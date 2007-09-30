@@ -5,8 +5,6 @@
 #include "map.h"
 #include "game.h"
 
-
-
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase(cPlayer *Owner){
   owner=Owner;
