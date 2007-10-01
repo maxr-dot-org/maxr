@@ -13,6 +13,7 @@
 #include "dialog.h"
 #include "game.h"
 
+
 // Menü vorbereiten:
 void EnterMenu(bool limited){
   if(!limited){
