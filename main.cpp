@@ -723,7 +723,7 @@ int LoadTerrain(){
 	int i;
 
 	if(!doc.LoadFile("terrain\\terrain.xml")){
-		MessageBoxA(NULL,"terrain.xml not found","LoadTerrain",MB_ICONERROR);
+		printf("terrain.xml could not be found!");
 		return 0;
 	}
 	rootnode = doc.FirstChildElement("Terrains");
