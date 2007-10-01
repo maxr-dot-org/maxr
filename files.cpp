@@ -13,6 +13,8 @@ bool FileExists(const char* name){
 	return true;
 }
 
+
+
 string LoadFileToString(const char* filename){
 	SDL_RWops *file;
 	char temp[256];
