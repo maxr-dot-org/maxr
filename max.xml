@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone=no>
+
+<MAXOptions>
+	<StartOptions>
+		<resolution>1</resolution>
+		<nointro>true</nointro>
+		<windowmode>true</windowmode>
+		<fastmode>true</fastmode>
+		<chunksize>2048</chunksize>
+		<frequency>44100</frequency>
+		<sound>true</sound>
+	</StartOptions>
+	
+	<GameOptions>
+		<Autosave>true</Autosave>
+		<Animation>true</Animation>
+		<Schatten>true</Schatten>
+		<Alpha>true</Alpha>
+		<ShowBeschreibung>true</ShowBeschreibung>
+		<DamageEffects>true</DamageEffects>
+		<DamageEffectsVehicles>true</DamageEffectsVehicles>
+		<MakeTracks>true</MakeTracks>
+	
+		<ScrollSpeed>22</ScrollSpeed>
+	
+		<MusicMute>false</MusicMute>
+		<SoundMute>false</SoundMute>
+		<VoiceMute>true</VoiceMute>
+		<MusicVol>32</MusicVol>
+		<SoundVol>32</SoundVol>
+		<VoiceVol>32</VoiceVol>
+	
+		<LastIP>127.0.0.1</LastIP>
+		<LastPort>58600</LastPort>
+		<LastPlayerName>Playername</LastPlayerName>
+	</GameOptions>
+</MAXOptions>
