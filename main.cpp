@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInst,HINSTANCE hPrevInstance,LPSTR args,INT)
 	// SplashScreen anzeigen
 	buffer=SDL_LoadBMP("InitPopup.bmp");
 	SDL_BlitSurface(buffer,NULL,screen,NULL);
-	SDL_WM_SetIcon(SDL_LoadBMP("MaxIcon.bmp"), NULL); //JCK
+	SDL_WM_SetIcon(SDL_LoadBMP("MaxIcon.bmp"), NULL); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode(500,420,32,SDL_HWSURFACE|SDL_NOFRAME);
 	SDL_UpdateRect(screen,0,0,0,0);
 	SDL_WM_SetCaption("MMs M.A.X. by DoctorDeath",NULL);
