@@ -993,9 +993,9 @@ int LoadMusic()
 	MusicFiles = new TList;
 	for ( int i=1;i<=MusicAnz;i++ )
 	{
-		sprintf(sztmp,"%d",i);
+		sprintf ( sztmp,"%d",i );
 		stmp = "bkg"; stmp += sztmp;
-		stmp = "music//"; stmp += ReadIniString("music", stmp.c_str(), "None", "music//music.ini" );
+		stmp = "music//"; stmp += ReadIniString ( "music", stmp.c_str(), "None", "music//music.ini" );
 		MusicFiles->Add ( stmp );
 		if ( MusicFiles->Items[i - 1].c_str() == "" ||!FileExists ( MusicFiles->Items[i - 1].c_str() ) )
 		{
@@ -1188,25 +1188,26 @@ int LoadBuildings()
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
 
-	if(!doc.LoadFile("buildings//buildings.xml"))
+	if ( !doc.LoadFile ( "buildings//buildings.xml" ) )
 	{
-		masterlog.write("Could not load buildings.xml",1);
+		masterlog.write ( "Could not load buildings.xml",1 );
 		return 0;
 	}
-	rootnode=doc.FirstChildElement("BuildingsData")->FirstChildElement("Buildings");
+	rootnode=doc.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" );
 
 	directorys = new TList();
 	node=rootnode->FirstChildElement();
-	if(node)
-		directorys->Add(node->ToElement()->Attribute("directory"));
-	while(node){
+	if ( node )
+		directorys->Add ( node->ToElement()->Attribute ( "directory" ) );
+	while ( node )
+	{
 		node=node->NextSibling();
-		if(node && node->Type()==1)
-			directorys->Add(node->ToElement()->Attribute("directory"));
+		if ( node && node->Type() ==1 )
+			directorys->Add ( node->ToElement()->Attribute ( "directory" ) );
 	}
 
 	// Alle Unterverzeichnisse durchsuchen:
-	for(int n=0;n<directorys->Count;n++)
+	for ( int n=0;n<directorys->Count;n++ )
 	{
 		p = directorys->Items[n];
 		p += "//";
@@ -1264,7 +1265,7 @@ int LoadBuildings()
 			return 0;
 		}
 		building[building_anz-1].data.version=1;
-		strncpy ( building[building_anz-1].data.name,ReadIniString("data", "name", "None", file.c_str()),24 );
+		strncpy ( building[building_anz-1].data.name,ReadIniString ( "data", "name", "None", file.c_str() ),24 );
 		ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
 		building[building_anz-1].data.max_hit_points =ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
 		building[building_anz-1].data.hit_points = 0;
@@ -1315,11 +1316,11 @@ int LoadBuildings()
 			building[building_anz-1].data.build_on_water = true;
 		}
 
-		strncpy ( building[building_anz-1].id,ReadIniString("data","id","unknown",file.c_str()),3 );
+		strncpy ( building[building_anz-1].id,ReadIniString ( "data","id","unknown",file.c_str() ),3 );
 		building[building_anz-1].id[3] = 0;
 
 		// Den Infotext auslesen:
-		TmpStr = ReadIniString("data","text","unknown",file.c_str());
+		TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
 		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
 		building[building_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
 		strcpy ( building[building_anz-1].text,TmpStr.c_str() );
@@ -1563,25 +1564,26 @@ int LoadVehicles()
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
 
-	if(!doc.LoadFile("vehicles//vehicles.xml"))
+	if ( !doc.LoadFile ( "vehicles//vehicles.xml" ) )
 	{
-		masterlog.write("Could not load vehicles.xml",1);
+		masterlog.write ( "Could not load vehicles.xml",1 );
 		return 0;
 	}
-	rootnode=doc.FirstChildElement("VehiclesData")->FirstChildElement("Vehicles");
+	rootnode=doc.FirstChildElement ( "VehiclesData" )->FirstChildElement ( "Vehicles" );
 
 	directorys = new TList();
 	node=rootnode->FirstChildElement();
-	if(node)
-		directorys->Add(node->ToElement()->Attribute("directory"));
-	while(node){
+	if ( node )
+		directorys->Add ( node->ToElement()->Attribute ( "directory" ) );
+	while ( node )
+	{
 		node=node->NextSibling();
-		if(node && node->Type()==1)
-			directorys->Add(node->ToElement()->Attribute("directory"));
+		if ( node && node->Type() ==1 )
+			directorys->Add ( node->ToElement()->Attribute ( "directory" ) );
 	}
 
 	// Alle Unterverzeichnisse durchsuchen:
-	for(int n=0;n<directorys->Count;n++)
+	for ( int n=0;n<directorys->Count;n++ )
 	{
 		p = directorys->Items[n];
 		p += "//";
@@ -1589,7 +1591,7 @@ int LoadVehicles()
 		vehicle= ( sVehicle* ) realloc ( vehicle,sizeof ( sVehicle ) *vehicle_anz );
 		memset ( & ( vehicle[vehicle_anz-1].data ),0,sizeof ( sVehicleData ) );
 
-		if ( strcmp(directorys->Items[n].c_str(),"infantery")==0 || strcmp(directorys->Items[n].c_str(),"commando")==0 )
+		if ( strcmp ( directorys->Items[n].c_str(),"infantery" ) ==0 || strcmp ( directorys->Items[n].c_str(),"commando" ) ==0 )
 		{
 			if ( !LoadInfantery ( vehicle+ ( vehicle_anz-1 ),p ) )
 			{
@@ -1601,7 +1603,7 @@ int LoadVehicles()
 			for ( i=0;i<8;i++ )
 			{
 				// img laden:
-				sprintf(TmpChr,"%d",i); file = p; file.insert ( 0,"vehicles//" ); file += "img"; file.insert ( file.length(),TmpChr ); file += ".pcx";
+				sprintf ( TmpChr,"%d",i ); file = p; file.insert ( 0,"vehicles//" ); file += "img"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
 					masterlog.write ( "File not found: img.pcx", 2 );
@@ -1615,7 +1617,7 @@ int LoadVehicles()
 				vehicle[vehicle_anz-1].img[i] = LoadPCX ( tmp );
 				SDL_SetColorKey ( vehicle[vehicle_anz-1].img[i],SDL_SRCCOLORKEY,0xFFFFFF );
 				// shw laden:
-				sprintf(TmpChr,"%d",i); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
+				sprintf ( TmpChr,"%d",i ); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
 					masterlog.write ( "File not found: shw.pcx", 2 );
@@ -1668,7 +1670,7 @@ int LoadVehicles()
 		}
 
 		vehicle[vehicle_anz-1].data.version=1;
-		strncpy ( vehicle[vehicle_anz-1].data.name,ReadIniString("data","name","unknown",file.c_str()),24 );
+		strncpy ( vehicle[vehicle_anz-1].data.name,ReadIniString ( "data","name","unknown",file.c_str() ),24 );
 
 		vehicle[vehicle_anz-1].data.max_speed = ReadIniInteger ( "data", "max_speed", 1, file.c_str() ) *2;
 		vehicle[vehicle_anz-1].data.speed = 0;
@@ -1710,11 +1712,11 @@ int LoadVehicles()
 		vehicle[vehicle_anz-1].data.is_commando = ReadIniInteger ( "data", "is_commando", 0, file.c_str() );
 		vehicle[vehicle_anz-1].data.is_alien = ReadIniInteger ( "data", "is_alien", 0, file.c_str() );
 
-		strncpy ( vehicle[vehicle_anz-1].id,ReadIniString("data","id","unknown",file.c_str()),3 );
+		strncpy ( vehicle[vehicle_anz-1].id,ReadIniString ( "data","id","unknown",file.c_str() ),3 );
 		vehicle[vehicle_anz-1].id[3] = 0;
 
 		// Den Infotext auslesen:
-		TmpStr = ReadIniString("data","text","unknown",file.c_str());
+		TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
 		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
 		vehicle[vehicle_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
 		strcpy ( vehicle[vehicle_anz-1].text,TmpStr.c_str() );
@@ -1996,7 +1998,7 @@ bool LoadInfantery ( sVehicle *v,string path )
 
 		for ( k=0;k<13;k++ )
 		{
-			file = path; file.insert ( 0,"vehicles//" ); file += "img"; sprintf(TmpChr,"%d",i); file.insert ( file.length(),TmpChr ); file += "_"; if ( k<10 ) file += "0"; sprintf(TmpChr,"%d",k); file.insert ( file.length(),TmpChr ); file += ".pcx";
+			file = path; file.insert ( 0,"vehicles//" ); file += "img"; sprintf ( TmpChr,"%d",i ); file.insert ( file.length(),TmpChr ); file += "_"; if ( k<10 ) file += "0"; sprintf ( TmpChr,"%d",k ); file.insert ( file.length(),TmpChr ); file += ".pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				masterlog.write ( "File not found: imgx_y.pcx", 2 );
@@ -2205,7 +2207,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 	SDL_LockSurface ( sf );
 
 	fak=size/64.0;
-	int fakint = (int)fak;
+	int fakint = ( int ) fak;
 	line ( p1x*fakint,p1y*fakint,p2x*fakint,p2y*fakint,color,sf );
 	line ( p2x*fakint,p2y*fakint,p3x*fakint,p3y*fakint,color,sf );
 	line ( p3x*fakint,p3y*fakint,p1x*fakint,p1y*fakint,color,sf );
