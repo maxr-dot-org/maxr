@@ -153,7 +153,6 @@ public:
 #define PING_COUNT         100      // Anzahl der Ping Messages
 
 // Globales //////////////////////////////////////////////////////////////////
-EX string AppPath;
 EX int ScrollSpeed;     // Scrollgeschwindigkeit
 EX bool Autosave;       // Gibt an, ob automatisch gespeichert werden soll
 EX bool Animation;      // Gibt am, ob es Animationen geben soll
