@@ -66,7 +66,7 @@ public:
 	* Closes the logfile. This should only be done on
 	* application exit (end or error.)
 	*
-	* @ return 0 SDL <= 1.2.9 always returns 0
+	* @return 0 SDL <= 1.2.9 always returns 0
 	*/
 	int close();
 };
