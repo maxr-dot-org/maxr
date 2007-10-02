@@ -26,6 +26,7 @@ private:
 	int writeMessage( char *);
 public:
 	Log();
+	int init();
 	int write(char *, int);
 	int write(char *);
 	int close();

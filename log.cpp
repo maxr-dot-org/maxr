@@ -18,8 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
 
 #include "SDL_rwops.h"
 #include "log.h"
@@ -37,29 +35,35 @@ Zusätzlich kann noch einer der folgenden Buchstaben zu mode hinzugefügt werden.
 t  Textmodus: Das Ende der Datei ist das STRG+Z-Zeichen.
 b  Binäre Modus: Das Ende der Datei ist am letzen Byte der Datei erreicht.*/
 
-char *ee="(EE): "; //errors
-char *ww="(WW): "; //warnings
-char *ii="(II): "; //informations
-//TODO: DEBUG (DD):
+const char *ee="(EE): "; //errors
+const char *ww="(WW): "; //warnings
+const char *ii="(II): "; //informations
+const char *dd="(DD): "; //debug
 
-SDL_RWops *logfile=SDL_RWFromFile ( "max.log","w+t" );
+static SDL_RWops *logfile;
 
 Log::Log()
 {}
 
-//Send str to logfile and add error/warning tag
-//TYPEs:
-// 1 		== warning 	(WW):
-// 2 		== error	(EE):
-// else		== information	(II):
-int Log::write ( char *str, int TYPE )
+int Log::init ( )
 {
+	logfile = SDL_RWFromFile ( "max.log","w+t" );
 	if ( logfile==NULL )
 	{
 		fprintf ( stderr,"Couldn't open max.log\n" );
 		return ( 1 );
 	}
-	
+	return 0;
+}
+
+//Send str to logfile and add error/warning tag
+//TYPEs:
+// 1 		== warning 	(WW):
+// 2 		== error	(EE):
+// 3		== debug	(DD):
+// else		== information	(II):
+int Log::write ( char *str, int TYPE )
+{
 	if ( TYPE == 1 )
 	{
 		SDL_RWwrite ( logfile,ww,1,6 );
@@ -67,6 +71,10 @@ int Log::write ( char *str, int TYPE )
 	else if ( TYPE == 2 )
 	{
 		SDL_RWwrite ( logfile,ee,1,6 );
+	}
+	else if ( TYPE == 3 )
+	{
+		SDL_RWwrite ( logfile,dd,1,6 );
 	}
 	else
 	{

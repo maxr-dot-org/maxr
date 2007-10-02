@@ -19,18 +19,26 @@
  ***************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
 
 #include "log.h"
 
 int main()
 {
+	//init "master"log
 	Log log;
+	log.init();
+
 	log.write("This is a testwarning\n", 1);
 	log.write("This is a testerror\n", 2);
-	log.write("This is a testinformation without given type\n");
-	log.write("This is a testinformation\n", 0);
+	log.write("This is a testdebug\n", 3);
+
+	//test for another log-object without init/close
+	//because this is masterlogs job at start and end of application
+	Log log2;
+	log2.write("This is a testinformation without given type\n");
+	log2.write("This is a testinformation\n", 0);
+
+	//close masterlog
 	log.close();
 
 }
