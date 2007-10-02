@@ -748,7 +748,7 @@ void cEngine::MakeRundenstartReport(void){
     r=game->ActivePlayer->ReportBuildings->ReportItems[0];
     if(anz)Report+=", ";
     anz+=r->anz;
-	stmp = itoa(r->anz,sztmp,10); stmp += " "; stmp += r->name;
+	sprintf(sztmp,"%d",r->anz); stmp = sztmp; stmp += " "; stmp += r->name;
     Report += r->anz>1?stmp:r->name;
     delete r;
     game->ActivePlayer->ReportBuildings->DeleteReport(0);
@@ -757,7 +757,7 @@ void cEngine::MakeRundenstartReport(void){
     r=game->ActivePlayer->ReportVehicles->ReportItems[0];
     if(anz)Report+=", ";
     anz+=r->anz;
-	stmp = itoa(r->anz,sztmp,10); stmp += " "; stmp += r->name;
+	sprintf(sztmp,"%d",r->anz); stmp = sztmp; stmp += " "; stmp += r->name;
     Report+=r->anz>1?stmp:r->name;
     delete r;
     game->ActivePlayer->ReportVehicles->DeleteReport(0);
