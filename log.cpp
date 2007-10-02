@@ -101,8 +101,6 @@ int Log::writeMessage( char *str )
 		fprintf ( stderr,"Couldn't write to max.log\n" );
 		return ( 2 );
 	}
-
-	fprintf ( stderr,"Wrote %d 1-byte blocks\n",wrote );
 	return ( 0 );
 }
 
