@@ -1256,8 +1256,7 @@ void cEngine::CollectTrash ( void )
 				mjobs->vehicle->mjob=NULL;
 			}
 			catch ( ... )
-			{}
-		}
+			{}}
 		delete mjobs;
 		mjobs=j;
 	}
