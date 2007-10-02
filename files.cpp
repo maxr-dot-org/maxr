@@ -426,7 +426,7 @@ void WriteIniInteger(const char* section, const char* key, int Value, const char
 	long startpos, endpos, keypos;
 	string stmp;
 	char charValue[256];
-	itoa(Value,charValue,10);
+	sprintf(charValue,"%d",Value);
 
 	file=SDL_RWFromFile(filename, "r+");
 	if(file==NULL)
