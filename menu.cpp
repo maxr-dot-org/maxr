@@ -1294,7 +1294,7 @@ void ShowPlanets(TList *files,int offset,int selected){
       SDL_FillRect(buffer,&r,0x00C000);
 
 	  char tmp[16];
-	  itoa(size,tmp,10);
+	  sprintf(tmp,"%d",size);
 	  name.insert(0,"> ");
 	  name.replace(name.length()-4, 2, " (");
 	  name.replace(name.length()-2, 3, tmp);
@@ -1303,7 +1303,7 @@ void ShowPlanets(TList *files,int offset,int selected){
 	  name.insert(name.length(),") <");
 	}else{
 	  char tmp[16];
-	  itoa(size,tmp,10);
+	  sprintf(tmp,"%d",size);
 	  name.replace(name.length()-4, 2, " (");
 	  name.replace(name.length()-2, 3, tmp);
 	  name.insert(name.length(),"x");
@@ -3175,7 +3175,8 @@ void cMultiPlayer::RunMenu(void){
   fonts->OutText("IP:",20,245,buffer);
   fonts->OutText((char *) IP.c_str(),20,260,buffer);
   fonts->OutText("Port:",228,245,buffer);
-  fonts->OutText(itoa(Port, sztmp, 10),228,260,buffer);
+  sprintf(sztmp,"%d",Port);
+  fonts->OutText(sztmp,228,260,buffer);
   fonts->OutText("Spielername:",352,245,buffer);
   fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);
   fonts->OutText("Farbe:",500,245,buffer);
@@ -3382,7 +3383,8 @@ void cMultiPlayer::RunMenu(void){
           }*/
 	      char sztmp[256];
           string msg;
-		  msg=itoa(Checksum,sztmp,10); msg+="#";
+		  sprintf(sztmp,"%d",Checksum);
+		  msg=sztmp; msg+="#";
 		  msg+=MAX_VERSION;
           AddChatLog("check for go");
 
@@ -3455,7 +3457,8 @@ void cMultiPlayer::RunMenu(void){
           fonts->OutText("IP:",20,245,buffer);
           fonts->OutText((char *)IP.c_str(),20,260,buffer);
           fonts->OutText("Port:",228,245,buffer);
-          fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);
+		  sprintf(sztmp,"%d",Port);
+          fonts->OutText(sztmp,228,260,buffer);
           fonts->OutText("Spielername:",352,245,buffer);
           fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);
           fonts->OutText("Farbe:",500,245,buffer);
@@ -3505,7 +3508,8 @@ void cMultiPlayer::RunMenu(void){
           fonts->OutText("IP:",20,245,buffer);
           fonts->OutText((char *)IP.c_str(),20,260,buffer);
           fonts->OutText("Port:",228,245,buffer);
-          fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);
+		  sprintf(sztmp,"%d",Port);
+          fonts->OutText(sztmp,228,260,buffer);
           fonts->OutText("Spielername:",352,245,buffer);
           fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);
           fonts->OutText("Farbe:",500,245,buffer);
@@ -3599,7 +3603,8 @@ void cMultiPlayer::RunMenu(void){
           if(fstcpip->status==STAT_OPENED){
             AddChatLog("Fehler beim Öffnen des Sockets");
           }else{
-			stmp="Spiel offen (Port: "; stmp+=itoa(Port,sztmp,10); stmp+=")";
+			sprintf(sztmp,"%d",Port);
+			stmp="Spiel offen (Port: "; stmp+=sztmp; stmp+=")";
 			AddChatLog(stmp);;
           }
         }else{
@@ -3612,7 +3617,8 @@ void cMultiPlayer::RunMenu(void){
 		  if(fstcpip->status!=STAT_CONNECTED){
             AddChatLog("Fehler beim Verbinden");
           }else{
-			stmp="Verbinde mit "; stmp+=IP; stmp+=":"; stmp+=itoa(Port,sztmp,10);
+			sprintf(sztmp,"%d",Port);
+			stmp="Verbinde mit "; stmp+=IP; stmp+=":"; stmp+=sztmp;
             AddChatLog(stmp);
           }
         }
@@ -3664,25 +3670,29 @@ void cMultiPlayer::RunMenu(void){
       Focus=FOCUS_IP;
       InputStr=IP;
       ShowCursor=true;
-      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
+	  sprintf(sztmp,"%d",Port);
+      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(sztmp,228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
     // Klick auf den Port:
 	}else if(b&&!lb&&mouse->x>=228&&mouse->x<228+108&&mouse->y>=250&&mouse->y<250+30){
       Focus=FOCUS_PORT;
-      InputStr=itoa(Port,sztmp,10);
+	  sprintf(sztmp,"%d",Port);
+      InputStr=sztmp;
       ShowCursor=true;
-      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
+      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(sztmp,228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
     // Klick auf den Namen:
     }else if(b&&!lb&&mouse->x>=352&&mouse->x<352+108&&mouse->y>=250&&mouse->y<250+30){
       Focus=FOCUS_NAME;
       InputStr=MyPlayer->name;
       ShowCursor=true;
-      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
+	  sprintf(sztmp,"%d",Port);
+      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(sztmp,228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
     // Klick auf den ChatStr:
     }else if(b&&!lb&&mouse->x>=20&&mouse->x<20+425&&mouse->y>=420&&mouse->y<420+30){
       Focus=FOCUS_CHAT;
       InputStr=ChatStr;
       ShowCursor=true;
-      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(itoa(Port,sztmp,10),228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
+	  sprintf(sztmp,"%d",Port);
+      scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)IP.c_str(),20,260,buffer);scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText(sztmp,228,260,buffer);scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)MyPlayer->name.c_str(),352,260,buffer);scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface(TmpSf,&scr,buffer,&scr);fonts->OutText((char *)ChatStr.c_str(),20,423,buffer);
     }
 
     // Das WaitForGo machen:
@@ -3944,7 +3954,8 @@ void cMultiPlayer::HandleMenuMessages(){
 				PlayerList->AddPlayer(p);
 				Refresh=true;
 				string smsg;
-				smsg=Strings->Items[2]; smsg+="#"; smsg+=itoa(p->Nr,sztmp,10);
+				sprintf(sztmp,"%d",p->Nr);
+				smsg=Strings->Items[2]; smsg+="#"; smsg+=sztmp;
 				fstcpip->FSTcpIpSend(MSG_YOUR_ID_IS,(char *)smsg.c_str(),(int)smsg.length(),-1);
 				SendPlayerList();
 				MessageList->DeleteNetMessage(0);
@@ -4066,12 +4077,14 @@ void cMultiPlayer::HandleMenuMessages(){
 				fp=fopen(mapstr.c_str(),"rb");
 				if(atoi(Strings->Items[0].c_str())==Checksum && strcmp(Strings->Items[1].c_str(),MAX_VERSION)==0 && fp){
 					string new_msg;
-					new_msg=itoa(MyPlayer->Nr,sztmp,10);
+					sprintf(sztmp,"%d",MyPlayer->Nr);
+					new_msg=sztmp;
 					fstcpip->FSTcpIpSend(MSG_READY_TO_GO,new_msg.c_str(),(int)new_msg.length(),-1);
 					AddChatLog("host wants to go: ready to go");
 				}else{
 					string new_msg;
-					new_msg=itoa(MyPlayer->Nr,sztmp,10);
+					sprintf(sztmp,"%d",MyPlayer->Nr);
+					new_msg=sztmp;
 					fstcpip->FSTcpIpSend(MSG_NO_GO,new_msg.c_str(),(int)new_msg.length(),-1);
 					AddChatLog("host wants to go: no go");
 				}
@@ -4237,7 +4250,8 @@ void cMultiPlayer::DisplayGameSettings(void){
   }
 
   str="Version: "; str+=MAX_VERSION; str+="\n";
-  str+="Checksum: "; str+=itoa(Checksum,sztmp,10); str+="\n";
+  sprintf(sztmp,"%d",Checksum);
+  str+="Checksum: "; str+=sztmp; str+="\n";
   str+="\n";
 
   if(!host&&fstcpip->status!=STAT_CONNECTED){
@@ -4261,7 +4275,8 @@ void cMultiPlayer::DisplayGameSettings(void){
         fread(tmpstr,1,len,fp);
         map=tmpstr;
         free(tmpstr);
-        str+="Runde: "; str+=itoa(game->Runde,sztmp,10); str+="\n";
+		sprintf(sztmp,"%d",game->Runde);
+        str+="Runde: "; str+=sztmp; str+="\n";
 
         if(host&&game){
           int i;
@@ -4297,11 +4312,12 @@ void cMultiPlayer::DisplayGameSettings(void){
         fread(&size,sizeof(int),1,fp);
         fclose(fp);
       }
-      str+=" ("; str+=itoa(size,sztmp,10); str+="x"; str+=itoa(size,sztmp,10); str+=")\n";
+	  sprintf(sztmp,"%d",size);
+      str+=" ("; str+=sztmp; str+="x"; str+=sztmp; str+=")\n";
 
       r.x=20;r.y=60;r.w=150;r.h=20;
       SDL_BlitSurface(TmpSf,&r,buffer,&r);
-	  mapstr=map; mapstr+=" ("; mapstr+=itoa(size,sztmp,10); mapstr+="x"; mapstr+=itoa(size,sztmp,10); mapstr+=")";
+	  mapstr=map; mapstr+=" ("; mapstr+=sztmp; mapstr+="x"; mapstr+=sztmp; mapstr+=")";
       fonts->OutTextCenter((char *)mapstr.c_str(),90,65,buffer);
 
       string mapstr;
@@ -4328,7 +4344,7 @@ void cMultiPlayer::DisplayGameSettings(void){
       str+="Öl: "; str+=(options.oil<2?(options.oil<1?"wenig":"mittel"):(options.oil<3?"viel":"extrem")); str+="\n";
       str+="Gold: "; str+=(options.gold<2?(options.gold<1?"wenig":"mittel"):(options.gold<3?"viel":"extrem")); str+="\n";
       str+="Ressourcendichte: "; str+=(options.dichte<2?(options.dichte<1?"dünn":"normal"):(options.gold<3?"dicht":"extrem")); str+="\n";
-      str+="Credits: "; str+=itoa(options.credits,sztmp,10); str+="\n";
+      str+="Credits: "; sprintf(sztmp,"%d",options.credits); str+=sztmp; str+="\n";
       str+="Brückenkopf: "; str+=(options.FixedBridgeHead?"fest":"mobil"); str+="\n";
       str+="Alientechnologie: "; str+=(options.AlienTech?"an":"aus"); str+="\n";
       str+="Spielart: "; str+=(options.PlayRounds?"Runden":"simultan"); str+="\n";
@@ -4414,8 +4430,10 @@ void cMultiPlayer::ClientConnectedCallBack(void){
 	string msg;
 	MyPlayer->Nr=100+random(1000000,1);
 	msg=MyPlayer->name; msg+="#";
-	msg+=itoa(GetColorNr(MyPlayer->color),sztmp,10); msg+="#";
-	msg+=itoa(MyPlayer->Nr,sztmp,10);
+	sprintf(sztmp,"%d",GetColorNr(MyPlayer->color));
+	msg+=sztmp; msg+="#";
+	sprintf(sztmp,"%d",MyPlayer->Nr);
+	msg+=sztmp;
 	fstcpip->FSTcpIpSend(MSG_SIGNING_IN,(char *)msg.c_str(),(int)msg.length(),-1);
 }
 
@@ -4457,8 +4475,10 @@ void cMultiPlayer::ChangeFarbeName(void){
     SendPlayerList();
     return;
   }
-  msg=itoa(MyPlayer->Nr,sztmp,10); msg+="#";
-  msg+=itoa(GetColorNr(MyPlayer->color),sztmp,10); msg+="#";
+  sprintf(sztmp,"%d",MyPlayer->Nr);
+  msg=sztmp; msg+="#";
+  sprintf(sztmp,"%d",GetColorNr(MyPlayer->color));
+  msg+=sztmp; msg+="#";
   msg+=MyPlayer->name;
   fstcpip->FSTcpIpSend(MSG_MY_NAME_CHANGED,(char *)msg.c_str(),(int)msg.length(),-1);
 }
@@ -4468,11 +4488,14 @@ void cMultiPlayer::SendPlayerList(void){
   char sztmp[256];
   string msg;
   cPlayer *p;
-  msg=itoa(PlayerList->Count,sztmp,10); msg+="#";
+  sprintf(sztmp,"%d",PlayerList->Count);
+  msg=sztmp; msg+="#";
   for(int i=0; i<PlayerList->Count; i++){
     p=PlayerList->PlayerItems[i];
-    msg+=itoa(p->Nr,sztmp,10); msg+="#";
-    msg+=itoa(GetColorNr(p->color),sztmp,10); msg+="#";
+	sprintf(sztmp,"%d",p->Nr);
+    msg+=sztmp; msg+="#";
+	sprintf(sztmp,"%d",GetColorNr(p->color));
+    msg+=sztmp; msg+="#";
 	msg+=p->name; if(i!=PlayerList->Count-1) msg+="#";
   }
   fstcpip->FSTcpIpSend(MSG_PLAYER_LIST,(char *)msg.c_str(),(int)msg.length(),-1);
@@ -4482,17 +4505,18 @@ void cMultiPlayer::SendPlayerList(void){
 void cMultiPlayer::SendOptions(void){
   char sztmp[256];
   string msg;
-  msg=itoa(no_options,sztmp,10); msg+="#";
+  sprintf(sztmp,"%d",no_options);
+  msg=sztmp; msg+="#";
   msg+=SaveGame; msg+="#";
   if(!no_options){
-	  msg+=itoa((int) options.AlienTech,sztmp,10); msg+="#";
-	  msg+=itoa(options.credits,sztmp,10); msg+="#";
-	  msg+=itoa(options.dichte,sztmp,10); msg+="#";
-	  msg+=itoa((int) options.FixedBridgeHead,sztmp,10); msg+="#";
-	  msg+=itoa(options.gold,sztmp,10); msg+="#";
-	  msg+=itoa(options.metal,sztmp,10); msg+="#";
-	  msg+=itoa(options.oil,sztmp,10); msg+="#";
-	  msg+=itoa((int) options.PlayRounds,sztmp,10); msg+="#";
+	  sprintf(sztmp,"%d",options.AlienTech); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.credits); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.dichte); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.FixedBridgeHead); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.gold); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.metal); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.oil); msg+=sztmp; msg+="#";
+	  sprintf(sztmp,"%d",options.PlayRounds); msg+=sztmp; msg+="#";
   }
   msg+=map;
   
@@ -4507,9 +4531,9 @@ void cMultiPlayer::TransmitRessources(void){
   for(i=0;i<map_obj->size*map_obj->size;i++){
     if(!map_obj->Resources[i].typ)continue;
 	if(msg.length()>0) msg+="#";
-	msg+=itoa(i,sztmp,10); msg+="#";
-    msg+=itoa(map_obj->Resources[i].typ,sztmp,10); msg+="#";
-    msg+=itoa(map_obj->Resources[i].value,sztmp,10);
+	sprintf(sztmp,"%d",no_options); msg+=sztmp; msg+="#";
+    sprintf(sztmp,"%d",map_obj->Resources[i].typ); msg+=sztmp; msg+="#";
+    sprintf(sztmp,"%d",map_obj->Resources[i].value); msg+=sztmp;
 	if(msg.length()>200){
 	  fstcpip->FSTcpIpSend(MSG_RESSOURCES,msg.c_str(),(int)msg.length(),-1);
 //      SDL_Delay(10);
@@ -4642,7 +4666,8 @@ void cMultiPlayer::TransmitPlayerUpgrades(cPlayer *p){
   string msg;
   char sztmp[256];
   int i;
-  msg=itoa(p->Nr,sztmp,10);
+  sprintf(sztmp,"%d",p->Nr);
+  msg=sztmp;
 
   for(i=0;i<vehicle_anz;i++){
     if(p->VehicleData[i].damage!=vehicle[i].data.damage||
@@ -4654,16 +4679,16 @@ void cMultiPlayer::TransmitPlayerUpgrades(cPlayer *p){
        p->VehicleData[i].scan!=vehicle[i].data.scan||
        p->VehicleData[i].max_speed!=vehicle[i].data.max_speed){
 	  if(msg.length()>0)msg+="#";
-	  msg+=itoa(0,sztmp,10);msg+="#";
-      msg+=itoa(i,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].damage,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].max_shots,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].range,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].max_ammo,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].armor,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].max_hit_points,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].scan,sztmp,10);msg+="#";
-      msg+=itoa(p->VehicleData[i].max_speed,sztmp,10);
+	  msg+="0";msg+="#";
+      sprintf(sztmp,"%d",i); msg+=sztmp; msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].damage); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].max_shots); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].range); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].max_ammo); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].armor); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].max_hit_points); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].scan); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->VehicleData[i].max_speed); msg+=sztmp;
     }
 	if(msg.length()>200){
 	  fstcpip->FSTcpIpSend(MSG_PLAYER_UPGRADES,msg.c_str(),(int)msg.length(),10);
@@ -4681,15 +4706,15 @@ void cMultiPlayer::TransmitPlayerUpgrades(cPlayer *p){
        p->BuildingData[i].max_hit_points!=building[i].data.max_hit_points||
        p->BuildingData[i].scan!=building[i].data.scan){
 	  if(msg.length()>0)msg+="#";
-	  msg+=itoa(1,sztmp,10);msg+="#";
-      msg+=itoa(i,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].damage,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].max_shots,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].range,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].max_ammo,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].armor,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].max_hit_points,sztmp,10);msg+="#";
-      msg+=itoa(p->BuildingData[i].scan,sztmp,10);msg+="#";
+	  msg+="1";msg+="#";
+      sprintf(sztmp,"%d",i); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].damage); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].max_shots); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].range); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].max_ammo); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].armor); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].max_hit_points); msg+=sztmp;msg+="#";
+      sprintf(sztmp,"%d",p->BuildingData[i].scan); msg+=sztmp;msg+="#";
     }
     if(msg.length()>200){
 	  fstcpip->FSTcpIpSend(MSG_PLAYER_UPGRADES,msg.c_str(),(int)msg.length(),10);
@@ -4708,16 +4733,16 @@ void cMultiPlayer::TransmitPlayerLanding(int nr,int x,int y,TList *ll){
   string msg;
   char sztmp[256];
   int i;
-  msg=itoa(x,sztmp,10);msg+="#";
-  msg+=itoa(y,sztmp,10);msg+="#";
-  msg+=itoa(nr,sztmp,10);msg+="#";
-  msg+=itoa(ll->Count,sztmp,10);
+  sprintf(sztmp,"%d",x);msg=sztmp;msg+="#";
+  sprintf(sztmp,"%d",y);msg+=sztmp;msg+="#";
+  sprintf(sztmp,"%d",nr);msg+=sztmp;msg+="#";
+  sprintf(sztmp,"%d",ll->Count);msg+=sztmp;
   for(i=0;i<ll->Count;i++){
     sLanding *l;
     l=ll->LandItems[i];
 	if(msg.length()>0)msg+="#";
-    msg+=itoa(l->id,sztmp,10);msg+="#";
-    msg+=itoa(l->cargo,sztmp,10);
+    sprintf(sztmp,"%d",l->id);msg+=sztmp;msg+="#";
+    sprintf(sztmp,"%d",l->cargo);msg+=sztmp;
     if(msg.length()>200){
 	  fstcpip->FSTcpIpSend(MSG_PLAYER_LANDING,msg.c_str(),(int)msg.length(),10);
       SDL_Delay(1);
@@ -4822,7 +4847,8 @@ void HeatTheSeat(void){
   list=new TList;
   for(i=1;i<=PlayerAnz;i++){
     stmp = "Player";
-	stmp += itoa(i,sztmp,10);
+	sprintf(sztmp,"%d",i);
+	stmp+=sztmp;
     list->AddPlayer(p=new cPlayer(stmp,colors[(i-1)%8],i));
     p->Credits=options.credits;
   }
@@ -5088,10 +5114,14 @@ void ShowFiles(TList *files, int offset, int selected)
 			y=72;
 		}
 		SDL_BlitSurface(gfx_load_save_menu,&rect,buffer,&rect);
-		if(i+offset==selected)
-			fonts->OutTextBigCenterGold(itoa((offset+i+1),sztmp,10),x,y,buffer);
-		else
-			fonts->OutTextBigCenter(itoa((offset+i+1),sztmp,10),x,y,buffer);
+		if(i+offset==selected){
+			sprintf(sztmp,"%d",(offset+i+1));
+			fonts->OutTextBigCenterGold(sztmp,x,y,buffer);
+		}
+		else{
+			sprintf(sztmp,"%d",(offset+i+1));
+			fonts->OutTextBigCenter(sztmp,x,y,buffer);
+		}
 		rect.y+=76;
 		y+=76;
 	}
