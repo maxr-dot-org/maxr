@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Bernd Kosmahl   *
- *   beko@duke.famkos.net   *
+ *   Copyright (C) 2007 by Bernd 'beko' Kosmahl   *
+ *   beko@dmaxthegame.de   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
