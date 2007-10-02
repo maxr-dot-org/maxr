@@ -4,145 +4,169 @@
 #include "pcx.h"
 #include <string.h>
 
-SDL_Surface *LoadPCX(char *name,bool NoHW){
-  unsigned int *_ptr;
-  unsigned char temp;
-  char tmp[2];
-  int k=0,i=0,z,j;
-  int colors[256];
-  SDL_Surface *sf;
-  short x,y;
-  SDL_RWops *file;
-  // Die Datei öffnen:
-  file=SDL_RWFromFile(name,"rb");
-  if(file==NULL){
-    return NULL;
-  }
-  // Die Datei laden:
-  SDL_RWseek(file,8,SEEK_SET);
-  SDL_RWread(file,&x,sizeof(short),1);
-  SDL_RWread(file,&y,sizeof(short),1);
-  x++;y++;
-  if(NoHW){
-    sf=SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0);
-  }else{
-    sf=SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0);
-  }
-  SDL_SetColorKey(sf,SDL_SRCCOLORKEY,0xFF00FF);
-  SDL_LockSurface(sf);
-  if(sf==NULL){SDL_RWclose(file);return NULL;}
-  _ptr=((unsigned int*)sf->pixels);
-  SDL_RWseek(file,128,SEEK_SET);
-  do{
-    SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-    if(temp>191){
-      z=temp-192;
-      if(z+k>x)
-      z=x-k;
-      SDL_RWread(file,tmp,1,1);
-	  temp=tmp[0];
-      for(j=0;j<z;j++){
-        _ptr[k+i*x]=temp;
-        k++;
-        if(k==x)break;
-      }
-    }else{
-      _ptr[k+i*x]=temp;
-      k++;
-    }
-    if(k==x){k=0;i++;}
-  }while(i!=y);
-  // Nun noch die Farbtabelle anpassen:
-  SDL_RWseek(file,0,SEEK_END);
-  SDL_RWseek(file,SDL_RWtell(file)-768,SEEK_SET);
-  for(i=0;i<256;i++){
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-    colors[i]=(temp<<16);
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-	colors[i]+=(temp<<8);
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-	colors[i]+=temp;
-  }
-  for(i=0;i<x*y;i++){
-    _ptr[i]=colors[_ptr[i]];
-  }
-  SDL_RWclose(file);
-  SDL_UnlockSurface(sf);
-  return sf;
+SDL_Surface *LoadPCX ( char *name,bool NoHW )
+{
+	unsigned int *_ptr;
+	unsigned char temp;
+	char tmp[2];
+	int k=0,i=0,z,j;
+	int colors[256];
+	SDL_Surface *sf;
+	short x,y;
+	SDL_RWops *file;
+	// Die Datei öffnen:
+	file=SDL_RWFromFile ( name,"rb" );
+	if ( file==NULL )
+	{
+		return NULL;
+	}
+	// Die Datei laden:
+	SDL_RWseek ( file,8,SEEK_SET );
+	SDL_RWread ( file,&x,sizeof ( short ),1 );
+	SDL_RWread ( file,&y,sizeof ( short ),1 );
+	x++;y++;
+	if ( NoHW )
+	{
+		sf=SDL_CreateRGBSurface ( SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
+	}
+	else
+	{
+		sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
+	}
+	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
+	SDL_LockSurface ( sf );
+	if ( sf==NULL ) {SDL_RWclose ( file );return NULL;}
+	_ptr= ( ( unsigned int* ) sf->pixels );
+	SDL_RWseek ( file,128,SEEK_SET );
+	do
+	{
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		if ( temp>191 )
+		{
+			z=temp-192;
+			if ( z+k>x )
+				z=x-k;
+			SDL_RWread ( file,tmp,1,1 );
+			temp=tmp[0];
+			for ( j=0;j<z;j++ )
+			{
+				_ptr[k+i*x]=temp;
+				k++;
+				if ( k==x ) break;
+			}
+		}
+		else
+		{
+			_ptr[k+i*x]=temp;
+			k++;
+		}
+		if ( k==x ) {k=0;i++;}
+	}
+	while ( i!=y );
+	// Nun noch die Farbtabelle anpassen:
+	SDL_RWseek ( file,0,SEEK_END );
+	SDL_RWseek ( file,SDL_RWtell ( file )-768,SEEK_SET );
+	for ( i=0;i<256;i++ )
+	{
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]= ( temp<<16 );
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]+= ( temp<<8 );
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]+=temp;
+	}
+	for ( i=0;i<x*y;i++ )
+	{
+		_ptr[i]=colors[_ptr[i]];
+	}
+	SDL_RWclose ( file );
+	SDL_UnlockSurface ( sf );
+	return sf;
 }
 
 // Läd eine PCX-Datei in das Surface:
-void LoadPCXtoSF(char *name,SDL_Surface *sf){
-  unsigned int *_ptr;
-  unsigned char temp;
-  char tmp[2];
-  int k=0,i=0,z,j;
-  int colors[256];
-  short x,y;
-  SDL_RWops *file;
+void LoadPCXtoSF ( char *name,SDL_Surface *sf )
+{
+	unsigned int *_ptr;
+	unsigned char temp;
+	char tmp[2];
+	int k=0,i=0,z,j;
+	int colors[256];
+	short x,y;
+	SDL_RWops *file;
 
-  // Die Datei öffnen:
-  file=SDL_RWFromFile(name,"rb");
-  if(file==NULL){
-    return;
-  }
-  // Die Datei laden:
-  SDL_RWseek(file,8,SEEK_SET);
-  SDL_RWread(file,&x,sizeof(short),1);
-  SDL_RWread(file,&y,sizeof(short),1);
-  x++;y++;
-  SDL_SetColorKey(sf,SDL_SRCCOLORKEY,0xFF00FF);
-  SDL_FillRect(sf,NULL,0xFFFFFF);
-  SDL_LockSurface(sf);
-  if(sf==NULL){SDL_RWclose(file);return;}
-  _ptr=((unsigned int*)sf->pixels);
-  SDL_RWseek(file,128,SEEK_SET);
-  do{
-    SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-    if(temp>191){
-      z=temp-192;
-      if(z+k>x)
-      z=x-k;
-	  SDL_RWread(file,tmp,1,1);
-	  temp=tmp[0];
-      for(j=0;j<z;j++){
-        _ptr[k+i*sf->w]=temp;
-        k++;
-        if(k==x)break;
-      }
-    }else{
-      _ptr[k+i*sf->w]=temp;
-      k++;
-    }
-    if(k==x){k=0;i++;}
-  }while(i!=y);
-  // Nun noch die Farbtabelle anpassen:
-  SDL_RWseek(file,0,SEEK_END);
-  SDL_RWseek(file,SDL_RWtell(file)-768,SEEK_SET);
-  for(i=0;i<256;i++){
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-    colors[i]=(temp<<16);
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-	colors[i]+=(temp<<8);
-	SDL_RWread(file,tmp,1,1);
-	temp=tmp[0];
-	colors[i]+=temp;
-  }
-  for(i=0;i<sf->w*y;i++){
-    unsigned int c=_ptr[i];
-    if(c<=255)_ptr[i]=colors[c];
-    else _ptr[i]=0;
-  }
-  if(sf->w*y<sf->w*sf->h){
-    memset(_ptr+sf->w*y,0,(sf->w*sf->h-sf->w*y)*4);
-  }
-  SDL_RWclose(file);
-  SDL_UnlockSurface(sf);
+	// Die Datei öffnen:
+	file=SDL_RWFromFile ( name,"rb" );
+	if ( file==NULL )
+	{
+		return;
+	}
+	// Die Datei laden:
+	SDL_RWseek ( file,8,SEEK_SET );
+	SDL_RWread ( file,&x,sizeof ( short ),1 );
+	SDL_RWread ( file,&y,sizeof ( short ),1 );
+	x++;y++;
+	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
+	SDL_FillRect ( sf,NULL,0xFFFFFF );
+	SDL_LockSurface ( sf );
+	if ( sf==NULL ) {SDL_RWclose ( file );return;}
+	_ptr= ( ( unsigned int* ) sf->pixels );
+	SDL_RWseek ( file,128,SEEK_SET );
+	do
+	{
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		if ( temp>191 )
+		{
+			z=temp-192;
+			if ( z+k>x )
+				z=x-k;
+			SDL_RWread ( file,tmp,1,1 );
+			temp=tmp[0];
+			for ( j=0;j<z;j++ )
+			{
+				_ptr[k+i*sf->w]=temp;
+				k++;
+				if ( k==x ) break;
+			}
+		}
+		else
+		{
+			_ptr[k+i*sf->w]=temp;
+			k++;
+		}
+		if ( k==x ) {k=0;i++;}
+	}
+	while ( i!=y );
+	// Nun noch die Farbtabelle anpassen:
+	SDL_RWseek ( file,0,SEEK_END );
+	SDL_RWseek ( file,SDL_RWtell ( file )-768,SEEK_SET );
+	for ( i=0;i<256;i++ )
+	{
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]= ( temp<<16 );
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]+= ( temp<<8 );
+		SDL_RWread ( file,tmp,1,1 );
+		temp=tmp[0];
+		colors[i]+=temp;
+	}
+	for ( i=0;i<sf->w*y;i++ )
+	{
+		unsigned int c=_ptr[i];
+		if ( c<=255 ) _ptr[i]=colors[c];
+		else _ptr[i]=0;
+	}
+	if ( sf->w*y<sf->w*sf->h )
+	{
+		memset ( _ptr+sf->w*y,0, ( sf->w*sf->h-sf->w*y ) *4 );
+	}
+	SDL_RWclose ( file );
+	SDL_UnlockSurface ( sf );
 }
