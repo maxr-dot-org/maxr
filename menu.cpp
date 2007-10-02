@@ -2573,7 +2573,7 @@ int CalcPrice(int value,int org, int variety){
 		break;
 	}
 
-	tmp=Round((a*pow((value-b),c)), 0);
+	tmp=(int)(Round((a*pow((value-b),c)), 0));
 	return tmp;
 }
 
@@ -2702,7 +2702,7 @@ void ShowBars(int credits,int StartCredits,TList *landing,int selected){
   scr.x=118;
   scr.y=336;
   scr.w=dest.w=16;
-  scr.h=dest.h=115*(credits/(float)StartCredits);
+  scr.h=dest.h=115*(int)((credits/(float)StartCredits));
   dest.x=375;
   dest.y=301+115-dest.h;
   SDL_BlitSurface(gfx_hud_stuff,&scr,buffer,&dest);
@@ -2724,7 +2724,7 @@ void ShowBars(int credits,int StartCredits,TList *landing,int selected){
       scr.x=133;
       scr.y=336;
       scr.w=dest.w=20;
-      scr.h=dest.h=115*(ptr->cargo/(float)vehicle[ptr->id].data.max_cargo);
+      scr.h=dest.h=115*(int)((ptr->cargo/(float)vehicle[ptr->id].data.max_cargo));
       dest.x=422;
       dest.y=301+115-dest.h;
       SDL_BlitSurface(gfx_hud_stuff,&scr,buffer,&dest);
@@ -2738,18 +2738,18 @@ int GetKachelBig(int x,int y, cMap *map){
   int nr;
   if(x<0||x>=ScreenW-192||y<0||y>=ScreenH-32)return 0;
 
-  x=x*(448.0/(ScreenW-192));
-  y=y*(448.0/(ScreenH-32));
+  x=x*(int)(448.0/(ScreenW-192));
+  y=y*(int)(448.0/(ScreenH-32));
 
   if(map->size<448){
     fak=448.0/map->size;
-    x/=fak;
-    y/=fak;
+    x=(int)(x/fak);
+    y=(int)(y/fak);
     nr=map->Kacheln[x+y*map->size];
   }else{
     fak=map->size/448.0;
-    x*=fak;
-    y*=fak;
+    x=(int)(x*fak);
+    y=(int)(y*fak);
     nr=map->Kacheln[x+y*map->size];
   }
   return nr;
@@ -2761,8 +2761,8 @@ void SelectLanding(int *x,int *y,cMap *map){
   int b,lx=-1,ly=-1,i,k,nr,fakx,faky,off;
   sTerrain *t;
 
-  fakx=(ScreenW-192.0)/game->map->size;
-  faky=(ScreenH-32.0)/game->map->size;
+  fakx=(int)((ScreenW-192.0)/game->map->size);
+  faky=(int)((ScreenH-32.0)/game->map->size);
 
   // Die Karte malen:
   SDL_LockSurface(buffer);
@@ -2825,8 +2825,8 @@ void SelectLanding(int *x,int *y,cMap *map){
     }
 
     if(b&&mouse->cur==gfx_Cmove){
-      *x=(mouse->x-180)/(448.0/game->map->size)*(448.0/(ScreenW-192));
-      *y=(mouse->y-18)/(448.0/game->map->size)*(448.0/(ScreenH-32));
+      *x=(int)((mouse->x-180)/(448.0/game->map->size)*(448.0/(ScreenW-192)));
+      *y=(int)((mouse->y-18)/(448.0/game->map->size)*(448.0/(ScreenH-32)));
       break;
     }
 
