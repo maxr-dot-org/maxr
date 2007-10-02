@@ -3386,10 +3386,14 @@ void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
 			y=72;
 		}
 		SDL_BlitSurface(gfx_load_save_menu,&rect,buffer,&rect);
-		if(i+offset==selected)
-			fonts->OutTextBigCenterGold(itoa((offset+i+1),sztmp,10),x,y,buffer);
-		else
-			fonts->OutTextBigCenter(itoa((offset+i+1),sztmp,10),x,y,buffer);
+		if(i+offset==selected){
+			sprintf(sztmp,"%d",(offset+i+1));
+			fonts->OutTextBigCenterGold(sztmp,x,y,buffer);
+		}
+		else{
+			sprintf(sztmp,"%d",(offset+i+1));
+			fonts->OutTextBigCenter(sztmp,x,y,buffer);
+		}
 		rect.y+=76;
 		y+=76;
 	}
@@ -3448,13 +3452,13 @@ void cGame::MakeAutosave(void){
   int i;
   // Alle Autosaves nach hinten verschieben:
   for(i=4;i>=0;i--){
-    filename=SavePath; filename+="autosave"; filename+=itoa(i,sztmp,10); filename+=".sav";
+    filename=SavePath; filename+="autosave"; sprintf(sztmp,"%d",i); filename+=sztmp; filename+=".sav";
 	if(!(fp=fopen(filename.c_str(),"rb")))continue;
 	fclose(fp);
     if(i==4){
 	  DeleteFileA(filename.c_str());
     }else{
-	  stmp=SavePath; stmp+="autosave"; stmp+=itoa((i+1),sztmp,10); stmp+=".sav";
+	  stmp=SavePath; stmp+="autosave"; sprintf(sztmp,"%d",i); stmp+=sztmp; stmp+=".sav";
 	  rename(filename.c_str(),stmp.c_str());
     }
   }
