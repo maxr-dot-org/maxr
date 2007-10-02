@@ -3494,7 +3494,7 @@ void cGame::Trace(void){
 void cGame::TraceVehicle(cVehicle *v,int *y,int x){
   char str[300];
 
-  sprintf(str,"name: \"%s\"   owner: \"%s\"   posx: %d   posy: %d   offx: %d   offy: %d",v->name.c_str(),v->owner->name,v->PosX,v->PosY,v->OffX,v->OffY);
+  sprintf(str,"name: \"%s\"   owner: \"%s\"   posx: %d   posy: %d   offx: %d   offy: %d",v->name.c_str(),v->owner->name.c_str(),v->PosX,v->PosY,v->OffX,v->OffY);
   fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
 
   sprintf(str,"dir: %d   selected: %d   moving: %d   rotating: %d   mjob: %d   mj_active: %d   menu_active: %d",v->dir,v->selected,v->moving,v->rotating,v->mjob,v->MoveJobActive,v->MenuActive);
