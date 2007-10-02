@@ -1057,8 +1057,9 @@ void cGame::DrawMap(bool pure){
   struct sTerrain *terr,*defwater;
   SDL_Rect dest,tmp,scr;
   zoom=hud->Zoom;
-  OffX=hud->OffX/(64.0/zoom);
-  OffY=hud->OffY/(64.0/zoom);
+  float f = 64.0;
+  OffX=(int)(hud->OffX/(f/zoom));
+  OffY=(int)(hud->OffY/(f/zoom));
   scr.y=0;
   scr.h=scr.w=dest.w=dest.h=zoom;
   dest.y=18-OffY;
@@ -1864,8 +1865,8 @@ void cGame::DrawFX(int i){
         }
       }
 
-      fx->PosX=ri->fpx;
-      fx->PosY=ri->fpy;
+      fx->PosX=(int)ri->fpx;
+      fx->PosY=(int)ri->fpy;
       scr.x=ri->dir*fx_rocket[1]->h;
       scr.y=0;
       scr.h=scr.w=dest.h=dest.w=fx_rocket[1]->h;
@@ -1884,7 +1885,7 @@ void cGame::DrawFX(int i){
         FXList->DeleteFX(i);
         return;
       }
-      scr.x=(0.375*hud->Zoom)*(Frame-fx->StartFrame);
+      scr.x=(int)(0.375*hud->Zoom)*(Frame-fx->StartFrame);
       scr.y=0;
       dest.w=scr.w=fx_dark_smoke[1]->h;
       dest.h=scr.h=fx_dark_smoke[1]->h;
@@ -1952,8 +1953,8 @@ void cGame::DrawFXBottom(int i){
         }
       }
 
-      fx->PosX=ri->fpx;
-      fx->PosY=ri->fpy;
+      fx->PosX=(int)(ri->fpx);
+      fx->PosY=(int)(ri->fpy);
       scr.x=ri->dir*fx_rocket[1]->h;
       scr.y=0;
       scr.h=scr.w=dest.h=dest.w=fx_rocket[1]->h;
@@ -1961,7 +1962,7 @@ void cGame::DrawFXBottom(int i){
       dest.y=18-((int)((hud->OffY-(fx->PosY-fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
       SDL_BlitSurface(fx_rocket[1],&scr,buffer,&dest);
 
-      x=((dest.x-180)+hud->OffX/(64.0/hud->Zoom))/hud->Zoom;
+      x=((int)(((dest.x-180)+hud->OffX/(64.0/hud->Zoom))/hud->Zoom));
       y=((int)(((dest.y-18)+hud->OffY/(64.0/hud->Zoom))/hud->Zoom));
 
       if(!map->IsWater(x+y*map->size,false)&&
@@ -2180,10 +2181,10 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
   }
   // Den Hintregrund malen:
   for(y=0;y<112;y++){
-    ty=(map->size/112.0)*y;
+    ty=(int)((map->size/112.0)*y);
     ty*=map->size;
     for(x=0;x<112;x++){
-      tx=(map->size/112.0)*x;
+      tx=(int)((map->size/112.0)*x);
 	  if(!pure){
         if(hud->Radar&&!ActivePlayer->ScanMap[tx+ty]){
           cl=*(unsigned int*)terrain[map->Kacheln[tx+ty]].shw_org->pixels;
@@ -2215,11 +2216,11 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
   }
   if(!sf){
     // Den Rahmen malen:
-    tx=(hud->OffX/64.0)*(112.0/map->size);
-    ty=(hud->OffY/64.0)*(112.0/map->size);
+    tx=(int)((hud->OffX/64.0)*(112.0/map->size));
+    ty=(int)((hud->OffY/64.0)*(112.0/map->size));
 //    ex=112/(map->size/((448.0/hud->Zoom)));
-    ex=112/(map->size/(((ScreenW-192.0)/hud->Zoom)));
-    ey=ty+112/(map->size/(((ScreenH-32.0)/hud->Zoom)));
+    ex=(int)(112/(map->size/(((ScreenW-192.0)/hud->Zoom))));
+    ey=(int)(ty+112/(map->size/(((ScreenH-32.0)/hud->Zoom))));
     ex+=tx;
     for(y=ty;y<ey;y++){
       ptr[y*gfx_hud->w+15+356*gfx_hud->w+tx]=MINIMAP_COLOR;
