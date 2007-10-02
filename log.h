@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#define LOG_TYPE_WARNING 1
+#define LOG_TYPE_ERROR 2
+#define LOG_TYPE_DEBUG 3
 
 /**
 * Log class. Simple log class :-)

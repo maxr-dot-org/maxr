@@ -66,9 +66,9 @@ int cLog::write ( char *str, int TYPE )
 {
 	switch(TYPE)
 	{
-		case 1 : SDL_RWwrite ( logfile,ww,1,6 ); break;
-		case 2 : SDL_RWwrite ( logfile,ee,1,6 ); break;
-		case 3 : SDL_RWwrite ( logfile,dd,1,6 ); break;
+		case LOG_TYPE_WARNING : SDL_RWwrite ( logfile,ww,1,6 ); break;
+		case LOG_TYPE_ERROR : SDL_RWwrite ( logfile,ee,1,6 ); break;
+		case LOG_TYPE_DEBUG : SDL_RWwrite ( logfile,dd,1,6 ); break;
 		default : SDL_RWwrite ( logfile,ii,1,6 );
 	
 	}
