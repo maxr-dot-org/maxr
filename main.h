@@ -351,12 +351,6 @@ EX SDL_Surface *WayPointPfeileSpecial[8][60];
 
 // Vordekleration ////////////////////////////////////////////////////////////
 
-/**
-
- * C++ version char* style "itoa":
- * @author http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
- */
-char* itoa ( int value, char* result, int base );
 bool GetXMLBool(TiXmlNode* rootnode,const char *nodename);
 int LoadGFX();
 void DeleteGFX(void);
