@@ -1182,22 +1182,33 @@ int LoadBuildings()
 	bool changed;
 	int i,max;
 	building_anz=0;
-	string suchdir="buildings//*.*";
-	long hFile;
 	char tmp[256];
-	char IniTmp[256];
+	TList *directorys;
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
 
-	if ( ( hFile = _findfirst ( suchdir.c_str(), &c_file ) ) == -1L )
+	if(!doc.LoadFile("buildings//buildings.xml"))
 	{
-		_findclose ( hFile ); return 0;
+		masterlog.write("Could not load buildings.xml",1);
+		return 0;
+	}
+	rootnode=doc.FirstChildElement("BuildingsData")->FirstChildElement("Buildings");
+
+	directorys = new TList();
+	node=rootnode->FirstChildElement();
+	if(node)
+		directorys->Add(node->ToElement()->Attribute("directory"));
+	while(node){
+		node=node->NextSibling();
+		if(node && node->Type()==1)
+			directorys->Add(node->ToElement()->Attribute("directory"));
 	}
 
 	// Alle Unterverzeichnisse durchsuchen:
-	do
+	for(int n=0;n<directorys->Count;n++)
 	{
-		if ( c_file.size == 0 && strcmp ( c_file.name,"." ) && strcmp ( c_file.name,".." ) ) ;
-		else continue;
-		p = c_file.name;
+		p = directorys->Items[n];
 		p += "//";
 		building_anz++;
 		building= ( sBuilding* ) realloc ( building,sizeof ( sBuilding ) *building_anz );
@@ -1396,8 +1407,6 @@ int LoadBuildings()
 			building[building_anz-1].Attack=NULL;
 		}
 	}
-	while ( _findnext ( hFile, &c_file ) == 0 );
-	_findclose ( hFile );
 	// Die Buildings sortieren:
 	changed=true;
 	max=building_anz-1;
@@ -1548,28 +1557,39 @@ int LoadVehicles()
 	bool changed;
 	int i,max;
 	vehicle_anz=0;
-	string suchdir = "vehicles//*.*";
-	long hFile;
 	char tmp[256];
-	char IniTmp[256];
+	TList *directorys;
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
 
-	if ( ( hFile = _findfirst ( suchdir.c_str(), &c_file ) ) == -1L )
+	if(!doc.LoadFile("vehicles//vehicles.xml"))
 	{
-		_findclose ( hFile ); return 0;
+		masterlog.write("Could not load vehicles.xml",1);
+		return 0;
+	}
+	rootnode=doc.FirstChildElement("VehiclesData")->FirstChildElement("Vehicles");
+
+	directorys = new TList();
+	node=rootnode->FirstChildElement();
+	if(node)
+		directorys->Add(node->ToElement()->Attribute("directory"));
+	while(node){
+		node=node->NextSibling();
+		if(node && node->Type()==1)
+			directorys->Add(node->ToElement()->Attribute("directory"));
 	}
 
 	// Alle Unterverzeichnisse durchsuchen:
-	do
+	for(int n=0;n<directorys->Count;n++)
 	{
-		if ( c_file.size == 0 && strcmp ( c_file.name,"." ) && strcmp ( c_file.name,".." ) ) ;
-		else continue;
-		p = c_file.name;
+		p = directorys->Items[n];
 		p += "//";
 		vehicle_anz++;
 		vehicle= ( sVehicle* ) realloc ( vehicle,sizeof ( sVehicle ) *vehicle_anz );
 		memset ( & ( vehicle[vehicle_anz-1].data ),0,sizeof ( sVehicleData ) );
 
-		if ( !strcmp ( c_file.name,"infantery" ) || !strcmp ( c_file.name,"commando" ) )
+		if ( strcmp(directorys->Items[n].c_str(),"infantery")==0 || strcmp(directorys->Items[n].c_str(),"commando")==0 )
 		{
 			if ( !LoadInfantery ( vehicle+ ( vehicle_anz-1 ),p ) )
 			{
@@ -1880,8 +1900,6 @@ int LoadVehicles()
 			vehicle[vehicle_anz-1].Attack=NULL;
 		}
 	}
-	while ( _findnext ( hFile, &c_file ) == 0 );
-	_findclose ( hFile );
 	// Die Vehicles sortieren:
 	changed=true;
 	max=vehicle_anz-1;
