@@ -1857,7 +1857,7 @@ void cGame::DrawFX(int i){
       if(timer0){
         int k;
         for(k=0;k<64;k+=8){
-          if(Alpha)AddFX(fxSmoke,ri->fpx,ri->fpy,0);
+          if(Alpha)AddFX(fxSmoke,(int)ri->fpx,(int)ri->fpy,0);
           ri->fpx+=ri->mx*8;
           ri->fpy-=ri->my*8;
           DrawFX(FXList->Count-1);
@@ -1945,7 +1945,7 @@ void cGame::DrawFXBottom(int i){
       if(timer0){
         int k;
         for(k=0;k<64;k+=8){
-          if(Alpha)AddFX(fxBubbles,ri->fpx,ri->fpy,0);
+          if(Alpha)AddFX(fxBubbles,(int)ri->fpx,(int)ri->fpy,0);
           ri->fpx+=ri->mx*8;
           ri->fpy-=ri->my*8;
           DrawFXBottom(FXListBottom->Count-1);
@@ -2420,7 +2420,7 @@ void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
   d=0;
   xx=0;
   yy=r;
-  bry=0.70710678*r;
+  bry=(int)0.70710678*r;
   while(yy>bry){
     da=d+(xx<<1)+1;
     db=da-(yy<<1)+1;
