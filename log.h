@@ -19,15 +19,54 @@
  ***************************************************************************/
 
 
-
+/**
+* Log class. Simple log class :-)
+*
+* @author Bernd "beko" Kosmahl
+*/
 class Log
 {
 private:
+
 	int writeMessage( char *);
 public:
 	Log();
+	/**
+	* Init the Logfile. This should be done only once 
+	* at the beginning of the app
+	*
+	* @return 0 on success
+	*/
 	int init();
-	int write(char *, int);
-	int write(char *);
+
+	/**
+	* Writes message to the logfile
+	*
+	* @param str Message for the log
+	* @param TYPE Type for the log.<br>
+	* 1 		== warning 	(WW):<br>
+	* 2 		== error	(EE):<br>
+	* 3		== debug	(DD):<br>
+	* else		== information	(II):
+	*
+	* @return 0 on success
+	*/
+	int write(char *str, int TYPE);
+
+	/**
+	* Writes message with default type (II) to the logfile
+	*
+	* @param str Message for the log
+	*
+	* @return 0 on success
+	*/
+	int write(char *str);
+
+	/**
+	* Closes the logfile. This should only be done on
+	* application exit (end or error.)
+	*
+	* @ return 0 SDL <= 1.2.9 always returns 0
+	*/
 	int close();
 };

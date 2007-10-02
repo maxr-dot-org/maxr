@@ -64,24 +64,15 @@ int Log::init ( )
 // else		== information	(II):
 int Log::write ( char *str, int TYPE )
 {
-	if ( TYPE == 1 )
+	switch(TYPE)
 	{
-		SDL_RWwrite ( logfile,ww,1,6 );
-	}
-	else if ( TYPE == 2 )
-	{
-		SDL_RWwrite ( logfile,ee,1,6 );
-	}
-	else if ( TYPE == 3 )
-	{
-		SDL_RWwrite ( logfile,dd,1,6 );
-	}
-	else
-	{
-		SDL_RWwrite ( logfile,ii,1,6 );
+		case 1 : SDL_RWwrite ( logfile,ww,1,6 ); break;
+		case 2 : SDL_RWwrite ( logfile,ee,1,6 ); break;
+		case 3 : SDL_RWwrite ( logfile,dd,1,6 ); break;
+		default : SDL_RWwrite ( logfile,ii,1,6 );
+	
 	}
 	return writeMessage( str );
-
 }
 
 // noTYPE	== information 	(II):
@@ -101,6 +92,8 @@ int Log::writeMessage( char *str )
 		fprintf ( stderr,"Couldn't write to max.log\n" );
 		return ( 2 );
 	}
+
+	//fprintf ( stderr,"Wrote %d 1-byte blocks\n",wrote );
 	return ( 0 );
 }
 
