@@ -9,10 +9,26 @@
 //  This class handles the support for different language packs in XML-Format.
 ////////////////////////////////////////////////////////////////////////////////
 
+#define 
+
+#include <map>
+#include <string>
+
+typedef std::map < std::string, std::string > StrStrMap; 
 
 class cLanguage
 {
 public:
 	cLanguage(void);
 	~cLanguage(void);
+protected:
+	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )
+	std::string szLanguage;
+	StrStrMap mpLanguage;
+public:
+	std::string GetCurrentLanguage(void);
+	int SetCurrentLanguage(std::string szLanguageCode);
+	std::string Translate(std::string szInputText);
+	int ReadLanguagePack(std::string szLanguageCode);
+	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
 };
