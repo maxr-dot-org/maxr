@@ -4,7 +4,6 @@
 #define TIXML_USE_STL
 
 #include <math.h>
-
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_net.h>
@@ -34,7 +33,6 @@
 #include "fstcpip.h"
 #include "log.h"
 
-struct _finddata_t c_file;
 cLog masterlog;
 
 TList::TList ( void )
@@ -51,12 +49,6 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	srand ( ( unsigned ) time ( NULL ) );
 	SDL_Thread *thread = NULL;
 	putenv ( "SDL_VIDEO_CENTERED=center" );
-
-	// Pfad der .exe ermitteln
-	char PathTmp[MAX_PATH+2];
-	GetModuleFileNameA ( NULL, PathTmp, MAX_PATH );
-	AppPath=PathTmp;
-	AppPath.erase ( AppPath.find_last_of ( "//" ) );
 
 	// *Tests*
 
@@ -1001,10 +993,9 @@ int LoadMusic()
 	MusicFiles = new TList;
 	for ( int i=1;i<=MusicAnz;i++ )
 	{
-		itoa ( i,sztmp,10 );
+		sprintf(sztmp,"%d",i);
 		stmp = "bkg"; stmp += sztmp;
-		GetPrivateProfileStringA ( "music", stmp.c_str(), "None", sztmp, 255, "music//music.ini" );
-		stmp = "music//"; stmp += sztmp;
+		stmp = "music//"; stmp += ReadIniString("music", stmp.c_str(), "None", "music//music.ini" );
 		MusicFiles->Add ( stmp );
 		if ( MusicFiles->Items[i - 1].c_str() == "" ||!FileExists ( MusicFiles->Items[i - 1].c_str() ) )
 		{
@@ -1262,65 +1253,62 @@ int LoadBuildings()
 			return 0;
 		}
 		building[building_anz-1].data.version=1;
-		GetPrivateProfileStringA ( "data", "name", "None", IniTmp, 255, file.c_str() );
-		strncpy ( building[building_anz-1].data.name,IniTmp,24 );
-		GetPrivateProfileIntA ( "data", "max_hit_points", 1, file.c_str() );
-		building[building_anz-1].data.max_hit_points =GetPrivateProfileIntA ( "data", "max_hit_points", 1, file.c_str() );
+		strncpy ( building[building_anz-1].data.name,ReadIniString("data", "name", "None", file.c_str()),24 );
+		ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
+		building[building_anz-1].data.max_hit_points =ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
 		building[building_anz-1].data.hit_points = 0;
-		building[building_anz-1].data.armor = GetPrivateProfileIntA ( "data", "armor", 1, file.c_str() );
-		building[building_anz-1].data.scan = GetPrivateProfileIntA ( "data", "scan", 1, file.c_str() );
-		building[building_anz-1].data.range = GetPrivateProfileIntA ( "data", "range", 1, file.c_str() );
-		building[building_anz-1].data.max_shots = GetPrivateProfileIntA ( "data", "max_shots", 1, file.c_str() );
+		building[building_anz-1].data.armor = ReadIniInteger ( "data", "armor", 1, file.c_str() );
+		building[building_anz-1].data.scan = ReadIniInteger ( "data", "scan", 1, file.c_str() );
+		building[building_anz-1].data.range = ReadIniInteger ( "data", "range", 1, file.c_str() );
+		building[building_anz-1].data.max_shots = ReadIniInteger ( "data", "max_shots", 1, file.c_str() );
 		building[building_anz-1].data.shots = 0;
-		building[building_anz-1].data.damage = GetPrivateProfileIntA ( "data", "damage", 1, file.c_str() );
-		building[building_anz-1].data.max_cargo = GetPrivateProfileIntA ( "data", "max_cargo", 0, file.c_str() );
+		building[building_anz-1].data.damage = ReadIniInteger ( "data", "damage", 1, file.c_str() );
+		building[building_anz-1].data.max_cargo = ReadIniInteger ( "data", "max_cargo", 0, file.c_str() );
 		building[building_anz-1].data.cargo = 0;
-		building[building_anz-1].data.max_ammo = GetPrivateProfileIntA ( "data", "max_ammo", 0, file.c_str() );
+		building[building_anz-1].data.max_ammo = ReadIniInteger ( "data", "max_ammo", 0, file.c_str() );
 		building[building_anz-1].data.ammo = 0;
-		building[building_anz-1].data.costs = GetPrivateProfileIntA ( "data", "costs", 1, file.c_str() );
-		building[building_anz-1].data.energy_prod = GetPrivateProfileIntA ( "data", "energy_prod", 0, file.c_str() );
-		building[building_anz-1].data.oil_need = GetPrivateProfileIntA ( "data", "oil_need", 0, file.c_str() );
-		building[building_anz-1].data.energy_need = GetPrivateProfileIntA ( "data", "energy_need", 0, file.c_str() );
-		building[building_anz-1].data.metal_need = GetPrivateProfileIntA ( "data", "metal_need", 0, file.c_str() );
-		building[building_anz-1].data.gold_need = GetPrivateProfileIntA ( "data", "gold_need", 0, file.c_str() );
-		building[building_anz-1].data.max_shield = GetPrivateProfileIntA ( "data", "max_shield", 0, file.c_str() );
+		building[building_anz-1].data.costs = ReadIniInteger ( "data", "costs", 1, file.c_str() );
+		building[building_anz-1].data.energy_prod = ReadIniInteger ( "data", "energy_prod", 0, file.c_str() );
+		building[building_anz-1].data.oil_need = ReadIniInteger ( "data", "oil_need", 0, file.c_str() );
+		building[building_anz-1].data.energy_need = ReadIniInteger ( "data", "energy_need", 0, file.c_str() );
+		building[building_anz-1].data.metal_need = ReadIniInteger ( "data", "metal_need", 0, file.c_str() );
+		building[building_anz-1].data.gold_need = ReadIniInteger ( "data", "gold_need", 0, file.c_str() );
+		building[building_anz-1].data.max_shield = ReadIniInteger ( "data", "max_shield", 0, file.c_str() );
 		building[building_anz-1].data.shield = 0;
 
-		building[building_anz-1].data.can_build = GetPrivateProfileIntA ( "data", "can_build", BUILD_NONE, file.c_str() );
-		building[building_anz-1].data.can_load = GetPrivateProfileIntA ( "data", "can_load", TRANS_NONE, file.c_str() );
-		building[building_anz-1].data.can_attack = GetPrivateProfileIntA ( "data", "can_attack", ATTACK_NONE, file.c_str() );
-		building[building_anz-1].data.muzzle_typ = GetPrivateProfileIntA ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
-		building[building_anz-1].data.human_prod = GetPrivateProfileIntA ( "data", "human_prod", 0, file.c_str() );
-		building[building_anz-1].data.human_need = GetPrivateProfileIntA ( "data", "human_need", 0, file.c_str() );
+		building[building_anz-1].data.can_build = ReadIniInteger ( "data", "can_build", BUILD_NONE, file.c_str() );
+		building[building_anz-1].data.can_load = ReadIniInteger ( "data", "can_load", TRANS_NONE, file.c_str() );
+		building[building_anz-1].data.can_attack = ReadIniInteger ( "data", "can_attack", ATTACK_NONE, file.c_str() );
+		building[building_anz-1].data.muzzle_typ = ReadIniInteger ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
+		building[building_anz-1].data.human_prod = ReadIniInteger ( "data", "human_prod", 0, file.c_str() );
+		building[building_anz-1].data.human_need = ReadIniInteger ( "data", "human_need", 0, file.c_str() );
 
-		building[building_anz-1].data.is_base = GetPrivateProfileIntA ( "data", "is_base", 0, file.c_str() );
+		building[building_anz-1].data.is_base = ReadIniInteger ( "data", "is_base", 0, file.c_str() );
 		building[building_anz-1].data.is_big = building[building_anz-1].img_org->h>64;
-		building[building_anz-1].data.is_road = GetPrivateProfileIntA ( "data", "is_road", 0, file.c_str() );
-		building[building_anz-1].data.is_connector = GetPrivateProfileIntA ( "data", "is_connector", 0, file.c_str() );
-		building[building_anz-1].data.has_effect = GetPrivateProfileIntA ( "data", "has_effect", 0, file.c_str() );
-		building[building_anz-1].data.is_mine = GetPrivateProfileIntA ( "data", "is_mine", 0, file.c_str() );
-		building[building_anz-1].data.is_annimated = GetPrivateProfileIntA ( "data", "is_annimated", 0, file.c_str() );
-		building[building_anz-1].data.is_pad = GetPrivateProfileIntA ( "data", "is_pad", 0, file.c_str() );
-		building[building_anz-1].data.is_expl_mine = GetPrivateProfileIntA ( "data", "is_expl_mine", 0, file.c_str() );
-		building[building_anz-1].data.can_research = GetPrivateProfileIntA ( "data", "can_research", 0, file.c_str() );
-		building[building_anz-1].data.build_alien = GetPrivateProfileIntA ( "data", "build_alien", 0, file.c_str() );
-		building[building_anz-1].data.is_alien = GetPrivateProfileIntA ( "data", "is_alien", 0, file.c_str() );
+		building[building_anz-1].data.is_road = ReadIniInteger ( "data", "is_road", 0, file.c_str() );
+		building[building_anz-1].data.is_connector = ReadIniInteger ( "data", "is_connector", 0, file.c_str() );
+		building[building_anz-1].data.has_effect = ReadIniInteger ( "data", "has_effect", 0, file.c_str() );
+		building[building_anz-1].data.is_mine = ReadIniInteger ( "data", "is_mine", 0, file.c_str() );
+		building[building_anz-1].data.is_annimated = ReadIniInteger ( "data", "is_annimated", 0, file.c_str() );
+		building[building_anz-1].data.is_pad = ReadIniInteger ( "data", "is_pad", 0, file.c_str() );
+		building[building_anz-1].data.is_expl_mine = ReadIniInteger ( "data", "is_expl_mine", 0, file.c_str() );
+		building[building_anz-1].data.can_research = ReadIniInteger ( "data", "can_research", 0, file.c_str() );
+		building[building_anz-1].data.build_alien = ReadIniInteger ( "data", "build_alien", 0, file.c_str() );
+		building[building_anz-1].data.is_alien = ReadIniInteger ( "data", "is_alien", 0, file.c_str() );
 
-		building[building_anz-1].data.is_bridge = GetPrivateProfileIntA ( "data", "is_bridge", 0, file.c_str() );
-		building[building_anz-1].data.is_platform = GetPrivateProfileIntA ( "data", "is_platform", 0, file.c_str() );
-		building[building_anz-1].data.build_on_water = GetPrivateProfileIntA ( "data", "build_on_water", 0, file.c_str() );
+		building[building_anz-1].data.is_bridge = ReadIniInteger ( "data", "is_bridge", 0, file.c_str() );
+		building[building_anz-1].data.is_platform = ReadIniInteger ( "data", "is_platform", 0, file.c_str() );
+		building[building_anz-1].data.build_on_water = ReadIniInteger ( "data", "build_on_water", 0, file.c_str() );
 		if ( building[building_anz-1].data.is_bridge || building[building_anz-1].data.is_platform )
 		{
 			building[building_anz-1].data.build_on_water = true;
 		}
 
-		GetPrivateProfileStringA ( "data", "id", "", IniTmp, 255, file.c_str() );
-		strncpy ( building[building_anz-1].id,IniTmp,3 );
+		strncpy ( building[building_anz-1].id,ReadIniString("data","id","unknown",file.c_str()),3 );
 		building[building_anz-1].id[3] = 0;
 
 		// Den Infotext auslesen:
-		GetPrivateProfileStringA ( "data", "text", "", IniTmp, 255, file.c_str() );
-		TmpStr = IniTmp;
+		TmpStr = ReadIniString("data","text","unknown",file.c_str());
 		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
 		building[building_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
 		strcpy ( building[building_anz-1].text,TmpStr.c_str() );
@@ -1593,7 +1581,7 @@ int LoadVehicles()
 			for ( i=0;i<8;i++ )
 			{
 				// img laden:
-				itoa ( i, TmpChr,10 ); file = p; file.insert ( 0,"vehicles//" ); file += "img"; file.insert ( file.length(),TmpChr ); file += ".pcx";
+				sprintf(TmpChr,"%d",i); file = p; file.insert ( 0,"vehicles//" ); file += "img"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
 					masterlog.write ( "File not found: img.pcx", 2 );
@@ -1607,7 +1595,7 @@ int LoadVehicles()
 				vehicle[vehicle_anz-1].img[i] = LoadPCX ( tmp );
 				SDL_SetColorKey ( vehicle[vehicle_anz-1].img[i],SDL_SRCCOLORKEY,0xFFFFFF );
 				// shw laden:
-				itoa ( i, TmpChr,10 ); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
+				sprintf(TmpChr,"%d",i); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
 					masterlog.write ( "File not found: shw.pcx", 2 );
@@ -1660,56 +1648,53 @@ int LoadVehicles()
 		}
 
 		vehicle[vehicle_anz-1].data.version=1;
-		GetPrivateProfileStringA ( "data", "name", "unknown", IniTmp, 255, file.c_str() );
-		strncpy ( vehicle[vehicle_anz-1].data.name,IniTmp,24 );
+		strncpy ( vehicle[vehicle_anz-1].data.name,ReadIniString("data","name","unknown",file.c_str()),24 );
 
-		vehicle[vehicle_anz-1].data.max_speed = GetPrivateProfileIntA ( "data", "max_speed", 1, file.c_str() ) *2;
+		vehicle[vehicle_anz-1].data.max_speed = ReadIniInteger ( "data", "max_speed", 1, file.c_str() ) *2;
 		vehicle[vehicle_anz-1].data.speed = 0;
-		vehicle[vehicle_anz-1].data.max_hit_points = GetPrivateProfileIntA ( "data", "max_hit_points", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.max_hit_points = ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
 		vehicle[vehicle_anz-1].data.hit_points = 0;
-		vehicle[vehicle_anz-1].data.armor = GetPrivateProfileIntA ( "data", "armor", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.scan = GetPrivateProfileIntA ( "data", "scan", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.range = GetPrivateProfileIntA ( "data", "range", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.max_shots = GetPrivateProfileIntA ( "data", "max_shots", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.armor = ReadIniInteger ( "data", "armor", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.scan = ReadIniInteger ( "data", "scan", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.range = ReadIniInteger ( "data", "range", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.max_shots = ReadIniInteger ( "data", "max_shots", 1, file.c_str() );
 		vehicle[vehicle_anz-1].data.shots = 0;
-		vehicle[vehicle_anz-1].data.damage = GetPrivateProfileIntA ( "data", "damage", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.max_cargo = GetPrivateProfileIntA ( "data", "max_cargo", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.damage = ReadIniInteger ( "data", "damage", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.max_cargo = ReadIniInteger ( "data", "max_cargo", 0, file.c_str() );
 		vehicle[vehicle_anz-1].data.cargo = 0;
-		vehicle[vehicle_anz-1].data.max_ammo = GetPrivateProfileIntA ( "data", "max_ammo", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.max_ammo = ReadIniInteger ( "data", "max_ammo", 0, file.c_str() );
 		vehicle[vehicle_anz-1].data.ammo = 0;
-		vehicle[vehicle_anz-1].data.costs = GetPrivateProfileIntA ( "data", "costs", 1, file.c_str() );
+		vehicle[vehicle_anz-1].data.costs = ReadIniInteger ( "data", "costs", 1, file.c_str() );
 
-		vehicle[vehicle_anz-1].data.can_build = GetPrivateProfileIntA ( "data", "can_build", BUILD_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_drive = GetPrivateProfileIntA ( "data", "can_drive", DRIVE_LAND, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_transport = GetPrivateProfileIntA ( "data", "can_transport", TRANS_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_attack = GetPrivateProfileIntA ( "data", "can_attack", ATTACK_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.muzzle_typ = GetPrivateProfileIntA ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_build = ReadIniInteger ( "data", "can_build", BUILD_NONE, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_drive = ReadIniInteger ( "data", "can_drive", DRIVE_LAND, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_transport = ReadIniInteger ( "data", "can_transport", TRANS_NONE, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_attack = ReadIniInteger ( "data", "can_attack", ATTACK_NONE, file.c_str() );
+		vehicle[vehicle_anz-1].data.muzzle_typ = ReadIniInteger ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
 
-		vehicle[vehicle_anz-1].data.can_reload = GetPrivateProfileIntA ( "data", "can_reload", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_repair = GetPrivateProfileIntA ( "data", "can_repair", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_drive_and_fire = GetPrivateProfileIntA ( "data", "can_drive_and_fire", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_stealth_land = GetPrivateProfileIntA ( "data", "is_stealth_land", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_stealth_sea = GetPrivateProfileIntA ( "data", "is_stealth_sea", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_human = GetPrivateProfileIntA ( "data", "is_human", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_survey = GetPrivateProfileIntA ( "data", "can_survey", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_clear = GetPrivateProfileIntA ( "data", "can_clear", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.has_overlay = GetPrivateProfileIntA ( "data", "has_overlay", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.build_by_big = GetPrivateProfileIntA ( "data", "build_by_big", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_lay_mines = GetPrivateProfileIntA ( "data", "can_lay_mines", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_mines = GetPrivateProfileIntA ( "data", "can_detect_mines", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_sea = GetPrivateProfileIntA ( "data", "can_detect_sea", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_land = GetPrivateProfileIntA ( "data", "can_detect_land", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.make_tracks = GetPrivateProfileIntA ( "data", "make_tracks", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_commando = GetPrivateProfileIntA ( "data", "is_commando", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_alien = GetPrivateProfileIntA ( "data", "is_alien", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_reload = ReadIniInteger ( "data", "can_reload", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_repair = ReadIniInteger ( "data", "can_repair", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_drive_and_fire = ReadIniInteger ( "data", "can_drive_and_fire", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.is_stealth_land = ReadIniInteger ( "data", "is_stealth_land", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.is_stealth_sea = ReadIniInteger ( "data", "is_stealth_sea", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.is_human = ReadIniInteger ( "data", "is_human", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_survey = ReadIniInteger ( "data", "can_survey", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_clear = ReadIniInteger ( "data", "can_clear", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.has_overlay = ReadIniInteger ( "data", "has_overlay", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.build_by_big = ReadIniInteger ( "data", "build_by_big", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_lay_mines = ReadIniInteger ( "data", "can_lay_mines", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_detect_mines = ReadIniInteger ( "data", "can_detect_mines", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_detect_sea = ReadIniInteger ( "data", "can_detect_sea", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.can_detect_land = ReadIniInteger ( "data", "can_detect_land", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.make_tracks = ReadIniInteger ( "data", "make_tracks", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.is_commando = ReadIniInteger ( "data", "is_commando", 0, file.c_str() );
+		vehicle[vehicle_anz-1].data.is_alien = ReadIniInteger ( "data", "is_alien", 0, file.c_str() );
 
-		GetPrivateProfileStringA ( "data", "id", "", IniTmp, 255, file.c_str() );
-		strncpy ( vehicle[vehicle_anz-1].id,IniTmp,3 );
+		strncpy ( vehicle[vehicle_anz-1].id,ReadIniString("data","id","unknown",file.c_str()),3 );
 		vehicle[vehicle_anz-1].id[3] = 0;
 
 		// Den Infotext auslesen:
-		GetPrivateProfileStringA ( "data", "text", "", IniTmp, 255, file.c_str() );
-		TmpStr = IniTmp;
+		TmpStr = ReadIniString("data","text","unknown",file.c_str());
 		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
 		vehicle[vehicle_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
 		strcpy ( vehicle[vehicle_anz-1].text,TmpStr.c_str() );
@@ -1993,7 +1978,7 @@ bool LoadInfantery ( sVehicle *v,string path )
 
 		for ( k=0;k<13;k++ )
 		{
-			file = path; file.insert ( 0,"vehicles//" ); file += "img"; itoa ( i, TmpChr,10 ); file.insert ( file.length(),TmpChr ); file += "_"; if ( k<10 ) file += "0"; itoa ( k, TmpChr,10 ); file.insert ( file.length(),TmpChr ); file += ".pcx";
+			file = path; file.insert ( 0,"vehicles//" ); file += "img"; sprintf(TmpChr,"%d",i); file.insert ( file.length(),TmpChr ); file += "_"; if ( k<10 ) file += "0"; sprintf(TmpChr,"%d",k); file.insert ( file.length(),TmpChr ); file += ".pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				masterlog.write ( "File not found: imgx_y.pcx", 2 );
@@ -2290,35 +2275,4 @@ bool GetXMLBool ( TiXmlNode* rootnode,const char *nodename )
 		return true;
 	else
 		return false;
-}
-
-
-/**
- *
- * C++ version char* style "itoa":
- * @author http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
- */
-
-char* itoa ( int value, char* result, int base )
-{
-// check that the base if valid
-	if ( base < 2 || base > 16 ) { *result = 0; return result; }
-
-	char* out = result;
-	int quotient = value;
-
-	do
-	{
-		*out = "0123456789abcdef"[ std::abs ( quotient % base ) ];
-		++out;
-		quotient /= base;
-	}
-	while ( quotient );
-
-// Only apply negative sign for base 10
-	if ( value < 0 && base == 10 ) *out++ = '-';
-	std::reverse ( result, out );
-	*out = 0;
-	return result;
-
 }
