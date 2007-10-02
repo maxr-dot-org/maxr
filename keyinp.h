@@ -5,7 +5,7 @@
 #define keyinpH
 //#include <windows.h>
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 
 // Der Input-String //////////////////////////////////////////////////////////

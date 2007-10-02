@@ -4,7 +4,7 @@
 #ifndef gameH
 #define gameH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "hud.h"
 #include "map.h"
 #include "player.h"

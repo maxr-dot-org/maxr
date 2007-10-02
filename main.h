@@ -15,10 +15,10 @@
 #define mainH
 
 #include <iostream>
-#include <tinyxml.h>
 #include <time.h>
 #include "defines.h"
-#include "sdl.h"
+#include <SDL.h>
+#include "tinyxml.h"
 
 using namespace std;
 
@@ -351,6 +351,13 @@ EX SDL_Surface *WayPointPfeile[8][60];
 EX SDL_Surface *WayPointPfeileSpecial[8][60];
 
 // Vordekleration ////////////////////////////////////////////////////////////
+
+/**
+
+ * C++ version char* style "itoa":
+ * @author http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
+ */
+char* itoa ( int value, char* result, int base );
 bool GetXMLBool(TiXmlNode* rootnode,const char *nodename);
 int LoadGFX();
 void DeleteGFX(void);

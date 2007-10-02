@@ -4,7 +4,7 @@
 #ifndef preferH
 #define preferH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 
 // Prototypen ////////////////////////////////////////////////////////////////

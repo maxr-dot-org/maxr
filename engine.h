@@ -4,7 +4,7 @@
 #ifndef engineH
 #define engineH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 #include "map.h"
 #include "player.h"

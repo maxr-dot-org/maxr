@@ -4,7 +4,7 @@
 #ifndef vehiclesH
 #define vehiclesH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 #include "player.h"
 #include "sound.h"

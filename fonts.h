@@ -4,7 +4,7 @@
 #ifndef fontsH
 #define fontsH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 
 // Die Farben des Small-Fonts ////////////////////////////////////////////////
 enum eFontSmallColor{ClWhite,ClRed,ClGreen,ClYellow};

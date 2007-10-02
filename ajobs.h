@@ -4,7 +4,7 @@
 #ifndef ajobsH
 #define ajobsH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "map.h"
 #include "vehicles.h"
 #include "buildings.h"

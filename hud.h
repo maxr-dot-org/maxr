@@ -4,7 +4,7 @@
 #ifndef hudH
 #define hudH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 
 // Die Hud-Klasse ////////////////////////////////////////////////////////////
 class cHud{

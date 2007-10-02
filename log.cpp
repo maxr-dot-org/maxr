@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
+#include <iostream>
 #include "SDL_rwops.h"
 #include "log.h"
 
@@ -101,6 +101,5 @@ int cLog::writeMessage( char *str )
 int cLog::close()
 {
 	//Die Funktion SDL_RWclose liefert aktuell immer 0 zurück, auf Fehler wird intern noch nicht geprüft (SDL 1.2.9).
-	SDL_RWclose ( logfile );
-
+	return SDL_RWclose ( logfile );
 }

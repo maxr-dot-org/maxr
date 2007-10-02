@@ -5,7 +5,7 @@
 #define playerH
 #include "defines.h"
 #include "main.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "hud.h"
 #include "vehicles.h"
 #include "buildings.h"
@@ -108,3 +108,4 @@ private:
 };
 
 #endif
+

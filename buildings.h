@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "player.h"
 #include "main.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "base.h"
 
 // Define zum Updaten:
@@ -242,3 +242,4 @@ public:
 };
 
 #endif
+

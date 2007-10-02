@@ -4,7 +4,7 @@
 #ifndef mouseH
 #define mouseH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 #include "game.h"
 

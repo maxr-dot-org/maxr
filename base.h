@@ -4,7 +4,7 @@
 #ifndef baseH
 #define baseH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "player.h"
 #include "buildings.h"
 

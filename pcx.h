@@ -4,7 +4,7 @@
 #ifndef pcxH
 #define pcxH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 
 // Prototypen ////////////////////////////////////////////////////////////////
 SDL_Surface *LoadPCX(char *name,bool NoHW=false);

@@ -6,7 +6,7 @@
 #define menuH
 #include "defines.h"
 #include "main.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "map.h"
 #include "buildings.h"
 #include "player.h"

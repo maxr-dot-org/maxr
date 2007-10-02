@@ -4,7 +4,7 @@
 #ifndef keysH
 #define keysH
 #include "defines.h"
-#include "sdl.h"
+#include "SDL.h"
 #include "main.h"
 
 // Globale Daten /////////////////////////////////////////////////////////////
