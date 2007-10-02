@@ -64,25 +64,25 @@ int cLog::init ( )
 // else		== information	(II):
 int cLog::write ( char *str, int TYPE )
 {
-	switch(TYPE)
+	switch ( TYPE )
 	{
 		case LOG_TYPE_WARNING : SDL_RWwrite ( logfile,ww,1,6 ); break;
 		case LOG_TYPE_ERROR : SDL_RWwrite ( logfile,ee,1,6 ); break;
 		case LOG_TYPE_DEBUG : SDL_RWwrite ( logfile,dd,1,6 ); break;
 		default : SDL_RWwrite ( logfile,ii,1,6 );
-	
+
 	}
-	return writeMessage( str );
+	return writeMessage ( str );
 }
 
 // noTYPE	== information 	(II):
 int cLog::write ( char *str )
 {
 	SDL_RWwrite ( logfile,ii,1,6 );
-	return writeMessage( str );
+	return writeMessage ( str );
 }
 
-int cLog::writeMessage( char *str )
+int cLog::writeMessage ( char *str )
 {
 	int wrote;
 	wrote=SDL_RWwrite ( logfile,str,1,strlen ( str ) );
