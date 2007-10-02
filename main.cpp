@@ -2277,6 +2277,9 @@ int random ( int x, int y )
 	return ( ( int ) ( ( ( double ) rand() /RAND_MAX ) * ( ( x-y ) +y ) ) );
 }
 
+//TODO: Possible that it makes sense to give back an INT since I've seen this
+//only in functions for ints and we have to cast every time from double to int o0
+//oh yeah.. and wtf is this doing exactly? "rounding"?
 double Round ( double num, unsigned int n )
 {
 	num *= pow ( ( double ) 10, ( int ) n );
