@@ -292,7 +292,7 @@ void cHud::SetZoom(int zoom,int DestY){
   else if(zoom>64)zoom=64;
   Zoom=zoom;
 //  zoom-=((448.0/game->map->size)<5?5:(448.0/game->map->size));
-  zoom-=(((ScreenW-192.0)/game->map->size)<5?5:((ScreenW-192.0)/game->map->size));
+  zoom-=(int)((((ScreenW-192.0)/game->map->size)<5?5:((ScreenW-192.0)/game->map->size)));
   scr.x=0;
   scr.y=0;
   dest.x=19;
@@ -677,8 +677,8 @@ void cHud::DoMinimapClick(int x,int y){
   static int lx=0,ly=0;
   if(lx==x&&ly==y)return;
   lx=x;ly=y;
-  OffX=(game->map->size/112.0)*(x-15)*64-(224.0/Zoom)*64;
-  OffY=(game->map->size/112.0)*(y-356)*64-(224.0/Zoom)*64;
+  OffX=(int)((game->map->size/112.0)*(x-15)*64-(224.0/Zoom)*64);
+  OffY=(int)((game->map->size/112.0)*(y-356)*64-(224.0/Zoom)*64);
   game->fDrawMMap=true;
   game->fDrawMap=true;
   DoScroll(0);
@@ -1105,7 +1105,7 @@ void cHud::DateiButton(bool set){
 void cHud::ScaleSurfaces(void){
   int i, k, sizex, sizey;
   TList *tlist;
-  float fak;
+  int fak;
   if(Zoom==LastZoom)return;
 
   // Terrain:
@@ -1137,40 +1137,40 @@ void cHud::ScaleSurfaces(void){
     }
   }
   // Vehicles:
-  fak=(Zoom/64.0);
+  fak=(int)(Zoom/64.0);
   for(i=0;i<vehicle_anz;i++){
     for(k=0;k<8;k++){
-      sizex=vehicle[i].img_org[k]->w*fak;
-      sizey=vehicle[i].img_org[k]->h*fak;
+      sizex=(vehicle[i].img_org[k]->w*fak);
+      sizey=(vehicle[i].img_org[k]->h*fak);
       ScaleSurfaceAdv2(vehicle[i].img_org[k],vehicle[i].img[k],sizex,sizey);
-      sizex=vehicle[i].shw_org[k]->w*fak;
-      sizey=vehicle[i].shw_org[k]->h*fak;
+      sizex=(vehicle[i].shw_org[k]->w*fak);
+      sizey=(vehicle[i].shw_org[k]->h*fak);
       ScaleSurfaceAdv2(vehicle[i].shw_org[k],vehicle[i].shw[k],sizex,sizey);
     }
     if(vehicle[i].build_org){
-      sizey=vehicle[i].build_org->h*fak;
+      sizey=(vehicle[i].build_org->h*fak);
       sizex=sizey*4;
       ScaleSurfaceAdv2(vehicle[i].build_org,vehicle[i].build,sizex,sizey);
-      sizex=vehicle[i].build_shw_org->w*fak;
-      sizey=vehicle[i].build_shw_org->h*fak;
+      sizex=(vehicle[i].build_shw_org->w*fak);
+      sizey=(vehicle[i].build_shw_org->h*fak);
       ScaleSurfaceAdv2(vehicle[i].build_shw_org,vehicle[i].build_shw,sizex,sizey);
     }
     if(vehicle[i].clear_small_org){
-      sizey=vehicle[i].clear_small_org->h*fak;
+      sizey=(vehicle[i].clear_small_org->h*fak);
       sizex=sizey*4;
       ScaleSurfaceAdv2(vehicle[i].clear_small_org,vehicle[i].clear_small,sizex,sizey);
-      sizex=vehicle[i].clear_small_shw_org->w*fak;
-      sizey=vehicle[i].clear_small_shw_org->h*fak;
+      sizex=(vehicle[i].clear_small_shw_org->w*fak);
+      sizey=(vehicle[i].clear_small_shw_org->h*fak);
       ScaleSurfaceAdv2(vehicle[i].clear_small_shw_org,vehicle[i].clear_small_shw,sizex,sizey);
     }
     if(vehicle[i].overlay_org){
-      sizey=vehicle[i].overlay_org->h*fak;
-      sizex=vehicle[i].overlay_org->w*fak;
+      sizey=(vehicle[i].overlay_org->h*fak);
+      sizex=(vehicle[i].overlay_org->w*fak);
       ScaleSurfaceAdv2(vehicle[i].overlay_org,vehicle[i].overlay,sizex,sizey);
     }
   }
   // Buildings:
-  fak=(Zoom/64.0);
+  fak=(int)(Zoom/64.0);
   for(i=0;i<building_anz;i++){
     ScaleSurfaceAdv2(building[i].img_org,building[i].img,building[i].img_org->w*fak,building[i].img_org->h*fak);
     ScaleSurfaceAdv2(building[i].shw_org,building[i].shw,building[i].shw_org->w*fak,building[i].shw_org->h*fak);
@@ -1201,7 +1201,7 @@ void cHud::ScaleSurfaces(void){
   // ScaleSurface2(gfx_build_finished_org,gfx_build_finished,Zoom*2);
 
   // FX:
-#define SCALE_FX(a,b) ScaleSurfaceAdv2(a[0],a[1],(a[0]->w/a[0]->h)*b,b);
+#define SCALE_FX(a,b) ScaleSurfaceAdv2(a[0],a[1],(int)((a[0]->w/a[0]->h*b)),b);
   SCALE_FX(fx_explo_small0,Zoom);
   SCALE_FX(fx_explo_small1,Zoom*2);
   SCALE_FX(fx_explo_small2,Zoom*2);
@@ -1214,9 +1214,9 @@ void cHud::ScaleSurfaces(void){
   SCALE_FX(fx_muzzle_small,Zoom);
   SCALE_FX(fx_muzzle_med,Zoom);    
   SCALE_FX(fx_hit,Zoom);
-  SCALE_FX(fx_smoke,Zoom/4);
-  SCALE_FX(fx_rocket,Zoom/2.28);
-  SCALE_FX(fx_dark_smoke,0.375*Zoom);
+  SCALE_FX(fx_smoke,(int)(Zoom/4));
+  SCALE_FX(fx_rocket,(int)(Zoom/2.28));
+  SCALE_FX(fx_dark_smoke,(int)(0.375*Zoom));
   SCALE_FX(fx_tracks,Zoom);
   SCALE_FX(fx_corpse,Zoom);
   SCALE_FX(fx_absorb,Zoom);
