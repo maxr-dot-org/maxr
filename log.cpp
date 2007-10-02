@@ -42,10 +42,10 @@ const char *dd="(DD): "; //debug
 
 static SDL_RWops *logfile;
 
-Log::Log()
+cLog::cLog()
 {}
 
-int Log::init ( )
+int cLog::init ( )
 {
 	logfile = SDL_RWFromFile ( "max.log","w+t" );
 	if ( logfile==NULL )
@@ -62,7 +62,7 @@ int Log::init ( )
 // 2 		== error	(EE):
 // 3		== debug	(DD):
 // else		== information	(II):
-int Log::write ( char *str, int TYPE )
+int cLog::write ( char *str, int TYPE )
 {
 	switch(TYPE)
 	{
@@ -76,13 +76,13 @@ int Log::write ( char *str, int TYPE )
 }
 
 // noTYPE	== information 	(II):
-int Log::write ( char *str )
+int cLog::write ( char *str )
 {
 	SDL_RWwrite ( logfile,ii,1,6 );
 	return writeMessage( str );
 }
 
-int Log::writeMessage( char *str )
+int cLog::writeMessage( char *str )
 {
 	int wrote;
 	wrote=SDL_RWwrite ( logfile,str,1,strlen ( str ) );
@@ -98,7 +98,7 @@ int Log::writeMessage( char *str )
 }
 
 //Am Programmende oder bei Programmabbruch ausführen
-int Log::close()
+int cLog::close()
 {
 	//Die Funktion SDL_RWclose liefert aktuell immer 0 zurück, auf Fehler wird intern noch nicht geprüft (SDL 1.2.9).
 	SDL_RWclose ( logfile );

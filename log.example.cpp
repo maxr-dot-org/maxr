@@ -25,7 +25,7 @@
 int main()
 {
 	//init "master"log
-	Log log;
+	cLog log;
 	log.init();
 
 	log.write("This is a testwarning\n", 1);
@@ -34,7 +34,7 @@ int main()
 
 	//test for another log-object without init/close
 	//because this is masterlogs job at start and end of application
-	Log log2;
+	cLog log2;
 	log2.write("This is a testinformation without given type\n");
 	log2.write("This is a testinformation\n", 0);
 

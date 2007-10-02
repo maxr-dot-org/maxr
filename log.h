@@ -24,13 +24,13 @@
 *
 * @author Bernd "beko" Kosmahl
 */
-class Log
+class cLog
 {
 private:
 
 	int writeMessage( char *);
 public:
-	Log();
+	cLog();
 	/**
 	* Init the Logfile. This should be done only once 
 	* at the beginning of the app
