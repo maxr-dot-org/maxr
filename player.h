@@ -42,7 +42,7 @@ struct sResearch{
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
-friend cEngine;
+friend class cEngine;
 public:
   cPlayer(string Name,SDL_Surface *Color,int nr);
   ~cPlayer(void);
