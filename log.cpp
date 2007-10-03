@@ -33,18 +33,14 @@
 #define DD "(DD): "
 
 static SDL_RWops *logfile = NULL;
+static bool bIsOpen = false;
 
-bool cLog::open()
+cLog::cLog()
 {
-	if (logfile != NULL) 
-	{
-		logfile = SDL_RWFromFile ( LOGFILE,"a+t" ); //Reopen log and write at end of file
-	} 
-	else //Log not yet started (should only happen at game start)
+	if (logfile == NULL) 
 	{
 		logfile = SDL_RWFromFile ( LOGFILE,"w+t" ); //Start new log and write at beginning of file
-	}
-
+	} 
 	int blocks; //sanity check - is file readable?
 	char buf[256];
 	blocks=SDL_RWread(logfile,buf,16,256/16);
@@ -52,16 +48,19 @@ bool cLog::open()
 	{
 		fprintf(stderr,"(EE): Couldn't open max.log!\n Please check file/directory permissions\n");
 
-		if ( logfile != NULL ) return true;
-		else return false;
+		if ( logfile != NULL ) bIsOpen = true;
+		else bIsOpen = false;
 	} 
-	else return true;
-	
+};
+
+cLog::~cLog()
+{
+	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
 }
 
 int cLog::write ( char *str, int TYPE )
 {
-	if (open())
+	if (bIsOpen)
 	{
 		char tmp[263] = "(XX): "; //placeholder
 		if (strlen ( str ) > 263 - 7) //message max is 256chars
@@ -99,11 +98,5 @@ int cLog::writeMessage ( char *str )
 		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str );
 		return -1;
 	}
-	else close(); //after successful writing of all information we close log here and nowhere else!
-	return 0;
-}
-
-void cLog::close()
-{
-	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
+	else return 0;
 }
