@@ -2,7 +2,6 @@
 // M.A.X. - menu.cpp
 //////////////////////////////////////////////////////////////////////////////
 #include <time.h>
-#include <io.h>
 #include <math.h>
 #include "menu.h"
 #include "pcx.h"
@@ -12,6 +11,7 @@
 #include "sound.h"
 #include "dialog.h"
 #include "game.h"
+#include "log.h"
 
 
 // Menü vorbereiten:
@@ -1291,10 +1291,9 @@ string RunPlanetSelect ( void )
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	TList *files;
 	SDL_Rect scr;
-	struct _finddata_t c_file;
-	long hFile;
-	string searchdir="*.bmp";
-	searchdir.insert ( 0,MapPath );
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
 
 	TmpSf=gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
@@ -1308,18 +1307,22 @@ string RunPlanetSelect ( void )
 	files = new TList;
 	int k = 1;
 
-	if ( ( hFile = _findfirst ( searchdir.c_str(), &c_file ) ) == -1L )
+	if ( !doc.LoadFile ( "maps//maps.xml" ) )
 	{
-		_findclose ( hFile );
+		cLog::write ( "Could not load maps.xml",1 );
+		return "";
 	}
-	else
+	rootnode=doc.FirstChildElement ( "MapData" )->FirstChildElement ( "MapList" );
+
+	files = new TList;
+	node=rootnode->FirstChildElement();
+	if ( node )
+		files->Add ( node->ToElement()->Attribute ( "file" ) );
+	while ( node )
 	{
-		do
-		{
-			files->Add ( c_file.name );
-		}
-		while ( _findnext ( hFile, &c_file ) == 0 );
-		_findclose ( hFile );
+		node=node->NextSibling();
+		if ( node && node->Type() ==1 )
+			files->Add ( node->ToElement()->Attribute ( "file" ) );
 	}
 
 	// Alle Namen sortieren:
@@ -5555,10 +5558,9 @@ int ShowDateiMenu ( void )
 	bool FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  HilfePressed=false, LadenPressed=false, Cursor=true;
 	TList *files;
-	struct _finddata_t c_file;
-	long hFile;
-	string searchdir="*.sav";
-	searchdir.insert ( 0,SavePath );
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
 
 	PlayFX ( SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -5582,20 +5584,22 @@ int ShowDateiMenu ( void )
 	dest.x=63;
 	SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
 	// Dateien suchen und Anzeigen:
-	files = new TList;
-
-	if ( ( hFile = _findfirst ( searchdir.c_str(), &c_file ) ) == -1L )
+	if ( !doc.LoadFile ( "saves//saves.xml" ) )
 	{
-		_findclose ( hFile );
+		cLog::write ( "Could not load saves.xml",1 );
+		return 0;
 	}
-	else
+	rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
+
+	files = new TList;
+	node=rootnode->FirstChildElement();
+	if ( node )
+		files->Add ( node->ToElement()->Attribute ( "file" ) );
+	while ( node )
 	{
-		do
-		{
-			files->Add ( c_file.name );
-		}
-		while ( _findnext ( hFile, &c_file ) == 0 );
-		_findclose ( hFile );
+		node=node->NextSibling();
+		if ( node && node->Type() ==1 )
+			files->Add ( node->ToElement()->Attribute ( "file" ) );
 	}
 
 	ShowFiles ( files,offset,selected );
