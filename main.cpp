@@ -51,8 +51,8 @@ TList::TList ( void )
 
 int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 {
-	cLog::write("Starting logging ");cLog::write(MAXVERSION);
-	cLog::write("\nMore here later\n");
+	cLog::write(MAXVERSION);
+	cLog::write("More here later\n");
 	srand ( ( unsigned ) time ( NULL ) );
 	SDL_Thread *thread = NULL;
 	putenv ( "SDL_VIDEO_CENTERED=center" );
@@ -224,27 +224,29 @@ int LoadData ( void * )
 	}
 	string logstr;
 	logstr="DDs M.A.X.  -  Version ";logstr+=MAX_VERSION;
-	MakeLog ( ( char * ) logstr.c_str(),false,0 );
-	MakeLog ( "SDL/SDL_Net starten...",false,2 );
+	MakeLog ( ( char * ) logstr.c_str(),false,0 ); 
+	MakeLog ( "SDL/SDL_Net starten...",false,2 ); cLog::write("Starting SDL\n",4);
 	MakeLog ( "SDL/SDL_Net starten...",true,2 );
-	MakeLog ( "Ini Datei lesen...",false,3 );
+	MakeLog ( "Ini Datei lesen...",false,3 ); cLog::write("Reading ini\n",4);
 	MakeLog ( "Ini Datei lesen...",true,3 );
-	MakeLog ( "Fonts laden...",false,4 );
+	MakeLog ( "Fonts laden...",false,4 ); cLog::write("Loading fonts\n",4);
 	MakeLog ( "Fonts laden...",true,4 );
 
 	// Sound Initialisieren
-	MakeLog ( "Sound initialisieren...",false,5 );
+	MakeLog ( "Sound initialisieren...",false,5 );  cLog::write("Starting sound\n",4);
 	if ( !InitSound() )
 	{
+		cLog::write("Starting sound\n",2);
 		SDL_Quit();
 		return -1;
 	}
 	MakeLog ( "Sound initialisieren...",true,5 );
 
 	// Keys laden:
-	MakeLog ( "Keys laden...",false,6 );
+	MakeLog ( "Keys laden...",false,6 );  cLog::write("Loading keys\n",4);
 	if ( !LoadKeys ( "keys.ini" ) )
 	{
+		cLog::write("Loading keys\n",2);
 		SDL_Quit();
 		if ( sound ) CloseSound();
 		return -1;
@@ -252,9 +254,10 @@ int LoadData ( void * )
 	MakeLog ( "Keys laden...",true,6 );
 
 	// Diverse Bilder laden
-	MakeLog ( "Bilder laden...",false,7 );
+	MakeLog ( "Bilder laden...",false,7 );  cLog::write("Loading pictures\n",4);
 	if ( !LoadGFX() )
 	{
+		cLog::write("Loading pictures\n",2);
 		SDL_Quit();
 		if ( sound ) CloseSound();
 		return -1;
@@ -265,9 +268,10 @@ int LoadData ( void * )
 
 
 	// FX laden
-	MakeLog ( "Effekte laden...",false,8 );
+	MakeLog ( "Effekte laden...",false,8 );  cLog::write("Loading effects\n",4);
 	if ( !LoadFX() )
 	{
+		("Loading effects\n",2);
 		DeleteGFX();
 		SDL_Quit();
 		if ( sound ) CloseSound();
@@ -276,9 +280,10 @@ int LoadData ( void * )
 	MakeLog ( "Effekte laden...",true,8 );
 
 	// Terrain laden
-	MakeLog ( "Terrain laden...",false,9 );
+	MakeLog ( "Terrain laden...",false,9 );  cLog::write("Loading terrain\n",4);
 	if ( !LoadTerrain() )
 	{
+		cLog::write("Loading terrain\n",2);
 		DeleteFX();
 		DeleteGFX();
 		SDL_Quit();
@@ -288,9 +293,10 @@ int LoadData ( void * )
 	MakeLog ( "Terrain laden...",true,9 );
 
 	// Die Vehicles laden
-	MakeLog ( "Fahrzeuge laden...",false,10 );
+	MakeLog ( "Fahrzeuge laden...",false,10 );  cLog::write("Loading vehicles\n",4);
 	if ( !LoadVehicles() )
 	{
+		cLog::write("Loading vehicles\n",2);
 		DeleteFonts();
 		DeleteTerrain();
 		DeleteFX();
@@ -299,12 +305,13 @@ int LoadData ( void * )
 		if ( sound ) CloseSound();
 		return -1;
 	}
-	MakeLog ( "Fahrzeuge laden...",true,10 );
+	MakeLog ( "Fahrzeuge laden...",true,10 ); 
 
 	// Die Buildings laden
-	MakeLog ( "Gebäude laden...",false,11 );
+	MakeLog ( "Gebäude laden...",false,11 );  cLog::write("Loading buildings\n",4);
 	if ( !LoadBuildings() )
 	{
+		cLog::write("Loading buildings\n",2);
 		DeleteVehicles();
 		DeleteFonts();
 		DeleteTerrain();
@@ -317,9 +324,10 @@ int LoadData ( void * )
 	MakeLog ( "Gebäude laden...",true,11 );
 
 	// Die Musik laden
-	MakeLog ( "Musik laden...",false,12 );
+	MakeLog ( "Musik laden...",false,12 );  cLog::write("Loading music\n",4);
 	if ( !LoadMusic() )
 	{
+		cLog::write("Loading music\n",2);
 		DeleteBuildings();
 		DeleteVehicles();
 		DeleteFonts();
@@ -333,9 +341,10 @@ int LoadData ( void * )
 	MakeLog ( "Musik laden...",true,12 );
 
 	// Die Sounds laden
-	MakeLog ( "Sounds laden...",false,13 );
+	MakeLog ( "Sounds laden...",false,13 );  cLog::write("Loading sounds\n",4);
 	if ( !LoadSounds() )
 	{
+		cLog::write("Loading sounds\n",2);
 		DeleteBuildings();
 		DeleteVehicles();
 		DeleteMusic();
@@ -350,9 +359,10 @@ int LoadData ( void * )
 	MakeLog ( "Sounds laden...",true,13 );
 
 	// Stimmen laden
-	MakeLog ( "Stimmen laden...",false,14 );
+	MakeLog ( "Stimmen laden...",false,14 );  cLog::write("Loading voices\n",4);
 	if ( !LoadVoices() )
 	{
+		cLog::write("Loading voices\n",2);
 		DeleteSounds();
 		DeleteBuildings();
 		DeleteVehicles();
@@ -365,7 +375,7 @@ int LoadData ( void * )
 		if ( sound ) CloseSound();
 		return -1;
 	}
-	MakeLog ( "Stimmen laden...",true,14 );
+	MakeLog ( "Stimmen laden...",true,14 ); 
 	return 1;
 }
 
@@ -749,7 +759,7 @@ int LoadTerrain()
 
 	if ( !doc.LoadFile ( "terrain//terrain.xml" ) )
 	{
-		printf ( "terrain.xml could not be found!" );
+		cLog::write("terrain.xml could not be found!",2);
 		return 0;
 	}
 	rootnode = doc.FirstChildElement ( "Terrains" );
