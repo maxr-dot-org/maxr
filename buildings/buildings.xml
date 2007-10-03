@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<BuildingsData>
+	<Header>
+		<Author name="DoctorDeath">
+			<Editor name="DoctorDeath"/>
+		</Author>
+		<Version text="00.00.01"/>
+		<Last_Change time="2007-10-03 21:05:00"/>
+	</Header>
+	<Buildings>
+		<Barracks directory="barracks"/>
+		<Block directory="block"/>
+		<Bridge directory="bridge"/>
+		<Connector directory="connector"/>
+		<Depot directory="depot"/>
+		<Dock directory="dock"/>
+		<Energy_Big directory="energy_big"/>
+		<Energy_Small directory="energy_small"/>
+		<Factory_Air directory="fac_air"/>
+		<Factory_Alien directory="fac_alien"/>
+		<Factory_Big directory="fac_big"/>
+		<Factory_Ship directory="fac_ship"/>
+		<Factory_Small directory="fac_small"/>
+		<Goldraffinery directory="goldraff"/>
+		<Gun_AA directory="gun_aa"/>
+		<Gun_Ari directory="gun_ari"/>
+		<Gun_Missel directory="gun_missel"/>
+		<Gun_Turret directory="gun_turret"/>
+		<Habitat directory="habitat"/>
+		<Hangar directory="hangar"/>
+		<Landmine directory="landmine"/>
+		<Mine directory="mine"/>
+		<Mine_Deep directory="mine_deep"/>
+		<Pad directory="pad"/>
+		<Platform directory="platform"/>
+		<Radar directory="radar"/>
+		<Research directory="research"/>
+		<Road directory="road"/>
+		<Seamine directory="seamine"/>
+		<Shield directory="shield"/>
+		<Storage_Gold directory="storage_gold"/>
+		<Storage_Metal directory="storage_metal"/>
+		<Storage_Oil directory="storage_oil"/>
+		<Training directory="training"/>
+	</Buildings>
+</BuildingsData>
+
