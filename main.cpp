@@ -36,8 +36,6 @@
 #define MAXVERSION "M.A.X. Klon v SVN"
 //#define MAXVERSION M.A.X. Klon v 0.5....
 
-/** access to logger*/
-cLog masterlog;
 /** Slashscreen width  */
 #define SPLASHWIDTH 500
 /** Slashscreen height  */
@@ -53,9 +51,6 @@ TList::TList ( void )
 
 int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 {
-	//init masterlog for logging
-	masterlog.init();
-
 	srand ( ( unsigned ) time ( NULL ) );
 	SDL_Thread *thread = NULL;
 	putenv ( "SDL_VIDEO_CENTERED=center" );
@@ -81,7 +76,7 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	// Ini-Datei lesen
 	if ( !FileExists ( "max.ini" ) )
 	{
-		masterlog.write ( "max.ini not found", 2 );
+		cLog::write ( "max.ini not found", 2 );
 		return 0;
 	}
 	// Einstellungen aus der Ini laden:
@@ -89,7 +84,7 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	TiXmlNode* rootnode;
 	if ( !doc.LoadFile ( "max.xml" ) )
 	{
-		masterlog.write ( "Could not load max.xml",1 );
+		cLog::write ( "Could not load max.xml",1 );
 		return 0;
 	}
 	rootnode = doc.FirstChildElement ( "MAXOptions" )->FirstChildElement ( "StartOptions" );
@@ -116,7 +111,7 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 // 		GlobalMemoryStatus ( &buff );
 // 		if ( ( buff.dwTotalPhys/1024 ) /1024<32 )
 // 		{
-// 			masterlog.write("Not enough memory!",2);
+// 			cLog::write("Not enough memory!",2);
 // 			return -1;
 // 		}
 // 	}
@@ -210,7 +205,6 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	WriteIniString("max","LastIP",LastIP.c_str(),"max.ini");
 	WriteIniInteger("max","LastPort",LastPort,"max.ini");
 	WriteIniString("max","LastPlayerName",LastPlayerName.c_str(),"max.ini");*/
-	masterlog.close();
 	return 0;
 }
 int LoadData ( void * )
@@ -411,8 +405,8 @@ int InitSound()
 int LoadGFX()
 {
 	string stmp;
-#define LOADGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; masterlog.write(b,1);return 0;}a=LoadPCX(b);
-#define CHECKGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; masterlog.write(b, 1);return 0;}a=b;
+#define LOADGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; cLog::write(b,1);return 0;}a=LoadPCX(b);
+#define CHECKGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; cLog::write(b, 1);return 0;}a=b;
 
 	LOADGFX ( gfx_Chand,"gfx//hand.pcx" );
 	LOADGFX ( gfx_Cno,"gfx//no.pcx" );
@@ -692,8 +686,8 @@ void DeleteGFX ( void )
 int LoadFX()
 {
 	// Die Surfaces anlegen:
-#define LOADFX(a,b) if(!FileExists(b)){masterlog.write("File not found: ", 2); return 0;} a = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); a[1] = LoadPCX(b);
-#define LOADFXALPHA(a,b,c) if(!FileExists(b)){masterlog.write("File not found: ", 2); return 0;}a=(SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); SDL_SetAlpha(a[0],SDL_SRCALPHA,c); a[1] = LoadPCX(b); SDL_SetAlpha(a[1],SDL_SRCALPHA,c);
+#define LOADFX(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2); return 0;} a = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); a[1] = LoadPCX(b);
+#define LOADFXALPHA(a,b,c) if(!FileExists(b)){cLog::write("File not found: ", 2); return 0;}a=(SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); SDL_SetAlpha(a[0],SDL_SRCALPHA,c); a[1] = LoadPCX(b); SDL_SetAlpha(a[1],SDL_SRCALPHA,c);
 	LOADFX ( fx_explo_small0,"fx//explo_small0.pcx" );
 	LOADFX ( fx_explo_small1,"fx//explo_small1.pcx" );
 	LOADFX ( fx_explo_small2,"fx//explo_small2.pcx" );
@@ -778,11 +772,11 @@ int LoadTerrain()
 		terrain= ( sTerrain* ) realloc ( terrain,sizeof ( sTerrain ) *terrain_anz );
 		file="terrain//";
 		if ( node->ToElement()->Attribute ( "file" ) ==NULL )
-			masterlog.write ( "Wrong format for xml-file", 2 );
+			cLog::write ( "Wrong format for xml-file", 2 );
 		file+=node->ToElement()->Attribute ( "file" );
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "xml-file not found", 2 );
+			cLog::write ( "xml-file not found", 2 );
 			return 0;
 		}
 
@@ -851,7 +845,7 @@ void DeleteTerrain ( void )
 int LoadFonts()
 {
 	// Die Fonts laden:
-#define LOADFONT(a,b) if(!FileExists(b)){masterlog.write("File not found: ", 2);return 0;}a=LoadPCX(b);
+#define LOADFONT(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2);return 0;}a=LoadPCX(b);
 	LOADFONT ( font,"fonts//font.pcx" );
 	LOADFONT ( font_small_white,"fonts//font_small_white.pcx" );
 	LOADFONT ( font_small_red,"fonts//font_small_red.pcx" );
@@ -981,21 +975,21 @@ int LoadMusic()
 	MusicAnz=0;
 	if ( !FileExists ( "music//music.ini" ) )
 	{
-		masterlog.write ( "music.ini not found or empty", 2 );
+		cLog::write ( "music.ini not found or empty", 2 );
 		return 0;
 	}
 
 	MainMusicFile = ReadIniString ( "music","main","None","music//music.ini" );
 	if ( MainMusicFile.c_str() == "" || !FileExists ( "music//main.ogg" ) )
 	{
-		masterlog.write ( "MainMusicFile ", 2 );
+		cLog::write ( "MainMusicFile ", 2 );
 		return 0;
 	}
 
 	CreditsMusicFile = ReadIniString ( "music","credits","None","music//music.ini" );;
 	if ( CreditsMusicFile.c_str() == "" || !FileExists ( "music//credits.ogg" ) )
 	{
-		masterlog.write ( "CreditsMusicFile ", 2 );
+		cLog::write ( "CreditsMusicFile ", 2 );
 		return 0;
 	}
 
@@ -1009,7 +1003,7 @@ int LoadMusic()
 		MusicFiles->Add ( stmp );
 		if ( MusicFiles->Items[i - 1].c_str() == "" ||!FileExists ( MusicFiles->Items[i - 1].c_str() ) )
 		{
-			masterlog.write ( "MusicFile", 2 );
+			cLog::write ( "MusicFile", 2 );
 			return 0;
 		}
 	}
@@ -1030,7 +1024,7 @@ void DeleteMusic ( void )
 // Läd alle Sounds:
 int LoadSounds()
 {
-#define LOADSND(a,b) if(!FileExists(b)){masterlog.write("File not found: ", 2);return 0;}a=Mix_LoadWAV(b);
+#define LOADSND(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2);return 0;}a=Mix_LoadWAV(b);
 
 	LOADSND ( SNDHudSwitch, "sounds/HudSwitch.wav" );
 	LOADSND ( SNDHudButton, "sounds/HudButton.wav" );
@@ -1110,7 +1104,7 @@ void DeleteSounds ( void )
 // Läd alle Voices:
 int LoadVoices()
 {
-#define LOADVOI(a,b) if(!FileExists(b)){masterlog.write("File not found: ", 0);return 0;}a=Mix_LoadWAV(b);
+#define LOADVOI(a,b) if(!FileExists(b)){cLog::write("File not found: ", 0);return 0;}a=Mix_LoadWAV(b);
 	LOADVOI ( VOINoPath1,"voices//no_path1.wav" );
 	LOADVOI ( VOINoPath2,"voices//no_path2.wav" );
 	LOADSND ( VOIBuildDone1,"voices//build_done1.wav" );
@@ -1200,7 +1194,7 @@ int LoadBuildings()
 
 	if ( !doc.LoadFile ( "buildings//buildings.xml" ) )
 	{
-		masterlog.write ( "Could not load buildings.xml",1 );
+		cLog::write ( "Could not load buildings.xml",1 );
 		return 0;
 	}
 	rootnode=doc.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" );
@@ -1228,7 +1222,7 @@ int LoadBuildings()
 		file = p; file.insert ( 0,"buildings//" ); file += "img.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: img.pcx",2 );
+			cLog::write ( "File not found: img.pcx",2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1240,7 +1234,7 @@ int LoadBuildings()
 		file = p; file.insert ( 0,"buildings//" ); file += "shw.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: shw.pcx", 2 );
+			cLog::write ( "File not found: shw.pcx", 2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1253,7 +1247,7 @@ int LoadBuildings()
 		file = p; file.insert ( 0,"buildings//" ); file += "video.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: video.pcx", 2 );
+			cLog::write ( "File not found: video.pcx", 2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1262,7 +1256,7 @@ int LoadBuildings()
 		file = p; file.insert ( 0,"buildings//" ); file += "info.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: info.pcx", 2 );
+			cLog::write ( "File not found: info.pcx", 2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1271,7 +1265,7 @@ int LoadBuildings()
 		file = p; file.insert ( 0,"buildings//" ); file += "data.ini";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: data.ini", 2 );
+			cLog::write ( "File not found: data.ini", 2 );
 			return 0;
 		}
 		building[building_anz-1].data.version=1;
@@ -1351,7 +1345,7 @@ int LoadBuildings()
 			file = p; file.insert ( 0,"buildings//" ); file += "effect.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: data.ini", 2 );
+				cLog::write ( "File not found: data.ini", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1391,7 +1385,7 @@ int LoadBuildings()
 			building[building_anz-1].data.can_work=false;
 		}
 
-#define LOADBUISND(a,b) if(!FileExists(b)){masterlog.write("File not found: ", 2);return 0;} a = Mix_LoadWAV(b);
+#define LOADBUISND(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2);return 0;} a = Mix_LoadWAV(b);
 		// Ggf noch Sounds laden:
 		if ( building[building_anz-1].data.can_work )
 		{
@@ -1428,7 +1422,7 @@ int LoadBuildings()
 		{
 			if ( strcmp ( building[i].id,building[i+1].id ) ==0 )
 			{
-				masterlog.write ( "Double defined ID", 2 );
+				cLog::write ( "Double defined ID", 2 );
 				return 0;
 			}
 			if ( teststr ( building[i].id,building[i+1].id ) )
@@ -1447,7 +1441,7 @@ int LoadBuildings()
 	file = "buildings//"; file += "dirt_small.pcx";
 	if ( !FileExists ( file.c_str() ) )
 	{
-		masterlog.write ( "File not found: dirt_small.pcx", 2 );
+		cLog::write ( "File not found: dirt_small.pcx", 2 );
 		return 0;
 	}
 	strcpy ( tmp, file.c_str() );
@@ -1457,7 +1451,7 @@ int LoadBuildings()
 	file = "buildings//"; file += "dirt_small_shw.pcx";
 	if ( !FileExists ( file.c_str() ) )
 	{
-		masterlog.write ( "File not found: dirt_small_shw.pcx", 2 );
+		cLog::write ( "File not found: dirt_small_shw.pcx", 2 );
 		return 0;
 	}
 	strcpy ( tmp, file.c_str() );
@@ -1469,7 +1463,7 @@ int LoadBuildings()
 	file = "buildings//"; file += "dirt_big.pcx";
 	if ( !FileExists ( file.c_str() ) )
 	{
-		masterlog.write ( "File not found: dirt_big.pcx", 2 );
+		cLog::write ( "File not found: dirt_big.pcx", 2 );
 		return 0;
 	}
 	strcpy ( tmp, file.c_str() );
@@ -1479,7 +1473,7 @@ int LoadBuildings()
 	file = "buildings//"; file += "dirt_big_shw.pcx";
 	if ( !FileExists ( file.c_str() ) )
 	{
-		masterlog.write ( "File not found: dirt_big_shw.pcx", 2 );
+		cLog::write ( "File not found: dirt_big_shw.pcx", 2 );
 		return 0;
 	}
 	strcpy ( tmp, file.c_str() );
@@ -1491,7 +1485,7 @@ int LoadBuildings()
 	// Prüfen, ob alle Ptr eingerichtet wurden:
 	if ( !ptr_connector||!ptr_connector_shw||!ptr_small_beton )
 	{
-		masterlog.write ( "Missing road or connector building", 2 );
+		cLog::write ( "Missing road or connector building", 2 );
 		return 0;
 	}
 
@@ -1505,7 +1499,7 @@ int LoadBuildings()
 	}
 	if ( !BNrLandMine||!BNrSeaMine )
 	{
-		masterlog.write ( "Missing land or sea-mine", 2 );
+		cLog::write ( "Missing land or sea-mine", 2 );
 		return 0;
 	}
 	// Gebäude für die Landung suchen:
@@ -1576,7 +1570,7 @@ int LoadVehicles()
 
 	if ( !doc.LoadFile ( "vehicles//vehicles.xml" ) )
 	{
-		masterlog.write ( "Could not load vehicles.xml",1 );
+		cLog::write ( "Could not load vehicles.xml",1 );
 		return 0;
 	}
 	rootnode=doc.FirstChildElement ( "VehiclesData" )->FirstChildElement ( "Vehicles" );
@@ -1616,7 +1610,7 @@ int LoadVehicles()
 				sprintf ( TmpChr,"%d",i ); file = p; file.insert ( 0,"vehicles//" ); file += "img"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
-					masterlog.write ( "File not found: img.pcx", 2 );
+					cLog::write ( "File not found: img.pcx", 2 );
 					return 0;
 				}
 				strcpy ( tmp, file.c_str() );
@@ -1630,7 +1624,7 @@ int LoadVehicles()
 				sprintf ( TmpChr,"%d",i ); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
 				{
-					masterlog.write ( "File not found: shw.pcx", 2 );
+					cLog::write ( "File not found: shw.pcx", 2 );
 					return 0;
 				}
 				strcpy ( tmp, file.c_str() );
@@ -1648,14 +1642,14 @@ int LoadVehicles()
 
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: video.flc", 2 );
+			cLog::write ( "File not found: video.flc", 2 );
 			return 0;
 		}
 		// Das Infobild laden:
 		file = p; file.insert ( 0,"vehicles//" ); file += "info.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: info.pcx", 2 );
+			cLog::write ( "File not found: info.pcx", 2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1665,7 +1659,7 @@ int LoadVehicles()
 		file = p; file.insert ( 0,"vehicles//" ); file += "store.pcx";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: strore.pcx", 2 );
+			cLog::write ( "File not found: strore.pcx", 2 );
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
@@ -1675,7 +1669,7 @@ int LoadVehicles()
 		file = p; file.insert ( 0,"vehicles//" ); file += "data.ini";
 		if ( !FileExists ( file.c_str() ) )
 		{
-			masterlog.write ( "File not found: data.ini", 2 );
+			cLog::write ( "File not found: data.ini", 2 );
 			return 0;
 		}
 
@@ -1737,7 +1731,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "overlay.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: overlay.pcx", 2 );
+				cLog::write ( "File not found: overlay.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1757,7 +1751,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "build.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: build.pcx", 2 );
+				cLog::write ( "File not found: build.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1769,7 +1763,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "build_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: build_shw.pcx", 2 );
+				cLog::write ( "File not found: build_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1794,7 +1788,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "clear_small.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: clear_small.pcx", 2 );
+				cLog::write ( "File not found: clear_small.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1806,7 +1800,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "clear_small_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: clear_small_shw.pcx", 2 );
+				cLog::write ( "File not found: clear_small_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1819,7 +1813,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "clear_big.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: clear_big.pcx", 2 );
+				cLog::write ( "File not found: clear_big.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1831,7 +1825,7 @@ int LoadVehicles()
 			file = p; file.insert ( 0,"vehicles//" ); file += "clear_big_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: clear_big_shw.pcx", 2 );
+				cLog::write ( "File not found: clear_big_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
@@ -1849,7 +1843,7 @@ int LoadVehicles()
 			vehicle[vehicle_anz-1].clear_small_shw_org=NULL;
 		}
 
-#define LOADVEHSND(a,b) if(!FileExists(b)){masterlog.write("SoundFile not found", 2);return 0;}a=Mix_LoadWAV(b);
+#define LOADVEHSND(a,b) if(!FileExists(b)){cLog::write("SoundFile not found", 2);return 0;}a=Mix_LoadWAV(b);
 
 		// Die Sounds laden:
 		switch ( vehicle[vehicle_anz-1].data.can_drive )
@@ -1922,7 +1916,7 @@ int LoadVehicles()
 		{
 			if ( strcmp ( vehicle[i].id,vehicle[i+1].id ) ==0 )
 			{
-				masterlog.write ( "Double defined ID", 2 );
+				cLog::write ( "Double defined ID", 2 );
 				return 0;
 			}
 			if ( teststr ( vehicle[i].id,vehicle[i+1].id ) )
@@ -2011,7 +2005,7 @@ bool LoadInfantery ( sVehicle *v,string path )
 			file = path; file.insert ( 0,"vehicles//" ); file += "img"; sprintf ( TmpChr,"%d",i ); file.insert ( file.length(),TmpChr ); file += "_"; if ( k<10 ) file += "0"; sprintf ( TmpChr,"%d",k ); file.insert ( file.length(),TmpChr ); file += ".pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
-				masterlog.write ( "File not found: imgx_y.pcx", 2 );
+				cLog::write ( "File not found: imgx_y.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
