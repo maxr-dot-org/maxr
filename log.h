@@ -31,14 +31,23 @@
 class cLog
 {
 private:
-	cLog();
-	~cLog();
 
 	/**
 	* Writes message finally to logfile
 	*/
 	static int writeMessage( char *);
 
+	/**
+	* Closes the logfile.
+	*/
+	static void close();
+
+	/**
+	* Opens the Logfile. 
+	*
+	* @return true on success
+	*/
+	static bool open();
 public:
 	/**
 	* Writes message with given type to logfile
