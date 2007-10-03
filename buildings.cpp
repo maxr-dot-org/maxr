@@ -1825,7 +1825,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		if ( x>=44+166&&x<44+223+166&&y>=86+159&&y<86+20+159&&b&&!LastB )
 		{
 			PlayFX ( SNDObjectMenu );
-			Transf= ( int ) ( Round ( ( x- ( 44+166 ) ) * ( int ) ( MaxTarget/223.0 )-Target,0 ) );
+			Transf = Round((x-( 44+166))*(int)(MaxTarget/223.0)-Target);
 			MakeTransBar ( &Transf,MaxTarget,Target );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -4308,7 +4308,7 @@ int cBuilding::CalcPrice ( int value,int org, int variety )
 			break;
 	}
 
-	tmp= ( int ) ( Round ( ( a*pow ( ( value-b ),c ) ), 0 ) );
+	tmp = Round((a*pow((value-b),c)));
 	return tmp;
 }
 
@@ -4697,7 +4697,7 @@ void cBuilding::ShowMineManager ( void )
 		{
 			int t;
 			PlayFX ( SNDObjectMenu );
-			t= ( int ) ( Round ( ( x-174 ) * ( MaxM/240.0 ),0 ) );
+			t=  Round (( x-174 ) * ( MaxM/240.0 ));
 			if ( t<SubBase->MetalProd )
 			{
 				for ( ;abs ( SubBase->MetalProd-t ) &&SubBase->MetalProd>0; )
@@ -4725,7 +4725,7 @@ void cBuilding::ShowMineManager ( void )
 		{
 			int t;
 			PlayFX ( SNDObjectMenu );
-			t= ( int ) ( Round ( ( x-174 ) * ( MaxO/240.0 ),0 ) );
+			t= Round ( ( x-174 ) * ( MaxO/240.0 ));
 			if ( t<SubBase->OilProd )
 			{
 				for ( ;abs ( SubBase->OilProd-t ) &&SubBase->OilProd>0; )
@@ -4753,7 +4753,7 @@ void cBuilding::ShowMineManager ( void )
 		{
 			int t;
 			PlayFX ( SNDObjectMenu );
-			t= ( int ) ( Round ( ( x-174 ) * ( MaxG/240.0 ),0 ) );
+			t= Round ( ( x-174 ) * ( MaxG/240.0 ));
 			if ( t<SubBase->GoldProd )
 			{
 				for ( ;abs ( SubBase->GoldProd-t ) &&SubBase->GoldProd>0; )
@@ -5966,17 +5966,17 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 			// Die Bauzeiten eintragen:
 			t=owner->VehicleData[ptr->id].costs;
 
-			sprintf ( str,"%d", ( int ) Round ( t/ ( data.metal_need*1.0 ),0 ) );
+			sprintf ( str,"%d", Round ( t/data.metal_need) );
 			fonts->OutTextCenter ( str,389,350,buffer );
 			sprintf ( str,"%d",t );
 			fonts->OutTextCenter ( str,429,350,buffer );
 			if ( data.can_build!=BUILD_MAN )
 			{
-				sprintf ( str,"%d", ( int ) Round ( t/ ( data.metal_need*2.0 ),0 ) );
+				sprintf ( str,"%d", Round ( t/ ( data.metal_need*2.0 )) );
 				fonts->OutTextCenter ( str,389,375,buffer );
 				sprintf ( str,"%d",t*2 );
 				fonts->OutTextCenter ( str,429,375,buffer );
-				sprintf ( str,"%d", ( int ) Round ( t/ ( data.metal_need*4.0 ),0 ) );
+				sprintf ( str,"%d", Round ( t/ ( data.metal_need*4.0 )) );
 				fonts->OutTextCenter ( str,389,400,buffer );
 				sprintf ( str,"%d",t*4 );
 				fonts->OutTextCenter ( str,429,400,buffer );

@@ -2508,8 +2508,8 @@ void cVehicle::ShowBuildMenu ( void )
 					}
 					else
 					{
-						BuildRounds= ( int ) Round ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 ) /BuildSpeedD,0 );
-						BuildCosts= ( int ) ceil ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs ) * ( BuildSpeedD ) /BuildRounds );
+						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
+						BuildCosts= (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs)*(BuildSpeedD)/BuildRounds);
 					}
 				}
 				else
@@ -2521,8 +2521,8 @@ void cVehicle::ShowBuildMenu ( void )
 					}
 					else
 					{
-						BuildRounds= ( int ) Round ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 ) /BuildSpeedD,0 );
-						BuildCosts= ( int ) ceil ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs ) * ( BuildSpeedD ) /BuildRounds );
+						BuildRounds = (int)Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
+						BuildCosts = (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
 					}
 				}
 				if ( data.can_build!=BUILD_BIG )
@@ -2617,21 +2617,21 @@ void cVehicle::ShowBuildMenu ( void )
 					}
 					else
 					{
-						BuildRounds= ( int ) Round ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 ) /BuildSpeedD,0 );
-						BuildCosts= ( int ) ceil ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs ) * ( BuildSpeedD ) /BuildRounds );
+						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 )/BuildSpeedD);
+						BuildCosts= (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
 					}
 				}
 				else
 				{
 					if ( BuildSpeedD<0 )
 					{
-						BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/8;
-						BuildCosts= ( owner->BuildingData[images->BuildStructItems[selected]->id].costs*4 ) /BuildRounds;
+						BuildRounds = owner->BuildingData[images->BuildStructItems[selected]->id].costs/8;
+						BuildCosts = (owner->BuildingData[images->BuildStructItems[selected]->id].costs*4)/BuildRounds;
 					}
 					else
 					{
-						BuildRounds= ( int ) Round ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 ) /BuildSpeedD,0 );
-						BuildCosts= ( int ) ceil ( ( owner->BuildingData[images->BuildStructItems[selected]->id].costs ) * ( BuildSpeedD ) /BuildRounds );
+						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
+						BuildCosts =(int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
 					}
 				}
 				BuildRoundsStart=BuildRounds;
@@ -2704,7 +2704,7 @@ void cVehicle::ShowBuildMenu ( void )
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
-			else if ( t/4>1&&t<data.cargo&&data.cargo==data.max_cargo&& ( int ) Round ( ( t/2 ) /g,0 ) <t/2 )
+			else if ( t/4>1&&t<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/2)
 			{
 				PlayFX ( SNDMenuButton );
 				BuildSpeed=2;
@@ -2728,7 +2728,7 @@ void cVehicle::ShowBuildMenu ( void )
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
-			else if ( t/8>1&&t*2<data.cargo&&data.cargo==data.max_cargo&& ( int ) Round ( ( t/2 ) /g,0 ) <t/4 )
+			else if ( t/8>1&&t*2<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/4)
 			{
 				PlayFX ( SNDMenuButton );
 				BuildSpeed=4;
@@ -2880,19 +2880,19 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 						sprintf ( str,"%d",t*4 );
 						fonts->OutTextCenter ( str,429,400,buffer );
 					}
-					else if ( t/8>1&&data.cargo>t*2&&data.cargo==data.max_cargo&& ( int ) Round ( ( t/2 ) /g,0 ) <t/4 )
+					else if ( t/8>1&&data.cargo>t*2&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/4)
 					{
-						sprintf ( str,"%d", ( int ) Round ( ( t/2 ) /g,0 ) );
+						sprintf ( str,"%d", Round((t/2)/g));
 						fonts->OutTextCenter ( str,389,400,buffer );
-						sprintf ( str,"%d", ( int ) Round ( t*g,0 ) );
+						sprintf ( str,"%d", Round(t*g));
 						fonts->OutTextCenter ( str,429,400,buffer );
 					}
 				}
-				else if ( t/4>1&&data.cargo>t&&data.cargo==data.max_cargo&& ( int ) Round ( ( t/2 ) /g,0 ) <t/2 )
+				else if ( t/4>1&&data.cargo>t&&data.cargo==data.max_cargo&& Round((t/2 )/g)<t/2)
 				{
-					sprintf ( str,"%d", ( int ) Round ( ( t/2 ) /g,0 ) );
+					sprintf ( str,"%d", Round((t/2 )/g));
 					fonts->OutTextCenter ( str,389,375,buffer );
-					sprintf ( str,"%d", ( int ) Round ( t*g,0 ) );
+					sprintf ( str,"%d", Round(t*g));
 					fonts->OutTextCenter ( str,429,375,buffer );
 				}
 			}
@@ -3422,7 +3422,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		if ( x>=44+166&&x<44+223+166&&y>=86+159&&y<86+20+159&&b&&!LastB )
 		{
 			PlayFX ( SNDObjectMenu );
-			Transf=(int)(Round ( ( x- ( 44+166 ) ) * ( MaxTarget/223.0 )-Target,0 ));
+			Transf=Round(( x- ( 44+166 ) ) * ( MaxTarget/223.0 )-Target);
 			MakeTransBar ( &Transf,MaxTarget,Target );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );

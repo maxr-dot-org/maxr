@@ -385,6 +385,31 @@ void ScaleSurfaceAdv2Spec(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey
 SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
 void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
 void MakeShieldColor(SDL_Surface **dest,SDL_Surface *scr);
+
+/**
+* Rounds given param num to specified position after decimal point<br>
+* Example:<br>
+* num := 3,234<br>
+* n := 2<br>
+* >>>>>>> Result = 3,23<br>
+*
+*@author MM
+*@param num number to round up
+*@param n the position after decimal point in dValueToRound, that will be rounded
+*@return rounded num
+*/
 double Round(double num, unsigned int n);
+
+/**
+* Rounds given param num without numbers after decimal point<br>
+* Example:<br>
+* num := 3,234<br>
+* >>>>>>> Result = 3<br>
+*
+*@author beko
+*@param num number to round up
+*@return rounded num
+*/
+int Round ( double num );
 
 #endif

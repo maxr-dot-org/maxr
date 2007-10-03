@@ -643,7 +643,7 @@ void cPlayer::DoResearch ( void )
 				d=6.4756817;
 				ResearchTechs[i].level+=0.1;
 				x=(int)(ResearchTechs[i].level*10)+1;
-				ResearchTechs[i].MaxRounds=(int)(Round ( ( a*b*pow ( ( x-c ),d ) ), 0 ));
+				ResearchTechs[i].MaxRounds= Round((a*b*pow((x-c),d)));
 				ResearchTechs[i].RoundsRemaining=ResearchTechs[i].MaxRounds;
 				complete=true;
 
