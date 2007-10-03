@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // M.A.X. - main.cpp
 //////////////////////////////////////////////////////////////////////////////
+#define TIXML_USE_STL
 
 #include <math.h>
 #include <SDL.h>
@@ -32,16 +33,15 @@
 #include "fstcpip.h"
 #include "log.h"
 
-#define TIXML_USE_STL
-#define MAXVERSION M.A.X. Klon v SVN
+#define MAXVERSION "M.A.X. Klon v SVN"
 //#define MAXVERSION M.A.X. Klon v 0.5....
 
 /** access to logger*/
 cLog masterlog;
 /** Slashscreen width  */
-#define SPLASHWIDTH = 500
+#define SPLASHWIDTH 500
 /** Slashscreen height  */
-#define SPLASHHEIGHT = 420
+#define SPLASHHEIGHT 420
 /** Colour depth we want (not defined because we might change it on runtime*/
 static int colourDepth = 32;
 
