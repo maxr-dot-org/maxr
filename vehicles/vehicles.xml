@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<VehicleData>
+	<Header>
+		<Author name="DoctorDeath">
+			<Editor name="DoctorDeath"/>
+		</Author>
+		<Version text="00.00.01"/>
+		<Last_Change time="2007-10-02 19:51:00"/>
+	</Header>
+	<Vehicles>
+		<Air_Transporter directory="air_transport"/>
+		<Alien_Assault directory="alien_assault"/>
+		<Alien_Plane directory="alien_plane"/>
+		<Alien_Ship directory="alien_ship"/>
+		<Alien_Tank directory="alien_tank"/>
+		<APC directory="apc"/>
+		<Assault directory="assault"/>
+		<AWAC directory="awac"/>
+		<Bomber directory="bomber"/>
+		<Bulldozer directory="bulldozer"/>
+		<Cargoship directory="cargoship"/>
+		<Cluster directory="cluster"/>
+		<Commando directory="commando"/>
+		<Corvet directory="corvet"/>
+		<Escort directory="escort"/>
+		<Fighter directory="fighter"/>
+		<Gunboat directory="gunboat"/>
+		<Infantery directory="infantery"/>
+		<Konstruktor directory="konstrukt"/>
+		<Minelayer directory="minelayer"/>
+		<Missellauncher directory="missel"/>
+		<Missel_Ship directory="missel_ship"/>
+		<Mobile_AA directory="mibile_aa"/>
+		<Pionier directory="pionier"/>
+		<Repair directory="repair"/>
+		<Scanner directory="scanner"/>
+		<Scout directory="scout"/>
+		<Sea_Minelayer directory="sea_minelayer"/>
+		<Sea_Transporter directory="sea_transport"/>
+		<Submarine directory="sub"/>
+		<Surveyor directory="surveyor"/>
+		<Tank directory="tank"/>
+		<Transporter_Gold directory="trans_gold"/>
+		<Transporter_Metal directory="trans_metal"/>
+		<Transporter_Oil directory="trans_oil"/>
+	</Vehicles>
+</VehicleData>
+
