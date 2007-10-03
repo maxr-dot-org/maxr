@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<MapData>
+	<Header>
+		<Author name="DoctorDeath">
+			<Editor name="DoctorDeath"/>
+		</Author>
+		<Version text="00.00.01"/>
+		<Last_Change time="2007-10-03 20:47:00"/>
+	</Header>
+	<MapList>
+		<Dune file="dune.bmp"/>
+		<Europa file="europa.bmp"/>
+		<Ice_Age file="ice age.bmp"/>
+		<Mittelmeer file="mittelmeer.bmp"/>
+		<Moon_17 file="moon 17.bmp"/>
+		<Seapower file="seapower.bmp"/>
+	</MapList>
+</MapData>
+
