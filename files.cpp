@@ -56,8 +56,6 @@ long StrPosToFilePos ( string filestring, long strpos )
 	return -1;
 }
 
-// Sucht in einer der Datei 'filename', ab der Position 'startpos', nach 'searchstr'
-// und gibt, wenn gefunden, die Position zurück. Ansonnsten wird -1 zurückgegeben.
 long SearchFor ( const char* searchstr, long startpos, const char* filename )
 {
 	SDL_RWops *file;
@@ -117,12 +115,6 @@ long SearchFor ( const char* searchstr, long startpos, const char* filename )
 	return -1;
 }
 
-/**
-* Löscht ab der Position 'startpos' bis zur position 'endpos' alle Daten der Datei 'filename'.
-* Ist 'endpos' gleich 0, so wird bis zum ende der Datei gelöscht.
-* Ist ein Fehler aufgetreten, so wird 0 zurückgegeben.
-* @return returns 0 on error and 1 on success
-*/
 int FileEraseData ( long startpos, long endpos, const char* filename )
 {
 	SDL_RWops *file;
@@ -172,13 +164,6 @@ int FileEraseData ( long startpos, long endpos, const char* filename )
 	return 1;
 }
 
-//TOFIX: Check Comment - ain't sure about
-/**
-* Fügt ab der Position 'startpos' bis zur position 'endpos' alle Daten in die Datei 'filename' ein.
-* Ist 'endpos' gleich 0, so wird bis zum ende der Datei gelöscht.
-* Ist ein Fehler aufgetreten, so wird 0 zurückgegeben.
-* @return returns 0 on error and 1 on success
-*/
 int FileInsertData ( long pos, const char* data, const char* filename )
 {
 	SDL_RWops *file;
