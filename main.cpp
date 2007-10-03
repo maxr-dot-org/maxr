@@ -2282,15 +2282,40 @@ int random ( int x, int y )
 //TODO: Possible that it makes sense to give back an INT since I've seen this
 //only in functions for ints and we have to cast every time from double to int o0
 //oh yeah.. and wtf is this doing exactly? "rounding"?
-double Round ( double num, unsigned int n )
+//
+// JCK:
+// dValueToRound : The value, that needs rounding
+// iDecimalPlace : The position after decimal point in dValueToRound, that will be rounded
+//
+// 1st Exp
+// dValueToRound := 3,234
+// iDecimalPlace := 2
+// >>>>>>> Result = 3,23
+//
+// 2nd Exp
+// dValueToRound := 3,235
+// iDecimalPlace := 2
+// >>>>>>> Result = 3,24
+//
+// 3rd Exp
+// dValueToRound := -3,234
+// iDecimalPlace := 2
+// >>>>>>> Result = -3,23
+//
+// 4th Exp
+// dValueToRound := -3,235
+// iDecimalPlace := 2
+// >>>>>>> Result = -3,24
+
+double Round ( double dValueToRound, unsigned int iDecimalPlace )
 {
-	num *= pow ( ( double ) 10, ( int ) n );
-	if ( num >= 0 )
-		num = floor ( num + 0.5 );
+	dValueToRound *= pow ( ( double ) 10, ( int ) iDecimalPlace ); 
+	if ( dValueToRound >= 0 )
+		dValueToRound = floor ( dValueToRound + 0.5 );
 	else
-		num = ceil ( num - 0.5 );
-	num /= pow ( ( double ) 10, ( int ) n );
-	return num;
+		dValueToRound = ceil ( dValueToRound - 0.5 );
+	dValueToRound /= pow ( ( double ) 10, ( int ) iDecimalPlace );
+	return dValueToRound;
 }
 
 bool GetXMLBool ( TiXmlNode* rootnode,const char *nodename )
