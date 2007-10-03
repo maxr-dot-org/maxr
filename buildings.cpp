@@ -161,7 +161,7 @@ char *cBuilding::GetStatusStr ( void )
 			{
 				static char str[50];
 				int r;
-				r = ( int ) ( floor ( ptr->metall_remaining/ ( data.metal_need*BuildSpeed*1 ) ) );
+				r = ( int ) ( floor ( (double) ptr->metall_remaining/ ( data.metal_need*BuildSpeed*1 ) ) );
 				if ( !r ) r++;
 				sprintf ( str,"beim bau: %s (%d)",owner->VehicleData[ptr->typ->nr].name,r );
 				if ( fonts->GetTextLenSmall ( str ) >126 )
