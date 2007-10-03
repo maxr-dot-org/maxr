@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<SavesData>
+	<Header>
+		<Author name="DoctorDeath">
+			<Editor name="DoctorDeath"/>
+		</Author>
+		<Version text="00.00.01"/>
+		<Last_Change time="2007-10-03 20:47:00"/>
+	</Header>
+	<SavesList>
+		<Save1 name="Autosave" file="autosave.sav"/>
+	</SavesList>
+</SavesData>
+
