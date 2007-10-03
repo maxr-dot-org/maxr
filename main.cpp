@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // M.A.X. - main.cpp
 //////////////////////////////////////////////////////////////////////////////
-#define TIXML_USE_STL
 
 #include <math.h>
 #include <SDL.h>
@@ -33,7 +32,18 @@
 #include "fstcpip.h"
 #include "log.h"
 
+#define TIXML_USE_STL
+#define MAXVERSION M.A.X. Klon v SVN
+//#define MAXVERSION M.A.X. Klon v 0.5....
+
+/** access to logger*/
 cLog masterlog;
+/** Slashscreen width  */
+#define SPLASHWIDTH = 500
+/** Slashscreen height  */
+#define SPLASHHEIGHT = 420
+/** Colour depth we want (not defined because we might change it on runtime*/
+static int colourDepth = 32;
 
 TList::TList ( void )
 {
@@ -60,9 +70,9 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
-	screen=SDL_SetVideoMode ( 500,420,32,SDL_HWSURFACE|SDL_NOFRAME );
+	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, colourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_UpdateRect ( screen,0,0,0,0 );
-	SDL_WM_SetCaption ( "MMs M.A.X. by DoctorDeath",NULL );
+	SDL_WM_SetCaption (MAXVERSION, NULL);
 
 	// SDL_Net starten
 	if ( SDLNet_Init() == -1 )
@@ -143,19 +153,19 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	// Intro
 
 	// Den Grafikmodus starten:
-	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,ScreenW,ScreenH,32,0,0,0,0 );
+	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,ScreenW,ScreenH,colourDepth,0,0,0,0 );
 	if ( !WindowMode )
 	{
-		screen=SDL_SetVideoMode ( ScreenW,ScreenH,32,SDL_HWSURFACE|SDL_FULLSCREEN );
+		screen=SDL_SetVideoMode ( ScreenW,ScreenH,colourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
 	}
 	else
 	{
-		screen=SDL_SetVideoMode ( ScreenW,ScreenH,32,SDL_HWSURFACE );
+		screen=SDL_SetVideoMode ( ScreenW,ScreenH,colourDepth,SDL_HWSURFACE );
 	}
 	SDL_FillRect ( buffer,NULL,0 );
 	SDL_ShowCursor ( 0 ); // Den Cursor verstecken.
 	// Die Caption muss neu gesetzt werden:
-	SDL_WM_SetCaption ( "MMs M.A.X. by DoctorDeath",NULL );
+	SDL_WM_SetCaption (MAXVERSION, NULL);
 
 	// Die Maus erzeugen:
 	mouse = new cMouse;
@@ -467,7 +477,7 @@ int LoadGFX()
 
 	// Hud:
 	SDL_Rect scr,dest;
-	gfx_hud=SDL_CreateRGBSurface ( SDL_HWSURFACE,ScreenW,ScreenH,32,0,0,0,0 );
+	gfx_hud=SDL_CreateRGBSurface ( SDL_HWSURFACE,ScreenW,ScreenH,colourDepth,0,0,0,0 );
 	SDL_FillRect ( gfx_hud,NULL,0xFF00FF );
 	SDL_SetColorKey ( gfx_hud,SDL_SRCCOLORKEY,0xFF00FF );
 
@@ -532,10 +542,10 @@ int LoadGFX()
 	MakeShieldColor ( & ( ShieldColors[7] ),colors[7] );
 
 	// Shadow:
-	gfx_shadow=SDL_CreateRGBSurface ( SDL_HWSURFACE,ScreenW,ScreenH,32,0,0,0,0 );
+	gfx_shadow=SDL_CreateRGBSurface ( SDL_HWSURFACE,ScreenW,ScreenH,colourDepth,0,0,0,0 );
 	SDL_FillRect ( gfx_shadow,NULL,0x0 );
 	SDL_SetAlpha ( gfx_shadow,SDL_SRCALPHA,50 );
-	gfx_tmp=SDL_CreateRGBSurface ( SDL_HWSURFACE,128,128,32,0,0,0,0 );
+	gfx_tmp=SDL_CreateRGBSurface ( SDL_HWSURFACE,128,128,colourDepth,0,0,0,0 );
 	SDL_SetColorKey ( gfx_tmp,SDL_SRCCOLORKEY,0xFF00FF );
 
 	// Glas:
@@ -567,24 +577,24 @@ int LoadGFX()
 	// Resources:
 	LOADGFX ( res_metal_org,"gfx//res.pcx" );
 	SDL_SetColorKey ( res_metal_org,SDL_SRCCOLORKEY,-1 );
-	res_metal=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,32,0,0,0,0 );
+	res_metal=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,colourDepth,0,0,0,0 );
 	SDL_BlitSurface ( res_metal_org,NULL,res_metal,NULL );
 	SDL_SetColorKey ( res_metal,SDL_SRCCOLORKEY,0xFFFFFF );
 
-	res_oil_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,32,0,0,0,0 );
+	res_oil_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,colourDepth,0,0,0,0 );
 	SDL_FillRect ( res_oil_org,NULL,0x00FF00 );
 	SDL_SetColorKey ( res_oil_org,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_BlitSurface ( res_metal,NULL,res_oil_org,NULL );
-	res_oil=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,32,0,0,0,0 );
+	res_oil=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,colourDepth,0,0,0,0 );
 	SDL_FillRect ( res_oil,NULL,0x00FF00 );
 	SDL_SetColorKey ( res_oil,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_BlitSurface ( res_metal,NULL,res_oil,NULL );
 
-	res_gold_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,32,0,0,0,0 );
+	res_gold_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,colourDepth,0,0,0,0 );
 	SDL_FillRect ( res_gold_org,NULL,0xFFFF00 );
 	SDL_SetColorKey ( res_gold_org,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_BlitSurface ( res_metal,NULL,res_gold_org,NULL );
-	res_gold=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,32,0,0,0,0 );
+	res_gold=SDL_CreateRGBSurface ( SDL_HWSURFACE,res_metal_org->w,res_metal_org->h,colourDepth,0,0,0,0 );
 	SDL_FillRect ( res_gold,NULL,0xFFFF00 );
 	SDL_SetColorKey ( res_gold,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_BlitSurface ( res_metal,NULL,res_gold,NULL );
@@ -776,7 +786,7 @@ int LoadTerrain()
 			return 0;
 		}
 
-#define DUP_SF(a,b)b= SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,a->w,a->h,32,0,0,0,0);SDL_FillRect(b,NULL,0xFF00FF);SDL_BlitSurface(a,NULL,b,NULL);
+#define DUP_SF(a,b)b= SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,a->w,a->h,colourDepth,0,0,0,0);SDL_FillRect(b,NULL,0xFF00FF);SDL_BlitSurface(a,NULL,b,NULL);
 		terrain[i].sf_org = LoadPCX ( ( char * ) file.c_str() );
 		DUP_SF ( terrain[i].sf_org,terrain[i].sf );
 
@@ -879,7 +889,7 @@ void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
 	{
 		sizex=scr->w/64*size;
 	}
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,32,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,colourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -1992,7 +2002,7 @@ bool LoadInfantery ( sVehicle *v,string path )
 
 	for ( i=0;i<8;i++ )
 	{
-		v->img[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,32,0,0,0,0 );
+		v->img[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,colourDepth,0,0,0,0 );
 		SDL_SetColorKey ( v->img[i],SDL_SRCCOLORKEY,0xFFFFFF );
 		SDL_FillRect ( v->img[i],NULL,0xFF00FF );
 
@@ -2014,15 +2024,15 @@ bool LoadInfantery ( sVehicle *v,string path )
 			SDL_FreeSurface ( sf );
 		}
 
-		v->img_org[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,32,0,0,0,0 );
+		v->img_org[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,colourDepth,0,0,0,0 );
 		SDL_SetColorKey ( v->img[i],SDL_SRCCOLORKEY,0xFFFFFF );
 		SDL_FillRect ( v->img_org[i],NULL,0xFFFFFF );
 		SDL_BlitSurface ( v->img[i],NULL,v->img_org[i],NULL );
 
-		v->shw[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,32,0,0,0,0 );
+		v->shw[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,colourDepth,0,0,0,0 );
 		SDL_SetColorKey ( v->shw[i],SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_FillRect ( v->shw[i],NULL,0xFF00FF );
-		v->shw_org[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,32,0,0,0,0 );
+		v->shw_org[i]=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64*13,64,colourDepth,0,0,0,0 );
 		SDL_SetColorKey ( v->shw_org[i],SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_FillRect ( v->shw_org[i],NULL,0xFF00FF );
 
@@ -2066,7 +2076,7 @@ void ScaleSurfaceAdv ( SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey )
 {
 	int x,y,rx,ry,dx,dy;
 	unsigned int *s,*d;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,32,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,colourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -2201,7 +2211,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 {
 	SDL_Surface *sf;
 	float fak;
-	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,32,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,colourDepth,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFF00FF );
 	SDL_LockSurface ( sf );
@@ -2253,7 +2263,7 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 {
 	SDL_Rect r;
 	int i;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,32,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,colourDepth,0,0,0,0 );
 	SDL_BlitSurface ( scr,NULL,*dest,NULL );
 	SDL_SetColorKey ( *dest,SDL_SRCCOLORKEY,0xFF00FF );
 	r.w=64;
