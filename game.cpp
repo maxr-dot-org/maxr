@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // M.A.X. - game.cpp
 //////////////////////////////////////////////////////////////////////////////
-#include <windows.h>
-#include <io.h>
 #include "math.h"
 #include "game.h"
 #include "main.h"
@@ -12,6 +10,7 @@
 #include "menu.h"
 #include "keys.h"
 #include "dialog.h"
+#include "log.h"
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame(cFSTcpIp *fstcpip, cMap *map){
@@ -3126,10 +3125,9 @@ void cGame::ShowDateiMenu(void){
   bool  HilfePressed=false, UpPressed=false, DownPressed=false, Cursor=true;
   Uint8 *keystate;
   TList *files;
-  struct _finddata_t c_file;
-  long hFile;
-  string searchdir="*.sav";
-  searchdir.insert(0,SavePath);
+  TiXmlDocument doc;
+  TiXmlNode* rootnode;
+  TiXmlNode* node;
 
   PlayFX(SNDHudButton);
   mouse->SetCursor(CHand);
@@ -3154,15 +3152,23 @@ void cGame::ShowDateiMenu(void){
   dest.x=63;
   SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
   // Dateien suchen und Anzeigen:
-  files = new TList;
 
-  if( (hFile = _findfirst( searchdir.c_str(), &c_file )) == -1L ) {
-		_findclose(hFile);
-  } else {
-	do {
-      files->Add(c_file.name);
-    } while( _findnext( hFile, &c_file ) == 0 );
-    _findclose(hFile);
+  if ( !doc.LoadFile ( "saves//saves.xml" ) )
+  {
+    cLog::write ( "Could not load saves.xml",1 );
+    return;
+  }
+  rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
+
+  files = new TList;
+  node=rootnode->FirstChildElement();
+  if ( node )
+    files->Add ( node->ToElement()->Attribute ( "file" ) );
+  while ( node )
+  {
+    node=node->NextSibling();
+    if ( node && node->Type() ==1 )
+      files->Add ( node->ToElement()->Attribute ( "file" ) );
   }
 
   ShowFiles(files,offset,selected,true);
@@ -3240,14 +3246,15 @@ void cGame::ShowDateiMenu(void){
 			Save(SaveLoadFile);
 			int count = files->Count;
 			for(int i = 0; i < count; i++ )
-			  files->DeleteString(0);
-			if( (hFile = _findfirst( searchdir.c_str(), &c_file )) == -1L ) {
-			_findclose(hFile);
-			} else {
-			  do {
-				files->Add(c_file.name);
-			  } while( _findnext( hFile, &c_file ) == 0 );
-			 _findclose(hFile);
+			files->DeleteString(0);
+			node=rootnode->FirstChildElement();
+			if ( node )
+			  files->Add ( node->ToElement()->Attribute ( "file" ) );
+			while ( node )
+			{
+			  node=node->NextSibling();
+			  if ( node && node->Type() ==1 )
+			    files->Add ( node->ToElement()->Attribute ( "file" ) );
 			}
 			selected = -1;
 			ShowFiles(files,offset,selected,false);
@@ -3457,7 +3464,7 @@ void cGame::MakeAutosave(void){
 	if(!(fp=fopen(filename.c_str(),"rb")))continue;
 	fclose(fp);
     if(i==4){
-	  DeleteFileA(filename.c_str());
+	  remove(filename.c_str());
     }else{
 	  stmp=SavePath; stmp+="autosave"; sprintf(sztmp,"%d",i); stmp+=sztmp; stmp+=".sav";
 	  rename(filename.c_str(),stmp.c_str());
