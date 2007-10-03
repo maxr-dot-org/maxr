@@ -21,6 +21,7 @@
 #define LOG_TYPE_WARNING 1
 #define LOG_TYPE_ERROR 2
 #define LOG_TYPE_DEBUG 3
+#define LOG_TYPE_INFO 4
 
 /**
 * Log class. Simple log class :-)
@@ -31,30 +32,37 @@ class cLog
 {
 private:
 
-	int writeMessage( char *);
-public:
-	cLog();
 	/**
-	* Init the Logfile. This should be done only once 
-	* at the beginning of the app
-	*
-	* @return 0 on success
+	* Writes message finally to logfile
 	*/
-	int init();
+	static int writeMessage( char *);
 
 	/**
-	* Writes message to the logfile
+	* Closes the logfile.
+	*/
+	static void close();
+
+	/**
+	* Opens the Logfile. 
+	*
+	* @return true on success
+	*/
+	static bool open();
+public:
+	/**
+	* Writes message with given type to logfile
 	*
 	* @param str Message for the log
 	* @param TYPE Type for the log.<br>
 	* 1 		== warning 	(WW):<br>
 	* 2 		== error	(EE):<br>
 	* 3		== debug	(DD):<br>
+	* 4		== information	(II):<br>
 	* else		== information	(II):
 	*
 	* @return 0 on success
 	*/
-	int write(char *str, int TYPE);
+	static int write(char *str, int TYPE);
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -63,13 +71,5 @@ public:
 	*
 	* @return 0 on success
 	*/
-	int write(char *str);
-
-	/**
-	* Closes the logfile. This should only be done on
-	* application exit (end or error.)
-	*
-	* @return 0 SDL <= 1.2.9 always returns 0
-	*/
-	int close();
+	static int write(char *str);
 };

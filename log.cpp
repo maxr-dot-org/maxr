@@ -22,84 +22,88 @@
 #include "SDL_rwops.h"
 #include "log.h"
 
-/*
-mode kann folgende Werte annehmen:
-r  Datei zum Lesen öffnen, die Datei muss existieren.
-w  Datei zum Schreiben öffnen, die Datei muss existieren.
-a  Hinzufügen zu der Datei, Daten werden am Ende der Datei hinzugefügt.
-r+  Datei zum Lesen und Schreiben öffnen, die Datei muss existieren.
-w+  Öffnet eine leere Datei zum Lesen und Schreiben. Wenn eine Datei mit dem Namen existiert, wird sie überschrieben.
-a+  Öffnet eine Datei zum Lesen und Hinzufügen. Alle Schreiboperationen geschehen am Ende der Datei.
+#define LOGFILE "max.log"
+/** errors */
+#define EE "(EE): "
+/** warnings */
+#define WW "(WW): "
+/** informations */
+#define II "(II): "
+/** debuginformations */
+#define DD "(DD): "
 
-Zusätzlich kann noch einer der folgenden Buchstaben zu mode hinzugefügt werden.
-t  Textmodus: Das Ende der Datei ist das STRG+Z-Zeichen.
-b  Binäre Modus: Das Ende der Datei ist am letzen Byte der Datei erreicht.*/
+static SDL_RWops *logfile = NULL;
 
-const char *ee="(EE): "; //errors
-const char *ww="(WW): "; //warnings
-const char *ii="(II): "; //informations
-const char *dd="(DD): "; //debug
-
-static SDL_RWops *logfile;
-
-cLog::cLog()
-{}
-
-int cLog::init ( )
+bool cLog::open()
 {
-	logfile = SDL_RWFromFile ( "max.log","w+t" );
-	if ( logfile==NULL )
+	if (logfile != NULL) 
 	{
-		fprintf ( stderr,"Couldn't open max.log\n" );
-		return ( 1 );
+		logfile = SDL_RWFromFile ( LOGFILE,"a+t" ); //Reopen log and write at end of file
+	} 
+	else //Log not yet started (should only happen at game start)
+	{
+		logfile = SDL_RWFromFile ( LOGFILE,"w+t" ); //Start new log and write at beginning of file
 	}
-	return 0;
+
+	int blocks; //sanity check - is file readable?
+	char buf[256];
+	blocks=SDL_RWread(logfile,buf,16,256/16);
+	if(blocks<0)
+	{
+		fprintf(stderr,"(EE): Couldn't open max.log!\n Please check file/directory permissions\n");
+
+		if ( logfile != NULL ) return true;
+		else return false;
+	} 
+	else return true;
+	
 }
 
-//Send str to logfile and add error/warning tag
-//TYPEs:
-// 1 		== warning 	(WW):
-// 2 		== error	(EE):
-// 3		== debug	(DD):
-// else		== information	(II):
 int cLog::write ( char *str, int TYPE )
 {
-	switch ( TYPE )
+	if (open())
 	{
-		case LOG_TYPE_WARNING : SDL_RWwrite ( logfile,ww,1,6 ); break;
-		case LOG_TYPE_ERROR : SDL_RWwrite ( logfile,ee,1,6 ); break;
-		case LOG_TYPE_DEBUG : SDL_RWwrite ( logfile,dd,1,6 ); break;
-		default : SDL_RWwrite ( logfile,ii,1,6 );
-
+		char tmp[263] = "(XX): "; //placeholder
+		if (strlen ( str ) > 263 - 7) //message max is 256chars
+		{ 
+			return writeMessage("(EE): sLog recieved to long log message!\n(EE): Message had more than 256 chars! That should not happen!\n");
+		}
+		else 
+		{
+			switch ( TYPE ) //Attach log message type to tmp
+			{
+				case LOG_TYPE_WARNING : strcpy(tmp, WW); break;
+				case LOG_TYPE_ERROR : strcpy(tmp, EE); break;
+				case LOG_TYPE_DEBUG : strcpy(tmp, DD); break;
+				case LOG_TYPE_INFO : strcpy(tmp, II); break;
+				default : strcpy(tmp, II);
+			}
+		}
+		return writeMessage ( strcat(tmp, str) ); //add log message itself to tmp and send it for writing
 	}
-	return writeMessage ( str );
+	else return -1;
 }
 
-// noTYPE	== information 	(II):
 int cLog::write ( char *str )
 {
-	SDL_RWwrite ( logfile,ii,1,6 );
-	return writeMessage ( str );
+	return write ( str, LOG_TYPE_INFO );
 }
 
 int cLog::writeMessage ( char *str )
 {
 	int wrote;
-	wrote=SDL_RWwrite ( logfile,str,1,strlen ( str ) );
+	wrote = SDL_RWwrite ( logfile,str,1,strlen ( str ) );
 
-	if ( wrote<0 )
+	if ( wrote<0 ) //sanity check - was file writable?
 	{
-		fprintf ( stderr,"Couldn't write to max.log\n" );
-		return ( 2 );
+		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str );
+		return -1;
 	}
-
-	//fprintf ( stderr,"Wrote %d 1-byte blocks\n",wrote );
-	return ( 0 );
+	else close(); //after successful writing of all information we close log here and nowhere else!
+	return 0;
 }
 
-//Am Programmende oder bei Programmabbruch ausführen
-int cLog::close()
+void cLog::close()
 {
-	//Die Funktion SDL_RWclose liefert aktuell immer 0 zurück, auf Fehler wird intern noch nicht geprüft (SDL 1.2.9).
-	return SDL_RWclose ( logfile );
+	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
 }

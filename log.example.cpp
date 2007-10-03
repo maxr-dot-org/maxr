@@ -24,21 +24,15 @@
 
 int main()
 {
-	//init "master"log
-	cLog log;
-	log.init();
+cLog::write("Poke...\n");
+	cLog::write("This is a testwarning\n", 1);
+	cLog::write("This is a testerror\n", 2);
+	cLog::write("This is a testdebug\n", 3);
 
-	log.write("This is a testwarning\n", 1);
-	log.write("This is a testerror\n", 2);
-	log.write("This is a testdebug\n", 3);
 
-	//test for another log-object without init/close
-	//because this is masterlogs job at start and end of application
-	cLog log2;
-	log2.write("This is a testinformation without given type\n");
-	log2.write("This is a testinformation\n", 0);
 
-	//close masterlog
-	log.close();
+	cLog::write("This is a testinformation without given type\n");
+	cLog::write("This is a testinformation\n", 0);
 
+	cLog::write("This is frea testwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaking to long\n", 1);
 }
