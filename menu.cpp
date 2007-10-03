@@ -1325,9 +1325,6 @@ string RunPlanetSelect ( void )
 			files->Add ( node->ToElement()->Attribute ( "file" ) );
 	}
 
-	// Alle Namen sortieren:
-	// files->Sort(SortFileList);
-
 	ShowPlanets ( files,offset,selected );
 	mouse->Show();
 	mouse->SetCursor ( CHand );
