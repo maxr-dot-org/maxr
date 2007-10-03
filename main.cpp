@@ -33,7 +33,7 @@
 #include "fstcpip.h"
 #include "log.h"
 
-#define MAXVERSION "M.A.X. Klon v SVN"
+#define MAXVERSION "M.A.X. Klon v SVN..."
 //#define MAXVERSION M.A.X. Klon v 0.5....
 
 /** Slashscreen width  */
@@ -51,6 +51,8 @@ TList::TList ( void )
 
 int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 {
+	cLog::write("Starting logging ");cLog::write(MAXVERSION);
+	cLog::write("\nMore here later\n");
 	srand ( ( unsigned ) time ( NULL ) );
 	SDL_Thread *thread = NULL;
 	putenv ( "SDL_VIDEO_CENTERED=center" );
@@ -205,6 +207,7 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	WriteIniString("max","LastIP",LastIP.c_str(),"max.ini");
 	WriteIniInteger("max","LastPort",LastPort,"max.ini");
 	WriteIniString("max","LastPlayerName",LastPlayerName.c_str(),"max.ini");*/
+	cLog::write("Stopped logging.\n\n");
 	return 0;
 }
 int LoadData ( void * )
