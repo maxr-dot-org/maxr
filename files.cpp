@@ -2,6 +2,7 @@
 // M.A.X. - files.cpp
 //////////////////////////////////////////////////////////////////////////////
 #include "files.h"
+#include "log.h"
 
 // Prüft ob die Datei 'name' existiert
 bool FileExists ( const char* name )
@@ -265,14 +266,19 @@ char *ReadIniString ( const char* section, const char* key, const char* defaultV
 
 	file=SDL_RWFromFile ( filename, "r" );
 	if ( file==NULL )
+	{
+		cLog::write("Missing file",1);
+		cLog::write(filename);
 		return ( char * ) defaultValue;
-
+	}
 	filestring = LoadFileToString ( filename );
 	// Section Länge ermitteln
 	stmp="[";stmp+=section;stmp+="]";
 	startpos = ( long ) filestring.find ( stmp );
 	if ( startpos==-1 )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return ( char * ) defaultValue;
 	}
@@ -287,6 +293,8 @@ char *ReadIniString ( const char* section, const char* key, const char* defaultV
 	keypos= ( long ) filestring.find ( key,startpos );
 	if ( keypos==-1 || keypos>endpos )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return ( char * ) defaultValue;
 	}
@@ -312,14 +320,19 @@ int ReadIniInteger ( const char* section, const char* key, int defaultValue, con
 
 	file=SDL_RWFromFile ( filename, "r" );
 	if ( file==NULL )
+	{
+		cLog::write("Missing file",1);
+		cLog::write(filename);
 		return defaultValue;
-
+	}
 	filestring = LoadFileToString ( filename );
 	// Section Länge ermitteln
 	stmp="[";stmp+=section;stmp+="]";
 	startpos = ( long ) filestring.find ( stmp );
 	if ( startpos==-1 )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return defaultValue;
 	}
@@ -334,6 +347,10 @@ int ReadIniInteger ( const char* section, const char* key, int defaultValue, con
 	keypos= ( long ) filestring.find ( key,startpos );
 	if ( keypos==-1 || keypos>endpos )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(section,1);
+		cLog::write(key,1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return defaultValue;
 	}
@@ -355,14 +372,25 @@ bool ReadIniBool ( const char* section, const char* key, bool defaultValue, cons
 
 	file=SDL_RWFromFile ( filename, "r" );
 	if ( file==NULL )
+	{
+		cLog::write("Missing file",1);
+		cLog::write(filename);
 		return defaultValue;
+	}
 
 	filestring = LoadFileToString ( filename );
 	// Section Länge ermitteln
-	stmp="[";stmp+=section;stmp+="]";
+	stmp="[";
+	stmp+=section;
+	stmp+="]";
+
 	startpos = ( long ) filestring.find ( stmp );
 	if ( startpos==-1 )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(section,1);
+		cLog::write(key,1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return defaultValue;
 	}
@@ -377,6 +405,10 @@ bool ReadIniBool ( const char* section, const char* key, bool defaultValue, cons
 	keypos= ( long ) filestring.find ( key,startpos );
 	if ( keypos==-1 || keypos>endpos )
 	{
+		cLog::write("File corrupted. Missing entry:",1);
+		cLog::write(section,1);
+		cLog::write(key,1);
+		cLog::write(filename);
 		SDL_RWclose ( file );
 		return defaultValue;
 	}

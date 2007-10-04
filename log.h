@@ -71,5 +71,5 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write(char *str);
+	static int write(const char *str);
 };

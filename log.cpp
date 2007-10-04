@@ -85,7 +85,7 @@ int cLog::write ( const char *str, int TYPE )
 	else return -1;
 }
 
-int cLog::write ( char *str )
+int cLog::write (const char *str )
 {
 	return write ( str, LOG_TYPE_INFO );
 }
