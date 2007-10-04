@@ -50,7 +50,7 @@ TList::TList ( void )
 }
 
 
-int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
+int main ( int argc, char *argv[] )
 {
 	cLog::write(MAXVERSION);
 	cLog::write("More here later\n");
@@ -1029,13 +1029,14 @@ int LoadMusic()
 	{
 		sprintf ( sztmp,"%d",i );
 		stmp = "bkg"; stmp += sztmp;
-		stmp = "music//"; stmp += ReadIniString ( "music", stmp.c_str(), "None", "music//music.ini" );
-		MusicFiles->Add ( stmp );
-		if ( MusicFiles->Items[i - 1].c_str() == "" ||!FileExists ( MusicFiles->Items[i - 1].c_str() ) )
+		stmp = ReadIniString ( "music", stmp.c_str(), "None", "music//music.ini" );
+		stmp.insert(0,"music//"); 
+		if ( stmp.c_str() == "" ||!FileExists ( stmp.c_str() ) )
 		{
 			cLog::write ( "MusicFile", 2 );
 			return 0;
 		}
+		MusicFiles->Add ( stmp );
 	}
 	return 1;
 }
@@ -1354,10 +1355,10 @@ int LoadBuildings()
 		building[building_anz-1].id[3] = 0;
 
 		// Den Infotext auslesen:
-		TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
+		/*TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
 		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
 		building[building_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
-		strcpy ( building[building_anz-1].text,TmpStr.c_str() );
+		strcpy ( building[building_anz-1].text,TmpStr.c_str() );*/
 
 		// Prüfen, ob es mehrere Frames gibt:
 		if ( building[building_anz-1].img_org->w>128&&!building[building_anz-1].data.is_connector )
@@ -1626,6 +1627,8 @@ int LoadVehicles()
 
 	for ( int n=0;n < tmpDirs ;n++ )
 	{
+		if(n==22)
+			int hads=5331;
 		p = directorys->Items[n];
 		p += "/";
 		vehicle_anz++;
