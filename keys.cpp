@@ -3,11 +3,18 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "files.h"
 #include "keys.h"
+#include "log.h"
 
 // Funktionen ////////////////////////////////////////////////////////////////
 int LoadKeys ( string file )
 {
-	if ( !FileExists ( file.c_str() ) ) return 0;
+	if ( !FileExists ( file.c_str() ) )
+	{
+		cLog::write(file.c_str(),2);
+		return 0;
+	}
+	cLog::write("Found keyfile:",3);
+	cLog::write(file.c_str(),3);
 
 	KeyExit = GetKeyFromString ( ReadIniString ( "keys","KeyExit","ESCAPE","keys.ini" ) );
 	KeyJumpToAction = GetKeyFromString ( ReadIniString ( "keys","KeyJumpToAction","F1","keys.ini" ) );
