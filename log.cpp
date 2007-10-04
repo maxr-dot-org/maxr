@@ -59,12 +59,12 @@ bool cLog::open()
 	
 }
 
-int cLog::write ( char *str, int TYPE )
+int cLog::write ( const char *str, int TYPE )
 {
 	if (open())
 	{
-		char tmp[263] = "(XX): "; //placeholder
-		if (strlen ( str ) > 263 - 7) //message max is 256chars
+		char tmp[264] = "(XX): "; //placeholder
+		if (strlen ( str ) > 264 - 7) //message max is 256chars
 		{ 
 			return writeMessage("(EE): sLog recieved to long log message!\n(EE): Message had more than 256 chars! That should not happen!\n");
 		}
@@ -79,7 +79,8 @@ int cLog::write ( char *str, int TYPE )
 				default : strcpy(tmp, II);
 			}
 		}
-		return writeMessage ( strcat(tmp, str) ); //add log message itself to tmp and send it for writing
+		strcat(tmp, str);
+		return writeMessage ( strcat(tmp, "\n") ); //add log message itself to tmp and send it for writing
 	}
 	else return -1;
 }

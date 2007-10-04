@@ -62,7 +62,7 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write(char *str, int TYPE);
+	static int write(const char *str, int TYPE);
 
 	/**
 	* Writes message with default type (II) to the logfile
