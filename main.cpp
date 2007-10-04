@@ -1634,6 +1634,8 @@ int LoadVehicles()
 		vehicle= ( sVehicle* ) realloc ( vehicle,sizeof ( sVehicle ) * vehicle_anz-1 );
 		memset ( & ( vehicle[vehicle_anz-1].data ),0,sizeof ( sVehicleData ) );
 
+		cLog::write ( "Reading", 3 );
+		cLog::write (directorys->Items[n].c_str(), 3 );
 
 
 		if ( strcmp ( directorys->Items[n].c_str(),"infantery" ) ==0 || strcmp ( directorys->Items[n].c_str(),"commando" ) ==0 )
@@ -1887,7 +1889,7 @@ int LoadVehicles()
 		}
 
 
-#define LOADVEHSND(a,b) if(!FileExists(b)){cLog::write("SoundFile not found\n", 2);cLog::write(b, 2);return 0;}a=Mix_LoadWAV(b);
+#define LOADVEHSND(a,b) if(!FileExists(b)){cLog::write("SoundFile not found\n", 2);cLog::write(b, 2);return 0;}cLog::write("Loading sound", 3);cLog::write(b, 3);a=Mix_LoadWAV(b);cLog::write("Sound assigned", 3);
 		//TODO: doesn't respect vehicle sounds correctly.seems like it doesn't load ini-data correct any more - segfauts somewhere in this block randomly
 		cLog::write("Reading vehicle data for getting wav-informations:", 3);
 		cLog::write(file.c_str(),3);
@@ -1895,12 +1897,27 @@ int LoadVehicles()
 		switch ( vehicle[tmpvehicle_anz].data.can_drive )
 		{
 			case DRIVE_LAND:
-			case DRIVE_AIR: cLog::write("Looks like a land/air unit",3);
+			case DRIVE_AIR: 
+				cLog::write("Looks like a land/air unit",3);
 				file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav";
 				LOADVEHSND ( vehicle[tmpvehicle_anz].Wait,file.c_str() )
+
+				cLog::write("Water=NULL",3);
 				vehicle[tmpvehicle_anz].WaitWater=NULL;
-			if ( !vehicle[tmpvehicle_anz].data.is_human ) {file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav"; LOADVEHSND ( vehicle[tmpvehicle_anz].Start,file.c_str() ) }
-				else{vehicle[tmpvehicle_anz].Start=NULL;}
+				cLog::write("Water=NULL2",3);
+
+				if ( !vehicle[tmpvehicle_anz].data.is_human ) 
+				{
+					cLog::write("Vehicle is not human",3);
+					file = p; file.insert ( 0,"vehicles/" ); 
+					file += "wait.wav"; 
+					LOADVEHSND ( vehicle[tmpvehicle_anz].Start,file.c_str() ) 
+				}
+				else
+				{
+					cLog::write("Vehicle IS human",3);
+					vehicle[tmpvehicle_anz].Start=NULL;
+				}
 				vehicle[tmpvehicle_anz].StartWater=NULL;
 				if ( !vehicle[tmpvehicle_anz].data.is_human ) {file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav"; LOADVEHSND ( vehicle[tmpvehicle_anz].Stop,file.c_str() ) }
 				else{vehicle[tmpvehicle_anz].Stop=NULL;}
@@ -1944,6 +1961,7 @@ int LoadVehicles()
 				LOADVEHSND ( vehicle[tmpvehicle_anz].DriveWater,file.c_str() )
 				break;
 		}
+		cLog::write("Sound loaded", 3);
 		if ( vehicle[tmpvehicle_anz].data.can_attack )
 		{
 			cLog::write("And it can shoot",3);
@@ -1957,6 +1975,7 @@ int LoadVehicles()
 		}
 		cLog::write("Done\n", 3);
 	}
+	cLog::write("Sorting vehicles\n", 3);
 	// Die Vehicles sortieren:
 	changed=true;
 	max=vehicle_anz-1;
