@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone=no>
+<?xml version="1.0" "encoding="iso-8859-15"?>
 <Terrains>
 	<!-- Wasser -->
 	<water_blue file="water_blue.pcx" water="true"/>
