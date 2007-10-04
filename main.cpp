@@ -1,12 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////
 // M.A.X. - main.cpp
 //////////////////////////////////////////////////////////////////////////////
-#define TIXML_USE_STL
 
 #include <math.h>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_net.h>
+#include <iostream>
+#include <stdio.h>
 
 #include "tinyxml.h"
 #include "SDL_mixer.h"
@@ -94,7 +95,7 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	FastMode=GetXMLBool ( rootnode,"fastmode" );;
 	WindowMode=GetXMLBool ( rootnode,"windowmode" );
 	NoIntro=GetXMLBool ( rootnode,"nointro" );
-	switch ( atoi ( rootnode->FirstChildElement ( "resolution" )->FirstChild()->ValueStr().c_str() ) )
+	switch ( atoi ( rootnode->FirstChildElement ( "resolution" )->FirstChild()->Value() ) )
 	{
 		default:
 		case 0: ScreenW=640;ScreenH=480;break;
@@ -121,10 +122,10 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 
 	// IniDatei auslesen:
 	rootnode = doc.FirstChildElement ( "MAXOptions" )->FirstChildElement ( "GameOptions" );
-	ScrollSpeed = atoi ( rootnode->FirstChildElement ( "ScrollSpeed" )->FirstChild()->ValueStr().c_str() );
-	MusicVol = atoi ( rootnode->FirstChildElement ( "MusicVol" )->FirstChild()->ValueStr().c_str() );
-	SoundVol = atoi ( rootnode->FirstChildElement ( "SoundVol" )->FirstChild()->ValueStr().c_str() );
-	VoiceVol = atoi ( rootnode->FirstChildElement ( "VoiceVol" )->FirstChild()->ValueStr().c_str() );
+	ScrollSpeed = atoi ( rootnode->FirstChildElement ( "ScrollSpeed" )->FirstChild()->Value() );
+	MusicVol = atoi ( rootnode->FirstChildElement ( "MusicVol" )->FirstChild()->Value() );
+	SoundVol = atoi ( rootnode->FirstChildElement ( "SoundVol" )->FirstChild()->Value() );
+	VoiceVol = atoi ( rootnode->FirstChildElement ( "VoiceVol" )->FirstChild()->Value() );
 	MusicMute = GetXMLBool ( rootnode,"MusicMute" );
 	SoundMute = GetXMLBool ( rootnode,"SoundMute" );
 	VoiceMute = GetXMLBool ( rootnode,"VoiceMute" );
@@ -137,9 +138,9 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 	MakeTracks = GetXMLBool ( rootnode,"MakeTracks" );
 	ShowBeschreibung = GetXMLBool ( rootnode,"ShowBeschreibung" );
 	// MapPath=AppPath+ini->ReadString("max","maps","maps");
-	LastIP = rootnode->FirstChildElement ( "LastIP" )->FirstChild()->ValueStr();
-	LastPort = atoi ( rootnode->FirstChildElement ( "LastPort" )->FirstChild()->ValueStr().c_str() );
-	LastPlayerName = rootnode->FirstChildElement ( "LastPlayerName" )->FirstChild()->ValueStr();
+	LastIP = rootnode->FirstChildElement ( "LastIP" )->FirstChild()->Value();
+	LastPort = atoi ( rootnode->FirstChildElement ( "LastPort" )->FirstChild()->Value() );
+	LastPlayerName = rootnode->FirstChildElement ( "LastPlayerName" )->FirstChild()->Value();
 
 	MapPath = "maps//";
 	SavePath = "save//";
@@ -212,9 +213,11 @@ int main ( int hInst,int hPrevInstance, int argc, char *argv[] )
 }
 int LoadData ( void * )
 {
+	cLog::write("Loading fonts\n",4);
 	// Fonts laden
 	if ( !LoadFonts() )
 	{
+		cLog::write("Loading fonts\n",2);
 		DeleteTerrain();
 		DeleteFX();
 		DeleteGFX();
@@ -222,14 +225,16 @@ int LoadData ( void * )
 		if ( sound ) CloseSound();
 		return -1;
 	}
+	cLog::write("Success\n",3);
+
 	string logstr;
 	logstr="DDs M.A.X.  -  Version ";logstr+=MAX_VERSION;
 	MakeLog ( ( char * ) logstr.c_str(),false,0 ); 
-	MakeLog ( "SDL/SDL_Net starten...",false,2 ); cLog::write("Starting SDL\n",4);
+	MakeLog ( "SDL/SDL_Net starten...",false,2 ); //cLog::write("Starting SDL\n",4);
 	MakeLog ( "SDL/SDL_Net starten...",true,2 );
-	MakeLog ( "Ini Datei lesen...",false,3 ); cLog::write("Reading ini\n",4);
+	MakeLog ( "Ini Datei lesen...",false,3 ); //cLog::write("Reading ini\n",4);
 	MakeLog ( "Ini Datei lesen...",true,3 );
-	MakeLog ( "Fonts laden...",false,4 ); cLog::write("Loading fonts\n",4);
+	MakeLog ( "Fonts laden...",false,4 ); //cLog::write("Loading fonts\n",4);
 	MakeLog ( "Fonts laden...",true,4 );
 
 	// Sound Initialisieren
@@ -241,6 +246,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Sound initialisieren...",true,5 );
+	cLog::write("Success\n",3);
 
 	// Keys laden:
 	MakeLog ( "Keys laden...",false,6 );  cLog::write("Loading keys\n",4);
@@ -252,6 +258,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Keys laden...",true,6 );
+	cLog::write("Success\n",3);
 
 	// Diverse Bilder laden
 	MakeLog ( "Bilder laden...",false,7 );  cLog::write("Loading pictures\n",4);
@@ -263,6 +270,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Bilder laden...",true,7 );
+	cLog::write("Success\n",3);
 
 	// GFX On Demmand prüfen
 
@@ -278,6 +286,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Effekte laden...",true,8 );
+	cLog::write("Success\n",3);
 
 	// Terrain laden
 	MakeLog ( "Terrain laden...",false,9 );  cLog::write("Loading terrain\n",4);
@@ -291,6 +300,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Terrain laden...",true,9 );
+	cLog::write("Success\n",3);
 
 	// Die Vehicles laden
 	MakeLog ( "Fahrzeuge laden...",false,10 );  cLog::write("Loading vehicles\n",4);
@@ -306,6 +316,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Fahrzeuge laden...",true,10 ); 
+	cLog::write("Success\n",3);
 
 	// Die Buildings laden
 	MakeLog ( "Gebäude laden...",false,11 );  cLog::write("Loading buildings\n",4);
@@ -322,6 +333,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Gebäude laden...",true,11 );
+	cLog::write("Success\n",3);
 
 	// Die Musik laden
 	MakeLog ( "Musik laden...",false,12 );  cLog::write("Loading music\n",4);
@@ -339,6 +351,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Musik laden...",true,12 );
+	cLog::write("Success\n",3);
 
 	// Die Sounds laden
 	MakeLog ( "Sounds laden...",false,13 );  cLog::write("Loading sounds\n",4);
@@ -357,6 +370,7 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Sounds laden...",true,13 );
+	cLog::write("Success\n",3);
 
 	// Stimmen laden
 	MakeLog ( "Stimmen laden...",false,14 );  cLog::write("Loading voices\n",4);
@@ -376,6 +390,8 @@ int LoadData ( void * )
 		return -1;
 	}
 	MakeLog ( "Stimmen laden...",true,14 ); 
+	cLog::write("Success\n",3);
+
 	return 1;
 }
 
@@ -402,8 +418,8 @@ int InitSound()
 	rootnode = doc.FirstChildElement ( "MAXOptions" )->FirstChildElement ( "StartOptions" );
 	sound=GetXMLBool ( rootnode,"sound" );
 	if ( !sound ) return 1;
-	frequency = atoi ( rootnode->FirstChildElement ( "frequency" )->FirstChild()->ValueStr().c_str() );
-	chunksize = atoi ( rootnode->FirstChildElement ( "chunksize" )->FirstChild()->ValueStr().c_str() );
+	frequency = atoi ( rootnode->FirstChildElement ( "frequency" )->FirstChild()->Value() );
+	chunksize = atoi ( rootnode->FirstChildElement ( "chunksize" )->FirstChild()->Value() );
 	if ( !InitSound ( frequency,chunksize ) )
 	{
 		printf ( "Could not initialize sound." );
@@ -418,7 +434,7 @@ int InitSound()
 int LoadGFX()
 {
 	string stmp;
-#define LOADGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; cLog::write(b,1);return 0;}a=LoadPCX(b);
+#define LOADGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; cLog::write(b,1);return 0;}cLog::write(b,4);a=LoadPCX(b);
 #define CHECKGFX(a,b) if(!FileExists(b)){stmp = "File not found: "; stmp += b; cLog::write(b, 1);return 0;}a=b;
 
 	LOADGFX ( gfx_Chand,"gfx//hand.pcx" );
@@ -699,7 +715,7 @@ void DeleteGFX ( void )
 int LoadFX()
 {
 	// Die Surfaces anlegen:
-#define LOADFX(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2); return 0;} a = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); a[1] = LoadPCX(b);
+#define LOADFX(a,b) if(!FileExists(b)){cLog::write("File not found: ", 2); return 0;}cLog::write(b,3); a = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); a[1] = LoadPCX(b);
 #define LOADFXALPHA(a,b,c) if(!FileExists(b)){cLog::write("File not found: ", 2); return 0;}a=(SDL_Surface**)malloc(sizeof(SDL_Surface*)*2); a[0] = LoadPCX(b); SDL_SetAlpha(a[0],SDL_SRCALPHA,c); a[1] = LoadPCX(b); SDL_SetAlpha(a[1],SDL_SRCALPHA,c);
 	LOADFX ( fx_explo_small0,"fx//explo_small0.pcx" );
 	LOADFX ( fx_explo_small1,"fx//explo_small1.pcx" );
@@ -768,13 +784,14 @@ int LoadTerrain()
 	sections = new TList();
 	node=rootnode->FirstChildElement();
 	if ( node )
-		sections->Add ( node->ToElement()->ValueStr() );
-	while ( node )
+		sections->Add ( node->ToElement()->Value() );
+	while ( node != NULL)
 	{
 		node=node->NextSibling();
 		if ( node && node->Type() ==1 )
 		{
-			sections->Add ( node->ToElement()->ValueStr() );
+			cLog::write(node->ToElement()->Value(),3 );
+			sections->Add ( node->ToElement()->Value() );
 		}
 	}
 
@@ -783,7 +800,7 @@ int LoadTerrain()
 		node = rootnode->FirstChildElement ( sections->Items[i].c_str() );
 		terrain_anz++;
 		terrain= ( sTerrain* ) realloc ( terrain,sizeof ( sTerrain ) *terrain_anz );
-		file="terrain//";
+		file="terrain/";
 		if ( node->ToElement()->Attribute ( "file" ) ==NULL )
 			cLog::write ( "Wrong format for xml-file", 2 );
 		file+=node->ToElement()->Attribute ( "file" );
@@ -1574,11 +1591,12 @@ int LoadVehicles()
 	char TmpChr[4];
 	bool changed;
 	int i,max;
-	vehicle_anz=0;
+	vehicle_anz=0; 
 	char tmp[256];
 	TList *directorys;
 	TiXmlDocument doc;
 	TiXmlNode* rootnode;
+
 	TiXmlNode* node;
 
 	if ( !doc.LoadFile ( "vehicles//vehicles.xml" ) )
@@ -1586,13 +1604,16 @@ int LoadVehicles()
 		cLog::write ( "Could not load vehicles.xml",1 );
 		return 0;
 	}
-	rootnode=doc.FirstChildElement ( "VehiclesData" )->FirstChildElement ( "Vehicles" );
+	//TODO: Crashes badly if can not find childelements in xml
+	rootnode=doc.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" );
+	//rootnode=doc.FirstChild ( "VehicleData" )->FirstChild ( "Vehicles" );
+
 
 	directorys = new TList();
 	node=rootnode->FirstChildElement();
 	if ( node )
 		directorys->Add ( node->ToElement()->Attribute ( "directory" ) );
-	while ( node )
+	while ( node != NULL )
 	{
 		node=node->NextSibling();
 		if ( node && node->Type() ==1 )
@@ -1600,18 +1621,26 @@ int LoadVehicles()
 	}
 
 	// Alle Unterverzeichnisse durchsuchen:
-	for ( int n=0;n<directorys->Count;n++ )
+	int tmpDirs = directorys->Count;
+	int tmpvehicle_anz = vehicle_anz-1;
+
+	for ( int n=0;n < tmpDirs ;n++ )
 	{
 		p = directorys->Items[n];
-		p += "//";
+		p += "/";
 		vehicle_anz++;
-		vehicle= ( sVehicle* ) realloc ( vehicle,sizeof ( sVehicle ) *vehicle_anz );
+		tmpvehicle_anz = vehicle_anz-1;
+
+		vehicle= ( sVehicle* ) realloc ( vehicle,sizeof ( sVehicle ) * vehicle_anz-1 );
 		memset ( & ( vehicle[vehicle_anz-1].data ),0,sizeof ( sVehicleData ) );
+
+
 
 		if ( strcmp ( directorys->Items[n].c_str(),"infantery" ) ==0 || strcmp ( directorys->Items[n].c_str(),"commando" ) ==0 )
 		{
-			if ( !LoadInfantery ( vehicle+ ( vehicle_anz-1 ),p ) )
+			if ( !LoadInfantery ( vehicle+ ( tmpvehicle_anz ),p ) )
 			{
+				cLog::write ( "Hey, what is this doing?", 2 );
 				return 0;
 			}
 		}
@@ -1627,12 +1656,12 @@ int LoadVehicles()
 					return 0;
 				}
 				strcpy ( tmp, file.c_str() );
-				if ( vehicle_anz == 34 )
+				if ( tmpvehicle_anz == 34 )
 					int h = 1;
-				vehicle[vehicle_anz-1].img_org[i] = LoadPCX ( tmp );
-				SDL_SetColorKey ( vehicle[vehicle_anz-1].img_org[i],SDL_SRCCOLORKEY,0xFFFFFF );
-				vehicle[vehicle_anz-1].img[i] = LoadPCX ( tmp );
-				SDL_SetColorKey ( vehicle[vehicle_anz-1].img[i],SDL_SRCCOLORKEY,0xFFFFFF );
+				vehicle[tmpvehicle_anz].img_org[i] = LoadPCX ( tmp );
+				SDL_SetColorKey ( vehicle[tmpvehicle_anz].img_org[i],SDL_SRCCOLORKEY,0xFFFFFF );
+				vehicle[tmpvehicle_anz].img[i] = LoadPCX ( tmp );
+				SDL_SetColorKey ( vehicle[tmpvehicle_anz].img[i],SDL_SRCCOLORKEY,0xFFFFFF );
 				// shw laden:
 				sprintf ( TmpChr,"%d",i ); file = p; file.insert ( 0,"vehicles//" ); file += "shw"; file.insert ( file.length(),TmpChr ); file += ".pcx";
 				if ( !FileExists ( file.c_str() ) )
@@ -1641,17 +1670,17 @@ int LoadVehicles()
 					return 0;
 				}
 				strcpy ( tmp, file.c_str() );
-				vehicle[vehicle_anz-1].shw_org[i] = LoadPCX ( tmp );
-				SDL_SetColorKey ( vehicle[vehicle_anz-1].shw_org[i],SDL_SRCCOLORKEY,0xFF00FF );
-				vehicle[vehicle_anz-1].shw[i] = LoadPCX ( tmp );
-				SDL_SetAlpha ( vehicle[vehicle_anz-1].shw[i],SDL_SRCALPHA,50 );
-				SDL_SetColorKey ( vehicle[vehicle_anz-1].shw[i],SDL_SRCCOLORKEY,0xFF00FF );
+				vehicle[tmpvehicle_anz].shw_org[i] = LoadPCX ( tmp );
+				SDL_SetColorKey ( vehicle[tmpvehicle_anz].shw_org[i],SDL_SRCCOLORKEY,0xFF00FF );
+				vehicle[tmpvehicle_anz].shw[i] = LoadPCX ( tmp );
+				SDL_SetAlpha ( vehicle[tmpvehicle_anz].shw[i],SDL_SRCALPHA,50 );
+				SDL_SetColorKey ( vehicle[tmpvehicle_anz].shw[i],SDL_SRCCOLORKEY,0xFF00FF );
 			}
 		}
 		// Das Video laden:
 		file = p; file.insert ( 0,"vehicles//" ); file += "video.flc";
-		vehicle[vehicle_anz-1].FLCFile= ( char* ) malloc ( strlen ( file.c_str() ) +1 );
-		strcpy ( vehicle[vehicle_anz-1].FLCFile,file.c_str() );
+		vehicle[tmpvehicle_anz].FLCFile= ( char* ) malloc ( strlen ( file.c_str() ) +1 );
+		strcpy ( vehicle[tmpvehicle_anz].FLCFile,file.c_str() );
 
 		if ( !FileExists ( file.c_str() ) )
 		{
@@ -1666,7 +1695,7 @@ int LoadVehicles()
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
-		vehicle[vehicle_anz-1].info=LoadPCX ( tmp );
+		vehicle[tmpvehicle_anz].info=LoadPCX ( tmp );
 
 		// Das Storagebild laden:
 		file = p; file.insert ( 0,"vehicles//" ); file += "store.pcx";
@@ -1676,7 +1705,7 @@ int LoadVehicles()
 			return 0;
 		}
 		strcpy ( tmp, file.c_str() );
-		vehicle[vehicle_anz-1].storage=LoadPCX ( tmp );
+		vehicle[tmpvehicle_anz].storage=LoadPCX ( tmp );
 
 		// Die Daten laden:
 		file = p; file.insert ( 0,"vehicles//" ); file += "data.ini";
@@ -1686,238 +1715,247 @@ int LoadVehicles()
 			return 0;
 		}
 
-		vehicle[vehicle_anz-1].data.version=1;
-		strncpy ( vehicle[vehicle_anz-1].data.name,ReadIniString ( "data","name","unknown",file.c_str() ),24 );
+		vehicle[tmpvehicle_anz].data.version=1;
+		strncpy ( vehicle[tmpvehicle_anz].data.name,ReadIniString ( "data","name","unknown",file.c_str() ),24 );
 
-		vehicle[vehicle_anz-1].data.max_speed = ReadIniInteger ( "data", "max_speed", 1, file.c_str() ) *2;
-		vehicle[vehicle_anz-1].data.speed = 0;
-		vehicle[vehicle_anz-1].data.max_hit_points = ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.hit_points = 0;
-		vehicle[vehicle_anz-1].data.armor = ReadIniInteger ( "data", "armor", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.scan = ReadIniInteger ( "data", "scan", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.range = ReadIniInteger ( "data", "range", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.max_shots = ReadIniInteger ( "data", "max_shots", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.shots = 0;
-		vehicle[vehicle_anz-1].data.damage = ReadIniInteger ( "data", "damage", 1, file.c_str() );
-		vehicle[vehicle_anz-1].data.max_cargo = ReadIniInteger ( "data", "max_cargo", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.cargo = 0;
-		vehicle[vehicle_anz-1].data.max_ammo = ReadIniInteger ( "data", "max_ammo", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.ammo = 0;
-		vehicle[vehicle_anz-1].data.costs = ReadIniInteger ( "data", "costs", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.max_speed = ReadIniInteger ( "data", "max_speed", 1, file.c_str() ) *2;
+		vehicle[tmpvehicle_anz].data.speed = 0;
+		vehicle[tmpvehicle_anz].data.max_hit_points = ReadIniInteger ( "data", "max_hit_points", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.hit_points = 0;
+		vehicle[tmpvehicle_anz].data.armor = ReadIniInteger ( "data", "armor", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.scan = ReadIniInteger ( "data", "scan", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.range = ReadIniInteger ( "data", "range", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.max_shots = ReadIniInteger ( "data", "max_shots", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.shots = 0;
+		vehicle[tmpvehicle_anz].data.damage = ReadIniInteger ( "data", "damage", 1, file.c_str() );
+		vehicle[tmpvehicle_anz].data.max_cargo = ReadIniInteger ( "data", "max_cargo", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.cargo = 0;
+		vehicle[tmpvehicle_anz].data.max_ammo = ReadIniInteger ( "data", "max_ammo", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.ammo = 0;
+		vehicle[tmpvehicle_anz].data.costs = ReadIniInteger ( "data", "costs", 1, file.c_str() );
 
-		vehicle[vehicle_anz-1].data.can_build = ReadIniInteger ( "data", "can_build", BUILD_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_drive = ReadIniInteger ( "data", "can_drive", DRIVE_LAND, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_transport = ReadIniInteger ( "data", "can_transport", TRANS_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_attack = ReadIniInteger ( "data", "can_attack", ATTACK_NONE, file.c_str() );
-		vehicle[vehicle_anz-1].data.muzzle_typ = ReadIniInteger ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_build = ReadIniInteger ( "data", "can_build", BUILD_NONE, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_drive = ReadIniInteger ( "data", "can_drive", DRIVE_LAND, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_transport = ReadIniInteger ( "data", "can_transport", TRANS_NONE, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_attack = ReadIniInteger ( "data", "can_attack", ATTACK_NONE, file.c_str() );
+		vehicle[tmpvehicle_anz].data.muzzle_typ = ReadIniInteger ( "data", "muzzle_typ", MUZZLE_BIG, file.c_str() );
 
-		vehicle[vehicle_anz-1].data.can_reload = ReadIniInteger ( "data", "can_reload", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_repair = ReadIniInteger ( "data", "can_repair", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_drive_and_fire = ReadIniInteger ( "data", "can_drive_and_fire", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_stealth_land = ReadIniInteger ( "data", "is_stealth_land", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_stealth_sea = ReadIniInteger ( "data", "is_stealth_sea", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_human = ReadIniInteger ( "data", "is_human", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_survey = ReadIniInteger ( "data", "can_survey", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_clear = ReadIniInteger ( "data", "can_clear", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.has_overlay = ReadIniInteger ( "data", "has_overlay", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.build_by_big = ReadIniInteger ( "data", "build_by_big", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_lay_mines = ReadIniInteger ( "data", "can_lay_mines", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_mines = ReadIniInteger ( "data", "can_detect_mines", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_sea = ReadIniInteger ( "data", "can_detect_sea", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.can_detect_land = ReadIniInteger ( "data", "can_detect_land", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.make_tracks = ReadIniInteger ( "data", "make_tracks", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_commando = ReadIniInteger ( "data", "is_commando", 0, file.c_str() );
-		vehicle[vehicle_anz-1].data.is_alien = ReadIniInteger ( "data", "is_alien", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_reload = ReadIniInteger ( "data", "can_reload", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_repair = ReadIniInteger ( "data", "can_repair", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_drive_and_fire = ReadIniInteger ( "data", "can_drive_and_fire", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.is_stealth_land = ReadIniInteger ( "data", "is_stealth_land", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.is_stealth_sea = ReadIniInteger ( "data", "is_stealth_sea", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.is_human = ReadIniInteger ( "data", "is_human", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_survey = ReadIniInteger ( "data", "can_survey", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_clear = ReadIniInteger ( "data", "can_clear", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.has_overlay = ReadIniInteger ( "data", "has_overlay", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.build_by_big = ReadIniInteger ( "data", "build_by_big", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_lay_mines = ReadIniInteger ( "data", "can_lay_mines", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_detect_mines = ReadIniInteger ( "data", "can_detect_mines", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_detect_sea = ReadIniInteger ( "data", "can_detect_sea", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.can_detect_land = ReadIniInteger ( "data", "can_detect_land", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.make_tracks = ReadIniInteger ( "data", "make_tracks", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.is_commando = ReadIniInteger ( "data", "is_commando", 0, file.c_str() );
+		vehicle[tmpvehicle_anz].data.is_alien = ReadIniInteger ( "data", "is_alien", 0, file.c_str() );
 
-		strncpy ( vehicle[vehicle_anz-1].id,ReadIniString ( "data","id","unknown",file.c_str() ),3 );
-		vehicle[vehicle_anz-1].id[3] = 0;
+		strncpy ( vehicle[tmpvehicle_anz].id,ReadIniString ( "data","id","unknown",file.c_str() ),3 );
+		vehicle[tmpvehicle_anz].id[3] = 0;
 
 		// Den Infotext auslesen:
-		TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
-		TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
-		vehicle[vehicle_anz-1].text= ( char* ) malloc ( TmpStr.length() +1 );
-		strcpy ( vehicle[vehicle_anz-1].text,TmpStr.c_str() );
+		//TODO: TmpStr.replace is buggy and results in program termination
+		//TmpStr = ReadIniString ( "data","text","unknown",file.c_str() );
+		//TmpStr.replace ( TmpStr.find ( "//",0 ),4,"\n\n" );
+		vehicle[tmpvehicle_anz].text= ( char* ) malloc ( TmpStr.length() +1 );
+		strcpy ( vehicle[tmpvehicle_anz].text,"TmpStr.c_str()" );
 
 		// Ggf Overlay laden:
-		if ( vehicle[vehicle_anz-1].data.has_overlay )
+		if ( vehicle[tmpvehicle_anz].data.has_overlay )
 		{
-			file = p; file.insert ( 0,"vehicles//" ); file += "overlay.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "overlay.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: overlay.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].overlay_org=LoadPCX ( tmp );
-			vehicle[vehicle_anz-1].overlay=LoadPCX ( tmp );
+			vehicle[tmpvehicle_anz].overlay_org=LoadPCX ( tmp );
+			vehicle[tmpvehicle_anz].overlay=LoadPCX ( tmp );
 		}
 		else
 		{
-			vehicle[vehicle_anz-1].overlay_org=NULL;
-			vehicle[vehicle_anz-1].overlay=NULL;
+			vehicle[tmpvehicle_anz].overlay_org=NULL;
+			vehicle[tmpvehicle_anz].overlay=NULL;
 		}
 
 		// Build-Surfaces laden:
-		if ( vehicle[vehicle_anz-1].data.can_build )
+		if ( vehicle[tmpvehicle_anz].data.can_build )
 		{
 			// img laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "build.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "build.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: build.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].build_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_org,SDL_SRCCOLORKEY,0xFFFFFF );
-			vehicle[vehicle_anz-1].build=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].build_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].build=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF );
 			// shw laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "build_shw.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "build_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: build_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].build_shw_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
-			vehicle[vehicle_anz-1].build_shw=LoadPCX ( tmp );
-			SDL_SetAlpha ( vehicle[vehicle_anz-1].build_shw,SDL_SRCALPHA,50 );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_shw,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].build_shw_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].build_shw=LoadPCX ( tmp );
+			SDL_SetAlpha ( vehicle[tmpvehicle_anz].build_shw,SDL_SRCALPHA,50 );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF );
 		}
 		else
 		{
-			vehicle[vehicle_anz-1].build=NULL;
-			vehicle[vehicle_anz-1].build_org=NULL;
-			vehicle[vehicle_anz-1].build_shw=NULL;
-			vehicle[vehicle_anz-1].build_shw_org=NULL;
+			vehicle[tmpvehicle_anz].build=NULL;
+			vehicle[tmpvehicle_anz].build_org=NULL;
+			vehicle[tmpvehicle_anz].build_shw=NULL;
+			vehicle[tmpvehicle_anz].build_shw_org=NULL;
 		}
 
 		// Clear-Surfaces laden:
-		if ( vehicle[vehicle_anz-1].data.can_clear )
+		if ( vehicle[tmpvehicle_anz].data.can_clear )
 		{
 			// img laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "clear_small.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "clear_small.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: clear_small.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].clear_small_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].clear_small_org,SDL_SRCCOLORKEY,0xFFFFFF );
-			vehicle[vehicle_anz-1].clear_small=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].clear_small,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].clear_small_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].clear_small_org,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].clear_small=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].clear_small,SDL_SRCCOLORKEY,0xFFFFFF );
 			// shw laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "clear_small_shw.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "clear_small_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: clear_small_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].clear_small_shw_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].clear_small_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
-			vehicle[vehicle_anz-1].clear_small_shw=LoadPCX ( tmp );
-			SDL_SetAlpha ( vehicle[vehicle_anz-1].clear_small_shw,SDL_SRCALPHA,50 );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].clear_small_shw,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].clear_small_shw_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].clear_small_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].clear_small_shw=LoadPCX ( tmp );
+			SDL_SetAlpha ( vehicle[tmpvehicle_anz].clear_small_shw,SDL_SRCALPHA,50 );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].clear_small_shw,SDL_SRCCOLORKEY,0xFF00FF );
 			// img laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "clear_big.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "clear_big.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: clear_big.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].build_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_org,SDL_SRCCOLORKEY,0xFFFFFF );
-			vehicle[vehicle_anz-1].build=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].build_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF );
+			vehicle[tmpvehicle_anz].build=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF );
 			// shw laden:
-			file = p; file.insert ( 0,"vehicles//" ); file += "clear_big_shw.pcx";
+			file = p; file.insert ( 0,"vehicles/" ); file += "clear_big_shw.pcx";
 			if ( !FileExists ( file.c_str() ) )
 			{
 				cLog::write ( "File not found: clear_big_shw.pcx", 2 );
 				return 0;
 			}
 			strcpy ( tmp, file.c_str() );
-			vehicle[vehicle_anz-1].build_shw_org=LoadPCX ( tmp );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
-			vehicle[vehicle_anz-1].build_shw=LoadPCX ( tmp );
-			SDL_SetAlpha ( vehicle[vehicle_anz-1].build_shw,SDL_SRCALPHA,50 );
-			SDL_SetColorKey ( vehicle[vehicle_anz-1].build_shw,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].build_shw_org=LoadPCX ( tmp );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF );
+			vehicle[tmpvehicle_anz].build_shw=LoadPCX ( tmp );
+			SDL_SetAlpha ( vehicle[tmpvehicle_anz].build_shw,SDL_SRCALPHA,50 );
+			SDL_SetColorKey ( vehicle[tmpvehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF );
 		}
 		else
 		{
-			vehicle[vehicle_anz-1].clear_small=NULL;
-			vehicle[vehicle_anz-1].clear_small_org=NULL;
-			vehicle[vehicle_anz-1].clear_small_shw=NULL;
-			vehicle[vehicle_anz-1].clear_small_shw_org=NULL;
+			vehicle[tmpvehicle_anz].clear_small=NULL;
+			vehicle[tmpvehicle_anz].clear_small_org=NULL;
+			vehicle[tmpvehicle_anz].clear_small_shw=NULL;
+			vehicle[tmpvehicle_anz].clear_small_shw_org=NULL;
 		}
 
-#define LOADVEHSND(a,b) if(!FileExists(b)){cLog::write("SoundFile not found", 2);return 0;}a=Mix_LoadWAV(b);
 
+#define LOADVEHSND(a,b) if(!FileExists(b)){cLog::write("SoundFile not found\n", 2);cLog::write(b, 2);return 0;}a=Mix_LoadWAV(b);
+		//TODO: doesn't respect vehicle sounds correctly.seems like it doesn't load ini-data correct any more - segfauts somewhere in this block randomly
+		cLog::write("Reading vehicle data for getting wav-informations:", 3);
+		cLog::write(file.c_str(),3);
 		// Die Sounds laden:
-		switch ( vehicle[vehicle_anz-1].data.can_drive )
+		switch ( vehicle[tmpvehicle_anz].data.can_drive )
 		{
 			case DRIVE_LAND:
-			case DRIVE_AIR:
-				file = p; file.insert ( 0,"vehicles//" ); file += "wait.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Wait,file.c_str() )
-				vehicle[vehicle_anz-1].WaitWater=NULL;
-			if ( !vehicle[vehicle_anz-1].data.is_human ) {file = p; file.insert ( 0,"vehicles//" ); file += "wait.wav"; LOADVEHSND ( vehicle[vehicle_anz-1].Start,file.c_str() ) }
-				else{vehicle[vehicle_anz-1].Start=NULL;}
-				vehicle[vehicle_anz-1].StartWater=NULL;
-				if ( !vehicle[vehicle_anz-1].data.is_human ) {file = p; file.insert ( 0,"vehicles//" ); file += "wait.wav"; LOADVEHSND ( vehicle[vehicle_anz-1].Stop,file.c_str() ) }
-				else{vehicle[vehicle_anz-1].Stop=NULL;}
-				vehicle[vehicle_anz-1].StopWater=NULL;
-				file = p; file.insert ( 0,"vehicles//" ); file += "drive.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Drive,file.c_str() )
-				vehicle[vehicle_anz-1].DriveWater=NULL;
+			case DRIVE_AIR: cLog::write("Looks like a land/air unit",3);
+				file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Wait,file.c_str() )
+				vehicle[tmpvehicle_anz].WaitWater=NULL;
+			if ( !vehicle[tmpvehicle_anz].data.is_human ) {file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav"; LOADVEHSND ( vehicle[tmpvehicle_anz].Start,file.c_str() ) }
+				else{vehicle[tmpvehicle_anz].Start=NULL;}
+				vehicle[tmpvehicle_anz].StartWater=NULL;
+				if ( !vehicle[tmpvehicle_anz].data.is_human ) {file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav"; LOADVEHSND ( vehicle[tmpvehicle_anz].Stop,file.c_str() ) }
+				else{vehicle[tmpvehicle_anz].Stop=NULL;}
+				vehicle[tmpvehicle_anz].StopWater=NULL;
+				file = p; file.insert ( 0,"vehicles/" ); file += "drive.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Drive,file.c_str() )
+				vehicle[tmpvehicle_anz].DriveWater=NULL;
 				break;
 			case DRIVE_SEA:
-				file = p; file.insert ( 0,"vehicles//" ); file += "wait_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].WaitWater,file.c_str() )
-				vehicle[vehicle_anz-1].Wait=NULL;
-				file = p; file.insert ( 0,"vehicles//" ); file += "start_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].StartWater,file.c_str() )
-				vehicle[vehicle_anz-1].Start=NULL;
-				file = p; file.insert ( 0,"vehicles//" ); file += "stop_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].StopWater,file.c_str() )
-				vehicle[vehicle_anz-1].Stop=NULL;
-				file = p; file.insert ( 0,"vehicles//" ); file += "drive_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].DriveWater,file.c_str() )
-				vehicle[vehicle_anz-1].Drive=NULL;
+				cLog::write("Looks like a sea unit",3);
+				file = p; file.insert ( 0,"vehicles/" ); file += "wait_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].WaitWater,file.c_str() )
+				vehicle[tmpvehicle_anz].Wait=NULL;
+				file = p; file.insert ( 0,"vehicles/" ); file += "start_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].StartWater,file.c_str() )
+				vehicle[tmpvehicle_anz].Start=NULL;
+				file = p; file.insert ( 0,"vehicles/" ); file += "stop_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].StopWater,file.c_str() )
+				vehicle[tmpvehicle_anz].Stop=NULL;
+				file = p; file.insert ( 0,"vehicles/" ); file += "drive_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].DriveWater,file.c_str() )
+				vehicle[tmpvehicle_anz].Drive=NULL;
 				break;
 			case DRIVE_LANDnSEA:
-				file = p; file.insert ( 0,"vehicles//" ); file += "wait.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Wait,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "wait_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].WaitWater,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "start.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Start,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "start_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].StartWater,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "stop.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Stop,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "stop_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].StopWater,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "drive.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].Drive,file.c_str() )
-				file = p; file.insert ( 0,"vehicles//" ); file += "drive_water.wav";
-				LOADVEHSND ( vehicle[vehicle_anz-1].DriveWater,file.c_str() )
+				cLog::write("Looks like a land/sea unit",3);
+				file = p; file.insert ( 0,"vehicles/" ); file += "wait.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Wait,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "wait_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].WaitWater,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "start.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Start,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "start_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].StartWater,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "stop.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Stop,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "stop_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].StopWater,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "drive.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].Drive,file.c_str() )
+				file = p; file.insert ( 0,"vehicles/" ); file += "drive_water.wav";
+				LOADVEHSND ( vehicle[tmpvehicle_anz].DriveWater,file.c_str() )
 				break;
 		}
-		if ( vehicle[vehicle_anz-1].data.can_attack )
+		if ( vehicle[tmpvehicle_anz].data.can_attack )
 		{
-			file = p; file.insert ( 0,"vehicles//" ); file += "attack.wav";
-			LOADVEHSND ( vehicle[vehicle_anz-1].Attack,file.c_str() )
+			cLog::write("And it can shoot",3);
+			file = p; file.insert ( 0,"vehicles/" ); file += "attack.wav";
+			LOADVEHSND ( vehicle[tmpvehicle_anz].Attack,file.c_str() )
 		}
 		else
 		{
-			vehicle[vehicle_anz-1].Attack=NULL;
+			cLog::write("But it can't shoot",3);
+			vehicle[tmpvehicle_anz].Attack=NULL;
 		}
+		cLog::write("Done\n", 3);
 	}
 	// Die Vehicles sortieren:
 	changed=true;
@@ -1944,6 +1982,7 @@ int LoadVehicles()
 		max--;
 	}
 	for ( i=0;i<vehicle_anz;i++ ) vehicle[i].nr=i;
+	cLog::write ( "Finished loading vehicles", 3 );
 	return 1;
 }
 
@@ -2315,7 +2354,7 @@ int Round ( double dValueToRound )
 
 bool GetXMLBool ( TiXmlNode* rootnode,const char *nodename )
 {
-	if ( strcmp ( rootnode->FirstChildElement ( nodename )->FirstChild()->ValueStr().c_str(),"true" ) ==0 )
+	if ( strcmp ( rootnode->FirstChildElement ( nodename )->FirstChild()->Value(),"true" ) ==0 )
 		return true;
 	else
 		return false;
