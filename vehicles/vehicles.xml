@@ -30,7 +30,7 @@
 		<Minelayer directory="minelayer"/>
 		<Missellauncher directory="missel"/>
 		<Missel_Ship directory="missel_ship"/>
-		<Mobile_AA directory="mibile_aa"/>
+		<Mobile_AA directory="mobile_aa"/>
 		<Pionier directory="pionier"/>
 		<Repair directory="repair"/>
 		<Scanner directory="scanner"/>
