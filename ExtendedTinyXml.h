@@ -47,8 +47,8 @@ public:
 	ExTiXmlNode* XmlGetNextNodeSibling();
 
 	/// Retrieve data from a node
-	int XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE eType );
-	int XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE eType, const char * pszAttributeName );
+	ExTiXmlNode * XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE eType );
+	ExTiXmlNode * XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE eType, const char * pszAttributeName );
 
 	bool XmlDataToBool( std::string &rstrData );
 	inline long XmlDataToLong( std::string &rstrData ){ return atol(rstrData.c_str()); };
