@@ -11,6 +11,7 @@
 		<Version Text="0.1"/> <!-- not really important for MAX but perhaps later for custom units by fans! -->
 		<Last_Change Time="2007-05-10 00:00:00"/> <!-- do we really need that?  -->
 		<Name Text="Transportplane"/> <!-- english here - needs to be translated using language xml containing msg-strings -->
+		<Describtion Text="Transportplane\n\nHeavy plane, able to transport three groundunits."/>
 	</Header>
 	<General_Info>
 		<Is_Controllable YN="Yes"/>
