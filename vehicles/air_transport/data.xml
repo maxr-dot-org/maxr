@@ -4,10 +4,12 @@
 		<Author ID="00 00 00 00" Name="OrgMax">
 			<Editor ID="0a 4e 2c f5" Name="beko"/>
 		</Author>
-		<Unit_ID ID="A2T"/>
-		<Version Text="00.00.01"/>
-		<Last_Change Time="2007-05-10 00:00:00"/>
-		<Name Text="Transportplane"/>
+		<Unit_ID ID="01"/> <!-- unique ID-Num. Needs sanity-check in code!!! --> 
+		<Unit_Type ID="0"/> <!-- 0 == vehicle, 1 == building, 2 == perhaps more to come? -->
+		<Game_Version Num="0"/> <!-- minimal game version NEEDED for this unit - 0 for undefined/ALL -->.
+		<Version Text="0.1"/> <!-- not really important for MAX but perhaps later for custom units by fans! -->
+		<Last_Change Time="2007-05-10 00:00:00"/> <!-- do we really need that?  -->
+		<Name Text="Transportplane"/> <!-- english here - needs to be translated using language xml containing msg-strings -->
 	</Header>
 	<General_Info>
 		<Is_Controllable YN="Yes"/>
@@ -32,7 +34,7 @@
 		<Built_Costs Num="18"/>
 		<Built_Costs_Max Num="72"/>
 		<Is_Produced_by>
-			<Unit ID="00 00 00 00"/>  <!-- toadd, no factory defined yet -->>
+			<Unit ID="00 00 00 00"/>  <!-- toadd, no factory defined yet -->
 		</Is_Produced_by>
 	</Production>
 	<Weapons>
