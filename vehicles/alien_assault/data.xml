@@ -4,37 +4,37 @@
 		<Author ID="00 00 00 00" Name="OrgMax">
 			<Editor ID="0a 4e 2c f5" Name="beko"/>
 		</Author>
-		<Unit_ID ID="00 01"/> 
+		<Unit_ID ID="00 02"/> 
 		<!-- first pair: 00 == vehicle, 01 == building, 2 == connector, 3 == perhaps more to come? -->
 		<!-- second pair: unique ID-Num. Needs sanity-check in code!!! translation files will look for that too!--> 
 		<Game_Version Num="0"/> <!-- minimal game version NEEDED for this unit - 0 for undefined/ALL -->.
 		<Version Text="0.1"/> <!-- not really important for MAX but perhaps later for custom units by fans! -->
 		<Last_Change Time="2007-05-10 00:00:00"/> <!-- do we really need that?  -->
-		<Name Text="Transportplane"/> <!-- english here - needs to be translated using language xml containing msg-strings -->
-		<Describtion Text="Transportplane\n\nHeavy plane, able to transport three groundunits."/>
+		<Name Text="Alien Assault"/> <!-- english here - needs to be translated using language xml containing msg-strings -->
+		<Describtion Text="Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself"/>		
 	</Header>
 	<General_Info>
 		<Is_Controllable YN="Yes"/>
 		<Can_Be_Captured YN="No"/>
-		<Can_Be_Disabled YN="Yes"/>
+		<Can_Be_Disabled YN="No"/>
 		<Size_Length Num="1"/>
 		<Size_Width Num="1"/>
 	</General_Info>
 	<Defence>
-		<Is_Target_Land YN="No"/>
+		<Is_Target_Land YN="Yes"/>
 		<Is_Target_Sea YN="No"/>
-		<Is_Target_Air YN="Yes"/>
+		<Is_Target_Air YN="No"/>
 		<Is_Target_Underwater YN="No"/>
-		<Is_Target_Mine YN="No"/>
+		<Is_Target_Mine YN="Yes"/>
 		<Is_Target_Building YN="No"/>
 		<Is_Target_Satellite YN="No"/>
 		<Is_Target_WMD YN="No"/>
-		<Armor Num="4"/>
-		<Hitpoints Num="18"/>
+		<Armor Num="8"/>
+		<Hitpoints Num="32"/>
 	</Defence>
 	<Production>
-		<Built_Costs Num="18"/>
-		<Built_Costs_Max Num="72"/>
+		<Built_Costs Num="60"/>
+		<Built_Costs_Max Num="240"/>
 		<Is_Produced_by>
 			<Unit_ID ID="00 00"/>  <!-- toadd, no factory defined yet -->
 		</Is_Produced_by>
@@ -46,11 +46,11 @@
 			<!--        <Shot_Trajectory Const="controlled" /> -->
 			<!--        <Ammo_Type Const="Energy" /> -->
 			<Ammo_Type Const="Standard"/>
-			<Ammo_Quantity Num="0"/>
+			<Ammo_Quantity Num="15"/>
 			<Allowed_Targets>
 				<Target_Land>
-					<Damage Num="0"/>
-					<Range Fd="0"/>
+					<Damage Num="25"/>
+					<Range Fd="7"/>
 				</Target_Land>
 				<Target_Sea>
 					<Damage Num="0"/>
@@ -69,15 +69,15 @@
 					<Range Fd="0"/>
 				</Target_Submarine>
 				<Target_Infantry>
-					<Damage Num="0"/>
-					<Range Fd="0"/>
+					<Damage Num="25"/>
+					<Range Fd="7"/>
 				</Target_Infantry>
 				<Target_WMD>
 					<Damage Num="0"/>
 					<Range Fd="0"/>
 				</Target_WMD>
 			</Allowed_Targets>
-			<Shots Num="0"/>
+			<Shots Num="3"/>
 			<Destination_Area Fd="1"/> <!-- Radius des Schadens -->
 			<Destination_Type Const="Point"/>
 			<!--          <Destination_Type Const="MIRV"/> -->
@@ -87,19 +87,19 @@
 	</Weapons>
 	<Abilities>
 		<Can_Clear_Area YN="No"/>
-		<Gets_Experience YN="No"/>
+		<Gets_Experience YN="Yes"/>
 		<Can_Disable YN="No"/>
 		<Can_Capture YN="No"/>
 		<Can_Dive YN="No"/>
-		<Landing_Type Const="GarageAndPlatform"/> <!-- OnlyGarage, GarageAndPlatform, Everywhere -->
+		<Landing_Type Const="none"/> <!-- OnlyGarage, GarageAndPlatform, Everywhere -->
 		<Can_Upgrade YN="No"/>
 		<Can_Repair YN="No"/>
 		<Can_Research YN="No"/>
 		<Is_Kamikaze YN="No"/> <!-- Minen und SRBM -->
 		<Is_Infrastructure YN="No"/> <!-- Wird automatisch überbaut -->
 		<Can_Place_Mines YN="No"/>
-		<Makes_Tracks Fd="0"/> <!-- z.B. hinterläßt 3 Felder Spuren -->
-		<Self_Repair_Type YN="None"/> <!-- Automatic(Alien) oder Normal(Metall) -->
+		<Makes_Tracks Fd="3"/> <!-- z.B. hinterläßt 3 Felder Spuren -->
+		<Self_Repair_Type YN="auto"/> <!-- Automatic(Alien) oder Normal(Metall) -->
 		<Converts_Gold Num="0"/>
 		<Needs_Energy Num="0"/> <!-- Negativ für Erzeugung -->
 		<Needs_Oil Num="0"/> <!-- Negativ für Erzeugung -->
@@ -122,39 +122,39 @@
 		<Range_Jammer Fd="0"/>
 	</Scan_Abilities>
 	<Movement>
-		<Movement_Sum Num="18"/>
+		<Movement_Sum Num="16"/>
 		
 		<!-- Null Werte bedeuten diese Bewegungsart ist nicht möglich -->
-		<Costs_Air Num="1"/>
+		<Costs_Air Num="0.0"/>
 		<Costs_Sea Num="0.0"/>
 		<Costs_Submarine Num="0.0"/>
-		<Costs_Ground Num="0.0"/>
+		<Costs_Ground Num="1"/>
 		
 		<!-- Diese Kosten werden multipliziert -->
 		<!-- Null Werte bedeuten dieses Gelände ist nicht möglich -->
 		<Factor_Coast Num="0.0"/>
 		<Factor_Wood Num="0.0"/>
-		<Factor_Road Num="0.0"/>
+		<Factor_Road Num="0.5"/>
 		<Factor_Bridge Num="0.0"/>
-		<Factor_Platform Num="0.0"/>
+		<Factor_Platform Num="1"/>
 		<Factor_Monorail Num="0.0"/>
 		<Factor_Wreck Num="0.0"/>
 		<Factor_Mountains Num="0.0"/>
 	</Movement>
 	<Storage>
-		<Is_Garage YN="Yes"/>
+		<Is_Garage YN="No"/>
 		<Capacity_Metal Num="0"/>
 		<Capacity_Oil Num="0"/>
 		<Capacity_Gold Num="0"/>
 		<Capacity_Energy Num="0"/>
 		<Capacity_Units_Air Num="0"/>
 		<Capacity_Units_Sea Num="0"/>
-		<Capacity_Units_Ground Num="3"/>
-		<Capacity_Units_Infantry Num="3"/>
+		<Capacity_Units_Ground Num="0"/>
+		<Capacity_Units_Infantry Num="0"/>
 		<Can_Use_Unit_As_Garage>
 			<!-- Hier werden die befahrbaren Einheiten aufgezählt -->
 			<!--und die Menge der verbauchten Kapazität aufgelistet -->
-			<Unit_ID ID="00 00"/>  <!-- toadd. no hangar defined yet -->
+			<Unit_ID ID="0"/>  <!-- toadd. no hangar defined yet -->
 		</Can_Use_Unit_As_Garage>
 	</Storage>
 </Unit>
