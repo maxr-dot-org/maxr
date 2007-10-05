@@ -34,7 +34,8 @@
 		<Built_Costs Num="18"/>
 		<Built_Costs_Max Num="72"/>
 		<Is_Produced_by>
-			<Unit ID="00 00 00 00"/>  <!-- toadd, no factory defined yet -->
+			<Unit ID="0"/>  <!-- toadd, no factory defined yet -->
+			<Unit_Type ID="0"/>
 		</Is_Produced_by>
 	</Production>
 	<Weapons>
@@ -152,7 +153,8 @@
 		<Can_Use_Unit_As_Garage>
 			<!-- Hier werden die befahrbaren Einheiten aufgezählt -->
 			<!--und die Menge der verbauchten Kapazität aufgelistet -->
-			<Unit ID="00 00 00 00" Size="1"/> <!-- toadd. no hangar defined yet -->
+			<Unit ID="0" Size="1"/> <!-- toadd. no hangar defined yet -->
+			<Unit_Type ID="0"/>
 		</Can_Use_Unit_As_Garage>
 	</Storage>
 </Unit>
