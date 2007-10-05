@@ -9,7 +9,9 @@
 //  This class handles the support for different language packs in XML-Format.
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LANGUAGE_FILE_NAME "Language "
+#define LANGUAGE_FILE_FOLDER "languages"
+#define LANGUAGE_FILE_NAME   "Language "
+#define LANGUAGE_FILE_EXT    ".xml"
 
 #include <map>
 #include <string>

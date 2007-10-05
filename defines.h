@@ -17,3 +17,14 @@
 #define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(WindowMode)SDL_UpdateRect(screen,0,0,0,0);
 
 #endif
+
+
+#ifdef WIN32
+	#ifndef PATH_DELIMITER
+		#define PATH_DELIMITER "\\"
+	#endif
+#else
+	#ifndef PATH_DELIMITER
+		#define PATH_DELIMITER "//"
+	#endif
+#endif
