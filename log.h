@@ -72,4 +72,13 @@ public:
 	* @return 0 on success
 	*/
 	static int write(const char *str);
+	enum LOG_TYPE
+	{
+		eLOG_TYPE_UNKNOWN = 0,
+		eLOG_TYPE_WARNING = 1,
+		eLOG_TYPE_ERROR   = 2,
+		eLOG_TYPE_DEBUG   = 3,
+		eLOG_TYPE_INFO    = 4,
+	};
+
 };
