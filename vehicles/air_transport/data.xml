@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<Unit>
+	<Header>
+		<Author ID="00 00 00 00" Name="OrgMax">
+			<Editor ID="0a 4e 2c f5" Name="beko"/>
+		</Author>
+		<Unit_ID ID="A2T"/>
+		<Version Text="00.00.01"/>
+		<Last_Change Time="2007-05-10 00:00:00"/>
+		<Name Text="Transportplane"/>
+	</Header>
+	<General_Info>
+		<Is_Controllable YN="Yes"/>
+		<Can_Be_Captured YN="No"/>
+		<Can_Be_Disabled YN="Yes"/>
+		<Size_Length Num="1"/>
+		<Size_Width Num="1"/>
+	</General_Info>
+	<Defence>
+		<Is_Target_Land YN="No"/>
+		<Is_Target_Sea YN="No"/>
+		<Is_Target_Air YN="Yes"/>
+		<Is_Target_Underwater YN="No"/>
+		<Is_Target_Mine YN="No"/>
+		<Is_Target_Building YN="No"/>
+		<Is_Target_Satellite YN="No"/>
+		<Is_Target_WMD YN="No"/>
+		<Armor Num="4"/>
+		<Hitpoints Num="18"/>
+	</Defence>
+	<Production>
+		<Built_Costs Num="18"/>
+		<Built_Costs_Max Num="72"/>
+		<Is_Produced_by>
+			<Unit ID="00 00 00 00"/>  <!-- toadd, no factory defined yet -->>
+		</Is_Produced_by>
+	</Production>
+	<Weapons>
+		<Weapon> <!-- can have more than one weapon.. later! -->
+			<Shot_Trajectory Const="straight"/>
+			<!--        <Shot_Trajectory Const="ballistic" /> -->
+			<!--        <Shot_Trajectory Const="controlled" /> -->
+			<!--        <Ammo_Type Const="Energy" /> -->
+			<Ammo_Type Const="Standard"/>
+			<Ammo_Quantity Num="0"/>
+			<Allowed_Targets>
+				<Target_Land>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Land>
+				<Target_Sea>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Sea>
+				<Target_Air>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Air>
+				<Target_Mine>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Mine>
+				<Target_Submarine>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Submarine>
+				<Target_Infantry>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_Infantry>
+				<Target_WMD>
+					<Damage Num="0"/>
+					<Range Fd="0"/>
+				</Target_WMD>
+			</Allowed_Targets>
+			<Shots Num="0"/>
+			<Destination_Area Fd="1"/> <!-- Radius des Schadens -->
+			<Destination_Type Const="Point"/>
+			<!--          <Destination_Type Const="MIRV"/> -->
+			<!--          <Destination_Type Const="Scatter"/> -->
+			<Movement_Allowed Num="0"/> <!-- Anzahl Bewegungspunkte bis anteilig die Schussanzahl sinkt -->
+		</Weapon>
+	</Weapons>
+	<Abilities>
+		<Can_Clear_Area YN="No"/>
+		<Gets_Experience YN="No"/>
+		<Can_Disable YN="No"/>
+		<Can_Capture YN="No"/>
+		<Can_Dive YN="No"/>
+		<Landing_Type Const="GarageAndPlatform"/> <!-- OnlyGarage, GarageAndPlatform, Everywhere -->
+		<Can_Upgrade YN="No"/>
+		<Can_Repair YN="No"/>
+		<Can_Research YN="No"/>
+		<Is_Kamikaze YN="No"/> <!-- Minen und SRBM -->
+		<Is_Infrastructure YN="No"/> <!-- Wird automatisch überbaut -->
+		<Can_Place_Mines YN="No"/>
+		<Makes_Tracks Fd="0"/> <!-- z.B. hinterläßt 3 Felder Spuren -->
+		<Self_Repair_Type YN="None"/> <!-- Automatic(Alien) oder Normal(Metall) -->
+		<Converts_Gold Num="0"/>
+		<Needs_Energy Num="0"/> <!-- Negativ für Erzeugung -->
+		<Needs_Oil Num="0"/> <!-- Negativ für Erzeugung -->
+		<Needs_Metall Num="0"/> <!-- Max pro Runde -->
+		<Needs_Humans Num="0"/> <!-- Negativ für Erzeugung -->
+		<Mines_Resources Num="0"/> <!-- Max pro Runde -->
+		<Can_Launch_SRBM YN="No"/>
+		<Energy_Shield_Strength Num="0"/>
+		<Energy_Shield_Size Num="0"/>
+	</Abilities>
+	<Scan_Abilities>
+		<Range_Sight Fd="5"/>
+		<Range_Air Fd="0"/>
+		<Range_Ground Fd="0"/>
+		<Range_Sea Fd="0"/>
+		<Range_Submarine Fd="0"/>
+		<Range_Mine Fd="0"/>
+		<Range_Infantry Fd="0"/>
+		<Range_Resources Fd="0"/>
+		<Range_Jammer Fd="0"/>
+	</Scan_Abilities>
+	<Movement>
+		<Movement_Sum Num="18"/>
+		
+		<!-- Null Werte bedeuten diese Bewegungsart ist nicht möglich -->
+		<Costs_Air Num="18"/>
+		<Costs_Sea Num="0.0"/>
+		<Costs_Submarine Num="0.0"/>
+		<Costs_Ground Num="0.0"/>
+		
+		<!-- Diese Kosten werden multipliziert -->
+		<!-- Null Werte bedeuten dieses Gelände ist nicht möglich -->
+		<Factor_Coast Num="0.0"/>
+		<Factor_Wood Num="0.0"/>
+		<Factor_Road Num="0.0"/>
+		<Factor_Bridge Num="0.0"/>
+		<Factor_Platform Num="0.0"/>
+		<Factor_Monorail Num="0.0"/>
+		<Factor_Wreck Num="0.0"/>
+		<Factor_Mountains Num="0.0"/>
+	</Movement>
+	<Storage>
+		<Is_Garage YN="Yes"/>
+		<Capacity_Metal Num="0"/>
+		<Capacity_Oil Num="0"/>
+		<Capacity_Gold Num="0"/>
+		<Capacity_Energy Num="0"/>
+		<Capacity_Units_Air Num="0"/>
+		<Capacity_Units_Sea Num="0"/>
+		<Capacity_Units_Ground Num="3"/>
+		<Capacity_Units_Infantry Num="3"/>
+		<Can_Use_Unit_As_Garage>
+			<!-- Hier werden die befahrbaren Einheiten aufgezählt -->
+			<!--und die Menge der verbauchten Kapazität aufgelistet -->
+			<Unit ID="00 00 00 00" Size="1"/> <!-- toadd. no hangar defined yet -->
+		</Can_Use_Unit_As_Garage>
+	</Storage>
+</Unit>
