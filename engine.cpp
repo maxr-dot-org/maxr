@@ -370,12 +370,12 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 				if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+1+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
 				if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
 				// Das Gebäude erstellen:
-				AddBuilding ( job->vehicle->BandX,job->vehicle->BandY,building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				AddBuilding ( job->vehicle->BandX,job->vehicle->BandY,BuildingMainData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
 			}
 			else
 			{
 				// Das Gebäude erstellen:
-				AddBuilding ( job->vehicle->PosX,job->vehicle->PosY,building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				AddBuilding ( job->vehicle->PosX,job->vehicle->PosY,BuildingMainData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
 			}
 		}
 	}
@@ -1192,7 +1192,7 @@ void cEngine::Rundenende ( void )
 	CollectTrash();
 
 	// Ggf Autosave machen:
-	if ( Autosave )
+	if ( GameSettingsData.Autosave )
 	{
 		game->MakeAutosave();
 	}
