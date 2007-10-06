@@ -64,11 +64,7 @@ struct sReport;
 // ------------------------
 // 
 ///////////////////////////////////////////////////////////////////////////////
-#define MAXVERSION "M.A.X. Reloaded 0.52.0 SVN"
-//#define MAXVERSION "M.A.X. Reloaded 0.52.0 SVN BUILD 200710052230"
-//#define MAXVERSION "M.A.X. Reloaded 0.52.1"
 
-#define MAX_VERSION        "0.52.0"
 #define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
 #define MINIMAP_COLOR      0xFC0000 // Farbe des Rahmens in der Minimap
 #define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
