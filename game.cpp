@@ -47,10 +47,12 @@ cGame::cGame(cFSTcpIp *fstcpip, cMap *map){
   MsgCoordsX=-1;
   MsgCoordsY=-1;
   HotSeatPlayer=0;
-  for(DebugIndex=0;DebugIndex<DB_COM_BUFFER;DebugIndex++){
-    DebugComSend[DebugIndex]=0;
-    DebugComRead[DebugIndex]=0;
-  }
+  //Auskommentiert bei Mainüberarbeitung
+  //for(DebugIndex=0;DebugIndex<DB_COM_BUFFER;DebugIndex++){
+  //  DebugComSend[DebugIndex]=0;
+  //  DebugComRead[DebugIndex]=0;
+  //}
+  //TODO:
   ComAvgSend=0;
   ComAvgRead=0;
   Runde=1;  
@@ -246,8 +248,8 @@ void cGame::Run(void){
           SDL_Rect dest;
           dest.x=180-((int)((hud->OffX)/(64.0/hud->Zoom)))+hud->Zoom*SelectedVehicle->BandX;
           dest.y=18-((int)((hud->OffY)/(64.0/hud->Zoom)))+hud->Zoom*SelectedVehicle->BandY;
-          dest.h=dest.w=gfx_band_big->h;
-          SDL_BlitSurface(gfx_band_big,NULL,buffer,&dest);
+          dest.h=dest.w=GraphicsData.gfx_band_big->h;
+          SDL_BlitSurface(GraphicsData.gfx_band_big,NULL,buffer,&dest);
         }else{
           SDL_Rect dest;
           int x,y;
@@ -255,8 +257,8 @@ void cGame::Run(void){
           if(x==SelectedVehicle->PosX||y==SelectedVehicle->PosY){
             dest.x=180-((int)((hud->OffX)/(64.0/hud->Zoom)))+hud->Zoom*x;
             dest.y=18-((int)((hud->OffY)/(64.0/hud->Zoom)))+hud->Zoom*y;
-            dest.h=dest.w=gfx_band_small->h;
-            SDL_BlitSurface(gfx_band_small,NULL,buffer,&dest);
+            dest.h=dest.w=GraphicsData.gfx_band_small->h;
+            SDL_BlitSurface(GraphicsData.gfx_band_small,NULL,buffer,&dest);
             SelectedVehicle->BandX=x;
             SelectedVehicle->BandY=y;
             SelectedVehicle->BuildPath=true;
@@ -464,7 +466,7 @@ void cGame::Run(void){
     }
 	// Prüfen, ob das Hud neu gemalt werden muss:
     if(fDrawHud||fDrawMap){
-      SDL_BlitSurface(gfx_hud,NULL,buffer,NULL);
+      SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       mouse->GetBack(buffer);
       fDraw=true;
     }
@@ -524,7 +526,7 @@ void cGame::Run(void){
       fDraw=false;
       fDrawHud=false;
       fDrawMap=false;
-    }else if(!FastMode){
+    }else if(!GameSettingsData.FastMode){
       SDL_Delay(1); // Es gibt nichts zu tun.
     }
 	// Die Engine laufen lassen:
@@ -540,7 +542,7 @@ void cGame::Run(void){
       }
     }
 	// Den Wind ändern:
-    if(timer2&&DamageEffects){
+    if(timer2&&GameSettingsData.DamageEffects){
       static int NextChange=25,NextDirChange=25,dir=90,change=3;
       if(NextChange==0){
         NextChange=10+random(20,0);
@@ -601,7 +603,7 @@ int cGame::CheckUser(void){
   }else{
     if(keystate[KeyExit]&&ShowYesNo("Wirklich beenden?\n\nAlle nicht gespeicherten Spieldaten gehen dabei verloren.")){
       game->DrawMap(false);
-      SDL_BlitSurface(gfx_hud,NULL,buffer,NULL);
+      SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       return -1;
     }
     if(keystate[KeyJumpToAction]&&MsgCoordsX!=-1){
@@ -735,11 +737,11 @@ int cGame::CheckUser(void){
   }
   if(MouseButton&&!LastMouseButton&&MouseButton!=4){
     if(OverObject&&hud->Lock)ActivePlayer->ToggelLock(OverObject);
-	if(SelectedVehicle&&mouse->cur==gfx_Ctransf){
+	if(SelectedVehicle&&mouse->cur==GraphicsData.gfx_Ctransf){
       SelectedVehicle->ShowTransfer(map->GO+mouse->GetKachelOff());
-    }else if(SelectedBuilding&&mouse->cur==gfx_Ctransf){
+    }else if(SelectedBuilding&&mouse->cur==GraphicsData.gfx_Ctransf){
       SelectedBuilding->ShowTransfer(map->GO+mouse->GetKachelOff());
-	}else if(SelectedVehicle&&SelectedVehicle->PlaceBand&&mouse->cur==gfx_Cband){
+	}else if(SelectedVehicle&&SelectedVehicle->PlaceBand&&mouse->cur==GraphicsData.gfx_Cband){
       SelectedVehicle->PlaceBand=false;
       SelectedVehicle->IsBuilding=true;
       if(SelectedVehicle->data.can_build==BUILD_BIG){
@@ -759,15 +761,15 @@ int cGame::CheckUser(void){
       }else{
         SelectedVehicle->IsBuilding=false;
       }
-    }else if(mouse->cur==gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->ActivatingVehicle){
+    }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->ActivatingVehicle){
       SelectedBuilding->ExitVehicleTo(SelectedBuilding->VehicleToActivate,mouse->GetKachelOff(),false);
       PlayFX(SNDActivate);
       MouseMoveCallback(true);
-    }else if(mouse->cur==gfx_Cactivate&&SelectedVehicle&&SelectedVehicle->ActivatingVehicle){
+    }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedVehicle&&SelectedVehicle->ActivatingVehicle){
       SelectedVehicle->ExitVehicleTo(SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false);
       PlayFX(SNDActivate);
       MouseMoveCallback(true);
-    }else if(mouse->cur==gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->Count){
+    }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->Count){
       sBuildList *ptr;
       int x,y;
       mouse->GetKachel(&x,&y);
@@ -786,17 +788,17 @@ int cGame::CheckUser(void){
         }
       }
       MouseMoveCallback(true);
-    }else if(mouse->cur==gfx_Cload&&SelectedBuilding&&SelectedBuilding->LoadActive){
+    }else if(mouse->cur==GraphicsData.gfx_Cload&&SelectedBuilding&&SelectedBuilding->LoadActive){
       int off;
       off=mouse->GetKachelOff();
       PlayFX(SNDLoad);      
       SelectedBuilding->StoreVehicle(off);
-    }else if(mouse->cur==gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive){
+    }else if(mouse->cur==GraphicsData.gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive){
       int off;
       off=mouse->GetKachelOff();
       PlayFX(SNDLoad);
       SelectedVehicle->StoreVehicle(off);
-    }else if(mouse->cur==gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive){
+    }else if(mouse->cur==GraphicsData.gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive){
       cBuilding *b=NULL;
       cVehicle *v=NULL;
       int off;
@@ -814,7 +816,7 @@ int cGame::CheckUser(void){
         }
       }
       SelectedVehicle->ShowDetails();
-    }else if(mouse->cur==gfx_Crepair&&SelectedVehicle&&SelectedVehicle->RepairActive){
+    }else if(mouse->cur==GraphicsData.gfx_Crepair&&SelectedVehicle&&SelectedVehicle->RepairActive){
       cBuilding *b=NULL;
       cVehicle *v=NULL;
       int off;
@@ -832,7 +834,7 @@ int cGame::CheckUser(void){
         }
       }
       SelectedVehicle->ShowDetails();
-    }else if(mouse->cur==gfx_Cmove&&SelectedVehicle&&!SelectedVehicle->moving&&!SelectedVehicle->rotating&&!hud->Ende&&!SelectedVehicle->Attacking){
+    }else if(mouse->cur==GraphicsData.gfx_Cmove&&SelectedVehicle&&!SelectedVehicle->moving&&!SelectedVehicle->rotating&&!hud->Ende&&!SelectedVehicle->Attacking){
       if(SelectedVehicle->data.can_drive!=DRIVE_AIR){
         if((SelectedVehicle->IsBuilding&&SelectedVehicle->data.can_build==BUILD_BIG)||(SelectedVehicle->IsClearing&&SelectedVehicle->ClearBig)){
           // Das Vehicle an den Rand setzen:
@@ -870,7 +872,7 @@ int cGame::CheckUser(void){
          (SelectedBuilding&&SelectedBuilding->MenuActive&&SelectedBuilding->MouseOverMenu(mouse->x,mouse->y))){
       }else
       // Prüfen, ob geschossen werden soll:
-      if(mouse->cur==gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive){
+      if(mouse->cur==GraphicsData.gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive){
         switch(SelectedVehicle->data.can_attack){
           case ATTACK_LAND:
           case ATTACK_SUB_LAND:
@@ -887,7 +889,7 @@ int cGame::CheckUser(void){
           SelectedVehicle->mjob=NULL;
           SelectedVehicle->MoveJobActive=false;
         }
-      }else if(mouse->cur==gfx_Cattack&&SelectedBuilding&&!SelectedBuilding->Attacking){
+      }else if(mouse->cur==GraphicsData.gfx_Cattack&&SelectedBuilding&&!SelectedBuilding->Attacking){
         switch(SelectedBuilding->data.can_attack){
           case ATTACK_LAND:
           case ATTACK_SUB_LAND:
@@ -1043,7 +1045,7 @@ bool FreeForLanding(int x,int y){
      game->map->GO[x+y*game->map->size].vehicle||
      game->map->GO[x+y*game->map->size].top||
      game->map->IsWater(x+y*game->map->size,false)||
-     terrain[game->map->Kacheln[x+y*game->map->size]].blocked){
+     TerrainData.terrain[game->map->Kacheln[x+y*game->map->size]].blocked){
      return false;
   }
   return true;
@@ -1062,7 +1064,7 @@ void cGame::DrawMap(bool pure){
   scr.y=0;
   scr.h=scr.w=dest.w=dest.h=zoom;
   dest.y=18-OffY;
-  defwater=terrain+map->DefaultWater;
+  defwater=TerrainData.terrain+map->DefaultWater;
   for(y=0;y<map->size;y++){
     dest.x=180-OffX;
     if(dest.y>=18-zoom){
@@ -1071,7 +1073,7 @@ void cGame::DrawMap(bool pure){
         if(dest.x>=180-zoom){
           // Das Terrain malen:
           tmp=dest;
-          terr=terrain+map->Kacheln[pos];
+          terr=TerrainData.terrain+map->Kacheln[pos];
           // Prüfen, ob es ein Küstenstück ist:
           if(terr->overlay){
             scr.x=(Frame%defwater->frames)*zoom;
@@ -1101,27 +1103,27 @@ void cGame::DrawMap(bool pure){
         }
         pos++;
         dest.x+=zoom;
-        if(dest.x>ScreenW-13)break;
+        if(dest.x>GameSettingsData.ScreenW-13)break;
       }
     }
     dest.y+=zoom;
-    if(dest.y>ScreenH-15)break;
+    if(dest.y>GameSettingsData.ScreenH-15)break;
   }
   // Gitter malen:
   if(hud->Gitter){
     dest.x=180;
     dest.y=18+zoom-(OffY%zoom);
-    dest.w=ScreenW-192;
+    dest.w=GameSettingsData.ScreenW-192;
     dest.h=1;
-    for(y=0;y<(ScreenH-32)/zoom+1;y++){
+    for(y=0;y<(GameSettingsData.ScreenH-32)/zoom+1;y++){
       SDL_FillRect(buffer,&dest,GRID_COLOR);
       dest.y+=zoom;
     }
     dest.x=180+zoom-(OffX%zoom);
     dest.y=18;
     dest.w=1;
-    dest.h=ScreenH-32;
-    for(x=0;x<(ScreenW-192)/zoom+1;x++){
+    dest.h=GameSettingsData.ScreenH-32;
+    for(x=0;x<(GameSettingsData.ScreenW-192)/zoom+1;x++){
       SDL_FillRect(buffer,&dest,GRID_COLOR);
       dest.x+=zoom;
     }
@@ -1136,8 +1138,8 @@ void cGame::DrawMap(bool pure){
   startY=(hud->OffY-1)/64;if(startY<0)startY=0;
   startX-=1;if(startX<0)startX=0;
   startY-=1;if(startY<0)startY=0;
-  endX=hud->OffX/64+(ScreenW-192)/hud->Zoom+1;if(endX>=map->size)endX=map->size-1;
-  endY=hud->OffY/64+(ScreenH-32)/hud->Zoom+1;if(endY>=map->size)endY=map->size-1;
+  endX=hud->OffX/64+(GameSettingsData.ScreenW-192)/hud->Zoom+1;if(endX>=map->size)endX=map->size-1;
+  endY=hud->OffY/64+(GameSettingsData.ScreenH-32)/hud->Zoom+1;if(endY>=map->size)endY=map->size-1;
   dest.y=18-OffY+zoom*startY;
   for(y=startY;y<=endY;y++){
     dest.x=180-OffX+zoom*startX;
@@ -1208,7 +1210,7 @@ void cGame::DrawMap(bool pure){
   dest.y=18-OffY+zoom*startY;
   scr.x=0;scr.y=0;
   scr.h=scr.w=zoom;
-  if(Alpha){
+  if(GameSettingsData.Alpha){
     SDL_SetAlpha(ActivePlayer->ShieldColor,SDL_SRCALPHA,150);
   }else{
     SDL_SetAlpha(ActivePlayer->ShieldColor,SDL_SRCALPHA,255);
@@ -1244,16 +1246,16 @@ void cGame::DrawMap(bool pure){
           if(map->Resources[pos].typ==RES_NONE){
             scr.x=0;
             tmp=dest;
-            SDL_BlitSurface(res_metal,&scr,buffer,&tmp);
+            SDL_BlitSurface(ResourceData.res_metal,&scr,buffer,&tmp);
           }else{
             scr.x=map->Resources[pos].value*zoom;
             tmp=dest;
             if(map->Resources[pos].typ==RES_METAL){
-              SDL_BlitSurface(res_metal,&scr,buffer,&tmp);
+              SDL_BlitSurface(ResourceData.res_metal,&scr,buffer,&tmp);
             }else if(map->Resources[pos].typ==RES_OIL){
-              SDL_BlitSurface(res_oil,&scr,buffer,&tmp);
+              SDL_BlitSurface(ResourceData.res_oil,&scr,buffer,&tmp);
             }else{
-              SDL_BlitSurface(res_gold,&scr,buffer,&tmp);            
+              SDL_BlitSurface(ResourceData.res_gold,&scr,buffer,&tmp);            
             }
           }
         }
@@ -1359,9 +1361,9 @@ void cGame::MakeLanding(int x,int y, cPlayer *p, TList *list, bool fixed){
             }
 
             // Gebäude platzieren:
-            game->engine->AddBuilding(x+k,y+i,building+BNrOilStore,p,true);
-            game->engine->AddBuilding(x+k,y+i+1,building+BNrSmallGen,p,true);
-            game->engine->AddBuilding(x+k+1,y+i,building+BNrMine,p,true);
+            game->engine->AddBuilding(x+k,y+i,BuildingMainData.building+BNrOilStore,p,true);
+            game->engine->AddBuilding(x+k,y+i+1,BuildingMainData.building+BNrSmallGen,p,true);
+            game->engine->AddBuilding(x+k+1,y+i,BuildingMainData.building+BNrMine,p,true);
             b=game->map->GO[x+k+(y+i)*game->map->size].top;
             p->base->AddOil(b->SubBase,4);
             break;
@@ -1378,11 +1380,11 @@ void cGame::MakeLanding(int x,int y, cPlayer *p, TList *list, bool fixed){
   w=2;h=2;
   for(i=0;i<list->Count;i++){
 	ptr=list->LandItems[i];
-    v=LandVehicle(x,y,w,h,vehicle+ptr->id,p);
+    v=LandVehicle(x,y,w,h,VehicleMainData.vehicle+ptr->id,p);
     while(!v){
       w+=2;
       h+=2;
-      v=LandVehicle(x,y,w,h,vehicle+ptr->id,p);
+      v=LandVehicle(x,y,w,h,VehicleMainData.vehicle+ptr->id,p);
     }
     if(ptr->cargo&&v){
       v->data.cargo=ptr->cargo;
@@ -1411,12 +1413,12 @@ void cGame::HandleMessages(void){
     height+=14+11*m->len/296;
   }
   if(messages->Count==0)return;
-  if(Alpha){
+  if(GameSettingsData.Alpha){
     scr.x=0;scr.y=0;
     dest.x=180;dest.y=30;
     dest.w=scr.w=250;
     dest.h=scr.h=height+6;
-    SDL_BlitSurface(gfx_shadow,&scr,buffer,&dest);
+    SDL_BlitSurface(GraphicsData.gfx_shadow,&scr,buffer,&dest);
   }
   dest.x=180+2;dest.y=34;
   dest.w=250-4;
@@ -1461,7 +1463,7 @@ bool cGame::DoCommand(char *cmd){
   if(strcmp(cmd,"show log")==0){ShowLog=true;return true;}
   if(strcmp(cmd,"hide log")==0){ShowLog=false;return true;}
 
-  if(strncmp(cmd,"color ",6)==0){int cl=0;sscanf(cmd,"color %d",&cl);cl%=8;ActivePlayer->color=colors[cl];return true;}
+  if(strncmp(cmd,"color ",6)==0){int cl=0;sscanf(cmd,"color %d",&cl);cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
   if(strcmp(cmd,"fog off")==0){memset(ActivePlayer->ScanMap,1,map->size*map->size);return true;}
   if(strcmp(cmd,"survey")==0){memset(ActivePlayer->ResourceMap,1,map->size*map->size);PlayerCheat=ActivePlayer->name; PlayerCheat+=" hat den Cheat \"Survey\" eingegeben";return true;}
   if(strcmp(cmd,"credits")==0){ActivePlayer->Credits+=1000;PlayerCheat=ActivePlayer->name; PlayerCheat+=" hat den Cheat \"Credits\" eingegeben";return true;}
@@ -1659,7 +1661,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_muzzle_big[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_muzzle_big[1],&scr,buffer,&dest);
       break;
     case fxMuzzleSmall:
       if(Frame-fx->StartFrame>2){
@@ -1673,7 +1675,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_muzzle_small[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_muzzle_small[1],&scr,buffer,&dest);
       break;
     case fxMuzzleMed:
       if(Frame-fx->StartFrame>2){
@@ -1687,7 +1689,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_muzzle_med[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_muzzle_med[1],&scr,buffer,&dest);
       break;
     case fxMuzzleMedLong:
       if(Frame-fx->StartFrame>5){
@@ -1701,7 +1703,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_muzzle_med[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_muzzle_med[1],&scr,buffer,&dest);
       break;
     case fxHit:
       if(Frame-fx->StartFrame>5){
@@ -1715,7 +1717,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_hit[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_hit[1],&scr,buffer,&dest);
       break;
     case fxExploSmall0:
       if(Frame-fx->StartFrame>11){
@@ -1729,7 +1731,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-(fx->PosX-32))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-32))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_small0[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_small0[1],&scr,buffer,&dest);
       break;
     case fxExploSmall1:
       if(Frame-fx->StartFrame>20){
@@ -1743,7 +1745,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_small1[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_small1[1],&scr,buffer,&dest);
       break;
     case fxExploSmall2:
       if(Frame-fx->StartFrame>10){
@@ -1757,7 +1759,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_small2[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_small2[1],&scr,buffer,&dest);
       break;
     case fxExploBig0:
       if(Frame-fx->StartFrame>14){
@@ -1771,7 +1773,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_big0[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_big0[1],&scr,buffer,&dest);
       break;
     case fxExploBig1:
       if(Frame-fx->StartFrame>13){
@@ -1785,7 +1787,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_big1[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_big1[1],&scr,buffer,&dest);
       break;
     case fxExploBig2:
       if(Frame-fx->StartFrame>15){
@@ -1799,7 +1801,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_big2[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_big2[1],&scr,buffer,&dest);
       break;
     case fxExploBig3:
       if(Frame-fx->StartFrame>8){
@@ -1813,7 +1815,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_big3[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_big3[1],&scr,buffer,&dest);
       break;
     case fxExploBig4:
       if(Frame-fx->StartFrame>10){
@@ -1827,7 +1829,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom*2;
       dest.x=180-((int)((hud->OffX-(fx->PosX-64))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY-64))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_explo_big4[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_explo_big4[1],&scr,buffer,&dest);
       break;
     case fxSmoke:
       if(Frame-fx->StartFrame>100/4){
@@ -1835,13 +1837,13 @@ void cGame::DrawFX(int i){
         FXList->DeleteFX(i);
         return;
       }
-      SDL_SetAlpha(fx_smoke[1],SDL_SRCALPHA,100-(Frame-fx->StartFrame)*4);
+      SDL_SetAlpha(EffectsData.fx_smoke[1],SDL_SRCALPHA,100-(Frame-fx->StartFrame)*4);
       scr.y=scr.x=0;
-      dest.w=scr.w=fx_smoke[1]->h;
-      dest.h=scr.h=fx_smoke[1]->h;
-      dest.x=180-((int)((hud->OffX-(fx->PosX-fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
-      dest.y=18-((int)((hud->OffY-(fx->PosY-fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_smoke[1],&scr,buffer,&dest);
+      dest.w=scr.w=EffectsData.fx_smoke[1]->h;
+      dest.h=scr.h=EffectsData.fx_smoke[1]->h;
+      dest.x=180-((int)((hud->OffX-(fx->PosX-EffectsData.fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
+      dest.y=18-((int)((hud->OffY-(fx->PosY-EffectsData.fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
+      SDL_BlitSurface(EffectsData.fx_smoke[1],&scr,buffer,&dest);
       break;
     case fxRocket:
     {
@@ -1857,7 +1859,7 @@ void cGame::DrawFX(int i){
       if(timer0){
         int k;
         for(k=0;k<64;k+=8){
-          if(Alpha)AddFX(fxSmoke,(int)ri->fpx,(int)ri->fpy,0);
+          if(GameSettingsData.Alpha)AddFX(fxSmoke,(int)ri->fpx,(int)ri->fpy,0);
           ri->fpx+=ri->mx*8;
           ri->fpy-=ri->my*8;
           DrawFX(FXList->Count-1);
@@ -1866,12 +1868,12 @@ void cGame::DrawFX(int i){
 
       fx->PosX=(int)ri->fpx;
       fx->PosY=(int)ri->fpy;
-      scr.x=ri->dir*fx_rocket[1]->h;
+      scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
       scr.y=0;
-      scr.h=scr.w=dest.h=dest.w=fx_rocket[1]->h;
-      dest.x=180-((int)((hud->OffX-(fx->PosX-fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
-      dest.y=18-((int)((hud->OffY-(fx->PosY-fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_rocket[1],&scr,buffer,&dest);
+      scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
+      dest.x=180-((int)((hud->OffX-(fx->PosX-EffectsData.fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
+      dest.y=18-((int)((hud->OffY-(fx->PosY-EffectsData.fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
+      SDL_BlitSurface(EffectsData.fx_rocket[1],&scr,buffer,&dest);
       break;
     }
     case fxDarkSmoke:
@@ -1886,13 +1888,13 @@ void cGame::DrawFX(int i){
       }
       scr.x=(int)(0.375*hud->Zoom)*(Frame-fx->StartFrame);
       scr.y=0;
-      dest.w=scr.w=fx_dark_smoke[1]->h;
-      dest.h=scr.h=fx_dark_smoke[1]->h;
+      dest.w=scr.w=EffectsData.fx_dark_smoke[1]->h;
+      dest.h=scr.h=EffectsData.fx_dark_smoke[1]->h;
       dest.x=180-((int)((hud->OffX-((int)dsi->fx))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-((int)dsi->fy))/(64.0/hud->Zoom)));
 
-      SDL_SetAlpha(fx_dark_smoke[1],SDL_SRCALPHA,dsi->alpha);
-      SDL_BlitSurface(fx_dark_smoke[1],&scr,buffer,&dest);
+      SDL_SetAlpha(EffectsData.fx_dark_smoke[1],SDL_SRCALPHA,dsi->alpha);
+      SDL_BlitSurface(EffectsData.fx_dark_smoke[1],&scr,buffer,&dest);
 
      if(timer0){
         dsi->fx+=dsi->dx;
@@ -1915,7 +1917,7 @@ void cGame::DrawFX(int i){
       dest.h=scr.h=hud->Zoom;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_absorb[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_absorb[1],&scr,buffer,&dest);
       break;
     }
   }
@@ -1945,7 +1947,7 @@ void cGame::DrawFXBottom(int i){
       if(timer0){
         int k;
         for(k=0;k<64;k+=8){
-          if(Alpha)AddFX(fxBubbles,(int)ri->fpx,(int)ri->fpy,0);
+          if(GameSettingsData.Alpha)AddFX(fxBubbles,(int)ri->fpx,(int)ri->fpy,0);
           ri->fpx+=ri->mx*8;
           ri->fpy-=ri->my*8;
           DrawFXBottom(FXListBottom->Count-1);
@@ -1954,12 +1956,12 @@ void cGame::DrawFXBottom(int i){
 
       fx->PosX=(int)(ri->fpx);
       fx->PosY=(int)(ri->fpy);
-      scr.x=ri->dir*fx_rocket[1]->h;
+      scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
       scr.y=0;
-      scr.h=scr.w=dest.h=dest.w=fx_rocket[1]->h;
-      dest.x=180-((int)((hud->OffX-(fx->PosX-fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
-      dest.y=18-((int)((hud->OffY-(fx->PosY-fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_rocket[1],&scr,buffer,&dest);
+      scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
+      dest.x=180-((int)((hud->OffX-(fx->PosX-EffectsData.fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
+      dest.y=18-((int)((hud->OffY-(fx->PosY-EffectsData.fx_rocket[0]->h/2+32))/(64.0/hud->Zoom)));
+      SDL_BlitSurface(EffectsData.fx_rocket[1],&scr,buffer,&dest);
 
       x=((int)(((dest.x-180)+hud->OffX/(64.0/hud->Zoom))/hud->Zoom));
       y=((int)(((dest.y-18)+hud->OffY/(64.0/hud->Zoom))/hud->Zoom));
@@ -1988,12 +1990,12 @@ void cGame::DrawFXBottom(int i){
         return;
       }
       scr.y=0;
-      dest.w=scr.w=dest.h=scr.h=fx_tracks[1]->h;
+      dest.w=scr.w=dest.h=scr.h=EffectsData.fx_tracks[1]->h;
       scr.x=tri->dir*scr.w;
       dest.x=180-((int)((hud->OffX-(fx->PosX))/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-(fx->PosY))/(64.0/hud->Zoom)));
-      SDL_SetAlpha(fx_tracks[1],SDL_SRCALPHA,tri->alpha);
-      SDL_BlitSurface(fx_tracks[1],&scr,buffer,&dest);
+      SDL_SetAlpha(EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha);
+      SDL_BlitSurface(EffectsData.fx_tracks[1],&scr,buffer,&dest);
 
       if(timer0){
         tri->alpha--;
@@ -2006,22 +2008,22 @@ void cGame::DrawFXBottom(int i){
         FXListBottom->DeleteFX(i);
         return;
       }
-      SDL_SetAlpha(fx_smoke[1],SDL_SRCALPHA,100-(Frame-fx->StartFrame)*4);
+      SDL_SetAlpha(EffectsData.fx_smoke[1],SDL_SRCALPHA,100-(Frame-fx->StartFrame)*4);
       scr.y=scr.x=0;
-      dest.w=scr.w=fx_smoke[1]->h;
-      dest.h=scr.h=fx_smoke[1]->h;
-      dest.x=180-((int)((hud->OffX-(fx->PosX-fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
-      dest.y=18-((int)((hud->OffY-(fx->PosY-fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_smoke[1],&scr,buffer,&dest);
+      dest.w=scr.w=EffectsData.fx_smoke[1]->h;
+      dest.h=scr.h=EffectsData.fx_smoke[1]->h;
+      dest.x=180-((int)((hud->OffX-(fx->PosX-EffectsData.fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
+      dest.y=18-((int)((hud->OffY-(fx->PosY-EffectsData.fx_smoke[0]->h/2+32))/(64.0/hud->Zoom)));
+      SDL_BlitSurface(EffectsData.fx_smoke[1],&scr,buffer,&dest);
       break;
     case fxCorpse:
-      SDL_SetAlpha(fx_corpse[1],SDL_SRCALPHA,fx->param--);
+      SDL_SetAlpha(EffectsData.fx_corpse[1],SDL_SRCALPHA,fx->param--);
       scr.y=scr.x=0;
-      dest.w=scr.w=fx_corpse[1]->h;
-      dest.h=scr.h=fx_corpse[1]->h;
+      dest.w=scr.w=EffectsData.fx_corpse[1]->h;
+      dest.h=scr.h=EffectsData.fx_corpse[1]->h;
       dest.x=180-((int)((hud->OffX-fx->PosX)/(64.0/hud->Zoom)));
       dest.y=18-((int)((hud->OffY-fx->PosY)/(64.0/hud->Zoom)));
-      SDL_BlitSurface(fx_corpse[1],&scr,buffer,&dest);
+      SDL_BlitSurface(EffectsData.fx_corpse[1],&scr,buffer,&dest);
 
       if(fx->param<=0){
         delete fx;
@@ -2036,8 +2038,8 @@ void cGame::DrawFXBottom(int i){
 void cGame::AddDirt(int x,int y,int value,bool big){
   cBuilding *n;
   if(value<=0)value=1;
-  if(terrain[map->Kacheln[x+y*map->size]].water||terrain[map->Kacheln[x+y*map->size]].coast)return;
-  if(big&&(terrain[map->Kacheln[x+1+y*map->size]].water||terrain[map->Kacheln[x+(y+1)*map->size]].water||terrain[map->Kacheln[x+1+(y+1)*map->size]].water))return;
+  if(TerrainData.terrain[map->Kacheln[x+y*map->size]].water||TerrainData.terrain[map->Kacheln[x+y*map->size]].coast)return;
+  if(big&&(TerrainData.terrain[map->Kacheln[x+1+y*map->size]].water||TerrainData.terrain[map->Kacheln[x+(y+1)*map->size]].water||TerrainData.terrain[map->Kacheln[x+1+(y+1)*map->size]].water))return;
   n=new cBuilding(NULL,NULL,NULL);
   n->next=DirtList;
   DirtList=n;
@@ -2071,7 +2073,7 @@ void cGame::DrawExitPoint(int x,int y){
   dest.y=y;
   dest.x=x;
   dest.w=dest.h=zoom;
-  SDL_BlitSurface(gfx_exitpoints,&scr,buffer,&dest);
+  SDL_BlitSurface(GraphicsData.gfx_exitpoints,&scr,buffer,&dest);
 }
 
 // Löscht den Dreck:
@@ -2100,42 +2102,42 @@ void cGame::MakePanel(bool open){
   SDL_Rect top,bottom,tmp;
   if(open){
     PlayFX(SNDPanelOpen);
-    top.x=0;top.y=(ScreenH/2)-479;
+    top.x=0;top.y=(GameSettingsData.ScreenH/2)-479;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
-    bottom.x=0;bottom.y=(ScreenH/2);
+    bottom.x=0;bottom.y=(GameSettingsData.ScreenH/2);
     tmp=top;
-    SDL_BlitSurface(gfx_panel_top,NULL,buffer,&tmp);
+    SDL_BlitSurface(GraphicsData.gfx_panel_top,NULL,buffer,&tmp);
     tmp=bottom;
-    SDL_BlitSurface(gfx_panel_bottom,NULL,buffer,&tmp);
+    SDL_BlitSurface(GraphicsData.gfx_panel_bottom,NULL,buffer,&tmp);
     while(top.y>-479){
       SHOW_SCREEN
       SDL_Delay(10);
       top.y-=10;
       bottom.y+=10;
-      SDL_BlitSurface(gfx_hud,NULL,buffer,NULL);
+      SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       tmp=top;
-      SDL_BlitSurface(gfx_panel_top,NULL,buffer,&tmp);
-      SDL_BlitSurface(gfx_panel_bottom,NULL,buffer,&bottom);
+      SDL_BlitSurface(GraphicsData.gfx_panel_top,NULL,buffer,&tmp);
+      SDL_BlitSurface(GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom);
     }
   }else{
     PlayFX(SNDPanelClose);
     top.x=0;top.y=-480;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
-    bottom.x=0;bottom.y=ScreenH;
-    while(bottom.y>ScreenH/2){
+    bottom.x=0;bottom.y=GameSettingsData.ScreenH;
+    while(bottom.y>GameSettingsData.ScreenH/2){
       SHOW_SCREEN
       SDL_Delay(10);
       top.y+=10;
-      if(top.y>(ScreenH/2)-479-9)top.y=(ScreenH/2)-479;
+      if(top.y>(GameSettingsData.ScreenH/2)-479-9)top.y=(GameSettingsData.ScreenH/2)-479;
       bottom.y-=10;
-      if(bottom.y<ScreenH/2+9)bottom.y=ScreenH/2;
-      SDL_BlitSurface(gfx_hud,NULL,buffer,NULL);
+      if(bottom.y<GameSettingsData.ScreenH/2+9)bottom.y=GameSettingsData.ScreenH/2;
+      SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       tmp=top;
-      SDL_BlitSurface(gfx_panel_top,NULL,buffer,&tmp);
+      SDL_BlitSurface(GraphicsData.gfx_panel_top,NULL,buffer,&tmp);
       tmp=bottom;
-      SDL_BlitSurface(gfx_panel_bottom,NULL,buffer,&tmp);
+      SDL_BlitSurface(GraphicsData.gfx_panel_bottom,NULL,buffer,&tmp);
     }
     SHOW_SCREEN
     SDL_Delay(100);
@@ -2172,8 +2174,8 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
 
   GO=map->GO;
   if(!sf){
-    SDL_LockSurface(gfx_hud);
-    ptr=((unsigned int*)gfx_hud->pixels);
+    SDL_LockSurface(GraphicsData.gfx_hud);
+    ptr=((unsigned int*)GraphicsData.gfx_hud->pixels);
   }else{
     SDL_LockSurface(sf);
     ptr=((unsigned int*)sf->pixels);
@@ -2186,7 +2188,7 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
       tx=(int)((map->size/112.0)*x);
 	  if(!pure){
         if(hud->Radar&&!ActivePlayer->ScanMap[tx+ty]){
-          cl=*(unsigned int*)terrain[map->Kacheln[tx+ty]].shw_org->pixels;
+          cl=*(unsigned int*)TerrainData.terrain[map->Kacheln[tx+ty]].shw_org->pixels;
         }else if(ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&&(!hud->TNT||(GO[tx+ty].base->data.can_attack))){
           cl=*(unsigned int*)GO[tx+ty].base->owner->color->pixels;
         }else if(ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].top&&(!hud->TNT||(GO[tx+ty].top->data.can_attack))){
@@ -2196,18 +2198,18 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
         }else if(ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&&GO[tx+ty].vehicle->detected&&(!hud->TNT||(GO[tx+ty].vehicle->data.can_attack))){
           cl=*(unsigned int*)GO[tx+ty].vehicle->owner->color->pixels;
         }else{
-          cl=*(unsigned int*)terrain[map->Kacheln[tx+ty]].sf_org->pixels;
+          cl=*(unsigned int*)TerrainData.terrain[map->Kacheln[tx+ty]].sf_org->pixels;
         }
       }else{
-        cl=*(unsigned int*)terrain[map->Kacheln[tx+ty]].sf_org->pixels;
+        cl=*(unsigned int*)TerrainData.terrain[map->Kacheln[tx+ty]].sf_org->pixels;
       }
       if(cl==0xFF00FF){
-        cl=*(unsigned int*)terrain[map->DefaultWater].sf_org->pixels;
+        cl=*(unsigned int*)TerrainData.terrain[map->DefaultWater].sf_org->pixels;
       }else if((cl&0xFFFFFF)==0xCD00CD){
-        cl=*(unsigned int*)terrain[map->DefaultWater].shw_org->pixels;
+        cl=*(unsigned int*)TerrainData.terrain[map->DefaultWater].shw_org->pixels;
       }
       if(!sf){
-        ptr[15+356*gfx_hud->w+x+y*gfx_hud->w]=cl;
+        ptr[15+356*GraphicsData.gfx_hud->w+x+y*GraphicsData.gfx_hud->w]=cl;
       }else{
         ptr[x+y*sf->w]=cl;      
       }
@@ -2218,20 +2220,20 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
     tx=(int)((hud->OffX/64.0)*(112.0/map->size));
     ty=(int)((hud->OffY/64.0)*(112.0/map->size));
 //    ex=112/(map->size/((448.0/hud->Zoom)));
-    ex=(int)(112/(map->size/(((ScreenW-192.0)/hud->Zoom))));
-    ey=(int)(ty+112/(map->size/(((ScreenH-32.0)/hud->Zoom))));
+    ex=(int)(112/(map->size/(((GameSettingsData.ScreenW-192.0)/hud->Zoom))));
+    ey=(int)(ty+112/(map->size/(((GameSettingsData.ScreenH-32.0)/hud->Zoom))));
     ex+=tx;
     for(y=ty;y<ey;y++){
-      ptr[y*gfx_hud->w+15+356*gfx_hud->w+tx]=MINIMAP_COLOR;
-      ptr[y*gfx_hud->w+15+356*gfx_hud->w+tx+ex-tx-1]=MINIMAP_COLOR;
+      ptr[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+tx]=MINIMAP_COLOR;
+      ptr[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+tx+ex-tx-1]=MINIMAP_COLOR;
     }
     for(x=tx;x<ex;x++){
-      ptr[x+15+356*gfx_hud->w+ty*gfx_hud->w]=MINIMAP_COLOR;
-      ptr[x+15+356*gfx_hud->w+(ty+ey-1-ty)*gfx_hud->w]=MINIMAP_COLOR;
+      ptr[x+15+356*GraphicsData.gfx_hud->w+ty*GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
+      ptr[x+15+356*GraphicsData.gfx_hud->w+(ty+ey-1-ty)*GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
     }
   }
   if(!sf){
-    SDL_UnlockSurface(gfx_hud);
+    SDL_UnlockSurface(GraphicsData.gfx_hud);
   }else{
     SDL_UnlockSurface(sf);  
   }
@@ -2254,13 +2256,13 @@ void MouseMoveCallback(bool force){
   scr.w=64;
   scr.h=16;
   dest.x=265;
-  dest.y=ScreenH-21;
-  SDL_BlitSurface(gfx_hud_stuff,&scr,gfx_hud,&dest);
+  dest.y=GameSettingsData.ScreenH-21;
+  SDL_BlitSurface(GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest);
   scr.x=64;
   scr.y=198;
   scr.w=215;
   dest.x=342;
-  SDL_BlitSurface(gfx_hud_stuff,&scr,gfx_hud,&dest);
+  SDL_BlitSurface(GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest);
   if(x==-1){
     return;
   }
@@ -2269,31 +2271,31 @@ void MouseMoveCallback(bool force){
   if(x < 100 && x > 9) xnull = "0"; if(x < 10) xnull = "00";
   if(y < 100 && y > 9) ynull = "0"; if(y < 10) ynull = "00";
   sprintf(str, "%s%d-%s%d", xnull.c_str(), x, ynull.c_str(), y);
-  fonts->OutTextCenter(str,265+32,(ScreenH-21)+4,gfx_hud);
+  fonts->OutTextCenter(str,265+32,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
 
   if(!game->ActivePlayer->ScanMap[x+y*game->map->size]){
     game->OverObject=NULL;
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
       SDL_Rect r;
       r.x=1;r.y=29;
       r.h=3;r.w=35;
-      SDL_FillRect(gfx_Cattack,&r,0);
+      SDL_FillRect(GraphicsData.gfx_Cattack,&r,0);
     }
     return;
   }
   // Prüfen, ob ein GO unter der Maus ist:
   GO=game->map->GO+(game->map->size*y+x);
-  if(mouse->cur==gfx_Csteal&&game->SelectedVehicle){
+  if(mouse->cur==GraphicsData.gfx_Csteal&&game->SelectedVehicle){
     game->SelectedVehicle->DrawCommandoCursor(GO,true);
-  }else if(mouse->cur==gfx_Cdisable&&game->SelectedVehicle){
+  }else if(mouse->cur==GraphicsData.gfx_Cdisable&&game->SelectedVehicle){
     game->SelectedVehicle->DrawCommandoCursor(GO,false);
   }
   if(GO->vehicle!=NULL&&(GO->vehicle->detected||GO->vehicle->owner==game->ActivePlayer)){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->vehicle->name.c_str(),343+106,(ScreenH-21)+4,gfx_hud);
+    fonts->OutTextCenter((char *)GO->vehicle->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedVehicle){
         game->SelectedVehicle->DrawAttackCursor(GO,game->SelectedVehicle->data.can_attack);
       }else if(game->SelectedBuilding){
@@ -2302,9 +2304,9 @@ void MouseMoveCallback(bool force){
     }
   }else if(GO->plane!=NULL){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->plane->name.c_str(),343+106,(ScreenH-21)+4,gfx_hud);
+    fonts->OutTextCenter((char *)GO->plane->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedVehicle){
         game->SelectedVehicle->DrawAttackCursor(GO,game->SelectedVehicle->data.can_attack);
       }else if(game->SelectedBuilding){
@@ -2313,29 +2315,29 @@ void MouseMoveCallback(bool force){
     }
   }else if(GO->top!=NULL){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->top->name.c_str(),343+106,(ScreenH-21)+4,gfx_hud);
+    fonts->OutTextCenter((char *)GO->top->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
 		if(game->SelectedBuilding){
         game->SelectedBuilding->DrawAttackCursor(GO,game->SelectedBuilding->data.can_attack);
       }
     }
   }else if(GO->base!=NULL&&GO->base->owner&&GO->base->detected){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->base->name.c_str(),343+106,(ScreenH-21)+4,gfx_hud);
+    fonts->OutTextCenter((char *)GO->base->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedBuilding){
         game->SelectedBuilding->DrawAttackCursor(GO,game->SelectedBuilding->data.can_attack);      
       }
     }
   }else{
     // Ggf den AttackCursor neu malen:
-    if(mouse->cur==gfx_Cattack){
+    if(mouse->cur==GraphicsData.gfx_Cattack){
       SDL_Rect r;
       r.x=1;r.y=29;
       r.h=3;r.w=35;
-      SDL_FillRect(gfx_Cattack,&r,0);
+      SDL_FillRect(GraphicsData.gfx_Cattack,&r,0);
     }
     game->OverObject=NULL;
   }
@@ -2412,10 +2414,10 @@ void cGame::DrawFLC(void){
 void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
   int d,da,db,xx,yy,bry;
   unsigned int *ptr;  
-  if(x+r<0||x-r>ScreenW||y+r<0||y-r>ScreenH)return;
+  if(x+r<0||x-r>GameSettingsData.ScreenW||y+r<0||y-r>GameSettingsData.ScreenH)return;
   SDL_LockSurface(sf);
   ptr=(unsigned int*)sf->pixels;
-  y*=ScreenW;
+  y*=GameSettingsData.ScreenW;
 
   d=0;
   xx=0;
@@ -2432,7 +2434,7 @@ void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
       xx++;
       yy--;
     }
-#define PUTC(xxx,yyy) if((xxx)+x>=0&&(xxx)+x<ScreenW&&(yyy)*ScreenW+y>=0&&(yyy)*ScreenW+y<ScreenH*ScreenW)ptr[(xxx)+x+(yyy)*ScreenW+y]=color;
+#define PUTC(xxx,yyy) if((xxx)+x>=0&&(xxx)+x<GameSettingsData.ScreenW&&(yyy)*GameSettingsData.ScreenW+y>=0&&(yyy)*GameSettingsData.ScreenW+y<GameSettingsData.ScreenH*GameSettingsData.ScreenW)ptr[(xxx)+x+(yyy)*GameSettingsData.ScreenW+y]=color;
     PUTC(xx,yy)
     PUTC(yy,xx)
     PUTC(yy,-xx)
@@ -2666,7 +2668,7 @@ bool cGame::Save(string name){
   string stmp;
 
   ActivePlayer->HotHud=*(hud);
-  stmp = SavePath; stmp += name; stmp += ".sav";
+  stmp = GameSettingsData.SavePath; stmp += name; stmp += ".sav";
   fp=fopen(stmp.c_str(),"wb");
   if(fp==NULL)return false;
 
@@ -2703,8 +2705,8 @@ bool cGame::Save(string name){
     fwrite(&(p->ResearchCount),sizeof(int),1,fp);
     fwrite(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fwrite(p->VehicleData,sizeof(sVehicleData),vehicle_anz,fp); // Vehicle-Data
-    fwrite(p->BuildingData,sizeof(sBuildingData),building_anz,fp); // Building-Data
+    fwrite(p->VehicleData,sizeof(sVehicleData),VehicleMainData.vehicle_anz,fp); // Vehicle-Data
+    fwrite(p->BuildingData,sizeof(sBuildingData),BuildingMainData.building_anz,fp); // Building-Data
 
     fwrite(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
   }
@@ -2752,7 +2754,7 @@ void cGame::Load(string name,int AP,bool MP){
   string stmp;
   FILE *fp;
   if(name.empty())return;
-  stmp = SavePath; stmp += name; stmp += ".sav";
+  stmp = GameSettingsData.SavePath; stmp += name; stmp += ".sav";
   fp=fopen(stmp.c_str(),"rb");
   if(fp==NULL)return;
 
@@ -2792,7 +2794,7 @@ void cGame::Load(string name,int AP,bool MP){
     fread(&typ,sizeof(int),1,fp); // Name Length
     str=(char*)malloc(typ);
     fread(str,1,typ,fp);
-    p=new cPlayer(str,colors[cl],nr);
+    p=new cPlayer(str,OtherData.colors[cl],nr);
     free(str);
     p->Credits=credits;
     if(i==AP)ActivePlayer=p;
@@ -2803,8 +2805,8 @@ void cGame::Load(string name,int AP,bool MP){
     fread(&(p->ResearchCount),sizeof(int),1,fp);
     fread(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fread(p->VehicleData,sizeof(sVehicleData),vehicle_anz,fp); // Vehicle-Data
-    fread(p->BuildingData,sizeof(sBuildingData),building_anz,fp); // Building-Data
+    fread(p->VehicleData,sizeof(sVehicleData),VehicleMainData.vehicle_anz,fp); // Vehicle-Data
+    fread(p->BuildingData,sizeof(sBuildingData),BuildingMainData.building_anz,fp); // Building-Data
 
     fread(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
 
@@ -2837,7 +2839,7 @@ void cGame::Load(string name,int AP,bool MP){
         }
         fread(&typnr,sizeof(int),1,fp); // Typ-Nr
 
-        engine->AddVehicle(off%map->size,off/map->size,vehicle+typnr,p,true);
+        engine->AddVehicle(off%map->size,off/map->size,VehicleMainData.vehicle+typnr,p,true);
         if(plane){
           v=map->GO[off].plane;
         }else{
@@ -2937,7 +2939,7 @@ void cGame::Load(string name,int AP,bool MP){
           b->PosX=i%map->size;
           b->PosY=i/map->size;
         }else{
-          engine->AddBuilding(i%map->size,i/map->size,building+typnr,p,true);
+          engine->AddBuilding(i%map->size,i/map->size,BuildingMainData.building+typnr,p,true);
 
           if(base){
             b=map->GO[i].base;
@@ -2989,7 +2991,7 @@ void cGame::Load(string name,int AP,bool MP){
             fread(&(t),sizeof(int),1,fp);
             fread(&(bl->metall_remaining),sizeof(int),1,fp);
 
-            bl->typ=vehicle+t;
+            bl->typ=VehicleMainData.vehicle+t;
           }
         }
 
@@ -3133,7 +3135,7 @@ void cGame::ShowDateiMenu(void){
   mouse->SetCursor(CHand);
   mouse->draw(false,buffer);
   // Den Bildschirm blitten:
-  SDL_BlitSurface(gfx_load_save_menu,NULL,buffer,NULL);
+  SDL_BlitSurface(GraphicsData.gfx_load_save_menu,NULL,buffer,NULL);
   // Den Text anzeigen:
   fonts->OutTextCenter("Laden/Speichern Menü",320,12,buffer);
   // Buttons setzen:
@@ -3147,10 +3149,10 @@ void cGame::ShowDateiMenu(void){
   dest.y=438;
   scr.x=96;
   dest.x=33;
-  SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+  SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
   scr.x=96+28*2;
   dest.x=63;
-  SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+  SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
   // Dateien suchen und Anzeigen:
 
   if ( !doc.LoadFile ( "saves//saves.xml" ) )
@@ -3314,7 +3316,7 @@ void cGame::ShowDateiMenu(void){
         PlayFX(SNDMenuButton);
 		scr.x=96+28;
         dest.x=33;
-        SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
         SHOW_SCREEN
         mouse->draw(false,screen);
         UpPressed=true;
@@ -3326,7 +3328,7 @@ void cGame::ShowDateiMenu(void){
 		ShowFiles(files,offset,selected,Cursor);
         scr.x=96;
         dest.x=33;
-        SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
 		SHOW_SCREEN
         mouse->draw(false,screen);
         UpPressed=false;
@@ -3334,7 +3336,7 @@ void cGame::ShowDateiMenu(void){
     }else if(UpPressed){
       scr.x=96;
       dest.x=33;
-      SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+      SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
       SHOW_SCREEN
       mouse->draw(false,screen);
       UpPressed=false;
@@ -3345,7 +3347,7 @@ void cGame::ShowDateiMenu(void){
         PlayFX(SNDMenuButton);
 		scr.x=96+28*3;
         dest.x=63;
-        SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
         SHOW_SCREEN
         mouse->draw(false,screen);
         DownPressed=true;
@@ -3357,7 +3359,7 @@ void cGame::ShowDateiMenu(void){
 		ShowFiles(files,offset,selected,Cursor);
         scr.x=96+28*2;
         dest.x=63;
-        SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
 		SHOW_SCREEN
         mouse->draw(false,screen);
         DownPressed=false;
@@ -3365,7 +3367,7 @@ void cGame::ShowDateiMenu(void){
     }else if(DownPressed){
       scr.x=96+28*2;
       dest.x=63;
-      SDL_BlitSurface(gfx_menu_buttons,&scr,buffer,&dest);
+      SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
       SHOW_SCREEN
       mouse->draw(false,screen);
       DownPressed=false;
@@ -3393,7 +3395,7 @@ void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
 			x=435;
 			y=72;
 		}
-		SDL_BlitSurface(gfx_load_save_menu,&rect,buffer,&rect);
+		SDL_BlitSurface(GraphicsData.gfx_load_save_menu,&rect,buffer,&rect);
 		if(i+offset==selected){
 			sprintf(sztmp,"%d",(offset+i+1));
 			fonts->OutTextBigCenterGold(sztmp,x,y,buffer);
@@ -3414,7 +3416,7 @@ void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
 			rect.x+=402;
 			rect.y=82;
 		}
-		SDL_BlitSurface(gfx_load_save_menu,&rect,buffer,&rect);
+		SDL_BlitSurface(GraphicsData.gfx_load_save_menu,&rect,buffer,&rect);
 		rect.y+=76;
 	}
 	x=60;y=87;
@@ -3460,13 +3462,13 @@ void cGame::MakeAutosave(void){
   int i;
   // Alle Autosaves nach hinten verschieben:
   for(i=4;i>=0;i--){
-    filename=SavePath; filename+="autosave"; sprintf(sztmp,"%d",i); filename+=sztmp; filename+=".sav";
+    filename=GameSettingsData.SavePath; filename+="autosave"; sprintf(sztmp,"%d",i); filename+=sztmp; filename+=".sav";
 	if(!(fp=fopen(filename.c_str(),"rb")))continue;
 	fclose(fp);
     if(i==4){
 	  remove(filename.c_str());
     }else{
-	  stmp=SavePath; stmp+="autosave"; sprintf(sztmp,"%d",i); stmp+=sztmp; stmp+=".sav";
+	  stmp=GameSettingsData.SavePath; stmp+="autosave"; sprintf(sztmp,"%d",i); stmp+=sztmp; stmp+=".sav";
 	  rename(filename.c_str(),stmp.c_str());
     }
   }
@@ -3549,7 +3551,7 @@ void cGame::TraceBuilding(cBuilding *b,int *y,int x){
   sprintf(str,"dir: %d   menu_active: %d   attacking_mode: %d   base: %d   sub_base: %d",b->dir,b->MenuActive,b->AttackMode,b->base,b->SubBase);
   fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
 
-  sprintf(str,"attacking: %d   dirt_typ: %d   dirt_value: %d   big_dirt: %d   is_working: %d   transfer: %d",b->Attacking,b->DirtTyp,b->DirtValue,b->BigDirt,b->IsWorking,b->Transfer);
+  sprintf(str,"attacking: %d   BuildingMainData.dirt_typ: %d   BuildingMainData.dirt_value: %d   big_dirt: %d   is_working: %d   transfer: %d",b->Attacking,b->DirtTyp,b->DirtValue,b->BigDirt,b->IsWorking,b->Transfer);
   fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
 
   sprintf(str,"metal_prod: %d   oil_prod: %d   gold_prod: %d   max_metal_p: %d   max_oil_p: %d   max_gold_p: %d",b->MetalProd,b->OilProd,b->GoldProd,b->MaxMetalProd,b->MaxOilProd,b->MaxGoldProd);
@@ -3579,7 +3581,7 @@ void cGame::TraceBuilding(cBuilding *b,int *y,int x){
     int i;
     for(i=0;i<b->BuildList->Count;i++){
       bl=b->BuildList->BuildListItems[i];
-      sprintf(str,"  build %d: %d \"%s\"",i,bl->typ->nr,vehicle[bl->typ->nr].data.name);
+      sprintf(str,"  build %d: %d \"%s\"",i,bl->typ->nr,VehicleMainData.vehicle[bl->typ->nr].data.name);
       fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
     }
   }
@@ -3624,12 +3626,12 @@ bool cGame::MakeHotSeatEnde(void){
 
   SDL_Surface *sf;
   SDL_Rect scr;
-  sf=SDL_CreateRGBSurface(SDL_SRCCOLORKEY,ScreenW,ScreenH,32,0,0,0,0);
+  sf=SDL_CreateRGBSurface(SDL_SRCCOLORKEY,GameSettingsData.ScreenW,GameSettingsData.ScreenH,32,0,0,0,0);
   scr.x=15;
   scr.y=356;
   scr.w=scr.h=112;
   SDL_BlitSurface(sf,NULL,buffer,NULL);
-  SDL_BlitSurface(gfx_hud,NULL,buffer,NULL);
+  SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
   SDL_BlitSurface(sf,&scr,buffer,&scr);
   stmp=ActivePlayer->name; stmp+=" ist am Zug.";
   ShowOK(stmp,true);
