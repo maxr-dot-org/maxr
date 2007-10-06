@@ -105,8 +105,6 @@ struct sReport;
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
-EX bool LoadingData;
-
 // Screenbuffers //////////////////////////////////////////////////////////////
 EX SDL_Surface *screen ZERO;	// Der Bildschirm
 EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
@@ -432,14 +430,13 @@ public:
 	SDL_Surface *WayPointPfeileSpecial[8][60];
 } EX OtherData;
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations
 // ------------------------
-// This classes are for saving global Variables needed by the game
+// 
 ///////////////////////////////////////////////////////////////////////////////
 
-int LoadData(void *);
-void MakeLog(char* sztxt,bool ok,int pos);
 void ScaleSurface(SDL_Surface *scr,SDL_Surface **dest,int size);
 void ScaleSurface2(SDL_Surface *scr,SDL_Surface *dest,int size);
 void ScaleSurfaceAdv(SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey);
