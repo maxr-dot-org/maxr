@@ -61,7 +61,7 @@ void cHud::SwitchTNT ( bool set )
 	dest.y=413;
 	dest.w=scr.w=27;
 	dest.h=scr.h=28;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	TNT=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
@@ -85,7 +85,7 @@ void cHud::SwitchRadar ( bool set )
 	dest.y=387;
 	dest.w=scr.w=27;
 	dest.h=scr.h=26;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Radar=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
@@ -109,7 +109,7 @@ void cHud::SwitchNebel ( bool set )
 	dest.y=330;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Nebel=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -132,7 +132,7 @@ void cHud::SwitchGitter ( bool set )
 	dest.y=313;
 	dest.w=scr.w=55;
 	dest.h=scr.h=17;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Gitter=set;
 	game->fDrawHud=true;
 	game->fDrawMap=true;
@@ -156,7 +156,7 @@ void cHud::SwitchScan ( bool set )
 	dest.y=296;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Scan=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -179,7 +179,7 @@ void cHud::SwitchReichweite ( bool set )
 	dest.y=330;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Reichweite=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -202,7 +202,7 @@ void cHud::SwitchMunition ( bool set )
 	dest.y=313;
 	dest.w=scr.w=55;
 	dest.h=scr.h=17;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Munition=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -225,7 +225,7 @@ void cHud::SwitchTreffer ( bool set )
 	dest.y=296;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Treffer=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -248,7 +248,7 @@ void cHud::SwitchFarben ( bool set )
 	dest.y=330;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Farben=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -271,7 +271,7 @@ void cHud::SwitchStatus ( bool set )
 	dest.y=313;
 	dest.w=scr.w=55;
 	dest.h=scr.h=17;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Status=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -294,7 +294,7 @@ void cHud::SwitchStudie ( bool set )
 	dest.y=296;
 	dest.w=scr.w=55;
 	dest.h=scr.h=18;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Studie=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -317,7 +317,7 @@ void cHud::SwitchLock ( bool set )
 	dest.y=227;
 	dest.w=scr.w=21;
 	dest.h=scr.h=22;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Lock=set;
 	game->fDrawHud=true;
 	PlayFX ( SNDHudSwitch );
@@ -328,7 +328,7 @@ void cHud::DoZoom ( int x,int y )
 	if ( x<=12 ) x=0;else x-=12;
 	if ( x>104 ) x=104;
 //  x=64-(int)(x*(64-((448.0/game->map->size)<5?5:(448.0/game->map->size)))/104);
-	x=64- ( int ) ( x* ( 64- ( ( ( ScreenW-192.0 ) /game->map->size ) <5?5: ( ( ScreenW-192.0 ) /game->map->size ) ) ) /104 );
+	x=64- ( int ) ( x* ( 64- ( ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) <5?5: ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) ) ) /104 );
 	if ( x<1 ) x=1;
 	SetZoom ( x,y );
 }
@@ -338,28 +338,28 @@ void cHud::SetZoom ( int zoom,int DestY )
 	static int lastz=64;
 	SDL_Rect scr,dest;
 //  if(zoom<448/game->map->size)zoom=448/game->map->size;
-	if ( zoom< ( ScreenW-192 ) /game->map->size ) zoom= ( ScreenW-192 ) /game->map->size;
+	if ( zoom< ( GameSettingsData.ScreenW-192 ) /game->map->size ) zoom= ( GameSettingsData.ScreenW-192 ) /game->map->size;
 	if ( zoom<5 ) zoom=5;
 	else if ( zoom>64 ) zoom=64;
 	Zoom=zoom;
 //  zoom-=((448.0/game->map->size)<5?5:(448.0/game->map->size));
-	zoom-= ( int ) ( ( ( ( ScreenW-192.0 ) /game->map->size ) <5?5: ( ( ScreenW-192.0 ) /game->map->size ) ) );
+	zoom-= ( int ) ( ( ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) <5?5: ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) ) );
 	scr.x=0;
 	scr.y=0;
 	dest.x=19;
 	dest.y=DestY;
 	dest.w=scr.w=132;
 	dest.h=scr.h=20;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 //  zoom=106-(int)(zoom*106.0/(64-((448.0/game->map->size)<5?5:(448.0/game->map->size))));
-	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( ScreenW-192.0 ) /game->map->size ) <5?5: ( ( ScreenW-192.0 ) /game->map->size ) ) ) );
+	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) <5?5: ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size ) ) ) );
 	scr.x=132;
 	scr.y=1;
 	dest.x=20+zoom;
 	dest.y=DestY+1;
 	dest.w=scr.w=25;
 	dest.h=scr.h=14;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	game->fDrawHud=true;
 	game->fDrawMap=true;
 	game->fDrawMMap=true;
@@ -368,13 +368,13 @@ void cHud::SetZoom ( int zoom,int DestY )
 	{
 		int off;
 //    off=(int)(((448.0/(float)lastz*64)-(448.0/(float)Zoom*64))/2);
-		off= ( int ) ( ( ( ( ScreenW-192.0 ) / ( float ) lastz*64 )- ( ( ScreenW-192.0 ) / ( float ) Zoom*64 ) ) /2 );
+		off= ( int ) ( ( ( ( GameSettingsData.ScreenW-192.0 ) / ( float ) lastz*64 )- ( ( GameSettingsData.ScreenW-192.0 ) / ( float ) Zoom*64 ) ) /2 );
 		lastz=Zoom;
 
 		OffX+=off;
 		OffY+=off;
 //    off=game->map->size*64-(int)((448.0/Zoom)*64);
-		off=game->map->size*64- ( int ) ( ( ( ScreenW-192.0 ) /Zoom ) *64 );
+		off=game->map->size*64- ( int ) ( ( ( GameSettingsData.ScreenW-192.0 ) /Zoom ) *64 );
 		while ( OffX>off ) OffX--;
 		while ( OffY>off ) OffY--;
 		while ( OffX<0 ) OffX++;
@@ -422,8 +422,8 @@ void cHud::CheckOneClick ( void )
 void cHud::DoAllHud ( void )
 {
 	bool s;
-	s=sound;
-	sound=false;
+	s=GameSettingsData.sound;
+	GameSettingsData.sound=false;
 	SwitchTNT ( TNT );
 	SwitchRadar ( Radar );
 	SwitchNebel ( Nebel );
@@ -437,7 +437,7 @@ void cHud::DoAllHud ( void )
 	SwitchStudie ( Studie );
 	SwitchLock ( Lock );
 	SetZoom ( Zoom );
-	sound=s;
+	GameSettingsData.sound=s;
 	ShowRunde();
 }
 
@@ -447,17 +447,17 @@ void cHud::CheckScroll ( bool pure )
 	x=mouse->x;
 	y=mouse->y;
 
-	if ( x<=0&&y>30&&y<ScreenH-30-18 ) {mouse->SetCursor ( CPfeil4 );DoScroll ( 4 );return;}
-	if ( x>=ScreenW-18&&y>30&&y<ScreenH-30-18 ) {mouse->SetCursor ( CPfeil6 );DoScroll ( 6 );return;}
+	if ( x<=0&&y>30&&y<GameSettingsData.ScreenH-30-18 ) {mouse->SetCursor ( CPfeil4 );DoScroll ( 4 );return;}
+	if ( x>=GameSettingsData.ScreenW-18&&y>30&&y<GameSettingsData.ScreenH-30-18 ) {mouse->SetCursor ( CPfeil6 );DoScroll ( 6 );return;}
 
 	if ( ( x<=0&&y<=30 ) || ( y<=0&&x<=30 ) ) {mouse->SetCursor ( CPfeil7 );DoScroll ( 7 );return;}
-	if ( ( x>=ScreenW-18&&y<=30 ) || ( y<=0&&x>=ScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil9 );DoScroll ( 9 );return;}
+	if ( ( x>=GameSettingsData.ScreenW-18&&y<=30 ) || ( y<=0&&x>=GameSettingsData.ScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil9 );DoScroll ( 9 );return;}
 
-	if ( y<=0&&x>30&&x<ScreenW-30-18 ) {mouse->SetCursor ( CPfeil8 );DoScroll ( 8 );return;}
-	if ( y>=ScreenH-18&&x>30&&x<ScreenW-30-18 ) {mouse->SetCursor ( CPfeil2 );DoScroll ( 2 );return;}
+	if ( y<=0&&x>30&&x<GameSettingsData.ScreenW-30-18 ) {mouse->SetCursor ( CPfeil8 );DoScroll ( 8 );return;}
+	if ( y>=GameSettingsData.ScreenH-18&&x>30&&x<GameSettingsData.ScreenW-30-18 ) {mouse->SetCursor ( CPfeil2 );DoScroll ( 2 );return;}
 
-	if ( ( x<=0&&y>=ScreenH-30-18 ) || ( y>=ScreenH-18&&x<=30 ) ) {mouse->SetCursor ( CPfeil1 );DoScroll ( 1 );return;}
-	if ( ( x>=ScreenW-18&&y>=ScreenH-30-18 ) || ( y>=ScreenH-18&&x>=ScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil3 );DoScroll ( 3 );return;}
+	if ( ( x<=0&&y>=GameSettingsData.ScreenH-30-18 ) || ( y>=GameSettingsData.ScreenH-18&&x<=30 ) ) {mouse->SetCursor ( CPfeil1 );DoScroll ( 1 );return;}
+	if ( ( x>=GameSettingsData.ScreenW-18&&y>=GameSettingsData.ScreenH-30-18 ) || ( y>=GameSettingsData.ScreenH-18&&x>=GameSettingsData.ScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil3 );DoScroll ( 3 );return;}
 
 	if ( pure )
 	{
@@ -559,7 +559,7 @@ void cHud::CheckScroll ( bool pure )
 				game->fDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->AttackMode&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<ScreenW-12&&y<ScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->AttackMode&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<GameSettingsData.ScreenW-12&&y<GameSettingsData.ScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) )
 			{
@@ -576,7 +576,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->StealActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<ScreenW-12&&y<ScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->StealActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<GameSettingsData.ScreenW-12&&y<GameSettingsData.ScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
 			{
@@ -594,7 +594,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->DisableActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<ScreenW-12&&y<ScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->DisableActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<GameSettingsData.ScreenW-12&&y<GameSettingsData.ScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
 			{
@@ -612,7 +612,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->AttackMode&&game->SelectedBuilding->owner==game->ActivePlayer&&x>=180&&y>=18&&x<ScreenW-12&&y<ScreenH-14 )
+		else if ( game->SelectedBuilding&&game->SelectedBuilding->AttackMode&&game->SelectedBuilding->owner==game->ActivePlayer&&x>=180&&y>=18&&x<GameSettingsData.ScreenW-12&&y<GameSettingsData.ScreenH-14 )
 		{
 			if ( game->SelectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
 			{
@@ -687,7 +687,7 @@ void cHud::CheckScroll ( bool pure )
 				game->fDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( !game->SelectedVehicle->IsBuilding&&!game->SelectedVehicle->IsClearing&&!game->SelectedVehicle->LoadActive&&!game->SelectedVehicle->ActivatingVehicle ) || ( game->SelectedVehicle->IsBuilding&&game->SelectedVehicle->BuildRounds==0 ) || ( game->SelectedVehicle->IsClearing&&game->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( ScreenW-192 ) &&y<18+ ( ScreenH-32 ) )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( !game->SelectedVehicle->IsBuilding&&!game->SelectedVehicle->IsClearing&&!game->SelectedVehicle->LoadActive&&!game->SelectedVehicle->ActivatingVehicle ) || ( game->SelectedVehicle->IsBuilding&&game->SelectedVehicle->BuildRounds==0 ) || ( game->SelectedVehicle->IsClearing&&game->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( GameSettingsData.ScreenW-192 ) &&y<18+ ( GameSettingsData.ScreenH-32 ) )
 		{
 			if ( game->SelectedVehicle->MoveJobActive )
 			{
@@ -824,7 +824,7 @@ void cHud::DoScroll ( int dir )
 	}
 	hud=game->hud;
 	step=64/Zoom;
-	step*=ScrollSpeed;
+	step*=GameSettingsData.ScrollSpeed;
 	switch ( dir )
 	{
 		case 1:
@@ -859,9 +859,9 @@ void cHud::DoScroll ( int dir )
 	if ( hud->OffX<0 ) hud->OffX=0;
 	if ( hud->OffY<0 ) hud->OffY=0;
 //  step=game->map->size*64-(int)((448.0/Zoom)*64);
-	step=game->map->size*64- ( int ) ( ( ( ScreenW-192.0 ) /Zoom ) *64 );
+	step=game->map->size*64- ( int ) ( ( ( GameSettingsData.ScreenW-192.0 ) /Zoom ) *64 );
 	if ( hud->OffX>=step ) hud->OffX=step;
-	step=game->map->size*64- ( int ) ( ( ( ScreenH-32.0 ) /Zoom ) *64 );
+	step=game->map->size*64- ( int ) ( ( ( GameSettingsData.ScreenH-32.0 ) /Zoom ) *64 );
 	if ( hud->OffY>=step ) hud->OffY=step;
 	if ( lx==OffX&&ly==OffY ) return;
 	game->fDrawMap=true;
@@ -1132,7 +1132,7 @@ void cHud::PraeferenzenButton ( bool set )
 		scr.y=169;
 		Praeferenzen=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 // Setzt den Monitor zurück:
@@ -1145,7 +1145,7 @@ void cHud::ResetVideoMonitor ( void )
 	dest.y=29;
 	scr.w=dest.w=128;
 	scr.h=dest.h=128;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::PauseButton ( bool set )
@@ -1167,7 +1167,7 @@ void cHud::PauseButton ( bool set )
 		scr.y=132;
 		PausePressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::PlayButton ( bool set )
@@ -1189,7 +1189,7 @@ void cHud::PlayButton ( bool set )
 		scr.y=132;
 		PlayPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::HelpButton ( bool set )
@@ -1211,7 +1211,7 @@ void cHud::HelpButton ( bool set )
 		scr.y=151;
 		HelpPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::ChatButton ( bool set )
@@ -1233,7 +1233,7 @@ void cHud::ChatButton ( bool set )
 		scr.y=130;
 		ChatPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::LogButton ( bool set )
@@ -1255,7 +1255,7 @@ void cHud::LogButton ( bool set )
 		scr.y=129;
 		LogPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::EndeButton ( bool set )
@@ -1277,7 +1277,7 @@ void cHud::EndeButton ( bool set )
 		scr.y=151;
 		EndePressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::ShowRunde ( void )
@@ -1290,9 +1290,9 @@ void cHud::ShowRunde ( void )
 	dest.h=scr.h=15;
 	dest.x=471;
 	dest.y=5;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	sprintf ( str,"%d",game->Runde );
-	fonts->OutTextCenter ( str,498,8,gfx_hud );
+	fonts->OutTextCenter ( str,498,8,GraphicsData.gfx_hud );
 	game->fDrawHud=true;
 }
 
@@ -1315,7 +1315,7 @@ void cHud::ErledigenButton ( bool set )
 		scr.y=172;
 		ErledigenPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::NextButton ( bool set )
@@ -1337,7 +1337,7 @@ void cHud::NextButton ( bool set )
 		scr.y=172;
 		NextPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::PrevButton ( bool set )
@@ -1359,7 +1359,7 @@ void cHud::PrevButton ( bool set )
 		scr.y=172;
 		PrevPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::CenterButton ( bool set )
@@ -1381,7 +1381,7 @@ void cHud::CenterButton ( bool set )
 		scr.y=149;
 		CenterPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::DateiButton ( bool set )
@@ -1403,7 +1403,7 @@ void cHud::DateiButton ( bool set )
 		scr.y=151;
 		DateiPressed=false;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
 void cHud::ScaleSurfaces ( void )
@@ -1450,95 +1450,95 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Vehicles:
 	fak= ( int ) ( Zoom/64.0 );
-	for ( i=0;i<vehicle_anz;i++ )
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
 		for ( k=0;k<8;k++ )
 		{
-			sizex= ( vehicle[i].img_org[k]->w*fak );
-			sizey= ( vehicle[i].img_org[k]->h*fak );
-			ScaleSurfaceAdv2 ( vehicle[i].img_org[k],vehicle[i].img[k],sizex,sizey );
-			sizex= ( vehicle[i].shw_org[k]->w*fak );
-			sizey= ( vehicle[i].shw_org[k]->h*fak );
-			ScaleSurfaceAdv2 ( vehicle[i].shw_org[k],vehicle[i].shw[k],sizex,sizey );
+			sizex= ( VehicleMainData.vehicle[i].img_org[k]->w*fak );
+			sizey= ( VehicleMainData.vehicle[i].img_org[k]->h*fak );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[k],VehicleMainData.vehicle[i].img[k],sizex,sizey );
+			sizex= ( VehicleMainData.vehicle[i].shw_org[k]->w*fak );
+			sizey= ( VehicleMainData.vehicle[i].shw_org[k]->h*fak );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].shw_org[k],VehicleMainData.vehicle[i].shw[k],sizex,sizey );
 		}
-		if ( vehicle[i].build_org )
+		if ( VehicleMainData.vehicle[i].build_org )
 		{
-			sizey= ( vehicle[i].build_org->h*fak );
+			sizey= ( VehicleMainData.vehicle[i].build_org->h*fak );
 			sizex=sizey*4;
-			ScaleSurfaceAdv2 ( vehicle[i].build_org,vehicle[i].build,sizex,sizey );
-			sizex= ( vehicle[i].build_shw_org->w*fak );
-			sizey= ( vehicle[i].build_shw_org->h*fak );
-			ScaleSurfaceAdv2 ( vehicle[i].build_shw_org,vehicle[i].build_shw,sizex,sizey );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].build_org,VehicleMainData.vehicle[i].build,sizex,sizey );
+			sizex= ( VehicleMainData.vehicle[i].build_shw_org->w*fak );
+			sizey= ( VehicleMainData.vehicle[i].build_shw_org->h*fak );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].build_shw_org,VehicleMainData.vehicle[i].build_shw,sizex,sizey );
 		}
-		if ( vehicle[i].clear_small_org )
+		if ( VehicleMainData.vehicle[i].clear_small_org )
 		{
-			sizey= ( vehicle[i].clear_small_org->h*fak );
+			sizey= ( VehicleMainData.vehicle[i].clear_small_org->h*fak );
 			sizex=sizey*4;
-			ScaleSurfaceAdv2 ( vehicle[i].clear_small_org,vehicle[i].clear_small,sizex,sizey );
-			sizex= ( vehicle[i].clear_small_shw_org->w*fak );
-			sizey= ( vehicle[i].clear_small_shw_org->h*fak );
-			ScaleSurfaceAdv2 ( vehicle[i].clear_small_shw_org,vehicle[i].clear_small_shw,sizex,sizey );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].clear_small_org,VehicleMainData.vehicle[i].clear_small,sizex,sizey );
+			sizex= ( VehicleMainData.vehicle[i].clear_small_shw_org->w*fak );
+			sizey= ( VehicleMainData.vehicle[i].clear_small_shw_org->h*fak );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].clear_small_shw_org,VehicleMainData.vehicle[i].clear_small_shw,sizex,sizey );
 		}
-		if ( vehicle[i].overlay_org )
+		if ( VehicleMainData.vehicle[i].overlay_org )
 		{
-			sizey= ( vehicle[i].overlay_org->h*fak );
-			sizex= ( vehicle[i].overlay_org->w*fak );
-			ScaleSurfaceAdv2 ( vehicle[i].overlay_org,vehicle[i].overlay,sizex,sizey );
+			sizey= ( VehicleMainData.vehicle[i].overlay_org->h*fak );
+			sizex= ( VehicleMainData.vehicle[i].overlay_org->w*fak );
+			ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].overlay_org,VehicleMainData.vehicle[i].overlay,sizex,sizey );
 		}
 	}
 	// Buildings:
 	fak= ( int ) ( Zoom/64.0 );
-	for ( i=0;i<building_anz;i++ )
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
-		ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w*fak,building[i].img_org->h*fak );
-		ScaleSurfaceAdv2 ( building[i].shw_org,building[i].shw,building[i].shw_org->w*fak,building[i].shw_org->h*fak );
-		if ( building[i].eff_org )
+		ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w*fak,BuildingMainData.building[i].img_org->h*fak );
+		ScaleSurfaceAdv2 ( BuildingMainData.building[i].shw_org,BuildingMainData.building[i].shw,BuildingMainData.building[i].shw_org->w*fak,BuildingMainData.building[i].shw_org->h*fak );
+		if ( BuildingMainData.building[i].eff_org )
 		{
-			if ( Zoom==64 ) ScaleSurfaceAdv2 ( building[i].eff_org,building[i].eff,building[i].eff_org->w*fak,building[i].eff_org->h*fak );
-			else ScaleSurfaceAdv2Spec ( building[i].eff_org,building[i].eff,building[i].eff_org->w*fak,building[i].eff_org->h*fak );
+			if ( Zoom==64 ) ScaleSurfaceAdv2 ( BuildingMainData.building[i].eff_org,BuildingMainData.building[i].eff,BuildingMainData.building[i].eff_org->w*fak,BuildingMainData.building[i].eff_org->h*fak );
+			else ScaleSurfaceAdv2Spec ( BuildingMainData.building[i].eff_org,BuildingMainData.building[i].eff,BuildingMainData.building[i].eff_org->w*fak,BuildingMainData.building[i].eff_org->h*fak );
 		}
 	}
-	ScaleSurfaceAdv2 ( dirt_small_org,dirt_small,dirt_small_org->w*fak,dirt_small_org->h*fak );
-	ScaleSurfaceAdv2 ( dirt_small_shw_org,dirt_small_shw,dirt_small_shw_org->w*fak,dirt_small_shw_org->h*fak );
-	ScaleSurfaceAdv2 ( dirt_big_org,dirt_big,dirt_big_org->w*fak,dirt_big_org->h*fak );
-	ScaleSurfaceAdv2 ( dirt_big_shw_org,dirt_big_shw,dirt_big_shw_org->w*fak,dirt_big_shw_org->h*fak );
+	ScaleSurfaceAdv2 ( BuildingMainData.dirt_small_org,BuildingMainData.dirt_small,BuildingMainData.dirt_small_org->w*fak,BuildingMainData.dirt_small_org->h*fak );
+	ScaleSurfaceAdv2 ( BuildingMainData.dirt_small_shw_org,BuildingMainData.dirt_small_shw,BuildingMainData.dirt_small_shw_org->w*fak,BuildingMainData.dirt_small_shw_org->h*fak );
+	ScaleSurfaceAdv2 ( BuildingMainData.dirt_big_org,BuildingMainData.dirt_big,BuildingMainData.dirt_big_org->w*fak,BuildingMainData.dirt_big_org->h*fak );
+	ScaleSurfaceAdv2 ( BuildingMainData.dirt_big_shw_org,BuildingMainData.dirt_big_shw,BuildingMainData.dirt_big_shw_org->w*fak,BuildingMainData.dirt_big_shw_org->h*fak );
 
 	// Bänder:
-	ScaleSurface2 ( gfx_band_small_org,gfx_band_small,Zoom );
-	ScaleSurface2 ( gfx_band_big_org,gfx_band_big,Zoom*2 );
+	ScaleSurface2 ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,Zoom );
+	ScaleSurface2 ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,Zoom*2 );
 
 	// Resources:
-	ScaleSurface2 ( res_metal_org,res_metal,Zoom );
-	ScaleSurface2 ( res_oil_org,res_oil,Zoom );
-	ScaleSurface2 ( res_gold_org,res_gold,Zoom );
+	ScaleSurface2 ( ResourceData.res_metal_org,ResourceData.res_metal,Zoom );
+	ScaleSurface2 ( ResourceData.res_oil_org,ResourceData.res_oil,Zoom );
+	ScaleSurface2 ( ResourceData.res_gold_org,ResourceData.res_gold,Zoom );
 
 	// Big Beton:
-	ScaleSurface2 ( gfx_big_beton_org,gfx_big_beton,Zoom*2 );
+	ScaleSurface2 ( GraphicsData.gfx_big_beton_org,GraphicsData.gfx_big_beton,Zoom*2 );
 
 	// Andere:
-	ScaleSurface2 ( gfx_exitpoints_org,gfx_exitpoints,Zoom );
-	// ScaleSurface2(gfx_build_finished_org,gfx_build_finished,Zoom*2);
+	ScaleSurface2 ( GraphicsData.gfx_exitpoints_org,GraphicsData.gfx_exitpoints,Zoom );
+	// ScaleSurface2(GraphicsData.gfx_build_finished_org,GraphicsData.gfx_build_finished,Zoom*2);
 
 	// FX:
 #define SCALE_FX(a,b) ScaleSurfaceAdv2(a[0],a[1],(int)((a[0]->w/a[0]->h*b)),b);
-	SCALE_FX ( fx_explo_small0,Zoom );
-	SCALE_FX ( fx_explo_small1,Zoom*2 );
-	SCALE_FX ( fx_explo_small2,Zoom*2 );
-	SCALE_FX ( fx_explo_big0,Zoom*2 );
-	SCALE_FX ( fx_explo_big1,Zoom*2 );
-	SCALE_FX ( fx_explo_big2,Zoom*2 );
-	SCALE_FX ( fx_explo_big3,Zoom*2 );
-	SCALE_FX ( fx_explo_big4,Zoom*2 );
-	SCALE_FX ( fx_muzzle_big,Zoom );
-	SCALE_FX ( fx_muzzle_small,Zoom );
-	SCALE_FX ( fx_muzzle_med,Zoom );
-	SCALE_FX ( fx_hit,Zoom );
-	SCALE_FX ( fx_smoke, ( int ) ( Zoom/4 ) );
-	SCALE_FX ( fx_rocket, ( int ) ( Zoom/2.28 ) );
-	SCALE_FX ( fx_dark_smoke, ( int ) ( 0.375*Zoom ) );
-	SCALE_FX ( fx_tracks,Zoom );
-	SCALE_FX ( fx_corpse,Zoom );
-	SCALE_FX ( fx_absorb,Zoom );
+	SCALE_FX ( EffectsData.fx_explo_small0,Zoom );
+	SCALE_FX ( EffectsData.fx_explo_small1,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_small2,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_big0,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_big1,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_big2,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_big3,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_explo_big4,Zoom*2 );
+	SCALE_FX ( EffectsData.fx_muzzle_big,Zoom );
+	SCALE_FX ( EffectsData.fx_muzzle_small,Zoom );
+	SCALE_FX ( EffectsData.fx_muzzle_med,Zoom );
+	SCALE_FX ( EffectsData.fx_hit,Zoom );
+	SCALE_FX ( EffectsData.fx_smoke, ( int ) ( Zoom/4 ) );
+	SCALE_FX ( EffectsData.fx_rocket, ( int ) ( Zoom/2.28 ) );
+	SCALE_FX ( EffectsData.fx_dark_smoke, ( int ) ( 0.375*Zoom ) );
+	SCALE_FX ( EffectsData.fx_tracks,Zoom );
+	SCALE_FX ( EffectsData.fx_corpse,Zoom );
+	SCALE_FX ( EffectsData.fx_absorb,Zoom );
 
 	LastZoom=Zoom;
 }
