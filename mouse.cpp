@@ -43,7 +43,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 		dest.w=back->w;
 		dest.h=back->h;
 		*/
-		if ( WindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
+		if ( GameSettingsData.WindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
 	}
 	// Den Hintergrund sichern, und die Maus malen:
 	GetBack ( sf );
@@ -53,7 +53,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	LastY=DrawY;
 
 	SDL_BlitSurface ( cur,NULL,sf,&dest );
-	if ( WindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
+	if ( GameSettingsData.WindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
 }
 
 // Setzt den Cursor:
@@ -62,92 +62,92 @@ bool cMouse::SetCursor ( eCursor typ )
 	switch ( typ )
 	{
 		case CHand:
-			if ( cur==gfx_Chand ) return false;
-			cur=gfx_Chand;
+			if ( cur==GraphicsData.gfx_Chand ) return false;
+			cur=GraphicsData.gfx_Chand;
 			break;
 		case CNo:
-			if ( cur==gfx_Cno ) return false;
-			cur=gfx_Cno;
+			if ( cur==GraphicsData.gfx_Cno ) return false;
+			cur=GraphicsData.gfx_Cno;
 			break;
 		case CSelect:
-			if ( cur==gfx_Cselect ) return false;
-			cur=gfx_Cselect;
+			if ( cur==GraphicsData.gfx_Cselect ) return false;
+			cur=GraphicsData.gfx_Cselect;
 			break;
 		case CMove:
-			if ( cur==gfx_Cmove ) return false;
-			cur=gfx_Cmove;
+			if ( cur==GraphicsData.gfx_Cmove ) return false;
+			cur=GraphicsData.gfx_Cmove;
 			break;
 		case CPfeil1:
-			if ( cur==gfx_Cpfeil1 ) return false;
-			cur=gfx_Cpfeil1;
+			if ( cur==GraphicsData.gfx_Cpfeil1 ) return false;
+			cur=GraphicsData.gfx_Cpfeil1;
 			break;
 		case CPfeil2:
-			if ( cur==gfx_Cpfeil2 ) return false;
-			cur=gfx_Cpfeil2;
+			if ( cur==GraphicsData.gfx_Cpfeil2 ) return false;
+			cur=GraphicsData.gfx_Cpfeil2;
 			break;
 		case CPfeil3:
-			if ( cur==gfx_Cpfeil3 ) return false;
-			cur=gfx_Cpfeil3;
+			if ( cur==GraphicsData.gfx_Cpfeil3 ) return false;
+			cur=GraphicsData.gfx_Cpfeil3;
 			break;
 		case CPfeil4:
-			if ( cur==gfx_Cpfeil4 ) return false;
-			cur=gfx_Cpfeil4;
+			if ( cur==GraphicsData.gfx_Cpfeil4 ) return false;
+			cur=GraphicsData.gfx_Cpfeil4;
 			break;
 		case CPfeil6:
-			if ( cur==gfx_Cpfeil6 ) return false;
-			cur=gfx_Cpfeil6;
+			if ( cur==GraphicsData.gfx_Cpfeil6 ) return false;
+			cur=GraphicsData.gfx_Cpfeil6;
 			break;
 		case CPfeil7:
-			if ( cur==gfx_Cpfeil7 ) return false;
-			cur=gfx_Cpfeil7;
+			if ( cur==GraphicsData.gfx_Cpfeil7 ) return false;
+			cur=GraphicsData.gfx_Cpfeil7;
 			break;
 		case CPfeil8:
-			if ( cur==gfx_Cpfeil8 ) return false;
-			cur=gfx_Cpfeil8;
+			if ( cur==GraphicsData.gfx_Cpfeil8 ) return false;
+			cur=GraphicsData.gfx_Cpfeil8;
 			break;
 		case CPfeil9:
-			if ( cur==gfx_Cpfeil9 ) return false;
-			cur=gfx_Cpfeil9;
+			if ( cur==GraphicsData.gfx_Cpfeil9 ) return false;
+			cur=GraphicsData.gfx_Cpfeil9;
 			break;
 		case CHelp:
-			if ( cur==gfx_Chelp ) return false;
-			cur=gfx_Chelp;
+			if ( cur==GraphicsData.gfx_Chelp ) return false;
+			cur=GraphicsData.gfx_Chelp;
 			break;
 		case CAttack:
-			if ( cur==gfx_Cattack ) return false;
-			cur=gfx_Cattack;
+			if ( cur==GraphicsData.gfx_Cattack ) return false;
+			cur=GraphicsData.gfx_Cattack;
 			break;
 		case CBand:
-			if ( cur==gfx_Cband ) return false;
-			cur=gfx_Cband;
+			if ( cur==GraphicsData.gfx_Cband ) return false;
+			cur=GraphicsData.gfx_Cband;
 			break;
 		case CTransf:
-			if ( cur==gfx_Ctransf ) return false;
-			cur=gfx_Ctransf;
+			if ( cur==GraphicsData.gfx_Ctransf ) return false;
+			cur=GraphicsData.gfx_Ctransf;
 			break;
 		case CLoad:
-			if ( cur==gfx_Cload ) return false;
-			cur=gfx_Cload;
+			if ( cur==GraphicsData.gfx_Cload ) return false;
+			cur=GraphicsData.gfx_Cload;
 			break;
 		case CMuni:
-			if ( cur==gfx_Cmuni ) return false;
-			cur=gfx_Cmuni;
+			if ( cur==GraphicsData.gfx_Cmuni ) return false;
+			cur=GraphicsData.gfx_Cmuni;
 			break;
 		case CRepair:
-			if ( cur==gfx_Crepair ) return false;
-			cur=gfx_Crepair;
+			if ( cur==GraphicsData.gfx_Crepair ) return false;
+			cur=GraphicsData.gfx_Crepair;
 			break;
 		case CSteal:
-			if ( cur==gfx_Csteal ) return false;
-			cur=gfx_Csteal;
+			if ( cur==GraphicsData.gfx_Csteal ) return false;
+			cur=GraphicsData.gfx_Csteal;
 			break;
 		case CDisable:
-			if ( cur==gfx_Cdisable ) return false;
-			cur=gfx_Cdisable;
+			if ( cur==GraphicsData.gfx_Cdisable ) return false;
+			cur=GraphicsData.gfx_Cdisable;
 			break;
 		case CActivate:
-			if ( cur==gfx_Cactivate ) return false;
-			cur=gfx_Cactivate;
+			if ( cur==GraphicsData.gfx_Cactivate ) return false;
+			cur=GraphicsData.gfx_Cactivate;
 			break;
 	}
 	if ( back!=NULL )
@@ -183,26 +183,26 @@ void cMouse::GetPos ( void )
 	SDL_GetMouseState ( &x,&y );
 
 	// Cursor Offset bestimmen:
-	if ( cur==gfx_Cselect||cur==gfx_Chelp||cur==gfx_Cmove||cur==gfx_Cno||cur==gfx_Ctransf||cur==gfx_Cband||cur==gfx_Cload||cur==gfx_Cmuni||cur==gfx_Crepair )
+	if ( cur==GraphicsData.gfx_Cselect||cur==GraphicsData.gfx_Chelp||cur==GraphicsData.gfx_Cmove||cur==GraphicsData.gfx_Cno||cur==GraphicsData.gfx_Ctransf||cur==GraphicsData.gfx_Cband||cur==GraphicsData.gfx_Cload||cur==GraphicsData.gfx_Cmuni||cur==GraphicsData.gfx_Crepair )
 	{
 		DrawX=x-12;
 		DrawY=y-12;
 	}
-	else if ( cur==gfx_Cattack||cur==gfx_Csteal||cur==gfx_Cdisable )
+	else if ( cur==GraphicsData.gfx_Cattack||cur==GraphicsData.gfx_Csteal||cur==GraphicsData.gfx_Cdisable )
 	{
 		DrawX=x-19;
 		DrawY=y-16;
 	}
 	else
 	{
-		if ( x>ScreenW-cur->w )
+		if ( x>GameSettingsData.ScreenW-cur->w )
 		{
-			x=ScreenW-cur->w;
+			x=GameSettingsData.ScreenW-cur->w;
 			SDL_WarpMouse ( x,y );
 		}
-		if ( y>ScreenH-cur->h )
+		if ( y>GameSettingsData.ScreenH-cur->h )
 		{
-			y=ScreenH-cur->h;
+			y=GameSettingsData.ScreenH-cur->h;
 			SDL_WarpMouse ( x,y );
 		}
 		DrawX=x;
@@ -220,7 +220,7 @@ void cMouse::GetPos ( void )
 void cMouse::GetKachel ( int *X,int *Y )
 {
 	cHud *hud;
-	if ( x<180||y<18||x>180+ ( ScreenW-192 ) ||y>18+ ( ScreenH-32 ) ) {*X=-1;*Y=-1;return;}
+	if ( x<180||y<18||x>180+ ( GameSettingsData.ScreenW-192 ) ||y>18+ ( GameSettingsData.ScreenH-32 ) ) {*X=-1;*Y=-1;return;}
 	hud=game->hud;
 	*X= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
 	*Y= (int)(( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
@@ -233,7 +233,7 @@ int cMouse::GetKachelOff ( void )
 {
 	cHud *hud;
 	int ret;
-	if ( x<180||y<18||x>180+ ( ScreenW-192 ) ||y>18+ ( ScreenH-32 ) ) return -1;
+	if ( x<180||y<18||x>180+ ( GameSettingsData.ScreenW-192 ) ||y>18+ ( GameSettingsData.ScreenH-32 ) ) return -1;
 	hud=game->hud;
 	ret= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
 	ret+= ( ( int ) ( ( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom ) ) *game->map->size;
