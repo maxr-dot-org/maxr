@@ -33,7 +33,7 @@
 #include "mjobs.h"
 #include "fstcpip.h"
 #include "log.h"
-//#include "loaddata.h"
+#include "loaddata.h"
 
 TList::TList ( void )
 {
@@ -48,26 +48,32 @@ int main ( int argc, char *argv[] )
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator 
 
-	//TODO: load max.xml here for settings!
-
 	showSplash(); //show splashscreen
 
 	// load files
 	SDL_Thread *DataThread = NULL;
-//	DataThread = SDL_CreateThread ( LoadData,NULL );
+	DataThread = SDL_CreateThread ( LoadData,NULL );
 
-// 	SDL_Event event;
-// 	while ( LoadingData )
-// 	{
-// 		while ( SDL_PollEvent ( &event ) )
-// 		{
-// 			if ( event.type == SDL_ACTIVEEVENT )
-// 			{
-// 				SDL_UpdateRect ( screen,0,0,0,0 );
-// 			}
-// 		}
-// 		SDL_Delay ( 30 ); 
-// 	}
+	SDL_Event event;
+	while(LoadingData != LOAD_FINISHED)
+	{
+		if(LoadingData == LOAD_ERROR)
+		{
+			cLog::write("Error while loading data! Application stoped!\n",LOG_TYPE_ERROR);
+			SDL_WaitThread ( DataThread, NULL );
+			SDL_Quit();
+			return 0;
+		}
+		while( SDL_PollEvent( &event ) )
+        {
+            if( event.type == SDL_ACTIVEEVENT )
+            {
+				SDL_UpdateRect ( screen,0,0,0,0 );
+            }    
+        }
+		SDL_Delay(10);
+	}
+
  	SDL_Delay ( 3000 ); //debug only
 
 	SDL_WaitThread ( DataThread, NULL );
@@ -90,8 +96,6 @@ void showSplash()
 	//TODO: default settings if max.xml not avaible. move to max.xml loading routine! SDL crashes BADLY without this!
 	SettingsData.iColourDepth = 32;
 	SettingsData.bWindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
-	SettingsData.iScreenW = 640;
-	SettingsData.iScreenH = 480;
 
 	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
@@ -147,7 +151,7 @@ int initSDL()
 		return -1;
 	}
 
-	cLog::write("Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO); //made it - enough to start game
+	cLog::write("Initalized SDL basics - looks good!\n",cLog::eLOG_TYPE_INFO); //made it - enough to start game
 
 	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
 	{
