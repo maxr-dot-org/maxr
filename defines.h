@@ -32,7 +32,7 @@
 // We have to take care of these manually !
 #define MAXVERSION      "M.A.X. Reloaded 0.52.0 SVN"
 #define MAX_VERSION     "0.52.0"
-#define MAX_BUILD_DATE  "200710052230"
+#define MAX_BUILD_DATE  "2007-10-05 22:30:00"
 
 //#define MAXVERSION "M.A.X. Reloaded 0.52.0 SVN BUILD 200710052230"
 //#define MAXVERSION "M.A.X. Reloaded 0.52.1"
