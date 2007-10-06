@@ -93,8 +93,6 @@ void showSplash()
 	SettingsData.iScreenW = 640;
 	SettingsData.iScreenH = 480;
 
-        putenv ( "SDL_VIDEO_CENTERED=center" );
-
 	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
 	if ( buffer == NULL ) cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -125,6 +123,9 @@ void showGameWindow()
 
 int initSDL()
 {
+	putenv("SDL_VIDEO_WINDOW_POS=center"); //Set env for SDL - must be done _before_ init_sdl
+	putenv("SDL_VIDEO_CENTERED=1");
+
 	if ( SDL_Init ( SDL_INIT_VIDEO ) == -1 ) // start SDL basics
 	{
 		cLog::write("Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR);
