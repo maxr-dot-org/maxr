@@ -151,7 +151,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schadenseffekt machen:
-	if ( timer1&&data.hit_points<data.max_hit_points&&DamageEffects&&!moving&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
+	if ( timer1&&data.hit_points<data.max_hit_points&&GameSettingsData.DamageEffects&&!moving&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
 	{
 		int intense= ( int ) ( 100-100* ( ( float ) data.hit_points/data.max_hit_points ) );
 		game->AddFX ( fxDarkSmoke,PosX*64+DamageFXPointX,PosY*64+DamageFXPointY,intense );
@@ -205,9 +205,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.w=dest->w=typ->img[dir]->w;
 		scr.h=dest->h=typ->img[dir]->h;
 		// Den Schatten malen:
-		if ( Schatten&&! ( data.is_stealth_sea&&game->map->IsWater ( PosX+PosY*game->map->size,true ) ) )
+		if ( GameSettingsData.Schatten&&! ( data.is_stealth_sea&&game->map->IsWater ( PosX+PosY*game->map->size,true ) ) )
 		{
-			if ( StartUp&&Alpha )
+			if ( StartUp&&GameSettingsData.Alpha )
 			{
 				SDL_SetAlpha ( typ->shw[dir],SDL_SRCALPHA,StartUp/5 );
 				if ( data.can_drive!=DRIVE_AIR )
@@ -279,16 +279,16 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 		// Die Spielerfarbe blitten:
-		SDL_BlitSurface ( owner->color,NULL,gfx_tmp,NULL );
+		SDL_BlitSurface ( owner->color,NULL,GraphicsData.gfx_tmp,NULL );
 		if ( data.is_human )
 		{
 			scr.w=scr.h=tmp.h=tmp.w=typ->img[dir]->h;
 			tmp.x=WalkFrame*tmp.w;tmp.y=0;
-			SDL_BlitSurface ( typ->img[dir],&tmp,gfx_tmp,NULL );
+			SDL_BlitSurface ( typ->img[dir],&tmp,GraphicsData.gfx_tmp,NULL );
 		}
 		else
 		{
-			SDL_BlitSurface ( typ->img[dir],NULL,gfx_tmp,NULL );
+			SDL_BlitSurface ( typ->img[dir],NULL,GraphicsData.gfx_tmp,NULL );
 		}
 		// Das Vehicle malen:
 		scr.x=0;
@@ -305,11 +305,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			tmp.y+=oy;
 		}
 
-		if ( StartUp&&Alpha )
+		if ( StartUp&&GameSettingsData.Alpha )
 		{
-			SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,StartUp );
-			SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
-			SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,255 );
+			SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,StartUp );
+			SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
+			SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,255 );
 			if ( timer0 ) StartUp+=25;
 			if ( StartUp>=255 ) StartUp=0;
 		}
@@ -317,17 +317,17 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		{
 			if ( data.is_stealth_sea&&game->map->IsWater ( PosX+PosY*game->map->size,true ) )
 			{
-				SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,100 );
-				SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
-				SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,255 );
+				SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,100 );
+				SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
+				SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,255 );
 			}
 			else
 			{
-				SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
+				SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
 			}
 		}
 		// Ggf das Overlay malen:
-		if ( data.has_overlay&&Animation )
+		if ( data.has_overlay&&GameSettingsData.Animation )
 		{
 			tmp=*dest;
 			scr.h=scr.w=typ->overlay->h;
@@ -343,7 +343,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			{
 				scr.x= (int)(( typ->overlay_org->h* ( ( game->Frame% ( typ->overlay->w/scr.h ) ) ) ) / newzoom);
 			}
-			if ( StartUp&&Alpha )
+			if ( StartUp&&GameSettingsData.Alpha )
 			{
 				SDL_SetAlpha ( typ->overlay,SDL_SRCALPHA,StartUp );
 				SDL_BlitSurface ( typ->overlay,&scr,buffer,&tmp );
@@ -362,8 +362,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		// Ggf den Beton malen:
 		if ( ShowBigBeton )
 		{
-			SDL_SetAlpha ( gfx_big_beton,SDL_SRCALPHA,BigBetonAlpha );
-			SDL_BlitSurface ( gfx_big_beton,NULL,buffer,&tmp );
+			SDL_SetAlpha ( GraphicsData.gfx_big_beton,SDL_SRCALPHA,BigBetonAlpha );
+			SDL_BlitSurface ( GraphicsData.gfx_big_beton,NULL,buffer,&tmp );
 			tmp=*dest;
 			if ( BigBetonAlpha<255 )
 			{
@@ -372,7 +372,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 		// Den Schatten malen:
-		if ( Schatten )
+		if ( GameSettingsData.Schatten )
 		{
 			SDL_BlitSurface ( typ->build_shw,NULL,buffer,&tmp );
 		}
@@ -380,29 +380,29 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.y=0;
 		scr.h=scr.w=typ->build->h;
 		scr.x= ( game->Frame%4 ) *scr.w;
-		SDL_BlitSurface ( owner->color,NULL,gfx_tmp,NULL );
-		SDL_BlitSurface ( typ->build,&scr,gfx_tmp,NULL );
+		SDL_BlitSurface ( owner->color,NULL,GraphicsData.gfx_tmp,NULL );
+		SDL_BlitSurface ( typ->build,&scr,GraphicsData.gfx_tmp,NULL );
 		// Das Vehicle malen:
 		scr.x=0;
 		scr.y=0;
 		tmp=*dest;
 		tmp.x+=ox;
 		tmp.y+=oy;
-		SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
 		// Ggf Markierung blitten, wenn der Bauvorgang abgeschlossen ist:
 		if ( ( ( IsBuilding&&BuildRounds==0 ) || ( IsClearing&&ClearingRounds==0 ) ) &&owner==game->ActivePlayer )
 		{
 			/*SDL_Rect d;
 			   int nr1;//,nr2;
 			   nr1=0xFF00-((game->Frame%0x8)*0x1000);
-			SDL_SetColorKey(gfx_build_finished_org,SDL_SRCCOLORKEY,0xFFFFFF);
+			SDL_SetColorKey(GraphicsData.gfx_build_finished_org,SDL_SRCCOLORKEY,0xFFFFFF);
 			d.x=d.y=0;
-			d.h=d.w=gfx_build_finished->w;
-			// gfx_build_finished=SDL_CreateRGBSurface(SDL_HWSURFACE,gfx_build_finished_org->w,gfx_build_finished_org->h,32,0,0,0,0);
-			SDL_FillRect(gfx_build_finished, NULL, nr1);
-			SDL_BlitSurface(gfx_build_finished_org,NULL,gfx_build_finished,NULL);
-			SDL_SetColorKey(gfx_build_finished,SDL_SRCCOLORKEY,0xFF00FF);
-			   SDL_BlitSurface(gfx_build_finished,&d,buffer,&tmp);*_/
+			d.h=d.w=GraphicsData.gfx_build_finished->w;
+			// GraphicsData.gfx_build_finished=SDL_CreateRGBSurface(SDL_HWSURFACE,GraphicsData.gfx_build_finished_org->w,GraphicsData.gfx_build_finished_org->h,32,0,0,0,0);
+			SDL_FillRect(GraphicsData.gfx_build_finished, NULL, nr1);
+			SDL_BlitSurface(GraphicsData.gfx_build_finished_org,NULL,GraphicsData.gfx_build_finished,NULL);
+			SDL_SetColorKey(GraphicsData.gfx_build_finished,SDL_SRCCOLORKEY,0xFF00FF);
+			   SDL_BlitSurface(GraphicsData.gfx_build_finished,&d,buffer,&tmp);*_/
 			SDL_Rect sr, de;
 			int nr, zoom;
 			zoom = game->hud->Zoom;
@@ -410,7 +410,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			sr.x = nr * (zoom * 2); sr.y = 0;
 			de.h = de.w = sr.h = sr.w = zoom * 2;
 			de.x = tmp.x; de.y = tmp.y;
-			SDL_BlitSurface(gfx_build_finished,&sr,buffer,&de);*/
+			SDL_BlitSurface(GraphicsData.gfx_build_finished,&sr,buffer,&de);*/
 
 			SDL_Rect d,t;
 			int max,nr;
@@ -447,7 +447,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	else
 	{
 		// Den Schatten malen:
-		if ( Schatten )
+		if ( GameSettingsData.Schatten )
 		{
 			SDL_BlitSurface ( typ->clear_small_shw,NULL,buffer,&tmp );
 		}
@@ -455,15 +455,15 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.y=0;
 		scr.h=scr.w=typ->clear_small->h;
 		scr.x= ( game->Frame%4 ) *scr.w;
-		SDL_BlitSurface ( owner->color,NULL,gfx_tmp,NULL );
-		SDL_BlitSurface ( typ->clear_small,&scr,gfx_tmp,NULL );
+		SDL_BlitSurface ( owner->color,NULL,GraphicsData.gfx_tmp,NULL );
+		SDL_BlitSurface ( typ->clear_small,&scr,GraphicsData.gfx_tmp,NULL );
 		// Das Vehicle malen:
 		scr.x=0;
 		scr.y=0;
 		tmp=*dest;
 		tmp.x+=ox;
 		tmp.y+=oy;
-		SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
 		// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
 		if ( ClearingRounds==0&&owner==game->ActivePlayer )
 		{
@@ -719,7 +719,7 @@ void cVehicle::Deselct ( void )
 	dest.h=scr.h=48;
 	dest.x=8;
 	dest.y=171;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	StopFXLoop ( game->ObjectStream );
 	game->ObjectStream=-1;
 }
@@ -818,13 +818,13 @@ void cVehicle::RefreshData ( void )
 			game->ObjectStream=PlayStram();
 		}
 
-		if ( BuildRounds==0&&owner==game->ActivePlayer ) game->engine->AddReport ( ( building+BuildingTyp )->data.name,false );
+		if ( BuildRounds==0&&owner==game->ActivePlayer ) game->engine->AddReport ( ( BuildingMainData.building+BuildingTyp )->data.name,false );
 
-		if ( BuildRounds==0&& ( building[BuildingTyp].data.is_base||building[BuildingTyp].data.is_connector ) && ( ! ( BandX!=PosX||BandY!=PosY ) ||data.cargo==0 ) )
+		if ( BuildRounds==0&& ( BuildingMainData.building[BuildingTyp].data.is_base||BuildingMainData.building[BuildingTyp].data.is_connector ) && ( ! ( BandX!=PosX||BandY!=PosY ) ||data.cargo==0 ) )
 		{
 			IsBuilding=false;
 			BuildPath=false;
-			game->engine->AddBuilding ( PosX,PosY,building+BuildingTyp,owner );
+			game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BuildingTyp,owner );
 		}
 
 		if ( BuildPath&& ( owner==game->ActivePlayer||game->HotSeat ) &&BuildRounds==0&&data.can_build==BUILD_SMALL&& ( BandX!=PosX||BandY!=PosY ) )
@@ -834,7 +834,7 @@ void cVehicle::RefreshData ( void )
 			if ( data.cargo>=BuildCosts*BuildRoundsStart )
 			{
 
-#define CHECK_PATH_BUILD(a) ((building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||building[BuildingTyp].data.is_connector))
+#define CHECK_PATH_BUILD(a) ((BuildingMainData.building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(BuildingMainData.building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||BuildingMainData.building[BuildingTyp].data.is_connector))
 				if ( BandX<PosX&&CHECK_PATH_BUILD ( PosX-1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX-1+PosY*game->map->size,false,false );
 				else if ( BandX>PosX&&CHECK_PATH_BUILD ( PosX+1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+1+PosY*game->map->size,false,false );
 				else if ( BandY<PosY&&CHECK_PATH_BUILD ( PosX+ ( PosY-1 ) *game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY-1 ) *game->map->size,false,false );
@@ -892,37 +892,37 @@ void cVehicle::ShowDetails ( void )
 	dest.h=scr.h=48;
 	dest.x=8;
 	dest.y=171;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	// Die Hitpoints anzeigen:
-	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,gfx_hud );
-	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,gfx_hud );
-	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,gfx_hud );
+	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,GraphicsData.gfx_hud );
+	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
 	// Den Speed anzeigen:
-	DrawNumber ( 31,201,data.speed/2,data.max_speed/2,gfx_hud );
-	fonts->OutTextSmall ( "Gesch",55,201,ClWhite,gfx_hud );
-	DrawSymbol ( SSpeed,88,199,70,data.speed/2,data.max_speed/2,gfx_hud );
+	DrawNumber ( 31,201,data.speed/2,data.max_speed/2,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( "Gesch",55,201,ClWhite,GraphicsData.gfx_hud );
+	DrawSymbol ( SSpeed,88,199,70,data.speed/2,data.max_speed/2,GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 	if ( data.can_transport&&owner==game->ActivePlayer )
 	{
 		// Transport:
-		DrawNumber ( 31,189,data.cargo,data.max_cargo,gfx_hud );
-		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,gfx_hud );
+		DrawNumber ( 31,189,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,GraphicsData.gfx_hud );
 		switch ( data.can_transport )
 		{
 			case TRANS_METAL:
-				DrawSymbol ( SMetal,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SMetal,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_OIL:
-				DrawSymbol ( SOil,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SOil,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_GOLD:
-				DrawSymbol ( SGold,88,187,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SGold,88,187,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_VEHICLES:
-				DrawSymbol ( STrans,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( STrans,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_MEN:
-				DrawSymbol ( SHuman,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SHuman,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 		}
 	}
@@ -931,14 +931,14 @@ void cVehicle::ShowDetails ( void )
 		if ( owner==game->ActivePlayer )
 		{
 			// Munition:
-			DrawNumber ( 31,189,data.ammo,data.max_ammo,gfx_hud );
-			fonts->OutTextSmall ( "Munni",55,189,ClWhite,gfx_hud );
-			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,gfx_hud );
+			DrawNumber ( 31,189,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( "Munni",55,189,ClWhite,GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
 		}
 		// Schüsse:
-		DrawNumber ( 31,212,data.shots,data.max_shots,gfx_hud );
-		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,gfx_hud );
-		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,gfx_hud );
+		DrawNumber ( 31,212,data.shots,data.max_shots,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,GraphicsData.gfx_hud );
+		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,GraphicsData.gfx_hud );
 	}
 }
 
@@ -1056,11 +1056,11 @@ void cVehicle::DrawSymbol ( eSymbols sym,int x,int y,int maxx,int value,int maxv
 	{
 		if ( value>0 )
 		{
-			SDL_BlitSurface ( gfx_hud_stuff,&full,sf,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&full,sf,&dest );
 		}
 		else
 		{
-			SDL_BlitSurface ( gfx_hud_stuff,&empty,sf,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&empty,sf,&dest );
 		}
 		dest.x+=offx;
 		value-=step;
@@ -1097,7 +1097,7 @@ void cVehicle::ShowHelp ( void )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( gfx_help_screen,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_help_screen,NULL,buffer,NULL );
 	// Das Infobild blitten:
 	dest.x=11;
 	dest.y=13;
@@ -1144,7 +1144,7 @@ void cVehicle::ShowHelp ( void )
 				dest.h=scr.h=22;
 				dest.x=484;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1162,7 +1162,7 @@ void cVehicle::ShowHelp ( void )
 			dest.h=scr.h=22;
 			dest.x=484;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_help_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_help_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -1281,7 +1281,7 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym,int x,int y,int maxx,int value,in
 			mark.h=dest.h;
 			SDL_FillRect ( sf,&mark,0xFC0000 );
 		}
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,sf,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,sf,&dest );
 		dest.x+=offx;
 	}
 }
@@ -1326,10 +1326,10 @@ bool cVehicle::CanDrive ( int MapOff )
 			if ( !game->map->IsWater ( MapOff,true ) ) return false;
 			return true;
 		case DRIVE_LANDnSEA:
-			if ( terrain[nr].blocked ) return false;
+			if ( TerrainData.terrain[nr].blocked ) return false;
 			return true;
 		case DRIVE_LAND:
-			if ( terrain[nr].blocked||game->map->IsWater ( MapOff ) ) return false;
+			if ( TerrainData.terrain[nr].blocked||game->map->IsWater ( MapOff ) ) return false;
 			return true;
 	}
 	return false;
@@ -1372,7 +1372,7 @@ void cVehicle::DrawPath ( void )
 			dest.w=zoom;
 			dest.h=zoom;
 
-			SDL_BlitSurface ( WayPointPfeileSpecial[sp][64-zoom],NULL,buffer,&dest );
+			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom],NULL,buffer,&dest );
 
 			if ( mx<BandX ) mx++;
 			else if ( mx>BandX ) mx--;
@@ -1383,7 +1383,7 @@ void cVehicle::DrawPath ( void )
 		dest.y=18-(int)(game->hud->OffY/ ( 64.0/zoom )) +zoom*my;
 		dest.w=zoom;
 		dest.h=zoom;
-		SDL_BlitSurface ( WayPointPfeileSpecial[sp][64-zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom],NULL,buffer,&dest );
 		return;
 	}
 	sp=data.speed;
@@ -1630,7 +1630,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=588;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Bauen:
@@ -1653,7 +1653,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=0;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Transfer:
@@ -1668,7 +1668,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=42;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Stop:
@@ -1727,7 +1727,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=210;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Entfernen:
@@ -1759,7 +1759,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=252;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Wachposten:
@@ -1775,7 +1775,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=84;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Aktivieren/Laden:
@@ -1791,7 +1791,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=462;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 		// Laden:
 		if ( SelMenu==nr ) scr.y=21;else scr.y=0;
@@ -1803,7 +1803,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=420;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Aufaden:
@@ -1818,7 +1818,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=546;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Reparatur:
@@ -1833,7 +1833,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=294;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Minen legen:
@@ -1850,7 +1850,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=630;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Minen sammeln:
@@ -1867,7 +1867,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=252;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Commando-Funktionen:
@@ -1883,7 +1883,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=336;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 		// Stehlen:
 		if ( SelMenu==nr ) scr.y=21;else scr.y=0;
@@ -1895,7 +1895,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 		scr.x=378;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Info:
@@ -1908,7 +1908,7 @@ void cVehicle::DrawMenu ( void )
 		return;
 	}
 	scr.x=840;
-	SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 	dest.y+=22;nr++;
 	// Fertig:
 	if ( SelMenu==nr ) scr.y=21;else scr.y=0;
@@ -1919,7 +1919,7 @@ void cVehicle::DrawMenu ( void )
 		return;
 	}
 	scr.x=126;
-	SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 }
 
 // Liefert die Anzahl der Menüpunkte:
@@ -1953,7 +1953,7 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 	size=game->hud->Zoom;
 	if ( IsBuilding&&data.can_build==BUILD_BIG ) size*=2;
 
-	if ( dest.x+size+42>=ScreenW-12 )
+	if ( dest.x+size+42>=GameSettingsData.ScreenW-12 )
 	{
 		dest.x-=42;
 	}
@@ -1966,10 +1966,10 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 		dest.y-= ( i-size ) /2;
 		dest.y+=- ( dest.y-24 );
 	}
-	else if ( dest.y- ( i-size ) /2+i>=ScreenH-24 )
+	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.ScreenH-24 )
 	{
 		dest.y-= ( i-size ) /2;
-		dest.y-= ( dest.y+i )- ( ScreenH-24 );
+		dest.y-= ( dest.y+i )- ( GameSettingsData.ScreenH-24 );
 	}
 	else
 	{
@@ -2153,7 +2153,7 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 		if ( !v&&!b )
 		{
 			r.x=1;r.y=29;r.h=3;r.w=35;
-			SDL_FillRect ( gfx_Cattack,&r,0 );
+			SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 			return;
 		}
 	}
@@ -2164,7 +2164,7 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 			if ( !go->vehicle&&!go->base&&!go->top )
 			{
 				r.x=1;r.y=29;r.h=3;r.w=35;
-				SDL_FillRect ( gfx_Cattack,&r,0 );
+				SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 				return;
 			}
 			if ( go->top )
@@ -2186,7 +2186,7 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 			if ( !go->plane )
 			{
 				r.x=1;r.y=29;r.h=3;r.w=35;
-				SDL_FillRect ( gfx_Cattack,&r,0 );
+				SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 				return;
 			}
 			v=go->plane;
@@ -2195,7 +2195,7 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	if ( ( v&&v==game->SelectedVehicle ) || ( b&&b==game->SelectedBuilding ) || ( !v&&!b ) )
 	{
 		r.x=1;r.y=29;r.h=3;r.w=35;
-		SDL_FillRect ( gfx_Cattack,&r,0 );
+		SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 		return;
 	}
 
@@ -2224,13 +2224,13 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	r.y=29;
 	r.h=3;
 	r.w=wp;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0x00FF00 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0x00FF00 );
 	r.x+=r.w;
 	r.w=wc-wp;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0xFF0000 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0xFF0000 );
 	r.x+=r.w;
 	r.w=35-wc;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 }
 
 // Berechnet die Hitpoints nach einem Treffer:
@@ -2258,7 +2258,7 @@ void cVehicle::ShowBuildMenu ( void )
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
 	bool PfadPressed=false;
-	bool Beschreibung=ShowBeschreibung;
+	bool Beschreibung=GameSettingsData.ShowDescription;
 	bool DownPressed=false;
 	bool UpPressed=false;
 	TList *images;
@@ -2269,7 +2269,7 @@ void cVehicle::ShowBuildMenu ( void )
 	BandY=PosY;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
-	SDL_BlitSurface ( gfx_build_screen,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen,NULL,buffer,NULL );
 
 	// Den Haken:
 	if ( Beschreibung )
@@ -2278,7 +2278,7 @@ void cVehicle::ShowBuildMenu ( void )
 		dest.y=scr.y=264;
 		dest.w=scr.w=17;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -2288,20 +2288,20 @@ void cVehicle::ShowBuildMenu ( void )
 		dest.y=264;
 		dest.w=scr.w=18;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 
 	// Die Images erstellen:
 	images=new TList;
-	for ( i=0;i<building_anz;i++ )
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
 		sBuildStruct *n;
 		SDL_Surface *sf,*sf2;
-		if ( building[i].data.is_expl_mine ) continue;
-		if ( data.can_build==BUILD_BIG&&!building[i].data.is_big ) continue;
-		if ( data.can_build==BUILD_SMALL&&building[i].data.is_big ) continue;
-		if ( !game->AlienTech&&building[i].data.is_alien ) continue;
-		ScaleSurface ( building[i].img_org,&sf2,32 );
+		if ( BuildingMainData.building[i].data.is_expl_mine ) continue;
+		if ( data.can_build==BUILD_BIG&&!BuildingMainData.building[i].data.is_big ) continue;
+		if ( data.can_build==BUILD_SMALL&&BuildingMainData.building[i].data.is_big ) continue;
+		if ( !game->AlienTech&&BuildingMainData.building[i].data.is_alien ) continue;
+		ScaleSurface ( BuildingMainData.building[i].img_org,&sf2,32 );
 		SDL_SetColorKey ( sf2,SDL_SRCCOLORKEY,0xFFFFFF );
 		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,32,32,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
@@ -2322,11 +2322,11 @@ void cVehicle::ShowBuildMenu ( void )
 		dest.w=scr.w=33;
 		dest.h=scr.h=22;
 		dest.x=347;dest.y=428;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		scr.y+=23;
 		dest.x+=scr.w;
 		dest.w=scr.w=30;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 
 	// Den Buffer anzeigen:
@@ -2370,7 +2370,7 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( selected<offset ) selected=offset;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=true;
@@ -2383,7 +2383,7 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=440;
-			SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -2404,7 +2404,7 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( selected>=offset+9 ) selected=offset+8;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=true;
@@ -2417,7 +2417,7 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=471;
 			dest.y=440;
-			SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
@@ -2434,7 +2434,7 @@ void cVehicle::ShowBuildMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=307;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -2452,7 +2452,7 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=307;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -2469,7 +2469,7 @@ void cVehicle::ShowBuildMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=397;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2480,19 +2480,19 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&building[BuildingTyp].data.is_base ) break;
-				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!building[BuildingTyp].data.is_connector )
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&BuildingMainData.building[BuildingTyp].data.is_base ) break;
+				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!BuildingMainData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
 					{
-						if ( !building[BuildingTyp].data.build_on_water ) break;
+						if ( !BuildingMainData.building[BuildingTyp].data.build_on_water ) break;
 					}
-					else if ( building[BuildingTyp].data.build_on_water&&! ( building[BuildingTyp].data.is_bridge||building[BuildingTyp].data.is_platform ) ) break;
-					if ( terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+					else if ( BuildingMainData.building[BuildingTyp].data.build_on_water&&! ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 					{
-						if ( !building[BuildingTyp].data.is_bridge&&!building[BuildingTyp].data.is_platform ) break;
+						if ( !BuildingMainData.building[BuildingTyp].data.is_bridge&&!BuildingMainData.building[BuildingTyp].data.is_platform ) break;
 					}
-					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( building[BuildingTyp].data.is_bridge||building[BuildingTyp].data.is_platform ) ) break;
+					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
 				}
 				if ( BuildSpeed==1 )
 				{
@@ -2560,7 +2560,7 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=397;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -2577,7 +2577,7 @@ void cVehicle::ShowBuildMenu ( void )
 				dest.h=scr.h=23;
 				dest.x=347;
 				dest.y=428;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				PfadPressed=true;
@@ -2588,19 +2588,19 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&building[BuildingTyp].data.is_base ) break;
-				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!building[BuildingTyp].data.is_connector )
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&BuildingMainData.building[BuildingTyp].data.is_base ) break;
+				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!BuildingMainData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
 					{
-						if ( !building[BuildingTyp].data.build_on_water ) break;
+						if ( !BuildingMainData.building[BuildingTyp].data.build_on_water ) break;
 					}
-					else if ( building[BuildingTyp].data.build_on_water&&! ( building[BuildingTyp].data.is_bridge||building[BuildingTyp].data.is_platform ) ) break;
-					if ( terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+					else if ( BuildingMainData.building[BuildingTyp].data.build_on_water&&! ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 					{
-						if ( !building[BuildingTyp].data.is_bridge&&!building[BuildingTyp].data.is_platform ) break;
+						if ( !BuildingMainData.building[BuildingTyp].data.is_bridge&&!BuildingMainData.building[BuildingTyp].data.is_platform ) break;
 					}
-					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( building[BuildingTyp].data.is_bridge||building[BuildingTyp].data.is_platform ) ) break;
+					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
 				}
 
 				if ( BuildSpeed==1 )
@@ -2647,7 +2647,7 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=23;
 			dest.x=347;
 			dest.y=428;
-			SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			PfadPressed=false;
@@ -2657,14 +2657,14 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			ShowBeschreibung=Beschreibung;
+			GameSettingsData.ShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
 				dest.y=scr.y=264;
 				dest.w=scr.w=17;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
 			}
 			else
 			{
@@ -2674,7 +2674,7 @@ void cVehicle::ShowBuildMenu ( void )
 				dest.y=264;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			SHOW_SCREEN
@@ -2786,10 +2786,10 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 	int i,t;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=378;
-	SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&scr );
 	scr.x=373;scr.y=344;
 	scr.w=77;scr.h=72;
-	SDL_BlitSurface ( gfx_build_screen,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
@@ -2829,15 +2829,15 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			// Das Bild neu malen:
 			tmp.x=11;tmp.y=13;
-			tmp.w=building[ptr->id].info->w;
-			tmp.h=building[ptr->id].info->h;
-			SDL_BlitSurface ( building[ptr->id].info,NULL,buffer,&tmp );
+			tmp.w=BuildingMainData.building[ptr->id].info->w;
+			tmp.h=BuildingMainData.building[ptr->id].info->h;
+			SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
 			{
 				tmp.x+=10;tmp.y+=10;
 				tmp.w-=20;tmp.h-=20;
-				fonts->OutTextBlock ( building[ptr->id].text,tmp,buffer );
+				fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
 			}
 			// Die Details anzeigen:
 			{
@@ -2846,8 +2846,8 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 				tmp.y=290;
 				tmp.w=260;
 				tmp.h=176;
-				SDL_BlitSurface ( gfx_build_screen,&tmp,buffer,&tmp );
-				tb=new cBuilding ( building+ptr->id,game->ActivePlayer,NULL );
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen,&tmp,buffer,&tmp );
+				tb=new cBuilding ( BuildingMainData.building+ptr->id,game->ActivePlayer,NULL );
 				tb->ShowBigDetails();
 				delete tb;
 			}
@@ -2900,9 +2900,9 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=building[ptr->id].data.name[t];str[++t]=0;
+			str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
@@ -2923,31 +2923,31 @@ void cVehicle::DrawBuildButtons ( int speed )
 	if ( speed==1 )
 	{
 		scr.x=39;scr.y=126;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=24;
 	if ( speed==2 )
 	{
 		scr.x=118;scr.y=126;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=25;
 	if ( speed==4 )
 	{
 		scr.x=216;scr.y=106;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
 	}
 }
 
@@ -2959,8 +2959,8 @@ void cVehicle::FindNextband ( void )
 	gms=game->map->size;
 	mouse->GetKachel ( &x,&y );
 
-//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||building[BuildingTyp].data.is_connector)&&(!terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||building[BuildingTyp].data.build_on_water||building[BuildingTyp].data.is_connector)&&!terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||building[BuildingTyp].data.build_on_water||building[BuildingTyp].data.is_connector)&&!terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
+//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.is_connector)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.build_on_water||BuildingMainData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
+#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.build_on_water||BuildingMainData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(BuildingMainData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
 	if ( CHECK_BAND ( -1,-1 ) &&CHECK_BAND ( +0,-1 ) &&CHECK_BAND ( -1,+0 ) ) pos[0]=true;else pos[0]=false;
 	if ( CHECK_BAND ( +0,-1 ) &&CHECK_BAND ( +1,-1 ) &&CHECK_BAND ( +1,+0 ) ) pos[1]=true;else pos[1]=false;
 	if ( CHECK_BAND ( +1,+0 ) &&CHECK_BAND ( +1,+1 ) &&CHECK_BAND ( +0,+1 ) ) pos[2]=true;else pos[2]=false;
@@ -3143,13 +3143,13 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
-	SDL_BlitSurface ( gfx_hud,NULL,buffer,NULL );
-	if ( Alpha ) SDL_BlitSurface ( gfx_shadow,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=166;
 	dest.y=159;
-	dest.w=gfx_transfer->w;
-	dest.h=gfx_transfer->h;
-	SDL_BlitSurface ( gfx_transfer,NULL,buffer,&dest );
+	dest.w=GraphicsData.gfx_transfer->w;
+	dest.h=GraphicsData.gfx_transfer->h;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,NULL,buffer,&dest );
 
 	// Die Images erstellen:
 	ScaleSurfaceAdv2 ( typ->img_org[0],typ->img[0],typ->img_org[0]->w/2,typ->img_org[0]->h/2 );
@@ -3277,7 +3277,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 				dest.h=scr.h=23;
 				dest.x=82+166;
 				dest.y=125+159;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -3295,7 +3295,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=23;
 			dest.x=82+166;
 			dest.y=125+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -3312,7 +3312,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 				dest.h=scr.h=23;
 				dest.x=174+166;
 				dest.y=125+159;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -3353,7 +3353,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=23;
 			dest.x=174+166;
 			dest.y=125+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -3370,7 +3370,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.y=88+159;
 			Transf++;
 			MakeTransBar ( &Transf,MaxTarget,Target );
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncPressed=true;
@@ -3383,7 +3383,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=18;
 			dest.x=277+166;
 			dest.y=88+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncPressed=false;
@@ -3400,7 +3400,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.y=88+159;
 			Transf--;
 			MakeTransBar ( &Transf,MaxTarget,Target );
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecPressed=true;
@@ -3413,7 +3413,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=18;
 			dest.x=16+166;
 			dest.y=88+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecPressed=false;
@@ -3458,7 +3458,7 @@ void cVehicle::DrawTransBar ( int len )
 	dest.h=scr.h=16;
 	dest.x=44+166;
 	dest.y=90+159;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	scr.x=156+ ( 223-len );
 	dest.w=scr.w=223- ( 223-len );
 	if ( data.can_transport==TRANS_METAL )
@@ -3473,7 +3473,7 @@ void cVehicle::DrawTransBar ( int len )
 	{
 		scr.y=290;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 }
 
 // Erzeugt den Transfer Balken:
@@ -3505,12 +3505,12 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.y=30+159;
 	dest.w=scr.w=78;
 	dest.h=scr.h=14;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",data.cargo-*trans );
 	fonts->OutTextCenter ( str,4+39+166,30+159,buffer );
 	scr.x=229;
 	dest.x=229+166;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",Target+*trans );
 	fonts->OutTextCenter ( str,229+39+166,30+159,buffer );
 	scr.x=141;
@@ -3519,7 +3519,7 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.y=15+159;
 	dest.w=scr.w=29;
 	dest.h=scr.h=21;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",abs ( *trans ) );
 	fonts->OutTextCenter ( str,155+166,21+159,buffer );
 	// Den Pfeil malen:
@@ -3531,7 +3531,7 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.y=44+159;
 		dest.w=scr.w=30;
 		dest.h=scr.h=16;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -3541,7 +3541,7 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.y=44+159;
 		dest.w=scr.w=30;
 		dest.h=scr.h=16;
-		SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	}
 	DrawTransBar ( 223* (int)( ( Target+*trans ) / ( float ) MaxTarget ) );
 }
@@ -3752,7 +3752,7 @@ bool cVehicle::CanExitTo ( int off,sVehicle *typ )
 	        ( off>=boff-1+game->map->size&&off<=boff+2+game->map->size ) )
 	{}
 	else return false;
-	if ( ( typ->data.can_drive!=DRIVE_AIR&& ( ( game->map->GO[off].top&&!game->map->GO[off].top->data.is_connector ) ||game->map->GO[off].vehicle||terrain[game->map->Kacheln[off]].blocked ) ) ||
+	if ( ( typ->data.can_drive!=DRIVE_AIR&& ( ( game->map->GO[off].top&&!game->map->GO[off].top->data.is_connector ) ||game->map->GO[off].vehicle||TerrainData.terrain[game->map->Kacheln[off]].blocked ) ) ||
 	        ( typ->data.can_drive==DRIVE_AIR&&game->map->GO[off].plane ) ||
 	        ( typ->data.can_drive==DRIVE_SEA&&!game->map->IsWater ( off,true ) ) ||
 	        ( typ->data.can_drive==DRIVE_LAND&&game->map->IsWater ( off ) ) )
@@ -3844,8 +3844,8 @@ void cVehicle::ShowStorage ( void )
 	scr.y=0;
 	scr.w=640-480;
 	scr.h=480;
-	SDL_BlitSurface ( gfx_storage,&scr,buffer,&scr );
-	SDL_BlitSurface ( gfx_storage_ground,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_storage_ground,NULL,buffer,NULL );
 	to=6;
 
 	// Alle Buttons machen:
@@ -3854,7 +3854,7 @@ void cVehicle::ShowStorage ( void )
 	scr.h=dest.h=23;
 	scr.x=0;scr.y=468;
 	dest.x=510;dest.y=371;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	// Down:
 	if ( StoredVehicles->Count>to )
 	{
@@ -3862,7 +3862,7 @@ void cVehicle::ShowStorage ( void )
 		scr.x=103;scr.y=452;
 		dest.h=scr.h=dest.w=scr.w=25;
 		dest.x=530;dest.y=426;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	// Alle Aktivieren:
 	scr.x=0;scr.y=376;
@@ -3871,7 +3871,7 @@ void cVehicle::ShowStorage ( void )
 	dest.x=511;dest.y=251;
 	if ( StoredVehicles->Count )
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		AlleAktivierenEnabled=true;
 	}
 
@@ -3920,7 +3920,7 @@ void cVehicle::ShowStorage ( void )
 				if ( StoredVehicles->Count<=offset+to ) DownEnabled=false;
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 
 				scr.x=130;
 				scr.y=452;
@@ -3928,7 +3928,7 @@ void cVehicle::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=504;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				UpEnabled=true;
 
 				SHOW_SCREEN
@@ -3943,7 +3943,7 @@ void cVehicle::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=530;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=false;
@@ -3966,7 +3966,7 @@ void cVehicle::ShowStorage ( void )
 				if ( offset==0 ) UpEnabled=false;
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 				mouse->draw ( false,screen );
 				UpPressed=true;
 
@@ -3976,7 +3976,7 @@ void cVehicle::ShowStorage ( void )
 					scr.x=103;scr.y=452;
 					dest.h=scr.h=dest.w=scr.w=25;
 					dest.x=530;dest.y=426;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				SHOW_SCREEN
 			}
@@ -3988,7 +3988,7 @@ void cVehicle::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=504;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=false;
@@ -4004,7 +4004,7 @@ void cVehicle::ShowStorage ( void )
 				scr.h=dest.h=23;
 				scr.x=510;scr.y=371;
 				dest.x=510;dest.y=371;
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -4020,7 +4020,7 @@ void cVehicle::ShowStorage ( void )
 			scr.h=dest.h=23;
 			scr.x=0;scr.y=468;
 			dest.x=510;dest.y=371;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -4033,7 +4033,7 @@ void cVehicle::ShowStorage ( void )
 			PlayFX ( SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251;
-			SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			while ( b )
@@ -4068,7 +4068,7 @@ void cVehicle::ShowStorage ( void )
 
 		// Buttons unter den Vehicles:
 		dest.w=73;dest.h=23;
-		sf=gfx_storage_ground;
+		sf=GraphicsData.gfx_storage_ground;
 		for ( i=0;i<to;i++ )
 		{
 			if ( StoredVehicles->Count<=i+offset ) break;
@@ -4136,7 +4136,7 @@ void cVehicle::DrawStored ( int off )
 	int i,to;
 
 	to=6;
-	sf=gfx_storage_ground;
+	sf=GraphicsData.gfx_storage_ground;
 
 	for ( i=0;i<to;i++ )
 	{
@@ -4197,7 +4197,7 @@ void cVehicle::DrawStored ( int off )
 		{
 			scr.x=156;
 			scr.y=431;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 		else
 		{
@@ -4326,12 +4326,12 @@ void cVehicle::LayMine ( void )
 	if ( game->map->GO[PosX+PosY*game->map->size].base ) return;
 	if ( data.can_drive==DRIVE_SEA )
 	{
-		game->engine->AddBuilding ( PosX,PosY,building+BNrSeaMine,owner,false );
+		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrSeaMine,owner,false );
 		PlayFX ( SNDSeaMinePlace );
 	}
 	else
 	{
-		game->engine->AddBuilding ( PosX,PosY,building+BNrLandMine,owner,false );
+		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrLandMine,owner,false );
 
 		PlayFX ( SNDLandMinePlace );
 	}
@@ -4436,13 +4436,13 @@ void cVehicle::DrawCommandoCursor ( struct sGameObjects *go,bool steal )
 	if ( steal )
 	{
 		v=go->vehicle;
-		sf=gfx_Csteal;
+		sf=GraphicsData.gfx_Csteal;
 	}
 	else
 	{
 		v=go->vehicle;
 		if ( !v ) b=go->top;
-		sf=gfx_Cdisable;
+		sf=GraphicsData.gfx_Cdisable;
 	}
 
 	r.x=1;
