@@ -223,48 +223,56 @@ public:
 // This classes are for saving global Variables needed by the game
 ///////////////////////////////////////////////////////////////////////////////
 
-// GameSettingsData - Class containing all gamesettings ///////////////////////
-class cGameSettingsData
+// cSettingsData - Class containing all gamesettings ///////////////////////
+class cSettings
 {
 public:
-	int ScrollSpeed;			// Scrollgeschwindigkeit
-	bool Autosave;				// Gibt an, ob automatisch gespeichert werden soll
-	bool Animation;				// Gibt am, ob es Animationen geben soll
-	bool Schatten;				// Gibt an, ob es Schatten geben soll
-	bool ShowDescription;		// Gibt an, ob die Beschreibung in Build-Menüs angezeigt werden soll
-	bool DamageEffects;			// Gibt an, ob Schadenseffekte gemacht werden sollen
-	bool DamageEffectsVehicles;	// Gibt an, ob Schadenseffekte bei Fahrzeugen gemacht werden sollen
-	bool MakeTracks;			// Gibt an, ob Tracks gemacht werden sollen
-	bool Alpha;					// Gibt an, ob es Alphaeffekte geben soll
-	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften
-	bool FastMode;				// Gibt an, ob das Spiel im Fast-Mode laufen soll
-	bool NoIntro;				// Gibt an, ob kein Intro abgespielt werden soll
-	bool WindowMode;			// Gibt an, ob das Spiel im Fenster laufen soll
-
-	bool sound;					// true=Sound an
-	int MusicVol,SoundVol,VoiceVol;		// Lautsärken der Sounds
-	bool MusicMute,SoundMute,VoiceMute;	// Muteeigenschaften der Sounds
-	string LastIP;				// Letzte eingegebene IP
-	int LastPort;				// Letzter eingegebener Port
-	string LastPlayerName;		// Letzter benutzter Spielername
+	//START
 	int iScreenW;				// Breite der ausgwählten Auflösung
 	int iScreenH;				// Höhe der ausgwählten Auflösung
 	int iColourDepth;			//e.g. 32
+	bool bIntro;				// Gibt an, ob kein Intro abgespielt werden soll
+	bool bWindowMode;			// Gibt an, ob das Spiel im Fenster laufen soll
+	bool bFastMode;				// Gibt an, ob das Spiel im Fast-Mode laufen soll
 
+	//GAME
+	bool bAutoSave;				// Gibt an, ob automatisch gespeichert werden soll
+	bool bAnimations;				// Gibt am, ob es bAnimationsen geben soll
+	bool bShadows;				// Gibt an, ob es bShadows geben soll
+	bool bAlphaEffects;					// Gibt an, ob es bAlphaEffectseffekte geben soll
+	bool bShowDescription;		// Gibt an, ob die Beschreibung in Build-Menüs angezeigt werden soll
+	bool bDamageEffects;			// Gibt an, ob Schadenseffekte gemacht werden sollen
+	bool bDamageEffectsVehicles;	// Gibt an, ob Schadenseffekte bei Fahrzeugen gemacht werden sollen
+	bool bMakeTracks;			// Gibt an, ob Tracks gemacht werden sollen
+	int iScrollSpeed;			// Scrollgeschwindigkeit
 
-	string BuildingPath;		// Path to the buildings
-	string FontPath;			// Path to the fonts
-	string FxPath;				// Path to the effects
-	string GfxPath;				// Path to the graphics
-	string GfxODPath;			// Path to the graphics on demand
-	string MapPath;				// Path to the maps
-	string MusicPath;			// Path to the music-files
-	string SavePath;			// Path to the saves
-	string SoundPath;			// Path to the sound-files
-	string TerrainPath;			// Path to the terrains
-	string VehiclesPath;		// Path to the vehicles
-	string VoicesPath;			// Path to the voice-files
-} EX GameSettingsData;
+	//NET
+	string sIP;				// Letzte eingegebene IP 
+	//string? why not int array? --beko
+	int sPort;				// Letzter eingegebener Port
+	string sPlayerName;		// Letzter benutzter Spielername
+
+	//SOUND
+	bool bSoundEnabled;					// true=Sound an
+	int MusicVol,SoundVol,VoiceVol,iChunkSize,iFrequency;		// Lautsärken der Sounds
+	bool bEnabled,MusicMute,SoundMute,VoiceMute;	// Muteeigenschaften der Sounds
+
+	//PATHS
+	string sFontPath;			// Path to the fonts
+	string sFxPath;				// Path to the effects
+	string sGfxPath;				// Path to the graphics
+	string sGfxODPath;			// Path to the graphics on demand
+	string sMapsPath;				// Path to the maps
+	string sSavesPath;			// Path to the saves
+	string sSoundsPath;			// Path to the sound-files
+	string sVoicesPath;			// Path to the voice-files
+	string sMusicPath;			// Path to the music-files
+	string sTerrainPath;			// Path to the terrains
+	string sVehiclesPath;		// Path to the vehicles
+	string sBuildingsPath;		// Path to the buildings
+
+	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften - NOT IN XML-file (yet?)!
+} EX cSettingsData;
 
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
 class cGraphicsData

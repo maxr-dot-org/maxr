@@ -671,7 +671,7 @@ void RunSPMenu ( void )
 					players = RunPlayerSelect();
 
 					list=new TList;
-					list->AddPlayer ( p=new cPlayer ( GameSettingsData.LastPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
+					list->AddPlayer ( p=new cPlayer ( cSettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
 					list->AddPlayer ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
 					game = new cGame ( NULL, map );
@@ -694,7 +694,7 @@ void RunSPMenu ( void )
 
 					game->Run();
 
-					GameSettingsData.LastPlayerName=p->name;
+					cSettingsData.sPlayerName=p->name;
 					while ( list->Count )
 					{
 						delete ( ( cPlayer* ) ( list->PlayerItems[0] ) );
@@ -1454,7 +1454,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		if ( i+offset>=files->Count ) break;
 		name = files->Items[i+offset];
 		pathname = name;
-		pathname.insert ( 0,GameSettingsData.MapPath );
+		pathname.insert ( 0,cSettingsData.sMapsPath );
 		sf = SDL_LoadBMP ( pathname.c_str() );
 		if ( sf!=NULL )
 		{
@@ -1714,7 +1714,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 void RunHangar ( cPlayer *player,TList *LandingList )
 {
 	bool tank=true,plane=false,ship=false,build=false,tnt=false,kauf=true;
-	bool FertigPressed=false,Beschreibung=GameSettingsData.ShowDescription;
+	bool FertigPressed=false,Beschreibung=cSettingsData.bShowDescription;
 	bool DownPressed=false,UpPressed=false,KaufPressed=false;
 	bool Down2Pressed=false,Up2Pressed=false,EntfernenPressed=false;
 	bool LadungUpPressed=false,LadungDownPressed=false;
@@ -1844,7 +1844,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			GameSettingsData.ShowDescription=Beschreibung;
+			cSettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
@@ -3100,10 +3100,10 @@ int GetKachelBig ( int x,int y, cMap *map )
 {
 	double fak;
 	int nr;
-	if ( x<0||x>=GameSettingsData.iScreenW-192||y<0||y>=GameSettingsData.iScreenH-32 ) return 0;
+	if ( x<0||x>=cSettingsData.iScreenW-192||y<0||y>=cSettingsData.iScreenH-32 ) return 0;
 
-	x=x* ( int ) ( 448.0/ ( GameSettingsData.iScreenW-192 ) );
-	y=y* ( int ) ( 448.0/ ( GameSettingsData.iScreenH-32 ) );
+	x=x* ( int ) ( 448.0/ ( cSettingsData.iScreenW-192 ) );
+	y=y* ( int ) ( 448.0/ ( cSettingsData.iScreenH-32 ) );
 
 	if ( map->size<448 )
 	{
@@ -3129,14 +3129,14 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	int b,lx=-1,ly=-1,i,k,nr,fakx,faky,off;
 	sTerrain *t;
 
-	fakx= ( int ) ( ( GameSettingsData.iScreenW-192.0 ) /game->map->size );
-	faky= ( int ) ( ( GameSettingsData.iScreenH-32.0 ) /game->map->size );
+	fakx= ( int ) ( ( cSettingsData.iScreenW-192.0 ) /game->map->size );
+	faky= ( int ) ( ( cSettingsData.iScreenH-32.0 ) /game->map->size );
 
 	// Die Karte malen:
 	SDL_LockSurface ( buffer );
-	for ( i=0;i<GameSettingsData.iScreenW-192;i++ )
+	for ( i=0;i<cSettingsData.iScreenW-192;i++ )
 	{
-		for ( k=0;k<GameSettingsData.iScreenH-32;k++ )
+		for ( k=0;k<cSettingsData.iScreenH-32;k++ )
 		{
 			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
 			t=TerrainData.terrain+nr;
@@ -3158,18 +3158,18 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
-	top.x=0;top.y= ( GameSettingsData.iScreenH/2 )-479;
+	top.x=0;top.y= ( cSettingsData.iScreenH/2 )-479;
 	top.w=bottom.w=171;
 
 	top.h=479;bottom.h=481;
-	bottom.x=0;bottom.y= ( GameSettingsData.iScreenH/2 );
+	bottom.x=0;bottom.y= ( cSettingsData.iScreenH/2 );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&top );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom );
 
 	SHOW_SCREEN
 
 	t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-	if ( mouse->x>=180&&mouse->x<GameSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+	if ( mouse->x>=180&&mouse->x<cSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<cSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 	{
 		mouse->SetCursor ( CMove );
 	}
@@ -3187,7 +3187,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
 		t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-		if ( mouse->x>=180&&mouse->x<GameSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+		if ( mouse->x>=180&&mouse->x<cSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<cSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 		{
 			mouse->SetCursor ( CMove );
 		}
@@ -3205,8 +3205,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.iScreenW-192 ) ) );
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.iScreenH-32 ) ) );
+			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( cSettingsData.iScreenW-192 ) ) );
+			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( cSettingsData.iScreenH-32 ) ) );
 			break;
 		}
 
@@ -3511,7 +3511,7 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 {
 	NextPlayerID=0;
 	PlayerList=new TList;
-	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( GameSettingsData.LastPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
+	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( cSettingsData.sPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
 
 	MessageList=new TList;
 	ChatList=new TList;
@@ -3530,11 +3530,11 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		{
 			fstcpip=new cFSTcpIp ( false );
 			Titel="TCP/IP Client";
-			IP=GameSettingsData.LastIP;
+			IP=cSettingsData.sIP;
 		}
 	}
 //  fstcpip->FSTcpIpMessageFuntion=ReceiveMenuMessage;
-	Port=GameSettingsData.LastPort;
+	Port=cSettingsData.sPort;
 
 	map="";
 	no_options=true;
@@ -3570,8 +3570,8 @@ cMultiPlayer::~cMultiPlayer ( void )
 	{
 		delete map_obj;map_obj=NULL;
 	}
-	if ( strcmp ( IP.c_str(),"-" ) ) GameSettingsData.LastIP=IP;
-	GameSettingsData.LastPort=Port;
+	if ( strcmp ( IP.c_str(),"-" ) ) cSettingsData.sIP=IP;
+	cSettingsData.sPort=Port;
 }
 
 // Zeigt das Chatmenü an:
@@ -3835,7 +3835,7 @@ void cMultiPlayer::RunMenu ( void )
 					       }*/
 					char sztmp[256];
 					string msg;
-					sprintf ( sztmp,"%d",GameSettingsData.Checksum );
+					sprintf ( sztmp,"%d",cSettingsData.Checksum );
 					msg=sztmp; msg+="#";
 					msg+=MAX_VERSION;
 					AddChatLog ( "check for go" );
@@ -4247,7 +4247,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					fstcpip->min_clients=PlayerList->Count-1;
 					game->Run();
-					GameSettingsData.LastPlayerName=MyPlayer->name;
+					cSettingsData.sPlayerName=MyPlayer->name;
 
 					while ( PlayerList->Count )
 					{
@@ -4291,7 +4291,7 @@ void cMultiPlayer::RunMenu ( void )
 				  game->hud->ScaleSurfaces();
 				}
 				game->Run();
-				LastPlayerName=MyPlayer->name;
+				sPlayerName=MyPlayer->name;
 
 				break;*/
 			}
@@ -4346,7 +4346,7 @@ void cMultiPlayer::RunMenu ( void )
 
 				fstcpip->min_clients=PlayerList->Count-1;
 				game->Run();
-				GameSettingsData.LastPlayerName=MyPlayer->name;
+				cSettingsData.sPlayerName=MyPlayer->name;
 
 				while ( PlayerList->Count )
 				{
@@ -4388,7 +4388,7 @@ void cMultiPlayer::RunMenu ( void )
 			  game->hud->ScaleSurfaces();
 			}
 			game->Run();
-			LastPlayerName=MyPlayer->name;
+			sPlayerName=MyPlayer->name;
 
 			break;*/
 		}
@@ -4610,9 +4610,9 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				FILE *fp;
 				string mapstr;
-				mapstr=GameSettingsData.MapPath; mapstr+=map;
+				mapstr=cSettingsData.sMapsPath; mapstr+=map;
 				fp=fopen ( mapstr.c_str(),"rb" );
-				if ( atoi ( Strings->Items[0].c_str() ) ==GameSettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
+				if ( atoi ( Strings->Items[0].c_str() ) ==cSettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
 				{
 					string new_msg;
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
@@ -4808,7 +4808,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	}
 
 	str="Version: "; str+=MAX_VERSION; str+="\n";
-	sprintf ( sztmp,"%d",GameSettingsData.Checksum );
+	sprintf ( sztmp,"%d",cSettingsData.Checksum );
 	str+="Checksum: "; str+=sztmp; str+="\n";
 	str+="\n";
 
@@ -4864,7 +4864,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	{
 		FILE *fp;
 		string mapstr;
-		mapstr=GameSettingsData.MapPath; mapstr+=map;
+		mapstr=cSettingsData.sMapsPath; mapstr+=map;
 		fp=fopen ( mapstr.c_str(),"rb" );
 		if ( !fp )
 		{
@@ -4892,7 +4892,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 			fonts->OutTextCenter ( ( char * ) mapstr.c_str(),90,65,buffer );
 
 			string mapstr;
-			mapstr=GameSettingsData.MapPath; mapstr+=map; mapstr.replace ( mapstr.length()-3,3,"bmp" );
+			mapstr=cSettingsData.sMapsPath; mapstr+=map; mapstr.replace ( mapstr.length()-3,3,"bmp" );
 			fp=fopen ( mapstr.c_str(),"rb" );
 			if ( fp )
 			{
@@ -5536,7 +5536,7 @@ void HeatTheSeat ( void )
 	game->HotSeatPlayer=0;
 	game->Run();
 
-	GameSettingsData.LastPlayerName=p->name;
+	cSettingsData.sPlayerName=p->name;
 	while ( list->Count )
 	{
 		delete list->PlayerItems[0];

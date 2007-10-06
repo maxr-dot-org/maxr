@@ -11,9 +11,9 @@
 // Zeigt das Präferenzenfenster an:
 void DoPraeferenzen ( void )
 {
-	bool OldMusicMute,OldSoundMute,OldVoiceMute,OldAutosave,OldAnimation,OldSchatten,OldAlpha,OldDamageEffects,OldDamageEffectsVehicles,OldMakeTracks;
+	bool OldMusicMute,OldSoundMute,OldVoiceMute,OldbAutoSave,OldbAnimations,OldbShadows,OldbAlphaEffects,OldbDamageEffects,OldbDamageEffectsVehicles,OldbMakeTracks;
 	bool FertigPressed=false,AbbruchPressed=false,Input=false;
-	int OldScrollSpeed,OldMusicVol,OldSoundVol,OldVoiceVol;
+	int OldiScrollSpeed,OldMusicVol,OldSoundVol,OldVoiceVol;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
 	string OldName;
 	string stmp;
@@ -21,33 +21,33 @@ void DoPraeferenzen ( void )
 	Uint8 *keystate;
 	bool cursor=true;
 
-	OldMusicMute=GameSettingsData.MusicMute;OldSoundMute=GameSettingsData.SoundMute;OldVoiceMute=GameSettingsData.VoiceMute;OldAutosave=GameSettingsData.Autosave;OldAnimation=GameSettingsData.Animation;OldSchatten=GameSettingsData.Schatten;OldAlpha=GameSettingsData.Alpha;
-	OldScrollSpeed=GameSettingsData.ScrollSpeed;OldMusicVol=GameSettingsData.MusicVol;OldSoundVol=GameSettingsData.SoundVol;OldVoiceVol=GameSettingsData.VoiceVol;
+	OldMusicMute=cSettingsData.MusicMute;OldSoundMute=cSettingsData.SoundMute;OldVoiceMute=cSettingsData.VoiceMute;OldbAutoSave=cSettingsData.bAutoSave;OldbAnimations=cSettingsData.bAnimations;OldbShadows=cSettingsData.bShadows;OldbAlphaEffects=cSettingsData.bAlphaEffects;
+	OldiScrollSpeed=cSettingsData.iScrollSpeed;OldMusicVol=cSettingsData.MusicVol;OldSoundVol=cSettingsData.SoundVol;OldVoiceVol=cSettingsData.VoiceVol;
 	OldName=game->ActivePlayer->name;
-	OldDamageEffects=GameSettingsData.DamageEffects;OldDamageEffectsVehicles=GameSettingsData.DamageEffectsVehicles;OldMakeTracks=GameSettingsData.MakeTracks;
+	OldbDamageEffects=cSettingsData.bDamageEffects;OldbDamageEffectsVehicles=cSettingsData.bDamageEffectsVehicles;OldbMakeTracks=cSettingsData.bMakeTracks;
 
 	dest.x=120;
 	dest.y=29;
 	dest.w=GraphicsData.gfx_praefer->w;
 	dest.h=GraphicsData.gfx_praefer->h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	if ( cSettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	SDL_BlitSurface ( GraphicsData.gfx_praefer,NULL,buffer,&dest );
 
-	ShowBar ( 74+120,81+29,GameSettingsData.MusicVol*2 );
-	ShowBar ( 84+120,101+29,GameSettingsData.SoundVol*2 );
-	ShowBar ( 80+120,121+29,GameSettingsData.VoiceVol*2 );
-	ShowBar ( 121+120,261+29,GameSettingsData.ScrollSpeed*5 );
-	SetButton ( 210+120,73+29,GameSettingsData.MusicMute );
-	SetButton ( 210+120,93+29,GameSettingsData.SoundMute );
-	SetButton ( 210+120,113+29,GameSettingsData.VoiceMute );
-	SetButton ( 25+120,133+29,GameSettingsData.Autosave );
-	SetButton ( 25+120,193+29,GameSettingsData.Animation );
-	SetButton ( 25+120,213+29,GameSettingsData.Schatten );
-	SetButton ( 25+120,233+29,GameSettingsData.Alpha );
-	SetButton ( 210+120,193+29,GameSettingsData.DamageEffects );
-	SetButton ( 210+120,213+29,GameSettingsData.DamageEffectsVehicles );
-	SetButton ( 210+120,233+29,GameSettingsData.MakeTracks );
+	ShowBar ( 74+120,81+29,cSettingsData.MusicVol*2 );
+	ShowBar ( 84+120,101+29,cSettingsData.SoundVol*2 );
+	ShowBar ( 80+120,121+29,cSettingsData.VoiceVol*2 );
+	ShowBar ( 121+120,261+29,cSettingsData.iScrollSpeed*5 );
+	SetButton ( 210+120,73+29,cSettingsData.MusicMute );
+	SetButton ( 210+120,93+29,cSettingsData.SoundMute );
+	SetButton ( 210+120,113+29,cSettingsData.VoiceMute );
+	SetButton ( 25+120,133+29,cSettingsData.bAutoSave );
+	SetButton ( 25+120,193+29,cSettingsData.bAnimations );
+	SetButton ( 25+120,213+29,cSettingsData.bShadows );
+	SetButton ( 25+120,233+29,cSettingsData.bAlphaEffects );
+	SetButton ( 210+120,193+29,cSettingsData.bDamageEffects );
+	SetButton ( 210+120,213+29,cSettingsData.bDamageEffectsVehicles );
+	SetButton ( 210+120,233+29,cSettingsData.bMakeTracks );
 	fonts->OutText ( ( char * ) game->ActivePlayer->name.c_str(),122+120,158+29,buffer );
 	SHOW_SCREEN
 
@@ -114,33 +114,33 @@ void DoPraeferenzen ( void )
 		{
 			if ( x>=74+120&&x<74+120+57&&y>=81+29-7&&y<=81+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
-				GameSettingsData.MusicVol= ( x- ( 74+120 ) ) * (int)( 128.0/57 );
-				if ( GameSettingsData.MusicVol>=125 ) GameSettingsData.MusicVol=128;
-				ShowBar ( 74+120,81+29,GameSettingsData.MusicVol*2 );
+				cSettingsData.MusicVol= ( x- ( 74+120 ) ) * (int)( 128.0/57 );
+				if ( cSettingsData.MusicVol>=125 ) cSettingsData.MusicVol=128;
+				ShowBar ( 74+120,81+29,cSettingsData.MusicVol*2 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
-				SetMusicVol ( GameSettingsData.MusicVol );
+				SetMusicVol ( cSettingsData.MusicVol );
 			}
 			else if ( x>=84+120&&x<84+120+57&&y>=101+29-7&&y<=101+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
-				GameSettingsData.SoundVol= ( x- ( 84+120 ) ) * (int)( 128.0/57 );
-				if ( GameSettingsData.SoundVol>=125 ) GameSettingsData.SoundVol=128;
-				ShowBar ( 84+120,101+29,GameSettingsData.SoundVol*2 );
+				cSettingsData.SoundVol= ( x- ( 84+120 ) ) * (int)( 128.0/57 );
+				if ( cSettingsData.SoundVol>=125 ) cSettingsData.SoundVol=128;
+				ShowBar ( 84+120,101+29,cSettingsData.SoundVol*2 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( x>=80+120&&x<80+120+57&&y>=121+29-7&&y<=121+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
-				GameSettingsData.VoiceVol= ( x- ( 80+120 ) ) * (int)( 128.0/57 );
-				if ( GameSettingsData.VoiceVol>=125 ) GameSettingsData.VoiceVol=128;
-				ShowBar ( 80+120,121+29,GameSettingsData.VoiceVol*2 );
+				cSettingsData.VoiceVol= ( x- ( 80+120 ) ) * (int)( 128.0/57 );
+				if ( cSettingsData.VoiceVol>=125 ) cSettingsData.VoiceVol=128;
+				ShowBar ( 80+120,121+29,cSettingsData.VoiceVol*2 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( x>=121+120&&x<121+120+57&&y>=261+29-7&&y<=261+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
-				GameSettingsData.ScrollSpeed= ( int ) ( ( x- ( 121+120 ) ) * ( 255.0/57 ) ) /5;
-				ShowBar ( 121+120,261+29,GameSettingsData.ScrollSpeed*5 );
+				cSettingsData.iScrollSpeed= ( int ) ( ( x- ( 121+120 ) ) * ( 255.0/57 ) ) /5;
+				ShowBar ( 121+120,261+29,cSettingsData.iScrollSpeed*5 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -148,11 +148,11 @@ void DoPraeferenzen ( void )
 			{
 				if ( x>=210+120&&x<210+120+18&&y>=73+29&&y<73+29+17 )
 				{
-					GameSettingsData.MusicMute=!GameSettingsData.MusicMute;
-					SetButton ( 210+120,73+29,GameSettingsData.MusicMute );
+					cSettingsData.MusicMute=!cSettingsData.MusicMute;
+					SetButton ( 210+120,73+29,cSettingsData.MusicMute );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
-					if ( GameSettingsData.MusicMute )
+					if ( cSettingsData.MusicMute )
 					{
 						StopMusic();
 					}
@@ -163,43 +163,43 @@ void DoPraeferenzen ( void )
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=93+29&&y<93+29+17 )
 				{
-					GameSettingsData.SoundMute=!GameSettingsData.SoundMute;
-					SetButton ( 210+120,93+29,GameSettingsData.SoundMute );
+					cSettingsData.SoundMute=!cSettingsData.SoundMute;
+					SetButton ( 210+120,93+29,cSettingsData.SoundMute );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=113+29&&y<113+29+17 )
 				{
-					GameSettingsData.VoiceMute=!GameSettingsData.VoiceMute;
-					SetButton ( 210+120,113+29,GameSettingsData.VoiceMute );
+					cSettingsData.VoiceMute=!cSettingsData.VoiceMute;
+					SetButton ( 210+120,113+29,cSettingsData.VoiceMute );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=133+29&&y<133+29+17 )
 				{
-					GameSettingsData.Autosave=!GameSettingsData.Autosave;
-					SetButton ( 25+120,133+29,GameSettingsData.Autosave );
+					cSettingsData.bAutoSave=!cSettingsData.bAutoSave;
+					SetButton ( 25+120,133+29,cSettingsData.bAutoSave );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=193+29&&y<193+29+17 )
 				{
-					GameSettingsData.Animation=!GameSettingsData.Animation;
-					SetButton ( 25+120,193+29,GameSettingsData.Animation );
+					cSettingsData.bAnimations=!cSettingsData.bAnimations;
+					SetButton ( 25+120,193+29,cSettingsData.bAnimations );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=213+29&&y<213+29+17 )
 				{
-					GameSettingsData.Schatten=!GameSettingsData.Schatten;
-					SetButton ( 25+120,213+29,GameSettingsData.Schatten );
+					cSettingsData.bShadows=!cSettingsData.bShadows;
+					SetButton ( 25+120,213+29,cSettingsData.bShadows );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=233+29&&y<233+29+17 )
 				{
-					GameSettingsData.Alpha=!GameSettingsData.Alpha;
-					SetButton ( 25+120,233+29,GameSettingsData.Alpha );
+					cSettingsData.bAlphaEffects=!cSettingsData.bAlphaEffects;
+					SetButton ( 25+120,233+29,cSettingsData.bAlphaEffects );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -214,22 +214,22 @@ void DoPraeferenzen ( void )
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=193+29&&y<193+29+17 )
 				{
-					GameSettingsData.DamageEffects=!GameSettingsData.DamageEffects;
-					SetButton ( 210+120,193+29,GameSettingsData.DamageEffects );
+					cSettingsData.bDamageEffects=!cSettingsData.bDamageEffects;
+					SetButton ( 210+120,193+29,cSettingsData.bDamageEffects );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=213+29&&y<213+29+17 )
 				{
-					GameSettingsData.DamageEffectsVehicles=!GameSettingsData.DamageEffectsVehicles;
-					SetButton ( 210+120,213+29,GameSettingsData.DamageEffectsVehicles );
+					cSettingsData.bDamageEffectsVehicles=!cSettingsData.bDamageEffectsVehicles;
+					SetButton ( 210+120,213+29,cSettingsData.bDamageEffectsVehicles );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=233+29&&y<233+29+17 )
 				{
-					GameSettingsData.MakeTracks=!GameSettingsData.MakeTracks;
-					SetButton ( 210+120,233+29,GameSettingsData.MakeTracks );
+					cSettingsData.bMakeTracks=!cSettingsData.bMakeTracks;
+					SetButton ( 210+120,233+29,cSettingsData.bMakeTracks );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -297,11 +297,11 @@ void DoPraeferenzen ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				GameSettingsData.MusicMute=OldMusicMute;GameSettingsData.SoundMute=OldSoundMute;GameSettingsData.VoiceMute=OldVoiceMute;GameSettingsData.Autosave=OldAutosave;GameSettingsData.Animation=OldAnimation;GameSettingsData.Schatten=OldSchatten;GameSettingsData.Alpha=OldAlpha;
-				GameSettingsData.ScrollSpeed=OldScrollSpeed;GameSettingsData.MusicVol=OldMusicVol;GameSettingsData.SoundVol=OldSoundVol;GameSettingsData.VoiceVol=OldVoiceVol;
-				GameSettingsData.DamageEffects=OldDamageEffects;GameSettingsData.DamageEffectsVehicles=OldDamageEffectsVehicles;GameSettingsData.MakeTracks=OldMakeTracks;
+				cSettingsData.MusicMute=OldMusicMute;cSettingsData.SoundMute=OldSoundMute;cSettingsData.VoiceMute=OldVoiceMute;cSettingsData.bAutoSave=OldbAutoSave;cSettingsData.bAnimations=OldbAnimations;cSettingsData.bShadows=OldbShadows;cSettingsData.bAlphaEffects=OldbAlphaEffects;
+				cSettingsData.iScrollSpeed=OldiScrollSpeed;cSettingsData.MusicVol=OldMusicVol;cSettingsData.SoundVol=OldSoundVol;cSettingsData.VoiceVol=OldVoiceVol;
+				cSettingsData.bDamageEffects=OldbDamageEffects;cSettingsData.bDamageEffectsVehicles=OldbDamageEffectsVehicles;cSettingsData.bMakeTracks=OldbMakeTracks;
 				game->ActivePlayer->name=OldName;
-				SetMusicVol ( GameSettingsData.MusicVol );
+				SetMusicVol ( cSettingsData.MusicVol );
 				return;
 			}
 		}

@@ -44,7 +44,7 @@ int InitSound ( int frequency,int chunksize )
 // Schließt den Sound:
 void CloseSound ( void )
 {
-	if ( !GameSettingsData.sound ) return;
+	if ( !cSettingsData.bSoundEnabled ) return;
 	Mix_CloseAudio();
 	return;
 }
@@ -52,9 +52,9 @@ void CloseSound ( void )
 // Spielt einen Voice-Sound:
 void PlayVoice ( sSOUND *snd )
 {
-	if ( !GameSettingsData.sound||GameSettingsData.VoiceMute ) return;
+	if ( !cSettingsData.bSoundEnabled||cSettingsData.VoiceMute ) return;
 	Mix_PlayChannel ( VoiceChannel,snd,0 );
-	Mix_Volume ( VoiceChannel,GameSettingsData.VoiceVol );
+	Mix_Volume ( VoiceChannel,cSettingsData.VoiceVol );
 	VoiceChannel++;
 	if ( VoiceChannel>VOICE_CHANNEL_MAX ) VoiceChannel=VOICE_CHANNEL_MIN;
 }
@@ -62,9 +62,9 @@ void PlayVoice ( sSOUND *snd )
 // Spielt einen FX-Sound:
 void PlayFX ( sSOUND *snd )
 {
-	if ( !GameSettingsData.sound||GameSettingsData.SoundMute ) return;
+	if ( !cSettingsData.bSoundEnabled||cSettingsData.SoundMute ) return;
 	Mix_PlayChannel ( SoundChannel,snd,0 );
-	Mix_Volume ( SoundChannel,GameSettingsData.SoundVol );
+	Mix_Volume ( SoundChannel,cSettingsData.SoundVol );
 	SoundChannel++;
 	if ( SoundChannel>SOUND_CHANNEL_MAX ) SoundChannel=SOUND_CHANNEL_MIN;
 }
@@ -72,24 +72,24 @@ void PlayFX ( sSOUND *snd )
 // Spielt die übergebene ogg/wav/mod-Datei:
 void PlayMusic ( char *file )
 {
-	if ( !GameSettingsData.sound||GameSettingsData.MusicMute ) return;
+	if ( !cSettingsData.bSoundEnabled||cSettingsData.MusicMute ) return;
 	music_stream = Mix_LoadMUS ( file );
 	if ( !music_stream ) return;
 	Mix_PlayMusic ( music_stream,0 );
-	Mix_VolumeMusic ( GameSettingsData.MusicVol );
+	Mix_VolumeMusic ( cSettingsData.MusicVol );
 }
 
 // Setzt das Volume der Musik:
 void SetMusicVol ( int vol )
 {
-	if ( !GameSettingsData.sound ) return;
+	if ( !cSettingsData.bSoundEnabled ) return;
 	Mix_VolumeMusic ( vol );
 }
 
 // Stoppt die Musik:
 void StopMusic ( void )
 {
-	if ( !GameSettingsData.sound||!music_stream ) return;
+	if ( !cSettingsData.bSoundEnabled||!music_stream ) return;
 	Mix_FreeMusic ( music_stream );
 	music_stream=NULL;
 }
@@ -97,14 +97,14 @@ void StopMusic ( void )
 // Startet die Musik:
 void StartMusic ( void )
 {
-	if ( !GameSettingsData.sound ) return;
+	if ( !cSettingsData.bSoundEnabled ) return;
 	PlayMusic ( ( char * ) MusicFiles->Items[random ( MusicAnz,0 ) ].c_str() );
 }
 
 // Callback, wenn Musik am Ende:
 void MusicFinished ( void )
 {
-	if ( !GameSettingsData.sound/*||in_credits*/ ) return;
+	if ( !cSettingsData.bSoundEnabled/*||in_credits*/ ) return;
 	srand ( ( unsigned ) time ( NULL ) );
 	PlayMusic ( ( char * ) MusicFiles->Items[random ( MusicAnz,0 ) ].c_str() );
 }
@@ -112,16 +112,16 @@ void MusicFinished ( void )
 // Startet einen Loop-Sound:
 int PlayFXLoop ( sSOUND *snd )
 {
-	if ( !GameSettingsData.sound ) return 0;
+	if ( !cSettingsData.bSoundEnabled ) return 0;
 	Mix_HaltChannel ( SoundLoopChannel );
 	Mix_PlayChannel ( SoundLoopChannel,snd,-1 );
-	Mix_Volume ( SoundLoopChannel,GameSettingsData.SoundVol );
+	Mix_Volume ( SoundLoopChannel,cSettingsData.SoundVol );
 	return SoundLoopChannel;
 }
 
 // Stoppt einen Loop-Sound:
 void StopFXLoop ( int SndStream )
 {
-	if ( !GameSettingsData.sound||SndStream!=SoundLoopChannel ) return;
+	if ( !cSettingsData.bSoundEnabled||SndStream!=SoundLoopChannel ) return;
 	Mix_HaltChannel ( SoundLoopChannel );
 }

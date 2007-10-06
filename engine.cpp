@@ -1192,7 +1192,7 @@ void cEngine::Rundenende ( void )
 	CollectTrash();
 
 	// Ggf Autosave machen:
-	if ( GameSettingsData.Autosave )
+	if ( cSettingsData.bAutoSave )
 	{
 		game->MakeAutosave();
 	}

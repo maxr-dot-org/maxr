@@ -151,7 +151,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schadenseffekt machen:
-	if ( timer1&&data.hit_points<data.max_hit_points&&GameSettingsData.DamageEffects&&!moving&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
+	if ( timer1&&data.hit_points<data.max_hit_points&&cSettingsData.bDamageEffects&&!moving&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
 	{
 		int intense= ( int ) ( 100-100* ( ( float ) data.hit_points/data.max_hit_points ) );
 		game->AddFX ( fxDarkSmoke,PosX*64+DamageFXPointX,PosY*64+DamageFXPointY,intense );
@@ -205,9 +205,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.w=dest->w=typ->img[dir]->w;
 		scr.h=dest->h=typ->img[dir]->h;
 		// Den Schatten malen:
-		if ( GameSettingsData.Schatten&&! ( data.is_stealth_sea&&game->map->IsWater ( PosX+PosY*game->map->size,true ) ) )
+		if ( cSettingsData.bShadows&&! ( data.is_stealth_sea&&game->map->IsWater ( PosX+PosY*game->map->size,true ) ) )
 		{
-			if ( StartUp&&GameSettingsData.Alpha )
+			if ( StartUp&&cSettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( typ->shw[dir],SDL_SRCALPHA,StartUp/5 );
 				if ( data.can_drive!=DRIVE_AIR )
@@ -305,7 +305,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			tmp.y+=oy;
 		}
 
-		if ( StartUp&&GameSettingsData.Alpha )
+		if ( StartUp&&cSettingsData.bAlphaEffects )
 		{
 			SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,StartUp );
 			SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
@@ -327,7 +327,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 		// Ggf das Overlay malen:
-		if ( data.has_overlay&&GameSettingsData.Animation )
+		if ( data.has_overlay&&cSettingsData.bAnimations )
 		{
 			tmp=*dest;
 			scr.h=scr.w=typ->overlay->h;
@@ -343,7 +343,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			{
 				scr.x= (int)(( typ->overlay_org->h* ( ( game->Frame% ( typ->overlay->w/scr.h ) ) ) ) / newzoom);
 			}
-			if ( StartUp&&GameSettingsData.Alpha )
+			if ( StartUp&&cSettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( typ->overlay,SDL_SRCALPHA,StartUp );
 				SDL_BlitSurface ( typ->overlay,&scr,buffer,&tmp );
@@ -372,7 +372,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 		// Den Schatten malen:
-		if ( GameSettingsData.Schatten )
+		if ( cSettingsData.bShadows )
 		{
 			SDL_BlitSurface ( typ->build_shw,NULL,buffer,&tmp );
 		}
@@ -447,7 +447,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	else
 	{
 		// Den Schatten malen:
-		if ( GameSettingsData.Schatten )
+		if ( cSettingsData.bShadows )
 		{
 			SDL_BlitSurface ( typ->clear_small_shw,NULL,buffer,&tmp );
 		}
@@ -1953,7 +1953,7 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 	size=game->hud->Zoom;
 	if ( IsBuilding&&data.can_build==BUILD_BIG ) size*=2;
 
-	if ( dest.x+size+42>=GameSettingsData.iScreenW-12 )
+	if ( dest.x+size+42>=cSettingsData.iScreenW-12 )
 	{
 		dest.x-=42;
 	}
@@ -1966,10 +1966,10 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 		dest.y-= ( i-size ) /2;
 		dest.y+=- ( dest.y-24 );
 	}
-	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.iScreenH-24 )
+	else if ( dest.y- ( i-size ) /2+i>=cSettingsData.iScreenH-24 )
 	{
 		dest.y-= ( i-size ) /2;
-		dest.y-= ( dest.y+i )- ( GameSettingsData.iScreenH-24 );
+		dest.y-= ( dest.y+i )- ( cSettingsData.iScreenH-24 );
 	}
 	else
 	{
@@ -2258,7 +2258,7 @@ void cVehicle::ShowBuildMenu ( void )
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
 	bool PfadPressed=false;
-	bool Beschreibung=GameSettingsData.ShowDescription;
+	bool Beschreibung=cSettingsData.bShowDescription;
 	bool DownPressed=false;
 	bool UpPressed=false;
 	TList *images;
@@ -2657,7 +2657,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			GameSettingsData.ShowDescription=Beschreibung;
+			cSettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
@@ -3144,7 +3144,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	if ( cSettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=166;
 	dest.y=159;
 	dest.w=GraphicsData.gfx_transfer->w;

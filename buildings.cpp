@@ -306,7 +306,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	scr.y=0;
 
 	// Den Schadenseffekt machen:
-	if ( timer1&&!data.is_base&&!data.is_connector&&data.hit_points<data.max_hit_points&&GameSettingsData.DamageEffects&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
+	if ( timer1&&!data.is_base&&!data.is_connector&&data.hit_points<data.max_hit_points&&cSettingsData.bDamageEffects&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
 	{
 		int intense= ( int ) ( 200-200* ( ( float ) data.hit_points/data.max_hit_points ) );
 		game->AddFX ( fxDarkSmoke,PosX*64+DamageFXPointX,PosY*64+DamageFXPointY,intense );
@@ -327,7 +327,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		scr.x=scr.w*DirtTyp;
 		scr.y=0;
 		// Den Schatten malen:
-		if ( GameSettingsData.Schatten )
+		if ( cSettingsData.bShadows )
 		{
 			if ( BigDirt ) SDL_BlitSurface ( BuildingMainData.dirt_big_shw,&scr,buffer,&tmp );
 			else SDL_BlitSurface ( BuildingMainData.dirt_small_shw,&scr,buffer,&tmp );
@@ -494,7 +494,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.is_big )
 		{
-			if ( StartUp&&GameSettingsData.Alpha )
+			if ( StartUp&&cSettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton,SDL_SRCALPHA,StartUp );
 				SDL_BlitSurface ( GraphicsData.gfx_big_beton,NULL,buffer,&tmp );
@@ -508,7 +508,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 		else if ( !data.is_road&&!data.is_connector )
 		{
-			if ( StartUp&&GameSettingsData.Alpha )
+			if ( StartUp&&cSettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,StartUp );
 				SDL_BlitSurface ( BuildingMainData.ptr_small_beton,NULL,buffer,&tmp );
@@ -530,9 +530,9 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schatten malen:
-	if ( GameSettingsData.Schatten )
+	if ( cSettingsData.bShadows )
 	{
-		if ( StartUp&&GameSettingsData.Alpha )
+		if ( StartUp&&cSettingsData.bAlphaEffects )
 		{
 			SDL_SetAlpha ( typ->shw,SDL_SRCALPHA,StartUp/5 );
 			if ( !data.is_connector )
@@ -565,7 +565,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		{
 			if ( data.has_frames )
 			{
-				if ( data.is_annimated&&GameSettingsData.Animation&&!Disabled )
+				if ( data.is_annimated&&cSettingsData.bAnimations&&!Disabled )
 				{
 					scr.x= ( game->Frame%data.has_frames ) *game->hud->Zoom;
 				}
@@ -603,7 +603,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	tmp=*dest;
 	scr.x=0;
 	scr.y=0;
-	if ( StartUp&&GameSettingsData.Alpha )
+	if ( StartUp&&cSettingsData.bAlphaEffects )
 	{
 		SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,StartUp );
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
@@ -617,7 +617,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf den Effekt malen:
-	if ( data.has_effect&&GameSettingsData.Animation&& ( IsWorking||!data.can_work ) )
+	if ( data.has_effect&&cSettingsData.bAnimations&& ( IsWorking||!data.can_work ) )
 	{
 		tmp=*dest;
 		SDL_SetAlpha ( typ->eff,SDL_SRCALPHA,EffectAlpha );
@@ -789,7 +789,7 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 	size=game->hud->Zoom;
 	if ( data.is_big ) size*=2;
 
-	if ( dest.x+size+42>=GameSettingsData.iScreenW-12 )
+	if ( dest.x+size+42>=cSettingsData.iScreenW-12 )
 	{
 		dest.x-=42;
 	}
@@ -802,10 +802,10 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 		dest.y-= ( i-size ) /2;
 		dest.y+=- ( dest.y-24 );
 	}
-	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.iScreenH-24 )
+	else if ( dest.y- ( i-size ) /2+i>=cSettingsData.iScreenH-24 )
 	{
 		dest.y-= ( i-size ) /2;
-		dest.y-= ( dest.y+i )- ( GameSettingsData.iScreenH-24 );
+		dest.y-= ( dest.y+i )- ( cSettingsData.iScreenH-24 );
 	}
 	else
 	{
@@ -840,7 +840,7 @@ void cBuilding::SelfDestructionMenu ( void )
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	if ( cSettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=233;scr.x=0;
 	dest.y=199;scr.y=0;
 	scr.w=dest.w=GraphicsData.gfx_destruction->w;
@@ -1546,7 +1546,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	if ( cSettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=166;
 	dest.y=159;
 	dest.w=GraphicsData.gfx_transfer->w;
@@ -2892,7 +2892,7 @@ void cBuilding::ShowResearch ( void )
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	if ( cSettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=140;
 	dest.y=74;
 	dest.w=GraphicsData.gfx_research->w;
@@ -3110,7 +3110,7 @@ void cBuilding::ShowUpgrade ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
-	bool Beschreibung=GameSettingsData.ShowDescription;
+	bool Beschreibung=cSettingsData.bShowDescription;
 	bool DownPressed=false;
 	bool UpPressed=false;
 	TList *images,*selection;
@@ -3397,7 +3397,7 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			GameSettingsData.ShowDescription=Beschreibung;
+			cSettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
@@ -5244,7 +5244,7 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
-	bool Beschreibung=GameSettingsData.ShowDescription;
+	bool Beschreibung=cSettingsData.bShowDescription;
 	bool Wiederholen=false;
 	bool DownPressed=false;
 	bool UpPressed=false;
@@ -5715,7 +5715,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			GameSettingsData.ShowDescription=Beschreibung;
+			cSettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
