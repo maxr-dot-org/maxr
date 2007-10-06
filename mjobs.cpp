@@ -232,7 +232,7 @@ bool cMJobs::CheckPossiblePoint ( int x,int y )
 	if ( PathCalcMap[x+y*map->size] ) return false;
 	if ( !plane )
 	{
-		if ( terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
+		if ( TerrainData.terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
 		if ( vehicle->data.can_drive==DRIVE_LAND&&map->IsWater ( x+y*map->size ) ) return false;
 		if ( vehicle->data.can_drive==DRIVE_SEA&&!map->IsWater ( x+y*map->size,true,true ) ) return false;
 	}
@@ -293,11 +293,11 @@ void cMJobs::DrawPfeil ( SDL_Rect dest,SDL_Rect *ldest,bool spezial )
 	else TESTXY_DP ( <,> ) index=7;
 	if ( spezial )
 	{
-		SDL_BlitSurface ( WayPointPfeileSpecial[index][64-game->hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[index][64-game->hud->Zoom],NULL,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( WayPointPfeile[index][64-game->hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeile[index][64-game->hud->Zoom],NULL,buffer,&dest );
 	}
 }
 
@@ -398,8 +398,8 @@ void cMJobs::DoTheMove ( void )
 	else speed=MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( MakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
-	        ( waypoints&&waypoints->next&&terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
+	if ( GameSettingsData.MakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
+	        ( waypoints&&waypoints->next&&TerrainData.terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
 	        ( vehicle->owner==game->ActivePlayer||game->ActivePlayer->ScanMap[vehicle->PosX+vehicle->PosY*game->map->size] ) )
 	{
 		if ( !vehicle->OffX&&!vehicle->OffY )
