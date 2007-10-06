@@ -217,3 +217,11 @@ bool ExTiXmlNode::IsTimeStamp( std::string &rstrData )
 
 	return true;
 }
+
+int ExTiXmlNode::XmlGetLastEditor( std::string &rstrData, ExTiXmlNode * pXmlAuthorNode )
+{
+	rstrData = "";
+
+	// ToDo - JCK: Find the last editor of the XML file
+	return 0;
+}
