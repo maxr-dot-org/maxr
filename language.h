@@ -13,6 +13,15 @@
 #define LANGUAGE_FILE_NAME   "Language "
 #define LANGUAGE_FILE_EXT    ".xml"
 
+////////////////////////////////////////////////////////////////////////////////
+// XML-Node paths
+
+#define XNP_MAX_LANG_FILE "MAX_Language_File", ""
+#define XNP_MAX_LANG_FILE_HEADER_AUTHOR "MAX_Language_File", "Header", "Author", ""
+#define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", ""
+
+////////////////////////////////////////////////////////////////////////////////
+
 #include <map>
 #include <string>
 
@@ -27,6 +36,8 @@ protected:
 	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )
 	std::string m_szLanguage;
 	std::string m_szLanguageFile;
+	std::string m_szEncoding;
+	bool m_bLeftToRight;
 	StrStrMap m_mpLanguage;
 public:
 	std::string GetCurrentLanguage(void);
