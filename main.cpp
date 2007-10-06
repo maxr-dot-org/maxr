@@ -61,8 +61,7 @@ int main ( int argc, char *argv[] )
 		{
 			cLog::write ( "Error while loading data!",LOG_TYPE_ERROR );
 			SDL_WaitThread ( DataThread, NULL );
-			SDL_Quit();
-			return 0;
+			Quit();
 		}
 		while ( SDL_PollEvent ( &event ) )
 		{
@@ -71,7 +70,7 @@ int main ( int argc, char *argv[] )
 				SDL_UpdateRect ( screen,0,0,0,0 );
 			}
 		}
-		SDL_Delay ( 10 );
+		SDL_Delay ( 100 );
 	}
 
 	//SDL_Delay ( 3000 ); //debug only
@@ -87,7 +86,6 @@ int main ( int argc, char *argv[] )
 	// Das Menü starten:
 //	RunMainMenu();
 	Quit();
-	return 0;
 }
 
 void showSplash()
