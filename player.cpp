@@ -14,16 +14,16 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr )
 	color=Color;
 	Nr=nr;
 	// Die Vehicle Eigenschaften kopieren:
-	VehicleData= ( sVehicleData* ) malloc ( sizeof ( sVehicleData ) *vehicle_anz );
-	for ( i=0;i<vehicle_anz;i++ )
+	VehicleData= ( sVehicleData* ) malloc ( sizeof ( sVehicleData ) *VehicleMainData.vehicle_anz );
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
-		VehicleData[i]=vehicle[i].data;
+		VehicleData[i]=VehicleMainData.vehicle[i].data;
 	}
 	// Die Building Eigenschaften kopieren:
-	BuildingData= ( sBuildingData* ) malloc ( sizeof ( sBuildingData ) *building_anz );
-	for ( i=0;i<building_anz;i++ )
+	BuildingData= ( sBuildingData* ) malloc ( sizeof ( sBuildingData ) *BuildingMainData.building_anz );
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
-		BuildingData[i]=building[i].data;
+		BuildingData[i]=BuildingMainData.building[i].data;
 	}
 	DetectLandMap=NULL;
 	DetectSeaMap=NULL;
@@ -187,7 +187,7 @@ void cPlayer::InitMaps ( int MapSizeX )
 	}
 
 	// ShieldColor zuweisen:
-	ShieldColor=ShieldColors[GetColorNr ( color ) ];
+	ShieldColor=OtherData.ShieldColors[GetColorNr ( color ) ];
 }
 
 // Fügt ein Building in die Listes des Spielser ein:
@@ -664,108 +664,108 @@ void cPlayer::DoTheResearch ( int i )
 {
 	int k;
 
-	for ( k=0;k<vehicle_anz;k++ )
+	for ( k=0;k<VehicleMainData.vehicle_anz;k++ )
 	{
 		int before;
 		switch ( i )
 		{
 			case 0:
 				before=VehicleData[k].damage;
-				VehicleData[k].damage-= ( int ) ( vehicle[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].damage+= ( int ) ( vehicle[k].data.damage*ResearchTechs[i].level );
+				VehicleData[k].damage-= ( int ) ( VehicleMainData.vehicle[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].damage+= ( int ) ( VehicleMainData.vehicle[k].data.damage*ResearchTechs[i].level );
 				if ( VehicleData[k].damage!=before ) VehicleData[k].version++;
 				break;
 			case 1:
 				before=VehicleData[k].max_shots;
-				VehicleData[k].max_shots-= ( int ) ( vehicle[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_shots+= ( int ) ( vehicle[k].data.max_shots*ResearchTechs[i].level );
+				VehicleData[k].max_shots-= ( int ) ( VehicleMainData.vehicle[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].max_shots+= ( int ) ( VehicleMainData.vehicle[k].data.max_shots*ResearchTechs[i].level );
 				if ( VehicleData[k].max_shots!=before ) VehicleData[k].version++;
 				break;
 			case 2:
 				before=VehicleData[k].range;
-				VehicleData[k].range-= ( int ) ( vehicle[k].data.range* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].range+= ( int ) ( vehicle[k].data.range*ResearchTechs[i].level );
+				VehicleData[k].range-= ( int ) ( VehicleMainData.vehicle[k].data.range* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].range+= ( int ) ( VehicleMainData.vehicle[k].data.range*ResearchTechs[i].level );
 				if ( VehicleData[k].range!=before ) VehicleData[k].version++;
 				break;
 			case 3:
 				before=VehicleData[k].armor;
-				VehicleData[k].armor-= ( int ) ( vehicle[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].armor+= ( int ) ( vehicle[k].data.armor*ResearchTechs[i].level );
+				VehicleData[k].armor-= ( int ) ( VehicleMainData.vehicle[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].armor+= ( int ) ( VehicleMainData.vehicle[k].data.armor*ResearchTechs[i].level );
 				if ( VehicleData[k].armor!=before ) VehicleData[k].version++;
 				break;
 			case 4:
 				before=VehicleData[k].max_hit_points;
-				VehicleData[k].max_hit_points-= ( int ) ( vehicle[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_hit_points+= ( int ) ( vehicle[k].data.max_hit_points*ResearchTechs[i].level );
+				VehicleData[k].max_hit_points-= ( int ) ( VehicleMainData.vehicle[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].max_hit_points+= ( int ) ( VehicleMainData.vehicle[k].data.max_hit_points*ResearchTechs[i].level );
 				if ( VehicleData[k].max_hit_points!=before ) VehicleData[k].version++;
 				break;
 			case 5:
 				before=VehicleData[k].max_speed;
-				VehicleData[k].max_speed-= ( int ) ( vehicle[k].data.max_speed* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_speed+= ( int ) ( vehicle[k].data.max_speed*ResearchTechs[i].level );
+				VehicleData[k].max_speed-= ( int ) ( VehicleMainData.vehicle[k].data.max_speed* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].max_speed+= ( int ) ( VehicleMainData.vehicle[k].data.max_speed*ResearchTechs[i].level );
 				if ( VehicleData[k].max_speed!=before ) VehicleData[k].version++;
 				break;
 			case 6:
 				before=VehicleData[k].scan;
-				VehicleData[k].scan-= ( int ) ( vehicle[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].scan+= ( int ) ( vehicle[k].data.scan*ResearchTechs[i].level );
+				VehicleData[k].scan-= ( int ) ( VehicleMainData.vehicle[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].scan+= ( int ) ( VehicleMainData.vehicle[k].data.scan*ResearchTechs[i].level );
 				if ( VehicleData[k].scan!=before ) VehicleData[k].version++;
 				break;
 			case 7:
 				before=VehicleData[k].costs;
-				VehicleData[k].costs+= ( int ) ( vehicle[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].costs-= ( int ) ( vehicle[k].data.costs*ResearchTechs[i].level );
+				VehicleData[k].costs+= ( int ) ( VehicleMainData.vehicle[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].costs-= ( int ) ( VehicleMainData.vehicle[k].data.costs*ResearchTechs[i].level );
 				if ( VehicleData[k].costs!=before ) VehicleData[k].version++;
 				break;
 		}
 	}
-	for ( k=0;k<building_anz;k++ )
+	for ( k=0;k<BuildingMainData.building_anz;k++ )
 	{
 		int before;
 		switch ( i )
 		{
 			case 0:
 				before=BuildingData[k].damage;
-				BuildingData[k].damage-= ( int ) ( building[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].damage+= ( int ) ( building[k].data.damage*ResearchTechs[i].level );
+				BuildingData[k].damage-= ( int ) ( BuildingMainData.building[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].damage+= ( int ) ( BuildingMainData.building[k].data.damage*ResearchTechs[i].level );
 				if ( BuildingData[k].damage!=before ) BuildingData[k].version++;
 				break;
 			case 1:
 				before=BuildingData[k].max_shots;
-				BuildingData[k].max_shots-= ( int ) ( building[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].max_shots+= ( int ) ( building[k].data.max_shots*ResearchTechs[i].level );
+				BuildingData[k].max_shots-= ( int ) ( BuildingMainData.building[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].max_shots+= ( int ) ( BuildingMainData.building[k].data.max_shots*ResearchTechs[i].level );
 				if ( BuildingData[k].max_shots!=before ) BuildingData[k].version++;
 				break;
 			case 2:
 				before=BuildingData[k].range;
-				BuildingData[k].range-= ( int ) ( building[k].data.range* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].range+= ( int ) ( building[k].data.range*ResearchTechs[i].level );
+				BuildingData[k].range-= ( int ) ( BuildingMainData.building[k].data.range* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].range+= ( int ) ( BuildingMainData.building[k].data.range*ResearchTechs[i].level );
 				if ( BuildingData[k].range!=before ) BuildingData[k].version++;
 				break;
 			case 3:
 				before=BuildingData[k].armor;
-				BuildingData[k].armor-= ( int ) ( building[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].armor+= ( int ) ( building[k].data.armor*ResearchTechs[i].level );
+				BuildingData[k].armor-= ( int ) ( BuildingMainData.building[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].armor+= ( int ) ( BuildingMainData.building[k].data.armor*ResearchTechs[i].level );
 				if ( BuildingData[k].armor!=before ) BuildingData[k].version++;
 				break;
 			case 4:
 				before=BuildingData[k].max_hit_points;
-				BuildingData[k].max_hit_points-= ( int ) ( building[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].max_hit_points+= ( int ) ( building[k].data.max_hit_points*ResearchTechs[i].level );
+				BuildingData[k].max_hit_points-= ( int ) ( BuildingMainData.building[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].max_hit_points+= ( int ) ( BuildingMainData.building[k].data.max_hit_points*ResearchTechs[i].level );
 				if ( BuildingData[k].max_hit_points!=before ) BuildingData[k].version++;
 				break;
 			case 5:
 				break;
 			case 6:
 				before=BuildingData[k].scan;
-				BuildingData[k].scan-= ( int ) ( building[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].scan+= ( int ) ( building[k].data.scan*ResearchTechs[i].level );
+				BuildingData[k].scan-= ( int ) ( BuildingMainData.building[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].scan+= ( int ) ( BuildingMainData.building[k].data.scan*ResearchTechs[i].level );
 				if ( BuildingData[k].scan!=before ) BuildingData[k].version++;
 				break;
 			case 7:
 				before=BuildingData[k].costs;
-				BuildingData[k].costs+= ( int ) ( building[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].costs-= ( int ) ( building[k].data.costs*ResearchTechs[i].level );
+				BuildingData[k].costs+= ( int ) ( BuildingMainData.building[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].costs-= ( int ) ( BuildingMainData.building[k].data.costs*ResearchTechs[i].level );
 				if ( BuildingData[k].costs!=before ) BuildingData[k].version++;
 				break;
 		}
