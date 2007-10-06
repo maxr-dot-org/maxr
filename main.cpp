@@ -33,6 +33,7 @@
 #include "mjobs.h"
 #include "fstcpip.h"
 #include "log.h"
+#include "loaddata.h"
 
 /** Slashscreen width  */
 #define SPLASHWIDTH 500
@@ -68,6 +69,7 @@ int main ( int argc, char *argv[] )
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, colourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption (MAXVERSION, NULL);
+	SDL_UpdateRect ( screen,0,0,0,0 );
 
 	// Dateien laden
 	SDL_Thread *DataThread = NULL;
@@ -117,31 +119,6 @@ int main ( int argc, char *argv[] )
 	RunMainMenu();
 	cLog::write("Stopped logging.\n\n");
 	return 0;
-}
-
-// LoadData ///////////////////////////////////////////////////////////////////
-// Loads alle relevant files and datas
-int LoadData ( void * )
-{
-	LoadingData=true;
-	for( int i = 0; i < 1000; i++)
-	{
-		SDL_Delay(10);
-	}
-	LoadingData=false;
-	return 1;
-}
-
-// MakeLog ///////////////////////////////////////////////////////////////////
-// Schreibt eine Nachricht auf dem SplashScreen:
-void MakeLog ( char* sztxt,bool ok,int pos )
-{
-	if ( !ok )
-		fonts->OutTextBig ( sztxt,22,152+16*pos,buffer );
-	else
-		fonts->OutTextBig ( "OK",250,152+16*pos,buffer );
-	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-	SDL_UpdateRect ( screen,0,0,0,0 );
 }
 
 // InitSound /////////////////////////////////////////////////////////////////
@@ -394,6 +371,7 @@ void ScaleSurfaceAdv2Spec ( SDL_Surface *scr,SDL_Surface *dest,int sizex,int siz
 	dest->h=sizey;
 }
 
+// CreatePfeil ////////////////////////////////////////////////////////////////
 // Erzeigt ein Pfeil-Surface:
 SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size )
 {
@@ -414,6 +392,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 	return sf;
 }
 
+// CreatePfeil ////////////////////////////////////////////////////////////////
 // Malt eine Linie auf dem Surface (muss vorher gelocked sein):
 void line ( int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf )
 {
@@ -446,6 +425,7 @@ void line ( int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf )
 	}
 }
 
+// CreatePfeil ////////////////////////////////////////////////////////////////
 // Erzeugt eine Schield-Farbe:
 void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 {
@@ -472,12 +452,15 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 	}
 }
 
+// random ////////////////////////////////////////////////////////////////
+// returns a random number between 'y' and 'x':
 int random ( int x, int y )
 {
 	return ( ( int ) ( ( ( double ) rand() /RAND_MAX ) * ( ( x-y ) +y ) ) );
 }
 
-
+// Round //////////////////////////////////////////////////////////////////////
+// Rounds a Number to 'iDecimalPlace' digits after the comma:
 double Round ( double dValueToRound, unsigned int iDecimalPlace )
 {
 	dValueToRound *= pow ( ( double ) 10, ( int ) iDecimalPlace ); 
