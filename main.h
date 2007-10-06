@@ -65,6 +65,10 @@ struct sReport;
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
+/** Slashscreen width  */
+#define SPLASHWIDTH 500
+/** Slashscreen height  */
+#define SPLASHHEIGHT 420
 #define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
 #define MINIMAP_COLOR      0xFC0000 // Farbe des Rahmens in der Minimap
 #define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
@@ -245,6 +249,8 @@ public:
 	string LastPlayerName;		// Letzter benutzter Spielername
 	int ScreenW;				// Breite der ausgwählten Auflösung
 	int ScreenH;				// Höhe der ausgwählten Auflösung
+	int iColourDepth;			//e.g. 32
+
 
 	string BuildingPath;		// Path to the buildings
 	string FontPath;			// Path to the fonts
@@ -468,5 +474,28 @@ double Round(double num, unsigned int n);
 *@return rounded num
 */
 int Round ( double num );
+
+/**
+*Terminates app
+*@author beko
+*/
+void Quit();
+
+/**
+*Inits SDL 
+*@author beko
+*@return -1 on error<br>0 on success<br>1 with warnings (sound or net not initialised due SDL-errors)
+*/
+int initSDL();
+
+/**
+*Shows splashscreen
+*/
+void showSplash();
+
+/**
+*Shows gamewindow
+*/
+void showGameWindow();
 
 #endif

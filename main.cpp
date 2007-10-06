@@ -33,14 +33,7 @@
 #include "mjobs.h"
 #include "fstcpip.h"
 #include "log.h"
-#include "loaddata.h"
-
-/** Slashscreen width  */
-#define SPLASHWIDTH 500
-/** Slashscreen height  */
-#define SPLASHHEIGHT 420
-/** Colour depth we want (not defined because we might change it on runtime*/
-static int colourDepth = 32;
+//#include "loaddata.h"
 
 TList::TList ( void )
 {
@@ -50,75 +43,125 @@ TList::TList ( void )
 
 int main ( int argc, char *argv[] )
 {
-	cLog::write(MAXVERSION);
-	cLog::write("More here later\n");
-	srand ( ( unsigned ) time ( NULL ) );
-	putenv ( "SDL_VIDEO_CENTERED=center" );
+	cLog::write ( MAXVERSION );
+	if(initSDL() == -1) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
-	// SDL starten
-	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE | SDL_INIT_AUDIO ) == -1 )
-		return 0;
+	srand ( ( unsigned ) time ( NULL ) ); //start random number generator 
+	//TODO: load max.xml here for settings!
 
-	// SDL_Net starten
-	if ( SDLNet_Init() == -1 )
-		return 0;
+	showSplash(); //show splashscreen
 
-	// SplashScreen anzeigen
-	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
-	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
-	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, colourDepth, SDL_HWSURFACE|SDL_NOFRAME );
-	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-	SDL_WM_SetCaption (MAXVERSION, NULL);
-	SDL_UpdateRect ( screen,0,0,0,0 );
-
-	// Dateien laden
+	// load files
 	SDL_Thread *DataThread = NULL;
-	DataThread = SDL_CreateThread ( LoadData,NULL );
+//	DataThread = SDL_CreateThread ( LoadData,NULL );
 
-	SDL_Event event;
-	while(LoadingData)
-	{
-		while( SDL_PollEvent( &event ) )
-        {
-            if( event.type == SDL_ACTIVEEVENT )
-            {
-				SDL_UpdateRect ( screen,0,0,0,0 );
-            }    
-        }
-		SDL_Delay(10);
-	}
+// 	SDL_Event event;
+// 	while ( LoadingData )
+// 	{
+// 		while ( SDL_PollEvent ( &event ) )
+// 		{
+// 			if ( event.type == SDL_ACTIVEEVENT )
+// 			{
+// 				SDL_UpdateRect ( screen,0,0,0,0 );
+// 			}
+// 		}
+// 		SDL_Delay ( 30 ); 
+// 	}
+ 	SDL_Delay ( 3000 ); //debug only
 
 	SDL_WaitThread ( DataThread, NULL );
-	return 0;
 
-	// *Intro*
-
-	// Musik starten
-
-	// Den Grafikmodus starten:
-	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,GameSettingsData.ScreenW,GameSettingsData.ScreenH,colourDepth,0,0,0,0 );
-	if ( !GameSettingsData.WindowMode )
-	{
-		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,colourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
-	}
-	else
-	{
-		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,colourDepth,SDL_HWSURFACE );
-	}
-	SDL_FillRect ( buffer,NULL,0 );
-
-	// Den Cursor verstecken.
-	SDL_ShowCursor ( 0 );
-	// Die Caption muss neu gesetzt werden:
-	SDL_WM_SetCaption (MAXVERSION, NULL);
+	showGameWindow(); //start game-window
+ 	SDL_Delay ( 3000 ); //debug only
 
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
 	// Das Menü starten:
-	RunMainMenu();
-	cLog::write("Stopped logging.\n\n");
+//	RunMainMenu();
+	
+	Quit();
+	cLog::write ( "Stopped logging.\n\n" );
 	return 0;
+}
+
+void showSplash()
+{
+	//TODO: default settings if max.xml not avaible. move to max.xml loading routine! SDL crashes BADLY without this!
+	GameSettingsData.iColourDepth = 32;
+	GameSettingsData.WindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
+	GameSettingsData.ScreenW = 640;
+	GameSettingsData.ScreenH = 480;
+
+        putenv ( "SDL_VIDEO_CENTERED=center" );
+
+	// generate SplashScreen
+	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
+	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
+	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, GameSettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
+	SDL_BlitSurface ( buffer,NULL,screen,NULL );
+	SDL_WM_SetCaption ( MAXVERSION, NULL );
+	SDL_UpdateRect ( screen,0,0,0,0 );
+	SDL_ShowCursor ( 0 ); // hide cursor during splash
+}
+
+void showGameWindow()
+{
+	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,0,0,0,0 );
+	if ( !GameSettingsData.WindowMode )
+	{
+		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
+	}
+	else
+	{
+		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE );
+	}
+	SDL_FillRect ( buffer,NULL,0 );
+ 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
+	SDL_ShowCursor ( 1 ); // hide cursor during splash
+}
+
+int initSDL()
+{
+	if ( SDL_Init ( SDL_INIT_VIDEO ) == -1 ) // start SDL basics
+	{
+		cLog::write("Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR);
+		return -1;
+	}
+
+	if ( SDL_Init ( SDL_INIT_TIMER ) == -1 )
+	{
+		cLog::write("Could not init SDL_TIMER",cLog::eLOG_TYPE_ERROR);
+		return -1;
+	}
+
+	if ( SDL_Init ( SDL_INIT_NOPARACHUTE ) == -1 )
+	{
+		cLog::write("Could not init SDL_NOPARACHUTE",cLog::eLOG_TYPE_ERROR);
+		return -1;
+	}
+
+	cLog::write("Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO); //made it - enough to start game
+
+	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
+	{
+		cLog::write("Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING);
+		return 1;
+	}
+
+	if ( SDLNet_Init() == -1 ) // start SDL_net
+	{
+		cLog::write("Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING);
+		return 1;
+	}
+	return 0;
+}
+
+void Quit()
+{	
+	delete mouse;
+	SDLNet_Quit();
+	SDL_Quit();
 }
 
 // InitSound /////////////////////////////////////////////////////////////////
@@ -154,7 +197,7 @@ void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
 	{
 		sizex=scr->w/64*size;
 	}
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,colourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,GameSettingsData.iColourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -241,7 +284,7 @@ void ScaleSurfaceAdv ( SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey )
 {
 	int x,y,rx,ry,dx,dy;
 	unsigned int *s,*d;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,colourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,GameSettingsData.iColourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -377,7 +420,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 {
 	SDL_Surface *sf;
 	float fak;
-	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,colourDepth,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,GameSettingsData.iColourDepth,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFF00FF );
 	SDL_LockSurface ( sf );
@@ -431,7 +474,7 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 {
 	SDL_Rect r;
 	int i;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,colourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,GameSettingsData.iColourDepth,0,0,0,0 );
 	SDL_BlitSurface ( scr,NULL,*dest,NULL );
 	SDL_SetColorKey ( *dest,SDL_SRCCOLORKEY,0xFF00FF );
 	r.w=64;
@@ -463,7 +506,7 @@ int random ( int x, int y )
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 double Round ( double dValueToRound, unsigned int iDecimalPlace )
 {
-	dValueToRound *= pow ( ( double ) 10, ( int ) iDecimalPlace ); 
+	dValueToRound *= pow ( ( double ) 10, ( int ) iDecimalPlace );
 	if ( dValueToRound >= 0 )
 		dValueToRound = floor ( dValueToRound + 0.5 );
 	else
@@ -474,5 +517,5 @@ double Round ( double dValueToRound, unsigned int iDecimalPlace )
 
 int Round ( double dValueToRound )
 {
-	return (int)Round(dValueToRound,0);
+	return ( int ) Round ( dValueToRound,0 );
 }
