@@ -47,6 +47,7 @@ int main ( int argc, char *argv[] )
 	if(initSDL() == -1) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator 
+
 	//TODO: load max.xml here for settings!
 
 	showSplash(); //show splashscreen
@@ -79,9 +80,8 @@ int main ( int argc, char *argv[] )
 
 	// Das Menü starten:
 //	RunMainMenu();
-	
-	Quit();
 	cLog::write ( "Stopped logging.\n\n" );
+	Quit();
 	return 0;
 }
 
@@ -97,6 +97,8 @@ void showSplash()
 
 	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
+	if ( buffer == NULL ) cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+	
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
@@ -126,18 +128,21 @@ int initSDL()
 	if ( SDL_Init ( SDL_INIT_VIDEO ) == -1 ) // start SDL basics
 	{
 		cLog::write("Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR);
+		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 
 	if ( SDL_Init ( SDL_INIT_TIMER ) == -1 )
 	{
 		cLog::write("Could not init SDL_TIMER",cLog::eLOG_TYPE_ERROR);
+		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 
 	if ( SDL_Init ( SDL_INIT_NOPARACHUTE ) == -1 )
 	{
 		cLog::write("Could not init SDL_NOPARACHUTE",cLog::eLOG_TYPE_ERROR);
+		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 
@@ -146,12 +151,14 @@ int initSDL()
 	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
 	{
 		cLog::write("Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING);
+		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_WARNING);
 		return 1;
 	}
 
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
 		cLog::write("Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING);
+		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_WARNING);
 		return 1;
 	}
 	return 0;
@@ -160,8 +167,10 @@ int initSDL()
 void Quit()
 {	
 	delete mouse;
+	//unload files here
 	SDLNet_Quit();
 	SDL_Quit();
+	exit(0);
 }
 
 // InitSound /////////////////////////////////////////////////////////////////
