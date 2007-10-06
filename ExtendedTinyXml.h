@@ -53,7 +53,7 @@ public:
 	bool XmlDataToBool( std::string &rstrData );
 	inline long XmlDataToLong( std::string &rstrData ){ return atol(rstrData.c_str()); };
 	inline double XmlDataToDouble( std::string &rstrData ){ return atof(rstrData.c_str()); };
-
+	bool IsTimeStamp( std::string &rstrData );
 
 
 	// Overrides. Do not use them !
