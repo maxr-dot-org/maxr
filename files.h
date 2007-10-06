@@ -82,6 +82,7 @@ TList *ReadIniSections(const char* name);
 * @param defaultValue Value returned in case no value can be found in file.
 * @param filename INI-File to open
 * @return Found value or defaultValue on error
+* @deprecated
 */
 char *ReadIniString(const char* section, const char* key, const char* defaultValue, const char* filename);
 
@@ -94,6 +95,7 @@ char *ReadIniString(const char* section, const char* key, const char* defaultVal
 * @param defaultValue Value returned in case no value can be found in file.
 * @param filename INI-File to open
 * @return Found value or defaultValue on error
+* @deprecated
 */
 int ReadIniInteger(const char* section, const char* key, int defaultValue, const char* filename);
 
@@ -106,6 +108,7 @@ int ReadIniInteger(const char* section, const char* key, int defaultValue, const
 * @param defaultValue Value returned in case no value can be found in file.
 * @param filename INI-File to open
 * @return Found value or defaultValue on error
+* @deprecated
 */
 bool ReadIniBool(const char* section, const char* key, bool defaultValue, const char* filename);
 
@@ -117,6 +120,7 @@ bool ReadIniBool(const char* section, const char* key, bool defaultValue, const 
 * @param key Key for value
 * @param Value Value to write
 * @param filename INI-File to open
+* @deprecated
 */
 void WriteIniString(const char* section, const char* key, const char* Value, const char* filename);
 
@@ -128,6 +132,7 @@ void WriteIniString(const char* section, const char* key, const char* Value, con
 * @param key Key for value
 * @param Value Value to write
 * @param filename INI-File to open
+* @deprecated
 */
 void WriteIniInteger(const char* section, const char* key, int Value, const char* filename);
 
@@ -139,6 +144,7 @@ void WriteIniInteger(const char* section, const char* key, int Value, const char
 * @param key Key for value
 * @param Value Value to write
 * @param filename INI-File to open
+* @deprecated
 */
 void WriteIniBool(const char* section, const char* key, bool Value, const char* filename);
 

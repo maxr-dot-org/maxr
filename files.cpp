@@ -10,7 +10,10 @@ bool FileExists ( const char* name )
 	SDL_RWops *file;
 	file=SDL_RWFromFile ( name, "r" );
 	if ( file==NULL )
+	{
+		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return false;
+	}
 	SDL_RWclose ( file );
 	return true;
 }
@@ -22,10 +25,15 @@ string LoadFileToString ( const char* filename )
 	string str;
 	long end;
 
+	//sanitychecks
+	if (!FileExists(filename)) return NULL;
+
 	file=SDL_RWFromFile ( filename, "r" );
 	if ( file==NULL )
+	{
+		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_ERROR);
 		return NULL;
-
+	}
 	SDL_RWseek ( file,0,SEEK_END );
 	end = SDL_RWtell ( file );
 	SDL_RWseek ( file,0,SEEK_SET );
@@ -42,6 +50,7 @@ string LoadFileToString ( const char* filename )
 long StrPosToFilePos ( string filestring, long strpos )
 {
 	long filepos=0;
+
 	if ( strpos!=string::npos )
 	{
 		int lastfind=0;
@@ -64,10 +73,10 @@ long SearchFor ( const char* searchstr, long startpos, const char* filename )
 	string str;
 	long end, pos, filepos=0;
 
-	file=SDL_RWFromFile ( filename, "r" );
-	if ( file==NULL )
-		return -1;
+	//sanitychecks
+	if (!FileExists(filename)) return -1;
 
+	file=SDL_RWFromFile ( filename, "r" );
 	SDL_RWseek ( file,0,SEEK_END );
 	end = SDL_RWtell ( file );
 	SDL_RWseek ( file,startpos,SEEK_SET );
@@ -125,12 +134,12 @@ int FileEraseData ( long startpos, long endpos, const char* filename )
 	long end;
 	int n=1;
 
-	if ( endpos!=0 && endpos<startpos )
-		return 0;
+	//sanitychecks
+	if ( endpos!=0 && endpos<startpos ) return 0;
+	if (!FileExists(filename)) return 0;
 
-	file=SDL_RWFromFile ( filename, "r" );
-	if ( file==NULL )
-		return 0;
+
+
 	SDL_RWseek ( file,0,SEEK_END );
 	end = SDL_RWtell ( file );
 	if ( endpos==0 )
@@ -174,9 +183,10 @@ int FileInsertData ( long pos, const char* data, const char* filename )
 	long end;
 	int n=1;
 
+	//sanitychecks
+	if (!FileExists(filename)) return 0;
+
 	file=SDL_RWFromFile ( filename, "r" );
-	if ( file==NULL )
-		return 0;
 	SDL_RWseek ( file,0,SEEK_END );
 	end = SDL_RWtell ( file );
 	SDL_RWseek ( file,0,SEEK_SET );
