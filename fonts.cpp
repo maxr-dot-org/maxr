@@ -15,48 +15,48 @@ cFonts::cFonts ( void )
 	chars=NULL;
 	anz=0;
 	last=0;
-	for ( i=0;i<font->w;i++ )
+	for ( i=0;i<FontsData.font->w;i++ )
 	{
-		if ( ( ( unsigned int* ) font->pixels ) [ ( font->h-1 ) *font->w+i]==0xFF00FF )
+		if ( ( ( unsigned int* ) FontsData.font->pixels ) [ ( FontsData.font->h-1 ) *FontsData.font->w+i]==0xFF00FF )
 		{
 			anz++;
 			chars= ( SDL_Rect* ) realloc ( chars,sizeof ( SDL_Rect ) *anz );
 			chars[anz-1].x=last;
 			chars[anz-1].y=0;
 			chars[anz-1].w=i-last+1;
-			chars[anz-1].h=font->h-1;
+			chars[anz-1].h=FontsData.font->h-1;
 			last=i+1;
 		}
 	}
 	chars_big=NULL;
 	anz=0;
 	last=0;
-	for ( i=0;i<font_big->w;i++ )
+	for ( i=0;i<FontsData.font_big->w;i++ )
 	{
-		if ( ( ( unsigned int* ) font_big->pixels ) [ ( font_big->h-1 ) *font_big->w+i]==0xFF00FF )
+		if ( ( ( unsigned int* ) FontsData.font_big->pixels ) [ ( FontsData.font_big->h-1 ) *FontsData.font_big->w+i]==0xFF00FF )
 		{
 			anz++;
 			chars_big= ( SDL_Rect* ) realloc ( chars_big,sizeof ( SDL_Rect ) *anz );
 			chars_big[anz-1].x=last;
 			chars_big[anz-1].y=0;
 			chars_big[anz-1].w=i-last+1;
-			chars_big[anz-1].h=font_big->h-1;
+			chars_big[anz-1].h=FontsData.font_big->h-1;
 			last=i+1;
 		}
 	}
 	chars_small=NULL;
 	anz=0;
 	last=0;
-	for ( i=0;i<font_small_white->w;i++ )
+	for ( i=0;i<FontsData.font_small_white->w;i++ )
 	{
-		if ( ( ( unsigned int* ) font_small_white->pixels ) [ ( font_small_white->h-1 ) *font_small_white->w+i]==0xFF00FF )
+		if ( ( ( unsigned int* ) FontsData.font_small_white->pixels ) [ ( FontsData.font_small_white->h-1 ) *FontsData.font_small_white->w+i]==0xFF00FF )
 		{
 			anz++;
 			chars_small= ( SDL_Rect* ) realloc ( chars_small,sizeof ( SDL_Rect ) *anz );
 			chars_small[anz-1].x=last;
 			chars_small[anz-1].y=0;
 			chars_small[anz-1].w=i-last+1;
-			chars_small[anz-1].h=font_small_white->h-1;
+			chars_small[anz-1].h=FontsData.font_small_white->h-1;
 			last=i+1;
 		}
 	}
@@ -144,7 +144,7 @@ void cFonts::OutText ( char *str,int x,int y,SDL_Surface *sf )
 		{
 			dest.w=chars[index].w;
 			dest.h=chars[index].h;
-			SDL_BlitSurface ( font,chars+index,sf,&dest );
+			SDL_BlitSurface ( FontsData.font,chars+index,sf,&dest );
 			dest.x+=dest.w;
 		}
 	}
@@ -196,7 +196,7 @@ void cFonts::OutTextBig ( char *str,int x,int y,SDL_Surface *sf )
 		{
 			dest.w=chars_big[index].w;
 			dest.h=chars_big[index].h;
-			SDL_BlitSurface ( font_big,chars_big+index,sf,&dest );
+			SDL_BlitSurface ( FontsData.font_big,chars_big+index,sf,&dest );
 			dest.x+=dest.w;
 		}
 	}
@@ -234,7 +234,7 @@ void cFonts::OutTextBigCenter ( char *str,int x,int y,SDL_Surface *sf )
 			dest.w=chars_big[index].w;
 			dest.h=chars_big[index].h;
 			tmp=dest;
-			SDL_BlitSurface ( font_big,chars_big+index,sf,&tmp );
+			SDL_BlitSurface ( FontsData.font_big,chars_big+index,sf,&tmp );
 			dest.x+=dest.w;
 		}
 	}
@@ -272,7 +272,7 @@ void cFonts::OutTextBigCenterGold ( char *str,int x,int y,SDL_Surface *sf )
 			dest.w=chars_big[index].w;
 			dest.h=chars_big[index].h;
 			tmp=dest;
-			SDL_BlitSurface ( font_big_gold,chars_big+index,sf,&tmp );
+			SDL_BlitSurface ( FontsData.font_big_gold,chars_big+index,sf,&tmp );
 			dest.x+=dest.w;
 		}
 	}
@@ -356,16 +356,16 @@ void cFonts::OutTextSmall ( char *str,int x,int y,eFontSmallColor color,SDL_Surf
 			switch ( color )
 			{
 				case ClWhite:
-					SDL_BlitSurface ( font_small_white,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_white,chars_small+index,sf,&dest );
 					break;
 				case ClRed:
-					SDL_BlitSurface ( font_small_red,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_red,chars_small+index,sf,&dest );
 					break;
 				case ClGreen:
-					SDL_BlitSurface ( font_small_green,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_green,chars_small+index,sf,&dest );
 					break;
 				case ClYellow:
-					SDL_BlitSurface ( font_small_yellow,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_yellow,chars_small+index,sf,&dest );
 					break;
 			}
 			dest.x+=dest.w;
@@ -406,7 +406,7 @@ void cFonts::OutTextCenter ( char *str,int x,int y,SDL_Surface *sf )
 			dest.w=chars[index].w;
 			dest.h=chars[index].h;
 			tmp=dest;
-			SDL_BlitSurface ( font,chars+index,sf,&tmp );
+			SDL_BlitSurface ( FontsData.font,chars+index,sf,&tmp );
 			dest.x+=dest.w;
 		}
 	}
@@ -485,16 +485,16 @@ void cFonts::OutTextSmallCenter ( char *str,int x,int y,eFontSmallColor color,SD
 			switch ( color )
 			{
 				case ClWhite:
-					SDL_BlitSurface ( font_small_white,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_white,chars_small+index,sf,&dest );
 					break;
 				case ClRed:
-					SDL_BlitSurface ( font_small_red,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_red,chars_small+index,sf,&dest );
 					break;
 				case ClGreen:
-					SDL_BlitSurface ( font_small_green,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_green,chars_small+index,sf,&dest );
 					break;
 				case ClYellow:
-					SDL_BlitSurface ( font_small_yellow,chars_small+index,sf,&dest );
+					SDL_BlitSurface ( FontsData.font_small_yellow,chars_small+index,sf,&dest );
 					break;
 			}
 			dest.x+=dest.w;
