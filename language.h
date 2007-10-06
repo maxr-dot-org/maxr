@@ -39,6 +39,7 @@ protected:
 	std::string m_szEncoding;
 	bool m_bLeftToRight;
 	StrStrMap m_mpLanguage;
+	std::string m_szLastEditor;
 public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);

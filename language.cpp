@@ -24,6 +24,7 @@ cLanguage::cLanguage(void)
 	m_szLanguageFile = "";
 	m_szEncoding = "";
 	m_bLeftToRight = true;
+	m_szLastEditor = "";
 }
 
 cLanguage::~cLanguage(void)
@@ -60,27 +61,29 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	ExTiXmlNode * pXmlNode = NULL;
 	std::string strResult;
 
+	// Load the file
 	if( !XmlDoc.LoadFile( m_szLanguageFile.c_str() ))
 	{
 		fLog.write( "Can't open language file", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
+	// Is the main node correct ?
 	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, XNP_MAX_LANG_FILE );
 	if( pXmlNode == NULL )
 	{
 		fLog.write( "Language file: missing main node!", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
+
+	// Who is responsible for the file ? (Who is to blame in case of errors?)
 	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, XNP_MAX_LANG_FILE_HEADER_AUTHOR );
 	if( pXmlNode == NULL )
 	{
-		fLog.write( "Language file: missing main node!", cLog::eLOG_TYPE_ERROR );
-		return -1;
+		fLog.write( "Language file: missing author node!", cLog::eLOG_TYPE_WARNING );
+	}else
+	{
+		pXmlNode->XmlGetLastEditor( strResult, pXmlNode );
 	}
-	pXmlNode->XmlGetLastEditor( strResult, pXmlNode );
-
-
-
 
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
 	{
