@@ -143,7 +143,9 @@ struct sSyncBuilding{
 struct sPing{
   int PlayerID;
   int rx_count;
-  int rx[PING_COUNT];
+  // auskommentiert beim Mainumbau
+  //int rx[PING_COUNT];
+  // TODO:
 };
 
 // Strukturen für die Reports ////////////////////////////////////////////////
