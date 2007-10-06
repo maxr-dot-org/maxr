@@ -20,7 +20,7 @@ void EnterMenu ( bool limited )
 	if ( !limited )
 	{
 //    TmpSf=SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,640,480,32,0,0,0,0);
-		TmpSf=gfx_shadow;
+		TmpSf=GraphicsData.gfx_shadow;
 		SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 		LoadPCXtoSF ( GFXOD_MAIN,TmpSf );
@@ -48,7 +48,7 @@ void ShowInfo ( void )
 	SDL_Rect dest;
 	static int LastInfoNr;
 	int nr;
-	nr=building_anz + building_anz;
+	nr=BuildingMainData.building_anz + BuildingMainData.building_anz;
 	nr=random ( nr,0 );
 	if ( nr == LastInfoNr ) nr++;
 	LastInfoNr = nr;
@@ -56,14 +56,14 @@ void ShowInfo ( void )
 	dest.y=182;
 	dest.w=320;
 	dest.h=240;
-	if ( nr>=vehicle_anz )
+	if ( nr>=VehicleMainData.vehicle_anz )
 	{
-		nr-=vehicle_anz;
-		SDL_BlitSurface ( building[nr].info,NULL,buffer,&dest );
+		nr-=VehicleMainData.vehicle_anz;
+		SDL_BlitSurface ( BuildingMainData.building[nr].info,NULL,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( vehicle[nr].info,NULL,buffer,&dest );
+		SDL_BlitSurface ( VehicleMainData.vehicle[nr].info,NULL,buffer,&dest );
 	}
 }
 
@@ -71,8 +71,8 @@ void ShowInfo ( void )
 void ExitMenu ( void )
 {
 //  SDL_FreeSurface(TmpSf);
-	SDL_FillRect ( gfx_shadow,NULL,0x0 );
-	SDL_SetAlpha ( gfx_shadow,SDL_SRCALPHA,50 );
+	SDL_FillRect ( GraphicsData.gfx_shadow,NULL,0x0 );
+	SDL_SetAlpha ( GraphicsData.gfx_shadow,SDL_SRCALPHA,50 );
 }
 
 void PlaceButton ( char *str,int x,int y,bool pressed )
@@ -84,7 +84,7 @@ void PlaceButton ( char *str,int x,int y,bool pressed )
 	if ( pressed ) scr.y=30;else scr.y=0;
 	dest.x=x;
 	dest.y=y;
-	SDL_BlitSurface ( gfx_menu_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
 
 	fonts->OutTextBigCenter ( str,x+100,y+8,buffer );
 }
@@ -99,7 +99,7 @@ void PlaceSmallButton ( char *str,int x,int y,bool pressed )
 	if ( pressed ) scr.y=90;else scr.y=60;
 	dest.x=x;
 	dest.y=y;
-	SDL_BlitSurface ( gfx_menu_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
 
 	fonts->OutTextBigCenter ( str,x+150/2,y+8,buffer );
 }
@@ -116,7 +116,7 @@ void PlaceMenuButton ( char *str,int x,int y, int darkness, bool pressed )
 	if ( pressed ) scr.x--;
 	dest.x=x;
 	dest.y=y;
-	SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
 	fonts->OutTextBigCenter ( str,x+109/2,y+12,buffer );
 }
@@ -131,7 +131,7 @@ void PlaceSmallMenuButton ( char *str,int x,int y,bool pressed )
 	if ( pressed ) scr.x=49;else scr.x=0;
 	dest.x=x;
 	dest.y=y;
-	SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
 	fonts->OutTextBigCenter ( str,x+48/2,y+12,buffer );
 }
@@ -671,8 +671,8 @@ void RunSPMenu ( void )
 					players = RunPlayerSelect();
 
 					list=new TList;
-					list->AddPlayer ( p=new cPlayer ( LastPlayerName.c_str(),colors[cl_red],1 ) );
-					list->AddPlayer ( new cPlayer ( "Player 2",colors[cl_green],2 ) );
+					list->AddPlayer ( p=new cPlayer ( GameSettingsData.LastPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
+					list->AddPlayer ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
 					game = new cGame ( NULL, map );
 					game->AlienTech = options.AlienTech;
@@ -694,7 +694,7 @@ void RunSPMenu ( void )
 
 					game->Run();
 
-					LastPlayerName=p->name;
+					GameSettingsData.LastPlayerName=p->name;
 					while ( list->Count )
 					{
 						delete ( ( cPlayer* ) ( list->PlayerItems[0] ) );
@@ -807,7 +807,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 		options=*init;
 	}
 
-	TmpSf=gfx_shadow;
+	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 	LoadPCXtoSF ( GFXOD_OPTIONS,TmpSf );
@@ -1295,7 +1295,7 @@ string RunPlanetSelect ( void )
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
 
-	TmpSf=gfx_shadow;
+	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 	LoadPCXtoSF ( GFXOD_PLANET_SELECT,TmpSf );
@@ -1454,7 +1454,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		if ( i+offset>=files->Count ) break;
 		name = files->Items[i+offset];
 		pathname = name;
-		pathname.insert ( 0,MapPath );
+		pathname.insert ( 0,GameSettingsData.MapPath );
 		sf = SDL_LoadBMP ( pathname.c_str() );
 		if ( sf!=NULL )
 		{
@@ -1528,7 +1528,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.h=scr.h=dest.w=scr.w=25;
 		dest.x=293;
 		dest.y=440;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -1543,7 +1543,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.h=scr.h=dest.w=scr.w=25;
 		dest.x=321;
 		dest.y=440;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -1569,7 +1569,7 @@ sPlayer RunPlayerSelect ( void )
 	players.what[0] = 1;
 	players.what[1] = 2;
 
-	SDL_BlitSurface ( gfx_player_select,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
 	fonts->OutTextCenter ( "Spielerauswahl",320,11,buffer );
 	fonts->OutTextCenter ( "Team",100,35,buffer );
 	fonts->OutTextCenter ( "Mensch",200,35,buffer );
@@ -1677,7 +1677,7 @@ void ShowPlayerStates ( sPlayer players )
 		if ( players.what[i] == 0 )
 		{
 			dest.x = 394;
-			SDL_BlitSurface ( gfx_player_none,NULL,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
 			norm1.x = 394 - 110;
 			norm2.x = 394 - 219;
 		}
@@ -1687,7 +1687,7 @@ void ShowPlayerStates ( sPlayer players )
 			norm1.x = 394 - 110;
 			norm2.x = 394;
 			dest.x = 394 - 219;
-			SDL_BlitSurface ( gfx_player_human,NULL,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
 		}
 		// Computer
 		if ( players.what[i] == 2 )
@@ -1695,10 +1695,10 @@ void ShowPlayerStates ( sPlayer players )
 			norm1.x = 394;
 			norm2.x = 394 - 219;
 			dest.x = 394 - 110;
-			SDL_BlitSurface ( gfx_player_pc,NULL,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
 		}
-		SDL_BlitSurface ( gfx_player_select,&norm1,buffer,&norm1 );
-		SDL_BlitSurface ( gfx_player_select,&norm2,buffer,&norm2 );
+		SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm1,buffer,&norm1 );
+		SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm2,buffer,&norm2 );
 	}
 }
 
@@ -1714,7 +1714,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 void RunHangar ( cPlayer *player,TList *LandingList )
 {
 	bool tank=true,plane=false,ship=false,build=false,tnt=false,kauf=true;
-	bool FertigPressed=false,Beschreibung=ShowBeschreibung;
+	bool FertigPressed=false,Beschreibung=GameSettingsData.ShowDescription;
 	bool DownPressed=false,UpPressed=false,KaufPressed=false;
 	bool Down2Pressed=false,Up2Pressed=false,EntfernenPressed=false;
 	bool LadungUpPressed=false,LadungDownPressed=false;
@@ -1723,7 +1723,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	SDL_Rect scr,dest;
 	TList *list,*selection;
 
-	TmpSf=gfx_shadow;
+	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 	LoadPCXtoSF ( GFXOD_HANGAR,TmpSf );
@@ -1731,52 +1731,52 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 	// Die Liste erstellen:
 	list=new TList;
-	for ( i=0;i<vehicle_anz;i++ )
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w/2,vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,vehicle[i].img[0]->w,vehicle[i].img[0]->h,32,0,0,0,0 );
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-		SDL_BlitSurface ( colors[cl_grey],NULL,sf,NULL );
-		SDL_BlitSurface ( vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w,vehicle[i].img_org[0]->h );
+		SDL_BlitSurface ( OtherData.colors[cl_grey],NULL,sf,NULL );
+		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w,VehicleMainData.vehicle[i].img_org[0]->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=vehicle[i].data.costs;
+		n->costs=VehicleMainData.vehicle[i].data.costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list->AddHUp ( n );
 	}
-	for ( i=0;i<building_anz;i++ )
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
-		if ( building[i].data.is_big )
+		if ( BuildingMainData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w/4,building[i].img_org->h/4 );
+			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/4,BuildingMainData.building[i].img_org->h/4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w/2,building[i].img_org->h/2 );
+			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/2,BuildingMainData.building[i].img_org->h/2 );
 		}
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,building[i].img->w,building[i].img->h,32,0,0,0,0 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,BuildingMainData.building[i].img->w,BuildingMainData.building[i].img->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-		if ( !building[i].data.is_connector&&!building[i].data.is_road )
+		if ( !BuildingMainData.building[i].data.is_connector&&!BuildingMainData.building[i].data.is_road )
 		{
-			SDL_BlitSurface ( colors[cl_grey],NULL,sf,NULL );
+			SDL_BlitSurface ( OtherData.colors[cl_grey],NULL,sf,NULL );
 		}
 		else
 		{
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
-		SDL_BlitSurface ( building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w,building[i].img_org->h );
+		SDL_BlitSurface ( BuildingMainData.building[i].img,NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w,BuildingMainData.building[i].img_org->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=building[i].data.costs;
+		n->costs=BuildingMainData.building[i].data.costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
 		list->AddHUp ( n );
@@ -1821,7 +1821,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				scr.w=dest.w=55;
 				scr.h=dest.h=24;
 				dest.x=447;dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1844,14 +1844,14 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			ShowBeschreibung=Beschreibung;
+			GameSettingsData.ShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
 				dest.y=scr.y=264;
 				dest.w=scr.w=17;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			}
 			else
 			{
@@ -1861,7 +1861,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				dest.y=264;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			SHOW_SCREEN
@@ -1883,7 +1883,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( selected<offset ) selected=offset;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=true;
@@ -1896,7 +1896,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=386;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -1917,7 +1917,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( selected>=offset+9 ) selected=offset+8;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=true;
@@ -1930,7 +1930,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=470;
 			dest.y=386;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
@@ -2125,7 +2125,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			KaufPressed=true;
@@ -2159,7 +2159,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( LandingSelected>=LandingOffset+5 ) LandingSelected=LandingOffset+4;
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Down2Pressed=true;
@@ -2193,7 +2193,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( LandingSelected<LandingOffset ) LandingSelected=LandingOffset;
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Up2Pressed=true;
@@ -2221,7 +2221,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=23;
 			dest.x=412;
 			dest.y=240;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=true;
@@ -2316,11 +2316,11 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			sLanding *ptr;
 			ptr=LandingList->LandItems[LandingSelected];
-			if ( vehicle[ptr->id].data.can_transport==TRANS_METAL||vehicle[ptr->id].data.can_transport==TRANS_OIL||vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+			if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 			{
 
 				// LadungUp-Button:
-				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
+				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<VehicleMainData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
 				{
 					PlayFX ( SNDObjectMenu );
 					scr.x=249;
@@ -2335,7 +2335,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungDownPressed=true;
@@ -2369,7 +2369,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungUpPressed=true;
@@ -2391,10 +2391,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115 )
 				{
 					int value;
-					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( VehicleMainData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SNDObjectMenu );
 
-					if ( ( 115- ( y-301 ) ) >=110 ) value=vehicle[ptr->id].data.max_cargo;
+					if ( ( 115- ( y-301 ) ) >=110 ) value=VehicleMainData.vehicle[ptr->id].data.max_cargo;
 
 					if ( value<ptr->cargo )
 					{
@@ -2404,15 +2404,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					else if ( value>ptr->cargo&&player->Credits>0 )
 					{
 						value-=ptr->cargo;
-						while ( value>0&&player->Credits>0&&ptr->cargo<vehicle[ptr->id].data.max_cargo )
+						while ( value>0&&player->Credits>0&&ptr->cargo<VehicleMainData.vehicle[ptr->id].data.max_cargo )
 						{
 							ptr->cargo+=5;
 							player->Credits--;
 							value-=5;
 						}
-						if ( ptr->cargo>vehicle[ptr->id].data.max_cargo )
+						if ( ptr->cargo>VehicleMainData.vehicle[ptr->id].data.max_cargo )
 						{
-							ptr->cargo=vehicle[ptr->id].data.max_cargo;
+							ptr->cargo=VehicleMainData.vehicle[ptr->id].data.max_cargo;
 						}
 					}
 
@@ -2476,25 +2476,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),vehicle[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->max_shots );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_shots, 2 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_shots, 2 );
 		u[i].name = "shots";
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->max_ammo );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_ammo, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_ammo, 0 );
 		u[i].name = "ammo";
 		i++;
 	}
@@ -2505,25 +2505,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.scan, 3 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.scan, 3 );
 	u[i].name = "scan";
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->max_speed );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_speed, 1 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_speed, 1 );
 	u[i].name = "speed";
 	i++;
 	// Costs:
@@ -2555,7 +2555,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),building[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		if ( !d->is_expl_mine )
@@ -2563,19 +2563,19 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 			// Shots:
 			u[i].active=true;
 			u[i].value=& ( d->max_shots );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_shots, 2 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_shots, 2 );
 			u[i].name = "shots";
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.range, 3 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
 			u[i].name = "range";
 			i++;
 			// Ammo:
 			u[i].active=true;
 			u[i].value=& ( d->max_ammo );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_ammo, 0 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_ammo, 0 );
 			u[i].name = "ammo";
 			i++;
 		}
@@ -2585,7 +2585,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 	}
@@ -2606,14 +2606,14 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->armor );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.armor, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.armor, 0 );
 		u[i].name = "armor";
 	}
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
@@ -2621,7 +2621,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->scan );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.scan, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.scan, 3 );
 		u[i].name = "scan";
 		i++;
 	}
@@ -2972,55 +2972,55 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	// Tank:
 	if ( !tank )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Plane:
 	if ( !plane )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Ship:
 	if ( !ship )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Building:
 	if ( !build )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// TNT:
 	if ( !tnt )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	// Kauf:
 	scr.x=54;scr.y=352;
@@ -3031,11 +3031,11 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	{
 		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
 		dest.y=462;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		dest.y=462;
 		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
 	}
@@ -3066,7 +3066,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	scr.h=dest.h=115* ( int ) ( ( credits/ ( float ) StartCredits ) );
 	dest.x=375;
 	dest.y=301+115-dest.h;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 
 	scr.x=dest.x=422;
 	scr.y=dest.y=301;
@@ -3078,7 +3078,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	{
 		sLanding *ptr;
 		ptr=landing->LandItems[selected];
-		if ( vehicle[ptr->id].data.can_transport==TRANS_METAL||vehicle[ptr->id].data.can_transport==TRANS_OIL||vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
 			sprintf ( str,"%d",ptr->cargo );
 			fonts->OutTextCenter ( "Ladung",430,275,buffer );
@@ -3087,10 +3087,10 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
-			scr.h=dest.h=115* ( int ) ( ( ptr->cargo/ ( float ) vehicle[ptr->id].data.max_cargo ) );
+			scr.h=dest.h=115* ( int ) ( ( ptr->cargo/ ( float ) VehicleMainData.vehicle[ptr->id].data.max_cargo ) );
 			dest.x=422;
 			dest.y=301+115-dest.h;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 	}
 }
@@ -3100,10 +3100,10 @@ int GetKachelBig ( int x,int y, cMap *map )
 {
 	double fak;
 	int nr;
-	if ( x<0||x>=ScreenW-192||y<0||y>=ScreenH-32 ) return 0;
+	if ( x<0||x>=GameSettingsData.ScreenW-192||y<0||y>=GameSettingsData.ScreenH-32 ) return 0;
 
-	x=x* ( int ) ( 448.0/ ( ScreenW-192 ) );
-	y=y* ( int ) ( 448.0/ ( ScreenH-32 ) );
+	x=x* ( int ) ( 448.0/ ( GameSettingsData.ScreenW-192 ) );
+	y=y* ( int ) ( 448.0/ ( GameSettingsData.ScreenH-32 ) );
 
 	if ( map->size<448 )
 	{
@@ -3129,22 +3129,22 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	int b,lx=-1,ly=-1,i,k,nr,fakx,faky,off;
 	sTerrain *t;
 
-	fakx= ( int ) ( ( ScreenW-192.0 ) /game->map->size );
-	faky= ( int ) ( ( ScreenH-32.0 ) /game->map->size );
+	fakx= ( int ) ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size );
+	faky= ( int ) ( ( GameSettingsData.ScreenH-32.0 ) /game->map->size );
 
 	// Die Karte malen:
 	SDL_LockSurface ( buffer );
-	for ( i=0;i<ScreenW-192;i++ )
+	for ( i=0;i<GameSettingsData.ScreenW-192;i++ )
 	{
-		for ( k=0;k<ScreenH-32;k++ )
+		for ( k=0;k<GameSettingsData.ScreenH-32;k++ )
 		{
 			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
-			t=terrain+nr;
+			t=TerrainData.terrain+nr;
 			off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
 			nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
 			if ( nr==0xFF00FF )
 			{
-				t=terrain+map->DefaultWater;
+				t=TerrainData.terrain+map->DefaultWater;
 				off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
 				nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
 			}
@@ -3155,21 +3155,21 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 	// Hud drüber legen:
 	game->hud->DoAllHud();
-	SDL_BlitSurface ( gfx_hud,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
-	top.x=0;top.y= ( ScreenH/2 )-479;
+	top.x=0;top.y= ( GameSettingsData.ScreenH/2 )-479;
 	top.w=bottom.w=171;
 
 	top.h=479;bottom.h=481;
-	bottom.x=0;bottom.y= ( ScreenH/2 );
-	SDL_BlitSurface ( gfx_panel_top,NULL,buffer,&top );
-	SDL_BlitSurface ( gfx_panel_bottom,NULL,buffer,&bottom );
+	bottom.x=0;bottom.y= ( GameSettingsData.ScreenH/2 );
+	SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&top );
+	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom );
 
 	SHOW_SCREEN
 
-	t=terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-	if ( mouse->x>=180&&mouse->x<ScreenW-12&&mouse->y>=18&&mouse->y<ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+	t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
+	if ( mouse->x>=180&&mouse->x<GameSettingsData.ScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 	{
 		mouse->SetCursor ( CMove );
 	}
@@ -3186,8 +3186,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
-		t=terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-		if ( mouse->x>=180&&mouse->x<ScreenW-12&&mouse->y>=18&&mouse->y<ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+		t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
+		if ( mouse->x>=180&&mouse->x<GameSettingsData.ScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 		{
 			mouse->SetCursor ( CMove );
 		}
@@ -3203,10 +3203,10 @@ void SelectLanding ( int *x,int *y,cMap *map )
 //      SHOW_SCREEN
 		}
 
-		if ( b&&mouse->cur==gfx_Cmove )
+		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( ScreenW-192 ) ) );
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( ScreenH-32 ) ) );
+			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.ScreenW-192 ) ) );
+			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.ScreenH-32 ) ) );
 			break;
 		}
 
@@ -3267,16 +3267,16 @@ void ShowLandingList ( TList *list,int selected,int offset )
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
 		fonts->OutText ( str,text.x,text.y,buffer );
-		if ( vehicle[ptr->id].data.can_transport==TRANS_METAL||vehicle[ptr->id].data.can_transport==TRANS_OIL||vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			sprintf ( str," (%d/%d)",ptr->cargo,vehicle[ptr->id].data.max_cargo );
+			sprintf ( str," (%d/%d)",ptr->cargo,VehicleMainData.vehicle[ptr->id].data.max_cargo );
 			fonts->OutText ( str,text.x,text.y+10,buffer );
 		}
 		text.y+=32+10;
@@ -3305,7 +3305,7 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		if ( images->HUpItems[i]->vehicle )
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			vd=& ( vehicle[images->HUpItems[i]->id].data );
+			vd=& ( VehicleMainData.vehicle[images->HUpItems[i]->id].data );
 			if ( vd->is_alien&&kauf ) continue;
 			if ( vd->is_human&&kauf ) continue;
 			if ( tnt&&!vd->can_attack ) continue;
@@ -3317,7 +3317,7 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		else
 		{
 			if ( !build ) continue;
-			bd=& ( building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
+			bd=& ( BuildingMainData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
 			if ( tnt&&!bd->can_attack ) continue;
 			selection->AddHUp ( images->HUpItems[i] );
 		}
@@ -3343,7 +3343,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 	int i,t,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
-	SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
@@ -3353,10 +3353,10 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 	{
 		scr.x=0;scr.y=0;
 		scr.w=316;scr.h=256;
-		SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		scr.x=11;scr.y=290;
 		scr.w=346;scr.h=176;
-		SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		return;
 	}
 	for ( i=offset;i<list->Count;i++ )
@@ -3395,15 +3395,15 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 			tmp.x=11;tmp.y=13;
 			if ( ptr->vehicle )
 			{
-				tmp.w=vehicle[ptr->id].info->w;
-				tmp.h=vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( vehicle[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
+				tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			}
 			else
 			{
-				tmp.w=building[ptr->id].info->w;
-				tmp.h=building[ptr->id].info->h;
-				SDL_BlitSurface ( building[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=BuildingMainData.building[ptr->id].info->w;
+				tmp.h=BuildingMainData.building[ptr->id].info->h;
+				SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
 			}
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
@@ -3412,11 +3412,11 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( vehicle[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( building[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3427,16 +3427,16 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				tmp.y=290;
 				tmp.w=346;
 				tmp.h=176;
-				SDL_BlitSurface ( gfx_upgrade,&tmp,buffer,&tmp );
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					tv=new cVehicle ( vehicle+ptr->id,p );
+					tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,p );
 					tv->ShowBigDetails();
 					delete tv;
 				}
 				else
 				{
-					tb=new cBuilding ( building+ptr->id,p,NULL );
+					tb=new cBuilding ( BuildingMainData.building+ptr->id,p,NULL );
 					tb->ShowBigDetails();
 					delete tb;
 				}
@@ -3454,14 +3454,14 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 					scr.x=380;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
 					dest.x=283;dest.y=293+k*19;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				if ( ptr->upgrades[k].NextPrice<=credits )
 				{
 					scr.x=399;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
 					dest.x=301;dest.y=293+k*19;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 			}
 		}
@@ -3469,20 +3469,20 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		t=0;
 		if ( ptr->vehicle )
 		{
-			sprintf ( str,"%d",vehicle[ptr->id].data.costs );
+			sprintf ( str,"%d",VehicleMainData.vehicle[ptr->id].data.costs );
 			fonts->OutTextCenter ( str,616,text.y,buffer );
 			str[0]=0;
-			while ( vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+			while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 			{
-				str[t]=vehicle[ptr->id].data.name[t];str[++t]=0;
+				str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
 			str[0]=0;
-			while ( building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=building[ptr->id].data.name[t];str[++t]=0;
+				str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';
@@ -3496,14 +3496,14 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 // Liefert die Numemr der Farbe zurück:
 int GetColorNr ( SDL_Surface *sf )
 {
-	if ( sf==colors[cl_red] ) return cl_red;
-	if ( sf==colors[cl_blue] ) return cl_blue;
-	if ( sf==colors[cl_green] ) return cl_green;
-	if ( sf==colors[cl_grey] ) return cl_grey;
-	if ( sf==colors[cl_orange] ) return cl_orange;
-	if ( sf==colors[cl_yellow] ) return cl_yellow;
-	if ( sf==colors[cl_purple] ) return cl_purple;
-	if ( sf==colors[cl_aqua] ) return cl_aqua;
+	if ( sf==OtherData.colors[cl_red] ) return cl_red;
+	if ( sf==OtherData.colors[cl_blue] ) return cl_blue;
+	if ( sf==OtherData.colors[cl_green] ) return cl_green;
+	if ( sf==OtherData.colors[cl_grey] ) return cl_grey;
+	if ( sf==OtherData.colors[cl_orange] ) return cl_orange;
+	if ( sf==OtherData.colors[cl_yellow] ) return cl_yellow;
+	if ( sf==OtherData.colors[cl_purple] ) return cl_purple;
+	if ( sf==OtherData.colors[cl_aqua] ) return cl_aqua;
 	return cl_red;
 }
 
@@ -3511,7 +3511,7 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 {
 	NextPlayerID=0;
 	PlayerList=new TList;
-	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( LastPlayerName,colors[cl_red],NextPlayerID++ ) );
+	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( GameSettingsData.LastPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
 
 	MessageList=new TList;
 	ChatList=new TList;
@@ -3530,11 +3530,11 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		{
 			fstcpip=new cFSTcpIp ( false );
 			Titel="TCP/IP Client";
-			IP=LastIP;
+			IP=GameSettingsData.LastIP;
 		}
 	}
 //  fstcpip->FSTcpIpMessageFuntion=ReceiveMenuMessage;
-	Port=LastPort;
+	Port=GameSettingsData.LastPort;
 
 	map="";
 	no_options=true;
@@ -3570,8 +3570,8 @@ cMultiPlayer::~cMultiPlayer ( void )
 	{
 		delete map_obj;map_obj=NULL;
 	}
-	if ( strcmp ( IP.c_str(),"-" ) ) LastIP=IP;
-	LastPort=Port;
+	if ( strcmp ( IP.c_str(),"-" ) ) GameSettingsData.LastIP=IP;
+	GameSettingsData.LastPort=Port;
 }
 
 // Zeigt das Chatmenü an:
@@ -3835,7 +3835,7 @@ void cMultiPlayer::RunMenu ( void )
 					       }*/
 					char sztmp[256];
 					string msg;
-					sprintf ( sztmp,"%d",Checksum );
+					sprintf ( sztmp,"%d",GameSettingsData.Checksum );
 					msg=sztmp; msg+="#";
 					msg+=MAX_VERSION;
 					AddChatLog ( "check for go" );
@@ -3864,7 +3864,7 @@ void cMultiPlayer::RunMenu ( void )
 			PlayFX ( SNDObjectMenu );
 			nr=GetColorNr ( MyPlayer->color ) +1;
 			if ( nr>7 ) nr=0;
-			MyPlayer->color=colors[nr];
+			MyPlayer->color=OtherData.colors[nr];
 			fonts->OutText ( "Farbe:",500,245,buffer );
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
@@ -3880,7 +3880,7 @@ void cMultiPlayer::RunMenu ( void )
 			PlayFX ( SNDObjectMenu );
 			nr=GetColorNr ( MyPlayer->color )-1;
 			if ( nr<0 ) nr=7;
-			MyPlayer->color=colors[nr];
+			MyPlayer->color=OtherData.colors[nr];
 			fonts->OutText ( "Farbe:",500,245,buffer );
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
@@ -3908,7 +3908,7 @@ void cMultiPlayer::RunMenu ( void )
 					map=RunPlanetSelect();
 					SaveGame="";
 
-					TmpSf=gfx_shadow;
+					TmpSf=GraphicsData.gfx_shadow;
 					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 					LoadPCXtoSF ( GFXOD_MULT,TmpSf );
 					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
@@ -3968,7 +3968,7 @@ void cMultiPlayer::RunMenu ( void )
 					no_options=false;
 					SaveGame="";
 
-					TmpSf=gfx_shadow;
+					TmpSf=GraphicsData.gfx_shadow;
 					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 					LoadPCXtoSF ( GFXOD_MULT,TmpSf );
 					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
@@ -4025,7 +4025,7 @@ void cMultiPlayer::RunMenu ( void )
 			          }
 			          {
 			            InputStr=tmp;
-			            TmpSf=gfx_shadow;
+			            TmpSf=GraphicsData.gfx_shadow;
 			            SDL_SetAlpha(TmpSf,SDL_SRCALPHA,255);
 			            LoadPCXtoSF(GfxODPath+GFXOD_MULT,TmpSf);
 			            SDL_BlitSurface(TmpSf,NULL,buffer,NULL);
@@ -4247,7 +4247,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					fstcpip->min_clients=PlayerList->Count-1;
 					game->Run();
-					LastPlayerName=MyPlayer->name;
+					GameSettingsData.LastPlayerName=MyPlayer->name;
 
 					while ( PlayerList->Count )
 					{
@@ -4346,7 +4346,7 @@ void cMultiPlayer::RunMenu ( void )
 
 				fstcpip->min_clients=PlayerList->Count-1;
 				game->Run();
-				LastPlayerName=MyPlayer->name;
+				GameSettingsData.LastPlayerName=MyPlayer->name;
 
 				while ( PlayerList->Count )
 				{
@@ -4479,7 +4479,7 @@ void cMultiPlayer::HandleMenuMessages()
 				char sztmp[256];
 				TList *Strings;
 				Strings = SplitMessage ( msgstring );
-				p=new cPlayer ( Strings->Items[0],colors[atoi ( Strings->Items[1].c_str() ) ],NextPlayerID++ );
+				p=new cPlayer ( Strings->Items[0],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],NextPlayerID++ );
 				PlayerList->AddPlayer ( p );
 				Refresh=true;
 				string smsg;
@@ -4524,7 +4524,7 @@ void cMultiPlayer::HandleMenuMessages()
 				{
 					p=PlayerList->PlayerItems[i];
 					if ( p->Nr!=atoi ( Strings->Items[0].c_str() ) ) continue;
-					p->color=colors[atoi ( Strings->Items[1].c_str() ) ];
+					p->color=OtherData.colors[atoi ( Strings->Items[1].c_str() ) ];
 					p->name=Strings->Items[2];
 					Refresh=true;
 					SendPlayerList();
@@ -4532,7 +4532,7 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				if ( i==PlayerList->Count )
 				{
-					p=new cPlayer ( Strings->Items[2],colors[atoi ( Strings->Items[1].c_str() ) ],atoi ( Strings->Items[0].c_str() ) );
+					p=new cPlayer ( Strings->Items[2],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],atoi ( Strings->Items[0].c_str() ) );
 					PlayerList->AddPlayer ( p );
 					SendPlayerList();
 					Refresh=true;
@@ -4560,7 +4560,7 @@ void cMultiPlayer::HandleMenuMessages()
 					id=atoi ( Strings->Items[i*3+1].c_str() );
 					color=atoi ( Strings->Items[i*3+2].c_str() );
 
-					p=new cPlayer ( Strings->Items[i*3+3],colors[color],id );
+					p=new cPlayer ( Strings->Items[i*3+3],OtherData.colors[color],id );
 					if ( id==myID ) MyPlayer=p;
 					PlayerList->AddPlayer ( p );
 				}
@@ -4610,9 +4610,9 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				FILE *fp;
 				string mapstr;
-				mapstr=MapPath; mapstr+=map;
+				mapstr=GameSettingsData.MapPath; mapstr+=map;
 				fp=fopen ( mapstr.c_str(),"rb" );
-				if ( atoi ( Strings->Items[0].c_str() ) ==Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
+				if ( atoi ( Strings->Items[0].c_str() ) ==GameSettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
 				{
 					string new_msg;
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
@@ -4808,7 +4808,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	}
 
 	str="Version: "; str+=MAX_VERSION; str+="\n";
-	sprintf ( sztmp,"%d",Checksum );
+	sprintf ( sztmp,"%d",GameSettingsData.Checksum );
 	str+="Checksum: "; str+=sztmp; str+="\n";
 	str+="\n";
 
@@ -4864,7 +4864,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	{
 		FILE *fp;
 		string mapstr;
-		mapstr=MapPath; mapstr+=map;
+		mapstr=GameSettingsData.MapPath; mapstr+=map;
 		fp=fopen ( mapstr.c_str(),"rb" );
 		if ( !fp )
 		{
@@ -4892,7 +4892,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 			fonts->OutTextCenter ( ( char * ) mapstr.c_str(),90,65,buffer );
 
 			string mapstr;
-			mapstr=MapPath; mapstr+=map; mapstr.replace ( mapstr.length()-3,3,"bmp" );
+			mapstr=GameSettingsData.MapPath; mapstr+=map; mapstr.replace ( mapstr.length()-3,3,"bmp" );
 			fp=fopen ( mapstr.c_str(),"rb" );
 			if ( fp )
 			{
@@ -5286,16 +5286,16 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 	sprintf ( sztmp,"%d",p->Nr );
 	msg=sztmp;
 
-	for ( i=0;i<vehicle_anz;i++ )
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
-		if ( p->VehicleData[i].damage!=vehicle[i].data.damage||
-		        p->VehicleData[i].max_shots!=vehicle[i].data.max_shots||
-		        p->VehicleData[i].range!=vehicle[i].data.range||
-		        p->VehicleData[i].max_ammo!=vehicle[i].data.max_ammo||
-		        p->VehicleData[i].armor!=vehicle[i].data.armor||
-		        p->VehicleData[i].max_hit_points!=vehicle[i].data.max_hit_points||
-		        p->VehicleData[i].scan!=vehicle[i].data.scan||
-		        p->VehicleData[i].max_speed!=vehicle[i].data.max_speed )
+		if ( p->VehicleData[i].damage!=VehicleMainData.vehicle[i].data.damage||
+		        p->VehicleData[i].max_shots!=VehicleMainData.vehicle[i].data.max_shots||
+		        p->VehicleData[i].range!=VehicleMainData.vehicle[i].data.range||
+		        p->VehicleData[i].max_ammo!=VehicleMainData.vehicle[i].data.max_ammo||
+		        p->VehicleData[i].armor!=VehicleMainData.vehicle[i].data.armor||
+		        p->VehicleData[i].max_hit_points!=VehicleMainData.vehicle[i].data.max_hit_points||
+		        p->VehicleData[i].scan!=VehicleMainData.vehicle[i].data.scan||
+		        p->VehicleData[i].max_speed!=VehicleMainData.vehicle[i].data.max_speed )
 		{
 			if ( msg.length() >0 ) msg+="#";
 			msg+="0";msg+="#";
@@ -5317,15 +5317,15 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 	}
 
-	for ( i=0;i<building_anz;i++ )
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
-		if ( p->BuildingData[i].damage!=building[i].data.damage||
-		        p->BuildingData[i].max_shots!=building[i].data.max_shots||
-		        p->BuildingData[i].range!=building[i].data.range||
-		        p->BuildingData[i].max_ammo!=building[i].data.max_ammo||
-		        p->BuildingData[i].armor!=building[i].data.armor||
-		        p->BuildingData[i].max_hit_points!=building[i].data.max_hit_points||
-		        p->BuildingData[i].scan!=building[i].data.scan )
+		if ( p->BuildingData[i].damage!=BuildingMainData.building[i].data.damage||
+		        p->BuildingData[i].max_shots!=BuildingMainData.building[i].data.max_shots||
+		        p->BuildingData[i].range!=BuildingMainData.building[i].data.range||
+		        p->BuildingData[i].max_ammo!=BuildingMainData.building[i].data.max_ammo||
+		        p->BuildingData[i].armor!=BuildingMainData.building[i].data.armor||
+		        p->BuildingData[i].max_hit_points!=BuildingMainData.building[i].data.max_hit_points||
+		        p->BuildingData[i].scan!=BuildingMainData.building[i].data.scan )
 		{
 			if ( msg.length() >0 ) msg+="#";
 			msg+="1";msg+="#";
@@ -5491,7 +5491,7 @@ void HeatTheSeat ( void )
 		stmp = "Player";
 		sprintf ( sztmp,"%d",i );
 		stmp+=sztmp;
-		list->AddPlayer ( p=new cPlayer ( stmp,colors[ ( i-1 ) %8],i ) );
+		list->AddPlayer ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
 		p->Credits=options.credits;
 	}
 
@@ -5536,7 +5536,7 @@ void HeatTheSeat ( void )
 	game->HotSeatPlayer=0;
 	game->Run();
 
-	LastPlayerName=p->name;
+	GameSettingsData.LastPlayerName=p->name;
 	while ( list->Count )
 	{
 		delete list->PlayerItems[0];
@@ -5563,7 +5563,7 @@ int ShowDateiMenu ( void )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Bildschirm blitten:
-	SDL_BlitSurface ( gfx_load_save_menu,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,NULL );
 	// Den Text anzeigen:
 	fonts->OutTextCenter ( "Laden Menü",320,12,buffer );
 	// Buttons setzen;
@@ -5576,10 +5576,10 @@ int ShowDateiMenu ( void )
 	dest.y=438;
 	scr.x=96;
 	dest.x=33;
-	SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 	scr.x=96+28*2;
 	dest.x=63;
-	SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 	// Dateien suchen und Anzeigen:
 	if ( !doc.LoadFile ( "saves//saves.xml" ) )
 	{
@@ -5702,7 +5702,7 @@ int ShowDateiMenu ( void )
 				PlayFX ( SNDMenuButton );
 				scr.x=96+28;
 				dest.x=33;
-				SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=true;
@@ -5717,7 +5717,7 @@ int ShowDateiMenu ( void )
 				ShowFiles ( files,offset,selected );
 				scr.x=96;
 				dest.x=33;
-				SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=false;
@@ -5727,7 +5727,7 @@ int ShowDateiMenu ( void )
 		{
 			scr.x=96;
 			dest.x=33;
-			SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
@@ -5740,7 +5740,7 @@ int ShowDateiMenu ( void )
 				PlayFX ( SNDMenuButton );
 				scr.x=96+28*3;
 				dest.x=63;
-				SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=true;
@@ -5755,7 +5755,7 @@ int ShowDateiMenu ( void )
 				ShowFiles ( files,offset,selected );
 				scr.x=96+28*2;
 				dest.x=63;
-				SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=false;
@@ -5765,7 +5765,7 @@ int ShowDateiMenu ( void )
 		{
 			scr.x=96+28*2;
 			dest.x=63;
-			SDL_BlitSurface ( gfx_menu_buttons,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -5796,7 +5796,7 @@ void ShowFiles ( TList *files, int offset, int selected )
 			x=435;
 			y=72;
 		}
-		SDL_BlitSurface ( gfx_load_save_menu,&rect,buffer,&rect );
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
 		if ( i+offset==selected )
 		{
 			sprintf ( sztmp,"%d", ( offset+i+1 ) );
@@ -5820,7 +5820,7 @@ void ShowFiles ( TList *files, int offset, int selected )
 			rect.x+=402;
 			rect.y=82;
 		}
-		SDL_BlitSurface ( gfx_load_save_menu,&rect,buffer,&rect );
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
 		rect.y+=76;
 	}
 	x=60;y=87;
