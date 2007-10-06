@@ -92,8 +92,6 @@ public:
   bool ChangeObjectName; // Gibt an, ob gerade der Name eines Objektes geändert wird.
   bool ChatInput;        // Gibt an, ob gerade eine Chat-Nachricht eingegeben werden soll.
   TList *messages;       // Liste mit allen Nachrichten.
-  int DebugComSend[DB_COM_BUFFER]; // Buffer für Anzahl gesendete Bytes.
-  int DebugComRead[DB_COM_BUFFER]; // Buffer für Anzahl gelesener Bytes.
   int DebugIndex;        // Index im Buffer.
   int ComAvgSend;        // Durchschitt der gesendeten Bytes.
   int ComAvgRead;        // Durchschitt der empfangenen Bytes.
