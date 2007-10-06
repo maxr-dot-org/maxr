@@ -378,8 +378,8 @@ protected:
 	
 	// None of these methods are reliable for any language except English.
 	// Good for approximation, not great for accuracy.
-	static int Alpha( unsigned char anyByte, TiXmlEncoding encoding );
-	static int AlphaNum( unsigned char anyByte, TiXmlEncoding encoding );
+	static int IsAlpha( unsigned char anyByte, TiXmlEncoding encoding );
+	static int IsAlphaNum( unsigned char anyByte, TiXmlEncoding encoding );
 	inline static int ToLower( int v, TiXmlEncoding encoding )
 	{
 		if ( encoding == TIXML_ENCODING_UTF8 )
