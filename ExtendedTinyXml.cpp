@@ -188,5 +188,32 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 
 bool ExTiXmlNode::IsTimeStamp( std::string &rstrData )
 {
+	//JCK: Should be replaced by a faster and more secure function
+
+
+	// Index   : 0123456789012345678
+	// Example : 2007-09-30 13:04:00
+
+	if( rstrData.length != 19 ) return false;
+	if(	! isdigit( rstrData[0] )) return false;
+	if(	! isdigit( rstrData[1] )) return false;
+	if(	! isdigit( rstrData[2] )) return false;
+	if(	! isdigit( rstrData[3] )) return false;
+	if(	 rstrData[4] != "-" ) return false;
+	if(	! isdigit( rstrData[5] )) return false;
+	if(	! isdigit( rstrData[6] )) return false;
+	if(	 rstrData[7] != "-" ) return false;
+	if(	! isdigit( rstrData[8] )) return false;
+	if(	! isdigit( rstrData[9] )) return false;
+	if(	 rstrData[10] != " " ) return false;
+	if(	! isdigit( rstrData[11] )) return false;
+	if(	! isdigit( rstrData[12] )) return false;
+	if(	 rstrData[13] != ":" ) return false;
+	if(	! isdigit( rstrData[14] )) return false;
+	if(	! isdigit( rstrData[15] )) return false;
+	if(	 rstrData[16] != ":" ) return false;
+	if(	! isdigit( rstrData[17] )) return false;
+	if(	! isdigit( rstrData[18] )) return false;
+
 	return true;
 }
