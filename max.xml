@@ -1,37 +1,53 @@
-<?xml version="1.0" standalone=no>
+<?xml version="1.0" encoding="iso-8859-15"?>
 
-<MAXOptions>
-	<StartOptions>
-		<resolution>1</resolution>
-		<nointro>true</nointro>
-		<windowmode>true</windowmode>
-		<fastmode>true</fastmode>
-		<chunksize>2048</chunksize>
-		<frequency>44100</frequency>
-		<sound>true</sound>
-	</StartOptions>
-	
-	<GameOptions>
-		<Autosave>true</Autosave>
-		<Animation>true</Animation>
-		<Schatten>true</Schatten>
-		<Alpha>true</Alpha>
-		<ShowBeschreibung>true</ShowBeschreibung>
-		<DamageEffects>true</DamageEffects>
-		<DamageEffectsVehicles>true</DamageEffectsVehicles>
-		<MakeTracks>true</MakeTracks>
-	
-		<ScrollSpeed>22</ScrollSpeed>
-	
-		<MusicMute>false</MusicMute>
-		<SoundMute>false</SoundMute>
-		<VoiceMute>true</VoiceMute>
-		<MusicVol>32</MusicVol>
-		<SoundVol>32</SoundVol>
-		<VoiceVol>32</VoiceVol>
-	
-		<LastIP>127.0.0.1</LastIP>
-		<LastPort>58600</LastPort>
-		<LastPlayerName>Playername</LastPlayerName>
-	</GameOptions>
-</MAXOptions>
+<Options>
+	<Start>
+		<Resolution Num="640.480"/>
+		<ColourDepth Num="32"/>
+		<Intro YN="No"/>
+		<Windowmode YN="Yes"/>
+		<Fastmode YN="Yes"/>
+		
+	</Start>
+	<Game>
+		<EnableAutosave YN="Yes"/>
+		<EnableAnimations YN="Yes"/>
+		<EnableShadows YN="Yes"/>
+		<EnableAlphaEffects YN="Yes"/>
+		<EnableDescribtions YN="Yes"/>
+		<EnableDamageEffects YN="Yes"/>
+		<EnableDamageEffectsVehicles  YN="Yes"/>
+		<EnableMakeTracks YN="Yes"/>		
+		<ScrollSpeed Num="22"/>
+		<Net>
+			<IP Num="127.0.0.1"/>
+			<Port Num="58600"/>
+			<PlayerName Text="Mechkommandant"/>
+		</Net>
+		<Sound>
+			<Enabled  YN="Yes"/>
+			<MusicMute YN="No"/>
+			<SoundMute YN="No"/>
+			<VoiceMute YN="No"/>
+			<MusicVol Num="32"/>
+			<SoundVol Num="32"/>
+			<VoiceVol Num="32"/>
+			<ChunkSize  Num="2048"/>
+			<Frequency  Num="44100"/>
+		</Sound>
+		<Paths>
+			<Fonts Text="fonts"/>
+			<FX Text="fx"/>
+			<GFX Text="gfx"/>
+			<GFXOD Text="gfx_od"/>
+			<Maps Text="maps"/>
+			<Saves Text="save"/>
+			<Sounds Text="sounds"/>
+			<Voices Text="voices"/>
+			<Music Text="music"/>
+			<Terrain Text="terrain"/>
+			<Vehicles Text="vehicles"/>
+			<Buildings Text="buildings"/>
+		</Paths>
+	</Game>
+</Options>
