@@ -20,7 +20,7 @@
 		<EnableMakeTracks YN="Yes"/>		
 		<ScrollSpeed Num="22"/>
 		<Net>
-			<IP Num="127.0.0.1"/>
+			<IP Text="127.0.0.1"/>
 			<Port Num="58600"/>
 			<PlayerName Text="Mechkommandant"/>
 		</Net>
