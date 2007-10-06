@@ -328,7 +328,7 @@ void cHud::DoZoom ( int x,int y )
 	if ( x<=12 ) x=0;else x-=12;
 	if ( x>104 ) x=104;
 //  x=64-(int)(x*(64-((448.0/game->map->size)<5?5:(448.0/game->map->size)))/104);
-	x=64- ( int ) ( x* ( 64- ( ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) ) ) /104 );
+	x=64- ( int ) ( x* ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) ) /104 );
 	if ( x<1 ) x=1;
 	SetZoom ( x,y );
 }
@@ -338,12 +338,12 @@ void cHud::SetZoom ( int zoom,int DestY )
 	static int lastz=64;
 	SDL_Rect scr,dest;
 //  if(zoom<448/game->map->size)zoom=448/game->map->size;
-	if ( zoom< ( cSettingsData.iScreenW-192 ) /game->map->size ) zoom= ( cSettingsData.iScreenW-192 ) /game->map->size;
+	if ( zoom< ( SettingsData.iScreenW-192 ) /game->map->size ) zoom= ( SettingsData.iScreenW-192 ) /game->map->size;
 	if ( zoom<5 ) zoom=5;
 	else if ( zoom>64 ) zoom=64;
 	Zoom=zoom;
 //  zoom-=((448.0/game->map->size)<5?5:(448.0/game->map->size));
-	zoom-= ( int ) ( ( ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) ) );
+	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) );
 	scr.x=0;
 	scr.y=0;
 	dest.x=19;
@@ -352,7 +352,7 @@ void cHud::SetZoom ( int zoom,int DestY )
 	dest.h=scr.h=20;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 //  zoom=106-(int)(zoom*106.0/(64-((448.0/game->map->size)<5?5:(448.0/game->map->size))));
-	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( cSettingsData.iScreenW-192.0 ) /game->map->size ) ) ) );
+	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) ) );
 	scr.x=132;
 	scr.y=1;
 	dest.x=20+zoom;
@@ -368,13 +368,13 @@ void cHud::SetZoom ( int zoom,int DestY )
 	{
 		int off;
 //    off=(int)(((448.0/(float)lastz*64)-(448.0/(float)Zoom*64))/2);
-		off= ( int ) ( ( ( ( cSettingsData.iScreenW-192.0 ) / ( float ) lastz*64 )- ( ( cSettingsData.iScreenW-192.0 ) / ( float ) Zoom*64 ) ) /2 );
+		off= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) / ( float ) lastz*64 )- ( ( SettingsData.iScreenW-192.0 ) / ( float ) Zoom*64 ) ) /2 );
 		lastz=Zoom;
 
 		OffX+=off;
 		OffY+=off;
 //    off=game->map->size*64-(int)((448.0/Zoom)*64);
-		off=game->map->size*64- ( int ) ( ( ( cSettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+		off=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
 		while ( OffX>off ) OffX--;
 		while ( OffY>off ) OffY--;
 		while ( OffX<0 ) OffX++;
@@ -422,8 +422,8 @@ void cHud::CheckOneClick ( void )
 void cHud::DoAllHud ( void )
 {
 	bool s;
-	s=cSettingsData.bSoundEnabled;
-	cSettingsData.bSoundEnabled=false;
+	s=SettingsData.bSoundEnabled;
+	SettingsData.bSoundEnabled=false;
 	SwitchTNT ( TNT );
 	SwitchRadar ( Radar );
 	SwitchNebel ( Nebel );
@@ -437,7 +437,7 @@ void cHud::DoAllHud ( void )
 	SwitchStudie ( Studie );
 	SwitchLock ( Lock );
 	SetZoom ( Zoom );
-	cSettingsData.bSoundEnabled=s;
+	SettingsData.bSoundEnabled=s;
 	ShowRunde();
 }
 
@@ -447,17 +447,17 @@ void cHud::CheckScroll ( bool pure )
 	x=mouse->x;
 	y=mouse->y;
 
-	if ( x<=0&&y>30&&y<cSettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil4 );DoScroll ( 4 );return;}
-	if ( x>=cSettingsData.iScreenW-18&&y>30&&y<cSettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil6 );DoScroll ( 6 );return;}
+	if ( x<=0&&y>30&&y<SettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil4 );DoScroll ( 4 );return;}
+	if ( x>=SettingsData.iScreenW-18&&y>30&&y<SettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil6 );DoScroll ( 6 );return;}
 
 	if ( ( x<=0&&y<=30 ) || ( y<=0&&x<=30 ) ) {mouse->SetCursor ( CPfeil7 );DoScroll ( 7 );return;}
-	if ( ( x>=cSettingsData.iScreenW-18&&y<=30 ) || ( y<=0&&x>=cSettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil9 );DoScroll ( 9 );return;}
+	if ( ( x>=SettingsData.iScreenW-18&&y<=30 ) || ( y<=0&&x>=SettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil9 );DoScroll ( 9 );return;}
 
-	if ( y<=0&&x>30&&x<cSettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil8 );DoScroll ( 8 );return;}
-	if ( y>=cSettingsData.iScreenH-18&&x>30&&x<cSettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil2 );DoScroll ( 2 );return;}
+	if ( y<=0&&x>30&&x<SettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil8 );DoScroll ( 8 );return;}
+	if ( y>=SettingsData.iScreenH-18&&x>30&&x<SettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil2 );DoScroll ( 2 );return;}
 
-	if ( ( x<=0&&y>=cSettingsData.iScreenH-30-18 ) || ( y>=cSettingsData.iScreenH-18&&x<=30 ) ) {mouse->SetCursor ( CPfeil1 );DoScroll ( 1 );return;}
-	if ( ( x>=cSettingsData.iScreenW-18&&y>=cSettingsData.iScreenH-30-18 ) || ( y>=cSettingsData.iScreenH-18&&x>=cSettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil3 );DoScroll ( 3 );return;}
+	if ( ( x<=0&&y>=SettingsData.iScreenH-30-18 ) || ( y>=SettingsData.iScreenH-18&&x<=30 ) ) {mouse->SetCursor ( CPfeil1 );DoScroll ( 1 );return;}
+	if ( ( x>=SettingsData.iScreenW-18&&y>=SettingsData.iScreenH-30-18 ) || ( y>=SettingsData.iScreenH-18&&x>=SettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil3 );DoScroll ( 3 );return;}
 
 	if ( pure )
 	{
@@ -559,7 +559,7 @@ void cHud::CheckScroll ( bool pure )
 				game->fDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->AttackMode&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<cSettingsData.iScreenW-12&&y<cSettingsData.iScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->AttackMode&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) )
 			{
@@ -576,7 +576,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->StealActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<cSettingsData.iScreenW-12&&y<cSettingsData.iScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->StealActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
 			{
@@ -594,7 +594,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->DisableActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<cSettingsData.iScreenW-12&&y<cSettingsData.iScreenH-14 )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->DisableActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
 			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
 			{
@@ -612,7 +612,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->AttackMode&&game->SelectedBuilding->owner==game->ActivePlayer&&x>=180&&y>=18&&x<cSettingsData.iScreenW-12&&y<cSettingsData.iScreenH-14 )
+		else if ( game->SelectedBuilding&&game->SelectedBuilding->AttackMode&&game->SelectedBuilding->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
 			if ( game->SelectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
 			{
@@ -687,7 +687,7 @@ void cHud::CheckScroll ( bool pure )
 				game->fDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( !game->SelectedVehicle->IsBuilding&&!game->SelectedVehicle->IsClearing&&!game->SelectedVehicle->LoadActive&&!game->SelectedVehicle->ActivatingVehicle ) || ( game->SelectedVehicle->IsBuilding&&game->SelectedVehicle->BuildRounds==0 ) || ( game->SelectedVehicle->IsClearing&&game->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( cSettingsData.iScreenW-192 ) &&y<18+ ( cSettingsData.iScreenH-32 ) )
+		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( !game->SelectedVehicle->IsBuilding&&!game->SelectedVehicle->IsClearing&&!game->SelectedVehicle->LoadActive&&!game->SelectedVehicle->ActivatingVehicle ) || ( game->SelectedVehicle->IsBuilding&&game->SelectedVehicle->BuildRounds==0 ) || ( game->SelectedVehicle->IsClearing&&game->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
 		{
 			if ( game->SelectedVehicle->MoveJobActive )
 			{
@@ -824,7 +824,7 @@ void cHud::DoScroll ( int dir )
 	}
 	hud=game->hud;
 	step=64/Zoom;
-	step*=cSettingsData.iScrollSpeed;
+	step*=SettingsData.iScrollSpeed;
 	switch ( dir )
 	{
 		case 1:
@@ -859,9 +859,9 @@ void cHud::DoScroll ( int dir )
 	if ( hud->OffX<0 ) hud->OffX=0;
 	if ( hud->OffY<0 ) hud->OffY=0;
 //  step=game->map->size*64-(int)((448.0/Zoom)*64);
-	step=game->map->size*64- ( int ) ( ( ( cSettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+	step=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
 	if ( hud->OffX>=step ) hud->OffX=step;
-	step=game->map->size*64- ( int ) ( ( ( cSettingsData.iScreenH-32.0 ) /Zoom ) *64 );
+	step=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
 	if ( hud->OffY>=step ) hud->OffY=step;
 	if ( lx==OffX&&ly==OffY ) return;
 	game->fDrawMap=true;

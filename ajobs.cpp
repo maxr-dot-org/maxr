@@ -423,7 +423,7 @@ bool cAJobs::MakeImpact ( void )
 			}
 		}
 	}
-	if ( PlayImpact&&cSettingsData.bAlphaEffects )
+	if ( PlayImpact&&SettingsData.bAlphaEffects )
 	{
 		game->AddFX ( fxHit,DestX*64,DestY*64,0 );
 	}

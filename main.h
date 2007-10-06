@@ -223,7 +223,7 @@ public:
 // This classes are for saving global Variables needed by the game
 ///////////////////////////////////////////////////////////////////////////////
 
-// cSettingsData - Class containing all gamesettings ///////////////////////
+// SettingsData - Class containing all gamesettings ///////////////////////
 class cSettings
 {
 public:
@@ -272,7 +272,7 @@ public:
 	string sBuildingsPath;		// Path to the buildings
 
 	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften - NOT IN XML-file (yet?)!
-} EX cSettingsData;
+} EX SettingsData;
 
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
 class cGraphicsData

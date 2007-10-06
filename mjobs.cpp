@@ -398,7 +398,7 @@ void cMJobs::DoTheMove ( void )
 	else speed=MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( cSettingsData.bMakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
+	if ( SettingsData.bMakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
 	        ( waypoints&&waypoints->next&&TerrainData.terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
 	        ( vehicle->owner==game->ActivePlayer||game->ActivePlayer->ScanMap[vehicle->PosX+vehicle->PosY*game->map->size] ) )
 	{

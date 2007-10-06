@@ -22,7 +22,7 @@ bool ShowYesNo(string text){
   game->DrawMap(false);
   SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
 
-  if(cSettingsData.bAlphaEffects){
+  if(SettingsData.bAlphaEffects){
     SDL_BlitSurface(GraphicsData.gfx_shadow,NULL,buffer,NULL);
   }
   LoadPCXtoSF((char *) GraphicsData.Dialog2Path.c_str(),GraphicsData.gfx_dialog);
@@ -185,7 +185,7 @@ void ShowOK(string text,bool pure){
     dest.x=15;dest.y=356;
     dest.w=dest.h=112;
     SDL_FillRect(buffer,&dest,0);
-    if(cSettingsData.bAlphaEffects){
+    if(SettingsData.bAlphaEffects){
       SDL_BlitSurface(GraphicsData.gfx_shadow,NULL,buffer,NULL);
     }
   }

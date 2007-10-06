@@ -88,17 +88,17 @@ int main ( int argc, char *argv[] )
 void showSplash()
 {
 	//TODO: default settings if max.xml not avaible. move to max.xml loading routine! SDL crashes BADLY without this!
-	cSettingsData.iColourDepth = 32;
-	cSettingsData.bWindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
-	cSettingsData.iScreenW = 640;
-	cSettingsData.iScreenH = 480;
+	SettingsData.iColourDepth = 32;
+	SettingsData.bWindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
+	SettingsData.iScreenW = 640;
+	SettingsData.iScreenH = 480;
 
         putenv ( "SDL_VIDEO_CENTERED=center" );
 
 	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
-	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, cSettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
+	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption ( MAXVERSION, NULL );
 	SDL_UpdateRect ( screen,0,0,0,0 );
@@ -107,14 +107,14 @@ void showSplash()
 
 void showGameWindow()
 {
-	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,cSettingsData.iScreenW,cSettingsData.iScreenH,cSettingsData.iColourDepth,0,0,0,0 );
-	if ( !cSettingsData.bWindowMode )
+	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
+	if ( !SettingsData.bWindowMode )
 	{
-		screen=SDL_SetVideoMode ( cSettingsData.iScreenW,cSettingsData.iScreenH,cSettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
+		screen=SDL_SetVideoMode ( SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
 	}
 	else
 	{
-		screen=SDL_SetVideoMode ( cSettingsData.iScreenW,cSettingsData.iScreenH,cSettingsData.iColourDepth,SDL_HWSURFACE );
+		screen=SDL_SetVideoMode ( SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE );
 	}
 	SDL_FillRect ( buffer,NULL,0 );
  	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
@@ -173,8 +173,8 @@ int InitSound()
 	TiXmlNode* rootnode;
 	doc.LoadFile ( "max.xml" );
 	rootnode = doc.FirstChildElement ( "MAXOptions" )->FirstChildElement ( "StartOptions" );
-//	cSettingsData.sound=GetXMLBool ( rootnode,"sound" );
-	if ( !cSettingsData.bSoundEnabled ) return 1;
+//	SettingsData.sound=GetXMLBool ( rootnode,"sound" );
+	if ( !SettingsData.bSoundEnabled ) return 1;
 	frequency = atoi ( rootnode->FirstChildElement ( "frequency" )->FirstChild()->Value() );
 	chunksize = atoi ( rootnode->FirstChildElement ( "chunksize" )->FirstChild()->Value() );
 	if ( !InitSound ( frequency,chunksize ) )
@@ -182,7 +182,7 @@ int InitSound()
 		printf ( "Could not initialize sound." );
 		return 0;
 	}
-	cSettingsData.bSoundEnabled=true;
+	SettingsData.bSoundEnabled=true;
 	return 1;
 }
 
@@ -197,7 +197,7 @@ void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
 	{
 		sizex=scr->w/64*size;
 	}
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,cSettingsData.iColourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,SettingsData.iColourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -284,7 +284,7 @@ void ScaleSurfaceAdv ( SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey )
 {
 	int x,y,rx,ry,dx,dy;
 	unsigned int *s,*d;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,cSettingsData.iColourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,SettingsData.iColourDepth,0,0,0,0 );
 	dx=rx=0;
 	dy=0;
 	SDL_LockSurface ( *dest );
@@ -420,7 +420,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 {
 	SDL_Surface *sf;
 	float fak;
-	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,cSettingsData.iColourDepth,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,SettingsData.iColourDepth,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFF00FF );
 	SDL_LockSurface ( sf );
@@ -474,7 +474,7 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 {
 	SDL_Rect r;
 	int i;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,cSettingsData.iColourDepth,0,0,0,0 );
+	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,SettingsData.iColourDepth,0,0,0,0 );
 	SDL_BlitSurface ( scr,NULL,*dest,NULL );
 	SDL_SetColorKey ( *dest,SDL_SRCCOLORKEY,0xFF00FF );
 	r.w=64;
