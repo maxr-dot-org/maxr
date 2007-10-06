@@ -247,8 +247,8 @@ public:
 	string LastIP;				// Letzte eingegebene IP
 	int LastPort;				// Letzter eingegebener Port
 	string LastPlayerName;		// Letzter benutzter Spielername
-	int ScreenW;				// Breite der ausgwählten Auflösung
-	int ScreenH;				// Höhe der ausgwählten Auflösung
+	int iScreenW;				// Breite der ausgwählten Auflösung
+	int iScreenH;				// Höhe der ausgwählten Auflösung
 	int iColourDepth;			//e.g. 32
 
 

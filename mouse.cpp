@@ -195,14 +195,14 @@ void cMouse::GetPos ( void )
 	}
 	else
 	{
-		if ( x>GameSettingsData.ScreenW-cur->w )
+		if ( x>GameSettingsData.iScreenW-cur->w )
 		{
-			x=GameSettingsData.ScreenW-cur->w;
+			x=GameSettingsData.iScreenW-cur->w;
 			SDL_WarpMouse ( x,y );
 		}
-		if ( y>GameSettingsData.ScreenH-cur->h )
+		if ( y>GameSettingsData.iScreenH-cur->h )
 		{
-			y=GameSettingsData.ScreenH-cur->h;
+			y=GameSettingsData.iScreenH-cur->h;
 			SDL_WarpMouse ( x,y );
 		}
 		DrawX=x;
@@ -220,7 +220,7 @@ void cMouse::GetPos ( void )
 void cMouse::GetKachel ( int *X,int *Y )
 {
 	cHud *hud;
-	if ( x<180||y<18||x>180+ ( GameSettingsData.ScreenW-192 ) ||y>18+ ( GameSettingsData.ScreenH-32 ) ) {*X=-1;*Y=-1;return;}
+	if ( x<180||y<18||x>180+ ( GameSettingsData.iScreenW-192 ) ||y>18+ ( GameSettingsData.iScreenH-32 ) ) {*X=-1;*Y=-1;return;}
 	hud=game->hud;
 	*X= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
 	*Y= (int)(( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
@@ -233,7 +233,7 @@ int cMouse::GetKachelOff ( void )
 {
 	cHud *hud;
 	int ret;
-	if ( x<180||y<18||x>180+ ( GameSettingsData.ScreenW-192 ) ||y>18+ ( GameSettingsData.ScreenH-32 ) ) return -1;
+	if ( x<180||y<18||x>180+ ( GameSettingsData.iScreenW-192 ) ||y>18+ ( GameSettingsData.iScreenH-32 ) ) return -1;
 	hud=game->hud;
 	ret= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
 	ret+= ( ( int ) ( ( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom ) ) *game->map->size;

@@ -90,8 +90,8 @@ void showSplash()
 	//TODO: default settings if max.xml not avaible. move to max.xml loading routine! SDL crashes BADLY without this!
 	GameSettingsData.iColourDepth = 32;
 	GameSettingsData.WindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
-	GameSettingsData.ScreenW = 640;
-	GameSettingsData.ScreenH = 480;
+	GameSettingsData.iScreenW = 640;
+	GameSettingsData.iScreenH = 480;
 
         putenv ( "SDL_VIDEO_CENTERED=center" );
 
@@ -107,14 +107,14 @@ void showSplash()
 
 void showGameWindow()
 {
-	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,0,0,0,0 );
+	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,GameSettingsData.iScreenW,GameSettingsData.iScreenH,GameSettingsData.iColourDepth,0,0,0,0 );
 	if ( !GameSettingsData.WindowMode )
 	{
-		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
+		screen=SDL_SetVideoMode ( GameSettingsData.iScreenW,GameSettingsData.iScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
 	}
 	else
 	{
-		screen=SDL_SetVideoMode ( GameSettingsData.ScreenW,GameSettingsData.ScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE );
+		screen=SDL_SetVideoMode ( GameSettingsData.iScreenW,GameSettingsData.iScreenH,GameSettingsData.iColourDepth,SDL_HWSURFACE );
 	}
 	SDL_FillRect ( buffer,NULL,0 );
  	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption

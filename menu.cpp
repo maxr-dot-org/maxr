@@ -3100,10 +3100,10 @@ int GetKachelBig ( int x,int y, cMap *map )
 {
 	double fak;
 	int nr;
-	if ( x<0||x>=GameSettingsData.ScreenW-192||y<0||y>=GameSettingsData.ScreenH-32 ) return 0;
+	if ( x<0||x>=GameSettingsData.iScreenW-192||y<0||y>=GameSettingsData.iScreenH-32 ) return 0;
 
-	x=x* ( int ) ( 448.0/ ( GameSettingsData.ScreenW-192 ) );
-	y=y* ( int ) ( 448.0/ ( GameSettingsData.ScreenH-32 ) );
+	x=x* ( int ) ( 448.0/ ( GameSettingsData.iScreenW-192 ) );
+	y=y* ( int ) ( 448.0/ ( GameSettingsData.iScreenH-32 ) );
 
 	if ( map->size<448 )
 	{
@@ -3129,14 +3129,14 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	int b,lx=-1,ly=-1,i,k,nr,fakx,faky,off;
 	sTerrain *t;
 
-	fakx= ( int ) ( ( GameSettingsData.ScreenW-192.0 ) /game->map->size );
-	faky= ( int ) ( ( GameSettingsData.ScreenH-32.0 ) /game->map->size );
+	fakx= ( int ) ( ( GameSettingsData.iScreenW-192.0 ) /game->map->size );
+	faky= ( int ) ( ( GameSettingsData.iScreenH-32.0 ) /game->map->size );
 
 	// Die Karte malen:
 	SDL_LockSurface ( buffer );
-	for ( i=0;i<GameSettingsData.ScreenW-192;i++ )
+	for ( i=0;i<GameSettingsData.iScreenW-192;i++ )
 	{
-		for ( k=0;k<GameSettingsData.ScreenH-32;k++ )
+		for ( k=0;k<GameSettingsData.iScreenH-32;k++ )
 		{
 			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
 			t=TerrainData.terrain+nr;
@@ -3158,18 +3158,18 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
-	top.x=0;top.y= ( GameSettingsData.ScreenH/2 )-479;
+	top.x=0;top.y= ( GameSettingsData.iScreenH/2 )-479;
 	top.w=bottom.w=171;
 
 	top.h=479;bottom.h=481;
-	bottom.x=0;bottom.y= ( GameSettingsData.ScreenH/2 );
+	bottom.x=0;bottom.y= ( GameSettingsData.iScreenH/2 );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&top );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom );
 
 	SHOW_SCREEN
 
 	t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-	if ( mouse->x>=180&&mouse->x<GameSettingsData.ScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+	if ( mouse->x>=180&&mouse->x<GameSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 	{
 		mouse->SetCursor ( CMove );
 	}
@@ -3187,7 +3187,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
 		t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-		if ( mouse->x>=180&&mouse->x<GameSettingsData.ScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.ScreenH-14&&! ( t->water||t->coast||t->blocked ) )
+		if ( mouse->x>=180&&mouse->x<GameSettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<GameSettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 		{
 			mouse->SetCursor ( CMove );
 		}
@@ -3205,8 +3205,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.ScreenW-192 ) ) );
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.ScreenH-32 ) ) );
+			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.iScreenW-192 ) ) );
+			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( GameSettingsData.iScreenH-32 ) ) );
 			break;
 		}
 

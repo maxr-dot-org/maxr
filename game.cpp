@@ -1103,27 +1103,27 @@ void cGame::DrawMap(bool pure){
         }
         pos++;
         dest.x+=zoom;
-        if(dest.x>GameSettingsData.ScreenW-13)break;
+        if(dest.x>GameSettingsData.iScreenW-13)break;
       }
     }
     dest.y+=zoom;
-    if(dest.y>GameSettingsData.ScreenH-15)break;
+    if(dest.y>GameSettingsData.iScreenH-15)break;
   }
   // Gitter malen:
   if(hud->Gitter){
     dest.x=180;
     dest.y=18+zoom-(OffY%zoom);
-    dest.w=GameSettingsData.ScreenW-192;
+    dest.w=GameSettingsData.iScreenW-192;
     dest.h=1;
-    for(y=0;y<(GameSettingsData.ScreenH-32)/zoom+1;y++){
+    for(y=0;y<(GameSettingsData.iScreenH-32)/zoom+1;y++){
       SDL_FillRect(buffer,&dest,GRID_COLOR);
       dest.y+=zoom;
     }
     dest.x=180+zoom-(OffX%zoom);
     dest.y=18;
     dest.w=1;
-    dest.h=GameSettingsData.ScreenH-32;
-    for(x=0;x<(GameSettingsData.ScreenW-192)/zoom+1;x++){
+    dest.h=GameSettingsData.iScreenH-32;
+    for(x=0;x<(GameSettingsData.iScreenW-192)/zoom+1;x++){
       SDL_FillRect(buffer,&dest,GRID_COLOR);
       dest.x+=zoom;
     }
@@ -1138,8 +1138,8 @@ void cGame::DrawMap(bool pure){
   startY=(hud->OffY-1)/64;if(startY<0)startY=0;
   startX-=1;if(startX<0)startX=0;
   startY-=1;if(startY<0)startY=0;
-  endX=hud->OffX/64+(GameSettingsData.ScreenW-192)/hud->Zoom+1;if(endX>=map->size)endX=map->size-1;
-  endY=hud->OffY/64+(GameSettingsData.ScreenH-32)/hud->Zoom+1;if(endY>=map->size)endY=map->size-1;
+  endX=hud->OffX/64+(GameSettingsData.iScreenW-192)/hud->Zoom+1;if(endX>=map->size)endX=map->size-1;
+  endY=hud->OffY/64+(GameSettingsData.iScreenH-32)/hud->Zoom+1;if(endY>=map->size)endY=map->size-1;
   dest.y=18-OffY+zoom*startY;
   for(y=startY;y<=endY;y++){
     dest.x=180-OffX+zoom*startX;
@@ -2102,10 +2102,10 @@ void cGame::MakePanel(bool open){
   SDL_Rect top,bottom,tmp;
   if(open){
     PlayFX(SNDPanelOpen);
-    top.x=0;top.y=(GameSettingsData.ScreenH/2)-479;
+    top.x=0;top.y=(GameSettingsData.iScreenH/2)-479;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
-    bottom.x=0;bottom.y=(GameSettingsData.ScreenH/2);
+    bottom.x=0;bottom.y=(GameSettingsData.iScreenH/2);
     tmp=top;
     SDL_BlitSurface(GraphicsData.gfx_panel_top,NULL,buffer,&tmp);
     tmp=bottom;
@@ -2125,14 +2125,14 @@ void cGame::MakePanel(bool open){
     top.x=0;top.y=-480;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
-    bottom.x=0;bottom.y=GameSettingsData.ScreenH;
-    while(bottom.y>GameSettingsData.ScreenH/2){
+    bottom.x=0;bottom.y=GameSettingsData.iScreenH;
+    while(bottom.y>GameSettingsData.iScreenH/2){
       SHOW_SCREEN
       SDL_Delay(10);
       top.y+=10;
-      if(top.y>(GameSettingsData.ScreenH/2)-479-9)top.y=(GameSettingsData.ScreenH/2)-479;
+      if(top.y>(GameSettingsData.iScreenH/2)-479-9)top.y=(GameSettingsData.iScreenH/2)-479;
       bottom.y-=10;
-      if(bottom.y<GameSettingsData.ScreenH/2+9)bottom.y=GameSettingsData.ScreenH/2;
+      if(bottom.y<GameSettingsData.iScreenH/2+9)bottom.y=GameSettingsData.iScreenH/2;
       SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       tmp=top;
       SDL_BlitSurface(GraphicsData.gfx_panel_top,NULL,buffer,&tmp);
@@ -2220,8 +2220,8 @@ void cGame::DrawMiniMap(bool pure,SDL_Surface *sf){
     tx=(int)((hud->OffX/64.0)*(112.0/map->size));
     ty=(int)((hud->OffY/64.0)*(112.0/map->size));
 //    ex=112/(map->size/((448.0/hud->Zoom)));
-    ex=(int)(112/(map->size/(((GameSettingsData.ScreenW-192.0)/hud->Zoom))));
-    ey=(int)(ty+112/(map->size/(((GameSettingsData.ScreenH-32.0)/hud->Zoom))));
+    ex=(int)(112/(map->size/(((GameSettingsData.iScreenW-192.0)/hud->Zoom))));
+    ey=(int)(ty+112/(map->size/(((GameSettingsData.iScreenH-32.0)/hud->Zoom))));
     ex+=tx;
     for(y=ty;y<ey;y++){
       ptr[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+tx]=MINIMAP_COLOR;
@@ -2256,7 +2256,7 @@ void MouseMoveCallback(bool force){
   scr.w=64;
   scr.h=16;
   dest.x=265;
-  dest.y=GameSettingsData.ScreenH-21;
+  dest.y=GameSettingsData.iScreenH-21;
   SDL_BlitSurface(GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest);
   scr.x=64;
   scr.y=198;
@@ -2271,7 +2271,7 @@ void MouseMoveCallback(bool force){
   if(x < 100 && x > 9) xnull = "0"; if(x < 10) xnull = "00";
   if(y < 100 && y > 9) ynull = "0"; if(y < 10) ynull = "00";
   sprintf(str, "%s%d-%s%d", xnull.c_str(), x, ynull.c_str(), y);
-  fonts->OutTextCenter(str,265+32,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
+  fonts->OutTextCenter(str,265+32,(GameSettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
 
   if(!game->ActivePlayer->ScanMap[x+y*game->map->size]){
     game->OverObject=NULL;
@@ -2293,7 +2293,7 @@ void MouseMoveCallback(bool force){
   }
   if(GO->vehicle!=NULL&&(GO->vehicle->detected||GO->vehicle->owner==game->ActivePlayer)){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->vehicle->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
+    fonts->OutTextCenter((char *)GO->vehicle->name.c_str(),343+106,(GameSettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
     if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedVehicle){
@@ -2304,7 +2304,7 @@ void MouseMoveCallback(bool force){
     }
   }else if(GO->plane!=NULL){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->plane->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
+    fonts->OutTextCenter((char *)GO->plane->name.c_str(),343+106,(GameSettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
     if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedVehicle){
@@ -2315,7 +2315,7 @@ void MouseMoveCallback(bool force){
     }
   }else if(GO->top!=NULL){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->top->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
+    fonts->OutTextCenter((char *)GO->top->name.c_str(),343+106,(GameSettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
     if(mouse->cur==GraphicsData.gfx_Cattack){
 		if(game->SelectedBuilding){
@@ -2324,7 +2324,7 @@ void MouseMoveCallback(bool force){
     }
   }else if(GO->base!=NULL&&GO->base->owner&&GO->base->detected){
     game->OverObject=GO;
-    fonts->OutTextCenter((char *)GO->base->name.c_str(),343+106,(GameSettingsData.ScreenH-21)+4,GraphicsData.gfx_hud);
+    fonts->OutTextCenter((char *)GO->base->name.c_str(),343+106,(GameSettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
     // Ggf den AttackCursor neu malen:
     if(mouse->cur==GraphicsData.gfx_Cattack){
       if(game->SelectedBuilding){
@@ -2414,10 +2414,10 @@ void cGame::DrawFLC(void){
 void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
   int d,da,db,xx,yy,bry;
   unsigned int *ptr;  
-  if(x+r<0||x-r>GameSettingsData.ScreenW||y+r<0||y-r>GameSettingsData.ScreenH)return;
+  if(x+r<0||x-r>GameSettingsData.iScreenW||y+r<0||y-r>GameSettingsData.iScreenH)return;
   SDL_LockSurface(sf);
   ptr=(unsigned int*)sf->pixels;
-  y*=GameSettingsData.ScreenW;
+  y*=GameSettingsData.iScreenW;
 
   d=0;
   xx=0;
@@ -2434,7 +2434,7 @@ void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
       xx++;
       yy--;
     }
-#define PUTC(xxx,yyy) if((xxx)+x>=0&&(xxx)+x<GameSettingsData.ScreenW&&(yyy)*GameSettingsData.ScreenW+y>=0&&(yyy)*GameSettingsData.ScreenW+y<GameSettingsData.ScreenH*GameSettingsData.ScreenW)ptr[(xxx)+x+(yyy)*GameSettingsData.ScreenW+y]=color;
+#define PUTC(xxx,yyy) if((xxx)+x>=0&&(xxx)+x<GameSettingsData.iScreenW&&(yyy)*GameSettingsData.iScreenW+y>=0&&(yyy)*GameSettingsData.iScreenW+y<GameSettingsData.iScreenH*GameSettingsData.iScreenW)ptr[(xxx)+x+(yyy)*GameSettingsData.iScreenW+y]=color;
     PUTC(xx,yy)
     PUTC(yy,xx)
     PUTC(yy,-xx)
@@ -3626,7 +3626,7 @@ bool cGame::MakeHotSeatEnde(void){
 
   SDL_Surface *sf;
   SDL_Rect scr;
-  sf=SDL_CreateRGBSurface(SDL_SRCCOLORKEY,GameSettingsData.ScreenW,GameSettingsData.ScreenH,32,0,0,0,0);
+  sf=SDL_CreateRGBSurface(SDL_SRCCOLORKEY,GameSettingsData.iScreenW,GameSettingsData.iScreenH,32,0,0,0,0);
   scr.x=15;
   scr.y=356;
   scr.w=scr.h=112;

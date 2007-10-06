@@ -789,7 +789,7 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 	size=game->hud->Zoom;
 	if ( data.is_big ) size*=2;
 
-	if ( dest.x+size+42>=GameSettingsData.ScreenW-12 )
+	if ( dest.x+size+42>=GameSettingsData.iScreenW-12 )
 	{
 		dest.x-=42;
 	}
@@ -802,10 +802,10 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 		dest.y-= ( i-size ) /2;
 		dest.y+=- ( dest.y-24 );
 	}
-	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.ScreenH-24 )
+	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.iScreenH-24 )
 	{
 		dest.y-= ( i-size ) /2;
-		dest.y-= ( dest.y+i )- ( GameSettingsData.ScreenH-24 );
+		dest.y-= ( dest.y+i )- ( GameSettingsData.iScreenH-24 );
 	}
 	else
 	{
