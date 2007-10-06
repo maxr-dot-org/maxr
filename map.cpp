@@ -24,7 +24,7 @@ cMap::~cMap ( void )
 // Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
 bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
 {
-	if ( !terrain[Kacheln[off]].water&&!terrain[Kacheln[off]].coast ) return false;
+	if ( !TerrainData.terrain[Kacheln[off]].water&&!TerrainData.terrain[Kacheln[off]].coast ) return false;
 
 
 //  if(game->ActivePlayer->ScanMap[off]&&GO[off].base&&(GO[off].base->data.is_platform||GO[off].base->data.is_bridge)){
@@ -33,11 +33,11 @@ bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
 	}*/
 	if ( not_coast )
 	{
-		return terrain[Kacheln[off]].water;
+		return TerrainData.terrain[Kacheln[off]].water;
 	}
 	else
 	{
-		return terrain[Kacheln[off]].water||terrain[Kacheln[off]].coast;
+		return TerrainData.terrain[Kacheln[off]].water||TerrainData.terrain[Kacheln[off]].coast;
 	}
 }
 
@@ -57,7 +57,7 @@ bool cMap::LoadMap ( string filename )
 	int nr,i,k;
 
 	MapName = filename;
-	filename.insert ( 0,MapPath );
+	filename.insert ( 0,GameSettingsData.MapPath );
 	ErrorStr="";
 	fp=fopen ( filename.c_str(),"rb" );
 	if ( !fp )
@@ -96,20 +96,20 @@ bool cMap::LoadMap ( string filename )
 			i++;
 		}
 
-		for ( i=0;i<terrain_anz;i++ )
+		for ( i=0;i<TerrainData.terrain_anz;i++ )
 		{
-			if ( strcmp ( terrain[i].id,str ) ==0 )
+			if ( strcmp ( TerrainData.terrain[i].id,str ) ==0 )
 			{
 				sTuple *t;
 				t=new sTuple;
 				t->from=nr;
 				t->to=i;
 				index->AddTuple ( t );
-				TerrainInUse->AddTerrain ( terrain+i );
+				TerrainInUse->AddTerrain ( TerrainData.terrain+i );
 				break;
 			}
 		}
-		if ( i==terrain_anz )
+		if ( i==TerrainData.terrain_anz )
 		{
 			ErrorStr="terrain not found";
 			while ( index->Count )
@@ -201,7 +201,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	// Dafür sorgen, dass mehr Rohstoffe auf dem Land sind:
 	for ( i=0;i<size*size;i++ )
 	{
-		if ( terrain[Kacheln[i]].water ) GaussMap[i]=5;
+		if ( TerrainData.terrain[Kacheln[i]].water ) GaussMap[i]=5;
 	}
 
 	// Berechnen, wieviele Quellen es geben soll:
@@ -231,7 +231,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 		}
 		pos=PosMap[index];
 
-		if ( terrain[Kacheln[pos]].blocked )
+		if ( TerrainData.terrain[Kacheln[pos]].blocked )
 		{
 			amount++;
 			continue;
