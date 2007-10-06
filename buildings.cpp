@@ -306,7 +306,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	scr.y=0;
 
 	// Den Schadenseffekt machen:
-	if ( timer1&&!data.is_base&&!data.is_connector&&data.hit_points<data.max_hit_points&&DamageEffects&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
+	if ( timer1&&!data.is_base&&!data.is_connector&&data.hit_points<data.max_hit_points&&GameSettingsData.DamageEffects&& ( owner==game->ActivePlayer||game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
 	{
 		int intense= ( int ) ( 200-200* ( ( float ) data.hit_points/data.max_hit_points ) );
 		game->AddFX ( fxDarkSmoke,PosX*64+DamageFXPointX,PosY*64+DamageFXPointY,intense );
@@ -322,20 +322,20 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	// Prüfen, ob es Dreck ist:
 	if ( !owner )
 	{
-		if ( BigDirt ) scr.w=scr.h=dest->h=dest->w=dirt_big->h;
-		else scr.w=scr.h=dest->h=dest->w=dirt_small->h;
+		if ( BigDirt ) scr.w=scr.h=dest->h=dest->w=BuildingMainData.dirt_big->h;
+		else scr.w=scr.h=dest->h=dest->w=BuildingMainData.dirt_small->h;
 		scr.x=scr.w*DirtTyp;
 		scr.y=0;
 		// Den Schatten malen:
-		if ( Schatten )
+		if ( GameSettingsData.Schatten )
 		{
-			if ( BigDirt ) SDL_BlitSurface ( dirt_big_shw,&scr,buffer,&tmp );
-			else SDL_BlitSurface ( dirt_small_shw,&scr,buffer,&tmp );
+			if ( BigDirt ) SDL_BlitSurface ( BuildingMainData.dirt_big_shw,&scr,buffer,&tmp );
+			else SDL_BlitSurface ( BuildingMainData.dirt_small_shw,&scr,buffer,&tmp );
 		}
 		// Das Building malen:
 		tmp=*dest;
-		if ( BigDirt ) SDL_BlitSurface ( dirt_big,&scr,buffer,&tmp );
-		else SDL_BlitSurface ( dirt_small,&scr,buffer,&tmp );
+		if ( BigDirt ) SDL_BlitSurface ( BuildingMainData.dirt_big,&scr,buffer,&tmp );
+		else SDL_BlitSurface ( BuildingMainData.dirt_small,&scr,buffer,&tmp );
 		return;
 	}
 
@@ -494,30 +494,30 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.is_big )
 		{
-			if ( StartUp&&Alpha )
+			if ( StartUp&&GameSettingsData.Alpha )
 			{
-				SDL_SetAlpha ( gfx_big_beton,SDL_SRCALPHA,StartUp );
-				SDL_BlitSurface ( gfx_big_beton,NULL,buffer,&tmp );
-				SDL_SetAlpha ( gfx_big_beton,SDL_SRCALPHA,255 );
+				SDL_SetAlpha ( GraphicsData.gfx_big_beton,SDL_SRCALPHA,StartUp );
+				SDL_BlitSurface ( GraphicsData.gfx_big_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( GraphicsData.gfx_big_beton,SDL_SRCALPHA,255 );
 			}
 			else
 			{
-				SDL_SetAlpha ( gfx_big_beton,SDL_SRCALPHA,255 );
-				SDL_BlitSurface ( gfx_big_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( GraphicsData.gfx_big_beton,SDL_SRCALPHA,255 );
+				SDL_BlitSurface ( GraphicsData.gfx_big_beton,NULL,buffer,&tmp );
 			}
 		}
 		else if ( !data.is_road&&!data.is_connector )
 		{
-			if ( StartUp&&Alpha )
+			if ( StartUp&&GameSettingsData.Alpha )
 			{
-				SDL_SetAlpha ( ptr_small_beton,SDL_SRCALPHA,StartUp );
-				SDL_BlitSurface ( ptr_small_beton,NULL,buffer,&tmp );
-				SDL_SetAlpha ( ptr_small_beton,SDL_SRCALPHA,255 );
+				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,StartUp );
+				SDL_BlitSurface ( BuildingMainData.ptr_small_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,255 );
 			}
 			else
 			{
-				SDL_SetAlpha ( ptr_small_beton,SDL_SRCALPHA,255 );
-				SDL_BlitSurface ( ptr_small_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,255 );
+				SDL_BlitSurface ( BuildingMainData.ptr_small_beton,NULL,buffer,&tmp );
 			}
 		}
 	}
@@ -530,9 +530,9 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schatten malen:
-	if ( Schatten )
+	if ( GameSettingsData.Schatten )
 	{
-		if ( StartUp&&Alpha )
+		if ( StartUp&&GameSettingsData.Alpha )
 		{
 			SDL_SetAlpha ( typ->shw,SDL_SRCALPHA,StartUp/5 );
 			if ( !data.is_connector )
@@ -560,12 +560,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	// Die Spielerfarbe blitten:
 	if ( !data.is_connector&&!data.is_road )
 	{
-		SDL_BlitSurface ( owner->color,NULL,gfx_tmp,NULL );
+		SDL_BlitSurface ( owner->color,NULL,GraphicsData.gfx_tmp,NULL );
 		if ( !data.is_connector )
 		{
 			if ( data.has_frames )
 			{
-				if ( data.is_annimated&&Animation&&!Disabled )
+				if ( data.is_annimated&&GameSettingsData.Animation&&!Disabled )
 				{
 					scr.x= ( game->Frame%data.has_frames ) *game->hud->Zoom;
 				}
@@ -573,29 +573,29 @@ void cBuilding::Draw ( SDL_Rect *dest )
 				{
 					scr.x=dir*game->hud->Zoom;
 				}
-				SDL_BlitSurface ( typ->img,&scr,gfx_tmp,NULL );
+				SDL_BlitSurface ( typ->img,&scr,GraphicsData.gfx_tmp,NULL );
 				scr.x=0;
 			}
 			else
 			{
-				SDL_BlitSurface ( typ->img,NULL,gfx_tmp,NULL );
+				SDL_BlitSurface ( typ->img,NULL,GraphicsData.gfx_tmp,NULL );
 			}
 		}
 		else
 		{
-			SDL_BlitSurface ( typ->img,&scr,gfx_tmp,NULL );
+			SDL_BlitSurface ( typ->img,&scr,GraphicsData.gfx_tmp,NULL );
 		}
 	}
 	else
 	{
-		SDL_FillRect ( gfx_tmp,NULL,0xFF00FF );
+		SDL_FillRect ( GraphicsData.gfx_tmp,NULL,0xFF00FF );
 		if ( !data.is_connector )
 		{
-			SDL_BlitSurface ( typ->img,NULL,gfx_tmp,NULL );
+			SDL_BlitSurface ( typ->img,NULL,GraphicsData.gfx_tmp,NULL );
 		}
 		else
 		{
-			SDL_BlitSurface ( typ->img,&scr,gfx_tmp,NULL );
+			SDL_BlitSurface ( typ->img,&scr,GraphicsData.gfx_tmp,NULL );
 		}
 	}
 
@@ -603,21 +603,21 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	tmp=*dest;
 	scr.x=0;
 	scr.y=0;
-	if ( StartUp&&Alpha )
+	if ( StartUp&&GameSettingsData.Alpha )
 	{
-		SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,StartUp );
-		SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
-		SDL_SetAlpha ( gfx_tmp,SDL_SRCALPHA,255 );
+		SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,StartUp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
+		SDL_SetAlpha ( GraphicsData.gfx_tmp,SDL_SRCALPHA,255 );
 		if ( timer0 ) StartUp+=25;
 		if ( StartUp>=255 ) StartUp=0;
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_tmp,&scr,buffer,&tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
 	}
 
 	// Ggf den Effekt malen:
-	if ( data.has_effect&&Animation&& ( IsWorking||!data.can_work ) )
+	if ( data.has_effect&&GameSettingsData.Animation&& ( IsWorking||!data.can_work ) )
 	{
 		tmp=*dest;
 		SDL_SetAlpha ( typ->eff,SDL_SRCALPHA,EffectAlpha );
@@ -789,7 +789,7 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 	size=game->hud->Zoom;
 	if ( data.is_big ) size*=2;
 
-	if ( dest.x+size+42>=ScreenW-12 )
+	if ( dest.x+size+42>=GameSettingsData.ScreenW-12 )
 	{
 		dest.x-=42;
 	}
@@ -802,10 +802,10 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 		dest.y-= ( i-size ) /2;
 		dest.y+=- ( dest.y-24 );
 	}
-	else if ( dest.y- ( i-size ) /2+i>=ScreenH-24 )
+	else if ( dest.y- ( i-size ) /2+i>=GameSettingsData.ScreenH-24 )
 	{
 		dest.y-= ( i-size ) /2;
-		dest.y-= ( dest.y+i )- ( ScreenH-24 );
+		dest.y-= ( dest.y+i )- ( GameSettingsData.ScreenH-24 );
 	}
 	else
 	{
@@ -839,19 +839,19 @@ void cBuilding::SelfDestructionMenu ( void )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
-	SDL_BlitSurface ( gfx_hud,NULL,buffer,NULL );
-	if ( Alpha ) SDL_BlitSurface ( gfx_shadow,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=233;scr.x=0;
 	dest.y=199;scr.y=0;
-	scr.w=dest.w=gfx_destruction->w;
-	scr.h=dest.h=gfx_destruction->h/2;
-	SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+	scr.w=dest.w=GraphicsData.gfx_destruction->w;
+	scr.h=dest.h=GraphicsData.gfx_destruction->h/2;
+	SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 
 	dest.w=59;
 	dest.h=56;
 	dest.x=233+15;
 	dest.y=199+13;
-	SDL_BlitSurface ( gfx_destruction_glas,NULL,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&dest );
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -887,7 +887,7 @@ void cBuilding::SelfDestructionMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=233+89;
 				dest.y=199+46;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -905,7 +905,7 @@ void cBuilding::SelfDestructionMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=233+89;
 			dest.y=199+46;
-			SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -922,7 +922,7 @@ void cBuilding::SelfDestructionMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=233+89;
 				dest.y=199+14;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				ScharfPressed=true;
@@ -941,7 +941,7 @@ void cBuilding::SelfDestructionMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=233+89;
 			dest.y=199+14;
-			SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			ScharfPressed=false;
@@ -955,13 +955,13 @@ void cBuilding::SelfDestructionMenu ( void )
 			scr.h=dest.h=56;
 			dest.x=233+15;
 			dest.y=199+13;
-			SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 			GlasHeight-=10;
 			if ( GlasHeight>0 )
 			{
 				scr.x=0;scr.y=0;
 				scr.h=dest.h=GlasHeight;
-				SDL_BlitSurface ( gfx_destruction_glas,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,&scr,buffer,&dest );
 			}
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -978,7 +978,7 @@ void cBuilding::SelfDestructionMenu ( void )
 				dest.h=scr.h=56;
 				dest.x=233+15;
 				dest.y=199+13;
-				SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DestroyPressed=true;
@@ -998,7 +998,7 @@ void cBuilding::SelfDestructionMenu ( void )
 			dest.h=scr.h=56;
 			dest.x=233+15;
 			dest.y=199+13;
-			SDL_BlitSurface ( gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DestroyPressed=false;
@@ -1232,13 +1232,13 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	if ( BaseN )
 	{
 		scr.x=zoom;
-		SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+		SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 		tmp=dest;
 	}
 	if ( BaseW )
 	{
 		scr.x=zoom*4;
-		SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+		SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 		tmp=dest;
 	}
 	if ( !data.is_big )
@@ -1246,13 +1246,13 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		if ( BaseE )
 		{
 			scr.x=zoom*2;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseS )
 		{
 			scr.x=zoom*3;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 	}
@@ -1262,21 +1262,21 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		{
 			scr.x=zoom;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBW )
 		{
 			scr.x=zoom*4;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseE )
 		{
 			scr.x=zoom*2;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBE )
@@ -1284,14 +1284,14 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 			scr.x=zoom*2;
 			tmp.x+=zoom;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseS )
 		{
 			scr.x=zoom*3;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBS )
@@ -1299,7 +1299,7 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 			scr.x=zoom*3;
 			tmp.y+=zoom;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 	}
@@ -1545,13 +1545,13 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
-	SDL_BlitSurface ( gfx_hud,NULL,buffer,NULL );
-	if ( Alpha ) SDL_BlitSurface ( gfx_shadow,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=166;
 	dest.y=159;
-	dest.w=gfx_transfer->w;
-	dest.h=gfx_transfer->h;
-	SDL_BlitSurface ( gfx_transfer,NULL,buffer,&dest );
+	dest.w=GraphicsData.gfx_transfer->w;
+	dest.h=GraphicsData.gfx_transfer->h;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,NULL,buffer,&dest );
 
 	// Die Images erstellen:
 	if ( data.is_big )
@@ -1671,7 +1671,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 				dest.h=scr.h=23;
 				dest.x=82+166;
 				dest.y=125+159;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1689,7 +1689,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=23;
 			dest.x=82+166;
 			dest.y=125+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1706,7 +1706,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 				dest.h=scr.h=23;
 				dest.x=174+166;
 				dest.y=125+159;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1756,7 +1756,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=23;
 			dest.x=174+166;
 			dest.y=125+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -1773,7 +1773,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.y=88+159;
 			Transf++;
 			MakeTransBar ( &Transf,MaxTarget,Target );
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncPressed=true;
@@ -1786,7 +1786,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=18;
 			dest.x=277+166;
 			dest.y=88+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncPressed=false;
@@ -1803,7 +1803,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.y=88+159;
 			Transf--;
 			MakeTransBar ( &Transf,MaxTarget,Target );
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecPressed=true;
@@ -1816,7 +1816,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			dest.h=scr.h=18;
 			dest.x=16+166;
 			dest.y=88+159;
-			SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecPressed=false;
@@ -1860,7 +1860,7 @@ void cBuilding::DrawTransBar ( int len )
 	dest.h=scr.h=16;
 	dest.x=44+166;
 	dest.y=90+159;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	scr.x=156+ ( 223-len );
 	dest.w=scr.w=223- ( 223-len );
 	if ( data.can_load==TRANS_METAL )
@@ -1875,7 +1875,7 @@ void cBuilding::DrawTransBar ( int len )
 	{
 		scr.y=290;
 	}
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 }
 
 // Erzeugt den Transfer Balken:
@@ -1925,12 +1925,12 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.y=30+159;
 	dest.w=scr.w=78;
 	dest.h=scr.h=14;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",cargo-*trans );
 	fonts->OutTextCenter ( str,4+39+166,30+159,buffer );
 	scr.x=229;
 	dest.x=229+166;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",Target+*trans );
 	fonts->OutTextCenter ( str,229+39+166,30+159,buffer );
 	scr.x=141;
@@ -1939,7 +1939,7 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.y=15+159;
 	dest.w=scr.w=29;
 	dest.h=scr.h=21;
-	SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	sprintf ( str,"%d",abs ( *trans ) );
 	fonts->OutTextCenter ( str,155+166,21+159,buffer );
 	// Den Pfeil malen:
@@ -1951,7 +1951,7 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.y=44+159;
 		dest.w=scr.w=30;
 		dest.h=scr.h=16;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -1961,7 +1961,7 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.y=44+159;
 		dest.w=scr.w=30;
 		dest.h=scr.h=16;
-		SDL_BlitSurface ( gfx_transfer,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	}
 	DrawTransBar ( 223* ( ( int ) ( ( Target+*trans ) / ( float ) MaxTarget ) ) );
 }
@@ -2004,7 +2004,7 @@ bool cBuilding::CanExitTo ( int off,sVehicle *typ )
 	        ( off>=boff-1+game->map->size*2&&off<=boff+2+game->map->size*2 ) )
 	{}
 	else return false;
-	if ( ( typ->data.can_drive!=DRIVE_AIR&& ( ( game->map->GO[off].top&&!game->map->GO[off].top->data.is_connector ) ||game->map->GO[off].vehicle||terrain[game->map->Kacheln[off]].blocked ) ) ||
+	if ( ( typ->data.can_drive!=DRIVE_AIR&& ( ( game->map->GO[off].top&&!game->map->GO[off].top->data.is_connector ) ||game->map->GO[off].vehicle||TerrainData.terrain[game->map->Kacheln[off]].blocked ) ) ||
 	        ( typ->data.can_drive==DRIVE_AIR&&game->map->GO[off].plane ) ||
 	        ( typ->data.can_drive==DRIVE_SEA&&!game->map->IsWater ( off,true ) ) ||
 	        ( typ->data.can_drive==DRIVE_LAND&&game->map->IsWater ( off ) ) )
@@ -2110,7 +2110,7 @@ void cBuilding::ShowStorage ( void )
 	mouse->draw ( false,buffer );
 	if ( data.can_load==TRANS_AIR )
 	{
-		SDL_BlitSurface ( gfx_storage,NULL,buffer,NULL );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,NULL,buffer,NULL );
 		to=4;
 	}
 	else
@@ -2119,8 +2119,8 @@ void cBuilding::ShowStorage ( void )
 		scr.y=0;
 		scr.w=640-480;
 		scr.h=480;
-		SDL_BlitSurface ( gfx_storage,&scr,buffer,&scr );
-		SDL_BlitSurface ( gfx_storage_ground,NULL,buffer,NULL );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&scr );
+		SDL_BlitSurface ( GraphicsData.gfx_storage_ground,NULL,buffer,NULL );
 		to=6;
 	}
 
@@ -2130,7 +2130,7 @@ void cBuilding::ShowStorage ( void )
 	scr.h=dest.h=23;
 	scr.x=0;scr.y=468;
 	dest.x=510;dest.y=371;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	// Down:
 	if ( StoredVehicles->Count>to )
 	{
@@ -2138,7 +2138,7 @@ void cBuilding::ShowStorage ( void )
 		scr.x=103;scr.y=452;
 		dest.h=scr.h=dest.w=scr.w=25;
 		dest.x=530;dest.y=426;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	// Alle Aktivieren:
 	scr.x=0;scr.y=376;
@@ -2147,7 +2147,7 @@ void cBuilding::ShowStorage ( void )
 	dest.x=511;dest.y=251;
 	if ( StoredVehicles->Count )
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		AlleAktivierenEnabled=true;
 		MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
 	}
@@ -2200,7 +2200,7 @@ void cBuilding::ShowStorage ( void )
 				if ( StoredVehicles->Count<=offset+to ) DownEnabled=false;
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 
 				scr.x=130;
 				scr.y=452;
@@ -2208,7 +2208,7 @@ void cBuilding::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=504;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				UpEnabled=true;
 
 				SHOW_SCREEN
@@ -2223,7 +2223,7 @@ void cBuilding::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=530;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=false;
@@ -2246,7 +2246,7 @@ void cBuilding::ShowStorage ( void )
 				if ( offset==0 ) UpEnabled=false;
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 				mouse->draw ( false,screen );
 				UpPressed=true;
 
@@ -2256,7 +2256,7 @@ void cBuilding::ShowStorage ( void )
 					scr.x=103;scr.y=452;
 					dest.h=scr.h=dest.w=scr.w=25;
 					dest.x=530;dest.y=426;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				SHOW_SCREEN
 			}
@@ -2268,7 +2268,7 @@ void cBuilding::ShowStorage ( void )
 				dest.h=scr.h=25;
 				dest.x=504;
 				dest.y=426;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=false;
@@ -2284,7 +2284,7 @@ void cBuilding::ShowStorage ( void )
 				scr.h=dest.h=23;
 				scr.x=510;scr.y=371;
 				dest.x=510;dest.y=371;
-				SDL_BlitSurface ( gfx_storage,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2300,7 +2300,7 @@ void cBuilding::ShowStorage ( void )
 			scr.h=dest.h=23;
 			scr.x=0;scr.y=468;
 			dest.x=510;dest.y=371;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -2313,7 +2313,7 @@ void cBuilding::ShowStorage ( void )
 			PlayFX ( SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251;
-			SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			while ( b )
@@ -2371,7 +2371,7 @@ void cBuilding::ShowStorage ( void )
 			PlayVoice ( VOILoaded );
 			ShowStorageMetalBar();
 
-			SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AlleAufladenEnabled=false;
@@ -2399,7 +2399,7 @@ void cBuilding::ShowStorage ( void )
 			PlayVoice ( VOIRepaired );
 			ShowStorageMetalBar();
 
-			SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AlleReparierenEnabled=false;
@@ -2429,7 +2429,7 @@ void cBuilding::ShowStorage ( void )
 			DrawStored ( offset );
 			ShowStorageMetalBar();
 
-			SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AlleUpgradenEnabled=false;
@@ -2439,11 +2439,11 @@ void cBuilding::ShowStorage ( void )
 		dest.w=73;dest.h=23;
 		if ( data.can_load==TRANS_AIR )
 		{
-			sf=gfx_storage;
+			sf=GraphicsData.gfx_storage;
 		}
 		else
 		{
-			sf=gfx_storage_ground;
+			sf=GraphicsData.gfx_storage_ground;
 		}
 		for ( i=0;i<to;i++ )
 		{
@@ -2599,12 +2599,12 @@ void cBuilding::DrawStored ( int off )
 	if ( data.can_load==TRANS_AIR )
 	{
 		to=4;
-		sf=gfx_storage;
+		sf=GraphicsData.gfx_storage;
 	}
 	else
 	{
 		to=6;
-		sf=gfx_storage_ground;
+		sf=GraphicsData.gfx_storage_ground;
 	}
 
 	for ( i=0;i<to;i++ )
@@ -2665,7 +2665,7 @@ void cBuilding::DrawStored ( int off )
 		}
 		else if ( data.build_on_water )
 		{
-			SDL_BlitSurface ( gfx_edock,NULL,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_edock,NULL,buffer,&dest );
 		}
 
 		// Die Buttons malen:
@@ -2685,7 +2685,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			scr.x=156;
 			scr.y=431;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 		else
 		{
@@ -2697,7 +2697,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			scr.x=304;
 			scr.y=431;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 		else
 		{
@@ -2710,7 +2710,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			scr.x=230;
 			scr.y=431;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 		else
 		{
@@ -2722,7 +2722,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			scr.x=156;
 			scr.y=455;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 		else
 		{
@@ -2761,7 +2761,7 @@ void cBuilding::ShowStorageMetalBar ( void )
 	char str[50];
 	scr.x=490;scr.y=80;
 	scr.w=136;scr.h=145;
-	SDL_BlitSurface ( gfx_storage,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&scr );
 
 	scr.x=135;
 	scr.y=335;
@@ -2770,7 +2770,7 @@ void cBuilding::ShowStorageMetalBar ( void )
 	scr.w=dest.w=20;
 	scr.h=dest.h=115* ( int ) ( SubBase->Metal/ ( float ) SubBase->MaxMetal );
 	dest.y+=115- ( 115* ( int ) ( SubBase->Metal/ ( float ) SubBase->MaxMetal ) );
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 
 	sprintf ( str,"Metall: %d",SubBase->Metal );
 	fonts->OutTextCenter ( str,557,86,buffer );
@@ -2840,33 +2840,33 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleRep
 	// Alle Aufladen:
 	if ( *AlleAufladenEnabled )
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 	}
 	scr.y+=23;
 	dest.y+=25;
 	// Alle Reparieren:
 	if ( *AlleReparierenEnabled )
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 	}
 	scr.y+=23;
 	dest.y+=25;
 	// Alle Upgraden:
 	if ( *AlleUpgradenEnabled )
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_storage,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
 	}
 }
 
@@ -2891,13 +2891,13 @@ void cBuilding::ShowResearch ( void )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
-	SDL_BlitSurface ( gfx_hud,NULL,buffer,NULL );
-	if ( Alpha ) SDL_BlitSurface ( gfx_shadow,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	if ( GameSettingsData.Alpha ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
 	dest.x=140;
 	dest.y=74;
-	dest.w=gfx_research->w;
-	dest.h=gfx_research->h;
-	SDL_BlitSurface ( gfx_research,NULL,buffer,&dest );
+	dest.w=GraphicsData.gfx_research->w;
+	dest.h=GraphicsData.gfx_research->h;
+	SDL_BlitSurface ( GraphicsData.gfx_research,NULL,buffer,&dest );
 
 	// Schieber malen:
 	ShowResearchSchieber();
@@ -2937,7 +2937,7 @@ void cBuilding::ShowResearch ( void )
 				dest.h=scr.h=26;
 				dest.x=92+140;
 				dest.y=294+74;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -2955,7 +2955,7 @@ void cBuilding::ShowResearch ( void )
 			dest.h=scr.h=26;
 			dest.x=92+140;
 			dest.y=294+74;
-			SDL_BlitSurface ( gfx_research,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -2972,7 +2972,7 @@ void cBuilding::ShowResearch ( void )
 				dest.h=scr.h=26;
 				dest.x=194+140;
 				dest.y=294+74;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2990,7 +2990,7 @@ void cBuilding::ShowResearch ( void )
 			dest.h=scr.h=26;
 			dest.x=194+140;
 			dest.y=294+74;
-			SDL_BlitSurface ( gfx_research,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -3017,7 +3017,7 @@ void cBuilding::ShowResearchSchieber ( void )
 		dest.y=70+74+i*28;
 		dest.w=scr.w=316;
 		dest.h=scr.h=18;
-		SDL_BlitSurface ( gfx_research,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
 
 		// Texte ausgeben:
 		sprintf ( str,"%d",owner->ResearchTechs[i].working_on );
@@ -3038,7 +3038,7 @@ void cBuilding::ShowResearchSchieber ( void )
 			scr.x=237;
 			scr.y=177;
 			dest.x=71+140;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 
 		// Den Pfeil nach rechts:
@@ -3049,7 +3049,7 @@ void cBuilding::ShowResearchSchieber ( void )
 			scr.x=257;
 			scr.y=177;
 			dest.x=143+140;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 
 		// Die Schieber malen:
@@ -3058,7 +3058,7 @@ void cBuilding::ShowResearchSchieber ( void )
 		scr.x=412;
 		scr.y=46;
 		dest.x=90+140+36* ( int ) ( ( ( float ) ( owner->ResearchTechs[i].working_on ) /owner->ResearchCount ) );
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 }
 
@@ -3110,7 +3110,7 @@ void cBuilding::ShowUpgrade ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
-	bool Beschreibung=ShowBeschreibung;
+	bool Beschreibung=GameSettingsData.ShowDescription;
 	bool DownPressed=false;
 	bool UpPressed=false;
 	TList *images,*selection;
@@ -3119,7 +3119,7 @@ void cBuilding::ShowUpgrade ( void )
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
-	SDL_BlitSurface ( gfx_upgrade,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,NULL,buffer,NULL );
 
 	// Der Haken:
 	if ( Beschreibung )
@@ -3128,7 +3128,7 @@ void cBuilding::ShowUpgrade ( void )
 		dest.y=scr.y=264;
 		dest.w=scr.w=17;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -3138,22 +3138,22 @@ void cBuilding::ShowUpgrade ( void )
 		dest.y=264;
 		dest.w=scr.w=18;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 
 	// Die Images erstellen:
 	images=new TList;
 	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
-	for ( i=0;i<vehicle_anz;i++ )
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
 		sUpgradeStruct *n;
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w/2,vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,vehicle[i].img[0]->w,vehicle[i].img[0]->h,32,0,0,0,0 );
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
-		SDL_BlitSurface ( vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w* newzoom,vehicle[i].img_org[0]->h* newzoom );
+		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w* newzoom,VehicleMainData.vehicle[i].img_org[0]->h* newzoom );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -3161,21 +3161,21 @@ void cBuilding::ShowUpgrade ( void )
 		MakeUpgradeSliderVehicle ( n->upgrades,i );
 		images->AddUpgraStr ( n );
 	}
-	for ( i=0;i<building_anz;i++ )
+	for ( i=0;i<BuildingMainData.building_anz;i++ )
 	{
 		sUpgradeStruct *n;
 		SDL_Surface *sf;
-		if ( building[i].data.is_big )
+		if ( BuildingMainData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w/4,building[i].img_org->h/4 );
+			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/4,BuildingMainData.building[i].img_org->h/4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w/2,building[i].img_org->h/2 );
+			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/2,BuildingMainData.building[i].img_org->h/2 );
 		}
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,building[i].img->w,building[i].img->h,32,0,0,0,0 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,BuildingMainData.building[i].img->w,BuildingMainData.building[i].img->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-		if ( !building[i].data.is_connector&&!building[i].data.is_road )
+		if ( !BuildingMainData.building[i].data.is_connector&&!BuildingMainData.building[i].data.is_road )
 		{
 			SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
 		}
@@ -3183,8 +3183,8 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
-		SDL_BlitSurface ( building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( building[i].img_org,building[i].img,building[i].img_org->w* newzoom,building[i].img_org->h* newzoom );
+		SDL_BlitSurface ( BuildingMainData.building[i].img,NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w* newzoom,BuildingMainData.building[i].img_org->h* newzoom );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -3241,7 +3241,7 @@ void cBuilding::ShowUpgrade ( void )
 				if ( selected<offset ) selected=offset;
 				ShowUpgradeList ( selection,selected,offset,Beschreibung );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=true;
@@ -3254,7 +3254,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=386;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -3275,7 +3275,7 @@ void cBuilding::ShowUpgrade ( void )
 				if ( selected>=offset+9 ) selected=offset+8;
 				ShowUpgradeList ( selection,selected,offset,Beschreibung );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=true;
@@ -3288,7 +3288,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.h=scr.h=17;
 			dest.x=470;
 			dest.y=386;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
@@ -3305,7 +3305,7 @@ void cBuilding::ShowUpgrade ( void )
 				dest.h=scr.h=24;
 				dest.x=357;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -3335,7 +3335,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.h=scr.h=24;
 			dest.x=357;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -3352,7 +3352,7 @@ void cBuilding::ShowUpgrade ( void )
 				dest.h=scr.h=24;
 				dest.x=447;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -3387,7 +3387,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.h=scr.h=24;
 			dest.x=447;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -3397,14 +3397,14 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			ShowBeschreibung=Beschreibung;
+			GameSettingsData.ShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
 				dest.y=scr.y=264;
 				dest.w=scr.w=17;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			}
 			else
 			{
@@ -3414,7 +3414,7 @@ void cBuilding::ShowUpgrade ( void )
 				dest.y=264;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
 			SHOW_SCREEN
@@ -3575,7 +3575,7 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 	int i,t,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
-	SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
@@ -3585,10 +3585,10 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 	{
 		scr.x=0;scr.y=0;
 		scr.w=316;scr.h=256;
-		SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		scr.x=11;scr.y=290;
 		scr.w=346;scr.h=176;
-		SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&scr );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		return;
 	}
 	for ( i=offset;i<list->Count;i++ )
@@ -3627,15 +3627,15 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 			tmp.x=11;tmp.y=13;
 			if ( ptr->vehicle )
 			{
-				tmp.w=vehicle[ptr->id].info->w;
-				tmp.h=vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( vehicle[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
+				tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			}
 			else
 			{
-				tmp.w=building[ptr->id].info->w;
-				tmp.h=building[ptr->id].info->h;
-				SDL_BlitSurface ( building[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=BuildingMainData.building[ptr->id].info->w;
+				tmp.h=BuildingMainData.building[ptr->id].info->h;
+				SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
 			}
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
@@ -3644,11 +3644,11 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( vehicle[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( building[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3659,16 +3659,16 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				tmp.y=290;
 				tmp.w=346;
 				tmp.h=176;
-				SDL_BlitSurface ( gfx_upgrade,&tmp,buffer,&tmp );
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					tv=new cVehicle ( vehicle+ptr->id,game->ActivePlayer );
+					tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,game->ActivePlayer );
 					tv->ShowBigDetails();
 					delete tv;
 				}
 				else
 				{
-					tb=new cBuilding ( building+ptr->id,game->ActivePlayer,NULL );
+					tb=new cBuilding ( BuildingMainData.building+ptr->id,game->ActivePlayer,NULL );
 					tb->ShowBigDetails();
 					delete tb;
 				}
@@ -3686,14 +3686,14 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 					scr.x=380;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
 					dest.x=283;dest.y=293+k*19;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				if ( ptr->upgrades[k].NextPrice<=owner->Credits )
 				{
 					scr.x=399;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
 					dest.x=301;dest.y=293+k*19;
-					SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 			}
 		}
@@ -3702,16 +3702,16 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 		str[0]=0;
 		if ( ptr->vehicle )
 		{
-			while ( vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=vehicle[ptr->id].data.name[t];str[++t]=0;
+				str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
-			while ( building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=building[ptr->id].data.name[t];str[++t]=0;
+				str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';
@@ -3731,12 +3731,12 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	scr.y=dest.y=301;
 	scr.w=dest.w=22;
 	scr.h=dest.h=115;
-	SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 	scr.x=dest.x=312;
 	scr.y=dest.y=265;
 	scr.w=dest.w=150;
 	scr.h=dest.h=26;
-	SDL_BlitSurface ( gfx_upgrade,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 	sprintf ( str,"Credits: %d",owner->Credits );
 	fonts->OutTextCenter ( str,381,275,buffer );
 
@@ -3746,7 +3746,7 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	scr.h=dest.h=115* ( int ) ( ( owner->Credits/ ( float ) StartCredits ) );
 	dest.x=375;
 	dest.y=301+115-dest.h;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 }
 
 // Macht die Upgradeschieber für Vehicle:
@@ -3768,25 +3768,25 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),vehicle[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->max_shots );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_shots, 2 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_shots, 2 );
 		u[i].name = "shots";
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->max_ammo );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_ammo, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_ammo, 0 );
 		u[i].name = "ammo";
 		i++;
 	}
@@ -3797,25 +3797,25 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.scan, 3 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.scan, 3 );
 	u[i].name = "scan";
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->max_speed );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),vehicle[nr].data.max_speed, 1 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_speed, 1 );
 	u[i].name = "speed";
 	i++;
 	// Costs:
@@ -3847,7 +3847,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),building[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		if ( !d->is_expl_mine )
@@ -3855,19 +3855,19 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 			// Shots:
 			u[i].active=true;
 			u[i].value=& ( d->max_shots );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_shots, 2 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_shots, 2 );
 			u[i].name = "shots";
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.range, 3 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
 			u[i].name = "range";
 			i++;
 			// Ammo:
 			u[i].active=true;
 			u[i].value=& ( d->max_ammo );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_ammo, 0 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_ammo, 0 );
 			u[i].name = "ammo";
 			i++;
 		}
@@ -3877,7 +3877,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 	}
@@ -3896,13 +3896,13 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
@@ -3910,7 +3910,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->scan );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),building[nr].data.scan, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.scan, 3 );
 		u[i].name = "scan";
 		i++;
 	}
@@ -3959,7 +3959,7 @@ void cBuilding::CreateUpgradeList ( TList *selection,TList *images,int *selected
 		if ( images->UpgraStrItems[i]->vehicle )
 		{
 			if ( ! ( game->UpShowTank||game->UpShowShip||game->UpShowPlane ) ) continue;
-			vd=& ( vehicle[images->UpgraStrItems[i]->id].data );
+			vd=& ( VehicleMainData.vehicle[images->UpgraStrItems[i]->id].data );
 			if ( game->UpShowTNT&&!vd->can_attack ) continue;
 			if ( vd->can_drive==DRIVE_AIR&&!game->UpShowPlane ) continue;
 			if ( vd->can_drive==DRIVE_SEA&&!game->UpShowShip ) continue;
@@ -3969,7 +3969,7 @@ void cBuilding::CreateUpgradeList ( TList *selection,TList *images,int *selected
 		else
 		{
 			if ( !game->UpShowBuild ) continue;
-			bd=& ( building[images->UpgraStrItems[i]->id].data );
+			bd=& ( BuildingMainData.building[images->UpgraStrItems[i]->id].data );
 			if ( game->UpShowTNT&&!bd->can_attack ) continue;
 			selection->AddUpgraStr ( images->UpgraStrItems[i] );
 		}
@@ -3996,55 +3996,55 @@ void cBuilding::MakeUpgradeSubButtons ( void )
 	// Tank:
 	if ( !game->UpShowTank )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Plane:
 	if ( !game->UpShowPlane )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Ship:
 	if ( !game->UpShowShip )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// Building:
 	if ( !game->UpShowBuild )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
 	// TNT:
 	if ( !game->UpShowTNT )
 	{
-		SDL_BlitSurface ( gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	dest.x+=33;
 	scr.x+=33;
@@ -4476,7 +4476,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym,int x,int y,int maxx,int value,i
 			mark.h=dest.h;
 			SDL_FillRect ( sf,&mark,0xFC0000 );
 		}
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,sf,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,sf,&dest );
 		dest.x+=offx;
 	}
 }
@@ -4603,7 +4603,7 @@ void cBuilding::ShowMineManager ( void )
 	int FreeM=0,FreeO=0,FreeG=0;
 	TList *mines;
 
-	SDL_BlitSurface ( gfx_mine_manager,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,NULL,buffer,NULL );
 	mouse->SetCursor ( CHand );
 
 	// Liste mit Minen erstellen:
@@ -4669,7 +4669,7 @@ void cBuilding::ShowMineManager ( void )
 				dest.h=scr.h=40;
 				dest.x=514;
 				dest.y=438;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -4687,7 +4687,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=40;
 			dest.x=514;
 			dest.y=438;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -4793,7 +4793,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncMetalPressed=true;
@@ -4806,7 +4806,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=421;
 			dest.y=71;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncMetalPressed=false;
@@ -4828,7 +4828,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecMetalPressed=true;
@@ -4841,7 +4841,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=139;
 			dest.y=71;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecMetalPressed=false;
@@ -4863,7 +4863,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncOilPressed=true;
@@ -4876,7 +4876,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=421;
 			dest.y=191;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncOilPressed=false;
@@ -4898,7 +4898,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecOilPressed=true;
@@ -4911,7 +4911,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=139;
 			dest.y=191;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecOilPressed=false;
@@ -4933,7 +4933,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncGoldPressed=true;
@@ -4946,7 +4946,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=421;
 			dest.y=311;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncGoldPressed=false;
@@ -4968,7 +4968,7 @@ void cBuilding::ShowMineManager ( void )
 				CALC_MINE_FREE
 				MakeMineBars ( MaxM,MaxO,MaxG,&FreeM,&FreeO,&FreeG );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecGoldPressed=true;
@@ -4981,7 +4981,7 @@ void cBuilding::ShowMineManager ( void )
 			dest.h=scr.h=27;
 			dest.x=139;
 			dest.y=311;
-			SDL_BlitSurface ( gfx_mine_manager,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecGoldPressed=false;
@@ -5035,7 +5035,7 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 	dest.w=240;
 	dest.h=scr.h=30;
 	dest.y+=offy*37;
-	SDL_BlitSurface ( gfx_mine_manager,&dest,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&dest,buffer,&dest );
 	if ( max_value==0 )
 	{
 		dest.w=scr.w=0;
@@ -5047,14 +5047,14 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 		scr.x=156+ ( 240- ( int ) ( value/ ( ( float ) max_value ) ) *240 );
 	}
 	dest.x=174;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	if ( fixed &&scr.w!=240&&max_value!=0 )
 		{
 			dest.w=scr.w= ( int ) ( fixed / ( ( float ) max_value ) ) *240;
 			dest.x=174+240-scr.w;
 			scr.x=156;
 			scr.y=307;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 	else if ( max_value==0 )
 	{
@@ -5062,7 +5062,7 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 		dest.x=174;
 		scr.x=156;
 		scr.y=307;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	if ( number )
 	{
@@ -5143,7 +5143,7 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 		if ( !go->vehicle&&!go->base&&!go->top )
 		{
 			r.x=1;r.y=29;r.h=3;r.w=35;
-			SDL_FillRect ( gfx_Cattack,&r,0 );
+			SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 			return;
 		}
 		if ( go->top )
@@ -5165,7 +5165,7 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 		if ( !go->plane )
 		{
 			r.x=1;r.y=29;r.h=3;r.w=35;
-			SDL_FillRect ( gfx_Cattack,&r,0 );
+			SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 			return;
 		}
 		v=go->plane;
@@ -5173,7 +5173,7 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	if ( ( v&&v==game->SelectedVehicle ) || ( b&&b==game->SelectedBuilding ) )
 	{
 		r.x=1;r.y=29;r.h=3;r.w=35;
-		SDL_FillRect ( gfx_Cattack,&r,0 );
+		SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 		return;
 	}
 
@@ -5202,13 +5202,13 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	r.y=29;
 	r.h=3;
 	r.w=wp;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0x00FF00 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0x00FF00 );
 	r.x+=r.w;
 	r.w=wc-wp;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0xFF0000 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0xFF0000 );
 	r.x+=r.w;
 	r.w=35-wc;
-	if ( r.w ) SDL_FillRect ( gfx_Cattack,&r,0 );
+	if ( r.w ) SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 }
 
 // Dreht das Building in die angegebene Richtung:
@@ -5244,7 +5244,7 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
-	bool Beschreibung=ShowBeschreibung;
+	bool Beschreibung=GameSettingsData.ShowDescription;
 	bool Wiederholen=false;
 	bool DownPressed=false;
 	bool UpPressed=false;
@@ -5260,7 +5260,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
-	SDL_BlitSurface ( gfx_fac_build_screen,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,NULL,buffer,NULL );
 
 	// Der Haken:
 	if ( Beschreibung )
@@ -5269,7 +5269,7 @@ void cBuilding::ShowBuildMenu ( void )
 		dest.y=scr.y=264;
 		dest.w=scr.w=17;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -5279,30 +5279,30 @@ void cBuilding::ShowBuildMenu ( void )
 		dest.y=264;
 		dest.w=scr.w=18;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 
 	// Die Images erstellen:
 	images=new TList;
 	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
-	for ( i=0;i<vehicle_anz;i++ )
+	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
 	{
 		sBuildStruct *n;
 		SDL_Surface *sf;
 
-		if ( data.can_build==BUILD_AIR&&vehicle[i].data.can_drive!=DRIVE_AIR ) continue;
-		else if ( data.can_build==BUILD_BIG&&!vehicle[i].data.build_by_big ) continue;
-		else if ( data.can_build==BUILD_SEA&&vehicle[i].data.can_drive!=DRIVE_SEA ) continue;
-		else if ( data.can_build==BUILD_SMALL&& ( vehicle[i].data.can_drive==DRIVE_AIR||vehicle[i].data.can_drive==DRIVE_SEA||vehicle[i].data.build_by_big||vehicle[i].data.is_human ) ) continue;
-		else if ( data.can_build==BUILD_MAN&&!vehicle[i].data.is_human ) continue;
-		else if ( !data.build_alien&&vehicle[i].data.is_alien ) continue;
-		else if ( data.build_alien&&!vehicle[i].data.is_alien ) continue;
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w/2,vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,vehicle[i].img[0]->w,vehicle[i].img[0]->h,32,0,0,0,0 );
+		if ( data.can_build==BUILD_AIR&&VehicleMainData.vehicle[i].data.can_drive!=DRIVE_AIR ) continue;
+		else if ( data.can_build==BUILD_BIG&&!VehicleMainData.vehicle[i].data.build_by_big ) continue;
+		else if ( data.can_build==BUILD_SEA&&VehicleMainData.vehicle[i].data.can_drive!=DRIVE_SEA ) continue;
+		else if ( data.can_build==BUILD_SMALL&& ( VehicleMainData.vehicle[i].data.can_drive==DRIVE_AIR||VehicleMainData.vehicle[i].data.can_drive==DRIVE_SEA||VehicleMainData.vehicle[i].data.build_by_big||VehicleMainData.vehicle[i].data.is_human ) ) continue;
+		else if ( data.can_build==BUILD_MAN&&!VehicleMainData.vehicle[i].data.is_human ) continue;
+		else if ( !data.build_alien&&VehicleMainData.vehicle[i].data.is_alien ) continue;
+		else if ( data.build_alien&&!VehicleMainData.vehicle[i].data.is_alien ) continue;
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
-		SDL_BlitSurface ( vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( vehicle[i].img_org[0],vehicle[i].img[0],vehicle[i].img_org[0]->w* newzoom,vehicle[i].img_org[0]->h* newzoom );
+		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w* newzoom,VehicleMainData.vehicle[i].img_org[0]->h* newzoom );
 		n=new sBuildStruct;
 		n->sf=sf;
 		n->id=i;
@@ -5322,7 +5322,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			sBuildStruct *bs;
 			bs=images->BuildStructItems[k];
-			if ( vehicle[bs->id].nr==ptr->typ->nr )
+			if ( VehicleMainData.vehicle[bs->id].nr==ptr->typ->nr )
 			{
 				to_build->AddBuildStruct ( images->BuildStructItems[k] );
 				break;
@@ -5338,7 +5338,7 @@ void cBuilding::ShowBuildMenu ( void )
 		dest.x=447;dest.y=322;
 		dest.w=scr.w=18;
 		dest.h=scr.h=17;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
@@ -5387,7 +5387,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( selected<offset ) selected=offset;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=true;
@@ -5400,7 +5400,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=440;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -5421,7 +5421,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( selected>=offset+9 ) selected=offset+8;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=true;
@@ -5434,7 +5434,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=471;
 			dest.y=440;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
@@ -5455,7 +5455,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( build_selected>=build_offset+5 ) build_selected=build_offset+4;
 				ShowToBuildList ( to_build,build_selected,build_offset );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Down2Pressed=true;
@@ -5468,7 +5468,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=327;
 			dest.y=293;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Down2Pressed=false;
@@ -5489,7 +5489,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( build_selected<build_offset ) build_selected=build_offset;
 				ShowToBuildList ( to_build,build_selected,build_offset );
 			}
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Up2Pressed=true;
@@ -5502,7 +5502,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=347;
 			dest.y=293;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Up2Pressed=false;
@@ -5517,7 +5517,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=23;
 			dest.x=548;
 			dest.y=442;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BauenPressed=true;
@@ -5535,7 +5535,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=23;
 			dest.x=548;
 			dest.y=442;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BauenPressed=false;
@@ -5550,7 +5550,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=23;
 			dest.x=412;
 			dest.y=293;
-			SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=true;
@@ -5579,7 +5579,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=23;
 			dest.x=412;
 			dest.y=293;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=false;
@@ -5596,7 +5596,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=307;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -5615,7 +5615,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=307;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -5632,7 +5632,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.h=scr.h=24;
 				dest.x=397;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5664,7 +5664,7 @@ void cBuilding::ShowBuildMenu ( void )
 				i=0;
 				if ( BuildList->Count )
 				{
-					if ( vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
+					if ( VehicleMainData.vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
 					{
 						while ( BuildList->Count>1 )
 						{
@@ -5690,7 +5690,7 @@ void cBuilding::ShowBuildMenu ( void )
 				{
 					sBuildList *n;
 					n=new sBuildList;
-					n->typ=vehicle+to_build->BuildStructItems[i]->id;
+					n->typ=VehicleMainData.vehicle+to_build->BuildStructItems[i]->id;
 					n->metall_remaining=owner->VehicleData[n->typ->nr].costs;
 					BuildList->AddBuildList ( n );
 				}
@@ -5705,7 +5705,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=24;
 			dest.x=397;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -5715,14 +5715,14 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			PlayFX ( SNDObjectMenu );
 			Beschreibung=!Beschreibung;
-			ShowBeschreibung=Beschreibung;
+			GameSettingsData.ShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
 				dest.x=scr.x=291;
 				dest.y=scr.y=264;
 				dest.w=scr.w=17;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			}
 			else
 			{
@@ -5732,7 +5732,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.y=264;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 			SHOW_SCREEN
@@ -5749,7 +5749,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.y=scr.y=322;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
 			}
 			else
 			{
@@ -5759,7 +5759,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.y=322;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 
 			SHOW_SCREEN
@@ -5898,10 +5898,10 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 	int i,t;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=378;
-	SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&scr );
 	scr.x=373;scr.y=344;
 	scr.w=77;scr.h=72;
-	SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
@@ -5941,15 +5941,15 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			// Das Bild neu malen:
 			tmp.x=11;tmp.y=13;
-			tmp.w=vehicle[ptr->id].info->w;
-			tmp.h=vehicle[ptr->id].info->h;
-			SDL_BlitSurface ( vehicle[ptr->id].info,NULL,buffer,&tmp );
+			tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
+			tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
+			SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
 			{
 				tmp.x+=10;tmp.y+=10;
 				tmp.w-=20;tmp.h-=20;
-				fonts->OutTextBlock ( vehicle[ptr->id].text,tmp,buffer );
+				fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
 			}
 			// Die Details anzeigen:
 			{
@@ -5958,8 +5958,8 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 				tmp.y=290;
 				tmp.w=260;
 				tmp.h=176;
-				SDL_BlitSurface ( gfx_fac_build_screen,&tmp,buffer,&tmp );
-				tv=new cVehicle ( vehicle+ptr->id,game->ActivePlayer );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
+				tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,game->ActivePlayer );
 				tv->ShowBigDetails();
 				delete tv;
 			}
@@ -5985,9 +5985,9 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
@@ -6008,31 +6008,31 @@ void cBuilding::DrawBuildButtons ( int speed )
 	if ( speed==1 )
 	{
 		scr.x=39;scr.y=126;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_fac_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=24;
 	if ( speed==2 )
 	{
 		scr.x=118;scr.y=126;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_fac_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=25;
 	if ( speed==4 )
 	{
 		scr.x=216;scr.y=106;
-		SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( gfx_fac_build_screen,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
 	}
 }
 
@@ -6045,7 +6045,7 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 	int i,t;
 	scr.x=330;scr.y=49;
 	scr.w=128;scr.h=233;
-	SDL_BlitSurface ( gfx_fac_build_screen,&scr,buffer,&scr );
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=340;dest.y=58;
@@ -6087,9 +6087,9 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
@@ -6164,7 +6164,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=588;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Bauen:
@@ -6179,7 +6179,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=0;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Verteilen:
@@ -6194,7 +6194,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=504;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Transfer:
@@ -6209,7 +6209,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=42;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Start:
@@ -6227,7 +6227,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=672;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Stop:
@@ -6242,7 +6242,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=210;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Aktivieren/Laden:
@@ -6258,7 +6258,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=462;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 		// Laden:
 		if ( SelMenu==nr ) scr.y=21;else scr.y=0;
@@ -6270,7 +6270,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=420;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Forschen:
@@ -6286,7 +6286,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=714;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Upgradeschirm:
@@ -6302,7 +6302,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=798;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Updates:
@@ -6343,7 +6343,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=756;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 
 		// Dies Updaten:
@@ -6362,7 +6362,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=798;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Entfernen:
@@ -6377,7 +6377,7 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 		scr.x=252;
-		SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
 	// Info:
@@ -6390,7 +6390,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 	scr.x=840;
-	SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 	dest.y+=22;nr++;
 	// Fertig:
 	if ( SelMenu==nr ) scr.y=21;else scr.y=0;
@@ -6401,7 +6401,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 	scr.x=126;
-	SDL_BlitSurface ( gfx_object_menu,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 }
 
 // Zentriert auf dieses Building:
@@ -6505,7 +6505,7 @@ void cBuilding::Deselct ( void )
 	dest.h=scr.h=48;
 	dest.x=8;
 	dest.y=171;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	StopFXLoop ( game->ObjectStream );
 	game->ObjectStream=-1;
 }
@@ -6520,62 +6520,62 @@ void cBuilding::ShowDetails ( void )
 	dest.h=scr.h=48;
 	dest.x=8;
 	dest.y=171;
-	SDL_BlitSurface ( gfx_hud_stuff,&scr,gfx_hud,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	// Die Hitpoints anzeigen:
-	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,gfx_hud );
-	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,gfx_hud );
-	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,gfx_hud );
+	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,GraphicsData.gfx_hud );
+	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 	if ( data.max_shield )
 	{
 		// Schild:
-		DrawNumber ( 31,189,data.shield,data.max_shield,gfx_hud );
-		fonts->OutTextSmall ( "Schild",55,189,ClWhite,gfx_hud );
-		DrawSymbol ( SShield,88,186,70,data.shield,data.max_shield,gfx_hud );
+		DrawNumber ( 31,189,data.shield,data.max_shield,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Schild",55,189,ClWhite,GraphicsData.gfx_hud );
+		DrawSymbol ( SShield,88,186,70,data.shield,data.max_shield,GraphicsData.gfx_hud );
 	}
 	if ( data.can_load&&owner==game->ActivePlayer )
 	{
 		// Load:
-		DrawNumber ( 31,189,data.cargo,data.max_cargo,gfx_hud );
-		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,gfx_hud );
+		DrawNumber ( 31,189,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,GraphicsData.gfx_hud );
 		switch ( data.can_load )
 		{
 			case TRANS_METAL:
-				DrawSymbol ( SMetal,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SMetal,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_OIL:
-				DrawSymbol ( SOil,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SOil,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_GOLD:
-				DrawSymbol ( SGold,88,187,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SGold,88,187,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_VEHICLES:
-				DrawSymbol ( STrans,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( STrans,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_MEN:
-				DrawSymbol ( SHuman,88,186,70,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SHuman,88,186,70,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 			case TRANS_AIR:
-				DrawSymbol ( SAir,88,186,50,data.cargo,data.max_cargo,gfx_hud );
+				DrawSymbol ( SAir,88,186,50,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
 				break;
 		}
 		// Gesamt:
 		if ( data.can_load==TRANS_METAL||data.can_load==TRANS_OIL||data.can_load==TRANS_GOLD )
 		{
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,gfx_hud );
+			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
 			switch ( data.can_load )
 			{
 				case TRANS_METAL:
-					DrawNumber ( 31,201,SubBase->Metal,SubBase->MaxMetal,gfx_hud );
-					DrawSymbol ( SMetal,88,198,70,SubBase->Metal,SubBase->MaxMetal,gfx_hud );
+					DrawNumber ( 31,201,SubBase->Metal,SubBase->MaxMetal,GraphicsData.gfx_hud );
+					DrawSymbol ( SMetal,88,198,70,SubBase->Metal,SubBase->MaxMetal,GraphicsData.gfx_hud );
 					break;
 				case TRANS_OIL:
-					DrawNumber ( 31,201,SubBase->Oil,SubBase->MaxOil,gfx_hud );
-					DrawSymbol ( SOil,88,198,70,SubBase->Oil,SubBase->MaxOil,gfx_hud );
+					DrawNumber ( 31,201,SubBase->Oil,SubBase->MaxOil,GraphicsData.gfx_hud );
+					DrawSymbol ( SOil,88,198,70,SubBase->Oil,SubBase->MaxOil,GraphicsData.gfx_hud );
 					break;
 				case TRANS_GOLD:
-					DrawNumber ( 31,201,SubBase->Gold,SubBase->MaxGold,gfx_hud );
-					DrawSymbol ( SGold,88,199,70,SubBase->Gold,SubBase->MaxGold,gfx_hud );
+					DrawNumber ( 31,201,SubBase->Gold,SubBase->MaxGold,GraphicsData.gfx_hud );
+					DrawSymbol ( SGold,88,199,70,SubBase->Gold,SubBase->MaxGold,GraphicsData.gfx_hud );
 					break;
 			}
 		}
@@ -6585,49 +6585,49 @@ void cBuilding::ShowDetails ( void )
 		if ( owner==game->ActivePlayer )
 		{
 			// Munition:
-			DrawNumber ( 31,189,data.ammo,data.max_ammo,gfx_hud );
-			fonts->OutTextSmall ( "Munni",55,189,ClWhite,gfx_hud );
-			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,gfx_hud );
+			DrawNumber ( 31,189,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( "Munni",55,189,ClWhite,GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
 		}
 		// Schüsse:
-		DrawNumber ( 31,212,data.shots,data.max_shots,gfx_hud );
-		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,gfx_hud );
-		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,gfx_hud );
+		DrawNumber ( 31,212,data.shots,data.max_shots,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,GraphicsData.gfx_hud );
+		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,GraphicsData.gfx_hud );
 	}
 	else if ( data.energy_prod )
 	{
 		// EnergieProduktion:
-		DrawNumber ( 31,189, ( IsWorking?data.energy_prod:0 ),data.energy_prod,gfx_hud );
-		fonts->OutTextSmall ( "Energie",55,189,ClWhite,gfx_hud );
-		DrawSymbol ( SEnergy,88,187,70, ( IsWorking?data.energy_prod:0 ),data.energy_prod,gfx_hud );
+		DrawNumber ( 31,189, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Energie",55,189,ClWhite,GraphicsData.gfx_hud );
+		DrawSymbol ( SEnergy,88,187,70, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,gfx_hud );
-			DrawNumber ( 31,201,SubBase->EnergyProd,SubBase->MaxEnergyProd,gfx_hud );
-			DrawSymbol ( SEnergy,88,199,70,SubBase->EnergyProd,SubBase->MaxEnergyProd,gfx_hud );
+			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			DrawNumber ( 31,201,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
+			DrawSymbol ( SEnergy,88,199,70,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,gfx_hud );
-			DrawNumber ( 31,212,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,gfx_hud );
-			DrawSymbol ( SEnergy,88,212,70,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,gfx_hud );
+			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,GraphicsData.gfx_hud );
+			DrawNumber ( 31,212,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
+			DrawSymbol ( SEnergy,88,212,70,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
 		}
 	}
 	else if ( data.human_prod )
 	{
 		// HumanProduktion:
-		DrawNumber ( 31,189,data.human_prod,data.human_prod,gfx_hud );
-		fonts->OutTextSmall ( "Teams",55,189,ClWhite,gfx_hud );
-		DrawSymbol ( SHuman,88,187,70,data.human_prod,data.human_prod,gfx_hud );
+		DrawNumber ( 31,189,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( "Teams",55,189,ClWhite,GraphicsData.gfx_hud );
+		DrawSymbol ( SHuman,88,187,70,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,gfx_hud );
-			DrawNumber ( 31,201,SubBase->HumanProd,SubBase->HumanProd,gfx_hud );
-			DrawSymbol ( SHuman,88,199,70,SubBase->HumanProd,SubBase->HumanProd,gfx_hud );
+			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			DrawNumber ( 31,201,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman,88,199,70,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,gfx_hud );
-			DrawNumber ( 31,212,SubBase->HumanNeed,SubBase->MaxHumanNeed,gfx_hud );
-			DrawSymbol ( SHuman,88,210,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,gfx_hud );
+			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,GraphicsData.gfx_hud );
+			DrawNumber ( 31,212,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman,88,210,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}
 	}
 	else if ( data.human_need )
@@ -6635,22 +6635,22 @@ void cBuilding::ShowDetails ( void )
 		// HumanNeed:
 		if ( IsWorking )
 		{
-			DrawNumber ( 31,189,data.human_need,data.human_need,gfx_hud );
-			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,gfx_hud );
-			DrawSymbol ( SHuman,88,187,70,data.human_need,data.human_need,gfx_hud );
+			DrawNumber ( 31,189,data.human_need,data.human_need,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman,88,187,70,data.human_need,data.human_need,GraphicsData.gfx_hud );
 		}
 		else
 		{
-			DrawNumber ( 31,189,0,data.human_need,gfx_hud );
-			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,gfx_hud );
-			DrawSymbol ( SHuman,88,187,70,0,data.human_need,gfx_hud );
+			DrawNumber ( 31,189,0,data.human_need,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman,88,187,70,0,data.human_need,GraphicsData.gfx_hud );
 		}
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,gfx_hud );
-			DrawNumber ( 31,201,SubBase->HumanNeed,SubBase->MaxHumanNeed,gfx_hud );
-			DrawSymbol ( SHuman,88,199,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,gfx_hud );
+			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			DrawNumber ( 31,201,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman,88,199,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}
 	}
 }
@@ -6783,11 +6783,11 @@ void cBuilding::DrawSymbol ( eSymbols sym,int x,int y,int maxx,int value,int max
 	{
 		if ( value>0 )
 		{
-			SDL_BlitSurface ( gfx_hud_stuff,&full,sf,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&full,sf,&dest );
 		}
 		else
 		{
-			SDL_BlitSurface ( gfx_hud_stuff,&empty,sf,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&empty,sf,&dest );
 		}
 		dest.x+=offx;
 		value-=step;
@@ -6831,7 +6831,7 @@ void cBuilding::ShowHelp ( void )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( gfx_help_screen,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_help_screen,NULL,buffer,NULL );
 	// Das Infobild blitten:
 	dest.x=11;
 	dest.y=13;
@@ -6878,7 +6878,7 @@ void cBuilding::ShowHelp ( void )
 				dest.h=scr.h=22;
 				dest.x=484;
 				dest.y=452;
-				SDL_BlitSurface ( gfx_hud_stuff,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -6896,7 +6896,7 @@ void cBuilding::ShowHelp ( void )
 			dest.h=scr.h=22;
 			dest.x=484;
 			dest.y=452;
-			SDL_BlitSurface ( gfx_help_screen,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_help_screen,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
