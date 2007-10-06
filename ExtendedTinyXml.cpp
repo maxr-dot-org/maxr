@@ -185,3 +185,8 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 	}
 	return (ExTiXmlNode *)pXmlNode;
 }
+
+bool ExTiXmlNode::IsTimeStamp( std::string &rstrData )
+{
+	return true;
+}
