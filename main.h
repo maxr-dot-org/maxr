@@ -60,7 +60,73 @@ struct sPathCalc;
 struct sReport;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Struktures
+// Defines
+// ------------------------
+// 
+///////////////////////////////////////////////////////////////////////////////
+#define MAXVERSION "M.A.X. Reloaded 0.52.0 SVN"
+//#define MAXVERSION "M.A.X. Reloaded 0.52.0 SVN BUILD 200710052230"
+//#define MAXVERSION "M.A.X. Reloaded 0.52.1"
+
+#define MAX_VERSION        "0.52.0"
+#define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
+#define MINIMAP_COLOR      0xFC0000 // Farbe des Rahmens in der Minimap
+#define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
+#define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises für Land
+#define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
+#define RANGE_SHIELD_COLOR 0x9CFFA5 // Farbe des Reichweiten Kreises für Schild
+#define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
+#define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
+#define MOVE_SPEED         16       // Geschwindigkeit der Fahrzeuge
+#define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
+#define MAX_PATHFINDING    5000     // Maximale Endpunktezal fürs Pathfinding
+
+// GFX On Demand /////////////////////////////////////////////////////////////
+#define GFXOD_MAIN          "gfx_od\\main.pcx"
+#define GFXOD_OPTIONS       "gfx_od\\options.pcx"
+#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
+#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
+#define GFXOD_MULT          "gfx_od\\mult.pcx"
+#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
+
+// Colors /////////////////////////////////////////////////////////////////////
+#define cl_red 0
+#define cl_blue 1
+#define cl_green 2
+#define cl_grey 3
+#define cl_orange 4
+#define cl_yellow 5
+#define cl_purple 6
+#define cl_aqua 7
+
+///////////////////////////////////////////////////////////////////////////////
+// Globals
+// ------------------------
+// 
+///////////////////////////////////////////////////////////////////////////////
+
+EX bool LoadingData;
+
+// Screenbuffers //////////////////////////////////////////////////////////////
+EX SDL_Surface *screen ZERO;	// Der Bildschirm
+EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
+
+// Nummbers of buildings //////////////////////////////////////////////////////
+EX int BNrLandMine ZERO;
+EX int BNrSeaMine ZERO;
+EX int BNrMine ZERO;
+EX int BNrSmallGen ZERO;
+EX int BNrOilStore ZERO;
+
+// Initvalues for Research ////////////////////////////////////////////////////
+#ifdef __main__
+int ResearchInits[8]={16,16,33,8,8,16,33,33};
+#else
+extern int ResearchInits[8];
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+// Structures
 // ------------------------
 // 
 ///////////////////////////////////////////////////////////////////////////////
@@ -152,70 +218,6 @@ public:
 	void DeleteHUp(int i){ HUpItems[i] = 0; for(int j = i; j < Count; j++) HUpItems[j]=HUpItems[j+1]; Count--; }
 	void DeleteClientSettings(int i){ ClientSettingsItems[i] = 0; for(int j = i; j < Count; j++) ClientSettingsItems[j]=ClientSettingsItems[j+1]; Count--; }
 };
-
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-// 
-///////////////////////////////////////////////////////////////////////////////
-#define MAXVERSION "M.A.X. Reloaded v SVN..."
-//#define MAXVERSION M.A.X. Reloaded v MAX_VERSION....
-
-#define MAX_VERSION        "Alpha 0.9"
-#define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
-#define MINIMAP_COLOR      0xFC0000 // Farbe des Rahmens in der Minimap
-#define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
-#define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises für Land
-#define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
-#define RANGE_SHIELD_COLOR 0x9CFFA5 // Farbe des Reichweiten Kreises für Schild
-#define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
-#define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
-#define MOVE_SPEED         16       // Geschwindigkeit der Fahrzeuge
-#define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
-#define MAX_PATHFINDING    5000     // Maximale Endpunktezal fürs Pathfinding
-
-// GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN          "gfx_od\\main.pcx"
-#define GFXOD_OPTIONS       "gfx_od\\options.pcx"
-#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
-#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
-#define GFXOD_MULT          "gfx_od\\mult.pcx"
-#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
-
-// Colors /////////////////////////////////////////////////////////////////////
-#define cl_red 0
-#define cl_blue 1
-#define cl_green 2
-#define cl_grey 3
-#define cl_orange 4
-#define cl_yellow 5
-#define cl_purple 6
-#define cl_aqua 7
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Variables-Classes
-// ------------------------
-// This classes are for saving global Variables needed by the game
-///////////////////////////////////////////////////////////////////////////////
-
-// Screenbuffers //////////////////////////////////////////////////////////////
-EX SDL_Surface *screen ZERO;	// Der Bildschirm
-EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
-
-// Nummbers of buildings //////////////////////////////////////////////////////
-EX int BNrLandMine ZERO;
-EX int BNrSeaMine ZERO;
-EX int BNrMine ZERO;
-EX int BNrSmallGen ZERO;
-EX int BNrOilStore ZERO;
-
-// Initvalues for Research ////////////////////////////////////////////////////
-#ifdef __main__
-int ResearchInits[8]={16,16,33,8,8,16,33,33};
-#else
-extern int ResearchInits[8];
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes
@@ -436,7 +438,6 @@ public:
 // This classes are for saving global Variables needed by the game
 ///////////////////////////////////////////////////////////////////////////////
 
-int InitSound();
 int LoadData(void *);
 void MakeLog(char* sztxt,bool ok,int pos);
 void ScaleSurface(SDL_Surface *scr,SDL_Surface **dest,int size);
