@@ -29,12 +29,12 @@ int LoadData ( void * )
 	ExTiXmlNode * pXmlNode = NULL;
 	while(!FileExists("max.xml"))
 	{
-		cLog::write ( "file not found: max.xml./ngenerating new file", LOG_TYPE_WARNING );
+		cLog::write ( "file not found: max.xml.\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateMaxXml();
 	}
 	while(!MaxXml.LoadFile("max.xml"))
 	{
-		cLog::write ( "cannot load max.xml/ngenerating new file", LOG_TYPE_WARNING );
+		cLog::write ( "cannot load max.xml\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateMaxXml();
 	}
 	// Load fonts for SplashMessages
@@ -44,25 +44,25 @@ int LoadData ( void * )
 		SettingsData.sFontPath = sTmpString;
 	else
 	{
-		cLog::write ( "Cannot load FontsPath out of max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load FontsPath from max.xml: using default value", LOG_TYPE_INFO );
 		SettingsData.sFontPath = "fonts";
 	}
 
 	if(!LoadGraphicToSurface(FontsData.font, SettingsData.sFontPath.c_str(), "font.pcx"))
 	{
-		cLog::write ( "File for game needed! Application Stoped", LOG_TYPE_ERROR );
+		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	if(!LoadGraphicToSurface(FontsData.font_big, SettingsData.sFontPath.c_str(), "font_big.pcx"))
 	{
-		cLog::write ( "File for game needed! Application Stoped", LOG_TYPE_ERROR );
+		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx"))
 	{
-		cLog::write ( "File for game needed! Application Stoped", LOG_TYPE_ERROR );
+		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
@@ -120,14 +120,14 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
 	{
-		filepath.insert(0,"file not found: ");
+		filepath.insert(0,"File not found: ");
 		cLog::write ( filepath.c_str(), LOG_TYPE_WARNING );
 		return 0;
 	}
 
 	dest = LoadPCX((char *)filepath.c_str());
 
-	filepath.insert(0,"file successful loaded: ");
+	filepath.insert(0,"File successful loaded: ");
 	cLog::write ( filepath.c_str(), LOG_TYPE_DEBUG );
 
 	return 1;
@@ -146,7 +146,7 @@ int CheckFile(const char* directory, const char* filename)
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
 	{
-		filepath.insert(0,"file not found: ");
+		filepath.insert(0,"File not found: ");
 		cLog::write ( filepath.c_str(), LOG_TYPE_WARNING );
 		return 0;
 	}
@@ -154,7 +154,7 @@ int CheckFile(const char* directory, const char* filename)
 }
 
 // ReadMaxXml /////////////////////////////////////////////////////////////////
-// Reads the Information out of the max.xml:
+// Reads the Information from the max.xml:
 void ReadMaxXml(TiXmlDocument MaxXml)
 {
 	cLog::write ( "Reading max.xml\n", LOG_TYPE_INFO );
@@ -170,7 +170,7 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 	}
 	else
 	{
-		cLog::write ( "Cannot load Resolution out of max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load resolution from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iScreenW = 640;
 		SettingsData.iScreenH = 480;
 	}
@@ -180,7 +180,7 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 		SettingsData.iColourDepth = atoi(sTmpString.c_str());
 	else
 	{
-		cLog::write ( "Cannot load ColourDepth out of max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iColourDepth = 32;
 	}
 
@@ -189,7 +189,7 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 		SettingsData.iColourDepth = pXmlNode->XmlDataToBool(sTmpString);
 	else
 	{
-		cLog::write ( "Cannot load Intro out of max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load Intro from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iColourDepth = false;
 	}*/
 
@@ -198,7 +198,7 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 		SettingsData.sGfxPath = sTmpString;
 	else
 	{
-		cLog::write ( "Cannot load GfxPath out of max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load GfxPath from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sGfxPath = "gfx";
 	}
 

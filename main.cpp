@@ -44,9 +44,9 @@ TList::TList ( void )
 int main ( int argc, char *argv[] )
 {
 	cLog::write ( MAXVERSION );
-	if(initSDL() == -1) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
+	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
-	srand ( ( unsigned ) time ( NULL ) ); //start random number generator 
+	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
 	showSplash(); //show splashscreen
 
@@ -55,38 +55,37 @@ int main ( int argc, char *argv[] )
 	DataThread = SDL_CreateThread ( LoadData,NULL );
 
 	SDL_Event event;
-	while(LoadingData != LOAD_FINISHED)
+	while ( LoadingData != LOAD_FINISHED )
 	{
-		if(LoadingData == LOAD_ERROR)
+		if ( LoadingData == LOAD_ERROR )
 		{
-			cLog::write("Error while loading data! Application stoped!\n",LOG_TYPE_ERROR);
+			cLog::write ( "Error while loading data!",LOG_TYPE_ERROR );
 			SDL_WaitThread ( DataThread, NULL );
 			SDL_Quit();
 			return 0;
 		}
-		while( SDL_PollEvent( &event ) )
-        {
-            if( event.type == SDL_ACTIVEEVENT )
-            {
+		while ( SDL_PollEvent ( &event ) )
+		{
+			if ( event.type == SDL_ACTIVEEVENT )
+			{
 				SDL_UpdateRect ( screen,0,0,0,0 );
-            }    
-        }
-		SDL_Delay(10);
+			}
+		}
+		SDL_Delay ( 10 );
 	}
 
- 	SDL_Delay ( 3000 ); //debug only
+	//SDL_Delay ( 3000 ); //debug only
 
 	SDL_WaitThread ( DataThread, NULL );
 
 	showGameWindow(); //start game-window
- 	SDL_Delay ( 3000 ); //debug only
+	SDL_Delay ( 3000 ); //debug only
 
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
 	// Das Menü starten:
 //	RunMainMenu();
-	cLog::write ( "Stopped logging.\n\n" );
 	Quit();
 	return 0;
 }
@@ -99,8 +98,8 @@ void showSplash()
 
 	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
-	if ( buffer == NULL ) cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
-	
+	if ( buffer == NULL ) cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
@@ -121,61 +120,62 @@ void showGameWindow()
 		screen=SDL_SetVideoMode ( SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE );
 	}
 	SDL_FillRect ( buffer,NULL,0 );
- 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
+	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
 	SDL_ShowCursor ( 1 ); // hide cursor during splash
 }
 
 int initSDL()
 {
-	putenv("SDL_VIDEO_WINDOW_POS=center"); //Set env for SDL - must be done _before_ init_sdl
-	putenv("SDL_VIDEO_CENTERED=1");
+	putenv ( "SDL_VIDEO_WINDOW_POS=center" ); //Set env for SDL - must be done _before_ init_sdl
+	putenv ( "SDL_VIDEO_CENTERED=1" );
 
 	if ( SDL_Init ( SDL_INIT_VIDEO ) == -1 ) // start SDL basics
 	{
-		cLog::write("Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR);
-		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
+		cLog::write ( "Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR );
+		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
 	if ( SDL_Init ( SDL_INIT_TIMER ) == -1 )
 	{
-		cLog::write("Could not init SDL_TIMER",cLog::eLOG_TYPE_ERROR);
-		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
+		cLog::write ( "Could not init SDL_TIMER",cLog::eLOG_TYPE_ERROR );
+		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
 	if ( SDL_Init ( SDL_INIT_NOPARACHUTE ) == -1 )
 	{
-		cLog::write("Could not init SDL_NOPARACHUTE",cLog::eLOG_TYPE_ERROR);
-		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_ERROR);
+		cLog::write ( "Could not init SDL_NOPARACHUTE",cLog::eLOG_TYPE_ERROR );
+		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
-	cLog::write("Initalized SDL basics - looks good!\n",cLog::eLOG_TYPE_INFO); //made it - enough to start game
+	cLog::write ( "Initalized SDL basics - looks good!\n",cLog::eLOG_TYPE_INFO ); //made it - enough to start game
 
 	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
 	{
-		cLog::write("Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING);
-		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_WARNING);
+		cLog::write ( "Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		return 1;
 	}
 
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
-		cLog::write("Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING);
-		cLog::write(SDL_GetError(),cLog::eLOG_TYPE_WARNING);
+		cLog::write ( "Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING );
+		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		return 1;
 	}
 	return 0;
 }
 
 void Quit()
-{	
+{
 	delete mouse;
 	//unload files here
 	SDLNet_Quit();
 	SDL_Quit();
-	exit(0);
+	cLog::write ( "EOF" );
+	exit ( 0 );
 }
 
 // InitSound /////////////////////////////////////////////////////////////////
