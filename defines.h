@@ -14,7 +14,7 @@
 #define ONE 
 #endif
 
-#define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(WindowMode)SDL_UpdateRect(screen,0,0,0,0);
+#define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(GameSettingsData.WindowMode)SDL_UpdateRect(screen,0,0,0,0);
 
 #endif
 
