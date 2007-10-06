@@ -9,12 +9,7 @@
 //  This class handles the support for language packs in XML-format.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <string>
-#include <tinyxml.h>
-#include "log.h"
 #include "language.h"
-#include "ExtendedTinyXml.h"
-#include "defines.h"
 
 extern cLog fLog;
 
@@ -57,18 +52,17 @@ std::string cLanguage::Translate(std::string szInputText)
 
 int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 {
-	TiXmlDocument XmlDoc;
 	ExTiXmlNode * pXmlNode = NULL;
 	std::string strResult;
 
 	// Load the file
-	if( !XmlDoc.LoadFile( m_szLanguageFile.c_str() ))
+	if( !m_XmlDoc.LoadFile( m_szLanguageFile.c_str() ))
 	{
 		fLog.write( "Can't open language file", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	// Is the main node correct ?
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, XNP_MAX_LANG_FILE );
+	pXmlNode = pXmlNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE );
 	if( pXmlNode == NULL )
 	{
 		fLog.write( "Language file: missing main node!", cLog::eLOG_TYPE_ERROR );
@@ -76,7 +70,7 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	}
 
 	// Who is responsible for the file ? (Who is to blame in case of errors?)
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, XNP_MAX_LANG_FILE_HEADER_AUTHOR );
+	pXmlNode = pXmlNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE_HEADER_AUTHOR );
 	if( pXmlNode == NULL )
 	{
 		fLog.write( "Language file: missing author node!", cLog::eLOG_TYPE_WARNING );
@@ -85,6 +79,7 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 		pXmlNode->XmlGetLastEditor( strResult, pXmlNode );
 	}
 
+	// Check the lang attribute of the main node
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
 	{
 		fLog.write( "Language file: language attribut missing! Language can not be identified", cLog::eLOG_TYPE_ERROR );
@@ -92,7 +87,7 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	}
 	if( m_szLanguage  != strResult )
 	{
-		fLog.write( "Language file: language attribut missing! Language can not be identified", cLog::eLOG_TYPE_ERROR );
+		fLog.write( "Language file: language attribut mismatch the selected language", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
@@ -100,9 +95,11 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 		fLog.write( "Language file: language attribut 'lang' missing! Language can not be identified", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
+
+	// Writing is left-to-right oder vice versa ?
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "direction" ) == NULL )
 	{
-		fLog.write( "Language file: language attribut 'direction' missing! Writing direction will be set to 'Left-To-Right'", cLog::eLOG_TYPE_WARNING );
+		fLog.write( "Language file: language attribut 'direction' is missing! Writing direction will be set to 'Left-To-Right'", cLog::eLOG_TYPE_WARNING );
 		m_bLeftToRight = true;
 	}
 	if( strResult == "left-to-right" ) 
@@ -117,6 +114,38 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 		m_bLeftToRight = true;
 	}
 
+	pXmlNode = pXmlNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE_HEADER_GAMEVERSION );
+	if( pXmlNode == NULL )
+	{
+		fLog.write( "Language file: missing game version node!", cLog::eLOG_TYPE_WARNING );
+	}else
+	{
+		if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "time" ) == NULL )
+		{
+			fLog.write( "Language file: game version attribute 'time' is missing!", cLog::eLOG_TYPE_WARNING );
+		}else
+		{
+			int iTestResult = pXmlNode->CheckTimeStamp( strResult );
+			switch( iTestResult )
+			{
+				case -1 : 
+					fLog.write( "Language file: game version attribute has wrong format!", cLog::eLOG_TYPE_WARNING );
+					break;
+				case 0 : 
+					fLog.write( "Language file may be outdated!", cLog::eLOG_TYPE_WARNING );
+					break;
+				case 1 :
+					fLog.write( "Language file is newer than the game!", cLog::eLOG_TYPE_WARNING );
+					break;
+				case 2 :
+					// Timestamps match
+					break;
+			}
+		}
+	}
+
+	// Now - finaly - let's get the translations.
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Game_Title" , "" );
 
 	return 0;
 }
@@ -125,3 +154,75 @@ int cLanguage::CheckCurrentLanguagePack(bool bInsertMissingEntries)
 {
 	return 0;
 }
+
+int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszCurrent, ... )
+{
+	va_list pvaArg;
+	va_start(pvaArg, pszCurrent);
+
+	TiXmlNode * pXmlNode;
+	std::string szXmlNodePath;
+
+	for(;;)
+	{
+		if( m_XmlDoc.Value() == NULL )
+		{
+			break;
+		}
+
+		pXmlNode = m_XmlDoc.RootElement();
+		if( pXmlNode == NULL )
+		{
+			break;
+		}
+
+		if( strcmp(pXmlNode->Value(), pszCurrent) != 0 )
+		{
+			break;
+		}
+
+		do
+		{
+			pszCurrent = va_arg(pvaArg, char * );
+			if( pszCurrent != "" )
+			{
+				szXmlNodePath += "_";
+				szXmlNodePath += pszCurrent;
+				pXmlNode = pXmlNode->FirstChild( pszCurrent );
+				if( pXmlNode == NULL )
+				{
+					break;
+				}
+			}
+		}while( pszCurrent != "" );
+		break;
+	}
+	szXmlNodePath.erase(0,1);
+
+	if( pXmlNode != NULL )
+	{
+		if( ((ExTiXmlNode *)pXmlNode)->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "localized" ) != NULL )
+		{
+			va_end( pvaArg );
+			m_mpLanguage[szXmlNodePath] = strResult;
+			return 0;
+		}
+	}
+
+	std::string szErrorMsg = "Language file: translation for >";
+	if( pXmlNode != NULL )
+	{
+		if( ((ExTiXmlNode *)pXmlNode)->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "ENG" ) != NULL )
+		{
+			m_mpLanguage[szXmlNodePath] = strResult;
+		}else
+		{
+			m_mpLanguage[szXmlNodePath] = szXmlNodePath;
+		}
+	}
+	szErrorMsg += strResult + "< is missing";
+	fLog.write( szErrorMsg.c_str(), cLog::eLOG_TYPE_WARNING );
+	va_end( pvaArg );
+	return -1;
+}
+
