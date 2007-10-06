@@ -4,8 +4,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Main-declerations, -classes and structures for the game
-// Contains all global varaibles needed for the game
+// 
+// 
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,20 +16,43 @@
 #define loaddataH
 
 ///////////////////////////////////////////////////////////////////////////////
+// Defines
+// ------------------------
+// 
+///////////////////////////////////////////////////////////////////////////////
+
+#define LOAD_GOING 0
+#define LOAD_ERROR 1
+#define LOAD_FINISHED 2
+
+///////////////////////////////////////////////////////////////////////////////
 // Globals
 // ------------------------
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
-EX bool LoadingData;
+EX int LoadingData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations
 // ------------------------
-// This classes are for saving global Variables needed by the game
+// 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Loads all relevant files and datas:
 int LoadData(void *);
-void MakeLog(char* sztxt,bool ok,int pos);
+// Writes a Logmessage on the SplashScreen:
+void MakeLog(const char* sztxt,bool ok,int pos);
+// Loades a Graphic to the Surface:
+int LoadGraphicToSurface(SDL_Surface *&dest, const char* directory, const char* filename);
+// Checks whether a file exits:
+int CheckFile(const char* directory, const char* filename);
+// Reads the Information out of the max.xml:
+void ReadMaxXml(TiXmlDocument MaxXml);
+// Generats a new max.xml file:
+void GenerateMaxXml();
+
+// Loads all Graphics:
+int LoadGraphics(const char* path);
 
 #endif
