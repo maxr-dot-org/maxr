@@ -542,9 +542,23 @@ void Quit();
 /**
 *Inits SDL 
 *@author beko
-*@return -1 on error<br>0 on success<br>1 with warnings (sound or net not initialised due SDL-errors)
+*@return -1 on error<br>0 on success<br>1 with warnings 
 */
 int initSDL();
+
+/**
+*Inits SDL_sound
+*@author beko
+*@return -1 on error<br>0 on success<br>1 with warnings 
+*/
+int initSound();
+
+/**
+*Inits SDL_net
+*@author beko
+*@return -1 on error<br>0 on success<br>1 with warnings 
+*/
+int initNet();
 
 /**
 *Shows splashscreen

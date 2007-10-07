@@ -17,14 +17,14 @@
  ***************************************************************************/
 
 #include <math.h>
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_net.h>
 #include <iostream>
 #include <stdio.h>
 
-#include "tinyxml.h"
-#include "SDL_mixer.h"
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_net.h>
+#include <SDL_mixer.h>
+
 #define __main__
 #include "defines.h"
 #include "main.h"
@@ -48,6 +48,8 @@
 #include "fstcpip.h"
 #include "log.h"
 #include "loaddata.h"
+#include "tinyxml.h"
+
 
 TList::TList ( void )
 {
@@ -91,6 +93,10 @@ int main ( int argc, char *argv[] )
 
 	SDL_WaitThread ( DataThread, NULL );
 
+	//now config is loaded and we can init sound and net
+	initSound();
+	initNet();
+
 	showGameWindow(); //start game-window
 	SDL_Delay ( 3000 ); //debug only
 
@@ -102,13 +108,9 @@ int main ( int argc, char *argv[] )
 	Quit();
 }
 
+// generate SplashScreen
 void showSplash()
 {
-	//TODO: default settings if max.xml not avaible. move to max.xml loading routine! SDL crashes BADLY without this!
-	SettingsData.iColourDepth = 32;
-	SettingsData.bWindowMode = true;			// Gibt an, ob das Spiel im Fenster laufen soll
-
-	// generate SplashScreen
 	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
 	if ( buffer == NULL ) cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
 
@@ -141,41 +143,45 @@ int initSDL()
 	putenv ( "SDL_VIDEO_WINDOW_POS=center" ); //Set env for SDL - must be done _before_ init_sdl
 	putenv ( "SDL_VIDEO_CENTERED=1" );
 
-	if ( SDL_Init ( SDL_INIT_VIDEO ) == -1 ) // start SDL basics
+	if ( SDL_Init ( SDL_INIT_VIDEO || SDL_INIT_TIMER || SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{
-		cLog::write ( "Could not init SDL_INIT_VIDEO",cLog::eLOG_TYPE_ERROR );
+		cLog::write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
 		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
-
-	if ( SDL_Init ( SDL_INIT_TIMER ) == -1 )
+	else
 	{
-		cLog::write ( "Could not init SDL_TIMER",cLog::eLOG_TYPE_ERROR );
-		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
-		return -1;
+		cLog::write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO ); 
+		//made it - enough to start game
+		return 0;
 	}
+}
 
-	if ( SDL_Init ( SDL_INIT_NOPARACHUTE ) == -1 )
+int initSound()
+{
+	if (!SettingsData.bSoundEnabled)
 	{
-		cLog::write ( "Could not init SDL_NOPARACHUTE",cLog::eLOG_TYPE_ERROR );
-		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
-		return -1;
+		cLog::write ( "Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
+		return 1;
 	}
-
-	cLog::write ( "Initalized SDL basics - looks good!\n",cLog::eLOG_TYPE_INFO ); //made it - enough to start game
 
 	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
 	{
 		cLog::write ( "Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
 		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
-		return 1;
+		SettingsData.bSoundEnabled=false;
+		return -1;
 	}
+	return 0;
+}
 
+int initNet()
+{
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
 		cLog::write ( "Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING );
 		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
-		return 1;
+		return -1;
 	}
 	return 0;
 }
