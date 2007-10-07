@@ -174,7 +174,7 @@ void ReadMaxXml()
 		SettingsData.iScreenH = 480;
 	}
 	// ColourDepth
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", NULL)))
 		cLog::write ( "Cannot find ColourDepth-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iColourDepth = atoi(sTmpString.c_str());
@@ -184,7 +184,7 @@ void ReadMaxXml()
 		SettingsData.iColourDepth = 32;
 	}
 	// Intro
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", NULL)))
 		cLog::write ( "Cannot find Intro-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bIntro = pXmlNode->XmlDataToBool(sTmpString);
@@ -194,7 +194,7 @@ void ReadMaxXml()
 		SettingsData.bIntro = false;
 	}
 	// Windowmode
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL)))
 		cLog::write ( "Cannot find Windowmode-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bWindowMode = pXmlNode->XmlDataToBool(sTmpString);
@@ -204,7 +204,7 @@ void ReadMaxXml()
 		SettingsData.bWindowMode = true;
 	}
 	// Intro
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Fastmode", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Fastmode", NULL)))
 		cLog::write ( "Cannot find Fastmode-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bFastMode = pXmlNode->XmlDataToBool(sTmpString);
@@ -216,7 +216,7 @@ void ReadMaxXml()
 
 	// GAME Options
 	// EnableAutosave
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", NULL)))
 		cLog::write ( "Cannot find EnableAutosave-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bAutoSave = pXmlNode->XmlDataToBool(sTmpString);
@@ -226,7 +226,7 @@ void ReadMaxXml()
 		SettingsData.bAutoSave = true;
 	}
 	// EnableAnimations
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", NULL)))
 		cLog::write ( "Cannot find EnableAnimations-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bAnimations = pXmlNode->XmlDataToBool(sTmpString);
@@ -236,7 +236,7 @@ void ReadMaxXml()
 		SettingsData.bAnimations = true;
 	}
 	// EnableShadows
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", NULL)))
 		cLog::write ( "Cannot find EnableShadows-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bShadows = pXmlNode->XmlDataToBool(sTmpString);
@@ -246,7 +246,7 @@ void ReadMaxXml()
 		SettingsData.bShadows = true;
 	}
 	// EnableAlphaEffects
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", NULL)))
 		cLog::write ( "Cannot find EnableAlphaEffects-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bAlphaEffects = pXmlNode->XmlDataToBool(sTmpString);
@@ -256,7 +256,7 @@ void ReadMaxXml()
 		SettingsData.bAlphaEffects = true;
 	}
 	// EnableDescribtions
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDescribtions", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDescribtions", NULL)))
 		cLog::write ( "Cannot find EnableDescribtions-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bShowDescription = pXmlNode->XmlDataToBool(sTmpString);
@@ -266,7 +266,7 @@ void ReadMaxXml()
 		SettingsData.bShowDescription = true;
 	}
 	// EnableDamageEffects
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", NULL)))
 		cLog::write ( "Cannot find EnableDamageEffects-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bDamageEffects = pXmlNode->XmlDataToBool(sTmpString);
@@ -276,7 +276,7 @@ void ReadMaxXml()
 		SettingsData.bDamageEffects = true;
 	}
 	// EnableDamageEffectsVehicles
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", NULL)))
 		cLog::write ( "Cannot find EnableDamageEffectsVehicles-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bDamageEffectsVehicles = pXmlNode->XmlDataToBool(sTmpString);
@@ -286,7 +286,7 @@ void ReadMaxXml()
 		SettingsData.bDamageEffectsVehicles = true;
 	}
 	// EnableMakeTracks  
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", NULL)))
 		cLog::write ( "Cannot find EnableMakeTracks-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bMakeTracks = pXmlNode->XmlDataToBool(sTmpString);
@@ -296,7 +296,7 @@ void ReadMaxXml()
 		SettingsData.bMakeTracks = true;
 	}
 	// ScrollSpeed
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", NULL)))
 		cLog::write ( "Cannot find ScrollSpeed-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iScrollSpeed = atoi(sTmpString.c_str());
@@ -308,7 +308,7 @@ void ReadMaxXml()
 
 	// GAME-NET Options
 	//IP
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", NULL)))
 		cLog::write ( "Cannot find Net-IP-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sIP = sTmpString;
@@ -318,7 +318,7 @@ void ReadMaxXml()
 		SettingsData.sIP = "127.0.0.1";
 	}
 	//Port
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port", NULL)))
 		cLog::write ( "Cannot find Net-Port-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iPort = atoi(sTmpString.c_str());
@@ -328,7 +328,7 @@ void ReadMaxXml()
 		SettingsData.iPort = 58600;
 	}
 	//PlayerName
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL)))
 		cLog::write ( "Cannot find Net-PlayerName-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sPlayerName = sTmpString;
@@ -341,7 +341,7 @@ void ReadMaxXml()
 
 	// GAME-SOUND Options
 	// Enabled
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "Enabled", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "Enabled", NULL)))
 		cLog::write ( "Cannot find Sound-Enabled-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.bSoundEnabled = pXmlNode->XmlDataToBool(sTmpString);
@@ -351,7 +351,7 @@ void ReadMaxXml()
 		SettingsData.bSoundEnabled = true;
 	}
 	// MusicMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "MusicMute", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "MusicMute", NULL)))
 		cLog::write ( "Cannot find Sound-MusicMute-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.MusicMute = pXmlNode->XmlDataToBool(sTmpString);
@@ -361,7 +361,7 @@ void ReadMaxXml()
 		SettingsData.MusicMute = false;
 	}
 	// SoundMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "SoundMute", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "SoundMute", NULL)))
 		cLog::write ( "Cannot find Sound-SoundMute-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.SoundMute = pXmlNode->XmlDataToBool(sTmpString);
@@ -371,7 +371,7 @@ void ReadMaxXml()
 		SettingsData.SoundMute = false;
 	}
 	// VoiceMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "VoiceMute", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "VoiceMute", NULL)))
 		cLog::write ( "Cannot find Sound-VoiceMute-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		SettingsData.VoiceMute = pXmlNode->XmlDataToBool(sTmpString);
@@ -381,7 +381,7 @@ void ReadMaxXml()
 		SettingsData.VoiceMute = false;
 	}
 	//MusicVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", NULL)))
 		cLog::write ( "Cannot find Sound-MusicVol-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.MusicVol  = atoi(sTmpString.c_str());
@@ -391,7 +391,7 @@ void ReadMaxXml()
 		SettingsData.MusicVol  = 128;
 	}
 	//SoundVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol", NULL)))
 		cLog::write ( "Cannot find Sound-SoundVol-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.SoundVol  = atoi(sTmpString.c_str());
@@ -401,7 +401,7 @@ void ReadMaxXml()
 		SettingsData.SoundVol  = 128;
 	}
 	//VoiceVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol", NULL)))
 		cLog::write ( "Cannot find Sound-VoiceVol-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.VoiceVol  = atoi(sTmpString.c_str());
@@ -411,7 +411,7 @@ void ReadMaxXml()
 		SettingsData.VoiceVol  = 128;
 	}
 	//ChunkSize
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","ChunkSize", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","ChunkSize", NULL)))
 		cLog::write ( "Cannot find Sound-ChunkSize-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iChunkSize  = atoi(sTmpString.c_str());
@@ -421,7 +421,7 @@ void ReadMaxXml()
 		SettingsData.iChunkSize  = 2048;
 	}
 	//Frequency
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","Frequency", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","Frequency", NULL)))
 		cLog::write ( "Cannot find Sound-Frequency-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iFrequency  = atoi(sTmpString.c_str());
@@ -433,7 +433,7 @@ void ReadMaxXml()
 
 	// PATHs
 	//Fonts 
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", NULL)))
 		cLog::write ( "Cannot find Path-Fonts-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sFontPath = sTmpString;
@@ -443,7 +443,7 @@ void ReadMaxXml()
 		SettingsData.sFontPath = "fonts";
 	}
 	//FX 
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", NULL)))
 		cLog::write ( "Cannot find Path-FX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sFxPath = sTmpString;
@@ -453,7 +453,7 @@ void ReadMaxXml()
 		SettingsData.sFxPath = "fx";
 	}
 	//Graphics
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", NULL)))
 		cLog::write ( "Cannot find Path-GFX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sGfxPath = sTmpString;
@@ -463,7 +463,7 @@ void ReadMaxXml()
 		SettingsData.sGfxPath = "gfx";
 	}
 	//Graphics on demmand
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFXOD", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFXOD", NULL)))
 		cLog::write ( "Cannot find Path-GFXOD-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sGfxODPath = sTmpString;
@@ -473,7 +473,7 @@ void ReadMaxXml()
 		SettingsData.sGfxODPath = "gfx_od";
 	}
 	//Maps
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Cannot find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sGfxODPath = sTmpString;
@@ -483,7 +483,7 @@ void ReadMaxXml()
 		SettingsData.sGfxODPath = "maps";
 	}
 	//Saves
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", NULL)))
 		cLog::write ( "Cannot find Path-Saves-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sSavesPath = sTmpString;
@@ -493,7 +493,7 @@ void ReadMaxXml()
 		SettingsData.sSavesPath = "saves";
 	}
 	//Sounds
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", NULL)))
 		cLog::write ( "Cannot find Path-Sounds-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sSoundsPath = sTmpString;
@@ -503,7 +503,7 @@ void ReadMaxXml()
 		SettingsData.sSoundsPath = "sounds";
 	}
 	//Voices
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", NULL)))
 		cLog::write ( "Cannot find Path-Voices-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sVoicesPath = sTmpString;
@@ -513,7 +513,7 @@ void ReadMaxXml()
 		SettingsData.sVoicesPath = "voices";
 	}
 	//Music
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", NULL)))
 		cLog::write ( "Cannot find Path-Music-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sMusicPath = sTmpString;
@@ -523,7 +523,7 @@ void ReadMaxXml()
 		SettingsData.sMusicPath = "music";
 	}
 	//Terrain
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Terrain", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Terrain", NULL)))
 		cLog::write ( "Cannot find Path-Terrain-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sTerrainPath = sTmpString;
@@ -533,7 +533,7 @@ void ReadMaxXml()
 		SettingsData.sTerrainPath = "terrain";
 	}
 	//Vehicles
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", NULL)))
 		cLog::write ( "Cannot find Path-Vehicles-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sVehiclesPath = sTmpString;
@@ -543,7 +543,7 @@ void ReadMaxXml()
 		SettingsData.sVehiclesPath = "vehicles";
 	}
 	//Buildings
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", NULL)))
 		cLog::write ( "Cannot find Path-Buildings-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sBuildingsPath = sTmpString;

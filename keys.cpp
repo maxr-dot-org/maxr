@@ -24,7 +24,7 @@ int LoadKeys ()
 		GenerateKeysXml();
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyExit", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyExit", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyExit = GetKeyFromString ( sTmpString );
 	else
@@ -32,7 +32,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyExit from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyExit = GetKeyFromString ( "ESCAPE" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyJumpToAction", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyJumpToAction", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyJumpToAction = GetKeyFromString ( sTmpString );
 	else
@@ -40,7 +40,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyJumpToAction from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyJumpToAction = GetKeyFromString ( "F1" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyEndTurn", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyEndTurn", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyEndTurn = GetKeyFromString ( sTmpString );
 	else
@@ -48,7 +48,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyEndTurn from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyEndTurn = GetKeyFromString ( "RETURN" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyChat", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyChat", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyChat = GetKeyFromString ( sTmpString );
 	else
@@ -56,7 +56,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyChat from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyChat = GetKeyFromString ( "TAB" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll8a", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll8a", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll8a = GetKeyFromString ( sTmpString );
 	else
@@ -64,7 +64,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll8a from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll8a = GetKeyFromString ( "UP" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll8b", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll8b", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll8b = GetKeyFromString ( sTmpString );
 	else
@@ -72,7 +72,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll8b from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll8b = GetKeyFromString ( "KP8" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll2a", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll2a", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll2a = GetKeyFromString ( sTmpString );
 	else
@@ -80,7 +80,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll2a from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll2a = GetKeyFromString ( "DOWN" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll2b", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll2b", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll2b = GetKeyFromString ( sTmpString );
 	else
@@ -88,7 +88,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll2b from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll2b = GetKeyFromString ( "KP2" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll6a", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll6a", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll6a = GetKeyFromString ( sTmpString );
 	else
@@ -96,7 +96,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll6a from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll6a = GetKeyFromString ( "RIGHT" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll6b", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll6b", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll6b = GetKeyFromString ( sTmpString );
 	else
@@ -104,7 +104,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll6b from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll6b = GetKeyFromString ( "KP6" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll4a", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll4a", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll4a = GetKeyFromString ( sTmpString );
 	else
@@ -112,7 +112,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll4a from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll4a = GetKeyFromString ( "LEFT" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll4b", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll4b", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll4b = GetKeyFromString ( sTmpString );
 	else
@@ -120,7 +120,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll4b from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll4b = GetKeyFromString ( "KP4" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll7", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll7", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll7 = GetKeyFromString ( sTmpString );
 	else
@@ -128,7 +128,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll7 from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll7 = GetKeyFromString ( "KP7" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll9", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll9", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll9 = GetKeyFromString ( sTmpString );
 	else
@@ -136,7 +136,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll9 from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll9 = GetKeyFromString ( "KP9" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll1", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll1", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll1 = GetKeyFromString ( sTmpString );
 	else
@@ -144,7 +144,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll1 from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll1 = GetKeyFromString ( "KP1" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll3", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScroll3", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScroll3 = GetKeyFromString ( sTmpString );
 	else
@@ -152,7 +152,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScroll3 from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScroll3 = GetKeyFromString ( "KP3" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomIna", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomIna", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyZoomIna = GetKeyFromString ( sTmpString );
 	else
@@ -160,7 +160,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyZoomIna from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyZoomIna = GetKeyFromString ( "RIGHTBRACKET" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomInb", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomInb", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyZoomInb = GetKeyFromString ( sTmpString );
 	else
@@ -168,7 +168,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyZoomInb from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyZoomInb = GetKeyFromString ( "KP_PLUS" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomOuta", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomOuta", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyZoomOuta = GetKeyFromString ( sTmpString );
 	else
@@ -176,7 +176,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyZoomOuta from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyZoomOuta = GetKeyFromString ( "SLASH" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomOutb", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyZoomOutb", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyZoomOutb = GetKeyFromString ( sTmpString );
 	else
@@ -184,7 +184,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyZoomOutb from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyZoomOutb = GetKeyFromString ( "KP_MINUS" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyFog", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyFog", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyFog = GetKeyFromString ( sTmpString );
 	else
@@ -192,7 +192,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyFog from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyFog = GetKeyFromString ( "N" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyGrid", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyGrid", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyGrid = GetKeyFromString ( sTmpString );
 	else
@@ -200,7 +200,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyGrid from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyGrid = GetKeyFromString ( "G" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScan", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyScan", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyScan = GetKeyFromString ( sTmpString );
 	else
@@ -208,7 +208,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyScan from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyScan = GetKeyFromString ( "S" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyRange", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyRange", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyRange = GetKeyFromString ( sTmpString );
 	else
@@ -216,7 +216,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyRange from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyRange = GetKeyFromString ( "R" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyAmmo", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyAmmo", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyAmmo = GetKeyFromString ( sTmpString );
 	else
@@ -224,7 +224,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyAmmo from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyAmmo = GetKeyFromString ( "M" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyHitpoints", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyHitpoints", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyHitpoints = GetKeyFromString ( sTmpString );
 	else
@@ -232,7 +232,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyHitpoints from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyHitpoints = GetKeyFromString ( "T" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyColors", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyColors", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyColors = GetKeyFromString ( sTmpString );
 	else
@@ -240,7 +240,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyColors from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyColors = GetKeyFromString ( "F" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyStatus", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyStatus", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyStatus = GetKeyFromString ( sTmpString );
 	else
@@ -248,7 +248,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeyStatus from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyStatus = GetKeyFromString ( "P" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeySurvey", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeySurvey", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeySurvey = GetKeyFromString ( sTmpString );
 	else
@@ -256,7 +256,7 @@ int LoadKeys ()
 		cLog::write ( "Cannot load KeySurvey from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeySurvey = GetKeyFromString ( "H" );
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyCalcPath", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyCalcPath", NULL);
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		KeysList.KeyCalcPath = GetKeyFromString ( sTmpString );
 	else
@@ -265,7 +265,7 @@ int LoadKeys ()
 		KeysList.KeyCalcPath = GetKeyFromString ( "LSHIFT" );
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","MOUSE_STYLE", "");
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","MOUSE_STYLE", NULL);
 	pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text");
 	if ( sTmpString.compare ( "OLD_SCHOOL" ) == 0 )
 		MouseStyle = OldSchool;
