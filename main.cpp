@@ -153,6 +153,7 @@ int initSDL()
 	else
 	{
 		cLog::write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO ); 
+		cLog::mark();
 		//made it - enough to start game
 		return 0;
 	}

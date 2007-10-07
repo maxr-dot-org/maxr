@@ -81,4 +81,8 @@ public:
 		eLOG_TYPE_INFO    = 4,
 	};
 
+	/**
+	* Writes a marker into logfile - please use only veeeery few times!
+	*/
+	static void mark();
 };

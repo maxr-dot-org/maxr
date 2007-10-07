@@ -90,6 +90,11 @@ int cLog::write (const char *str )
 	return write ( str, LOG_TYPE_INFO );
 }
 
+void cLog::mark()
+{
+	if(open()) writeMessage( "==============================(MARK)==============================\n");
+}
+
 int cLog::writeMessage ( char *str )
 {
 	int wrote;
