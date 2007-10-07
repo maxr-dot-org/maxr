@@ -194,18 +194,10 @@ void Quit()
 // Initialisiert den Sound:
 int InitSound()
 {
-	int frequency, chunksize;
-	TiXmlDocument doc;
-	TiXmlNode* rootnode;
-	doc.LoadFile ( "max.xml" );
-	rootnode = doc.FirstChildElement ( "MAXOptions" )->FirstChildElement ( "StartOptions" );
-//	SettingsData.sound=GetXMLBool ( rootnode,"sound" );
 	if ( !SettingsData.bSoundEnabled ) return 1;
-	frequency = atoi ( rootnode->FirstChildElement ( "frequency" )->FirstChild()->Value() );
-	chunksize = atoi ( rootnode->FirstChildElement ( "chunksize" )->FirstChild()->Value() );
-	if ( !InitSound ( frequency,chunksize ) )
+	if ( !InitSound ( SettingsData.iFrequency,SettingsData.iChunkSize ) )
 	{
-		printf ( "Could not initialize sound." );
+		cLog::write ( "could not init sound!",cLog::eLOG_TYPE_WARNING );
 		return 0;
 	}
 	SettingsData.bSoundEnabled=true;
