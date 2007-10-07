@@ -224,38 +224,75 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 // SettingsData - Class containing all gamesettings ///////////////////////
+/**
+* cSettings class. Stores gamesettings :-)
+*
+* @author Bernd "beko" Kosmahl
+*/
 class cSettings
 {
 public:
 	//START
-	int iScreenW;				// Breite der ausgwählten Auflösung
-	int iScreenH;				// Höhe der ausgwählten Auflösung
-	int iColourDepth;			//e.g. 32
-	bool bIntro;				// Gibt an, ob kein Intro abgespielt werden soll
-	bool bWindowMode;			// Gibt an, ob das Spiel im Fenster laufen soll
-	bool bFastMode;				// Gibt an, ob das Spiel im Fast-Mode laufen soll
+	/**screen width in pixels */
+	int iScreenW;
+	/**screen height in pixels */
+	int iScreenH;
+	/**colour depth - e.g. 32*/
+	int iColourDepth;
+	/**enable intro on start*/
+	bool bIntro;
+	/**start in windowmode*/
+	bool bWindowMode;
+	/**start in fastmode */
+	bool bFastMode;	
 
 	//GAME
-	bool bAutoSave;				// Gibt an, ob automatisch gespeichert werden soll
-	bool bAnimations;				// Gibt am, ob es bAnimationsen geben soll
-	bool bShadows;				// Gibt an, ob es bShadows geben soll
-	bool bAlphaEffects;					// Gibt an, ob es bAlphaEffectseffekte geben soll
-	bool bShowDescription;		// Gibt an, ob die Beschreibung in Build-Menüs angezeigt werden soll
-	bool bDamageEffects;			// Gibt an, ob Schadenseffekte gemacht werden sollen
-	bool bDamageEffectsVehicles;	// Gibt an, ob Schadenseffekte bei Fahrzeugen gemacht werden sollen
-	bool bMakeTracks;			// Gibt an, ob Tracks gemacht werden sollen
-	int iScrollSpeed;			// Scrollgeschwindigkeit
+	/**enable autosafe */
+	bool bAutoSave;
+	/**enable animations */
+	bool bAnimations;
+	/**enable shadows */
+	bool bShadows;
+	/**enable alpha effects */
+	bool bAlphaEffects;
+	/**enable describtions (e.g. in buildmenues) */
+	bool bShowDescription;
+	/**enable damage effects (smoke'n stuff)*/
+	bool bDamageEffects;
+	/**enable damage effects for vehicles (smoke'n stuff)*/
+	bool bDamageEffectsVehicles;
+	/**enable tracks (units leave tracks on the floor) */
+	bool bMakeTracks;
+	/**scrollspeed on map */
+	int iScrollSpeed;
 
 	//NET
-	string sIP;				// Letzte eingegebene IP 
-	//string? why not int array? --beko
-	int sPort;				// Letzter eingegebener Port
-	string sPlayerName;		// Letzter benutzter Spielername
+	/**Last/default ip used for network game */
+	string sIP; //string? why not int array? --beko
+	/**Last/default port  used for network game */
+	int sPort;
+	/**Last/default player's name used for network game */
+	string sPlayerName;
 
 	//SOUND
-	bool bSoundEnabled;					// true=Sound an
-	int MusicVol,SoundVol,VoiceVol,iChunkSize,iFrequency;		// Lautsärken der Sounds
-	bool bEnabled,MusicMute,SoundMute,VoiceMute;	// Muteeigenschaften der Sounds
+	/**sound enabled*/
+	bool bSoundEnabled;
+	/**volume music */
+	int MusicVol;
+	/**volume sound effects */
+	int SoundVol;
+	/**volume voices */
+	int VoiceVol;
+	/**chunk size */
+	int iChunkSize;
+	/**frequenzy */
+	int iFrequency;
+	/**mute music */
+	bool MusicMute;
+	/**mute sound effects */
+	bool SoundMute;
+	/**mute voices */
+	bool VoiceMute;	// Muteeigenschaften der Sounds
 
 	//PATHS
 	string sFontPath;			// Path to the fonts
