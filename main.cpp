@@ -66,6 +66,8 @@ int main ( int argc, char *argv[] )
 
 	ReadMaxXml();
 	showSplash(); //show splashscreen
+	initSound(); //now config is loaded and we can init sound and net
+	initNet();
 
 	// load files
 	SDL_Thread *DataThread = NULL;
@@ -94,9 +96,7 @@ int main ( int argc, char *argv[] )
 
 	SDL_WaitThread ( DataThread, NULL );
 
-	//now config is loaded and we can init sound and net
-	initSound();
-	initNet();
+
 
 	showGameWindow(); //start game-window
 	SDL_Delay ( 3000 ); //debug only
@@ -178,7 +178,7 @@ int initSound()
         {
                 return -1;
         }
-
+	cLog::write ( "Sound started", cLog::eLOG_TYPE_INFO);
 	return 0;
 }
 
@@ -190,6 +190,7 @@ int initNet()
 		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		return -1;
 	}
+	cLog::write ( "Net started", cLog::eLOG_TYPE_INFO);
 	return 0;
 }
 
