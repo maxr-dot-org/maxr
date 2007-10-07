@@ -9,6 +9,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+// Defines for more Debuginformations in Log
+
+//#define TERRAIN_DEBUG	// Logs the using of default values while loading terrain
+
 #include "ExtendedTinyXml.h"
 #include "loaddata.h"
 #include "files.h"
@@ -179,8 +183,118 @@ void ReadMaxXml()
 		cLog::write ( "Cannot load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iColourDepth = 32;
 	}
+	// Intro
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", "")))
+		cLog::write ( "Cannot find Intro-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bIntro = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load Intro from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bIntro = false;
+	}
+	// Windowmode
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", "")))
+		cLog::write ( "Cannot find Windowmode-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bWindowMode = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load Windowmode from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bWindowMode = true;
+	}
+	// Intro
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Fastmode", "")))
+		cLog::write ( "Cannot find Fastmode-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bFastMode = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load Fastmode from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bFastMode = false;
+	}
 
 	// GAME Options
+	// EnableAutosave
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", "")))
+		cLog::write ( "Cannot find EnableAutosave-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bAutoSave = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableAutosave from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bAutoSave = true;
+	}
+	// EnableAnimations
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", "")))
+		cLog::write ( "Cannot find EnableAnimations-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bAnimations = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableAnimations from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bAnimations = true;
+	}
+	// EnableShadows
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", "")))
+		cLog::write ( "Cannot find EnableShadows-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bShadows = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableShadows from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bShadows = true;
+	}
+	// EnableAlphaEffects
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", "")))
+		cLog::write ( "Cannot find EnableAlphaEffects-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bAlphaEffects = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableAlphaEffects from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bAlphaEffects = true;
+	}
+	// EnableDescribtions
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDescribtions", "")))
+		cLog::write ( "Cannot find EnableDescribtions-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bShowDescription = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableDescribtions from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bShowDescription = true;
+	}
+	// EnableDamageEffects
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", "")))
+		cLog::write ( "Cannot find EnableDamageEffects-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bDamageEffects = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableDamageEffects from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bDamageEffects = true;
+	}
+	// EnableDamageEffectsVehicles
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", "")))
+		cLog::write ( "Cannot find EnableDamageEffectsVehicles-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bDamageEffectsVehicles = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableDamageEffectsVehicles from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bDamageEffectsVehicles = true;
+	}
+	// EnableMakeTracks  
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", "")))
+		cLog::write ( "Cannot find EnableMakeTracks-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bMakeTracks = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load EnableMakeTracks from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bMakeTracks = true;
+	}
 	// ScrollSpeed
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", "")))
 		cLog::write ( "Cannot find ScrollSpeed-Node in max.xml", LOG_TYPE_WARNING );
@@ -226,6 +340,46 @@ void ReadMaxXml()
 
 
 	// GAME-SOUND Options
+	// Enabled
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "Enabled", "")))
+		cLog::write ( "Cannot find Sound-Enabled-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bSoundEnabled = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load Enabled from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bSoundEnabled = true;
+	}
+	// MusicMute
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "MusicMute", "")))
+		cLog::write ( "Cannot find Sound-MusicMute-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.MusicMute = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load MusicMute from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.MusicMute = false;
+	}
+	// SoundMute
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "SoundMute", "")))
+		cLog::write ( "Cannot find Sound-SoundMute-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.SoundMute = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load SoundMute from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.SoundMute = false;
+	}
+	// VoiceMute
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "VoiceMute", "")))
+		cLog::write ( "Cannot find Sound-VoiceMute-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.VoiceMute = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Cannot load VoiceMute from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.VoiceMute = false;
+	}
 	//MusicVol
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", "")))
 		cLog::write ( "Cannot find Sound-MusicVol-Node in max.xml", LOG_TYPE_WARNING );
@@ -398,19 +552,6 @@ void ReadMaxXml()
 		cLog::write ( "Cannot load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sBuildingsPath = "buildings";
 	}
-
-	SettingsData.bAlphaEffects = true;
-	SettingsData.bAnimations = true;
-	SettingsData.bAutoSave = true;
-	SettingsData.bDamageEffects = true;
-	SettingsData.bDamageEffectsVehicles = true;
-	SettingsData.bFastMode = false;
-	SettingsData.bIntro = false;
-	SettingsData.bMakeTracks = true;
-	SettingsData.bShadows = true;
-	SettingsData.bShowDescription = true;
-	SettingsData.bSoundEnabled = true;
-	SettingsData.bWindowMode = true;
 
 	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return;
@@ -684,49 +825,56 @@ int LoadTerrain(const char* path)
 {
 	cLog::write ( "Loading Terrain", LOG_TYPE_INFO );
 	string sTmpString;
-	TiXmlDocument doc;
-	TiXmlNode* rootnode;
-	TiXmlNode* node;
+	TiXmlDocument TerrainXml;
+	TiXmlNode *pXmlNode;
+	ExTiXmlNode *pExXmlNode = NULL;
 
 	sTmpString = path;
 	sTmpString += PATH_DELIMITER;
 	sTmpString += "terrain.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 		return 0;
-	if ( !doc.LoadFile ( sTmpString.c_str() ) )
+	if ( !TerrainXml.LoadFile ( sTmpString.c_str() ) )
 	{
 		cLog::write("could not load terrain.xml!",LOG_TYPE_ERROR);
 		return 0;
 	}
-	rootnode = doc.FirstChildElement ( "Terrains" );
+	pXmlNode = TerrainXml.FirstChildElement ( "Terrains" );
 
 	TList *sections;
 	sections = new TList();
-	node = rootnode->FirstChildElement();
-	if ( node )
-		sections->Add ( node->ToElement()->Value() );
-	while ( node != NULL)
+	pXmlNode = pXmlNode->FirstChildElement();
+	if ( pXmlNode )
+		sections->Add ( pXmlNode->ToElement()->Value() );
+	while ( pXmlNode != NULL)
 	{
-		node=node->NextSibling();
-		if ( node && node->Type() ==1 )
+		pXmlNode=pXmlNode->NextSibling();
+		if ( pXmlNode && pXmlNode->Type() ==1 )
 		{
-			sections->Add ( node->ToElement()->Value() );
+			sections->Add ( pXmlNode->ToElement()->Value() );
 		}
 	}
 
 	for ( int i=0;i<sections->Count;i++ )
 	{
-		node = rootnode->FirstChildElement ( sections->Items[i].c_str() );
+		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "")))
+		{
+			sTmpString = "Cannot load \"\" from max.xml";
+			sTmpString.insert(11, sections->Items[i]);
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
+			continue;
+		}
 		TerrainData.terrain_anz++;
 		TerrainData.terrain= ( sTerrain* ) realloc ( TerrainData.terrain,sizeof ( sTerrain ) *TerrainData.terrain_anz );
-		if ( node->ToElement()->Attribute ( "file" ) ==NULL )
+		if(!(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"file")))
 		{
-			cLog::write ( "terrain.xml has wrong format!", LOG_TYPE_ERROR );
-			return 0;
+			sTmpString = "Cannot load fileattribute of ";
+			sTmpString += sections->Items[i];
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
+			continue;
 		}
-		sTmpString = path;
-		sTmpString += PATH_DELIMITER;
-		sTmpString += node->ToElement()->Attribute ( "file" );
+		sTmpString.insert(0,PATH_DELIMITER);
+		sTmpString.insert(0,path);
 		if ( !FileExists ( sTmpString.c_str() ) )
 			continue;
 
@@ -737,10 +885,54 @@ int LoadTerrain(const char* path)
 		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,TerrainData.terrain[i].shw_org,NULL );
 		DupSurface ( TerrainData.terrain[i].shw_org,TerrainData.terrain[i].shw );
 
-		TerrainData.terrain[i].water=false;
-		TerrainData.terrain[i].coast=false;
-		TerrainData.terrain[i].overlay=false;
-		TerrainData.terrain[i].blocked=false;
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"water"))
+			TerrainData.terrain[i].water = pExXmlNode->XmlDataToBool(sTmpString);
+		else
+		{
+			#ifdef TERRAIN_DEBUG
+			sTmpString = "Attribute water of \"\" not found: using default value";
+			sTmpString.insert(20,sections->Items[i]);
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_DEBUG );
+			#endif
+			TerrainData.terrain[i].water = false;
+		}
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"blocked"))
+			TerrainData.terrain[i].blocked = pExXmlNode->XmlDataToBool(sTmpString);
+		else
+		{
+			#ifdef TERRAIN_DEBUG
+			sTmpString = "Attribute blocked of \"\" not found: using default value";
+			sTmpString.insert(22,sections->Items[i]);
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_DEBUG );
+			#endif
+			TerrainData.terrain[i].blocked = false;
+		}
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"coast"))
+			TerrainData.terrain[i].coast = pExXmlNode->XmlDataToBool(sTmpString);
+		else
+		{
+			#ifdef TERRAIN_DEBUG
+			sTmpString = "Attribute coast of \"\" not found: using default value";
+			sTmpString.insert(20,sections->Items[i]);
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_DEBUG );
+			#endif
+			TerrainData.terrain[i].coast = false;
+		}
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"overlay"))
+			TerrainData.terrain[i].overlay = pExXmlNode->XmlDataToBool(sTmpString);
+		else
+		{
+			#ifdef TERRAIN_DEBUG
+			sTmpString = "Attribute overlay of \"\" not found: using default value";
+			sTmpString.insert(22,sections->Items[i]);
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_DEBUG );
+			#endif
+			TerrainData.terrain[i].overlay = false;
+		}
 
 		TerrainData.terrain[i].frames = TerrainData.terrain[i].sf_org->w/64;
 		TerrainData.terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
