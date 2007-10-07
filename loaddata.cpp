@@ -160,7 +160,7 @@ void ReadMaxXml()
 
 	// START Options
 	// Resolution
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", "")))
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
 		cLog::write ( "Cannot find Resolution-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 	{

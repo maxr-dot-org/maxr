@@ -51,7 +51,7 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 		return NULL;
 	}
 
-	szDebug = " 5 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
+//	szDebug = " 5 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
 	debugToLog( szDebug );
 	if( strcmp(pXmlNode->Value(), pszCurrent) != 0 )
 	{
@@ -63,9 +63,9 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 	do
 	{
 		pszCurrent = va_arg(pvaArg, char * );
-		szDebug = " 7 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
+//		szDebug = " 7 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
 		debugToLog( szDebug );
-		if( pszCurrent != "" )
+		if( pszCurrent != NULL )
 		{
 			debugToLog( pXmlNode, " 8 : XmlGetFirstNode : pXmlNode");
 			pXmlNode = pXmlNode->FirstChild( pszCurrent );
@@ -77,7 +77,7 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 				return NULL;
 			}
 		}
-	}while( pszCurrent != "" );
+	}while( pszCurrent != NULL );
 
 	debugToLog( pXmlNode, "11 : XmlGetFirstNode : pXmlNode != 0 SUCCESS");
 	debugToLog( (ExTiXmlNode *)pXmlNode, "12 : XmlGetFirstNode : pXmlNode cast Test");
