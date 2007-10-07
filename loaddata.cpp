@@ -68,20 +68,47 @@ int LoadData ( void * )
 	}
 	MakeLog("Loading Gfx...",true,4);
 
+	// Load Effects
+	MakeLog("Loading Effects...",false,5);
+	LoadEffects(SettingsData.sFxPath.c_str());
+	MakeLog("Loading Effects...",true,5);
+
 	// Load Terrain
-	MakeLog("Loading Terrain...",false,5);
+	MakeLog("Loading Terrain...",false,6);
 	if(!LoadTerrain(SettingsData.sTerrainPath.c_str()))
 	{
 		cLog::write ( "Error while loading terrain", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Terrain...",true,5);
+	MakeLog("Loading Terrain...",true,6);
 
-	while(1)
+	// Load Vehicles
+	MakeLog("Loading Vehicles...",false,7);
+
+	// Load Buildings
+	MakeLog("Loading Buildings...",false,8);
+
+	// Load Music
+	MakeLog("Loading Music...",false,9);
+	if(!LoadMusic(SettingsData.sMusicPath.c_str()))
 	{
-		SDL_Delay(10);
+		cLog::write ( "Error while loading music", LOG_TYPE_ERROR );
+		LoadingData=LOAD_ERROR;
+		return 0;
 	}
+	MakeLog("Loading Music...",true,9);
+
+	// Load Sounds
+	MakeLog("Loading Sounds...",false,10);
+	LoadSounds(SettingsData.sSoundsPath.c_str());
+	MakeLog("Loading Sounds...",true,10);
+
+	// Load Voices
+	MakeLog("Loading Voices...",false,11);
+
+
+	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;
 	return 1;
 }
@@ -99,8 +126,8 @@ void MakeLog ( const char* sztxt,bool ok,int pos )
 	return;
 }
 
-// LoadData ///////////////////////////////////////////////////////////////////
-// Loads all relevant files and datas:
+// LoadGraphicToSurface ///////////////////////////////////////////////////////
+// Loades a graphic to the surface:
 int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename)
 {
 	string filepath;
@@ -121,9 +148,9 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	return 1;
 }
 
-// CheckFile ///////////////////////////////////////////////////////////////////
-// Checks whether the file exists
-int CheckFile(const char* directory, const char* filename)
+// LoadEffectGraphicToSurface /////////////////////////////////////////////////
+// Loades a effectgraphic to the surface:
+int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if(strcmp(directory,""))
@@ -134,6 +161,41 @@ int CheckFile(const char* directory, const char* filename)
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
 		return 0;
+
+	
+	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	dest[0] = LoadPCX((char *)filepath.c_str());
+	dest[1] = LoadPCX((char *)filepath.c_str());
+
+	filepath.insert(0,"Effect successful loaded: ");
+	cLog::write ( filepath.c_str(), LOG_TYPE_DEBUG );
+
+	return 1;
+}
+
+// LoadEffectAlphacToSurface /////////////////////////////////////////////////
+// Loades a effectgraphic as aplha to the surface:
+int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const char* filename, int alpha)
+{
+	string filepath;
+	if(strcmp(directory,""))
+	{
+		filepath = directory;
+		filepath += PATH_DELIMITER;
+	}
+	filepath += filename;
+	if(!FileExists(filepath.c_str()))
+		return 0;
+	
+	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	dest[0] = LoadPCX((char *)filepath.c_str());
+	SDL_SetAlpha(dest[0],SDL_SRCALPHA,alpha);
+	dest[1] = LoadPCX((char *)filepath.c_str());
+	SDL_SetAlpha(dest[1],SDL_SRCALPHA,alpha);
+
+	filepath.insert(0,"Effectalpha successful loaded: ");
+	cLog::write ( filepath.c_str(), LOG_TYPE_DEBUG );
+
 	return 1;
 }
 
@@ -141,6 +203,8 @@ int CheckFile(const char* directory, const char* filename)
 // Reads the Information from the max.xml:
 void ReadMaxXml()
 {
+	cLog::write ( "Reading max.xml", LOG_TYPE_INFO );
+
 	string sTmpString;
 	// Prepare max.xml for reading
 	TiXmlDocument MaxXml;
@@ -155,8 +219,6 @@ void ReadMaxXml()
 		cLog::write ( "cannot load max.xml\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateMaxXml();
 	}
-
-	cLog::write ( "Reading max.xml", LOG_TYPE_INFO );
 
 	// START Options
 	// Resolution
@@ -580,6 +642,126 @@ int LoadFonts(const char* path)
 		return 0;
 	if(!LoadGraphicToSurface ( FontsData.font_big_gold,path,"font_big_gold.pcx" ))
 		return 0;
+
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
+	return 1;
+}
+
+// LoadEffects ///////////////////////////////////////////////////////////////////
+// Loads all Effects
+int LoadEffects(const char* path)
+{
+	cLog::write ( "Loading Effects", LOG_TYPE_INFO );
+
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_small0,path,"explo_small0.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_small1,path,"explo_small1.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_small2,path,"explo_small2.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big0,path,"explo_big0.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big1,path,"explo_big1.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big2,path,"explo_big2.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big3,path,"explo_big3.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big4,path,"explo_big4.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_big,path,"muzzle_big.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_small,path,"muzzle_small.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_med,path,"muzzle_med.pcx" );
+	LoadEffectGraphicToSurface ( EffectsData.fx_hit,path,"hit.pcx" );
+	LoadEffectAlphaToSurface ( EffectsData.fx_smoke,path,"smoke.pcx",100 );
+	LoadEffectGraphicToSurface ( EffectsData.fx_rocket,path,"rocket.pcx" );
+	LoadEffectAlphaToSurface ( EffectsData.fx_dark_smoke,path,"dark_smoke.pcx",100 );
+	LoadEffectAlphaToSurface ( EffectsData.fx_tracks,path,"tracks.pcx",100 );
+	LoadEffectAlphaToSurface ( EffectsData.fx_corpse,path,"corpse.pcx",255 );
+	LoadEffectAlphaToSurface ( EffectsData.fx_absorb,path,"absorb.pcx",150 );
+
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
+	return 1;
+}
+
+// LoadMusic ///////////////////////////////////////////////////////////////////
+// Loads all Musicfiles
+int LoadMusic(const char* path)
+{
+	cLog::write ( "Loading Music", LOG_TYPE_INFO );
+	string sTmpString;
+	char sztmp[32];
+
+	// Prepare music.xml for reading
+	TiXmlDocument MusicXml;
+	ExTiXmlNode * pXmlNode = NULL;
+	sTmpString = path;
+	sTmpString += PATH_DELIMITER;
+	sTmpString += "music.xml";
+	while(!FileExists(sTmpString.c_str()))
+		return 0;
+	while(!(MusicXml.LoadFile(sTmpString.c_str())))
+	{
+		cLog::write ( "cannot load music.xml ", LOG_TYPE_ERROR );
+		return 0;
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","main", NULL);
+	if(!(pXmlNode->XmlReadNodeData(MainMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
+	{
+		cLog::write ( "cannot load \"main\" from music.xml ", LOG_TYPE_ERROR );
+		return 0;
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","credits", NULL);
+	if(!(pXmlNode->XmlReadNodeData(CreditsMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
+	{
+		cLog::write ( "cannot load \"credits\" from music.xml ", LOG_TYPE_ERROR );
+		return 0;
+	}
+
+
+	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Game","bkgcount", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		MusicAnz = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "cannot load \"bkgcount\" from music.xml ", LOG_TYPE_WARNING );
+		return 1;
+	}
+	MusicFiles = new TList;
+	for ( int i=1;i <= MusicAnz; i++ )
+	{
+		sprintf ( sztmp,"%d",i );
+		sTmpString = "bkg"; sTmpString += sztmp;
+		pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Game",sTmpString.c_str(), NULL);
+		if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		{
+			sTmpString.insert(0,PATH_DELIMITER);
+			sTmpString.insert(0,path);
+		}
+		else
+		{
+			sTmpString = "can not read bkg from music.xml";
+			sprintf ( sztmp,"%d",i );
+			sTmpString.insert(16,sztmp); 
+			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
+			continue;
+		}
+		if(!FileExists(sTmpString.c_str()))
+			continue;
+		MusicFiles->Add ( sTmpString );
+	}
+
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
+	return 1;
+}
+
+// LoadSounds ///////////////////////////////////////////////////////////////////
+// Loads all Sounds
+int LoadSounds(const char* path)
+{
+	cLog::write ( "Loading Sounds", LOG_TYPE_INFO );
+
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
+	return 1;
+}
+
+// LoadVoices ///////////////////////////////////////////////////////////////////
+// Loads all Voices
+int LoadVoices(const char* path)
+{
+	cLog::write ( "Loading Voices", LOG_TYPE_INFO );
 
 	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return 1;
