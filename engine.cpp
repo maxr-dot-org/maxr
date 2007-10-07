@@ -560,8 +560,8 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		char str[50];
 		sprintf ( str,"%s entdeckt",v->name.c_str() );
 		game->AddCoords ( str,v->PosX,v->PosY );
-		if ( random ( 2,0 ) ==0 ) PlayVoice ( VOIDetected1 );
-		else PlayVoice ( VOIDetected2 );
+		if ( random ( 2,0 ) ==0 ) PlayVoice ( VoiceData.VOIDetected1 );
+		else PlayVoice ( VoiceData.VOIDetected2 );
 	}
 	return;
 }
@@ -976,19 +976,19 @@ void cEngine::MakeRundenstartReport ( void )
 
 	if ( anz==0 )
 	{
-		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VOIStartNone );
+		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartNone );
 		game->ActivePlayer->ReportForschungFinished=false;
 		return;
 	}
 	if ( anz==1 )
 	{
 		Report+=" wurde fertiggestellt.";
-		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VOIStartOne );
+		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartOne );
 	}
 	else
 	{
 		Report+=" wurden fertiggestellt.";
-		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VOIStartMore );
+		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;
 	game->AddMessage ( ( char * ) Report.c_str() );
