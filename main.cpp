@@ -190,20 +190,6 @@ void Quit()
 	exit ( 0 );
 }
 
-// InitSound /////////////////////////////////////////////////////////////////
-// Initialisiert den Sound:
-int InitSound()
-{
-	if ( !SettingsData.bSoundEnabled ) return 1;
-	if ( !InitSound ( SettingsData.iFrequency,SettingsData.iChunkSize ) )
-	{
-		cLog::write ( "could not init sound!",cLog::eLOG_TYPE_WARNING );
-		return 0;
-	}
-	SettingsData.bSoundEnabled=true;
-	return 1;
-}
-
 // ScaleSurface //////////////////////////////////////////////////////////////
 // Skaliert ein Surface in ein Anderes:
 void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
