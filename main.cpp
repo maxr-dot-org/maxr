@@ -64,6 +64,7 @@ int main ( int argc, char *argv[] )
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
+	ReadMaxXml();
 	showSplash(); //show splashscreen
 
 	// load files
@@ -143,7 +144,7 @@ int initSDL()
 	putenv ( "SDL_VIDEO_WINDOW_POS=center" ); //Set env for SDL - must be done _before_ init_sdl
 	putenv ( "SDL_VIDEO_CENTERED=1" );
 
-	if ( SDL_Init ( SDL_INIT_VIDEO || SDL_INIT_TIMER || SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
+	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{
 		cLog::write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
 		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
