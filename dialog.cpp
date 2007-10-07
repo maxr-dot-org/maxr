@@ -59,7 +59,7 @@ bool ShowYesNo(string text){
     // Ja Button:
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+150&&y<480/2-231/2+150+29){
       if(b&&!lb){
-        PlayFX(SNDHudButton);
+        PlayFX(SoundData.SNDHudButton);
         PlaceSmallButton("Ja",640/2-300/2+80,480/2-231/2+150,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -70,7 +70,7 @@ bool ShowYesNo(string text){
     // Nein Button:
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
-        PlayFX(SNDHudButton);
+        PlayFX(SoundData.SNDHudButton);
         PlaceSmallButton("Nein",640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -153,7 +153,7 @@ int ShowNumberInput(string text){
     // OK Button:
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
-        PlayFX(SNDHudButton);
+        PlayFX(SoundData.SNDHudButton);
         PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -222,7 +222,7 @@ void ShowOK(string text,bool pure){
     // OK Button:
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
-        PlayFX(SNDHudButton);
+        PlayFX(SoundData.SNDHudButton);
         PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
