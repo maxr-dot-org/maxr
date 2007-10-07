@@ -270,7 +270,7 @@ public:
 	/**Last/default ip used for network game */
 	string sIP; //string? why not int array? --beko
 	/**Last/default port  used for network game */
-	int sPort;
+	int iPort;
 	/**Last/default player's name used for network game */
 	string sPlayerName;
 
