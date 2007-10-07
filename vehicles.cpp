@@ -1093,7 +1093,7 @@ void cVehicle::ShowHelp ( void )
 	bool FertigPressed=false;
 	SDL_Rect scr,dest;
 
-	PlayFX ( SNDHudButton );
+	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Hilfebildschirm blitten:
@@ -1137,7 +1137,7 @@ void cVehicle::ShowHelp ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=68;
 				scr.y=172;
 				dest.w=scr.w=61;
@@ -1540,11 +1540,11 @@ int cVehicle::PlayStram ( void )
 {
 	if ( IsBuilding&&BuildRounds )
 	{
-		return PlayFXLoop ( SNDBuilding );
+		return PlayFXLoop ( SoundData.SNDBuilding );
 	}
 	else if ( IsClearing&&ClearingRounds )
 	{
-		return PlayFXLoop ( SNDClearing );
+		return PlayFXLoop ( SoundData.SNDClearing );
 	}
 	else if ( game->map->IsWater ( PosX+PosY*game->map->size ) &&data.can_drive!=DRIVE_AIR )
 	{
@@ -1623,7 +1623,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode=true;
 			game->hud->CheckScroll();
 			MouseMoveCallback ( true );
@@ -1645,10 +1645,10 @@ void cVehicle::DrawMenu ( void )
 				mjob=NULL;
 				MoveJobActive=false;
 				MenuActive=false;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 			}
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowBuildMenu();
 			return;
 		}
@@ -1663,7 +1663,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Transfer=true;
 			return;
 		}
@@ -1683,12 +1683,12 @@ void cVehicle::DrawMenu ( void )
 				mjob=NULL;
 				MoveJobActive=false;
 				MenuActive=false;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 			}
 			else if ( IsBuilding )
 			{
 				MenuActive=false;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				IsBuilding=false;
 				BuildPath=false;
 				if ( data.can_build==BUILD_BIG )
@@ -1710,7 +1710,7 @@ void cVehicle::DrawMenu ( void )
 			else
 			{
 				MenuActive=false;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				IsClearing=false;
 				if ( ClearBig )
 				{
@@ -1737,7 +1737,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			IsClearing=true;
 			ClearingRounds=game->map->GO[PosX+PosY*game->map->size].base->DirtValue/4+1;
 			ClearBig=game->map->GO[PosX+PosY*game->map->size].base->data.is_big;
@@ -1769,7 +1769,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten=!Wachposten;
 			Wachwechsel();
 			return;
@@ -1786,7 +1786,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowStorage();
 			return;
 		}
@@ -1798,7 +1798,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			LoadActive=true;
 			return;
 		}
@@ -1813,7 +1813,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			MuniActive=true;
 			return;
 		}
@@ -1828,7 +1828,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			RepairActive=true;
 			return;
 		}
@@ -1843,7 +1843,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			LayMines=!LayMines;
 			ClearMines=false;
 			LayMine();
@@ -1860,7 +1860,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ClearMines=!ClearMines;
 			LayMines=false;
 			ClearMine();
@@ -1878,7 +1878,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			DisableActive=true;
 			return;
 		}
@@ -1890,7 +1890,7 @@ void cVehicle::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			StealActive=true;
 			return;
 		}
@@ -1903,7 +1903,7 @@ void cVehicle::DrawMenu ( void )
 	if ( ExeNr==nr )
 	{
 		MenuActive=false;
-		PlayFX ( SNDObjectMenu );
+		PlayFX ( SoundData.SNDObjectMenu );
 		ShowHelp();
 		return;
 	}
@@ -1915,7 +1915,7 @@ void cVehicle::DrawMenu ( void )
 	if ( ExeNr==nr )
 	{
 		MenuActive=false;
-		PlayFX ( SNDObjectMenu );
+		PlayFX ( SoundData.SNDObjectMenu );
 		return;
 	}
 	scr.x=126;
@@ -2357,7 +2357,7 @@ void cVehicle::ShowBuildMenu ( void )
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=440&&y<440+17&&b&&!DownPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -2391,7 +2391,7 @@ void cVehicle::ShowBuildMenu ( void )
 		// Up-Button:
 		if ( x>=471&&x<471+18&&y>=440&&y<440+17&&b&&!UpPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -2427,7 +2427,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=364;
 				scr.y=231;
 				dest.w=scr.w=62;
@@ -2462,7 +2462,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=308;
 				scr.y=231;
 				dest.w=scr.w=55;
@@ -2570,7 +2570,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			if ( b&&!PfadPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=161;
 				scr.y=149;
 				dest.w=scr.w=63;
@@ -2655,7 +2655,7 @@ void cVehicle::ShowBuildMenu ( void )
 		// Beschreibung Haken:
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung=!Beschreibung;
 			SettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
@@ -2683,7 +2683,7 @@ void cVehicle::ShowBuildMenu ( void )
 		// 1x Button:
 		if ( x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB&&owner->BuildingData[images->BuildStructItems[selected]->id].costs<=data.cargo )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=1;
 			BuildSpeedD=-1;
 			DrawBuildButtons ( BuildSpeed );
@@ -2697,7 +2697,7 @@ void cVehicle::ShowBuildMenu ( void )
 			float g=data.cargo/ ( float ) t;
 			if ( t/4>=1&&t*2<=data.cargo )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				BuildSpeed=2;
 				BuildSpeedD=-1;
 				DrawBuildButtons ( BuildSpeed );
@@ -2706,7 +2706,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 			else if ( t/4>1&&t<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/2)
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				BuildSpeed=2;
 				BuildSpeedD=g;
 				DrawBuildButtons ( BuildSpeed );
@@ -2721,7 +2721,7 @@ void cVehicle::ShowBuildMenu ( void )
 			float g=data.cargo/ ( float ) t;
 			if ( t/8>=1&&t*4<=data.cargo )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				BuildSpeed=4;
 				BuildSpeedD=-1;
 				DrawBuildButtons ( BuildSpeed );
@@ -2730,7 +2730,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 			else if ( t/8>1&&t*2<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/4)
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				BuildSpeed=4;
 				BuildSpeedD=g;
 				DrawBuildButtons ( BuildSpeed );
@@ -2754,7 +2754,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 			if ( nr!=-1 )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 				SHOW_SCREEN
@@ -3002,7 +3002,7 @@ void cVehicle::MakeReport ( void )
 	if ( Disabled )
 	{
 		// Disabled:
-		PlayVoice ( VOIDisabled );
+		PlayVoice ( VoiceData.VOIDisabled );
 	}
 	else if ( data.hit_points>data.max_hit_points/2 )
 	{
@@ -3010,7 +3010,7 @@ void cVehicle::MakeReport ( void )
 		if ( data.speed==0 )
 		{
 			// Bewegung erschöpft:
-			PlayVoice ( VOINoSpeed );
+			PlayVoice ( VoiceData.VOINoSpeed );
 		}
 		else if ( IsBuilding )
 		{
@@ -3020,11 +3020,11 @@ void cVehicle::MakeReport ( void )
 				// Bau beendet:
 				if ( random ( 2,0 ) )
 				{
-					PlayVoice ( VOIBuildDone1 );
+					PlayVoice ( VoiceData.VOIBuildDone1 );
 				}
 				else
 				{
-					PlayVoice ( VOIBuildDone2 );
+					PlayVoice ( VoiceData.VOIBuildDone2 );
 				}
 			}
 		}
@@ -3033,11 +3033,11 @@ void cVehicle::MakeReport ( void )
 			// Räumen:
 			if ( ClearingRounds )
 			{
-				PlayVoice ( VOIClearing );
+				PlayVoice ( VoiceData.VOIClearing );
 			}
 			else
 			{
-				PlayVoice ( VOIOK2 );
+				PlayVoice ( VoiceData.VOIOK2 );
 			}
 		}
 		else if ( data.can_attack&&!data.ammo )
@@ -3045,25 +3045,25 @@ void cVehicle::MakeReport ( void )
 			// Keine Munition:
 			if ( random ( 2,0 ) )
 			{
-				PlayVoice ( VOILowAmmo1 );
+				PlayVoice ( VoiceData.VOILowAmmo1 );
 			}
 			else
 			{
-				PlayVoice ( VOILowAmmo2 );
+				PlayVoice ( VoiceData.VOILowAmmo2 );
 			}
 		}
 		else if ( Wachposten )
 		{
 			// Wachposten:
-			PlayVoice ( VOIWachposten );
+			PlayVoice ( VoiceData.VOIWachposten );
 		}
 		else if ( ClearMines )
 		{
-			PlayVoice ( VOIClearingMines );
+			PlayVoice ( VoiceData.VOIClearingMines );
 		}
 		else if ( LayMines )
 		{
-			PlayVoice ( VOILayingMines );
+			PlayVoice ( VoiceData.VOILayingMines );
 		}
 		else
 		{
@@ -3072,27 +3072,27 @@ void cVehicle::MakeReport ( void )
 			nr=random ( 3,0 );
 			if ( nr==0 )
 			{
-				PlayVoice ( VOIOK1 );
+				PlayVoice ( VoiceData.VOIOK1 );
 			}
 			else if ( nr==1 )
 			{
-				PlayVoice ( VOIOK2 );
+				PlayVoice ( VoiceData.VOIOK2 );
 			}
 			else
 			{
-				PlayVoice ( VOIOK3 );
+				PlayVoice ( VoiceData.VOIOK3 );
 			}
 		}
 	}
 	else if ( data.hit_points>data.max_hit_points/4 )
 	{
 		// Status Gelb:
-		PlayVoice ( VOIStatusYellow );
+		PlayVoice ( VoiceData.VOIStatusYellow );
 	}
 	else
 	{
 		// Status Rot:
-		PlayVoice ( VOIStatusRed );
+		PlayVoice ( VoiceData.VOIStatusRed );
 	}
 }
 
@@ -3270,7 +3270,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=0;
 				scr.y=263;
 				dest.w=scr.w=64;
@@ -3305,7 +3305,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=65;
 				scr.y=263;
 				dest.w=scr.w=56;
@@ -3341,7 +3341,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 					}
 				}
 				ShowDetails();
-				PlayVoice ( VOITransferDone );
+				PlayVoice ( VoiceData.VOITransferDone );
 				break;
 			}
 		}
@@ -3361,7 +3361,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		// Inc-Button:
 		if ( x>=277+166&&x<277+19+166&&y>=88+159&&y<88+18+159&&b&&!IncPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=257;
 			scr.y=177;
 			dest.w=scr.w=19;
@@ -3391,7 +3391,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		// Dec-Button:
 		if ( x>=16+166&&x<16+19+166&&y>=88+159&&y<88+18+159&&b&&!DecPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=237;
 			scr.y=177;
 			dest.w=scr.w=19;
@@ -3421,7 +3421,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		// Klick auf den Bar:
 		if ( x>=44+166&&x<44+223+166&&y>=86+159&&y<86+20+159&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Transf=Round(( x- ( 44+166 ) ) * ( MaxTarget/223.0 )-Target);
 			MakeTransBar ( &Transf,MaxTarget,Target );
 			SHOW_SCREEN
@@ -3908,7 +3908,7 @@ void cVehicle::ShowStorage ( void )
 		{
 			if ( x>=530&&x<530+25&&y>=426&&y<426+25&&b&&!DownPressed )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=530;
 				scr.y=426;
 				dest.w=scr.w=25;
@@ -3954,7 +3954,7 @@ void cVehicle::ShowStorage ( void )
 		{
 			if ( x>=504&&x<504+25&&y>=426&&y<426+25&&b&&!UpPressed )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=504;
 				scr.y=426;
 				dest.w=scr.w=25;
@@ -3999,7 +3999,7 @@ void cVehicle::ShowStorage ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.w=dest.w=94;
 				scr.h=dest.h=23;
 				scr.x=510;scr.y=371;
@@ -4030,7 +4030,7 @@ void cVehicle::ShowStorage ( void )
 		{
 			sVehicle *typ;
 			int size;
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251;
 			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
@@ -4044,7 +4044,7 @@ void cVehicle::ShowStorage ( void )
 			game->OverObject=NULL;
 			mouse->MoveCallback=true;
 
-			PlayFX ( SNDActivate );
+			PlayFX ( SoundData.SNDActivate );
 			size=game->map->size;
 
 			for ( i=0;i<StoredVehicles->Count; )
@@ -4105,7 +4105,7 @@ void cVehicle::ShowStorage ( void )
 			// Aktivieren:
 			if ( x>=dest.x&&x<dest.x+73&&y>=dest.y&&y<dest.y+23&&b&&!LastB )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				ActivatingVehicle=true;
 				VehicleToActivate=i+offset;
 				SDL_BlitSurface ( sf,&dest,buffer,&dest );
@@ -4327,13 +4327,13 @@ void cVehicle::LayMine ( void )
 	if ( data.can_drive==DRIVE_SEA )
 	{
 		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrSeaMine,owner,false );
-		PlayFX ( SNDSeaMinePlace );
+		PlayFX ( SoundData.SNDSeaMinePlace );
 	}
 	else
 	{
 		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrLandMine,owner,false );
 
-		PlayFX ( SNDLandMinePlace );
+		PlayFX ( SoundData.SNDLandMinePlace );
 	}
 	data.cargo--;
 	if ( game->SelectedVehicle==this )
@@ -4371,11 +4371,11 @@ void cVehicle::ClearMine ( void )
 
 	if ( data.can_drive==DRIVE_SEA )
 	{
-		PlayFX ( SNDSeaMineClear );
+		PlayFX ( SoundData.SNDSeaMineClear );
 	}
 	else
 	{
-		PlayFX ( SNDLandMineClear );
+		PlayFX ( SoundData.SNDLandMineClear );
 	}
 
 	data.cargo++;
@@ -4509,14 +4509,14 @@ void cVehicle::CommandoOperation ( int off,bool steal )
 			cVehicle *v;
 			v=game->map->GO[off].vehicle;
 			if ( v ) v->owner=owner;
-			PlayVoice ( VOIUnitStolen );
+			PlayVoice ( VoiceData.VOIUnitStolen );
 		}
 		else
 		{
 			cVehicle *v;
 			cBuilding *b;
 			v=game->map->GO[off].vehicle;
-			PlayVoice ( VOIUnitDisabled );
+			PlayVoice ( VoiceData.VOIUnitDisabled );
 			if ( v )
 			{
 				v->Disabled=2+CommandoRank/2;
@@ -4546,7 +4546,7 @@ void cVehicle::CommandoOperation ( int off,bool steal )
 	}
 	else
 	{
-		PlayVoice ( VOICommandoDetected );
+		PlayVoice ( VoiceData.VOICommandoDetected );
 	}
 
 	if ( game->SelectedVehicle==this ) ShowDetails();

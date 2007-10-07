@@ -63,11 +63,11 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 		{
 			if ( random ( 2,0 ) )
 			{
-				PlayVoice ( VOINoPath1 );
+				PlayVoice ( VoiceData.VOINoPath1 );
 			}
 			else
 			{
-				PlayVoice ( VOINoPath2 );
+				PlayVoice ( VoiceData.VOINoPath2 );
 			}
 		}
 		return;

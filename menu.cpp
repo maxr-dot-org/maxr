@@ -203,7 +203,7 @@ void RunMainMenu ( void )
 		// Klick aufs Bild:
 		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowInfo();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -214,7 +214,7 @@ void RunMainMenu ( void )
 			if ( b&&!lb )
 			{
 				SPPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Einzelspieler",390,190,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -248,7 +248,7 @@ void RunMainMenu ( void )
 			if ( b&&!lb )
 			{
 				MPPRessed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Mehrspieler",390,190+35,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -282,7 +282,7 @@ void RunMainMenu ( void )
 			if ( b&&!lb )
 			{
 				MEPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Map-Editor",390,190+35*2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -315,7 +315,7 @@ void RunMainMenu ( void )
 			if ( b&&!lb )
 			{
 				CrPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Credits",390,190+35*3,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -346,7 +346,7 @@ void RunMainMenu ( void )
 			if ( b&&!lb )
 			{
 				BePressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Beenden",390,190+35*5,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -414,7 +414,7 @@ void RunMPMenu ( void )
 		// Klick aufs Bild:
 		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowInfo();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -425,7 +425,7 @@ void RunMPMenu ( void )
 			if ( b&&!lb )
 			{
 				TCPHostPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "TCP/IP Host",390,190,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -451,7 +451,7 @@ void RunMPMenu ( void )
 			if ( b&&!lb )
 			{
 				TCPClientPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "TCP/IP Client",390,190+35,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -477,7 +477,7 @@ void RunMPMenu ( void )
 			if ( b&&!lb )
 			{
 				HotSeatPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Hot Seat",390,190+35*2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -501,7 +501,7 @@ void RunMPMenu ( void )
 			if ( b&&!lb )
 			{
 				LoadHotSeatPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Hot Seat laden",390,190+35*3,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -542,7 +542,7 @@ void RunMPMenu ( void )
 			if ( b&&!lb )
 			{
 				BackPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Zurück",390,190+35*5,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -603,7 +603,7 @@ void RunSPMenu ( void )
 		// Klick aufs Bild:
 		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowInfo();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -614,7 +614,7 @@ void RunSPMenu ( void )
 			if ( b&&!lb )
 			{
 				StartTrainingPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Training starten",390,190,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -641,7 +641,7 @@ void RunSPMenu ( void )
 			if ( b&&!lb )
 			{
 				StartNewPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Neues Spiel starten",390,190+35,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -720,7 +720,7 @@ void RunSPMenu ( void )
 			if ( b&&!lb )
 			{
 				LoadPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Spiel laden",390,190+35*2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -760,7 +760,7 @@ void RunSPMenu ( void )
 			if ( b&&!lb )
 			{
 				BackPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Zurück",390,190+35*4,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -898,7 +898,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,86+16,options.metal==1 );
 			PlaceSelectText ( "viel",38+45*2,86+16,options.metal==2 );
 			PlaceSelectText ( "extrem",38+45*3,86+16,options.metal==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -909,7 +909,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,86+16,options.metal==1 );
 			PlaceSelectText ( "viel",38+45*2,86+16,options.metal==2 );
 			PlaceSelectText ( "extrem",38+45*3,86+16,options.metal==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -920,7 +920,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,86+16,options.metal==1 );
 			PlaceSelectText ( "viel",38+45*2,86+16,options.metal==2 );
 			PlaceSelectText ( "extrem",38+45*3,86+16,options.metal==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -931,7 +931,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,86+16,options.metal==1 );
 			PlaceSelectText ( "viel",38+45*2,86+16,options.metal==2 );
 			PlaceSelectText ( "extrem",38+45*3,86+16,options.metal==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -943,7 +943,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,124+16,options.oil==1 );
 			PlaceSelectText ( "viel",38+45*2,124+16,options.oil==2 );
 			PlaceSelectText ( "extrem",38+45*3,124+16,options.oil==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -954,7 +954,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,124+16,options.oil==1 );
 			PlaceSelectText ( "viel",38+45*2,124+16,options.oil==2 );
 			PlaceSelectText ( "extrem",38+45*3,124+16,options.oil==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -965,7 +965,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,124+16,options.oil==1 );
 			PlaceSelectText ( "viel",38+45*2,124+16,options.oil==2 );
 			PlaceSelectText ( "extrem",38+45*3,124+16,options.oil==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -976,7 +976,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,124+16,options.oil==1 );
 			PlaceSelectText ( "viel",38+45*2,124+16,options.oil==2 );
 			PlaceSelectText ( "extrem",38+45*3,124+16,options.oil==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -988,7 +988,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,162+16,options.gold==1 );
 			PlaceSelectText ( "viel",38+45*2,162+16,options.gold==2 );
 			PlaceSelectText ( "extrem",38+45*3,162+16,options.gold==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -999,7 +999,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,162+16,options.gold==1 );
 			PlaceSelectText ( "viel",38+45*2,162+16,options.gold==2 );
 			PlaceSelectText ( "extrem",38+45*3,162+16,options.gold==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1010,7 +1010,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,162+16,options.gold==1 );
 			PlaceSelectText ( "viel",38+45*2,162+16,options.gold==2 );
 			PlaceSelectText ( "extrem",38+45*3,162+16,options.gold==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1021,7 +1021,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "mittel",38+45,162+16,options.gold==1 );
 			PlaceSelectText ( "viel",38+45*2,162+16,options.gold==2 );
 			PlaceSelectText ( "extrem",38+45*3,162+16,options.gold==3 );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1036,7 +1036,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1050,7 +1050,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1064,7 +1064,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1078,7 +1078,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1092,7 +1092,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1106,7 +1106,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1120,7 +1120,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "viele (200)",110+130,86+20*4,options.credits==200,false );
 			PlaceSelectText ( "sehr viele (250)",110+130,86+20*5,options.credits==250,false );
 			PlaceSelectText ( "extrem (300)",110+130,86+20*6,options.credits==300,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1130,7 +1130,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.FixedBridgeHead=false;
 			PlaceSelectText ( "Mobil",452,86,!options.FixedBridgeHead,false );
 			PlaceSelectText ( "Fest",452,86+20,options.FixedBridgeHead,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1139,7 +1139,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.FixedBridgeHead=true;
 			PlaceSelectText ( "Mobil",452,86,!options.FixedBridgeHead,false );
 			PlaceSelectText ( "Fest",452,86+20,options.FixedBridgeHead,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1149,7 +1149,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.AlienTech=true;
 			PlaceSelectText ( "ein",38,281,options.AlienTech );
 			PlaceSelectText ( "aus",38,281+20,!options.AlienTech );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1158,7 +1158,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.AlienTech=false;
 			PlaceSelectText ( "ein",38,281,options.AlienTech );
 			PlaceSelectText ( "aus",38,281+20,!options.AlienTech );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1170,7 +1170,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "normal",110+130,281+20,options.dichte==1,false );
 			PlaceSelectText ( "dicht",110+130,281+20*2,options.dichte==2,false );
 			PlaceSelectText ( "extrem",110+130,281+20*3,options.dichte==3,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1181,7 +1181,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "normal",110+130,281+20,options.dichte==1,false );
 			PlaceSelectText ( "dicht",110+130,281+20*2,options.dichte==2,false );
 			PlaceSelectText ( "extrem",110+130,281+20*3,options.dichte==3,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1192,7 +1192,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "normal",110+130,281+20,options.dichte==1,false );
 			PlaceSelectText ( "dicht",110+130,281+20*2,options.dichte==2,false );
 			PlaceSelectText ( "extrem",110+130,281+20*3,options.dichte==3,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1203,7 +1203,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			PlaceSelectText ( "normal",110+130,281+20,options.dichte==1,false );
 			PlaceSelectText ( "dicht",110+130,281+20*2,options.dichte==2,false );
 			PlaceSelectText ( "extrem",110+130,281+20*3,options.dichte==3,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1213,7 +1213,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.PlayRounds=false;
 			PlaceSelectText ( "simultan",452,281,!options.PlayRounds,false );
 			PlaceSelectText ( "Runden",452,281+20,options.PlayRounds,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1222,7 +1222,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			options.PlayRounds=true;
 			PlaceSelectText ( "simultan",452,281,!options.PlayRounds,false );
 			PlaceSelectText ( "Runden",452,281+20,options.PlayRounds,false );
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1232,7 +1232,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			if ( b&&!lb )
 			{
 				BackPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Zurück",50,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -1256,7 +1256,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			if ( b&&!lb )
 			{
 				OKPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Ok",390,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -1353,7 +1353,7 @@ string RunPlanetSelect ( void )
 			if ( b&&!lb )
 			{
 				OKPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Ok",390,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -1377,7 +1377,7 @@ string RunPlanetSelect ( void )
 		// Up:
 		if ( mouse->x>=293&&mouse->x<293+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&offset>0 )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			offset-=4;
 			ShowPlanets ( files,offset,selected );
 			SHOW_SCREEN
@@ -1386,7 +1386,7 @@ string RunPlanetSelect ( void )
 		// Down:
 		if ( mouse->x>=321&&mouse->x<321+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&files->Count-8-offset>0 )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			offset+=4;
 			ShowPlanets ( files,offset,selected );
 			SHOW_SCREEN
@@ -1404,7 +1404,7 @@ string RunPlanetSelect ( void )
 				if ( mouse->x>=scr.x&&mouse->x<scr.x+112&&mouse->y>=scr.y&&mouse->y<scr.y+112 )
 				{
 					selected=i+offset;
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					ShowPlanets ( files,offset,selected );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -1604,7 +1604,7 @@ sPlayer RunPlayerSelect ( void )
 			{
 				if ( mouse->x>=x&&mouse->x<x+55&&mouse->y>=y&&mouse->y<y+71 )
 				{
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					if ( i == 0 ) players.what[0] = 1;
 					if ( i == 1 ) players.what[0] = 2;
 					if ( i == 2 ) players.what[0] = 0;
@@ -1638,7 +1638,7 @@ sPlayer RunPlayerSelect ( void )
 			if ( b&&!lb )
 			{
 				OKPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Ok",390,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -1816,7 +1816,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			if ( b&&!lb )
 			{
 				FertigPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=308;scr.y=231;
 				scr.w=dest.w=55;
 				scr.h=dest.h=24;
@@ -1842,7 +1842,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Beschreibung Haken:
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!lb )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung=!Beschreibung;
 			SettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
@@ -1870,7 +1870,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=386&&y<386+17&&b&&!DownPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -1904,7 +1904,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Up-Button:
 		if ( x>=470&&x<470+18&&y>=386&&y<386+17&&b&&!UpPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -1952,7 +1952,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			if ( nr!=-1 )
 			{
 				int last_selected=selected;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 				// Doppelklick prüfen:
@@ -2001,7 +2001,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					player->Credits+=ptr->upgrades[i].NextPrice;
 					ptr->upgrades[i].Purchased--;
 
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 					SHOW_SCREEN
@@ -2024,7 +2024,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					ptr->upgrades[i].Purchased++;
 
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 					SHOW_SCREEN
@@ -2037,7 +2037,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Klick auf einen der SubSelctionButtons:
 		if ( b&&!lb&&x>=467&&x<467+32&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			tank=!tank;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
@@ -2047,7 +2047,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=467+33&&x<467+32+33&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			plane=!plane;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2056,7 +2056,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=467+33*2&&x<467+32+33*2&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			ship=!ship;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2065,7 +2065,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=467+33*3&&x<467+32+33*3&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			build=!build;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2074,7 +2074,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=467+33*4&&x<467+32+33*4&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			tnt=!tnt;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2083,7 +2083,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=542&&x<542+16&&y>=459 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=false;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2092,7 +2092,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		else if ( b&&!lb&&x>=542&&x<542+16&&y>=445 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=true;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
@@ -2102,7 +2102,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Kauf-Button:
 		if ( x>=590&&x<590+41&&y>=386&&y<386+23&&b&&!KaufPressed&&selection->HUpItems[selected]->costs<=player->Credits&&kauf )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			scr.x=380;
 			scr.y=274;
 			dest.w=scr.w=41;
@@ -2146,7 +2146,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Down2-Button:
 		if ( x>=327&&x<327+18&&y>=240&&y<240+17&&b&&!Down2Pressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -2180,7 +2180,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Up2-Button:
 		if ( x>=347&&x<347+18&&y>=240&&y<240+17&&b&&!Up2Pressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -2214,7 +2214,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		// Entfernen-Button:
 		if ( x>=412&&x<412+53&&y>=240&&y<240+23&&b&&!EntfernenPressed )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			scr.x=0;
 			scr.y=352;
 			dest.w=scr.w=53;
@@ -2279,7 +2279,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			if ( nr!=-1 )
 			{
 				int last_selected=LandingSelected;
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				LandingSelected=nr;
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
@@ -2322,7 +2322,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				// LadungUp-Button:
 				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<VehicleMainData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
 				{
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
 					scr.y=151;
 					dest.w=scr.w=18;
@@ -2356,7 +2356,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				// LadungDown-Button:
 				if ( x>=433&&x<433+18&&y>=424&&y<424+17&&b&&!LadungUpPressed&&ptr->cargo>0 )
 				{
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
 					scr.y=151;
 					dest.w=scr.w=18;
@@ -2392,7 +2392,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				{
 					int value;
 					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( VehicleMainData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 
 					if ( ( 115- ( y-301 ) ) >=110 ) value=VehicleMainData.vehicle[ptr->id].data.max_cargo;
 
@@ -3752,7 +3752,7 @@ void cMultiPlayer::RunMenu ( void )
 			if ( b&&!lb )
 			{
 				BackPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Zurück",50,450,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -3777,7 +3777,7 @@ void cMultiPlayer::RunMenu ( void )
 			if ( b&&!lb )
 			{
 				OKPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceButton ( "Ok",390,450,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -3861,7 +3861,7 @@ void cMultiPlayer::RunMenu ( void )
 		if ( b&&!lb&&mouse->x>=596&&mouse->x<596+18&&mouse->y>=256&&mouse->y<256+18&&!WaitForGo )
 		{
 			int nr;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			nr=GetColorNr ( MyPlayer->color ) +1;
 			if ( nr>7 ) nr=0;
 			MyPlayer->color=OtherData.colors[nr];
@@ -3877,7 +3877,7 @@ void cMultiPlayer::RunMenu ( void )
 		if ( b&&!lb&&mouse->x>=478&&mouse->x<478+18&&mouse->y>=256&&mouse->y<256+18&&!WaitForGo )
 		{
 			int nr;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			nr=GetColorNr ( MyPlayer->color )-1;
 			if ( nr<0 ) nr=7;
 			MyPlayer->color=OtherData.colors[nr];
@@ -3898,7 +3898,7 @@ void cMultiPlayer::RunMenu ( void )
 				if ( b&&!lb )
 				{
 					PlanetPressed=true;
-					PlayFX ( SNDMenuButton );
+					PlayFX ( SoundData.SNDMenuButton );
 					PlaceSmallButton ( "Planet wählen",470,42,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -3950,7 +3950,7 @@ void cMultiPlayer::RunMenu ( void )
 				if ( b&&!lb )
 				{
 					OptionsPressed=true;
-					PlayFX ( SNDMenuButton );
+					PlayFX ( SoundData.SNDMenuButton );
 					PlaceSmallButton ( "Optionen",470,42+35,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -4008,7 +4008,7 @@ void cMultiPlayer::RunMenu ( void )
 			/*	  if(mouse->x>=470&&mouse->x<470+150&&mouse->y>=42+35*2&&mouse->y<42+29+32*2){
 			        if(b&&!lb){
 			          LadenPressed=true;
-			          PlayFX(SNDMenuButton);
+			          PlayFX(SoundData.SNDMenuButton);
 			          PlaceSmallButton("Spiel laden",470,42+35*2,true);
 			          SHOW_SCREEN
 			          mouse->draw(false,screen);
@@ -4066,7 +4066,7 @@ void cMultiPlayer::RunMenu ( void )
 			if ( !lb )
 			{
 				StartHostConnect=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				if ( host ) PlaceSmallButton ( "Start Host",470,200,true );
 				else PlaceSmallButton ( "Connect",470,200,true );
 
@@ -4124,12 +4124,12 @@ void cMultiPlayer::RunMenu ( void )
 			if ( !lb|| ( InputEnter&&Focus==FOCUS_CHAT ) )
 			{
 				SendenPressed=true;
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceSmallButton ( "Senden",470,416,true );
 
 				if ( !ChatStr.empty() )
 				{
-					PlayFX ( SNDChat );
+					PlayFX ( SoundData.SNDChat );
 					ChatStr.insert ( 0,": " );
 					ChatStr.insert ( 0,MyPlayer->name );
 
@@ -4469,7 +4469,7 @@ void cMultiPlayer::HandleMenuMessages()
 				// Chatnachricht:
 			case MSG_CHAT:
 				AddChatLog ( msgstring );
-				PlayFX ( SNDChat );
+				PlayFX ( SoundData.SNDChat );
 				MessageList->DeleteNetMessage ( 0 );
 				break;
 				// Neuer Spieler meldet sich an:
@@ -5559,7 +5559,7 @@ int ShowDateiMenu ( void )
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
 
-	PlayFX ( SNDHudButton );
+	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Bildschirm blitten:
@@ -5645,7 +5645,7 @@ int ShowDateiMenu ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceMenuButton ( "Fertig",353,438,2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -5668,7 +5668,7 @@ int ShowDateiMenu ( void )
 		{
 			if ( b&&!LadenPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				PlaceMenuButton ( "Laden",514,438,4,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -5699,7 +5699,7 @@ int ShowDateiMenu ( void )
 		{
 			if ( b&&!UpPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=96+28;
 				dest.x=33;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
@@ -5737,7 +5737,7 @@ int ShowDateiMenu ( void )
 		{
 			if ( b&&!DownPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=96+28*3;
 				dest.x=63;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );

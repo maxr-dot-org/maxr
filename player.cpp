@@ -654,7 +654,7 @@ void cPlayer::DoResearch ( void )
 	}
 	if ( complete )
 	{
-		PlayVoice ( VOIResearchComplete );
+		PlayVoice ( VoiceData.VOIResearchComplete );
 		ReportForschungFinished=true;
 	}
 }

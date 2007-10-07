@@ -240,7 +240,7 @@ void DoPraeferenzen ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=68;
 				scr.y=172;
 				dest.w=scr.w=63;
@@ -283,7 +283,7 @@ void DoPraeferenzen ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=0;
 				scr.y=190;
 				dest.w=scr.w=63;
