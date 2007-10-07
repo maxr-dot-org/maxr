@@ -78,7 +78,13 @@ void ReadMaxXml();
 void GenerateMaxXml();
 
 /**
-	* Loads all Graphics
+	* Loads the rest of the fonts
+	* @param path Directory of the fonts
+	* @return 1 on success
+	*/
+int LoadFonts(const char* path);
+/**
+	* Loads all Fonts
 	* @param path Directory of the graphics
 	* @return 1 on success
 	*/
