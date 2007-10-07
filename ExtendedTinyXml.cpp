@@ -250,3 +250,31 @@ int ExTiXmlNode::XmlGetLastEditor( std::string &rstrData, ExTiXmlNode * pXmlAuth
 	// ToDo - JCK: Find the last editor of the XML file
 	return 0;
 }
+
+bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
+{
+	// Default value = true !!!
+
+	// is it a number ?
+	if( rstrData.find_first_not_of(" 01234567890,.+-") == rstrData.npos )
+	{
+		if( atoi( rstrData.c_str() ) == 0
+		{
+			return false;
+		}else
+		{
+			return true;
+		}
+	}else // no number ! only first letter is important !
+	{
+		std::string szTemp = rstrData;
+		szTemp.replace(" ", "");
+		if( szTemp[0] == "f" || szTemp[0] == "F")
+		{
+						return false;
+		}else
+		{
+			return true;
+		}
+	}
+}
