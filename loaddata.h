@@ -11,6 +11,7 @@
 
 #include "defines.h"
 #include "main.h"
+#include "sound.h"
 
 #ifndef loaddataH
 #define loaddataH
@@ -60,7 +61,32 @@ void MakeLog(const char* sztxt,bool ok,int pos);
 	* @param filename Name of the file
 	* @return 1 on success
 	*/
-int LoadGraphicToSurface(SDL_Surface *&dest, const char* directory, const char* filename);
+int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename);
+/**
+	* Loades a effectgraphic to the surface
+	* @param dest Destination surface
+	* @param directory Directory of the file
+	* @param filename Name of the file
+	* @return 1 on success
+	*/
+int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename);
+/**
+	* Loades a effectgraphic with alpha to the surface
+	* @param dest Destination surface
+	* @param directory Directory of the file
+	* @param filename Name of the file
+	* @param aplha Strength og alpha (from 0=transparent to 255=opaque)
+	* @return 1 on success
+	*/
+int LoadEffectAplhaToSurface(SDL_Surface** &dest, const char* directory, const char* filename, int alpha);
+/**
+	* Loades a sounfile to the Mix_Chunk
+	* @param dest Destination Mix_Chunk
+	* @param directory Directory of the file
+	* @param filename Name of the file
+	* @return 1 on success
+	*/
+int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename);
 /**
 	* Checks whether a file exits
 	* @param directory Directory of the file
@@ -101,5 +127,41 @@ int LoadTerrain(const char* path);
 	* @param dest Destination surface
 	*/
 void DupSurface(SDL_Surface *&src,SDL_Surface *&dest);
+/**
+	* Loads the Effects
+	* @param path Directory of the Effects
+	* @return 1 on success
+	*/
+int LoadEffects(const char* path);
+/**
+	* Loads all Buildings
+	* @param path Directory of the Buildings
+	* @return 1 on success
+	*/
+int LoadBuildings(const char* path);
+/**
+	* Loads all Vehicles
+	* @param path Directory of the Vehicles
+	* @return 1 on success
+	*/
+int LoadVehicles(const char* path);
+/**
+	* Loads all Musicfiles
+	* @param path Directory of the Vehicles
+	* @return 1 on success
+	*/
+int LoadMusic(const char* path);
+/**
+	* Loads all Sounds
+	* @param path Directory of the Vehicles
+	* @return 1 on success
+	*/
+int LoadSounds(const char* path);
+/**
+	* Loads all Voices
+	* @param path Directory of the Vehicles
+	* @return 1 on success
+	*/
+int LoadVoices(const char* path);
 
 #endif
