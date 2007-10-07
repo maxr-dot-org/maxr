@@ -172,6 +172,12 @@ int initSound()
 		SettingsData.bSoundEnabled=false;
 		return -1;
 	}
+
+	if ( !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
+        {
+                return -1;
+        }
+
 	return 0;
 }
 
@@ -190,6 +196,7 @@ void Quit()
 {
 	delete mouse;
 	//unload files here
+	CloseSound();
 	SDLNet_Quit();
 	SDL_Quit();
 	cLog::write ( "EOF" );

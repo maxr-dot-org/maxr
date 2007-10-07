@@ -5,7 +5,9 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "sound.h"
+#include "log.h"
 // #include "credits.h"
 #include "SDL_mixer.h"
 //#include "SDL_thread.h"
@@ -32,7 +34,11 @@ int InitSound ( int frequency,int chunksize )
 
 	// SDL Mixer initialisieren:
 	int haha = Mix_OpenAudio ( frequency,AUDIO_S16,2,chunksize );
-	if ( haha<0 ) return 0;
+	if ( haha<0 )
+	{
+		cLog::write("Could not initialize SDL_mixer", cLog::eLOG_TYPE_ERROR);
+		return 0;
+	}
 	Mix_QuerySpec ( &audio_rate, &audio_format, &audio_channels );
 
 	// Callback für Musik installieren:
