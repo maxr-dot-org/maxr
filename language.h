@@ -16,21 +16,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 // XML-Node paths
 
-// With "" as ending sign
-#define XNP_MAX_LANG_FILE "MAX_Language_File", ""
-#define XNP_MAX_LANG_FILE_HEADER_AUTHOR "MAX_Language_File", "Header", "Author", ""
-#define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", ""
-#define XNP_MAX_LANG_FILE_HEADER_GAMEVERSION "MAX_Language_File", "Header", "Game_Version", ""
+// With NULL as ending sign
+#define XNP_MAX_LANG_FILE "MAX_Language_File", NULL
+#define XNP_MAX_LANG_FILE_HEADER_AUTHOR "MAX_Language_File", "Header", "Author", NULL
+#define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", NULL
+#define XNP_MAX_LANG_FILE_HEADER_GAMEVERSION "MAX_Language_File", "Header", "Game_Version", NULL
 
-// Without "" as ending sign. Do not forget it in parameter list !
+// Without NULL as ending sign. Do not forget it in parameter list !
 #define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
+#define XNP_MAX_LANG_FILE_TEXT_ERROR_MSG "MAX_Language_File", "Text", "Error_Messages"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <map>
 #include <string>
 #include <tinyxml.h>
-#include "log.h"
+#ifndef LOG_H
+	#include "log.h"
+#endif
 #include "defines.h"
 
 #include "ExtendedTinyXml.h"
@@ -49,6 +52,7 @@ protected:
 	std::string m_szLanguageFile;
 	std::string m_szEncoding;
 	bool m_bLeftToRight;
+	bool m_bErrorMsgTranslationLoaded;
 	StrStrMap m_mpLanguage;
 	std::string m_szLastEditor;
 	int ReadSingleTranslation( std::string & strResult, const char * pszCurrent, ... );
@@ -56,7 +60,7 @@ public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);
 	std::string Translate(std::string szInputText);
-	int ReadLanguagePack(std::string szLanguageCode);
+	int ReadLanguagePack();
 	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
 };
 

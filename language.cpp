@@ -20,6 +20,7 @@ cLanguage::cLanguage(void)
 	m_szEncoding = "";
 	m_bLeftToRight = true;
 	m_szLastEditor = "";
+	m_bErrorMsgTranslationLoaded = false;
 }
 
 cLanguage::~cLanguage(void)
@@ -47,10 +48,25 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 
 std::string cLanguage::Translate(std::string szInputText)
 {
-	return NULL;
+	StrStrMap :: const_iterator impTranslation;
+	impTranslation = m_mpLanguage.find( szInputText );
+
+	if( impTranslation == m_mpLanguage.end() )
+	{
+		if( m_bErrorMsgTranslationLoaded = true )
+		{
+			return Translate( "Text~Error_Messages~ERROR_Missing_Translation" ) + szInputText;
+		}else
+		{
+			return std::string("missing translation: ") + szInputText;
+		}
+	}else
+	{
+		return impTranslation->second ;
+	}
 }
 
-int cLanguage::ReadLanguagePack(std::string szLanguageCode)
+int cLanguage::ReadLanguagePack()
 {
 	ExTiXmlNode * pXmlNode = NULL;
 	std::string strResult;
@@ -80,6 +96,7 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	}
 
 	// Check the lang attribute of the main node
+	pXmlNode = pXmlNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE );
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
 	{
 		fLog.write( "Language file: language attribut missing! Language can not be identified", cLog::eLOG_TYPE_ERROR );
@@ -88,11 +105,6 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	if( m_szLanguage  != strResult )
 	{
 		fLog.write( "Language file: language attribut mismatch the selected language", cLog::eLOG_TYPE_ERROR );
-		return -1;
-	}
-	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
-	{
-		fLog.write( "Language file: language attribut 'lang' missing! Language can not be identified", cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
@@ -145,7 +157,23 @@ int cLanguage::ReadLanguagePack(std::string szLanguageCode)
 	}
 
 	// Now - finaly - let's get the translations.
-	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Game_Title" , "" );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_ERROR_MSG, "ERROR_File_Not_Found", NULL );
+	if( ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_ERROR_MSG, "ERROR_Missing_Translation", NULL ) == 0)
+	{
+		m_bErrorMsgTranslationLoaded = true;
+	}
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_ERROR_MSG, "INFO_Language_initialised", NULL );
+
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Game_Title" , NULL );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Game_Subtitle" , NULL );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Version" , NULL );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Credits_MM" , NULL );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Credits_Doc" , NULL );
+
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Test1" , NULL );
+	ReadSingleTranslation( strResult, XNP_MAX_LANG_FILE_TEXT_MAIN, "Test2" , NULL );
+
+	fLog.write(this->Translate("Text~Error_Messages~INFO_Language_initialised").c_str(), cLog::eLOG_TYPE_INFO );
 
 	return 0;
 }
@@ -184,9 +212,9 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		do
 		{
 			pszCurrent = va_arg(pvaArg, char * );
-			if( pszCurrent != "" )
+			if( pszCurrent != NULL )
 			{
-				szXmlNodePath += "_";
+				szXmlNodePath += "~";
 				szXmlNodePath += pszCurrent;
 				pXmlNode = pXmlNode->FirstChild( pszCurrent );
 				if( pXmlNode == NULL )
@@ -194,7 +222,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 					break;
 				}
 			}
-		}while( pszCurrent != "" );
+		}while( pszCurrent != NULL );
 		break;
 	}
 	szXmlNodePath.erase(0,1);
@@ -215,12 +243,19 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		if( ((ExTiXmlNode *)pXmlNode)->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "ENG" ) != NULL )
 		{
 			m_mpLanguage[szXmlNodePath] = strResult;
+			szErrorMsg += strResult + "< is missing";
 		}else
 		{
-			m_mpLanguage[szXmlNodePath] = szXmlNodePath;
+			if( m_bErrorMsgTranslationLoaded = true )
+			{
+				m_mpLanguage[szXmlNodePath] = Translate( "Text~Error_Messages~ERROR_Missing_Translation" ) + szXmlNodePath;
+			}else
+			{
+				m_mpLanguage[szXmlNodePath] = std::string("missing translation: ") + szXmlNodePath;
+			}
+			szErrorMsg += szXmlNodePath + "< is missing";
 		}
 	}
-	szErrorMsg += strResult + "< is missing";
 	fLog.write( szErrorMsg.c_str(), cLog::eLOG_TYPE_WARNING );
 	va_end( pvaArg );
 	return -1;
