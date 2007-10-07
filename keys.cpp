@@ -267,7 +267,7 @@ int LoadKeys ()
 
 	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","MOUSE_STYLE", "");
 	pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text");
-	if ( sTmpString.compare ( "OLD_SCHOOL" ) == NULL )
+	if ( sTmpString.compare ( "OLD_SCHOOL" ) == 0 )
 		MouseStyle = OldSchool;
 	else
 		MouseStyle = Modern;
