@@ -15,6 +15,7 @@
 #include "log.h"
 #include "pcx.h"
 #include "fonts.h"
+#include "keys.h"
 
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and datas:
@@ -25,7 +26,7 @@ int LoadData ( void * )
 	string sTmpString;
 
 	// Load fonts for SplashMessages
-	cLog::write ( "Loading font for Splash Messages\n", LOG_TYPE_INFO );
+	cLog::write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
 
 	if(!LoadGraphicToSurface(FontsData.font, SettingsData.sFontPath.c_str(), "font.pcx"))
 		NECESSARY_FILE_FAILURE
@@ -34,34 +35,34 @@ int LoadData ( void * )
 	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx"))
 		NECESSARY_FILE_FAILURE
 	fonts = new cFonts;
-	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
 
 	MakeLog(MAXVERSION,false,0);
 
 	// Load Keys
-	MakeLog("Loading Keys...",false,3);
-//	if(InitSound())
-		MakeLog("Loading Keys...",true,3);
+	MakeLog("Loading Keys...",false,2);
+	LoadKeys();
+	MakeLog("Loading Keys...",true,2);
 
 	// Load Graphics
-	MakeLog("Loading Gfx...",false,4);
+	MakeLog("Loading Gfx...",false,3);
 	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))
 	{
 		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Gfx...",true,4);
+	MakeLog("Loading Gfx...",true,3);
 
 	// Load Terrain
-	MakeLog("Loading Terrain...",false,5);
+	MakeLog("Loading Terrain...",false,4);
 	if(!LoadTerrain(SettingsData.sTerrainPath.c_str()))
 	{
 		cLog::write ( "Error while loading terrain", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Terrain...",true,5);
+	MakeLog("Loading Terrain...",true,4);
 
 	while(1)
 	{
@@ -141,7 +142,7 @@ void ReadMaxXml()
 		GenerateMaxXml();
 	}
 
-	cLog::write ( "Reading max.xml\n", LOG_TYPE_INFO );
+	cLog::write ( "Reading max.xml", LOG_TYPE_INFO );
 
 	// START Options
 	// Resolution
@@ -262,7 +263,7 @@ void ReadMaxXml()
 		SettingsData.sFontPath = sTmpString;
 	else
 	{
-		cLog::write ( "Cannot load FontsPath from max.xml: using default value", LOG_TYPE_INFO );
+		cLog::write ( "Cannot load FontsPath from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sFontPath = "fonts";
 	}
 	//FX 
@@ -378,8 +379,7 @@ void ReadMaxXml()
 	SettingsData.bSoundEnabled = true;
 	SettingsData.bWindowMode = true;
 
-
-	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return;
 }
 
@@ -396,7 +396,7 @@ void GenerateMaxXml()
 // Loads all graphics
 int LoadGraphics(const char* path)
 {
-	cLog::write ( "Loading Graphics\n", LOG_TYPE_INFO );
+	cLog::write ( "Loading Graphics", LOG_TYPE_INFO );
 	string stmp;
 
 	cLog::write ( "loading normal graphics", LOG_TYPE_DEBUG );
@@ -621,7 +621,7 @@ int LoadGraphics(const char* path)
 
 	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
 
-	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -630,6 +630,7 @@ int LoadGraphics(const char* path)
 // Loads the Terrain
 int LoadTerrain(const char* path)
 {
+	cLog::write ( "Loading Terrain", LOG_TYPE_INFO );
 	string sTmpString;
 	TiXmlDocument doc;
 	TiXmlNode* rootnode;
@@ -642,7 +643,7 @@ int LoadTerrain(const char* path)
 		return 0;
 	if ( !doc.LoadFile ( sTmpString.c_str() ) )
 	{
-		cLog::write("could not load terrain.xml!",2);
+		cLog::write("could not load terrain.xml!",LOG_TYPE_ERROR);
 		return 0;
 	}
 	rootnode = doc.FirstChildElement ( "Terrains" );
@@ -657,64 +658,61 @@ int LoadTerrain(const char* path)
 		node=node->NextSibling();
 		if ( node && node->Type() ==1 )
 		{
-			cLog::write(node->ToElement()->Value(),3 );
 			sections->Add ( node->ToElement()->Value() );
 		}
 	}
 
-/*	for ( i=0;i<sections->Count;i++ )
+	for ( int i=0;i<sections->Count;i++ )
 	{
 		node = rootnode->FirstChildElement ( sections->Items[i].c_str() );
-		terrain_anz++;
-		terrain= ( sTerrain* ) realloc ( terrain,sizeof ( sTerrain ) *terrain_anz );
-		file="terrain/";
+		TerrainData.terrain_anz++;
+		TerrainData.terrain= ( sTerrain* ) realloc ( TerrainData.terrain,sizeof ( sTerrain ) *TerrainData.terrain_anz );
 		if ( node->ToElement()->Attribute ( "file" ) ==NULL )
-			cLog::write ( "Wrong format for xml-file", 2 );
-		file+=node->ToElement()->Attribute ( "file" );
-		if ( !FileExists ( file.c_str() ) )
 		{
-			cLog::write ( "xml-file not found", 2 );
+			cLog::write ( "terrain.xml has wrong format!", LOG_TYPE_ERROR );
 			return 0;
 		}
+		sTmpString = path;
+		sTmpString += PATH_DELIMITER;
+		sTmpString += node->ToElement()->Attribute ( "file" );
+		if ( !FileExists ( sTmpString.c_str() ) )
+			continue;
 
-#define DUP_SF(a,b)b= SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,a->w,a->h,colourDepth,0,0,0,0);SDL_FillRect(b,NULL,0xFF00FF);SDL_BlitSurface(a,NULL,b,NULL);
-		terrain[i].sf_org = LoadPCX ( ( char * ) file.c_str() );
-		DUP_SF ( terrain[i].sf_org,terrain[i].sf );
+		TerrainData.terrain[i].sf_org = LoadPCX ( ( char * ) sTmpString.c_str() );
+		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].sf );
 
-		DUP_SF ( terrain[i].sf_org,terrain[i].shw_org );
-		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,terrain[i].shw_org,NULL );
-		DUP_SF ( terrain[i].shw_org,terrain[i].shw );
+		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].shw_org );
+		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,TerrainData.terrain[i].shw_org,NULL );
+		DupSurface ( TerrainData.terrain[i].shw_org,TerrainData.terrain[i].shw );
 
-		terrain[i].water=false;
-		if ( node->ToElement()->Attribute ( "water" ) !=NULL )
-			if ( strcmp ( node->ToElement()->Attribute ( "water" ),"true" ) ==0 )
-				terrain[i].water=true;
-		terrain[i].coast=false;
-		if ( node->ToElement()->Attribute ( "coast" ) !=NULL )
-			if ( strcmp ( node->ToElement()->Attribute ( "coast" ),"true" ) ==0 )
-				terrain[i].coast=true;
-		terrain[i].overlay=false;
-		if ( node->ToElement()->Attribute ( "overlay" ) !=NULL )
-			if ( strcmp ( node->ToElement()->Attribute ( "overlay" ),"true" ) ==0 )
-				terrain[i].overlay=true;
-		terrain[i].blocked=false;
-		if ( node->ToElement()->Attribute ( "blocked" ) !=NULL )
-			if ( strcmp ( node->ToElement()->Attribute ( "blocked" ),"true" ) ==0 )
-				terrain[i].blocked=true;
+		TerrainData.terrain[i].water=false;
+		TerrainData.terrain[i].coast=false;
+		TerrainData.terrain[i].overlay=false;
+		TerrainData.terrain[i].blocked=false;
 
-		terrain[i].frames=terrain[i].sf_org->w/64;
-		terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
-		strcpy ( terrain[i].id, ( sections->Items[i] ).c_str() );
+		TerrainData.terrain[i].frames = TerrainData.terrain[i].sf_org->w/64;
+		TerrainData.terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
+		strcpy ( TerrainData.terrain[i].id, ( sections->Items[i] ).c_str() );
 
-		if ( terrain[i].overlay )
+		if ( TerrainData.terrain[i].overlay )
 		{
 			int t=0xFFCD00CD;
-			SDL_SetColorKey ( terrain[i].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( terrain[i].shw_org,SDL_SRCCOLORKEY,t );
-			SDL_SetColorKey ( terrain[i].sf,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( terrain[i].shw,SDL_SRCCOLORKEY,t );
+			SDL_SetColorKey ( TerrainData.terrain[i].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
+			SDL_SetColorKey ( TerrainData.terrain[i].shw_org,SDL_SRCCOLORKEY,t );
+			SDL_SetColorKey ( TerrainData.terrain[i].sf,SDL_SRCCOLORKEY,0xFF00FF );
+			SDL_SetColorKey ( TerrainData.terrain[i].shw,SDL_SRCCOLORKEY,t );
 		}
-	}*/
+	}
 	delete sections;
+	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return 1;
+}
+
+// DupSurface ////////////////////////////////////////////////////////////////
+void DupSurface(SDL_Surface *&src,SDL_Surface *&dest)
+{
+	dest = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,src->w,src->h,SettingsData.iColourDepth,0,0,0,0);
+	SDL_FillRect(dest,NULL,0xFF00FF);
+	SDL_BlitSurface(src,NULL,dest,NULL);
+	return;
 }
