@@ -9,6 +9,11 @@
 //  This class handles the support for different language packs in XML-Format.
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef LANGUAGE_H
+#define LANGUAGE_H
+
+////////////////////////////////////////////////////////////////////////////////
+
 #define LANGUAGE_FILE_FOLDER "languages"
 #define LANGUAGE_FILE_NAME   "language "
 #define LANGUAGE_FILE_EXT    ".xml"
@@ -28,7 +33,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <map>
+#include <map> once
 #include <string>
 #include <tinyxml.h>
 #ifndef LOG_H
@@ -60,7 +65,9 @@ public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);
 	std::string Translate(std::string szInputText);
+	// ToDo - JCK: Translation with replace %s
 	int ReadLanguagePack();
 	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
 };
 
+#endif

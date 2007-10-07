@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+#ifndef LOG_H
 #define LOG_H
 
 #define LOG_TYPE_WARNING 1
@@ -88,3 +88,4 @@ public:
 	*/
 	static void mark();
 };
+#endif

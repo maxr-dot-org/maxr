@@ -49,7 +49,7 @@
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"
-
+#include "language.h"
 
 TList::TList ( void )
 {
@@ -60,11 +60,35 @@ TList::TList ( void )
 int main ( int argc, char *argv[] )
 {
 	cLog::write ( MAXVERSION );
+
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
 	ReadMaxXml();
+
+	////////////////////////////////////////////////////////////////////////////////
+	// ToDo - JCK: Reading the language pack should be right after retrieving the 
+	//             information, which language to select. Here is the way to initialise
+	//             a language pack and how to use it.
+	//
+	//cLanguage lngPack; // Create an instance to hold the translations
+	//
+	//if( lngPack.SetCurrentLanguage("GER") != 0 )			// Set the language code
+	//{
+	//	; // Not a valid language code, critical fail!
+	//}
+	//if( lngPack.ReadLanguagePack() != 0 )					// Load the translations
+	//{
+	//	; // Could not load the language, critical fail!
+	//}
+	//	  // Now some translations, including error handling
+	//cLog::write( lngPack.Translate("Text~Main~Credits_MM").c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Test1").c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Test2").c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Test3").c_str() );
+	////////////////////////////////////////////////////////////////////////////////
+
 	showSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
 	initNet();

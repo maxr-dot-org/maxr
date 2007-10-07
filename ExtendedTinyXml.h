@@ -13,6 +13,9 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef EXTENDEDTINYXML_H
+#define EXTENDEDTINYXML_H
+
 #include "tinyxml.h"
 #include <stdarg.h>
 #include <string>
@@ -180,3 +183,4 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 */
 
+#endif

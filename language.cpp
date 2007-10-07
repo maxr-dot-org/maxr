@@ -29,7 +29,7 @@ cLanguage::~cLanguage(void)
 
 std::string cLanguage::GetCurrentLanguage(void)
 {
-	return NULL;
+	return m_szLanguage;
 }
 
 int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
@@ -180,6 +180,7 @@ int cLanguage::ReadLanguagePack()
 
 int cLanguage::CheckCurrentLanguagePack(bool bInsertMissingEntries)
 {
+	// ToDo - JCK: Check and correct a language pack
 	return 0;
 }
 
