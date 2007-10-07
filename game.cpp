@@ -763,11 +763,11 @@ int cGame::CheckUser(void){
       }
     }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->ActivatingVehicle){
       SelectedBuilding->ExitVehicleTo(SelectedBuilding->VehicleToActivate,mouse->GetKachelOff(),false);
-      PlayFX(SNDActivate);
+      PlayFX(SoundData.SNDActivate);
       MouseMoveCallback(true);
     }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedVehicle&&SelectedVehicle->ActivatingVehicle){
       SelectedVehicle->ExitVehicleTo(SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false);
-      PlayFX(SNDActivate);
+      PlayFX(SoundData.SNDActivate);
       MouseMoveCallback(true);
     }else if(mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->Count){
       sBuildList *ptr;
@@ -791,19 +791,19 @@ int cGame::CheckUser(void){
     }else if(mouse->cur==GraphicsData.gfx_Cload&&SelectedBuilding&&SelectedBuilding->LoadActive){
       int off;
       off=mouse->GetKachelOff();
-      PlayFX(SNDLoad);      
+      PlayFX(SoundData.SNDLoad);      
       SelectedBuilding->StoreVehicle(off);
     }else if(mouse->cur==GraphicsData.gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive){
       int off;
       off=mouse->GetKachelOff();
-      PlayFX(SNDLoad);
+      PlayFX(SoundData.SNDLoad);
       SelectedVehicle->StoreVehicle(off);
     }else if(mouse->cur==GraphicsData.gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive){
       cBuilding *b=NULL;
       cVehicle *v=NULL;
       int off;
       off=mouse->GetKachelOff();
-      PlayFX(SNDReload);
+      PlayFX(SoundData.SNDReload);
       SelectedVehicle->data.cargo-=2;
       v=map->GO[off].vehicle;
       if(!v&&map->GO[off].plane&&map->GO[off].plane->FlightHigh==0)v=map->GO[off].plane;
@@ -821,7 +821,7 @@ int cGame::CheckUser(void){
       cVehicle *v=NULL;
       int off;
       off=mouse->GetKachelOff();
-      PlayFX(SNDRepair);
+      PlayFX(SoundData.SNDRepair);
       SelectedVehicle->data.cargo-=2;
       v=map->GO[off].vehicle;
       if(!v&&map->GO[off].plane&&map->GO[off].plane->FlightHigh==0)v=map->GO[off].plane;
@@ -906,19 +906,19 @@ int cGame::CheckUser(void){
 		if(SelectedVehicle&&(OverObject->plane==SelectedVehicle||OverObject->vehicle==SelectedVehicle)){
           if(!SelectedVehicle->moving&&!SelectedVehicle->rotating&&SelectedVehicle->owner==ActivePlayer){
             SelectedVehicle->MenuActive=true;
-            PlayFX(SNDHudButton);
+            PlayFX(SoundData.SNDHudButton);
           }
         }else if(SelectedBuilding&&(OverObject->base==SelectedBuilding||OverObject->top==SelectedBuilding)){
           if(SelectedBuilding->owner==ActivePlayer){
             SelectedBuilding->MenuActive=true;
-            PlayFX(SNDHudButton);
+            PlayFX(SoundData.SNDHudButton);
           }
 		}else if(OverObject->plane&&!OverObject->plane->moving&&!OverObject->plane->rotating){
           ChangeObjectName=false;
           if(SelectedVehicle==OverObject->plane){
             if(SelectedVehicle->owner==ActivePlayer){
               SelectedVehicle->MenuActive=true;
-              PlayFX(SNDHudButton);
+              PlayFX(SoundData.SNDHudButton);
             }
           }else{
             if(SelectedVehicle){
@@ -939,7 +939,7 @@ int cGame::CheckUser(void){
           if(SelectedVehicle==OverObject->vehicle){
             if(SelectedVehicle->owner==ActivePlayer){
               SelectedVehicle->MenuActive=true;
-              PlayFX(SNDHudButton);
+              PlayFX(SoundData.SNDHudButton);
             }
           }else{
             if(SelectedVehicle){
@@ -960,7 +960,7 @@ int cGame::CheckUser(void){
           if(SelectedBuilding==OverObject->top){
             if(SelectedBuilding->owner==ActivePlayer){
               SelectedBuilding->MenuActive=true;
-              PlayFX(SNDHudButton);
+              PlayFX(SoundData.SNDHudButton);
             }
           }else{
             if(SelectedVehicle){
@@ -981,7 +981,7 @@ int cGame::CheckUser(void){
           if(SelectedBuilding==OverObject->base){
             if(SelectedBuilding->owner==ActivePlayer){
               SelectedBuilding->MenuActive=true;
-              PlayFX(SNDHudButton);
+              PlayFX(SoundData.SNDHudButton);
             }
           }else{
             if(SelectedVehicle){
@@ -1511,21 +1511,21 @@ void cGame::AddFX(eFXTyps typ,int x,int y,int param){
         int nr;
         nr=random(3,0);
         if(nr==0){
-          PlayFX(EXPSmallWet0);
+          PlayFX(SoundData.EXPSmallWet0);
         }else if(nr==1){
-          PlayFX(EXPSmallWet1);
+          PlayFX(SoundData.EXPSmallWet1);
         }else{
-          PlayFX(EXPSmallWet2);
+          PlayFX(SoundData.EXPSmallWet2);
         }
       }else{
         int nr;
         nr=random(3,0);
         if(nr==0){
-          PlayFX(EXPSmall0);
+          PlayFX(SoundData.EXPSmall0);
         }else if(nr==1){
-          PlayFX(EXPSmall1);
+          PlayFX(SoundData.EXPSmall1);
         }else{
-          PlayFX(EXPSmall2);
+          PlayFX(SoundData.EXPSmall2);
         }
       }
       break;
@@ -1536,21 +1536,21 @@ void cGame::AddFX(eFXTyps typ,int x,int y,int param){
     case fxExploBig4:    
       if(map->IsWater(x/64+(y/64)*map->size)){
         if(random(2,0)){
-          PlayFX(EXPBigWet0);
+          PlayFX(SoundData.EXPBigWet0);
         }else{
-          PlayFX(EXPBigWet1);
+          PlayFX(SoundData.EXPBigWet1);
         }
       }else{
         int nr;
         nr=random(4,0);
         if(nr==0){
-          PlayFX(EXPBig0);
+          PlayFX(SoundData.EXPBig0);
         }else if(nr==1){
-          PlayFX(EXPBig1);
+          PlayFX(SoundData.EXPBig1);
         }else if(nr==2){
-          PlayFX(EXPBig2);
+          PlayFX(SoundData.EXPBig2);
         }else{
-          PlayFX(EXPBig3);
+          PlayFX(SoundData.EXPBig3);
         }
       }
       break;
@@ -1616,7 +1616,7 @@ void cGame::AddFX(eFXTyps typ,int x,int y,int param){
       n->param=255;
       break;
     case fxAbsorb:
-      PlayFX(SNDAbsorb);
+      PlayFX(SoundData.SNDAbsorb);
       break;
   }
 }
@@ -2101,7 +2101,7 @@ void cGame::SetWind(int dir){
 void cGame::MakePanel(bool open){
   SDL_Rect top,bottom,tmp;
   if(open){
-    PlayFX(SNDPanelOpen);
+    PlayFX(SoundData.SNDPanelOpen);
     top.x=0;top.y=(SettingsData.iScreenH/2)-479;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
@@ -2121,7 +2121,7 @@ void cGame::MakePanel(bool open){
       SDL_BlitSurface(GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom);
     }
   }else{
-    PlayFX(SNDPanelClose);
+    PlayFX(SoundData.SNDPanelClose);
     top.x=0;top.y=-480;
     top.w=bottom.w=171;
     top.h=479;bottom.h=481;
@@ -3131,7 +3131,7 @@ void cGame::ShowDateiMenu(void){
   TiXmlNode* rootnode;
   TiXmlNode* node;
 
-  PlayFX(SNDHudButton);
+  PlayFX(SoundData.SNDHudButton);
   mouse->SetCursor(CHand);
   mouse->draw(false,buffer);
   // Den Bildschirm blitten:
@@ -3236,7 +3236,7 @@ void cGame::ShowDateiMenu(void){
 	// Speichern-Button:
     if(x>=132&&x<132+109&&y>=438&&y<438+40){
       if(b&&!SpeichernPressed){
-        PlayFX(SNDMenuButton);
+        PlayFX(SoundData.SNDMenuButton);
         PlaceMenuButton("Speichern",132,438,0,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -3274,7 +3274,7 @@ void cGame::ShowDateiMenu(void){
 	// Beenden-Button:
     if(x>=242&&x<242+109&&y>=438&&y<438+40){
       if(b&&!BeendenPressed){
-        PlayFX(SNDMenuButton);
+        PlayFX(SoundData.SNDMenuButton);
         PlaceMenuButton("Beenden",242,438,1,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -3296,7 +3296,7 @@ void cGame::ShowDateiMenu(void){
     // Fertig-Button:
     if(x>=353&&x<353+109&&y>=438&&y<438+40){
       if(b&&!FertigPressed){
-        PlayFX(SNDMenuButton);
+        PlayFX(SoundData.SNDMenuButton);
         PlaceMenuButton("Fertig",353,438,2,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
@@ -3313,7 +3313,7 @@ void cGame::ShowDateiMenu(void){
 	// Up-Button:
     if(x>=33&&x<33+29&&y>=438&&y<438+29){
       if(b&&!UpPressed){
-        PlayFX(SNDMenuButton);
+        PlayFX(SoundData.SNDMenuButton);
 		scr.x=96+28;
         dest.x=33;
         SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
@@ -3344,7 +3344,7 @@ void cGame::ShowDateiMenu(void){
 	// Down-Button:
     if(x>=63&&x<63+29&&y>=438&&y<438+29){
       if(b&&!DownPressed){
-        PlayFX(SNDMenuButton);
+        PlayFX(SoundData.SNDMenuButton);
 		scr.x=96+28*3;
         dest.x=63;
         SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
