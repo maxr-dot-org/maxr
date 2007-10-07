@@ -857,9 +857,9 @@ int LoadTerrain(const char* path)
 
 	for ( int i=0;i<sections->Count;i++ )
 	{
-		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "")))
+		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL)))
 		{
-			sTmpString = "Cannot load \"\" from max.xml";
+			sTmpString = "Cannot load \"\" from terrain.xml";
 			sTmpString.insert(11, sections->Items[i]);
 			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
 			continue;
@@ -885,7 +885,7 @@ int LoadTerrain(const char* path)
 		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,TerrainData.terrain[i].shw_org,NULL );
 		DupSurface ( TerrainData.terrain[i].shw_org,TerrainData.terrain[i].shw );
 
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"water"))
 			TerrainData.terrain[i].water = pExXmlNode->XmlDataToBool(sTmpString);
 		else
@@ -897,7 +897,7 @@ int LoadTerrain(const char* path)
 			#endif
 			TerrainData.terrain[i].water = false;
 		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"blocked"))
 			TerrainData.terrain[i].blocked = pExXmlNode->XmlDataToBool(sTmpString);
 		else
@@ -909,7 +909,7 @@ int LoadTerrain(const char* path)
 			#endif
 			TerrainData.terrain[i].blocked = false;
 		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"coast"))
 			TerrainData.terrain[i].coast = pExXmlNode->XmlDataToBool(sTmpString);
 		else
@@ -921,7 +921,7 @@ int LoadTerrain(const char* path)
 			#endif
 			TerrainData.terrain[i].coast = false;
 		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), "");
+		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"overlay"))
 			TerrainData.terrain[i].overlay = pExXmlNode->XmlDataToBool(sTmpString);
 		else
