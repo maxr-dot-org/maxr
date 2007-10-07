@@ -92,9 +92,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	pXmlNode = NULL;
 
 	// Get the first node with a matching path.
-	// "" is the ending sign. Do not foget it!
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "" );
-	//pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", "" );
+	// NULL is the ending sign. Do not foget it!
+	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", NULL );
+	//pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", NULL );
 	if( pXmlNode != NULL )
 	{
 		// Get the data of the attribute "name"
@@ -107,7 +107,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", "" );
+	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
 	while( pXmlNode != NULL )
 	{
 		// Get the TEXT data within the node
@@ -120,7 +120,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	strConcat = "";
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", "" );
+	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
 	while( pXmlNode != NULL )
 	{
 		// Get the COMMENT data within the node
@@ -132,7 +132,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", "" );
+	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", NULL );
 	if( pXmlNode != NULL )
 	{
 		// Get the data of the attribute "name"
@@ -152,7 +152,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}while( pXmlNode != NULL );
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", "" );
+	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
 	while( pXmlNode != NULL )
 	{
 		pXmlNode = pXmlNode->XmlGetNextNodeSibling();
