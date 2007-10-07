@@ -435,7 +435,7 @@ bool cAJobs::MakeImpact ( void )
 			char str[50];
 			sprintf ( str,"%s zerstört",name.c_str() );
 			game->AddCoords ( str,DestX,DestY );
-			PlayVoice ( VOIDestroyedUs );
+			PlayVoice ( VoiceData.VOIDestroyedUs );
 		}
 	}
 	else
@@ -446,12 +446,12 @@ bool cAJobs::MakeImpact ( void )
 			if ( destroyed||target->data.hit_points<=0 )
 			{
 				sprintf ( str,"%s zerstört",name.c_str() );
-				PlayVoice ( VOIDestroyedUs );
+				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
 				sprintf ( str,"%s wird angegriffen",name.c_str() );
-				PlayVoice ( VOIAttackingUs );
+				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( str,DestX,DestY );
 		}
@@ -461,12 +461,12 @@ bool cAJobs::MakeImpact ( void )
 			if ( destroyed||btarget->data.hit_points<=0 )
 			{
 				sprintf ( str,"%s zerstört",name.c_str() );
-				PlayVoice ( VOIDestroyedUs );
+				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
 				sprintf ( str,"%s wird angegriffen",name.c_str() );
-				PlayVoice ( VOIAttackingUs );
+				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( str,DestX,DestY );
 		}
