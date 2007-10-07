@@ -258,7 +258,7 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 	// is it a number ?
 	if( rstrData.find_first_not_of(" 01234567890,.+-") == rstrData.npos )
 	{
-		if( atoi( rstrData.c_str() ) == 0
+		if( atoi( rstrData.c_str() ) == 0 )
 		{
 			return false;
 		}else
@@ -268,8 +268,11 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 	}else // no number ! only first letter is important !
 	{
 		std::string szTemp = rstrData;
-		szTemp.replace(" ", "");
-		if( szTemp[0] == "f" || szTemp[0] == "F")
+		while(szTemp[0] == ' ')
+		{
+			szTemp.erase(0);
+		}
+		if( szTemp[0] == 'f' || szTemp[0] == 'F')
 		{
 						return false;
 		}else
