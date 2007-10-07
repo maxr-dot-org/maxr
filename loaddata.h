@@ -89,5 +89,11 @@ int LoadGraphics(const char* path);
 	* @return 1 on success
 	*/
 int LoadTerrain(const char* path);
+/**
+	* ??
+	* @param src Source surface
+	* @param dest Destination surface
+	*/
+void DupSurface(SDL_Surface *&src,SDL_Surface *&dest);
 
 #endif
