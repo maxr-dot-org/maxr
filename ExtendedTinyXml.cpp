@@ -16,29 +16,46 @@
 
 #include "ExtendedTinyXml.h"
 #include "defines.h"
+#include "log.h"
+
+void debugToLog( std::string szMsg);
+void debugToLog( void * pointer , const char * pszName);
+
 
 ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char * pszCurrent, ... )
 {
 	va_list pvaArg;
 	va_start(pvaArg, pszCurrent);
+	
+	std::string szDebug;
+	debugToLog(" 0 : XmlGetFirstNode : Start");
+
 
 	TiXmlNode * pXmlNode;
 
+	debugToLog( & rTiXmlDoc, " 1 : XmlGetFirstNode : rTiXmlDoc");
+
 	if( rTiXmlDoc.Value() == NULL )
 	{
+		debugToLog(" 2 : XmlGetFirstNode : rTiXmlDoc fail");
 		va_end( pvaArg );
 		return NULL;
 	}
 
 	pXmlNode = rTiXmlDoc.RootElement();
+	debugToLog( pXmlNode, " 3 : XmlGetFirstNode : pXmlNode");
 	if( pXmlNode == NULL )
 	{
+		debugToLog(" 4 : XmlGetFirstNode : RootElement > pXmlNode fail");
 		va_end( pvaArg );
 		return NULL;
 	}
 
+	szDebug = " 5 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
+	debugToLog( szDebug );
 	if( strcmp(pXmlNode->Value(), pszCurrent) != 0 )
 	{
+		debugToLog(" 6 : XmlGetFirstNode : pXmlNode != pszCurrent > fail");
 		va_end( pvaArg );
 		return NULL;
 	}
@@ -46,17 +63,25 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 	do
 	{
 		pszCurrent = va_arg(pvaArg, char * );
+		szDebug = " 7 : XmlGetFirstNode : pszCurrent" + std::string( pszCurrent );
+		debugToLog( szDebug );
 		if( pszCurrent != "" )
 		{
+			debugToLog( pXmlNode, " 8 : XmlGetFirstNode : pXmlNode");
 			pXmlNode = pXmlNode->FirstChild( pszCurrent );
+			debugToLog( pXmlNode, " 9 : XmlGetFirstNode : pXmlNode");
 			if( pXmlNode == NULL )
 			{
+				debugToLog("10 : XmlGetFirstNode : FirstChild > pXmlNode fail");
 				va_end( pvaArg );
 				return NULL;
 			}
 		}
 	}while( pszCurrent != "" );
 
+	debugToLog( pXmlNode, "11 : XmlGetFirstNode : pXmlNode != 0 SUCCESS");
+	debugToLog( (ExTiXmlNode *)pXmlNode, "12 : XmlGetFirstNode : pXmlNode cast Test");
+	debugToLog("13 : XmlGetFirstNode : End !");
 
 	return (ExTiXmlNode *)pXmlNode;
 }
@@ -281,3 +306,16 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 		}
 	}
 }
+
+void debugToLog( void * pointer , const char * pszName)
+{
+	char szMsg[256] = ""; //JCK
+	sprintf(szMsg , "%s = %p", pszName, pointer);
+
+	cLog::write( szMsg, cLog::eLOG_TYPE_DEBUG );
+};
+
+void debugToLog( std::string szMsg)
+{
+	cLog::write( szMsg.c_str(), cLog::eLOG_TYPE_DEBUG );
+};
