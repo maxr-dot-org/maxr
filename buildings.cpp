@@ -880,7 +880,7 @@ void cBuilding::SelfDestructionMenu ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=232;
 				scr.y=231;
 				dest.w=scr.w=75;
@@ -915,7 +915,7 @@ void cBuilding::SelfDestructionMenu ( void )
 		{
 			if ( b&&!ScharfPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=156;
 				scr.y=231;
 				dest.w=scr.w=75;
@@ -930,7 +930,7 @@ void cBuilding::SelfDestructionMenu ( void )
 			else if ( !b&&LastB )
 			{
 				Scharf=true;
-				PlayFX ( SNDArm );
+				PlayFX ( SoundData.SNDArm );
 			}
 		}
 		else if ( !Scharf&&ScharfPressed )
@@ -971,7 +971,7 @@ void cBuilding::SelfDestructionMenu ( void )
 		{
 			if ( b&&!DestroyPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=15;
 				scr.y=95;
 				dest.w=scr.w=59;
@@ -1664,7 +1664,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=0;
 				scr.y=263;
 				dest.w=scr.w=64;
@@ -1699,7 +1699,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=65;
 				scr.y=263;
 				dest.w=scr.w=56;
@@ -1744,7 +1744,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 					pb->data.cargo+=Transf;
 				}
 				ShowDetails();
-				PlayVoice ( VOITransferDone );
+				PlayVoice ( VoiceData.VOITransferDone );
 				break;
 			}
 		}
@@ -1764,7 +1764,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		// Inc-Button:
 		if ( x>=277+166&&x<277+19+166&&y>=88+159&&y<88+18+159&&b&&!IncPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=257;
 			scr.y=177;
 			dest.w=scr.w=19;
@@ -1794,7 +1794,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		// Dec-Button:
 		if ( x>=16+166&&x<16+19+166&&y>=88+159&&y<88+18+159&&b&&!DecPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=237;
 			scr.y=177;
 			dest.w=scr.w=19;
@@ -1824,7 +1824,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		// Klick auf den Bar:
 		if ( x>=44+166&&x<44+223+166&&y>=86+159&&y<86+20+159&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Transf = Round((x-( 44+166))*(int)(MaxTarget/223.0)-Target);
 			MakeTransBar ( &Transf,MaxTarget,Target );
 			SHOW_SCREEN
@@ -2188,7 +2188,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			if ( x>=530&&x<530+25&&y>=426&&y<426+25&&b&&!DownPressed )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=530;
 				scr.y=426;
 				dest.w=scr.w=25;
@@ -2234,7 +2234,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			if ( x>=504&&x<504+25&&y>=426&&y<426+25&&b&&!UpPressed )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=504;
 				scr.y=426;
 				dest.w=scr.w=25;
@@ -2279,7 +2279,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.w=dest.w=94;
 				scr.h=dest.h=23;
 				scr.x=510;scr.y=371;
@@ -2310,7 +2310,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			sVehicle *typ;
 			int size;
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251;
 			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
@@ -2324,7 +2324,7 @@ void cBuilding::ShowStorage ( void )
 			game->OverObject=NULL;
 			mouse->MoveCallback=true;
 
-			PlayFX ( SNDActivate );
+			PlayFX ( SoundData.SNDActivate );
 			size=game->map->size;
 			for ( i=0;i<StoredVehicles->Count; )
 			{
@@ -2351,7 +2351,7 @@ void cBuilding::ShowStorage ( void )
 		// Alle Aufladen:
 		if ( x>=511&&x<511+94&&y>=251+25&&y<251+25+23&&b&&!LastB&&AlleAufladenEnabled )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251+25;
 
@@ -2368,7 +2368,7 @@ void cBuilding::ShowStorage ( void )
 				}
 			}
 			DrawStored ( offset );
-			PlayVoice ( VOILoaded );
+			PlayVoice ( VoiceData.VOILoaded );
 			ShowStorageMetalBar();
 
 			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
@@ -2379,7 +2379,7 @@ void cBuilding::ShowStorage ( void )
 		// Alle Reparieren:
 		if ( x>=511&&x<511+94&&y>=251+25*2&&y<251+25*2+23&&b&&!LastB&&AlleReparierenEnabled )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251+25*2;
 
@@ -2396,7 +2396,7 @@ void cBuilding::ShowStorage ( void )
 				}
 			}
 			DrawStored ( offset );
-			PlayVoice ( VOIRepaired );
+			PlayVoice ( VoiceData.VOIRepaired );
 			ShowStorageMetalBar();
 
 			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
@@ -2407,7 +2407,7 @@ void cBuilding::ShowStorage ( void )
 		// Alle Upgraden:
 		if ( x>=511&&x<511+94&&y>=251+25*3&&y<251+25*3+23&&b&&!LastB&&AlleUpgradenEnabled )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
 			dest.x=511;dest.y=251+25*3;
 
@@ -2510,7 +2510,7 @@ void cBuilding::ShowStorage ( void )
 			// Aktivieren:
 			if ( x>=dest.x&&x<dest.x+73&&y>=dest.y&&y<dest.y+23&&b&&!LastB )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				ActivatingVehicle=true;
 				VehicleToActivate=i+offset;
 				SDL_BlitSurface ( sf,&dest,buffer,&dest );
@@ -2529,12 +2529,12 @@ void cBuilding::ShowStorage ( void )
 			dest.x+=75;
 			if ( x>=dest.x&&x<dest.x+73&&y>=dest.y&&y<dest.y+23&&b&&!LastB&&v->data.hit_points<v->data.max_hit_points )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 
 				owner->base->AddMetal ( SubBase,-2 );
 				v->data.hit_points=v->data.max_hit_points;
 				DrawStored ( offset );
-				PlayVoice ( VOIRepaired );
+				PlayVoice ( VoiceData.VOIRepaired );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
 
 				SDL_BlitSurface ( sf,&dest,buffer,&dest );
@@ -2548,12 +2548,12 @@ void cBuilding::ShowStorage ( void )
 			dest.y+=25;
 			if ( x>=dest.x&&x<dest.x+73&&y>=dest.y&&y<dest.y+23&&b&&!LastB&&v->data.ammo<v->data.max_ammo )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 
 				owner->base->AddMetal ( SubBase,-2 );
 				v->data.ammo=v->data.max_ammo;
 				DrawStored ( offset );
-				PlayVoice ( VOILoaded );
+				PlayVoice ( VoiceData.VOILoaded );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
 
 				SDL_BlitSurface ( sf,&dest,buffer,&dest );
@@ -2566,7 +2566,7 @@ void cBuilding::ShowStorage ( void )
 			dest.x+=75;
 			if ( x>=dest.x&&x<dest.x+73&&y>=dest.y&&y<dest.y+23&&b&&!LastB&&v->data.version!=owner->VehicleData[v->typ->nr].version )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 
 				Update ( v->data,owner->VehicleData[v->typ->nr] )
 				v->GenerateName();
@@ -2930,7 +2930,7 @@ void cBuilding::ShowResearch ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=0;
 				scr.y=492;
 				dest.w=scr.w=75;
@@ -2965,7 +2965,7 @@ void cBuilding::ShowResearch ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=76;
 				scr.y=492;
 				dest.w=scr.w=75;
@@ -3228,7 +3228,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=386&&y<386+17&&b&&!DownPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -3262,7 +3262,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Up-Button:
 		if ( x>=470&&x<470+18&&y>=386&&y<386+17&&b&&!UpPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -3298,7 +3298,7 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=364;
 				scr.y=231;
 				dest.w=scr.w=62;
@@ -3345,7 +3345,7 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=308;
 				scr.y=231;
 				dest.w=scr.w=55;
@@ -3395,7 +3395,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Beschreibung Haken:
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung=!Beschreibung;
 			SettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
@@ -3436,7 +3436,7 @@ void cBuilding::ShowUpgrade ( void )
 			}
 			if ( nr!=-1 )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
 				ShowUpgradeList ( selection,selected,offset,Beschreibung );
 				SHOW_SCREEN
@@ -3466,7 +3466,7 @@ void cBuilding::ShowUpgrade ( void )
 					owner->Credits+=ptr->upgrades[i].NextPrice;
 					ptr->upgrades[i].Purchased--;
 
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					ShowUpgradeList ( selection,selected,offset,Beschreibung );
 					ShowGoldBar ( StartCredits );
 					SHOW_SCREEN
@@ -3489,7 +3489,7 @@ void cBuilding::ShowUpgrade ( void )
 					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					ptr->upgrades[i].Purchased++;
 
-					PlayFX ( SNDObjectMenu );
+					PlayFX ( SoundData.SNDObjectMenu );
 					ShowUpgradeList ( selection,selected,offset,Beschreibung );
 					ShowGoldBar ( StartCredits );
 					SHOW_SCREEN
@@ -3501,7 +3501,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Klick auf einen der SubSelctionButtons:
 		if ( b&&!LastB&&x>=467&&x<467+32&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowTank=!game->UpShowTank;
 			CreateUpgradeList ( selection,images,&selected,&offset );
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
@@ -3511,7 +3511,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( b&&!LastB&&x>=467+33&&x<467+32+33&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowPlane=!game->UpShowPlane;
 			CreateUpgradeList ( selection,images,&selected,&offset );
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
@@ -3521,7 +3521,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( b&&!LastB&&x>=467+33*2&&x<467+32+33*2&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowShip=!game->UpShowShip;
 			CreateUpgradeList ( selection,images,&selected,&offset );
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
@@ -3531,7 +3531,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( b&&!LastB&&x>=467+33*3&&x<467+32+33*3&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowBuild=!game->UpShowBuild;
 			CreateUpgradeList ( selection,images,&selected,&offset );
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
@@ -3541,7 +3541,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( b&&!LastB&&x>=467+33*4&&x<467+32+33*4&&y>=411&&y<411+31 )
 		{
-			PlayFX ( SNDHudSwitch );
+			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowTNT=!game->UpShowTNT;
 			CreateUpgradeList ( selection,images,&selected,&offset );
 			ShowUpgradeList ( selection,selected,offset,Beschreibung );
@@ -4662,7 +4662,7 @@ void cBuilding::ShowMineManager ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=0;
 				scr.y=287;
 				dest.w=scr.w=109;
@@ -4696,7 +4696,7 @@ void cBuilding::ShowMineManager ( void )
 		if ( x>=174&&x<174+240&&y>=70&&y<70+30&&b&&!LastB )
 		{
 			int t;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			t=  Round (( x-174 ) * ( MaxM/240.0 ));
 			if ( t<SubBase->MetalProd )
 			{
@@ -4724,7 +4724,7 @@ void cBuilding::ShowMineManager ( void )
 		if ( x>=174&&x<174+240&&y>=190&&y<190+30&&b&&!LastB )
 		{
 			int t;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			t= Round ( ( x-174 ) * ( MaxO/240.0 ));
 			if ( t<SubBase->OilProd )
 			{
@@ -4752,7 +4752,7 @@ void cBuilding::ShowMineManager ( void )
 		if ( x>=174&&x<174+240&&y>=310&&y<310+30&&b&&!LastB )
 		{
 			int t;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			t= Round ( ( x-174 ) * ( MaxG/240.0 ));
 			if ( t<SubBase->GoldProd )
 			{
@@ -4779,7 +4779,7 @@ void cBuilding::ShowMineManager ( void )
 		// IncMetal-Button:
 		if ( x>=421&&x<421+26&&y>=71&&y<71+27&&b&&!IncMetalPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
@@ -4814,7 +4814,7 @@ void cBuilding::ShowMineManager ( void )
 		// DecMetal-Button:
 		if ( x>=139&&x<139+26&&y>=71&&y<71+27&&b&&!DecMetalPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
@@ -4849,7 +4849,7 @@ void cBuilding::ShowMineManager ( void )
 		// IncOil-Button:
 		if ( x>=421&&x<421+26&&y>=191&&y<191+27&&b&&!IncOilPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
@@ -4884,7 +4884,7 @@ void cBuilding::ShowMineManager ( void )
 		// DecOil-Button:
 		if ( x>=139&&x<139+26&&y>=191&&y<191+27&&b&&!DecOilPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
@@ -4919,7 +4919,7 @@ void cBuilding::ShowMineManager ( void )
 		// IncGold-Button:
 		if ( x>=421&&x<421+26&&y>=311&&y<311+27&&b&&!IncGoldPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
@@ -4954,7 +4954,7 @@ void cBuilding::ShowMineManager ( void )
 		// DecGold-Button:
 		if ( x>=139&&x<139+26&&y>=311&&y<311+27&&b&&!DecGoldPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
@@ -5374,7 +5374,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=440&&y<440+17&&b&&!DownPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -5408,7 +5408,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Up-Button:
 		if ( x>=471&&x<471+18&&y>=440&&y<440+17&&b&&!UpPressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -5442,7 +5442,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Down2-Button:
 		if ( x>=327&&x<327+18&&y>=293&&y<293+17&&b&&!Down2Pressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -5476,7 +5476,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Up2-Button:
 		if ( x>=347&&x<347+18&&y>=293&&y<293+17&&b&&!Up2Pressed )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
@@ -5510,7 +5510,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Bauen-Button:
 		if ( x>=548&&x<548+78&&y>=442&&y<442+23&&b&&!BauenPressed )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			scr.x=0;
 			scr.y=328;
 			dest.w=scr.w=78;
@@ -5543,7 +5543,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Entfernen-Button:
 		if ( x>=412&&x<412+53&&y>=293&&y<293+23&&b&&!EntfernenPressed )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			scr.x=0;
 			scr.y=352;
 			dest.w=scr.w=53;
@@ -5589,7 +5589,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			if ( b&&!AbbruchPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=364;
 				scr.y=231;
 				dest.w=scr.w=62;
@@ -5625,7 +5625,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=308;
 				scr.y=231;
 				dest.w=scr.w=55;
@@ -5713,7 +5713,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Beschreibung Haken:
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung=!Beschreibung;
 			SettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
@@ -5741,7 +5741,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Wiederholen Haken:
 		if ( x>=447&&x<447+16&&y>=322&&y<322+15&&b&&!LastB )
 		{
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Wiederholen=!Wiederholen;
 			if ( Wiederholen )
 			{
@@ -5768,7 +5768,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// 1x Button:
 		if ( x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=1;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
@@ -5777,7 +5777,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// 2x Button:
 		if ( x>=292&&x<292+76&&y>=369&&y<369+22&&b&&!LastB&&data.can_build!=BUILD_MAN )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=2;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
@@ -5786,7 +5786,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// 4x Button:
 		if ( x>=292&&x<292+76&&y>=394&&y<394+22&&b&&!LastB&&data.can_build!=BUILD_MAN )
 		{
-			PlayFX ( SNDMenuButton );
+			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=4;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
@@ -5808,7 +5808,7 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 			if ( nr!=-1 )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
 				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
 				// Doppelklick prüfen:
@@ -5838,7 +5838,7 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 			if ( nr!=-1 )
 			{
-				PlayFX ( SNDObjectMenu );
+				PlayFX ( SoundData.SNDObjectMenu );
 				build_selected=nr;
 				ShowToBuildList ( to_build,build_selected,build_offset );
 				// Doppelklick prüfen:
@@ -6157,7 +6157,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode=true;
 			game->hud->CheckScroll();
 			MouseMoveCallback ( true );
@@ -6174,7 +6174,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowBuildMenu();
 			return;
 		}
@@ -6189,7 +6189,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowMineManager();
 			return;
 		}
@@ -6204,7 +6204,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			Transfer=true;
 			return;
 		}
@@ -6219,10 +6219,10 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			if ( !StartWork() )
 			{
-				PlayFX ( SNDQuitsch );
+				PlayFX ( SoundData.SNDQuitsch );
 			}
 			return;
 		}
@@ -6237,7 +6237,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			StopWork ( false );
 			return;
 		}
@@ -6253,7 +6253,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowStorage();
 			return;
 		}
@@ -6265,7 +6265,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			LoadActive=true;
 			return;
 		}
@@ -6281,7 +6281,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowResearch();
 			return;
 		}
@@ -6297,7 +6297,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			ShowUpgrade();
 			return;
 		}
@@ -6315,7 +6315,7 @@ void cBuilding::DrawMenu ( void )
 			int i,k,sum=0,count=0;
 			char str[50];
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 
 			for ( i=0;i<owner->base->SubBases->Count;i++ )
 			{
@@ -6351,7 +6351,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 
 			UpdateBuilding ( data,owner->BuildingData[typ->nr] );
 			GenerateName();
@@ -6372,7 +6372,7 @@ void cBuilding::DrawMenu ( void )
 		if ( ExeNr==nr )
 		{
 			MenuActive=false;
-			PlayFX ( SNDObjectMenu );
+			PlayFX ( SoundData.SNDObjectMenu );
 			SelfDestructionMenu();
 			return;
 		}
@@ -6385,7 +6385,7 @@ void cBuilding::DrawMenu ( void )
 	if ( ExeNr==nr )
 	{
 		MenuActive=false;
-		PlayFX ( SNDObjectMenu );
+		PlayFX ( SoundData.SNDObjectMenu );
 		ShowHelp();
 		return;
 	}
@@ -6397,7 +6397,7 @@ void cBuilding::DrawMenu ( void )
 	if ( ExeNr==nr )
 	{
 		MenuActive=false;
-		PlayFX ( SNDObjectMenu );
+		PlayFX ( SoundData.SNDObjectMenu );
 		return;
 	}
 	scr.x=126;
@@ -6484,7 +6484,7 @@ void cBuilding::Select ( void )
 		game->video=typ->video;
 	}
 	// Sound abspielen:
-	if ( !IsWorking ) PlayFX ( SNDHudButton );
+	if ( !IsWorking ) PlayFX ( SoundData.SNDHudButton );
 	// Die Eigenschaften anzeigen:
 	ShowDetails();
 }
@@ -6827,7 +6827,7 @@ void cBuilding::ShowHelp ( void )
 	bool FertigPressed=false;
 	SDL_Rect scr,dest;
 
-	PlayFX ( SNDHudButton );
+	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Hilfebildschirm blitten:
@@ -6871,7 +6871,7 @@ void cBuilding::ShowHelp ( void )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SNDMenuButton );
+				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=68;
 				scr.y=172;
 				dest.w=scr.w=61;
