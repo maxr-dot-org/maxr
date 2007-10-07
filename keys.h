@@ -8,43 +8,51 @@
 #include "main.h"
 
 // Globale Daten /////////////////////////////////////////////////////////////
-EX SDLKey KeyExit;
-EX SDLKey KeyJumpToAction;
-EX SDLKey KeyEndTurn;
-EX SDLKey KeyChat;
-EX SDLKey KeyScroll8a;
-EX SDLKey KeyScroll8b;
-EX SDLKey KeyScroll2a;
-EX SDLKey KeyScroll2b;
-EX SDLKey KeyScroll6a;
-EX SDLKey KeyScroll6b;
-EX SDLKey KeyScroll4a;
-EX SDLKey KeyScroll4b;
-EX SDLKey KeyScroll7;
-EX SDLKey KeyScroll9;
-EX SDLKey KeyScroll1;
-EX SDLKey KeyScroll3;
-EX SDLKey KeyZoomIna;
-EX SDLKey KeyZoomInb;
-EX SDLKey KeyZoomOuta;
-EX SDLKey KeyZoomOutb;
-EX SDLKey KeyFog;
-EX SDLKey KeyGrid;
-EX SDLKey KeyScan;
-EX SDLKey KeyRange;
-EX SDLKey KeyAmmo;
-EX SDLKey KeyHitpoints;
-EX SDLKey KeyColors;
-EX SDLKey KeyStatus;
-EX SDLKey KeySurvey;
-EX SDLKey KeyCalcPath;
+class cKeysList
+{
+public:
+	SDLKey KeyExit;
+	SDLKey KeyJumpToAction;
+	SDLKey KeyEndTurn;
+	SDLKey KeyChat;
+	SDLKey KeyScroll8a;
+	SDLKey KeyScroll8b;
+	SDLKey KeyScroll2a;
+	SDLKey KeyScroll2b;
+	SDLKey KeyScroll6a;
+	SDLKey KeyScroll6b;
+	SDLKey KeyScroll4a;
+	SDLKey KeyScroll4b;
+	SDLKey KeyScroll7;
+	SDLKey KeyScroll9;
+	SDLKey KeyScroll1;
+	SDLKey KeyScroll3;
+	SDLKey KeyZoomIna;
+	SDLKey KeyZoomInb;
+	SDLKey KeyZoomOuta;
+	SDLKey KeyZoomOutb;
+	SDLKey KeyFog;
+	SDLKey KeyGrid;
+	SDLKey KeyScan;
+	SDLKey KeyRange;
+	SDLKey KeyAmmo;
+	SDLKey KeyHitpoints;
+	SDLKey KeyColors;
+	SDLKey KeyStatus;
+	SDLKey KeySurvey;
+	SDLKey KeyCalcPath;
+} EX KeysList;
 
 typedef enum {OldSchool,Modern}eMouseStyle;
 EX eMouseStyle MouseStyle;
 
 // Prototypen ////////////////////////////////////////////////////////////////
-int LoadKeys(string file);
+int LoadKeys();
 char *GetKeyString(SDLKey key);
 SDLKey GetKeyFromString(string key);
+/**
+	* Generats a new keys.xml file
+	*/
+void GenerateKeysXml();
 
 #endif
