@@ -106,7 +106,8 @@ int LoadData ( void * )
 
 	// Load Voices
 	MakeLog("Loading Voices...",false,11);
-
+	LoadVoices(SettingsData.sVoicesPath.c_str());
+	MakeLog("Loading Voices...",true,11);
 
 	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;
@@ -199,6 +200,25 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 	return 1;
 }
 
+// LoadEffectAlphacToSurface /////////////////////////////////////////////////
+// Loades a sounfile to the Mix_Chunk
+int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
+{
+	string filepath;
+	if(strcmp(directory,""))
+	{
+		filepath = directory;
+		filepath += PATH_DELIMITER;
+	}
+	filepath += filename;
+	if(!FileExists(filepath.c_str()))
+		return 0;
+
+	dest = Mix_LoadWAV(filepath.c_str());
+
+	return 1;
+}
+
 // ReadMaxXml /////////////////////////////////////////////////////////////////
 // Reads the Information from the max.xml:
 void ReadMaxXml()
@@ -209,12 +229,12 @@ void ReadMaxXml()
 	// Prepare max.xml for reading
 	TiXmlDocument MaxXml;
 	ExTiXmlNode * pXmlNode = NULL;
-	while(!FileExists("max.xml"))
+	if(!FileExists("max.xml"))
 	{
 		cLog::write ( "generating new file", LOG_TYPE_WARNING );
 		GenerateMaxXml();
 	}
-	while(!MaxXml.LoadFile("max.xml"))
+	if(!MaxXml.LoadFile("max.xml"))
 	{
 		cLog::write ( "cannot load max.xml\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateMaxXml();
@@ -690,9 +710,9 @@ int LoadMusic(const char* path)
 	sTmpString = path;
 	sTmpString += PATH_DELIMITER;
 	sTmpString += "music.xml";
-	while(!FileExists(sTmpString.c_str()))
+	if(!FileExists(sTmpString.c_str()))
 		return 0;
-	while(!(MusicXml.LoadFile(sTmpString.c_str())))
+	if(!(MusicXml.LoadFile(sTmpString.c_str())))
 	{
 		cLog::write ( "cannot load music.xml ", LOG_TYPE_ERROR );
 		return 0;
@@ -753,6 +773,39 @@ int LoadSounds(const char* path)
 {
 	cLog::write ( "Loading Sounds", LOG_TYPE_INFO );
 
+	LoadSoundfile ( SoundData.SNDHudSwitch, path, "HudSwitch.wav" );
+	LoadSoundfile ( SoundData.SNDHudButton, path, "HudButton.wav" );
+	LoadSoundfile ( SoundData.SNDMenuButton, path, "MenuButton.wav" );
+	LoadSoundfile ( SoundData.SNDChat, path, "Chat.wav" );
+	LoadSoundfile ( SoundData.SNDObjectMenu, path, "ObjectMenu.wav" );
+	LoadSoundfile ( SoundData.EXPBigWet0, path, "exp_big_wet0.wav" );
+	LoadSoundfile ( SoundData.EXPBigWet1, path, "exp_big_wet1.wav" );
+	LoadSoundfile ( SoundData.EXPBig0, path, "exp_big0.wav" );
+	LoadSoundfile ( SoundData.EXPBig1, path, "exp_big1.wav" );
+	LoadSoundfile ( SoundData.EXPBig2, path, "exp_big2.wav" );
+	LoadSoundfile ( SoundData.EXPBig3, path, "exp_big3.wav" );
+	LoadSoundfile ( SoundData.EXPSmallWet0, path, "exp_small_wet0.wav" );
+	LoadSoundfile ( SoundData.EXPSmallWet1, path, "exp_small_wet1.wav" );
+	LoadSoundfile ( SoundData.EXPSmallWet2, path, "exp_small_wet2.wav" );
+	LoadSoundfile ( SoundData.EXPSmall0, path, "exp_small0.wav" );
+	LoadSoundfile ( SoundData.EXPSmall1, path, "exp_small1.wav" );
+	LoadSoundfile ( SoundData.EXPSmall2, path, "exp_small2.wav" );
+	LoadSoundfile ( SoundData.SNDArm, path, "arm.wav" );
+	LoadSoundfile ( SoundData.SNDBuilding, path, "building.wav" );
+	LoadSoundfile ( SoundData.SNDClearing, path, "clearing.wav" );
+	LoadSoundfile ( SoundData.SNDQuitsch, path, "quitsch.wav" );
+	LoadSoundfile ( SoundData.SNDActivate, path, "activate.wav" );
+	LoadSoundfile ( SoundData.SNDLoad, path, "load.wav" );
+	LoadSoundfile ( SoundData.SNDReload, path, "reload.wav" );
+	LoadSoundfile ( SoundData.SNDRepair, path, "repair.wav" );
+	LoadSoundfile ( SoundData.SNDLandMinePlace, path, "land_mine_place.wav" );
+	LoadSoundfile ( SoundData.SNDLandMineClear, path, "land_mine_clear.wav" );
+	LoadSoundfile ( SoundData.SNDSeaMinePlace, path, "sea_mine_place.wav" );
+	LoadSoundfile ( SoundData.SNDSeaMineClear, path, "sea_mine_clear.wav" );
+	LoadSoundfile ( SoundData.SNDPanelOpen, path, "panel_open.wav" );
+	LoadSoundfile ( SoundData.SNDPanelClose, path, "panel_close.wav" );
+	LoadSoundfile ( SoundData.SNDAbsorb, path, "absorb.wav" );
+
 	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return 1;
 }
@@ -762,6 +815,39 @@ int LoadSounds(const char* path)
 int LoadVoices(const char* path)
 {
 	cLog::write ( "Loading Voices", LOG_TYPE_INFO );
+
+	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.wav" );
+	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.wav" );
+	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.wav" );
+	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.wav" );
+	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.wav" );
+	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.wav" );
+	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.wav" );
+	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.wav" );
+	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.wav" );
+	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.wav" );
+	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.wav" );
+	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.wav" );
+	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.wav" );
+	LoadSoundfile ( VoiceData.VOIWachposten,path, "wachposten.wav" );
+	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.wav" );
+	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.wav" );
+	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.wav" );
+	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.wav" );
+	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.wav" );
+	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.wav" );
+	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.wav" );
+	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.wav" );
+	LoadSoundfile ( VoiceData.VOICommandoDetected,path, "commando_detected.wav" );
+	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.wav" );
+	LoadSoundfile ( VoiceData.VOISaved,path, "saved.wav" );
+	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.wav" );
+	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.wav" );
+	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.wav" );
+	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.wav" );
+	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.wav" );
+	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.wav" );
+	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.wav" );
 
 	cLog::write ( "Success", LOG_TYPE_DEBUG );
 	return 1;
