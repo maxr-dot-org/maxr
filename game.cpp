@@ -601,49 +601,49 @@ int cGame::CheckUser(void){
       }
     }
   }else{
-    if(keystate[KeyExit]&&ShowYesNo("Wirklich beenden?\n\nAlle nicht gespeicherten Spieldaten gehen dabei verloren.")){
+    if(keystate[KeysList.KeyExit]&&ShowYesNo("Wirklich beenden?\n\nAlle nicht gespeicherten Spieldaten gehen dabei verloren.")){
       game->DrawMap(false);
       SDL_BlitSurface(GraphicsData.gfx_hud,NULL,buffer,NULL);
       return -1;
     }
-    if(keystate[KeyJumpToAction]&&MsgCoordsX!=-1){
+    if(keystate[KeysList.KeyJumpToAction]&&MsgCoordsX!=-1){
       hud->OffX=MsgCoordsX*64-((int)(((float)224/hud->Zoom)*64))+32;
       hud->OffY=MsgCoordsY*64-((int)(((float)224/hud->Zoom)*64))+32;
       fDrawMap=true;
       hud->DoScroll(0);
       MsgCoordsX=-1;
     }
-    if(keystate[KeyEndTurn]&&!LastReturn&&!hud->Ende){
+    if(keystate[KeysList.KeyEndTurn]&&!LastReturn&&!hud->Ende){
       hud->EndeButton(true);
       hud->MakeMeMyEnd();
       LastReturn=true;
-    }else if(!keystate[KeyEndTurn])LastReturn=false;
-    if(keystate[KeyChat]&&!keystate[SDLK_RALT]&&!keystate[SDLK_LALT]){
+    }else if(!keystate[KeysList.KeyEndTurn])LastReturn=false;
+    if(keystate[KeysList.KeyChat]&&!keystate[SDLK_RALT]&&!keystate[SDLK_LALT]){
       ChatInput=true;
       InputStr="";
     }
-    if(keystate[KeyScroll8a]||keystate[KeyScroll8b])hud->DoScroll(8);
-    if(keystate[KeyScroll2a]||keystate[KeyScroll2b])hud->DoScroll(2);
-    if(keystate[KeyScroll6a]||keystate[KeyScroll6b])hud->DoScroll(6);
-    if(keystate[KeyScroll4a]||keystate[KeyScroll4b])hud->DoScroll(4);
-    if(keystate[KeyScroll7])hud->DoScroll(7);
-    if(keystate[KeyScroll9])hud->DoScroll(9);
-    if(keystate[KeyScroll1])hud->DoScroll(1);
-    if(keystate[KeyScroll3])hud->DoScroll(3);
-    if(keystate[KeyZoomIna]||keystate[KeyZoomInb])hud->SetZoom(hud->Zoom+1);
-    if(keystate[KeyZoomOuta]||keystate[KeyZoomOutb])hud->SetZoom(hud->Zoom-1);
+    if(keystate[KeysList.KeyScroll8a]||keystate[KeysList.KeyScroll8b])hud->DoScroll(8);
+    if(keystate[KeysList.KeyScroll2a]||keystate[KeysList.KeyScroll2b])hud->DoScroll(2);
+    if(keystate[KeysList.KeyScroll6a]||keystate[KeysList.KeyScroll6b])hud->DoScroll(6);
+    if(keystate[KeysList.KeyScroll4a]||keystate[KeysList.KeyScroll4b])hud->DoScroll(4);
+    if(keystate[KeysList.KeyScroll7])hud->DoScroll(7);
+    if(keystate[KeysList.KeyScroll9])hud->DoScroll(9);
+    if(keystate[KeysList.KeyScroll1])hud->DoScroll(1);
+    if(keystate[KeysList.KeyScroll3])hud->DoScroll(3);
+    if(keystate[KeysList.KeyZoomIna]||keystate[KeysList.KeyZoomInb])hud->SetZoom(hud->Zoom+1);
+    if(keystate[KeysList.KeyZoomOuta]||keystate[KeysList.KeyZoomOutb])hud->SetZoom(hud->Zoom-1);
 
     {
       static SDLKey last_key=SDLK_UNKNOWN;
-      if(keystate[KeyFog]){if(last_key!=KeyFog){hud->SwitchNebel(!hud->Nebel);last_key=KeyFog;}}
-      else if(keystate[KeyGrid]){if(last_key!=KeyGrid){hud->SwitchGitter(!hud->Gitter);last_key=KeyGrid;}}
-      else if(keystate[KeyScan]){if(last_key!=KeyScan){hud->SwitchScan(!hud->Scan);last_key=KeyScan;}}
-      else if(keystate[KeyRange]){if(last_key!=KeyRange){hud->SwitchReichweite(!hud->Reichweite);last_key=KeyRange;}}
-      else if(keystate[KeyAmmo]){if(last_key!=KeyAmmo){hud->SwitchMunition(!hud->Munition);last_key=KeyAmmo;}}
-      else if(keystate[KeyHitpoints]){if(last_key!=KeyHitpoints){hud->SwitchTreffer(!hud->Treffer);last_key=KeyHitpoints;}}
-      else if(keystate[KeyColors]){if(last_key!=KeyColors){hud->SwitchFarben(!hud->Farben);last_key=KeyColors;}}
-      else if(keystate[KeyStatus]){if(last_key!=KeyStatus){hud->SwitchStatus(!hud->Status);last_key=KeyStatus;}}
-      else if(keystate[KeySurvey]){if(last_key!=KeySurvey){hud->SwitchStudie(!hud->Studie);last_key=KeySurvey;}}
+      if(keystate[KeysList.KeyFog]){if(last_key!=KeysList.KeyFog){hud->SwitchNebel(!hud->Nebel);last_key=KeysList.KeyFog;}}
+      else if(keystate[KeysList.KeyGrid]){if(last_key!=KeysList.KeyGrid){hud->SwitchGitter(!hud->Gitter);last_key=KeysList.KeyGrid;}}
+      else if(keystate[KeysList.KeyScan]){if(last_key!=KeysList.KeyScan){hud->SwitchScan(!hud->Scan);last_key=KeysList.KeyScan;}}
+      else if(keystate[KeysList.KeyRange]){if(last_key!=KeysList.KeyRange){hud->SwitchReichweite(!hud->Reichweite);last_key=KeysList.KeyRange;}}
+      else if(keystate[KeysList.KeyAmmo]){if(last_key!=KeysList.KeyAmmo){hud->SwitchMunition(!hud->Munition);last_key=KeysList.KeyAmmo;}}
+      else if(keystate[KeysList.KeyHitpoints]){if(last_key!=KeysList.KeyHitpoints){hud->SwitchTreffer(!hud->Treffer);last_key=KeysList.KeyHitpoints;}}
+      else if(keystate[KeysList.KeyColors]){if(last_key!=KeysList.KeyColors){hud->SwitchFarben(!hud->Farben);last_key=KeysList.KeyColors;}}
+      else if(keystate[KeysList.KeyStatus]){if(last_key!=KeysList.KeyStatus){hud->SwitchStatus(!hud->Status);last_key=KeysList.KeyStatus;}}
+      else if(keystate[KeysList.KeySurvey]){if(last_key!=KeysList.KeySurvey){hud->SwitchStudie(!hud->Studie);last_key=KeysList.KeySurvey;}}
       else last_key=SDLK_UNKNOWN;
     }
   }
@@ -855,12 +855,12 @@ int cGame::CheckUser(void){
           }
         }
         // hans
-        if(keystate[KeyCalcPath])
+        if(keystate[KeysList.KeyCalcPath])
 			engine->AddMoveJob(SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,false,true);
         else
 			engine->AddMoveJob(SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,false);
       }else{
-        if(keystate[KeyCalcPath])
+        if(keystate[KeysList.KeyCalcPath])
 			engine->AddMoveJob(SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,true,true);
         else
 			engine->AddMoveJob(SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,true);
@@ -1034,7 +1034,7 @@ int cGame::CheckUser(void){
 // Zeigt eine Nachricht mit Koordinaten an:
 void cGame::AddCoords(char *msg,int x,int y){
   char str[100];
-  sprintf(str,"[%d,%d] %s (%s)",x,y,msg,GetKeyString(KeyJumpToAction));
+  sprintf(str,"[%d,%d] %s (%s)",x,y,msg,GetKeyString(KeysList.KeyJumpToAction));
   AddMessage(str);
   MsgCoordsX=x;
   MsgCoordsY=y;
