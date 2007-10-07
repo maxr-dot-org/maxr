@@ -65,7 +65,7 @@ void cHud::SwitchTNT ( bool set )
 	TNT=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchRadar ( bool set )
@@ -89,7 +89,7 @@ void cHud::SwitchRadar ( bool set )
 	Radar=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchNebel ( bool set )
@@ -112,7 +112,7 @@ void cHud::SwitchNebel ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Nebel=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchGitter ( bool set )
@@ -136,7 +136,7 @@ void cHud::SwitchGitter ( bool set )
 	Gitter=set;
 	game->fDrawHud=true;
 	game->fDrawMap=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchScan ( bool set )
@@ -159,7 +159,7 @@ void cHud::SwitchScan ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Scan=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchReichweite ( bool set )
@@ -182,7 +182,7 @@ void cHud::SwitchReichweite ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Reichweite=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchMunition ( bool set )
@@ -205,7 +205,7 @@ void cHud::SwitchMunition ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Munition=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchTreffer ( bool set )
@@ -228,7 +228,7 @@ void cHud::SwitchTreffer ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Treffer=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchFarben ( bool set )
@@ -251,7 +251,7 @@ void cHud::SwitchFarben ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Farben=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchStatus ( bool set )
@@ -274,7 +274,7 @@ void cHud::SwitchStatus ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Status=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchStudie ( bool set )
@@ -297,7 +297,7 @@ void cHud::SwitchStudie ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Studie=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::SwitchLock ( bool set )
@@ -320,7 +320,7 @@ void cHud::SwitchLock ( bool set )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Lock=set;
 	game->fDrawHud=true;
-	PlayFX ( SNDHudSwitch );
+	PlayFX ( SoundData.SNDHudSwitch );
 }
 
 void cHud::DoZoom ( int x,int y )
@@ -896,7 +896,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) PraeferenzenButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			game->ChangeObjectName=false;
 			game->ChatInput=false;
 			DoPraeferenzen();
@@ -913,7 +913,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) PauseButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			PlayFLC=false;
 			PauseButton ( false );
 		}
@@ -928,7 +928,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) PlayButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			PlayFLC=true;
 			PlayButton ( false );
 		}
@@ -943,7 +943,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) HelpButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			game->HelpActive=true;
 			HelpButton ( false );
 		}
@@ -958,7 +958,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) ChatButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			game->ChatInput=true;
 			InputStr="";
 			ChatButton ( false );
@@ -974,7 +974,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) LogButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			// Log-Menü aufrufen...
 			game->AddMessage ( "what ever..." );
 
@@ -1004,7 +1004,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) ErledigenButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			if ( game->SelectedVehicle&&game->SelectedVehicle->mjob&&game->SelectedVehicle->mjob->Suspended&&game->SelectedVehicle->data.speed )
 			{
 				game->SelectedVehicle->mjob->CalcNextDir();
@@ -1024,7 +1024,7 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			cVehicle *v;
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			v=game->ActivePlayer->GetNextVehicle();
 			if ( v )
 			{
@@ -1052,7 +1052,7 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			cVehicle *v;
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			v=game->ActivePlayer->GetPrevVehicle();
 			if ( v )
 			{
@@ -1079,7 +1079,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) CenterButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			if ( game->SelectedVehicle )
 			{
 				game->SelectedVehicle->Center();
@@ -1101,7 +1101,7 @@ void cHud::ChechMouseOver ( void )
 		if ( b ) DateiButton ( true );
 		else if ( lb )
 		{
-			PlayFX ( SNDHudButton );
+			PlayFX ( SoundData.SNDHudButton );
 			game->ShowDateiMenu();
 			DateiButton ( false );
 		}
@@ -1546,7 +1546,7 @@ void cHud::ScaleSurfaces ( void )
 // Drück Ende:
 void cHud::MakeMeMyEnd ( void )
 {
-	PlayFX ( SNDHudButton );
+	PlayFX ( SoundData.SNDHudButton );
 	if ( game->engine->CheckVehiclesMoving ( false ) )
 	{
 		EndeButton ( false );
