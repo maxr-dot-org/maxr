@@ -272,7 +272,7 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 		{
 			szTemp.erase(0);
 		}
-		if( szTemp[0] == 'f' || szTemp[0] == 'F')
+		if( szTemp[0] == 'f' || szTemp[0] == 'F' || szTemp[0] == 'n' || szTemp[0] == 'N' )
 		{
 						return false;
 		}else
