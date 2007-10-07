@@ -3534,7 +3534,7 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		}
 	}
 //  fstcpip->FSTcpIpMessageFuntion=ReceiveMenuMessage;
-	Port=SettingsData.sPort;
+	Port=SettingsData.iPort;
 
 	map="";
 	no_options=true;
@@ -3571,7 +3571,7 @@ cMultiPlayer::~cMultiPlayer ( void )
 		delete map_obj;map_obj=NULL;
 	}
 	if ( strcmp ( IP.c_str(),"-" ) ) SettingsData.sIP=IP;
-	SettingsData.sPort=Port;
+	SettingsData.iPort=Port;
 }
 
 // Zeigt das Chatmenü an:
