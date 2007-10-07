@@ -24,67 +24,44 @@ int LoadData ( void * )
 
 	string sTmpString;
 
-	// Prepare max.xml for reading
-	TiXmlDocument MaxXml;
-	ExTiXmlNode * pXmlNode = NULL;
-	while(!FileExists("max.xml"))
-	{
-		cLog::write ( "file not found: max.xml.\ngenerating new file", LOG_TYPE_WARNING );
-		GenerateMaxXml();
-	}
-	while(!MaxXml.LoadFile("max.xml"))
-	{
-		cLog::write ( "cannot load max.xml\ngenerating new file", LOG_TYPE_WARNING );
-		GenerateMaxXml();
-	}
 	// Load fonts for SplashMessages
 	cLog::write ( "Loading font for Splash Messages\n", LOG_TYPE_INFO );
-	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", "");
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFontPath = sTmpString;
-	else
-	{
-		cLog::write ( "Cannot load FontsPath from max.xml: using default value", LOG_TYPE_INFO );
-		SettingsData.sFontPath = "fonts";
-	}
 
 	if(!LoadGraphicToSurface(FontsData.font, SettingsData.sFontPath.c_str(), "font.pcx"))
-	{
-		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
-		return 0;
-	}
+		NECESSARY_FILE_FAILURE
 	if(!LoadGraphicToSurface(FontsData.font_big, SettingsData.sFontPath.c_str(), "font_big.pcx"))
-	{
-		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
-		return 0;
-	}
+		NECESSARY_FILE_FAILURE
 	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx"))
-	{
-		cLog::write ( "File for game needed! ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
-		return 0;
-	}
+		NECESSARY_FILE_FAILURE
 	fonts = new cFonts;
 	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
 
 	MakeLog(MAXVERSION,false,0);
 
-	// Read the MaxXml-file
-	MakeLog("Reading max.xml...",false,2);
-	ReadMaxXml(MaxXml);
-	MakeLog("Reading max.xml...",true,2);
+	// Load Keys
+	MakeLog("Loading Keys...",false,3);
+//	if(InitSound())
+		MakeLog("Loading Keys...",true,3);
 
 	// Load Graphics
-	MakeLog("Loading Gfx...",false,3);
+	MakeLog("Loading Gfx...",false,4);
 	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))
 	{
 		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Gfx...",true,3);
+	MakeLog("Loading Gfx...",true,4);
+
+	// Load Terrain
+	MakeLog("Loading Terrain...",false,5);
+	if(!LoadTerrain(SettingsData.sTerrainPath.c_str()))
+	{
+		cLog::write ( "Error while loading terrain", LOG_TYPE_ERROR );
+		LoadingData=LOAD_ERROR;
+		return 0;
+	}
+	MakeLog("Loading Terrain...",true,5);
 
 	while(1)
 	{
@@ -119,11 +96,7 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	}
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
-	{
-		filepath.insert(0,"File not found: ");
-		cLog::write ( filepath.c_str(), LOG_TYPE_WARNING );
 		return 0;
-	}
 
 	dest = LoadPCX((char *)filepath.c_str());
 
@@ -145,23 +118,33 @@ int CheckFile(const char* directory, const char* filename)
 	}
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
-	{
-		filepath.insert(0,"File not found: ");
-		cLog::write ( filepath.c_str(), LOG_TYPE_WARNING );
 		return 0;
-	}
 	return 1;
 }
 
 // ReadMaxXml /////////////////////////////////////////////////////////////////
 // Reads the Information from the max.xml:
-void ReadMaxXml(TiXmlDocument MaxXml)
+void ReadMaxXml()
 {
+	string sTmpString;
+	// Prepare max.xml for reading
+	TiXmlDocument MaxXml;
+	ExTiXmlNode * pXmlNode = NULL;
+	while(!FileExists("max.xml"))
+	{
+		cLog::write ( "generating new file", LOG_TYPE_WARNING );
+		GenerateMaxXml();
+	}
+	while(!MaxXml.LoadFile("max.xml"))
+	{
+		cLog::write ( "cannot load max.xml\ngenerating new file", LOG_TYPE_WARNING );
+		GenerateMaxXml();
+	}
+
 	cLog::write ( "Reading max.xml\n", LOG_TYPE_INFO );
 
-	string sTmpString;
-	ExTiXmlNode * pXmlNode = NULL;
-
+	// START Options
+	// Resolution
 	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", "");
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 	{
@@ -174,7 +157,7 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 		SettingsData.iScreenW = 640;
 		SettingsData.iScreenH = 480;
 	}
-
+	// ColourDepth
 	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", "");
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		SettingsData.iColourDepth = atoi(sTmpString.c_str());
@@ -184,23 +167,217 @@ void ReadMaxXml(TiXmlDocument MaxXml)
 		SettingsData.iColourDepth = 32;
 	}
 
-/*	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", "");
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.iColourDepth = pXmlNode->XmlDataToBool(sTmpString);
+	// GAME Options
+	// ScrollSpeed
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.iScrollSpeed = atoi(sTmpString.c_str());
 	else
 	{
-		cLog::write ( "Cannot load Intro from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iColourDepth = false;
-	}*/
+		cLog::write ( "Cannot load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iScrollSpeed = 32;
+	}
 
+	// GAME-NET Options
+	//IP
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sIP = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load IP from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sIP = "127.0.0.1";
+	}
+	//Port
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.iPort = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load Port from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iPort = 58600;
+	}
+	//PlayerName
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sPlayerName = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load PlayerName from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sPlayerName = "Mechkommandant";
+	}
+
+
+	// GAME-SOUND Options
+	//MusicVol
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.MusicVol  = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load MusicVol from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.MusicVol  = 128;
+	}
+	//SoundVol
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.SoundVol  = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load SoundVol from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.SoundVol  = 128;
+	}
+	//VoiceVol
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.VoiceVol  = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load VoiceVol from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.VoiceVol  = 128;
+	}
+	//ChunkSize
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","ChunkSize" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.iChunkSize  = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load ChunkSize from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iChunkSize  = 2048;
+	}
+	//Frequency
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","Frequency" "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.iFrequency  = atoi(sTmpString.c_str());
+	else
+	{
+		cLog::write ( "Cannot load Frequency from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iFrequency  = 44100;
+	}
+
+	// PATHs
+	//Fonts 
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sFontPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load FontsPath from max.xml: using default value", LOG_TYPE_INFO );
+		SettingsData.sFontPath = "fonts";
+	}
+	//FX 
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX ", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sFxPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load FX-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sFxPath = "fx";
+	}
+	//Graphics
 	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", "");
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		SettingsData.sGfxPath = sTmpString;
 	else
 	{
-		cLog::write ( "Cannot load GfxPath from max.xml: using default value", LOG_TYPE_WARNING );
+		cLog::write ( "Cannot load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sGfxPath = "gfx";
 	}
+	//Graphics on demmand
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFXOD", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sGfxODPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load GFXOD-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sGfxODPath = "gfx_od";
+	}
+	//Maps
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sGfxODPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Maps-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sGfxODPath = "maps";
+	}
+	//Saves
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sSavesPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Saves-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sSavesPath = "saves";
+	}
+	//Sounds
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sSoundsPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Sounds-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sSoundsPath = "sounds";
+	}
+	//Voices
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sVoicesPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Voices-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sVoicesPath = "voices";
+	}
+	//Music
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sMusicPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Music-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sMusicPath = "music";
+	}
+	//Terrain
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Terrain", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sTerrainPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Terrain-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sTerrainPath = "terrain";
+	}
+	//Vehicles
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sVehiclesPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Vehicles-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sVehiclesPath = "vehicles";
+	}
+	//Buildings
+	pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", "");
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sBuildingsPath = sTmpString;
+	else
+	{
+		cLog::write ( "Cannot load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sBuildingsPath = "buildings";
+	}
+
+	SettingsData.bAlphaEffects = true;
+	SettingsData.bAnimations = true;
+	SettingsData.bAutoSave = true;
+	SettingsData.bDamageEffects = true;
+	SettingsData.bDamageEffectsVehicles = true;
+	SettingsData.bFastMode = false;
+	SettingsData.bIntro = false;
+	SettingsData.bMakeTracks = true;
+	SettingsData.bShadows = true;
+	SettingsData.bShowDescription = true;
+	SettingsData.bSoundEnabled = true;
+	SettingsData.bWindowMode = true;
+
 
 	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
 	return;
@@ -445,5 +622,99 @@ int LoadGraphics(const char* path)
 	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
 
 	cLog::write ( "Success\n", LOG_TYPE_DEBUG );
+	return 1;
+}
+
+
+// LoadTerrain ////////////////////////////////////////////////////////////////
+// Loads the Terrain
+int LoadTerrain(const char* path)
+{
+	string sTmpString;
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
+
+	sTmpString = path;
+	sTmpString += PATH_DELIMITER;
+	sTmpString += "terrain.xml";
+	if( !FileExists( sTmpString.c_str() ) )
+		return 0;
+	if ( !doc.LoadFile ( sTmpString.c_str() ) )
+	{
+		cLog::write("could not load terrain.xml!",2);
+		return 0;
+	}
+	rootnode = doc.FirstChildElement ( "Terrains" );
+
+	TList *sections;
+	sections = new TList();
+	node = rootnode->FirstChildElement();
+	if ( node )
+		sections->Add ( node->ToElement()->Value() );
+	while ( node != NULL)
+	{
+		node=node->NextSibling();
+		if ( node && node->Type() ==1 )
+		{
+			cLog::write(node->ToElement()->Value(),3 );
+			sections->Add ( node->ToElement()->Value() );
+		}
+	}
+
+/*	for ( i=0;i<sections->Count;i++ )
+	{
+		node = rootnode->FirstChildElement ( sections->Items[i].c_str() );
+		terrain_anz++;
+		terrain= ( sTerrain* ) realloc ( terrain,sizeof ( sTerrain ) *terrain_anz );
+		file="terrain/";
+		if ( node->ToElement()->Attribute ( "file" ) ==NULL )
+			cLog::write ( "Wrong format for xml-file", 2 );
+		file+=node->ToElement()->Attribute ( "file" );
+		if ( !FileExists ( file.c_str() ) )
+		{
+			cLog::write ( "xml-file not found", 2 );
+			return 0;
+		}
+
+#define DUP_SF(a,b)b= SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,a->w,a->h,colourDepth,0,0,0,0);SDL_FillRect(b,NULL,0xFF00FF);SDL_BlitSurface(a,NULL,b,NULL);
+		terrain[i].sf_org = LoadPCX ( ( char * ) file.c_str() );
+		DUP_SF ( terrain[i].sf_org,terrain[i].sf );
+
+		DUP_SF ( terrain[i].sf_org,terrain[i].shw_org );
+		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,terrain[i].shw_org,NULL );
+		DUP_SF ( terrain[i].shw_org,terrain[i].shw );
+
+		terrain[i].water=false;
+		if ( node->ToElement()->Attribute ( "water" ) !=NULL )
+			if ( strcmp ( node->ToElement()->Attribute ( "water" ),"true" ) ==0 )
+				terrain[i].water=true;
+		terrain[i].coast=false;
+		if ( node->ToElement()->Attribute ( "coast" ) !=NULL )
+			if ( strcmp ( node->ToElement()->Attribute ( "coast" ),"true" ) ==0 )
+				terrain[i].coast=true;
+		terrain[i].overlay=false;
+		if ( node->ToElement()->Attribute ( "overlay" ) !=NULL )
+			if ( strcmp ( node->ToElement()->Attribute ( "overlay" ),"true" ) ==0 )
+				terrain[i].overlay=true;
+		terrain[i].blocked=false;
+		if ( node->ToElement()->Attribute ( "blocked" ) !=NULL )
+			if ( strcmp ( node->ToElement()->Attribute ( "blocked" ),"true" ) ==0 )
+				terrain[i].blocked=true;
+
+		terrain[i].frames=terrain[i].sf_org->w/64;
+		terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
+		strcpy ( terrain[i].id, ( sections->Items[i] ).c_str() );
+
+		if ( terrain[i].overlay )
+		{
+			int t=0xFFCD00CD;
+			SDL_SetColorKey ( terrain[i].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
+			SDL_SetColorKey ( terrain[i].shw_org,SDL_SRCCOLORKEY,t );
+			SDL_SetColorKey ( terrain[i].sf,SDL_SRCCOLORKEY,0xFF00FF );
+			SDL_SetColorKey ( terrain[i].shw,SDL_SRCCOLORKEY,t );
+		}
+	}*/
+	delete sections;
 	return 1;
 }
