@@ -97,11 +97,11 @@ int CheckFile(const char* directory, const char* filename);
 /**
 	* Reads the Information out of the max.xml
 	*/
-void ReadMaxXml();
+int ReadMaxXml();
 /**
 	* Generats a new max.xml file
 	*/
-void GenerateMaxXml();
+int GenerateMaxXml();
 
 /**
 	* Loads the rest of the fonts

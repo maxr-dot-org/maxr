@@ -13,12 +13,12 @@ int LoadKeys ()
 	TiXmlDocument KeysXml;
 	ExTiXmlNode * pXmlNode = NULL;
 	string sTmpString;
-	while(!FileExists("keys.xml"))
+	if(!FileExists("keys.xml"))
 	{
 		cLog::write ( "generating new file", LOG_TYPE_WARNING );
 		GenerateKeysXml();
 	}
-	while(!KeysXml.LoadFile("keys.xml"))
+	if(!KeysXml.LoadFile("keys.xml"))
 	{
 		cLog::write ( "cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateKeysXml();
