@@ -221,6 +221,8 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 {
 	va_list pvaArg;
 	va_start(pvaArg, pszCurrent);
+	StrStrMap :: const_iterator impTranslation;
+	std::string szErrorMsg;
 
 	TiXmlNode * pXmlNode;
 	std::string szXmlNodePath;
@@ -266,12 +268,20 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		if( ((ExTiXmlNode *)pXmlNode)->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "localized" ) != NULL )
 		{
 			va_end( pvaArg );
+			impTranslation = m_mpLanguage.find( szXmlNodePath );
+			if( impTranslation == m_mpLanguage.end() )
+			{
+				szErrorMsg = "Language file: translation for >";
+				szErrorMsg += szXmlNodePath + "< is read more than once!";
+				fLog.write( szErrorMsg.c_str(), cLog::eLOG_TYPE_WARNING );
+				return -1;
+			}
 			m_mpLanguage[szXmlNodePath] = strResult;
 			return 0;
 		}
 	}
 
-	std::string szErrorMsg = "Language file: translation for >";
+	szErrorMsg = "Language file: translation for >";
 	if( pXmlNode != NULL )
 	{
 		if( ((ExTiXmlNode *)pXmlNode)->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "ENG" ) != NULL )
