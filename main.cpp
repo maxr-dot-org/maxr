@@ -65,7 +65,11 @@ int main ( int argc, char *argv[] )
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
-	ReadMaxXml();
+	if( ReadMaxXml() == -1 )
+	{
+		Quit();
+		return -1;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	// ToDo - JCK: Reading the language pack should be right after retrieving the 

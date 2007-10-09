@@ -202,7 +202,7 @@ int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
 
 // ReadMaxXml /////////////////////////////////////////////////////////////////
 // Reads the Information from the max.xml:
-void ReadMaxXml()
+int ReadMaxXml()
 {
 	cLog::write ( "Reading max.xml", LOG_TYPE_INFO );
 
@@ -213,12 +213,18 @@ void ReadMaxXml()
 	if(!FileExists("max.xml"))
 	{
 		cLog::write ( "Generating new config file max.xml", LOG_TYPE_WARNING );
-		GenerateMaxXml();
+		if( GenerateMaxXml() == -1)
+		{
+			return -1;
+		}
 	}
 	if(!MaxXml.LoadFile("max.xml"))
 	{
 		cLog::write ( "Can't find max.xml\n", LOG_TYPE_WARNING );
-		GenerateMaxXml();
+		if( GenerateMaxXml() == -1)
+		{
+			return -1;
+		}
 	}
 
 	// START Options
@@ -617,16 +623,17 @@ void ReadMaxXml()
 	}
 
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
-	return;
+	return 0;
 }
 
 // GenerateMaxXml /////////////////////////////////////////////////////////////
 // Generats a new max.xml file
-void GenerateMaxXml()
+int GenerateMaxXml()
 {
 	static int iGenerateTrys = 0;
 	iGenerateTrys++;
-	return;
+	return -1; // Generate fails
+	// return 0; // Generate success
 }
 
 // LoadFonts ///////////////////////////////////////////////////////////////////
