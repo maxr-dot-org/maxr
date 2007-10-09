@@ -136,8 +136,9 @@ int main ( int argc, char *argv[] )
 	mouse = new cMouse;
 
 	// Das Menü starten:
-//	RunMainMenu();
+	// RunMainMenu();
 	Quit();
+	return 0;
 }
 
 // generate SplashScreen
