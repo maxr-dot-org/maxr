@@ -39,10 +39,24 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 	{
 		return -1;
 	}
+	if( szLanguageCode.find_first_not_of
+		( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string.npos )
+	{
+		return -1;
+	}
+
 	m_szLanguage = szLanguageCode;
+	for(int i=0 ; i<=2 ; i++)
+	{
+		if( m_szLanguage[i] < 97 )
+		{
+			m_szLanguage[i] += 32;
+		}
+	}
+
 	m_szLanguageFile = LANGUAGE_FILE_FOLDER ;
 	m_szLanguageFile += PATH_DELIMITER;
-	m_szLanguageFile += LANGUAGE_FILE_NAME + szLanguageCode + LANGUAGE_FILE_EXT;
+	m_szLanguageFile += m_szLanguage + LANGUAGE_FILE_EXT;
 	return 0;
 }
 
@@ -65,6 +79,25 @@ std::string cLanguage::Translate(std::string szInputText)
 		return impTranslation->second ;
 	}
 }
+
+// Translation with replace %s
+std::string cLanguage::Translate(std::string  & rszMainText, std::string & rszInsertText)
+{
+	std::string szMainText, szInsertText;
+	std::size_t iPos;
+
+	szMainText = this->Translate( rszMainText );
+	szInsertText = this->Translate( rszInsertText );
+	iPos = szMainText.find( "%s" );
+	if( iPos = std::string.npos )
+	{
+		return szMainText + szInsertText;
+	}
+	szMainText.replace( iPos, 2, szInsertText );
+	return szMainText;
+}
+
+
 
 int cLanguage::ReadLanguagePack()
 {

@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define LANGUAGE_FILE_FOLDER "languages"
-#define LANGUAGE_FILE_NAME   "language "
+#define LANGUAGE_FILE_NAME   "lang_"
 #define LANGUAGE_FILE_EXT    ".xml"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <map> once
+#include <map>
 #include <string>
 #include <tinyxml.h>
 #ifndef LOG_H
@@ -65,7 +65,7 @@ public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);
 	std::string Translate(std::string szInputText);
-	// ToDo - JCK: Translation with replace %s
+	std::string Translate(std::string & rszMainText, std::string & rszInsertText); 	// Translation with replace %s
 	int ReadLanguagePack();
 	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
 };
