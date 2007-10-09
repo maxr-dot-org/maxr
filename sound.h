@@ -62,6 +62,9 @@ public:
 	sSOUND *EXPSmall0;
 	sSOUND *EXPSmall1;
 	sSOUND *EXPSmall2;
+
+	// Dummy
+	sSOUND *DummySound;
 } EX SoundData;
 
 // Voices ////////////////////////////////////////////////////////////////////
