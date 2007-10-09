@@ -13,7 +13,7 @@
 
 //#define TERRAIN_DEBUG	// Logs the using of default values while loading terrain
 
-#include "ExtendedTinyXml.h"
+#include "extendedtinyxml.h"
 #include "loaddata.h"
 #include "files.h"
 #include "log.h"

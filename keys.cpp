@@ -2,7 +2,7 @@
 // M.A.X. - keys.cpp
 //////////////////////////////////////////////////////////////////////////////
 #include "files.h"
-#include "ExtendedTinyXml.h"
+#include "extendedtinyxml.h"
 #include "keys.h"
 #include "log.h"
 
