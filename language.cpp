@@ -56,7 +56,8 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 
 	m_szLanguageFile = LANGUAGE_FILE_FOLDER ;
 	m_szLanguageFile += PATH_DELIMITER;
-	m_szLanguageFile += m_szLanguage + LANGUAGE_FILE_EXT;
+	m_szLanguageFile += LANGUAGE_FILE_NAME;
+	m_szLanguageFile +=	m_szLanguage + LANGUAGE_FILE_EXT;
 	return 0;
 }
 
@@ -67,7 +68,7 @@ std::string cLanguage::Translate(std::string szInputText)
 
 	if( impTranslation == m_mpLanguage.end() )
 	{
-		if( m_bErrorMsgTranslationLoaded = true )
+		if( m_bErrorMsgTranslationLoaded == true )
 		{
 			return Translate( "Text~Error_Messages~ERROR_Missing_Translation" ) + szInputText;
 		}else
@@ -81,20 +82,19 @@ std::string cLanguage::Translate(std::string szInputText)
 }
 
 // Translation with replace %s
-std::string cLanguage::Translate(std::string  & rszMainText, std::string & rszInsertText)
+std::string cLanguage::Translate(std::string  szMainText, std::string szInsertText)
 {
-	std::string szMainText, szInsertText;
+	std::string  szMainTextNew;
 	std::size_t iPos;
 
-	szMainText = this->Translate( rszMainText );
-	szInsertText = this->Translate( rszInsertText );
-	iPos = szMainText.find( "%s" );
-	if( iPos = std::string.npos )
+	szMainTextNew = this->Translate( szMainText );
+	iPos = szMainTextNew.find( "%s" );
+	if( iPos == std::string.npos )
 	{
-		return szMainText + szInsertText;
+		return szMainTextNew + szInsertText;
 	}
-	szMainText.replace( iPos, 2, szInsertText );
-	return szMainText;
+	szMainTextNew.replace( iPos, 2, szInsertText );
+	return szMainTextNew;
 }
 
 
@@ -280,7 +280,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 			szErrorMsg += strResult + "< is missing";
 		}else
 		{
-			if( m_bErrorMsgTranslationLoaded = true )
+			if( m_bErrorMsgTranslationLoaded == true )
 			{
 				m_mpLanguage[szXmlNodePath] = Translate( "Text~Error_Messages~ERROR_Missing_Translation" ) + szXmlNodePath;
 			}else

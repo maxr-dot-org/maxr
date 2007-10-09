@@ -87,6 +87,9 @@ int main ( int argc, char *argv[] )
 	//cLog::write( lngPack.Translate("Text~Main~Test1").c_str() );
 	//cLog::write( lngPack.Translate("Text~Main~Test2").c_str() );
 	//cLog::write( lngPack.Translate("Text~Main~Test3").c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Test2", "User" ).c_str() );
+	//	  // And finaly some translations with replace
+	//cLog::write( lngPack.Translate("Text~Main~Test2", lngPack.Translate("Text~Main~Game_Title") ).c_str() );
 	////////////////////////////////////////////////////////////////////////////////
 
 	showSplash(); //show splashscreen

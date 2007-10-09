@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "ExtendedTinyXml.h"
+#include "extendedtinyxml.h"
 #include "defines.h"
 #include "log.h"
 

@@ -65,7 +65,7 @@ public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);
 	std::string Translate(std::string szInputText);
-	std::string Translate(std::string & rszMainText, std::string & rszInsertText); 	// Translation with replace %s
+	std::string Translate(std::string szMainText, std::string szInsertText); 	// Translation with replace %s
 	int ReadLanguagePack();
 	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
 };

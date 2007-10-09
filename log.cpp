@@ -97,7 +97,7 @@ void cLog::mark()
 
 int cLog::writeMessage ( char *str )
 {
-	int wrote;
+	unsigned int wrote;
 	wrote = SDL_RWwrite ( logfile,str,1,strlen ( str ) );
 
 	if ( wrote<0 ) //sanity check - was file writable?
