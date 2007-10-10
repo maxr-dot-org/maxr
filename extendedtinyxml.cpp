@@ -65,6 +65,20 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 	return (ExTiXmlNode *)pXmlNode;
 }
 
+ExTiXmlNode* ExTiXmlNode::XmlGetFirstNodeChild()
+{
+	TiXmlNode * pXmlNode;
+	if( this == NULL )
+	{
+		return NULL;
+	}
+	pXmlNode = this;
+
+	pXmlNode = pXmlNode->FirstChild();
+
+	return (ExTiXmlNode *)pXmlNode;
+}
+
 ExTiXmlNode* ExTiXmlNode::XmlGetNextNodeSibling()
 {
 	TiXmlNode * pXmlNode;

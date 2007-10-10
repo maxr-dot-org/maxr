@@ -46,6 +46,8 @@ public:
 	/// Get the first Node with a matching path
 	ExTiXmlNode* XmlGetFirstNode( TiXmlDocument & rTiXmlDoc, const char * pszCurrent, ... );
 
+	/// Navigate to a child node.
+	ExTiXmlNode* XmlGetFirstNodeChild();
 	/// Navigate to a sibling node.
 	ExTiXmlNode* XmlGetNextNodeSibling();
 

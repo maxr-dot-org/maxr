@@ -26,12 +26,14 @@
 #define XNP_MAX_LANG_FILE_HEADER_AUTHOR "MAX_Language_File", "Header", "Author", NULL
 #define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", NULL
 #define XNP_MAX_LANG_FILE_HEADER_GAMEVERSION "MAX_Language_File", "Header", "Game_Version", NULL
+#define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", NULL
 
 // Without NULL as ending sign. Do not forget it in parameter list !
 #define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
 #define XNP_MAX_LANG_FILE_TEXT_ERROR_MSG "MAX_Language_File", "Text", "Error_Messages"
 
 ////////////////////////////////////////////////////////////////////////////////
+
 
 #include <map>
 #include <string>
@@ -55,12 +57,17 @@ protected:
 	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )
 	std::string m_szLanguage;
 	std::string m_szLanguageFile;
+	std::string m_szLanguageFileMaster;
 	std::string m_szEncoding;
 	bool m_bLeftToRight;
 	bool m_bErrorMsgTranslationLoaded;
 	StrStrMap m_mpLanguage;
 	std::string m_szLastEditor;
 	int ReadSingleTranslation( std::string & strResult, const char * pszCurrent, ... );
+	int ReadLanguagePackHeader( );
+	int ReadLanguagePackHeader( std::string szLanguageCode );
+	int ReadLanguageMaster();
+	int ReadRecursiveLanguagePack( ExTiXmlNode * pXmlStartingNode );
 public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);
