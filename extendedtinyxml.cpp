@@ -21,7 +21,6 @@
 void debugToLog( std::string szMsg);
 void debugToLog( void * pointer , const char * pszName);
 
-
 ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char * pszCurrent, ... )
 {
 	va_list pvaArg;

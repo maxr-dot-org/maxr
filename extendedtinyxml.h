@@ -30,6 +30,9 @@ class ExTiXmlNode : public TiXmlNode
 	friend class TiXmlParsingData;
 	friend class TiXmlElement;
 
+protected:
+		ExTiXmlNode( );
+
 public:
 	enum XML_NODE_TYPE
 	{

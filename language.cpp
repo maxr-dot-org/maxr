@@ -46,7 +46,7 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 		return -1;
 	}
 	if( szLanguageCode.find_first_not_of
-		( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string.npos )
+		( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string::npos )
 	{
 		return -1;
 	}
@@ -95,7 +95,7 @@ std::string cLanguage::Translate(std::string  szMainText, std::string szInsertTe
 
 	szMainTextNew = this->Translate( szMainText );
 	iPos = szMainTextNew.find( "%s" );
-	if( iPos == std::string.npos )
+	if( iPos == std::string::npos )
 	{
 		return szMainTextNew + szInsertText;
 	}
