@@ -48,7 +48,7 @@ void ShowInfo ( void )
 	SDL_Rect dest;
 	static int LastInfoNr;
 	int nr;
-	nr=BuildingMainData.building_anz + BuildingMainData.building_anz;
+	nr=BuildingMainData.building_anz + VehicleMainData.vehicle_anz;
 	nr=random ( nr,0 );
 	if ( nr == LastInfoNr ) nr++;
 	LastInfoNr = nr;
