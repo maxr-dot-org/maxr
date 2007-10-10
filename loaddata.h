@@ -10,6 +10,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "defines.h"
+#include <map>
 #include "main.h"
 #include "sound.h"
 
@@ -80,7 +81,7 @@ int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const
 	*/
 int LoadEffectAplhaToSurface(SDL_Surface** &dest, const char* directory, const char* filename, int alpha);
 /**
-	* Loades a sounfile to the Mix_Chunk
+	* Loades a soundfile to the Mix_Chunk
 	* @param dest Destination Mix_Chunk
 	* @param directory Directory of the file
 	* @param filename Name of the file
@@ -88,8 +89,22 @@ int LoadEffectAplhaToSurface(SDL_Surface** &dest, const char* directory, const c
 	*/
 int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename);
 /**
+	* Loades a vehiclesoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
+	* @param dest Destination Mix_Chunk
+	* @param directory Directory of the file, relativ to the main vehicles directory
+	* @param filename Name of the file
+	*/
+void LoadVehicleSoundfile(sSOUND *&dest, const char* directory, const char* filename);
+/**
+	* Loades the vehicledata from the data.xml in the vehiclesfolder
+	* @param vehiclenum Indexnumber of vehicle for which the data should be loaded.
+	* @param directory Vehicledirectory , relativ to the main game directory
+	* @return 1 on success
+	*/
+int LoadVehicleData(int vehiclenum, const char* directory);
+/**
 	* Checks whether a file exits
-	* @param directory Directory of the file
+	* @param directory Directory to the file
 	* @param filename Name of the file
 	* @return 1 on success
 	*/
