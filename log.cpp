@@ -135,7 +135,7 @@ int cLog::writeMessage ( std::string str )
 
 	if ( wrote<0 ) //sanity check - was file writable?
 	{
-		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str );
+		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str.c_str() );
 		return -1;
 	}
 	else close(); //after successful writing of all information we close log here and nowhere else!
