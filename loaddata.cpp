@@ -219,9 +219,11 @@ void LoadVehicleSoundfile(sSOUND *&dest, const char* directory, const char* file
 	filepath += filename;
 	if(!SoundData.DummySound)
 	{
-		if(!FileExists("dummy.wav"))
+		string sTmpString;
+		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER + "dummy.wav";
+		if(FileExists(sTmpString.c_str()))
 		{
-			SoundData.DummySound = Mix_LoadWAV("dummy.wav");
+			SoundData.DummySound = Mix_LoadWAV(sTmpString.c_str());
 			if(!SoundData.DummySound)
 				cLog::write("Can't load dummy.wav", LOG_TYPE_WARNING);
 		}
@@ -1347,17 +1349,17 @@ int LoadVehicles(const char* path)
 	}
 	// load found vehicles
 	VehicleMainData.vehicle_anz = 0;
+	int iLastVehicleCount = -1;
 	for( int i = 0; i < VehicleList->Count; i++)
 	{
-		VehicleMainData.vehicle_anz++;
 		sVehiclePath = path;
 		sVehiclePath += PATH_DELIMITER;
 		sVehiclePath += VehicleList->Items[i];
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		VehicleMainData.vehicle= ( sVehicle* ) realloc ( VehicleMainData.vehicle,sizeof ( sVehicle ) * VehicleMainData.vehicle_anz );
-		memset ( & ( VehicleMainData.vehicle[i].data ),0,sizeof ( sVehicleData ) );
+		VehicleMainData.vehicle = ( sVehicle* ) realloc ( VehicleMainData.vehicle,sizeof ( sVehicle ) * (VehicleMainData.vehicle_anz+1) );
+		memset ( & ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].data ),0,sizeof ( sVehicleData ) );
 
 		// Load Data from data.xml
 		if(!LoadVehicleData(i,sVehiclePath.c_str()))
@@ -1382,40 +1384,40 @@ int LoadVehicles(const char* path)
 						rcDest.y = 32 - sfTempSurface->h/2;
 						rcDest.w = sfTempSurface->w;
 						rcDest.h = sfTempSurface->h;
-						SDL_BlitSurface ( sfTempSurface, NULL, VehicleMainData.vehicle[i].img[n], &rcDest );
+						SDL_BlitSurface ( sfTempSurface, NULL, VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img[n], &rcDest );
 						SDL_FreeSurface ( sfTempSurface );
 					}
 				}
-				VehicleMainData.vehicle[i].img_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey ( VehicleMainData.vehicle[i].img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
-				SDL_FillRect ( VehicleMainData.vehicle[i].img_org[n], NULL, 0xFFFFFF );
-				SDL_BlitSurface ( VehicleMainData.vehicle[i].img[n],NULL,VehicleMainData.vehicle[i].img_org[n], NULL );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_FillRect ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n], NULL, 0xFFFFFF );
+				SDL_BlitSurface ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img[n],NULL,VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n], NULL );
 
-				VehicleMainData.vehicle[i].shw[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey (VehicleMainData.vehicle[i].shw[n], SDL_SRCCOLORKEY, 0xFF00FF );
-				SDL_FillRect ( VehicleMainData.vehicle[i].shw[n], NULL, 0xFF00FF );
-				VehicleMainData.vehicle[i].shw_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey ( VehicleMainData.vehicle[i].shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF );
-				SDL_FillRect ( VehicleMainData.vehicle[i].shw_org[n], NULL, 0xFF00FF );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				SDL_SetColorKey (VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n], SDL_SRCCOLORKEY, 0xFF00FF );
+				SDL_FillRect ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n], NULL, 0xFF00FF );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF );
+				SDL_FillRect ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n], NULL, 0xFF00FF );
 
 				int *ptr;
 				rcDest.x=3;
 				rcDest.y=3;
 				rcDest.w=64*13;
 				rcDest.h=64;
-				SDL_BlitSurface ( VehicleMainData.vehicle[i].img_org[n], NULL, VehicleMainData.vehicle[i].shw_org[n], &rcDest );
-				SDL_LockSurface ( VehicleMainData.vehicle[i].shw_org[n] );
-				ptr = ( int* ) ( VehicleMainData.vehicle[i].shw_org[n]->pixels );
+				SDL_BlitSurface ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n], NULL, VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n], &rcDest );
+				SDL_LockSurface ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n] );
+				ptr = ( int* ) ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n]->pixels );
 				for ( int j = 0; j < 64*13*64; j++ )
 				{
 					if ( *ptr != 0xFF00FF )
 						*ptr=0;
 					ptr++;
 				}
-				SDL_UnlockSurface ( VehicleMainData.vehicle[i].shw_org[n] );
-				SDL_BlitSurface ( VehicleMainData.vehicle[i].shw_org[n], NULL, VehicleMainData.vehicle[i].shw[n], NULL );
-				SDL_SetAlpha ( VehicleMainData.vehicle[i].shw_org[n], SDL_SRCALPHA, 50 );
-				SDL_SetAlpha ( VehicleMainData.vehicle[i].shw[n], SDL_SRCALPHA, 50 );
+				SDL_UnlockSurface ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n] );
+				SDL_BlitSurface ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n], NULL, VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n], NULL );
+				SDL_SetAlpha ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n], SDL_SRCALPHA, 50 );
+				SDL_SetAlpha ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n], SDL_SRCALPHA, 50 );
 			}
 		}
 		else
@@ -1428,21 +1430,21 @@ int LoadVehicles(const char* path)
 				sTmpString += sztmp;
 				if(FileExists(sTmpString.c_str()))
 				{
-					VehicleMainData.vehicle[i].img_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetColorKey ( VehicleMainData.vehicle[i].img_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
-					VehicleMainData.vehicle[i].img[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetColorKey ( VehicleMainData.vehicle[i].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
 				}
 
 				// load shadow
 				sTmpString.replace(sTmpString.length()-8,3,"shw");
 				if(FileExists(sTmpString.c_str()))
 				{
-					VehicleMainData.vehicle[i].shw_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetColorKey ( VehicleMainData.vehicle[i].shw_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
-					VehicleMainData.vehicle[i].shw[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetAlpha ( VehicleMainData.vehicle[i].shw[n],SDL_SRCALPHA,50 );
-					SDL_SetColorKey ( VehicleMainData.vehicle[i].shw[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					SDL_SetAlpha ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
+					SDL_SetColorKey ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].shw[n],SDL_SRCCOLORKEY,0xFFFFFF );
 				}
 			}
 		}
@@ -1451,21 +1453,21 @@ int LoadVehicles(const char* path)
 		sTmpString += "video.flc";
 		if(FileExists(sTmpString.c_str()))
 		{
-			VehicleMainData.vehicle[i].FLCFile= ( char* ) malloc ( sVehiclePath.length() +1 );
-			strcpy ( VehicleMainData.vehicle[i].FLCFile,sVehiclePath.c_str() );
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].FLCFile= ( char* ) malloc ( sVehiclePath.length() +1 );
+			strcpy ( VehicleMainData.vehicle[VehicleMainData.vehicle_anz].FLCFile,sVehiclePath.c_str() );
 		}
 
 		// load infoimage
 		sTmpString = sVehiclePath;
 		sTmpString += "info.pcx";
 		if(FileExists(sTmpString.c_str()))
-			VehicleMainData.vehicle[i].info = LoadPCX ( (char *) sTmpString.c_str() );
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load storageimage
 		sTmpString = sVehiclePath;
 		sTmpString += "store.pcx";
 		if(FileExists(sTmpString.c_str()))
-			VehicleMainData.vehicle[i].storage = LoadPCX ( (char *) sTmpString.c_str() );
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load overlaygraphics if necessary
 		if(false/*has overlay*/)
@@ -1474,14 +1476,14 @@ int LoadVehicles(const char* path)
 			sTmpString += "overlay.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].overlay_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].overlay = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].overlay_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].overlay = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 		}
 		else
 		{
-			VehicleMainData.vehicle[i].overlay_org = NULL;
-			VehicleMainData.vehicle[i].overlay = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].overlay_org = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].overlay = NULL;
 		}
 
 		// load buildgraphics if necessary
@@ -1492,24 +1494,24 @@ int LoadVehicles(const char* path)
 			sTmpString += "build.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].build_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].build = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
 			sTmpString += "build_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 		}
 		else
 		{
-			VehicleMainData.vehicle[i].build_org = NULL;
-			VehicleMainData.vehicle[i].build = NULL;
-			VehicleMainData.vehicle[i].build_shw_org = NULL;
-			VehicleMainData.vehicle[i].build_shw = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_org = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw_org = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw = NULL;
 		}
 		// load cleargraphics if necessary
 		if(false/*can clear*/)
@@ -1519,52 +1521,54 @@ int LoadVehicles(const char* path)
 			sTmpString += "clear_small.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].clear_small_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].clear_small = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].clear_small_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].clear_small_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_shw = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].build_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].build = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				VehicleMainData.vehicle[i].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				VehicleMainData.vehicle[i].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				VehicleMainData.vehicle[VehicleMainData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 			}
 		}
 		else
 		{
-			VehicleMainData.vehicle[i].clear_small_org = NULL;
-			VehicleMainData.vehicle[i].clear_small = NULL;
-			VehicleMainData.vehicle[i].clear_small_shw_org = NULL;
-			VehicleMainData.vehicle[i].clear_small_shw = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_org = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_shw_org = NULL;
+			VehicleMainData.vehicle[VehicleMainData.vehicle_anz].clear_small_shw = NULL;
 		}
 
 		// load sounds
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].Wait,VehicleList->Items[i].c_str(),"wait.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].WaitWater,VehicleList->Items[i].c_str(),"wait_water.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].Start,VehicleList->Items[i].c_str(),"start.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].StartWater,VehicleList->Items[i].c_str(),"start_water.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].Stop,VehicleList->Items[i].c_str(),"stop.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].StopWater,VehicleList->Items[i].c_str(),"stop_water.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].Drive,VehicleList->Items[i].c_str(),"drive.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].DriveWater,VehicleList->Items[i].c_str(),"drive_water.wav");
-		LoadVehicleSoundfile(VehicleMainData.vehicle[i].Attack,VehicleList->Items[i].c_str(),"attack.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].Wait,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"wait.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].WaitWater,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"wait_water.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].Start,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"start.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].StartWater,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"start_water.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].Stop,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"stop.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].StopWater,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"stop_water.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].Drive,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"drive.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].DriveWater,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"drive_water.wav");
+		LoadVehicleSoundfile(VehicleMainData.vehicle[VehicleMainData.vehicle_anz].Attack,VehicleList->Items[VehicleMainData.vehicle_anz].c_str(),"attack.wav");
+
+		VehicleMainData.vehicle_anz++;
 	}
 
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
