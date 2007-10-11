@@ -38,6 +38,7 @@ private:
 	* Writes message finally to logfile
 	*/
 	static int writeMessage( char *);
+	static int writeMessage( std::string );
 
 	/**
 	* Closes the logfile.
@@ -64,7 +65,8 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write(const char *str, int TYPE);
+	static int write( const char *str , int TYPE );
+	static int write( std::string str , int TYPE );
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -73,7 +75,9 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write(const char *str);
+	static int write( const char *str );
+	static int write( std::string str );
+
 	enum LOG_TYPE
 	{
 		eLOG_TYPE_UNKNOWN = 0,

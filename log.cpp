@@ -85,6 +85,25 @@ int cLog::write ( const char *str, int TYPE )
 	else return -1;
 }
 
+int cLog::write ( std::string str, int TYPE )
+{
+
+	if (open())
+	{
+		switch ( TYPE ) //Attach log message type to tmp
+		{
+			case LOG_TYPE_WARNING : str = str.insert( 0 , WW ); break;
+			case LOG_TYPE_ERROR :   str = str.insert( 0 , EE ); break;
+			case LOG_TYPE_DEBUG :   str = str.insert( 0 , DD ); break;
+			case LOG_TYPE_INFO :    str = str.insert( 0 , II ); break;
+			default :				str = str.insert( 0 , II );
+		}
+		str += "\n";
+		return writeMessage ( str ); //add log message itself to tmp and send it for writing
+	}
+	else return -1;
+}
+
 int cLog::write (const char *str )
 {
 	return write ( str, LOG_TYPE_INFO );
@@ -108,6 +127,21 @@ int cLog::writeMessage ( char *str )
 	else close(); //after successful writing of all information we close log here and nowhere else!
 	return 0;
 }
+
+int cLog::writeMessage ( std::string str )
+{
+	std::size_t wrote;
+	wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , (int) str.length() );
+
+	if ( wrote<0 ) //sanity check - was file writable?
+	{
+		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str );
+		return -1;
+	}
+	else close(); //after successful writing of all information we close log here and nowhere else!
+	return 0;
+}
+
 
 void cLog::close()
 {
