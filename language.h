@@ -43,7 +43,7 @@
 #endif
 #include "defines.h"
 
-#include "ExtendedTinyXml.h"
+#include "extendedtinyxml.h"
 
 typedef std::map < std::string, std::string > StrStrMap; 
 
@@ -67,7 +67,7 @@ protected:
 	int ReadLanguagePackHeader( );
 	int ReadLanguagePackHeader( std::string szLanguageCode );
 	int ReadLanguageMaster();
-	int ReadRecursiveLanguagePack( ExTiXmlNode * pXmlStartingNode );
+	int ReadRecursiveLanguagePack( ExTiXmlNode * pXmlStartingNode , std::string strNodePath );
 public:
 	std::string GetCurrentLanguage(void);
 	int SetCurrentLanguage(std::string szLanguageCode);

@@ -110,17 +110,30 @@ int cLanguage::ReadLanguagePack()
 	std::string strResult;
 	ExTiXmlNode * pXmlStartingNode;
 
+	// First let's load the English language pack and use it as master
 	if( ReadLanguagePackHeader() != 0 )
 	{
 		return -1;
 	}
 
 	pXmlStartingNode = NULL;
-	pXmlStartingNode = pXmlStartingNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE_TEXT );
-	if( ReadRecursiveLanguagePack( pXmlStartingNode ) != 0 )
+	// Read the complete <Text> - section
+	try
 	{
-		//
+		pXmlStartingNode = pXmlStartingNode->XmlGetFirstNode( m_XmlDoc, XNP_MAX_LANG_FILE_TEXT );
+		if( pXmlStartingNode == 0 ) throw "No <Text> section found!" ;
+
+		pXmlStartingNode = pXmlStartingNode->XmlGetFirstNodeChild();
+		if( pXmlStartingNode == 0 ) throw "<Text> section is empty!" ;
+
+		ReadRecursiveLanguagePack( pXmlStartingNode , "Text" );
 	}
+	catch( std::string strMsg )
+	{
+		fLog.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
+		return -1;
+	}
+	// Second step: Load the selected language pack
 	if( ReadLanguagePackHeader( m_szLanguage ) != 0 )
 	{
 		return -1;
@@ -373,7 +386,34 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	return 0;
 }
 
-int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlStartingNode )
+int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlNode, std::string strNodePath )
 {
+	ExTiXmlNode * pXmlNodeTMP;
+	std::string strResult;
+
+	if( pXmlNode == NULL )
+	{
+		return -1;
+	}
+
+	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "ENG" ) != NULL )
+	{
+		m_mpLanguage[strNodePath + pXmlNode->Value()] = strResult;
+	}
+
+	strNodePath += "~";
+
+	pXmlNodeTMP = pXmlNode->XmlGetFirstNodeChild( );
+	if( pXmlNodeTMP != NULL )
+	{
+		this->ReadRecursiveLanguagePack( pXmlNodeTMP , strNodePath + pXmlNode->Value() );
+	}
+
+	pXmlNode = pXmlNode->XmlGetNextNodeSibling();
+	if( pXmlNode != NULL )
+	{
+		this->ReadRecursiveLanguagePack( pXmlNode , strNodePath );
+	}
+
 	return 0;
 }
