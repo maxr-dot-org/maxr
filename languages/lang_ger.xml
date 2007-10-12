@@ -8,7 +8,7 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="GER" encoding="iso-8859-15" direction="left-to-right">
+<MAX_Language_File lang="ger" encoding="iso-8859-15" direction="left-to-right">
 	<Header>
 		<Author name="JCK">
 			<Editor name="JCK" time="2007-09-30 13:04:00"/>
@@ -40,10 +40,11 @@
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
+      <INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
 		</Error_Messages>
 	</Text>
-	<Grafic>
-	</Grafic>
+	<Graphic>
+	</Graphic>
 	<Speech>
 	</Speech>
 </MAX_Language_File>
