@@ -46,6 +46,7 @@
 #include <SDL.h>
 #include "tinyxml.h"
 #include "defines.h"
+#include "language.h"
 
 using namespace std;
 
@@ -117,6 +118,9 @@ struct sReport;
 // ------------------------
 // 
 ///////////////////////////////////////////////////////////////////////////////
+
+// Languagepack ////////////////////////////////////////////////////////////////
+EX cLanguage lngPack;
 
 // Screenbuffers //////////////////////////////////////////////////////////////
 EX SDL_Surface *screen ZERO;	// Der Bildschirm
@@ -258,6 +262,8 @@ public:
 	bool bWindowMode;
 	/**start in fastmode */
 	bool bFastMode;	
+	/**start in fastmode */
+	string sLanguage;	
 
 	//GAME
 	/**enable autosafe */
