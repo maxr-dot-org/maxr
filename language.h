@@ -27,6 +27,8 @@
 #define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", NULL
 #define XNP_MAX_LANG_FILE_HEADER_GAMEVERSION "MAX_Language_File", "Header", "Game_Version", NULL
 #define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", NULL
+#define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", "Graphic", NULL
+#define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", "Speech", NULL
 
 // Without NULL as ending sign. Do not forget it in parameter list !
 #define XNP_MAX_LANG_FILE_TEXT_MAIN "MAX_Language_File", "Text", "Main"
@@ -59,11 +61,12 @@ protected:
 	std::string m_szLanguageFile;
 	std::string m_szLanguageFileMaster;
 	std::string m_szEncoding;
+	std::string m_szLastEditor;
 	bool m_bLeftToRight;
 	bool m_bErrorMsgTranslationLoaded;
 	StrStrMap m_mpLanguage;
-	std::string m_szLastEditor;
 	int ReadSingleTranslation( std::string & strResult, const char * pszCurrent, ... );
+	std::string ReadSingleTranslation( std::string strInput );
 	int ReadLanguagePackHeader( );
 	int ReadLanguagePackHeader( std::string szLanguageCode );
 	int ReadLanguageMaster();
