@@ -41,57 +41,63 @@ int LoadData ( void * )
 	
 	MakeLog(MAXVERSION,false,0);
 
+	// Load Languagepack
+	MakeLog("Loading Languagepack...",false,2);
+	if(!LoadLanguage()) return 0;
+	MakeLog("Loading Languagepack...",true,2); cLog::mark();
+
 	// Load Keys
-	MakeLog("Loading Keys...",false,2); LoadKeys();
-	MakeLog("Loading Keys...",true,2); cLog::mark();
+	MakeLog("Loading Keys...",false,3);
+	LoadKeys();
+	MakeLog("Loading Keys...",true,3); cLog::mark();
 
 	// Load Fonts
-	MakeLog("Loading Fonts...",false,3);
+	MakeLog("Loading Fonts...",false,4);
 	if(!LoadFonts(SettingsData.sFontPath.c_str()))	return 0;
-	MakeLog("Loading Fonts...",true,3); cLog::mark();
+	MakeLog("Loading Fonts...",true,4); cLog::mark();
 
 	// Load Graphics
-	MakeLog("Loading Gfx...",false,4);
+	MakeLog("Loading Gfx...",false,5);
 	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))  //FIXME: is always 1
 	{
 		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Gfx...",true,4); cLog::mark();
+	MakeLog("Loading Gfx...",true,5); cLog::mark();
 
 	// Load Effects
-	MakeLog("Loading Effects...",false,5);
+	MakeLog("Loading Effects...",false,6);
 	LoadEffects(SettingsData.sFxPath.c_str()); //FIXME: proceeds on errors
-	MakeLog("Loading Effects...",true,5); cLog::mark();
+	MakeLog("Loading Effects...",true,6); cLog::mark();
 
 	// Load Terrain
-	MakeLog("Loading Terrain...",false,6);
+	MakeLog("Loading Terrain...",false,7);
 	if(!LoadTerrain(SettingsData.sTerrainPath.c_str())) return 0;
-	MakeLog("Loading Terrain...",true,6); cLog::mark();
+	MakeLog("Loading Terrain...",true,7); cLog::mark();
 
 	// Load Vehicles
-	MakeLog("Loading Vehicles...",false,7);
+	MakeLog("Loading Vehicles...",false,8);
 	if(!LoadVehicles(SettingsData.sVehiclesPath.c_str())) return 0; 
-	MakeLog("Loading Vehicles...",true,7); cLog::mark();
+	MakeLog("Loading Vehicles...",true,8); cLog::mark();
 
 	// Load Buildings
-	MakeLog("Loading Buildings...",false,8); cLog::mark();
+	MakeLog("Loading Buildings...",false,9); cLog::mark();
 
 	// Load Music
-	MakeLog("Loading Music...",false,9);
+	MakeLog("Loading Music...",false,10);
 	if(!LoadMusic(SettingsData.sMusicPath.c_str())) return 0;
-	MakeLog("Loading Music...",true,9); cLog::mark();
+	MakeLog("Loading Music...",true,10); cLog::mark();
 
 	// Load Sounds
-	MakeLog("Loading Sounds...",false,10);
+	MakeLog("Loading Sounds...",false,11);
 	LoadSounds(SettingsData.sSoundsPath.c_str());
-	MakeLog("Loading Sounds...",true,10); cLog::mark();
+	MakeLog("Loading Sounds...",true,11); cLog::mark();
 
 	// Load Voices
-	MakeLog("Loading Voices...",false,11);
+	MakeLog("Loading Voices...",false,12);
 	LoadVoices(SettingsData.sVoicesPath.c_str());
-	MakeLog("Loading Voices...",true,11); cLog::mark();
+	MakeLog("Loading Voices...",true,12); cLog::mark();
 
 	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;
@@ -259,7 +265,7 @@ int ReadMaxXml()
 	}
 	if(!MaxXml.LoadFile("max.xml"))
 	{
-		cLog::write ( "Can't find max.xml\n", LOG_TYPE_WARNING );
+		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
 		{
 			return -1;
@@ -320,6 +326,16 @@ int ReadMaxXml()
 	{
 		cLog::write ( "Can't load Fastmode from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.bFastMode = false;
+	}
+	// Language
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Language", NULL)))
+		cLog::write ( "Can't find Language-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sLanguage = sTmpString;
+	else
+	{
+		cLog::write ( "Can't load Language-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sLanguage = "ENG";
 	}
 
 	// GAME Options
@@ -663,6 +679,25 @@ int ReadMaxXml()
 
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 0;
+}
+
+// LoadLanguage ///////////////////////////////////////////////////////////////
+// Loads the selected languagepack:
+int LoadLanguage()
+{
+	if( lngPack.SetCurrentLanguage(SettingsData.sLanguage) != 0 )			// Set the language code
+	{
+		// Not a valid language code, critical fail!
+		cLog::write( "Not a valid language code!" , cLog::eLOG_TYPE_ERROR );
+		return 0;
+	}
+	if( lngPack.ReadLanguagePack() != 0 )					// Load the translations
+	{
+		// Could not load the language, critical fail!
+		cLog::write( "Could not load the language!" , cLog::eLOG_TYPE_ERROR );
+		return 0;
+	}
+	return 1;
 }
 
 // GenerateMaxXml /////////////////////////////////////////////////////////////
@@ -1591,6 +1626,7 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		"Unit","Defence","Is_Target_Land", NULL,
 		"Unit","Defence","Is_Target_Sea", NULL,
 		"Unit","Defence","Is_Target_Air", NULL,
+		"Unit","Defence","Is_Target_Underwater", NULL,
 		"Unit","Defence","Is_Target_Mine", NULL,
 		"Unit","Defence","Is_Target_Building", NULL,
 		"Unit","Defence","Is_Target_Satellite", NULL,
@@ -1622,8 +1658,6 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		"Unit","Weapons","Weapon","Allowed_Targets","Target_Infantry","Range", NULL,
 		"Unit","Weapons","Weapon","Allowed_Targets","Target_WMD","Damage", NULL,
 		"Unit","Weapons","Weapon","Allowed_Targets","Target_WMD","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Mine","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Mine","Range", NULL,
 
 		"Unit","Weapons","Weapon","Shots", NULL,
 		"Unit","Weapons","Weapon","Destination_Area", NULL,
@@ -1717,7 +1751,7 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		arraycount++;
 	}
 	// Read infos
-	for( i = 0; i < arraycount; i+=n)
+	for( i = 0; i < arraycount; i += n )
 	{
 		n = 0;
 		while(VehicleDataStructure[i+n] != NULL)
@@ -1728,14 +1762,43 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		sNodePath="";
 		for(int j = 0; j<n;j++)
 		{
-			sNodePath+=VehicleDataStructure[i+j];
-			sNodePath+=";";
+			sNodePath += VehicleDataStructure[i+j];
+			sNodePath += ";";
 		}
 
 		// is bool?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		{
-			// TODO: Should save the Data here....
+		/*	switch(sNodePath)
+			{
+			case VEH_IS_CONTROLLABLE:
+				break;
+			case VEH_CAN_BE_CAPTURED:
+				break;
+			case VEH_CAN_BE_DISABLED:
+				break;
+			case VEH_LENGHT:
+				break;
+			case VEH_WIDTH:
+				break;
+
+			case VEH_IS_TARGET_LAND:
+				break;
+			case VEH_IS_TARGET_SEA:
+				break;
+			case VEH_IS_TARGET_AIR:
+				break;
+			case VEH_IS_TARGET_UNDERWATER:
+				break;
+			case VEH_IS_TARGET_MINE:
+				break;
+			case VEH_IS_TARGET_BUILDING:
+				break;
+			case VEH_IS_TARGET_SATELLITE:
+				break;
+			case VEH_IS_TARGET_WMD:
+				break;*/
+
 			n++;
 			continue;
 		}

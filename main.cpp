@@ -49,7 +49,6 @@
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"
-#include "language.h"
 
 TList::TList ( void )
 {
@@ -75,31 +74,6 @@ int main ( int argc, char *argv[] )
 		Quit();
 		return -1;
 	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	// ToDo - JCK: Reading the language pack should be right after retrieving the 
-	//             information, which language to select. Here is the way to initialise
-	//             a language pack and how to use it.
-	//
-	//cLanguage lngPack; // Create an instance to hold the translations
-	//
-	//if( lngPack.SetCurrentLanguage("GER") != 0 )			// Set the language code
-	//{
-	//	; // Not a valid language code, critical fail!
-	//}
-	//if( lngPack.ReadLanguagePack() != 0 )					// Load the translations
-	//{
-	//	; // Could not load the language, critical fail!
-	//}
-	//	  // Now some translations, including error handling
-	//cLog::write( lngPack.Translate("Text~Main~Credits_MM") , cLog::eLOG_TYPE_INFO );
-	//cLog::write( lngPack.Translate("Text~Menu_Main~Title_Main_Menu") , cLog::eLOG_TYPE_INFO );
-	//cLog::write( lngPack.Translate("Text~Main~Test2") , cLog::eLOG_TYPE_INFO );
-	//cLog::write( lngPack.Translate("Text~Main~Test3") , cLog::eLOG_TYPE_INFO );
-	//cLog::write( lngPack.Translate("Text~Main~Test2", "User" ) , cLog::eLOG_TYPE_INFO );
-	//	  // And finaly some translations with replace
-	//cLog::write( lngPack.Translate("Text~Main~Test2", lngPack.Translate("Text~Main~Game_Title") ), cLog::eLOG_TYPE_INFO );
-	////////////////////////////////////////////////////////////////////////////////
 
 	showSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
@@ -141,7 +115,7 @@ int main ( int argc, char *argv[] )
 	mouse = new cMouse;
 
 	// Das Menü starten:
-	// RunMainMenu();
+	RunMainMenu();
 	Quit();
 	return 0;
 }
