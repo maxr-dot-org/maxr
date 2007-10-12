@@ -59,8 +59,13 @@ TList::TList ( void )
 
 int main ( int argc, char *argv[] )
 {
-	cLog::write ( MAXVERSION );
-
+	{
+		cLog::write ( MAXVERSION );
+		std::string str = "Build : ";
+		str += MAX_BUILD_DATE;
+		cLog::write ( str , cLog::eLOG_TYPE_INFO );
+		cLog::mark();
+	}
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
@@ -87,13 +92,13 @@ int main ( int argc, char *argv[] )
 	//	; // Could not load the language, critical fail!
 	//}
 	//	  // Now some translations, including error handling
-	//cLog::write( lngPack.Translate("Text~Main~Credits_MM").c_str() );
-	//cLog::write( lngPack.Translate("Text~Main~Test1").c_str() );
-	//cLog::write( lngPack.Translate("Text~Main~Test2").c_str() );
-	//cLog::write( lngPack.Translate("Text~Main~Test3").c_str() );
-	//cLog::write( lngPack.Translate("Text~Main~Test2", "User" ).c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Credits_MM") , cLog::eLOG_TYPE_INFO );
+	//cLog::write( lngPack.Translate("Text~Menu_Main~Title_Main_Menu") , cLog::eLOG_TYPE_INFO );
+	//cLog::write( lngPack.Translate("Text~Main~Test2") , cLog::eLOG_TYPE_INFO );
+	//cLog::write( lngPack.Translate("Text~Main~Test3") , cLog::eLOG_TYPE_INFO );
+	//cLog::write( lngPack.Translate("Text~Main~Test2", "User" ) , cLog::eLOG_TYPE_INFO );
 	//	  // And finaly some translations with replace
-	//cLog::write( lngPack.Translate("Text~Main~Test2", lngPack.Translate("Text~Main~Game_Title") ).c_str() );
+	//cLog::write( lngPack.Translate("Text~Main~Test2", lngPack.Translate("Text~Main~Game_Title") ), cLog::eLOG_TYPE_INFO );
 	////////////////////////////////////////////////////////////////////////////////
 
 	showSplash(); //show splashscreen
