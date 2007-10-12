@@ -20,6 +20,8 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include "defines.h"
+
 #define LOG_TYPE_WARNING 1
 #define LOG_TYPE_ERROR 2
 #define LOG_TYPE_DEBUG 3

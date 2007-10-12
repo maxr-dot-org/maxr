@@ -66,7 +66,11 @@ int cLog::write ( const char *str, int TYPE )
 		char tmp[264] = "(XX): "; //placeholder
 		if (strlen ( str ) > 264 - 7) //message max is 256chars
 		{ 
-			return writeMessage("(EE): sLog recieved to long log message!\n(EE): Message had more than 256 chars! That should not happen!\n");
+			std::string str = "(EE): sLog recieved to long log message!";
+			str += TEXT_FILE_LF;
+			str += "(EE): Message had more than 256 chars! That should not happen!";
+			str += TEXT_FILE_LF;
+			return writeMessage( str );
 		}
 		else 
 		{
@@ -80,7 +84,7 @@ int cLog::write ( const char *str, int TYPE )
 			}
 		}
 		strcat(tmp, str);
-		return writeMessage ( strcat(tmp, "\n") ); //add log message itself to tmp and send it for writing
+		return writeMessage ( strcat(tmp, TEXT_FILE_LF ) ); //add log message itself to tmp and send it for writing
 	}
 	else return -1;
 }
@@ -98,7 +102,7 @@ int cLog::write ( std::string str, int TYPE )
 			case LOG_TYPE_INFO :    str = str.insert( 0 , II ); break;
 			default :				str = str.insert( 0 , II );
 		}
-		str += "\n";
+		str += TEXT_FILE_LF;
 		return writeMessage ( str ); //add log message itself to tmp and send it for writing
 	}
 	else return -1;
@@ -111,7 +115,9 @@ int cLog::write (const char *str )
 
 void cLog::mark()
 {
-	if(open()) writeMessage( "==============================(MARK)==============================\n");
+	std::string str = "==============================(MARK)==============================";
+	str += TEXT_FILE_LF;
+	if(open()) writeMessage( str );
 }
 
 int cLog::writeMessage ( char *str )
