@@ -7,7 +7,7 @@
 		<Intro YN="No"/>
 		<Windowmode YN="Yes"/>
 		<Fastmode YN="Yes"/>
-		
+		<Language Text="GER"/>
 	</Start>
 	<Game>
 		<EnableAutosave YN="Yes"/>
