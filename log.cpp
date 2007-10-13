@@ -61,7 +61,9 @@ bool cLog::open()
 
 int cLog::write ( const char *str, int TYPE )
 {
-	if (open())
+	return write( std::string( str ) , TYPE ); 
+}
+/*	if (open())
 	{
 		char tmp[264] = "(XX): "; //placeholder
 		if (strlen ( str ) > 264 - 7) //message max is 256chars
@@ -88,7 +90,7 @@ int cLog::write ( const char *str, int TYPE )
 	}
 	else return -1;
 }
-
+*/
 int cLog::write ( std::string str, int TYPE )
 {
 
@@ -110,7 +112,8 @@ int cLog::write ( std::string str, int TYPE )
 
 int cLog::write (const char *str )
 {
-	return write ( str, LOG_TYPE_INFO );
+	return write ( std::string( str ) , LOG_TYPE_INFO );
+//	return write ( str, LOG_TYPE_INFO );
 }
 
 void cLog::mark()
@@ -122,7 +125,9 @@ void cLog::mark()
 
 int cLog::writeMessage ( char *str )
 {
-	std::size_t wrote;
+	return writeMessage( std::string( str ) );
+}
+/*	std::size_t wrote;
 	wrote = SDL_RWwrite ( logfile,str,1, (int)strlen ( str ) );
 
 	if ( wrote<0 ) //sanity check - was file writable?
@@ -133,7 +138,7 @@ int cLog::writeMessage ( char *str )
 	else close(); //after successful writing of all information we close log here and nowhere else!
 	return 0;
 }
-
+*/
 int cLog::writeMessage ( std::string str )
 {
 	std::size_t wrote;
