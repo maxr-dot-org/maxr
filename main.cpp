@@ -108,6 +108,7 @@ int main ( int argc, char *argv[] )
 	SDL_Delay ( 3000 ); //debug only
 
 
+
 	showGameWindow(); //start game-window
 
 	// Die Maus erzeugen:
