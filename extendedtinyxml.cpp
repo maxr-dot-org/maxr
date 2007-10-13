@@ -310,7 +310,7 @@ void debugToLog( void * pointer , const char * pszName)
 
 void debugToLog( std::string szMsg)
 {
-	cLog::write( szMsg.c_str(), cLog::eLOG_TYPE_DEBUG );
+	cLog::write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };
 
 */
