@@ -23,11 +23,23 @@
 			<Version ENG="version v%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)"/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented"/>
 			</Remarks>
 		</Main>
 		<Initialisation>
+			<Load_Lang ENG="Loading languagepack..."/>
+		        <Load_Keys ENG="Loading keys..."/>
+			<Load_Fonts ENG="Loading fonts..."/>
+			<Load_GFX ENG="Loading gfx..."/>
+			<Load_Effects ENG="Loading effects..."/>
+			<Load_Terrain ENG="Loading terrain..."/>
+			<Load_Vehicles ENG="Loading vehicles..."/>
+			<Load_Buildings ENG="Loading buildings..."/>
+			<Load_Music ENG="Loading music..."/>
+			<Load_Sounds ENG="Loading sounds..."/>
+			<Load_Voices ENG="Loading voices..."/>
 		</Initialisation>
 		<Menu_Main>
 			<Title_Main_Menu ENG="Main Menu"/>

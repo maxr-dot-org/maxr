@@ -23,11 +23,23 @@
 			<Version ENG="version v%s" localized="Version V%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded basierend auf Interplays Mechanized Assault and Exploration"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) noch nicht eingebaut"/>
 			</Remarks>
 		</Main>
 		<Initialisation>
+			<Load_Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
+			<Load_Keys ENG="Loading keys..." localized="Lade Tasten..."/>
+                        <Load_Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
+                        <Load_GFX ENG="Loading gfx..." localized="Lade GFX..."/>
+                        <Load_Effects ENG="Loading effects..." localized="Lade Effekte..."/>
+                        <Load_Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
+                        <Load_Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
+                        <Load_Buildings ENG="Loading buildings..." localized="Lade Gebäude..."/>
+                        <Load_Music ENG="Loading music..." localized="Lade Musik..."/>
+                        <Load_Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
+			<Load_Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
 		</Initialisation>
 		<Menu_Main>
 			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
