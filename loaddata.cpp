@@ -42,62 +42,63 @@ int LoadData ( void * )
 	MakeLog(MAXVERSION,false,0);
 
 	// Load Languagepack
-	MakeLog("Loading Languagepack...",false,2);
+	MakeLog("Loading languagepack...",false,2);
 	if(!LoadLanguage()) return 0;
-	MakeLog("Loading Languagepack...",true,2); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Lang").c_str(),true,2); cLog::mark();
 
 	// Load Keys
-	MakeLog("Loading Keys...",false,3);
+	
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Keys").c_str(),false,3);
 	LoadKeys();
-	MakeLog("Loading Keys...",true,3); cLog::mark();
-
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Keys").c_str(),true,3); cLog::mark();
+	
 	// Load Fonts
-	MakeLog("Loading Fonts...",false,4);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Fonts").c_str(),false,4);
 	if(!LoadFonts(SettingsData.sFontPath.c_str()))	return 0;
-	MakeLog("Loading Fonts...",true,4); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Fonts").c_str(),true,4); cLog::mark();
 
 	// Load Graphics
-	MakeLog("Loading Gfx...",false,5);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_GFX").c_str(),false,5);
 	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))  //FIXME: is always 1
 	{
 		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	MakeLog("Loading Gfx...",true,5); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_GFX").c_str(),true,5); cLog::mark();
 
 	// Load Effects
-	MakeLog("Loading Effects...",false,6);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),false,6);
 	LoadEffects(SettingsData.sFxPath.c_str()); //FIXME: proceeds on errors
-	MakeLog("Loading Effects...",true,6); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),true,6); cLog::mark();
 
 	// Load Terrain
-	MakeLog("Loading Terrain...",false,7);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Terrain").c_str(),false,7);
 	if(!LoadTerrain(SettingsData.sTerrainPath.c_str())) return 0;
-	MakeLog("Loading Terrain...",true,7); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Terrain").c_str(),true,7); cLog::mark();
 
 	// Load Vehicles
-	MakeLog("Loading Vehicles...",false,8);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Vehicles").c_str(),false,8);
 	if(!LoadVehicles(SettingsData.sVehiclesPath.c_str())) return 0; 
-	MakeLog("Loading Vehicles...",true,8); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Vehicles").c_str(),true,8); cLog::mark();
 
 	// Load Buildings
-	MakeLog("Loading Buildings...",false,9); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Buildings").c_str(),false,9); cLog::mark();
 
 	// Load Music
-	MakeLog("Loading Music...",false,10);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Music").c_str(),false,10);
 	if(!LoadMusic(SettingsData.sMusicPath.c_str())) return 0;
-	MakeLog("Loading Music...",true,10); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Music").c_str(),true,10); cLog::mark();
 
 	// Load Sounds
-	MakeLog("Loading Sounds...",false,11);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Sounds").c_str(),false,11);
 	LoadSounds(SettingsData.sSoundsPath.c_str());
-	MakeLog("Loading Sounds...",true,11); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Sounds").c_str(),true,11); cLog::mark();
 
 	// Load Voices
-	MakeLog("Loading Voices...",false,12);
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Voices").c_str(),false,12);
 	LoadVoices(SettingsData.sVoicesPath.c_str());
-	MakeLog("Loading Voices...",true,12); cLog::mark();
+	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Voices").c_str(),true,12); cLog::mark();
 
 	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;

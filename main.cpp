@@ -107,7 +107,6 @@ int main ( int argc, char *argv[] )
 	SDL_WaitThread ( DataThread, NULL );
 
 
-
 	showGameWindow(); //start game-window
 	SDL_Delay ( 3000 ); //debug only
 

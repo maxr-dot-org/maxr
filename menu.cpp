@@ -24,7 +24,7 @@ void EnterMenu ( bool limited )
 		SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 		LoadPCXtoSF ( GFXOD_MAIN,TmpSf );
-		string txt = lngPack.Translate( "Text~Main~Credits_Doc"); // "MichaelMoenchs' MAX (Remake by DoctorDeath)"
+		string txt = lngPack.Translate( "Text~Main~Credits_Reloaded");
 		txt+=" ";
 		txt+=MAX_VERSION;
 		fonts->OutTextCenter ( ( char * ) txt.c_str(),320,465,TmpSf );
