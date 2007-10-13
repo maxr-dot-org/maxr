@@ -26,6 +26,13 @@
 	#ifndef TEXT_FILE_LF
 		#define TEXT_FILE_LF "\r\n"
 	#endif
+		// GFX On Demand /////////////////////////////////////////////////////////////
+	#define GFXOD_MAIN          "gfx_od\\main.pcx"
+	#define GFXOD_OPTIONS       "gfx_od\\options.pcx"
+	#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
+	#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
+	#define GFXOD_MULT          "gfx_od\\mult.pcx"
+	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #else
 	#ifndef PATH_DELIMITER
 		#define PATH_DELIMITER "//"
@@ -33,6 +40,13 @@
 	#ifndef TEXT_FILE_LF
 		#define TEXT_FILE_LF "\n"
 	#endif
+		// GFX On Demand /////////////////////////////////////////////////////////////
+	#define GFXOD_MAIN          "gfx_od//main.pcx"
+	#define GFXOD_OPTIONS       "gfx_od//options.pcx"
+	#define GFXOD_PLANET_SELECT "gfx_od//planet_select.pcx"
+	#define GFXOD_HANGAR        "gfx_od//hangar.pcx"
+	#define GFXOD_MULT          "gfx_od//mult.pcx"
+	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #endif
 
 // We have to take care of these manually !

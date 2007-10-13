@@ -95,14 +95,6 @@ struct sReport;
 #define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
 #define MAX_PATHFINDING    5000     // Maximale Endpunktezal fürs Pathfinding
 
-// GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN          "gfx_od\\main.pcx"
-#define GFXOD_OPTIONS       "gfx_od\\options.pcx"
-#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
-#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
-#define GFXOD_MULT          "gfx_od\\mult.pcx"
-#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
-
 // Colors /////////////////////////////////////////////////////////////////////
 #define cl_red 0
 #define cl_blue 1

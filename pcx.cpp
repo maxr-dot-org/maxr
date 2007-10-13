@@ -2,6 +2,8 @@
 // M.A.X. - pcx.cpp
 //////////////////////////////////////////////////////////////////////////////
 #include "pcx.h"
+#include "log.h"
+
 #include <string.h>
 
 SDL_Surface *LoadPCX ( char *name,bool NoHW )
@@ -18,6 +20,7 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	file=SDL_RWFromFile ( name,"rb" );
 	if ( file==NULL )
 	{
+		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return NULL;
 	}
 	// Die Datei laden:

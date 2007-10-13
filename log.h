@@ -20,6 +20,8 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <iostream>
+
 #include "defines.h"
 
 #define LOG_TYPE_WARNING 1
