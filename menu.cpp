@@ -24,12 +24,13 @@ void EnterMenu ( bool limited )
 		SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
 		LoadPCXtoSF ( GFXOD_MAIN,TmpSf );
-		string txt = "MichaelMoenchs' MAX (Remake by DoctorDeath) ";
+		string txt = lngPack.Translate( "Text~Main~Credits_Doc"); // "MichaelMoenchs' MAX (Remake by DoctorDeath)"
+		txt+=" ";
 		txt+=MAX_VERSION;
 		fonts->OutTextCenter ( ( char * ) txt.c_str(),320,465,TmpSf );
 	}
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-	fonts->OutTextCenter ( "Hauptmenü",320,147,buffer );
+	fonts->OutTextCenter ( ( char * ) lngPack.Translate( "Text~Menu_Main~Title_Main_Menu").c_str() ,320,147,buffer ); // "Hauptmenü"
 
 	PlaceButton ( "Einzelspieler",390,190,false );
 	PlaceButton ( "Mehrspieler",390,190+35,false );
