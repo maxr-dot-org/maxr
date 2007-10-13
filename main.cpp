@@ -105,10 +105,10 @@ int main ( int argc, char *argv[] )
 	//SDL_Delay ( 3000 ); //debug only
 
 	SDL_WaitThread ( DataThread, NULL );
+	SDL_Delay ( 3000 ); //debug only
 
 
 	showGameWindow(); //start game-window
-	SDL_Delay ( 3000 ); //debug only
 
 	// Die Maus erzeugen:
 	mouse = new cMouse;
