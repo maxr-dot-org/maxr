@@ -47,6 +47,7 @@ unique ID-Num.-->    </Unit_ID>
   </Production>
   <Weapons>
     <Weapon>
+      <Turret_Gfx Text="none" Num="0"/> <!-- Text: filename; Num: Sequence -->
       <Shot_Trajectory Const="ballistic" >
 <!--types are:
 straight
@@ -175,4 +176,12 @@ Normal (needs Metall)-->    </Self_Repair_Type>
       <Unit_ID ID="00 00" />
     </Can_Use_Unit_As_Garage>
   </Storage>
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <Animations>
+      <Build_Up YN="No"/>
+      <Movement YN="No"/>
+      <Power_On YN="No"/>
+    </Animations>
+  </Graphic>
 </Unit>

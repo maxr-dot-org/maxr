@@ -41,6 +41,7 @@
 	</Production>
 	<Weapons>
 		<Weapon> <!-- can have more than one weapon.. later! -->
+      <Turret_Gfx Text="none" Num="0"/> <!-- Text: filename; Num: Sequence -->
 			<Shot_Trajectory Const="straight"/>
 			<!--        <Shot_Trajectory Const="ballistic" /> -->
 			<!--        <Shot_Trajectory Const="controlled" /> -->
@@ -157,4 +158,12 @@
 			<Unit_ID ID="0"/>  <!-- toadd. no hangar defined yet -->
 		</Can_Use_Unit_As_Garage>
 	</Storage>
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <Animations>
+      <Build_Up YN="No"/>
+      <Movement YN="No"/>
+      <Power_On YN="No"/>
+    </Animations>
+  </Graphic>
 </Unit>
