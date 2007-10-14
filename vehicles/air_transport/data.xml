@@ -1,347 +1,360 @@
 <Unit ID="0 1" name="air_transport">
-<!-- ID ist eine einmalige Nummer, über die dieser Einheitentyp identifiziert wird-->
-<!-- name ist der Einheitenname, der benutzt wird, wenn keine Übersetzung für die ID gefunden wird-->
-  
-<Header>
+  <!-- ID ist eine einmalige Nummer, Ã¼ber die dieser Einheitentyp identifiziert wird-->
+  <!-- name ist der Einheitenname, der benutzt wird, wenn keine Ãœbersetzung fÃ¼r die ID gefunden wird-->
+    
+  <Header>
 
-<Author name="Someone">
-<Editor name="Rocky" time="2007-10-14 19:30:00"/>
-<Editor name="Someone" time="2007-09-30 13:05:00"/>
-</Author>
-<!-- "Author" ist der ursprüngliche Ersteller. Wichtiger sind die Einträge in "Editor". Der letzte Editor wird vom Spiel genannt, wenn es die XML-Datei nicht auswerten kann. Dadurch hat man einen Ansprechpartner als DAU. -->
+    <Author name="Someone">
+    <Editor name="Rocky" time="2007-10-14 19:30:00"/>
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <!-- "Author" ist der ursprÃ¼ngliche Ersteller. Wichtiger sind die EintrÃ¤ge in "Editor". Der letzte Editor wird vom Spiel genannt, wenn es die XML-Datei nicht auswerten kann. Dadurch hat man einen Ansprechpartner als DAU. -->
 
-<Game_Version text="00.00.00.00"/>
-<!--"Game_Version" gibt die Spiel-Version an, ab der die Einheit im Spiel funktioniert.-->
-</Header>
-<Description lang="ENG">
- Transportplane\n\nHeavy plane, able to transport three groundunits.
-</Description>
-<!-- Der "Description"-Block dient der spiel-internen Erklärung, wenn keine Übersetzung gefunden wurde. -->
+    <Game_Version text="00.00.00.00"/>
+    <!--"Game_Version" gibt die Spiel-Version an, ab der die Einheit im Spiel funktioniert.-->
+  </Header>
+  <Description lang="ENG">
+    Transportplane\n\nHeavy plane, able to transport three groundunits.
+  </Description>
+  <!-- Der "Description"-Block dient der spiel-internen ErklÃ¤rung, wenn keine Ãœbersetzung gefunden wurde. -->
 
-<General_Info>
+  <General_Info>
 
-<Is_Controllable YN="Yes"/>
-<!-- Kann die Einheit gesteuert werden? Mit Minen kann man z.B. nicht machen--> 
- 
-<Can_Be_Captured YN="Yes"/>
-<!-- Kann die Einheit gefangen genommen werden? Gebäude z.B. Nein --> 
- 
-<Can_Be_Disabled YN="Yes"/>
-<!-- Kann die Einheit durch Infiltratoren abgeschaltet werden. Trifft auf die meisten Einheiten zu --> 
- 
-<Size_Length Num="1"/>
-<!-- Wie groß ist die Einheit in Bewegungsrichtung bzw. Nord-Süd Richtung --> 
- 
-<Size_Width Num="1"/>
-<!-- Wie groß ist die Einheit quer zur Bewegungsrichtung bzw. Ost-West Richtung -->
+    <Is_Controllable YN="Yes"/>
+    <!-- Kann die Einheit gesteuert werden? Mit Minen kann man z.B. nicht machen--> 
+     
+    <Can_Be_Captured YN="Yes"/>
+    <!-- Kann die Einheit gefangen genommen werden? GebÃ¤ude z.B. Nein --> 
+     
+    <Can_Be_Disabled YN="Yes"/>
+    <!-- Kann die Einheit durch Infiltratoren abgeschaltet werden. Trifft auf die meisten Einheiten zu --> 
+     
+    <Size_Length Num="1"/>
+    <!-- Wie groÃŸ ist die Einheit in Bewegungsrichtung bzw. Nord-SÃ¼d Richtung --> 
+     
+    <Size_Width Num="1"/>
+    <!-- Wie groÃŸ ist die Einheit quer zur Bewegungsrichtung bzw. Ost-West Richtung -->
 
-</General_Info>
-<Defence>
- 
-<Is_Target_Land YN="No"/>
-<!-- Wenn die Einheit über Land ist, kann sie dann von Waffen angegriffen werden, die Landziele attackieren können -->
-  
-<Is_Target_Sea YN="No"/>
-<!-- Wenn die Einheit über Wasser ist, kann sie dann von Waffen angegriffen werden, die Seeziele attackieren können -->
- 
-<Is_Target_Air YN="Yes"/>
-<!-- Kann die Einheit fliegen, so dass sie nur von Waffen angegriffen werden kann, die Luftiele attackieren können -->
- 
-<Is_Target_Underwater YN="No"/>
-<!-- Kann die Einheit tauchen, so dass sie nur von Waffen angegriffen werden kann, die Unterwasseriele attackieren können -->
- 
-<Is_Target_Mine YN="No"/>
-<!-- Handelt es sich um eine Mine ? -->
- 
-<Is_Target_Building YN="No"/>
-<!-- Ist die Einheit groß und unbeweglich ?-->
- 
-<Is_Target_Satellite YN="No"/>
-<!-- Fliegt die Einheit im Orbit, so dass sie nur von spezielle Waffensystemen getroffen werden kann -->
- 
-<Is_Target_WMD YN="No"/>
-<!-- Ist die Einheit eine Cruise Missile oder ähnliches ? -->
- 
-<Armor Num="4"/>
-<!-- Wieviel Schaden absorbiert die Panzerung -->
- 
-<Hitpoints Num="18"/>
-<!-- Wieviel Schaden kann die Struktur einstecken -->
- 
-</Defence>
-<Production>
- 
-<Built_Costs Num="18"/>
-<!-- Baukosten bei einfacher Baugeschwindigkeit -->
- 
-<Built_Costs_Max Num="72"/>
-<!-- Maximale Baukosten beim Turbobauen, gibt damit den max. Turbo Faktor an. -->
- 
-<Is_Produced_by>
-<Unit ID="0 0"/>
-<Unit ID="0 0"/> 
-<!-- Liste der Einheiten die diese Einheit herstellen können-->
- 
-</Is_Produced_by>
-</Production>
+  </General_Info>
+  <Defence>
+     
+    <Is_Target_Land YN="No"/>
+    <!-- Wenn die Einheit Ã¼ber Land ist, kann sie dann von Waffen angegriffen werden, die Landziele attackieren kÃ¶nnen -->
+      
+    <Is_Target_Sea YN="No"/>
+    <!-- Wenn die Einheit Ã¼ber Wasser ist, kann sie dann von Waffen angegriffen werden, die Seeziele attackieren kÃ¶nnen -->
+     
+    <Is_Target_Air YN="Yes"/>
+    <!-- Kann die Einheit fliegen, so dass sie nur von Waffen angegriffen werden kann, die Luftiele attackieren kÃ¶nnen -->
+     
+    <Is_Target_Underwater YN="No"/>
+    <!-- Kann die Einheit tauchen, so dass sie nur von Waffen angegriffen werden kann, die Unterwasseriele attackieren kÃ¶nnen -->
+     
+    <Is_Target_Mine YN="No"/>
+    <!-- Handelt es sich um eine Mine ? -->
+     
+    <Is_Target_Building YN="No"/>
+    <!-- Ist die Einheit groÃŸ und unbeweglich ?-->
+     
+    <Is_Target_Satellite YN="No"/>
+    <!-- Fliegt die Einheit im Orbit, so dass sie nur von spezielle Waffensystemen getroffen werden kann -->
+     
+    <Is_Target_WMD YN="No"/>
+    <!-- Ist die Einheit eine Cruise Missile oder Ã¤hnliches ? -->
+     
+    <Armor Num="4"/>
+    <!-- Wieviel Schaden absorbiert die Panzerung -->
+     
+    <Hitpoints Num="18"/>
+    <!-- Wieviel Schaden kann die Struktur einstecken -->
+     
+  </Defence>
+  <Production>
+     
+    <Built_Costs Num="18"/>
+    <!-- Baukosten bei einfacher Baugeschwindigkeit -->
+     
+    <Built_Costs_Max Num="72"/>
+    <!-- Maximale Baukosten beim Turbobauen, gibt damit den max. Turbo Faktor an. -->
+     
+    <Is_Produced_by>
+      <Unit ID="0 0"/>
+      <Unit ID="0 0"/> 
+      <!-- Liste der Einheiten die diese Einheit herstellen kÃ¶nnen-->
+       
+    </Is_Produced_by>
+  </Production>
 
-<Weapons>
+  <Weapons>
 
-<!-- Wenn die Einheit unbewaffnet ist, kann diese Sektion leer bleiben -->
- 
-<Weapon>
-<!-- Für jedes Waffensystem wird eine<Weapon>-Sektion benötigt -->
- 
-<Shot_Trajectory Const="straight"/>
-<!--<Shot_Trajectory Const="ballistic" /> -->
-<!--<Shot_Trajectory Const="controlled" /> -->
-<!-- Wie sieht die Flugbahn des Geschosses aus? "Straight": ganz gerade, kann nicht durch Hindernisse schießen
-"ballistic": Einheit schießt über Hindernisse hinweg. "Controlled": Ferngelenkt, wie eine Cruise Missile --> 
- 
-<Ammo_Type Const="Standard"/>
-<!--<Ammo_Type Const="Energy> -->
-<!-- Handelt es sich um eine Energiewaffe (keine Munition) oder wird Munition verschossen --> 
- 
-<Ammo_Quantity Num="0"/>
-<!-- Wenn Munition verwendet wird, wieviel Schuss hat diese Einheit bevor sie aufmunitioniert werden muss --> 
- 
-<Allowed_Targets>
-<!-- Welche Einheitentypen können beschossen werden mit dieser Waffe (siehe Is_Target...) -->
-<!-- Und wieviel Schaden richtet sie an auf welcher maximalen Entfernung ? --> 
- 
-<Target_Land>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Land>
-<Target_Sea>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Sea>
-<Target_Air>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Air>
-<Target_Mine>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Mine>
-<Target_Submarine>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Submarine>
-<Target_Infantry>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_Infantry>
-<Target_WMD>
-<Damage Num="0"/>
-<Range Fd="0"/>
-</Target_WMD>
-</Allowed_Targets>
+    <!-- Wenn die Einheit unbewaffnet ist, kann diese Sektion leer bleiben -->
+     
+    <Weapon>
+      <!-- FÃ¼r jedes Waffensystem wird eine<Weapon>-Sektion benÃ¶tigt -->
 
-<Shots Num="0"/>
-<!-- Wieviel Schuss hat die Einheit mit dieser Waffe bei Stillstand -->
- 
-<Destination_Area Num="1"/>
-<!-- Der Radius des Schadens -->
- 
-<Destination_Type Const="Point"/>
-<!--<Destination_Type Const="MIRV"/> -->
-<!--<Destination_Type Const="Scatter"/> -->
-<!-- Wie sieht die Schadensverteilung aus ? "Point": Alle Einheiten im Radius bekommen gleich viel Schaden -->
-<!-- "MIRV": Mehrfachsprengkopf, Destination_Area ist dann die Anzahl der getroffenen Ziele.-->
-<!-- "Scatter" der Schaden ist in der Mitte maximal und nimmt über den Radius ab -->
- 
-<Movement_Allowed Num="0"/>
-<!-- Anzahl Bewegungspunkte bis anteilig die Schussanzahl sinkt -->
-<!-- Bei "-1" darf die Einheit sich garnicht bewegen, selbst wenn durch Forschung die Schussanzahl erhöht wird. -->
- 
-</Weapon>
-</Weapons>
+      <Turret_Gfx Text="none" Num="0"/>
+      <!-- FÃ¼r GeschÃ¼tztÃ¼rme Text:Dateiname der grafik, Num:Sequenz (noch in keiner Einheit benÃ¶tigt) -->
+      <Shot_Trajectory Const="straight"/>
+      <!--<Shot_Trajectory Const="ballistic" /> -->
+      <!--<Shot_Trajectory Const="controlled" /> -->
+      <!-- Wie sieht die Flugbahn des Geschosses aus? "Straight": ganz gerade, kann nicht durch Hindernisse schieÃŸen
+      "ballistic": Einheit schieÃŸt Ã¼ber Hindernisse hinweg. "Controlled": Ferngelenkt, wie eine Cruise Missile --> 
+       
+      <Ammo_Type Const="Standard"/>
+      <!--<Ammo_Type Const="Energy> -->
+      <!-- Handelt es sich um eine Energiewaffe (keine Munition) oder wird Munition verschossen --> 
+       
+      <Ammo_Quantity Num="0"/>
+      <!-- Wenn Munition verwendet wird, wieviel Schuss hat diese Einheit bevor sie aufmunitioniert werden muss --> 
+       
+      <Allowed_Targets>
+      <!-- Welche Einheitentypen kÃ¶nnen beschossen werden mit dieser Waffe (siehe Is_Target...) -->
+      <!-- Und wieviel Schaden richtet sie an auf welcher maximalen Entfernung ? --> 
+       
+      <Target_Land>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Land>
+      <Target_Sea>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Sea>
+      <Target_Air>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Air>
+      <Target_Mine>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Mine>
+      <Target_Submarine>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Submarine>
+      <Target_Infantry>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_Infantry>
+      <Target_WMD>
+        <Damage Num="0"/>
+        <Range Fd="0"/>
+      </Target_WMD>
+      </Allowed_Targets>
 
-<Abilities>
-<!-- Spezialfähigkeiten --> 
- 
-<Can_Clear_Area YN="No"/>
-<!--Kann die Einheit Wracks und Bäume beseitigen? (Später eventuell auch Gelände modifizieren) -->
- 
-<Gets_Experience YN="No"/>
-<!-- Verbessert sich die Einheit über Erfahrung oder Forschung -->
- 
-<Can_Disable YN="No"/>
-<!--Kann die Einheit Gegner abschalten-->
- 
-<Can_Capture YN="No"/>
-<!--Kann die Einheit Gegner erobern-->
- 
-<Can_Dive YN="No"/>
-<!--Kann die Einheit wie ein UBoot abtauchen?-->
- 
-<Landing_Type Const="GarageAndPlatform"/>
-<!-- OnlyGarage, GarageAndPlatform, Everywhere -->
-<!-- Wo kann die Einheit landen? Nirgendwo, nur in "Garagen", zusätzlich noch auf Landeplattformen oder Überall-->
- 
-<Can_Upgrade YN="No"/>
-<!--Kann die Einheit andere nach Forschung/Gold-Upgrades modernisieren -->
- 
-<Can_Repair YN="No"/>
-<!--Kann sie andere reparieren-->
- 
-<Can_Research YN="No"/>
-<!--Kann sie Forschung betreiben-->
- 
-<Is_Kamikaze YN="No"/>
-<!-- Minen und SRBM, ist es eine Kamikaze-Einheit -->
- 
-<Is_Infrastructure YN="No"/>
-<!-- Handelt es sich um Infrastruktur: wird automatisch überbaut -->
- 
-<Can_Place_Mines YN="No"/>
-<!--Könne Minen ausgelegt werden-->
- 
-<Makes_Tracks Fd="0"/>
-<!-- Wie weit werden Spuren auf weichem Untergrund/Wasser hinterlassen -->
- 
-<Self_Repair_Type Const="None"/>
-<!-- Automatic(Alien) oder Normal(Metall) -->
-<!-- Wenn die Einheit sich selbstreparieren kann, "heilt" sie sich, oder benötigt sie Metall-->
- 
-<Converts_Gold Num="0"/>
-<!--Wird hier Gold raffiniert-->
- 
-<Needs_Energy Num="0"/>
-<!-- Negativ für Erzeugung -->
-<!-- Verbraucht bzw. erzeugt die Einheit Energie--> 
- 
-<Needs_Oil Num="0"/>
-<!--Braucht die Einheit Öl-->
- 
-<Needs_Metall Num="0"/>
-<!-- Max pro Runde -->
-<!--Verbraucht die Einheit Metall-->
- 
-<Needs_Humans Num="0"/>
-<!-- Negativ für Erzeugung -->
-<!--Stellt die Einheit Arebiter zur Verfügung bzw. benötigt sie Arbeiter--> 
- 
-<Mines_Resources Num="0"/>
-<!-- Max pro Runde -->
-<!--Werden Rohstoffe gefördert-->
- 
-<Can_Launch_SRBM YN="No"/>
-<!--Können Kurzstreckenraketen / Cruise Missiles von dieser Einheit gestartet werden-->
- 
-<Energy_Shield_Strength Num="0"/>
-<!--Wieviel Schaden absorbiert der Schutzschild-->
- 
-<Energy_Shield_Size Num="0"/>
-<!--Wieviele Felder werden durch den Schutzschild abgedeckt-->
- 
-</Abilities>
+      <Shots Num="0"/>
+      <!-- Wieviel Schuss hat die Einheit mit dieser Waffe bei Stillstand -->
+       
+      <Destination_Area Num="1"/>
+      <!-- Der Radius des Schadens -->
+       
+      <Destination_Type Const="Point"/>
+      <!--<Destination_Type Const="MIRV"/> -->
+      <!--<Destination_Type Const="Scatter"/> -->
+      <!-- Wie sieht die Schadensverteilung aus ? "Point": Alle Einheiten im Radius bekommen gleich viel Schaden -->
+      <!-- "MIRV": Mehrfachsprengkopf, Destination_Area ist dann die Anzahl der getroffenen Ziele.-->
+      <!-- "Scatter" der Schaden ist in der Mitte maximal und nimmt Ã¼ber den Radius ab -->
+       
+      <Movement_Allowed Num="0"/>
+      <!-- Anzahl Bewegungspunkte bis anteilig die Schussanzahl sinkt -->
+      <!-- Bei "-1" darf die Einheit sich garnicht bewegen, selbst wenn durch Forschung die Schussanzahl erhÃ¶ht wird. -->
+       
+    </Weapon>
+  </Weapons>
 
-<Scan_Abilities>
-<Range_Sight Fd="5"/>
-<!--Wie weit guckt die Einheit mit normalen "Kameraaugen"-->
+  <Abilities>
+    <!-- SpezialfÃ¤higkeiten --> 
+     
+    <Can_Clear_Area YN="No"/>
+    <!--Kann die Einheit Wracks und BÃ¤ume beseitigen? (SpÃ¤ter eventuell auch GelÃ¤nde modifizieren) -->
+     
+    <Gets_Experience YN="No"/>
+    <!-- Verbessert sich die Einheit Ã¼ber Erfahrung oder Forschung -->
+     
+    <Can_Disable YN="No"/>
+    <!--Kann die Einheit Gegner abschalten-->
+     
+    <Can_Capture YN="No"/>
+    <!--Kann die Einheit Gegner erobern-->
+     
+    <Can_Dive YN="No"/>
+    <!--Kann die Einheit wie ein UBoot abtauchen?-->
+     
+    <Landing_Type Const="GarageAndPlatform"/>
+    <!-- OnlyGarage, GarageAndPlatform, Everywhere -->
+    <!-- Wo kann die Einheit landen? Nirgendwo, nur in "Garagen", zusÃ¤tzlich noch auf Landeplattformen oder Ãœberall-->
+     
+    <Can_Upgrade YN="No"/>
+    <!--Kann die Einheit andere nach Forschung/Gold-Upgrades modernisieren -->
+     
+    <Can_Repair YN="No"/>
+    <!--Kann sie andere reparieren-->
+     
+    <Can_Research YN="No"/>
+    <!--Kann sie Forschung betreiben-->
+     
+    <Is_Kamikaze YN="No"/>
+    <!-- Minen und SRBM, ist es eine Kamikaze-Einheit -->
+     
+    <Is_Infrastructure YN="No"/>
+    <!-- Handelt es sich um Infrastruktur: wird automatisch Ã¼berbaut -->
+     
+    <Can_Place_Mines YN="No"/>
+    <!--KÃ¶nne Minen ausgelegt werden-->
+     
+    <Makes_Tracks Fd="0"/>
+    <!-- Wie weit werden Spuren auf weichem Untergrund/Wasser hinterlassen -->
+     
+    <Self_Repair_Type Const="None"/>
+    <!-- Automatic(Alien) oder Normal(Metall) -->
+    <!-- Wenn die Einheit sich selbstreparieren kann, "heilt" sie sich, oder benÃ¶tigt sie Metall-->
+     
+    <Converts_Gold Num="0"/>
+    <!--Wird hier Gold raffiniert-->
+     
+    <Needs_Energy Num="0"/>
+    <!-- Negativ fÃ¼r Erzeugung -->
+    <!-- Verbraucht bzw. erzeugt die Einheit Energie--> 
+     
+    <Needs_Oil Num="0"/>
+    <!--Braucht die Einheit Ã–l-->
+     
+    <Needs_Metall Num="0"/>
+    <!-- Max pro Runde -->
+    <!--Verbraucht die Einheit Metall-->
+     
+    <Needs_Humans Num="0"/>
+    <!-- Negativ fÃ¼r Erzeugung -->
+    <!--Stellt die Einheit Arebiter zur VerfÃ¼gung bzw. benÃ¶tigt sie Arbeiter--> 
+     
+    <Mines_Resources Num="0"/>
+    <!-- Max pro Runde -->
+    <!--Werden Rohstoffe gefÃ¶rdert-->
+     
+    <Can_Launch_SRBM YN="No"/>
+    <!--KÃ¶nnen Kurzstreckenraketen / Cruise Missiles von dieser Einheit gestartet werden-->
+     
+    <Energy_Shield_Strength Num="0"/>
+    <!--Wieviel Schaden absorbiert der Schutzschild-->
+     
+    <Energy_Shield_Size Num="0"/>
+    <!--Wieviele Felder werden durch den Schutzschild abgedeckt-->
+     
+  </Abilities>
 
-<Range_Air Fd="0"/>
-<!--Wie weit reicht ihr Luftradar-->
- 
-<Range_Ground Fd="0"/>
-<!-- Wie weit reicht ihr Bodenradar-->
- 
-<Range_Sea Fd="0"/>
-<!--Und das Radar auf See-->
- 
-<Range_Submarine Fd="0"/>
-<!-- Bis zu welcher Entfernung werden UBoote entdeckt-->
- 
-<Range_Mine Fd="0"/>
-<!-- Bis zu welcher Entfernung werden UBoote entdeckt--> 
+  <Scan_Abilities>
+    <Range_Sight Fd="5"/>
+    <!--Wie weit guckt die Einheit mit normalen "Kameraaugen"-->
 
-<Range_Infantry Fd="0"/>
-<!-- Bis zu welcher Entfernung werden Infantrie entdeckt-->
- 
-<Range_Resources Fd="0"/>
-<!-- Bis zu welcher Entfernung werden Rohstoffe entdeckt-->
- 
-<Range_Jammer Fd="0"/>
-<!-- Bis zu welcher Entfernung stört diese Einheit Radarsensoren-->
- 
-</Scan_Abilities>
+    <Range_Air Fd="0"/>
+    <!--Wie weit reicht ihr Luftradar-->
+     
+    <Range_Ground Fd="0"/>
+    <!-- Wie weit reicht ihr Bodenradar-->
+     
+    <Range_Sea Fd="0"/>
+    <!--Und das Radar auf See-->
+     
+    <Range_Submarine Fd="0"/>
+    <!-- Bis zu welcher Entfernung werden UBoote entdeckt-->
+     
+    <Range_Mine Fd="0"/>
+    <!-- Bis zu welcher Entfernung werden UBoote entdeckt--> 
 
-<Movement>
-<Movement_Sum Num="18"/>
-<!-- Wie weit kann diese Einehit sich unter normalen Umständen maximal bewegen--> 
-<!-- Bei Gebäuden ist dieser Wert 0. Dann geben die Faktoren an, wo das Gebäude drauf errichtet werden kann.--> 
+    <Range_Infantry Fd="0"/>
+    <!-- Bis zu welcher Entfernung werden Infantrie entdeckt-->
+     
+    <Range_Resources Fd="0"/>
+    <!-- Bis zu welcher Entfernung werden Rohstoffe entdeckt-->
+     
+    <Range_Jammer Fd="0"/>
+    <!-- Bis zu welcher Entfernung stÃ¶rt diese Einheit Radarsensoren-->
+     
+  </Scan_Abilities>
 
-<!-- Null Werte bedeuten diese Bewegungsart ist nicht möglich -->
+  <Movement>
+    <Movement_Sum Num="18"/>
+    <!-- Wie weit kann diese Einehit sich unter normalen UmstÃ¤nden maximal bewegen--> 
+    <!-- Bei GebÃ¤uden ist dieser Wert 0. Dann geben die Faktoren an, wo das GebÃ¤ude drauf errichtet werden kann.--> 
 
-<Costs_Air Num="1"/>
-<!-- Einheit kann fliegen mit maximal X Reichweite--> 
- 
-<Costs_Sea Num="0.0"/>
-<!-- Einheit kann schwimmen mit maximal X Reichweite-->
+    <!-- Null Werte bedeuten diese Bewegungsart ist nicht mÃ¶glich -->
 
-<Costs_Submarine Num="0.0"/>
-<!-- Einheit kann tauchen mit maximal X Reichweite-->
- 
-<Costs_Ground Num="0.0"/>
-<!-- Einheit kann fahren/gehen mit maximal X Reichweite-->
- 
- 
-<!-- Diese Kosten werden miteinander multipliziert und geben den Verbrauch an-->
-<!-- Null Werte bedeuten dieses Gelände ist nicht möglich -->
-<Factor_Water Num="0.0"/>
-<Factor_Coast Num="0.0"/>
-<Factor_Wood Num="0.0"/>
-<Factor_Road Num="0.0"/>
-<Factor_Bridge Num="0.0"/>
-<Factor_Platform Num="0.0"/>
-<Factor_Monorail Num="0.0"/>
-<Factor_Wreck Num="0.0"/>
-<Factor_Mountains Num="0.0"/>
-<Factor_Land_TakeOff Num="0.0"/>
-<Factor_Dive Num="0.0"/>
-</Movement>
+    <Costs_Air Num="1"/>
+    <!-- Einheit kann fliegen mit maximal X Reichweite--> 
+     
+    <Costs_Sea Num="0.0"/>
+    <!-- Einheit kann schwimmen mit maximal X Reichweite-->
 
-<Storage>
-<!--Lagerung-->
- 
-<Is_Garage YN="Yes"/>
-<!-- Können andere Einheiten diese Einheit befahren (Depots, Transporter, etc)-->
- 
-<Capacity_Metal Num="0"/>
-<!--Wieviel Metall kann diese Einheit speichern-->
+    <Costs_Submarine Num="0.0"/>
+    <!-- Einheit kann tauchen mit maximal X Reichweite-->
+     
+    <Costs_Ground Num="0.0"/>
+    <!-- Einheit kann fahren/gehen mit maximal X Reichweite-->
+     
+     
+    <!-- Diese Kosten werden miteinander multipliziert und geben den Verbrauch an-->
+    <!-- Null Werte bedeuten dieses GelÃ¤nde ist nicht mÃ¶glich -->
+    <Factor_Water Num="0.0"/>
+    <Factor_Coast Num="0.0"/>
+    <Factor_Wood Num="0.0"/>
+    <Factor_Road Num="0.0"/>
+    <Factor_Bridge Num="0.0"/>
+    <Factor_Platform Num="0.0"/>
+    <Factor_Monorail Num="0.0"/>
+    <Factor_Wreck Num="0.0"/>
+    <Factor_Mountains Num="0.0"/>
+    <Factor_Land_TakeOff Num="0.0"/>
+    <Factor_Dive Num="0.0"/>
+  </Movement>
 
-<Capacity_Oil Num="0"/>
-<!--Wieviel Öl kann diese Einheit speichern-->
+  <Storage>
+    <!--Lagerung-->
+     
+    <Is_Garage YN="Yes"/>
+    <!-- KÃ¶nnen andere Einheiten diese Einheit befahren (Depots, Transporter, etc)-->
+     
+    <Capacity_Metal Num="0"/>
+    <!--Wieviel Metall kann diese Einheit speichern-->
 
-<Capacity_Gold Num="0"/>
-<!--Wieviel Gold kann diese Einheit speichern--> 
+    <Capacity_Oil Num="0"/>
+    <!--Wieviel Ã–l kann diese Einheit speichern-->
 
-<Capacity_Energy Num="0"/>
-<!--Wieviel Energie kann diese Einheit speichern-->
- 
-<Capacity_Units_Air Num="0"/>
-<!--Wieviel Lufteinhieten kann diese Einheit speichern-->
- 
-<Capacity_Units_Sea Num="0"/>
-<!--Wieviel Seeeinheiten(+UBoote) kann diese Einheit speichern-->
- 
-<Capacity_Units_Ground Num="3"/>
-<!--Wieviel Bodeneinheiten kann diese Einheit speichern-->
- 
-<Capacity_Units_Infantry Num="3"/>
-<!--Wieviel Infantrie kann diese Einheit speichern-->
- 
-<Can_Use_Unit_As_Garage>
-<!-- Hier werden die befahrbaren Einheiten aufgezählt -->
-<!--und die Menge der verbauchten Kapazität aufgelistet -->
-<Unit ID="xxxx" Size="1"/>
-</Can_Use_Unit_As_Garage>
+    <Capacity_Gold Num="0"/>
+    <!--Wieviel Gold kann diese Einheit speichern--> 
 
-</Storage>
+    <Capacity_Energy Num="0"/>
+    <!--Wieviel Energie kann diese Einheit speichern-->
+     
+    <Capacity_Units_Air Num="0"/>
+    <!--Wieviel Lufteinhieten kann diese Einheit speichern-->
+     
+    <Capacity_Units_Sea Num="0"/>
+    <!--Wieviel Seeeinheiten(+UBoote) kann diese Einheit speichern-->
+     
+    <Capacity_Units_Ground Num="3"/>
+    <!--Wieviel Bodeneinheiten kann diese Einheit speichern-->
+     
+    <Capacity_Units_Infantry Num="3"/>
+    <!--Wieviel Infantrie kann diese Einheit speichern-->
+     
+    <Can_Use_Unit_As_Garage>
+      <!-- Hier werden die befahrbaren Einheiten aufgezÃ¤hlt -->
+      <!--und die Menge der verbauchten KapazitÃ¤t aufgelistet -->
+      <Unit ID="xxxx" Size="1"/>
+    </Can_Use_Unit_As_Garage>
 
+  </Storage>
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <!-- Gibt an ob eine overlay.pcx geladen werden soll -->
+    <Animations>
+      <Build_Up YN="No"/>
+      <!-- Gibt an ob baugrafiken geladen werden sollen -->
+      <Movement YN="No"/>
+      <!-- Gibt fÃ¼r die Bewegung speziele Animationsgrafiken benÃ¶tigt werden. (Bodentruppen) -->
+      <Power_On YN="No"/>
+      <!-- Gibt bei GebÃ¤uden an, ob sie eine speziele Grafik bei eingesaltetem Status haben. (effect.pcx) -->
+    </Animations>
+  </Graphic>
 </Unit>
 
 
