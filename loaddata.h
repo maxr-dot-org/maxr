@@ -90,7 +90,7 @@
 #define VEH_CAN_REPAIR					"Unit;Abilities;Can_Repair"
 #define VEH_CAN_RESEARCH				"Unit;Abilities;Is_Kamikaze"
 #define VEH_IS_INFRASTRUCTURE			"Unit;Abilities;Is_Infrastructure"
-#define VEH_IS_KAMIKAZE					"Unit;Abilities;Can_Place_Mines"		
+#define VEH_IS_KAMIKAZE					"Unit;Abilities;Is_Kamikaze"		
 #define VEH_CAN_PLACE_MINES				"Unit;Abilities;Can_Place_Mines"
 #define VEH_MAKES_TRACKS				"Unit;Abilities;Makes_Tracks"
 #define VEH_SELF_REPAIR_TYPE			"Unit;Abilities;Self_Repair_Type"

@@ -435,18 +435,15 @@ public:
 	int terrain_anz;
 } EX TerrainData;
 
-// VehicleData - Class containing all vehicle surfaces & data /////////////////
-class cVehicleData
+// UnitsData - Class containing all building/vehicle surfaces & data ///////////////
+class cUnitsData
 {
 public:
+	// Vehicles
 	struct sVehicle *vehicle;
 	int vehicle_anz;
-} EX VehicleMainData;
 
-// BuildingData - Class containing all building surfaces & data ///////////////
-class cBuildingData
-{
-public:
+	// Buildings
 	struct sBuilding *building;
 	int building_anz;
 
@@ -462,7 +459,7 @@ public:
 	SDL_Surface *ptr_small_beton;
 	SDL_Surface *ptr_connector;
 	SDL_Surface *ptr_connector_shw;
-} EX BuildingMainData;
+} EX UnitsData;
 
 // FontsData - Class containing all font surfaces /////////////////////////////
 class cFontsData

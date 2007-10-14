@@ -15,6 +15,137 @@
 // Vehicle-Strukturen ////////////////////////////////////////////////////////
 // Struktur für die Eigenschaften der Vehicles:
 struct sVehicleData{
+	// Main info
+	int iID;
+	string sName;
+	string sDescribtion;
+
+	// General info
+	bool bIs_Controllable;
+	bool bCan_Be_Captured;
+	bool bCan_Be_Disabled;
+	bool bSize_Length;
+	bool bSize_Width;
+
+	// Defence
+	bool bIs_Target_Land;
+	bool bIs_Target_Sea;
+	bool bIs_Target_Air;
+	bool bIs_Target_Underwater;
+	bool bIs_Target_Mine;
+	bool bIs_Target_Building;
+	bool bIs_Target_Satellite;
+	bool bIs_Target_WMD;
+	int iArmor;
+	int iHitpoints;
+
+	// Production
+	int iBuilt_Costs;
+	int iBuilt_Costs_Max;
+	int iIs_Produced_by_ID;
+
+	// Weapons
+	int iShot_Trajectory;
+	#define STRAIGHT  0
+	int iAmmo_Type;
+	int iAmmo_Quantity;
+
+	int iTarget_Land_Damage;
+	int iTarget_Land_Range;
+	int iTarget_Sea_Damage;
+	int iTarget_Sea_Range;
+	int iTarget_Air_Damage;
+	int iTarget_Air_Range;
+	int iTarget_Mine_Damage;
+	int iTarget_Mine_Range;
+	int iTarget_Submarine_Damage;
+	int iTarget_Submarine_Range;
+	int iTarget_Infantry_Damage;
+	int iTarget_Infantry_Range;
+	int iTarget_WMD_Damage;
+	int iTarget_WMD_Range;
+
+	int iShots;
+	int iDestination_Area;
+	int iDestination_Type;
+	#define POINT  0
+	#define MIRV  0
+	#define SCATTER  0
+	int iMovement_Allowed;
+
+	// Abilities
+	bool bCan_Clear_Area;
+	bool bGets_Experience;
+	bool bCan_Disable;
+	bool bCan_Capture;
+	bool bCan_Dive;
+	int iLanding_Type;
+	#define ONLY_GARAGE  0
+	#define GARAGE_AND_PLATFORM  1
+	#define EVERYWHERE  2
+	bool bCan_Upgrade;
+	bool bCan_Repair;
+	bool bCan_Research;
+	bool bIs_Kamikaze;
+	bool bIs_Infrastructure;
+	bool bCan_Place_Mines;
+	bool bMakes_Tracks;
+	int iSelf_Repair_Type;
+	#define NONE  0
+	#define AUTOMATIC  1
+	#define NORMAL  2
+	bool bConverts_Gold;
+	bool bNeeds_Energy;
+	bool bNeeds_Oil;
+	bool bNeeds_Metall;
+	bool bNeeds_Humans;
+	int iMines_Resources;
+	bool bCan_Launch_SRBM;
+	int iEnergy_Shield_Strength;
+	int iEnergy_Shield_Size;
+
+	// Scan_Abilities
+	int iScan_Range_Sight;
+	int iScan_Range_Air;
+	int iScan_Range_Ground;
+	int iScan_Range_Sea;
+	int iScan_Range_Submarine;
+	int iScan_Range_Mine;
+	int iScan_Range_Infantry;
+	int iScan_Range_Resources;
+	int iScan_Range_Jammer;
+
+	// Movement
+	int iMovement_Sum;
+	float fCosts_Air;
+	float fCosts_Sea;
+	float fCosts_Submarine;
+	float fCosts_Ground;
+	float fFactor_Coast;
+	float fFactor_Wood;
+	float fFactor_Road;
+	float fFactor_Bridge;
+	float fFactor_Platform;
+	float fFactor_Monorail;
+	float fFactor_Wreck;
+	float fFactor_Mountains;
+
+	// Storage
+	bool bIs_Garage;
+	int iCapacity_Metal;
+	int iCapacity_Oil;
+	int iCapacity_Gold;
+	int iCapacity_Energy;
+	int iCapacity_Units_Air;
+	int iCapacity_Units_Sea;
+	int iCapacity_Units_Ground;
+	int iCapacity_Units_Infantry;
+	int iCan_Use_Unit_As_Garage_ID;
+
+
+	//////
+	// Old-Stuff!
+	//////
   int version; // Version des Vehicles
   char name[25];
 
