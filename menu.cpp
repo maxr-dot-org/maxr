@@ -52,6 +52,8 @@ void ShowInfo ( void )
 	//and buildings are stored in one huge units-block.	
 	register int nr = random(3,1); 
 	
+	//TODO: add sanity check that the same picture doesn't show twice
+	
 	if ( nr == 1 )
 	{
 		cLog::write("Showing building graphic in main menu", cLog::eLOG_TYPE_DEBUG);
