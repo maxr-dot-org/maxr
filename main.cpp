@@ -102,12 +102,8 @@ int main ( int argc, char *argv[] )
 		SDL_Delay ( 100 );
 	}
 
-	//SDL_Delay ( 3000 ); //debug only
-
 	SDL_WaitThread ( DataThread, NULL );
-	SDL_Delay ( 3000 ); //debug only
-
-
+//	SDL_Delay ( 3000 ); //debug only
 
 	showGameWindow(); //start game-window
 
@@ -147,7 +143,6 @@ void showGameWindow()
 	}
 	SDL_FillRect ( buffer,NULL,0 );
 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
-	SDL_ShowCursor ( 1 ); // hide cursor during splash
 }
 
 int initSDL()
