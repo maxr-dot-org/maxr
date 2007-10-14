@@ -127,7 +127,7 @@ Normal (needs Metall)-->    </Self_Repair_Type>
     <Needs_Energy Num="0" >
 <!--negative value for "produces"-->    </Needs_Energy>
     <Needs_Oil Num="0" />
-    <Needs_Metall Num="0" />
+    <Needs_Metal Num="0" />
     <Needs_Humans Num="0" />
     <Mines_Resources Num="0" >
 <!--max per round-->    </Mines_Resources>

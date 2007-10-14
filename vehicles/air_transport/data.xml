@@ -103,7 +103,7 @@
 		<Converts_Gold Num="0"/>
 		<Needs_Energy Num="0"/> <!-- Negativ für Erzeugung -->
 		<Needs_Oil Num="0"/> <!-- Negativ für Erzeugung -->
-		<Needs_Metall Num="0"/> <!-- Max pro Runde -->
+		<Needs_Metal Num="0"/> <!-- Max pro Runde -->
 		<Needs_Humans Num="0"/> <!-- Negativ für Erzeugung -->
 		<Mines_Resources Num="0"/> <!-- Max pro Runde -->
 		<Can_Launch_SRBM YN="No"/>
