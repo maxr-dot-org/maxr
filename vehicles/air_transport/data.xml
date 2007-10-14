@@ -41,6 +41,7 @@
 	</Production>
 	<Weapons>
 		<Weapon> <!-- can have more than one weapon.. later! -->
+      <Turret_Gfx Text="none" Num="0"/> <!-- Text: filename; Num: Sequence -->
 			<Shot_Trajectory Const="straight"/>
 			<!--        <Shot_Trajectory Const="ballistic" /> -->
 			<!--        <Shot_Trajectory Const="controlled" /> -->
@@ -109,6 +110,9 @@
 		<Can_Launch_SRBM YN="No"/>
 		<Energy_Shield_Strength Num="0"/>
 		<Energy_Shield_Size Num="0"/>
+    <Has_Connector YN="No"/>
+    <Can_Be_Passed YN="No"/>
+    <Changes_Terrain Const="None"/> <!-- Can be: None, Street, Plattform, Bridge, Mine, Connector -->
 	</Abilities>
 	<Scan_Abilities>
 		<Range_Sight Fd="5"/>
@@ -157,4 +161,12 @@
 			<Unit_ID ID="00 00"/>  <!-- toadd. no hangar defined yet -->
 		</Can_Use_Unit_As_Garage>
 	</Storage>
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <Animations>
+      <Build_Up YN="No"/>
+      <Movement YN="No"/>
+      <Power_On YN="No"/>
+    </Animations>
+  </Graphic>
 </Unit>
