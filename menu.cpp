@@ -61,19 +61,19 @@ void ShowInfo ( void )
 		// have any buildings loaded right now and app crashes
 		// without this. REMOVE THIS when buildings load
 		// successful. Should look like else-block later!
-		if (BuildingMainData.building_anz == 0 ) 
+		if (UnitsData.building_anz == 0 ) 
 		{
 			cLog::write("No buildings found - can't show graphic", cLog::eLOG_TYPE_WARNING);
 		}
 		else
 		{
-			SDL_BlitSurface ( BuildingMainData.building[random ( BuildingMainData.building_anz,0 )].info,NULL,buffer,&dest );
+			SDL_BlitSurface ( UnitsData.building[random ( UnitsData.building_anz,0 )].info,NULL,buffer,&dest );
 		}
 	}
 	else
 	{
 		cLog::write("Showing vehicle graphic in main menu", cLog::eLOG_TYPE_DEBUG);
-		SDL_BlitSurface ( VehicleMainData.vehicle[random ( VehicleMainData.vehicle_anz,0 )].info,NULL,buffer,&dest );
+		SDL_BlitSurface ( UnitsData.vehicle[random ( UnitsData.vehicle_anz,0 )].info,NULL,buffer,&dest );
 	}
 }
 
@@ -1741,39 +1741,39 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 	// Die Liste erstellen:
 	list=new TList;
-	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
+	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w/2,UnitsData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.vehicle[i].img[0]->w,UnitsData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( OtherData.colors[cl_grey],NULL,sf,NULL );
-		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w,VehicleMainData.vehicle[i].img_org[0]->h );
+		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w,UnitsData.vehicle[i].img_org[0]->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=VehicleMainData.vehicle[i].data.costs;
+		n->costs=UnitsData.vehicle[i].data.costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list->AddHUp ( n );
 	}
-	for ( i=0;i<BuildingMainData.building_anz;i++ )
+	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
-		if ( BuildingMainData.building[i].data.is_big )
+		if ( UnitsData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/4,BuildingMainData.building[i].img_org->h/4 );
+			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/4,UnitsData.building[i].img_org->h/4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/2,BuildingMainData.building[i].img_org->h/2 );
+			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/2,UnitsData.building[i].img_org->h/2 );
 		}
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,BuildingMainData.building[i].img->w,BuildingMainData.building[i].img->h,32,0,0,0,0 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.building[i].img->w,UnitsData.building[i].img->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-		if ( !BuildingMainData.building[i].data.is_connector&&!BuildingMainData.building[i].data.is_road )
+		if ( !UnitsData.building[i].data.is_connector&&!UnitsData.building[i].data.is_road )
 		{
 			SDL_BlitSurface ( OtherData.colors[cl_grey],NULL,sf,NULL );
 		}
@@ -1781,12 +1781,12 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
-		SDL_BlitSurface ( BuildingMainData.building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w,BuildingMainData.building[i].img_org->h );
+		SDL_BlitSurface ( UnitsData.building[i].img,NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w,UnitsData.building[i].img_org->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=BuildingMainData.building[i].data.costs;
+		n->costs=UnitsData.building[i].data.costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
 		list->AddHUp ( n );
@@ -2326,11 +2326,11 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			sLanding *ptr;
 			ptr=LandingList->LandItems[LandingSelected];
-			if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+			if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 			{
 
 				// LadungUp-Button:
-				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<VehicleMainData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
+				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2401,10 +2401,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115 )
 				{
 					int value;
-					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( VehicleMainData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SoundData.SNDObjectMenu );
 
-					if ( ( 115- ( y-301 ) ) >=110 ) value=VehicleMainData.vehicle[ptr->id].data.max_cargo;
+					if ( ( 115- ( y-301 ) ) >=110 ) value=UnitsData.vehicle[ptr->id].data.max_cargo;
 
 					if ( value<ptr->cargo )
 					{
@@ -2414,15 +2414,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					else if ( value>ptr->cargo&&player->Credits>0 )
 					{
 						value-=ptr->cargo;
-						while ( value>0&&player->Credits>0&&ptr->cargo<VehicleMainData.vehicle[ptr->id].data.max_cargo )
+						while ( value>0&&player->Credits>0&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo )
 						{
 							ptr->cargo+=5;
 							player->Credits--;
 							value-=5;
 						}
-						if ( ptr->cargo>VehicleMainData.vehicle[ptr->id].data.max_cargo )
+						if ( ptr->cargo>UnitsData.vehicle[ptr->id].data.max_cargo )
 						{
-							ptr->cargo=VehicleMainData.vehicle[ptr->id].data.max_cargo;
+							ptr->cargo=UnitsData.vehicle[ptr->id].data.max_cargo;
 						}
 					}
 
@@ -2486,25 +2486,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->max_shots );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_shots, 2 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_shots, 2 );
 		u[i].name = "shots";
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->max_ammo );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_ammo, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_ammo, 0 );
 		u[i].name = "ammo";
 		i++;
 	}
@@ -2515,25 +2515,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.scan, 3 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
 	u[i].name = "scan";
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->max_speed );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_speed, 1 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_speed, 1 );
 	u[i].name = "speed";
 	i++;
 	// Costs:
@@ -2565,7 +2565,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		if ( !d->is_expl_mine )
@@ -2573,19 +2573,19 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 			// Shots:
 			u[i].active=true;
 			u[i].value=& ( d->max_shots );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_shots, 2 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_shots, 2 );
 			u[i].name = "shots";
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
 			u[i].name = "range";
 			i++;
 			// Ammo:
 			u[i].active=true;
 			u[i].value=& ( d->max_ammo );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_ammo, 0 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_ammo, 0 );
 			u[i].name = "ammo";
 			i++;
 		}
@@ -2595,7 +2595,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 	}
@@ -2616,14 +2616,14 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->armor );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.armor, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.armor, 0 );
 		u[i].name = "armor";
 	}
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
@@ -2631,7 +2631,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->scan );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.scan, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.scan, 3 );
 		u[i].name = "scan";
 		i++;
 	}
@@ -3088,7 +3088,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	{
 		sLanding *ptr;
 		ptr=landing->LandItems[selected];
-		if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
 			sprintf ( str,"%d",ptr->cargo );
 			fonts->OutTextCenter ( "Ladung",430,275,buffer );
@@ -3097,7 +3097,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
-			scr.h=dest.h=115* ( int ) ( ( ptr->cargo/ ( float ) VehicleMainData.vehicle[ptr->id].data.max_cargo ) );
+			scr.h=dest.h=115* ( int ) ( ( ptr->cargo/ ( float ) UnitsData.vehicle[ptr->id].data.max_cargo ) );
 			dest.x=422;
 			dest.y=301+115-dest.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -3277,16 +3277,16 @@ void ShowLandingList ( TList *list,int selected,int offset )
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
 		fonts->OutText ( str,text.x,text.y,buffer );
-		if ( VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_METAL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_OIL||VehicleMainData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			sprintf ( str," (%d/%d)",ptr->cargo,VehicleMainData.vehicle[ptr->id].data.max_cargo );
+			sprintf ( str," (%d/%d)",ptr->cargo,UnitsData.vehicle[ptr->id].data.max_cargo );
 			fonts->OutText ( str,text.x,text.y+10,buffer );
 		}
 		text.y+=32+10;
@@ -3315,7 +3315,7 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		if ( images->HUpItems[i]->vehicle )
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			vd=& ( VehicleMainData.vehicle[images->HUpItems[i]->id].data );
+			vd=& ( UnitsData.vehicle[images->HUpItems[i]->id].data );
 			if ( vd->is_alien&&kauf ) continue;
 			if ( vd->is_human&&kauf ) continue;
 			if ( tnt&&!vd->can_attack ) continue;
@@ -3327,7 +3327,7 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		else
 		{
 			if ( !build ) continue;
-			bd=& ( BuildingMainData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
+			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
 			if ( tnt&&!bd->can_attack ) continue;
 			selection->AddHUp ( images->HUpItems[i] );
 		}
@@ -3405,15 +3405,15 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 			tmp.x=11;tmp.y=13;
 			if ( ptr->vehicle )
 			{
-				tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
-				tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=UnitsData.vehicle[ptr->id].info->w;
+				tmp.h=UnitsData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			}
 			else
 			{
-				tmp.w=BuildingMainData.building[ptr->id].info->w;
-				tmp.h=BuildingMainData.building[ptr->id].info->h;
-				SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=UnitsData.building[ptr->id].info->w;
+				tmp.h=UnitsData.building[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.building[ptr->id].info,NULL,buffer,&tmp );
 			}
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
@@ -3422,11 +3422,11 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3440,13 +3440,13 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,p );
+					tv=new cVehicle ( UnitsData.vehicle+ptr->id,p );
 					tv->ShowBigDetails();
 					delete tv;
 				}
 				else
 				{
-					tb=new cBuilding ( BuildingMainData.building+ptr->id,p,NULL );
+					tb=new cBuilding ( UnitsData.building+ptr->id,p,NULL );
 					tb->ShowBigDetails();
 					delete tb;
 				}
@@ -3479,20 +3479,20 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		t=0;
 		if ( ptr->vehicle )
 		{
-			sprintf ( str,"%d",VehicleMainData.vehicle[ptr->id].data.costs );
+			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.costs );
 			fonts->OutTextCenter ( str,616,text.y,buffer );
 			str[0]=0;
-			while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 			{
-				str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
+				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
 			str[0]=0;
-			while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
+				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';
@@ -5296,16 +5296,16 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 	sprintf ( sztmp,"%d",p->Nr );
 	msg=sztmp;
 
-	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
+	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
-		if ( p->VehicleData[i].damage!=VehicleMainData.vehicle[i].data.damage||
-		        p->VehicleData[i].max_shots!=VehicleMainData.vehicle[i].data.max_shots||
-		        p->VehicleData[i].range!=VehicleMainData.vehicle[i].data.range||
-		        p->VehicleData[i].max_ammo!=VehicleMainData.vehicle[i].data.max_ammo||
-		        p->VehicleData[i].armor!=VehicleMainData.vehicle[i].data.armor||
-		        p->VehicleData[i].max_hit_points!=VehicleMainData.vehicle[i].data.max_hit_points||
-		        p->VehicleData[i].scan!=VehicleMainData.vehicle[i].data.scan||
-		        p->VehicleData[i].max_speed!=VehicleMainData.vehicle[i].data.max_speed )
+		if ( p->VehicleData[i].damage!=UnitsData.vehicle[i].data.damage||
+		        p->VehicleData[i].max_shots!=UnitsData.vehicle[i].data.max_shots||
+		        p->VehicleData[i].range!=UnitsData.vehicle[i].data.range||
+		        p->VehicleData[i].max_ammo!=UnitsData.vehicle[i].data.max_ammo||
+		        p->VehicleData[i].armor!=UnitsData.vehicle[i].data.armor||
+		        p->VehicleData[i].max_hit_points!=UnitsData.vehicle[i].data.max_hit_points||
+		        p->VehicleData[i].scan!=UnitsData.vehicle[i].data.scan||
+		        p->VehicleData[i].max_speed!=UnitsData.vehicle[i].data.max_speed )
 		{
 			if ( msg.length() >0 ) msg+="#";
 			msg+="0";msg+="#";
@@ -5327,15 +5327,15 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 	}
 
-	for ( i=0;i<BuildingMainData.building_anz;i++ )
+	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
-		if ( p->BuildingData[i].damage!=BuildingMainData.building[i].data.damage||
-		        p->BuildingData[i].max_shots!=BuildingMainData.building[i].data.max_shots||
-		        p->BuildingData[i].range!=BuildingMainData.building[i].data.range||
-		        p->BuildingData[i].max_ammo!=BuildingMainData.building[i].data.max_ammo||
-		        p->BuildingData[i].armor!=BuildingMainData.building[i].data.armor||
-		        p->BuildingData[i].max_hit_points!=BuildingMainData.building[i].data.max_hit_points||
-		        p->BuildingData[i].scan!=BuildingMainData.building[i].data.scan )
+		if ( p->BuildingData[i].damage!=UnitsData.building[i].data.damage||
+		        p->BuildingData[i].max_shots!=UnitsData.building[i].data.max_shots||
+		        p->BuildingData[i].range!=UnitsData.building[i].data.range||
+		        p->BuildingData[i].max_ammo!=UnitsData.building[i].data.max_ammo||
+		        p->BuildingData[i].armor!=UnitsData.building[i].data.armor||
+		        p->BuildingData[i].max_hit_points!=UnitsData.building[i].data.max_hit_points||
+		        p->BuildingData[i].scan!=UnitsData.building[i].data.scan )
 		{
 			if ( msg.length() >0 ) msg+="#";
 			msg+="1";msg+="#";

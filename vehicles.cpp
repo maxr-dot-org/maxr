@@ -818,13 +818,13 @@ void cVehicle::RefreshData ( void )
 			game->ObjectStream=PlayStram();
 		}
 
-		if ( BuildRounds==0&&owner==game->ActivePlayer ) game->engine->AddReport ( ( BuildingMainData.building+BuildingTyp )->data.name,false );
+		if ( BuildRounds==0&&owner==game->ActivePlayer ) game->engine->AddReport ( ( UnitsData.building+BuildingTyp )->data.name,false );
 
-		if ( BuildRounds==0&& ( BuildingMainData.building[BuildingTyp].data.is_base||BuildingMainData.building[BuildingTyp].data.is_connector ) && ( ! ( BandX!=PosX||BandY!=PosY ) ||data.cargo==0 ) )
+		if ( BuildRounds==0&& ( UnitsData.building[BuildingTyp].data.is_base||UnitsData.building[BuildingTyp].data.is_connector ) && ( ! ( BandX!=PosX||BandY!=PosY ) ||data.cargo==0 ) )
 		{
 			IsBuilding=false;
 			BuildPath=false;
-			game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BuildingTyp,owner );
+			game->engine->AddBuilding ( PosX,PosY,UnitsData.building+BuildingTyp,owner );
 		}
 
 		if ( BuildPath&& ( owner==game->ActivePlayer||game->HotSeat ) &&BuildRounds==0&&data.can_build==BUILD_SMALL&& ( BandX!=PosX||BandY!=PosY ) )
@@ -834,7 +834,7 @@ void cVehicle::RefreshData ( void )
 			if ( data.cargo>=BuildCosts*BuildRoundsStart )
 			{
 
-#define CHECK_PATH_BUILD(a) ((BuildingMainData.building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(BuildingMainData.building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||BuildingMainData.building[BuildingTyp].data.is_connector))
+#define CHECK_PATH_BUILD(a) ((UnitsData.building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(UnitsData.building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||UnitsData.building[BuildingTyp].data.is_connector))
 				if ( BandX<PosX&&CHECK_PATH_BUILD ( PosX-1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX-1+PosY*game->map->size,false,false );
 				else if ( BandX>PosX&&CHECK_PATH_BUILD ( PosX+1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+1+PosY*game->map->size,false,false );
 				else if ( BandY<PosY&&CHECK_PATH_BUILD ( PosX+ ( PosY-1 ) *game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY-1 ) *game->map->size,false,false );
@@ -2293,15 +2293,15 @@ void cVehicle::ShowBuildMenu ( void )
 
 	// Die Images erstellen:
 	images=new TList;
-	for ( i=0;i<BuildingMainData.building_anz;i++ )
+	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
 		sBuildStruct *n;
 		SDL_Surface *sf,*sf2;
-		if ( BuildingMainData.building[i].data.is_expl_mine ) continue;
-		if ( data.can_build==BUILD_BIG&&!BuildingMainData.building[i].data.is_big ) continue;
-		if ( data.can_build==BUILD_SMALL&&BuildingMainData.building[i].data.is_big ) continue;
-		if ( !game->AlienTech&&BuildingMainData.building[i].data.is_alien ) continue;
-		ScaleSurface ( BuildingMainData.building[i].img_org,&sf2,32 );
+		if ( UnitsData.building[i].data.is_expl_mine ) continue;
+		if ( data.can_build==BUILD_BIG&&!UnitsData.building[i].data.is_big ) continue;
+		if ( data.can_build==BUILD_SMALL&&UnitsData.building[i].data.is_big ) continue;
+		if ( !game->AlienTech&&UnitsData.building[i].data.is_alien ) continue;
+		ScaleSurface ( UnitsData.building[i].img_org,&sf2,32 );
 		SDL_SetColorKey ( sf2,SDL_SRCCOLORKEY,0xFFFFFF );
 		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,32,32,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
@@ -2480,19 +2480,19 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&BuildingMainData.building[BuildingTyp].data.is_base ) break;
-				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!BuildingMainData.building[BuildingTyp].data.is_connector )
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&UnitsData.building[BuildingTyp].data.is_base ) break;
+				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!UnitsData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
 					{
-						if ( !BuildingMainData.building[BuildingTyp].data.build_on_water ) break;
+						if ( !UnitsData.building[BuildingTyp].data.build_on_water ) break;
 					}
-					else if ( BuildingMainData.building[BuildingTyp].data.build_on_water&&! ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					else if ( UnitsData.building[BuildingTyp].data.build_on_water&&! ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 					if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 					{
-						if ( !BuildingMainData.building[BuildingTyp].data.is_bridge&&!BuildingMainData.building[BuildingTyp].data.is_platform ) break;
+						if ( !UnitsData.building[BuildingTyp].data.is_bridge&&!UnitsData.building[BuildingTyp].data.is_platform ) break;
 					}
-					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 				}
 				if ( BuildSpeed==1 )
 				{
@@ -2588,19 +2588,19 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&BuildingMainData.building[BuildingTyp].data.is_base ) break;
-				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!BuildingMainData.building[BuildingTyp].data.is_connector )
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&UnitsData.building[BuildingTyp].data.is_base ) break;
+				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!UnitsData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
 					{
-						if ( !BuildingMainData.building[BuildingTyp].data.build_on_water ) break;
+						if ( !UnitsData.building[BuildingTyp].data.build_on_water ) break;
 					}
-					else if ( BuildingMainData.building[BuildingTyp].data.build_on_water&&! ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					else if ( UnitsData.building[BuildingTyp].data.build_on_water&&! ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 					if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 					{
-						if ( !BuildingMainData.building[BuildingTyp].data.is_bridge&&!BuildingMainData.building[BuildingTyp].data.is_platform ) break;
+						if ( !UnitsData.building[BuildingTyp].data.is_bridge&&!UnitsData.building[BuildingTyp].data.is_platform ) break;
 					}
-					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( BuildingMainData.building[BuildingTyp].data.is_bridge||BuildingMainData.building[BuildingTyp].data.is_platform ) ) break;
+					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 				}
 
 				if ( BuildSpeed==1 )
@@ -2829,15 +2829,15 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			// Das Bild neu malen:
 			tmp.x=11;tmp.y=13;
-			tmp.w=BuildingMainData.building[ptr->id].info->w;
-			tmp.h=BuildingMainData.building[ptr->id].info->h;
-			SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
+			tmp.w=UnitsData.building[ptr->id].info->w;
+			tmp.h=UnitsData.building[ptr->id].info->h;
+			SDL_BlitSurface ( UnitsData.building[ptr->id].info,NULL,buffer,&tmp );
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
 			{
 				tmp.x+=10;tmp.y+=10;
 				tmp.w-=20;tmp.h-=20;
-				fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
+				fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
 			}
 			// Die Details anzeigen:
 			{
@@ -2847,7 +2847,7 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 				tmp.w=260;
 				tmp.h=176;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen,&tmp,buffer,&tmp );
-				tb=new cBuilding ( BuildingMainData.building+ptr->id,game->ActivePlayer,NULL );
+				tb=new cBuilding ( UnitsData.building+ptr->id,game->ActivePlayer,NULL );
 				tb->ShowBigDetails();
 				delete tb;
 			}
@@ -2900,9 +2900,9 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
+			str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
@@ -2959,8 +2959,8 @@ void cVehicle::FindNextband ( void )
 	gms=game->map->size;
 	mouse->GetKachel ( &x,&y );
 
-//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.is_connector)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.build_on_water||BuildingMainData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||BuildingMainData.building[BuildingTyp].data.build_on_water||BuildingMainData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(BuildingMainData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
+//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
+#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
 	if ( CHECK_BAND ( -1,-1 ) &&CHECK_BAND ( +0,-1 ) &&CHECK_BAND ( -1,+0 ) ) pos[0]=true;else pos[0]=false;
 	if ( CHECK_BAND ( +0,-1 ) &&CHECK_BAND ( +1,-1 ) &&CHECK_BAND ( +1,+0 ) ) pos[1]=true;else pos[1]=false;
 	if ( CHECK_BAND ( +1,+0 ) &&CHECK_BAND ( +1,+1 ) &&CHECK_BAND ( +0,+1 ) ) pos[2]=true;else pos[2]=false;
@@ -4326,12 +4326,12 @@ void cVehicle::LayMine ( void )
 	if ( game->map->GO[PosX+PosY*game->map->size].base ) return;
 	if ( data.can_drive==DRIVE_SEA )
 	{
-		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrSeaMine,owner,false );
+		game->engine->AddBuilding ( PosX,PosY,UnitsData.building+BNrSeaMine,owner,false );
 		PlayFX ( SoundData.SNDSeaMinePlace );
 	}
 	else
 	{
-		game->engine->AddBuilding ( PosX,PosY,BuildingMainData.building+BNrLandMine,owner,false );
+		game->engine->AddBuilding ( PosX,PosY,UnitsData.building+BNrLandMine,owner,false );
 
 		PlayFX ( SoundData.SNDLandMinePlace );
 	}

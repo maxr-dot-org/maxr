@@ -322,20 +322,20 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	// Prüfen, ob es Dreck ist:
 	if ( !owner )
 	{
-		if ( BigDirt ) scr.w=scr.h=dest->h=dest->w=BuildingMainData.dirt_big->h;
-		else scr.w=scr.h=dest->h=dest->w=BuildingMainData.dirt_small->h;
+		if ( BigDirt ) scr.w=scr.h=dest->h=dest->w=UnitsData.dirt_big->h;
+		else scr.w=scr.h=dest->h=dest->w=UnitsData.dirt_small->h;
 		scr.x=scr.w*DirtTyp;
 		scr.y=0;
 		// Den Schatten malen:
 		if ( SettingsData.bShadows )
 		{
-			if ( BigDirt ) SDL_BlitSurface ( BuildingMainData.dirt_big_shw,&scr,buffer,&tmp );
-			else SDL_BlitSurface ( BuildingMainData.dirt_small_shw,&scr,buffer,&tmp );
+			if ( BigDirt ) SDL_BlitSurface ( UnitsData.dirt_big_shw,&scr,buffer,&tmp );
+			else SDL_BlitSurface ( UnitsData.dirt_small_shw,&scr,buffer,&tmp );
 		}
 		// Das Building malen:
 		tmp=*dest;
-		if ( BigDirt ) SDL_BlitSurface ( BuildingMainData.dirt_big,&scr,buffer,&tmp );
-		else SDL_BlitSurface ( BuildingMainData.dirt_small,&scr,buffer,&tmp );
+		if ( BigDirt ) SDL_BlitSurface ( UnitsData.dirt_big,&scr,buffer,&tmp );
+		else SDL_BlitSurface ( UnitsData.dirt_small,&scr,buffer,&tmp );
 		return;
 	}
 
@@ -510,14 +510,14 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		{
 			if ( StartUp&&SettingsData.bAlphaEffects )
 			{
-				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,StartUp );
-				SDL_BlitSurface ( BuildingMainData.ptr_small_beton,NULL,buffer,&tmp );
-				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,255 );
+				SDL_SetAlpha ( UnitsData.ptr_small_beton,SDL_SRCALPHA,StartUp );
+				SDL_BlitSurface ( UnitsData.ptr_small_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( UnitsData.ptr_small_beton,SDL_SRCALPHA,255 );
 			}
 			else
 			{
-				SDL_SetAlpha ( BuildingMainData.ptr_small_beton,SDL_SRCALPHA,255 );
-				SDL_BlitSurface ( BuildingMainData.ptr_small_beton,NULL,buffer,&tmp );
+				SDL_SetAlpha ( UnitsData.ptr_small_beton,SDL_SRCALPHA,255 );
+				SDL_BlitSurface ( UnitsData.ptr_small_beton,NULL,buffer,&tmp );
 			}
 		}
 	}
@@ -1232,13 +1232,13 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	if ( BaseN )
 	{
 		scr.x=zoom;
-		SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+		SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 		tmp=dest;
 	}
 	if ( BaseW )
 	{
 		scr.x=zoom*4;
-		SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+		SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 		tmp=dest;
 	}
 	if ( !data.is_big )
@@ -1246,13 +1246,13 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		if ( BaseE )
 		{
 			scr.x=zoom*2;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseS )
 		{
 			scr.x=zoom*3;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 	}
@@ -1262,21 +1262,21 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		{
 			scr.x=zoom;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBW )
 		{
 			scr.x=zoom*4;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseE )
 		{
 			scr.x=zoom*2;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBE )
@@ -1284,14 +1284,14 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 			scr.x=zoom*2;
 			tmp.x+=zoom;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseS )
 		{
 			scr.x=zoom*3;
 			tmp.y+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 		if ( BaseBS )
@@ -1299,7 +1299,7 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 			scr.x=zoom*3;
 			tmp.y+=zoom;
 			tmp.x+=zoom;
-			SDL_BlitSurface ( BuildingMainData.ptr_connector,&scr,buffer,&tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector,&scr,buffer,&tmp );
 			tmp=dest;
 		}
 	}
@@ -3144,16 +3144,16 @@ void cBuilding::ShowUpgrade ( void )
 	// Die Images erstellen:
 	images=new TList;
 	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
-	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
+	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sUpgradeStruct *n;
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w/2,UnitsData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.vehicle[i].img[0]->w,UnitsData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
-		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w* newzoom,VehicleMainData.vehicle[i].img_org[0]->h* newzoom );
+		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w* newzoom,UnitsData.vehicle[i].img_org[0]->h* newzoom );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -3161,21 +3161,21 @@ void cBuilding::ShowUpgrade ( void )
 		MakeUpgradeSliderVehicle ( n->upgrades,i );
 		images->AddUpgraStr ( n );
 	}
-	for ( i=0;i<BuildingMainData.building_anz;i++ )
+	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
 		sUpgradeStruct *n;
 		SDL_Surface *sf;
-		if ( BuildingMainData.building[i].data.is_big )
+		if ( UnitsData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/4,BuildingMainData.building[i].img_org->h/4 );
+			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/4,UnitsData.building[i].img_org->h/4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w/2,BuildingMainData.building[i].img_org->h/2 );
+			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/2,UnitsData.building[i].img_org->h/2 );
 		}
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,BuildingMainData.building[i].img->w,BuildingMainData.building[i].img->h,32,0,0,0,0 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.building[i].img->w,UnitsData.building[i].img->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-		if ( !BuildingMainData.building[i].data.is_connector&&!BuildingMainData.building[i].data.is_road )
+		if ( !UnitsData.building[i].data.is_connector&&!UnitsData.building[i].data.is_road )
 		{
 			SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
 		}
@@ -3183,8 +3183,8 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
-		SDL_BlitSurface ( BuildingMainData.building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( BuildingMainData.building[i].img_org,BuildingMainData.building[i].img,BuildingMainData.building[i].img_org->w* newzoom,BuildingMainData.building[i].img_org->h* newzoom );
+		SDL_BlitSurface ( UnitsData.building[i].img,NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w* newzoom,UnitsData.building[i].img_org->h* newzoom );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -3627,15 +3627,15 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 			tmp.x=11;tmp.y=13;
 			if ( ptr->vehicle )
 			{
-				tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
-				tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=UnitsData.vehicle[ptr->id].info->w;
+				tmp.h=UnitsData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			}
 			else
 			{
-				tmp.w=BuildingMainData.building[ptr->id].info->w;
-				tmp.h=BuildingMainData.building[ptr->id].info->h;
-				SDL_BlitSurface ( BuildingMainData.building[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=UnitsData.building[ptr->id].info->w;
+				tmp.h=UnitsData.building[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.building[ptr->id].info,NULL,buffer,&tmp );
 			}
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
@@ -3644,11 +3644,11 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( BuildingMainData.building[ptr->id].text,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3662,13 +3662,13 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,game->ActivePlayer );
+					tv=new cVehicle ( UnitsData.vehicle+ptr->id,game->ActivePlayer );
 					tv->ShowBigDetails();
 					delete tv;
 				}
 				else
 				{
-					tb=new cBuilding ( BuildingMainData.building+ptr->id,game->ActivePlayer,NULL );
+					tb=new cBuilding ( UnitsData.building+ptr->id,game->ActivePlayer,NULL );
 					tb->ShowBigDetails();
 					delete tb;
 				}
@@ -3702,16 +3702,16 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 		str[0]=0;
 		if ( ptr->vehicle )
 		{
-			while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
+				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
-			while ( BuildingMainData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=BuildingMainData.building[ptr->id].data.name[t];str[++t]=0;
+				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';
@@ -3768,25 +3768,25 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->max_shots );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_shots, 2 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_shots, 2 );
 		u[i].name = "shots";
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->max_ammo );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_ammo, 0 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_ammo, 0 );
 		u[i].name = "ammo";
 		i++;
 	}
@@ -3797,25 +3797,25 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.scan, 3 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
 	u[i].name = "scan";
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->max_speed );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),VehicleMainData.vehicle[nr].data.max_speed, 1 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_speed, 1 );
 	u[i].name = "speed";
 	i++;
 	// Costs:
@@ -3847,7 +3847,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		if ( !d->is_expl_mine )
@@ -3855,19 +3855,19 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 			// Shots:
 			u[i].active=true;
 			u[i].value=& ( d->max_shots );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_shots, 2 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_shots, 2 );
 			u[i].name = "shots";
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
 			u[i].name = "range";
 			i++;
 			// Ammo:
 			u[i].active=true;
 			u[i].value=& ( d->max_ammo );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_ammo, 0 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_ammo, 0 );
 			u[i].name = "ammo";
 			i++;
 		}
@@ -3877,7 +3877,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
 		u[i].name = "range";
 		i++;
 	}
@@ -3896,13 +3896,13 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 	// Armor:
 	u[i].active=true;
 	u[i].value=& ( d->armor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.armor, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.armor, 0 );
 	u[i].name = "armor";
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.max_hit_points, 0 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
@@ -3910,7 +3910,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->scan );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),BuildingMainData.building[nr].data.scan, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.scan, 3 );
 		u[i].name = "scan";
 		i++;
 	}
@@ -3959,7 +3959,7 @@ void cBuilding::CreateUpgradeList ( TList *selection,TList *images,int *selected
 		if ( images->UpgraStrItems[i]->vehicle )
 		{
 			if ( ! ( game->UpShowTank||game->UpShowShip||game->UpShowPlane ) ) continue;
-			vd=& ( VehicleMainData.vehicle[images->UpgraStrItems[i]->id].data );
+			vd=& ( UnitsData.vehicle[images->UpgraStrItems[i]->id].data );
 			if ( game->UpShowTNT&&!vd->can_attack ) continue;
 			if ( vd->can_drive==DRIVE_AIR&&!game->UpShowPlane ) continue;
 			if ( vd->can_drive==DRIVE_SEA&&!game->UpShowShip ) continue;
@@ -3969,7 +3969,7 @@ void cBuilding::CreateUpgradeList ( TList *selection,TList *images,int *selected
 		else
 		{
 			if ( !game->UpShowBuild ) continue;
-			bd=& ( BuildingMainData.building[images->UpgraStrItems[i]->id].data );
+			bd=& ( UnitsData.building[images->UpgraStrItems[i]->id].data );
 			if ( game->UpShowTNT&&!bd->can_attack ) continue;
 			selection->AddUpgraStr ( images->UpgraStrItems[i] );
 		}
@@ -5285,24 +5285,24 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Images erstellen:
 	images=new TList;
 	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
-	for ( i=0;i<VehicleMainData.vehicle_anz;i++ )
+	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sBuildStruct *n;
 		SDL_Surface *sf;
 
-		if ( data.can_build==BUILD_AIR&&VehicleMainData.vehicle[i].data.can_drive!=DRIVE_AIR ) continue;
-		else if ( data.can_build==BUILD_BIG&&!VehicleMainData.vehicle[i].data.build_by_big ) continue;
-		else if ( data.can_build==BUILD_SEA&&VehicleMainData.vehicle[i].data.can_drive!=DRIVE_SEA ) continue;
-		else if ( data.can_build==BUILD_SMALL&& ( VehicleMainData.vehicle[i].data.can_drive==DRIVE_AIR||VehicleMainData.vehicle[i].data.can_drive==DRIVE_SEA||VehicleMainData.vehicle[i].data.build_by_big||VehicleMainData.vehicle[i].data.is_human ) ) continue;
-		else if ( data.can_build==BUILD_MAN&&!VehicleMainData.vehicle[i].data.is_human ) continue;
-		else if ( !data.build_alien&&VehicleMainData.vehicle[i].data.is_alien ) continue;
-		else if ( data.build_alien&&!VehicleMainData.vehicle[i].data.is_alien ) continue;
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w/2,VehicleMainData.vehicle[i].img_org[0]->h/2 );
-		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,VehicleMainData.vehicle[i].img[0]->w,VehicleMainData.vehicle[i].img[0]->h,32,0,0,0,0 );
+		if ( data.can_build==BUILD_AIR&&UnitsData.vehicle[i].data.can_drive!=DRIVE_AIR ) continue;
+		else if ( data.can_build==BUILD_BIG&&!UnitsData.vehicle[i].data.build_by_big ) continue;
+		else if ( data.can_build==BUILD_SEA&&UnitsData.vehicle[i].data.can_drive!=DRIVE_SEA ) continue;
+		else if ( data.can_build==BUILD_SMALL&& ( UnitsData.vehicle[i].data.can_drive==DRIVE_AIR||UnitsData.vehicle[i].data.can_drive==DRIVE_SEA||UnitsData.vehicle[i].data.build_by_big||UnitsData.vehicle[i].data.is_human ) ) continue;
+		else if ( data.can_build==BUILD_MAN&&!UnitsData.vehicle[i].data.is_human ) continue;
+		else if ( !data.build_alien&&UnitsData.vehicle[i].data.is_alien ) continue;
+		else if ( data.build_alien&&!UnitsData.vehicle[i].data.is_alien ) continue;
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w/2,UnitsData.vehicle[i].img_org[0]->h/2 );
+		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.vehicle[i].img[0]->w,UnitsData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
-		SDL_BlitSurface ( VehicleMainData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( VehicleMainData.vehicle[i].img_org[0],VehicleMainData.vehicle[i].img[0],VehicleMainData.vehicle[i].img_org[0]->w* newzoom,VehicleMainData.vehicle[i].img_org[0]->h* newzoom );
+		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w* newzoom,UnitsData.vehicle[i].img_org[0]->h* newzoom );
 		n=new sBuildStruct;
 		n->sf=sf;
 		n->id=i;
@@ -5322,7 +5322,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			sBuildStruct *bs;
 			bs=images->BuildStructItems[k];
-			if ( VehicleMainData.vehicle[bs->id].nr==ptr->typ->nr )
+			if ( UnitsData.vehicle[bs->id].nr==ptr->typ->nr )
 			{
 				to_build->AddBuildStruct ( images->BuildStructItems[k] );
 				break;
@@ -5664,7 +5664,7 @@ void cBuilding::ShowBuildMenu ( void )
 				i=0;
 				if ( BuildList->Count )
 				{
-					if ( VehicleMainData.vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
+					if ( UnitsData.vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
 					{
 						while ( BuildList->Count>1 )
 						{
@@ -5690,7 +5690,7 @@ void cBuilding::ShowBuildMenu ( void )
 				{
 					sBuildList *n;
 					n=new sBuildList;
-					n->typ=VehicleMainData.vehicle+to_build->BuildStructItems[i]->id;
+					n->typ=UnitsData.vehicle+to_build->BuildStructItems[i]->id;
 					n->metall_remaining=owner->VehicleData[n->typ->nr].costs;
 					BuildList->AddBuildList ( n );
 				}
@@ -5941,15 +5941,15 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			// Das Bild neu malen:
 			tmp.x=11;tmp.y=13;
-			tmp.w=VehicleMainData.vehicle[ptr->id].info->w;
-			tmp.h=VehicleMainData.vehicle[ptr->id].info->h;
-			SDL_BlitSurface ( VehicleMainData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+			tmp.w=UnitsData.vehicle[ptr->id].info->w;
+			tmp.h=UnitsData.vehicle[ptr->id].info->h;
+			SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
 			{
 				tmp.x+=10;tmp.y+=10;
 				tmp.w-=20;tmp.h-=20;
-				fonts->OutTextBlock ( VehicleMainData.vehicle[ptr->id].text,tmp,buffer );
+				fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 			}
 			// Die Details anzeigen:
 			{
@@ -5959,7 +5959,7 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 				tmp.w=260;
 				tmp.h=176;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
-				tv=new cVehicle ( VehicleMainData.vehicle+ptr->id,game->ActivePlayer );
+				tv=new cVehicle ( UnitsData.vehicle+ptr->id,game->ActivePlayer );
 				tv->ShowBigDetails();
 				delete tv;
 			}
@@ -5985,9 +5985,9 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
@@ -6087,9 +6087,9 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( VehicleMainData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=VehicleMainData.vehicle[ptr->id].data.name[t];str[++t]=0;
+			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;

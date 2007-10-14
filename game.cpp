@@ -1361,9 +1361,9 @@ void cGame::MakeLanding(int x,int y, cPlayer *p, TList *list, bool fixed){
             }
 
             // Gebäude platzieren:
-            game->engine->AddBuilding(x+k,y+i,BuildingMainData.building+BNrOilStore,p,true);
-            game->engine->AddBuilding(x+k,y+i+1,BuildingMainData.building+BNrSmallGen,p,true);
-            game->engine->AddBuilding(x+k+1,y+i,BuildingMainData.building+BNrMine,p,true);
+            game->engine->AddBuilding(x+k,y+i,UnitsData.building+BNrOilStore,p,true);
+            game->engine->AddBuilding(x+k,y+i+1,UnitsData.building+BNrSmallGen,p,true);
+            game->engine->AddBuilding(x+k+1,y+i,UnitsData.building+BNrMine,p,true);
             b=game->map->GO[x+k+(y+i)*game->map->size].top;
             p->base->AddOil(b->SubBase,4);
             break;
@@ -1380,11 +1380,11 @@ void cGame::MakeLanding(int x,int y, cPlayer *p, TList *list, bool fixed){
   w=2;h=2;
   for(i=0;i<list->Count;i++){
 	ptr=list->LandItems[i];
-    v=LandVehicle(x,y,w,h,VehicleMainData.vehicle+ptr->id,p);
+    v=LandVehicle(x,y,w,h,UnitsData.vehicle+ptr->id,p);
     while(!v){
       w+=2;
       h+=2;
-      v=LandVehicle(x,y,w,h,VehicleMainData.vehicle+ptr->id,p);
+      v=LandVehicle(x,y,w,h,UnitsData.vehicle+ptr->id,p);
     }
     if(ptr->cargo&&v){
       v->data.cargo=ptr->cargo;
@@ -2705,8 +2705,8 @@ bool cGame::Save(string name){
     fwrite(&(p->ResearchCount),sizeof(int),1,fp);
     fwrite(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fwrite(p->VehicleData,sizeof(sVehicleData),VehicleMainData.vehicle_anz,fp); // Vehicle-Data
-    fwrite(p->BuildingData,sizeof(sBuildingData),BuildingMainData.building_anz,fp); // Building-Data
+    fwrite(p->VehicleData,sizeof(sVehicleData),UnitsData.vehicle_anz,fp); // Vehicle-Data
+    fwrite(p->BuildingData,sizeof(sBuildingData),UnitsData.building_anz,fp); // Building-Data
 
     fwrite(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
   }
@@ -2805,8 +2805,8 @@ void cGame::Load(string name,int AP,bool MP){
     fread(&(p->ResearchCount),sizeof(int),1,fp);
     fread(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fread(p->VehicleData,sizeof(sVehicleData),VehicleMainData.vehicle_anz,fp); // Vehicle-Data
-    fread(p->BuildingData,sizeof(sBuildingData),BuildingMainData.building_anz,fp); // Building-Data
+    fread(p->VehicleData,sizeof(sVehicleData),UnitsData.vehicle_anz,fp); // Vehicle-Data
+    fread(p->BuildingData,sizeof(sBuildingData),UnitsData.building_anz,fp); // Building-Data
 
     fread(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
 
@@ -2839,7 +2839,7 @@ void cGame::Load(string name,int AP,bool MP){
         }
         fread(&typnr,sizeof(int),1,fp); // Typ-Nr
 
-        engine->AddVehicle(off%map->size,off/map->size,VehicleMainData.vehicle+typnr,p,true);
+        engine->AddVehicle(off%map->size,off/map->size,UnitsData.vehicle+typnr,p,true);
         if(plane){
           v=map->GO[off].plane;
         }else{
@@ -2939,7 +2939,7 @@ void cGame::Load(string name,int AP,bool MP){
           b->PosX=i%map->size;
           b->PosY=i/map->size;
         }else{
-          engine->AddBuilding(i%map->size,i/map->size,BuildingMainData.building+typnr,p,true);
+          engine->AddBuilding(i%map->size,i/map->size,UnitsData.building+typnr,p,true);
 
           if(base){
             b=map->GO[i].base;
@@ -2991,7 +2991,7 @@ void cGame::Load(string name,int AP,bool MP){
             fread(&(t),sizeof(int),1,fp);
             fread(&(bl->metall_remaining),sizeof(int),1,fp);
 
-            bl->typ=VehicleMainData.vehicle+t;
+            bl->typ=UnitsData.vehicle+t;
           }
         }
 
@@ -3551,7 +3551,7 @@ void cGame::TraceBuilding(cBuilding *b,int *y,int x){
   sprintf(str,"dir: %d   menu_active: %d   attacking_mode: %d   base: %d   sub_base: %d",b->dir,b->MenuActive,b->AttackMode,b->base,b->SubBase);
   fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
 
-  sprintf(str,"attacking: %d   BuildingMainData.dirt_typ: %d   BuildingMainData.dirt_value: %d   big_dirt: %d   is_working: %d   transfer: %d",b->Attacking,b->DirtTyp,b->DirtValue,b->BigDirt,b->IsWorking,b->Transfer);
+  sprintf(str,"attacking: %d   UnitsData.dirt_typ: %d   UnitsData.dirt_value: %d   big_dirt: %d   is_working: %d   transfer: %d",b->Attacking,b->DirtTyp,b->DirtValue,b->BigDirt,b->IsWorking,b->Transfer);
   fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
 
   sprintf(str,"metal_prod: %d   oil_prod: %d   gold_prod: %d   max_metal_p: %d   max_oil_p: %d   max_gold_p: %d",b->MetalProd,b->OilProd,b->GoldProd,b->MaxMetalProd,b->MaxOilProd,b->MaxGoldProd);
@@ -3581,7 +3581,7 @@ void cGame::TraceBuilding(cBuilding *b,int *y,int x){
     int i;
     for(i=0;i<b->BuildList->Count;i++){
       bl=b->BuildList->BuildListItems[i];
-      sprintf(str,"  build %d: %d \"%s\"",i,bl->typ->nr,VehicleMainData.vehicle[bl->typ->nr].data.name);
+      sprintf(str,"  build %d: %d \"%s\"",i,bl->typ->nr,UnitsData.vehicle[bl->typ->nr].data.name);
       fonts->OutTextSmall(str,x,*y,ClWhite,buffer);*y+=8;
     }
   }
