@@ -601,11 +601,11 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sGfxODPath = sTmpString;
+		SettingsData.sMapsPath = sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Maps-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sGfxODPath = "maps";
+		SettingsData.sMapsPath = "maps";
 	}
 	//Saves
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", NULL)))
@@ -1397,12 +1397,13 @@ int LoadVehicles(const char* path)
 		UnitsData.vehicle = ( sVehicle* ) realloc ( UnitsData.vehicle,sizeof ( sVehicle ) * (UnitsData.vehicle_anz+1) );
 		memset ( & ( UnitsData.vehicle[UnitsData.vehicle_anz].data ),0,sizeof ( sVehicleData ) );
 
+		// Set default data-values
+		SetDefaultUnitData(UnitsData.vehicle_anz);
 		// Load Data from data.xml
-		if(!LoadVehicleData(UnitsData.vehicle_anz,sVehiclePath.c_str()))
-			continue;
+		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str());
 
 		// laod infantery graphics
-		if(false/*is groundtroup*/)
+		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
 			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
@@ -1506,7 +1507,7 @@ int LoadVehicles(const char* path)
 			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load overlaygraphics if necessary
-		if(false/*has overlay*/)
+		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bHas_Overlay)
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
@@ -1523,7 +1524,7 @@ int LoadVehicles(const char* path)
 		}
 
 		// load buildgraphics if necessary
-		if(false/*can build*/)
+		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic)
 		{
 			// load image
 			sTmpString = sVehiclePath;
@@ -1550,7 +1551,7 @@ int LoadVehicles(const char* path)
 			UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
 		}
 		// load cleargraphics if necessary
-		if(false/*can clear*/)
+		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area)
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
@@ -1611,9 +1612,9 @@ int LoadVehicles(const char* path)
 	return 1;
 }
 
-// LoadVehicleData ////////////////////////////////////////////////////////////////
-// Loades the vehicledata from the data.xml in the vehiclesfolder
-int LoadVehicleData(int vehiclenum, const char *directory)
+// LoadUnitData ////////////////////////////////////////////////////////////////
+// Loades the unitdata from the data.xml in the unitfolder
+void LoadUnitData(int unitnum, const char *directory)
 {
 	char *VehicleDataStructure[] = {
 		// Header
@@ -1647,6 +1648,7 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		"Unit","Production","Is_Produced_by", "Unit_ID", NULL,
 
 		// Weapons
+		"Unit","Weapons","Weapon","Turret_Gfx", NULL,
 		"Unit","Weapons","Weapon","Shot_Trajectory", NULL,
 		"Unit","Weapons","Weapon","Ammo_Type", NULL,
 		"Unit","Weapons","Weapon","Ammo_Quantity", NULL,
@@ -1688,7 +1690,7 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		"Unit","Abilities","Converts_Gold", NULL,
 		"Unit","Abilities","Needs_Energy", NULL,
 		"Unit","Abilities","Needs_Oil", NULL,
-		"Unit","Abilities","Needs_Metall", NULL,
+		"Unit","Abilities","Needs_Metal", NULL,
 		"Unit","Abilities","Needs_Humans", NULL,
 		"Unit","Abilities","Mines_Resources", NULL,
 		"Unit","Abilities","Can_Launch_SRBM", NULL,
@@ -1731,7 +1733,13 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		"Unit","Storage","Capacity_Units_Sea", NULL,
 		"Unit","Storage","Capacity_Units_Ground", NULL,
 		"Unit","Storage","Capacity_Units_Infantry", NULL,
-		"Unit","Storage","Can_Use_Unit_As_Garage","Unit_ID", NULL
+		"Unit","Storage","Can_Use_Unit_As_Garage","Unit_ID", NULL,
+
+		// Grafics
+		"Unit","Graphic","Has_Overlay", NULL,
+		"Unit","Graphic","Animations","Build_Up", NULL,
+		"Unit","Graphic","Animations","Movement", NULL,
+		"Unit","Graphic","Animations","Power_On", NULL
 	};
 	int i, n, arraycount;
 	string sTmpString, sVehicleDataPath, sNodePath;
@@ -1741,14 +1749,14 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 	sVehicleDataPath = directory;
 	sVehicleDataPath += "data.xml";
 	if( !FileExists( sVehicleDataPath.c_str() ) )
-		return 0;
+		return ;
 
 	if ( !VehicleDataXml.LoadFile ( sVehicleDataPath.c_str() ) )
 	{
 		sTmpString = "Can't load data.xml in ";
 		sTmpString += directory;
 		cLog::write(sTmpString.c_str(),LOG_TYPE_ERROR);
-		return 0;
+		return ;
 	}
 	// get array count
 	i = sizeof(VehicleDataStructure);
@@ -1774,110 +1782,330 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 			sNodePath += ";";
 		}
 
-		int iGeneral = 0;
+#define HEADER_NODE (string)"Unit;Header;"
+#define GENERAL_NODE (string)"Unit;General_Info;"
+#define DEFENCE_NODE (string)"Unit;Defence;"
+#define PRODUCTION_NODE (string)"Unit;Production;"
+#define WEAPONS_NODE (string)"Unit;Weapons;Weapon;"
+#define ABILITIES_NODE (string)"Unit;Abilities;"
+#define SCAN_ABILITIES_NODE (string)"Unit;Scan_Abilities;"
+#define MOVEMENT_NODE (string)"Unit;Movement;"
+#define STORAGE_NODE (string)"Unit;Storage;"
+#define GRAFIC_NODE (string)"Unit;Graphic;"
+
 		// is bool?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		{
 			// General
-			if(iGeneral < 3) //we want to know 3 general values so we stop checking for generals after we found all needed 3 values and skip this check for any further nodes found. First comes, first served. Safes runtime since string compare take much time. XML have to be written completly for this to take effect in runtime since missing values will be searched over and over again until last node is found and we use default value.
-			{
-				if(sNodePath.compare("Unit;General_Info;Is_Controllable;") == 0)
-				{
-					UnitsData.vehicle[vehiclenum].data.bIs_Controllable = pExXmlNode->XmlDataToBool(sTmpString);
-					iGeneral++;
-				}
-				else if(sNodePath.compare("Unit;General_Info;Can_Be_Captured;") == 0)
-				{
-					UnitsData.vehicle[vehiclenum].data.bCan_Be_Captured = pExXmlNode->XmlDataToBool(sTmpString);
-					iGeneral++;
-				}
-				else if(sNodePath.compare("Unit;General_Info;Can_Be_Disabled;") == 0)
-				{
-					UnitsData.vehicle[vehiclenum].data.bCan_Be_Disabled = pExXmlNode->XmlDataToBool(sTmpString);
-					iGeneral++;
-				}
-			}
+			if(sNodePath.compare(GENERAL_NODE + "Is_Controllable;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Controllable = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(GENERAL_NODE + "Can_Be_Captured;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Be_Captured = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(GENERAL_NODE + "Can_Be_Disabled;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Be_Disabled = pExXmlNode->XmlDataToBool(sTmpString);
 			// Defence
-			if(sNodePath.compare("Unit;Defence;Is_Target_Land;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Land = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Sea;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Sea = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Air;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Air = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Underwater;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Underwater = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Mine;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Mine = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Building;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Building = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Satellite;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_Satellite = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Defence;Is_Target_WMD;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Target_WMD = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Land;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Land = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Sea;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Sea = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Air;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Air = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Underwater;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Underwater = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Mine;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Mine = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Building;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Building = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Satellite;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_Satellite = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_WMD;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Target_WMD = pExXmlNode->XmlDataToBool(sTmpString);
 			// Abilities
-			else if(sNodePath.compare("Unit;Abilities;Can_Clear_Area;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Clear_Area = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Gets_Experience;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bGets_Experience = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Disable;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Disable = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Capture;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Capture = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Dive;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Dive = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Upgrade;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Upgrade = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Repair;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Repair = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Research;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Research = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Is_Kamikaze;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Kamikaze = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Is_Infrastructure;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Infrastructure = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Place_Mines;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Place_Mines = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare("Unit;Abilities;Can_Launch_SRBM;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Launch_SRBM = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Clear_Area;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Clear_Area = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Gets_Experience;") == 0)
+				UnitsData.vehicle[unitnum].data.bGets_Experience = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Disable;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Disable = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Capture;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Capture = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Dive;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Dive = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Upgrade;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Upgrade = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Repair;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Repair = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Research;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Research = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Is_Kamikaze;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Kamikaze = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Is_Infrastructure;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Infrastructure = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Place_Mines;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Place_Mines = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Launch_SRBM;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Launch_SRBM = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Has_Connector;") == 0)
+				UnitsData.vehicle[unitnum].data.bHas_Connector = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Be_Passed;") == 0)
+				UnitsData.vehicle[unitnum].data.bCan_Be_Passed = pExXmlNode->XmlDataToBool(sTmpString);
 			// Storage
-			else if(sNodePath.compare("Unit;Storage;Is_Garage;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Garage = pExXmlNode->XmlDataToBool(sTmpString);
-
+			else if(sNodePath.compare(STORAGE_NODE + "Is_Garage;") == 0)
+				UnitsData.vehicle[unitnum].data.bIs_Garage = pExXmlNode->XmlDataToBool(sTmpString);
+			// Grafic
+			else if(sNodePath.compare(GRAFIC_NODE + "Has_Overlay;") == 0)
+				UnitsData.vehicle[unitnum].data.bHas_Overlay = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Build_Up;") == 0)
+				UnitsData.vehicle[unitnum].data.bBuild_Up_Grafic = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Movement;") == 0)
+				UnitsData.vehicle[unitnum].data.bAnimation_Movement = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Power_On;") == 0)
+				UnitsData.vehicle[unitnum].data.bPower_On_Grafic = pExXmlNode->XmlDataToBool(sTmpString);
 			n++;
 			continue;
 		}
-			// is int?
+		// is int?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		{
-			// TODO: Should save the Data here....
+			// General
+			if(sNodePath.compare(GENERAL_NODE + "Size_Length;") == 0)
+				UnitsData.vehicle[unitnum].data.iSize_Length = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(GENERAL_NODE + "Size_Width;") == 0)
+				UnitsData.vehicle[unitnum].data.iSize_Width = atoi(sTmpString.c_str());
+			// Defence
+			else if(sNodePath.compare(DEFENCE_NODE + "Armor;") == 0)
+				UnitsData.vehicle[unitnum].data.iArmor = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(DEFENCE_NODE + "Hitpoints;") == 0)
+				UnitsData.vehicle[unitnum].data.iHitpoints = atoi(sTmpString.c_str());
+			// Production
+			else if(sNodePath.compare(PRODUCTION_NODE + "Built_Costs;") == 0)
+				UnitsData.vehicle[unitnum].data.iBuilt_Costs = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(PRODUCTION_NODE + "Built_Costs_Max;") == 0)
+				UnitsData.vehicle[unitnum].data.iBuilt_Costs_Max = atoi(sTmpString.c_str());
+			// Weapons
+			else if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
+				UnitsData.vehicle[unitnum].data.iSequence = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Quantity;") == 0)
+				UnitsData.vehicle[unitnum].data.iAmmo_Quantity = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Land_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Sea_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Air;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Air_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Mine;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Mine_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Submarine;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Submarine_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Infantry;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Infantry_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_WMD;Damage;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_WMD_Damage = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Shots;") == 0)
+				UnitsData.vehicle[unitnum].data.iShots = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Movement_Allowed;") == 0)
+				UnitsData.vehicle[unitnum].data.iMovement_Allowed = atoi(sTmpString.c_str());
+			// Abilities
+			else if(sNodePath.compare(ABILITIES_NODE + "Converts_Gold;") == 0)
+				UnitsData.vehicle[unitnum].data.iConverts_Gold = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Energy;") == 0)
+				UnitsData.vehicle[unitnum].data.iNeeds_Energy = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Oil;") == 0)
+				UnitsData.vehicle[unitnum].data.iNeeds_Oil = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Metal;") == 0)
+				UnitsData.vehicle[unitnum].data.iNeeds_Metal = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Humans;") == 0)
+				UnitsData.vehicle[unitnum].data.iNeeds_Humans = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Mines_Resources;") == 0)
+				UnitsData.vehicle[unitnum].data.iMines_Resources = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Strength;") == 0)
+				UnitsData.vehicle[unitnum].data.iEnergy_Shield_Strength = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Size;") == 0)
+				UnitsData.vehicle[unitnum].data.iEnergy_Shield_Size = atoi(sTmpString.c_str());
+			// Movement
+			else if(sNodePath.compare(MOVEMENT_NODE + "Movement_Sum;") == 0)
+				UnitsData.vehicle[unitnum].data.iMovement_Sum = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Air;") == 0)
+				UnitsData.vehicle[unitnum].data.fCosts_Air = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Sea;") == 0)
+				UnitsData.vehicle[unitnum].data.fCosts_Sea = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Submarine;") == 0)
+				UnitsData.vehicle[unitnum].data.fCosts_Submarine = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Ground;") == 0)
+				UnitsData.vehicle[unitnum].data.fCosts_Ground = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Coast;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Coast = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Wood;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Wood = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Road;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Road = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Bridge;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Bridge = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Platform;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Platform = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Monorail;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Monorail = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Wreck;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Wreck = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Mountains;") == 0)
+				UnitsData.vehicle[unitnum].data.fFactor_Mountains = (float) pExXmlNode->XmlDataToDouble(sTmpString);
+			// Storage
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Metal;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Metal = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Oil;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Oil = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Gold;") == 0)
+				UnitsData.vehicle[unitnum].data.iConverts_Gold = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Energy;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Energy = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Air;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Units_Air = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Sea;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Units_Sea = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Ground;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Units_Ground = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Infantry;") == 0)
+				UnitsData.vehicle[unitnum].data.iCapacity_Units_Infantry = atoi(sTmpString.c_str());
 			n++;
 			continue;
 		}
 		// is text?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		{
-			// TODO: Should save the Data here....
+			// Header
+			if(sNodePath.compare(HEADER_NODE + "Name;") == 0)
+				UnitsData.vehicle[unitnum].data.sName = sTmpString.c_str();
+			else if(sNodePath.compare(HEADER_NODE + "Name;") == 0)
+				UnitsData.vehicle[unitnum].data.sDescribtion = sTmpString.c_str();
+			// Weapon
+			else if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
+				UnitsData.vehicle[unitnum].data.sTurret_Gfx = sTmpString.c_str();
 			n++;
 			continue;
 		}
 		// is id?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
 		{
-			// TODO: Should save the Data here....
+			// Header
+			if(sNodePath.compare(HEADER_NODE + "Unit_ID;") == 0)
+				UnitsData.vehicle[unitnum].data.iID = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+			// Production
+			else if(sNodePath.compare(HEADER_NODE + "Is_Produced_by;Unit_ID") == 0)
+				UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+			// Storage
+			else if(sNodePath.compare(HEADER_NODE + "Can_Use_Unit_As_Garage;Unit_ID;") == 0)
+				UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
 			n++;
 			continue;
 		}
 		// is fd?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Fd"))
 		{
-			// TODO: Should save the Data here....
+			// Weapons
+			if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Air_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Sea_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Air;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Air_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Mine;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Mine_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Submarine;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Submarine_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Infantry;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_Infantry_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_WMD;Range;") == 0)
+				UnitsData.vehicle[unitnum].data.iTarget_WMD_Range = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(WEAPONS_NODE + "Destination_Area") == 0)
+				UnitsData.vehicle[unitnum].data.iDestination_Area = atoi(sTmpString.c_str());
+			// Abilities
+			else if(sNodePath.compare(ABILITIES_NODE + "Makes_Tracks;") == 0)
+				UnitsData.vehicle[unitnum].data.iMakes_Tracks = atoi(sTmpString.c_str());
+			// Scan-Abilities
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Sight;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Sight = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Air;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Air = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Ground;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Ground = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Sea;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Sea = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Submarine;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Submarine = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Mine;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Mine = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Infantry;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Infantry = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Resources;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Resources = atoi(sTmpString.c_str());
+			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Jammer;") == 0)
+				UnitsData.vehicle[unitnum].data.iScan_Range_Jammer = atoi(sTmpString.c_str());
 			n++;
 			continue;
 		}
 		// is const?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Const"))
 		{
-			// TODO: Should save the Data here....
+			// Weapons
+			if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
+			{
+				if(sTmpString.compare("straight") == 0)
+					UnitsData.vehicle[unitnum].data.iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
+				else if(sTmpString.compare("ballistic") == 0)
+					UnitsData.vehicle[unitnum].data.iShot_Trajectory = SHOT_TRAJECTURY_BALISTIC;
+				else if(sTmpString.compare("controlled") == 0)
+					UnitsData.vehicle[unitnum].data.iShot_Trajectory = SHOT_TRAJECTURY_CONTROLED;
+			}
+			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Type;") == 0)
+			{
+				if(sTmpString.compare("Standard") == 0)
+					UnitsData.vehicle[unitnum].data.iAmmo_Type = AMMO_TYPE_STANDARD;
+				else if(sTmpString.compare("Energy") == 0)
+					UnitsData.vehicle[unitnum].data.iAmmo_Type = AMMO_TYPE_ENERGY;
+			}
+			else if(sNodePath.compare(WEAPONS_NODE + "Destination_Type;") == 0)
+			{
+				if(sTmpString.compare("Point") == 0)
+					UnitsData.vehicle[unitnum].data.iDestination_Type = DESTINATION_TYPE_POINT;
+				else if(sTmpString.compare("MIRV") == 0)
+					UnitsData.vehicle[unitnum].data.iDestination_Type = DESTINATION_TYPE_MIRV;
+				else if(sTmpString.compare("Scatter") == 0)
+					UnitsData.vehicle[unitnum].data.iDestination_Type = DESTINATION_TYPE_SCATTER;
+			}
+			// Abilities
+			else if(sNodePath.compare(ABILITIES_NODE + "Landing_Type;") == 0)
+			{
+				if(sTmpString.compare("OnlyGarage") == 0)
+					UnitsData.vehicle[unitnum].data.iLanding_Type = LANDING_TYPE_ONLY_GARAGE;
+				else if(sTmpString.compare("GarageAndPlatform") == 0)
+					UnitsData.vehicle[unitnum].data.iLanding_Type = LANDING_TYPE_GARAGE_AND_PLATFORM;
+				else if(sTmpString.compare("Everywhere") == 0)
+					UnitsData.vehicle[unitnum].data.iLanding_Type = LANDING_TYPE_EVERYWHERE;
+			}
+			else if(sNodePath.compare(ABILITIES_NODE + "Self_Repair_Type;") == 0)
+			{
+				if(sTmpString.compare("None") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = SELF_REPAIR_TYPE_NONE;
+				else if(sTmpString.compare("Automatic") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = SELF_REPAIR_TYPE_AUTOMATIC;
+				else if(sTmpString.compare("Normal") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = SELF_REPAIR_TYPE_NORMAL;
+			}
+			else if(sNodePath.compare(ABILITIES_NODE + "Changes_Terrain;") == 0)
+			{
+				if(sTmpString.compare("None") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_NONE;
+				else if(sTmpString.compare("Street") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_STREET;
+				else if(sTmpString.compare("Plattform") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_PLATTFORM;
+				else if(sTmpString.compare("Bridge") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_BRIDGE;
+				else if(sTmpString.compare("Mine") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_MINE;
+				else if(sTmpString.compare("Connector") == 0)
+					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_CONNECTOR;
+			}
 			n++;
 			continue;
 		}
@@ -1888,5 +2116,139 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 		cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		n++;
 	}
-	return 1;
+	return ;
+}
+
+// SetDefaultUnitData /////////////////////////////////////////////////////////
+// Sets all unitdata to default values
+void SetDefaultUnitData(int unitnum)
+{
+	// Main info
+	UnitsData.vehicle[unitnum].data.iID = -1;
+	UnitsData.vehicle[unitnum].data.sName = "unknown";
+	UnitsData.vehicle[unitnum].data.sDescribtion = "Default";
+
+	// General info
+	UnitsData.vehicle[unitnum].data.bIs_Controllable = true;
+	UnitsData.vehicle[unitnum].data.bCan_Be_Captured = true;
+	UnitsData.vehicle[unitnum].data.bCan_Be_Disabled = true;
+	UnitsData.vehicle[unitnum].data.iSize_Length = 1;
+	UnitsData.vehicle[unitnum].data.iSize_Width = 1;
+
+	// Defence
+	UnitsData.vehicle[unitnum].data.bIs_Target_Land = true;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Sea = false;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Air = false;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Underwater = false;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Mine = true;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Building = true;
+	UnitsData.vehicle[unitnum].data.bIs_Target_Satellite = false;
+	UnitsData.vehicle[unitnum].data.bIs_Target_WMD = false;
+	UnitsData.vehicle[unitnum].data.iArmor = 1;
+	UnitsData.vehicle[unitnum].data.iHitpoints = 1;
+
+	// Production
+	UnitsData.vehicle[unitnum].data.iBuilt_Costs = 1;
+	UnitsData.vehicle[unitnum].data.iBuilt_Costs_Max = 1;
+	UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID = -1;
+
+	// Weapons
+	UnitsData.vehicle[unitnum].data.sTurret_Gfx = "None";
+	UnitsData.vehicle[unitnum].data.iSequence = 0;
+	UnitsData.vehicle[unitnum].data.iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
+	UnitsData.vehicle[unitnum].data.iAmmo_Type = AMMO_TYPE_STANDARD;
+	UnitsData.vehicle[unitnum].data.iAmmo_Quantity = 1;
+
+	UnitsData.vehicle[unitnum].data.iTarget_Land_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Land_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Sea_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Sea_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Air_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Air_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Mine_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Mine_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Submarine_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Submarine_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Infantry_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_Infantry_Range = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_WMD_Damage = 1;
+	UnitsData.vehicle[unitnum].data.iTarget_WMD_Range = 1;
+
+	UnitsData.vehicle[unitnum].data.iShots = 1;
+	UnitsData.vehicle[unitnum].data.iDestination_Area = 1;
+	UnitsData.vehicle[unitnum].data.iDestination_Type = DESTINATION_TYPE_POINT;
+	UnitsData.vehicle[unitnum].data.iMovement_Allowed = 0;
+
+	// Abilities
+	UnitsData.vehicle[unitnum].data.bCan_Clear_Area = false;
+	UnitsData.vehicle[unitnum].data.bGets_Experience = false;
+	UnitsData.vehicle[unitnum].data.bCan_Disable = false;
+	UnitsData.vehicle[unitnum].data.bCan_Capture = false;
+	UnitsData.vehicle[unitnum].data.bCan_Dive = false;
+	UnitsData.vehicle[unitnum].data.iLanding_Type = LANDING_TYPE_GARAGE_AND_PLATFORM;
+	UnitsData.vehicle[unitnum].data.bCan_Upgrade = false;
+	UnitsData.vehicle[unitnum].data.bCan_Repair = false;
+	UnitsData.vehicle[unitnum].data.bCan_Research = false;
+	UnitsData.vehicle[unitnum].data.bIs_Kamikaze = false;
+	UnitsData.vehicle[unitnum].data.bIs_Infrastructure = false;
+	UnitsData.vehicle[unitnum].data.bCan_Place_Mines = false;
+	UnitsData.vehicle[unitnum].data.iMakes_Tracks = 12;
+	UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = SELF_REPAIR_TYPE_NONE;
+	UnitsData.vehicle[unitnum].data.iConverts_Gold = 0;
+	UnitsData.vehicle[unitnum].data.iNeeds_Energy = 0;
+	UnitsData.vehicle[unitnum].data.iNeeds_Oil = 0;
+	UnitsData.vehicle[unitnum].data.iNeeds_Metal = 0;
+	UnitsData.vehicle[unitnum].data.iNeeds_Humans = 0;
+	UnitsData.vehicle[unitnum].data.iMines_Resources = 0;
+	UnitsData.vehicle[unitnum].data.bCan_Launch_SRBM = false;
+	UnitsData.vehicle[unitnum].data.iEnergy_Shield_Strength = 0;
+	UnitsData.vehicle[unitnum].data.iEnergy_Shield_Size = 0;
+	UnitsData.vehicle[unitnum].data.bHas_Connector = false;
+	UnitsData.vehicle[unitnum].data.bCan_Be_Passed = false;
+	UnitsData.vehicle[unitnum].data.iChanges_Terrain = CHANGES_TERRAIN_TYPE_NONE;
+
+	// Scan_Abilities
+	UnitsData.vehicle[unitnum].data.iScan_Range_Sight = 1;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Air = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Ground = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Sea = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Submarine = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Mine = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Infantry = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Resources = 0;
+	UnitsData.vehicle[unitnum].data.iScan_Range_Jammer = 0;
+
+	// Movement
+	UnitsData.vehicle[unitnum].data.iMovement_Sum = 1;
+	UnitsData.vehicle[unitnum].data.fCosts_Air = 0;
+	UnitsData.vehicle[unitnum].data.fCosts_Sea = 0;
+	UnitsData.vehicle[unitnum].data.fCosts_Submarine = 0;
+	UnitsData.vehicle[unitnum].data.fCosts_Ground = 1;
+	UnitsData.vehicle[unitnum].data.fFactor_Coast = 1.5;
+	UnitsData.vehicle[unitnum].data.fFactor_Wood = 1.5;
+	UnitsData.vehicle[unitnum].data.fFactor_Road = 0.5;
+	UnitsData.vehicle[unitnum].data.fFactor_Bridge = 1;
+	UnitsData.vehicle[unitnum].data.fFactor_Platform = 1;
+	UnitsData.vehicle[unitnum].data.fFactor_Monorail = 0;
+	UnitsData.vehicle[unitnum].data.fFactor_Wreck = 1;
+	UnitsData.vehicle[unitnum].data.fFactor_Mountains = 0;
+
+	// Storage
+	UnitsData.vehicle[unitnum].data.bIs_Garage = false;
+	UnitsData.vehicle[unitnum].data.iCapacity_Metal = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Oil = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Gold = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Energy = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Units_Air = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Units_Sea = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Units_Ground = 0;
+	UnitsData.vehicle[unitnum].data.iCapacity_Units_Infantry = 0;
+	UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID = -1;
+
+	// Grafics
+	UnitsData.vehicle[unitnum].data.bHas_Overlay = false;
+	UnitsData.vehicle[unitnum].data.bBuild_Up_Grafic = false;
+	UnitsData.vehicle[unitnum].data.bAnimation_Movement = false;
+	UnitsData.vehicle[unitnum].data.bPower_On_Grafic = false;
+	return ;
 }
