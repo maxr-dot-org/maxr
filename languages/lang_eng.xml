@@ -43,12 +43,48 @@
 		</Initialisation>
 		<Menu_Main>
 			<Title_Main_Menu ENG="Main Menu"/>
-			<Button_Single_Player ENG="Single Player"/>
-			<Button_Multi_Player ENG="Multi Player"/>
-			<Button_Map_Editor ENG="Map-Editor (*)"/>
+			<Button_Single_Player ENG="Singleplayer"/>
+			<Button_Multi_Player ENG="Multiplayer"/>
+			<Button_Map_Editor ENG="Mapeditor (*)"/>
 			<Button_Credits ENG="Credits (*)"/>
 			<Button_Exit ENG="Exit"/>
+			<Button_Back ENG="Back"/>
+			<Button_OK ENG="OK"/>
+			<Button_TCPIP_Host ENG="TCP/IP Host"/>
+			<Button_TCPIP_Client ENG="TCP/IP Client"/>
+			<Button_HotSeat_New ENG="New Hot Seat"/>
+			<Button_HotSeat_Load ENG="Load Hot Seat"/>
+			<Button_Game_New ENG="New Game"/>
+			<Button_Game_Load ENG="Load Game"/>
+			<Button_Game_Options ENG="Game Options"/>
+			<Button_Training ENG="Training"/>
 		</Menu_Main>
+		<Game_Options>
+			<Title_Credits ENG="Credits"/>
+			<Title_Gold ENG="Gold:"/>
+			<Title_Metal ENG="Metal:"/>
+			<Title_Oil ENG="Oil:"/>
+			<Title_BridgeHead ENG="Bridgehead"/>
+			<Title_Alien_Tech ENG="Alientechnology"/>
+			<Title_Resource ENG="Resources"/>
+			<Title_Resource_Density ENG="Resources Density"/>
+			<Title_Game_Type ENG="Game Type"/>
+			<Option_Lowest ENG="lowest"/>
+			<Option_Lower ENG="very low"/>
+			<Option_Low ENG="low"/>
+			<Option_Normal ENG="normal"/>
+			<Option_Much ENG="much"/>
+			<Option_More ENG="very much"/>
+			<Option_Most ENG="most"/>
+			<Option_Thick ENG="thick"/>
+			<Option_Thin ENG="thin"/>
+			<Option_On ENG="on"/>
+			<Option_Off ENG="off"/>
+			<Option_Definite ENG="definite"/>
+			<Option_Mobile ENG="mobile"/>
+			<Option_Type_Turns ENG="turns"/>
+			<Option_Type_Simu ENG="simultaneous"/>
+		</Game_Options>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>

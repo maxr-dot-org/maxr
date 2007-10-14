@@ -43,12 +43,48 @@
 		</Initialisation>
 		<Menu_Main>
 			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
-			<Button_Single_Player ENG="Single Player" localized="Einzelspieler"/>
-			<Button_Multi_Player ENG="Multi Player" localized="Mehrspieler"/>
-			<Button_Map_Editor ENG="Map-Editor (*)" localized="Karten Editor (*)"/>
+			<Button_Single_Player ENG="Singleplayer" localized="Einzelspieler"/>
+			<Button_Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
+			<Button_Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
 			<Button_Credits ENG="Credits (*)" localized="Credits (*)"/>
 			<Button_Exit ENG="Exit" localized="Beenden"/>
+			<Button_Back ENG="Back" localized="Zurück"/>
+			<Button_OK ENG="OK" localized="Weiter"/>
+			<Button_TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Button_TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
+			<Button_HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
+			<Button_HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
+			<Button_Game_New ENG="New Game" localized="Neues Spiel"/>
+			<Button_Game_Load ENG="Load Game" localized="Spiel laden"/>
+			<Button_Game_Options ENG="Game Options" localized="Spieloptionen"/>
+			<Button_Training ENG="Training" localized="Training"/>
 		</Menu_Main>
+		<Game_Options>
+			<Title_Credits ENG="Credits" localized="Geld"/>
+			<Title_Gold ENG="Gold:" localized="Gold"/>
+			<Title_Metal ENG="Metal:" localized="Metall"/>
+			<Title_Oil ENG="Oil:" localized="Öl"/>
+			<Title_BridgeHead ENG="Bridgehead" localized="Brückenkopf"/>
+			<Title_Alien_Tech ENG="Alientechnology" localized="Alientechnologie"/>
+			<Title_Resource ENG="Resources" localized="Ressourcen"/>
+			<Title_Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
+			<Title_Game_Type ENG="Game Type" localized="Spielart"/>
+			<Option_Lowest ENG="lowest" localized="kaum"/>
+			<Option_Lower ENG="very low" localized="sehr wenig"/>
+			<Option_Low ENG="low" localized="wenige"/>
+			<Option_Normal ENG="normal" localized="normal"/>
+			<Option_Much ENG="much" localized="viele"/>
+			<Option_More ENG="very much" localized="sehr viel"/>
+			<Option_Most ENG="most" localized="extrem"/>
+			<Option_Thick ENG="thick" localized="dicht"/>
+			<Option_Thin ENG="thin" localized="dünn"/>
+			<Option_On ENG="on" localized="Ein"/>
+			<Option_Off ENG="off" localized="Aus"/>
+			<Option_Definite ENG="definite" localized="definite"/>
+			<Option_Mobile ENG="mobile" localized="mobil"/>
+			<Option_Type_Turns ENG="turns" localized="Rundenbasierend"/>
+			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
+		</Game_Options>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
