@@ -125,7 +125,7 @@ int cFonts::Charset ( char c )
 }
 
 // Gibt einen Text mit dem normalen Font aus:
-void cFonts::OutText ( char *str,int x,int y,SDL_Surface *sf )
+void cFonts::OutText (const char *str,int x,int y,SDL_Surface *sf )
 {
 	SDL_Rect dest;
 	int i=0,index;
@@ -177,7 +177,7 @@ int cFonts::CharsetBig ( char c )
 }
 
 // Gibt einen Text mit dem Big Font aus:
-void cFonts::OutTextBig ( char *str,int x,int y,SDL_Surface *sf )
+void cFonts::OutTextBig (char *str,int x,int y,SDL_Surface *sf )
 {
 	SDL_Rect dest;
 	int i=0,index;
@@ -202,7 +202,7 @@ void cFonts::OutTextBig ( char *str,int x,int y,SDL_Surface *sf )
 	}
 }
 
-void cFonts::OutTextBigCenter ( char *str,int x,int y,SDL_Surface *sf )
+void cFonts::OutTextBigCenter (const char *str,int x,int y,SDL_Surface *sf )
 {
 	SDL_Rect dest,tmp;
 	int i=0,index,width=0;
@@ -326,7 +326,7 @@ int cFonts::CharsetSmall ( char c )
 }
 
 // Gibt einen Text mit dem Small Font aus:
-void cFonts::OutTextSmall ( char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf )
+void cFonts::OutTextSmall (const char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf )
 {
 	SDL_Rect dest;
 	int i=0,index;
@@ -374,7 +374,7 @@ void cFonts::OutTextSmall ( char *str,int x,int y,eFontSmallColor color,SDL_Surf
 }
 
 // Gibt den Text mit dem normalen Font zentriert aus:
-void cFonts::OutTextCenter ( char *str,int x,int y,SDL_Surface *sf )
+void cFonts::OutTextCenter (const char *str,int x,int y,SDL_Surface *sf )
 {
 	SDL_Rect dest,tmp;
 	int i=0,index,width=0;
@@ -413,7 +413,7 @@ void cFonts::OutTextCenter ( char *str,int x,int y,SDL_Surface *sf )
 }
 
 // Ermittelt die Text-Länge:
-int cFonts::GetTextLen ( char *str )
+int cFonts::GetTextLen (const char *str )
 {
 	int i=0,index,width=0;
 	while ( str[i]!=0 )

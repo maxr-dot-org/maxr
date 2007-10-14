@@ -18,15 +18,15 @@ public:
   SDL_Rect *chars,*chars_small,*chars_big; // Rects der Zeichen.
 
   int Charset(char c);
-  void OutText(char *str,int x,int y,SDL_Surface *sf);
+  void OutText(const char *str,int x,int y,SDL_Surface *sf);
   int CharsetBig(char c);
   void OutTextBig(char *str,int x,int y,SDL_Surface *sf);
-  void OutTextBigCenter(char *str,int x,int y,SDL_Surface *sf);
+  void OutTextBigCenter(const char *str,int x,int y,SDL_Surface *sf);
   void OutTextBigCenterGold(char *str,int x,int y,SDL_Surface *sf);  
   int CharsetSmall(char c);
-  void OutTextSmall(char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf);
-  void OutTextCenter(char *str,int x,int y,SDL_Surface *sf);
-  int GetTextLen(char *str);
+  void OutTextSmall(const char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf);
+  void OutTextCenter(const char *str,int x,int y,SDL_Surface *sf);
+  int GetTextLen(const char *str);
   int GetTextLenSmall(char *str);
   void OutTextSmallCenter(char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf);
   void OutTextBlock(char *str,SDL_Rect block,SDL_Surface *sf);  

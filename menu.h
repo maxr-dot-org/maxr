@@ -60,7 +60,7 @@ struct sClientSettings{
 
 // Prototypen ////////////////////////////////////////////////////////////////
 void RunMainMenu(void);
-void PlaceButton(char *str,int x,int y,bool pressed);
+void PlaceButton(const char *str,int x,int y,bool pressed);
 void ShowInfo(void);
 void EnterMenu(bool limited=false);
 void ExitMenu(void);
@@ -69,7 +69,7 @@ string RunPlanetSelect(void);
 void ShowPlanets(TList *files,int offset,int selected);
 sOptions RunOptionsMenu(sOptions *init);
 sPlayer RunPlayerSelect(void);
-void PlaceSelectText(char *str,int x,int y,bool checked,bool center=true);
+void PlaceSelectText(const char *str,int x,int y,bool checked,bool center=true);
 void RunHangar(cPlayer *player, TList *LandingList);
 void SelectLanding(int *x,int *y,cMap *map);
 int GetKachelBig(int x,int y);
