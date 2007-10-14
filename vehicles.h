@@ -24,8 +24,8 @@ struct sVehicleData{
 	bool bIs_Controllable;
 	bool bCan_Be_Captured;
 	bool bCan_Be_Disabled;
-	bool bSize_Length;
-	bool bSize_Width;
+	int iSize_Length;
+	int iSize_Width;
 
 	// Defence
 	bool bIs_Target_Land;
@@ -45,9 +45,15 @@ struct sVehicleData{
 	int iIs_Produced_by_ID;
 
 	// Weapons
+	string sTurret_Gfx;
+	int iSequence;
 	int iShot_Trajectory;
-	#define STRAIGHT  0
+#define SHOT_TRAJECTURY_STRAIGHT 0
+#define SHOT_TRAJECTURY_BALISTIC 1
+#define SHOT_TRAJECTURY_CONTROLED 2
 	int iAmmo_Type;
+#define AMMO_TYPE_STANDARD 0
+#define AMMO_TYPE_ENERGY 1
 	int iAmmo_Quantity;
 
 	int iTarget_Land_Damage;
@@ -68,9 +74,9 @@ struct sVehicleData{
 	int iShots;
 	int iDestination_Area;
 	int iDestination_Type;
-	#define POINT  0
-	#define MIRV  0
-	#define SCATTER  0
+#define DESTINATION_TYPE_POINT 0
+#define DESTINATION_TYPE_MIRV 1
+#define DESTINATION_TYPE_SCATTER 2
 	int iMovement_Allowed;
 
 	// Abilities
@@ -80,29 +86,39 @@ struct sVehicleData{
 	bool bCan_Capture;
 	bool bCan_Dive;
 	int iLanding_Type;
-	#define ONLY_GARAGE  0
-	#define GARAGE_AND_PLATFORM  1
-	#define EVERYWHERE  2
+#define LANDING_TYPE_ONLY_GARAGE 0
+#define LANDING_TYPE_GARAGE_AND_PLATFORM 1
+#define LANDING_TYPE_EVERYWHERE 2
 	bool bCan_Upgrade;
 	bool bCan_Repair;
 	bool bCan_Research;
 	bool bIs_Kamikaze;
 	bool bIs_Infrastructure;
 	bool bCan_Place_Mines;
-	bool bMakes_Tracks;
+	int iMakes_Tracks;
 	int iSelf_Repair_Type;
-	#define NONE  0
-	#define AUTOMATIC  1
-	#define NORMAL  2
-	bool bConverts_Gold;
-	bool bNeeds_Energy;
-	bool bNeeds_Oil;
-	bool bNeeds_Metall;
-	bool bNeeds_Humans;
+#define SELF_REPAIR_TYPE_NONE 0
+#define SELF_REPAIR_TYPE_AUTOMATIC 1
+#define SELF_REPAIR_TYPE_NORMAL 2
+	int iConverts_Gold;
+	int iNeeds_Energy;
+	int iNeeds_Oil;
+	int iNeeds_Metal;
+	int iNeeds_Humans;
 	int iMines_Resources;
 	bool bCan_Launch_SRBM;
 	int iEnergy_Shield_Strength;
 	int iEnergy_Shield_Size;
+	bool bHas_Connector;
+	bool bCan_Be_Passed;
+	int iChanges_Terrain;
+#define CHANGES_TERRAIN_TYPE_NONE 0
+#define CHANGES_TERRAIN_TYPE_STREET 0
+#define CHANGES_TERRAIN_TYPE_PLATTFORM 0
+#define CHANGES_TERRAIN_TYPE_BRIDGE 0
+#define CHANGES_TERRAIN_TYPE_MINE 0
+#define CHANGES_TERRAIN_TYPE_CONNECTOR 0
+
 
 	// Scan_Abilities
 	int iScan_Range_Sight;
@@ -142,6 +158,11 @@ struct sVehicleData{
 	int iCapacity_Units_Infantry;
 	int iCan_Use_Unit_As_Garage_ID;
 
+	// Grafics
+	bool bHas_Overlay;
+	bool bBuild_Up_Grafic;
+	bool bAnimation_Movement;
+	bool bPower_On_Grafic;
 
 	//////
 	// Old-Stuff!
