@@ -1798,7 +1798,7 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 				}
 			}
 			// Defence
-			else if(sNodePath.compare("Unit;Defence;Is_Target_Land;") == 0)
+			if(sNodePath.compare("Unit;Defence;Is_Target_Land;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Land = pExXmlNode->XmlDataToBool(sTmpString);
 			else if(sNodePath.compare("Unit;Defence;Is_Target_Sea;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Sea = pExXmlNode->XmlDataToBool(sTmpString);
