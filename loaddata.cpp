@@ -1774,60 +1774,73 @@ int LoadVehicleData(int vehiclenum, const char *directory)
 			sNodePath += ";";
 		}
 
+		int iGeneral = 0;
 		// is bool?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		{
 			// General
-			if(sNodePath.compare("Unit;General_Info;Is_Controllable;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bIs_Controllable = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;General_Info;Can_Be_Captured;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Be_Captured = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;General_Info;Can_Be_Disabled;") == 0)
-				UnitsData.vehicle[vehiclenum].data.bCan_Be_Disabled = pExXmlNode->XmlDataToBool(sTmpString);
+			if(iGeneral < 3) //we want to know 3 general values so we stop checking for generals after we found all needed 3 values and skip this check for any further nodes found. First comes, first served. Safes runtime since string compare take much time. XML have to be written completly for this to take effect in runtime since missing values will be searched over and over again until last node is found and we use default value.
+			{
+				if(sNodePath.compare("Unit;General_Info;Is_Controllable;") == 0)
+				{
+					UnitsData.vehicle[vehiclenum].data.bIs_Controllable = pExXmlNode->XmlDataToBool(sTmpString);
+					iGeneral++;
+				}
+				else if(sNodePath.compare("Unit;General_Info;Can_Be_Captured;") == 0)
+				{
+					UnitsData.vehicle[vehiclenum].data.bCan_Be_Captured = pExXmlNode->XmlDataToBool(sTmpString);
+					iGeneral++;
+				}
+				else if(sNodePath.compare("Unit;General_Info;Can_Be_Disabled;") == 0)
+				{
+					UnitsData.vehicle[vehiclenum].data.bCan_Be_Disabled = pExXmlNode->XmlDataToBool(sTmpString);
+					iGeneral++;
+				}
+			}
 			// Defence
-			if(sNodePath.compare("Unit;Defence;Is_Target_Land;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Land;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Land = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Sea;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Sea;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Sea = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Air;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Air;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Air = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Underwater;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Underwater;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Underwater = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Mine;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Mine;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Mine = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Building;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Building;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Building = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_Satellite;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_Satellite;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_Satellite = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Defence;Is_Target_WMD;") == 0)
+			else if(sNodePath.compare("Unit;Defence;Is_Target_WMD;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Target_WMD = pExXmlNode->XmlDataToBool(sTmpString);
 			// Abilities
-			if(sNodePath.compare("Unit;Abilities;Can_Clear_Area;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Clear_Area;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Clear_Area = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Gets_Experience;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Gets_Experience;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bGets_Experience = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Disable;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Disable;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Disable = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Capture;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Capture;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Capture = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Dive;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Dive;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Dive = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Upgrade;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Upgrade;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Upgrade = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Repair;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Repair;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Repair = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Research;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Research;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Research = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Is_Kamikaze;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Is_Kamikaze;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Kamikaze = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Is_Infrastructure;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Is_Infrastructure;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Infrastructure = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Place_Mines;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Place_Mines;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Place_Mines = pExXmlNode->XmlDataToBool(sTmpString);
-			if(sNodePath.compare("Unit;Abilities;Can_Launch_SRBM;") == 0)
+			else if(sNodePath.compare("Unit;Abilities;Can_Launch_SRBM;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bCan_Launch_SRBM = pExXmlNode->XmlDataToBool(sTmpString);
 			// Storage
-			if(sNodePath.compare("Unit;Storage;Is_Garage;") == 0)
+			else if(sNodePath.compare("Unit;Storage;Is_Garage;") == 0)
 				UnitsData.vehicle[vehiclenum].data.bIs_Garage = pExXmlNode->XmlDataToBool(sTmpString);
 
 			n++;
