@@ -46,25 +46,32 @@ void EnterMenu ( bool limited )
 // Zeigt ein Infobild an:
 void ShowInfo ( void )
 {
-	SDL_Rect dest;
-	static int LastInfoNr;
-	int nr;
-	nr=BuildingMainData.building_anz + VehicleMainData.vehicle_anz;
-	nr=random ( nr-1,0 );
-	if ( nr == LastInfoNr ) nr++;
-	LastInfoNr = nr;
-	dest.x=16;
-	dest.y=182;
-	dest.w=320;
-	dest.h=240;
-	if ( nr>=VehicleMainData.vehicle_anz )
+	SDL_Rect dest= {16,182,320,240}; //Rect for our unit picture in main menu
+	//TODO: using random number nr to decide whether we show a
+	//vehicle or a building - should become obsolete when vehicles
+	//and buildings are stored in one huge units-block.	
+	register int nr = random(3,1); 
+	
+	if ( nr == 1 )
 	{
-		nr-=VehicleMainData.vehicle_anz;
-		SDL_BlitSurface ( BuildingMainData.building[nr].info,NULL,buffer,&dest );
+		cLog::write("Showing building graphic in main menu", cLog::eLOG_TYPE_DEBUG);
+		//FIXME: sanity check just for debug since we don't
+		// have any buildings loaded right now and app crashes
+		// without this. REMOVE THIS when buildings load
+		// successful. Should look like else-block later!
+		if (BuildingMainData.building_anz == 0 ) 
+		{
+			cLog::write("No buildings found - can't show graphic", cLog::eLOG_TYPE_WARNING);
+		}
+		else
+		{
+			SDL_BlitSurface ( BuildingMainData.building[random ( BuildingMainData.building_anz,0 )].info,NULL,buffer,&dest );
+		}
 	}
 	else
 	{
-		SDL_BlitSurface ( VehicleMainData.vehicle[nr].info,NULL,buffer,&dest );
+		cLog::write("Showing vehicle graphic in main menu", cLog::eLOG_TYPE_DEBUG);
+		SDL_BlitSurface ( VehicleMainData.vehicle[random ( VehicleMainData.vehicle_anz,0 )].info,NULL,buffer,&dest );
 	}
 }
 
