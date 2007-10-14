@@ -50,7 +50,7 @@ void ShowInfo ( void )
 	static int LastInfoNr;
 	int nr;
 	nr=BuildingMainData.building_anz + VehicleMainData.vehicle_anz;
-	nr=random ( nr,0 );
+	nr=random ( nr-1,0 );
 	if ( nr == LastInfoNr ) nr++;
 	LastInfoNr = nr;
 	dest.x=16;
