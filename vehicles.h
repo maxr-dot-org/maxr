@@ -13,38 +13,14 @@
 #define Update(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).speed=(to).speed;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).costs=(to).costs;
 
 // Vehicle-Strukturen ////////////////////////////////////////////////////////
-// Struktur für die Eigenschaften der Vehicles:
-struct sVehicleData{
-	// Main info
-	int iID;
-	string sName;
-	string sDescribtion;
+// Struktur für die IDs
+struct sID{
+	int iFirstPart;
+	int iSecondPart;
+};
 
-	// General info
-	bool bIs_Controllable;
-	bool bCan_Be_Captured;
-	bool bCan_Be_Disabled;
-	int iSize_Length;
-	int iSize_Width;
-
-	// Defence
-	bool bIs_Target_Land;
-	bool bIs_Target_Sea;
-	bool bIs_Target_Air;
-	bool bIs_Target_Underwater;
-	bool bIs_Target_Mine;
-	bool bIs_Target_Building;
-	bool bIs_Target_Satellite;
-	bool bIs_Target_WMD;
-	int iArmor;
-	int iHitpoints;
-
-	// Production
-	int iBuilt_Costs;
-	int iBuilt_Costs_Max;
-	int iIs_Produced_by_ID;
-
-	// Weapons
+// Struktur für die Waffen
+struct sWeaponData{
 	string sTurret_Gfx;
 	int iSequence;
 	int iShot_Trajectory;
@@ -78,6 +54,42 @@ struct sVehicleData{
 #define DESTINATION_TYPE_MIRV 1
 #define DESTINATION_TYPE_SCATTER 2
 	int iMovement_Allowed;
+};
+
+// Struktur für die Eigenschaften der Vehicles:
+struct sVehicleData{
+	// Main info
+	sID ID;
+	string sName;
+	string sDescribtion;
+
+	// General info
+	bool bIs_Controllable;
+	bool bCan_Be_Captured;
+	bool bCan_Be_Disabled;
+	int iSize_Length;
+	int iSize_Width;
+
+	// Defence
+	bool bIs_Target_Land;
+	bool bIs_Target_Sea;
+	bool bIs_Target_Air;
+	bool bIs_Target_Underwater;
+	bool bIs_Target_Mine;
+	bool bIs_Target_Building;
+	bool bIs_Target_Satellite;
+	bool bIs_Target_WMD;
+	int iArmor;
+	int iHitpoints;
+
+	// Production
+	int iBuilt_Costs;
+	int iBuilt_Costs_Max;
+	sID *iIs_Produced_by_ID;
+
+	// Weapons
+	int iWeaponsCount;
+	sWeaponData *Weapons;
 
 	// Abilities
 	bool bCan_Clear_Area;
@@ -156,7 +168,7 @@ struct sVehicleData{
 	int iCapacity_Units_Sea;
 	int iCapacity_Units_Ground;
 	int iCapacity_Units_Infantry;
-	int iCan_Use_Unit_As_Garage_ID;
+	sID *iCan_Use_Unit_As_Garage_ID;
 
 	// Grafics
 	bool bHas_Overlay;
