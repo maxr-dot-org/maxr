@@ -1639,7 +1639,7 @@ void LoadUnitData(int unitnum, const char *directory)
 		// Production
 		"Unit","Production","Built_Costs", NULL,
 		"Unit","Production","Built_Costs_Max", NULL,
-		"Unit","Production","Is_Produced_by", "Unit", NULL,
+		"Unit","Production","Is_Produced_by", NULL,
 
 		// Weapons
 		"Unit","Weapons","Weapon","Turret_Gfx", NULL,
@@ -1727,7 +1727,7 @@ void LoadUnitData(int unitnum, const char *directory)
 		"Unit","Storage","Capacity_Units_Sea", NULL,
 		"Unit","Storage","Capacity_Units_Ground", NULL,
 		"Unit","Storage","Capacity_Units_Infantry", NULL,
-		"Unit","Storage","Can_Use_Unit_As_Garage","Unit", NULL,
+		"Unit","Storage","Can_Use_Unit_As_Garage", NULL,
 
 		// Grafics
 		"Unit","Graphic","Has_Overlay", NULL,
@@ -1737,6 +1737,7 @@ void LoadUnitData(int unitnum, const char *directory)
 	};
 	int i, n, arraycount;
 	string sTmpString, sVehicleDataPath, sNodePath;
+	char szTmp[8];
 	TiXmlDocument VehicleDataXml;
 	ExTiXmlNode *pExXmlNode = NULL;
 
@@ -1749,7 +1750,7 @@ void LoadUnitData(int unitnum, const char *directory)
 	{
 		sTmpString = "Can't load data.xml in ";
 		sTmpString += directory;
-		cLog::write(sTmpString.c_str(),LOG_TYPE_ERROR);
+		cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		return ;
 	}
 	// Read minimal game version, id, name and desciption first!
@@ -1761,6 +1762,13 @@ void LoadUnitData(int unitnum, const char *directory)
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", NULL))
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
 		{
+			for( i = 0; i < UnitsData.vehicle_anz; i++)
+				if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
+				{
+					sprintf( szTmp, "vehicle with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+					cLog::write(szTmp,LOG_TYPE_WARNING);
+					return ;
+				}
 			UnitsData.vehicle[unitnum].data.ID.iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
 			UnitsData.vehicle[unitnum].data.ID.iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
 		}
@@ -1872,10 +1880,9 @@ void LoadUnitData(int unitnum, const char *directory)
 			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Power_On;") == 0)
 				UnitsData.vehicle[unitnum].data.bPower_On_Grafic = pExXmlNode->XmlDataToBool(sTmpString);
 			n++;
-			continue;
 		}
 		// is int?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 		{
 			// General
 			if(sNodePath.compare(GENERAL_NODE + "Size_Length;") == 0)
@@ -1977,37 +1984,17 @@ void LoadUnitData(int unitnum, const char *directory)
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Infantry;") == 0)
 				UnitsData.vehicle[unitnum].data.iCapacity_Units_Infantry = atoi(sTmpString.c_str());
 			n++;
-			continue;
 		}
 		// is text?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 		{
 			// Weapon
 			if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
 				UnitsData.vehicle[unitnum].data.Weapons[UnitsData.vehicle[unitnum].data.iWeaponsCount].sTurret_Gfx = sTmpString;
 			n++;
-			continue;
-		}
-		// is id?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
-		{
-			// Production
-			if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;Unit;") == 0)
-			{
-				UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID[0].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-				UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID[0].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
-			}
-			// Storage
-			else if(sNodePath.compare(STORAGE_NODE + "Can_Use_Unit_As_Garage;Unit;") == 0)
-			{
-				UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID[0].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-				UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID[0].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
-			}
-			n++;
-			continue;
 		}
 		// is fd?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Fd"))
+		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Fd"))
 		{
 			// Weapons
 			if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Range;") == 0)
@@ -2049,10 +2036,9 @@ void LoadUnitData(int unitnum, const char *directory)
 			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Jammer;") == 0)
 				UnitsData.vehicle[unitnum].data.iScan_Range_Jammer = atoi(sTmpString.c_str());
 			n++;
-			continue;
 		}
 		// is const?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Const"))
+		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Const"))
 		{
 			// Weapons
 			if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
@@ -2115,14 +2101,51 @@ void LoadUnitData(int unitnum, const char *directory)
 					UnitsData.vehicle[unitnum].data.iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_CONNECTOR;
 			}
 			n++;
-			continue;
+		}
+		// is id?
+		else if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;") == 0 || sNodePath.compare(STORAGE_NODE + "Can_Use_Unit_As_Garage;") == 0)
+		{
+			// Production
+			if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;") == 0)
+			{
+				int k = 0;
+				pExXmlNode = pExXmlNode->XmlGetFirstNodeChild();
+				while(pExXmlNode)
+				{
+					if(!pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
+						break;
+					UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID[k].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
+					UnitsData.vehicle[unitnum].data.iIs_Produced_by_ID[k].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+					pExXmlNode = pExXmlNode->XmlGetNextNodeSibling();
+					k++;
+				}
+			}
+			// Storage
+			else if(sNodePath.compare(STORAGE_NODE + "Can_Use_Unit_As_Garage;") == 0)
+			{
+				int k = 0;
+				pExXmlNode = pExXmlNode->XmlGetFirstNodeChild();
+				while(pExXmlNode)
+				{
+					if(!pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
+						break;
+					UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID[0].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
+					UnitsData.vehicle[unitnum].data.iCan_Use_Unit_As_Garage_ID[0].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+					pExXmlNode = pExXmlNode->XmlGetNextNodeSibling();
+					k++;
+				}
+			}
+			n++;
 		}
 		// is nothing known: cannot be readed!
-		sTmpString = "Can't read -Node in ";
-		sTmpString.insert(sTmpString.length()-9,DataStructure[i+n-1]);
-		sTmpString += sVehicleDataPath;
-		cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
-		n++;
+		else
+		{
+			sTmpString = "Can't read -Node in ";
+			sTmpString.insert(sTmpString.length()-9,DataStructure[i+n-1]);
+			sTmpString += sVehicleDataPath;
+			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			n++;
+		}
 	}
 	return ;
 }
