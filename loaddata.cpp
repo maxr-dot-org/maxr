@@ -2157,7 +2157,9 @@ void SetDefaultUnitData(int unitnum)
 	// Main info
 	UnitsData.vehicle[unitnum].data.ID.iFirstPart = -1;
 	UnitsData.vehicle[unitnum].data.ID.iSecondPart = -1;
+	memset ( & ( UnitsData.vehicle[unitnum].data.sName ), 0, sizeof ( string ) );
 	UnitsData.vehicle[unitnum].data.sName = "unknown";
+	memset ( & ( UnitsData.vehicle[unitnum].data.sDescribtion ), 0, sizeof ( string ) );
 	UnitsData.vehicle[unitnum].data.sDescribtion = "Default";
 
 	// General info
