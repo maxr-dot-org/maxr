@@ -1,13 +1,13 @@
-<Unit ID="0 2" name="alien_assault">
+<Unit ID="0 3" name="alien_plane">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-14 19:30:00"/>
+    <Editor name="Rocky" time="2007-10-15 13:30:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself.
+    Alien Plane\n\nFast and well armored attack aircraft. Can both ground and air targets to attack. Like all Alien units also owns the Alien attack aircraft a special organic armor, which can regenerate itself.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -17,20 +17,20 @@
     <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes"/>
+    <Is_Target_Land YN="No"/>
     <Is_Target_Sea YN="No"/>
-    <Is_Target_Air YN="No"/>
+    <Is_Target_Air YN="Yes"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="8"/>
-    <Hitpoints Num="32"/>
+    <Armor Num="6"/>
+    <Hitpoints Num="20"/>
   </Defence>
   <Production>
-    <Built_Costs Num="60"/>
-    <Built_Costs_Max Num="240"/>
+    <Built_Costs Num="56"/>
+    <Built_Costs_Max Num="224"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -42,38 +42,38 @@
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="15"/>
+      <Ammo_Quantity Num="10"/>
       <Allowed_Targets>
         <Target_Land>
           <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Range Fd="5"/>
         </Target_Land>
         <Target_Sea>
           <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Range Fd="5"/>
         </Target_Sea>
         <Target_Air>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
+          <Damage Num="25"/>
+          <Range Fd="5"/>
         </Target_Air>
         <Target_Mine>
           <Damage Num="0"/>
           <Range Fd="0"/>
         </Target_Mine>
         <Target_Submarine>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
+          <Damage Num="25"/>
+          <Range Fd="5"/>
         </Target_Submarine>
         <Target_Infantry>
           <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Range Fd="5"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="3"/>
+      <Shots Num="2"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
       <Movement_Allowed Num="0"/>  
@@ -86,14 +86,14 @@
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
     <Can_Dive YN="No"/>
-    <Landing_Type Const="OnlyGarage"/>
+    <Landing_Type Const="GarageAndPlatform"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
     <Can_Research YN="No"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>
     <Can_Place_Mines YN="No"/>
-    <Makes_Tracks Fd="3"/>
+    <Makes_Tracks Fd="0"/>
     <Self_Repair_Type Const="Automatic"/>
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
@@ -119,11 +119,11 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="16"/>
-    <Costs_Air Num="0.0"/>
+    <Movement_Sum Num="18"/>
+    <Costs_Air Num="1"/>
     <Costs_Sea Num="0.0"/>
     <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
+    <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>
     <Factor_Coast Num="0.0"/>
     <Factor_Wood Num="0.0"/>

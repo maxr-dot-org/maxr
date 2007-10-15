@@ -1,13 +1,13 @@
-<Unit ID="0 2" name="alien_assault">
+<Unit ID="0 7" name="assault">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-14 19:30:00"/>
+    <Editor name="Rocky" time="2007-10-15 15:45:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself.
+    Assault Gun\n\nLight armored vehicle with a weapon with great range, the varrio fires grenades. Fast and effective in attack, but rather vulnerable.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -25,12 +25,12 @@
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="8"/>
-    <Hitpoints Num="32"/>
+    <Armor Num="4"/>
+    <Hitpoints Num="24"/>
   </Defence>
   <Production>
-    <Built_Costs Num="60"/>
-    <Built_Costs_Max Num="240"/>
+    <Built_Costs Num="24"/>
+    <Built_Costs_Max Num="86"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -42,15 +42,15 @@
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="15"/>
+      <Ammo_Quantity Num="14"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="18"/>
+          <Range Fd="6"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="18"/>
+          <Range Fd="6"/>
         </Target_Sea>
         <Target_Air>
           <Damage Num="0"/>
@@ -65,15 +65,15 @@
           <Range Fd="0"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="18"/>
+          <Range Fd="6"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="3"/>
+      <Shots Num="2"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
       <Movement_Allowed Num="0"/>  
@@ -82,7 +82,7 @@
 
   <Abilities>
     <Can_Clear_Area YN="No"/>
-    <Gets_Experience YN="Yes"/>
+    <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
     <Can_Dive YN="No"/>
@@ -94,7 +94,7 @@
     <Is_Infrastructure YN="No"/>
     <Can_Place_Mines YN="No"/>
     <Makes_Tracks Fd="3"/>
-    <Self_Repair_Type Const="Automatic"/>
+    <Self_Repair_Type Const="None"/>
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
     <Needs_Oil Num="0"/>
@@ -119,7 +119,7 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="16"/>
+    <Movement_Sum Num="12"/>
     <Costs_Air Num="0.0"/>
     <Costs_Sea Num="0.0"/>
     <Costs_Submarine Num="0.0"/>

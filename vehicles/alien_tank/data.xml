@@ -1,13 +1,13 @@
-<Unit ID="0 2" name="alien_assault">
+<Unit ID="0 5" name="alien_tank">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-14 19:30:00"/>
+    <Editor name="Rocky" time="2007-10-15 15:30:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself.
+    Alien tank\n\nAlien heavy armored fighting vehicle. Like all Alien units, the alien has a special organic tank armor, which can regenerate itself.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -25,12 +25,12 @@
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="8"/>
+    <Armor Num="14"/>
     <Hitpoints Num="32"/>
   </Defence>
   <Production>
-    <Built_Costs Num="60"/>
-    <Built_Costs_Max Num="240"/>
+    <Built_Costs Num="56"/>
+    <Built_Costs_Max Num="224"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -45,12 +45,12 @@
       <Ammo_Quantity Num="15"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="20"/>
+          <Range Fd="5"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="20"/>
+          <Range Fd="5"/>
         </Target_Sea>
         <Target_Air>
           <Damage Num="0"/>
@@ -65,8 +65,8 @@
           <Range Fd="0"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="20"/>
+          <Range Fd="5"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
@@ -107,7 +107,7 @@
   </Abilities>
 
   <Scan_Abilities>
-    <Range_Sight Fd="5"/>
+    <Range_Sight Fd="4"/>
     <Range_Air Fd="0"/>
     <Range_Ground Fd="0"/>
     <Range_Sea Fd="0"/>
@@ -119,7 +119,7 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="16"/>
+    <Movement_Sum Num="8"/>
     <Costs_Air Num="0.0"/>
     <Costs_Sea Num="0.0"/>
     <Costs_Submarine Num="0.0"/>

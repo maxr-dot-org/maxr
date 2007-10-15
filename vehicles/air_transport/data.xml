@@ -14,7 +14,7 @@
     <!--"Game_Version" gibt die Spiel-Version an, ab der die Einheit im Spiel funktioniert.-->
   </Header>
   <Description lang="ENG">
-    Transportplane\n\nHeavy plane, able to transport three groundunits.
+    Transport Plane\n\nHeavy plane, able to transport three groundunits.
   </Description>
   <!-- Der "Description"-Block dient der spiel-internen Erklärung, wenn keine Übersetzung gefunden wurde. -->
 

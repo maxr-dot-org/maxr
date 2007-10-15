@@ -1,13 +1,13 @@
-<Unit ID="0 2" name="alien_assault">
+<Unit ID="0 4" name="alien_ship">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-14 19:30:00"/>
+    <Editor name="Rocky" time="2007-10-15 14:30:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself.
+    Alien gunboat\n\nHeavy armored and armed alien warship. Like all Alien units also owns the Alien gunboat a special organic armor, which can regenerate itself.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -17,16 +17,16 @@
     <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes"/>
-    <Is_Target_Sea YN="No"/>
+    <Is_Target_Land YN="No"/>
+    <Is_Target_Sea YN="Yes"/>
     <Is_Target_Air YN="No"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="8"/>
-    <Hitpoints Num="32"/>
+    <Armor Num="18"/>
+    <Hitpoints Num="40"/>
   </Defence>
   <Production>
     <Built_Costs Num="60"/>
@@ -42,15 +42,15 @@
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="15"/>
+      <Ammo_Quantity Num="10"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="28"/>
+          <Range Fd="8"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="28"/>
+          <Range Fd="8"/>
         </Target_Sea>
         <Target_Air>
           <Damage Num="0"/>
@@ -65,15 +65,15 @@
           <Range Fd="0"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="25"/>
-          <Range Fd="7"/>
+          <Damage Num="28"/>
+          <Range Fd="8"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="3"/>
+      <Shots Num="2"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
       <Movement_Allowed Num="0"/>  
@@ -119,11 +119,11 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="16"/>
+    <Movement_Sum Num="7"/>
     <Costs_Air Num="0.0"/>
-    <Costs_Sea Num="0.0"/>
+    <Costs_Sea Num="1"/>
     <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
+    <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>
     <Factor_Coast Num="0.0"/>
     <Factor_Wood Num="0.0"/>
