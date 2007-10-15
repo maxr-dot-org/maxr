@@ -98,7 +98,7 @@
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
     <Needs_Oil Num="0"/>
-    <Needs_Metall Num="0"/>
+    <Needs_Metal Num="0"/>
     <Needs_Humans Num="0"/>
     <Mines_Resources Num="0"/>
     <Can_Launch_SRBM YN="No"/>
@@ -148,7 +148,7 @@
     <Capacity_Units_Ground Num="0"/>
     <Capacity_Units_Infantry Num="0"/>
     <Can_Use_Unit_As_Garage>
-      <Unit ID="0" Size="0"/>
+      <Unit ID="0 0" Size="0"/>
     </Can_Use_Unit_As_Garage>
   </Storage>
   <Graphic>

@@ -218,7 +218,7 @@
     <Needs_Oil Num="0"/>
     <!--Braucht die Einheit Öl-->
      
-    <Needs_Metall Num="0"/>
+    <Needs_Metal Num="0"/>
     <!-- Max pro Runde -->
     <!--Verbraucht die Einheit Metall-->
      
@@ -339,7 +339,7 @@
     <Can_Use_Unit_As_Garage>
       <!-- Hier werden die befahrbaren Einheiten aufgezählt -->
       <!--und die Menge der verbauchten Kapazität aufgelistet -->
-      <Unit ID="xxxx" Size="1"/>
+      <Unit ID="xx xx" Size="1"/>
     </Can_Use_Unit_As_Garage>
 
   </Storage>
