@@ -1,13 +1,13 @@
-<Unit ID="0 4" name="alien_ship">
+<Unit ID="0 9" name="bomber">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-15 14:30:00"/>
+    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien gunboat\n\nHeavy armored and armed alien warship. Like all Alien units also owns the Alien gunboat a special organic armor, which can regenerate itself.
+    Bomber\n\nA heavy plane with a full load of air-to-ground missiles transported. Expensive, but the speed and the ability of everything except hunters and air defense attack is worth it.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -18,19 +18,19 @@
   </General_Info>
   <Defence>
     <Is_Target_Land YN="No"/>
-    <Is_Target_Sea YN="Yes"/>
-    <Is_Target_Air YN="No"/>
+    <Is_Target_Sea YN="No"/>
+    <Is_Target_Air YN="Yes"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="18"/>
-    <Hitpoints Num="40"/>
+    <Armor Num="4"/>
+    <Hitpoints Num="18"/>
   </Defence>
   <Production>
-    <Built_Costs Num="60"/>
-    <Built_Costs_Max Num="240"/>
+    <Built_Costs Num="30"/>
+    <Built_Costs_Max Num="120"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -42,15 +42,15 @@
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="10"/>
+      <Ammo_Quantity Num="12"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="28"/>
-          <Range Fd="8"/>
+          <Damage Num="18"/>
+          <Range Fd="4"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="28"/>
-          <Range Fd="8"/>
+          <Damage Num="18"/>
+          <Range Fd="4"/>
         </Target_Sea>
         <Target_Air>
           <Damage Num="0"/>
@@ -61,12 +61,12 @@
           <Range Fd="0"/>
         </Target_Mine>
         <Target_Submarine>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
+          <Damage Num="18"/>
+          <Range Fd="4"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="28"/>
-          <Range Fd="8"/>
+          <Damage Num="18"/>
+          <Range Fd="4"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
@@ -76,17 +76,17 @@
       <Shots Num="2"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="0"/>  
+      <Movement_Allowed Num="18"/>  
     </Weapon>
   </Weapons>
 
   <Abilities>
     <Can_Clear_Area YN="No"/>
-    <Gets_Experience YN="Yes"/>
+    <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
     <Can_Dive YN="No"/>
-    <Landing_Type Const="OnlyGarage"/>
+    <Landing_Type Const="GarageAndPlatform"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
     <Can_Rearm YN="No"/>
@@ -95,7 +95,7 @@
     <Is_Infrastructure YN="No"/>
     <Can_Place_Mines YN="No"/>
     <Makes_Tracks Fd="3"/>
-    <Self_Repair_Type Const="Automatic"/>
+    <Self_Repair_Type Const="None"/>
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
     <Needs_Oil Num="0"/>
@@ -120,9 +120,9 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="7"/>
-    <Costs_Air Num="0.0"/>
-    <Costs_Sea Num="1"/>
+    <Movement_Sum Num="18"/>
+    <Costs_Air Num="1"/>
+    <Costs_Sea Num="0.0"/>
     <Costs_Submarine Num="0.0"/>
     <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>

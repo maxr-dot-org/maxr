@@ -89,6 +89,7 @@
     <Landing_Type Const="OnlyGarage"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
+    <Can_Rearm YN="No"/>
     <Can_Research YN="No"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>

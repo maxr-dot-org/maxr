@@ -188,6 +188,9 @@
      
     <Can_Repair YN="No"/>
     <!--Kann sie andere reparieren-->
+    
+    <Can_Rearm YN="No"/>
+    <!--Kann sie andere aufladen (Munition)-->
      
     <Can_Research YN="No"/>
     <!--Kann sie Forschung betreiben-->
