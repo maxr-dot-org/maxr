@@ -1450,6 +1450,7 @@ int LoadVehicles()
 				SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n], SDL_SRCALPHA, 50 );
 			}
 		}
+		// load other vehicle graphics
 		else
 		{
 			for(int n = 0; n < 8; n++)
@@ -1612,7 +1613,6 @@ int LoadBuildings()
 	cLog::write ( "Loading Buildings", LOG_TYPE_INFO );
 
 	string sTmpString, sBuildingPath;
-	char sztmp[16];
 	const char *pszTmp;
 	TList *BuildingList;
 	TiXmlDocument BuildingsXml;
@@ -1942,9 +1942,15 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			Data->ID.iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
 		}
 	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
-		Data->szName = (char *)sTmpString.c_str();
+	{
+		Data->szName = (char *)malloc(sTmpString.length());
+		strcpy(Data->szName,sTmpString.c_str());
+	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
-		Data->szDescribtion = (char *)pExXmlNode->ToElement()->GetText();
+	{
+		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText()));
+		strcpy(Data->szDescribtion,pExXmlNode->ToElement()->GetText());
+	}
 
 	// get array count
 	i = sizeof(DataStructure);
