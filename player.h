@@ -7,14 +7,13 @@
 #include "main.h"
 #include "SDL.h"
 #include "hud.h"
-#include "vehicles.h"
 #include "buildings.h"
+#include "vehicles.h"
 #include "base.h"
 
 struct sVehicle;
-struct sVehicleData;
+struct sUnitData;
 struct sBuilding;
-struct sBuildingData;
 class cVehicle;
 class cBuilding;
 class cEngine;
@@ -52,9 +51,9 @@ public:
   SDL_Surface *ShieldColor;
   int Nr;
 
-  sVehicleData *VehicleData; // Daten aller Vehicles für diesen Player.
+  sUnitData *VehicleData; // Daten aller Vehicles für diesen Player.
   cVehicle *VehicleList;     // Liste aller Vehicles des Spielers.
-  sBuildingData *BuildingData; // Daten aller Buildings für diesen Player.
+  sUnitData *BuildingData; // Daten aller Buildings für diesen Player.
   cBuilding *BuildingList;     // Liste aller Buildings des Spielers.
   int MapSize;               // Kartengröße
   char *ScanMap;             // Map mit dem Scannerflags.

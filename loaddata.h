@@ -88,25 +88,27 @@ int LoadEffectAplhaToSurface(SDL_Surface** &dest, const char* directory, const c
 	*/
 int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename);
 /**
-	* Loades a vehiclesoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
+	* Loades a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
 	* @param dest Destination Mix_Chunk
 	* @param directory Directory of the file, relativ to the main vehicles directory
 	* @param filename Name of the file
 	*/
-void LoadVehicleSoundfile(sSOUND *&dest, const char* directory, const char* filename);
+void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filename);
 /**
 	* Loades the unitdata from the data.xml in the unitfolder
 	* @param unitnum Indexnumber of unit for which the data should be loaded.
 	* @param directory Unitdirectory , relativ to the main game directory
+	* @param vehicle Should be true if unit is a vehicle
 	* @return 1 on success
 	*/
-void LoadUnitData(int unitnum, const char* directory);
+void LoadUnitData(int unitnum, const char* directory, bool vehicle);
 /**
 	* Sets all unitdata to default values
 	* @param unitnum Indexnumber of unit for which the data should be loaded.
+	* @param vehicle Should be true if unit is a vehicle
 	* @return 1 on success
 	*/
-void SetDefaultUnitData(int unitnum);
+void SetDefaultUnitData(int unitnum, bool vehicle);
 /**
 	* Checks whether a file exits
 	* @param directory Directory to the file
@@ -163,13 +165,13 @@ int LoadEffects(const char* path);
 	* @param path Directory of the Buildings
 	* @return 1 on success
 	*/
-int LoadBuildings(const char* path);
+int LoadBuildings();
 /**
 	* Loads all Vehicles
 	* @param path Directory of the Vehicles
 	* @return 1 on success
 	*/
-int LoadVehicles(const char* path);
+int LoadVehicles();
 /**
 	* Loads all Musicfiles
 	* @param path Directory of the Vehicles

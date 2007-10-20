@@ -138,6 +138,286 @@ extern int ResearchInits[8];
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Struktur für die IDs
+struct sID{
+	int iFirstPart;
+	int iSecondPart;
+};
+
+// Struktur für die Waffen
+struct sWeaponData{
+	char *szTurret_Gfx;
+	int iSequence;
+	int iShot_Trajectory;
+#define SHOT_TRAJECTURY_STRAIGHT 0
+#define SHOT_TRAJECTURY_BALISTIC 1
+#define SHOT_TRAJECTURY_CONTROLED 2
+	int iAmmo_Type;
+#define AMMO_TYPE_STANDARD 0
+#define AMMO_TYPE_ENERGY 1
+	int iAmmo_Quantity;
+
+	int iTarget_Land_Damage;
+	int iTarget_Land_Range;
+	int iTarget_Sea_Damage;
+	int iTarget_Sea_Range;
+	int iTarget_Air_Damage;
+	int iTarget_Air_Range;
+	int iTarget_Mine_Damage;
+	int iTarget_Mine_Range;
+	int iTarget_Submarine_Damage;
+	int iTarget_Submarine_Range;
+	int iTarget_Infantry_Damage;
+	int iTarget_Infantry_Range;
+	int iTarget_WMD_Damage;
+	int iTarget_WMD_Range;
+
+	int iShots;
+	int iDestination_Area;
+	int iDestination_Type;
+#define DESTINATION_TYPE_POINT 0
+#define DESTINATION_TYPE_MIRV 1
+#define DESTINATION_TYPE_SCATTER 2
+	int iMovement_Allowed;
+};
+
+// Struktur für die Eigenschaften der Vehicles:
+struct sUnitData{
+	// Main info
+	sID ID;
+	char *szName;
+	char *szDescribtion;
+
+	// General info
+	bool bIs_Controllable;
+	bool bCan_Be_Captured;
+	bool bCan_Be_Disabled;
+	int iSize_Length;
+	int iSize_Width;
+
+	// Defence
+	bool bIs_Target_Land;
+	bool bIs_Target_Sea;
+	bool bIs_Target_Air;
+	bool bIs_Target_Underwater;
+	bool bIs_Target_Mine;
+	bool bIs_Target_Building;
+	bool bIs_Target_Satellite;
+	bool bIs_Target_WMD;
+	int iArmor;
+	int iHitpoints;
+
+	// Production
+	int iBuilt_Costs;
+	int iBuilt_Costs_Max;
+	sID *iIs_Produced_by_ID;
+
+	// Weapons
+	int iWeaponsCount;
+	sWeaponData *Weapons;
+
+	// Abilities
+	bool bCan_Clear_Area;
+	bool bGets_Experience;
+	bool bCan_Disable;
+	bool bCan_Capture;
+	bool bCan_Dive;
+	int iLanding_Type;
+#define LANDING_TYPE_ONLY_GARAGE 0
+#define LANDING_TYPE_GARAGE_AND_PLATFORM 1
+#define LANDING_TYPE_EVERYWHERE 2
+	bool bCan_Upgrade;
+	bool bCan_Repair;
+	bool bCan_Research;
+	bool bIs_Kamikaze;
+	bool bIs_Infrastructure;
+	bool bCan_Place_Mines;
+	int iMakes_Tracks;
+	int iSelf_Repair_Type;
+#define SELF_REPAIR_TYPE_NONE 0
+#define SELF_REPAIR_TYPE_AUTOMATIC 1
+#define SELF_REPAIR_TYPE_NORMAL 2
+	int iConverts_Gold;
+	int iNeeds_Energy;
+	int iNeeds_Oil;
+	int iNeeds_Metal;
+	int iNeeds_Humans;
+	int iMines_Resources;
+	bool bCan_Launch_SRBM;
+	int iEnergy_Shield_Strength;
+	int iEnergy_Shield_Size;
+	bool bHas_Connector;
+	bool bCan_Be_Passed;
+	int iChanges_Terrain;
+#define CHANGES_TERRAIN_TYPE_NONE 0
+#define CHANGES_TERRAIN_TYPE_STREET 0
+#define CHANGES_TERRAIN_TYPE_PLATTFORM 0
+#define CHANGES_TERRAIN_TYPE_BRIDGE 0
+#define CHANGES_TERRAIN_TYPE_MINE 0
+#define CHANGES_TERRAIN_TYPE_CONNECTOR 0
+
+
+	// Scan_Abilities
+	int iScan_Range_Sight;
+	int iScan_Range_Air;
+	int iScan_Range_Ground;
+	int iScan_Range_Sea;
+	int iScan_Range_Submarine;
+	int iScan_Range_Mine;
+	int iScan_Range_Infantry;
+	int iScan_Range_Resources;
+	int iScan_Range_Jammer;
+
+	// Movement
+	int iMovement_Sum;
+	float fCosts_Air;
+	float fCosts_Sea;
+	float fCosts_Submarine;
+	float fCosts_Ground;
+	float fFactor_Coast;
+	float fFactor_Wood;
+	float fFactor_Road;
+	float fFactor_Bridge;
+	float fFactor_Platform;
+	float fFactor_Monorail;
+	float fFactor_Wreck;
+	float fFactor_Mountains;
+
+	// Storage
+	bool bIs_Garage;
+	int iCapacity_Metal;
+	int iCapacity_Oil;
+	int iCapacity_Gold;
+	int iCapacity_Energy;
+	int iCapacity_Units_Air;
+	int iCapacity_Units_Sea;
+	int iCapacity_Units_Ground;
+	int iCapacity_Units_Infantry;
+	sID *iCan_Use_Unit_As_Garage_ID;
+
+	// Grafics
+	bool bHas_Overlay;
+	bool bBuild_Up_Grafic;
+	bool bAnimation_Movement;
+	bool bPower_On_Grafic;
+
+	//////
+	// Old-Stuff!
+	//////
+  int version; // Version des Vehicles
+  char name[25];
+
+  // Grunddaten:
+  int max_speed;
+  int speed;
+  int max_hit_points;
+  int hit_points;
+  int armor;
+  int scan;
+  int range;
+  int max_shots;
+  int shots;
+  int damage;
+  int max_cargo;
+  int cargo;
+  int max_ammo;
+  int ammo;
+  int costs;
+
+  int energy_prod;
+  int oil_need;
+  int energy_need;
+  int metal_need;
+  int human_prod;
+  int human_need;
+  int gold_need;
+  int shield;
+  int max_shield;
+
+  // Die Bau-Eigenschaft:
+  int can_build;
+#define BUILD_NONE  0
+#define BUILD_SMALL 1
+#define BUILD_BIG   2
+
+#define BUILD_SEA 3
+#define BUILD_AIR 4
+#define BUILD_MAN 5
+
+  // Die Fahr-Eigenschaft:
+  int can_drive;
+#define DRIVE_LAND     0
+#define DRIVE_SEA      1
+#define DRIVE_LANDnSEA 2
+#define DRIVE_AIR      3
+
+  // die Transport-Eigenschaft:
+  int can_load;
+  int can_transport;
+#define TRANS_NONE     0
+#define TRANS_METAL    1
+#define TRANS_OIL      2
+#define TRANS_GOLD     3
+#define TRANS_VEHICLES 4
+#define TRANS_MEN      5
+#define TRANS_AIR	   6
+
+  // Die Attack-Eigenschaft:
+  int can_attack;
+#define ATTACK_NONE     0
+#define ATTACK_LAND     1
+#define ATTACK_SUB_LAND 2
+#define ATTACK_AIR      3
+#define ATTACK_AIRnLAND 4
+
+  // Der Style des Mündungsfeuers:
+  int muzzle_typ;
+#define MUZZLE_BIG 0
+#define MUZZLE_ROCKET 1
+#define MUZZLE_SMALL 2
+#define MUZZLE_MED 3
+#define MUZZLE_MED_LONG 4
+#define MUZZLE_ROCKET_CLUSTER 5
+#define MUZZLE_TORPEDO 6
+#define MUZZLE_SNIPER 7
+
+  // weitere Eigenschaften:
+  bool can_reload;
+  bool can_repair;
+  bool can_drive_and_fire;
+  bool is_stealth_land;
+  bool is_stealth_sea;
+  bool is_human;
+  bool can_survey;
+  bool can_clear;
+  bool has_overlay;
+  bool build_by_big;
+  bool can_lay_mines;
+  bool can_detect_mines;
+  bool can_detect_sea;
+  bool can_detect_land;
+  bool make_tracks;
+  bool is_commando;
+  bool is_alien;
+
+  bool is_base;
+  bool is_big;
+  bool is_road;
+  bool is_connector;
+  bool has_effect;
+  bool can_work;
+  bool is_mine;
+  int has_frames;
+  bool is_annimated;
+  bool is_bridge;
+  bool is_platform;
+  bool build_on_water;
+  bool is_pad;
+  bool is_expl_mine;
+  bool can_research;
+  bool build_alien;
+};
+
 struct sTerrain{
   SDL_Surface *sf,*sf_org;   // Surfaces des terrains
   SDL_Surface *shw,*shw_org; // Surfaces des terrains im Schatten

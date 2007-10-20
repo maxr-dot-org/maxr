@@ -23,84 +23,13 @@ struct sUpgrades{
   string name;
 };
 
-
-// Building-Strukturen ///////////////////////////////////////////////////////
-// Struktur für die Eigenschaften der Buildings:
-struct sBuildingData{
-  int version; // Version des Vehicles
-  char name[25];
-
-  // Grunddaten:
-  int max_hit_points;
-  int hit_points;
-  int armor;
-  int scan;
-  int range;
-  int max_shots;
-  int shots;
-  int damage;
-  int max_cargo;
-  int cargo;
-  int max_ammo;
-  int ammo;
-  int costs;
-  int energy_prod;
-  int oil_need;
-  int energy_need;
-  int metal_need;
-  int human_prod;
-  int human_need;
-  int gold_need;
-  int shield;
-  int max_shield;
-
-  // Die Bau-Eigenschaft:
-  int can_build;
-// see vehicles.h
-#define BUILD_SEA 3
-#define BUILD_AIR 4
-#define BUILD_MAN 5
-
-  // die Load-Eigenschaft:
-  int can_load;
-// see vehicles.h
-#define TRANS_AIR 6
-
-  // Die Attack-Eigenschaft:
-  int can_attack;
-// see vehicles.h
-
-  // Der Style des Mündungsfeuers:
-  int muzzle_typ;
-// see vehicles.h
-
-  // Weitere Eigenschaften:
-  bool is_base;
-  bool is_big;
-  bool is_road;
-  bool is_connector;
-  bool has_effect;
-  bool can_work;
-  bool is_mine;
-  int has_frames;
-  bool is_annimated;
-  bool is_bridge;
-  bool is_platform;
-  bool build_on_water;
-  bool is_pad;
-  bool is_expl_mine;
-  bool can_research;
-  bool build_alien;
-  bool is_alien;
-};
-
 // Struktur für die Bilder und Sounds:
 struct sBuilding{
   SDL_Surface *img,*img_org; // Surface des Buildings
   SDL_Surface *shw,*shw_org; // Surfaces des Schattens
   SDL_Surface *eff,*eff_org; // Surfaces des Effektes  
   SDL_Surface *video;  // Video
-  sBuildingData data;  // Grunddaten des Buildings
+  sUnitData data;  // Grunddaten des Buildings
   char id[4];          // ID dieses Elements
   int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
@@ -140,7 +69,7 @@ public:
   bool selected;   // Gibt an, ob das Building ausgewählt ist
   string name; // Name des Buildings
   cPlayer *owner;  // Eigentümer des Buildings
-  sBuildingData data;    // Daten des Buildings
+  sUnitData data;    // Daten des Buildings
   cBuilding *next,*prev; // Zeiger für die Verkettung
   bool MenuActive; // Gibt an, ob das Menü grad aktiv ist
   bool AttackMode; // Gibt an, ob der AttackMode grad aktiv ist
