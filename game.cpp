@@ -2535,7 +2535,7 @@ void SaveVehicle(cVehicle *v,FILE *fp){
   t=v->PosX+v->PosY*game->map->size;fwrite(&t,sizeof(int),1,fp); // Offset
   t=v->owner->Nr;fwrite(&t,sizeof(int),1,fp); // Player Nr
   fwrite(&(v->typ->nr),sizeof(int),1,fp); // Typ-Nr
-  fwrite(&(v->data),sizeof(sVehicleData),1,fp); // Data
+  fwrite(&(v->data),sizeof(sUnitData),1,fp); // Data
 
 #define FSAVE_V_4(a) fwrite(&(v->a),sizeof(int),1,fp);
 #define FSAVE_V_1(a) fwrite(&(v->a),1,1,fp);
@@ -2609,7 +2609,7 @@ void SaveBuilding(int off,FILE *fp,bool base){
     t=b->owner->Nr;fwrite(&t,sizeof(int),1,fp); // Player Nr
     fwrite(&(b->typ->nr),sizeof(int),1,fp); // Typ-Nr
   }
-  fwrite(&(b->data),sizeof(sBuildingData),1,fp); // Data
+  fwrite(&(b->data),sizeof(sUnitData),1,fp); // Data
 
 #define FSAVE_B_4(a) fwrite(&(b->a),sizeof(int),1,fp);
 #define FSAVE_B_1(a) fwrite(&(b->a),1,1,fp);
@@ -2705,8 +2705,8 @@ bool cGame::Save(string name){
     fwrite(&(p->ResearchCount),sizeof(int),1,fp);
     fwrite(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fwrite(p->VehicleData,sizeof(sVehicleData),UnitsData.vehicle_anz,fp); // Vehicle-Data
-    fwrite(p->BuildingData,sizeof(sBuildingData),UnitsData.building_anz,fp); // Building-Data
+    fwrite(p->VehicleData,sizeof(sUnitData),UnitsData.vehicle_anz,fp); // Vehicle-Data
+    fwrite(p->BuildingData,sizeof(sUnitData),UnitsData.building_anz,fp); // Building-Data
 
     fwrite(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
   }
@@ -2805,8 +2805,8 @@ void cGame::Load(string name,int AP,bool MP){
     fread(&(p->ResearchCount),sizeof(int),1,fp);
     fread(&(p->UnusedResearch),sizeof(int),1,fp);
 
-    fread(p->VehicleData,sizeof(sVehicleData),UnitsData.vehicle_anz,fp); // Vehicle-Data
-    fread(p->BuildingData,sizeof(sBuildingData),UnitsData.building_anz,fp); // Building-Data
+    fread(p->VehicleData,sizeof(sUnitData),UnitsData.vehicle_anz,fp); // Vehicle-Data
+    fread(p->BuildingData,sizeof(sUnitData),UnitsData.building_anz,fp); // Building-Data
 
     fread(&(p->HotHud),sizeof(cHud),1,fp); // Hud-Einstellungen
 
@@ -2846,7 +2846,7 @@ void cGame::Load(string name,int AP,bool MP){
           v=map->GO[off].vehicle;
         }
 
-        fread(&(v->data),sizeof(sVehicleData),1,fp); // Data
+        fread(&(v->data),sizeof(sUnitData),1,fp); // Data
 
 #define FLOAD_V_4(a) fread(&(v->a),sizeof(int),1,fp);
 #define FLOAD_V_1(a) fread(&(v->a),1,1,fp);
@@ -2948,7 +2948,7 @@ void cGame::Load(string name,int AP,bool MP){
           }
         }
 
-        fread(&(b->data),sizeof(sBuildingData),1,fp); // Data
+        fread(&(b->data),sizeof(sUnitData),1,fp); // Data
 /*        if((b->data.can_load==TRANS_METAL||b->data.can_load==TRANS_GOLD||b->data.can_load==TRANS_OIL)&&b->data.cargo){
           int c;
           c=b->data.cargo;

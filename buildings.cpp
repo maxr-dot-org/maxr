@@ -31,7 +31,7 @@ cBuilding::cBuilding ( sBuilding *b,cPlayer *Owner,cBase *Base )
 		}
 		else
 		{
-			memset ( &data,0,sizeof ( sBuildingData ) );
+			memset ( &data,0,sizeof ( sUnitData ) );
 		}
 		BuildList=NULL;
 		StoredVehicles=NULL;
@@ -3752,7 +3752,7 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 // Macht die Upgradeschieber für Vehicle:
 void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 {
-	sVehicleData *d;
+	sUnitData *d;
 	int i;
 	for ( i=0;i<8;i++ )
 	{
@@ -3831,7 +3831,7 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u,int nr )
 // Macht die Upgradeschieber für Buildings:
 void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 {
-	sBuildingData *d;
+	sUnitData *d;
 	int i;
 	for ( i=0;i<8;i++ )
 	{
@@ -3947,8 +3947,8 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u,int nr )
 // Stellt die Selectionlist zusammen:
 void cBuilding::CreateUpgradeList ( TList *selection,TList *images,int *selected,int *offset )
 {
-	sBuildingData *bd;
-	sVehicleData *vd;
+	sUnitData *bd;
+	sUnitData *vd;
 	int i;
 	while ( selection->Count )
 	{
@@ -6911,13 +6911,13 @@ void cBuilding::ShowHelp ( void )
 void cBuilding::SendUpdateStored ( int index )
 {
 	/*if(!game->engine->fstcpip||game->engine->fstcpip->server)*/return;
-	/*unsigned char msg[3+12+sizeof(sVehicleData)];
+	/*unsigned char msg[3+12+sizeof(sUnitData)];
 	msg[0]='#';
-	msg[1]=3+12+sizeof(sVehicleData);
+	msg[1]=3+12+sizeof(sUnitData);
 	msg[2]=MSG_UPDATE_STORED;
 	((int*)(msg+3))[0]=owner->Nr;
 	((int*)(msg+3))[1]=index;
 	((int*)(msg+3))[2]=PosX+PosY*game->map->size; 
-	((sVehicleData*)(msg+3+12))[0]=((cVehicle*)(StoredVehicles->Items[index]))->data;
+	((sUnitData*)(msg+3+12))[0]=((cVehicle*)(StoredVehicles->Items[index]))->data;
 	game->engine->fstcpip->Send(msg,msg[1]);*/
 }

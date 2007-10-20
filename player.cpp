@@ -14,13 +14,13 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr )
 	color=Color;
 	Nr=nr;
 	// Die Vehicle Eigenschaften kopieren:
-	VehicleData= ( sVehicleData* ) malloc ( sizeof ( sVehicleData ) *UnitsData.vehicle_anz );
+	VehicleData= ( sUnitData* ) malloc ( sizeof ( sUnitData ) *UnitsData.vehicle_anz );
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		VehicleData[i]=UnitsData.vehicle[i].data;
 	}
 	// Die Building Eigenschaften kopieren:
-	BuildingData= ( sBuildingData* ) malloc ( sizeof ( sBuildingData ) *UnitsData.building_anz );
+	BuildingData= ( sUnitData* ) malloc ( sizeof ( sUnitData ) *UnitsData.building_anz );
 	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
 		BuildingData[i]=UnitsData.building[i].data;

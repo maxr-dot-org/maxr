@@ -2503,7 +2503,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 // Macht die Upgradeschieber für Vehicle:
 void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 {
-	sVehicleData *d;
+	sUnitData *d;
 	int i;
 	for ( i=0;i<8;i++ )
 	{
@@ -2582,7 +2582,7 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 // Macht die Upgradeschieber für Buildings:
 void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 {
-	sBuildingData *d;
+	sUnitData *d;
 	int i;
 	for ( i=0;i<8;i++ )
 	{
@@ -3330,8 +3330,8 @@ void ShowLandingList ( TList *list,int selected,int offset )
 // Stellt die Selectionlist zusammen:
 void CreateSelectionList ( TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
 {
-	sBuildingData *bd;
-	sVehicleData *vd;
+	sUnitData *bd;
+	sUnitData *vd;
 	int i;
 	while ( selection->Count )
 	{
