@@ -31,7 +31,8 @@
 #define II "(II): "
 /** debuginformations */
 #define DD "(DD): "
-
+/**mem error*/
+#define MM "(MM): "
 static SDL_RWops *logfile = NULL;
 
 bool cLog::open()
@@ -102,6 +103,7 @@ int cLog::write ( std::string str, int TYPE )
 			case LOG_TYPE_ERROR :   str = str.insert( 0 , EE ); break;
 			case LOG_TYPE_DEBUG :   str = str.insert( 0 , DD ); break;
 			case LOG_TYPE_INFO :    str = str.insert( 0 , II ); break;
+			case LOG_TYPE_MEM :	 str = str.insert( 0 , MM ); break;
 			default :				str = str.insert( 0 , II );
 		}
 		str += TEXT_FILE_LF;

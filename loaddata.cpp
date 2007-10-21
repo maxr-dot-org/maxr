@@ -158,6 +158,7 @@ int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const
 
 	
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX((char *)filepath.c_str());
 	dest[1] = LoadPCX((char *)filepath.c_str());
 
@@ -182,6 +183,7 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 		return 0;
 	
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX((char *)filepath.c_str());
 	SDL_SetAlpha(dest[0],SDL_SRCALPHA,alpha);
 	dest[1] = LoadPCX((char *)filepath.c_str());
@@ -1072,6 +1074,7 @@ int LoadGraphics(const char* path)
 	cLog::write ( "Colourgraphics...", LOG_TYPE_DEBUG );
 	// Farben:
 	OtherData.colors= ( SDL_Surface** ) malloc ( sizeof ( SDL_Surface* ) *8 );
+	if(!OtherData.colors) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	LoadGraphicToSurface ( OtherData.colors[cl_red],path,"cl_red.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_blue],path,"cl_blue.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_green],path,"cl_green.pcx" );
@@ -1082,6 +1085,7 @@ int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( OtherData.colors[cl_aqua],path,"cl_aqua.pcx" );
 
 	OtherData.ShieldColors= ( SDL_Surface** ) malloc ( sizeof ( SDL_Surface* ) *8 );
+	if(!OtherData.ShieldColors) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	MakeShieldColor ( & ( OtherData.ShieldColors[0] ),OtherData.colors[0] );
 	MakeShieldColor ( & ( OtherData.ShieldColors[1] ),OtherData.colors[1] );
 	MakeShieldColor ( & ( OtherData.ShieldColors[2] ),OtherData.colors[2] );
@@ -1213,6 +1217,9 @@ int LoadTerrain(const char* path)
 		}
 		TerrainData.terrain_anz++;
 		TerrainData.terrain= ( sTerrain* ) realloc ( TerrainData.terrain,sizeof ( sTerrain ) *TerrainData.terrain_anz );
+		if(!TerrainData.terrain) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+
+		
 		if(!(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"file")))
 		{
 			sTmpString = "Can't read fileattribute ";
@@ -1283,6 +1290,7 @@ int LoadTerrain(const char* path)
 
 		TerrainData.terrain[i].frames = TerrainData.terrain[i].sf_org->w/64;
 		TerrainData.terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
+		if(!TerrainData.terrain[i].id) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy ( TerrainData.terrain[i].id, ( sections->Items[i] ).c_str() );
 
 		if ( TerrainData.terrain[i].overlay )
@@ -1389,6 +1397,8 @@ int LoadVehicles()
 
 		// Prepare memory for next unit
 		UnitsData.vehicle = ( sVehicle* ) realloc ( UnitsData.vehicle, sizeof ( sVehicle ) * (UnitsData.vehicle_anz+1));
+		if(!UnitsData.vehicle) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+
 
 		// Set default data-values
 		SetDefaultUnitData(UnitsData.vehicle_anz, true);
@@ -1485,6 +1495,7 @@ int LoadVehicles()
 		if(FileExists(sTmpString.c_str()))
 		{
 			UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sVehiclePath.length() +1 );
+			if(!UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 			strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sVehiclePath.c_str() );
 		}
 
@@ -1686,6 +1697,8 @@ int LoadBuildings()
 
 		// Prepare memory for next unit
 		UnitsData.building = ( sBuilding* ) realloc ( UnitsData.building,sizeof ( sBuilding ) * (UnitsData.building_anz+1) );
+		if(!UnitsData.building) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+
 
 		// Set default data-values
 		SetDefaultUnitData(UnitsData.building_anz, false);
@@ -1944,11 +1957,13 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
 	{
 		Data->szName = (char *)malloc(sTmpString.length());
+		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szName,sTmpString.c_str());
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
 	{
 		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText()));
+		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szDescribtion,pExXmlNode->ToElement()->GetText());
 	}
 
@@ -2364,12 +2379,14 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->iBuilt_Costs = 1;
 	Data->iBuilt_Costs_Max = 1;
 	Data->iIs_Produced_by_ID = (sID*) malloc(sizeof(sID));
+	if(!Data->iIs_Produced_by_ID) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->iIs_Produced_by_ID[0].iFirstPart = -1;
 	Data->iIs_Produced_by_ID[0].iSecondPart = -1;
 
 	// Weapons
 	Data->iWeaponsCount = 0;
 	Data->Weapons = ( sWeaponData* ) calloc( 1, sizeof ( sWeaponData ) );
+	if(!Data->Weapons) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->Weapons[Data->iWeaponsCount].szTurret_Gfx = "None";
 	Data->Weapons[Data->iWeaponsCount].iSequence = 0;
 	Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
@@ -2461,6 +2478,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->iCapacity_Units_Ground = 0;
 	Data->iCapacity_Units_Infantry = 0;
 	Data->iCan_Use_Unit_As_Garage_ID = (sID*) malloc(sizeof(sID));
+	if(!Data->iCan_Use_Unit_As_Garage_ID) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->iCan_Use_Unit_As_Garage_ID[0].iFirstPart = -1;
 	Data->iCan_Use_Unit_As_Garage_ID[0].iSecondPart = -1;
 

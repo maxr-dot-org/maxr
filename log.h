@@ -28,6 +28,7 @@
 #define LOG_TYPE_ERROR 2
 #define LOG_TYPE_DEBUG 3
 #define LOG_TYPE_INFO 4
+#define LOG_TYPE_MEM 5
 
 /**
 * Log class. Simple log class :-)
@@ -65,6 +66,7 @@ public:
 	* 2 		== error	(EE):<br>
 	* 3		== debug	(DD):<br>
 	* 4		== information	(II):<br>
+	* 5		== memory prob. (MM):<br>
 	* else		== information	(II):
 	*
 	* @return 0 on success
@@ -89,6 +91,7 @@ public:
 		eLOG_TYPE_ERROR   = 2,
 		eLOG_TYPE_DEBUG   = 3,
 		eLOG_TYPE_INFO    = 4,
+		eLOG_TYPE_MEM	  = 5,
 	};
 
 	/**
