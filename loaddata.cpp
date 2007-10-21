@@ -1401,10 +1401,13 @@ int LoadVehicles()
 
 
 		// Set default data-values
+		cLog::write("Setting default values", cLog::eLOG_TYPE_DEBUG);
 		SetDefaultUnitData(UnitsData.vehicle_anz, true);
 		// Load Data from data.xml
+		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true);
 
+		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 		// laod infantery graphics
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
@@ -1467,8 +1470,11 @@ int LoadVehicles()
 			{
 				// load image
 				sTmpString = sVehiclePath;
+				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
+
 				sprintf(sztmp,"img%d.pcx",n);
 				sTmpString += sztmp;
+				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if(FileExists(sTmpString.c_str()))
 				{
 					UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
@@ -1490,6 +1496,7 @@ int LoadVehicles()
 			}
 		}
 		// load video
+		cLog::write("Loading video", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "video.flc";
 		if(FileExists(sTmpString.c_str()))
@@ -1500,18 +1507,21 @@ int LoadVehicles()
 		}
 
 		// load infoimage
+		cLog::write("Loading portrait", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "info.pcx";
 		if(FileExists(sTmpString.c_str()))
 			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load storageimage
+		cLog::write("Loading storageportrait", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "store.pcx";
 		if(FileExists(sTmpString.c_str()))
 			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load overlaygraphics if necessary
+		cLog::write("Loading overlay", cLog::eLOG_TYPE_DEBUG);
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bHas_Overlay)
 		{
 			sTmpString = sVehiclePath;
@@ -1529,6 +1539,7 @@ int LoadVehicles()
 		}
 
 		// load buildgraphics if necessary
+		cLog::write("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic)
 		{
 			// load image
@@ -1556,6 +1567,7 @@ int LoadVehicles()
 			UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
 		}
 		// load cleargraphics if necessary
+		cLog::write("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area)
 		{
 			// load image (small)
@@ -1600,6 +1612,7 @@ int LoadVehicles()
 		}
 
 		// load sounds
+		cLog::write("Loading sounds", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Wait,sVehiclePath.c_str(),"wait.wav");
 		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].WaitWater,sVehiclePath.c_str(),"wait_water.wav");
 		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Start,sVehiclePath.c_str(),"start.wav");
@@ -1959,12 +1972,15 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		Data->szName = (char *)malloc(sTmpString.length());
 		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szName,sTmpString.c_str());
+		cLog::write(Data->szName, cLog::eLOG_TYPE_DEBUG);
+
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
 	{
 		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText()));
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szDescribtion,pExXmlNode->ToElement()->GetText());
+		cLog::write(Data->szDescribtion, cLog::eLOG_TYPE_DEBUG);
 	}
 
 	// get array count
@@ -2000,7 +2016,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 #define MOVEMENT_NODE (string)"Unit;Movement;"
 #define STORAGE_NODE (string)"Unit;Storage;"
 #define GRAFIC_NODE (string)"Unit;Graphic;"
-
+		cLog::write(sNodePath, cLog::eLOG_TYPE_DEBUG);
 		// is bool?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		{
@@ -2180,7 +2196,10 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		{
 			// Weapon
 			if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
+			{
 				Data->Weapons[Data->iWeaponsCount].szTurret_Gfx = (char *)sTmpString.c_str();
+				cLog::write(Data->Weapons[Data->iWeaponsCount].szTurret_Gfx, cLog::eLOG_TYPE_DEBUG);
+			}
 			n++;
 		}
 		// is fd?
@@ -2234,27 +2253,43 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
 			{
 				if(sTmpString.compare("straight") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
+				}
 				else if(sTmpString.compare("ballistic") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_BALISTIC;
+				}
 				else if(sTmpString.compare("controlled") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_CONTROLED;
+				}
 			}
 			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Type;") == 0)
 			{
 				if(sTmpString.compare("Standard") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_STANDARD;
+				}
 				else if(sTmpString.compare("Energy") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_ENERGY;
+				}
 			}
 			else if(sNodePath.compare(WEAPONS_NODE + "Destination_Type;") == 0)
 			{
 				if(sTmpString.compare("Point") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_POINT;
+				}
 				else if(sTmpString.compare("MIRV") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_MIRV;
+				}
 				else if(sTmpString.compare("Scatter") == 0)
+				{
 					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_SCATTER;
+				}
 			}
 			// Abilities
 			else if(sNodePath.compare(ABILITIES_NODE + "Landing_Type;") == 0)
@@ -2337,6 +2372,8 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			n++;
 		}
 	}
+	cLog::write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
+	cLog::mark();
 	return ;
 }
 
