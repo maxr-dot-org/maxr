@@ -1409,11 +1409,13 @@ int LoadVehicles()
 
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 		// laod infantery graphics
+		
+		register int n = 0;
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
 			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
-			for(int n = 0; n < 8; n++)
+			for(n; n < 8; n++)
 			{
 				for ( int j = 0; j < 13; j++ )
 				{
@@ -1466,7 +1468,7 @@ int LoadVehicles()
 		// load other vehicle graphics
 		else
 		{
-			for(int n = 0; n < 8; n++)
+			for(n; n < 8; n++)
 			{
 				// load image
 				sTmpString = sVehiclePath;
@@ -1914,7 +1916,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 	else
 		Data = &UnitsData.building[unitnum].data;
 	int i, n, arraycount;
-	string sTmpString, sVehicleDataPath, sNodePath;
+	string sTmpString, sVehicleDataPath, sNodePath="";
 	char szTmp[8];
 	TiXmlDocument VehicleDataXml;
 	ExTiXmlNode *pExXmlNode = NULL;
@@ -1969,7 +1971,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		}
 	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
 	{
-		Data->szName = (char *)malloc(sTmpString.length());
+		Data->szName = (char *)malloc(sTmpString.length()+1); //+1 for \0 termination of string especially on *nix
 		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szName,sTmpString.c_str());
 		cLog::write(Data->szName, cLog::eLOG_TYPE_DEBUG);
@@ -1977,7 +1979,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
 	{
-		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText()));
+		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText())+1);
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szDescribtion,pExXmlNode->ToElement()->GetText());
 		cLog::write(Data->szDescribtion, cLog::eLOG_TYPE_DEBUG);
@@ -1991,6 +1993,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		i -= sizeof(DataStructure[arraycount]);
 		arraycount++;
 	}
+
 	// Read infos
 	for( i = 0; i < arraycount; i += n )
 	{
@@ -2016,7 +2019,8 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 #define MOVEMENT_NODE (string)"Unit;Movement;"
 #define STORAGE_NODE (string)"Unit;Storage;"
 #define GRAFIC_NODE (string)"Unit;Graphic;"
-		cLog::write(sNodePath, cLog::eLOG_TYPE_DEBUG);
+
+		//cLog::write(sNodePath, cLog::eLOG_TYPE_DEBUG);
 		// is bool?
 		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
 		{
@@ -2333,16 +2337,16 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			// Production
 			if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;") == 0)
 			{
-				int k = 0;
+				//int k = 0;
 				pExXmlNode = pExXmlNode->XmlGetFirstNodeChild();
 				while(pExXmlNode)
 				{
 					if(!pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
 						break;
-					Data->iIs_Produced_by_ID[k].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-					Data->iIs_Produced_by_ID[k].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+					Data->iIs_Produced_by_ID->iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
+					Data->iIs_Produced_by_ID->iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
 					pExXmlNode = pExXmlNode->XmlGetNextNodeSibling();
-					k++;
+					//k++;
 				}
 			}
 			// Storage
@@ -2417,8 +2421,10 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->iBuilt_Costs_Max = 1;
 	Data->iIs_Produced_by_ID = (sID*) malloc(sizeof(sID));
 	if(!Data->iIs_Produced_by_ID) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	Data->iIs_Produced_by_ID[0].iFirstPart = -1;
-	Data->iIs_Produced_by_ID[0].iSecondPart = -1;
+	Data->iIs_Produced_by_ID->iFirstPart = -1;
+	Data->iIs_Produced_by_ID->iSecondPart = -1;
+	//Data->iIs_Produced_by_ID[0].iFirstPart = -1;
+	//Data->iIs_Produced_by_ID[0].iSecondPart = -1;
 
 	// Weapons
 	Data->iWeaponsCount = 0;
