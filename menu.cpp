@@ -13,6 +13,8 @@
 #include "game.h"
 #include "log.h"
 
+/** int for ShowInfo to prevent same graphic shown twice on click*/
+static int s_iLastUnitShown = 0;
 
 // Menü vorbereiten:
 void EnterMenu ( bool limited )
@@ -46,35 +48,36 @@ void EnterMenu ( bool limited )
 // Zeigt ein Infobild an:
 void ShowInfo ( void )
 {
-	SDL_Rect dest= {16,182,320,240}; //Rect for our unit picture in main menu
-	//TODO: using random number nr to decide whether we show a
-	//vehicle or a building - should become obsolete when vehicles
-	//and buildings are stored in one huge units-block.	
-	register int nr = random(3,1); 
+	/**To randomize whether to show a vehicles or a building*/
+	int iShowBuilding = random(3,1);	
+				/*I want 3 possible random numbers
+				since a chance of 50:50 is boring (and
+				vehicles are way more cool so I prefer
+				them to be shown) -- beko */
+	/**Unit to show*/
+	int iUnitShow;
+	/**Destinationrect for unit picture in main menu*/
+	SDL_Rect rDest= {16,182,320,240};
 	
-	//TODO: add sanity check that the same picture doesn't show twice
-	
-	if ( nr == 1 )
+	if ( iShowBuilding == 1 ) //that's a 33% chance that we show a building on 1
 	{
-		cLog::write("Showing building graphic in main menu", cLog::eLOG_TYPE_DEBUG);
-		//FIXME: sanity check just for debug since we don't
-		// have any buildings loaded right now and app crashes
-		// without this. REMOVE THIS when buildings load
-		// successful. Should look like else-block later!
-		if (UnitsData.building_anz == 0 ) 
+		do 
 		{
-			cLog::write("No buildings found - can't show graphic", cLog::eLOG_TYPE_WARNING);
+			iUnitShow = random ( UnitsData.building_anz,0 );
 		}
-		else
-		{
-			SDL_BlitSurface ( UnitsData.building[random ( UnitsData.building_anz,0 )].info,NULL,buffer,&dest );
-		}
+		while (iUnitShow == s_iLastUnitShown);	//make sure we don't show same unit twice	
+		SDL_BlitSurface ( UnitsData.building[iUnitShow].info,NULL,buffer,&rDest );
 	}
-	else
+	else //and a 66% chance to show a vehicle on 0 or 2
 	{
-		cLog::write("Showing vehicle graphic in main menu", cLog::eLOG_TYPE_DEBUG);
-		SDL_BlitSurface ( UnitsData.vehicle[random ( UnitsData.vehicle_anz,0 )].info,NULL,buffer,&dest );
+		do
+		{
+			iUnitShow = random ( UnitsData.vehicle_anz,0 );
+		}
+		while(iUnitShow == s_iLastUnitShown);	//make sure we don't show same unit twice	
+		SDL_BlitSurface ( UnitsData.vehicle[iUnitShow].info,NULL,buffer,&rDest );
 	}
+	s_iLastUnitShown = iUnitShow; //store shown unit
 }
 
 // Menü aufräumen:
