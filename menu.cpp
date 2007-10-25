@@ -1482,86 +1482,88 @@ string RunPlanetSelect ( void )
 void ShowPlanets ( TList *files,int offset,int selected )
 {
 	SDL_Surface *sf;
-	SDL_Rect scr,dest;
-	string name;
-	string pathname;
-	int i,size;
+	SDL_Rect scr={640, 390, 0, 38},dest;
+	string sMap;
+	string sPath;
+	int size;
 	FILE *fp;
-
-	scr.w=640;
-	scr.h=390;
-	scr.x=0;
-	scr.y=38;
+	
 	SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
 
-	scr.x=25;
-	scr.y=90;
-	scr.h=scr.w=112;
+	scr.x=25; scr.y=90; scr.h=scr.w=112;
+		
 	cLog::write("Loading Maps", cLog::eLOG_TYPE_INFO);
 	
-	for ( i=0;i<8;i++ )
+	for (int i=0;i<8;i++ ) //only 8 maps on one screen
 	{
 		if ( i+offset>=files->Count ) break;
-		name = files->Items[i+offset];
-		pathname = name;
-		pathname.insert (0, PATH_DELIMITER );
-		pathname.insert (0,SettingsData.sMapsPath );
+		sMap = files->Items[i+offset];
+		sPath = sMap;
+		sPath.insert (0, PATH_DELIMITER );
+		sPath.insert (0,SettingsData.sMapsPath );
 		
-		if(FileExists(pathname.c_str()))
+		if(FileExists(sPath.c_str()))
 		{
 		
-			sf = SDL_LoadBMP ( pathname.c_str() );
+			sf = SDL_LoadBMP ( sPath.c_str() );
 			if ( sf!=NULL )
 			{
 				SDL_BlitSurface ( sf,NULL,buffer,&scr );
 			}
-			pathname.replace ( pathname.length()-3, 3, "map" );
-			cLog::write(pathname.c_str(), cLog::eLOG_TYPE_DEBUG);
-			fp=fopen ( pathname.c_str(),"rb" );
+			sPath.replace ( sPath.length()-3, 3, "map" );
+			cLog::write(sPath.c_str(), cLog::eLOG_TYPE_DEBUG);
+			fp=fopen ( sPath.c_str(),"rb" );
 			fseek ( fp,21,SEEK_CUR );
 			fread ( &size,sizeof ( int ),1,fp );
 			fclose ( fp );
 
-			if ( selected==i+offset )
+			SDL_Rect r;
+			r=scr;
+			//borders
+			#define SELECTED 0x00C000
+			#define UNSELECTED 0x000000
+			//TOFIX: remove old offset on old selection after selecting new map - painting other borders just black for now -- beko
+			if ( selected==i+offset ) //draw offset "green border"
 			{
-				SDL_Rect r;
-				r=scr;
-				r.x-=4;
-				r.y-=4;
-				r.w+=8;
-				r.h=4;
-				SDL_FillRect ( buffer,&r,0x00C000 );
-				r.w=4;
-				r.h=112+8;
-				SDL_FillRect ( buffer,&r,0x00C000 );
+
+				r.x-=4; r.y-=4; r.w+=8; r.h=4;
+				SDL_FillRect ( buffer,&r,SELECTED );
+				r.w=4; r.h=112+8;
+				SDL_FillRect ( buffer,&r,SELECTED );
 				r.x+=112+4;
-				SDL_FillRect ( buffer,&r,0x00C000 );
-				r.x-=112+4;
-				r.y+=112+4;
-				r.w=112+8;
-				r.h=4;
-				SDL_FillRect ( buffer,&r,0x00C000 );
+				SDL_FillRect ( buffer,&r,SELECTED );
+				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
+				SDL_FillRect ( buffer,&r,SELECTED );
 	
 				char tmp[16];
 				sprintf ( tmp,"%d",size );
-				name.insert ( 0,"> " );
-				name.replace ( name.length()-4, 2, " (" );
-				name.replace ( name.length()-2, 3, tmp );
-				name.insert ( name.length(),"x" );
-				name.replace ( name.length(), 3, tmp );
-				name.insert ( name.length(),") <" );
+				sMap.insert ( 0,"> " );
+				sMap.replace ( sMap.length()-4, 2, " (" );
+				sMap.replace ( sMap.length()-2, 3, tmp );
+				sMap.insert ( sMap.length(),"x" );
+				sMap.replace ( sMap.length(), 3, tmp );
+				sMap.insert ( sMap.length(),") <" );
 			}
 			else
 			{
+				r.x-=4; r.y-=4; r.w+=8; r.h=4;
+				SDL_FillRect ( buffer,&r,UNSELECTED );
+				r.w=4; r.h=112+8;
+				SDL_FillRect ( buffer,&r,UNSELECTED );
+				r.x+=112+4;
+				SDL_FillRect ( buffer,&r,UNSELECTED );
+				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
+				SDL_FillRect ( buffer,&r,UNSELECTED );
+				
 				char tmp[16];
 				sprintf ( tmp,"%d",size );
-				name.replace ( name.length()-4, 2, " (" );
-				name.replace ( name.length()-2, 3, tmp );
-				name.insert ( name.length(),"x" );
-				name.replace ( name.length(), 3, tmp );
-				name.insert ( name.length(),")" );
+				sMap.replace ( sMap.length()-4, 2, " (" );
+				sMap.replace ( sMap.length()-2, 3, tmp );
+				sMap.insert ( sMap.length(),"x" );
+				sMap.replace ( sMap.length(), 3, tmp );
+				sMap.insert ( sMap.length(),")" );
 			}
-			fonts->OutTextCenter ( ( char * ) name.c_str(),scr.x+77-21,scr.y-42,buffer );
+			fonts->OutTextCenter ( ( char * ) sMap.c_str(),scr.x+77-21,scr.y-42,buffer );
 	
 			scr.x+=158;
 			if ( i==3 )
@@ -1574,7 +1576,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		}
 		else
 		{
-		//error
+		//error - do nothing.
 		}
 		
 		if ( sf!=NULL )
@@ -1582,6 +1584,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 			SDL_FreeSurface ( sf );
 		}
 	}
+	cLog::mark();
 
 	// Die Up-Down Buttons machen:
 	if ( offset )
@@ -1614,7 +1617,6 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.y=440;
 		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
 	}
-	cLog::mark();
 }
 
 // Startet die Spielerauswahl (gibt die Spielereinstellungen):
