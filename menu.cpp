@@ -12,6 +12,8 @@
 #include "dialog.h"
 #include "game.h"
 #include "log.h"
+#include "files.h"
+
 
 /** int for ShowInfo to prevent same graphic shown twice on click*/
 static int s_iLastUnitShown = 0;
@@ -1495,72 +1497,86 @@ void ShowPlanets ( TList *files,int offset,int selected )
 	scr.x=25;
 	scr.y=90;
 	scr.h=scr.w=112;
+	cLog::write("Loading Maps", cLog::eLOG_TYPE_INFO);
+	
 	for ( i=0;i<8;i++ )
 	{
 		if ( i+offset>=files->Count ) break;
 		name = files->Items[i+offset];
 		pathname = name;
-		pathname.insert ( 0,SettingsData.sMapsPath );
-		sf = SDL_LoadBMP ( pathname.c_str() );
-		if ( sf!=NULL )
+		pathname.insert (0, PATH_DELIMITER );
+		pathname.insert (0,SettingsData.sMapsPath );
+		
+		if(FileExists(pathname.c_str()))
 		{
-			SDL_BlitSurface ( sf,NULL,buffer,&scr );
-		}
+		
+			sf = SDL_LoadBMP ( pathname.c_str() );
+			if ( sf!=NULL )
+			{
+				SDL_BlitSurface ( sf,NULL,buffer,&scr );
+			}
+			pathname.replace ( pathname.length()-3, 3, "map" );
+			cLog::write(pathname.c_str(), cLog::eLOG_TYPE_DEBUG);
+			fp=fopen ( pathname.c_str(),"rb" );
+			fseek ( fp,21,SEEK_CUR );
+			fread ( &size,sizeof ( int ),1,fp );
+			fclose ( fp );
 
-		pathname.replace ( pathname.length()-3, 3, "map" );
-		fp=fopen ( pathname.c_str(),"rb" );
-		fseek ( fp,21,SEEK_CUR );
-		fread ( &size,sizeof ( int ),1,fp );
-		fclose ( fp );
+			if ( selected==i+offset )
+			{
+				SDL_Rect r;
+				r=scr;
+				r.x-=4;
+				r.y-=4;
+				r.w+=8;
+				r.h=4;
+				SDL_FillRect ( buffer,&r,0x00C000 );
+				r.w=4;
+				r.h=112+8;
+				SDL_FillRect ( buffer,&r,0x00C000 );
+				r.x+=112+4;
+				SDL_FillRect ( buffer,&r,0x00C000 );
+				r.x-=112+4;
+				r.y+=112+4;
+				r.w=112+8;
+				r.h=4;
+				SDL_FillRect ( buffer,&r,0x00C000 );
+	
+				char tmp[16];
+				sprintf ( tmp,"%d",size );
+				name.insert ( 0,"> " );
+				name.replace ( name.length()-4, 2, " (" );
+				name.replace ( name.length()-2, 3, tmp );
+				name.insert ( name.length(),"x" );
+				name.replace ( name.length(), 3, tmp );
+				name.insert ( name.length(),") <" );
+			}
+			else
+			{
+				char tmp[16];
+				sprintf ( tmp,"%d",size );
+				name.replace ( name.length()-4, 2, " (" );
+				name.replace ( name.length()-2, 3, tmp );
+				name.insert ( name.length(),"x" );
+				name.replace ( name.length(), 3, tmp );
+				name.insert ( name.length(),")" );
+			}
+			fonts->OutTextCenter ( ( char * ) name.c_str(),scr.x+77-21,scr.y-42,buffer );
+	
+			scr.x+=158;
+			if ( i==3 )
+			{
+				scr.x=25;
+				scr.y+=197;
+			}
+	
 
-		if ( selected==i+offset )
-		{
-			SDL_Rect r;
-			r=scr;
-			r.x-=4;
-			r.y-=4;
-			r.w+=8;
-			r.h=4;
-			SDL_FillRect ( buffer,&r,0x00C000 );
-			r.w=4;
-			r.h=112+8;
-			SDL_FillRect ( buffer,&r,0x00C000 );
-			r.x+=112+4;
-			SDL_FillRect ( buffer,&r,0x00C000 );
-			r.x-=112+4;
-			r.y+=112+4;
-			r.w=112+8;
-			r.h=4;
-			SDL_FillRect ( buffer,&r,0x00C000 );
-
-			char tmp[16];
-			sprintf ( tmp,"%d",size );
-			name.insert ( 0,"> " );
-			name.replace ( name.length()-4, 2, " (" );
-			name.replace ( name.length()-2, 3, tmp );
-			name.insert ( name.length(),"x" );
-			name.replace ( name.length(), 3, tmp );
-			name.insert ( name.length(),") <" );
 		}
 		else
 		{
-			char tmp[16];
-			sprintf ( tmp,"%d",size );
-			name.replace ( name.length()-4, 2, " (" );
-			name.replace ( name.length()-2, 3, tmp );
-			name.insert ( name.length(),"x" );
-			name.replace ( name.length(), 3, tmp );
-			name.insert ( name.length(),")" );
+		//error
 		}
-		fonts->OutTextCenter ( ( char * ) name.c_str(),scr.x+77-21,scr.y-42,buffer );
-
-		scr.x+=158;
-		if ( i==3 )
-		{
-			scr.x=25;
-			scr.y+=197;
-		}
-
+		
 		if ( sf!=NULL )
 		{
 			SDL_FreeSurface ( sf );
@@ -1598,6 +1614,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.y=440;
 		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
 	}
+	cLog::mark();
 }
 
 // Startet die Spielerauswahl (gibt die Spielereinstellungen):
