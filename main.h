@@ -429,14 +429,55 @@ struct sTerrain{
   int frames;       // Anzahl an Frames
 };
 
-// List - All kind of Lists ///////////////////////////////////////////////////
+/**
+* List structure. All kind of Lists.
+*
+* @author alzi
+*/
 struct sList{
-	sList() {iCount = 0; Items = NULL; }
+	// Constructor
+	sList()
+	{
+		iCount = 0;
+		Items = NULL;
+	}
+
+	// Items of the List
 	void **Items;
+	// Number of Items
 	int iCount;
 
-	void Add(void *src) { Items = (void **)realloc(Items, (iCount+1) * sizeof(src)); Items[iCount] = src; iCount++; }
-	void Delete(int iIndex){ if(iIndex >= iCount) iIndex = iCount-1;  delete Items[iIndex]; for(int i = iIndex; i < iCount; i++) Items[i]=Items[i+1]; iCount--; }
+	/**
+	* Add an Item to the List.
+	*
+	* @param *src Pointer on Item to add
+	*/
+	void Add(void *src)
+	{
+		// Increase the space for the new Item
+		Items = (void **)realloc(Items, (iCount+1) * sizeof(src));
+		// Add the Item
+		Items[iCount] = src;
+		iCount++;
+	}
+	/**
+	* Deletes an Item from the List and resorts the remaining Items.
+	*
+	* @param *iIndex Index of Item to delete
+	*/
+	void Delete(int iIndex)
+	{
+		// Index mustn't be to high
+		if(iIndex >= iCount) iIndex = iCount-1;
+		// Delete Item
+		delete Items[iIndex];
+		iCount--;
+		// Resort Items
+		for(int i = iIndex; i <= iCount; i++)
+		{
+			Items[i]=Items[i+1];
+		}
+	}
 };
 
 // TList - All kind of Lists //////////////////////////////////////////////////
