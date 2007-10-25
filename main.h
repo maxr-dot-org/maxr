@@ -429,6 +429,16 @@ struct sTerrain{
   int frames;       // Anzahl an Frames
 };
 
+// List - All kind of Lists ///////////////////////////////////////////////////
+struct sList{
+	sList();
+	void **Items;
+	int iCount;
+
+	void Add(void *src) { Items = (void **)realloc(Items, (iCount+1) * sizeof(src)); Items[iCount] = src; iCount++; }
+	void Delete(int iIndex){ if(iIndex >= iCount) iIndex = iCount-1;  delete Items[iIndex]; for(int i = iIndex; i < iCount; i++) Items[i]=Items[i+1]; iCount--; }
+};
+
 // TList - All kind of Lists //////////////////////////////////////////////////
 class TList{
 public:
