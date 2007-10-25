@@ -431,7 +431,7 @@ struct sTerrain{
 
 // List - All kind of Lists ///////////////////////////////////////////////////
 struct sList{
-	sList();
+	sList() {iCount = 0; Items = NULL; }
 	void **Items;
 	int iCount;
 
