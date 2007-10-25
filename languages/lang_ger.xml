@@ -80,8 +80,8 @@
 			<Option_Thin ENG="thin" localized="dünn"/>
 			<Option_On ENG="on" localized="Ein"/>
 			<Option_Off ENG="off" localized="Aus"/>
-			<Option_Definite ENG="definite" localized="definite"/>
-			<Option_Mobile ENG="mobile" localized="mobil"/>
+			<Option_Definite ENG="definite" localized="Fest"/>
+			<Option_Mobile ENG="mobile" localized="Mobil"/>
 			<Option_Type_Turns ENG="turns" localized="Rundenbasierend"/>
 			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
 		</Game_Options>
