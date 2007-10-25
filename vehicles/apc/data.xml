@@ -1,4 +1,3 @@
-<?xml version = '1.0' encoding = 'iso-8859-15'?>
 <Unit ID="0 6" name="apc">
   <Header>
     <Author name="Someone">
@@ -150,7 +149,8 @@
     <Capacity_Units_Ground Num="0"/>
     <Capacity_Units_Infantry Num="6"/>
     <Can_Use_Unit_As_Garage>
-      <Unit ID="0 0" Size="0"/>
+      <Unit ID="0 13" Size="1"/>
+      <Unit ID="0 18" Size="1"/>
     </Can_Use_Unit_As_Garage>
   </Storage>
   <Graphic>

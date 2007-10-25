@@ -1,13 +1,13 @@
-<Unit ID="0 10" name="bulldozer">
+<Unit ID="0 29" name="sea_transport">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
+    <Editor name="Rocky" time="2007-10-25 14:45:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bulldozer\n\nThe vehicle, in order to clear debris. Bulldozers can filter out material from debris.
+    Sea Transport\n\nHeavy armored ship with space for up to six units of the ground to carry. Sea tranports are much slower than aircraft transports, but they also tend to survive an enemy attack.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -17,20 +17,20 @@
     <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes"/>
-    <Is_Target_Sea YN="No"/>
+    <Is_Target_Land YN="No"/>
+    <Is_Target_Sea YN="Yes"/>
     <Is_Target_Air YN="No"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="4"/>
-    <Hitpoints Num="14"/>
+    <Armor Num="12"/>
+    <Hitpoints Num="32"/>
   </Defence>
   <Production>
-    <Built_Costs Num="15"/>
-    <Built_Costs_Max Num="60"/>
+    <Built_Costs Num="12"/>
+    <Built_Costs_Max Num="48"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -81,7 +81,7 @@
   </Weapons>
 
   <Abilities>
-    <Can_Clear_Area YN="Yes"/>
+    <Can_Clear_Area YN="No"/>
     <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
@@ -122,9 +122,9 @@
   <Movement>
     <Movement_Sum Num="7"/>
     <Costs_Air Num="0.0"/>
-    <Costs_Sea Num="0.0"/>
+    <Costs_Sea Num="1"/>
     <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
+    <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>
     <Factor_Coast Num="0.0"/>
     <Factor_Wood Num="0.0"/>
@@ -139,17 +139,37 @@
   </Movement>
 
   <Storage>
-    <Is_Garage YN="No"/>
-    <Capacity_Metal Num="30"/>
+    <Is_Garage YN="Yes"/>
+    <Capacity_Metal Num="0"/>
     <Capacity_Oil Num="0"/>
     <Capacity_Gold Num="0"/>
     <Capacity_Energy Num="0"/>
     <Capacity_Units_Air Num="0"/>
     <Capacity_Units_Sea Num="0"/>
-    <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="0"/>
+    <Capacity_Units_Ground Num="6"/>
+    <Capacity_Units_Infantry Num="6"/>
     <Can_Use_Unit_As_Garage>
-      <Unit ID="0 0" Size="0"/>
+      <Unit ID="0 2" Size="1"/>
+      <Unit ID="0 5" Size="1"/>
+      <Unit ID="0 6" Size="1"/>
+      <Unit ID="0 7" Size="1"/>
+      <Unit ID="0 10" Size="1"/>
+      <Unit ID="0 12" Size="1"/>
+      <Unit ID="0 13" Size="1"/>
+      <Unit ID="0 18" Size="1"/>
+      <Unit ID="0 19" Size="1"/>
+      <Unit ID="0 20" Size="1"/>
+      <Unit ID="0 21" Size="1"/>
+      <Unit ID="0 23" Size="1"/>
+      <Unit ID="0 24" Size="1"/>
+      <Unit ID="0 25" Size="1"/>
+      <Unit ID="0 26" Size="1"/>
+      <Unit ID="0 27" Size="1"/>
+      <Unit ID="0 31" Size="1"/>
+      <Unit ID="0 32" Size="1"/>
+      <Unit ID="0 33" Size="1"/>
+      <Unit ID="0 34" Size="1"/>
+      <Unit ID="0 35" Size="1"/>
     </Can_Use_Unit_As_Garage>
   </Storage>
   <Graphic>

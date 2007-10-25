@@ -1,179 +1,155 @@
-<?xml version = '1.0' encoding = 'iso-8859-15'?>
-<Unit>
+<Unit ID="0 27" name="scout">
   <Header>
-    <Author Name="OrgMax" ID="00 00 00 00" >
-      <Editor Name="beko" ID="0a 4e 2c f5" />
+    <Author name="Someone">
+    <Editor name="Rocky" time="2007-10-25 14:30:00"/>
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
-    <Unit_ID ID="00 04" >
-<!--first pair:
-00 == vehicle
-01 == building 
-2 == connector
-3 == perhaps more to come? 
-
-second pair: 
-unique ID-Num.-->    </Unit_ID>
-    <Game_Version Num="0" />
-    <Version Text="0.1" />
-    <Last_Change Time="2007-05-10 00:00:00" />
-    <Name Text="Scout" />
-    <Describtion Text="Späher\n\nHoch-Geschwindigkeits-Späher-Fahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, ist jedoch schneller auf Land.\nSehr schnell und gute Scan-Reichweite, aber viel schwächer als die meisten Kampfeinheiten." />
+    <Game_Version text="00.00.00.00"/>
   </Header>
+  <Description lang="ENG">
+    Scout\n\nHigh-speed-scout-vehicle, to discover enemy units. Can drive over water without a bridge, but is faster on ground. Very fast and good scanning range, but much weaker than most combat units.
+  </Description>
   <General_Info>
-    <Is_Controllable YN="Yes" />
-    <Can_Be_Captured YN="Yes" />
-    <Can_Be_Disabled YN="Yes" />
-    <Size_Length Num="1" />
-    <Size_Width Num="1" />
+    <Is_Controllable YN="Yes"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Size_Length Num="1"/>
+    <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes" />
-    <Is_Target_Sea YN="Yes" />
-    <Is_Target_Air YN="No" />
-    <Is_Target_Underwater YN="No" />
-    <Is_Target_Mine YN="Yes" />
-    <Is_Target_Building YN="No" />
-    <Is_Target_Satellite YN="No" />
-    <Is_Target_WMD YN="No" />
-    <Armor Num="4" />
-    <Hitpoints Num="16" />
+    <Is_Target_Land YN="Yes"/>
+    <Is_Target_Sea YN="Yes"/>
+    <Is_Target_Air YN="No"/>
+    <Is_Target_Underwater YN="No"/>
+    <Is_Target_Mine YN="No"/>
+    <Is_Target_Building YN="No"/>
+    <Is_Target_Satellite YN="No"/>
+    <Is_Target_WMD YN="No"/>
+    <Armor Num="4"/>
+    <Hitpoints Num="16"/>
   </Defence>
   <Production>
-    <Built_Costs Num="9" />
-    <Built_Costs_Max Num="36" />
+    <Built_Costs Num="9"/>
+    <Built_Costs_Max Num="36"/>
     <Is_Produced_by>
-      <Unit_ID ID="00 00" />
+      <Unit ID="0 0"/>
+      <Unit ID="0 0"/> 
     </Is_Produced_by>
   </Production>
+
   <Weapons>
     <Weapon>
-      <Turret_Gfx Text="none" Num="0"/> <!-- Text: filename; Num: Sequence -->
-      <Shot_Trajectory Const="straight" >
-<!--types are:
-straight
-ballistic
-controlled-->      </Shot_Trajectory>
-      <Ammo_Type Const="default" >
-<!--types are:
-default
-energy-->      </Ammo_Type>
-      <Ammo_Quantity Num="10" />
+      <Turret_Gfx Text="none" Num="0"/>
+      <Shot_Trajectory Const="straight"/>
+      <Ammo_Type Const="Standard"/>
+      <Ammo_Quantity Num="10"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="12" />
-          <Range Fd="3" />
+          <Damage Num="12"/>
+          <Range Fd="3"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="12" />
-          <Range Fd="3" />
+          <Damage Num="12"/>
+          <Range Fd="3"/>
         </Target_Sea>
         <Target_Air>
-          <Damage Num="0" />
-          <Range Fd="0" />
+          <Damage Num="0"/>
+          <Range Fd="0"/>
         </Target_Air>
         <Target_Mine>
-          <Damage Num="0" />
-          <Range Fd="0" />
+          <Damage Num="12"/>
+          <Range Fd="3"/>
         </Target_Mine>
         <Target_Submarine>
-          <Damage Num="0" />
-          <Range Fd="0" />
+          <Damage Num="0"/>
+          <Range Fd="0"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="12" />
-          <Range Fd="3" />
+          <Damage Num="12"/>
+          <Range Fd="3"/>
         </Target_Infantry>
         <Target_WMD>
-          <Damage Num="0" />
-          <Range Fd="0" />
+          <Damage Num="0"/>
+          <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="1" />
-      <Destination_Area Fd="1" >
-<!--damage area-->      </Destination_Area>
-      <Destination_Type Const="point" >
-<!--destination types are
-point
-mirv
-scatter-->      </Destination_Type>
-      <Movement_Allowed Num="12" >
-<!--amount moving points until possible shoots are reduced for this round-->      </Movement_Allowed>
+      <Shots Num="1"/>
+      <Destination_Area Num="1"/>
+      <Destination_Type Const="Point"/>
+      <Movement_Allowed Num="12"/>  
     </Weapon>
   </Weapons>
+
   <Abilities>
-    <Can_Clear_Area YN="No" />
-    <Gets_Experience YN="No" />
-    <Can_Disable YN="No" />
-    <Can_Capture YN="No" />
-    <Can_Dive YN="No" />
-    <Landing_Type Const="OnlyGarage" >
-<!--OnlyGarage, 
-GarageAndPlatform
-Everywhere-->    </Landing_Type>
-    <Can_Upgrade YN="Yes" />
-    <Can_Repair YN="No" />
-    <Can_Research YN="No" />
-    <Is_Kamikaze YN="No" >
-<!--mines and srbms-->    </Is_Kamikaze>
-    <Is_Infrastructure YN="No" >
-<!--automatically overbuild-->    </Is_Infrastructure>
-    <Can_Place_Mines YN="No" />
-    <Makes_Tracks Fd="12" >
-<!--tracks and how long-->    </Makes_Tracks>
-    <Self_Repair_Type YN="None" >
-<!--None
-Automatic (e.g. Alien) 
-Normal (needs Metall)-->    </Self_Repair_Type>
-    <Converts_Gold Num="0" />
-    <Needs_Energy Num="0" >
-<!--negative value for "produces"-->    </Needs_Energy>
-    <Needs_Oil Num="0" />
-    <Needs_Metal Num="0" />
-    <Needs_Humans Num="0" />
-    <Mines_Resources Num="0" >
-<!--max per round-->    </Mines_Resources>
-    <Can_Launch_SRBM YN="No" />
-    <Energy_Shield_Strength Num="0" />
-    <Energy_Shield_Size Num="0" />
+    <Can_Clear_Area YN="No"/>
+    <Gets_Experience YN="No"/>
+    <Can_Disable YN="No"/>
+    <Can_Capture YN="No"/>
+    <Can_Dive YN="No"/>
+    <Landing_Type Const="OnlyGarage"/>
+    <Can_Upgrade YN="No"/>
+    <Can_Repair YN="No"/>
+    <Can_Rearm YN="No"/>
+    <Can_Research YN="No"/>
+    <Is_Kamikaze YN="No"/>
+    <Is_Infrastructure YN="No"/>
+    <Can_Place_Mines YN="No"/>
+    <Makes_Tracks Fd="3"/>
+    <Self_Repair_Type Const="None"/>
+    <Converts_Gold Num="0"/>
+    <Needs_Energy Num="0"/>
+    <Needs_Oil Num="0"/>
+    <Needs_Metal Num="0"/>
+    <Needs_Humans Num="0"/>
+    <Mines_Resources Num="0"/>
+    <Can_Launch_SRBM YN="No"/>
+    <Energy_Shield_Strength Num="0"/>
+    <Energy_Shield_Size Num="0"/>
   </Abilities>
+
   <Scan_Abilities>
-    <Range_Sight Fd="9" />
-    <Range_Air Fd="0" />
-    <Range_Ground Fd="0" />
-    <Range_Sea Fd="0" />
-    <Range_Submarine Fd="0" />
-    <Range_Mine Fd="0" />
-    <Range_Infantry Fd="0" />
-    <Range_Resources Fd="0" />
-    <Range_Jammer Fd="0" />
+    <Range_Sight Fd="9"/>
+    <Range_Air Fd="0"/>
+    <Range_Ground Fd="0"/>
+    <Range_Sea Fd="0"/>
+    <Range_Submarine Fd="0"/>
+    <Range_Mine Fd="0"/>
+    <Range_Infantry Fd="0"/>
+    <Range_Resources Fd="0"/>
+    <Range_Jammer Fd="0"/>
   </Scan_Abilities>
+
   <Movement>
-    <Movement_Sum Num="12" />
-    <Costs_Air Num="0" />
-    <Costs_Sea Num="1.5" />
-    <Costs_Submarine Num="0.0" />
-    <Costs_Ground Num="1" />
-    <Factor_Coast Num="1.5" />
-    <Factor_Wood Num="1.5" />
-    <Factor_Road Num="0.5" />
-    <Factor_Bridge Num="0.0" />
-    <Factor_Platform Num="0.0" />
-    <Factor_Monorail Num="0.0" />
-    <Factor_Wreck Num="0.0" />
-    <Factor_Mountains Num="0.0" />
+    <Movement_Sum Num="12"/>
+    <Costs_Air Num="0.0"/>
+    <Costs_Sea Num="1"/>
+    <Costs_Submarine Num="0.0"/>
+    <Costs_Ground Num="1"/>
+    <Factor_Water Num="0.0"/>
+    <Factor_Coast Num="0.0"/>
+    <Factor_Wood Num="0.0"/>
+    <Factor_Road Num="0.0"/>
+    <Factor_Bridge Num="0.0"/>
+    <Factor_Platform Num="0.0"/>
+    <Factor_Monorail Num="0.0"/>
+    <Factor_Wreck Num="0.0"/>
+    <Factor_Mountains Num="0.0"/>
+    <Factor_Land_TakeOff Num="0.0"/>
+    <Factor_Dive Num="0.0"/>
   </Movement>
+
   <Storage>
-    <Is_Garage YN="No" />
-    <Capacity_Metal Num="0" />
-    <Capacity_Oil Num="0" />
-    <Capacity_Gold Num="0" />
-    <Capacity_Energy Num="0" />
-    <Capacity_Units_Air Num="0" />
-    <Capacity_Units_Sea Num="0" />
-    <Capacity_Units_Ground Num="0" />
-    <Capacity_Units_Infantry Num="0" />
+    <Is_Garage YN="No"/>
+    <Capacity_Metal Num="0"/>
+    <Capacity_Oil Num="0"/>
+    <Capacity_Gold Num="0"/>
+    <Capacity_Energy Num="0"/>
+    <Capacity_Units_Air Num="0"/>
+    <Capacity_Units_Sea Num="0"/>
+    <Capacity_Units_Ground Num="0"/>
+    <Capacity_Units_Infantry Num="0"/>
     <Can_Use_Unit_As_Garage>
-      <Unit_ID ID="00 00" />
+      <Unit ID="0 0" Size="0"/>
     </Can_Use_Unit_As_Garage>
   </Storage>
   <Graphic>

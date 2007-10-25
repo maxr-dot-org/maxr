@@ -1,13 +1,13 @@
-<Unit ID="0 10" name="bulldozer">
+<Unit ID="0 16" name="fighter">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
+    <Editor name="Rocky" time="2007-10-21 12:30:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bulldozer\n\nThe vehicle, in order to clear debris. Bulldozers can filter out material from debris.
+    Fighter\n\nFast but sensitive plane, which a limited number of air-to-air missiles transported. Hunters are the best means to enemy aircraft from one area to distribute and to a moving army to defend. Stationary air defense is the better choice to a specific area to defend.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -17,20 +17,20 @@
     <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes"/>
+    <Is_Target_Land YN="No"/>
     <Is_Target_Sea YN="No"/>
-    <Is_Target_Air YN="No"/>
+    <Is_Target_Air YN="Yes"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
     <Armor Num="4"/>
-    <Hitpoints Num="14"/>
+    <Hitpoints Num="12"/>
   </Defence>
   <Production>
-    <Built_Costs Num="15"/>
-    <Built_Costs_Max Num="60"/>
+    <Built_Costs Num="24"/>
+    <Built_Costs_Max Num="96"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -42,7 +42,7 @@
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="0"/>
+      <Ammo_Quantity Num="4"/>
       <Allowed_Targets>
         <Target_Land>
           <Damage Num="0"/>
@@ -53,8 +53,8 @@
           <Range Fd="0"/>
         </Target_Sea>
         <Target_Air>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
+          <Damage Num="16"/>
+          <Range Fd="5"/>
         </Target_Air>
         <Target_Mine>
           <Damage Num="0"/>
@@ -73,20 +73,20 @@
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="0"/>
+      <Shots Num="1"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="0"/>  
+      <Movement_Allowed Num="24"/>  
     </Weapon>
   </Weapons>
 
   <Abilities>
-    <Can_Clear_Area YN="Yes"/>
+    <Can_Clear_Area YN="No"/>
     <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
     <Can_Dive YN="No"/>
-    <Landing_Type Const="OnlyGarage"/>
+    <Landing_Type Const="GarageAndPlatform"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
     <Can_Rearm YN="No"/>
@@ -108,7 +108,7 @@
   </Abilities>
 
   <Scan_Abilities>
-    <Range_Sight Fd="3"/>
+    <Range_Sight Fd="5"/>
     <Range_Air Fd="0"/>
     <Range_Ground Fd="0"/>
     <Range_Sea Fd="0"/>
@@ -120,11 +120,11 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="7"/>
-    <Costs_Air Num="0.0"/>
+    <Movement_Sum Num="24"/>
+    <Costs_Air Num="1"/>
     <Costs_Sea Num="0.0"/>
     <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
+    <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>
     <Factor_Coast Num="0.0"/>
     <Factor_Wood Num="0.0"/>
@@ -140,7 +140,7 @@
 
   <Storage>
     <Is_Garage YN="No"/>
-    <Capacity_Metal Num="30"/>
+    <Capacity_Metal Num="0"/>
     <Capacity_Oil Num="0"/>
     <Capacity_Gold Num="0"/>
     <Capacity_Energy Num="0"/>

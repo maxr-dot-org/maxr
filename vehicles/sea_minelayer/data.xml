@@ -1,13 +1,13 @@
-<Unit ID="0 10" name="bulldozer">
+<Unit ID="0 28" name="sea_minelayer">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
+    <Editor name="Rocky" time="2007-10-25 14:45:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bulldozer\n\nThe vehicle, in order to clear debris. Bulldozers can filter out material from debris.
+    Sea Minelayer\n\nSeaversion of minelayer. Like its counterpart on the ground, the sea minelayer can produce mines and retransform it to materials.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -17,20 +17,20 @@
     <Size_Width Num="1"/>
   </General_Info>
   <Defence>
-    <Is_Target_Land YN="Yes"/>
-    <Is_Target_Sea YN="No"/>
+    <Is_Target_Land YN="No"/>
+    <Is_Target_Sea YN="Yes"/>
     <Is_Target_Air YN="No"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
     <Is_Target_Building YN="No"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="4"/>
-    <Hitpoints Num="14"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="28"/>
   </Defence>
   <Production>
-    <Built_Costs Num="15"/>
-    <Built_Costs_Max Num="60"/>
+    <Built_Costs Num="18"/>
+    <Built_Costs_Max Num="72"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -81,7 +81,7 @@
   </Weapons>
 
   <Abilities>
-    <Can_Clear_Area YN="Yes"/>
+    <Can_Clear_Area YN="No"/>
     <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
@@ -93,7 +93,7 @@
     <Can_Research YN="No"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>
-    <Can_Place_Mines YN="No"/>
+    <Can_Place_Mines YN="Yes"/>
     <Makes_Tracks Fd="3"/>
     <Self_Repair_Type Const="None"/>
     <Converts_Gold Num="0"/>
@@ -108,7 +108,7 @@
   </Abilities>
 
   <Scan_Abilities>
-    <Range_Sight Fd="3"/>
+    <Range_Sight Fd="4"/>
     <Range_Air Fd="0"/>
     <Range_Ground Fd="0"/>
     <Range_Sea Fd="0"/>
@@ -120,11 +120,11 @@
   </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="7"/>
+    <Movement_Sum Num="9"/>
     <Costs_Air Num="0.0"/>
-    <Costs_Sea Num="0.0"/>
+    <Costs_Sea Num="1"/>
     <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
+    <Costs_Ground Num="0.0"/>
     <Factor_Water Num="0.0"/>
     <Factor_Coast Num="0.0"/>
     <Factor_Wood Num="0.0"/>
@@ -140,7 +140,7 @@
 
   <Storage>
     <Is_Garage YN="No"/>
-    <Capacity_Metal Num="30"/>
+    <Capacity_Metal Num="16"/>
     <Capacity_Oil Num="0"/>
     <Capacity_Gold Num="0"/>
     <Capacity_Energy Num="0"/>

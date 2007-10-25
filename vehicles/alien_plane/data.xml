@@ -1,4 +1,3 @@
-<?xml version = '1.0' encoding = 'iso-8859-15'?>
 <Unit ID="0 3" name="alien_plane">
   <Header>
     <Author name="Someone">
@@ -58,8 +57,8 @@
           <Range Fd="5"/>
         </Target_Air>
         <Target_Mine>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
+          <Damage Num="25"/>
+          <Range Fd="5"/>
         </Target_Mine>
         <Target_Submarine>
           <Damage Num="25"/>

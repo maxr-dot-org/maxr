@@ -1,13 +1,13 @@
-<Unit ID="0 10" name="bulldozer">
+<Unit ID="0 34" name="trans_metal">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
+    <Editor name="Rocky" time="2007-10-25 15:15:00"/>
     <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bulldozer\n\nThe vehicle, in order to clear debris. Bulldozers can filter out material from debris.
+    Metal Transport\n\nUnit to move metal from one place to the next.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
@@ -26,11 +26,11 @@
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
     <Armor Num="4"/>
-    <Hitpoints Num="14"/>
+    <Hitpoints Num="24"/>
   </Defence>
   <Production>
-    <Built_Costs Num="15"/>
-    <Built_Costs_Max Num="60"/>
+    <Built_Costs Num="12"/>
+    <Built_Costs_Max Num="48"/>
     <Is_Produced_by>
       <Unit ID="0 0"/>
       <Unit ID="0 0"/> 
@@ -81,7 +81,7 @@
   </Weapons>
 
   <Abilities>
-    <Can_Clear_Area YN="Yes"/>
+    <Can_Clear_Area YN="No"/>
     <Gets_Experience YN="No"/>
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
@@ -89,7 +89,7 @@
     <Landing_Type Const="OnlyGarage"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
-    <Can_Rearm YN="No"/>
+    <Can_Rearm YN="Yes"/>
     <Can_Research YN="No"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>
@@ -140,7 +140,7 @@
 
   <Storage>
     <Is_Garage YN="No"/>
-    <Capacity_Metal Num="30"/>
+    <Capacity_Metal Num="50"/>
     <Capacity_Oil Num="0"/>
     <Capacity_Gold Num="0"/>
     <Capacity_Energy Num="0"/>
