@@ -1422,14 +1422,32 @@ int LoadVehicles()
 					sTmpString = sVehiclePath;
 					sprintf(sztmp,"img%d_%0.2d.pcx",n,j);
 					sTmpString += sztmp;
+					
+					/*FIXME: if n > 4 vehicle-img
+					is not initialized and any
+					access on img using -> fails
+					with segmentation fault.
+					Creating RGB-Surface now
+					manually. Please move this to
+					proper space in code!
+					-- beko*/
+					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
 					if(FileExists(sTmpString.c_str()))
 					{
 						sfTempSurface = LoadPCX ( (char *) sTmpString.c_str() );
-						rcDest.x = 64*j + 32 - sfTempSurface->w/2;
-						rcDest.y = 32 - sfTempSurface->h/2;
-						rcDest.w = sfTempSurface->w;
-						rcDest.h = sfTempSurface->h;
-						SDL_BlitSurface ( sfTempSurface, NULL, UnitsData.vehicle[UnitsData.vehicle_anz].img[n], &rcDest );
+						if(!sfTempSurface)
+						{
+							cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+						}
+						else
+							{
+							rcDest.x = 64*j + 32 - sfTempSurface->w/2;
+							rcDest.y = 32 - sfTempSurface->h/2;
+							rcDest.w = sfTempSurface->w;
+							rcDest.h = sfTempSurface->h;
+							SDL_BlitSurface ( sfTempSurface, NULL, UnitsData.vehicle[UnitsData.vehicle_anz].img[n], &rcDest );
+						}
 						SDL_FreeSurface ( sfTempSurface );
 					}
 				}
