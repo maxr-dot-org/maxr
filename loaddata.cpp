@@ -1417,21 +1417,23 @@ int LoadVehicles()
 			SDL_Rect rcDest;
 			for(n; n < 8; n++)
 			{
+				/*FIXME: if n > 4 vehicle-img
+				is not initialized and any
+				access on img using -> fails
+				with segmentation fault.
+				Creating RGB-Surface now
+				manually. Please move this to
+				proper space in code!
+				-- beko*/
+				UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				
 				for ( int j = 0; j < 13; j++ )
 				{
 					sTmpString = sVehiclePath;
 					sprintf(sztmp,"img%d_%0.2d.pcx",n,j);
 					sTmpString += sztmp;
 					
-					/*FIXME: if n > 4 vehicle-img
-					is not initialized and any
-					access on img using -> fails
-					with segmentation fault.
-					Creating RGB-Surface now
-					manually. Please move this to
-					proper space in code!
-					-- beko*/
-					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
 
 					if(FileExists(sTmpString.c_str()))
 					{
