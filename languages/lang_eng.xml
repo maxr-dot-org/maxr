@@ -85,6 +85,29 @@
 			<Option_Type_Turns ENG="turns"/>
 			<Option_Type_Simu ENG="simultaneous"/>
 		</Game_Options>
+		<Game_Start>
+			<Title_Player_Select ENG="Playeroptions"/>
+			<Title_Team ENG="Team"/>
+			<Title_Human ENG="Human"/>
+			<Title_Computer ENG="Computer"/>
+			<Title_Nobody ENG="Nobody"/>
+			<Title_Clan ENG="Clan"/>
+			<Title_Cargo ENG="Cargo"/>
+			<Title_Choose_Planet ENG="Planetchoosing"/>
+			<Title_Options ENG="Options"/>
+			<Title_Connect ENG="Connect"/>
+			<Title_Send ENG="Send"/>
+		</Game_Start>
+		<Vehicles>
+			<Title_Damage ENG="Damage"/>
+			<Title_Shoots ENG="Shoots"/>
+			<Title_Range ENG="Range"/>
+			<Title_Ammo ENG="Ammo"/>
+			<Title_Armor ENG="Armor"/>
+			<Title_Hitpoints ENG="Hitpoints"/>
+			<Title_Scan ENG="Scan"/>
+			<Title_Speed ENG="Speed"/>
+		</Vehicles>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>

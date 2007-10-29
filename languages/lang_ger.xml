@@ -85,6 +85,29 @@
 			<Option_Type_Turns ENG="turns" localized="Rundenbasierend"/>
 			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
 		</Game_Options>
+		<Game_Start>
+			<Title_Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
+			<Title_Team ENG="Team" localized="Team"/>
+			<Title_Human ENG="Human" localized="Mensch"/>
+			<Title_Computer ENG="Computer" localized="Computer"/>
+			<Title_Nobody ENG="Nobody" localized="Niemand"/>
+			<Title_Clan ENG="Clan" localized="Clan"/>
+			<Title_Cargo ENG="Cargo" localized="Ladung"/>
+			<Title_Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
+			<Title_Options ENG="Options" localized="Optionen"/>
+			<Title_Connect ENG="Connect" localized="Verbinden"/>
+			<Title_Send ENG="Send" localized="Senden"/>
+		</Game_Start>
+		<Vehicles>
+			<Title_Damage ENG="Damage" localized="Schaden"/>
+			<Title_Shoots ENG="Shoots" localized="Schüsse"/>
+			<Title_Range ENG="Range" localized="Reichweite"/>
+			<Title_Ammo ENG="Ammo" localized="Munition"/>
+			<Title_Armor ENG="Armor" localized="Panzerung"/>
+			<Title_Hitpoints ENG="Hitpoints" localized="Trefferpunkte"/>
+			<Title_Scan ENG="Scan" localized="Radar"/>
+			<Title_Speed ENG="Speed" localized="Geschwindigkeit"/>
+		</Vehicles>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
