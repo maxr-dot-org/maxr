@@ -80,7 +80,7 @@ void RunHangar(cPlayer *player, TList *LandingList);
 void SelectLanding(int *x,int *y,cMap *map);
 int GetKachelBig(int x,int y);
 void RunMPMenu(void);
-void PlaceSmallButton(char *str,int x,int y,bool pressed);
+void PlaceSmallButton(const char *str,int x,int y,bool pressed);
 void PlaceMenuButton(char *str,int x,int y, int darkness, bool pressed);
 void PlaceSmallMenuButton(char *str,int x,int y,bool pressed);
 int GetColorNr(SDL_Surface *sf);

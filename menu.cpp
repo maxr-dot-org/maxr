@@ -105,7 +105,7 @@ void PlaceButton (const char *str,int x,int y,bool pressed )
 }
 
 // Platziert einen kleinen Button:
-void PlaceSmallButton ( char *str,int x,int y,bool pressed )
+void PlaceSmallButton (const char *str,int x,int y,bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=150;
@@ -1348,9 +1348,9 @@ string RunPlanetSelect ( void )
 
 	LoadPCXtoSF ( GFXOD_PLANET_SELECT,TmpSf );
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-	fonts->OutTextCenter ( "Planetenauswahl",320,11,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str() ,320,11,buffer );
 
-	PlaceButton ( "Ok",390,440,false );
+	PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,440,false );
 
 	files = new TList;
 	int k = 1;
@@ -1402,7 +1402,7 @@ string RunPlanetSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( "Ok",390,440,true );
+				PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1418,7 +1418,7 @@ string RunPlanetSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( "Ok",390,440,false );
+			PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,440,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1635,14 +1635,14 @@ sPlayer RunPlayerSelect ( void )
 	players.what[1] = 2;
 
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
-	fonts->OutTextCenter ( "Spielerauswahl",320,11,buffer );
-	fonts->OutTextCenter ( "Team",100,35,buffer );
-	fonts->OutTextCenter ( "Mensch",200,35,buffer );
-	fonts->OutTextCenter ( "Computer",310,35,buffer );
-	fonts->OutTextCenter ( "Keiner",420,35,buffer );
-	fonts->OutTextCenter ( "Clan",535,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Player_Select").c_str() ,320,11,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Team").c_str() ,100,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Human").c_str() ,200,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Team").c_str() ,310,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Nobody").c_str() ,420,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Clan").c_str() ,535,35,buffer );
 
-	PlaceButton ( "Ok",390,440,false );
+	PlaceButton (  lngPack.Translate( "Text~Menu_Main~Button_OK").c_str() ,390,440,false );
 	ShowPlayerStates ( players );
 
 	mouse->Show();
@@ -1704,7 +1704,7 @@ sPlayer RunPlayerSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( "Ok",390,440,true );
+				PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,440,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1716,7 +1716,7 @@ sPlayer RunPlayerSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( "Ok",390,440,false );
+			PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,440,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2543,25 +2543,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].active=true;
 		u[i].value=& ( d->damage );
 		u[i].NextPrice=0;//2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
-		u[i].name = "damage";
+		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Damage");
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->Weapons[0].iShots );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.Weapons[0].iShots, 2 );
-		u[i].name = "shots";
+		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Shoots");
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
 		u[i].NextPrice=0;//CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
-		u[i].name = "range";
+		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Range");
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->Weapons[0].iAmmo_Quantity );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.Weapons[0].iAmmo_Quantity, 0 );
-		u[i].name = "ammo";
+		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Ammo");
 		i++;
 	}
 	if ( d->iCapacity_Metal > 0 || d->iCapacity_Oil > 0 || d->iCapacity_Gold > 0 )
@@ -2572,25 +2572,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 	u[i].active=true;
 	u[i].value=& ( d->iArmor );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iArmor, 0 );
-	u[i].name = "armor";
+	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Armor");
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->iHitpoints );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iHitpoints, 0 );
-	u[i].name = "hitpoints";
+	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Hitpoints");
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
 	u[i].NextPrice=0;//CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
-	u[i].name = "scan";
+	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Scan");
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->iMovement_Sum );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iMovement_Sum, 1 );
-	u[i].name = "speed";
+	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Speed");
 	i++;
 	// Costs:
 	i++;
@@ -3123,7 +3123,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	scr.h=dest.h=30;
 	SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
 	sprintf ( str,"%d",credits );
-	fonts->OutTextCenter ( "Credits",381,275,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Gold").c_str() ,381,275,buffer );
 	fonts->OutTextCenter ( str,381,275+10,buffer );
 
 	scr.x=118;
@@ -3147,7 +3147,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 		if ( UnitsData.vehicle[ptr->id].data.iCapacity_Metal > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Oil > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Gold > 0 )
 		{
 			sprintf ( str,"%d",ptr->cargo );
-			fonts->OutTextCenter ( "Ladung",430,275,buffer );
+			fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Cargo").c_str(),430,275,buffer );
 			fonts->OutTextCenter ( str,430,275+10,buffer );
 
 			scr.x=133;
@@ -3588,13 +3588,13 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		if ( host )
 		{
 			fstcpip=new cFSTcpIp ( true );
-			Titel="TCP/IP Host";
+			Titel=lngPack.Translate( "Text~Game_Menu~Button_TCPIP_Host");
 			IP="-";
 		}
 		else
 		{
 			fstcpip=new cFSTcpIp ( false );
-			Titel="TCP/IP Client";
+			Titel=lngPack.Translate( "Text~Game_Menu~Button_TCPIP_Client");
 			IP=SettingsData.sIP;
 		}
 	}
@@ -3679,19 +3679,19 @@ void cMultiPlayer::RunMenu ( void )
 
 	if ( host )
 	{
-		PlaceSmallButton ( "Planet wählen",470,42,false );
-		PlaceSmallButton ( "Optionen",470,42+35,false );
-		PlaceSmallButton ( "Spiel laden",470,42+35*2,false );
+		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str() ,470,42,false );
+		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str() ,470,42+35,false );
+		PlaceSmallButton ( lngPack.Translate( "Text~Game_Menu~Button_Game_Load").c_str() ,470,42+35*2,false );
 		PlaceSmallButton ( "Start Host",470,200,false );
-		PlaceButton ( "Ok",390,450,false );
+		PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 	}
 	else
 	{
-		PlaceSmallButton ( "Connect",470,200,false );
+		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Connect").c_str(), 470,200,false );
 	}
-	PlaceSmallButton ( "Senden",470,416,false );
+	PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false );
 
-	PlaceButton ( "Zurück",50,450,false );
+	PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false );
 
 	// Den Focus vorbereiten:
 	switch ( Focus )
@@ -3818,7 +3818,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( "Zurück",50,450,true );
+				PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -3832,7 +3832,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			PlaceButton ( "Zurück",50,450,false );
+			PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -3843,7 +3843,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( "Ok",390,450,true );
+				PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -3910,7 +3910,7 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str(), ( int ) msg.length(),-1 );
 				}
 				OKPressed=false;
-				PlaceButton ( "Ok",390,450,false );
+				PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -3918,7 +3918,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( "Ok",390,450,false );
+			PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -3964,7 +3964,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					PlanetPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					PlaceSmallButton ( "Planet wählen",470,42,true );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str(),470,42,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -3990,13 +3990,13 @@ void cMultiPlayer::RunMenu ( void )
 					fonts->OutText ( "Farbe:",500,245,buffer );
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					PlaceSmallButton ( "Planet wählen",470,42,false );
-					PlaceSmallButton ( "Optionen",470,42+35,false );
-					PlaceSmallButton ( "Spiel laden",470,42+35*2,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str(),470,42,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(),470,42+35*2,false );
 					PlaceSmallButton ( "Start Host",470,200,false );
-					PlaceSmallButton ( "Senden",470,416,false );
-					PlaceButton ( "Zurück",50,450,false );
-					PlaceButton ( "Ok",390,450,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false );
+					PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false );
+					PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4005,7 +4005,7 @@ void cMultiPlayer::RunMenu ( void )
 			else if ( PlanetPressed )
 			{
 				PlanetPressed=false;
-				PlaceSmallButton ( "Planet wählen",470,42,false );
+				PlaceSmallButton (lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str() ,470,42,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4016,7 +4016,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					OptionsPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					PlaceSmallButton ( "Optionen",470,42+35,true );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -4050,13 +4050,13 @@ void cMultiPlayer::RunMenu ( void )
 					fonts->OutText ( "Farbe:",500,245,buffer );
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					PlaceSmallButton ( "Planet wählen",470,42,false );
-					PlaceSmallButton ( "Optionen",470,42+35,false );
-					PlaceSmallButton ( "Spiel laden",470,42+35*2,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str(),470,42,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false );
 					PlaceSmallButton ( "Start Host",470,200,false );
-					PlaceSmallButton ( "Senden",470,416,false );
-					PlaceButton ( "Zurück",50,450,false );
-					PlaceButton ( "Ok",390,450,false );
+					PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false );
+					PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false );
+					PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4074,7 +4074,7 @@ void cMultiPlayer::RunMenu ( void )
 			        if(b&&!lb){
 			          LadenPressed=true;
 			          PlayFX(SoundData.SNDMenuButton);
-			          PlaceSmallButton("Spiel laden",470,42+35*2,true);
+			          PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,true);
 			          SHOW_SCREEN
 			          mouse->draw(false,screen);
 					}else if(!b&&LadenPressed){
@@ -4108,11 +4108,11 @@ void cMultiPlayer::RunMenu ( void )
 			            SDL_BlitSurface(MyPlayer->color,&scr,buffer,&dest);
 			            if(SaveGame.IsEmpty())PlaceSmallButton("Planet wählen",470,42,false);
 			            if(SaveGame.IsEmpty())PlaceSmallButton("Optionen",470,42+35,false);
-			            if(SaveGame.IsEmpty())PlaceSmallButton("Spiel laden",470,42+35*2,false);
+			            if(SaveGame.IsEmpty())PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
 			            PlaceSmallButton("Start Host",470,200,false);
-			            PlaceSmallButton("Senden",470,416,false);
-			            PlaceButton("Zurück",50,450,false);
-			            PlaceButton("Ok",390,450,false);
+			            PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false);
+			            PlaceButton(lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false);
+			            PlaceButton(lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false);
 			            SHOW_SCREEN
 			            mouse->draw(false,screen);
 			            SendOptions();
@@ -4120,7 +4120,7 @@ void cMultiPlayer::RunMenu ( void )
 			        }
 			      }else if(LadenPressed){
 			        LadenPressed=false;
-			        if(SaveGame.empty())PlaceSmallButton("Spiel laden",470,42+35*2,false);
+			        if(SaveGame.empty())PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
 			        SHOW_SCREEN
 			        mouse->draw(false,screen);
 			      }*/
@@ -4133,7 +4133,7 @@ void cMultiPlayer::RunMenu ( void )
 				StartHostConnect=true;
 				PlayFX ( SoundData.SNDMenuButton );
 				if ( host ) PlaceSmallButton ( "Start Host",470,200,true );
-				else PlaceSmallButton ( "Connect",470,200,true );
+				else PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Connect").c_str(), 470,200,true );
 
 				if ( host )
 				{
@@ -4179,7 +4179,7 @@ void cMultiPlayer::RunMenu ( void )
 		{
 			StartHostConnect=false;
 			if ( host ) PlaceSmallButton ( "Start Host",470,200,false );
-			else PlaceSmallButton ( "Connect",470,200,false );
+			else PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Connect").c_str(), 470,200,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4190,7 +4190,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				SendenPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceSmallButton ( "Senden",470,416,true );
+				PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,true );
 
 				if ( !ChatStr.empty() )
 				{
@@ -4217,7 +4217,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( SendenPressed )
 		{
 			SendenPressed=false;
-			PlaceSmallButton ( "Senden",470,416,false );
+			PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
