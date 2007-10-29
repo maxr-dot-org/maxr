@@ -57,7 +57,7 @@ bool cMap::LoadMap ( string filename )
 	int nr,i,k;
 
 	MapName = filename;
-	filename.insert ( 0,SettingsData.sMapsPath );
+	filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
 	ErrorStr="";
 	fp=fopen ( filename.c_str(),"rb" );
 	if ( !fp )
