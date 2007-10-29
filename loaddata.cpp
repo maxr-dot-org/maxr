@@ -59,7 +59,7 @@ int LoadData ( void * )
 
 	// Load Graphics
 	MakeLog(lngPack.Translate( "Text~Initialisation~Load_GFX").c_str(),false,5);
-	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))  //FIXME: is always 1
+	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))
 	{
 		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
 		LoadingData=LOAD_ERROR;
@@ -69,7 +69,7 @@ int LoadData ( void * )
 
 	// Load Effects
 	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),false,6);
-	LoadEffects(SettingsData.sFxPath.c_str()); //FIXME: proceeds on errors
+	LoadEffects(SettingsData.sFxPath.c_str());
 	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),true,6); cLog::mark();
 
 	// Load Terrain
@@ -132,7 +132,10 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	}
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
+	{
+		dest = NULL;
 		return 0;
+	}
 
 	dest = LoadPCX((char *)filepath.c_str());
 
@@ -932,17 +935,31 @@ int LoadVoices(const char* path)
 // Loads all graphics
 int LoadGraphics(const char* path)
 {
-	//FIXME: missing sanity checks for graphics
 	cLog::write ( "Loading Graphics", LOG_TYPE_INFO );
 	string stmp;
 
 	cLog::write ( "Gamegraphics...", LOG_TYPE_DEBUG );
-	LoadGraphicToSurface ( GraphicsData.gfx_Chand,path,"hand.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cno,path,"no.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cselect,path,"select.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cmove,path,"move.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Chelp,path,"help.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cattack,path,"attack.pcx" );
+	if ( !LoadGraphicToSurface ( GraphicsData.gfx_Chand,path,"hand.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cno,path,"no.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cselect,path,"select.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cmove,path,"move.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Chelp,path,"help.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Ctransf,path,"transf.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cload,path,"load.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cmuni,path,"muni.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cband,path,"band_cur.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cactivate,path,"activate.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Crepair,path,"repair.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Csteal,path,"steal.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cdisable,path,"disable.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_Cattack,path,"attack.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_hud_stuff,path,"hud_stuff.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_panel_top,path,"panel_top.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_panel_bottom,path,"panel_bottom.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_menu_stuff,path,"menu_stuff.pcx" ) )
+	{
+		return 0;
+	}
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil1,path,"pf_1.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil2,path,"pf_2.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil3,path,"pf_3.pcx" );
@@ -951,38 +968,26 @@ int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil7,path,"pf_7.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil8,path,"pf_8.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil9,path,"pf_9.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_hud_stuff,path,"hud_stuff.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_praefer,path,"praefer.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_help_screen,path,"help_screen.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_object_menu,path,"object_menu.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_destruction,path,"destruction.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_build_screen,path,"build_screen.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_fac_build_screen,path,"fac_build_screen.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cband,path,"band_cur.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_band_small,path,"band_small.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_band_big,path,"band_big.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_band_small_org,path,"band_small.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_band_small,path,"band_small.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_band_big_org,path,"band_big.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_band_big,path,"band_big.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_big_beton_org,path,"big_beton.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_big_beton,path,"big_beton.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Ctransf,path,"transf.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_transfer,path,"transfer.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_mine_manager,path,"mine_manager.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cload,path,"load.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cactivate,path,"activate.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_storage,path,"storage.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_storage_ground,path,"storage_ground.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_dialog,path,"dialog.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_edock,path,"edock.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cmuni,path,"muni.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Crepair,path,"repair.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_research,path,"research.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_upgrade,path,"upgrade.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_panel_top,path,"panel_top.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_panel_bottom,path,"panel_bottom.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Csteal,path,"steal.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_Cdisable,path,"disable.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_menu_stuff,path,"menu_stuff.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_pc,path,"player_pc.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_human,path,"player_human.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_none,path,"player_none.pcx" );
@@ -1004,11 +1009,13 @@ int LoadGraphics(const char* path)
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
 	SDL_SetColorKey ( GraphicsData.gfx_hud, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_left.pcx" );
+	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_left.pcx" ))
+		return 0;
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, NULL, GraphicsData.gfx_hud, NULL );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
-	LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_top.pcx" );
+	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_top.pcx" ))
+		return 0;
 	scr.x = 0;
 	scr.y=0;
 	scr.w = GraphicsData.gfx_tmp->w;
@@ -1025,7 +1032,8 @@ int LoadGraphics(const char* path)
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud, &dest );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
-	LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_right.pcx" );
+	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_right.pcx" ))
+		return 0;
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = GraphicsData.gfx_tmp->w;
@@ -1037,7 +1045,8 @@ int LoadGraphics(const char* path)
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud,&dest );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
-	LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_bottom.pcx" );
+	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_bottom.pcx" ))
+		return 0;
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = GraphicsData.gfx_tmp->w;
@@ -1062,7 +1071,8 @@ int LoadGraphics(const char* path)
 
 	if ( SettingsData.iScreenH > 480 )
 	{
-		LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "logo.pcx" );
+		if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "logo.pcx" ))
+			return 0;
 		dest.x = 9;
 		dest.y = SettingsData.iScreenH-32-15;
 		dest.w = 152;
@@ -1408,8 +1418,8 @@ int LoadVehicles()
 		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true);
 
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
+
 		// laod infantery graphics
-		
 		register int n = 0;
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
@@ -1417,15 +1427,9 @@ int LoadVehicles()
 			SDL_Rect rcDest;
 			for(n; n < 8; n++)
 			{
-				/*FIXME: if n > 4 vehicle-img
-				is not initialized and any
-				access on img using -> fails
-				with segmentation fault.
-				Creating RGB-Surface now
-				manually. Please move this to
-				proper space in code!
-				-- beko*/
-				UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
+				SDL_FillRect ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],NULL,0xFF00FF );
 				
 				for ( int j = 0; j < 13; j++ )
 				{
@@ -1443,7 +1447,7 @@ int LoadVehicles()
 							cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 						}
 						else
-							{
+						{
 							rcDest.x = 64*j + 32 - sfTempSurface->w/2;
 							rcDest.y = 32 - sfTempSurface->h/2;
 							rcDest.w = sfTempSurface->w;
@@ -1648,6 +1652,7 @@ int LoadVehicles()
 		UnitsData.vehicle_anz++;
 	}
 
+	for ( int i = 0 ; i < UnitsData.vehicle_anz; i++ ) UnitsData.vehicle[i].nr = i;
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
@@ -1803,6 +1808,7 @@ int LoadBuildings()
 		UnitsData.building_anz++;
 	}
 
+	for ( int i = 0 ; i < UnitsData.building_anz; i++ ) UnitsData.building[i].nr = i;
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
@@ -2171,7 +2177,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 				Data->iEnergy_Shield_Size = atoi(sTmpString.c_str());
 			// Movement
 			else if(sNodePath.compare(MOVEMENT_NODE + "Movement_Sum;") == 0)
-				Data->iMovement_Sum = atoi(sTmpString.c_str());
+				Data->iMovement_Sum = 2*atoi(sTmpString.c_str());
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Air;") == 0)
 				Data->fCosts_Air = (float) pExXmlNode->XmlDataToDouble(sTmpString);
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Sea;") == 0)
@@ -2396,6 +2402,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			n++;
 		}
 	}
+	if(Data->Weapons[0].iShots > 0) Data->iWeaponsCount = 1;
 	cLog::write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
 	cLog::mark();
 	return ;
