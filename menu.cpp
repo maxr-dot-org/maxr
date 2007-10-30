@@ -3748,6 +3748,21 @@ void cMultiPlayer::RunMenu ( void )
 			int i_tmpRedrawLength=20; //20 choosen by random to make sure we erase _all_ the old garbage on screen - should be calculated in a better way when fonts come from ttf and not from jpg -- beko
 			switch ( Focus )
 			{
+				/*okej, what we are trying to to here
+				*is that: first we get a focus. Then
+				*we store the actual length of string
+				*in textfield of focus for a cleaner
+				*redraw later. Now we do some sanity
+				*checks on the input we got. Shorten
+				*strings and recognize impossible
+				*portsnumbers. Stuff like that. Then
+				*we draw new string back on screen
+				*adding "_" so the user sees where the
+				*focus is while the original data is
+				*safed to their proper vals.
+				*
+				*			-- beko
+				*/
 				case FOCUS_IP:
 					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
 					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >176 )
