@@ -2423,7 +2423,7 @@ void DrawCircle(int x,int y,int r,int color,SDL_Surface *sf){
   d=0;
   xx=0;
   yy=r;
-  bry=(int)0.70710678*r;
+  bry=(int)Round(0.70710678*r,0);
   while(yy>bry){
     da=d+(xx<<1)+1;
     db=da-(yy<<1)+1;
