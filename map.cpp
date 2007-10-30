@@ -112,6 +112,7 @@ bool cMap::LoadMap ( string filename )
 		if ( i==TerrainData.terrain_anz )
 		{
 			ErrorStr="terrain not found";
+			cLog::write((string)"terrain not found: " + str,LOG_TYPE_WARNING);
 			while ( index->Count )
 			{
 				index->DeleteTuple ( index->Count );
