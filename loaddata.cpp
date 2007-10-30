@@ -2029,9 +2029,16 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
 	{
-		Data->szDescribtion = (char *)malloc(strlen(pExXmlNode->ToElement()->GetText())+1);
+		sTmpString = pExXmlNode->ToElement()->GetText();
+		int iPosition = (int)sTmpString.find("\\",0);
+		while(iPosition != string::npos)
+		{
+			sTmpString.replace(iPosition,2,"\n");
+			iPosition = (int)sTmpString.find("\\",iPosition);
+		}
+		Data->szDescribtion = (char *)malloc(sTmpString.length()+1);
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy(Data->szDescribtion,pExXmlNode->ToElement()->GetText());
+		strcpy(Data->szDescribtion,sTmpString.c_str());
 		cLog::write(Data->szDescribtion, cLog::eLOG_TYPE_DEBUG);
 	}
 
