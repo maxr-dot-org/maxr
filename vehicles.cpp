@@ -185,7 +185,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		if ( !detected ) return;
 	}
 
-	float newzoom = ( game->hud->Zoom/64.0 );
+	float newzoom = ( 64.0/game->hud->Zoom );
 	if ( OffX ) ox= (int)(OffX/newzoom);
 	if ( OffY ) oy= (int)(OffY/newzoom);
 	tmp=*dest;
@@ -3431,16 +3431,16 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		LastB=b;
 	}
 	// Die Images wiederherstellen:
-	int newzoom = (int)( game->hud->Zoom/64.0 );
+	float newzoom = ( game->hud->Zoom/64.0 );
 
-	ScaleSurfaceAdv2 ( typ->img_org[0],typ->img[0],typ->img_org[0]->w* newzoom,typ->img_org[0]->h* newzoom );
+	ScaleSurfaceAdv2 ( typ->img_org[0],typ->img[0],( int )( typ->img_org[0]->w* newzoom ),( int )( typ->img_org[0]->h* newzoom ) );
 	if ( pv )
 	{
-		ScaleSurfaceAdv2 ( pv->typ->img_org[0],pv->typ->img[0],pv->typ->img_org[0]->w* newzoom,pv->typ->img_org[0]->h* newzoom );
+		ScaleSurfaceAdv2 ( pv->typ->img_org[0],pv->typ->img[0],( int )( pv->typ->img_org[0]->w* newzoom ),( int )( pv->typ->img_org[0]->h* newzoom ) );
 	}
 	else
 	{
-		ScaleSurfaceAdv2 ( pb->typ->img_org,pb->typ->img,pb->typ->img_org->w* newzoom,pb->typ->img_org->h* newzoom );
+		ScaleSurfaceAdv2 ( pb->typ->img_org,pb->typ->img,( int )( pb->typ->img_org->w* newzoom ),( int )( pb->typ->img_org->h* newzoom ) );
 	}
 	Transfer=false;
 	mouse->MoveCallback=true;
