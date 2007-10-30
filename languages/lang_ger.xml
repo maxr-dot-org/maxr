@@ -86,6 +86,7 @@
 			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
 		</Game_Options>
 		<Game_Start>
+			<Title_Player_Name ENG="Playername:" localized="Spielername:"/>
 			<Title_Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
 			<Title_Team ENG="Team" localized="Team"/>
 			<Title_Human ENG="Human" localized="Mensch"/>
@@ -97,7 +98,22 @@
 			<Title_Options ENG="Options" localized="Optionen"/>
 			<Title_Connect ENG="Connect" localized="Verbinden"/>
 			<Title_Send ENG="Send" localized="Senden"/>
+			<Title_Color ENG="Colour:" localized="Farbe:"/>
+			<Title_IP ENG="IP:" localized="IP:"/>
+			<Title_Port ENG="Port:" localized="Port:"/>
+			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
 		</Game_Start>
+		<Game_MP>
+			<Title_Player ENG="Player" localized="Spieler"/>
+			<Comp_Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
+			<Comp_Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
+			<Comp_Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
+			<Comp_Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
+			<Comp_Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
+			<Comp_Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
+			<Comp_Player_Amount ENG="Amount of players:" localized="Anzahl der Spieler:"/>
+			<Comp_Player_Turn ENG="'s turn" localized=" ist am Zug"/>
+		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage" localized="Schaden"/>
 			<Title_Shoots ENG="Shoots" localized="Schüsse"/>

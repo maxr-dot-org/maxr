@@ -86,6 +86,7 @@
 			<Option_Type_Simu ENG="simultaneous"/>
 		</Game_Options>
 		<Game_Start>
+			<Title_Player_Name ENG="Playername:"/>
 			<Title_Player_Select ENG="Playeroptions"/>
 			<Title_Team ENG="Team"/>
 			<Title_Human ENG="Human"/>
@@ -97,7 +98,22 @@
 			<Title_Options ENG="Options"/>
 			<Title_Connect ENG="Connect"/>
 			<Title_Send ENG="Send"/>
+			<Title_Color ENG="Colour:"/>
+			<Title_IP ENG="IP:"/>
+			<Title_Port ENG="Port:"/>
+			<Button_Host_Start ENG="Start Host"/>
 		</Game_Start>
+		<Game_MP>
+			<Title_Player ENG="Player"/>
+			<Comp_Waiting ENG="Waiting for other players..."/>
+			<Comp_Player_Few ENG="Not enough players!"/>
+			<Comp_Player_Many ENG="Too many players!"/>
+			<Comp_Player_Twice ENG="Playername exists twice: "/>
+			<Comp_Player_Wrong ENG="Missing a correct player's name"/>
+			<Comp_Player_MustHost ENG="must be host in turnbased game!"/>
+			<Comp_Player_Amount ENG="Amount of players:"/>
+			<Comp_Player_Turn ENG="'s turn"/>
+		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage"/>
 			<Title_Shoots ENG="Shoots"/>
