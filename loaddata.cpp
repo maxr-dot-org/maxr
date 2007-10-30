@@ -22,6 +22,10 @@
 #include "keys.h"
 #include "vehicles.h"
 
+// Translates the loaded data to the old data structure.
+// This should be just used temporarily while the game doesn't undestand new structure.
+void ConvertData(int unitnum, bool vehicle);
+
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and datas:
 int LoadData ( void * )
@@ -997,9 +1001,12 @@ int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_player_select,path,"customgame_menu.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_menu_buttons,path,"menu_buttons.pcx" );
 
-	CheckFile(path,"dialog.pcx");
-	CheckFile(path,"dialog2.pcx");
-	CheckFile(path,"dialog3.pcx");
+	GraphicsData.DialogPath = SettingsData.sGfxPath + PATH_DELIMITER + "dialog.pcx";
+	GraphicsData.Dialog2Path = SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx";
+	GraphicsData.Dialog3Path = SettingsData.sGfxPath + PATH_DELIMITER + "dialog3.pcx";
+	FileExists(GraphicsData.DialogPath.c_str());
+	FileExists(GraphicsData.Dialog2Path.c_str());
+	FileExists(GraphicsData.Dialog3Path.c_str());
 
 	// Hud:
 	cLog::write ( "Hudgraphics...", LOG_TYPE_DEBUG );
@@ -1417,6 +1424,9 @@ int LoadVehicles()
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true);
 
+		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
+		ConvertData(UnitsData.vehicle_anz, true);
+
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
 		// laod infantery graphics
@@ -1514,10 +1524,10 @@ int LoadVehicles()
 				if(FileExists(sTmpString.c_str()))
 				{
 					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n],SDL_SRCCOLORKEY,0xFF00FF );
 					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX ( (char *) sTmpString.c_str() );
 					SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCCOLORKEY,0xFF00FF );
 				}
 			}
 		}
@@ -1527,9 +1537,9 @@ int LoadVehicles()
 		sTmpString += "video.flc";
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sVehiclePath.length() +1 );
+			UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sTmpString.length() +1 );
 			if(!UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-			strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sVehiclePath.c_str() );
+			strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sTmpString.c_str() );
 		}
 
 		// load infoimage
@@ -1739,11 +1749,13 @@ int LoadBuildings()
 		UnitsData.building = ( sBuilding* ) realloc ( UnitsData.building,sizeof ( sBuilding ) * (UnitsData.building_anz+1) );
 		if(!UnitsData.building) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 
-
 		// Set default data-values
 		SetDefaultUnitData(UnitsData.building_anz, false);
 		// Load Data from data.xml
 		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false);
+
+		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
+		ConvertData(UnitsData.building_anz, false);
 
 		// load img
 		sTmpString = sBuildingPath;
@@ -1807,6 +1819,17 @@ int LoadBuildings()
 
 		UnitsData.building_anz++;
 	}
+
+	// Dirtsurfaces
+	LoadGraphicToSurface ( UnitsData.dirt_big,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_org,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_shw,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_org,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_shw,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
+//	LoadGraphicToSurface ( UnitsData.ptr_small_beton,SettingsData.sBuildingsPath,"" );
 
 	for ( int i = 0 ; i < UnitsData.building_anz; i++ ) UnitsData.building[i].nr = i;
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
@@ -1877,6 +1900,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		"Unit","Abilities","Landing_Type", NULL,
 		"Unit","Abilities","Can_Upgrade", NULL,
 		"Unit","Abilities","Can_Repair", NULL,
+		"Unit","Abilities","Can_Rearm", NULL,
 		"Unit","Abilities","Is_Kamikaze", NULL,
 		"Unit","Abilities","Is_Infrastructure", NULL,
 		"Unit","Abilities","Can_Place_Mines", NULL,
@@ -2089,6 +2113,8 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 				Data->bCan_Upgrade = pExXmlNode->XmlDataToBool(sTmpString);
 			else if(sNodePath.compare(ABILITIES_NODE + "Can_Repair;") == 0)
 				Data->bCan_Repair = pExXmlNode->XmlDataToBool(sTmpString);
+			else if(sNodePath.compare(ABILITIES_NODE + "Can_Rearm;") == 0)
+				Data->bCan_Rearm = pExXmlNode->XmlDataToBool(sTmpString);
 			else if(sNodePath.compare(ABILITIES_NODE + "Can_Research;") == 0)
 				Data->bCan_Research = pExXmlNode->XmlDataToBool(sTmpString);
 			else if(sNodePath.compare(ABILITIES_NODE + "Is_Kamikaze;") == 0)
@@ -2129,7 +2155,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			else if(sNodePath.compare(DEFENCE_NODE + "Armor;") == 0)
 				Data->iArmor = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(DEFENCE_NODE + "Hitpoints;") == 0)
-				Data->iHitpoints = atoi(sTmpString.c_str());
+				Data->iHitpoints_Max = atoi(sTmpString.c_str());
 			// Production
 			else if(sNodePath.compare(PRODUCTION_NODE + "Built_Costs;") == 0)
 				Data->iBuilt_Costs = atoi(sTmpString.c_str());
@@ -2139,7 +2165,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			else if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
 				Data->Weapons[Data->iWeaponsCount].iSequence = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Quantity;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity = atoi(sTmpString.c_str());
+				Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Damage;") == 0)
 				Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Damage;") == 0)
@@ -2155,7 +2181,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_WMD;Damage;") == 0)
 				Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Shots;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iShots = atoi(sTmpString.c_str());
+				Data->Weapons[Data->iWeaponsCount].iShots_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Movement_Allowed;") == 0)
 				Data->Weapons[Data->iWeaponsCount].iMovement_Allowed = atoi(sTmpString.c_str());
 			// Abilities
@@ -2172,12 +2198,12 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 			else if(sNodePath.compare(ABILITIES_NODE + "Mines_Resources;") == 0)
 				Data->iMines_Resources = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Strength;") == 0)
-				Data->iEnergy_Shield_Strength = atoi(sTmpString.c_str());
+				Data->iEnergy_Shield_Strength_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Size;") == 0)
 				Data->iEnergy_Shield_Size = atoi(sTmpString.c_str());
 			// Movement
 			else if(sNodePath.compare(MOVEMENT_NODE + "Movement_Sum;") == 0)
-				Data->iMovement_Sum = 2*atoi(sTmpString.c_str());
+				Data->iMovement_Max = 2*atoi(sTmpString.c_str());
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Air;") == 0)
 				Data->fCosts_Air = (float) pExXmlNode->XmlDataToDouble(sTmpString);
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Sea;") == 0)
@@ -2204,21 +2230,21 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 				Data->fFactor_Mountains = (float) pExXmlNode->XmlDataToDouble(sTmpString);
 			// Storage
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Metal;") == 0)
-				Data->iCapacity_Metal = atoi(sTmpString.c_str());
+				Data->iCapacity_Metal_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Oil;") == 0)
-				Data->iCapacity_Oil = atoi(sTmpString.c_str());
+				Data->iCapacity_Oil_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Gold;") == 0)
-				Data->iConverts_Gold = atoi(sTmpString.c_str());
+				Data->iCapacity_Gold_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Energy;") == 0)
-				Data->iCapacity_Energy = atoi(sTmpString.c_str());
+				Data->iCapacity_Energy_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Air;") == 0)
-				Data->iCapacity_Units_Air = atoi(sTmpString.c_str());
+				Data->iCapacity_Units_Air_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Sea;") == 0)
-				Data->iCapacity_Units_Sea = atoi(sTmpString.c_str());
+				Data->iCapacity_Units_Sea_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Ground;") == 0)
-				Data->iCapacity_Units_Ground = atoi(sTmpString.c_str());
+				Data->iCapacity_Units_Ground_Max = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Infantry;") == 0)
-				Data->iCapacity_Units_Infantry = atoi(sTmpString.c_str());
+				Data->iCapacity_Units_Infantry_Max = atoi(sTmpString.c_str());
 			n++;
 		}
 		// is text?
@@ -2423,6 +2449,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->ID.iSecondPart = -1;
 	Data->szName = "unknown";
 	Data->szDescribtion = "Default";
+	Data->iVersion = 1;
 
 	// General info
 	Data->bIs_Controllable = true;
@@ -2441,7 +2468,8 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->bIs_Target_Satellite = false;
 	Data->bIs_Target_WMD = false;
 	Data->iArmor = 1;
-	Data->iHitpoints = 1;
+	Data->iHitpoints_Max = 1;
+	Data->iHitpoints = 0;
 
 	// Production
 	Data->iBuilt_Costs = 1;
@@ -2461,7 +2489,8 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->Weapons[Data->iWeaponsCount].iSequence = 0;
 	Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
 	Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_STANDARD;
-	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity = 1;
+	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = 1;
+	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity = 0;
 
 	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = 1;
 	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = 1;
@@ -2478,12 +2507,14 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = 1;
 	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Range = 1;
 
-	Data->Weapons[Data->iWeaponsCount].iShots = 1;
+	Data->Weapons[Data->iWeaponsCount].iShots_Max = 1;
+	Data->Weapons[Data->iWeaponsCount].iShots = 0;
 	Data->Weapons[Data->iWeaponsCount].iDestination_Area = 1;
 	Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_POINT;
 	Data->Weapons[Data->iWeaponsCount].iMovement_Allowed = 0;
 
 	// Abilities
+	Data->bIs_Base = false;
 	Data->bCan_Clear_Area = false;
 	Data->bGets_Experience = false;
 	Data->bCan_Disable = false;
@@ -2492,6 +2523,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->iLanding_Type = LANDING_TYPE_GARAGE_AND_PLATFORM;
 	Data->bCan_Upgrade = false;
 	Data->bCan_Repair = false;
+	Data->bCan_Rearm = false;
 	Data->bCan_Research = false;
 	Data->bIs_Kamikaze = false;
 	Data->bIs_Infrastructure = false;
@@ -2505,6 +2537,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->iNeeds_Humans = 0;
 	Data->iMines_Resources = 0;
 	Data->bCan_Launch_SRBM = false;
+	Data->iEnergy_Shield_Strength_Max = 0;
 	Data->iEnergy_Shield_Strength = 0;
 	Data->iEnergy_Shield_Size = 0;
 	Data->bHas_Connector = false;
@@ -2524,6 +2557,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 
 	// Movement
 	Data->iMovement_Sum = 1;
+	Data->iMovement_Max = 0;
 	Data->fCosts_Air = 0;
 	Data->fCosts_Sea = 0;
 	Data->fCosts_Submarine = 0;
@@ -2539,6 +2573,14 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 
 	// Storage
 	Data->bIs_Garage = false;
+	Data->iCapacity_Metal_Max = 0;
+	Data->iCapacity_Oil_Max = 0;
+	Data->iCapacity_Gold_Max = 0;
+	Data->iCapacity_Energy_Max = 0;
+	Data->iCapacity_Units_Air_Max = 0;
+	Data->iCapacity_Units_Sea_Max = 0;
+	Data->iCapacity_Units_Ground_Max = 0;
+	Data->iCapacity_Units_Infantry_Max = 0;
 	Data->iCapacity_Metal = 0;
 	Data->iCapacity_Oil = 0;
 	Data->iCapacity_Gold = 0;
@@ -2558,4 +2600,249 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	Data->bAnimation_Movement = false;
 	Data->bPower_On_Grafic = false;
 	return ;
+}
+
+void ConvertData(int unitnum, bool vehicle)
+{
+	sUnitData *Data;
+	if(vehicle)
+	{
+		Data = &UnitsData.vehicle[unitnum].data;
+		UnitsData.vehicle[unitnum].text = (char *) malloc (strlen(Data->szDescribtion)+1);
+		strcpy(UnitsData.vehicle[unitnum].text,Data->szDescribtion);
+	}
+	else
+	{
+		Data = &UnitsData.building[unitnum].data;
+		UnitsData.building[unitnum].text = (char *) malloc (strlen(Data->szDescribtion)+1);
+		strcpy(UnitsData.building[unitnum].text,Data->szDescribtion);
+	}
+	strcpy(Data->name, Data->szName);
+	Data->version = Data->iVersion;
+	Data->max_speed = Data->iMovement_Max;
+	Data->speed = Data->iMovement_Sum;
+	Data->max_hit_points = Data->iHitpoints_Max;
+	Data->hit_points = Data->iHitpoints;
+	Data->armor = Data->iArmor;
+	Data->scan = Data->iScan_Range_Sight;
+	if(Data->Weapons[0].iTarget_Air_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Air_Range;
+	else if(Data->Weapons[0].iTarget_Infantry_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Infantry_Range;
+	else if(Data->Weapons[0].iTarget_Land_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Land_Range;
+	else if(Data->Weapons[0].iTarget_Mine_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Mine_Range;
+	else if(Data->Weapons[0].iTarget_Sea_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Sea_Range;
+	else if(Data->Weapons[0].iTarget_Submarine_Range > 0)
+		Data->range = Data->Weapons[0].iTarget_Submarine_Range;
+	else
+		Data->range = 0;
+	Data->max_shots = Data->Weapons[0].iShots_Max;
+	Data->shots = Data->Weapons[0].iShots;
+	if(Data->Weapons[0].iTarget_Air_Range > 0)
+		Data->damage = Data->Weapons[0].iTarget_Air_Damage;
+	else if(Data->Weapons[0].iTarget_Infantry_Damage > 0)
+		Data->damage = Data->Weapons[0].iTarget_Infantry_Damage;
+	else if(Data->Weapons[0].iTarget_Land_Damage > 0)
+		Data->damage = Data->Weapons[0].iTarget_Land_Damage;
+	else if(Data->Weapons[0].iTarget_Mine_Damage > 0)
+		Data->damage = Data->Weapons[0].iTarget_Mine_Damage;
+	else if(Data->Weapons[0].iTarget_Sea_Damage > 0)
+		Data->damage = Data->Weapons[0].iTarget_Sea_Damage;
+	else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
+		Data->damage = Data->Weapons[0].iTarget_Submarine_Damage;
+	else
+		Data->damage = 0;
+	if(Data->iCapacity_Metal_Max > 0)
+		Data->max_cargo = Data->iCapacity_Metal_Max;
+	else if(Data->iCapacity_Oil_Max > 0)
+		Data->max_cargo = Data->iCapacity_Oil_Max;
+	else if(Data->iCapacity_Gold_Max > 0)
+		Data->max_cargo = Data->iCapacity_Gold_Max;
+	else
+		Data->max_cargo = 0;
+	Data->cargo = 0;
+	Data->max_ammo = Data->Weapons[0].iAmmo_Quantity_Max;
+	Data->ammo = Data->Weapons[0].iAmmo_Quantity;
+	Data->costs = Data->iBuilt_Costs;
+
+	if(Data->iNeeds_Energy < 0)
+	{
+		Data->energy_prod = -Data->iNeeds_Energy;
+		Data->energy_need = 0;
+	}
+	else
+	{
+		Data->energy_prod = 0;
+		Data->energy_need = Data->iNeeds_Energy;
+	}
+	if(Data->iNeeds_Humans < 0)
+	{
+		Data->human_prod = -Data->iNeeds_Humans;
+		Data->human_need = 0;
+	}
+	else
+	{
+		Data->human_prod = 0;
+		Data->human_need = Data->iNeeds_Humans;
+	}
+	Data->oil_need = Data->iNeeds_Oil;
+	Data->metal_need = Data->iNeeds_Metal;
+	Data->gold_need = Data->iConverts_Gold;
+
+	Data->max_shield = Data->iEnergy_Shield_Strength_Max;
+	Data->shield = Data->iEnergy_Shield_Strength;
+	
+	if(Data->fCosts_Ground > 0.0)
+		if(Data->fCosts_Sea > 0.0)
+			Data->can_drive = DRIVE_LANDnSEA;
+		else
+			Data->can_drive = DRIVE_LAND;
+	else if(Data->fCosts_Sea > 0.0)
+		Data->can_drive = DRIVE_SEA;
+	if(Data->fCosts_Air > 0.0)
+		Data->can_drive = DRIVE_AIR;
+
+	if(Data->iCapacity_Metal_Max > 0)
+		Data->can_transport = TRANS_METAL;
+	else if(Data->iCapacity_Oil_Max > 0)
+		Data->can_transport = TRANS_OIL;
+	else if(Data->iCapacity_Gold_Max > 0)
+		Data->can_transport = TRANS_GOLD;
+	else if(Data->iCapacity_Units_Sea_Max > 0 || Data->iCapacity_Units_Ground_Max > 0)
+		Data->can_transport = TRANS_VEHICLES;
+	else if(Data->iCapacity_Units_Infantry_Max > 0)
+		Data->can_transport = TRANS_MEN;
+	else if(Data->iCapacity_Units_Air_Max > 0)
+		Data->can_transport = TRANS_AIR;
+	else
+		Data->can_transport = TRANS_NONE;
+	Data->can_load = Data->can_transport;
+
+	if(Data->Weapons[0].iTarget_Land_Damage > 0)
+		if(Data->Weapons[0].iTarget_Air_Damage > 0)
+			Data->can_attack = ATTACK_AIRnLAND;
+		else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
+			Data->can_attack = ATTACK_SUB_LAND;
+		else
+			Data->can_attack = ATTACK_LAND;
+	else if(Data->Weapons[0].iTarget_Air_Damage > 0)
+		Data->can_attack = ATTACK_AIR;
+	else
+		Data->can_attack = ATTACK_NONE;
+
+	Data->can_reload = 0;
+	Data->can_repair = Data->bCan_Repair;
+	if(Data->iScan_Range_Resources > 0)
+		Data->can_survey = true;
+	else
+		Data->can_survey = false;
+	Data->can_clear = Data->bCan_Clear_Area;
+	Data->has_overlay = Data->bHas_Overlay;
+	Data->can_lay_mines = Data->bCan_Place_Mines;
+	if(Data->iScan_Range_Mine > 0)
+		Data->can_detect_mines = true;
+	else
+		Data->can_detect_mines = false;
+	if(Data->iScan_Range_Sea > 0)
+		Data->can_detect_sea = true;
+	else
+		Data->can_detect_sea = false;
+	if(Data->iScan_Range_Ground > 0)
+		Data->can_detect_land = true;
+	else
+		Data->can_detect_land = false;
+	if(Data->iMakes_Tracks > 0)
+		Data->make_tracks = true;
+	else
+		Data->make_tracks = false;
+	Data->is_human = Data->bAnimation_Movement;
+
+	Data->is_base = Data->bIs_Base;
+	if(Data->iSize_Length > 1)
+		Data->is_big = true;
+	else
+		Data->is_big = false;
+
+	Data->has_effect = Data->bPower_On_Grafic;
+	Data->can_research = Data->bCan_Research;
+	Data->can_reload = Data->bCan_Rearm;
+
+	if(Data->Weapons[0].iMovement_Allowed == Data->iMovement_Max)
+		Data->can_drive_and_fire = true;
+	else
+		Data->can_drive_and_fire = false;
+
+	if(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 13 ) // Infiltrator
+		Data->is_commando = true;
+	else
+		Data->is_commando = false;
+	Data->is_stealth_land = Data->is_commando;
+
+	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 6 ) || (Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 30 )) // Apc & Submarine
+		Data->is_stealth_sea = true;
+	else
+		Data->is_stealth_sea = false;
+
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Connector
+		Data->is_connector = true;
+	else
+		Data->is_connector = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Road
+		Data->is_road = true;
+	else
+		Data->is_road = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Bridge
+		Data->is_bridge = true;
+	else
+		Data->is_bridge = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Platform
+		Data->is_platform = true;
+	else
+		Data->is_platform = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Pad
+		Data->is_pad = true;
+	else
+		Data->is_pad = false;
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Mine & Alien Mine
+		Data->is_mine = true;
+	else
+		Data->is_mine = false;
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Landmine & Seamine
+		Data->is_expl_mine = true;
+	else
+		Data->is_expl_mine = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Radar
+		Data->is_annimated = true;
+	else
+		Data->is_annimated = false;
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Alienfactory
+		Data->build_alien = true;
+	else
+		Data->build_alien = false;
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Dock
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Shipfactory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Seamine
+		Data->build_on_water = true;
+	else
+		Data->build_on_water = false;
+	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 5 ) || // Alientank
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2 ) || // Alienassault
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Alienfactory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Alienshield
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Alienmine
+		Data->is_alien = true;
+	else
+		Data->is_alien = false;
+
+	Data->can_build = BUILD_NONE;
+	Data->muzzle_typ = MUZZLE_SMALL;
+	Data->build_by_big = false;
+
+	Data->can_work = false;
+	Data->has_frames = 0;
 }

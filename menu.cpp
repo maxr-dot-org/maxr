@@ -1809,7 +1809,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
+		n->costs=UnitsData.vehicle[i].data.costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list->AddHUp ( n );
@@ -2381,11 +2381,11 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			sLanding *ptr;
 			ptr=LandingList->LandItems[LandingSelected];
-			if ( UnitsData.vehicle[ptr->id].data.iCapacity_Metal > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Oil > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Gold > 0 )
+			if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 			{
 
 				// LadungUp-Button:
-				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b && !LadungDownPressed && ptr->cargo < (UnitsData.vehicle[ptr->id].data.iCapacity_Metal + UnitsData.vehicle[ptr->id].data.iCapacity_Oil + UnitsData.vehicle[ptr->id].data.iCapacity_Gold) && player->Credits > 0 )
+				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2456,29 +2456,28 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115 )
 				{
 					int value;
-					int iMaxCargo = UnitsData.vehicle[ptr->id].data.iCapacity_Metal + UnitsData.vehicle[ptr->id].data.iCapacity_Oil + UnitsData.vehicle[ptr->id].data.iCapacity_Gold;
-					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( iMaxCargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SoundData.SNDObjectMenu );
 
-					if ( ( 115- ( y-301 ) ) >=110 ) value = iMaxCargo;
+					if ( ( 115- ( y-301 ) ) >=110 ) value=UnitsData.vehicle[ptr->id].data.max_cargo;
 
-					if ( value < ptr->cargo )
+					if ( value<ptr->cargo )
 					{
-						player->Credits += ( ptr->cargo-value ) /5;
-						ptr->cargo = value;
+						player->Credits+= ( ptr->cargo-value ) /5;
+						ptr->cargo=value;
 					}
-					else if ( value > ptr->cargo && player->Credits > 0 )
+					else if ( value>ptr->cargo&&player->Credits>0 )
 					{
-						value -= ptr->cargo;
-						while ( value > 0 && player->Credits > 0 && ptr->cargo < iMaxCargo )
+						value-=ptr->cargo;
+						while ( value>0&&player->Credits>0&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo )
 						{
-							ptr->cargo += 5;
+							ptr->cargo+=5;
 							player->Credits--;
-							value -= 5;
+							value-=5;
 						}
-						if ( ptr->cargo > iMaxCargo )
+						if ( ptr->cargo>UnitsData.vehicle[ptr->id].data.max_cargo )
 						{
-							ptr->cargo = iMaxCargo;
+							ptr->cargo=UnitsData.vehicle[ptr->id].data.max_cargo;
 						}
 					}
 
@@ -2537,59 +2536,59 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 	d=p->VehicleData+nr;
 	i=0;
 
-	if ( d->iWeaponsCount > 0 )
+	if ( d->can_attack )
 	{
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=0;//2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
 		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Damage");
 		i++;
 		// Shots:
 		u[i].active=true;
-		u[i].value=& ( d->Weapons[0].iShots );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.Weapons[0].iShots, 2 );
+		u[i].value=& ( d->max_shots );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_shots, 2 );
 		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Shoots");
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
-		u[i].NextPrice=0;//CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
 		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Range");
 		i++;
 		// Ammo:
 		u[i].active=true;
-		u[i].value=& ( d->Weapons[0].iAmmo_Quantity );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.Weapons[0].iAmmo_Quantity, 0 );
+		u[i].value=& ( d->max_ammo );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_ammo, 0 );
 		u[i].name = lngPack.Translate( "Text~Vehicles~Title_Ammo");
 		i++;
 	}
-	if ( d->iCapacity_Metal > 0 || d->iCapacity_Oil > 0 || d->iCapacity_Gold > 0 )
+	if ( d->can_transport==TRANS_METAL||d->can_transport==TRANS_OIL||d->can_transport==TRANS_GOLD )
 	{
 		i++;
 	}
 	// Armor:
 	u[i].active=true;
-	u[i].value=& ( d->iArmor );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iArmor, 0 );
+	u[i].value=& ( d->armor );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.armor, 0 );
 	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Armor");
 	i++;
 	// Hitpoints:
 	u[i].active=true;
-	u[i].value=& ( d->iHitpoints );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iHitpoints, 0 );
+	u[i].value=& ( d->max_hit_points );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_hit_points, 0 );
 	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Hitpoints");
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
-	u[i].NextPrice=0;//CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
 	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Scan");
 	i++;
 	// Speed:
 	u[i].active=true;
-	u[i].value=& ( d->iMovement_Sum );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.iMovement_Sum, 1 );
+	u[i].value=& ( d->max_speed );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_speed, 1 );
 	u[i].name = lngPack.Translate( "Text~Vehicles~Title_Speed");
 	i++;
 	// Costs:
@@ -2616,32 +2615,32 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 	d=p->BuildingData+nr;
 	i=0;
 
-	if ( d->iWeaponsCount > 0 )
+	if ( d->can_attack )
 	{
 		// Damage:
 		u[i].active=true;
 		u[i].value=& ( d->damage );
-		u[i].NextPrice=0;//2*CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.damage, 0 );
+		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.damage, 0 );
 		u[i].name = "damage";
 		i++;
 		if ( !d->is_expl_mine )
 		{
 			// Shots:
 			u[i].active=true;
-			u[i].value=& ( d->Weapons[0].iShots );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.Weapons[0].iShots , 2 );
+			u[i].value=& ( d->max_shots );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_shots, 2 );
 			u[i].name = "shots";
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
-			u[i].NextPrice=0;//CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
 			u[i].name = "range";
 			i++;
 			// Ammo:
 			u[i].active=true;
-			u[i].value=& ( d->Weapons[0].iAmmo_Quantity );
-			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.Weapons[0].iAmmo_Quantity, 0 );
+			u[i].value=& ( d->max_ammo );
+			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_ammo, 0 );
 			u[i].name = "ammo";
 			i++;
 		}
@@ -2655,35 +2654,35 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].name = "range";
 		i++;
 	}
-	if ( d->iCapacity_Metal > 0 || d->iCapacity_Oil > 0 || d->iCapacity_Gold > 0 )
+	if ( d->can_load==TRANS_METAL||d->can_load==TRANS_OIL||d->can_load==TRANS_GOLD )
 	{
 		i++;
 	}
-	if ( d->iNeeds_Energy < 0)
+	if ( d->energy_prod )
 	{
 		i+=2;
 	}
-	if ( d->iNeeds_Humans < 0 )
+	if ( d->human_prod )
 	{
 		i++;
 	}
 	// Armor:
-	if ( d->iArmor!=1 )
+	if ( d->armor!=1 )
 	{
 		u[i].active=true;
-		u[i].value=& ( d->iArmor );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.iArmor, 0 );
+		u[i].value=& ( d->armor );
+		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.armor, 0 );
 		u[i].name = "armor";
 	}
 	i++;
 	// Hitpoints:
 	u[i].active=true;
-	u[i].value=& ( d->iHitpoints );
-	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.iHitpoints, 0 );
+	u[i].value=& ( d->max_hit_points );
+	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_hit_points, 0 );
 	u[i].name = "hitpoints";
 	i++;
 	// Scan:
-	if ( false/*d->scan && d->scan!=1*/ )
+	if ( d->scan && d->scan!=1 )
 	{
 		u[i].active=true;
 		u[i].value=& ( d->scan );
@@ -2692,25 +2691,25 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		i++;
 	}
 	// Energieverbrauch:
-	if ( d->iNeeds_Energy > 0 )
+	if ( d->energy_need )
 	{
 		i++;
 	}
 	// Humanverbrauch:
-	if ( d->iNeeds_Humans > 0 )
+	if ( d->human_need )
 	{
 		i++;
 	}
 	// Metallverbrauch:
-	if ( d->iNeeds_Metal > 0 )
+	if ( d->metal_need )
 	{
 		i++;
 	}
 	// Goldverbrauch:
-	/*if ( d->gold_need )
+	if ( d->gold_need )
 	{
 		i++;
-	}*/
+	}
 	// Costs:
 	i++;
 
@@ -3129,7 +3128,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	scr.x=118;
 	scr.y=336;
 	scr.w=dest.w=16;
-	scr.h=dest.h=( int ) (115 * ( credits / ( float ) StartCredits ) );
+	scr.h=dest.h= ( int ) ( 115 * ( credits / ( float ) StartCredits ) );
 	dest.x=375;
 	dest.y=301+115-dest.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -3144,7 +3143,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	{
 		sLanding *ptr;
 		ptr=landing->LandItems[selected];
-		if ( UnitsData.vehicle[ptr->id].data.iCapacity_Metal > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Oil > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Gold > 0 )
+		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
 			sprintf ( str,"%d",ptr->cargo );
 			fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Cargo").c_str(),430,275,buffer );
@@ -3153,7 +3152,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
-			scr.h=dest.h=( int ) (115 * ( ptr->cargo / ( float ) (UnitsData.vehicle[ptr->id].data.iCapacity_Metal + UnitsData.vehicle[ptr->id].data.iCapacity_Oil + UnitsData.vehicle[ptr->id].data.iCapacity_Gold) ) );
+			scr.h=dest.h=( int ) ( 115 * ( ptr->cargo / ( float ) UnitsData.vehicle[ptr->id].data.max_cargo ) );
 			dest.x=422;
 			dest.y=301+115-dest.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -3333,16 +3332,16 @@ void ShowLandingList ( TList *list,int selected,int offset )
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
-		while ( UnitsData.vehicle[ptr->id].data.szName[t]&&fonts->GetTextLen ( str ) <70 )
+		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
-			str[t]=UnitsData.vehicle[ptr->id].data.szName[t];str[++t]=0;
+			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
 		str[t+1]=0;
 		fonts->OutText ( str,text.x,text.y,buffer );
-		if ( UnitsData.vehicle[ptr->id].data.iCapacity_Metal > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Oil > 0 || UnitsData.vehicle[ptr->id].data.iCapacity_Gold > 0 )
+		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			sprintf ( str," (%d/%d)",ptr->cargo,UnitsData.vehicle[ptr->id].data.iCapacity_Metal + UnitsData.vehicle[ptr->id].data.iCapacity_Oil + UnitsData.vehicle[ptr->id].data.iCapacity_Gold );
+			sprintf ( str," (%d/%d)",ptr->cargo,UnitsData.vehicle[ptr->id].data.max_cargo );
 			fonts->OutText ( str,text.x,text.y+10,buffer );
 		}
 		text.y+=32+10;
@@ -3353,8 +3352,8 @@ void ShowLandingList ( TList *list,int selected,int offset )
 // Stellt die Selectionlist zusammen:
 void CreateSelectionList ( TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
 {
-	sUnitData *BuildingData;
-	sUnitData *VehicleData;
+	sUnitData *bd;
+	sUnitData *vd;
 	int i;
 	while ( selection->Count )
 	{
@@ -3371,19 +3370,20 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		if ( images->HUpItems[i]->vehicle )
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			VehicleData = & ( UnitsData.vehicle[images->HUpItems[i]->id].data );
-			if ( VehicleData->bAnimation_Movement && kauf ) continue;
-			if ( tnt && (VehicleData->iWeaponsCount < 1) ) continue;
-			if ( (VehicleData->fCosts_Air > 0.0) && !plane ) continue;
-			if ( (VehicleData->fCosts_Sea > 0.0 || VehicleData->fCosts_Submarine > 0.0) && !ship && VehicleData->fCosts_Ground == 0.0 ) continue;
-			if ( (VehicleData->fCosts_Ground > 0.0) && !tank ) continue;
+			vd=& ( UnitsData.vehicle[images->HUpItems[i]->id].data );
+			if ( vd->is_alien&&kauf ) continue;
+			if ( vd->is_human&&kauf ) continue;
+			if ( tnt&&!vd->can_attack ) continue;
+			if ( vd->can_drive==DRIVE_AIR&&!plane ) continue;
+			if ( vd->can_drive==DRIVE_SEA&&!ship ) continue;
+			if ( ( vd->can_drive==DRIVE_LAND||vd->can_drive==DRIVE_LANDnSEA ) &&!tank ) continue;
 			selection->AddHUp ( images->HUpItems[i] );
 		}
 		else
 		{
 			if ( !build ) continue;
-			BuildingData = & ( UnitsData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
-			if ( tnt && (BuildingData->iWeaponsCount < 1) ) continue;
+			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
+			if ( tnt&&!bd->can_attack ) continue;
 			selection->AddHUp ( images->HUpItems[i] );
 		}
 	}
@@ -3477,11 +3477,11 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].data.szDescribtion,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( UnitsData.building[ptr->id].data.szDescribtion,tmp,buffer );
+					fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3534,20 +3534,20 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		t=0;
 		if ( ptr->vehicle )
 		{
-			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.iBuilt_Costs );
+			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.costs );
 			fonts->OutTextCenter ( str,616,text.y,buffer );
 			str[0]=0;
-			while ( UnitsData.vehicle[ptr->id].data.szName[t]&&fonts->GetTextLen ( str ) <70 )
+			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 			{
-				str[t]=UnitsData.vehicle[ptr->id].data.szName[t];str[++t]=0;
+				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
 			str[0]=0;
-			while ( UnitsData.building[ptr->id].data.szName[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
 			{
-				str[t]=UnitsData.building[ptr->id].data.szName[t];str[++t]=0;
+				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';

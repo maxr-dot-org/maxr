@@ -3552,101 +3552,100 @@ void cVehicle::ShowBigDetails ( void )
 	char str[6];
 	int y;
 	y=297;
-	int iTmpValue, iTmpOrgValue;
-
-	if ( data.iWeaponsCount > 0 )
+	if ( data.can_attack )
 	{
 		// Damage:
-		iTmpValue = data.Weapons[0].iTarget_Air_Damage + data.Weapons[0].iTarget_Land_Damage + data.Weapons[0].iTarget_Submarine_Damage + data.Weapons[0].iTarget_WMD_Damage;
-		iTmpOrgValue =  typ->data.Weapons[0].iTarget_Air_Damage + typ->data.Weapons[0].iTarget_Land_Damage + typ->data.Weapons[0].iTarget_Submarine_Damage + typ->data.Weapons[0].iTarget_WMD_Damage;
-		sprintf ( str,"%d",iTmpValue );
+		sprintf ( str,"%d",data.damage );
 		fonts->OutTextCenter ( str,27,y,buffer );
 		fonts->OutText ( "Angriff",42,y,buffer );
-		DrawSymbolBig ( SBAttack,95,y-3,160,iTmpValue,iTmpOrgValue,buffer );
+		DrawSymbolBig ( SBAttack,95,y-3,160,data.damage,typ->data.damage,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
 		y+=19;
 		// Shots:
-		sprintf ( str,"%d",data.Weapons[0].iShots );
+		sprintf ( str,"%d",data.max_shots );
 		fonts->OutTextCenter ( str,27,y,buffer );
 		fonts->OutText ( "Schüsse",42,y,buffer );
-		DrawSymbolBig ( SBShots,95,y+2,160,data.Weapons[0].iShots,typ->data.Weapons[0].iShots,buffer );
+		DrawSymbolBig ( SBShots,95,y+2,160,data.max_shots,typ->data.max_shots,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
 		y+=19;
 		// Range:
-		iTmpValue = data.Weapons[0].iTarget_Air_Range + data.Weapons[0].iTarget_Infantry_Range + data.Weapons[0].iTarget_Land_Range + data.Weapons[0].iTarget_Mine_Range + data.Weapons[0].iTarget_Sea_Range + data.Weapons[0].iTarget_Submarine_Range + data.Weapons[0].iTarget_WMD_Range;
-		iTmpOrgValue =  typ->data.Weapons[0].iTarget_Air_Range + typ->data.Weapons[0].iTarget_Infantry_Range + typ->data.Weapons[0].iTarget_Land_Range + typ->data.Weapons[0].iTarget_Mine_Range + typ->data.Weapons[0].iTarget_Sea_Range + typ->data.Weapons[0].iTarget_Submarine_Range + typ->data.Weapons[0].iTarget_WMD_Range;
-		sprintf ( str,"%d",iTmpValue );
+		sprintf ( str,"%d",data.range );
 		fonts->OutTextCenter ( str,27,y,buffer );
 		fonts->OutText ( "Reichw.",42,y,buffer );
-		DrawSymbolBig ( SBRange,95,y-2,160,iTmpValue,iTmpOrgValue,buffer );
+		DrawSymbolBig ( SBRange,95,y-2,160,data.range,typ->data.range,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
 		y+=19;
 		// Ammo:
-		sprintf ( str,"%d",data.Weapons[0].iAmmo_Quantity );
+		sprintf ( str,"%d",data.max_ammo );
 		fonts->OutTextCenter ( str,27,y,buffer );
 		fonts->OutText ( "Munni.",42,y,buffer );
-		DrawSymbolBig ( SBAmmo,95,y-2,160,data.Weapons[0].iAmmo_Quantity,typ->data.Weapons[0].iAmmo_Quantity,buffer );
+		DrawSymbolBig ( SBAmmo,95,y-2,160,data.max_ammo,typ->data.max_ammo,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
 		y+=19;
 	}
-	if ( data.iCapacity_Metal > 0 || data.iCapacity_Oil > 0 || data.iCapacity_Gold > 0 )
+	if ( data.can_transport==TRANS_METAL||data.can_transport==TRANS_OIL||data.can_transport==TRANS_GOLD )
 	{
-		iTmpValue = data.iCapacity_Metal + data.iCapacity_Oil + data.iCapacity_Gold;
-		iTmpOrgValue = typ->data.iCapacity_Metal + typ->data.iCapacity_Oil + typ->data.iCapacity_Gold;  
-		sprintf ( str,"%d",iTmpValue );
+		// Metall:
+		sprintf ( str,"%d",data.max_cargo );
 		fonts->OutTextCenter ( str,27,y,buffer );
 		fonts->OutText ( "Ladung",42,y,buffer );
-		if(data.iCapacity_Metal > 0)
-			DrawSymbolBig ( SBMetal,95,y-2,160,iTmpValue,iTmpOrgValue,buffer );
-		else if(data.iCapacity_Oil > 0 )
-			DrawSymbolBig ( SBOil,95,y-2,160,iTmpValue,iTmpOrgValue,buffer );
-		else
-			DrawSymbolBig ( SBGold,95,y-2,160,iTmpValue,iTmpOrgValue,buffer );
+		switch ( data.can_transport )
+		{
+			case TRANS_METAL:
+				DrawSymbolBig ( SBMetal,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				break;
+			case TRANS_OIL:
+				DrawSymbolBig ( SBOil,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				break;
+			case TRANS_GOLD:
+				DrawSymbolBig ( SBGold,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				break;
+		}
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
 		y+=19;
 	}
 	// Armor:
-	sprintf ( str,"%d",data.iArmor );
+	sprintf ( str,"%d",data.armor );
 	fonts->OutTextCenter ( str,27,y,buffer );
 	fonts->OutText ( "Panzer",42,y,buffer );
-	DrawSymbolBig ( SBArmor,95,y-2,160,data.iArmor,typ->data.iArmor,buffer );
+	DrawSymbolBig ( SBArmor,95,y-2,160,data.armor,typ->data.armor,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
 	y+=19;
 	// Hitpoints:
-	sprintf ( str,"%d",data.iHitpoints );
+	sprintf ( str,"%d",data.max_hit_points );
 	fonts->OutTextCenter ( str,27,y,buffer );
 	fonts->OutText ( "Treffer",42,y,buffer );
-	DrawSymbolBig ( SBHits,95,y-1,160,data.iHitpoints,typ->data.iHitpoints,buffer );
+	DrawSymbolBig ( SBHits,95,y-1,160,data.max_hit_points,typ->data.max_hit_points,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
 	y+=19;
 	// Scan:
-	sprintf ( str,"%d",data.iScan_Range_Sight );
+	sprintf ( str,"%d",data.scan );
 	fonts->OutTextCenter ( str,27,y,buffer );
 	fonts->OutText ( "Scan",42,y,buffer );
-	DrawSymbolBig ( SBScan,95,y-2,160,data.iScan_Range_Sight,typ->data.iScan_Range_Sight,buffer );
+	DrawSymbolBig ( SBScan,95,y-2,160,data.scan,typ->data.scan,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
 	y+=19;
 	// Speed:
-	sprintf ( str,"%d",data.iMovement_Sum/2 );
+	sprintf ( str,"%d",data.max_speed/2 );
 	fonts->OutTextCenter ( str,27,y,buffer );
 	fonts->OutText ( "Gesch.",42,y,buffer );
-	DrawSymbolBig ( SBSpeed,95,y-2,160,data.iMovement_Sum/2,typ->data.iMovement_Sum/2,buffer );
+	DrawSymbolBig ( SBSpeed,95,y-2,160,data.max_speed/2,typ->data.max_speed/2,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
 	y+=19;
 	// Costs:
-	sprintf ( str,"%d",data.iBuilt_Costs );
+	sprintf ( str,"%d",data.costs );
 	fonts->OutTextCenter ( str,27,y,buffer );
 	fonts->OutText ( "Kosten",42,y,buffer );
-	DrawSymbolBig ( SBMetal,95,y-2,160,data.iBuilt_Costs,typ->data.iBuilt_Costs,buffer );
+	DrawSymbolBig ( SBMetal,95,y-2,160,data.costs,typ->data.costs,buffer );
 }
 
 // Führt alle Maßnahmen durch, die mit einem Wachwechsel eintreten:

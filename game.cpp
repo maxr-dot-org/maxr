@@ -1361,11 +1361,12 @@ void cGame::MakeLanding(int x,int y, cPlayer *p, TList *list, bool fixed){
             }
 
             // Gebäude platzieren:
-            game->engine->AddBuilding(x+k,y+i,UnitsData.building+BNrOilStore,p,true);
+			// TOFIX: Land buildings
+            /*game->engine->AddBuilding(x+k,y+i,UnitsData.building+BNrOilStore,p,true);
             game->engine->AddBuilding(x+k,y+i+1,UnitsData.building+BNrSmallGen,p,true);
             game->engine->AddBuilding(x+k+1,y+i,UnitsData.building+BNrMine,p,true);
             b=game->map->GO[x+k+(y+i)*game->map->size].top;
-            p->base->AddOil(b->SubBase,4);
+            p->base->AddOil(b->SubBase,4);*/
             break;
           }
         }

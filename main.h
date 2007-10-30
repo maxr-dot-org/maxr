@@ -156,6 +156,7 @@ struct sWeaponData{
 #define AMMO_TYPE_STANDARD 0
 #define AMMO_TYPE_ENERGY 1
 	int iAmmo_Quantity;
+	int iAmmo_Quantity_Max;
 
 	int iTarget_Land_Damage;
 	int iTarget_Land_Range;
@@ -173,6 +174,7 @@ struct sWeaponData{
 	int iTarget_WMD_Range;
 
 	int iShots;
+	int iShots_Max;
 	int iDestination_Area;
 	int iDestination_Type;
 #define DESTINATION_TYPE_POINT 0
@@ -187,6 +189,7 @@ struct sUnitData{
 	sID ID;
 	char *szName;
 	char *szDescribtion;
+	int iVersion;
 
 	// General info
 	bool bIs_Controllable;
@@ -206,6 +209,7 @@ struct sUnitData{
 	bool bIs_Target_WMD;
 	int iArmor;
 	int iHitpoints;
+	int iHitpoints_Max;
 
 	// Production
 	int iBuilt_Costs;
@@ -217,6 +221,7 @@ struct sUnitData{
 	sWeaponData *Weapons;
 
 	// Abilities
+	bool bIs_Base;
 	bool bCan_Clear_Area;
 	bool bGets_Experience;
 	bool bCan_Disable;
@@ -228,6 +233,7 @@ struct sUnitData{
 #define LANDING_TYPE_EVERYWHERE 2
 	bool bCan_Upgrade;
 	bool bCan_Repair;
+	bool bCan_Rearm;
 	bool bCan_Research;
 	bool bIs_Kamikaze;
 	bool bIs_Infrastructure;
@@ -244,6 +250,7 @@ struct sUnitData{
 	int iNeeds_Humans;
 	int iMines_Resources;
 	bool bCan_Launch_SRBM;
+	int iEnergy_Shield_Strength_Max;
 	int iEnergy_Shield_Strength;
 	int iEnergy_Shield_Size;
 	bool bHas_Connector;
@@ -270,6 +277,7 @@ struct sUnitData{
 
 	// Movement
 	int iMovement_Sum;
+	int iMovement_Max;
 	float fCosts_Air;
 	float fCosts_Sea;
 	float fCosts_Submarine;
@@ -285,6 +293,14 @@ struct sUnitData{
 
 	// Storage
 	bool bIs_Garage;
+	int iCapacity_Metal_Max;
+	int iCapacity_Oil_Max;
+	int iCapacity_Gold_Max;
+	int iCapacity_Energy_Max;
+	int iCapacity_Units_Air_Max;
+	int iCapacity_Units_Sea_Max;
+	int iCapacity_Units_Ground_Max;
+	int iCapacity_Units_Infantry_Max;
 	int iCapacity_Metal;
 	int iCapacity_Oil;
 	int iCapacity_Gold;
