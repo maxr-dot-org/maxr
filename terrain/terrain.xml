@@ -544,14 +544,14 @@
 	<crat_c61 file="crat_c61.pcx" overlay="true"/>
 
 	<!-- Snow -->
-	<snow_00 file="snow_00.pcx"/>
-	<snow_01 file="snow_01.pcx"/>
-	<snow_02 file="snow_02.pcx"/>
-	<snow_03 file="snow_03.pcx"/>
-	<snow_04 file="snow_04.pcx"/>
-	<snow_05 file="snow_05.pcx"/>
-	<snow_06 file="snow_06.pcx"/>
-	<snow_07 file="snow_07.pcx"/>
+	<snow00 file="snow_00.pcx"/>
+	<snow01 file="snow_01.pcx"/>
+	<snow02 file="snow_02.pcx"/>
+	<snow03 file="snow_03.pcx"/>
+	<snow04 file="snow_04.pcx"/>
+	<snow05 file="snow_05.pcx"/>
+	<snow06 file="snow_06.pcx"/>
+	<snow07 file="snow_07.pcx"/>
 
 	<snow_d00 file="snow_d00.pcx"/>
 	<snow_d01 file="snow_d01.pcx"/>
