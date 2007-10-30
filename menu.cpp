@@ -3588,13 +3588,13 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		if ( host )
 		{
 			fstcpip=new cFSTcpIp ( true );
-			Titel=lngPack.Translate( "Text~Game_Menu~Button_TCPIP_Host");
+			Titel=lngPack.Translate( "Text~Menu_Main~Button_TCPIP_Host");
 			IP="-";
 		}
 		else
 		{
 			fstcpip=new cFSTcpIp ( false );
-			Titel=lngPack.Translate( "Text~Game_Menu~Button_TCPIP_Client");
+			Titel=lngPack.Translate( "Text~Menu_Main~Button_TCPIP_Client");
 			IP=SettingsData.sIP;
 		}
 	}
@@ -3679,9 +3679,10 @@ void cMultiPlayer::RunMenu ( void )
 
 	if ( host )
 	{
+		//FIXME: Game crashes on Choose Planet after clicking on a planet -- beko
 		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str() ,470,42,false );
 		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str() ,470,42+35,false );
-		PlaceSmallButton ( lngPack.Translate( "Text~Game_Menu~Button_Game_Load").c_str() ,470,42+35*2,false );
+		PlaceSmallButton ( lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str() ,470,42+35*2,false );
 		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,false );
 		PlaceButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false );
 	}
@@ -3744,55 +3745,74 @@ void cMultiPlayer::RunMenu ( void )
 			static bool CursorOn=false;
 			ShowCursor=false;
 			CursorOn=!CursorOn;
+			int i_tmpRedrawLength=20; //20 choosen by random to make sure we erase _all_ the old garbage on screen - should be calculated in a better way when fonts come from ttf and not from jpg -- beko
 			switch ( Focus )
 			{
 				case FOCUS_IP:
+					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
+					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >176 )
+					{
+						InputStr.erase ( InputStr.end()-1 );
+					}	
 					stmp = InputStr; stmp += "_";
-					while ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >176 )
-						InputStr.erase ( InputStr.length()-1, 0 );
+				
 					IP=InputStr;
 					scr.x=20;scr.y=260;
-					scr.w=188;scr.h=16;
+					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
-					stmp = IP; stmp += ( CursorOn?"_":"" );
 					fonts->OutText ( ( char * ) stmp.c_str(),20,260,buffer );
 					break;
 				case FOCUS_PORT:
-					stmp = InputStr; stmp += "_";
-					while ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >98 )
-						InputStr.erase ( InputStr.length()-1, 0 );
-					Port= atoi ( InputStr.c_str() );
+					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str());
+					if(atoi ( InputStr.c_str() ) > 65535) //ports over 65535 are impossible
+					{
+						Port = 58600; //default Port 58600 - why is this our default Port? -- beko
+						stmp = "58600_";
+					}
+					else
+					{
+						stmp = InputStr; stmp += "_";					
+						Port= atoi ( InputStr.c_str() );
+					}
 					scr.x=228;scr.y=260;
-					scr.w=108;scr.h=16;
+					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
-					stmp = InputStr; stmp += ( CursorOn?"_":"" );
 					fonts->OutText ( ( char * ) stmp.c_str(),228,260,buffer );
 					break;
 				case FOCUS_NAME:
-					stmp = InputStr; stmp += "_";
-					while ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >98 )
-						InputStr.erase ( InputStr.length()-1, 0 );
+					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );					
+					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >98 )
+					{
+						InputStr.erase ( InputStr.end()-1 );
+					}
+					stmp = InputStr;  stmp += "_";	
+					
 					if ( strcmp ( MyPlayer->name.c_str(),InputStr.c_str() ) )
 					{
 						MyPlayer->name=InputStr;
 						DisplayPlayerList();
 						ChangeFarbeName();
 					}
-					scr.x=352;scr.y=260;
-					scr.w=108;scr.h=16;
+					scr.x=352;
+					scr.y=260;
+					scr.w=i_tmpRedrawLength; 
+					scr.h=16;
 					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
-					stmp = MyPlayer->name; stmp += ( CursorOn?"_":"" );
 					fonts->OutText ( ( char * ) stmp.c_str(),352,260,buffer );
 					break;
 				case FOCUS_CHAT:
+					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
+					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >425 )
+					{
+						InputStr.erase ( InputStr.end()-1 );
+					}
 					stmp = InputStr; stmp += "_";
-					while ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >425 )
-						InputStr.erase ( InputStr.length()-1, 0 );
+
 					ChatStr=InputStr;
 					scr.x=20;scr.y=423;
-					scr.w=430;scr.h=16;
+					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
-					stmp = ChatStr; stmp += ( CursorOn?"_":"" );
+					//FIXME: app hangs submitting to long string -- beko
 					fonts->OutText ( ( char * ) stmp.c_str(),20,423,buffer );
 					break;
 			}
