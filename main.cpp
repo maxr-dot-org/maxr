@@ -452,10 +452,9 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 	SDL_LockSurface ( sf );
 
 	fak=size/64.0;
-	int fakint = ( int ) fak;
-	line ( p1x*fakint,p1y*fakint,p2x*fakint,p2y*fakint,color,sf );
-	line ( p2x*fakint,p2y*fakint,p3x*fakint,p3y*fakint,color,sf );
-	line ( p3x*fakint,p3y*fakint,p1x*fakint,p1y*fakint,color,sf );
+	line ( ( int )Round ( p1x*fak ),( int )Round ( p1y*fak ),( int )Round ( p2x*fak ),( int )Round ( p2y*fak ),color,sf );
+	line ( ( int )Round ( p2x*fak ),( int )Round ( p2y*fak ),( int )Round ( p3x*fak ),( int )Round ( p3y*fak ),color,sf );
+	line ( ( int )Round ( p3x*fak ),( int )Round ( p3y*fak ),( int )Round ( p1x*fak ),( int )Round ( p1y*fak ),color,sf );
 
 	SDL_UnlockSurface ( sf );
 	return sf;

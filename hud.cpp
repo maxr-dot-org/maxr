@@ -1410,7 +1410,7 @@ void cHud::ScaleSurfaces ( void )
 {
 	int i, k, sizex, sizey;
 	TList *tlist;
-	int fak;
+	float fak;
 	if ( Zoom==LastZoom ) return;
 
 	// Terrain:
@@ -1449,7 +1449,7 @@ void cHud::ScaleSurfaces ( void )
 		}
 	}
 	// Vehicles:
-	fak= ( int ) ( Zoom/64.0 );
+	fak = ( float ) ( Zoom/64.0 );
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		for ( k=0;k<8;k++ )
@@ -1487,7 +1487,7 @@ void cHud::ScaleSurfaces ( void )
 		}
 	}
 	// Buildings:
-	fak= ( int ) ( Zoom/64.0 );
+	fak= ( float ) ( Zoom/64.0 );
 	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w*fak,UnitsData.building[i].img_org->h*fak );
