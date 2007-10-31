@@ -1,19 +1,19 @@
-<Unit ID="1 1" name="baracks">
+<Unit ID="1 33" name="storage-oil">
   <Header>
     <Author name="DoctorDeath">
-      <Editor name="DoctorDeath" time="2007-10-16 13:05:00"/>
+      <Editor name="DoctorDeath" time="2007-10-30 22:40:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Baracks\n\nBlaBlaBla...
+    Bla Bla Bla...
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>
     <Can_Be_Captured YN="No"/>
     <Can_Be_Disabled YN="No"/>
-    <Size_Length Num="2"/>
-    <Size_Width Num="2"/>
+    <Size_Length Num="1"/>
+    <Size_Width Num="1"/>
   </General_Info>
   <Defence>
     <Is_Target_Land YN="Yes"/>
@@ -24,14 +24,14 @@
     <Is_Target_Building YN="Yes"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
-    <Armor Num="12"/>
-    <Hitpoints Num="56"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="14"/>
   </Defence>
   <Production>
-    <Built_Costs Num="10"/>
-    <Built_Costs_Max Num="40"/>
+    <Built_Costs Num="4"/>
+    <Built_Costs_Max Num="16"/>
     <Is_Produced_by>
-      <Unit ID="0 19"/>
+      <Unit ID="0 24"/>
     </Is_Produced_by>
   </Production>
   <Weapons>
@@ -82,7 +82,7 @@
     <Can_Disable YN="No"/>
     <Can_Capture YN="No"/>
     <Can_Dive YN="No"/>
-    <Landing_Type Const="OnlyGarage"/>
+    <Landing_Type Const="None"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
     <Can_Research YN="No"/>
@@ -134,17 +134,17 @@
   </Movement>
 
   <Storage>
-    <Is_Garage YN="Yes"/>
+    <Is_Garage YN="No"/>
     <Capacity_Metal Num="0"/>
-    <Capacity_Oil Num="0"/>
+    <Capacity_Oil Num="50"/>
     <Capacity_Gold Num="0"/>
     <Capacity_Energy Num="0"/>
     <Capacity_Units_Air Num="0"/>
     <Capacity_Units_Sea Num="0"/>
     <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="12"/>
+    <Capacity_Units_Infantry Num="0"/>
     <Can_Use_Unit_As_Garage>
-      <Unit ID="xx xx" Size="1"/>
+      <Unit ID="0 0" Size="1"/>
     </Can_Use_Unit_As_Garage>
   </Storage>
   <Graphic>

@@ -2,6 +2,7 @@
   <Header>
     <Author name="DoctorDeath">
       <Editor name="Rocky" time="2007-10-26 01:00:00"/>
+      <Editor name="DoctorDeath" time="2007-10-31 00:50:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
@@ -21,7 +22,7 @@
     <Is_Target_Air YN="No"/>
     <Is_Target_Underwater YN="No"/>
     <Is_Target_Mine YN="No"/>
-    <Is_Target_Building YN="No"/>
+    <Is_Target_Building YN="Yes"/>
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
     <Armor Num="16"/>
