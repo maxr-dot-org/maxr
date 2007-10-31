@@ -1792,7 +1792,7 @@ int LoadBuildings()
 			UnitsData.building[UnitsData.building_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load effectgraphics if necessary
-		if(false/*UnitsData.vehicle[UnitsData.vehicle_anz].data.bHasEffect*/)
+		if(UnitsData.building[UnitsData.building_anz].data.bPower_On_Grafic)
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
@@ -1817,21 +1817,47 @@ int LoadBuildings()
 		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Stop,sBuildingPath.c_str(),"stop.wav");
 		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Attack,sBuildingPath.c_str(),"attack.wav");
 
+		// Ggf Ptr auf Surface anlegen:
+		if(UnitsData.building[UnitsData.building_anz].data.is_connector)
+		{
+			UnitsData.ptr_connector = UnitsData.building[UnitsData.building_anz].img;
+			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
+			UnitsData.ptr_connector_shw = UnitsData.building[UnitsData.building_anz].shw;
+			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
+		}
+		else if(UnitsData.building[UnitsData.building_anz].data.is_road)
+		{
+			UnitsData.ptr_small_beton = UnitsData.building[UnitsData.building_anz].img;
+			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
+		}
+
 		UnitsData.building_anz++;
 	}
 
 	// Dirtsurfaces
 	LoadGraphicToSurface ( UnitsData.dirt_big,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
+	SDL_SetColorKey(UnitsData.dirt_big,SDL_SRCCOLORKEY,0xFF00FF);
 	LoadGraphicToSurface ( UnitsData.dirt_big_org,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
+	SDL_SetColorKey(UnitsData.dirt_big_shw,SDL_SRCCOLORKEY,0xFF00FF);
+	SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
+	SDL_SetColorKey(UnitsData.dirt_small,SDL_SRCCOLORKEY,0xFF00FF);
 	LoadGraphicToSurface ( UnitsData.dirt_small_org,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
+	SDL_SetColorKey(UnitsData.dirt_small_shw,SDL_SRCCOLORKEY,0xFF00FF);
+	SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
-//	LoadGraphicToSurface ( UnitsData.ptr_small_beton,SettingsData.sBuildingsPath,"" );
 
-	for ( int i = 0 ; i < UnitsData.building_anz; i++ ) UnitsData.building[i].nr = i;
+	// Get numbers of buildings for landing + set building numbers
+	for ( int i = 0 ; i < UnitsData.building_anz; i++ )
+	{
+		UnitsData.building[i].nr = i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 33) BNrOilStore=i;
+	}
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
@@ -2030,11 +2056,11 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
 	{
 		sTmpString = pExXmlNode->ToElement()->GetText();
-		int iPosition = (int)sTmpString.find("\\",0);
+		int iPosition = (int)sTmpString.find("\\n",0);
 		while(iPosition != string::npos)
 		{
 			sTmpString.replace(iPosition,2,"\n");
-			iPosition = (int)sTmpString.find("\\",iPosition);
+			iPosition = (int)sTmpString.find("\\n",iPosition);
 		}
 		Data->szDescribtion = (char *)malloc(sTmpString.length()+1);
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
@@ -2793,11 +2819,11 @@ void ConvertData(int unitnum, bool vehicle)
 	else
 		Data->is_stealth_sea = false;
 
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Connector
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 4 ) // Connector
 		Data->is_connector = true;
 	else
 		Data->is_connector = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Road
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 28 ) // Road
 		Data->is_road = true;
 	else
 		Data->is_road = false;
@@ -2813,11 +2839,11 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_pad = true;
 	else
 		Data->is_pad = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Mine & Alien Mine
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 22 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Mine & Alien Mine
 		Data->is_mine = true;
 	else
 		Data->is_mine = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Landmine & Seamine
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Landmine & Seamine
 		Data->is_expl_mine = true;
 	else
 		Data->is_expl_mine = false;
@@ -2831,7 +2857,7 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->build_alien = false;
 	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Dock
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Shipfactory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Seamine
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Seamine
 		Data->build_on_water = true;
 	else
 		Data->build_on_water = false;
@@ -2845,11 +2871,28 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_alien = true;
 	else
 		Data->is_alien = false;
+	if(Data->energy_prod || Data->energy_need)
+		Data->can_work=true;
+	else
+		Data->can_work=false;
 
-	Data->can_build = BUILD_NONE;
+	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 19 ) || // Constructor
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Big-factory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) ) // Alien-factory
+		Data->can_build = BUILD_BIG;
+	else if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 24 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) ) // Pionier & Small-factory
+		Data->can_build = BUILD_SMALL;
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Ship-factory
+		Data->can_build = BUILD_SEA;
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Air-factory
+		Data->can_build = BUILD_AIR;
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Training
+		Data->can_build = BUILD_MAN;
+	else
+		Data->can_build = BUILD_NONE;
+
 	Data->muzzle_typ = MUZZLE_SMALL;
 	Data->build_by_big = false;
 
-	Data->can_work = false;
 	Data->has_frames = 0;
 }

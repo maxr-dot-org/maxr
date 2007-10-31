@@ -2011,8 +2011,9 @@ void cVehicle::DrawMunBar ( void )
 	r2.x= ( r1.x=GetScreenPosX() ) +1;
 	r1.w=game->hud->Zoom;
 	r2.h= ( r1.h=game->hud->Zoom/6 )-2;
+	if(r1.h<2) r2.h=1;
 	r2.y= (int)( r1.y=game->hud->Zoom-r1.h+GetScreenPosY() ) +1;
-	r2.w= (int)( ( ( float ) ( r1.w-2 ) ) /data.max_ammo ) *data.ammo;
+	r2.w= (int)( ( (float) ( r1.w-2 ) / data.max_ammo ) *data.ammo);
 	if ( data.ammo>data.max_ammo/2 )
 	{
 		SDL_FillRect ( buffer,&r1,0 );
@@ -2037,8 +2038,9 @@ void cVehicle::DrawHelthBar ( void )
 	r2.x= ( r1.x=GetScreenPosX() ) +1;
 	r1.w=game->hud->Zoom;
 	r2.h= ( r1.h=game->hud->Zoom/6 )-2;
+	if(r1.h<2) r2.h=1;
 	r2.y= (int)( r1.y=GetScreenPosY() ) +1;
-	r2.w= (int)( ( ( float ) ( r1.w-2 ) ) /data.max_hit_points ) *data.hit_points;
+	r2.w= (int)( ( (float) ( r1.w-2 ) / data.max_hit_points ) *data.hit_points);
 	if ( data.hit_points>data.max_hit_points/2 )
 	{
 		SDL_FillRect ( buffer,&r1,0 );
@@ -3543,7 +3545,7 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.h=scr.h=16;
 		SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	}
-	DrawTransBar ( 223* (int)( ( Target+*trans ) / ( float ) MaxTarget ) );
+	DrawTransBar ( (int)(223 * ( float ) ( Target+*trans ) / MaxTarget ) );
 }
 
 void cVehicle::ShowBigDetails ( void )

@@ -868,13 +868,15 @@ void cEngine::CheckDefeat ( void )
 {
 	cPlayer *p;
 	int i;
+	string sTmpString;
 
 	for ( i=0;i<game->PlayerList->Count;i++ )
 	{
 		p=game->PlayerList->PlayerItems[i];
 		if ( p->IsDefeated() )
 		{
-			game->AddMessage ( ( "Spieler "/*+p->name.c_str()+*/" besiegt!" ) );
+			sTmpString = "Spieler " + p->name + " besiegt!";
+			game->AddMessage ( (char *)sTmpString.c_str() );
 
 			if ( game->HotSeat )
 			{
