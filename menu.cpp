@@ -4177,7 +4177,8 @@ void cMultiPlayer::RunMenu ( void )
 				PlayFX ( SoundData.SNDMenuButton );
 				if ( host ) PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,true );
 				else PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Connect").c_str(), 470,200,true );
-
+//FIXME: error opening socket when we choose map and options before starting host -- beko
+//FIXME client crashes when host goes for starting game
 				if ( host )
 				{
 					fstcpip->FSTcpIpClose();
@@ -4205,24 +4206,27 @@ void cMultiPlayer::RunMenu ( void )
 				else
 				{
 					fstcpip->FSTcpIpClose();
-					fstcpip->SetIp ( "192.168.0.3" );
+					fstcpip->SetIp ( IP );
 					fstcpip->SetTcpIpPort ( Port );
 					FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
-					SDL_WaitThread ( FSTcpIpReceiveThread,NULL );
+					for (int i=0;i<5;i++) //wait 5 seconds for connection - break in case we got one earlier
+					{
+						SDL_Delay(1000);
+						if (fstcpip->status==STAT_CONNECTED ) continue;
+
+					}
+					//SDL_WaitThread ( FSTcpIpReceiveThread,NULL ); sucks, since SDL_WaitThread has no timeout! app hangs if no connection can be established -- beko
 					FSTcpIpReceiveThread=NULL;
+					sprintf ( sztmp,"%d",Port );
+					
 					if ( fstcpip->status!=STAT_CONNECTED )
 					{
-						AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Network_Error_Connect") );
-						cLog::write("Error on connecting", cLog::eLOG_TYPE_WARNING);
+						AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Network_Error_Connect")+IP+":"+sztmp );
+						cLog::write("Error on connecting "+IP+":"+sztmp, cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
-						sprintf ( sztmp,"%d",Port );
-						stmp=lngPack.Translate( "Text~Game_MP~Comp_Network_Connecting");
-						stmp+=IP;
-						stmp+=":";
-						stmp+=sztmp;
-						AddChatLog ( stmp ); // e.g. Connecting to 127.0.0.1:55800
+						AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Network_Connecting")+IP+":"+sztmp ); // e.g. Connecting to 127.0.0.1:55800
 						cLog::write(("Connecting to "+IP+":"+sztmp), cLog::eLOG_TYPE_INFO);
 					}
 				}
