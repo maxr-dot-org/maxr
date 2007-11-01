@@ -98,9 +98,10 @@
 			<Title_Options ENG="Options" localized="Optionen"/>
 			<Title_Connect ENG="Connect" localized="Verbinden"/>
 			<Title_Send ENG="Send" localized="Senden"/>
-			<Title_Color ENG="Colour:" localized="Farbe:"/>
-			<Title_IP ENG="IP:" localized="IP:"/>
-			<Title_Port ENG="Port:" localized="Port:"/>
+			<Title_Color ENG="Color:" localized="Farbe:"/>
+			<Title_IP ENG="IP" localized="IP"/>
+			<Title_Port ENG="Port" localized="Port"/>
+			<Title_Map ENG="Map" localized="Karte"/>
 			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
 		</Game_Start>
 		<Game_MP>
@@ -114,7 +115,7 @@
 			<Comp_Player_Amount ENG="Amount of players:" localized="Anzahl der Spieler:"/>
 			<Comp_Player_Turn ENG="'s turn" localized=" ist am Zug"/>
 			<Comp_Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
-			<Comp_Network_Error_Connect ENG="Error on connecting" localized="Fehler beim Verbinden"/>
+			<Comp_Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
 			<Comp_Network_Open ENG="Game open" localized="Spiel offen"/>
 			<Comp_Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
 			<Comp_Network_New ENG="New connection" localized="Neue Verbindung"/>
@@ -129,6 +130,7 @@
 			<Comp_Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
 			<Comp_Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Comp_Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
+			<Comp_Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
 		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage" localized="Schaden"/>

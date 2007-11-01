@@ -98,9 +98,10 @@
 			<Title_Options ENG="Options"/>
 			<Title_Connect ENG="Connect"/>
 			<Title_Send ENG="Send"/>
-			<Title_Color ENG="Colour:"/>
-			<Title_IP ENG="IP:"/>
-			<Title_Port ENG="Port:"/>
+			<Title_Color ENG="Color:"/>
+			<Title_IP ENG="IP"/>
+			<Title_Port ENG="Port"/>
+			<Title_Map ENG="Map"/>
 			<Button_Host_Start ENG="Start Host"/>
 		</Game_Start>
 		<Game_MP>
@@ -114,7 +115,7 @@
 			<Comp_Player_Amount ENG="Amount of players:"/>
 			<Comp_Player_Turn ENG="'s turn"/>
 			<Comp_Network_Error_Socket ENG="Error opening socket"/>
-			<Comp_Network_Error_Connect ENG="Error on connecting"/>
+			<Comp_Network_Error_Connect ENG="Could not connect to "/>
 			<Comp_Network_Open ENG="Game open"/>
 			<Comp_Network_Connecting ENG="Connecting to "/>
 			<Comp_Network_New ENG="New connection"/>
@@ -129,6 +130,7 @@
 			<Comp_Go_Host_No ENG="Host wants to go: No go"/>
 			<Comp_Go_Ready ENG="Ready to go"/>
 			<Comp_Go_Ready_No ENG="not ready to go"/>
+			<Comp_Go_Check ENG="Check for go"/>
 		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage"/>
