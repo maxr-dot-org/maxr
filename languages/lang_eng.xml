@@ -61,9 +61,9 @@
 		</Menu_Main>
 		<Game_Options>
 			<Title_Credits ENG="Credits"/>
-			<Title_Gold ENG="Gold:"/>
-			<Title_Metal ENG="Metal:"/>
-			<Title_Oil ENG="Oil:"/>
+			<Title_Gold ENG="Gold"/>
+			<Title_Metal ENG="Metal"/>
+			<Title_Oil ENG="Oil"/>
 			<Title_BridgeHead ENG="Bridgehead"/>
 			<Title_Alien_Tech ENG="Alientechnology"/>
 			<Title_Resource ENG="Resources"/>
@@ -120,6 +120,8 @@
 			<Comp_Network_New ENG="New connection"/>
 			<Comp_Network_Connected ENG="Connected"/>
 			<Comp_Network_Closed ENG="Connection closed"/>
+			<Comp_Map_NoSet ENG="--no map set--"/>
+			<Comp_Option_NoSet ENG="--no options set--"/>
 		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage"/>
