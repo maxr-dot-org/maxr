@@ -122,6 +122,12 @@
 			<Comp_Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
 			<Comp_Map_NoSet ENG="--no map set--" localized="--keine Map gewählt--"/>
 			<Comp_Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
+			<Comp_Go ENG="Let's go" localized="Los gehts"/>
+			<Comp_Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
+			<Comp_Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Fertigmachen"/>
+			<Comp_Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
+			<Comp_Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
+			<Comp_Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
 		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage" localized="Schaden"/>
