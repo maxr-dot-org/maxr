@@ -119,6 +119,7 @@
 			<Comp_Network_Connecting ENG="Connecting to "/>
 			<Comp_Network_New ENG="New connection"/>
 			<Comp_Network_Connected ENG="Connected"/>
+			<Comp_Network_Connected_Not ENG="Not connected"/>
 			<Comp_Network_Closed ENG="Connection closed"/>
 			<Comp_Map_NoSet ENG="--no map set--"/>
 			<Comp_Option_NoSet ENG="--no options set--"/>
