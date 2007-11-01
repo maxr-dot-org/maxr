@@ -8,41 +8,41 @@
 		<Last_Change time="2007-10-02 19:51:00"/>
 	</Header>
 	<Vehicles>
-		<Air_Transporter directory="air_transport"/>
-		<Alien_Assault directory="alien_assault"/>
-		<Alien_Plane directory="alien_plane"/>
-		<Alien_Ship directory="alien_ship"/>
-		<Alien_Tank directory="alien_tank"/>
-		<APC directory="apc"/>
-		<Assault directory="assault"/>
-		<AWAC directory="awac"/>
-		<Bomber directory="bomber"/>
-		<Bulldozer directory="bulldozer"/>
-		<Cargoship directory="cargoship"/>
-		<Cluster directory="cluster"/>
-		<Commando directory="commando"/>
-		<Corvet directory="corvet"/>
-		<Escort directory="escort"/>
-		<Fighter directory="fighter"/>
-		<Gunboat directory="gunboat"/>
-		<Infantery directory="infantery"/>
-		<Konstruktor directory="konstrukt"/>
-		<Minelayer directory="minelayer"/>
-		<Missellauncher directory="missel"/>
-		<Missel_Ship directory="missel_ship"/>
-		<Mobile_AA directory="mobile_aa"/>
-		<Pionier directory="pionier"/>
-		<Repair directory="repair"/>
-		<Scanner directory="scanner"/>
-		<Scout directory="scout"/>
-		<Sea_Minelayer directory="sea_minelayer"/>
-		<Sea_Transporter directory="sea_transport"/>
-		<Submarine directory="sub"/>
-		<Surveyor directory="surveyor"/>
-		<Tank directory="tank"/>
-		<Transporter_Gold directory="trans_gold"/>
-		<Transporter_Metal directory="trans_metal"/>
-		<Transporter_Oil directory="trans_oil"/>
+		<Air_Transporter directory="air_transport" num="1"/>
+		<Alien_Assault directory="alien_assault" num="2"/>
+		<Alien_Plane directory="alien_plane" num="3"/>
+		<Alien_Ship directory="alien_ship" num="4"/>
+		<Alien_Tank directory="alien_tank" num="5"/>
+		<APC directory="apc" num="6"/>
+		<Assault directory="assault" num="7"/>
+		<AWAC directory="awac" num="8"/>
+		<Bomber directory="bomber" num="9"/>
+		<Bulldozer directory="bulldozer" num="10"/>
+		<Cargoship directory="cargoship" num="11"/>
+		<Cluster directory="cluster" num="12"/>
+		<Commando directory="commando" num="13"/>
+		<Corvet directory="corvet" num="14"/>
+		<Escort directory="escort" num="15"/>
+		<Fighter directory="fighter" num="16"/>
+		<Gunboat directory="gunboat" num="17"/>
+		<Infantery directory="infantery" num="18"/>
+		<Konstruktor directory="konstrukt" num="19"/>
+		<Minelayer directory="minelayer" num="20"/>
+		<Missellauncher directory="missel" num="21"/>
+		<Missel_Ship directory="missel_ship" num="22"/>
+		<Mobile_AA directory="mobile_aa" num="23"/>
+		<Pionier directory="pionier" num="24"/>
+		<Repair directory="repair" num="25"/>
+		<Scanner directory="scanner" num="26"/>
+		<Scout directory="scout" num="27"/>
+		<Sea_Minelayer directory="sea_minelayer" num="28"/>
+		<Sea_Transporter directory="sea_transport" num="29"/>
+		<Submarine directory="sub" num="30"/>
+		<Surveyor directory="surveyor" num="31"/>
+		<Tank directory="tank" num="32"/>
+		<Transporter_Gold directory="trans_gold" num="33"/>
+		<Transporter_Metal directory="trans_metal" num="34"/>
+		<Transporter_Oil directory="trans_oil" num="35"/>
 	</Vehicles>
 </VehicleData>
 
