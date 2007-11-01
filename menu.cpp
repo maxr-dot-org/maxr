@@ -835,6 +835,16 @@ sOptions RunOptionsMenu ( sOptions *init )
 	#define TURNS lngPack.Translate( "Text~Game_Options~Option_Type_Turns").c_str()
 	#define SIMU lngPack.Translate( "Text~Game_Options~Option_Type_Simu").c_str()
 	
+	#define METAL lngPack.Translate( "Text~Game_Options~Title_Metal")
+	#define OIL lngPack.Translate( "Text~Game_Options~Title_Oil")
+	#define GOLD lngPack.Translate( "Text~Game_Options~Title_Gold")
+	#define RESOURCE lngPack.Translate( "Text~Game_Options~Title_Resource_Density")
+	#define HEAD lngPack.Translate( "Text~Game_Options~Title_BridgeHead")
+	#define CREDITS lngPack.Translate( "Text~Game_Options~Title_Credits")
+	#define ALIEN lngPack.Translate( "Text~Game_Options~Title_Alien_Tech")
+	#define GAMETYPE lngPack.Translate( "Text~Game_Options~Title_Game_Type")
+	//beko IS lazy. fact is.
+	
 	bool OKPressed=false, BackPressed=false;
 	sOptions options;
 	int b,lb=0,lx=-1,ly=-1;
@@ -865,26 +875,26 @@ sOptions RunOptionsMenu ( sOptions *init )
 	// Ressourcen:
 	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Resource").c_str(),110,56,buffer );
 
-	fonts->OutText ( lngPack.Translate( "Text~Game_Options~Title_Metal").c_str(),17,86,buffer );
+	fonts->OutText ( METAL.c_str(),17,86,buffer );
 	PlaceSelectText ( LOW,38,86+16,options.metal==0 );
 	PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
 	PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
 	PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
 
-	fonts->OutText ( lngPack.Translate( "Text~Game_Options~Title_Oil").c_str(),17,124,buffer );
+	fonts->OutText ( OIL.c_str(),17,124,buffer );
 	PlaceSelectText ( LOW,38,124+16,options.oil==0 );
 	PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
 	PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
 	PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
 
-	fonts->OutText ( lngPack.Translate( "Text~Game_Options~Title_Gold").c_str(),17,162,buffer );
+	fonts->OutText ( GOLD.c_str(),17,162,buffer );
 	PlaceSelectText ( LOW,38,162+16,options.gold==0 );
 	PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
 	PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
 	PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
 
 	// Credits:
-	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Credits").c_str(),110+211,56,buffer );
+	fonts->OutTextCenter ( CREDITS.c_str(),110+211,56,buffer );
 
 	PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
 	PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
@@ -895,19 +905,19 @@ sOptions RunOptionsMenu ( sOptions *init )
 	PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
 
 	// Brückenkopf:
-	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_BridgeHead").c_str(),110+211*2,56,buffer );
+	fonts->OutTextCenter ( HEAD.c_str(),110+211*2,56,buffer );
 
 	PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead,false );
 	PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead,false );
 
 	// AlienTechs:
-	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Alien_Tech").c_str(),110,251,buffer );
+	fonts->OutTextCenter ( ALIEN.c_str(),110,251,buffer );
 
 	PlaceSelectText ( ON,38,281,options.AlienTech );
 	PlaceSelectText ( OFF,38,281+20,!options.AlienTech );
 
 	// Ressourcendichte:
-	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Resource_Density").c_str(),110+211,251,buffer );
+	fonts->OutTextCenter ( RESOURCE.c_str(),110+211,251,buffer );
 
 	PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
 	PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
@@ -915,7 +925,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 	PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
 
 	// Spielart:
-	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Options~Title_Game_Type").c_str(),110+211*2,251,buffer );
+	fonts->OutTextCenter ( GAMETYPE.c_str(),110+211*2,251,buffer );
 
 	PlaceSelectText ( SIMU,452,281,!options.PlayRounds,false );
 	PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,false );
@@ -5027,25 +5037,37 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	}
 	else
 	{
-		if ( SaveGame.empty() ) str+=">keine Map gewählt<\n";
+		if ( SaveGame.empty() ) str+=lngPack.Translate( "Text~Game_MP~Comp_Map_NoSet")+"\n";
 	}
 	str+="\n";
 	if ( SaveGame.empty() )
 	{
 		if ( !no_options )
 		{
-			str+="Metall: "; str+= ( options.metal<2? ( options.metal<1?"wenig":"mittel" ) : ( options.metal<3?"viel":"extrem" ) ); str+="\n";
-			str+="Öl: "; str+= ( options.oil<2? ( options.oil<1?"wenig":"mittel" ) : ( options.oil<3?"viel":"extrem" ) ); str+="\n";
-			str+="Gold: "; str+= ( options.gold<2? ( options.gold<1?"wenig":"mittel" ) : ( options.gold<3?"viel":"extrem" ) ); str+="\n";
-			str+="Ressourcendichte: "; str+= ( options.dichte<2? ( options.dichte<1?"dünn":"normal" ) : ( options.gold<3?"dicht":"extrem" ) ); str+="\n";
-			str+="Credits: "; sprintf ( sztmp,"%d",options.credits ); str+=sztmp; str+="\n";
-			str+="Brückenkopf: "; str+= ( options.FixedBridgeHead?"fest":"mobil" ); str+="\n";
-			str+="Alientechnologie: "; str+= ( options.AlienTech?"an":"aus" ); str+="\n";
-			str+="Spielart: "; str+= ( options.PlayRounds?"Runden":"simultan" ); str+="\n";
+			str+=METAL+": "; 
+			str+= ( options.metal<2? ( options.metal<1?LOW:MIDDLE ) : ( options.metal<3?MUCH:MOST ) ); str+="\n";
+			
+			str+=OIL+": "; 
+			str+= ( options.oil<2? ( options.oil<1?LOW:MIDDLE ) : ( options.oil<3?MUCH:MOST ) ); str+="\n";
+			
+			str+=GOLD+": "; 
+			str+= ( options.gold<2? ( options.gold<1?LOW:MIDDLE ) : ( options.gold<3?MUCH:MOST ) ); str+="\n";
+			
+			str+=RESOURCE+": "; 
+			str+= ( options.dichte<2? ( options.dichte<1?THIN:MIDDLE ) : ( options.gold<3?THICK:MOST ) ); str+="\n";
+			
+			str+=CREDITS+": "; sprintf ( sztmp,"%d",options.credits ); str+=sztmp; str+="\n";
+			
+			str+=HEAD+": "; str+= ( options.FixedBridgeHead?DEFINITE:MOBILE ); str+="\n";
+
+			str+=ALIEN+": "; str+= ( options.AlienTech?ON:OFF ); str+="\n";
+
+			str+=GAMETYPE+": "; str+= ( options.PlayRounds?TURNS:SIMU ); str+="\n";
+			
 		}
 		else
 		{
-			str+=">keine Optionen gewählt<\n";
+			str+=lngPack.Translate( "Text~Game_MP~Comp_Option_NoSet")+"\n";
 		}
 	}
 
