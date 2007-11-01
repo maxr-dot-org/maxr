@@ -1963,7 +1963,7 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 		dest.h=scr.h=16;
 		SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
 	}
-	DrawTransBar ( 223* ( ( int ) ( ( Target+*trans ) / ( float ) MaxTarget ) ) );
+	DrawTransBar ( (int) (223 * ( float ) ( Target+*trans ) / MaxTarget ) );
 }
 
 // Mal die Exitpoints für ein Vehicle des Übergebenen Typs:
@@ -5043,14 +5043,14 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 	}
 	else
 	{
-		dest.w=scr.w= ( int ) ( value/ ( ( float ) max_value ) ) *240;
-		scr.x=156+ ( 240- ( int ) ( value/ ( ( float ) max_value ) ) *240 );
+		dest.w=scr.w= ( int ) ( ( ( float ) value / max_value ) * 240 );
+		scr.x=156+ ( 240- ( int ) ( ( ( float ) value / max_value ) * 240 ) );
 	}
 	dest.x=174;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	if ( fixed &&scr.w!=240&&max_value!=0 )
 		{
-			dest.w=scr.w= ( int ) ( fixed / ( ( float ) max_value ) ) *240;
+			dest.w=scr.w= ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
 			dest.x=174+240-scr.w;
 			scr.x=156;
 			scr.y=307;
