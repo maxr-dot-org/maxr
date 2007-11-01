@@ -4177,13 +4177,20 @@ void cMultiPlayer::RunMenu ( void )
 					FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
 					if ( fstcpip->status==STAT_OPENED )
 					{
-						AddChatLog ( "Fehler beim Öffnen des Sockets" );
+						AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Network_Error_Socket") );
+						cLog::write("Error opening socket", cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
 						sprintf ( sztmp,"%d",Port );
-						stmp="Spiel offen (Port: "; stmp+=sztmp; stmp+=")";
-						AddChatLog ( stmp );;
+						stmp=lngPack.Translate( "Text~Game_MP~Comp_Network_Open");
+						stmp+=" (";
+						stmp+=lngPack.Translate( "Text~Game_Start~Title_Port");
+						stmp+=sztmp;
+						stmp+=")";
+						AddChatLog ( stmp );
+						stmp="Game open (Port: ";stmp+=sztmp; stmp+=")";
+						cLog::write(stmp, cLog::eLOG_TYPE_INFO);
 					}
 				}
 				else
@@ -4196,13 +4203,18 @@ void cMultiPlayer::RunMenu ( void )
 					FSTcpIpReceiveThread=NULL;
 					if ( fstcpip->status!=STAT_CONNECTED )
 					{
-						AddChatLog ( "Fehler beim Verbinden" );
+						AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Network_Error_Connect") );
+						cLog::write("Error on connecting", cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
 						sprintf ( sztmp,"%d",Port );
-						stmp="Verbinde mit "; stmp+=IP; stmp+=":"; stmp+=sztmp;
-						AddChatLog ( stmp );
+						stmp=lngPack.Translate( "Text~Game_MP~Comp_Network_Connecting");
+						stmp+=IP;
+						stmp+=":";
+						stmp+=sztmp;
+						AddChatLog ( stmp ); // e.g. Connecting to 127.0.0.1:55800
+						cLog::write(("Connecting to "+IP+":"+sztmp), cLog::eLOG_TYPE_INFO);
 					}
 				}
 
@@ -4359,7 +4371,8 @@ void cMultiPlayer::RunMenu ( void )
 				}
 				else
 				{
-					AddChatLog ( "Error loading map" );
+					AddChatLog ( lngPack.Translate( "Text~Error_Messages~ERROR_Map_Loading") );
+					cLog::write("Error loading map", cLog::eLOG_TYPE_WARNING);
 					delete ClientSettingsList;
 				}
 			}
@@ -4458,7 +4471,8 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else
 			{
-				AddChatLog ( "Error loading map" );
+				AddChatLog ( lngPack.Translate( "Text~Error_Messages~ERROR_Map_Loading") );
+				cLog::write("Error loading map", cLog::eLOG_TYPE_WARNING);
 				delete map_obj;map_obj=NULL;
 			}
 		}
@@ -4512,11 +4526,13 @@ void cMultiPlayer::RunMenu ( void )
 				case STAT_CONNECTED:
 					if ( host )
 					{
-						AddChatLog ( "fstcpip: new connection" );
+						AddChatLog ( "fstcpip: "+lngPack.Translate( "Text~Game_MP~Comp_Network_New") );
+						cLog::write("New connection", cLog::eLOG_TYPE_DEBUG);
 					}
 					else
 					{
-						AddChatLog ( "fstcpip: connected" );
+						AddChatLog ( "fstcpip: "+lngPack.Translate( "Text~Game_MP~Comp_Network_Connected") );
+						cLog::write("Connected", cLog::eLOG_TYPE_DEBUG);
 						ClientConnectedCallBack();
 					}
 					break;
@@ -4524,7 +4540,8 @@ void cMultiPlayer::RunMenu ( void )
 					  AddChatLog("fstcpip: Wartet");
 					  break;*/
 				case STAT_CLOSED:
-					AddChatLog ( "fstcpip: closed" );
+					AddChatLog ( "fstcpip: "+lngPack.Translate( "Text~Game_MP~Comp_Network_Closed") );
+					cLog::write("Connection closed", cLog::eLOG_TYPE_DEBUG);
 					if ( !host ) ClientDistconnect();
 					break;
 					/*case STAT_OPENED:
