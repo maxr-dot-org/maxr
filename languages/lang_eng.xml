@@ -113,6 +113,13 @@
 			<Comp_Player_MustHost ENG="must be host in turnbased game!"/>
 			<Comp_Player_Amount ENG="Amount of players:"/>
 			<Comp_Player_Turn ENG="'s turn"/>
+			<Comp_Network_Error_Socket ENG="Error opening socket"/>
+			<Comp_Network_Error_Connect ENG="Error on connecting"/>
+			<Comp_Network_Open ENG="Game open"/>
+			<Comp_Network_Connecting ENG="Connecting to "/>
+			<Comp_Network_New ENG="New connection"/>
+			<Comp_Network_Connected ENG="Connected"/>
+			<Comp_Network_Closed ENG="Connection closed"/>
 		</Game_MP>
 		<Vehicles>
 			<Title_Damage ENG="Damage"/>
@@ -127,6 +134,7 @@
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map"/>
       <INFO_Language_initialised ENG="Language is now initialised"/>
     </Error_Messages>
 	</Text>
