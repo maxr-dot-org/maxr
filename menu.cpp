@@ -4941,7 +4941,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 
 	if ( !host&&fstcpip->status!=STAT_CONNECTED )
 	{
-		str+="not connected";
+		str+=lngPack.Translate( "Text~Game_MP~Comp_Network_Connected_Not");
 		fonts->OutTextBlock ( ( char * ) str.c_str(),r,buffer );
 		return;
 	}
@@ -4972,7 +4972,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 				if ( host&&game )
 				{
 					int i;
-					str+="Player: ";
+					str+=lngPack.Translate( "Text~Game_MP~Title_Player")+": ";
 					for ( i=0;i<game->PlayerList->Count;i++ )
 					{
 						str+=game->PlayerList->PlayerItems[i]->name;
@@ -4991,15 +4991,17 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	{
 		FILE *fp;
 		string mapstr;
-		mapstr=SettingsData.sMapsPath; mapstr+=map;
-		fp=fopen ( mapstr.c_str(),"rb" );
-		if ( !fp )
+		mapstr=SettingsData.sMapsPath; 
+		mapstr+=PATH_DELIMITER; 
+		mapstr+=map;
+		if (!FileExists( mapstr.c_str()))
 		{
-			str+="Map: "; str+=map; str+=" !NICHT VORHANDEN!\n";
-			fclose ( fp );
-		}
-		else
+			str+="Map: "; str+=map; str+=" !CORRUPTED!\n";
+			cLog::write("Couldn't load map", cLog::eLOG_TYPE_WARNING);
+		}	
+		else 
 		{
+			fp=fopen ( mapstr.c_str(),"rb" );
 			SDL_Surface *sf;
 			SDL_Rect r;
 			int size=0;
