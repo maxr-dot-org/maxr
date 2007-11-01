@@ -101,11 +101,12 @@ void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filenam
 	* @param vehicle Should be true if unit is a vehicle
 	* @return 1 on success
 	*/
-void LoadUnitData(int unitnum, const char* directory, bool vehicle);
+void LoadUnitData(int unitnum, const char* directory, bool vehicle, int ID);
 /**
 	* Sets all unitdata to default values
 	* @param unitnum Indexnumber of unit for which the data should be loaded.
 	* @param vehicle Should be true if unit is a vehicle
+	* @param ID The ID which the unit should have
 	* @return 1 on success
 	*/
 void SetDefaultUnitData(int unitnum, bool vehicle);

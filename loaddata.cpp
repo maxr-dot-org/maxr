@@ -1342,7 +1342,7 @@ int LoadVehicles()
 	string sTmpString, sVehiclePath;
 	char sztmp[16];
 	const char *pszTmp;
-	TList *VehicleList;
+	TList *VehicleList, *IDList;
 	TiXmlDocument VehiclesXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -1370,6 +1370,7 @@ int LoadVehicles()
 	}
 	// read vehicles.xml
 	VehicleList = new TList();
+	IDList = new TList();
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
@@ -1381,6 +1382,16 @@ int LoadVehicles()
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
 			sTmpString.insert(38,pXmlNode->Value());
+			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		}
+		pszTmp = pXmlElement->Attribute( "num" );
+		if(pszTmp != 0)
+			IDList->Add ( pszTmp );
+		else
+		{
+			VehicleList->Delete(VehicleList->Count);
+			sTmpString = "Can't read num-attribute from \"\" - node";
+			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		}
 	}
@@ -1400,6 +1411,16 @@ int LoadVehicles()
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
 			sTmpString.insert(38,pXmlNode->Value());
+			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		}
+		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
+		if(pszTmp != 0)
+			IDList->Add ( pszTmp );
+		else
+		{
+			VehicleList->Delete(VehicleList->Count);
+			sTmpString = "Can't read num-attribute from \"\" - node";
+			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		}
 	}
@@ -1422,7 +1443,7 @@ int LoadVehicles()
 		SetDefaultUnitData(UnitsData.vehicle_anz, true);
 		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true);
+		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true, atoi(IDList->Items[i].c_str()));
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
 		ConvertData(UnitsData.vehicle_anz, true);
@@ -1690,7 +1711,7 @@ int LoadBuildings()
 
 	string sTmpString, sBuildingPath;
 	const char *pszTmp;
-	TList *BuildingList;
+	TList *BuildingList, *IDList;
 	TiXmlDocument BuildingsXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -1718,6 +1739,7 @@ int LoadBuildings()
 		return 0;
 	}
 	BuildingList = new TList();
+	IDList = new TList();
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
@@ -1729,6 +1751,16 @@ int LoadBuildings()
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
 			sTmpString.insert(38,pXmlNode->Value());
+			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		}
+		pszTmp = pXmlElement->Attribute( "num" );
+		if(pszTmp != 0)
+			IDList->Add ( pszTmp );
+		else
+		{
+			BuildingList->Delete(BuildingList->Count);
+			sTmpString = "Can't read num-attribute from \"\" - node";
+			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		}
 	}
@@ -1750,6 +1782,16 @@ int LoadBuildings()
 			sTmpString.insert(38,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		}
+		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
+		if(pszTmp != 0)
+			IDList->Add ( pszTmp );
+		else
+		{
+			BuildingList->Delete(BuildingList->Count);
+			sTmpString = "Can't read num-attribute from \"\" - node";
+			sTmpString.insert(32,pXmlNode->Value());
+			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		}
 	}
 	// load found units
 	UnitsData.building_anz = 0;
@@ -1767,7 +1809,7 @@ int LoadBuildings()
 		// Set default data-values
 		SetDefaultUnitData(UnitsData.building_anz, false);
 		// Load Data from data.xml
-		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false);
+		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false, atoi(IDList->Items[i].c_str()));
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
 		ConvertData(UnitsData.building_anz, false);
@@ -1879,7 +1921,7 @@ int LoadBuildings()
 
 // LoadUnitData ////////////////////////////////////////////////////////////////
 // Loades the unitdata from the data.xml in the unitfolder
-void LoadUnitData(int unitnum, const char *directory, bool vehicle)
+void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 {
 	char *DataStructure[] = {
 		// General
@@ -2008,7 +2050,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 		Data = &UnitsData.building[unitnum].data;
 	int i, n, arraycount;
 	string sTmpString, sVehicleDataPath, sNodePath="";
-	char szTmp[8];
+	char szTmp[100];
 	TiXmlDocument VehicleDataXml;
 	ExTiXmlNode *pExXmlNode = NULL;
 
@@ -2059,6 +2101,18 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle)
 				}
 			}
 			Data->ID.iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+
+			if(iID != atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
+			{
+				sprintf( szTmp, "ID %0.2d %0.2d isn't equal with ID for unit \"%s\" ", atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str()), atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()), directory);
+				cLog::write(szTmp,LOG_TYPE_WARNING);
+				return ;
+			}
+			else
+			{
+				sprintf( szTmp, "ID %0.2d %0.2d verified", atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str()), atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()), directory);
+				cLog::write(szTmp,LOG_TYPE_DEBUG);
+			}
 		}
 	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
 	{
