@@ -4196,6 +4196,7 @@ void cMultiPlayer::RunMenu ( void )
 						stmp=lngPack.Translate( "Text~Game_MP~Comp_Network_Open");
 						stmp+=" (";
 						stmp+=lngPack.Translate( "Text~Game_Start~Title_Port");
+						stmp+=": ";
 						stmp+=sztmp;
 						stmp+=")";
 						AddChatLog ( stmp );
@@ -5001,6 +5002,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 		}	
 		else 
 		{
+ 			//draw mapinfo in game infobox
 			fp=fopen ( mapstr.c_str(),"rb" );
 			SDL_Surface *sf;
 			SDL_Rect r;
@@ -5014,17 +5016,25 @@ void cMultiPlayer::DisplayGameSettings ( void )
 			}
 			sprintf ( sztmp,"%d",size );
 			str+=" ("; str+=sztmp; str+="x"; str+=sztmp; str+=")\n";
-
 			r.x=20;r.y=60;r.w=150;r.h=20;
 			SDL_BlitSurface ( TmpSf,&r,buffer,&r );
-			mapstr=map; mapstr+=" ("; mapstr+=sztmp; mapstr+="x"; mapstr+=sztmp; mapstr+=")";
-			fonts->OutTextCenter ( ( char * ) mapstr.c_str(),90,65,buffer );
+	
+			//draw mapname to infobox map
+			mapstr.clear();
+			mapstr = map;
+			mapstr.erase(mapstr.length()-4,4); //remove ".map" for eyecandy
+			fonts->OutTextCenter ( ( char * ) mapstr.c_str(),90,65,buffer ); 
 
-			string mapstr;
-			mapstr=SettingsData.sMapsPath; mapstr+=map; mapstr.replace ( mapstr.length()-3,3,"bmp" );
-			fp=fopen ( mapstr.c_str(),"rb" );
-			if ( fp )
+			//load mapimage
+			mapstr.clear(); 
+			mapstr=SettingsData.sMapsPath; 
+			mapstr+=PATH_DELIMITER;
+			mapstr+=map;
+			mapstr.replace ( mapstr.length()-3,2,"bm" ); //replace "ma" from ".map" with "bm" so our new ending is .bmp
+			if(FileExists(mapstr.c_str()))
 			{
+				//draw map in infobox for map
+				fp=fopen ( mapstr.c_str(),"rb" ); 
 				sf=SDL_LoadBMP ( mapstr.c_str() );
 				if ( sf!=NULL )
 				{
