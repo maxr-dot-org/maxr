@@ -1584,7 +1584,9 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
@@ -1592,7 +1594,10 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 		}
 		else
@@ -1612,7 +1617,9 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org,SDL_SRCCOLORKEY,0xFFFFFF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
@@ -1620,7 +1627,10 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCALPHA,50);
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
@@ -1628,7 +1638,9 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
@@ -1636,7 +1648,10 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
+				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 		}
 		else
