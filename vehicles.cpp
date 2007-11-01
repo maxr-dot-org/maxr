@@ -386,7 +386,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.x=0;
 		scr.y=0;
 		tmp=*dest;
-		tmp.x+=ox;
+		tmp.x+=ox; 
 		tmp.y+=oy;
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,buffer,&tmp );
 		// Ggf Markierung blitten, wenn der Bauvorgang abgeschlossen ist:
@@ -426,21 +426,21 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			d.x=dest->x+2+ox;
 			d.y=dest->y+2+oy;
 			d.w=max;
-			d.h=1;
+			d.h=3;
 			t=d;
 			SDL_FillRect ( buffer,&d,nr );
 			d=t;
-			d.y+=max-1;
+			d.y+=max-3;
 			t=d;
 			SDL_FillRect ( buffer,&d,nr );
 			d=t;
 			d.y=dest->y+2+oy;
-			d.w=1;
+			d.w=3;
 			d.h=max;
 			t=d;
 			SDL_FillRect ( buffer,&d,nr );
 			d=t;
-			d.x+=max-1;
+			d.x+=max-3;
 			SDL_FillRect ( buffer,&d,nr );
 		}
 	}
