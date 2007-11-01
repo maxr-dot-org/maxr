@@ -3826,7 +3826,7 @@ void cMultiPlayer::RunMenu ( void )
 					break;
 				case FOCUS_CHAT:
 					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
-					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >425 )
+					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >410 -fonts->GetTextLen ( (MyPlayer->name+": ").c_str() ) ) //keeping playername lenght in mind
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
@@ -3946,7 +3946,7 @@ void cMultiPlayer::RunMenu ( void )
 					sprintf ( sztmp,"%d",SettingsData.Checksum );
 					msg=sztmp; msg+="#";
 					msg+=MAX_VERSION;
-					AddChatLog ( "check for go" );
+					AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go_Check") );
 
 					WaitForGo=true;
 					ClientsToGo=fstcpip->GetConnectionCount();
