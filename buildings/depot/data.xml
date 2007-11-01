@@ -1,12 +1,12 @@
-<Unit ID="1 1" name="baracks">
+<Unit ID="1 5" name="depot">
   <Header>
-    <Author name="DoctorDeath">
-      <Editor name="DoctorDeath" time="2007-10-16 13:05:00"/>
+    <Author name="Eiko">
+      <Editor name="Eiko" time="2007-11-1 21:44:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Baracks\n\nBlaBlaBla...
+    Depot\n\nBlaBlaBla...
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>
@@ -28,7 +28,7 @@
     <Hitpoints Num="56"/>
   </Defence>
   <Production>
-    <Built_Costs Num="10"/>
+    <Built_Costs Num="12"/>
     <Built_Costs_Max Num="40"/>
     <Is_Produced_by>
       <Unit ID="0 19"/>
@@ -41,34 +41,34 @@
       <Ammo_Type Const="Standard"/>
       <Ammo_Quantity Num="0"/>
       <Allowed_Targets>
-	      <Target_Land>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Land>
-	      <Target_Sea>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Sea>
-	      <Target_Air>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Air>
-	      <Target_Mine>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Mine>
-	      <Target_Submarine>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Submarine>
-	      <Target_Infantry>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Infantry>
-	      <Target_WMD>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_WMD>
+        <Target_Land>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Land>
+        <Target_Sea>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Sea>
+        <Target_Air>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Air>
+        <Target_Mine>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Mine>
+        <Target_Submarine>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Submarine>
+        <Target_Infantry>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_Infantry>
+        <Target_WMD>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
+        </Target_WMD>
       </Allowed_Targets>
       <Shots Num="0"/>
       <Destination_Area Num="1"/>
@@ -141,8 +141,8 @@
     <Capacity_Energy Num="0"/>
     <Capacity_Units_Air Num="0"/>
     <Capacity_Units_Sea Num="0"/>
-    <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="12"/>
+    <Capacity_Units_Ground Num="12"/>
+    <Capacity_Units_Infantry Num="0"/>
     <Can_Use_Unit_As_Garage>
       <Unit ID="xx xx" Size="1"/>
     </Can_Use_Unit_As_Garage>
