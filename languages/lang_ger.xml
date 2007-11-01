@@ -149,6 +149,52 @@
       <INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
 		</Error_Messages>
 	</Text>
+	<Units>
+		<Unit ID="0 1" ENG="Airtransport" localized="Lufttransporter">--Description here</Unit>
+		<Unit ID="0 2" ENG="Alien Assault" localized="Aliensturm">--Description here</Unit>
+		<Unit ID="0 3" ENG="Alien Plane" localized="Alienflugzeug">--Description here</Unit>
+		<Unit ID="0 4" ENG="Alien Ship" localized="Alienschiff">--Description here</Unit>
+		<Unit ID="0 5" ENG="Alien Tank" localized="Alienpanzer">--Description here</Unit>
+		<Unit ID="0 6" ENG="APC" localized="APC">--Description here</Unit>
+		<Unit ID="0 7" ENG="Assault" localized="Assault">--Description here</Unit>
+		<Unit ID="0 8" ENG="AWAC" localized="AWAC">--Description here</Unit>
+		<Unit ID="0 9" ENG="Bomber" localized="Bomber">--Description here</Unit>
+		<Unit ID="0 10" ENG="Bulldozer" localized="Bulldozer">--Description here</Unit>
+		<Unit ID="0 11" ENG="Cargoship" localized="Frachtschiff">--Description here</Unit>
+		<Unit ID="0 12" ENG="Cluster" localized="Kraftwerk">--Description here</Unit>
+		<Unit ID="0 13" ENG="Commando" localized="Infiltrator">--Description here</Unit>
+		<Unit ID="0 14" ENG="Corvet" localized="Korvette">--Description here</Unit>
+		<Unit ID="0 15" ENG="Escort" localized="Eskorte">--Description here</Unit>
+		<Unit ID="0 16" ENG="Fighter" localized="Jäger">--Description here</Unit>
+		<Unit ID="0 17" ENG="Gunboat" localized="Kanonenboot">--Description here</Unit>
+		<Unit ID="0 18" ENG="Infantery" localized="Infanterie">--Description here</Unit>
+		<Unit ID="0 19" ENG="Constructor" localized="Konstrukteur">--Description here</Unit>
+		<Unit ID="0 20" ENG="Minelayer" localized="Minenleger">--Description here</Unit>
+		<Unit ID="0 21" ENG="Missel" localized="Raketenwerfer">--Description here</Unit>
+		<Unit ID="0 22" ENG="Missel Ship" localized="Raketenschiff">--Description here</Unit>
+		<Unit ID="0 23" ENG="Mobile AntiAir" localized="Luftabwehr">--Description here</Unit>
+		<Unit ID="0 24" ENG="Pioneer" localized="Pionier">--Description here</Unit>
+		<Unit ID="0 25" ENG="Repairer" localized="Repariereinheit">--Description here</Unit>
+		<Unit ID="0 26" ENG="Scanner" localized="Scanner">--Description here</Unit>
+		<Unit ID="0 27" ENG="Scout" localized="Späher">--Description here</Unit>
+		<Unit ID="0 28" ENG="Seaminelayer" localized="Seeminenleger">--Description here</Unit>
+		<Unit ID="0 29" ENG="Seatransport" localized="Seetransporter">--Description here</Unit>
+		<Unit ID="0 30" ENG="Submarine" localized="U-Boot">--Description here</Unit>
+		<Unit ID="0 31" ENG="Surveyor" localized="Gutachter">--Description here</Unit>
+		<Unit ID="0 32" ENG="Tank" localized="Panzer">--Description here</Unit>
+		<Unit ID="0 33" ENG="Goldtransporter" localized="Goldtransporter">--Description here</Unit>
+		<Unit ID="0 34" ENG="Metaltransporter" localized="Metalltransporter">--Description here</Unit>
+		<Unit ID="0 35" ENG="Oiltransporter" localized="Öltransporter">--Description here</Unit>
+		<Unit ID="1 1" ENG="Baracks" localized="Baracken">--Description here</Unit>
+		<Unit ID="1 2" ENG="Block" localized="Block">--Description here</Unit>
+		<Unit ID="1 4" ENG="Connector" localized="Kopplung">--Description here</Unit>
+		<Unit ID="1 8" ENG="Small Plant" localized="Generator">--Description here</Unit>
+		<Unit ID="1 21" ENG="Claymore" localized="Mine">--Description here</Unit>
+		<Unit ID="1 22" ENG="Mine" localized="Bergwerk">--Description here</Unit>
+		<Unit ID="1 28" ENG="Road" localized="Strasse">--Description here</Unit>
+		<Unit ID="1 29" ENG="Seamine" localized="Seemine">--Description here</Unit>
+		<Unit ID="1 33" ENG="Oilstorage" localized="Öllager">--Description here</Unit>
+	</Units>
 	<Graphic>
 	</Graphic>
 	<Speech>
