@@ -4740,8 +4740,11 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				FILE *fp;
 				string mapstr;
-				mapstr=SettingsData.sMapsPath; mapstr+=map;
-				fp=fopen ( mapstr.c_str(),"rb" );
+				mapstr=SettingsData.sMapsPath; mapstr+=PATH_DELIMITER; mapstr+=map;
+				if(FileExists(mapstr.c_str()))
+				{
+					fp=fopen ( mapstr.c_str(),"rb" );
+				}
 				if ( atoi ( Strings->Items[0].c_str() ) ==SettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
 				{
 					string new_msg;
@@ -4758,7 +4761,7 @@ void cMultiPlayer::HandleMenuMessages()
 					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str(), ( int ) new_msg.length(),-1 );
 					AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go_Host_No") );
 				}
-				fclose ( fp );
+				if(fp) fclose ( fp );
 				MessageList->DeleteNetMessage ( 0 );
 				break;
 			}
