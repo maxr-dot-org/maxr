@@ -4991,59 +4991,71 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	if ( !map.empty() )
 	{
 		FILE *fp;
-		string mapstr;
-		mapstr=SettingsData.sMapsPath; 
-		mapstr+=PATH_DELIMITER; 
-		mapstr+=map;
-		if (!FileExists( mapstr.c_str()))
+		/**mappath*/
+		string sMapPath;
+		/**eyecandy mapname*/
+		string sNameNice;
+		/**mapimage*/
+		string sMapImage;
+		
+		//set absolute mapname
+		sMapPath=SettingsData.sMapsPath; 
+		sMapPath+=PATH_DELIMITER; 
+		sMapPath+=map;
+		
+		//remove ".map" for eyecandy
+		sNameNice = map;
+		sNameNice.erase(sNameNice.length()-4,4);
+		
+		//set abolute mapimagename
+		sMapImage=sMapPath;
+		//replace "ma" from ".map" with "bm" so our new ending is .bmp
+		sMapImage.replace ( sMapImage.length()-3,2,"bm" ); 
+		
+		if (!FileExists( sMapPath.c_str()))
 		{
-			str+="Map: "; str+=map; str+=" !CORRUPTED!\n";
-			cLog::write("Couldn't load map", cLog::eLOG_TYPE_WARNING);
+			//d'oh, somebody doesn't have the map we've choosen here
+			str+=lngPack.Translate( "Text~Error_Messages~ERROR_Map_Loading")+" "+map+"\n";
+			cLog::write("Couldn't load map "+sMapPath, cLog::eLOG_TYPE_WARNING);
 		}	
 		else 
 		{
  			//draw mapinfo in game infobox
-			fp=fopen ( mapstr.c_str(),"rb" );
-			SDL_Surface *sf;
-			SDL_Rect r;
-			int size=0;
-			str+="Map: "; str+=map;
+			fp=fopen ( sMapPath.c_str(),"rb" );
+			/**rect to draw mapname*/
+			SDL_Rect r = {20,60,150,20};
+			/**Mapsize*/ 
+			int iSize=0;
+			
+			str+=lngPack.Translate( "Text~Game_Start~Title_Map")+": "+sNameNice;
 			if ( fp )
 			{
 				fseek ( fp,21,SEEK_SET );
-				fread ( &size,sizeof ( int ),1,fp );
+				fread ( &iSize,sizeof ( int ),1,fp );
 				fclose ( fp );
 			}
-			sprintf ( sztmp,"%d",size );
+			sprintf ( sztmp,"%d",iSize );
 			str+=" ("; str+=sztmp; str+="x"; str+=sztmp; str+=")\n";
-			r.x=20;r.y=60;r.w=150;r.h=20;
+
 			SDL_BlitSurface ( TmpSf,&r,buffer,&r );
 	
 			//draw mapname to infobox map
-			mapstr.clear();
-			mapstr = map;
-			mapstr.erase(mapstr.length()-4,4); //remove ".map" for eyecandy
-			fonts->OutTextCenter ( ( char * ) mapstr.c_str(),90,65,buffer ); 
+			fonts->OutTextCenter ( ( char * ) sNameNice.c_str(),90,65,buffer ); 
 
-			//load mapimage
-			mapstr.clear(); 
-			mapstr=SettingsData.sMapsPath; 
-			mapstr+=PATH_DELIMITER;
-			mapstr+=map;
-			mapstr.replace ( mapstr.length()-3,2,"bm" ); //replace "ma" from ".map" with "bm" so our new ending is .bmp
-			if(FileExists(mapstr.c_str()))
+			//load mapimage (if exists)
+			if(FileExists(sMapImage.c_str()))
 			{
 				//draw map in infobox for map
-				fp=fopen ( mapstr.c_str(),"rb" ); 
-				sf=SDL_LoadBMP ( mapstr.c_str() );
+				fp=fopen ( sMapImage.c_str(),"rb" ); 
+				SDL_Surface *sf;
+				sf=SDL_LoadBMP ( sMapImage.c_str() );
 				if ( sf!=NULL )
 				{
-					SDL_Rect dest;
-					dest.w=dest.h=112;
-					dest.x=33;dest.y=106;
+					/**rect to draw mapimage*/
+					SDL_Rect dest = {33,106,112,112};
 					SDL_BlitSurface ( sf,NULL,buffer,&dest );
-					SDL_FreeSurface ( sf );
 				}
+				SDL_FreeSurface ( sf );
 			}
 		}
 	}
