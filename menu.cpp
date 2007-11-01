@@ -3689,7 +3689,6 @@ void cMultiPlayer::RunMenu ( void )
 
 	if ( host )
 	{
-		//FIXME: Game crashes on Choose Planet after clicking on a planet -- beko
 		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Choose_Planet").c_str() ,470,42,false );
 		PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Options").c_str() ,470,42+35,false );
 		PlaceSmallButton ( lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str() ,470,42+35*2,false );
@@ -3837,7 +3836,6 @@ void cMultiPlayer::RunMenu ( void )
 					scr.x=20;scr.y=423;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
-					//FIXME: app hangs submitting to long string -- beko
 					fonts->OutText ( ( char * ) stmp.c_str(),20,423,buffer );
 					break;
 			}
@@ -5124,7 +5122,7 @@ void cMultiPlayer::ShowChatLog ( void )
 		str=ChatList->Items[i];
 		while ( fonts->GetTextLen ( ( char * ) str.c_str() ) >410 )
 		{
-			str.erase ( str.length()-1,0 );
+			str.erase ( str.end()-1 );
 		}
 		SDL_Rect scr,dest;
 		scr.x=27;scr.y=298+11;
