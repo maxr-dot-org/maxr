@@ -4320,14 +4320,14 @@ void cMultiPlayer::RunMenu ( void )
 		{
 			if ( ClientsToGo>fstcpip->GetConnectionCount() )
 			{
-				AddChatLog ( "abort go" );
+				AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go_Abort") );
 				WaitForGo=false;
 			}
 			else if ( ClientsToGo<=0&&SaveGame.empty() )
 			{
 				ClientSettingsList=new TList;
 
-				AddChatLog ( "lets go" );
+				AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go") );
 				fstcpip->FSTcpIpSend ( MSG_LETS_GO,"",0,-1 );
 
 				// Das Spiel machen:
@@ -4745,7 +4745,7 @@ void cMultiPlayer::HandleMenuMessages()
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
 					new_msg=sztmp;
 					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str(), ( int ) new_msg.length(),-1 );
-					AddChatLog ( "host wants to go: ready to go" );
+					AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go_Host") );
 				}
 				else
 				{
@@ -4753,7 +4753,7 @@ void cMultiPlayer::HandleMenuMessages()
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
 					new_msg=sztmp;
 					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str(), ( int ) new_msg.length(),-1 );
-					AddChatLog ( "host wants to go: no go" );
+					AddChatLog ( lngPack.Translate( "Text~Game_MP~Comp_Go_Host_No") );
 				}
 				fclose ( fp );
 				MessageList->DeleteNetMessage ( 0 );
@@ -4770,7 +4770,7 @@ void cMultiPlayer::HandleMenuMessages()
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
-						log=p->name; log+=": no go";
+						log=p->name; log+=": "+lngPack.Translate( "Text~Game_MP~Comp_Go_Ready_No");
 						AddChatLog ( log );
 						break;
 					}
@@ -4790,7 +4790,7 @@ void cMultiPlayer::HandleMenuMessages()
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
-						log=p->name; log+=": ready to go";
+						log=p->name; log+=": "+lngPack.Translate( "Text~Game_MP~Comp_Go_Ready");
 						AddChatLog ( log );
 						break;
 					}
