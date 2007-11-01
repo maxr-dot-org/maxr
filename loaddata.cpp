@@ -2793,7 +2793,6 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->make_tracks = false;
 	Data->is_human = Data->bAnimation_Movement;
 
-	Data->is_base = Data->bIs_Base;
 	if(Data->iSize_Length > 1)
 		Data->is_big = true;
 	else
@@ -2843,7 +2842,7 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_mine = true;
 	else
 		Data->is_mine = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Landmine & Seamine
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 21 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Landmine & Seamine
 		Data->is_expl_mine = true;
 	else
 		Data->is_expl_mine = false;
@@ -2890,6 +2889,15 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->can_build = BUILD_MAN;
 	else
 		Data->can_build = BUILD_NONE;
+
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 28) || // Road
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Bridge
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Platform
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 21 ) || // Landmine
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 ) ) // Seamine
+		Data->is_base = true;
+	else
+		Data->is_base = false;
 
 	Data->muzzle_typ = MUZZLE_SMALL;
 	Data->build_by_big = false;
