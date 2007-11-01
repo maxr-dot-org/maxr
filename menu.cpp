@@ -4178,7 +4178,6 @@ void cMultiPlayer::RunMenu ( void )
 				if ( host ) PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,true );
 				else PlaceSmallButton ( lngPack.Translate( "Text~Game_Start~Title_Connect").c_str(), 470,200,true );
 //FIXME: error opening socket when we choose map and options before starting host -- beko
-//FIXME client crashes when host goes for starting game
 				if ( host )
 				{
 					fstcpip->FSTcpIpClose();
@@ -4360,7 +4359,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					ServerWait ( LandX,LandY,LandingList );
 //-          fstcpip->RxFunc=game->engine->ReceiveNetMsg;
-
+					
 					while ( LandingList->Count )
 					{
 						delete LandingList->LandItems[0];
