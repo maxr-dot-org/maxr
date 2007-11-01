@@ -8,40 +8,40 @@
 		<Last_Change time="2007-10-03 21:05:00"/>
 	</Header>
 	<Buildings>
-		<Barracks directory="barracks"/>
-		<Block directory="block"/>
-		<Bridge directory="bridge"/>
-		<Connector directory="connector"/>
-		<Depot directory="depot"/>
-		<Dock directory="dock"/>
-		<Energy_Big directory="energy_big"/>
-		<Energy_Small directory="energy_small"/>
-		<Factory_Air directory="fac_air"/>
-		<Factory_Alien directory="fac_alien"/>
-		<Factory_Big directory="fac_big"/>
-		<Factory_Ship directory="fac_ship"/>
-		<Factory_Small directory="fac_small"/>
-		<Goldraffinery directory="goldraff"/>
-		<Gun_AA directory="gun_aa"/>
-		<Gun_Ari directory="gun_ari"/>
-		<Gun_Missel directory="gun_missel"/>
-		<Gun_Turret directory="gun_turret"/>
-		<Habitat directory="habitat"/>
-		<Hangar directory="hangar"/>
-		<Landmine directory="landmine"/>
-		<Mine directory="mine"/>
-		<Mine_Deep directory="mine_deep"/>
-		<Pad directory="pad"/>
-		<Platform directory="platform"/>
-		<Radar directory="radar"/>
-		<Research directory="research"/>
-		<Road directory="road"/>
-		<Seamine directory="seamine"/>
-		<Shield directory="shield"/>
-		<Storage_Gold directory="storage_gold"/>
-		<Storage_Metal directory="storage_metal"/>
-		<Storage_Oil directory="storage_oil"/>
-		<Training directory="training"/>
+		<Barracks directory="barracks" num="1"/>
+		<Block directory="block" num="2"/>
+		<Bridge directory="bridge" num="3"/>
+		<Connector directory="connector" num="4"/>
+		<Depot directory="depot" num="5"/>
+		<Dock directory="dock" num="6"/>
+		<Energy_Big directory="energy_big" num="7"/>
+		<Energy_Small directory="energy_small" num="8"/>
+		<Factory_Air directory="fac_air" num="9"/>
+		<Factory_Alien directory="fac_alien" num="10"/>
+		<Factory_Big directory="fac_big" num="11"/>
+		<Factory_Ship directory="fac_ship" num="12"/>
+		<Factory_Small directory="fac_small" num="13"/>
+		<Goldraffinery directory="goldraff" num="14"/>
+		<Gun_AA directory="gun_aa" num="15"/>
+		<Gun_Ari directory="gun_ari" num="16"/>
+		<Gun_Missel directory="gun_missel" num="17"/>
+		<Gun_Turret directory="gun_turret" num="18"/>
+		<Habitat directory="habitat" num="19"/>
+		<Hangar directory="hangar" num="20"/>
+		<Landmine directory="landmine" num="21"/>
+		<Mine directory="mine" num="22"/>
+		<Mine_Deep directory="mine_deep" num="23"/>
+		<Pad directory="pad" num="24"/>
+		<Platform directory="platform" num="25"/>
+		<Radar directory="radar" num="26"/>
+		<Research directory="research" num="27"/>
+		<Road directory="road" num="28"/>
+		<Seamine directory="seamine" num="29"/>
+		<Shield directory="shield" num="30"/>
+		<Storage_Gold directory="storage_gold" num="31"/>
+		<Storage_Metal directory="storage_metal" num="32"/>
+		<Storage_Oil directory="storage_oil" num="33"/>
+		<Training directory="training" num="34"/>
 	</Buildings>
 </BuildingsData>
 
