@@ -94,7 +94,7 @@
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>
     <Can_Place_Mines YN="No"/>
-    <Makes_Tracks Fd="3"/>
+    <Makes_Tracks Fd="0"/>
     <Self_Repair_Type Const="None"/>
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
