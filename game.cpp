@@ -483,10 +483,11 @@ void cGame::Run(void){
     }
 	// Ggf die Chateingabe anzeigen:
     if(ChatInput&&fDrawMap){
-	  string OutTxt = ">"; OutTxt += InputStr.c_str(); OutTxt += "_";
+	  string OutTxt = ">"; OutTxt += InputStr.c_str();
       if(Frame%2){
         fonts->OutText((char *)OutTxt.c_str(),185,440,buffer);
       }else{
+		OutTxt += "_";
         fonts->OutText((char *) OutTxt.c_str(),185,440,buffer);
       }
     }

@@ -1888,6 +1888,12 @@ int LoadBuildings()
 			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
 		}
 
+		// Check if there are more than one frame
+		if(UnitsData.building[UnitsData.building_anz].img_org->w > 128 && !UnitsData.building[UnitsData.building_anz].data.is_connector)
+		{
+			UnitsData.building[UnitsData.building_anz].data.has_frames = UnitsData.building[UnitsData.building_anz].img_org->w / UnitsData.building[UnitsData.building_anz].img_org->h;
+		}
+
 		UnitsData.building_anz++;
 	}
 
@@ -2921,6 +2927,8 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->build_alien = false;
 	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 6 ) || // Dock
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 12 ) || // Shipfactory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) || // Bridge
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) || // Platform
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Seamine
 		Data->build_on_water = true;
 	else
