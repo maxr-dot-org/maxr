@@ -89,7 +89,7 @@ void ShowPlayerStates(sPlayer players);
 void ShowLandingList(TList *list,int selected,int offset);
 void CreateSelectionList(TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
 int ShowDateiMenu(void);
-void ShowFiles(TList *files, int offset, int selected);
+void ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected);
 
 // MultiPlayer Klasse ////////////////////////////////////////////////////////
 class cMultiPlayer{

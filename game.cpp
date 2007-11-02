@@ -2669,12 +2669,17 @@ void SaveBuilding(int off,FILE *fp,bool base){
 bool cGame::Save(string name){
   FILE *fp;
   int i,t;
-  string stmp;
 
+  for(std::string::iterator i = name.begin(); i < name.end(); i++ )
+  {
+    *i = tolower(*i);
+  }
   ActivePlayer->HotHud=*(hud);
-  stmp = SettingsData.sSavesPath; stmp += name; stmp += ".sav";
-  fp=fopen(stmp.c_str(),"wb");
-  if(fp==NULL)return false;
+  if( ( fp = fopen( ( SettingsData.sSavesPath + PATH_DELIMITER + name ).c_str() ,"wb" ) ) == NULL )
+  {
+	  cLog::write("Can't open Savefile " + name + " for writing", LOG_TYPE_WARNING);
+	  return false;
+  }
 
   // Map-Name:
   i=(int)map->MapName.length()+1;
@@ -2755,12 +2760,13 @@ void cGame::Load(string name,int AP,bool MP){
   TList *StoredVehicles;
   int i,t,typ;
   char *str;
-  string stmp;
   FILE *fp;
   if(name.empty())return;
-  stmp = SettingsData.sSavesPath; stmp += name; stmp += ".sav";
-  fp=fopen(stmp.c_str(),"rb");
-  if(fp==NULL)return;
+  if ((fp = fopen ( (SettingsData.sSavesPath + PATH_DELIMITER + name).c_str(),"rb" ) ) == NULL )
+  {
+	  cLog::write("Can't open Savegame: " + name, LOG_TYPE_WARNING);
+	  return ;
+  }
 
   StoredVehicles=new TList;
 
@@ -3125,264 +3131,352 @@ bool cGame::CheckRecursivLoaded(cVehicle *v,TList *StoredVehicles){
 
 // Zeigt das Laden/Speichern Menü an:
 void cGame::ShowDateiMenu(void){
-  SDL_Rect scr,dest;
-  int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
-  bool SpeichernPressed=false, BeendenPressed=false, FertigPressed=false;
-  bool  HilfePressed=false, UpPressed=false, DownPressed=false, Cursor=true;
-  Uint8 *keystate;
-  TList *files;
-  TiXmlDocument doc;
-  TiXmlNode* rootnode;
-  TiXmlNode* node;
+	SDL_Rect scr,dest;
+	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
+	bool SpeichernPressed=false, BeendenPressed=false, FertigPressed=false;
+	bool  HilfePressed=false, UpPressed=false, DownPressed=false, Cursor=true;
+	Uint8 *keystate;
+	TList *files, *filenums, *filenames;
+	TiXmlDocument doc;
+	TiXmlNode* rootnode;
+	TiXmlNode* node;
+	char szTmp[8];
 
-  PlayFX(SoundData.SNDHudButton);
-  mouse->SetCursor(CHand);
-  mouse->draw(false,buffer);
-  // Den Bildschirm blitten:
-  SDL_BlitSurface(GraphicsData.gfx_load_save_menu,NULL,buffer,NULL);
-  // Den Text anzeigen:
-  fonts->OutTextCenter("Laden/Speichern Menü",320,12,buffer);
-  // Buttons setzen:
-  PlaceMenuButton("Speichern",132,438,0,false);
-  PlaceMenuButton("Beenden",242,438,1,false);
-  PlaceMenuButton("Fertig",353,438,2,false);
-  PlaceSmallMenuButton("? ",464,438,false);
-  scr.y=40;
-  scr.w=dest.w=28;
-  scr.h=dest.h=29;
-  dest.y=438;
-  scr.x=96;
-  dest.x=33;
-  SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-  scr.x=96+28*2;
-  dest.x=63;
-  SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-  // Dateien suchen und Anzeigen:
-
-  if ( !doc.LoadFile ( "saves//saves.xml" ) )
-  {
-    cLog::write ( "Could not load saves.xml",1 );
-    return;
-  }
-  rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
-
-  files = new TList;
-  node=rootnode->FirstChildElement();
-  if ( node )
-    files->Add ( node->ToElement()->Attribute ( "file" ) );
-  while ( node )
-  {
-    node=node->NextSibling();
-    if ( node && node->Type() ==1 )
-      files->Add ( node->ToElement()->Attribute ( "file" ) );
-  }
-
-  ShowFiles(files,offset,selected,true);
-  // Den Buffer anzeigen:
-  SHOW_SCREEN
-  mouse->GetBack(buffer);
-  while(1){
-    // Die Engine laufen lassen:
-    game->engine->Run();
-    HandleTimer();
-
-    // Events holen:
-    SDL_PumpEvents();
-
-	// Tasten prüfen:
-    keystate=SDL_GetKeyState(NULL);
-    if(keystate[SDLK_ESCAPE]){
-      InputStr="";
-      break;
-    }
-
-    if(DoKeyInp(keystate)||timer2){
-      if(Cursor){
-        Cursor=false;
-        ShowFiles(files,offset,selected,true);
-      }else{
-        Cursor=true;
-        ShowFiles(files,offset,selected,false);
-      }
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-    }
-    // Die Maus machen:
-    mouse->GetPos();
-    b=mouse->GetMouseButton();
-    x=mouse->x;y=mouse->y;
-    if(x!=LastMouseX||y!=LastMouseY){
-      mouse->draw(true,screen);
-    }
-	// Klick auf einen Speicher:
-	if((x>=15&&x<15+205&&y>45&&y<45+375) || (x>=417&&x<417+205&&y>45&&y<45+375))
+	PlayFX(SoundData.SNDHudButton);
+	mouse->SetCursor(CHand);
+	mouse->draw(false,buffer);
+	// Den Bildschirm blitten:
+	SDL_BlitSurface(GraphicsData.gfx_load_save_menu,NULL,buffer,NULL);
+	// Den Text anzeigen:
+	fonts->OutTextCenter("Laden/Speichern Menü",320,12,buffer);
+	// Buttons setzen:
+	PlaceMenuButton("Speichern",132,438,0,false);
+	PlaceMenuButton("Beenden",242,438,1,false);
+	PlaceMenuButton("Fertig",353,438,2,false);
+	PlaceSmallMenuButton("? ",464,438,false);
+	scr.y=40;
+	scr.w=dest.w=28;
+	scr.h=dest.h=29;
+	dest.y=438;
+	scr.x=96;
+	dest.x=33;
+	SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+	scr.x=96+28*2;
+	dest.x=63;
+	SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+	// Dateien suchen und Anzeigen:
+	if ( !doc.LoadFile ( (SettingsData.sSavesPath + PATH_DELIMITER + "saves.xml" ).c_str() ))
 	{
-		if(b&&!LastB)
+		cLog::write ( "Could not load saves.xml",1 );
+		return ;
+	}
+	rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
+
+	files = new TList;
+	filenums = new TList;
+	filenames = new TList;
+	node=rootnode->FirstChildElement();
+	if ( node && node->Type() == 1 )
+	{
+		files->Add ( node->ToElement()->Attribute ( "file" ) );
+		filenums->Add ( node->ToElement()->Attribute ( "num" ) );
+		filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+	}
+	while ( node )
+	{
+		node=node->NextSibling();
+		if ( node && node->Type() == 1 )
 		{
-			InputStr = "";
-			int checkx = 15, checky = 45;
-			// Speicher 1
-			for(int i = 0; i<10; i++)
+			files->Add ( node->ToElement()->Attribute ( "file" ) );
+			filenums->Add ( node->ToElement()->Attribute ( "num" ) );
+			filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+		}
+	}
+	ShowFiles ( files,filenums,filenames,offset,selected,true );
+	// Den Buffer anzeigen:
+	SHOW_SCREEN
+	mouse->GetBack(buffer);
+	while(1)
+	{
+		// Die Engine laufen lassen:
+		game->engine->Run();
+		HandleTimer();
+
+		// Events holen:
+		SDL_PumpEvents();
+
+		// Tasten prüfen:
+		keystate=SDL_GetKeyState(NULL);
+		if(keystate[SDLK_ESCAPE])
+		{
+			InputStr="";
+			break;
+		}
+
+		if(DoKeyInp(keystate)||timer2)
+		{
+			if(Cursor)
 			{
-				if(i==5){
-					checkx=418;
-					checky=45;
-				}
-				if(x>=checkx&&x<checkx+205&&y>checky&&y<checky+73)
-					selected = i;
-				checky+=75;
+				Cursor=false;
+				ShowFiles(files,filenums,filenames,offset,selected,true);
+			}else
+			{
+				Cursor=true;
+				ShowFiles(files,filenums,filenames,offset,selected,false);
 			}
-			ShowFiles(files,offset,selected,true);
 			SHOW_SCREEN
 			mouse->draw(false,screen);
 		}
-	}
-	// Speichern-Button:
-    if(x>=132&&x<132+109&&y>=438&&y<438+40){
-      if(b&&!SpeichernPressed){
-        PlayFX(SoundData.SNDMenuButton);
-        PlaceMenuButton("Speichern",132,438,0,true);
-        SHOW_SCREEN
-        mouse->draw(false,screen);
-        SpeichernPressed=true;
-      }else if(!b&&LastB){
-        PlaceMenuButton("Speichern",132,438,0,false);
-		if(selected != -1) {
-			ShowFiles(files,offset,selected,false);
-			Save(SaveLoadFile);
-			int count = files->Count;
-			for(int i = 0; i < count; i++ )
-			files->DeleteString(0);
-			node=rootnode->FirstChildElement();
-			if ( node )
-			  files->Add ( node->ToElement()->Attribute ( "file" ) );
-			while ( node )
+		// Die Maus machen:
+		mouse->GetPos();
+		b=mouse->GetMouseButton();
+		x=mouse->x;y=mouse->y;
+		if(x!=LastMouseX||y!=LastMouseY)
+		{
+			mouse->draw(true,screen);
+		}
+		// Klick auf einen Speicher:
+		if((x>=15&&x<15+205&&y>45&&y<45+375) || (x>=417&&x<417+205&&y>45&&y<45+375))
+		{
+			if(b&&!LastB)
 			{
-			  node=node->NextSibling();
-			  if ( node && node->Type() ==1 )
-			    files->Add ( node->ToElement()->Attribute ( "file" ) );
+				InputStr = "";
+				int checkx = 15, checky = 45;
+				// Speicher 1
+				for(int i = 0; i<10; i++)
+				{
+					if(i==5)
+					{
+						checkx=418;
+						checky=45;
+					}
+					if(x>=checkx&&x<checkx+205&&y>checky&&y<checky+73)
+					{
+						selected = i + offset;
+					}
+					checky+=75;
+				}
+				ShowFiles(files,filenums,filenames,offset,selected,true);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
 			}
-			selected = -1;
-			ShowFiles(files,offset,selected,false);
 		}
-		SHOW_SCREEN
-		mouse->draw(false,screen);
-		SpeichernPressed=false;
-      }
-    }else if(SpeichernPressed){
-      PlaceMenuButton("Speichern",132,438,0,false);
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-      SpeichernPressed=false;
-    }
-	// Beenden-Button:
-    if(x>=242&&x<242+109&&y>=438&&y<438+40){
-      if(b&&!BeendenPressed){
-        PlayFX(SoundData.SNDMenuButton);
-        PlaceMenuButton("Beenden",242,438,1,true);
-        SHOW_SCREEN
-        mouse->draw(false,screen);
-        BeendenPressed=true;
-      }else if(!b&&LastB){
-        PlaceMenuButton("Beenden",242,438,1,false);
-		SHOW_SCREEN
-		mouse->draw(false,screen);
-		BeendenPressed=false;
-		End = true;
-		return;
-      }
-    }else if(BeendenPressed){
-      PlaceMenuButton("Beenden",242,438,1,false);
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-      BeendenPressed=false;
-    }
-    // Fertig-Button:
-    if(x>=353&&x<353+109&&y>=438&&y<438+40){
-      if(b&&!FertigPressed){
-        PlayFX(SoundData.SNDMenuButton);
-        PlaceMenuButton("Fertig",353,438,2,true);
-        SHOW_SCREEN
-        mouse->draw(false,screen);
-        FertigPressed=true;
-      }else if(!b&&LastB){
-        return;
-      }
-    }else if(FertigPressed){
-      PlaceMenuButton("Fertig",353,438,2,false);
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-      FertigPressed=false;
-    }
-	// Up-Button:
-    if(x>=33&&x<33+29&&y>=438&&y<438+29){
-      if(b&&!UpPressed){
-        PlayFX(SoundData.SNDMenuButton);
-		scr.x=96+28;
-        dest.x=33;
-        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-        SHOW_SCREEN
-        mouse->draw(false,screen);
-        UpPressed=true;
-      }else if(!b&&LastB){
-		if(offset>0) {
-		  offset-=10;
-		  selected=-1;
+		// Speichern-Button:
+		if(x>=132&&x<132+109&&y>=438&&y<438+40)
+		{
+			if(b&&!SpeichernPressed)
+			{
+				PlayFX(SoundData.SNDMenuButton);
+				PlaceMenuButton("Speichern",132,438,0,true);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				SpeichernPressed=true;
+			}else if(!b&&LastB)
+			{
+				PlaceMenuButton("Speichern",132,438,0,false);
+				if(selected != -1)
+				{
+					ShowFiles(files,filenums,filenames,offset,selected,false);
+					// Set Savename to lowercase
+					for(std::string::iterator i = SaveLoadFile.begin(); i < SaveLoadFile.end(); i++ )
+					{
+						*i = tolower(*i);
+					}
+					if( Save ( SaveLoadFile ) )
+					{
+						// Save new file to saves.xml
+						int iNumber = selected + 1;
+						// Search if number exists
+						for( int i = 0; i < filenums->Count; i++ )
+						{
+							// if exists: set new values
+							if( atoi ( filenums->Items[i].c_str() ) == iNumber)
+							{
+								node = rootnode->FirstChildElement();
+								for( int j = 0; j <= i; j++ )
+									node=node->NextSibling();
+								node->ToElement()->SetAttribute ( "name",filenames->Items[i].c_str() );
+								node->ToElement()->SetAttribute ( "file",SaveLoadFile.c_str() );
+								break;
+							}
+							// if doesn't exists: add new node
+							else if( i == filenums->Count - 1)
+							{
+								TiXmlElement element("Save");
+								node = rootnode->InsertEndChild(element);
+								sprintf(  szTmp,"%d",iNumber );
+								node->ToElement()->SetAttribute ( "name",InputStr.c_str() );
+								node->ToElement()->SetAttribute ( "file",SaveLoadFile.c_str() );
+								node->ToElement()->SetAttribute ( "num",szTmp );
+							}
+						}
+						doc.SaveFile();
+						// Clear Lists
+						int iCount = files->Count;
+						for(int i = 0; i < iCount; i++ )
+						{
+							files->DeleteString(files->Count);
+							filenums->DeleteString(filenums->Count);
+							filenames->DeleteString(filenames->Count);
+						}
+						// Read filelists new
+						node=rootnode->FirstChildElement();
+						if ( node && node->Type() == 1 )
+						{
+							files->Add ( node->ToElement()->Attribute ( "file" ) );
+							filenums->Add ( node->ToElement()->Attribute ( "num" ) );
+							filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+						}
+						while ( node )
+						{
+							node=node->NextSibling();
+							if ( node && node->Type() == 1 )
+							{
+								files->Add ( node->ToElement()->Attribute ( "file" ) );
+								filenums->Add ( node->ToElement()->Attribute ( "num" ) );
+								filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+							}
+						}
+						selected = -1;
+					}
+					ShowFiles(files,filenums,filenames,offset,selected,false);
+				}
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				SpeichernPressed=false;
+			}
+		}else if(SpeichernPressed)
+		{
+			PlaceMenuButton("Speichern",132,438,0,false);
+			SHOW_SCREEN
+			mouse->draw(false,screen);
+			SpeichernPressed=false;
 		}
-		ShowFiles(files,offset,selected,Cursor);
-        scr.x=96;
-        dest.x=33;
-        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-		SHOW_SCREEN
-        mouse->draw(false,screen);
-        UpPressed=false;
-      }
-    }else if(UpPressed){
-      scr.x=96;
-      dest.x=33;
-      SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-      UpPressed=false;
-    }
-	// Down-Button:
-    if(x>=63&&x<63+29&&y>=438&&y<438+29){
-      if(b&&!DownPressed){
-        PlayFX(SoundData.SNDMenuButton);
-		scr.x=96+28*3;
-        dest.x=63;
-        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-        SHOW_SCREEN
-        mouse->draw(false,screen);
-        DownPressed=true;
-      }else if(!b&&LastB){
-	    if(offset<90) {
-		  offset+=10;
-		  selected=-1;
+		// Beenden-Button:
+		if(x>=242&&x<242+109&&y>=438&&y<438+40)
+		{
+			if(b&&!BeendenPressed)
+			{
+				PlayFX(SoundData.SNDMenuButton);
+				PlaceMenuButton("Beenden",242,438,1,true);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				BeendenPressed=true;
+			}else if(!b&&LastB)
+			{
+				PlaceMenuButton("Beenden",242,438,1,false);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				BeendenPressed=false;
+				End = true;
+				return;
+			}
+		}else if(BeendenPressed)
+		{
+			PlaceMenuButton("Beenden",242,438,1,false);
+			SHOW_SCREEN
+			mouse->draw(false,screen);
+			BeendenPressed=false;
 		}
-		ShowFiles(files,offset,selected,Cursor);
-        scr.x=96+28*2;
-        dest.x=63;
-        SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-		SHOW_SCREEN
-        mouse->draw(false,screen);
-        DownPressed=false;
-      }
-    }else if(DownPressed){
-      scr.x=96+28*2;
-      dest.x=63;
-      SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
-      SHOW_SCREEN
-      mouse->draw(false,screen);
-      DownPressed=false;
-    }
-
-    LastMouseX=x;LastMouseY=y;
-    LastB=b;
-  }
+		// Fertig-Button:
+		if(x>=353&&x<353+109&&y>=438&&y<438+40)
+		{
+			if(b&&!FertigPressed)
+			{
+				PlayFX(SoundData.SNDMenuButton);
+				PlaceMenuButton("Fertig",353,438,2,true);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				FertigPressed=true;
+			}else if(!b&&LastB)
+			{
+				return;
+			}
+		}else if(FertigPressed)
+		{
+			PlaceMenuButton("Fertig",353,438,2,false);
+			SHOW_SCREEN
+			mouse->draw(false,screen);
+			FertigPressed=false;
+		}
+		// Up-Button:
+		if(x>=33&&x<33+29&&y>=438&&y<438+29)
+		{
+			if(b&&!UpPressed)
+			{
+				PlayFX(SoundData.SNDMenuButton);
+				scr.x=96+28;
+				dest.x=33;
+				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				UpPressed=true;
+			}else if(!b&&LastB)
+			{
+				if(offset>0)
+				{
+					offset-=10;
+					selected=-1;
+				}
+				ShowFiles(files,filenums,filenames,offset,selected,Cursor);
+				scr.x=96;
+				dest.x=33;
+				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				UpPressed=false;
+			}
+		}else if(UpPressed)
+		{
+			scr.x=96;
+			dest.x=33;
+			SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+			SHOW_SCREEN
+			mouse->draw(false,screen);
+			UpPressed=false;
+		}
+		// Down-Button:
+		if(x>=63&&x<63+29&&y>=438&&y<438+29)
+		{
+			if(b&&!DownPressed)
+			{
+				PlayFX(SoundData.SNDMenuButton);
+				scr.x=96+28*3;
+				dest.x=63;
+				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				DownPressed=true;
+			}else if(!b&&LastB)
+			{
+				if(offset<90)
+				{
+					offset+=10;
+					selected=-1;
+				}
+				ShowFiles(files,filenums,filenames,offset,selected,Cursor);
+				scr.x=96+28*2;
+				dest.x=63;
+				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+				SHOW_SCREEN
+				mouse->draw(false,screen);
+				DownPressed=false;
+			}
+		}else if(DownPressed)
+		{
+			scr.x=96+28*2;
+			dest.x=63;
+			SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
+			SHOW_SCREEN
+			mouse->draw(false,screen);
+			DownPressed=false;
+		}
+		LastMouseX=x;LastMouseY=y;
+		LastB=b;
+	}
 }
 
-void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
+void cGame::ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor)
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
@@ -3391,22 +3485,25 @@ void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
 	// Save Nummern ausgeben
 	rect.x=25;rect.y=70;
 	rect.w=26;rect.h=16;
-	for(i = 0; i < 10; i++)
+	for ( i = 0; i < 10; i++ )
 	{
-		if(i == 5) {
+		if ( i == 5 )
+		{
 			rect.x+=398;
 			rect.y=70;
 			x=435;
 			y=72;
 		}
-		SDL_BlitSurface(GraphicsData.gfx_load_save_menu,&rect,buffer,&rect);
-		if(i+offset==selected){
-			sprintf(sztmp,"%d",(offset+i+1));
-			fonts->OutTextBigCenterGold(sztmp,x,y,buffer);
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
+		if ( i+offset==selected )
+		{
+			sprintf ( sztmp,"%d", ( offset+i+1 ) );
+			fonts->OutTextBigCenterGold ( sztmp,x,y,buffer );
 		}
-		else{
-			sprintf(sztmp,"%d",(offset+i+1));
-			fonts->OutTextBigCenter(sztmp,x,y,buffer);
+		else
+		{
+			sprintf ( sztmp,"%d", ( offset+i+1 ) );
+			fonts->OutTextBigCenter ( sztmp,x,y,buffer );
 		}
 		rect.y+=76;
 		y+=76;
@@ -3414,45 +3511,57 @@ void cGame::ShowFiles(TList *files, int offset, int selected, bool cursor)
 	// Savenamen mit evtl. Auswahl ausgeben
 	rect.x=55;rect.y=82;
 	rect.w=153;rect.h=18;
-	for(i = 0; i < 10; i++)
+	for ( i = 0; i < 10; i++ )
 	{
-		if(i == 5) {
+		if ( i == 5 )
+		{
 			rect.x+=402;
 			rect.y=82;
 		}
-		SDL_BlitSurface(GraphicsData.gfx_load_save_menu,&rect,buffer,&rect);
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
 		rect.y+=76;
 	}
 	x=60;y=87;
-	for(i = offset; i < 10+offset; i++)
+	selected++;
+	for ( i = offset+1; i < 10+offset; i++ )
 	{
-		if(i == offset+5) {
+		if ( i == offset+6 )
+		{
 			x+=402;
 			y=87;
 		}
-		if(i>=files->Count && i != selected) {
-			y+=76;
-			continue;
+		for( int j = 0; j < filenums->Count; j++)
+		{
+			if(atoi(filenums->Items[j].c_str()) == i)
+			{
+				filename = filenames->Items[j];
+				// Dateinamen anpassen und ausgeben
+				if ( filename.length() > 15 )
+				{
+					filename.erase ( 15 );
+				}
+				if ( i == selected )
+				{
+					SaveLoadFile = files->Items[j];
+				}
+				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
+				break;
+			}
+			else if( i == selected && j == filenums->Count-1)
+			{
+				if ( InputStr.length() > 15 )
+				{
+					InputStr.erase ( 15 );
+				}
+				filename = InputStr;
+				if(cursor)
+				{
+					filename+="_";
+				}
+				SaveLoadFile = InputStr + ".sav";
+				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
+			}
 		}
-		if(i != selected || (selected < files->Count && selected != -1)){
-			filename = files->Items[i];
-			// Dateinamen anpassen und ausgeben
-			filename.erase(filename.length()-4);
-			if(filename.length() > 15)
-				filename.erase(15);
-			if(selected == i && cursor)
-				filename+="_";
-		}
-		else {
-			if(InputStr.length() > 15)
-				InputStr.erase(15);
-			filename = InputStr;
-			if(cursor)
-				filename+="_";
-		}
-		if(i == selected)
-			SaveLoadFile = filename;
-		fonts->OutText((char *) filename.c_str(),x,y,buffer);
 		y+=76;
 	}
 }
