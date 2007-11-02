@@ -11,6 +11,7 @@
 	</Start>
 	<Game>
 		<EnableAutosave YN="Yes"/>
+		<EnableDebug YN="Yes"/>
 		<EnableAnimations YN="Yes"/>
 		<EnableShadows YN="Yes"/>
 		<EnableAlphaEffects YN="Yes"/>
