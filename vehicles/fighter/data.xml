@@ -32,8 +32,7 @@
     <Built_Costs Num="24"/>
     <Built_Costs_Max Num="96"/>
     <Is_Produced_by>
-      <Unit ID="0 0"/>
-      <Unit ID="0 0"/> 
+      <Unit ID="1 9"/>
     </Is_Produced_by>
   </Production>
 

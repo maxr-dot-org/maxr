@@ -78,8 +78,7 @@
     <!-- Maximale Baukosten beim Turbobauen, gibt damit den max. Turbo Faktor an. -->
      
     <Is_Produced_by>
-      <Unit ID="0 0"/>
-      <Unit ID="0 0"/> 
+      <Unit ID="1 9"/>
       <!-- Liste der Einheiten die diese Einheit herstellen können-->
        
     </Is_Produced_by>
