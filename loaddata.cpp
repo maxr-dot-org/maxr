@@ -375,7 +375,17 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDebug", NULL)))
 		cLog::write ( "Can't find EnableDebug-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+	{
 		SettingsData.bDebug = pXmlNode->XmlDataToBool(sTmpString);
+		if(!SettingsData.bDebug)
+		{
+			cLog::write("Debugmode disabled - for verbose output please enable Debug in max.xml", cLog::eLOG_TYPE_WARNING);
+		}
+		else
+		{
+			cLog::write("Debugmode enabled", cLog::eLOG_TYPE_INFO);
+		}
+	}
 	else
 	{
 		cLog::write ( "Can't load EnableDebug from max.xml: using default value", LOG_TYPE_WARNING );

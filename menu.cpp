@@ -5165,7 +5165,7 @@ void cMultiPlayer::ShowChatLog ( void )
 void cMultiPlayer::AddChatLog ( string str )
 {
 	ChatList->Add ( str );
-	LOGDEBUG cLog::write( str.c_str(), cLog::eLOG_TYPE_DEBUG );
+	if(SettingsData.bDebug) cLog::write( str.c_str(), cLog::eLOG_TYPE_DEBUG );
 }
 
 // Zeigt die Liste ,it den Spielern an:

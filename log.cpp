@@ -20,6 +20,7 @@
 #include <iostream>
 #include "SDL_rwops.h"
 #include "log.h"
+#include "main.h"
 
 #define LOGFILE "max.log"
 /** errors */
@@ -106,7 +107,15 @@ int cLog::write ( std::string str, int TYPE )
 			default :				str = str.insert( 0 , II );
 		}
 		str += TEXT_FILE_LF;
-		return writeMessage ( str ); //add log message itself to tmp and send it for writing
+		if (TYPE == LOG_TYPE_DEBUG && SettingsData.bDebug || TYPE != LOG_TYPE_DEBUG)
+		{
+			return writeMessage ( str ); //add log message itself to tmp and send it for writing
+		}
+		else
+		{
+			close();
+			return 0; 
+		}
 	}
 	else return -1;
 }
