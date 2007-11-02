@@ -2891,19 +2891,19 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_road = true;
 	else
 		Data->is_road = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Bridge
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) // Bridge
 		Data->is_bridge = true;
 	else
 		Data->is_bridge = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Platform
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) // Platform
 		Data->is_platform = true;
 	else
 		Data->is_platform = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Pad
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 24 ) // Pad
 		Data->is_pad = true;
 	else
 		Data->is_pad = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 22 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Mine & Alien Mine
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 22 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 23 )) // Mine & Alien Mine
 		Data->is_mine = true;
 	else
 		Data->is_mine = false;
@@ -2911,16 +2911,16 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_expl_mine = true;
 	else
 		Data->is_expl_mine = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Radar
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 26 ) // Radar
 		Data->is_annimated = true;
 	else
 		Data->is_annimated = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Alienfactory
+	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) // Alienfactory
 		Data->build_alien = true;
 	else
 		Data->build_alien = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Dock
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Shipfactory
+	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 6 ) || // Dock
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 12 ) || // Shipfactory
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Seamine
 		Data->build_on_water = true;
 	else
@@ -2929,9 +2929,9 @@ void ConvertData(int unitnum, bool vehicle)
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2 ) || // Alienassault
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Alienfactory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Alienshield
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 )) // Alienmine
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) || // Alienfactory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 30 ) || // Alienshield
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 23 )) // Alienmine
 		Data->is_alien = true;
 	else
 		Data->is_alien = false;
@@ -2941,23 +2941,23 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->can_work=false;
 
 	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 19 ) || // Constructor
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Big-factory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) ) // Alien-factory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 11 ) || // Big-factory
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) ) // Alien-factory
 		Data->can_build = BUILD_BIG;
-	else if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 24 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) ) // Pionier & Small-factory
+	else if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 24 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 13 ) ) // Pionier & Small-factory
 		Data->can_build = BUILD_SMALL;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Ship-factory
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 12 ) // Ship-factory
 		Data->can_build = BUILD_SEA;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Air-factory
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 9 ) // Air-factory
 		Data->can_build = BUILD_AIR;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) // Training
+	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 34 ) // Training
 		Data->can_build = BUILD_MAN;
 	else
 		Data->can_build = BUILD_NONE;
 
 	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 28) || // Road
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Bridge
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == -2 ) || // Platform
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) || // Bridge
+		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) || // Platform
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 21 ) || // Landmine
 		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 ) ) // Seamine
 		Data->is_base = true;
@@ -2965,7 +2965,19 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->is_base = false;
 
 	Data->muzzle_typ = MUZZLE_SMALL;
-	Data->build_by_big = false;
+	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2) || // Alienassault
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 5 ) || // Alientank
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 7 ) || // Assault
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 12 ) || // Cluster
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 19 ) || // Konstrukt
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 21 ) || // Missel
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 26 ) || // Scanner
+		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 32 ) ) // Tank
+		Data->build_by_big = true;
+	else
+		Data->build_by_big = false;
 
 	Data->has_frames = 0;
 }
