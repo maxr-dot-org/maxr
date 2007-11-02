@@ -900,7 +900,14 @@ int cGame::CheckUser(void){
             engine->AddAttackJob(SelectedBuilding->PosX+SelectedBuilding->PosY*map->size,mouse->GetKachelOff(),false,false,true,true);
             break;
         }
-      } else
+      }
+	  else if(mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle)
+	  {
+		SelectedVehicle->CommandoOperation(mouse->GetKachelOff(),true);
+	  }else if(mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle)
+	  {
+        SelectedVehicle->CommandoOperation(mouse->GetKachelOff(),false);
+      }else
       // Das Objekt auswählen:
 	  if(OverObject&&!hud->Ende){
 		if(SelectedVehicle&&(OverObject->plane==SelectedVehicle||OverObject->vehicle==SelectedVehicle)){
@@ -2267,10 +2274,7 @@ void MouseMoveCallback(bool force){
     return;
   }
   // Die Koordinaten malen:
-  string xnull, ynull;
-  if(x < 100 && x > 9) xnull = "0"; if(x < 10) xnull = "00";
-  if(y < 100 && y > 9) ynull = "0"; if(y < 10) ynull = "00";
-  sprintf(str, "%s%d-%s%d", xnull.c_str(), x, ynull.c_str(), y);
+  sprintf(str, "%0.3d-%0.3d", x, y);
   fonts->OutTextCenter(str,265+32,(SettingsData.iScreenH-21)+4,GraphicsData.gfx_hud);
 
   if(!game->ActivePlayer->ScanMap[x+y*game->map->size]){
