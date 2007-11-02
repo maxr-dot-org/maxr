@@ -151,10 +151,10 @@
 	</Text>
 	<Units>
 		<Unit ID="0 1" ENG="Airtransport" localized="Tranzportflugzeug">Transportflugzeug\n\nSchweres Flugzeug, fähig bis zu drei Bodeneinheiten zu transportieren.</Unit>
-		<Unit ID="0 2" ENG="Alien Assault" localized="Aliensturm">--Description here</Unit>
-		<Unit ID="0 3" ENG="Alien Plane" localized="Alienflugzeug">--Description here</Unit>
-		<Unit ID="0 4" ENG="Alien Ship" localized="Alienschiff">--Description here</Unit>
-		<Unit ID="0 5" ENG="Alien Tank" localized="Alienpanzer">--Description here</Unit>
+		<Unit ID="0 2" ENG="Alien Assault" localized="Aliensturmgeschütz">Aliensturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittel-gepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgeschütze ist, sollte das Alien-Sturmgeschütz dennoch Feindfeuer vermeiden. Alle Alien-Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 3" ENG="Alien Plane" localized="Alienflugzeug">Alien-Jäger-Bomber\n\nObwohl das Alienflugzeug hauptsächlich für einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alien-Einheiten, können Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten.</Unit>
+		<Unit ID="0 4" ENG="Alien Ship" localized="Alienkanonenboot">Alienkanonenboot\n\nSchwer gepanzertes und bewaffnetes Alien-Kriegsschiff Design: Wie ein menschliches Kanonenboot herausragend beim Zerstören von anderen Schiffen und Landzielen in Ufernähe. Alle Alien-Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 5" ENG="Alien Tank" localized="Alienpanzer">Alienpanzer\n\nSchwer gepanzerter Panzer im Alien-Design. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alien-Einheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
 		<Unit ID="0 6" ENG="APC" localized="APC">gepanzerter Personentransporter\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
 		<Unit ID="0 7" ENG="Assault" localized="Sturmgeschütz">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
 		<Unit ID="0 8" ENG="AWAC" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar-Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
