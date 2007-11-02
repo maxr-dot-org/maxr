@@ -2,7 +2,7 @@
   <Header>
     <Author name="Someone">
     <Editor name="Rocky" time="2007-10-21 12:00:00"/>
-    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    <Editor name="DoctorDeath" time="2007-11-02 12:40:00"/>
     </Author>
     <Game_Version text="00.00.00.00"/>
   </Header>
@@ -46,11 +46,11 @@
       <Allowed_Targets>
         <Target_Land>
           <Damage Num="6"/>
-          <Range Fd="10"/>
+          <Range Fd="4"/>
         </Target_Land>
         <Target_Sea>
           <Damage Num="6"/>
-          <Range Fd="10"/>
+          <Range Fd="4"/>
         </Target_Sea>
         <Target_Air>
           <Damage Num="0"/>
@@ -58,7 +58,7 @@
         </Target_Air>
         <Target_Mine>
           <Damage Num="6"/>
-          <Range Fd="10"/>
+          <Range Fd="4"/>
         </Target_Mine>
         <Target_Submarine>
           <Damage Num="0"/>
@@ -66,14 +66,14 @@
         </Target_Submarine>
         <Target_Infantry>
           <Damage Num="6"/>
-          <Range Fd="10"/>
+          <Range Fd="4"/>
         </Target_Infantry>
         <Target_WMD>
           <Damage Num="0"/>
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="2"/>
+      <Shots Num="1"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
       <Movement_Allowed Num="5"/>  
