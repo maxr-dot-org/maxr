@@ -159,32 +159,32 @@
 		<Unit ID="0 7" ENG="Assault" localized="Sturmgeschütz">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
 		<Unit ID="0 8" ENG="AWAC" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar-Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
 		<Unit ID="0 9" ENG="Bomber" localized="Bomber">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Boden-Missilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert.</Unit>
-		<Unit ID="0 10" ENG="Bulldozer" localized="Bulldozer">--Description here</Unit>
-		<Unit ID="0 11" ENG="Cargoship" localized="Frachtschiff">--Description here</Unit>
+		<Unit ID="0 10" ENG="Bulldozer" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herausfiltern.</Unit>
+		<Unit ID="0 11" ENG="Cargoship" localized="Frachtschiff">Frachtschiff\n\nSchiffe für den Transport von Rohstoffen. Nützlich, um Pionier-Fahrzeuge und See-Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
 		<Unit ID="0 12" ENG="Cluster" localized="Raketenwerfer">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstrecken-Raketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Flächen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
 		<Unit ID="0 13" ENG="Commando" localized="Infiltrator">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
-		<Unit ID="0 14" ENG="Corvet" localized="Korvette">--Description here</Unit>
-		<Unit ID="0 15" ENG="Escort" localized="Eskorte">--Description here</Unit>
+		<Unit ID="0 14" ENG="Corvet" localized="Korvette">Korvette\n\nHoch-Geschwindigkeits-Schiff mit Torpedos und Echolot. Korvetten können jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen.</Unit>
+		<Unit ID="0 15" ENG="Escort" localized="Eskorte">Eskorte\n\nHochgeschwindigkeits-Schiff mit gutem Radar und Schnellschuss-Luftabwehr-Kanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
 		<Unit ID="0 16" ENG="Fighter" localized="Jäger">Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft-Missilen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
-		<Unit ID="0 17" ENG="Gunboat" localized="Kanonenboot">--Description here</Unit>
+		<Unit ID="0 17" ENG="Gunboat" localized="Kanonenboot">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer Hoch-Kaliber-Kanone mit mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen.</Unit>
 		<Unit ID="0 18" ENG="Infantery" localized="Infanterie">Infanterie\n\nSoldaten, die mit leichten Panzer-Abwehr-Waffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
 		<Unit ID="0 19" ENG="Constructor" localized="Konstrukteur">Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude, wie Bergwerke und Fabriken.</Unit>
-		<Unit ID="0 20" ENG="Minelayer" localized="Minenleger">--Description here</Unit>
-		<Unit ID="0 21" ENG="Missel" localized="Raketenwerfer">--Description here</Unit>
-		<Unit ID="0 22" ENG="Missel Ship" localized="Raketenschiff">--Description here</Unit>
+		<Unit ID="0 20" ENG="Minelayer" localized="Minenleger">Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, ausspähen und entfernen können. Minenleger können an Board Rohstoffe in Minen verwandeln. Sie können diese Minen später auch wieder entfernen und in Rohstoffe zurückverwandeln. Sie können keine feindlichen Minenfelder entfernen - diese müssen mit Kanonen und Raketen zum Explodieren gebracht werden.</Unit>
+		<Unit ID="0 21" ENG="Missel" localized="mobiler Missilenwerfer">mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine Bewegungsfähigkeit wesendlich flexibler.</Unit>
+		<Unit ID="0 22" ENG="Missel Ship" localized="Missilenschiff">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
 		<Unit ID="0 23" ENG="Mobile AntiAir" localized="Luftabwehr">mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Feuer-Kanone zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungs-Einheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben.</Unit>
 		<Unit ID="0 24" ENG="Pioneer" localized="Pionier">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Gebäude und stationäre Waffen baut.</Unit>
-		<Unit ID="0 25" ENG="Repairer" localized="Repariereinheit">--Description here</Unit>
-		<Unit ID="0 26" ENG="Scanner" localized="Scanner">--Description here</Unit>
+		<Unit ID="0 25" ENG="Repairer" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Peparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
+		<Unit ID="0 26" ENG="Scanner" localized="Scanner">Scanner\n\nMobile Radar-Plattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scan-Reichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen.</Unit>
 		<Unit ID="0 27" ENG="Scout" localized="Späher">Späher\n\nHoch-Geschwindigkeits-Späher-Fahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scan-Reichweite, aber viel schwächer als die meisten Kampfeinheiten.</Unit>
-		<Unit ID="0 28" ENG="Seaminelayer" localized="Seeminenleger">--Description here</Unit>
-		<Unit ID="0 29" ENG="Seatransport" localized="Seetransporter">--Description here</Unit>
-		<Unit ID="0 30" ENG="Submarine" localized="U-Boot">--Description here</Unit>
+		<Unit ID="0 28" ENG="Seaminelayer" localized="Seeminenleger">Seeminenleger\n\nSee-Version des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspähen, und die in Rohstoffe zurückverwandeln.</Unit>
+		<Unit ID="0 29" ENG="Seatransport" localized="Seetransporter">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff.</Unit>
+		<Unit ID="0 30" ENG="Submarine" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Desweiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen.</Unit>
 		<Unit ID="0 31" ENG="Surveyor" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrund-Rohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
 		<Unit ID="0 32" ENG="Tank" localized="Panzer">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern können, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer zu erreichen.</Unit>
-		<Unit ID="0 33" ENG="Goldtransporter" localized="Goldtransporter">--Description here</Unit>
-		<Unit ID="0 34" ENG="Metaltransporter" localized="Metalltransporter">--Description here</Unit>
-		<Unit ID="0 35" ENG="Oiltransporter" localized="Öltransporter">--Description here</Unit>
+		<Unit ID="0 33" ENG="Goldtransporter" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nächsten zu bewegen.</Unit>
+		<Unit ID="0 34" ENG="Metaltransporter" localized="Metalltransporter">Versorgungs-Lkw\n\nLkw zum Transport von Rohstoffen.Nützlich, um Pionier-Fahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
+		<Unit ID="0 35" ENG="Oiltransporter" localized="Treibstofftransporter">Treibstofftransporter\n\nLkw, um Treibstoff zu transportieren.</Unit>
 		<Unit ID="1 1" ENG="Baracks" localized="Baracken">--Description here</Unit>
 		<Unit ID="1 2" ENG="Block" localized="Block">--Description here</Unit>
 		<Unit ID="1 4" ENG="Connector" localized="Kopplung">--Description here</Unit>
