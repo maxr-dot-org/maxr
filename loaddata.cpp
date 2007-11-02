@@ -370,6 +370,18 @@ int ReadMaxXml()
 		cLog::write ( "Can't load EnableAutosave from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.bAutoSave = true;
 	}
+
+	//Enable Debug
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDebug", NULL)))
+		cLog::write ( "Can't find EnableDebug-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bDebug = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		cLog::write ( "Can't load EnableDebug from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bDebug = false;
+	}
+
 	// EnableAnimations
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", NULL)))
 		cLog::write ( "Can't find EnableAnimations-Node in max.xml", LOG_TYPE_WARNING );

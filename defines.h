@@ -30,6 +30,7 @@
 #endif
 
 #define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(SettingsData.bWindowMode)SDL_UpdateRect(screen,0,0,0,0);
+#define LOGDEBUG if(SettingsData.bDebug)
 
 #endif
 

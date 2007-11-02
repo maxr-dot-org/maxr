@@ -606,6 +606,8 @@ public:
 	string sLanguage;	
 
 	//GAME
+	/** enable debug*/
+	bool bDebug;
 	/**enable autosafe */
 	bool bAutoSave;
 	/**enable animations */
