@@ -26,6 +26,7 @@
 #include "keys.h"
 #include "dialog.h"
 #include "log.h"
+#include "files.h"
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame(cFSTcpIp *fstcpip, cMap *map){
@@ -3208,7 +3209,7 @@ void cGame::ShowDateiMenu(void){
 			filenames->Add ( node->ToElement()->Attribute ( "name" ) );
 		}
 	}
-	ShowFiles ( files,filenums,filenames,offset,selected,true );
+	ShowFiles ( files,filenums,filenames,offset,selected,true,false );
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack(buffer);
@@ -3234,11 +3235,11 @@ void cGame::ShowDateiMenu(void){
 			if(Cursor)
 			{
 				Cursor=false;
-				ShowFiles(files,filenums,filenames,offset,selected,true);
+				ShowFiles(files,filenums,filenames,offset,selected,true,false);
 			}else
 			{
 				Cursor=true;
-				ShowFiles(files,filenums,filenames,offset,selected,false);
+				ShowFiles(files,filenums,filenames,offset,selected,false,false);
 			}
 			SHOW_SCREEN
 			mouse->draw(false,screen);
@@ -3272,7 +3273,7 @@ void cGame::ShowDateiMenu(void){
 					}
 					checky+=75;
 				}
-				ShowFiles(files,filenums,filenames,offset,selected,true);
+				ShowFiles(files,filenums,filenames,offset,selected,true,true);
 				SHOW_SCREEN
 				mouse->draw(false,screen);
 			}
@@ -3292,7 +3293,7 @@ void cGame::ShowDateiMenu(void){
 				PlaceMenuButton("Speichern",132,438,0,false);
 				if(selected != -1)
 				{
-					ShowFiles(files,filenums,filenames,offset,selected,false);
+					ShowFiles(files,filenums,filenames,offset,selected,false,false);
 					// Set Savename to lowercase
 					for(std::string::iterator i = SaveLoadFile.begin(); i < SaveLoadFile.end(); i++ )
 					{
@@ -3305,13 +3306,22 @@ void cGame::ShowDateiMenu(void){
 						// Search if number exists
 						for( int i = 0; i < filenums->Count; i++ )
 						{
-							// if exists: set new values
+							// if exists: remove old file & set new values
 							if( atoi ( filenums->Items[i].c_str() ) == iNumber)
 							{
+								// if name changed, delete old file
+								if( strcmp ( filenames->Items[i].c_str(), InputStr.c_str() ) != NULL)
+								{
+									if(FileExists( (SettingsData.sSavesPath + PATH_DELIMITER + files->Items[i]).c_str()) )
+									{
+										remove( (SettingsData.sSavesPath + PATH_DELIMITER + files->Items[i]).c_str() );
+									}
+								}
+								// set new values in saves.xml
 								node = rootnode->FirstChildElement();
-								for( int j = 0; j <= i; j++ )
+								for( int j = 0; j < i; j++ )
 									node=node->NextSibling();
-								node->ToElement()->SetAttribute ( "name",filenames->Items[i].c_str() );
+								node->ToElement()->SetAttribute ( "name",InputStr.c_str() );
 								node->ToElement()->SetAttribute ( "file",SaveLoadFile.c_str() );
 								break;
 							}
@@ -3355,7 +3365,7 @@ void cGame::ShowDateiMenu(void){
 						}
 						selected = -1;
 					}
-					ShowFiles(files,filenums,filenames,offset,selected,false);
+					ShowFiles(files,filenums,filenames,offset,selected,false,false);
 				}
 				SHOW_SCREEN
 				mouse->draw(false,screen);
@@ -3434,7 +3444,7 @@ void cGame::ShowDateiMenu(void){
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles(files,filenums,filenames,offset,selected,Cursor);
+				ShowFiles(files,filenums,filenames,offset,selected,Cursor,false);
 				scr.x=96;
 				dest.x=33;
 				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
@@ -3470,7 +3480,7 @@ void cGame::ShowDateiMenu(void){
 					offset+=10;
 					selected=-1;
 				}
-				ShowFiles(files,filenums,filenames,offset,selected,Cursor);
+				ShowFiles(files,filenums,filenames,offset,selected,Cursor,false);
 				scr.x=96+28*2;
 				dest.x=63;
 				SDL_BlitSurface(GraphicsData.gfx_menu_buttons,&scr,buffer,&dest);
@@ -3492,7 +3502,7 @@ void cGame::ShowDateiMenu(void){
 	}
 }
 
-void cGame::ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor)
+void cGame::ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor, bool firstselect)
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
@@ -3558,7 +3568,19 @@ void cGame::ShowFiles(TList *files, TList *filenums, TList *filenames, int offse
 				}
 				if ( i == selected )
 				{
-					SaveLoadFile = files->Items[j];
+					if(firstselect)
+					{
+						InputStr = filename;
+					}
+					else
+					{
+						filename = InputStr;
+					}
+					if(cursor)
+					{
+						filename+="_";
+					}
+					SaveLoadFile = InputStr + ".sav";
 				}
 				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
 				break;

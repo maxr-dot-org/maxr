@@ -161,7 +161,7 @@ public:
   bool Save(string name);
   void Load(string name,int AP,bool MP=false);
   void ShowDateiMenu(void);
-  void ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor);
+  void ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor, bool firstselect);
   bool CheckRecursivLoaded(cVehicle *v,TList *StoredVehicles);
   void MakeAutosave(void);
   void Trace(void);
