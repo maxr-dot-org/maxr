@@ -1910,7 +1910,7 @@ int LoadBuildings()
 		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Stop,sBuildingPath.c_str(),"stop.wav");
 		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Attack,sBuildingPath.c_str(),"attack.wav");
 
-		// Ggf Ptr auf Surface anlegen:
+		// Get Ptr if necessary:
 		if(UnitsData.building[UnitsData.building_anz].data.is_connector)
 		{
 			UnitsData.ptr_connector = UnitsData.building[UnitsData.building_anz].img;
@@ -1924,7 +1924,7 @@ int LoadBuildings()
 			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
 		}
 
-		// Check if there are more than one frame
+		// Check if there is more than one frame
 		if(UnitsData.building[UnitsData.building_anz].img_org->w > 128 && !UnitsData.building[UnitsData.building_anz].data.is_connector)
 		{
 			UnitsData.building[UnitsData.building_anz].data.has_frames = UnitsData.building[UnitsData.building_anz].img_org->w / UnitsData.building[UnitsData.building_anz].img_org->h;
@@ -1949,13 +1949,16 @@ int LoadBuildings()
 	SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
-	// Get numbers of buildings for landing + set building numbers
+	// Get numbers of important buildings + set building numbers
 	for ( int i = 0 ; i < UnitsData.building_anz; i++ )
 	{
 		UnitsData.building[i].nr = i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 33) BNrOilStore=i;
+		if(!UnitsData.building[i].data.is_expl_mine) continue;
+		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = i;
+		else BNrLandMine = i;
 	}
 	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
