@@ -6018,7 +6018,7 @@ void ShowFiles ( TList *files, TList *filenums,TList *filenames,int offset, int 
 	}
 	x=60;y=87;
 	selected++;
-	for ( i = offset+1; i < 10+offset; i++ )
+	for ( i = offset+1; i <= 10+offset; i++ )
 	{
 		if ( i == offset+6 )
 		{

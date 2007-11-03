@@ -3539,7 +3539,7 @@ void cGame::ShowFiles(TList *files, TList *filenums, TList *filenames, int offse
 	}
 	x=60;y=87;
 	selected++;
-	for ( i = offset+1; i < 10+offset; i++ )
+	for ( i = offset+1; i <= 10+offset; i++ )
 	{
 		if ( i == offset+6 )
 		{
