@@ -150,36 +150,36 @@
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" ENG="Airtransport">--Description here</Unit>
+		<Unit ID="0 1" ENG="Air Transport">Air Transport\n\nHeavy aircraft capable of holding up to three ground units.</Unit>
 		<Unit ID="0 2" ENG="Alien Assault">--Description here</Unit>
 		<Unit ID="0 3" ENG="Alien Plane">--Description here</Unit>
 		<Unit ID="0 4" ENG="Alien Ship">--Description here</Unit>
 		<Unit ID="0 5" ENG="Alien Tank">--Description here</Unit>
 		<Unit ID="0 6" ENG="Personnel Carrier">Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. Tha APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.</Unit>
 		<Unit ID="0 7" ENG="Assault Gun">Assault Gun\n\nLightly armored vehicle with a long range gun firing high-explosive shells. Fast and effective on the attack, but fragile.</Unit>
-		<Unit ID="0 8" ENG="AWAC">--Description here</Unit>
-		<Unit ID="0 9" ENG="Bomber">--Description here</Unit>
+		<Unit ID="0 8" ENG="AWAC">AWAC\n\nAirborne Warning And Control plane. Basically a flying radar dish, an AWAC is essential to spot enemy anti aircraft before your planes fly info firing range.</Unit>
+		<Unit ID="0 9" ENG="Ground Attack Plane">Ground Attack Plane\n\nA hevier plane carrying a full load of air to ground missiles. Ground Attack Planes are expencive, but the advantages are worth the cost. Their great speet lets them reach any trouble spot quickly, and once they arrive, only fighters and antiaircraft can defend against them.</Unit>
 		<Unit ID="0 10" ENG="Bulldozer">Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.</Unit>
-		<Unit ID="0 11" ENG="Cargoship">--Description here</Unit>
+		<Unit ID="0 11" ENG="Cargo Ship">Ships for hauling raw material. Useful for resupplying pioneers and sea combat units with new ammunition.</Unit>
 		<Unit ID="0 12" ENG="Rocket Launcher">Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.</Unit>
 		<Unit ID="0 13" ENG="Infiltrator">Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.</Unit>
-		<Unit ID="0 14" ENG="Corvet">--Description here</Unit>
-		<Unit ID="0 15" ENG="Escort">--Description here</Unit>
-		<Unit ID="0 16" ENG="Fighter">--Description here</Unit>
-		<Unit ID="0 17" ENG="Gunboat">--Description here</Unit>
+		<Unit ID="0 14" ENG="Corvette">Corvette\n\nHigh speed boat with torpedo tubes and sonar. Corvettes can attack any sea unit, but their real strength is their ability to spot and attack submarines.</Unit>
+		<Unit ID="0 15" ENG="Escort">Escort\n\nHigh speed boat with good radar and rapid fire anti aircraft cannon. Escorts are the eyes of a fleet, and a fleet's protection from planes.</Unit>
+		<Unit ID="0 16" ENG="Fighter">Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area.</Unit>
+		<Unit ID="0 17" ENG="Gunboat">Gunboat\n\nHeavily armored ship with a high caliber, medium range cannon. Excellent at destroying other ships and bombing shore targets.</Unit>
 		<Unit ID="0 18" ENG="Infantery">Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.</Unit>
 		<Unit ID="0 19" ENG="Constructor">Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.</Unit>
 		<Unit ID="0 20" ENG="Mine Layer">Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.</Unit>
 		<Unit ID="0 21" ENG="Missile Crawler">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.</Unit>
-		<Unit ID="0 22" ENG="Missel Ship">--Description here</Unit>
+		<Unit ID="0 22" ENG="Missile Cruiser">Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength, and medium armor makes this a powerful unit.</Unit>
 		<Unit ID="0 23" ENG="Mobile Anti Aircraft">Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.</Unit>
 		<Unit ID="0 24" ENG="Pioneer">Small construktion vehical for creating small buildings and stationary weapons.</Unit>
 		<Unit ID="0 25" ENG="Repair Unit">Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require materials. The most extensive the damage, the more materials the repair requires. Depots, docks, hangars and barracks can also repair units.</Unit>
 		<Unit ID="0 26" ENG="Scanner">Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for very long ranged units like missile crawlers.</Unit>
 		<Unit ID="0 27" ENG="Scout">Scout\n\nHigh speed scouting vehical for exploration and spotting enemy units. Can cross water without a bridge, but is faster an land.\n\nVery fast and good scan range, but much weaker than most combat units.</Unit>
-		<Unit ID="0 28" ENG="Seaminelayer">--Description here</Unit>
-		<Unit ID="0 29" ENG="Seatransport">--Description here</Unit>
-		<Unit ID="0 30" ENG="Submarine">--Description here</Unit>
+		<Unit ID="0 28" ENG="Sea Mine Layer">Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines, detect them, and convert them back into raw material.</Unit>
+		<Unit ID="0 29" ENG="Sea Transport">Sea Transport\n\nHeavily armored ship with space to carry up to six land units. Sea transports are much slower than air transports, but also much more likely to survive an enemy attack.</Unit>
+		<Unit ID="0 30" ENG="Submarine">Submarine\n\nLurking beneath the surface, submarines can sneak close to the enemy to fire their powerful torpedoes. Submarines do not carry active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes, and ground attack planes can attack them.</Unit>
 		<Unit ID="0 31" ENG="Surveyor">Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are just as fast on water an on Land.</Unit>
 		<Unit ID="0 32" ENG="Tank">Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.</Unit>
 		<Unit ID="0 33" ENG="Gold Truck">Gold Truck\n\nUnit for moving gold ore from one location to another.</Unit>
