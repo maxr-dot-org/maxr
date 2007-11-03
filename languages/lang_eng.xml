@@ -30,7 +30,7 @@
 		</Main>
 		<Initialisation>
 			<Load_Lang ENG="Loading languagepack..."/>
-		        <Load_Keys ENG="Loading keys..."/>
+			<Load_Keys ENG="Loading keys..."/>
 			<Load_Fonts ENG="Loading fonts..."/>
 			<Load_GFX ENG="Loading gfx..."/>
 			<Load_Effects ENG="Loading effects..."/>
@@ -146,8 +146,8 @@
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map"/>
-      <INFO_Language_initialised ENG="Language is now initialised"/>
-    		</Error_Messages>
+			<INFO_Language_initialised ENG="Language is now initialised"/>
+		</Error_Messages>
 	</Text>
 	<Units>
 		<Unit ID="0 1" ENG="Airtransport">--Description here</Unit>
@@ -159,7 +159,7 @@
 		<Unit ID="0 7" ENG="Assault Gun">Assault Gun\n\nLightly armored vehicle with a long range gun firing high-explosive shells. Fast and effective on the attack, but fragile.</Unit>
 		<Unit ID="0 8" ENG="AWAC">--Description here</Unit>
 		<Unit ID="0 9" ENG="Bomber">--Description here</Unit>
-		<Unit ID="0 10" ENG="Bulldozer">Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.</Unit></Unit>
+		<Unit ID="0 10" ENG="Bulldozer">Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.</Unit>
 		<Unit ID="0 11" ENG="Cargoship">--Description here</Unit>
 		<Unit ID="0 12" ENG="Rocket Launcher">Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.</Unit>
 		<Unit ID="0 13" ENG="Infiltrator">Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.</Unit>
@@ -170,7 +170,7 @@
 		<Unit ID="0 18" ENG="Infantery">Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.</Unit>
 		<Unit ID="0 19" ENG="Constructor">Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.</Unit>
 		<Unit ID="0 20" ENG="Mine Layer">Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.</Unit>
-		<Unit ID="0 21" ENG="Missile Crawler">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.</Unit></Unit>
+		<Unit ID="0 21" ENG="Missile Crawler">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.</Unit>
 		<Unit ID="0 22" ENG="Missel Ship">--Description here</Unit>
 		<Unit ID="0 23" ENG="Mobile Anti Aircraft">Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.</Unit>
 		<Unit ID="0 24" ENG="Pioneer">Small construktion vehical for creating small buildings and stationary weapons.</Unit>
@@ -196,9 +196,9 @@
 		<Unit ID="1 33" ENG="Oilstorage">--Description here</Unit>
 	</Units>
 	<Graphic>
-    <Dummy/>
+		<Dummy/>
 	</Graphic>
 	<Speech>
-    <Dummy/>
-  </Speech>
+		<Dummy/>
+	</Speech>
 </MAX_Language_File>
