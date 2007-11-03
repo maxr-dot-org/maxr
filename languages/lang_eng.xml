@@ -155,36 +155,36 @@
 		<Unit ID="0 3" ENG="Alien Plane">--Description here</Unit>
 		<Unit ID="0 4" ENG="Alien Ship">--Description here</Unit>
 		<Unit ID="0 5" ENG="Alien Tank">--Description here</Unit>
-		<Unit ID="0 6" ENG="APC">--Description here</Unit>
-		<Unit ID="0 7" ENG="Assault">--Description here</Unit>
+		<Unit ID="0 6" ENG="Personnel Carrier">Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. Tha APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.</Unit>
+		<Unit ID="0 7" ENG="Assault Gun">Assault Gun\n\nLightly armored vehicle with a long range gun firing high-explosive shells. Fast and effective on the attack, but fragile.</Unit>
 		<Unit ID="0 8" ENG="AWAC">--Description here</Unit>
 		<Unit ID="0 9" ENG="Bomber">--Description here</Unit>
-		<Unit ID="0 10" ENG="Bulldozer">--Description here</Unit>
+		<Unit ID="0 10" ENG="Bulldozer">Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.</Unit></Unit>
 		<Unit ID="0 11" ENG="Cargoship">--Description here</Unit>
-		<Unit ID="0 12" ENG="Cluster">--Description here</Unit>
-		<Unit ID="0 13" ENG="Commando">--Description here</Unit>
+		<Unit ID="0 12" ENG="Rocket Launcher">Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.</Unit>
+		<Unit ID="0 13" ENG="Infiltrator">Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.</Unit>
 		<Unit ID="0 14" ENG="Corvet">--Description here</Unit>
 		<Unit ID="0 15" ENG="Escort">--Description here</Unit>
 		<Unit ID="0 16" ENG="Fighter">--Description here</Unit>
 		<Unit ID="0 17" ENG="Gunboat">--Description here</Unit>
-		<Unit ID="0 18" ENG="Infantery">--Description here</Unit>
-		<Unit ID="0 19" ENG="Constructor">--Description here</Unit>
-		<Unit ID="0 20" ENG="Minelayer">--Description here</Unit>
-		<Unit ID="0 21" ENG="Missel">--Description here</Unit>
+		<Unit ID="0 18" ENG="Infantery">Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.</Unit>
+		<Unit ID="0 19" ENG="Constructor">Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.</Unit>
+		<Unit ID="0 20" ENG="Mine Layer">Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.</Unit>
+		<Unit ID="0 21" ENG="Missile Crawler">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.</Unit></Unit>
 		<Unit ID="0 22" ENG="Missel Ship">--Description here</Unit>
-		<Unit ID="0 23" ENG="Mobile AntiAir">--Description here</Unit>
-		<Unit ID="0 24" ENG="Pioneer">--Description here</Unit>
-		<Unit ID="0 25" ENG="Repairer">--Description here</Unit>
-		<Unit ID="0 26" ENG="Scanner">--Description here</Unit>
-		<Unit ID="0 27" ENG="Scout">--Description here</Unit>
+		<Unit ID="0 23" ENG="Mobile Anti Aircraft">Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.</Unit>
+		<Unit ID="0 24" ENG="Pioneer">Small construktion vehical for creating small buildings and stationary weapons.</Unit>
+		<Unit ID="0 25" ENG="Repair Unit">Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require materials. The most extensive the damage, the more materials the repair requires. Depots, docks, hangars and barracks can also repair units.</Unit>
+		<Unit ID="0 26" ENG="Scanner">Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for very long ranged units like missile crawlers.</Unit>
+		<Unit ID="0 27" ENG="Scout">Scout\n\nHigh speed scouting vehical for exploration and spotting enemy units. Can cross water without a bridge, but is faster an land.\n\nVery fast and good scan range, but much weaker than most combat units.</Unit>
 		<Unit ID="0 28" ENG="Seaminelayer">--Description here</Unit>
 		<Unit ID="0 29" ENG="Seatransport">--Description here</Unit>
 		<Unit ID="0 30" ENG="Submarine">--Description here</Unit>
-		<Unit ID="0 31" ENG="Surveyor">--Description here</Unit>
-		<Unit ID="0 32" ENG="Tank">--Description here</Unit>
-		<Unit ID="0 33" ENG="Goldtransporter">--Description here</Unit>
-		<Unit ID="0 34" ENG="Metaltransporter">--Description here</Unit>
-		<Unit ID="0 35" ENG="Oiltransporter">--Description here</Unit>
+		<Unit ID="0 31" ENG="Surveyor">Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are just as fast on water an on Land.</Unit>
+		<Unit ID="0 32" ENG="Tank">Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.</Unit>
+		<Unit ID="0 33" ENG="Gold Truck">Gold Truck\n\nUnit for moving gold ore from one location to another.</Unit>
+		<Unit ID="0 34" ENG="Supply Truck">Supply Truck\n\nTruck for hauling raw materials. Useful for resupplying pioneers and constructors, and for supplying combat units with new ammunition.</Unit>
+		<Unit ID="0 35" ENG="Fuel Truck">Fuel Truck\n\nTruck for moving fuel.</Unit>
 		<Unit ID="1 1" ENG="Baracks">--Description here</Unit>
 		<Unit ID="1 2" ENG="Block">--Description here</Unit>
 		<Unit ID="1 4" ENG="Connector">--Description here</Unit>
