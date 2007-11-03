@@ -3192,8 +3192,8 @@ int GetKachelBig ( int x,int y, cMap *map )
 	int nr;
 	if ( x<0||x>=SettingsData.iScreenW-192||y<0||y>=SettingsData.iScreenH-32 ) return 0;
 
-	x=x* ( int ) ( 448.0/ ( SettingsData.iScreenW-192 ) );
-	y=y* ( int ) ( 448.0/ ( SettingsData.iScreenH-32 ) );
+	x=(int) ( x* ( 448.0/ ( SettingsData.iScreenW-192 ) ) );
+	y=(int) ( y* ( 448.0/ ( SettingsData.iScreenH-32 ) ) );
 
 	if ( map->size<448 )
 	{
@@ -3228,7 +3228,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	{
 		for ( k=0;k<SettingsData.iScreenH-32;k++ )
 		{
-			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
+			nr=GetKachelBig ( (i/fakx ) *fakx,( k/faky ) *faky, map );
 			t=TerrainData.terrain+nr;
 			off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
 			nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
