@@ -1467,6 +1467,11 @@ void cGame::AddMessage(char *msg){
   messages->AddMessage(m);
 }
 
+// Fügt eine neue Nachricht ein:
+void cGame::AddMessage(std::string msg)
+{
+	AddMessage((char *)msg.c_str());
+}
 // Führt das übergebene Kommando aus, und gibt false zurück, falls es keins war:
 bool cGame::DoCommand(char *cmd){
   if(strcmp(cmd,"fps on")==0){DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}

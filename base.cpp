@@ -414,7 +414,7 @@ void cBase::Rundenende ( void )
 		if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 )
 		{
 			// Generator muss abgeschaltet werden:
-			game->AddMessage ( "Zu wenig Treibstoff, Generatoren werden abgeschaltet!" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Fuel") );
 			for ( k=0;k<sb->buildings->Count&&sb->EnergyProd;k++ )
 			{
 				cBuilding *b;
@@ -429,7 +429,7 @@ void cBase::Rundenende ( void )
 		// Energieverbraucher prüfen:
 		if ( sb->EnergyNeed>sb->EnergyProd )
 		{
-			game->AddMessage ( "Zu wenig Energie, Verbraucher werden abgeschaltet!" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Energy") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -444,7 +444,7 @@ void cBase::Rundenende ( void )
 		// Metall produzieren/abziehen:
 		if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 )
 		{
-			game->AddMessage ( "Zu wenig Metall, Verbraucher werden abgeschaltet!" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Metal") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -460,7 +460,7 @@ void cBase::Rundenende ( void )
 		// Gold produzieren/abziehen:
 		if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 )
 		{
-			game->AddMessage ( "Zu wenig Gold, Verbraucher werden abgeschaltet!" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Gold") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;

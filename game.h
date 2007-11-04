@@ -143,6 +143,7 @@ public:
   void DrawFLC(void);
   void HandleMessages(void);
   void AddMessage(char *msg);
+  void AddMessage(std::string msg);
   bool DoCommand(char *cmd);
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);
