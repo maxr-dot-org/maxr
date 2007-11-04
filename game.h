@@ -142,7 +142,7 @@ public:
   void RotateBlinkColor(void);
   void DrawFLC(void);
   void HandleMessages(void);
-  void AddMessage(char *msg);
+  void AddMessage(const char *msg);
   void AddMessage(std::string msg);
   bool DoCommand(char *cmd);
   void ShowDebugComGraph(int Off);

@@ -1455,7 +1455,7 @@ void cGame::HandleMessages(void){
 }
 
 // Fügt eine neue Nachricht ein:
-void cGame::AddMessage(char *msg){
+void cGame::AddMessage(const char *msg){
   sMessage *m;
   m=(sMessage*)malloc(sizeof(sMessage));
   m->chars=(int)strlen(msg);
@@ -1470,7 +1470,7 @@ void cGame::AddMessage(char *msg){
 // Fügt eine neue Nachricht ein:
 void cGame::AddMessage(std::string msg)
 {
-	AddMessage((char *)msg.c_str());
+	AddMessage(msg.c_str());
 }
 // Führt das übergebene Kommando aus, und gibt false zurück, falls es keins war:
 bool cGame::DoCommand(char *cmd){
