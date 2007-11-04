@@ -4331,31 +4331,31 @@ void cGame::ShowFiles ( TList *files, TList *filenums, TList *filenames, int off
 	}
 }
 
-// Führt ein Autosave durch:
-void cGame::MakeAutosave ( void )
+// makes an autosave:
+void cGame::MakeAutosave(void)
 {
 	string filename;
-	string stmp;
-	char sztmp[32];
-	FILE *fp;
+	char *sztmp;
 	int i;
 	// Alle Autosaves nach hinten verschieben:
-	for ( i=4;i>=0;i-- )
+	for(i = 4; i >= 0; i--)
 	{
-		filename=SettingsData.sSavesPath; filename+="autosave"; sprintf ( sztmp,"%d",i ); filename+=sztmp; filename+=".sav";
-		if ( ! ( fp=fopen ( filename.c_str(),"rb" ) ) ) continue;
-		fclose ( fp );
-		if ( i==4 )
+		sztmp = (char *) malloc ( SettingsData.sSavesPath.length() + 1 + strlen( ((string) "autosave" + PATH_DELIMITER).c_str()) + 2);
+		sprintf(sztmp,"%s%sautosave%d.sav",SettingsData.sSavesPath.c_str(),PATH_DELIMITER,i);
+		filename = sztmp;
+		if( !( FileExists( filename.c_str() ) ) ) continue;
+		if( i == 4 )
 		{
-			remove ( filename.c_str() );
+			remove(filename.c_str());
 		}
 		else
 		{
-			stmp=SettingsData.sSavesPath; stmp+="autosave"; sprintf ( sztmp,"%d",i ); stmp+=sztmp; stmp+=".sav";
-			rename ( filename.c_str(),stmp.c_str() );
+			sprintf(sztmp,"%s%sautosave%d.sav",SettingsData.sSavesPath.c_str(),PATH_DELIMITER,i+1);
+			rename(filename.c_str(),sztmp);
 		}
 	}
-	Save ( "autosave0" );
+	Save("autosave0.sav");
+	free(sztmp);
 }
 
 // Zeigt alle Infos der Objekte unter der Maus an:
