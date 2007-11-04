@@ -414,7 +414,7 @@ void cBase::Rundenende ( void )
 		if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 )
 		{
 			// Generator muss abgeschaltet werden:
-			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Fuel") );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Fuel_Low") );
 			for ( k=0;k<sb->buildings->Count&&sb->EnergyProd;k++ )
 			{
 				cBuilding *b;
@@ -429,7 +429,7 @@ void cBase::Rundenende ( void )
 		// Energieverbraucher prüfen:
 		if ( sb->EnergyNeed>sb->EnergyProd )
 		{
-			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Energy") );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Energy_Low") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -444,7 +444,7 @@ void cBase::Rundenende ( void )
 		// Metall produzieren/abziehen:
 		if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 )
 		{
-			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Metal") );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Metal_Low") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -460,7 +460,7 @@ void cBase::Rundenende ( void )
 		// Gold produzieren/abziehen:
 		if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 )
 		{
-			game->AddMessage ( lngPack.Translate( "Text~Comp~Low_Gold") );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Gold_Low") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -478,7 +478,7 @@ void cBase::Rundenende ( void )
 		// Humanneed prüfen:
 		if ( sb->HumanNeed>sb->HumanProd )
 		{
-			game->AddMessage ( "Zu wenig Teams, Verbraucher werden ausgeschaltet!" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Team_Low") );
 			for ( k=0;k<sb->buildings->Count;k++ )
 			{
 				cBuilding *b;
@@ -493,7 +493,7 @@ void cBase::Rundenende ( void )
 		// Energieoptimierungen:
 		if ( OptimizeEnergy ( sb ) )
 		{
-			game->AddMessage ( "Energieoptimierungen vorgenommen." );
+			game->AddMessage (lngPack.Translate( "Text~Comp~Energy_Optimize"));
 		}
 
 		// Reparaturen durchführen/bauen/aufladen:
