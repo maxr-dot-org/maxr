@@ -157,7 +157,8 @@ public:
   void DeleteDirt(cBuilding *ptr);
   void SetWind(int dir);
   void MakePanel(bool open);
-  void AddCoords(char *msg,int x,int y);
+  void AddCoords(const char *msg,int x,int y);
+  void AddCoords(const string sMsg, int x, int y);
   void MakeLanding(int x,int y,cPlayer *p,TList *list,bool fixed);
   bool Save(string name);
   void Load(string name,int AP,bool MP=false);

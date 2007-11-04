@@ -27,6 +27,7 @@
 #include "dialog.h"
 #include "log.h"
 #include "files.h"
+#include <sstream>
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame ( cFSTcpIp *fstcpip, cMap *map )
@@ -1311,14 +1312,21 @@ int cGame::CheckUser ( void )
 }
 
 // Zeigt eine Nachricht mit Koordinaten an:
-void cGame::AddCoords ( char *msg,int x,int y )
+void cGame::AddCoords (const char *msg,int x,int y )
 {
-	char str[100];
-	sprintf ( str,"[%d,%d] %s (%s)",x,y,msg,GetKeyString ( KeysList.KeyJumpToAction ) );
-	AddMessage ( str );
+ 	stringstream strStream;
+ 	//e.g. [85,22] missel MK I is under attack (F1)
+ 	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString ( KeysList.KeyJumpToAction ) << ")";
+	AddMessage ( strStream.str() );
 	MsgCoordsX=x;
 	MsgCoordsY=y;
 }
+
+ void cGame::AddCoords ( const string sMsg, int x, int y)
+ {
+ 	AddCoords ( sMsg.c_str(), x, y);
+ }
+
 
 bool FreeForLanding ( int x,int y )
 {

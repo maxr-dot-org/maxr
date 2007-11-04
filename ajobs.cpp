@@ -443,13 +443,15 @@ bool cAJobs::MakeImpact ( void )
 		game->AddFX ( fxHit,DestX*64,DestY*64,0 );
 	}
 
+	string sMessage;
 	if ( destroyed )
 	{
 		if ( WasMine )
 		{
-			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
-			sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
-			game->AddCoords ( str,DestX,DestY );
+			sMessage = name;
+			sMessage += " ";
+			sMessage += lngPack.Translate( "Text~Comp~Destroyed");
+			game->AddCoords ( sMessage,DestX,DestY );
 			PlayVoice ( VoiceData.VOIDestroyedUs );
 		}
 	}
@@ -457,34 +459,36 @@ bool cAJobs::MakeImpact ( void )
 	{
 		if ( target&&target->owner==game->ActivePlayer )
 		{
-			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
+			sMessage = name;
+			sMessage += " ";
 			if ( destroyed||target->data.hit_points<=0 )
 			{
 				
-				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
+				sMessage += lngPack.Translate( "Text~Comp~Destroyed");
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Attacked").c_str() );
+				sMessage += lngPack.Translate( "Text~Comp~Attacked");
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
-			game->AddCoords ( str,DestX,DestY );
+			game->AddCoords ( sMessage,DestX,DestY );
 		}
 		else if ( btarget&&btarget->owner==game->ActivePlayer )
 		{
-			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
+			sMessage = name;
+			sMessage += " ";
 			if ( destroyed||btarget->data.hit_points<=0 )
 			{
-				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
+				sMessage += lngPack.Translate( "Text~Comp~Destroyed");
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Attacked").c_str() );
+				sMessage += lngPack.Translate( "Text~Comp~Attacked");
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
-			game->AddCoords ( str,DestX,DestY );
+			game->AddCoords ( sMessage,DestX,DestY );
 		}
 	}
 
