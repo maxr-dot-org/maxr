@@ -1,0 +1,69 @@
+PREREQUISOTES
+
+You'll need to have these libraries (with equivalent devel versions) to
+build M.A.X. Reloaded:
+
+ libsdl1.2
+ libsdl-mixer1.2 (with Vorbis support)
+ libsdl-net
+
+SDL libraries can be found at http://www.libsdl.org
+
+WINDOWS
+
+Download the required SDL-libraries and install them to your system32 directory - e.g. c:\windows\system32
+
+http://www.libsdl.org/release/SDL-1.2.12-win32.zip
+http://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-1.2.8-win32.zip
+http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7-win32.zip
+
+Now unzip max-x.y.z.zip to a folder of your choise - e.g.
+C:\Program Files\MAX Reloaded\
+
+After installing currently needed original gamedata you can 
+start M.A.X. Reloaded executing MAX.EXE
+
+LINUX
+
+See BUILDING
+
+BOTH
+
+Due the copyright we are not allowed to provide any game content
+from the original Mechanized Assault and Exploration (c) 1996 Interplay
+
+We can only provide you with dummy-files so you can see where files
+from an original gamecd belong. We're going to write an install
+script for easy installing the needed files in our game structure.
+
+If you don't own an original maxcd you've another chance in downloading
+Mechanized Assault and Exploration from cdosabandonware.com since you
+won't find any gamecds from this any more on stores - too old.
+http://www.cdosabandonware.com/std_games_details.php?gameid=1979
+
+TROUBLESHOOTING
+
+Resolution:
+
+It is possible to increase the resolution in MAX.XML however
+you should keep in mind that all menus and displays are designed for
+640x480. If you experience odd graphical problems you're on your own.
+
+Sound:
+
+If you experience problems with soundquality (especially on WinXP) you
+may increase the chunksize in MAX.XML. Default is 1024 and 2205Hz. Next
+proper value is 2048 or 4096. Ih you increasing frequency you have to 
+increase the chunksize, too. However inceasing frequency has only a
+small benefit to the backgroundmusic.
+
+Maps:
+
+The mapeditor from MM's Max is (currently) not included. The old maps
+are however 100% compatible. MM's Editor can still be used to create or
+modify maps. Just save them on our maps folder and add 
+an entry in maps.xml
+
+Known Bugs:
+
+Many. Multiplayer does NOT work. HotSeat does.

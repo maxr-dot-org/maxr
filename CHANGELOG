@@ -1,0 +1,10 @@
+
+
+M.A.X. Reloaded 0.1.0
+=======================================================================
+-MM's MAX 0.52 goes opensource (See ABOUT)
+-SDL only support, removed WinAPI
+-XML support, removed INI support
+-translations support
+-max.log support
+-tons of bugs fixed

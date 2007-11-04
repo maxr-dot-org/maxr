@@ -1,0 +1,59 @@
+PREREQUISOTES
+
+You'll need to have these libraries (with equivalent devel versions) to
+build M.A.X. Reloaded:
+
+ libsdl1.2
+ libsdl-mixer1.2 (with Vorbis support)
+ libsdl-net
+
+SDL libraries can be found at http://www.libsdl.org
+
+The .tar.gz file is distributed with a working set of configure files. They
+are not in the SVN repository. Consequently, if you are building from
+SVN, you will need autoconf (>= 2.59) and automake (>= 1.9).
+
+Sourcecode:
+
+You can get it here:
+
+ http://www.maxthegame.de/<coming soon>
+
+WINDOWS
+
+
+LINUX
+
+First untar the package:
+
+ $ tar xfzv max-x.y.z.tar.gz
+
+then
+
+ $ cd max-x.y.z
+
+The usual
+
+ $ ./configure
+ $ make
+ $ make install
+
+only compiles the max binary and installs it along with the game
+data to the default prefix which is probably /usr/local.
+
+Rebuilding:
+
+You should clean your existing max release build first with:
+
+ $ make distclean
+
+If you want to clean your max SVN build do:
+
+ $ make maintainer-clean
+
+Starting:
+
+After installing currently needed original gamedata (see INSTALL) 
+you can start M.A.X. Reloaded executing ./max in the gamedirectory
+
+

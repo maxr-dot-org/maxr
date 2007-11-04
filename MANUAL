@@ -1,0 +1,97 @@
+MECHANIZED ASSAULT AND EXPLORATION RELOADED MANUAL
+
+If you are new to M.A.X.  you might want to read the M.A.X. Wiki
+at http://maxthegame.de/wiki
+
+OPTIONS
+
+Startoptionen and gamesettings are configured in MAX.XML. To change
+settings simply open the file in a texteditor (not word!) or change
+settings ingame (not all options are offered ingame however).
+
+CONTROLS
+
+F1		Go to event
+Arrows		Scroll
++/- 		Zoom
+Enter		Turn End
+n		fog on/off
+s		scan on/off
+r		range on/off
+m		munition on/off
+t		hitpoints on/off
+f		color on/off
+n		shild on/off
+d		study on/off
+LShift		calculate path (but don't move)
+ESC		end game
+
+COMMANDS
+
+In-game console (TAB or chat-button) offers a variet of commands:
+
+fps [on/off]      shows frames per second
+com [on/off]      [*not working*] shows network traffic (multiplayer)
+base [on/off]     shows additional informations to basecamps
+wache [on/off]    shows covered areas
+fx [on/off]       shows additional information to special effects
+ping              [*not working*] checks connectivity in multiplayer
+trace [on/off]    shows additional information about current field
+log [on/off]      [*not working*] creats a logfile by engine
+[show/hide] log   shows log (if active
+
+Next commands are considered as cheats and will show up in gamechat
+
+color [0-7]       sets new color for active player
+fog off           disabled fog for a short period
+survey            shows all mapresources
+credits           player gets +1000 credits
+kill [x] [y]      kills whatever is on position x,y
+god off           creates a godless world
+load              reloads active unit
+
+DESCRIPTION
+
+<missing>
+
+RESOURCES
+
+<missing>
+
+
+BUILDING AND BUYING
+
+<missing>
+
+UNIT SPECIALTIES
+
+Unit specialties are described under Unit Description in-game.
+
+UPDATES
+
+<missing>
+
+MOVING
+
+<missing>
+
+FIGHTING
+
+<missing>
+
+REPAIRING
+
+<missing>
+
+EXPERIENCE
+
+<missing>
+
+MULTIPLAYER
+
+<missing>
+
+OTHER RESOURCES
+
+Not much yet - please visit http://www.maxthegame.de/bbs for questions
+
