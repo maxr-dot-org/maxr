@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Concrete Block\n\nHardened, armored block to block enemy movements.
+    Concrete Block\n\nHardened, armored block for blocking enemy movement.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

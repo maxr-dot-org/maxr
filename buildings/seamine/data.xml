@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Sea Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

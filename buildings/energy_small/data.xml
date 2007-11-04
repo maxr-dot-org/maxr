@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Power Generator\n\nA power generator consumes two fuel each turn, and provides enough power for one mining station or factory. The power generator must be connected to the fuel source (minig station or fuel tank) and the building that needs the power.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Antiaircraft\n\nBlaBlaBla...
+    Anti Aircraft\n\nLow caliber, high speed anti aircraft cannon. Anti aircraft make short work of planes, but cannot attack ground units.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

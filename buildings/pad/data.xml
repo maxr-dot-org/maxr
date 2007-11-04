@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Landing Pad\n\nLanding facility for planes. Does not repair, resupply or refuel planes. To resupply a plane on a landing pad, use a nearby truck or storage unit.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

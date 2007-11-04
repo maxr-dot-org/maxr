@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Training\n\nBlaBlaBla...
+    Training Hall\n\nTrains infiltrators who can disable or capture enemy units, and infantry to guard against infiltrators. A training hall requires colonists from a habitat and power to operate.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
 <Unit ID="1 1" name="baracks">
   <Header>
     <Author name="DoctorDeath">
@@ -6,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Baracks\n\nBlaBlaBla...
+    Barracks\n\nA barracks holds infiltrators and infantery units. Inside the barracks is a machine shop for repairing and improving powered suits, and for manufacturing ammunition. The barracks needs raw materials to repair, upgrade or resupply, so it should be connected to a storage unit or a minig station.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Turret\n\nBlaBlaBla...
+    Gun Turret\n\nHeavily armored stationary gun turret. Gun turrets have good firepower, heavy armor, and moderate range. Because they take little time to build, they are a good choice when you need defense in a hurry.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

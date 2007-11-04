@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Energy Big\n\nBlaBlaBla...
+    Power Station\n\nA power station consumes six fuel each turn, and provides enough power for six factories or mining stations.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

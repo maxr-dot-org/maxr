@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Fuel Tank\n\nHolds fuel reserves. Minig stations produce fuel every turn. To save extra fuel, a mining station must be connected to a fuel tank.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

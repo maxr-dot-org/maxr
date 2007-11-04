@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Radar\n\nBlaBlaBla...
+    Radar\n\nStationary, long-range radar. Longer-range units like missile launchers and artillery cannot fire on what thay cannot see, so it's important to have a scanner or radar nearby.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Smallfactory\n\nBlaBlaBla...
+    Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs a source of gold ore. A mining station can produce gold ore if one of its four spuares covers a spuare with undergound gold.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

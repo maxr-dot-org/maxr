@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Rocket launcher\n\nBlaBlaBla...
+    Missile Launcher\n\nLong-range missile launcher on a fixed mount. Exellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti aircraft.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

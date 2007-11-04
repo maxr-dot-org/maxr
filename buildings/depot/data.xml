@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Depot\n\nBlaBlaBla...
+    Depot\n\nA depot can repair damage, manufracture ammunition, and refit ground units with the newest technology. All of these operations require raw materials, so depots should be connected to stored materials.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

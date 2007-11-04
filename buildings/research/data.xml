@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Research Center\n\nResearch centers investigate ways to improve your units. Unlike upgrades purcased with refined gold, research takes time, and the improvements are small. Hovever, research affects all of your units instead of just one type, and doesn't require a source of gold ore. A research center requires colonists from a habitat to operate, and power.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

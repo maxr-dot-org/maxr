@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Hangar\n\nBlaBlaBla...
+    Hangar\n\nA hangar can repair damage, manufracture ammunition and refit planes with the newest technology. All of these operations require raw materials, so hangars should be connected to stored materials.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Shipfactory\n\nBlaBlaBla...
+    Shipyard\n\nShipyards manufacture ships, such as submarines, sea transporters and missile cruisers. A shipyard requires three raw materials a turn to operate, an power.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

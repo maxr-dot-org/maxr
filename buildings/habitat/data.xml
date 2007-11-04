@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Habitat Big\n\nBlaBlaBla...
+    Habitat\n\nHabitats house colonists. Each habitat houses enough colonists to operate three research centers, training halls or eco-spheres. The colonist buildings must be connected to the habitat before they can operate.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

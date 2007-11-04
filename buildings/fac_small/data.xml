@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Smallfactory\n\nBlaBlaBla...
+    Light Vehicle Plant\n\nBuilds light vehicles: pioneers, trucks, mobile repair units, scouts and mobile anti-aircraft units. A light vehicle plant requires three raw materials a turn to operate, and power from a power generator or power station.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

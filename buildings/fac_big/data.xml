@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bigfactory\n\nBlaBlaBla...
+    Heavy Vehicle Plant\n\nBuilds construtors, mobile scanners, and the heavy fighting units: tanks, assult guns, rocket launchers and missile crawlers. A heavy vehicle factory needs three raw materials a turn to operate, and power.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

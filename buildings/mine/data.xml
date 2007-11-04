@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Mining Station\n\nExtracts raw materials, fuel and gold from the ground everuy turn. Buildings must be connected to a mine to use the resources a mine produces. If there are no storage buildings, to store extra materials, it will be lost.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

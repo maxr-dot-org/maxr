@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Water Platform\n\nProvides a surface over water on which to construct other buildings. Pioneers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps, or when a valuable material deposit is under water.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

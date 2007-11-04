@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Gold Vault\n\nHolds unrefined gold ore. Minig stations produce gold every turn, if they have gold ore underneath them. To store the ore, a mining station must be connected to a gold vault.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Artillerie\n\nBlaBlaBla...
+    Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap, rugged gun turret and the expensive, long-range missile turret.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Airfactory\n\nBlaBlaBla...
+    Air Units Plant\n\nBuilds fighters, ground attack planes, AWACs and air transports. A air units plant needs three raw materials a turn to operate and power.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

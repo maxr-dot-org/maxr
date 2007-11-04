@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bridge\n\nBlaBlaBla...
+    Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>

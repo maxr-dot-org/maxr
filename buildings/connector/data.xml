@@ -6,7 +6,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bla Bla Bla...
+    Connector\n\nBuildings must be connected to share power, fuel, raw materials ans gold. You can connect buildings by placing them next to each other, or by building connectors from one building to the other.
   </Description>
   <General_Info>
     <Is_Controllable YN="No"/>
