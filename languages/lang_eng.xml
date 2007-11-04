@@ -56,7 +56,10 @@
 			<Button_HotSeat_Load ENG="Load Hot Seat"/>
 			<Button_Game_New ENG="New Game"/>
 			<Button_Game_Load ENG="Load Game"/>
+			<Button_Game_Save ENG="Save Game"/>
 			<Button_Game_Options ENG="Game Options"/>
+			<Button_Load ENG="Load"/>
+			<Button_Save ENG="Save"/>
 			<Button_Training ENG="Training"/>
 		</Menu_Main>
 		<Game_Options>
@@ -102,6 +105,8 @@
 			<Title_IP ENG="IP"/>
 			<Title_Port ENG="Port"/>
 			<Title_Map ENG="Map"/>
+			<Title_LoadSave ENG="Load/Save Menu"/>
+			<Title_Load ENG="Load Menu"/>
 			<Button_Host_Start ENG="Start Host"/>
 		</Game_Start>
 		<Game_MP>
@@ -142,6 +147,15 @@
 			<Title_Scan ENG="Scan"/>
 			<Title_Speed ENG="Speed"/>
 		</Vehicles>
+		<Comp>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized="Zu wenig Energie, Verbraucher werden abgeschaltet!"/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized="Zu wenig Metall, Verbraucher werden abgeschaltet!"/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
+			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
+			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
+			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
+		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>

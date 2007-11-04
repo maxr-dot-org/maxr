@@ -56,7 +56,10 @@
 			<Button_HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
 			<Button_Game_New ENG="New Game" localized="Neues Spiel"/>
 			<Button_Game_Load ENG="Load Game" localized="Spiel laden"/>
+			<Button_Game_Save ENG="Save Game" localized="Speichern"/>
 			<Button_Game_Options ENG="Game Options" localized="Spieloptionen"/>
+			<Button_Load ENG="Load" localized="Laden"/>
+			<Button_Save ENG="Save" localized="Speichern"/>
 			<Button_Training ENG="Training" localized="Training"/>
 		</Menu_Main>
 		<Game_Options>
@@ -102,6 +105,8 @@
 			<Title_IP ENG="IP" localized="IP"/>
 			<Title_Port ENG="Port" localized="Port"/>
 			<Title_Map ENG="Map" localized="Karte"/>
+			<Title_LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
+			<Title_Load ENG="Load Menu" localized="Laden Menü"/>
 			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
 		</Game_Start>
 		<Game_MP>
