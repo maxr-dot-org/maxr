@@ -135,7 +135,7 @@ void PlaceSmallButton (const char *str,int x,int y,bool pressed )
 }
 
 // Platziert einen spezielen Menübutton:
-void PlaceMenuButton ( char *str,int x,int y, int darkness, bool pressed )
+void PlaceMenuButton (const char *str,int x,int y, int darkness, bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=109;
@@ -152,7 +152,7 @@ void PlaceMenuButton ( char *str,int x,int y, int darkness, bool pressed )
 }
 
 // Platziert einen kleinen spezielen Menübutton:
-void PlaceSmallMenuButton ( char *str,int x,int y,bool pressed )
+void PlaceSmallMenuButton (const char *str,int x,int y,bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=48;
@@ -5751,11 +5751,11 @@ int ShowDateiMenu ( void )
 	// Den Bildschirm blitten:
 	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,NULL );
 	// Den Text anzeigen:
-	fonts->OutTextCenter ( "Laden Menü",320,12,buffer );
+	fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_Load").c_str(),320,12,buffer );
 	// Buttons setzen;
-	PlaceMenuButton ( "Fertig",353,438,2,false );
+	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,false );
 	PlaceSmallMenuButton ( "? ",464,438,false );
-	PlaceMenuButton ( "Laden",514,438,4,false );
+	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Load").c_str(),514,438,4,false );
 	scr.y=40;
 	scr.w=dest.w=28;
 	scr.h=dest.h=29;
@@ -5841,7 +5841,7 @@ int ShowDateiMenu ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( "Fertig",353,438,2,true );
+				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5853,7 +5853,7 @@ int ShowDateiMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			PlaceMenuButton ( "Fertig",353,438,2,false );
+			PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -5864,14 +5864,14 @@ int ShowDateiMenu ( void )
 			if ( b&&!LadenPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( "Laden",514,438,4,true );
+				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Load").c_str(),514,438,4,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				LadenPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				PlaceMenuButton ( "Laden",514,438,4,false );
+				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Load").c_str(),514,438,4,false );
 				if ( selected != -1 )
 				{
 					ShowFiles ( files,filenums,filenames,offset,selected );
@@ -5884,7 +5884,7 @@ int ShowDateiMenu ( void )
 		}
 		else if ( LadenPressed )
 		{
-			PlaceMenuButton ( "Laden",514,438,4,false );
+			PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Load").c_str(),514,438,4,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			LadenPressed=false;
