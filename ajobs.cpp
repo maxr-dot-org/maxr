@@ -447,8 +447,8 @@ bool cAJobs::MakeImpact ( void )
 	{
 		if ( WasMine )
 		{
-			char str[50];
-			sprintf ( str,"%s zerstört",name.c_str() );
+			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
+			sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
 			game->AddCoords ( str,DestX,DestY );
 			PlayVoice ( VoiceData.VOIDestroyedUs );
 		}
@@ -457,30 +457,31 @@ bool cAJobs::MakeImpact ( void )
 	{
 		if ( target&&target->owner==game->ActivePlayer )
 		{
-			char str[50];
+			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
 			if ( destroyed||target->data.hit_points<=0 )
 			{
-				sprintf ( str,"%s zerstört",name.c_str() );
+				
+				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sprintf ( str,"%s wird angegriffen",name.c_str() );
+				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Attacked").c_str() );
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( str,DestX,DestY );
 		}
 		else if ( btarget&&btarget->owner==game->ActivePlayer )
 		{
-			char str[50];
+			char str[50]; //FIXME: holy shit, sb take care of this please - It's only a question of time until we get an index array out of bound exception -- beko
 			if ( destroyed||btarget->data.hit_points<=0 )
 			{
-				sprintf ( str,"%s zerstört",name.c_str() );
+				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Destroyed").c_str() );
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sprintf ( str,"%s wird angegriffen",name.c_str() );
+				sprintf ( str,"%s %s",name.c_str(), lngPack.Translate( "Text~Comp~Attacked").c_str() );
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( str,DestX,DestY );
