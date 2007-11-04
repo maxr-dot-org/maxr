@@ -147,6 +147,17 @@
 			<Title_Scan ENG="Scan" localized="Radar"/>
 			<Title_Speed ENG="Speed" localized="Geschwindigkeit"/>
 		</Vehicles>
+		<Comp>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized="Zu wenig Energie, Verbraucher werden abgeschaltet!"/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized="Zu wenig Metall, Verbraucher werden abgeschaltet!"/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
+			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
+			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
+			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
+			<Destroyed ENG="destroyed" localized="zerstört"/>
+			<Attacked ENG="is under attack" localized="wird angegriffen"/>
+		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
