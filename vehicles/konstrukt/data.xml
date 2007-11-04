@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Constructor\n\nLarge construction vehicle to build large buildings, such as mines and factories. One Constructors two materials consumed per round when he works.
+    Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

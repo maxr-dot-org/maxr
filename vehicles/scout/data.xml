@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Scout\n\nHigh-speed-scout-vehicle, to discover enemy units. Can drive over water without a bridge, but is faster on ground. Very fast and good scanning range, but much weaker than most combat units.
+    Scout\n\nHigh speed scouting vehical for exploration and spotting enemy units. Can cross water without a bridge, but is faster an land.\n\nVery fast and good scan range, but much weaker than most combat units.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

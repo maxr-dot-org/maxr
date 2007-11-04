@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Escort\n\nHigh-speed ship with a good radar and air defense gun. Convoy are the eyes of a fleet and their protection against aircraft.
+    Escort\n\nHigh speed boat with good radar and rapid fire anti aircraft cannon. Escorts are the eyes of a fleet, and a fleet's protection from planes.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

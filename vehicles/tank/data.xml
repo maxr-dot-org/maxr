@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Tank\n\nHeavy armored fighting vehicle. The best way to the front line, where enemy units can easily prevent armored auxiliary units like for example assault guns and missle launchers to reach.
+    Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

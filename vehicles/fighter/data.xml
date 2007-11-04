@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Fighter\n\nFast but sensitive plane, which a limited number of air-to-air missiles transported. Hunters are the best means to enemy aircraft from one area to distribute and to a moving army to defend. Stationary air defense is the better choice to a specific area to defend.
+    Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Minelayer\n\nLaying mines are specialized vehicles, the place and remove mines. Mine laying mines in commodities can transform. You can mine later removed and retransform commodities. You can not remove enemy minefields. This must start with cannons or missiles to be placed explosion.
+    Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Engineer\n\nSmall construction vehicle, that builds small buildings and stationary weapons.
+    Small construktion vehical for creating small buildings and stationary weapons.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

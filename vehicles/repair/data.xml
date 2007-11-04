@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Repair Unit\n\nLight vehicle, that can repair fast ground units and buildings. Repairing require materials. Depots, hangars and barracks can also repair units.
+    Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require materials. The most extensive the damage, the more materials the repair requires. Depots, docks, hangars and barracks can also repair units.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

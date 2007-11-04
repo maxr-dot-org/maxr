@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Metal Transport\n\nUnit to move metal from one place to the next.
+    Supply Truck\n\nTruck for hauling raw materials. Useful for resupplying pioneers and constructors, and for supplying combat units with new ammunition.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Infantery\n\nSoldiers using light-armored-defense weapons. Infantry can identify enemy Infiltrators.
+    Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

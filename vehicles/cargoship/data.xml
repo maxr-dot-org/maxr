@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Cargoship\n\nShip for the transportation of raw materials. Useful to pioneer vehicles and Seekampfeinheiten again with ammunition and raw materials checks.
+    Cargo Ship\n\nShips for hauling raw material. Useful for resupplying pioneers and sea combat units with new ammunition.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

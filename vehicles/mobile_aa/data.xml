@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Mobile Anti Aircraft\n\nLight, fast, fast car with a gun to the shooting of enemy aircraft. Mobile Luftabwehren are usually defense units, as it is not as fast as airplanes and are not able to move, as long as they are firing. Use them to an area to protect, after your fighter bombers amid the enemy.
+    Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

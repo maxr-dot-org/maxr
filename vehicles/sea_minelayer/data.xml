@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Sea Minelayer\n\nSeaversion of minelayer. Like its counterpart on the ground, the sea minelayer can produce mines and retransform it to materials.
+    Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines, detect them, and convert them back into raw material.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

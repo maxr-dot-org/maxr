@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Assault\n\nLighter armor than the alien tank but much faster and can cause more damage. Like all alien units is the organic armor able to heal itself.
+    Alien Assault\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault gunns, the alien assault gun should still avoid enemy fire whenever possible. All alien unitsrepair themselves, and improve their abilities with experience.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

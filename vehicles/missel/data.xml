@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Missile Crawler\n\nMissile launcher on a lightly armored chassis. This mobile thrower is a little bit less robust than the stationary version and erfprdert more material in the construction. However, its flexibility makes it much more flexible.
+    Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

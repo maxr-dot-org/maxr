@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Submarine\n\nSealing under the surface of the water lurking, submarines close to the enemy to sneak up to their powerful torpedoes fired. Only corvettes and submarines can discover submarines before they fire. Only submarines, corvettes and bombers can attack them.
+    Submarine\n\nLurking beneath the surface, submarines can sneak close to the enemy to fire their powerful torpedoes. Submarines do not carry active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes, and ground attack planes can attack them.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

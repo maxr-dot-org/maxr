@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Corvet\n\nHigh-speed ship with torpedoes and depth. Corvettes can attack any Marine unit, but its real strength is the ability to sift submarines and attack.
+    Corvette\n\nHigh speed boat with torpedo tubes and sonar. Corvettes can attack any sea unit, but their real strength is their ability to spot and attack submarines.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

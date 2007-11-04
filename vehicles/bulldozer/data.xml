@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bulldozer\n\nThe vehicle, in order to clear debris. Bulldozers can filter out material from debris.
+    Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

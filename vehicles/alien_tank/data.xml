@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien tank\n\nAlien heavy armored fighting vehicle. Like all Alien units, the alien has a special organic tank armor, which can regenerate itself.
+    Alien Tank\n\nHeavily armored tank of alien design. Alien tanks are best used at the front of an attack to soak up enemy fire. All alien units repair themselves, and improve their abilities with erperience.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

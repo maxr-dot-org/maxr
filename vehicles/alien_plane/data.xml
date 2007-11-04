@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien Plane\n\nFast and well armored attack aircraft. Can both ground and air targets to attack. Like all Alien units also owns the Alien attack aircraft a special organic armor, which can regenerate itself.
+    Alien Plane\n\nAlien fighter-bomber. While the alien plane is primarily desinged to attack ground targets, it can also fire its missiles at other planes. Though powerful, the alien attack plane is still vulnerable to anti aircraft fire. Like other alien units, alien planes repair themselves and improve their abilities wity experience.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

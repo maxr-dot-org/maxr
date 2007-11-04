@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Gunboat\n\nHeavy armored ship with a high-caliber gun with a medium-range. Excellent while destroying other ships and the bombing of coastal destinations.
+    Gunboat\n\nHeavily armored ship with a high caliber, medium range cannon. Excellent at destroying other ships and bombing shore targets.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

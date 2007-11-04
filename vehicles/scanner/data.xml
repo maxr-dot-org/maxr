@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Scanner\n\nMobile radar platform. Slow and expensive as a Scout, but with a better scan range. A scanner is excellent to discover enemy units for units with a very large range like missle launchers.
+    Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for very long ranged units like missile crawlers.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

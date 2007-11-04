@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Bomber\n\nA heavy plane with a full load of air-to-ground missiles transported. Expensive, but the speed and the ability of everything except hunters and air defense attack is worth it.
+    Ground Attack Plane\n\nA hevier plane carrying a full load of air to ground missiles. Ground Attack Planes are expencive, but the advantages are worth the cost. Their great speet lets them reach any trouble spot quickly, and once they arrive, only fighters and antiaircraft can defend against them.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

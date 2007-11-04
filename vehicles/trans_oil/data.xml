@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Oil Transport\n\nUnit to move oil from one place to the next.
+    Fuel Truck\n\nTruck for moving fuel.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

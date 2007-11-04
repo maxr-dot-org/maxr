@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Passenger Van\n\nFast, armored vehicle, infantry and infiltrator to carry. The APC can be slow, both under water and on land. Only hostile corvettes and submarines can be under water moving APC discover.
+    Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. Tha APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Gold Transport\n\nUnit to move gold from one place to the next.
+    Gold Truck\n\nUnit for moving gold ore from one location to another.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

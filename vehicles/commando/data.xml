@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Infiltrator\n\nCommand, in the art of silent and electronic warfare training. Firbolg enemy units can be destroyed or taken prisoner. Firbolg are normally invisible, until they make a mistake when they try to sabotage enemy units, or up by infantry or Firbolg been spotted. Furthermore, with a sharp Rifle, allowing them out of the ambush on slightly armored targets fire.
+    Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

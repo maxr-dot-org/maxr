@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Alien gunboat\n\nHeavy armored and armed alien warship. Like all Alien units also owns the Alien gunboat a special organic armor, which can regenerate itself.
+    Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

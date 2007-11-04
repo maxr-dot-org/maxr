@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    AWAC\n\nAir Warning and Control aircraft. In essence, a flying radar reflector, an AWAC is necessary to keep out enemy air defenses before your aircraft fire range fly.
+    AWAC\n\nAirborne Warning And Control plane. Basically a flying radar dish, an AWAC is essential to spot enemy anti aircraft before your planes fly info firing range.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

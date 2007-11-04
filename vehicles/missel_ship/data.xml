@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Missile Ship\n\nOn a ship mounted missile launcher. Extzellente range, great attack strength and medium armor make this a powerful unit.
+    Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength, and medium armor makes this a powerful unit.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Assault Gun\n\nLight armored vehicle with a weapon with great range, the varrio fires grenades. Fast and effective in attack, but rather vulnerable.
+    Assault Gun\n\nLightly armored vehicle with a long range gun firing high-explosive shells. Fast and effective on the attack, but fragile.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Rocket Launcher\n\nLight armored vehicle, the medium-range missile fire, all units damaged drag, which is within 2 fields to the target around. Against hostile groups most effective units.
+    Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

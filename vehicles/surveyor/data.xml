@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Surveyor\n\nLight, amphibious vehicle with a very delicate sensors to detect underground minerals and enemy mines. In contrast to most amphibious units are reviewer on the water as fast as on land.
+    Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are just as fast on water an on Land.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>

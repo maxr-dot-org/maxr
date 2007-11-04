@@ -7,7 +7,7 @@
     <Game_Version text="00.00.00.00"/>
   </Header>
   <Description lang="ENG">
-    Sea Transport\n\nHeavy armored ship with space for up to six units of the ground to carry. Sea tranports are much slower than aircraft transports, but they also tend to survive an enemy attack.
+    Sea Transport\n\nHeavily armored ship with space to carry up to six land units. Sea transports are much slower than air transports, but also much more likely to survive an enemy attack.
   </Description>
   <General_Info>
     <Is_Controllable YN="Yes"/>
