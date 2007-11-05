@@ -134,14 +134,9 @@ void showSplash()
 void showGameWindow()
 {
 	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
-	if ( !SettingsData.bWindowMode )
-	{
-		screen=SDL_SetVideoMode ( SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|SDL_FULLSCREEN );
-	}
-	else
-	{
-		screen=SDL_SetVideoMode ( SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE );
-	}
+	
+	screen=SDL_SetVideoMode ( buffer->w,buffer ->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
+	
 	SDL_FillRect ( buffer,NULL,0 );
 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
 }

@@ -35,6 +35,7 @@ cMouse::~cMouse ( void )
 	if ( back!=NULL )
 	{
 		SDL_FreeSurface ( back );
+		SDL_FreeSurface ( cur ) ;
 	}
 }
 
@@ -58,7 +59,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 		dest.w=back->w;
 		dest.h=back->h;
 		*/
-		if ( SettingsData.bWindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
+		SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
 	}
 	// Den Hintergrund sichern, und die Maus malen:
 	GetBack ( sf );
@@ -68,7 +69,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	LastY=DrawY;
 
 	SDL_BlitSurface ( cur,NULL,sf,&dest );
-	if ( SettingsData.bWindowMode ) SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
+	SDL_UpdateRect ( sf,dest.x,dest.y,dest.h,dest.w );
 }
 
 // Setzt den Cursor:
