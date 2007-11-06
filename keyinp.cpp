@@ -141,7 +141,7 @@ bool DoKeyInp ( Uint8 *keystate )
 	else if ( keystate[45]ALT ) c='\\';
 	else if ( keystate[45] ) c='ß';
 
-	// else if(keystate[SDLK_KP0])c='0';
+	else if(keystate[SDLK_KP0])c='0';
 	else if ( keystate[SDLK_KP1] ) c='1';
 	else if ( keystate[SDLK_KP2] ) c='2';
 	else if ( keystate[SDLK_KP3] ) c='3';
@@ -156,8 +156,10 @@ bool DoKeyInp ( Uint8 *keystate )
 	else if ( keystate[SDLK_KP_MULTIPLY] ) c='*';
 	else if ( keystate[SDLK_KP_MINUS] ) c='-';
 	else if ( keystate[SDLK_KP_PLUS] ) c='+';
-	else if ( keystate[SDLK_KP_EQUALS] ) c='=';
-	else
+	// Cut if-else becouse Visual Studio reports an error: "Compilerlimit: Blöcke zu tief geschachtelt"
+	if ( keystate[SDLK_KP_EQUALS] ) c='=';
+
+	if ( c == -1 ) // Default
 	{
 		lc = -1;
 		return false;
