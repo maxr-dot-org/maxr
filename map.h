@@ -25,10 +25,11 @@
 
 // GameObjects Struktur //////////////////////////////////////////////////////
 struct sGameObjects{
-  cVehicle *vehicle;
-  cVehicle *plane;
-  cBuilding *base;
-  cBuilding *top;  
+  cVehicle *vehicle;		// Vehicles on the ground
+  cVehicle *plane;			// Vehicles in the air
+  cBuilding *base;			// Buildings on the ground whitch are under vehciles and top-buildings
+  cBuilding *subbase;		// Normaley base-buildings but in this special case they are under an other base-building (for examble plattform under street)
+  cBuilding *top;			// Normal buildings on the ground
   bool reserviert;
   bool air_reserviert;  
 };

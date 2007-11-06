@@ -1444,7 +1444,7 @@ void cGame::DrawMap ( bool pure )
 	// Die FX-Bottom-Effekte anzeigen:
 	DisplayFXBottom();
 
-	// Base-Buildings malen:
+	// Draw sub- and base buildings:
 	startX= ( hud->OffX-1 ) /64;if ( startX<0 ) startX=0;
 	startY= ( hud->OffY-1 ) /64;if ( startY<0 ) startY=0;
 	startX-=1;if ( startX<0 ) startX=0;
@@ -1460,6 +1460,10 @@ void cGame::DrawMap ( bool pure )
 		{
 			if ( ActivePlayer->ScanMap[pos] )
 			{
+				if ( map->GO[pos].subbase&&map->GO[pos].subbase->PosX==x&&map->GO[pos].subbase->PosY==y )
+				{
+					map->GO[pos].subbase->Draw ( &dest );
+				}
 				if ( map->GO[pos].base&&map->GO[pos].base->PosX==x&&map->GO[pos].base->PosY==y )
 				{
 					map->GO[pos].base->Draw ( &dest );
@@ -4340,7 +4344,7 @@ void cGame::MakeAutosave(void)
 	// Alle Autosaves nach hinten verschieben:
 	for(i = 4; i >= 0; i--)
 	{
-		sztmp = (char *) malloc ( SettingsData.sSavesPath.length() + 1 + strlen( ((string) "autosave" + PATH_DELIMITER).c_str()) + 2);
+		sztmp = (char *) malloc ( SettingsData.sSavesPath.length() + 1 + strlen( ((string) PATH_DELIMITER + "autosave.sav").c_str()) + 2);
 		sprintf(sztmp,"%s%sautosave%d.sav",SettingsData.sSavesPath.c_str(),PATH_DELIMITER,i);
 		filename = sztmp;
 		if( !( FileExists( filename.c_str() ) ) ) continue;

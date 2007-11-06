@@ -2497,7 +2497,7 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&UnitsData.building[BuildingTyp].data.is_base ) break;
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&(UnitsData.building[BuildingTyp].data.is_base&&!UnitsData.building[BuildingTyp].data.is_road) ) break;
 				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!UnitsData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
@@ -2605,7 +2605,7 @@ void cVehicle::ShowBuildMenu ( void )
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
-				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&UnitsData.building[BuildingTyp].data.is_base ) break;
+				if ( game->map->GO[PosX+PosY*game->map->size].base&& ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform||game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) &&(UnitsData.building[BuildingTyp].data.is_base&&!UnitsData.building[BuildingTyp].data.is_road) ) break;
 				if ( ( !game->map->GO[PosX+PosY*game->map->size].base||!game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) &&!UnitsData.building[BuildingTyp].data.is_connector )
 				{
 					if ( game->map->IsWater ( PosX+PosY*game->map->size ) )
@@ -4340,7 +4340,7 @@ bool cVehicle::CanRepair ( int off )
 void cVehicle::LayMine ( void )
 {
 	if ( !data.cargo ) return;
-	if ( game->map->GO[PosX+PosY*game->map->size].base ) return;
+	if ( game->map->GO[PosX+PosY*game->map->size].base && game->map->GO[PosX+PosY*game->map->size].base->data.is_expl_mine) return;
 	if ( data.can_drive==DRIVE_SEA )
 	{
 		game->engine->AddBuilding ( PosX,PosY,UnitsData.building+BNrSeaMine,owner,false );

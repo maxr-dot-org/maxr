@@ -272,8 +272,8 @@ int cMJobs::GetWayCost ( int x,int y,bool *road )
 	if ( plane||ship ) return 2;
 	costs=2;
 	pos=x+y*map->size;
-	if ( map->IsWater ( pos ) ) costs=4;
-else if ( map->GO[pos].base&& ( map->GO[pos].base->data.is_road||map->GO[pos].base->data.is_bridge ) ) {costs=1;*road=true;}
+	if ( map->IsWater ( pos ) && !( map->GO[pos].base && !map->GO[pos].base->data.is_expl_mine ) ) costs=4;
+else if ( ( map->GO[pos].base&& ( map->GO[pos].base->data.is_road||map->GO[pos].base->data.is_bridge ) ) || ( map->GO[pos].subbase && map->GO[pos].subbase->data.is_road ) ) {costs=1;*road=true;}
 	if ( vehicle->data.can_survey&&costs>2 ) costs=2;
 	return costs;
 }
