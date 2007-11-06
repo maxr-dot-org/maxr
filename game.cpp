@@ -2919,7 +2919,11 @@ void MouseMoveCallback ( bool force )
 		// Ggf den AttackCursor neu malen:
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
-			if ( game->SelectedBuilding )
+			if ( game->SelectedVehicle )
+			{
+				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+			}
+			else if ( game->SelectedBuilding )
 			{
 				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
@@ -2932,7 +2936,11 @@ void MouseMoveCallback ( bool force )
 		// Ggf den AttackCursor neu malen:
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
-			if ( game->SelectedBuilding )
+			if ( game->SelectedVehicle )
+			{
+				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+			}
+			else if ( game->SelectedBuilding )
 			{
 				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
