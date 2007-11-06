@@ -670,7 +670,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 		{
 			DELETE_OBJ ( map->GO[off].top,BuildingList )
 			map->GO[off].top=n;
-			if ( !n->data.is_connector&&map->GO[off].base&&map->GO[off].base->data.is_road )
+			if ( !n->data.is_connector&&map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
 				DELETE_OBJ ( map->GO[off].base,BuildingList )
 				map->GO[off].base=NULL;
