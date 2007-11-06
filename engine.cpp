@@ -616,13 +616,21 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 	// Das Building erzeugen:
 	n = p->AddBuilding ( posx,posy,b );
 	// Das Building platzieren:
+	off=posx+map->size*posy;
 	if ( n->data.is_base )
 	{
-		map->GO[posx+map->size*posy].base = n;
+		if(map->GO[off].base)
+		{
+			map->GO[off].subbase = map->GO[off].base;
+			map->GO[off].base = n;
+		}
+		else
+		{
+			map->GO[off].base = n;
+		}
 	}
 	else
 	{
-		off=posx+map->size*posy;
 #define DELETE_OBJ(a,b) if(a){if(a->prev){a->prev->next=a->next;if(a->next)a->next->prev=a->prev;}else{a->owner->b=a->next;if(a->next)a->next->prev=NULL;}if(a->base)a->base->DeleteBuilding(a);delete a;}
 		if ( n->data.is_big )
 		{
@@ -867,7 +875,15 @@ void cEngine::DestroyObject ( int off,bool air )
 		}
 		else
 		{
-			map->GO[off].base=NULL;
+			if(map->GO[off].subbase)
+			{
+				map->GO[off].base = map->GO[off].subbase;
+				map->GO[off].subbase = NULL;
+			}
+			else
+			{
+				map->GO[off].base=NULL;
+			}
 			// Dirt erstellen:
 			if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.costs/2,false );
 		}
