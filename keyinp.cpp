@@ -183,10 +183,17 @@ bool DoKeyInp ( Uint8 *keystate )
 		InputEnter = true;
 		keystate[SDLK_RETURN] = 0;
 	}
-	else if ( c == -2 && InputStr.length() >= 1 )
-		InputStr.erase ( InputStr.length()-1 );
+	else if ( c == -2)
+	{
+		if(InputStr.length() >= 1 )
+		{
+			InputStr.erase ( InputStr.length()-1 );
+		}
+	}
 	else
+	{
 		InputStr += ( char ) c;
+	}
 	lc = c;
 	lasttime=SDL_GetTicks();
 	return true;
