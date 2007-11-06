@@ -636,7 +636,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 		{
 			DELETE_OBJ ( map->GO[off].top,BuildingList )
 			map->GO[off].top=n;
-			if ( map->GO[off].base&&map->GO[off].base->data.is_road )
+			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
 				DELETE_OBJ ( map->GO[off].base,BuildingList )
 				map->GO[off].base = NULL;
@@ -644,7 +644,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 			off++;
 			DELETE_OBJ ( map->GO[off].top,BuildingList )
 			map->GO[off].top=n;
-			if ( map->GO[off].base&&map->GO[off].base->data.is_road )
+			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
 				DELETE_OBJ ( map->GO[off].base,BuildingList )
 				map->GO[off].base=NULL;
@@ -652,7 +652,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 			off+=map->size;
 			DELETE_OBJ ( map->GO[off].top,BuildingList )
 			map->GO[off].top=n;
-			if ( map->GO[off].base&&map->GO[off].base->data.is_road )
+			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
 				DELETE_OBJ ( map->GO[off].base,BuildingList )
 				map->GO[off].base=NULL;
@@ -660,7 +660,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 			off--;
 			DELETE_OBJ ( map->GO[off].top,BuildingList )
 			map->GO[off].top=n;
-			if ( map->GO[off].base&&map->GO[off].base->data.is_road )
+			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
 				DELETE_OBJ ( map->GO[off].base,BuildingList )
 				map->GO[off].base=NULL;
@@ -755,7 +755,7 @@ void cEngine::DestroyObject ( int off,bool air )
 			}
 
 			// Ggf Mine löschen:
-			if ( map->GO[off].base&&map->GO[off].base->owner&&map->GO[off].base->data.is_expl_mine )
+			if ( map->GO[off].base&&map->GO[off].base->owner )
 			{
 				cBuilding *building=map->GO[off].base;
 				if ( building==game->SelectedBuilding ) building->Deselct();
