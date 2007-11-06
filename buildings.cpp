@@ -5195,8 +5195,8 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	if ( v ) t=v->data.hit_points;else t=b->data.hit_points;
 	if ( t )
 	{
-		if ( v ) wc= (int)( ( float ) t/v->data.max_hit_points ) *35;
-		else wc= (int)( ( float ) t/b->data.max_hit_points ) *35;
+		if ( v ) wc= (int)( ( float ) t/v->data.max_hit_points *35 );
+		else wc= (int)( ( float ) t/b->data.max_hit_points *35 );
 	}
 	else
 	{
@@ -5205,8 +5205,8 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go,int can_attack )
 	if ( v ) t=v->CalcHelth ( data.damage );else t=b->CalcHelth ( data.damage );
 	if ( t )
 	{
-		if ( v ) wp= (int)( ( float ) t/v->data.max_hit_points ) *35;
-		else wp= (int)( ( float ) t/b->data.max_hit_points ) *35;
+		if ( v ) wp= (int)( ( float ) t/v->data.max_hit_points *35 );
+		else wp= (int)( ( float ) t/b->data.max_hit_points *35 );
 	}
 	else
 	{
