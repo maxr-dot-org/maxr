@@ -95,7 +95,12 @@ void PlayMusic ( char *file )
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.MusicMute ) return;
 	music_stream = Mix_LoadMUS ( file );
-	if ( !music_stream ) return;
+	if ( !music_stream ) 
+	{
+		cLog::write("failed opening music stream", cLog::eLOG_TYPE_WARNING);
+		cLog::write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
+		return;
+	}
 	Mix_PlayMusic ( music_stream,0 );
 	Mix_VolumeMusic ( SettingsData.MusicVol );
 }
