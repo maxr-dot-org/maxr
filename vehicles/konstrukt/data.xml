@@ -98,7 +98,7 @@
     <Converts_Gold Num="0"/>
     <Needs_Energy Num="0"/>
     <Needs_Oil Num="0"/>
-    <Needs_Metal Num="0"/>
+    <Needs_Metal Num="2"/>
     <Needs_Humans Num="0"/>
     <Mines_Resources Num="0"/>
     <Can_Launch_SRBM YN="No"/>
