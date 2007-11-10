@@ -35,6 +35,7 @@
 #include "fonts.h"
 #include "keys.h"
 #include "vehicles.h"
+#include <sstream>
 
 // Translates the loaded data to the old data structure.
 // This should be just used temporarily while the game doesn't undestand new structure.
@@ -54,7 +55,6 @@ int LoadData ( void * )
 	if(!LoadGraphicToSurface(FontsData.font_big, SettingsData.sFontPath.c_str(), "font_big.pcx")) NECESSARY_FILE_FAILURE
 	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx")) NECESSARY_FILE_FAILURE
 	fonts = new cFonts;
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	cLog::mark();
 	
 	MakeLog(MAXVERSION,false,0);
@@ -719,8 +719,95 @@ int ReadMaxXml()
 		cLog::write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sBuildingsPath = "buildings";
 	}
+	
+	if(SettingsData.bDebug) //Print settingslist to log
+	{
+		stringstream strStream;
+		string sTmp;
+		
+		#define SON "Enabled"
+		#define SOFF "Disabled"
+		cLog::mark();
+		cLog::write ("I read the following settings:", cLog::eLOG_TYPE_DEBUG);
+		strStream << "Screensize    == " << SettingsData.iScreenW << "x" << SettingsData.iScreenH << "x" << SettingsData.iColourDepth << "bpp";
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+	
+		sTmp =  SettingsData.bIntro?SON:SOFF;
+		cLog::write ("Intro         == "+sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bWindowMode?SON:SOFF;
+		cLog::write ("Windowmode    == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bFastMode?SON:SOFF;
+		cLog::write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
+		//cLog::write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bAutoSave?SON:SOFF;
+		cLog::write ("Autosave      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);	
+		sTmp =  SettingsData.bAnimations?SON:SOFF;
+		cLog::write ("Animation     == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bShadows?SON:SOFF;
+		cLog::write ("Shadows       == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bAlphaEffects?SON:SOFF;
+		cLog::write ("Alphaeffect   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bDamageEffects?SON:SOFF;
+		cLog::write ("Damageeffect  == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bDamageEffectsVehicles?SON:SOFF;
+		cLog::write ("Vehicledamage == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bMakeTracks?SON:SOFF;
+		cLog::write ("Vehicletracks == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bShowDescription?SON:SOFF;
+		cLog::write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		cLog::write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
+		
+		strStream << "Scrollspeed   == " << SettingsData.iScrollSpeed;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+	
+		cLog::write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
+		
+		strStream << "Port          == " << SettingsData.iPort;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+		
+		cLog::write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
+	
+		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
+		cLog::write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+	
+		strStream << "Chunksize     == " << SettingsData.iChunkSize;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+	
+		strStream << "Frequency     == " << SettingsData.iFrequency;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+		
+		sTmp =  SettingsData.MusicMute?SON:SOFF;
+		strStream << "Musicvolume   == " << SettingsData.MusicVol << " Mute: " << sTmp;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+		
+		sTmp =  SettingsData.SoundMute?SON:SOFF;
+		strStream << "Soundvolume   == " << SettingsData.SoundVol << " Mute: " << sTmp;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+		
+		sTmp =  SettingsData.VoiceMute?SON:SOFF;
+		strStream << "Voicevolume   == " << SettingsData.VoiceVol << " Mute: " << sTmp;
+		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+		
+		cLog::mark();
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
+	}
 	return 0;
 }
 
@@ -770,7 +857,6 @@ int LoadFonts(const char* path)
 	}
 	else
 	{
-		cLog::write ( "Done", LOG_TYPE_DEBUG );
 		return 1;
 	}
 }
@@ -800,7 +886,6 @@ int LoadEffects(const char* path)
 	LoadEffectAlphaToSurface ( EffectsData.fx_corpse,path,"corpse.pcx",255 );
 	LoadEffectAlphaToSurface ( EffectsData.fx_absorb,path,"absorb.pcx",150 );
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -881,7 +966,6 @@ int LoadMusic(const char* path)
 		MusicFiles->Add ( sTmpString );
 	}
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -924,7 +1008,6 @@ int LoadSounds(const char* path)
 	LoadSoundfile ( SoundData.SNDPanelClose, path, "panel_close.wav" );
 	LoadSoundfile ( SoundData.SNDAbsorb, path, "absorb.wav" );
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -967,7 +1050,6 @@ int LoadVoices(const char* path)
 	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.wav" );
 	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.wav" );
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -1213,7 +1295,6 @@ int LoadGraphics(const char* path)
 
 	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
 
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -1356,7 +1437,6 @@ int LoadTerrain(const char* path)
 		}
 	}
 	delete sections;
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -1735,7 +1815,6 @@ int LoadVehicles()
 	}
 
 	for ( int i = 0 ; i < UnitsData.vehicle_anz; i++ ) UnitsData.vehicle[i].nr = i;
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
@@ -1960,7 +2039,6 @@ int LoadBuildings()
 		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = i;
 		else BNrLandMine = i;
 	}
-	cLog::write ( "Done", LOG_TYPE_DEBUG );
 	return 1;
 }
 
