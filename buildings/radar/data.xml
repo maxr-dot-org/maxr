@@ -29,7 +29,7 @@
   </Defence>
   <Production>
     <Built_Costs Num="18"/>
-    <Built_Costs_Max Num="76"/>
+    <Built_Costs_Max Num="34"/>
     <Is_Produced_by>
       <Unit ID="0 24"/>
     </Is_Produced_by>
