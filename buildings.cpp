@@ -1840,7 +1840,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		if ( x>=44+166&&x<44+223+166&&y>=86+159&&y<86+20+159&&b&&!LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			Transf = Round((x-( 44+166))*(int)(MaxTarget/223.0)-Target);
+			Transf = Round( ( x -( 44+  166 ) ) * ( MaxTarget / 223.0 ) - Target);
 			MakeTransBar ( &Transf,MaxTarget,Target );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1849,16 +1849,16 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		LastB=b;
 	}
 	// Die Images wiederherstellen:
-	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
+	float newzoom = game->hud->Zoom / 64.0;
 
-	ScaleSurfaceAdv2 ( typ->img_org,typ->img,typ->img_org->w* newzoom,typ->img_org->h* newzoom );
+	ScaleSurfaceAdv2 ( typ->img_org,typ->img,( int ) ( typ->img_org->w* newzoom ) ,( int ) ( typ->img_org->h* newzoom ) );
 	if ( pv )
 	{
-		ScaleSurfaceAdv2 ( pv->typ->img_org[0],pv->typ->img[0],pv->typ->img_org[0]->w* newzoom,pv->typ->img_org[0]->h* newzoom );
+		ScaleSurfaceAdv2 ( pv->typ->img_org[0],pv->typ->img[0],( int ) ( pv->typ->img_org[0]->w* newzoom ),( int ) ( pv->typ->img_org[0]->h* newzoom ) );
 	}
 	else
 	{
-		ScaleSurfaceAdv2 ( pb->typ->img_org,pb->typ->img,pb->typ->img_org->w* newzoom,pb->typ->img_org->h* newzoom );
+		ScaleSurfaceAdv2 ( pb->typ->img_org,pb->typ->img,( int ) ( pb->typ->img_org->w* newzoom ),( int ) ( pb->typ->img_org->h* newzoom ) );
 	}
 	Transfer=false;
 }
@@ -3158,7 +3158,7 @@ void cBuilding::ShowUpgrade ( void )
 
 	// Die Images erstellen:
 	images=new TList;
-	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
+	float newzoom = ( game->hud->Zoom/64.0 );
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sUpgradeStruct *n;
@@ -3168,7 +3168,7 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w* newzoom,UnitsData.vehicle[i].img_org[0]->h* newzoom );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ),( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -3199,7 +3199,7 @@ void cBuilding::ShowUpgrade ( void )
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
 		SDL_BlitSurface ( UnitsData.building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w* newzoom,UnitsData.building[i].img_org->h* newzoom );
+		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,( int ) (UnitsData.building[i].img_org->w* newzoom ),( int ) (UnitsData.building[i].img_org->h* newzoom ) );
 		n=new sUpgradeStruct;
 		n->sf=sf;
 		n->id=i;
@@ -5299,7 +5299,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 	// Die Images erstellen:
 	images=new TList;
-	int newzoom = ( int ) ( game->hud->Zoom/64.0 );
+	float newzoom = ( game->hud->Zoom/64.0 );
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sBuildStruct *n;
@@ -5317,7 +5317,7 @@ void cBuilding::ShowBuildMenu ( void )
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( game->ActivePlayer->color,NULL,sf,NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w* newzoom,UnitsData.vehicle[i].img_org[0]->h* newzoom );
+		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],( int ) (UnitsData.vehicle[i].img_org[0]->w* newzoom ),( int ) (UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 		n=new sBuildStruct;
 		n->sf=sf;
 		n->id=i;
