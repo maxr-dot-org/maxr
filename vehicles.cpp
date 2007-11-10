@@ -824,8 +824,11 @@ void cVehicle::RefreshData ( void )
 	// Bauen:
 	if ( IsBuilding&&BuildRounds )
 	{
-		data.cargo-=BuildCosts;
+		
+		data.cargo-=(BuildCosts/BuildRounds);
+		BuildCosts-= (BuildCosts/BuildRounds);
 		if ( data.cargo<0 ) data.cargo=0;
+
 		BuildRounds--;
 		if ( BuildRounds==0&&game->SelectedVehicle==this )
 		{
@@ -846,7 +849,7 @@ void cVehicle::RefreshData ( void )
 		{
 			cMJobs *mj=NULL;
 
-			if ( data.cargo>=BuildCosts*BuildRoundsStart )
+			if ( data.cargo>=BuildCostsStart )
 			{
 
 #define CHECK_PATH_BUILD(a) ((UnitsData.building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(UnitsData.building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||UnitsData.building[BuildingTyp].data.is_connector))
@@ -859,7 +862,7 @@ void cVehicle::RefreshData ( void )
 					BuildPath=false;
 				}
 				{
-					if ( mj&&!mj->finished&&data.cargo>=BuildCosts*BuildRoundsStart ) mj->BuildAtTarget=true;
+					if ( mj&&!mj->finished&&data.cargo>=BuildCostsStart ) mj->BuildAtTarget=true;
 					else
 					{
 						if ( mj ) mj->finished=true;
@@ -2280,7 +2283,9 @@ void cVehicle::ShowBuildMenu ( void )
 	bool UpPressed=false;
 	TList *images;
 	int selected=0,offset=0,BuildSpeed=1;
-	float BuildSpeedD=-1;
+	int iTurboBuildCosts[3];
+	int iTurboBuildRounds[3];// 0 für nicht verfügbare Stufe
+
 
 	BandX=PosX;
 	BandY=PosY;
@@ -2328,9 +2333,9 @@ void cVehicle::ShowBuildMenu ( void )
 		n=new sBuildStruct;
 		n->sf=sf;
 		n->id=i;
-		images->AddBuildStruct ( n );
+		images->AddBuildStruct( n );
 	}
-	ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+	ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
 	DrawBuildButtons ( BuildSpeed );
 
 	if ( data.can_build==BUILD_BIG )
@@ -2385,7 +2390,7 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				offset++;
 				if ( selected<offset ) selected=offset;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -2419,7 +2424,7 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				offset--;
 				if ( selected>=offset+9 ) selected=offset+8;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds  );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -2493,7 +2498,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				if ( BuildSpeed<=0 ) break;
+				if ( BuildSpeed<0 ) break;
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
@@ -2511,37 +2516,10 @@ void cVehicle::ShowBuildMenu ( void )
 					}
 					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 				}
-				if ( BuildSpeed==1 )
-				{
-					BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/2;
-					BuildCosts=owner->BuildingData[images->BuildStructItems[selected]->id].costs/BuildRounds;
-				}
-				else if ( BuildSpeed==2 )
-				{
-					if ( BuildSpeedD<0 )
-					{
-						BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/4;
-						BuildCosts= ( owner->BuildingData[images->BuildStructItems[selected]->id].costs*2 ) /BuildRounds;
-					}
-					else
-					{
-						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
-						BuildCosts= (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs)*(BuildSpeedD)/BuildRounds);
-					}
-				}
-				else
-				{
-					if ( BuildSpeedD<0 )
-					{
-						BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/8;
-						BuildCosts= ( owner->BuildingData[images->BuildStructItems[selected]->id].costs*4 ) /BuildRounds;
-					}
-					else
-					{
-						BuildRounds = (int)Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
-						BuildCosts = (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
-					}
-				}
+
+				BuildRounds = iTurboBuildRounds[BuildSpeed];
+				BuildCosts  = iTurboBuildCosts[BuildSpeed];
+				
 				if ( data.can_build!=BUILD_BIG )
 				{
 					IsBuilding=true;
@@ -2601,7 +2579,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				if ( BuildSpeed<=0 ) break;
+				if ( BuildSpeed<0 ) break;
 				if ( game->map->GO[PosX+PosY*game->map->size].base&&!game->map->GO[PosX+PosY*game->map->size].base->owner ) break;
 				BuildingTyp=images->BuildStructItems[selected]->id;
 
@@ -2620,38 +2598,11 @@ void cVehicle::ShowBuildMenu ( void )
 					else if ( !game->map->IsWater ( PosX+PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge||UnitsData.building[BuildingTyp].data.is_platform ) ) break;
 				}
 
-				if ( BuildSpeed==1 )
-				{
-					BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/2;
-					BuildCosts=owner->BuildingData[images->BuildStructItems[selected]->id].costs/BuildRounds;
-				}
-				else if ( BuildSpeed==2 )
-				{
-					if ( BuildSpeedD<0 )
-					{
-						BuildRounds=owner->BuildingData[images->BuildStructItems[selected]->id].costs/4;
-						BuildCosts= ( owner->BuildingData[images->BuildStructItems[selected]->id].costs*2 ) /BuildRounds;
-					}
-					else
-					{
-						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2 )/BuildSpeedD);
-						BuildCosts= (int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
-					}
-				}
-				else
-				{
-					if ( BuildSpeedD<0 )
-					{
-						BuildRounds = owner->BuildingData[images->BuildStructItems[selected]->id].costs/8;
-						BuildCosts = (owner->BuildingData[images->BuildStructItems[selected]->id].costs*4)/BuildRounds;
-					}
-					else
-					{
-						BuildRounds = Round((owner->BuildingData[images->BuildStructItems[selected]->id].costs/2)/BuildSpeedD);
-						BuildCosts =(int)ceil((owner->BuildingData[images->BuildStructItems[selected]->id].costs )*(BuildSpeedD)/BuildRounds);
-					}
-				}
-				BuildRoundsStart=BuildRounds;
+				BuildRounds = iTurboBuildRounds[BuildSpeed];
+				BuildCosts  = iTurboBuildCosts[BuildSpeed];
+
+				BuildRoundsStart = BuildRounds;
+				BuildCostsStart = BuildCosts;
 				PlaceBand=true;
 				break;
 			}
@@ -2693,67 +2644,36 @@ void cVehicle::ShowBuildMenu ( void )
 				dest.h=scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
-			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds  );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// 1x Button:
-		if ( x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB&&owner->BuildingData[images->BuildStructItems[selected]->id].costs<=data.cargo )
+		if ( (x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB) && (iTurboBuildRounds[0] > 0) )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			BuildSpeed=1;
-			BuildSpeedD=-1;
+			BuildSpeed=0;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// 2x Button:
-		if ( x>=292&&x<292+76&&y>=369&&y<369+22&&b&&!LastB )
+		if ( (x>=292&&x<292+76&&y>=369&&y<369+22&&b&&!LastB) && (iTurboBuildRounds[1] > 0) )
 		{
-			int t=owner->BuildingData[images->BuildStructItems[selected]->id].costs;
-			float g=data.cargo/ ( float ) t;
-			if ( t/4>=1&&t*2<=data.cargo )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				BuildSpeed=2;
-				BuildSpeedD=-1;
-				DrawBuildButtons ( BuildSpeed );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( t/4>1&&t<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/2)
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				BuildSpeed=2;
-				BuildSpeedD=g;
-				DrawBuildButtons ( BuildSpeed );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
+			PlayFX ( SoundData.SNDMenuButton );
+			BuildSpeed=1;
+			DrawBuildButtons ( BuildSpeed );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
 		}
 		// 4x Button:
-		if ( x>=292&&x<292+76&&y>=394&&y<394+22&&b&&!LastB )
+		if ( (x>=292&&x<292+76&&y>=394&&y<394+22&&b&&!LastB) && (iTurboBuildRounds[2] > 0) )
 		{
-			int t=owner->BuildingData[images->BuildStructItems[selected]->id].costs;
-			float g=data.cargo/ ( float ) t;
-			if ( t/8>=1&&t*4<=data.cargo )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				BuildSpeed=4;
-				BuildSpeedD=-1;
-				DrawBuildButtons ( BuildSpeed );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( t/8>1&&t*2<data.cargo&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/4)
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				BuildSpeed=4;
-				BuildSpeedD=g;
-				DrawBuildButtons ( BuildSpeed );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
+			PlayFX ( SoundData.SNDMenuButton );
+			BuildSpeed=2;
+			DrawBuildButtons ( BuildSpeed );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
 		}
 		// Klick in die Liste:
 		if ( x>=490&&x<490+70&&y>=60&&y<60+368&&b&&!LastB )
@@ -2773,7 +2693,7 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed,iTurboBuildCosts,iTurboBuildRounds );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -2795,7 +2715,7 @@ void cVehicle::ShowBuildMenu ( void )
 }
 
 // Zeigt die Liste mit den Images an:
-void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschreibung,int *buildspeed )
+void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschreibung,int *buildspeed, int *iTurboBuildCosts,int *iTurboBuildRounds )
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest,scr,text;
@@ -2868,50 +2788,83 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 				tb->ShowBigDetails();
 				delete tb;
 			}
-			// Die Bauzeiten eintragen:
-			t=owner->BuildingData[ptr->id].costs;
-			if ( data.cargo<t )
+			// calculate building time and costs
+
+			//TODO: check, if the algorithm works also correct, if the building costs are reduced by research
+			iTurboBuildRounds[0] = 0;
+			iTurboBuildRounds[1] = 0;
+			iTurboBuildRounds[2] = 0;
+			
+			//prevent division by zero
+			if (data.iNeeds_Metal == 0) data.iNeeds_Metal = 1;
+
+			//step 1x
+			if (data.cargo >= owner->BuildingData[ptr->id].iBuilt_Costs)
 			{
-				*buildspeed=0;
-				DrawBuildButtons ( 0 );
+				if (*buildspeed == -1) 
+				{
+					*buildspeed = 0;
+				}
+				iTurboBuildCosts[0] = owner->BuildingData[ptr->id].iBuilt_Costs;
+				iTurboBuildRounds[0] = iTurboBuildCosts[0] / data.iNeeds_Metal;
 			}
-			else
+			
+			//step 2x
+			if ((iTurboBuildRounds[0] > 1) && (iTurboBuildCosts[0] + 4 <= owner->BuildingData[ptr->id].iBuilt_Costs_Max) && (data.cargo >= iTurboBuildCosts[0] + 4) )
 			{
-				float g=data.cargo/ ( float ) t;
-				*buildspeed=1;
-				DrawBuildButtons ( 1 );
-				sprintf ( str,"%d",t/2 );
-				fonts->OutTextCenter ( str,389,350,buffer );
-				sprintf ( str,"%d",t );
-				fonts->OutTextCenter ( str,429,350,buffer );
-				if ( t/4>=1&&t*2<=data.cargo )
+				iTurboBuildRounds[1] = iTurboBuildRounds[0];
+				iTurboBuildCosts[1] = iTurboBuildCosts[0];
+				while ( (data.cargo >= iTurboBuildCosts[1] + 4) && (iTurboBuildRounds[1] > 1) )
 				{
-					sprintf ( str,"%d",t/4 );
-					fonts->OutTextCenter ( str,389,375,buffer );
-					sprintf ( str,"%d",t*2 );
-					fonts->OutTextCenter ( str,429,375,buffer );
-					if ( t/8>=1&&t*4<=data.cargo )
-					{
-						sprintf ( str,"%d",t/8 );
-						fonts->OutTextCenter ( str,389,400,buffer );
-						sprintf ( str,"%d",t*4 );
-						fonts->OutTextCenter ( str,429,400,buffer );
-					}
-					else if ( t/8>1&&data.cargo>t*2&&data.cargo==data.max_cargo&& Round((t/2)/g)<t/4)
-					{
-						sprintf ( str,"%d", Round((t/2)/g));
-						fonts->OutTextCenter ( str,389,400,buffer );
-						sprintf ( str,"%d", Round(t*g));
-						fonts->OutTextCenter ( str,429,400,buffer );
-					}
+					iTurboBuildRounds[1]--;
+					iTurboBuildCosts[1]+= 4;
+					if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0]) break;
+					if ( iTurboBuildCosts[1] + 4 > owner->BuildingData[ptr->id].iBuilt_Costs_Max) break;
 				}
-				else if ( t/4>1&&data.cargo>t&&data.cargo==data.max_cargo&& Round((t/2 )/g)<t/2)
+			}
+
+			//step 4x
+			if ((iTurboBuildRounds[1] > 1) && (iTurboBuildCosts[1] + 8 <= owner->BuildingData[ptr->id].iBuilt_Costs_Max) && (data.cargo >= iTurboBuildCosts[1] + 8) )
+			{
+				iTurboBuildRounds[2] = iTurboBuildRounds[1];
+				iTurboBuildCosts[2] = iTurboBuildCosts[1];
+				while ( (data.cargo >= iTurboBuildCosts[2] + 8) && (iTurboBuildRounds[2] > 1) )
 				{
-					sprintf ( str,"%d", Round((t/2 )/g));
-					fonts->OutTextCenter ( str,389,375,buffer );
-					sprintf ( str,"%d", Round(t*g));
-					fonts->OutTextCenter ( str,429,375,buffer );
+					iTurboBuildRounds[2]--;
+					iTurboBuildCosts[2]+=8;
+					if (iTurboBuildCosts[2] + 8 > owner->BuildingData[ptr->id].iBuilt_Costs_Max) break;
 				}
+			}
+
+			//reduce buildspeed, if necesary
+			if ( (*buildspeed == 2) && (iTurboBuildRounds[2] == 0) ) *buildspeed = 1;
+			if ( (*buildspeed == 1) && (iTurboBuildRounds[1] == 0) ) *buildspeed = 0;
+			if ( (*buildspeed == 0) && (iTurboBuildRounds[0] == 0) ) *buildspeed = -1;
+
+			
+			// Die Bauzeiten eintragen:
+
+			DrawBuildButtons(*buildspeed);
+			
+			sprintf ( str,"%d",owner->BuildingData[ptr->id].iBuilt_Costs / data.iNeeds_Metal );
+			fonts->OutTextCenter ( str,389,350,buffer );
+			sprintf ( str,"%d",owner->BuildingData[ptr->id].iBuilt_Costs );
+			fonts->OutTextCenter ( str,429,350,buffer );
+			
+			if (iTurboBuildRounds[1] > 0)
+			{
+				sprintf ( str,"%d",iTurboBuildRounds[1] );
+				fonts->OutTextCenter ( str,389,375,buffer );
+				sprintf ( str,"%d",iTurboBuildCosts[1] );
+				fonts->OutTextCenter ( str,429,375,buffer );
+			}
+
+			if (iTurboBuildRounds[2] > 0)
+			{
+				sprintf ( str,"%d",iTurboBuildRounds[2] );
+				fonts->OutTextCenter ( str,389,400,buffer );
+				sprintf ( str,"%d",iTurboBuildCosts[2] );
+				fonts->OutTextCenter ( str,429,400,buffer );
 			}
 		}
 		// Text ausgeben:
@@ -2937,7 +2890,7 @@ void cVehicle::DrawBuildButtons ( int speed )
 	dest.w=scr.w=78;
 	dest.h=scr.h=23;
 	dest.x=292;dest.y=345;
-	if ( speed==1 )
+	if ( speed==0 )
 	{
 		scr.x=39;scr.y=126;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -2947,7 +2900,7 @@ void cVehicle::DrawBuildButtons ( int speed )
 		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=24;
-	if ( speed==2 )
+	if ( speed==1 )
 	{
 		scr.x=118;scr.y=126;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -2957,7 +2910,7 @@ void cVehicle::DrawBuildButtons ( int speed )
 		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=25;
-	if ( speed==4 )
+	if ( speed==2 )
 	{
 		scr.x=216;scr.y=106;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );

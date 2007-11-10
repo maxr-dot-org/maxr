@@ -91,9 +91,10 @@ public:
   int ditherX,ditherY; // Dithering für Flugzeuge
   bool IsBuilding;  // Gibt an ob was gebaut wird
   int BuildingTyp;  // Gibt an, was gebaut wird
-  int BuildCosts;   // Die Baukosten pro Runde
+  int BuildCosts;   // Die verbleibenden Baukosten
   int BuildRounds;  // Die verbleibenden Baurunden
-  int BuildRoundsStart; // Startwert der Baurunden
+  int BuildRoundsStart; // Startwert der Baurunden (fürs Pfadbauen)
+  int BuildCostsStart;  // Startwert der Baukosten (fürs Pfadbauen)
   bool PlaceBand;   // Gibt an, ob grad ein Band platziert wird
   int BandX,BandY;  // X,Y Position für das Band
   int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
@@ -160,7 +161,7 @@ public:
   void DrawAttackCursor(struct sGameObjects *go,int can_attack);
   int CalcHelth(int damage);
   void ShowBuildMenu(void);
-  void ShowBuildList(TList *list,int selected,int offset,bool beschreibung,int *buildspeed);
+  void ShowBuildList(TList *list,int selected,int offset,bool beschreibung,int *buildspeed, int *iTurboBuildCosts, int *TurboBuildRounds );
   void DrawBuildButtons(int speed);
   void FindNextband(void);
   void DoSurvey(void);

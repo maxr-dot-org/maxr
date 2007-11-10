@@ -154,6 +154,7 @@ void cEngine::Run ( void )
 			{
 				v->IsBuilding=true;
 				v->BuildRounds=v->BuildRoundsStart;
+				v->BuildCosts=v->BuildCostsStart;
 				if ( game->SelectedVehicle==v )
 				{
 					// Den Building Sound machen:
