@@ -66,7 +66,7 @@ cBuilding::cBuilding ( sBuilding *b,cPlayer *Owner,cBase *Base )
 	LoadActive=false;
 	ActivatingVehicle=false;
 	RepeatBuild=false;
-	if ( data.is_expl_mine&&owner!=game->ActivePlayer )
+	if ( data.is_expl_mine )
 	{
 		detected=false;
 	}

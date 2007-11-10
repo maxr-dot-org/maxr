@@ -2929,7 +2929,7 @@ void MouseMoveCallback ( bool force )
 			}
 		}
 	}
-	else if ( GO->base!=NULL&&GO->base->owner&&GO->base->detected )
+	else if ( GO->base!=NULL&&GO->base->owner&&(GO->base->owner == game->ActivePlayer || GO->base->detected) )
 	{
 		game->OverObject=GO;
 		fonts->OutTextCenter ( ( char * ) GO->base->name.c_str(),343+106, ( SettingsData.iScreenH-21 ) +4,GraphicsData.gfx_hud );
