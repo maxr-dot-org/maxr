@@ -2050,21 +2050,29 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				// Doppelklick prüfen:
 				if ( last_selected==nr&&selection->HUpItems[selected]->costs<=player->Credits )
 				{
-					sLanding *n;
-					n=new sLanding;
-					n->cargo=0;
-					n->sf=selection->HUpItems[selected]->sf;
-					n->id=selection->HUpItems[selected]->id;
-					n->costs=selection->HUpItems[selected]->costs;
-					LandingList->AddLanding ( n );
-					LandingSelected=LandingList->Count-1;
-					while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
+					// Don't add buildings, humans, planes, etc...
+					if ( selection->HUpItems[selected]->vehicle &&
+						!UnitsData.vehicle[selection->HUpItems[selected]->id].data.is_human &&
+						!UnitsData.vehicle[selection->HUpItems[selected]->id].data.is_alien &&
+						!(UnitsData.vehicle[selection->HUpItems[selected]->id].data.can_drive == DRIVE_AIR) &&
+						!(UnitsData.vehicle[selection->HUpItems[selected]->id].data.can_drive == DRIVE_SEA) )
+					{
+						sLanding *n;
+						n=new sLanding;
+						n->cargo=0;
+						n->sf=selection->HUpItems[selected]->sf;
+						n->id=selection->HUpItems[selected]->id;
+						n->costs=selection->HUpItems[selected]->costs;
+						LandingList->AddLanding ( n );
+						LandingSelected=LandingList->Count-1;
+						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
 
-					if ( LandingSelected<0 ) LandingSelected=0;
-					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
-					player->Credits-=selection->HUpItems[selected]->costs;
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
-					ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
+						if ( LandingSelected<0 ) LandingSelected=0;
+						ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+						player->Credits-=selection->HUpItems[selected]->costs;
+						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
+					}
 				}
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
