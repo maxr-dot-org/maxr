@@ -990,8 +990,8 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			// Log-Menü aufrufen...
-			game->AddMessage ( "what ever..." );
+			//TODO: Log-Menü aufrufen...
+			game->AddMessage ( lngPack.Translate( "Text~Error_Messages~INFO_Not_Implemented") );
 
 			LogButton ( false );
 		}
@@ -1565,14 +1565,14 @@ void cHud::MakeMeMyEnd ( void )
 	if ( game->engine->CheckVehiclesMoving ( false ) )
 	{
 		EndeButton ( false );
-		game->AddMessage ( "Warten Sie bis alle Bewegungen abgeschlossen sind" );
+		game->AddMessage ( lngPack.Translate( "Text~Comp~Turn_Wait") );
 	}
 	else
 	{
 //    if(game->engine->DoEndActions()&&(!game->engine->com||game->engine->com->server)){
 		if ( game->engine->DoEndActions() )
 		{
-			game->AddMessage ( "Verbleibende Bewegungen werden durchgeführt" );
+			game->AddMessage ( lngPack.Translate( "Text~Comp~Turn_Automove") );
 			game->WantToEnd=true;
 			if ( !game->HotSeat )
 				Ende=true;
