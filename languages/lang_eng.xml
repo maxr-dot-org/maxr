@@ -165,12 +165,15 @@
 			<Attacked ENG="is under attack"/>
 			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost."/>
 			<Turn_Start ENG="Start turn"/>
+			<Turn_Wait ENG="Please wait until all movements are completed"/>
+			<Turn_Automove ENG="Executing remaining movements"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map"/>
 			<INFO_Language_initialised ENG="Language is now initialised"/>
+			<INFO_Not_Implemented ENG="Not yet implemented"/>
 		</Error_Messages>
 	</Text>
 	<Units>
