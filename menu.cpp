@@ -5761,7 +5761,7 @@ int ShowDateiMenu ( void )
 	// Den Text anzeigen:
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),320,12,buffer );
 	// Buttons setzen;
-	PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(),353,438,2,false );
+	PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,false );
 	PlaceSmallMenuButton ( "? ",464,438,false );
 	PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,false );
 	scr.y=40;
@@ -5849,7 +5849,7 @@ int ShowDateiMenu ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(),353,438,2,true );
+				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5861,7 +5861,7 @@ int ShowDateiMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(),353,438,2,false );
+			PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;

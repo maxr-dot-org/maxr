@@ -574,7 +574,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	if ( v->owner!=game->ActivePlayer&&game->ActivePlayer->ScanMap[ToX+ToY*map->size]&&!game->ActivePlayer->ScanMap[FromX+FromY*map->size]&&v->detected )
 	{
 		char str[50];
-		sprintf ( str,"%s entdeckt",v->name.c_str() );
+		sprintf ( str,"%s %s",v->name.c_str(), lngPack.Translate( "Text~Comp~Detected").c_str() );
 		game->AddCoords ( str,v->PosX,v->PosY );
 		if ( random ( 2,0 ) ==0 ) PlayVoice ( VoiceData.VOIDetected1 );
 		else PlayVoice ( VoiceData.VOIDetected2 );
@@ -907,7 +907,9 @@ void cEngine::CheckDefeat ( void )
 		p=game->PlayerList->PlayerItems[i];
 		if ( p->IsDefeated() )
 		{
-			sTmpString = "Spieler " + p->name + " besiegt!";
+			sTmpString = lngPack.Translate( "Text~Game_MP~Title_Player") + " ";
+			sTmpString += p->name + " ";
+			sTmpString += lngPack.Translate( "Text~Comp~Defeated") + "!";
 			game->AddMessage ( (char *)sTmpString.c_str() );
 
 			if ( game->HotSeat )
@@ -982,7 +984,7 @@ void cEngine::MakeRundenstartReport ( void )
 	char sztmp[32];
 	char str[100];
 	int anz;
-	sprintf ( str,"Beginnen Sie Runde %d",game->Runde );
+	sprintf ( str,"%s %d",lngPack.Translate( "Text~Comp~Turn_Start").c_str(), game->Runde );
 	game->AddMessage ( str );
 
 	anz=0;
@@ -1016,12 +1018,12 @@ void cEngine::MakeRundenstartReport ( void )
 	}
 	if ( anz==1 )
 	{
-		Report+=" wurde fertiggestellt.";
+		Report+=" "+lngPack.Translate( "Text~Comp~Finished") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartOne );
 	}
 	else
 	{
-		Report+=" wurden fertiggestellt.";
+		Report+=" "+lngPack.Translate( "Text~Comp~Finished2") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;

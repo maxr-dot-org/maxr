@@ -26,7 +26,7 @@
 #include "sound.h"
 #include "menu.h"
 #include "pcx.h"
-
+//TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
 // Zeigt einen Ja/Nein Dialog an:
 bool ShowYesNo(string text){
   int b,x,y,lx=0,ly=0,lb=0;
@@ -46,8 +46,8 @@ bool ShowYesNo(string text){
   dest.w=300;
   dest.h=231;
   SDL_BlitSurface(GraphicsData.gfx_dialog,NULL,buffer,&dest);
-  PlaceSmallButton("Ja",640/2-300/2+80,480/2-231/2+150,false);
-  PlaceSmallButton("Nein",640/2-300/2+80,480/2-231/2+185,false);
+  PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+150,false);
+  PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_No").c_str(),640/2-300/2+80,480/2-231/2+185,false);
   dest.x+=20;dest.w-=40;
   dest.y+=20;dest.h-=150;
   fonts->OutTextBlock((char *) text.c_str(),dest,buffer);
@@ -75,7 +75,7 @@ bool ShowYesNo(string text){
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+150&&y<480/2-231/2+150+29){
       if(b&&!lb){
         PlayFX(SoundData.SNDHudButton);
-        PlaceSmallButton("Ja",640/2-300/2+80,480/2-231/2+150,true);
+        PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+150,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
         ret=true;
@@ -86,7 +86,7 @@ bool ShowYesNo(string text){
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
         PlayFX(SoundData.SNDHudButton);
-        PlaceSmallButton("Nein",640/2-300/2+80,480/2-231/2+185,true);
+        PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_No").c_str(),640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
         ret=false;
@@ -120,7 +120,7 @@ int ShowNumberInput(string text){
   dest.w=300;
   dest.h=231;
   SDL_BlitSurface(GraphicsData.gfx_dialog,NULL,buffer,&dest);
-  PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,false);
+  PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+185,false);
   dest.x+=20;dest.w-=40;
   dest.y+=20;dest.h-=150;
   fonts->OutTextBlock((char *) text.c_str(),dest,buffer);
@@ -169,7 +169,7 @@ int ShowNumberInput(string text){
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
         PlayFX(SoundData.SNDHudButton);
-        PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,true);
+        PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
         break;
@@ -210,7 +210,7 @@ void ShowOK(string text,bool pure){
   dest.w=300;
   dest.h=231;
   SDL_BlitSurface(GraphicsData.gfx_dialog,NULL,buffer,&dest);
-  PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,false);
+  PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+185,false);
   dest.x+=20;dest.w-=40;
   dest.y+=20;dest.h-=150;
   fonts->OutTextBlock((char *) text.c_str(),dest,buffer);
@@ -238,7 +238,7 @@ void ShowOK(string text,bool pure){
     if(x>=640/2-300/2+80&&x<640/2-300/2+80+150&&y>=480/2-231/2+185&&y<480/2-231/2+185+29){
       if(b&&!lb){
         PlayFX(SoundData.SNDHudButton);
-        PlaceSmallButton("OK",640/2-300/2+80,480/2-231/2+185,true);
+        PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Yes").c_str(),640/2-300/2+80,480/2-231/2+185,true);
         SHOW_SCREEN
         mouse->draw(false,screen);
         break;

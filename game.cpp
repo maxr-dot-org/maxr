@@ -732,7 +732,7 @@ int cGame::CheckUser ( void )
 	}
 	else
 	{
-		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( "Wirklich beenden?\n\nAlle nicht gespeicherten Spieldaten gehen dabei verloren." ) )
+		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.Translate( "Text~Comp~End_Game") ) )
 		{
 			game->DrawMap ( false );
 			SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
@@ -3897,7 +3897,7 @@ void cGame::ShowDateiMenu ( void )
 	// Buttons setzen:
 	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Save").c_str(),132,438,0,false );
 	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Exit").c_str(),242,438,1,false );
-	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,false );
+	PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(),353,438,2,false );
 	PlaceSmallMenuButton ( "? ",464,438,false );
 	scr.y=40;
 	scr.w=dest.w=28;
@@ -4143,7 +4143,7 @@ void cGame::ShowDateiMenu ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,true );
+				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(),353,438,2,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -4155,7 +4155,7 @@ void cGame::ShowDateiMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(),353,438,2,false );
+			PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(),353,438,2,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
