@@ -50,6 +50,8 @@
 			<Button_Exit ENG="Exit" localized="Beenden"/>
 			<Button_Back ENG="Back" localized="Zurück"/>
 			<Button_OK ENG="OK" localized="Weiter"/>
+			<Button_Yes ENG="Yes" localized="Ja"/>
+			<Button_No ENG="No" localized="Nein"/>
 			<Button_TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
 			<Button_TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
 			<Button_HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
@@ -156,7 +158,13 @@
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
+			<Defeated ENG="defeated" localized="besiegt"/>
+			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
+			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
+			<Detected ENG="detected" localized="entdeckt"/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
+			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Wirklich beenden?\n\nNicht gespeicherte Spieldaten gehen dabei verloren."/>
+			<Turn_Start ENG="Start turn" localized="Starten Sie Runde"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

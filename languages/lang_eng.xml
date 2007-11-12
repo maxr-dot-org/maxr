@@ -50,6 +50,8 @@
 			<Button_Exit ENG="Exit"/>
 			<Button_Back ENG="Back"/>
 			<Button_OK ENG="OK"/>
+			<Button_Yes ENG="Yes"/>
+			<Button_No ENG="No"/>
 			<Button_TCPIP_Host ENG="TCP/IP Host"/>
 			<Button_TCPIP_Client ENG="TCP/IP Client"/>
 			<Button_HotSeat_New ENG="New Hot Seat"/>
@@ -156,7 +158,13 @@
 			<Energy_Optimize ENG="Energygeneration optimized"/>
 			<Cheat ENG="used cheat"/>
 			<Destroyed ENG="destroyed"/>
+			<Defeated ENG="defeated"/>
+			<Finished ENG="is finished"/>
+			<Finished2 ENG="are finished"/>
+			<Detected ENG="detected"/>
 			<Attacked ENG="is under attack"/>
+			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost."/>
+			<Turn_Start ENG="Start turn"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
