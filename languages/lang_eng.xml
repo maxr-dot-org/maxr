@@ -47,6 +47,7 @@
 			<Button_Multi_Player ENG="Multiplayer"/>
 			<Button_Map_Editor ENG="Mapeditor (*)"/>
 			<Button_Credits ENG="Credits (*)"/>
+			<Button_Mani ENG="Manifestation"/>
 			<Button_Exit ENG="Exit"/>
 			<Button_Back ENG="Back"/>
 			<Button_OK ENG="OK"/>

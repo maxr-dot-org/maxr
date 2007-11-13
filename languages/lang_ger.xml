@@ -47,6 +47,7 @@
 			<Button_Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
 			<Button_Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
 			<Button_Credits ENG="Credits (*)" localized="Credits (*)"/>
+			<Button_Mani ENG="Manifestation" localized="Hinweise"/>
 			<Button_Exit ENG="Exit" localized="Beenden"/>
 			<Button_Back ENG="Back" localized="Zurück"/>
 			<Button_OK ENG="OK" localized="Weiter"/>
