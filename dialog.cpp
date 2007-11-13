@@ -400,15 +400,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	//draw left arrow "up"
 	rArrowUp.x = screen->w / 2 - SfDialog->w / 2 + 241;
 	rArrowUp.y = screen->h / 2 - SfDialog->h / 2 + 187;
-	rArrowUp.w = 18; //TODO: read gfx-size here
-	rArrowUp.h = 17; //TODO: read gfx-size here
+	rArrowUp.w = 18;
+	rArrowUp.h = 17;
 	drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); //up is deselected now since not usable at start here (index already 0)
 
 	//draw right arrow "down"
 	rArrowDown.x = screen->w / 2 - SfDialog->w / 2 + 261;
 	rArrowDown.y = screen->h / 2 - SfDialog->h / 2 + 187;
-	rArrowDown.w = 18; //TODO: read gfx-size here
-	rArrowDown.h = 17; //TODO: read gfx-size here
+	rArrowDown.w = 18;
+	rArrowDown.h = 17;
 	//drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //uncommented since we want Up-Arrow to be active at start
 	
 	SHOW_SCREEN
@@ -446,7 +446,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 		{
 			if ( b && !lb )
 			{
-				PlayFX ( SoundData.SNDHudButton );
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 		
@@ -454,11 +453,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				{
 					case 1 : 
 						index = 0; 
+						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP);
 						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
 						break;
 					case 2 : 
 						index = 1; 
+						PlayFX ( SoundData.SNDHudButton );
 						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
 						break;
 					default: //should not happen
@@ -476,7 +477,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 		{
 			if ( b && !lb )
 			{
-				PlayFX ( SoundData.SNDHudButton );
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
@@ -484,10 +484,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				{
 					case 0 : 
 						index = 1;
+						PlayFX ( SoundData.SNDHudButton );
 						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
 						break;
 					case 1 : 
 						index = 2;
+						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
 						break;						
