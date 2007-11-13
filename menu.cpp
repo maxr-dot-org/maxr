@@ -55,6 +55,7 @@ void EnterMenu ( bool limited )
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),390,190+35,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ).c_str(),390,190+35*2,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ).c_str(),390,190+35*3,false );
+	PlaceButton ( "Hinweise",390,190+35*4,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ).c_str(),390,190+35*5,false );
 
 	ShowInfo();
@@ -101,7 +102,7 @@ void ShowInfo ( void )
 void ExitMenu ( void )
 {
 //  SDL_FreeSurface(TmpSf);
-	SDL_FillRect ( GraphicsData.gfx_shadow,NULL,0x0 );
+	SDL_FillRect ( GraphicsData.gfx_shadow,NULL,(buffer->format, 0, 0, 0)  );
 	SDL_SetAlpha ( GraphicsData.gfx_shadow,SDL_SRCALPHA,50 );
 }
 
@@ -200,7 +201,7 @@ void PlaceSelectText ( const char *str,int x,int y,bool checked,bool center )
 // Zeigt das Hauptmenü an:
 void RunMainMenu ( void )
 {
-	bool SPPressed=false,MPPRessed=false,MEPressed=false,CrPressed=false,BePressed=false;
+	bool SPPressed=false,MPPRessed=false,MEPressed=false,CrPressed=false,BePressed=false,LiPressed=false;
 	bool EscHot=true;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
@@ -372,6 +373,35 @@ void RunMainMenu ( void )
 			mouse->draw ( false,screen );
 		}
 
+		//Licence
+		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*4&&mouse->y<190+35*4+29 )
+		{
+			if ( b&&!lb )
+			{
+				LiPressed=true;
+				PlayFX ( SoundData.SNDMenuButton );
+				PlaceButton ( "Hinweise",390,190+35*4,true );
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+			}
+			else if ( !b&&LiPressed )
+			{
+				mouse->draw ( false,screen );
+				SHOW_SCREEN
+				ShowLicence();
+				SHOW_SCREEN
+				LiPressed=false;
+				CrPressed=false;
+			}
+		}
+		else if ( CrPressed )
+		{
+			CrPressed=false;
+			PlaceButton ( "Hinweise",390,190+35*4,false );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		
 		// Beenden:
 		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*5&&mouse->y<190+35*5+29 )
 		{

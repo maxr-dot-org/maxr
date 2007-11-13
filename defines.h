@@ -47,6 +47,7 @@
 	#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
 	#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
 	#define GFXOD_MULT          "gfx_od\\mult.pcx"
+	#define GFXOD_DIALOG4		"gfx\\dialog4.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #else
 	#ifndef PATH_DELIMITER
@@ -61,6 +62,7 @@
 	#define GFXOD_PLANET_SELECT "gfx_od//planet_select.pcx"
 	#define GFXOD_HANGAR        "gfx_od//hangar.pcx"
 	#define GFXOD_MULT          "gfx_od//mult.pcx"
+	#define GFXOD_DIALOG4		"gfx//dialog4.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #endif
 

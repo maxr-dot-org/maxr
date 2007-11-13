@@ -618,7 +618,7 @@ void cPlayer::DoResearch ( void )
 				double a,b,c,d;
 				int x;
 
-				switch ( i )
+				switch ( i ) //TODO: translate stuff
 				{
 					case 0:
 						game->AddMessage ( "Forschung 'Angriff' abgeschlossen." );

@@ -26,5 +26,6 @@ void ShowDialogList(TList *list,int offset);
 bool ShowYesNo(string text);
 int ShowNumberInput(string text);
 void ShowOK(string text,bool pure=false);
+void ShowLicence();
 
 #endif

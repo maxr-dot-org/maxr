@@ -137,7 +137,7 @@ void showGameWindow()
 	
 	screen=SDL_SetVideoMode ( buffer->w,buffer ->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
 	
-	SDL_FillRect ( buffer,NULL,0 );
+	SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
 }
 
