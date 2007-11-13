@@ -27,5 +27,12 @@ bool ShowYesNo(string text);
 int ShowNumberInput(string text);
 void ShowOK(string text,bool pure=false);
 void ShowLicence();
+void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
+
+enum ARROW_TYPE
+{
+	ARROW_TYPE_UP = 0,
+	ARROW_TYPE_DOWN = 1,
+};
 
 #endif

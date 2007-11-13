@@ -27,6 +27,7 @@
 #include "menu.h"
 #include "pcx.h"
 #include "files.h"
+#include "log.h"
 //TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
 // Zeigt einen Ja/Nein Dialog an:
 bool ShowYesNo ( string text )
@@ -325,13 +326,24 @@ void ShowOK ( string text, bool pure )
 		game->fDrawMap = true;
 }
 
+/** shows licence infobox on screen (don't call this within game since I this doesn't care about ongoing engine 
+*@author beko
+*/
 void ShowLicence ()
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0, index=0;
 	string sLicence1;
 	string sLicence2;
 	string sLicence3;
-
+	SDL_Rect rDialogOnScreen; //dialog blitted on the screen
+	SDL_Rect rDialog; //our dialog
+	SDL_Rect rDialogBoxBlack; //spot to draw text inside
+	SDL_Rect rDialogBoxBlackOffset = {0,0,0,0}; //for redrawing only the black part PLUS buttons
+	SDL_Rect rArrowUp;
+	SDL_Rect rArrowDown;
+	SDL_Surface *SfDialog;
+	SDL_Surface *SfButton;
+	
 	sLicence1 = "\
                M.A.X. Reloaded\n\
 Copyright (C) 2007  by it's authors\n\
@@ -340,23 +352,20 @@ This program is free software; you can redistribute it and/or modify \
 it under the terms of the GNU General Public License as published by \
 the Free Software Foundation; either version 2 of the License, or \
 (at your option) any later version.";
-sLicence2 = "This program is distributed in the hope that it will be useful, \
+sLicence2 = "\
+               M.A.X. Reloaded\n\
+Copyright (C) 2007  by it's authors\n\n\
+This program is distributed in the hope that it will be useful, \
 but WITHOUT ANY WARRANTY; without even the implied warranty of \
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
 GNU General Public License for more details.";
-sLicence3="You should have received a copy of the GNU General Public License \
+sLicence3="\
+               M.A.X. Reloaded\n\
+Copyright (C) 2007  by it's authors\n\n\
+You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
-	
-	SDL_Rect dest;
-	SDL_Rect rDialogOnScreen;
-	SDL_Rect rDialog;
-	SDL_Rect rDialogBoxBlack;
-	SDL_Rect rDialogBoxBlackOffset = {0,0,0,0};
-	SDL_Rect rArrowUp;
-	SDL_Rect rArrowDown;
-	SDL_Surface *SfDialog;
-	SDL_Surface *SfButton;
+
 	
 	mouse->SetCursor ( CHand );
 	SDL_BlitSurface ( screen, NULL, buffer, NULL ); //write screen to buffer for proper background "picture"
@@ -366,61 +375,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG4, SfDialog ); //load dialog4.pxc
 	}
-	SfButton = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 17, 17, 32, 0, 0, 0, 0 );
-	//PlaceMenuButton
 	
-	rDialog.x = dest.x = screen->w / 2 - SfDialog->w / 2;
-	rDialog.y = dest.y = screen->h / 2 - SfDialog->h / 2;
-	rDialog.w = dest.w = SfDialog->w;
-	rDialog.h = dest.h = SfDialog->h;
-	rDialogOnScreen.x = dest.x + 32; rDialogBoxBlack.x=32;
-	rDialogOnScreen.w = dest.w = 232; rDialogBoxBlack.w=232;
-	rDialogOnScreen.y = dest.y + 28; rDialogBoxBlack.y=28;
-	rDialogOnScreen.h = dest.h = 142; rDialogBoxBlack.h=142;
+	//set some rects
+	rDialog.x = screen->w / 2 - SfDialog->w / 2;
+	rDialog.y = screen->h / 2 - SfDialog->h / 2;
+	
+	rDialogOnScreen.x = rDialog.x + 32; 
+	rDialogBoxBlack.x=32;
+	rDialogOnScreen.w = 232; 
+	rDialogBoxBlack.w=SfDialog->w-32;
+	rDialogOnScreen.y = rDialog.y + 28; 
+	rDialogBoxBlack.y=28;
+	rDialogOnScreen.h = 142; 
+	rDialogBoxBlack.h=SfDialog->h-28;
+	
 	rDialogBoxBlackOffset.x = screen->w / 2 - SfDialog->w / 2 + 32;
-	rDialogBoxBlackOffset.y = dest.y = screen->h / 2 - SfDialog->h / 2 + 28; //w, h not needed since SDL_BlitSurface ignores these for destination rect
+	rDialogBoxBlackOffset.y = screen->h / 2 - SfDialog->h / 2 + 28; //w, h not needed since SDL_BlitSurface ignores these for destination rect
 	
+	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
-	
 	fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
 	
-	
 	//draw left arrow "up"
-	dest.x = rDialog.x + 242;
-	dest.y = rDialog.y + 187;
-	dest.w = SfDialog->w;
-	dest.h = SfDialog->h;
-	SDL_BlitSurface ( SfButton, NULL, buffer, &dest );
+	rArrowUp.x = screen->w / 2 - SfDialog->w / 2 + 241;
+	rArrowUp.y = screen->h / 2 - SfDialog->h / 2 + 187;
+	rArrowUp.w = 18; //TODO: read gfx-size here
+	rArrowUp.h = 17; //TODO: read gfx-size here
+	drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); //up is deselected now since not usable at start here (index already 0)
+
 	//draw right arrow "down"
-	dest.x = rDialog.x + 262;
-	SDL_BlitSurface ( SfButton, NULL, buffer, &dest );
+	rArrowDown.x = screen->w / 2 - SfDialog->w / 2 + 261;
+	rArrowDown.y = screen->h / 2 - SfDialog->h / 2 + 187;
+	rArrowDown.w = 18; //TODO: read gfx-size here
+	rArrowDown.h = 17; //TODO: read gfx-size here
+	//drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //uncommented since we want Up-Arrow to be active at start
 	
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
-	
 
-	rArrowUp.x = screen->w / 2 - SfDialog->w / 2 + 242;
-	rArrowUp.y = screen->h / 2 - SfDialog->h / 2 + 187;
-	rArrowUp.w = 17; //TODO: read gfx-size here
-	rArrowUp.h = 17; //TODO: read gfx-size here
-	
-	rArrowDown.x = screen->w / 2 - SfDialog->w / 2 + 262;
-	rArrowDown.y = screen->h / 2 - SfDialog->h / 2 + 187;
-	rArrowDown.w = 17; //TODO: read gfx-size here
-	rArrowDown.h = 17; //TODO: read gfx-size here
-		
-	dest.x = screen->w / 2 - SfDialog->w / 2;
-	dest.y = screen->h / 2 - SfDialog->h / 2;
-	dest.w = SfDialog->w;
-	dest.h = SfDialog->h;
 
 	while ( 1 )
 	{
-		// Eingaben holen:
-		SDL_PumpEvents();
-		// Die Maus:
-		mouse->GetPos();
+		SDL_PumpEvents(); //get hid-input
+		mouse->GetPos(); //get mouseposition
 		b = mouse->GetMouseButton();
 		x = mouse->x; y = mouse->y;
 
@@ -430,7 +428,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 		}
 
 		// OK Button:
-		if ( x >= dest.x + 80 && x < dest.x + 80 + 150 && y >= dest.y + 185 && y < dest.y + 185 + 29 )
+		if ( x >= rDialog.x + 80 && x < rDialog.x + 80 + 150 && y >= rDialog.y + 185 && y < rDialog.y + 185 + 29 )
 		{
 			if ( b && !lb )
 			{
@@ -444,26 +442,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			}
 		}
 		//button up (left)
-		else if ( x >= dest.x + 242 && x < dest.x + 242 + 17 && y >= dest.y + 187 && y < dest.y + 187 + 17 )
+		else if ( x >= rDialog.x + 241 && x < rDialog.x + 241 + 18 && y >= rDialog.y + 187 && y < rDialog.y + 187 + 17 )
 		{
 			if ( b && !lb )
 			{
-				mouse->draw ( false, screen );
 				PlayFX ( SoundData.SNDHudButton );
-				SDL_FillRect ( buffer,&rArrowUp,0x00C000 ); //TODO: menugraphic arrow up here
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
-								
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+		
 				switch(index)
 				{
 					case 1 : 
 						index = 0; 
+						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP);
 						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
 						break;
 					case 2 : 
 						index = 1; 
 						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
 						break;
-					default: fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
+					default: //should not happen
+						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
+						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); 
+						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
 				}
 								
 				SHOW_SCREEN
@@ -471,13 +472,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			}
 		}
 		//button down (right)
-		else if ( x >= dest.x + 262 && x < dest.x + 262 + 17 && y >= dest.y + 187 && y < dest.y + 187 + 17 )
+		else if ( x >= rDialog.x + 261 && x < rDialog.x + 261 + 18 && y >= rDialog.y + 187 && y < rDialog.y + 187 + 17 )
 		{
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				SDL_FillRect ( buffer,&rArrowDown,0x00C000 );//TODO: menugraphic arrow down here
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
 				switch(index)
 				{
@@ -487,9 +488,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						break;
 					case 1 : 
 						index = 2;
+						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
 						break;						
-					default: fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
+					default: //should not happen
+						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
+						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); 
+						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
 				}
 				
 				SHOW_SCREEN
@@ -503,7 +508,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 		lb = b;
 		SDL_Delay ( 1 );
 	}
-
 	SDL_FreeSurface ( SfDialog ); //remove old surface from heap
-	SDL_FreeSurface ( SfButton );
+}
+
+/**gets tiny up or down arrow from hud gfx and writes arrow to surface*/
+void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
+{
+	SDL_Rect scr = {230,151,18,17}; //arrow gfx is 18x17 in size
+
+	switch(type)
+	{
+		case ARROW_TYPE_UP :
+			scr.x = 230;
+			break;
+		case ARROW_TYPE_DOWN : 
+			scr.x = 249;
+			break;
+		default: 
+			cLog::write("Invalid arrow type - can't serve here", cLog::eLOG_TYPE_WARNING);
+			break;
+	}
+	
+	if(surface)
+	{
+		//get gfx arrow from menu graphic and blit it to tmp
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,dest ); 
+	}
+	else
+	{
+		cLog::write("Invalid surface - can't apply gfx arrow", cLog::eLOG_TYPE_WARNING);
+	}
 }

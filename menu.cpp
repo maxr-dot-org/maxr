@@ -55,7 +55,7 @@ void EnterMenu ( bool limited )
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),390,190+35,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ).c_str(),390,190+35*2,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ).c_str(),390,190+35*3,false );
-	PlaceButton ( "Hinweise",390,190+35*4,false );
+	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,false );
 	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ).c_str(),390,190+35*5,false );
 
 	ShowInfo();
@@ -380,7 +380,7 @@ void RunMainMenu ( void )
 			{
 				LiPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( "Hinweise",390,190+35*4,true );
+				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -397,7 +397,7 @@ void RunMainMenu ( void )
 		else if ( CrPressed )
 		{
 			CrPressed=false;
-			PlaceButton ( "Hinweise",390,190+35*4,false );
+			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
