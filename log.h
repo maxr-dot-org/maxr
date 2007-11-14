@@ -28,6 +28,7 @@
 #define LOG_TYPE_DEBUG 3
 #define LOG_TYPE_INFO 4
 #define LOG_TYPE_MEM 5
+#define LOG_TYPE_NETWORK 6
 
 /**
 * Log class. Simple log class :-)
@@ -54,7 +55,7 @@ private:
 	*
 	* @return true on success
 	*/
-	static bool open();
+	static bool open(int TYPE);
 public:
 	/**
 	* Writes message with given type to logfile
@@ -91,6 +92,7 @@ public:
 		eLOG_TYPE_DEBUG   = 3,
 		eLOG_TYPE_INFO    = 4,
 		eLOG_TYPE_MEM	  = 5,
+		eLOG_TYPE_NETWORK = 5,
 	};
 
 	/**

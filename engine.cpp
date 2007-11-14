@@ -32,7 +32,7 @@ cEngine::cEngine ( cMap *Map,cFSTcpIp *fstcpip )
 	this->fstcpip=fstcpip;
 	EndeCount=0;
 	RundenendeActionsReport=0;
-	if ( fstcpip&&fstcpip->server )
+	if ( fstcpip&&fstcpip->bServer )
 	{
 		SyncNo=0;
 	}

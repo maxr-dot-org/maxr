@@ -23,6 +23,7 @@
 #include "main.h"
 
 #define LOGFILE "max.log"
+#define NETLOGFILE "net.log"
 /** errors */
 #define EE "(EE): "
 /** warnings */
@@ -34,16 +35,39 @@
 /**mem error*/
 #define MM "(MM): "
 static SDL_RWops *logfile = NULL;
+static SDL_mutex *mutex;
+bool bNetlogStarted;
+bool bIsRunning=false;
 
-bool cLog::open()
+bool cLog::open(int TYPE)
 {
-	if ( logfile != NULL )
+	while(bIsRunning)
+		SDL_Delay(10);
+
+	bIsRunning = true;
+
+	if ( logfile == NULL || (TYPE == LOG_TYPE_NETWORK && !bNetlogStarted) )
 	{
-		logfile = SDL_RWFromFile ( LOGFILE,"a+t" ); //Reopen log and write at end of file
+		if(TYPE == LOG_TYPE_NETWORK)
+		{
+			logfile = SDL_RWFromFile ( NETLOGFILE,"w+t" ); //Start new network-log and write at beginning of file
+			bNetlogStarted = true;
+		}
+		else
+		{
+			logfile = SDL_RWFromFile ( LOGFILE,"w+t" ); //Start new log and write at beginning of file
+		}
 	}
-	else //Log not yet started (should only happen at game start)
+	else
 	{
-		logfile = SDL_RWFromFile ( LOGFILE,"w+t" ); //Start new log and write at beginning of file
+		if(TYPE == LOG_TYPE_NETWORK)
+		{
+			logfile = SDL_RWFromFile ( NETLOGFILE,"a+t" ); //Reopen network-log and write at end of file
+		}
+		else
+		{
+			logfile = SDL_RWFromFile ( LOGFILE,"a+t" ); //Reopen log and write at end of file
+		}
 	}
 
 	int blocks; //sanity check - is file readable?
@@ -96,7 +120,7 @@ int cLog::write ( std::string str, int TYPE )
 {
 	if ( TYPE == LOG_TYPE_DEBUG && SettingsData.bDebug || TYPE != LOG_TYPE_DEBUG ) //in case debug is disabled we skip message
 	{
-		if ( open() )
+		if ( open(TYPE) )
 		{
 			switch ( TYPE ) //Attach log message type to tmp
 			{
@@ -125,7 +149,7 @@ void cLog::mark()
 {
 	std::string str = "==============================(MARK)==============================";
 	str += TEXT_FILE_LF;
-	if ( open() ) writeMessage ( str );
+	if ( open(-1) ) writeMessage ( str );
 }
 
 int cLog::writeMessage ( char *str )
@@ -162,4 +186,5 @@ int cLog::writeMessage ( std::string str )
 void cLog::close()
 {
 	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
+	bIsRunning = false;
 }

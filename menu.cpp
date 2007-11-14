@@ -4005,7 +4005,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					WaitForGo=true;
 					ClientsToGo=fstcpip->GetConnectionCount();
-					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str(), ( int ) msg.length(),-1 );
+					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str());
 				}
 				OKPressed=false;
 				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
@@ -4237,8 +4237,8 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					fstcpip->FSTcpIpClose();
 					fstcpip->SetTcpIpPort ( Port );
-					FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
-					if ( fstcpip->status==STAT_OPENED )
+					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
+					if ( fstcpip->iStatus==STAT_OPENED )
 					{
 						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Socket" ) );
 						cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
@@ -4262,26 +4262,27 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->FSTcpIpClose();
 					fstcpip->SetIp ( IP );
 					fstcpip->SetTcpIpPort ( Port );
-					FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
+
+					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Connecting" ) +IP+":"+sztmp ); // e.g. Connecting to 127.0.0.1:55800
+					cLog::write ( ( "Connecting to "+IP+":"+sztmp ), cLog::eLOG_TYPE_INFO );
+
+					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
 					for ( int i=0;i<5;i++ ) //wait 5 seconds for connection - break in case we got one earlier
 					{
 						SDL_Delay ( 1000 );
-						if ( fstcpip->status==STAT_CONNECTED ) continue;
+						if ( fstcpip->iStatus==STAT_CONNECTED ) continue;
 
 					}
-					//SDL_WaitThread ( FSTcpIpReceiveThread,NULL ); sucks, since SDL_WaitThread has no timeout! app hangs if no connection can be established -- beko
-					FSTcpIpReceiveThread=NULL;
+					if( ! fstcpip->bReceiveThreadFinished )
+					{
+						SDL_KillThread ( fstcpip->FSTcpIpReceiveThread ) ;
+					}
 					sprintf ( sztmp,"%d",Port );
 
-					if ( fstcpip->status!=STAT_CONNECTED )
+					if ( fstcpip->iStatus!=STAT_CONNECTED )
 					{
 						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Connect" ) +IP+":"+sztmp );
 						cLog::write ( "Error on connecting "+IP+":"+sztmp, cLog::eLOG_TYPE_WARNING );
-					}
-					else
-					{
-						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Connecting" ) +IP+":"+sztmp ); // e.g. Connecting to 127.0.0.1:55800
-						cLog::write ( ( "Connecting to "+IP+":"+sztmp ), cLog::eLOG_TYPE_INFO );
 					}
 				}
 
@@ -4316,7 +4317,7 @@ void cMultiPlayer::RunMenu ( void )
 					{
 						ChatStr.erase ( 200 );
 					}
-					fstcpip->FSTcpIpSend ( MSG_CHAT, ( char * ) ChatStr.c_str(), ( int ) ChatStr.length(),-1 );
+					fstcpip->FSTcpIpSend ( MSG_CHAT, ( char * ) ChatStr.c_str());
 
 					AddChatLog ( ChatStr );
 					ChatStr="";
@@ -4385,7 +4386,7 @@ void cMultiPlayer::RunMenu ( void )
 				ClientSettingsList=new TList;
 
 				AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go" ) );
-				fstcpip->FSTcpIpSend ( MSG_LETS_GO,"",0,-1 );
+				fstcpip->FSTcpIpSend ( MSG_LETS_GO,"");
 
 				// Das Spiel machen:
 				TList *LandingList;
@@ -4413,7 +4414,6 @@ void cMultiPlayer::RunMenu ( void )
 					SelectLanding ( &LandX,&LandY,map_obj );
 
 					ServerWait ( LandX,LandY,LandingList );
-//-          fstcpip->RxFunc=game->engine->ReceiveNetMsg;
 
 					while ( LandingList->Count )
 					{
@@ -4424,7 +4424,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					ExitMenu();
 
-					fstcpip->min_clients=PlayerList->Count-1;
+					fstcpip->iMin_clients=PlayerList->Count-1;
 					game->Run();
 					SettingsData.sPlayerName=MyPlayer->name;
 
@@ -4524,7 +4524,7 @@ void cMultiPlayer::RunMenu ( void )
 
 				ExitMenu();
 
-				fstcpip->min_clients=PlayerList->Count-1;
+				fstcpip->iMin_clients=PlayerList->Count-1;
 				game->Run();
 				SettingsData.sPlayerName=MyPlayer->name;
 
@@ -4585,9 +4585,9 @@ void cMultiPlayer::RunMenu ( void )
 		}
 
 		// Ggf Meldung über Statusänderung machen:
-		if ( LastStatus!=fstcpip->status )
+		if ( LastStatus!=fstcpip->iStatus )
 		{
-			LastStatus=fstcpip->status;
+			LastStatus=fstcpip->iStatus;
 			switch ( LastStatus )
 			{
 				case STAT_CONNECTED:
@@ -4603,18 +4603,11 @@ void cMultiPlayer::RunMenu ( void )
 						ClientConnectedCallBack();
 					}
 					break;
-					/*case STAT_WAITING:
-					  AddChatLog("fstcpip: Wartet");
-					  break;*/
 				case STAT_CLOSED:
 					AddChatLog ( "fstcpip: "+lngPack.Translate ( "Text~Game_MP~Comp_Network_Closed" ) );
 					cLog::write ( "Connection closed", cLog::eLOG_TYPE_DEBUG );
 					if ( !host ) ClientDistconnect();
 					break;
-					/*case STAT_OPENED:
-					  AddChatLog("fstcpip: open");
-					  if(host)ServerDisconnect();
-					  break;*/
 			}
 		}
 		if ( host )
@@ -4629,8 +4622,11 @@ void cMultiPlayer::RunMenu ( void )
 		lx=mouse->x;
 		ly=mouse->y;
 		lb=b;
-		if ( fstcpip->status==STAT_CONNECTED && !FSTcpIpReceiveThread )
-			FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+		if ( fstcpip->iStatus==STAT_CONNECTED && fstcpip->bReceiveThreadFinished )
+		{
+			SDL_WaitThread ( fstcpip->FSTcpIpReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
+			fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+		}
 		HandleMenuMessages();
 		SDL_Delay ( 1 );
 	}
@@ -4669,7 +4665,7 @@ void cMultiPlayer::HandleMenuMessages()
 				string smsg;
 				sprintf ( sztmp,"%d",p->Nr );
 				smsg=Strings->Items[2]; smsg+="#"; smsg+=sztmp;
-				fstcpip->FSTcpIpSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str(), ( int ) smsg.length(),-1 );
+				fstcpip->FSTcpIpSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
 				MessageList->DeleteNetMessage ( 0 );
 				break;
@@ -4804,7 +4800,7 @@ void cMultiPlayer::HandleMenuMessages()
 					string new_msg;
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
 					new_msg=sztmp;
-					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str(), ( int ) new_msg.length(),-1 );
+					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host" ) );
 				}
 				else
@@ -4812,7 +4808,7 @@ void cMultiPlayer::HandleMenuMessages()
 					string new_msg;
 					sprintf ( sztmp,"%d",MyPlayer->Nr );
 					new_msg=sztmp;
-					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str(), ( int ) new_msg.length(),-1 );
+					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host_No" ) );
 				}
 				if ( fp ) fclose ( fp );
@@ -4974,7 +4970,6 @@ void cMultiPlayer::HandleMenuMessages()
 				MessageList->DeleteNetMessage ( 0 );
 				break;
 			}
-
 		}
 	}
 }
@@ -4999,7 +4994,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 	str+="Checksum: "; str+=sztmp; str+="\n";
 	str+="\n";
 
-	if ( !host&&fstcpip->status!=STAT_CONNECTED )
+	if ( !host&&fstcpip->iStatus!=STAT_CONNECTED )
 	{
 		str+=lngPack.Translate ( "Text~Game_MP~Comp_Network_Connected_Not" );
 		fonts->OutTextBlock ( ( char * ) str.c_str(),r,buffer );
@@ -5244,7 +5239,7 @@ void cMultiPlayer::ClientConnectedCallBack ( void )
 	msg+=sztmp; msg+="#";
 	sprintf ( sztmp,"%d",MyPlayer->Nr );
 	msg+=sztmp;
-	fstcpip->FSTcpIpSend ( MSG_SIGNING_IN, ( char * ) msg.c_str(), ( int ) msg.length(),-1 );
+	fstcpip->FSTcpIpSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
 }
 
 // Meldet einen Disconnect, wenn man Client ist:
@@ -5276,7 +5271,7 @@ void cMultiPlayer::ServerDisconnect ( void )
 	}
 	PlayerList->AddPlayer ( MyPlayer );
 
-	fstcpip->FSTcpIpSend ( MSG_WHO_ARE_YOU,"",0,-1 );
+	fstcpip->FSTcpIpSend ( MSG_WHO_ARE_YOU,"" );
 	Refresh=true;
 }
 
@@ -5285,10 +5280,10 @@ void cMultiPlayer::ChangeFarbeName ( void )
 {
 	string msg;
 	char sztmp[256];
-	if ( fstcpip->server && !fstcpip->GetConnectionCount() ) return;
-	if ( !fstcpip->server && fstcpip->status!=STAT_CONNECTED ) return;
+	if ( fstcpip->bServer && !fstcpip->GetConnectionCount() ) return;
+	if ( !fstcpip->bServer && fstcpip->iStatus!=STAT_CONNECTED ) return;
 
-	if ( fstcpip->server )
+	if ( fstcpip->bServer )
 	{
 		SendPlayerList();
 		return;
@@ -5298,7 +5293,7 @@ void cMultiPlayer::ChangeFarbeName ( void )
 	sprintf ( sztmp,"%d",GetColorNr ( MyPlayer->color ) );
 	msg+=sztmp; msg+="#";
 	msg+=MyPlayer->name;
-	fstcpip->FSTcpIpSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str(), ( int ) msg.length(),-1 );
+	fstcpip->FSTcpIpSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
 }
 
 // Versendet eine Liste mit allen Spielern:
@@ -5318,7 +5313,7 @@ void cMultiPlayer::SendPlayerList ( void )
 		msg+=sztmp; msg+="#";
 		msg+=p->name; if ( i!=PlayerList->Count-1 ) msg+="#";
 	}
-	fstcpip->FSTcpIpSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str(), ( int ) msg.length(),-1 );
+	fstcpip->FSTcpIpSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
 }
 
 // Überträgt die Spieloptionen:
@@ -5342,7 +5337,7 @@ void cMultiPlayer::SendOptions ( void )
 	}
 	msg+=map;
 
-	fstcpip->FSTcpIpSend ( MSG_OPTIONS, msg.c_str(), ( int ) msg.length(),-1 );
+	fstcpip->FSTcpIpSend ( MSG_OPTIONS, msg.c_str() );
 }
 
 // Sendet die Ressourcmap an alle Clients:
@@ -5360,14 +5355,14 @@ void cMultiPlayer::TransmitRessources ( void )
 		sprintf ( sztmp,"%d",map_obj->Resources[i].value ); msg+=sztmp;
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str(), ( int ) msg.length(),-1 );
+			fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str() );
 //      SDL_Delay(10);
 			msg="";
 		}
 	}
 	if ( msg.length() >0 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str(), ( int ) msg.length(),-1 );
+		fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str() );
 //    SDL_Delay(10);
 	}
 }
@@ -5439,7 +5434,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 	// Die Ressourcen übertragen:
 	TransmitRessources();
 
-	fstcpip->FSTcpIpSend ( MSG_LETS_GO,"",0,-1 );
+	fstcpip->FSTcpIpSend ( MSG_LETS_GO,"" );
 }
 
 // Überträgt alle Settings und wartet auf die Daten des Servers:
@@ -5469,6 +5464,12 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 		lx=mouse->x;
 		ly=mouse->y;
 		SDL_Delay ( 1 );
+		// Look for messages and handle them
+		if ( fstcpip->iStatus==STAT_CONNECTED && fstcpip->bReceiveThreadFinished )
+		{
+			SDL_WaitThread ( fstcpip->FSTcpIpReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
+			fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+		}
 		HandleMenuMessages();
 	}
 
@@ -5534,7 +5535,7 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str(), ( int ) msg.length(),10 );
+			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
@@ -5563,14 +5564,14 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str(), ( int ) msg.length(),10 );
+			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
 	}
 	if ( msg.length() >1 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str(), ( int ) msg.length(),10 );
+		fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 		SDL_Delay ( 1 );
 	}
 }
@@ -5594,14 +5595,14 @@ void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
 		sprintf ( sztmp,"%d",l->cargo );msg+=sztmp;
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str(), ( int ) msg.length(),10 );
+			fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
 	}
 	if ( msg.length() >0 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str(), ( int ) msg.length(),10 );
+		fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str() );
 		SDL_Delay ( 1 );
 	}
 }
