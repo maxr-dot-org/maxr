@@ -618,7 +618,7 @@ void cPlayer::DoResearch ( void )
 				double a,b,c,d;
 				int x;
 
-				switch ( i ) //TODO: translate stuff
+				switch ( i )
 				{
 					case 0:
 						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Attack" ));
