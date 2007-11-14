@@ -1,4 +1,15 @@
 
+M.A.X. Reloaded 0.1.1
+=======================================================================
+-more translations (e.g. preferences menu)
+-net.log support (extra log for network debugging)
+-TCP/IP connect and chatting works now (NOT playing!)
+-manifestation avaible in main menu
+-claymores fixed
+-movements on roads/bridges fixed
+-attackcursor fixed (calculation of remaining hitpoints)
+-problem with Win32 version related to static sdl.dlls fixed
+-tons of bugs fixed
 
 M.A.X. Reloaded 0.1.0
 =======================================================================
