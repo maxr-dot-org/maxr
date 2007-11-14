@@ -129,6 +129,14 @@ void DoPraeferenzen ( void )
 	//END BLOCK SOUND
 	//BEGIN BLOCK PLAYERNAME	
 	
+	scr.x=108;
+	scr.y=12;
+	dest.w=scr.w=186;
+	dest.h=scr.h=18;
+	dest.x=108+120;
+	dest.y=155+29;
+	SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest ); //blit black bar behind text
+	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 158+29;
 	fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Player_Name" ).c_str(),rFont.x,rFont.y,buffer);
@@ -335,6 +343,8 @@ void DoPraeferenzen ( void )
 					Input=true;
 					InputStr=game->ActivePlayer->name;
 					stmp = InputStr; stmp += "_";
+					
+					//TODO: blit black bar behind text again
 					fonts->OutText ( ( char * ) stmp.c_str(),122+120,158+29,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
