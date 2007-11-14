@@ -91,6 +91,22 @@
 			<Option_Type_Turns ENG="turns"/>
 			<Option_Type_Simu ENG="simultaneous"/>
 		</Game_Options>
+		<Game_Settings>
+			<Title_Preferences ENG="Preferences"/>
+			<Title_Volume ENG="Volume"/>
+			<Title_Music ENG="Music"/>
+			<Title_Effects ENG="Effects"/>
+			<Title_Voices ENG="Voices"/>
+			<Title_Disable ENG="Disable"/>
+			<Title_Scrollspeed ENG="Scrollspeed"/>
+			<Title_Autosave ENG="Autosave"/>
+			<Title_Animation ENG="Animations"/>
+			<Title_Alphaeffects ENG="Alphaeffects"/>
+			<Title_Shadows ENG="Shadows"/>
+			<Title_ShowDamage ENG="Buildingdamage"/>
+			<Title_ShowDamageVehicle ENG="Vehicledamage"/>
+			<Title_Tracks ENG="Vehicletracks"/>
+		</Game_Settings>
 		<Game_Start>
 			<Title_Player_Name ENG="Playername:"/>
 			<Title_Player_Select ENG="Playeroptions"/>
