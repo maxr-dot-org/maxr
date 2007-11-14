@@ -92,7 +92,7 @@ public:
 		eLOG_TYPE_DEBUG   = 3,
 		eLOG_TYPE_INFO    = 4,
 		eLOG_TYPE_MEM	  = 5,
-		eLOG_TYPE_NETWORK = 5,
+		eLOG_TYPE_NETWORK = 6,
 	};
 
 	/**

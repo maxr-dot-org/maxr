@@ -65,6 +65,8 @@ int main ( int argc, char *argv[] )
 		str += MAX_BUILD_DATE;
 		cLog::write ( str , cLog::eLOG_TYPE_INFO );
 		cLog::mark();
+		cLog::write ( MAXVERSION , cLog::eLOG_TYPE_NETWORK );
+		cLog::write ( str , cLog::eLOG_TYPE_NETWORK );
 	}
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
