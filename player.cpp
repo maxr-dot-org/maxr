@@ -621,35 +621,35 @@ void cPlayer::DoResearch ( void )
 				switch ( i ) //TODO: translate stuff
 				{
 					case 0:
-						game->AddMessage ( "Forschung 'Angriff' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Attack" ));
 						a=0.5;
 						break;
 					case 1:
-						game->AddMessage ( "Forschung 'Schüsse' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Shoots" ) );
 						a=0.5;
 						break;
 					case 2:
-						game->AddMessage ( "Forschung 'Reichweite' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Range" ) );
 						a=1.0;
 						break;
 					case 3:
-						game->AddMessage ( "Forschung 'Panzerung' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Armor" ) );
 						a=0.25;
 						break;
 					case 4:
-						game->AddMessage ( "Forschung 'Treffer' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Hitpoints" ) );
 						a=0.25;
 						break;
 					case 5:
-						game->AddMessage ( "Forschung 'Geschwindigkeit' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Speed" ) );
 						a=0.5;
 						break;
 					case 6:
-						game->AddMessage ( "Forschung 'Scan' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Scan" ) );
 						a=1.0;
 						break;
 					case 7:
-						game->AddMessage ( "Forschung 'Kosten' abgeschlossen." );
+						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Costs" ) );
 						a=1.0;
 						break;
 				}
