@@ -45,6 +45,7 @@ cFSTcpIp::cFSTcpIp ( bool server )
 		iNextMessageID = -1;
 	}
 	bReceiveThreadFinished = true;
+	FSTcpIpReceiveThread = NULL;
 }
 
 cFSTcpIp::~cFSTcpIp()
@@ -418,3 +419,32 @@ int Open ( void * )
 		return 0;
 	}
 }
+/*
+void cFSTcpIp::FSTcpIpCheckResends ()
+{
+	for(int i = 0; WaitOKList->iCount > i; i++) // Check all Waiting Buffers
+	{
+		if(WaitOKList->Items[i]) // sanity check
+		{
+			int iTime = ( ( sNetBuffer *) WaitOKList->Items[i])->iTicks; // Get the Time since this buffer was send the last time
+			if( ( iTime - SDL_GetTicks() ) > 100 )
+			{
+				int iClient = ( ( sNetBuffer *) WaitOKList->Items[i])->iDestClientNum; // To which client should the buffer be send
+				if(iClient != -1) // To a Client
+				{
+					SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+				}
+				else // To the Host
+				{
+					SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+				}
+				( ( sNetBuffer *) WaitOKList->Items[i])->iTicks = SDL_GetTicks(); // Set the new Time
+				char szTmp[400];
+				sprintf(szTmp,"Resend buffer: -Typ: %d -Parts: %d/%d -ID: %d -Client: %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts , NetBuffer->iTyp, NetBuffer->iID, iClient, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
+				cLog::write(szTmp, LOG_TYPE_NETWORK);
+			}
+			SDL_Delay ( 1 ) ;
+		}
+	}
+	return ;
+}*/
