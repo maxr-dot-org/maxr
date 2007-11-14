@@ -168,6 +168,14 @@
 			<Turn_Start ENG="Start turn" localized="Starten Sie Runde"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Warten Sie bis alle Bewegungen abgeschlossen sind"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Verbleibende Bewegungen werden durchgeführt"/>
+			<Research_Attack ENG="Research 'Attack' completed" localized="Angriffsforschung abgeschlossen"/>
+			<Research_Shoots ENG="Research 'Shoots' completed" localized="Schüsseforschung abgeschlossen"/>
+			<Research_Range ENG="Research 'Range' completed" localized="Reichweitenforschung abgeschlossen"/>
+			<Research_Armor ENG="Research 'Armor' completed" localized="Panzerungsforschung abgeschlossen"/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Trefferpunkteforschung abgeschlossen"/>
+			<Research_Speed ENG="Research 'Speed' completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
+			<Research_Scan ENG="Research 'Scan' completed" localized="Scanforschung abgeschlossen"/>
+			<Research_Costs ENG="Research 'Costs' completed" localized="Kostenforschung abgeschlossen"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

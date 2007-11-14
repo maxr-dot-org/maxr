@@ -168,6 +168,14 @@
 			<Turn_Start ENG="Start turn"/>
 			<Turn_Wait ENG="Please wait until all movements are completed"/>
 			<Turn_Automove ENG="Executing remaining movements"/>
+			<Research_Attack ENG="Research 'Attack' completed"/>
+			<Research_Shoots ENG="Research 'Shoots' completed"/>
+			<Research_Range ENG="Research 'Range' completed"/>
+			<Research_Armor ENG="Research 'Armor' completed"/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed"/>
+			<Research_Speed ENG="Research 'Speed' completed"/>
+			<Research_Scan ENG="Research 'Scan' completed"/>
+			<Research_Costs ENG="Research 'Costs' completed"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
