@@ -1385,6 +1385,10 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	cVehicle *pv=NULL;
 	cBuilding *pb=NULL;
 
+	#define POS_CANCEL_BTN 74+166, 125+159
+	#define POS_DONE___BTN 165+166, 125+159
+	
+
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
@@ -1477,6 +1481,10 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	// Den Bar malen:
 	MakeTransBar ( &Transf,MaxTarget,Target );
 
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, POS_CANCEL_BTN, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, POS_DONE___BTN, buffer);
+
+
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -1503,18 +1511,12 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		}
 
 		// Abbruch-Button:
-		if ( x>=82+166&&x<141+166&&y>=125+159&&y<145+159 )
+		if ( x>=76+166&&x<153+166&&y>=125+159&&y<145+159 )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=0;
-				scr.y=263;
-				dest.w=scr.w=64;
-				dest.h=scr.h=23;
-				dest.x=82+166;
-				dest.y=125+159;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), true, POS_CANCEL_BTN, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1526,30 +1528,18 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=82;
-			scr.y=125;
-			dest.w=scr.w=64;
-			dest.h=scr.h=23;
-			dest.x=82+166;
-			dest.y=125+159;
-			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, POS_CANCEL_BTN, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Fertig-Button:
-		if ( x>=174+166&&x<174+56+166&&y>=125+159&&y<125+23+159 )
+		if ( x>=165+166&&x<165+77+166&&y>=125+159&&y<125+23+159 )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=65;
-				scr.y=263;
-				dest.w=scr.w=56;
-				dest.h=scr.h=23;
-				dest.x=174+166;
-				dest.y=125+159;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, POS_DONE___BTN, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1593,13 +1583,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=174;
-			scr.y=125;
-			dest.w=scr.w=56;
-			dest.h=scr.h=23;
-			dest.x=174+166;
-			dest.y=125+159;
-			SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, POS_DONE___BTN, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
