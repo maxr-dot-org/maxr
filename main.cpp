@@ -38,7 +38,6 @@
 #include "keys.h"
 #include "sound.h"
 #include "map.h"
-#include "prefer.h"
 #include "game.h"
 #include "buildings.h"
 #include "vehicles.h"

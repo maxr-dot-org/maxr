@@ -26,8 +26,11 @@ void ShowDialogList(TList *list,int offset);
 bool ShowYesNo(string text);
 int ShowNumberInput(string text);
 void ShowOK(string text,bool pure=false);
-void ShowLicence();
+void showLicence();
+void showPreferences(void);
 void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
+void drawSlider(int offx,int offy,int value, SDL_Surface *surface);
+void drawButton(int offx,int offy,bool set);
 
 enum ARROW_TYPE
 {

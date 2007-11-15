@@ -388,7 +388,7 @@ void RunMainMenu ( void )
 			{
 				mouse->draw ( false,screen );
 				SHOW_SCREEN
-				ShowLicence();
+				showLicence();
 				SHOW_SCREEN
 				LiPressed=false;
 				CrPressed=false;

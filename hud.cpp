@@ -21,7 +21,7 @@
 #include "mouse.h"
 #include "game.h"
 #include "sound.h"
-#include "prefer.h"
+#include "dialog.h"
 #include "keyinp.h"
 #include "fonts.h"
 
@@ -914,7 +914,7 @@ void cHud::ChechMouseOver ( void )
 			PlayFX ( SoundData.SNDHudButton );
 			game->ChangeObjectName=false;
 			game->ChatInput=false;
-			DoPraeferenzen();
+			showPreferences();
 			PraeferenzenButton ( false );
 		}
 	}
