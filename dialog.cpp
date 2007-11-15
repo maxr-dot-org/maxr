@@ -608,8 +608,8 @@ void showPreferences ( void )
 	dest.h = SfDialog->h;
 	
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118, 383, buffer); 
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208, 383, buffer); 
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118+120, 383+29, buffer); 
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208+120, 383+29, buffer); 
 	
 	rFont.x = 120 + 160; //TOFIX: Text not centered
 	rFont.y = 29 + 15;
@@ -894,7 +894,7 @@ void showPreferences ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), true, 208, 383, buffer); 
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), true, 208+120, 383+29, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -914,7 +914,7 @@ void showPreferences ( void )
 		}
 		else if ( FertigPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208, 383, buffer); 
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208+120, 383+29, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -926,7 +926,7 @@ void showPreferences ( void )
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 118, 383, buffer); 
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 118+120, 383+29, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -954,7 +954,7 @@ void showPreferences ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118, 383, buffer); 
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118+120, 383+29, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1034,7 +1034,7 @@ void drawCheckbox ( int offx,int offy,bool set, SDL_Surface *surface )
 
 void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface)
 {
-	SDL_Rect scr, dest={120,29,0,0}; //ugly 120,29 stuff for position of dialog on screen
+	SDL_Rect scr, dest;
 	int iPx; //for moving fonts 1 pixel down on click
 	if(bPressed)
 	{

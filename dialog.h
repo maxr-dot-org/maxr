@@ -66,9 +66,6 @@ void drawSlider(int offx,int offy,int value, SDL_Surface *surface);
  */
 void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
 /** Draws a button
- * IMPORTANT: initially this was part of showPreferences and since showPreferences
- * shows it's dialog x120,y29 no matter what resolutions buttons are automatically
- * moved to x+=120 and y+=20 too! This is ugly and has to be fixed in showPreferences.
  * @author beko
  * @param sText Text displayed centered on button
  * @param bPressed clickstatus
