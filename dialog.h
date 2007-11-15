@@ -23,14 +23,59 @@
 
 void ShowDialog(string text,bool pure,string path,int SaveLoad=-1);
 void ShowDialogList(TList *list,int offset);
+ /** Shows localized Yes/No dialog 
+ * @param text Text to show on button
+ * @return true on Yes<br>false on No
+ */
 bool ShowYesNo(string text);
 int ShowNumberInput(string text);
+ /**
+ * Shows dialogbox with localized OK button
+ * @param text Text to show on button
+ * @param pure 
+ */
 void ShowOK(string text,bool pure=false);
+ /** Shows licence infobox refering to hardcoded GPL-notation and warranty information
+ * @author beko
+ */
 void showLicence();
+ /** Shows localized preferences dialog
+ * @author beko
+ */
 void showPreferences(void);
+ /**
+ * 
+ */
 void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
+/**
+ * Draws a sliderbar with a slider
+ * @author beko
+ * @param offx
+ * @param offy
+ * @param value 0 - 255 for sliderposition
+ * @param *surface SDL_Surface to draw on
+ */
 void drawSlider(int offx,int offy,int value, SDL_Surface *surface);
-void drawButton(int offx,int offy,bool set);
+/**
+ * Draws a checkbox
+ * @author beko
+ * @param offx
+ * @param offy
+ * @param set clickstatus
+ * @param *surface SDL_Surface to draw on
+ */
+void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
+/** Draws a button
+ * IMPORTANT: initially this was part of showPreferences and since showPreferences
+ * shows it's dialog x120,y29 no matter what resolutions buttons are automatically
+ * moved to x+=120 and y+=20 too! This is ugly and has to be fixed in showPreferences.
+ * @author beko
+ * @param sText Text displayed centered on button
+ * @param bPressed clickstatus
+ * @param x x position 
+ * @param y y position
+ * @param *surface SDL_Surface to draw on
+ */
 void drawButton(string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
 enum ARROW_TYPE

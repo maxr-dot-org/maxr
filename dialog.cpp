@@ -630,7 +630,7 @@ void showPreferences ( void )
 	rFont.h = CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Music" ).c_str(),rFont.x,rFont.y,buffer);
 	drawSlider ( BAR_X+120,BAR_Y,SettingsData.MusicVol*2,SfDialog );
-	drawButton ( 210+120,73+29,SettingsData.MusicMute );
+	drawCheckbox ( 210+120,73+29,SettingsData.MusicMute, buffer);
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
 		
@@ -639,7 +639,7 @@ void showPreferences ( void )
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Effects" ).c_str(),rFont.x,rFont.y,buffer);
 	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, SfDialog );
-	drawButton ( 210+120,93+29,SettingsData.SoundMute );
+	drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
 
@@ -648,7 +648,7 @@ void showPreferences ( void )
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Voices" ).c_str(),rFont.x,rFont.y,buffer);
 	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,SfDialog );
-	drawButton ( 210+120,113+29,SettingsData.VoiceMute );
+	drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
 	//END BLOCK SOUND
@@ -665,32 +665,32 @@ void showPreferences ( void )
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 193+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Animation" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 25+120,193+29,SettingsData.bAnimations );
+	drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 213+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Shadows" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 25+120,213+29,SettingsData.bShadows );
+	drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 233+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Alphaeffects" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 25+120,233+29,SettingsData.bAlphaEffects );
+	drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 193+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_ShowDamage" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 210+120,193+29,SettingsData.bDamageEffects );
+	drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 213+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_ShowDamageVehicle" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 210+120,213+29,SettingsData.bDamageEffectsVehicles );
+	drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 233+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Tracks" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 210+120,233+29,SettingsData.bMakeTracks );
+	drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 261+25;
@@ -700,7 +700,7 @@ void showPreferences ( void )
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 290+33;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Autosave" ).c_str(),rFont.x,rFont.y,buffer);
-	drawButton ( 25+120,290+29,SettingsData.bAutoSave );
+	drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
 	
 	SHOW_SCREEN
 
@@ -802,7 +802,7 @@ void showPreferences ( void )
 				if ( x>=210+120&&x<210+120+18&&y>=73+29&&y<73+29+17 )
 				{
 					SettingsData.MusicMute=!SettingsData.MusicMute;
-					drawButton ( 210+120,73+29,SettingsData.MusicMute );
+					drawCheckbox ( 210+120,73+29,SettingsData.MusicMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					if ( SettingsData.MusicMute )
@@ -817,42 +817,42 @@ void showPreferences ( void )
 				else if ( x>=210+120&&x<210+120+18&&y>=93+29&&y<93+29+17 )
 				{
 					SettingsData.SoundMute=!SettingsData.SoundMute;
-					drawButton ( 210+120,93+29,SettingsData.SoundMute );
+					drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=113+29&&y<113+29+17 )
 				{
 					SettingsData.VoiceMute=!SettingsData.VoiceMute;
-					drawButton ( 210+120,113+29,SettingsData.VoiceMute );
+					drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=290+29&&y<290+29+17 )
 				{
 					SettingsData.bAutoSave=!SettingsData.bAutoSave;
-					drawButton ( 25+120,290+29,SettingsData.bAutoSave );
+					drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=193+29&&y<193+29+17 )
 				{
 					SettingsData.bAnimations=!SettingsData.bAnimations;
-					drawButton ( 25+120,193+29,SettingsData.bAnimations );
+					drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=213+29&&y<213+29+17 )
 				{
 					SettingsData.bShadows=!SettingsData.bShadows;
-					drawButton ( 25+120,213+29,SettingsData.bShadows );
+					drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=25+120&&x<25+120+18&&y>=233+29&&y<233+29+17 )
 				{
 					SettingsData.bAlphaEffects=!SettingsData.bAlphaEffects;
-					drawButton ( 25+120,233+29,SettingsData.bAlphaEffects );
+					drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -868,21 +868,21 @@ void showPreferences ( void )
 				else if ( x>=210+120&&x<210+120+18&&y>=193+29&&y<193+29+17 )
 				{
 					SettingsData.bDamageEffects=!SettingsData.bDamageEffects;
-					drawButton ( 210+120,193+29,SettingsData.bDamageEffects );
+					drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=213+29&&y<213+29+17 )
 				{
 					SettingsData.bDamageEffectsVehicles=!SettingsData.bDamageEffectsVehicles;
-					drawButton ( 210+120,213+29,SettingsData.bDamageEffectsVehicles );
+					drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 				else if ( x>=210+120&&x<210+120+18&&y>=233+29&&y<233+29+17 )
 				{
 					SettingsData.bMakeTracks=!SettingsData.bMakeTracks;
-					drawButton ( 210+120,233+29,SettingsData.bMakeTracks );
+					drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -1013,45 +1013,44 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	//END DRAW SLIDER
 }
 
-void drawButton ( int offx,int offy,bool set )
+void drawCheckbox ( int offx,int offy,bool set, SDL_Surface *surface )
 {
 	SDL_Rect scr,dest;
 	scr.x=393;
 	if ( !set )
 	{
-		scr.y=46;
+		scr.y=46; //button pressed
 	}
 	else
 	{
-		scr.y=64;
+		scr.y=64; //button unpressed
 	}
-	dest.w=scr.w=18;
+	dest.w=scr.w=18; //get button from hud_gfx
 	dest.h=scr.h=17;
 	dest.x=offx;
 	dest.y=offy;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
 }
 
 void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface)
 {
-	SDL_Rect scr, dest={120,29,0,0};
-	int iPx;
+	SDL_Rect scr, dest={120,29,0,0}; //ugly 120,29 stuff for position of dialog on screen
+	int iPx; //for moving fonts 1 pixel down on click
 	if(bPressed)
 	{
-		scr.x=230;
+		scr.x=230; //clicked button
 		iPx = 6;
 	}
 	else
 	{
-		scr.x=308;
+		scr.x=308; //unclicked button
 		iPx = 5;
 	}
-	scr.y=455;
+	scr.y=455; //get button from gfx_hud.pcx
 	dest.w=scr.w=77;
 	dest.h=scr.h=23;
 	dest.x += x;
 	dest.y += y;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //finnished button
-	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,buffer);
-	//fonts->OutText(sText.c_str(),dest.x+5,dest.y+3,buffer);
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
+	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,buffer); //show text centered on button
 }
