@@ -35,6 +35,7 @@ int ShowNumberInput(string text);
  * @param pure 
  */
 void ShowOK(string text,bool pure=false);
+bool showSelfdestruction(void);
  /** Shows licence infobox refering to hardcoded GPL-notation and warranty information
  * @author beko
  */

@@ -968,6 +968,201 @@ void showPreferences ( void )
 	SDL_FreeSurface (SfDialog);
 }
 
+bool showSelfdestruction()
+{
+	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
+	SDL_Rect scr,dest;
+	bool AbbruchPressed=false;
+	bool ScharfPressed=false;
+	bool DestroyPressed=true;
+	bool Scharf=false;
+	int GlasHeight=56;
+
+	mouse->SetCursor ( CHand );
+	mouse->draw ( false,buffer );
+	game->DrawMap();
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	dest.x=233;scr.x=0;
+	dest.y=199;scr.y=0;
+	scr.w=dest.w=GraphicsData.gfx_destruction->w;
+	scr.h=dest.h=GraphicsData.gfx_destruction->h/2;
+	SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+
+
+
+	dest.w=59;
+	dest.h=56;
+	dest.x=233+15;
+	dest.y=199+13;
+	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&dest );
+	
+	drawButton("Blast", false, 233+89,199+14,buffer);
+	drawButton("Cancel", false, 233+89,199+46,buffer);
+
+
+	// Den Buffer anzeigen:
+	SHOW_SCREEN
+	mouse->GetBack ( buffer );
+	while ( 1 )
+	{
+		if ( game->SelectedBuilding==NULL ) break;
+		// Die Engine laufen lassen:
+		//FIXME: check whether game is really running
+		game->engine->Run();
+		game->HandleTimer();
+
+		// Events holen:
+		SDL_PumpEvents();
+
+		// Die Maus machen:
+		mouse->GetPos();
+		b=mouse->GetMouseButton();
+		x=mouse->x;y=mouse->y;
+		if ( x!=LastMouseX||y!=LastMouseY )
+		{
+			mouse->draw ( true,screen );
+		}
+
+		// Abbruch-Button:
+		if ( x>=233+89&&x<233+89+71&&y>=199+46&&y<199+46+21 )
+		{
+			if ( b&&!AbbruchPressed )
+			{
+				PlayFX ( SoundData.SNDMenuButton ); //pressed
+				drawButton("Cancel", true, 233+89,199+46,buffer);
+				/*scr.x=232;
+				scr.y=231;
+				dest.w=scr.w=75;
+				dest.h=scr.h=24;
+				dest.x=233+89;
+				dest.y=199+46;
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );*/
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				AbbruchPressed=true;
+			}
+			else if ( !b&&LastB )
+			{
+				return false;
+			}
+		}
+		else if ( AbbruchPressed )
+		{
+			drawButton("Cancel", false, 233+89,199+46,buffer);
+			/*scr.x=89;
+			scr.y=46;
+			dest.w=scr.w=75;
+			dest.h=scr.h=24;
+			dest.x=233+89;
+			dest.y=199+46;
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );*/
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+			AbbruchPressed=false;
+		}
+		// Scharf-Button:
+		if ( !Scharf&&x>=233+89&&x<233+89+71&&y>=199+14&&y<199+14+21 )
+		{
+			if ( b&&!ScharfPressed )
+			{
+				PlayFX ( SoundData.SNDMenuButton );
+				drawButton("Blast", true, 233+89,199+14,buffer);
+				/*
+				scr.x=156;
+				scr.y=231;
+				dest.w=scr.w=75;
+				dest.h=scr.h=24;
+				dest.x=233+89;
+				dest.y=199+14;
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest ); */
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				ScharfPressed=true;
+			}
+			else if ( !b&&LastB )
+			{
+				Scharf=true;
+				PlayFX ( SoundData.SNDArm );
+			}
+		}
+		else if ( !Scharf&&ScharfPressed )
+		{
+			drawButton("Blast", false, 233+89,199+14,buffer);
+/*
+			scr.x=89;
+			scr.y=14;
+			dest.w=scr.w=75;
+			dest.h=scr.h=24;
+			dest.x=233+89;
+			dest.y=199+14;
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );*/
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+			ScharfPressed=false;
+		}
+		// Das Schutzglas hochfahren:
+		if ( Scharf&&GlasHeight>0&&timer0 )
+		{
+			scr.x=15;
+			scr.y=13;
+			scr.w=dest.w=59;
+			scr.h=dest.h=56;
+			dest.x=233+15;
+			dest.y=199+13;
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+			GlasHeight-=10;
+			if ( GlasHeight>0 )
+			{
+				scr.x=0;scr.y=0;
+				scr.h=dest.h=GlasHeight;
+				SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,&scr,buffer,&dest );
+			}
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		// Zerstören-Button:
+		if ( GlasHeight<=0&&x>=233+15&&x<233+15+59&&y>=199+13&&y<199+13+56 )
+		{
+			if ( b&&!DestroyPressed )
+			{
+				PlayFX ( SoundData.SNDMenuButton );
+				scr.x=15;
+				scr.y=95;
+				dest.w=scr.w=59;
+				dest.h=scr.h=56;
+				dest.x=233+15;
+				dest.y=199+13;
+				SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				DestroyPressed=true;
+			}
+			else if ( !b&&LastB )
+			{
+				// Nur SP/Server:
+				//game->engine->DestroyObject ( PosX+PosY*game->map->size,false );
+				return true;
+			}
+		}
+		else if ( GlasHeight<=0&&DestroyPressed )
+		{
+			scr.x=15;
+			scr.y=13;
+			dest.w=scr.w=59;
+			dest.h=scr.h=56;
+			dest.x=233+15;
+			dest.y=199+13;
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+			DestroyPressed=false;
+		}
+		LastMouseX=x;LastMouseY=y;
+		LastB=b;
+	}
+}
+
  //FIXME: offset method only works on fixed resolution 640x460. 
 void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 {
@@ -1049,8 +1244,8 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	scr.y=455; //get button from gfx_hud.pcx
 	dest.w=scr.w=77;
 	dest.h=scr.h=23;
-	dest.x += x;
-	dest.y += y;
+	dest.x = x;
+	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
 	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,buffer); //show text centered on button
 }

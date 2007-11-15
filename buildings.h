@@ -24,6 +24,7 @@
 #include "main.h"
 #include "SDL.h"
 #include "base.h"
+#include "dialog.h"
 
 // Define zum Updaten:
 #define UpdateBuilding(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).costs=(to).costs;
@@ -161,7 +162,7 @@ public:
   void ShowBuildList(TList *list,int selected,int offset, bool showInfo);
   void DrawBuildButtons(int speed);
   void ShowToBuildList(TList *list,int selected,int offset, bool showInfo);
-  void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
+  void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
   void DrawExitPoints(sVehicle *typ);
   bool CanExitTo(int off,sVehicle *typ);
   bool CanLoad(int off);
