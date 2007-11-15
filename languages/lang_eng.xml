@@ -53,6 +53,7 @@
 			<Button_OK ENG="OK"/>
 			<Button_Done ENG="Done"/>
 			<Button_Cancel ENG="Cancel"/>
+			<Button_Hot ENG="Hot"/>
 			<Button_Yes ENG="Yes"/>
 			<Button_No ENG="No"/>
 			<Button_TCPIP_Host ENG="TCP/IP Host"/>
