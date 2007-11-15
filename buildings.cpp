@@ -84,7 +84,7 @@ cBuilding::cBuilding ( sBuilding *b,cPlayer *Owner,cBase *Base )
 	data.hit_points=data.max_hit_points;
 	data.ammo=data.max_ammo;
 	SubBase=NULL;
-	BuildSpeed=1;
+	BuildSpeed=0;
 	BuildList=NULL;
 	if ( data.can_build )
 	{
@@ -176,12 +176,13 @@ char *cBuilding::GetStatusStr ( void )
 			{
 				static char str[50];
 				int r;
-				r = ( int ) ( floor ( (double) ptr->metall_remaining/ ( data.metal_need*BuildSpeed*1 ) ) );
-				if ( !r ) r++;
-				sprintf ( str,"beim bau: %s (%d)",owner->VehicleData[ptr->typ->nr].name,r );
+				//r = ( int ) ( floor ( (double) ptr->metall_remaining/ ( data.metal_need*BuildSpeed*1 ) ) );
+				r = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
+				//if ( !r ) r++;
+				sprintf ( str,"beim bau: %s (%d)",owner->VehicleData[ptr->typ->nr].name,r ); //"Runden"?
 				if ( fonts->GetTextLenSmall ( str ) >126 )
 				{
-					sprintf ( str,"beim bau:\n%s (%d)",owner->VehicleData[ptr->typ->nr].name,r );
+					sprintf ( str,"beim bau:\n%s (%d)",owner->VehicleData[ptr->typ->nr].name,r ); //"Runden"?
 				}
 				return str;
 			}
@@ -1403,7 +1404,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed+=data.metal_need*BuildSpeed*BuildSpeed;
+		SubBase->MetalNeed+= min( MetalPerRound, BuildList->BuildListItems[0]->metall_remaining);
 	}
 
 	// Goldverbraucher:
@@ -1461,7 +1462,7 @@ void cBuilding::StopWork ( bool override,bool engine_call )
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed-=data.metal_need*BuildSpeed*BuildSpeed;
+		SubBase->MetalNeed-=min( MetalPerRound, BuildList->BuildListItems[0]->metall_remaining);
 	}
 
 	// Goldverbraucher:
@@ -5250,6 +5251,7 @@ struct sBuildStruct
 {
 	SDL_Surface *sf;
 	int id;
+	int iRemainingMetal;
 };
 #include "pcx.h"
 // Zeigt das Build-Menü an:
@@ -5259,7 +5261,6 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
-	bool Beschreibung=SettingsData.bShowDescription;
 	bool Wiederholen=false;
 	bool DownPressed=false;
 	bool UpPressed=false;
@@ -5269,8 +5270,12 @@ void cBuilding::ShowBuildMenu ( void )
 	bool EntfernenPressed=false;
 	TList *images;
 	TList *to_build;
-	int selected=0,offset=0,BuildSpeed=1;
+	int selected=0,offset=0,BuildSpeed;
 	int build_selected=0,build_offset=0;
+	int  iTurboBuildRounds[3];		//Costs and
+	int  iTurboBuildCosts[3];		//durations of the tree build speeds
+	bool showDetailsBuildlist=true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
+
 	int last_b_ticks=0;
 
 	mouse->SetCursor ( CHand );
@@ -5278,7 +5283,7 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,NULL,buffer,NULL );
 
 	// Der Haken:
-	if ( Beschreibung )
+	if ( SettingsData.bShowDescription )
 	{
 		dest.x=scr.x=291;
 		dest.y=scr.y=264;
@@ -5323,9 +5328,7 @@ void cBuilding::ShowBuildMenu ( void )
 		n->id=i;
 		images->AddBuildStruct ( n );
 	}
-	ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
-	BuildSpeed=this->BuildSpeed;
-	DrawBuildButtons ( BuildSpeed );
+	
 
 	// Die Bauliste anlegen:
 	to_build=new TList;
@@ -5333,18 +5336,42 @@ void cBuilding::ShowBuildMenu ( void )
 	{
 		sBuildList *ptr;
 		ptr=BuildList->BuildListItems[i];
+
+		sBuildStruct *n;
+		n = new sBuildStruct;
+		n->iRemainingMetal = ptr->metall_remaining;
+
+		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
+		//und in die toBuild-Liste kopieren.
 		for ( k=0;k<images->Count;k++ )
 		{
 			sBuildStruct *bs;
 			bs=images->BuildStructItems[k];
 			if ( UnitsData.vehicle[bs->id].nr==ptr->typ->nr )
 			{
-				to_build->AddBuildStruct ( images->BuildStructItems[k] );
+				n->id = images->BuildStructItems[k]->id;
+				n->sf = images->BuildStructItems[k]->sf;
+				to_build->AddBuildStruct ( n );
+
 				break;
 			}
 		}
 	}
-	ShowToBuildList ( to_build,build_selected,build_offset );
+	BuildSpeed=this->BuildSpeed;
+	
+	//show details of the first item in to_build list, if it exists
+	if (to_build->Count > 0)
+	{
+		showDetailsBuildlist=false;
+	}
+	else
+	{
+		showDetailsBuildlist=true;
+	}
+
+	ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+	DrawBuildButtons ( BuildSpeed );
+	ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 
 	if ( !RepeatBuild )
 	{
@@ -5371,7 +5398,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( game->SelectedBuilding==NULL ) break;
 		// Die Engine laufen lassen:
 		game->engine->Run();
-		game->HandleTimer();
+		//game->HandleTimer();
 
 		// Events holen:
 		SDL_PumpEvents();
@@ -5384,7 +5411,7 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		if ( timer0 ) last_b_ticks++;
+		//if ( timer0 ) last_b_ticks++;
 
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=440&&y<440+17&&b&&!DownPressed )
@@ -5399,8 +5426,8 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( offset<images->Count-9 )
 			{
 				offset++;
-				if ( selected<offset ) selected=offset;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+				//if ( selected<offset ) selected=offset;
+				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -5433,8 +5460,8 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( offset!=0 )
 			{
 				offset--;
-				if ( selected>=offset+9 ) selected=offset+8;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+				//if ( selected>=offset+9 ) selected=offset+8;
+				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -5467,8 +5494,8 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( build_offset!=0 )
 			{
 				build_offset--;
-				if ( build_selected>=build_offset+5 ) build_selected=build_offset+4;
-				ShowToBuildList ( to_build,build_selected,build_offset );
+				//if ( build_selected>=build_offset+5 ) build_selected=build_offset+4;
+				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -5501,8 +5528,8 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( build_offset<to_build->Count-5 )
 			{
 				build_offset++;
-				if ( build_selected<build_offset ) build_selected=build_offset;
-				ShowToBuildList ( to_build,build_selected,build_offset );
+				//if ( build_selected<build_offset ) build_selected=build_offset;
+				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -5540,9 +5567,14 @@ void cBuilding::ShowBuildMenu ( void )
 		else if ( BauenPressed&&!b&&LastB )
 		{
 			// Vehicle in die Bauliste aufnehmen:
-			to_build->AddBuildStruct ( images->BuildStructItems[selected] );
+			sBuildStruct *n = new sBuildStruct;
+			n->id = images->BuildStructItems[selected]->id;
+			n->sf = images->BuildStructItems[selected]->sf;
+			n->iRemainingMetal = -1;
+
+			to_build->AddBuildStruct ( n );
 			if ( build_selected<0 ) build_selected=0;
-			ShowToBuildList ( to_build,build_selected,build_offset );
+			ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 
 			scr.x=548;
 			scr.y=442;
@@ -5575,8 +5607,9 @@ void cBuilding::ShowBuildMenu ( void )
 			// Vehicle aus der Bauliste entfernen:
 			if ( to_build->Count&&to_build->Count>build_selected&&build_selected>=0 )
 			{
-				to_build->Delete ( build_selected );
-				ShowToBuildList ( to_build,build_selected,build_offset );
+				delete to_build->BuildStructItems[build_selected];
+				to_build->DeleteBuildStruct ( build_selected );
+				//ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 				if ( build_selected>=to_build->Count )
 				{
 					build_selected--;
@@ -5585,7 +5618,7 @@ void cBuilding::ShowBuildMenu ( void )
 				{
 					build_offset--;
 				}
-				ShowToBuildList ( to_build,build_selected,build_offset );
+				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
 
 			scr.x=412;
@@ -5618,7 +5651,7 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				RepeatBuild=Wiederholen;
+				//RepeatBuild=Wiederholen;  ?? warum?
 				break;
 			}
 		}
@@ -5654,29 +5687,55 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				if ( this->BuildSpeed!=BuildSpeed&&IsWorking )
+				//perform all changes
+
+				//first set the metal consumption of the factory
+				if (IsWorking)
 				{
-					SubBase->MetalNeed-=data.metal_need*this->BuildSpeed*this->BuildSpeed;
-					this->BuildSpeed=BuildSpeed;
-					SubBase->MetalNeed+=data.metal_need*BuildSpeed*BuildSpeed;
+					StopWork(false);
 				}
-				else
-				{
-					this->BuildSpeed=BuildSpeed;
-				}
+
+				if (BuildSpeed == 0) MetalPerRound =  3;
+				if (BuildSpeed == 1) MetalPerRound = 12;
+				if (BuildSpeed == 2) MetalPerRound = 36;
+
+				this->BuildSpeed=BuildSpeed;
 				RepeatBuild=Wiederholen;
-				if ( !to_build->Count )
+				
+				//delete old BuildList
+				while ( BuildList->Count )
 				{
-					while ( BuildList->Count )
-					{
 						sBuildList *ptr;
 						ptr=BuildList->BuildListItems[0];
 						delete ptr;
 						BuildList->DeleteBuildList ( 0 );
-					}
-					break;
 				}
-				i=0;
+
+				//calculate actual costs of the vehicles
+				//and add is to the BuildList
+				for (int counter = 0; counter < to_build->Count; counter++)
+				{
+					sBuildStruct *bs = to_build->BuildStructItems[counter];
+
+					CalcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[bs->id].iBuilt_Costs, bs->iRemainingMetal);
+
+					sBuildList *bl = new sBuildList;
+					bl->metall_remaining = iTurboBuildCosts[BuildSpeed];
+					bl->typ = &UnitsData.vehicle[bs->id];
+
+					BuildList->AddBuildList ( bl );
+				}
+				
+				//start facrory, if there is something in the build queue
+				if ( BuildList->Count > 0 )
+				{
+					StartWork();
+				}
+
+				break;
+				
+				//old
+				/*i=0;
 				if ( BuildList->Count )
 				{
 					if ( UnitsData.vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
@@ -5701,6 +5760,7 @@ void cBuilding::ShowBuildMenu ( void )
 						}
 					}
 				}
+
 				for ( ;i<to_build->Count;i++ )
 				{
 					sBuildList *n;
@@ -5710,6 +5770,7 @@ void cBuilding::ShowBuildMenu ( void )
 					BuildList->AddBuildList ( n );
 				}
 				break;
+				*/
 			}
 		}
 		else if ( FertigPressed )
@@ -5729,9 +5790,9 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			Beschreibung=!Beschreibung;
-			SettingsData.bShowDescription=Beschreibung;
-			if ( Beschreibung )
+			
+			SettingsData.bShowDescription=!SettingsData.bShowDescription;
+			if ( SettingsData.bShowDescription )
 			{
 				dest.x=scr.x=291;
 				dest.y=scr.y=264;
@@ -5749,7 +5810,7 @@ void cBuilding::ShowBuildMenu ( void )
 				dest.h=scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
-			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
+			ShowBuildList ( images,selected,offset, showDetailsBuildlist );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -5784,7 +5845,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			BuildSpeed=1;
+			BuildSpeed=0;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -5793,20 +5854,22 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( x>=292&&x<292+76&&y>=369&&y<369+22&&b&&!LastB&&data.can_build!=BUILD_MAN )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			BuildSpeed=2;
+			BuildSpeed=1;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
+			
 		}
 		// 4x Button:
 		if ( x>=292&&x<292+76&&y>=394&&y<394+22&&b&&!LastB&&data.can_build!=BUILD_MAN )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			BuildSpeed=4;
+			BuildSpeed=2;
 			DrawBuildButtons ( BuildSpeed );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
+
 		// Klick in die Liste:
 		if ( x>=490&&x<490+70&&y>=60&&y<60+368&&b&&!LastB )
 		{
@@ -5824,15 +5887,24 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( nr!=-1 )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				selected=nr;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed );
-				// Doppelklick prüfen:
-				if ( last_b_ticks<6 )
+				
+				// second klick on the Unit?
+				if ( (nr == selected)&&showDetailsBuildlist )
 				{
-					to_build->AddBuildStruct ( images->BuildStructItems[selected] );
+					//insert selected Vehicle in to_build list
+					sBuildStruct *n = new sBuildStruct;
+					n->id = images->BuildStructItems[selected]->id;
+					n->sf = images->BuildStructItems[selected]->sf;
+					n->iRemainingMetal = -1;
+
+					to_build->AddBuildStruct ( n );
 					if ( build_selected<0 ) build_selected=0;
-					ShowToBuildList ( to_build,build_selected,build_offset );
 				}
+				selected=nr;
+				showDetailsBuildlist=true;
+				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
+
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -5854,15 +5926,18 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( nr!=-1 )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				build_selected=nr;
-				ShowToBuildList ( to_build,build_selected,build_offset );
-				// Doppelklick prüfen:
-				if ( last_b_ticks<6 )
+				
+				// second klick on the Unit?
+				if ( (build_selected == nr) &&!showDetailsBuildlist )
 				{
 					if ( to_build->Count&&to_build->Count>build_selected&&build_selected>=0 )
 					{
-						to_build->Delete ( build_selected );
-						ShowToBuildList ( to_build,build_selected,build_offset );
+						delete to_build->BuildStructItems[build_selected];
+						to_build->DeleteBuildStruct ( build_selected );
+						
+						//to_build->Delete ( build_selected );
+
+						//ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 						if ( build_selected>=to_build->Count )
 						{
 							build_selected--;
@@ -5871,16 +5946,21 @@ void cBuilding::ShowBuildMenu ( void )
 						{
 							build_offset--;
 						}
-						ShowToBuildList ( to_build,build_selected,build_offset );
 					}
 				}
+
+				build_selected=nr;
+				showDetailsBuildlist=false;
+				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
+
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 		}
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
-		if ( b ) last_b_ticks=0;
+		//if ( b ) last_b_ticks=0;
 	}
 	// Alles Images löschen:
 	while ( images->Count )
@@ -5892,7 +5972,16 @@ void cBuilding::ShowBuildMenu ( void )
 		images->DeleteBuildStruct ( 0 );
 	}
 	delete images;
+
+	while ( to_build->Count )
+	{
+		delete  to_build->BuildStructItems[0];
+		to_build->DeleteBuildStruct ( 0 );
+	}
 	delete to_build;
+
+	//dat geit so nich...
+	/*
 	if ( BuildList->Count&&!IsWorking )
 	{
 		StartWork();
@@ -5900,12 +5989,13 @@ void cBuilding::ShowBuildMenu ( void )
 	else if ( !BuildList->Count&&IsWorking )
 	{
 		StopWork ( false );
-	}
+	} */
+
 	mouse->MoveCallback=true;
 }
 
-// Zeigt die Liste mit den Images an:
-void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschreibung,int *buildspeed )
+// Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch sämtliche Infos zur ausgewählten Einheit 
+void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest,scr,text;
@@ -5931,72 +6021,136 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
 		{
-			SDL_Rect tmp;
-			tmp=dest;
-			tmp.x-=4;
-			tmp.y-=4;
-			tmp.h=1;
-			tmp.w=8;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x+=30;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y+=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x-=30;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y=dest.y-4;
-			tmp.w=1;
-			tmp.h=8;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x+=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y+=31;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x-=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			// Das Bild neu malen:
-			tmp.x=11;tmp.y=13;
-			tmp.w=UnitsData.vehicle[ptr->id].info->w;
-			tmp.h=UnitsData.vehicle[ptr->id].info->h;
-			SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
-			// Ggf die Beschreibung ausgeben:
-			if ( beschreibung )
+			if (showInfo == true)
 			{
-				tmp.x+=10;tmp.y+=10;
-				tmp.w-=20;tmp.h-=20;
-				fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
-			}
-			// Die Details anzeigen:
-			{
-				cVehicle *tv;
-				tmp.x=11;
-				tmp.y=290;
-				tmp.w=260;
-				tmp.h=176;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
-				tv=new cVehicle ( UnitsData.vehicle+ptr->id,game->ActivePlayer );
-				tv->ShowBigDetails();
-				delete tv;
-			}
-			// Die Bauzeiten eintragen:
-			t=owner->VehicleData[ptr->id].costs;
+				//doppelten Rahmen drum malen
+				SDL_Rect tmp;
+				tmp=dest;
+				tmp.x-=3;
+				tmp.y-=3;
+				tmp.h=1;
+				tmp.w=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=28;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=28;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-3;
+				tmp.w=1;
+				tmp.h=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=29;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 
-			sprintf ( str,"%d", Round ( t/data.metal_need) );
-			fonts->OutTextCenter ( str,389,350,buffer );
-			sprintf ( str,"%d",t );
-			fonts->OutTextCenter ( str,429,350,buffer );
-			if ( data.can_build!=BUILD_MAN )
+				tmp=dest;
+				tmp.x-=5;
+				tmp.y-=5;
+				tmp.h=1;
+				tmp.w=10;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-5;
+				tmp.w=1;
+				tmp.h=10;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=31;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+
+				// Das große Bild neu malen:
+				tmp.x=11;tmp.y=13;
+				tmp.w=UnitsData.vehicle[ptr->id].info->w;
+				tmp.h=UnitsData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+				
+				
+				// Ggf die Beschreibung ausgeben:
+				if ( SettingsData.bShowDescription )
+				{
+					tmp.x+=10;tmp.y+=10;
+					tmp.w-=20;tmp.h-=20;
+					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+				}
+				// Die Details anzeigen:
+				{
+					cVehicle *tv;
+					tmp.x=11;
+					tmp.y=290;
+					tmp.w=260;
+					tmp.h=176;
+					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
+					tv=new cVehicle ( UnitsData.vehicle+ptr->id,game->ActivePlayer );
+					tv->ShowBigDetails();
+					delete tv;
+				}
+				// Die Bauzeiten eintragen:
+				int iTurboBuildRounds[3];
+				int iTurboBuildCosts[3];
+				CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs );
+
+				sprintf ( str,"%d",iTurboBuildRounds[0]) ;
+				fonts->OutTextCenter ( str,389,350,buffer );
+				sprintf ( str,"%d",iTurboBuildCosts[0] );
+				fonts->OutTextCenter ( str,429,350,buffer );
+
+				if ( iTurboBuildRounds[1] > 0 )
+				{
+					sprintf ( str,"%d", iTurboBuildRounds[1] );
+					fonts->OutTextCenter ( str,389,375,buffer );
+					sprintf ( str,"%d", iTurboBuildCosts[1] );
+					fonts->OutTextCenter ( str,429,375,buffer );
+				}
+				if ( iTurboBuildRounds[2] > 0 )
+				{
+					sprintf ( str,"%d", iTurboBuildRounds[2] );
+					fonts->OutTextCenter ( str,389,400,buffer );
+					sprintf ( str,"%d", iTurboBuildCosts[2] );
+					fonts->OutTextCenter ( str,429,400,buffer );
+				}
+			}
+			else //showInfo == false
 			{
-				sprintf ( str,"%d", Round ( t/ ( data.metal_need*2.0 )) );
-				fonts->OutTextCenter ( str,389,375,buffer );
-				sprintf ( str,"%d",t*2 );
-				fonts->OutTextCenter ( str,429,375,buffer );
-				sprintf ( str,"%d", Round ( t/ ( data.metal_need*4.0 )) );
-				fonts->OutTextCenter ( str,389,400,buffer );
-				sprintf ( str,"%d",t*4 );
-				fonts->OutTextCenter ( str,429,400,buffer );
+				//einfachen Rahmen drum malen
+				SDL_Rect tmp;
+				tmp=dest;
+				tmp.x-=4;
+				tmp.y-=4;
+				tmp.h=1;
+				tmp.w=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-4;
+				tmp.w=1;
+				tmp.h=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=31;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			}
 		}
+
 		// Text ausgeben:
 		t=0;
 		str[0]=0;
@@ -6014,13 +6168,14 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset,bool beschre
 	}
 }
 
+//draws the Buildspeed-Buttons
 void cBuilding::DrawBuildButtons ( int speed )
 {
 	SDL_Rect scr,dest;
 	dest.w=scr.w=78;
 	dest.h=scr.h=23;
 	dest.x=292;dest.y=345;
-	if ( speed==1 )
+	if ( speed==0 )
 	{
 		scr.x=39;scr.y=126;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -6030,7 +6185,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=24;
-	if ( speed==2 )
+	if ( speed==1 )
 	{
 		scr.x=118;scr.y=126;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -6040,7 +6195,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
 	}
 	dest.y+=25;
-	if ( speed==4 )
+	if ( speed==2 )
 	{
 		scr.x=216;scr.y=106;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -6051,8 +6206,8 @@ void cBuilding::DrawBuildButtons ( int speed )
 	}
 }
 
-// Zeigt die Liste mit den Bauaufträgen an:
-void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
+// Zeigt die Liste mit den Bauaufträgen an, und wenn show Info==true auch sämtliche Details zur gewählten Einheit 
+void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
 	SDL_Rect scr,dest,text;
@@ -6061,6 +6216,8 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 	scr.x=330;scr.y=49;
 	scr.w=128;scr.h=233;
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&scr );
+
+	
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=340;dest.y=58;
@@ -6075,29 +6232,139 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
 		{
-			SDL_Rect tmp;
-			tmp=dest;
-			tmp.x-=4;
-			tmp.y-=4;
-			tmp.h=1;
-			tmp.w=8;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x+=30;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y+=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x-=30;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y=dest.y-4;
-			tmp.w=1;
-			tmp.h=8;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x+=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.y+=31;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
-			tmp.x-=38;
-			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+			if (showInfo == true)
+			{
+				
+				//dopelten Rahmen drum malen
+				SDL_Rect tmp;
+				tmp=dest;
+				tmp.x-=3;
+				tmp.y-=3;
+				tmp.h=1;
+				tmp.w=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=28;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=28;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-3;
+				tmp.w=1;
+				tmp.h=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=29;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=36;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+
+				tmp=dest;
+				tmp.x-=5;
+				tmp.y-=5;
+				tmp.h=1;
+				tmp.w=10;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-5;
+				tmp.w=1;
+				tmp.h=10;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=31;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=40;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+
+				// Das große Bild neu malen:
+				tmp.x=11;tmp.y=13;
+				tmp.w=UnitsData.vehicle[ptr->id].info->w;
+				tmp.h=UnitsData.vehicle[ptr->id].info->h;
+				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+				
+				
+				// Ggf die Beschreibung ausgeben:
+				if ( SettingsData.bShowDescription )
+				{
+					tmp.x+=10;tmp.y+=10;
+					tmp.w-=20;tmp.h-=20;
+					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+				}
+				// Die Details anzeigen:
+				{
+					cVehicle *tv;
+					tmp.x=11;
+					tmp.y=290;
+					tmp.w=260;
+					tmp.h=176;
+					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
+					tv=new cVehicle ( UnitsData.vehicle+ptr->id,game->ActivePlayer );
+					tv->ShowBigDetails();
+					delete tv;
+				}
+				
+				// Die Bauzeiten eintragen:
+				int iTurboBuildRounds[3];
+				int iTurboBuildCosts[3];
+				CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs, ptr->iRemainingMetal );
+
+				tmp.x=373;tmp.y=344;
+				tmp.w=77;tmp.h=72;
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
+
+				sprintf ( str,"%d",iTurboBuildRounds[0]);
+				fonts->OutTextCenter ( str,389,350,buffer );
+				sprintf ( str,"%d",iTurboBuildCosts[0] );
+				fonts->OutTextCenter ( str,429,350,buffer );
+
+				if ( iTurboBuildRounds[1] > 0 )
+				{
+					sprintf ( str,"%d", iTurboBuildRounds[1] );
+					fonts->OutTextCenter ( str,389,375,buffer );
+					sprintf ( str,"%d", iTurboBuildCosts[1] );
+					fonts->OutTextCenter ( str,429,375,buffer );
+				}
+				if ( iTurboBuildRounds[2] > 0 )
+				{
+					sprintf ( str,"%d", iTurboBuildRounds[2] );
+					fonts->OutTextCenter ( str,389,400,buffer );
+					sprintf ( str,"%d", iTurboBuildCosts[2] );
+					fonts->OutTextCenter ( str,429,400,buffer );
+				}
+			}
+			else
+			{
+				SDL_Rect tmp;
+				tmp=dest;
+				tmp.x-=4;
+				tmp.y-=4;
+				tmp.h=1;
+				tmp.w=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=30;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y=dest.y-4;
+				tmp.w=1;
+				tmp.h=8;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x+=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.y+=31;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+				tmp.x-=38;
+				SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
+			}
 		}
 		// Text ausgeben:
 		t=0;
@@ -6112,6 +6379,60 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset )
 		text.y+=32+10;
 		dest.y+=32+10;
 	}
+}
+
+//calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
+//iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1
+void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal)
+{
+	//first calc costs for a new Vehical
+	iTurboBuildCosts[0] = iVehicleCosts;
+	
+	iTurboBuildCosts[1] = iTurboBuildCosts[0];
+	while (iTurboBuildCosts[1] + 6 <= 2*iTurboBuildCosts[0]) 
+	{
+		iTurboBuildCosts[1] += 6;
+	}
+
+	iTurboBuildCosts[2] = iTurboBuildCosts[1];
+	while (iTurboBuildCosts[2] + 12 <= 3*iTurboBuildCosts[0]) 
+	{
+		iTurboBuildCosts[2] += 12;
+	}
+
+	//now this is a litle bit tricky ...
+	//trying to calculate a plausible value, if we are changing the speed of an already started build-job
+	if ( iRemainingMetal >= 0 )
+	{
+		float WorkedRounds;
+		switch (BuildSpeed)  //BuildSpeed here is the previous build speed
+		{
+			case 0:
+				WorkedRounds = ( iTurboBuildCosts[0] - iRemainingMetal )/ (float) 3;
+				iTurboBuildCosts[0] -= 1    *  3 * WorkedRounds;
+				iTurboBuildCosts[1] -= 0.5  * 12 * WorkedRounds;
+				iTurboBuildCosts[2] -= 0.25 * 36 * WorkedRounds;
+				break;
+			case 1:
+				WorkedRounds = ( iTurboBuildCosts[1] - iRemainingMetal )/ (float) 12;
+				iTurboBuildCosts[0] -= 2   *  3 * WorkedRounds;
+				iTurboBuildCosts[1] -= 1   * 12 * WorkedRounds;
+				iTurboBuildCosts[2] -= 0.5 * 36 * WorkedRounds;
+				break;
+			case 2:
+				WorkedRounds = ( iTurboBuildCosts[2] - iRemainingMetal )/ (float) 36;
+				iTurboBuildCosts[0] -= 4 *  3 * WorkedRounds;
+				iTurboBuildCosts[1] -= 2 * 12 * WorkedRounds;
+				iTurboBuildCosts[2] -= 1 * 36 * WorkedRounds;
+				break;
+		}
+	}
+
+	//TODO: men always need 9 month ;)
+	//calc needed Rounds
+	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) 3  );
+	iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) 12 );
+	iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) 36 );
 }
 
 // Liefert die X-Position des Buildings auf dem Screen zurück:

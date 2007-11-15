@@ -2283,8 +2283,9 @@ void cVehicle::ShowBuildMenu ( void )
 	bool UpPressed=false;
 	TList *images;
 	int selected=0,offset=0,BuildSpeed=1;
-	int iTurboBuildCosts[3];
-	int iTurboBuildRounds[3];// 0 für nicht verfügbare Stufe
+	int iTurboBuildCosts[3]; //costs for the 3 turbo build steps
+	int iTurboBuildRounds[3];// needed rounds for the 3 turbo build steps
+							 // 0 rounds, means not available
 
 
 	BandX=PosX;

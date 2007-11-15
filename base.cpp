@@ -235,10 +235,10 @@ void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 	// Rohstoffhaushalt ausrechnen:
 	if ( b->data.metal_need )
 	{
-		sb->MaxMetalNeed+=b->data.metal_need*4*4;
+		sb->MaxMetalNeed+=b->data.metal_need*12;
 		if ( b->IsWorking )
 		{
-			sb->MetalNeed+=b->data.metal_need*b->BuildSpeed*b->BuildSpeed;
+			sb->MetalNeed+=min( b->MetalPerRound, b->BuildList->BuildListItems[0]->metall_remaining);
 		}
 	}
 	// Goldhaushalt ausrechnen:
@@ -529,13 +529,20 @@ void cBase::Rundenende ( void )
 			// Bauen:
 			if ( b->IsWorking&&b->data.can_build&&b->BuildList->Count )
 			{
-				sBuildList *ptr;
-				ptr=b->BuildList->BuildListItems[0];
-				if ( ptr->metall_remaining>0 )
+				sBuildList *BuildListItem;
+				BuildListItem=b->BuildList->BuildListItems[0];
+				if ( BuildListItem->metall_remaining > 0 )
 				{
-					ptr->metall_remaining-=b->data.metal_need*b->BuildSpeed;
+					//in this block the metal consumption of the factory in the next round can change
+					//so we first substract the old value from MetalNeed and then add the new one, to hold the base up to date
+					sb->MetalNeed -= min( b->MetalPerRound, BuildListItem->metall_remaining);
+
+					BuildListItem->metall_remaining -= min( b->MetalPerRound, BuildListItem->metall_remaining);
+					if (BuildListItem->metall_remaining < 0) BuildListItem->metall_remaining = 0;
+
+					sb->MetalNeed += min( b->MetalPerRound, BuildListItem->metall_remaining);
 				}
-				if ( ptr->metall_remaining<=0 )
+				if ( BuildListItem->metall_remaining<=0 )
 				{
 					// if(b->owner==game->ActivePlayer)game->engine->AddReport(ptr->typ->data.name,true);
 					b->StopWork ( false );

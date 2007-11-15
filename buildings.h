@@ -106,6 +106,7 @@ public:
   bool Attacking;  // Gibt an, ob das Building gerade angreift
   TList *BuildList; // Die Bauliste der Fabrik
   int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
+  int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
   bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
   bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
   TList *StoredVehicles; // Liste mit geladenen Vehicles
@@ -157,9 +158,10 @@ public:
   void DrawAttackCursor(struct sGameObjects *go,int can_attack);
   void RotateTo(int Dir);
   void ShowBuildMenu(void);
-  void ShowBuildList(TList *list,int selected,int offset,bool beschreibung,int *buildspeed);
+  void ShowBuildList(TList *list,int selected,int offset, bool showInfo);
   void DrawBuildButtons(int speed);
-  void ShowToBuildList(TList *list,int selected,int offset);
+  void ShowToBuildList(TList *list,int selected,int offset, bool showInfo);
+  void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
   void DrawExitPoints(sVehicle *typ);
   bool CanExitTo(int off,sVehicle *typ);
   bool CanLoad(int off);

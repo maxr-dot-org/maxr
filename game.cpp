@@ -951,7 +951,10 @@ int cGame::CheckUser ( void )
 			if ( SelectedBuilding->RepeatBuild )
 			{
 				SelectedBuilding->BuildList->DeleteBuildList ( 0 );
-				ptr->metall_remaining=ptr->typ->data.costs;
+				int iTurboBuildCosts[3];
+				int iTurboBuildRounds[3];
+				SelectedBuilding->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, ptr->typ->data.iBuilt_Costs);
+				ptr->metall_remaining=iTurboBuildCosts[SelectedBuilding->BuildSpeed];
 				SelectedBuilding->BuildList->AddBuildList ( ptr );
 				SelectedBuilding->StartWork();
 			}
@@ -2704,6 +2707,10 @@ Uint32 Timer ( Uint32 interval, void *param )
 // Kümmert sich um alle Timer:
 void cGame::HandleTimer ( void )
 {
+	//timer0: 50ms
+	//timer1: 100ms
+	//timer2: 400ms
+
 	static unsigned int last=0,i=0;
 	timer0=0;timer1=0;timer2=0;
 	if ( TimerTime!=last )
