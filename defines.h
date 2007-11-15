@@ -48,6 +48,7 @@
 	#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
 	#define GFXOD_MULT          "gfx_od\\mult.pcx"
 	#define GFXOD_DIALOG4		"gfx\\dialog4.pcx"
+	#define GFXOD_DIALOG5		"gfx\\dialog5.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #else
 	#ifndef PATH_DELIMITER
@@ -63,6 +64,7 @@
 	#define GFXOD_HANGAR        "gfx_od//hangar.pcx"
 	#define GFXOD_MULT          "gfx_od//mult.pcx"
 	#define GFXOD_DIALOG4		"gfx//dialog4.pcx"
+	#define GFXOD_DIALOG5		"gfx//dialog5.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #endif
 

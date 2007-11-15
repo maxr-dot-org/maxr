@@ -370,7 +370,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	mouse->SetCursor ( CHand );
 	SDL_BlitSurface ( screen, NULL, buffer, NULL ); //write screen to buffer for proper background "picture"
 
-	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 300, 231, 32, 0, 0, 0, 0 );
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 300, 231, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	if (FileExists(GFXOD_DIALOG4));
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG4, SfDialog ); //load dialog4.pxc

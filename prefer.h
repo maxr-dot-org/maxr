@@ -24,7 +24,7 @@
 
 // Prototypen ////////////////////////////////////////////////////////////////
 void DoPraeferenzen(void);
-void ShowBar(int offx,int offy,int value);
+void ShowBar(int offx,int offy,int value, SDL_Surface *surface);
 void SetButton(int offx,int offy,bool set);
 
 #endif

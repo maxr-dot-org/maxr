@@ -21,6 +21,9 @@
 #include "sound.h"
 #include "keyinp.h"
 #include "fonts.h"
+#include "files.h"
+#include "defines.h"
+#include "pcx.h"
 
 // DoPraeferenzen ////////////////////////////////////////////////////////////
 // Zeigt das Präferenzenfenster an:
@@ -36,6 +39,7 @@ void DoPraeferenzen ( void )
 	SDL_Rect scr, dest, rFont;
 	Uint8 *keystate;
 	bool cursor = true;
+	SDL_Surface *SfDialog;
 	
 	//position x of all sliderbars
 	#define BAR_X 140
@@ -58,16 +62,35 @@ void DoPraeferenzen ( void )
 	OldbDamageEffects = SettingsData.bDamageEffects;
 	OldbDamageEffectsVehicles = SettingsData.bDamageEffectsVehicles;
 	OldbMakeTracks = SettingsData.bMakeTracks;
-	
+
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 400, 422, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
+	if ( SettingsData.bAlphaEffects )
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+	}
+
+	if(FileExists(GFXOD_DIALOG5));
+	{
+		LoadPCXtoSF (GFXOD_DIALOG5, SfDialog );	
+		//blit black titlebar behind textfield for playername
+		scr.x=108;
+		scr.y=12;
+		dest.w=scr.w=186;
+		dest.h=scr.h=18;
+		dest.x=108;
+		dest.y=154;
+		SDL_BlitSurface ( SfDialog,&scr,SfDialog,&dest ); 
+
+	}
+
+	 //blit dialog to buffer
 	dest.x = 120;
 	dest.y = 29;
-	dest.w = GraphicsData.gfx_praefer->w;
-	dest.h = GraphicsData.gfx_praefer->h;
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+	dest.w = SfDialog->w;
+	dest.h = SfDialog->h;
 	
-	if ( SettingsData.bAlphaEffects )
-		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-	SDL_BlitSurface ( GraphicsData.gfx_praefer, NULL, buffer, &dest );
+	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
 
 				scr.x=68;
 				scr.y=172;
@@ -104,7 +127,7 @@ void DoPraeferenzen ( void )
 	rFont.y = 105;
 	rFont.h = CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Music" ).c_str(),rFont.x,rFont.y,buffer);
-	ShowBar ( BAR_X+120,BAR_Y,SettingsData.MusicVol*2 );
+	ShowBar ( BAR_X+120,BAR_Y,SettingsData.MusicVol*2,SfDialog );
 	SetButton ( 210+120,73+29,SettingsData.MusicMute );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
@@ -113,7 +136,7 @@ void DoPraeferenzen ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Effects" ).c_str(),rFont.x,rFont.y,buffer);
-	ShowBar ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2 );
+	ShowBar ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, SfDialog );
 	SetButton ( 210+120,93+29,SettingsData.SoundMute );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
@@ -122,20 +145,13 @@ void DoPraeferenzen ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Voices" ).c_str(),rFont.x,rFont.y,buffer);
-	ShowBar ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2 );
+	ShowBar ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,SfDialog );
 	SetButton ( 210+120,113+29,SettingsData.VoiceMute );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
 	//END BLOCK SOUND
 	//BEGIN BLOCK PLAYERNAME	
 	
-	scr.x=108;
-	scr.y=12;
-	dest.w=scr.w=186;
-	dest.h=scr.h=18;
-	dest.x=108+120;
-	dest.y=155+29;
-	SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest ); //blit black bar behind text
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 158+29;
@@ -177,7 +193,7 @@ void DoPraeferenzen ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 261+25;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Scrollspeed" ).c_str(),rFont.x,rFont.y,buffer);
-	ShowBar ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5 );
+	ShowBar ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, SfDialog );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 290+33;
@@ -208,7 +224,7 @@ void DoPraeferenzen ( void )
 				dest.h=scr.h=17;
 				dest.x=116+120;
 				dest.y=154+29;
-				SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest );
+				SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
 				if ( InputEnter )
 				{
 					fonts->OutText ( ( char * ) InputStr.c_str(),122+120,158+29,buffer );
@@ -251,7 +267,7 @@ void DoPraeferenzen ( void )
 			{
 				SettingsData.MusicVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.MusicVol>=125 ) SettingsData.MusicVol=128;
-				ShowBar ( BAR_X+120,81+29,SettingsData.MusicVol*2 );
+				ShowBar ( BAR_X+120,81+29,SettingsData.MusicVol*2, SfDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SetMusicVol ( SettingsData.MusicVol );
@@ -260,7 +276,7 @@ void DoPraeferenzen ( void )
 			{
 				SettingsData.SoundVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.SoundVol>=125 ) SettingsData.SoundVol=128;
-				ShowBar ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2 );
+				ShowBar ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, SfDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -268,14 +284,14 @@ void DoPraeferenzen ( void )
 			{
 				SettingsData.VoiceVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.VoiceVol>=125 ) SettingsData.VoiceVol=128;
-				ShowBar ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2 );
+				ShowBar ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2, SfDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=261+29-7&&y<=261+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
 				SettingsData.iScrollSpeed= ( int ) ( ( x- ( BAR_X+120 ) ) * ( 255.0/57 ) ) /5;
-				ShowBar ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5 );
+				ShowBar ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, SfDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -343,8 +359,6 @@ void DoPraeferenzen ( void )
 					Input=true;
 					InputStr=game->ActivePlayer->name;
 					stmp = InputStr; stmp += "_";
-					
-					//TODO: blit black bar behind text again
 					fonts->OutText ( ( char * ) stmp.c_str(),122+120,158+29,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -410,7 +424,7 @@ void DoPraeferenzen ( void )
 			dest.h=scr.h=24;
 			dest.x=215+120;
 			dest.y=383+29;
-			SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest );
+			SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -461,7 +475,7 @@ void DoPraeferenzen ( void )
 			dest.h=scr.h=24;
 			dest.x=125+120;
 			dest.y=383+29;
-			SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest );
+			SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -472,40 +486,42 @@ void DoPraeferenzen ( void )
 		LastB=b;
 		SDL_Delay ( 1 );
 	}
+	SDL_FreeSurface (SfDialog);
 }
 
  //FIXME: offset method only works on fixed resolution 640x460. 
-void ShowBar ( int offx,int offy,int value )
+void ShowBar ( int offx,int offy,int value, SDL_Surface *surface )
 {
 	SDL_Rect scr, dest;
 	#define SLIDER_W 14
 	#define SLIDER_H 17
+	
+	//BEGIN REDRAW DIALOG UNDER SLIDER
 	/*Offset to read clean background from +/- 7 to 
 	*overdraw slider because slider is 14 fat and can
 	*show half over the ends of the sliderbar*/
 	scr.x = offx - 120 - SLIDER_W / 2; //scr.x & scr.y = topleft
 	scr.y = offy - 29 ;
-	scr.w = 57 + SLIDER_W / 2;
+	scr.w = 57 + SLIDER_W;
 	scr.h = SLIDER_H;
-	
 	dest.x = offx - 6;
 	dest.y = offy - 7;	
-	dest.w = scr.w + 6;
+	dest.w = scr.w + SLIDER_W;
 	dest.h = SLIDER_H;
-
-	//SDL_FillRect(GraphicsData.gfx_praefer,&scr,0x00C000);
-	SDL_BlitSurface ( GraphicsData.gfx_praefer,&scr,buffer,&dest ); //dist
-
-	//SDL_BlitSurface ( GraphicsData.gfx_praefer,&dest,buffer,&dest );
+	SDL_BlitSurface ( surface,&scr,buffer,&dest ); //dist
+	//END REDRAW DIALOG UNDER SLIDER
 	
-	scr.x=334;
+	//BEGIN DRAW SLIDERBAR
+	scr.x=334; //get sliderbar from hud_stuff.pxc
 	scr.y=82;
 	scr.w=58;
 	scr.h=3;	
 	dest.y += 7;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	//END DRAW SLIDERBAR
 
-	scr.x=412; //get slider on hud_stuff.pcx
+	//BEGIN DRAW SLIDER
+	scr.x=412; //get slider from hud_stuff.pcx
 	scr.y=46;
 	scr.w=SLIDER_W;
 	scr.h=SLIDER_H;
@@ -515,6 +531,7 @@ void ShowBar ( int offx,int offy,int value )
 	dest.x=offx-6+ ( int ) ( ( 57/255.0 ) *value );
 	dest.y=offy-SLIDER_W / 2;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	//END DRAW SLIDER
 }
 
 void SetButton ( int offx,int offy,bool set )

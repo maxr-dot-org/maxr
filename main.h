@@ -692,7 +692,6 @@ public:
 	SDL_Surface *gfx_Cpfeil8;
 	SDL_Surface *gfx_Cpfeil9;
 	SDL_Surface *gfx_hud_stuff;
-	SDL_Surface *gfx_praefer;
 	SDL_Surface *gfx_shadow;
 	SDL_Surface *gfx_tmp;
 	SDL_Surface *gfx_help_screen;
