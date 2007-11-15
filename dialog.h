@@ -35,6 +35,10 @@ int ShowNumberInput(string text);
  * @param pure 
  */
 void ShowOK(string text,bool pure=false);
+/** Shows selfdestruction dialog with safe feature. User has to click twice to blow something up
+ * @author beko
+ * @return true on blast<br>false on cancel
+ */
 bool showSelfdestruction(void);
  /** Shows licence infobox refering to hardcoded GPL-notation and warranty information
  * @author beko

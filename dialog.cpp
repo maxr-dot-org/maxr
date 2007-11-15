@@ -997,8 +997,8 @@ bool showSelfdestruction()
 	dest.y=199+13;
 	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&dest );
 	
-	drawButton("Blast", false, 233+89,199+14,buffer);
-	drawButton("Cancel", false, 233+89,199+46,buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, 233+89,199+14,buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 233+89,199+46,buffer);
 
 
 	// Den Buffer anzeigen:
@@ -1030,14 +1030,7 @@ bool showSelfdestruction()
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton ); //pressed
-				drawButton("Cancel", true, 233+89,199+46,buffer);
-				/*scr.x=232;
-				scr.y=231;
-				dest.w=scr.w=75;
-				dest.h=scr.h=24;
-				dest.x=233+89;
-				dest.y=199+46;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );*/
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 233+89,199+46,buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1049,14 +1042,7 @@ bool showSelfdestruction()
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton("Cancel", false, 233+89,199+46,buffer);
-			/*scr.x=89;
-			scr.y=46;
-			dest.w=scr.w=75;
-			dest.h=scr.h=24;
-			dest.x=233+89;
-			dest.y=199+46;
-			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );*/
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 233+89,199+46,buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1067,15 +1053,7 @@ bool showSelfdestruction()
 			if ( b&&!ScharfPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton("Blast", true, 233+89,199+14,buffer);
-				/*
-				scr.x=156;
-				scr.y=231;
-				dest.w=scr.w=75;
-				dest.h=scr.h=24;
-				dest.x=233+89;
-				dest.y=199+14;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest ); */
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), true, 233+89,199+14,buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				ScharfPressed=true;
@@ -1088,15 +1066,7 @@ bool showSelfdestruction()
 		}
 		else if ( !Scharf&&ScharfPressed )
 		{
-			drawButton("Blast", false, 233+89,199+14,buffer);
-/*
-			scr.x=89;
-			scr.y=14;
-			dest.w=scr.w=75;
-			dest.h=scr.h=24;
-			dest.x=233+89;
-			dest.y=199+14;
-			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );*/
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, 233+89,199+14,buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			ScharfPressed=false;
@@ -1140,9 +1110,7 @@ bool showSelfdestruction()
 			}
 			else if ( !b&&LastB )
 			{
-				// Nur SP/Server:
-				//game->engine->DestroyObject ( PosX+PosY*game->map->size,false );
-				return true;
+				return true; //user told us to blow something up
 			}
 		}
 		else if ( GlasHeight<=0&&DestroyPressed )
