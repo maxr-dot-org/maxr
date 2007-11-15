@@ -600,7 +600,7 @@ void showPreferences ( void )
 		SDL_BlitSurface ( SfDialog,&scr,SfDialog,&dest ); 
 
 	}
-
+	
 	 //blit dialog to buffer
 	dest.x = 120;
 	dest.y = 29;
@@ -608,24 +608,9 @@ void showPreferences ( void )
 	dest.h = SfDialog->h;
 	
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-
-				scr.x=68;
-				scr.y=172;
-				dest.w=scr.w=63;
-				dest.h=scr.h=24;
-				dest.x=215+120;
-				dest.y=383+29;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest ); //finnished button
-			
-				scr.x=0;
-				scr.y=190;
-				dest.w=scr.w=63;
-				dest.h=scr.h=24;
-				dest.x=125+120;
-				dest.y=383+29;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
-				//exit button
-
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118, 383, buffer); 
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208, 383, buffer); 
+	
 	rFont.x = 120 + 160; //TOFIX: Text not centered
 	rFont.y = 29 + 15;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Preferences" ).c_str(),rFont.x,rFont.y,buffer);
@@ -904,18 +889,12 @@ void showPreferences ( void )
 			}
 		}
 		// Fertig-Button:
-		if ( x>=215+120&&x<215+120+63&&y>=383+29&&y<382+29+24 )
+		if ( x>=208+120&&x<208+120+77&&y>=383+29&&y<382+29+24 )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=68;
-				scr.y=172;
-				dest.w=scr.w=63;
-				dest.h=scr.h=24;
-				dest.x=215+120;
-				dest.y=383+29;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), true, 208, 383, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -935,30 +914,19 @@ void showPreferences ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=215;
-			scr.y=383;
-			dest.w=scr.w=63;
-			dest.h=scr.h=24;
-			dest.x=215+120;
-			dest.y=383+29;
-			SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208, 383, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
+			
 		}
 		// Abbruch-Button:
-		if ( x>=125+120&&x<125+120+63&&y>=383+29&&y<382+29+24 )
+		if ( x>=118+120&&x<118+120+77&&y>=383+29&&y<382+29+24 )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=0;
-				scr.y=190;
-				dest.w=scr.w=63;
-				dest.h=scr.h=24;
-				dest.x=125+120;
-				dest.y=383+29;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 118, 383, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -986,13 +954,7 @@ void showPreferences ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=125;
-			scr.y=383;
-			dest.w=scr.w=63;
-			dest.h=scr.h=24;
-			dest.x=125+120;
-			dest.y=383+29;
-			SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118, 383, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1068,4 +1030,28 @@ void drawButton ( int offx,int offy,bool set )
 	dest.x=offx;
 	dest.y=offy;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+}
+
+void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface)
+{
+	SDL_Rect scr, dest={120,29,0,0};
+	int iPx;
+	if(bPressed)
+	{
+		scr.x=230;
+		iPx = 6;
+	}
+	else
+	{
+		scr.x=308;
+		iPx = 5;
+	}
+	scr.y=455;
+	dest.w=scr.w=77;
+	dest.h=scr.h=23;
+	dest.x += x;
+	dest.y += y;
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //finnished button
+	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,buffer);
+	//fonts->OutText(sText.c_str(),dest.x+5,dest.y+3,buffer);
 }

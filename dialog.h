@@ -31,6 +31,7 @@ void showPreferences(void);
 void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
 void drawSlider(int offx,int offy,int value, SDL_Surface *surface);
 void drawButton(int offx,int offy,bool set);
+void drawButton(string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
 enum ARROW_TYPE
 {
