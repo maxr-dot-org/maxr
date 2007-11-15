@@ -28,14 +28,13 @@ cFSTcpIp::cFSTcpIp ( bool server )
 	iPlayerId=-1;
 	SocketSet=NULL;
 	sock_server=NULL;
-	NetBuffer = new sNetBuffer;
-	for ( int i=0;i<8;i++ )
+	for ( int i=0;i<16;i++ )
 	{
 		sock_client[i]=NULL;
 	}
 	iStatus=STAT_CLOSED;
 	UsedIDs = new sIDList();
-	WaitOKList = new sIDList();
+	WaitOKList = new sList();
 	if(bServer)
 	{
 		iNextMessageID = 1;
@@ -46,6 +45,7 @@ cFSTcpIp::cFSTcpIp ( bool server )
 	}
 	bReceiveThreadFinished = true;
 	FSTcpIpReceiveThread = NULL;
+	FSTcpIpResendThread = SDL_CreateThread ( CheckResends , NULL );
 }
 
 cFSTcpIp::~cFSTcpIp()
@@ -57,14 +57,16 @@ cFSTcpIp::~cFSTcpIp()
 void cFSTcpIp::FSTcpIpClose()
 {
 	if ( FSTcpIpReceiveThread ) SDL_KillThread( FSTcpIpReceiveThread );
+	if ( FSTcpIpResendThread ) SDL_KillThread( FSTcpIpResendThread );
 	if ( SocketSet ) SDLNet_FreeSocketSet ( SocketSet );
 	if ( sock_server ) SDLNet_TCP_Close ( sock_server );
-	for ( int i=0;i<8;i++ )
+	for ( int i=0;i<16;i++ )
 	{
 		if ( sock_client[i] ) SDLNet_TCP_Close ( sock_client[i] );
 	}
 	iStatus=STAT_CLOSED;
 	FSTcpIpReceiveThread = NULL;
+	FSTcpIpResendThread = NULL;
 }
 
 bool cFSTcpIp::FSTcpIpCreate()
@@ -139,7 +141,7 @@ bool cFSTcpIp::FSTcpIpOpen ( void )
 
 bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 {
-	cNetMessage NetMessage;
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	int iPartLenght;
 	int iPartNum = 1;
 	int iMax_PartNum;
@@ -156,16 +158,12 @@ bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 		{
 			iPartLenght = ( int ) ( strlen(msg) - ( ( iMax_PartNum - 1 ) * 255 ) + 1 );
 		}
-		NetMessage.typ = typ;
-		NetMessage.lenght = iPartLenght;
-		memcpy ( NetMessage.msg, msg,iPartLenght );
-		NetMessage.msg[iPartLenght-1]='\0';
+		NetBuffer->msg.typ = typ;
+		NetBuffer->msg.lenght = iPartLenght;
+		memcpy ( NetBuffer->msg.msg, msg,iPartLenght );
+		NetBuffer->msg.msg[iPartLenght-1]='\0';
 
 		// Set the buffer
-		NetBuffer->iID = iNextMessageID;
-		UsedIDs->Add ( iNextMessageID );
-		iNextMessageID = GenerateNewID();
-		NetBuffer->msg = NetMessage;
 		NetBuffer->iMax_parts = iMax_PartNum;
 		NetBuffer->iPart = iPartNum;
 		NetBuffer->iTyp = BUFF_TYP_DATA;
@@ -176,6 +174,11 @@ bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 		{
 			while ( sock_client[i] != NULL && i < iMax_clients )
 			{
+				NetBuffer->iID = iNextMessageID;
+				UsedIDs->Add ( iNextMessageID );
+				iNextMessageID = GenerateNewID();
+				NetBuffer->iTicks = SDL_GetTicks();
+				NetBuffer->iDestClientNum = i;
 				SDLNet_TCP_Send ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
 				char szTmp[400];
 				sprintf(szTmp,"(Host)Send Data-Message: -Part: %d/%d -ID: %d -Client %d -Message: \"%s\" -Lenght: %d -Typ: %d",NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, i, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
@@ -187,6 +190,11 @@ bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 		// Client
 		else
 		{
+			NetBuffer->iID = iNextMessageID;
+			UsedIDs->Add ( iNextMessageID );
+			iNextMessageID = GenerateNewID();
+			NetBuffer->iTicks = SDL_GetTicks();
+			NetBuffer->iDestClientNum = -1;
 			SDLNet_TCP_Send ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
 			char szTmp[400];
 			sprintf(szTmp,"(Client)Send Data-Message: -Part: %d/%d -ID: %d -Message: \"%s\" -Lenght: %d -Typ: %d",NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
@@ -194,7 +202,7 @@ bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 			SDL_Delay ( 1 );
 		}
 		// Add package to waitlist
-		WaitOKList->Add(NetBuffer->iID);
+		WaitOKList->Add(NetBuffer);
 
 		iPartNum++;
 	}
@@ -203,6 +211,7 @@ bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 
 bool cFSTcpIp::FSTcpIpReceive()
 {
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	// Host
 	int i = 0;
 	if ( bServer )
@@ -219,8 +228,6 @@ bool cFSTcpIp::FSTcpIpReceive()
 					char szTmp[400];
 					sprintf(szTmp,"(Host)Received Data-Message: -Part: %d/%d -ID: %d -Client %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, i, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
 					cLog::write(szTmp, LOG_TYPE_NETWORK);
-					if ( NetBuffer->msg.typ == 107 )
-						int h = 0;
 					// Add message to list
 					MultiPlayer->MessageList->AddNetMessage ( &NetBuffer->msg );
 					// Send OK to Client
@@ -237,7 +244,7 @@ bool cFSTcpIp::FSTcpIpReceive()
 					// Delete Message ID from WaitList
 					for (int k = 0; k < WaitOKList->iCount; k++)
 					{
-						if( WaitOKList->iID[k] == NetBuffer->iID )
+						if( ( ( sNetBuffer *) WaitOKList->Items[k] ) == NetBuffer )
 						{
 							WaitOKList->Delete(k);
 							break;
@@ -281,7 +288,7 @@ bool cFSTcpIp::FSTcpIpReceive()
 			// Delete Message ID from WaitList
 			for (int k = 0; k < WaitOKList->iCount; k++)
 			{
-				if( WaitOKList->iID[k] == NetBuffer->iID )
+				if( ( ( sNetBuffer *) WaitOKList->Items[k] ) == NetBuffer )
 				{
 					WaitOKList->Delete(k);
 					break;
@@ -319,36 +326,39 @@ int cFSTcpIp::GenerateNewID()
 
 void cFSTcpIp::SendNewID(unsigned int iNewID, int iClientNum)
 {
-	cNetMessage *msg;
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	char szTmp[12];
 
-	msg = new cNetMessage();
 	NetBuffer->iID = iNextMessageID;
 	UsedIDs->Add ( iNextMessageID );
 	iNextMessageID = GenerateNewID();
 	NetBuffer->iMax_parts = 1;
 	NetBuffer->iPart = 1;
 	NetBuffer->iTyp = BUFF_TYP_NEWID;
+	NetBuffer->iTicks = SDL_GetTicks();
+	NetBuffer->iDestClientNum = iClientNum;
 	sprintf(szTmp,"%d", iNewID);
-	msg->lenght = ( int ) strlen(szTmp) + 1;
-	memcpy ( msg->msg, szTmp, msg->lenght );
-	NetBuffer->msg = *msg;
+	NetBuffer->msg.lenght = ( int ) strlen(szTmp) + 1;
+	memcpy ( NetBuffer->msg.msg, szTmp, NetBuffer->msg.lenght );
 
 	SDLNet_TCP_Send ( sock_client[iClientNum], NetBuffer, sizeof ( sNetBuffer ) );
 	char szTmp2[400];
 	sprintf(szTmp2,"(Host)Send NewID-Message: -ID %d -Client %d -Message: \"%s\" -Lenght: %d",NetBuffer->iID, iClientNum, NetBuffer->msg.msg, NetBuffer->msg.lenght);
 	cLog::write(szTmp2, LOG_TYPE_NETWORK);
 	// Add package to waitlist
-	WaitOKList->Add(NetBuffer->iID);
+	WaitOKList->Add(NetBuffer);
 	SDL_Delay ( 1 );
 }
 
 void cFSTcpIp::SendOK(unsigned int iID, int iClientNum)
 {
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	NetBuffer->iID = iID;
 	NetBuffer->iMax_parts = 1;
 	NetBuffer->iPart = 1;
 	NetBuffer->iTyp = BUFF_TYP_OK;
+	NetBuffer->iTicks = SDL_GetTicks();
+	NetBuffer->iDestClientNum = iClientNum;
 
 	// Client
 	if(iClientNum == -1)
@@ -419,7 +429,17 @@ int Open ( void * )
 		return 0;
 	}
 }
-/*
+
+int CheckResends ( void * )
+{
+	SDL_Delay(1000);
+	while ( 1 )
+	{
+		MultiPlayer->fstcpip->FSTcpIpCheckResends ();
+	}
+	return 1;
+}
+
 void cFSTcpIp::FSTcpIpCheckResends ()
 {
 	for(int i = 0; WaitOKList->iCount > i; i++) // Check all Waiting Buffers
@@ -440,11 +460,11 @@ void cFSTcpIp::FSTcpIpCheckResends ()
 				}
 				( ( sNetBuffer *) WaitOKList->Items[i])->iTicks = SDL_GetTicks(); // Set the new Time
 				char szTmp[400];
-				sprintf(szTmp,"Resend buffer: -Typ: %d -Parts: %d/%d -ID: %d -Client: %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts , NetBuffer->iTyp, NetBuffer->iID, iClient, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
+				sprintf(szTmp,"Resend buffer: -Typ: %d -Parts: %d/%d -ID: %d -Client: %d -Message: \"%s\" -Lenght: %d -Typ: %d", ( ( sNetBuffer *) WaitOKList->Items[i])->iPart, ( ( sNetBuffer *) WaitOKList->Items[i])->iMax_parts , ( ( sNetBuffer *) WaitOKList->Items[i])->iTyp, ( ( sNetBuffer *) WaitOKList->Items[i])->iID, iClient, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.msg, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.lenght, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.typ);
 				cLog::write(szTmp, LOG_TYPE_NETWORK);
 			}
 			SDL_Delay ( 1 ) ;
 		}
 	}
 	return ;
-}*/
+}

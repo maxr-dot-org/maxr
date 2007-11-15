@@ -55,6 +55,8 @@ struct sNetBuffer{
 	int iTyp;			// Typ of Buffer: see BUFF_TYP_XYZ
 	int iPart;			// Partnumber of message
 	int iMax_parts;		// Maximal number of parts
+	int iTicks;			// Ticktime when this buffer has been send
+	int iDestClientNum;	// Client to which this buffer should be send
 	cNetMessage msg;	// Message for Data-Packages
 };
 
@@ -98,6 +100,7 @@ public:
 	int iMax_clients;					// Maximal clients that can connect
 	int iMin_clients;					// Minimal clients needed to run stable
 
+	void FSTcpIpCheckResends ();
 	bool FSTcpIpOpen(void);
 	bool FSTcpIpCreate(void);
 	void FSTcpIpClose(void);
@@ -112,11 +115,11 @@ private:
 	int GenerateNewID();
 	void SendNewID(unsigned int iNewID, int iClientNum);
 	void SendOK(unsigned int iID, int iClientNum /* -1 For server*/ );
+	SDL_Thread *FSTcpIpResendThread;	// Thread that looks for buffers which must be resend
 
 	unsigned int iNextMessageID;	// ID of next Message
 	sIDList *UsedIDs;				// A List with all currently used message IDs (server only)
-	sIDList *WaitOKList;			// A List with all IDs of messages, the game is waiting for an Reseive-OK
-	sNetBuffer *NetBuffer;			// Buffer for incominig and outcoming Packages
+	sList *WaitOKList;			// A List with all IDs of messages, the game is waiting for an Reseive-OK
 	int iPlayerId;					// ID of this Player
 	int iNum_clients;				// Number of current clients
 	int iPort;						// Current port
@@ -139,5 +142,11 @@ int Receive(void *);
 * @author Albert "alzi" Ziegenhagel alias DoctorDeath
 */
 int Open(void *);
+/**
+* Looks for buffers which must be resend
+*
+* @author Albert "alzi" Ziegenhagel alias DoctorDeath
+*/
+int CheckResends(void *);
 
 #endif
