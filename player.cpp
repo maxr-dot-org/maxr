@@ -778,10 +778,10 @@ void cPlayer::DoTheResearch ( int i )
 				if ( BuildingData[k].scan!=before ) BuildingData[k].version++;
 				break;
 			case 7:
-				before=BuildingData[k].costs;
-				BuildingData[k].costs+= ( int ) ( UnitsData.building[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].costs-= ( int ) ( UnitsData.building[k].data.costs*ResearchTechs[i].level );
-				if ( BuildingData[k].costs!=before ) BuildingData[k].version++;
+				before=BuildingData[k].iBuilt_Costs;
+				BuildingData[k].iBuilt_Costs+= ( int ) ( UnitsData.building[k].data.iBuilt_Costs * ( ResearchTechs[i].level-0.1 ) );
+				BuildingData[k].iBuilt_Costs-= ( int ) ( UnitsData.building[k].data.iBuilt_Costs * ResearchTechs[i].level );
+				if ( BuildingData[k].iBuilt_Costs!=before ) BuildingData[k].version++;
 				break;
 		}
 	}
