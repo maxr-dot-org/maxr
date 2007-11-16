@@ -727,10 +727,10 @@ void cPlayer::DoTheResearch ( int i )
 				if ( VehicleData[k].scan!=before ) VehicleData[k].version++;
 				break;
 			case 7:
-				before=VehicleData[k].costs;
-				VehicleData[k].costs+= ( int ) ( UnitsData.vehicle[k].data.costs* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].costs-= ( int ) ( UnitsData.vehicle[k].data.costs*ResearchTechs[i].level );
-				if ( VehicleData[k].costs!=before ) VehicleData[k].version++;
+				before=VehicleData[k].iBuilt_Costs;
+				VehicleData[k].iBuilt_Costs+= ( int ) ( UnitsData.vehicle[k].data.iBuilt_Costs * ( ResearchTechs[i].level-0.1 ) );
+				VehicleData[k].iBuilt_Costs-= ( int ) ( UnitsData.vehicle[k].data.iBuilt_Costs *ResearchTechs[i].level );
+				if ( VehicleData[k].iBuilt_Costs!=before ) VehicleData[k].version++;
 				break;
 		}
 	}
