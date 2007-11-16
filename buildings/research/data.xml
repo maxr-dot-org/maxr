@@ -85,7 +85,7 @@
     <Landing_Type Const="None"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
-    <Can_Research YN="No"/>
+    <Can_Research YN="Yes"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>
     <Can_Place_Mines YN="No"/>
