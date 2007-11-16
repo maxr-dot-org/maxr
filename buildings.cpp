@@ -6558,7 +6558,7 @@ void cBuilding::DrawHelthBar ( void )
 	r1.w=w;
 	r2.h= ( r1.h=w/6 )-2;
 	r2.y= (int)( r1.y=GetScreenPosY() ) +1;
-	r2.w= (int)( ( ( float ) ( r1.w-2 ) ) /data.max_hit_points ) *data.hit_points;
+	r2.w= (int)( ( ( float ) ( r1.w-2 ) / data.max_hit_points ) *data.hit_points );
 	if ( data.hit_points>data.max_hit_points/2 )
 	{
 		SDL_FillRect ( buffer,&r1,0 );
