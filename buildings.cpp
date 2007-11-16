@@ -311,7 +311,7 @@ void cBuilding::GenerateName ( void )
 	}
 	// Den Namen zusammenbauen:
 	// name=(string)data.name + " MK "+rome;
-	name += ( string ) data.name; name += " MK "; name += rome;
+	name = ( string ) data.name; name += " MK "; name += rome;
 }
 
 void cBuilding::Draw ( SDL_Rect *dest )

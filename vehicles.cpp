@@ -802,7 +802,7 @@ void cVehicle::GenerateName ( void )
 		rome+="I";
 	}
 	// Den Namen zusammenbauen:
-	name += ( string ) data.name; name += " MK "; name += rome;
+	name = ( string ) data.name; name += " MK "; name += rome;
 }
 
 // Aktalisiert alle Daten auf ihre Max-Werte:

@@ -2105,6 +2105,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 		"Unit","Abilities","Landing_Type", NULL,
 		"Unit","Abilities","Can_Upgrade", NULL,
 		"Unit","Abilities","Can_Repair", NULL,
+		"Unit","Abilities","Can_Research", NULL,
 		"Unit","Abilities","Can_Rearm", NULL,
 		"Unit","Abilities","Is_Kamikaze", NULL,
 		"Unit","Abilities","Is_Infrastructure", NULL,
