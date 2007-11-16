@@ -176,13 +176,13 @@ char *cBuilding::GetStatusStr ( void )
 			{
 				static char str[50];
 				int r;
-				//r = ( int ) ( floor ( (double) ptr->metall_remaining/ ( data.metal_need*BuildSpeed*1 ) ) );
+				
 				r = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
-				//if ( !r ) r++;
-				sprintf ( str,"beim bau: %s (%d)",owner->VehicleData[ptr->typ->nr].name,r ); //"Runden"?
+				
+				sprintf ( str,"beim bau: %s (%d)",owner->VehicleData[ptr->typ->nr].name,r );
 				if ( fonts->GetTextLenSmall ( str ) >126 )
 				{
-					sprintf ( str,"beim bau:\n%s (%d)",owner->VehicleData[ptr->typ->nr].name,r ); //"Runden"?
+					sprintf ( str,"beim bau:\n%s (%d)",owner->VehicleData[ptr->typ->nr].name,r );
 				}
 				return str;
 			}
@@ -5087,8 +5087,6 @@ void cBuilding::ShowBuildMenu ( void )
 	int  iTurboBuildCosts[3];		//durations of the tree build speeds
 	bool showDetailsBuildlist=true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
 
-	int last_b_ticks=0;
-
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,NULL,buffer,NULL );
@@ -5209,7 +5207,6 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( game->SelectedBuilding==NULL ) break;
 		// Die Engine laufen lassen:
 		game->engine->Run();
-		//game->HandleTimer();
 
 		// Events holen:
 		SDL_PumpEvents();
@@ -5222,7 +5219,6 @@ void cBuilding::ShowBuildMenu ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		//if ( timer0 ) last_b_ticks++;
 
 		// Down-Button:
 		if ( x>=491&&x<491+18&&y>=440&&y<440+17&&b&&!DownPressed )
@@ -5237,7 +5233,6 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( offset<images->Count-9 )
 			{
 				offset++;
-				//if ( selected<offset ) selected=offset;
 				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -5271,7 +5266,6 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( offset!=0 )
 			{
 				offset--;
-				//if ( selected>=offset+9 ) selected=offset+8;
 				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -5305,7 +5299,6 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( build_offset!=0 )
 			{
 				build_offset--;
-				//if ( build_selected>=build_offset+5 ) build_selected=build_offset+4;
 				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -5339,7 +5332,6 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( build_offset<to_build->Count-5 )
 			{
 				build_offset++;
-				//if ( build_selected<build_offset ) build_selected=build_offset;
 				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -5420,7 +5412,6 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				delete to_build->BuildStructItems[build_selected];
 				to_build->DeleteBuildStruct ( build_selected );
-				//ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 				if ( build_selected>=to_build->Count )
 				{
 					build_selected--;
@@ -5462,7 +5453,6 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 			else if ( !b&&LastB )
 			{
-				//RepeatBuild=Wiederholen;  ?? warum?
 				break;
 			}
 		}
@@ -5510,8 +5500,6 @@ void cBuilding::ShowBuildMenu ( void )
 				if (BuildSpeed == 1) MetalPerRound = 12;
 				if (BuildSpeed == 2) MetalPerRound = 36;
 
-				this->BuildSpeed=BuildSpeed;
-				RepeatBuild=Wiederholen;
 				
 				//delete old BuildList
 				while ( BuildList->Count )
@@ -5536,6 +5524,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 					BuildList->AddBuildList ( bl );
 				}
+
+				this->BuildSpeed=BuildSpeed;
+				RepeatBuild=Wiederholen;
 				
 				//start facrory, if there is something in the build queue
 				if ( BuildList->Count > 0 )
@@ -5544,44 +5535,6 @@ void cBuilding::ShowBuildMenu ( void )
 				}
 
 				break;
-				
-				//old
-				/*i=0;
-				if ( BuildList->Count )
-				{
-					if ( UnitsData.vehicle[to_build->BuildStructItems[0]->id].nr == BuildList->BuildListItems[0]->typ->nr )
-					{
-						while ( BuildList->Count>1 )
-						{
-							sBuildList *ptr;
-							ptr=BuildList->BuildListItems[1];
-							delete ptr;
-							BuildList->DeleteBuildList ( 1 );
-						}
-						i=1;
-					}
-					else
-					{
-						while ( BuildList->Count )
-						{
-							sBuildList *ptr;
-							ptr=BuildList->BuildListItems[0];
-							delete ptr;
-							BuildList->DeleteBuildList ( 0 );
-						}
-					}
-				}
-
-				for ( ;i<to_build->Count;i++ )
-				{
-					sBuildList *n;
-					n=new sBuildList;
-					n->typ=UnitsData.vehicle+to_build->BuildStructItems[i]->id;
-					n->metall_remaining=owner->VehicleData[n->typ->nr].costs;
-					BuildList->AddBuildList ( n );
-				}
-				break;
-				*/
 			}
 		}
 		else if ( FertigPressed )
@@ -5622,6 +5575,7 @@ void cBuilding::ShowBuildMenu ( void )
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+			ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -5741,14 +5695,12 @@ void cBuilding::ShowBuildMenu ( void )
 				// second klick on the Unit?
 				if ( (build_selected == nr) &&!showDetailsBuildlist )
 				{
+					//remove vehicle from to_build queue
 					if ( to_build->Count&&to_build->Count>build_selected&&build_selected>=0 )
 					{
 						delete to_build->BuildStructItems[build_selected];
 						to_build->DeleteBuildStruct ( build_selected );
 						
-						//to_build->Delete ( build_selected );
-
-						//ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 						if ( build_selected>=to_build->Count )
 						{
 							build_selected--;
@@ -5771,7 +5723,7 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
-		//if ( b ) last_b_ticks=0;
+		
 	}
 	// Alles Images löschen:
 	while ( images->Count )
@@ -5790,17 +5742,6 @@ void cBuilding::ShowBuildMenu ( void )
 		to_build->DeleteBuildStruct ( 0 );
 	}
 	delete to_build;
-
-	//dat geit so nich...
-	/*
-	if ( BuildList->Count&&!IsWorking )
-	{
-		StartWork();
-	}
-	else if ( !BuildList->Count&&IsWorking )
-	{
-		StopWork ( false );
-	} */
 
 	mouse->MoveCallback=true;
 }
@@ -5829,7 +5770,7 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 		// Das Bild malen:
 		ptr=list->BuildStructItems[i];
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
-		// Ggf noch Rahmen drum:
+		
 		if ( selected==i )
 		{
 			if (showInfo == true)
@@ -6040,12 +5981,11 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 		ptr=list->BuildStructItems[i];
 		// Das Bild malen:
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
-		// Ggf noch Rahmen drum:
+
 		if ( selected==i )
 		{
 			if (showInfo == true)
-			{
-				
+			{		
 				//dopelten Rahmen drum malen
 				SDL_Rect tmp;
 				tmp=dest;
@@ -6152,6 +6092,7 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 			}
 			else
 			{
+				//einfachen Rahmen drum
 				SDL_Rect tmp;
 				tmp=dest;
 				tmp.x-=4;
@@ -6244,6 +6185,25 @@ void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, in
 	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) 3  );
 	iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) 12 );
 	iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) 36 );
+
+	//now avoid different costs at the same number of rounds
+
+	/* macht mehr Probleme, als dass es hilft
+	switch (BuildSpeed) //old buildspeed
+	{
+		case 0:
+			if (iTurboBuildRounds[1] == iTurboBuildRounds[0]) iTurboBuildCosts[1] = iTurboBuildCosts[0];
+			if (iTurboBuildRounds[2] == iTurboBuildRounds[0]) iTurboBuildCosts[2] = iTurboBuildCosts[0];
+			break;
+		case 1:
+			if (iTurboBuildRounds[0] == iTurboBuildRounds[1]) iTurboBuildCosts[0] = iTurboBuildCosts[1];
+			if (iTurboBuildRounds[2] == iTurboBuildRounds[1]) iTurboBuildCosts[2] = iTurboBuildCosts[1];
+			break;
+		case 2:
+			if (iTurboBuildRounds[0] == iTurboBuildRounds[2]) iTurboBuildCosts[1] = iTurboBuildCosts[2];
+			if (iTurboBuildRounds[1] == iTurboBuildRounds[2]) iTurboBuildCosts[2] = iTurboBuildCosts[2];
+			break;
+	}*/
 }
 
 // Liefert die X-Position des Buildings auf dem Screen zurück:
