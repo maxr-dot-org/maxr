@@ -2388,12 +2388,16 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=440;
-			if ( offset<images->Count-9 )
+
+			offset +=9;
+			if ( offset > images->Count-9 )
 			{
-				offset++;
-				if ( selected<offset ) selected=offset;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
+				offset = images->Count - 9;
 			}
+			if (selected < offset ) selected = offset;
+
+			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
+			
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -2422,12 +2426,16 @@ void cVehicle::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=471;
 			dest.y=440;
-			if ( offset!=0 )
+
+			offset -=9;
+			if ( offset < 0 )
 			{
-				offset--;
-				if ( selected>=offset+9 ) selected=offset+8;
-				ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds  );
+				offset = 0;
 			}
+			if (selected > offset + 8 ) selected = offset + 8;
+			
+			ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds  );
+			
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );

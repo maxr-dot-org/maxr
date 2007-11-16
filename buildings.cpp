@@ -5230,11 +5230,17 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=440;
-			if ( offset<images->Count-9 )
+
+			offset +=9;
+			if ( offset > images->Count-9 )
 			{
-				offset++;
-				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+				offset = images->Count - 9;
 			}
+			if (selected < offset ) selected = offset;
+
+			ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+			
+
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -5263,11 +5269,16 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.h=scr.h=17;
 			dest.x=471;
 			dest.y=440;
-			if ( offset!=0 )
+
+			offset -=9;
+			if ( offset < 0 )
 			{
-				offset--;
-				ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+				offset = 0;
 			}
+			if (selected > offset + 8 ) selected = offset + 8;
+			
+			ShowBuildList ( images,selected,offset, showDetailsBuildlist );
+			
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -5376,7 +5387,14 @@ void cBuilding::ShowBuildMenu ( void )
 			n->iRemainingMetal = -1;
 
 			to_build->AddBuildStruct ( n );
-			if ( build_selected<0 ) build_selected=0;
+			
+			if ( to_build->Count > build_offset + 5 )
+			{
+				build_offset = to_build->Count - 5;
+			}
+			
+			if ( build_selected < build_offset ) build_selected= build_offset;
+
 			ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 
 			scr.x=548;
@@ -5496,9 +5514,9 @@ void cBuilding::ShowBuildMenu ( void )
 					StopWork(false);
 				}
 
-				if (BuildSpeed == 0) MetalPerRound =  3;
-				if (BuildSpeed == 1) MetalPerRound = 12;
-				if (BuildSpeed == 2) MetalPerRound = 36;
+				if (BuildSpeed == 0) MetalPerRound =  1 * data.iNeeds_Metal;
+				if (BuildSpeed == 1) MetalPerRound =  4 * data.iNeeds_Metal;
+				if (BuildSpeed == 2) MetalPerRound = 12 * data.iNeeds_Metal;
 
 				
 				//delete old BuildList
@@ -5663,7 +5681,12 @@ void cBuilding::ShowBuildMenu ( void )
 					n->iRemainingMetal = -1;
 
 					to_build->AddBuildStruct ( n );
-					if ( build_selected<0 ) build_selected=0;
+
+					if ( to_build->Count > build_offset + 5 )
+					{
+						build_offset = to_build->Count - 5;
+					}
+					if ( build_selected < build_offset ) build_selected= build_offset;
 				}
 				selected=nr;
 				showDetailsBuildlist=true;
@@ -6141,15 +6164,15 @@ void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, in
 	iTurboBuildCosts[0] = iVehicleCosts;
 	
 	iTurboBuildCosts[1] = iTurboBuildCosts[0];
-	while (iTurboBuildCosts[1] + 6 <= 2*iTurboBuildCosts[0]) 
+	while (iTurboBuildCosts[1] + (2 * data.iNeeds_Metal) <= 2*iTurboBuildCosts[0])
 	{
-		iTurboBuildCosts[1] += 6;
+		iTurboBuildCosts[1] += 2 * data.iNeeds_Metal;
 	}
 
 	iTurboBuildCosts[2] = iTurboBuildCosts[1];
-	while (iTurboBuildCosts[2] + 12 <= 3*iTurboBuildCosts[0]) 
+	while (iTurboBuildCosts[2] + (4 * data.iNeeds_Metal) <= 3*iTurboBuildCosts[0])
 	{
-		iTurboBuildCosts[2] += 12;
+		iTurboBuildCosts[2] += 4 * data.iNeeds_Metal;
 	}
 
 	//now this is a litle bit tricky ...
@@ -6160,31 +6183,39 @@ void cBuilding::CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, in
 		switch (BuildSpeed)  //BuildSpeed here is the previous build speed
 		{
 			case 0:
-				WorkedRounds = ( iTurboBuildCosts[0] - iRemainingMetal )/ (float) 3;
-				iTurboBuildCosts[0] -= 1    *  3 * WorkedRounds;
-				iTurboBuildCosts[1] -= 0.5  * 12 * WorkedRounds;
-				iTurboBuildCosts[2] -= 0.25 * 36 * WorkedRounds;
+				WorkedRounds = ( iTurboBuildCosts[0] - iRemainingMetal )/ (float) (1 * data.iNeeds_Metal);
+				iTurboBuildCosts[0] -= (int) (1    *  1 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[1] -= (int) (0.5  *  4 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[2] -= (int) (0.25 * 12 * data.iNeeds_Metal * WorkedRounds);
 				break;
 			case 1:
-				WorkedRounds = ( iTurboBuildCosts[1] - iRemainingMetal )/ (float) 12;
-				iTurboBuildCosts[0] -= 2   *  3 * WorkedRounds;
-				iTurboBuildCosts[1] -= 1   * 12 * WorkedRounds;
-				iTurboBuildCosts[2] -= 0.5 * 36 * WorkedRounds;
+				WorkedRounds = ( iTurboBuildCosts[1] - iRemainingMetal )/ (float) (4 * data.iNeeds_Metal);
+				iTurboBuildCosts[0] -= (int) (2   *  1 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[1] -= (int) (1   *  4 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[2] -= (int) (0.5 * 12 * data.iNeeds_Metal * WorkedRounds);
 				break;
 			case 2:
-				WorkedRounds = ( iTurboBuildCosts[2] - iRemainingMetal )/ (float) 36;
-				iTurboBuildCosts[0] -= 4 *  3 * WorkedRounds;
-				iTurboBuildCosts[1] -= 2 * 12 * WorkedRounds;
-				iTurboBuildCosts[2] -= 1 * 36 * WorkedRounds;
+				WorkedRounds = ( iTurboBuildCosts[2] - iRemainingMetal )/ (float) (12 * data.iNeeds_Metal);
+				iTurboBuildCosts[0] -= (int) (4 *  1 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[1] -= (int) (2 *  4 * data.iNeeds_Metal * WorkedRounds);
+				iTurboBuildCosts[2] -= (int) (1 * 12 * data.iNeeds_Metal * WorkedRounds);
 				break;
 		}
 	}
 
-	//TODO: men always need 9 month ;)
+	
 	//calc needed Rounds
-	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) 3  );
-	iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) 12 );
-	iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) 36 );
+	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) (1 * data.iNeeds_Metal ));
+	if (data.can_build != BUILD_MAN)
+	{
+		iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) (4 * data.iNeeds_Metal ));
+		iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) (12* data.iNeeds_Metal ));
+	}
+	else
+	{
+		iTurboBuildRounds[1] = 0;
+		iTurboBuildRounds[2] = 0;
+	}
 
 	//now avoid different costs at the same number of rounds
 
