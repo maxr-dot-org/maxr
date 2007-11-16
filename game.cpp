@@ -3611,7 +3611,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-//            v->StoredVehicles->AddVehicle((int*)t); // Die ID (in OffX)
+			            v->StoredVehicles->AddVehicle((cVehicle *)(int *)t); // Die ID (in OffX)
 					}
 				}
 
@@ -3679,18 +3679,24 @@ void cGame::Load ( string name,int AP,bool MP )
 				}
 
 				fread ( & ( b->data ),sizeof ( sUnitData ),1,fp ); // Data
-				/*        if((b->data.can_load==TRANS_METAL||b->data.can_load==TRANS_GOLD||b->data.can_load==TRANS_OIL)&&b->data.cargo){
-				          int c;
-				          c=b->data.cargo;
-				          b->data.cargo=0;
-				          if(b->data.can_load==TRANS_METAL){
-				            b->owner->base->AddMetal(b->SubBase,c);
-				          }else if(b->data.can_load==TRANS_OIL){
-				            b->owner->base->AddOil(b->SubBase,c);
-				          }else if(b->data.can_load==TRANS_GOLD){
-				            b->owner->base->AddGold(b->SubBase,c);
-				          }
-				        }*/
+		        if((b->data.can_load==TRANS_METAL||b->data.can_load==TRANS_GOLD||b->data.can_load==TRANS_OIL)&&b->data.cargo)
+				{
+					int c;
+					c=b->data.cargo;
+					b->data.cargo=0;
+					if(b->data.can_load==TRANS_METAL)
+					{
+						b->owner->base->AddMetal(b->SubBase,c);
+					}
+					else if(b->data.can_load==TRANS_OIL)
+					{
+						b->owner->base->AddOil(b->SubBase,c);
+					}
+					else if(b->data.can_load==TRANS_GOLD)
+					{
+						b->owner->base->AddGold(b->SubBase,c);
+					}
+				}
 
 #define FLOAD_B_4(a) fread(&(b->a),sizeof(int),1,fp);
 #define FLOAD_B_1(a) fread(&(b->a),1,1,fp);
@@ -3733,7 +3739,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-//            b->StoredVehicles->Add((int*)t); // Die ID (in OffX)
+			            b->StoredVehicles->AddVehicle((cVehicle *)(int *)t); // Die ID (in OffX)
 					}
 				}
 
