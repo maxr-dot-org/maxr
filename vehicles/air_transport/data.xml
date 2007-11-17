@@ -76,6 +76,7 @@
      
     <Built_Costs_Max Num="72"/>
     <!-- Maximale Baukosten beim Turbobauen, gibt damit den max. Turbo Faktor an. -->
+    <!-- Bei Fahrzeugen hat dieser Wert keine Funktion. -->
      
     <Is_Produced_by>
       <Unit ID="1 9"/>
