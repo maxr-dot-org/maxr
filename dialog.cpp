@@ -32,9 +32,16 @@
 // Zeigt einen Ja/Nein Dialog an:
 bool ShowYesNo ( string text )
 {
+	#define DIALOG_W 300
+	#define DIALOG_H 231
+	#define BUTTON_W 150
+	#define BUTTON_H 29
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	bool ret = false;
-	SDL_Rect dest;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rButtonYes = {rDialog.x+80, rDialog.y+150, BUTTON_W, BUTTON_H};
+	SDL_Rect rButtonNo = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
+	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 
 	mouse->SetCursor ( CHand );
 	game->DrawMap ( false );
@@ -47,18 +54,11 @@ bool ShowYesNo ( string text )
 
 	LoadPCXtoSF ( ( char * ) GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog );
 
-	dest.x = 640 / 2 - 300 / 2;
-	dest.y = 480 / 2 - 231 / 2;
-	dest.w = 300;
-	dest.h = 231;
-	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 150, false );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
-	dest.x += 20;
-	dest.w -= 40;
-	dest.y += 20;
-	dest.h -= 150;
-	fonts->OutTextBlock ( ( char * ) text.c_str(), dest, buffer );
+
+	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
+	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
+	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
+	fonts->OutTextBlock ( ( char * ) text.c_str(), rText, buffer );
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -88,12 +88,12 @@ bool ShowYesNo ( string text )
 		}
 
 		// Ja Button:
-		if ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 150 && y < 480 / 2 - 231 / 2 + 150 + 29 )
+		if ( x >= rButtonYes.x && x <= rButtonYes.x + rButtonYes.w && y >= rButtonYes.y && y <= rButtonYes.y + rButtonYes.h )
 		{
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 150, true );
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = true;
@@ -102,12 +102,12 @@ bool ShowYesNo ( string text )
 		}
 
 		// Nein Button:
-		if ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 185 && y < 480 / 2 - 231 / 2 + 185 + 29 )
+		if ( x >= rButtonNo.x && x <= rButtonNo.x + rButtonNo.w && y >= rButtonNo.x && y <= rButtonNo.y + rButtonNo.h )
 		{
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = false;
@@ -123,7 +123,6 @@ bool ShowYesNo ( string text )
 	}
 
 	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
-
 	game->fDrawMap = true;
 	return ret;
 }
