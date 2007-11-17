@@ -146,11 +146,16 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	string stmp = iToStr(iDefaultValue);
 	SDL_Surface *SfDialog;
 	
-	if(iMaxValue < 0)
+	if(iMaxValue < 0 || iDefaultValue < 0)
 	{
 		SDL_FreeSurface(SfDialog);
 		cLog::write("Can't ask for negative numbers in number dialog", cLog::eLOG_TYPE_WARNING); //dev fucked up
 		return -1;
+	}
+	if(iDefaultValue > iMaxValue)
+	{
+		iDefaultValue = iMaxValue;
+		cLog::write("Got default value bigger than maximum value", cLog::eLOG_TYPE_WARNING); //dev fucked up
 	}
 	
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
