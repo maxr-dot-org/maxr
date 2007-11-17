@@ -230,6 +230,14 @@
 			<Disabled ENG="disabled" localized="außer Gefecht"/>
 			<Producing ENG="Producing" localized="beim Bau"/>
 			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
+			<Moving ENG="moving" localized="in bewegung"/>
+			<Sentry ENG="on sentry" localized="auf wachposten"/>
+			<Clearing ENG="Clearing" localized="Beim Räumen"/>
+			<Clearing_Mine ENG="clearing mines" localized="Räume Minen"/>
+			<Clearing_Fin ENG="clearing done" localized="Räumen abgeschlossen"/>
+			<Laying ENG="laying mines" localized="Lege Minen"/>
+			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
+			<Veteran ENG="Veteran" localized="Veteran"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

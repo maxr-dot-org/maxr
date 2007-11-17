@@ -230,6 +230,14 @@
 			<Disabled ENG="disabled"/>
 			<Producing ENG="Producing"/>
 			<Producing_Fin ENG="finished producing"/>
+			<Moving ENG="moving"/>
+			<Sentry ENG="on sentry"/>
+			<Clearing ENG="Clearing"/>
+			<Clearing_Mine ENG="clearing mines"/>
+			<Clearing_Fin ENG="clearing done"/>
+			<Laying ENG="laying mines"/>
+			<Greenhorn ENG="Greenhorn"/>
+			<Veteran ENG="Veteran"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
