@@ -70,7 +70,7 @@
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files"/>
-			<Settings ENG="Config"/>
+			<Settings ENG="Settings"/>
 			<Proceed ENG="Do"/>
 			<End ENG="End"/>
 			<Log ENG="Log"/>
@@ -79,11 +79,20 @@
 			<Status ENG="Status"/>
 			<Color ENG="Color"/>
 			<Hitpoints ENG="Hits"/>
-			<Ammo ENG="Ammo"/>
+			<Ammo ENG="Munition"/>
 			<Range ENG="Range"/>
 			<Scan ENG="Scan"/>
 			<Grid ENG="Grid"/>
 			<Fog ENG="Fog"/>
+			<Speed ENG="Speed"/>
+			<Cargo ENG="Gargo"/>
+			<AmmoShort ENG="Ammo"/>
+			<Shots ENG="Shots"/>
+			<Shield ENG="Shield"/>
+			<Total ENG="Total"/>
+			<Energy ENG="Energy"/>
+			<Usage ENG="Usage"/>
+			<Teams ENG="Teams"/>
 		</Hud>
 		<Game_Options>
 			<Title_Credits ENG="Credits"/>

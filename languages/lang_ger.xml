@@ -70,7 +70,7 @@
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
-			<Settings ENG="Config" localized="Konfig"/>
+			<Settings ENG="Settings" localized="Präferenzen"/>
 			<Proceed ENG="Do" localized="Erl."/>
 			<End ENG="End" localized="Ende"/>
 			<Log ENG="Log" localized="Log"/>
@@ -84,6 +84,15 @@
 			<Scan ENG="Scan" localized="Scan"/>
 			<Grid ENG="Grid" localized="Gitter"/>
 			<Fog ENG="Fog" localized="Nebel"/>
+			<Speed ENG="Speed" localized="Geschw."/>
+			<Cargo ENG="Gargo" localized="Ladung"/>
+			<AmmoShort ENG="Ammo" localized="Munit."/>
+			<Shots ENG="Shots" localized="Schuss"/>
+			<Shield ENG="Shield" localized="Schild"/>
+			<Total ENG="Total" localized="Total"/>
+			<Energy ENG="Energy" localized="Energie"/>
+			<Usage ENG="Usage" localized="Verbr."/>
+			<Teams ENG="Teams" localized="Teams"/>
 		</Hud>
 		<Game_Options>
 			<Title_Credits ENG="Credits" localized="Geld"/>
