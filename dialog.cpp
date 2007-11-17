@@ -217,7 +217,6 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				stmp = iToStr(value);
 				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
 				SHOW_SCREEN
-				;
 			}
 		}
 		//arrow diwn "decrease" numbers
@@ -240,7 +239,6 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
 				
 				SHOW_SCREEN
-				;
 			}
 		}
 
@@ -363,7 +361,6 @@ void showLicence ()
 	SDL_Rect rArrowUp;
 	SDL_Rect rArrowDown;
 	SDL_Surface *SfDialog;
-	SDL_Surface *SfButton;
 	
 	sLicence1 = "\
                M.A.X. Reloaded\n\
