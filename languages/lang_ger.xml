@@ -165,7 +165,7 @@
 			<Comp_Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
 			<Comp_Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
 			<Comp_Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
-			<Comp_Player_Amount ENG="Amount of players:" localized="Anzahl der Spieler:"/>
+			<Comp_Player_Amount ENG="Amount of players" localized="Bitte wählt die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
 			<Comp_Player_Turn ENG="'s turn" localized=" ist am Zug"/>
 			<Comp_Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
 			<Comp_Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>

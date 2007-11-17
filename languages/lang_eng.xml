@@ -165,7 +165,7 @@
 			<Comp_Player_Twice ENG="Playername exists twice: "/>
 			<Comp_Player_Wrong ENG="Missing a correct player's name"/>
 			<Comp_Player_MustHost ENG="must be host in turnbased game!"/>
-			<Comp_Player_Amount ENG="Amount of players:"/>
+			<Comp_Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible."/>
 			<Comp_Player_Turn ENG="'s turn"/>
 			<Comp_Network_Error_Socket ENG="Error opening socket"/>
 			<Comp_Network_Error_Connect ENG="Could not connect to "/>
