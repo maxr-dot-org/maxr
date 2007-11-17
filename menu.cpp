@@ -5686,7 +5686,7 @@ void HeatTheSeat ( void )
 	char sztmp[32];
 	// Anzahl der Spieler holen:
 	int PlayerAnz;
-	PlayerAnz=ShowNumberInput ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Amount" ) );
+	PlayerAnz=ShowNumberInput ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Amount" ), MAXPLAYER_HOTSEAT, 2 );
 	if ( PlayerAnz<2 ) PlayerAnz=2;
 
 	// Spiel erstellen:

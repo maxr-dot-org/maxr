@@ -129,29 +129,43 @@ bool ShowYesNo ( string text )
 }
 
 // Zeigt einen Dialog für eine Zahleneingabe an:
-int ShowNumberInput ( string text )
+int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 {
+	#define DIALOG_W 300
+	#define DIALOG_H 231
 	int b, x, y, lx = 0, ly = 0, lb = 0;
+	
 	int value = 2;
-	SDL_Rect dest, scr;
-	Uint8 *keystate;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rTextBox = {rDialog.x + 30, rDialog.y + 30, 238, 114 };
+	SDL_Rect rTextField = {rDialog.x + 246, rDialog.y + 171, 30, 10 };
+	SDL_Rect rButton = {rDialog.x + 80, rDialog.y + 185,150,29};
+	SDL_Rect rArrowUp = { rDialog.x + 241, rDialog.y + 187, 18, 17};
+	SDL_Rect rArrowDown = { rDialog.x + 261, rDialog.y + 187, 18, 17};
+	SDL_Rect scr = {rTextField.x - rDialog.x, rTextField.y - rDialog.y, rTextField.w, rTextField.h}; //remove offset
+	
 	bool Cursor = true;
-	string stmp;
+	string stmp = iToStr(iDefaultValue);
+	SDL_Surface *SfDialog;
+	
+	if(iMaxValue < 0)
+	{
+		SDL_FreeSurface(SfDialog);
+		cLog::write("Can't ask for negative numbers in number dialog", cLog::eLOG_TYPE_WARNING); //dev fucked up
+		return -1;
+	}
+	
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	if (FileExists(GFXOD_DIALOG4));
+	{	
+		LoadPCXtoSF ( GFXOD_DIALOG6, SfDialog ); //load dialog6.pxc
+	}
 
-	LoadPCXtoSF ( ( char * ) GraphicsData.Dialog3Path.c_str(), GraphicsData.gfx_dialog );
-	dest.x = 640 / 2 - 300 / 2;
-	dest.y = 480 / 2 - 231 / 2;
-	dest.w = 300;
-	dest.h = 231;
-	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
-	dest.x += 20;
-	dest.w -= 40;
-	dest.y += 20;
-	dest.h -= 150;
-	fonts->OutTextBlock ( ( char * ) text.c_str(), dest, buffer );
-	fonts->OutText ( "_", 20 + 170 + 7, 167 + 124 + 4, buffer );
-	InputStr = "";
+	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
+	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
+	fonts->OutTextBlock ( ( char * ) text.c_str(), rTextBox, buffer );
+	fonts->OutText ( (char *)stmp.c_str(), rTextField.x, rTextField.y, buffer );
+
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -170,67 +184,74 @@ int ShowNumberInput ( string text )
 			mouse->draw ( true, screen );
 		}
 
-		// Die Tastatur:
-		keystate = SDL_GetKeyState ( NULL );
-
-		if ( DoKeyInp ( keystate ) || timer2 )
-		{
-			scr.x = 20;
-			scr.y = 167;
-			dest.w = scr.w = 259;
-			dest.h = scr.h = 17;
-			dest.x = 20 + 170;
-			dest.y = 167 + 124;
-			SDL_BlitSurface ( GraphicsData.gfx_dialog, &scr, buffer, &dest );
-			stmp = InputStr;
-			stmp += "_";
-
-			if ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >= 246 )
-			{
-				InputStr.erase ( InputStr.length() - 1, 0 );
-			}
-
-			if ( Cursor )
-			{
-				Cursor = false;
-				stmp = InputStr;
-				stmp += "_";
-				fonts->OutText ( ( char * ) stmp.c_str(), dest.x + 7, dest.y + 4, buffer );
-			}
-			else
-			{
-				Cursor = true;
-				fonts->OutText ( ( char * ) InputStr.c_str(), dest.x + 7, dest.y + 4, buffer );
-			}
-
-			SHOW_SCREEN
-
-			mouse->draw ( false, screen );
-		}
-
 		// OK Button:
-		if ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 185 && y < 480 / 2 - 231 / 2 + 185 + 29 )
+		if ( x >= rButton.x && x <= rButton.x + rButton.w && y >= rButton.y && y <= rButton.y + rButton.h )
 		{
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
 			}
 		}
+		//arrow up "increase" numbers
+		if ( x >= rArrowUp.x && x <= rArrowUp.x + rArrowUp.w && y >= rArrowUp.y && y <= rArrowUp.y + rArrowUp.h )
+		{
+			if ( b && !lb )
+			{
+				SDL_BlitSurface ( SfDialog, &scr, buffer, &rTextField ); //redraw textfield
+				value = atoi ( stmp.c_str() );
+				value++;
+				if( value > iMaxValue )
+				{
+					cLog::write("Numberlimit exceeded", cLog::eLOG_TYPE_WARNING);
+					value --;
+				}
+				else
+				{
+					PlayFX ( SoundData.SNDHudButton );
+				}
+
+				stmp = iToStr(value);
+				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
+				SHOW_SCREEN
+				;
+			}
+		}
+		//arrow diwn "decrease" numbers
+		if ( x >= rArrowDown.x && x <= rArrowDown.x + rArrowDown.w && y >= rArrowDown.y && y <= rArrowDown.y + rArrowDown.h )
+		{
+			if ( b && !lb )
+			{
+				SDL_BlitSurface ( SfDialog, &scr, buffer, &rTextField ); //redraw textfield
+				value = atoi ( stmp.c_str() );
+				if (value > 1)
+				{
+					value --;
+					PlayFX ( SoundData.SNDHudButton );
+				}
+				else
+				{
+					cLog::write("Negative numbers not allowed", cLog::eLOG_TYPE_WARNING);
+				}
+				stmp = iToStr(value);
+				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
+				
+				SHOW_SCREEN
+				;
+			}
+		}
 
 		lx = x;
-
 		ly = y;
 		lb = b;
 		SDL_Delay ( 1 );
 	}
 
-	LoadPCXtoSF ( ( char * )  GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
 
-	value = atoi ( InputStr.c_str() );
+	SDL_FreeSurface(SfDialog);
 	return value;
 }
 

@@ -30,6 +30,7 @@
 #endif
 
 #define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(SettingsData.bWindowMode)SDL_UpdateRect(screen,0,0,0,0);else{SDL_Flip(screen);}
+#define MAXPLAYER_HOTSEAT 8
 
 #endif
 
@@ -49,6 +50,7 @@
 	#define GFXOD_MULT          "gfx_od\\mult.pcx"
 	#define GFXOD_DIALOG4		"gfx\\dialog4.pcx"
 	#define GFXOD_DIALOG5		"gfx\\dialog5.pcx"
+	#define GFXOD_DIALOG6		"gfx\\dialog6.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #else
 	#ifndef PATH_DELIMITER
@@ -65,6 +67,7 @@
 	#define GFXOD_MULT          "gfx_od//mult.pcx"
 	#define GFXOD_DIALOG4		"gfx//dialog4.pcx"
 	#define GFXOD_DIALOG5		"gfx//dialog5.pcx"
+	#define GFXOD_DIALOG6		"gfx//dialog6.pcx"
 	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #endif
 
