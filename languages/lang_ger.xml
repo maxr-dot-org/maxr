@@ -50,7 +50,7 @@
 			<Button_Mani ENG="Manifestation" localized="Hinweise"/>
 			<Button_Exit ENG="Exit" localized="Beenden"/>
 			<Button_Back ENG="Back" localized="Zurück"/>
-			<Button_OK ENG="OK" localized="Weiter"/>
+			<Button_OK ENG="OK" localized="Ok"/>
 			<Button_Done ENG="Done" localized="Fertig"/>
 			<Button_Cancel ENG="Cancel" localized="Abbruch"/>
 			<Button_Hot ENG="Hot" localized="Scharf"/>
