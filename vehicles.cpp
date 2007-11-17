@@ -1498,13 +1498,22 @@ char *cVehicle::GetStatusStr ( void )
 		{
 			if ( BuildRounds )
 			{
-				static char str[50]; //FIXME: dies on to long strings
-				sprintf ( str,"%s: %s (%d)", lngPack.Translate( "Text~Comp~Producing").c_str(), owner->BuildingData[BuildingTyp].name,BuildRounds );
-				if ( fonts->GetTextLenSmall ( str ) >126 ) //FIXME: doesn't work with internationalization because text lenghts may vary!
+				string sText;
+				sText = lngPack.Translate( "Text~Comp~Producing");
+				sText += ": ";
+				sText += (string)owner->BuildingData[BuildingTyp].name + " (";
+				sText += iToStr(BuildRounds);
+				sText += ")";
+
+				if ( fonts->GetTextLenSmall ( (char *)sText.c_str() ) >126 )
 				{
-					sprintf ( str,"%s:\n%s (%d)", lngPack.Translate( "Text~Comp~Producing").c_str(), owner->BuildingData[BuildingTyp].name,BuildRounds );
-				}
-				return str;
+					sText = lngPack.Translate( "Text~Comp~Producing");
+					sText += ":\n";
+					sText += (string)owner->BuildingData[BuildingTyp].name + " (";
+					sText += iToStr(BuildRounds);
+					sText += ")";
+				} 
+				return (char *)sText.c_str();
 			}
 			else
 			{
@@ -1524,9 +1533,10 @@ char *cVehicle::GetStatusStr ( void )
 	{
 		if ( ClearingRounds )
 		{
-			static char str[50];
-			sprintf ( str,"%s (%d)", lngPack.Translate( "Text~Comp~Clearing").c_str(), ClearingRounds );
-			return str;
+			string sText;
+			sText = lngPack.Translate( "Text~Comp~Clearing") + " (";
+			sText += iToStr(ClearingRounds) + ")";
+			return (char *)sText.c_str();
 		}
 		else
 		{
@@ -1562,9 +1572,10 @@ char *cVehicle::GetStatusStr ( void )
 	}
 	else if ( Disabled )
 	{
-		static char str[50];
-		sprintf ( str,"%s (%d)", lngPack.Translate( "Text~Comp~Disabled").c_str(), Disabled );
-		return str;
+		string sText;
+		sText = lngPack.Translate( "Text~Comp~Disabled") + " (";
+		sText += iToStr(Disabled) + ")";
+		return (char *)sText.c_str();
 	}
 	return (char *)lngPack.Translate( "Text~Comp~Waits").c_str();
 }
