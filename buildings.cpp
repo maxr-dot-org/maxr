@@ -163,7 +163,7 @@ cBuilding::~cBuilding ( void )
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:
-char *cBuilding::GetStatusStr ( void )
+char *cBuilding::GetStatusStr ( void ) //TODO: translations
 {
 	if ( IsWorking )
 	{
@@ -863,7 +863,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Range:
 		sprintf ( str,"%d",data.range );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Reichw.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Range").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBRange,95,y-2,160,data.range,typ->data.range,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -874,7 +874,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Damage:
 		sprintf ( str,"%d",data.damage );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Angriff",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Damage").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBAttack,95,y-3,160,data.damage,typ->data.damage,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -884,7 +884,7 @@ void cBuilding::ShowBigDetails ( void )
 			// Shots:
 			sprintf ( str,"%d",data.max_shots );
 			fonts->OutTextCenter ( str,27,y,buffer );
-			fonts->OutText ( "Schüsse",42,y,buffer );
+			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Shoots").c_str(),42,y,buffer );
 			DrawSymbolBig ( SBShots,95,y+2,160,data.max_shots,typ->data.max_shots,buffer );
 			dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 			SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -892,7 +892,7 @@ void cBuilding::ShowBigDetails ( void )
 			// Range:
 			sprintf ( str,"%d",data.range );
 			fonts->OutTextCenter ( str,27,y,buffer );
-			fonts->OutText ( "Reichw.",42,y,buffer );
+			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Range").c_str(),42,y,buffer );
 			DrawSymbolBig ( SBRange,95,y-2,160,data.range,typ->data.range,buffer );
 			dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 			SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -900,7 +900,7 @@ void cBuilding::ShowBigDetails ( void )
 			// Ammo:
 			sprintf ( str,"%d",data.ammo );
 			fonts->OutTextCenter ( str,27,y,buffer );
-			fonts->OutText ( "Munni.",42,y,buffer );
+			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Ammo").c_str(),42,y,buffer );
 			DrawSymbolBig ( SBAmmo,95,y-2,160,data.ammo,typ->data.max_ammo,buffer );
 			dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 			SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -912,7 +912,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Metall:
 		sprintf ( str,"%d",data.max_cargo );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Ladung",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Cargo").c_str(),42,y,buffer );
 		switch ( data.can_load )
 		{
 			case TRANS_METAL:
@@ -934,7 +934,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Energieproduktion:
 		sprintf ( str,"%d",data.energy_prod );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Prod.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBEnergy,95,y-2,160,data.energy_prod,typ->data.energy_prod,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -942,7 +942,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Verbrauch:
 		sprintf ( str,"%d",data.oil_need );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Verbr.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBOil,95,y-2,160,data.oil_need,typ->data.oil_need,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -953,7 +953,7 @@ void cBuilding::ShowBigDetails ( void )
 		// Humanproduktion:
 		sprintf ( str,"%d",data.human_prod );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Prod.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBHuman,95,y-2,160,data.human_prod,typ->data.human_prod,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -962,7 +962,7 @@ void cBuilding::ShowBigDetails ( void )
 	// Armor:
 	sprintf ( str,"%d",data.armor );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Panzer",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Armor").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBArmor,95,y-2,160,data.armor,typ->data.armor,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -970,7 +970,7 @@ void cBuilding::ShowBigDetails ( void )
 	// Hitpoints:
 	sprintf ( str,"%d",data.max_hit_points );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Treffer",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Hitpoints").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBHits,95,y-1,160,data.max_hit_points,typ->data.max_hit_points,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -980,7 +980,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		sprintf ( str,"%d",data.scan );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Scan",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Scan").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBScan,95,y-2,160,data.scan,typ->data.scan,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -991,7 +991,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		sprintf ( str,"%d",data.energy_need );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Verbr.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBEnergy,95,y-2,160,data.energy_need,typ->data.energy_need,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -1002,7 +1002,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		sprintf ( str,"%d",data.human_need );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Prod.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBHuman,95,y-2,160,data.human_need,typ->data.human_need,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -1013,7 +1013,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		sprintf ( str,"%d",data.metal_need );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Verbr.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBMetal,95,y-2,160,data.metal_need,typ->data.metal_need,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -1024,7 +1024,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		sprintf ( str,"%d",data.gold_need );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Verbr.",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),42,y,buffer );
 		DrawSymbolBig ( SBGold,95,y-2,160,data.gold_need,typ->data.gold_need,buffer );
 		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 		SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -1033,7 +1033,7 @@ void cBuilding::ShowBigDetails ( void )
 	// Costs:
 	sprintf ( str,"%d",data.costs );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Kosten",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBMetal,95,y-2,160,data.costs,typ->data.costs,buffer );
 }
 

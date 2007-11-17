@@ -1478,7 +1478,7 @@ void cVehicle::RotateTo ( int Dir )
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:
-char *cVehicle::GetStatusStr ( void )
+char *cVehicle::GetStatusStr ( void ) //TODO: add translation
 {
 	if ( mjob )
 	{
@@ -3554,7 +3554,7 @@ void cVehicle::ShowBigDetails ( void )
 		// Metall:
 		sprintf ( str,"%d",data.max_cargo );
 		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Ladung",42,y,buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Cargo").c_str(),42,y,buffer );
 		switch ( data.can_transport )
 		{
 			case TRANS_METAL:
@@ -3574,7 +3574,7 @@ void cVehicle::ShowBigDetails ( void )
 	// Armor:
 	sprintf ( str,"%d",data.armor );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Panzer",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Armor").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBArmor,95,y-2,160,data.armor,typ->data.armor,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -3582,7 +3582,7 @@ void cVehicle::ShowBigDetails ( void )
 	// Hitpoints:
 	sprintf ( str,"%d",data.max_hit_points );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Treffer",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Hitpoints").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBHits,95,y-1,160,data.max_hit_points,typ->data.max_hit_points,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -3590,7 +3590,7 @@ void cVehicle::ShowBigDetails ( void )
 	// Scan:
 	sprintf ( str,"%d",data.scan );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Scan",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Scan").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBScan,95,y-2,160,data.scan,typ->data.scan,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -3598,7 +3598,7 @@ void cVehicle::ShowBigDetails ( void )
 	// Speed:
 	sprintf ( str,"%d",data.max_speed/2 );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Gesch.",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Speed").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBSpeed,95,y-2,160,data.max_speed/2,typ->data.max_speed/2,buffer );
 	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
 	SDL_FillRect ( buffer,&dest,0xFC0000 );
@@ -3606,7 +3606,7 @@ void cVehicle::ShowBigDetails ( void )
 	// Costs:
 	sprintf ( str,"%d",data.costs );
 	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( "Kosten",42,y,buffer );
+	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(),42,y,buffer );
 	DrawSymbolBig ( SBMetal,95,y-2,160,data.costs,typ->data.costs,buffer );
 }
 
