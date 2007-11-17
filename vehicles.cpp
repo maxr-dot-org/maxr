@@ -1478,80 +1478,95 @@ void cVehicle::RotateTo ( int Dir )
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:
-char *cVehicle::GetStatusStr ( void ) //TODO: add translation
+char *cVehicle::GetStatusStr ( void )
 {
 	if ( mjob )
 	{
-		return "in bewegung";
+		return (char *)lngPack.Translate( "Text~Comp~Moving").c_str();
 	}
 	else if ( Wachposten )
 	{
-		return "auf wachposten";
+		return (char *)lngPack.Translate( "Text~Comp~Sentry").c_str();
 	}
 	else if ( IsBuilding )
 	{
 		if ( owner!=game->ActivePlayer )
 		{
-			return "beim bau";
+			return (char *)lngPack.Translate( "Text~Comp~Producing").c_str();
 		}
 		else
 		{
 			if ( BuildRounds )
 			{
-				static char str[50];
-				sprintf ( str,"beim bau: %s (%d)",owner->BuildingData[BuildingTyp].name,BuildRounds );
-				if ( fonts->GetTextLenSmall ( str ) >126 )
+				static char str[50]; //FIXME: dies on to long strings
+				sprintf ( str,"%s: %s (%d)", lngPack.Translate( "Text~Comp~Producing").c_str(), owner->BuildingData[BuildingTyp].name,BuildRounds );
+				if ( fonts->GetTextLenSmall ( str ) >126 ) //FIXME: doesn't work with internationalization because text lenghts may vary!
 				{
-					sprintf ( str,"beim bau:\n%s (%d)",owner->BuildingData[BuildingTyp].name,BuildRounds );
+					sprintf ( str,"%s:\n%s (%d)", lngPack.Translate( "Text~Comp~Producing").c_str(), owner->BuildingData[BuildingTyp].name,BuildRounds );
 				}
 				return str;
 			}
 			else
 			{
-				return "bau abgeschlossen";
+				return (char *)lngPack.Translate( "Text~Comp~Producing_Fin").c_str();
 			}
 		}
 	}
 	else if ( ClearMines )
 	{
-		return "räume minen";
+		return (char *)lngPack.Translate( "Text~Comp~Clearing_Mine").c_str();
 	}
 	else if ( LayMines )
 	{
-		return "lege minen";
+		return (char *)lngPack.Translate( "Text~Comp~Laying").c_str();
 	}
 	else if ( IsClearing )
 	{
 		if ( ClearingRounds )
 		{
 			static char str[50];
-			sprintf ( str,"beim räumen (%d)",ClearingRounds );
+			sprintf ( str,"%s (%d)", lngPack.Translate( "Text~Comp~Clearing").c_str(), ClearingRounds );
 			return str;
 		}
 		else
 		{
-			return "räumen abgeschlossen";
+			return (char *)lngPack.Translate( "Text~Comp~Clearing_Fin").c_str();
 		}
 	}
 	else if ( data.is_commando&&owner==game->ActivePlayer )
 	{
+		string sTmp = lngPack.Translate( "Text~Comp~Waits") + "\n";
+
 		switch ( CommandoRank )
 		{
-			case 0: return "warter\n0 (Gefreiter)";
-			case 1: return "warter\n+1 (Uffz)";
-			case 2: return "warter\n+2 (Feldwebel)";
-			case 3: return "warter\n+3 (Leutnant)";
-			case 4: return "warter\n+4 (Hauptmann)";
-			case 5: return "warter\n+5 (Major)";
+			case 0:
+			case 1:
+			case 2: sTmp += lngPack.Translate( "Text~Comp~Greenhorn"); break;
+			case 3: 
+			case 4: 
+			case 5: sTmp += lngPack.Translate( "Text~Comp~Veteran"); break;
+			default: "invalid rank"; //dev messed up
 		}
+		
+		switch ( CommandoRank )
+		{
+			case 0: sTmp += "";  break;
+			case 1: sTmp += " +1";  break;
+			case 2: sTmp += " +2";  break;
+			case 3: sTmp += " +3";  break;
+			case 4: sTmp += " +4";  break;
+			case 5: sTmp += " +5";  break;
+			default: ""; //dev messed up
+		}
+		return (char *)sTmp.c_str();
 	}
 	else if ( Disabled )
 	{
 		static char str[50];
-		sprintf ( str,"außer Gefecht (%d)",Disabled );
+		sprintf ( str,"%s (%d)", lngPack.Translate( "Text~Comp~Disabled").c_str(), Disabled );
 		return str;
 	}
-	return "wartet";
+	return (char *)lngPack.Translate( "Text~Comp~Waits").c_str();
 }
 
 // Spielt den Soundstream am, der zu diesem Vehicle gehört:
