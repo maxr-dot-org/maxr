@@ -68,6 +68,23 @@
 			<Button_Save ENG="Save"/>
 			<Button_Training ENG="Training"/>
 		</Menu_Main>
+		<Hud>
+			<Files ENG="Files"/>
+			<Settings ENG="Config"/>
+			<Proceed ENG="Do"/>
+			<End ENG="End"/>
+			<Log ENG="Log"/>
+			<Chat ENG="Chat"/>
+			<Survey ENG="Survey"/>
+			<Status ENG="Status"/>
+			<Color ENG="Color"/>
+			<Hitpoints ENG="Hits"/>
+			<Ammo ENG="Ammo"/>
+			<Range ENG="Range"/>
+			<Scan ENG="Scan"/>
+			<Grid ENG="Grid"/>
+			<Fog ENG="Fog"/>
+		</Hud>
 		<Game_Options>
 			<Title_Credits ENG="Credits"/>
 			<Title_Gold ENG="Gold"/>
