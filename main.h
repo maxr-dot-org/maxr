@@ -850,6 +850,9 @@ SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigne
 void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
 void MakeShieldColor(SDL_Surface **dest,SDL_Surface *scr);
 int random(int x, int y);
+/**Converts integer to string
+*/
+std::string iToStr(int x);
 int min (int a, int b );
 
 /**

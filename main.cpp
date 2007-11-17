@@ -20,6 +20,7 @@
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
+#include <sstream>
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -522,6 +523,13 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 int random ( int x, int y )
 {
 	return ( ( int ) ( ( ( double ) rand() /RAND_MAX ) * ( ( x-y ) +y ) ) );
+}
+
+string iToStr(int x)
+{
+ 	stringstream strStream;
+ 	strStream << x;
+ 	return strStream.str();
 }
 
 // Round //////////////////////////////////////////////////////////////////////
