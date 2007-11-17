@@ -186,14 +186,18 @@
 			<Comp_Go_Check ENG="Check for go"/>
 		</Game_MP>
 		<Vehicles>
-			<Title_Damage ENG="Damage"/>
+			<Title_Damage ENG="Attack"/>
 			<Title_Shoots ENG="Shoots"/>
 			<Title_Range ENG="Range"/>
 			<Title_Ammo ENG="Ammo"/>
 			<Title_Armor ENG="Armor"/>
-			<Title_Hitpoints ENG="Hitpoints"/>
+			<Title_Hitpoints ENG="Hits"/>
 			<Title_Scan ENG="Scan"/>
 			<Title_Speed ENG="Speed"/>
+			<Title_Cargo ENG="Cargo"/>
+			<Title_Costs ENG="Costs"/>
+			<Title_Produce ENG="Produces"/>
+			<Title_Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
 			<Fuel_Low ENG="To low fuel, generator disabled!"/>

@@ -186,14 +186,18 @@
 			<Comp_Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
 		</Game_MP>
 		<Vehicles>
-			<Title_Damage ENG="Damage" localized="Schaden"/>
+			<Title_Damage ENG="Damage" localized="Angriff"/>
 			<Title_Shoots ENG="Shoots" localized="Schüsse"/>
 			<Title_Range ENG="Range" localized="Reichweite"/>
 			<Title_Ammo ENG="Ammo" localized="Munition"/>
-			<Title_Armor ENG="Armor" localized="Panzerung"/>
-			<Title_Hitpoints ENG="Hitpoints" localized="Trefferpunkte"/>
+			<Title_Armor ENG="Armor" localized="Panzer"/>
+			<Title_Hitpoints ENG="Hitpoints" localized="Treffer"/>
 			<Title_Scan ENG="Scan" localized="Radar"/>
-			<Title_Speed ENG="Speed" localized="Geschwindigkeit"/>
+			<Title_Speed ENG="Speed" localized="Geschw."/>
+			<Title_Cargo ENG="Cargo" localized="Ladung"/>
+			<Title_Costs ENG="Costs" localized="Kosten"/>
+			<Title_Produce ENG="Produces" localized="Produz."/>
+			<Title_Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
 			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
