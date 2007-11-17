@@ -174,17 +174,21 @@ char *cBuilding::GetStatusStr ( void )
 			ptr=BuildList->BuildListItems[0];
 			if ( ptr->metall_remaining>0 )
 			{
-				static char str[50]; //FIXME: dies on to long strings
-				int r;
+				string sText;
+				int iRound;
 				
-				r = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
-				
-				sprintf ( str,"%s: %s (%d)",lngPack.Translate( "Text~Comp~Producing").c_str(), owner->VehicleData[ptr->typ->nr].name,r );
-				if ( fonts->GetTextLenSmall ( str ) >126 ) //FIXME: doesn't work with internationalization because text lenghts may vary!
+				iRound = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
+				sText = lngPack.Translate( "Text~Comp~Producing") + ": ";
+				sText += (string)owner->VehicleData[ptr->typ->nr].name + " (";
+				sText += iToStr(iRound) + ")";
+
+				if ( fonts->GetTextLenSmall ( (char *)sText.c_str() ) >126 )
 				{
-					sprintf ( str,"%s:\n%s (%d)",lngPack.Translate( "Text~Comp~Producing").c_str(), owner->VehicleData[ptr->typ->nr].name,r );
-				}
-				return str;
+					sText = lngPack.Translate( "Text~Comp~Producing");  + ":\n";
+					sText += (string)owner->VehicleData[ptr->typ->nr].name + " (";
+					sText += iToStr(iRound) + ")";
+				} 
+				return (char *)sText.c_str();
 			}
 			else
 			{
@@ -194,67 +198,61 @@ char *cBuilding::GetStatusStr ( void )
 		// Forschungszentrum:
 		if ( data.can_research&&owner==game->ActivePlayer )
 		{
-			static char str[400];
-			char tmp[50];
-			int i;
-			sprintf ( str,"%s\n", lngPack.Translate( "Text~Comp~Working").c_str() );
-			for ( i=0;i<8;i++ )
+			string sText = lngPack.Translate( "Text~Comp~Working") + "\n";
+			
+			for (int i=0;i<8;i++ )
 			{
 				if ( owner->ResearchTechs[i].working_on )
 				{
 					switch ( i )
 					{
 						case 0:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Vehicles~Title_Damage").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Vehicles~Title_Damage");
 							break;
 						case 1:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Hud~Shots").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Hud~Shots");
 							break;
 						case 2:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Hud~Range").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Hud~Range");
 							break;
 						case 3:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Vehicles~Title_Armor").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Vehicles~Title_Armor");
 							break;
 						case 4:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Hud~Hitpoints").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Hud~Hitpoints");
 							break;
 						case 5:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Hud~Speed").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Hud~Speed");
 							break;
 						case 6:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Hud~Scan").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Hud~Scan");
 							break;
 						case 7:
-							sprintf ( tmp,"%s: %d\n", lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(), ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-							strcat ( str,tmp );
+							sText += lngPack.Translate( "Text~Vehicles~Title_Costs");
 							break;
 					}
+					sText += ": " + iToStr(( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on )) + "\n";
 				}
 			}
-			return str;
+			return (char *)sText.c_str();
 		}
 		// Goldraffinerie:
 		if ( data.gold_need&&owner==game->ActivePlayer )
 		{
-			static char str[50];
-			sprintf ( str,"%s\n%s: %d",lngPack.Translate( "Text~Comp~Working").c_str(), lngPack.Translate( "Text~Game_Options~Title_Credits").c_str(), owner->Credits );
-			return str;
+			string sText;
+			sText = lngPack.Translate( "Text~Comp~Working") + "\n";
+			sText += lngPack.Translate( "Text~Game_Options~Title_Credits") + ": ";
+			sText += iToStr(owner->Credits);
+			return (char *)sText.c_str();
 		}
 		return (char *)lngPack.Translate( "Text~Comp~Working").c_str();
 	}
 	if ( Disabled )
 	{
-		static char str[50];
-		sprintf ( str,"%s (%d)",lngPack.Translate( "Text~Comp~Disabled").c_str(), Disabled );
-		return str;
+		string sText;
+		sText = lngPack.Translate( "Text~Comp~Disabled") + " (";
+		sText += iToStr(Disabled) + ")";
+		return (char *)sText.c_str();
 	}
 	return (char *)lngPack.Translate( "Text~Comp~Waits").c_str();
 }
