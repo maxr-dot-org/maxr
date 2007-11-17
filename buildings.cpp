@@ -6661,21 +6661,21 @@ void cBuilding::ShowDetails ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
-	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),55,177,ClWhite,GraphicsData.gfx_hud );
 	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 	if ( data.max_shield )
 	{
 		// Schild:
 		DrawNumber ( 31,189,data.shield,data.max_shield,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Schild",55,189,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shield"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SShield,88,186,70,data.shield,data.max_shield,GraphicsData.gfx_hud );
 	}
 	if ( data.can_load&&owner==game->ActivePlayer )
 	{
 		// Load:
 		DrawNumber ( 31,189,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Cargo"),55,189,ClWhite,GraphicsData.gfx_hud );
 		switch ( data.can_load )
 		{
 			case TRANS_METAL:
@@ -6700,7 +6700,7 @@ void cBuilding::ShowDetails ( void )
 		// Gesamt:
 		if ( data.can_load==TRANS_METAL||data.can_load==TRANS_OIL||data.can_load==TRANS_GOLD )
 		{
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			switch ( data.can_load )
 			{
 				case TRANS_METAL:
@@ -6724,28 +6724,28 @@ void cBuilding::ShowDetails ( void )
 		{
 			// Munition:
 			DrawNumber ( 31,189,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( "Munni",55,189,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
 		}
 		// Schüsse:
 		DrawNumber ( 31,212,data.shots,data.max_shots,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shots"),55,212,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,GraphicsData.gfx_hud );
 	}
 	else if ( data.energy_prod )
 	{
 		// EnergieProduktion:
 		DrawNumber ( 31,189, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Energie",55,189,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Energy"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SEnergy,88,187,70, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
 			DrawSymbol ( SEnergy,88,199,70,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,212,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SEnergy,88,212,70,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
 		}
@@ -6754,16 +6754,16 @@ void cBuilding::ShowDetails ( void )
 	{
 		// HumanProduktion:
 		DrawNumber ( 31,189,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Teams",55,189,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Teams"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SHuman,88,187,70,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,199,70,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( "Verbr.",55,212,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,212,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,210,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}
@@ -6774,19 +6774,19 @@ void cBuilding::ShowDetails ( void )
 		if ( IsWorking )
 		{
 			DrawNumber ( 31,189,data.human_need,data.human_need,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,187,70,data.human_need,data.human_need,GraphicsData.gfx_hud );
 		}
 		else
 		{
 			DrawNumber ( 31,189,0,data.human_need,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( "Verbr.",55,189,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,187,70,0,data.human_need,GraphicsData.gfx_hud );
 		}
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( "Gesamt",55,201,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,199,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}

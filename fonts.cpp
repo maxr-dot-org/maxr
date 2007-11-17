@@ -340,6 +340,11 @@ int cFonts::CharsetSmall ( char c )
 	return -1;
 }
 
+void cFonts::OutTextSmall (string str,int x,int y,eFontSmallColor color,SDL_Surface *sf )
+{
+	OutTextSmall ( (char *)str.c_str(), x, y, color, sf );
+}
+
 // Gibt einen Text mit dem Small Font aus:
 void cFonts::OutTextSmall (const char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf )
 {

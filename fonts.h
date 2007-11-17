@@ -18,6 +18,9 @@
  ***************************************************************************/
 #ifndef fontsH
 #define fontsH
+
+#include <string>
+
 #include "defines.h"
 #include "SDL.h"
 
@@ -39,6 +42,9 @@ public:
   void OutTextBigCenter(const char *str,int x,int y,SDL_Surface *sf);
   void OutTextBigCenterGold(char *str,int x,int y,SDL_Surface *sf);  
   int CharsetSmall(char c);
+  /** Wrapper for OutTextSmall
+  */
+void OutTextSmall (std::string str,int x,int y,eFontSmallColor color,SDL_Surface *sf );
   void OutTextSmall(const char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf);
   void OutTextCenter(const char *str,int x,int y,SDL_Surface *sf);
   int GetTextLen(const char *str);

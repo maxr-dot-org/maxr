@@ -1055,7 +1055,7 @@ void cHud::PraeferenzenButton ( bool set )
 	{
 		Praeferenzen=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Settings"), set );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Settings"), set, true );
 }
 
 // Setzt den Monitor zurück:
@@ -1261,7 +1261,7 @@ void cHud::DateiButton ( bool set )
 	{
 		DateiPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Files"), set);
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Files"), set, true);
 }
 
 int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed)

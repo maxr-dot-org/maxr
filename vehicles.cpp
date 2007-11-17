@@ -914,18 +914,18 @@ void cVehicle::ShowDetails ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
-	fonts->OutTextSmall ( "Treffer",55,177,ClWhite,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),55,177,ClWhite,GraphicsData.gfx_hud );
 	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
 	// Den Speed anzeigen:
 	DrawNumber ( 31,201,data.speed/2,data.max_speed/2,GraphicsData.gfx_hud );
-	fonts->OutTextSmall ( "Gesch",55,201,ClWhite,GraphicsData.gfx_hud );
+	fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Speed"),55,201,ClWhite,GraphicsData.gfx_hud );
 	DrawSymbol ( SSpeed,88,199,70,data.speed/2,data.max_speed/2,GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 	if ( data.can_transport&&owner==game->ActivePlayer )
 	{
 		// Transport:
 		DrawNumber ( 31,189,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Ladung",55,189,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Cargo"),55,189,ClWhite,GraphicsData.gfx_hud );
 		switch ( data.can_transport )
 		{
 			case TRANS_METAL:
@@ -951,12 +951,12 @@ void cVehicle::ShowDetails ( void )
 		{
 			// Munition:
 			DrawNumber ( 31,189,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( "Munni",55,189,ClWhite,GraphicsData.gfx_hud );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
 		}
 		// Schüsse:
 		DrawNumber ( 31,212,data.shots,data.max_shots,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( "Schüss",55,212,ClWhite,GraphicsData.gfx_hud );
+		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shots"),55,212,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,GraphicsData.gfx_hud );
 	}
 }
