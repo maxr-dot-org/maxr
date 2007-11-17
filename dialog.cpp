@@ -134,8 +134,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	#define DIALOG_W 300
 	#define DIALOG_H 231
 	int b, x, y, lx = 0, ly = 0, lb = 0;
-	
-	int value = 2;
+	int value = iDefaultValue;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
 	SDL_Rect rTextBox = {rDialog.x + 30, rDialog.y + 30, 238, 114 };
 	SDL_Rect rTextField = {rDialog.x + 246, rDialog.y + 171, 30, 10 };
@@ -143,7 +142,6 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	SDL_Rect rArrowUp = { rDialog.x + 241, rDialog.y + 187, 18, 17};
 	SDL_Rect rArrowDown = { rDialog.x + 261, rDialog.y + 187, 18, 17};
 	SDL_Rect scr = {rTextField.x - rDialog.x, rTextField.y - rDialog.y, rTextField.w, rTextField.h}; //remove offset
-	
 	bool Cursor = true;
 	string stmp = iToStr(iDefaultValue);
 	SDL_Surface *SfDialog;
@@ -160,8 +158,8 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG6, SfDialog ); //load dialog6.pxc
 	}
-
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
+	
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
 	fonts->OutTextBlock ( ( char * ) text.c_str(), rTextBox, buffer );
 	fonts->OutText ( (char *)stmp.c_str(), rTextField.x, rTextField.y, buffer );
