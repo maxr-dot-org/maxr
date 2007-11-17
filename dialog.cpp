@@ -266,7 +266,7 @@ void ShowOK ( string text, bool pure )
 	dest.w = 300;
 	dest.h = 231;
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
+	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
 	dest.x += 20;
 	dest.w -= 40;
 	dest.y += 20;
@@ -306,7 +306,7 @@ void ShowOK ( string text, bool pure )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
