@@ -991,34 +991,40 @@ void showPreferences ( void )
 bool showSelfdestruction()
 {
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
-	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool ScharfPressed=false;
 	bool DestroyPressed=true;
 	bool Scharf=false;
-	int GlasHeight=56;
+
+	#define DLG_W GraphicsData.gfx_destruction->w
+	#define DLG_H GraphicsData.gfx_destruction->h/2
+	#define BTN_W 71
+	#define BTN_H 21
+	#define DSTR_W 59
+	#define DSTR_H 56
+
+	int GlasHeight=DSTR_H;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_W / 2, SettingsData.iScreenH / 2 - DLG_H / 2, DLG_W, DLG_H }; 
+	SDL_Rect rDialogSrc = { 0,0,DLG_W, DLG_H};
+	SDL_Rect rButtonHot = {rDialog.x+89, rDialog.y+14, BTN_W, BTN_H};
+	SDL_Rect rButtonCancel = {rDialog.x+89, rDialog.y+46, BTN_W, BTN_H};
+	SDL_Rect rGlass = {rDialog.x+15, rDialog.y+13, DSTR_W, DSTR_H};
+	SDL_Rect rDestroySrc = {15,13,DSTR_W,DSTR_H}; //red button
+	SDL_Rect rDestroyPressedSrc = {15,95,DSTR_W,DSTR_H}; //red button pressed
+	SDL_Rect rDestroyDest = { rDialog.x + 15, rDialog.y + 13, DSTR_W, DSTR_H}; //destination pos for red button
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
-	dest.x=233;scr.x=0;
-	dest.y=199;scr.y=0;
-	scr.w=dest.w=GraphicsData.gfx_destruction->w;
-	scr.h=dest.h=GraphicsData.gfx_destruction->h/2;
-	SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
-
-
-
-	dest.w=59;
-	dest.h=56;
-	dest.x=233+15;
-	dest.y=199+13;
-	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&dest );
-	
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, 233+89,199+14,buffer);
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 233+89,199+46,buffer);
+	if ( SettingsData.bAlphaEffects )
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	}
+	SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDialogSrc,buffer,&rDialog ); //blit dialog
+	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&rGlass ); //blit security glass
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, rButtonHot.x, rButtonHot.y, buffer); //blit sharp-button
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, rButtonCancel.x, rButtonCancel.y, buffer); //blit cancel button
 
 
 	// Den Buffer anzeigen:
@@ -1045,12 +1051,12 @@ bool showSelfdestruction()
 		}
 
 		// Abbruch-Button:
-		if ( x>=233+89&&x<233+89+71&&y>=199+46&&y<199+46+21 )
+		if ( x>= rButtonCancel.x &&x <= rButtonCancel.x + rButtonCancel.w &&y>= rButtonCancel.y &&y <= rButtonCancel.y + rButtonCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton ); //pressed
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 233+89,199+46,buffer);
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, rButtonCancel.x, rButtonCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1062,18 +1068,18 @@ bool showSelfdestruction()
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 233+89,199+46,buffer);
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, rButtonCancel.x, rButtonCancel.y ,buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Scharf-Button:
-		if ( !Scharf&&x>=233+89&&x<233+89+71&&y>=199+14&&y<199+14+21 )
+		if ( !Scharf&&x>= rButtonHot.x &&x<= rButtonHot.x + rButtonHot.w &&y>= rButtonHot.y &&y< rButtonHot.y + rButtonHot.h )
 		{
 			if ( b&&!ScharfPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), true, 233+89,199+14,buffer);
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), true, rButtonHot.x, rButtonHot.y,buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				ScharfPressed=true;
@@ -1086,7 +1092,7 @@ bool showSelfdestruction()
 		}
 		else if ( !Scharf&&ScharfPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, 233+89,199+14,buffer);
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false,  rButtonHot.x, rButtonHot.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			ScharfPressed=false;
@@ -1094,36 +1100,25 @@ bool showSelfdestruction()
 		// Das Schutzglas hochfahren:
 		if ( Scharf&&GlasHeight>0&&timer0 )
 		{
-			scr.x=15;
-			scr.y=13;
-			scr.w=dest.w=59;
-			scr.h=dest.h=56;
-			dest.x=233+15;
-			dest.y=199+13;
-			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDestroySrc,buffer,&rDestroyDest );
 			GlasHeight-=10;
 			if ( GlasHeight>0 )
 			{
-				scr.x=0;scr.y=0;
-				scr.h=dest.h=GlasHeight;
-				SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,&scr,buffer,&dest );
+				rGlass.h=GlasHeight;
+				rGlass.x=0;rGlass.y=0;
+				SDL_Rect rTmp={rDestroyDest.x, rDestroyDest.y, rDestroyDest.w, rGlass.h};
+				SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,&rGlass,buffer,&rTmp );
 			}
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Zerstören-Button:
-		if ( GlasHeight<=0&&x>=233+15&&x<233+15+59&&y>=199+13&&y<199+13+56 )
+		if ( GlasHeight<=0&&x>=rDestroyDest.x&&x<rDestroyDest.x+rDestroyDest.w&&y>=rDestroyDest.y&&y<rDestroyDest.y+rDestroyDest.h )
 		{
 			if ( b&&!DestroyPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=15;
-				scr.y=95;
-				dest.w=scr.w=59;
-				dest.h=scr.h=56;
-				dest.x=233+15;
-				dest.y=199+13;
-				SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDestroyPressedSrc,buffer,&rDestroyDest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DestroyPressed=true;
@@ -1135,13 +1130,7 @@ bool showSelfdestruction()
 		}
 		else if ( GlasHeight<=0&&DestroyPressed )
 		{
-			scr.x=15;
-			scr.y=13;
-			dest.w=scr.w=59;
-			dest.h=scr.h=56;
-			dest.x=233+15;
-			dest.y=199+13;
-			SDL_BlitSurface ( GraphicsData.gfx_destruction,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDestroySrc,buffer,&rDestroyDest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DestroyPressed=false;
