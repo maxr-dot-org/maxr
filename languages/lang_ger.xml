@@ -86,7 +86,7 @@
 			<Fog ENG="Fog" localized="Nebel"/>
 			<Speed ENG="Speed" localized="Geschw."/>
 			<Cargo ENG="Gargo" localized="Ladung"/>
-			<AmmoShort ENG="Ammo" localized="Munit."/>
+			<AmmoShort ENG="Ammo" localized="Munitio."/>
 			<Shots ENG="Shots" localized="Schuss"/>
 			<Shield ENG="Shield" localized="Schild"/>
 			<Total ENG="Total" localized="Total"/>
