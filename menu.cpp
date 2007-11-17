@@ -5761,9 +5761,13 @@ void HeatTheSeat ( void )
 	game->HotSeatPlayer=0;
 	game->Run();
 
-	SettingsData.sPlayerName=p->name;
+	if(!game->HotSeat) //don't store playername in hotseat games (would crash, too)
+	{
+		SettingsData.sPlayerName=p->name; 
+	}
 	while ( list->Count )
 	{
+
 		delete list->PlayerItems[0];
 		list->Delete ( 0 );
 	}
