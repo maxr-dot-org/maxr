@@ -21,6 +21,9 @@
 #include "defines.h"
 #include "SDL.h"
 
+#include <string>
+
+
 // Die Hud-Klasse ////////////////////////////////////////////////////////////
 class cHud{
 public:
@@ -76,6 +79,42 @@ public:
   void ResetVideoMonitor(void);
   void ShowRunde(void);
   void MakeMeMyEnd(void);
+  
+private:
+	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target using normal font
+	*@author beko
+	*@param scr SDL_Rect for position on source Surface
+	*@param dest SDL_Rect for position to copy onto on sfDest
+	*@param sText Text to apply on the image
+	*@param bPressed button pressed
+	*@return 0 on success
+	*/
+	int BlitButton(SDL_Rect scr, SDL_Rect dest, std::string sText, bool bPressed);
+	
+	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target
+	*@author beko
+	*@param scr SDL_Rect for position on source Surface
+	*@param dest SDL_Rect for position to copy onto on sfDest
+	*@param sText Text to apply on the image
+	*@param bPressed button pressed
+	*@param bSmallFont Normal or small font
+	*@return 0 on success
+	*/
+	int BlitButton(SDL_Rect scr, SDL_Rect dest, std::string sText, bool bPressed, bool bSmallFont);
+
+	/** Draws an image onto given surface and attaches given text centered on it
+	*@author beko
+	*@param *sfSrc SDL_Surface source to get image from
+	*@param scr SDL_Rect for position on source Surface
+	*@param *sfDest SDL_Surface to copy sfSrc into
+	*@param dest SDL_Rect for position to copy onto on sfDest
+	*@param sText Text to apply on the image
+	*@param bPressed button pressed
+	*@param bSmallFont Normal or small font
+	*@return 0 on success
+	*/
+ 	int BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_Rect dest, std::string sText, bool bPressed, bool bSmallFont);
+
 };
 
 #endif

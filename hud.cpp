@@ -25,6 +25,7 @@
 #include "keyinp.h"
 #include "fonts.h"
 
+
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
 {
@@ -61,22 +62,14 @@ cHud::~cHud ( void )
 
 void cHud::SwitchTNT ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={334,24,27,28},dest={136,413,27,28};
 	if ( set )
 		{
 			scr.x=362;
 			scr.y=24;
 		}
-	else
-	{
-		scr.x=334;
-		scr.y=24;
-	}
-	dest.x=136;
-	dest.y=413;
-	dest.w=scr.w=27;
-	dest.h=scr.h=28;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, "", false);
 	TNT=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
@@ -85,22 +78,14 @@ void cHud::SwitchTNT ( bool set )
 
 void cHud::SwitchRadar ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={334,53,27,26},dest={136,387,27,26};
 	if ( set )
 		{
 			scr.x=362;
 			scr.y=53;
 		}
-	else
-	{
-		scr.x=334;
-		scr.y=53;
-	}
-	dest.x=136;
-	dest.y=387;
-	dest.w=scr.w=27;
-	dest.h=scr.h=26;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, "", false);
 	Radar=set;
 	game->fDrawHud=true;
 	game->fDrawMMap=true;
@@ -109,22 +94,14 @@ void cHud::SwitchRadar ( bool set )
 
 void cHud::SwitchNebel ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={277,78,55,18},dest={112,330,55,18};
 	if ( set )
 		{
 			scr.x=110;
 			scr.y=78;
 		}
-	else
-	{
-		scr.x=277;
-		scr.y=78;
-	}
-	dest.x=112;
-	dest.y=330;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Fog"),  set, true);
 	Nebel=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -132,22 +109,14 @@ void cHud::SwitchNebel ( bool set )
 
 void cHud::SwitchGitter ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={277,61,55,17},dest={112,313,55,17};
 	if ( set )
 		{
 			scr.x=110;
 			scr.y=61;
 		}
-	else
-	{
-		scr.x=277;
-		scr.y=61;
-	}
-	dest.x=112;
-	dest.y=313;
-	dest.w=scr.w=55;
-	dest.h=scr.h=17;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Grid"), set, true);
 	Gitter=set;
 	game->fDrawHud=true;
 	game->fDrawMap=true;
@@ -156,22 +125,14 @@ void cHud::SwitchGitter ( bool set )
 
 void cHud::SwitchScan ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={277,44,55,18},dest={112,296,55,18};
 	if ( set )
 		{
 			scr.x=110;
 			scr.y=44;
 		}
-	else
-	{
-		scr.x=277;
-		scr.y=44;
-	}
-	dest.x=112;
-	dest.y=296;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Scan"), set, true);
 	Scan=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -179,22 +140,14 @@ void cHud::SwitchScan ( bool set )
 
 void cHud::SwitchReichweite ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={222,78,55,18},dest={57,330,55,18};
 	if ( set )
 		{
 			scr.x=55;
 			scr.y=78;
 		}
-	else
-	{
-		scr.x=222;
-		scr.y=78;
-	}
-	dest.x=57;
-	dest.y=330;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Range"), set, true);
 	Reichweite=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -202,22 +155,14 @@ void cHud::SwitchReichweite ( bool set )
 
 void cHud::SwitchMunition ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={222,61,55,17},dest={57,313,55,17};
 	if ( set )
 		{
 			scr.x=55;
 			scr.y=61;
 		}
-	else
-	{
-		scr.x=222;
-		scr.y=61;
-	}
-	dest.x=57;
-	dest.y=313;
-	dest.w=scr.w=55;
-	dest.h=scr.h=17;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Ammo"),  set, true);
 	Munition=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -225,22 +170,14 @@ void cHud::SwitchMunition ( bool set )
 
 void cHud::SwitchTreffer ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={222,44,55,18},dest={57,296,55,18};
 	if ( set )
 		{
 			scr.x=55;
 			scr.y=44;
 		}
-	else
-	{
-		scr.x=222;
-		scr.y=44;
-	}
-	dest.x=57;
-	dest.y=296;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Hitpoints"), set, true);
 	Treffer=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -248,22 +185,14 @@ void cHud::SwitchTreffer ( bool set )
 
 void cHud::SwitchFarben ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={167,78,55,18},dest={2,330,55,18};
 	if ( set )
 		{
 			scr.x=0;
 			scr.y=78;
 		}
-	else
-	{
-		scr.x=167;
-		scr.y=78;
-	}
-	dest.x=2;
-	dest.y=330;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Color"),  set, true);
 	Farben=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -271,22 +200,14 @@ void cHud::SwitchFarben ( bool set )
 
 void cHud::SwitchStatus ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={167,61,55,17},dest={2,313,55,17};
 	if ( set )
 		{
 			scr.x=0;
 			scr.y=61;
 		}
-	else
-	{
-		scr.x=167;
-		scr.y=61;
-	}
-	dest.x=2;
-	dest.y=313;
-	dest.w=scr.w=55;
-	dest.h=scr.h=17;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Status"),  set, true);
 	Status=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -294,22 +215,14 @@ void cHud::SwitchStatus ( bool set )
 
 void cHud::SwitchStudie ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={167,44,55,18},dest={2,296,55,18};
 	if ( set )
 		{
 			scr.x=0;
 			scr.y=44;
 		}
-	else
-	{
-		scr.x=167;
-		scr.y=44;
-	}
-	dest.x=2;
-	dest.y=296;
-	dest.w=scr.w=55;
-	dest.h=scr.h=18;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+		
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Survey"), set, true);
 	Studie=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -317,22 +230,14 @@ void cHud::SwitchStudie ( bool set )
 
 void cHud::SwitchLock ( bool set )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr={397,321,21,22},dest={32,227,21,22};
 	if ( set )
 		{
 			scr.x=397;
 			scr.y=298;
 		}
-	else
-	{
-		scr.x=397;
-		scr.y=321;
-	}
-	dest.x=32;
-	dest.y=227;
-	dest.w=scr.w=21;
-	dest.h=scr.h=22;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+
+	BlitButton(scr, dest, "", false);
 	Lock=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -439,6 +344,15 @@ void cHud::DoAllHud ( void )
 	bool s;
 	s=SettingsData.bSoundEnabled;
 	SettingsData.bSoundEnabled=false;
+	
+	DateiButton(false);
+	PraeferenzenButton(false);
+	PrevButton(false);
+	ErledigenButton(false);
+	NextButton(false);
+	LogButton(false);
+	ChatButton(false);
+	DateiButton(false);
 	SwitchTNT ( TNT );
 	SwitchRadar ( Radar );
 	SwitchNebel ( Nebel );
@@ -1130,11 +1044,7 @@ void cHud::ChechMouseOver ( void )
 
 void cHud::PraeferenzenButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=86;
-	dest.y=4;
-	dest.w=scr.w=67;
-	dest.h=scr.h=20;
+	SDL_Rect scr={0,169,67,20},dest={86,4,67,20};
 	if ( set )
 		{
 			scr.x=195;
@@ -1143,11 +1053,9 @@ void cHud::PraeferenzenButton ( bool set )
 		}
 	else
 	{
-		scr.x=0;
-		scr.y=169;
 		Praeferenzen=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Settings"), set );
 }
 
 // Setzt den Monitor zurück:
@@ -1165,11 +1073,7 @@ void cHud::ResetVideoMonitor ( void )
 
 void cHud::PauseButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=146;
-	dest.y=143;
-	dest.w=scr.w=19;
-	dest.h=scr.h=19;
+	SDL_Rect scr={19,132,19,19},dest={146,143,19,19};
 	if ( set )
 		{
 			scr.x=176;
@@ -1178,20 +1082,14 @@ void cHud::PauseButton ( bool set )
 		}
 	else
 	{
-		scr.x=19;
-		scr.y=132;
 		PausePressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, "", set );
 }
 
 void cHud::PlayButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=146;
-	dest.y=123;
-	dest.w=scr.w=19;
-	dest.h=scr.h=18;
+	SDL_Rect scr={0,132,19,18},dest={146,123,19,18};
 	if ( set )
 		{
 			scr.x=157;
@@ -1200,20 +1098,14 @@ void cHud::PlayButton ( bool set )
 		}
 	else
 	{
-		scr.x=0;
-		scr.y=132;
 		PlayPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, "", set );
 }
 
 void cHud::HelpButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=20;
-	dest.y=250;
-	dest.w=scr.w=26;
-	dest.h=scr.h=24;
+	SDL_Rect scr={268,151,26,24},dest={20,250,26,24};
 	if ( set )
 		{
 			scr.x=366;
@@ -1222,20 +1114,14 @@ void cHud::HelpButton ( bool set )
 		}
 	else
 	{
-		scr.x=268;
-		scr.y=151;
 		HelpPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, "", set );
 }
 
 void cHud::ChatButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=51;
-	dest.y=252;
-	dest.w=scr.w=49;
-	dest.h=scr.h=20;
+	SDL_Rect scr={245,130,49,20},dest={51,252,49,20};
 	if ( set )
 		{
 			scr.x=210;
@@ -1244,20 +1130,14 @@ void cHud::ChatButton ( bool set )
 		}
 	else
 	{
-		scr.x=245;
-		scr.y=130;
 		ChatPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Chat"), set, true ); 
 }
 
 void cHud::LogButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=102;
-	dest.y=252;
-	dest.w=scr.w=49;
-	dest.h=scr.h=20;
+	SDL_Rect scr={196,129,49,20},dest={101,252,49,20};
 	if ( set )
 		{
 			scr.x=160;
@@ -1266,20 +1146,14 @@ void cHud::LogButton ( bool set )
 		}
 	else
 	{
-		scr.x=196;
-		scr.y=129;
 		LogPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Log"), set, true ); 
 }
 
 void cHud::EndeButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=391;
-	dest.y=4;
-	dest.w=scr.w=70;
-	dest.h=scr.h=17;
+	SDL_Rect scr={0,151,70,17},dest={391,4,70,17};
 	if ( set )
 		{
 			scr.x=22;
@@ -1288,11 +1162,9 @@ void cHud::EndeButton ( bool set )
 		}
 	else
 	{
-		scr.x=0;
-		scr.y=151;
 		EndePressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~End"), set );
 }
 
 void cHud::ShowRunde ( void )
@@ -1313,11 +1185,7 @@ void cHud::ShowRunde ( void )
 
 void cHud::ErledigenButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=99;
-	dest.y=227;
-	dest.w=scr.w=25;
-	dest.h=scr.h=24;
+	SDL_Rect scr={132,172,25,24},dest={99,227,25,24};
 	if ( set )
 		{
 			scr.x=262;
@@ -1326,20 +1194,14 @@ void cHud::ErledigenButton ( bool set )
 		}
 	else
 	{
-		scr.x=132;
-		scr.y=172;
 		ErledigenPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Proceed"), set );
 }
 
 void cHud::NextButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=124;
-	dest.y=227;
-	dest.w=scr.w=39;
-	dest.h=scr.h=23;
+	SDL_Rect scr={158,172,39,23},dest={124,227,39,23};
 	if ( set )
 		{
 			scr.x=288;
@@ -1348,20 +1210,14 @@ void cHud::NextButton ( bool set )
 		}
 	else
 	{
-		scr.x=158;
-		scr.y=172;
 		NextPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, ">>  ", set );
 }
 
 void cHud::PrevButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=60;
-	dest.y=227;
-	dest.w=scr.w=38;
-	dest.h=scr.h=23;
+	SDL_Rect scr={198,172,38,23},dest={60,227,38,23};
 	if ( set )
 		{
 			scr.x=327;
@@ -1370,20 +1226,14 @@ void cHud::PrevButton ( bool set )
 		}
 	else
 	{
-		scr.x=198;
-		scr.y=172;
 		PrevPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, "  <<", set );
 }
 
 void cHud::CenterButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=4;
-	dest.y=227;
-	dest.w=scr.w=21;
-	dest.h=scr.h=22;
+	SDL_Rect scr={139,149,21,22},dest={4,227,21,22};
 	if ( set )
 		{
 			scr.x=0;
@@ -1392,33 +1242,62 @@ void cHud::CenterButton ( bool set )
 		}
 	else
 	{
-		scr.x=139;
-		scr.y=149;
 		CenterPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, "", set);
 }
 
 void cHud::DateiButton ( bool set )
 {
-	SDL_Rect scr,dest;
-	dest.x=17;
-	dest.y=3;
-	dest.w=scr.w=67;
-	dest.h=scr.h=20;
+	SDL_Rect scr={71,151,67,20},dest={17,3,67,20};
+	
 	if ( set )
 		{
-			scr.x=93;
+			scr.x=93; //change source position
 			scr.y=21;
 			DateiPressed=true;
 		}
 	else
 	{
-		scr.x=71;
-		scr.y=151;
 		DateiPressed=false;
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Files"), set);
+}
+
+int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed)
+{
+	return BlitButton(GraphicsData.gfx_hud_stuff,scr,GraphicsData.gfx_hud,dest, sText, bPressed, false);
+}
+
+int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed, bool bSmallFont)
+{
+	return BlitButton(GraphicsData.gfx_hud_stuff,scr,GraphicsData.gfx_hud,dest, sText, bPressed, bSmallFont);
+}
+
+int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_Rect dest, string sText, bool bPressed, bool bSmallFont)
+{
+	int iPx = 4;  //for moving fonts 1 pixel down on click
+	if(bPressed) iPx += 1;
+	SDL_BlitSurface ( sfSrc,&scr,sfDest,&dest );
+	if(!bSmallFont)
+	{
+		fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,sfDest); //show text centered on button
+	}
+	else
+	{	
+		if(bPressed)
+		{
+			fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2,dest.y+iPx+2,ClGreen, sfDest);
+			//iPx only +2 because small buttons aren't big enough for moving text on them
+		}
+		else 
+		{
+			fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2,dest.y+iPx+3,ClRed, sfDest);
+		}
+		fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2-1,dest.y+iPx+2,ClWhite, sfDest);
+	}
+	//TODO: add sanity check
+	return 0;
 }
 
 void cHud::ScaleSurfaces ( void )
