@@ -225,6 +225,11 @@
 			<Research_Speed ENG="Research 'Speed' completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
 			<Research_Scan ENG="Research 'Scan' completed" localized="Scanforschung abgeschlossen"/>
 			<Research_Costs ENG="Research 'Costs' completed" localized="Kostenforschung abgeschlossen"/>
+			<Working ENG="working" localized="arbeitet"/>
+			<Waits ENG="waits" localized="wartet"/>
+			<Disabled ENG="disabled" localized="außer Gefecht"/>
+			<Producing ENG="Producing" localized="beim Bau"/>
+			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

@@ -225,6 +225,11 @@
 			<Research_Speed ENG="Research 'Speed' completed"/>
 			<Research_Scan ENG="Research 'Scan' completed"/>
 			<Research_Costs ENG="Research 'Costs' completed"/>
+			<Working ENG="working"/>
+			<Waits ENG="waits"/>
+			<Disabled ENG="disabled"/>
+			<Producing ENG="Producing"/>
+			<Producing_Fin ENG="finished producing"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
