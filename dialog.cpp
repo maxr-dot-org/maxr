@@ -433,7 +433,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				EnterMenu();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
