@@ -1159,7 +1159,7 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	dest.y = offy - 7;	
 	dest.w = scr.w + SLIDER_W;
 	dest.h = SLIDER_H;
-	SDL_BlitSurface ( surface,&scr,buffer,&dest ); //dist
+	SDL_BlitSurface ( surface,&scr,surface,&dest ); //dist
 	//END REDRAW DIALOG UNDER SLIDER
 	
 	//BEGIN DRAW SLIDERBAR
@@ -1168,7 +1168,7 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	scr.w=58;
 	scr.h=3;	
 	dest.y += 7;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
 	//END DRAW SLIDERBAR
 
 	//BEGIN DRAW SLIDER
@@ -1181,7 +1181,7 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	dest.h=scr.h;
 	dest.x=offx-6+ ( int ) ( ( 57/255.0 ) *value );
 	dest.y=offy-SLIDER_W / 2;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
 	//END DRAW SLIDER
 }
 
@@ -1224,5 +1224,5 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	dest.x = x;
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,buffer); //show text centered on button
+	fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,surface); //show text centered on button
 }
