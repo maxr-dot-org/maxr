@@ -3530,7 +3530,7 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	DrawTransBar ( (int)(223 * ( float ) ( Target+*trans ) / MaxTarget ) );
 }
 
-void cVehicle::ShowBigDetails ( void ) //TODO: add translation
+void cVehicle::ShowBigDetails ( void )
 {
 	SDL_Rect dest = { SettingsData.iScreenW / 2 - DIALOG_W / 2 + 16, SettingsData.iScreenH / 2 - DIALOG_H / 2, 242, 1 };
 	
@@ -3545,25 +3545,25 @@ void cVehicle::ShowBigDetails ( void ) //TODO: add translation
 	{
 		// Damage:
 		fonts->OutTextCenter ( iToStr(data.damage), COLUMN_1 , y, buffer );
-		fonts->OutText ( "Angriff", COLUMN_2, y, buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Damage"), COLUMN_2, y, buffer );
 		DrawSymbolBig ( SBAttack, COLUMN_3 , y - 3, 160, data.damage, typ->data.damage, buffer );
 		DOLINEBREAK
 		
 		// Shots:
 		fonts->OutTextCenter ( iToStr(data.max_shots), COLUMN_1 , y, buffer );
-		fonts->OutText ( "Schüsse", COLUMN_2, y, buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Shoots"), COLUMN_2, y, buffer );
 		DrawSymbolBig ( SBShots, COLUMN_3 , y + 2, 160, data.max_shots, typ->data.max_shots, buffer );
 		DOLINEBREAK
 		
 		// Range:
 		fonts->OutTextCenter ( iToStr(data.range), COLUMN_1 , y, buffer );
-		fonts->OutText ( "Reichw.", COLUMN_2, y, buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Range"), COLUMN_2, y, buffer );
 		DrawSymbolBig ( SBRange, COLUMN_3 , y - 2, 160, data.range, typ->data.range, buffer );
 		DOLINEBREAK
 		
 		// Ammo:
 		fonts->OutTextCenter ( iToStr(data.max_ammo), COLUMN_1 , y, buffer );
-		fonts->OutText ( "Munni.", COLUMN_2, y, buffer );
+		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Ammo"), COLUMN_2, y, buffer );
 		DrawSymbolBig ( SBAmmo, COLUMN_3 , y - 2, 160, data.max_ammo, typ->data.max_ammo, buffer );
 		DOLINEBREAK
 	}
@@ -3572,7 +3572,7 @@ void cVehicle::ShowBigDetails ( void ) //TODO: add translation
 	{
 		// Metall:
 		fonts->OutTextCenter ( iToStr(data.max_cargo), COLUMN_1 , y, buffer );
-		fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Cargo" ).c_str(), COLUMN_2, y, buffer );
+		fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Cargo" ), COLUMN_2, y, buffer );
 	
 		switch ( data.can_transport )
 		{
