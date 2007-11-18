@@ -915,7 +915,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 
-	LoadPCXtoSF ( GFXOD_OPTIONS,TmpSf );
+	if(FileExists(GFXOD_OPTIONS))
+	{
+		LoadPCXtoSF ( GFXOD_OPTIONS,TmpSf );
+	}
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 	fonts->OutTextCenter ( GAMEOPTIONS,320,11,buffer );
 
