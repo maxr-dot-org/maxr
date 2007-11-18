@@ -1852,8 +1852,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-
-	LoadPCXtoSF ( GFXOD_HANGAR,TmpSf );
+	if(FileExists(GFXOD_HANGAR))
+	{
+		LoadPCXtoSF ( GFXOD_HANGAR,TmpSf );
+	}
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 
 	// Die Liste erstellen:
