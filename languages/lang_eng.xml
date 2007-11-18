@@ -186,6 +186,7 @@
 			<Comp_Go_Check ENG="Check for go"/>
 		</Game_MP>
 		<Vehicles>
+			<Title_Info ENG="Unitinformations"/>
 			<Title_Damage ENG="Attack"/>
 			<Title_Shoots ENG="Shoots"/>
 			<Title_Range ENG="Range"/>
