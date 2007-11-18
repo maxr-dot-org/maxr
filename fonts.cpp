@@ -139,6 +139,11 @@ int cFonts::Charset ( char c )
 	return -1;
 }
 
+void cFonts::OutText (string str,int x,int y,SDL_Surface *sf )
+{
+	OutText((char *)str.c_str(),x,y,sf);
+}
+
 // Gibt einen Text mit dem normalen Font aus:
 void cFonts::OutText (const char *str,int x,int y,SDL_Surface *sf )
 {

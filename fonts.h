@@ -36,6 +36,9 @@ public:
   SDL_Rect *chars,*chars_small,*chars_big; // Rects der Zeichen.
 
   int Charset(char c);
+   /** Wrapper for OutText
+  */
+  void OutText(std::string str,int x,int y,SDL_Surface *sf);
   void OutText(const char *str,int x,int y,SDL_Surface *sf);
   int CharsetBig(char c);
   void OutTextBig(char *str,int x,int y,SDL_Surface *sf);
