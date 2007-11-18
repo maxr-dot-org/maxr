@@ -1405,8 +1405,10 @@ string RunPlanetSelect ( void )
 
 	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-
-	LoadPCXtoSF ( GFXOD_PLANET_SELECT,TmpSf );
+	if(FileExists(GFXOD_PLANET_SELECT))
+	{
+		LoadPCXtoSF ( GFXOD_PLANET_SELECT,TmpSf );
+	}
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,320,11,buffer );
 
