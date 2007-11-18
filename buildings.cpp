@@ -6983,31 +6983,39 @@ int cBuilding::PlayStram ( void )
 // Zeigt den Hilfebildschirm an:
 void cBuilding::ShowHelp ( void )
 {
-	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y;
+	#define DIALOG_W 640
+	#define DIALOG_H 480
+	#define BUTTON_W 150
+	#define BUTTON_H 29
+	
+	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
 	bool FertigPressed=false;
-	SDL_Rect scr,dest;
-
+	bool ret = false;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
+	SDL_Rect rInfoTxt = {rDialog.x+11, rDialog.y + 13, typ->info->w, typ->info->h};
+	SDL_Rect rTxt = {rDialog.x+349, rDialog.y + 66, 277, 181};
+	SDL_Rect rTitle = {rDialog.x+332, rDialog.y + 11, 152, 15};
+	SDL_Rect rButton = { rDialog.x+474, rDialog.y + 452, BUTTON_W, BUTTON_H };
+	
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( GraphicsData.gfx_help_screen,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_help_screen, &rDialogSrc, buffer, &rDialog );
 	// Das Infobild blitten:
-	dest.x=11;
-	dest.y=13;
-	dest.w=typ->info->w;
-	dest.h=typ->info->h;
-	SDL_BlitSurface ( typ->info,NULL,buffer,&dest );
-	// Den Text anzeigen:
-	dest.x=345;
-	dest.y=62;
-	dest.w=277;
-	dest.h=181;
-	fonts->OutTextBlock ( typ->text,dest,buffer );
-	// Die Details anzeigen:
-	ShowBigDetails();
-	// Den Buffer anzeigen:
-	SHOW_SCREEN
+	SDL_BlitSurface ( typ->info,NULL,buffer,&rInfoTxt );
+	//show menu title
+	fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Info" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	
+	// show text
+	fonts->OutTextBlock ( typ->text,rTxt,buffer );
+	// get unit details
+	ShowBigDetails(); //FIXME: doesn't work on resolutions > 640x480
+	//draw button
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, rButton.x, rButton.y, buffer);
+
+	SHOW_SCREEN 	// Den Buffer anzeigen
 	mouse->GetBack ( buffer );
 	while ( 1 )
 	{
@@ -7027,18 +7035,12 @@ void cBuilding::ShowHelp ( void )
 			mouse->draw ( true,screen );
 		}
 		// Fertig-Button:
-		if ( x>=484&&x<484+63&&y>=452&&y<452+24 )
+		if ( x >= rButton.x && x < rButton.x + rButton.w  && y >= rButton.y && y < rButton.y + rButton.w )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=68;
-				scr.y=172;
-				dest.w=scr.w=61;
-				dest.h=scr.h=22;
-				dest.x=484;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), true, rButton.x, rButton.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -7049,14 +7051,8 @@ void cBuilding::ShowHelp ( void )
 			}
 		}
 		else if ( FertigPressed )
-		{
-			scr.x=484;
-			scr.y=452;
-			dest.w=scr.w=61;
-			dest.h=scr.h=22;
-			dest.x=484;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_help_screen,&scr,buffer,&dest );
+		{			
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, rButton.x, rButton.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
