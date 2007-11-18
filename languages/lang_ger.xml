@@ -67,6 +67,8 @@
 			<Button_Load ENG="Load" localized="Laden"/>
 			<Button_Save ENG="Save" localized="Speichern"/>
 			<Button_Training ENG="Training" localized="Training"/>
+			<Button_Delete ENG="Delete" localized="Löschen"/>
+			<Button_Buy ENG="Buy" localized="Kaufen"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>

@@ -67,6 +67,8 @@
 			<Button_Load ENG="Load"/>
 			<Button_Save ENG="Save"/>
 			<Button_Training ENG="Training"/>
+			<Button_Delete ENG="Delete"/>
+			<Button_Buy ENG="Buy"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files"/>
