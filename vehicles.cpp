@@ -25,6 +25,8 @@
 #include "sound.h"
 #include "map.h"
 #include "dialog.h"
+#include "files.h"
+#include "pcx.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v,cPlayer *Owner )
@@ -1122,12 +1124,28 @@ void cVehicle::ShowHelp ( void )
 	SDL_Rect rTxt = {rDialog.x+349, rDialog.y + 66, 277, 181};
 	SDL_Rect rTitle = {rDialog.x+332, rDialog.y + 11, 152, 15};
 	SDL_Rect rButton = { rDialog.x+474, rDialog.y + 452, BUTTON_W, BUTTON_H };
+	SDL_Surface *SfDialog;
 	
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
+	
+	if ( SettingsData.bAlphaEffects )
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+	}
+
+	
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	if(FileExists(GFXOD_HELP));
+	{
+		LoadPCXtoSF (GFXOD_HELP, SfDialog );	
+
+	}
+	
+
 	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( GraphicsData.gfx_help_screen, &rDialogSrc, buffer, &rDialog );
+	SDL_BlitSurface ( SfDialog, &rDialogSrc, buffer, &rDialog );
 	// Das Infobild blitten:
 	SDL_BlitSurface ( typ->info,NULL,buffer,&rInfoTxt );
 	//show menu title
@@ -1186,6 +1204,7 @@ void cVehicle::ShowHelp ( void )
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
 	}
+	SDL_FreeSurface(SfDialog);
 }
 
 // Malt große Symbole für das Info-Fenster:

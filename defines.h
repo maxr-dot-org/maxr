@@ -44,6 +44,7 @@
 	#endif
 		// GFX On Demand /////////////////////////////////////////////////////////////
 	#define GFXOD_MAIN          "gfx\\main.pcx"
+	#define GFXOD_HELP          "gfx\\help_screen.pcx"
 	#define GFXOD_OPTIONS       "gfx_od\\options.pcx"
 	#define GFXOD_PLANET_SELECT "gfx_od\\planet_select.pcx"
 	#define GFXOD_HANGAR        "gfx_od\\hangar.pcx"
@@ -61,6 +62,7 @@
 	#endif
 		// GFX On Demand /////////////////////////////////////////////////////////////
 	#define GFXOD_MAIN          "gfx//main.pcx"
+	#define GFXOD_HELP          "gfx//help_screen.pcx"
 	#define GFXOD_OPTIONS       "gfx_od//options.pcx"
 	#define GFXOD_PLANET_SELECT "gfx_od//planet_select.pcx"
 	#define GFXOD_HANGAR        "gfx_od//hangar.pcx"
