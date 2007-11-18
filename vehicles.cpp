@@ -1474,21 +1474,21 @@ void cVehicle::RotateTo ( int Dir )
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:
-char *cVehicle::GetStatusStr ( void )
+string cVehicle::GetStatusStr ( void )
 {
 	if ( mjob )
 	{
-		return (char *)lngPack.Translate( "Text~Comp~Moving").c_str();
+		return lngPack.Translate( "Text~Comp~Moving");
 	}
 	else if ( Wachposten )
 	{
-		return (char *)lngPack.Translate( "Text~Comp~Sentry").c_str();
+		return lngPack.Translate( "Text~Comp~Sentry");
 	}
 	else if ( IsBuilding )
 	{
 		if ( owner!=game->ActivePlayer )
 		{
-			return (char *)lngPack.Translate( "Text~Comp~Producing").c_str();
+			return lngPack.Translate( "Text~Comp~Producing");
 		}
 		else
 		{
@@ -1501,7 +1501,7 @@ char *cVehicle::GetStatusStr ( void )
 				sText += iToStr(BuildRounds);
 				sText += ")";
 
-				if ( fonts->GetTextLenSmall ( (char *)sText.c_str() ) >126 )
+				if ( fonts->GetTextLenSmall ( (char*)sText.c_str() ) >126 )
 				{
 					sText = lngPack.Translate( "Text~Comp~Producing");
 					sText += ":\n";
@@ -1509,21 +1509,21 @@ char *cVehicle::GetStatusStr ( void )
 					sText += iToStr(BuildRounds);
 					sText += ")";
 				} 
-				return (char *)sText.c_str();
+				return sText;
 			}
 			else
 			{
-				return (char *)lngPack.Translate( "Text~Comp~Producing_Fin").c_str();
+				return lngPack.Translate( "Text~Comp~Producing_Fin");
 			}
 		}
 	}
 	else if ( ClearMines )
 	{
-		return (char *)lngPack.Translate( "Text~Comp~Clearing_Mine").c_str();
+		return lngPack.Translate( "Text~Comp~Clearing_Mine");
 	}
 	else if ( LayMines )
 	{
-		return (char *)lngPack.Translate( "Text~Comp~Laying").c_str();
+		return lngPack.Translate( "Text~Comp~Laying");
 	}
 	else if ( IsClearing )
 	{
@@ -1532,11 +1532,11 @@ char *cVehicle::GetStatusStr ( void )
 			string sText;
 			sText = lngPack.Translate( "Text~Comp~Clearing") + " (";
 			sText += iToStr(ClearingRounds) + ")";
-			return (char *)sText.c_str();
+			return sText;
 		}
 		else
 		{
-			return (char *)lngPack.Translate( "Text~Comp~Clearing_Fin").c_str();
+			return lngPack.Translate( "Text~Comp~Clearing_Fin");
 		}
 	}
 	else if ( data.is_commando&&owner==game->ActivePlayer )
@@ -1564,16 +1564,16 @@ char *cVehicle::GetStatusStr ( void )
 			case 5: sTmp += " +5";  break;
 			default: ""; //dev messed up
 		}
-		return (char *)sTmp.c_str();
+		return sTmp;
 	}
 	else if ( Disabled )
 	{
 		string sText;
 		sText = lngPack.Translate( "Text~Comp~Disabled") + " (";
 		sText += iToStr(Disabled) + ")";
-		return (char *)sText.c_str();
+		return sText;
 	}
-	return (char *)lngPack.Translate( "Text~Comp~Waits").c_str();
+	return lngPack.Translate( "Text~Comp~Waits");
 }
 
 // Spielt den Soundstream am, der zu diesem Vehicle gehört:

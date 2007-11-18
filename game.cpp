@@ -3031,7 +3031,7 @@ void cGame::DrawFLC ( void )
 		{
 			fonts->OutTextSmall ( ( char * ) SelectedVehicle->name.c_str(),10,32,ClGreen,buffer );
 		}
-		fonts->OutTextSmall ( ( char * ) SelectedVehicle->GetStatusStr(),10,40,ClWhite,buffer );
+		fonts->OutTextSmall ( SelectedVehicle->GetStatusStr(),10,40,ClWhite,buffer );
 	}
 	else if ( SelectedBuilding )
 	{
@@ -3054,7 +3054,7 @@ void cGame::DrawFLC ( void )
 		{
 			fonts->OutTextSmall ( ( char * ) SelectedBuilding->name.c_str(),10,32,ClGreen,buffer );
 		}
-		fonts->OutTextSmall ( ( char * ) SelectedBuilding->GetStatusStr(),10,40,ClWhite,buffer );
+		fonts->OutTextSmall ( SelectedBuilding->GetStatusStr(),10,40,ClWhite,buffer );
 	}
 }
 

@@ -163,7 +163,7 @@ cBuilding::~cBuilding ( void )
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:
-char *cBuilding::GetStatusStr ( void )
+string cBuilding::GetStatusStr ( void )
 {
 	if ( IsWorking )
 	{
@@ -188,11 +188,11 @@ char *cBuilding::GetStatusStr ( void )
 					sText += (string)owner->VehicleData[ptr->typ->nr].name + " (";
 					sText += iToStr(iRound) + ")";
 				} 
-				return (char *)sText.c_str();
+				return sText;
 			}
 			else
 			{
-				return (char *)lngPack.Translate( "Text~Comp~Producing_Fin").c_str();
+				return lngPack.Translate( "Text~Comp~Producing_Fin");
 			}
 		}
 		// Forschungszentrum:
@@ -234,7 +234,7 @@ char *cBuilding::GetStatusStr ( void )
 					sText += ": " + iToStr(( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on )) + "\n";
 				}
 			}
-			return (char *)sText.c_str();
+			return sText;
 		}
 		// Goldraffinerie:
 		if ( data.gold_need&&owner==game->ActivePlayer )
@@ -245,7 +245,7 @@ char *cBuilding::GetStatusStr ( void )
 			sText += iToStr(owner->Credits);
 			return (char *)sText.c_str();
 		}
-		return (char *)lngPack.Translate( "Text~Comp~Working").c_str();
+		return lngPack.Translate( "Text~Comp~Working");
 	}
 	if ( Disabled )
 	{
@@ -254,7 +254,7 @@ char *cBuilding::GetStatusStr ( void )
 		sText += iToStr(Disabled) + ")";
 		return (char *)sText.c_str();
 	}
-	return (char *)lngPack.Translate( "Text~Comp~Waits").c_str();
+	return lngPack.Translate( "Text~Comp~Waits");
 }
 
 // Aktalisiert alle Daten auf ihre Max-Werte:

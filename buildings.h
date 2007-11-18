@@ -124,7 +124,7 @@ public:
   void ShowDetails(void);
   void GenerateName(void);
   int PlayStram(void);
-  char *GetStatusStr(void);
+  std::string GetStatusStr(void);
   void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
   void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
   void RefreshData(void);

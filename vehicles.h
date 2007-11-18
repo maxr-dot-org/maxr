@@ -145,7 +145,7 @@ public:
   int GetScreenPosY(void);
   void DrawPath(void);
   void RotateTo(int Dir);
-  char *GetStatusStr(void);
+  std::string GetStatusStr(void);
   int PlayStram(void);
   void StartMoveSound(void);
   void DrawMenu(void);
