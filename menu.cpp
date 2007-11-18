@@ -3643,7 +3643,6 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 	PlayerList=new TList;
 	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( SettingsData.sPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
 
-	MessageList=new TList;
 	ChatList=new TList;
 	this->host=host;
 	this->tcp=tcp;
@@ -4513,7 +4512,6 @@ void cMultiPlayer::RunMenu ( void )
 
 				// Settings übertragen:
 				ClientWait ( LandX,LandY,LandingList );
-//-        fstcpip->RxFunc=game->engine->ReceiveNetMsg;
 
 				while ( LandingList->Count )
 				{
@@ -4524,7 +4522,7 @@ void cMultiPlayer::RunMenu ( void )
 
 				ExitMenu();
 
-				fstcpip->iMin_clients=PlayerList->Count-1;
+				fstcpip->iMax_clients = fstcpip->iMin_clients = PlayerList->Count-1; // set maximal and minimal players for this game
 				game->Run();
 				SettingsData.sPlayerName=MyPlayer->name;
 
@@ -4638,11 +4636,9 @@ void cMultiPlayer::HandleMenuMessages()
 {
 	cNetMessage *msg;
 	string msgstring;
-	int iMessageCount = MessageList->Count;
-	if ( iMessageCount<1 ) return;
-	for ( int i=0;i<iMessageCount;i++ )
+	for ( int i=0;i<fstcpip->NetMessageList->iCount;i++ )
 	{
-		msg = MessageList->NetMessageItems[0];
+		msg = (cNetMessage *) fstcpip->NetMessageList->Items[i];
 		msgstring = ( char * ) msg->msg;
 		switch ( msg->typ )
 		{
@@ -4650,7 +4646,7 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_CHAT:
 				AddChatLog ( msgstring );
 				PlayFX ( SoundData.SNDChat );
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 				// Neuer Spieler meldet sich an:
 			case MSG_SIGNING_IN:
@@ -4667,7 +4663,7 @@ void cMultiPlayer::HandleMenuMessages()
 				smsg=Strings->Items[2]; smsg+="#"; smsg+=sztmp;
 				fstcpip->FSTcpIpSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Mitteilung über die eigene ID:
@@ -4678,7 +4674,7 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				if ( MyPlayer->Nr!=atoi ( Strings->Items[0].c_str() ) )
 				{
-					MessageList->DeleteNetMessage ( 0 );
+					fstcpip->NetMessageList->Delete ( i );
 					break;
 				}
 				for ( i=0;i<PlayerList->Count;i++ )
@@ -4690,7 +4686,7 @@ void cMultiPlayer::HandleMenuMessages()
 						break;
 					}
 				}
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Client ändert seinen Namen:
@@ -4717,7 +4713,7 @@ void cMultiPlayer::HandleMenuMessages()
 					SendPlayerList();
 					Refresh=true;
 				}
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Bekommt die Liste mit den Spielern:
@@ -4733,19 +4729,19 @@ void cMultiPlayer::HandleMenuMessages()
 					PlayerList->DeletePlayer ( 0 );
 				}
 				count=atoi ( Strings->Items[0].c_str() );
-				for ( int i = 0;count--;i++ )
+				for ( int k = 0;count--;k++ )
 				{
 					cPlayer *p;
 					int id,color;
-					id=atoi ( Strings->Items[i*3+1].c_str() );
-					color=atoi ( Strings->Items[i*3+2].c_str() );
+					id=atoi ( Strings->Items[k*3+1].c_str() );
+					color=atoi ( Strings->Items[k*3+2].c_str() );
 
-					p=new cPlayer ( Strings->Items[i*3+3],OtherData.colors[color],id );
+					p=new cPlayer ( Strings->Items[k*3+3],OtherData.colors[color],id );
 					if ( id==myID ) MyPlayer=p;
 					PlayerList->AddPlayer ( p );
 				}
 				Refresh=true;
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Überträgt die Optionen:
@@ -4772,14 +4768,14 @@ void cMultiPlayer::HandleMenuMessages()
 				else
 					map=Strings->Items[4];
 				Refresh=true;
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Fordert einen Client auf sich zu identifizieren:
 			case MSG_WHO_ARE_YOU:
 			{
 				ChangeFarbeName();
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Prüfen, ob der Client bereit ist zum Go:
@@ -4812,7 +4808,7 @@ void cMultiPlayer::HandleMenuMessages()
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host_No" ) );
 				}
 				if ( fp ) fclose ( fp );
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über einen nicht bereiten Client:
@@ -4832,7 +4828,7 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				WaitForGo=false;
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über einen bereiten Client:
@@ -4852,13 +4848,13 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				ClientsToGo--;
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung, dass es jetzt los geht:
 			case MSG_LETS_GO:
 				LetsGo=true;
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 				// Die Ressourcen:
 			case MSG_RESSOURCES:
@@ -4867,13 +4863,13 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				int off;
 				if ( map_obj==NULL ) break;
-				for ( int i=0;i<Strings->Count;i++ )
+				for ( int k=0;k<Strings->Count;k++ )
 				{
-					off=atoi ( Strings->Items[i].c_str() );
-					map_obj->Resources[off].typ= ( unsigned char ) atoi ( Strings->Items[i++].c_str() );
-					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[i++].c_str() );
+					off=atoi ( Strings->Items[k].c_str() );
+					map_obj->Resources[off].typ= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
+					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 				}
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Empfang der Upgrades eines Players:
@@ -4892,7 +4888,7 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				if ( p==MyPlayer )
 				{
-					MessageList->DeleteNetMessage ( 0 );
+					fstcpip->NetMessageList->Delete ( i );
 					break;
 				}
 				for ( int i=1;i<Strings->Count;i++ )
@@ -4921,7 +4917,7 @@ void cMultiPlayer::HandleMenuMessages()
 						p->VehicleData[i].version++;
 					}
 				}
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Landedaten eines Players:
@@ -4930,25 +4926,25 @@ void cMultiPlayer::HandleMenuMessages()
 				TList *Strings;
 				Strings = SplitMessage ( msgstring );
 				sClientSettings *cs=NULL;
-				int nr,i,max;
+				int nr,k,max;
 
 				nr=atoi ( Strings->Items[2].c_str() );
 				if ( nr==MyPlayer->Nr )
 				{
-					MessageList->DeleteNetMessage ( 0 );
+					fstcpip->NetMessageList->Delete ( i );
 					break;
 				}
 
-				for ( i=0;i<ClientSettingsList->Count;i++ )
+				for ( k=0;k<ClientSettingsList->Count;k++ )
 				{
-					cs=ClientSettingsList->ClientSettingsItems[i];
+					cs=ClientSettingsList->ClientSettingsItems[k];
 					if ( cs->nr==nr )
 					{
 						break;
 					}
 				}
 
-				if ( cs==NULL||i==ClientSettingsList->Count )
+				if ( cs==NULL||k==ClientSettingsList->Count )
 				{
 					cs=new sClientSettings;
 					cs->LandX=atoi ( Strings->Items[0].c_str() );
@@ -4959,15 +4955,15 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				max=atoi ( Strings->Items[3].c_str() );
 
-				for ( i=4;i< ( max*2+4 );i++ )
+				for ( k=4;k< ( max*2+4 );k++ )
 				{
 					sLanding *l;
 					l=new sLanding;
-					l->id=atoi ( Strings->Items[i].c_str() );
-					l->cargo=atoi ( Strings->Items[i++].c_str() );
+					l->id=atoi ( Strings->Items[k].c_str() );
+					l->cargo=atoi ( Strings->Items[k++].c_str() );
 					cs->LandingList->AddLanding ( l );
 				}
-				MessageList->DeleteNetMessage ( 0 );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 		}

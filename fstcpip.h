@@ -94,6 +94,8 @@ public:
 	cFSTcpIp(bool server);
 	~cFSTcpIp();
 	SDL_Thread *FSTcpIpReceiveThread;	// Thread for message receiving
+	sList *NetMessageList;				// List with all received messages
+
 	bool bReceiveThreadFinished;		// Has the Receive-Thread finished?
 	bool bServer;						// Is this a server?
 	int iStatus;						// Status of connection

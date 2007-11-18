@@ -73,6 +73,18 @@ cEngine::~cEngine ( void )
 void cEngine::Run ( void )
 {
 	int i;
+	// Network
+	if(fstcpip)
+	{
+		// Look for new messages
+		if ( fstcpip->iStatus == STAT_CONNECTED && fstcpip->bReceiveThreadFinished )
+		{
+			SDL_WaitThread ( fstcpip->FSTcpIpReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
+			fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+		}
+		// Handle incomming messages
+		HandleGameMessages();
+	}
 
 	// Diese Aktionen nur Zeitgebunden ausführen:
 	if ( !timer0 ) return;
@@ -1324,4 +1336,271 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 	cAJobs *aj;
 	aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
 	AJobs->AddAJobs ( aj );
+}
+
+// Empfängt eine Nachricht aus dem Netzwerk:
+void cEngine::HandleGameMessages()
+{
+	cNetMessage *msg;
+	string sMsgString;
+	for ( int i=0;i<fstcpip->NetMessageList->iCount;i++ )
+	{
+		msg = (cNetMessage *) fstcpip->NetMessageList->Items[i];
+		sMsgString = ( char * ) msg->msg;
+		switch( msg->typ )
+		{
+			// Chatnachricht:
+			case MSG_CHAT:
+			{
+				game->AddMessage( sMsgString );
+				PlayFX( SoundData.SNDChat );
+				fstcpip->NetMessageList->Delete ( i );
+				break;
+			}
+			// Movejob hinzufügen:
+			case MSG_ADD_MOVEJOB:
+			{
+				break;
+			}
+			// Fahrzeug umsetzen:
+			case MSG_MOVE_VEHICLE:
+			{
+				break;
+			}
+			// Fahrzeug um ein Feld bewegen:
+			case MSG_MOVE_TO:
+			{
+				break;
+			}
+			// Pfad versperrt:
+			case MSG_NO_PATH:
+			{
+				break;
+			}
+			// Ende eines Movejobs:
+			case MSG_END_MOVE:
+			{
+				break;
+			}
+			// Ändert den Namen eines Vehicled:
+			case MSG_CHANGE_VEH_NAME:
+			{
+				break;
+			}
+			// Ende eines Movejobs für diese Runde:
+			case MSG_END_MOVE_FOR_NOW:
+			{
+				break;
+			}
+			// Ändert den Namen eines Spielers:
+			case MSG_CHANGE_PLAYER_NAME:
+			{
+				break;
+			}
+			// Benachrichtigung über ein gedrücktes Ende:
+			case MSG_ENDE_PRESSED:
+			{
+				break;
+			}
+			// Benachrichtigung über den Abbruch eines MJobs:
+			case MSG_MJOB_STOP:
+			{
+				break;
+			}
+			// Ein neuer Attackjob:
+			case MSG_ADD_ATTACKJOB:
+			{
+				break;
+			}
+			// Ein Objekt zerstören:
+			case MSG_DESTROY_OBJECT:
+			{
+				break;
+			}
+			// Einen MJob erledigen:
+			case MSG_ERLEDIGEN:
+			{
+				break;
+			}
+			// Meldet, dass Speed gesaved wurde:
+			case MSG_SAVED_SPEED:
+			{
+				break;
+			}
+			// Ändert den Namen eines Buildings:
+			case MSG_CHANGE_BUI_NAME:
+			{
+				break;
+			}
+			// Startet einen Bauvorgang eines Gebäudes:
+			case MSG_START_BUILD:
+			{
+				break;
+			}
+			// Stopt den Bauvorgang/Räumen eines Gebäudes:
+			case MSG_STOP_BUILD:
+			{
+				break;
+			}
+			// Fügt ein neues Gebäude ein:
+			case MSG_ADD_BUILDING:
+			{
+				break;
+			}
+			// Die Konstruktion eines großen Gebäudes starten:
+			case MSG_START_BUILD_BIG:
+			{
+				break;
+			}
+			// Den Constructor umsetzen:
+			case MSG_RESET_CONSTRUCTOR:
+			{
+				break;
+			}
+			// Startet das Räumen eines Feldes:
+			case MSG_START_CLEAR:
+			{
+				break;
+			}
+			// Vehicle einladen:
+			case MSG_STORE_VEHICLE:
+			{
+				break;
+			}
+			// Vehicle ausladen:
+			case MSG_ACTIVATE_VEHICLE:
+			{
+				break;
+			}
+			// Ein Building starten:
+			case MSG_START_WORK:
+			{
+				break;
+			}
+			// Ein Building stoppen:
+			case MSG_STOP_WORK:
+			{
+				break;
+			}
+			// Ein Vehicle einfügen:
+			case MSG_ADD_VEHICLE:
+			{
+				break;
+			}
+			// Etwas reparieren:
+			case MSG_REPAIR:
+			{
+				break;
+			}
+			// Etwas aufladen:
+			case MSG_RELOAD:
+			{
+				break;
+			}
+			// Den Wachstatus von etwas ändern:
+			case MSG_WACHE:
+			{
+				break;
+			}
+			// Räumt eine Mine:
+			case MSG_CLEAR_MINE:
+			{
+				break;
+			}
+			// Upgrade eines Spielers:
+			case MSG_UPGRADE:
+			{
+				break;
+			}
+			// Furschung abgeschlossen:
+			case MSG_RESEARCH:
+			{
+				break;
+			}
+			// Gebäude verbessern:
+			case MSG_UPDATE_BUILDING:
+			{
+				break;
+			}
+			// Einen Fehler eines Commandos melden:
+			case MSG_COMMANDO_MISTAKE:
+			{
+				break;
+			}
+			// Eine Commandooperation durchführen:
+			case MSG_COMMANDO_SUCCESS:
+			{
+				break;
+			}
+			// Aufforderung zur Synchronisation:
+			case MSG_START_SYNC:
+			{
+				break;
+			}
+			// Sync Player:
+			case MSG_SYNC_PLAYER:
+			{
+				break;
+			}
+			// Sync Vehicle:
+			case MSG_SYNC_VEHICLE:
+			{
+				break;
+			}
+			// Sync Building:
+			case MSG_SYNC_BUILDING:
+			{
+				break;
+			}
+			// Updated ein gestoredtes Vehicle:
+			case MSG_UPDATE_STORED:
+			{
+				break;
+			}
+			// Bericht über Abschluss der RundenendeActions:
+			case MSG_REPORT_R_E_A:
+			{
+				break;
+			}
+			// Ping:
+			case MSG_PING:
+			{
+				break;
+			}
+			// Pong:
+			case MSG_PONG:
+			{
+				break;
+			}
+			// Niederlage des Host:
+			case MSG_HOST_DEFEAT:
+			{
+				break;
+			}
+			// Niederlage eines Spielers:
+			case MSG_PLAYER_DEFEAT:
+			{
+				break;
+			}
+			// Nächster Spieler im Runden-Spiel-Modus:
+			case MSG_PLAY_ROUNDS_NEXT:
+			{
+				break;
+			}
+		}
+	}
+}
+
+// Sends a chat-message:
+void cEngine::SendChatMessage(const char *str){
+	if(fstcpip){
+		string sChatMessage = str;
+		if(sChatMessage.length() > 255)
+		{
+			sChatMessage.erase( 255 );
+		}
+		fstcpip->FSTcpIpSend(MSG_CHAT, sChatMessage.c_str());
+	}
+	game->AddMessage(str);
+	PlayFX(SoundData.SNDChat);
 }

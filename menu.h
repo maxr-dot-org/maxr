@@ -111,7 +111,6 @@ public:
   cMultiPlayer(bool host,bool tcp);
   ~cMultiPlayer(void);
 
-  TList *MessageList;// Liste mit allen empfangenen Nachrichten
   TList *ChatList;   // Liste mit den Chatnachrichten
   cPlayer *MyPlayer; // Der aktuelle Spieler
   TList *PlayerList; // Liste mit allen Spielern

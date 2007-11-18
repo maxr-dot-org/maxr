@@ -189,7 +189,6 @@ public:
   int RundenendeActionsReport;
   int SyncNo;
   TList *PingList;
-  // TTime PingStart;
   SDL_RWops *LogFile;
   TList *LogHistory;
 
@@ -212,8 +211,8 @@ public:
   void AddReport(string name,bool vehicle);
   void MakeRundenstartReport(void);
 
-  void SendChatMessage(char *str);
-  void ReceiveNetMsg(unsigned char *msg,int len);
+  void SendChatMessage(const char *str);
+  void HandleGameMessages();
   void DestroyObject(int off,bool air);
   void Ping(void);
   void CheckDefeat(void);

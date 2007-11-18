@@ -487,7 +487,7 @@ struct sList{
 		// Index mustn't be to high
 		if(iIndex >= iCount) iIndex = iCount-1;
 		// Delete Item
-		delete Items[iIndex];
+		Items[iIndex] = NULL;
 		iCount--;
 		// Resort Items
 		for(int i = iIndex; i <= iCount; i++)
@@ -713,7 +713,6 @@ public:
 	SDL_Surface *gfx_Cactivate;
 	SDL_Surface *gfx_storage;
 	SDL_Surface *gfx_storage_ground;
-	SDL_Surface *gfx_editor;
 	SDL_Surface *gfx_dialog;
 	SDL_Surface *gfx_edock;
 	SDL_Surface *gfx_Cmuni;

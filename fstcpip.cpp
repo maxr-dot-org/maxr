@@ -35,6 +35,7 @@ cFSTcpIp::cFSTcpIp ( bool server )
 	iStatus=STAT_CLOSED;
 	UsedIDs = new sIDList();
 	WaitOKList = new sList();
+	NetMessageList = new sList();
 	if(bServer)
 	{
 		iNextMessageID = 1;
@@ -229,7 +230,7 @@ bool cFSTcpIp::FSTcpIpReceive()
 					sprintf(szTmp,"(Host)Received Data-Message: -Part: %d/%d -ID: %d -Client %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, i, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
 					cLog::write(szTmp, LOG_TYPE_NETWORK);
 					// Add message to list
-					MultiPlayer->MessageList->AddNetMessage ( &NetBuffer->msg );
+					NetMessageList->Add( &NetBuffer->msg );
 					// Send OK to Client
 					SendOK( NetBuffer->iID, i );
 					// Send New ID to Client
@@ -275,7 +276,7 @@ bool cFSTcpIp::FSTcpIpReceive()
 			sprintf(szTmp,"(Client)Received Data-Message: -Part: %d/%d -ID: %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
 			cLog::write(szTmp, LOG_TYPE_NETWORK);
 			// Add message to list
-			MultiPlayer->MessageList->AddNetMessage ( &NetBuffer->msg );
+			NetMessageList->Add( &NetBuffer->msg );
 			// Send OK to Server
 			SendOK( NetBuffer->iID, -1 );
 		}

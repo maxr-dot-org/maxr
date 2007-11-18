@@ -718,7 +718,7 @@ int cGame::CheckUser ( void )
 			ChatInput=false;
 			if ( !InputStr.empty() &&!DoCommand ( ( char * ) InputStr.c_str() ) )
 			{
-				// engine->SendChatMessage((ActivePlayer->name+": "+InputStr).c_str());
+				engine->SendChatMessage((ActivePlayer->name+": "+InputStr).c_str());
 			}
 		}
 		else
