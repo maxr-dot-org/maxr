@@ -1706,6 +1706,15 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive=false;
 				MenuActive=false;
 				PlayFX ( SoundData.SNDObjectMenu );
+				// Client only
+				if( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				{
+					string sMessage;
+					sMessage = iToStr( PosX + PosY * game->map->size ) + "#";
+					if( data.can_drive == DRIVE_AIR ) sMessage += "1";
+					else sMessage += "0";
+					game->engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+				}
 			}
 			MenuActive=false;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -1744,6 +1753,15 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive=false;
 				MenuActive=false;
 				PlayFX ( SoundData.SNDObjectMenu );
+				// Client only
+				if( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				{
+					string sMessage;
+					sMessage = iToStr( PosX + PosY * game->map->size ) + "#";
+					if( data.can_drive == DRIVE_AIR ) sMessage += "1";
+					else sMessage += "0";
+					game->engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+				}
 			}
 			else if ( IsBuilding )
 			{

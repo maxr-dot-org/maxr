@@ -1104,6 +1104,14 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->mjob->finished=true;
 						SelectedVehicle->mjob=NULL;
 						SelectedVehicle->MoveJobActive=false;
+						if( engine->fstcpip && !engine->fstcpip->bServer )
+						{
+							string sMessage;
+							sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#";
+							if( SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
+							else sMessage += "0";
+							engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+						}
 					}
 				}
 				else if ( mouse->cur==GraphicsData.gfx_Cattack&&SelectedBuilding&&!SelectedBuilding->Attacking )

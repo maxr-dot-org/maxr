@@ -219,6 +219,7 @@ public:
   void StartLog(void);
   void StopLog(void);
   void LogMessage(string msg);
+  TList* SplitMessage ( string sMsg );
 
   void Run(void);
 };

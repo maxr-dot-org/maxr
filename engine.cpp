@@ -114,14 +114,36 @@ void cEngine::Run ( void )
 			cMJobs *ptr,*last;
 			if ( job->EndForNow&&v )
 			{
-				v->MoveJobActive=false;
+				if( fstcpip && fstcpip->bServer )
+				{
+					string sMessage;
+					sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#" + iToStr( job->DestX + job->DestY * map->size ) + "#";
+					if ( job->plane ) sMessage += "1";
+					else sMessage += "0";
+					fstcpip->FSTcpIpSend ( MSG_END_MOVE_FOR_NOW,sMessage.c_str() );
+					v->MoveJobActive = false;
+				}
+				else if( !fstcpip )
+				{
+					v->MoveJobActive = false;
+				}
 				ActiveMJobs->DeleteMJobs ( i );
 			}
 			else
 			{
 				if ( v&&v->mjob==job )
 				{
-					v->MoveJobActive=false;
+					if( fstcpip && fstcpip->bServer )
+					{
+						string sMessage;
+						sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#";
+						fstcpip->FSTcpIpSend ( MSG_END_MOVE,sMessage.c_str() );
+						v->MoveJobActive = false;
+					}
+					else if( !fstcpip )
+					{
+						v->MoveJobActive = false;
+					}
 					v->mjob=NULL;
 				}
 				ActiveMJobs->DeleteMJobs ( i );
@@ -358,83 +380,102 @@ void cEngine::ChangeBuildingName ( int posx,int posy,string name,bool override,b
 cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,bool suspended )
 {
 	cMJobs *job;
-	// Server/SP:
-	job=new cMJobs ( map,ScrOff,DestOff,plane );
-	job->ClientMove=ClientMove;
-	job->next=mjobs;
-	mjobs=job;
-
-	if ( !job->finished )
+	string sMessage;
+	if( fstcpip && !fstcpip->bServer && !ClientMove)
 	{
-		if ( suspended )
-		{
-			job->Suspended=true;
-		}
-		else
-		{
-			AddActiveMoveJob ( job );
-		}
-		if ( job->vehicle->InWachRange() )
-		{
-			job->finished=true;
-			return job;
-		}
+		// Client:
+		sMessage = iToStr(ScrOff) + "#" + iToStr(DestOff) + "#";
+		if ( plane ) sMessage += "1";
+		else sMessage += "0";
+		fstcpip->FSTcpIpSend( MSG_ADD_MOVEJOB, sMessage.c_str() );
+		return NULL;
 	}
 	else
 	{
-		return job;
-	}
+		// Server/SP:
+		job=new cMJobs ( map,ScrOff,DestOff,plane );
+		job->ClientMove=ClientMove;
+		job->next=mjobs;
+		mjobs=job;
 
-	// Ggf den Bauvorgang abschließen:
-	if ( job->vehicle->IsBuilding&&!job->finished )
-	{
-		job->vehicle->IsBuilding=false;
-		job->vehicle->BuildOverride=false;
+		if ( !job->finished )
 		{
-			if ( job->vehicle->data.can_build==BUILD_BIG )
+			if ( suspended )
 			{
-				if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+job->vehicle->BandY*map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+1+job->vehicle->BandY*map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+1+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
-				// Das Gebäude erstellen:
-				AddBuilding ( job->vehicle->BandX,job->vehicle->BandY,UnitsData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				job->Suspended=true;
 			}
 			else
 			{
-				// Das Gebäude erstellen:
-				AddBuilding ( job->vehicle->PosX,job->vehicle->PosY,UnitsData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				AddActiveMoveJob ( job );
 			}
-		}
-	}
-	else
-		// Oder ggf den Clearvorgang abschließen:
-		if ( job->vehicle->IsClearing&&!job->finished )
-		{
-			job->vehicle->IsClearing=false;
-			job->vehicle->BuildOverride=false;
-			if ( job->vehicle->ClearBig )
+			if ( job->vehicle->InWachRange() )
 			{
-				if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+job->vehicle->BandY*map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+1+job->vehicle->BandY*map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+1+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
-				if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
+				job->finished=true;
+				return job;
 			}
-			// Den Dirt löschen:
-			job->vehicle->data.cargo+=map->GO[job->vehicle->PosX+job->vehicle->PosY*map->size].base->DirtValue;
-			if ( job->vehicle->data.cargo>job->vehicle->data.max_cargo ) job->vehicle->data.cargo=job->vehicle->data.max_cargo;
-			if ( job->vehicle==game->SelectedVehicle ) job->vehicle->ShowDetails();
-			game->DeleteDirt ( map->GO[job->vehicle->PosX+job->vehicle->PosY*map->size].base );
+		}
+		else
+		{
+			return job;
 		}
 
-	// Die Move-Message absetzen:
+		// Ggf den Bauvorgang abschließen:
+		if ( job->vehicle->IsBuilding&&!job->finished )
+		{
+			job->vehicle->IsBuilding=false;
+			job->vehicle->BuildOverride=false;
+			{
+				if ( job->vehicle->data.can_build==BUILD_BIG )
+				{
+					if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+job->vehicle->BandY*map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+1+job->vehicle->BandY*map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+1+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
+					// Das Gebäude erstellen:
+					AddBuilding ( job->vehicle->BandX,job->vehicle->BandY,UnitsData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				}
+				else
+				{
+					// Das Gebäude erstellen:
+					AddBuilding ( job->vehicle->PosX,job->vehicle->PosY,UnitsData.building+job->vehicle->BuildingTyp,job->vehicle->owner );
+				}
+			}
+		}
+		else
+			// Oder ggf den Clearvorgang abschließen:
+			if ( job->vehicle->IsClearing&&!job->finished )
+			{
+				job->vehicle->IsClearing=false;
+				job->vehicle->BuildOverride=false;
+				if ( job->vehicle->ClearBig )
+				{
+					if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+job->vehicle->BandY*map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY ) map->GO[job->vehicle->BandX+1+job->vehicle->BandY*map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX+1||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+1+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
+					if ( job->vehicle->PosX!=job->vehicle->BandX||job->vehicle->PosY!=job->vehicle->BandY+1 ) map->GO[job->vehicle->BandX+ ( job->vehicle->BandY+1 ) *map->size].vehicle=NULL;
+				}
+				// Den Dirt löschen:
+				job->vehicle->data.cargo+=map->GO[job->vehicle->PosX+job->vehicle->PosY*map->size].base->DirtValue;
+				if ( job->vehicle->data.cargo>job->vehicle->data.max_cargo ) job->vehicle->data.cargo=job->vehicle->data.max_cargo;
+				if ( job->vehicle==game->SelectedVehicle ) job->vehicle->ShowDetails();
+				game->DeleteDirt ( map->GO[job->vehicle->PosX+job->vehicle->PosY*map->size].base );
+			}
 
-	if ( job&&ClientMove&&job->vehicle->BuildPath&&job->vehicle->data.can_build==BUILD_SMALL&& ( job->vehicle->BandX!=job->vehicle->PosX||job->vehicle->BandY!=job->vehicle->PosY ) &&!job->finished&&job->vehicle->data.cargo>=job->vehicle->BuildCosts*job->vehicle->BuildRoundsStart )
-	{
-		job->BuildAtTarget=true;
+		// Die Move-Message absetzen:
+		if( fstcpip && fstcpip->bServer && job->waypoints && job->waypoints->next )
+		{
+			sMessage = iToStr(job->waypoints->X+job->waypoints->Y*map->size) + "#" + iToStr(job->waypoints->next->X+job->waypoints->next->Y*map->size) + "#";
+			if ( plane ) sMessage += "1";
+			else sMessage += "0";
+			fstcpip->FSTcpIpSend( MSG_MOVE_TO, sMessage.c_str() );
+		}
+
+		if ( job&&ClientMove&&job->vehicle->BuildPath&&job->vehicle->data.can_build==BUILD_SMALL&& ( job->vehicle->BandX!=job->vehicle->PosX||job->vehicle->BandY!=job->vehicle->PosY ) &&!job->finished&&job->vehicle->data.cargo>=job->vehicle->BuildCosts*job->vehicle->BuildRoundsStart )
+		{
+			job->BuildAtTarget=true;
+		}
+		return job;
 	}
-
-	return job;
 }
 
 // Fügt einen Movejob in die Liste der aktiven Jobs ein:
@@ -485,7 +526,27 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	}
 	v->PosX=ToX;
 	v->PosY=ToY;
-	// Nur Client:
+	// Client only:
+	if( fstcpip && !fstcpip->bServer && ( v->OffX || v->OffY ) )
+	{
+		if( v->mjob )
+		{
+			v->mjob->finished = true;
+			v->data.speed += v->mjob->SavedSpeed;
+			v->mjob->SavedSpeed = 0;
+			if( v->mjob->waypoints && v->mjob->waypoints->next )
+			{
+				v->DecSpeed( v->mjob->waypoints->next->Costs );
+			}
+			v->mjob = NULL;      
+		}
+		v->moving = false;
+		v->rotating = false;
+		v->WalkFrame = 0;
+		if( game->SelectedVehicle == v ) v->ShowDetails();
+		v->owner->DoScan();
+		MouseMoveCallback( true );
+	}
 	v->OffX=0;
 	v->OffY=0;
 
@@ -503,7 +564,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		v->MoveJobActive=false;
 	}
 
-	// Nur Server (SP):
+	// Server and singleplayer only:
 	{
 		if ( v->mjob&&v->mjob->waypoints&&v->mjob->waypoints->next&&!v->mjob->Suspended )
 		{
@@ -511,28 +572,18 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 			v->mjob->StartMove();
 			if ( v->mjob )
 			{
-				unsigned char msg[48];
-				msg[0]='#';
-				msg[1]=36;
-				msg[2]=MSG_MOVE_VEHICLE;
-				( ( int* ) ( msg+3 ) ) [0]=FromX;
-				( ( int* ) ( msg+3 ) ) [1]=FromY;
-				( ( int* ) ( msg+3 ) ) [2]=ToX;
-				( ( int* ) ( msg+3 ) ) [3]=ToY;
-				msg[35]=v->mjob->plane;
+				string sMessage;
+				sMessage = iToStr( FromX ) + "#" + iToStr( FromY ) + "#" + iToStr( ToX ) + "#" + iToStr( ToY ) + "#"; 
+				if ( plane ) sMessage += "1";
+				else sMessage += "0";
+				fstcpip->FSTcpIpSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
+
 				if ( !v->mjob->finished )
 				{
-					msg[36]='#';
-					msg[37]=12;
-					msg[38]=MSG_MOVE_TO;
-					( ( int* ) ( msg+39 ) ) [0]=v->mjob->waypoints->X+v->mjob->waypoints->Y*map->size;
-					( ( int* ) ( msg+39 ) ) [1]=v->mjob->waypoints->next->X+v->mjob->waypoints->next->Y*map->size;
-					msg[47]=v->mjob->plane;
-					// fstcpip->Send(msg,48);
-				}
-				else
-				{
-					// fstcpip->Send(msg,36);
+					sMessage = iToStr( v->mjob->waypoints->X + v->mjob->waypoints->Y * map->size ) + "#" + iToStr( v->mjob->waypoints->next->X + v->mjob->waypoints->next->Y * map->size ) + "#"; 
+					if ( plane ) sMessage += "1";
+					else sMessage += "0";
+					fstcpip->FSTcpIpSend( MSG_MOVE_TO,sMessage.c_str() );
 				}
 			}
 		}
@@ -1349,7 +1400,7 @@ void cEngine::HandleGameMessages()
 		sMsgString = ( char * ) msg->msg;
 		switch( msg->typ )
 		{
-			// Chatnachricht:
+			// Chatmessages:
 			case MSG_CHAT:
 			{
 				game->AddMessage( sMsgString );
@@ -1357,234 +1408,404 @@ void cEngine::HandleGameMessages()
 				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Movejob hinzufügen:
+			// Add movejob:
 			case MSG_ADD_MOVEJOB:
 			{
+				cMJobs *job;
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				job = AddMoveJob( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),false,atoi( Strings->Items[2].c_str() ) );
+				// Check if path is barred:
+				if(job->finished)
+				{
+					fstcpip->FSTcpIpSend(MSG_NO_PATH,"");
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Fahrzeug umsetzen:
+			// Move vehicle:
 			case MSG_MOVE_VEHICLE:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				MoveVehicle ( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),true,atoi( Strings->Items[4].c_str() ) );
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Fahrzeug um ein Feld bewegen:
+			// Move vehicle for a field:
 			case MSG_MOVE_TO:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				AddMoveJob( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ));
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Pfad versperrt:
+			// Path is barred:
 			case MSG_NO_PATH:
 			{
+				if( random( 1,0 ) )
+				{
+					PlayVoice(VoiceData.VOINoPath1);
+				}
+				else
+				{
+					PlayVoice(VoiceData.VOINoPath2);
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ende eines Movejobs:
+			// End of a movejobs:
 			case MSG_END_MOVE:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if( atoi ( Strings->Items[1].c_str() ) == 0 )
+				{
+					v=map->GO[atoi ( Strings->Items[0].c_str() )].vehicle;
+				}
+				else
+				{
+					v=map->GO[atoi ( Strings->Items[0].c_str() )].plane;        
+				}
+				if( v )
+				{
+					v->MoveJobActive=false;
+					if( v == game->SelectedVehicle )
+					{
+						StopFXLoop( game->ObjectStream );
+						if( map->IsWater( v->PosX + v->PosY * map->size) && v->data.can_drive != DRIVE_AIR )
+						{
+							PlayFX( v->typ->StopWater );
+						}
+						else
+						{
+							PlayFX( v->typ->Stop );
+						}
+						game->ObjectStream = v->PlayStram();
+					}
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ändert den Namen eines Vehicled:
 			case MSG_CHANGE_VEH_NAME:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ende eines Movejobs für diese Runde:
 			case MSG_END_MOVE_FOR_NOW:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if( atoi( Strings->Items[2].c_str() ) == 0 )
+				{
+					v = map->GO[atoi( Strings->Items[0].c_str() ) ].vehicle;
+				}
+				else
+				{
+					v = map->GO[atoi( Strings->Items[0].c_str() ) ].plane;
+				}
+				if( !v ) break;
+				if( v->owner == game->ActivePlayer )
+				{
+					AddMoveJob(v->PosX + v->PosY * map->size,atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ) );
+				}
+				v->MoveJobActive = false;
+				if( v == game->SelectedVehicle )
+				{
+					StopFXLoop( game->ObjectStream );
+					if( map->IsWater( v->PosX + v->PosY * map->size ) && v->data.can_drive != DRIVE_AIR )
+					{
+						PlayFX( v->typ->StopWater );
+					}
+					else
+					{
+						PlayFX( v->typ->Stop );
+					}
+					game->ObjectStream = v->PlayStram();
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ändert den Namen eines Spielers:
 			case MSG_CHANGE_PLAYER_NAME:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über ein gedrücktes Ende:
 			case MSG_ENDE_PRESSED:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über den Abbruch eines MJobs:
 			case MSG_MJOB_STOP:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if( atoi( Strings->Items[1].c_str() ) == 0)
+				{
+					v = map->GO[atoi( Strings->Items[0].c_str() )].vehicle;
+				}else{
+					v = map->GO[atoi( Strings->Items[0].c_str() )].plane;        
+				}
+				if( v && v->mjob )
+				{
+					v->mjob->finished = true;
+					v->mjob = NULL;
+					v->MoveJobActive = false;
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein neuer Attackjob:
 			case MSG_ADD_ATTACKJOB:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Objekt zerstören:
 			case MSG_DESTROY_OBJECT:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Einen MJob erledigen:
+			// Execute a movejob:
 			case MSG_ERLEDIGEN:
 			{
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if( atoi( Strings->Items[1].c_str() ) == 0)
+				{
+					v=map->GO[atoi( Strings->Items[0].c_str() )].vehicle;
+				}else
+				{
+					v=map->GO[atoi( Strings->Items[0].c_str() )].plane;        
+				}
+				if( v && v->mjob )
+				{
+					v->mjob->CalcNextDir();
+					AddActiveMoveJob(v->mjob);
+					if( fstcpip->bServer && v->mjob->waypoints && v->mjob->waypoints->next )
+					{
+						string sMessage;
+						sMessage = iToStr( v->mjob->waypoints->X + v->mjob->waypoints->Y * map->size ) + "#" + iToStr( v->mjob->waypoints->next->X + v->mjob->waypoints->next->Y * map->size ) + "#";
+						if ( v->mjob->plane ) sMessage += "1";
+						else sMessage += "0";
+						fstcpip->FSTcpIpSend( MSG_MOVE_TO, sMessage.c_str() );
+					}
+				}
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Meldet, dass Speed gesaved wurde:
 			case MSG_SAVED_SPEED:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ändert den Namen eines Buildings:
 			case MSG_CHANGE_BUI_NAME:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Startet einen Bauvorgang eines Gebäudes:
 			case MSG_START_BUILD:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Stopt den Bauvorgang/Räumen eines Gebäudes:
 			case MSG_STOP_BUILD:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Fügt ein neues Gebäude ein:
 			case MSG_ADD_BUILDING:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Die Konstruktion eines großen Gebäudes starten:
 			case MSG_START_BUILD_BIG:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Den Constructor umsetzen:
 			case MSG_RESET_CONSTRUCTOR:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Startet das Räumen eines Feldes:
 			case MSG_START_CLEAR:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Vehicle einladen:
 			case MSG_STORE_VEHICLE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Vehicle ausladen:
 			case MSG_ACTIVATE_VEHICLE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Building starten:
 			case MSG_START_WORK:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Building stoppen:
 			case MSG_STOP_WORK:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Vehicle einfügen:
 			case MSG_ADD_VEHICLE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Etwas reparieren:
 			case MSG_REPAIR:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Etwas aufladen:
 			case MSG_RELOAD:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Den Wachstatus von etwas ändern:
 			case MSG_WACHE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Räumt eine Mine:
 			case MSG_CLEAR_MINE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Upgrade eines Spielers:
 			case MSG_UPGRADE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Furschung abgeschlossen:
 			case MSG_RESEARCH:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Gebäude verbessern:
 			case MSG_UPDATE_BUILDING:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Einen Fehler eines Commandos melden:
 			case MSG_COMMANDO_MISTAKE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Eine Commandooperation durchführen:
 			case MSG_COMMANDO_SUCCESS:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Aufforderung zur Synchronisation:
 			case MSG_START_SYNC:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Sync Player:
 			case MSG_SYNC_PLAYER:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Sync Vehicle:
 			case MSG_SYNC_VEHICLE:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Sync Building:
 			case MSG_SYNC_BUILDING:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Updated ein gestoredtes Vehicle:
 			case MSG_UPDATE_STORED:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Bericht über Abschluss der RundenendeActions:
 			case MSG_REPORT_R_E_A:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ping:
 			case MSG_PING:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Pong:
 			case MSG_PONG:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Niederlage des Host:
 			case MSG_HOST_DEFEAT:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Niederlage eines Spielers:
 			case MSG_PLAYER_DEFEAT:
 			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 			// Nächster Spieler im Runden-Spiel-Modus:
 			case MSG_PLAY_ROUNDS_NEXT:
 			{
+				fstcpip->NetMessageList->Delete ( i );
+				break;
+			}
+			default:
+			{
+				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
 		}
@@ -1603,4 +1824,19 @@ void cEngine::SendChatMessage(const char *str){
 	}
 	game->AddMessage(str);
 	PlayFX(SoundData.SNDChat);
+}
+
+TList* cEngine::SplitMessage ( string sMsg )
+{
+	TList *Strings;
+	Strings = new TList;
+	int npos=0;
+	for ( int i=0; npos != string::npos; i++ )
+	{
+		Strings->Items[i] = sMsg.substr ( npos, ( sMsg.find ( "#",npos )-npos ) );
+		npos = ( int ) sMsg.find ( "#",npos );
+		if ( npos != string::npos )
+			npos++;
+	}
+	return Strings;
 }
