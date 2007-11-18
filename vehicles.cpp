@@ -1136,7 +1136,7 @@ void cVehicle::ShowHelp ( void )
 	// show text
 	fonts->OutTextBlock ( typ->text,rTxt,buffer );
 	// get unit details
-	ShowBigDetails(); //FIXME: doesn't work on resolutions > 640x480
+	ShowBigDetails(); 
 	//draw button
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, rButton.x, rButton.y, buffer);
 
@@ -3530,107 +3530,97 @@ void cVehicle::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	DrawTransBar ( (int)(223 * ( float ) ( Target+*trans ) / MaxTarget ) );
 }
 
-void cVehicle::ShowBigDetails ( void ) //FIXME: doesn't work on resolutions > 640x480
+void cVehicle::ShowBigDetails ( void ) //TODO: add translation
 {
-	SDL_Rect dest;
-	char str[6];
+	SDL_Rect dest = { SettingsData.iScreenW / 2 - DIALOG_W / 2 + 16, SettingsData.iScreenH / 2 - DIALOG_H / 2, 242, 1 };
+	
+	#define COLUMN_1 dest.x+27
+	#define COLUMN_2 dest.x+42
+	#define COLUMN_3 dest.x+95
+	#define DOLINEBREAK dest.y = y + 14; SDL_FillRect ( buffer, &dest, 0xFC0000 ); y += 19;
 	int y;
-	y=297;
+	y=dest.y+297;
+	
 	if ( data.can_attack )
 	{
 		// Damage:
-		sprintf ( str,"%d",data.damage );
-		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Angriff",42,y,buffer );
-		DrawSymbolBig ( SBAttack,95,y-3,160,data.damage,typ->data.damage,buffer );
-		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-		SDL_FillRect ( buffer,&dest,0xFC0000 );
-		y+=19;
+		fonts->OutTextCenter ( iToStr(data.damage), COLUMN_1 , y, buffer );
+		fonts->OutText ( "Angriff", COLUMN_2, y, buffer );
+		DrawSymbolBig ( SBAttack, COLUMN_3 , y - 3, 160, data.damage, typ->data.damage, buffer );
+		DOLINEBREAK
+		
 		// Shots:
-		sprintf ( str,"%d",data.max_shots );
-		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Schüsse",42,y,buffer );
-		DrawSymbolBig ( SBShots,95,y+2,160,data.max_shots,typ->data.max_shots,buffer );
-		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-		SDL_FillRect ( buffer,&dest,0xFC0000 );
-		y+=19;
+		fonts->OutTextCenter ( iToStr(data.max_shots), COLUMN_1 , y, buffer );
+		fonts->OutText ( "Schüsse", COLUMN_2, y, buffer );
+		DrawSymbolBig ( SBShots, COLUMN_3 , y + 2, 160, data.max_shots, typ->data.max_shots, buffer );
+		DOLINEBREAK
+		
 		// Range:
-		sprintf ( str,"%d",data.range );
-		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Reichw.",42,y,buffer );
-		DrawSymbolBig ( SBRange,95,y-2,160,data.range,typ->data.range,buffer );
-		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-		SDL_FillRect ( buffer,&dest,0xFC0000 );
-		y+=19;
+		fonts->OutTextCenter ( iToStr(data.range), COLUMN_1 , y, buffer );
+		fonts->OutText ( "Reichw.", COLUMN_2, y, buffer );
+		DrawSymbolBig ( SBRange, COLUMN_3 , y - 2, 160, data.range, typ->data.range, buffer );
+		DOLINEBREAK
+		
 		// Ammo:
-		sprintf ( str,"%d",data.max_ammo );
-		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( "Munni.",42,y,buffer );
-		DrawSymbolBig ( SBAmmo,95,y-2,160,data.max_ammo,typ->data.max_ammo,buffer );
-		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-		SDL_FillRect ( buffer,&dest,0xFC0000 );
-		y+=19;
+		fonts->OutTextCenter ( iToStr(data.max_ammo), COLUMN_1 , y, buffer );
+		fonts->OutText ( "Munni.", COLUMN_2, y, buffer );
+		DrawSymbolBig ( SBAmmo, COLUMN_3 , y - 2, 160, data.max_ammo, typ->data.max_ammo, buffer );
+		DOLINEBREAK
 	}
-	if ( data.can_transport==TRANS_METAL||data.can_transport==TRANS_OIL||data.can_transport==TRANS_GOLD )
+	
+	if ( data.can_transport == TRANS_METAL || data.can_transport == TRANS_OIL || data.can_transport == TRANS_GOLD )
 	{
 		// Metall:
-		sprintf ( str,"%d",data.max_cargo );
-		fonts->OutTextCenter ( str,27,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Cargo").c_str(),42,y,buffer );
+		fonts->OutTextCenter ( iToStr(data.max_cargo), COLUMN_1 , y, buffer );
+		fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Cargo" ).c_str(), COLUMN_2, y, buffer );
+	
 		switch ( data.can_transport )
 		{
+	
 			case TRANS_METAL:
-				DrawSymbolBig ( SBMetal,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				DrawSymbolBig ( SBMetal, COLUMN_3 , y - 2, 160, data.max_cargo, typ->data.max_cargo, buffer );
 				break;
+	
 			case TRANS_OIL:
-				DrawSymbolBig ( SBOil,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				DrawSymbolBig ( SBOil, COLUMN_3 , y - 2, 160, data.max_cargo, typ->data.max_cargo, buffer );
 				break;
+	
 			case TRANS_GOLD:
-				DrawSymbolBig ( SBGold,95,y-2,160,data.max_cargo,typ->data.max_cargo,buffer );
+				DrawSymbolBig ( SBGold, COLUMN_3 , y - 2, 160, data.max_cargo, typ->data.max_cargo, buffer );
 				break;
 		}
-		dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-		SDL_FillRect ( buffer,&dest,0xFC0000 );
-		y+=19;
+		DOLINEBREAK
 	}
+	
 	// Armor:
-	sprintf ( str,"%d",data.armor );
-	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Armor").c_str(),42,y,buffer );
-	DrawSymbolBig ( SBArmor,95,y-2,160,data.armor,typ->data.armor,buffer );
-	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-	SDL_FillRect ( buffer,&dest,0xFC0000 );
-	y+=19;
+	fonts->OutTextCenter ( iToStr(data.armor), COLUMN_1 , y, buffer );	
+	fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ).c_str(), COLUMN_2, y, buffer );
+	DrawSymbolBig ( SBArmor, COLUMN_3 , y - 2, 160, data.armor, typ->data.armor, buffer );
+	DOLINEBREAK
+	
 	// Hitpoints:
-	sprintf ( str,"%d",data.max_hit_points );
-	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Hitpoints").c_str(),42,y,buffer );
-	DrawSymbolBig ( SBHits,95,y-1,160,data.max_hit_points,typ->data.max_hit_points,buffer );
-	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-	SDL_FillRect ( buffer,&dest,0xFC0000 );
-	y+=19;
+	fonts->OutTextCenter ( iToStr(data.max_hit_points), COLUMN_1 , y, buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ).c_str(), COLUMN_2, y, buffer );
+	DrawSymbolBig ( SBHits, COLUMN_3 , y - 1, 160, data.max_hit_points, typ->data.max_hit_points, buffer );
+	DOLINEBREAK
+	
 	// Scan:
-	sprintf ( str,"%d",data.scan );
-	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Scan").c_str(),42,y,buffer );
-	DrawSymbolBig ( SBScan,95,y-2,160,data.scan,typ->data.scan,buffer );
-	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-	SDL_FillRect ( buffer,&dest,0xFC0000 );
-	y+=19;
+	fonts->OutTextCenter ( iToStr(data.scan), COLUMN_1 , y, buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ).c_str(), COLUMN_2, y, buffer );
+	DrawSymbolBig ( SBScan, COLUMN_3 , y - 2, 160, data.scan, typ->data.scan, buffer );
+	DOLINEBREAK
+	
 	// Speed:
-	sprintf ( str,"%d",data.max_speed/2 );
-	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Speed").c_str(),42,y,buffer );
-	DrawSymbolBig ( SBSpeed,95,y-2,160,data.max_speed/2,typ->data.max_speed/2,buffer );
-	dest.y=y+14;dest.x=13;dest.w=242;dest.h=1;
-	SDL_FillRect ( buffer,&dest,0xFC0000 );
-	y+=19;
+	fonts->OutTextCenter ( iToStr(data.max_speed/2), COLUMN_1 , y, buffer ); //FIXME: might crash if e.g. max_speed = 3
+	fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ).c_str(), COLUMN_2, y, buffer );
+	DrawSymbolBig ( SBSpeed, COLUMN_3 , y - 2, 160, data.max_speed / 2, typ->data.max_speed / 2, buffer );
+	DOLINEBREAK
+	
 	// Costs:
-	sprintf ( str,"%d",data.costs );
-	fonts->OutTextCenter ( str,27,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(),42,y,buffer );
-	DrawSymbolBig ( SBMetal,95,y-2,160,data.costs,typ->data.costs,buffer );
-}
+	fonts->OutTextCenter ( iToStr(data.costs), COLUMN_1 , y, buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Vehicles~Title_Costs" ).c_str(), COLUMN_2, y, buffer );
+	DrawSymbolBig ( SBMetal, COLUMN_3 , y - 2, 160, data.costs, typ->data.costs, buffer );
+	}
 
 // Führt alle Maßnahmen durch, die mit einem Wachwechsel eintreten:
 void cVehicle::Wachwechsel ( void )
