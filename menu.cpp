@@ -1849,14 +1849,27 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	int LandingOffset=0,LandingSelected=0;
 	SDL_Rect scr,dest;
 	TList *list,*selection;
-
+	
+	#define BUTTON_W 77
+	#define BUTTON_H 23	
+	
+	SDL_Rect rBtnDone = {447, 452, BUTTON_W, BUTTON_H};
+	SDL_Rect rBtnBuy = {561, 388, BUTTON_W, BUTTON_H};
+	SDL_Rect rBtnDel = {388, 240, BUTTON_W, BUTTON_H};
+		
 	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 	if(FileExists(GFXOD_HANGAR))
 	{
 		LoadPCXtoSF ( GFXOD_HANGAR,TmpSf );
 	}
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, TmpSf);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, TmpSf);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, TmpSf);
+
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
+
+
 
 	// Die Liste erstellen:
 	list=new TList;
@@ -1931,26 +1944,23 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		SDL_PumpEvents();
 		// Die Maus machen:
 		mouse->GetPos();
-		b=mouse->GetMouseButton();
-		x=mouse->x;y=mouse->y;
+		b = mouse->GetMouseButton();
+		x = mouse->x;
+		y = mouse->y;
 
-		if ( mouse->x!=lx||mouse->y!=ly )
+		if ( x != lx || y != ly )
 		{
 			mouse->draw ( true,screen );
 		}
 
 		// Fertig:
-		if ( mouse->x>=447&&mouse->x<447+55&&mouse->y>=452&&mouse->y<452+24 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!lb )
 			{
 				FertigPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=308;scr.y=231;
-				scr.w=dest.w=55;
-				scr.h=dest.h=24;
-				dest.x=447;dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1962,9 +1972,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		else if ( FertigPressed )
 		{
 			FertigPressed=false;
-			scr.x=447;scr.y=452;
-			scr.w=55;scr.h=24;
-			SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2237,15 +2245,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			mouse->draw ( false,screen );
 		}
 		// Kauf-Button:
-		if ( x>=590&&x<590+41&&y>=386&&y<386+23&&b&&!KaufPressed&&selection->HUpItems[selected]->costs<=player->Credits&&kauf )
+		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection->HUpItems[selected]->costs <= player->Credits && kauf )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			scr.x=380;
-			scr.y=274;
-			dest.w=scr.w=41;
-			dest.h=scr.h=23;
-			dest.x=590;
-			dest.y=386;
 
 			sLanding *n;
 			n=new sLanding;
@@ -2255,27 +2257,23 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			n->costs=selection->HUpItems[selected]->costs;
 			LandingList->AddLanding ( n );
 			LandingSelected=LandingList->Count-1;
-			while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
-
+			while ( LandingSelected>=LandingOffset+5 )
+			{
+				LandingOffset++;
+			}
 			ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 			player->Credits-=n->costs;
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			KaufPressed=true;
 		}
 		else if ( !b&&KaufPressed )
 		{
-			scr.x=590;
-			scr.y=386;
-			dest.w=scr.w=41;
-			dest.h=scr.h=23;
-			dest.x=590;
-			dest.y=386;
-			SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			KaufPressed=false;
@@ -2349,16 +2347,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			Up2Pressed=false;
 		}
 		// Entfernen-Button:
-		if ( x>=412&&x<412+53&&y>=240&&y<240+23&&b&&!EntfernenPressed )
+		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			scr.x=0;
-			scr.y=352;
-			dest.w=scr.w=53;
-			dest.h=scr.h=23;
-			dest.x=412;
-			dest.y=240;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), true, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=true;
@@ -2388,13 +2380,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
 			}
 
-			scr.x=412;
-			scr.y=240;
-			dest.w=scr.w=53;
-			dest.h=scr.h=23;
-			dest.x=412;
-			dest.y=240;
-			SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=false;
