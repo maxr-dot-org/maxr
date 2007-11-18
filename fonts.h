@@ -46,6 +46,9 @@ public:
   */
 void OutTextSmall (std::string str,int x,int y,eFontSmallColor color,SDL_Surface *sf );
   void OutTextSmall(const char *str,int x,int y,eFontSmallColor color,SDL_Surface *sf);
+  /** Wrapper for OutTextCenter
+  */
+  void OutTextCenter(std::string str,int x,int y,SDL_Surface *sf);
   void OutTextCenter(const char *str,int x,int y,SDL_Surface *sf);
   int GetTextLen(const char *str);
   int GetTextLenSmall(char *str);

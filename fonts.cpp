@@ -393,6 +393,11 @@ void cFonts::OutTextSmall (const char *str,int x,int y,eFontSmallColor color,SDL
 	}
 }
 
+void cFonts::OutTextCenter (string str,int x,int y,SDL_Surface *sf )
+{
+	OutTextCenter((char *)str.c_str(),x,y,sf);
+}
+
 // Gibt den Text mit dem normalen Font zentriert aus:
 void cFonts::OutTextCenter (const char *str,int x,int y,SDL_Surface *sf )
 {
