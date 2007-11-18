@@ -3726,7 +3726,10 @@ void cMultiPlayer::RunMenu ( void )
 #define FOCUS_NAME 2
 #define FOCUS_CHAT 3
 
-	LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+	if(FileExists(GFXOD_MULT))
+	{
+		LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+	}
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 
 	Focus=FOCUS_NAME;
@@ -4075,7 +4078,10 @@ void cMultiPlayer::RunMenu ( void )
 
 					TmpSf=GraphicsData.gfx_shadow;
 					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-					LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+					if(FileExists(GFXOD_MULT))
+					{
+						LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+					}
 					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 					DisplayGameSettings();
 					DisplayPlayerList();
@@ -4135,7 +4141,10 @@ void cMultiPlayer::RunMenu ( void )
 
 					TmpSf=GraphicsData.gfx_shadow;
 					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-					LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+					if(FileExists(GFXOD_MULT))
+					{
+						LoadPCXtoSF ( GFXOD_MULT,TmpSf );
+					}
 					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 					DisplayGameSettings();
 					DisplayPlayerList();
@@ -4192,7 +4201,10 @@ void cMultiPlayer::RunMenu ( void )
 			            InputStr=tmp;
 			            TmpSf=GraphicsData.gfx_shadow;
 			            SDL_SetAlpha(TmpSf,SDL_SRCALPHA,255);
-			            LoadPCXtoSF(GfxODPath+GFXOD_MULT,TmpSf);
+			            if(FileExists(GFXOD_MULT))
+			            {
+			            	LoadPCXtoSF(GfxODPath+GFXOD_MULT,TmpSf);
+			            }
 			            SDL_BlitSurface(TmpSf,NULL,buffer,NULL);
 			            DisplayGameSettings();
 			            DisplayPlayerList();
