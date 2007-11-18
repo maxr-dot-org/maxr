@@ -2941,6 +2941,24 @@ void cBuilding::ShowUpgrade ( void )
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade,NULL,buffer,NULL );
 
+				dest.w=scr.w=55;
+				dest.h=scr.h=24;
+				dest.x=447;
+				dest.y=452;
+	#define BUTTON__W 77
+	#define BUTTON__H 23	
+	
+	SDL_Rect rBtnDone = {447, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {360, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rTitle = {330, 11, 154, 13};
+	SDL_Rect rTxtDescription = {141,266,150,13};
+	
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Updates" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+
 	// Der Haken:
 	if ( Beschreibung )
 	{
@@ -3114,18 +3132,12 @@ void cBuilding::ShowUpgrade ( void )
 			UpPressed=false;
 		}
 		// Abbruch-Button:
-		if ( x>=357&&x<357+61&&y>=452&&y<452+23 )
+		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=364;
-				scr.y=231;
-				dest.w=scr.w=62;
-				dest.h=scr.h=24;
-				dest.x=357;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), true, rBtnCancel.x, rBtnCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -3149,30 +3161,18 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=357;
-			scr.y=452;
-			dest.w=scr.w=62;
-			dest.h=scr.h=24;
-			dest.x=357;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Fertig-Button:
-		if ( x>=447&&x<447+54&&y>=452&&y<452+23 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=308;
-				scr.y=231;
-				dest.w=scr.w=55;
-				dest.h=scr.h=24;
-				dest.x=447;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -3201,13 +3201,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=447;
-			scr.y=452;
-			dest.w=scr.w=55;
-			dest.h=scr.h=24;
-			dest.x=447;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;

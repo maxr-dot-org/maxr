@@ -1856,7 +1856,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	SDL_Rect rBtnDone = {447, 452, BUTTON_W, BUTTON_H};
 	SDL_Rect rBtnBuy = {561, 388, BUTTON_W, BUTTON_H};
 	SDL_Rect rBtnDel = {388, 240, BUTTON_W, BUTTON_H};
-		
+	SDL_Rect rTxtDescription = {141,266,150,13};
+
 	TmpSf=GraphicsData.gfx_shadow;
 	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
 	if(FileExists(GFXOD_HANGAR))
@@ -1866,6 +1867,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, TmpSf);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, TmpSf);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, TmpSf);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, TmpSf);
 
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 
