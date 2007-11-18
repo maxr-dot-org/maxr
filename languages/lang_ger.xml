@@ -158,6 +158,7 @@
 			<Title_LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
 			<Title_Load ENG="Load Menu" localized="Laden Menü"/>
 			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
+			<Title_Updates ENG="Updatemenu" localized="Updatemenü"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player" localized="Spieler"/>
@@ -241,6 +242,7 @@
 			<Laying ENG="laying mines" localized="Lege Minen"/>
 			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
 			<Veteran ENG="Veteran" localized="Veteran"/>
+			<Description ENG="Description" localized="Beschreibung"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

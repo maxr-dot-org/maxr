@@ -158,6 +158,7 @@
 			<Title_LoadSave ENG="Load/Save Menu"/>
 			<Title_Load ENG="Load Menu"/>
 			<Button_Host_Start ENG="Start Host"/>
+			<Title_Updates ENG="Updatemenu"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player"/>
@@ -241,6 +242,7 @@
 			<Laying ENG="laying mines"/>
 			<Greenhorn ENG="Greenhorn"/>
 			<Veteran ENG="Veteran"/>
+			<Description ENG="Description"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
