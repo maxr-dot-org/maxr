@@ -69,6 +69,8 @@
 			<Button_Training ENG="Training"/>
 			<Button_Delete ENG="Delete"/>
 			<Button_Buy ENG="Buy"/>
+			<Button_Path ENG="Path"/>
+			<Button_Build ENG="Build"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files"/>
@@ -159,6 +161,7 @@
 			<Title_Load ENG="Load Menu"/>
 			<Button_Host_Start ENG="Start Host"/>
 			<Title_Updates ENG="Updatemenu"/>
+			<Title_Build ENG="Buildmenu"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player"/>
@@ -243,6 +246,7 @@
 			<Greenhorn ENG="Greenhorn"/>
 			<Veteran ENG="Veteran"/>
 			<Description ENG="Description"/>
+			<Repeat ENG="Again"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>

@@ -69,6 +69,8 @@
 			<Button_Training ENG="Training" localized="Training"/>
 			<Button_Delete ENG="Delete" localized="Löschen"/>
 			<Button_Buy ENG="Buy" localized="Kaufen"/>
+			<Button_Path ENG="Path" localized="Pfad"/>
+			<Button_Build ENG="Build" localized="Bauen"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
@@ -159,6 +161,7 @@
 			<Title_Load ENG="Load Menu" localized="Laden Menü"/>
 			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
 			<Title_Updates ENG="Updatemenu" localized="Updatemenü"/>
+			<Title_Build ENG="Buildmenu" localized="Baumenü"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player" localized="Spieler"/>
@@ -243,6 +246,7 @@
 			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
 			<Veteran ENG="Veteran" localized="Veteran"/>
 			<Description ENG="Description" localized="Beschreibung"/>
+			<Repeat ENG="Again" localized="Wieder"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
