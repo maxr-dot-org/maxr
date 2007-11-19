@@ -2941,10 +2941,6 @@ void cBuilding::ShowUpgrade ( void )
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade,NULL,buffer,NULL );
 
-				dest.w=scr.w=55;
-				dest.h=scr.h=24;
-				dest.x=447;
-				dest.y=452;
 	#define BUTTON__W 77
 	#define BUTTON__H 23	
 	
@@ -5074,9 +5070,38 @@ void cBuilding::ShowBuildMenu ( void )
 	int  iTurboBuildCosts[3];		//durations of the tree build speeds
 	bool showDetailsBuildlist=true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
 
+	#define BUTTON__W 77
+	#define BUTTON__H 23
+	
+	SDL_Rect rTxtDescription = {141,266,150,13};
+	SDL_Rect rTitle = {330, 11, 154, 13};
+	SDL_Rect rBtnDone = {387, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {300, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rTxtRepeat = {370, 326, 76, 17};
+	SDL_Rect rBtnDel = {388, 292, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnBuy = {561, 441, BUTTON__W, BUTTON__H};
+
+
+	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
+	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
+	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
+	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
+
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,NULL,buffer,NULL );
+
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Build"), false, rBtnBuy.x, rBtnBuy.y, buffer);
+
+
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Build" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Repeat" ).c_str(), rTxtRepeat.x+rTxtRepeat.w/2, rTxtRepeat.y, buffer);
+
 
 	// Der Haken:
 	if ( SettingsData.bShowDescription )
@@ -5351,16 +5376,10 @@ void cBuilding::ShowBuildMenu ( void )
 			Up2Pressed=false;
 		}
 		// Bauen-Button:
-		if ( x>=548&&x<548+78&&y>=442&&y<442+23&&b&&!BauenPressed )
+		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !BauenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			scr.x=0;
-			scr.y=328;
-			dest.w=scr.w=78;
-			dest.h=scr.h=23;
-			dest.x=548;
-			dest.y=442;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Build"), true, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BauenPressed=true;
@@ -5383,29 +5402,16 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( build_selected < build_offset ) build_selected= build_offset;
 
 			ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
-
-			scr.x=548;
-			scr.y=442;
-			dest.w=scr.w=78;
-			dest.h=scr.h=23;
-			dest.x=548;
-			dest.y=442;
-			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Build"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BauenPressed=false;
 		}
 		// Entfernen-Button:
-		if ( x>=412&&x<412+53&&y>=293&&y<293+23&&b&&!EntfernenPressed )
+		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			scr.x=0;
-			scr.y=352;
-			dest.w=scr.w=53;
-			dest.h=scr.h=23;
-			dest.x=412;
-			dest.y=293;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), true, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=true;
@@ -5427,31 +5433,18 @@ void cBuilding::ShowBuildMenu ( void )
 				}
 				ShowToBuildList ( to_build,build_selected,build_offset, !showDetailsBuildlist );
 			}
-
-			scr.x=412;
-			scr.y=293;
-			dest.w=scr.w=53;
-			dest.h=scr.h=23;
-			dest.x=412;
-			dest.y=293;
-			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=false;
 		}
 		// Abbruch-Button:
-		if ( x>=307&&x<307+61&&y>=452&&y<452+23 )
+		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=364;
-				scr.y=231;
-				dest.w=scr.w=62;
-				dest.h=scr.h=24;
-				dest.x=307;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), true, rBtnCancel.x, rBtnCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -5463,30 +5456,18 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=307;
-			scr.y=452;
-			dest.w=scr.w=62;
-			dest.h=scr.h=24;
-			dest.x=307;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Fertig-Button:
-		if ( x>=397&&x<397+54&&y>=452&&y<452+23 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=308;
-				scr.y=231;
-				dest.w=scr.w=55;
-				dest.h=scr.h=24;
-				dest.x=397;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5544,13 +5525,7 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=397;
-			scr.y=452;
-			dest.w=scr.w=55;
-			dest.h=scr.h=24;
-			dest.x=397;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -5933,38 +5908,37 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 //draws the Buildspeed-Buttons
 void cBuilding::DrawBuildButtons ( int speed )
 {
-	SDL_Rect scr,dest;
-	dest.w=scr.w=78;
-	dest.h=scr.h=23;
-	dest.x=292;dest.y=345;
+	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H};
+	
+	string sTmp = lngPack.Translate( "Text~Menu_Main~Button_Build");	
+
 	if ( speed==0 )
 	{
-		scr.x=39;scr.y=126;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x1", true, rBtnSpeed1.x, rBtnSpeed1.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x1", false, rBtnSpeed1.x, rBtnSpeed1.y, buffer);
 	}
-	dest.y+=24;
+	
 	if ( speed==1 )
 	{
-		scr.x=118;scr.y=126;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x2", true, rBtnSpeed2.x, rBtnSpeed2.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x2", false, rBtnSpeed2.x, rBtnSpeed2.y, buffer);
 	}
-	dest.y+=25;
+	
 	if ( speed==2 )
 	{
-		scr.x=216;scr.y=106;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x4", true, rBtnSpeed3.x, rBtnSpeed3.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x4", false, rBtnSpeed3.x, rBtnSpeed3.y, buffer);
 	}
 }
 

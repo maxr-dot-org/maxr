@@ -2346,13 +2346,33 @@ void cVehicle::ShowBuildMenu ( void )
 	int iTurboBuildCosts[3]; //costs for the 3 turbo build steps
 	int iTurboBuildRounds[3];// needed rounds for the 3 turbo build steps
 							 // 0 rounds, means not available
-
+	#define BUTTON__W 77
+	#define BUTTON__H 23
+	
+	SDL_Rect rTxtDescription = {141,266,150,13};
+	SDL_Rect rTitle = {330, 11, 154, 13};
+	SDL_Rect rBtnDone = {387, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {300, 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnPath = {339, 428, BUTTON__W, BUTTON__H};
+	
+	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
+	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
+	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
+	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
 
 	BandX=PosX;
 	BandY=PosY;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_build_screen,NULL,buffer,NULL );
+
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Path"), false, rBtnPath.x, rBtnPath.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
+
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Build" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+
 
 	// Den Haken:
 	if ( Beschreibung )
@@ -2514,18 +2534,12 @@ void cVehicle::ShowBuildMenu ( void )
 			UpPressed=false;
 		}
 		// Abbruch-Button:
-		if ( x>=307&&x<307+61&&y>=452&&y<452+23 )
+		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=364;
-				scr.y=231;
-				dest.w=scr.w=62;
-				dest.h=scr.h=24;
-				dest.x=307;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), true, rBtnCancel.x, rBtnCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -2537,30 +2551,18 @@ void cVehicle::ShowBuildMenu ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=307;
-			scr.y=452;
-			dest.w=scr.w=62;
-			dest.h=scr.h=24;
-			dest.x=307;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Fertig-Button:
-		if ( x>=397&&x<397+54&&y>=452&&y<452+23 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=308;
-				scr.y=231;
-				dest.w=scr.w=55;
-				dest.h=scr.h=24;
-				dest.x=397;
-				dest.y=452;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2618,30 +2620,18 @@ void cVehicle::ShowBuildMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=397;
-			scr.y=452;
-			dest.w=scr.w=55;
-			dest.h=scr.h=24;
-			dest.x=397;
-			dest.y=452;
-			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 		}
 		// Pfad-Button:
-		if ( data.can_build!=BUILD_BIG&&x>=347&&x<347+62&&y>=428&&y<428+22 )
+		if ( data.can_build != BUILD_BIG && x >= rBtnPath.x && x < rBtnPath.x + rBtnPath.w && y >= rBtnPath.y && y < rBtnPath.y + rBtnPath.h )
 		{
 			if ( b&&!PfadPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=161;
-				scr.y=149;
-				dest.w=scr.w=63;
-				dest.h=scr.h=23;
-				dest.x=347;
-				dest.y=428;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Path"), true, rBtnPath.x, rBtnPath.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				PfadPressed=true;
@@ -2678,13 +2668,7 @@ void cVehicle::ShowBuildMenu ( void )
 		}
 		else if ( PfadPressed )
 		{
-			scr.x=347;
-			scr.y=428;
-			dest.w=scr.w=63;
-			dest.h=scr.h=23;
-			dest.x=347;
-			dest.y=428;
-			SDL_BlitSurface ( GraphicsData.gfx_build_screen,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Path"), false, rBtnPath.x, rBtnPath.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			PfadPressed=false;
@@ -2718,7 +2702,7 @@ void cVehicle::ShowBuildMenu ( void )
 			mouse->draw ( false,screen );
 		}
 		// 1x Button:
-		if ( (x>=292&&x<292+76&&y>=345&&y<345+22&&b&&!LastB) && (iTurboBuildRounds[0] > 0) )
+		if ( ( x >= rBtnSpeed1.x && x < rBtnSpeed1.x + rBtnSpeed1.w && y >= rBtnSpeed1.y && y < rBtnSpeed1.y + rBtnSpeed1.h && b && !LastB ) && ( iTurboBuildRounds[0] > 0 ) )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=0;
@@ -2727,7 +2711,7 @@ void cVehicle::ShowBuildMenu ( void )
 			mouse->draw ( false,screen );
 		}
 		// 2x Button:
-		if ( (x>=292&&x<292+76&&y>=369&&y<369+22&&b&&!LastB) && (iTurboBuildRounds[1] > 0) )
+		if ( ( x >= rBtnSpeed2.x && x < rBtnSpeed2.x + rBtnSpeed2.w && y >= rBtnSpeed2.y && y < rBtnSpeed2.y + rBtnSpeed2.h && b && !LastB ) && ( iTurboBuildRounds[1] > 0 ) )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=1;
@@ -2736,7 +2720,7 @@ void cVehicle::ShowBuildMenu ( void )
 			mouse->draw ( false,screen );
 		}
 		// 4x Button:
-		if ( (x>=292&&x<292+76&&y>=394&&y<394+22&&b&&!LastB) && (iTurboBuildRounds[2] > 0) )
+		if ( ( x >= rBtnSpeed3.x && x < rBtnSpeed3.x + rBtnSpeed3.w && y >= rBtnSpeed3.y && y < rBtnSpeed3.y + rBtnSpeed3.h && b && !LastB ) && ( iTurboBuildRounds[2] > 0 ) )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed=2;
@@ -2955,38 +2939,37 @@ void cVehicle::ShowBuildList ( TList *list,int selected,int offset,bool beschrei
 
 void cVehicle::DrawBuildButtons ( int speed )
 {
-	SDL_Rect scr,dest;
-	dest.w=scr.w=78;
-	dest.h=scr.h=23;
-	dest.x=292;dest.y=345;
+	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H};
+	
+	string sTmp = lngPack.Translate( "Text~Menu_Main~Button_Build");	
+
 	if ( speed==0 )
 	{
-		scr.x=39;scr.y=126;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x1", true, rBtnSpeed1.x, rBtnSpeed1.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x1", false, rBtnSpeed1.x, rBtnSpeed1.y, buffer);
 	}
-	dest.y+=24;
+	
 	if ( speed==1 )
 	{
-		scr.x=118;scr.y=126;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x2", true, rBtnSpeed2.x, rBtnSpeed2.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x2", false, rBtnSpeed2.x, rBtnSpeed2.y, buffer);
 	}
-	dest.y+=25;
+	
 	if ( speed==2 )
 	{
-		scr.x=216;scr.y=106;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton(sTmp + " x4", true, rBtnSpeed3.x, rBtnSpeed3.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_build_screen,&dest,buffer,&dest );
+		drawButton(sTmp + " x4", false, rBtnSpeed3.x, rBtnSpeed3.y, buffer);
 	}
 }
 
