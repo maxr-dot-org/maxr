@@ -2366,7 +2366,10 @@ void cVehicle::ShowBuildMenu ( void )
 	mouse->draw ( false,buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_build_screen,NULL,buffer,NULL );
 
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Path"), false, rBtnPath.x, rBtnPath.y, buffer);
+	if(data.can_build != BUILD_BIG)
+	{
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Path"), false, rBtnPath.x, rBtnPath.y, buffer);
+	}
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
 
@@ -2418,19 +2421,6 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 	ShowBuildList ( images,selected,offset,Beschreibung,&BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
 	DrawBuildButtons ( BuildSpeed );
-
-	if ( data.can_build==BUILD_BIG )
-	{
-		scr.x=393;scr.y=0;
-		dest.w=scr.w=33;
-		dest.h=scr.h=22;
-		dest.x=347;dest.y=428;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
-		scr.y+=23;
-		dest.x+=scr.w;
-		dest.w=scr.w=30;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
-	}
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
