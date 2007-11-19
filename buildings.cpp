@@ -1924,7 +1924,19 @@ void cBuilding::ShowStorage ( void )
 	bool AlleReparierenEnabled=false;
 	bool AlleUpgradenEnabled=false;
 	int offset=0;
+	
+	#define BUTTON__W 77
+	#define BUTTON__H 23
+	
+	SDL_Rect rBtnDone = {518, 371, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnAllActive = {518, 246, BUTTON__W, BUTTON__H};
 
+	//IMPORTANT: These are just for reference! If you change them you'll
+	//have to change them at MakeStorageButtonsAlle too -- beko
+	SDL_Rect rBtnRefuel = {518, 271, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnRepair = {518, 271 + 25,  BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnUpgrade = {518, 271 + 25*2, BUTTON__W, BUTTON__H};
+			
 	LoadActive=false;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
@@ -1945,12 +1957,10 @@ void cBuilding::ShowStorage ( void )
 	}
 
 	// Alle Buttons machen:
+
 	// Fertig-Button:
-	scr.w=dest.w=94;
-	scr.h=dest.h=23;
-	scr.x=0;scr.y=468;
-	dest.x=510;dest.y=371;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+
 	// Down:
 	if ( StoredVehicles->Count>to )
 	{
@@ -1961,22 +1971,23 @@ void cBuilding::ShowStorage ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	// Alle Aktivieren:
-	scr.x=0;scr.y=376;
-	dest.w=scr.w=94;
-	dest.h=scr.h=23;
-	dest.x=511;dest.y=251;
 	if ( StoredVehicles->Count )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton("Aktiv", false, rBtnAllActive.x, rBtnAllActive.y, buffer);
 		AlleAktivierenEnabled=true;
-		MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
 	}
+	else
+	{
+		drawButton("Aktiv", true, rBtnAllActive.x, rBtnAllActive.y, buffer);
+	}
+
+	MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
 
 	// Vehicles anzeigen:
 	DrawStored ( offset );
 
 	// Metallreserven anzeigen:
-	ShowStorageMetalBar();
+	ShowStorageMetalBar(); //FIXME: buggy, doesn't show metalbar just amount number
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -2095,16 +2106,11 @@ void cBuilding::ShowStorage ( void )
 			}
 		}
 		// Fertig-Button:
-		if ( x>=510&&x<510+94&&y>=371&&y<371+23 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				scr.w=dest.w=94;
-				scr.h=dest.h=23;
-				scr.x=510;scr.y=371;
-				dest.x=510;dest.y=371;
-				SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2116,24 +2122,19 @@ void cBuilding::ShowStorage ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.w=dest.w=94;
-			scr.h=dest.h=23;
-			scr.x=0;scr.y=468;
-			dest.x=510;dest.y=371;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 		}
 		// Alle Aktivieren:
-		if ( x>=511&&x<511+94&&y>=251&&y<251+23&&b&&!LastB&&AlleAktivierenEnabled )
+		if ( x >= rBtnAllActive.x && x < rBtnAllActive.x + rBtnAllActive.w && y >= rBtnAllActive.y && y < rBtnAllActive.y + rBtnAllActive.h && b && !LastB && AlleAktivierenEnabled )
 		{
 			sVehicle *typ;
 			int size;
+			
 			PlayFX ( SoundData.SNDMenuButton );
-			dest.w=94;dest.h=23;
-			dest.x=511;dest.y=251;
-			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+			drawButton("Aktiv", false, rBtnAllActive.x, rBtnAllActive.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			while ( b )
@@ -2169,11 +2170,9 @@ void cBuilding::ShowStorage ( void )
 			return;
 		}
 		// Alle Aufladen:
-		if ( x>=511&&x<511+94&&y>=251+25&&y<251+25+23&&b&&!LastB&&AlleAufladenEnabled )
+		if ( x >= rBtnRefuel.x && x < rBtnRefuel.x + rBtnRefuel.w && y >= rBtnRefuel.y && y < rBtnRefuel.y + rBtnRefuel.h && b && !LastB && AlleAufladenEnabled )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			dest.w=94;dest.h=23;
-			dest.x=511;dest.y=251+25;
 
 			for ( i=0;i<StoredVehicles->Count;i++ )
 			{
@@ -2187,17 +2186,19 @@ void cBuilding::ShowStorage ( void )
 					if ( SubBase->Metal<2 ) break;
 				}
 			}
+			
 			DrawStored ( offset );
 			PlayVoice ( VoiceData.VOILoaded );
 			ShowStorageMetalBar();
-
-			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+			AlleAufladenEnabled=false;
+			MakeStorageButtonsAlle(&AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled);
+			
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			AlleAufladenEnabled=false;
+
 		}
 		// Alle Reparieren:
-		if ( x>=511&&x<511+94&&y>=251+25*2&&y<251+25*2+23&&b&&!LastB&&AlleReparierenEnabled )
+		if ( x >= rBtnRepair.x && x < rBtnRepair.x + rBtnRepair.w && y >= rBtnRepair.y && y < rBtnRepair.y + rBtnRepair.h && b && !LastB && AlleReparierenEnabled )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
@@ -2218,18 +2219,16 @@ void cBuilding::ShowStorage ( void )
 			DrawStored ( offset );
 			PlayVoice ( VoiceData.VOIRepaired );
 			ShowStorageMetalBar();
-
-			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+			AlleReparierenEnabled=false;
+			MakeStorageButtonsAlle(&AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled);
+			
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			AlleReparierenEnabled=false;
 		}
 		// Alle Upgraden:
-		if ( x>=511&&x<511+94&&y>=251+25*3&&y<251+25*3+23&&b&&!LastB&&AlleUpgradenEnabled )
+		if ( x >= rBtnUpgrade.x && x < rBtnUpgrade.x + rBtnUpgrade.w && y >= rBtnUpgrade.y && y < rBtnUpgrade.y + rBtnUpgrade.h && b && !LastB && AlleUpgradenEnabled )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			dest.w=94;dest.h=23;
-			dest.x=511;dest.y=251+25*3;
 
 			for ( i=0;i<StoredVehicles->Count;i++ )
 			{
@@ -2246,13 +2245,14 @@ void cBuilding::ShowStorage ( void )
 					if ( SubBase->Metal<2 ) break;
 				}
 			}
+			
 			DrawStored ( offset );
 			ShowStorageMetalBar();
-
-			SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+			AlleUpgradenEnabled=false;
+			MakeStorageButtonsAlle(&AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled);
+			
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			AlleUpgradenEnabled=false;
 		}
 
 		// Buttons unter den Vehicles:
@@ -2630,11 +2630,12 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleRep
 {
 	SDL_Rect scr,dest;
 	int i;
-	scr.x=0;scr.y=376+23;
-	dest.w=scr.w=94;
-	dest.h=scr.h=23;
-	dest.x=511;dest.y=251+25;
+	SDL_Rect rBtnRefuel = {518, 271, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnRepair = {518, 271 + 25,  BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnUpgrade = {518, 271 + 25*2, BUTTON__W, BUTTON__H};
 
+			
+			
 	*AlleAufladenEnabled=false;
 	*AlleReparierenEnabled=false;
 	*AlleUpgradenEnabled=false;
@@ -2660,33 +2661,31 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleRep
 	// Alle Aufladen:
 	if ( *AlleAufladenEnabled )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton("Reload", false, rBtnRefuel.x, rBtnRefuel.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+		drawButton("Reload", true, rBtnRefuel.x, rBtnRefuel.y, buffer);
 	}
-	scr.y+=23;
-	dest.y+=25;
+
 	// Alle Reparieren:
 	if ( *AlleReparierenEnabled )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton("Repair", false, rBtnRepair.x, rBtnRepair.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+		drawButton("Repair", true, rBtnRepair.x, rBtnRepair.y, buffer);
 	}
-	scr.y+=23;
-	dest.y+=25;
+
 	// Alle Upgraden:
 	if ( *AlleUpgradenEnabled )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		drawButton("Upgrade", false, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
 	}
 	else
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_storage,&dest,buffer,&dest );
+		drawButton("Upgrade", true, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
 	}
 }
 
