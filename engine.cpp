@@ -564,11 +564,11 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		v->MoveJobActive=false;
 	}
 
-	// Server and singleplayer only:
-	{
+	// Server only:
+	if( fstcpip && fstcpip->bServer ){
 		if ( v->mjob&&v->mjob->waypoints&&v->mjob->waypoints->next&&!v->mjob->Suspended )
 		{
-			// Das vehicle Bewegen und den nächsten Move machen:
+			// Move the vehicle and make the next move:
 			v->mjob->StartMove();
 			if ( v->mjob )
 			{
@@ -589,7 +589,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 		else
 		{
-			// Nur das Vehicle bewegen:
+			// Just move the vehicle:
 			unsigned char msg[36];
 			msg[0]='#';
 			msg[1]=36;
