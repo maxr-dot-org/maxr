@@ -142,6 +142,7 @@ bool cFSTcpIp::FSTcpIpOpen ( void )
 
 bool cFSTcpIp::FSTcpIpSend ( int typ,const char *msg)
 {
+	if (iStatus == STAT_CLOSED) return false;
 	sNetBuffer *NetBuffer = new sNetBuffer();
 	int iPartLenght;
 	int iPartNum = 1;
