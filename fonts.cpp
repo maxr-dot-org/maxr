@@ -196,6 +196,11 @@ int cFonts::CharsetBig ( char c )
 	return -1;
 }
 
+void cFonts::OutTextBig (string str,int x,int y,SDL_Surface *sf )
+{
+	OutTextBig((char *)str.c_str(), x, y, sf);
+}
+
 // Gibt einen Text mit dem Big Font aus:
 void cFonts::OutTextBig (char *str,int x,int y,SDL_Surface *sf )
 {
@@ -221,8 +226,12 @@ void cFonts::OutTextBig (char *str,int x,int y,SDL_Surface *sf )
 		}
 	}
 }
+void cFonts::OutTextBigCenter (string str,int x,int y,SDL_Surface *sf )
+{
+	OutTextBigCenter((char *)str.c_str(), x, y, sf);
+}
 
-void cFonts::OutTextBigCenter (const char *str,int x,int y,SDL_Surface *sf )
+void cFonts::OutTextBigCenter (char *str,int x,int y,SDL_Surface *sf )
 {
 	SDL_Rect dest,tmp;
 	int i=0,index,width=0;

@@ -41,8 +41,14 @@ public:
   void OutText(std::string str,int x,int y,SDL_Surface *sf);
   void OutText(const char *str,int x,int y,SDL_Surface *sf);
   int CharsetBig(char c);
+  /** Wrapper for OutTextBig
+  */
+  void OutTextBig(std::string str,int x,int y,SDL_Surface *sf);
   void OutTextBig(char *str,int x,int y,SDL_Surface *sf);
-  void OutTextBigCenter(const char *str,int x,int y,SDL_Surface *sf);
+  /** Wrapper for OutTextBigCenter
+  */
+  void OutTextBigCenter(std::string str,int x,int y,SDL_Surface *sf);
+  void OutTextBigCenter(char *str,int x,int y,SDL_Surface *sf);
   void OutTextBigCenterGold(char *str,int x,int y,SDL_Surface *sf);  
   int CharsetSmall(char c);
   /** Wrapper for OutTextSmall
