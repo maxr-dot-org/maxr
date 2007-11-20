@@ -2780,17 +2780,44 @@ void cBuilding::ShowResearch ( void )
 	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
+	
+	//Dialog Research width
+	#define DLG_RSRCH_W GraphicsData.gfx_research->w
+	//Dialog research height
+	#define DLD_RSRCH_H GraphicsData.gfx_research->h
+	
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
+	SDL_Rect rTitle = {rDialog.x+89, rDialog.y + 19, 182, 21};
+	SDL_Rect rTxtLabs = {rDialog.x+24, rDialog.y + 52, 68, 21};
+	SDL_Rect rTxtThemes = {rDialog.x+177, rDialog.y + 52, 45, 21};
+	SDL_Rect rTxtRounds = {rDialog.x+291, rDialog.y + 52, 45, 21};
+
+	SDL_Rect rBtnDone = {rDialog.x+193, rDialog.y+294, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {rDialog.x+91, rDialog.y+294, BUTTON__W, BUTTON__H};
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	game->DrawMap();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
-	dest.x=140;
-	dest.y=74;
-	dest.w=GraphicsData.gfx_research->w;
-	dest.h=GraphicsData.gfx_research->h;
-	SDL_BlitSurface ( GraphicsData.gfx_research,NULL,buffer,&dest );
+	if ( SettingsData.bAlphaEffects ) 
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,buffer,NULL );
+	}
+
+	SDL_BlitSurface ( GraphicsData.gfx_research,NULL,buffer,&rDialog );
+
+	//draw titles
+	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Labs" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Labs" ), rTxtLabs.x+rTxtLabs.w/2, rTxtLabs.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Themes" ), rTxtThemes.x+rTxtThemes.w/2, rTxtThemes.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Turns" ), rTxtRounds.x+rTxtRounds.w/2, rTxtRounds.y, buffer);
+
+
+	//draw button Cancel
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
+	//draw button Done
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+
 
 	// Schieber malen:
 	ShowResearchSchieber();
@@ -2819,18 +2846,12 @@ void cBuilding::ShowResearch ( void )
 		}
 
 		// Abbruch-Button:
-		if ( x>=92+140&&x<92+140+75&&y>=294+74&&y<294+74+26 )
+		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=0;
-				scr.y=492;
-				dest.w=scr.w=75;
-				dest.h=scr.h=26;
-				dest.x=92+140;
-				dest.y=294+74;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), true, rBtnCancel.x, rBtnCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -2842,30 +2863,18 @@ void cBuilding::ShowResearch ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			scr.x=92;
-			scr.y=294;
-			dest.w=scr.w=75;
-			dest.h=scr.h=26;
-			dest.x=92+140;
-			dest.y=294+74;
-			SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
 		}
 		// Fertig-Button:
-		if ( x>=194+140&&x<194+140+75&&y>=294+74&&y<294+26+74 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=76;
-				scr.y=492;
-				dest.w=scr.w=75;
-				dest.h=scr.h=26;
-				dest.x=194+140;
-				dest.y=294+74;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -2877,13 +2886,7 @@ void cBuilding::ShowResearch ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=194;
-			scr.y=294;
-			dest.w=scr.w=75;
-			dest.h=scr.h=26;
-			dest.x=194+140;
-			dest.y=294+74;
-			SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -2898,60 +2901,95 @@ void cBuilding::ShowResearch ( void )
 // Zeigt die Schieber an:
 void cBuilding::ShowResearchSchieber ( void )
 {
-	SDL_Rect scr,dest;
-	char str[20];
-	int i;
+	SDL_Rect scr, dest;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
+	SDL_Rect rTxtDescr = {rDialog.x+183, rDialog.y + 72, 12, 21};
+	string sTxtTheme ="";
 
-	for ( i=0;i<8;i++ )
+	for (int i = 0;i < 8;i++ )
 	{
-		scr.x=20;
-		scr.y=70+i*28;
-		dest.x=20+140;
-		dest.y=70+74+i*28;
-		dest.w=scr.w=316;
-		dest.h=scr.h=18;
-		SDL_BlitSurface ( GraphicsData.gfx_research,&scr,buffer,&dest );
+		scr.x = 20;
+		scr.y = 70 + i * 28;
+		dest.x = 20 + rDialog.x;
+		dest.y = 70 + rDialog.y + i * 28;
+		dest.w = scr.w = 316;
+		dest.h = scr.h = 18;
+		SDL_BlitSurface ( GraphicsData.gfx_research, &scr, buffer, &dest );
 
 		// Texte ausgeben:
-		sprintf ( str,"%d",owner->ResearchTechs[i].working_on );
-		fonts->OutTextCenter ( str,dest.x+21+2,dest.y+3,buffer );
-		sprintf ( str,"+%.0f%",owner->ResearchTechs[i].level*100 );
-		fonts->OutTextCenter ( str,258+140,dest.y+3,buffer );
+		fonts->OutTextCenter ( iToStr(owner->ResearchTechs[i].working_on), dest.x + 21 + 2, dest.y + 3, buffer );
+		fonts->OutTextCenter ( dToStr(owner->ResearchTechs[i].level*100), 258 + rDialog.x, dest.y + 3, buffer );
+
 		if ( owner->ResearchTechs[i].working_on )
 		{
-			sprintf ( str,"%d", ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining/ ( double ) owner->ResearchTechs[i].working_on ) );
-			fonts->OutTextCenter ( str,313+140,dest.y+3,buffer );
+			int iTmp = ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining / ( double ) owner->ResearchTechs[i].working_on);
+			fonts->OutTextCenter ( iToStr(iTmp), 313 + 140, dest.y + 3, buffer );
 		}
 
 		// Den Pfeil nach links:
-		if ( owner->ResearchTechs[i].working_on==0 )
+		if ( owner->ResearchTechs[i].working_on == 0 )
 		{
-			dest.w=scr.w=19;
-			dest.h=scr.h=18;
-			scr.x=237;
-			scr.y=177;
-			dest.x=71+140;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			dest.w = scr.w = 19;
+			dest.h = scr.h = 18;
+			scr.x = 237;
+			scr.y = 177;
+			dest.x = 71 + rDialog.x;
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		}
 
 		// Den Pfeil nach rechts:
-		if ( owner->UnusedResearch<=0 )
+		if ( owner->UnusedResearch <= 0 )
 		{
-			dest.w=scr.w=19;
-			dest.h=scr.h=18;
-			scr.x=257;
-			scr.y=177;
-			dest.x=143+140;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			dest.w = scr.w = 19;
+			dest.h = scr.h = 18;
+			scr.x = 257;
+			scr.y = 177;
+			dest.x = 143 + rDialog.x;
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		}
 
 		// Die Schieber malen:
-		dest.w=scr.w=14;
-		dest.h=scr.h=17;
-		scr.x=412;
-		scr.y=46;
-		dest.x=90+140+36* ( int ) ( ( ( float ) ( owner->ResearchTechs[i].working_on ) /owner->ResearchCount ) );
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+		dest.w = scr.w = 14;
+		dest.h = scr.h = 17;
+		scr.x = 412;
+		scr.y = 46;
+		dest.x = 90 + rDialog.x + 36 * ( int ) ( ( ( float ) ( owner->ResearchTechs[i].working_on ) / owner->ResearchCount ) );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		
+
+		switch(i)
+		{
+			case 0:
+				sTxtTheme = lngPack.Translate( "Text~Vehicles~Title_Damage");
+				break;
+			case 1:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Shots");
+				break;
+			case 2:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Range");
+				break;
+			case 3:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Shield");
+				break;
+			case 4:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Hitpoints");
+				break;
+			case 5:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Speed");
+				break;
+			case 6:
+				sTxtTheme = lngPack.Translate( "Text~Hud~Scan");
+				break;
+			case 7:
+				sTxtTheme = lngPack.Translate( "Text~Vehicles~Title_Costs");
+				break;
+		}
+		
+		dest.x = rTxtDescr.x;
+		//dest.w = rTxtDescr.w; //not used right now
+		//dest.h = rTxtDescr.h; //not used right now
+		dest.y = rTxtDescr.y + i * 28;
+		fonts->OutText(sTxtTheme, dest.x, dest.y, buffer);
 	}
 }
 
