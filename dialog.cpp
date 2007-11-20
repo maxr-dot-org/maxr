@@ -28,6 +28,7 @@
 #include "pcx.h"
 #include "files.h"
 #include "log.h"
+#include "loaddata.h"
 //TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
 // Zeigt einen Ja/Nein Dialog an:
 bool ShowYesNo ( string text )
@@ -929,6 +930,22 @@ void showPreferences ( void )
 				{
 					game->engine->ChangePlayerName ( game->ActivePlayer->name );
 				}
+				// Save new settings to max.xml
+				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
+				if( SettingsData.SoundMute != OldSoundMute ) SaveOption ( SAVETYPE_SOUNDMUTE );
+				if( SettingsData.VoiceMute != OldVoiceMute ) SaveOption ( SAVETYPE_VOICEMUTE );
+				if( SettingsData.bAutoSave != OldbAutoSave ) SaveOption ( SAVETYPE_AUTOSAVE );
+				if( SettingsData.bAnimations != OldbAnimations ) SaveOption ( SAVETYPE_ANIMATIONS );
+				if( SettingsData.bShadows != OldbShadows ) SaveOption ( SAVETYPE_SHADOWS );
+				if( SettingsData.bAlphaEffects != OldbAlphaEffects ) SaveOption ( SAVETYPE_ALPHA );
+				if( SettingsData.iScrollSpeed != OldiScrollSpeed ) SaveOption ( SAVETYPE_SCROLLSPEED );
+				if( SettingsData.MusicVol != OldMusicVol ) SaveOption ( SAVETYPE_MUSICVOL );
+				if( SettingsData.SoundVol != OldSoundVol ) SaveOption ( SAVETYPE_SOUNDVOL );
+				if( SettingsData.VoiceVol != OldVoiceVol ) SaveOption ( SAVETYPE_VOICEVOL );
+				if( SettingsData.bDamageEffects != OldbDamageEffects ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
+				if( SettingsData.bDamageEffectsVehicles != OldbDamageEffectsVehicles ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
+				if( SettingsData.bMakeTracks != OldbMakeTracks ) SaveOption ( SAVETYPE_TRACKS );
+				if( OldName.compare ( game->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
 				return;
 			}
 		}

@@ -3105,3 +3105,126 @@ void ConvertData(int unitnum, bool vehicle)
 
 	Data->has_frames = 0;
 }
+
+void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue )
+{
+	if( !pXmlNode )
+	{
+		cLog::write ( "Can't find necessary node in max.xml", LOG_TYPE_WARNING );
+	}
+	else
+	{
+		if( sAttributName.compare("YN") == 0 )
+		{
+			if( bValue )
+				pXmlNode->ToElement()->SetAttribute ( "YN", "Yes" );
+			else
+				pXmlNode->ToElement()->SetAttribute ( "YN", "No" );
+		}
+		else if( sAttributName.compare("Num") == 0 )
+		{
+			pXmlNode->ToElement()->SetAttribute ( "Num", iValue );
+		}
+		else if( sAttributName.compare("Text") == 0 )
+		{
+			pXmlNode->ToElement()->SetAttribute ( "Text", sValue.c_str() );
+		}
+	}
+}
+int SaveOption ( int iTyp )
+{
+	cLog::write ( "Saving option", LOG_TYPE_INFO );
+
+	// Prepare max.xml for writing
+	TiXmlDocument MaxXml;
+	ExTiXmlNode * pXmlNode = NULL;
+	if(!FileExists("max.xml"))
+	{
+		cLog::write ( "Generating new config file max.xml (not working yet)", LOG_TYPE_WARNING );
+		if( GenerateMaxXml() == -1)
+		{
+			return -1;
+		}
+	}
+	if(!MaxXml.LoadFile("max.xml"))
+	{
+		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
+		if( GenerateMaxXml() == -1)
+		{
+			return -1;
+		}
+	}
+	switch (iTyp )
+	{
+	case SAVETYPE_ANIMATIONS:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bAnimations,0,"");
+		break;
+	case SAVETYPE_SHADOWS:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bShadows,0,"");
+		break;
+	case SAVETYPE_ALPHA:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bAlphaEffects,0,"");
+		break;
+	case SAVETYPE_DAMAGEEFFECTS_BUILDINGS:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bDamageEffects,0,"");
+		break;
+	case SAVETYPE_DAMAGEEFFECTS_VEHICLES:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bDamageEffectsVehicles,0,"");
+		break;
+	case SAVETYPE_TRACKS:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bMakeTracks,0,"");
+		break;
+	case SAVETYPE_AUTOSAVE:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bAutoSave,0,"");
+		break;
+	case SAVETYPE_NAME:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL);
+		SaveValue ( pXmlNode, "Text",false,0,SettingsData.sPlayerName);
+		break;
+	case SAVETYPE_IP:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", NULL);
+		SaveValue ( pXmlNode, "Text",false,0,SettingsData.sIP);
+		break;
+	case SAVETYPE_PORT:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.iPort,"");
+		break;
+	case SAVETYPE_MUSICMUTE:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicMute", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.MusicMute,0,"");
+		break;
+	case SAVETYPE_VOICEMUTE:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceMute", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.VoiceMute,0,"");
+		break;
+	case SAVETYPE_SOUNDMUTE:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundMute", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.SoundMute,0,"");
+		break;
+	case SAVETYPE_MUSICVOL:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.MusicVol,"");
+		break;
+	case SAVETYPE_VOICEVOL:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.VoiceVol,"");
+		break;
+	case SAVETYPE_SOUNDVOL:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.SoundVol,"");
+		break;
+	case SAVETYPE_SCROLLSPEED:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.iScrollSpeed,"");
+		break;
+	}
+	MaxXml.SaveFile(); // Write the new values to the file
+	return 1;
+}

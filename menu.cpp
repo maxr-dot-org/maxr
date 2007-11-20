@@ -28,6 +28,7 @@
 #include "game.h"
 #include "log.h"
 #include "files.h"
+#include "loaddata.h"
 
 
 /** int for ShowInfo to prevent same graphic shown twice on click*/
@@ -3921,6 +3922,11 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				if ( fstcpip )
 					delete fstcpip;
+				// Save changed name, port or ip to max.xml
+				SettingsData.sPlayerName = MyPlayer->name;
+				SaveOption ( SAVETYPE_NAME );
+				SaveOption ( SAVETYPE_IP );
+				SaveOption ( SAVETYPE_PORT );
 				break;
 			}
 		}
@@ -3944,6 +3950,11 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else if ( !b&&OKPressed )
 			{
+				// Save changed name, port or ip to max.xml
+				SettingsData.sPlayerName = MyPlayer->name;
+				SaveOption ( SAVETYPE_NAME );
+				SaveOption ( SAVETYPE_IP );
+				SaveOption ( SAVETYPE_PORT );
 				if ( TestPlayerList() && ( TestPlayerListLoad() ||SaveGame.empty() ) )
 				{
 					/*if(!SaveGame.empty()){

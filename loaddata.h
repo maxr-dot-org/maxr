@@ -39,6 +39,25 @@
 #define LOAD_ERROR 1
 #define LOAD_FINISHED 2
 
+// Typs for saving a setting
+#define SAVETYPE_ANIMATIONS					0
+#define SAVETYPE_SHADOWS					1
+#define SAVETYPE_ALPHA						2
+#define SAVETYPE_DAMAGEEFFECTS_BUILDINGS	3
+#define SAVETYPE_DAMAGEEFFECTS_VEHICLES		4
+#define SAVETYPE_TRACKS						5
+#define SAVETYPE_AUTOSAVE					6
+#define SAVETYPE_NAME						7
+#define SAVETYPE_IP							8
+#define SAVETYPE_PORT						9
+#define SAVETYPE_MUSICMUTE					10
+#define SAVETYPE_VOICEMUTE					11
+#define SAVETYPE_SOUNDMUTE					12
+#define SAVETYPE_MUSICVOL					13
+#define SAVETYPE_VOICEVOL					14
+#define SAVETYPE_SOUNDVOL					15
+#define SAVETYPE_SCROLLSPEED				16
+
 #define NECESSARY_FILE_FAILURE { cLog::write ( "File for game needed! ", LOG_TYPE_ERROR ); LoadingData=LOAD_ERROR; return 0; }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -204,5 +223,21 @@ int LoadSounds(const char* path);
 	* @return 1 on success
 	*/
 int LoadVoices(const char* path);
+/**
+	* Saves the value. Do not use bye yourselve. Only used by SaveOption()-function.
+	* @param pXmlNode Node to which the value should be set
+	* @param sAttributName Name (which means typ) of the attribut to set ("YN", "Num" or "Text")
+	* @param bValue bool value to set
+	* @param iValue int value to set
+	* @param sValue string value to set
+	* @return 1 on success
+	*/
+void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue);
+/**
+	* Saves the acctual value of an option to the max.xml file
+	* @param Typ of Data to write (see SAVETYPE-defines)
+	* @return 1 on success
+	*/
+int SaveOption (int iTyp);
 
 #endif
