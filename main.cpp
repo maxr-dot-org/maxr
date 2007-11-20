@@ -532,6 +532,13 @@ string iToStr(int x)
  	return strStream.str();
 }
 
+string dToStr(double x)
+{
+ 	stringstream strStream;
+ 	strStream << x;
+ 	return strStream.str();
+}
+
 // Round //////////////////////////////////////////////////////////////////////
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 double Round ( double dValueToRound, unsigned int iDecimalPlace )

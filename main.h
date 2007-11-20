@@ -851,6 +851,9 @@ int random(int x, int y);
 /**Converts integer to string
 */
 std::string iToStr(int x);
+/**Converts double to string
+*/
+std::string dToStr(double x);
 int min (int a, int b );
 
 /**
