@@ -1158,6 +1158,7 @@ bool showSelfdestruction()
 }
 
  //FIXME: offset method only works on fixed resolution 640x460. 
+ //TODO: beko: rewrite this -- beko
 void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface *surface )
 {
 	SDL_Rect scr, dest;
