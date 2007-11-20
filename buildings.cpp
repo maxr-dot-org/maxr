@@ -2615,17 +2615,17 @@ void cBuilding::DrawStored ( int off )
 		SDL_BlitSurface ( sf,&scr,buffer,&dest );
 		dest.x+=6;
 		if ( vehicleV )
-		{
+		{	
 			// Die Hitpoints anzeigen:
 			DrawNumber ( dest.x+13,dest.y,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
-			fonts->OutTextSmall ( "Treffer",dest.x+27,dest.y,ClWhite,buffer );
+			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),dest.x+27,dest.y,ClWhite,buffer );
 			DrawSymbol ( SHits,dest.x+60,dest.y,58,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
 			// Die Munition anzeigen:
 			if ( vehicleV->data.can_attack )
 			{
 				dest.y+=15;
 				DrawNumber ( dest.x+13,dest.y,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
-				fonts->OutTextSmall ( "Munni",dest.x+27,dest.y,ClWhite,buffer );
+				fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),dest.x+27,dest.y,ClWhite,buffer );
 				DrawSymbol ( SAmmo,dest.x+60,dest.y,58,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
 			}
 		}
