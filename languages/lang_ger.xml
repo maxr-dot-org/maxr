@@ -71,6 +71,10 @@
 			<Button_Buy ENG="Buy" localized="Kaufen"/>
 			<Button_Path ENG="Path" localized="Pfad"/>
 			<Button_Build ENG="Build" localized="Bauen"/>
+			<Button_Active ENG="Active" localized="Aktiv"/>
+			<Button_Repair ENG="Repair" localized="Reparieren"/>
+			<Button_Upgrade ENG="Upgrade" localized="Verbessern"/>
+			<Button_Reload ENG="Reload" localized="Aufladen"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
@@ -247,6 +251,7 @@
 			<Veteran ENG="Veteran" localized="Veteran"/>
 			<Description ENG="Description" localized="Beschreibung"/>
 			<Repeat ENG="Again" localized="Wieder"/>
+			<Dated ENG="dated" localized="veraltet"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

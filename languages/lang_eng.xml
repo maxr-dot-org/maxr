@@ -71,6 +71,10 @@
 			<Button_Buy ENG="Buy"/>
 			<Button_Path ENG="Path"/>
 			<Button_Build ENG="Build"/>
+			<Button_Active ENG="Active"/>
+			<Button_Repair ENG="Repair"/>
+			<Button_Upgrade ENG="Upgrade"/>
+			<Button_Reload ENG="Reload"/>
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files"/>
@@ -247,6 +251,7 @@
 			<Veteran ENG="Veteran"/>
 			<Description ENG="Description"/>
 			<Repeat ENG="Again"/>
+			<Dated ENG="dated"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
