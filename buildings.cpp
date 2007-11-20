@@ -4523,9 +4523,50 @@ void cBuilding::ShowMineManager ( void )
 	int MaxM=0,MaxO=0,MaxG=0;
 	int FreeM=0,FreeO=0,FreeG=0;
 	TList *mines;
+	
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+ 	SDL_Rect rBtnDone = {rDialog.x+514, rDialog.y+430, 106, 40};
+	SDL_Rect rTitle = {rDialog.x+230, rDialog.y+11, 174, 13};
+	SDL_Rect rInfo1 = {rDialog.x+46, rDialog.y+78, 70, 11};
+	SDL_Rect rInfo2 = {rInfo1.x, rInfo1.y+37, rInfo1.w, rInfo1.h};
+	SDL_Rect rInfo3 = {rInfo1.x, rInfo1.y+37*2, rInfo1.w, rInfo1.h};
 
-	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,NULL,buffer,NULL );
+	if ( SettingsData.bAlphaEffects )
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+	}
+
+	//blit menu img
+	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,NULL,buffer,&rDialog );
 	mouse->SetCursor ( CHand );
+
+	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Mine" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+
+	for(int i = 0; i < 3; i++)
+	{
+		switch(i)
+		{
+			case 0:
+				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Metal" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				break;
+			case 1:
+				rInfo1.y += 120;
+				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Oil" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				break;
+			case 2:
+				rInfo1.y += 120;
+				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Gold" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				break;
+		}
+		
+		fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Usage" ), rInfo2.x+rInfo2.w/2, rInfo2.y, buffer);
+		rInfo2.y += 121;
+		fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Reserve" ), rInfo3.x+rInfo3.w/2, rInfo3.y, buffer);
+		rInfo3.y += 121;
+	}
+
+	//draw big button
+	drawButtonBig(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 
 	// Liste mit Minen erstellen:
 	mines=new TList;
@@ -4579,18 +4620,12 @@ void cBuilding::ShowMineManager ( void )
 		}
 
 		// Fertig-Button:
-		if ( x>=514&&x<514+109&&y>=438&&y<438+40 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.x=0;
-				scr.y=287;
-				dest.w=scr.w=109;
-				dest.h=scr.h=40;
-				dest.x=514;
-				dest.y=438;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+				drawButtonBig(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -4602,19 +4637,13 @@ void cBuilding::ShowMineManager ( void )
 		}
 		else if ( FertigPressed )
 		{
-			scr.x=514;
-			scr.y=438;
-			dest.w=scr.w=109;
-			dest.h=scr.h=40;
-			dest.x=514;
-			dest.y=438;
-			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
+			drawButtonBig(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 		}
 		// Aufs Metall geklickt:
-		if ( x>=174&&x<174+240&&y>=70&&y<70+30&&b&&!LastB )
+		if ( x >= rDialog.x + 174 && x < rDialog.x + 174 + 240 && y >= rDialog.y + 70 && y < rDialog.y + 70 + 30 && b && !LastB )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -4642,7 +4671,7 @@ void cBuilding::ShowMineManager ( void )
 			mouse->draw ( false,screen );
 		}
 		// Aufs Öl geklickt:
-		if ( x>=174&&x<174+240&&y>=190&&y<190+30&&b&&!LastB )
+		if ( x >= rDialog.x + 174 && x < rDialog.x + 174 + 240 && y >= rDialog.y + 190 && y < rDialog.y + 190 + 30 && b && !LastB )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -4670,7 +4699,7 @@ void cBuilding::ShowMineManager ( void )
 			mouse->draw ( false,screen );
 		}
 		// Aufs Gold geklickt:
-		if ( x>=174&&x<174+240&&y>=310&&y<310+30&&b&&!LastB )
+		if ( x >= rDialog.x + 174 && x < rDialog.x + 174 + 240 && y >= rDialog.y + 310 && y < rDialog.y + 310 + 30 && b && !LastB )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -4698,15 +4727,15 @@ void cBuilding::ShowMineManager ( void )
 			mouse->draw ( false,screen );
 		}
 		// IncMetal-Button:
-		if ( x>=421&&x<421+26&&y>=71&&y<71+27&&b&&!IncMetalPressed )
+		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 71 && y < rDialog.y + 71 + 27 && b && !IncMetalPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=71;
+			dest.x=rDialog.x +421;
+			dest.y=rDialog.y +71;
 			if ( FreeM )
 			{
 				SubBase->MetalProd++;
@@ -4725,23 +4754,23 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=71;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=71;
+			dest.x=rDialog.x +421;
+			dest.y=rDialog.y +71;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncMetalPressed=false;
 		}
 		// DecMetal-Button:
-		if ( x>=139&&x<139+26&&y>=71&&y<71+27&&b&&!DecMetalPressed )
+		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 71 && y < rDialog.y + 71 + 27 && b && !DecMetalPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=71;
+			dest.x=rDialog.x +139;
+			dest.y=rDialog.y +71;
 			if ( SubBase->MetalProd>0 )
 			{
 				SubBase->MetalProd--;
@@ -4760,23 +4789,23 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=71;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=71;
+			dest.x=rDialog.x +139;
+			dest.y=rDialog.y +71;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecMetalPressed=false;
 		}
 		// IncOil-Button:
-		if ( x>=421&&x<421+26&&y>=191&&y<191+27&&b&&!IncOilPressed )
+		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 191 && y < rDialog.y + 191 + 27 && b && !IncOilPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=191;
+			dest.x=rDialog.x +421;
+			dest.y=rDialog.y +191;
 			if ( FreeO )
 			{
 				SubBase->OilProd++;
@@ -4795,23 +4824,23 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=191;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=191;
+			dest.x=rDialog.x +421;
+			dest.y=rDialog.y +191;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncOilPressed=false;
 		}
 		// DecOil-Button:
-		if ( x>=139&&x<139+26&&y>=191&&y<191+27&&b&&!DecOilPressed )
+		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 191 && y < rDialog.y + 191 + 27 && b && !DecOilPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=191;
+			dest.x= rDialog.x + 139;
+			dest.y= rDialog.y + 191;
 			if ( SubBase->OilProd>0 )
 			{
 				SubBase->OilProd--;
@@ -4830,23 +4859,23 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=191;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=191;
+			dest.x=rDialog.x + 139;
+			dest.y=rDialog.y + 191;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DecOilPressed=false;
 		}
 		// IncGold-Button:
-		if ( x>=421&&x<421+26&&y>=311&&y<311+27&&b&&!IncGoldPressed )
+		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 311 && y < rDialog.y + 311 + 27 && b && !IncGoldPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=308;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=311;
+			dest.x=rDialog.x + 421;
+			dest.y=rDialog.y + 311;
 			if ( FreeG )
 			{
 				SubBase->GoldProd++;
@@ -4865,23 +4894,23 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=311;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=421;
-			dest.y=311;
+			dest.x=rDialog.x + 421;
+			dest.y=rDialog.y + 311;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			IncGoldPressed=false;
 		}
 		// DecGold-Button:
-		if ( x>=139&&x<139+26&&y>=311&&y<311+27&&b&&!DecGoldPressed )
+		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 311 && y < rDialog.y + 311 + 27 && b && !DecGoldPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=122;
 			scr.y=280;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=311;
+			dest.x=rDialog.x + 139;
+			dest.y=rDialog.y + 311;
 			if ( SubBase->GoldProd>0 )
 			{
 				SubBase->GoldProd--;
@@ -4900,8 +4929,8 @@ void cBuilding::ShowMineManager ( void )
 			scr.y=311;
 			dest.w=scr.w=26;
 			dest.h=scr.h=27;
-			dest.x=139;
-			dest.y=311;
+			dest.x=rDialog.x + 139;
+			dest.y=rDialog.y + 311;
 			SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -4916,47 +4945,58 @@ void cBuilding::ShowMineManager ( void )
 // Malt die Minenmanager-Bars:
 void cBuilding::MakeMineBars ( int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG )
 {
-	char str[20];
-	DrawMineBar ( TRANS_METAL,SubBase->MetalProd,MaxM,0,true,MaxM-SubBase->MetalProd-*FreeM );
-	DrawMineBar ( TRANS_OIL,SubBase->OilProd,MaxO,0,true,MaxO-SubBase->OilProd-*FreeO );
-	DrawMineBar ( TRANS_GOLD,SubBase->GoldProd,MaxG,0,true,MaxG-SubBase->GoldProd-*FreeG );
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 
-	DrawMineBar ( TRANS_METAL,SubBase->MetalNeed,SubBase->MaxMetalNeed,1,false,0 );
-	sprintf ( str,"%d (%+d / Runde)",SubBase->MetalNeed,SubBase->MetalProd-SubBase->MetalNeed );
-	fonts->OutTextBigCenter ( str,174+120,70+8+37,buffer );
-	DrawMineBar ( TRANS_OIL,SubBase->OilNeed,SubBase->MaxOilNeed,1,false,0 );
-	sprintf ( str,"%d (%+d / Runde)",SubBase->OilNeed,SubBase->OilProd-SubBase->OilNeed );
-	fonts->OutTextBigCenter ( str,174+120,190+8+37,buffer );
-	DrawMineBar ( TRANS_GOLD,SubBase->GoldNeed,SubBase->MaxGoldNeed,1,false,0 );
-	sprintf ( str,"%d (%+d / Runde)",SubBase->GoldNeed,SubBase->GoldProd-SubBase->GoldNeed );
-	fonts->OutTextBigCenter ( str,174+120,310+8+37,buffer );
+	string sTmp1 = "";
+	string sTmp2 = " / " + lngPack.Translate( "Text~Comp~Turn") +")";
+	DrawMineBar ( TRANS_METAL, SubBase->MetalProd, MaxM, 0, true, MaxM - SubBase->MetalProd - *FreeM );
+	DrawMineBar ( TRANS_OIL, SubBase->OilProd, MaxO, 0, true, MaxO - SubBase->OilProd - *FreeO );
+	DrawMineBar ( TRANS_GOLD, SubBase->GoldProd, MaxG, 0, true, MaxG - SubBase->GoldProd - *FreeG );
+	
+	DrawMineBar ( TRANS_METAL, SubBase->MetalNeed, SubBase->MaxMetalNeed, 1, false, 0 );
+	sTmp1 = iToStr(SubBase->MetalNeed) + " (" + iToStr(SubBase->MetalProd - SubBase->MetalNeed);
+	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+70 + 8 + 37, buffer );
+	
+	DrawMineBar ( TRANS_OIL, SubBase->OilNeed, SubBase->MaxOilNeed, 1, false, 0 );
+	sTmp1 = iToStr(SubBase->OilNeed) + " (" + iToStr(SubBase->OilProd - SubBase->OilNeed);
+	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+190 + 8 + 37, buffer );
+	
+	DrawMineBar ( TRANS_GOLD, SubBase->GoldNeed, SubBase->MaxGoldNeed, 1, false, 0 );
+	sTmp1 = iToStr(SubBase->GoldNeed) + " (" + iToStr(SubBase->GoldProd - SubBase->GoldNeed);	
+	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+310 + 8 + 37, buffer );
 }
 
 // Malt einen Rohstoffbalken:
 void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool number,int fixed )
 {
 	SDL_Rect scr,dest;
-	char str[10];
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+	SDL_Rect rScr;
+
 	switch ( typ )
 	{
 		case TRANS_METAL:
 			scr.y=339;
-			dest.y=70;
+			dest.y=rDialog.y+70;
 			break;
 		case TRANS_OIL:
 			scr.y=369;
-			dest.y=190;
+			dest.y=rDialog.y+190;
 			break;
 		case TRANS_GOLD:
 			scr.y=400;
-			dest.y=310;
+			dest.y=rDialog.y+310;
 			break;
 	}
-	dest.x=174;
+	dest.x=rDialog.x+174;
 	dest.w=240;
 	dest.h=scr.h=30;
 	dest.y+=offy*37;
-	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&dest,buffer,&dest );
+	rScr.x = dest.x - rDialog.x;
+	rScr.y = dest.y - rDialog.y;
+	rScr.w = dest.w;
+	rScr.h = dest.h;
+	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,&rScr,buffer,&dest );
 	if ( max_value==0 )
 	{
 		dest.w=scr.w=0;
@@ -4967,12 +5007,12 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 		dest.w=scr.w= ( int ) ( ( ( float ) value / max_value ) * 240 );
 		scr.x=156+ ( 240- ( int ) ( ( ( float ) value / max_value ) * 240 ) );
 	}
-	dest.x=174;
+	dest.x=rDialog.x+174;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	if ( fixed &&scr.w!=240&&max_value!=0 )
 		{
 			dest.w=scr.w= ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
-			dest.x=174+240-scr.w;
+			dest.x=rDialog.x+174+240-scr.w;
 			scr.x=156;
 			scr.y=307;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -4980,15 +5020,14 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 	else if ( max_value==0 )
 	{
 		dest.w=scr.w=240;
-		dest.x=174;
+		dest.x=rDialog.x+174;
 		scr.x=156;
 		scr.y=307;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	if ( number )
 	{
-		sprintf ( str,"%d",value );
-		fonts->OutTextBigCenter ( str,174+120,dest.y+8,buffer );
+		fonts->OutTextBigCenter ( iToStr(value),rDialog.x+174+120,dest.y+8,buffer );
 	}
 }
 
