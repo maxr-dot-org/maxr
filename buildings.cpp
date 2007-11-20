@@ -1928,31 +1928,38 @@ void cBuilding::ShowStorage ( void )
 	#define BUTTON__W 77
 	#define BUTTON__H 23
 	
-	SDL_Rect rBtnDone = {518, 371, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnAllActive = {518, 246, BUTTON__W, BUTTON__H};
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+
+	SDL_Rect rBtnDone = {rDialog.x+518, rDialog.y+371, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnAllActive = {rDialog.x+518, rDialog.y+246, BUTTON__W, BUTTON__H};
 
 	//IMPORTANT: These are just for reference! If you change them you'll
 	//have to change them at MakeStorageButtonsAlle too -- beko
-	SDL_Rect rBtnRefuel = {518, 271, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnRepair = {518, 271 + 25,  BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnUpgrade = {518, 271 + 25*2, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnRefuel = {rDialog.x+518, rDialog.y+271, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnRepair = {rDialog.x+518, rDialog.y+271 + 25,  BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnUpgrade = {rDialog.x+518, rDialog.y+271 + 25*2, BUTTON__W, BUTTON__H};
 			
 	LoadActive=false;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	if ( data.can_load==TRANS_AIR )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_storage,NULL,buffer,NULL );
+		SDL_BlitSurface ( GraphicsData.gfx_storage,NULL,buffer,&rDialog );
 		to=4;
 	}
 	else
 	{
 		scr.x=480;
 		scr.y=0;
-		scr.w=640-480;
-		scr.h=480;
-		SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&scr );
-		SDL_BlitSurface ( GraphicsData.gfx_storage_ground,NULL,buffer,NULL );
+		dest.w = scr.w=640-480;
+		dest.h = scr.h=480;
+		dest.x = rDialog.x + scr.x;
+		dest.y = rDialog.y + scr.y;
+		SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
+		dest.x = rDialog.x;
+		dest.y = rDialog.y;
+		dest.w = 480;
+		SDL_BlitSurface ( GraphicsData.gfx_storage_ground,NULL,buffer,&dest );
 		to=6;
 	}
 
@@ -1967,18 +1974,18 @@ void cBuilding::ShowStorage ( void )
 		DownEnabled=true;
 		scr.x=103;scr.y=452;
 		dest.h=scr.h=dest.w=scr.w=25;
-		dest.x=530;dest.y=426;
+		dest.x=rDialog.x+530;dest.y=rDialog.y+426;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	// Alle Aktivieren:
 	if ( StoredVehicles->Count )
 	{
-		drawButton("Aktiv", false, rBtnAllActive.x, rBtnAllActive.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Active"), false, rBtnAllActive.x, rBtnAllActive.y, buffer);
 		AlleAktivierenEnabled=true;
 	}
 	else
 	{
-		drawButton("Aktiv", true, rBtnAllActive.x, rBtnAllActive.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Active"), true, rBtnAllActive.x, rBtnAllActive.y, buffer);
 	}
 
 	MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
@@ -1987,7 +1994,7 @@ void cBuilding::ShowStorage ( void )
 	DrawStored ( offset );
 
 	// Metallreserven anzeigen:
-	ShowStorageMetalBar(); //FIXME: buggy, doesn't show metalbar just amount number
+	ShowStorageMetalBar();
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -2017,15 +2024,15 @@ void cBuilding::ShowStorage ( void )
 		// Down-Button:
 		if ( DownEnabled )
 		{
-			if ( x>=530&&x<530+25&&y>=426&&y<426+25&&b&&!DownPressed )
+			if ( x >= rDialog.x + 530 && x < rDialog.x + 530 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !DownPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=530;
 				scr.y=426;
 				dest.w=scr.w=25;
 				dest.h=scr.h=25;
-				dest.x=530;
-				dest.y=426;
+				dest.x=rDialog.x+530;
+				dest.y=rDialog.y+426;
 
 				offset+=to;
 				if ( StoredVehicles->Count<=offset+to ) DownEnabled=false;
@@ -2037,8 +2044,8 @@ void cBuilding::ShowStorage ( void )
 				scr.y=452;
 				dest.w=scr.w=25;
 				dest.h=scr.h=25;
-				dest.x=504;
-				dest.y=426;
+				dest.x=rDialog.x+504;
+				dest.y=rDialog.y+426;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				UpEnabled=true;
 
@@ -2052,8 +2059,8 @@ void cBuilding::ShowStorage ( void )
 				scr.y=452;
 				dest.w=scr.w=25;
 				dest.h=scr.h=25;
-				dest.x=530;
-				dest.y=426;
+				dest.x=rDialog.x+530;
+				dest.y=rDialog.y+426;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -2063,15 +2070,15 @@ void cBuilding::ShowStorage ( void )
 		// Up-Button:
 		if ( UpEnabled )
 		{
-			if ( x>=504&&x<504+25&&y>=426&&y<426+25&&b&&!UpPressed )
+			if ( x >= rDialog.x + 504 && x < rDialog.x + 504 + 25 && y >= rDialog.y+426 && y < rDialog.y + 426 + 25 && b && !UpPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x=504;
 				scr.y=426;
 				dest.w=scr.w=25;
 				dest.h=scr.h=25;
-				dest.x=504;
-				dest.y=426;
+				dest.x=rDialog.x+504;
+				dest.y=rDialog.y+426;
 
 				offset-=to;
 				if ( offset==0 ) UpEnabled=false;
@@ -2086,7 +2093,7 @@ void cBuilding::ShowStorage ( void )
 					DownEnabled=true;
 					scr.x=103;scr.y=452;
 					dest.h=scr.h=dest.w=scr.w=25;
-					dest.x=530;dest.y=426;
+					dest.x=rDialog.x+530;dest.y=rDialog.y+426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				SHOW_SCREEN
@@ -2097,8 +2104,8 @@ void cBuilding::ShowStorage ( void )
 				scr.y=452;
 				dest.w=scr.w=25;
 				dest.h=scr.h=25;
-				dest.x=504;
-				dest.y=426;
+				dest.x=rDialog.x+504;
+				dest.y=rDialog.y+426;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -2134,7 +2141,7 @@ void cBuilding::ShowStorage ( void )
 			int size;
 			
 			PlayFX ( SoundData.SNDMenuButton );
-			drawButton("Aktiv", false, rBtnAllActive.x, rBtnAllActive.y, buffer);
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Active"), false, rBtnAllActive.x, rBtnAllActive.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			while ( b )
@@ -2202,7 +2209,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			dest.w=94;dest.h=23;
-			dest.x=511;dest.y=251+25*2;
+			dest.x=rDialog.x+511;dest.y=rDialog.y+251+25*2;
 
 			for ( i=0;i<StoredVehicles->Count;i++ )
 			{
@@ -2273,58 +2280,62 @@ void cBuilding::ShowStorage ( void )
 			v=StoredVehicles->VehicleItems[i+offset];
 			if ( data.can_load==TRANS_AIR )
 			{
-				if ( i==0 )
+				switch ( i )
 				{
-					dest.x=44;
-					dest.y=191;
-				}
-				else if ( i==1 )
-				{
-					dest.x=270;
-					dest.y=191;
-				}
-				else if ( i==2 )
-				{
-					dest.x=44;
-					dest.y=426;
-				}
-				else
-				{
-					dest.x=270;
-					dest.y=426;
+					case 0:
+						dest.x = rDialog.x + 44;
+						dest.y = rDialog.y + 191;
+						break;
+					
+					case 1:
+						dest.x = rDialog.x + 270;
+						dest.y = rDialog.y + 191;
+						break;
+					
+					case 2:
+						dest.x = rDialog.x + 44;
+						dest.y = rDialog.y + 426;
+						break;
+					
+					case 3:
+						dest.x = rDialog.x + 270;
+						dest.y = rDialog.y + 426;
+						break;
 				}
 			}
 			else
 			{
-				if ( i==0 )
+				switch ( i )
 				{
-					dest.x=8;
-					dest.y=191;
-				}
-				else if ( i==1 )
-				{
-					dest.x=163;
-					dest.y=191;
-				}
-				else if ( i==2 )
-				{
-					dest.x=318;
-					dest.y=191;
-				}
-				else if ( i==3 )
-				{
-					dest.x=8;
-					dest.y=426;
-				}
-				else if ( i==4 )
-				{
-					dest.x=163;
-					dest.y=426;
-				}
-				else if ( i==5 )
-				{
-					dest.x=318;
-					dest.y=426;
+					case 0:
+						dest.x = rDialog.x + 8;
+						dest.y = rDialog.y + 191;
+						break;
+					
+					case 1:
+						dest.x = rDialog.x + 163;
+						dest.y = rDialog.y + 191;
+						break;
+					
+					case 2:
+						dest.x = rDialog.x + 318;
+						dest.y = rDialog.y + 191;
+						break;
+					
+					case 3:
+						dest.x = rDialog.x + 8;
+						dest.y = rDialog.y + 426;
+						break;
+					
+					case  4:
+						dest.x = rDialog.x + 163;
+						dest.y = rDialog.y + 426;
+						break;
+					
+					case 5:
+						dest.x = rDialog.x + 318;
+						dest.y = rDialog.y + 426;
+						break;
 				}
 			}
 			// Aktivieren:
@@ -2333,7 +2344,7 @@ void cBuilding::ShowStorage ( void )
 				PlayFX ( SoundData.SNDMenuButton );
 				ActivatingVehicle=true;
 				VehicleToActivate=i+offset;
-				SDL_BlitSurface ( sf,&dest,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Active"), true, dest.x, dest.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				while ( b )
@@ -2356,8 +2367,7 @@ void cBuilding::ShowStorage ( void )
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOIRepaired );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
-
-				SDL_BlitSurface ( sf,&dest,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Repair"), true, dest.x, dest.y, buffer);
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -2375,8 +2385,7 @@ void cBuilding::ShowStorage ( void )
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOILoaded );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
-
-				SDL_BlitSurface ( sf,&dest,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Reload"), true, dest.x, dest.y, buffer);
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -2393,8 +2402,7 @@ void cBuilding::ShowStorage ( void )
 				owner->base->AddMetal ( SubBase,-2 );
 				DrawStored ( offset );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled,&AlleReparierenEnabled,&AlleUpgradenEnabled );
-
-				SDL_BlitSurface ( sf,&dest,buffer,&dest );
+				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Upgrade"), true, dest.x, dest.y, buffer);
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -2413,60 +2421,115 @@ void cBuilding::DrawStored ( int off )
 {
 	SDL_Rect scr,dest;
 	SDL_Surface *sf;
-	cVehicle *v;
+	cVehicle *vehicleV;
 	int i,to;
+	
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+
+	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if ( data.can_load==TRANS_AIR )
 	{
 		to=4;
-		sf=GraphicsData.gfx_storage;
+		SDL_BlitSurface(GraphicsData.gfx_storage, NULL, sf, NULL);
+		//sf=GraphicsData.gfx_storage;
 	}
 	else
 	{
 		to=6;
-		sf=GraphicsData.gfx_storage_ground;
+		SDL_BlitSurface(GraphicsData.gfx_storage_ground, NULL, sf, NULL);
+		//sf=GraphicsData.gfx_storage_ground;
 	}
 
 	for ( i=0;i<to;i++ )
 	{
 		if ( i+off>=StoredVehicles->Count )
 		{
-			v=NULL;
+			vehicleV=NULL;
 		}
 		else
 		{
-			v=StoredVehicles->VehicleItems[i+off];
+			vehicleV=StoredVehicles->VehicleItems[i+off];
 		}
 
 		// Das Bild malen:
 		if ( data.can_load==TRANS_AIR )
+		//4 possible bays on screen
 		{
-			if ( i==0 ) {dest.x=17;dest.y=9;}
-			else if ( i==1 ) {dest.x=243;dest.y=9;}
-			else if ( i==2 ) {dest.x=17;dest.y=244;}
-			else{dest.x=243;dest.y=244;}
-			dest.w=200;dest.h=128;
+			switch ( i )
+			{
+				case 0 :
+					dest.x = rDialog.x + (scr.x = 17);
+					dest.y = rDialog.y + (scr.y = 9);
+					break;
+		
+				case 1 :
+					dest.x = rDialog.x + (scr.x = 243);
+					dest.y = rDialog.y + (scr.y = 9);
+					break;
+		
+				case 2 :
+					dest.x = rDialog.x + (scr.x = 17);
+					dest.y = rDialog.y + (scr.y = 244);
+					break;
+		
+				case 3 :
+					dest.x = rDialog.x + (scr.x = 243);
+					dest.y = rDialog.y + (scr.y = 244);
+					break;
+			}
+		
+			dest.w = scr.w = 200; //hangarwidth
+			dest.h = scr.h = 128; //hangarheight
 		}
 		else
-		{
-			if ( i==0 ) {dest.x=17;dest.y=9;}
-			else if ( i==1 ) {dest.x=172;dest.y=9;}
-			else if ( i==2 ) {dest.x=327;dest.y=9;}
-			else if ( i==3 ) {dest.x=17;dest.y=244;}
-			else if ( i==4 ) {dest.x=172;dest.y=244;}
-			else if ( i==5 ) {dest.x=327;dest.y=244;}
-			dest.w=128;dest.h=128;
+		{ //6 possible bays on screen
+			switch ( i )
+			{
+				case 0 :
+					dest.x = rDialog.x + (scr.x = 17);
+					dest.y = rDialog.y + (scr.y = 9);
+					break;
+				
+				case 1 :
+					dest.x = rDialog.x + (scr.x = 172);
+					dest.y = rDialog.y + (scr.y = 9);
+					break;
+				
+				case 2 :
+					dest.x = rDialog.x + (scr.x = 327);
+					dest.y = rDialog.y + (scr.y = 9);
+					break;
+				
+				case 3 :
+					dest.x = rDialog.x + (scr.x = 17);
+					dest.y = rDialog.y + (scr.y = 244);
+					break;
+				
+				case 4 :
+					dest.x = rDialog.x + (scr.x = 172);
+					dest.y = rDialog.y + (scr.y = 244);
+					break;
+				
+				case 5 :
+					dest.x = rDialog.x + (scr.x = 327);
+					dest.y = rDialog.y + (scr.y = 244);
+					break;
+			}
+			dest.w=scr.w=128; //hangarwidth
+			dest.h=scr.h=128; //hangarsize
 		}
 
-		SDL_BlitSurface ( sf,&dest,buffer,&dest );
-		if ( v )
+		SDL_BlitSurface ( sf,&scr,buffer,&dest );
+		
+		if ( vehicleV )
 		{
-			SDL_BlitSurface ( v->typ->storage,NULL,buffer,&dest );
+			SDL_BlitSurface ( vehicleV->typ->storage,NULL,buffer,&dest );
 			// Den Namen ausgeben:
-			if ( fonts->GetTextLen ( ( char * ) v->name.c_str() ) >dest.w-10 )
+			if ( fonts->GetTextLen ( ( char * ) vehicleV->name.c_str() ) >dest.w-10 )
 			{
 				char str[100];
-				strcpy ( str,v->name.c_str() );
+				strcpy ( str,vehicleV->name.c_str() );
 				str[strlen ( str )-1]=0;
 				while ( fonts->GetTextLen ( str ) >dest.w-10 )
 				{
@@ -2476,11 +2539,11 @@ void cBuilding::DrawStored ( int off )
 			}
 			else
 			{
-				fonts->OutText ( ( char * ) v->name.c_str(),dest.x+5,dest.y+5,buffer );
+				fonts->OutText ( ( char * ) vehicleV->name.c_str(),dest.x+5,dest.y+5,buffer );
 			}
-			if ( v->data.version!=v->owner->VehicleData[v->typ->nr].version )
+			if ( vehicleV->data.version!=vehicleV->owner->VehicleData[vehicleV->typ->nr].version )
 			{
-				fonts->OutTextSmall ( "(veraltet)",dest.x+5,dest.y+15,ClWhite,buffer );
+				fonts->OutTextSmall ( "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", dest.x + 5, dest.y + 15, ClWhite, buffer );
 			}
 		}
 		else if ( data.build_on_water )
@@ -2499,101 +2562,112 @@ void cBuilding::DrawStored ( int off )
 			dest.x-=9;
 		}
 		dest.y+=182;
-		scr.w=dest.w=73;
-		scr.h=dest.h=23;
-		if ( v )
+		
+		if ( vehicleV )
 		{
 			scr.x=156;
 			scr.y=431;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Active"), false, dest.x, dest.y, buffer);
 		}
 		else
 		{
-			SDL_BlitSurface ( sf,&dest,buffer,&dest );
+			drawButton( lngPack.Translate( "Text~Menu_Main~Button_Active"), true, dest.x, dest.y, buffer);
 		}
 		// Reparieren:
 		dest.x+=75;
-		if ( v&&v->data.hit_points!=v->data.max_hit_points&&SubBase->Metal>=2 )
+		if ( vehicleV&&vehicleV->data.hit_points!=vehicleV->data.max_hit_points&&SubBase->Metal>=2 )
 		{
-			scr.x=304;
-			scr.y=431;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Repair"), false, dest.x, dest.y, buffer);
 		}
 		else
 		{
-			SDL_BlitSurface ( sf,&dest,buffer,&dest );
+			drawButton( lngPack.Translate( "Text~Menu_Main~Button_Repair"), true, dest.x, dest.y, buffer);
 		}
+		
 		// Aufladen:
 		dest.x-=75;
 		dest.y+=25;
-		if ( v&&v->data.ammo!=v->data.max_ammo&&SubBase->Metal>=2 )
+		if ( vehicleV&&vehicleV->data.ammo!=vehicleV->data.max_ammo&&SubBase->Metal>=2 )
 		{
-			scr.x=230;
-			scr.y=431;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Reload"), false, dest.x, dest.y, buffer);
 		}
 		else
 		{
-			SDL_BlitSurface ( sf,&dest,buffer,&dest );
+			drawButton( lngPack.Translate( "Text~Menu_Main~Button_Reload"), true, dest.x, dest.y, buffer);
 		}
 		// Upgrade:
 		dest.x+=75;
-		if ( v&&v->data.version!=v->owner->VehicleData[v->typ->nr].version&&SubBase->Metal>=2 )
+		if ( vehicleV&&vehicleV->data.version!=vehicleV->owner->VehicleData[vehicleV->typ->nr].version&&SubBase->Metal>=2 )
 		{
-			scr.x=156;
-			scr.y=455;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Upgrade"), false, dest.x, dest.y, buffer);
 		}
 		else
 		{
-			SDL_BlitSurface ( sf,&dest,buffer,&dest );
+			drawButton( lngPack.Translate( "Text~Menu_Main~Button_Upgrade"), true, dest.x, dest.y, buffer);
 		}
 
 		// Die zusätzlichen Infos anzeigen:
 		dest.x-=66;
 		dest.y-=69-6;
-		dest.w=128;
-		dest.h=30;
-		SDL_BlitSurface ( sf,&dest,buffer,&dest );
+		scr.w=dest.w=128;
+		scr.h=dest.h=30;
+		scr.x = dest.x - rDialog.x;
+		scr.y = dest.y - rDialog.y;
+		SDL_BlitSurface ( sf,&scr,buffer,&dest );
 		dest.x+=6;
-		if ( v )
+		if ( vehicleV )
 		{
 			// Die Hitpoints anzeigen:
-			DrawNumber ( dest.x+13,dest.y,v->data.hit_points,v->data.max_hit_points,buffer );
+			DrawNumber ( dest.x+13,dest.y,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
 			fonts->OutTextSmall ( "Treffer",dest.x+27,dest.y,ClWhite,buffer );
-			DrawSymbol ( SHits,dest.x+60,dest.y,58,v->data.hit_points,v->data.max_hit_points,buffer );
+			DrawSymbol ( SHits,dest.x+60,dest.y,58,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
 			// Die Munition anzeigen:
-			if ( v->data.can_attack )
+			if ( vehicleV->data.can_attack )
 			{
 				dest.y+=15;
-				DrawNumber ( dest.x+13,dest.y,v->data.ammo,v->data.max_ammo,buffer );
+				DrawNumber ( dest.x+13,dest.y,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
 				fonts->OutTextSmall ( "Munni",dest.x+27,dest.y,ClWhite,buffer );
-				DrawSymbol ( SAmmo,dest.x+60,dest.y,58,v->data.ammo,v->data.max_ammo,buffer );
+				DrawSymbol ( SAmmo,dest.x+60,dest.y,58,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
 			}
 		}
 	}
+	SDL_FreeSurface(sf);
 }
 
 // Zeigt den Metallbalken im Storage-Menü an:
 void cBuilding::ShowStorageMetalBar ( void )
 {
 	SDL_Rect scr,dest;
-	char str[50];
-	scr.x=490;scr.y=80;
-	scr.w=136;scr.h=145;
-	SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&scr );
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	
+	//redraw metalbar to clean it from prior draws
+	dest.x = rDialog.x + (scr.x = 490);
+	dest.y = rDialog.y + (scr.y = 80);
+	dest.w = scr.w = 136;
+	dest.h = scr.h = 145;
+	SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 
+	//draw metalamount over the metalbar
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Metal" ) + ": " + iToStr ( SubBase->Metal ), rDialog.x + 557, rDialog.y + 86, buffer );
+
+	//BEGIN fill metal bar
 	scr.x=135;
 	scr.y=335;
-	dest.x=546;
-	dest.y=106;
+	dest.x=rDialog.x+546;
+	dest.y=rDialog.y+106;
 	scr.w=dest.w=20;
-	scr.h=dest.h=115* ( int ) ( SubBase->Metal/ ( float ) SubBase->MaxMetal );
-	dest.y+=115- ( 115* ( int ) ( SubBase->Metal/ ( float ) SubBase->MaxMetal ) );
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
-
-	sprintf ( str,"Metall: %d",SubBase->Metal );
-	fonts->OutTextCenter ( str,557,86,buffer );
+	
+	/*Gosh, this is tricky. I'll try to make an example. The metalbar graphic is 115px high.
+	* We've eg. storages for metal 125 and we have an metal amount of 49 so this would look 
+	* like this: height of metalbar = 115 / (125/49) 
+	* e voila - metalbar is 45px height. So we blit 45px and draw them at the bottom of the
+	* empty metal zylinder on storage.pcx
+	*								-- beko
+	*/
+	scr.h = dest.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
+	dest.y += 115 - scr.h;
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	//END fill metal bar
 }
 
 // Läd ein Vehicle aus:
@@ -2630,9 +2704,10 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleRep
 {
 	SDL_Rect scr,dest;
 	int i;
-	SDL_Rect rBtnRefuel = {518, 271, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnRepair = {518, 271 + 25,  BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnUpgrade = {518, 271 + 25*2, BUTTON__W, BUTTON__H};
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+	SDL_Rect rBtnRefuel = {rDialog.x + 518, rDialog.y + 271, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnRepair = {rDialog.x + 518, rDialog.y + 271 + 25,  BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnUpgrade = {rDialog.x + 518, rDialog.y + 271 + 25*2, BUTTON__W, BUTTON__H};
 
 			
 			
@@ -2661,31 +2736,31 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleRep
 	// Alle Aufladen:
 	if ( *AlleAufladenEnabled )
 	{
-		drawButton("Reload", false, rBtnRefuel.x, rBtnRefuel.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Reload"), false, rBtnRefuel.x, rBtnRefuel.y, buffer);
 	}
 	else
 	{
-		drawButton("Reload", true, rBtnRefuel.x, rBtnRefuel.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Reload"), true, rBtnRefuel.x, rBtnRefuel.y, buffer);
 	}
 
 	// Alle Reparieren:
 	if ( *AlleReparierenEnabled )
 	{
-		drawButton("Repair", false, rBtnRepair.x, rBtnRepair.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Repair"), false, rBtnRepair.x, rBtnRepair.y, buffer);
 	}
 	else
 	{
-		drawButton("Repair", true, rBtnRepair.x, rBtnRepair.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Repair"), true, rBtnRepair.x, rBtnRepair.y, buffer);
 	}
 
 	// Alle Upgraden:
 	if ( *AlleUpgradenEnabled )
 	{
-		drawButton("Upgrade", false, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Upgrade"), false, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
 	}
 	else
 	{
-		drawButton("Upgrade", true, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
+		drawButton(lngPack.Translate( "Text~Menu_Main~Button_Upgrade"), true, rBtnUpgrade.x, rBtnUpgrade.y, buffer);
 	}
 }
 
