@@ -649,7 +649,7 @@ void showPreferences ( void )
 	rFont.y = 105;
 	rFont.h = CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Music" ).c_str(),rFont.x,rFont.y,buffer);
-	drawSlider ( BAR_X+120,BAR_Y,SettingsData.MusicVol*2,SfDialog );
+	drawSlider ( BAR_X+120,BAR_Y,SettingsData.MusicVol*2,buffer );
 	drawCheckbox ( 210+120,73+29,SettingsData.MusicMute, buffer);
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
@@ -658,7 +658,7 @@ void showPreferences ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Effects" ).c_str(),rFont.x,rFont.y,buffer);
-	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, SfDialog );
+	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
 	drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
@@ -667,7 +667,7 @@ void showPreferences ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Voices" ).c_str(),rFont.x,rFont.y,buffer);
-	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,SfDialog );
+	drawSlider ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,buffer );
 	drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
@@ -715,7 +715,7 @@ void showPreferences ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 261+25;
 	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Scrollspeed" ).c_str(),rFont.x,rFont.y,buffer);
-	drawSlider ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, SfDialog );
+	drawSlider ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 290+33;
@@ -789,7 +789,7 @@ void showPreferences ( void )
 			{
 				SettingsData.MusicVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.MusicVol>=125 ) SettingsData.MusicVol=128;
-				drawSlider ( BAR_X+120,81+29,SettingsData.MusicVol*2, SfDialog );
+				drawSlider ( BAR_X+120,81+29,SettingsData.MusicVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SetMusicVol ( SettingsData.MusicVol );
@@ -798,7 +798,7 @@ void showPreferences ( void )
 			{
 				SettingsData.SoundVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.SoundVol>=125 ) SettingsData.SoundVol=128;
-				drawSlider ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, SfDialog );
+				drawSlider ( BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -806,14 +806,14 @@ void showPreferences ( void )
 			{
 				SettingsData.VoiceVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
 				if ( SettingsData.VoiceVol>=125 ) SettingsData.VoiceVol=128;
-				drawSlider ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2, SfDialog );
+				drawSlider ( BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=261+29-7&&y<=261+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
 			{
 				SettingsData.iScrollSpeed= ( int ) ( ( x- ( BAR_X+120 ) ) * ( 255.0/57 ) ) /5;
-				drawSlider ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, SfDialog );
+				drawSlider ( BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1159,7 +1159,7 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	dest.y = offy - 7;	
 	dest.w = scr.w + SLIDER_W;
 	dest.h = SLIDER_H;
-	SDL_BlitSurface ( surface,&scr,surface,&dest ); //dist
+	SDL_BlitSurface ( surface,&scr,surface,&dest ); //dist //FIXME: wrong source
 	//END REDRAW DIALOG UNDER SLIDER
 	
 	//BEGIN DRAW SLIDERBAR
@@ -1168,7 +1168,7 @@ void drawSlider ( int offx,int offy,int value, SDL_Surface *surface )
 	scr.w=58;
 	scr.h=3;	
 	dest.y += 7;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); 
 	//END DRAW SLIDERBAR
 
 	//BEGIN DRAW SLIDER
