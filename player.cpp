@@ -102,6 +102,15 @@ cPlayer::~cPlayer ( void )
 		cBuilding *ptr;
 		ptr=BuildingList->next;
 
+		// Clear stored list becouse stored vehicles are already deleted
+		if(BuildingList->StoredVehicles)
+		{
+			while( BuildingList->StoredVehicles->Count )
+			{
+				BuildingList->StoredVehicles->DeleteVehicle( BuildingList->StoredVehicles->Count - 1 );
+			}
+		}
+
 		delete BuildingList;
 		BuildingList=ptr;
 	}
