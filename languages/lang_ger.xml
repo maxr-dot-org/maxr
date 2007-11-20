@@ -88,13 +88,13 @@
 			<Color ENG="Color" localized="Farben"/>
 			<Hitpoints ENG="Hits" localized="Treffer"/>
 			<Ammo ENG="Ammo" localized="Munition"/>
-			<Range ENG="Range" localized="Reichweite"/>
+			<Range ENG="Range" localized="Reichw."/>
 			<Scan ENG="Scan" localized="Scan"/>
 			<Grid ENG="Grid" localized="Gitter"/>
 			<Fog ENG="Fog" localized="Nebel"/>
 			<Speed ENG="Speed" localized="Geschw."/>
 			<Cargo ENG="Gargo" localized="Ladung"/>
-			<AmmoShort ENG="Ammo" localized="Munitio."/>
+			<AmmoShort ENG="Ammo" localized="Munni"/>
 			<Shots ENG="Shots" localized="Schuss"/>
 			<Shield ENG="Shield" localized="Schild"/>
 			<Total ENG="Total" localized="Total"/>
@@ -166,6 +166,7 @@
 			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
 			<Title_Updates ENG="Updatemenu" localized="Updatemenü"/>
 			<Title_Build ENG="Buildmenu" localized="Baumenü"/>
+			<Title_Labs ENG="Researchmenu" localized="Forschungsmenü"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player" localized="Spieler"/>
@@ -252,6 +253,9 @@
 			<Description ENG="Description" localized="Beschreibung"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Dated ENG="dated" localized="veraltet"/>
+			<Labs ENG="Labs" localized="Labore"/>
+			<Themes ENG="Themes" localized="Bereich"/>
+			<Turns ENG="Turns" localized="Runden"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

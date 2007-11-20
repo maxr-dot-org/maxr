@@ -166,6 +166,7 @@
 			<Button_Host_Start ENG="Start Host"/>
 			<Title_Updates ENG="Updatemenu"/>
 			<Title_Build ENG="Buildmenu"/>
+			<Title_Labs ENG="Researchmenu"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player"/>
@@ -252,6 +253,9 @@
 			<Description ENG="Description"/>
 			<Repeat ENG="Again"/>
 			<Dated ENG="dated"/>
+			<Labs ENG="Labs"/>
+			<Themes ENG="Themes"/>
+			<Turns ENG="Turns"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
