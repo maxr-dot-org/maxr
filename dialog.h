@@ -57,12 +57,13 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
 /**
  * Draws a sliderbar with a slider
  * @author beko
+ * @param *sfDialog SDL_Surface of dialog for proper redrawing background
  * @param offx
  * @param offy
  * @param value 0 - 255 for sliderposition
  * @param *surface SDL_Surface to draw on
  */
-void drawSlider(int offx,int offy,int value, SDL_Surface *surface);
+void drawSlider(SDL_Surface *sfDialog, int offx,int offy,int value, SDL_Surface *surface);
 /**
  * Draws a checkbox
  * @author beko
