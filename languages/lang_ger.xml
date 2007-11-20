@@ -167,6 +167,7 @@
 			<Title_Updates ENG="Updatemenu" localized="Updatemenü"/>
 			<Title_Build ENG="Buildmenu" localized="Baumenü"/>
 			<Title_Labs ENG="Researchmenu" localized="Forschungsmenü"/>
+			<Title_Mine ENG="Minemanager" localized="Mienenmanager"/>
 		</Game_Start>
 		<Game_MP>
 			<Title_Player ENG="Player" localized="Spieler"/>
@@ -256,6 +257,8 @@
 			<Labs ENG="Labs" localized="Labore"/>
 			<Themes ENG="Themes" localized="Bereich"/>
 			<Turns ENG="Turns" localized="Runden"/>
+			<Turn ENG="Turn" localized="Runde"/>
+			<Reserve ENG="Reserve" localized="Reserve"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
