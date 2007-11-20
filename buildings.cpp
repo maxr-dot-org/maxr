@@ -143,7 +143,6 @@ cBuilding::~cBuilding ( void )
 				v->owner->VehicleList=v->next;
 				if ( v->next ) v->next->prev=NULL;
 			}
-			delete v;
 			StoredVehicles->DeleteVehicle ( 0 );
 		}
 		delete StoredVehicles;

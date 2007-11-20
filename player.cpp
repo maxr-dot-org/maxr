@@ -68,14 +68,12 @@ cPlayer::~cPlayer ( void )
 	{
 		sWachposten *w;
 		w= ( sWachposten* ) ( WachpostenAir->Items[0].c_str() );
-		delete w;
 		WachpostenAir->DeleteWaPo ( 0 );
 	}
 	while ( WachpostenGround->Count )
 	{
 		sWachposten *w;
 		w= ( sWachposten* ) ( WachpostenGround->Items[0].c_str() );
-		delete w;
 		WachpostenGround->DeleteWaPo ( 0 );
 	}
 

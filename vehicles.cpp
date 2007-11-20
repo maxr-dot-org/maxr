@@ -117,7 +117,6 @@ cVehicle::~cVehicle ( void )
 			a=game->engine->AJobs->AJobsItems[i];
 			if ( a->vehicle==this )
 			{
-				delete a;
 				game->engine->AJobs->DeleteAJobs ( i );
 				break;
 			}
