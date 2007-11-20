@@ -4984,6 +4984,9 @@ void cMultiPlayer::HandleMenuMessages()
 				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
+			default:
+				fstcpip->NetMessageList->Delete ( i );
+				break;
 		}
 	}
 }

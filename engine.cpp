@@ -30,6 +30,7 @@ cEngine::cEngine ( cMap *Map,cFSTcpIp *fstcpip )
 	ActiveMJobs=new TList;
 	AJobs=new TList;
 	this->fstcpip=fstcpip;
+	mutex = SDL_CreateMutex();
 	EndeCount=0;
 	RundenendeActionsReport=0;
 	if ( fstcpip&&fstcpip->bServer )
@@ -88,6 +89,7 @@ void cEngine::Run ( void )
 
 	// Diese Aktionen nur Zeitgebunden ausführen:
 	if ( !timer0 ) return;
+	SDL_LockMutex(mutex);
 
 	// Alle Move-Jobs bearbeiten:
 	for ( i=0;i<ActiveMJobs->Count;i++ )
@@ -136,7 +138,7 @@ void cEngine::Run ( void )
 					if( fstcpip && fstcpip->bServer )
 					{
 						string sMessage;
-						sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#";
+						sMessage = iToStr( v->PosX + v->PosY * map->size );
 						fstcpip->FSTcpIpSend ( MSG_END_MOVE,sMessage.c_str() );
 						v->MoveJobActive = false;
 					}
@@ -337,6 +339,7 @@ void cEngine::Run ( void )
 		AJobs->DeleteAJobs ( i );
 		i--;
 	}
+	SDL_UnlockMutex(mutex);
 }
 
 // Ändert den Namen eines Vehicles:
@@ -395,8 +398,10 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 		// Server/SP:
 		job=new cMJobs ( map,ScrOff,DestOff,plane );
 		job->ClientMove=ClientMove;
+		SDL_LockMutex(mutex);
 		job->next=mjobs;
 		mjobs=job;
+		SDL_UnlockMutex(mutex);
 
 		if ( !job->finished )
 		{
@@ -481,8 +486,10 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 // Fügt einen Movejob in die Liste der aktiven Jobs ein:
 void cEngine::AddActiveMoveJob ( cMJobs *job )
 {
+	SDL_LockMutex(mutex);
 	ActiveMJobs->AddMJobs ( job );
 	job->Suspended=false;
+	SDL_UnlockMutex(mutex);
 }
 
 // Reserviert ein Feld in der GO-Map:
@@ -512,6 +519,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		v=map->GO[FromX+FromY*map->size].plane;
 	}
 	if ( !v ) return;
+	SDL_LockMutex(mutex);
 	if ( !plane )
 	{
 		map->GO[FromX+FromY*map->size].vehicle=NULL;
@@ -576,31 +584,32 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 				sMessage = iToStr( FromX ) + "#" + iToStr( FromY ) + "#" + iToStr( ToX ) + "#" + iToStr( ToY ) + "#"; 
 				if ( plane ) sMessage += "1";
 				else sMessage += "0";
-				fstcpip->FSTcpIpSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
 
 				if ( !v->mjob->finished )
 				{
+					fstcpip->FSTcpIpSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
 					sMessage = iToStr( v->mjob->waypoints->X + v->mjob->waypoints->Y * map->size ) + "#" + iToStr( v->mjob->waypoints->next->X + v->mjob->waypoints->next->Y * map->size ) + "#"; 
 					if ( plane ) sMessage += "1";
 					else sMessage += "0";
 					fstcpip->FSTcpIpSend( MSG_MOVE_TO,sMessage.c_str() );
+				}
+				else
+				{
+					fstcpip->FSTcpIpSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
 				}
 			}
 		}
 		else
 		{
 			// Just move the vehicle:
-			unsigned char msg[36];
-			msg[0]='#';
-			msg[1]=36;
-			msg[2]=MSG_MOVE_VEHICLE;
-			( ( int* ) ( msg+3 ) ) [0]=FromX;
-			( ( int* ) ( msg+3 ) ) [1]=FromY;
-			( ( int* ) ( msg+3 ) ) [2]=ToX;
-			( ( int* ) ( msg+3 ) ) [3]=ToY;
-			msg[35]=v->data.can_drive==DRIVE_AIR;
+			string sMessage;
+			sMessage = iToStr( FromX ) + "#" + iToStr( FromY ) + "#" + iToStr( ToX ) + "#" + iToStr( ToY ) + "#"; 
+			if ( v->data.can_drive == DRIVE_AIR ) sMessage += "1";
+			else sMessage += "0";
+			fstcpip->FSTcpIpSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
 		}
 	}
+	SDL_UnlockMutex(mutex);
 	// Ggf nach Rohstoffen suchen:
 	if ( v->data.can_survey )
 	{
@@ -1170,6 +1179,54 @@ void cEngine::ChangePlayerName ( string name )
 void cEngine::EndePressed ( int PlayerNr )
 {
 	EndeCount++;
+	if ( fstcpip )
+	{
+		fstcpip->FSTcpIpSend( MSG_ENDE_PRESSED, iToStr ( PlayerNr ).c_str() );
+
+		if ( fstcpip->bServer && game->PlayRounds )
+		{
+			int i,next;
+			cBuilding *b;
+			cVehicle *v;
+			cPlayer *p;
+			for ( i = 0; i < game->PlayerList->Count; i++ )
+			{
+				p = game->PlayerList->PlayerItems[i];
+				if ( p->Nr == game->ActiveRoundPlayerNr )
+				{
+					if ( i < game->PlayerList->Count - 1 )
+					{
+						p = game->PlayerList->PlayerItems[i+1];
+					}
+					else
+					{
+						p = game->PlayerList->PlayerItems[0];
+					}
+					next=p->Nr;
+					if(p!=game->ActivePlayer)
+					{
+						game->AddMessage( p->name + " ist an der Reihe." );
+					}
+					break;
+				}
+			}
+
+			v = p->VehicleList;
+			while ( v )
+			{
+				v->RefreshData();
+				v = v->next;
+			}
+			b = p->BuildingList;
+			while ( b )
+			{
+				if( b->data.can_attack ) b->RefreshData();
+				b = b->next;
+			}
+			fstcpip->FSTcpIpSend( MSG_PLAY_ROUNDS_NEXT,iToStr ( next ).c_str() );
+			game->ActiveRoundPlayerNr = next;
+		}
+	}
 }
 
 // Prüft das Rundenende:
@@ -1311,8 +1368,31 @@ bool cEngine::DoEndActions ( void )
 	v=game->ActivePlayer->VehicleList;
 	while ( v )
 	{
+		if ( fstcpip && !fstcpip->bServer )
 		{
-			// SP/Server:
+			// Client:
+			if( v->mjob && v->data.speed && !v->MoveJobActive && !v->moving && !v->mjob->finished )
+			{
+				if( v->mjob->Suspended && v->data.speed > 0 ) v->mjob->Suspended = false;
+				if( !v->mjob->Suspended && v->mjob->waypoints && v->mjob->waypoints->next )
+				{
+					v->mjob->finished=true;
+					v->mjob=NULL;
+					v->MoveJobActive=false;
+
+					string sMessage;
+					sMessage = iToStr ( v->PosX + v->PosY * map->size ) + "#" ;
+					if ( v->data.can_drive == DRIVE_AIR ) sMessage += "1";
+					else sMessage += "0";
+					fstcpip->FSTcpIpSend ( MSG_ERLEDIGEN , sMessage.c_str() );
+
+					todo=true;          
+				}
+			}
+		}
+		else
+		{
+			// SP/Host:
 			if ( v->mjob&&v->data.speed )
 			{
 				v->mjob->CalcNextDir();
@@ -1394,7 +1474,7 @@ void cEngine::HandleGameMessages()
 {
 	cNetMessage *msg;
 	string sMsgString;
-	for ( int i=0;i<fstcpip->NetMessageList->iCount;i++ )
+	for ( int i=0;i < fstcpip->NetMessageList->iCount;i++ )
 	{
 		msg = (cNetMessage *) fstcpip->NetMessageList->Items[i];
 		sMsgString = ( char * ) msg->msg;
@@ -1540,6 +1620,25 @@ void cEngine::HandleGameMessages()
 			// Benachrichtigung über ein gedrücktes Ende:
 			case MSG_ENDE_PRESSED:
 			{
+				if( atoi ( sMsgString.c_str() ) == game->ActivePlayer->Nr ) break;
+				if( fstcpip->bServer )
+				{
+					EndePressed ( atoi ( sMsgString.c_str() ) );
+				}
+				else
+				{
+					EndeCount++;
+				}
+				for ( int k = 0 ; k < game->PlayerList->Count; k++)
+				{
+					cPlayer *p;
+					p = game->PlayerList->PlayerItems[k];
+					if ( p->Nr == atoi ( sMsgString.c_str() ) )
+					{
+						game->AddMessage( (string)"Spieler " + p->name + " hat die Runde beendet" );
+						break;
+					}
+				}
 				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
@@ -1797,12 +1896,50 @@ void cEngine::HandleGameMessages()
 				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
-			// Nächster Spieler im Runden-Spiel-Modus:
+			// Next player in round-playing-mode:
 			case MSG_PLAY_ROUNDS_NEXT:
 			{
+				cBuilding *b;
+				cVehicle *v;
+				cPlayer *p;
+				int next;
+				next = atoi ( sMsgString.c_str() );
+				game->ActiveRoundPlayerNr = next;
+				if ( next == game->ActivePlayer->Nr )
+				{
+					game->hud->Ende = false;
+					game->hud->EndeButton ( false );
+					p = game->ActivePlayer;
+				}
+				else
+				{
+					for(int k = 0 ; k < game->PlayerList->Count ; k++)
+					{
+						p = game->PlayerList->PlayerItems[k];
+						if( p->Nr == next )
+						{
+							game->AddMessage( p->name + " ist an der Reihe." );
+							break;
+						}
+					}
+				}
+
+				v = p->VehicleList;
+				while ( v )
+				{
+					v->RefreshData();
+					v = v->next;
+				}
+				b = p->BuildingList;
+				while ( b )
+				{
+					if ( b->data.can_attack ) b->RefreshData();
+					b = b->next;
+				}
 				fstcpip->NetMessageList->Delete ( i );
 				break;
 			}
+			// If the messages isn't known just delete it
 			default:
 			{
 				fstcpip->NetMessageList->Delete ( i );

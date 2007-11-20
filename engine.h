@@ -183,6 +183,7 @@ public:
   cMJobs *mjobs;
   TList *ActiveMJobs;
   cFSTcpIp *fstcpip;
+  SDL_mutex *mutex;
   int EndeCount;
   TList *AJobs;
   int SyncWaiting;

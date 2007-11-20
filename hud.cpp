@@ -936,8 +936,25 @@ void cHud::ChechMouseOver ( void )
 			PlayFX ( SoundData.SNDHudButton );
 			if ( game->SelectedVehicle&&game->SelectedVehicle->mjob&&game->SelectedVehicle->mjob->Suspended&&game->SelectedVehicle->data.speed )
 			{
-				game->SelectedVehicle->mjob->CalcNextDir();
-				game->engine->AddActiveMoveJob ( game->SelectedVehicle->mjob );
+				if ( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				{
+					// Client
+					game->SelectedVehicle->mjob->finished=true;
+					game->SelectedVehicle->mjob=NULL;
+					game->SelectedVehicle->MoveJobActive=false;    
+
+					string sMessage;
+					sMessage = iToStr ( game->SelectedVehicle->PosX + game->SelectedVehicle->PosY * game->map->size ) + "#" ;
+					if ( game->SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
+					else sMessage += "0";
+					game->engine->fstcpip->FSTcpIpSend ( MSG_ERLEDIGEN , sMessage.c_str() );
+				}
+				else
+				{
+					// SP/Host
+					game->SelectedVehicle->mjob->CalcNextDir();
+					game->engine->AddActiveMoveJob ( game->SelectedVehicle->mjob );
+				}
 			}
 			ErledigenButton ( false );
 		}
@@ -1452,9 +1469,19 @@ void cHud::MakeMeMyEnd ( void )
 		if ( game->engine->DoEndActions() )
 		{
 			game->AddMessage ( lngPack.Translate( "Text~Comp~Turn_Automove") );
-			game->WantToEnd=true;
-			if ( !game->HotSeat )
-				Ende=true;
+			if ( !game->engine->fstcpip || game->engine->fstcpip->bServer )
+			{
+				game->WantToEnd = true;
+				if( !game->HotSeat )
+				{
+					Ende=true;
+				}
+			}
+			else
+			{
+				Ende = false;
+				EndeButton ( false );
+			}
 		}
 		else
 		{
