@@ -78,7 +78,7 @@ void cAutoMJob::DoAutoMove()
 		if (this->n > 10)
 		{
 			//very stupid testing code...
-			int direktion = random(3,0);
+			int direktion = random(4,0);
 			switch (direktion){
 			case 0: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + 1 + vehicle->PosY*engine->map->size, false, false);
 				break;
