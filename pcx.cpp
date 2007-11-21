@@ -18,6 +18,8 @@
  ***************************************************************************/
 #include "pcx.h"
 #include "log.h"
+#include "files.h"
+#include "main.h"
 
 #include <string.h>
 
@@ -31,29 +33,40 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	SDL_Surface *sf;
 	short x,y;
 	SDL_RWops *file;
+	
 	// Die Datei öffnen:
-	file=SDL_RWFromFile ( name,"rb" );
+	if(FileExists(name))
+	{
+		file=SDL_RWFromFile ( name,"rb" );
+	}
+	else
+	{
+		//file not found - creating empty surface
+		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		return sf;
+	}	
 	if ( file==NULL )
 	{
-		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
-		return NULL;
-	}
+		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
+		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		return sf;
+	}	
+	
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
 	SDL_RWread ( file,&x,sizeof ( short ),1 );
 	SDL_RWread ( file,&y,sizeof ( short ),1 );
 	x++;y++;
-	if ( NoHW )
-	{
-		sf=SDL_CreateRGBSurface ( SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
-	}
-	else
-	{
-		sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
-	}
-	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
+	sf=SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
 	SDL_LockSurface ( sf );
-	if ( sf==NULL ) {SDL_RWclose ( file );return NULL;}
+	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
+	if ( sf == NULL )
+	{
+		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_ERROR); //sdl f*cked up
+		SDL_UnlockSurface ( sf );
+		SDL_RWclose ( file );
+		return NULL; //app will crash using this
+	}
 	_ptr= ( ( unsigned int* ) sf->pixels );
 	SDL_RWseek ( file,128,SEEK_SET );
 	do
@@ -107,7 +120,7 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 }
 
 // Läd eine PCX-Datei in das Surface:
-void LoadPCXtoSF ( char *name,SDL_Surface *sf )
+int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 {
 	unsigned int *_ptr;
 	unsigned char temp;
@@ -118,11 +131,23 @@ void LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	SDL_RWops *file;
 
 	// Die Datei öffnen:
-	file=SDL_RWFromFile ( name,"rb" );
+	if(FileExists(name))
+	{
+		file=SDL_RWFromFile ( name,"rb" );
+	}
+	else
+	{
+		//file not found - creating empty surface
+		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		return -1;
+	}
 	if ( file==NULL )
 	{
-		return;
+		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img  - creating empty surface
+		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		return -1;
 	}
+	
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
 	SDL_RWread ( file,&x,sizeof ( short ),1 );
@@ -131,7 +156,14 @@ void LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFFFFFF );
 	SDL_LockSurface ( sf );
-	if ( sf==NULL ) {SDL_RWclose ( file );return;}
+	if ( sf == NULL )
+	{
+		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img format - creating empty surface
+		SDL_RWclose ( file );
+		SDL_UnlockSurface ( sf );
+		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		return -1;
+	}
 	_ptr= ( ( unsigned int* ) sf->pixels );
 	SDL_RWseek ( file,128,SEEK_SET );
 	do
@@ -187,4 +219,5 @@ void LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	}
 	SDL_RWclose ( file );
 	SDL_UnlockSurface ( sf );
+	return 0;
 }
