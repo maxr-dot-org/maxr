@@ -21,16 +21,13 @@
 #include "defines.h"
 #include "SDL.h"
 
-// Prototypen ////////////////////////////////////////////////////////////////
-/**
- * Loads an image to a surface
+/** Loads an image to a surface
  * @param name path to img
  * @param NoHW true for softwarerendering<br>false for hardwarerendering
  * @return surface with img<br>or empty surface on error<br>or <b>NULL</b> if SDL couldn't create a surface
  */
 SDL_Surface *LoadPCX(char *name,bool NoHW=false);
-/**
- * Draws an image to a surface
+/** Draws an image to a surface
  * @param name path to img
  * @param sf surface to load to
  * @return 0 on success
