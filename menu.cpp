@@ -6029,6 +6029,10 @@ int ShowDateiMenu ( void )
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
 	}
+	delete files;
+	delete filenums;
+	delete filenames;
+	
 	return -1;
 }
 
