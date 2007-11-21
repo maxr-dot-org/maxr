@@ -27,6 +27,7 @@ cEngine::cEngine ( cMap *Map,cFSTcpIp *fstcpip )
 {
 	map=Map;
 	mjobs=NULL;
+	cAutoMJob::init(this);
 	ActiveMJobs=new TList;
 	AJobs=new TList;
 	this->fstcpip=fstcpip;
@@ -90,6 +91,9 @@ void cEngine::Run ( void )
 	// Diese Aktionen nur Zeitgebunden ausführen:
 	if ( !timer0 ) return;
 	SDL_LockMutex(mutex);
+
+	//run auto move jobs
+	cAutoMJob::handleAutoMoveJobs();
 
 	// Alle Move-Jobs bearbeiten:
 	for ( i=0;i<ActiveMJobs->Count;i++ )

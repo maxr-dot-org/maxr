@@ -59,6 +59,7 @@ cVehicle::cVehicle ( sVehicle *v,cPlayer *Owner )
 	data.hit_points=data.max_hit_points;
 	data.ammo=data.max_ammo;
 	mjob=NULL;
+	autoMJob=NULL;
 	moving=false;
 	rotating=false;
 	MoveJobActive=false;
@@ -94,6 +95,13 @@ cVehicle::cVehicle ( sVehicle *v,cPlayer *Owner )
 	DamageFXPointX=random ( 7,0 ) +26-3;
 	DamageFXPointY=random ( 7,0 ) +26-3;
 	RefreshData();
+
+	//only for testing!
+	//until starting the AI is integrated in the vehicle menu
+	if (data.can_survey)
+	{
+		autoMJob = new cAutoMJob(this);
+	}
 }
 
 cVehicle::~cVehicle ( void )
@@ -102,6 +110,10 @@ cVehicle::~cVehicle ( void )
 	{
 		mjob->vehicle=NULL;
 		mjob->Release();
+	}
+	if (autoMJob)
+	{
+		delete autoMJob;
 	}
 	if ( Wachposten )
 	{

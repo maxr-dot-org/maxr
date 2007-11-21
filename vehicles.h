@@ -23,6 +23,7 @@
 #include "main.h"
 #include "player.h"
 #include "sound.h"
+#include "automjobs.h"
 
 // Define zum Updaten:
 #define Update(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).speed=(to).speed;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).costs=(to).costs;
@@ -31,6 +32,7 @@
 
 class cPlayer;
 class cMJobs;
+class cAutoMJob;
 
 // Enum für die Symbole
 #ifndef D_eSymbols
@@ -82,6 +84,7 @@ public:
   string name; // Name des Vehicles
   cPlayer *owner;  // Eigentümer des Vehicles
   cMJobs *mjob;    // Der Movejob des Vehicles
+  cAutoMJob *autoMJob; //the auto move AI of the vehicle
   bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
   bool rotating;   // Gibt an, ob sich das Vehicle grade dreht
   bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
