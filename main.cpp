@@ -107,6 +107,7 @@ int main ( int argc, char *argv[] )
 
 	SDL_WaitThread ( DataThread, NULL );
 //	SDL_Delay ( 3000 ); //debug only
+	
 
 	showGameWindow(); //start game-window
 
@@ -142,6 +143,7 @@ void showSplash()
 
 void showGameWindow()
 {
+	SDL_FreeSurface(buffer); //delete splash image 
 	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
 	
 	screen=SDL_SetVideoMode ( buffer->w,buffer ->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
