@@ -27,7 +27,7 @@ class cVehicle;
 class cAutoMJob {
 
 
-	static cAutoMJob *autoMJobs[100];	//the active auto move jobs
+	static cAutoMJob **autoMJobs;		//the active auto move jobs
 	static int iCount;					//the number of acive auto move jobs
 	static cEngine *engine;				//pointer to the engine
 	

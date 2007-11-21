@@ -23,7 +23,7 @@
 
 //static variables
 cEngine *cAutoMJob::engine = NULL;
-cAutoMJob *cAutoMJob::autoMJobs[100];
+cAutoMJob **cAutoMJob::autoMJobs = NULL;
 int cAutoMJob::iCount = 0;
 
 //static functions of cAutoMJob
@@ -51,6 +51,7 @@ void cAutoMJob::handleAutoMoveJobs()
 //construktor for cAutoMJob
 cAutoMJob::cAutoMJob(cVehicle *vehicle)
 {
+	 autoMJobs = (cAutoMJob **) realloc(autoMJobs, (iCount + 1) * sizeof(this));
 	 autoMJobs[iCount] = this;
 	 iNumber = iCount;
 	 iCount++;
@@ -67,15 +68,16 @@ cAutoMJob::~cAutoMJob()
 		autoMJobs[i] = autoMJobs[i + 1];
 	}
 	iCount--;
+	autoMJobs = (cAutoMJob **) realloc(autoMJobs, iCount * sizeof(this));
 }
 
 //performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
 void cAutoMJob::DoAutoMove()
 {
-	if (vehicle->mjob == NULL )
+	if (vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
 		//hier is the right place for the AI to think about the next move
-		if (this->n > 10)
+		if (n > 7)
 		{
 			//very stupid testing code...
 			int direktion = random(4,0);
