@@ -35,6 +35,7 @@ class cAutoMJob {
 							//needed to check if the move job was changed from outside the AI
 	cVehicle *vehicle;		//the vehicle the auto move job belongs to
 	int iNumber;			//index of the AutoMJob in autoMJobs[]
+	int n;					//debug
 	
 	void DoAutoMove();
 	

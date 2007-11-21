@@ -36,6 +36,7 @@ void cAutoMJob::init(cEngine* engine)
 }
 
 //static function that calls DoAutoMove for all active auto move jobs
+//this function is periodically called by the engine
 void cAutoMJob::handleAutoMoveJobs()
 {
 	int i;
@@ -54,6 +55,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 iNumber = iCount;
 	 iCount++;
 	 this->vehicle = vehicle;
+	 n = 0;
 }
 
 //destruktor for cAutoMJob
@@ -67,13 +69,32 @@ cAutoMJob::~cAutoMJob()
 	iCount--;
 }
 
-//performs the auto move of vehicle and adds new mjobs to the engine, if nessesary
+//performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
 void cAutoMJob::DoAutoMove()
 {
 	if (vehicle->mjob == NULL )
 	{
 		//hier is the right place for the AI to think about the next move
-		cLog::write("Auto move AI: I am totaly stupid", LOG_TYPE_DEBUG);
+		if (this->n > 10)
+		{
+			//very stupid testing code...
+			int direktion = random(3,0);
+			switch (direktion){
+			case 0: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + 1 + vehicle->PosY*engine->map->size, false, false);
+				break;
+			case 1: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX - 1 + vehicle->PosY*engine->map->size, false, false);
+				break;
+			case 2: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + (vehicle->PosY + 1) * engine->map->size, false, false);
+				break;
+			case 3: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + (vehicle->PosY - 1) * engine->map->size, false, false);
+				break;
+			}
+			n = 0;
+		}
+		else
+		{
+			n++;
+		}
 	}
 	else 
 	{
