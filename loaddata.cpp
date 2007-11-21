@@ -1783,8 +1783,6 @@ int LoadVehicles()
 			{
 				// load image
 				sTmpString = sVehiclePath;
-				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
-
 				sprintf(sztmp,"img%d.pcx",n);
 				sTmpString += sztmp;
 				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
@@ -1809,9 +1807,9 @@ int LoadVehicles()
 			}
 		}
 		// load video
-		cLog::write("Loading video", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "video.flc";
+		cLog::write("Loading video " + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
 			UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sTmpString.length() +1 );
@@ -1820,16 +1818,16 @@ int LoadVehicles()
 		}
 
 		// load infoimage
-		cLog::write("Loading portrait", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "info.pcx";
+		cLog::write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
 
 		// load storageimage
-		cLog::write("Loading storageportrait", cLog::eLOG_TYPE_DEBUG);
 		sTmpString = sVehiclePath;
 		sTmpString += "store.pcx";
+		cLog::write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
 
@@ -2383,7 +2381,6 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 		Data->szName = (char *)malloc(sTmpString.length()+1); //+1 for \0 termination of string especially on *nix
 		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szName,sTmpString.c_str());
-		cLog::write(Data->szName, cLog::eLOG_TYPE_DEBUG);
 
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
@@ -2398,7 +2395,6 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 		Data->szDescribtion = (char *)malloc(sTmpString.length()+1);
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(Data->szDescribtion,sTmpString.c_str());
-		cLog::write(Data->szDescribtion, cLog::eLOG_TYPE_DEBUG);
 	}
 
 	// get array count
