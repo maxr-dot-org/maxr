@@ -122,8 +122,15 @@ int main ( int argc, char *argv[] )
 // generate SplashScreen
 void showSplash()
 {
-	buffer=SDL_LoadBMP ( "InitPopup.bmp" );
-	if ( buffer == NULL ) cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+	if(FileExists("InitPopup.bmp"))
+	{	
+		buffer=SDL_LoadBMP( "InitPopup.bmp" );
+	}
+	else
+	{
+		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+		buffer = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth,0,0,0,0 );
+	}
 
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );

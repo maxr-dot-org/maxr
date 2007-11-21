@@ -81,11 +81,11 @@ EX int LoadingData;
 int LoadData(void *);
 /**
 	* Writes a Logmessage on the SplashScreen
-	* @param sztxt Text to write
-	* @param ok If set writes "OK" at the end
+	* @param sTxt Text to write
+	* @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
 	* @param pos Horizontal Positionindex on SplashScreen
 	*/
-void MakeLog(const char* sztxt,bool ok,int pos);
+void MakeLog(std::string sTxt, int ok,int pos);
 /**
 	* Loades a graphic to the surface
 	* @param dest Destination surface

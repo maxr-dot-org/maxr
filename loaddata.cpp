@@ -35,6 +35,7 @@
 #include "fonts.h"
 #include "keys.h"
 #include "vehicles.h"
+#include "main.h"
 #include <sstream>
 
 // Translates the loaded data to the old data structure.
@@ -57,68 +58,184 @@ int LoadData ( void * )
 	fonts = new cFonts;
 	cLog::mark();
 	
-	MakeLog(MAXVERSION,false,0);
+	MakeLog(MAXVERSION,0,0);
 
 	// Load Languagepack
-	MakeLog("Loading languagepack...",false,2);
-	if(!LoadLanguage()) return 0;
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Lang").c_str(),true,2); cLog::mark();
-
-	// Load Keys
+	MakeLog ( "Loading languagepack...", 0, 2 );
 	
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Keys").c_str(),false,3);
-	LoadKeys();
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Keys").c_str(),true,3); cLog::mark();
+	if (LoadLanguage()!=1)
+	{
+		MakeLog("",-1,2);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}
+	else
+	{
+		MakeLog ( "", 1, 2 );
+	}
+	cLog::mark();
+	
+	// Load Keys
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Keys" ), 0, 3 );
+	
+	if(LoadKeys()!=1)
+	{
+		MakeLog("",-1,3);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 3 );
+	}
+	cLog::mark();
 	
 	// Load Fonts
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Fonts").c_str(),false,4);
-	if(!LoadFonts(SettingsData.sFontPath.c_str()))	return 0;
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Fonts").c_str(),true,4); cLog::mark();
-
-	// Load Graphics
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_GFX").c_str(),false,5);
-	if(!LoadGraphics(SettingsData.sGfxPath.c_str()))
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Fonts" ), 0, 4 );
+	
+	if (LoadFonts ( SettingsData.sFontPath.c_str() ) != 1 )
 	{
-		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
-		return 0;
+		MakeLog("",-1,4);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 4 );
 	}
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_GFX").c_str(),true,5); cLog::mark();
-
+	cLog::mark();
+	
+	// Load Graphics
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_GFX" ), 0, 5 );
+	
+	if ( LoadGraphics ( SettingsData.sGfxPath.c_str() ) != 1 )
+	{
+		MakeLog("",-1,5);
+		cLog::write ( "Error while loading graphics", LOG_TYPE_ERROR );
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 5 );
+	}
+	cLog::mark();
+		
 	// Load Effects
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),false,6);
-	LoadEffects(SettingsData.sFxPath.c_str());
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Effects").c_str(),true,6); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Effects" ), 0, 6 );
+	
+	if(LoadEffects ( SettingsData.sFxPath.c_str() ) != 1)
+	{
+		MakeLog("",-1,6);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 6 );
+	}
+	cLog::mark();
+	
 	// Load Terrain
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Terrain").c_str(),false,7);
-	if(!LoadTerrain(SettingsData.sTerrainPath.c_str())) return 0;
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Terrain").c_str(),true,7); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Terrain" ), 0, 7 );
+	
+	if ( LoadTerrain ( SettingsData.sTerrainPath.c_str() ) != 1 )
+	{
+		MakeLog("",-1,7);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 7 );
+	}
+	cLog::mark();
+	
 	// Load Vehicles
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Vehicles").c_str(),false,8);
-	if(!LoadVehicles()) return 0; 
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Vehicles").c_str(),true,8); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Vehicles" ), 0, 8 );
+	
+	if ( LoadVehicles() != 1 )
+	{
+		MakeLog("",-1,8);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 8 );
+	}
+	cLog::mark();
+	
 	// Load Buildings
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Buildings").c_str(),false,9);
-	if(!LoadBuildings()) return 0; 
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Buildings").c_str(),true,9); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Buildings" ), 0, 9 );
+	
+	if ( LoadBuildings() != 1)
+	{
+		MakeLog("",-1,9);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 9 );
+	}
+	cLog::mark();
+	
 	// Load Music
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Music").c_str(),false,10);
-	if(!LoadMusic(SettingsData.sMusicPath.c_str())) return 0;
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Music").c_str(),true,10); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Music" ), 0, 10 );
+	
+	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
+	{
+		MakeLog("",-1,10);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 10 );
+	}
+	cLog::mark();
+	
 	// Load Sounds
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Sounds").c_str(),false,11);
-	LoadSounds(SettingsData.sSoundsPath.c_str());
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Sounds").c_str(),true,11); cLog::mark();
-
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Sounds" ), 0, 11 );
+	
+	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
+	{
+		MakeLog("",-1,11);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 11 );
+	}
+	cLog::mark();
+	
 	// Load Voices
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Voices").c_str(),false,12);
-	LoadVoices(SettingsData.sVoicesPath.c_str());
-	MakeLog(lngPack.Translate( "Text~Initialisation~Load_Voices").c_str(),true,12); cLog::mark();
+	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Voices" ), 0, 12 );
+	
+	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
+	{
+		MakeLog("",-1,12);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}	
+	else
+	{
+		MakeLog ( "", 1, 12 );
+	}
+	cLog::mark();
 
 	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;
@@ -127,14 +244,39 @@ int LoadData ( void * )
 
 // MakeLog ///////////////////////////////////////////////////////////////////
 // Writes a Logmessage on the SplashScreen:
-void MakeLog ( const char* sztxt,bool ok,int pos )
+void MakeLog ( string sTxt,int ok,int pos )
 {
-	if ( !ok )
-		fonts->OutTextBig ( (char *)sztxt,22,152+16*pos,buffer );
-	else
-		fonts->OutTextBig ( "OK",250,152+16*pos,buffer );
-	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-	SDL_UpdateRect ( screen,0,0,0,0 );
+	SDL_Rect rDest = {22, 152, 228, 16};
+	SDL_Rect rDest2 = {250, 152, 230, 16};
+	SDL_Rect rSrc;
+
+	switch ( ok )
+	{
+	case 0:
+		fonts->OutTextBig ( sTxt, rDest.x, rDest.y + rDest.h*pos, buffer );
+		rSrc=rDest;
+		rSrc.y = rDest.y + rDest.h*pos;
+		SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
+		SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w, rDest.h );
+		break;
+	
+	case 1:
+		fonts->OutTextBig ( "OK", rDest2.x, rDest2.y + rDest2.h*pos, buffer );
+		break;
+	
+	default:
+		fonts->OutTextBig ( "ERROR ..check max.log!", rDest2.x, rDest2.y + rDest2.h*pos, buffer );
+		break;
+	}
+	
+	if ( ok != 0 )
+	{
+		rSrc=rDest2;
+		rSrc.y = rDest2.y + rDest2.h*pos;
+		SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
+		SDL_UpdateRect ( screen, rDest2.x, rDest2.y + rDest2.h*pos, rDest2.w, rDest2.h );
+	}
+	
 	return;
 }
 
