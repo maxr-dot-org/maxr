@@ -56,7 +56,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 iNumber = iCount;
 	 iCount++;
 	 this->vehicle = vehicle;
-	 n = 0;
+	 n = random(9,0);
 }
 
 //destruktor for cAutoMJob
@@ -77,7 +77,7 @@ void cAutoMJob::DoAutoMove()
 	if (vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
 		//hier is the right place for the AI to think about the next move
-		if (n > 7)
+		if (n > 8)
 		{
 			//very stupid testing code...
 			int direktion = random(4,0);
