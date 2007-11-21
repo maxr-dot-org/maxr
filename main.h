@@ -919,4 +919,6 @@ void showSplash();
 */
 void showGameWindow();
 
+int runEventChecker( void *);
+
 #endif

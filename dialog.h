@@ -25,8 +25,6 @@ void ShowDialog(string text,bool pure,string path,int SaveLoad=-1);
 void ShowDialogList(TList *list,int offset);
  /** Shows localized Yes/No dialog 
  * @param text Text to show on button
- * @param iMaxValue maximum allowed value (no negative numbers!)
- * @param iDefaultValue default value to display
  * @return true on Yes<br>false on No
  */
 bool ShowYesNo(string text);

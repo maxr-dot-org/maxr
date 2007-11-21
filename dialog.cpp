@@ -45,7 +45,10 @@ bool ShowYesNo ( string text )
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 
 	mouse->SetCursor ( CHand );
-	game->DrawMap ( false );
+	if(game)
+	{
+		game->DrawMap ( false );
+	}
 	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 
 	if ( SettingsData.bAlphaEffects )
@@ -124,7 +127,10 @@ bool ShowYesNo ( string text )
 	}
 
 	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
-	game->fDrawMap = true;
+	if(game)
+	{
+		game->fDrawMap = true;
+	}
 	return ret;
 }
 
