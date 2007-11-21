@@ -123,14 +123,19 @@ int main ( int argc, char *argv[] )
 // generate SplashScreen
 void showSplash()
 {
-	if(FileExists("InitPopup.bmp"))
-	{	
-		buffer=SDL_LoadBMP( "InitPopup.bmp" );
-	}
-	else
-	{
-		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
-		buffer = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth,0,0,0,0 );
+	buffer = LoadPCX("init.pcx", false); //load splash with SDL_HWSURFACE
+	if (buffer == NULL)
+	{ //TODO: at flag for gamewide handling of SDL_HWSURFACE in case it doesn't work
+		cLog::write("Couldn't use hardware acceleration for images", cLog::eLOG_TYPE_ERROR);
+		cLog::write("This is currently not supported. Expect M.A.X. to crash!", cLog::eLOG_TYPE_ERROR);
+		buffer = LoadPCX("init.pcx", true);
+		if (buffer == NULL)
+		{
+			cLog::write("Couldn't use software acceleration, too", cLog::eLOG_TYPE_ERROR);
+			cLog::write("That's it. Tried my best. Bye!", cLog::eLOG_TYPE_ERROR);
+			Quit();
+		}
+
 	}
 
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
@@ -214,6 +219,8 @@ void Quit()
 	//unload files here
 	CloseSound();
 	SDLNet_Quit();
+	SDL_FreeSurface(buffer);
+	SDL_FreeSurface(screen);
 	SDL_Quit();
 	cLog::write ( "EOF" );
 	exit ( 0 );
