@@ -20,6 +20,12 @@
 #include "log.h"
 #include "string.h"
 
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <dirent.h>
+#endif
+
 // Prüft ob die Datei 'name' existiert
 bool FileExists ( const char* name )
 {
@@ -46,4 +52,52 @@ int CheckFile(const char* directory, const char* filename)
 	if(!FileExists(filepath.c_str()))
 		return 0;
 	return 1;
+}
+
+TList *getFilesOfDirectory(string sDirectory)
+{
+	TList *List = new TList();
+#ifdef _WIN32
+	_finddata_t DataFile;
+	long lFile = _findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
+
+	if( lFile == -1 )
+	{
+		_findclose ( lFile );
+	}
+	else
+	{
+		do
+		{
+			if ( !( DataFile.attrib & _A_SUBDIR ) && DataFile.name[0] != '.' )
+			{
+				List->Add( DataFile.name );
+			}
+		}
+		while ( _findnext ( lFile, &DataFile ) == 0 );
+		_findclose ( lFile );
+	}
+#else
+	DIR* hDir = opendir ( sDirectory.c_str() );
+	struct dirent* entry;
+	if( hDir == NULL )
+	{
+		closedir( hDir );
+	}
+	else
+	{
+		do
+		{
+			entry = readdir ( hDir );
+			if( entry != NULL && entry->d_name[0] != '.' )
+			{
+				List->Add( entry->d_name );
+			}
+		}
+		while ( entry != NULL );
+
+		closedir( hDir );
+	}
+#endif
+	return List;
 }

@@ -50,4 +50,12 @@ bool FileExists(const char* name);
 * @return 1 on success
 */
 int CheckFile(const char* directory, const char* filename);
+
+/**
+* Gets the filenames of all files in the directory
+* @author alzi
+* @param sDirectory Directory in which to search
+* @return A List with all filenames
+*/
+TList *getFilesOfDirectory(string sDirectory);
 #endif

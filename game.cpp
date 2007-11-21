@@ -4061,7 +4061,7 @@ void cGame::ShowDateiMenu ( void )
 							if ( atoi ( filenums->Items[i].c_str() ) == iNumber )
 							{
 								// if name changed, delete old file
-								if ( strcmp ( filenames->Items[i].c_str(), InputStr.c_str() ) != NULL )
+								if ( strcmp ( filenames->Items[i].c_str(), InputStr.c_str() ) != 0 )
 								{
 									if ( FileExists ( ( SettingsData.sSavesPath + PATH_DELIMITER + files->Items[i] ).c_str() ) )
 									{
