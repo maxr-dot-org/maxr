@@ -19,6 +19,7 @@
 #ifndef automjobsH
 #define automjobsH
 
+#define WAIT_FRAMES 15
 
 class cEngine;
 class cMJobs;
