@@ -59,8 +59,6 @@ TList::TList ( void )
 
 int main ( int argc, char *argv[] )
 {
-
-
 	{
 		cLog::write ( MAXVERSION );
 		std::string str = "Build : ";
@@ -88,8 +86,8 @@ int main ( int argc, char *argv[] )
 	SDL_Thread *DataThread = NULL;
 	DataThread = SDL_CreateThread ( LoadData,NULL );
 
-	SDL_Thread *EventThread = NULL;
-	EventThread = SDL_CreateThread ( runEventChecker, NULL);
+	//SDL_Thread *EventThread = NULL;
+	//EventThread = SDL_CreateThread ( runEventChecker, NULL);
 
 	SDL_Event event;
 	while ( LoadingData != LOAD_FINISHED )
@@ -188,6 +186,7 @@ int runEventChecker( void *)
 		
 		
 		}
+		SDL_Delay ( 100 );
 	}
 	return 0;
 }
