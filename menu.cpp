@@ -5800,7 +5800,7 @@ int ShowDateiMenu ( void )
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  HilfePressed=false, LadenPressed=false, Cursor=true;
-	TList *files, *filenums, *filenames;
+	TList *files;
 	TiXmlDocument doc;
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
@@ -5827,35 +5827,16 @@ int ShowDateiMenu ( void )
 	dest.x=63;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 	// Dateien suchen und Anzeigen:
-	if ( !doc.LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "saves.xml" ).c_str() ) )
+	files = getFilesOfDirectory ( SettingsData.sSavesPath );
+	for ( int i = 0; i < files->Count; i++ )
 	{
-		cLog::write ( "Could not load saves.xml",1 );
-		return 0;
-	}
-	rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
-
-	files = new TList;
-	filenums = new TList;
-	filenames = new TList;
-	node=rootnode->FirstChildElement();
-	if ( node && node->Type() == 1 )
-	{
-		files->Add ( node->ToElement()->Attribute ( "file" ) );
-		filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-		filenames->Add ( node->ToElement()->Attribute ( "name" ) );
-	}
-	while ( node )
-	{
-		node=node->NextSibling();
-		if ( node && node->Type() == 1 )
+		if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
 		{
-			files->Add ( node->ToElement()->Attribute ( "file" ) );
-			filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-			filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+			files->Delete ( i );
+			i--;
 		}
 	}
-
-	ShowFiles ( files,filenums,filenames,offset,selected );
+	ShowFiles ( files,offset,selected );
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -5890,7 +5871,7 @@ int ShowDateiMenu ( void )
 						selected = i+offset;
 					checky+=75;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected );
+				ShowFiles ( files,offset,selected );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -5934,7 +5915,7 @@ int ShowDateiMenu ( void )
 				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,false );
 				if ( selected != -1 )
 				{
-					ShowFiles ( files,filenums,filenames,offset,selected );
+					ShowFiles ( files,offset,selected );
 					return 1;
 				}
 				SHOW_SCREEN
@@ -5969,7 +5950,7 @@ int ShowDateiMenu ( void )
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected );
+				ShowFiles ( files,offset,selected );
 				scr.x=96;
 				dest.x=33;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
@@ -6007,7 +5988,7 @@ int ShowDateiMenu ( void )
 					offset+=10;
 					selected=-1;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected );
+				ShowFiles ( files,offset,selected );
 				scr.x=96+28*2;
 				dest.x=63;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
@@ -6030,18 +6011,14 @@ int ShowDateiMenu ( void )
 		LastB=b;
 	}
 	delete files;
-	delete filenums;
-	delete filenames;
-	
 	return -1;
 }
 
 // Zeigt die Saves an
-void ShowFiles ( TList *files, TList *filenums,TList *filenames,int offset, int selected )
+void ShowFiles ( TList *files, int offset, int selected )
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
-	string filename;
 	char sztmp[32];
 	// Save Nummern ausgeben
 	rect.x=25;rect.y=70;
@@ -6056,22 +6033,20 @@ void ShowFiles ( TList *files, TList *filenums,TList *filenames,int offset, int 
 			y=72;
 		}
 		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
-		if ( i+offset==selected )
+		if ( i + offset == selected )
 		{
-			sprintf ( sztmp,"%d", ( offset+i+1 ) );
-			fonts->OutTextBigCenterGold ( sztmp,x,y,buffer );
+			fonts->OutTextBigCenterGold ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
 		}
 		else
 		{
-			sprintf ( sztmp,"%d", ( offset+i+1 ) );
-			fonts->OutTextBigCenter ( sztmp,x,y,buffer );
+			fonts->OutTextBigCenter ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
 		}
 		rect.y+=76;
 		y+=76;
 	}
 	// Savenamen mit evtl. Auswahl ausgeben
-	rect.x=55;rect.y=82;
-	rect.w=153;rect.h=18;
+	rect.x=55;rect.y=59;
+	rect.w=153;rect.h=41;
 	for ( i = 0; i < 10; i++ )
 	{
 		if ( i == 5 )
@@ -6084,38 +6059,36 @@ void ShowFiles ( TList *files, TList *filenums,TList *filenames,int offset, int 
 	}
 	x=60;y=87;
 	selected++;
-	for ( i = offset+1; i <= 10+offset; i++ )
+	for ( i = offset+1; i <= 10 + offset; i++ )
 	{
-		if ( i == offset+6 )
+		if ( i == offset + 6 )
 		{
 			x+=402;
 			y=87;
 		}
-		for ( int j = 0; j < filenums->Count; j++ )
+		for ( int j = 0; j < files->Count; j++ )
 		{
-			if ( atoi ( filenums->Items[j].c_str() ) == i )
+			int iSaveNumber;
+			string sFilename, sTime, sMode;
+			iSaveNumber = atoi( files->Items[j].substr ( files->Items[j].length() - 5, 1 ).c_str() );
+			game->loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
+
+			if ( iSaveNumber == i )
 			{
-				filename = filenames->Items[j];
 				// Dateinamen anpassen und ausgeben
-				if ( filename.length() > 15 )
+				if ( sFilename.length() > 15 )
 				{
-					filename.erase ( 15 );
+					sFilename.erase ( 15 );
 				}
 				if ( i == selected )
 				{
 					LoadFile = files->Items[j];
 				}
-				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
+				fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+				// Zeit und Modus ausgeben
+				fonts->OutText ( ( char * ) sTime.c_str(),x,y-23,buffer );
+				fonts->OutText ( ( char * ) sMode.c_str(),x+113,y-23,buffer );
 				break;
-			}
-			else if ( i == selected && j == filenums->Count-1 )
-			{
-				if ( InputStr.length() > 15 )
-				{
-					InputStr.erase ( 15 );
-				}
-				filename = InputStr;
-				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
 			}
 		}
 		y+=76;

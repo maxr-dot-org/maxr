@@ -3356,34 +3356,61 @@ void SaveBuilding ( int off,FILE *fp,bool base )
 }
 
 // Speichert das Spiel ab:
-bool cGame::Save ( string name )
+bool cGame::Save ( string sName, int iNumber )
 {
 	FILE *fp;
+	time_t tTime;
+	tm *tmTime;
+	char szTmp[32];
 	int i,t;
 
-	for ( std::string::iterator i = name.begin(); i < name.end(); i++ )
-	{
-		*i = tolower ( *i );
-	}
 	ActivePlayer->HotHud=* ( hud );
-	if ( ( fp = fopen ( ( SettingsData.sSavesPath + PATH_DELIMITER + name ).c_str() ,"wb" ) ) == NULL )
+	if ( ( fp = fopen ( ( SettingsData.sSavesPath + PATH_DELIMITER + "savegame" + iToStr( iNumber ) + ".sav" ).c_str() ,"wb" ) ) == NULL )
 	{
-		cLog::write ( "Can't open Savefile " + name + " for writing", LOG_TYPE_WARNING );
+		cLog::write ( "Can't open Savefile \"savegame" + iToStr( iNumber ) + ".sav\"" + " for writing", LOG_TYPE_WARNING );
 		return false;
 	}
+
+	// Time and Date
+	tTime = time ( NULL );
+	tmTime = localtime ( &tTime );
+	strftime(szTmp,32,"%d.%m.%y %H:%M:%S",tmTime);
+	i= ( int ) strlen( szTmp ) + 1;
+	fwrite ( &i,sizeof ( int ),1,fp );
+	fwrite ( szTmp,sizeof ( char ),i,fp );
+
+	// Savegame name
+	i= ( int ) sName.length() + 1;
+	fwrite ( &i,sizeof ( int ),1,fp );
+	fwrite ( sName.c_str(),sizeof ( char ),i,fp );
+
+	// Mode
+	if( HotSeat )
+	{
+		fwrite ( "HOT\0",sizeof ( char ),4,fp );
+	}
+	else if ( engine->fstcpip )
+	{
+		fwrite ( "MUL\0",sizeof ( char ),4,fp );
+	}
+	else
+	{
+		fwrite ( "IND\0",sizeof ( char ),4,fp );
+	}
+
 
 	// Map-Name:
 	i= ( int ) map->MapName.length() +1;
 	fwrite ( &i,sizeof ( int ),1,fp );
 	fwrite ( map->MapName.c_str(),1,i,fp );
 
-	// Rundennummer:
+	// Roundnumber:
 	fwrite ( &Runde,sizeof ( int ),1,fp );
 	// AlienTechs:
 	fwrite ( &AlienTech,sizeof ( bool ),1,fp );
 	// HotSeatPlayer:
 	fwrite ( &HotSeatPlayer,sizeof ( int ),1,fp );
-	// Rundenspiel:
+	// Roundgame:
 	fwrite ( &PlayRounds,sizeof ( bool ),1,fp );
 	fwrite ( &ActiveRoundPlayerNr,sizeof ( int ),1,fp );
 	fwrite ( & ( engine->EndeCount ),sizeof ( int ),1,fp );
@@ -3412,10 +3439,10 @@ bool cGame::Save ( string name )
 		fwrite ( & ( p->HotHud ),sizeof ( cHud ),1,fp ); // Hud-Einstellungen
 	}
 
-	// Alle Objekte:
+	// All Objects:
 	for ( i=0;i<map->size*map->size;i++ )
 	{
-		// Ressorcen:
+		// Resource:
 		if ( map->Resources[i].typ )
 		{
 			fputc ( SAVE_RES,fp );
@@ -3470,7 +3497,14 @@ void cGame::Load ( string name,int AP,bool MP )
 		return ;
 	}
 
-	StoredVehicles=new TList;
+	StoredVehicles = new TList;
+
+	// Ignore time, name and mode
+	fread ( &i,sizeof ( int ),1,fp );
+	fseek ( fp,i,SEEK_CUR );
+	fread ( &i,sizeof ( int ),1,fp );
+	fseek ( fp,i,SEEK_CUR );
+	fseek ( fp,4,SEEK_CUR );
 
 	// Map-Laden:
 	fread ( &i,sizeof ( int ),1,fp );
@@ -3902,7 +3936,7 @@ void cGame::ShowDateiMenu ( void )
 	bool SpeichernPressed=false, BeendenPressed=false, FertigPressed=false;
 	bool  HilfePressed=false, UpPressed=false, DownPressed=false, Cursor=true;
 	Uint8 *keystate;
-	TList *files, *filenums, *filenames;
+	TList *files;
 	TiXmlDocument doc;
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
@@ -3931,34 +3965,16 @@ void cGame::ShowDateiMenu ( void )
 	dest.x=63;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 	// Dateien suchen und Anzeigen:
-	if ( !doc.LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "saves.xml" ).c_str() ) )
+	files = getFilesOfDirectory ( SettingsData.sSavesPath );
+	for ( int i = 0; i < files->Count; i++ )
 	{
-		cLog::write ( "Could not load saves.xml",1 );
-		return ;
-	}
-	rootnode=doc.FirstChildElement ( "SavesData" )->FirstChildElement ( "SavesList" );
-
-	files = new TList;
-	filenums = new TList;
-	filenames = new TList;
-	node=rootnode->FirstChildElement();
-	if ( node && node->Type() == 1 )
-	{
-		files->Add ( node->ToElement()->Attribute ( "file" ) );
-		filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-		filenames->Add ( node->ToElement()->Attribute ( "name" ) );
-	}
-	while ( node )
-	{
-		node=node->NextSibling();
-		if ( node && node->Type() == 1 )
+		if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
 		{
-			files->Add ( node->ToElement()->Attribute ( "file" ) );
-			filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-			filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+			files->Delete ( i );
+			i--;
 		}
 	}
-	ShowFiles ( files,filenums,filenames,offset,selected,true,false );
+	ShowFiles ( files,offset,selected,true,false );
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -3984,12 +4000,12 @@ void cGame::ShowDateiMenu ( void )
 			if ( Cursor )
 			{
 				Cursor=false;
-				ShowFiles ( files,filenums,filenames,offset,selected,true,false );
+				ShowFiles ( files,offset,selected,true,false );
 			}
 			else
 			{
 				Cursor=true;
-				ShowFiles ( files,filenums,filenames,offset,selected,false,false );
+				ShowFiles ( files,offset,selected,false,false );
 			}
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -4023,7 +4039,7 @@ void cGame::ShowDateiMenu ( void )
 					}
 					checky+=75;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected,true,true );
+				ShowFiles ( files,offset,selected,true,true );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4044,79 +4060,21 @@ void cGame::ShowDateiMenu ( void )
 				PlaceMenuButton ( lngPack.Translate( "Text~Menu_Main~Button_Save").c_str(),132,438,0,false );
 				if ( selected != -1 )
 				{
-					ShowFiles ( files,filenums,filenames,offset,selected,false,false );
-					// Set Savename to lowercase
-					for ( std::string::iterator i = SaveLoadFile.begin(); i < SaveLoadFile.end(); i++ )
+					ShowFiles ( files,offset,selected,false,false );
+					if ( Save ( SaveLoadFile, SaveLoadNumber ) )
 					{
-						*i = tolower ( *i );
-					}
-					if ( Save ( SaveLoadFile ) )
-					{
-						// Save new file to saves.xml
-						int iNumber = selected + 1;
-						// Search if number exists
-						for ( int i = 0; i < filenums->Count; i++ )
+						files = getFilesOfDirectory ( SettingsData.sSavesPath );
+						for ( int i = 0; i < files->Count; i++ )
 						{
-							// if exists: remove old file & set new values
-							if ( atoi ( filenums->Items[i].c_str() ) == iNumber )
+							if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
 							{
-								// if name changed, delete old file
-								if ( strcmp ( filenames->Items[i].c_str(), InputStr.c_str() ) != 0 )
-								{
-									if ( FileExists ( ( SettingsData.sSavesPath + PATH_DELIMITER + files->Items[i] ).c_str() ) )
-									{
-										remove ( ( SettingsData.sSavesPath + PATH_DELIMITER + files->Items[i] ).c_str() );
-									}
-								}
-								// set new values in saves.xml
-								node = rootnode->FirstChildElement();
-								for ( int j = 0; j < i; j++ )
-									node=node->NextSibling();
-								node->ToElement()->SetAttribute ( "name",InputStr.c_str() );
-								node->ToElement()->SetAttribute ( "file",SaveLoadFile.c_str() );
-								break;
-							}
-							// if doesn't exists: add new node
-							else if ( i == filenums->Count - 1 )
-							{
-								TiXmlElement element ( "Save" );
-								node = rootnode->InsertEndChild ( element );
-								sprintf ( szTmp,"%d",iNumber );
-								node->ToElement()->SetAttribute ( "name",InputStr.c_str() );
-								node->ToElement()->SetAttribute ( "file",SaveLoadFile.c_str() );
-								node->ToElement()->SetAttribute ( "num",szTmp );
-							}
-						}
-						doc.SaveFile();
-						// Clear Lists
-						int iCount = files->Count;
-						for ( int i = 0; i < iCount; i++ )
-						{
-							files->DeleteString ( files->Count );
-							filenums->DeleteString ( filenums->Count );
-							filenames->DeleteString ( filenames->Count );
-						}
-						// Read filelists new
-						node=rootnode->FirstChildElement();
-						if ( node && node->Type() == 1 )
-						{
-							files->Add ( node->ToElement()->Attribute ( "file" ) );
-							filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-							filenames->Add ( node->ToElement()->Attribute ( "name" ) );
-						}
-						while ( node )
-						{
-							node=node->NextSibling();
-							if ( node && node->Type() == 1 )
-							{
-								files->Add ( node->ToElement()->Attribute ( "file" ) );
-								filenums->Add ( node->ToElement()->Attribute ( "num" ) );
-								filenames->Add ( node->ToElement()->Attribute ( "name" ) );
+								files->Delete ( i );
+								i--;
 							}
 						}
 						selected = -1;
 					}
-					ShowFiles ( files,filenums,filenames,offset,selected,false,false );
+					ShowFiles ( files,offset,selected,false,false );
 				}
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -4201,7 +4159,7 @@ void cGame::ShowDateiMenu ( void )
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected,Cursor,false );
+				ShowFiles ( files,offset,selected,Cursor,false );
 				scr.x=96;
 				dest.x=33;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
@@ -4239,7 +4197,7 @@ void cGame::ShowDateiMenu ( void )
 					offset+=10;
 					selected=-1;
 				}
-				ShowFiles ( files,filenums,filenames,offset,selected,Cursor,false );
+				ShowFiles ( files,offset,selected,Cursor,false );
 				scr.x=96+28*2;
 				dest.x=63;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
@@ -4262,11 +4220,10 @@ void cGame::ShowDateiMenu ( void )
 	}
 }
 
-void cGame::ShowFiles ( TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor, bool firstselect )
+void cGame::ShowFiles ( TList *files, int offset, int selected, bool cursor, bool firstselect )
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
-	string filename;
 	char sztmp[32];
 	// Save Nummern ausgeben
 	rect.x=25;rect.y=70;
@@ -4281,22 +4238,20 @@ void cGame::ShowFiles ( TList *files, TList *filenums, TList *filenames, int off
 			y=72;
 		}
 		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
-		if ( i+offset==selected )
+		if ( i + offset == selected )
 		{
-			sprintf ( sztmp,"%d", ( offset+i+1 ) );
-			fonts->OutTextBigCenterGold ( sztmp,x,y,buffer );
+			fonts->OutTextBigCenterGold ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
 		}
 		else
 		{
-			sprintf ( sztmp,"%d", ( offset+i+1 ) );
-			fonts->OutTextBigCenter ( sztmp,x,y,buffer );
+			fonts->OutTextBigCenter ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
 		}
 		rect.y+=76;
 		y+=76;
 	}
 	// Savenamen mit evtl. Auswahl ausgeben
-	rect.x=55;rect.y=82;
-	rect.w=153;rect.h=18;
+	rect.x=55;rect.y=59;
+	rect.w=153;rect.h=41;
 	for ( i = 0; i < 10; i++ )
 	{
 		if ( i == 5 )
@@ -4307,61 +4262,115 @@ void cGame::ShowFiles ( TList *files, TList *filenums, TList *filenames, int off
 		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
 		rect.y+=76;
 	}
-	x=60;y=87;
+	x=58;y=87;
 	selected++;
-	for ( i = offset+1; i <= 10+offset; i++ )
+	for ( i = offset+1; i <= 10 + offset; i++ )
 	{
-		if ( i == offset+6 )
+		if ( i == offset + 6 )
 		{
 			x+=402;
 			y=87;
 		}
-		for ( int j = 0; j < filenums->Count; j++ )
+		for ( int j = 0; j < files->Count || j == 0; j++ )
 		{
-			if ( atoi ( filenums->Items[j].c_str() ) == i )
+			int iSaveNumber;
+			string sFilename, sTime, sMode;
+			if ( files->Count > 0 )
 			{
-				filename = filenames->Items[j];
+				iSaveNumber = atoi( files->Items[j].substr ( files->Items[j].length() - 5, 1 ).c_str() );
+				loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
+			}
+			else
+			{
+				iSaveNumber = -1;
+			}
+			if ( iSaveNumber == i )
+			{
 				// Dateinamen anpassen und ausgeben
-				if ( filename.length() > 15 )
+				if ( sFilename.length() > 15 )
 				{
-					filename.erase ( 15 );
+					sFilename.erase ( 15 );
 				}
 				if ( i == selected )
 				{
 					if ( firstselect )
 					{
-						InputStr = filename;
+						InputStr = sFilename;
 					}
 					else
 					{
-						filename = InputStr;
+						sFilename = InputStr;
 					}
 					if ( cursor )
 					{
-						filename+="_";
+						sFilename += "_";
 					}
-					SaveLoadFile = InputStr + ".sav";
+					SaveLoadFile = InputStr;
+					SaveLoadNumber = i;
 				}
-				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
+				fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+				// Zeit und Modus ausgeben
+				fonts->OutText ( ( char * ) sTime.c_str(),x,y-23,buffer );
+				fonts->OutText ( ( char * ) sMode.c_str(),x+113,y-23,buffer );
 				break;
 			}
-			else if ( i == selected && j == filenums->Count-1 )
+			else if ( i == selected )
 			{
 				if ( InputStr.length() > 15 )
 				{
 					InputStr.erase ( 15 );
 				}
-				filename = InputStr;
+				sFilename = InputStr;
 				if ( cursor )
 				{
-					filename+="_";
+					sFilename += "_";
 				}
-				SaveLoadFile = InputStr + ".sav";
-				fonts->OutText ( ( char * ) filename.c_str(),x,y,buffer );
+				SaveLoadFile = InputStr;
+				SaveLoadNumber = i;
+				fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
 			}
 		}
 		y+=76;
 	}
+}
+
+void cGame::loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode )
+{
+	SDL_RWops *pFile;
+	int iLenght;
+	char *szBuffer;
+	string sTmp;
+
+	if ( ( pFile = SDL_RWFromFile( ( SettingsData.sSavesPath + PATH_DELIMITER + sFileName ).c_str(),"rb" ) ) == NULL )
+	{
+		cLog::write ( "Can't open Savegame: " + sFileName, LOG_TYPE_WARNING );
+		return ;
+	}
+
+	// Read time
+	SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+	szBuffer = ( char* ) malloc ( iLenght );
+	SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
+	sTmp = szBuffer;
+	*sTime = sTmp;
+	free ( szBuffer );
+
+	// Read name
+	SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+	szBuffer = ( char* ) malloc ( iLenght );
+	SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
+	sTmp = szBuffer;
+	*sSavegameName = sTmp;
+	free ( szBuffer );
+
+	// Read mode
+	szBuffer = ( char* ) malloc ( 4 );
+	SDL_RWread(pFile, szBuffer, sizeof ( char ), 4);
+	sTmp = szBuffer;
+	*sMode = sTmp;
+	free ( szBuffer );
+
+	SDL_RWclose ( pFile );
 }
 
 // makes an autosave:
@@ -4387,7 +4396,7 @@ void cGame::MakeAutosave(void)
 			rename(filename.c_str(),sztmp);
 		}
 	}
-	Save("autosave0.sav");
+	Save("autosave",0);
 	free(sztmp);
 }
 

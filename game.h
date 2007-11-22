@@ -123,7 +123,8 @@ public:
   int HotSeatPlayer;     // Nummer des aktiven Hot-Seat-Spielers.
   bool PlayRounds;       // Gibt an, ob in Runden gespielt werden soll (nur MP).
   int ActiveRoundPlayerNr; // Nummer des aktiven Spielers in einem Runden-Spiel.
-  string SaveLoadFile;   // Name der zu speichernden oder zu ladenden Datei
+  string SaveLoadFile;   // Name of the savegame to load or to save
+  int SaveLoadNumber;   // Index number of the savegame to load or to save
   bool End;
 
   // Flags:
@@ -160,16 +161,17 @@ public:
   void AddCoords(const char *msg,int x,int y);
   void AddCoords(const string sMsg, int x, int y);
   void MakeLanding(int x,int y,cPlayer *p,TList *list,bool fixed);
-  bool Save(string name);
+  bool Save(string name, int iNumber);
   void Load(string name,int AP,bool MP=false);
   void ShowDateiMenu(void);
-  void ShowFiles(TList *files, TList *filenums, TList *filenames, int offset, int selected, bool cursor, bool firstselect);
+  void ShowFiles(TList *files, int offset, int selected, bool cursor, bool firstselect);
   bool CheckRecursivLoaded(cVehicle *v,TList *StoredVehicles);
   void MakeAutosave(void);
   void Trace(void);
   void TraceVehicle(cVehicle *v,int *y,int x);
   void TraceBuilding(cBuilding *b,int *y,int x);
   bool MakeHotSeatEnde(void);
+  void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode );
 };
 
 // Das Game-Objekt ///////////////////////////////////////////////////////////
