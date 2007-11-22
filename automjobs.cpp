@@ -56,7 +56,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 iNumber = iCount;
 	 iCount++;
 	 this->vehicle = vehicle;
-	 n = iNumber % WAIT_FRAMES;
+	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
 }
 
 //destruktor for cAutoMJob
@@ -66,6 +66,7 @@ cAutoMJob::~cAutoMJob()
 	for (i = iNumber; i < iCount - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
+		autoMJobs[i]->iNumber = i;
 	}
 	iCount--;
 	autoMJobs = (cAutoMJob **) realloc(autoMJobs, iCount * sizeof(this));
