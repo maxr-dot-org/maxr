@@ -96,12 +96,6 @@ cVehicle::cVehicle ( sVehicle *v,cPlayer *Owner )
 	DamageFXPointY=random ( 7,0 ) +26-3;
 	RefreshData();
 
-	//only for testing!
-	//until starting the AI is integrated in the vehicle menu
-	if (data.can_survey)
-	{
-		autoMJob = new cAutoMJob(this);
-	}
 }
 
 cVehicle::~cVehicle ( void )
@@ -1506,7 +1500,11 @@ void cVehicle::RotateTo ( int Dir )
 // Liefert einen String mit dem aktuellen Status zurück:
 string cVehicle::GetStatusStr ( void )
 {
-	if ( mjob )
+	if ( autoMJob )
+	{
+		return std::string("Vermesse"); //TODO: i18n
+	}
+	else if ( mjob )
 	{
 		return lngPack.Translate( "Text~Comp~Moving");
 	}
@@ -1751,6 +1749,37 @@ void cVehicle::DrawMenu ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
 		dest.y+=22;nr++;
 	}
+	// Auto
+	if ( data.can_survey )
+	{
+		if ( (autoMJob == NULL && SelMenu == nr) || ( autoMJob != NULL && SelMenu != nr) )
+		{
+			scr.y = 21;
+		}
+		else
+		{
+			scr.y = 0;
+		}
+		if ( ExeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			if (autoMJob == NULL)
+			{
+				autoMJob = new cAutoMJob(this);
+			}
+			else
+			{
+				delete autoMJob;
+				autoMJob = NULL;
+			}
+			return;
+		}
+		scr.x=168;
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu,&scr,buffer,&dest );
+		dest.y+=22;nr++;
+	}
+
 	// Stop:
 	if ( mjob|| ( IsBuilding&&BuildRounds ) || ( IsClearing&&ClearingRounds ) )
 	{
@@ -2016,6 +2045,7 @@ int cVehicle::GetMenuPointAnz ( void )
 {
 	int nr=2;
 	if ( data.can_build&&!IsBuilding ) nr++;
+	if ( data.can_survey ) nr++;
 	if ( ( data.can_transport==TRANS_METAL||data.can_transport==TRANS_OIL||data.can_transport==TRANS_GOLD ) &&!IsBuilding&&!IsClearing ) nr++;
 	if ( data.can_attack&&data.shots ) nr++;
 	if ( mjob|| ( IsBuilding&&BuildRounds ) || ( IsClearing&&ClearingRounds ) ) nr++;

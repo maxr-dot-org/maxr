@@ -56,7 +56,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 iNumber = iCount;
 	 iCount++;
 	 this->vehicle = vehicle;
-	 n = iNumber % WAIT_FRAMES;  
+	 n = iNumber % WAIT_FRAMES;
 }
 
 //destruktor for cAutoMJob
