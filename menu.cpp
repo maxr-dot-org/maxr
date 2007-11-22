@@ -5801,9 +5801,6 @@ int ShowDateiMenu ( void )
 	bool FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  HilfePressed=false, LadenPressed=false, Cursor=true;
 	TList *files;
-	TiXmlDocument doc;
-	TiXmlNode* rootnode;
-	TiXmlNode* node;
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -6019,7 +6016,6 @@ void ShowFiles ( TList *files, int offset, int selected )
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
-	char sztmp[32];
 	// Save Nummern ausgeben
 	rect.x=25;rect.y=70;
 	rect.w=26;rect.h=16;

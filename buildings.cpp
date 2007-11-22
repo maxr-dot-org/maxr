@@ -2701,7 +2701,6 @@ void cBuilding::ExitVehicleTo ( int nr,int off,bool engine_call )
 
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled,bool *AlleReparierenEnabled,bool *AlleUpgradenEnabled )
 {
-	SDL_Rect scr,dest;
 	int i;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rBtnRefuel = {rDialog.x + 518, rDialog.y + 271, BUTTON__W, BUTTON__H};
@@ -2777,7 +2776,6 @@ void cBuilding::Detonate ( void )
 void cBuilding::ShowResearch ( void )
 {
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
-	SDL_Rect scr,dest;
 	bool AbbruchPressed=false;
 	bool FertigPressed=false;
 	

@@ -3937,10 +3937,6 @@ void cGame::ShowDateiMenu ( void )
 	bool  HilfePressed=false, UpPressed=false, DownPressed=false, Cursor=true;
 	Uint8 *keystate;
 	TList *files;
-	TiXmlDocument doc;
-	TiXmlNode* rootnode;
-	TiXmlNode* node;
-	char szTmp[8];
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -4224,7 +4220,6 @@ void cGame::ShowFiles ( TList *files, int offset, int selected, bool cursor, boo
 {
 	SDL_Rect rect;
 	int i,x=35,y=72;
-	char sztmp[32];
 	// Save Nummern ausgeben
 	rect.x=25;rect.y=70;
 	rect.w=26;rect.h=16;
