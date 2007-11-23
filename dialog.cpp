@@ -461,8 +461,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			{
 				PlayFX ( SoundData.SNDHudButton );
 				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
-				EnterMenu();
-				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				SDL_Delay ( 2 );
 				break;
@@ -1277,4 +1275,17 @@ void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surf
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
 	fonts->OutTextBigCenter(sText,dest.x+dest.w/2,dest.y+iPx,surface); //show text centered on button
+}
+
+
+void drawMenuButton ( string sText, bool bPressed ,int x,int y, SDL_Surface *surface )
+{
+	SDL_Rect scr = {0, 0, 200, 29};
+	SDL_Rect dest = {x, y, 200, 29};
+	if ( bPressed )
+	{
+		scr.y = 30;
+	}
+	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,surface,&dest );
+	fonts->OutTextBigCenter ( sText,x+100,y+8,surface );
 }

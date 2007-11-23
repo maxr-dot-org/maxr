@@ -31,41 +31,84 @@
 #include "loaddata.h"
 
 
-/** int for ShowInfo to prevent same graphic shown twice on click*/
+/** int for showUnitPicture to prevent same graphic shown twice on click*/
 static int s_iLastUnitShown = 0;
 
 // Menü vorbereiten:
-void EnterMenu ( bool limited )
+void prepareMenu ( bool bIAmMain )
 {
-	if ( !limited )
+	#define DIALOG_W 640
+	#define DIALOG_H 480
+	#define DIALOG_X (SettingsData.iScreenW / 2 - DIALOG_W / 2)
+	#define DIALOG_Y (SettingsData.iScreenH / 2 - DIALOG_H / 2)	
+	#define TITLE_X DIALOG_X+320
+	#define TITLE_Y DIALOG_Y+147
+	#define INFO_IMG_X DIALOG_X+16
+	#define INFO_IMG_Y DIALOG_Y+182
+	#define INFO_IMG_WIDTH 320
+	#define INFO_IMG_HEIGHT 240
+	
+	#define BTN_SPACE 35
+	#define BTN_WIDTH 200
+	#define BTN_HEIGHT 29
+	#define BTN_1_X DIALOG_X+390
+	#define BTN_1_Y DIALOG_Y+190
+	#define BTN_2_X BTN_1_X
+	#define BTN_2_Y BTN_1_Y+BTN_SPACE
+	#define BTN_3_X BTN_1_X
+	#define BTN_3_Y BTN_1_Y+BTN_SPACE*2
+	#define BTN_4_X BTN_1_X
+	#define BTN_4_Y BTN_1_Y+BTN_SPACE*3
+	#define BTN_5_X BTN_1_X
+	#define BTN_5_Y BTN_1_Y+BTN_SPACE*4
+	#define BTN_6_X BTN_1_X
+	#define BTN_6_Y BTN_1_Y+BTN_SPACE*5
+
+	//BEGIN MENU REDRAW
+	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Surface *sfTmp;
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_MAIN,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
+	
+	//blit sfTmp to buffer and delete it
+	SDL_BlitSurface (sfTmp, NULL, buffer, &dest);
+	SDL_FreeSurface(sfTmp);	
+
+	//draw infostring with maxversion at the bottom
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION,DIALOG_X+320,DIALOG_Y+465,buffer );
+	//END MENU REDRAW
+		
+	//we came back from a submenu so we have to redraw main menu
+	if(bIAmMain)
 	{
-//    TmpSf=SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,640,480,32,0,0,0,0);
-		TmpSf=GraphicsData.gfx_shadow;
-		SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-
-		LoadPCXtoSF ( GFXOD_MAIN,TmpSf );
-		string txt = lngPack.Translate ( "Text~Main~Credits_Reloaded" );
-		txt+=" ";
-		txt+=MAX_VERSION;
-		fonts->OutTextCenter ( ( char * ) txt.c_str(),320,465,TmpSf );
+		fonts->OutTextCenter ( lngPack.Translate ( "Text~Menu_Main~Title_Main_Menu" ), TITLE_X, TITLE_Y,buffer );
+		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),false,BTN_1_X,BTN_1_Y );
+		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ),false,BTN_2_X,BTN_2_Y );
+		//uncommented since no need for right now -- beko
+		//drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),false,BTN_3_X,BTN_3_Y );
+		//drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),false,BTN_4_X,BTN_4_Y );
+		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),false,BTN_5_X,BTN_5_Y );
+		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,BTN_6_X,BTN_6_Y );
 	}
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-	fonts->OutTextCenter ( ( char * ) lngPack.Translate ( "Text~Menu_Main~Title_Main_Menu" ).c_str() ,320,147,buffer ); // "Hauptmenü"
 
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ).c_str(),390,190,false );
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),390,190+35,false );
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ).c_str(),390,190+35*2,false );
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ).c_str(),390,190+35*3,false );
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,false );
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ).c_str(),390,190+35*5,false );
-
-	ShowInfo();
-	mouse->Show();
+	//display random unit
+	showUnitPicture();
+	
+	//show mouse
+	mouse->Show();	
 	mouse->SetCursor ( CHand );
 }
 
-// Zeigt ein Infobild an:
-void ShowInfo ( void )
+// shows the randomized unit picture
+void showUnitPicture ( void )
 {
 	/**To randomize whether to show a vehicles or a building*/
 	int iShowBuilding = random ( 3,1 );
@@ -76,7 +119,7 @@ void ShowInfo ( void )
 	/**Unit to show*/
 	int iUnitShow;
 	/**Destinationrect for unit picture in main menu*/
-	SDL_Rect rDest= {16,182,320,240};
+	SDL_Rect rDest = {INFO_IMG_X, INFO_IMG_Y, INFO_IMG_WIDTH, INFO_IMG_HEIGHT};
 
 	if ( iShowBuilding == 1 ) //that's a 33% chance that we show a building on 1
 	{
@@ -107,19 +150,6 @@ void ExitMenu ( void )
 	SDL_SetAlpha ( GraphicsData.gfx_shadow,SDL_SRCALPHA,50 );
 }
 
-void PlaceButton ( const char *str,int x,int y,bool pressed )
-{
-	SDL_Rect scr,dest;
-	scr.w=dest.w=200;
-	scr.h=dest.h=29;
-	scr.x=0;
-	if ( pressed ) scr.y=30;else scr.y=0;
-	dest.x=x;
-	dest.y=y;
-	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
-
-	fonts->OutTextBigCenter ( str,x+100,y+8,buffer );
-}
 
 // Platziert einen kleinen Button:
 void PlaceSmallButton ( const char *str,int x,int y,bool pressed )
@@ -209,7 +239,7 @@ void RunMainMenu ( void )
 	// start main musicfile
 	PlayMusic ( ( char * ) ( SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg" ).c_str() );
 
-	EnterMenu();
+	prepareMenu(true);	
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -235,35 +265,28 @@ void RunMainMenu ( void )
 		}
 
 		// Klick aufs Bild:
-		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
+		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowInfo();
+			showUnitPicture();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Einzelspieler:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190&&mouse->y<190+29 )
+		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				SPPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ).c_str(),390,190,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),true,BTN_1_X,BTN_1_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&SPPressed )
 			{
 				RunSPMenu();
-				if ( TmpSf==NULL )
-				{
-					EnterMenu();
-				}
-				else
-				{
-					EnterMenu ( true );
-				}
+				prepareMenu(true);
 				SHOW_SCREEN
 				SPPressed=false;
 				EscHot=false;
@@ -272,32 +295,25 @@ void RunMainMenu ( void )
 		else if ( SPPressed )
 		{
 			SPPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ).c_str(),390,190,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),false,BTN_1_X,BTN_1_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Mehrspieler:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35&&mouse->y<190+35+29 )
+		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				MPPRessed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),390,190+35,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ), true,BTN_2_X,BTN_2_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&MPPRessed )
 			{
 				RunMPMenu();
-				if ( TmpSf==NULL )
-				{
-					EnterMenu();
-				}
-				else
-				{
-					EnterMenu ( true );
-				}
+				prepareMenu(true);
 				SHOW_SCREEN
 				SPPressed=false;
 				EscHot=false;
@@ -306,31 +322,32 @@ void RunMainMenu ( void )
 		else if ( MPPRessed )
 		{
 			MPPRessed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),390,190+35,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ),false,BTN_2_X,BTN_2_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Map-Editor:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*2&&mouse->y<190+35*2+29 )
+		/*
+		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				MEPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ).c_str(),390,190+35*2,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),true,BTN_3_X,BTN_3_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&MEPressed )
 			{
-				/*cMapEditor *me;
-				ExitMenu();
+				//cMapEditor *me;
+				//ExitMenu();
+				//
+				//me=new cMapEditor();
+				//me->Run();
+				//delete me;
 
-				me=new cMapEditor();
-				me->Run();
-				delete me;*/
-
-				EnterMenu();
+				prepareMenu(true);
 				SHOW_SCREEN
 				MEPressed=false;
 				EscHot=false;
@@ -339,28 +356,29 @@ void RunMainMenu ( void )
 		else if ( MEPressed )
 		{
 			MEPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ).c_str(),390,190+35*2,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),false,BTN_3_X,BTN_3_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-		}
+		} */
 		// Credits:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*3&&mouse->y<190+35*3+29 )
+		/*
+		if ( mouse->x >= BTN_4_X && mouse->x < BTN_4_X + BTN_WIDTH && mouse->y >= BTN_4_Y && mouse->y < BTN_4_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				CrPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ).c_str(),390,190+35*3,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),true,BTN_4_X,BTN_4_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&CrPressed )
 			{
-				/*cCredits *cred;
-				cred=new cCredits();
-				cred->Run();
-				delete cred;*/
-				EnterMenu();
+// 				cCredits *cred;
+// 				cred=new cCredits();
+// 				cred->Run();
+// 				delete cred;
+				prepareMenu(true);
 				SHOW_SCREEN
 				EscHot=false;
 				CrPressed=false;
@@ -369,27 +387,28 @@ void RunMainMenu ( void )
 		else if ( CrPressed )
 		{
 			CrPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ).c_str(),390,190+35*3,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),false,BTN_4_X,BTN_4_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-
+*/
 		//Licence
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*4&&mouse->y<190+35*4+29 )
+		if ( mouse->x >= BTN_5_X && mouse->x < BTN_5_X + BTN_WIDTH && mouse->y >= BTN_5_Y  && mouse->y < BTN_5_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				LiPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),true,BTN_5_X,BTN_5_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&LiPressed )
 			{
 				mouse->draw ( false,screen );
-				SHOW_SCREEN
+				//SHOW_SCREEN
 				showLicence();
+				prepareMenu(true);
 				SHOW_SCREEN
 				LiPressed=false;
 				CrPressed=false;
@@ -398,19 +417,19 @@ void RunMainMenu ( void )
 		else if ( CrPressed )
 		{
 			CrPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ).c_str(),390,190+35*4,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),false,BTN_5_X,BTN_5_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		
 		// Beenden:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*5&&mouse->y<190+35*5+29 )
+		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				BePressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ).c_str(),390,190+35*5,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),true,BTN_6_X,BTN_6_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -422,7 +441,7 @@ void RunMainMenu ( void )
 		else if ( BePressed )
 		{
 			BePressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ).c_str(),390,190+35*5,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,BTN_6_X,BTN_6_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -441,27 +460,24 @@ void RunMainMenu ( void )
 void RunMPMenu ( void )
 {
 	//defines for translation since I'm very lazy --beko
-#define TCPIPHOST lngPack.Translate("Text~Menu_Main~Button_TCPIP_Host").c_str()
-#define TCPIPCLIENT lngPack.Translate( "Text~Menu_Main~Button_TCPIP_Client").c_str()
-#define NEWHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_New").c_str()
-#define LOADHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_Load").c_str()
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back").c_str()
+#define TCPIPHOST lngPack.Translate("Text~Menu_Main~Button_TCPIP_Host")
+#define TCPIPCLIENT lngPack.Translate( "Text~Menu_Main~Button_TCPIP_Client")
+#define NEWHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_New")
+#define LOADHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_Load")
+#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
 	bool TCPHostPressed=false,TCPClientPressed=false,BackPressed=false,HotSeatPressed=false,LoadHotSeatPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),320,147,buffer );
+	prepareMenu();
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),TITLE_X, TITLE_Y,buffer );
 
-	PlaceButton ( TCPIPHOST,390,190,false );
-	PlaceButton ( TCPIPCLIENT,390,190+35,false );
-	PlaceButton ( NEWHOTSEAT,390,190+35*2,false );
-	PlaceButton ( LOADHOTSEAT,390,190+35*3,false );
-	PlaceButton ( BACK,390,190+35*5,false );
+	drawMenuButton ( TCPIPHOST, false, BTN_1_X, BTN_1_Y );
+	drawMenuButton ( TCPIPCLIENT, false, BTN_2_X, BTN_2_Y );
+	drawMenuButton ( NEWHOTSEAT, false, BTN_3_X, BTN_3_Y );
+	drawMenuButton ( LOADHOTSEAT, false, BTN_4_X, BTN_4_Y );
+	drawMenuButton ( BACK, false, BTN_6_X, BTN_6_Y );
 
-	ShowInfo();
-	mouse->Show();
-	mouse->SetCursor ( CHand );
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -481,21 +497,21 @@ void RunMPMenu ( void )
 		}
 
 		// Klick aufs Bild:
-		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
+		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowInfo();
+			showUnitPicture();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// TCP Host:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190&&mouse->y<190+29 )
+		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				TCPHostPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( TCPIPHOST,390,190,true );
+				drawMenuButton ( TCPIPHOST,true,BTN_1_X,BTN_1_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -510,18 +526,18 @@ void RunMPMenu ( void )
 		else if ( TCPHostPressed )
 		{
 			TCPHostPressed=false;
-			PlaceButton ( TCPIPHOST,390,190,false );
+			drawMenuButton ( TCPIPHOST,false,BTN_1_X,BTN_1_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// TCP Client:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35&&mouse->y<190+35+29 )
+		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT)
 		{
 			if ( b&&!lb )
 			{
 				TCPClientPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( TCPIPCLIENT,390,190+35,true );
+				drawMenuButton ( TCPIPCLIENT,true,BTN_2_X,BTN_2_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -536,18 +552,18 @@ void RunMPMenu ( void )
 		else if ( TCPClientPressed )
 		{
 			TCPClientPressed=false;
-			PlaceButton ( TCPIPCLIENT,390,190+35,false );
+			drawMenuButton ( TCPIPCLIENT,false,BTN_2_X,BTN_2_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Hot Seat:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*2&&mouse->y<190+35*2+29 )
+		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT)
 		{
 			if ( b&&!lb )
 			{
 				HotSeatPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( NEWHOTSEAT,390,190+35*2,true );
+				drawMenuButton ( NEWHOTSEAT,true,BTN_3_X, BTN_3_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -560,18 +576,18 @@ void RunMPMenu ( void )
 		else if ( HotSeatPressed )
 		{
 			HotSeatPressed=false;
-			PlaceButton ( NEWHOTSEAT,390,190+35*2,false );
+			drawMenuButton ( NEWHOTSEAT,false,BTN_3_X, BTN_3_Y);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Hot Seat laden:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*3&&mouse->y<190+35*3+29 )
+		if ( mouse->x >= BTN_4_X && mouse->x < BTN_4_X + BTN_WIDTH && mouse->y >= BTN_4_Y && mouse->y < BTN_4_Y + BTN_HEIGHT)
 		{
 			if ( b&&!lb )
 			{
 				LoadHotSeatPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( LOADHOTSEAT,390,190+35*3,true );
+				drawMenuButton ( LOADHOTSEAT,true,BTN_4_X,BTN_4_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -593,7 +609,7 @@ void RunMPMenu ( void )
 					delete map;
 					break;
 				}
-				EnterMenu();
+				prepareMenu();
 				RunSPMenu();
 				break;
 			}
@@ -601,18 +617,18 @@ void RunMPMenu ( void )
 		else if ( LoadHotSeatPressed )
 		{
 			LoadHotSeatPressed=false;
-			PlaceButton ( LOADHOTSEAT,390,190+35*3,false );
+			drawMenuButton ( LOADHOTSEAT,false,BTN_4_X,BTN_4_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Zurück:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*5&&mouse->y<190+35*5+29 )
+		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT)
 		{
 			if ( b&&!lb )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( BACK,390,190+35*5,true );
+				drawMenuButton ( BACK,true,BTN_6_X, BTN_6_Y);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -624,7 +640,7 @@ void RunMPMenu ( void )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			PlaceButton ( BACK,390,190+35*5,false );
+			drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -638,26 +654,23 @@ void RunMPMenu ( void )
 void RunSPMenu ( void )
 {
 	//defines for translation since I'm very lazy --beko
-#define SINGLEPLAYER lngPack.Translate("Text~Menu_Main~Button_Single_Player").c_str()
-#define TRAINING lngPack.Translate( "Text~Menu_Main~Button_Training").c_str()
-#define NEWGAME lngPack.Translate( "Text~Menu_Main~Button_Game_New").c_str()
-#define LOADGAME lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str()
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back").c_str()
+#define SINGLEPLAYER lngPack.Translate("Text~Menu_Main~Button_Single_Player")
+#define TRAINING lngPack.Translate( "Text~Menu_Main~Button_Training")
+#define NEWGAME lngPack.Translate( "Text~Menu_Main~Button_Game_New")
+#define LOADGAME lngPack.Translate( "Text~Menu_Main~Button_Game_Load")
+#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
 	bool StartTrainingPressed=false, StartNewPressed=false, LoadPressed=false, BackPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-	fonts->OutTextCenter ( SINGLEPLAYER,320,147,buffer );
+	prepareMenu();
+	fonts->OutTextCenter ( SINGLEPLAYER,TITLE_X, TITLE_Y,buffer );
 
-	PlaceButton ( TRAINING,390,190,false );
-	PlaceButton ( NEWGAME,390,190+35,false );
-	PlaceButton ( LOADGAME,390,190+35*2,false );
-	PlaceButton ( BACK,390,190+35*4,false );
+	drawMenuButton ( TRAINING,false,BTN_1_X, BTN_1_Y );
+	drawMenuButton ( NEWGAME,false,BTN_2_X, BTN_2_Y );
+	drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
+	drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y );
 
-	ShowInfo();
-	mouse->Show();
-	mouse->SetCursor ( CHand );
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -676,28 +689,28 @@ void RunSPMenu ( void )
 			mouse->draw ( true,screen );
 		}
 		// Klick aufs Bild:
-		if ( b&&!lb&&mouse->x>=16&&mouse->x<16+320&&mouse->y>=182&&mouse->y<182+240 )
+		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowInfo();
+			showUnitPicture();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Training starten:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190&&mouse->y<190+29 )
+		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				StartTrainingPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( TRAINING,390,190,true );
+				drawMenuButton ( TRAINING,true,BTN_1_X, BTN_1_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			else if ( !b&&StartTrainingPressed )
 			{
 				StartTrainingPressed=false;
-				PlaceButton ( TRAINING,390,190,false );
+				drawMenuButton ( TRAINING,false,BTN_1_X, BTN_1_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -705,19 +718,19 @@ void RunSPMenu ( void )
 		else if ( StartTrainingPressed )
 		{
 			StartTrainingPressed=false;
-			PlaceButton ( TRAINING,390,190,false );
+			drawMenuButton ( TRAINING,false,BTN_1_X,BTN_1_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 
 		// Neues Spiel starten:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35&&mouse->y<190+29+35 )
+		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				StartNewPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( NEWGAME,390,190+35,true );
+				drawMenuButton ( NEWGAME,true,BTN_2_X,BTN_2_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -777,6 +790,8 @@ void RunSPMenu ( void )
 					}
 					delete game; game=NULL;
 					delete map;
+					delete LandingList;
+					delete list;
 					break;
 				}
 				break;
@@ -785,18 +800,18 @@ void RunSPMenu ( void )
 		else if ( StartNewPressed )
 		{
 			StartNewPressed=false;
-			PlaceButton ( NEWGAME,390,190+35,false );
+			drawMenuButton ( NEWGAME,false,BTN_2_X,BTN_2_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Spiel laden:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*2&&mouse->y<190+35*2+29 )
+		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				LoadPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( LOADGAME,390,190+35*2,true );
+				drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -817,7 +832,7 @@ void RunSPMenu ( void )
 					delete map;
 					break;
 				}
-				EnterMenu();
+				prepareMenu();
 				RunSPMenu();
 				break;
 			}
@@ -825,18 +840,18 @@ void RunSPMenu ( void )
 		else if ( LoadPressed )
 		{
 			LoadPressed=false;
-			PlaceButton ( LOADGAME,390,190+35*2,false );
+			drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Zurück:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=190+35*4&&mouse->y<190+35*4+29 )
+		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( BACK,390,190+35*4,true );
+				drawMenuButton ( BACK,true,BTN_6_X, BTN_6_Y);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -848,7 +863,7 @@ void RunSPMenu ( void )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			PlaceButton ( BACK,390,190+35*4,false );
+			drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -863,9 +878,9 @@ void RunSPMenu ( void )
 sOptions RunOptionsMenu ( sOptions *init )
 {
 	//defines for translation since I'm very lazy --beko
-#define GAMEOPTIONS lngPack.Translate("Text~Menu_Main~Button_Game_Options").c_str()
-#define OK lngPack.Translate( "Text~Menu_Main~Button_OK").c_str()
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back").c_str()
+#define GAMEOPTIONS lngPack.Translate("Text~Menu_Main~Button_Game_Options")
+#define OK lngPack.Translate( "Text~Menu_Main~Button_OK")
+#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
 
 #define LOWEST lngPack.Translate( "Text~Game_Options~Option_Lowest").c_str()
 #define LOWER lngPack.Translate( "Text~Game_Options~Option_Lower").c_str()
@@ -981,8 +996,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 	PlaceSelectText ( SIMU,452,281,!options.PlayRounds,false );
 	PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,false );
 
-	PlaceButton ( OK,390,440,false );
-	PlaceButton ( BACK,50,440,false );
+	drawMenuButton ( OK,false,390,440);
+	drawMenuButton ( BACK,false,50,440);
 	SHOW_SCREEN
 	mouse->draw ( false,screen );
 
@@ -1342,7 +1357,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( BACK,50,440,true );
+				drawMenuButton ( BACK,true,50,440);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1355,7 +1370,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			PlaceButton ( BACK,50,440,false );
+			drawMenuButton ( BACK,false,50,440);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1366,7 +1381,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( OK,390,440,true );
+				drawMenuButton ( OK,true,390,440 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1378,7 +1393,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( OK,390,440,false );
+			drawMenuButton ( OK,false,390,440 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1413,7 +1428,7 @@ string RunPlanetSelect ( void )
 	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,320,11,buffer );
 
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,440,false );
+	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
 
 	files = new TList;
 	int k = 1;
@@ -1425,7 +1440,6 @@ string RunPlanetSelect ( void )
 	}
 	rootnode=doc.FirstChildElement ( "MapData" )->FirstChildElement ( "MapList" );
 
-	files = new TList;
 	node=rootnode->FirstChildElement();
 	if ( node )
 		files->Add ( node->ToElement()->Attribute ( "file" ) );
@@ -1465,7 +1479,7 @@ string RunPlanetSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,440,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,440 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1481,7 +1495,7 @@ string RunPlanetSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,440,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1698,14 +1712,14 @@ sPlayer RunPlayerSelect ( void )
 	players.what[1] = 2;
 
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Player_Select" ).c_str() ,320,11,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ).c_str() ,100,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Human" ).c_str() ,200,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ).c_str() ,310,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Nobody" ).c_str() ,420,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Clan" ).c_str() ,535,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Player_Select" ) ,320,11,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ) ,100,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Human" ) ,200,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ) ,310,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Nobody" ) ,420,35,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Clan" ) ,535,35,buffer );
 
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str() ,390,440,false );
+	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false ,390,440 );
 	ShowPlayerStates ( players );
 
 	mouse->Show();
@@ -1767,7 +1781,7 @@ sPlayer RunPlayerSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,440,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,440 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1779,7 +1793,7 @@ sPlayer RunPlayerSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,440,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2581,6 +2595,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		list->DeleteHUp ( 0 );
 	}
 	delete list;
+	delete selection;
+	
 }
 
 // Macht die Upgradeschieber für Vehicle:
@@ -3746,7 +3762,7 @@ void cMultiPlayer::RunMenu ( void )
 		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str() ,470,42+35,false );
 		PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str() ,470,42+35*2,false );
 		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
-		PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
+		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 	}
 	else
 	{
@@ -3754,7 +3770,7 @@ void cMultiPlayer::RunMenu ( void )
 	}
 	PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
 
-	PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(), 50,450,false );
+	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
 
 	// Den Focus vorbereiten:
 	switch ( Focus )
@@ -3914,7 +3930,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(), 50,450,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), true, 50,450);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -3933,7 +3949,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(), 50,450,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -3944,7 +3960,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,true );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,450 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4016,7 +4032,7 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str());
 				}
 				OKPressed=false;
-				PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
+				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4024,7 +4040,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
+			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4104,8 +4120,8 @@ void cMultiPlayer::RunMenu ( void )
 					PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str(),470,42+35*2,false );
 					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
 					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
-					PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(), 50,450,false );
-					PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
+					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false, 50,450 );
+					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450);
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4167,8 +4183,8 @@ void cMultiPlayer::RunMenu ( void )
 					PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str(), 470,42+35*2,false );
 					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
 					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
-					PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(), 50,450,false );
-					PlaceButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 390,450,false );
+					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false,50,450 );
+					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4226,8 +4242,8 @@ void cMultiPlayer::RunMenu ( void )
 			            if(SaveGame.IsEmpty())PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
 			            PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,false);
 			            PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false);
-			            PlaceButton(lngPack.Translate( "Text~Menu_Main~Button_Back").c_str(), 50,450,false);
-			            PlaceButton(lngPack.Translate( "Text~Menu_Main~Button_OK").c_str(), 390,450,false);
+			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_Back"),false, 50,450);
+			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_OK"),false, 390,450);
 			            SHOW_SCREEN
 			            mouse->draw(false,screen);
 			            SendOptions();

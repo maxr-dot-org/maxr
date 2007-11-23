@@ -74,15 +74,14 @@ struct sClientSettings{
 
 // Prototypen ////////////////////////////////////////////////////////////////
 void RunMainMenu(void);
-void PlaceButton(const char *str,int x,int y,bool pressed);
 /**
 *Shows a vehicle or a building in the mainscreen. There's
 *a 33% chance that it shows a building and a 66% chance to
 *show a vehicle. A unit won't be shown twice in order.
 *@author beko
 */
-void ShowInfo(void);
-void EnterMenu(bool limited=false);
+void showUnitPicture(void);
+void prepareMenu(bool bIAmMain=false);
 void ExitMenu(void);
 void RunSPMenu(void);
 string RunPlanetSelect(void);

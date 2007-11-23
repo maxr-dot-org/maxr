@@ -153,17 +153,21 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	SDL_RWread ( file,&x,sizeof ( short ),1 );
 	SDL_RWread ( file,&y,sizeof ( short ),1 );
 	x++;y++;
+	if( sf == NULL)
+	{
+		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,1, 1, SettingsData.iColourDepth,0,0,0,0 ); //temporairy surface so sf is not null any more
+	}
+
+	if ( sf == NULL ) //ops, couldn't create temp. surface
+	{
+		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+		SDL_RWclose ( file );
+		return -1;
+	}
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFFFFFF );
 	SDL_LockSurface ( sf );
-	if ( sf == NULL )
-	{
-		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img format - creating empty surface
-		SDL_RWclose ( file );
-		SDL_UnlockSurface ( sf );
-		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
-		return -1;
-	}
+	
 	_ptr= ( ( unsigned int* ) sf->pixels );
 	SDL_RWseek ( file,128,SEEK_SET );
 	do

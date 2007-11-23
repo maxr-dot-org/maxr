@@ -86,8 +86,7 @@ int main ( int argc, char *argv[] )
 	SDL_Thread *DataThread = NULL;
 	DataThread = SDL_CreateThread ( LoadData,NULL );
 
-	//SDL_Thread *EventThread = NULL;
-	//EventThread = SDL_CreateThread ( runEventChecker, NULL);
+
 
 	SDL_Event event;
 	while ( LoadingData != LOAD_FINISHED )
@@ -118,8 +117,13 @@ int main ( int argc, char *argv[] )
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
+
+	//SDL_Thread *EventThread = NULL;
+	//EventThread = SDL_CreateThread ( runEventChecker, NULL);
+	
 	// Das Menü starten:
 	RunMainMenu();
+	
 	Quit();
 	return 0;
 }
@@ -130,63 +134,67 @@ int runEventChecker( void *)
 	bool exit = false;
 	SDL_Event event;
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, 2);
+	cout << "Eventing\n";
+	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 	
 	#define SYM event.key.keysym.sym
 	#define MOD event.key.keysym.mod
 	#define ETYPE event.type
 	while(!exit)
 	{
-		while(SDL_WaitEvent (&event))
-		{
 		
-		//SDL_PollEvent ( &event );
+		SDL_PollEvent ( &event );
 
-		
-		if ( SYM == SDLK_RETURN)
-		{ //FIXME: works only within game with SDL_KEYUP - and fine without in main menu but then toggles twice within game. dunno why -- beko
-			if(MOD &KMOD_ALT && ETYPE == SDL_KEYUP) //alt+enter makes us go fullscreen|windowmode
-			{
-				SettingsData.bWindowMode = !SettingsData.bWindowMode;
-				SDL_LockSurface(screen);
-				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
-
-				SDL_UnlockSurface(screen);
-				SHOW_SCREEN
-			}
-		}
-
-		if ( SYM == SDLK_ESCAPE )
-		{
-		
-		}
-
-		if ( SYM == SDLK_F4 )
-		{
-			if(MOD &KMOD_ALT) //alt+f4 pressed
-			{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
-
-					SDL_Event quit;
-					quit.type = SDL_QUIT;
-					SDL_PushEvent(&quit);
-					Quit();
-			}
-		}
-		
-		//if ( SYM == SDLK_LEFT )
-		
-		//if ( SYM == SDLK_RIGHT)
-	
 		switch (event.type)
 		{
 		case SDL_QUIT:
 			cout << "Quit \n";
 			exit=true;
 			break;
-		}
 		
-		
+		case SDL_PRESSED:		
+		if ( SYM == SDLK_RETURN)
+		{
+			cout << "Toggled Enter\n";
+			if(MOD &KMOD_ALT && ETYPE == SDL_KEYUP) //alt+enter makes us go fullscreen|windowmode
+			{
+				cout << "Toggled Fullscreen\n";
+				SettingsData.bWindowMode = !SettingsData.bWindowMode;
+				//SDL_LockSurface(screen);
+				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
+
+				//SDL_UnlockSurface(screen);
+				SHOW_SCREEN
+			}
 		}
-		SDL_Delay ( 100 );
+
+		if ( SYM == SDLK_ESCAPE )
+		{
+			cout << "Toggled ESC\n";
+		}
+
+		if ( SYM == SDLK_F4 )
+		{
+			if(MOD &KMOD_ALT) //alt+f4 pressed
+			{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
+					cout << "Toggled Alt+F4\n";
+					SDL_Event quit;
+					quit.type = SDL_QUIT;
+					SDL_PushEvent(&quit);
+					Quit();
+			}
+		}
+		break;
+		}
+		//if ( SYM == SDLK_LEFT )
+// 		SDL_SaveBMP
+		//if ( SYM == SDLK_RIGHT)
+	
+
+
+
+		
+		SDL_Delay ( 1 );
 	}
 	return 0;
 }
