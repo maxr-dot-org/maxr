@@ -74,6 +74,7 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 	if ( !CalcPath() )
 	{
 		finished=true;
+		if ( vehicle->autoMJob && !vehicle->selected) return; //an automiveing surveyor don't need to tell this
 		if ( vehicle->owner==game->ActivePlayer )
 		{
 			if ( random ( 2,0 ) )
