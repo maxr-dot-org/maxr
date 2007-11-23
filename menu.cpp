@@ -152,7 +152,7 @@ void ExitMenu ( void )
 
 
 // Platziert einen kleinen Button:
-void PlaceSmallButton ( const char *str,int x,int y,bool pressed )
+void PlaceSmallButton (string sText,int x,int y,bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=150;
@@ -163,11 +163,11 @@ void PlaceSmallButton ( const char *str,int x,int y,bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter ( str,x+150/2,y+8,buffer );
+	fonts->OutTextBigCenter( sText,x+150/2,y+8,buffer );
 }
 
 // Platziert einen spezielen Menübutton:
-void PlaceMenuButton ( const char *str,int x,int y, int darkness, bool pressed )
+void PlaceMenuButton (string sText,int x,int y, int darkness, bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=109;
@@ -180,11 +180,11 @@ void PlaceMenuButton ( const char *str,int x,int y, int darkness, bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter ( str,x+109/2,y+12,buffer );
+	fonts->OutTextBigCenter ( sText,x+109/2,y+12,buffer );
 }
 
 // Platziert einen kleinen spezielen Menübutton:
-void PlaceSmallMenuButton ( const char *str,int x,int y,bool pressed )
+void PlaceSmallMenuButton ( string sText,int x,int y,bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=48;
@@ -195,7 +195,7 @@ void PlaceSmallMenuButton ( const char *str,int x,int y,bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter ( str,x+48/2,y+12,buffer );
+	fonts->OutTextBigCenter ( sText,x+48/2,y+12,buffer );
 }
 
 // Platziert einen auswählbaren Text (zentriert):
@@ -3735,40 +3735,36 @@ void cMultiPlayer::RunMenu ( void )
 #define FOCUS_NAME 2
 #define FOCUS_CHAT 3
 
-	if(FileExists(GFXOD_MULT))
-	{
-		LoadPCXtoSF ( GFXOD_MULT,TmpSf );
-	}
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
+	LoadPCXtoSF ( GFXOD_MULT,buffer );
 
 	Focus=FOCUS_NAME;
 	ChatStr="";
-	fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
+	fonts->OutTextCenter ( Titel,320,11,buffer );
 
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ).c_str(),20,245,buffer );
-	fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Port" ).c_str(),228,245,buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ),20,245,buffer );
+	fonts->OutText ( IP,20,260,buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Port" ),228,245,buffer );
 	sprintf ( sztmp,"%d",Port );
 	fonts->OutText ( sztmp,228,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ).c_str(),352,245,buffer );
-	fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ),352,245,buffer );
+	fonts->OutText ( MyPlayer->name,352,260,buffer );
+	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ),500,245,buffer );
 	dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 	SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 
 	if ( host )
 	{
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,470,42,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str() ,470,42+35,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str() ,470,42+35*2,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
+		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
+		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ) ,470,42+35,false );
+		PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ) ,470,42+35*2,false );
+		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
 		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 	}
 	else
 	{
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ).c_str(), 470,200,false );
+		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
 	}
-	PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
+	PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
 
 	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
 
@@ -5254,8 +5250,7 @@ void cMultiPlayer::DisplayPlayerList ( void )
 		p=PlayerList->PlayerItems[i];
 
 		SDL_BlitSurface ( p->color,&scr,buffer,&dest );
-		fonts->OutText ( ( char * ) p->name.c_str(),dest.x+16,dest.y,buffer );
-
+		fonts->OutText ( p->name,dest.x+16,dest.y,buffer );
 		dest.y+=16;
 	}
 	SHOW_SCREEN
