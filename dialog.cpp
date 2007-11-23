@@ -1038,7 +1038,10 @@ bool showSelfdestruction()
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
-	game->DrawMap();
+	if(game)
+	{
+		game->DrawMap();
+	}
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 	if ( SettingsData.bAlphaEffects )
 	{
@@ -1055,11 +1058,13 @@ bool showSelfdestruction()
 	mouse->GetBack ( buffer );
 	while ( 1 )
 	{
-		if ( game->SelectedBuilding==NULL ) break;
-		// Die Engine laufen lassen:
-		//FIXME: check whether game is really running
-		game->engine->Run();
-		game->HandleTimer();
+		if(game)
+		{
+			if ( game->SelectedBuilding==NULL ) break;
+			// Die Engine laufen lassen:
+			game->engine->Run();
+			game->HandleTimer();
+		}
 
 		// Events holen:
 		SDL_PumpEvents();
