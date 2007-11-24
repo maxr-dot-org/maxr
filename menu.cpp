@@ -145,7 +145,6 @@ void showUnitPicture ( void )
 // Menü aufräumen:
 void ExitMenu ( void )
 {
-//  SDL_FreeSurface(TmpSf);
 	SDL_FillRect ( GraphicsData.gfx_shadow,NULL,(buffer->format, 0, 0, 0)  );
 	SDL_SetAlpha ( GraphicsData.gfx_shadow,SDL_SRCALPHA,50 );
 }

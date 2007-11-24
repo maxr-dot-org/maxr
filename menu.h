@@ -80,27 +80,152 @@ void RunMainMenu(void);
 *@author beko
 */
 void showUnitPicture(void);
+/**
+ * 
+ * @param bIAmMain 
+ */
 void prepareMenu(bool bIAmMain=false);
+/**
+ * 
+ * @param  
+ */
 void ExitMenu(void);
+/**
+ * 
+ * @param  
+ */
 void RunSPMenu(void);
+/**
+ * 
+ * @param  
+ * @return 
+ */
 string RunPlanetSelect(void);
+/**
+ * 
+ * @param files 
+ * @param offset 
+ * @param selected 
+ * @param surface Source Surface for proper background drawing
+ */
 void ShowPlanets(TList *files,int offset,int selected, SDL_Surface *surface);
+/**
+ * 
+ * @param init 
+ * @return 
+ */
 sOptions RunOptionsMenu(sOptions *init);
+/**
+ * 
+ * @param  
+ * @return 
+ */
 sPlayer RunPlayerSelect(void);
+/**
+ * 
+ * @param str 
+ * @param x 
+ * @param y 
+ * @param checked 
+ * @param surface Source Surface for proper background drawing
+ * @param center 
+ */
 void PlaceSelectText(const char *str,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
+/**
+ * 
+ * @param player 
+ * @param LandingList 
+ */
 void RunHangar(cPlayer *player, TList *LandingList);
+/**
+ * 
+ * @param x 
+ * @param y 
+ * @param map 
+ */
 void SelectLanding(int *x,int *y,cMap *map);
+/**
+ * 
+ * @param x 
+ * @param y 
+ * @return 
+ */
 int GetKachelBig(int x,int y);
+/**
+ * 
+ * @param  
+ */
 void RunMPMenu(void);
+/**
+ * 
+ * @param  
+ */
 void PlaceSmallButton(std::string sText,int x,int y,bool pressed);
+/**
+ * 
+ * @param files 
+ * @param offset 
+ * @param selected 
+ */
 void PlaceMenuButton(std::string sText,int x,int y, int darkness, bool pressed);
+/**
+ * 
+ * @param sText 
+ * @param x 
+ * @param y 
+ * @param pressed 
+ */
 void PlaceSmallMenuButton(std::string sText,int x,int y,bool pressed);
+/**
+ * 
+ * @param sf 
+ * @return 
+ */
 int GetColorNr(SDL_Surface *sf);
+/**
+ * 
+ * @param  
+ */
 void HeatTheSeat(void);
+/**
+ * 
+ * @param players 
+ */
 void ShowPlayerStates(sPlayer players);
+/**
+ * 
+ * @param list 
+ * @param selected 
+ * @param offset 
+ * @param surface Source Surface for proper background drawing
+ */
 void ShowLandingList(TList *list,int selected,int offset, SDL_Surface *surface);
+/**
+ * 
+ * @param selection 
+ * @param images 
+ * @param selected 
+ * @param offset 
+ * @param tank 
+ * @param plane 
+ * @param ship 
+ * @param build 
+ * @param tnt 
+ * @param kauf 
+ */
 void CreateSelectionList(TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
+/**
+ * 
+ * @param  
+ * @return 
+ */
 int ShowDateiMenu(void);
+/**
+ * 
+ * @param files 
+ * @param offset 
+ * @param selected 
+ */
 void ShowFiles(TList *files, int offset, int selected);
 
 // MultiPlayer Klasse ////////////////////////////////////////////////////////
@@ -129,25 +254,116 @@ public:
   TList *ClientSettingsList; // Liste mit allen empfangenen ClientSettings
   string SaveGame; // Name des zu ladenden Savegames
 
+  /**
+   * 
+   * @param  
+   */
   void RunMenu(void);
+  /**
+   * 
+   * @param surface Source Surface for proper background drawing
+   */
   void DisplayGameSettings(SDL_Surface *surface);
+  /**
+   * 
+   * @param surface Source Surface for proper background drawing
+   */
   void DisplayPlayerList(SDL_Surface *surface);
+  /**
+   * 
+   * @param surface Source Surface for proper background drawing
+   */
   void ShowChatLog(SDL_Surface *surface);
+  /**
+   * 
+   * @param str 
+   */
   void AddChatLog(string str);
+  /**
+   * 
+   * @param  
+   */
   void HandleMenuMessages();
+  /**
+   * 
+   * @param LandX 
+   * @param LandY 
+   * @param LandingList 
+   */
   void ClientConnectedCallBack(void);
+  /**
+   * 
+   * @param  
+   */
   void ClientDistconnect(void);
+  /**
+   * 
+   * @param  
+   */
   void ServerDisconnect(void);
+  /**
+   * 
+   * @param  
+   */
   void ChangeFarbeName(void);
+  /**
+   * 
+   * @param  
+   */
   void SendPlayerList(void);
+  /**
+   * 
+   * @param  
+   */
   void SendOptions(void);
+  /**
+   * 
+   * @param  
+   */
   void TransmitRessources(void);
+  /**
+   * 
+   * @param  
+   * @return 
+   */
   void ServerWait(int LandX,int LandY,TList *LandingList);
+  /**
+   * 
+   * @param LandX 
+   * @param LandY 
+   * @param LandingList 
+   */
   void ClientWait(int LandX,int LandY,TList *LandingList);
+  /**
+   * 
+   * @param p 
+   */
   void TransmitPlayerUpgrades(cPlayer *p);
+  /**
+   * 
+   * @param nr 
+   * @param x 
+   * @param y 
+   * @param ll 
+   */
   void TransmitPlayerLanding(int nr,int x,int y,TList *ll);
+  /**
+   * 
+   * @param  
+   * @return 
+   */
   bool TestPlayerList(void);
+  /**
+   * 
+   * @param  
+   * @return 
+   */
   bool TestPlayerListLoad(void);  
+  /**
+   * 
+   * @param msg 
+   * @return 
+   */
   TList* SplitMessage(string msg);
 };
 
