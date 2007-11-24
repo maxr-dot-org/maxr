@@ -271,7 +271,7 @@ void cFonts::OutTextBigCenter (char *str,int x,int y,SDL_Surface *sf )
 
 void cFonts::OutTextBigCenterGold ( string str,int x,int y,SDL_Surface *sf )
 {
-	OutTextBigCenterGold( str.c_str(), x, y, sf);
+	OutTextBigCenterGold( (char *)str.c_str(), x, y, sf);
 }
 
 void cFonts::OutTextBigCenterGold ( char *str,int x,int y,SDL_Surface *sf )
