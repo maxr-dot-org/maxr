@@ -28,7 +28,6 @@
 
 // Globales //////////////////////////////////////////////////////////////////
 class cMultiPlayer;
-EX SDL_Surface *TmpSf ZERO;
 EX cMultiPlayer *MultiPlayer;
 EX string LoadFile;
 
@@ -85,7 +84,7 @@ void prepareMenu(bool bIAmMain=false);
 void ExitMenu(void);
 void RunSPMenu(void);
 string RunPlanetSelect(void);
-void ShowPlanets(TList *files,int offset,int selected);
+void ShowPlanets(TList *files,int offset,int selected, SDL_Surface *surface);
 sOptions RunOptionsMenu(sOptions *init);
 sPlayer RunPlayerSelect(void);
 void PlaceSelectText(const char *str,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
@@ -99,7 +98,7 @@ void PlaceSmallMenuButton(std::string sText,int x,int y,bool pressed);
 int GetColorNr(SDL_Surface *sf);
 void HeatTheSeat(void);
 void ShowPlayerStates(sPlayer players);
-void ShowLandingList(TList *list,int selected,int offset);
+void ShowLandingList(TList *list,int selected,int offset, SDL_Surface *surface);
 void CreateSelectionList(TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
 int ShowDateiMenu(void);
 void ShowFiles(TList *files, int offset, int selected);

@@ -1424,13 +1424,22 @@ string RunPlanetSelect ( void )
 	TiXmlNode* rootnode;
 	TiXmlNode* node;
 
-	TmpSf=GraphicsData.gfx_shadow;
-	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-	if(FileExists(GFXOD_PLANET_SELECT))
-	{
-		LoadPCXtoSF ( GFXOD_PLANET_SELECT,TmpSf );
-	}
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
+	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Surface *sfTmp;
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_PLANET_SELECT,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
+	
+	//blit sfTmp to buffer
+	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
+
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,320,11,buffer );
 
 	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
@@ -1455,12 +1464,12 @@ string RunPlanetSelect ( void )
 			files->Add ( node->ToElement()->Attribute ( "file" ) );
 	}
 
-	ShowPlanets ( files,offset,selected );
+	ShowPlanets ( files,offset,selected, sfTmp );
 	mouse->Show();
 	mouse->SetCursor ( CHand );
 	SHOW_SCREEN
 
-#define TEAR_DOWN TmpSf=NULL;while(files->Count){/*delete (files->Items(0));*/files->DeleteString(0);}delete files;
+#define TEAR_DOWN while(files->Count){/*delete (files->Items(0));*/files->DeleteString(0);}delete files;
 
 	while ( 1 )
 	{
@@ -1509,7 +1518,7 @@ string RunPlanetSelect ( void )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			offset-=4;
-			ShowPlanets ( files,offset,selected );
+			ShowPlanets ( files,offset,selected, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1518,7 +1527,7 @@ string RunPlanetSelect ( void )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			offset+=4;
-			ShowPlanets ( files,offset,selected );
+			ShowPlanets ( files,offset,selected, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1535,7 +1544,7 @@ string RunPlanetSelect ( void )
 				{
 					selected=i+offset;
 					PlayFX ( SoundData.SNDObjectMenu );
-					ShowPlanets ( files,offset,selected );
+					ShowPlanets ( files,offset,selected, sfTmp );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					break;
@@ -1557,11 +1566,12 @@ string RunPlanetSelect ( void )
 	}
 
 	TEAR_DOWN
+	SDL_FreeSurface(sfTmp);
 	return "";
 }
 
 // Zeigt die Planeten an:
-void ShowPlanets ( TList *files,int offset,int selected )
+void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
 {
 	SDL_Surface *sf;
 	SDL_Rect scr={640, 390, 0, 38},dest;
@@ -1570,7 +1580,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 	int size;
 	FILE *fp;
 
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+	SDL_BlitSurface ( surface,&scr,buffer,&scr );
 
 	scr.x=25; scr.y=90; scr.h=scr.w=112;
 
@@ -1682,7 +1692,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.h=dest.w=25;
 		dest.x=293;
 		dest.y=440;
-		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
+		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 	}
 	if ( files->Count-8-offset>0 )
 	{
@@ -1697,7 +1707,7 @@ void ShowPlanets ( TList *files,int offset,int selected )
 		dest.h=dest.w=25;
 		dest.x=321;
 		dest.y=440;
-		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
+		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 	}
 }
 
@@ -1850,12 +1860,12 @@ void ShowPlayerStates ( sPlayer players )
 }
 
 // Zeigt den Hngar an:
-void ShowBars ( int credits,int StartCredits,TList *landing,int selected );
+void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Surface *surface );
 void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p );
 void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p );
 int CalcSteigerung ( int org, int variety );
 int CalcPrice ( int value,int org, int variety );
-void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf );
+void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface );
 void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,int credits,cPlayer *p );
 
 void RunHangar ( cPlayer *player,TList *LandingList )
@@ -1867,7 +1877,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	bool LadungUpPressed=false,LadungDownPressed=false;
 	int b,lb=0,i,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
 	int LandingOffset=0,LandingSelected=0;
-	SDL_Rect scr,dest;
+	SDL_Rect scr;
 	TList *list,*selection;
 	
 	#define BUTTON_W 77
@@ -1878,18 +1888,27 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	SDL_Rect rBtnDel = {388, 240, BUTTON_W, BUTTON_H};
 	SDL_Rect rTxtDescription = {141,266,150,13};
 
-	TmpSf=GraphicsData.gfx_shadow;
-	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-	if(FileExists(GFXOD_HANGAR))
-	{
-		LoadPCXtoSF ( GFXOD_HANGAR,TmpSf );
-	}
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, TmpSf);
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, TmpSf);
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, TmpSf);
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, TmpSf);
+	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Surface *sfTmp;
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_HANGAR,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
 
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
+	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
+
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
+	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	
+	//blit sfTmp to buffer
 
 
 
@@ -1949,13 +1968,13 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	selection=new TList;
 	CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );
 	ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-	MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+	MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 
 	// Die Landeliste anzeigen:
-	ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+	ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 
 	// Die Bars anzeigen:
-	ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+	ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 
 	SHOW_SCREEN
 	mouse->draw ( false,screen );
@@ -2135,9 +2154,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
 
 						if ( LandingSelected<0 ) LandingSelected=0;
-						ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+						ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 						player->Credits-=selection->HUpItems[selected]->costs;
-						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 					}
 				}
@@ -2170,7 +2189,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 					PlayFX ( SoundData.SNDObjectMenu );
 					ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					break;
@@ -2193,7 +2212,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 					PlayFX ( SoundData.SNDObjectMenu );
 					ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					break;
@@ -2208,7 +2227,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			tank=!tank;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2217,7 +2236,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			plane=!plane;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2226,7 +2245,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			ship=!ship;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2235,7 +2254,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			build=!build;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2244,7 +2263,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			tnt=!tnt;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2253,7 +2272,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=false;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2262,7 +2281,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=true;
 			CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );      ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf );
+			MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2283,9 +2302,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			{
 				LandingOffset++;
 			}
-			ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+			ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			player->Credits-=n->costs;
-			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			
 			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
@@ -2314,7 +2333,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			{
 				LandingOffset--;
 				if ( LandingSelected>=LandingOffset+5 ) LandingSelected=LandingOffset+4;
-				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -2329,7 +2348,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=327;
 			dest.y=240;
-			SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Down2Pressed=false;
@@ -2348,7 +2367,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			{
 				LandingOffset++;
 				if ( LandingSelected<LandingOffset ) LandingSelected=LandingOffset;
-				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			SHOW_SCREEN
@@ -2363,7 +2382,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=347;
 			dest.y=240;
-			SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Up2Pressed=false;
@@ -2387,7 +2406,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 				delete LandingList->LandItems[LandingSelected];
 				LandingList->DeleteLanding ( LandingSelected );
-				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
 				if ( LandingSelected>=LandingList->Count )
@@ -2399,7 +2418,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					LandingOffset--;
 				}
 				if ( LandingSelected<0 ) LandingSelected=0;
-				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			}
 
 			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
@@ -2426,8 +2445,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				int last_selected=LandingSelected;
 				PlayFX ( SoundData.SNDObjectMenu );
 				LandingSelected=nr;
-				ShowLandingList ( LandingList,LandingSelected,LandingOffset );
-				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
+				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 				// Doppelklick prüfen:
 				if ( last_selected==nr )
 				{
@@ -2437,7 +2456,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 						player->Credits+=LandingList->LandItems[LandingSelected]->cargo/5;
 						delete LandingList->LandItems[LandingSelected];
 						LandingList->DeleteLanding ( LandingSelected );
-						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
+						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
 						if ( LandingSelected>=LandingList->Count )
@@ -2449,7 +2468,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 							LandingOffset--;
 						}
 						if ( LandingSelected<0 ) LandingSelected=0;
-						ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+						ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
 					}
 				}
 				SHOW_SCREEN
@@ -2477,8 +2496,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 					ptr->cargo+=5;
 					player->Credits--;
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
-					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
+					ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
 
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 					SHOW_SCREEN
@@ -2493,7 +2512,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					dest.h=scr.h=17;
 					dest.x=413;
 					dest.y=424;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungDownPressed=false;
@@ -2511,8 +2530,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 					ptr->cargo-=5;
 					player->Credits++;
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
-					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
+					ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
 
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 					SHOW_SCREEN
@@ -2527,7 +2546,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 					dest.h=scr.h=17;
 					dest.x=433;
 					dest.y=424;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungUpPressed=false;
@@ -2561,8 +2580,8 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 						}
 					}
 
-					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected );
-					ShowLandingList ( LandingList,LandingSelected,LandingOffset );
+					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
+					ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -2575,7 +2594,6 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		SDL_Delay ( 1 );
 	}
 
-	TmpSf=NULL;
 	while ( list->Count )
 	{
 		sHUp *ptr;
@@ -2601,6 +2619,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	}
 	delete list;
 	delete selection;
+	SDL_FreeSurface(sfTmp);
 	
 }
 
@@ -3110,7 +3129,7 @@ int CalcSteigerung ( int org, int variety )
 }
 
 // Malt die SubButtons im Upgradefenster:
-void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
+void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface )
 {
 	SDL_Rect scr,dest;
 	scr.x=152;scr.y=479;
@@ -3176,7 +3195,7 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	dest.y=446;
 	if ( !kauf )
 	{
-		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
+		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 		dest.y=462;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
@@ -3184,12 +3203,12 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		dest.y=462;
-		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
+		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 	}
 }
 
 // Zeigt die Bars an:
-void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
+void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Surface *surface )
 {
 	char str[50];
 	SDL_Rect scr,dest;
@@ -3197,12 +3216,12 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	scr.y=dest.y=301;
 	scr.w=dest.w=22;
 	scr.h=dest.h=115;
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	scr.x=dest.x=312;
 	scr.y=dest.y=265;
 	scr.w=dest.w=150;
 	scr.h=dest.h=30;
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	sprintf ( str,"%d",credits );
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Gold" ).c_str() ,381,275,buffer );
 	fonts->OutTextCenter ( str,381,275+10,buffer );
@@ -3219,7 +3238,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected )
 	scr.y=dest.y=301;
 	scr.w=dest.w=20;
 	scr.h=dest.h=115;
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&dest );
+	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
 	if ( selected>=0&&landing->Count&&selected<landing->Count )
 	{
@@ -3364,7 +3383,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 }
 
 // Zeigt die Liste mit den ausgewählten Landefahrzeugen an:
-void ShowLandingList ( TList *list,int selected,int offset )
+void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface )
 {
 	sLanding *ptr;
 	SDL_Rect scr,dest,text;
@@ -3372,7 +3391,7 @@ void ShowLandingList ( TList *list,int selected,int offset )
 	int i,t;
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=233;
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+	SDL_BlitSurface ( surface,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=340;dest.y=20;
@@ -4111,7 +4130,7 @@ void cMultiPlayer::RunMenu ( void )
 					map=RunPlanetSelect();
 					SaveGame="";
 					LoadPCXtoSF ( GFXOD_MULT,sfTmp );
-					SDL_BlitSurface ( TmpSf,NULL,sfTmp,NULL );
+					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
 					DisplayGameSettings(sfTmp);
 					DisplayPlayerList(sfTmp);
 					fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
