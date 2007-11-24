@@ -199,7 +199,7 @@ void PlaceSmallMenuButton ( string sText,int x,int y,bool pressed )
 }
 
 // Platziert einen auswählbaren Text (zentriert):
-void PlaceSelectText ( const char *str,int x,int y,bool checked,bool center )
+void PlaceSelectText ( const char *str,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {
 	SDL_Rect r;
 	int len;
@@ -217,16 +217,16 @@ void PlaceSelectText ( const char *str,int x,int y,bool checked,bool center )
 	r.w=len+8;
 	r.h=1;
 	r.y=y-2;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 	r.y+=14;
 	r.w++;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 	r.y-=14;
 	r.w=1;
 	r.h=14;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 	r.x+=len+8;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 }
 
 // Zeigt das Hauptmenü an:
@@ -599,7 +599,6 @@ void RunMPMenu ( void )
 					map=new cMap();
 					game=new cGame ( NULL, map );
 					ExitMenu();
-					TmpSf=NULL;
 					if ( !LoadFile.empty() )
 					{
 						game->HotSeat=true;
@@ -823,7 +822,6 @@ void RunSPMenu ( void )
 					map=new cMap();
 					game=new cGame ( NULL, map );
 					ExitMenu();
-					TmpSf=NULL;
 					if ( !LoadFile.empty() )
 					{
 						game->Load ( LoadFile,0 );
@@ -928,73 +926,80 @@ sOptions RunOptionsMenu ( sOptions *init )
 		options=*init;
 	}
 
-	TmpSf=GraphicsData.gfx_shadow;
-	SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-
-	if(FileExists(GFXOD_OPTIONS))
-	{
-		LoadPCXtoSF ( GFXOD_OPTIONS,TmpSf );
-	}
-	SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
+	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Surface *sfTmp;
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_OPTIONS,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
+	
+	//blit sfTmp to buffer
+	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 	fonts->OutTextCenter ( GAMEOPTIONS,320,11,buffer );
 
 	// Ressourcen:
 	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Resource" ).c_str(),110,56,buffer );
 
 	fonts->OutText ( METAL.c_str(),17,86,buffer );
-	PlaceSelectText ( LOW,38,86+16,options.metal==0 );
-	PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
-	PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
-	PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
+	PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
+	PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp);
+	PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+	PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 
 	fonts->OutText ( OIL.c_str(),17,124,buffer );
-	PlaceSelectText ( LOW,38,124+16,options.oil==0 );
-	PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
-	PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
-	PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
+	PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
+	PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 , sfTmp);
+	PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+	PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 
 	fonts->OutText ( GOLD.c_str(),17,162,buffer );
-	PlaceSelectText ( LOW,38,162+16,options.gold==0 );
-	PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
-	PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
-	PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
+	PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
+	PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+	PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 , sfTmp);
+	PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 
 	// Credits:
 	fonts->OutTextCenter ( CREDITS.c_str(),110+211,56,buffer );
 
-	PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-	PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-	PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-	PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-	PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-	PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-	PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+	PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+	PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+	PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+	PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+	PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+	PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+	PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 
 	// Brückenkopf:
 	fonts->OutTextCenter ( HEAD.c_str(),110+211*2,56,buffer );
 
-	PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead,false );
-	PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead,false );
+	PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+	PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 
 	// AlienTechs:
 	fonts->OutTextCenter ( ALIEN.c_str(),110,251,buffer );
 
-	PlaceSelectText ( ON,38,281,options.AlienTech );
-	PlaceSelectText ( OFF,38,281+20,!options.AlienTech );
+	PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
+	PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 
 	// Ressourcendichte:
 	fonts->OutTextCenter ( RESOURCE.c_str(),110+211,251,buffer );
 
-	PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
-	PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
-	PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,false );
-	PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
+	PlaceSelectText ( THIN,110+130,281,options.dichte==0, sfTmp,false );
+	PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1, sfTmp,false );
+	PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2, sfTmp,false );
+	PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3, sfTmp,false );
 
 	// Spielart:
 	fonts->OutTextCenter ( GAMETYPE.c_str(),110+211*2,251,buffer );
 
-	PlaceSelectText ( SIMU,452,281,!options.PlayRounds,false );
-	PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,false );
+	PlaceSelectText ( SIMU,452,281,!options.PlayRounds, sfTmp,false );
+	PlaceSelectText ( TURNS,452,281+20,options.PlayRounds, sfTmp,false );
 
 	drawMenuButton ( OK,false,390,440);
 	drawMenuButton ( BACK,false,50,440);
@@ -1018,10 +1023,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=0;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0 );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
+			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1029,10 +1034,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=1;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0 );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
+			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1040,10 +1045,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=2;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0 );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
+			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1051,10 +1056,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=3;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0 );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1 );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2 );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3 );
+			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1063,10 +1068,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=0;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0 );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
+			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1074,10 +1079,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=1;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0 );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
+			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1085,10 +1090,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=2;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0 );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
+			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1096,10 +1101,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=3;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0 );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2 );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3 );
+			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1108,10 +1113,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=0;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0 );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
+			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1119,10 +1124,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=1;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0 );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
+			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1130,10 +1135,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=2;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0 );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
+			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1141,10 +1146,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=3;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0 );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1 );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3 );
+			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
+			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1153,13 +1158,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4&&mouse->y<86-4+20 )
 		{
 			options.credits=25;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1167,13 +1172,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20&&mouse->y<86-4+20+20 )
 		{
 			options.credits=50;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1181,13 +1186,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*2&&mouse->y<86-4+20+20*2 )
 		{
 			options.credits=100;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1195,13 +1200,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*3&&mouse->y<86-4+20+20*3 )
 		{
 			options.credits=150;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1209,13 +1214,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*4&&mouse->y<86-4+20+20*4 )
 		{
 			options.credits=200;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1223,13 +1228,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*5&&mouse->y<86-4+20+20*5 )
 		{
 			options.credits=250;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1237,13 +1242,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*6&&mouse->y<86-4+20+20*6 )
 		{
 			options.credits=300;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300,false );
+			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1252,8 +1257,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4&&mouse->y<86-4+14 )
 		{
 			options.FixedBridgeHead=false;
-			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead,false );
-			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead,false );
+			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1261,8 +1266,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4+20&&mouse->y<86-4+14+20 )
 		{
 			options.FixedBridgeHead=true;
-			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead,false );
-			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead,false );
+			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1271,8 +1276,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4&&mouse->y<281-4+14 )
 		{
 			options.AlienTech=true;
-			PlaceSelectText ( ON,38,281,options.AlienTech );
-			PlaceSelectText ( OFF,38,281+20,!options.AlienTech );
+			PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
+			PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1280,8 +1285,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4+20&&mouse->y<281-4+14+20 )
 		{
 			options.AlienTech=false;
-			PlaceSelectText ( ON,38,281,options.AlienTech );
-			PlaceSelectText ( OFF,38,281+20,!options.AlienTech );
+			PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
+			PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1290,10 +1295,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
 		{
 			options.dichte=0;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
+			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1301,10 +1306,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
 		{
 			options.dichte=1;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
+			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1312,10 +1317,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*2-4&&mouse->y<281+20*2-4+20 )
 		{
 			options.dichte=2;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
+			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1323,10 +1328,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*3-4&&mouse->y<281+20*3-4+20 )
 		{
 			options.dichte=3;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,false );
+			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1335,8 +1340,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
 		{
 			options.PlayRounds=false;
-			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,false );
-			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,false );
+			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
+			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1344,8 +1349,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
 		{
 			options.PlayRounds=true;
-			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,false );
-			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,false );
+			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
+			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1403,7 +1408,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 		SDL_Delay ( 1 );
 	}
 
-	TmpSf=NULL;
+	SDL_FreeSurface(sfTmp);
 	return options;
 }
 
@@ -3723,7 +3728,7 @@ void cMultiPlayer::RunMenu ( void )
 	int b, lb=0,lx=-1,ly=-1;
 	string ChatStr, stmp;
 	char sztmp[256];
-	SDL_Rect scr,dest;
+	SDL_Rect scr;
 	Uint8 *keystate;
 	unsigned int time;
 	int Focus;
@@ -3735,7 +3740,22 @@ void cMultiPlayer::RunMenu ( void )
 #define FOCUS_NAME 2
 #define FOCUS_CHAT 3
 
-	LoadPCXtoSF ( GFXOD_MULT,buffer );
+	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Surface *sfTmp;
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_MULT,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
+	
+	//blit sfTmp to buffer
+	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
+
 
 	Focus=FOCUS_NAME;
 	ChatStr="";
@@ -3786,8 +3806,8 @@ void cMultiPlayer::RunMenu ( void )
 	}
 
 	mouse->SetCursor ( CHand );
-	DisplayGameSettings();
-	DisplayPlayerList();
+	DisplayGameSettings(sfTmp);
+	DisplayPlayerList(sfTmp);
 	SHOW_SCREEN
 	mouse->draw ( false,screen );
 	time=SDL_GetTicks();
@@ -3848,7 +3868,7 @@ void cMultiPlayer::RunMenu ( void )
 					IP=InputStr;
 					scr.x=20;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
 					fonts->OutText ( ( char * ) stmp.c_str(),20,260,buffer );
 					break;
 				case FOCUS_PORT:
@@ -3865,7 +3885,7 @@ void cMultiPlayer::RunMenu ( void )
 					}
 					scr.x=228;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
 					fonts->OutText ( ( char * ) stmp.c_str(),228,260,buffer );
 					break;
 				case FOCUS_NAME:
@@ -3879,14 +3899,14 @@ void cMultiPlayer::RunMenu ( void )
 					if ( strcmp ( MyPlayer->name.c_str(),InputStr.c_str() ) )
 					{
 						MyPlayer->name=InputStr;
-						DisplayPlayerList();
+						DisplayPlayerList(sfTmp);
 						ChangeFarbeName();
 					}
 					scr.x=352;
 					scr.y=260;
 					scr.w=i_tmpRedrawLength;
 					scr.h=16;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
 					fonts->OutText ( ( char * ) stmp.c_str(),352,260,buffer );
 					break;
 				case FOCUS_CHAT:
@@ -3900,7 +3920,7 @@ void cMultiPlayer::RunMenu ( void )
 					ChatStr=InputStr;
 					scr.x=20;scr.y=423;
 					scr.w=i_tmpRedrawLength;scr.h=16;
-					SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
 					fonts->OutText ( ( char * ) stmp.c_str(),20,423,buffer );
 					break;
 			}
@@ -4051,7 +4071,7 @@ void cMultiPlayer::RunMenu ( void )
 			fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-			DisplayPlayerList();
+			DisplayPlayerList(sfTmp);
 			ChangeFarbeName();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -4067,7 +4087,7 @@ void cMultiPlayer::RunMenu ( void )
 			fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-			DisplayPlayerList();
+			DisplayPlayerList(sfTmp);
 			ChangeFarbeName();
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -4090,16 +4110,10 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					map=RunPlanetSelect();
 					SaveGame="";
-
-					TmpSf=GraphicsData.gfx_shadow;
-					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-					if(FileExists(GFXOD_MULT))
-					{
-						LoadPCXtoSF ( GFXOD_MULT,TmpSf );
-					}
-					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-					DisplayGameSettings();
-					DisplayPlayerList();
+					LoadPCXtoSF ( GFXOD_MULT,sfTmp );
+					SDL_BlitSurface ( TmpSf,NULL,sfTmp,NULL );
+					DisplayGameSettings(sfTmp);
+					DisplayPlayerList(sfTmp);
 					fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
 					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ).c_str(),20,245,buffer );
 					fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );
@@ -4153,16 +4167,10 @@ void cMultiPlayer::RunMenu ( void )
 					}
 					no_options=false;
 					SaveGame="";
-
-					TmpSf=GraphicsData.gfx_shadow;
-					SDL_SetAlpha ( TmpSf,SDL_SRCALPHA,255 );
-					if(FileExists(GFXOD_MULT))
-					{
-						LoadPCXtoSF ( GFXOD_MULT,TmpSf );
-					}
-					SDL_BlitSurface ( TmpSf,NULL,buffer,NULL );
-					DisplayGameSettings();
-					DisplayPlayerList();
+					LoadPCXtoSF ( GFXOD_MULT,sfTmp );
+					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
+					DisplayGameSettings(sfTmp);
+					DisplayPlayerList(sfTmp);
 					fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
 					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ).c_str(),20,245,buffer );
 					fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );
@@ -4351,7 +4359,7 @@ void cMultiPlayer::RunMenu ( void )
 					AddChatLog ( ChatStr );
 					ChatStr="";
 					if ( Focus==FOCUS_CHAT ) InputStr="";
-					scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+					scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
 				}
 
 				SHOW_SCREEN
@@ -4372,7 +4380,7 @@ void cMultiPlayer::RunMenu ( void )
 			InputStr=IP;
 			ShowCursor=true;
 			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
 			// Klick auf den Port:
 		}
 		else if ( b&&!lb&&mouse->x>=228&&mouse->x<228+108&&mouse->y>=250&&mouse->y<250+30 )
@@ -4381,7 +4389,7 @@ void cMultiPlayer::RunMenu ( void )
 			sprintf ( sztmp,"%d",Port );
 			InputStr=sztmp;
 			ShowCursor=true;
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
 			// Klick auf den Namen:
 		}
 		else if ( b&&!lb&&mouse->x>=352&&mouse->x<352+108&&mouse->y>=250&&mouse->y<250+30 )
@@ -4390,7 +4398,7 @@ void cMultiPlayer::RunMenu ( void )
 			InputStr=MyPlayer->name;
 			ShowCursor=true;
 			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
 			// Klick auf den ChatStr:
 		}
 		else if ( b&&!lb&&mouse->x>=20&&mouse->x<20+425&&mouse->y>=420&&mouse->y<420+30 )
@@ -4399,7 +4407,7 @@ void cMultiPlayer::RunMenu ( void )
 			InputStr=ChatStr;
 			ShowCursor=true;
 			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
 		}
 
 		// Das WaitForGo machen:
@@ -4603,13 +4611,13 @@ void cMultiPlayer::RunMenu ( void )
 		}
 
 		// Ggf Chatlogs anzeigen:
-		ShowChatLog();
+		ShowChatLog(sfTmp);
 		// Ggf weitere Daten anzeigen:
 		if ( Refresh )
 		{
 			Refresh=false;
-			DisplayGameSettings();
-			DisplayPlayerList();
+			DisplayGameSettings(sfTmp);
+			DisplayPlayerList(sfTmp);
 		}
 
 		// Ggf Meldung über Statusänderung machen:
@@ -4658,7 +4666,7 @@ void cMultiPlayer::RunMenu ( void )
 		HandleMenuMessages();
 		SDL_Delay ( 1 );
 	}
-	TmpSf=NULL;
+	SDL_FreeSurface(sfTmp);
 }
 
 // Empfängt eine Nachricht fürs Menü:
@@ -5004,7 +5012,7 @@ void cMultiPlayer::HandleMenuMessages()
 }
 
 // Zeigt die Settings für das Spiel an:
-void cMultiPlayer::DisplayGameSettings ( void )
+void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 {
 	string str;
 	char sztmp[256];
@@ -5015,7 +5023,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 
 	if ( !host )
 	{
-		SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+		SDL_BlitSurface ( surface,&r,buffer,&r );
 	}
 
 	str="Version: "; str+=MAX_VERSION; str+="\n";
@@ -5120,7 +5128,7 @@ void cMultiPlayer::DisplayGameSettings ( void )
 			sprintf ( sztmp,"%d",iSize );
 			str+=" ("; str+=sztmp; str+="x"; str+=sztmp; str+=")\n";
 
-			SDL_BlitSurface ( TmpSf,&r,buffer,&r );
+			SDL_BlitSurface ( surface,&r,buffer,&r );
 
 			//draw mapname to infobox map
 			fonts->OutTextCenter ( ( char * ) sNameNice.c_str(),90,65,buffer );
@@ -5197,7 +5205,7 @@ TList* cMultiPlayer::SplitMessage ( string msg )
 }
 
 
-void cMultiPlayer::ShowChatLog ( void )
+void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
 {
 	string str;
 	int i;
@@ -5216,7 +5224,7 @@ void cMultiPlayer::ShowChatLog ( void )
 		SDL_BlitSurface ( buffer,&scr,buffer,&dest );
 		dest.y=298+8*11;
 		dest.h=11;
-		SDL_BlitSurface ( TmpSf,&dest,buffer,&dest );
+		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 		fonts->OutText ( ( char * ) str.c_str(),dest.x,dest.y,buffer );
 	}
 	while ( ChatList->Count>0 )
@@ -5233,14 +5241,14 @@ void cMultiPlayer::AddChatLog ( string str )
 }
 
 // Zeigt die Liste ,it den Spielern an:
-void cMultiPlayer::DisplayPlayerList ( void )
+void cMultiPlayer::DisplayPlayerList ( SDL_Surface *surface )
 {
 	SDL_Rect scr,dest;
 	cPlayer *p;
 	int i;
 	scr.x=465;scr.y=287;
 	scr.w=162;scr.h=116;
-	SDL_BlitSurface ( TmpSf,&scr,buffer,&scr );
+	SDL_BlitSurface ( surface,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	dest.w=dest.h=scr.w=scr.h=10;
 	dest.x=476;dest.y=297;

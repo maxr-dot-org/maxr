@@ -88,7 +88,7 @@ string RunPlanetSelect(void);
 void ShowPlanets(TList *files,int offset,int selected);
 sOptions RunOptionsMenu(sOptions *init);
 sPlayer RunPlayerSelect(void);
-void PlaceSelectText(const char *str,int x,int y,bool checked,bool center=true);
+void PlaceSelectText(const char *str,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
 void RunHangar(cPlayer *player, TList *LandingList);
 void SelectLanding(int *x,int *y,cMap *map);
 int GetKachelBig(int x,int y);
@@ -131,9 +131,9 @@ public:
   string SaveGame; // Name des zu ladenden Savegames
 
   void RunMenu(void);
-  void DisplayGameSettings();
-  void DisplayPlayerList(void);
-  void ShowChatLog(void);
+  void DisplayGameSettings(SDL_Surface *surface);
+  void DisplayPlayerList(SDL_Surface *surface);
+  void ShowChatLog(SDL_Surface *surface);
   void AddChatLog(string str);
   void HandleMenuMessages();
   void ClientConnectedCallBack(void);
