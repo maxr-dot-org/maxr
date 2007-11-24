@@ -225,8 +225,9 @@ int ShowDateiMenu(void);
  * @param files 
  * @param offset 
  * @param selected 
+ * @param rDialog SDL_Rect with real Dialog rect depending on screen resolution
  */
-void ShowFiles(TList *files, int offset, int selected);
+void ShowFiles(TList *files, int offset, int selected, SDL_Rect rDialog);
 
 // MultiPlayer Klasse ////////////////////////////////////////////////////////
 class cMultiPlayer{

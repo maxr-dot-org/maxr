@@ -30,40 +30,39 @@
 #include "files.h"
 #include "loaddata.h"
 
+#define DIALOG_W 640
+#define DIALOG_H 480
+#define DIALOG_X (SettingsData.iScreenW / 2 - DIALOG_W / 2)
+#define DIALOG_Y (SettingsData.iScreenH / 2 - DIALOG_H / 2)	
+#define TITLE_X DIALOG_X+320
+#define TITLE_Y DIALOG_Y+147
+#define INFO_IMG_X DIALOG_X+16
+#define INFO_IMG_Y DIALOG_Y+182
+#define INFO_IMG_WIDTH 320
+#define INFO_IMG_HEIGHT 240
 
+#define BTN_SPACE 35
+#define BTN_WIDTH 200
+#define BTN_HEIGHT 29
+#define BTN_1_X DIALOG_X+390
+#define BTN_1_Y DIALOG_Y+190
+#define BTN_2_X BTN_1_X
+#define BTN_2_Y BTN_1_Y+BTN_SPACE
+#define BTN_3_X BTN_1_X
+#define BTN_3_Y BTN_1_Y+BTN_SPACE*2
+#define BTN_4_X BTN_1_X
+#define BTN_4_Y BTN_1_Y+BTN_SPACE*3
+#define BTN_5_X BTN_1_X
+#define BTN_5_Y BTN_1_Y+BTN_SPACE*4
+#define BTN_6_X BTN_1_X
+#define BTN_6_Y BTN_1_Y+BTN_SPACE*5
+	
 /** int for showUnitPicture to prevent same graphic shown twice on click*/
 static int s_iLastUnitShown = 0;
 
 // Menü vorbereiten:
 void prepareMenu ( bool bIAmMain )
 {
-	#define DIALOG_W 640
-	#define DIALOG_H 480
-	#define DIALOG_X (SettingsData.iScreenW / 2 - DIALOG_W / 2)
-	#define DIALOG_Y (SettingsData.iScreenH / 2 - DIALOG_H / 2)	
-	#define TITLE_X DIALOG_X+320
-	#define TITLE_Y DIALOG_Y+147
-	#define INFO_IMG_X DIALOG_X+16
-	#define INFO_IMG_Y DIALOG_Y+182
-	#define INFO_IMG_WIDTH 320
-	#define INFO_IMG_HEIGHT 240
-	
-	#define BTN_SPACE 35
-	#define BTN_WIDTH 200
-	#define BTN_HEIGHT 29
-	#define BTN_1_X DIALOG_X+390
-	#define BTN_1_Y DIALOG_Y+190
-	#define BTN_2_X BTN_1_X
-	#define BTN_2_Y BTN_1_Y+BTN_SPACE
-	#define BTN_3_X BTN_1_X
-	#define BTN_3_Y BTN_1_Y+BTN_SPACE*2
-	#define BTN_4_X BTN_1_X
-	#define BTN_4_Y BTN_1_Y+BTN_SPACE*3
-	#define BTN_5_X BTN_1_X
-	#define BTN_5_Y BTN_1_Y+BTN_SPACE*4
-	#define BTN_6_X BTN_1_X
-	#define BTN_6_Y BTN_1_Y+BTN_SPACE*5
-
 	//BEGIN MENU REDRAW
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
@@ -5833,33 +5832,39 @@ void HeatTheSeat ( void )
 // Zeigt das Laden Menü an:
 int ShowDateiMenu ( void )
 {
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect scr,dest;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  HilfePressed=false, LadenPressed=false, Cursor=true;
 	TList *files;
+	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
+	SDL_Rect rBtnLoad = {rDialog.x+514,rDialog.y+438, 106, 40};
+	SDL_Rect rBtnHelp = {rDialog.x+464,rDialog.y+438, 40, 40};
+	SDL_Rect rArrowUp = {rDialog.x+33, rDialog.y+438, 28, 29};
+	SDL_Rect rArrowDown = {rDialog.x+63, rDialog.y+438, 28, 29};
+	SDL_Rect rTitle = { rDialog.x+320, rDialog.y+12, 150, 12 };
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
 	// Den Bildschirm blitten:
-	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,&rDialog );
 	// Den Text anzeigen:
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),320,12,buffer );
+	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),rTitle.x,rTitle.y,buffer );
 	// Buttons setzen;
-	PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,false );
-	PlaceSmallMenuButton ( "? ",464,438,false );
-	PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,false );
+	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
+	PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
+	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+	//BEGIN ARROW CODE
 	scr.y=40;
-	scr.w=dest.w=28;
-	scr.h=dest.h=29;
-	dest.y=438;
+	scr.w=28;
+	scr.h=29;
 	scr.x=96;
-	dest.x=33;
-	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 	scr.x=96+28*2;
-	dest.x=63;
-	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
+	//END ARROW CODE
 	// Dateien suchen und Anzeigen:
 	files = getFilesOfDirectory ( SettingsData.sSavesPath );
 	for ( int i = 0; i < files->Count; i++ )
@@ -5870,7 +5875,7 @@ int ShowDateiMenu ( void )
 			i--;
 		}
 	}
-	ShowFiles ( files,offset,selected );
+	ShowFiles ( files,offset,selected, rDialog );
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -5888,35 +5893,35 @@ int ShowDateiMenu ( void )
 			mouse->draw ( true,screen );
 		}
 		// Klick auf einen Speicher:
-		if ( ( x>=15&&x<15+205&&y>45&&y<45+375 ) || ( x>=417&&x<417+205&&y>45&&y<45+375 ) )
+		if ( ( x >= rDialog.x+15 && x < rDialog.x+15 + 205 && y > rDialog.y+45 && y <  rDialog.y+45 + 375 ) || ( x >=  rDialog.x+417 && x <  rDialog.x+417 + 205 && y >  rDialog.y+45 && y <  rDialog.y+45 + 375 ) )
 		{
 			if ( b&&!LastB )
 			{
 				InputStr = "";
-				int checkx = 15, checky = 45;
+				int checkx = rDialog.x+15, checky = rDialog.y+45;
 				for ( int i = 0; i<10; i++ )
 				{
 					if ( i==5 )
 					{
-						checkx=418;
-						checky=45;
+						checkx=rDialog.x+418;
+						checky=rDialog.y+45;
 					}
 					if ( x>=checkx&&x<checkx+205&&y>checky&&y<checky+73 )
 						selected = i+offset;
 					checky+=75;
 				}
-				ShowFiles ( files,offset,selected );
+				ShowFiles ( files,offset,selected, rDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 		}
 		// Fertig-Button:
-		if ( x>=353&&x<353+109&&y>=438&&y<438+40 )
+		if ( x >= rBtnBack.x && x < rBtnBack.x + rBtnBack.w && y >= rBtnBack.y && y < rBtnBack.y + rBtnBack.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,true );
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),true,rBtnBack.x,rBtnBack.y,buffer );	
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5928,28 +5933,28 @@ int ShowDateiMenu ( void )
 		}
 		else if ( FertigPressed )
 		{
-			PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ).c_str(),353,438,2,false );
+			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 		}
 		// Laden-Button:
-		if ( x>=514&&x<514+109&&y>=438&&y<438+40 )
+		if ( x >= rBtnLoad.x && x < rBtnLoad.x + rBtnLoad.w && y >= rBtnLoad.y && y < rBtnLoad.y + rBtnLoad.h )
 		{
 			if ( b&&!LadenPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,true );
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),true,rBtnLoad.x,rBtnLoad.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				LadenPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,false );
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 				if ( selected != -1 )
 				{
-					ShowFiles ( files,offset,selected );
+					ShowFiles ( files,offset,selected, rDialog );
 					return 1;
 				}
 				SHOW_SCREEN
@@ -5959,20 +5964,19 @@ int ShowDateiMenu ( void )
 		}
 		else if ( LadenPressed )
 		{
-			PlaceMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Load" ).c_str(),514,438,4,false );
+			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			LadenPressed=false;
 		}
 		// Up-Button:
-		if ( x>=33&&x<33+29&&y>=438&&y<438+29 )
+		if ( x >= rArrowUp.x && x < rArrowUp.x + rArrowUp.w && y >= rArrowUp.y && y < rArrowUp.y + rArrowUp.h )
 		{
 			if ( b&&!UpPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=96+28;
-				dest.x=33;
-				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=true;
@@ -5984,10 +5988,9 @@ int ShowDateiMenu ( void )
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected );
+				ShowFiles ( files,offset,selected, rDialog );
 				scr.x=96;
-				dest.x=33;
-				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=false;
@@ -5996,21 +5999,19 @@ int ShowDateiMenu ( void )
 		else if ( UpPressed )
 		{
 			scr.x=96;
-			dest.x=33;
-			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
 		}
 		// Down-Button:
-		if ( x>=63&&x<63+29&&y>=438&&y<438+29 )
+		if ( x >= rArrowDown.x && x < rArrowDown.x + rArrowDown.w && y >= rArrowDown.y && y < rArrowDown.y + rArrowDown.h )
 		{
 			if ( b&&!DownPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
 				scr.x=96+28*3;
-				dest.x=63;
-				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=true;
@@ -6022,10 +6023,9 @@ int ShowDateiMenu ( void )
 					offset+=10;
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected );
+				ShowFiles ( files,offset,selected, rDialog );
 				scr.x=96+28*2;
-				dest.x=63;
-				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=false;
@@ -6034,8 +6034,7 @@ int ShowDateiMenu ( void )
 		else if ( DownPressed )
 		{
 			scr.x=96+28*2;
-			dest.x=63;
-			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
+			SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
@@ -6049,61 +6048,83 @@ int ShowDateiMenu ( void )
 }
 
 // Zeigt die Saves an
-void ShowFiles ( TList *files, int offset, int selected )
+void ShowFiles ( TList *files, int offset, int selected, SDL_Rect rDialog )
+
 {
-	SDL_Rect rect;
-	int i,x=35,y=72;
+	SDL_Rect rect, src;
+	int i, x = rDialog.x + 35, y = rDialog.y + 72;
 	// Save Nummern ausgeben
-	rect.x=25;rect.y=70;
-	rect.w=26;rect.h=16;
+	rect.x = rDialog.x + (src.x = 25);
+	rect.y = rDialog.y + (src.y = 70);
+	rect.w = src.w = 26;
+	rect.h = src.h = 16;
+
+	//redraw numbers
 	for ( i = 0; i < 10; i++ )
 	{
 		if ( i == 5 )
 		{
-			rect.x+=398;
-			rect.y=70;
-			x=435;
-			y=72;
+			rect.x += 398;
+			src.x += 398;
+			rect.y = rDialog.y + (src.y=70);
+			x = rDialog.x + 435;
+			y = rDialog.y + 72;
 		}
-		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
+
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu, &src, buffer, &rect );
 		if ( i + offset == selected )
 		{
-			fonts->OutTextBigCenterGold ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
+			fonts->OutTextBigCenterGold ( iToStr ( offset + i + 1 ), x, y, buffer );
 		}
 		else
 		{
-			fonts->OutTextBigCenter ( ( char * ) iToStr( offset+i+1 ).c_str(),x,y,buffer );
+			fonts->OutTextBigCenter ( iToStr ( offset + i + 1 ), x, y, buffer );
 		}
-		rect.y+=76;
-		y+=76;
+
+		rect.y += 76;
+		src.y += 76;
+		y += 76;
 	}
+
 	// Savenamen mit evtl. Auswahl ausgeben
-	rect.x=55;rect.y=59;
-	rect.w=153;rect.h=41;
+	rect.x = rDialog.x + (src.x=55);
+	rect.y = rDialog.y + (src.y=59);
+	rect.w = src.w = 153;
+	rect.h = src.h = 41;
+
+	//redraw black bars in save slots
 	for ( i = 0; i < 10; i++ )
 	{
 		if ( i == 5 )
 		{
-			rect.x+=402;
-			rect.y=82;
+			rect.x += 402;
+			src.x += 402;
+			rect.y = rDialog.y + (src.y=59);
 		}
-		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,&rect,buffer,&rect );
-		rect.y+=76;
+
+		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu, &src, buffer, &rect );
+
+		rect.y += 76;
+		src.y += 76;
 	}
-	x=60;y=87;
+
+	x = rDialog.x + 60;
+	y = rDialog.y + 87;
 	selected++;
-	for ( i = offset+1; i <= 10 + offset; i++ )
+
+	for ( i = offset + 1; i <= 10 + offset; i++ )
 	{
 		if ( i == offset + 6 )
 		{
-			x+=402;
-			y=87;
+			x += 402;
+			y = rDialog.y + 87;
 		}
+
 		for ( int j = 0; j < files->Count; j++ )
 		{
 			int iSaveNumber;
 			string sFilename, sTime, sMode;
-			iSaveNumber = atoi( files->Items[j].substr ( files->Items[j].length() - 5, 1 ).c_str() );
+			iSaveNumber = atoi ( files->Items[j].substr ( files->Items[j].length() - 5, 1 ).c_str() );
 			game->loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
 
 			if ( iSaveNumber == i )
@@ -6113,17 +6134,21 @@ void ShowFiles ( TList *files, int offset, int selected )
 				{
 					sFilename.erase ( 15 );
 				}
+
 				if ( i == selected )
 				{
 					LoadFile = files->Items[j];
 				}
-				fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+
+				fonts->OutText ( sFilename, x, y, buffer );
+
 				// Zeit und Modus ausgeben
-				fonts->OutText ( ( char * ) sTime.c_str(),x,y-23,buffer );
-				fonts->OutText ( ( char * ) sMode.c_str(),x+113,y-23,buffer );
+				fonts->OutText ( sTime, x, y - 23, buffer );
+				fonts->OutText ( sMode, x + 113, y - 23, buffer );
 				break;
 			}
 		}
-		y+=76;
+
+		y += 76;
 	}
 }
