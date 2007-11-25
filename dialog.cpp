@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <SDL.h>
+#include <sstream>
 //#include <dirent.h>
 #include "dialog.h"
 #include "game.h"
@@ -29,6 +30,7 @@
 #include "files.h"
 #include "log.h"
 #include "loaddata.h"
+
 //TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
 // Zeigt einen Ja/Nein Dialog an:
 bool ShowYesNo ( string text )
@@ -360,9 +362,7 @@ void ShowOK ( string text, bool pure )
 void showLicence ()
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0, index=0;
-	string sLicence1;
-	string sLicence2;
-	string sLicence3;
+
 	SDL_Rect rDialogOnScreen; //dialog blitted on the screen
 	SDL_Rect rDialog; //our dialog
 	SDL_Rect rDialogBoxBlack; //spot to draw text inside
@@ -370,9 +370,13 @@ void showLicence ()
 	SDL_Rect rArrowUp;
 	SDL_Rect rArrowDown;
 	SDL_Surface *SfDialog;
-	
+	//BEGIN CREATING LICENCE TEXTS
+	string sLicence1;
+	string sLicence2;
+	string sLicence3;
+ 	string sLicence4;
 	sLicence1 = "\
-               M.A.X. Reloaded\n\
+             \"M.A.X. Reloaded\"\n\
 Copyright (C) 2007  by it's authors\n\
 \n\
 This program is free software; you can redistribute it and/or modify \
@@ -380,20 +384,64 @@ it under the terms of the GNU General Public License as published by \
 the Free Software Foundation; either version 2 of the License, or \
 (at your option) any later version.";
 sLicence2 = "\
-               M.A.X. Reloaded\n\
+             \"M.A.X. Reloaded\"\n\
 Copyright (C) 2007  by it's authors\n\n\
 This program is distributed in the hope that it will be useful, \
 but WITHOUT ANY WARRANTY; without even the implied warranty of \
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
 GNU General Public License for more details.";
 sLicence3="\
-               M.A.X. Reloaded\n\
+             \"M.A.X. Reloaded\"\n\
 Copyright (C) 2007  by it's authors\n\n\
 You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
+	//BEGIN CREATING AUTHORS TEXT
+	FILE *fp; 
+	char line[72];
+	stringstream ssLicence4;
+	ssLicence4 << "     \"M.A.X. Reloaded\" developers\n\n";
 
+	//open AUTHOR
+	#ifdef _WIN32
+	if (FileExists("AUTHORS.txt")) //wintendo
+	{
+		fp = fopen (  "AUTHORS.txt", "r"  );
+	}
+	#else	
+	if (FileExists("AUTHORS"))  //others
+	{
+		fp = fopen (  "AUTHORS", "r"  );
+	}
+	#endif	
+	if ( fp != NULL  )
+	{	//read authors from file
+		while(fgets(line, 72, fp)) //snip entrys longer 72
+		{
+			ssLicence4 << line;
+		}
+		fclose(fp);
+	}
+	else
+	{
+		ssLicence4 << "Couldn't read AUTHORS"; //missing file - naughty
+	}
 	
+	sLicence4 = ssLicence4.str();
+	
+	int k; //search and replace @ with (at) in string since we don't support the @ in our fontset
+	do{
+		k = sLicence4.find("@");
+		if(k != string::npos)
+		{
+			sLicence4.erase(k, 1);
+			sLicence4.insert(k, "(at)");
+		}
+	}
+	while ( k != string::npos);
+	//END CREATING AUTHORS TEXT
+	//END CREATING LICENCE TEXTS
+
 	mouse->SetCursor ( CHand );
 	SDL_BlitSurface ( screen, NULL, buffer, NULL ); //write screen to buffer for proper background "picture"
 
@@ -479,7 +527,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 					case 1 : 
 						index = 0; 
 						PlayFX ( SoundData.SNDHudButton );
-						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP);
+						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); //first entry in list needs this to disable arrow
 						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
 						break;
 					case 2 : 
@@ -487,6 +535,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						PlayFX ( SoundData.SNDHudButton );
 						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
 						break;
+					case 3: index = 2;
+						PlayFX ( SoundData.SNDHudButton );
+						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
+						break;						
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); 
@@ -515,9 +567,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 					case 1 : 
 						index = 2;
 						PlayFX ( SoundData.SNDHudButton );
-						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
-						break;						
+						break;
+					case 2:
+						index = 3;
+						PlayFX ( SoundData.SNDHudButton );
+						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //last entry in list needs this to disable arrow
+						fonts->OutTextBlock ( ( char * ) sLicence4.c_str(), rDialogOnScreen, buffer );
+						break;					
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); 
