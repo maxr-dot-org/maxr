@@ -5854,7 +5854,7 @@ int ShowDateiMenu ( bool bSave )
 	// Den Bildschirm blitten:
 	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,&rDialog );
 	// Den Text anzeigen:
-	if ( bSave ) fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_LoadSave").c_str(),320,12,buffer );
+	if ( bSave ) fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_LoadSave").c_str(),rTitle.x,rTitle.y,buffer );
 	else fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),rTitle.x,rTitle.y,buffer );
 	// Buttons setzen;
 	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
@@ -5946,7 +5946,7 @@ int ShowDateiMenu ( bool bSave )
 						selected = i+offset;
 					checky+=75;
 				}
-				ShowFiles ( files,offset,selected,false,false,false, rDialog );
+				ShowFiles ( files,offset,selected,bSave,false,true, rDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -5975,7 +5975,7 @@ int ShowDateiMenu ( bool bSave )
 			FertigPressed=false;
 		}
 		// Beenden-Button:
-		if (  bSave && ( x>=242&&x<242+109&&y>=438&&y<438+40 ) )
+		if (  bSave && ( x >= rBtnExit.x && x < rBtnExit.x + rBtnExit.w && y >= rBtnExit.y && y < rBtnExit.y + rBtnExit.h ) )
 		{
 			if ( b&&!BeendenPressed )
 			{
@@ -6003,7 +6003,7 @@ int ShowDateiMenu ( bool bSave )
 			BeendenPressed=false;
 		}
 		// Speichern-Button:
-		if ( bSave && ( x>=132&&x<132+109&&y>=438&&y<438+40 ) )
+		if ( bSave && ( x >= rBtnSave.x && x < rBtnSave.x + rBtnSave.w && y >= rBtnSave.y && y < rBtnSave.y + rBtnSave.h ) )
 		{
 			if ( b&&!SpeichernPressed )
 			{
