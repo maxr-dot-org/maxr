@@ -163,15 +163,12 @@ public:
   void MakeLanding(int x,int y,cPlayer *p,TList *list,bool fixed);
   bool Save(string name, int iNumber);
   void Load(string name,int AP,bool MP=false);
-  void ShowDateiMenu(void);
-  void ShowFiles(TList *files, int offset, int selected, bool cursor, bool firstselect);
   bool CheckRecursivLoaded(cVehicle *v,TList *StoredVehicles);
   void MakeAutosave(void);
   void Trace(void);
   void TraceVehicle(cVehicle *v,int *y,int x);
   void TraceBuilding(cBuilding *b,int *y,int x);
   bool MakeHotSeatEnde(void);
-  void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode );
 };
 
 // Das Game-Objekt ///////////////////////////////////////////////////////////

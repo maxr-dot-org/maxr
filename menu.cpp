@@ -591,16 +591,16 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&LoadHotSeatPressed )
 			{
-				if ( ShowDateiMenu() != -1 )
+				if ( ShowDateiMenu( false ) != -1 )
 				{
 					cMap *map;
 					map=new cMap();
 					game=new cGame ( NULL, map );
 					ExitMenu();
-					if ( !LoadFile.empty() )
+					if ( !SaveLoadFile.empty() )
 					{
 						game->HotSeat=true;
-						game->Load ( LoadFile,0 );
+						game->Load ( SaveLoadFile,0 );
 					}
 					delete game;game=NULL;
 					delete map;
@@ -814,15 +814,15 @@ void RunSPMenu ( void )
 			}
 			else if ( !b&&LoadPressed )
 			{
-				if ( ShowDateiMenu() != -1 )
+				if ( ShowDateiMenu( false ) != -1 )
 				{
 					cMap *map;
 					map=new cMap();
 					game=new cGame ( NULL, map );
 					ExitMenu();
-					if ( !LoadFile.empty() )
+					if ( !SaveLoadFile.empty() )
 					{
-						game->Load ( LoadFile,0 );
+						game->Load ( SaveLoadFile,0 );
 					}
 					delete game; game=NULL;
 					delete map;
@@ -5830,16 +5830,19 @@ void HeatTheSeat ( void )
 }
 
 // Zeigt das Laden Menü an:
-int ShowDateiMenu ( void )
+int ShowDateiMenu ( bool bSave )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
-	SDL_Rect scr,dest;
+	SDL_Rect scr;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
-	bool FertigPressed=false, UpPressed=false, DownPressed=false;
-	bool  HilfePressed=false, LadenPressed=false, Cursor=true;
+	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
+	bool  BeendenPressed=false, HilfePressed=false, LadenPressed=false, Cursor=true;
+	Uint8 *keystate;
 	TList *files;
 	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
+	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnLoad = {rDialog.x+514,rDialog.y+438, 106, 40};
+	SDL_Rect rBtnSave = {rDialog.x+132,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnHelp = {rDialog.x+464,rDialog.y+438, 40, 40};
 	SDL_Rect rArrowUp = {rDialog.x+33, rDialog.y+438, 28, 29};
 	SDL_Rect rArrowDown = {rDialog.x+63, rDialog.y+438, 28, 29};
@@ -5851,11 +5854,20 @@ int ShowDateiMenu ( void )
 	// Den Bildschirm blitten:
 	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,&rDialog );
 	// Den Text anzeigen:
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),rTitle.x,rTitle.y,buffer );
+	if ( bSave ) fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_LoadSave").c_str(),320,12,buffer );
+	else fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),rTitle.x,rTitle.y,buffer );
 	// Buttons setzen;
 	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
-	PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
-	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+	// PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
+	if ( bSave )
+	{
+		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
+		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
+	}
+	else
+	{
+		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+	}
 	//BEGIN ARROW CODE
 	scr.y=40;
 	scr.w=28;
@@ -5875,7 +5887,7 @@ int ShowDateiMenu ( void )
 			i--;
 		}
 	}
-	ShowFiles ( files,offset,selected, rDialog );
+	ShowFiles ( files,offset,selected,false,false,false, rDialog );
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -5884,6 +5896,30 @@ int ShowDateiMenu ( void )
 		// Events holen:
 		SDL_PumpEvents();
 
+		// Tasten prüfen:
+		if ( bSave ) game->HandleTimer();
+		keystate=SDL_GetKeyState ( NULL );
+		if ( keystate[SDLK_ESCAPE] )
+		{
+			InputStr="";
+			break;
+		}
+
+		if ( DoKeyInp ( keystate ) || timer2 )
+		{
+			if ( Cursor )
+			{
+				Cursor=false;
+				ShowFiles ( files,offset,selected,true,true,false, rDialog );
+			}
+			else
+			{
+				Cursor=true;
+				ShowFiles ( files,offset,selected,true,false,false, rDialog );
+			}
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
@@ -5910,7 +5946,7 @@ int ShowDateiMenu ( void )
 						selected = i+offset;
 					checky+=75;
 				}
-				ShowFiles ( files,offset,selected, rDialog );
+				ShowFiles ( files,offset,selected,false,false,false, rDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -5938,8 +5974,80 @@ int ShowDateiMenu ( void )
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 		}
+		// Beenden-Button:
+		if (  bSave && ( x>=242&&x<242+109&&y>=438&&y<438+40 ) )
+		{
+			if ( b&&!BeendenPressed )
+			{
+				PlayFX ( SoundData.SNDMenuButton );
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );	
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				BeendenPressed=true;
+			}
+			else if ( !b&&LastB )
+			{
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				BeendenPressed=false;
+				game->End = true;
+				return -1;
+			}
+		}
+		else if ( BeendenPressed )
+		{
+			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+			BeendenPressed=false;
+		}
+		// Speichern-Button:
+		if ( bSave && ( x>=132&&x<132+109&&y>=438&&y<438+40 ) )
+		{
+			if ( b&&!SpeichernPressed )
+			{
+				PlayFX ( SoundData.SNDMenuButton );
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),true,rBtnSave.x,rBtnSave.y,buffer );	
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				SpeichernPressed=true;
+			}
+			else if ( !b&&LastB )
+			{
+				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+				if ( selected != -1 )
+				{
+					ShowFiles ( files,offset,selected,true,false,false, rDialog );
+					if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
+					{
+						files = getFilesOfDirectory ( SettingsData.sSavesPath );
+						for ( int i = 0; i < files->Count; i++ )
+						{
+							if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
+							{
+								files->Delete ( i );
+								i--;
+							}
+						}
+						selected = -1;
+					}
+					ShowFiles ( files,offset,selected,true,false,false, rDialog );
+				}
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+				SpeichernPressed=false;
+			}
+		}
+		else if ( SpeichernPressed )
+		{
+			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+			SpeichernPressed=false;
+		}
 		// Laden-Button:
-		if ( x >= rBtnLoad.x && x < rBtnLoad.x + rBtnLoad.w && y >= rBtnLoad.y && y < rBtnLoad.y + rBtnLoad.h )
+		if ( !bSave && ( x >= rBtnLoad.x && x < rBtnLoad.x + rBtnLoad.w && y >= rBtnLoad.y && y < rBtnLoad.y + rBtnLoad.h ) )
 		{
 			if ( b&&!LadenPressed )
 			{
@@ -5954,7 +6062,7 @@ int ShowDateiMenu ( void )
 				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 				if ( selected != -1 )
 				{
-					ShowFiles ( files,offset,selected, rDialog );
+					ShowFiles ( files,offset,selected,false,false,false, rDialog );
 					return 1;
 				}
 				SHOW_SCREEN
@@ -5988,7 +6096,7 @@ int ShowDateiMenu ( void )
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected, rDialog );
+				ShowFiles ( files,offset,selected,false,false,false, rDialog );
 				scr.x=96;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 				SHOW_SCREEN
@@ -6023,7 +6131,7 @@ int ShowDateiMenu ( void )
 					offset+=10;
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected, rDialog );
+				ShowFiles ( files,offset,selected,false,false,false, rDialog );
 				scr.x=96+28*2;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 				SHOW_SCREEN
@@ -6047,8 +6155,66 @@ int ShowDateiMenu ( void )
 	return -1;
 }
 
+void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode )
+{
+	SDL_RWops *pFile;
+	int iLenght;
+	char *szBuffer;
+	string sTmp;
+
+	if ( ( pFile = SDL_RWFromFile( ( SettingsData.sSavesPath + PATH_DELIMITER + sFileName ).c_str(),"rb" ) ) == NULL )
+	{
+		cLog::write ( "Can't open Savegame: " + sFileName, LOG_TYPE_WARNING );
+		return ;
+	}
+
+	// Read time
+	if ( sTime != NULL )
+	{
+		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+		szBuffer = ( char* ) malloc ( iLenght );
+		SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
+		sTmp = szBuffer;
+		*sTime = sTmp;
+		free ( szBuffer );
+	}
+	else
+	{
+		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+		SDL_RWseek(pFile, iLenght, SEEK_CUR);
+	}
+
+	// Read name
+	if ( sSavegameName != NULL )
+	{
+		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+		szBuffer = ( char* ) malloc ( iLenght );
+		SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
+		sTmp = szBuffer;
+		*sSavegameName = sTmp;
+		free ( szBuffer );
+	}
+	else
+	{
+		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+		SDL_RWseek(pFile, iLenght, SEEK_CUR);
+	}
+
+	// Read mode
+	if ( sMode != NULL )
+	{
+		szBuffer = ( char* ) malloc ( 4 );
+		SDL_RWread(pFile, szBuffer, sizeof ( char ), 4);
+		sTmp = szBuffer;
+		*sMode = sTmp;
+		free ( szBuffer );
+	}
+
+	SDL_RWclose ( pFile );
+}
+
 // Zeigt die Saves an
-void ShowFiles ( TList *files, int offset, int selected, SDL_Rect rDialog )
+void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
 
 {
 	SDL_Rect rect, src;
@@ -6119,36 +6285,99 @@ void ShowFiles ( TList *files, int offset, int selected, SDL_Rect rDialog )
 			x += 402;
 			y = rDialog.y + 87;
 		}
-
-		for ( int j = 0; j < files->Count; j++ )
+		if ( bSave )
 		{
-			int iSaveNumber;
-			string sFilename, sTime, sMode;
-			iSaveNumber = atoi ( files->Items[j].substr ( files->Items[j].length() - 5, 1 ).c_str() );
-			game->loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
-
-			if ( iSaveNumber == i )
+			for ( int j = 0; j < files->Count || j == 0; j++ )
 			{
-				// Dateinamen anpassen und ausgeben
-				if ( sFilename.length() > 15 )
+				int iSaveNumber;
+				string sFilename, sTime, sMode;
+				if ( files->Count > 0 )
 				{
-					sFilename.erase ( 15 );
+					iSaveNumber = atoi( files->Items[j].substr ( files->Items[j].length() - 7, 3 ).c_str() );
+					loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
 				}
-
-				if ( i == selected )
+				else
 				{
-					LoadFile = files->Items[j];
+					iSaveNumber = -1;
 				}
-
-				fonts->OutText ( sFilename, x, y, buffer );
-
-				// Zeit und Modus ausgeben
-				fonts->OutText ( sTime, x, y - 23, buffer );
-				fonts->OutText ( sMode, x + 113, y - 23, buffer );
-				break;
+				if ( iSaveNumber == i )
+				{
+					// Dateinamen anpassen und ausgeben
+					if ( sFilename.length() > 15 )
+					{
+						sFilename.erase ( 15 );
+					}
+					if ( i == selected )
+					{
+						if ( bFirstSelect )
+						{
+							InputStr = sFilename;
+						}
+						else
+						{
+							sFilename = InputStr;
+						}
+						if ( bCursor )
+						{
+							sFilename += "_";
+						}
+						SaveLoadFile = InputStr;
+						SaveLoadNumber = i;
+					}
+					fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+					// Zeit und Modus ausgeben
+					fonts->OutText ( ( char * ) sTime.c_str(),x,y-23,buffer );
+					fonts->OutText ( ( char * ) sMode.c_str(),x+113,y-23,buffer );
+					break;
+				}
+				else if ( i == selected )
+				{
+					if ( InputStr.length() > 15 )
+					{
+						InputStr.erase ( 15 );
+					}
+					sFilename = InputStr;
+					if ( bCursor )
+					{
+						sFilename += "_";
+					}
+					SaveLoadFile = InputStr;
+					SaveLoadNumber = i;
+					fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+				}
 			}
 		}
+		else
+		{
+			for ( int j = 0; j < files->Count; j++ )
+			{
+				int iSaveNumber;
+				string sFilename, sTime, sMode;
+				iSaveNumber = atoi ( files->Items[j].substr ( files->Items[j].length() - 7, 3 ).c_str() );
+				loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
 
+				if ( iSaveNumber == i )
+				{
+					// Dateinamen anpassen und ausgeben
+					if ( sFilename.length() > 15 )
+					{
+						sFilename.erase ( 15 );
+					}
+
+					if ( i == selected )
+					{
+						SaveLoadFile = files->Items[j];
+					}
+
+					fonts->OutText ( sFilename, x, y, buffer );
+
+					// Zeit und Modus ausgeben
+					fonts->OutText ( sTime, x, y - 23, buffer );
+					fonts->OutText ( sMode, x + 113, y - 23, buffer );
+					break;
+				}
+			}
+		}
 		y += 76;
 	}
 }

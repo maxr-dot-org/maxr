@@ -24,6 +24,7 @@
 #include "dialog.h"
 #include "keyinp.h"
 #include "fonts.h"
+#include "menu.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
@@ -1048,7 +1049,7 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			game->ShowDateiMenu();
+			ShowDateiMenu( true );
 			DateiButton ( false );
 		}
 	}

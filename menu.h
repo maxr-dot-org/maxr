@@ -29,7 +29,8 @@
 // Globales //////////////////////////////////////////////////////////////////
 class cMultiPlayer;
 EX cMultiPlayer *MultiPlayer;
-EX string LoadFile;
+EX string SaveLoadFile;	// Name of the savegame to load or to save
+EX int SaveLoadNumber;	// Index number of the savegame to load or to save
 
 // Strukturen ////////////////////////////////////////////////////////////////
 struct sPlayer{
@@ -216,10 +217,10 @@ void ShowLandingList(TList *list,int selected,int offset, SDL_Surface *surface);
 void CreateSelectionList(TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
 /**
  * 
- * @param  
+ * @param bSave Should you can load savegames in this menu?
  * @return 
  */
-int ShowDateiMenu(void);
+int ShowDateiMenu( bool bSave );
 /**
  * 
  * @param files 
@@ -227,7 +228,15 @@ int ShowDateiMenu(void);
  * @param selected 
  * @param rDialog SDL_Rect with real Dialog rect depending on screen resolution
  */
-void ShowFiles(TList *files, int offset, int selected, SDL_Rect rDialog);
+void ShowFiles(TList *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog);
+/**
+ * 
+ * @param sFileName 
+ * @param sTime 
+ * @param sSavegameName 
+ * @param sMode
+ */
+void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode );
 
 // MultiPlayer Klasse ////////////////////////////////////////////////////////
 class cMultiPlayer{
