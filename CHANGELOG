@@ -1,11 +1,12 @@
 
-M.A.X. Reloaded SVN
+M.A.X. Reloaded 0.1.2
 =======================================================================
 -surveyor AI for automoves added
--overworked menu, dialog and intro graphics
+-overworked menu, dialog, cursor and intro graphics
 -save games no longer need saves.xml but get read from disc
 	*works only on win32 and linux - MAC supported planned
 	*due changes in save-format are old saves useless
+	*autosave improved, fixed
 -almost everything translated to english and german
 -almost every menu works now on resolutions over 640x480
 -tons of bugs fixed
