@@ -5829,8 +5829,6 @@ void HeatTheSeat ( void )
 	}
 	while ( list->Count )
 	{
-
-		delete list->PlayerItems[0];
 		list->Delete ( 0 );
 	}
 	delete game;game=NULL;
