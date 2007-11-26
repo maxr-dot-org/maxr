@@ -253,11 +253,20 @@ void MakeLog ( string sTxt,int ok,int pos )
 	switch ( ok )
 	{
 	case 0:
+
 		fonts->OutTextBig ( sTxt, rDest.x, rDest.y + rDest.h*pos, buffer );
 		rSrc=rDest;
 		rSrc.y = rDest.y + rDest.h*pos;
-		SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
-		SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w, rDest.h );
+		if(pos == 0) //need full line for first entry version information
+		{
+			SDL_BlitSurface ( buffer, NULL, screen, NULL );
+			SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w+rDest2.w, rDest.h );			
+		}
+		else
+		{
+			SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
+			SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w, rDest.h );
+		}
 		break;
 	
 	case 1:
