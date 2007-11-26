@@ -77,22 +77,40 @@ void cAutoMJob::DoAutoMove()
 {
 	if (vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
-		//hier is the right place for the AI to think about the next move
+		
 		if (n > WAIT_FRAMES)
 		{
-			//very stupid testing code...
-			int direktion = random(4,0);
-			switch (direktion){
-			case 0: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + 1 + vehicle->PosY*engine->map->size, false, false);
-				break;
-			case 1: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX - 1 + vehicle->PosY*engine->map->size, false, false);
-				break;
-			case 2: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + (vehicle->PosY + 1) * engine->map->size, false, false);
-				break;
-			case 3: engine->AddMoveJob( vehicle->PosX + vehicle->PosY*engine->map->size, vehicle->PosX + (vehicle->PosY - 1) * engine->map->size, false, false);
-				break;
+			//think about the next move:
+			//the AI look at all fields next to the surveyor
+			//and calculates an factor for each field
+			//the surveyor will move to the field with the highest value
+
+			float temp_factor, max_factor = 0;
+			int bestX, bestY;
+			int x, y;
+
+			for ( x = vehicle->PosX - 1; x <= vehicle->PosX + 1; x ++)
+			{	
+				for (y = vehicle->PosY - 1; y <= vehicle->PosY + 1; y++)
+				{
+					if ( x == vehicle->PosX && y == vehicle->PosY ) continue;
+
+					temp_factor = CalcFactor( x, y);
+
+					if ( temp_factor > max_factor)
+					{
+						max_factor = temp_factor;
+						bestX = x;
+						bestY = y;
+					}
+				}
 			}
-			n = 0;
+			
+			//todo: don't know yet, what to do, if the path cannot be found
+			engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
+			
+			n = 0;			
+			
 		}
 		else
 		{
@@ -106,5 +124,13 @@ void cAutoMJob::DoAutoMove()
 			engine->AddActiveMoveJob(vehicle->mjob);
 		}
 	}
+
+}
+
+//calculates an "importance-factor" for a given field
+float cAutoMJob::CalcFactor(int x, int y)
+{
+	//test:
+	return random (10,0);
 
 }
