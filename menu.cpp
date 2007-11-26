@@ -2182,7 +2182,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 						variety = 3;
 					else variety = -1;
 					* ( ptr->upgrades[i].value )-=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
-					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					// double price for damage
+					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					{
+						ptr->upgrades[i].NextPrice = 2*CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					}
+					else
+					{
+						ptr->upgrades[i].NextPrice = CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					}
 					player->Credits+=ptr->upgrades[i].NextPrice;
 					ptr->upgrades[i].Purchased--;
 
@@ -2207,7 +2215,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 						variety = 3;
 					else variety = -1;
 					* ( ptr->upgrades[i].value ) +=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
-					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					// double price for damage
+					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					{
+						ptr->upgrades[i].NextPrice = 2*CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					}
+					else
+					{
+						ptr->upgrades[i].NextPrice = CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
+					}
 					ptr->upgrades[i].Purchased++;
 
 					PlayFX ( SoundData.SNDObjectMenu );
@@ -3080,6 +3096,8 @@ int CalcPrice ( int value,int org, int variety )
 					return 0;
 					break;
 			}
+		default:
+			return 0;
 			break;
 	}
 
