@@ -578,7 +578,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); 
-						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
+						fonts->OutTextBlock ( ( char * ) sLicence4.c_str(), rDialogOnScreen, buffer );
 				}
 				
 				SHOW_SCREEN
