@@ -26,7 +26,7 @@
     <Is_Target_Satellite YN="No"/>
     <Is_Target_WMD YN="No"/>
     <Armor Num="4"/>
-    <Hitpoints Num="24"/>
+    <Hitpoints Num="20"/>
   </Defence>
   <Production>
     <Built_Costs Num="12"/>
