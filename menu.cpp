@@ -3096,9 +3096,9 @@ int CalcPrice ( int value,int org, int variety )
 					return 0;
 					break;
 			}
+			break;
 		default:
 			return 0;
-			break;
 	}
 
 	tmp= ( int ) ( Round ( ( a*pow ( ( value-b ),c ) ), 0 ) );

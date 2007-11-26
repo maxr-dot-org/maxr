@@ -4242,9 +4242,9 @@ int cBuilding::CalcPrice ( int value,int org, int variety )
 				default:
 					return 0;
 			}
+			break;
 		default:
 			return 0;
-			break;
 	}
 
 	tmp = Round((a*pow((value-b),c)));
