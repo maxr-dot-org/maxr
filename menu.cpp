@@ -2172,14 +2172,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( ptr->upgrades[i].Purchased&&x<283+18&&y>=293+i*19&&y<293+i*19+19 )
 				{
 					int variety;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "hitpoints" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "armor" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "ammo" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "damage" ) == 0 )
+					if ( ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
 						variety = 0;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "speed" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
 						variety = 1;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "shots" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
 						variety = 2;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "range" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "scan" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
 						variety = 3;
+					else variety = -1;
 					* ( ptr->upgrades[i].value )-=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
 					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					player->Credits+=ptr->upgrades[i].NextPrice;
@@ -2196,14 +2197,15 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				{
 					int variety;
 					player->Credits-=ptr->upgrades[i].NextPrice;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "hitpoints" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "armor" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "ammo" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "damage" ) == 0 )
+					if ( ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
 						variety = 0;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "speed" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
 						variety = 1;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "shots" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
 						variety = 2;
-					if ( strcmp ( ptr->upgrades[i].name.c_str(), "range" ) == 0 || strcmp ( ptr->upgrades[i].name.c_str(), "scan" ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
 						variety = 3;
+					else variety = -1;
 					* ( ptr->upgrades[i].value ) +=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
 					ptr->upgrades[i].NextPrice=CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					ptr->upgrades[i].Purchased++;
@@ -2915,7 +2917,8 @@ int CalcPrice ( int value,int org, int variety )
 					c=5.4335099;
 					break;
 				default:
-					return -1;
+					return 0;
+					break;
 			}
 			break;
 			// Geschwindgigkeit
@@ -2990,7 +2993,8 @@ int CalcPrice ( int value,int org, int variety )
 					c=5.8842817;
 					break;
 				default:
-					return -2;
+					return 0;
+					break;
 			}
 			break;
 			// Schüsse
@@ -3005,7 +3009,8 @@ int CalcPrice ( int value,int org, int variety )
 					if ( value==3 ) return 641;
 					break;
 				default:
-					return -3;
+					return 0;
+					break;
 			}
 			break;
 			// Reichweite, Scan
@@ -3072,7 +3077,8 @@ int CalcPrice ( int value,int org, int variety )
 					c=6.11706;
 					break;
 				default:
-					return -4;
+					return 0;
+					break;
 			}
 			break;
 	}
@@ -3122,6 +3128,9 @@ int CalcSteigerung ( int org, int variety )
 				tmp = 2;
 			break;
 		}
+		default:
+			tmp = 1;
+			break;
 	}
 	return tmp;
 }
