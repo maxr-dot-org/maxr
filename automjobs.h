@@ -19,7 +19,13 @@
 #ifndef automjobsH
 #define automjobsH
 
+#define FIELD_BLOCKED -10000
 #define WAIT_FRAMES 15
+
+//main tuning knobs of the AI:
+#define A 1 //how impottant is it, to survey as much fields as possible with each move	
+#define B 1.9 //important is it, to stay near the operation point
+#define C 0 //how important is it, to hold a distance to other surveyors
 
 class cEngine;
 class cMJobs;
@@ -37,9 +43,12 @@ class cAutoMJob {
 	cVehicle *vehicle;		//the vehicle the auto move job belongs to
 	int iNumber;			//index of the AutoMJob in autoMJobs[]
 	int n;					//debug
+	int OPX, OPY;			//the operation point of the surveyor
+							//the surveyor tries to stay near this coordinates
 	
 	void DoAutoMove();
 	float CalcFactor(int x, int y); 
+	void PlanNextMove();
 	
 
 public:
