@@ -861,7 +861,7 @@ void cEngine::DestroyObject ( int off,bool air )
 			else
 			{
 				// Dirt erstellen:
-				if ( !map->GO[off].base ) game->AddDirt ( vehicle->PosX,vehicle->PosY,vehicle->data.costs/2,false );
+				if ( !map->GO[off].base ) game->AddDirt ( vehicle->PosX,vehicle->PosY,vehicle->data.iBuilt_Costs/2,false );
 			}
 		}
 		vehicle->owner->DoScan();
@@ -941,13 +941,13 @@ void cEngine::DestroyObject ( int off,bool air )
 				map->GO[off+1+map->size].top=NULL;
 				map->GO[off+map->size].top=NULL;
 				// Dirt erstellen:
-				if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.costs/2,true );
+				if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.iBuilt_Costs/2,true );
 			}
 			else
 			{
 				map->GO[off].top=NULL;
 				// Dirt erstellen:
-				if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.costs/2,false );
+				if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.iBuilt_Costs/2,false );
 			}
 		}
 		else
@@ -962,7 +962,7 @@ void cEngine::DestroyObject ( int off,bool air )
 				map->GO[off].base=NULL;
 			}
 			// Dirt erstellen:
-			if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.costs/2,false );
+			if ( !map->GO[off].base ) game->AddDirt ( building->PosX,building->PosY,building->data.iBuilt_Costs/2,false );
 		}
 		building->owner->DoScan();
 		delete building;

@@ -1925,7 +1925,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=UnitsData.vehicle[i].data.costs;
+		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list->AddHUp ( n );
@@ -1957,7 +1957,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		n=new sHUp;
 		n->sf=sf;
 		n->id=i;
-		n->costs=UnitsData.building[i].data.costs;
+		n->costs=UnitsData.building[i].data.iBuilt_Costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
 		list->AddHUp ( n );
@@ -3660,7 +3660,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		t=0;
 		if ( ptr->vehicle )
 		{
-			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.costs );
+			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.iBuilt_Costs );
 			fonts->OutTextCenter ( str,616,text.y,buffer );
 			str[0]=0;
 			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )

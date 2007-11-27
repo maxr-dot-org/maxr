@@ -1024,9 +1024,9 @@ void cBuilding::ShowBigDetails ( void )
 	
 	}
 	// Costs:
-	fonts->OutTextCenter ( iToStr(data.costs),COLUMN_1 ,y,buffer );
+	fonts->OutTextCenter ( iToStr(data.iBuilt_Costs),COLUMN_1 ,y,buffer );
 	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(),COLUMN_2,y,buffer );
-	DrawSymbolBig ( SBMetal,COLUMN_3,y-2,160,data.costs,typ->data.costs,buffer );
+	DrawSymbolBig ( SBMetal,COLUMN_3,y-2,160,data.iBuilt_Costs,typ->data.iBuilt_Costs,buffer );
 }
 
 // Prüft, ob es Nachbarn gibt:
@@ -6069,7 +6069,7 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 		str[t]='.';
 		str[t+1]=0;
 		fonts->OutText ( str,text.x,text.y,buffer );
-		sprintf ( str,"%d",owner->VehicleData[ptr->id].costs );
+		sprintf ( str,"%d",owner->VehicleData[ptr->id].iBuilt_Costs );
 		fonts->OutTextCenter ( str,616,text.y,buffer );
 		text.y+=32+10;
 		dest.y+=32+10;

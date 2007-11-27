@@ -3033,7 +3033,6 @@ void ConvertData(int unitnum, bool vehicle)
 	Data->cargo = 0;
 	Data->max_ammo = Data->Weapons[0].iAmmo_Quantity_Max;
 	Data->ammo = Data->Weapons[0].iAmmo_Quantity;
-	Data->costs = Data->iBuilt_Costs;
 
 	if(Data->iNeeds_Energy < 0)
 	{
