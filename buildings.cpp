@@ -2951,7 +2951,7 @@ void cBuilding::ShowResearchSchieber ( void )
 		dest.h = scr.h = 17;
 		scr.x = 412;
 		scr.y = 46;
-		dest.x = 90 + rDialog.x + 36 * ( int ) ( ( ( float ) ( owner->ResearchTechs[i].working_on ) / owner->ResearchCount ) );
+		dest.x = 90 + rDialog.x + ( int ) ( 36 * ( ( float ) ( owner->ResearchTechs[i].working_on ) / owner->ResearchCount ) );
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		
 
