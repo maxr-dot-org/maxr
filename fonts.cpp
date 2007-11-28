@@ -23,7 +23,7 @@
 #include "fonts.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -1000,8 +1000,23 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 
 	getCharset(eBitmapFontType);
 	
-	getTextLenght(sText, eBitmapFontType);
-	
+	//make sure only upper characters are read for the small fonts
+	// since we don't support lower chars on the small fonts
+	switch(eBitmapFontType)
+	{
+		case LATIN_SMALL_GREEN:
+		case LATIN_SMALL_RED:
+		case LATIN_SMALL_WHITE:
+		case LATIN_SMALL_YELLOW:
+			for(int i=0; i < sText.size(); i++)
+			{
+				sText[i] = toupper(sText[i]);
+			}
+			break;
+		default:
+			break;
+	}	
+		
 	if(sfTmp != NULL)
 	{
 		for(int i = 0; sText[i] != '\0'; i++)

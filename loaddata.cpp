@@ -64,17 +64,17 @@ int LoadData ( void * )
 	
 	//font->showText(40,32,"thank you\n--beko", LATIN_BIG_GOLD);
 	
-	SDL_Rect rTmp = {40,32,200,200};
+	SDL_Rect rTmp = {40,0,250,200};
 	SDL_FillRect(buffer, &rTmp, 0xE0E0E0);
 	font->showTextAsBlock(rTmp,"This is a long test text that should be broken down to several lines", LATIN_BIG_GOLD);
 	
 	
 	font->showText(300,32,"n\nno\nnor\nnorm\nnorma\nnormal\n", LATIN_NORMAL);
 
-	font->showText(320,32,"GREEEEN", LATIN_SMALL_GREEN);
-	font->showText(320,40,"WHIIITE", LATIN_SMALL_WHITE);
-	font->showText(320,48,"YELLOOW", LATIN_SMALL_YELLOW);
-	font->showText(320,56,"REEEEED\nREEEEED", LATIN_SMALL_RED);
+	font->showText(40,56,"GREEEEN", LATIN_SMALL_GREEN);
+	font->showText(40,64,"WHIIITE", LATIN_SMALL_WHITE);
+	font->showText(40,72,"YELLOOW", LATIN_SMALL_YELLOW);
+	font->showText(40,80,"REEEEED\nREEEEED TWO lined", LATIN_SMALL_RED);
 
 
 	SHOW_SCREEN
