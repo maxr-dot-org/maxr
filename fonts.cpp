@@ -23,7 +23,7 @@
 #include "fonts.h"
 #include "main.h"
 
-#define DEBUGFONTS true
+#define DEBUGFONTS false
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
