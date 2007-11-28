@@ -193,6 +193,7 @@ public:
   int CalcCommandoChance(bool steal);
   void CommandoOperation(int off,bool steal);
   void DeleteStored(void);
+  bool CheckPathBuild(int iOff, int iBuildingTyp);
 };
 
 #endif

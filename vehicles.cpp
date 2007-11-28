@@ -734,7 +734,6 @@ void cVehicle::Deselct ( void )
 	RepairActive=false;
 	StealActive=false;
 	DisableActive=false;
-//  BuildPath=false;
 	// Den Hintergrund wiederherstellen:
 	scr.x=0;
 	scr.y=215;
@@ -812,6 +811,39 @@ void cVehicle::GenerateName ( void )
 	name = ( string ) data.name; name += " MK "; name += rome;
 }
 
+bool cVehicle::CheckPathBuild(int iOff, int iBuildingTyp)
+{
+	if ( UnitsData.building[iBuildingTyp].data.is_base )
+	{
+		if ( ( ( game->map->GO[iOff].base && !( game->map->GO[iOff].base->data.is_road || game->map->GO[iOff].base->data.is_platform ) ) || ( game->map->GO[iOff].top && !game->map->GO[iOff].top->data.is_connector ) ) )
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if ( game->map->GO[iOff].top && !game->map->GO[iOff].top->data.is_connector )
+		{
+			return false;
+		}
+	}
+	if ( UnitsData.building[iBuildingTyp].data.build_on_water )
+	{
+		if ( !game->map->IsWater(iOff) )
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if ( game->map->IsWater(iOff) && !( game->map->GO[iOff].base && game->map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 // Aktalisiert alle Daten auf ihre Max-Werte:
 void cVehicle::RefreshData ( void )
 {
@@ -859,12 +891,10 @@ void cVehicle::RefreshData ( void )
 
 			if ( data.cargo>=BuildCostsStart )
 			{
-
-#define CHECK_PATH_BUILD(a) ((UnitsData.building[BuildingTyp].data.is_base?!((game->map->GO[a].base&&!game->map->GO[a].base->data.is_road)||(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector)):!(game->map->GO[a].top&&!game->map->GO[a].top->data.is_connector))&&(UnitsData.building[BuildingTyp].data.build_on_water?(game->map->IsWater(a)):!game->map->IsWater(a)||UnitsData.building[BuildingTyp].data.is_connector))
-				if ( BandX<PosX&&CHECK_PATH_BUILD ( PosX-1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX-1+PosY*game->map->size,false,false );
-				else if ( BandX>PosX&&CHECK_PATH_BUILD ( PosX+1+PosY*game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+1+PosY*game->map->size,false,false );
-				else if ( BandY<PosY&&CHECK_PATH_BUILD ( PosX+ ( PosY-1 ) *game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY-1 ) *game->map->size,false,false );
-				else if ( BandY>PosY&&CHECK_PATH_BUILD ( PosX+ ( PosY+1 ) *game->map->size ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY+1 ) *game->map->size,false,false );
+				if ( BandX<PosX&& CheckPathBuild( PosX-1+PosY*game->map->size, BuildingTyp ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX-1+PosY*game->map->size,false,false );
+				else if ( BandX>PosX&&CheckPathBuild( PosX+1+PosY*game->map->size, BuildingTyp ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+1+PosY*game->map->size,false,false );
+				else if ( BandY<PosY&&CheckPathBuild( PosX+(PosY-1)*game->map->size, BuildingTyp ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY-1 ) *game->map->size,false,false );
+				else if ( BandY>PosY&&CheckPathBuild( PosX+(PosY+1)*game->map->size, BuildingTyp ) ) mj=game->engine->AddMoveJob ( PosX+PosY*game->map->size,PosX+ ( PosY+1 ) *game->map->size,false,false );
 				else
 				{
 					BuildPath=false;
@@ -1362,13 +1392,13 @@ bool cVehicle::CanDrive ( int MapOff )
 		case DRIVE_AIR:
 			return true;
 		case DRIVE_SEA:
-			if ( !game->map->IsWater ( MapOff,true ) ) return false;
+			if ( !game->map->IsWater ( MapOff,true ) || ( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) ) return false;
 			return true;
 		case DRIVE_LANDnSEA:
 			if ( TerrainData.terrain[nr].blocked ) return false;
 			return true;
 		case DRIVE_LAND:
-			if ( TerrainData.terrain[nr].blocked||game->map->IsWater ( MapOff ) ) return false;
+			if ( TerrainData.terrain[nr].blocked||( game->map->IsWater ( MapOff ) && !( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_bridge || game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) ) ) return false;
 			return true;
 	}
 	return false;
@@ -1633,7 +1663,14 @@ void cVehicle::StartMoveSound ( void )
 	MenuActive=false;
 	// Prüfen, ob ein Sound zu spielen ist:
 	if ( this!=game->SelectedVehicle ) return;
-	water=game->map->IsWater ( PosX+PosY*game->map->size );
+	if ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA )
+	{
+		water = game->map->IsWater ( PosX+PosY*game->map->size ) && !( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge || game->map->GO[PosX+PosY*game->map->size].base->data.is_road ) );
+	}
+	else
+	{
+		water = game->map->IsWater ( PosX+PosY*game->map->size && !( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_road ) ) );
+	}
 
 	StopFXLoop ( game->ObjectStream );
 	if ( !MoveJobActive )

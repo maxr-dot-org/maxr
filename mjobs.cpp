@@ -249,8 +249,8 @@ bool cMJobs::CheckPossiblePoint ( int x,int y )
 	if ( !plane )
 	{
 		if ( TerrainData.terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
-		if ( vehicle->data.can_drive==DRIVE_LAND&&map->IsWater ( x+y*map->size ) ) return false;
-		if ( vehicle->data.can_drive==DRIVE_SEA&&!map->IsWater ( x+y*map->size,true,true ) ) return false;
+		if ( vehicle->data.can_drive==DRIVE_LAND && map->IsWater ( x+y*map->size ) && !( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_bridge || map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) return false;
+		if ( vehicle->data.can_drive==DRIVE_SEA && (!map->IsWater ( x+y*map->size,true,true ) || ( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) ) return false;
 	}
 	return CheckPointNotBlocked ( x,y );
 }
