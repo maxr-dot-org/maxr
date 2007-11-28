@@ -216,7 +216,7 @@ void showSplash()
 		}
 
 	}
-
+	
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
@@ -295,6 +295,7 @@ int initNet()
 void Quit()
 {
 	delete mouse;
+	delete font;
 	//unload files here
 	CloseSound();
 	SDLNet_Quit();

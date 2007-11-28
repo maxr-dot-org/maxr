@@ -654,7 +654,7 @@ public:
 	bool SoundMute;
 	/**mute voices */
 	bool VoiceMute;	// Muteeigenschaften der Sounds
-
+	
 	//PATHS
 	string sFontPath;			// Path to the fonts
 	string sFxPath;				// Path to the effects
@@ -838,6 +838,8 @@ public:
 // ------------------------
 // 
 ///////////////////////////////////////////////////////////////////////////////
+
+
 
 void ScaleSurface(SDL_Surface *scr,SDL_Surface **dest,int size);
 void ScaleSurface2(SDL_Surface *scr,SDL_Surface *dest,int size);

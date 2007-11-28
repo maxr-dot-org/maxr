@@ -56,7 +56,22 @@ int LoadData ( void * )
 	if(!LoadGraphicToSurface(FontsData.font_big, SettingsData.sFontPath.c_str(), "font_big.pcx")) NECESSARY_FILE_FAILURE
 	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx")) NECESSARY_FILE_FAILURE
 	fonts = new cFonts;
+	font = new cBitmapFont; //init ascii fonts
+
 	cLog::mark();
+	
+	font->showText(10,10,"ABCDEFGHIJKLMNOPGRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\nTest TEST test\n öäü ÖÄÜ & + / - = ; . , * ' '");
+	font->showText(40,32,"thank you\n--beko", LATIN_BIG_GOLD);
+	
+	font->showText(300,32,"n\nno\nnor\nnorm\nnorma\nnormal\n", LATIN_NORMAL);
+
+	font->showText(320,32,"GREEEEN", LATIN_SMALL_GREEN);
+	font->showText(320,40,"WHIIITE", LATIN_SMALL_WHITE);
+	font->showText(320,48,"YELLOOW", LATIN_SMALL_YELLOW);
+	font->showText(320,56,"REEEEED", LATIN_SMALL_RED);
+
+
+	SHOW_SCREEN
 	
 	MakeLog(MAXVERSION,0,0);
 

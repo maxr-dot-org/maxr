@@ -23,6 +23,8 @@
 
 #include "defines.h"
 #include "SDL.h"
+#include "main.h"
+#include "pcx.h"
 
 // Die Farben des Small-Fonts ////////////////////////////////////////////////
 enum eFontSmallColor{ClWhite,ClRed,ClGreen,ClYellow};
@@ -70,5 +72,78 @@ void OutTextSmall (std::string str,int x,int y,eFontSmallColor color,SDL_Surface
 
 // Das Font-Objekt ///////////////////////////////////////////////////////////
 EX cFonts *fonts;
+
+enum eBitmapFontType
+{
+	LATIN_NORMAL,
+	LATIN_BIG,
+	LATIN_BIG_GOLD,
+	LATIN_SMALL_WHITE,
+	LATIN_SMALL_RED,
+	LATIN_SMALL_GREEN,
+	LATIN_SMALL_YELLOW
+};
+
+/**
+ * @author beko
+ * Takes care of displaying correct ascii sign from different charactersets stored as image in fonts.<br>
+ * This function is inspired by lazyfoo.net SDL tutorial "Bitmap Fonts" - Thank you, lazyfoo! (for your great howtos ;-)
+*/
+class cBitmapFont{
+	public:
+		~cBitmapFont();
+		cBitmapFont();
+		/**
+		 * Wrapper for showText for easy use of SDL_Rects
+		 * @param rdest destination to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_BIG is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
+		void showText(SDL_Rect rdest, std::string sText, int eBitmapFontType=LATIN_BIG, SDL_Surface *surface=buffer);
+		/**
+		 * 
+		 * @param x position x to start drawing
+		 * @param y position y to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_BIG is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
+		void showText(int x, int y, std::string sText, int eBitmapFontType=LATIN_BIG, SDL_Surface *surface=buffer);
+	private:
+		//Surfaces to store our latin charsets
+		//tmp for actual used surface during creation or drawing
+		SDL_Surface *sfTmp;
+		SDL_Surface *sfLatinNormal;
+		SDL_Surface *sfLatinBig;
+		SDL_Surface *sfLatinBigGold;
+		SDL_Surface *sfLatinSmallWhite;
+		SDL_Surface *sfLatinSmallRed;
+		SDL_Surface *sfLatinSmallGreen;
+		SDL_Surface *sfLatinSmallYellow;
+		//Rects to store carset coordinates for latin charsets
+		//chars for actual used surface during creation or drawing
+		SDL_Rect chars[256];
+		SDL_Rect LatinNormal[256];
+		SDL_Rect LatinBig[256];
+		SDL_Rect LatinBigGold[256];
+		SDL_Rect LatinSmallWhite[256];
+		SDL_Rect LatinSmallRed[256];
+		SDL_Rect LatinSmallGreen[256];
+		SDL_Rect LatinSmallYellow[256];
+		int iLoadedCharset;
+		/**
+		 * IMPORTANT: Only tested with images having a colourdepth of 8!
+		 * @param surface the SDL_Surface providing fonts seperated in 16x16 rows/cells on a 256x256px image
+		 */
+		void buildFont(SDL_Surface *surface);
+		void copyArray(SDL_Rect source[],SDL_Rect dest[]);
+		Uint32 getPixel32(int x, int y, SDL_Surface *surface);
+		Uint16 getPixel16(int x, int y, SDL_Surface *surface);
+		Uint8 getPixel8(int x, int y, SDL_Surface *surface);
+};
+
+EX cBitmapFont *font;
+
 
 #endif

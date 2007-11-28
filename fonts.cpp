@@ -19,8 +19,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include "fonts.h"
 #include "main.h"
+
+#define DEBUGFONTS false
+
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
 cFonts::cFonts ( void )
@@ -597,5 +601,321 @@ void cFonts::OutTextBlock ( char *str,SDL_Rect block,SDL_Surface *sf )
 			block.y+=11;
 		}
 	}
+}
+
+cBitmapFont::cBitmapFont()
+{
+	iLoadedCharset = -1;
+	sfTmp= NULL;
+	sfLatinNormal= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+	sfLatinBig= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+	sfLatinBigGold= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+	sfLatinSmallWhite= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+	sfLatinSmallRed= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+	sfLatinSmallGreen= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
+	sfLatinSmallYellow= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
+
+		
+	string sTmp = SettingsData.sFontPath + PATH_DELIMITER;
+	
+	sfLatinNormal = LoadPCX((char*)(sTmp + "latin_normal.pcx").c_str());
+	buildFont(sfLatinNormal);
+	copyArray(chars, LatinNormal);
+	
+	sfLatinSmallGreen = LoadPCX((char*)(sTmp + "latin_small_green.pcx").c_str());
+	buildFont(sfLatinSmallGreen);
+	copyArray(chars, LatinSmallGreen);
+	
+	sfLatinSmallRed = LoadPCX((char*)(sTmp + "latin_small_red.pcx").c_str());
+	buildFont(sfLatinSmallRed);
+	copyArray(chars, LatinSmallRed);
+	
+	sfLatinSmallYellow= LoadPCX((char*)(sTmp + "latin_small_yellow.pcx").c_str());
+	buildFont(sfLatinSmallYellow);
+	copyArray(chars, LatinSmallYellow);
+	
+	sfLatinSmallWhite = LoadPCX((char*)(sTmp + "latin_small_white.pcx").c_str());
+	buildFont(sfLatinSmallWhite);
+	copyArray(chars, LatinSmallWhite);
+	
+	sfLatinBig = LoadPCX((char*)(sTmp + "latin_big.pcx").c_str());
+	buildFont(sfLatinBig);
+	copyArray(chars, LatinBig);
+
+	sfLatinBigGold = LoadPCX((char*)(sTmp + "latin_big_gold.pcx").c_str());
+	buildFont(sfLatinBigGold);
+	copyArray(chars, LatinBigGold);
+	//TODO: add support for cryllian characters
+}
+
+cBitmapFont::~cBitmapFont()
+{
+	/*FIXME: dunno why but app crashes when I want to free my surfaces
+	SDL_FreeSurface(sfLatinNormal);
+	SDL_FreeSurface(sfLatinBig);
+	SDL_FreeSurface(sfLatinBigGold);
+	SDL_FreeSurface(sfLatinSmallWhite);
+	SDL_FreeSurface(sfLatinSmallRed);
+	SDL_FreeSurface(sfLatinSmallGreen);
+	SDL_FreeSurface(sfLatinSmallYellow);
+	SDL_FreeSurface(sfTmp); */
+}
+
+void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
+{	
+	for(int i=0; i < 256; i++)
+	{
+		dest[i].x = source[i].x;
+		dest[i].y = source[i].y;
+		dest[i].w = source[i].w;
+		dest[i].h = source[i].h;
+	}
+}
+
+void cBitmapFont::buildFont(SDL_Surface *surface)
+{
+	if(surface == NULL)
+	{
+		cLog::write("Got NULL surface for font", cLog::eLOG_TYPE_ERROR);
+		return;
+	}
+	sfTmp = surface;
+	
+	int iFormat = sfTmp->format->BitsPerPixel;
+	
+	Uint32 bgColor32;
+	Uint16 bgColor16;
+	Uint8 bgColor8;
+	switch(iFormat)
+	{
+		case 32:
+		case 24:
+			bgColor32 = SDL_MapRGB(sfTmp->format, 0xFF, 0, 0xFF);
+			break;
+		case 16:
+			bgColor16 = SDL_MapRGB(sfTmp->format, 0xFF, 0, 0xFF);
+			break;	
+		case 8:
+		default:
+			bgColor8 = SDL_MapRGB(sfTmp->format, 0xFF, 0, 0xFF);
+			break;
+	}
+	
+
+	int cellW = sfTmp->w / 16;
+	int cellH = sfTmp->h / 16;
+	int currentChar = 0;
+	register int pX = 0;
+	register int pY = 0;
+			
+	//go through the rows
+	for( int rows = 0; rows < 16; rows ++)
+	{
+		//go through the cols
+		for( int cols = 0; cols < 16; cols ++)
+		{
+			chars[currentChar].x = cellW * cols; //write each cell position and size into array
+			chars[currentChar].y = cellH * rows;
+			chars[currentChar].h = cellH;
+			chars[currentChar].w = cellW;
+			
+			//go through pixels to find offset x
+			for( int pCol = 0; pCol < cellH; pCol++)
+			{
+				for( int pRow = 0; pRow < cellH; pRow++)
+				{
+					pX = (cellW * cols) + pCol;
+					pY = (cellH * rows) + pRow;
+					bool bFound = false;
+
+					//search for pixel != background colour
+					switch(iFormat)
+					{
+						case 32:
+							if(getPixel32(pX, pY, sfTmp) != bgColor32)
+							{
+								bFound = true;
+							}
+							break;
+						case 16:
+							if(getPixel16(pX, pY, sfTmp) != bgColor16)
+							{
+								bFound = true;
+							}
+							break;
+						case 8:
+						default:
+							if(getPixel8(pX, pY, sfTmp) != bgColor8)
+							{
+								bFound = true;
+							}
+							break;	
+					}
+					if(bFound)
+					{
+						//offset
+						chars[currentChar].x = pX;
+						pCol = cellW; //break loop
+						pRow = cellH;	
+						bFound = false;		
+					}
+				}
+			}
+			
+			//go through pixel to find offset w
+			for( int pCol_w = cellW - 1; pCol_w >= 0; pCol_w--)
+			{
+				for ( int pRow_w = 0; pRow_w < cellH; pRow_w++)
+				{
+					pX = (cellW * cols ) + pCol_w;
+					pY = (cellH * rows ) + pRow_w;
+					bool bFound = false;
+					//search for pixel != background colour
+					switch(iFormat)
+					{
+						case 32:
+							if(getPixel32(pX, pY, sfTmp) != bgColor32)
+							{
+								bFound = true;
+							}
+							break;
+						case 16:
+							if(getPixel16(pX, pY, sfTmp) != bgColor16)
+							{
+								bFound = true;
+							}
+							break;
+						case 8:
+						default:
+							if(getPixel8(pX, pY, sfTmp) != bgColor8)
+							{
+								bFound = true;
+							}
+							break;	
+					}
+					if(bFound)
+					{
+						chars[currentChar].w = (pX - chars[currentChar].x) +1;
+						pCol_w = -1; //break loop
+						pRow_w = cellH;	
+						bFound = false;				
+					}
+				
+				}
+			}
+			//goto next character		
+			currentChar++;	
+		}
+	}
+}
+
+void cBitmapFont::showText(SDL_Rect rdest, string sText, int eBitmapFontType, SDL_Surface *surface)
+{
+	showText(rdest.x, rdest.y, sText, eBitmapFontType, surface);
+}
+
+void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)
+{
+	//tmp offsets
+	int offX = x;
+	int offY = y;
+	
+	if(iLoadedCharset != eBitmapFontType) //requested new font - load font surface and array of charlocations
+	{
+		iLoadedCharset = eBitmapFontType;
+		
+		switch(eBitmapFontType)
+		{
+			case LATIN_BIG_GOLD:
+				sfTmp = sfLatinBigGold;
+				copyArray(LatinBigGold, chars);
+				break;
+			case LATIN_BIG:
+				sfTmp = sfLatinBig;
+				copyArray(LatinBig, chars);
+				break;
+			case LATIN_SMALL_GREEN:
+				sfTmp = sfLatinSmallGreen;
+				copyArray(LatinSmallGreen, chars);
+				break;
+			case LATIN_SMALL_RED:
+				sfTmp = sfLatinSmallRed;
+				copyArray(LatinSmallRed, chars);
+				break;
+			case LATIN_SMALL_WHITE:
+				sfTmp = sfLatinSmallWhite;
+				copyArray(LatinSmallWhite, chars);
+				break;
+			case LATIN_SMALL_YELLOW:
+				sfTmp = sfLatinSmallYellow;
+				copyArray(LatinSmallYellow, chars);
+				break;
+			case LATIN_NORMAL :
+			default:
+				sfTmp = sfLatinNormal;
+				copyArray(LatinNormal, chars);
+		}
+	}
+	if(sfTmp != NULL)
+	{
+		for(int i = 0; sText[i] != '\0'; i++)
+		{
+			//is space?
+			if(sText[i] == ' ')
+			{
+				offX += sfTmp->w / 32;
+			} //is new line?
+			else if(sText[i] == '\n')
+			{
+				offY += sfTmp->h / 16;
+				offX = x;
+			}
+			else
+			{
+				//get ascii value
+				int ascii = (unsigned char) sText[i];
+				
+				//blit signs to surface
+				SDL_Rect rTmp = {offX, offY, 16, 16};
+				SDL_BlitSurface(sfTmp, &chars[ascii], surface, &rTmp);
+				if(DEBUGFONTS)
+				{	
+				 	stringstream strStream;
+ 					strStream << "Sign: " << sText[i] << "(" << ascii << ")" << "  x: " << chars[ascii].x << "  y: " << chars[ascii].y << "  w: " << chars[ascii].w << "  h: " << chars[ascii].h;
+					cLog::write(strStream.str(), cLog::eLOG_TYPE_DEBUG);
+				}
+				//move one px forward for space between signs
+				offX += chars[ascii].w + 1;
+			}
+		}
+	}
+
+}
+
+Uint32 cBitmapFont::getPixel32(int x, int y, SDL_Surface *surface)
+{
+	//converts the Pixel to 32 bit
+	Uint32 *pixels = (Uint32 *) surface->pixels;
+	
+	//get the requested pixels
+	return pixels[(y*surface->w)+x];
+}
+
+Uint16 cBitmapFont::getPixel16(int x, int y, SDL_Surface *surface)
+{
+	//converts the Pixel to 16 bit
+	Uint16 *pixels = (Uint16 *) surface->pixels;
+	
+	//get the requested pixels
+	return pixels[(y*surface->w)+x];
+}
+
+Uint8 cBitmapFont::getPixel8(int x, int y, SDL_Surface *surface)
+{
+	//converts the Pixel to 8 bit
+	Uint8 *pixels = (Uint8 *) surface->pixels;
+	
+	//get the requested pixels
+	return pixels[(y*surface->w)+x];
 }
 
