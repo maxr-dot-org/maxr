@@ -64,7 +64,8 @@ int LoadData ( void * )
 	
 	//font->showText(40,32,"thank you\n--beko", LATIN_BIG_GOLD);
 	
-	SDL_Rect rTmp = {40,32,30,0};
+	SDL_Rect rTmp = {40,32,200,200};
+	SDL_FillRect(buffer, &rTmp, 0xE0E0E0);
 	font->showTextAsBlock(rTmp,"This is a long test text that should be broken down to several lines", LATIN_BIG_GOLD);
 	
 	

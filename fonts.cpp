@@ -691,7 +691,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	if(DEBUGFONTS) cLog::write("Seeking through " + sText, cLog::eLOG_TYPE_DEBUG);
 
 	string sTmp = sText;
-	string sTestNew;
+	string sTextShortened;
 	
 	int k;
 	int lastK = 0;
@@ -724,20 +724,36 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 			k = sTmp.find(" ");
 			if(k != string::npos)
 			{
-				if(DEBUGFONTS) cLog::write("Found ' ' at " + iToStr(k+i), cLog::eLOG_TYPE_DEBUG);
+				if(DEBUGFONTS) cLog::write("Found space at " + iToStr(k+i), cLog::eLOG_TYPE_DEBUG);
 				sTmp.erase(k, 1);
 				i++;
 				
-				if(k+i > rDest.w)
+				sTextShortened = sText; //copy text to tmp string
+				sTextShortened.erase(k+i-1, sTextShortened.size()); //erase everything longer than line
+				rLenght = getTextLenght(sTextShortened, eBitmapFontType); //test new string lenght
+				
+				if(DEBUGFONTS) cLog::write("sTextShortened is '" + sTextShortened + "'", cLog::eLOG_TYPE_DEBUG);
+
+				if(rLenght.w > rDest.w)
 				{	
-					//found important lastK to snip text
-					sTestNew = sText; //copy text to tmp string
-					sTestNew.erase(lastK-1, sTestNew.size()); //erase everything longer than line
-					sText.erase(0, lastK); //erase txt from original that we just copied to tmp
-					
+					//found important lastK to snip text since text is now to long
+					sTextShortened = sText; //copy text to tmp string
+					if(lastK > 0)
+					{
+						sTextShortened.erase(lastK-1, sTextShortened.size()); //erase everything longer than line
+						sText.erase(0, lastK); //erase txt from original that we just copied to tmp
+
+					}
+					else
+					{
+						sTextShortened.erase(lastK, sTextShortened.size()); //erase everything longer than line
+						sText.erase(0, lastK+1); //erase txt from original that we just copied to tmp
+						cLog::write("Textbox defined to small! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR);
+
+					}
 					sTmp = sText; //copy snipped original sText to sTmp to start searching again
 					i=0; //reset i
-					showText(rDest, sTestNew, eBitmapFontType, surface); //blit part of text 
+					showText(rDest, sTextShortened, eBitmapFontType, surface); //blit part of text 
 					rDest.y += getFontHeight(eBitmapFontType); //and increase line
 				}
 				else
