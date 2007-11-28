@@ -687,13 +687,7 @@ void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
 }
 
 void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
-{
-	char word[50], *ptr, *p, *p2;
-	int len, x;
-	ptr = (char*) sText.c_str();
-	x = rDest.x;
-	// Wort für Wort durch den String gehen:
-	
+{	
 	if(DEBUGFONTS) cLog::write("Seeking through " + sText, cLog::eLOG_TYPE_DEBUG);
 
 	string sTmp = sText;
