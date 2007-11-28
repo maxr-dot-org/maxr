@@ -716,7 +716,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	}
 	while ( k != string::npos);
 	
-	SDL_Rect rLenght = getTextLenght(sText, eBitmapFontType);
+	SDL_Rect rLenght = getTextSize(sText, eBitmapFontType);
 	
 	if(rLenght.w > rDest.w) //text is longer than dest-width - let's snip it
 	{
@@ -730,7 +730,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 				
 				sTextShortened = sText; //copy text to tmp string
 				sTextShortened.erase(k+i-1, sTextShortened.size()); //erase everything longer than line
-				rLenght = getTextLenght(sTextShortened, eBitmapFontType); //test new string lenght
+				rLenght = getTextSize(sTextShortened, eBitmapFontType); //test new string lenght
 				
 				if(DEBUGFONTS) cLog::write("sTextShortened is '" + sTextShortened + "'", cLog::eLOG_TYPE_DEBUG);
 
@@ -955,7 +955,7 @@ void cBitmapFont::getCharset(int eBitmapFontType)
 	}
 }
 
-SDL_Rect cBitmapFont::getTextLenght(string sText, int eBitmapFontType)
+SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 {
 	//tmp offsets
 	SDL_Rect rTmp = {0, 0, 0, sfTmp->h / 16};
@@ -994,7 +994,7 @@ SDL_Rect cBitmapFont::getTextLenght(string sText, int eBitmapFontType)
 
 void cBitmapFont::showTextCentered(SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface)
 {
-	SDL_Rect rTmp = getTextLenght(sText, eBitmapFontType);
+	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType);
 	showText( rDest.x + rDest.w / 2 - rTmp.w / 2, rDest.y, sText, eBitmapFontType, surface);
 }
 
@@ -1084,5 +1084,11 @@ Uint8 cBitmapFont::getPixel8(int x, int y, SDL_Surface *surface)
 	
 	//get the requested pixels
 	return pixels[(y*surface->w)+x];
+}
+
+int cBitmapFont::getTextWide(string sText, int eBitmapFontType)
+{
+	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType);
+	return rTmp.w;
 }
 

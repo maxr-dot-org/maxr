@@ -110,7 +110,15 @@ class cBitmapFont{
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
 		void showText(int x, int y, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
-		
+
+ 		/**
+		 * Calculates the needed width for a text in pixels
+		 * @param sText text to check
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return needed width for text
+		 */
+		int getTextWide(std::string sText, int eBitmapFontType=LATIN_NORMAL);
+
 		/**
 		 * Displays a text as block.<br><br> This does <b>not</b> allow linebreaks and blanks in line. Linebreaks will be snipped. Unneeded blanks will be snipped. If you want a headline for a textblock create one manually!<br><br>
 		 * Do not try "Headline\n\n This is my text"!
@@ -127,7 +135,7 @@ class cBitmapFont{
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @return SDL_Rect with needed width and height for text
 		 */
-		SDL_Rect getTextLenght(std::string sText, int eBitmapFontType=LATIN_NORMAL);
+		SDL_Rect getTextSize(std::string sText, int eBitmapFontType=LATIN_NORMAL);
 		/**
 		 * Holds information of font height
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
