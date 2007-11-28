@@ -748,7 +748,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 					{
 						sTextShortened.erase(lastK, sTextShortened.size()); //erase everything longer than line
 						sText.erase(0, lastK+1); //erase txt from original that we just copied to tmp
-						cLog::write("Textbox defined to small! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR);
+						cLog::write("Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR);
 
 					}
 					sTmp = sText; //copy snipped original sText to sTmp to start searching again

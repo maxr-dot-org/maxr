@@ -102,7 +102,7 @@ class cBitmapFont{
 		 */
 		void showText(SDL_Rect rdest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
 		/**
-		 * 
+		 * Displays a text
 		 * @param x position x to start drawing
 		 * @param y position y to start drawing
 		 * @param sText text to draw
@@ -111,8 +111,29 @@ class cBitmapFont{
 		 */
 		void showText(int x, int y, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
 		
+		/**
+		 * Displays a text as block.<br><br> This does <b>not</b> allow linebreaks and blanks in line. Linebreaks will be snipped. Unneeded blanks will be snipped. If you want a headline for a textblock create one manually!<br><br>
+		 * Do not try "Headline\n\n This is my text"!
+		 * @param rDest SDL_Rect for position and wide of textbox. Height is not taken care of!
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		void showTextAsBlock ( SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer );
-
+		
+		/**
+		 * Calculates the needed space for a text in pixels
+		 * @param sText text to check
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return SDL_Rect with needed width and height for text
+		 */
+		SDL_Rect getTextLenght(std::string sText, int eBitmapFontType=LATIN_NORMAL);
+		/**
+		 * Holds information of font height
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return Height of fonttype in pixels
+		 */
+		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
 	private:
 		//Surfaces to store our latin charsets
 		//tmp for actual used surface during creation or drawing
@@ -145,8 +166,7 @@ class cBitmapFont{
 		Uint16 getPixel16(int x, int y, SDL_Surface *surface);
 		Uint8 getPixel8(int x, int y, SDL_Surface *surface);
 		void getCharset(int eBitmapFontType=LATIN_NORMAL);
-		SDL_Rect getTextLenght(std::string sText, int eBitmapFontType=LATIN_NORMAL);
-		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
+
 };
 
 EX cBitmapFont *font;
