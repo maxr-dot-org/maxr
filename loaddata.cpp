@@ -59,31 +59,7 @@ int LoadData ( void * )
 	font = new cBitmapFont; //init ascii fonts
 
 	cLog::mark();
-	
-	//font->showText(10,10,"ABCDEFGHIJKLMNOPGRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\nTest TEST test\n öäü ÖÄÜ & + / - = ; . , * ' '");
-	
-	//font->showText(40,32,"thank you\n--beko", LATIN_BIG_GOLD);
-	
-	SDL_Rect rTmp = {40,0,250,200};
-	SDL_FillRect(buffer, &rTmp, 0xE0E0E0);
-	font->showTextAsBlock(rTmp,"This is a long test text that should be broken down to several lines", LATIN_BIG_GOLD);
-	
-	
-	font->showText(300,32,"n\nno\nnor\nnorm\nnorma\nnormal\n", LATIN_NORMAL);
 
-	font->showText(40,56,"GREEEEN", LATIN_SMALL_GREEN);
-	font->showText(40,64,"WHIIITE", LATIN_SMALL_WHITE);
-	font->showText(40,72,"YELLOOW", LATIN_SMALL_YELLOW);
-	
-	rTmp.x = 40;
-	rTmp.y = 80;
-	rTmp.w = 170;
-	rTmp.h = font->getFontHeight(LATIN_SMALL_RED);
-	font->showTextCentered(rTmp,"REEEEED\nREEEEED TWO lined", LATIN_SMALL_RED);
-	rTmp.y += 2* font->getFontHeight(LATIN_SMALL_RED);
-	font->showTextCentered(rTmp,"REEEEeeeeeeEEEEEED", LATIN_SMALL_RED);
-
-	SHOW_SCREEN
 	
 	MakeLog(MAXVERSION,0,0);
 
@@ -273,15 +249,14 @@ int LoadData ( void * )
 // Writes a Logmessage on the SplashScreen:
 void MakeLog ( string sTxt,int ok,int pos )
 {
-	SDL_Rect rDest = {22, 152, 228, 16};
-	SDL_Rect rDest2 = {250, 152, 230, 16};
+	SDL_Rect rDest = {22, 152, 228, font->getFontHeight(LATIN_BIG_GOLD)};
+	SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight(LATIN_BIG_GOLD)};
 	SDL_Rect rSrc;
 
 	switch ( ok )
 	{
 	case 0:
-
-		fonts->OutTextBig ( sTxt, rDest.x, rDest.y + rDest.h*pos, buffer );
+		font->showText(rDest.x, rDest.y + rDest.h*pos, sTxt, LATIN_NORMAL);
 		rSrc=rDest;
 		rSrc.y = rDest.y + rDest.h*pos;
 		if(pos == 0) //need full line for first entry version information
@@ -297,11 +272,11 @@ void MakeLog ( string sTxt,int ok,int pos )
 		break;
 	
 	case 1:
-		fonts->OutTextBig ( "OK", rDest2.x, rDest2.y + rDest2.h*pos, buffer );
+		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "OK", LATIN_BIG_GOLD);
 		break;
 	
 	default:
-		fonts->OutTextBig ( "ERROR ..check max.log!", rDest2.x, rDest2.y + rDest2.h*pos, buffer );
+		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check max.log!", LATIN_BIG_GOLD);
 		break;
 	}
 	
