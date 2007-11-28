@@ -74,8 +74,14 @@ int LoadData ( void * )
 	font->showText(40,56,"GREEEEN", LATIN_SMALL_GREEN);
 	font->showText(40,64,"WHIIITE", LATIN_SMALL_WHITE);
 	font->showText(40,72,"YELLOOW", LATIN_SMALL_YELLOW);
-	font->showText(40,80,"REEEEED\nREEEEED TWO lined", LATIN_SMALL_RED);
-
+	
+	rTmp.x = 40;
+	rTmp.y = 80;
+	rTmp.w = 170;
+	rTmp.h = font->getFontHeight(LATIN_SMALL_RED);
+	font->showTextCentered(rTmp,"REEEEED\nREEEEED TWO lined", LATIN_SMALL_RED);
+	rTmp.y += 2* font->getFontHeight(LATIN_SMALL_RED);
+	font->showTextCentered(rTmp,"REEEEeeeeeeEEEEEED", LATIN_SMALL_RED);
 
 	SHOW_SCREEN
 	

@@ -992,6 +992,15 @@ SDL_Rect cBitmapFont::getTextLenght(string sText, int eBitmapFontType)
 	return rTmp;
 }
 
+void cBitmapFont::showTextCentered(SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface)
+{
+	int i = sText.size(); /*ok, this is cheating since I don't
+				care for the real size checking the
+				pixels but hey this will do nicely
+				for us			-- beko*/
+	showText( rDest.x + rDest.w / 2 - i / 2, rDest.y, sText, eBitmapFontType, surface);
+}
+
 void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)
 {
 	//tmp offsets
