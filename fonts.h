@@ -97,19 +97,22 @@ class cBitmapFont{
 		 * Wrapper for showText for easy use of SDL_Rects
 		 * @param rdest destination to start drawing
 		 * @param sText text to draw
-		 * @param eBitmapFontType enum of fonttype. LATIN_BIG is default
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showText(SDL_Rect rdest, std::string sText, int eBitmapFontType=LATIN_BIG, SDL_Surface *surface=buffer);
+		void showText(SDL_Rect rdest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
 		/**
 		 * 
 		 * @param x position x to start drawing
 		 * @param y position y to start drawing
 		 * @param sText text to draw
-		 * @param eBitmapFontType enum of fonttype. LATIN_BIG is default
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showText(int x, int y, std::string sText, int eBitmapFontType=LATIN_BIG, SDL_Surface *surface=buffer);
+		void showText(int x, int y, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
+		
+		void showTextAsBlock ( SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer );
+
 	private:
 		//Surfaces to store our latin charsets
 		//tmp for actual used surface during creation or drawing
@@ -141,6 +144,9 @@ class cBitmapFont{
 		Uint32 getPixel32(int x, int y, SDL_Surface *surface);
 		Uint16 getPixel16(int x, int y, SDL_Surface *surface);
 		Uint8 getPixel8(int x, int y, SDL_Surface *surface);
+		void getCharset(int eBitmapFontType=LATIN_NORMAL);
+		SDL_Rect getTextLenght(std::string sText, int eBitmapFontType=LATIN_NORMAL);
+		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
 };
 
 EX cBitmapFont *font;

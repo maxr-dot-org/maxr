@@ -23,7 +23,7 @@
 #include "fonts.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -551,54 +551,68 @@ void cFonts::OutTextSmallCenter ( char *str,int x,int y,eFontSmallColor color,SD
 }
 
 // Gibt den Text mit automatischem Zeilenumbruch aus:
-void cFonts::OutTextBlock ( char *str,SDL_Rect block,SDL_Surface *sf )
+void cFonts::OutTextBlock ( char *str, SDL_Rect block, SDL_Surface *sf )
 {
-	char word[50],*ptr,*p,*p2;
-	int len,x;
-	ptr=str;
-	x=block.x;
+	char word[50], *ptr, *p, *p2;
+	int len, x;
+	ptr = str;
+	x = block.x;
 	// Wort für Wort durch den String gehen:
+
 	while ( ptr )
 	{
-		p=strchr ( ptr,' ' );
-		p2=strchr ( ptr,'\n' );
-		if ( ( p2&&p&&p2<p ) || ( p2&&!p ) )
+		p = strchr ( ptr, ' ' );
+		p2 = strchr ( ptr, '\n' );
+
+		if ( ( p2 && p && p2 < p ) || ( p2 && !p ) )
 		{
-			p=p2;
+			p = p2;
 		}
+
 		if ( p )
 		{
-			len=p-ptr;
-			if ( len>49 ) len=49;
-			strncpy ( word,ptr,len );
-			word[len]=0;
-			ptr=p+1;
+			len = p - ptr;
+
+			if ( len > 49 )
+				len = 49;
+
+			strncpy ( word, ptr, len );
+
+			word[len] = 0;
+
+			ptr = p + 1;
 		}
 		else
 		{
-			if ( strlen ( ptr ) >=50 )
+			if ( strlen ( ptr ) >= 50 )
 			{
-				strncpy ( word,ptr,49 );
-				word[49]=0;
+				strncpy ( word, ptr, 49 );
+				word[49] = 0;
 			}
 			else
 			{
-				strcpy ( word,ptr );
+				strcpy ( word, ptr );
 			}
-			ptr=0;
+
+			ptr = 0;
 		}
-		len=GetTextLen ( word );
-		if ( block.x+len>x+block.w )
+
+		len = GetTextLen ( word );
+
+		if ( block.x + len > x + block.w )
 		{
-			block.x=x;
-			block.y+=11;
+			block.x = x;
+			block.y += 11;
 		}
-		OutText ( word,block.x,block.y,sf );
-		block.x+=len+5;
-		if ( p&&*p=='\n' )
+
+		OutText ( word, block.x, block.y, sf );
+
+		block.x += len + 5;
+
+		if ( p && *p == '\n' )
 		{
-			block.x=x;
-			block.y+=11;
+			block.x = x;
+			block.y += 11;
 		}
 	}
 }
@@ -670,6 +684,83 @@ void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
 		dest[i].w = source[i].w;
 		dest[i].h = source[i].h;
 	}
+}
+
+void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
+{
+	char word[50], *ptr, *p, *p2;
+	int len, x;
+	ptr = (char*) sText.c_str();
+	x = rDest.x;
+	// Wort für Wort durch den String gehen:
+	
+	if(DEBUGFONTS) cLog::write("Seeking through " + sText, cLog::eLOG_TYPE_DEBUG);
+
+	string sTmp = sText;
+	string sTestNew;
+	
+	int k;
+	int lastK = 0;
+	int i = 0;
+	
+	do{ //search and replace \n since we want a blocktext - no manual breaklines allowed
+		k = sText.find("\n");
+		if(k != string::npos)
+		{
+			sText.erase(k, 1);
+			sText.insert(k, " ");
+		}
+	}
+	while ( k != string::npos);	
+	
+	do{ //erase all blanks > 2
+		k = sText.find("  "); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
+		if(k != string::npos)
+		{
+			sText.erase(k, 1);
+		}
+	}
+	while ( k != string::npos);
+	
+	SDL_Rect rLenght = getTextLenght(sText, eBitmapFontType);
+	
+	if(rLenght.w > rDest.w) //text is longer than dest-width - let's snip it
+	{
+		do{
+			k = sTmp.find(" ");
+			if(k != string::npos)
+			{
+				if(DEBUGFONTS) cLog::write("Found ' ' at " + iToStr(k+i), cLog::eLOG_TYPE_DEBUG);
+				sTmp.erase(k, 1);
+				i++;
+				
+				if(k+i > rDest.w)
+				{	
+					//found important lastK to snip text
+					sTestNew = sText; //copy text to tmp string
+					sTestNew.erase(lastK-1, sTestNew.size()); //erase everything longer than line
+					sText.erase(0, lastK); //erase txt from original that we just copied to tmp
+					
+					sTmp = sText; //copy snipped original sText to sTmp to start searching again
+					i=0; //reset i
+					showText(rDest, sTestNew, eBitmapFontType, surface); //blit part of text 
+					rDest.y += getFontHeight(eBitmapFontType); //and increase line
+				}
+				else
+				{
+					lastK = k+i;
+				}				
+			}
+		}
+		while ( k != string::npos);
+		showText(rDest, sText, eBitmapFontType, surface); //draw last part of text
+	}
+}
+
+int cBitmapFont::getFontHeight(int eBitmapFontType)
+{
+	getCharset(eBitmapFontType);
+	return sfTmp->h / 16;
 }
 
 void cBitmapFont::buildFont(SDL_Surface *surface)
@@ -814,16 +905,12 @@ void cBitmapFont::showText(SDL_Rect rdest, string sText, int eBitmapFontType, SD
 	showText(rdest.x, rdest.y, sText, eBitmapFontType, surface);
 }
 
-void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)
+void cBitmapFont::getCharset(int eBitmapFontType)
 {
-	//tmp offsets
-	int offX = x;
-	int offY = y;
-	
 	if(iLoadedCharset != eBitmapFontType) //requested new font - load font surface and array of charlocations
 	{
 		iLoadedCharset = eBitmapFontType;
-		
+		if(DEBUGFONTS) cLog::write("Setting fonttype to " + iToStr(eBitmapFontType), cLog::eLOG_TYPE_DEBUG);
 		switch(eBitmapFontType)
 		{
 			case LATIN_BIG_GOLD:
@@ -856,6 +943,55 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 				copyArray(LatinNormal, chars);
 		}
 	}
+}
+
+SDL_Rect cBitmapFont::getTextLenght(string sText, int eBitmapFontType)
+{
+	//tmp offsets
+	SDL_Rect rTmp = {0, 0, 0, sfTmp->h / 16};
+	
+	getCharset(eBitmapFontType);
+	
+	int ascii;
+	
+	for(int i = 0; sText[i] != '\0'; i++)
+	{
+		ascii = (unsigned char) sText[i];
+		//is space?
+		if(sText[i] == ' ')
+		{
+			rTmp.w += sfTmp->w / 32;
+		} //is new line?
+		else if(sText[i] == '\n')
+		{
+			rTmp.h += sfTmp->h / 16; //high always the same per charset
+		}
+		else
+		{
+			//get ascii value
+			rTmp.w += chars[ascii].w + 1;
+		}
+	}
+	
+	if(DEBUGFONTS)
+	{	
+		stringstream strStream;
+		strStream << "Text: " << sText << " is " << rTmp.w << " width and " << rTmp.h << " hight\n";
+		cLog::write(strStream.str(), cLog::eLOG_TYPE_DEBUG);
+	}
+	return rTmp;
+}
+
+void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)
+{
+	//tmp offsets
+	int offX = x;
+	int offY = y;
+
+	getCharset(eBitmapFontType);
+	
+	getTextLenght(sText, eBitmapFontType);
+	
 	if(sfTmp != NULL)
 	{
 		for(int i = 0; sText[i] != '\0'; i++)
