@@ -1157,7 +1157,7 @@ void cVehicle::ShowHelp ( void )
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {rDialog.x+11, rDialog.y + 13, typ->info->w, typ->info->h};
 	SDL_Rect rTxt = {rDialog.x+349, rDialog.y + 66, 277, 181};
-	SDL_Rect rTitle = {rDialog.x+332, rDialog.y + 11, 152, 15};
+	SDL_Rect rTitle = {rDialog.x+327, rDialog.y + 11, 160, 15};
 	SDL_Rect rButton = { rDialog.x+474, rDialog.y + 452, BUTTON_W, BUTTON_H };
 	SDL_Surface *SfDialog;
 	
@@ -1184,10 +1184,11 @@ void cVehicle::ShowHelp ( void )
 	// Das Infobild blitten:
 	SDL_BlitSurface ( typ->info,NULL,buffer,&rInfoTxt );
 	//show menu title
-	fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Info" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	font->showTextCentered(rTitle, lngPack.Translate( "Text~Vehicles~Title_Info" ));
 	
 	// show text
-	fonts->OutTextBlock ( typ->text,rTxt,buffer );
+	font->showTextAsBlock(rTxt, typ->text);
+	
 	// get unit details
 	ShowBigDetails(); 
 	//draw button
