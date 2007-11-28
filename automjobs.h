@@ -20,12 +20,18 @@
 #define automjobsH
 
 #define FIELD_BLOCKED -10000
-#define WAIT_FRAMES 15
+#define WAIT_FRAMES 10
 
 //main tuning knobs of the AI:
-#define A 1 //how impottant is it, to survey as much fields as possible with each move	
-#define B 1.9 //important is it, to stay near the operation point
-#define C 0 //how important is it, to hold a distance to other surveyors
+#define A 1.0	//how impottant is it, to survey as much fields as possible with each move	
+#define B 1.49  //how important is it, to stay near the operation point
+#define C 7.0	//how important is it, to hold a distance to other surveyors
+#define EXP -1	//an negative integer; the influence of other surveyors is falling over the distance with x^EXP
+				//when there are no fields to survey next to the surveyor, where should the surveyor resume?
+				//if the surveyor seem to plan far senseless moves, rebalancing the folowing factors might help
+#define D 1		//more likley near the operation point
+#define E 3		//more likley near his position
+
 
 class cEngine;
 class cMJobs;
@@ -42,13 +48,15 @@ class cAutoMJob {
 							//needed to check if the move job was changed from outside the AI (i. e. by the player)
 	cVehicle *vehicle;		//the vehicle the auto move job belongs to
 	int iNumber;			//index of the AutoMJob in autoMJobs[]
-	int n;					//debug
+	int n;					//frame delay counter
 	int OPX, OPY;			//the operation point of the surveyor
 							//the surveyor tries to stay near this coordinates
 	
 	void DoAutoMove();
 	float CalcFactor(int x, int y); 
 	void PlanNextMove();
+	void PlanLongMove();
+	bool FieldIsFree( int PosX, int PosY);
 	
 
 public:

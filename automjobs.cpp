@@ -98,18 +98,20 @@ void cAutoMJob::DoAutoMove()
 		if (vehicle->mjob->Suspended && vehicle->data.speed)
 		{
 			engine->AddActiveMoveJob(vehicle->mjob);
+			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
 
 }
 
 //think about the next move:
-//the AI look at all fields next to the surveyor
+//the AI looks at all fields next to the surveyor
 //and calculates an factor for each field
 //the surveyor will move to the field with the highest value
 void cAutoMJob::PlanNextMove()
 {
 
+	//TODO: survey an partly detected area with ressources completly, like in the org MAX
 	int x, y;
 	int bestX, bestY;
 	float tempFactor;
@@ -134,14 +136,10 @@ void cAutoMJob::PlanNextMove()
 	if ( maxFactor != FIELD_BLOCKED )
 	{
 		engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
-		if (vehicle->mjob->finished) //debug
-		{
-			cLog::write("Error in Surveyor AI: no path to dest", LOG_TYPE_DEBUG);
-		}
 	}	
 	else //no fields to survey next to the surveyor
 	{
-		//TODO: search for the nearest field to survey
+		PlanLongMove();
 	}
 }
 
@@ -149,19 +147,10 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
-	//check if the destination field is free
-	//we do this here manually, because this is much faster than using the result of AddMoveJob()
+	if ( !FieldIsFree(PosX, PosY) ) return FIELD_BLOCKED;
 
-	if ( PosX < 0 || PosY < 0 || PosX >= engine->map->size || PosY >= engine->map->size ) return FIELD_BLOCKED; //check map borders
-	
-	int terrainNr=engine->map->Kacheln[PosX + PosY * engine->map->size];
-	if ( TerrainData.terrain[terrainNr].blocked ) return FIELD_BLOCKED; //check terrain
-	
-	sGameObjects objects = engine->map->GO[PosX + PosY * engine->map->size];
-	if ( objects.reserviert || objects.reserviert || objects.top ) return FIELD_BLOCKED; //check if there is another unit on the field
-
-
-	//next, calculate some values, on which the "impotance-factor" may depend
+	//calculate some values, on which the "impotance-factor" may depend
+	//TODO: don't use the deltas
 
 	//the number of fields which would be surveyed by this move
 	float NrSurvFields = 0; 
@@ -172,6 +161,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			if ( x == PosX && y == PosY ) continue;
+			if ( x < 0 || y < 0 || x >= engine->map->size || y >= engine->map->size ) continue;
 
 			if ( vehicle->owner->ResourceMap[x + y * engine->map->size] == 0)
 			{
@@ -179,7 +169,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 			}
 		}
 	}
-	if (vehicle->PosX != PosX && vehicle->PosY != PosY)
+	if (vehicle->PosX != PosX && vehicle->PosY != PosY) //diagonal move
 	{
 		NrSurvFields /= 2;
 	}
@@ -191,14 +181,92 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	float deltaDistanceOP = oldDistanceOP - newDistanceOP;
 
 	//distances to other surveyors
-	//TODO
+	
+	int i;
+	float oldDistancesSurv = 0;
+	float newDistancesSurv = 0;
+	float deltaDistancesSury;
+	float temp;
+	for ( i = 0; i < iCount ; i++)
+	{
+		if ( i == iNumber ) continue;
+		
+		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
+		newDistancesSurv += pow( temp, EXP);
+
+		temp = sqrt( pow( (float) vehicle->PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) vehicle->PosY - autoMJobs[i]->vehicle->PosY , 2) );
+		oldDistancesSurv += pow( temp, EXP);
+	}
+	deltaDistancesSury = oldDistancesSurv - newDistancesSurv;
+
 
 	//and now the magic formula, which calculates the "importance-factor"
-	//TODO: check for factor < FIELD_BLOCKED
 	
-	float factor = A * NrSurvFields + B * deltaDistanceOP;
+	
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
+	float factor = A * NrSurvFields + B * deltaDistanceOP + C * deltaDistancesSury;
+	
+	if (factor < FIELD_BLOCKED)
+	{
+		factor = FIELD_BLOCKED;
+	}
 
 	return  factor;
 
+}
+
+//checks if the destination field is free
+bool cAutoMJob::FieldIsFree(int PosX, int PosY)
+{
+	if ( PosX < 0 || PosY < 0 || PosX >= engine->map->size || PosY >= engine->map->size ) return false; //check map borders
+	
+	int terrainNr=engine->map->Kacheln[PosX + PosY * engine->map->size];
+	if ( TerrainData.terrain[terrainNr].blocked ) return false; //check terrain
+	
+	sGameObjects objects = engine->map->GO[PosX + PosY * engine->map->size];
+	if ( objects.reserviert || objects.vehicle || objects.top ) return false; //check if there is another unit on the field
+	//FIXME: an field with a connector is returned as false
+
+	//TODO: check for enemy mines
+
+	return true;
+}
+
+//searches the map for a location where the surveyor can resume
+void cAutoMJob::PlanLongMove()
+{
+	int x, y;
+	int bestX, bestY;
+	float destinationOP, destinationSurv;
+	float tempValue;
+	float minValue = 0;
+
+	for ( x = 0; x < engine->map->size; x++ )
+	{
+		for ( y = 0; y < engine->map->size; y++ )
+		{
+			if ( !FieldIsFree( x, y) ) continue;
+			if ( vehicle->owner->ResourceMap[x + y * engine->map->size] == 1 ) continue;
+
+			destinationOP = sqrt( (float) (x - OPX) * (x - OPX) + (y - OPY) * (y - OPY) );
+			destinationSurv = sqrt( (float) (x - vehicle->PosX) * (x - vehicle->PosX) + (y - vehicle->PosY) * (y - vehicle->PosY) );
+			tempValue = D * destinationOP + E * destinationSurv;
+
+			if ( (tempValue < minValue) || (minValue == 0) )
+			{
+				minValue = tempValue;
+				bestX = x;
+				bestY = y;
+			}
+			//TODO: check, if a path can be found to the coordinates
+		}
+	}
+	if ( minValue != 0 )
+	{
+		engine->AddMoveJob( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false, false);
+	}
+	else
+	{
+		//TODO: disable automove
+	}
 }
