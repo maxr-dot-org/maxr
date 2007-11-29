@@ -259,6 +259,7 @@
 			<Turns ENG="Turns" localized="Runden"/>
 			<Turn ENG="Turn" localized="Runde"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
+			<Surveying ENG="surveying" localized="vermesse"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>

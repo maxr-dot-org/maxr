@@ -259,6 +259,7 @@
 			<Turns ENG="Turns"/>
 			<Turn ENG="Turn"/>
 			<Reserve ENG="Reserve"/>
+			<Surveying ENG="surveying"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
