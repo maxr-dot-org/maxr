@@ -1839,7 +1839,7 @@ string cVehicle::GetStatusStr ( void )
 {
 	if ( autoMJob )
 	{
-		return std::string ( "Vermesse" ); //TODO: i18n
+		return lngPack.Translate ( "Text~Comp~Surveying" );
 	}
 	else
 		if ( mjob )
