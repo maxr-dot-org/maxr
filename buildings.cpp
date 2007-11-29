@@ -183,7 +183,7 @@ string cBuilding::GetStatusStr ( void )
 				sText += (string)owner->VehicleData[ptr->typ->nr].name + " (";
 				sText += iToStr(iRound) + ")";
 
-				if ( fonts->GetTextLenSmall ( (char *)sText.c_str() ) >126 )
+				if ( font->getTextWide ( sText, LATIN_SMALL_WHITE ) >126 )
 				{
 					sText = lngPack.Translate( "Text~Comp~Producing");  + ":\n";
 					sText += (string)owner->VehicleData[ptr->typ->nr].name + " (";
@@ -891,36 +891,36 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.max_shield )
 	{
 		// Range:
-		fonts->OutTextCenter ( iToStr(data.range),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Range").c_str(),COLUMN_2,y,buffer );
-		DrawSymbolBig ( SBRange,COLUMN_3,y-2,160,data.range,typ->data.range,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.range));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Range"));
+		DrawSymbolBig ( SBRange,COLUMN_3,y-2,160,data.range,typ->data.range,buffer );		
 		DOLINEBREAK
 	}
 	if ( data.can_attack )
 	{
 		// Damage:
-		fonts->OutTextCenter ( iToStr(data.damage),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Damage").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.damage));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Damage"));
 		DrawSymbolBig ( SBAttack,COLUMN_3,y-3,160,data.damage,typ->data.damage,buffer );
 		DOLINEBREAK
 
 		if ( !data.is_expl_mine )
 		{
 			// Shots:
-			fonts->OutTextCenter ( iToStr(data.max_shots),COLUMN_1 ,y,buffer );
-			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Shoots").c_str(),COLUMN_2,y,buffer );
+			font->showTextCentered(COLUMN_1, y, iToStr(data.max_shots));
+			font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Shoots"));
 			DrawSymbolBig ( SBShots,COLUMN_3,y+2,160,data.max_shots,typ->data.max_shots,buffer );
 			DOLINEBREAK
 
 			// Range:
-			fonts->OutTextCenter ( iToStr(data.range),COLUMN_1 ,y,buffer );
-			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Range").c_str(),COLUMN_2,y,buffer );
+			font->showTextCentered(COLUMN_1, y, iToStr(data.range));
+			font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Range"));
 			DrawSymbolBig ( SBRange,COLUMN_3,y-2,160,data.range,typ->data.range,buffer );
 			DOLINEBREAK
 			
 			// Ammo:
-			fonts->OutTextCenter ( iToStr(data.ammo),COLUMN_1 ,y,buffer );
-			fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Ammo").c_str(),COLUMN_2,y,buffer );
+			font->showTextCentered(COLUMN_1, y, iToStr(data.ammo));
+			font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Ammo"));
 			DrawSymbolBig ( SBAmmo,COLUMN_3,y-2,160,data.ammo,typ->data.max_ammo,buffer );
 			DOLINEBREAK
 		}
@@ -928,8 +928,8 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.can_load==TRANS_METAL||data.can_load==TRANS_OIL||data.can_load==TRANS_GOLD )
 	{
 		// Metall:
-		fonts->OutTextCenter ( iToStr(data.max_cargo),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Cargo").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.max_cargo));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Cargo"));
 		switch ( data.can_load )
 		{
 			case TRANS_METAL:
@@ -947,42 +947,42 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.energy_prod )
 	{
 		// Energieproduktion:
-		fonts->OutTextCenter ( iToStr(data.energy_prod),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.energy_prod));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Produce"));
 		DrawSymbolBig ( SBEnergy,COLUMN_3,y-2,160,data.energy_prod,typ->data.energy_prod,buffer );
 		DOLINEBREAK
 			
 		// Verbrauch:
-		fonts->OutTextCenter ( iToStr(data.oil_need),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.oil_need));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Usage"));
 		DrawSymbolBig ( SBOil,COLUMN_3,y-2,160,data.oil_need,typ->data.oil_need,buffer );
 		DOLINEBREAK
 	}
 	if ( data.human_prod )
 	{
 		// Humanproduktion:
-		fonts->OutTextCenter ( iToStr(data.human_prod),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),COLUMN_2,y,buffer );
+		font->showText(COLUMN_1, y, iToStr(data.human_prod));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Produce"));
 		DrawSymbolBig ( SBHuman,COLUMN_3,y-2,160,data.human_prod,typ->data.human_prod,buffer );
 		DOLINEBREAK
 	}
 	// Armor:
-	fonts->OutTextCenter ( iToStr(data.armor),COLUMN_1 ,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Armor").c_str(),COLUMN_2,y,buffer );
+	font->showTextCentered(COLUMN_1, y, iToStr(data.armor));
+	font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Armor"));
 	DrawSymbolBig ( SBArmor,COLUMN_3,y-2,160,data.armor,typ->data.armor,buffer );
 	DOLINEBREAK
 	
 	// Hitpoints:
-	fonts->OutTextCenter ( iToStr(data.max_hit_points),COLUMN_1 ,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Hitpoints").c_str(),COLUMN_2,y,buffer );
+	font->showTextCentered(COLUMN_1, y, iToStr(data.max_hit_points));
+	font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Hitpoints"));
 	DrawSymbolBig ( SBHits,COLUMN_3,y-1,160,data.max_hit_points,typ->data.max_hit_points,buffer );
 	DOLINEBREAK
 	
 	// Scan:
 	if ( data.scan )
 	{
-		fonts->OutTextCenter ( iToStr(data.scan),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Scan").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.scan));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Scan"));
 		DrawSymbolBig ( SBScan,COLUMN_3,y-2,160,data.scan,typ->data.scan,buffer );
 		DOLINEBREAK
 	
@@ -990,8 +990,8 @@ void cBuilding::ShowBigDetails ( void )
 	// Energieverbrauch:
 	if ( data.energy_need )
 	{
-		fonts->OutTextCenter ( iToStr(data.energy_need),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.energy_need));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Usage"));
 		DrawSymbolBig ( SBEnergy,COLUMN_3,y-2,160,data.energy_need,typ->data.energy_need,buffer );
 		DOLINEBREAK
 	
@@ -999,8 +999,8 @@ void cBuilding::ShowBigDetails ( void )
 	// Humanverbrauch:
 	if ( data.human_need )
 	{
-		fonts->OutTextCenter ( iToStr(data.human_need),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Produce").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.human_need));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Produce"));
 		DrawSymbolBig ( SBHuman,COLUMN_3,y-2,160,data.human_need,typ->data.human_need,buffer );
 		DOLINEBREAK
 	
@@ -1008,8 +1008,8 @@ void cBuilding::ShowBigDetails ( void )
 	// Metallverbrauch:
 	if ( data.metal_need )
 	{
-		fonts->OutTextCenter ( iToStr(data.metal_need),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.metal_need));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Usage"));
 		DrawSymbolBig ( SBMetal,COLUMN_3,y-2,160,data.metal_need,typ->data.metal_need,buffer );
 		DOLINEBREAK
 	
@@ -1017,15 +1017,15 @@ void cBuilding::ShowBigDetails ( void )
 	// Goldverbrauch:
 	if ( data.gold_need )
 	{
-		fonts->OutTextCenter ( iToStr(data.gold_need),COLUMN_1 ,y,buffer );
-		fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Usage").c_str(),COLUMN_2,y,buffer );
+		font->showTextCentered(COLUMN_1, y, iToStr(data.gold_need));
+		font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Usage"));
 		DrawSymbolBig ( SBGold,COLUMN_3,y-2,160,data.gold_need,typ->data.gold_need,buffer );
 		DOLINEBREAK
 	
 	}
 	// Costs:
-	fonts->OutTextCenter ( iToStr(data.iBuilt_Costs),COLUMN_1 ,y,buffer );
-	fonts->OutText ( lngPack.Translate( "Text~Vehicles~Title_Costs").c_str(),COLUMN_2,y,buffer );
+	font->showTextCentered(COLUMN_1, y, iToStr(data.iBuilt_Costs));
+	font->showText(COLUMN_2, y, lngPack.Translate( "Text~Vehicles~Title_Costs"));
 	DrawSymbolBig ( SBMetal,COLUMN_3,y-2,160,data.iBuilt_Costs,typ->data.iBuilt_Costs,buffer );
 }
 
@@ -1181,7 +1181,7 @@ bool cBuilding::StartWork ( bool engine_call )
 		}
 	}
 	// Energieverbraucher:
-	else if ( data.energy_need )
+	else if ( data.energy_need )//TODO: add i18n
 	{
 		if ( data.energy_need+SubBase->EnergyNeed>SubBase->MaxEnergyProd )
 		{
@@ -1455,16 +1455,19 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	SDL_FreeSurface ( img );
 
 	// Text ausgeben:
-	fonts->OutTextCenter ( typ->data.name,102+166,64+159,buffer );
+	//fonts->OutTextCenter ( typ->data.name,102+166,64+159,buffer );
+	font->showTextCentered(102+166, 64+159, typ->data.name);
 	if ( pv )
 	{
-		fonts->OutTextCenter ( pv->typ->data.name,208+166,64+159,buffer );
+		font->showTextCentered(208+166, 64+159, pv->typ->data.name);
+		//fonts->OutTextCenter ( pv->typ->data.name,208+166,64+159,buffer );
 		MaxTarget=pv->data.max_cargo;
 		Target=pv->data.cargo;
 	}
 	else
 	{
-		fonts->OutTextCenter ( pb->typ->data.name,208+166,64+159,buffer );
+		font->showTextCentered(208+166, 64+159, pb->typ->data.name);
+		//fonts->OutTextCenter ( pb->typ->data.name,208+166,64+159,buffer );
 		MaxTarget=pb->data.max_cargo;
 		Target=pb->data.cargo;
 	}
@@ -1702,7 +1705,7 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 {
 	int cargo,max_cargo;
 	SDL_Rect scr,dest;
-	char str[10];
+	string sText;
 
 	switch ( data.can_load )
 	{
@@ -1745,13 +1748,17 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.w=scr.w=78;
 	dest.h=scr.h=14;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
-	sprintf ( str,"%d",cargo-*trans );
-	fonts->OutTextCenter ( str,4+39+166,30+159,buffer );
+	sText = iToStr(cargo-*trans);
+	//sprintf ( str,"%d",cargo-*trans );
+	//fonts->OutTextCenter ( str,4+39+166,30+159,buffer );
+	font->showTextCentered(4+39+166,30+159, sText);
 	scr.x=229;
 	dest.x=229+166;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
-	sprintf ( str,"%d",Target+*trans );
-	fonts->OutTextCenter ( str,229+39+166,30+159,buffer );
+	sText = iToStr(Target+*trans);
+	//sprintf ( str,"%d",Target+*trans );
+	//fonts->OutTextCenter ( str,229+39+166,30+159,buffer );
+	font->showTextCentered(229+39+166,30+159, sText);
 	scr.x=141;
 	scr.y=15;
 	dest.x=141+166;
@@ -1759,8 +1766,10 @@ void cBuilding::MakeTransBar ( int *trans,int MaxTarget,int Target )
 	dest.w=scr.w=29;
 	dest.h=scr.h=21;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer,&scr,buffer,&dest );
-	sprintf ( str,"%d",abs ( *trans ) );
-	fonts->OutTextCenter ( str,155+166,21+159,buffer );
+	//sprintf ( str,"%d",abs ( *trans ) );
+	sText = iToStr(abs(*trans));
+	//fonts->OutTextCenter ( str,155+166,21+159,buffer );
+	font->showTextCentered(155+166,21+159, sText);
 	// Den Pfeil malen:
 	if ( *trans<0 )
 	{
@@ -2525,24 +2534,13 @@ void cBuilding::DrawStored ( int off )
 		{
 			SDL_BlitSurface ( vehicleV->typ->storage,NULL,buffer,&dest );
 			// Den Namen ausgeben:
-			if ( fonts->GetTextLen ( ( char * ) vehicleV->name.c_str() ) >dest.w-10 )
-			{
-				char str[100];
-				strcpy ( str,vehicleV->name.c_str() );
-				str[strlen ( str )-1]=0;
-				while ( fonts->GetTextLen ( str ) >dest.w-10 )
-				{
-					str[strlen ( str )-1]=0;
-				}
-				fonts->OutText ( str,dest.x+5,dest.y+5,buffer );
-			}
-			else
-			{
-				fonts->OutText ( ( char * ) vehicleV->name.c_str(),dest.x+5,dest.y+5,buffer );
-			}
+			SDL_Rect rTmp = { dest.x+5, dest.y+5, dest.w-10, font->getFontHeight() };
+			font->showTextAsBlock(rTmp, vehicleV->name, LATIN_SMALL_WHITE);
+			
 			if ( vehicleV->data.version!=vehicleV->owner->VehicleData[vehicleV->typ->nr].version )
 			{
-				fonts->OutTextSmall ( "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", dest.x + 5, dest.y + 15, ClWhite, buffer );
+				//fonts->OutTextSmall ( "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", dest.x + 5, dest.y + 15, ClWhite, buffer );
+				font->showText(dest.x+5, dest.y+15, "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", LATIN_SMALL_WHITE);
 			}
 		}
 		else if ( data.build_on_water )
@@ -2618,14 +2616,16 @@ void cBuilding::DrawStored ( int off )
 		{	
 			// Die Hitpoints anzeigen:
 			DrawNumber ( dest.x+13,dest.y,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),dest.x+27,dest.y,ClWhite,buffer );
+			font->showText(dest.x+27,dest.y, lngPack.Translate( "Text~Hud~Hitpoints"), LATIN_SMALL_WHITE);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),dest.x+27,dest.y,ClWhite,buffer );
 			DrawSymbol ( SHits,dest.x+60,dest.y,58,vehicleV->data.hit_points,vehicleV->data.max_hit_points,buffer );
 			// Die Munition anzeigen:
 			if ( vehicleV->data.can_attack )
 			{
 				dest.y+=15;
 				DrawNumber ( dest.x+13,dest.y,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
-				fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),dest.x+27,dest.y,ClWhite,buffer );
+				//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),dest.x+27,dest.y,ClWhite,buffer );
+				font->showText(dest.x+27,dest.y, lngPack.Translate( "Text~Hud~AmmoShort"), LATIN_SMALL_WHITE);
 				DrawSymbol ( SAmmo,dest.x+60,dest.y,58,vehicleV->data.ammo,vehicleV->data.max_ammo,buffer );
 			}
 		}
@@ -2647,7 +2647,8 @@ void cBuilding::ShowStorageMetalBar ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_storage,&scr,buffer,&dest );
 
 	//draw metalamount over the metalbar
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Metal" ) + ": " + iToStr ( SubBase->Metal ), rDialog.x + 557, rDialog.y + 86, buffer );
+	font->showTextCentered(rDialog.x + 557, rDialog.y + 86, lngPack.Translate ( "Text~Game_Options~Title_Metal" ) + ": " + iToStr ( SubBase->Metal ));
+	//fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Metal" ) + ": " + iToStr ( SubBase->Metal ), rDialog.x + 557, rDialog.y + 86, buffer );
 
 	//BEGIN fill metal bar
 	scr.x=135;
@@ -2805,10 +2806,15 @@ void cBuilding::ShowResearch ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_research,NULL,buffer,&rDialog );
 
 	//draw titles
+	font->showTextCentered(rTitle.x+rTitle.w/2, rTitle.y, lngPack.Translate( "Text~Game_Start~Title_Labs" ));
+	font->showTextCentered(rTxtLabs.x+rTxtLabs.w/2, rTxtLabs.y, lngPack.Translate( "Text~Comp~Labs" ));
+	font->showTextCentered(rTxtThemes.x+rTxtThemes.w/2, rTxtThemes.y, lngPack.Translate( "Text~Comp~Themes" ));
+	font->showTextCentered(rTxtRounds.x+rTxtRounds.w/2, rTxtRounds.y, lngPack.Translate( "Text~Comp~Turns" ));
+/*
 	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Labs" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
 	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Labs" ), rTxtLabs.x+rTxtLabs.w/2, rTxtLabs.y, buffer);
 	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Themes" ), rTxtThemes.x+rTxtThemes.w/2, rTxtThemes.y, buffer);
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Turns" ), rTxtRounds.x+rTxtRounds.w/2, rTxtRounds.y, buffer);
+	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Turns" ), rTxtRounds.x+rTxtRounds.w/2, rTxtRounds.y, buffer); */
 
 
 	//draw button Cancel
@@ -2915,13 +2921,17 @@ void cBuilding::ShowResearchSchieber ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_research, &scr, buffer, &dest );
 
 		// Texte ausgeben:
-		fonts->OutTextCenter ( iToStr(owner->ResearchTechs[i].working_on), dest.x + 21 + 2, dest.y + 3, buffer );
-		fonts->OutTextCenter ( dToStr(owner->ResearchTechs[i].level*100), 258 + rDialog.x, dest.y + 3, buffer );
+		font->showTextCentered(dest.x + 21 + 2, dest.y + 3, iToStr(owner->ResearchTechs[i].working_on));
+		font->showTextCentered(258 + rDialog.x, dest.y + 3, dToStr(owner->ResearchTechs[i].level*100));
+
+		//fonts->OutTextCenter ( iToStr(owner->ResearchTechs[i].working_on), dest.x + 21 + 2, dest.y + 3, buffer );
+		//fonts->OutTextCenter ( dToStr(owner->ResearchTechs[i].level*100), 258 + rDialog.x, dest.y + 3, buffer );
 
 		if ( owner->ResearchTechs[i].working_on )
 		{
 			int iTmp = ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining / ( double ) owner->ResearchTechs[i].working_on);
-			fonts->OutTextCenter ( iToStr(iTmp), 313 + 140, dest.y + 3, buffer );
+			//fonts->OutTextCenter ( iToStr(iTmp), 313 + 140, dest.y + 3, buffer );
+			font->showTextCentered(313 + 140, dest.y + 3, iToStr(iTmp));
 		}
 
 		// Den Pfeil nach links:
@@ -2987,7 +2997,8 @@ void cBuilding::ShowResearchSchieber ( void )
 		//dest.w = rTxtDescr.w; //not used right now
 		//dest.h = rTxtDescr.h; //not used right now
 		dest.y = rTxtDescr.y + i * 28;
-		fonts->OutText(sTxtTheme, dest.x, dest.y, buffer);
+		font->showText(dest, sTxtTheme);
+		//fonts->OutText(sTxtTheme, dest.x, dest.y, buffer);
 	}
 }
 
@@ -3060,9 +3071,12 @@ void cBuilding::ShowUpgrade ( void )
 	
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel"), false, rBtnCancel.x, rBtnCancel.y, buffer);
-	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Updates" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
-
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	font->showTextCentered(rTitle.x+rTitle.w/2, rTitle.y, lngPack.Translate( "Text~Game_Start~Title_Updates" ));
+	
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Updates" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	
+	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.Translate( "Text~Comp~Description" ));
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
 
 	// Der Haken:
 	if ( Beschreibung )
@@ -3581,11 +3595,13 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.vehicle[ptr->id].text);
+					//fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				else
 				{
-					fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.building[ptr->id].text);
+					//fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
 				}
 			}
 			// Die Details anzeigen:
@@ -3616,7 +3632,8 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 				SDL_Rect scr,dest;
 				if ( !ptr->upgrades[k].active ) continue;
 				sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
-				fonts->OutText ( str,322,296+k*19,buffer );
+				//fonts->OutText ( str,322,296+k*19,buffer );
+				font->showText(322,296+k*19, iToStr(ptr->upgrades[k].NextPrice));
 
 				if ( ptr->upgrades[k].Purchased )
 				{
@@ -3639,21 +3656,22 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 		str[0]=0;
 		if ( ptr->vehicle )
 		{
-			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.vehicle[ptr->id].data.name[t]&&font->getTextWide ( str ) <85 )
 			{
 				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		else
 		{
-			while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
+			while ( UnitsData.building[ptr->id].data.name[t]&&font->getTextWide ( str ) <85 )
 			{
 				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
 			}
 		}
 		str[t]='.';
 		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer );
+		//fonts->OutText ( str,text.x,text.y,buffer );
+		font->showText(text, str);
 		text.y+=32+2;
 		dest.y+=32+2;
 	}
@@ -3662,7 +3680,7 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 // Zeigt die Anzahl der Credits an:
 void cBuilding::ShowGoldBar ( int StartCredits )
 {
-	char str[50];
+	//char str[50];
 	SDL_Rect scr,dest;
 	scr.x=dest.x=371;
 	scr.y=dest.y=301;
@@ -3674,8 +3692,9 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	scr.w=dest.w=150;
 	scr.h=dest.h=26;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
-	sprintf ( str,"Credits: %d",owner->Credits );
-	fonts->OutTextCenter ( str,381,275,buffer );
+	//sprintf ( str,"Credits: %d",owner->Credits );
+	//fonts->OutTextCenter ( str,381,275,buffer );
+	font->showTextCentered(381, 275, "Credits: " + iToStr(owner->Credits));
 
 	scr.x=118;
 	scr.y=336;
@@ -4561,28 +4580,34 @@ void cBuilding::ShowMineManager ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_mine_manager,NULL,buffer,&rDialog );
 	mouse->SetCursor ( CHand );
 
-	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Mine" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
-
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Mine" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	font->showTextCentered(rTitle.x+rTitle.w/2, rTitle.y, lngPack.Translate( "Text~Game_Start~Title_Mine" ));
 	for(int i = 0; i < 3; i++)
 	{
 		switch(i)
 		{
 			case 0:
-				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Metal" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Metal" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				font->showTextCentered(rInfo1.x+rInfo1.w/2, rInfo1.y, lngPack.Translate( "Text~Game_Options~Title_Metal" ));
+
 				break;
 			case 1:
 				rInfo1.y += 120;
-				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Oil" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				font->showTextCentered(rInfo1.x+rInfo1.w/2, rInfo1.y, lngPack.Translate( "Text~Game_Options~Title_Oil" ));
+				//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Oil" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
 				break;
 			case 2:
 				rInfo1.y += 120;
-				fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Gold" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
+				font->showTextCentered(rInfo1.x+rInfo1.w/2, rInfo1.y, lngPack.Translate( "Text~Game_Options~Title_Gold" ));
+				//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Options~Title_Gold" ), rInfo1.x+rInfo1.w/2, rInfo1.y, buffer);
 				break;
 		}
 		
-		fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Usage" ), rInfo2.x+rInfo2.w/2, rInfo2.y, buffer);
+		font->showTextCentered(rInfo2.x+rInfo2.w/2, rInfo2.y, lngPack.Translate( "Text~Vehicles~Title_Usage" ));
+		//fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Usage" ), rInfo2.x+rInfo2.w/2, rInfo2.y, buffer);
 		rInfo2.y += 121;
-		fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Reserve" ), rInfo3.x+rInfo3.w/2, rInfo3.y, buffer);
+		font->showTextCentered(rInfo3.x+rInfo3.w/2, rInfo3.y, lngPack.Translate( "Text~Comp~Reserve" ));
+		//fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Reserve" ), rInfo3.x+rInfo3.w/2, rInfo3.y, buffer);
 		rInfo3.y += 121;
 	}
 
@@ -4967,7 +4992,6 @@ void cBuilding::ShowMineManager ( void )
 void cBuilding::MakeMineBars ( int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
-
 	string sTmp1 = "";
 	string sTmp2 = " / " + lngPack.Translate( "Text~Comp~Turn") +")";
 	DrawMineBar ( TRANS_METAL, SubBase->MetalProd, MaxM, 0, true, MaxM - SubBase->MetalProd - *FreeM );
@@ -4976,15 +5000,18 @@ void cBuilding::MakeMineBars ( int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,
 	
 	DrawMineBar ( TRANS_METAL, SubBase->MetalNeed, SubBase->MaxMetalNeed, 1, false, 0 );
 	sTmp1 = iToStr(SubBase->MetalNeed) + " (" + iToStr(SubBase->MetalProd - SubBase->MetalNeed);
-	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+70 + 8 + 37, buffer );
+	//fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+70 + 8 + 37, buffer );
+	font->showTextCentered(rDialog.x+174 + 120, rDialog.y+70 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG);
 	
 	DrawMineBar ( TRANS_OIL, SubBase->OilNeed, SubBase->MaxOilNeed, 1, false, 0 );
 	sTmp1 = iToStr(SubBase->OilNeed) + " (" + iToStr(SubBase->OilProd - SubBase->OilNeed);
-	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+190 + 8 + 37, buffer );
-	
+	//fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+190 + 8 + 37, buffer );
+	font->showTextCentered(rDialog.x+174 + 120, rDialog.y+190 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG);
+		
 	DrawMineBar ( TRANS_GOLD, SubBase->GoldNeed, SubBase->MaxGoldNeed, 1, false, 0 );
 	sTmp1 = iToStr(SubBase->GoldNeed) + " (" + iToStr(SubBase->GoldProd - SubBase->GoldNeed);	
-	fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+310 + 8 + 37, buffer );
+	//fonts->OutTextBigCenter ( sTmp1 + sTmp2, rDialog.x+174 + 120, rDialog.y+310 + 8 + 37, buffer );
+	font->showTextCentered(rDialog.x+174 + 120, rDialog.y+310 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG);
 }
 
 // Malt einen Rohstoffbalken:
@@ -5048,7 +5075,8 @@ void cBuilding::DrawMineBar ( int typ,int value,int max_value,int offy,bool numb
 	}
 	if ( number )
 	{
-		fonts->OutTextBigCenter ( iToStr(value),rDialog.x+174+120,dest.y+8,buffer );
+		//fonts->OutTextBigCenter ( iToStr(value),rDialog.x+174+120,dest.y+8,buffer );
+		font->showTextCentered(rDialog.x+174+120,dest.y+8, iToStr(value), LATIN_BIG);
 	}
 }
 
@@ -5267,11 +5295,12 @@ void cBuilding::ShowBuildMenu ( void )
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Build"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 
-
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
-	fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Build" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
-	
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Repeat" ).c_str(), rTxtRepeat.x+rTxtRepeat.w/2, rTxtRepeat.y, buffer);
+	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.Translate( "Text~Comp~Description" ));
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Build" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	font->showTextCentered(rTitle.x+rTitle.w/2, rTitle.y, lngPack.Translate( "Text~Game_Start~Title_Build" ));
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Repeat" ).c_str(), rTxtRepeat.x+rTxtRepeat.w/2, rTxtRepeat.y, buffer);
+	font->showTextCentered(rTxtRepeat.x+rTxtRepeat.w/2, rTxtRepeat.y, lngPack.Translate( "Text~Comp~Repeat" ));
 
 
 	// Der Haken:
@@ -5939,7 +5968,6 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest,scr,text;
-	char str[100];
 	int i,t;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=378;
@@ -6023,7 +6051,8 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 				{
 					tmp.x+=10;tmp.y+=10;
 					tmp.w-=20;tmp.h-=20;
-					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.vehicle[ptr->id].text);
+					//fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				// Die Details anzeigen:
 				{
@@ -6042,24 +6071,31 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 				int iTurboBuildCosts[3];
 				CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs );
 
-				sprintf ( str,"%d",iTurboBuildRounds[0]) ;
-				fonts->OutTextCenter ( str,389,350,buffer );
-				sprintf ( str,"%d",iTurboBuildCosts[0] );
-				fonts->OutTextCenter ( str,429,350,buffer );
+				//sprintf ( str,"%d",iTurboBuildRounds[0]) ;
+				font->showTextCentered(389,350,iToStr(iTurboBuildRounds[0]));
+				//fonts->OutTextCenter ( str,389,350,buffer );
+				//sprintf ( str,"%d",iTurboBuildCosts[0] );
+				font->showTextCentered(429,350,iToStr(iTurboBuildCosts[0]));
+				//fonts->OutTextCenter ( str,429,350,buffer );
 
 				if ( iTurboBuildRounds[1] > 0 )
 				{
-					sprintf ( str,"%d", iTurboBuildRounds[1] );
-					fonts->OutTextCenter ( str,389,375,buffer );
-					sprintf ( str,"%d", iTurboBuildCosts[1] );
-					fonts->OutTextCenter ( str,429,375,buffer );
+					
+					//sprintf ( str,"%d", iTurboBuildRounds[1] );
+					font->showTextCentered(389,375,iToStr(iTurboBuildRounds[1]));
+					//fonts->OutTextCenter ( str,389,375,buffer );
+					//sprintf ( str,"%d", iTurboBuildCosts[1] );
+					font->showTextCentered(429,375,iToStr(iTurboBuildCosts[1]));
+					//fonts->OutTextCenter ( str,429,375,buffer );
 				}
 				if ( iTurboBuildRounds[2] > 0 )
 				{
-					sprintf ( str,"%d", iTurboBuildRounds[2] );
-					fonts->OutTextCenter ( str,389,400,buffer );
-					sprintf ( str,"%d", iTurboBuildCosts[2] );
-					fonts->OutTextCenter ( str,429,400,buffer );
+					font->showTextCentered(389,400,iToStr(iTurboBuildRounds[2]));
+					//sprintf ( str,"%d", iTurboBuildRounds[2] );
+					//fonts->OutTextCenter ( str,389,400,buffer );
+					font->showTextCentered(429,400,iToStr(iTurboBuildCosts[2]));
+					//sprintf ( str,"%d", iTurboBuildCosts[2] );
+					//fonts->OutTextCenter ( str,429,400,buffer );
 				}
 			}
 			else //showInfo == false
@@ -6091,7 +6127,8 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 			}
 		}
 
-		// Text ausgeben:
+		// Text ausgeben: 
+		/* FIXME:
 		t=0;
 		str[0]=0;
 		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
@@ -6100,9 +6137,10 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 		}
 		str[t]='.';
 		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer );
-		sprintf ( str,"%d",owner->VehicleData[ptr->id].iBuilt_Costs );
-		fonts->OutTextCenter ( str,616,text.y,buffer );
+		fonts->OutText ( str,text.x,text.y,buffer ); */
+		//sprintf ( str,"%d",owner->VehicleData[ptr->id].iBuilt_Costs );
+		//fonts->OutTextCenter ( str,616,text.y,buffer );
+		font->showTextCentered(616, text.y, iToStr(owner->VehicleData[ptr->id].iBuilt_Costs));
 		text.y+=32+10;
 		dest.y+=32+10;
 	}
@@ -6150,7 +6188,6 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 {
 	sBuildStruct *ptr;
 	SDL_Rect scr,dest,text;
-	char str[100];
 	int i,t;
 	scr.x=330;scr.y=49;
 	scr.w=128;scr.h=233;
@@ -6233,7 +6270,8 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 				{
 					tmp.x+=10;tmp.y+=10;
 					tmp.w-=20;tmp.h-=20;
-					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.vehicle[ptr->id].text);
+					//fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
 				}
 				// Die Details anzeigen:
 				{
@@ -6257,24 +6295,30 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 				tmp.w=77;tmp.h=72;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen,&tmp,buffer,&tmp );
 
-				sprintf ( str,"%d",iTurboBuildRounds[0]);
-				fonts->OutTextCenter ( str,389,350,buffer );
-				sprintf ( str,"%d",iTurboBuildCosts[0] );
-				fonts->OutTextCenter ( str,429,350,buffer );
+				//sprintf ( str,"%d",iTurboBuildRounds[0]);
+				//fonts->OutTextCenter ( str,389,350,buffer );
+				font->showTextCentered(389, 350, iToStr(iTurboBuildRounds[0]));
+				//sprintf ( str,"%d",iTurboBuildCosts[0] );
+				//fonts->OutTextCenter ( str,429,350,buffer );
+				font->showTextCentered(429, 350, iToStr(iTurboBuildCosts[0]));
 
 				if ( iTurboBuildRounds[1] > 0 )
 				{
-					sprintf ( str,"%d", iTurboBuildRounds[1] );
-					fonts->OutTextCenter ( str,389,375,buffer );
-					sprintf ( str,"%d", iTurboBuildCosts[1] );
-					fonts->OutTextCenter ( str,429,375,buffer );
+					//sprintf ( str,"%d", iTurboBuildRounds[1] );
+					//fonts->OutTextCenter ( str,389,375,buffer );
+					font->showTextCentered(389, 375, iToStr(iTurboBuildRounds[1]));
+					//sprintf ( str,"%d", iTurboBuildCosts[1] );
+					//fonts->OutTextCenter ( str,429,375,buffer );
+					font->showTextCentered(429, 375, iToStr(iTurboBuildCosts[1]));
 				}
 				if ( iTurboBuildRounds[2] > 0 )
 				{
-					sprintf ( str,"%d", iTurboBuildRounds[2] );
-					fonts->OutTextCenter ( str,389,400,buffer );
-					sprintf ( str,"%d", iTurboBuildCosts[2] );
-					fonts->OutTextCenter ( str,429,400,buffer );
+					//sprintf ( str,"%d", iTurboBuildRounds[2] );
+					//fonts->OutTextCenter ( str,389,400,buffer );
+					font->showTextCentered(389, 400, iToStr(iTurboBuildRounds[2]));
+					//sprintf ( str,"%d", iTurboBuildCosts[2] );
+					//fonts->OutTextCenter ( str,429,400,buffer );
+					font->showTextCentered(429, 400, iToStr(iTurboBuildCosts[2]));
 				}
 			}
 			else
@@ -6306,15 +6350,16 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 			}
 		}
 		// Text ausgeben:
-		t=0;
+	/*	t=0; FIXME:
 		str[0]=0;
 		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
 			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
 		}
 		str[t]='.';
-		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer );
+		str[t+1]=0; */
+		//fonts->OutText ( str,text.x,text.y,buffer );
+		font->showText(text, UnitsData.vehicle[ptr->id].data.name);
 		text.y+=32+10;
 		dest.y+=32+10;
 	}
@@ -6825,21 +6870,24 @@ void cBuilding::ShowDetails ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31,177,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
-	fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),55,177,ClWhite,GraphicsData.gfx_hud );
+	font->showText(55,177, lngPack.Translate( "Text~Hud~Hitpoints"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+	//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Hitpoints"),55,177,ClWhite,GraphicsData.gfx_hud );
 	DrawSymbol ( SHits,88,174,70,data.hit_points,data.max_hit_points,GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 	if ( data.max_shield )
 	{
 		// Schild:
 		DrawNumber ( 31,189,data.shield,data.max_shield,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shield"),55,189,ClWhite,GraphicsData.gfx_hud );
+		font->showText(55,189, lngPack.Translate( "Text~Hud~Shield"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+		//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shield"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SShield,88,186,70,data.shield,data.max_shield,GraphicsData.gfx_hud );
 	}
 	if ( data.can_load&&owner==game->ActivePlayer )
 	{
 		// Load:
 		DrawNumber ( 31,189,data.cargo,data.max_cargo,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Cargo"),55,189,ClWhite,GraphicsData.gfx_hud );
+		font->showText(55,189, lngPack.Translate( "Text~Hud~Cargo"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+		//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Cargo"),55,189,ClWhite,GraphicsData.gfx_hud );
 		switch ( data.can_load )
 		{
 			case TRANS_METAL:
@@ -6864,7 +6912,8 @@ void cBuilding::ShowDetails ( void )
 		// Gesamt:
 		if ( data.can_load==TRANS_METAL||data.can_load==TRANS_OIL||data.can_load==TRANS_GOLD )
 		{
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,201, lngPack.Translate( "Text~Hud~Total"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			switch ( data.can_load )
 			{
 				case TRANS_METAL:
@@ -6888,28 +6937,33 @@ void cBuilding::ShowDetails ( void )
 		{
 			// Munition:
 			DrawNumber ( 31,189,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),55,189,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,189, lngPack.Translate( "Text~Hud~AmmoShort"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~AmmoShort"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SAmmo,88,187,70,data.ammo,data.max_ammo,GraphicsData.gfx_hud );
 		}
 		// Schüsse:
 		DrawNumber ( 31,212,data.shots,data.max_shots,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shots"),55,212,ClWhite,GraphicsData.gfx_hud );
+		font->showText(55,212, lngPack.Translate( "Text~Hud~Shots"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+		//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Shots"),55,212,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SShots,88,212,70,data.shots,data.max_shots,GraphicsData.gfx_hud );
 	}
 	else if ( data.energy_prod )
 	{
 		// EnergieProduktion:
 		DrawNumber ( 31,189, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Energy"),55,189,ClWhite,GraphicsData.gfx_hud );
+		font->showText(55,189, lngPack.Translate( "Text~Hud~Energy"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+		//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Energy"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SEnergy,88,187,70, ( IsWorking?data.energy_prod:0 ),data.energy_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,201, lngPack.Translate( "Text~Hud~Total"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
 			DrawSymbol ( SEnergy,88,199,70,SubBase->EnergyProd,SubBase->MaxEnergyProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,212, lngPack.Translate( "Text~Hud~Usage"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,212,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SEnergy,88,212,70,SubBase->EnergyNeed,SubBase->MaxEnergyNeed,GraphicsData.gfx_hud );
 		}
@@ -6918,16 +6972,19 @@ void cBuilding::ShowDetails ( void )
 	{
 		// HumanProduktion:
 		DrawNumber ( 31,189,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
-		fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Teams"),55,189,ClWhite,GraphicsData.gfx_hud );
+		font->showText(55,189, lngPack.Translate( "Text~Hud~Teams"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+		//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Teams"),55,189,ClWhite,GraphicsData.gfx_hud );
 		DrawSymbol ( SHuman,88,187,70,data.human_prod,data.human_prod,GraphicsData.gfx_hud );
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,201, lngPack.Translate( "Text~Hud~Total"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,199,70,SubBase->HumanProd,SubBase->HumanProd,GraphicsData.gfx_hud );
 			// Verbrauch:
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,212, lngPack.Translate( "Text~Hud~Usage"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,212,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,212,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,210,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}
@@ -6938,19 +6995,22 @@ void cBuilding::ShowDetails ( void )
 		if ( IsWorking )
 		{
 			DrawNumber ( 31,189,data.human_need,data.human_need,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,189, lngPack.Translate( "Text~Hud~Usage"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,187,70,data.human_need,data.human_need,GraphicsData.gfx_hud );
 		}
 		else
 		{
 			DrawNumber ( 31,189,0,data.human_need,GraphicsData.gfx_hud );
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,189, lngPack.Translate( "Text~Hud~Usage"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Usage"),55,189,ClWhite,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,187,70,0,data.human_need,GraphicsData.gfx_hud );
 		}
 		if ( owner==game->ActivePlayer )
 		{
 			// Gesammt:
-			fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
+			font->showText(55,201, lngPack.Translate( "Text~Hud~Total"), LATIN_SMALL_WHITE,GraphicsData.gfx_hud);
+			//fonts->OutTextSmall ( lngPack.Translate( "Text~Hud~Total"),55,201,ClWhite,GraphicsData.gfx_hud );
 			DrawNumber ( 31,201,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 			DrawSymbol ( SHuman,88,199,70,SubBase->HumanNeed,SubBase->MaxHumanNeed,GraphicsData.gfx_hud );
 		}
@@ -7099,19 +7159,20 @@ void cBuilding::DrawSymbol ( eSymbols sym,int x,int y,int maxx,int value,int max
 // Malt eine Nummer/Nummer auf das Surface:
 void cBuilding::DrawNumber ( int x,int y,int value,int maxvalue,SDL_Surface *sf )
 {
-	char str[20];
-	sprintf ( str,"%d/%d",value,maxvalue );
 	if ( value>maxvalue/2 )
 	{
-		fonts->OutTextSmallCenter ( str,x,y,ClGreen,sf );
+		font->showTextCentered(x, y, iToStr(value)+"/"+iToStr(maxvalue), LATIN_SMALL_GREEN, sf);
+		//fonts->OutTextSmallCenter ( str,x,y,ClGreen,sf );
 	}
 	else if ( value>maxvalue/4 )
 	{
-		fonts->OutTextSmallCenter ( str,x,y,ClYellow,sf );
+		font->showTextCentered(x, y, iToStr(value)+"/"+iToStr(maxvalue), LATIN_SMALL_YELLOW, sf);
+		//fonts->OutTextSmallCenter ( str,x,y,ClYellow,sf );
 	}
 	else
 	{
-		fonts->OutTextSmallCenter ( str,x,y,ClRed,sf );
+		font->showTextCentered(x, y, iToStr(value)+"/"+iToStr(maxvalue), LATIN_SMALL_RED, sf);
+		//fonts->OutTextSmallCenter ( str,x,y,ClRed,sf );
 	}
 }
 
@@ -7164,10 +7225,12 @@ void cBuilding::ShowHelp ( void )
 	// Das Infobild blitten:
 	SDL_BlitSurface ( typ->info,NULL,buffer,&rInfoTxt );
 	//show menu title
-	fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Info" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
+	font->showTextCentered(rTitle.x+rTitle.w/2, rTitle.y, lngPack.Translate( "Text~Vehicles~Title_Info" ));
+	//fonts->OutTextCenter(lngPack.Translate( "Text~Vehicles~Title_Info" ).c_str(), rTitle.x+rTitle.w/2, rTitle.y, buffer);
 	
 	// show text
-	fonts->OutTextBlock ( typ->text,rTxt,buffer );
+	//fonts->OutTextBlock ( typ->text,rTxt,buffer );
+	font->showTextAsBlock(rTxt, typ->text);
 	// get unit details
 	ShowBigDetails();
 	//draw button
