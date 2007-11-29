@@ -685,85 +685,116 @@ void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
 		dest[i].h = source[i].h;
 	}
 }
-//FIXME: doesn't work proper
+
 void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
-{	
-	if(DEBUGFONTS) cLog::write("Seeking through " + sText, cLog::eLOG_TYPE_DEBUG);
+{
+	if ( DEBUGFONTS )
+		cLog::write ( "Seeking through " + sText, cLog::eLOG_TYPE_DEBUG );
 
 	string sTmp = sText;
+
 	string sTextShortened;
-	
+
 	int k;
+
 	int lastK = 0;
-	int i = 0;
-	
-	do{ //search and replace \n since we want a blocktext - no manual breaklines allowed
-		k = sText.find("\n");
-		if(k != string::npos)
-		{
-			sText.erase(k, 1);
-			sText.insert(k, " ");
-		}
-	}
-	while ( k != string::npos);	
-	
-	do{ //erase all blanks > 2
-		k = sText.find("  "); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
-		if(k != string::npos)
-		{
-			sText.erase(k, 1);
-		}
-	}
-	while ( k != string::npos);
-	
-	SDL_Rect rLenght = getTextSize(sText, eBitmapFontType);
-	
-	if(rLenght.w > rDest.w) //text is longer than dest-width - let's snip it
+
+	do
 	{
-		do{
-			k = sTmp.find(" ");
-			if(k != string::npos)
+		//search and replace \n since we want a blocktext - no manual breaklines allowed
+		k = sText.find ( "\n" );
+
+		if ( k != string::npos )
+		{
+			sText.erase ( k, 1 );
+			sText.insert ( k, " " );
+		}
+	}
+	while ( k != string::npos );
+
+	do
+	{
+		//erase all blanks > 2
+		k = sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
+
+		if ( k != string::npos )
+		{
+			sText.erase ( k, 1 );
+		}
+	}
+	while ( k != string::npos );
+
+	SDL_Rect rLenght = getTextSize ( sText, eBitmapFontType );
+
+	if ( rLenght.w > rDest.w ) //text is longer than dest-width - let's snip it
+	{
+		do
+		{
+			k = sTmp.find ( " " ); //search spaces/blanks
+
+			if ( k == string::npos ) //reached the end but leftovers might be to long
 			{
-				if(DEBUGFONTS) cLog::write("Found space at " + iToStr(k+i), cLog::eLOG_TYPE_DEBUG);
-				sTmp.erase(k, 1);
-				i++;
-				
-				sTextShortened = sText; //copy text to tmp string
-				sTextShortened.erase(k+i-1, sTextShortened.size()); //erase everything longer than line
-				rLenght = getTextSize(sTextShortened, eBitmapFontType); //test new string lenght
-				
-				if(DEBUGFONTS) cLog::write("sTextShortened is '" + sTextShortened + "'", cLog::eLOG_TYPE_DEBUG);
+				rLenght = getTextSize ( sText, eBitmapFontType ); //test new string lenght
+				if ( rLenght.w > rDest.w ) //if leftover is to long snip it too
+				{
+					sTextShortened = sText; //get total leftover again
 
-				if(rLenght.w > rDest.w)
-				{	
-					//found important lastK to snip text since text is now to long
-					sTextShortened = sText; //copy text to tmp string
-					if(lastK > 0)
+					if ( lastK > 0 )
 					{
-						sTextShortened.erase(lastK-1, sTextShortened.size()); //erase everything longer than line
-						sText.erase(0, lastK); //erase txt from original that we just copied to tmp
-
+						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
+						sText.erase ( 0, lastK + 1 ); //erase txt from original that we just copied to tmp including leading blank
 					}
 					else
 					{
-						sTextShortened.erase(lastK, sTextShortened.size()); //erase everything longer than line
-						sText.erase(0, lastK+1); //erase txt from original that we just copied to tmp
-						cLog::write("Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR);
+						sTextShortened.erase ( sText.size() / 2, sTextShortened.size() ); //erase everything longer than line
+						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
+						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
+					}
+
+					showText ( rDest, sTextShortened, eBitmapFontType, surface ); //blit part of text
+					rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak
+				}
+
+				showText ( rDest, sText, eBitmapFontType, surface ); //draw last part of text
+			}
+
+			if ( k != string::npos )
+			{
+				sTmp.erase ( k, 1 ); //replace spaces with # so we don't find them again next search
+				sTmp.insert ( k, "#" );
+				sTextShortened = sText; //copy clean text to tmp string
+				sTextShortened.erase ( k, sTextShortened.size() ); //erase everything longer than line
+				
+				rLenght = getTextSize ( sTextShortened, eBitmapFontType ); //test new string lenght
+				if ( rLenght.w > rDest.w )
+				{
+					//found important lastK to snip text since text is now to long
+					sTextShortened = sText; //copy text to tmp string
+
+					if ( lastK > 0 )
+					{
+						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
+						sText.erase ( 0, lastK + 1 ); //erase txt from original that we just copied to tmp including leading blank
+					}
+					else
+					{
+						sTextShortened.erase ( sText.size() / 2, sTextShortened.size() ); //erase everything longer than line
+						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
+						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
 
 					}
+
 					sTmp = sText; //copy snipped original sText to sTmp to start searching again
-					i=0; //reset i
-					showText(rDest, sTextShortened, eBitmapFontType, surface); //blit part of text 
-					rDest.y += getFontHeight(eBitmapFontType); //and increase line
+					showText ( rDest, sTextShortened, eBitmapFontType, surface ); //blit part of text
+					rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak
 				}
 				else
 				{
-					lastK = k+i;
-				}				
+					lastK = k; //seek more, couldn't find korrekt lastK
+				}
 			}
 		}
-		while ( k != string::npos);
-		showText(rDest, sText, eBitmapFontType, surface); //draw last part of text
+		while ( k != string::npos );
 	}
 }
 
@@ -925,7 +956,7 @@ void cBitmapFont::getCharset(int eBitmapFontType)
 		{
 			case LATIN_BIG_GOLD:
 				sfTmp = sfLatinBigGold;
-				copyArray(LatinBigGold, chars);
+				copyArray(LatinBigGold, chars); //FIXME: to this with pointers to prevent high cpu load
 				break;
 			case LATIN_BIG:
 				sfTmp = sfLatinBig;
