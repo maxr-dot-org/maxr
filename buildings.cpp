@@ -2534,12 +2534,10 @@ void cBuilding::DrawStored ( int off )
 		{
 			SDL_BlitSurface ( vehicleV->typ->storage,NULL,buffer,&dest );
 			// Den Namen ausgeben:
-			SDL_Rect rTmp = { dest.x+5, dest.y+5, dest.w-10, font->getFontHeight() };
-			font->showTextAsBlock(rTmp, vehicleV->name, LATIN_SMALL_WHITE);
+			font->showText(dest.x+5, dest.y+5, vehicleV->name, LATIN_SMALL_WHITE);
 			
 			if ( vehicleV->data.version!=vehicleV->owner->VehicleData[vehicleV->typ->nr].version )
 			{
-				//fonts->OutTextSmall ( "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", dest.x + 5, dest.y + 15, ClWhite, buffer );
 				font->showText(dest.x+5, dest.y+15, "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", LATIN_SMALL_WHITE);
 			}
 		}
