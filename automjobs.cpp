@@ -85,6 +85,7 @@ void cAutoMJob::DoAutoMove()
 		
 		if (n > WAIT_FRAMES)
 		{
+			changeOP();
 			PlanNextMove();
 			n = 0;			
 		}
@@ -150,8 +151,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	if ( !FieldIsFree(PosX, PosY) ) return FIELD_BLOCKED;
 
 	//calculate some values, on which the "impotance-factor" may depend
-	//TODO: don't use the deltas
-
+	
 	//the number of fields which would be surveyed by this move
 	float NrSurvFields = 0; 
 	int x, y;
@@ -175,36 +175,25 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	}
 	
 	//the distances to the OP
-	
-	float oldDistanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
 	float newDistanceOP = sqrt( (float) (PosX - OPX) * (PosX - OPX) + (PosY - OPY) * (PosY - OPY) );
-	float deltaDistanceOP = oldDistanceOP - newDistanceOP;
-
-	//distances to other surveyors
 	
 	int i;
-	float oldDistancesSurv = 0;
 	float newDistancesSurv = 0;
-	float deltaDistancesSury;
 	float temp;
 	for ( i = 0; i < iCount ; i++)
 	{
 		if ( i == iNumber ) continue;
+		//FIXME: only look at surveyors of the owner
 		
 		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
 		newDistancesSurv += pow( temp, EXP);
-
-		temp = sqrt( pow( (float) vehicle->PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) vehicle->PosY - autoMJobs[i]->vehicle->PosY , 2) );
-		oldDistancesSurv += pow( temp, EXP);
 	}
-	deltaDistancesSury = oldDistancesSurv - newDistancesSurv;
-
-
-	//and now the magic formula, which calculates the "importance-factor"
 	
-	
+	//and now calc the "importance-factor"
+
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
-	float factor = A * NrSurvFields + B * deltaDistanceOP + C * deltaDistancesSury;
+	
+	float factor = A * NrSurvFields - B * newDistanceOP - C * newDistancesSurv;
 	
 	if (factor < FIELD_BLOCKED)
 	{
@@ -224,10 +213,9 @@ bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 	if ( TerrainData.terrain[terrainNr].blocked ) return false; //check terrain
 	
 	sGameObjects objects = engine->map->GO[PosX + PosY * engine->map->size];
-	if ( objects.reserviert || objects.vehicle || objects.top ) return false; //check if there is another unit on the field
-	//FIXME: an field with a connector is returned as false
+	if ( objects.reserviert || objects.vehicle || ( objects.top && !objects.top->data.is_connector) ) return false; //check if there is another unit on the field
 
-	//TODO: check for enemy mines
+	if ( objects.base && objects.base->data.is_expl_mine && objects.base->owner != vehicle->owner) return false; //check for enemy mines
 
 	return true;
 }
@@ -235,6 +223,8 @@ bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 //searches the map for a location where the surveyor can resume
 void cAutoMJob::PlanLongMove()
 {
+	//TODO: add parameter for distance to surveyors
+
 	int x, y;
 	int bestX, bestY;
 	float destinationOP, destinationSurv;
@@ -268,5 +258,16 @@ void cAutoMJob::PlanLongMove()
 	else
 	{
 		//TODO: disable automove
+	}
+}
+
+//places the OP nearer to the surveyor, if the distance between surv. and OP exceeds MAX_DISTANCE_OP
+void cAutoMJob::changeOP()
+{
+	float distanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
+	if ( distanceOP > MAX_DISTANCE_OP )
+	{
+		OPX = (int) vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP;
+		OPY = (int) vehicle->PosY + ( OPY - vehicle->PosY ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP;
 	}
 }
