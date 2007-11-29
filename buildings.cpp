@@ -6128,8 +6128,7 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 		}
 
 		// Text ausgeben: 
-		/* FIXME:
-		t=0;
+		/*t=0;
 		str[0]=0;
 		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
 		{
@@ -6140,6 +6139,12 @@ void cBuilding::ShowBuildList ( TList *list,int selected,int offset, bool showIn
 		fonts->OutText ( str,text.x,text.y,buffer ); */
 		//sprintf ( str,"%d",owner->VehicleData[ptr->id].iBuilt_Costs );
 		//fonts->OutTextCenter ( str,616,text.y,buffer );
+		bool bLongName = false;
+		if(font->getTextWide(UnitsData.vehicle[ptr->id].data.name) > 72)
+		{
+			bLongName = true;
+		}
+		font->showText(text, UnitsData.vehicle[ptr->id].data.name, bLongName?LATIN_SMALL_WHITE:LATIN_NORMAL);
 		font->showTextCentered(616, text.y, iToStr(owner->VehicleData[ptr->id].iBuilt_Costs));
 		text.y+=32+10;
 		dest.y+=32+10;
@@ -6359,7 +6364,12 @@ void cBuilding::ShowToBuildList ( TList *list,int selected,int offset, bool show
 		str[t]='.';
 		str[t+1]=0; */
 		//fonts->OutText ( str,text.x,text.y,buffer );
-		font->showText(text, UnitsData.vehicle[ptr->id].data.name);
+		bool bLongName = false;
+		if(font->getTextWide(UnitsData.vehicle[ptr->id].data.name) > 72)
+		{
+			bLongName = true;
+		}
+		font->showText(text, UnitsData.vehicle[ptr->id].data.name, bLongName?LATIN_SMALL_WHITE:LATIN_NORMAL);		
 		text.y+=32+10;
 		dest.y+=32+10;
 	}
@@ -7197,7 +7207,7 @@ void cBuilding::ShowHelp ( void )
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {rDialog.x+11, rDialog.y + 13, typ->info->w, typ->info->h};
-	SDL_Rect rTxt = {rDialog.x+349, rDialog.y + 66, 277, 181};
+	SDL_Rect rTxt = {rDialog.x+345, rDialog.y + 66, 274, 181};
 	SDL_Rect rTitle = {rDialog.x+332, rDialog.y + 11, 152, 15};
 	SDL_Rect rButton = { rDialog.x+474, rDialog.y + 452, BUTTON_W, BUTTON_H };
 	SDL_Surface *SfDialog;
