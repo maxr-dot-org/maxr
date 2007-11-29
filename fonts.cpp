@@ -685,7 +685,7 @@ void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
 		dest[i].h = source[i].h;
 	}
 }
-
+//FIXME: doesn't work proper
 void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
 {	
 	if(DEBUGFONTS) cLog::write("Seeking through " + sText, cLog::eLOG_TYPE_DEBUG);
@@ -994,8 +994,13 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 
 void cBitmapFont::showTextCentered(SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface)
 {
+	showTextCentered(rDest.x, rDest.y, sText, eBitmapFontType, surface);
+}
+
+void cBitmapFont::showTextCentered(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)
+{
 	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType);
-	showText( rDest.x + rDest.w / 2 - rTmp.w / 2, rDest.y, sText, eBitmapFontType, surface);
+	showText( x - rTmp.w / 2, y, sText, eBitmapFontType, surface);	
 }
 
 void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_Surface *surface)

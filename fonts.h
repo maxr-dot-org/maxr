@@ -144,13 +144,24 @@ class cBitmapFont{
 		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
 		
 		/**
-		 * Displays a text centered between given X and WIDTH
-		 * @param rDest DL_Rect for position.<br>Use X for possible startposition and W for maximal lenght.<br>Height is not taken care of!
+		 * Displays a text centered on given X 
+		 * @param rDest DL_Rect for position.<br>Use X for position to center on.<br>Y is not taken care of!
 		 * @param sText text to draw
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
 		void showTextCentered(SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
+		
+		/**
+		 * Displays a text centered on given X 
+		 * @param x Use X for position to center on.<br>Y is not taken care of!
+		 * @param y position y to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
+		void showTextCentered(int x, int y, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
+
 	private:
 		//Surfaces to store our latin charsets
 		//tmp for actual used surface during creation or drawing
