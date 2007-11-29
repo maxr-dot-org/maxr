@@ -60,6 +60,8 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 this->vehicle = vehicle;
 	 OPX = vehicle->PosX;
 	 OPY = vehicle->PosY;
+	 playerMJob = false;
+	 lastMoveJob = NULL;
 	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
 }
 
@@ -79,7 +81,6 @@ cAutoMJob::~cAutoMJob()
 //performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
 void cAutoMJob::DoAutoMove()
 {
-	//TODO: check if surveyor was moved by the player, and set new operation point
 	if (vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
 		
@@ -96,7 +97,11 @@ void cAutoMJob::DoAutoMove()
 	}
 	else 
 	{
-		if (vehicle->mjob->Suspended && vehicle->data.speed)
+		if ( vehicle->mjob != lastMoveJob && !vehicle->mjob->Suspended && vehicle->data.speed )
+		{
+			playerMJob = true;
+		}
+		if ( vehicle->mjob->Suspended && vehicle->data.speed )
 		{
 			engine->AddActiveMoveJob(vehicle->mjob);
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
@@ -136,7 +141,7 @@ void cAutoMJob::PlanNextMove()
 
 	if ( maxFactor != FIELD_BLOCKED )
 	{
-		engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
+		lastMoveJob = engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
 	}	
 	else //no fields to survey next to the surveyor
 	{
@@ -174,9 +179,10 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 		NrSurvFields /= 2;
 	}
 	
-	//the distances to the OP
+	//the distance to the OP
 	float newDistanceOP = sqrt( (float) (PosX - OPX) * (PosX - OPX) + (PosY - OPY) * (PosY - OPY) );
 	
+	//the distance to other surveyors
 	int i;
 	float newDistancesSurv = 0;
 	float temp;
@@ -253,7 +259,7 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		engine->AddMoveJob( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false, false);
+		lastMoveJob = engine->AddMoveJob( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false, false);
 	}
 	else
 	{
@@ -262,12 +268,22 @@ void cAutoMJob::PlanLongMove()
 }
 
 //places the OP nearer to the surveyor, if the distance between surv. and OP exceeds MAX_DISTANCE_OP
+//places the OP to the actual position, if the surveyor was send there by the player
 void cAutoMJob::changeOP()
 {
-	float distanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
-	if ( distanceOP > MAX_DISTANCE_OP )
+	if ( playerMJob )
 	{
-		OPX = (int) (vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
-		OPY = (int) (vehicle->PosY + ( OPY - vehicle->PosY ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+		OPX = vehicle->PosX;
+		OPY = vehicle->PosY;
+		playerMJob = false;
+	}
+	else
+	{
+		float distanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
+		if ( distanceOP > MAX_DISTANCE_OP )
+		{
+			OPX = (int) (vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+			OPY = (int) (vehicle->PosY + ( OPY - vehicle->PosY ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+		}
 	}
 }
