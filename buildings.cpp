@@ -3522,7 +3522,6 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 {
 	sUpgradeStruct *ptr;
 	SDL_Rect dest,scr,text;
-	char str[100];
 	int i,t,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
@@ -3631,7 +3630,7 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 			{
 				SDL_Rect scr,dest;
 				if ( !ptr->upgrades[k].active ) continue;
-				sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
+				//sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
 				//fonts->OutText ( str,322,296+k*19,buffer );
 				font->showText(322,296+k*19, iToStr(ptr->upgrades[k].NextPrice));
 
@@ -3652,26 +3651,30 @@ void cBuilding::ShowUpgradeList ( TList *list,int selected,int offset,bool besch
 			}
 		}
 		// Text ausgeben:
-		t=0;
-		str[0]=0;
+		//t=0;
+		//str[0]=0;
+		string sTmp;
+		
 		if ( ptr->vehicle )
 		{
-			while ( UnitsData.vehicle[ptr->id].data.name[t]&&font->getTextWide ( str ) <85 )
-			{
-				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
-			}
+			sTmp = UnitsData.vehicle[ptr->id].data.name;
 		}
 		else
 		{
-			while ( UnitsData.building[ptr->id].data.name[t]&&font->getTextWide ( str ) <85 )
-			{
-				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
-			}
+			sTmp = UnitsData.building[ptr->id].data.name;
 		}
-		str[t]='.';
-		str[t+1]=0;
+		//str[t]='.';
+		//str[t+1]=0;
 		//fonts->OutText ( str,text.x,text.y,buffer );
-		font->showText(text, str);
+		
+		bool bLongName = false;
+		if(font->getTextWide(sTmp) > 72)
+		{
+			bLongName = true;
+		}
+		font->showText(text, sTmp, bLongName?LATIN_SMALL_WHITE:LATIN_NORMAL);
+		
+		//font->showText(text, str);
 		text.y+=32+2;
 		dest.y+=32+2;
 	}
