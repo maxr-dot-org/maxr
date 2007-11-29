@@ -183,7 +183,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	for ( i = 0; i < iCount ; i++)
 	{
 		if ( i == iNumber ) continue;
-		//FIXME: only look at surveyors of the owner
+		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
 		
 		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
 		newDistancesSurv += pow( temp, EXP);
