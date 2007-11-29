@@ -5332,33 +5332,30 @@ void cBuilding::ShowBuildMenu ( void )
 		SDL_Surface *sf;
 		bool land = false, water = false;
 
-		if ( data.build_alien )
+		int x = PosX-2, y = PosY-1;
+		for ( int i = 0; i < 12; i++ )
 		{
-			int x = PosX-2, y = PosY-1;
-			for ( int i = 0; i < 12; i++ )
+			if ( i == 4 ||  i == 6 || i == 8 )
 			{
-				if ( i == 4 ||  i == 6 || i == 8 )
-				{
-					x -= 3;
-					y += 1;
-				}
-				else if( i == 5 || i == 7 )
-				{
-					x += 3;
-				}
-				else
-				{
-					x++;
-				}
-				int off = x + y*game->map->size;
-				if ( !game->map->IsWater( off, true, true ) || ( game->map->GO[off].base && ( game->map->GO[off].base->data.is_bridge || game->map->GO[off].base->data.is_platform || game->map->GO[off].base->data.is_road ) ) )
-				{
-					land = true;
-				}
-				else
-				{
-					water = true;
-				}
+				x -= 3;
+				y += 1;
+			}
+			else if( i == 5 || i == 7 )
+			{
+				x += 3;
+			}
+			else
+			{
+				x++;
+			}
+			int off = x + y*game->map->size;
+			if ( !game->map->IsWater( off, true, true ) || ( game->map->GO[off].base && ( game->map->GO[off].base->data.is_bridge || game->map->GO[off].base->data.is_platform || game->map->GO[off].base->data.is_road ) ) )
+			{
+				land = true;
+			}
+			else
+			{
+				water = true;
 			}
 		}
 		if ( UnitsData.vehicle[i].data.can_drive == DRIVE_SEA && !water ) continue;
