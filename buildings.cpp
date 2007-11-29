@@ -1108,20 +1108,14 @@ void cBuilding::ShowBigDetails ( void )
 
 	// Armor:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.armor ) );
-
 	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Armor" ) );
-
 	DrawSymbolBig ( SBArmor, COLUMN_3, y - 2, 160, data.armor, typ->data.armor, buffer );
-
 	DOLINEBREAK
 
 	// Hitpoints:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_hit_points ) );
-
 	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) );
-
 	DrawSymbolBig ( SBHits, COLUMN_3, y - 1, 160, data.max_hit_points, typ->data.max_hit_points, buffer );
-
 	DOLINEBREAK
 
 	// Scan:
@@ -1176,9 +1170,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	// Costs:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.iBuilt_Costs ) );
-
 	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Costs" ) );
-
 	DrawSymbolBig ( SBMetal, COLUMN_3, y - 2, 160, data.iBuilt_Costs, typ->data.iBuilt_Costs, buffer );
 }
 
