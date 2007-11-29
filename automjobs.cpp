@@ -267,7 +267,7 @@ void cAutoMJob::changeOP()
 	float distanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
 	if ( distanceOP > MAX_DISTANCE_OP )
 	{
-		OPX = (int) vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP;
-		OPY = (int) vehicle->PosY + ( OPY - vehicle->PosY ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP;
+		OPX = (int) (vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+		OPY = (int) (vehicle->PosY + ( OPY - vehicle->PosY ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
 	}
 }
