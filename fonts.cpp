@@ -706,8 +706,10 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 
 		if ( k != string::npos )
 		{
+			if(DEBUGFONTS) cLog::write("Fount breakline at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
 			sText.erase ( k, 1 );
 			sText.insert ( k, " " );
+			sTmp=sText;
 		}
 	}
 	while ( k != string::npos );
@@ -720,6 +722,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 		if ( k != string::npos )
 		{
 			sText.erase ( k, 1 );
+			sTmp = sText;
 		}
 	}
 	while ( k != string::npos );
@@ -994,7 +997,27 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 	getCharset(eBitmapFontType);
 	
 	int ascii;
+	int iSpace = 0;
 	
+	//make sure only upper characters are read for the small fonts
+	// since we don't support lower chars on the small fonts
+	switch(eBitmapFontType)
+	{
+		case LATIN_SMALL_GREEN:
+		case LATIN_SMALL_RED:
+		case LATIN_SMALL_WHITE:
+		case LATIN_SMALL_YELLOW:
+			for(int i=0; i < sText.size(); i++)
+			{
+				sText[i] = toupper(sText[i]);
+			}
+			iSpace = 1;
+			break;
+		default:
+			break;
+	}
+	
+
 	for(int i = 0; sText[i] != '\0'; i++)
 	{
 		ascii = (unsigned char) sText[i];
@@ -1010,7 +1033,7 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 		else
 		{
 			//get ascii value
-			rTmp.w += chars[ascii].w + 1;
+			rTmp.w += chars[ascii].w + iSpace;
 		}
 	}
 	
@@ -1039,6 +1062,7 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 	//tmp offsets
 	int offX = x;
 	int offY = y;
+	int iSpace = 0;
 
 	getCharset(eBitmapFontType);
 	
@@ -1054,6 +1078,7 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 			{
 				sText[i] = toupper(sText[i]);
 			}
+			iSpace = 1;
 			break;
 		default:
 			break;
@@ -1088,7 +1113,7 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 					cLog::write(strStream.str(), cLog::eLOG_TYPE_DEBUG);
 				}
 				//move one px forward for space between signs
-				offX += chars[ascii].w + 1;
+				offX += chars[ascii].w + iSpace;
 			}
 		}
 	}
