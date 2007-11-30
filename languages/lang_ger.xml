@@ -78,7 +78,7 @@
 		</Menu_Main>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
-			<Settings ENG="Settings" localized="Präferenzen"/>
+			<Settings ENG="Settings" localized="PRÄFERENZEN"/>
 			<Proceed ENG="Do" localized="Erl."/>
 			<End ENG="End" localized="Ende"/>
 			<Log ENG="Log" localized="Log"/>
