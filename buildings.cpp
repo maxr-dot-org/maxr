@@ -6660,7 +6660,6 @@ void cBuilding::ShowBuildMenu ( void )
 	BuildSpeed = this->BuildSpeed;
 
 	//show details of the first item in to_build list, if it exists
-
 	if ( to_build->Count > 0 )
 	{
 		showDetailsBuildlist = false;
@@ -6738,6 +6737,10 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( offset > images->Count - 9 )
 			{
 				offset = images->Count - 9;
+			}
+			if ( offset < 0 )
+			{
+				offset = 0;
 			}
 
 			if ( selected < offset )
