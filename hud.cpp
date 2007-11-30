@@ -1188,7 +1188,6 @@ void cHud::EndeButton ( bool set )
 void cHud::ShowRunde ( void )
 {
 	SDL_Rect scr,dest;
-	char str[10];
 	scr.x=156;
 	scr.y=215;
 	dest.w=scr.w=55;
@@ -1196,8 +1195,7 @@ void cHud::ShowRunde ( void )
 	dest.x=471;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	sprintf ( str,"%d",game->Runde );
-	fonts->OutTextCenter ( str,498,8,GraphicsData.gfx_hud );
+	font->showTextCentered(498,7, iToStr(game->Runde), LATIN_NORMAL, GraphicsData.gfx_hud);
 	game->fDrawHud=true;
 }
 
@@ -1294,27 +1292,26 @@ int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed, b
 
 int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_Rect dest, string sText, bool bPressed, bool bSmallFont)
 {
-	int iPx = 4;  //for moving fonts 1 pixel down on click
+	int iPx = 3;  //for moving fonts 1 pixel down on click
 	if(bPressed) iPx += 1;
 	SDL_BlitSurface ( sfSrc,&scr,sfDest,&dest );
 	if(!bSmallFont)
 	{
-		fonts->OutTextCenter(sText.c_str(),dest.x+dest.w/2,dest.y+iPx,sfDest); //show text centered on button
+		font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, sfDest);
 	}
 	else
 	{	
 		if(bPressed)
 		{
-			fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2,dest.y+iPx+2,ClGreen, sfDest);
+			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+2, sText, LATIN_SMALL_GREEN, sfDest);
 			//iPx only +2 because small buttons aren't big enough for moving text on them
 		}
 		else 
 		{
-			fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2,dest.y+iPx+3,ClRed, sfDest);
+			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+3, sText, LATIN_SMALL_RED, sfDest);
 		}
-		fonts->OutTextSmallCenter((char *)sText.c_str(),dest.x+dest.w/2-1,dest.y+iPx+2,ClWhite, sfDest);
+		font->showTextCentered(dest.x+dest.w/2-1,dest.y+iPx+2, sText, LATIN_SMALL_WHITE, sfDest);
 	}
-	//TODO: add sanity check
 	return 0;
 }
 
