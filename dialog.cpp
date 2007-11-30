@@ -64,7 +64,7 @@ bool ShowYesNo ( string text )
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
-	fonts->OutTextBlock ( ( char * ) text.c_str(), rText, buffer );
+	font->showTextAsBlock(rText, text);
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -174,9 +174,9 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
-	fonts->OutTextBlock ( ( char * ) text.c_str(), rTextBox, buffer );
-	fonts->OutText ( (char *)stmp.c_str(), rTextField.x, rTextField.y, buffer );
-
+	font->showTextAsBlock(rTextBox, text);
+	font->showText(rTextField, stmp);
+	
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -226,7 +226,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				}
 
 				stmp = iToStr(value);
-				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
+				font->showText(rTextField, stmp);
 				SHOW_SCREEN
 			}
 		}
@@ -247,7 +247,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 					cLog::write("Negative numbers not allowed", cLog::eLOG_TYPE_WARNING);
 				}
 				stmp = iToStr(value);
-				fonts->OutText ( ( char * ) stmp.c_str(), rTextField.x, rTextField.y, buffer );
+				font->showText(rTextField, stmp);
 				
 				SHOW_SCREEN
 			}
@@ -371,28 +371,28 @@ void showLicence ()
 	SDL_Rect rArrowDown;
 	SDL_Surface *SfDialog;
 	//BEGIN CREATING LICENCE TEXTS
+	string sLicenceIntro1;
+	string sLicenceIntro2;
+	string sLicence4Intro1;
 	string sLicence1;
 	string sLicence2;
 	string sLicence3;
  	string sLicence4;
+ 	sLicenceIntro1 = "\"M.A.X. Reloaded\"";
+	sLicenceIntro2 = "(C) 2007 by it's authors";
+	sLicence4Intro1 = "AUTHORS:";
+ 	
 	sLicence1 = "\
-             \"M.A.X. Reloaded\"\n\
-Copyright (C) 2007  by it's authors\n\
-\n\
 This program is free software; you can redistribute it and/or modify \
 it under the terms of the GNU General Public License as published by \
 the Free Software Foundation; either version 2 of the License, or \
 (at your option) any later version.";
 sLicence2 = "\
-             \"M.A.X. Reloaded\"\n\
-Copyright (C) 2007  by it's authors\n\n\
 This program is distributed in the hope that it will be useful, \
 but WITHOUT ANY WARRANTY; without even the implied warranty of \
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
 GNU General Public License for more details.";
 sLicence3="\
-             \"M.A.X. Reloaded\"\n\
-Copyright (C) 2007  by it's authors\n\n\
 You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
@@ -400,7 +400,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	FILE *fp = NULL; 
 	char line[72];
 	stringstream ssLicence4;
-	ssLicence4 << "     \"M.A.X. Reloaded\" developers\n\n";
 
 	//open AUTHOR
 	#ifdef _WIN32
@@ -455,11 +454,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	rDialog.x = screen->w / 2 - SfDialog->w / 2;
 	rDialog.y = screen->h / 2 - SfDialog->h / 2;
 	
-	rDialogOnScreen.x = rDialog.x + 32; 
+	rDialogOnScreen.x = rDialog.x + 35; 
 	rDialogBoxBlack.x=32;
 	rDialogOnScreen.w = 232; 
 	rDialogBoxBlack.w=SfDialog->w-32;
-	rDialogOnScreen.y = rDialog.y + 28; 
+	rDialogOnScreen.y = rDialog.y + 30 + 3* font->getFontHeight(); 
 	rDialogBoxBlack.y=28;
 	rDialogOnScreen.h = 142; 
 	rDialogBoxBlack.h=SfDialog->h-28;
@@ -470,7 +469,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
-	fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
+	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
+	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
+	font->showTextAsBlock(rDialogOnScreen, sLicence1);
 	
 	//draw left arrow "up"
 	rArrowUp.x = screen->w / 2 - SfDialog->w / 2 + 241;
@@ -520,29 +521,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			if ( b && !lb )
 			{
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
+				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
+				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
-		
+				
 				switch(index)
 				{
 					case 1 : 
 						index = 0; 
 						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); //first entry in list needs this to disable arrow
-						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
+						font->showTextAsBlock(rDialogOnScreen, sLicence1);
 						break;
 					case 2 : 
 						index = 1; 
 						PlayFX ( SoundData.SNDHudButton );
-						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
+						font->showTextAsBlock(rDialogOnScreen, sLicence2);
 						break;
 					case 3: index = 2;
 						PlayFX ( SoundData.SNDHudButton );
-						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
+						font->showTextAsBlock(rDialogOnScreen, sLicence3);
 						break;						
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); 
-						fonts->OutTextBlock ( ( char * ) sLicence1.c_str(), rDialogOnScreen, buffer );
+						font->showTextAsBlock(rDialogOnScreen, sLicence1);
 				}
 								
 				SHOW_SCREEN
@@ -555,6 +558,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			if ( b && !lb )
 			{
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
+				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
+				
 				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
 				switch(index)
@@ -562,23 +567,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 					case 0 : 
 						index = 1;
 						PlayFX ( SoundData.SNDHudButton );
-						fonts->OutTextBlock ( ( char * ) sLicence2.c_str(), rDialogOnScreen, buffer );
+						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
+						font->showTextAsBlock(rDialogOnScreen, sLicence2);
 						break;
 					case 1 : 
 						index = 2;
 						PlayFX ( SoundData.SNDHudButton );
-						fonts->OutTextBlock ( ( char * ) sLicence3.c_str(), rDialogOnScreen, buffer );
+						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
+						font->showTextAsBlock(rDialogOnScreen, sLicence3);
 						break;
 					case 2:
 						index = 3;
 						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //last entry in list needs this to disable arrow
-						fonts->OutTextBlock ( ( char * ) sLicence4.c_str(), rDialogOnScreen, buffer );
+						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
+						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
 						break;					
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); 
-						fonts->OutTextBlock ( ( char * ) sLicence4.c_str(), rDialogOnScreen, buffer );
+						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
+						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
 				}
 				
 				SHOW_SCREEN
@@ -695,93 +704,96 @@ void showPreferences ( void )
 	
 	rFont.x = 120 + 160; //TOFIX: Text not centered
 	rFont.y = 29 + 15;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Preferences" ).c_str(),rFont.x,rFont.y,buffer);
-
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Preferences" ));
+	
 
 	//BEGIN BLOCK SOUND
 	//Headline
 	sTmp = lngPack.Translate ( "Text~Game_Settings~Title_Volume" ) + ":";
 	rFont.x = 145;
 	rFont.y = 85;
-	rFont.w = fonts->GetTextLen(sTmp.c_str());
-	fonts->OutText(sTmp.c_str(),rFont.x,rFont.y,buffer);
+	rFont.w = font->getTextWide(sTmp);
+	font->showText(rFont, sTmp);
 
 	//Music
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 105;
 	rFont.h = CELLSPACE_FONT;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Music" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Music" ));
 	drawSlider (SfDialog, BAR_X+120,BAR_Y,SettingsData.MusicVol*2,buffer );
 	drawCheckbox ( 210+120,73+29,SettingsData.MusicMute, buffer);
 	rFont.x = 355; 	rFont.w = 140;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
-		
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
+
 	//Effectsound
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Effects" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Effects" ));
+
 	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
 	drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
+
 
 	//Voices
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Voices" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Voices" ));
 	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,buffer );
 	drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Disable" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
 	//END BLOCK SOUND
 	//BEGIN BLOCK PLAYERNAME	
 	
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 158+29;
-	fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Player_Name" ).c_str(),rFont.x,rFont.y,buffer);
-	fonts->OutText ( ( char * ) game->ActivePlayer->name.c_str(),122+120,158+29,buffer );
+	font->showText(rFont, lngPack.Translate( "Text~Game_Start~Title_Player_Name" ));
+	font->showText(122+120,158+29, game->ActivePlayer->name);
 
 	//END BLOCK PLAYERNAME
 
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 193+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Animation" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Animation" ));
+
 	drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 213+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Shadows" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Shadows" ));
 	drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 233+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Alphaeffects" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Alphaeffects" ));
 	drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 193+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_ShowDamage" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_ShowDamage" ));
 	drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 213+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_ShowDamageVehicle" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_ShowDamageVehicle" ));
 	drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 233+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Tracks" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Tracks" ));
 	drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 261+25;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Scrollspeed" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Scrollspeed" ));
 	drawSlider (SfDialog, BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 290+33;
-	fonts->OutText(lngPack.Translate( "Text~Game_Settings~Title_Autosave" ).c_str(),rFont.x,rFont.y,buffer);
+	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Autosave" ));
 	drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
 	
 	SHOW_SCREEN
@@ -811,25 +823,26 @@ void showPreferences ( void )
 				SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
 				if ( InputEnter )
 				{
-					fonts->OutText ( ( char * ) InputStr.c_str(),122+120,158+29,buffer );
+					font->showText(122+120,158+29, InputStr);
 					Input=false;
 					game->ActivePlayer->name=InputStr;
 				}
 				else
 				{
 					stmp = InputStr; stmp += "_";
-					if ( fonts->GetTextLen ( ( char * ) stmp.c_str() ) >178 )
+					if ( font->getTextWide(stmp) >178 )
 					{
 						InputStr.erase ( InputStr.length()-1 );
 					}
 					if ( cursor )
 					{
 						stmp = InputStr; stmp += "_";
-						fonts->OutText ( ( char * ) stmp.c_str(),122+120,158+29,buffer );
+						font->showText(122+120,158+29, stmp);
+						
 					}
 					else
 					{
-						fonts->OutText ( ( char * ) InputStr.c_str(),122+120,158+29,buffer );
+						font->showText(122+120,158+29, InputStr);
 					}
 					if ( timer2 ) cursor=!cursor;
 				}
@@ -943,7 +956,7 @@ void showPreferences ( void )
 					Input=true;
 					InputStr=game->ActivePlayer->name;
 					stmp = InputStr; stmp += "_";
-					fonts->OutText ( ( char * ) stmp.c_str(),122+120,158+29,buffer );
+					font->showText(122+120,158+29, stmp);
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
