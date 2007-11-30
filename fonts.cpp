@@ -23,7 +23,7 @@
 #include "fonts.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -721,6 +721,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 
 		if ( k != string::npos )
 		{
+			if(DEBUGFONTS) cLog::write("Fount doubleblank at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
 			sText.erase ( k, 1 );
 			sTmp = sText;
 		}
@@ -798,6 +799,10 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 			}
 		}
 		while ( k != string::npos );
+	}
+	else
+	{
+		showText ( rDest, sText, eBitmapFontType, surface ); //nothing to shorten, just blit text
 	}
 }
 
