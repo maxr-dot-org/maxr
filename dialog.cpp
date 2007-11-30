@@ -301,7 +301,7 @@ void ShowOK ( string text, bool pure )
 	dest.w -= 40;
 	dest.y += 20;
 	dest.h -= 150;
-	fonts->OutTextBlock ( ( char * ) text.c_str(), dest, buffer );
+	font->showTextAsBlock(dest, text);
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -1295,12 +1295,12 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	if(bPressed)
 	{
 		scr.x=230; //clicked button
-		iPx = 6;
+		iPx = 5;
 	}
 	else
 	{
 		scr.x=308; //unclicked button
-		iPx = 5;
+		iPx = 4;
 	}
 	scr.y=455; //get button from gfx_hud.pcx
 	dest.w=scr.w=77;
@@ -1308,7 +1308,7 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	dest.x = x;
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	fonts->OutTextCenter(sText,dest.x+dest.w/2,dest.y+iPx,surface); //show text centered on button
+	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, surface);
 }
 
 void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surface)
@@ -1318,12 +1318,12 @@ void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surf
 	if(bPressed)
 	{
 		scr.y=411; //clicked button
-		iPx = 13;
+		iPx = 12;
 	}
 	else
 	{
 		scr.y=370; //unclicked button
-		iPx = 12;
+		iPx = 11;
 	}
 	scr.x=0; //get button from gfx_hud.pcx
 	dest.w=scr.w=106;
@@ -1331,7 +1331,7 @@ void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surf
 	dest.x = x;
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	fonts->OutTextBigCenter(sText,dest.x+dest.w/2,dest.y+iPx,surface); //show text centered on button
+	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_BIG, surface);
 }
 
 
@@ -1344,5 +1344,5 @@ void drawMenuButton ( string sText, bool bPressed ,int x,int y, SDL_Surface *sur
 		scr.y = 30;
 	}
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,surface,&dest );
-	fonts->OutTextBigCenter ( sText,x+100,y+8,surface );
+	font->showTextCentered(x+100,y+7, sText, LATIN_BIG, surface);
 }
