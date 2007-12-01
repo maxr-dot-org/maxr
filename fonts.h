@@ -95,7 +95,6 @@ enum eFontLangCode
 	FIN,	//Finnish
 	FRA,	//French
 	FRE,	//French
-	GLG,	//Galician
 	GLE,	//Irish
 	ICE,	//Icelandic
 	ISL,	//Icelandic
