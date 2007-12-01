@@ -4211,7 +4211,7 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 {
 	sUpgradeStruct *ptr;
 	SDL_Rect dest, scr, text;
-	int i, t, k;
+	int i, k;
 	scr.x = 479;
 	scr.y = 52;
 	scr.w = 150;
@@ -6548,15 +6548,15 @@ void cBuilding::ShowBuildMenu ( void )
 
 		int x = PosX - 2, y = PosY - 1;
 
-		for ( int i = 0; i < 12; i++ )
+		for ( int j = 0; j < 12; j++ )
 		{
-			if ( i == 4 ||  i == 6 || i == 8 )
+			if ( j == 4 ||  j == 6 || j == 8 )
 			{
 				x -= 3;
 				y += 1;
 			}
 			else
-				if ( i == 5 || i == 7 )
+				if ( j == 5 || j == 7 )
 				{
 					x += 3;
 				}
@@ -7313,7 +7313,7 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text;
-	int i, t;
+	int i;
 	scr.x = 479;
 	scr.y = 52;
 	scr.w = 150;
@@ -7563,7 +7563,7 @@ void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool sh
 {
 	sBuildStruct *ptr;
 	SDL_Rect scr, dest, text;
-	int i, t;
+	int i;
 	scr.x = 330;
 	scr.y = 49;
 	scr.w = 128;
