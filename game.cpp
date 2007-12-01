@@ -408,7 +408,6 @@ void cGame::Run ( void )
 		if ( DebugFPS )
 		{
 			// Frames pro Sekunde:
-			char DebugStr[100];
 			int hour, min, sec;
 			unsigned int time;
 			cycles++;
@@ -3206,7 +3205,22 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	t=v->owner->Nr;fwrite ( &t,sizeof ( int ),1,fp ); // Player Nr
 	fwrite ( & ( v->typ->nr ),sizeof ( int ),1,fp ); // Typ-Nr
 	fwrite ( & ( v->data ),sizeof ( sUnitData ),1,fp ); // Data
+	// MoveJob datas
+	if ( v->mjob )
+	{
+		fputc ( 1,fp );
+		fwrite ( &v->mjob->DestX ,sizeof ( int ),1,fp );
+		fwrite ( &v->mjob->DestY ,sizeof ( int ),1,fp );
+		fwrite ( &v->mjob->ClientMove ,sizeof ( bool ),1,fp );
+		fwrite ( &v->mjob->plane ,sizeof ( bool ),1,fp );
+		fwrite ( &v->mjob->Suspended ,sizeof ( bool ),1,fp );
+	}
+	else
+	{
+		fputc ( 0,fp );
+	}
 
+	// rest
 #define FSAVE_V_4(a) fwrite(&(v->a),sizeof(int),1,fp);
 #define FSAVE_V_1(a) fwrite(&(v->a),1,1,fp);
 	FSAVE_V_4 ( dir )
@@ -3218,6 +3232,11 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	FSAVE_V_4 ( BandX )
 	FSAVE_V_4 ( BandY )
 	FSAVE_V_1 ( BuildPath )
+	if ( v->BuildPath )
+	{
+		fwrite ( &v->BandX ,sizeof ( int ),1,fp );
+		fwrite ( &v->BandY ,sizeof ( int ),1,fp );
+	}
 	FSAVE_V_1 ( IsClearing )
 	FSAVE_V_4 ( ClearingRounds )
 	FSAVE_V_1 ( ClearBig )
@@ -3267,21 +3286,25 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	}
 }
 
-void SaveBuilding ( int off,FILE *fp,bool base )
+void SaveBuilding ( int off,FILE *fp,int iTyp )
 {
 	cBuilding *b;
 	int t;
-	if ( base )
+	if ( iTyp == 1 )
 	{
 		b=game->map->GO[off].base;
 	}
-	else
+	else if ( iTyp == 0 )
 	{
 		b=game->map->GO[off].top;
 	}
+	else if ( iTyp == 2 )
+	{
+		b=game->map->GO[off].subbase;
+	}
 	if ( b->data.is_big&& ( off%game->map->size!=b->PosX||off/game->map->size!=b->PosY ) ) return;
 	fputc ( SAVE_BUILDING,fp );
-	fputc ( ( base?1:0 ),fp ); // Base
+	fputc ( ( iTyp?1:0 ),fp ); // Base
 	fwrite ( &off,sizeof ( int ),1,fp ); // Offset
 	if ( !b->owner )
 	{
@@ -3371,6 +3394,11 @@ bool cGame::Save ( string sName, int iNumber )
 		cLog::write ( "Can't open Savefile \"savegame" + iToStr( iNumber ) + ".sav\"" + " for writing", LOG_TYPE_WARNING );
 		return false;
 	}
+
+	// Version
+	i= ( int ) strlen( MAX_VERSION ) + 1;
+	fwrite ( &i,sizeof ( int ),1,fp );
+	fwrite ( MAX_VERSION,sizeof ( char ),i,fp );
 
 	// Time and Date
 	tTime = time ( NULL );
@@ -3472,12 +3500,17 @@ bool cGame::Save ( string sName, int iNumber )
 		// Top-Building:
 		if ( map->GO[i].top )
 		{
-			SaveBuilding ( i,fp,false );
+			SaveBuilding ( i,fp,0 );
+		}
+		// Subbase-Building:
+		if ( map->GO[i].subbase )
+		{
+			SaveBuilding ( i,fp,2 );
 		}
 		// Base-Building:
 		if ( map->GO[i].base )
 		{
-			SaveBuilding ( i,fp,true );
+			SaveBuilding ( i,fp,1 );
 		}
 	}
 	fclose ( fp );
@@ -3499,6 +3532,12 @@ void cGame::Load ( string name,int AP,bool MP )
 	}
 
 	StoredVehicles = new TList;
+
+	// Read version
+	fread ( &i,sizeof ( int ),1,fp );
+	str= ( char* ) malloc ( i );
+	fread ( str,sizeof ( char ),i,fp );
+	// ToDo: Compare game versions
 
 	// Ignore time, name and mode
 	fread ( &i,sizeof ( int ),1,fp );
@@ -3601,6 +3640,18 @@ void cGame::Load ( string name,int AP,bool MP )
 				}
 
 				fread ( & ( v->data ),sizeof ( sUnitData ),1,fp ); // Data
+				// MoveJob
+				int iOffX, iOffY;
+				bool bClientMove, bSuspended, bPlane;
+				if( fgetc( fp ) == 1 )
+				{
+					fread ( &iOffX,sizeof ( int ),1,fp );
+					fread ( &iOffY,sizeof ( int ),1,fp );
+					fread ( &bClientMove,sizeof ( bool ),1,fp );
+					fread ( &bPlane,sizeof ( bool ),1,fp );
+					fread ( &bSuspended,sizeof ( bool ),1,fp );
+					engine->AddMoveJob( off, iOffX + iOffY * map->size, bClientMove, bPlane, bSuspended);
+				}
 
 #define FLOAD_V_4(a) fread(&(v->a),sizeof(int),1,fp);
 #define FLOAD_V_1(a) fread(&(v->a),1,1,fp);
@@ -3615,9 +3666,8 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_V_1 ( BuildPath )
 				if ( v->BuildPath )
 				{
-					v->BuildPath=false;
-					v->BandX=0;
-					v->BandY=0;
+					fread ( &(v->BandX ),sizeof ( int ),1,fp );
+					fread ( &(v->BandY ),sizeof ( int ),1,fp );
 				}
 				FLOAD_V_1 ( IsClearing )
 				FLOAD_V_4 ( ClearingRounds )

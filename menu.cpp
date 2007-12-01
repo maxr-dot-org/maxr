@@ -6192,6 +6192,9 @@ void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameN
 		cLog::write ( "Can't open Savegame: " + sFileName, LOG_TYPE_WARNING );
 		return ;
 	}
+	// Ignore version
+	SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
+	SDL_RWseek(pFile, iLenght, SEEK_CUR);
 
 	// Read time
 	if ( sTime != NULL )
