@@ -38,6 +38,8 @@
 #include "main.h"
 #include <sstream>
 
+TiXmlDocument LanguageFile;
+
 // Translates the loaded data to the old data structure.
 // This should be just used temporarily while the game doesn't undestand new structure.
 void ConvertData(int unitnum, bool vehicle);
@@ -65,8 +67,17 @@ int LoadData ( void * )
 
 	// Load Languagepack
 	MakeLog ( "Loading languagepack...", 0, 2 );
-	
-	if (LoadLanguage()!=1)
+	sTmpString = SettingsData.sLanguage;
+	for(int i=0 ; i<=2 ; i++)
+	{
+		if( sTmpString[i] < 97 )
+		{
+			sTmpString[i] += 32;
+		}
+	}
+	sTmpString.insert(0, (string)"languages" + PATH_DELIMITER + "lang_");
+	sTmpString += ".xml";
+	if ( LoadLanguage()!=1 || !LanguageFile.LoadFile( sTmpString.c_str() ) )
 	{
 		MakeLog("",-1,2);
 		SDL_Delay(5000);
@@ -1711,6 +1722,7 @@ int LoadVehicles()
 		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true, atoi(IDList->Items[i].c_str()));
+		translateUnitData( UnitsData.vehicle[UnitsData.vehicle_anz].data.ID, true );
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
 		ConvertData(UnitsData.vehicle_anz, true);
@@ -1967,6 +1979,60 @@ int LoadVehicles()
 	return 1;
 }
 
+void translateUnitData( sID ID, bool vehicle )
+{
+	sUnitData *Data = NULL;
+	TiXmlNode * pXmlNode = NULL;
+	string sTmpString;
+
+	if ( vehicle )
+	{
+		for (int i = 0; i <= UnitsData.vehicle_anz; i++)
+		{
+			if ( UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart )
+			{
+				Data = &UnitsData.vehicle[i].data;
+				break;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i <= UnitsData.building_anz; i++)
+		{
+			if ( UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart )
+			{
+				Data = &UnitsData.building[i].data;
+				break;
+			}
+		}
+	}
+	if ( Data == NULL ) return;
+	pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Units" );
+	pXmlNode = pXmlNode->FirstChildElement();
+	while ( pXmlNode != NULL)
+	{
+		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
+		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
+		{
+			sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
+			Data->szName = (char *)malloc( sTmpString.length() + 1 );
+			strcpy( Data->szName, sTmpString.c_str() );
+
+			sTmpString = pXmlNode->ToElement()->GetText();
+			int iPosition = (int)sTmpString.find("\\n",0);
+			while(iPosition != string::npos)
+			{
+				sTmpString.replace(iPosition,2,"\n");
+				iPosition = (int)sTmpString.find("\\n",iPosition);
+			}
+			Data->szDescribtion = (char *)malloc( sTmpString.length() + 1 );
+			strcpy( Data->szDescribtion, sTmpString.c_str() );
+		}
+		pXmlNode = pXmlNode->NextSibling();
+	}
+}
+
 // LoadBuildings //////////////////////////////////////////////////////////////
 // Loads all Buildings
 int LoadBuildings()
@@ -2074,6 +2140,7 @@ int LoadBuildings()
 		SetDefaultUnitData(UnitsData.building_anz, false);
 		// Load Data from data.xml
 		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false, atoi(IDList->Items[i].c_str()));
+		translateUnitData( UnitsData.building[UnitsData.building_anz].data.ID, false );
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
 		ConvertData(UnitsData.building_anz, false);

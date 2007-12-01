@@ -206,6 +206,11 @@ int LoadBuildings();
 	*/
 int LoadVehicles();
 /**
+	* Gets the name and the description for the unit from the selected language file
+	* @param ID Id of the unit
+	*/
+void translateUnitData( sID ID, bool vehicle );
+/**
 	* Loads all Musicfiles
 	* @param path Directory of the Vehicles
 	* @return 1 on success
