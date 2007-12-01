@@ -695,11 +695,58 @@ int cBitmapFont::setLang(void)
 		sLang[i] = toupper(sLang[i]);
 	}
 	
-	//TODO: add more language codes
-	if(sLang == "GER") iLangCode = GER;
-	else if (sLang == "RUS") iLangCode = RUS;
-	else iLangCode = ENG;
-
+	iLangCode = -1;
+	do
+	{
+		if(sLang == "GER") { iLangCode = GER; continue; }	//German
+		else if (sLang == "ENG") { iLangCode = ENG; continue; }	//English
+		else if (sLang == "RUS") { iLangCode = RUS; continue; }	//Russian
+		else if (sLang == "ALB") { iLangCode = 	ALB; continue; }	//Alban
+		else if (sLang == "DAN") { iLangCode = 	DAN; continue; }	//Danish
+		else if (sLang == "FAO") { iLangCode = 	FAO; continue; }	//Faroese
+		else if (sLang == "FIN") { iLangCode = 	FIN; continue; }	//Finnish
+		else if (sLang == "FRA") { iLangCode = 	FRA; continue; }	//French
+		else if (sLang == "FRE") { iLangCode = 	FRE; continue; }	//French
+		else if (sLang == "GLE") { iLangCode = 	GLE; continue; }	//Irish
+		else if (sLang == "ICE") { iLangCode = 	ICE; continue; }	//Icelandic
+		else if (sLang == "ISL") { iLangCode = 	ISL; continue; }	//Icelandic
+		else if (sLang == "ITA") { iLangCode = 	ITA; continue; }	//Italian
+		else if (sLang == "CAT") { iLangCode = 	CAT; continue; }	//Catalan Valencian
+		else if (sLang == "DUT") { iLangCode = 	DUT; continue; }	//Dutch Flemish
+		else if (sLang == "NLD") { iLangCode = 	NLD; continue; }	//Dutch Flemish
+		else if (sLang == "NNO") { iLangCode = 	NNO; continue; }	//Norwegian Nynorsk
+		else if (sLang == "NOB") { iLangCode = 	NOB; continue; }	//Norwegian Bokmål
+		else if (sLang == "POR") { iLangCode = 	POR; continue; }	//Portuguese
+		else if (sLang == "SWE") { iLangCode = 	SWE; continue; }	//Swedish
+		else if (sLang == "SPA") { iLangCode = 	SPA; continue; }	//Spanish
+		else if (sLang == "HRV") { iLangCode = HRV; continue; }	//Croatian
+		else if (sLang == "SCR") { iLangCode = 	SCR; continue; }	//Croatian
+		else if (sLang == "POL") { iLangCode = 	POL; continue; }	//Polish
+		else if (sLang == "RON") { iLangCode = 	RON; continue; }	//Romanian
+		else if (sLang == "RUM") { iLangCode = 	RUM; continue; }	//Romanian
+		else if (sLang == "SLK") { iLangCode = 	SLK; continue; }	//Slovak
+		else if (sLang == "SLO") { iLangCode = 	SLO; continue; }	//Slovak
+		else if (sLang == "SLV") { iLangCode = 	SLV; continue; }	//Slovenian
+		else if (sLang == "CES") { iLangCode = 	CES; continue; }	//Czech
+		else if (sLang == "CZE") { iLangCode = 	CZE; continue; }	//Czech
+		else if (sLang == "HUN") { iLangCode = 	HUN; continue; }	//Hungarian
+		else if (sLang == "EPO") { iLangCode = 	EPO; continue; }	//Esperanto
+		else if (sLang == "GLG") { iLangCode = 	GLG; continue; }	//Galician
+		else if (sLang == "MLT") { iLangCode = 	MLT; continue; }	//Maltese
+		else if (sLang == "TUR") { iLangCode = 	TUR; continue; }	//Turkish
+		else if (sLang == "EST") { iLangCode = 	EST; continue; }	//Estonian
+		else if (sLang == "LAV") { iLangCode = 	LAV; continue; }	//Latvian
+		else if (sLang == "LIT") { iLangCode = 	LIT; continue; }	//Lithuanian
+		else if (sLang == "BUL") { iLangCode = 	BUL; continue; }	//Bulgarian
+		else if (sLang == "MAK") { iLangCode = 	MAK; continue; }	//Macedonian
+		else if (sLang == "MKD") { iLangCode = 	MKD; continue; }	//Macedonian
+		else if (sLang == "RUS") { iLangCode = 	RUS; continue; }	//Russian
+		else if (sLang == "SCC") { iLangCode = 	SCC; continue; }	//Serbian
+		else if (sLang == "SRP") { iLangCode = 	SRP; continue; }	//Serbian
+		else if (sLang == "UKR") { iLangCode = 	UKR; continue; }	//Ukrainian		
+		else { iLangCode = ENG; continue; } //English iso-8559-1 for all unknown language tags
+	}
+	while(iLangCode == -1);
 	return iLangCode;
 }
 
@@ -708,13 +755,69 @@ int cBitmapFont::getIsoTable(int eFontLangCode)
 	//returns iso-8559-$code
 	switch(eFontLangCode)
 	{
-		
-		case RUS:
+		//BEGIN LATIN-5 iso-8559-5
+		case BUL:	//Bulgarian
+		case MAK:	//Macedonian
+		case MKD:	//Macedonian
+		case RUS:	//Russian
+		case SCC:	//Serbian
+		case SRP:	//Serbian
+		case UKR:	//Ukrainian
 			return 5;
-		case GER:
-		case ENG:
+		//END LATIN-5 iso-8559-5
+		//BEGIN LATIN-4 iso-8559-4
+		case EST:	//Estonian
+		case LAV:	//Latvian
+		case LIT:	//Lithuanian
+			return 4;
+		//END LATIN-4 iso-8559-4
+		//BEGIN LATIN-3 iso-8559-3
+		case EPO:	//Esperanto
+		case GLG:	//Galician
+		case MLT:	//Maltese
+		case TUR:	//Turkish
+			return 3;
+		//END LATIN-3 iso-8559-3
+		//BEGIN LATIN-2 iso-8559-2
+		case HRV:	//Croatian
+		case SCR:	//Croatian
+		case POL:	//Polish
+		case RON:	//Romanian
+		case RUM:	//Romanian
+		case SLK:	//Slovak
+		case SLO:	//Slovak
+		case SLV:	//Slovenian
+		case CES:	//Czech
+		case CZE:	//Czech
+		case HUN:	//Hungarian
+			return 2;
+		//END LATIN-2 iso-8559-2
+		//BEGIN LATIN-1 iso-8559-1
+		/* no need to check. there are all left and fallback for unknown is 1 anyway.
+		case ENG:	//English iso-8559-1
+		case GER:	//German
+		case ALB:	//Alban
+		case DAN:	//Danish
+		case FAO:	//Faroese
+		case FIN:	//Finnish
+		case FRA:	//French
+		case FRE:	//French
+		case GLE:	//Irish
+		case ICE:	//Icelandic
+		case ISL:	//Icelandic
+		case ITA:	//Italian
+		case CAT:	//Catalan; Valencian
+		case DUT:	//Dutch; Flemish
+		case NLD:	//Dutch; Flemish
+		case NNO:	//Norwegian Nynorsk
+		case NOB:	//Norwegian Bokmål
+		case POR:	//Portuguese
+		case SWE:	//Swedish
+		case SPA:	//Spanish
+		*/
 		default:
 			return 1;
+		//END LATIN-1 iso-8559-1
 	}
 }
 

@@ -132,7 +132,7 @@ enum eFontLangCode
 	LAV,	//Latvian
 	LIT,	//Lithuanian
 	//END LATIN-4 iso-8559-4
-	//END LATIN-5 iso-8559-5
+	//BEGIN LATIN-5 iso-8559-5
 	BUL,	//Bulgarian
 	MAK,	//Macedonian
 	MKD,	//Macedonian
@@ -140,7 +140,7 @@ enum eFontLangCode
 	SCC,	//Serbian
 	SRP,	//Serbian
 	UKR	//Ukrainian
-	//BEGIN LATIN-5 iso-8559-5
+	//END LATIN-5 iso-8559-5
 };
 
 /**
