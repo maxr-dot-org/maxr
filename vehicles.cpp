@@ -2700,7 +2700,7 @@ void cVehicle::DecSpeed ( int value )
 	{
 		float f;
 		int s;
-		f = ( int ) ( ( ( float ) data.max_shots ) / data.max_speed );
+		f = ( ( float ) data.max_shots / data.max_speed );
 		s = ( int ) ( data.speed * f );
 
 		if ( !data.can_drive_and_fire && s < data.shots && s >= 0 )
