@@ -2703,7 +2703,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 		{
 			// Weapons
 			if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Air_Range = atoi(sTmpString.c_str());
+				Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Range;") == 0)
 				Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Range = atoi(sTmpString.c_str());
 			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Air;Range;") == 0)
@@ -3165,6 +3165,8 @@ void ConvertData(int unitnum, bool vehicle)
 			Data->can_attack = ATTACK_LAND;
 	else if(Data->Weapons[0].iTarget_Air_Damage > 0)
 		Data->can_attack = ATTACK_AIR;
+	else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
+			Data->can_attack = ATTACK_SUB_LAND;
 	else
 		Data->can_attack = ATTACK_NONE;
 
