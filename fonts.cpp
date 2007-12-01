@@ -21,9 +21,10 @@
 #include <string.h>
 #include <sstream>
 #include "fonts.h"
+#include "files.h"
 #include "main.h"
 
-#define DEBUGFONTS true
+#define DEBUGFONTS false
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -617,10 +618,13 @@ void cFonts::OutTextBlock ( char *str, SDL_Rect block, SDL_Surface *sf )
 	}
 }
 
+//TODO: load only one small fontset and simply colour the others
 cBitmapFont::cBitmapFont()
 {
 	iLoadedCharset = -1;
+	//workingsurface - points always to loaded charset
 	sfTmp= NULL;
+	//surfaces for default font charsets
 	sfLatinNormal= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,192,8,0,0,0,0 );
 	sfLatinBig= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
 	sfLatinBigGold= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
@@ -629,48 +633,139 @@ cBitmapFont::cBitmapFont()
 	sfLatinSmallGreen= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 	sfLatinSmallYellow= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 
-	SDL_Surface *sfISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,72,8,0,0,0,0 );
-	SDL_Rect rIsoDest = { 0, sfLatinNormal->h - sfISO->h, sfISO->w, sfISO->h}; //blit additional char to lower side of ascii chart
+	//surfaces for additional languagedepending charset
+	SDL_Surface *sfBigISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,92,8,0,0,0,0 );
+	SDL_Surface *sfNormalISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,72,8,0,0,0,0 );
+	SDL_Surface *sfSmallISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,48,8,0,0,0,0 );
+
+	SDL_Rect rIsoDest = { 0, sfLatinNormal->h - sfNormalISO->h, sfNormalISO->w, sfNormalISO->h}; //blit additional char to lower side of ascii chart
 	
-	string sTmp = SettingsData.sFontPath + PATH_DELIMITER;
+	string sFontPath = SettingsData.sFontPath + PATH_DELIMITER;
+	string sISO8850;
 	
 	setLang(); //init lang
 	
-	if(DEBUGFONTS) cLog::write ( "Languagecode "+SettingsData.sLanguage+" set to " + iToStr(iLangCode) + ". Loading charset iso-8559-" + iToStr(getIsoTable(getLang())), cLog::eLOG_TYPE_DEBUG );
+	cLog::write ( "Languagecode "+SettingsData.sLanguage+" set to " + iToStr(iLangCode) + ". Loading charset iso-8559-" + iToStr(getIsoTable(getLang())), cLog::eLOG_TYPE_DEBUG );
 	
-	sfLatinNormal = LoadPCX((char*)(sTmp + "latin_normal.pcx").c_str());
-	sfISO = LoadPCX((char*)(sTmp + "latin_normal_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx").c_str());  //get file for additional charset
-	SDL_BlitSurface(sfISO, NULL, sfLatinNormal, &rIsoDest);
+	//BEGIN NORMAL FONTS
+	//load fonts
+	sfLatinNormal = LoadPCX((char*)(sFontPath + "latin_normal.pcx").c_str());
 	
-	buildFont(sfLatinNormal);
-	copyArray(chars, LatinNormal);
-	
-	sfLatinSmallGreen = LoadPCX((char*)(sTmp + "latin_small_green.pcx").c_str());
-	buildFont(sfLatinSmallGreen);
-	copyArray(chars, LatinSmallGreen);
-	
-	sfLatinSmallRed = LoadPCX((char*)(sTmp + "latin_small_red.pcx").c_str());
-	buildFont(sfLatinSmallRed);
-	copyArray(chars, LatinSmallRed);
-	
-	sfLatinSmallYellow= LoadPCX((char*)(sTmp + "latin_small_yellow.pcx").c_str());
-	buildFont(sfLatinSmallYellow);
-	copyArray(chars, LatinSmallYellow);
-	
-	sfLatinSmallWhite = LoadPCX((char*)(sTmp + "latin_small_white.pcx").c_str());
-	buildFont(sfLatinSmallWhite);
-	copyArray(chars, LatinSmallWhite);
-	
-	sfLatinBig = LoadPCX((char*)(sTmp + "latin_big.pcx").c_str());
-	buildFont(sfLatinBig);
-	copyArray(chars, LatinBig);
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_normal_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfNormalISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfNormalISO, NULL, sfLatinNormal, &rIsoDest); //blit special characters of lang to fonts
+	}
 
-	sfLatinBigGold = LoadPCX((char*)(sTmp + "latin_big_gold.pcx").c_str());
-	buildFont(sfLatinBigGold);
-	copyArray(chars, LatinBigGold);
+	buildFont(sfLatinNormal); //calculate offsets
+	copyArray(chars, LatinNormal); 	//store offsets
+	//END NORMAL FONTS
 	
-	SDL_FreeSurface(sfISO);
-	//TODO: add support for cryllian characters
+	//BEGIN SMALL FONTS
+	//adjust dest rect for small fonts
+	rIsoDest.y = sfLatinSmallGreen->h - sfSmallISO->h;
+	rIsoDest.w = sfSmallISO->w;
+	rIsoDest.h = sfSmallISO->h;
+	
+	//load fonts
+	sfLatinSmallGreen = LoadPCX((char*)(sFontPath + "latin_small_green.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_small_green_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallGreen, &rIsoDest); //blit special characters of lang to fonts
+	}
+
+	
+	buildFont(sfLatinSmallGreen); //calculate offsets	
+	copyArray(chars, LatinSmallGreen); //store offsets
+	
+	
+	//load fonts
+	sfLatinSmallRed = LoadPCX((char*)(sFontPath + "latin_small_red.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_small_red_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallRed, &rIsoDest); //blit special characters of lang to fonts
+	}
+	
+	buildFont(sfLatinSmallRed); //calculate offsets	
+	copyArray(chars, LatinSmallRed); //store offsets
+	
+	//load fonts
+	sfLatinSmallYellow= LoadPCX((char*)(sFontPath + "latin_small_yellow.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_small_yellow_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallYellow, &rIsoDest); //blit special characters of lang to fonts
+	}
+	
+	buildFont(sfLatinSmallYellow); //calculate offsets	
+	copyArray(chars, LatinSmallYellow); //store offsets
+	
+	//load fonts
+	sfLatinSmallWhite = LoadPCX((char*)(sFontPath + "latin_small_white.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_small_white_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallWhite, &rIsoDest); //blit special characters of lang to fonts
+	}
+	
+	buildFont(sfLatinSmallWhite); //calculate offsets	
+	copyArray(chars, LatinSmallWhite); //store offsets
+	//END SMALL FONTS
+	
+	//BEGIN BIG FONTS
+	//adjust dest rect for big fonts
+	rIsoDest.y = sfLatinBig->h - sfBigISO->h;
+	rIsoDest.w = sfBigISO->w;
+	rIsoDest.h = sfBigISO->h;
+	
+	//load fonts
+	sfLatinBig = LoadPCX((char*)(sFontPath + "latin_big.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_big_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfBigISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfBigISO, NULL, sfLatinBig, &rIsoDest); //blit special characters of lang to fonts
+	}
+	
+	buildFont(sfLatinBig); //calculate offsets	
+	copyArray(chars, LatinBig); //store offsets
+
+	//load fonts
+	sfLatinBigGold = LoadPCX((char*)(sFontPath + "latin_big_gold.pcx").c_str());
+	
+	//load languagedepending charset
+	sISO8850 = sFontPath + "latin_big_gold_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	if(FileExists(sISO8850.c_str()))
+	{
+		sfBigISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		SDL_BlitSurface(sfBigISO, NULL, sfLatinBigGold, &rIsoDest); //blit special characters of lang to fonts
+	}
+	
+	buildFont(sfLatinBigGold); //calculate offsets	
+	copyArray(chars, LatinBigGold); //store offsets
+	
+	SDL_FreeSurface(sfSmallISO);
+	SDL_FreeSurface(sfNormalISO);
+	SDL_FreeSurface(sfBigISO);
+	//END BIG FONTS
 }
 
 cBitmapFont::~cBitmapFont()
