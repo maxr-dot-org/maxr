@@ -84,6 +84,13 @@ enum eBitmapFontType
 	LATIN_SMALL_YELLOW
 };
 
+enum eFontLangCode
+{
+	ENG,
+	GER,
+	RUS
+};
+
 /**
  * @author beko
  * Takes care of displaying correct ascii sign from different charactersets stored as image in fonts.<br>
@@ -143,6 +150,13 @@ class cBitmapFont{
 		 */
 		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
 		
+		
+		/**
+		 * Holds languagecode eFontLangCode
+		 * @return eFontLangCode 
+		 */
+		int getLang(void);
+
 		/**
 		 * Displays a text centered on given X 
 		 * @param rDest DL_Rect for position.<br>Use X for position to center on.<br>Y is not taken care of!
@@ -165,6 +179,7 @@ class cBitmapFont{
 	private:
 		//Surfaces to store our latin charsets
 		//tmp for actual used surface during creation or drawing
+		int iLangCode;
 		SDL_Surface *sfTmp;
 		SDL_Surface *sfLatinNormal;
 		SDL_Surface *sfLatinBig;
@@ -189,6 +204,8 @@ class cBitmapFont{
 		 * @param surface the SDL_Surface providing fonts seperated in 16x16 rows/cells on a 256x256px image
 		 */
 		void buildFont(SDL_Surface *surface);
+		int setLang(void);
+		int getIsoTable(int eFontLangCode);
 		void copyArray(SDL_Rect source[],SDL_Rect dest[]);
 		Uint32 getPixel32(int x, int y, SDL_Surface *surface);
 		Uint16 getPixel16(int x, int y, SDL_Surface *surface);

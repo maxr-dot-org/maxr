@@ -23,7 +23,7 @@
 #include "fonts.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -629,10 +629,19 @@ cBitmapFont::cBitmapFont()
 	sfLatinSmallGreen= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 	sfLatinSmallYellow= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 
-		
+	SDL_Surface *sfISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,72,8,0,0,0,0 );
+	SDL_Rect rIsoDest = { 0, sfLatinNormal->h - sfISO->h, sfISO->w, sfISO->h}; //blit additional char to lower side of ascii chart
+	
 	string sTmp = SettingsData.sFontPath + PATH_DELIMITER;
 	
+	setLang(); //init lang
+	
+	if(DEBUGFONTS) cLog::write ( "Languagecode "+SettingsData.sLanguage+" set to " + iToStr(iLangCode) + ". Loading charset iso-8559-" + iToStr(getIsoTable(getLang())), cLog::eLOG_TYPE_DEBUG );
+	
 	sfLatinNormal = LoadPCX((char*)(sTmp + "latin_normal.pcx").c_str());
+	sfISO = LoadPCX((char*)(sTmp + "latin_normal_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx").c_str());  //get file for additional charset
+	SDL_BlitSurface(sfISO, NULL, sfLatinNormal, &rIsoDest);
+	
 	buildFont(sfLatinNormal);
 	copyArray(chars, LatinNormal);
 	
@@ -659,6 +668,8 @@ cBitmapFont::cBitmapFont()
 	sfLatinBigGold = LoadPCX((char*)(sTmp + "latin_big_gold.pcx").c_str());
 	buildFont(sfLatinBigGold);
 	copyArray(chars, LatinBigGold);
+	
+	SDL_FreeSurface(sfISO);
 	//TODO: add support for cryllian characters
 }
 
@@ -673,6 +684,43 @@ cBitmapFont::~cBitmapFont()
 	SDL_FreeSurface(sfLatinSmallGreen);
 	SDL_FreeSurface(sfLatinSmallYellow);
 	SDL_FreeSurface(sfTmp); */
+}
+
+int cBitmapFont::setLang(void)
+{
+	string sLang = SettingsData.sLanguage;
+	
+	for(int i=0; i < sLang.size(); i++)
+	{
+		sLang[i] = toupper(sLang[i]);
+	}
+	
+	//TODO: add more language codes
+	if(sLang == "GER") iLangCode = GER;
+	else if (sLang == "RUS") iLangCode = RUS;
+	else iLangCode = ENG;
+
+	return iLangCode;
+}
+
+int cBitmapFont::getIsoTable(int eFontLangCode)
+{	
+	//returns iso-8559-$code
+	switch(eFontLangCode)
+	{
+		
+		case RUS:
+			return 5;
+		case GER:
+		case ENG:
+		default:
+			return 1;
+	}
+}
+
+int cBitmapFont::getLang(void)
+{
+	return iLangCode;
 }
 
 void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
