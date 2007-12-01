@@ -233,7 +233,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	{
 		for ( i=0;i<10;i++ )
 		{
-			PosMap[i]=random ( size*size,0 );
+			PosMap[i]=random ( size*size - 1,0 );
 		}
 		pos=GaussMap[PosMap[0]];
 		index=0;
