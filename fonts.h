@@ -86,9 +86,62 @@ enum eBitmapFontType
 
 enum eFontLangCode
 {
-	ENG,
-	GER,
-	RUS
+	//BEGIN LATIN-1 iso-8559-1
+	ENG,	//English iso-8559-1
+	GER,	//German
+	ALB,	//Alban
+	DAN,	//Danish
+	FAO,	//Faroese
+	FIN,	//Finnish
+	FRA,	//French
+	FRE,	//French
+	GLG,	//Galician
+	GLE,	//Irish
+	ICE,	//Icelandic
+	ISL,	//Icelandic
+	ITA,	//Italian
+	CAT,	//Catalan; Valencian
+	DUT,	//Dutch; Flemish
+	NLD,	//Dutch; Flemish
+	NNO,	//Norwegian Nynorsk
+	NOB,	//Norwegian Bokmål
+	POR,	//Portuguese
+	SWE,	//Swedish
+	SPA,	//Spanish
+	//END LATIN-1 iso-8559-1
+	//BEGIN LATIN-2 iso-8559-2
+	HRV,	//Croatian
+	SCR,	//Croatian
+	POL,	//Polish
+	RON,	//Romanian
+	RUM,	//Romanian
+	SLK,	//Slovak
+	SLO,	//Slovak
+	SLV,	//Slovenian
+	CES,	//Czech
+	CZE,	//Czech
+	HUN,	//Hungarian
+	//END LATIN-2 iso-8559-2
+	//BEGIN LATIN-3 iso-8559-3
+	EPO,	//Esperanto
+	GLG,	//Galician
+	MLT,	//Maltese
+	TUR,	//Turkish
+	//END LATIN-3 iso-8559-3
+	//BEGIN LATIN-4 iso-8559-4
+	EST,	//Estonian
+	LAV,	//Latvian
+	LIT,	//Lithuanian
+	//END LATIN-4 iso-8559-4
+	//END LATIN-5 iso-8559-5
+	BUL,	//Bulgarian
+	MAK,	//Macedonian
+	MKD,	//Macedonian
+	RUS,	//Russian
+	SCC,	//Serbian
+	SRP,	//Serbian
+	UKR	//Ukrainian
+	//BEGIN LATIN-5 iso-8559-5
 };
 
 /**
