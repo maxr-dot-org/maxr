@@ -634,7 +634,7 @@ cBitmapFont::cBitmapFont()
 	sfLatinSmallYellow= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 
 	//surfaces for additional languagedepending charset
-	SDL_Surface *sfBigISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,92,8,0,0,0,0 );
+	SDL_Surface *sfBigISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,96,8,0,0,0,0 );
 	SDL_Surface *sfNormalISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,72,8,0,0,0,0 );
 	SDL_Surface *sfSmallISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,48,8,0,0,0,0 );
 
