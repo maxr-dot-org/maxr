@@ -629,9 +629,6 @@ cBitmapFont::cBitmapFont()
 	sfLatinBig= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
 	sfLatinBigGold= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,256,8,0,0,0,0 );
 	sfLatinSmallWhite= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
-	sfLatinSmallRed= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
-	sfLatinSmallGreen= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
-	sfLatinSmallYellow= SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,128,128,8,0,0,0,0 );
 
 	//surfaces for additional languagedepending charset
 	SDL_Surface *sfBigISO = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,256,96,8,0,0,0,0 );
@@ -665,59 +662,15 @@ cBitmapFont::cBitmapFont()
 	
 	//BEGIN SMALL FONTS
 	//adjust dest rect for small fonts
-	rIsoDest.y = sfLatinSmallGreen->h - sfSmallISO->h;
+	rIsoDest.y = sfLatinSmallWhite->h - sfSmallISO->h;
 	rIsoDest.w = sfSmallISO->w;
 	rIsoDest.h = sfSmallISO->h;
 	
 	//load fonts
-	sfLatinSmallGreen = LoadPCX((char*)(sFontPath + "latin_small_green.pcx").c_str());
-	
+	sfLatinSmallWhite = LoadPCX((char*)(sFontPath + "latin_small.pcx").c_str());
+		
 	//load languagedepending charset
-	sISO8850 = sFontPath + "latin_small_green_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
-	if(FileExists(sISO8850.c_str()))
-	{
-		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
-		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallGreen, &rIsoDest); //blit special characters of lang to fonts
-	}
-
-	
-	buildFont(sfLatinSmallGreen); //calculate offsets	
-	copyArray(chars, LatinSmallGreen); //store offsets
-	
-	
-	//load fonts
-	sfLatinSmallRed = LoadPCX((char*)(sFontPath + "latin_small_red.pcx").c_str());
-	
-	//load languagedepending charset
-	sISO8850 = sFontPath + "latin_small_red_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
-	if(FileExists(sISO8850.c_str()))
-	{
-		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
-		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallRed, &rIsoDest); //blit special characters of lang to fonts
-	}
-	
-	buildFont(sfLatinSmallRed); //calculate offsets	
-	copyArray(chars, LatinSmallRed); //store offsets
-	
-	//load fonts
-	sfLatinSmallYellow= LoadPCX((char*)(sFontPath + "latin_small_yellow.pcx").c_str());
-	
-	//load languagedepending charset
-	sISO8850 = sFontPath + "latin_small_yellow_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
-	if(FileExists(sISO8850.c_str()))
-	{
-		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
-		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallYellow, &rIsoDest); //blit special characters of lang to fonts
-	}
-	
-	buildFont(sfLatinSmallYellow); //calculate offsets	
-	copyArray(chars, LatinSmallYellow); //store offsets
-	
-	//load fonts
-	sfLatinSmallWhite = LoadPCX((char*)(sFontPath + "latin_small_white.pcx").c_str());
-	
-	//load languagedepending charset
-	sISO8850 = sFontPath + "latin_small_white_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
+	sISO8850 = sFontPath + "latin_small_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
 	if(FileExists(sISO8850.c_str()))
 	{
 		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
@@ -725,7 +678,28 @@ cBitmapFont::cBitmapFont()
 	}
 	
 	buildFont(sfLatinSmallWhite); //calculate offsets	
-	copyArray(chars, LatinSmallWhite); //store offsets
+	copyArray(chars, LatinSmall); //store offsets
+	
+	//init other font colours
+	sfLatinSmallRed = SDL_CreateRGBSurface ( SDL_HWSURFACE, sfLatinSmallWhite->w, sfLatinSmallWhite->h, SettingsData.iColourDepth,0,0,0,0 );
+	sfLatinSmallYellow = SDL_CreateRGBSurface ( SDL_HWSURFACE, sfLatinSmallWhite->w, sfLatinSmallWhite->h, SettingsData.iColourDepth,0,0,0,0 );
+	sfLatinSmallGreen = SDL_CreateRGBSurface ( SDL_HWSURFACE, sfLatinSmallWhite->w, sfLatinSmallWhite->h, SettingsData.iColourDepth,0,0,0,0 );
+
+	//note: I don't like it to hardcode the font's colour but I don't want to read it out manually just in case somebody doesn't like my master fonts so if somebody changes the fonts colourtable he's lost in the woods -- beko
+	SDL_SetColorKey ( sfLatinSmallWhite,SDL_SRCCOLORKEY, 0xf0d8b8 ); //set transparency to pseudo-white
+	
+	SDL_FillRect ( sfLatinSmallRed, NULL, 0xe60000); //fill with red (ish)
+	SDL_FillRect ( sfLatinSmallGreen, NULL, 0x04ae04); //fill with green (ish)
+	SDL_FillRect ( sfLatinSmallYellow, NULL, 0xdbde00); //fill with yellow(ish)
+	
+	SDL_BlitSurface ( sfLatinSmallWhite, NULL, sfLatinSmallRed, NULL); //blit small fonts "background" into color red
+	SDL_BlitSurface ( sfLatinSmallWhite, NULL, sfLatinSmallGreen, NULL); //blit small fonts "background" into color green
+	SDL_BlitSurface ( sfLatinSmallWhite, NULL, sfLatinSmallYellow, NULL); //blit small fonts "background" into color yellow
+	
+	SDL_SetColorKey ( sfLatinSmallRed, SDL_SRCCOLORKEY,0xFF00FF ); //set transparency to mangenta
+	SDL_SetColorKey ( sfLatinSmallGreen, SDL_SRCCOLORKEY,0xFF00FF ); //set transparency to mangenta
+	SDL_SetColorKey ( sfLatinSmallYellow, SDL_SRCCOLORKEY,0xFF00FF ); //set transparency to mangenta
+	SDL_SetColorKey ( sfLatinSmallWhite,SDL_SRCCOLORKEY, 0xFF00FF ); //set transparency for white font back to magenta
 	//END SMALL FONTS
 	
 	//BEGIN BIG FONTS
@@ -1218,19 +1192,19 @@ void cBitmapFont::getCharset(int eBitmapFontType)
 				break;
 			case LATIN_SMALL_GREEN:
 				sfTmp = sfLatinSmallGreen;
-				copyArray(LatinSmallGreen, chars);
+				copyArray(LatinSmall, chars);
 				break;
 			case LATIN_SMALL_RED:
 				sfTmp = sfLatinSmallRed;
-				copyArray(LatinSmallRed, chars);
+				copyArray(LatinSmall, chars);
 				break;
 			case LATIN_SMALL_WHITE:
 				sfTmp = sfLatinSmallWhite;
-				copyArray(LatinSmallWhite, chars);
+				copyArray(LatinSmall, chars);
 				break;
 			case LATIN_SMALL_YELLOW:
 				sfTmp = sfLatinSmallYellow;
-				copyArray(LatinSmallYellow, chars);
+				copyArray(LatinSmall, chars);
 				break;
 			case LATIN_NORMAL :
 			default:

@@ -246,10 +246,7 @@ class cBitmapFont{
 		SDL_Rect LatinNormal[256];
 		SDL_Rect LatinBig[256];
 		SDL_Rect LatinBigGold[256];
-		SDL_Rect LatinSmallWhite[256];
-		SDL_Rect LatinSmallRed[256];
-		SDL_Rect LatinSmallGreen[256];
-		SDL_Rect LatinSmallYellow[256];
+		SDL_Rect LatinSmall[256];
 		int iLoadedCharset;
 		/**
 		 * IMPORTANT: Only tested with images having a colourdepth of 8!
