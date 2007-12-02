@@ -24,7 +24,7 @@
 #include "files.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -1245,7 +1245,6 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 
 	for(int i = 0; sText[i] != '\0'; i++)
 	{
-		ascii = (unsigned char) sText[i];
 		//is space?
 		if(sText[i] == ' ')
 		{
@@ -1258,6 +1257,7 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 		else
 		{
 			//get ascii value
+			ascii = (unsigned char) sText[i];
 			rTmp.w += chars[ascii].w + iSpace;
 		}
 	}
