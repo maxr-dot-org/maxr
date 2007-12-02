@@ -3368,12 +3368,6 @@ void cBuilding::ShowResearch ( void )
 	font->showTextCentered ( rTxtLabs.x + rTxtLabs.w / 2, rTxtLabs.y, lngPack.Translate ( "Text~Comp~Labs" ) );
 	font->showTextCentered ( rTxtThemes.x + rTxtThemes.w / 2, rTxtThemes.y, lngPack.Translate ( "Text~Comp~Themes" ) );
 	font->showTextCentered ( rTxtRounds.x + rTxtRounds.w / 2, rTxtRounds.y, lngPack.Translate ( "Text~Comp~Turns" ) );
-	/*
-		fonts->OutTextCenter(lngPack.Translate( "Text~Game_Start~Title_Labs" ), rTitle.x+rTitle.w/2, rTitle.y, buffer);
-		fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Labs" ), rTxtLabs.x+rTxtLabs.w/2, rTxtLabs.y, buffer);
-		fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Themes" ), rTxtThemes.x+rTxtThemes.w/2, rTxtThemes.y, buffer);
-		fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Turns" ), rTxtRounds.x+rTxtRounds.w/2, rTxtRounds.y, buffer); */
-
 
 	//draw button Cancel
 	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
