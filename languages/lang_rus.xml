@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="ISO-8859-5"?>
 <!-- * encoding is needed for selecting the correct code table               -->
 <!--       iso-8859-5  : Cyrillic languages                                  -->
 <!--       iso-8859-15 : western European languages                          -->
@@ -30,7 +30,7 @@
 		</Main>
 		<Initialisation>
 			<Load_Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
-			<Load_Keys ENG="Loading keys..." localized="°àâñÜ »ØâÒØÝÞÒØç..."/>
+			<Load_Keys ENG="Loading keys..." localized="°àmñÜ »ØâÒØÝÞÒØç..."/>
                         <Load_Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
                         <Load_GFX ENG="Loading gfx..." localized="Lade GFX..."/>
                         <Load_Effects ENG="Loading effects..." localized="Lade Effekte..."/>
@@ -345,3 +345,4 @@
 	<Speech>
 	</Speech>
 </MAX_Language_File>
+
