@@ -24,7 +24,7 @@
 #include "files.h"
 #include "main.h"
 
-#define DEBUGFONTS true
+#define DEBUGFONTS false
 
 
 // Funktionen der Font-Klasse ////////////////////////////////////////////////
@@ -1265,7 +1265,7 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 	if(DEBUGFONTS)
 	{	
 		stringstream strStream;
-		strStream << "Text: " << sText << " is " << rTmp.w << " width and " << rTmp.h << " hight\n";
+		strStream << "Text: " << sText << " is " << rTmp.w << " width and " << rTmp.h << " height\n";
 		cLog::write(strStream.str(), cLog::eLOG_TYPE_DEBUG);
 	}
 	return rTmp;
