@@ -3787,28 +3787,27 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 		}
 
 		// Text ausgeben:
-		/*
-		t=0;
-		str[0]=0;
-		while ( UnitsData.building[ptr->id].data.name[t]&&
+		
+		string sTmp = UnitsData.building[ptr->id].data.name;
+		
+		if ( font->getTextWide ( sTmp ) > 72 )
 		{
-			str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			}
 		}
-		str[t]='.';
-		str[t+1]=0;
-
-		sprintf ( str,"%d",owner->BuildingData[ptr->id].iBuilt_Costs );
-
-		*/
-		bool bLongName = false;
-
-		if ( font->getTextWide ( UnitsData.building[ptr->id].data.name ) > 72 )
+		else
 		{
-			bLongName = true;
+			font->showText ( text, sTmp);
 		}
-
-		font->showText ( text, UnitsData.building[ptr->id].data.name, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
-
+		
 		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
 
 		text.y += 32 + 10;

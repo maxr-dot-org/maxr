@@ -1374,7 +1374,7 @@ Uint8 cBitmapFont::getPixel8(int x, int y, SDL_Surface *surface)
 
 int cBitmapFont::getTextWide(string sText, int eBitmapFontType)
 {
-	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType);
+	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType); //FIXME: doesn't work proper on small fonts!
 	return rTmp.w;
 }
 

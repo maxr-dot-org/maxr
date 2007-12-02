@@ -3451,19 +3451,28 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 		}
 		// Text ausgeben:
 		
-		bool bLongName = false;
 
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 72 )
+		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 87 )
 		{
-			bLongName = true;
+			if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > 87 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
+			}
 		}
-		
-		font->showText ( text, UnitsData.vehicle[ptr->id].data.name, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
-
+		else
+		{
+			font->showText ( text, UnitsData.vehicle[ptr->id].data.name);
+		}
 		
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			font->showText(text.x,text.y+10, " ("+iToStr(ptr->cargo)+"/"+iToStr(UnitsData.vehicle[ptr->id].data.max_cargo)+")");
+			font->showText(text.x,text.y+10, " ("+iToStr(ptr->cargo)+"/"+iToStr(UnitsData.vehicle[ptr->id].data.max_cargo)+")", LATIN_SMALL_WHITE);
 		}
 		text.y+=32+10;
 		dest.y+=32+10;
@@ -3661,14 +3670,23 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		bool bLongName = false;
-
-		if ( font->getTextWide ( sTmp ) > 72 )
+		if ( font->getTextWide ( sTmp ) > 87 )
 		{
-			bLongName = true;
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 87 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			}
 		}
-
-		font->showText ( text, sTmp, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
+		else
+		{
+			font->showText ( text, sTmp);
+		}
 		
 		text.y+=32+2;
 		dest.y+=32+2;

@@ -4377,8 +4377,6 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 		}
 
 		// Text ausgeben:
-		//t=0;
-		//str[0]=0;
 		string sTmp;
 
 		if ( ptr->vehicle )
@@ -4390,20 +4388,24 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		//str[t]='.';
-		//str[t+1]=0;
-
-
-		bool bLongName = false;
-
 		if ( font->getTextWide ( sTmp ) > 72 )
 		{
-			bLongName = true;
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			}
 		}
-
-		font->showText ( text, sTmp, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
-
-		//font->showText(text, str);
+		else
+		{
+			font->showText ( text, sTmp);
+		}
+		
 		text.y += 32 + 2;
 		dest.y += 32 + 2;
 	}
@@ -7495,25 +7497,25 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 		}
 
 		// Text ausgeben:
-		/*t=0;
-		str[0]=0;
-		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		string sTmp = UnitsData.vehicle[ptr->id].data.name;
+		
+		if ( font->getTextWide ( sTmp ) > 72 )
 		{
-			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			}
 		}
-		str[t]='.';
-		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer ); */
-		//sprintf ( str,"%d",owner->VehicleData[ptr->id].iBuilt_Costs );
-
-		bool bLongName = false;
-
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 72 )
+		else
 		{
-			bLongName = true;
+			font->showText ( text, sTmp);
 		}
-
-		font->showText ( text, UnitsData.vehicle[ptr->id].data.name, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
 
 		font->showTextCentered ( 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ) );
 		text.y += 32 + 10;
@@ -7752,23 +7754,26 @@ void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool sh
 		}
 
 		// Text ausgeben:
-		/*	t=0; FIXME:
-			str[0]=0;
-			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
-			{
-				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
-			}
-			str[t]='.';
-			str[t+1]=0; */
 
-		bool bLongName = false;
-
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 72 )
+		string sTmp = UnitsData.vehicle[ptr->id].data.name;
+		
+		if ( font->getTextWide ( sTmp ) > 82 )
 		{
-			bLongName = true;
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 82 )
+			{
+				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			}
+			else
+			{
+				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			}
 		}
-
-		font->showText ( text, UnitsData.vehicle[ptr->id].data.name, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
+		else
+		{
+			font->showText ( text, sTmp);
+		}
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
