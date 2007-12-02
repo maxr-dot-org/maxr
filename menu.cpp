@@ -82,13 +82,13 @@ void prepareMenu ( bool bIAmMain )
 	SDL_FreeSurface(sfTmp);	
 
 	//draw infostring with maxversion at the bottom
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION,DIALOG_X+320,DIALOG_Y+465,buffer );
+	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.Translate ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
 	//END MENU REDRAW
 		
 	//we came back from a submenu so we have to redraw main menu
 	if(bIAmMain)
 	{
-		fonts->OutTextCenter ( lngPack.Translate ( "Text~Menu_Main~Title_Main_Menu" ), TITLE_X, TITLE_Y,buffer );
+		font->showTextCentered(TITLE_X, TITLE_Y, lngPack.Translate ( "Text~Menu_Main~Title_Main_Menu" ));
 		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),false,BTN_1_X,BTN_1_Y );
 		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ),false,BTN_2_X,BTN_2_Y );
 		//uncommented since no need for right now -- beko
@@ -150,7 +150,7 @@ void ExitMenu ( void )
 
 
 // Platziert einen kleinen Button:
-void PlaceSmallButton (string sText,int x,int y,bool pressed )
+void placeSmallButton (string sText,int x,int y,bool pressed )
 {
 	SDL_Rect scr,dest;
 	scr.w=dest.w=150;
@@ -161,7 +161,7 @@ void PlaceSmallButton (string sText,int x,int y,bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter( sText,x+150/2,y+8,buffer );
+	font->showTextCentered(x+150/2,y+7, sText, LATIN_BIG);
 }
 
 // Platziert einen spezielen Menübutton:
@@ -178,7 +178,7 @@ void PlaceMenuButton (string sText,int x,int y, int darkness, bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter ( sText,x+109/2,y+12,buffer );
+	font->showTextCentered(x+109/2,y+11, sText, LATIN_BIG);
 }
 
 // Platziert einen kleinen spezielen Menübutton:
@@ -193,22 +193,22 @@ void PlaceSmallMenuButton ( string sText,int x,int y,bool pressed )
 	dest.y=y;
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
 
-	fonts->OutTextBigCenter ( sText,x+48/2,y+12,buffer );
+	font->showTextCentered(x+48/2,y+11, sText, LATIN_BIG);
 }
 
 // Platziert einen auswählbaren Text (zentriert):
-void PlaceSelectText ( const char *str,int x,int y,bool checked, SDL_Surface *surface,bool center )
+void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {
 	SDL_Rect r;
 	int len;
-	len=fonts->GetTextLen ( str );
+	len = font->getTextWide(sText);
 	if ( center )
 	{
-		fonts->OutTextCenter ( str,x,y,buffer );
+		font->showTextCentered(x, y, sText);
 	}
 	else
 	{
-		fonts->OutText ( str,x,y,buffer );
+		font->showText(x, y, sText);
 		x+=len/2;
 	}
 	r.x=x-len/2-4;
@@ -468,7 +468,7 @@ void RunMPMenu ( void )
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ).c_str(),TITLE_X, TITLE_Y,buffer );
+	font->showTextCentered(TITLE_X, TITLE_Y, lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ));
 
 	drawMenuButton ( TCPIPHOST, false, BTN_1_X, BTN_1_Y );
 	drawMenuButton ( TCPIPCLIENT, false, BTN_2_X, BTN_2_Y );
@@ -661,7 +661,7 @@ void RunSPMenu ( void )
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
-	fonts->OutTextCenter ( SINGLEPLAYER,TITLE_X, TITLE_Y,buffer );
+	font->showTextCentered(TITLE_X, TITLE_Y, SINGLEPLAYER);
 
 	drawMenuButton ( TRAINING,false,BTN_1_X, BTN_1_Y );
 	drawMenuButton ( NEWGAME,false,BTN_2_X, BTN_2_Y );
@@ -878,21 +878,21 @@ sOptions RunOptionsMenu ( sOptions *init )
 #define OK lngPack.Translate( "Text~Menu_Main~Button_OK")
 #define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
 
-#define LOWEST lngPack.Translate( "Text~Game_Options~Option_Lowest").c_str()
-#define LOWER lngPack.Translate( "Text~Game_Options~Option_Lower").c_str()
-#define LOW lngPack.Translate( "Text~Game_Options~Option_Low").c_str()
-#define MIDDLE lngPack.Translate( "Text~Game_Options~Option_Normal").c_str()
-#define MUCH lngPack.Translate( "Text~Game_Options~Option_Much").c_str()
-#define MORE lngPack.Translate( "Text~Game_Options~Option_More").c_str()
-#define MOST lngPack.Translate( "Text~Game_Options~Option_Most").c_str()
-#define THIN lngPack.Translate( "Text~Game_Options~Option_Thin").c_str()
-#define THICK lngPack.Translate( "Text~Game_Options~Option_Thick").c_str()
-#define ON lngPack.Translate( "Text~Game_Options~Option_On").c_str()
-#define OFF lngPack.Translate( "Text~Game_Options~Option_Off").c_str()
-#define DEFINITE lngPack.Translate( "Text~Game_Options~Option_Definite").c_str()
-#define MOBILE lngPack.Translate( "Text~Game_Options~Option_Mobile").c_str()
-#define TURNS lngPack.Translate( "Text~Game_Options~Option_Type_Turns").c_str()
-#define SIMU lngPack.Translate( "Text~Game_Options~Option_Type_Simu").c_str()
+#define LOWEST lngPack.Translate( "Text~Game_Options~Option_Lowest")
+#define LOWER lngPack.Translate( "Text~Game_Options~Option_Lower")
+#define LOW lngPack.Translate( "Text~Game_Options~Option_Low")
+#define MIDDLE lngPack.Translate( "Text~Game_Options~Option_Normal")
+#define MUCH lngPack.Translate( "Text~Game_Options~Option_Much")
+#define MORE lngPack.Translate( "Text~Game_Options~Option_More")
+#define MOST lngPack.Translate( "Text~Game_Options~Option_Most")
+#define THIN lngPack.Translate( "Text~Game_Options~Option_Thin")
+#define THICK lngPack.Translate( "Text~Game_Options~Option_Thick")
+#define ON lngPack.Translate( "Text~Game_Options~Option_On")
+#define OFF lngPack.Translate( "Text~Game_Options~Option_Off")
+#define DEFINITE lngPack.Translate( "Text~Game_Options~Option_Definite")
+#define MOBILE lngPack.Translate( "Text~Game_Options~Option_Mobile")
+#define TURNS lngPack.Translate( "Text~Game_Options~Option_Type_Turns")
+#define SIMU lngPack.Translate( "Text~Game_Options~Option_Type_Simu")
 
 #define METAL lngPack.Translate( "Text~Game_Options~Title_Metal")
 #define OIL lngPack.Translate( "Text~Game_Options~Title_Oil")
@@ -939,65 +939,66 @@ sOptions RunOptionsMenu ( sOptions *init )
 	
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
-	fonts->OutTextCenter ( GAMEOPTIONS,320,11,buffer );
+	font->showTextCentered(320, 11, GAMEOPTIONS);
 
 	// Ressourcen:
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Resource" ).c_str(),110,56,buffer );
+	font->showTextCentered(110,56, lngPack.Translate ( "Text~Game_Options~Title_Resource" ));
 
-	fonts->OutText ( METAL.c_str(),17,86,buffer );
-	PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
-	PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp);
-	PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
-	PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
+	font->showText(17,86, METAL);
+	placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
+	placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp);
+	placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+	placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 
-	fonts->OutText ( OIL.c_str(),17,124,buffer );
-	PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
-	PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1 , sfTmp);
-	PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
-	PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
+	font->showText(17,124, OIL);
+	placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
+	placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1 , sfTmp);
+	placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+	placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 
-	fonts->OutText ( GOLD.c_str(),17,162,buffer );
-	PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
-	PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
-	PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2 , sfTmp);
-	PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
+	font->showText(17,162, GOLD);
+	placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
+	placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+	placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2 , sfTmp);
+	placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 
 	// Credits:
-	fonts->OutTextCenter ( CREDITS.c_str(),110+211,56,buffer );
+	font->showTextCentered(110+211,56, CREDITS);
 
-	PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-	PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-	PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-	PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-	PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-	PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-	PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+	placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+	placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+	placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+	placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+	placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+	placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+	placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 
 	// Brückenkopf:
-	fonts->OutTextCenter ( HEAD.c_str(),110+211*2,56,buffer );
+	font->showTextCentered(110+211*2,56, HEAD);
 
-	PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
-	PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
+	placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+	placeSelectableText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 
 	// AlienTechs:
-	fonts->OutTextCenter ( ALIEN.c_str(),110,251,buffer );
+	font->showTextCentered(110,251, ALIEN);
 
-	PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
-	PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
+	placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
+	placeSelectableText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 
 	// Ressourcendichte:
-	fonts->OutTextCenter ( RESOURCE.c_str(),110+211,251,buffer );
+	font->showTextCentered(110+211,251, RESOURCE);
 
-	PlaceSelectText ( THIN,110+130,281,options.dichte==0, sfTmp,false );
-	PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1, sfTmp,false );
-	PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2, sfTmp,false );
-	PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3, sfTmp,false );
+	placeSelectableText ( THIN,110+130,281,options.dichte==0, sfTmp,false );
+	placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1, sfTmp,false );
+	placeSelectableText ( THICK,110+130,281+20*2,options.dichte==2, sfTmp,false );
+	placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3, sfTmp,false );
 
 	// Spielart:
-	fonts->OutTextCenter ( GAMETYPE.c_str(),110+211*2,251,buffer );
+	font->showTextCentered(110+211*2,251, GAMETYPE);
 
-	PlaceSelectText ( SIMU,452,281,!options.PlayRounds, sfTmp,false );
-	PlaceSelectText ( TURNS,452,281+20,options.PlayRounds, sfTmp,false );
+
+	placeSelectableText ( SIMU,452,281,!options.PlayRounds, sfTmp,false );
+	placeSelectableText ( TURNS,452,281+20,options.PlayRounds, sfTmp,false );
 
 	drawMenuButton ( OK,false,390,440);
 	drawMenuButton ( BACK,false,50,440);
@@ -1021,10 +1022,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=0;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
+			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1032,10 +1033,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=1;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
+			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1043,10 +1044,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=2;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
+			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1054,10 +1055,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
 		{
 			options.metal=3;
-			PlaceSelectText ( LOW,38,86+16,options.metal==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
+			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1066,10 +1067,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=0;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
+			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1077,10 +1078,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=1;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
+			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1088,10 +1089,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=2;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
+			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1099,10 +1100,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
 		{
 			options.oil=3;
-			PlaceSelectText ( LOW,38,124+16,options.oil==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
+			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1111,10 +1112,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=0;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
+			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1122,10 +1123,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=1;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
+			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1133,10 +1134,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=2;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
+			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1144,10 +1145,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
 		{
 			options.gold=3;
-			PlaceSelectText ( LOW,38,162+16,options.gold==0, sfTmp );
-			PlaceSelectText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
-			PlaceSelectText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
-			PlaceSelectText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
+			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
+			placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
+			placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2, sfTmp );
+			placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1156,13 +1157,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4&&mouse->y<86-4+20 )
 		{
 			options.credits=25;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1170,13 +1171,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20&&mouse->y<86-4+20+20 )
 		{
 			options.credits=50;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1184,13 +1185,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*2&&mouse->y<86-4+20+20*2 )
 		{
 			options.credits=100;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1198,13 +1199,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*3&&mouse->y<86-4+20+20*3 )
 		{
 			options.credits=150;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1212,13 +1213,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*4&&mouse->y<86-4+20+20*4 )
 		{
 			options.credits=200;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1226,13 +1227,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*5&&mouse->y<86-4+20+20*5 )
 		{
 			options.credits=250;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1240,13 +1241,13 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*6&&mouse->y<86-4+20+20*6 )
 		{
 			options.credits=300;
-			PlaceSelectText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
-			PlaceSelectText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
-			PlaceSelectText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
-			PlaceSelectText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
-			PlaceSelectText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
-			PlaceSelectText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
+			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
+			placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
+			placeSelectableText ( LOW,110+130,86+20*2,options.credits==100, sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,86+20*3,options.credits==150, sfTmp,false );
+			placeSelectableText ( MUCH,110+130,86+20*4,options.credits==200, sfTmp,false );
+			placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
+			placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1255,8 +1256,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4&&mouse->y<86-4+14 )
 		{
 			options.FixedBridgeHead=false;
-			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
-			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
+			placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+			placeSelectableText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1264,8 +1265,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4+20&&mouse->y<86-4+14+20 )
 		{
 			options.FixedBridgeHead=true;
-			PlaceSelectText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
-			PlaceSelectText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
+			placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
+			placeSelectableText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1274,8 +1275,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4&&mouse->y<281-4+14 )
 		{
 			options.AlienTech=true;
-			PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
-			PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
+			placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
+			placeSelectableText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1283,8 +1284,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4+20&&mouse->y<281-4+14+20 )
 		{
 			options.AlienTech=false;
-			PlaceSelectText ( ON,38,281,options.AlienTech, sfTmp );
-			PlaceSelectText ( OFF,38,281+20,!options.AlienTech, sfTmp );
+			placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
+			placeSelectableText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1293,10 +1294,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
 		{
 			options.dichte=0;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
+			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			placeSelectableText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1304,10 +1305,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
 		{
 			options.dichte=1;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
+			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			placeSelectableText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1315,10 +1316,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*2-4&&mouse->y<281+20*2-4+20 )
 		{
 			options.dichte=2;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
+			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			placeSelectableText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1326,10 +1327,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*3-4&&mouse->y<281+20*3-4+20 )
 		{
 			options.dichte=3;
-			PlaceSelectText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
-			PlaceSelectText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
-			PlaceSelectText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
-			PlaceSelectText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
+			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
+			placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1,sfTmp,false );
+			placeSelectableText ( THICK,110+130,281+20*2,options.dichte==2,sfTmp,false );
+			placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1338,8 +1339,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
 		{
 			options.PlayRounds=false;
-			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
-			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
+			placeSelectableText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
+			placeSelectableText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1347,8 +1348,8 @@ sOptions RunOptionsMenu ( sOptions *init )
 		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
 		{
 			options.PlayRounds=true;
-			PlaceSelectText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
-			PlaceSelectText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
+			placeSelectableText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
+			placeSelectableText ( TURNS,452,281+20,options.PlayRounds,sfTmp,false );
 			PlayFX ( SoundData.SNDObjectMenu );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -1438,7 +1439,7 @@ string RunPlanetSelect ( void )
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,320,11,buffer );
+	font->showTextCentered(320,11, lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ));
 
 	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
 
@@ -1625,13 +1626,11 @@ void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
 				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
 				SDL_FillRect ( buffer,&r,SELECTED );
 
-				char tmp[16];
-				sprintf ( tmp,"%d",size );
 				sMap.insert ( 0,"> " );
 				sMap.replace ( sMap.length()-4, 2, " (" );
-				sMap.replace ( sMap.length()-2, 3, tmp );
+				sMap.replace ( sMap.length()-2, 3, iToStr(size) );
 				sMap.insert ( sMap.length(),"x" );
-				sMap.replace ( sMap.length(), 3, tmp );
+				sMap.replace ( sMap.length(), 3, iToStr(size) );
 				sMap.insert ( sMap.length(),") <" );
 			}
 			else
@@ -1645,16 +1644,14 @@ void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
 				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
 				SDL_FillRect ( buffer,&r,UNSELECTED );
 
-				char tmp[16];
-				sprintf ( tmp,"%d",size );
 				sMap.replace ( sMap.length()-4, 2, " (" );
-				sMap.replace ( sMap.length()-2, 3, tmp );
+				sMap.replace ( sMap.length()-2, 3, iToStr(size) );
 				sMap.insert ( sMap.length(),"x" );
-				sMap.replace ( sMap.length(), 3, tmp );
+				sMap.replace ( sMap.length(), 3, iToStr(size) );
 				sMap.insert ( sMap.length(),")" );
 			}
-			fonts->OutTextCenter ( ( char * ) sMap.c_str(),scr.x+77-21,scr.y-42,buffer );
-
+			font->showTextCentered(scr.x+77-21,scr.y-42, sMap);
+			
 			scr.x+=158;
 			if ( i==3 )
 			{
@@ -1725,12 +1722,12 @@ sPlayer RunPlayerSelect ( void )
 	players.what[1] = 2;
 
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Player_Select" ) ,320,11,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ) ,100,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Human" ) ,200,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Team" ) ,310,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Nobody" ) ,420,35,buffer );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Clan" ) ,535,35,buffer );
+	font->showTextCentered(320,11, lngPack.Translate ( "Text~Game_Start~Title_Player_Select" ));
+	font->showTextCentered(100,35, lngPack.Translate ( "Text~Game_Start~Title_Team" ));
+	font->showTextCentered(200,35, lngPack.Translate ( "Text~Game_Start~Title_Human" ));
+	font->showTextCentered(310,35, lngPack.Translate ( "Text~Game_Start~Title_Team" ));
+	font->showTextCentered(420,35, lngPack.Translate ( "Text~Game_Start~Title_Nobody" ));
+	font->showTextCentered(535,35, lngPack.Translate ( "Text~Game_Start~Title_Clan" ));
 
 	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false ,390,440 );
 	ShowPlayerStates ( players );
@@ -1904,7 +1901,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
-	fonts->OutTextCenter(lngPack.Translate( "Text~Comp~Description" ).c_str(), rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, buffer);
+	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.Translate( "Text~Comp~Description" ));
 	
 	//blit sfTmp to buffer
 
@@ -3235,7 +3232,6 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 // Zeigt die Bars an:
 void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Surface *surface )
 {
-	char str[50];
 	SDL_Rect scr,dest;
 	scr.x=dest.x=371;
 	scr.y=dest.y=301;
@@ -3247,9 +3243,8 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Su
 	scr.w=dest.w=150;
 	scr.h=dest.h=30;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
-	sprintf ( str,"%d",credits );
-	fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Options~Title_Gold" ).c_str() ,381,275,buffer );
-	fonts->OutTextCenter ( str,381,275+10,buffer );
+	font->showTextCentered(381,275, lngPack.Translate ( "Text~Game_Options~Title_Gold" ));
+	font->showTextCentered(381,275+10, iToStr(credits));
 
 	scr.x=118;
 	scr.y=336;
@@ -3271,9 +3266,9 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Su
 		ptr=landing->LandItems[selected];
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			sprintf ( str,"%d",ptr->cargo );
-			fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Cargo" ).c_str(),430,275,buffer );
-			fonts->OutTextCenter ( str,430,275+10,buffer );
+			font->showTextCentered(430,275, lngPack.Translate ( "Text~Game_Start~Title_Cargo" ));
+			font->showTextCentered(430,275+10, iToStr(ptr->cargo));
+
 
 			scr.x=133;
 			scr.y=336;
@@ -3412,10 +3407,9 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 {
 	sLanding *ptr;
 	SDL_Rect scr,dest,text;
-	char str[100];
 	int i,t;
 	scr.x=330;scr.y=11;
-	scr.w=128;scr.h=233;
+	scr.w=128;scr.h=222;
 	SDL_BlitSurface ( surface,&scr,buffer,&scr );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
@@ -3456,19 +3450,20 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 		}
 		// Text ausgeben:
-		t=0;
-		str[0]=0;
-		while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
+		
+		bool bLongName = false;
+
+		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 72 )
 		{
-			str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
+			bLongName = true;
 		}
-		str[t]='.';
-		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer );
+		
+		font->showText ( text, UnitsData.vehicle[ptr->id].data.name, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
+
+		
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			sprintf ( str," (%d/%d)",ptr->cargo,UnitsData.vehicle[ptr->id].data.max_cargo );
-			fonts->OutText ( str,text.x,text.y+10,buffer );
+			font->showText(text.x,text.y+10, " ("+iToStr(ptr->cargo)+"/"+iToStr(UnitsData.vehicle[ptr->id].data.max_cargo)+")");
 		}
 		text.y+=32+10;
 		dest.y+=32+10;
@@ -3530,7 +3525,6 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 {
 	sHUp *ptr;
 	SDL_Rect dest,scr,text;
-	char str[100];
 	int i,t,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
@@ -3603,11 +3597,11 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					fonts->OutTextBlock ( UnitsData.vehicle[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.vehicle[ptr->id].text);
 				}
 				else
 				{
-					fonts->OutTextBlock ( UnitsData.building[ptr->id].text,tmp,buffer );
+					font->showTextAsBlock(tmp, UnitsData.building[ptr->id].text);
 				}
 			}
 			// Die Details anzeigen:
@@ -3637,8 +3631,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 			{
 				SDL_Rect scr,dest;
 				if ( !ptr->upgrades[k].active ) continue;
-				sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
-				fonts->OutText ( str,322,296+k*19,buffer );
+				font->showText(322,296+k*19, iToStr(ptr->upgrades[k].NextPrice));
 
 				if ( ptr->upgrades[k].Purchased )
 				{
@@ -3657,28 +3650,26 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 			}
 		}
 		// Text ausgeben:
-		t=0;
+		string sTmp;
+
 		if ( ptr->vehicle )
 		{
-			sprintf ( str,"%d",UnitsData.vehicle[ptr->id].data.iBuilt_Costs );
-			fonts->OutTextCenter ( str,616,text.y,buffer );
-			str[0]=0;
-			while ( UnitsData.vehicle[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <70 )
-			{
-				str[t]=UnitsData.vehicle[ptr->id].data.name[t];str[++t]=0;
-			}
+			sTmp = UnitsData.vehicle[ptr->id].data.name;
 		}
 		else
 		{
-			str[0]=0;
-			while ( UnitsData.building[ptr->id].data.name[t]&&fonts->GetTextLen ( str ) <85 )
-			{
-				str[t]=UnitsData.building[ptr->id].data.name[t];str[++t]=0;
-			}
+			sTmp = UnitsData.building[ptr->id].data.name;
 		}
-		str[t]='.';
-		str[t+1]=0;
-		fonts->OutText ( str,text.x,text.y,buffer );
+
+		bool bLongName = false;
+
+		if ( font->getTextWide ( sTmp ) > 72 )
+		{
+			bLongName = true;
+		}
+
+		font->showText ( text, sTmp, bLongName ? LATIN_SMALL_WHITE : LATIN_NORMAL );
+		
 		text.y+=32+2;
 		dest.y+=32+2;
 	}
@@ -3771,7 +3762,6 @@ void cMultiPlayer::RunMenu ( void )
 	bool OKPressed=false,BackPressed=false,ShowCursor=true,LadenPressed=false;
 	int b, lb=0,lx=-1,ly=-1;
 	string ChatStr, stmp;
-	char sztmp[256];
 	SDL_Rect scr;
 	Uint8 *keystate;
 	unsigned int time;
@@ -3803,32 +3793,34 @@ void cMultiPlayer::RunMenu ( void )
 
 	Focus=FOCUS_NAME;
 	ChatStr="";
-	fonts->OutTextCenter ( Titel,320,11,buffer );
+	font->showTextCentered(320,11, Titel);
 
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ),20,245,buffer );
-	fonts->OutText ( IP,20,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Port" ),228,245,buffer );
-	sprintf ( sztmp,"%d",Port );
-	fonts->OutText ( sztmp,228,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ),352,245,buffer );
-	fonts->OutText ( MyPlayer->name,352,260,buffer );
-	fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ),500,245,buffer );
+	font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+	font->showText(20,260, IP);
+	
+	font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+	font->showText(228,260, iToStr(Port));
+	
+	font->showText(352, 245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+	font->showText(352,260, MyPlayer->name);
+	
+	font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
 	dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 	SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 
 	if ( host )
 	{
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ) ,470,42+35,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ) ,470,42+35*2,false );
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
+		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
+		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ) ,470,42+35,false );
+		placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ) ,470,42+35*2,false );
+		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
 		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 	}
 	else
 	{
-		PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
+		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
 	}
-	PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
+	placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
 
 	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
 
@@ -3902,8 +3894,8 @@ void cMultiPlayer::RunMenu ( void )
 					*			-- beko
 					*/
 				case FOCUS_IP:
-					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
-					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >176 )
+					i_tmpRedrawLength += font->getTextWide(InputStr);
+					while ( font->getTextWide(InputStr) > 176 )
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
@@ -3913,10 +3905,10 @@ void cMultiPlayer::RunMenu ( void )
 					scr.x=20;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
-					fonts->OutText ( ( char * ) stmp.c_str(),20,260,buffer );
+					font->showText(20,260, stmp);
 					break;
 				case FOCUS_PORT:
-					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
+					i_tmpRedrawLength += font->getTextWide(InputStr);
 					if ( atoi ( InputStr.c_str() ) > 65535 ) //ports over 65535 are impossible
 					{
 						Port = 58600; //default Port 58600 - why is this our default Port? -- beko
@@ -3930,11 +3922,11 @@ void cMultiPlayer::RunMenu ( void )
 					scr.x=228;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
-					fonts->OutText ( ( char * ) stmp.c_str(),228,260,buffer );
+					font->showText(228,260, stmp);
 					break;
 				case FOCUS_NAME:
-					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
-					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >98 )
+					i_tmpRedrawLength  += font->getTextWide(InputStr);
+					while ( font->getTextWide(InputStr) > 98 )
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
@@ -3951,11 +3943,11 @@ void cMultiPlayer::RunMenu ( void )
 					scr.w=i_tmpRedrawLength;
 					scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
-					fonts->OutText ( ( char * ) stmp.c_str(),352,260,buffer );
+					font->showText(352,260, stmp);
 					break;
 				case FOCUS_CHAT:
-					i_tmpRedrawLength += fonts->GetTextLen ( ( char * ) InputStr.c_str() );
-					while ( fonts->GetTextLen ( ( char * ) InputStr.c_str() ) >410 -fonts->GetTextLen ( ( MyPlayer->name+": " ).c_str() ) ) //keeping playername lenght in mind
+					i_tmpRedrawLength += font->getTextWide(InputStr);
+					while ( font->getTextWide(InputStr) > 410 - font->getTextWide ( ( MyPlayer->name+": " ) ) ) //keeping playername lenght in mind
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
@@ -3965,7 +3957,7 @@ void cMultiPlayer::RunMenu ( void )
 					scr.x=20;scr.y=423;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
-					fonts->OutText ( ( char * ) stmp.c_str(),20,423,buffer );
+					font->showText(20,423, stmp);
 					break;
 			}
 			SHOW_SCREEN
@@ -4080,10 +4072,8 @@ void cMultiPlayer::RunMenu ( void )
 					         fclose(fp);
 					         free(msg);
 					       }*/
-					char sztmp[256];
 					string msg;
-					sprintf ( sztmp,"%d",SettingsData.Checksum );
-					msg=sztmp; msg+="#";
+					msg=iToStr(SettingsData.Checksum); msg+="#";
 					msg+=MAX_VERSION;
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Check" ) );
 
@@ -4112,7 +4102,7 @@ void cMultiPlayer::RunMenu ( void )
 			nr=GetColorNr ( MyPlayer->color ) +1;
 			if ( nr>7 ) nr=0;
 			MyPlayer->color=OtherData.colors[nr];
-			fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
+			font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 			DisplayPlayerList(sfTmp);
@@ -4128,7 +4118,7 @@ void cMultiPlayer::RunMenu ( void )
 			nr=GetColorNr ( MyPlayer->color )-1;
 			if ( nr<0 ) nr=7;
 			MyPlayer->color=OtherData.colors[nr];
-			fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
+			font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 			DisplayPlayerList(sfTmp);
@@ -4146,7 +4136,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					PlanetPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str(),470,42,true );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str(),470,42,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -4158,22 +4148,23 @@ void cMultiPlayer::RunMenu ( void )
 					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
 					DisplayGameSettings(sfTmp);
 					DisplayPlayerList(sfTmp);
-					fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ).c_str(),20,245,buffer );
-					fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Port" ).c_str(),228,245,buffer );
-					sprintf ( sztmp,"%d",Port );
-					fonts->OutText ( sztmp,228,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ).c_str(),352,245,buffer );
-					fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
+					
+					font->showTextCentered(320,11, Titel);
+					font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+					font->showText(20,260, IP);
+					font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+					font->showText(228,260, iToStr(Port));
+					font->showText(352,245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+					font->showText(352,260, MyPlayer->name);
+					font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+					
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str(),470,42,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str(),470,42+35,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str(),470,42+35*2,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ),470,42,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ),470,42+35*2,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
 					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false, 50,450 );
 					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450);
 					SHOW_SCREEN
@@ -4184,7 +4175,7 @@ void cMultiPlayer::RunMenu ( void )
 			else if ( PlanetPressed )
 			{
 				PlanetPressed=false;
-				PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str() ,470,42,false );
+				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4195,7 +4186,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					OptionsPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str(),470,42+35,true );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -4215,22 +4206,24 @@ void cMultiPlayer::RunMenu ( void )
 					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
 					DisplayGameSettings(sfTmp);
 					DisplayPlayerList(sfTmp);
-					fonts->OutTextCenter ( ( char * ) Titel.c_str(),320,11,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_IP" ).c_str(),20,245,buffer );
-					fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Port" ).c_str(),228,245,buffer );
-					sprintf ( sztmp,"%d",Port );
-					fonts->OutText ( sztmp,228,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ).c_str(),352,245,buffer );
-					fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );
-					fonts->OutText ( lngPack.Translate ( "Text~Game_Start~Title_Color" ).c_str(),500,245,buffer );
+					
+					font->showTextCentered(320,11, Titel);
+					font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+					font->showText(20,260, IP);
+					font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+					font->showText(228,260, iToStr(Port));
+					font->showText(352,245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+					font->showText(352,260, MyPlayer->name);
+					font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+										
+										
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str(),470,42,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str(),470,42+35,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ).c_str(), 470,42+35*2,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
-					PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ),470,42,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ), 470,42+35*2,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
+					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
 					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false,50,450 );
 					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
 					SHOW_SCREEN
@@ -4241,7 +4234,7 @@ void cMultiPlayer::RunMenu ( void )
 			else if ( OptionsPressed )
 			{
 				OptionsPressed=false;
-				PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ).c_str(),470,42+35,false );
+				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4250,7 +4243,7 @@ void cMultiPlayer::RunMenu ( void )
 			        if(b&&!lb){
 			          LadenPressed=true;
 			          PlayFX(SoundData.SNDMenuButton);
-			          PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,true);
+			          placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,true);
 			          SHOW_SCREEN
 			          mouse->draw(false,screen);
 					}else if(!b&&LadenPressed){
@@ -4275,21 +4268,21 @@ void cMultiPlayer::RunMenu ( void )
 			            SDL_BlitSurface(TmpSf,NULL,buffer,NULL);
 			            DisplayGameSettings();
 			            DisplayPlayerList();
-			            fonts->OutTextCenter(Titel.c_str(),320,11,buffer);
-			            fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_IP").c_str(),20,245,buffer);
-			            fonts->OutText(IP.c_str(),20,260,buffer);
-			            fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Port").c_str(),228,245,buffer);
-			            fonts->OutText(((AnsiString)Port).c_str(),228,260,buffer);
-			            fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Player_Name").c_str(),352,245,buffer);
-			            fonts->OutText(MyPlayer->name.c_str(),352,260,buffer);
-			            fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Color").c_str(),500,245,buffer);
+			            TODO: fonts->OutTextCenter(Titel.c_str(),320,11,buffer);
+			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_IP").c_str(),20,245,buffer);
+			            TODO: fonts->OutText(IP.c_str(),20,260,buffer);
+			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Port").c_str(),228,245,buffer);
+			            TODO: fonts->OutText(((AnsiString)Port).c_str(),228,260,buffer);
+			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Player_Name").c_str(),352,245,buffer);
+			            TODO: fonts->OutText(MyPlayer->name.c_str(),352,260,buffer);
+			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Color").c_str(),500,245,buffer);
 			            dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			            SDL_BlitSurface(MyPlayer->color,&scr,buffer,&dest);
-			            if(SaveGame.IsEmpty())PlaceSmallButton("Planet wählen",470,42,false);
-			            if(SaveGame.IsEmpty())PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,false);
-			            if(SaveGame.IsEmpty())PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
-			            PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,false);
-			            PlaceSmallButton(lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false);
+			            if(SaveGame.IsEmpty())placeSmallButton("Planet wählen",470,42,false);
+			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,false);
+			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
+			            placeSmallButton(lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,false);
+			            placeSmallButton(lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false);
 			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_Back"),false, 50,450);
 			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_OK"),false, 390,450);
 			            SHOW_SCREEN
@@ -4299,7 +4292,7 @@ void cMultiPlayer::RunMenu ( void )
 			        }
 			      }else if(LadenPressed){
 			        LadenPressed=false;
-			        if(SaveGame.empty())PlaceSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
+			        if(SaveGame.empty())placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
 			        SHOW_SCREEN
 			        mouse->draw(false,screen);
 			      }*/
@@ -4311,8 +4304,8 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				StartHostConnect=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				if ( host ) PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,true );
-				else PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ).c_str(), 470,200,true );
+				if ( host ) placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,true );
+				else placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,true );
 //FIXME: error opening socket when we choose map and options before starting host -- beko
 				if ( host )
 				{
@@ -4326,15 +4319,14 @@ void cMultiPlayer::RunMenu ( void )
 					}
 					else
 					{
-						sprintf ( sztmp,"%d",Port );
 						stmp=lngPack.Translate ( "Text~Game_MP~Comp_Network_Open" );
 						stmp+=" (";
 						stmp+=lngPack.Translate ( "Text~Game_Start~Title_Port" );
 						stmp+=": ";
-						stmp+=sztmp;
+						stmp+=iToStr(Port);
 						stmp+=")";
 						AddChatLog ( stmp );
-						stmp="Game open (Port: ";stmp+=sztmp; stmp+=")";
+						stmp="Game open (Port: "+iToStr(Port)+")";
 						cLog::write ( stmp, cLog::eLOG_TYPE_INFO );
 					}
 				}
@@ -4344,8 +4336,8 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->SetIp ( IP );
 					fstcpip->SetTcpIpPort ( Port );
 
-					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Connecting" ) +IP+":"+sztmp ); // e.g. Connecting to 127.0.0.1:55800
-					cLog::write ( ( "Connecting to "+IP+":"+sztmp ), cLog::eLOG_TYPE_INFO );
+					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
+					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
 
 					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
 					for ( int i=0;i<5;i++ ) //wait 5 seconds for connection - break in case we got one earlier
@@ -4358,12 +4350,11 @@ void cMultiPlayer::RunMenu ( void )
 					{
 						SDL_KillThread ( fstcpip->FSTcpIpReceiveThread ) ;
 					}
-					sprintf ( sztmp,"%d",Port );
 
 					if ( fstcpip->iStatus!=STAT_CONNECTED )
 					{
-						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Connect" ) +IP+":"+sztmp );
-						cLog::write ( "Error on connecting "+IP+":"+sztmp, cLog::eLOG_TYPE_WARNING );
+						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Connect" ) +IP+":"+iToStr(Port) );
+						cLog::write ( "Error on connecting "+IP+":"+iToStr(Port), cLog::eLOG_TYPE_WARNING );
 					}
 				}
 
@@ -4374,8 +4365,8 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( StartHostConnect )
 		{
 			StartHostConnect=false;
-			if ( host ) PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ).c_str(),470,200,false );
-			else PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ).c_str(), 470,200,false );
+			if ( host ) placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
+			else placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4386,7 +4377,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				SendenPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,true );
+				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,true );
 
 				if ( !ChatStr.empty() )
 				{
@@ -4403,7 +4394,13 @@ void cMultiPlayer::RunMenu ( void )
 					AddChatLog ( ChatStr );
 					ChatStr="";
 					if ( Focus==FOCUS_CHAT ) InputStr="";
-					scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+					scr.x = 20;
+					scr.y = 423;
+					scr.w = 430;
+					scr.h = 16;
+					SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+					
+					font->showText(20, 423, ChatStr);
 				}
 
 				SHOW_SCREEN
@@ -4413,7 +4410,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( SendenPressed )
 		{
 			SendenPressed=false;
-			PlaceSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ).c_str(), 470,416,false );
+			placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4423,35 +4420,140 @@ void cMultiPlayer::RunMenu ( void )
 			Focus=FOCUS_IP;
 			InputStr=IP;
 			ShowCursor=true;
-			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			
+			scr.x = 20;
+			scr.y = 260;
+			scr.w = 188;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 260, IP);
+			scr.x = 228;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(228, 260, iToStr(Port));
+			scr.x = 352;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(352, 260, MyPlayer->name);
+			scr.x = 20;
+			scr.y = 423;
+			scr.w = 430;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 423, ChatStr);
 			// Klick auf den Port:
 		}
 		else if ( b&&!lb&&mouse->x>=228&&mouse->x<228+108&&mouse->y>=250&&mouse->y<250+30 )
 		{
-			Focus=FOCUS_PORT;
-			sprintf ( sztmp,"%d",Port );
-			InputStr=sztmp;
-			ShowCursor=true;
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			Focus = FOCUS_PORT;
+			InputStr = iToStr(Port);
+			ShowCursor = true;
+			scr.x = 20;
+			scr.y = 260;
+			scr.w = 188;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+
+			font->showText(20, 260, IP);
+			scr.x = 228;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(228, 260, iToStr(Port));
+			scr.x = 352;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(352, 260, MyPlayer->name);
+			scr.x = 20;
+			scr.y = 423;
+			scr.w = 430;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 423, ChatStr);
 			// Klick auf den Namen:
 		}
 		else if ( b&&!lb&&mouse->x>=352&&mouse->x<352+108&&mouse->y>=250&&mouse->y<250+30 )
 		{
-			Focus=FOCUS_NAME;
-			InputStr=MyPlayer->name;
-			ShowCursor=true;
-			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			Focus = FOCUS_NAME;
+			InputStr = MyPlayer->name; //TODO: hey, this stuff gets repeated all the time beside Focus and InputStr..
+			ShowCursor = true;
+			scr.x = 20;
+			scr.y = 260;
+			scr.w = 188;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 260, IP);
+			scr.x = 228;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(228, 260, iToStr(Port));
+			scr.x = 352;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(352, 260, MyPlayer->name);
+			scr.x = 20;
+			scr.y = 423;
+			scr.w = 430;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 423, ChatStr);
 			// Klick auf den ChatStr:
 		}
 		else if ( b&&!lb&&mouse->x>=20&&mouse->x<20+425&&mouse->y>=420&&mouse->y<420+30 )
 		{
-			Focus=FOCUS_CHAT;
-			InputStr=ChatStr;
-			ShowCursor=true;
-			sprintf ( sztmp,"%d",Port );
-			scr.x=20;scr.y=260;scr.w=188;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) IP.c_str(),20,260,buffer );scr.x=228;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( sztmp,228,260,buffer );scr.x=352;scr.y=260;scr.w=108;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) MyPlayer->name.c_str(),352,260,buffer );scr.x=20;scr.y=423;scr.w=430;scr.h=16;SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );fonts->OutText ( ( char * ) ChatStr.c_str(),20,423,buffer );
+			Focus = FOCUS_CHAT;
+			InputStr = ChatStr;
+			ShowCursor = true;
+			scr.x = 20;
+			scr.y = 260;
+			scr.w = 188;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 260, IP);
+			scr.x = 228;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(228, 260, iToStr(Port));
+			scr.x = 352;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(352, 260, MyPlayer->name);
+			scr.x = 20;
+			scr.y = 423;
+			scr.w = 430;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 423, ChatStr);
 		}
 
 		// Das WaitForGo machen:
@@ -4741,8 +4843,7 @@ void cMultiPlayer::HandleMenuMessages()
 				PlayerList->AddPlayer ( p );
 				Refresh=true;
 				string smsg;
-				sprintf ( sztmp,"%d",p->Nr );
-				smsg=Strings->Items[2]; smsg+="#"; smsg+=sztmp;
+				smsg=Strings->Items[2]; smsg+="#"; smsg+=iToStr(p->Nr);
 				fstcpip->FSTcpIpSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
 				fstcpip->NetMessageList->Delete ( i );
@@ -4876,16 +4977,14 @@ void cMultiPlayer::HandleMenuMessages()
 				if ( atoi ( Strings->Items[0].c_str() ) ==SettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
 				{
 					string new_msg;
-					sprintf ( sztmp,"%d",MyPlayer->Nr );
-					new_msg=sztmp;
+					new_msg=iToStr(MyPlayer->Nr);
 					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host" ) );
 				}
 				else
 				{
 					string new_msg;
-					sprintf ( sztmp,"%d",MyPlayer->Nr );
-					new_msg=sztmp;
+					new_msg=iToStr(MyPlayer->Nr);
 					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host_No" ) );
 				}
@@ -5059,7 +5158,6 @@ void cMultiPlayer::HandleMenuMessages()
 void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 {
 	string str;
-	char sztmp[256];
 	SDL_Rect r;
 
 	r.x=192;r.y=52;
@@ -5071,14 +5169,13 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 	}
 
 	str="Version: "; str+=MAX_VERSION; str+="\n";
-	sprintf ( sztmp,"%d",SettingsData.Checksum );
-	str+="Checksum: "; str+=sztmp; str+="\n";
-	str+="\n";
+	str+="Checksum: "+iToStr(SettingsData.Checksum)+"\n\n";
 
 	if ( !host&&fstcpip->iStatus!=STAT_CONNECTED )
 	{
 		str+=lngPack.Translate ( "Text~Game_MP~Comp_Network_Connected_Not" );
-		fonts->OutTextBlock ( ( char * ) str.c_str(),r,buffer );
+		font->showTextAsBlock(r, str);
+		
 		return;
 	}
 
@@ -5102,8 +5199,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 				fread ( tmpstr,1,len,fp );
 				map=tmpstr;
 				free ( tmpstr );
-				sprintf ( sztmp,"%d",game->Runde );
-				str+="Runde: "; str+=sztmp; str+="\n";
+				str+="Runde: "; str+=iToStr(game->Runde); str+="\n";
 
 				if ( host&&game )
 				{
@@ -5169,14 +5265,13 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 				fread ( &iSize,sizeof ( int ),1,fp );
 				fclose ( fp );
 			}
-			sprintf ( sztmp,"%d",iSize );
-			str+=" ("; str+=sztmp; str+="x"; str+=sztmp; str+=")\n";
+			str+=" ("; str+=iToStr(iSize); str+="x"; str+=iToStr(iSize); str+=")\n";
 
 			SDL_BlitSurface ( surface,&r,buffer,&r );
 
 			//draw mapname to infobox map
-			fonts->OutTextCenter ( ( char * ) sNameNice.c_str(),90,65,buffer );
-
+			font->showTextCentered(90,65, sNameNice);
+			
 			//load mapimage (if exists)
 			if ( FileExists ( sMapImage.c_str() ) )
 			{
@@ -5215,7 +5310,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 			str+=RESOURCE+": ";
 			str+= ( options.dichte<2? ( options.dichte<1?THIN:MIDDLE ) : ( options.gold<3?THICK:MOST ) ); str+="\n";
 
-			str+=CREDITS+": "; sprintf ( sztmp,"%d",options.credits ); str+=sztmp; str+="\n";
+			str+=CREDITS+": "; str+=iToStr(options.credits); str+="\n";
 
 			str+=HEAD+": "; str+= ( options.FixedBridgeHead?DEFINITE:MOBILE ); str+="\n";
 
@@ -5230,7 +5325,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 		}
 	}
 
-	fonts->OutTextBlock ( ( char * ) str.c_str(),r,buffer );
+	font->showText(r, str);
 }
 
 TList* cMultiPlayer::SplitMessage ( string msg )
@@ -5257,7 +5352,7 @@ void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
 	for ( i=ChatList->Count-1;i>=0;i-- )
 	{
 		str=ChatList->Items[i];
-		while ( fonts->GetTextLen ( ( char * ) str.c_str() ) >410 )
+		while (font->getTextWide(str) >410 )
 		{
 			str.erase ( str.end()-1 );
 		}
@@ -5269,7 +5364,7 @@ void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
 		dest.y=298+8*11;
 		dest.h=11;
 		SDL_BlitSurface ( surface,&dest,buffer,&dest );
-		fonts->OutText ( ( char * ) str.c_str(),dest.x,dest.y,buffer );
+		font->showText(dest, str);
 	}
 	while ( ChatList->Count>0 )
 		ChatList->DeleteString ( 0 );
@@ -5302,7 +5397,7 @@ void cMultiPlayer::DisplayPlayerList ( SDL_Surface *surface )
 		p=PlayerList->PlayerItems[i];
 
 		SDL_BlitSurface ( p->color,&scr,buffer,&dest );
-		fonts->OutText ( p->name,dest.x+16,dest.y,buffer );
+		font->showText(dest.x+16,dest.y, p->name);
 		dest.y+=16;
 	}
 	SHOW_SCREEN
@@ -5311,14 +5406,11 @@ void cMultiPlayer::DisplayPlayerList ( SDL_Surface *surface )
 // Callback für einen Client, der eine Connection bekommt:
 void cMultiPlayer::ClientConnectedCallBack ( void )
 {
-	char sztmp[32];
 	string msg;
 	MyPlayer->Nr=100+random ( 1000000,1 );
 	msg=MyPlayer->name; msg+="#";
-	sprintf ( sztmp,"%d",GetColorNr ( MyPlayer->color ) );
-	msg+=sztmp; msg+="#";
-	sprintf ( sztmp,"%d",MyPlayer->Nr );
-	msg+=sztmp;
+	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
+	msg+=iToStr(MyPlayer->Nr);
 	fstcpip->FSTcpIpSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
 }
 
@@ -5359,7 +5451,6 @@ void cMultiPlayer::ServerDisconnect ( void )
 void cMultiPlayer::ChangeFarbeName ( void )
 {
 	string msg;
-	char sztmp[256];
 	if ( fstcpip->bServer && !fstcpip->GetConnectionCount() ) return;
 	if ( !fstcpip->bServer && fstcpip->iStatus!=STAT_CONNECTED ) return;
 
@@ -5368,10 +5459,8 @@ void cMultiPlayer::ChangeFarbeName ( void )
 		SendPlayerList();
 		return;
 	}
-	sprintf ( sztmp,"%d",MyPlayer->Nr );
-	msg=sztmp; msg+="#";
-	sprintf ( sztmp,"%d",GetColorNr ( MyPlayer->color ) );
-	msg+=sztmp; msg+="#";
+	msg=iToStr(MyPlayer->Nr); msg+="#";
+	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
 	msg+=MyPlayer->name;
 	fstcpip->FSTcpIpSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
 }
@@ -5379,18 +5468,14 @@ void cMultiPlayer::ChangeFarbeName ( void )
 // Versendet eine Liste mit allen Spielern:
 void cMultiPlayer::SendPlayerList ( void )
 {
-	char sztmp[256];
 	string msg;
 	cPlayer *p;
-	sprintf ( sztmp,"%d",PlayerList->Count );
-	msg=sztmp; msg+="#";
+	msg=iToStr(PlayerList->Count); msg+="#";
 	for ( int i=0; i<PlayerList->Count; i++ )
 	{
 		p=PlayerList->PlayerItems[i];
-		sprintf ( sztmp,"%d",p->Nr );
-		msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",GetColorNr ( p->color ) );
-		msg+=sztmp; msg+="#";
+		msg+=iToStr(p->Nr); msg+="#";
+		msg+=iToStr(GetColorNr ( p->color )); msg+="#";
 		msg+=p->name; if ( i!=PlayerList->Count-1 ) msg+="#";
 	}
 	fstcpip->FSTcpIpSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
@@ -5399,21 +5484,19 @@ void cMultiPlayer::SendPlayerList ( void )
 // Überträgt die Spieloptionen:
 void cMultiPlayer::SendOptions ( void )
 {
-	char sztmp[256];
 	string msg;
-	sprintf ( sztmp,"%d",no_options );
-	msg=sztmp; msg+="#";
+	msg=iToStr(no_options); msg+="#";
 	msg+=SaveGame; msg+="#";
 	if ( !no_options )
 	{
-		sprintf ( sztmp,"%d",options.AlienTech ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.credits ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.dichte ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.FixedBridgeHead ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.gold ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.metal ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.oil ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",options.PlayRounds ); msg+=sztmp; msg+="#";
+		msg += iToStr( options.AlienTech ) + "#";
+		msg += iToStr( options.credits ) + "#";
+		msg += iToStr( options.dichte ) + "#";
+		msg += iToStr( options.FixedBridgeHead ) + "#";
+		msg += iToStr( options.gold ) + "#";
+		msg += iToStr( options.metal ) + "#";
+		msg += iToStr( options.oil ) + "#";
+		msg += iToStr( options.PlayRounds ) + "#";
 	}
 	msg+=map;
 
@@ -5424,15 +5507,14 @@ void cMultiPlayer::SendOptions ( void )
 void cMultiPlayer::TransmitRessources ( void )
 {
 	string msg;
-	char sztmp[256];
 	int i;
 	for ( i=0;i<map_obj->size*map_obj->size;i++ )
 	{
 		if ( !map_obj->Resources[i].typ ) continue;
 		if ( msg.length() >0 ) msg+="#";
-		sprintf ( sztmp,"%d",no_options ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",map_obj->Resources[i].typ ); msg+=sztmp; msg+="#";
-		sprintf ( sztmp,"%d",map_obj->Resources[i].value ); msg+=sztmp;
+		msg+=iToStr(no_options); msg+="#";
+		msg+=iToStr(map_obj->Resources[i].typ); msg+="#";
+		msg+=iToStr(map_obj->Resources[i].value);
 		if ( msg.length() >200 )
 		{
 			fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str() );
@@ -5452,7 +5534,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
-	fonts->OutTextBigCenter ( lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ).c_str(),320,235,buffer );
+	font->showTextCentered(320,235, lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ), LATIN_BIG);
 	SHOW_SCREEN
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
@@ -5522,7 +5604,7 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
-	fonts->OutTextBigCenter ( lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ).c_str(),320,235,buffer );
+	font->showTextCentered(320,235, lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ), LATIN_BIG);
 	SHOW_SCREEN
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
@@ -5585,10 +5667,8 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 {
 	string msg;
-	char sztmp[256];
 	int i;
-	sprintf ( sztmp,"%d",p->Nr );
-	msg=sztmp;
+	msg=iToStr(p->Nr);
 
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
@@ -5602,16 +5682,16 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		        p->VehicleData[i].max_speed!=UnitsData.vehicle[i].data.max_speed )
 		{
 			if ( msg.length() >0 ) msg+="#";
-			msg+="0";msg+="#";
-			sprintf ( sztmp,"%d",i ); msg+=sztmp; msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].damage ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].max_shots ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].range ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].max_ammo ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].armor ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].max_hit_points ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].scan ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->VehicleData[i].max_speed ); msg+=sztmp;
+			msg+="0#";
+			msg+=iToStr(i) + "#";
+			msg+=iToStr(p->VehicleData[i].damage) + "#";
+			msg+=iToStr(p->VehicleData[i].max_shots) + "#";
+			msg+=iToStr(p->VehicleData[i].range) + "#";
+			msg+=iToStr(p->VehicleData[i].max_ammo) + "#";
+			msg+=iToStr(p->VehicleData[i].armor) + "#";
+			msg+=iToStr(p->VehicleData[i].max_hit_points) + "#";
+			msg+=iToStr(p->VehicleData[i].scan) + "#";
+			msg+=iToStr(p->VehicleData[i].max_speed);
 		}
 		if ( msg.length() >200 )
 		{
@@ -5632,15 +5712,15 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		        p->BuildingData[i].scan!=UnitsData.building[i].data.scan )
 		{
 			if ( msg.length() >0 ) msg+="#";
-			msg+="1";msg+="#";
-			sprintf ( sztmp,"%d",i ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].damage ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].max_shots ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].range ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].max_ammo ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].armor ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].max_hit_points ); msg+=sztmp;msg+="#";
-			sprintf ( sztmp,"%d",p->BuildingData[i].scan ); msg+=sztmp;msg+="#";
+			msg+="1#";
+			msg+=iToStr(i) + "#";
+			msg+=iToStr(p->BuildingData[i].damage) + "#";
+			msg+=iToStr(p->BuildingData[i].max_shots) + "#";
+			msg+=iToStr(p->BuildingData[i].range) + "#";
+			msg+=iToStr(p->BuildingData[i].max_ammo) + "#";
+			msg+=iToStr(p->BuildingData[i].armor) + "#";
+			msg+=iToStr(p->BuildingData[i].max_hit_points) + "#";
+			msg+=iToStr(p->BuildingData[i].scan) + "#"; //FIXME: is there a "#" to much alzi? -- beko
 		}
 		if ( msg.length() >200 )
 		{
@@ -5660,19 +5740,20 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
 {
 	string msg;
-	char sztmp[256];
 	int i;
-	sprintf ( sztmp,"%d",x );msg=sztmp;msg+="#";
-	sprintf ( sztmp,"%d",y );msg+=sztmp;msg+="#";
-	sprintf ( sztmp,"%d",nr );msg+=sztmp;msg+="#";
-	sprintf ( sztmp,"%d",ll->Count );msg+=sztmp;
+	
+	msg = iToStr(x) + "#";
+	msg += iToStr(y) + "#";
+	msg += iToStr(nr) + "#";
+	msg += iToStr(ll->Count);
+
 	for ( i=0;i<ll->Count;i++ )
 	{
 		sLanding *l;
 		l=ll->LandItems[i];
 		if ( msg.length() >0 ) msg+="#";
-		sprintf ( sztmp,"%d",l->id );msg+=sztmp;msg+="#";
-		sprintf ( sztmp,"%d",l->cargo );msg+=sztmp;
+		msg+=iToStr(l->id) + "#";
+		msg+=iToStr(l->cargo);
 		if ( msg.length() >200 )
 		{
 			fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str() );
@@ -5763,7 +5844,6 @@ bool cMultiPlayer::TestPlayerListLoad ( void )
 void HeatTheSeat ( void )
 {
 	string stmp;
-	char sztmp[32];
 	// Anzahl der Spieler holen:
 	int PlayerAnz;
 	PlayerAnz=ShowNumberInput ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Amount" ), MAXPLAYER_HOTSEAT, 2 );
@@ -5794,8 +5874,7 @@ void HeatTheSeat ( void )
 	for ( i=1;i<=PlayerAnz;i++ )
 	{
 		stmp = lngPack.Translate ( "Text~Game_MP~Title_Player" );
-		sprintf ( sztmp,"%d",i );
-		stmp+=sztmp;
+		stmp+=iToStr(i);
 		list->AddPlayer ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
 		p->Credits=options.credits;
 	}
@@ -5879,8 +5958,11 @@ int ShowDateiMenu ( bool bSave )
 	// Den Bildschirm blitten:
 	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,&rDialog );
 	// Den Text anzeigen:
-	if ( bSave ) fonts->OutTextCenter ( lngPack.Translate( "Text~Game_Start~Title_LoadSave").c_str(),rTitle.x,rTitle.y,buffer );
-	else fonts->OutTextCenter ( lngPack.Translate ( "Text~Game_Start~Title_Load" ).c_str(),rTitle.x,rTitle.y,buffer );
+	if ( bSave )
+		font->showTextCentered(rTitle.x, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_LoadSave" ));
+	else
+		font->showTextCentered(rTitle.x, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Load" ));
+
 	// Buttons setzen;
 	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
 	// PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
@@ -6268,11 +6350,11 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu, &src, buffer, &rect );
 		if ( i + offset == selected )
 		{
-			fonts->OutTextBigCenterGold ( iToStr ( offset + i + 1 ), x, y, buffer );
+			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), LATIN_BIG_GOLD);
 		}
 		else
 		{
-			fonts->OutTextBigCenter ( iToStr ( offset + i + 1 ), x, y, buffer );
+			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), LATIN_BIG);
 		}
 
 		rect.y += 76;
@@ -6352,10 +6434,10 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 						SaveLoadFile = InputStr;
 						SaveLoadNumber = i;
 					}
-					fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+					font->showText(x, y, sFilename);
 					// Zeit und Modus ausgeben
-					fonts->OutText ( ( char * ) sTime.c_str(),x,y-23,buffer );
-					fonts->OutText ( ( char * ) sMode.c_str(),x+113,y-23,buffer );
+					font->showText(x, y-23, sTime);
+					font->showText(x+113,y-23, sMode);
 					break;
 				}
 				else if ( i == selected )
@@ -6371,7 +6453,7 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 					}
 					SaveLoadFile = InputStr;
 					SaveLoadNumber = i;
-					fonts->OutText ( ( char * ) sFilename.c_str(),x,y,buffer );
+					font->showText(x, y, sFilename);
 				}
 			}
 		}
@@ -6397,11 +6479,11 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 						SaveLoadFile = files->Items[j];
 					}
 
-					fonts->OutText ( sFilename, x, y, buffer );
+					font->showText(x, y, sFilename);
 
 					// Zeit und Modus ausgeben
-					fonts->OutText ( sTime, x, y - 23, buffer );
-					fonts->OutText ( sMode, x + 113, y - 23, buffer );
+					font->showText(x, y - 23, sTime);
+					font->showText(x + 113, y - 23, sMode);
 					break;
 				}
 			}

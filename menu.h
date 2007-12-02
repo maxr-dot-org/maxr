@@ -131,7 +131,7 @@ sPlayer RunPlayerSelect(void);
  * @param surface Source Surface for proper background drawing
  * @param center 
  */
-void PlaceSelectText(const char *str,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
+void placeSelectableText(std::string sText,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
 /**
  * 
  * @param player 
@@ -161,7 +161,7 @@ void RunMPMenu(void);
  * 
  * @param  
  */
-void PlaceSmallButton(std::string sText,int x,int y,bool pressed);
+void placeSmallButton(std::string sText,int x,int y,bool pressed);
 /**
  * 
  * @param files 

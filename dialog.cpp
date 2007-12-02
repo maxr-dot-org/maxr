@@ -62,8 +62,8 @@ bool ShowYesNo ( string text )
 
 
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
+	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
+	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
 	font->showTextAsBlock(rText, text);
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
@@ -99,7 +99,7 @@ bool ShowYesNo ( string text )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = true;
@@ -113,7 +113,7 @@ bool ShowYesNo ( string text )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = false;
@@ -173,7 +173,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	}
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
+	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
 	font->showTextAsBlock(rTextBox, text);
 	font->showText(rTextField, stmp);
 	
@@ -201,7 +201,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, true );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
@@ -296,7 +296,7 @@ void ShowOK ( string text, bool pure )
 	dest.w = 300;
 	dest.h = 231;
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
+	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
 	dest.x += 20;
 	dest.w -= 40;
 	dest.y += 20;
@@ -336,7 +336,7 @@ void ShowOK ( string text, bool pure )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
@@ -468,7 +468,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
-	PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 	font->showTextAsBlock(rDialogOnScreen, sLicence1);
@@ -509,7 +509,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				mouse->draw ( false, screen );
 				SDL_Delay ( 2 );
 				break;
@@ -523,7 +523,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 				
 				switch(index)
 				{
@@ -560,7 +560,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				
-				PlaceSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
 				switch(index)
 				{
