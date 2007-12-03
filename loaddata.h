@@ -164,13 +164,7 @@ int LoadLanguage();
 int GenerateMaxXml();
 
 /**
-	* Loads the rest of the fonts
-	* @param path Directory of the fonts
-	* @return 1 on success
-	*/
-int LoadFonts(const char* path);
-/**
-	* Loads all Fonts
+	* Loads all Graphics
 	* @param path Directory of the graphics
 	* @return 1 on success
 	*/

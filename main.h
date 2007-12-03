@@ -808,19 +808,6 @@ public:
 	SDL_Surface *ptr_connector_shw;
 } EX UnitsData;
 
-// FontsData - Class containing all font surfaces /////////////////////////////
-class cFontsData
-{
-public:
-	SDL_Surface *font;
-	SDL_Surface *font_small_white;
-	SDL_Surface *font_small_red;
-	SDL_Surface *font_small_green;
-	SDL_Surface *font_small_yellow;
-	SDL_Surface *font_big;
-	SDL_Surface *font_big_gold;
-} EX FontsData;
-
 // OtherData - Class containing the rest of surfaces //////////////////////////
 class cOtherData
 {

@@ -54,9 +54,12 @@ int LoadData ( void * )
 
 	// Load fonts for SplashMessages
 	cLog::write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
-	if(!LoadGraphicToSurface(FontsData.font, SettingsData.sFontPath.c_str(), "font.pcx")) NECESSARY_FILE_FAILURE
-	if(!LoadGraphicToSurface(FontsData.font_big, SettingsData.sFontPath.c_str(), "font_big.pcx")) NECESSARY_FILE_FAILURE
-	if(!LoadGraphicToSurface(FontsData.font_small_white, SettingsData.sFontPath.c_str(), "font_small_white.pcx")) NECESSARY_FILE_FAILURE
+	
+	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
+	
 	font = new cBitmapFont; //init ascii fonts
 
 	cLog::mark();
@@ -107,7 +110,7 @@ int LoadData ( void * )
 	
 	// Load Fonts
 	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Fonts" ), 0, 4 );
-	
+	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
 	if (LoadFonts ( SettingsData.sFontPath.c_str() ) != 1 )
 	{
 		MakeLog("",-1,4);
@@ -116,9 +119,9 @@ int LoadData ( void * )
 		return -1;
 	}	
 	else
-	{
+	{*/
 		MakeLog ( "", 1, 4 );
-	}
+	//}
 	cLog::mark();
 	
 	// Load Graphics
@@ -1001,27 +1004,6 @@ int GenerateMaxXml()
 	iGenerateTrys++;
 	return -1; // Generate fails
 	// return 0; // Generate success
-}
-
-// LoadFonts ///////////////////////////////////////////////////////////////////
-// Loads all Fonts
-int LoadFonts(const char* path)
-{
-	cLog::write ( "Loading Fonts", LOG_TYPE_INFO );
-
-	if(!LoadGraphicToSurface ( FontsData.font_small_red,path,"font_small_red.pcx" )) LoadingData=LOAD_ERROR;
-	if(!LoadGraphicToSurface ( FontsData.font_small_green,path,"font_small_green.pcx" )) LoadingData=LOAD_ERROR;
-	if(!LoadGraphicToSurface ( FontsData.font_small_yellow,path,"font_small_yellow.pcx" )) LoadingData=LOAD_ERROR;
-	if(!LoadGraphicToSurface ( FontsData.font_big_gold,path,"font_big_gold.pcx" )) LoadingData=LOAD_ERROR;
-
-	if(LoadingData==LOAD_ERROR)
-	{
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
 }
 
 // LoadEffects ///////////////////////////////////////////////////////////////////
