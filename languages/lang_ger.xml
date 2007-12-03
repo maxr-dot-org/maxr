@@ -28,54 +28,90 @@
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) noch nicht eingebaut"/>
 			</Remarks>
 		</Main>
-		<Initialisation>
-			<Load_Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
-			<Load_Keys ENG="Loading keys..." localized="Lade Tasten..."/>
-                        <Load_Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
-                        <Load_GFX ENG="Loading gfx..." localized="Lade GFX..."/>
-                        <Load_Effects ENG="Loading effects..." localized="Lade Effekte..."/>
-                        <Load_Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
-                        <Load_Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
-                        <Load_Buildings ENG="Loading buildings..." localized="Lade Gebäude..."/>
-                        <Load_Music ENG="Loading music..." localized="Lade Musik..."/>
-                        <Load_Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
-			<Load_Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
-		</Initialisation>
-		<Menu_Main>
+		<Init>
+			<Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
+			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
+                        <Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
+                        <GFX ENG="Loading gfx..." localized="Lade GFX..."/>
+                        <Effects ENG="Loading effects..." localized="Lade Effekte..."/>
+                        <Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
+                        <Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
+                        <Buildings ENG="Loading buildings..." localized="Lade Gebäude..."/>
+                        <Music ENG="Loading music..." localized="Lade Musik..."/>
+                        <Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
+			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
+		</Init>
+		<Title>
+			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
+			<Credits ENG="Credits" localized="Geld"/>
+			<Gold ENG="Gold" localized="Gold"/>
+			<Metal ENG="Metal" localized="Metall"/>
+			<Oil ENG="Oil" localized="Öl"/>
+			<BridgeHead ENG="Bridgehead" localized="Brückenkopf"/>
+			<Alien_Tech ENG="Alientechnology" localized="Alientechnologie"/>
+			<Resource ENG="Resources" localized="Ressourcen"/>
+			<Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
+			<Game_Type ENG="Game Type" localized="Spielart"/>
+			<Player_Name ENG="Playername:" localized="Spielername:"/>
+			<Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
+			<Team ENG="Team" localized="Team"/>
+			<Human ENG="Human" localized="Mensch"/>
+			<Computer ENG="Computer" localized="Computer"/>
+			<Nobody ENG="Nobody" localized="Niemand"/>
+			<Clan ENG="Clan" localized="Clan"/>
+			<Cargo ENG="Cargo" localized="Ladung"/>
+			<Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
+			<Options ENG="Options" localized="Optionen"/>
+			<Connect ENG="Connect" localized="Verbinden"/>
+			<Send ENG="Send" localized="Senden"/>
+			<Color ENG="Color:" localized="Farbe:"/>
+			<IP ENG="IP" localized="IP"/>
+			<Port ENG="Port" localized="Port"/>
+			<Map ENG="Map" localized="Karte"/>
+			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
+			<Load ENG="Load Menu" localized="Laden Menü"/>
+			<Updates ENG="Updatemenu" localized="Updatemenü"/>
+			<Build ENG="Buildmenu" localized="Baumenü"/>
+			<Labs ENG="Researchmenu" localized="Forschungsmenü"/>
+			<Mine ENG="Minemanager" localized="Mienenmanager"/>
+			<Unitinfo ENG="Unitinformations" localized="Einheitendetails"/>
+		</Title>
+		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
-			<Button_Single_Player ENG="Singleplayer" localized="Einzelspieler"/>
-			<Button_Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
-			<Button_Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
-			<Button_Credits ENG="Credits (*)" localized="Credits (*)"/>
-			<Button_Mani ENG="Manifestation" localized="Hinweise"/>
-			<Button_Exit ENG="Exit" localized="Beenden"/>
-			<Button_Back ENG="Back" localized="Zurück"/>
-			<Button_OK ENG="OK" localized="Ok"/>
-			<Button_Done ENG="Done" localized="Fertig"/>
-			<Button_Cancel ENG="Cancel" localized="Abbruch"/>
-			<Button_Hot ENG="Hot" localized="Scharf"/>
-			<Button_Yes ENG="Yes" localized="Ja"/>
-			<Button_No ENG="No" localized="Nein"/>
-			<Button_TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
-			<Button_TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
-			<Button_HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
-			<Button_HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
-			<Button_Game_New ENG="New Game" localized="Neues Spiel"/>
-			<Button_Game_Load ENG="Load Game" localized="Spiel laden"/>
-			<Button_Game_Save ENG="Save Game" localized="Speichern"/>
-			<Button_Game_Options ENG="Game Options" localized="Spieloptionen"/>
-			<Button_Load ENG="Load" localized="Laden"/>
-			<Button_Save ENG="Save" localized="Speichern"/>
-			<Button_Training ENG="Training" localized="Training"/>
-			<Button_Delete ENG="Delete" localized="Löschen"/>
-			<Button_Buy ENG="Buy" localized="Kaufen"/>
-			<Button_Path ENG="Path" localized="Pfad"/>
-			<Button_Build ENG="Build" localized="Bauen"/>
-			<Button_Active ENG="Active" localized="Aktiv"/>
-			<Button_Repair ENG="Repair" localized="Reparieren"/>
-			<Button_Upgrade ENG="Upgrade" localized="Verbessern"/>
-			<Button_Reload ENG="Reload" localized="Aufladen"/>
-		</Menu_Main>
+			<Single_Player ENG="Singleplayer" localized="Einzelspieler"/>
+			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
+			<Credits ENG="Credits (*)" localized="Credits (*)"/>
+			<Mani ENG="Manifestation" localized="Hinweise"/>
+			<Exit ENG="Exit" localized="Beenden"/>
+			<Back ENG="Back" localized="Zurück"/>
+			<OK ENG="OK" localized="Ok"/>
+			<Done ENG="Done" localized="Fertig"/>
+			<Cancel ENG="Cancel" localized="Abbruch"/>
+			<Hot ENG="Hot" localized="Scharf"/>
+			<Yes ENG="Yes" localized="Ja"/>
+			<No ENG="No" localized="Nein"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
+			<Game_New ENG="New Game" localized="Neues Spiel"/>
+			<Game_Load ENG="Load Game" localized="Spiel laden"/>
+			<Game_Save ENG="Save Game" localized="Speichern"/>
+			<Game_Options ENG="Game Options" localized="Spieloptionen"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Save ENG="Save" localized="Speichern"/>
+			<Training ENG="Training" localized="Training"/>
+			<Delete ENG="Delete" localized="Löschen"/>
+			<Buy ENG="Buy" localized="Kaufen"/>
+			<Path ENG="Path" localized="Pfad"/>
+			<Build ENG="Build" localized="Bauen"/>
+			<Active ENG="Active" localized="Aktiv"/>
+			<Repair ENG="Repair" localized="Reparieren"/>
+			<Upgrade ENG="Upgrade" localized="Verbessern"/>
+			<Reload ENG="Reload" localized="Aufladen"/>
+			<Host_Start ENG="Start Host" localized="Starte Host"/>
+		</Button>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
 			<Settings ENG="Settings" localized="PRÄFERENZEN"/>
@@ -102,115 +138,80 @@
 			<Usage ENG="Usage" localized="Verbr."/>
 			<Teams ENG="Teams" localized="Teams"/>
 		</Hud>
-		<Game_Options>
-			<Title_Credits ENG="Credits" localized="Geld"/>
-			<Title_Gold ENG="Gold" localized="Gold"/>
-			<Title_Metal ENG="Metal" localized="Metall"/>
-			<Title_Oil ENG="Oil" localized="Öl"/>
-			<Title_BridgeHead ENG="Bridgehead" localized="Brückenkopf"/>
-			<Title_Alien_Tech ENG="Alientechnology" localized="Alientechnologie"/>
-			<Title_Resource ENG="Resources" localized="Ressourcen"/>
-			<Title_Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
-			<Title_Game_Type ENG="Game Type" localized="Spielart"/>
-			<Option_Lowest ENG="lowest" localized="kaum"/>
-			<Option_Lower ENG="very low" localized="sehr wenig"/>
-			<Option_Low ENG="low" localized="wenige"/>
-			<Option_Normal ENG="normal" localized="normal"/>
-			<Option_Much ENG="much" localized="viele"/>
-			<Option_More ENG="very much" localized="sehr viel"/>
-			<Option_Most ENG="most" localized="extrem"/>
-			<Option_Thick ENG="thick" localized="dicht"/>
-			<Option_Thin ENG="thin" localized="dünn"/>
-			<Option_On ENG="on" localized="Ein"/>
-			<Option_Off ENG="off" localized="Aus"/>
-			<Option_Definite ENG="definite" localized="Fest"/>
-			<Option_Mobile ENG="mobile" localized="Mobil"/>
-			<Option_Type_Turns ENG="turns" localized="Rundenbasierend"/>
-			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
-		</Game_Options>
-		<Game_Settings>
-			<Title_Preferences ENG="Preferences" localized="Einstellungen"/>
-			<Title_Volume ENG="Volume" localized="Lautstärke"/>
-			<Title_Music ENG="Music" localized="Musik"/>
-			<Title_Effects ENG="Effects" localized="Effekte"/>
-			<Title_Voices ENG="Voices" localized="Stimmen"/>
-			<Title_Disable ENG="Disable" localized="Deaktivieren"/>
-			<Title_Scrollspeed ENG="Scrollspeed" localized="Scrolltempo"/>
-			<Title_Autosave ENG="Autosave" localized="Autospeichern"/>
-			<Title_Animation ENG="Animations" localized="Animationen"/>
-			<Title_Alphaeffects ENG="Alphaeffects" localized="Alphaeffekte"/>
-			<Title_Shadows ENG="Shadows" localized="Schatteneffekte"/>
-			<Title_ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
-			<Title_ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
-			<Title_Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
-		</Game_Settings>
-		<Game_Start>
-			<Title_Player_Name ENG="Playername:" localized="Spielername:"/>
-			<Title_Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
-			<Title_Team ENG="Team" localized="Team"/>
-			<Title_Human ENG="Human" localized="Mensch"/>
-			<Title_Computer ENG="Computer" localized="Computer"/>
-			<Title_Nobody ENG="Nobody" localized="Niemand"/>
-			<Title_Clan ENG="Clan" localized="Clan"/>
-			<Title_Cargo ENG="Cargo" localized="Ladung"/>
-			<Title_Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
-			<Title_Options ENG="Options" localized="Optionen"/>
-			<Title_Connect ENG="Connect" localized="Verbinden"/>
-			<Title_Send ENG="Send" localized="Senden"/>
-			<Title_Color ENG="Color:" localized="Farbe:"/>
-			<Title_IP ENG="IP" localized="IP"/>
-			<Title_Port ENG="Port" localized="Port"/>
-			<Title_Map ENG="Map" localized="Karte"/>
-			<Title_LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
-			<Title_Load ENG="Load Menu" localized="Laden Menü"/>
-			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
-			<Title_Updates ENG="Updatemenu" localized="Updatemenü"/>
-			<Title_Build ENG="Buildmenu" localized="Baumenü"/>
-			<Title_Labs ENG="Researchmenu" localized="Forschungsmenü"/>
-			<Title_Mine ENG="Minemanager" localized="Mienenmanager"/>
-		</Game_Start>
-		<Game_MP>
-			<Title_Player ENG="Player" localized="Spieler"/>
-			<Comp_Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
-			<Comp_Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
-			<Comp_Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
-			<Comp_Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
-			<Comp_Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
-			<Comp_Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
-			<Comp_Player_Amount ENG="Amount of players" localized="Bitte wählt die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
-			<Comp_Player_Turn ENG="'s turn" localized=" ist am Zug"/>
-			<Comp_Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
-			<Comp_Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
-			<Comp_Network_Open ENG="Game open" localized="Spiel offen"/>
-			<Comp_Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
-			<Comp_Network_New ENG="New connection" localized="Neue Verbindung"/>
-			<Comp_Network_Connected ENG="Connected" localized="Verbunden"/>
-			<Comp_Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
-			<Comp_Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
-			<Comp_Map_NoSet ENG="--no map set--" localized="--keine Map gewählt--"/>
-			<Comp_Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
-			<Comp_Go ENG="Let's go" localized="Los gehts"/>
-			<Comp_Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
-			<Comp_Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Fertigmachen"/>
-			<Comp_Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
-			<Comp_Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
-			<Comp_Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
-			<Comp_Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
-		</Game_MP>
+		<Option>
+			<Lowest ENG="lowest" localized="kaum"/>
+			<Lower ENG="very low" localized="sehr wenig"/>
+			<Low ENG="low" localized="wenige"/>
+			<Normal ENG="normal" localized="normal"/>
+			<Much ENG="much" localized="viele"/>
+			<More ENG="very much" localized="sehr viel"/>
+			<Most ENG="most" localized="extrem"/>
+			<Thick ENG="thick" localized="dicht"/>
+			<Thin ENG="thin" localized="dünn"/>
+			<On ENG="on" localized="Ein"/>
+			<Off ENG="off" localized="Aus"/>
+			<Definite ENG="definite" localized="Fest"/>
+			<Mobile ENG="mobile" localized="Mobil"/>
+			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
+			<Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
+		</Option>
+		<Settings>
+			<Preferences ENG="Preferences" localized="Einstellungen"/>
+			<Volume ENG="Volume" localized="Lautstärke"/>
+			<Music ENG="Music" localized="Musik"/>
+			<Effects ENG="Effects" localized="Effekte"/>
+			<Voices ENG="Voices" localized="Stimmen"/>
+			<Disable ENG="Disable" localized="Deaktivieren"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Scrolltempo"/>
+			<Autosave ENG="Autosave" localized="Autospeichern"/>
+			<Animation ENG="Animations" localized="Animationen"/>
+			<Alphaeffects ENG="Alphaeffects" localized="Alphaeffekte"/>
+			<Shadows ENG="Shadows" localized="Schatteneffekte"/>
+			<ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
+			<Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
+		</Settings>
+		<Multiplayer>
+			<Player ENG="Player" localized="Spieler"/>
+			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
+			<Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
+			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
+			<Player_Amount ENG="Amount of players" localized="Bitte wählt die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
+			<Player_Turn ENG="'s turn" localized=" ist am Zug"/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
+			<Network_Open ENG="Game open" localized="Spiel offen"/>
+			<Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
+			<Network_New ENG="New connection" localized="Neue Verbindung"/>
+			<Network_Connected ENG="Connected" localized="Verbunden"/>
+			<Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
+			<Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
+			<Map_NoSet ENG="--no map set--" localized="--keine Map gewählt--"/>
+			<Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
+			<Go ENG="Let's go" localized="Los gehts"/>
+			<Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Fertigmachen"/>
+			<Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
+			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
+			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
+			<Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
+		</Multiplayer>
 		<Vehicles>
-			<Title_Info ENG="Unitinformations" localized="Einheitendetails"/>
-			<Title_Damage ENG="Damage" localized="Angriff"/>
-			<Title_Shoots ENG="Shoots" localized="Schüsse"/>
-			<Title_Range ENG="Range" localized="Reichweite"/>
-			<Title_Ammo ENG="Ammo" localized="Munition"/>
-			<Title_Armor ENG="Armor" localized="Panzer"/>
-			<Title_Hitpoints ENG="Hitpoints" localized="Treffer"/>
-			<Title_Scan ENG="Scan" localized="Radar"/>
-			<Title_Speed ENG="Speed" localized="Geschw."/>
-			<Title_Cargo ENG="Cargo" localized="Ladung"/>
-			<Title_Costs ENG="Costs" localized="Kosten"/>
-			<Title_Produce ENG="Produces" localized="Produz."/>
-			<Title_Usage ENG="Usage" localized="Verbr."/>
+			<Damage ENG="Damage" localized="Angriff"/>
+			<Shoots ENG="Shoots" localized="Schüsse"/>
+			<Range ENG="Range" localized="Reichweite"/>
+			<Ammo ENG="Ammo" localized="Munition"/>
+			<Armor ENG="Armor" localized="Panzer"/>
+			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Speed ENG="Speed" localized="Geschw."/>
+			<Cargo ENG="Cargo" localized="Ladung"/>
+			<Costs ENG="Costs" localized="Kosten"/>
+			<Produce ENG="Produces" localized="Produz."/>
+			<Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
 			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>

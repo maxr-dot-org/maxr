@@ -28,54 +28,90 @@
 				<Not_yet_implemented ENG="(*) not yet implemented"/>
 			</Remarks>
 		</Main>
-		<Initialisation>
-			<Load_Lang ENG="Loading languagepack..."/>
-			<Load_Keys ENG="Loading keys..."/>
-			<Load_Fonts ENG="Loading fonts..."/>
-			<Load_GFX ENG="Loading gfx..."/>
-			<Load_Effects ENG="Loading effects..."/>
-			<Load_Terrain ENG="Loading terrain..."/>
-			<Load_Vehicles ENG="Loading vehicles..."/>
-			<Load_Buildings ENG="Loading buildings..."/>
-			<Load_Music ENG="Loading music..."/>
-			<Load_Sounds ENG="Loading sounds..."/>
-			<Load_Voices ENG="Loading voices..."/>
-		</Initialisation>
-		<Menu_Main>
+		<Init>
+			<Lang ENG="Loading languagepack..."/>
+			<Keys ENG="Loading keys..."/>
+			<Fonts ENG="Loading fonts..."/>
+			<GFX ENG="Loading gfx..."/>
+			<Effects ENG="Loading effects..."/>
+			<Terrain ENG="Loading terrain..."/>
+			<Vehicles ENG="Loading vehicles..."/>
+			<Buildings ENG="Loading buildings..."/>
+			<Music ENG="Loading music..."/>
+			<Sounds ENG="Loading sounds..."/>
+			<Voices ENG="Loading voices..."/>
+		</Init>
+		<Title>
+			<MainMenu ENG="Main Menu"/>
+			<Credits ENG="Credits"/>
+			<Gold ENG="Gold"/>
+			<Metal ENG="Metal"/>
+			<Oil ENG="Oil"/>
+			<BridgeHead ENG="Bridgehead"/>
+			<Alien_Tech ENG="Alientechnology"/>
+			<Resource ENG="Resources"/>
+			<Resource_Density ENG="Resources Density"/>
+			<Game_Type ENG="Game Type"/>
+			<Player_Name ENG="Playername:"/>
+			<Player_Select ENG="Playeroptions"/>
+			<Team ENG="Team"/>
+			<Human ENG="Human"/>
+			<Computer ENG="Computer"/>
+			<Nobody ENG="Nobody"/>
+			<Clan ENG="Clan"/>
+			<Cargo ENG="Cargo"/>
+			<Choose_Planet ENG="Planetchoosing"/>
+			<Options ENG="Options"/>
+			<Connect ENG="Connect"/>
+			<Send ENG="Send"/>
+			<Color ENG="Color:"/>
+			<IP ENG="IP"/>
+			<Port ENG="Port"/>
+			<Map ENG="Map"/>
+			<LoadSave ENG="Load/Save Menu"/>
+			<Load ENG="Load Menu"/>
+			<Updates ENG="Updatemenu"/>
+			<Build ENG="Buildmenu"/>
+			<Labs ENG="Researchmenu"/>
+			<Mine ENG="Minemanager"/>
+			<Unitinfo ENG="Unitinformations"/>
+		</Title>
+		<Button>
 			<Title_Main_Menu ENG="Main Menu"/>
-			<Button_Single_Player ENG="Singleplayer"/>
-			<Button_Multi_Player ENG="Multiplayer"/>
-			<Button_Map_Editor ENG="Mapeditor (*)"/>
-			<Button_Credits ENG="Credits (*)"/>
-			<Button_Mani ENG="Manifestation"/>
-			<Button_Exit ENG="Exit"/>
-			<Button_Back ENG="Back"/>
-			<Button_OK ENG="OK"/>
-			<Button_Done ENG="Done"/>
-			<Button_Cancel ENG="Cancel"/>
-			<Button_Hot ENG="Sharp"/>
-			<Button_Yes ENG="Yes"/>
-			<Button_No ENG="No"/>
-			<Button_TCPIP_Host ENG="TCP/IP Host"/>
-			<Button_TCPIP_Client ENG="TCP/IP Client"/>
-			<Button_HotSeat_New ENG="New Hot Seat"/>
-			<Button_HotSeat_Load ENG="Load Hot Seat"/>
-			<Button_Game_New ENG="New Game"/>
-			<Button_Game_Load ENG="Load Game"/>
-			<Button_Game_Save ENG="Save Game"/>
-			<Button_Game_Options ENG="Game Options"/>
-			<Button_Load ENG="Load"/>
-			<Button_Save ENG="Save"/>
-			<Button_Training ENG="Training"/>
-			<Button_Delete ENG="Delete"/>
-			<Button_Buy ENG="Buy"/>
-			<Button_Path ENG="Path"/>
-			<Button_Build ENG="Build"/>
-			<Button_Active ENG="Active"/>
-			<Button_Repair ENG="Repair"/>
-			<Button_Upgrade ENG="Upgrade"/>
-			<Button_Reload ENG="Reload"/>
-		</Menu_Main>
+			<Single_Player ENG="Singleplayer"/>
+			<Multi_Player ENG="Multiplayer"/>
+			<Map_Editor ENG="Mapeditor (*)"/>
+			<Credits ENG="Credits (*)"/>
+			<Mani ENG="Manifestation"/>
+			<Exit ENG="Exit"/>
+			<Back ENG="Back"/>
+			<OK ENG="OK"/>
+			<Done ENG="Done"/>
+			<Cancel ENG="Cancel"/>
+			<Hot ENG="Sharp"/>
+			<Yes ENG="Yes"/>
+			<No ENG="No"/>
+			<TCPIP_Host ENG="TCP/IP Host"/>
+			<TCPIP_Client ENG="TCP/IP Client"/>
+			<HotSeat_New ENG="New Hot Seat"/>
+			<HotSeat_Load ENG="Load Hot Seat"/>
+			<Game_New ENG="New Game"/>
+			<Game_Load ENG="Load Game"/>
+			<Game_Save ENG="Save Game"/>
+			<Game_Options ENG="Game Options"/>
+			<Load ENG="Load"/>
+			<Save ENG="Save"/>
+			<Training ENG="Training"/>
+			<Delete ENG="Delete"/>
+			<Buy ENG="Buy"/>
+			<Path ENG="Path"/>
+			<Build ENG="Build"/>
+			<Active ENG="Active"/>
+			<Repair ENG="Repair"/>
+			<Upgrade ENG="Upgrade"/>
+			<Reload ENG="Reload"/>
+			<Host_Start ENG="Start Host"/>
+		</Button>
 		<Hud>
 			<Files ENG="Files"/>
 			<Settings ENG="Settings"/>
@@ -102,115 +138,80 @@
 			<Usage ENG="Usage"/>
 			<Teams ENG="Teams"/>
 		</Hud>
-		<Game_Options>
-			<Title_Credits ENG="Credits"/>
-			<Title_Gold ENG="Gold"/>
-			<Title_Metal ENG="Metal"/>
-			<Title_Oil ENG="Oil"/>
-			<Title_BridgeHead ENG="Bridgehead"/>
-			<Title_Alien_Tech ENG="Alientechnology"/>
-			<Title_Resource ENG="Resources"/>
-			<Title_Resource_Density ENG="Resources Density"/>
-			<Title_Game_Type ENG="Game Type"/>
-			<Option_Lowest ENG="lowest"/>
-			<Option_Lower ENG="very low"/>
-			<Option_Low ENG="low"/>
-			<Option_Normal ENG="normal"/>
-			<Option_Much ENG="much"/>
-			<Option_More ENG="very much"/>
-			<Option_Most ENG="most"/>
-			<Option_Thick ENG="thick"/>
-			<Option_Thin ENG="thin"/>
-			<Option_On ENG="on"/>
-			<Option_Off ENG="off"/>
-			<Option_Definite ENG="definite"/>
-			<Option_Mobile ENG="mobile"/>
-			<Option_Type_Turns ENG="turns"/>
-			<Option_Type_Simu ENG="simultaneous"/>
-		</Game_Options>
-		<Game_Settings>
-			<Title_Preferences ENG="Preferences"/>
-			<Title_Volume ENG="Volume"/>
-			<Title_Music ENG="Music"/>
-			<Title_Effects ENG="Effects"/>
-			<Title_Voices ENG="Voices"/>
-			<Title_Disable ENG="Disable"/>
-			<Title_Scrollspeed ENG="Scrollspeed"/>
-			<Title_Autosave ENG="Autosave"/>
-			<Title_Animation ENG="Animations"/>
-			<Title_Alphaeffects ENG="Alphaeffects"/>
-			<Title_Shadows ENG="Shadows"/>
-			<Title_ShowDamage ENG="Buildingdamage"/>
-			<Title_ShowDamageVehicle ENG="Vehicledamage"/>
-			<Title_Tracks ENG="Vehicletracks"/>
-		</Game_Settings>
-		<Game_Start>
-			<Title_Player_Name ENG="Playername:"/>
-			<Title_Player_Select ENG="Playeroptions"/>
-			<Title_Team ENG="Team"/>
-			<Title_Human ENG="Human"/>
-			<Title_Computer ENG="Computer"/>
-			<Title_Nobody ENG="Nobody"/>
-			<Title_Clan ENG="Clan"/>
-			<Title_Cargo ENG="Cargo"/>
-			<Title_Choose_Planet ENG="Planetchoosing"/>
-			<Title_Options ENG="Options"/>
-			<Title_Connect ENG="Connect"/>
-			<Title_Send ENG="Send"/>
-			<Title_Color ENG="Color:"/>
-			<Title_IP ENG="IP"/>
-			<Title_Port ENG="Port"/>
-			<Title_Map ENG="Map"/>
-			<Title_LoadSave ENG="Load/Save Menu"/>
-			<Title_Load ENG="Load Menu"/>
-			<Button_Host_Start ENG="Start Host"/>
-			<Title_Updates ENG="Updatemenu"/>
-			<Title_Build ENG="Buildmenu"/>
-			<Title_Labs ENG="Researchmenu"/>
-			<Title_Mine ENG="Minemanager"/>
-		</Game_Start>
-		<Game_MP>
-			<Title_Player ENG="Player"/>
-			<Comp_Waiting ENG="Waiting for other players..."/>
-			<Comp_Player_Few ENG="Not enough players!"/>
-			<Comp_Player_Many ENG="Too many players!"/>
-			<Comp_Player_Twice ENG="Playername exists twice: "/>
-			<Comp_Player_Wrong ENG="Missing a correct player's name"/>
-			<Comp_Player_MustHost ENG="must be host in turnbased game!"/>
-			<Comp_Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible."/>
-			<Comp_Player_Turn ENG="'s turn"/>
-			<Comp_Network_Error_Socket ENG="Error opening socket"/>
-			<Comp_Network_Error_Connect ENG="Could not connect to "/>
-			<Comp_Network_Open ENG="Game open"/>
-			<Comp_Network_Connecting ENG="Connecting to "/>
-			<Comp_Network_New ENG="New connection"/>
-			<Comp_Network_Connected ENG="Connected"/>
-			<Comp_Network_Connected_Not ENG="Not connected"/>
-			<Comp_Network_Closed ENG="Connection closed"/>
-			<Comp_Map_NoSet ENG="--no map set--"/>
-			<Comp_Option_NoSet ENG="--no options set--"/>
-			<Comp_Go ENG="Let's go"/>
-			<Comp_Go_Abort ENG="Go aborted"/>
-			<Comp_Go_Host ENG="Host wants to go: Ready to go"/>
-			<Comp_Go_Host_No ENG="Host wants to go: No go"/>
-			<Comp_Go_Ready ENG="Ready to go"/>
-			<Comp_Go_Ready_No ENG="not ready to go"/>
-			<Comp_Go_Check ENG="Check for go"/>
-		</Game_MP>
+		<Option>
+			<Lowest ENG="lowest"/>
+			<Lower ENG="very low"/>
+			<Low ENG="low"/>
+			<Normal ENG="normal"/>
+			<Much ENG="much"/>
+			<More ENG="very much"/>
+			<Most ENG="most"/>
+			<Thick ENG="thick"/>
+			<Thin ENG="thin"/>
+			<On ENG="on"/>
+			<Off ENG="off"/>
+			<Definite ENG="definite"/>
+			<Mobile ENG="mobile"/>
+			<Type_Turns ENG="turns"/>
+			<Type_Simu ENG="simultaneous"/>
+		</Option>
+		<Settings>
+			<Preferences ENG="Preferences"/>
+			<Volume ENG="Volume"/>
+			<Music ENG="Music"/>
+			<Effects ENG="Effects"/>
+			<Voices ENG="Voices"/>
+			<Disable ENG="Disable"/>
+			<Scrollspeed ENG="Scrollspeed"/>
+			<Autosave ENG="Autosave"/>
+			<Animation ENG="Animations"/>
+			<Alphaeffects ENG="Alphaeffects"/>
+			<Shadows ENG="Shadows"/>
+			<ShowDamage ENG="Buildingdamage"/>
+			<ShowDamageVehicle ENG="Vehicledamage"/>
+			<Tracks ENG="Vehicletracks"/>
+		</Settings>
+		<Multiplayer>
+			<Player ENG="Player"/>
+			<Waiting ENG="Waiting for other players..."/>
+			<Player_Few ENG="Not enough players!"/>
+			<Player_Many ENG="Too many players!"/>
+			<Player_Twice ENG="Playername exists twice: "/>
+			<Player_Wrong ENG="Missing a correct player's name"/>
+			<Player_MustHost ENG="must be host in turnbased game!"/>
+			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible."/>
+			<Player_Turn ENG="'s turn"/>
+			<Network_Error_Socket ENG="Error opening socket"/>
+			<Network_Error_Connect ENG="Could not connect to "/>
+			<Network_Open ENG="Game open"/>
+			<Network_Connecting ENG="Connecting to "/>
+			<Network_New ENG="New connection"/>
+			<Network_Connected ENG="Connected"/>
+			<Network_Connected_Not ENG="Not connected"/>
+			<Network_Closed ENG="Connection closed"/>
+			<Map_NoSet ENG="--no map set--"/>
+			<Option_NoSet ENG="--no options set--"/>
+			<Go ENG="Let's go"/>
+			<Go_Abort ENG="Go aborted"/>
+			<Go_Host ENG="Host wants to go: Ready to go"/>
+			<Go_Host_No ENG="Host wants to go: No go"/>
+			<Go_Ready ENG="Ready to go"/>
+			<Go_Ready_No ENG="not ready to go"/>
+			<Go_Check ENG="Check for go"/>
+		</Multiplayer>
 		<Vehicles>
-			<Title_Info ENG="Unitinformations"/>
-			<Title_Damage ENG="Attack"/>
-			<Title_Shoots ENG="Shoots"/>
-			<Title_Range ENG="Range"/>
-			<Title_Ammo ENG="Ammo"/>
-			<Title_Armor ENG="Armor"/>
-			<Title_Hitpoints ENG="Hits"/>
-			<Title_Scan ENG="Scan"/>
-			<Title_Speed ENG="Speed"/>
-			<Title_Cargo ENG="Cargo"/>
-			<Title_Costs ENG="Costs"/>
-			<Title_Produce ENG="Produces"/>
-			<Title_Usage ENG="Usage"/>
+			<Damage ENG="Attack"/>
+			<Shoots ENG="Shoots"/>
+			<Range ENG="Range"/>
+			<Ammo ENG="Ammo"/>
+			<Armor ENG="Armor"/>
+			<Hitpoints ENG="Hits"/>
+			<Scan ENG="Scan"/>
+			<Speed ENG="Speed"/>
+			<Cargo ENG="Cargo"/>
+			<Costs ENG="Costs"/>
+			<Produce ENG="Produces"/>
+			<Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
 			<Fuel_Low ENG="To low fuel, generator disabled!"/>
