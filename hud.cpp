@@ -102,7 +102,7 @@ void cHud::SwitchNebel ( bool set )
 			scr.y=78;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Fog"),  set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Fog"),  set, true);
 	Nebel=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -117,7 +117,7 @@ void cHud::SwitchGitter ( bool set )
 			scr.y=61;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Grid"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Grid"), set, true);
 	Gitter=set;
 	game->fDrawHud=true;
 	game->fDrawMap=true;
@@ -133,7 +133,7 @@ void cHud::SwitchScan ( bool set )
 			scr.y=44;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Scan"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Scan"), set, true);
 	Scan=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -148,7 +148,7 @@ void cHud::SwitchReichweite ( bool set )
 			scr.y=78;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Range"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Range"), set, true);
 	Reichweite=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -163,7 +163,7 @@ void cHud::SwitchMunition ( bool set )
 			scr.y=61;
 		}
 	
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Ammo"),  set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Ammo"),  set, true);
 	Munition=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -178,7 +178,7 @@ void cHud::SwitchTreffer ( bool set )
 			scr.y=44;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Hitpoints"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Hitpoints"), set, true);
 	Treffer=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -193,7 +193,7 @@ void cHud::SwitchFarben ( bool set )
 			scr.y=78;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Color"),  set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Color"),  set, true);
 	Farben=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -208,7 +208,7 @@ void cHud::SwitchStatus ( bool set )
 			scr.y=61;
 		}
 
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Status"),  set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Status"),  set, true);
 	Status=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -223,7 +223,7 @@ void cHud::SwitchStudie ( bool set )
 			scr.y=44;
 		}
 		
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Survey"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Survey"), set, true);
 	Studie=set;
 	game->fDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -906,7 +906,7 @@ void cHud::ChechMouseOver ( void )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			//TODO: Log-Menü aufrufen...
-			game->AddMessage ( lngPack.Translate( "Text~Error_Messages~INFO_Not_Implemented") );
+			game->AddMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
 
 			LogButton ( false );
 		}
@@ -1073,7 +1073,7 @@ void cHud::PraeferenzenButton ( bool set )
 	{
 		Praeferenzen=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Settings"), set, true );
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Settings"), set, true );
 }
 
 // Setzt den Monitor zurück:
@@ -1150,7 +1150,7 @@ void cHud::ChatButton ( bool set )
 	{
 		ChatPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Chat"), set, true ); 
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Chat"), set, true ); 
 }
 
 void cHud::LogButton ( bool set )
@@ -1166,7 +1166,7 @@ void cHud::LogButton ( bool set )
 	{
 		LogPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Log"), set, true ); 
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Log"), set, true ); 
 }
 
 void cHud::EndeButton ( bool set )
@@ -1182,7 +1182,7 @@ void cHud::EndeButton ( bool set )
 	{
 		EndePressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~End"), set );
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~End"), set );
 }
 
 void cHud::ShowRunde ( void )
@@ -1212,7 +1212,7 @@ void cHud::ErledigenButton ( bool set )
 	{
 		ErledigenPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Proceed"), set );
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Proceed"), set );
 }
 
 void cHud::NextButton ( bool set )
@@ -1277,7 +1277,7 @@ void cHud::DateiButton ( bool set )
 	{
 		DateiPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.Translate( "Text~Hud~Files"), set, true);
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Files"), set, true);
 }
 
 int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed)
@@ -1459,14 +1459,14 @@ void cHud::MakeMeMyEnd ( void )
 	if ( game->engine->CheckVehiclesMoving ( false ) )
 	{
 		EndeButton ( false );
-		game->AddMessage ( lngPack.Translate( "Text~Comp~Turn_Wait") );
+		game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Wait") );
 	}
 	else
 	{
 //    if(game->engine->DoEndActions()&&(!game->engine->com||game->engine->com->server)){
 		if ( game->engine->DoEndActions() )
 		{
-			game->AddMessage ( lngPack.Translate( "Text~Comp~Turn_Automove") );
+			game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
 			if ( !game->engine->fstcpip || game->engine->fstcpip->bServer )
 			{
 				game->WantToEnd = true;

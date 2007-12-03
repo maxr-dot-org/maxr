@@ -82,20 +82,20 @@ void prepareMenu ( bool bIAmMain )
 	SDL_FreeSurface(sfTmp);	
 
 	//draw infostring with maxversion at the bottom
-	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.Translate ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
+	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.i18n ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
 	//END MENU REDRAW
 		
 	//we came back from a submenu so we have to redraw main menu
 	if(bIAmMain)
 	{
-		font->showTextCentered(TITLE_X, TITLE_Y, lngPack.Translate ( "Text~Menu_Main~Title_Main_Menu" ));
-		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),false,BTN_1_X,BTN_1_Y );
-		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ),false,BTN_2_X,BTN_2_Y );
+		font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n ( "Text~Title~MainMenu" ));
+		drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),false,BTN_1_X,BTN_1_Y );
+		drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
 		//uncommented since no need for right now -- beko
-		//drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),false,BTN_3_X,BTN_3_Y );
-		//drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),false,BTN_4_X,BTN_4_Y );
-		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),false,BTN_5_X,BTN_5_Y );
-		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,BTN_6_X,BTN_6_Y );
+		//drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),false,BTN_3_X,BTN_3_Y );
+		//drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),false,BTN_4_X,BTN_4_Y );
+		drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),false,BTN_5_X,BTN_5_Y );
+		drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),false,BTN_6_X,BTN_6_Y );
 	}
 
 	//display random unit
@@ -277,7 +277,7 @@ void RunMainMenu ( void )
 			{
 				SPPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),true,BTN_1_X,BTN_1_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),true,BTN_1_X,BTN_1_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -293,7 +293,7 @@ void RunMainMenu ( void )
 		else if ( SPPressed )
 		{
 			SPPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Single_Player" ),false,BTN_1_X,BTN_1_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),false,BTN_1_X,BTN_1_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -304,7 +304,7 @@ void RunMainMenu ( void )
 			{
 				MPPRessed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ), true,BTN_2_X,BTN_2_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ), true,BTN_2_X,BTN_2_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -320,7 +320,7 @@ void RunMainMenu ( void )
 		else if ( MPPRessed )
 		{
 			MPPRessed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ),false,BTN_2_X,BTN_2_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -332,7 +332,7 @@ void RunMainMenu ( void )
 			{
 				MEPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),true,BTN_3_X,BTN_3_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),true,BTN_3_X,BTN_3_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -354,7 +354,7 @@ void RunMainMenu ( void )
 		else if ( MEPressed )
 		{
 			MEPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Map_Editor" ),false,BTN_3_X,BTN_3_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),false,BTN_3_X,BTN_3_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		} */
@@ -366,7 +366,7 @@ void RunMainMenu ( void )
 			{
 				CrPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),true,BTN_4_X,BTN_4_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),true,BTN_4_X,BTN_4_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -385,7 +385,7 @@ void RunMainMenu ( void )
 		else if ( CrPressed )
 		{
 			CrPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Credits" ),false,BTN_4_X,BTN_4_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),false,BTN_4_X,BTN_4_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -397,7 +397,7 @@ void RunMainMenu ( void )
 			{
 				LiPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),true,BTN_5_X,BTN_5_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),true,BTN_5_X,BTN_5_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -415,7 +415,7 @@ void RunMainMenu ( void )
 		else if ( CrPressed )
 		{
 			CrPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Mani" ),false,BTN_5_X,BTN_5_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),false,BTN_5_X,BTN_5_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -427,7 +427,7 @@ void RunMainMenu ( void )
 			{
 				BePressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),true,BTN_6_X,BTN_6_Y );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),true,BTN_6_X,BTN_6_Y );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -439,7 +439,7 @@ void RunMainMenu ( void )
 		else if ( BePressed )
 		{
 			BePressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,BTN_6_X,BTN_6_Y );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),false,BTN_6_X,BTN_6_Y );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -458,17 +458,17 @@ void RunMainMenu ( void )
 void RunMPMenu ( void )
 {
 	//defines for translation since I'm very lazy --beko
-#define TCPIPHOST lngPack.Translate("Text~Menu_Main~Button_TCPIP_Host")
-#define TCPIPCLIENT lngPack.Translate( "Text~Menu_Main~Button_TCPIP_Client")
-#define NEWHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_New")
-#define LOADHOTSEAT lngPack.Translate( "Text~Menu_Main~Button_HotSeat_Load")
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
+#define TCPIPHOST lngPack.i18n("Text~Button~TCPIP_Host")
+#define TCPIPCLIENT lngPack.i18n( "Text~Button~TCPIP_Client")
+#define NEWHOTSEAT lngPack.i18n( "Text~Button~HotSeat_New")
+#define LOADHOTSEAT lngPack.i18n( "Text~Button~HotSeat_Load")
+#define BACK lngPack.i18n( "Text~Button~Back")
 	bool TCPHostPressed=false,TCPClientPressed=false,BackPressed=false,HotSeatPressed=false,LoadHotSeatPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
-	font->showTextCentered(TITLE_X, TITLE_Y, lngPack.Translate ( "Text~Menu_Main~Button_Multi_Player" ));
+	font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n ( "Text~Button~Multi_Player" ));
 
 	drawMenuButton ( TCPIPHOST, false, BTN_1_X, BTN_1_Y );
 	drawMenuButton ( TCPIPCLIENT, false, BTN_2_X, BTN_2_Y );
@@ -651,11 +651,11 @@ void RunMPMenu ( void )
 void RunSPMenu ( void )
 {
 	//defines for translation since I'm very lazy --beko
-#define SINGLEPLAYER lngPack.Translate("Text~Menu_Main~Button_Single_Player")
-#define TRAINING lngPack.Translate( "Text~Menu_Main~Button_Training")
-#define NEWGAME lngPack.Translate( "Text~Menu_Main~Button_Game_New")
-#define LOADGAME lngPack.Translate( "Text~Menu_Main~Button_Game_Load")
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
+#define SINGLEPLAYER lngPack.i18n("Text~Button~Single_Player")
+#define TRAINING lngPack.i18n( "Text~Button~Training")
+#define NEWGAME lngPack.i18n( "Text~Button~Game_New")
+#define LOADGAME lngPack.i18n( "Text~Button~Game_Load")
+#define BACK lngPack.i18n( "Text~Button~Back")
 	bool StartTrainingPressed=false, StartNewPressed=false, LoadPressed=false, BackPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
@@ -874,34 +874,34 @@ void RunSPMenu ( void )
 sOptions RunOptionsMenu ( sOptions *init )
 {
 	//defines for translation since I'm very lazy --beko
-#define GAMEOPTIONS lngPack.Translate("Text~Menu_Main~Button_Game_Options")
-#define OK lngPack.Translate( "Text~Menu_Main~Button_OK")
-#define BACK lngPack.Translate( "Text~Menu_Main~Button_Back")
+#define GAMEOPTIONS lngPack.i18n("Text~Button~Game_Options")
+#define OK lngPack.i18n( "Text~Button~OK")
+#define BACK lngPack.i18n( "Text~Button~Back")
 
-#define LOWEST lngPack.Translate( "Text~Game_Options~Option_Lowest")
-#define LOWER lngPack.Translate( "Text~Game_Options~Option_Lower")
-#define LOW lngPack.Translate( "Text~Game_Options~Option_Low")
-#define MIDDLE lngPack.Translate( "Text~Game_Options~Option_Normal")
-#define MUCH lngPack.Translate( "Text~Game_Options~Option_Much")
-#define MORE lngPack.Translate( "Text~Game_Options~Option_More")
-#define MOST lngPack.Translate( "Text~Game_Options~Option_Most")
-#define THIN lngPack.Translate( "Text~Game_Options~Option_Thin")
-#define THICK lngPack.Translate( "Text~Game_Options~Option_Thick")
-#define ON lngPack.Translate( "Text~Game_Options~Option_On")
-#define OFF lngPack.Translate( "Text~Game_Options~Option_Off")
-#define DEFINITE lngPack.Translate( "Text~Game_Options~Option_Definite")
-#define MOBILE lngPack.Translate( "Text~Game_Options~Option_Mobile")
-#define TURNS lngPack.Translate( "Text~Game_Options~Option_Type_Turns")
-#define SIMU lngPack.Translate( "Text~Game_Options~Option_Type_Simu")
+#define LOWEST lngPack.i18n( "Text~Option~Lowest")
+#define LOWER lngPack.i18n( "Text~Option~Lower")
+#define LOW lngPack.i18n( "Text~Option~Low")
+#define MIDDLE lngPack.i18n( "Text~Option~Normal")
+#define MUCH lngPack.i18n( "Text~Option~Much")
+#define MORE lngPack.i18n( "Text~Option~More")
+#define MOST lngPack.i18n( "Text~Option~Most")
+#define THIN lngPack.i18n( "Text~Option~Thin")
+#define THICK lngPack.i18n( "Text~Option~Thick")
+#define ON lngPack.i18n( "Text~Option~On")
+#define OFF lngPack.i18n( "Text~Option~Off")
+#define DEFINITE lngPack.i18n( "Text~Option~Definite")
+#define MOBILE lngPack.i18n( "Text~Option~Mobile")
+#define TURNS lngPack.i18n( "Text~Option~Type_Turns")
+#define SIMU lngPack.i18n( "Text~Option~Type_Simu")
 
-#define METAL lngPack.Translate( "Text~Game_Options~Title_Metal")
-#define OIL lngPack.Translate( "Text~Game_Options~Title_Oil")
-#define GOLD lngPack.Translate( "Text~Game_Options~Title_Gold")
-#define RESOURCE lngPack.Translate( "Text~Game_Options~Title_Resource_Density")
-#define HEAD lngPack.Translate( "Text~Game_Options~Title_BridgeHead")
-#define CREDITS lngPack.Translate( "Text~Game_Options~Title_Credits")
-#define ALIEN lngPack.Translate( "Text~Game_Options~Title_Alien_Tech")
-#define GAMETYPE lngPack.Translate( "Text~Game_Options~Title_Game_Type")
+#define METAL lngPack.i18n( "Text~Title~Metal")
+#define OIL lngPack.i18n( "Text~Title~Oil")
+#define GOLD lngPack.i18n( "Text~Title~Gold")
+#define RESOURCE lngPack.i18n( "Text~Title~Resource_Density")
+#define HEAD lngPack.i18n( "Text~Title~BridgeHead")
+#define CREDITS lngPack.i18n( "Text~Title~Credits")
+#define ALIEN lngPack.i18n( "Text~Title~Alien_Tech")
+#define GAMETYPE lngPack.i18n( "Text~Title~Game_Type")
 	//beko IS lazy. fact is.
 
 	bool OKPressed=false, BackPressed=false;
@@ -942,7 +942,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 	font->showTextCentered(320, 11, GAMEOPTIONS);
 
 	// Ressourcen:
-	font->showTextCentered(110,56, lngPack.Translate ( "Text~Game_Options~Title_Resource" ));
+	font->showTextCentered(110,56, lngPack.i18n ( "Text~Title~Resource" ));
 
 	font->showText(17,86, METAL);
 	placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
@@ -1439,9 +1439,9 @@ string RunPlanetSelect ( void )
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
-	font->showTextCentered(320,11, lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ));
+	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Choose_Planet" ));
 
-	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
+	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 
 	files = new TList;
 	int k = 1;
@@ -1492,7 +1492,7 @@ string RunPlanetSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,440 );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,440 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1508,7 +1508,7 @@ string RunPlanetSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1722,14 +1722,14 @@ sPlayer RunPlayerSelect ( void )
 	players.what[1] = 2;
 
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
-	font->showTextCentered(320,11, lngPack.Translate ( "Text~Game_Start~Title_Player_Select" ));
-	font->showTextCentered(100,35, lngPack.Translate ( "Text~Game_Start~Title_Team" ));
-	font->showTextCentered(200,35, lngPack.Translate ( "Text~Game_Start~Title_Human" ));
-	font->showTextCentered(310,35, lngPack.Translate ( "Text~Game_Start~Title_Team" ));
-	font->showTextCentered(420,35, lngPack.Translate ( "Text~Game_Start~Title_Nobody" ));
-	font->showTextCentered(535,35, lngPack.Translate ( "Text~Game_Start~Title_Clan" ));
+	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Player_Select" ));
+	font->showTextCentered(100,35, lngPack.i18n ( "Text~Title~Team" ));
+	font->showTextCentered(200,35, lngPack.i18n ( "Text~Title~Human" ));
+	font->showTextCentered(310,35, lngPack.i18n ( "Text~Title~Team" ));
+	font->showTextCentered(420,35, lngPack.i18n ( "Text~Title~Nobody" ));
+	font->showTextCentered(535,35, lngPack.i18n ( "Text~Title~Clan" ));
 
-	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false ,390,440 );
+	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false ,390,440 );
 	ShowPlayerStates ( players );
 
 	mouse->Show();
@@ -1791,7 +1791,7 @@ sPlayer RunPlayerSelect ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,440 );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,440 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -1803,7 +1803,7 @@ sPlayer RunPlayerSelect ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,440 );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -1898,10 +1898,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
-	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.Translate( "Text~Comp~Description" ));
+	drawButton(lngPack.i18n( "Text~Button~Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+	drawButton(lngPack.i18n( "Text~Button~Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
+	drawButton(lngPack.i18n( "Text~Button~Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.i18n( "Text~Comp~Description" ));
 	
 	//blit sfTmp to buffer
 
@@ -1996,7 +1996,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			{
 				FertigPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), true, rBtnDone.x, rBtnDone.y, buffer);
+				drawButton(lngPack.i18n( "Text~Button~Done"), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -2008,7 +2008,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		else if ( FertigPressed )
 		{
 			FertigPressed=false;
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done"), false, rBtnDone.x, rBtnDone.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Done"), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -2169,18 +2169,18 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				if ( ptr->upgrades[i].Purchased&&x<283+18&&y>=293+i*19&&y<293+i*19+19 )
 				{
 					int variety;
-					if ( ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 						variety = 0;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 						variety = 1;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
 						variety = 2;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 						variety = 3;
 					else variety = -1;
 					* ( ptr->upgrades[i].value )-=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
 					// double price for damage
-					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 					{
 						ptr->upgrades[i].NextPrice = 2*CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					}
@@ -2202,18 +2202,18 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				{
 					int variety;
 					player->Credits-=ptr->upgrades[i].NextPrice;
-					if ( ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 						variety = 0;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 						variety = 1;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
 						variety = 2;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 						variety = 3;
 					else variety = -1;
 					* ( ptr->upgrades[i].value ) +=CalcSteigerung ( ptr->upgrades[i].StartValue,variety );
 					// double price for damage
-					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 					{
 						ptr->upgrades[i].NextPrice = 2*CalcPrice ( * ( ptr->upgrades[i].value ),ptr->upgrades[i].StartValue,variety );
 					}
@@ -2320,14 +2320,14 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			KaufPressed=true;
 		}
 		else if ( !b&&KaufPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			KaufPressed=false;
@@ -2404,7 +2404,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), true, rBtnDel.x, rBtnDel.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Delete"), true, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=true;
@@ -2434,7 +2434,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			}
 
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			EntfernenPressed=false;
@@ -2656,25 +2656,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].active=true;
 		u[i].value=& ( d->damage );
 		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.damage, 0 );
-		u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Damage" );
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
 		i++;
 		// Shots:
 		u[i].active=true;
 		u[i].value=& ( d->max_shots );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_shots, 2 );
-		u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Shoots" );
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Shoots" );
 		i++;
 		// Range:
 		u[i].active=true;
 		u[i].value=& ( d->range );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.range, 3 );
-		u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Range" );
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
 		i++;
 		// Ammo:
 		u[i].active=true;
 		u[i].value=& ( d->max_ammo );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_ammo, 0 );
-		u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Ammo" );
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
 		i++;
 	}
 	if ( d->can_transport==TRANS_METAL||d->can_transport==TRANS_OIL||d->can_transport==TRANS_GOLD )
@@ -2685,25 +2685,25 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 	u[i].active=true;
 	u[i].value=& ( d->armor );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.armor, 0 );
-	u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Armor" );
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_hit_points, 0 );
-	u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" );
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
 	i++;
 	// Scan:
 	u[i].active=true;
 	u[i].value=& ( d->scan );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.scan, 3 );
-	u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Scan" );
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
 	i++;
 	// Speed:
 	u[i].active=true;
 	u[i].value=& ( d->max_speed );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.vehicle[nr].data.max_speed, 1 );
-	u[i].name = lngPack.Translate ( "Text~Vehicles~Title_Speed" );
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Speed" );
 	i++;
 	// Costs:
 	i++;
@@ -3243,7 +3243,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Su
 	scr.w=dest.w=150;
 	scr.h=dest.h=30;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
-	font->showTextCentered(381,275, lngPack.Translate ( "Text~Game_Options~Title_Gold" ));
+	font->showTextCentered(381,275, lngPack.i18n ( "Text~Title~Gold" ));
 	font->showTextCentered(381,275+10, iToStr(credits));
 
 	scr.x=118;
@@ -3266,7 +3266,7 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Su
 		ptr=landing->LandItems[selected];
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			font->showTextCentered(430,275, lngPack.Translate ( "Text~Game_Start~Title_Cargo" ));
+			font->showTextCentered(430,275, lngPack.i18n ( "Text~Title~Cargo" ));
 			font->showTextCentered(430,275+10, iToStr(ptr->cargo));
 
 
@@ -3722,13 +3722,13 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 		if ( host )
 		{
 			fstcpip=new cFSTcpIp ( true );
-			Titel=lngPack.Translate ( "Text~Menu_Main~Button_TCPIP_Host" );
+			Titel=lngPack.i18n ( "Text~Button~TCPIP_Host" );
 			IP="-";
 		}
 		else
 		{
 			fstcpip=new cFSTcpIp ( false );
-			Titel=lngPack.Translate ( "Text~Menu_Main~Button_TCPIP_Client" );
+			Titel=lngPack.i18n ( "Text~Button~TCPIP_Client" );
 			IP=SettingsData.sIP;
 		}
 	}
@@ -3813,34 +3813,34 @@ void cMultiPlayer::RunMenu ( void )
 	ChatStr="";
 	font->showTextCentered(320,11, Titel);
 
-	font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+	font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
 	font->showText(20,260, IP);
 	
-	font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+	font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
 	font->showText(228,260, iToStr(Port));
 	
-	font->showText(352, 245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+	font->showText(352, 245, lngPack.i18n ( "Text~Title~Player_Name" ));
 	font->showText(352,260, MyPlayer->name);
 	
-	font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+	font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 	dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 	SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 
 	if ( host )
 	{
-		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
-		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ) ,470,42+35,false );
-		placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ) ,470,42+35*2,false );
-		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
-		drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
+		placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ) ,470,42,false );
+		placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ) ,470,42+35,false );
+		placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ) ,470,42+35*2,false );
+		placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+		drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
 	}
 	else
 	{
-		placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
+		placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
 	}
-	placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
+	placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 
-	drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
+	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
 
 	// Den Focus vorbereiten:
 	switch ( Focus )
@@ -4000,7 +4000,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				BackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), true, 50,450);
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,450);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4019,7 +4019,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( BackPressed )
 		{
 			BackPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false, 50,450 );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4030,7 +4030,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				OKPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), true, 390,450 );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,450 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4093,14 +4093,14 @@ void cMultiPlayer::RunMenu ( void )
 					string msg;
 					msg=iToStr(SettingsData.Checksum); msg+="#";
 					msg+=MAX_VERSION;
-					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Check" ) );
+					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Check" ) );
 
 					WaitForGo=true;
 					ClientsToGo=fstcpip->GetConnectionCount();
 					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str());
 				}
 				OKPressed=false;
-				drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4108,7 +4108,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( OKPressed )
 		{
 			OKPressed=false;
-			drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
+			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4120,7 +4120,7 @@ void cMultiPlayer::RunMenu ( void )
 			nr=GetColorNr ( MyPlayer->color ) +1;
 			if ( nr>7 ) nr=0;
 			MyPlayer->color=OtherData.colors[nr];
-			font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+			font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 			DisplayPlayerList(sfTmp);
@@ -4136,7 +4136,7 @@ void cMultiPlayer::RunMenu ( void )
 			nr=GetColorNr ( MyPlayer->color )-1;
 			if ( nr<0 ) nr=7;
 			MyPlayer->color=OtherData.colors[nr];
-			font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+			font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
 			DisplayPlayerList(sfTmp);
@@ -4154,7 +4154,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					PlanetPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ).c_str(),470,42,true );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ).c_str(),470,42,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -4168,23 +4168,23 @@ void cMultiPlayer::RunMenu ( void )
 					DisplayPlayerList(sfTmp);
 					
 					font->showTextCentered(320,11, Titel);
-					font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+					font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
 					font->showText(20,260, IP);
-					font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+					font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
 					font->showText(228,260, iToStr(Port));
-					font->showText(352,245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+					font->showText(352,245, lngPack.i18n ( "Text~Title~Player_Name" ));
 					font->showText(352,260, MyPlayer->name);
-					font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+					font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 					
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ),470,42,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ),470,42+35*2,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
-					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false, 50,450 );
-					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450);
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ),470,42,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ),470,42+35*2,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ),false, 50,450 );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450);
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4193,7 +4193,7 @@ void cMultiPlayer::RunMenu ( void )
 			else if ( PlanetPressed )
 			{
 				PlanetPressed=false;
-				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ) ,470,42,false );
+				placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ) ,470,42,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4204,7 +4204,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 					OptionsPressed=true;
 					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,true );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -4226,24 +4226,24 @@ void cMultiPlayer::RunMenu ( void )
 					DisplayPlayerList(sfTmp);
 					
 					font->showTextCentered(320,11, Titel);
-					font->showText(20,245, lngPack.Translate ( "Text~Game_Start~Title_IP" ));
+					font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
 					font->showText(20,260, IP);
-					font->showText(228,245, lngPack.Translate ( "Text~Game_Start~Title_Port" ));
+					font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
 					font->showText(228,260, iToStr(Port));
-					font->showText(352,245, lngPack.Translate ( "Text~Game_Start~Title_Player_Name" ));
+					font->showText(352,245, lngPack.i18n ( "Text~Title~Player_Name" ));
 					font->showText(352,260, MyPlayer->name);
-					font->showText(500,245, lngPack.Translate ( "Text~Game_Start~Title_Color" ));
+					font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 										
 										
 					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Choose_Planet" ),470,42,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Game_Load" ), 470,42+35*2,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
-					placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
-					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_Back" ), false,50,450 );
-					drawMenuButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ), false, 390,450 );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ),470,42,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470,42+35*2,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false,50,450 );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					SendOptions();
@@ -4252,7 +4252,7 @@ void cMultiPlayer::RunMenu ( void )
 			else if ( OptionsPressed )
 			{
 				OptionsPressed=false;
-				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Options" ),470,42+35,false );
+				placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -4261,7 +4261,7 @@ void cMultiPlayer::RunMenu ( void )
 			        if(b&&!lb){
 			          LadenPressed=true;
 			          PlayFX(SoundData.SNDMenuButton);
-			          placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,true);
+			          placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,true);
 			          SHOW_SCREEN
 			          mouse->draw(false,screen);
 					}else if(!b&&LadenPressed){
@@ -4287,22 +4287,22 @@ void cMultiPlayer::RunMenu ( void )
 			            DisplayGameSettings();
 			            DisplayPlayerList();
 			            TODO: fonts->OutTextCenter(Titel.c_str(),320,11,buffer);
-			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_IP").c_str(),20,245,buffer);
+			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~IP").c_str(),20,245,buffer);
 			            TODO: fonts->OutText(IP.c_str(),20,260,buffer);
-			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Port").c_str(),228,245,buffer);
+			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Port").c_str(),228,245,buffer);
 			            TODO: fonts->OutText(((AnsiString)Port).c_str(),228,260,buffer);
-			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Player_Name").c_str(),352,245,buffer);
+			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Player_Name").c_str(),352,245,buffer);
 			            TODO: fonts->OutText(MyPlayer->name.c_str(),352,260,buffer);
-			            TODO: fonts->OutText(lngPack.Translate( "Text~Game_Start~Title_Color").c_str(),500,245,buffer);
+			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Color").c_str(),500,245,buffer);
 			            dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
 			            SDL_BlitSurface(MyPlayer->color,&scr,buffer,&dest);
 			            if(SaveGame.IsEmpty())placeSmallButton("Planet wählen",470,42,false);
-			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.Translate( "Text~Game_Start~Title_Options").c_str(),470,42+35,false);
-			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
-			            placeSmallButton(lngPack.Translate( "Text~Game_Start~Button_Host_Start").c_str(),470,200,false);
-			            placeSmallButton(lngPack.Translate( "Text~Game_Start~Title_Send").c_str(), 470,416,false);
-			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_Back"),false, 50,450);
-			            drawMenuButton(lngPack.Translate( "Text~Menu_Main~Button_OK"),false, 390,450);
+			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.i18n( "Text~Title~Options").c_str(),470,42+35,false);
+			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,false);
+			            placeSmallButton(lngPack.i18n( "Text~Button~Host_Start").c_str(),470,200,false);
+			            placeSmallButton(lngPack.i18n( "Text~Title~Send").c_str(), 470,416,false);
+			            drawMenuButton(lngPack.i18n( "Text~Button~Back"),false, 50,450);
+			            drawMenuButton(lngPack.i18n( "Text~Button~OK"),false, 390,450);
 			            SHOW_SCREEN
 			            mouse->draw(false,screen);
 			            SendOptions();
@@ -4310,7 +4310,7 @@ void cMultiPlayer::RunMenu ( void )
 			        }
 			      }else if(LadenPressed){
 			        LadenPressed=false;
-			        if(SaveGame.empty())placeSmallButton(lngPack.Translate( "Text~Menu_Main~Button_Game_Load").c_str(), 470,42+35*2,false);
+			        if(SaveGame.empty())placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,false);
 			        SHOW_SCREEN
 			        mouse->draw(false,screen);
 			      }*/
@@ -4322,8 +4322,8 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				StartHostConnect=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				if ( host ) placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,true );
-				else placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,true );
+				if ( host ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,true );
+				else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,true );
 //FIXME: error opening socket when we choose map and options before starting host -- beko
 				if ( host )
 				{
@@ -4332,14 +4332,14 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
 					if ( fstcpip->iStatus==STAT_OPENED )
 					{
-						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Socket" ) );
+						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Socket" ) );
 						cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
 					}
 					else
 					{
-						stmp=lngPack.Translate ( "Text~Game_MP~Comp_Network_Open" );
+						stmp=lngPack.i18n ( "Text~Multiplayer~Network_Open" );
 						stmp+=" (";
-						stmp+=lngPack.Translate ( "Text~Game_Start~Title_Port" );
+						stmp+=lngPack.i18n ( "Text~Title~Port" );
 						stmp+=": ";
 						stmp+=iToStr(Port);
 						stmp+=")";
@@ -4354,7 +4354,7 @@ void cMultiPlayer::RunMenu ( void )
 					fstcpip->SetIp ( IP );
 					fstcpip->SetTcpIpPort ( Port );
 
-					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
+					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
 					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
 
 					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
@@ -4371,7 +4371,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					if ( fstcpip->iStatus!=STAT_CONNECTED )
 					{
-						AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Network_Error_Connect" ) +IP+":"+iToStr(Port) );
+						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Connect" ) +IP+":"+iToStr(Port) );
 						cLog::write ( "Error on connecting "+IP+":"+iToStr(Port), cLog::eLOG_TYPE_WARNING );
 					}
 				}
@@ -4383,8 +4383,8 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( StartHostConnect )
 		{
 			StartHostConnect=false;
-			if ( host ) placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Button_Host_Start" ),470,200,false );
-			else placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Connect" ), 470,200,false );
+			if ( host ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+			else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4395,7 +4395,7 @@ void cMultiPlayer::RunMenu ( void )
 			{
 				SendenPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,true );
+				placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,true );
 
 				if ( !ChatStr.empty() )
 				{
@@ -4428,7 +4428,7 @@ void cMultiPlayer::RunMenu ( void )
 		else if ( SendenPressed )
 		{
 			SendenPressed=false;
-			placeSmallButton ( lngPack.Translate ( "Text~Game_Start~Title_Send" ), 470,416,false );
+			placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -4579,14 +4579,14 @@ void cMultiPlayer::RunMenu ( void )
 		{
 			if ( ClientsToGo>fstcpip->GetConnectionCount() )
 			{
-				AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Abort" ) );
+				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Abort" ) );
 				WaitForGo=false;
 			}
 			else if ( ClientsToGo<=0&&SaveGame.empty() )
 			{
 				ClientSettingsList=new TList;
 
-				AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go" ) );
+				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go" ) );
 				fstcpip->FSTcpIpSend ( MSG_LETS_GO,"");
 
 				// Das Spiel machen:
@@ -4639,7 +4639,7 @@ void cMultiPlayer::RunMenu ( void )
 				}
 				else
 				{
-					AddChatLog ( lngPack.Translate ( "Text~Error_Messages~ERROR_Map_Loading" ) );
+					AddChatLog ( lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) );
 					cLog::write ( "Error loading map", cLog::eLOG_TYPE_WARNING );
 					delete ClientSettingsList;
 				}
@@ -4738,7 +4738,7 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else
 			{
-				AddChatLog ( lngPack.Translate ( "Text~Error_Messages~ERROR_Map_Loading" ) );
+				AddChatLog ( lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) );
 				cLog::write ( "Error loading map", cLog::eLOG_TYPE_WARNING );
 				delete map_obj;map_obj=NULL;
 			}
@@ -4793,18 +4793,18 @@ void cMultiPlayer::RunMenu ( void )
 				case STAT_CONNECTED:
 					if ( host )
 					{
-						AddChatLog ( "fstcpip: "+lngPack.Translate ( "Text~Game_MP~Comp_Network_New" ) );
+						AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_New" ) );
 						cLog::write ( "New connection", cLog::eLOG_TYPE_DEBUG );
 					}
 					else
 					{
-						AddChatLog ( "fstcpip: "+lngPack.Translate ( "Text~Game_MP~Comp_Network_Connected" ) );
+						AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
 						cLog::write ( "Connected", cLog::eLOG_TYPE_DEBUG );
 						ClientConnectedCallBack();
 					}
 					break;
 				case STAT_CLOSED:
-					AddChatLog ( "fstcpip: "+lngPack.Translate ( "Text~Game_MP~Comp_Network_Closed" ) );
+					AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_Closed" ) );
 					cLog::write ( "Connection closed", cLog::eLOG_TYPE_DEBUG );
 					if ( !host ) ClientDistconnect();
 					break;
@@ -4997,14 +4997,14 @@ void cMultiPlayer::HandleMenuMessages()
 					string new_msg;
 					new_msg=iToStr(MyPlayer->Nr);
 					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str() );
-					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host" ) );
+					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host" ) );
 				}
 				else
 				{
 					string new_msg;
 					new_msg=iToStr(MyPlayer->Nr);
 					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str() );
-					AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Go_Host_No" ) );
+					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host_No" ) );
 				}
 				if ( fp ) fclose ( fp );
 				fstcpip->NetMessageList->Delete ( i );
@@ -5021,7 +5021,7 @@ void cMultiPlayer::HandleMenuMessages()
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
-						log=p->name; log+=": "+lngPack.Translate ( "Text~Game_MP~Comp_Go_Ready_No" );
+						log=p->name; log+=": "+lngPack.i18n ( "Text~Multiplayer~Go_Ready_No" );
 						AddChatLog ( log );
 						break;
 					}
@@ -5041,7 +5041,7 @@ void cMultiPlayer::HandleMenuMessages()
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
-						log=p->name; log+=": "+lngPack.Translate ( "Text~Game_MP~Comp_Go_Ready" );
+						log=p->name; log+=": "+lngPack.i18n ( "Text~Multiplayer~Go_Ready" );
 						AddChatLog ( log );
 						break;
 					}
@@ -5191,7 +5191,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 
 	if ( !host&&fstcpip->iStatus!=STAT_CONNECTED )
 	{
-		str+=lngPack.Translate ( "Text~Game_MP~Comp_Network_Connected_Not" );
+		str+=lngPack.i18n ( "Text~Multiplayer~Network_Connected_Not" );
 		font->showTextAsBlock(r, str);
 		
 		return;
@@ -5222,7 +5222,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 				if ( host&&game )
 				{
 					int i;
-					str+=lngPack.Translate ( "Text~Game_MP~Title_Player" ) +": ";
+					str+=lngPack.i18n ( "Text~Multiplayer~Player" ) +": ";
 					for ( i=0;i<game->PlayerList->Count;i++ )
 					{
 						str+=game->PlayerList->PlayerItems[i]->name;
@@ -5264,7 +5264,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 		if ( !FileExists ( sMapPath.c_str() ) )
 		{
 			//d'oh, somebody doesn't have the map we've choosen here
-			str+=lngPack.Translate ( "Text~Error_Messages~ERROR_Map_Loading" ) +" "+map+"\n";
+			str+=lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) +" "+map+"\n";
 			cLog::write ( "Couldn't load map "+sMapPath, cLog::eLOG_TYPE_WARNING );
 		}
 		else
@@ -5276,7 +5276,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 			/**Mapsize*/
 			int iSize=0;
 
-			str+=lngPack.Translate ( "Text~Game_Start~Title_Map" ) +": "+sNameNice;
+			str+=lngPack.i18n ( "Text~Title~Map" ) +": "+sNameNice;
 			if ( fp )
 			{
 				fseek ( fp,21,SEEK_SET );
@@ -5309,7 +5309,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 	}
 	else
 	{
-		if ( SaveGame.empty() ) str+=lngPack.Translate ( "Text~Game_MP~Comp_Map_NoSet" ) +"\n";
+		if ( SaveGame.empty() ) str+=lngPack.i18n ( "Text~Multiplayer~Map_NoSet" ) +"\n";
 	}
 	str+="\n";
 	if ( SaveGame.empty() )
@@ -5339,7 +5339,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 		}
 		else
 		{
-			str+=lngPack.Translate ( "Text~Game_MP~Comp_Option_NoSet" ) +"\n";
+			str+=lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) +"\n";
 		}
 	}
 
@@ -5552,7 +5552,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
-	font->showTextCentered(320,235, lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ), LATIN_BIG);
+	font->showTextCentered(320,235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG);
 	SHOW_SCREEN
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
@@ -5622,7 +5622,7 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
-	font->showTextCentered(320,235, lngPack.Translate ( "Text~Game_MP~Comp_Waiting" ), LATIN_BIG);
+	font->showTextCentered(320,235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG);
 	SHOW_SCREEN
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
@@ -5798,7 +5798,7 @@ bool cMultiPlayer::TestPlayerList ( void )
 			if ( strcmp ( PlayerList->PlayerItems[i]->name.c_str(),PlayerList->PlayerItems[k]->name.c_str() ) ==0 )
 			{
 				string log;
-				log=lngPack.Translate ( "Text~Game_MP~Comp_Player_Twice" );
+				log=lngPack.i18n ( "Text~Multiplayer~Player_Twice" );
 				log+=PlayerList->PlayerItems[i]->name;
 				AddChatLog ( log );
 				return false;
@@ -5816,12 +5816,12 @@ bool cMultiPlayer::TestPlayerListLoad ( void )
 
 	if ( PlayerList->Count>game->PlayerList->Count )
 	{
-		AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Many" ) );
+		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Many" ) );
 		return false;
 	}
 	if ( PlayerList->Count<game->PlayerList->Count )
 	{
-		AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Few" ) );
+		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Few" ) );
 		return false;
 	}
 
@@ -5839,18 +5839,18 @@ bool cMultiPlayer::TestPlayerListLoad ( void )
 	}
 	if ( found!=PlayerList->Count )
 	{
-		AddChatLog ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Wrong" ) );
+		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
 		return false;
 	}
 
 	if ( game->PlayRounds && strcmp ( game->PlayerList->PlayerItems[0]->name.c_str(),MyPlayer->name.c_str() ) )
 	{
 		string log;
-		lngPack.Translate ( "Text~Game_MP~Title_Player" );
+		lngPack.i18n ( "Text~Multiplayer~Player" );
 		log+=" ";
 		log+=game->PlayerList->PlayerItems[0]->name.c_str();
 		log+=" ";
-		log+=lngPack.Translate ( "Text~Game_MP~Comp_Player_MustHost" );
+		log+=lngPack.i18n ( "Text~Multiplayer~Player_MustHost" );
 		AddChatLog ( log );
 		return false;
 	}
@@ -5864,7 +5864,7 @@ void HeatTheSeat ( void )
 	string stmp;
 	// Anzahl der Spieler holen:
 	int PlayerAnz;
-	PlayerAnz=ShowNumberInput ( lngPack.Translate ( "Text~Game_MP~Comp_Player_Amount" ), MAXPLAYER_HOTSEAT, 2 );
+	PlayerAnz=ShowNumberInput ( lngPack.i18n ( "Text~Multiplayer~Player_Amount" ), MAXPLAYER_HOTSEAT, 2 );
 	if ( PlayerAnz<2 ) PlayerAnz=2;
 
 	// Spiel erstellen:
@@ -5891,7 +5891,7 @@ void HeatTheSeat ( void )
 	list=new TList;
 	for ( i=1;i<=PlayerAnz;i++ )
 	{
-		stmp = lngPack.Translate ( "Text~Game_MP~Title_Player" );
+		stmp = lngPack.i18n ( "Text~Multiplayer~Player" );
 		stmp+=iToStr(i);
 		list->AddPlayer ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
 		p->Credits=options.credits;
@@ -5908,7 +5908,7 @@ void HeatTheSeat ( void )
 		p=list->PlayerItems[i];
 		p->InitMaps ( map->size );
 
-		stmp=p->name; stmp+=lngPack.Translate ( "Text~Game_MP~Comp_Player_Turn" );
+		stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
 		ShowOK ( stmp,true );
 
 		LandingList=new TList;
@@ -5932,7 +5932,7 @@ void HeatTheSeat ( void )
 	p=list->PlayerItems[0];
 	game->ActivePlayer=p;
 	* ( game->hud ) =p->HotHud;
-	stmp=p->name; stmp+=lngPack.Translate ( "Text~Game_MP~Comp_Player_Turn" );
+	stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
 	ShowOK ( stmp,true );
 	game->HotSeat=true;
 	game->HotSeatPlayer=0;
@@ -5977,21 +5977,21 @@ int ShowDateiMenu ( bool bSave )
 	SDL_BlitSurface ( GraphicsData.gfx_load_save_menu,NULL,buffer,&rDialog );
 	// Den Text anzeigen:
 	if ( bSave )
-		font->showTextCentered(rTitle.x, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_LoadSave" ));
+		font->showTextCentered(rTitle.x, rTitle.y, lngPack.i18n ( "Text~Title~LoadSave" ));
 	else
-		font->showTextCentered(rTitle.x, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Load" ));
+		font->showTextCentered(rTitle.x, rTitle.y, lngPack.i18n ( "Text~Title~Load" ));
 
 	// Buttons setzen;
-	drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
+	drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
 	// PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
 	if ( bSave )
 	{
-		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
-		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
+		drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
+		drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
 	}
 	else
 	{
-		drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+		drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 	}
 	//BEGIN ARROW CODE
 	scr.y=40;
@@ -6082,7 +6082,7 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),true,rBtnBack.x,rBtnBack.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),true,rBtnBack.x,rBtnBack.y,buffer );	
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -6094,7 +6094,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( FertigPressed )
 		{
-			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -6105,14 +6105,14 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!BeendenPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );	
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				BeendenPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				BeendenPressed=false;
@@ -6122,7 +6122,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( BeendenPressed )
 		{
-			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BeendenPressed=false;
@@ -6133,14 +6133,14 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!SpeichernPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),true,rBtnSave.x,rBtnSave.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),true,rBtnSave.x,rBtnSave.y,buffer );	
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SpeichernPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
 				if ( selected != -1 )
 				{
 					ShowFiles ( files,offset,selected,true,false,false, rDialog );
@@ -6166,7 +6166,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( SpeichernPressed )
 		{
-			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			SpeichernPressed=false;
@@ -6177,14 +6177,14 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!LadenPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),true,rBtnLoad.x,rBtnLoad.y,buffer );
+				drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),true,rBtnLoad.x,rBtnLoad.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				LadenPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+				drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 				if ( selected != -1 )
 				{
 					ShowFiles ( files,offset,selected,false,false,false, rDialog );
@@ -6197,7 +6197,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( LadenPressed )
 		{
-			drawButtonBig( lngPack.Translate ( "Text~Menu_Main~Button_Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+			drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			LadenPressed=false;

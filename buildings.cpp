@@ -203,13 +203,13 @@ string cBuilding::GetStatusStr ( void )
 				int iRound;
 
 				iRound = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
-				sText = lngPack.Translate ( "Text~Comp~Producing" ) + ": ";
+				sText = lngPack.i18n ( "Text~Comp~Producing" ) + ": ";
 				sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 				sText += iToStr ( iRound ) + ")";
 
 				if ( font->getTextWide ( sText, LATIN_SMALL_WHITE ) > 126 )
 				{
-					sText = lngPack.Translate ( "Text~Comp~Producing" );
+					sText = lngPack.i18n ( "Text~Comp~Producing" );
 					+ ":\n";
 					sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 					sText += iToStr ( iRound ) + ")";
@@ -219,14 +219,14 @@ string cBuilding::GetStatusStr ( void )
 			}
 			else
 			{
-				return lngPack.Translate ( "Text~Comp~Producing_Fin" );
+				return lngPack.i18n ( "Text~Comp~Producing_Fin" );
 			}
 		}
 
 		// Forschungszentrum:
 		if ( data.can_research && owner == game->ActivePlayer )
 		{
-			string sText = lngPack.Translate ( "Text~Comp~Working" ) + "\n";
+			string sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 
 			for ( int i = 0;i < 8;i++ )
 			{
@@ -236,35 +236,35 @@ string cBuilding::GetStatusStr ( void )
 					{
 
 						case 0:
-							sText += lngPack.Translate ( "Text~Vehicles~Title_Damage" );
+							sText += lngPack.i18n ( "Text~Vehicles~Damage" );
 							break;
 
 						case 1:
-							sText += lngPack.Translate ( "Text~Hud~Shots" );
+							sText += lngPack.i18n ( "Text~Hud~Shots" );
 							break;
 
 						case 2:
-							sText += lngPack.Translate ( "Text~Hud~Range" );
+							sText += lngPack.i18n ( "Text~Hud~Range" );
 							break;
 
 						case 3:
-							sText += lngPack.Translate ( "Text~Vehicles~Title_Armor" );
+							sText += lngPack.i18n ( "Text~Vehicles~Armor" );
 							break;
 
 						case 4:
-							sText += lngPack.Translate ( "Text~Hud~Hitpoints" );
+							sText += lngPack.i18n ( "Text~Hud~Hitpoints" );
 							break;
 
 						case 5:
-							sText += lngPack.Translate ( "Text~Hud~Speed" );
+							sText += lngPack.i18n ( "Text~Hud~Speed" );
 							break;
 
 						case 6:
-							sText += lngPack.Translate ( "Text~Hud~Scan" );
+							sText += lngPack.i18n ( "Text~Hud~Scan" );
 							break;
 
 						case 7:
-							sText += lngPack.Translate ( "Text~Vehicles~Title_Costs" );
+							sText += lngPack.i18n ( "Text~Vehicles~Costs" );
 							break;
 					}
 
@@ -279,24 +279,24 @@ string cBuilding::GetStatusStr ( void )
 		if ( data.gold_need && owner == game->ActivePlayer )
 		{
 			string sText;
-			sText = lngPack.Translate ( "Text~Comp~Working" ) + "\n";
-			sText += lngPack.Translate ( "Text~Game_Options~Title_Credits" ) + ": ";
+			sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
+			sText += lngPack.i18n ( "Text~Title~Credits" ) + ": ";
 			sText += iToStr ( owner->Credits );
 			return ( char * ) sText.c_str();
 		}
 
-		return lngPack.Translate ( "Text~Comp~Working" );
+		return lngPack.i18n ( "Text~Comp~Working" );
 	}
 
 	if ( Disabled )
 	{
 		string sText;
-		sText = lngPack.Translate ( "Text~Comp~Disabled" ) + " (";
+		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
 		sText += iToStr ( Disabled ) + ")";
 		return ( char * ) sText.c_str();
 	}
 
-	return lngPack.Translate ( "Text~Comp~Waits" );
+	return lngPack.i18n ( "Text~Comp~Waits" );
 }
 
 // Aktalisiert alle Daten auf ihre Max-Werte:
@@ -1022,7 +1022,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		// Range:
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.range ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Range" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Range" ) );
 		DrawSymbolBig ( SBRange, COLUMN_3, y - 2, 160, data.range, typ->data.range, buffer );
 		DOLINEBREAK
 	}
@@ -1031,7 +1031,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		// Damage:
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.damage ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Damage" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Damage" ) );
 		DrawSymbolBig ( SBAttack, COLUMN_3, y - 3, 160, data.damage, typ->data.damage, buffer );
 		DOLINEBREAK
 
@@ -1039,19 +1039,19 @@ void cBuilding::ShowBigDetails ( void )
 		{
 			// Shots:
 			font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_shots ) );
-			font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Shoots" ) );
+			font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Shoots" ) );
 			DrawSymbolBig ( SBShots, COLUMN_3, y + 2, 160, data.max_shots, typ->data.max_shots, buffer );
 			DOLINEBREAK
 
 			// Range:
 			font->showTextCentered ( COLUMN_1, y, iToStr ( data.range ) );
-			font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Range" ) );
+			font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Range" ) );
 			DrawSymbolBig ( SBRange, COLUMN_3, y - 2, 160, data.range, typ->data.range, buffer );
 			DOLINEBREAK
 
 			// Ammo:
 			font->showTextCentered ( COLUMN_1, y, iToStr ( data.ammo ) );
-			font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) );
+			font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Ammo" ) );
 			DrawSymbolBig ( SBAmmo, COLUMN_3, y - 2, 160, data.ammo, typ->data.max_ammo, buffer );
 			DOLINEBREAK
 		}
@@ -1061,7 +1061,7 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		// Metall:
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_cargo ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Cargo" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Cargo" ) );
 
 		switch ( data.can_load )
 		{
@@ -1086,13 +1086,13 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		// Energieproduktion:
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.energy_prod ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Produce" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
 		DrawSymbolBig ( SBEnergy, COLUMN_3, y - 2, 160, data.energy_prod, typ->data.energy_prod, buffer );
 		DOLINEBREAK
 
 		// Verbrauch:
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.oil_need ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Usage" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 		DrawSymbolBig ( SBOil, COLUMN_3, y - 2, 160, data.oil_need, typ->data.oil_need, buffer );
 		DOLINEBREAK
 	}
@@ -1101,20 +1101,20 @@ void cBuilding::ShowBigDetails ( void )
 	{
 		// Humanproduktion:
 		font->showText ( COLUMN_1, y, iToStr ( data.human_prod ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Produce" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
 		DrawSymbolBig ( SBHuman, COLUMN_3, y - 2, 160, data.human_prod, typ->data.human_prod, buffer );
 		DOLINEBREAK
 	}
 
 	// Armor:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.armor ) );
-	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Armor" ) );
+	font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Armor" ) );
 	DrawSymbolBig ( SBArmor, COLUMN_3, y - 2, 160, data.armor, typ->data.armor, buffer );
 	DOLINEBREAK
 
 	// Hitpoints:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_hit_points ) );
-	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) );
+	font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Hitpoints" ) );
 	DrawSymbolBig ( SBHits, COLUMN_3, y - 1, 160, data.max_hit_points, typ->data.max_hit_points, buffer );
 	DOLINEBREAK
 
@@ -1122,7 +1122,7 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.scan )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.scan ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Scan" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Scan" ) );
 		DrawSymbolBig ( SBScan, COLUMN_3, y - 2, 160, data.scan, typ->data.scan, buffer );
 		DOLINEBREAK
 
@@ -1132,7 +1132,7 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.energy_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.energy_need ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Usage" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 		DrawSymbolBig ( SBEnergy, COLUMN_3, y - 2, 160, data.energy_need, typ->data.energy_need, buffer );
 		DOLINEBREAK
 
@@ -1142,7 +1142,7 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.human_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.human_need ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Produce" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
 		DrawSymbolBig ( SBHuman, COLUMN_3, y - 2, 160, data.human_need, typ->data.human_need, buffer );
 		DOLINEBREAK
 
@@ -1152,7 +1152,7 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.metal_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.metal_need ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Usage" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 		DrawSymbolBig ( SBMetal, COLUMN_3, y - 2, 160, data.metal_need, typ->data.metal_need, buffer );
 		DOLINEBREAK
 
@@ -1162,7 +1162,7 @@ void cBuilding::ShowBigDetails ( void )
 	if ( data.gold_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.gold_need ) );
-		font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Usage" ) );
+		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 		DrawSymbolBig ( SBGold, COLUMN_3, y - 2, 160, data.gold_need, typ->data.gold_need, buffer );
 		DOLINEBREAK
 
@@ -1170,7 +1170,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	// Costs:
 	font->showTextCentered ( COLUMN_1, y, iToStr ( data.iBuilt_Costs ) );
-	font->showText ( COLUMN_2, y, lngPack.Translate ( "Text~Vehicles~Title_Costs" ) );
+	font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Costs" ) );
 	DrawSymbolBig ( SBMetal, COLUMN_3, y - 2, 160, data.iBuilt_Costs, typ->data.iBuilt_Costs, buffer );
 }
 
@@ -1713,8 +1713,8 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	// Den Bar malen:
 	MakeTransBar ( &Transf, MaxTarget, Target );
 
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, POS_CANCEL_BTN, buffer );
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, POS_DONE___BTN, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
 
 
 	// Den Buffer anzeigen:
@@ -1760,7 +1760,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			if ( b && !AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), true, POS_CANCEL_BTN, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, POS_CANCEL_BTN, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = true;
@@ -1774,7 +1774,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		else
 			if ( AbbruchPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, POS_CANCEL_BTN, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = false;
@@ -1786,7 +1786,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, POS_DONE___BTN, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, POS_DONE___BTN, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -1841,7 +1841,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, POS_DONE___BTN, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -2355,7 +2355,7 @@ void cBuilding::ShowStorage ( void )
 	// Alle Buttons machen:
 
 	// Fertig-Button:
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 
 	// Down:
 	if ( StoredVehicles->Count > to )
@@ -2372,12 +2372,12 @@ void cBuilding::ShowStorage ( void )
 	// Alle Aktivieren:
 	if ( StoredVehicles->Count )
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 		AlleAktivierenEnabled = true;
 	}
 	else
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), true, rBtnAllActive.x, rBtnAllActive.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, rBtnAllActive.x, rBtnAllActive.y, buffer );
 	}
 
 	MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
@@ -2540,7 +2540,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			if ( b && !FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -2554,7 +2554,7 @@ void cBuilding::ShowStorage ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -2567,7 +2567,7 @@ void cBuilding::ShowStorage ( void )
 			int size;
 
 			PlayFX ( SoundData.SNDMenuButton );
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
 
@@ -2861,7 +2861,7 @@ void cBuilding::ShowStorage ( void )
 				PlayFX ( SoundData.SNDMenuButton );
 				ActivatingVehicle = true;
 				VehicleToActivate = i + offset;
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), true, dest.x, dest.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 
@@ -2889,7 +2889,7 @@ void cBuilding::ShowStorage ( void )
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOIRepaired );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Repair" ), true, dest.x, dest.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Repair" ), true, dest.x, dest.y, buffer );
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -2910,7 +2910,7 @@ void cBuilding::ShowStorage ( void )
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOILoaded );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Reload" ), true, dest.x, dest.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Reload" ), true, dest.x, dest.y, buffer );
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -2929,7 +2929,7 @@ void cBuilding::ShowStorage ( void )
 				owner->base->AddMetal ( SubBase, -2 );
 				DrawStored ( offset );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Upgrade" ), true, dest.x, dest.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -3067,7 +3067,7 @@ void cBuilding::DrawStored ( int off )
 
 			if ( vehicleV->data.version != vehicleV->owner->VehicleData[vehicleV->typ->nr].version )
 			{
-				font->showText ( dest.x + 5, dest.y + 15, "(" + lngPack.Translate ( "Text~Comp~Dated" ) + ")", LATIN_SMALL_WHITE );
+				font->showText ( dest.x + 5, dest.y + 15, "(" + lngPack.i18n ( "Text~Comp~Dated" ) + ")", LATIN_SMALL_WHITE );
 			}
 		}
 		else
@@ -3093,11 +3093,11 @@ void cBuilding::DrawStored ( int off )
 		{
 			scr.x = 156;
 			scr.y = 431;
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), false, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, dest.x, dest.y, buffer );
 		}
 		else
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Active" ), true, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 		}
 
 		// Reparieren:
@@ -3105,11 +3105,11 @@ void cBuilding::DrawStored ( int off )
 
 		if ( vehicleV && vehicleV->data.hit_points != vehicleV->data.max_hit_points && SubBase->Metal >= 2 )
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Repair" ), false, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Repair" ), false, dest.x, dest.y, buffer );
 		}
 		else
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Repair" ), true, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Repair" ), true, dest.x, dest.y, buffer );
 		}
 
 		// Aufladen:
@@ -3119,11 +3119,11 @@ void cBuilding::DrawStored ( int off )
 
 		if ( vehicleV && vehicleV->data.ammo != vehicleV->data.max_ammo && SubBase->Metal >= 2 )
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Reload" ), false, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Reload" ), false, dest.x, dest.y, buffer );
 		}
 		else
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Reload" ), true, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Reload" ), true, dest.x, dest.y, buffer );
 		}
 
 		// Upgrade:
@@ -3131,11 +3131,11 @@ void cBuilding::DrawStored ( int off )
 
 		if ( vehicleV && vehicleV->data.version != vehicleV->owner->VehicleData[vehicleV->typ->nr].version && SubBase->Metal >= 2 )
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Upgrade" ), false, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), false, dest.x, dest.y, buffer );
 		}
 		else
 		{
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Upgrade" ), true, dest.x, dest.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
 		}
 
 		// Die zusätzlichen Infos anzeigen:
@@ -3159,7 +3159,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			// Die Hitpoints anzeigen:
 			DrawNumber ( dest.x + 13, dest.y, vehicleV->data.hit_points, vehicleV->data.max_hit_points, buffer );
-			font->showText ( dest.x + 27, dest.y, lngPack.Translate ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE );
+			font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE );
 
 			DrawSymbol ( SHits, dest.x + 60, dest.y, 58, vehicleV->data.hit_points, vehicleV->data.max_hit_points, buffer );
 			// Die Munition anzeigen:
@@ -3169,7 +3169,7 @@ void cBuilding::DrawStored ( int off )
 				dest.y += 15;
 				DrawNumber ( dest.x + 13, dest.y, vehicleV->data.ammo, vehicleV->data.max_ammo, buffer );
 
-				font->showText ( dest.x + 27, dest.y, lngPack.Translate ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE );
+				font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE );
 				DrawSymbol ( SAmmo, dest.x + 60, dest.y, 58, vehicleV->data.ammo, vehicleV->data.max_ammo, buffer );
 			}
 		}
@@ -3192,7 +3192,7 @@ void cBuilding::ShowStorageMetalBar ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
 
 	//draw metalamount over the metalbar
-	font->showTextCentered ( rDialog.x + 557, rDialog.y + 86, lngPack.Translate ( "Text~Game_Options~Title_Metal" ) + ": " + iToStr ( SubBase->Metal ) );
+	font->showTextCentered ( rDialog.x + 557, rDialog.y + 86, lngPack.i18n ( "Text~Title~Metal" ) + ": " + iToStr ( SubBase->Metal ) );
 
 
 	//BEGIN fill metal bar
@@ -3292,31 +3292,31 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 	// Alle Aufladen:
 	if ( *AlleAufladenEnabled )
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Reload" ), false, rBtnRefuel.x, rBtnRefuel.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Reload" ), false, rBtnRefuel.x, rBtnRefuel.y, buffer );
 	}
 	else
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Reload" ), true, rBtnRefuel.x, rBtnRefuel.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Reload" ), true, rBtnRefuel.x, rBtnRefuel.y, buffer );
 	}
 
 	// Alle Reparieren:
 	if ( *AlleReparierenEnabled )
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Repair" ), false, rBtnRepair.x, rBtnRepair.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Repair" ), false, rBtnRepair.x, rBtnRepair.y, buffer );
 	}
 	else
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Repair" ), true, rBtnRepair.x, rBtnRepair.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Repair" ), true, rBtnRepair.x, rBtnRepair.y, buffer );
 	}
 
 	// Alle Upgraden:
 	if ( *AlleUpgradenEnabled )
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Upgrade" ), false, rBtnUpgrade.x, rBtnUpgrade.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), false, rBtnUpgrade.x, rBtnUpgrade.y, buffer );
 	}
 	else
 	{
-		drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Upgrade" ), true, rBtnUpgrade.x, rBtnUpgrade.y, buffer );
+		drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, rBtnUpgrade.x, rBtnUpgrade.y, buffer );
 	}
 }
 
@@ -3364,15 +3364,15 @@ void cBuilding::ShowResearch ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_research, NULL, buffer, &rDialog );
 
 	//draw titles
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Labs" ) );
-	font->showTextCentered ( rTxtLabs.x + rTxtLabs.w / 2, rTxtLabs.y, lngPack.Translate ( "Text~Comp~Labs" ) );
-	font->showTextCentered ( rTxtThemes.x + rTxtThemes.w / 2, rTxtThemes.y, lngPack.Translate ( "Text~Comp~Themes" ) );
-	font->showTextCentered ( rTxtRounds.x + rTxtRounds.w / 2, rTxtRounds.y, lngPack.Translate ( "Text~Comp~Turns" ) );
+	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Labs" ) );
+	font->showTextCentered ( rTxtLabs.x + rTxtLabs.w / 2, rTxtLabs.y, lngPack.i18n ( "Text~Comp~Labs" ) );
+	font->showTextCentered ( rTxtThemes.x + rTxtThemes.w / 2, rTxtThemes.y, lngPack.i18n ( "Text~Comp~Themes" ) );
+	font->showTextCentered ( rTxtRounds.x + rTxtRounds.w / 2, rTxtRounds.y, lngPack.i18n ( "Text~Comp~Turns" ) );
 
 	//draw button Cancel
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
 	//draw button Done
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 
 
 	// Schieber malen:
@@ -3415,7 +3415,7 @@ void cBuilding::ShowResearch ( void )
 			if ( b && !AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = true;
@@ -3429,7 +3429,7 @@ void cBuilding::ShowResearch ( void )
 		else
 			if ( AbbruchPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = false;
@@ -3441,7 +3441,7 @@ void cBuilding::ShowResearch ( void )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -3455,7 +3455,7 @@ void cBuilding::ShowResearch ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -3545,35 +3545,35 @@ void cBuilding::ShowResearchSchieber ( void )
 		{
 
 			case 0:
-				sTxtTheme = lngPack.Translate ( "Text~Vehicles~Title_Damage" );
+				sTxtTheme = lngPack.i18n ( "Text~Vehicles~Damage" );
 				break;
 
 			case 1:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Shots" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Shots" );
 				break;
 
 			case 2:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Range" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Range" );
 				break;
 
 			case 3:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Shield" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Shield" );
 				break;
 
 			case 4:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Hitpoints" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Hitpoints" );
 				break;
 
 			case 5:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Speed" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Speed" );
 				break;
 
 			case 6:
-				sTxtTheme = lngPack.Translate ( "Text~Hud~Scan" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Scan" );
 				break;
 
 			case 7:
-				sTxtTheme = lngPack.Translate ( "Text~Vehicles~Title_Costs" );
+				sTxtTheme = lngPack.i18n ( "Text~Vehicles~Costs" );
 				break;
 		}
 
@@ -3657,13 +3657,13 @@ void cBuilding::ShowUpgrade ( void )
 	SDL_Rect rTitle = {330, 11, 154, 13};
 	SDL_Rect rTxtDescription = {141, 266, 150, 13};
 
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Updates" ) );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Updates" ) );
 
 
 
-	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.Translate ( "Text~Comp~Description" ) );
+	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
 
 
 	// Der Haken:
@@ -3880,7 +3880,7 @@ void cBuilding::ShowUpgrade ( void )
 			if ( b && !AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = true;
@@ -3911,7 +3911,7 @@ void cBuilding::ShowUpgrade ( void )
 		else
 			if ( AbbruchPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = false;
@@ -3923,7 +3923,7 @@ void cBuilding::ShowUpgrade ( void )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -3960,7 +3960,7 @@ void cBuilding::ShowUpgrade ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -4041,16 +4041,16 @@ void cBuilding::ShowUpgrade ( void )
 				{
 					int variety;
 
-					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 						variety = 0;
 					else
-						if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
+						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 							variety = 1;
 						else
-							if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
+							if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
 								variety = 2;
 							else
-								if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
+								if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 									variety = 3;
 								else
 									variety = -1;
@@ -4058,7 +4058,7 @@ void cBuilding::ShowUpgrade ( void )
 					* ( ptr->upgrades[i].value ) -= CalcSteigerung ( ptr->upgrades[i].StartValue, variety );
 
 					// double price for damage
-					if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 					{
 						ptr->upgrades[i].NextPrice = 2 * CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
 					}
@@ -4084,16 +4084,16 @@ void cBuilding::ShowUpgrade ( void )
 						int variety;
 						owner->Credits -= ptr->upgrades[i].NextPrice;
 
-						if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 							variety = 0;
 						else
-							if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Speed" ) ) == 0 )
+							if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 								variety = 1;
 							else
-								if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Shots" ) ) == 0 )
+								if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
 									variety = 2;
 								else
-									if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Scan" ) ) == 0 )
+									if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 										variety = 3;
 									else
 										variety = -1;
@@ -4101,7 +4101,7 @@ void cBuilding::ShowUpgrade ( void )
 						* ( ptr->upgrades[i].value ) += CalcSteigerung ( ptr->upgrades[i].StartValue, variety );
 
 						// double price for damage
-						if ( ptr->upgrades[i].name.compare ( lngPack.Translate ( "Text~Vehicles~Title_Damage" ) ) == 0 )
+						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
 						{
 							ptr->upgrades[i].NextPrice = 2 * CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
 						}
@@ -5625,7 +5625,7 @@ void cBuilding::ShowMineManager ( void )
 	mouse->SetCursor ( CHand );
 
 
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Mine" ) );
+	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Mine" ) );
 
 	for ( int i = 0; i < 3; i++ )
 	{
@@ -5634,33 +5634,33 @@ void cBuilding::ShowMineManager ( void )
 
 			case 0:
 
-				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.Translate ( "Text~Game_Options~Title_Metal" ) );
+				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.i18n ( "Text~Title~Metal" ) );
 
 				break;
 
 			case 1:
 				rInfo1.y += 120;
-				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.Translate ( "Text~Game_Options~Title_Oil" ) );
+				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.i18n ( "Text~Title~Oil" ) );
 
 				break;
 
 			case 2:
 				rInfo1.y += 120;
-				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.Translate ( "Text~Game_Options~Title_Gold" ) );
+				font->showTextCentered ( rInfo1.x + rInfo1.w / 2, rInfo1.y, lngPack.i18n ( "Text~Title~Gold" ) );
 
 				break;
 		}
 
-		font->showTextCentered ( rInfo2.x + rInfo2.w / 2, rInfo2.y, lngPack.Translate ( "Text~Vehicles~Title_Usage" ) );
+		font->showTextCentered ( rInfo2.x + rInfo2.w / 2, rInfo2.y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 
 		rInfo2.y += 121;
-		font->showTextCentered ( rInfo3.x + rInfo3.w / 2, rInfo3.y, lngPack.Translate ( "Text~Comp~Reserve" ) );
+		font->showTextCentered ( rInfo3.x + rInfo3.w / 2, rInfo3.y, lngPack.i18n ( "Text~Comp~Reserve" ) );
 
 		rInfo3.y += 121;
 	}
 
 	//draw big button
-	drawButtonBig ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 
 	// Liste mit Minen erstellen:
 	mines = new TList;
@@ -5730,7 +5730,7 @@ void cBuilding::ShowMineManager ( void )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
+				drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -5744,7 +5744,7 @@ void cBuilding::ShowMineManager ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButtonBig ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -6103,7 +6103,7 @@ void cBuilding::MakeMineBars ( int MaxM, int MaxO, int MaxG, int *FreeM, int *Fr
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	string sTmp1 = "";
-	string sTmp2 = " / " + lngPack.Translate ( "Text~Comp~Turn" ) + ")";
+	string sTmp2 = " / " + lngPack.i18n ( "Text~Comp~Turn" ) + ")";
 	DrawMineBar ( TRANS_METAL, SubBase->MetalProd, MaxM, 0, true, MaxM - SubBase->MetalProd - *FreeM );
 	DrawMineBar ( TRANS_OIL, SubBase->OilProd, MaxO, 0, true, MaxO - SubBase->OilProd - *FreeO );
 	DrawMineBar ( TRANS_GOLD, SubBase->GoldProd, MaxG, 0, true, MaxG - SubBase->GoldProd - *FreeG );
@@ -6497,17 +6497,17 @@ void cBuilding::ShowBuildMenu ( void )
 	mouse->draw ( false, buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, NULL, buffer, NULL );
 
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
 
-	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.Translate ( "Text~Comp~Description" ) );
+	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
 
 
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.Translate ( "Text~Game_Start~Title_Build" ) );
+	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Build" ) );
 
-	font->showTextCentered ( rTxtRepeat.x + rTxtRepeat.w / 2, rTxtRepeat.y, lngPack.Translate ( "Text~Comp~Repeat" ) );
+	font->showTextCentered ( rTxtRepeat.x + rTxtRepeat.w / 2, rTxtRepeat.y, lngPack.i18n ( "Text~Comp~Repeat" ) );
 
 
 	// Der Haken:
@@ -6892,7 +6892,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !BauenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Build" ), true, rBtnBuy.x, rBtnBuy.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Build" ), true, rBtnBuy.x, rBtnBuy.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
 			BauenPressed = true;
@@ -6918,7 +6918,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
 
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
 
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -6930,7 +6930,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Delete" ), true, rBtnDel.x, rBtnDel.y, buffer );
+			drawButton ( lngPack.i18n ( "Text~Button~Delete" ), true, rBtnDel.x, rBtnDel.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
 			EntfernenPressed = true;
@@ -6957,7 +6957,7 @@ void cBuilding::ShowBuildMenu ( void )
 					ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
 				}
 
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
 
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -6970,7 +6970,7 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( b && !AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = true;
@@ -6984,7 +6984,7 @@ void cBuilding::ShowBuildMenu ( void )
 		else
 			if ( AbbruchPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				AbbruchPressed = false;
@@ -6996,7 +6996,7 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -7063,7 +7063,7 @@ void cBuilding::ShowBuildMenu ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
@@ -7524,7 +7524,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H};
 	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H};
 
-	string sTmp = lngPack.Translate ( "Text~Menu_Main~Button_Build" );
+	string sTmp = lngPack.i18n ( "Text~Button~Build" );
 
 	if ( speed == 0 )
 	{
@@ -8457,7 +8457,7 @@ void cBuilding::ShowDetails ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
-	font->showText ( 55, 177, lngPack.Translate ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
@@ -8466,7 +8466,7 @@ void cBuilding::ShowDetails ( void )
 	{
 		// Schild:
 		DrawNumber ( 31, 189, data.shield, data.max_shield, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Shield" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Shield" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 		DrawSymbol ( SShield, 88, 186, 70, data.shield, data.max_shield, GraphicsData.gfx_hud );
 	}
@@ -8475,7 +8475,7 @@ void cBuilding::ShowDetails ( void )
 	{
 		// Load:
 		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Cargo" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 		switch ( data.can_load )
 		{
@@ -8508,7 +8508,7 @@ void cBuilding::ShowDetails ( void )
 		// Gesamt:
 		if ( data.can_load == TRANS_METAL || data.can_load == TRANS_OIL || data.can_load == TRANS_GOLD )
 		{
-			font->showText ( 55, 201, lngPack.Translate ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			switch ( data.can_load )
 			{
@@ -8537,7 +8537,7 @@ void cBuilding::ShowDetails ( void )
 			{
 				// Munition:
 				DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
-				font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 			}
@@ -8545,7 +8545,7 @@ void cBuilding::ShowDetails ( void )
 			// Schüsse:
 			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
 
-			font->showText ( 55, 212, lngPack.Translate ( "Text~Hud~Shots" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
 		}
@@ -8554,19 +8554,19 @@ void cBuilding::ShowDetails ( void )
 			{
 				// EnergieProduktion:
 				DrawNumber ( 31, 189, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
-				font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Energy" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Energy" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 				DrawSymbol ( SEnergy, 88, 187, 70, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
 
 				if ( owner == game->ActivePlayer )
 				{
 					// Gesammt:
-					font->showText ( 55, 201, lngPack.Translate ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawNumber ( 31, 201, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
 					DrawSymbol ( SEnergy, 88, 199, 70, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
 					// Verbrauch:
-					font->showText ( 55, 212, lngPack.Translate ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawNumber ( 31, 212, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
 					DrawSymbol ( SEnergy, 88, 212, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
@@ -8577,19 +8577,19 @@ void cBuilding::ShowDetails ( void )
 				{
 					// HumanProduktion:
 					DrawNumber ( 31, 189, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
-					font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Teams" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Teams" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawSymbol ( SHuman, 88, 187, 70, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
 
 					if ( owner == game->ActivePlayer )
 					{
 						// Gesammt:
-						font->showText ( 55, 201, lngPack.Translate ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+						font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 						DrawNumber ( 31, 201, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
 						DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
 						// Verbrauch:
-						font->showText ( 55, 212, lngPack.Translate ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+						font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 						DrawNumber ( 31, 212, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
 						DrawSymbol ( SHuman, 88, 210, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
@@ -8602,14 +8602,14 @@ void cBuilding::ShowDetails ( void )
 						if ( IsWorking )
 						{
 							DrawNumber ( 31, 189, data.human_need, data.human_need, GraphicsData.gfx_hud );
-							font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawSymbol ( SHuman, 88, 187, 70, data.human_need, data.human_need, GraphicsData.gfx_hud );
 						}
 						else
 						{
 							DrawNumber ( 31, 189, 0, data.human_need, GraphicsData.gfx_hud );
-							font->showText ( 55, 189, lngPack.Translate ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawSymbol ( SHuman, 88, 187, 70, 0, data.human_need, GraphicsData.gfx_hud );
 						}
@@ -8617,7 +8617,7 @@ void cBuilding::ShowDetails ( void )
 						if ( owner == game->ActivePlayer )
 						{
 							// Gesammt:
-							font->showText ( 55, 201, lngPack.Translate ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawNumber ( 31, 201, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
 							DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
@@ -8864,7 +8864,7 @@ void cBuilding::ShowHelp ( void )
 	SDL_BlitSurface ( typ->info, NULL, buffer, &rInfoTxt );
 
 	//show menu title
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.Translate ( "Text~Vehicles~Title_Info" ) );
+	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Unitinfo" ) );
 
 
 	// show text
@@ -8875,7 +8875,7 @@ void cBuilding::ShowHelp ( void )
 	ShowBigDetails();
 
 	//draw button
-	drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rButton.x, rButton.y, buffer );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
 
 	SHOW_SCREEN 	// Den Buffer anzeigen
 	mouse->GetBack ( buffer );
@@ -8906,7 +8906,7 @@ void cBuilding::ShowHelp ( void )
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), true, rButton.x, rButton.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rButton.x, rButton.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -8920,7 +8920,7 @@ void cBuilding::ShowHelp ( void )
 		else
 			if ( FertigPressed )
 			{
-				drawButton ( lngPack.Translate ( "Text~Menu_Main~Button_Done" ), false, rButton.x, rButton.y, buffer );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;

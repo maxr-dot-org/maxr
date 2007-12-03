@@ -628,35 +628,35 @@ void cPlayer::DoResearch ( void )
 				switch ( i )
 				{
 					case 0:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Attack" ));
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Attack" ));
 						a=0.5;
 						break;
 					case 1:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Shoots" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Shoots" ) );
 						a=0.5;
 						break;
 					case 2:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Range" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Range" ) );
 						a=1.0;
 						break;
 					case 3:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Armor" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Armor" ) );
 						a=0.25;
 						break;
 					case 4:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Hitpoints" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Hitpoints" ) );
 						a=0.25;
 						break;
 					case 5:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Speed" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Speed" ) );
 						a=0.5;
 						break;
 					case 6:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Scan" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Scan" ) );
 						a=1.0;
 						break;
 					case 7:
-						game->AddMessage ( lngPack.Translate ( "Text~Comp~Research_Costs" ) );
+						game->AddMessage ( lngPack.i18n ( "Text~Comp~Research_Costs" ) );
 						a=1.0;
 						break;
 				}

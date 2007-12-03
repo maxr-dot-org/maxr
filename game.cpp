@@ -729,7 +729,7 @@ int cGame::CheckUser ( void )
 	}
 	else
 	{
-		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.Translate( "Text~Comp~End_Game") ) )
+		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
 		{
 			game->DrawMap ( false );
 			SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
@@ -1862,7 +1862,7 @@ bool cGame::DoCommand ( char *cmd )
 		memset ( ActivePlayer->ScanMap,1,map->size*map->size );
 		PlayerCheat=ActivePlayer->name; 
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Fog Off\"";
 		return true;
 	}
@@ -1872,7 +1872,7 @@ bool cGame::DoCommand ( char *cmd )
 		memset ( ActivePlayer->ResourceMap,1,map->size*map->size );
 		PlayerCheat=ActivePlayer->name; 
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Survey\"";
 		return true;
 	}
@@ -1881,7 +1881,7 @@ bool cGame::DoCommand ( char *cmd )
 	{
 		ActivePlayer->Credits+=1000;
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Credits\"";
 		return true;
 	}
@@ -1893,7 +1893,7 @@ bool cGame::DoCommand ( char *cmd )
 		engine->DestroyObject ( x+y*map->size,true );
 		PlayerCheat=ActivePlayer->name; 
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Kill\"";
 		return true;
 	}
@@ -1914,7 +1914,7 @@ bool cGame::DoCommand ( char *cmd )
 		}
 		PlayerCheat=ActivePlayer->name; 
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"God Off\"";
 		return true;
 	}
@@ -1922,7 +1922,7 @@ bool cGame::DoCommand ( char *cmd )
 	{
 		PlayerCheat=ActivePlayer->name; 
 		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.Translate( "Text~Comp~Cheat");
+		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Load\"";
 		
 		if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammo=SelectedVehicle->data.max_ammo;SelectedVehicle->ShowDetails();}
@@ -4201,7 +4201,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	SDL_BlitSurface ( sf,NULL,buffer,NULL );
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 	SDL_BlitSurface ( sf,&scr,buffer,&scr );
-	stmp=ActivePlayer->name; stmp+=lngPack.Translate( "Text~Game_MP~Comp_Player_Turn");
+	stmp=ActivePlayer->name; stmp+=lngPack.i18n( "Text~Multiplayer~Player_Turn");
 	ShowOK ( stmp,true );
 	if ( HotSeatPlayer!=0 )
 	{

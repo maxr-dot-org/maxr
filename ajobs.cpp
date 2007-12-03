@@ -450,7 +450,7 @@ bool cAJobs::MakeImpact ( void )
 		{
 			sMessage = name;
 			sMessage += " ";
-			sMessage += lngPack.Translate( "Text~Comp~Destroyed");
+			sMessage += lngPack.i18n( "Text~Comp~Destroyed");
 			game->AddCoords ( sMessage,DestX,DestY );
 			PlayVoice ( VoiceData.VOIDestroyedUs );
 		}
@@ -464,12 +464,12 @@ bool cAJobs::MakeImpact ( void )
 			if ( destroyed||target->data.hit_points<=0 )
 			{
 				
-				sMessage += lngPack.Translate( "Text~Comp~Destroyed");
+				sMessage += lngPack.i18n( "Text~Comp~Destroyed");
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sMessage += lngPack.Translate( "Text~Comp~Attacked");
+				sMessage += lngPack.i18n( "Text~Comp~Attacked");
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( sMessage,DestX,DestY );
@@ -480,12 +480,12 @@ bool cAJobs::MakeImpact ( void )
 			sMessage += " ";
 			if ( destroyed||btarget->data.hit_points<=0 )
 			{
-				sMessage += lngPack.Translate( "Text~Comp~Destroyed");
+				sMessage += lngPack.i18n( "Text~Comp~Destroyed");
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}
 			else
 			{
-				sMessage += lngPack.Translate( "Text~Comp~Attacked");
+				sMessage += lngPack.i18n( "Text~Comp~Attacked");
 				PlayVoice ( VoiceData.VOIAttackingUs );
 			}
 			game->AddCoords ( sMessage,DestX,DestY );

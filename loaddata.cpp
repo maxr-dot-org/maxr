@@ -40,7 +40,7 @@
 
 TiXmlDocument LanguageFile;
 
-// Translates the loaded data to the old data structure.
+// i18ns the loaded data to the old data structure.
 // This should be just used temporarily while the game doesn't undestand new structure.
 void ConvertData(int unitnum, bool vehicle);
 
@@ -93,7 +93,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Keys
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Keys" ), 0, 3 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Keys" ), 0, 3 );
 	
 	if(LoadKeys()!=1)
 	{
@@ -109,7 +109,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Fonts
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Fonts" ), 0, 4 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Fonts" ), 0, 4 );
 	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
 	if (LoadFonts ( SettingsData.sFontPath.c_str() ) != 1 )
 	{
@@ -125,7 +125,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Graphics
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_GFX" ), 0, 5 );
+	MakeLog ( lngPack.i18n ( "Text~Init~GFX" ), 0, 5 );
 	
 	if ( LoadGraphics ( SettingsData.sGfxPath.c_str() ) != 1 )
 	{
@@ -142,7 +142,7 @@ int LoadData ( void * )
 	cLog::mark();
 		
 	// Load Effects
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Effects" ), 0, 6 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Effects" ), 0, 6 );
 	
 	if(LoadEffects ( SettingsData.sFxPath.c_str() ) != 1)
 	{
@@ -158,7 +158,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Terrain
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Terrain" ), 0, 7 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Terrain" ), 0, 7 );
 	
 	if ( LoadTerrain ( SettingsData.sTerrainPath.c_str() ) != 1 )
 	{
@@ -174,7 +174,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Vehicles
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Vehicles" ), 0, 8 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Vehicles" ), 0, 8 );
 	
 	if ( LoadVehicles() != 1 )
 	{
@@ -190,7 +190,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Buildings
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Buildings" ), 0, 9 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Buildings" ), 0, 9 );
 	
 	if ( LoadBuildings() != 1)
 	{
@@ -206,7 +206,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Music
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Music" ), 0, 10 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
 	
 	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
 	{
@@ -222,7 +222,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Sounds
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Sounds" ), 0, 11 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 11 );
 	
 	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
 	{
@@ -238,7 +238,7 @@ int LoadData ( void * )
 	cLog::mark();
 	
 	// Load Voices
-	MakeLog ( lngPack.Translate ( "Text~Initialisation~Load_Voices" ), 0, 12 );
+	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 12 );
 	
 	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
 	{

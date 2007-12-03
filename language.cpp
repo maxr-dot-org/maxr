@@ -85,7 +85,7 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 	return 0;
 }
 
-std::string cLanguage::Translate(std::string szInputText)
+std::string cLanguage::i18n(std::string szInputText)
 {
 	StrStrMap :: const_iterator impTranslation;
 	impTranslation = m_mpLanguage.find( szInputText );
@@ -94,7 +94,7 @@ std::string cLanguage::Translate(std::string szInputText)
 	{
 		if( m_bErrorMsgTranslationLoaded == true )
 		{
-			return Translate( "Text~Error_Messages~ERROR_Missing_Translation" , szInputText );
+			return i18n( "Text~Error_Messages~ERROR_Missing_Translation" , szInputText );
 		}else
 		{
 			return std::string("missing translation: ") + szInputText;
@@ -106,12 +106,12 @@ std::string cLanguage::Translate(std::string szInputText)
 }
 
 // Translation with replace %s
-std::string cLanguage::Translate(std::string  szMainText, std::string szInsertText)
+std::string cLanguage::i18n(std::string  szMainText, std::string szInsertText)
 {
 	std::string  szMainTextNew;
 	std::size_t iPos;
 
-	szMainTextNew = this->Translate( szMainText );
+	szMainTextNew = this->i18n( szMainText );
 	iPos = szMainTextNew.find( "%s" );
 	if( iPos == std::string::npos )
 	{
@@ -227,7 +227,7 @@ int cLanguage::ReadLanguagePack()
 	}
 
 
-	fLog.write(this->Translate("Text~Error_Messages~INFO_Language_initialised"), cLog::eLOG_TYPE_INFO );
+	fLog.write(this->i18n("Text~Error_Messages~INFO_Language_initialised"), cLog::eLOG_TYPE_INFO );
 
 	return 0;
 }
@@ -313,7 +313,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		{
 			if( m_bErrorMsgTranslationLoaded == true )
 			{
-				m_mpLanguage[szXmlNodePath] = Translate( "Text~Error_Messages~ERROR_Missing_Translation" ) + szXmlNodePath;
+				m_mpLanguage[szXmlNodePath] = i18n( "Text~Error_Messages~ERROR_Missing_Translation" ) + szXmlNodePath;
 			}else
 			{
 				m_mpLanguage[szXmlNodePath] = std::string("missing translation: ") + szXmlNodePath;
@@ -324,7 +324,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 	{
 		if( m_bErrorMsgTranslationLoaded == true )
 		{
-			m_mpLanguage[szXmlNodePath] = Translate( "Text~Error_Messages~ERROR_Missing_Translation" , szXmlNodePath);
+			m_mpLanguage[szXmlNodePath] = i18n( "Text~Error_Messages~ERROR_Missing_Translation" , szXmlNodePath);
 		}else
 		{
 			m_mpLanguage[szXmlNodePath] = std::string("missing translation: ") + szXmlNodePath;
@@ -532,7 +532,7 @@ std::string cLanguage::ReadSingleTranslation( std::string strInput )
 			if( strCurrent[0] == '~' ) strCurrent.erase(0,1);
 			pXmlNode = pXmlNode->FirstChild( strCurrent.c_str() );
 			if( pXmlNode == NULL )
-				throw Translate("Text~Error_Messages~ERROR_Missing_Translation" , m_mpLanguage[strInput] );
+				throw i18n("Text~Error_Messages~ERROR_Missing_Translation" , m_mpLanguage[strInput] );
 
 			iPosBegin = iPosEnd;
 		}while( iPosBegin != std::string::npos );

@@ -62,8 +62,8 @@ bool ShowYesNo ( string text )
 
 
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
-	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
-	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
+	placeSmallButton ( lngPack.i18n ( "Text~Button~Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
+	placeSmallButton ( lngPack.i18n ( "Text~Button~No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
 	font->showTextAsBlock(rText, text);
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
@@ -99,7 +99,7 @@ bool ShowYesNo ( string text )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = true;
@@ -113,7 +113,7 @@ bool ShowYesNo ( string text )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				ret = false;
@@ -173,7 +173,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	}
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	
-	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, false );
+	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButton.x, rButton.y, false );
 	font->showTextAsBlock(rTextBox, text);
 	font->showText(rTextField, stmp);
 	
@@ -201,7 +201,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rButton.x, rButton.y, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButton.x, rButton.y, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
@@ -296,7 +296,7 @@ void ShowOK ( string text, bool pure )
 	dest.w = 300;
 	dest.h = 231;
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
+	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
 	dest.x += 20;
 	dest.w -= 40;
 	dest.y += 20;
@@ -336,7 +336,7 @@ void ShowOK ( string text, bool pure )
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				break;
@@ -468,7 +468,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
-	placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 	font->showTextAsBlock(rDialogOnScreen, sLicence1);
@@ -509,7 +509,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			if ( b && !lb )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
 				mouse->draw ( false, screen );
 				SDL_Delay ( 2 );
 				break;
@@ -523,7 +523,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 				
 				switch(index)
 				{
@@ -560,7 +560,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				
-				placeSmallButton ( lngPack.Translate ( "Text~Menu_Main~Button_OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
 				switch(index)
 				{
@@ -699,17 +699,17 @@ void showPreferences ( void )
 	dest.h = SfDialog->h;
 	
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118+120, 383+29, buffer); 
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208+120, 383+29, buffer); 
+	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, 118+120, 383+29, buffer); 
+	drawButton(lngPack.i18n( "Text~Button~Done" ), false, 208+120, 383+29, buffer); 
 	
 	rFont.x = 120 + 160; //TOFIX: Text not centered
 	rFont.y = 29 + 15;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Preferences" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Preferences" ));
 	
 
 	//BEGIN BLOCK SOUND
 	//Headline
-	sTmp = lngPack.Translate ( "Text~Game_Settings~Title_Volume" ) + ":";
+	sTmp = lngPack.i18n ( "Text~Settings~Volume" ) + ":";
 	rFont.x = 145;
 	rFont.y = 85;
 	rFont.w = font->getTextWide(sTmp);
@@ -719,81 +719,81 @@ void showPreferences ( void )
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 105;
 	rFont.h = CELLSPACE_FONT;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Music" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Music" ));
 	drawSlider (SfDialog, BAR_X+120,BAR_Y,SettingsData.MusicVol*2,buffer );
 	drawCheckbox ( 210+120,73+29,SettingsData.MusicMute, buffer);
 	rFont.x = 355; 	rFont.w = 140;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 
 	//Effectsound
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Effects" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Effects" ));
 
 	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
 	drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 
 
 	//Voices
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Voices" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Voices" ));
 	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,buffer );
 	drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
 	rFont.x = 355; 	rFont.w = 140;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Disable" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 	//END BLOCK SOUND
 	//BEGIN BLOCK PLAYERNAME	
 	
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 158+29;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Start~Title_Player_Name" ));
+	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
 	font->showText(122+120,158+29, game->ActivePlayer->name);
 
 	//END BLOCK PLAYERNAME
 
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 193+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Animation" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Animation" ));
 
 	drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 213+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Shadows" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Shadows" ));
 	drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 233+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Alphaeffects" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Alphaeffects" ));
 	drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 193+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_ShowDamage" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamage" ));
 	drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 213+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_ShowDamageVehicle" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ));
 	drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
 	
 	rFont.x = 145+210; rFont.w = 100;
 	rFont.y = 233+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Tracks" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Tracks" ));
 	drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
 	
 	rFont.x = 145; 	rFont.w = 100;
 	rFont.y = 261+25;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Scrollspeed" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Scrollspeed" ));
 	drawSlider (SfDialog, BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
 	
 	rFont.x = 145+25; rFont.w = 100;
 	rFont.y = 290+33;
-	font->showText(rFont, lngPack.Translate( "Text~Game_Settings~Title_Autosave" ));
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Autosave" ));
 	drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
 	
 	SHOW_SCREEN
@@ -989,7 +989,7 @@ void showPreferences ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), true, 208+120, 383+29, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Done" ), true, 208+120, 383+29, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1025,7 +1025,7 @@ void showPreferences ( void )
 		}
 		else if ( FertigPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Done" ), false, 208+120, 383+29, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Done" ), false, 208+120, 383+29, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -1037,7 +1037,7 @@ void showPreferences ( void )
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, 118+120, 383+29, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, 118+120, 383+29, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1065,7 +1065,7 @@ void showPreferences ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, 118+120, 383+29, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, 118+120, 383+29, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1117,8 +1117,8 @@ bool showSelfdestruction()
 	}
 	SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDialogSrc,buffer,&rDialog ); //blit dialog
 	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&rGlass ); //blit security glass
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false, rButtonHot.x, rButtonHot.y, buffer); //blit sharp-button
-	drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, rButtonCancel.x, rButtonCancel.y, buffer); //blit cancel button
+	drawButton(lngPack.i18n( "Text~Button~Hot" ), false, rButtonHot.x, rButtonHot.y, buffer); //blit sharp-button
+	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rButtonCancel.x, rButtonCancel.y, buffer); //blit cancel button
 
 
 	// Den Buffer anzeigen:
@@ -1152,7 +1152,7 @@ bool showSelfdestruction()
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton ); //pressed
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), true, rButtonCancel.x, rButtonCancel.y, buffer);
+				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rButtonCancel.x, rButtonCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1164,7 +1164,7 @@ bool showSelfdestruction()
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Cancel" ), false, rButtonCancel.x, rButtonCancel.y ,buffer);
+			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rButtonCancel.x, rButtonCancel.y ,buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1175,7 +1175,7 @@ bool showSelfdestruction()
 			if ( b&&!ScharfPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), true, rButtonHot.x, rButtonHot.y,buffer);
+				drawButton(lngPack.i18n( "Text~Button~Hot" ), true, rButtonHot.x, rButtonHot.y,buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				ScharfPressed=true;
@@ -1188,7 +1188,7 @@ bool showSelfdestruction()
 		}
 		else if ( !Scharf&&ScharfPressed )
 		{
-			drawButton(lngPack.Translate( "Text~Menu_Main~Button_Hot" ), false,  rButtonHot.x, rButtonHot.y, buffer);
+			drawButton(lngPack.i18n( "Text~Button~Hot" ), false,  rButtonHot.x, rButtonHot.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			ScharfPressed=false;
