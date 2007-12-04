@@ -317,28 +317,9 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	if ( DEBUGFONTS )
 		cLog::write ( "Seeking through " + sText, cLog::eLOG_TYPE_DEBUG );
 
-	string sTmp = sText;
-
-	string sTextShortened;
+	string sTmp;
 
 	int k;
-
-	int lastK = 0;
-
-	do
-	{
-		//search and replace \n since we want a blocktext - no manual breaklines allowed
-		k = ( int ) sText.find ( "\n" );
-
-		if ( k != string::npos )
-		{
-			if(DEBUGFONTS) cLog::write("Fount breakline at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
-			sText.erase ( k, 1 );
-			sText.insert ( k, " " );
-			sTmp=sText;
-		}
-	}
-	while ( k != string::npos );
 
 	do
 	{
@@ -349,26 +330,59 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 		{
 			if(DEBUGFONTS) cLog::write("Fount doubleblank at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
 			sText.erase ( k, 1 );
-			sTmp = sText;
 		}
 	}
 	while ( k != string::npos );
 
-	SDL_Rect rLenght = getTextSize ( sText, eBitmapFontType );
+	do //support of linebreaks: snip text at linebreaks, do the auto linebreak for first part and proceed with second part
+	{
+		//search and replace \n since we want a blocktext - no manual breaklines allowed
+		k = ( int ) sText.find ( "\n" );
+
+		if ( k != string::npos )
+		{
+			if(DEBUGFONTS) cLog::write("Fount breakline at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
+			
+			sTmp=sText;
+			
+			sText.erase ( 0, k+1 ); //delete everything before and including linebreak \n
+			sTmp.erase (k, sTmp.size()); //delete everything after \n
+			
+			drawWithBreakLines(rDest, sTmp, eBitmapFontType, surface); //draw first part of text and proceed searching for breaklines
+			rDest.y += font->getFontHeight(eBitmapFontType); //add newline for each breakline			
+		}
+	}
+	while ( k != string::npos );
+
+	drawWithBreakLines(rDest, sText, eBitmapFontType, surface); //draw rest of text
+
+
+}
+
+void cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
+{
+	int k;
+	int lastK = 0;
+	
+	SDL_Rect rLenght = {0,0,0,0};
+	string sTmp = sText;
+	string sTextShortened;
+
+	rLenght = getTextSize ( sText, eBitmapFontType );
 
 	if ( rLenght.w > rDest.w ) //text is longer than dest-width - let's snip it
 	{
 		do
 		{
 			k = ( int ) sTmp.find ( " " ); //search spaces/blanks
-
+	
 			if ( k == string::npos ) //reached the end but leftovers might be to long
 			{
 				rLenght = getTextSize ( sText, eBitmapFontType ); //test new string lenght
 				if ( rLenght.w > rDest.w ) //if leftover is to long snip it too
 				{
 					sTextShortened = sText; //get total leftover again
-
+	
 					if ( lastK > 0 )
 					{
 						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
@@ -380,14 +394,14 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
 						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
 					}
-
+	
 					showText ( rDest, sTextShortened, eBitmapFontType, surface ); //blit part of text
 					rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak
 				}
-
+	
 				showText ( rDest, sText, eBitmapFontType, surface ); //draw last part of text
 			}
-
+	
 			if ( k != string::npos )
 			{
 				sTmp.erase ( k, 1 ); //replace spaces with # so we don't find them again next search
@@ -400,7 +414,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 				{
 					//found important lastK to snip text since text is now to long
 					sTextShortened = sText; //copy text to tmp string
-
+	
 					if ( lastK > 0 )
 					{
 						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
@@ -411,9 +425,9 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 						sTextShortened.erase ( sText.size() / 2, sTextShortened.size() ); //erase everything longer than line
 						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
 						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
-
+	
 					}
-
+	
 					sTmp = sText; //copy snipped original sText to sTmp to start searching again
 					showText ( rDest, sTextShortened, eBitmapFontType, surface ); //blit part of text
 					rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak

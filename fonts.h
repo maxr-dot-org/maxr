@@ -132,8 +132,8 @@ class cBitmapFont{
 		int getTextWide(std::string sText, int eBitmapFontType=LATIN_NORMAL);
 
 		/**
-		 * Displays a text as block.<br><br> This does <b>not</b> allow linebreaks and blanks in line. Linebreaks will be snipped. Unneeded blanks will be snipped. If you want a headline for a textblock create one manually!<br><br>
-		 * Do not try "Headline\n\n This is my text"!
+		 * Displays a text as block.<br><br> This does <b>not</b> allow blanks in line. Linebreaks are interpreted. Unneeded blanks will be snipped.<br><br>
+		 * Example: "Headline\n\n This is my text for a textblock that get's linebreaked automagically"!
 		 * @param rDest SDL_Rect for position and wide of textbox. Height is not taken care of!
 		 * @param sText text to draw
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
@@ -206,6 +206,7 @@ class cBitmapFont{
 		 * @param surface the SDL_Surface providing fonts seperated in 16x16 rows/cells on a 256x256px image
 		 */
 		void buildFont(SDL_Surface *surface);
+		void drawWithBreakLines( SDL_Rect rDest, std::string sText, int eBitmapFontType, SDL_Surface *surface );
 		int setLang(void);
 		int getIsoTable(int eFontLangCode);
 		void copyArray(SDL_Rect source[],SDL_Rect dest[]);
