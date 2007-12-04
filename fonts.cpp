@@ -348,8 +348,8 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 			sText.erase ( 0, k+1 ); //delete everything before and including linebreak \n
 			sTmp.erase (k, sTmp.size()); //delete everything after \n
 			
-			drawWithBreakLines(rDest, sTmp, eBitmapFontType, surface); //draw first part of text and proceed searching for breaklines
-			rDest.y += font->getFontHeight(eBitmapFontType); //add newline for each breakline			
+			rDest.y = drawWithBreakLines(rDest, sTmp, eBitmapFontType, surface); //draw first part of text and proceed searching for breaklines
+			// += font->getFontHeight(eBitmapFontType); //add newline for each breakline			
 		}
 	}
 	while ( k != string::npos );
@@ -359,7 +359,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 
 }
 
-void cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
+int cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
 {
 	int k;
 	int lastK = 0;
@@ -399,7 +399,8 @@ void cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapF
 					rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak
 				}
 	
-				showText ( rDest, sText, eBitmapFontType, surface ); //draw last part of text
+				showText ( rDest, sText, eBitmapFontType, surface ); //draw last part of
+				rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak text
 			}
 	
 			if ( k != string::npos )
@@ -443,7 +444,9 @@ void cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapF
 	else
 	{
 		showText ( rDest, sText, eBitmapFontType, surface ); //nothing to shorten, just blit text
+		rDest.y += getFontHeight ( eBitmapFontType ); //and add a linebreak
 	}
+	return rDest.y;
 }
 
 int cBitmapFont::getFontHeight(int eBitmapFontType)

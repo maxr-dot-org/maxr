@@ -206,7 +206,7 @@ class cBitmapFont{
 		 * @param surface the SDL_Surface providing fonts seperated in 16x16 rows/cells on a 256x256px image
 		 */
 		void buildFont(SDL_Surface *surface);
-		void drawWithBreakLines( SDL_Rect rDest, std::string sText, int eBitmapFontType, SDL_Surface *surface );
+		int drawWithBreakLines( SDL_Rect rDest, std::string sText, int eBitmapFontType, SDL_Surface *surface );
 		int setLang(void);
 		int getIsoTable(int eFontLangCode);
 		void copyArray(SDL_Rect source[],SDL_Rect dest[]);
