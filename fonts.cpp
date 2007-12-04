@@ -635,11 +635,11 @@ void cBitmapFont::getCharset(int eBitmapFontType)
 }
 
 SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
-{
+{	
+	getCharset(eBitmapFontType);
+	
 	//tmp offsets
 	SDL_Rect rTmp = {0, 0, 0, sfTmp->h / 16};
-	
-	getCharset(eBitmapFontType);
 	
 	int ascii;
 	int iSpace = 0;
@@ -669,6 +669,7 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 		if(sText[i] == ' ')
 		{
 			rTmp.w += sfTmp->w / 32;
+			
 		} //is new line?
 		else if(sText[i] == '\n')
 		{
