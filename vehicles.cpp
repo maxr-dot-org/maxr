@@ -3591,7 +3591,7 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text;
-	int i, t;
+	int i;
 	scr.x = 479;
 	scr.y = 52;
 	scr.w = 150;

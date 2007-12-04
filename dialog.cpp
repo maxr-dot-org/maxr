@@ -430,7 +430,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	
 	int k; //search and replace @ with (at) in string since we don't support the @ in our fontset
 	do{
-		k = sLicence4.find("@");
+		k = ( int ) sLicence4.find("@");
 		if(k != string::npos)
 		{
 			sLicence4.erase(k, 1);
@@ -1234,6 +1234,7 @@ bool showSelfdestruction()
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
 	}
+	return false;
 }
 
  //FIXME: offset method only works on fixed resolution 640x460. 

@@ -3407,7 +3407,7 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 {
 	sLanding *ptr;
 	SDL_Rect scr,dest,text;
-	int i,t;
+	int i;
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=222;
 	SDL_BlitSurface ( surface,&scr,buffer,&scr );
@@ -3534,7 +3534,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 {
 	sHUp *ptr;
 	SDL_Rect dest,scr,text;
-	int i,t,k;
+	int i,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
@@ -4854,7 +4854,6 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_SIGNING_IN:
 			{
 				cPlayer *p;
-				char sztmp[256];
 				TList *Strings;
 				Strings = SplitMessage ( msgstring );
 				p=new cPlayer ( Strings->Items[0],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],NextPlayerID++ );
@@ -4982,7 +4981,6 @@ void cMultiPlayer::HandleMenuMessages()
 			// Prüfen, ob der Client bereit ist zum Go:
 			case MSG_CHECK_FOR_GO:
 			{
-				char sztmp[256];
 				TList *Strings;
 				Strings = SplitMessage ( msgstring );
 				FILE *fp;

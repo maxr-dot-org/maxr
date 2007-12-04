@@ -165,7 +165,7 @@ int cBitmapFont::setLang(void)
 {
 	string sLang = SettingsData.sLanguage;
 	
-	for(int i=0; i < sLang.size(); i++)
+	for(int i=0; i < ( int )sLang.size(); i++)
 	{
 		sLang[i] = toupper(sLang[i]);
 	}
@@ -328,7 +328,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	do
 	{
 		//search and replace \n since we want a blocktext - no manual breaklines allowed
-		k = sText.find ( "\n" );
+		k = ( int ) sText.find ( "\n" );
 
 		if ( k != string::npos )
 		{
@@ -343,7 +343,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	do
 	{
 		//erase all blanks > 2
-		k = sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
+		k = ( int ) sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
 
 		if ( k != string::npos )
 		{
@@ -360,7 +360,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	{
 		do
 		{
-			k = sTmp.find ( " " ); //search spaces/blanks
+			k = ( int ) sTmp.find ( " " ); //search spaces/blanks
 
 			if ( k == string::npos ) //reached the end but leftovers might be to long
 			{
@@ -638,7 +638,7 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 		case LATIN_SMALL_RED:
 		case LATIN_SMALL_WHITE:
 		case LATIN_SMALL_YELLOW:
-			for(int i=0; i < sText.size(); i++)
+			for(int i=0; i < ( int )sText.size(); i++)
 			{
 				sText[i] = toupper(sText[i]);
 			}
@@ -705,7 +705,7 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 		case LATIN_SMALL_RED:
 		case LATIN_SMALL_WHITE:
 		case LATIN_SMALL_YELLOW:
-			for(int i=0; i < sText.size(); i++)
+			for(int i=0; i < ( int )sText.size(); i++)
 			{
 				sText[i] = toupper(sText[i]);
 			}
