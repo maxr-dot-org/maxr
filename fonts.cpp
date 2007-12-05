@@ -23,7 +23,7 @@
 #include "files.h"
 #include "main.h"
 
-#define DEBUGFONTS false
+#define DEBUGFONTS true
 
 cBitmapFont::cBitmapFont()
 {
@@ -678,11 +678,15 @@ SDL_Rect cBitmapFont::getTextSize(string sText, int eBitmapFontType)
 		{
 			rTmp.h += sfTmp->h / 16; //high always the same per charset
 		}
+		else if(13 == (unsigned char) sText[i])
+		{
+			//ignore - is breakline in file
+		}
 		else
 		{
 			//get ascii value
 			ascii = (unsigned char) sText[i];
-			rTmp.w += chars[ascii].w + iSpace;
+			rTmp.w += (chars[ascii].w) + iSpace;
 		}
 	}
 	
@@ -747,6 +751,10 @@ void cBitmapFont::showText(int x, int y, string sText, int eBitmapFontType, SDL_
 				offY += sfTmp->h / 16;
 				offX = x;
 			}
+			else if(13 == (unsigned char) sText[i])
+			{
+				//ignore - is breakline in file
+			}
 			else
 			{
 				//get ascii value
@@ -798,7 +806,7 @@ Uint8 cBitmapFont::getPixel8(int x, int y, SDL_Surface *surface)
 
 int cBitmapFont::getTextWide(string sText, int eBitmapFontType)
 {
-	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType); //FIXME: doesn't work proper on small fonts!
+	SDL_Rect rTmp = getTextSize(sText, eBitmapFontType);
 	return rTmp.w;
 }
 
