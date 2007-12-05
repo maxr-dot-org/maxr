@@ -3590,7 +3590,7 @@ void cVehicle::ShowBuildMenu ( void )
 void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text;
+	SDL_Rect dest, scr, text = { 530, 70, 72, 16};
 	int i;
 	scr.x = 479;
 	scr.y = 52;
@@ -3610,8 +3610,6 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 	dest.y = 58;
 	dest.w = 32;
 	dest.h = 32;
-	text.x = 530;
-	text.y = 70;
 
 	for ( i = offset;i < list->Count;i++ )
 	{
@@ -3790,9 +3788,9 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 		
 		string sTmp = UnitsData.building[ptr->id].data.name;
 		
-		if ( font->getTextWide ( sTmp ) > 72 )
+		if ( font->getTextWide ( sTmp ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 			{
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);

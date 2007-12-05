@@ -3406,7 +3406,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface )
 {
 	sLanding *ptr;
-	SDL_Rect scr,dest,text;
+	SDL_Rect scr,dest,text = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
 	int i;
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=222;
@@ -3415,7 +3415,6 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 	scr.w=32;scr.h=32;
 	dest.x=340;dest.y=20;
 	dest.w=32;dest.h=32;
-	text.x=375;text.y=32;
 	for ( i=offset;i<list->Count;i++ )
 	{
 		if ( i>=offset+5 ) break;
@@ -3450,12 +3449,10 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 		}
 		// Text ausgeben:
-		
-
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > 87 )
-		{
-			if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > 87 )
-			{
+		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > text.w )
+		{		
+			if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > text.w )
+			{				
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
 				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
@@ -3469,6 +3466,7 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 		{
 			font->showText ( text, UnitsData.vehicle[ptr->id].data.name);
 		}
+		
 		
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
@@ -3533,7 +3531,7 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,int credits, cPlayer *p )
 {
 	sHUp *ptr;
-	SDL_Rect dest,scr,text;
+	SDL_Rect dest,scr,text = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
 	int i,k;
 	scr.x=479;scr.y=52;
 	scr.w=150;scr.h=330;
@@ -3542,7 +3540,6 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
 	dest.w=32;dest.h=32;
-	text.x=530;text.y=70;
 	if ( list->Count==0 )
 	{
 		scr.x=0;scr.y=0;
@@ -3664,15 +3661,16 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		if ( ptr->vehicle )
 		{
 			sTmp = UnitsData.vehicle[ptr->id].data.name;
+			font->showTextCentered(616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs));
 		}
 		else
 		{
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		if ( font->getTextWide ( sTmp ) > 87 )
+		if ( font->getTextWide ( sTmp ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 87 )
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 			{
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);

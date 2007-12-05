@@ -4204,7 +4204,7 @@ void cBuilding::ShowUpgrade ( void )
 void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool beschreibung )
 {
 	sUpgradeStruct *ptr;
-	SDL_Rect dest, scr, text;
+	SDL_Rect dest, scr, text = { 530, 70, 72, 0 };
 	int i, k;
 	scr.x = 479;
 	scr.y = 52;
@@ -4219,8 +4219,6 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 	dest.y = 58;
 	dest.w = 32;
 	dest.h = 32;
-	text.x = 530;
-	text.y = 70;
 
 	if ( list->Count == 0 )
 	{
@@ -4382,9 +4380,9 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		if ( font->getTextWide ( sTmp ) > 72 )
+		if ( font->getTextWide ( sTmp ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 			{
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
@@ -7308,7 +7306,7 @@ void cBuilding::ShowBuildMenu ( void )
 void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text;
+	SDL_Rect dest, scr, text = { 530, 70, 72, 16 };
 	int i;
 	scr.x = 479;
 	scr.y = 52;
@@ -7328,8 +7326,6 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 	dest.y = 58;
 	dest.w = 32;
 	dest.h = 32;
-	text.x = 530;
-	text.y = 70;
 
 	for ( i = offset;i < list->Count;i++ )
 	{
@@ -7493,9 +7489,9 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 		// Text ausgeben:
 		string sTmp = UnitsData.vehicle[ptr->id].data.name;
 		
-		if ( font->getTextWide ( sTmp ) > 72 )
+		if ( font->getTextWide ( sTmp ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 72 )
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 			{
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
@@ -7558,7 +7554,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
-	SDL_Rect scr, dest, text;
+	SDL_Rect scr, dest, text = { 375, 70, 80, 16};
 	int i;
 	scr.x = 330;
 	scr.y = 49;
@@ -7575,8 +7571,6 @@ void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool sh
 	dest.y = 58;
 	dest.w = 32;
 	dest.h = 32;
-	text.x = 375;
-	text.y = 70;
 
 	for ( i = offset;i < list->Count;i++ )
 	{
@@ -7751,9 +7745,9 @@ void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool sh
 
 		string sTmp = UnitsData.vehicle[ptr->id].data.name;
 		
-		if ( font->getTextWide ( sTmp ) > 82 )
+		if ( font->getTextWide ( sTmp ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > 82 )
+			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 			{
 				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
