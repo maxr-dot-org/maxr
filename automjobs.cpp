@@ -229,8 +229,6 @@ bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 //searches the map for a location where the surveyor can resume
 void cAutoMJob::PlanLongMove()
 {
-	//TODO: add parameter for distance to surveyors
-
 	int x, y;
 	int bestX, bestY;
 	float destinationOP, destinationSurv;
@@ -243,10 +241,23 @@ void cAutoMJob::PlanLongMove()
 		{
 			if ( !FieldIsFree( x, y) ) continue;
 			if ( vehicle->owner->ResourceMap[x + y * engine->map->size] == 1 ) continue;
+			
+			//the distance to other surveyors
+			int i;
+			float distancesSurv = 0;
+			float temp;
+			for ( i = 0; i < iCount ; i++)
+			{
+				if ( i == iNumber ) continue;
+				if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
+		
+				temp = sqrt( pow( (float) x - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) y - autoMJobs[i]->vehicle->PosY , 2) );
+				distancesSurv += pow( temp, EXP2);
+			}
 
 			destinationOP = sqrt( (float) (x - OPX) * (x - OPX) + (y - OPY) * (y - OPY) );
 			destinationSurv = sqrt( (float) (x - vehicle->PosX) * (x - vehicle->PosX) + (y - vehicle->PosY) * (y - vehicle->PosY) );
-			tempValue = D * destinationOP + E * destinationSurv;
+			tempValue = D * destinationOP + E * destinationSurv + F * distancesSurv;
 
 			if ( (tempValue < minValue) || (minValue == 0) )
 			{
