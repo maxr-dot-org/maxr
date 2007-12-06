@@ -1399,18 +1399,18 @@ void cHud::ScaleSurfaces ( void )
 	fak= ( float ) ( Zoom/64.0 );
 	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
-		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img, (int) UnitsData.building[i].img_org->w*fak, (int) UnitsData.building[i].img_org->h*fak );
-		ScaleSurfaceAdv2 ( UnitsData.building[i].shw_org,UnitsData.building[i].shw, (int) UnitsData.building[i].shw_org->w*fak, (int) UnitsData.building[i].shw_org->h*fak );
+		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img, (int) ( UnitsData.building[i].img_org->w * fak ), (int) ( UnitsData.building[i].img_org->h * fak ) );
+		ScaleSurfaceAdv2 ( UnitsData.building[i].shw_org,UnitsData.building[i].shw, (int) ( UnitsData.building[i].shw_org->w * fak ), (int) ( UnitsData.building[i].shw_org->h * fak ) );
 		if ( UnitsData.building[i].eff_org )
 		{
-			if ( Zoom==64 ) ScaleSurfaceAdv2 ( UnitsData.building[i].eff_org,UnitsData.building[i].eff, (int) UnitsData.building[i].eff_org->w*fak, (int) UnitsData.building[i].eff_org->h*fak );
-			else ScaleSurfaceAdv2Spec ( UnitsData.building[i].eff_org,UnitsData.building[i].eff, (int) UnitsData.building[i].eff_org->w*fak, (int) UnitsData.building[i].eff_org->h*fak );
+			if ( Zoom==64 ) ScaleSurfaceAdv2 ( UnitsData.building[i].eff_org,UnitsData.building[i].eff, (int) ( UnitsData.building[i].eff_org->w * fak ), (int) ( UnitsData.building[i].eff_org->h * fak ) );
+			else ScaleSurfaceAdv2Spec ( UnitsData.building[i].eff_org,UnitsData.building[i].eff, (int) ( UnitsData.building[i].eff_org->w * fak ), (int) ( UnitsData.building[i].eff_org->h * fak ) );
 		}
 	}
-	ScaleSurfaceAdv2 ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) UnitsData.dirt_small_org->w*fak, (int) UnitsData.dirt_small_org->h*fak );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) UnitsData.dirt_small_shw_org->w*fak, (int) UnitsData.dirt_small_shw_org->h*fak );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) UnitsData.dirt_big_org->w*fak, (int) UnitsData.dirt_big_org->h*fak );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) UnitsData.dirt_big_shw_org->w*fak, (int) UnitsData.dirt_big_shw_org->h*fak );
+	ScaleSurfaceAdv2 ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) ( UnitsData.dirt_small_org->w * fak ), (int) ( UnitsData.dirt_small_org->h * fak ) );
+	ScaleSurfaceAdv2 ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) ( UnitsData.dirt_small_shw_org->w * fak ), (int) ( UnitsData.dirt_small_shw_org->h * fak ) );
+	ScaleSurfaceAdv2 ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * fak ), (int) ( UnitsData.dirt_big_org->h * fak ) );
+	ScaleSurfaceAdv2 ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * fak ), (int) ( UnitsData.dirt_big_shw_org->h * fak ) );
 
 	// Bänder:
 	ScaleSurface2 ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,Zoom );
