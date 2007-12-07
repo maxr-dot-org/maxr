@@ -3835,12 +3835,6 @@ void cGame::Load ( string name,int AP,bool MP )
 			            b->StoredVehicles->AddVehicle((cVehicle *)(int *)t); // Die ID (in OffX)
 					}
 				}
-
-				if ( b->data.can_attack )
-				{
-					b->owner->AddWachpostenB ( b );
-				}
-
 				break;
 			}
 		}
