@@ -3449,28 +3449,43 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 		}
 		// Text ausgeben:
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name ) > text.w )
-		{		
-			if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > text.w )
-			{				
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
-			}
+	
+		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > text.w )
+		{				
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, UnitsData.vehicle[ptr->id].data.name);
+			font->showText ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
 		}
+
 		
 		
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			font->showText(text.x,text.y+10, " ("+iToStr(ptr->cargo)+"/"+iToStr(UnitsData.vehicle[ptr->id].data.max_cargo)+")", LATIN_SMALL_WHITE);
+			int value = ptr->cargo;
+			int maxval = UnitsData.vehicle[ptr->id].data.max_cargo;
+			
+			if(value == 0)
+			{
+				font->showText(text.x,text.y+10, "(empty)", LATIN_SMALL_WHITE);
+			}
+			else if(value <= maxval / 4)
+			{
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_RED);
+			}
+			else if(value <= maxval / 2)
+			{
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_YELLOW);
+			}
+			else
+			{
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_GREEN);
+			}
+			
+			
 		}
 		text.y+=32+10;
 		dest.y+=32+10;
@@ -3661,30 +3676,25 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		if ( ptr->vehicle )
 		{
 			sTmp = UnitsData.vehicle[ptr->id].data.name;
-			font->showTextCentered(616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs));
+			font->showTextCentered(616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs), LATIN_SMALL_YELLOW);
 		}
 		else
 		{
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		if ( font->getTextWide ( sTmp ) > text.w )
+
+		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
-			{
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
-			}
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp);
+			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
+
 		
 		text.y+=32+2;
 		dest.y+=32+2;
