@@ -227,7 +227,7 @@
 			<Finished2 ENG="are finished"/>
 			<Detected ENG="detected"/>
 			<Attacked ENG="is under attack"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost."/>
+			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost."/>
 			<Turn_Start ENG="Start turn"/>
 			<Turn_Wait ENG="Please wait until all movements are completed"/>
 			<Turn_Automove ENG="Executing remaining movements"/>
