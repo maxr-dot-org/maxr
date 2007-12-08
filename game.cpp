@@ -729,6 +729,35 @@ int cGame::CheckUser ( void )
 	}
 	else
 	{
+	
+		//TODO: read keystates more sensitive - e.g. take care of ALT and STRG modifiers
+		//TODO: add more keys:
+		/*
+		e end turn
+		f center on selected unit
+		-/+ zoom bigger/smaller
+		g grid
+		PG DOWN center on selected unit
+		ARROWS scroll on map
+		ALT L load menu
+		ALT S save menu
+		ALT X end game
+		ALT F5 save window pos
+		ALT F6 save window pos
+		ALT F7 save window pos
+		ALT F8 save window pos
+		F5 jump to saved window pos
+		F6 jump to saved window pos
+		F7 jump to saved window pos
+		F8 jump to saved window pos
+		/ or ? activate help cursor
+		ALT C screenshot
+		Space + Enter + ESC cancel demo sequence
+		Shift + mouseclick groupcommand
+		
+		
+		*/
+	
 		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
 		{
 			game->DrawMap ( false );
