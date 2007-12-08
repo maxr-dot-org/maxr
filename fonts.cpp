@@ -150,7 +150,7 @@ cBitmapFont::cBitmapFont()
 
 cBitmapFont::~cBitmapFont()
 {
-	/*FIXME: dunno why but app crashes when I want to free my surfaces
+	
 	SDL_FreeSurface(sfLatinNormal);
 	SDL_FreeSurface(sfLatinBig);
 	SDL_FreeSurface(sfLatinBigGold);
@@ -158,7 +158,7 @@ cBitmapFont::~cBitmapFont()
 	SDL_FreeSurface(sfLatinSmallRed);
 	SDL_FreeSurface(sfLatinSmallGreen);
 	SDL_FreeSurface(sfLatinSmallYellow);
-	SDL_FreeSurface(sfTmp); */
+	
 }
 
 int cBitmapFont::setLang(void)
