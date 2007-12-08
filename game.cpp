@@ -754,7 +754,11 @@ int cGame::CheckUser ( void )
 		ALT C screenshot
 		Space + Enter + ESC cancel demo sequence
 		Shift + mouseclick groupcommand
-		
+		*/
+		//TODO: additional hotkeys
+		/*
+		mousewheel UP zoom out
+		mousewheel DOWN zoom in
 		
 		*/
 	
