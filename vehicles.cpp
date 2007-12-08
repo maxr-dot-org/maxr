@@ -3590,7 +3590,7 @@ void cVehicle::ShowBuildMenu ( void )
 void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 72, 16};
+	SDL_Rect dest, scr, text = { 530, 70, 80, 16};
 	int i;
 	scr.x = 479;
 	scr.y = 52;
@@ -3788,25 +3788,19 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 		
 		string sTmp = UnitsData.building[ptr->id].data.name;
 		
-		if ( font->getTextWide ( sTmp ) > text.w )
+		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
-			{
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
-			}
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp);
+			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
 		
-		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
+		
+		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_YELLOW );
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;

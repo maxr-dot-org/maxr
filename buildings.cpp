@@ -4204,7 +4204,7 @@ void cBuilding::ShowUpgrade ( void )
 void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool beschreibung )
 {
 	sUpgradeStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 72, 0 };
+	SDL_Rect dest, scr, text = { 530, 70, 80, 0 };
 	int i, k;
 	scr.x = 479;
 	scr.y = 52;
@@ -4380,22 +4380,16 @@ void cBuilding::ShowUpgradeList ( TList *list, int selected, int offset, bool be
 			sTmp = UnitsData.building[ptr->id].data.name;
 		}
 
-		if ( font->getTextWide ( sTmp ) > text.w )
+
+		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
-			{
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
-			}
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp);
+			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
 		
 		text.y += 32 + 2;
@@ -7306,7 +7300,7 @@ void cBuilding::ShowBuildMenu ( void )
 void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 72, 16 };
+	SDL_Rect dest, scr, text = { 530, 70, 80, 16 };
 	int i;
 	scr.x = 479;
 	scr.y = 52;
@@ -7488,26 +7482,20 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 
 		// Text ausgeben:
 		string sTmp = UnitsData.vehicle[ptr->id].data.name;
-		
-		if ( font->getTextWide ( sTmp ) > text.w )
+
+		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
-			{
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
-			}
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp);
+			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
 
-		font->showTextCentered ( 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ) );
+
+		font->showTextCentered ( 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ), LATIN_SMALL_YELLOW );
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
 	}
@@ -7745,23 +7733,18 @@ void cBuilding::ShowToBuildList ( TList *list, int selected, int offset, bool sh
 
 		string sTmp = UnitsData.vehicle[ptr->id].data.name;
 		
-		if ( font->getTextWide ( sTmp ) > text.w )
+
+		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
-			if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
-			{
-				text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-				font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-				text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			}
-			else
-			{
-				font->showText ( text, sTmp, LATIN_SMALL_WHITE);
-			}
+			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp);
+			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
+
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
