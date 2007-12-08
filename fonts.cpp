@@ -390,8 +390,9 @@ int cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapFo
 					}
 					else
 					{
-						sTextShortened.erase ( sText.size() / 2, sTextShortened.size() ); //erase everything longer than line
-						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
+						sTextShortened.erase ( sText.size() / 2 - 1 , sTextShortened.size() ); //erase everything longer than line
+						sTextShortened += "-";
+						sText.erase ( 0, sText.size() / 2 - 1 ); //erase txt from original that we just copied to tmp
 						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
 					}
 	
@@ -423,8 +424,9 @@ int cBitmapFont::drawWithBreakLines( SDL_Rect rDest, string sText, int eBitmapFo
 					}
 					else
 					{
-						sTextShortened.erase ( sText.size() / 2, sTextShortened.size() ); //erase everything longer than line
-						sText.erase ( 0, sText.size() / 2 + 1 ); //erase txt from original that we just copied to tmp
+						sTextShortened.erase ( sText.size() / 2 - 1, sTextShortened.size() ); //erase everything longer than line
+						sTextShortened += "-";
+						sText.erase ( 0, sText.size() / 2 - 1 ); //erase txt from original that we just copied to tmp
 						cLog::write ( "Textbox defined to small for text! Can not snip text correctly!", cLog::eLOG_TYPE_ERROR );
 	
 					}
