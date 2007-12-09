@@ -649,7 +649,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	// Ggf Meldung machen:
 	if ( v->owner!=game->ActivePlayer&&game->ActivePlayer->ScanMap[ToX+ToY*map->size]&&!game->ActivePlayer->ScanMap[FromX+FromY*map->size]&&v->detected )
 	{
-		char str[50];
+		char str[50]; //FIXME: remove array
 		sprintf ( str,"%s %s",v->name.c_str(), lngPack.i18n( "Text~Comp~Detected").c_str() );
 		game->AddCoords ( str,v->PosX,v->PosY );
 		if ( random ( 2,0 ) ==0 ) PlayVoice ( VoiceData.VOIDetected1 );
@@ -1935,7 +1935,7 @@ void cEngine::HandleGameMessages()
 			// TODO: player defeated:
 			case MSG_PLAYER_DEFEAT:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);				
 				network->NetMessageList->Delete ( i );
 				break;
 			}
