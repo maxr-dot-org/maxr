@@ -4366,10 +4366,10 @@ void cMultiPlayer::RunMenu ( void )
 					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
 
 					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
-					for ( int i=0;i<5;i++ ) //wait 5 seconds for connection - break in case we got one earlier
+					for ( int i=0;i<10;i++ ) //wait some seconds for connection - break in case we got one earlier
 					{
-						SDL_Delay ( 1000 );
-						if ( network->iStatus==STAT_CONNECTED ) break;
+						SDL_Delay ( 500 );
+						if ( network->iStatus==STAT_CONNECTED ) i = 10;
 
 					}
 					if( ! network->bReceiveThreadFinished )
