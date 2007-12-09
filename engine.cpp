@@ -138,7 +138,7 @@ void cEngine::Run ( void )
 				{
 					if( network && network->bServer )
 					{
-						SendInt( v->PosX + v->PosY * map->size,  MSG_END_MOVE);
+						SendIntBool( v->PosX + v->PosY * map->size, job->plane,  MSG_END_MOVE);
 						v->MoveJobActive = false;
 					}
 					else if( !network )
@@ -1675,14 +1675,25 @@ void cEngine::HandleGameMessages()
 			// TODO: new attackjob:
 			case MSG_ADD_ATTACKJOB:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( !network->bServer )
+				{
+					AddAttackJob( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), true, atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),atoi( Strings->Items[4].c_str() ) );
+				}
+				else
+				{
+					AddAttackJob( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), false, atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),atoi( Strings->Items[4].c_str() ) );
+				}
 				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// TODO: destroy object:
 			case MSG_DESTROY_OBJECT:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				TList *Strings;
+				Strings = SplitMessage ( sMsgString );
+				DestroyObject( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ) );
 				network->NetMessageList->Delete ( i );
 				break;
 			}

@@ -329,10 +329,6 @@ unsigned int cTCP::GenerateNewID()
 	iSec = SDL_GetTicks() / 1000 - iMin*60 - iHour*60*60;
 	iMsec = SDL_GetTicks() - iSec*1000 - iMin*60*1000 - iHour*60*60*1000;
 
-	char szTmp[13];	// Message-ID will allways be 12 characters long + null termination
-	sprintf(szTmp, "%0.2d:%0.2d:%0.2d:%0.3d", iMyID, iMin, iSec, iMsec );
-	cLog::write( (string)"ID generated: " + szTmp, LOG_TYPE_NETWORK); 
-
 	iReturnID = iMyID * 10000000;
 	iReturnID += iMin * 100000;
 	iReturnID += iSec * 1000;
