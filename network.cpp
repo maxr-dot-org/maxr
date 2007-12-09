@@ -24,11 +24,11 @@ cTCP::cTCP ( bool server )
 {
 	this->bServer=server;
 	iNum_clients=0;
-	iMax_clients=16;
+	iMax_clients=8;
 	iPlayerId=-1;
 	SocketSet=NULL;
 	sock_server=NULL;
-	for ( int i=0;i<16;i++ )
+	for ( int i=0;i<8;i++ )
 	{
 		sock_client[i]=NULL;
 	}
@@ -38,10 +38,12 @@ cTCP::cTCP ( bool server )
 	NetMessageList = new sList();
 	if(bServer)
 	{
+		iMyID = 0;
 		iNextMessageID = 1;
 	}
 	else
 	{
+		iMyID = -1;
 		iNextMessageID = -1;
 	}
 	bReceiveThreadFinished = true;
@@ -61,7 +63,7 @@ void cTCP::TCPClose()
 	if ( TCPResendThread ) SDL_KillThread( TCPResendThread );
 	if ( SocketSet ) SDLNet_FreeSocketSet ( SocketSet );
 	if ( sock_server ) SDLNet_TCP_Close ( sock_server );
-	for ( int i=0;i<16;i++ )
+	for ( int i=0;i<8;i++ )
 	{
 		if ( sock_client[i] ) SDLNet_TCP_Close ( sock_client[i] );
 	}
@@ -118,10 +120,19 @@ bool cTCP::TCPOpen ( void )
 				{
 					SDLNet_TCP_AddSocket ( SocketSet, sock_client[i] ); // Add clients to the socket-set
 				}
-				// Send next message ID to new client and generate a new one for next message
-				SendNewID(iNextMessageID, iNum_clients-1);
+				// Send the client his ID
+				sNetBuffer *NetBuffer = new sNetBuffer();
+
+				NetBuffer->iID = iNextMessageID;
 				UsedIDs->Add ( iNextMessageID );
 				iNextMessageID = GenerateNewID();
+				NetBuffer->iTyp = BUFF_TYP_NEWID;
+				NetBuffer->iTicks = SDL_GetTicks();
+				NetBuffer->iDestClientNum = iNum_clients;
+				NetBuffer->msg.lenght = iToStr( iNum_clients ).length() + 1;
+				strcpy(NetBuffer->msg.msg, iToStr( iNum_clients ).c_str() );
+
+				SDLNet_TCP_Send ( sock_client[iNum_clients], NetBuffer, sizeof ( sNetBuffer ) );
 			}
 		}
 		iStatus=STAT_CONNECTED;
@@ -234,8 +245,6 @@ bool cTCP::TCPReceive()
 					NetMessageList->Add( &NetBuffer->msg );
 					// Send OK to Client
 					SendOK( NetBuffer->iID, i );
-					// Send New ID to Client
-					SendNewID(GenerateNewID(), i);
 				}
 				// if an OK that messages has been reveived
 				else if( NetBuffer->iTyp == BUFF_TYP_OK )
@@ -300,10 +309,10 @@ bool cTCP::TCPReceive()
 		// if a newid has been received
 		else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
 		{
-			char szTmp[400];
-			sprintf(szTmp,"(Client)Received NewID-Message: -ID %d -Message: \"%s\" -Lenght: %d -Typ: %d",NetBuffer->iID, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
-			cLog::write(szTmp, LOG_TYPE_NETWORK);
-			iNextMessageID = atoi ( (char *) NetBuffer->msg.msg );
+			string sTmp;
+			sTmp = "(Client)Received NewID-Message: -ID " + iToStr(NetBuffer->iID) + " -Message: \"" + NetBuffer->msg.msg + "\"";
+			cLog::write(sTmp, LOG_TYPE_NETWORK);
+			iMyID = atoi ( (char *) NetBuffer->msg.msg );
 			SendOK( NetBuffer->iID, -1 );
 		}
 	}

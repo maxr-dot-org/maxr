@@ -188,15 +188,16 @@ private:
 	void SendOK(unsigned int iID, int iClientNum /* -1 For server*/ );
 	SDL_Thread *TCPResendThread;	// Thread that looks for buffers which must be resend
 
+	int iMyID;						// ID of this Client
 	unsigned int iNextMessageID;	// ID of next Message
 	sIDList *UsedIDs;				// A List with all currently used message IDs (server only)
-	sList *WaitOKList;			// A List with all IDs of messages, the game is waiting for an Reseive-OK
+	sList *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
 	int iPlayerId;					// ID of this Player
 	int iNum_clients;				// Number of current clients
 	int iPort;						// Current port
 	string sIp;						// Current ip or hostname
 	IPaddress addr;					// Address for SDL_Net
-	TCPsocket sock_server, sock_client[16];	// Sockets of Server (clients only) or for maximal 16 clients (server only)
+	TCPsocket sock_server, sock_client[8];	// Sockets of Server (clients only) or for maximal 16 clients (server only)
 	SDLNet_SocketSet SocketSet;		// The socket-set with all currently connected clients
 };
 
