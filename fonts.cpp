@@ -23,7 +23,7 @@
 #include "files.h"
 #include "main.h"
 
-#define DEBUGFONTS true
+#define DEBUGFONTS false
 
 cBitmapFont::cBitmapFont()
 {

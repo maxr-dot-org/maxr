@@ -152,7 +152,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	SDL_Rect scr = {rTextField.x - rDialog.x, rTextField.y - rDialog.y, rTextField.w, rTextField.h}; //remove offset
 	bool Cursor = true;
 	string stmp = iToStr(iDefaultValue);
-	SDL_Surface *SfDialog;
+	SDL_Surface *SfDialog = NULL;
 	
 	if(iMaxValue < 0 || iDefaultValue < 0)
 	{
@@ -167,7 +167,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	}
 	
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	if (FileExists(GFXOD_DIALOG4));
+	if (FileExists(GFXOD_DIALOG4))
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG6, SfDialog ); //load dialog6.pxc
 	}
@@ -445,7 +445,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	SDL_BlitSurface ( screen, NULL, buffer, NULL ); //write screen to buffer for proper background "picture"
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 300, 231, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	if (FileExists(GFXOD_DIALOG4));
+	if (FileExists(GFXOD_DIALOG4))
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG4, SfDialog ); //load dialog4.pxc
 	}
@@ -678,7 +678,7 @@ void showPreferences ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
 	}
 
-	if(FileExists(GFXOD_DIALOG5));
+	if(FileExists(GFXOD_DIALOG5))
 	{
 		LoadPCXtoSF (GFXOD_DIALOG5, SfDialog );	
 		//blit black titlebar behind textfield for playername

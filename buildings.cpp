@@ -209,8 +209,7 @@ string cBuilding::GetStatusStr ( void )
 
 				if ( font->getTextWide ( sText, LATIN_SMALL_WHITE ) > 126 )
 				{
-					sText = lngPack.i18n ( "Text~Comp~Producing" );
-					+ ":\n";
+					sText = lngPack.i18n ( "Text~Comp~Producing" ) + ":\n";
 					sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 					sText += iToStr ( iRound ) + ")";
 				}
@@ -8826,11 +8825,8 @@ void cBuilding::ShowHelp ( void )
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if ( FileExists ( GFXOD_HELP ) )
-		;
-
 	{
 		LoadPCXtoSF ( GFXOD_HELP, SfDialog );
-
 	}
 
 
