@@ -1060,33 +1060,30 @@ void cEngine::AddReport ( string name,bool vehicle )
 // Zeigt einen sReport zum Rundenbeginn an:
 void cEngine::MakeRundenstartReport ( void )
 {
-	struct sReport *r;
-	string sReport;
-	string stmp;
-	int anz;
-	
+	sReport *r;
+	string sReportMsg = "";
+	string stmp = "";
 	string sTmp = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr(game->Runde);
 	game->AddMessage(sTmp);
-
-	anz=0;
-	sReport="";
+	int anz = 0;
+	
 	while ( game->ActivePlayer->ReportBuildings->Count )
 	{
 		r=game->ActivePlayer->ReportBuildings->ReportItems[0];
-		if ( anz ) sReport+=", ";
+		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
-		sReport += r->anz>1?stmp:r->name;
+		sReportMsg += r->anz>1?stmp:r->name;
 		delete r;
 		game->ActivePlayer->ReportBuildings->DeleteReport ( 0 );
 	}
 	while ( game->ActivePlayer->ReportVehicles->Count )
 	{
 		r=game->ActivePlayer->ReportVehicles->ReportItems[0];
-		if ( anz ) sReport+=", ";
+		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
-		sReport+=r->anz>1?stmp:r->name;
+		sReportMsg+=r->anz>1?stmp:r->name;
 		delete r;
 		game->ActivePlayer->ReportVehicles->DeleteReport ( 0 );
 	}
@@ -1099,16 +1096,16 @@ void cEngine::MakeRundenstartReport ( void )
 	}
 	if ( anz==1 )
 	{
-		sReport+=" "+lngPack.i18n( "Text~Comp~Finished") +".";
+		sReportMsg+=" "+lngPack.i18n( "Text~Comp~Finished") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartOne );
 	}
 	else
 	{
-		sReport+=" "+lngPack.i18n( "Text~Comp~Finished2") +".";
+		sReportMsg+=" "+lngPack.i18n( "Text~Comp~Finished2") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;
-	game->AddMessage ( sReport );
+	game->AddMessage ( sReportMsg );
 }
 
 // Bereitet das Logging vor:
