@@ -27,6 +27,7 @@
 #include "dialog.h"
 #include "log.h"
 #include "files.h"
+#include "networkmessages.h"
 #include <sstream>
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
@@ -1136,11 +1137,7 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->MoveJobActive=false;
 						if( engine->network && !engine->network->bServer )
 						{
-							string sMessage;
-							sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#";
-							if( SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
-							else sMessage += "0";
-							engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
+							SendIntBool(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, ( SelectedVehicle->data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
 						}
 					}
 				}

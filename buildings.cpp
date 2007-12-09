@@ -24,6 +24,7 @@
 #include "mouse.h"
 #include "files.h"
 #include "pcx.h"
+#include "networkmessages.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
@@ -998,7 +999,14 @@ void cBuilding::SelfDestructionMenu ( void )
 {
 	if ( showSelfdestruction() )
 	{
-		game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
+		if( !game->engine->network || game->engine->network->bServer )
+		{
+			game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
+		}
+		else
+		{
+			SendDestroyObject( PosX + PosY*game->map->size, false );
+		}
 	}
 
 }

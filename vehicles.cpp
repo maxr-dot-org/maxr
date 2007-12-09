@@ -27,6 +27,7 @@
 #include "dialog.h"
 #include "files.h"
 #include "pcx.h"
+#include "networkmessages.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
@@ -2123,15 +2124,7 @@ void cVehicle::DrawMenu ( void )
 
 				if ( game->engine->network && !game->engine->network->bServer )
 				{
-					string sMessage;
-					sMessage = iToStr ( PosX + PosY * game->map->size ) + "#";
-
-					if ( data.can_drive == DRIVE_AIR )
-						sMessage += "1";
-					else
-						sMessage += "0";
-
-					game->engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
+					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
 				}
 			}
 
@@ -2230,15 +2223,7 @@ void cVehicle::DrawMenu ( void )
 
 				if ( game->engine->network && !game->engine->network->bServer )
 				{
-					string sMessage;
-					sMessage = iToStr ( PosX + PosY * game->map->size ) + "#";
-
-					if ( data.can_drive == DRIVE_AIR )
-						sMessage += "1";
-					else
-						sMessage += "0";
-
-					game->engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
+					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
 				}
 			}
 			else

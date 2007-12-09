@@ -21,6 +21,7 @@
 #include "sound.h"
 #include "fonts.h"
 #include "mouse.h"
+#include "networkmessages.h"
 
 // Funktionen der Engine Klasse //////////////////////////////////////////////
 cEngine::cEngine ( cMap *Map,cTCP *network )
@@ -122,11 +123,7 @@ void cEngine::Run ( void )
 			{
 				if( network && network->bServer )
 				{
-					string sMessage;
-					sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#" + iToStr( job->DestX + job->DestY * map->size ) + "#";
-					if ( job->plane ) sMessage += "1";
-					else sMessage += "0";
-					network->TCPSend ( MSG_END_MOVE_FOR_NOW,sMessage.c_str() );
+					SendIntIntBool( v->PosX + v->PosY * map->size, job->DestX + job->DestY * map->size, job->plane, MSG_END_MOVE_FOR_NOW);
 					v->MoveJobActive = false;
 				}
 				else if( !network )
@@ -141,9 +138,7 @@ void cEngine::Run ( void )
 				{
 					if( network && network->bServer )
 					{
-						string sMessage;
-						sMessage = iToStr( v->PosX + v->PosY * map->size );
-						network->TCPSend ( MSG_END_MOVE,sMessage.c_str() );
+						SendInt( v->PosX + v->PosY * map->size,  MSG_END_MOVE);
 						v->MoveJobActive = false;
 					}
 					else if( !network )
@@ -391,10 +386,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 	if( network && !network->bServer && !ClientMove)
 	{
 		// Client:
-		sMessage = iToStr(ScrOff) + "#" + iToStr(DestOff) + "#";
-		if ( plane ) sMessage += "1";
-		else sMessage += "0";
-		network->TCPSend( MSG_ADD_MOVEJOB, sMessage.c_str() );
+		SendIntIntBool(ScrOff, DestOff, plane, MSG_ADD_MOVEJOB);
 		return NULL;
 	}
 	else
@@ -473,10 +465,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 		// Die Move-Message absetzen:
 		if( network && network->bServer && job->waypoints && job->waypoints->next )
 		{
-			sMessage = iToStr(job->waypoints->X+job->waypoints->Y*map->size) + "#" + iToStr(job->waypoints->next->X+job->waypoints->next->Y*map->size) + "#";
-			if ( plane ) sMessage += "1";
-			else sMessage += "0";
-			network->TCPSend( MSG_MOVE_TO, sMessage.c_str() );
+			SendIntIntBool( job->waypoints->X+job->waypoints->Y*map->size, job->waypoints->next->X+job->waypoints->next->Y*map->size, plane, MSG_MOVE_TO );
 		}
 
 		if ( job&&ClientMove&&job->vehicle->BuildPath&&job->vehicle->data.can_build==BUILD_SMALL&& ( job->vehicle->BandX!=job->vehicle->PosX||job->vehicle->BandY!=job->vehicle->PosY ) &&!job->finished&&job->vehicle->data.cargo>=job->vehicle->BuildCosts*job->vehicle->BuildRoundsStart )
@@ -591,11 +580,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 
 				if ( !v->mjob->finished )
 				{
-					network->TCPSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
-					sMessage = iToStr( v->mjob->waypoints->X + v->mjob->waypoints->Y * map->size ) + "#" + iToStr( v->mjob->waypoints->next->X + v->mjob->waypoints->next->Y * map->size ) + "#"; 
-					if ( plane ) sMessage += "1";
-					else sMessage += "0";
-					network->TCPSend( MSG_MOVE_TO,sMessage.c_str() );
+					SendIntIntBool( v->mjob->waypoints->X+v->mjob->waypoints->Y*map->size, v->mjob->waypoints->next->X+v->mjob->waypoints->next->Y*map->size, v->mjob->plane, MSG_MOVE_TO );
 				}
 				else
 				{
@@ -772,6 +757,11 @@ void cEngine::DestroyObject ( int off,bool air )
 {
 	cVehicle *vehicle=NULL;
 	cBuilding *building=NULL;
+	// Host only
+	if( network && network->bServer )
+	{
+		SendDestroyObject(off, air);
+	}
 	// Das Objekt zerstören:
 	if ( air ) vehicle=map->GO[off].plane;
 	else
@@ -1386,11 +1376,7 @@ bool cEngine::DoEndActions ( void )
 					v->mjob=NULL;
 					v->MoveJobActive=false;
 
-					string sMessage;
-					sMessage = iToStr ( v->PosX + v->PosY * map->size ) + "#" ;
-					if ( v->data.can_drive == DRIVE_AIR ) sMessage += "1";
-					else sMessage += "0";
-					network->TCPSend ( MSG_ERLEDIGEN , sMessage.c_str() );
+					SendIntBool( v->PosX + v->PosY * map->size, ( v->data.can_drive == DRIVE_AIR ), MSG_ERLEDIGEN);
 
 					todo=true;          
 				}
@@ -1470,9 +1456,22 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 	{
 		if ( !ScrBuilding||map->GO[ScrOff].base==NULL||map->GO[ScrOff].base->owner==NULL||!map->GO[ScrOff].base->data.is_expl_mine ) return;
 	}
-	cAJobs *aj;
-	aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
-	AJobs->AddAJobs ( aj );
+	// Host / SP
+	if( !network || network->bServer || override )
+	{
+		cAJobs *aj;
+		aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
+		AJobs->AddAJobs ( aj );
+		if( network && network->bServer )
+		{
+			SendAddAtackJob(ScrOff, DestOff, ScrAir, DestAir, ScrBuilding);
+		}
+	}
+	//Client
+	else
+	{
+		SendAddAtackJob(ScrOff, DestOff, ScrAir, DestAir, ScrBuilding);
+	}
 }
 
 // Empfängt eine Nachricht aus dem Netzwerk:
@@ -1706,11 +1705,7 @@ void cEngine::HandleGameMessages()
 					AddActiveMoveJob(v->mjob);
 					if( network->bServer && v->mjob->waypoints && v->mjob->waypoints->next )
 					{
-						string sMessage;
-						sMessage = iToStr( v->mjob->waypoints->X + v->mjob->waypoints->Y * map->size ) + "#" + iToStr( v->mjob->waypoints->next->X + v->mjob->waypoints->next->Y * map->size ) + "#";
-						if ( v->mjob->plane ) sMessage += "1";
-						else sMessage += "0";
-						network->TCPSend( MSG_MOVE_TO, sMessage.c_str() );
+						SendIntIntBool( v->mjob->waypoints->X+v->mjob->waypoints->Y*map->size, v->mjob->waypoints->next->X+v->mjob->waypoints->next->Y*map->size, v->mjob->plane, MSG_MOVE_TO );
 					}
 				}
 				network->NetMessageList->Delete ( i );

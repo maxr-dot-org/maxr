@@ -25,6 +25,7 @@
 #include "keyinp.h"
 #include "fonts.h"
 #include "menu.h"
+#include "networkmessages.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
@@ -944,11 +945,7 @@ void cHud::ChechMouseOver ( void )
 					game->SelectedVehicle->mjob=NULL;
 					game->SelectedVehicle->MoveJobActive=false;    
 
-					string sMessage;
-					sMessage = iToStr ( game->SelectedVehicle->PosX + game->SelectedVehicle->PosY * game->map->size ) + "#" ;
-					if ( game->SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
-					else sMessage += "0";
-					game->engine->network->TCPSend ( MSG_ERLEDIGEN , sMessage.c_str() );
+					SendIntBool( game->SelectedVehicle->PosX + game->SelectedVehicle->PosY * game->map->size, ( game->SelectedVehicle->data.can_drive == DRIVE_AIR ), MSG_ERLEDIGEN);
 				}
 				else
 				{
