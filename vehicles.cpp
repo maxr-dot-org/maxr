@@ -1368,11 +1368,8 @@ void cVehicle::ShowHelp ( void )
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if ( FileExists ( GFXOD_HELP ) )
-		;
-
 	{
 		LoadPCXtoSF ( GFXOD_HELP, SfDialog );
-
 	}
 
 
