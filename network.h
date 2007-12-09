@@ -129,30 +129,6 @@ struct sNetBuffer{
 	cNetMessage msg;	// Message for Data-Packages
 };
 
-struct sIDList{
-	sIDList()
-	{
-		iCount = 0;
-	}
-	unsigned int iID[64];  // This isn't good but it hasn't worked with pointer. But normaly there shouldn't be more then 64 ids
-	int iCount;
-
-	void Add(unsigned int iSrcID)
-	{
-		if(iCount > 64) return; // Saves from bufferoverflow
-		iID[iCount] = iSrcID;
-		iCount++;
-	}
-	void Delete(int iIndex)
-	{
-		if(iIndex >= iCount) iIndex = iCount-1;
-		iID[iIndex] = 0;
-		iCount--;
-		for (int i = iIndex; i <= iCount; i++)
-			iID[i] = iID[i + 1];
-	}
-};
-
 /**
 * Failsafe TcpIp class.
 *
@@ -190,7 +166,6 @@ private:
 
 	int iMyID;						// ID of this Client
 	unsigned int iNextMessageID;	// ID of next Message
-	sIDList *UsedIDs;				// A List with all currently used message IDs (server only)
 	sList *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
 	int iPlayerId;					// ID of this Player
 	int iNum_clients;				// Number of current clients

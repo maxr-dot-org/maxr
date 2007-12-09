@@ -33,7 +33,6 @@ cTCP::cTCP ( bool server )
 		sock_client[i]=NULL;
 	}
 	iStatus=STAT_CLOSED;
-	UsedIDs = new sIDList();
 	WaitOKList = new sList();
 	NetMessageList = new sList();
 	iMyID = 0;
@@ -116,7 +115,6 @@ bool cTCP::TCPOpen ( void )
 				sNetBuffer *NetBuffer = new sNetBuffer();
 
 				NetBuffer->iID = iNextMessageID;
-				UsedIDs->Add ( iNextMessageID );
 				iNextMessageID = GenerateNewID();
 				NetBuffer->iTyp = BUFF_TYP_NEWID;
 				NetBuffer->iTicks = SDL_GetTicks();
@@ -186,7 +184,6 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 			while ( sock_client[i] != NULL && i < iMax_clients )
 			{
 				NetBuffer->iID = iNextMessageID;
-				UsedIDs->Add ( iNextMessageID );
 				iNextMessageID = GenerateNewID();
 				NetBuffer->iTicks = SDL_GetTicks();
 				NetBuffer->iDestClientNum = i;
@@ -202,7 +199,6 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 		else
 		{
 			NetBuffer->iID = iNextMessageID;
-			UsedIDs->Add ( iNextMessageID );
 			iNextMessageID = GenerateNewID();
 			NetBuffer->iTicks = SDL_GetTicks();
 			NetBuffer->iDestClientNum = -1;
@@ -233,6 +229,13 @@ bool cTCP::TCPReceive()
 			if ( SDLNet_SocketReady ( sock_client[i] ) )
 			{
 				SDLNet_TCP_Recv ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
+				for (int j = 0; j < WaitOKList->iCount; j++ )
+				{
+					if( NetBuffer->iID == ( (sNetBuffer *) WaitOKList->Items[j])->iID )
+					{
+						break;	// Received message twice - ignoring 
+					}
+				}
 				// is a new messages
 				if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 				{
@@ -259,15 +262,6 @@ bool cTCP::TCPReceive()
 							break;
 						}
 					}
-					// Delete Message ID from used IDs
-					for (int k = 0; k < UsedIDs->iCount; k++)
-					{
-						if( UsedIDs->iID[k] == NetBuffer->iID )
-						{
-							UsedIDs->Delete(k);
-							break;
-						}
-					}
 				}
 				SDL_Delay ( 1 );
 			}
@@ -278,6 +272,13 @@ bool cTCP::TCPReceive()
 	else
 	{
 		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
+		for (int j = 0; j < WaitOKList->iCount; j++ )
+		{
+			if( NetBuffer->iID == ( (sNetBuffer *) WaitOKList->Items[j])->iID )
+			{
+				break;	// Received message twice - ignoring 
+			}
+		}
 		if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 		{
 			string sTmp;
@@ -381,17 +382,6 @@ void cTCP::SendOK(unsigned int iID, int iClientNum)
 		sTmp = "(Host)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: \"" + iToStr( iClientNum );
 		cLog::write(sTmp, LOG_TYPE_NETWORK);
 		SDL_Delay ( 1 );
-	}
-	// Delete Message ID from used IDs if this is server
-	if( bServer ){
-		for (int k = 0; k < UsedIDs->iCount; k++)
-		{
-			if( UsedIDs->iID[k] == iID )
-			{
-				UsedIDs->Delete(k);
-				break;
-			}
-		}
 	}
 	return ;
 }
