@@ -191,9 +191,9 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 				NetBuffer->iTicks = SDL_GetTicks();
 				NetBuffer->iDestClientNum = i;
 				SDLNet_TCP_Send ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
-				char szTmp[400];
-				sprintf(szTmp,"(Host)Send Data-Message: -Part: %d/%d -ID: %d -Client %d -Message: \"%s\" -Lenght: %d -Typ: %d",NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, i, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
-				cLog::write(szTmp, LOG_TYPE_NETWORK);
+				string sTmp;
+				sTmp = "(Host)Send Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
 				SDL_Delay ( 1 );
 				i++;
 			}
@@ -207,9 +207,9 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 			NetBuffer->iTicks = SDL_GetTicks();
 			NetBuffer->iDestClientNum = -1;
 			SDLNet_TCP_Send ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-			char szTmp[400];
-			sprintf(szTmp,"(Client)Send Data-Message: -Part: %d/%d -ID: %d -Message: \"%s\" -Lenght: %d -Typ: %d",NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
-			cLog::write(szTmp, LOG_TYPE_NETWORK);
+			string sTmp;
+			sTmp = "(Client)Send Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			SDL_Delay ( 1 );
 		}
 		// Add package to waitlist
@@ -236,9 +236,9 @@ bool cTCP::TCPReceive()
 				// is a new messages
 				if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 				{
-					char szTmp[400];
-					sprintf(szTmp,"(Host)Received Data-Message: -Part: %d/%d -ID: %d -Client %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, i, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
-					cLog::write(szTmp, LOG_TYPE_NETWORK);
+					string sTmp;
+					sTmp = "(Host)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+					cLog::write(sTmp, LOG_TYPE_NETWORK);
 					// Add message to list
 					NetMessageList->Add( &NetBuffer->msg );
 					// Send OK to Client
@@ -247,9 +247,9 @@ bool cTCP::TCPReceive()
 				// if an OK that messages has been reveived
 				else if( NetBuffer->iTyp == BUFF_TYP_OK )
 				{
-					char szTmp[64];
-					sprintf(szTmp,"(Host)Received OK-Message: -ID: %d -Client: %d", NetBuffer->iID, i);
-					cLog::write(szTmp, LOG_TYPE_NETWORK);
+					string sTmp;
+					sTmp = "(Host)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i );
+					cLog::write(sTmp, LOG_TYPE_NETWORK);
 					// Delete Message ID from WaitList
 					for (int k = 0; k < WaitOKList->iCount; k++)
 					{
@@ -280,9 +280,9 @@ bool cTCP::TCPReceive()
 		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
 		if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 		{
-			char szTmp[400];
-			sprintf(szTmp,"(Client)Received Data-Message: -Part: %d/%d -ID: %d -Message: \"%s\" -Lenght: %d -Typ: %d", NetBuffer->iPart, NetBuffer->iMax_parts, NetBuffer->iID, NetBuffer->msg.msg, NetBuffer->msg.lenght, NetBuffer->msg.typ);
-			cLog::write(szTmp, LOG_TYPE_NETWORK);
+			string sTmp;
+			sTmp = "(Client)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			// Add message to list
 			NetMessageList->Add( &NetBuffer->msg );
 			// Send OK to Server
@@ -291,9 +291,9 @@ bool cTCP::TCPReceive()
 		// if an OK that messages has been reveived
 		else if( NetBuffer->iTyp == BUFF_TYP_OK )
 		{
-			char szTmp[64];
-			sprintf(szTmp,"(Client)Received OK-Message: -ID: %d",NetBuffer->iID);
-			cLog::write(szTmp, LOG_TYPE_NETWORK);
+			string sTmp;
+			sTmp = "(Client)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
+			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			// Delete Message ID from WaitList
 			for (int k = 0; k < WaitOKList->iCount; k++)
 			{
@@ -308,7 +308,7 @@ bool cTCP::TCPReceive()
 		else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
 		{
 			string sTmp;
-			sTmp = "(Client)Received NewID-Message: -ID " + iToStr(NetBuffer->iID) + " -Message: \"" + NetBuffer->msg.msg + "\"";
+			sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg;
 			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			iMyID = atoi ( (char *) NetBuffer->msg.msg );
 			SendOK( NetBuffer->iID, -1 );
@@ -327,7 +327,8 @@ unsigned int cTCP::GenerateNewID()
 	iMin = SDL_GetTicks() / ( 60*1000 ) - iHour*60;
 	iSec = SDL_GetTicks() / 1000 - iMin*60 - iHour*60*60;
 	iMsec = SDL_GetTicks() - iSec*1000 - iMin*60*1000 - iHour*60*60*1000;
-	char szTmp[15];
+
+	char szTmp[13];	// Message-ID will allways be 12 characters long + null termination
 	sprintf(szTmp, "%0.2d:%0.2d:%0.2d:%0.3d", iMyID, iMin, iSec, iMsec );
 	cLog::write( (string)"ID generated: " + szTmp, LOG_TYPE_NETWORK); 
 
@@ -335,7 +336,22 @@ unsigned int cTCP::GenerateNewID()
 	iReturnID += iMin * 100000;
 	iReturnID += iSec * 1000;
 	iReturnID += iMsec;
+
 	return iReturnID;
+}
+
+string cTCP::SplitMessageID(unsigned int iID)
+{
+	string sResult;
+	sResult = iToStr( iID );
+	while( sResult.size() < 9 )
+	{
+		sResult.insert( 0,"0" );
+	}
+	sResult.insert( sResult.size()-3,":" );
+	sResult.insert( sResult.size()-6,":" );
+	sResult.insert( sResult.size()-9,":" );
+	return sResult;
 }
 
 void cTCP::SendOK(unsigned int iID, int iClientNum)
@@ -352,18 +368,18 @@ void cTCP::SendOK(unsigned int iID, int iClientNum)
 	if(iClientNum == -1)
 	{
 		SDLNet_TCP_Send ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-		char szTmp[256];
-		sprintf(szTmp,"(Client)Send OK-Message: -ID: %d",NetBuffer->iID);
-		cLog::write(szTmp, LOG_TYPE_NETWORK);
+		string sTmp;
+		sTmp = "(Client)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
+		cLog::write(sTmp, LOG_TYPE_NETWORK);
 		SDL_Delay ( 1 );
 	}
 	// Host
 	else
 	{
 		SDLNet_TCP_Send ( sock_client[iClientNum], NetBuffer, sizeof ( sNetBuffer ) );
-		char szTmp[256];
-		sprintf(szTmp,"(Host)Send OK-Message: -ID: %d -Client: %d",NetBuffer->iID,iClientNum);
-		cLog::write(szTmp, LOG_TYPE_NETWORK);
+		string sTmp;
+		sTmp = "(Host)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: \"" + iToStr( iClientNum );
+		cLog::write(sTmp, LOG_TYPE_NETWORK);
 		SDL_Delay ( 1 );
 	}
 	// Delete Message ID from used IDs if this is server
@@ -447,9 +463,9 @@ void cTCP::TCPCheckResends ()
 					SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
 				}
 				( ( sNetBuffer *) WaitOKList->Items[i])->iTicks = SDL_GetTicks(); // Set the new Time
-				char szTmp[400];
-				sprintf(szTmp,"Resend buffer: -Typ: %d -Parts: %d/%d -ID: %d -Client: %d -Message: \"%s\" -Lenght: %d -Typ: %d", ( ( sNetBuffer *) WaitOKList->Items[i])->iPart, ( ( sNetBuffer *) WaitOKList->Items[i])->iMax_parts , ( ( sNetBuffer *) WaitOKList->Items[i])->iTyp, ( ( sNetBuffer *) WaitOKList->Items[i])->iID, iClient, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.msg, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.lenght, ( ( sNetBuffer *) WaitOKList->Items[i])->msg.typ);
-				cLog::write(szTmp, LOG_TYPE_NETWORK);
+				string sTmp;
+				sTmp = "Resend buffer: -ID: " + iToStr( ( ( sNetBuffer *) WaitOKList->Items[i])->iID );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
 			}
 			SDL_Delay ( 1 ) ;
 		}

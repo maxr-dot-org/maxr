@@ -185,6 +185,7 @@ public:
 private:
 	unsigned int GenerateNewID();
 	void SendOK(unsigned int iID, int iClientNum /* -1 For server*/ );
+	string SplitMessageID(unsigned int iID);
 	SDL_Thread *TCPResendThread;	// Thread that looks for buffers which must be resend
 
 	int iMyID;						// ID of this Client
