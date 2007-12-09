@@ -4369,7 +4369,7 @@ void cMultiPlayer::RunMenu ( void )
 					for ( int i=0;i<5;i++ ) //wait 5 seconds for connection - break in case we got one earlier
 					{
 						SDL_Delay ( 1000 );
-						if ( network->iStatus==STAT_CONNECTED ) continue;
+						if ( network->iStatus==STAT_CONNECTED ) break;
 
 					}
 					if( ! network->bReceiveThreadFinished )
