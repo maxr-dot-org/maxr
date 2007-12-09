@@ -465,7 +465,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 		// Die Move-Message absetzen:
 		if( network && network->bServer && job->waypoints && job->waypoints->next )
 		{
-			SendIntIntBool( job->waypoints->X+job->waypoints->Y*map->size, job->waypoints->next->X+job->waypoints->next->Y*map->size, plane, MSG_MOVE_TO );
+			SendIntIntBool( job->waypoints->X+job->waypoints->Y*map->size, job->waypoints->next->X+job->waypoints->next->Y*map->size, job->plane, MSG_MOVE_TO );
 		}
 
 		if ( job&&ClientMove&&job->vehicle->BuildPath&&job->vehicle->data.can_build==BUILD_SMALL&& ( job->vehicle->BandX!=job->vehicle->PosX||job->vehicle->BandY!=job->vehicle->PosY ) &&!job->finished&&job->vehicle->data.cargo>=job->vehicle->BuildCosts*job->vehicle->BuildRoundsStart )
