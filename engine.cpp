@@ -1021,7 +1021,7 @@ void cEngine::CheckDefeat ( void )
 // Fügt einen Reporteintrag in die entsprechende Liste ein:
 void cEngine::AddReport ( string name,bool vehicle )
 {
-	struct sReport *r;
+	sReport *r;
 	int i;
 	if ( vehicle )
 	{
