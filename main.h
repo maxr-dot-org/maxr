@@ -460,7 +460,7 @@ public:
 
 	cList()
 	{
-		size = 1;
+		size = 20;
 		iCount = 0;
 		Items = new string[size];
 	}
@@ -476,7 +476,7 @@ public:
 		if ( iCount == size )
 		{
 			//allocate more memory
-			size+=1;
+			size+=20;
 			//realloc doesn't work here
 			//because it doesn't call the constructors
 			//so the following is a kind of 'renew'
@@ -510,10 +510,10 @@ public:
 			Items[i] = Items[i+1];
 		}
 
-		if ( iCount < size - 1 )
+		if ( iCount < size - 20 )
 		{
 			//free some memory
-			size -=1;
+			size -=20;
 			//realloc doesn't work here
 			//because it doesn't call the destructors
 			//so the following is a kind of 'renew'
@@ -543,7 +543,7 @@ public:
 	{
 		size = 20;
 		iCount = 0;
-		Items = (void**) malloc(20 * sizeof(void*));
+		Items = (void**) malloc(size * sizeof(void*));
 	}
 
 	~cList()
