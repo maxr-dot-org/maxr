@@ -33,6 +33,75 @@
 #define BUFF_TYP_RESEND	202
 #define BUFF_TYP_NEWID	203
 
+enum MSG_TYPE
+{
+    // IDs der NET-Messages //////////////////////////////////////////////////////
+    MSG_CHAT            =   1  , // Chatnachricht
+    MSG_ADD_MOVEJOB      =  2  , // Einen Movejob hinzufügen
+    MSG_MOVE_VEHICLE     =  3  , // Ein Fahrzeug umsetzen
+    MSG_MOVE_TO          =  4  , // Ein Fahrzeug um ein Feld bewegen
+    MSG_NO_PATH           = 5  , // Benachrichtigung über einen versperrten Pfad
+    MSG_END_MOVE           = 6  , // Beendet die Bewegung eines Fahrzeugs
+    MSG_CHANGE_VEH_NAME   = 7  , // Ändert den Namen eines Vehicles
+    MSG_END_MOVE_FOR_NOW  = 8  , // Beendet die Bewegung eines Fahrzeugs für diese Runde
+    MSG_CHANGE_PLAYER_NAME  = 9  , // Ändert den Namen eines Spielers
+    MSG_ENDE_PRESSED      = 10 , // Benachrichtigung über einen Druck auf Ende
+    MSG_MJOB_STOP        =  11 , // Wird vom Client übermittelt, wenn er manuell den MJob stoppt
+    MSG_ADD_ATTACKJOB     = 12 , // Einen Attackjob einfügen
+    MSG_DESTROY_OBJECT     = 13 , // Zerstört ein Objekt
+    MSG_ERLEDIGEN        =  14 , // Ein MJob soll erledigt werden
+    MSG_SAVED_SPEED      =  15 , // Teilt einem Client ein Speed Save mit
+    MSG_CHANGE_BUI_NAME  =  16 , // Ändert den Namen eines Buildings
+    MSG_START_BUILD      =  17 , // Startet ein Building zu bauen
+    MSG_STOP_BUILD       =  18 , // Stopt ein Building zu bauen
+    MSG_ADD_BUILDING     =  19 , // Fügt ein Gebäude ein
+    MSG_START_BUILD_BIG  =  20 , // Startet den bau eines großen Gebäudes
+    MSG_RESET_CONSTRUCTOR = 21 , // Setzt den Constructor nach beenden des Bauens neu
+    MSG_START_CLEAR       = 22 , // Startet das Räumen eines Feldes
+    MSG_STORE_VEHICLE     = 23 , // Läd ein Vehicle ein
+    MSG_ACTIVATE_VEHICLE  = 24 , // Aktiviert ein geladenes Vehicle wieder
+    MSG_START_WORK        = 25 , // Startet ein Gebäude
+    MSG_STOP_WORK         = 26 , // Stoppt ein Gebäude
+    MSG_ADD_VEHICLE       = 27 , // Erzeugt ein vehicle
+    MSG_REPAIR            = 28 , // Repariert etwas
+    MSG_RELOAD            = 29 , // Läd etwas nach
+    MSG_WACHE             = 30 , // Ändert den Wachstatus eines Objektes
+    MSG_CLEAR_MINE        = 31 , // Räumt eine Mine
+    MSG_UPGRADE           = 32 , // Upgrade eines Spielers
+    MSG_RESEARCH          = 33 , // Meldet eine abgeschlossene Forschung
+    MSG_UPDATE_BUILDING   = 34 , // Meldet das Upgrade eines Gebäudes
+    MSG_COMMANDO_MISTAKE  = 35 , // Berichtet über einen Fehler eines Commandos
+    MSG_COMMANDO_SUCCESS  = 36 , // Meldet einen Erfolg eines Commandos
+    MSG_START_SYNC        = 37 , // Fordert die Clients zum Synchronisieren auf
+    MSG_SYNC_PLAYER       = 38 , // Sync Player
+    MSG_SYNC_VEHICLE      = 39 , // Sync Vehicle
+    MSG_SYNC_BUILDING     = 40 , // Sync Building
+    MSG_UPDATE_STORED     = 41 , // Aktualisiert ein gespeichertes Vehicle
+    MSG_REPORT_R_E_A      = 42 , // Berichtet über das Ende der RundenendeActions
+    MSG_PING              = 43 , // Anforderung eines Pong
+    MSG_PONG              = 44 , // Rückgabe des Pong
+    MSG_PLAYER_DEFEAT     = 45 , // Medet die Niederlage eines Spielers
+    MSG_HOST_DEFEAT       = 46 , // Meldet die Niederlage des Hostes
+    MSG_PLAY_ROUNDS_NEXT  = 47 , // Nachricht, dass der nächste Spieler dran ist
+
+    // Nur für das MP-Menü:
+    MSG_SIGNING_IN       = 100 , // Anmeldenachricht eines Spielers
+    MSG_YOUR_ID_IS       = 101 , // Teilt dem Client nach dem Anmelden seine ID mit
+    MSG_MY_NAME_CHANGED  = 102 , // Benachrichtigung wenn ein Client seinen Namen/Farbe ändert
+    MSG_PLAYER_LIST      = 103 , // Übertragng der Spielerliste
+    MSG_OPTIONS          = 104 , // Übertragung der Optionen des Spiels
+    MSG_WHO_ARE_YOU      = 105 , // Fordert den Client auf sich zu identifizieren
+    MSG_CHECK_FOR_GO     = 106 , // Läßt überprüfen, ob alle Clients bereit sind
+    MSG_READY_TO_GO      = 107 , // Meldet der Client wenn er bereit ist zum Starten
+    MSG_NO_GO            = 108 , // Meldet der Client, wenn er nicht bereit ist
+    MSG_LETS_GO          = 109 , // Gibt dem Client das Signal zum Start
+    MSG_RESSOURCES       = 110 , // Überträgt die Ressourcenmap
+    MSG_PLAYER_LANDING   = 111 , // Landedaten eines Players
+    MSG_PLAYER_UPGRADES  = 112 , // Übeträgt alle Upgrades eines Players
+    MSG_SAVEGAME_START   = 113 , // Start der Übertragung des Savegames
+    MSG_SAVEGAME_PART    = 114  // Teil der Übertragung des Savegames
+};
+
 /**
 * Message class with message, lenght and typ
 *
