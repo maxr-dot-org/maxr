@@ -446,6 +446,170 @@ struct sTerrain{
   int frames;       // Anzahl an Frames
 };
 
+//List for all kinds of Objects
+template<class T> class cList {};
+
+//template spezialisation for strings
+//this code should also work for other objects
+//but not tested yet, so only allowing strings
+template<> class cList<string>
+{
+public:
+	int iCount;			//number of Items in the List
+	string* Items;		//the Items
+
+	cList()
+	{
+		size = 1;
+		iCount = 0;
+		Items = new string[size];
+	}
+	
+	~cList()
+	{
+		delete[] Items;
+	}
+	
+	//adds an object to the end of the list
+	void Add(const string& x)
+	{
+		if ( iCount == size )
+		{
+			//allocate more memory
+			size+=1;
+			//realloc doesn't work here
+			//because it doesn't call the constructors
+			//so the following is a kind of 'renew'
+			string* newItems = new string[size];
+			
+			for ( int n = 0; n < iCount; n++ )
+			{
+				newItems[n] = Items[n];
+			}
+			delete[] Items;
+			Items = newItems;
+			
+		}
+		
+		Items[iCount] = x;
+		
+		iCount++;
+		
+	}
+
+	//deletes the object at Items[n] and resorts the remaining Items
+	void Delete( int n)
+	{
+		if (n >= iCount) return;
+
+		Items[n] = "";
+		iCount--;
+
+		for(int i = n; i < iCount; i++)
+		{
+			Items[i] = Items[i+1];
+		}
+
+		if ( iCount < size - 1 )
+		{
+			//free some memory
+			size -=1;
+			//realloc doesn't work here
+			//because it doesn't call the destructors
+			//so the following is a kind of 'renew'
+			string* newItems = new string[size];
+			
+			for ( int n = 0; n < iCount; n++ )
+			{
+				newItems[n] = Items[n];
+			}
+			delete[] Items;
+			Items = newItems;
+		}
+	}
+private:
+	int size; //the amount of allocated memory
+
+};
+
+//template spezialisation for void*
+template<> class cList<void*>
+{
+public:
+	int iCount;		//number of Items in the List
+	void** Items;	//the items
+
+	cList()
+	{
+		size = 20;
+		iCount = 0;
+		Items = (void**) malloc(20 * sizeof(void*));
+	}
+
+	~cList()
+	{
+		free( Items);
+	}
+	
+	//adds a pointer to the end of the list
+	void Add( void* x)
+	{
+		//allocate new memory, if needed
+		if ( iCount == size )
+		{
+			size+=20;
+			Items = (void**) realloc(Items, size * sizeof(void*));
+		}
+
+		//add item
+		Items[iCount] = x;
+		iCount++;
+	}
+
+	//deletes the pionter at Items[n] and resorts the remaining Items
+	void Delete( int n)
+	{
+		if (n >= iCount) return;
+		
+		Items[n] = NULL;
+		iCount--;
+		
+		for(int i = n; i < iCount; i++)
+		{
+			Items[i] = Items[i+1];
+		}
+		
+		if ( iCount < size - 20 )
+		{
+			size -=20;
+			Items = (void**) realloc(Items, size * sizeof( void* ));
+		}
+	}
+private:
+	int size;	//the amount of allocated memory
+
+};
+
+//template spezialization for all kinds of pointers
+//does only the typecasting to void*
+template<class T> class cList<T*> : public cList<void*>
+{
+public:
+	T**& Items;		//an other name for void* Items
+	
+	cList() : Items( (T**&) cList<void*>::Items) {}
+
+
+	void Add (T* x)
+	{
+		cList<void*>::Add( (void*) x);
+	}
+
+};
+
+	
+
+
 /**
 * List structure. All kind of Lists.
 *
