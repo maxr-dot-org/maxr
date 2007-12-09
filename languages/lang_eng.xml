@@ -181,6 +181,7 @@
 			<Player_MustHost ENG="must be host in turnbased game!"/>
 			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible."/>
 			<Player_Turn ENG="'s turn"/>
+			<Player_Turn_End ENG=" ended turn"/>
 			<Network_Error_Socket ENG="Error opening socket"/>
 			<Network_Error_Connect ENG="Could not connect to "/>
 			<Network_Open ENG="Game open"/>
