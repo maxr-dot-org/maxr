@@ -1573,13 +1573,15 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ändert den Namen eines Vehicled:
+			// changes vehicle name
 			case MSG_CHANGE_VEH_NAME:
 			{
+				//TODO: change vehicle name
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ende eines Movejobs für diese Runde:
+			// end of movejob for current turn
 			case MSG_END_MOVE_FOR_NOW:
 			{
 				TList *Strings;
@@ -1615,13 +1617,15 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ändert den Namen eines Spielers:
+			// changes name of player
 			case MSG_CHANGE_PLAYER_NAME:
 			{
+				//TODO: change name of player
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Benachrichtigung über ein gedrücktes Ende:
+			// notification of pressed end-turn button:
 			case MSG_ENDE_PRESSED:
 			{
 				if( atoi ( sMsgString.c_str() ) == game->ActivePlayer->Nr ) break;
@@ -1639,6 +1643,7 @@ void cEngine::HandleGameMessages()
 					p = game->PlayerList->PlayerItems[k];
 					if ( p->Nr == atoi ( sMsgString.c_str() ) )
 					{
+						//TODO: i18n
 						game->AddMessage( (string)"Spieler " + p->name + " hat die Runde beendet" );
 						break;
 					}
@@ -1646,7 +1651,7 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Benachrichtigung über den Abbruch eines MJobs:
+			// notification of canceling a movejob:
 			case MSG_MJOB_STOP:
 			{
 				TList *Strings;
@@ -1667,19 +1672,21 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ein neuer Attackjob:
+			// TODO: new attackjob:
 			case MSG_ADD_ATTACKJOB:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ein Objekt zerstören:
+			// TODO: destroy object:
 			case MSG_DESTROY_OBJECT:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Execute a movejob:
+			// execute a movejob:
 			case MSG_ERLEDIGEN:
 			{
 				TList *Strings;
@@ -1708,199 +1715,231 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Meldet, dass Speed gesaved wurde:
+			// TODO: notifiation of saved speed:
 			case MSG_SAVED_SPEED:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ändert den Namen eines Buildings:
+			// TODO: notification of new buildingname:
 			case MSG_CHANGE_BUI_NAME:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Startet einen Bauvorgang eines Gebäudes:
+			// TODO: starts buildprocess of building:
 			case MSG_START_BUILD:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Stopt den Bauvorgang/Räumen eines Gebäudes:
+			// TODO: cancels buildprocess of building:
 			case MSG_STOP_BUILD:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Fügt ein neues Gebäude ein:
+			// TODO: adds a new building
 			case MSG_ADD_BUILDING:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Die Konstruktion eines großen Gebäudes starten:
+			// TODO: starts construction of a big building:
 			case MSG_START_BUILD_BIG:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Den Constructor umsetzen:
+			// TODO: center construction unit within construction side:
 			case MSG_RESET_CONSTRUCTOR:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Startet das Räumen eines Feldes:
+			// TODO: starts cleaning of area (e.g. bulldozer)
 			case MSG_START_CLEAR:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Vehicle einladen:
+			// TODO: board/load a vehicle into
 			case MSG_STORE_VEHICLE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Vehicle ausladen:
+			// TODO: unboard/unload a vehicle from
 			case MSG_ACTIVATE_VEHICLE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ein Building starten:
+			// TODO: activates a building (start work)
 			case MSG_START_WORK:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ein Building stoppen:
+			// TODO: deactivated a building (stop work)
 			case MSG_STOP_WORK:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ein Vehicle einfügen:
+			// TODO: add a new vehicle to game
 			case MSG_ADD_VEHICLE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Etwas reparieren:
+			// TODO: repair a unit
 			case MSG_REPAIR:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Etwas aufladen:
+			// TODO: reload a unit
 			case MSG_RELOAD:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Den Wachstatus von etwas ändern:
+			// TODO: change sentrymode of unit:
 			case MSG_WACHE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Räumt eine Mine:
+			// TODO: clears field of claymore:
 			case MSG_CLEAR_MINE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Upgrade eines Spielers:
+			// TODO: upgrades a unit:
 			case MSG_UPGRADE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Furschung abgeschlossen:
+			// TODO: finished research
 			case MSG_RESEARCH:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Gebäude verbessern:
+			// TODO: improve/update building:
 			case MSG_UPDATE_BUILDING:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Einen Fehler eines Commandos melden:
+			// TODO: commando failed:
 			case MSG_COMMANDO_MISTAKE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Eine Commandooperation durchführen:
+			// TODO: commando success:
 			case MSG_COMMANDO_SUCCESS:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Aufforderung zur Synchronisation:
+			// TODO: request resync:
 			case MSG_START_SYNC:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Sync Player:
+			// TODO: sync players:
 			case MSG_SYNC_PLAYER:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Sync Vehicle:
+			// TODO: sync vehicles:
 			case MSG_SYNC_VEHICLE:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Sync Building:
+			// TODO: sync buildings:
 			case MSG_SYNC_BUILDING:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Updated ein gestoredtes Vehicle:
+			// TODO: updates a unit in storage/hangar/dock:
 			case MSG_UPDATE_STORED:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Bericht über Abschluss der RundenendeActions:
+			// TODO: turn finished:
 			case MSG_REPORT_R_E_A:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Ping:
+			// TODO: Ping:
 			case MSG_PING:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Pong:
+			//TODO: Pong:
 			case MSG_PONG:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Niederlage des Host:
+			// TODO: host defeated:
 			case MSG_HOST_DEFEAT:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Niederlage eines Spielers:
+			// TODO: player defeated:
 			case MSG_PLAYER_DEFEAT:
 			{
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
 				network->NetMessageList->Delete ( i );
 				break;
 			}
-			// Next player in round-playing-mode:
+			// TODO: next player in round-playing-mode:
 			case MSG_PLAY_ROUNDS_NEXT:
 			{
 				cBuilding *b;
@@ -1922,6 +1961,7 @@ void cEngine::HandleGameMessages()
 						p = game->PlayerList->PlayerItems[k];
 						if( p->Nr == next )
 						{
+							//TODO: i18n
 							game->AddMessage( p->name + " ist an der Reihe." );
 							break;
 						}
