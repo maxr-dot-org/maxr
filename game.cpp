@@ -4065,6 +4065,7 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	
 	sTmp = "dir: " + iToStr ( v->dir ) + " selected: " + iToStr ( v->selected ) + " moving: +" + iToStr ( v->moving ) + " rotating: " + iToStr ( v->rotating ) + " mjob: " + iToStr ((int) v->mjob ) + " mj_active: " + iToStr ( v->MoveJobActive ) + " menu_active: " + iToStr ( v->MenuActive );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
+	*y+=8;
 	
 	sTmp = "attack_mode: " + iToStr ( v->AttackMode ) + " attacking: " + iToStr ( v->Attacking ) + " wachpost: +" + iToStr ( v->Wachposten ) + " transfer: " + iToStr ( v->Transfer ) + " ditherx: " + iToStr (v->ditherX ) + " dithery: " + iToStr ( v->ditherY );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
