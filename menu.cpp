@@ -4364,7 +4364,9 @@ void cMultiPlayer::RunMenu ( void )
 
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
 					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
-
+					
+					SHOW_SCREEN
+					
 					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
 					for ( int i=0;i<10;i++ ) //wait some seconds for connection - break in case we got one earlier
 					{
