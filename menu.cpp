@@ -5744,7 +5744,7 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 			msg+=iToStr(p->BuildingData[i].max_ammo) + "#";
 			msg+=iToStr(p->BuildingData[i].armor) + "#";
 			msg+=iToStr(p->BuildingData[i].max_hit_points) + "#";
-			msg+=iToStr(p->BuildingData[i].scan) + "#"; //FIXME: is there a "#" to much alzi? -- beko
+			msg+=iToStr(p->BuildingData[i].scan);
 		}
 		if ( msg.length() >200 )
 		{
