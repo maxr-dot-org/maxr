@@ -327,10 +327,13 @@ unsigned int cTCP::GenerateNewID()
 	iMin = SDL_GetTicks() / ( 60*1000 ) - iHour*60;
 	iSec = SDL_GetTicks() / 1000 - iMin*60 - iHour*60*60;
 	iMsec = SDL_GetTicks() - iSec*1000 - iMin*60*1000 - iHour*60*60*1000;
+	char szTmp[10];
+	sprintf(szTmp, "%0.2d%0.2d%0.3d", iMin, iSec, iMsec );
+	cLog::write( (string)"ID generated: " + szTmp, LOG_TYPE_NETWORK); 
 
-	iReturnID = iMyID * 100000000;
-	iReturnID += iMin * 1000000;
-	iReturnID += iSec * 10000;
+	iReturnID = iMyID * 10000000;
+	iReturnID += iMin * 100000;
+	iReturnID += iSec * 1000;
 	iReturnID += iMsec;
 	return iReturnID;
 }
