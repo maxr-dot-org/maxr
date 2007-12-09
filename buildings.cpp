@@ -8911,7 +8911,7 @@ void cBuilding::ShowHelp ( void )
 // Sendet die Update-Nachricht für das gespeicherte Vehicle mit dem Index:
 void cBuilding::SendUpdateStored ( int index )
 {
-	/*if(!game->engine->fstcpip||game->engine->fstcpip->server)*/
+	/*if(!game->engine->network||game->engine->network->server)*/
 	return;
 	/*unsigned char msg[3+12+sizeof(sUnitData)];
 	msg[0]='#';
@@ -8921,5 +8921,5 @@ void cBuilding::SendUpdateStored ( int index )
 	((int*)(msg+3))[1]=index;
 	((int*)(msg+3))[2]=PosX+PosY*game->map->size;
 	((sUnitData*)(msg+3+12))[0]=((cVehicle*)(StoredVehicles->Items[index]))->data;
-	game->engine->fstcpip->Send(msg,msg[1]);*/
+	game->engine->network->Send(msg,msg[1]);*/
 }

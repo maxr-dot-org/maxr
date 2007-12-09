@@ -30,7 +30,7 @@
 #include <sstream>
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
-cGame::cGame ( cFSTcpIp *fstcpip, cMap *map )
+cGame::cGame ( cTCP *network, cMap *map )
 {
 	this->map=map;
 	PlayerCheat="";
@@ -46,7 +46,7 @@ cGame::cGame ( cFSTcpIp *fstcpip, cMap *map )
 	FLCname="";
 	video=NULL;
 	hud=new cHud;
-	engine=new cEngine ( map, fstcpip );
+	engine=new cEngine ( map, network );
 	HelpActive=false;
 	ChangeObjectName=false;
 	ChatInput=false;
@@ -180,7 +180,7 @@ void cGame::Run ( void )
 	mouse->MoveCallback=true;
 	hud->DoAllHud();
 
-//  if(!engine->fstcpip)
+//  if(!engine->network)
 	PlayRounds=false;
 	if ( PlayRounds )
 	{
@@ -430,25 +430,25 @@ void cGame::Run ( void )
 				DebugOff+=font->getFontHeight(LATIN_SMALL_WHITE);
 			}
 		}
-		/*if(DebugCom&&engine->fstcpip&&fDrawMap){
+		/*if(DebugCom&&engine->network&&fDrawMap){
 		  // Com-Infos:
 		  unsigned short hour,min,sec,msec;
 		  char DebugStr[100];
 		  unsigned int time;
-		  sprintf(DebugStr,"connections: %d",engine->fstcpip->GetConnectionCount());
+		  sprintf(DebugStr,"connections: %d",engine->network->GetConnectionCount());
 		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"lags: %d",engine->fstcpip->GetLag());
+		  sprintf(DebugStr,"lags: %d",engine->network->GetLag());
 		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"retrys: %d",engine->fstcpip->GetRetrys());
+		  sprintf(DebugStr,"retrys: %d",engine->network->GetRetrys());
 		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"resends: %d",engine->fstcpip->GetResends());
+		  sprintf(DebugStr,"resends: %d",engine->network->GetResends());
 		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
 		  (Comstart.CurrentTime()-Comstart).DecodeTime(&hour,&min,&sec,&msec);
 		  time=(((int)hour*24+min)*60+sec)*1000+msec;
 		  if(time>1000){
 		    Comstart=Comstart.CurrentTime();
-		    AddDebugComGraph(engine->fstcpip->GetTX(),engine->fstcpip->GetRX());
-		    engine->fstcpip->ResetStats();
+		    AddDebugComGraph(engine->network->GetTX(),engine->network->GetRX());
+		    engine->network->ResetStats();
 		  }
 		  ShowDebugComGraph(DebugOff);DebugOff+=60;
 		}*/
@@ -1134,13 +1134,13 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->mjob->finished=true;
 						SelectedVehicle->mjob=NULL;
 						SelectedVehicle->MoveJobActive=false;
-						if( engine->fstcpip && !engine->fstcpip->bServer )
+						if( engine->network && !engine->network->bServer )
 						{
 							string sMessage;
 							sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#";
 							if( SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
 							else sMessage += "0";
-							engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+							engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
 						}
 					}
 				}
@@ -1873,7 +1873,7 @@ bool cGame::DoCommand ( char *cmd )
 {
 	if ( strcmp ( cmd,"fps on" ) ==0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
 	if ( strcmp ( cmd,"fps off" ) ==0 ) {DebugFPS=false;return true;}
-	/*if(strcmp(cmd,"com on")==0){if(engine->fstcpip){engine->fstcpip->ResetStats();DebugCom=true;Comstart=Comstart.CurrentTime();}return true;}
+	/*if(strcmp(cmd,"com on")==0){if(engine->network){engine->network->ResetStats();DebugCom=true;Comstart=Comstart.CurrentTime();}return true;}
 	if(strcmp(cmd,"com off")==0){DebugCom=false;return true;}*/
 	if ( strcmp ( cmd,"base on" ) ==0 ) {DebugBase=true;return true;}
 	if ( strcmp ( cmd,"base off" ) ==0 ) {DebugBase=false;return true;}
@@ -3451,7 +3451,7 @@ bool cGame::Save ( string sName, int iNumber )
 	{
 		fwrite ( "HOT\0",sizeof ( char ),4,fp );
 	}
-	else if ( engine->fstcpip )
+	else if ( engine->network )
 	{
 		fwrite ( "MUL\0",sizeof ( char ),4,fp );
 	}

@@ -937,7 +937,7 @@ void cHud::ChechMouseOver ( void )
 			PlayFX ( SoundData.SNDHudButton );
 			if ( game->SelectedVehicle&&game->SelectedVehicle->mjob&&game->SelectedVehicle->mjob->Suspended&&game->SelectedVehicle->data.speed )
 			{
-				if ( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				if ( game->engine->network && !game->engine->network->bServer )
 				{
 					// Client
 					game->SelectedVehicle->mjob->finished=true;
@@ -948,7 +948,7 @@ void cHud::ChechMouseOver ( void )
 					sMessage = iToStr ( game->SelectedVehicle->PosX + game->SelectedVehicle->PosY * game->map->size ) + "#" ;
 					if ( game->SelectedVehicle->data.can_drive == DRIVE_AIR ) sMessage += "1";
 					else sMessage += "0";
-					game->engine->fstcpip->FSTcpIpSend ( MSG_ERLEDIGEN , sMessage.c_str() );
+					game->engine->network->TCPSend ( MSG_ERLEDIGEN , sMessage.c_str() );
 				}
 				else
 				{
@@ -1467,7 +1467,7 @@ void cHud::MakeMeMyEnd ( void )
 		if ( game->engine->DoEndActions() )
 		{
 			game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
-			if ( !game->engine->fstcpip || game->engine->fstcpip->bServer )
+			if ( !game->engine->network || game->engine->network->bServer )
 			{
 				game->WantToEnd = true;
 				if( !game->HotSeat )

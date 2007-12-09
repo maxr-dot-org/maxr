@@ -25,7 +25,7 @@
 #include "player.h"
 #include "mjobs.h"
 #include "ajobs.h"
-#include "fstcpip.h"
+#include "network.h"
 
 // IDs der NET-Messages //////////////////////////////////////////////////////
 #define MSG_CHAT               1  // Chatnachricht
@@ -176,13 +176,13 @@ struct sReport{
 // Die Engine-Klasse /////////////////////////////////////////////////////////
 class cEngine{
 public:
-  cEngine(cMap *Map, cFSTcpIp *fstcpip);
+  cEngine(cMap *Map, cTCP *network);
   ~cEngine(void);
 
   cMap *map;
   cMJobs *mjobs;
   TList *ActiveMJobs;
-  cFSTcpIp *fstcpip;
+  cTCP *network;
   SDL_mutex *mutex;
   int EndeCount;
   TList *AJobs;

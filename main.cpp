@@ -46,7 +46,7 @@
 #include "base.h"
 #include "ajobs.h"
 #include "mjobs.h"
-#include "fstcpip.h"
+#include "network.h"
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"

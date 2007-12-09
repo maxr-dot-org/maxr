@@ -24,7 +24,7 @@
 #include "map.h"
 #include "buildings.h"
 #include "player.h"
-#include "fstcpip.h"
+#include "network.h"
 
 // Globales //////////////////////////////////////////////////////////////////
 class cMultiPlayer;
@@ -250,7 +250,7 @@ public:
   string Titel;      // Titel des Menüs
   sOptions options;  // Optionen des Spiels
   bool host,tcp;     // Eigenschaften des Sockets
-  cFSTcpIp *fstcpip; // Die Com-Schnittstelle
+  cTCP *network; // Die Com-Schnittstelle
   string map;	     // Name der Map-Datei
   string IP;         // IP für die Verbindung
   int Port;          // Port für die Verbindung

@@ -3729,18 +3729,18 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 	{
 		if ( host )
 		{
-			fstcpip=new cFSTcpIp ( true );
+			network=new cTCP ( true );
 			Titel=lngPack.i18n ( "Text~Button~TCPIP_Host" );
 			IP="-";
 		}
 		else
 		{
-			fstcpip=new cFSTcpIp ( false );
+			network=new cTCP ( false );
 			Titel=lngPack.i18n ( "Text~Button~TCPIP_Client" );
 			IP=SettingsData.sIP;
 		}
 	}
-//  fstcpip->FSTcpIpMessageFuntion=ReceiveMenuMessage;
+//  network->TCPMessageFuntion=ReceiveMenuMessage;
 	Port=SettingsData.iPort;
 
 	map="";
@@ -4014,8 +4014,8 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else if ( !b&&BackPressed )
 			{
-				if ( fstcpip )
-					delete fstcpip;
+				if ( network )
+					delete network;
 				// Save changed name, port or ip to max.xml
 				SettingsData.sPlayerName = MyPlayer->name;
 				SaveOption ( SAVETYPE_NAME );
@@ -4093,7 +4093,7 @@ void cMultiPlayer::RunMenu ( void )
 					           fread(ptr+3,1,half,fp);
 					         }
 
-					         fstcpip->Send(msg,buffer_size);
+					         network->Send(msg,buffer_size);
 
 					         fclose(fp);
 					         free(msg);
@@ -4104,8 +4104,8 @@ void cMultiPlayer::RunMenu ( void )
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Check" ) );
 
 					WaitForGo=true;
-					ClientsToGo=fstcpip->GetConnectionCount();
-					fstcpip->FSTcpIpSend ( MSG_CHECK_FOR_GO,msg.c_str());
+					ClientsToGo=network->GetConnectionCount();
+					network->TCPSend ( MSG_CHECK_FOR_GO,msg.c_str());
 				}
 				OKPressed=false;
 				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
@@ -4280,7 +4280,7 @@ void cMultiPlayer::RunMenu ( void )
 			            SaveGame=InputStr;
 
 			            map_obj=new cMap;
-			            game=new cGame(fstcpip,map_obj);
+			            game=new cGame(network,map_obj);
 			            game->Load(SaveGame,0,true);
 			          }
 			          {
@@ -4335,10 +4335,10 @@ void cMultiPlayer::RunMenu ( void )
 //FIXME: error opening socket when we choose map and options before starting host -- beko
 				if ( host )
 				{
-					fstcpip->FSTcpIpClose();
-					fstcpip->SetTcpIpPort ( Port );
-					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
-					if ( fstcpip->iStatus==STAT_OPENED )
+					network->TCPClose();
+					network->SetTcpIpPort ( Port );
+					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
+					if ( network->iStatus==STAT_OPENED )
 					{
 						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Socket" ) );
 						cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
@@ -4358,26 +4358,26 @@ void cMultiPlayer::RunMenu ( void )
 				}
 				else
 				{
-					fstcpip->FSTcpIpClose();
-					fstcpip->SetIp ( IP );
-					fstcpip->SetTcpIpPort ( Port );
+					network->TCPClose();
+					network->SetIp ( IP );
+					network->SetTcpIpPort ( Port );
 
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
 					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
 
-					fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Open,NULL );
+					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
 					for ( int i=0;i<5;i++ ) //wait 5 seconds for connection - break in case we got one earlier
 					{
 						SDL_Delay ( 1000 );
-						if ( fstcpip->iStatus==STAT_CONNECTED ) continue;
+						if ( network->iStatus==STAT_CONNECTED ) continue;
 
 					}
-					if( ! fstcpip->bReceiveThreadFinished )
+					if( ! network->bReceiveThreadFinished )
 					{
-						SDL_KillThread ( fstcpip->FSTcpIpReceiveThread ) ;
+						SDL_KillThread ( network->TCPReceiveThread ) ;
 					}
 
-					if ( fstcpip->iStatus!=STAT_CONNECTED )
+					if ( network->iStatus!=STAT_CONNECTED )
 					{
 						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Connect" ) +IP+":"+iToStr(Port) );
 						cLog::write ( "Error on connecting "+IP+":"+iToStr(Port), cLog::eLOG_TYPE_WARNING );
@@ -4415,7 +4415,7 @@ void cMultiPlayer::RunMenu ( void )
 					{
 						ChatStr.erase ( 200 );
 					}
-					fstcpip->FSTcpIpSend ( MSG_CHAT, ( char * ) ChatStr.c_str());
+					network->TCPSend ( MSG_CHAT, ( char * ) ChatStr.c_str());
 
 					AddChatLog ( ChatStr );
 					ChatStr="";
@@ -4585,7 +4585,7 @@ void cMultiPlayer::RunMenu ( void )
 		// Das WaitForGo machen:
 		if ( host&&WaitForGo )
 		{
-			if ( ClientsToGo>fstcpip->GetConnectionCount() )
+			if ( ClientsToGo>network->GetConnectionCount() )
 			{
 				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Abort" ) );
 				WaitForGo=false;
@@ -4595,7 +4595,7 @@ void cMultiPlayer::RunMenu ( void )
 				ClientSettingsList=new TList;
 
 				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go" ) );
-				fstcpip->FSTcpIpSend ( MSG_LETS_GO,"");
+				network->TCPSend ( MSG_LETS_GO,"");
 
 				// Das Spiel machen:
 				TList *LandingList;
@@ -4605,7 +4605,7 @@ void cMultiPlayer::RunMenu ( void )
 				{
 
 					map_obj->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
-					game=new cGame ( fstcpip,map_obj );
+					game=new cGame ( network,map_obj );
 					game->AlienTech=options.AlienTech;
 					game->PlayRounds=options.PlayRounds;
 					game->ActiveRoundPlayerNr=MyPlayer->Nr;
@@ -4633,7 +4633,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					ExitMenu();
 
-					fstcpip->iMin_clients=PlayerList->Count-1;
+					network->iMin_clients=PlayerList->Count-1;
 					game->Run();
 					SettingsData.sPlayerName=MyPlayer->name;
 
@@ -4660,10 +4660,10 @@ void cMultiPlayer::RunMenu ( void )
 				msg[0]='#';
 				msg[1]=3;
 				msg[2]=MSG_LETS_GO;
-				fstcpip->Send(msg,3);
+				network->Send(msg,3);
 
 				ExitMenu();
-				fstcpip->RxFunc=game->engine->ReceiveNetMsg;
+				network->RxFunc=game->engine->ReceiveNetMsg;
 				TmpSf=NULL;
 
 				for(i=0;i<game->PlayerList->Count;i++){
@@ -4673,7 +4673,7 @@ void cMultiPlayer::RunMenu ( void )
 				  }
 				}
 
-				fstcpip->MinConnections=PlayerList->Count-1;
+				network->MinConnections=PlayerList->Count-1;
 				*(game->hud)=game->ActivePlayer->HotHud;
 				if(game->hud->Zoom!=64){
 				  game->hud->LastZoom=-1;
@@ -4702,7 +4702,7 @@ void cMultiPlayer::RunMenu ( void )
 					if ( PlayerList->PlayerItems[i]==MyPlayer ) {nr=i;break;}
 				}
 
-				game=new cGame ( fstcpip,map_obj );
+				game=new cGame ( network,map_obj );
 				game->AlienTech=options.AlienTech;
 				game->PlayRounds=options.PlayRounds;
 				game->ActiveRoundPlayerNr=-1;
@@ -4732,7 +4732,7 @@ void cMultiPlayer::RunMenu ( void )
 
 				ExitMenu();
 
-				fstcpip->iMax_clients = fstcpip->iMin_clients = PlayerList->Count-1; // set maximal and minimal players for this game
+				network->iMax_clients = network->iMin_clients = PlayerList->Count-1; // set maximal and minimal players for this game
 				game->Run();
 				SettingsData.sPlayerName=MyPlayer->name;
 
@@ -4756,12 +4756,12 @@ void cMultiPlayer::RunMenu ( void )
 			/*int i;
 
 			map_obj=new cMap;
-			game=new cGame(fstcpip,map_obj);
+			game=new cGame(network,map_obj);
 			game->Load(SaveGame,0,true);
 
 			ExitMenu();
 			TmpSf=NULL;
-			fstcpip->RxFunc=game->engine->ReceiveNetMsg;
+			network->RxFunc=game->engine->ReceiveNetMsg;
 
 			for(i=0;i<game->PlayerList->Count;i++){
 			  if(((cPlayer*)(game->PlayerList->Items[i]))->name==MyPlayer->name){
@@ -4770,7 +4770,7 @@ void cMultiPlayer::RunMenu ( void )
 			  }
 			}
 
-			fstcpip->MinConnections=PlayerList->Count-1;
+			network->MinConnections=PlayerList->Count-1;
 			*(game->hud)=game->ActivePlayer->HotHud;
 			if(game->hud->Zoom!=64){
 			  game->hud->LastZoom=-1;
@@ -4793,26 +4793,26 @@ void cMultiPlayer::RunMenu ( void )
 		}
 
 		// Ggf Meldung über Statusänderung machen:
-		if ( LastStatus!=fstcpip->iStatus )
+		if ( LastStatus!=network->iStatus )
 		{
-			LastStatus=fstcpip->iStatus;
+			LastStatus=network->iStatus;
 			switch ( LastStatus )
 			{
 				case STAT_CONNECTED:
 					if ( host )
 					{
-						AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_New" ) );
+						AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_New" ) );
 						cLog::write ( "New connection", cLog::eLOG_TYPE_DEBUG );
 					}
 					else
 					{
-						AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
+						AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
 						cLog::write ( "Connected", cLog::eLOG_TYPE_DEBUG );
 						ClientConnectedCallBack();
 					}
 					break;
 				case STAT_CLOSED:
-					AddChatLog ( "fstcpip: "+lngPack.i18n ( "Text~Multiplayer~Network_Closed" ) );
+					AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_Closed" ) );
 					cLog::write ( "Connection closed", cLog::eLOG_TYPE_DEBUG );
 					if ( !host ) ClientDistconnect();
 					break;
@@ -4820,20 +4820,20 @@ void cMultiPlayer::RunMenu ( void )
 		}
 		if ( host )
 		{
-			if ( LastConnectionCount>fstcpip->GetConnectionCount() )
+			if ( LastConnectionCount>network->GetConnectionCount() )
 			{
 				ServerDisconnect();
 			}
-			LastConnectionCount=fstcpip->GetConnectionCount();
+			LastConnectionCount=network->GetConnectionCount();
 		}
 
 		lx=mouse->x;
 		ly=mouse->y;
 		lb=b;
-		if ( fstcpip->iStatus==STAT_CONNECTED && fstcpip->bReceiveThreadFinished )
+		if ( network->iStatus==STAT_CONNECTED && network->bReceiveThreadFinished )
 		{
-			SDL_WaitThread ( fstcpip->FSTcpIpReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
-			fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+			SDL_WaitThread ( network->TCPReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
+			network->TCPReceiveThread = SDL_CreateThread ( Receive,NULL );
 		}
 		HandleMenuMessages();
 		SDL_Delay ( 1 );
@@ -4846,9 +4846,9 @@ void cMultiPlayer::HandleMenuMessages()
 {
 	cNetMessage *msg;
 	string msgstring;
-	for ( int i=0;i<fstcpip->NetMessageList->iCount;i++ )
+	for ( int i=0;i<network->NetMessageList->iCount;i++ )
 	{
-		msg = (cNetMessage *) fstcpip->NetMessageList->Items[i];
+		msg = (cNetMessage *) network->NetMessageList->Items[i];
 		msgstring = ( char * ) msg->msg;
 		switch ( msg->typ )
 		{
@@ -4856,7 +4856,7 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_CHAT:
 				AddChatLog ( msgstring );
 				PlayFX ( SoundData.SNDChat );
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 				// Neuer Spieler meldet sich an:
 			case MSG_SIGNING_IN:
@@ -4869,9 +4869,9 @@ void cMultiPlayer::HandleMenuMessages()
 				Refresh=true;
 				string smsg;
 				smsg=Strings->Items[2]; smsg+="#"; smsg+=iToStr(p->Nr);
-				fstcpip->FSTcpIpSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
+				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Mitteilung über die eigene ID:
@@ -4882,7 +4882,7 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				if ( MyPlayer->Nr!=atoi ( Strings->Items[0].c_str() ) )
 				{
-					fstcpip->NetMessageList->Delete ( i );
+					network->NetMessageList->Delete ( i );
 					break;
 				}
 				for ( i=0;i<PlayerList->Count;i++ )
@@ -4894,7 +4894,7 @@ void cMultiPlayer::HandleMenuMessages()
 						break;
 					}
 				}
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Ein Client ändert seinen Namen:
@@ -4921,7 +4921,7 @@ void cMultiPlayer::HandleMenuMessages()
 					SendPlayerList();
 					Refresh=true;
 				}
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Bekommt die Liste mit den Spielern:
@@ -4949,7 +4949,7 @@ void cMultiPlayer::HandleMenuMessages()
 					PlayerList->AddPlayer ( p );
 				}
 				Refresh=true;
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Überträgt die Optionen:
@@ -4976,14 +4976,14 @@ void cMultiPlayer::HandleMenuMessages()
 				else
 					map=Strings->Items[4];
 				Refresh=true;
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Fordert einen Client auf sich zu identifizieren:
 			case MSG_WHO_ARE_YOU:
 			{
 				ChangeFarbeName();
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Prüfen, ob der Client bereit ist zum Go:
@@ -5002,18 +5002,18 @@ void cMultiPlayer::HandleMenuMessages()
 				{
 					string new_msg;
 					new_msg=iToStr(MyPlayer->Nr);
-					fstcpip->FSTcpIpSend ( MSG_READY_TO_GO,new_msg.c_str() );
+					network->TCPSend ( MSG_READY_TO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host" ) );
 				}
 				else
 				{
 					string new_msg;
 					new_msg=iToStr(MyPlayer->Nr);
-					fstcpip->FSTcpIpSend ( MSG_NO_GO,new_msg.c_str() );
+					network->TCPSend ( MSG_NO_GO,new_msg.c_str() );
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host_No" ) );
 				}
 				if ( fp ) fclose ( fp );
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über einen nicht bereiten Client:
@@ -5033,7 +5033,7 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				WaitForGo=false;
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung über einen bereiten Client:
@@ -5053,13 +5053,13 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				ClientsToGo--;
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Benachrichtigung, dass es jetzt los geht:
 			case MSG_LETS_GO:
 				LetsGo=true;
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 				// Die Ressourcen:
 			case MSG_RESSOURCES:
@@ -5074,7 +5074,7 @@ void cMultiPlayer::HandleMenuMessages()
 					map_obj->Resources[off].typ= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 				}
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Empfang der Upgrades eines Players:
@@ -5093,7 +5093,7 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				if ( p==MyPlayer )
 				{
-					fstcpip->NetMessageList->Delete ( i );
+					network->NetMessageList->Delete ( i );
 					break;
 				}
 				for ( int i=1;i<Strings->Count;i++ )
@@ -5122,7 +5122,7 @@ void cMultiPlayer::HandleMenuMessages()
 						p->VehicleData[i].version++;
 					}
 				}
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Landedaten eines Players:
@@ -5136,7 +5136,7 @@ void cMultiPlayer::HandleMenuMessages()
 				nr=atoi ( Strings->Items[2].c_str() );
 				if ( nr==MyPlayer->Nr )
 				{
-					fstcpip->NetMessageList->Delete ( i );
+					network->NetMessageList->Delete ( i );
 					break;
 				}
 
@@ -5168,11 +5168,11 @@ void cMultiPlayer::HandleMenuMessages()
 					l->cargo=atoi ( Strings->Items[k++].c_str() );
 					cs->LandingList->AddLanding ( l );
 				}
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 			}
 			default:
-				fstcpip->NetMessageList->Delete ( i );
+				network->NetMessageList->Delete ( i );
 				break;
 		}
 	}
@@ -5195,7 +5195,7 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 	str="Version: "; str+=MAX_VERSION; str+="\n";
 	str+="Checksum: "+iToStr(SettingsData.Checksum)+"\n\n";
 
-	if ( !host&&fstcpip->iStatus!=STAT_CONNECTED )
+	if ( !host&&network->iStatus!=STAT_CONNECTED )
 	{
 		str+=lngPack.i18n ( "Text~Multiplayer~Network_Connected_Not" );
 		font->showTextAsBlock(r, str);
@@ -5435,7 +5435,7 @@ void cMultiPlayer::ClientConnectedCallBack ( void )
 	msg=MyPlayer->name; msg+="#";
 	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
 	msg+=iToStr(MyPlayer->Nr);
-	fstcpip->FSTcpIpSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
+	network->TCPSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
 }
 
 // Meldet einen Disconnect, wenn man Client ist:
@@ -5467,7 +5467,7 @@ void cMultiPlayer::ServerDisconnect ( void )
 	}
 	PlayerList->AddPlayer ( MyPlayer );
 
-	fstcpip->FSTcpIpSend ( MSG_WHO_ARE_YOU,"" );
+	network->TCPSend ( MSG_WHO_ARE_YOU,"" );
 	Refresh=true;
 }
 
@@ -5475,10 +5475,10 @@ void cMultiPlayer::ServerDisconnect ( void )
 void cMultiPlayer::ChangeFarbeName ( void )
 {
 	string msg;
-	if ( fstcpip->bServer && !fstcpip->GetConnectionCount() ) return;
-	if ( !fstcpip->bServer && fstcpip->iStatus!=STAT_CONNECTED ) return;
+	if ( network->bServer && !network->GetConnectionCount() ) return;
+	if ( !network->bServer && network->iStatus!=STAT_CONNECTED ) return;
 
-	if ( fstcpip->bServer )
+	if ( network->bServer )
 	{
 		SendPlayerList();
 		return;
@@ -5486,7 +5486,7 @@ void cMultiPlayer::ChangeFarbeName ( void )
 	msg=iToStr(MyPlayer->Nr); msg+="#";
 	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
 	msg+=MyPlayer->name;
-	fstcpip->FSTcpIpSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
+	network->TCPSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
 }
 
 // Versendet eine Liste mit allen Spielern:
@@ -5502,7 +5502,7 @@ void cMultiPlayer::SendPlayerList ( void )
 		msg+=iToStr(GetColorNr ( p->color )); msg+="#";
 		msg+=p->name; if ( i!=PlayerList->Count-1 ) msg+="#";
 	}
-	fstcpip->FSTcpIpSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
+	network->TCPSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
 }
 
 // Überträgt die Spieloptionen:
@@ -5524,7 +5524,7 @@ void cMultiPlayer::SendOptions ( void )
 	}
 	msg+=map;
 
-	fstcpip->FSTcpIpSend ( MSG_OPTIONS, msg.c_str() );
+	network->TCPSend ( MSG_OPTIONS, msg.c_str() );
 }
 
 // Sendet die Ressourcmap an alle Clients:
@@ -5541,14 +5541,14 @@ void cMultiPlayer::TransmitRessources ( void )
 		msg+=iToStr(map_obj->Resources[i].value);
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str() );
+			network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
 //      SDL_Delay(10);
 			msg="";
 		}
 	}
 	if ( msg.length() >0 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_RESSOURCES,msg.c_str() );
+		network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
 //    SDL_Delay(10);
 	}
 }
@@ -5620,7 +5620,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 	// Die Ressourcen übertragen:
 	TransmitRessources();
 
-	fstcpip->FSTcpIpSend ( MSG_LETS_GO,"" );
+	network->TCPSend ( MSG_LETS_GO,"" );
 }
 
 // Überträgt alle Settings und wartet auf die Daten des Servers:
@@ -5651,10 +5651,10 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 		// Look for messages and handle them
-		if ( fstcpip->iStatus==STAT_CONNECTED && fstcpip->bReceiveThreadFinished )
+		if ( network->iStatus==STAT_CONNECTED && network->bReceiveThreadFinished )
 		{
-			SDL_WaitThread ( fstcpip->FSTcpIpReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
-			fstcpip->FSTcpIpReceiveThread = SDL_CreateThread ( Receive,NULL );
+			SDL_WaitThread ( network->TCPReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
+			network->TCPReceiveThread = SDL_CreateThread ( Receive,NULL );
 		}
 		HandleMenuMessages();
 	}
@@ -5719,7 +5719,7 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
+			network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
@@ -5748,14 +5748,14 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		}
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
+			network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
 	}
 	if ( msg.length() >1 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
+		network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
 		SDL_Delay ( 1 );
 	}
 }
@@ -5780,14 +5780,14 @@ void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
 		msg+=iToStr(l->cargo);
 		if ( msg.length() >200 )
 		{
-			fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str() );
+			network->TCPSend ( MSG_PLAYER_LANDING,msg.c_str() );
 			SDL_Delay ( 1 );
 			msg="";
 		}
 	}
 	if ( msg.length() >0 )
 	{
-		fstcpip->FSTcpIpSend ( MSG_PLAYER_LANDING,msg.c_str() );
+		network->TCPSend ( MSG_PLAYER_LANDING,msg.c_str() );
 		SDL_Delay ( 1 );
 	}
 }

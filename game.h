@@ -71,7 +71,7 @@ struct sFX{
 // Die Game-Klasse ///////////////////////////////////////////////////////////
 class cGame{
 public:
-  cGame(cFSTcpIp *fstcpip, cMap *map);
+  cGame(cTCP *network, cMap *map);
   ~cGame(void);
 
   // Variablen:

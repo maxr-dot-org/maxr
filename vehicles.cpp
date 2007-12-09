@@ -2121,7 +2121,7 @@ void cVehicle::DrawMenu ( void )
 				PlayFX ( SoundData.SNDObjectMenu );
 				// Client only
 
-				if ( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				if ( game->engine->network && !game->engine->network->bServer )
 				{
 					string sMessage;
 					sMessage = iToStr ( PosX + PosY * game->map->size ) + "#";
@@ -2131,7 +2131,7 @@ void cVehicle::DrawMenu ( void )
 					else
 						sMessage += "0";
 
-					game->engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+					game->engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
 				}
 			}
 
@@ -2228,7 +2228,7 @@ void cVehicle::DrawMenu ( void )
 				PlayFX ( SoundData.SNDObjectMenu );
 				// Client only
 
-				if ( game->engine->fstcpip && !game->engine->fstcpip->bServer )
+				if ( game->engine->network && !game->engine->network->bServer )
 				{
 					string sMessage;
 					sMessage = iToStr ( PosX + PosY * game->map->size ) + "#";
@@ -2238,7 +2238,7 @@ void cVehicle::DrawMenu ( void )
 					else
 						sMessage += "0";
 
-					game->engine->fstcpip->FSTcpIpSend ( MSG_MJOB_STOP, sMessage.c_str() );
+					game->engine->network->TCPSend ( MSG_MJOB_STOP, sMessage.c_str() );
 				}
 			}
 			else
