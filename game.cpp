@@ -1890,9 +1890,7 @@ bool cGame::DoCommand ( char *cmd )
 	if ( strcmp ( cmd,"fog off" ) ==0 ) 
 	{
 		memset ( ActivePlayer->ScanMap,1,map->size*map->size );
-		PlayerCheat=ActivePlayer->name; 
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Fog Off\"";
 		return true;
 	}
@@ -1900,9 +1898,7 @@ bool cGame::DoCommand ( char *cmd )
 	if ( strcmp ( cmd,"survey" ) ==0 ) 
 	{
 		memset ( ActivePlayer->ResourceMap,1,map->size*map->size );
-		PlayerCheat=ActivePlayer->name; 
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Survey\"";
 		return true;
 	}
@@ -1910,8 +1906,7 @@ bool cGame::DoCommand ( char *cmd )
 	if ( strcmp ( cmd,"credits" ) ==0 )
 	{
 		ActivePlayer->Credits+=1000;
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Credits\"";
 		return true;
 	}
@@ -1921,9 +1916,7 @@ bool cGame::DoCommand ( char *cmd )
 		sscanf ( cmd,"kill %d,%d",&x,&y );
 		engine->DestroyObject ( x+y*map->size,false );
 		engine->DestroyObject ( x+y*map->size,true );
-		PlayerCheat=ActivePlayer->name; 
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Kill\"";
 		return true;
 	}
@@ -1942,17 +1935,13 @@ bool cGame::DoCommand ( char *cmd )
 			}
 			memset ( ActivePlayer->ScanMap,1,map->size*map->size );
 		}
-		PlayerCheat=ActivePlayer->name; 
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"God Off\"";
 		return true;
 	}
 	if ( strcmp ( cmd,"load" ) ==0 )
 	{
-		PlayerCheat=ActivePlayer->name; 
-		PlayerCheat+=" ";
-		PlayerCheat+=lngPack.i18n( "Text~Comp~Cheat");
+		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Load\"";
 		
 		if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammo=SelectedVehicle->data.max_ammo;SelectedVehicle->ShowDetails();}
