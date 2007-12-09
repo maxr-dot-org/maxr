@@ -36,16 +36,8 @@ cTCP::cTCP ( bool server )
 	UsedIDs = new sIDList();
 	WaitOKList = new sList();
 	NetMessageList = new sList();
-	if(bServer)
-	{
-		iMyID = 0;
-		iNextMessageID = 1;
-	}
-	else
-	{
-		iMyID = -1;
-		iNextMessageID = -1;
-	}
+	iMyID = 0;
+	iNextMessageID = GenerateNewID();
 	bReceiveThreadFinished = true;
 	TCPReceiveThread = NULL;
 	TCPResendThread = SDL_CreateThread ( CheckResends , NULL );
@@ -119,7 +111,7 @@ bool cTCP::TCPOpen ( void )
 				for ( int i=0;i<=iNum_clients;i++ )
 				{
 					SDLNet_TCP_AddSocket ( SocketSet, sock_client[i] ); // Add clients to the socket-set
-				}
+				} 
 				// Send the client his ID
 				sNetBuffer *NetBuffer = new sNetBuffer();
 
@@ -129,10 +121,16 @@ bool cTCP::TCPOpen ( void )
 				NetBuffer->iTyp = BUFF_TYP_NEWID;
 				NetBuffer->iTicks = SDL_GetTicks();
 				NetBuffer->iDestClientNum = iNum_clients;
-				NetBuffer->msg.lenght = iToStr( iNum_clients ).length() + 1;
+				NetBuffer->msg.lenght = ( int )iToStr( iNum_clients-1 ).length() + 1;
 				strcpy(NetBuffer->msg.msg, iToStr( iNum_clients ).c_str() );
 
-				SDLNet_TCP_Send ( sock_client[iNum_clients], NetBuffer, sizeof ( sNetBuffer ) );
+				SDLNet_TCP_Send ( sock_client[iNum_clients-1], NetBuffer, sizeof ( sNetBuffer ) );
+				SDL_Delay ( 1 );
+
+				string sTmp;
+				sTmp = "(Host)Send NewID-Message: -ID " + iToStr(NetBuffer->iID) + " -Client " + iToStr( iNum_clients-1 ) + "-Message: \"" + NetBuffer->msg.msg + "\"";
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
+				WaitOKList->Add(NetBuffer); // Add package to waitlist
 			}
 		}
 		iStatus=STAT_CONNECTED;
@@ -321,44 +319,20 @@ bool cTCP::TCPReceive()
 	return true;
 }
 
-int cTCP::GenerateNewID()
+unsigned int cTCP::GenerateNewID()
 {
-	int iID = 1;
-	for(int i = 0; i < UsedIDs->iCount; i++)
-	{
-		if( iID == UsedIDs->iID[i] )
-		{
-			iID++;
-			i = 0;
-		}
-	}
-	return iID;
-}
+	int iReturnID;
+	int iHour, iMin, iSec, iMsec;
+	iHour = SDL_GetTicks() / ( 60*60*1000 );
+	iMin = SDL_GetTicks() / ( 60*1000 ) - iHour*60;
+	iSec = SDL_GetTicks() / 1000 - iMin*60 - iHour*60*60;
+	iMsec = SDL_GetTicks() - iSec*1000 - iMin*60*1000 - iHour*60*60*1000;
 
-void cTCP::SendNewID(unsigned int iNewID, int iClientNum)
-{
-	sNetBuffer *NetBuffer = new sNetBuffer();
-	char szTmp[12];
-
-	NetBuffer->iID = iNextMessageID;
-	UsedIDs->Add ( iNextMessageID );
-	iNextMessageID = GenerateNewID();
-	NetBuffer->iMax_parts = 1;
-	NetBuffer->iPart = 1;
-	NetBuffer->iTyp = BUFF_TYP_NEWID;
-	NetBuffer->iTicks = SDL_GetTicks();
-	NetBuffer->iDestClientNum = iClientNum;
-	sprintf(szTmp,"%d", iNewID);
-	NetBuffer->msg.lenght = ( int ) strlen(szTmp) + 1;
-	memcpy ( NetBuffer->msg.msg, szTmp, NetBuffer->msg.lenght );
-
-	SDLNet_TCP_Send ( sock_client[iClientNum], NetBuffer, sizeof ( sNetBuffer ) );
-	char szTmp2[400];
-	sprintf(szTmp2,"(Host)Send NewID-Message: -ID %d -Client %d -Message: \"%s\" -Lenght: %d",NetBuffer->iID, iClientNum, NetBuffer->msg.msg, NetBuffer->msg.lenght);
-	cLog::write(szTmp2, LOG_TYPE_NETWORK);
-	// Add package to waitlist
-	WaitOKList->Add(NetBuffer);
-	SDL_Delay ( 1 );
+	iReturnID = iMyID * 100000000;
+	iReturnID += iMin * 1000000;
+	iReturnID += iSec * 10000;
+	iReturnID += iMsec;
+	return iReturnID;
 }
 
 void cTCP::SendOK(unsigned int iID, int iClientNum)

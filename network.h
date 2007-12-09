@@ -183,8 +183,7 @@ public:
 	int GetConnectionCount(void);
 
 private:
-	int GenerateNewID();
-	void SendNewID(unsigned int iNewID, int iClientNum);
+	unsigned int GenerateNewID();
 	void SendOK(unsigned int iID, int iClientNum /* -1 For server*/ );
 	SDL_Thread *TCPResendThread;	// Thread that looks for buffers which must be resend
 
