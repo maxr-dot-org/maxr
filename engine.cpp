@@ -647,13 +647,19 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 	}
 	// Ggf Meldung machen:
-	if ( v->owner!=game->ActivePlayer&&game->ActivePlayer->ScanMap[ToX+ToY*map->size]&&!game->ActivePlayer->ScanMap[FromX+FromY*map->size]&&v->detected )
+	if ( v->owner != game->ActivePlayer && game->ActivePlayer->ScanMap[ToX+ToY*map->size] && !game->ActivePlayer->ScanMap[FromX+FromY*map->size] && v->detected )
 	{
-		char str[50]; //FIXME: remove array
-		sprintf ( str,"%s %s",v->name.c_str(), lngPack.i18n( "Text~Comp~Detected").c_str() );
-		game->AddCoords ( str,v->PosX,v->PosY );
-		if ( random ( 2,0 ) ==0 ) PlayVoice ( VoiceData.VOIDetected1 );
-		else PlayVoice ( VoiceData.VOIDetected2 );
+		string sTmp = v->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
+		game->AddCoords ( sTmp, v->PosX, v->PosY );
+	
+		if ( random ( 2, 0 ) == 0 )
+		{
+			PlayVoice ( VoiceData.VOIDetected1 );
+		}
+		else
+		{
+			PlayVoice ( VoiceData.VOIDetected2 );
+		}
 	}
 	return;
 }
@@ -986,7 +992,7 @@ void cEngine::CheckDefeat ( void )
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
 			sTmpString += p->name + " ";
 			sTmpString += lngPack.i18n( "Text~Comp~Defeated") + "!";
-			game->AddMessage ( (char *)sTmpString.c_str() );
+			game->AddMessage ( sTmpString );
 
 			if ( game->HotSeat )
 			{
@@ -1051,37 +1057,36 @@ void cEngine::AddReport ( string name,bool vehicle )
 	}
 }
 
-// Zeigt einen Report zum Rundenbeginn an:
+// Zeigt einen sReport zum Rundenbeginn an:
 void cEngine::MakeRundenstartReport ( void )
 {
 	struct sReport *r;
-	string Report;
+	string sReport;
 	string stmp;
-	char sztmp[32];
-	char str[100];
 	int anz;
-	sprintf ( str,"%s %d",lngPack.i18n( "Text~Comp~Turn_Start").c_str(), game->Runde );
-	game->AddMessage ( str );
+	
+	string sTmp = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr(game->Runde);
+	game->AddMessage(sTmp);
 
 	anz=0;
-	Report="";
+	sReport="";
 	while ( game->ActivePlayer->ReportBuildings->Count )
 	{
 		r=game->ActivePlayer->ReportBuildings->ReportItems[0];
-		if ( anz ) Report+=", ";
+		if ( anz ) sReport+=", ";
 		anz+=r->anz;
-		sprintf ( sztmp,"%d",r->anz ); stmp = sztmp; stmp += " "; stmp += r->name;
-		Report += r->anz>1?stmp:r->name;
+		stmp = iToStr(r->anz) + " " + r->name;
+		sReport += r->anz>1?stmp:r->name;
 		delete r;
 		game->ActivePlayer->ReportBuildings->DeleteReport ( 0 );
 	}
 	while ( game->ActivePlayer->ReportVehicles->Count )
 	{
 		r=game->ActivePlayer->ReportVehicles->ReportItems[0];
-		if ( anz ) Report+=", ";
+		if ( anz ) sReport+=", ";
 		anz+=r->anz;
-		sprintf ( sztmp,"%d",r->anz ); stmp = sztmp; stmp += " "; stmp += r->name;
-		Report+=r->anz>1?stmp:r->name;
+		stmp = iToStr(r->anz) + " " + r->name;
+		sReport+=r->anz>1?stmp:r->name;
 		delete r;
 		game->ActivePlayer->ReportVehicles->DeleteReport ( 0 );
 	}
@@ -1094,16 +1099,16 @@ void cEngine::MakeRundenstartReport ( void )
 	}
 	if ( anz==1 )
 	{
-		Report+=" "+lngPack.i18n( "Text~Comp~Finished") +".";
+		sReport+=" "+lngPack.i18n( "Text~Comp~Finished") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartOne );
 	}
 	else
 	{
-		Report+=" "+lngPack.i18n( "Text~Comp~Finished2") +".";
+		sReport+=" "+lngPack.i18n( "Text~Comp~Finished2") +".";
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;
-	game->AddMessage ( ( char * ) Report.c_str() );
+	game->AddMessage ( sReport );
 }
 
 // Bereitet das Logging vor:
@@ -1643,8 +1648,7 @@ void cEngine::HandleGameMessages()
 					p = game->PlayerList->PlayerItems[k];
 					if ( p->Nr == atoi ( sMsgString.c_str() ) )
 					{
-						//TODO: i18n
-						game->AddMessage( (string)"Spieler " + p->name + " hat die Runde beendet" );
+						game->AddMessage( lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + p->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn_End" ));
 						break;
 					}
 				}
@@ -1961,8 +1965,7 @@ void cEngine::HandleGameMessages()
 						p = game->PlayerList->PlayerItems[k];
 						if( p->Nr == next )
 						{
-							//TODO: i18n
-							game->AddMessage( p->name + " ist an der Reihe." );
+							game->AddMessage( p->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ) );
 							break;
 						}
 					}
