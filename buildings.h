@@ -161,7 +161,7 @@ public:
   void ShowBuildMenu(void);
   void ShowBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
   void DrawBuildButtons(int speed);
-  void ShowToBuildList(TList *list,int selected,int offset, bool showInfo);
+  void ShowToBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
   void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
   void DrawExitPoints(sVehicle *typ);
   bool CanExitTo(int off,sVehicle *typ);
@@ -177,11 +177,11 @@ public:
   void ShowResearchSchieber(void);
   void MakeResearchSchieber(int x,int y);
   void ShowUpgrade(void);
-  void ShowUpgradeList(TList *list,int selected,int offset,bool beschreibung);
+  void ShowUpgradeList(cList<sUpgradeStruct*> *list,int selected,int offset,bool beschreibung);
   void ShowGoldBar(int StartCredits);
   void MakeUpgradeSliderVehicle(sUpgrades *u,int nr);
   void MakeUpgradeSliderBuilding(sUpgrades *u,int nr);
-  void CreateUpgradeList(TList *selection,TList *images,int *selected,int *offset);
+  void CreateUpgradeList(cList<sUpgradeStruct*> *selection,cList<sUpgradeStruct*> *images,int *selected,int *offset);
   void MakeUpgradeSubButtons(void);
   int CalcPrice(int value,int org, int variety);
   int CalcSteigerung(int org, int variety);
