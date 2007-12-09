@@ -29,7 +29,7 @@ class cMap;
 
 // Die SubBase Struktur //////////////////////////////////////////////////////
 struct sSubBase{
-  TList *buildings;
+  cList<cBuilding*> *buildings;
 
   int MaxMetal;
   int Metal;
@@ -66,7 +66,7 @@ public:
   ~cBase(void);
 
   cPlayer *owner;
-  TList *SubBases;
+  cList<sSubBase*> *SubBases;
   cMap *map;
 
   void AddBuilding(cBuilding *b);

@@ -455,7 +455,7 @@ void cGame::Run ( void )
 		}*/
 		if ( DebugBase&&fDrawMap )
 		{
-			font->showText(550,DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->Count), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 	

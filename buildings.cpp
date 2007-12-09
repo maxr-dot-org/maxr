@@ -1363,9 +1363,9 @@ bool cBuilding::StartWork ( bool engine_call )
 				{
 					game->AddMessage ( "Zu wenig Energie, Generator wird eingeschaltet!" );
 
-					for ( i = 0;i < SubBase->buildings->Count;i++ )
+					for ( i = 0;i < SubBase->buildings->iCount;i++ )
 					{
-						b = SubBase->buildings->BuildItems[i];
+						b = SubBase->buildings->Items[i];
 
 						if ( !b->data.energy_prod || b->data.is_big )
 							continue;
@@ -1376,12 +1376,12 @@ bool cBuilding::StartWork ( bool engine_call )
 							break;
 					}
 
-					for ( i = 0;i < SubBase->buildings->Count;i++ )
+					for ( i = 0;i < SubBase->buildings->iCount;i++ )
 					{
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
 
-						b = SubBase->buildings->BuildItems[i];
+						b = SubBase->buildings->Items[i];
 
 						if ( !b->data.energy_prod )
 							continue;
@@ -1541,9 +1541,9 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		if ( v->data.can_transport != data.can_load )
 			return false;
 
-		for ( i = 0;i < SubBase->buildings->Count;i++ )
+		for ( i = 0;i < SubBase->buildings->iCount;i++ )
 		{
-			b = SubBase->buildings->BuildItems[i];
+			b = SubBase->buildings->Items[i];
 
 			if ( b->data.is_big )
 			{
@@ -5664,12 +5664,12 @@ void cBuilding::ShowMineManager ( void )
 	// Liste mit Minen erstellen:
 	mines = new cList<cBuilding*>;
 
-	for ( x = 0;x < SubBase->buildings->Count;x++ )
+	for ( x = 0;x < SubBase->buildings->iCount;x++ )
 	{
-		if ( SubBase->buildings->BuildItems[x]->data.is_mine && SubBase->buildings->BuildItems[x]->IsWorking )
+		if ( SubBase->buildings->Items[x]->data.is_mine && SubBase->buildings->Items[x]->IsWorking )
 		{
 			cBuilding *b;
-			b = SubBase->buildings->BuildItems[x];
+			b = SubBase->buildings->Items[x];
 			mines->Add ( b );
 			MaxM += b->MaxMetalProd;
 			MaxO += b->MaxOilProd;
@@ -6531,7 +6531,6 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Die Images erstellen:
-	//images = new TList;
 	images = new cList<sBuildStruct*>;
 
 	float newzoom = ( game->hud->Zoom / 64.0 );
@@ -8165,15 +8164,15 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			for ( i = 0;i < owner->base->SubBases->Count;i++ )
+			for ( i = 0;i < owner->base->SubBases->iCount;i++ )
 			{
 				sSubBase *sb;
-				sb = owner->base->SubBases->SubBaseItems[i];
+				sb = owner->base->SubBases->Items[i];
 
-				for ( k = 0;k < sb->buildings->Count;k++ )
+				for ( k = 0;k < sb->buildings->iCount;k++ )
 				{
 					cBuilding *b;
-					b = sb->buildings->BuildItems[k];
+					b = sb->buildings->Items[k];
 
 					if ( b->typ != typ )
 						continue;

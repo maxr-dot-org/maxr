@@ -3044,11 +3044,11 @@ void cVehicle::ShowBuildMenu ( void )
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
-	TList *images;
+	cList<sBuildStruct*> *images;
 	int selected = 0, offset = 0, BuildSpeed = 1;
-	int iTurboBuildCosts[3]; //costs for the 3 turbo build steps
-	int iTurboBuildRounds[3];// needed rounds for the 3 turbo build steps
-	// 0 rounds, means not available
+	int iTurboBuildCosts[3];	//costs for the 3 turbo build steps
+	int iTurboBuildRounds[3];	// needed rounds for the 3 turbo build steps
+								// 0 rounds, means not available
 #define BUTTON__W 77
 #define BUTTON__H 23
 
@@ -3106,7 +3106,7 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Die Images erstellen:
-	images = new TList;
+	images = new cList<sBuildStruct*>;
 
 	for ( i = 0;i < UnitsData.building_anz;i++ )
 	{
@@ -3145,7 +3145,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		n->id = i;
 
-		images->AddBuildStruct ( n );
+		images->Add ( n );
 	}
 
 	ShowBuildList ( images, selected, offset, Beschreibung, &BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
@@ -3198,9 +3198,9 @@ void cVehicle::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images->Count - 9 )
+			if ( offset > images->iCount - 9 )
 			{
-				offset = images->Count - 9;
+				offset = images->iCount - 9;
 			}
 
 			if ( selected < offset )
@@ -3321,7 +3321,7 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner )
 						break;
 
-					BuildingTyp = images->BuildStructItems[selected]->id;
+					BuildingTyp = images->Items[selected]->id;
 
 					if ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
@@ -3411,7 +3411,7 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner )
 						break;
 
-					BuildingTyp = images->BuildStructItems[selected]->id;
+					BuildingTyp = images->Items[selected]->id;
 
 					if ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
@@ -3524,9 +3524,9 @@ void cVehicle::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 ) / ( 32 + 10 );
 
-			if ( images->Count < 9 )
+			if ( images->iCount < 9 )
 			{
-				if ( nr >= images->Count )
+				if ( nr >= images->iCount )
 					nr = -1;
 			}
 			else
@@ -3554,13 +3554,13 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	for ( int i = 0;i < images->Count; i++ )
+	for ( int i = 0;i < images->iCount; i++ )
 	{
 		sBuildStruct *ptr;
-		ptr = images->BuildStructItems[i];
+		ptr = images->Items[i];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->DeleteBuildStruct ( 0 );
+		images->Delete ( 0 );
 	}
 
 	delete images;
@@ -3569,7 +3569,7 @@ void cVehicle::ShowBuildMenu ( void )
 }
 
 // Zeigt die Liste mit den Images an:
-void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
+void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text = { 530, 70, 80, 16};
@@ -3593,13 +3593,13 @@ void cVehicle::ShowBuildList ( TList *list, int selected, int offset, bool besch
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list->Count;i++ )
+	for ( i = offset;i < list->iCount;i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
-		ptr = list->BuildStructItems[i];
+		ptr = list->Items[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
