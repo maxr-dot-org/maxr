@@ -127,14 +127,14 @@ cVehicle::~cVehicle ( void )
 	{
 		int i;
 
-		for ( i = 0;i < game->engine->AJobs->Count;i++ )
+		for ( i = 0;i < game->engine->AJobs->iCount;i++ )
 		{
 			cAJobs *a;
-			a = game->engine->AJobs->AJobsItems[i];
+			a = game->engine->AJobs->Items[i];
 
 			if ( a->vehicle == this )
 			{
-				game->engine->AJobs->DeleteAJobs ( i );
+				game->engine->AJobs->Delete ( i );
 				break;
 			}
 		}

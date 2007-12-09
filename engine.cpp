@@ -29,8 +29,8 @@ cEngine::cEngine ( cMap *Map,cTCP *network )
 	map=Map;
 	mjobs=NULL;
 	cAutoMJob::init(this);
-	ActiveMJobs=new TList;
-	AJobs=new TList;
+	ActiveMJobs=new cList<cMJobs*>;
+	AJobs=new cList<cAJobs*>;
 	this->network=network;
 	mutex = SDL_CreateMutex();
 	EndeCount=0;
@@ -97,12 +97,12 @@ void cEngine::Run ( void )
 	cAutoMJob::handleAutoMoveJobs();
 
 	// Alle Move-Jobs bearbeiten:
-	for ( i=0;i<ActiveMJobs->Count;i++ )
+	for ( i=0;i<ActiveMJobs->iCount;i++ )
 	{
 		bool WasMoving,BuildAtTarget;
 		cMJobs *job;
 		cVehicle *v;
-		job=ActiveMJobs->MJobsItems[i];
+		job=ActiveMJobs->Items[i];
 		v=job->vehicle;
 		if ( v )
 		{
@@ -130,7 +130,7 @@ void cEngine::Run ( void )
 				{
 					v->MoveJobActive = false;
 				}
-				ActiveMJobs->DeleteMJobs ( i );
+				ActiveMJobs->Delete ( i );
 			}
 			else
 			{
@@ -147,7 +147,7 @@ void cEngine::Run ( void )
 					}
 					v->mjob=NULL;
 				}
-				ActiveMJobs->DeleteMJobs ( i );
+				ActiveMJobs->Delete ( i );
 				ptr=mjobs;
 				last=NULL;
 				while ( ptr )
@@ -225,11 +225,11 @@ void cEngine::Run ( void )
 		game->fDrawMap=true;
 	}
 	// Alle Attack-Jobs bearbeiten:
-	for ( i=0;i<AJobs->Count;i++ )
+	for ( i=0;i<AJobs->iCount;i++ )
 	{
 		bool destroyed;
 		cAJobs *aj;
-		aj=AJobs->AJobsItems[i];
+		aj=AJobs->Items[i];
 		// Prüfen, ob das Vehicle gedreht werden muss:
 		if ( aj->vehicle )
 		{
@@ -335,7 +335,7 @@ void cEngine::Run ( void )
 		}
 
 		delete aj;
-		AJobs->DeleteAJobs ( i );
+		AJobs->Delete ( i );
 		i--;
 	}
 	SDL_UnlockMutex(mutex);
@@ -480,7 +480,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 void cEngine::AddActiveMoveJob ( cMJobs *job )
 {
 	SDL_LockMutex(mutex);
-	ActiveMJobs->AddMJobs ( job );
+	ActiveMJobs->Add ( job );
 	job->Suspended=false;
 	SDL_UnlockMutex(mutex);
 }
@@ -1105,14 +1105,14 @@ void cEngine::StartLog ( void )
 	LogFile=SDL_RWFromFile ( "engine.log","w" );
 	if ( LogHistory )
 	{
-		while ( LogHistory->Count )
+		while ( LogHistory->iCount )
 		{
 //      delete LogHistory->Items[0];
 			LogHistory->Delete ( 0 );
 		}
 		delete LogHistory;
 	}
-	LogHistory=new TList;
+	LogHistory=new cList<string>;
 }
 
 // Beendet das Logging vor:
@@ -1123,7 +1123,7 @@ void cEngine::StopLog ( void )
 	LogFile=NULL;
 	if ( LogHistory )
 	{
-		while ( LogHistory->Count )
+		while ( LogHistory->iCount )
 		{
 //      delete (AnsiString*)(LogHistory->Items[0]);
 			LogHistory->Delete ( 0 );
@@ -1141,7 +1141,7 @@ void cEngine::LogMessage ( string msg )
 	if ( game->ShowLog )
 	{
 		string str;
-		if ( LogHistory->Count>=54 )
+		if ( LogHistory->iCount>=54 )
 		{
 //      delete LogHistory->Items[0];
 			LogHistory->Delete ( 0 );
@@ -1400,7 +1400,7 @@ bool cEngine::DoEndActions ( void )
 // Prüft ob sich noch Fahrzeuge bewegen:
 bool cEngine::CheckVehiclesMoving ( bool WantToEnd )
 {
-	return ActiveMJobs->Count>0;
+	return ActiveMJobs->iCount>0;
 }
 
 // Sammelt den gesammten Müll ein:
@@ -1412,11 +1412,11 @@ void cEngine::CollectTrash ( void )
 	while ( mjobs&&mjobs->finished )
 	{
 		j=mjobs->next;
-		for ( i=0;i<ActiveMJobs->Count;i++ )
+		for ( i=0;i<ActiveMJobs->iCount;i++ )
 		{
-			if ( ActiveMJobs->MJobsItems[i] == mjobs )
+			if ( ActiveMJobs->Items[i] == mjobs )
 			{
-				ActiveMJobs->DeleteMJobs ( i );
+				ActiveMJobs->Delete ( i );
 				break;
 			}
 		}
@@ -1461,7 +1461,7 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 	{
 		cAJobs *aj;
 		aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
-		AJobs->AddAJobs ( aj );
+		AJobs->Add ( aj );
 		if( network && network->bServer )
 		{
 			SendAddAtackJob(ScrOff, DestOff, ScrAir, DestAir, ScrBuilding);
@@ -1497,9 +1497,10 @@ void cEngine::HandleGameMessages()
 			case MSG_ADD_MOVEJOB:
 			{
 				cMJobs *job;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				job = AddMoveJob( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),false,atoi( Strings->Items[2].c_str() ) );
+				delete Strings;
 				// Check if path is barred:
 				if(job->finished)
 				{
@@ -1511,18 +1512,20 @@ void cEngine::HandleGameMessages()
 			// Move vehicle:
 			case MSG_MOVE_VEHICLE:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				MoveVehicle ( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),true,atoi( Strings->Items[4].c_str() ) );
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Move vehicle for a field:
 			case MSG_MOVE_TO:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				AddMoveJob( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ));
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -1543,7 +1546,7 @@ void cEngine::HandleGameMessages()
 			// End of a movejobs:
 			case MSG_END_MOVE:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				cVehicle *v;
 				if( atoi ( Strings->Items[1].c_str() ) == 0 )
@@ -1554,6 +1557,7 @@ void cEngine::HandleGameMessages()
 				{
 					v=map->GO[atoi ( Strings->Items[0].c_str() )].plane;        
 				}
+				delete Strings;
 				if( v )
 				{
 					v->MoveJobActive=false;
@@ -1585,7 +1589,7 @@ void cEngine::HandleGameMessages()
 			// end of movejob for current turn
 			case MSG_END_MOVE_FOR_NOW:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				cVehicle *v;
 				if( atoi( Strings->Items[2].c_str() ) == 0 )
@@ -1596,11 +1600,14 @@ void cEngine::HandleGameMessages()
 				{
 					v = map->GO[atoi( Strings->Items[0].c_str() ) ].plane;
 				}
+				
 				if( !v ) break;
 				if( v->owner == game->ActivePlayer )
 				{
 					AddMoveJob(v->PosX + v->PosY * map->size,atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ) );
 				}
+				delete Strings;
+
 				v->MoveJobActive = false;
 				if( v == game->SelectedVehicle )
 				{
@@ -1654,7 +1661,7 @@ void cEngine::HandleGameMessages()
 			// notification of canceling a movejob:
 			case MSG_MJOB_STOP:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				cVehicle *v;
 				if( atoi( Strings->Items[1].c_str() ) == 0)
@@ -1663,6 +1670,7 @@ void cEngine::HandleGameMessages()
 				}else{
 					v = map->GO[atoi( Strings->Items[0].c_str() )].plane;        
 				}
+				delete Strings;
 				if( v && v->mjob )
 				{
 					v->mjob->finished = true;
@@ -1675,7 +1683,7 @@ void cEngine::HandleGameMessages()
 			// TODO: new attackjob:
 			case MSG_ADD_ATTACKJOB:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				if( !network->bServer )
 				{
@@ -1685,22 +1693,26 @@ void cEngine::HandleGameMessages()
 				{
 					AddAttackJob( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), false, atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),atoi( Strings->Items[4].c_str() ) );
 				}
+				delete Strings;
+
 				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// TODO: destroy object:
 			case MSG_DESTROY_OBJECT:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				DestroyObject( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ) );
+				delete Strings;
+
 				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// execute a movejob:
 			case MSG_ERLEDIGEN:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( sMsgString );
 				cVehicle *v;
 				if( atoi( Strings->Items[1].c_str() ) == 0)
@@ -1710,6 +1722,8 @@ void cEngine::HandleGameMessages()
 				{
 					v=map->GO[atoi( Strings->Items[0].c_str() )].plane;        
 				}
+				delete Strings;
+
 				if( v && v->mjob )
 				{
 					v->mjob->CalcNextDir();
@@ -2013,14 +2027,14 @@ void cEngine::SendChatMessage(const char *str){
 	PlayFX(SoundData.SNDChat);
 }
 
-TList* cEngine::SplitMessage ( string sMsg )
+cList<string>* cEngine::SplitMessage ( string sMsg )
 {
-	TList *Strings;
-	Strings = new TList;
+	cList<string> *Strings;
+	Strings = new cList<string>;
 	int npos=0;
 	for ( int i=0; npos != string::npos; i++ )
 	{
-		Strings->Items[i] = sMsg.substr ( npos, ( sMsg.find ( "#",npos )-npos ) );
+		Strings->Add( sMsg.substr ( npos, ( sMsg.find ( "#",npos )-npos ) ) );
 		npos = ( int ) sMsg.find ( "#",npos );
 		if ( npos != string::npos )
 			npos++;

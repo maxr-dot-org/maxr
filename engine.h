@@ -115,17 +115,17 @@ public:
 
   cMap *map;
   cMJobs *mjobs;
-  TList *ActiveMJobs;
+  cList<cMJobs*> *ActiveMJobs;
   cTCP *network;
   SDL_mutex *mutex;
   int EndeCount;
-  TList *AJobs;
+  cList<cAJobs*> *AJobs;
   int SyncWaiting;
   int RundenendeActionsReport;
   int SyncNo;
   TList *PingList;
   SDL_RWops *LogFile;
-  TList *LogHistory;
+  cList<string> *LogHistory;
 
   void AddVehicle(int posx,int posy,sVehicle *v,cPlayer *p,bool init=false,bool engine_call=false);
   void AddBuilding(int posx,int posy,sBuilding *b,cPlayer *p,bool init=false);
@@ -154,7 +154,7 @@ public:
   void StartLog(void);
   void StopLog(void);
   void LogMessage(string msg);
-  TList* SplitMessage ( string sMsg );
+  cList<string> *SplitMessage ( string sMsg );
 
   void Run(void);
 };

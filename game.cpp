@@ -540,7 +540,7 @@ void cGame::Run ( void )
 		}
 		if ( DebugLog&&ShowLog&&fDrawMap )
 		{
-			for ( i=0;i<engine->LogHistory->Count;i++ )
+			for ( i=0;i<engine->LogHistory->iCount;i++ )
 			{
 				font->showText(184,20+i*8, engine->LogHistory->Items[i], LATIN_SMALL_WHITE);
 			}
