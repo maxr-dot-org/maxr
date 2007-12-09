@@ -91,7 +91,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 
 	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
 	{
-		StoredVehicles = new TList;
+		StoredVehicles = new cList<cVehicle*>;
 	}
 
 	DamageFXPointX = random ( 7, 0 ) + 26 - 3;
@@ -5026,7 +5026,7 @@ void cVehicle::StoreVehicle ( int off )
 
 	v->Loaded = true;
 
-	StoredVehicles->AddVehicle ( v );
+	StoredVehicles->Add ( v );
 	data.cargo++;
 
 	if ( game->SelectedVehicle && game->SelectedVehicle == this )
@@ -5076,7 +5076,7 @@ void cVehicle::ShowStorage ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	// Down:
 
-	if ( StoredVehicles->Count > to )
+	if ( StoredVehicles->iCount > to )
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -5100,7 +5100,7 @@ void cVehicle::ShowStorage ( void )
 
 	dest.y = 251;
 
-	if ( StoredVehicles->Count )
+	if ( StoredVehicles->iCount )
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		AlleAktivierenEnabled = true;
@@ -5157,7 +5157,7 @@ void cVehicle::ShowStorage ( void )
 
 				offset += to;
 
-				if ( StoredVehicles->Count <= offset + to )
+				if ( StoredVehicles->iCount <= offset + to )
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -5227,7 +5227,7 @@ void cVehicle::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( StoredVehicles->Count > to )
+				if ( StoredVehicles->iCount > to )
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -5321,9 +5321,9 @@ void cVehicle::ShowStorage ( void )
 			PlayFX ( SoundData.SNDActivate );
 			size = game->map->size;
 
-			for ( i = 0;i < StoredVehicles->Count; )
+			for ( i = 0;i < StoredVehicles->iCount; )
 			{
-				typ = StoredVehicles->VehicleItems[i]->typ;
+				typ = StoredVehicles->Items[i]->typ;
 
 				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
 				{
@@ -5394,7 +5394,7 @@ void cVehicle::ShowStorage ( void )
 
 		for ( i = 0;i < to;i++ )
 		{
-			if ( StoredVehicles->Count <= i + offset )
+			if ( StoredVehicles->iCount <= i + offset )
 				break;
 
 			if ( i == 0 )
@@ -5478,13 +5478,13 @@ void cVehicle::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= StoredVehicles->Count )
+		if ( i + off >= StoredVehicles->iCount )
 		{
 			v = NULL;
 		}
 		else
 		{
-			v = StoredVehicles->VehicleItems[i+off];
+			v = StoredVehicles->Items[i+off];
 		}
 
 		// Das Bild malen:
@@ -5619,12 +5619,12 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if ( !StoredVehicles || StoredVehicles->Count <= nr )
+	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
 		return;
 
-	ptr = StoredVehicles->VehicleItems[nr];
+	ptr = StoredVehicles->Items[nr];
 
-	StoredVehicles->DeleteVehicle ( nr );
+	StoredVehicles->Delete ( nr );
 
 	data.cargo--;
 
@@ -6052,10 +6052,10 @@ void cVehicle::DeleteStored ( void )
 	if ( !StoredVehicles )
 		return;
 
-	while ( StoredVehicles->Count )
+	while ( StoredVehicles->iCount )
 	{
 		cVehicle *v;
-		v = StoredVehicles->VehicleItems[0];
+		v = StoredVehicles->Items[0];
 
 		if ( v->prev )
 		{
@@ -6077,7 +6077,7 @@ void cVehicle::DeleteStored ( void )
 		v->DeleteStored();
 
 		delete v;
-		StoredVehicles->DeleteVehicle ( 0 );
+		StoredVehicles->Delete ( 0 );
 	}
 
 	delete StoredVehicles;

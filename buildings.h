@@ -105,12 +105,12 @@ public:
   int MaxMetalProd,MaxOilProd,MaxGoldProd; // Maximal mögliche Produktion
   int dir;         // Frame des Gebäudes
   bool Attacking;  // Gibt an, ob das Building gerade angreift
-  TList *BuildList; // Die Bauliste der Fabrik
+  cList<sBuildList*> *BuildList; // Die Bauliste der Fabrik
   int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
   int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
   bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
   bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
-  TList *StoredVehicles; // Liste mit geladenen Vehicles
+  cList<cVehicle*> *StoredVehicles; // Liste mit geladenen Vehicles
   int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
   bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
   bool detected;   // Merker, ob die Mine entdeckt wurde (vom aktiven Spieler)
@@ -159,7 +159,7 @@ public:
   void DrawAttackCursor(struct sGameObjects *go,int can_attack);
   void RotateTo(int Dir);
   void ShowBuildMenu(void);
-  void ShowBuildList(TList *list,int selected,int offset, bool showInfo);
+  void ShowBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
   void DrawBuildButtons(int speed);
   void ShowToBuildList(TList *list,int selected,int offset, bool showInfo);
   void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);

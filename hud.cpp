@@ -609,7 +609,7 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->OverObject&&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( game->SelectedVehicle->data.can_drive!=DRIVE_AIR&&!game->OverObject->vehicle&& ( !game->OverObject->top||game->OverObject->top->data.is_connector ) ) || ( game->SelectedVehicle->data.can_drive==DRIVE_AIR&&!game->OverObject->plane ) ) ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->Count&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->BuildListItems[0]->metall_remaining<=0 ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->LoadActive ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->ActivatingVehicle ) &&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->LoadActive )
+		else if ( game->OverObject&&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( game->SelectedVehicle->data.can_drive!=DRIVE_AIR&&!game->OverObject->vehicle&& ( !game->OverObject->top||game->OverObject->top->data.is_connector ) ) || ( game->SelectedVehicle->data.can_drive==DRIVE_AIR&&!game->OverObject->plane ) ) ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->iCount&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->LoadActive ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->ActivatingVehicle ) &&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->LoadActive )
 		          &&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->ActivatingVehicle ) )
 		{
 			if ( mouse->SetCursor ( CSelect ) )
@@ -641,9 +641,9 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->Count&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->BuildListItems[0]->metall_remaining<=0 )
+		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->iCount&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 )
 		{
-			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->BuildList->BuildListItems[0]->typ ) )
+			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->BuildList->Items[0]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
@@ -660,7 +660,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->ActivatingVehicle )
 		{
-			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->StoredVehicles->VehicleItems[game->SelectedBuilding->VehicleToActivate]->typ ) )
+			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->StoredVehicles->Items[game->SelectedBuilding->VehicleToActivate]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
@@ -677,7 +677,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->ActivatingVehicle )
 		{
-			if ( game->SelectedVehicle->CanExitTo ( mouse->GetKachelOff(),game->SelectedVehicle->StoredVehicles->VehicleItems[game->SelectedVehicle->VehicleToActivate]->typ ) )
+			if ( game->SelectedVehicle->CanExitTo ( mouse->GetKachelOff(),game->SelectedVehicle->StoredVehicles->Items[game->SelectedVehicle->VehicleToActivate]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{

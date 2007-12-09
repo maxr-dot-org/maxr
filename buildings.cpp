@@ -99,14 +99,14 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	if ( data.can_build )
 	{
-		BuildList = new TList;
+		BuildList = new cList<sBuildList*>;
 	}
 
 	StoredVehicles = NULL;
 
 	if ( data.can_load == TRANS_VEHICLES || data.can_load == TRANS_MEN || data.can_load == TRANS_AIR )
 	{
-		StoredVehicles = new TList;
+		StoredVehicles = new cList<cVehicle*>;
 	}
 
 	if ( data.is_big )
@@ -129,21 +129,21 @@ cBuilding::~cBuilding ( void )
 {
 	if ( BuildList )
 	{
-		while ( BuildList->Count )
+		while ( BuildList->iCount )
 		{
 			sBuildList *ptr;
-			ptr = BuildList->BuildListItems[0];
+			ptr = BuildList->Items[0];
 			delete ptr;
-			BuildList->DeleteBuildList ( 0 );
+			BuildList->Delete( 0 );
 		}
 	}
 
 	if ( StoredVehicles )
 	{
-		while ( StoredVehicles->Count )
+		while ( StoredVehicles->iCount )
 		{
 			cVehicle *v;
-			v = StoredVehicles->VehicleItems[0];
+			v = StoredVehicles->Items[0];
 
 			if ( v->prev )
 			{
@@ -162,7 +162,7 @@ cBuilding::~cBuilding ( void )
 					v->next->prev = NULL;
 			}
 
-			StoredVehicles->DeleteVehicle ( 0 );
+			StoredVehicles->Delete ( 0 );
 		}
 
 		delete StoredVehicles;
@@ -192,10 +192,10 @@ string cBuilding::GetStatusStr ( void )
 	if ( IsWorking )
 	{
 		// Fabrik:
-		if ( data.can_build && BuildList && BuildList->Count && owner == game->ActivePlayer )
+		if ( data.can_build && BuildList && BuildList->iCount && owner == game->ActivePlayer )
 		{
 			sBuildList *ptr;
-			ptr = BuildList->BuildListItems[0];
+			ptr = BuildList->Items[0];
 
 			if ( ptr->metall_remaining > 0 )
 			{
@@ -778,7 +778,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
-	if ( BuildList && BuildList->Count && !IsWorking && BuildList->BuildListItems[0]->metall_remaining <= 0 && owner == game->ActivePlayer )
+	if ( BuildList && BuildList->iCount && !IsWorking && BuildList->Items[0]->metall_remaining <= 0 && owner == game->ActivePlayer )
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -1398,7 +1398,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed += min ( MetalPerRound, BuildList->BuildListItems[0]->metall_remaining );
+		SubBase->MetalNeed += min ( MetalPerRound, BuildList->Items[0]->metall_remaining );
 	}
 
 	// Goldverbraucher:
@@ -1470,7 +1470,7 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed -= min ( MetalPerRound, BuildList->BuildListItems[0]->metall_remaining );
+		SubBase->MetalNeed -= min ( MetalPerRound, BuildList->Items[0]->metall_remaining );
 	}
 
 	// Goldverbraucher:
@@ -2280,7 +2280,7 @@ void cBuilding::StoreVehicle ( int off )
 
 	v->Loaded = true;
 
-	StoredVehicles->AddVehicle ( v );
+	StoredVehicles->Add ( v );
 	data.cargo++;
 
 	if ( game->SelectedBuilding && game->SelectedBuilding == this )
@@ -2357,7 +2357,7 @@ void cBuilding::ShowStorage ( void )
 	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 
 	// Down:
-	if ( StoredVehicles->Count > to )
+	if ( StoredVehicles->iCount > to )
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -2369,7 +2369,7 @@ void cBuilding::ShowStorage ( void )
 	}
 
 	// Alle Aktivieren:
-	if ( StoredVehicles->Count )
+	if ( StoredVehicles->iCount )
 	{
 		drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 		AlleAktivierenEnabled = true;
@@ -2435,7 +2435,7 @@ void cBuilding::ShowStorage ( void )
 
 				offset += to;
 
-				if ( StoredVehicles->Count <= offset + to )
+				if ( StoredVehicles->iCount <= offset + to )
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -2505,7 +2505,7 @@ void cBuilding::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( StoredVehicles->Count > to )
+				if ( StoredVehicles->iCount > to )
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -2583,9 +2583,9 @@ void cBuilding::ShowStorage ( void )
 			PlayFX ( SoundData.SNDActivate );
 			size = game->map->size;
 
-			for ( i = 0;i < StoredVehicles->Count; )
+			for ( i = 0;i < StoredVehicles->iCount; )
 			{
-				typ = StoredVehicles->VehicleItems[i]->typ;
+				typ = StoredVehicles->Items[i]->typ;
 
 				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
 				{
@@ -2670,10 +2670,10 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for ( i = 0;i < StoredVehicles->Count;i++ )
+			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->VehicleItems[i];
+				v = StoredVehicles->Items[i];
 
 				if ( v->data.ammo != v->data.max_ammo )
 				{
@@ -2707,10 +2707,10 @@ void cBuilding::ShowStorage ( void )
 			dest.x = rDialog.x + 511;
 			dest.y = rDialog.y + 251 + 25 * 2;
 
-			for ( i = 0;i < StoredVehicles->Count;i++ )
+			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->VehicleItems[i];
+				v = StoredVehicles->Items[i];
 
 				if ( v->data.hit_points != v->data.max_hit_points )
 				{
@@ -2739,10 +2739,10 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for ( i = 0;i < StoredVehicles->Count;i++ )
+			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->VehicleItems[i];
+				v = StoredVehicles->Items[i];
 
 				if ( v->data.version != owner->VehicleData[v->typ->nr].version )
 				{
@@ -2786,10 +2786,10 @@ void cBuilding::ShowStorage ( void )
 		{
 			cVehicle *v;
 
-			if ( StoredVehicles->Count <= i + offset )
+			if ( StoredVehicles->iCount <= i + offset )
 				break;
 
-			v = StoredVehicles->VehicleItems[i+offset];
+			v = StoredVehicles->Items[i+offset];
 
 			if ( data.can_load == TRANS_AIR )
 			{
@@ -2972,13 +2972,13 @@ void cBuilding::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= StoredVehicles->Count )
+		if ( i + off >= StoredVehicles->iCount )
 		{
 			vehicleV = NULL;
 		}
 		else
 		{
-			vehicleV = StoredVehicles->VehicleItems[i+off];
+			vehicleV = StoredVehicles->Items[i+off];
 		}
 
 		// Das Bild malen:
@@ -3219,12 +3219,12 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if ( !StoredVehicles || StoredVehicles->Count <= nr )
+	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
 		return;
 
-	ptr = StoredVehicles->VehicleItems[nr];
+	ptr = StoredVehicles->Items[nr];
 
-	StoredVehicles->DeleteVehicle ( nr );
+	StoredVehicles->Delete ( nr );
 
 	data.cargo--;
 
@@ -3269,19 +3269,19 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 
 	if ( SubBase->Metal >= 2 )
 	{
-		for ( i = 0;i < StoredVehicles->Count;i++ )
+		for ( i = 0;i < StoredVehicles->iCount;i++ )
 		{
-			if ( StoredVehicles->VehicleItems[i]->data.ammo != StoredVehicles->VehicleItems[i]->data.max_ammo )
+			if ( StoredVehicles->Items[i]->data.ammo != StoredVehicles->Items[i]->data.max_ammo )
 			{
 				*AlleAufladenEnabled = true;
 			}
 
-			if ( StoredVehicles->VehicleItems[i]->data.hit_points != StoredVehicles->VehicleItems[i]->data.max_hit_points )
+			if ( StoredVehicles->Items[i]->data.hit_points != StoredVehicles->Items[i]->data.max_hit_points )
 			{
 				*AlleReparierenEnabled = true;
 			}
 
-			if ( StoredVehicles->VehicleItems[i]->data.version != StoredVehicles->VehicleItems[i]->owner->VehicleData[StoredVehicles->VehicleItems[i]->typ->nr].version && SubBase->Metal >= 2 )
+			if ( StoredVehicles->Items[i]->data.version != StoredVehicles->Items[i]->owner->VehicleData[StoredVehicles->Items[i]->typ->nr].version && SubBase->Metal >= 2 )
 			{
 				*AlleUpgradenEnabled = true;
 			}
@@ -6459,7 +6459,8 @@ void cBuilding::ShowBuildMenu ( void )
 	bool Up2Pressed = false;
 	bool BauenPressed = false;
 	bool EntfernenPressed = false;
-	TList *images;
+	//TList *images;
+	cList<sBuildStruct*> *images;
 	TList *to_build;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
@@ -6523,7 +6524,8 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Die Images erstellen:
-	images = new TList;
+	//images = new TList;
+	images = new cList<sBuildStruct*>;
 
 	float newzoom = ( game->hud->Zoom / 64.0 );
 
@@ -6609,17 +6611,19 @@ void cBuilding::ShowBuildMenu ( void )
 
 		n->id = i;
 
-		images->AddBuildStruct ( n );
+		//images->AddBuildStruct ( n );
+		images->Add( n );
+
 	}
 
 
 	// Die Bauliste anlegen:
 	to_build = new TList;
 
-	for ( i = 0;i < BuildList->Count;i++ )
+	for ( i = 0;i < BuildList->iCount;i++ )
 	{
 		sBuildList *ptr;
-		ptr = BuildList->BuildListItems[i];
+		ptr = BuildList->Items[i];
 
 		sBuildStruct *n;
 		n = new sBuildStruct;
@@ -6628,15 +6632,15 @@ void cBuilding::ShowBuildMenu ( void )
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
-		for ( k = 0;k < images->Count;k++ )
+		for ( k = 0;k < images->iCount;k++ )
 		{
 			sBuildStruct *bs;
-			bs = images->BuildStructItems[k];
+			bs = images->Items[k];
 
 			if ( UnitsData.vehicle[bs->id].nr == ptr->typ->nr )
 			{
-				n->id = images->BuildStructItems[k]->id;
-				n->sf = images->BuildStructItems[k]->sf;
+				n->id = images->Items[k]->id;
+				n->sf = images->Items[k]->sf;
 				to_build->AddBuildStruct ( n );
 
 				break;
@@ -6721,9 +6725,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images->Count - 9 )
+			if ( offset > images->iCount - 9 )
 			{
-				offset = images->Count - 9;
+				offset = images->iCount - 9;
 			}
 			if ( offset < 0 )
 			{
@@ -6893,8 +6897,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				// Vehicle in die Bauliste aufnehmen:
 				sBuildStruct *n = new sBuildStruct;
-				n->id = images->BuildStructItems[selected]->id;
-				n->sf = images->BuildStructItems[selected]->sf;
+				n->id = images->Items[selected]->id;
+				n->sf = images->Items[selected]->sf;
 				n->iRemainingMetal = -1;
 
 				to_build->AddBuildStruct ( n );
@@ -7014,12 +7018,12 @@ void cBuilding::ShowBuildMenu ( void )
 
 
 					//delete old BuildList
-					while ( BuildList->Count )
+					while ( BuildList->iCount )
 					{
 						sBuildList *ptr;
-						ptr = BuildList->BuildListItems[0];
+						ptr = BuildList->Items[0];
 						delete ptr;
-						BuildList->DeleteBuildList ( 0 );
+						BuildList->Delete( 0 );
 					}
 
 					//calculate actual costs of the vehicles
@@ -7034,7 +7038,7 @@ void cBuilding::ShowBuildMenu ( void )
 						bl->metall_remaining = iTurboBuildCosts[BuildSpeed];
 						bl->typ = &UnitsData.vehicle[bs->id];
 
-						BuildList->AddBuildList ( bl );
+						BuildList->Add( bl );
 					}
 
 					this->BuildSpeed = BuildSpeed;
@@ -7043,7 +7047,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 					//start facrory, if there is something in the build queue
 
-					if ( BuildList->Count > 0 )
+					if ( BuildList->iCount > 0 )
 					{
 						StartWork();
 					}
@@ -7160,9 +7164,9 @@ void cBuilding::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 ) / ( 32 + 10 );
 
-			if ( images->Count < 9 )
+			if ( images->iCount < 9 )
 			{
-				if ( nr >= images->Count )
+				if ( nr >= images->iCount )
 					nr = -1;
 			}
 			else
@@ -7183,8 +7187,8 @@ void cBuilding::ShowBuildMenu ( void )
 				{
 					//insert selected Vehicle in to_build list
 					sBuildStruct *n = new sBuildStruct;
-					n->id = images->BuildStructItems[selected]->id;
-					n->sf = images->BuildStructItems[selected]->sf;
+					n->id = images->Items[selected]->id;
+					n->sf = images->Items[selected]->sf;
 					n->iRemainingMetal = -1;
 
 					to_build->AddBuildStruct ( n );
@@ -7273,13 +7277,13 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images->Count )
+	while ( images->iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images->BuildStructItems[0];
+		ptr = images->Items[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->DeleteBuildStruct ( 0 );
+		images->Delete( 0 );
 	}
 
 	delete images;
@@ -7296,7 +7300,7 @@ void cBuilding::ShowBuildMenu ( void )
 }
 
 // Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch sämtliche Infos zur ausgewählten Einheit
-void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool showInfo )
+void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text = { 530, 70, 80, 16 };
@@ -7320,13 +7324,13 @@ void cBuilding::ShowBuildList ( TList *list, int selected, int offset, bool show
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list->Count;i++ )
+	for ( i = offset;i < list->iCount;i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
-		ptr = list->BuildStructItems[i];
+		ptr = list->Items[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
@@ -7881,7 +7885,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 
-	if ( BuildList && BuildList->Count && !IsWorking && ( BuildList->BuildListItems[0] )->metall_remaining <= 0 )
+	if ( BuildList && BuildList->iCount && !IsWorking && ( BuildList->Items[0] )->metall_remaining <= 0 )
 		return;
 
 	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )
@@ -7996,7 +8000,7 @@ void cBuilding::DrawMenu ( void )
 	}
 
 	// Start:
-	if ( typ->data.can_work && !IsWorking && ( ( BuildList && BuildList->Count ) || typ->data.can_build == BUILD_NONE ) )
+	if ( typ->data.can_work && !IsWorking && ( ( BuildList && BuildList->iCount ) || typ->data.can_build == BUILD_NONE ) )
 	{
 		if ( SelMenu == nr )
 			scr.y = 21;

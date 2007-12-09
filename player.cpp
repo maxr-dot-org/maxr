@@ -105,9 +105,9 @@ cPlayer::~cPlayer ( void )
 		// Clear stored list becouse stored vehicles are already deleted
 		if(BuildingList->StoredVehicles)
 		{
-			while( BuildingList->StoredVehicles->Count )
+			while( BuildingList->StoredVehicles->iCount )
 			{
-				BuildingList->StoredVehicles->DeleteVehicle( BuildingList->StoredVehicles->Count - 1 );
+				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->iCount - 1 );
 			}
 		}
 

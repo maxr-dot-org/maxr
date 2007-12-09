@@ -328,7 +328,7 @@ void cGame::Run ( void )
 			}
 			if ( SelectedVehicle->ActivatingVehicle&&SelectedVehicle->owner==ActivePlayer )
 			{
-				SelectedVehicle->DrawExitPoints ( SelectedVehicle->StoredVehicles->VehicleItems[SelectedVehicle->VehicleToActivate]->typ );
+				SelectedVehicle->DrawExitPoints ( SelectedVehicle->StoredVehicles->Items[SelectedVehicle->VehicleToActivate]->typ );
 			}
 		}
 		else if ( SelectedBuilding )
@@ -386,13 +386,13 @@ void cGame::Run ( void )
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
-			if ( SelectedBuilding->BuildList && SelectedBuilding->BuildList->Count && !SelectedBuilding->IsWorking && SelectedBuilding->BuildList->BuildListItems[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer )
+			if ( SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && SelectedBuilding->BuildList->Items[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer )
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->BuildList->BuildListItems[0]->typ );
+				SelectedBuilding->DrawExitPoints ( SelectedBuilding->BuildList->Items[0]->typ );
 			}
 			if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->VehicleItems[SelectedBuilding->VehicleToActivate]->typ );
+				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
 			}
 		}
 		ActivePlayer->DrawLockList ( hud );
@@ -971,28 +971,28 @@ int cGame::CheckUser ( void )
 			PlayFX ( SoundData.SNDActivate );
 			MouseMoveCallback ( true );
 		}
-		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->Count )
+		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->iCount )
 		{
 			sBuildList *ptr;
 			int x,y;
 			mouse->GetKachel ( &x,&y );
-			ptr=SelectedBuilding->BuildList->BuildListItems[0];
+			ptr=SelectedBuilding->BuildList->Items[0];
 			engine->AddVehicle ( x,y,ptr->typ,ActivePlayer,false );
 			if ( SelectedBuilding->RepeatBuild )
 			{
-				SelectedBuilding->BuildList->DeleteBuildList ( 0 );
+				SelectedBuilding->BuildList->Delete( 0 );
 				int iTurboBuildCosts[3];
 				int iTurboBuildRounds[3];
 				SelectedBuilding->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, ptr->typ->data.iBuilt_Costs);
 				ptr->metall_remaining=iTurboBuildCosts[SelectedBuilding->BuildSpeed];
-				SelectedBuilding->BuildList->AddBuildList ( ptr );
+				SelectedBuilding->BuildList->Add( ptr );
 				SelectedBuilding->StartWork();
 			}
 			else
 			{
 				delete ptr;
-				SelectedBuilding->BuildList->DeleteBuildList ( 0 );
-				if ( SelectedBuilding->BuildList->Count )
+				SelectedBuilding->BuildList->Delete( 0 );
+				if ( SelectedBuilding->BuildList->iCount )
 				{
 					SelectedBuilding->StartWork();
 				}
@@ -3296,20 +3296,20 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 		fwrite ( &t,sizeof ( int ),1,fp );
 	}
 
-	if ( v->StoredVehicles&&v->StoredVehicles->Count )
+	if ( v->StoredVehicles&&v->StoredVehicles->iCount )
 	{
 		int i;
-		fputc ( v->StoredVehicles->Count,fp ); // Vehicle geladen
-		for ( i=0;i<v->StoredVehicles->Count;i++ )
+		fputc ( v->StoredVehicles->iCount,fp ); // Vehicle geladen
+		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=v->StoredVehicles->VehicleItems[i];
+			s=v->StoredVehicles->Items[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
-		for ( i=0;i<v->StoredVehicles->Count;i++ )
+		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=v->StoredVehicles->VehicleItems[i];
+			s=v->StoredVehicles->Items[i];
 			SaveVehicle ( s,fp );
 		}
 	}
@@ -3371,14 +3371,14 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_1 ( detected )
 	FSAVE_B_4 ( Disabled )
 
-	if ( b->BuildList&&b->BuildList->Count )
+	if ( b->BuildList&&b->BuildList->iCount )
 	{
 		int i;
-		fputc ( b->BuildList->Count,fp ); // BuildList vorhanden
-		for ( i=0;i<b->BuildList->Count;i++ )
+		fputc ( b->BuildList->iCount,fp ); // BuildList vorhanden
+		for ( i=0;i<b->BuildList->iCount;i++ )
 		{
 			sBuildList *bl;
-			bl=b->BuildList->BuildListItems[i];
+			bl=b->BuildList->Items[i];
 			fwrite ( & ( bl->typ->nr ),sizeof ( int ),1,fp );
 			fwrite ( & ( bl->metall_remaining ),sizeof ( int ),1,fp );
 		}
@@ -3388,20 +3388,20 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 		fputc ( 0,fp ); // Keine BuildList
 	}
 
-	if ( b->StoredVehicles&&b->StoredVehicles->Count )
+	if ( b->StoredVehicles&&b->StoredVehicles->iCount )
 	{
 		int i;
-		fputc ( b->StoredVehicles->Count,fp ); // Vehicle geladen
-		for ( i=0;i<b->StoredVehicles->Count;i++ )
+		fputc ( b->StoredVehicles->iCount,fp ); // Vehicle geladen
+		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=b->StoredVehicles->VehicleItems[i];
+			s=b->StoredVehicles->Items[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
-		for ( i=0;i<b->StoredVehicles->Count;i++ )
+		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=b->StoredVehicles->VehicleItems[i];
+			s=b->StoredVehicles->Items[i];
 			SaveVehicle ( s,fp );
 		}
 	}
@@ -3553,7 +3553,7 @@ bool cGame::Save ( string sName, int iNumber )
 // Läd das Spiel:
 void cGame::Load ( string name,int AP,bool MP )
 {
-	TList *StoredVehicles;
+	cList<cVehicle*> *StoredVehicles;
 	int i,t,typ;
 	char *str;
 	FILE *fp;
@@ -3564,7 +3564,7 @@ void cGame::Load ( string name,int AP,bool MP )
 		return ;
 	}
 
-	StoredVehicles = new TList;
+	StoredVehicles = new cList<cVehicle*>;
 
 	// Read version
 	fread ( &i,sizeof ( int ),1,fp );
@@ -3720,7 +3720,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_V_4 ( OffX ) // ID zum wiederfinden wenn gestored
 				if ( v->OffX!=0 )
 				{
-					StoredVehicles->AddVehicle ( v );
+					StoredVehicles->Add ( v );
 					if ( plane )
 					{
 						if ( map->GO[off].plane==v ) map->GO[off].plane=NULL;
@@ -3737,7 +3737,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-			            v->StoredVehicles->AddVehicle((cVehicle *)(int *)t); // Die ID (in OffX)
+			            v->StoredVehicles->Add((cVehicle *)(int *)t); // Die ID (in OffX)
 					}
 				}
 
@@ -3850,7 +3850,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					{
 						sBuildList *bl;
 						bl=new sBuildList;
-						b->BuildList->AddBuildList ( bl );
+						b->BuildList->Add( bl );
 
 						fread ( & ( t ),sizeof ( int ),1,fp );
 						fread ( & ( bl->metall_remaining ),sizeof ( int ),1,fp );
@@ -3865,7 +3865,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-			            b->StoredVehicles->AddVehicle((cVehicle *)(int *)t); // Die ID (in OffX)
+			            b->StoredVehicles->Add((cVehicle *)(int *)t); // Die ID (in OffX)
 					}
 				}
 				break;
@@ -3890,15 +3890,15 @@ void cGame::Load ( string name,int AP,bool MP )
 		{
 			cVehicle *v=map->GO[i].vehicle,*v2;
 			int k,m;
-			for ( k=0;k<v->StoredVehicles->Count;k++ )
+			for ( k=0;k<v->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->Count;m++ )
+				for ( m=0;m<StoredVehicles->iCount;m++ )
 				{
-					if ( StoredVehicles->VehicleItems[m]->OffX== ( ( int ) ( v->StoredVehicles->VehicleItems[k] ) ) )
+					if ( StoredVehicles->Items[m]->OffX== ( ( int ) ( v->StoredVehicles->Items[k] ) ) )
 					{
-						StoredVehicles->VehicleItems[m]->OffX=0;
-						v->StoredVehicles->VehicleItems[k]=v2=StoredVehicles->VehicleItems[m];
-						StoredVehicles->DeleteVehicle ( m );
+						StoredVehicles->Items[m]->OffX=0;
+						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
+						StoredVehicles->Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
 					}
@@ -3909,15 +3909,15 @@ void cGame::Load ( string name,int AP,bool MP )
 		{
 			cVehicle *v=map->GO[i].plane,*v2;
 			int k,m;
-			for ( k=0;k<v->StoredVehicles->Count;k++ )
+			for ( k=0;k<v->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->Count;m++ )
+				for ( m=0;m<StoredVehicles->iCount;m++ )
 				{
-					if ( StoredVehicles->VehicleItems[m]->OffX== ( ( int ) ( v->StoredVehicles->VehicleItems[k] ) ) )
+					if ( StoredVehicles->Items[m]->OffX== ( ( int ) ( v->StoredVehicles->Items[k] ) ) )
 					{
-						StoredVehicles->VehicleItems[m]->OffX=0;
-						v->StoredVehicles->VehicleItems[k]=v2=StoredVehicles->VehicleItems[m];
-						StoredVehicles->DeleteVehicle ( m );
+						StoredVehicles->Items[m]->OffX=0;
+						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
+						StoredVehicles->Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
 					}
@@ -3929,17 +3929,17 @@ void cGame::Load ( string name,int AP,bool MP )
 			cBuilding *b=map->GO[i].top;
 			int k,m;
 			if ( b->PosX!=i%map->size||b->PosY!=i/map->size ) continue;
-			for ( k=0;k<b->StoredVehicles->Count;k++ )
+			for ( k=0;k<b->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->Count;m++ )
+				for ( m=0;m<StoredVehicles->iCount;m++ )
 				{
 					cVehicle *v;
-					v=StoredVehicles->VehicleItems[m];
-					if ( v->OffX== ( int ) ( b->StoredVehicles->VehicleItems[k] ) )
+					v=StoredVehicles->Items[m];
+					if ( v->OffX== ( int ) ( b->StoredVehicles->Items[k] ) )
 					{
 						v->OffX=0;
-						b->StoredVehicles->VehicleItems[k]=v;
-						StoredVehicles->DeleteVehicle ( m );
+						b->StoredVehicles->Items[k]=v;
+						StoredVehicles->Delete ( m );
 
 						CheckRecursivLoaded ( v,StoredVehicles );
 						break;
@@ -3948,7 +3948,7 @@ void cGame::Load ( string name,int AP,bool MP )
 			}
 		}
 		else continue;
-		if ( !StoredVehicles->Count ) break;
+		if ( !StoredVehicles->iCount ) break;
 	}
 	delete StoredVehicles;
 
@@ -3978,23 +3978,23 @@ void cGame::Load ( string name,int AP,bool MP )
 }
 
 // Prüft, ob das Vehicle auch wieder was geladen hat:
-bool cGame::CheckRecursivLoaded ( cVehicle *v,TList *StoredVehicles )
+bool cGame::CheckRecursivLoaded ( cVehicle *v,cList<cVehicle*> *StoredVehicles )
 {
 	cVehicle *vv;
 	int i,k;
 
-	if ( StoredVehicles->Count&&v->StoredVehicles&&v->StoredVehicles->Count )
+	if ( StoredVehicles->iCount&&v->StoredVehicles&&v->StoredVehicles->iCount )
 	{
-		for ( i=0;i<v->StoredVehicles->Count;i++ )
+		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
-			for ( k=0;k<StoredVehicles->Count;k++ )
+			for ( k=0;k<StoredVehicles->iCount;k++ )
 			{
-				vv=StoredVehicles->VehicleItems[k];
-				if ( vv->OffX== ( int ) ( v->StoredVehicles->VehicleItems[i] ) )
+				vv=StoredVehicles->Items[k];
+				if ( vv->OffX== ( int ) ( v->StoredVehicles->Items[i] ) )
 				{
 					vv->OffX=0;
-					v->StoredVehicles->VehicleItems[i]=vv;
-					StoredVehicles->DeleteVehicle ( k );
+					v->StoredVehicles->Items[i]=vv;
+					StoredVehicles->Delete ( k );
 
 					CheckRecursivLoaded ( vv,StoredVehicles );
 					break;
@@ -4104,17 +4104,17 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->Count:0 ) );	
+	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->iCount:0 ) );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( v->StoredVehicles&&v->StoredVehicles->Count )
+	if ( v->StoredVehicles&&v->StoredVehicles->iCount )
 	{
 		cVehicle *vp;
 		int i;
-		for ( i=0;i<v->StoredVehicles->Count;i++ )
+		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
-			vp=v->StoredVehicles->VehicleItems[i];
+			vp=v->StoredVehicles->Items[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}
@@ -4146,33 +4146,33 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->Count:0 ));	
+	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->iCount:0 ));	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( b->StoredVehicles&&b->StoredVehicles->Count )
+	if ( b->StoredVehicles&&b->StoredVehicles->iCount )
 	{
 		cVehicle *vp;
 		int i;
-		for ( i=0;i<b->StoredVehicles->Count;i++ )
+		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
-			vp=b->StoredVehicles->VehicleItems[i];
+			vp=b->StoredVehicles->Items[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}
 	}
 
-	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->Count:0 ));	
+	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->iCount:0 ));	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( b->BuildList&&b->BuildList->Count )
+	if ( b->BuildList&&b->BuildList->iCount )
 	{
 		sBuildList *bl;
 		int i;
-		for ( i=0;i<b->BuildList->Count;i++ )
+		for ( i=0;i<b->BuildList->iCount;i++ )
 		{
-			bl=b->BuildList->BuildListItems[i];
+			bl=b->BuildList->Items[i];
 			font->showText(x, *y, "  build "+iToStr(i)+": "+iToStr(bl->typ->nr)+" \""+UnitsData.vehicle[bl->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}

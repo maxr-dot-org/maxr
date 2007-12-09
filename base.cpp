@@ -238,7 +238,7 @@ void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 		sb->MaxMetalNeed+=b->data.metal_need*12;
 		if ( b->IsWorking )
 		{
-			sb->MetalNeed+=min( b->MetalPerRound, b->BuildList->BuildListItems[0]->metall_remaining);
+			sb->MetalNeed+=min( b->MetalPerRound, b->BuildList->Items[0]->metall_remaining);
 		}
 	}
 	// Goldhaushalt ausrechnen:
@@ -527,10 +527,10 @@ void cBase::Rundenende ( void )
 
 			}
 			// Bauen:
-			if ( b->IsWorking&&b->data.can_build&&b->BuildList->Count )
+			if ( b->IsWorking&&b->data.can_build&&b->BuildList->iCount )
 			{
 				sBuildList *BuildListItem;
-				BuildListItem=b->BuildList->BuildListItems[0];
+				BuildListItem=b->BuildList->Items[0];
 				if ( BuildListItem->metall_remaining > 0 )
 				{
 					//in this block the metal consumption of the factory in the next round can change
