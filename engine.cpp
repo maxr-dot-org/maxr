@@ -59,6 +59,10 @@ cEngine::~cEngine ( void )
 		mjobs=next;
 	}
 	delete ActiveMJobs;
+	while ( AJobs->iCount )
+	{
+		delete AJobs->Items[AJobs->iCount - 1];
+	}
 	delete AJobs;
 	if ( PingList )
 	{
@@ -1105,11 +1109,6 @@ void cEngine::StartLog ( void )
 	LogFile=SDL_RWFromFile ( "engine.log","w" );
 	if ( LogHistory )
 	{
-		while ( LogHistory->iCount )
-		{
-//      delete LogHistory->Items[0];
-			LogHistory->Delete ( 0 );
-		}
 		delete LogHistory;
 	}
 	LogHistory=new cList<string>;
@@ -1123,11 +1122,6 @@ void cEngine::StopLog ( void )
 	LogFile=NULL;
 	if ( LogHistory )
 	{
-		while ( LogHistory->iCount )
-		{
-//      delete (AnsiString*)(LogHistory->Items[0]);
-			LogHistory->Delete ( 0 );
-		}
 		delete LogHistory;
 	}
 	LogHistory=NULL;

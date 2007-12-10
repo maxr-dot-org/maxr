@@ -37,6 +37,7 @@ cBase::~cBase ( void )
 		delete sb;
 		SubBases->Delete ( 0 );
 	}
+	delete SubBases;
 }
 
 // Fügt ein neues Building in die Base ein:
@@ -113,6 +114,7 @@ void cBase::AddBuilding ( cBuilding *b )
 					sbb->SubBase=n;
 					sb->buildings->Delete ( 0 );
 				}
+				delete sb->buildings;
 				// Die Subbase aus der Subbaseliste löschen:
 				for ( i=0;i<SubBases->iCount;i++ )
 				{

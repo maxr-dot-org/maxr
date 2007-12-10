@@ -6019,7 +6019,7 @@ int ShowDateiMenu ( bool bSave )
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 	//END ARROW CODE
 	// Dateien suchen und Anzeigen:
-	files = getFilesOfDirectory ( SettingsData.sSavesPath ); //FIXME: mem leakage; 'delete files' needed for every call of getFilesOfDirectory
+	files = getFilesOfDirectory ( SettingsData.sSavesPath );
 	for ( int i = 0; i < files->iCount; i++ )
 	{
 		if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
@@ -6162,6 +6162,7 @@ int ShowDateiMenu ( bool bSave )
 					ShowFiles ( files,offset,selected,true,false,false, rDialog );
 					if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
 					{
+						delete files;
 						files = getFilesOfDirectory ( SettingsData.sSavesPath );
 						for ( int i = 0; i < files->iCount; i++ )
 						{

@@ -137,6 +137,7 @@ cBuilding::~cBuilding ( void )
 			delete ptr;
 			BuildList->Delete( 0 );
 		}
+		delete BuildList;
 	}
 
 	if ( StoredVehicles )
@@ -162,6 +163,7 @@ cBuilding::~cBuilding ( void )
 				if ( v->next )
 					v->next->prev = NULL;
 			}
+			delete v;
 
 			StoredVehicles->Delete ( 0 );
 		}
