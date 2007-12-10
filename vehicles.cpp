@@ -3782,7 +3782,7 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 		}
 		
 		
-		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_YELLOW );
+		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
