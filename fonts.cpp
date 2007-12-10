@@ -320,6 +320,20 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	string sTmp;
 
 	int k;
+	
+	do
+	{
+		//erase all invalid formatted breaklines like we may get them from translation XMLs
+		k = ( int ) sText.find ( "\\n" );
+
+		if ( k != string::npos )
+		{
+			sText.erase ( k, 2 );
+			sText.insert (k, "\n");
+			if(DEBUGFONTS) cLog::write("Fount invalid breakline at " + iToStr(k) + ". Replaced it", cLog::eLOG_TYPE_DEBUG);
+		}
+	}
+	while ( k != string::npos );
 
 	do
 	{
@@ -328,7 +342,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 
 		if ( k != string::npos )
 		{
-			if(DEBUGFONTS) cLog::write("Fount doubleblank at " + iToStr(k), cLog::eLOG_TYPE_DEBUG);
+			if(DEBUGFONTS) cLog::write("Fount doubleblank at " + iToStr(k) + ". Erased one", cLog::eLOG_TYPE_DEBUG);
 			sText.erase ( k, 1 );
 		}
 	}
