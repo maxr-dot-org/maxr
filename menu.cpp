@@ -4846,7 +4846,7 @@ void cMultiPlayer::HandleMenuMessages()
 	string msgstring;
 	for ( int i=0;i<network->NetMessageList->iCount;i++ )
 	{
-		msg = (cNetMessage *) network->NetMessageList->Items[i];
+		msg = network->NetMessageList->Items[i];
 		msgstring = ( char * ) msg->msg;
 		switch ( msg->typ )
 		{

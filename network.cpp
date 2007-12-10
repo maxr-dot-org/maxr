@@ -33,8 +33,8 @@ cTCP::cTCP ( bool server )
 		sock_client[i]=NULL;
 	}
 	iStatus=STAT_CLOSED;
-	WaitOKList = new sList();
-	NetMessageList = new sList();
+	WaitOKList = new cList<sNetBuffer*>;
+	NetMessageList = new cList<cNetMessage*>;
 	iMyID = 0;
 	iNextMessageID = GenerateNewID();
 	bReceiveThreadFinished = true;
@@ -210,7 +210,7 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 		}
 		// Add package to waitlist
 		WaitOKList->Add(NetBuffer);
-
+		
 		iPartNum++;
 	}
 	return true;
@@ -231,7 +231,7 @@ bool cTCP::TCPReceive()
 				SDLNet_TCP_Recv ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
 				for (int j = 0; j < WaitOKList->iCount; j++ )
 				{
-					if( NetBuffer->iID == ( (sNetBuffer *) WaitOKList->Items[j])->iID )
+					if( NetBuffer->iID == ( WaitOKList->Items[j])->iID )
 					{
 						break;	// Received message twice - ignoring 
 					}
@@ -256,7 +256,7 @@ bool cTCP::TCPReceive()
 					// Delete Message ID from WaitList
 					for (int k = 0; k < WaitOKList->iCount; k++)
 					{
-						if( ( ( sNetBuffer *) WaitOKList->Items[k] ) == NetBuffer )
+						if( ( WaitOKList->Items[k] ) == NetBuffer )
 						{
 							WaitOKList->Delete(k);
 							break;
@@ -274,7 +274,7 @@ bool cTCP::TCPReceive()
 		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
 		for (int j = 0; j < WaitOKList->iCount; j++ )
 		{
-			if( NetBuffer->iID == ( (sNetBuffer *) WaitOKList->Items[j])->iID )
+			if( NetBuffer->iID == ( WaitOKList->Items[j])->iID )
 			{
 				break;	// Received message twice - ignoring 
 			}
@@ -298,7 +298,7 @@ bool cTCP::TCPReceive()
 			// Delete Message ID from WaitList
 			for (int k = 0; k < WaitOKList->iCount; k++)
 			{
-				if( ( ( sNetBuffer *) WaitOKList->Items[k] ) == NetBuffer )
+				if( ( WaitOKList->Items[k] ) == NetBuffer )
 				{
 					WaitOKList->Delete(k);
 					break;
@@ -436,10 +436,10 @@ void cTCP::TCPCheckResends ()
 	{
 		if(WaitOKList->Items[i]) // sanity check
 		{
-			int iTime = ( ( sNetBuffer *) WaitOKList->Items[i])->iTicks; // Get the Time since this buffer was send the last time
+			int iTime = ( WaitOKList->Items[i])->iTicks; // Get the Time since this buffer was send the last time
 			if( ( iTime - SDL_GetTicks() ) > 100 )
 			{
-				int iClient = ( ( sNetBuffer *) WaitOKList->Items[i])->iDestClientNum; // To which client should the buffer be send
+				int iClient = ( WaitOKList->Items[i])->iDestClientNum; // To which client should the buffer be send
 				if(iClient != -1) // To a Client
 				{
 					SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
@@ -448,9 +448,9 @@ void cTCP::TCPCheckResends ()
 				{
 					SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
 				}
-				( ( sNetBuffer *) WaitOKList->Items[i])->iTicks = SDL_GetTicks(); // Set the new Time
+				WaitOKList->Items[i]->iTicks = SDL_GetTicks(); // Set the new Time
 				string sTmp;
-				sTmp = "Resend buffer: -ID: " + iToStr( ( ( sNetBuffer *) WaitOKList->Items[i])->iID );
+				sTmp = "Resend buffer: -ID: " + iToStr( WaitOKList->Items[i]->iID );
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
 			}
 			SDL_Delay ( 1 ) ;

@@ -139,7 +139,7 @@ public:
 	cTCP(bool server);
 	~cTCP();
 	SDL_Thread *TCPReceiveThread;	// Thread for message receiving
-	sList *NetMessageList;				// List with all received messages
+	cList<cNetMessage*> *NetMessageList;				// List with all received messages
 
 	bool bReceiveThreadFinished;		// Has the Receive-Thread finished?
 	bool bServer;						// Is this a server?
@@ -166,7 +166,7 @@ private:
 
 	int iMyID;						// ID of this Client
 	unsigned int iNextMessageID;	// ID of next Message
-	sList *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
+	cList<sNetBuffer*> *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
 	int iPlayerId;					// ID of this Player
 	int iNum_clients;				// Number of current clients
 	int iPort;						// Current port

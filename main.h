@@ -446,6 +446,7 @@ struct sTerrain{
   int frames;       // Anzahl an Frames
 };
 
+
 //List for all kinds of Objects
 template<class T> class cList {};
 
@@ -458,9 +459,12 @@ public:
 	int iCount;			//number of Items in the List
 	string* Items;		//the Items
 
-	cList()
+	//if you know, that the list will store a large nubmer of objects,
+	//you can spezify a larger blocksize for better performance
+	cList(int blocksize = 20)
 	{
-		size = 20;
+		this->blocksize = blocksize;
+		size = blocksize;
 		iCount = 0;
 		Items = new string[size];
 	}
@@ -476,7 +480,8 @@ public:
 		if ( iCount == size )
 		{
 			//allocate more memory
-			size+=20;
+			size+=blocksize;
+			
 			//realloc doesn't work here
 			//because it doesn't call the constructors
 			//so the following is a kind of 'renew'
@@ -510,10 +515,10 @@ public:
 			Items[i] = Items[i+1];
 		}
 
-		if ( iCount < size - 20 )
+		if ( size - iCount > blocksize )
 		{
 			//free some memory
-			size -=20;
+			size -=blocksize;
 			//realloc doesn't work here
 			//because it doesn't call the destructors
 			//so the following is a kind of 'renew'
@@ -528,6 +533,7 @@ public:
 		}
 	}
 private:
+	int blocksize; 
 	int size; //the amount of allocated memory
 
 };
@@ -608,136 +614,6 @@ public:
 
 };
 
-	
-
-
-/**
-* List structure. All kind of Lists.
-*
-* @author alzi
-*/
-struct sList{
-	// Constructor
-	sList()
-	{
-		iCount = 0;
-		Items = NULL;
-	}
-
-	// Items of the List
-	void **Items;
-	// Number of Items
-	int iCount;
-
-	/**
-	* Add an Item to the List.
-	*
-	* @param *src Pointer on Item to add
-	*/
-	void Add(void *src)
-	{
-		// Increase the space for the new Item
-		Items = (void **)realloc(Items, (iCount+1) * sizeof(src));
-		// Add the Item
-		Items[iCount] = src;
-		iCount++;
-	}
-	/**
-	* Deletes an Item from the List and resorts the remaining Items.
-	*
-	* @param *iIndex Index of Item to delete
-	*/
-	void Delete(int iIndex)
-	{
-		// Index mustn't be to high
-		if(iIndex >= iCount) iIndex = iCount-1;
-		// Delete Item
-		Items[iIndex] = NULL;
-		iCount--;
-		// Resort Items
-		for(int i = iIndex; i <= iCount; i++)
-		{
-			Items[i]=Items[i+1];
-		}
-	}
-};
-
-/*// TList - All kind of Lists //////////////////////////////////////////////////
-class TList{
-public:
-	TList();
-	string Items[1024];
-	cPlayer *PlayerItems[1024];
-	cBuilding *BuildItems[1024];
-	cVehicle *VehicleItems[1024];
-	cMJobs *MJobsItems[1024];
-	cAJobs *AJobsItems[1024];
-	cNetMessage *NetMessageItems[1024];
-
-	sTuple *TupleItems[1024];
-	sMessage *MessageItems[1024];
-	sTerrain *TerItems[1024];
-	sBuildList *BuildListItems[1024];
-	sLanding *LandItems[1024];
-	sHUp *HUpItems[1024];
-	sWachposten *WaPoItems[1024];
-	sLockElem *LockItems[1024];
-	sUpgradeStruct *UpgraStrItems[1024];
-	sSubBase *SubBaseItems[1024];
-	sBuildStruct *BuildStructItems[1024];
-	sFX *FXItems[1024];
-	sPathCalc *PathCalcItems[5120];
-	sReport *ReportItems[1024];
-	sClientSettings *ClientSettingsItems[1024];
-	int Count;
-
-	void Add(string cStr) {Items[Count] = cStr; Count++;}
-	void AddTuple(sTuple *Tuple) {TupleItems[Count] = Tuple; Count++;}
-	void AddPlayer(cPlayer *Player) {PlayerItems[Count] = Player; Count++;}
-	void AddBuild(cBuilding *Build) {BuildItems[Count] = Build; Count++;}
-	void AddVehicle(cVehicle *Vehicle) {VehicleItems[Count] = Vehicle; Count++;}
-	void AddMJobs(cMJobs *MJobs) {MJobsItems[Count] = MJobs; Count++;}
-	void AddAJobs(cAJobs *AJobs) {AJobsItems[Count] = AJobs; Count++;}
-	void AddNetMessage(cNetMessage *NetMessage) {NetMessageItems[Count] = NetMessage; Count++;}
-	void AddMessage(sMessage *Message) {MessageItems[Count] = Message; Count++;}
-	void AddTerrain(sTerrain *ter) {TerItems[Count] = ter; Count++;}
-	void AddBuildList(sBuildList *BuildList) {BuildListItems[Count] = BuildList; Count++;}
-	void AddHUp(sHUp *HUp) {HUpItems[Count] = HUp; Count++;}
-	void AddLanding(sLanding *Land) {LandItems[Count] = Land; Count++;}
-	void AddWaPo(sWachposten *WaPo) {WaPoItems[Count] = WaPo; Count++;}
-	void AddLock(sLockElem *Lock) {LockItems[Count] = Lock; Count++;}
-	void AddUpgraStr(sUpgradeStruct *UpgraStr) {UpgraStrItems[Count] = UpgraStr; Count++;}
-	void AddSubBase(sSubBase *SubBase) {SubBaseItems[Count] = SubBase; Count++;}
-	void AddBuildStruct(sBuildStruct *BuildStruct) {BuildStructItems[Count] = BuildStruct; Count++;}
-	void AddFX(sFX *FX) {FXItems[Count] = FX; Count++;}
-	void AddPathCalc(sPathCalc *PathCalc) {PathCalcItems[Count] = PathCalc; Count++;}
-	void AddReport(sReport *Report) {ReportItems[Count] = Report; Count++;}
-	void AddClientSettings(sClientSettings *ClientSettings) {ClientSettingsItems[Count] = ClientSettings; Count++;}
-
-	void Delete(int i) { Items[i] = ""; for(int j = i; j < Count; j++) Items[j]=Items[j+1]; Count--; }
-	void DeleteString(int i) { Items[i] = ""; for(int j = i; j < Count; j++) Items[j]=Items[j+1]; Count--; }
-	void DeleteTuple(int i){ TupleItems[i] = 0; for(int j = i; j < Count; j++) TupleItems[j]=TupleItems[j+1]; Count--; }
-	void DeleteSubBase(int i){ SubBaseItems[i] = 0; for(int j = i; j < Count; j++) SubBaseItems[j]=SubBaseItems[j+1]; Count--; }
-	void DeleteMessage(int i) { MessageItems[i] = 0; for(int j = i; j < Count; j++) MessageItems[j]=MessageItems[j+1]; Count--;}
-	void DeleteMJobs(int i) { MJobsItems[i] = 0; for(int j = i; j < Count; j++) MJobsItems[j]=MJobsItems[j+1]; Count--;}
-	void DeletePathCalc(int i) { PathCalcItems[i] = 0; for(int j = i; j < Count; j++) PathCalcItems[j]=PathCalcItems[j+1]; Count--;}
-	void DeleteBuilding(int i){ BuildItems[i] = 0; for(int j = i; j < Count; j++) BuildItems[j]=BuildItems[j+1]; Count--; }
-	void DeleteVehicle(int i){ VehicleItems[i] = 0; for(int j = i; j < Count; j++) VehicleItems[j]=VehicleItems[j+1]; Count--; }
-	void DeleteBuildList(int i){ BuildListItems[i] = 0; for(int j = i; j < Count; j++) BuildListItems[j]=BuildListItems[j+1]; Count--; }
-	void DeleteUpgraStr(int i){ UpgraStrItems[i] = 0; for(int j = i; j < Count; j++) UpgraStrItems[j]=UpgraStrItems[j+1]; Count--; }
-	void DeleteBuildStruct(int i){ BuildStructItems[i] = 0; for(int j = i; j < Count; j++) BuildStructItems[j]=BuildStructItems[j+1]; Count--; }
-	void DeleteAJobs(int i){ AJobsItems[i] = 0; for(int j = i; j < Count; j++) AJobsItems[j]=AJobsItems[j+1]; Count--; }
-	void DeleteNetMessage(int i) { NetMessageItems[i] = 0; for(int j = i; j < Count; j++) NetMessageItems[j]=NetMessageItems[j+1]; Count--;}
-	void DeletePlayer(int i){ PlayerItems[i] = 0; for(int j = i; j < Count; j++) PlayerItems[j]=PlayerItems[j+1]; Count--; }
-	void DeleteReport(int i){ ReportItems[i] = 0; for(int j = i; j < Count; j++) ReportItems[j]=ReportItems[j+1]; Count--; }
-	void DeleteFX(int i){ FXItems[i] = 0; for(int j = i; j < Count; j++) FXItems[j]=FXItems[j+1]; Count--; }
-	void DeleteTerrain(int i){ TerItems[i] = 0; for(int j = i; j < Count; j++) TerItems[j]=TerItems[j+1]; Count--; }
-	void DeleteLanding(int i){ LandItems[i] = 0; for(int j = i; j < Count; j++) LandItems[j]=LandItems[j+1]; Count--; }
-	void DeleteWaPo(int i){ WaPoItems[i] = 0; for(int j = i; j < Count; j++) WaPoItems[j]=WaPoItems[j+1]; Count--; }
-	void DeleteLock(int i){ LockItems[i] = 0; for(int j = i; j < Count; j++) LockItems[j]=LockItems[j+1]; Count--; }
-	void DeleteHUp(int i){ HUpItems[i] = 0; for(int j = i; j < Count; j++) HUpItems[j]=HUpItems[j+1]; Count--; }
-	void DeleteClientSettings(int i){ ClientSettingsItems[i] = 0; for(int j = i; j < Count; j++) ClientSettingsItems[j]=ClientSettingsItems[j+1]; Count--; }
-};*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes

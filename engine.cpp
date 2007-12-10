@@ -1481,7 +1481,7 @@ void cEngine::HandleGameMessages()
 	string sMsgString;
 	for ( int i=0;i < network->NetMessageList->iCount;i++ )
 	{
-		msg = (cNetMessage *) network->NetMessageList->Items[i];
+		msg = network->NetMessageList->Items[i];
 		sMsgString = ( char * ) msg->msg;
 		switch( msg->typ )
 		{

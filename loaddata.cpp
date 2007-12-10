@@ -1470,7 +1470,7 @@ int LoadTerrain(const char* path)
 	pXmlNode = TerrainXml.FirstChildElement ( "Terrains" );
 
 	cList<string> *sections;
-	sections = new cList<string>;
+	sections = new cList<string>(300);
 	pXmlNode = pXmlNode->FirstChildElement();
 	if ( pXmlNode )
 		sections->Add ( pXmlNode->ToElement()->Value() );
