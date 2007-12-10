@@ -66,7 +66,7 @@ struct sLanding{
 
 // Struktur für die ClientSettings:
 struct sClientSettings{
-  TList *LandingList;
+  cList<sLanding*> *LandingList;
   int LandX,LandY;
   int nr;
 };
@@ -109,7 +109,7 @@ string RunPlanetSelect(void);
  * @param selected 
  * @param surface Source Surface for proper background drawing
  */
-void ShowPlanets(TList *files,int offset,int selected, SDL_Surface *surface);
+void ShowPlanets(cList<string> *files,int offset,int selected, SDL_Surface *surface);
 /**
  * 
  * @param init 
@@ -137,7 +137,7 @@ void placeSelectableText(std::string sText,int x,int y,bool checked, SDL_Surface
  * @param player 
  * @param LandingList 
  */
-void RunHangar(cPlayer *player, TList *LandingList);
+void RunHangar(cPlayer *player, cList<sLanding*> *LandingList);
 /**
  * 
  * @param x 
@@ -200,7 +200,7 @@ void ShowPlayerStates(sPlayer players);
  * @param offset 
  * @param surface Source Surface for proper background drawing
  */
-void ShowLandingList(TList *list,int selected,int offset, SDL_Surface *surface);
+void ShowLandingList(cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface);
 /**
  * 
  * @param selection 
@@ -214,7 +214,7 @@ void ShowLandingList(TList *list,int selected,int offset, SDL_Surface *surface);
  * @param tnt 
  * @param kauf 
  */
-void CreateSelectionList(TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
+void CreateSelectionList(cList<sHUp*> *selection,cList<sHUp*> *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
 /**
  * 
  * @param bSave Should you can load savegames in this menu?
@@ -228,7 +228,7 @@ int ShowDateiMenu( bool bSave );
  * @param selected 
  * @param rDialog SDL_Rect with real Dialog rect depending on screen resolution
  */
-void ShowFiles(TList *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog);
+void ShowFiles(cList<string> *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog);
 /**
  * 
  * @param sFileName 
@@ -244,9 +244,9 @@ public:
   cMultiPlayer(bool host,bool tcp);
   ~cMultiPlayer(void);
 
-  TList *ChatList;   // Liste mit den Chatnachrichten
+  cList<string> *ChatList;   // Liste mit den Chatnachrichten
   cPlayer *MyPlayer; // Der aktuelle Spieler
-  TList *PlayerList; // Liste mit allen Spielern
+  cList<cPlayer*> *PlayerList; // Liste mit allen Spielern
   string Titel;      // Titel des Menüs
   sOptions options;  // Optionen des Spiels
   bool host,tcp;     // Eigenschaften des Sockets
@@ -261,7 +261,7 @@ public:
   int ClientsToGo;   // Verbleibende Anzahl an Clients, die nich Go geben müssen
   bool LetsGo;       // Gibt an, ob der Host das LetsGo Signal gab
   cMap *map_obj;     // Die Map zum spielen
-  TList *ClientSettingsList; // Liste mit allen empfangenen ClientSettings
+  cList<sClientSettings*> *ClientSettingsList; // Liste mit allen empfangenen ClientSettings
   string SaveGame; // Name des zu ladenden Savegames
 
   /**
@@ -336,14 +336,14 @@ public:
    * @param  
    * @return 
    */
-  void ServerWait(int LandX,int LandY,TList *LandingList);
+  void ServerWait(int LandX,int LandY,cList<sLanding*> *LandingList);
   /**
    * 
    * @param LandX 
    * @param LandY 
    * @param LandingList 
    */
-  void ClientWait(int LandX,int LandY,TList *LandingList);
+  void ClientWait(int LandX,int LandY,cList<sLanding*> *LandingList);
   /**
    * 
    * @param p 
@@ -356,7 +356,7 @@ public:
    * @param y 
    * @param ll 
    */
-  void TransmitPlayerLanding(int nr,int x,int y,TList *ll);
+  void TransmitPlayerLanding(int nr,int x,int y,cList<sLanding*> *ll);
   /**
    * 
    * @param  
@@ -374,7 +374,7 @@ public:
    * @param msg 
    * @return 
    */
-  TList* SplitMessage(string msg);
+  cList<string>* SplitMessage(string msg);
 };
 
 #endif

@@ -123,7 +123,7 @@ public:
   int SyncWaiting;
   int RundenendeActionsReport;
   int SyncNo;
-  TList *PingList;
+  cList<void*> *PingList; //FIXME: don't know which type is stored in PingList
   SDL_RWops *LogFile;
   cList<string> *LogHistory;
 

@@ -179,9 +179,9 @@ cBuilding::~cBuilding ( void )
 		cPlayer *p;
 		int i;
 
-		for ( i = 0;i < game->PlayerList->Count;i++ )
+		for ( i = 0;i < game->PlayerList->iCount;i++ )
 		{
-			p = game->PlayerList->PlayerItems[i];
+			p = game->PlayerList->Items[i];
 			p->DeleteLock ( this );
 		}
 	}

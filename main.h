@@ -567,6 +567,7 @@ public:
 	}
 
 	//deletes the pionter at Items[n] and resorts the remaining Items
+	//IMPORTANT: does not delete the object the pionter points to!!!
 	void Delete( int n)
 	{
 		if (n >= iCount) return;
@@ -661,7 +662,7 @@ struct sList{
 	}
 };
 
-// TList - All kind of Lists //////////////////////////////////////////////////
+/*// TList - All kind of Lists //////////////////////////////////////////////////
 class TList{
 public:
 	TList();
@@ -736,7 +737,7 @@ public:
 	void DeleteLock(int i){ LockItems[i] = 0; for(int j = i; j < Count; j++) LockItems[j]=LockItems[j+1]; Count--; }
 	void DeleteHUp(int i){ HUpItems[i] = 0; for(int j = i; j < Count; j++) HUpItems[j]=HUpItems[j+1]; Count--; }
 	void DeleteClientSettings(int i){ ClientSettingsItems[i] = 0; for(int j = i; j < Count; j++) ClientSettingsItems[j]=ClientSettingsItems[j+1]; Count--; }
-};
+};*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes

@@ -1087,7 +1087,7 @@ int LoadMusic(const char* path)
 	
 		
 	
-	MusicFiles = new TList;
+	MusicFiles = new cList<string>;
 	for ( int i=1;i <= MusicAnz; i++ )
 	{
 		sprintf ( sztmp,"%d",i );
@@ -1469,8 +1469,8 @@ int LoadTerrain(const char* path)
 		
 	pXmlNode = TerrainXml.FirstChildElement ( "Terrains" );
 
-	TList *sections;
-	sections = new TList();
+	cList<string> *sections;
+	sections = new cList<string>;
 	pXmlNode = pXmlNode->FirstChildElement();
 	if ( pXmlNode )
 		sections->Add ( pXmlNode->ToElement()->Value() );
@@ -1483,7 +1483,7 @@ int LoadTerrain(const char* path)
 		}
 	}
 
-	for ( int i=0;i<sections->Count;i++ )
+	for ( int i=0;i<sections->iCount;i++ )
 	{
 		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL)))
 		{
@@ -1601,7 +1601,7 @@ int LoadVehicles()
 	string sTmpString, sVehiclePath;
 	char sztmp[16];
 	const char *pszTmp;
-	TList *VehicleList, *IDList;
+	cList<string> *VehicleList, *IDList;
 	TiXmlDocument VehiclesXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -1628,8 +1628,8 @@ int LoadVehicles()
 		return 0;
 	}
 	// read vehicles.xml
-	VehicleList = new TList();
-	IDList = new TList();
+	VehicleList = new cList<string>;
+	IDList = new cList<string>;
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
@@ -1648,7 +1648,7 @@ int LoadVehicles()
 			IDList->Add ( pszTmp );
 		else
 		{
-			VehicleList->Delete(VehicleList->Count);
+			VehicleList->Delete(VehicleList->iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1677,7 +1677,7 @@ int LoadVehicles()
 			IDList->Add ( pszTmp );
 		else
 		{
-			VehicleList->Delete(VehicleList->Count);
+			VehicleList->Delete(VehicleList->iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1685,7 +1685,7 @@ int LoadVehicles()
 	}
 	// load found units
 	UnitsData.vehicle_anz = 0;
-	for( int i = 0; i < VehicleList->Count; i++)
+	for( int i = 0; i < VehicleList->iCount; i++)
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
 		sVehiclePath += PATH_DELIMITER;
@@ -2022,7 +2022,7 @@ int LoadBuildings()
 
 	string sTmpString, sBuildingPath;
 	const char *pszTmp;
-	TList *BuildingList, *IDList;
+	cList<string> *BuildingList, *IDList;
 	TiXmlDocument BuildingsXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -2049,8 +2049,8 @@ int LoadBuildings()
 		cLog::write("Can't read \"BuildingData->Building\" node!",LOG_TYPE_ERROR);
 		return 0;
 	}
-	BuildingList = new TList();
-	IDList = new TList();
+	BuildingList = new cList<string>;
+	IDList = new cList<string>;
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
@@ -2069,7 +2069,7 @@ int LoadBuildings()
 			IDList->Add ( pszTmp );
 		else
 		{
-			BuildingList->Delete(BuildingList->Count);
+			BuildingList->Delete(BuildingList->iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2098,7 +2098,7 @@ int LoadBuildings()
 			IDList->Add ( pszTmp );
 		else
 		{
-			BuildingList->Delete(BuildingList->Count);
+			BuildingList->Delete(BuildingList->iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2106,7 +2106,7 @@ int LoadBuildings()
 	}
 	// load found units
 	UnitsData.building_anz = 0;
-	for( int i = 0; i < BuildingList->Count; i++)
+	for( int i = 0; i < BuildingList->iCount; i++)
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
 		sBuildingPath += PATH_DELIMITER;

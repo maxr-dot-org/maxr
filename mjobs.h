@@ -57,8 +57,8 @@ public:
 
   char *PathCalcMap;
   sPathCalc *PathCalcRoot;
-  TList *PathCalcEnds;
-  TList *PathCalcAll;
+  cList<sPathCalc*> *PathCalcEnds;
+  cList<sPathCalc*> *PathCalcAll;
   sPathCalc *FoundEnd;
 
   sWaypoint *waypoints;

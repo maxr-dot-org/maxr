@@ -106,8 +106,8 @@ void cMJobs::Release ( void )
 bool cMJobs::CalcPath ( void )
 {
 	bool ret;
-	PathCalcEnds=new TList;
-	PathCalcAll=new TList;
+	PathCalcEnds=new cList<sPathCalc*>;
+	PathCalcAll=new cList<sPathCalc*>;
 	// Die PathCalcMap erzeugen:
 	PathCalcMap= ( char* ) malloc ( map->size*map->size );
 	memset ( PathCalcMap,0,map->size*map->size );
@@ -120,8 +120,8 @@ bool cMJobs::CalcPath ( void )
 	PathCalcRoot->WayCosts=0;
 	PathCalcRoot->CostsGes=PathCalcRoot->WayCosts+CalcDest ( ScrX,ScrY );
 	PathCalcMap[ScrX+ScrY*map->size]=1;
-	PathCalcEnds->AddPathCalc ( PathCalcRoot );
-	PathCalcAll->AddPathCalc ( PathCalcRoot );
+	PathCalcEnds->Add( PathCalcRoot );
+	PathCalcAll->Add( PathCalcRoot );
 	// Den Weg finden:
 	if ( ( ret=CreateNextPath() ) !=false )
 	{
@@ -142,10 +142,10 @@ bool cMJobs::CalcPath ( void )
 		waypoints=wp;
 	}
 	// Alle Punkte löschen:
-	for ( int i = 0;i < PathCalcAll->Count; i++ )
+	while ( PathCalcAll->iCount )
 	{
-		free ( PathCalcAll->PathCalcItems[i] );
-		PathCalcAll->DeleteMJobs ( 0 );
+		free ( PathCalcAll->Items[0] );
+		PathCalcAll->Delete( 0 );
 	}
 	free ( PathCalcMap );
 	delete PathCalcEnds;
@@ -172,8 +172,8 @@ bool cMJobs::AddPoint ( int x,int y,int m, sPathCalc *p )
 		n->Y=y;
 		n->WayCosts=GetWayCost ( n->X,n->Y,& ( n->road ) ) *m;
 		n->CostsGes=n->WayCosts+CalcDest ( n->X,n->Y );
-		PathCalcEnds->AddPathCalc ( n );
-		PathCalcAll->AddPathCalc ( n );
+		PathCalcEnds->Add ( n );
+		PathCalcAll->Add ( n );
 		PathCalcMap[n->X+n->Y*map->size]=1;
 		if ( x==DestX&&y==DestY )
 		{
@@ -190,15 +190,15 @@ bool cMJobs::CreateNextPath ( void )
 	sPathCalc *p,*pp;
 	int i,index;
 
-	if ( PathCalcEnds->Count==0||PathCalcAll->Count>MAX_PATHFINDING ) return false;
+	if ( PathCalcEnds->iCount==0||PathCalcAll->iCount>MAX_PATHFINDING ) return false;
 	// Den Endpunkt mit den geringsten Kosten suchen:
-	p=PathCalcEnds->PathCalcItems[0];
+	p=PathCalcEnds->Items[0];
 	index=0;
 	if ( !plane )
 	{
-		for ( i=0;i<PathCalcEnds->Count;i++ )
+		for ( i=0;i<PathCalcEnds->iCount;i++ )
 		{
-			pp=PathCalcEnds->PathCalcItems[i];
+			pp=PathCalcEnds->Items[i];
 			if ( pp->road )
 			{
 				p=pp;
@@ -214,9 +214,9 @@ bool cMJobs::CreateNextPath ( void )
 	}
 	else
 	{
-		for ( i=0;i<PathCalcEnds->Count;i++ )
+		for ( i=0;i<PathCalcEnds->iCount;i++ )
 		{
-			pp=PathCalcEnds->PathCalcItems[i];
+			pp=PathCalcEnds->Items[i];
 			if ( pp->CostsGes< ( p->CostsGes ) >>1 )
 			{
 				p=pp;
@@ -225,9 +225,9 @@ bool cMJobs::CreateNextPath ( void )
 		}
 	}
 	// Den gefundenen Punkt aus der Endpunkteliste löschen:
-	PathCalcEnds->DeletePathCalc ( index );
+	PathCalcEnds->Delete ( index );
 	// Neue Knotenpunkte erzeugen:
-//#define AddPoint(x,y,m) if(CheckPossiblePoint(x,y)){n=(sPathCalc*)malloc(sizeof(sPathCalc));n->prev=p;n->X=x;n->Y=y;n->WayCosts=GetWayCost(n->X,n->Y,&(n->road))*m;n->CostsGes=n->WayCosts+CalcDest(n->X,n->Y);PathCalcEnds->AddPathCalc(n);PathCalcAll->AddPathCalc(n);PathCalcMap[n->X+n->Y*map->size]=1;if(x==DestX&&y==DestY){FoundEnd=n;return true;}}
+//#define AddPoint(x,y,m) if(CheckPossiblePoint(x,y)){n=(sPathCalc*)malloc(sizeof(sPathCalc));n->prev=p;n->X=x;n->Y=y;n->WayCosts=GetWayCost(n->X,n->Y,&(n->road))*m;n->CostsGes=n->WayCosts+CalcDest(n->X,n->Y);PathCalcEnds->Add(n);PathCalcAll->AddPathCalc(n);PathCalcMap[n->X+n->Y*map->size]=1;if(x==DestX&&y==DestY){FoundEnd=n;return true;}}
 //#define AddPoint(x,y,m) if(CheckPossiblePoint(x,y)){n=(sPathCalc*)malloc(sizeof(sPathCalc));n->prev=p;n->X=x;n->Y=y;n->WayCosts=GetWayCost(n->X,n->Y,&(n->road))*m;n->CostsGes=n->WayCosts+CalcDest(n->X,n->Y);PathCalcEnds->Add(n);PathCalcAll->Add(n);PathCalcMap[n->X+n->Y*map->size]=1;game->map->Kacheln[(x)+(y)*game->map->size]=game->map->DefaultWater;if(x==DestX&&y==DestY){FoundEnd=n;return true;}}
 	if ( AddPoint ( p->X,p->Y-1,1,p ) ) return true;
 	if ( AddPoint ( p->X+1,p->Y,1,p ) ) return true;

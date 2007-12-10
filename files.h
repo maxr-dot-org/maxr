@@ -57,5 +57,5 @@ int CheckFile(const char* directory, const char* filename);
 * @param sDirectory Directory in which to search
 * @return A List with all filenames
 */
-TList *getFilesOfDirectory(string sDirectory);
+cList<string> *getFilesOfDirectory(string sDirectory);
 #endif

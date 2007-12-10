@@ -50,31 +50,29 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr )
 	ResourceMap=NULL;
 	ShieldMap=NULL;
 	base=new cBase ( this );
-	WachpostenAir=new TList;
-	WachpostenGround=new TList;
+	WachpostenAir=new cList<sWachposten*>;
+	WachpostenGround=new cList<sWachposten*>;
 	ResearchCount=0;
 	UnusedResearch=0;
 	Credits=0;
-	ReportVehicles=new TList;
-	ReportBuildings=new TList;
+	ReportVehicles=new cList<sReport*>;
+	ReportBuildings=new cList<sReport*>;
 	ReportForschungFinished=false;
-	LockList=new TList;
+	LockList=new cList<sLockElem*>;
 }
 
 cPlayer::~cPlayer ( void )
 {
 
-	while ( WachpostenAir->Count )
+	while ( WachpostenAir->iCount )
 	{
-		sWachposten *w;
-		w= ( sWachposten* ) ( WachpostenAir->Items[0].c_str() );
-		WachpostenAir->DeleteWaPo ( 0 );
+		//FIXME: mem leakage??; delete sWachposten-Items
+		WachpostenAir->Delete( 0 );
 	}
-	while ( WachpostenGround->Count )
+	while ( WachpostenGround->iCount )
 	{
-		sWachposten *w;
-		w= ( sWachposten* ) ( WachpostenGround->Items[0].c_str() );
-		WachpostenGround->DeleteWaPo ( 0 );
+		//FIXME: mem leakage??; delete sWachposten-Items
+		WachpostenGround->Delete( 0 );
 	}
 
 	// Erst alle geladenen Vehicles löschen:
@@ -126,22 +124,22 @@ cPlayer::~cPlayer ( void )
 	if ( DetectLandMap ) free ( DetectLandMap );
 	if ( DetectSeaMap ) free ( DetectSeaMap );
 
-	while ( ReportVehicles->Count )
+	while ( ReportVehicles->iCount )
 	{
-		delete ReportVehicles->ReportItems[0];
-		ReportVehicles->DeleteReport ( 0 );
+		delete ReportVehicles->Items[0];
+		ReportVehicles->Delete ( 0 );
 	}
 	delete ReportVehicles;
-	while ( ReportBuildings->Count )
+	while ( ReportBuildings->iCount )
 	{
-		delete ReportBuildings->ReportItems[0];
-		ReportBuildings->DeleteReport ( 0 );
+		delete ReportBuildings->Items[0];
+		ReportBuildings->Delete ( 0 );
 	}
 	delete ReportBuildings;
-	while ( LockList->Count )
+	while ( LockList->iCount )
 	{
-		delete LockList->LockItems[0];
-		LockList->DeleteLock ( 0 );
+		delete LockList->Items[0];
+		LockList->Delete ( 0 );
 	}
 	delete LockList;
 	delete WachpostenAir;
@@ -247,19 +245,19 @@ void cPlayer::AddWachpostenV ( cVehicle *v )
 	n->v=v;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir->AddWaPo ( n );
+		WachpostenAir->Add ( n );
 		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir->AddWaPo ( n );
+		WachpostenAir->Add ( n );
 		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
-		WachpostenGround->AddWaPo ( n );
+		WachpostenGround->Add ( n );
 		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 	else
 	{
-		WachpostenGround->AddWaPo ( n );
+		WachpostenGround->Add ( n );
 		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 }
@@ -273,19 +271,19 @@ void cPlayer::AddWachpostenB ( cBuilding *b )
 	n->v=NULL;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir->AddWaPo ( n );
+		WachpostenAir->Add ( n );
 		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir->AddWaPo ( n );
+		WachpostenAir->Add ( n );
 		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
-		WachpostenGround->AddWaPo ( n );
+		WachpostenGround->Add ( n );
 		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 	else
 	{
-		WachpostenGround->AddWaPo ( n );
+		WachpostenGround->Add ( n );
 		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 }
@@ -297,12 +295,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	int i;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir->Count;i++ )
+		for ( i=0;i<WachpostenAir->iCount;i++ )
 		{
-			ptr=WachpostenAir->WaPoItems[i];
+			ptr=WachpostenAir->Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenAir->DeleteWaPo ( i );
+				WachpostenAir->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -311,22 +309,22 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir->Count;i++ )
+		for ( i=0;i<WachpostenAir->iCount;i++ )
 		{
-			ptr=WachpostenAir->WaPoItems[i];
+			ptr=WachpostenAir->Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenAir->DeleteWaPo ( i );
+				WachpostenAir->Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround->Count;i++ )
+		for ( i=0;i<WachpostenGround->iCount;i++ )
 		{
-			ptr=WachpostenGround->WaPoItems[i];
+			ptr=WachpostenGround->Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenGround->DeleteWaPo ( i );
+				WachpostenGround->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -336,12 +334,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround->Count;i++ )
+		for ( i=0;i<WachpostenGround->iCount;i++ )
 		{
-			ptr=WachpostenGround->WaPoItems[i];
+			ptr=WachpostenGround->Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenGround->DeleteWaPo ( i );
+				WachpostenGround->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -357,12 +355,12 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	int i;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir->Count;i++ )
+		for ( i=0;i<WachpostenAir->iCount;i++ )
 		{
-			ptr=WachpostenAir->WaPoItems[i];
+			ptr=WachpostenAir->Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenAir->DeleteWaPo ( i );
+				WachpostenAir->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -371,22 +369,22 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir->Count;i++ )
+		for ( i=0;i<WachpostenAir->iCount;i++ )
 		{
-			ptr=WachpostenAir->WaPoItems[i];
+			ptr=WachpostenAir->Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenAir->DeleteWaPo ( i );
+				WachpostenAir->Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround->Count;i++ )
+		for ( i=0;i<WachpostenGround->iCount;i++ )
 		{
-			ptr=WachpostenGround->WaPoItems[i];
+			ptr=WachpostenGround->Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenGround->DeleteWaPo ( i );
+				WachpostenGround->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -396,12 +394,12 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround->Count;i++ )
+		for ( i=0;i<WachpostenGround->iCount;i++ )
 		{
-			ptr=WachpostenGround->WaPoItems[i];
+			ptr=WachpostenGround->Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenGround->DeleteWaPo ( i );
+				WachpostenGround->Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -416,9 +414,9 @@ void cPlayer::RefreshWacheAir ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapAir,0,MapSize );
-	for ( i=0;i<WachpostenAir->Count;i++ )
+	for ( i=0;i<WachpostenAir->iCount;i++ )
 	{
-		ptr=WachpostenAir->WaPoItems[i];
+		ptr=WachpostenAir->Items[i];
 		if ( ptr->v )
 		{
 			SpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
@@ -436,9 +434,9 @@ void cPlayer::RefreshWacheGround ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapGround,0,MapSize );
-	for ( i=0;i<WachpostenGround->Count;i++ )
+	for ( i=0;i<WachpostenGround->iCount;i++ )
 	{
-		ptr=WachpostenGround->WaPoItems[i];
+		ptr=WachpostenGround->Items[i];
 		if ( ptr->v )
 		{
 			SpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
@@ -886,7 +884,7 @@ void cPlayer::AddLock ( cBuilding *b )
 	elem=new sLockElem;
 	elem->b=b;
 	b->IsLocked=true;
-	LockList->AddLock ( elem );
+	LockList->Add ( elem );
 }
 
 // Fügt ein Vehicle in die Lock-Liste ein:
@@ -897,7 +895,7 @@ void cPlayer::AddLock ( cVehicle *v )
 	elem->v=v;
 	elem->b=NULL;
 	v->IsLocked=true;
-	LockList->AddLock ( elem );
+	LockList->Add ( elem );
 }
 
 // FLöscht ein Vehicle aus der Lock-Liste:
@@ -905,14 +903,14 @@ void cPlayer::DeleteLock ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->Count;i++ )
+	for ( i=0;i<LockList->iCount;i++ )
 	{
-		elem=LockList->LockItems[i];
+		elem=LockList->Items[i];
 		if ( elem->v==v )
 		{
 			v->IsLocked=false;
 			delete elem;
-			LockList->DeleteLock ( i );
+			LockList->Delete ( i );
 			return;
 		}
 	}
@@ -923,14 +921,14 @@ void cPlayer::DeleteLock ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->Count;i++ )
+	for ( i=0;i<LockList->iCount;i++ )
 	{
-		elem=LockList->LockItems[i];
+		elem=LockList->Items[i];
 		if ( elem->b==b )
 		{
 			b->IsLocked=false;
 			delete elem;
-			LockList->DeleteLock ( i );
+			LockList->Delete ( i );
 			return;
 		}
 	}
@@ -941,9 +939,9 @@ bool cPlayer::InLockList ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->Count;i++ )
+	for ( i=0;i<LockList->iCount;i++ )
 	{
-		elem=LockList->LockItems[i];
+		elem=LockList->Items[i];
 		if ( elem->b==b ) return true;
 	}
 	return false;
@@ -954,9 +952,9 @@ bool cPlayer::InLockList ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->Count;i++ )
+	for ( i=0;i<LockList->iCount;i++ )
 	{
-		elem=LockList->LockItems[i];
+		elem=LockList->Items[i];
 		if ( elem->v==v ) return true;
 	}
 	return false;
@@ -989,9 +987,9 @@ void cPlayer::DrawLockList ( cHud *hud )
 	sLockElem *elem;
 	int i,spx,spy,off;
 
-	for ( i=0;i<LockList->Count;i++ )
+	for ( i=0;i<LockList->iCount;i++ )
 	{
-		elem=LockList->LockItems[i];
+		elem=LockList->Items[i];
 		if ( elem->v )
 		{
 			off=elem->v->PosX+elem->v->PosY*game->map->size;

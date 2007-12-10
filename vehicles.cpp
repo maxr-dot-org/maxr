@@ -145,9 +145,9 @@ cVehicle::~cVehicle ( void )
 		cPlayer *p;
 		int i;
 
-		for ( i = 0;i < game->PlayerList->Count;i++ )
+		for ( i = 0;i < game->PlayerList->iCount;i++ )
 		{
-			p = game->PlayerList->PlayerItems[i];
+			p = game->PlayerList->Items[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -4780,9 +4780,9 @@ bool cVehicle::InWachRange ( void )
 
 	off = PosX + PosY * game->map->size;
 
-	for ( i = 0;i < game->PlayerList->Count;i++ )
+	for ( i = 0;i < game->PlayerList->iCount;i++ )
 	{
-		p = game->PlayerList->PlayerItems[i];
+		p = game->PlayerList->Items[i];
 
 		if ( p == owner )
 			continue;
@@ -4799,9 +4799,9 @@ bool cVehicle::InWachRange ( void )
 				return false;
 
 			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenAir->Count;k++ )
+			for ( k = 0;k < p->WachpostenAir->iCount;k++ )
 			{
-				w = p->WachpostenAir->WaPoItems[k];
+				w = p->WachpostenAir->Items[k];
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
@@ -4836,9 +4836,9 @@ bool cVehicle::InWachRange ( void )
 				return false;
 
 			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenGround->Count;k++ )
+			for ( k = 0;k < p->WachpostenGround->iCount;k++ )
 			{
-				w = p->WachpostenGround->WaPoItems[k];
+				w = p->WachpostenGround->Items[k];
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{

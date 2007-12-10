@@ -24,7 +24,7 @@
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap ( void )
 {
-	TerrainInUse=new TList;
+	TerrainInUse=new cList<sTerrain*>;
 	Kacheln=NULL;
 	NewMap ( 32 );
 	MapName="";
@@ -68,7 +68,7 @@ bool cMap::LoadMap ( string filename )
 {
 	FILE *fp;
 	char str[100];
-	TList *index;
+	cList<sTuple*> *index;
 	int nr,i,k;
 
 	MapName = filename;
@@ -98,7 +98,7 @@ bool cMap::LoadMap ( string filename )
 	// DefaultWater:
 	fread ( &DefaultWater,sizeof ( int ),1,fp );
 	// Den Index erstellen:
-	index=new TList;
+	index=new cList<sTuple*>;
 	fseek ( fp,sizeof ( int ) *size*size,SEEK_CUR );
 	while ( 1 )
 	{
@@ -119,8 +119,8 @@ bool cMap::LoadMap ( string filename )
 				t=new sTuple;
 				t->from=nr;
 				t->to=i;
-				index->AddTuple ( t );
-				TerrainInUse->AddTerrain ( TerrainData.terrain+i );
+				index->Add( t );
+				TerrainInUse->Add( TerrainData.terrain+i );
 				break;
 			}
 		}
@@ -128,14 +128,15 @@ bool cMap::LoadMap ( string filename )
 		{
 			ErrorStr="terrain not found";
 			cLog::write((string)"terrain not found: " + str,LOG_TYPE_WARNING);
-			while ( index->Count )
+			while ( index->iCount )
 			{
-				index->DeleteTuple ( index->Count );
+				//FIXME: mem leakage; tuples are not deleted
+				index->Delete( 0 );
 			}
 			delete index;
 			fclose ( fp );
 			NewMap ( 16 );
-			return false;
+			return false; 
 		}
 	}
 	// Die Karte laden:
@@ -144,18 +145,18 @@ bool cMap::LoadMap ( string filename )
 	{
 		sTuple *t;
 		fread ( &nr,sizeof ( int ),1,fp );
-		for ( k=0;k<index->Count;k++ )
+		for ( k=0;k<index->iCount;k++ )
 		{
-			t=index->TupleItems[k];
+			t=index->Items[k];
 			if ( t->from==nr ) break;
 		}
 		Kacheln[i]=t->to;
 	}
 
-	while ( index->Count )
+	while ( index->iCount )
 	{
-		// delete (sTuple*)(index->Items[index->Count]);
-		index->Delete ( index->Count );
+		// delete index->Items[0];   //FIXME: mem leakage; why are the tuples not deleted?
+		index->Delete ( 0 );
 	}
 	delete index;
 	fclose ( fp );
@@ -189,9 +190,9 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	while ( TerrainInUse->Count )
+	while ( TerrainInUse->iCount )
 	{
-		TerrainInUse->DeleteTerrain ( 0 );
+		TerrainInUse->Delete( 0 );
 	}
 }
 

@@ -742,7 +742,8 @@ void RunSPMenu ( void )
 				if ( !MapName.empty() )
 				{
 					int i,LandX,LandY;
-					TList *list, *LandingList;
+					cList<cPlayer*> *list;
+					cList<sLanding*> *LandingList;
 					cMap *map;
 					cPlayer *p;
 					map=new cMap;
@@ -755,9 +756,9 @@ void RunSPMenu ( void )
 					map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 					players = RunPlayerSelect();
 
-					list=new TList;
-					list->AddPlayer ( p=new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
-					list->AddPlayer ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
+					list=new cList<cPlayer*>;
+					list->Add ( p=new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
+					list->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
 					game = new cGame ( NULL, map );
 					game->AlienTech = options.AlienTech;
@@ -765,12 +766,12 @@ void RunSPMenu ( void )
 					game->ActiveRoundPlayerNr = p->Nr;
 					game->Init ( list,0 );
 
-					for ( i=0;i<list->Count;i++ )
-						list->PlayerItems[i]->InitMaps ( map->size );
+					for ( i=0;i<list->iCount;i++ )
+						list->Items[i]->InitMaps ( map->size );
 
 					p->Credits=options.credits;
 
-					LandingList = new TList;
+					LandingList = new cList<sLanding*>;
 					RunHangar ( p, LandingList );
 					SelectLanding ( &LandX, &LandY, map );
 					game->MakeLanding ( LandX,LandY,p,LandingList,options.FixedBridgeHead );
@@ -780,10 +781,10 @@ void RunSPMenu ( void )
 					game->Run();
 
 					SettingsData.sPlayerName=p->name;
-					while ( list->Count )
+					while ( list->iCount )
 					{
-						delete ( ( cPlayer* ) ( list->PlayerItems[0] ) );
-						list->DeletePlayer ( 0 );
+						delete ( list->Items[0] );
+						list->Delete ( 0 );
 					}
 					delete game; game=NULL;
 					delete map;
@@ -1417,7 +1418,7 @@ string RunPlanetSelect ( void )
 	bool OKPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
-	TList *files;
+	cList<string> *files;
 	SDL_Rect scr;
 	TiXmlDocument doc;
 	TiXmlNode* rootnode;
@@ -1443,7 +1444,7 @@ string RunPlanetSelect ( void )
 
 	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 
-	files = new TList;
+	files = new cList<string>;
 	int k = 1;
 
 	if ( !doc.LoadFile ( "maps//maps.xml" ) )
@@ -1468,7 +1469,6 @@ string RunPlanetSelect ( void )
 	mouse->SetCursor ( CHand );
 	SHOW_SCREEN
 
-#define TEAR_DOWN while(files->Count){/*delete (files->Items(0));*/files->DeleteString(0);}delete files;
 
 	while ( 1 )
 	{
@@ -1501,7 +1501,7 @@ string RunPlanetSelect ( void )
 				string name;
 				name = files->Items[selected];
 				name.replace ( name.length()-3,3,"map" );
-				TEAR_DOWN
+				delete files;
 				return name;
 			}
 		}
@@ -1522,7 +1522,7 @@ string RunPlanetSelect ( void )
 			mouse->draw ( false,screen );
 		}
 		// Down:
-		if ( mouse->x>=321&&mouse->x<321+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&files->Count-8-offset>0 )
+		if ( mouse->x>=321&&mouse->x<321+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&files->iCount-8-offset>0 )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			offset+=4;
@@ -1537,7 +1537,7 @@ string RunPlanetSelect ( void )
 			scr.y=90;
 			for ( i=0;i<8;i++ )
 			{
-				if ( i+offset>=files->Count ) break;
+				if ( i+offset>=files->iCount ) break;
 
 				if ( mouse->x>=scr.x&&mouse->x<scr.x+112&&mouse->y>=scr.y&&mouse->y<scr.y+112 )
 				{
@@ -1564,13 +1564,13 @@ string RunPlanetSelect ( void )
 		SDL_Delay ( 1 );
 	}
 
-	TEAR_DOWN
+	delete files;
 	SDL_FreeSurface(sfTmp);
 	return "";
 }
 
 // Zeigt die Planeten an:
-void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
+void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *surface )
 {
 	SDL_Surface *sf;
 	SDL_Rect scr={640, 390, 0, 38},dest;
@@ -1587,7 +1587,7 @@ void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
 
 	for ( int i=0;i<8;i++ ) //only 8 maps on one screen
 	{
-		if ( i+offset>=files->Count ) break;
+		if ( i+offset>=files->iCount ) break;
 		sMap = files->Items[i+offset];
 		sPath = sMap;
 		sPath.insert ( 0, PATH_DELIMITER );
@@ -1689,7 +1689,7 @@ void ShowPlanets ( TList *files,int offset,int selected, SDL_Surface *surface )
 		dest.y=440;
 		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 	}
-	if ( files->Count-8-offset>0 )
+	if ( files->iCount-8-offset>0 )
 	{
 		scr.x=103;scr.y=452;
 		dest.h=scr.h=dest.w=scr.w=25;
@@ -1855,15 +1855,15 @@ void ShowPlayerStates ( sPlayer players )
 }
 
 // Zeigt den Hngar an:
-void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Surface *surface );
+void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selected, SDL_Surface *surface );
 void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p );
 void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p );
 int CalcSteigerung ( int org, int variety );
 int CalcPrice ( int value,int org, int variety );
 void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface );
-void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,int credits,cPlayer *p );
+void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschreibung,int credits,cPlayer *p );
 
-void RunHangar ( cPlayer *player,TList *LandingList )
+void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 {
 	bool tank=true,plane=false,ship=false,build=false,tnt=false,kauf=true;
 	bool FertigPressed=false,Beschreibung=SettingsData.bShowDescription;
@@ -1873,7 +1873,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 	int b,lb=0,i,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
 	int LandingOffset=0,LandingSelected=0;
 	SDL_Rect scr;
-	TList *list,*selection;
+	cList<sHUp*> *list,*selection;
 	
 	#define BUTTON_W 77
 	#define BUTTON_H 23	
@@ -1908,7 +1908,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 
 
 	// Die Liste erstellen:
-	list=new TList;
+	list=new cList<sHUp*>;
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sHUp *n;
@@ -1925,7 +1925,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
-		list->AddHUp ( n );
+		list->Add ( n );
 	}
 	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
@@ -1957,10 +1957,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		n->costs=UnitsData.building[i].data.iBuilt_Costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
-		list->AddHUp ( n );
+		list->Add ( n );
 	}
 	// Die Selection erstellen:
-	selection=new TList;
+	selection=new cList<sHUp*>;
 	CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );
 	ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 	MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
@@ -2050,7 +2050,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=386;
-			if ( offset<selection->Count-9 )
+			if ( offset<selection->iCount-9 )
 			{
 				offset++;
 				if ( selected<offset ) selected=offset;
@@ -2113,9 +2113,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			int nr;
 			nr= ( y-60 ) / ( 32+2 );
-			if ( selection->Count<9 )
+			if ( selection->iCount<9 )
 			{
-				if ( nr>=selection->Count ) nr=-1;
+				if ( nr>=selection->iCount ) nr=-1;
 			}
 			else
 			{
@@ -2129,28 +2129,28 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				selected=nr;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 				// Doppelklick prüfen:
-				if ( last_selected==nr&&selection->HUpItems[selected]->costs<=player->Credits )
+				if ( last_selected==nr&&selection->Items[selected]->costs<=player->Credits )
 				{
 					// Don't add buildings, humans, planes, etc...
-					if ( selection->HUpItems[selected]->vehicle &&
-						!UnitsData.vehicle[selection->HUpItems[selected]->id].data.is_human &&
-						!UnitsData.vehicle[selection->HUpItems[selected]->id].data.is_alien &&
-						!(UnitsData.vehicle[selection->HUpItems[selected]->id].data.can_drive == DRIVE_AIR) &&
-						!(UnitsData.vehicle[selection->HUpItems[selected]->id].data.can_drive == DRIVE_SEA) )
+					if ( selection->Items[selected]->vehicle &&
+						!UnitsData.vehicle[selection->Items[selected]->id].data.is_human &&
+						!UnitsData.vehicle[selection->Items[selected]->id].data.is_alien &&
+						!(UnitsData.vehicle[selection->Items[selected]->id].data.can_drive == DRIVE_AIR) &&
+						!(UnitsData.vehicle[selection->Items[selected]->id].data.can_drive == DRIVE_SEA) )
 					{
 						sLanding *n;
 						n=new sLanding;
 						n->cargo=0;
-						n->sf=selection->HUpItems[selected]->sf;
-						n->id=selection->HUpItems[selected]->id;
-						n->costs=selection->HUpItems[selected]->costs;
-						LandingList->AddLanding ( n );
-						LandingSelected=LandingList->Count-1;
+						n->sf=selection->Items[selected]->sf;
+						n->id=selection->Items[selected]->id;
+						n->costs=selection->Items[selected]->costs;
+						LandingList->Add ( n );
+						LandingSelected=LandingList->iCount-1;
 						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
 
 						if ( LandingSelected<0 ) LandingSelected=0;
 						ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
-						player->Credits-=selection->HUpItems[selected]->costs;
+						player->Credits-=selection->Items[selected]->costs;
 						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 					}
@@ -2160,9 +2160,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			}
 		}
 		// Klick auf einen Upgrade-Slider:
-		if ( b&&!lb&&x>=283&&x<301+18&&selection->Count )
+		if ( b&&!lb&&x>=283&&x<301+18&&selection->iCount )
 		{
-			sHUp *ptr=selection->HUpItems[selected];
+			sHUp *ptr=selection->Items[selected];
 			for ( i=0;i<8;i++ )
 			{
 				if ( !ptr->upgrades[i].active ) continue;
@@ -2299,18 +2299,18 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			mouse->draw ( false,screen );
 		}
 		// Kauf-Button:
-		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection->HUpItems[selected]->costs <= player->Credits && kauf )
+		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection->Items[selected]->costs <= player->Credits && kauf )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
 			sLanding *n;
 			n=new sLanding;
 			n->cargo=0;
-			n->sf=selection->HUpItems[selected]->sf;
-			n->id=selection->HUpItems[selected]->id;
-			n->costs=selection->HUpItems[selected]->costs;
-			LandingList->AddLanding ( n );
-			LandingSelected=LandingList->Count-1;
+			n->sf=selection->Items[selected]->sf;
+			n->id=selection->Items[selected]->id;
+			n->costs=selection->Items[selected]->costs;
+			LandingList->Add ( n );
+			LandingSelected=LandingList->iCount-1;
 			while ( LandingSelected>=LandingOffset+5 )
 			{
 				LandingOffset++;
@@ -2376,7 +2376,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			dest.h=scr.h=17;
 			dest.x=347;
 			dest.y=240;
-			if ( LandingOffset<LandingList->Count-5 )
+			if ( LandingOffset<LandingList->iCount-5 )
 			{
 				LandingOffset++;
 				if ( LandingSelected<LandingOffset ) LandingSelected=LandingOffset;
@@ -2412,21 +2412,21 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		else if ( EntfernenPressed&&!b&&lb )
 		{
 			// Vehicle aus der Liste entfernen:
-			if ( LandingList->Count&&LandingList->Count>LandingSelected&&LandingSelected>=0 )
+			if ( LandingList->iCount&&LandingList->iCount>LandingSelected&&LandingSelected>=0 )
 			{
-				player->Credits+=LandingList->LandItems[LandingSelected]->costs;
-				player->Credits+=LandingList->LandItems[LandingSelected]->cargo/5;
+				player->Credits+=LandingList->Items[LandingSelected]->costs;
+				player->Credits+=LandingList->Items[LandingSelected]->cargo/5;
 
-				delete LandingList->LandItems[LandingSelected];
-				LandingList->DeleteLanding ( LandingSelected );
+				delete LandingList->Items[LandingSelected];
+				LandingList->Delete ( LandingSelected );
 				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
-				if ( LandingSelected>=LandingList->Count )
+				if ( LandingSelected>=LandingList->iCount )
 				{
 					LandingSelected--;
 				}
-				if ( LandingList->Count-LandingOffset<5&&LandingOffset>0 )
+				if ( LandingList->iCount-LandingOffset<5&&LandingOffset>0 )
 				{
 					LandingOffset--;
 				}
@@ -2444,9 +2444,9 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		{
 			int nr;
 			nr= ( y-22 ) / ( 32+10 );
-			if ( LandingList->Count<5 )
+			if ( LandingList->iCount<5 )
 			{
-				if ( nr>=LandingList->Count ) nr=-1;
+				if ( nr>=LandingList->iCount ) nr=-1;
 			}
 			else
 			{
@@ -2463,20 +2463,20 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 				// Doppelklick prüfen:
 				if ( last_selected==nr )
 				{
-					if ( LandingList->Count&&LandingList->Count>LandingSelected&&LandingSelected>=0 )
+					if ( LandingList->iCount&&LandingList->iCount>LandingSelected&&LandingSelected>=0 )
 					{
-						player->Credits+=LandingList->LandItems[LandingSelected]->costs;
-						player->Credits+=LandingList->LandItems[LandingSelected]->cargo/5;
-						delete LandingList->LandItems[LandingSelected];
-						LandingList->DeleteLanding ( LandingSelected );
+						player->Credits+=LandingList->Items[LandingSelected]->costs;
+						player->Credits+=LandingList->Items[LandingSelected]->cargo/5;
+						delete LandingList->Items[LandingSelected];
+						LandingList->Delete ( LandingSelected );
 						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
-						if ( LandingSelected>=LandingList->Count )
+						if ( LandingSelected>=LandingList->iCount )
 						{
 							LandingSelected--;
 						}
-						if ( LandingList->Count-LandingOffset<5&&LandingOffset>0 )
+						if ( LandingList->iCount-LandingOffset<5&&LandingOffset>0 )
 						{
 							LandingOffset--;
 						}
@@ -2489,10 +2489,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 			}
 		}
 
-		if ( LandingSelected>=0&&LandingList->Count&&LandingSelected<LandingList->Count )
+		if ( LandingSelected>=0&&LandingList->iCount&&LandingSelected<LandingList->iCount )
 		{
 			sLanding *ptr;
-			ptr=LandingList->LandItems[LandingSelected];
+			ptr=LandingList->Items[LandingSelected];
 			if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 			{
 
@@ -2607,10 +2607,10 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		SDL_Delay ( 1 );
 	}
 
-	while ( list->Count )
+	while ( list->iCount )
 	{
 		sHUp *ptr;
-		ptr = list->HUpItems[0];
+		ptr = list->Items[0];
 		for ( i=0;i<8;i++ )
 		{
 			if ( ptr->upgrades[i].active&&ptr->upgrades[i].Purchased )
@@ -2628,7 +2628,7 @@ void RunHangar ( cPlayer *player,TList *LandingList )
 		}
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		list->DeleteHUp ( 0 );
+		list->Delete ( 0 );
 	}
 	delete list;
 	delete selection;
@@ -3230,7 +3230,7 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 }
 
 // Zeigt die Bars an:
-void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Surface *surface )
+void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selected, SDL_Surface *surface )
 {
 	SDL_Rect scr,dest;
 	scr.x=dest.x=371;
@@ -3260,10 +3260,10 @@ void ShowBars ( int credits,int StartCredits,TList *landing,int selected, SDL_Su
 	scr.h=dest.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
-	if ( selected>=0&&landing->Count&&selected<landing->Count )
+	if ( selected>=0&&landing->iCount&&selected<landing->iCount )
 	{
 		sLanding *ptr;
-		ptr=landing->LandItems[selected];
+		ptr=landing->Items[selected];
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
 			font->showTextCentered(430,275, lngPack.i18n ( "Text~Title~Cargo" ));
@@ -3403,7 +3403,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 }
 
 // Zeigt die Liste mit den ausgewählten Landefahrzeugen an:
-void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface )
+void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface )
 {
 	sLanding *ptr;
 	SDL_Rect scr,dest,text = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
@@ -3415,10 +3415,10 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 	scr.w=32;scr.h=32;
 	dest.x=340;dest.y=20;
 	dest.w=32;dest.h=32;
-	for ( i=offset;i<list->Count;i++ )
+	for ( i=offset;i<list->iCount;i++ )
 	{
 		if ( i>=offset+5 ) break;
-		ptr=list->LandItems[i];
+		ptr=list->Items[i];
 		// Das Bild malen:
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
 		// Ggf noch Rahmen drum:
@@ -3493,12 +3493,12 @@ void ShowLandingList ( TList *list,int selected,int offset, SDL_Surface *surface
 }
 
 // Stellt die Selectionlist zusammen:
-void CreateSelectionList ( TList *selection,TList *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
+void CreateSelectionList ( cList<sHUp*> *selection,cList<sHUp*> *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
 {
 	sUnitData *bd;
 	sUnitData *vd;
 	int i;
-	while ( selection->Count )
+	while ( selection->iCount )
 	{
 		selection->Delete ( 0 );
 	}
@@ -3508,42 +3508,42 @@ void CreateSelectionList ( TList *selection,TList *images,int *selected,int *off
 		ship=false;
 		build=false;
 	}
-	for ( i=0;i<images->Count;i++ )
+	for ( i=0;i<images->iCount;i++ )
 	{
-		if ( images->HUpItems[i]->vehicle )
+		if ( images->Items[i]->vehicle )
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			vd=& ( UnitsData.vehicle[images->HUpItems[i]->id].data );
+			vd=& ( UnitsData.vehicle[images->Items[i]->id].data );
 			if ( vd->is_alien&&kauf ) continue;
 			if ( vd->is_human&&kauf ) continue;
 			if ( tnt&&!vd->can_attack ) continue;
 			if ( vd->can_drive==DRIVE_AIR&&!plane ) continue;
 			if ( vd->can_drive==DRIVE_SEA&&!ship ) continue;
 			if ( ( vd->can_drive==DRIVE_LAND||vd->can_drive==DRIVE_LANDnSEA ) &&!tank ) continue;
-			selection->AddHUp ( images->HUpItems[i] );
+			selection->Add ( images->Items[i] );
 		}
 		else
 		{
 			if ( !build ) continue;
-			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images->HUpItems[i] ) )->id].data );
+			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images->Items[i] ) )->id].data );
 			if ( tnt&&!bd->can_attack ) continue;
-			selection->AddHUp ( images->HUpItems[i] );
+			selection->Add ( images->Items[i] );
 		}
 	}
-	if ( *offset>=selection->Count-9 )
+	if ( *offset>=selection->iCount-9 )
 	{
-		*offset=selection->Count-9;
+		*offset=selection->iCount-9;
 		if ( *offset<0 ) *offset=0;
 	}
-	if ( *selected>=selection->Count )
+	if ( *selected>=selection->iCount )
 	{
-		*selected=selection->Count-1;
+		*selected=selection->iCount-1;
 		if ( *selected<0 ) *selected=0;
 	}
 }
 
 // Zeigt die Liste mit den Images an:
-void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,int credits, cPlayer *p )
+void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschreibung,int credits, cPlayer *p )
 {
 	sHUp *ptr;
 	SDL_Rect dest,scr,text = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
@@ -3555,7 +3555,7 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
 	dest.w=32;dest.h=32;
-	if ( list->Count==0 )
+	if ( list->iCount==0 )
 	{
 		scr.x=0;scr.y=0;
 		scr.w=316;scr.h=256;
@@ -3565,11 +3565,11 @@ void ShowSelectionList ( TList *list,int selected,int offset,bool beschreibung,i
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		return;
 	}
-	for ( i=offset;i<list->Count;i++ )
+	for ( i=offset;i<list->iCount;i++ )
 	{
 		if ( i>=offset+9 ) break;
 		// Das Bild malen:
-		ptr = list->HUpItems[i];
+		ptr = list->Items[i];
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
@@ -3718,10 +3718,10 @@ int GetColorNr ( SDL_Surface *sf )
 cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 {
 	NextPlayerID=0;
-	PlayerList=new TList;
-	PlayerList->AddPlayer ( MyPlayer=new cPlayer ( SettingsData.sPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
+	PlayerList=new cList<cPlayer*>;
+	PlayerList->Add ( MyPlayer=new cPlayer ( SettingsData.sPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
 
-	ChatList=new TList;
+	ChatList=new cList<string>;
 	this->host=host;
 	this->tcp=tcp;
 
@@ -3753,23 +3753,19 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 
 cMultiPlayer::~cMultiPlayer ( void )
 {
-	while ( ChatList->Count )
-	{
-		ChatList->DeleteString ( 0 );
-	}
 	delete ChatList;
-	while ( PlayerList->Count )
+	while ( PlayerList->iCount )
 	{
-		delete PlayerList->PlayerItems[0];
-		PlayerList->DeletePlayer ( 0 );
+		delete PlayerList->Items[0];
+		PlayerList->Delete ( 0 );
 	}
 	delete PlayerList;
 	if ( game )
 	{
-		while ( game->PlayerList->Count )
+		while ( game->PlayerList->iCount )
 		{
-			delete game->PlayerList->PlayerItems[0];
-			game->PlayerList->DeletePlayer ( 0 );
+			delete game->PlayerList->Items[0];
+			game->PlayerList->Delete ( 0 );
 		}
 		delete game;game=NULL;
 	}
@@ -4594,13 +4590,13 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else if ( ClientsToGo<=0&&SaveGame.empty() )
 			{
-				ClientSettingsList=new TList;
+				ClientSettingsList=new cList<sClientSettings*>;
 
 				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go" ) );
 				network->TCPSend ( MSG_LETS_GO,"");
 
 				// Das Spiel machen:
-				TList *LandingList;
+				cList<sLanding*> *LandingList;
 				int i,LandX,LandY;
 				map_obj=new cMap();
 				if ( map_obj->LoadMap ( map ) )
@@ -4613,36 +4609,36 @@ void cMultiPlayer::RunMenu ( void )
 					game->ActiveRoundPlayerNr=MyPlayer->Nr;
 					game->Init ( PlayerList,0 );
 
-					for ( i=0;i<PlayerList->Count;i++ )
+					for ( i=0;i<PlayerList->iCount;i++ )
 					{
-						PlayerList->PlayerItems[i]->InitMaps ( map_obj->size );
+						PlayerList->Items[i]->InitMaps ( map_obj->size );
 					}
 					MyPlayer->Credits=options.credits;
 
-					LandingList=new TList;
+					LandingList=new cList<sLanding*>;
 					RunHangar ( MyPlayer,LandingList );
 
 					SelectLanding ( &LandX,&LandY,map_obj );
 
 					ServerWait ( LandX,LandY,LandingList );
 
-					while ( LandingList->Count )
+					while ( LandingList->iCount )
 					{
-						delete LandingList->LandItems[0];
-						LandingList->DeleteLanding ( 0 );
+						delete LandingList->Items[0];
+						LandingList->Delete ( 0 );
 					}
 					delete LandingList;
 
 					ExitMenu();
 
-					network->iMin_clients=PlayerList->Count-1;
+					network->iMin_clients=PlayerList->iCount-1;
 					game->Run();
 					SettingsData.sPlayerName=MyPlayer->name;
 
-					while ( PlayerList->Count )
+					while ( PlayerList->iCount )
 					{
-						delete PlayerList->PlayerItems[0];
-						PlayerList->DeletePlayer ( 0 );
+						delete PlayerList->Items[0];
+						PlayerList->Delete ( 0 );
 					}
 					delete game;game=NULL;
 					break;
@@ -4668,14 +4664,14 @@ void cMultiPlayer::RunMenu ( void )
 				network->RxFunc=game->engine->ReceiveNetMsg;
 				TmpSf=NULL;
 
-				for(i=0;i<game->PlayerList->Count;i++){
+				for(i=0;i<game->PlayerList->iCount;i++){
 				  if(((cPlayer*)(game->PlayerList->Items[i]))->name==MyPlayer->name){
 				    game->ActivePlayer=(cPlayer*)(game->PlayerList->Items[i]);
 				    break;
 				  }
 				}
 
-				network->MinConnections=PlayerList->Count-1;
+				network->MinConnections=PlayerList->iCount-1;
 				*(game->hud)=game->ActivePlayer->HotHud;
 				if(game->hud->Zoom!=64){
 				  game->hud->LastZoom=-1;
@@ -4693,15 +4689,15 @@ void cMultiPlayer::RunMenu ( void )
 		{
 			// Das Spiel machen:
 			int i,LandX,LandY,nr;
-			TList *LandingList;
+			cList<sLanding*> *LandingList;
 			map_obj=new cMap();
 			LetsGo=false;
 			if ( map_obj->LoadMap ( map ) )
 			{
 
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					if ( PlayerList->PlayerItems[i]==MyPlayer ) {nr=i;break;}
+					if ( PlayerList->Items[i]==MyPlayer ) {nr=i;break;}
 				}
 
 				game=new cGame ( network,map_obj );
@@ -4710,14 +4706,14 @@ void cMultiPlayer::RunMenu ( void )
 				game->ActiveRoundPlayerNr=-1;
 				game->Init ( PlayerList,nr );
 
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					PlayerList->PlayerItems[i]->InitMaps ( map_obj->size );
+					PlayerList->Items[i]->InitMaps ( map_obj->size );
 				}
 
 				MyPlayer->Credits=options.credits;
 
-				LandingList=new TList;
+				LandingList=new cList<sLanding*>;
 				RunHangar ( MyPlayer,LandingList );
 
 				SelectLanding ( &LandX,&LandY,map_obj );
@@ -4725,23 +4721,23 @@ void cMultiPlayer::RunMenu ( void )
 				// Settings übertragen:
 				ClientWait ( LandX,LandY,LandingList );
 
-				while ( LandingList->Count )
+				while ( LandingList->iCount )
 				{
-					delete LandingList->LandItems[0];
-					LandingList->DeleteLanding ( 0 );
+					delete LandingList->Items[0];
+					LandingList->Delete ( 0 );
 				}
 				delete LandingList;
 
 				ExitMenu();
 
-				network->iMax_clients = network->iMin_clients = PlayerList->Count-1; // set maximal and minimal players for this game
+				network->iMax_clients = network->iMin_clients = PlayerList->iCount-1; // set maximal and minimal players for this game
 				game->Run();
 				SettingsData.sPlayerName=MyPlayer->name;
 
-				while ( PlayerList->Count )
+				while ( PlayerList->iCount )
 				{
-					delete PlayerList->PlayerItems[0];
-					PlayerList->DeletePlayer ( 0 );
+					delete PlayerList->Items[0];
+					PlayerList->Delete ( 0 );
 				}
 				delete game;game=NULL;
 				break;
@@ -4765,14 +4761,14 @@ void cMultiPlayer::RunMenu ( void )
 			TmpSf=NULL;
 			network->RxFunc=game->engine->ReceiveNetMsg;
 
-			for(i=0;i<game->PlayerList->Count;i++){
+			for(i=0;i<game->PlayerList->iCount;i++){
 			  if(((cPlayer*)(game->PlayerList->Items[i]))->name==MyPlayer->name){
 			    game->ActivePlayer=(cPlayer*)(game->PlayerList->Items[i]);
 			    break;
 			  }
 			}
 
-			network->MinConnections=PlayerList->Count-1;
+			network->MinConnections=PlayerList->iCount-1;
 			*(game->hud)=game->ActivePlayer->HotHud;
 			if(game->hud->Zoom!=64){
 			  game->hud->LastZoom=-1;
@@ -4864,15 +4860,16 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_SIGNING_IN:
 			{
 				cPlayer *p;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				p=new cPlayer ( Strings->Items[0],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],NextPlayerID++ );
-				PlayerList->AddPlayer ( p );
+				PlayerList->Add ( p );
 				Refresh=true;
 				string smsg;
 				smsg=Strings->Items[2]; smsg+="#"; smsg+=iToStr(p->Nr);
 				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -4880,22 +4877,24 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_YOUR_ID_IS:
 			{
 				cPlayer *p;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				if ( MyPlayer->Nr!=atoi ( Strings->Items[0].c_str() ) )
 				{
 					network->NetMessageList->Delete ( i );
 					break;
 				}
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					p=PlayerList->PlayerItems[i];
+					p=PlayerList->Items[i];
 					if ( p==MyPlayer )
 					{
 						p->Nr=atoi ( Strings->Items[1].c_str() );
 						break;
 					}
 				}
+				delete Strings;
+
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -4903,12 +4902,12 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_MY_NAME_CHANGED:
 			{
 				cPlayer *p;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				int i;
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					p=PlayerList->PlayerItems[i];
+					p=PlayerList->Items[i];
 					if ( p->Nr!=atoi ( Strings->Items[0].c_str() ) ) continue;
 					p->color=OtherData.colors[atoi ( Strings->Items[1].c_str() ) ];
 					p->name=Strings->Items[2];
@@ -4916,13 +4915,15 @@ void cMultiPlayer::HandleMenuMessages()
 					SendPlayerList();
 					break;
 				}
-				if ( i==PlayerList->Count )
+				if ( i==PlayerList->iCount )
 				{
 					p=new cPlayer ( Strings->Items[2],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],atoi ( Strings->Items[0].c_str() ) );
-					PlayerList->AddPlayer ( p );
+					PlayerList->Add ( p );
 					SendPlayerList();
 					Refresh=true;
 				}
+
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -4930,13 +4931,13 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_PLAYER_LIST:
 			{
 				int count,myID;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				myID=MyPlayer->Nr;
-				while ( PlayerList->Count )
+				while ( PlayerList->iCount )
 				{
-					delete PlayerList->PlayerItems[0];
-					PlayerList->DeletePlayer ( 0 );
+					delete PlayerList->Items[0];
+					PlayerList->Delete ( 0 );
 				}
 				count=atoi ( Strings->Items[0].c_str() );
 				for ( int k = 0;count--;k++ )
@@ -4948,8 +4949,10 @@ void cMultiPlayer::HandleMenuMessages()
 
 					p=new cPlayer ( Strings->Items[k*3+3],OtherData.colors[color],id );
 					if ( id==myID ) MyPlayer=p;
-					PlayerList->AddPlayer ( p );
+					PlayerList->Add ( p );
 				}
+
+				delete Strings;
 				Refresh=true;
 				network->NetMessageList->Delete ( i );
 				break;
@@ -4957,7 +4960,7 @@ void cMultiPlayer::HandleMenuMessages()
 			// Überträgt die Optionen:
 			case MSG_OPTIONS:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				no_options=atoi ( Strings->Items[0].c_str() );
 
@@ -4977,6 +4980,8 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				else
 					map=Strings->Items[4];
+
+				delete Strings;
 				Refresh=true;
 				network->NetMessageList->Delete ( i );
 				break;
@@ -4991,7 +4996,7 @@ void cMultiPlayer::HandleMenuMessages()
 			// Prüfen, ob der Client bereit ist zum Go:
 			case MSG_CHECK_FOR_GO:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				FILE *fp;
 				string mapstr;
@@ -5015,6 +5020,7 @@ void cMultiPlayer::HandleMenuMessages()
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host_No" ) );
 				}
 				if ( fp ) fclose ( fp );
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -5023,9 +5029,9 @@ void cMultiPlayer::HandleMenuMessages()
 			{
 				cPlayer *p;
 				int i;
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					p=PlayerList->PlayerItems[i];
+					p=PlayerList->Items[i];
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
@@ -5043,9 +5049,9 @@ void cMultiPlayer::HandleMenuMessages()
 			{
 				cPlayer *p;
 				int i;
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					p=PlayerList->PlayerItems[i];
+					p=PlayerList->Items[i];
 					if ( p->Nr==atoi ( msgstring.c_str() ) )
 					{
 						string log;
@@ -5066,16 +5072,17 @@ void cMultiPlayer::HandleMenuMessages()
 				// Die Ressourcen:
 			case MSG_RESSOURCES:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				int off;
 				if ( map_obj==NULL ) break;
-				for ( int k=0;k<Strings->Count;k++ )
+				for ( int k=0;k<Strings->iCount;k++ )
 				{
 					off=atoi ( Strings->Items[k].c_str() );
 					map_obj->Resources[off].typ= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 				}
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -5083,13 +5090,13 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_PLAYER_UPGRADES:
 			{
 				cPlayer *p;
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				int nr,i;
 				nr=atoi ( Strings->Items[0].c_str() );
-				for ( i=0;i<PlayerList->Count;i++ )
+				for ( i=0;i<PlayerList->iCount;i++ )
 				{
-					p=PlayerList->PlayerItems[i];
+					p=PlayerList->Items[i];
 					if ( p->Nr==nr )
 						break;
 				}
@@ -5098,7 +5105,7 @@ void cMultiPlayer::HandleMenuMessages()
 					network->NetMessageList->Delete ( i );
 					break;
 				}
-				for ( int i=1;i<Strings->Count;i++ )
+				for ( int i=1;i<Strings->iCount;i++ )
 				{
 					if ( atoi ( Strings->Items[i].c_str() ) ==0 )
 					{
@@ -5124,13 +5131,14 @@ void cMultiPlayer::HandleMenuMessages()
 						p->VehicleData[i].version++;
 					}
 				}
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
 			// Landedaten eines Players:
 			case MSG_PLAYER_LANDING:
 			{
-				TList *Strings;
+				cList<string> *Strings;
 				Strings = SplitMessage ( msgstring );
 				sClientSettings *cs=NULL;
 				int nr,k,max;
@@ -5142,23 +5150,23 @@ void cMultiPlayer::HandleMenuMessages()
 					break;
 				}
 
-				for ( k=0;k<ClientSettingsList->Count;k++ )
+				for ( k=0;k<ClientSettingsList->iCount;k++ )
 				{
-					cs=ClientSettingsList->ClientSettingsItems[k];
+					cs=ClientSettingsList->Items[k];
 					if ( cs->nr==nr )
 					{
 						break;
 					}
 				}
 
-				if ( cs==NULL||k==ClientSettingsList->Count )
+				if ( cs==NULL||k==ClientSettingsList->iCount )
 				{
 					cs=new sClientSettings;
 					cs->LandX=atoi ( Strings->Items[0].c_str() );
 					cs->LandY=atoi ( Strings->Items[1].c_str() );
 					cs->nr=nr;
-					cs->LandingList=new TList;
-					ClientSettingsList->AddClientSettings ( cs );
+					cs->LandingList=new cList<sLanding*>;
+					ClientSettingsList->Add ( cs );
 				}
 				max=atoi ( Strings->Items[3].c_str() );
 
@@ -5168,8 +5176,9 @@ void cMultiPlayer::HandleMenuMessages()
 					l=new sLanding;
 					l->id=atoi ( Strings->Items[k].c_str() );
 					l->cargo=atoi ( Strings->Items[k++].c_str() );
-					cs->LandingList->AddLanding ( l );
+					cs->LandingList->Add ( l );
 				}
+				delete Strings;
 				network->NetMessageList->Delete ( i );
 				break;
 			}
@@ -5231,10 +5240,10 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 				{
 					int i;
 					str+=lngPack.i18n ( "Text~Multiplayer~Player" ) +": ";
-					for ( i=0;i<game->PlayerList->Count;i++ )
+					for ( i=0;i<game->PlayerList->iCount;i++ )
 					{
-						str+=game->PlayerList->PlayerItems[i]->name;
-						if ( i<game->PlayerList->Count-1 ) str+=",";
+						str+=game->PlayerList->Items[i]->name;
+						if ( i<game->PlayerList->iCount-1 ) str+=",";
 					}
 					str+="\n";
 				}
@@ -5354,10 +5363,11 @@ void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
 	font->showText(r, str);
 }
 
-TList* cMultiPlayer::SplitMessage ( string msg )
+
+cList<string>* cMultiPlayer::SplitMessage ( string msg )
 {
-	TList *Strings;
-	Strings = new TList;
+	cList<string> *Strings;
+	Strings = new cList<string>;
 	int npos=0;
 	for ( int i=0; npos!=string::npos; i++ )
 	{
@@ -5374,8 +5384,8 @@ void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
 {
 	string str;
 	int i;
-	if ( !ChatList->Count ) return;
-	for ( i=ChatList->Count-1;i>=0;i-- )
+	if ( !ChatList->iCount ) return;
+	for ( i=ChatList->iCount-1;i>=0;i-- )
 	{
 		str=ChatList->Items[i];
 		while (font->getTextWide(str) >410 )
@@ -5392,8 +5402,8 @@ void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
 		SDL_BlitSurface ( surface,&dest,buffer,&dest );
 		font->showText(dest, str);
 	}
-	while ( ChatList->Count>0 )
-		ChatList->DeleteString ( 0 );
+	while ( ChatList->iCount>0 )
+		ChatList->Delete ( 0 );
 	SHOW_SCREEN
 	mouse->draw ( false,screen );
 }
@@ -5418,9 +5428,9 @@ void cMultiPlayer::DisplayPlayerList ( SDL_Surface *surface )
 	dest.w=dest.h=scr.w=scr.h=10;
 	dest.x=476;dest.y=297;
 
-	for ( i=0;i<PlayerList->Count;i++ )
+	for ( i=0;i<PlayerList->iCount;i++ )
 	{
-		p=PlayerList->PlayerItems[i];
+		p=PlayerList->Items[i];
 
 		SDL_BlitSurface ( p->color,&scr,buffer,&dest );
 		font->showText(dest.x+16,dest.y, p->name);
@@ -5444,30 +5454,30 @@ void cMultiPlayer::ClientConnectedCallBack ( void )
 void cMultiPlayer::ClientDistconnect ( void )
 {
 	Refresh=true;
-	while ( PlayerList->Count )
+	while ( PlayerList->iCount )
 	{
-		if ( PlayerList->PlayerItems[0]!=MyPlayer )
+		if ( PlayerList->Items[0]!=MyPlayer )
 		{
-			delete PlayerList->PlayerItems[0];
+			delete PlayerList->Items[0];
 		}
-		PlayerList->DeletePlayer ( 0 );
+		PlayerList->Delete ( 0 );
 	}
-	PlayerList->AddPlayer ( MyPlayer );
+	PlayerList->Add ( MyPlayer );
 	MyPlayer->Nr=0;
 }
 
 // Meldet einen Disconnect, wenn man Server ist:
 void cMultiPlayer::ServerDisconnect ( void )
 {
-	while ( PlayerList->Count )
+	while ( PlayerList->iCount )
 	{
-		if ( PlayerList->PlayerItems[0]!=MyPlayer )
+		if ( PlayerList->Items[0]!=MyPlayer )
 		{
-			delete PlayerList->PlayerItems[0];
+			delete PlayerList->Items[0];
 		}
-		PlayerList->DeletePlayer ( 0 );
+		PlayerList->Delete ( 0 );
 	}
-	PlayerList->AddPlayer ( MyPlayer );
+	PlayerList->Add ( MyPlayer );
 
 	network->TCPSend ( MSG_WHO_ARE_YOU,"" );
 	Refresh=true;
@@ -5496,13 +5506,13 @@ void cMultiPlayer::SendPlayerList ( void )
 {
 	string msg;
 	cPlayer *p;
-	msg=iToStr(PlayerList->Count); msg+="#";
-	for ( int i=0; i<PlayerList->Count; i++ )
+	msg=iToStr(PlayerList->iCount); msg+="#";
+	for ( int i=0; i<PlayerList->iCount; i++ )
 	{
-		p=PlayerList->PlayerItems[i];
+		p=PlayerList->Items[i];
 		msg+=iToStr(p->Nr); msg+="#";
 		msg+=iToStr(GetColorNr ( p->color )); msg+="#";
-		msg+=p->name; if ( i!=PlayerList->Count-1 ) msg+="#";
+		msg+=p->name; if ( i!=PlayerList->iCount-1 ) msg+="#";
 	}
 	network->TCPSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
 }
@@ -5556,7 +5566,7 @@ void cMultiPlayer::TransmitRessources ( void )
 }
 
 // Wartet auf alle anderen Spieler (als Server):
-void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
+void cMultiPlayer::ServerWait ( int LandX,int LandY,cList<sLanding*> *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
@@ -5565,7 +5575,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
 
-	while ( ClientSettingsList->Count<PlayerList->Count-1 )
+	while ( ClientSettingsList->iCount<PlayerList->iCount-1 )
 	{
 		// Events holen:
 		SDL_PumpEvents();
@@ -5583,39 +5593,39 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 	}
 
 	// Alle Upgrades übertragen:
-	for ( i=0;i<PlayerList->Count;i++ )
+	for ( i=0;i<PlayerList->iCount;i++ )
 	{
-		TransmitPlayerUpgrades ( PlayerList->PlayerItems[i] );
+		TransmitPlayerUpgrades ( PlayerList->Items[i] );
 	}
 
 	TransmitPlayerLanding ( MyPlayer->Nr,LandX,LandY,LandingList );
 	game->MakeLanding ( LandX,LandY,MyPlayer,LandingList,options.FixedBridgeHead );
 
 	// Alle Landungen übertragen:
-	while ( ClientSettingsList->Count )
+	while ( ClientSettingsList->iCount )
 	{
 		sClientSettings *cs;
 		cPlayer *p;
-		cs=ClientSettingsList->ClientSettingsItems[0];
+		cs=ClientSettingsList->Items[0];
 
 		TransmitPlayerLanding ( cs->nr,cs->LandX,cs->LandY,cs->LandingList );
 
-		for ( i=0;i<PlayerList->Count;i++ )
+		for ( i=0;i<PlayerList->iCount;i++ )
 		{
-			p=PlayerList->PlayerItems[i];
+			p=PlayerList->Items[i];
 			if ( p->Nr==cs->nr ) break;
 		}
 		game->MakeLanding ( cs->LandX,cs->LandY,p,cs->LandingList,options.FixedBridgeHead );
 
-		while ( cs->LandingList->Count )
+		while ( cs->LandingList->iCount )
 		{
 			sLanding *l;
-			l=cs->LandingList->LandItems[0];
+			l=cs->LandingList->Items[0];
 			delete l;
-			cs->LandingList->DeleteLanding ( 0 );
+			cs->LandingList->Delete ( 0 );
 		}
 		delete cs;
-		ClientSettingsList->DeleteClientSettings ( 0 );
+		ClientSettingsList->Delete ( 0 );
 	}
 	delete ClientSettingsList;
 
@@ -5626,7 +5636,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,TList *LandingList )
 }
 
 // Überträgt alle Settings und wartet auf die Daten des Servers:
-void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
+void cMultiPlayer::ClientWait ( int LandX,int LandY,cList<sLanding*> *LandingList )
 {
 	int lx=-1,ly=-1;
 	int i;
@@ -5635,7 +5645,7 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
 
-	ClientSettingsList=new TList;
+	ClientSettingsList=new cList<sClientSettings*>;
 	TransmitPlayerUpgrades ( MyPlayer );
 	TransmitPlayerLanding ( MyPlayer->Nr,LandX,LandY,LandingList );
 
@@ -5663,28 +5673,28 @@ void cMultiPlayer::ClientWait ( int LandX,int LandY,TList *LandingList )
 
 	// Alle Landungen durchführen:
 	game->MakeLanding ( LandX,LandY,MyPlayer,LandingList,options.FixedBridgeHead );
-	while ( ClientSettingsList->Count )
+	while ( ClientSettingsList->iCount )
 	{
 		sClientSettings *cs;
 		cPlayer *p;
-		cs=ClientSettingsList->ClientSettingsItems[0];
+		cs=ClientSettingsList->Items[0];
 
-		for ( i=0;i<PlayerList->Count;i++ )
+		for ( i=0;i<PlayerList->iCount;i++ )
 		{
-			p=PlayerList->PlayerItems[i];
+			p=PlayerList->Items[i];
 			if ( p->Nr==cs->nr ) break;
 		}
 		game->MakeLanding ( cs->LandX,cs->LandY,p,cs->LandingList,options.FixedBridgeHead );
 
-		while ( cs->LandingList->Count )
+		while ( cs->LandingList->iCount )
 		{
 			sLanding *l;
-			l=cs->LandingList->LandItems[0];
+			l=cs->LandingList->Items[0];
 			delete l;
-			cs->LandingList->DeleteLanding ( 0 );
+			cs->LandingList->Delete ( 0 );
 		}
 		delete cs;
-		ClientSettingsList->DeleteClientSettings ( 0 );
+		ClientSettingsList->Delete ( 0 );
 	}
 	delete ClientSettingsList;
 }
@@ -5763,7 +5773,7 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 }
 
 // Überträgt die Landungsdaten des Players:
-void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
+void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,cList<sLanding*> *ll )
 {
 	string msg;
 	int i;
@@ -5771,12 +5781,12 @@ void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
 	msg = iToStr(x) + "#";
 	msg += iToStr(y) + "#";
 	msg += iToStr(nr) + "#";
-	msg += iToStr(ll->Count);
+	msg += iToStr(ll->iCount);
 
-	for ( i=0;i<ll->Count;i++ )
+	for ( i=0;i<ll->iCount;i++ )
 	{
 		sLanding *l;
-		l=ll->LandItems[i];
+		l=ll->Items[i];
 		if ( msg.length() >0 ) msg+="#";
 		msg+=iToStr(l->id) + "#";
 		msg+=iToStr(l->cargo);
@@ -5798,16 +5808,16 @@ void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,TList *ll )
 bool cMultiPlayer::TestPlayerList ( void )
 {
 	int i,k;
-	for ( i=0;i<PlayerList->Count;i++ )
+	for ( i=0;i<PlayerList->iCount;i++ )
 	{
-		for ( k=0;k<PlayerList->Count;k++ )
+		for ( k=0;k<PlayerList->iCount;k++ )
 		{
 			if ( i==k ) continue;
-			if ( strcmp ( PlayerList->PlayerItems[i]->name.c_str(),PlayerList->PlayerItems[k]->name.c_str() ) ==0 )
+			if ( strcmp ( PlayerList->Items[i]->name.c_str(),PlayerList->Items[k]->name.c_str() ) ==0 )
 			{
 				string log;
 				log=lngPack.i18n ( "Text~Multiplayer~Player_Twice" );
-				log+=PlayerList->PlayerItems[i]->name;
+				log+=PlayerList->Items[i]->name;
 				AddChatLog ( log );
 				return false;
 			}
@@ -5822,41 +5832,41 @@ bool cMultiPlayer::TestPlayerListLoad ( void )
 	int i,k,found;
 	if ( SaveGame.empty() ) return false;
 
-	if ( PlayerList->Count>game->PlayerList->Count )
+	if ( PlayerList->iCount>game->PlayerList->iCount )
 	{
 		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Many" ) );
 		return false;
 	}
-	if ( PlayerList->Count<game->PlayerList->Count )
+	if ( PlayerList->iCount<game->PlayerList->iCount )
 	{
 		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Few" ) );
 		return false;
 	}
 
 	found=0;
-	for ( i=0;i<PlayerList->Count;i++ )
+	for ( i=0;i<PlayerList->iCount;i++ )
 	{
 		cPlayer *a;
-		a=PlayerList->PlayerItems[i];
-		for ( k=0;k<game->PlayerList->Count;k++ )
+		a=PlayerList->Items[i];
+		for ( k=0;k<game->PlayerList->iCount;k++ )
 		{
 			cPlayer *b;
-			b=game->PlayerList->PlayerItems[k];
+			b=game->PlayerList->Items[k];
 			if ( strcmp ( b->name.c_str(),a->name.c_str() ) ==0 ) {found++;break;}
 		}
 	}
-	if ( found!=PlayerList->Count )
+	if ( found!=PlayerList->iCount )
 	{
 		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
 		return false;
 	}
 
-	if ( game->PlayRounds && strcmp ( game->PlayerList->PlayerItems[0]->name.c_str(),MyPlayer->name.c_str() ) )
+	if ( game->PlayRounds && strcmp ( game->PlayerList->Items[0]->name.c_str(),MyPlayer->name.c_str() ) )
 	{
 		string log;
 		lngPack.i18n ( "Text~Multiplayer~Player" );
 		log+=" ";
-		log+=game->PlayerList->PlayerItems[0]->name.c_str();
+		log+=game->PlayerList->Items[0]->name.c_str();
 		log+=" ";
 		log+=lngPack.i18n ( "Text~Multiplayer~Player_MustHost" );
 		AddChatLog ( log );
@@ -5880,7 +5890,8 @@ void HeatTheSeat ( void )
 	MapName=RunPlanetSelect();
 	if ( MapName.empty() ) return;
 
-	TList *list,*LandingList;
+	cList<cPlayer*> *list;
+	cList<sLanding*> *LandingList;
 	int i,LandX,LandY;
 	sOptions options;
 	cPlayer *p;
@@ -5896,12 +5907,12 @@ void HeatTheSeat ( void )
 
 	map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 
-	list=new TList;
+	list=new cList<cPlayer*>;
 	for ( i=1;i<=PlayerAnz;i++ )
 	{
 		stmp = lngPack.i18n ( "Text~Multiplayer~Player" );
 		stmp+=iToStr(i);
-		list->AddPlayer ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
+		list->Add ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
 		p->Credits=options.credits;
 	}
 
@@ -5911,15 +5922,15 @@ void HeatTheSeat ( void )
 	game->ActiveRoundPlayerNr=p->Nr;
 	game->Init ( list,0 );
 
-	for ( i=0;i<list->Count;i++ )
+	for ( i=0;i<list->iCount;i++ )
 	{
-		p=list->PlayerItems[i];
+		p=list->Items[i];
 		p->InitMaps ( map->size );
 
 		stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
 		ShowOK ( stmp,true );
 
-		LandingList=new TList;
+		LandingList=new cList<sLanding*>;
 		RunHangar ( p,LandingList );
 
 		SelectLanding ( &LandX,&LandY,map );
@@ -5927,17 +5938,17 @@ void HeatTheSeat ( void )
 		game->MakeLanding ( LandX,LandY,p,LandingList,options.FixedBridgeHead );
 		p->HotHud=* ( game->hud );
 
-		while ( LandingList->Count )
+		while ( LandingList->iCount )
 		{
-			delete LandingList->LandItems[0];
-			LandingList->DeleteLanding ( 0 );
+			delete LandingList->Items[0];
+			LandingList->Delete ( 0 );
 		}
 		delete LandingList;
 	}
 
 	ExitMenu();
 
-	p=list->PlayerItems[0];
+	p=list->Items[0];
 	game->ActivePlayer=p;
 	* ( game->hud ) =p->HotHud;
 	stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
@@ -5950,10 +5961,7 @@ void HeatTheSeat ( void )
 	{
 		SettingsData.sPlayerName=p->name; 
 	}
-	while ( list->Count )
-	{
-		list->Delete ( 0 );
-	}
+	
 	delete game;game=NULL;
 	delete map;
 	delete list;
@@ -5968,7 +5976,7 @@ int ShowDateiMenu ( bool bSave )
 	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  BeendenPressed=false, HilfePressed=false, LadenPressed=false, Cursor=true;
 	Uint8 *keystate;
-	TList *files;
+	cList<string> *files;
 	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnLoad = {rDialog.x+514,rDialog.y+438, 106, 40};
@@ -6011,8 +6019,8 @@ int ShowDateiMenu ( bool bSave )
 	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 	//END ARROW CODE
 	// Dateien suchen und Anzeigen:
-	files = getFilesOfDirectory ( SettingsData.sSavesPath );
-	for ( int i = 0; i < files->Count; i++ )
+	files = getFilesOfDirectory ( SettingsData.sSavesPath ); //FIXME: mem leakage; 'delete files' needed for every call of getFilesOfDirectory
+	for ( int i = 0; i < files->iCount; i++ )
 	{
 		if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
 		{
@@ -6155,7 +6163,7 @@ int ShowDateiMenu ( bool bSave )
 					if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
 					{
 						files = getFilesOfDirectory ( SettingsData.sSavesPath );
-						for ( int i = 0; i < files->Count; i++ )
+						for ( int i = 0; i < files->iCount; i++ )
 						{
 							if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
 							{
@@ -6350,7 +6358,7 @@ void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameN
 }
 
 // Zeigt die Saves an
-void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
+void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
 
 {
 	SDL_Rect rect, src;
@@ -6423,11 +6431,11 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 		}
 		if ( bSave )
 		{
-			for ( int j = 0; j < files->Count || j == 0; j++ )
+			for ( int j = 0; j < files->iCount || j == 0; j++ )
 			{
 				int iSaveNumber;
 				string sFilename, sTime, sMode;
-				if ( files->Count > 0 )
+				if ( files->iCount > 0 )
 				{
 					iSaveNumber = atoi( files->Items[j].substr ( files->Items[j].length() - 7, 3 ).c_str() );
 					loadMenudatasFromSave ( files->Items[j], &sTime, &sFilename, &sMode );
@@ -6485,7 +6493,7 @@ void ShowFiles ( TList *files, int offset, int selected, bool bSave, bool bCurso
 		}
 		else
 		{
-			for ( int j = 0; j < files->Count; j++ )
+			for ( int j = 0; j < files->iCount; j++ )
 			{
 				int iSaveNumber;
 				string sFilename, sTime, sMode;

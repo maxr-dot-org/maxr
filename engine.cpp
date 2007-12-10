@@ -62,7 +62,7 @@ cEngine::~cEngine ( void )
 	delete AJobs;
 	if ( PingList )
 	{
-		while ( PingList->Count )
+		while ( PingList->iCount )
 		{
 			// delete (sPing*)(PingList->Items[0]);
 			// PingList->Delete(0);
@@ -974,9 +974,9 @@ void cEngine::CheckDefeat ( void )
 	int i;
 	string sTmpString;
 
-	for ( i=0;i<game->PlayerList->Count;i++ )
+	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
-		p=game->PlayerList->PlayerItems[i];
+		p=game->PlayerList->Items[i];
 		if ( p->IsDefeated() )
 		{
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
@@ -989,18 +989,18 @@ void cEngine::CheckDefeat ( void )
 				if ( p==game->ActivePlayer )
 				{
 					game->HotSeatPlayer++;
-					if ( game->HotSeatPlayer>=game->PlayerList->Count ) game->HotSeatPlayer=0;
+					if ( game->HotSeatPlayer>=game->PlayerList->iCount ) game->HotSeatPlayer=0;
 					game->ActivePlayer->HotHud=* ( game->hud );
-					game->ActivePlayer=game->PlayerList->PlayerItems[game->HotSeatPlayer];
+					game->ActivePlayer=game->PlayerList->Items[game->HotSeatPlayer];
 
 					delete p;
-					game->PlayerList->DeletePlayer ( i );
+					game->PlayerList->Delete ( i );
 					i--;
 				}
 				else
 				{
 					delete p;
-					game->PlayerList->DeletePlayer ( i );
+					game->PlayerList->Delete ( i );
 					i--;
 				}
 			}
@@ -1015,9 +1015,9 @@ void cEngine::AddReport ( string name,bool vehicle )
 	int i;
 	if ( vehicle )
 	{
-		for ( i=0;i<game->ActivePlayer->ReportVehicles->Count;i++ )
+		for ( i=0;i<game->ActivePlayer->ReportVehicles->iCount;i++ )
 		{
-			r=game->ActivePlayer->ReportVehicles->ReportItems[i];
+			r=game->ActivePlayer->ReportVehicles->Items[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -1027,13 +1027,13 @@ void cEngine::AddReport ( string name,bool vehicle )
 		r=new sReport;
 		r->name=name;
 		r->anz=1;
-		game->ActivePlayer->ReportVehicles->AddReport ( r );
+		game->ActivePlayer->ReportVehicles->Add ( r );
 	}
 	else
 	{
-		for ( i=0;i<game->ActivePlayer->ReportBuildings->Count;i++ )
+		for ( i=0;i<game->ActivePlayer->ReportBuildings->iCount;i++ )
 		{
-			r=game->ActivePlayer->ReportBuildings->ReportItems[i];
+			r=game->ActivePlayer->ReportBuildings->Items[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -1043,7 +1043,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 		r=new sReport;
 		r->name=name;
 		r->anz=1;
-		game->ActivePlayer->ReportBuildings->AddReport ( r );
+		game->ActivePlayer->ReportBuildings->Add ( r );
 	}
 }
 
@@ -1057,25 +1057,25 @@ void cEngine::MakeRundenstartReport ( void )
 	game->AddMessage(sTmp);
 	int anz = 0;
 	
-	while ( game->ActivePlayer->ReportBuildings->Count )
+	while ( game->ActivePlayer->ReportBuildings->iCount )
 	{
-		r=game->ActivePlayer->ReportBuildings->ReportItems[0];
+		r=game->ActivePlayer->ReportBuildings->Items[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
 		sReportMsg += r->anz>1?stmp:r->name;
 		delete r;
-		game->ActivePlayer->ReportBuildings->DeleteReport ( 0 );
+		game->ActivePlayer->ReportBuildings->Delete ( 0 );
 	}
-	while ( game->ActivePlayer->ReportVehicles->Count )
+	while ( game->ActivePlayer->ReportVehicles->iCount )
 	{
-		r=game->ActivePlayer->ReportVehicles->ReportItems[0];
+		r=game->ActivePlayer->ReportVehicles->Items[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
 		sReportMsg+=r->anz>1?stmp:r->name;
 		delete r;
-		game->ActivePlayer->ReportVehicles->DeleteReport ( 0 );
+		game->ActivePlayer->ReportVehicles->Delete ( 0 );
 	}
 
 	if ( anz==0 )
@@ -1185,18 +1185,18 @@ void cEngine::EndePressed ( int PlayerNr )
 			cBuilding *b;
 			cVehicle *v;
 			cPlayer *p;
-			for ( i = 0; i < game->PlayerList->Count; i++ )
+			for ( i = 0; i < game->PlayerList->iCount; i++ )
 			{
-				p = game->PlayerList->PlayerItems[i];
+				p = game->PlayerList->Items[i];
 				if ( p->Nr == game->ActiveRoundPlayerNr )
 				{
-					if ( i < game->PlayerList->Count - 1 )
+					if ( i < game->PlayerList->iCount - 1 )
 					{
-						p = game->PlayerList->PlayerItems[i+1];
+						p = game->PlayerList->Items[i+1];
 					}
 					else
 					{
-						p = game->PlayerList->PlayerItems[0];
+						p = game->PlayerList->Items[0];
 					}
 					next=p->Nr;
 					if(p!=game->ActivePlayer)
@@ -1247,12 +1247,12 @@ void cEngine::Rundenende ( void )
 	game->hud->ShowRunde();
 
 	// Alle Buildings wieder aufladen:
-	for ( i=0;i<game->PlayerList->Count;i++ )
+	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
 		bool ShieldChaned;
 		cBuilding *b;
 		cPlayer *p;
-		p=game->PlayerList->PlayerItems[i];
+		p=game->PlayerList->Items[i];
 
 		ShieldChaned=false;
 		b=p->BuildingList;
@@ -1283,11 +1283,11 @@ void cEngine::Rundenende ( void )
 	}
 
 	// Alle Vehicles wieder aufladen:
-	for ( i=0;i<game->PlayerList->Count;i++ )
+	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
 		cVehicle *v;
 		cPlayer *p;
-		p=game->PlayerList->PlayerItems[i];
+		p=game->PlayerList->Items[i];
 
 		v=p->VehicleList;
 		while ( v )
@@ -1311,11 +1311,11 @@ void cEngine::Rundenende ( void )
 	}
 	// Gun'em down:
 	{
-		for ( i=0;i<game->PlayerList->Count;i++ )
+		for ( i=0;i<game->PlayerList->iCount;i++ )
 		{
 			cVehicle *v;
 			cPlayer *p;
-			p=game->PlayerList->PlayerItems[i];
+			p=game->PlayerList->Items[i];
 
 			v=p->VehicleList;
 			while ( v )
@@ -1645,10 +1645,10 @@ void cEngine::HandleGameMessages()
 				{
 					EndeCount++;
 				}
-				for ( int k = 0 ; k < game->PlayerList->Count; k++)
+				for ( int k = 0 ; k < game->PlayerList->iCount; k++)
 				{
 					cPlayer *p;
-					p = game->PlayerList->PlayerItems[k];
+					p = game->PlayerList->Items[k];
 					if ( p->Nr == atoi ( sMsgString.c_str() ) )
 					{
 						game->AddMessage( lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + p->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn_End" ));
@@ -1977,9 +1977,9 @@ void cEngine::HandleGameMessages()
 				}
 				else
 				{
-					for(int k = 0 ; k < game->PlayerList->Count ; k++)
+					for(int k = 0 ; k < game->PlayerList->iCount ; k++)
 					{
-						p = game->PlayerList->PlayerItems[k];
+						p = game->PlayerList->Items[k];
 						if( p->Nr == next )
 						{
 							game->AddMessage( p->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ) );

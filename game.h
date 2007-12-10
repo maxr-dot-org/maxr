@@ -75,7 +75,7 @@ public:
   ~cGame(void);
 
   // Variablen:
-  TList *PlayerList;     // Liste der Player.
+  cList<cPlayer*> *PlayerList;     // Liste der Player.
   string PlayerCheat;	 // Wenn ein Spieler ein Cheat eingegeben hat.
   cPlayer *ActivePlayer; // Der aktive Player.
   cMap *map;             // Die Karte.
@@ -106,13 +106,13 @@ public:
   bool HelpActive;       // Gibt an, ob der Help-Cursor angezeigt werden soll.
   bool ChangeObjectName; // Gibt an, ob gerade der Name eines Objektes geändert wird.
   bool ChatInput;        // Gibt an, ob gerade eine Chat-Nachricht eingegeben werden soll.
-  TList *messages;       // Liste mit allen Nachrichten.
+  cList<sMessage*> *messages;       // Liste mit allen Nachrichten.
   int DebugIndex;        // Index im Buffer.
   int ComAvgSend;        // Durchschitt der gesendeten Bytes.
   int ComAvgRead;        // Durchschitt der empfangenen Bytes.
   int Runde;             // Nummer der aktuellen Runde.
   bool WantToEnd;        // Gibt an, ob die Runde beendet werden soll, sobald alle Bewegungen abgeschlossen sind.
-  TList *FXList,*FXListBottom; // Liste mit FX-Effekten.
+  cList<sFX*> *FXList,*FXListBottom; // Liste mit FX-Effekten.
   cBuilding *DirtList;   // Liste mit dem Dreck.
   float WindDir;         // Richtung, aus der der Wind kommt (0-2pi).
   bool UpShowTank,UpShowPlane,UpShowShip,UpShowBuild,UpShowTNT; // Flags, was in der Raffinerie angezeigt werden soll.
@@ -134,7 +134,7 @@ public:
   bool fDrawMMap; // Gibt an, ob die Minimap neu gezeichnet werden soll.
 
   // Funktionen:
-  void Init(TList *Player,int APNo);
+  void Init(cList<cPlayer*> *Player,int APNo);
   void Run(void);
   int CheckUser(void);
   void DrawMap(bool pure=false);
@@ -160,7 +160,7 @@ public:
   void MakePanel(bool open);
   void AddCoords(const char *msg,int x,int y);
   void AddCoords(const string sMsg, int x, int y);
-  void MakeLanding(int x,int y,cPlayer *p,TList *list,bool fixed);
+  void MakeLanding(int x,int y,cPlayer *p,cList<sLanding*> *list,bool fixed);
   bool Save(string name, int iNumber);
   void Load(string name,int AP,bool MP=false);
   bool CheckRecursivLoaded(cVehicle *v,cList<cVehicle*> *StoredVehicles);

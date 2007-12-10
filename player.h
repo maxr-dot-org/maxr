@@ -74,9 +74,9 @@ public:
   char *ScanMap;             // Map mit dem Scannerflags.
   char *ResourceMap;         // Map mit aufgedeckten Resourcen.
   cBase *base;               // Die Basis dieses Spielers.
-  TList *WachpostenAir;      // Liste mit den Vehicles/Buildings auf Wachposten.
+  cList<sWachposten*> *WachpostenAir;      // Liste mit den Vehicles/Buildings auf Wachposten.
   char *WachMapAir;          // Map mit dem abgedeckten Bereich.
-  TList *WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.
+  cList<sWachposten*> *WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.
   char *WachMapGround;       // Map mit dem abgedeckten Bereich.
   char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden können.
   char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden können.
@@ -86,9 +86,9 @@ public:
   int Credits;               // Anzahl der erworbenen Credits.
   char *ShieldMap;           // Map mit den gebieten, die durch ein Schild geschützt sind.
   cHud HotHud;               // Gespeichertes Hud für Hot-Seat-Spiele.
-  TList *ReportVehicles,*ReportBuildings; // Reportlisten.
+  cList<sReport*> *ReportVehicles,*ReportBuildings; // Reportlisten.
   bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
-  TList *LockList;           // Liste mit gelockten Objekten.
+  cList<sLockElem*> *LockList;           // Liste mit gelockten Objekten.
 
   void InitMaps(int MapSizeX);
   void DoScan(void);

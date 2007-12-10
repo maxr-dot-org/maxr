@@ -54,9 +54,9 @@ int CheckFile(const char* directory, const char* filename)
 	return 1;
 }
 
-TList *getFilesOfDirectory(string sDirectory)
+cList<string> *getFilesOfDirectory(string sDirectory)
 {
-	TList *List = new TList();
+	cList<string> *List = new cList<string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
 	long lFile = _findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );

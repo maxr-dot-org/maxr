@@ -51,10 +51,10 @@
 #include "loaddata.h"
 #include "tinyxml.h"
 
-TList::TList ( void )
+/*TList::TList ( void )
 {
 	Count = 0;
-}
+}*/
 
 
 int main ( int argc, char *argv[] )
