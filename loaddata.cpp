@@ -1956,6 +1956,8 @@ int LoadVehicles()
 		UnitsData.vehicle_anz++;
 	}
 
+	delete VehicleList;
+	delete IDList;
 	for ( int i = 0 ; i < UnitsData.vehicle_anz; i++ ) UnitsData.vehicle[i].nr = i;
 	return 1;
 }
@@ -2236,6 +2238,10 @@ int LoadBuildings()
 		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = i;
 		else BNrLandMine = i;
 	}
+
+	delete BuildingList;
+	delete IDList;
+
 	return 1;
 }
 

@@ -130,8 +130,8 @@ bool cMap::LoadMap ( string filename )
 			cLog::write((string)"terrain not found: " + str,LOG_TYPE_WARNING);
 			while ( index->iCount )
 			{
-				//FIXME: mem leakage; tuples are not deleted
-				index->Delete( 0 );
+				delete index->Items[index->iCount - 1];
+				index->Delete( index->iCount - 1 );
 			}
 			delete index;
 			fclose ( fp );
@@ -155,7 +155,7 @@ bool cMap::LoadMap ( string filename )
 
 	while ( index->iCount )
 	{
-		// delete index->Items[0];   //FIXME: mem leakage; why are the tuples not deleted?
+		delete index->Items[0];
 		index->Delete ( 0 );
 	}
 	delete index;

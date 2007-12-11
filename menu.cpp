@@ -776,6 +776,13 @@ void RunSPMenu ( void )
 					SelectLanding ( &LandX, &LandY, map );
 					game->MakeLanding ( LandX,LandY,p,LandingList,options.FixedBridgeHead );
 
+					while ( LandingList->iCount )
+					{
+						delete LandingList->Items[LandingList->iCount - 1];
+						LandingList->Delete(LandingList->iCount - 1);
+					}
+					delete LandingList;
+
 					ExitMenu();
 
 					game->Run();
@@ -788,7 +795,7 @@ void RunSPMenu ( void )
 					}
 					delete game; game=NULL;
 					delete map;
-					delete LandingList;
+					
 					delete list;
 					break;
 				}
@@ -3774,6 +3781,7 @@ cMultiPlayer::~cMultiPlayer ( void )
 		delete map_obj;map_obj=NULL;
 	}
 	if ( strcmp ( IP.c_str(),"-" ) ) SettingsData.sIP=IP;
+	delete network;
 	SettingsData.iPort=Port;
 }
 
@@ -4010,8 +4018,6 @@ void cMultiPlayer::RunMenu ( void )
 			}
 			else if ( !b&&BackPressed )
 			{
-				if ( network )
-					delete network;
 				// Save changed name, port or ip to max.xml
 				SettingsData.sPlayerName = MyPlayer->name;
 				SaveOption ( SAVETYPE_NAME );

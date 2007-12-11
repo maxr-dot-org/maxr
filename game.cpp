@@ -40,6 +40,7 @@ cGame::cGame ( cTCP *network, cMap *map )
 	Frame=0;
 	SelectedVehicle=NULL;
 	SelectedBuilding=NULL;
+	DirtList = NULL;
 	ObjectStream=-1;
 	OverObject=NULL;
 	BlinkColor=0xFFFFFF;
@@ -104,10 +105,10 @@ cGame::~cGame ( void )
 		free ( msg );
 		messages->Delete ( 0 );
 	}
+	delete messages;
 	if ( FLC ) FLI_Close ( FLC );
 	delete hud;
 	delete engine;
-	delete messages;
 	while ( FXList->iCount )
 	{
 		sFX *ptr;
@@ -148,12 +149,12 @@ cGame::~cGame ( void )
 		FXListBottom->Delete ( 0 );
 	}
 	delete FXListBottom;
-	/*while(DirtList){
+	while(DirtList){	//FIXME: this is a mem leakage; why is this commented out?
 	  cBuilding *ptr;
 	  ptr=DirtList->next;
 	  delete DirtList;
 	  DirtList=ptr;
-	}*/
+	}
 }
 
 // Init //////////////////////////////////////////////////////////////////////
@@ -459,21 +460,21 @@ void cGame::Run ( void )
 			DebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 	
-	if ( DebugWache && fDrawMap )
-	{
-		font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir->iCount), LATIN_SMALL_WHITE);
-		DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround->iCount), LATIN_SMALL_WHITE);
-		DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-	}
-	
-	if ( DebugFX && fDrawMap )
-	{
-		font->showText(550,DebugOff, "fx-count: " + iToStr(FXList->iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
-		DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
-		DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-	}
+		if ( DebugWache && fDrawMap )
+		{
+			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir->iCount), LATIN_SMALL_WHITE);
+			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround->iCount), LATIN_SMALL_WHITE);
+			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		}
+		
+		if ( DebugFX && fDrawMap )
+		{
+			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList->iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
+			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
+			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		}
 		/*if(engine->PingList){
 		  unsigned short hour,min,sec,msec;
 		  char DebugStr[100];
@@ -3557,6 +3558,7 @@ void cGame::Load ( string name,int AP,bool MP )
 	str= ( char* ) malloc ( i );
 	fread ( str,sizeof ( char ),i,fp );
 	// ToDo: Compare game versions
+	free ( str );
 
 	// Ignore time, name and mode
 	fread ( &i,sizeof ( int ),1,fp );

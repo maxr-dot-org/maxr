@@ -74,6 +74,7 @@ cEngine::~cEngine ( void )
 		delete PingList;
 	}
 	StopLog();
+	SDL_DestroyMutex(mutex);
 }
 
 // Lässt die Engine laufen:
