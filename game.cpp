@@ -149,7 +149,7 @@ cGame::~cGame ( void )
 		FXListBottom->Delete ( 0 );
 	}
 	delete FXListBottom;
-	while(DirtList){	//FIXME: this is a mem leakage; why is this commented out?
+	while(DirtList){
 	  cBuilding *ptr;
 	  ptr=DirtList->next;
 	  delete DirtList;
