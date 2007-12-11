@@ -1451,14 +1451,15 @@ string RunPlanetSelect ( void )
 
 	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 
-	files = new cList<string>;
 	int k = 1;
 
 	if ( !doc.LoadFile ( "maps//maps.xml" ) )
 	{
+		SDL_FreeSurface(sfTmp);
 		cLog::write ( "Could not load maps.xml",1 );
 		return "";
 	}
+	files = new cList<string>;
 	rootnode=doc.FirstChildElement ( "MapData" )->FirstChildElement ( "MapList" );
 
 	node=rootnode->FirstChildElement();
@@ -1508,6 +1509,8 @@ string RunPlanetSelect ( void )
 				string name;
 				name = files->Items[selected];
 				name.replace ( name.length()-3,3,"map" );
+				
+				SDL_FreeSurface(sfTmp);
 				delete files;
 				return name;
 			}
@@ -6111,6 +6114,7 @@ int ShowDateiMenu ( bool bSave )
 			}
 			else if ( !b&&LastB )
 			{
+				delete files;
 				return -1;
 			}
 		}
@@ -6139,6 +6143,7 @@ int ShowDateiMenu ( bool bSave )
 				mouse->draw ( false,screen );
 				BeendenPressed=false;
 				game->End = true;
+				delete files;
 				return -1;
 			}
 		}
@@ -6211,6 +6216,7 @@ int ShowDateiMenu ( bool bSave )
 				if ( selected != -1 )
 				{
 					ShowFiles ( files,offset,selected,false,false,false, rDialog );
+					delete files;
 					return 1;
 				}
 				SHOW_SCREEN

@@ -222,7 +222,6 @@ void showSplash()
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption ( MAXVERSION, NULL );
 	SDL_UpdateRect ( screen,0,0,0,0 );
-	SDL_ShowCursor ( 0 ); // hide cursor during splash
 }
 
 void showGameWindow()
@@ -234,6 +233,7 @@ void showGameWindow()
 	
 	SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
+	SDL_ShowCursor ( 0 );
 }
 
 int initSDL()
