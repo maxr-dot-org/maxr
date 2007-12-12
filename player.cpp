@@ -446,7 +446,6 @@ void cPlayer::DoScan ( void )
 {
 	cVehicle *vp;
 	cBuilding *bp;
-	if ( this!=game->ActivePlayer ) return;
 
 	memset ( ScanMap,0,MapSize );
 	memset ( DetectLandMap,0,MapSize );
