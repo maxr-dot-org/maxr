@@ -2518,6 +2518,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					dest.y=424;
 
 					ptr->cargo+=5;
+					if ( ptr->cargo > UnitsData.vehicle[ptr->id].data.max_cargo )
+					{
+						ptr->cargo = UnitsData.vehicle[ptr->id].data.max_cargo;
+					}
 					player->Credits--;
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 					ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
@@ -2552,6 +2556,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					dest.y=424;
 
 					ptr->cargo-=5;
+					if ( ptr->cargo < 0 )
+					{
+						ptr->cargo = 0;
+					}
 					player->Credits++;
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 					ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp );
@@ -5973,6 +5981,11 @@ void HeatTheSeat ( void )
 	
 	delete game;game=NULL;
 	delete map;
+	while ( list->iCount )
+	{
+		delete list->Items[0];
+		list->Delete(0);
+	}
 	delete list;
 }
 

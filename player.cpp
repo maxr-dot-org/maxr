@@ -66,14 +66,17 @@ cPlayer::~cPlayer ( void )
 
 	while ( WachpostenAir->iCount )
 	{
-		//FIXME: mem leakage??; delete sWachposten-Items
-		WachpostenAir->Delete( 0 );
+		delete WachpostenAir->Items[WachpostenAir->iCount - 1];
+		WachpostenAir->Delete( WachpostenAir->iCount - 1 );
 	}
+	delete WachpostenAir;
+
 	while ( WachpostenGround->iCount )
 	{
-		//FIXME: mem leakage??; delete sWachposten-Items
-		WachpostenGround->Delete( 0 );
+		delete WachpostenGround->Items[WachpostenGround->iCount - 1];
+		WachpostenGround->Delete( WachpostenGround->iCount - 1 );
 	}
+	delete WachpostenGround;
 
 	// Erst alle geladenen Vehicles löschen:
 	cVehicle *ptr=VehicleList;
@@ -99,15 +102,6 @@ cPlayer::~cPlayer ( void )
 	{
 		cBuilding *ptr;
 		ptr=BuildingList->next;
-
-		// Clear stored list becouse stored vehicles are already deleted
-		if(BuildingList->StoredVehicles)
-		{
-			while( BuildingList->StoredVehicles->iCount )
-			{
-				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->iCount - 1 );
-			}
-		}
 
 		delete BuildingList;
 		BuildingList=ptr;
@@ -142,8 +136,7 @@ cPlayer::~cPlayer ( void )
 		LockList->Delete ( 0 );
 	}
 	delete LockList;
-	delete WachpostenAir;
-	delete WachpostenGround;
+	
 }
 
 // Fügt ein Vehicle in die Listes des Spielser ein:

@@ -45,6 +45,8 @@ cTCP::cTCP ( bool server )
 cTCP::~cTCP()
 {
 	TCPClose();
+	delete WaitOKList;
+	delete NetMessageList;
 }
 
 
@@ -112,7 +114,7 @@ bool cTCP::TCPOpen ( void )
 					SDLNet_TCP_AddSocket ( SocketSet, sock_client[i] ); // Add clients to the socket-set
 				} 
 				// Send the client his ID
-				sNetBuffer *NetBuffer = new sNetBuffer();
+				sNetBuffer *NetBuffer = new sNetBuffer(); //FIXME: sNetBuffer is never deleted, afaics
 
 				NetBuffer->iID = iNextMessageID;
 				iNextMessageID = GenerateNewID();
@@ -150,7 +152,7 @@ bool cTCP::TCPOpen ( void )
 bool cTCP::TCPSend ( int typ,const char *msg)
 {
 	if (iStatus == STAT_CLOSED) return false;
-	sNetBuffer *NetBuffer = new sNetBuffer();
+	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
 	int iPartLenght;
 	int iPartNum = 1;
 	int iMax_PartNum;
@@ -218,7 +220,7 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 
 bool cTCP::TCPReceive()
 {
-	sNetBuffer *NetBuffer = new sNetBuffer();
+	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
 	// Host
 	int i = 0;
 	if ( bServer )
@@ -353,7 +355,7 @@ string cTCP::SplitMessageID(unsigned int iID)
 
 void cTCP::SendOK(unsigned int iID, int iClientNum)
 {
-	sNetBuffer *NetBuffer = new sNetBuffer();
+	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
 	NetBuffer->iID = iID;
 	NetBuffer->iMax_parts = 1;
 	NetBuffer->iPart = 1;

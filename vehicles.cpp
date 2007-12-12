@@ -3554,13 +3554,13 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	for ( int i = 0;i < images->iCount; i++ )
+	while ( images->iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images->Items[i];
+		ptr = images->Items[images->iCount - 1];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->Delete ( 0 );
+		images->Delete ( images->iCount - 1 );
 	}
 
 	delete images;
