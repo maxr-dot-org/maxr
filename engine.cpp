@@ -1474,9 +1474,9 @@ void cEngine::HandleGameMessages()
 {
 	cNetMessage *msg;
 	string sMsgString;
-	for ( int i=0;i < network->NetMessageList->iCount;i++ )
+	for ( int iNum = 0; iNum < network->NetMessageList->iCount; iNum++ )
 	{
-		msg = network->NetMessageList->Items[i];
+		msg = network->NetMessageList->Items[iNum];
 		sMsgString = ( char * ) msg->msg;
 		switch( msg->typ )
 		{
@@ -1485,7 +1485,8 @@ void cEngine::HandleGameMessages()
 			{
 				game->AddMessage( sMsgString );
 				PlayFX( SoundData.SNDChat );
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Add movejob:
@@ -1501,7 +1502,8 @@ void cEngine::HandleGameMessages()
 				{
 					network->TCPSend(MSG_NO_PATH,"");
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Move vehicle:
@@ -1511,7 +1513,8 @@ void cEngine::HandleGameMessages()
 				Strings = SplitMessage ( sMsgString );
 				MoveVehicle ( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),true,atoi( Strings->Items[4].c_str() ) );
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Move vehicle for a field:
@@ -1521,7 +1524,8 @@ void cEngine::HandleGameMessages()
 				Strings = SplitMessage ( sMsgString );
 				AddMoveJob( atoi( Strings->Items[0].c_str() ),atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ));
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Path is barred:
@@ -1535,7 +1539,8 @@ void cEngine::HandleGameMessages()
 				{
 					PlayVoice(VoiceData.VOINoPath2);
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// End of a movejobs:
@@ -1570,7 +1575,8 @@ void cEngine::HandleGameMessages()
 						game->ObjectStream = v->PlayStram();
 					}
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// changes vehicle name
@@ -1578,7 +1584,8 @@ void cEngine::HandleGameMessages()
 			{
 				//TODO: change vehicle name
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// end of movejob for current turn
@@ -1617,7 +1624,8 @@ void cEngine::HandleGameMessages()
 					}
 					game->ObjectStream = v->PlayStram();
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// changes name of player
@@ -1625,7 +1633,8 @@ void cEngine::HandleGameMessages()
 			{
 				//TODO: change name of player
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// notification of pressed end-turn button:
@@ -1650,7 +1659,8 @@ void cEngine::HandleGameMessages()
 						break;
 					}
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// notification of canceling a movejob:
@@ -1672,7 +1682,8 @@ void cEngine::HandleGameMessages()
 					v->mjob = NULL;
 					v->MoveJobActive = false;
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: new attackjob:
@@ -1689,8 +1700,8 @@ void cEngine::HandleGameMessages()
 					AddAttackJob( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), false, atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),atoi( Strings->Items[4].c_str() ) );
 				}
 				delete Strings;
-
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: destroy object:
@@ -1700,8 +1711,8 @@ void cEngine::HandleGameMessages()
 				Strings = SplitMessage ( sMsgString );
 				DestroyObject( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ) );
 				delete Strings;
-
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// execute a movejob:
@@ -1728,231 +1739,264 @@ void cEngine::HandleGameMessages()
 						SendIntIntBool( v->mjob->waypoints->X+v->mjob->waypoints->Y*map->size, v->mjob->waypoints->next->X+v->mjob->waypoints->next->Y*map->size, v->mjob->plane, MSG_MOVE_TO );
 					}
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: notifiation of saved speed:
 			case MSG_SAVED_SPEED:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: notification of new buildingname:
 			case MSG_CHANGE_BUI_NAME:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: starts buildprocess of building:
 			case MSG_START_BUILD:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: cancels buildprocess of building:
 			case MSG_STOP_BUILD:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: adds a new building
 			case MSG_ADD_BUILDING:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: starts construction of a big building:
 			case MSG_START_BUILD_BIG:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: center construction unit within construction side:
 			case MSG_RESET_CONSTRUCTOR:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: starts cleaning of area (e.g. bulldozer)
 			case MSG_START_CLEAR:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: board/load a vehicle into
 			case MSG_STORE_VEHICLE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: unboard/unload a vehicle from
 			case MSG_ACTIVATE_VEHICLE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: activates a building (start work)
 			case MSG_START_WORK:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: deactivated a building (stop work)
 			case MSG_STOP_WORK:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: add a new vehicle to game
 			case MSG_ADD_VEHICLE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: repair a unit
 			case MSG_REPAIR:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: reload a unit
 			case MSG_RELOAD:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: change sentrymode of unit:
 			case MSG_WACHE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: clears field of claymore:
 			case MSG_CLEAR_MINE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: upgrades a unit:
 			case MSG_UPGRADE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: finished research
 			case MSG_RESEARCH:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: improve/update building:
 			case MSG_UPDATE_BUILDING:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: commando failed:
 			case MSG_COMMANDO_MISTAKE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: commando success:
 			case MSG_COMMANDO_SUCCESS:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: request resync:
 			case MSG_START_SYNC:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: sync players:
 			case MSG_SYNC_PLAYER:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: sync vehicles:
 			case MSG_SYNC_VEHICLE:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: sync buildings:
 			case MSG_SYNC_BUILDING:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: updates a unit in storage/hangar/dock:
 			case MSG_UPDATE_STORED:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: turn finished:
 			case MSG_REPORT_R_E_A:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: Ping:
 			case MSG_PING:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			//TODO: Pong:
 			case MSG_PONG:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: host defeated:
 			case MSG_HOST_DEFEAT:
 			{
 				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: player defeated:
 			case MSG_PLAYER_DEFEAT:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);				
-				network->NetMessageList->Delete ( i );
+				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				delete network->NetMessageList->Items[iNum];		
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// TODO: next player in round-playing-mode:
@@ -1995,13 +2039,15 @@ void cEngine::HandleGameMessages()
 					if ( b->data.can_attack ) b->RefreshData();
 					b = b->next;
 				}
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// If the messages isn't known just delete it
 			default:
 			{
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 		}

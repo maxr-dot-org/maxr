@@ -128,7 +128,7 @@ bool cTCP::TCPOpen ( void )
 				SDL_Delay ( 1 );
 
 				string sTmp;
-				sTmp = "(Host)Send NewID-Message: -ID " + iToStr(NetBuffer->iID) + " -Client " + iToStr( iNum_clients-1 ) + "-Message: \"" + NetBuffer->msg.msg + "\"";
+				sTmp = "(Host)Send NewID-Message: -ID " + SplitMessageID( NetBuffer->iID ) + " -Client " + iToStr( iNum_clients-1 ) + "-Message: \"" + NetBuffer->msg.msg + "\"";
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
 				WaitOKList->Add(NetBuffer); // Add package to waitlist
 			}
@@ -152,7 +152,7 @@ bool cTCP::TCPOpen ( void )
 bool cTCP::TCPSend ( int typ,const char *msg)
 {
 	if (iStatus == STAT_CLOSED) return false;
-	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	int iPartLenght;
 	int iPartNum = 1;
 	int iMax_PartNum;
@@ -215,12 +215,13 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 		
 		iPartNum++;
 	}
+	delete NetBuffer;
 	return true;
 }
 
 bool cTCP::TCPReceive()
 {
-	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	// Host
 	int i = 0;
 	if ( bServer )
@@ -231,13 +232,16 @@ bool cTCP::TCPReceive()
 			if ( SDLNet_SocketReady ( sock_client[i] ) )
 			{
 				SDLNet_TCP_Recv ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
-				for (int j = 0; j < WaitOKList->iCount; j++ )
+				/*for (int j = 0; j < WaitOKList->iCount; j++ )
 				{
-					if( NetBuffer->iID == ( WaitOKList->Items[j])->iID )
+					if(  NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == WaitOKList->Items[j]->iID )
 					{
+						string sTmp;
+						sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
+						cLog::write(sTmp, LOG_TYPE_NETWORK);
 						break;	// Received message twice - ignoring 
 					}
-				}
+				}*/
 				// is a new messages
 				if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 				{
@@ -245,7 +249,9 @@ bool cTCP::TCPReceive()
 					sTmp = "(Host)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
 					cLog::write(sTmp, LOG_TYPE_NETWORK);
 					// Add message to list
-					NetMessageList->Add( &NetBuffer->msg );
+					cNetMessage *Message = new cNetMessage();
+					memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
+					NetMessageList->Add( Message );
 					// Send OK to Client
 					SendOK( NetBuffer->iID, i );
 				}
@@ -258,14 +264,19 @@ bool cTCP::TCPReceive()
 					// Delete Message ID from WaitList
 					for (int k = 0; k < WaitOKList->iCount; k++)
 					{
-						if( ( WaitOKList->Items[k] ) == NetBuffer )
+						if( WaitOKList->Items[k]->iID == NetBuffer->iID )
 						{
 							WaitOKList->Delete(k);
 							break;
 						}
 					}
 				}
-				SDL_Delay ( 1 );
+				else
+				{
+					string sTmp;
+					sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+					cLog::write(sTmp, LOG_TYPE_NETWORK);
+				}
 			}
 			i++;
 		}
@@ -274,20 +285,25 @@ bool cTCP::TCPReceive()
 	else
 	{
 		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-		for (int j = 0; j < WaitOKList->iCount; j++ )
+		/*for (int j = 0; j < WaitOKList->iCount; j++ )
 		{
-			if( NetBuffer->iID == ( WaitOKList->Items[j])->iID )
+			if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == WaitOKList->Items[j]->iID )
 			{
+				string sTmp;
+				sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
 				break;	// Received message twice - ignoring 
 			}
-		}
+		}*/
 		if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 		{
 			string sTmp;
 			sTmp = "(Client)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
 			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			// Add message to list
-			NetMessageList->Add( &NetBuffer->msg );
+			cNetMessage *Message = new cNetMessage();
+			memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
+			NetMessageList->Add( Message );
 			// Send OK to Server
 			SendOK( NetBuffer->iID, -1 );
 		}
@@ -300,31 +316,38 @@ bool cTCP::TCPReceive()
 			// Delete Message ID from WaitList
 			for (int k = 0; k < WaitOKList->iCount; k++)
 			{
-				if( ( WaitOKList->Items[k] ) == NetBuffer )
+				if( WaitOKList->Items[k]->iID == NetBuffer->iID )
 				{
 					WaitOKList->Delete(k);
 					break;
 				}
 			}
 		}
-		// if a newid has been received
+		// if a new id has been received
 		else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
 		{
 			string sTmp;
-			sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg;
+			sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"";
 			cLog::write(sTmp, LOG_TYPE_NETWORK);
 			iMyID = atoi ( (char *) NetBuffer->msg.msg );
 			SendOK( NetBuffer->iID, -1 );
 		}
+		else
+		{
+			string sTmp;
+			sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+			cLog::write(sTmp, LOG_TYPE_NETWORK);
+		}
 	}
 	if ( !bServer || iStatus==STAT_CONNECTED )
 		bReceiveThreadFinished = true;
+	delete NetBuffer;
 	return true;
 }
 
 unsigned int cTCP::GenerateNewID()
 {
-	int iReturnID;
+	unsigned int iReturnID;
 	int iHour, iMin, iSec, iMsec;
 	iHour = SDL_GetTicks() / ( 60*60*1000 );
 	iMin = SDL_GetTicks() / ( 60*1000 ) - iHour*60;
@@ -355,7 +378,7 @@ string cTCP::SplitMessageID(unsigned int iID)
 
 void cTCP::SendOK(unsigned int iID, int iClientNum)
 {
-	sNetBuffer *NetBuffer = new sNetBuffer();  //FIXME: sNetBuffer is never deleted, afaics
+	sNetBuffer *NetBuffer = new sNetBuffer();
 	NetBuffer->iID = iID;
 	NetBuffer->iMax_parts = 1;
 	NetBuffer->iPart = 1;
@@ -377,10 +400,11 @@ void cTCP::SendOK(unsigned int iID, int iClientNum)
 	{
 		SDLNet_TCP_Send ( sock_client[iClientNum], NetBuffer, sizeof ( sNetBuffer ) );
 		string sTmp;
-		sTmp = "(Host)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: \"" + iToStr( iClientNum );
+		sTmp = "(Host)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: \"" + iToStr( iClientNum ) + "\"";
 		cLog::write(sTmp, LOG_TYPE_NETWORK);
 		SDL_Delay ( 1 );
 	}
+	delete NetBuffer;
 	return ;
 }
 
@@ -438,10 +462,10 @@ void cTCP::TCPCheckResends ()
 	{
 		if(WaitOKList->Items[i]) // sanity check
 		{
-			int iTime = ( WaitOKList->Items[i])->iTicks; // Get the Time since this buffer was send the last time
+			int iTime = WaitOKList->Items[i]->iTicks; // Get the Time since this buffer was send the last time
 			if( ( iTime - SDL_GetTicks() ) > 100 )
 			{
-				int iClient = ( WaitOKList->Items[i])->iDestClientNum; // To which client should the buffer be send
+				int iClient = WaitOKList->Items[i]->iDestClientNum; // To which client should the buffer be send
 				if(iClient != -1) // To a Client
 				{
 					SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );

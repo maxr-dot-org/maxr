@@ -4861,9 +4861,9 @@ void cMultiPlayer::HandleMenuMessages()
 {
 	cNetMessage *msg;
 	string msgstring;
-	for ( int i=0;i<network->NetMessageList->iCount;i++ )
+	for ( int iNum = 0 ; iNum < network->NetMessageList->iCount; iNum++ )
 	{
-		msg = network->NetMessageList->Items[i];
+		msg = network->NetMessageList->Items[iNum];
 		msgstring = ( char * ) msg->msg;
 		switch ( msg->typ )
 		{
@@ -4871,7 +4871,8 @@ void cMultiPlayer::HandleMenuMessages()
 			case MSG_CHAT:
 				AddChatLog ( msgstring );
 				PlayFX ( SoundData.SNDChat );
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 				// Neuer Spieler meldet sich an:
 			case MSG_SIGNING_IN:
@@ -4887,7 +4888,8 @@ void cMultiPlayer::HandleMenuMessages()
 				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Mitteilung über die eigene ID:
@@ -4898,10 +4900,11 @@ void cMultiPlayer::HandleMenuMessages()
 				Strings = SplitMessage ( msgstring );
 				if ( MyPlayer->Nr!=atoi ( Strings->Items[0].c_str() ) )
 				{
-					network->NetMessageList->Delete ( i );
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
 					break;
 				}
-				for ( i=0;i<PlayerList->iCount;i++ )
+				for ( int i=0;i<PlayerList->iCount;i++ )
 				{
 					p=PlayerList->Items[i];
 					if ( p==MyPlayer )
@@ -4912,7 +4915,8 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				delete Strings;
 
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Ein Client ändert seinen Namen:
@@ -4941,7 +4945,8 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Bekommt die Liste mit den Spielern:
@@ -4971,7 +4976,8 @@ void cMultiPlayer::HandleMenuMessages()
 
 				delete Strings;
 				Refresh=true;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Überträgt die Optionen:
@@ -5000,14 +5006,16 @@ void cMultiPlayer::HandleMenuMessages()
 
 				delete Strings;
 				Refresh=true;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Fordert einen Client auf sich zu identifizieren:
 			case MSG_WHO_ARE_YOU:
 			{
 				ChangeFarbeName();
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Prüfen, ob der Client bereit ist zum Go:
@@ -5038,7 +5046,8 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				if ( fp ) fclose ( fp );
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Benachrichtigung über einen nicht bereiten Client:
@@ -5058,7 +5067,8 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				WaitForGo=false;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Benachrichtigung über einen bereiten Client:
@@ -5078,13 +5088,15 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				ClientsToGo--;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Benachrichtigung, dass es jetzt los geht:
 			case MSG_LETS_GO:
 				LetsGo=true;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 				// Die Ressourcen:
 			case MSG_RESSOURCES:
@@ -5100,7 +5112,8 @@ void cMultiPlayer::HandleMenuMessages()
 					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
 				}
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Empfang der Upgrades eines Players:
@@ -5119,7 +5132,8 @@ void cMultiPlayer::HandleMenuMessages()
 				}
 				if ( p==MyPlayer )
 				{
-					network->NetMessageList->Delete ( i );
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
 					break;
 				}
 				for ( int i=1;i<Strings->iCount;i++ )
@@ -5149,7 +5163,8 @@ void cMultiPlayer::HandleMenuMessages()
 					}
 				}
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			// Landedaten eines Players:
@@ -5163,7 +5178,8 @@ void cMultiPlayer::HandleMenuMessages()
 				nr=atoi ( Strings->Items[2].c_str() );
 				if ( nr==MyPlayer->Nr )
 				{
-					network->NetMessageList->Delete ( i );
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
 					break;
 				}
 
@@ -5196,12 +5212,16 @@ void cMultiPlayer::HandleMenuMessages()
 					cs->LandingList->Add ( l );
 				}
 				delete Strings;
-				network->NetMessageList->Delete ( i );
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
 			}
 			default:
-				network->NetMessageList->Delete ( i );
+			{
+				delete network->NetMessageList->Items[iNum];
+				network->NetMessageList->Delete ( iNum );
 				break;
+			}
 		}
 	}
 }
@@ -5388,7 +5408,7 @@ cList<string>* cMultiPlayer::SplitMessage ( string msg )
 	int npos=0;
 	for ( int i=0; npos!=string::npos; i++ )
 	{
-		Strings->Items[i]=msg.substr ( npos, ( msg.find ( "#",npos )-npos ) );
+		Strings->Add( msg.substr ( npos, ( msg.find ( "#",npos )-npos ) ) );
 		npos= ( int ) msg.find ( "#",npos );
 		if ( npos!=string::npos )
 			npos++;
@@ -5592,7 +5612,7 @@ void cMultiPlayer::ServerWait ( int LandX,int LandY,cList<sLanding*> *LandingLis
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,screen );
 
-	while ( ClientSettingsList->iCount<PlayerList->iCount-1 )
+	while ( ClientSettingsList->iCount < PlayerList->iCount-1 )
 	{
 		// Events holen:
 		SDL_PumpEvents();
