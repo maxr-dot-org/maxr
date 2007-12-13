@@ -940,6 +940,12 @@ int cGame::CheckUser ( void )
 			SelectedVehicle->IsBuilding=true;
 			if ( SelectedVehicle->data.can_build==BUILD_BIG )
 			{
+				if ( engine->network )
+				{
+					string sMessage;
+					sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#" + iToStr( SelectedVehicle->BuildingTyp ) + "#" + iToStr( SelectedVehicle->BuildRounds ) + "#" + iToStr( SelectedVehicle->BuildCosts ) + "#" + iToStr( SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->BandY );
+					engine->network->TCPSend ( MSG_START_BUILD_BIG, sMessage.c_str() );
+				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -952,6 +958,12 @@ int cGame::CheckUser ( void )
 			}
 			else if ( SelectedVehicle->PosX!=SelectedVehicle->BandX||SelectedVehicle->PosY!=SelectedVehicle->BandY )
 			{
+				if ( engine->network )
+				{
+					string sMessage;
+					sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#" + iToStr( SelectedVehicle->BuildingTyp ) + "#" + iToStr( SelectedVehicle->BuildRounds ) + "#" + iToStr( SelectedVehicle->BuildCosts ) + "#" + iToStr( SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->BandY );
+					engine->network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -1091,6 +1103,11 @@ int cGame::CheckUser ( void )
 					{
 						SelectedVehicle->PosY++;
 						changed=true;
+					}
+					if ( engine->network && changed )
+					{
+						string sMessage;
+						sMessage = iToStr( SelectedVehicle->BandX + SelectedVehicle->BandY * map->size ) + "#" + iToStr( SelectedVehicle->PosX - SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->PosY - SelectedVehicle->BandY );
 					}
 				}
 				// hans

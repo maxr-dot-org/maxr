@@ -2233,6 +2233,10 @@ void cVehicle::DrawMenu ( void )
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsBuilding = false;
 					BuildPath = false;
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
+					}
 
 					if ( data.can_build == BUILD_BIG )
 					{
@@ -2256,6 +2260,10 @@ void cVehicle::DrawMenu ( void )
 					MenuActive = false;
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsClearing = false;
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
+					}
 
 					if ( ClearBig )
 					{
@@ -5747,6 +5755,13 @@ void cVehicle::LayMine ( void )
 	else
 	{
 		game->engine->AddBuilding ( PosX, PosY, UnitsData.building + BNrLandMine, owner, false );
+
+		if( game->engine->network && !game->engine->network->bServer )
+		{
+			string sMessage;
+			sMessage = iToStr ( PosX ) + "#" + iToStr ( PosY ) + "#" + iToStr ( BNrLandMine ) + "#" + iToStr ( owner->Nr );
+			game->engine->network->TCPSend ( MSG_ADD_BUILDING, sMessage.c_str() );
+		}
 
 		PlayFX ( SoundData.SNDLandMinePlace );
 	}

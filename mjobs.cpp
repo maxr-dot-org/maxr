@@ -504,16 +504,12 @@ void cMJobs::DoTheMove ( void )
 	if ( vehicle->OffX>=64||vehicle->OffY>=64||vehicle->OffX<=-64||vehicle->OffY<=-64 )
 	{
 		sWaypoint *wp;
-		/*if(SavedSpeed&&game->engine->network&&game->engine->network->server){
-		  unsigned char msg[12];
-		  msg[0]='#';
-		  msg[1]=12;
-		  msg[2]=MSG_SAVED_SPEED;
-		  ((int*)(msg+3))[0]=vehicle->PosX+vehicle->PosY*map->size;
-		  ((int*)(msg+3))[1]=SavedSpeed;
-		  msg[11]=plane;
-		  game->engine->network->Send(msg,12);
-		}*/
+		if(SavedSpeed && game->engine->network && game->engine->network->bServer )
+		{
+			string sMessage;
+			sMessage = iToStr( vehicle->PosX + vehicle->PosY * map->size ) + "#" + iToStr( SavedSpeed ) + "#" + iToStr( plane );
+			game->engine->network->TCPSend( MSG_SAVED_SPEED,sMessage.c_str() );
+		}
 		// Die Kosten abziehen:
 		vehicle->data.speed+=SavedSpeed;
 		SavedSpeed=0;

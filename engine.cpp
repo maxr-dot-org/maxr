@@ -195,6 +195,12 @@ void cEngine::Run ( void )
 				v->IsBuilding=true;
 				v->BuildRounds=v->BuildRoundsStart;
 				v->BuildCosts=v->BuildCostsStart;
+				if ( network )
+				{
+					string sMessage;
+					sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#" + iToStr( v->BuildingTyp ) + "#" + iToStr( v->BuildRounds ) + "#" + iToStr( v->BuildCosts ) + "#" + iToStr( v->BandX ) + "#" + iToStr( v->BandY );
+					network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+				}
 				if ( game->SelectedVehicle==v )
 				{
 					// Den Building Sound machen:
@@ -755,6 +761,12 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 	// Das Gebäude in die Basis integrieren:
 	p->base->AddBuilding ( n );
 
+	if( network && p == game->ActivePlayer && !init && network->bServer )
+	{
+		string sMessage;
+		sMessage = iToStr ( posx ) + "#" + iToStr ( posy ) + "#" + iToStr ( b->nr ) + "#" + iToStr ( p->Nr );
+		network->TCPSend ( MSG_ADD_BUILDING, sMessage.c_str() );
+	}
 }
 
 // Wird aufgerufen, wenn ein Objekt zerstört werden soll:
@@ -1743,10 +1755,25 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: notifiation of saved speed:
+			// notifiation of saved speed:
 			case MSG_SAVED_SPEED:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cVehicle *v;
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( Strings->Items[2].compare("0") != 0 )
+				{
+					v = map->GO[atoi( Strings->Items[0].c_str() )].vehicle;
+				}
+				else
+				{
+					v = map->GO[atoi( Strings->Items[0].c_str() )].plane;
+				}
+				if( v && v->owner == game->ActivePlayer )
+				{
+					v->data.speed += atoi( Strings->Items[1].c_str() );
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -1759,42 +1786,129 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: starts buildprocess of building:
+			// starts buildprocess of building:
 			case MSG_START_BUILD:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if ( v = map->GO[atoi( Strings->Items[0].c_str() )].vehicle )
+				{
+					v->IsBuilding = true;
+					v->BuildingTyp = atoi( Strings->Items[1].c_str() );
+					v->BuildRounds = atoi( Strings->Items[2].c_str() );
+					v->BuildCosts = atoi( Strings->Items[3].c_str() );
+					v->BandX = atoi( Strings->Items[4].c_str() );
+					v->BandY = atoi( Strings->Items[5].c_str() );     
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: cancels buildprocess of building:
+			// cancels buildprocess of building:
 			case MSG_STOP_BUILD:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cVehicle *v;
+				if ( v = map->GO[atoi( sMsgString.c_str() )].vehicle )
+				{
+					v->IsBuilding = false;
+					v->IsClearing = false;
+					v->BuildPath = false;
+					if(v->data.can_build == BUILD_BIG || v->ClearBig)
+					{
+						map->GO[v->BandX + v->BandY * map->size].vehicle = NULL;
+						map->GO[v->BandX + 1 + v->BandY * map->size].vehicle  = NULL;
+						map->GO[v->BandX + 1 + ( v->BandY + 1 ) * map->size].vehicle = NULL;
+						map->GO[v->BandX + ( v->BandY + 1 ) * map->size].vehicle = NULL;
+						map->GO[v->BuildBigSavedPos].vehicle = v;
+						v->PosX = v->BuildBigSavedPos % map->size;
+						v->PosY = v->BuildBigSavedPos / map->size;
+					}
+				}
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: adds a new building
+			// adds a new building
 			case MSG_ADD_BUILDING:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cPlayer *pl;
+				sBuilding *b;
+				for( int i = 0 ;i < game->PlayerList->iCount; i++ )
+				{
+					pl = game->PlayerList->Items[i];
+					if( pl->Nr == atoi( Strings->Items[3].c_str() ) ) break;
+				}
+				b = UnitsData.building + atoi( Strings->Items[3].c_str() );
+				UpdateBuilding( b->data, pl->BuildingData[b->nr] )
+				AddBuilding( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), b, pl );
+				if( b->data.is_base || b->data.is_connector )
+				{
+					cVehicle *v;
+					v = map->GO[atoi( Strings->Items[0].c_str() ) + atoi( Strings->Items[0].c_str() ) * map->size].vehicle;
+					if( v && v->data.can_build == BUILD_SMALL )
+					{
+						v->IsBuilding = false;
+					}
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: starts construction of a big building:
+			// starts construction of a big building:
 			case MSG_START_BUILD_BIG:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( map->GO[atoi( Strings->Items[0].c_str() )].vehicle )
+				{
+					cVehicle *v;
+					v = map->GO[atoi( Strings->Items[0].c_str() )].vehicle;
+					v->BuildBigSavedPos = v->PosX + v->PosY * map->size;
+					v->IsBuilding = true;
+					v->BuildingTyp = atoi( Strings->Items[1].c_str() );
+					v->BuildRounds = atoi( Strings->Items[2].c_str() );
+					v->BuildCosts = atoi( Strings->Items[3].c_str() );
+					v->BandX = atoi( Strings->Items[4].c_str() );
+					v->BandY = atoi( Strings->Items[5].c_str() );
+					map->GO[v->BandX + v->BandY * map->size].vehicle = v;
+					map->GO[v->BandX + 1 + v->BandY * map->size].vehicle = v;
+					map->GO[v->BandX + (v->BandY+1) * map->size].vehicle = v;
+					map->GO[v->BandX + 1 + (v->BandY+1) * map->size].vehicle = v;
+					v->PosX = v->BandX;
+					v->PosY = v->BandY;
+					if( !map->IsWater( v->PosX + v->PosY * map->size ) )
+					{
+						v->ShowBigBeton = true;
+						v->BigBetonAlpha = 10;
+					}else
+					{
+						v->ShowBigBeton = false;
+						v->BigBetonAlpha = 255;
+					}
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: center construction unit within construction side:
+			// center construction unit within construction side:
 			case MSG_RESET_CONSTRUCTOR:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *v;
+				if( v = map->GO[atoi( Strings->Items[0].c_str() )].vehicle )
+				{
+					v->PosX += atoi( Strings->Items[1].c_str() );
+					v->PosY += atoi( Strings->Items[2].c_str() );
+					v->BuildOverride = true;
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
