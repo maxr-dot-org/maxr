@@ -93,9 +93,7 @@ struct sSyncBuilding{
 struct sPing{
   int PlayerID;
   int rx_count;
-  // auskommentiert beim Mainumbau
-  //int rx[PING_COUNT];
-  // TODO:
+  int rx[PING_COUNT];
 };
 
 // Strukturen für die Reports ////////////////////////////////////////////////
@@ -124,7 +122,8 @@ public:
   int SyncWaiting;
   int RundenendeActionsReport;
   int SyncNo;
-  cList<void*> *PingList; //FIXME: don't know which type is stored in PingList
+  cList<sPing*> *PingList;
+  int PingStart;
   SDL_RWops *LogFile;
   cList<string> *LogHistory;
 

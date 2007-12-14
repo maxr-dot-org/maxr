@@ -182,8 +182,7 @@ void cGame::Run ( void )
 	mouse->MoveCallback=true;
 	hud->DoAllHud();
 
-//  if(!engine->network)
-	PlayRounds=false;
+	if( !engine->network ) PlayRounds = false;
 	if ( PlayRounds )
 	{
 		if ( ActiveRoundPlayerNr!=ActivePlayer->Nr )
@@ -475,66 +474,78 @@ void cGame::Run ( void )
 			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
-		/*if(engine->PingList){
-		  unsigned short hour,min,sec,msec;
-		  char DebugStr[100];
-		  unsigned int time;
-		  int i,missing;
-		  (engine->PingStart.CurrentTime()-engine->PingStart).DecodeTime(&hour,&min,&sec,&msec);
-		  time=(((int)hour*24+min)*60+sec)*1000+msec;
+		if( engine->PingList )
+		{
+			string DebugStr;
+			unsigned int iTime;
+			int iMissing;
+			iTime = SDL_GetTicks() - engine->PingStart;
 
-		  sprintf(DebugStr,"ping: %d",5000-time);
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
+			DebugStr = "ping: " + iToStr( 5000 - iTime );
+			font->showText( 550, DebugOff, DebugStr, LATIN_SMALL_WHITE, buffer );
+			DebugOff += 10;
 
-		  missing=0;
-		  for(i=0;i<engine->PingList->Count;i++){
-		    sPing *p;
-		    p=(sPing*)(engine->PingList->Items[i]);
+			iMissing = 0;
+			for( int i = 0 ; i < engine->PingList->iCount ; i++ )
+			{
+				sPing *Ping;
+				Ping = engine->PingList->Items[i];
 
-		    missing+=PING_COUNT-p->rx_count;
-		    sprintf(DebugStr,"ping %d: %d/%d",i,p->rx_count,PING_COUNT);
-		    fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  }
+				iMissing += PING_COUNT - Ping->rx_count;
+				DebugStr = "ping: " + iToStr( 5000 - iTime ) + ": " + iToStr( Ping->rx_count ) + "/" + iToStr( PING_COUNT );
+				font->showText( 550, DebugOff, DebugStr, LATIN_SMALL_WHITE, buffer );
+				DebugOff += 10;
+			}
 
-		  if(missing==0){
-		    bool wrong=false;
-		    int k;
+			if( iMissing == 0 )
+			{
+				bool bWrong = false;
 
-		    for(i=0;i<engine->PingList->Count;i++){
-		      sPing *p;
-		      p=(sPing*)(engine->PingList->Items[i]);
-		      for(k=0;k<p->rx_count;k++){
-		        if(p->rx[k]!=k){
-		          wrong=true;
-		          break;
-		        }
-		      }
-		      if(wrong)break;
-		    }
+				for( int i = 0 ; i < engine->PingList->iCount ; i++ )
+				{
+					sPing *Ping;
+					Ping = engine->PingList->Items[i];
+					for( int k = 0 ; k < Ping->rx_count ; k++ )
+					{
+						if( Ping->rx[k] != k )
+						{
+							bWrong = true;
+							break;
+						}
+					}
+					if( bWrong ) break;
+				}
 
-		    if(wrong){
-		      AddMessage("Ping complete, but wron order!");
-		    }else{
-		      AddMessage("Ping ok!");
-		    }
+				if(bWrong)
+				{
+					AddMessage("Ping complete, but wrong order!"); // TODO: Translate?!?
+				}
+				else
+				{
+					AddMessage("Ping ok!"); // TODO: Translate?!?
+				}
 
-		    while(engine->PingList->Count){
-		      delete (sPing*)(engine->PingList->Items[0]);
-		      engine->PingList->Delete(0);
-		    }
-		    delete engine->PingList;
-		    engine->PingList=NULL;
-		  }else if(time>5000){
-		    sprintf(DebugStr,"TIMEOUT! missing: %d",missing);
-		    AddMessage(DebugStr);
-		    while(engine->PingList->Count){
-		      delete (sPing*)(engine->PingList->Items[0]);
-		      engine->PingList->Delete(0);
-		    }
-		    delete engine->PingList;
-		    engine->PingList=NULL;
-		  }
-		}*/
+				while( engine->PingList->iCount )
+				{
+					delete engine->PingList->Items[0];
+					engine->PingList->Delete( 0 );
+				}
+				delete engine->PingList;
+				engine->PingList = NULL;
+			}
+			else if( iTime > 5000 )
+			{
+				DebugStr = "TIMEOUT! missing: " + iToStr( iMissing ); // TODO: Translate?!?
+				AddMessage( DebugStr );
+				while( engine->PingList->iCount )
+				{
+					delete engine->PingList->Items[0];
+					engine->PingList->Delete( 0 );
+				}
+				delete engine->PingList;
+				engine->PingList = NULL;
+			}
+		}
 		if ( DebugTrace&&fDrawMap )
 		{
 			Trace();
@@ -1896,7 +1907,7 @@ bool cGame::DoCommand ( char *cmd )
 	if ( strcmp ( cmd,"wache off" ) ==0 ) {DebugWache=false;return true;}
 	if ( strcmp ( cmd,"fx on" ) ==0 ) {DebugFX=true;return true;}
 	if ( strcmp ( cmd,"fx off" ) ==0 ) {DebugFX=false;return true;}
-	// if(strcmp(cmd,"ping")==0){engine->Ping();return true;}
+	if ( strcmp ( cmd,"ping") ==0) {engine->Ping();return true;}
 	if ( strcmp ( cmd,"trace on" ) ==0 ) {DebugTrace=true;return true;}
 	if ( strcmp ( cmd,"trace off" ) ==0 ) {DebugTrace=false;return true;}
 	if ( strcmp ( cmd,"log on" ) ==0 ) {DebugLog=true;engine->StartLog();return true;}

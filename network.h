@@ -33,6 +33,8 @@
 #define BUFF_TYP_RESEND	202
 #define BUFF_TYP_NEWID	203
 
+#define PING_COUNT		100
+
 enum MSG_TYPE
 {
     // IDs der NET-Messages //////////////////////////////////////////////////////

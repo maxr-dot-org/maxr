@@ -68,8 +68,8 @@ cEngine::~cEngine ( void )
 	{
 		while ( PingList->iCount )
 		{
-			// delete (sPing*)(PingList->Items[0]);
-			// PingList->Delete(0);
+			delete PingList->Items[0];
+			PingList->Delete( 0 );
 		}
 		delete PingList;
 	}
@@ -984,6 +984,45 @@ void cEngine::DestroyObject ( int off,bool air )
 	game->fDrawMMap=true;
 }
 
+// Starts pinging
+void cEngine::Ping( void )
+{
+	if( !network ) return;
+
+	PingList = new cList<sPing*>;
+	if( network->bServer )
+	{
+		for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+		{
+			sPing *Ping;
+			cPlayer *Player;
+			Player = game->PlayerList->Items[i];
+			if( Player == game->ActivePlayer ) continue;
+			Ping = new sPing;
+			memset( Ping, 0, sizeof( sPing ) );
+			Ping->PlayerID = Player->Nr;
+			PingList->Add( Ping );
+		}
+	}
+	else
+	{
+		sPing *Ping;
+		Ping = new sPing;
+		memset( Ping, 0, sizeof( sPing ) );
+		PingList->Add( Ping );
+	}
+
+	PingStart = SDL_GetTicks();
+	for( int i = 0 ; i < PING_COUNT ; i++ )
+	{
+		network->TCPSend( MSG_PING, iToStr( i ).c_str() );
+		if( i % 10 == 0 )
+		{
+			SDL_Delay( 10 );
+		}
+	}
+}
+
 // Prüft, ob Jemand besiegt wurde:
 void cEngine::CheckDefeat ( void )
 {
@@ -1208,7 +1247,7 @@ void cEngine::EndePressed ( int PlayerNr )
 					next=p->Nr;
 					if(p!=game->ActivePlayer)
 					{
-						game->AddMessage( p->name + " ist an der Reihe." );
+						game->AddMessage( p->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ) );
 					}
 					break;
 				}
@@ -2439,18 +2478,41 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: Ping:
+			// Ping:
 			case MSG_PING:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				network->TCPSend( MSG_PONG, iToStr( game->ActivePlayer->Nr ).c_str() );
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			//TODO: Pong:
+			// Pong:
 			case MSG_PONG:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				int iIndex = 0;
+				sPing *Ping;
+				if( !PingList ) break;
+				if( network->bServer )
+				{
+					cPlayer *Player;
+					for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+					{
+						Player = game->PlayerList->Items[i];
+						for( int k = 0 ; k < PingList->iCount ; k++ )
+						{
+							Ping = PingList->Items[k];
+							if( Player->Nr == Ping->PlayerID )
+							{
+								iIndex = k;
+								break;
+							}
+						}
+					}
+				}
+				Ping = PingList->Items[iIndex];
+				if( Ping->rx_count >= PING_COUNT ) break;
+				Ping->rx[Ping->rx_count++] = atoi( sMsgString.c_str() );
+
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2471,7 +2533,7 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: next player in round-playing-mode:
+			// next player in round-playing-mode:
 			case MSG_PLAY_ROUNDS_NEXT:
 			{
 				cBuilding *b;
