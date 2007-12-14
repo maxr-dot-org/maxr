@@ -3362,6 +3362,12 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( data.can_build != BUILD_BIG )
 					{
 						IsBuilding = true;
+						if ( game->engine->network )
+						{
+							string sMessage;
+							sMessage = iToStr( PosX + PosY * game->map->size ) + "#" + iToStr( BuildingTyp ) + "#" + iToStr( BuildRounds ) + "#" + iToStr( BuildCosts ) + "#" + iToStr( BandX ) + "#" + iToStr( BandY );
+							game->engine->network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+						}
 						// Den Building Sound machen:
 						StopFXLoop ( game->ObjectStream );
 						game->ObjectStream = PlayStram();

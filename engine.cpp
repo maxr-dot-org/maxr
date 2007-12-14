@@ -1245,9 +1245,9 @@ void cEngine::Rundenende ( void )
 	int i;
 	game->WantToEnd=false;
 	EndeCount=0;
-	if ( !game->PlayRounds )
+	if ( !game->PlayRounds || ( network && network->bServer ) )
 	{
-		game->hud->Ende=false;
+		game->hud->Ende = false;
 		game->hud->EndeButton ( false );
 	}
 	game->Runde++;
@@ -1317,6 +1317,7 @@ void cEngine::Rundenende ( void )
 		}
 	}
 	// Gun'em down:
+	if( !network || network->bServer )
 	{
 		for ( i=0;i<game->PlayerList->iCount;i++ )
 		{
@@ -1350,13 +1351,80 @@ void cEngine::Rundenende ( void )
 	// Müll einsammeln:
 	CollectTrash();
 
-	// Ggf Autosave machen:
+	// Sync if necessary:
+	if( network && network->bServer )
+	{
+		int iLastMouseX = -1, iLastMouseY = -1;
+		// Wait until all clients have finished their round
+		while( RundenendeActionsReport < game->PlayerList->iCount -1 )
+		{
+			SDL_PumpEvents();
+			mouse->GetPos();
+
+			game->HandleTimer();
+			Run();
+
+			if( mouse->x != iLastMouseX || mouse->y != iLastMouseY )
+			{
+				mouse->draw( true, screen );
+			}
+			iLastMouseX = mouse->x;
+			iLastMouseY = mouse->y;
+			SDL_Delay( 1 );
+		}
+		RundenendeActionsReport = 0;
+
+		// Request resync
+		network->TCPSend ( MSG_START_SYNC, iToStr ( SyncNo ).c_str() );
+		font->showTextCentered( 320, 235, "Synchronisieren...", LATIN_BIG, buffer ); // TODO: Translate!!!
+		SHOW_SCREEN
+		mouse->MoveCallback = false;
+		mouse->SetCursor( CHand );
+		mouse->draw( false, screen );
+		SyncWaiting = network->iMin_clients;
+
+		int iC = 0;
+		while( SyncWaiting > 0 && network->GetConnectionCount() == network->iMin_clients )
+		{
+			SDL_PumpEvents();
+			mouse->GetPos();
+
+			game->HandleTimer();
+			// Send sync again from time to time
+			if( timer2 )
+			{
+				iC++;
+				if( iC >= 20 )
+				{
+					network->TCPSend ( MSG_START_SYNC, iToStr ( SyncNo ).c_str() );
+					iC = 0;
+				}
+			}
+			if( mouse->x != iLastMouseX || mouse->y != iLastMouseY )
+			{
+				mouse->draw( true, screen );
+			}
+			iLastMouseX = mouse->x;
+			iLastMouseY = mouse->y;
+			HandleGameMessages();
+			SDL_Delay(1);
+		}
+
+		mouse->MoveCallback = true;
+		SyncNo++;
+	}
+
 	if ( SettingsData.bAutoSave )
 	{
 		game->MakeAutosave();
 	}
 
 	CheckDefeat();
+
+	if( network && !network->bServer )
+	{
+		network->TCPSend( MSG_REPORT_R_E_A, "" );
+	}
 
 	// Meldung zum Rundenstart:
 	MakeRundenstartReport();
@@ -2033,34 +2101,324 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: request resync:
+			// request resync:
 			case MSG_START_SYNC:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				int iSync;
+				iSync = atoi( sMsgString.c_str() );
+
+				cPlayer *Player = game->ActivePlayer;
+				string sMsg;
+				sSyncPlayer *SyncPlayer;
+
+				SyncPlayer = new sSyncPlayer();
+
+				SyncPlayer->TNT = game->hud->TNT;
+				SyncPlayer->Radar = game->hud->Radar;
+				SyncPlayer->Nebel = game->hud->Nebel;
+				SyncPlayer->Gitter = game->hud->Gitter;
+				SyncPlayer->Scan = game->hud->Scan;
+				SyncPlayer->Reichweite = game->hud->Reichweite;
+				SyncPlayer->Munition = game->hud->Munition;
+				SyncPlayer->Treffer = game->hud->Treffer;
+				SyncPlayer->Farben = game->hud->Farben;
+				SyncPlayer->Status = game->hud->Status;
+				SyncPlayer->Studie = game->hud->Studie;
+				SyncPlayer->PlayFLC = game->hud->PlayFLC;
+				SyncPlayer->Zoom = game->hud->Zoom;
+				SyncPlayer->OffX = game->hud->OffX;
+				SyncPlayer->OffY = game->hud->OffY;
+				SyncPlayer->Lock = game->hud->Lock;
+
+				SyncPlayer->PlayerID = Player->Nr;
+				SyncPlayer->Credits = Player->Credits;
+				memcpy( SyncPlayer->ResearchTechs, Player->ResearchTechs, sizeof(sResearch) * 8 );
+				SyncPlayer->ResearchCount = Player->ResearchCount;
+				SyncPlayer->UnusedResearch = Player->UnusedResearch;
+				if( Player->VehicleList || Player->BuildingList )
+				{
+					cBuilding *Building = Player->BuildingList;
+					cVehicle *Vehicle = Player->VehicleList;
+					SyncPlayer->EndOfSync = false;
+
+					sSyncVehicle *SyncVehicle = new sSyncVehicle();
+					while( Vehicle )
+					{
+						if( Vehicle->Loaded )
+						{
+							if( SyncVehicle )
+							{
+								if( Vehicle->next == NULL && Building == NULL )
+								{
+									SyncVehicle->EndOfSync = true;
+								}
+								else
+								{
+									SyncVehicle->EndOfSync = false;
+								}
+							}
+							else if( !Player->BuildingList && Vehicle->next == NULL )
+							{
+								SyncPlayer->EndOfSync = true;
+							}
+							Vehicle = Vehicle->next;
+							continue;
+						}
+
+						SyncVehicle->PlayerID = Player->Nr;
+						SyncVehicle->isPlane = Vehicle->data.can_drive == DRIVE_AIR;
+						SyncVehicle->off = Vehicle->PosX + Vehicle->PosY * map->size;
+						SyncVehicle->IsBuilding = Vehicle->IsBuilding;
+						SyncVehicle->BuildingTyp = Vehicle->BuildingTyp;
+						SyncVehicle->BuildCosts = Vehicle->BuildCosts;
+						SyncVehicle->BuildRounds = Vehicle->BuildRounds;
+						SyncVehicle->BuildRoundsStart = Vehicle->BuildRoundsStart;
+						SyncVehicle->BandX = Vehicle->BandX;
+						SyncVehicle->BandY = Vehicle->BandY;
+						SyncVehicle->IsClearing = Vehicle->IsClearing;
+						SyncVehicle->ClearingRounds = Vehicle->ClearingRounds;
+						SyncVehicle->ClearBig = Vehicle->ClearBig;
+						SyncVehicle->ShowBigBeton = Vehicle->ShowBigBeton;
+						SyncVehicle->FlightHigh = Vehicle->FlightHigh;
+						SyncVehicle->LayMines = Vehicle->LayMines;
+						SyncVehicle->ClearMines = Vehicle->ClearMines;
+						SyncVehicle->Loaded = Vehicle->Loaded;
+						SyncVehicle->CommandoRank = Vehicle->CommandoRank;
+						SyncVehicle->Disabled = Vehicle->Disabled;
+						SyncVehicle->Ammo = Vehicle->data.ammo;
+						SyncVehicle->Cargo = Vehicle->data.cargo;
+
+						if( Vehicle->next == NULL && Building == NULL )
+						{
+							SyncVehicle->EndOfSync = true;
+						}
+						else
+						{
+							SyncVehicle->EndOfSync = false;
+						}
+						SendVehicleSync( SyncVehicle );
+
+						Vehicle = Vehicle->next;
+					}
+
+					while( Building )
+					{
+						sSyncBuilding *SyncBuilding = new sSyncBuilding();;
+
+						SyncBuilding->PlayerID=  Player->Nr;
+						SyncBuilding->isBase = Building->data.is_base;
+						SyncBuilding->off = Building->PosX+Building->PosY*map->size;
+						if ( map->GO[SyncBuilding->off].top && map->GO[SyncBuilding->off].top == Building )
+						{
+							SyncBuilding->iTyp = 0;
+						}
+						else if( map->GO[SyncBuilding->off].base && map->GO[SyncBuilding->off].base == Building )
+						{
+							SyncBuilding->iTyp = 1;
+						}
+						else
+						{
+							SyncBuilding->iTyp = 2;
+						}
+						SyncBuilding->IsWorking = Building->IsWorking;
+						SyncBuilding->MetalProd = Building->MetalProd;
+						SyncBuilding->OilProd = Building->OilProd;
+						SyncBuilding->GoldProd = Building->GoldProd;
+						SyncBuilding->MaxMetalProd = Building->MaxMetalProd;
+						SyncBuilding->MaxOilProd = Building->MaxOilProd;
+						SyncBuilding->MaxGoldProd = Building->MaxGoldProd;
+						SyncBuilding->BuildSpeed = Building->BuildSpeed;
+						SyncBuilding->RepeatBuild = Building->RepeatBuild;
+						SyncBuilding->Disabled = Building->Disabled;
+						SyncBuilding->Ammo = Building->data.ammo;
+						SyncBuilding->Load = Building->data.cargo;
+
+						if( Building->BuildList && Building->BuildList->iCount > 0 )
+						{
+							int *ptr = NULL;
+							SyncBuilding->BuildList = Building->BuildList->iCount;
+
+							// TODO: Add sending buildlist here
+						}
+						else
+						{
+							SyncBuilding->BuildList = 0;
+						}
+
+						if( Building->next == NULL )
+						{
+							SyncBuilding->EndOfSync = true;
+						}
+						else
+						{
+							SyncBuilding->EndOfSync = false;
+						}
+
+						SendBuildingSync( SyncBuilding );
+						Building = Building->next;
+					}
+				}
+				else
+				{
+					SyncPlayer->EndOfSync = true;
+				}
+				SendPlayerSync( SyncPlayer );
+
+				SyncNo = iSync;
+				delete SyncPlayer;
+
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: sync players:
+			// sync players:
 			case MSG_SYNC_PLAYER:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+
+				cPlayer *Player;
+				for(int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi ( Strings->Items[0].c_str() ) ) break;
+				}
+
+				Player->Credits = atoi ( Strings->Items[2].c_str() );
+				Player->ResearchCount = atoi ( Strings->Items[3].c_str() );
+				Player->UnusedResearch = atoi ( Strings->Items[4].c_str() );
+
+				Player->HotHud.TNT = atoi ( Strings->Items[5].c_str() );
+				Player->HotHud.Radar = atoi ( Strings->Items[6].c_str() );
+				Player->HotHud.Nebel = atoi ( Strings->Items[7].c_str() );
+				Player->HotHud.Gitter = atoi ( Strings->Items[8].c_str() );
+				Player->HotHud.Scan = atoi ( Strings->Items[9].c_str() );
+				Player->HotHud.Reichweite = atoi ( Strings->Items[10].c_str() );
+				Player->HotHud.Munition = atoi ( Strings->Items[11].c_str() );
+				Player->HotHud.Treffer = atoi ( Strings->Items[12].c_str() );
+				Player->HotHud.Farben = atoi ( Strings->Items[13].c_str() );
+				Player->HotHud.Status = atoi ( Strings->Items[14].c_str() );
+				Player->HotHud.Studie = atoi ( Strings->Items[15].c_str() );
+				Player->HotHud.PlayFLC = atoi ( Strings->Items[16].c_str() );
+				Player->HotHud.Zoom = atoi ( Strings->Items[17].c_str() );
+				Player->HotHud.OffX = atoi ( Strings->Items[18].c_str() );
+				Player->HotHud.OffY = atoi ( Strings->Items[19].c_str() );
+				Player->HotHud.Lock = atoi ( Strings->Items[20].c_str() );
+
+				for( int i = 0; i < 8; i++ )
+				{
+					Player->ResearchTechs[i].working_on = atoi ( Strings->Items[21 + i*4].c_str() );
+					Player->ResearchTechs[i].RoundsRemaining = atoi ( Strings->Items[22 + i*4].c_str() );
+					Player->ResearchTechs[i].MaxRounds = atoi ( Strings->Items[23 + i*4].c_str() );
+					Player->ResearchTechs[i].level = atoi ( Strings->Items[24 + i*4].c_str() );
+				}
+				if( atoi ( Strings->Items[1].c_str() ) ) SyncWaiting--;
+
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: sync vehicles:
+			// sync vehicles:
 			case MSG_SYNC_VEHICLE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+
+				cVehicle *Vehicle;
+				cPlayer *Player;
+				for(int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi ( Strings->Items[0].c_str() ) ) break;
+				}
+
+				if( Strings->Items[2].c_str() )
+				{
+					Vehicle = map->GO[atoi ( Strings->Items[3].c_str())].plane;
+				}
+				else
+				{
+					Vehicle = map->GO[atoi ( Strings->Items[3].c_str())].vehicle;
+				}
+				if( !Vehicle || Vehicle->owner != Player ) break;
+
+				Vehicle->PosX = atoi ( Strings->Items[3].c_str() ) % map->size;
+				Vehicle->PosY = atoi ( Strings->Items[3].c_str() ) / map->size;
+				Vehicle->IsBuilding = atoi ( Strings->Items[4].c_str() );
+				Vehicle->BuildingTyp = atoi ( Strings->Items[5].c_str() );
+				Vehicle->BuildCosts = atoi ( Strings->Items[6].c_str() );
+				Vehicle->BuildRounds = atoi ( Strings->Items[7].c_str() );
+				Vehicle->BuildRoundsStart = atoi ( Strings->Items[8].c_str() );
+				Vehicle->BandX = atoi ( Strings->Items[9].c_str() );
+				Vehicle->BandY = atoi ( Strings->Items[10].c_str() );
+				Vehicle->IsClearing = atoi ( Strings->Items[11].c_str() );
+				Vehicle->ClearingRounds = atoi ( Strings->Items[12].c_str() );
+				Vehicle->ClearBig = atoi ( Strings->Items[13].c_str() );
+				Vehicle->ShowBigBeton = atoi ( Strings->Items[14].c_str() );
+				Vehicle->FlightHigh = atoi ( Strings->Items[15].c_str() );
+				Vehicle->LayMines = atoi ( Strings->Items[16].c_str() );
+				Vehicle->ClearMines = atoi ( Strings->Items[17].c_str() );
+				Vehicle->Loaded = atoi ( Strings->Items[18].c_str() );
+				Vehicle->CommandoRank = atoi ( Strings->Items[19].c_str() );
+				Vehicle->Disabled = atoi ( Strings->Items[20].c_str() );
+				Vehicle->data.ammo = atoi ( Strings->Items[21].c_str() );
+				Vehicle->data.cargo = atoi ( Strings->Items[22].c_str() );
+
+				if(atoi ( Strings->Items[1].c_str() ) ) SyncWaiting--;
+
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: sync buildings:
+			// sync buildings:
 			case MSG_SYNC_BUILDING:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+
+				cBuilding *Building;
+				cPlayer *Player;
+				for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi ( Strings->Items[0].c_str() ) ) break;
+				}
+
+				if ( atoi ( Strings->Items[2].c_str() ) == 0 ) // top
+				{
+					Building = map->GO[atoi ( Strings->Items[3].c_str() )].top;
+				}
+				else if ( atoi ( Strings->Items[2].c_str() ) == 1 ) // base
+				{
+					Building = map->GO[atoi ( Strings->Items[3].c_str() )].base;
+				}
+				else // subbase
+				{
+					Building = map->GO[atoi ( Strings->Items[3].c_str() )].subbase;
+				}
+				if( !Building || Building->owner != Player ) break;
+
+				Building->PosX = atoi ( Strings->Items[3].c_str() ) % map->size;
+				Building->PosY = atoi ( Strings->Items[3].c_str() ) / map->size;
+				Building->data.is_base = atoi ( Strings->Items[4].c_str() );
+				Building->IsWorking = atoi ( Strings->Items[5].c_str() );
+				Building->MetalProd = atoi ( Strings->Items[6].c_str() );
+				Building->OilProd = atoi ( Strings->Items[7].c_str() );
+				Building->GoldProd = atoi ( Strings->Items[8].c_str() );
+				Building->MaxMetalProd = atoi ( Strings->Items[9].c_str() );
+				Building->MaxOilProd = atoi ( Strings->Items[10].c_str() );
+				Building->MaxGoldProd = atoi ( Strings->Items[11].c_str() );
+				Building->BuildSpeed = atoi ( Strings->Items[12].c_str() );
+				Building->RepeatBuild=  atoi ( Strings->Items[13].c_str() );
+				Building->Disabled = atoi ( Strings->Items[14].c_str() );
+				Building->data.ammo = atoi ( Strings->Items[15].c_str() );
+				Building->data.cargo = atoi ( Strings->Items[16].c_str() );
+
+				if(atoi ( Strings->Items[1].c_str() ) ) SyncWaiting--;
+
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2073,10 +2431,10 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: turn finished:
+			// turn finished:
 			case MSG_REPORT_R_E_A:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				RundenendeActionsReport++;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2168,8 +2526,55 @@ void cEngine::HandleGameMessages()
 	}
 }
 
+void cEngine::SendPlayerSync( sSyncPlayer *SyncData )
+{
+	string sMessage;
+	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->Credits ) + "#" +
+				iToStr( SyncData->ResearchCount ) + "#" + iToStr( SyncData->UnusedResearch ) + "#" + iToStr( SyncData->TNT ) + "#" +
+				iToStr( SyncData->Radar ) + "#" + iToStr( SyncData->Nebel ) + "#" + iToStr( SyncData->Gitter ) + "#" +
+				iToStr( SyncData->Scan ) + "#" + iToStr( SyncData->Reichweite ) + "#" + iToStr( SyncData->Munition ) + "#" +
+				iToStr( SyncData->Treffer ) + "#" + iToStr( SyncData->Farben ) + "#" + iToStr( SyncData->Status ) + "#" +
+				iToStr( SyncData->Studie ) + "#" + iToStr( SyncData->Lock ) + "#" + iToStr( SyncData->PlayFLC ) + "#" +
+				iToStr( SyncData->Zoom ) + "#" + iToStr( SyncData->OffX ) + "#" + iToStr( SyncData->OffY );
+	for( int i = 0 ; i < 8 ; i++ )
+	{
+		sMessage += "#" + iToStr( SyncData->ResearchTechs->working_on ) + "#" + iToStr( SyncData->ResearchTechs->RoundsRemaining ) + "#" +
+				iToStr( SyncData->ResearchTechs->MaxRounds ) + "#" + iToStr( SyncData->ResearchTechs->level );
+	}
+	network->TCPSend ( MSG_SYNC_PLAYER, sMessage.c_str() );
+}
+
+void cEngine::SendVehicleSync( sSyncVehicle *SyncData )
+{
+	string sMessage;
+	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->isPlane ) + "#" +
+		iToStr( SyncData->off ) + "#" + iToStr( SyncData->IsBuilding ) + "#" + iToStr( SyncData->BuildingTyp ) + "#" +
+		iToStr( SyncData->BuildCosts ) + "#" + iToStr( SyncData->BuildRounds ) + "#" + iToStr( SyncData->BuildRoundsStart ) + "#" +
+		iToStr( SyncData->BandX ) + "#" + iToStr( SyncData->BandY ) + "#" + iToStr( SyncData->IsClearing ) + "#" +
+		iToStr( SyncData->ClearingRounds ) + "#" + iToStr( SyncData->ClearBig ) + "#" + iToStr( SyncData->ShowBigBeton ) + "#" +
+		iToStr( SyncData->FlightHigh ) + "#" + iToStr( SyncData->LayMines ) + "#" + iToStr( SyncData->ClearMines ) + "#" +
+		iToStr( SyncData->Loaded ) + "#" + iToStr( SyncData->CommandoRank ) + "#" + iToStr( SyncData->Disabled ) + "#" +
+		iToStr( SyncData->Ammo ) + "#" + iToStr( SyncData->Cargo);
+
+	network->TCPSend ( MSG_SYNC_VEHICLE, sMessage.c_str() );
+}
+
+void cEngine::SendBuildingSync( sSyncBuilding *SyncData )
+{
+	string sMessage;
+	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->iTyp ) + "#" +
+		iToStr( SyncData->off ) + "#" + iToStr( SyncData->IsWorking ) + "#" + iToStr( SyncData->MetalProd ) + "#" +
+		iToStr( SyncData->OilProd ) + "#" + iToStr( SyncData->GoldProd ) + "#" + iToStr( SyncData->MaxMetalProd ) + "#" +
+		iToStr( SyncData->MaxOilProd ) + "#" + iToStr( SyncData->MaxGoldProd ) + "#" + iToStr( SyncData->BuildSpeed ) + "#" +
+		iToStr( SyncData->RepeatBuild ) + "#" + iToStr( SyncData->Disabled ) + "#" + iToStr( SyncData->Ammo ) + "#" + 
+		iToStr( SyncData->Load);
+
+	network->TCPSend ( MSG_SYNC_BUILDING, sMessage.c_str() );
+}
+
 // Sends a chat-message:
-void cEngine::SendChatMessage(const char *str){
+void cEngine::SendChatMessage(const char *str)
+{
 	if(network){
 		string sChatMessage = str;
 		if(sChatMessage.length() > 255)
