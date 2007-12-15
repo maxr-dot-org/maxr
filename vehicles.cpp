@@ -5649,6 +5649,11 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
+
+	if ( game->engine->network && !engine_call )
+	{
+		SendActivateVehicle( false, data.can_drive == DRIVE_AIR, nr, off, PosX + PosY * game->map->size, 0, 0 );
+	}
 }
 
 // Prüft, ob das Objekt aufmunitioniert werden kann:

@@ -1438,8 +1438,12 @@ bool cBuilding::StartWork ( bool engine_call )
 
 	ShowDetails();
 
-	if ( data.can_research )
-		owner->StartAResearch();
+	if( game->engine->network )
+	{
+		game->engine->network->TCPSend( MSG_START_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
+	}
+
+	if ( data.can_research ) owner->StartAResearch();
 
 	return true;
 }
@@ -1521,8 +1525,12 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 
 	ShowDetails();
 
-	if ( data.can_research )
-		owner->StopAReserach();
+	if( game->engine->network )
+	{
+		game->engine->network->TCPSend( MSG_STOP_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
+	}
+
+	if ( data.can_research ) owner->StopAReserach();
 }
 
 // Prüft, ob Rohstoffe zu dem GO transferiert werden können:
@@ -3261,6 +3269,11 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
+
+	if ( game->engine->network && !engine_call )
+	{
+		SendActivateVehicle( true, false, nr, off, PosX + PosY * game->map->size, ptr->data.hit_points, ptr->data.ammo );
+	}
 }
 
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled )

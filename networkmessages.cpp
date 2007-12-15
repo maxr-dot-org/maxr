@@ -115,6 +115,28 @@ void SendBuildingSync( sSyncBuilding *SyncData )
 	game->engine->network->TCPSend ( MSG_SYNC_BUILDING, sMessage.c_str() );
 }
 
+void SendAddVehicle( int iPlayerNr, int iVehicleNr, int iPosX, int iPosY)
+{
+	string sMessage;
+	sMessage = iToStr(iPlayerNr) + NET_MSG_SEPERATOR + iToStr(iVehicleNr) + NET_MSG_SEPERATOR + iToStr(iPosX) + NET_MSG_SEPERATOR + iToStr(iPosY);
+	game->engine->network->TCPSend( MSG_ADD_VEHICLE, sMessage.c_str() );
+}
+
+void SendStoreVehicle( bool bDestPlane, bool bBuilding, int iDestOff, int iScrOff, bool bScrPlane )
+{
+	string sMessage;
+	sMessage = iToStr(bDestPlane) + NET_MSG_SEPERATOR + iToStr(bBuilding) + NET_MSG_SEPERATOR + iToStr(iDestOff) + NET_MSG_SEPERATOR + iToStr(iScrOff)+ NET_MSG_SEPERATOR + iToStr(bScrPlane);
+	game->engine->network->TCPSend( MSG_STORE_VEHICLE, sMessage.c_str() );
+}
+
+void SendActivateVehicle( bool bBuilding, bool bScrPlane, int iUnitIndex, int iDestOff, int iScrOff, int iHitoints, int iAmmo )
+{
+	string sMessage;
+	sMessage = iToStr(bBuilding) + NET_MSG_SEPERATOR + iToStr(bScrPlane) + NET_MSG_SEPERATOR + iToStr(iUnitIndex) + NET_MSG_SEPERATOR + iToStr(iDestOff) 
+		+ NET_MSG_SEPERATOR + iToStr(iScrOff)+ NET_MSG_SEPERATOR + iToStr(iHitoints) + NET_MSG_SEPERATOR + iToStr(iAmmo);
+	game->engine->network->TCPSend( MSG_ACTIVATE_VEHICLE, sMessage.c_str() );
+}
+
 
 
 void SendIntIntBool(int iScrOff, int iDestOff, bool bScrAir, int iTyp)

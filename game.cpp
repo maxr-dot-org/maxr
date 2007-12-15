@@ -1026,6 +1026,10 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedBuilding->StoreVehicle ( off );
+			if ( engine->network )
+			{
+				SendStoreVehicle( SelectedBuilding->data.can_load == TRANS_AIR, true, off, SelectedBuilding->PosX + SelectedBuilding->PosY * map->size, false );
+			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive )
 		{
@@ -1033,6 +1037,10 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedVehicle->StoreVehicle ( off );
+			if ( engine->network )
+			{
+				SendStoreVehicle( false, false, off, SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->data.can_drive == DRIVE_AIR );
+			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive )
 		{

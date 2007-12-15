@@ -105,6 +105,37 @@ void SendVehicleSync( sSyncVehicle *SyncData );
 * @param SyncData
 */
 void SendBuildingSync( sSyncBuilding *SyncData );
+/**
+* @author alzi
+*
+* @param iPlayerNr
+* @param iVehicleNr
+* @param iPosX
+* @param iPosY
+*/
+void SendAddVehicle( int iPlayerNr, int iVehicleNr, int iPosX, int iPosY);
+/**
+* @author alzi
+*
+* @param bDestPlane
+* @param bBuilding
+* @param iDestOff
+* @param iScrOff
+* @param bScrPlane
+*/
+void SendStoreVehicle( bool bDestPlane, bool bBuilding, int iDestOff, int iScrOff, bool bScrPlane );
+/**
+* @author alzi
+*
+* @param bBuilding
+* @param bScrPlane
+* @param iUnitIndex
+* @param iDestOff
+* @param iScrOff
+* @param iHitoints
+* @param iAmmo
+*/
+void SendActivateVehicle( bool bBuilding, bool bScrPlane, int iUnitIndex, int iDestOff, int iScrOff, int iHitoints, int iAmmo );
 
 
 /**

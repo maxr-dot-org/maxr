@@ -675,6 +675,11 @@ void cEngine::AddVehicle ( int posx,int posy,sVehicle *v,cPlayer *p,bool init,bo
 		n->DoSurvey();
 	}
 	if ( !init ) n->InWachRange();
+
+	if( network && !engine_call && !init )
+	{
+		SendAddVehicle( p->Nr, v->nr, posx, posy );
+	}
 }
 
 // Fügt ein Building ein:
@@ -2016,42 +2021,127 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: board/load a vehicle into
+			// board/load a vehicle into
 			case MSG_STORE_VEHICLE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *Vehicle;
+				cBuilding *Building;
+				if( atoi( Strings->Items[0].c_str() ) )
+				{
+					Vehicle = map->GO[atoi( Strings->Items[2].c_str() )].plane;
+				}
+				else
+				{
+					Vehicle = map->GO[atoi( Strings->Items[2].c_str() )].vehicle;
+				}
+				if( atoi( Strings->Items[1].c_str() ) )
+				{
+					Building = map->GO[atoi( Strings->Items[3].c_str() )].top;
+					if( Building && Vehicle )
+					{
+						Building->StoreVehicle(atoi( Strings->Items[2].c_str() ));
+					}
+				}
+				else
+				{
+					cVehicle *VehicleSource;
+					if( atoi( Strings->Items[4].c_str() ) )
+					{
+						VehicleSource = map->GO[atoi( Strings->Items[3].c_str() )].plane;
+					}
+					else
+					{
+						VehicleSource = map->GO[atoi( Strings->Items[3].c_str() )].vehicle;
+					}
+					if( VehicleSource && Vehicle )
+					{
+						VehicleSource->StoreVehicle(atoi( Strings->Items[2].c_str() ));
+					}
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: unboard/unload a vehicle from
+			// unboard/unload a vehicle from
 			case MSG_ACTIVATE_VEHICLE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( atoi( Strings->Items[0].c_str() ) )
+				{
+					cBuilding *Building;
+					Building = map->GO[atoi( Strings->Items[4].c_str() )].top;
+					if( Building )
+					{
+						cVehicle *Vehicle;
+						if( Building->StoredVehicles && Building->StoredVehicles->iCount > atoi( Strings->Items[2].c_str() ) )
+						{
+							Vehicle = Building->StoredVehicles->Items[atoi( Strings->Items[2].c_str() )];
+							Vehicle->data.hit_points = atoi( Strings->Items[5].c_str() );
+							Vehicle->data.ammo = atoi( Strings->Items[6].c_str() );
+						}
+						Building->ExitVehicleTo(atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),true);
+					}
+				}
+				else
+				{
+					cVehicle *Vehicle;
+					if( atoi( Strings->Items[1].c_str() ) )
+					{
+						Vehicle = map->GO[atoi( Strings->Items[4].c_str() )].plane;
+					}
+					else
+					{
+						Vehicle = map->GO[atoi( Strings->Items[4].c_str() )].vehicle;
+					}
+					if( Vehicle )
+					{
+						Vehicle->ExitVehicleTo(atoi( Strings->Items[2].c_str() ),atoi( Strings->Items[3].c_str() ),true);
+					}
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: activates a building (start work)
+			// activates a building (start work)
 			case MSG_START_WORK:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				map->GO[atoi( sMsgString.c_str() )].top->StartWork( true );
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: deactivated a building (stop work)
+			// deactivated a building (stop work)
 			case MSG_STOP_WORK:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				map->GO[atoi( sMsgString.c_str() )].top->StopWork( false, true );
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: add a new vehicle to game
+			// add a new vehicle to game
 			case MSG_ADD_VEHICLE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cPlayer *Player = NULL;
+				for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					if( game->PlayerList->Items[i]->Nr == atoi ( Strings->Items[0].c_str() ) )
+					{
+						Player = game->PlayerList->Items[i];
+						break;
+					}
+				}
+				if( Player )
+				{
+					AddVehicle(atoi ( Strings->Items[2].c_str() ),atoi ( Strings->Items[3].c_str() ),UnitsData.vehicle + atoi ( Strings->Items[1].c_str() ),Player,false,true);
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
