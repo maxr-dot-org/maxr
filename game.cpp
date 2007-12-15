@@ -953,9 +953,7 @@ int cGame::CheckUser ( void )
 			{
 				if ( engine->network )
 				{
-					string sMessage;
-					sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#" + iToStr( SelectedVehicle->BuildingTyp ) + "#" + iToStr( SelectedVehicle->BuildRounds ) + "#" + iToStr( SelectedVehicle->BuildCosts ) + "#" + iToStr( SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->BandY );
-					engine->network->TCPSend ( MSG_START_BUILD_BIG, sMessage.c_str() );
+					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD_BIG);
 				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
@@ -971,9 +969,7 @@ int cGame::CheckUser ( void )
 			{
 				if ( engine->network )
 				{
-					string sMessage;
-					sMessage = iToStr( SelectedVehicle->PosX + SelectedVehicle->PosY * map->size ) + "#" + iToStr( SelectedVehicle->BuildingTyp ) + "#" + iToStr( SelectedVehicle->BuildRounds ) + "#" + iToStr( SelectedVehicle->BuildCosts ) + "#" + iToStr( SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->BandY );
-					engine->network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD );
 				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
@@ -1117,8 +1113,7 @@ int cGame::CheckUser ( void )
 					}
 					if ( engine->network && changed )
 					{
-						string sMessage;
-						sMessage = iToStr( SelectedVehicle->BandX + SelectedVehicle->BandY * map->size ) + "#" + iToStr( SelectedVehicle->PosX - SelectedVehicle->BandX ) + "#" + iToStr( SelectedVehicle->PosY - SelectedVehicle->BandY );
+						SendResetConstructor( SelectedVehicle->BandX + SelectedVehicle->BandY * map->size, SelectedVehicle->PosX - SelectedVehicle->BandX, SelectedVehicle->PosY - SelectedVehicle->BandY);
 					}
 				}
 				// hans

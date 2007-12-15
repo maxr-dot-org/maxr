@@ -197,9 +197,7 @@ void cEngine::Run ( void )
 				v->BuildCosts=v->BuildCostsStart;
 				if ( network )
 				{
-					string sMessage;
-					sMessage = iToStr( v->PosX + v->PosY * map->size ) + "#" + iToStr( v->BuildingTyp ) + "#" + iToStr( v->BuildRounds ) + "#" + iToStr( v->BuildCosts ) + "#" + iToStr( v->BandX ) + "#" + iToStr( v->BandY );
-					network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+					SendStartBuild(v->PosX + v->PosY * map->size, v->BuildingTyp, v->BuildRounds, v->BuildCosts, v->BandX, v->BandY, MSG_START_BUILD);
 				}
 				if ( game->SelectedVehicle==v )
 				{
@@ -584,29 +582,21 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 			v->mjob->StartMove();
 			if ( v->mjob )
 			{
-				string sMessage;
-				sMessage = iToStr( FromX ) + "#" + iToStr( FromY ) + "#" + iToStr( ToX ) + "#" + iToStr( ToY ) + "#"; 
-				if ( plane ) sMessage += "1";
-				else sMessage += "0";
-
 				if ( !v->mjob->finished )
 				{
+					SendMoveVehicle( FromX, FromY, ToX, ToY, plane);
 					SendIntIntBool( v->mjob->waypoints->X+v->mjob->waypoints->Y*map->size, v->mjob->waypoints->next->X+v->mjob->waypoints->next->Y*map->size, v->mjob->plane, MSG_MOVE_TO );
 				}
 				else
 				{
-					network->TCPSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
+					SendMoveVehicle( FromX, FromY, ToX, ToY, plane);
 				}
 			}
 		}
 		else
 		{
 			// Just move the vehicle:
-			string sMessage;
-			sMessage = iToStr( FromX ) + "#" + iToStr( FromY ) + "#" + iToStr( ToX ) + "#" + iToStr( ToY ) + "#"; 
-			if ( v->data.can_drive == DRIVE_AIR ) sMessage += "1";
-			else sMessage += "0";
-			network->TCPSend( MSG_MOVE_VEHICLE,sMessage.c_str() );
+			SendMoveVehicle( FromX, FromY, ToX, ToY, ( v->data.can_drive == DRIVE_AIR ) );
 		}
 	}
 	SDL_UnlockMutex(mutex);
@@ -763,9 +753,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 
 	if( network && p == game->ActivePlayer && !init && network->bServer )
 	{
-		string sMessage;
-		sMessage = iToStr ( posx ) + "#" + iToStr ( posy ) + "#" + iToStr ( b->nr ) + "#" + iToStr ( p->Nr );
-		network->TCPSend ( MSG_ADD_BUILDING, sMessage.c_str() );
+		SendAddBuilding( posx, posy, b->nr, p->Nr );
 	}
 }
 
@@ -1805,7 +1793,7 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: new attackjob:
+			// new attackjob:
 			case MSG_ADD_ATTACKJOB:
 			{
 				cList<string> *Strings;
@@ -1823,7 +1811,7 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: destroy object:
+			// destroy object:
 			case MSG_DESTROY_OBJECT:
 			{
 				cList<string> *Strings;
@@ -2588,52 +2576,6 @@ void cEngine::HandleGameMessages()
 	}
 }
 
-void cEngine::SendPlayerSync( sSyncPlayer *SyncData )
-{
-	string sMessage;
-	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->Credits ) + "#" +
-				iToStr( SyncData->ResearchCount ) + "#" + iToStr( SyncData->UnusedResearch ) + "#" + iToStr( SyncData->TNT ) + "#" +
-				iToStr( SyncData->Radar ) + "#" + iToStr( SyncData->Nebel ) + "#" + iToStr( SyncData->Gitter ) + "#" +
-				iToStr( SyncData->Scan ) + "#" + iToStr( SyncData->Reichweite ) + "#" + iToStr( SyncData->Munition ) + "#" +
-				iToStr( SyncData->Treffer ) + "#" + iToStr( SyncData->Farben ) + "#" + iToStr( SyncData->Status ) + "#" +
-				iToStr( SyncData->Studie ) + "#" + iToStr( SyncData->Lock ) + "#" + iToStr( SyncData->PlayFLC ) + "#" +
-				iToStr( SyncData->Zoom ) + "#" + iToStr( SyncData->OffX ) + "#" + iToStr( SyncData->OffY );
-	for( int i = 0 ; i < 8 ; i++ )
-	{
-		sMessage += "#" + iToStr( SyncData->ResearchTechs->working_on ) + "#" + iToStr( SyncData->ResearchTechs->RoundsRemaining ) + "#" +
-				iToStr( SyncData->ResearchTechs->MaxRounds ) + "#" + iToStr( SyncData->ResearchTechs->level );
-	}
-	network->TCPSend ( MSG_SYNC_PLAYER, sMessage.c_str() );
-}
-
-void cEngine::SendVehicleSync( sSyncVehicle *SyncData )
-{
-	string sMessage;
-	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->isPlane ) + "#" +
-		iToStr( SyncData->off ) + "#" + iToStr( SyncData->IsBuilding ) + "#" + iToStr( SyncData->BuildingTyp ) + "#" +
-		iToStr( SyncData->BuildCosts ) + "#" + iToStr( SyncData->BuildRounds ) + "#" + iToStr( SyncData->BuildRoundsStart ) + "#" +
-		iToStr( SyncData->BandX ) + "#" + iToStr( SyncData->BandY ) + "#" + iToStr( SyncData->IsClearing ) + "#" +
-		iToStr( SyncData->ClearingRounds ) + "#" + iToStr( SyncData->ClearBig ) + "#" + iToStr( SyncData->ShowBigBeton ) + "#" +
-		iToStr( SyncData->FlightHigh ) + "#" + iToStr( SyncData->LayMines ) + "#" + iToStr( SyncData->ClearMines ) + "#" +
-		iToStr( SyncData->Loaded ) + "#" + iToStr( SyncData->CommandoRank ) + "#" + iToStr( SyncData->Disabled ) + "#" +
-		iToStr( SyncData->Ammo ) + "#" + iToStr( SyncData->Cargo);
-
-	network->TCPSend ( MSG_SYNC_VEHICLE, sMessage.c_str() );
-}
-
-void cEngine::SendBuildingSync( sSyncBuilding *SyncData )
-{
-	string sMessage;
-	sMessage = iToStr( SyncData->PlayerID ) + "#" + iToStr( SyncData->EndOfSync ) + "#" + iToStr( SyncData->iTyp ) + "#" +
-		iToStr( SyncData->off ) + "#" + iToStr( SyncData->IsWorking ) + "#" + iToStr( SyncData->MetalProd ) + "#" +
-		iToStr( SyncData->OilProd ) + "#" + iToStr( SyncData->GoldProd ) + "#" + iToStr( SyncData->MaxMetalProd ) + "#" +
-		iToStr( SyncData->MaxOilProd ) + "#" + iToStr( SyncData->MaxGoldProd ) + "#" + iToStr( SyncData->BuildSpeed ) + "#" +
-		iToStr( SyncData->RepeatBuild ) + "#" + iToStr( SyncData->Disabled ) + "#" + iToStr( SyncData->Ammo ) + "#" + 
-		iToStr( SyncData->Load);
-
-	network->TCPSend ( MSG_SYNC_BUILDING, sMessage.c_str() );
-}
-
 // Sends a chat-message:
 void cEngine::SendChatMessage(const char *str)
 {
@@ -2656,8 +2598,8 @@ cList<string>* cEngine::SplitMessage ( string sMsg )
 	int npos=0;
 	for ( int i=0; npos != string::npos; i++ )
 	{
-		Strings->Add( sMsg.substr ( npos, ( sMsg.find ( "#",npos )-npos ) ) );
-		npos = ( int ) sMsg.find ( "#",npos );
+		Strings->Add( sMsg.substr ( npos, ( sMsg.find ( NET_MSG_SEPERATOR,npos )-npos ) ) );
+		npos = ( int ) sMsg.find ( NET_MSG_SEPERATOR,npos );
 		if ( npos != string::npos )
 			npos++;
 	}

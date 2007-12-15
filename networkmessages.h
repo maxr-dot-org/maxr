@@ -19,8 +19,28 @@
 #ifndef NetworkMessagesH
 #define NetworkMessagesH
 #include "defines.h"
-#include "network.h"
+#include "engine.h"
 
+#define NET_MSG_SEPERATOR	"#"
+
+/**
+* @author alzi
+*
+* @param iFromX
+* @param iFromY
+* @param iToX
+* @param iToY
+* @param bPlane
+*/
+void SendMoveVehicle(int iFromX, int iFromY, int iToX, int iToY, bool bPlane );
+/**
+* @author alzi
+*
+* @param iOff
+* @param iSavedSpeed
+* @param bPlane
+*/
+void SendSavedSpeed(int iOff, int iSavedSpeed, bool bPlane );
 /**
 * @author alzi
 *
@@ -42,18 +62,60 @@ void SendDestroyObject(int iOff, bool bAir);
 * @author alzi
 *
 * @param iScrOff Source offset of unit
+* @param iBuildTyp What typ of building?
+* @param iRounds How many turns will it take
+* @param iCosts How much will it cost?
+* @param iBandX BandX
+* @param iBandY BandY
+* @param iTyp Typ of the Message
+*/
+void SendStartBuild(int iScrOff, int iBuildTyp, int iRounds, int iCosts, int iBandX, int iBandY, int iTyp);
+/**
+* @author alzi
+*
+* @param iPosX Horizontal position
+* @param iPosY Vertikal position
+* @param iBuildTyp What typ of building?
+* @param iPlayerNr Number of player who wants to build
+*/
+void SendAddBuilding(int iPosX, int iPosY, int iBuildTyp, int iPlayerNr);
+/**
+* @author alzi
+*
+* @param iOff
+* @param iExitOffX
+* @param iExitOffY
+*/
+void SendResetConstructor(int iOff, int iExitOffX, int iExitOffY);
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendPlayerSync( sSyncPlayer *SyncData );
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendVehicleSync( sSyncVehicle *SyncData );
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendBuildingSync( sSyncBuilding *SyncData );
+
+
+/**
+* @author alzi
+*
+* @param iScrOff Source offset of unit
 * @param iDestOff Offset of target unit
 * @param bScrAir is the source unit a plane?
 * @param iTyp Typ of the Message
 */
 void SendIntIntBool(int iScrOff, int iDestOff, bool bScrAir, int iTyp);
-/**
-* @author alzi
-*
-* @param iScrOff Source offset of unit
-* @param iTyp Typ of the Message
-*/
-void SendInt(int iScrOff, int iTyp);
 /**
 * @author alzi
 *

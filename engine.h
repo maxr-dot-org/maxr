@@ -155,9 +155,6 @@ public:
   void StopLog(void);
   void LogMessage(string msg);
   cList<string> *SplitMessage ( string sMsg );
-  void SendPlayerSync( sSyncPlayer *SyncData );
-  void SendVehicleSync( sSyncVehicle *SyncData );
-  void SendBuildingSync( sSyncBuilding *SyncData );
 
   void Run(void);
 };

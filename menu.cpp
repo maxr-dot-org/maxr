@@ -29,6 +29,7 @@
 #include "log.h"
 #include "files.h"
 #include "loaddata.h"
+#include "networkmessages.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -4112,8 +4113,7 @@ void cMultiPlayer::RunMenu ( void )
 					         free(msg);
 					       }*/
 					string msg;
-					msg=iToStr(SettingsData.Checksum); msg+="#";
-					msg+=MAX_VERSION;
+					msg=iToStr(SettingsData.Checksum) + NET_MSG_SEPERATOR + MAX_VERSION;
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Check" ) );
 
 					WaitForGo=true;
@@ -4884,7 +4884,7 @@ void cMultiPlayer::HandleMenuMessages()
 				PlayerList->Add ( p );
 				Refresh=true;
 				string smsg;
-				smsg=Strings->Items[2]; smsg+="#"; smsg+=iToStr(p->Nr);
+				smsg = Strings->Items[2] + NET_MSG_SEPERATOR + iToStr(p->Nr);
 				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
 				delete Strings;
@@ -5408,8 +5408,8 @@ cList<string>* cMultiPlayer::SplitMessage ( string msg )
 	int npos=0;
 	for ( int i=0; npos!=string::npos; i++ )
 	{
-		Strings->Add( msg.substr ( npos, ( msg.find ( "#",npos )-npos ) ) );
-		npos= ( int ) msg.find ( "#",npos );
+		Strings->Add( msg.substr ( npos, ( msg.find ( NET_MSG_SEPERATOR,npos )-npos ) ) );
+		npos= ( int ) msg.find ( NET_MSG_SEPERATOR,npos );
 		if ( npos!=string::npos )
 			npos++;
 	}
@@ -5481,9 +5481,7 @@ void cMultiPlayer::ClientConnectedCallBack ( void )
 {
 	string msg;
 	MyPlayer->Nr=100+random ( 1000000,1 );
-	msg=MyPlayer->name; msg+="#";
-	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
-	msg+=iToStr(MyPlayer->Nr);
+	msg = MyPlayer->name + NET_MSG_SEPERATOR + iToStr(GetColorNr ( MyPlayer->color )) + NET_MSG_SEPERATOR + iToStr(MyPlayer->Nr);
 	network->TCPSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
 }
 
@@ -5532,9 +5530,7 @@ void cMultiPlayer::ChangeFarbeName ( void )
 		SendPlayerList();
 		return;
 	}
-	msg=iToStr(MyPlayer->Nr); msg+="#";
-	msg+=iToStr(GetColorNr ( MyPlayer->color )); msg+="#";
-	msg+=MyPlayer->name;
+	msg=iToStr(MyPlayer->Nr) + NET_MSG_SEPERATOR + iToStr(GetColorNr ( MyPlayer->color )) + NET_MSG_SEPERATOR + MyPlayer->name;
 	network->TCPSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
 }
 
@@ -5543,13 +5539,12 @@ void cMultiPlayer::SendPlayerList ( void )
 {
 	string msg;
 	cPlayer *p;
-	msg=iToStr(PlayerList->iCount); msg+="#";
+	msg = iToStr(PlayerList->iCount) + NET_MSG_SEPERATOR;
 	for ( int i=0; i<PlayerList->iCount; i++ )
 	{
 		p=PlayerList->Items[i];
-		msg+=iToStr(p->Nr); msg+="#";
-		msg+=iToStr(GetColorNr ( p->color )); msg+="#";
-		msg+=p->name; if ( i!=PlayerList->iCount-1 ) msg+="#";
+		msg += iToStr(p->Nr) + NET_MSG_SEPERATOR + iToStr(GetColorNr ( p->color )) + NET_MSG_SEPERATOR + p->name;
+		if ( i != PlayerList->iCount-1 ) msg += NET_MSG_SEPERATOR;
 	}
 	network->TCPSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
 }
@@ -5558,18 +5553,17 @@ void cMultiPlayer::SendPlayerList ( void )
 void cMultiPlayer::SendOptions ( void )
 {
 	string msg;
-	msg=iToStr(no_options); msg+="#";
-	msg+=SaveGame; msg+="#";
+	msg=iToStr(no_options) + NET_MSG_SEPERATOR + SaveGame + NET_MSG_SEPERATOR;
 	if ( !no_options )
 	{
-		msg += iToStr( options.AlienTech ) + "#";
-		msg += iToStr( options.credits ) + "#";
-		msg += iToStr( options.dichte ) + "#";
-		msg += iToStr( options.FixedBridgeHead ) + "#";
-		msg += iToStr( options.gold ) + "#";
-		msg += iToStr( options.metal ) + "#";
-		msg += iToStr( options.oil ) + "#";
-		msg += iToStr( options.PlayRounds ) + "#";
+		msg += iToStr( options.AlienTech ) + NET_MSG_SEPERATOR
+		+ iToStr( options.credits ) + NET_MSG_SEPERATOR
+		+ iToStr( options.dichte ) + NET_MSG_SEPERATOR
+		+ iToStr( options.FixedBridgeHead ) + NET_MSG_SEPERATOR
+		+ iToStr( options.gold ) + NET_MSG_SEPERATOR
+		+ iToStr( options.metal ) + NET_MSG_SEPERATOR
+		+ iToStr( options.oil ) + NET_MSG_SEPERATOR
+		+ iToStr( options.PlayRounds ) + NET_MSG_SEPERATOR;
 	}
 	msg+=map;
 
@@ -5584,21 +5578,17 @@ void cMultiPlayer::TransmitRessources ( void )
 	for ( i=0;i<map_obj->size*map_obj->size;i++ )
 	{
 		if ( !map_obj->Resources[i].typ ) continue;
-		if ( msg.length() >0 ) msg+="#";
-		msg+=iToStr(no_options); msg+="#";
-		msg+=iToStr(map_obj->Resources[i].typ); msg+="#";
-		msg+=iToStr(map_obj->Resources[i].value);
+		if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
+		msg += iToStr(no_options) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].typ) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].value);
 		if ( msg.length() >200 )
 		{
 			network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
-//      SDL_Delay(10);
-			msg="";
+			msg = "";
 		}
 	}
 	if ( msg.length() >0 )
 	{
 		network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
-//    SDL_Delay(10);
 	}
 }
 
@@ -5754,17 +5744,17 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		        p->VehicleData[i].scan!=UnitsData.vehicle[i].data.scan||
 		        p->VehicleData[i].max_speed!=UnitsData.vehicle[i].data.max_speed )
 		{
-			if ( msg.length() >0 ) msg+="#";
-			msg+="0#";
-			msg+=iToStr(i) + "#";
-			msg+=iToStr(p->VehicleData[i].damage) + "#";
-			msg+=iToStr(p->VehicleData[i].max_shots) + "#";
-			msg+=iToStr(p->VehicleData[i].range) + "#";
-			msg+=iToStr(p->VehicleData[i].max_ammo) + "#";
-			msg+=iToStr(p->VehicleData[i].armor) + "#";
-			msg+=iToStr(p->VehicleData[i].max_hit_points) + "#";
-			msg+=iToStr(p->VehicleData[i].scan) + "#";
-			msg+=iToStr(p->VehicleData[i].max_speed);
+			if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
+			msg += (string)"0" + NET_MSG_SEPERATOR
+			+ iToStr(i) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].damage) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].max_shots) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].range) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].max_ammo) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].armor) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].max_hit_points) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].scan) + NET_MSG_SEPERATOR
+			+ iToStr(p->VehicleData[i].max_speed);
 		}
 		if ( msg.length() >200 )
 		{
@@ -5784,16 +5774,16 @@ void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
 		        p->BuildingData[i].max_hit_points!=UnitsData.building[i].data.max_hit_points||
 		        p->BuildingData[i].scan!=UnitsData.building[i].data.scan )
 		{
-			if ( msg.length() >0 ) msg+="#";
-			msg+="1#";
-			msg+=iToStr(i) + "#";
-			msg+=iToStr(p->BuildingData[i].damage) + "#";
-			msg+=iToStr(p->BuildingData[i].max_shots) + "#";
-			msg+=iToStr(p->BuildingData[i].range) + "#";
-			msg+=iToStr(p->BuildingData[i].max_ammo) + "#";
-			msg+=iToStr(p->BuildingData[i].armor) + "#";
-			msg+=iToStr(p->BuildingData[i].max_hit_points) + "#";
-			msg+=iToStr(p->BuildingData[i].scan);
+			if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
+			msg += (string)"1" + NET_MSG_SEPERATOR
+			+ iToStr(i) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].damage) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].max_shots) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].range) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].max_ammo) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].armor) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].max_hit_points) + NET_MSG_SEPERATOR
+			+ iToStr(p->BuildingData[i].scan);
 		}
 		if ( msg.length() >200 )
 		{
@@ -5815,18 +5805,14 @@ void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,cList<sLanding*> *
 	string msg;
 	int i;
 	
-	msg = iToStr(x) + "#";
-	msg += iToStr(y) + "#";
-	msg += iToStr(nr) + "#";
-	msg += iToStr(ll->iCount);
+	msg = iToStr(x) + NET_MSG_SEPERATOR + iToStr(y) + NET_MSG_SEPERATOR + iToStr(nr) + NET_MSG_SEPERATOR + iToStr(ll->iCount);
 
 	for ( i=0;i<ll->iCount;i++ )
 	{
 		sLanding *l;
 		l=ll->Items[i];
-		if ( msg.length() >0 ) msg+="#";
-		msg+=iToStr(l->id) + "#";
-		msg+=iToStr(l->cargo);
+		if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
+		msg += iToStr(l->id) + NET_MSG_SEPERATOR + iToStr(l->cargo);
 		if ( msg.length() >200 )
 		{
 			network->TCPSend ( MSG_PLAYER_LANDING,msg.c_str() );

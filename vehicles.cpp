@@ -3364,9 +3364,7 @@ void cVehicle::ShowBuildMenu ( void )
 						IsBuilding = true;
 						if ( game->engine->network )
 						{
-							string sMessage;
-							sMessage = iToStr( PosX + PosY * game->map->size ) + "#" + iToStr( BuildingTyp ) + "#" + iToStr( BuildRounds ) + "#" + iToStr( BuildCosts ) + "#" + iToStr( BandX ) + "#" + iToStr( BandY );
-							game->engine->network->TCPSend ( MSG_START_BUILD, sMessage.c_str() );
+							SendStartBuild( PosX + PosY * game->map->size, BuildingTyp, BuildRounds, BuildCosts, BandX, BandY, MSG_START_BUILD );
 						}
 						// Den Building Sound machen:
 						StopFXLoop ( game->ObjectStream );
@@ -5764,9 +5762,7 @@ void cVehicle::LayMine ( void )
 
 		if( game->engine->network && !game->engine->network->bServer )
 		{
-			string sMessage;
-			sMessage = iToStr ( PosX ) + "#" + iToStr ( PosY ) + "#" + iToStr ( BNrLandMine ) + "#" + iToStr ( owner->Nr );
-			game->engine->network->TCPSend ( MSG_ADD_BUILDING, sMessage.c_str() );
+			SendAddBuilding( PosX, PosY, BNrLandMine, owner->Nr );
 		}
 
 		PlayFX ( SoundData.SNDLandMinePlace );

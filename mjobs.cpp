@@ -20,6 +20,7 @@
 #include "mjobs.h"
 #include "game.h"
 #include "sound.h"
+#include "networkmessages.h"
 
 #include "fonts.h"
 
@@ -506,9 +507,7 @@ void cMJobs::DoTheMove ( void )
 		sWaypoint *wp;
 		if(SavedSpeed && game->engine->network && game->engine->network->bServer )
 		{
-			string sMessage;
-			sMessage = iToStr( vehicle->PosX + vehicle->PosY * map->size ) + "#" + iToStr( SavedSpeed ) + "#" + iToStr( plane );
-			game->engine->network->TCPSend( MSG_SAVED_SPEED,sMessage.c_str() );
+			SendSavedSpeed( vehicle->PosX + vehicle->PosY * map->size, SavedSpeed, plane );
 		}
 		// Die Kosten abziehen:
 		vehicle->data.speed+=SavedSpeed;
