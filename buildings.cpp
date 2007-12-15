@@ -3643,16 +3643,6 @@ void cBuilding::MakeResearchSchieber ( int x, int y )
 	}
 }
 
-// Struktur für die Upgrade-List:
-
-struct sUpgradeStruct
-{
-	SDL_Surface *sf;
-	bool vehicle;
-	int id;
-	sUpgrades upgrades[8];
-};
-
 // Zeigt den Upgradeschirm an:
 void cBuilding::ShowUpgrade ( void )
 {
@@ -3973,6 +3963,10 @@ void cBuilding::ShowUpgrade ( void )
 							up = true;
 
 							break;
+						}
+						if ( up && game->engine->network )
+						{
+							SendUpgrade( owner, ptr );
 						}
 					}
 
@@ -8207,6 +8201,11 @@ void cBuilding::DrawMenu ( void )
 					owner->base->AddMetal ( SubBase, -2 );
 
 					count++;
+
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend ( MSG_UPDATE_BUILDING, iToStr ( b->PosX + b->PosY * game->map->size ).c_str() );
+					}
 				}
 			}
 
@@ -8244,6 +8243,11 @@ void cBuilding::DrawMenu ( void )
 				ShowDetails();
 
 			owner->DoScan();
+
+			if ( game->engine->network )
+			{
+				game->engine->network->TCPSend ( MSG_UPDATE_BUILDING,  iToStr ( PosX + PosY * game->map->size ).c_str() );
+			}
 
 			return;
 		}

@@ -2013,10 +2013,33 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: starts cleaning of area (e.g. bulldozer)
+			// starts cleaning of area (e.g. bulldozer)
 			case MSG_START_CLEAR:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cVehicle *Vehicle;
+				Vehicle = map->GO[atoi ( sMsgString.c_str() )].vehicle;
+				if( Vehicle )
+				{
+					Vehicle->IsClearing = true;
+					Vehicle->ClearingRounds = map->GO[Vehicle->PosX + Vehicle->PosY * map->size].base->DirtValue / 4 + 1;
+					Vehicle->ClearBig = map->GO[Vehicle->PosX + Vehicle->PosY * map->size].base->data.is_big;
+					if( game->SelectedVehicle == Vehicle )
+					{
+						StopFXLoop( game->ObjectStream );
+						game->ObjectStream = Vehicle->PlayStram();
+					}
+					if( Vehicle->ClearBig )
+					{
+						Vehicle->PosX = map->GO[Vehicle->PosX + Vehicle->PosY * map->size].base->PosX;
+						Vehicle->PosY = map->GO[Vehicle->PosX + Vehicle->PosY * map->size].base->PosY;
+						Vehicle->BandX = Vehicle->PosX;
+						Vehicle->BandY = Vehicle->PosY;
+						map->GO[Vehicle->PosX + Vehicle->PosY * map->size].vehicle = Vehicle;
+						map->GO[Vehicle->PosX + 1 + Vehicle->PosY * map->size].vehicle = Vehicle;
+						map->GO[Vehicle->PosX + 1 + ( Vehicle->PosY + 1 ) * map->size].vehicle = Vehicle;
+						map->GO[Vehicle->PosX + ( Vehicle->PosY + 1 ) * map->size].vehicle = Vehicle;
+					}
+				}
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2178,26 +2201,94 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: upgrades a unit:
+			// upgrades a unit:
 			case MSG_UPGRADE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cPlayer *Player;
+				for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi( Strings->Items[0].c_str() ) ) break;
+				}
+				if( Player == game->ActivePlayer )
+				{
+					delete Strings;
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
+
+				if( atoi( Strings->Items[1].c_str() ) == 1 )
+				{
+					sUnitData *VehicleData;
+					VehicleData = Player->VehicleData + atoi( Strings->Items[2].c_str() );
+
+					VehicleData->damage = atoi( Strings->Items[3].c_str() );
+					VehicleData->range = atoi( Strings->Items[4].c_str() );
+					VehicleData->max_shots = atoi( Strings->Items[5].c_str() );
+					VehicleData->max_ammo = atoi( Strings->Items[6].c_str() );
+					VehicleData->max_hit_points = atoi( Strings->Items[7].c_str() );
+					VehicleData->armor = atoi( Strings->Items[8].c_str() );
+					VehicleData->scan = atoi( Strings->Items[9].c_str() );
+					VehicleData->costs = atoi( Strings->Items[10].c_str() );
+					VehicleData->max_speed = atoi( Strings->Items[11].c_str() );
+
+					VehicleData->version++;
+				}
+				else
+				{
+					sUnitData *BuildingData;
+					BuildingData = Player->BuildingData + atoi( Strings->Items[2].c_str() );
+
+					BuildingData->damage = atoi( Strings->Items[3].c_str() );
+					BuildingData->range = atoi( Strings->Items[4].c_str() );
+					BuildingData->max_shots = atoi( Strings->Items[5].c_str() );
+					BuildingData->max_ammo = atoi( Strings->Items[6].c_str() );
+					BuildingData->max_hit_points = atoi( Strings->Items[7].c_str() );
+					BuildingData->armor = atoi( Strings->Items[8].c_str() );
+					BuildingData->scan = atoi( Strings->Items[9].c_str() );
+					BuildingData->costs = atoi( Strings->Items[10].c_str() );
+
+					BuildingData->version++;
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: finished research
+			// finished research
 			case MSG_RESEARCH:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cPlayer *Player;
+				for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi( Strings->Items[0].c_str() ) ) break;
+				}
+				if( Player != game->ActivePlayer )
+				{
+					Player->DoTheResearch( atoi( Strings->Items[1].c_str() ) );
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: improve/update building:
+			// improve/update building:
 			case MSG_UPDATE_BUILDING:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cBuilding *Building;
+				Building = map->GO[atoi( sMsgString.c_str() )].top;
+				if( Building && Building->owner != game->ActivePlayer)
+				{
+					UpdateBuilding(Building->data,Building->owner->BuildingData[Building->typ->nr]);
+					Building->GenerateName();
+					if( Building == game->SelectedBuilding ) Building->ShowDetails();
+				}
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;

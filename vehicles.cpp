@@ -2321,6 +2321,10 @@ void cVehicle::DrawMenu ( void )
 				game->map->GO[PosX+ ( PosY+1 ) *game->map->size].vehicle = this;
 			}
 
+			if ( game->engine->network )
+			{
+				game->engine->network->TCPSend ( MSG_START_CLEAR, iToStr ( PosX + PosY * game->map->size ).c_str() );
+			}
 			return;
 		}
 

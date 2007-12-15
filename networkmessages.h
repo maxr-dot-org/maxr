@@ -136,6 +136,20 @@ void SendStoreVehicle( bool bDestPlane, bool bBuilding, int iDestOff, int iScrOf
 * @param iAmmo
 */
 void SendActivateVehicle( bool bBuilding, bool bScrPlane, int iUnitIndex, int iDestOff, int iScrOff, int iHitoints, int iAmmo );
+/**
+* @author alzi
+*
+* @param Owner
+* @param UpgradeStruct
+*/
+void SendUpgrade( cPlayer *Owner, sUpgradeStruct *UpgradeStruct );
+/**
+* @author alzi
+*
+* @param iPlayerNr
+* @param iResearchNr
+*/
+void SendResearch( int iPlayerNr, int iResearchNr );
 
 
 /**

@@ -136,7 +136,43 @@ void SendActivateVehicle( bool bBuilding, bool bScrPlane, int iUnitIndex, int iD
 		+ NET_MSG_SEPERATOR + iToStr(iScrOff)+ NET_MSG_SEPERATOR + iToStr(iHitoints) + NET_MSG_SEPERATOR + iToStr(iAmmo);
 	game->engine->network->TCPSend( MSG_ACTIVATE_VEHICLE, sMessage.c_str() );
 }
+void SendUpgrade( cPlayer *Owner, sUpgradeStruct *UpgradeStruct )
+{
+	string sMessage;
+	if( UpgradeStruct->vehicle )
+	{
+		sMessage = iToStr( Owner->Nr ) + NET_MSG_SEPERATOR + "1" + NET_MSG_SEPERATOR + iToStr( UpgradeStruct->id ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].damage ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].range ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_shots ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_ammo ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_hit_points ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].armor ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].scan ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].costs ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_speed );
+	}
+	else
+	{
+		sMessage = iToStr( Owner->Nr ) + NET_MSG_SEPERATOR + "1" + NET_MSG_SEPERATOR + iToStr( UpgradeStruct->id ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].damage ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].range ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_shots ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_ammo ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].max_hit_points ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].armor ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].scan ) + NET_MSG_SEPERATOR +
+			iToStr( Owner->VehicleData[UpgradeStruct->id].costs );
+	}
+	game->engine->network->TCPSend( MSG_UPGRADE, sMessage.c_str() );
+}
 
+void SendResearch( int iPlayerNr, int iResearchNr )
+{
+	string sMessage;
+	sMessage = iToStr ( iPlayerNr ) + NET_MSG_SEPERATOR + iToStr ( iResearchNr );
+	game->engine->network->TCPSend( MSG_RESEARCH, sMessage.c_str() );
+}
 
 
 void SendIntIntBool(int iScrOff, int iDestOff, bool bScrAir, int iTyp)

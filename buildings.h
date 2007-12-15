@@ -39,6 +39,15 @@ struct sUpgrades{
   string name;
 };
 
+// Struktur für die Upgrade-List:
+struct sUpgradeStruct
+{
+	SDL_Surface *sf;
+	bool vehicle;
+	int id;
+	sUpgrades upgrades[8];
+};
+
 // Struktur für die Bilder und Sounds:
 struct sBuilding{
   SDL_Surface *img,*img_org; // Surface des Buildings
