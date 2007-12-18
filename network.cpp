@@ -468,11 +468,17 @@ void cTCP::TCPCheckResends ()
 				int iClient = WaitOKList->Items[i]->iDestClientNum; // To which client should the buffer be send
 				if(iClient != -1) // To a Client
 				{
-					SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+					if ( sock_client[iClient] != NULL )
+					{
+						SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+					}
 				}
 				else // To the Host
 				{
-					SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+					if ( sock_server != NULL )
+					{
+						SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+					}
 				}
 				WaitOKList->Items[i]->iTicks = SDL_GetTicks(); // Set the new Time
 				string sTmp;
