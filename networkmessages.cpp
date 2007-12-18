@@ -174,6 +174,41 @@ void SendResearch( int iPlayerNr, int iResearchNr )
 	game->engine->network->TCPSend( MSG_RESEARCH, sMessage.c_str() );
 }
 
+void SendCommandoSuccess( bool bSteal, int SrcVehicleOff, int TargetVehicleOff )
+{
+	string sMessage;
+	sMessage = iToStr(bSteal) + NET_MSG_SEPERATOR + iToStr(SrcVehicleOff) + NET_MSG_SEPERATOR + iToStr(TargetVehicleOff);
+	game->engine->network->TCPSend( MSG_COMMANDO_SUCCESS, sMessage.c_str() );
+}
+
+void SendReloadRepair( bool bBuilding, bool bPlane, int iUnitOffset, int iDataValue, int iTyp )
+{
+	string sMessage;
+	sMessage = iToStr(bBuilding) + NET_MSG_SEPERATOR + iToStr(bPlane) + NET_MSG_SEPERATOR + iToStr(iUnitOffset) + NET_MSG_SEPERATOR + iToStr(iDataValue);
+	game->engine->network->TCPSend( iTyp, sMessage.c_str() );
+}
+
+void SendSentryMode( bool bPlane, int iUnitOffset, int iDataValue)
+{
+	string sMessage;
+	sMessage = iToStr(bPlane) + NET_MSG_SEPERATOR + iToStr(iUnitOffset) + NET_MSG_SEPERATOR + iToStr(iDataValue);
+	game->engine->network->TCPSend( MSG_WACHE, sMessage.c_str() );
+}
+
+void SendChangeUnitName( int iPosX, int iPosY, string sName, bool bSpecialInformation, int iTyp )
+{
+	string sMessage;
+	sMessage = iToStr(iPosX) + NET_MSG_SEPERATOR + iToStr(iPosY) + NET_MSG_SEPERATOR + sName + NET_MSG_SEPERATOR + iToStr(bSpecialInformation);
+	game->engine->network->TCPSend( iTyp, sMessage.c_str() );
+}
+
+void SendChangePlayerName( int iNr, string sName )
+{
+	string sMessage;
+	sMessage = iToStr(iNr) + NET_MSG_SEPERATOR + sName;
+	game->engine->network->TCPSend( MSG_CHANGE_PLAYER_NAME, sMessage.c_str() );
+}
+
 
 void SendIntIntBool(int iScrOff, int iDestOff, bool bScrAir, int iTyp)
 {

@@ -364,7 +364,11 @@ void cEngine::ChangeVehicleName ( int posx,int posy,string name,bool override,bo
 	}
 	if ( v )
 	{
-		v->name=name;
+		v->name = name;
+		if ( network && !override )
+		{
+			SendChangeUnitName( posx, posy, name, plane, MSG_CHANGE_VEH_NAME );
+		}
 	}
 }
 
@@ -382,7 +386,11 @@ void cEngine::ChangeBuildingName ( int posx,int posy,string name,bool override,b
 	}
 	if ( b )
 	{
-		b->name=name;
+		b->name = name;
+		if ( network && !override )
+		{
+			SendChangeUnitName( posx, posy, name, base, MSG_CHANGE_BUI_NAME );
+		}
 	}
 }
 
@@ -1053,6 +1061,35 @@ void cEngine::CheckDefeat ( void )
 					i--;
 				}
 			}
+			else if( network )
+			{
+				if ( p == game->ActivePlayer )
+				{
+					network->TCPSend( MSG_HOST_DEFEAT, "" );
+
+					cList<cPlayer *> *save = game->PlayerList;
+					for( int k = 0; k < save->iCount; k++ )
+					{
+						cPlayer *pp;
+						pp = save->Items[k];
+						if ( pp == p ) continue;
+						game->PlayerList->Add( pp );
+					}
+					// TOFIX: Gamesave 100 will be overwritten!
+					game->Save( "HostDefeat.sav", 100 );
+					delete game->PlayerList;
+					game->PlayerList = save;
+				}
+				else
+				{
+					network->TCPSend( MSG_PLAYER_DEFEAT, iToStr( p->Nr ).c_str() );
+
+					delete p;
+					game->PlayerList->Delete( i );
+					i--;
+					network->iMin_clients--;
+				}
+			}
 		}
 	}
 }
@@ -1193,21 +1230,6 @@ void cEngine::LogMessage ( string msg )
 	SDL_RWwrite ( LogFile,"\n",1,1 );
 
 	SDL_FreeRW ( LogFile );
-}
-
-// Ändert den Namen eines Spielers:
-void cEngine::ChangePlayerName ( string name )
-{
-	/*unsigned char msg[200];
-	int len;
-	if(!network)return;
-	len=name.Length()+8;
-	msg[0]='#';
-	msg[1]=len;
-	msg[2]=MSG_CHANGE_PLAYER_NAME;
-	((int*)(msg+3))[0]=game->ActivePlayer->Nr;
-	strcpy(msg+7,name.c_str());
-	network->Send(msg,len);*/
 }
 
 // Wird aufgerufen, wenn ein Spieler Ende drückt:
@@ -1694,8 +1716,10 @@ void cEngine::HandleGameMessages()
 			// changes vehicle name
 			case MSG_CHANGE_VEH_NAME:
 			{
-				//TODO: change vehicle name
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				ChangeVehicleName( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), Strings->Items[2], true, atoi( Strings->Items[3].c_str() ));
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -1743,8 +1767,19 @@ void cEngine::HandleGameMessages()
 			// changes name of player
 			case MSG_CHANGE_PLAYER_NAME:
 			{
-				//TODO: change name of player
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				for( int i = 0; i < game->PlayerList->iCount; i++ )
+				{
+					cPlayer *Player;
+					Player = game->PlayerList->Items[i];
+					if( Player->Nr == atoi( Strings->Items[0].c_str() ) )
+					{
+						Player->name = Strings->Items[1];
+						break;
+					}
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -1878,10 +1913,13 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: notification of new buildingname:
+			// notification of new buildingname:
 			case MSG_CHANGE_BUI_NAME:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				ChangeBuildingName( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), Strings->Items[2], true, atoi( Strings->Items[3].c_str() ));
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2169,34 +2207,123 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: repair a unit
+			// repair a unit
 			case MSG_REPAIR:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( atoi ( Strings->Items[0].c_str() ) )
+				{
+					cBuilding *Building;
+					Building = map->GO[atoi ( Strings->Items[2].c_str() )].top;
+					Building->data.hit_points = atoi ( Strings->Items[3].c_str() );
+					if( game->SelectedBuilding == Building ) Building->ShowDetails();
+				}
+				else
+				{
+					cVehicle *Vehicle;
+					if( atoi ( Strings->Items[1].c_str() ) )
+					{
+						Vehicle = map->GO[atoi ( Strings->Items[2].c_str() )].plane;
+					}
+					else
+					{
+						Vehicle = map->GO[atoi ( Strings->Items[2].c_str() )].vehicle;
+					}
+					Vehicle->data.hit_points = atoi ( Strings->Items[3].c_str() );
+					if( game->SelectedVehicle == Vehicle ) Vehicle->ShowDetails();
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: reload a unit
+			// reload a unit
 			case MSG_RELOAD:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				if( atoi ( Strings->Items[0].c_str() ) )
+				{
+					cBuilding *Building;
+					Building = map->GO[atoi ( Strings->Items[2].c_str() )].top;
+					Building->data.ammo = atoi ( Strings->Items[3].c_str() );
+					if( game->SelectedBuilding == Building ) Building->ShowDetails();
+				}
+				else
+				{
+					cVehicle *Vehicle;
+					if( atoi ( Strings->Items[1].c_str() ) )
+					{
+						Vehicle = map->GO[atoi ( Strings->Items[2].c_str() )].plane;
+					}
+					else
+					{
+						Vehicle = map->GO[atoi ( Strings->Items[2].c_str() )].vehicle;
+					}
+					Vehicle->data.ammo = atoi ( Strings->Items[3].c_str() );
+					if( game->SelectedVehicle == Vehicle ) Vehicle->ShowDetails();
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: change sentrymode of unit:
+			// change sentrymode of unit:
 			case MSG_WACHE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				cVehicle *Vehicle;
+				if( atoi ( Strings->Items[0].c_str() ) )
+				{
+					Vehicle = map->GO[atoi ( Strings->Items[1].c_str() )].plane;
+				}
+				else
+				{
+					Vehicle = map->GO[atoi ( Strings->Items[1].c_str() )].vehicle;
+				}
+				if( Vehicle )
+				{
+					Vehicle->Wachposten = atoi ( Strings->Items[2].c_str() );
+					Vehicle->Wachwechsel();
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: clears field of claymore:
+			// clears field of claymore:
 			case MSG_CLEAR_MINE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cBuilding *Building;
+				Building = map->GO[atoi( sMsgString.c_str() )].base;
+				if( Building )
+				{
+					if( Building == game->SelectedBuilding ) Building->Deselct();
+					if ( map->GO[atoi( sMsgString.c_str() )].subbase )
+					{
+						map->GO[atoi( sMsgString.c_str() )].base = map->GO[atoi( sMsgString.c_str() )].subbase;
+						map->GO[atoi( sMsgString.c_str() )].subbase = NULL;
+					}
+					else
+					{
+						map->GO[atoi( sMsgString.c_str() )].base = NULL;
+					}
+					if( Building->prev )
+					{
+						cBuilding *PrevBuilding;
+						PrevBuilding = Building->prev;
+						PrevBuilding->next = Building->next;
+						if( PrevBuilding->next ) PrevBuilding->next->prev = PrevBuilding;
+					}
+					else
+					{
+						Building->owner->BuildingList = Building->next;
+						if( Building->next ) Building->next->prev = NULL;
+					}
+					delete Building;
+				}
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2293,18 +2420,88 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: commando failed:
+			// commando failed:
 			case MSG_COMMANDO_MISTAKE:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cVehicle *Vehicle;
+				Vehicle = map->GO[atoi( sMsgString.c_str() )].vehicle;
+				if( Vehicle )
+				{
+					Vehicle->detected = true;
+					Vehicle->detection_override = true;
+					if( game->ActivePlayer->ScanMap[Vehicle->PosX + Vehicle->PosY * map->size] )
+					{
+						// TODO: Translate!!!
+						game->AddCoords( "Infiltrator entdeckt", Vehicle->PosX, Vehicle->PosY );
+						if( random( 2, 0 ) == 0 ) PlayVoice( VoiceData.VOIDetected1 );
+						else PlayVoice( VoiceData.VOIDetected2 );
+					}
+				}
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: commando success:
+			// commando success:
 			case MSG_COMMANDO_SUCCESS:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+
+				cVehicle *Vehicle,*TargetVehicle;
+				cBuilding *TargetBuilding;
+				bool bSteal;
+
+				bSteal = atoi ( Strings->Items[0].c_str() );
+				Vehicle = map->GO[atoi ( Strings->Items[1].c_str() )].vehicle;
+				TargetVehicle = map->GO[atoi ( Strings->Items[2].c_str() )].vehicle;
+				TargetBuilding = map->GO[atoi ( Strings->Items[2].c_str() )].top;
+				if( Vehicle )
+				{
+					if( TargetVehicle )
+					{
+						if( bSteal )
+						{
+							if( TargetVehicle->owner == game->ActivePlayer )
+							{
+								// TODO: Translate!!!
+								game->AddCoords( "Einheit gestohlen", TargetVehicle->PosX, TargetVehicle->PosY );
+							}
+							TargetVehicle->owner = Vehicle->owner;
+						}
+						else
+						{
+							if( TargetVehicle->owner == game->ActivePlayer )
+							{
+								// TODO: Translate!!!
+								game->AddCoords( "Einheit sabotiert", TargetVehicle->PosX, TargetVehicle->PosY );
+							}
+							TargetVehicle->Disabled = 2 + Vehicle->CommandoRank / 2;
+							TargetVehicle->data.speed = 0;
+							TargetVehicle->data.shots = 0;
+							if( TargetVehicle->mjob )
+							{
+								TargetVehicle->mjob->finished = true;
+								TargetVehicle->mjob = NULL;
+								TargetVehicle->moving = false;
+								TargetVehicle->MoveJobActive = false;
+							}
+						}
+					}
+					else if( TargetBuilding )
+					{
+						if( TargetBuilding->owner == game->ActivePlayer )
+						{
+							// TODO: Translate!!!
+							game->AddCoords( "Gebäude sabotiert", TargetBuilding->PosX, TargetBuilding->PosY );
+						}
+						TargetBuilding->Disabled = 2 + Vehicle->CommandoRank / 2;
+						TargetBuilding->data.shots = 0;
+						TargetBuilding->StopWork( true );
+						TargetBuilding->owner->DoScan();
+					}
+					if( Vehicle->CommandoRank < 5) Vehicle->CommandoRank++;
+				}
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2631,10 +2828,28 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: updates a unit in storage/hangar/dock:
+			// updates a unit in storage/hangar/dock:
 			case MSG_UPDATE_STORED:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cList<string> *Strings;
+				Strings = SplitMessage ( sMsgString );
+				int iPlayerNr, iIndex, iOff;
+				cBuilding *Building;
+
+				iPlayerNr = atoi ( Strings->Items[0].c_str() );
+				iIndex = atoi ( Strings->Items[1].c_str() );
+				iOff = atoi ( Strings->Items[2].c_str() );
+				Building = map->GO[iOff].top;
+				if( !Building || !Building->StoredVehicles || Building->StoredVehicles->iCount <= iIndex || Building->owner->Nr != iPlayerNr )
+				{
+					delete Strings;
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
+				// TOFIX: Add copying data here!
+				//Building->StoredVehicles->Items[iIndex]->data = *((sVehicleData*)(msg+12));
+				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
@@ -2686,18 +2901,35 @@ void cEngine::HandleGameMessages()
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: host defeated:
+			// host defeated:
 			case MSG_HOST_DEFEAT:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				game->Defeated = true;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
 			}
-			// TODO: player defeated:
+			// player defeated:
 			case MSG_PLAYER_DEFEAT:
 			{
-				cLog::write("FIXME: Msgtype "+iToStr(msg->typ)+" not yet implemented!", cLog::eLOG_TYPE_NETWORK);
+				cPlayer *Player;
+				for( int i = 0 ; i < game->PlayerList->iCount ; i++ )
+				{
+					Player = game->PlayerList->Items[i] ;
+					if( Player->Nr != atoi ( sMsgString.c_str() ) ) continue;
+
+					if( Player != game->ActivePlayer )
+					{
+						game->AddMessage( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name  + " " + lngPack.i18n( "Text~Comp~Defeated") + "!" );
+						delete Player;
+						game->PlayerList->Delete( i );
+					}
+					else
+					{
+						game->Defeated = true;
+					}
+					break;
+				}
 				delete network->NetMessageList->Items[iNum];		
 				network->NetMessageList->Delete ( iNum );
 				break;

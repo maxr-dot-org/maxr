@@ -1064,6 +1064,10 @@ int cGame::CheckUser ( void )
 					b->data.ammo=b->data.max_ammo;
 				}
 			}
+			if( engine->network )
+			{
+				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.ammo:b->data.ammo ), MSG_RELOAD );
+			}
 			SelectedVehicle->ShowDetails();
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Crepair&&SelectedVehicle&&SelectedVehicle->RepairActive )
@@ -1087,6 +1091,10 @@ int cGame::CheckUser ( void )
 				{
 					b->data.hit_points=b->data.max_hit_points;
 				}
+			}
+			if( engine->network )
+			{
+				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.hit_points:b->data.hit_points ), MSG_REPAIR );
 			}
 			SelectedVehicle->ShowDetails();
 		}

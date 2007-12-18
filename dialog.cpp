@@ -30,6 +30,7 @@
 #include "files.h"
 #include "log.h"
 #include "loaddata.h"
+#include "networkmessages.h"
 
 //TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
 // Zeigt einen Ja/Nein Dialog an:
@@ -1002,7 +1003,10 @@ void showPreferences ( void )
 				}
 				if ( strcmp ( game->ActivePlayer->name.c_str(),OldName.c_str() ) !=0 )
 				{
-					game->engine->ChangePlayerName ( game->ActivePlayer->name );
+					if( game->engine->network )
+					{
+						SendChangePlayerName( game->ActivePlayer->Nr, game->ActivePlayer->name );
+					}
 				}
 				// Save new settings to max.xml
 				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );

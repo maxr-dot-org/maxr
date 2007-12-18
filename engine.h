@@ -135,7 +135,6 @@ public:
   void AddActiveMoveJob(cMJobs *job);
   void Reservieren(int x,int y,bool plane);
   void MoveVehicle(int FromX,int FromY,int ToX,int ToY,bool override,bool plane);
-  void ChangePlayerName(string name);
   void EndePressed(int PlayerNr);
   void CheckEnde(void);
   void Rundenende(void);

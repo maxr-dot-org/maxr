@@ -150,6 +150,49 @@ void SendUpgrade( cPlayer *Owner, sUpgradeStruct *UpgradeStruct );
 * @param iResearchNr
 */
 void SendResearch( int iPlayerNr, int iResearchNr );
+/**
+* @author alzi
+*
+* @param bSteal
+* @param SrcVehicleOff
+* @param TargetVehicleOff
+*/
+void SendCommandoSuccess( bool bSteal, int SrcVehicleOff, int TargetVehicleOff );
+/**
+* @author alzi
+*
+* @param bBuilding
+* @param bPlane
+* @param iUnitOffset
+* @param iDataValue
+* @param iTyp
+*/
+void SendReloadRepair( bool bBuilding, bool bPlane, int iUnitOffset, int iDataValue, int iTyp );
+/**
+* @author alzi
+*
+* @param bPlane
+* @param iUnitOffset
+* @param iDataValue
+*/
+void SendSentryMode( bool bPlane, int iUnitOffset, int iDataValue);
+/**
+* @author alzi
+*
+* @param iPosX
+* @param iPosY
+* @param sName
+* @param bSpecialInformation
+* @param iTyp
+*/
+void SendChangeUnitName( int iPosX, int iPosY, string sName, bool bSpecialInformation, int iTyp );
+/**
+* @author alzi
+*
+* @param iNr
+* @param sName
+*/
+void SendChangePlayerName( int iNr, string sName );
 
 
 /**

@@ -2348,6 +2348,10 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten = !Wachposten;
+			if ( game->engine->network )
+			{
+				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
+			}
 			Wachwechsel();
 			return;
 		}
@@ -5798,8 +5802,12 @@ void cVehicle::ClearMine ( void )
 
 	b = game->map->GO[off].base;
 
-	if ( !b || !b->data.is_expl_mine || b->owner != owner )
-		return;
+	if ( !b || !b->data.is_expl_mine || b->owner != owner ) return;
+
+	if ( game->engine->network )
+	{
+		game->engine->network->TCPSend ( MSG_CLEAR_MINE, iToStr ( off ).c_str() );
+	}
 
 	// Mine räumen:
 	game->map->GO[off].base = NULL;
@@ -6002,6 +6010,10 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 
 	if ( success )
 	{
+		if ( game->engine->network )
+		{
+			SendCommandoSuccess ( steal, PosX + PosY * game->map->size, off );
+		}
 		if ( steal )
 		{
 			cVehicle *v;
@@ -6052,10 +6064,16 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	else
 	{
 		PlayVoice ( VoiceData.VOICommandoDetected );
+		if ( game->engine->network )
+		{
+			game->engine->network->TCPSend ( MSG_COMMANDO_MISTAKE, iToStr( PosX + PosY * game->map->size ).c_str() );
+		}
 	}
 
 	if ( game->SelectedVehicle == this )
+	{
 		ShowDetails();
+	}
 }
 
 void cVehicle::DeleteStored ( void )
