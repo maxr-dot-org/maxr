@@ -451,6 +451,7 @@ int CheckResends ( void * )
 	SDL_Delay(1000);
 	while ( 1 )
 	{
+		SDL_Delay(10);
 		MultiPlayer->network->TCPCheckResends ();
 	}
 	return 1;
@@ -458,34 +459,37 @@ int CheckResends ( void * )
 
 void cTCP::TCPCheckResends ()
 {
-	for(int i = 0; WaitOKList->iCount > i; i++) // Check all Waiting Buffers
+	if(WaitOKList)
 	{
-		if(WaitOKList->Items[i]) // sanity check
+		for(int i = 0; WaitOKList->iCount > i; i++) // Check all Waiting Buffers
 		{
-			int iTime = WaitOKList->Items[i]->iTicks; // Get the Time since this buffer was send the last time
-			if( ( iTime - SDL_GetTicks() ) > 100 )
+			if(WaitOKList->Items[i]) // sanity check
 			{
-				int iClient = WaitOKList->Items[i]->iDestClientNum; // To which client should the buffer be send
-				if(iClient != -1) // To a Client
+				int iTime = WaitOKList->Items[i]->iTicks; // Get the Time since this buffer was send the last time
+				if( ( iTime - SDL_GetTicks() ) > 100 )
 				{
-					if ( sock_client[iClient] != NULL )
+					int iClient = WaitOKList->Items[i]->iDestClientNum; // To which client should the buffer be send
+					if(iClient != -1) // To a Client
 					{
-						SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+						if ( sock_client[iClient] != NULL )
+						{
+							SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+						}
 					}
-				}
-				else // To the Host
-				{
-					if ( sock_server != NULL )
+					else // To the Host
 					{
-						SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+						if ( sock_server != NULL )
+						{
+							SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
+						}
 					}
+					WaitOKList->Items[i]->iTicks = SDL_GetTicks(); // Set the new Time
+					string sTmp;
+					sTmp = "Resend buffer: -ID: " + iToStr( WaitOKList->Items[i]->iID );
+					cLog::write(sTmp, LOG_TYPE_NETWORK);
 				}
-				WaitOKList->Items[i]->iTicks = SDL_GetTicks(); // Set the new Time
-				string sTmp;
-				sTmp = "Resend buffer: -ID: " + iToStr( WaitOKList->Items[i]->iID );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
+				SDL_Delay ( 1 ) ;
 			}
-			SDL_Delay ( 1 ) ;
 		}
 	}
 	return ;
