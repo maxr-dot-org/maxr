@@ -131,7 +131,9 @@ bool cTCP::TCPOpen ( void )
 				string sTmp;
 				sTmp = "(Host)Send NewID-Message: -ID " + SplitMessageID( NetBuffer->iID ) + " -Client " + iToStr( iNum_clients-1 ) + "-Message: \"" + NetBuffer->msg.msg + "\"";
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				WaitOKList->Add(NetBuffer); // Add package to waitlist
+				sNetBuffer *WaitBuffer = new sNetBuffer;
+				memcpy( WaitBuffer, NetBuffer, sizeof( sNetBuffer ) );
+				WaitOKList->Add( WaitBuffer ); // Add package to waitlist
 			}
 		}
 		iStatus=STAT_CONNECTED;
@@ -239,53 +241,57 @@ bool cTCP::TCPReceive()
 				sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
 				ReceivedMsgData->iID = NetBuffer->iID;
 				ReceivedMsgData->iTime = SDL_GetTicks();
-				LastReceived->Add( ReceivedMsgData );
-
+				bool bIgnore = false;
 				for (int j = 0; j < LastReceived->iCount; j++ )
 				{
-					if( NetBuffer->iID == LastReceived->Items[j]->iID )
+					if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == LastReceived->Items[j]->iID )
 					{
 						string sTmp;
 						sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 						cLog::write(sTmp, LOG_TYPE_NETWORK);
-						break;	// Received message twice - ignoring 
+						bIgnore = true;	// Received message twice - ignoring 
+						break;
 					}
 				}
-				// is a new messages
-				if ( NetBuffer->iTyp == BUFF_TYP_DATA )
+				if ( !bIgnore )
 				{
-					string sTmp;
-					sTmp = "(Host)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-					cLog::write(sTmp, LOG_TYPE_NETWORK);
-					// Add message to list
-					cNetMessage *Message = new cNetMessage();
-					memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
-					NetMessageList->Add( Message );
-					// Send OK to Client
-					SendOK( NetBuffer->iID, i );
-				}
-				// if an OK that messages has been reveived
-				else if( NetBuffer->iTyp == BUFF_TYP_OK )
-				{
-					string sTmp;
-					sTmp = "(Host)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i );
-					cLog::write(sTmp, LOG_TYPE_NETWORK);
-					// Delete Message ID from WaitList
-					for (int k = 0; k < WaitOKList->iCount; k++)
+					LastReceived->Add( ReceivedMsgData );
+					// is a new messages
+					if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 					{
-						if( WaitOKList->Items[k]->iID == NetBuffer->iID )
+						string sTmp;
+						sTmp = "(Host)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+						cLog::write(sTmp, LOG_TYPE_NETWORK);
+						// Add message to list
+						cNetMessage *Message = new cNetMessage();
+						memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
+						NetMessageList->Add( Message );
+						// Send OK to Client
+						SendOK( NetBuffer->iID, i );
+					}
+					// if an OK that messages has been reveived
+					else if( NetBuffer->iTyp == BUFF_TYP_OK )
+					{
+						string sTmp;
+						sTmp = "(Host)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i );
+						cLog::write(sTmp, LOG_TYPE_NETWORK);
+						// Delete Message ID from WaitList
+						for (int k = 0; k < WaitOKList->iCount; k++)
 						{
-							delete WaitOKList->Items[k];
-							WaitOKList->Delete(k);
-							break;
+							if( WaitOKList->Items[k]->iID == NetBuffer->iID )
+							{
+								delete WaitOKList->Items[k];
+								WaitOKList->Delete(k);
+								break;
+							}
 						}
 					}
-				}
-				else
-				{
-					string sTmp;
-					sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-					cLog::write(sTmp, LOG_TYPE_NETWORK);
+					else
+					{
+						string sTmp;
+						sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+						cLog::write(sTmp, LOG_TYPE_NETWORK);
+					}
 				}
 			}
 			i++;
@@ -299,61 +305,66 @@ bool cTCP::TCPReceive()
 		sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
 		ReceivedMsgData->iID = NetBuffer->iID;
 		ReceivedMsgData->iTime = SDL_GetTicks();
-		LastReceived->Add( ReceivedMsgData );
 
+		bool bIgnore = false;
 		for (int j = 0; j < LastReceived->iCount; j++ )
 		{
-			if( NetBuffer->iID == LastReceived->Items[j]->iID )
+			if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == LastReceived->Items[j]->iID )
 			{
 				string sTmp;
 				sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				break;	// Received message twice - ignoring 
+				bIgnore = true;	// Received message twice - ignoring 
+				break;
 			}
 		}
-		if ( NetBuffer->iTyp == BUFF_TYP_DATA )
+		if ( !bIgnore )
 		{
-			string sTmp;
-			sTmp = "(Client)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-			cLog::write(sTmp, LOG_TYPE_NETWORK);
-			// Add message to list
-			cNetMessage *Message = new cNetMessage();
-			memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
-			NetMessageList->Add( Message );
-			// Send OK to Server
-			SendOK( NetBuffer->iID, -1 );
-		}
-		// if an OK that messages has been reveived
-		else if( NetBuffer->iTyp == BUFF_TYP_OK )
-		{
-			string sTmp;
-			sTmp = "(Client)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
-			cLog::write(sTmp, LOG_TYPE_NETWORK);
-			// Delete Message ID from WaitList
-			for (int k = 0; k < WaitOKList->iCount; k++)
+			LastReceived->Add( ReceivedMsgData );
+			if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 			{
-				if( WaitOKList->Items[k]->iID == NetBuffer->iID )
+				string sTmp;
+				sTmp = "(Client)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
+				// Add message to list
+				cNetMessage *Message = new cNetMessage();
+				memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
+				NetMessageList->Add( Message );
+				// Send OK to Server
+				SendOK( NetBuffer->iID, -1 );
+			}
+			// if an OK that messages has been reveived
+			else if( NetBuffer->iTyp == BUFF_TYP_OK )
+			{
+				string sTmp;
+				sTmp = "(Client)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
+				// Delete Message ID from WaitList
+				for (int k = 0; k < WaitOKList->iCount; k++)
 				{
-					delete WaitOKList->Items[k];
-					WaitOKList->Delete(k);
-					break;
+					if( WaitOKList->Items[k]->iID == NetBuffer->iID )
+					{
+						delete WaitOKList->Items[k];
+						WaitOKList->Delete(k);
+						break;
+					}
 				}
 			}
-		}
-		// if a new id has been received
-		else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
-		{
-			string sTmp;
-			sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"";
-			cLog::write(sTmp, LOG_TYPE_NETWORK);
-			iMyID = atoi ( (char *) NetBuffer->msg.msg );
-			SendOK( NetBuffer->iID, -1 );
-		}
-		else
-		{
-			string sTmp;
-			sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-			cLog::write(sTmp, LOG_TYPE_NETWORK);
+			// if a new id has been received
+			else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
+			{
+				string sTmp;
+				sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"";
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
+				iMyID = atoi ( (char *) NetBuffer->msg.msg );
+				SendOK( NetBuffer->iID, -1 );
+			}
+			else
+			{
+				string sTmp;
+				sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
+				cLog::write(sTmp, LOG_TYPE_NETWORK);
+			}
 		}
 	}
 	if ( !bServer || iStatus==STAT_CONNECTED )
@@ -515,6 +526,7 @@ void cTCP::TCPCheckResends ()
 		{
 			if( LastReceived->Items[i]->iTime - SDL_GetTicks() > 60*1000 )
 			{
+				delete LastReceived->Items[i];
 				LastReceived->Delete(i);
 				break;
 			}
