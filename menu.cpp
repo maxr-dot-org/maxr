@@ -4711,7 +4711,6 @@ void cMultiPlayer::RunMenu ( void )
 			LetsGo=false;
 			if ( map_obj->LoadMap ( map ) )
 			{
-
 				for ( i=0;i<PlayerList->iCount;i++ )
 				{
 					if ( PlayerList->Items[i]==MyPlayer ) {nr=i;break;}

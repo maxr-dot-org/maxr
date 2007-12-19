@@ -442,6 +442,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 		{
 			job->vehicle->IsBuilding=false;
 			job->vehicle->BuildOverride=false;
+			if( !network || network->bServer || job->vehicle->owner == game->ActivePlayer )
 			{
 				if ( job->vehicle->data.can_build==BUILD_BIG )
 				{
@@ -690,6 +691,34 @@ void cEngine::AddVehicle ( int posx,int posy,sVehicle *v,cPlayer *p,bool init,bo
 	}
 }
 
+void DeleteObject( cBuilding *Building )
+{
+	if( Building )
+	{
+		if( Building->prev )
+		{
+			Building->prev->next = Building->next;
+			if( Building->next )
+			{
+				Building->next->prev = Building->prev;
+			}
+		}
+		else
+		{
+			Building->owner->BuildingList = Building->next;
+			if( Building->next )
+			{
+				Building->next->prev = NULL;
+			}
+		}
+		if( Building->base )
+		{
+			Building->base->DeleteBuilding( Building );
+		}
+		delete Building;
+	}
+}
+
 // Fügt ein Building ein:
 void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init )
 {
@@ -713,52 +742,54 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 	}
 	else
 	{
-#define DELETE_OBJ(a,b) if(a){if(a->prev){a->prev->next=a->next;if(a->next)a->next->prev=a->prev;}else{a->owner->b=a->next;if(a->next)a->next->prev=NULL;}if(a->base)a->base->DeleteBuilding(a);delete a;}
 		if ( n->data.is_big )
 		{
-			DELETE_OBJ ( map->GO[off].top,BuildingList )
+			game->map->GO[off].top;
+			game->map->GO[off+1].top;
+			game->map->GO[off+map->size].top;
+			game->map->GO[off+map->size+1].top;
+			DeleteObject ( map->GO[off].top );
 			map->GO[off].top=n;
 			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
-				DELETE_OBJ ( map->GO[off].base,BuildingList )
+				DeleteObject ( map->GO[off].base );
 				map->GO[off].base = NULL;
 			}
 			off++;
-			DELETE_OBJ ( map->GO[off].top,BuildingList )
+			DeleteObject ( map->GO[off].top );
 			map->GO[off].top=n;
 			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
-				DELETE_OBJ ( map->GO[off].base,BuildingList )
+				DeleteObject ( map->GO[off].base );
 				map->GO[off].base=NULL;
 			}
 			off+=map->size;
-			DELETE_OBJ ( map->GO[off].top,BuildingList )
+			DeleteObject ( map->GO[off].top );
 			map->GO[off].top=n;
 			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
-				DELETE_OBJ ( map->GO[off].base,BuildingList )
+				DeleteObject ( map->GO[off].base );
 				map->GO[off].base=NULL;
 			}
 			off--;
-			DELETE_OBJ ( map->GO[off].top,BuildingList )
+			DeleteObject ( map->GO[off].top );
 			map->GO[off].top=n;
 			if ( map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
-				DELETE_OBJ ( map->GO[off].base,BuildingList )
+				DeleteObject ( map->GO[off].base );
 				map->GO[off].base=NULL;
 			}
 		}
 		else
 		{
-			DELETE_OBJ ( map->GO[off].top,BuildingList )
+			DeleteObject ( map->GO[off].top );
 			map->GO[off].top=n;
 			if ( !n->data.is_connector&&map->GO[off].base&&(map->GO[off].base->data.is_road || map->GO[off].base->data.is_expl_mine) )
 			{
-				DELETE_OBJ ( map->GO[off].base,BuildingList )
+				DeleteObject ( map->GO[off].base );
 				map->GO[off].base=NULL;
 			}
 		}
-#undef DELETE_OBJ
 	}
 	if ( !init ) n->StartUp=10;
 	// Das Gebäude in die Basis integrieren:
@@ -1980,13 +2011,13 @@ void cEngine::HandleGameMessages()
 					pl = game->PlayerList->Items[i];
 					if( pl->Nr == atoi( Strings->Items[3].c_str() ) ) break;
 				}
-				b = UnitsData.building + atoi( Strings->Items[3].c_str() );
+				b = UnitsData.building + atoi( Strings->Items[2].c_str() );
 				UpdateBuilding( b->data, pl->BuildingData[b->nr] )
 				AddBuilding( atoi( Strings->Items[0].c_str() ), atoi( Strings->Items[1].c_str() ), b, pl );
 				if( b->data.is_base || b->data.is_connector )
 				{
 					cVehicle *v;
-					v = map->GO[atoi( Strings->Items[0].c_str() ) + atoi( Strings->Items[0].c_str() ) * map->size].vehicle;
+					v = map->GO[atoi( Strings->Items[0].c_str() ) + atoi( Strings->Items[1].c_str() ) * map->size].vehicle;
 					if( v && v->data.can_build == BUILD_SMALL )
 					{
 						v->IsBuilding = false;
