@@ -4867,14 +4867,14 @@ void cMultiPlayer::HandleMenuMessages()
 		msgstring = ( char * ) msg->msg;
 		switch ( msg->typ )
 		{
-				// Chatnachricht:
+			// Chatnachricht:
 			case MSG_CHAT:
 				AddChatLog ( msgstring );
 				PlayFX ( SoundData.SNDChat );
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
 				break;
-				// Neuer Spieler meldet sich an:
+			// Neuer Spieler meldet sich an:
 			case MSG_SIGNING_IN:
 			{
 				cPlayer *p;
@@ -4887,6 +4887,7 @@ void cMultiPlayer::HandleMenuMessages()
 				smsg = Strings->Items[2] + NET_MSG_SEPERATOR + iToStr(p->Nr);
 				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
 				SendPlayerList();
+				SendOptions();
 				delete Strings;
 				delete network->NetMessageList->Items[iNum];
 				network->NetMessageList->Delete ( iNum );
