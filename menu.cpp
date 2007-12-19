@@ -5580,10 +5580,11 @@ void cMultiPlayer::TransmitRessources ( void )
 		if ( !map_obj->Resources[i].typ ) continue;
 		if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
 		msg += iToStr(no_options) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].typ) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].value);
-		if ( msg.length() >200 )
+		if ( msg.length() > 200 )
 		{
 			network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
 			msg = "";
+			SDL_Delay( 5 );
 		}
 	}
 	if ( msg.length() >0 )
