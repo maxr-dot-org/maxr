@@ -105,6 +105,16 @@ enum MSG_TYPE
 };
 
 /**
+* 
+*
+* @author Albert "alzi" Ziegenhagel alias DoctorDeath
+*/
+struct sReceivedMsgData{
+	int iTime;
+	int iID;
+};
+
+/**
 * Message class with message, lenght and typ
 *
 * @author Albert "alzi" Ziegenhagel alias DoctorDeath
@@ -168,6 +178,7 @@ private:
 
 	int iMyID;						// ID of this Client
 	unsigned int iNextMessageID;	// ID of next Message
+	cList<sReceivedMsgData*> *LastReceived;		// A List with all IDs of messages, the game has received in the last minute
 	cList<sNetBuffer*> *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
 	int iPlayerId;					// ID of this Player
 	int iNum_clients;				// Number of current clients

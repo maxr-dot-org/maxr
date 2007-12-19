@@ -35,6 +35,7 @@ cTCP::cTCP ( bool server )
 	iStatus=STAT_CLOSED;
 	WaitOKList = new cList<sNetBuffer*>;
 	NetMessageList = new cList<cNetMessage*>;
+	LastReceived = new cList<sReceivedMsgData*>;
 	iMyID = 0;
 	iNextMessageID = GenerateNewID();
 	bReceiveThreadFinished = true;
@@ -211,7 +212,9 @@ bool cTCP::TCPSend ( int typ,const char *msg)
 			SDL_Delay ( 1 );
 		}
 		// Add package to waitlist
-		WaitOKList->Add(NetBuffer);
+		sNetBuffer *WaitBuffer = new sNetBuffer;
+		memcpy( WaitBuffer, NetBuffer, sizeof( sNetBuffer ) );
+		WaitOKList->Add( WaitBuffer );
 		
 		iPartNum++;
 	}
@@ -232,16 +235,22 @@ bool cTCP::TCPReceive()
 			if ( SDLNet_SocketReady ( sock_client[i] ) )
 			{
 				SDLNet_TCP_Recv ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
-				/*for (int j = 0; j < WaitOKList->iCount; j++ )
+
+				sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
+				ReceivedMsgData->iID = NetBuffer->iID;
+				ReceivedMsgData->iTime = SDL_GetTicks();
+				LastReceived->Add( ReceivedMsgData );
+
+				for (int j = 0; j < LastReceived->iCount; j++ )
 				{
-					if(  NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == WaitOKList->Items[j]->iID )
+					if( NetBuffer->iID == LastReceived->Items[j]->iID )
 					{
 						string sTmp;
 						sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 						cLog::write(sTmp, LOG_TYPE_NETWORK);
 						break;	// Received message twice - ignoring 
 					}
-				}*/
+				}
 				// is a new messages
 				if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 				{
@@ -266,6 +275,7 @@ bool cTCP::TCPReceive()
 					{
 						if( WaitOKList->Items[k]->iID == NetBuffer->iID )
 						{
+							delete WaitOKList->Items[k];
 							WaitOKList->Delete(k);
 							break;
 						}
@@ -285,16 +295,22 @@ bool cTCP::TCPReceive()
 	else
 	{
 		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-		/*for (int j = 0; j < WaitOKList->iCount; j++ )
+
+		sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
+		ReceivedMsgData->iID = NetBuffer->iID;
+		ReceivedMsgData->iTime = SDL_GetTicks();
+		LastReceived->Add( ReceivedMsgData );
+
+		for (int j = 0; j < LastReceived->iCount; j++ )
 		{
-			if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == WaitOKList->Items[j]->iID )
+			if( NetBuffer->iID == LastReceived->Items[j]->iID )
 			{
 				string sTmp;
 				sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
 				break;	// Received message twice - ignoring 
 			}
-		}*/
+		}
 		if ( NetBuffer->iTyp == BUFF_TYP_DATA )
 		{
 			string sTmp;
@@ -318,6 +334,7 @@ bool cTCP::TCPReceive()
 			{
 				if( WaitOKList->Items[k]->iID == NetBuffer->iID )
 				{
+					delete WaitOKList->Items[k];
 					WaitOKList->Delete(k);
 					break;
 				}
@@ -489,6 +506,17 @@ void cTCP::TCPCheckResends ()
 					cLog::write(sTmp, LOG_TYPE_NETWORK);
 				}
 				SDL_Delay ( 1 ) ;
+			}
+		}
+	}
+	if( LastReceived )
+	{
+		for (int i = 0; i < LastReceived->iCount; i++ )
+		{
+			if( LastReceived->Items[i]->iTime - SDL_GetTicks() > 60*1000 )
+			{
+				LastReceived->Delete(i);
+				break;
 			}
 		}
 	}
