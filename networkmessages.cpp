@@ -106,7 +106,7 @@ void SendBuildingSync( sSyncBuilding *SyncData )
 {
 	string sMessage;
 	sMessage = iToStr( SyncData->PlayerID ) + NET_MSG_SEPERATOR + iToStr( SyncData->EndOfSync ) + NET_MSG_SEPERATOR + iToStr( SyncData->iTyp ) + NET_MSG_SEPERATOR +
-		iToStr( SyncData->off ) + NET_MSG_SEPERATOR + iToStr( SyncData->IsWorking ) + NET_MSG_SEPERATOR + iToStr( SyncData->MetalProd ) + NET_MSG_SEPERATOR +
+		iToStr( SyncData->off ) + NET_MSG_SEPERATOR + iToStr( SyncData->isBase ) + NET_MSG_SEPERATOR + iToStr( SyncData->IsWorking ) + NET_MSG_SEPERATOR + iToStr( SyncData->MetalProd ) + NET_MSG_SEPERATOR +
 		iToStr( SyncData->OilProd ) + NET_MSG_SEPERATOR + iToStr( SyncData->GoldProd ) + NET_MSG_SEPERATOR + iToStr( SyncData->MaxMetalProd ) + NET_MSG_SEPERATOR +
 		iToStr( SyncData->MaxOilProd ) + NET_MSG_SEPERATOR + iToStr( SyncData->MaxGoldProd ) + NET_MSG_SEPERATOR + iToStr( SyncData->BuildSpeed ) + NET_MSG_SEPERATOR +
 		iToStr( SyncData->RepeatBuild ) + NET_MSG_SEPERATOR + iToStr( SyncData->Disabled ) + NET_MSG_SEPERATOR + iToStr( SyncData->Ammo ) + NET_MSG_SEPERATOR + 
