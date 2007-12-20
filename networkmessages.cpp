@@ -82,7 +82,7 @@ void SendPlayerSync( sSyncPlayer *SyncData )
 	for( int i = 0 ; i < 8 ; i++ )
 	{
 		sMessage += NET_MSG_SEPERATOR + iToStr( SyncData->ResearchTechs->working_on ) + NET_MSG_SEPERATOR + iToStr( SyncData->ResearchTechs->RoundsRemaining ) + NET_MSG_SEPERATOR +
-				iToStr( SyncData->ResearchTechs->MaxRounds ) + NET_MSG_SEPERATOR + iToStr( SyncData->ResearchTechs->level );
+				iToStr( SyncData->ResearchTechs->MaxRounds ) + NET_MSG_SEPERATOR + dToStr( SyncData->ResearchTechs->level );
 	}
 	game->engine->network->TCPSend ( MSG_SYNC_PLAYER, sMessage.c_str() );
 }
