@@ -1998,7 +1998,14 @@ void translateUnitData( sID ID, bool vehicle )
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
+			if( SettingsData.sLanguage.compare ( "ENG" ) != NULL )
+			{
+				sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
+			}
+			else
+			{
+				sTmpString = pXmlNode->ToElement()->Attribute( "ENG" );
+			}
 			Data->szName = (char *)malloc( sTmpString.length() + 1 );
 			strcpy( Data->szName, sTmpString.c_str() );
 
