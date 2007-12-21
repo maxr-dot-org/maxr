@@ -1859,8 +1859,6 @@ void cGame::HandleMessages ( void )
 			free ( m->msg );
 			free ( m );
 			messages->Delete ( i );
-			/*for(int j=0;j<messages->iCount;j++)
-			  messages->Items[j]=messages->Items[j+1];*/
 			continue;
 		}
 		height+=14+11*m->len/296;
@@ -3278,12 +3276,24 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	{
 		fputc ( 0,fp );
 	}
+	if ( v->autoMJob )
+	{
+		fputc ( 1,fp );
+		fwrite ( &v->autoMJob->OPX ,sizeof ( int ),1,fp );
+		fwrite ( &v->autoMJob->OPY ,sizeof ( int ),1,fp );
+		fwrite ( &v->autoMJob->playerMJob ,sizeof ( bool ),1,fp );
+	}
+	else
+	{
+		fputc ( 0,fp );
+	}
 
 	// rest
 #define FSAVE_V_4(a) fwrite(&(v->a),sizeof(int),1,fp);
 #define FSAVE_V_1(a) fwrite(&(v->a),1,1,fp);
 	FSAVE_V_4 ( dir )
 	FSAVE_V_1 ( IsBuilding )
+	FSAVE_V_4 ( BuildCostsStart )
 	FSAVE_V_4 ( BuildingTyp )
 	FSAVE_V_4 ( BuildCosts )
 	FSAVE_V_4 ( BuildRounds )
@@ -3386,6 +3396,7 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_1 ( BigDirt )
 	FSAVE_B_1 ( IsWorking )
 	FSAVE_B_4 ( MetalProd )
+	FSAVE_B_4 ( MetalPerRound )
 	FSAVE_B_4 ( OilProd )
 	FSAVE_B_4 ( GoldProd )
 	FSAVE_B_4 ( MaxMetalProd )
@@ -3593,10 +3604,21 @@ void cGame::Load ( string name,int AP,bool MP )
 	StoredVehicles = new cList<cVehicle*>;
 
 	// Read version
+	string sSaveVersion, sGameVersion;
 	fread ( &i,sizeof ( int ),1,fp );
 	str= ( char* ) malloc ( i );
 	fread ( str,sizeof ( char ),i,fp );
-	// ToDo: Compare game versions
+	sSaveVersion = str;
+	sGameVersion = MAX_VERSION;
+	// Only read saves of same version as the game ones
+	if( atoi( sSaveVersion.substr( 0, sSaveVersion.find( ".",0 ) ).c_str() ) != atoi( sGameVersion.substr( 0, sGameVersion.find( ".",0 ) ).c_str() ) ||
+		atoi( sSaveVersion.substr( sSaveVersion.find( ".",0 )+1, sSaveVersion.find( ".",sSaveVersion.find( ".",0 ) ) ).c_str() ) != atoi( sGameVersion.substr( sGameVersion.find( ".",0 )+1, sGameVersion.find( ".",sGameVersion.find( ".",0 ) ) ).c_str() ) ||
+		atoi( sSaveVersion.substr( sSaveVersion.find_last_of( ".", sSaveVersion.length() ), sSaveVersion.length() ).c_str() ) != atoi( sGameVersion.substr( sGameVersion.find_last_of( ".", sGameVersion.length() ), sGameVersion.length() ).c_str() ) )
+	{
+		cLog::write ( "Savegame" + name + "has a wrong version", LOG_TYPE_WARNING );
+		free ( str );
+		return ;
+	}
 	free ( str );
 
 	// Ignore time, name and mode
@@ -3712,11 +3734,19 @@ void cGame::Load ( string name,int AP,bool MP )
 					fread ( &bSuspended,sizeof ( bool ),1,fp );
 					engine->AddMoveJob( off, iOffX + iOffY * map->size, bClientMove, bPlane, bSuspended);
 				}
+				if( fgetc( fp ) == 1 )
+				{
+					v->autoMJob = new cAutoMJob( v );
+					fread ( &v->autoMJob->OPX,sizeof ( int ),1,fp );
+					fread ( &v->autoMJob->OPY,sizeof ( int ),1,fp );
+					fread ( &v->autoMJob->playerMJob,sizeof ( bool ),1,fp );
+				}
 
 #define FLOAD_V_4(a) fread(&(v->a),sizeof(int),1,fp);
 #define FLOAD_V_1(a) fread(&(v->a),1,1,fp);
 				FLOAD_V_4 ( dir )
 				FLOAD_V_1 ( IsBuilding )
+				FLOAD_V_4 ( BuildCostsStart )
 				FLOAD_V_4 ( BuildingTyp )
 				FLOAD_V_4 ( BuildCosts )
 				FLOAD_V_4 ( BuildRounds )
@@ -3858,6 +3888,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_B_4 ( DirtValue )
 				FLOAD_B_1 ( BigDirt )
 				FLOAD_B_1 ( IsWorking )
+				FLOAD_B_4 ( MetalPerRound )
 				FLOAD_B_4 ( MetalProd )
 				FLOAD_B_4 ( OilProd )
 				FLOAD_B_4 ( GoldProd )
