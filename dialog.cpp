@@ -269,6 +269,8 @@ void ShowOK ( string text, bool pure )
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	SDL_Rect dest;
+	Uint8 *keystate;
+	bool bLastKeystate = false;
 
 	mouse->SetCursor ( CHand );
 
@@ -306,6 +308,7 @@ void ShowOK ( string text, bool pure )
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
+	SDL_Delay ( 200 );
 	while ( 1 )
 	{
 		if ( !pure && game )
@@ -316,7 +319,8 @@ void ShowOK ( string text, bool pure )
 
 		// Eingaben holen:
 		SDL_PumpEvents();
-
+		keystate = SDL_GetKeyState ( NULL );
+		
 		// Die Maus:
 		mouse->GetPos();
 
@@ -332,9 +336,9 @@ void ShowOK ( string text, bool pure )
 		}
 
 		// OK Button:
-		if ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 185 && y < 480 / 2 - 231 / 2 + 185 + 29 )
+		if ( ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 185 && y < 480 / 2 - 231 / 2 + 185 + 29 ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
 		{
-			if ( b && !lb )
+			if ( ( b && !lb ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
 			{
 				PlayFX ( SoundData.SNDHudButton );
 				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
@@ -349,6 +353,7 @@ void ShowOK ( string text, bool pure )
 		ly = y;
 		lb = b;
 		SDL_Delay ( 1 );
+		bLastKeystate = keystate[SDLK_RETURN];
 	}
 
 	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
