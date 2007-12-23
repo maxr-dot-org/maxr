@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-5"?>
+<?xml version="1.0" encoding="iso-8859-5"?>
 <!-- * encoding is needed for selecting the correct code table               -->
 <!--       iso-8859-5  : Cyrillic languages                                  -->
 <!--       iso-8859-15 : western European languages                          -->
@@ -10,339 +10,341 @@
 <!--   blank.                                                                -->
 <MAX_Language_File lang="rus" encoding="iso-8859-5" direction="left-to-right">
 	<Header>
-		<Author name="JCK">
-			<Editor name="JCK" time="2007-09-30 13:04:00"/>
-			<Editor name="Someone" time="2007-09-30 13:04:00"/>
+		<Author name="beko">
+			<Editor name="beko" time="2007-09-30 13:04:00"/>
 		</Author>
 		<Game_Version time="2007-09-30 13:04:00"/>
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
-			<Version ENG="version v%s" localized="Version V%s"/>
-			<Credits_MM ENG="Michael M?nch's M.A.X. (Original by Interplay)" localized="Michael M?nchs M.A.X. (Original von Interplay)"/>
-			<Credits_Doc ENG="Michael M?nch's M.A.X. (Remake by DoctorDeath)" localized="Michael M?nchs M.A.X. (Remake von DoctorDeath)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded basierend auf Interplays Mechanized Assault and Exploration"/>
+			<Game_Title ENG="M.A.X." localized=""/>
+			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized=""/>
+			<Version ENG="version v%s" localized=""/>
+			<Credits_MM ENG="Michael M?nch's M.A.X. (Original by Interplay)" localized=""/>
+			<Credits_Doc ENG="Michael M?nch's M.A.X. (Remake by DoctorDeath)" localized=""/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized=""/>
 			<Remarks>
-				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) noch nicht eingebaut"/>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized=""/>
 			</Remarks>
 		</Main>
-		<Initialisation>
-			<Load_Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
-			<Load_Keys ENG="Loading keys..." localized="Арmём Литвинович..."/>
-                        <Load_Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
-                        <Load_GFX ENG="Loading gfx..." localized="Lade GFX..."/>
-                        <Load_Effects ENG="Loading effects..." localized="Lade Effekte..."/>
-                        <Load_Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
-                        <Load_Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
-                        <Load_Buildings ENG="Loading buildings..." localized="Lade Geb?ude..."/>
-                        <Load_Music ENG="Loading music..." localized="Lade Musik..."/>
-                        <Load_Sounds ENG="Loading sounds..." localized="Lade Ger?usche..."/>
-			<Load_Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
-		</Initialisation>
-		<Menu_Main>
-			<Title_Main_Menu ENG="Main Menu" localized="Hauptmen?"/>
-			<Button_Single_Player ENG="Singleplayer" localized="Einzelspieler"/>
-			<Button_Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
-			<Button_Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
-			<Button_Credits ENG="Credits (*)" localized="Credits (*)"/>
-			<Button_Mani ENG="Manifestation" localized="Hinweise"/>
-			<Button_Exit ENG="Exit" localized="Beenden"/>
-			<Button_Back ENG="Back" localized="Zur?ck"/>
-			<Button_OK ENG="OK" localized="Ok"/>
-			<Button_Done ENG="Done" localized="Fertig"/>
-			<Button_Cancel ENG="Cancel" localized="Abbruch"/>
-			<Button_Hot ENG="Hot" localized="Scharf"/>
-			<Button_Yes ENG="Yes" localized="Ja"/>
-			<Button_No ENG="No" localized="Nein"/>
-			<Button_TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
-			<Button_TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
-			<Button_HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
-			<Button_HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
-			<Button_Game_New ENG="New Game" localized="Neues Spiel"/>
-			<Button_Game_Load ENG="Load Game" localized="Spiel laden"/>
-			<Button_Game_Save ENG="Save Game" localized="Speichern"/>
-			<Button_Game_Options ENG="Game Options" localized="Spieloptionen"/>
-			<Button_Load ENG="Load" localized="Laden"/>
-			<Button_Save ENG="Save" localized="Speichern"/>
-			<Button_Training ENG="Training" localized="Training"/>
-			<Button_Delete ENG="Delete" localized="L?schen"/>
-			<Button_Buy ENG="Buy" localized="Kaufen"/>
-			<Button_Path ENG="Path" localized="Pfad"/>
-			<Button_Build ENG="Build" localized="Bauen"/>
-			<Button_Active ENG="Active" localized="Aktiv"/>
-			<Button_Repair ENG="Repair" localized="Reparieren"/>
-			<Button_Upgrade ENG="Upgrade" localized="Verbessern"/>
-			<Button_Reload ENG="Reload" localized="Aufladen"/>
-		</Menu_Main>
+		<Init>
+			<Lang ENG="Loading languagepack..." localized="Нагрузка язык..."/>
+			<Keys ENG="Loading keys..." localized="Нагрузка ключи..."/>
+			<Fonts ENG="Loading fonts..." localized="Нагрузка купели..."/>
+			<GFX ENG="Loading gfx..." localized="Нагрузка графики..."/>
+			<Effects ENG="Loading effects..." localized="Нагрузка влияния..."/>
+			<Terrain ENG="Loading terrain..." localized="Нагрузка территория..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Нагрузка корабли..."/>
+			<Buildings ENG="Loading buildings..." localized="Нагрузка здания..."/>
+			<Music ENG="Loading music..." localized="Нагрузка нот..."/>
+			<Sounds ENG="Loading sounds..." localized="Нагрузка звуки..."/>
+			<Voices ENG="Loading voices..." localized="Нагрузка голоса..."/>
+		</Init>
+		<Title>
+			<MainMenu ENG="Main Menu" localized=""/>
+			<Credits ENG="Credits" localized=""/>
+			<Gold ENG="Gold" localized=""/>
+			<Metal ENG="Metal" localized=""/>
+			<Oil ENG="Oil" localized=""/>
+			<BridgeHead ENG="Bridgehead" localized=""/>
+			<Alien_Tech ENG="Alientechnology" localized=""/>
+			<Resource ENG="Resources" localized=""/>
+			<Resource_Density ENG="Resources Density" localized=""/>
+			<Game_Type ENG="Game Type" localized=""/>
+			<Player_Name ENG="Playername:" localized=""/>
+			<Player_Select ENG="Playeroptions" localized=""/>
+			<Team ENG="Team" localized=""/>
+			<Human ENG="Human" localized=""/>
+			<Computer ENG="Computer" localized=""/>
+			<Nobody ENG="Nobody" localized=""/>
+			<Clan ENG="Clan" localized=""/>
+			<Cargo ENG="Cargo" localized=""/>
+			<Choose_Planet ENG="Planetchoosing" localized=""/>
+			<Options ENG="Options" localized=""/>
+			<Connect ENG="Connect" localized=""/>
+			<Send ENG="Send" localized=""/>
+			<Color ENG="Color:" localized=""/>
+			<IP ENG="IP" localized=""/>
+			<Port ENG="Port" localized=""/>
+			<Map ENG="Map" localized=""/>
+			<LoadSave ENG="Load/Save Menu" localized=""/>
+			<Load ENG="Load Menu" localized=""/>
+			<Updates ENG="Updatemenu" localized=""/>
+			<Build ENG="Buildmenu" localized=""/>
+			<Labs ENG="Researchmenu" localized=""/>
+			<Mine ENG="Minemanager" localized=""/>
+			<Unitinfo ENG="Unitinformations" localized=""/>
+		</Title>
+		<Button>
+			<Title_Main_Menu ENG="Main Menu" localized=""/>
+			<Single_Player ENG="Singleplayer" localized=""/>
+			<Multi_Player ENG="Multiplayer" localized=""/>
+			<Map_Editor ENG="Mapeditor (*)" localized=""/>
+			<Credits ENG="Credits (*)" localized=""/>
+			<Mani ENG="Manifestation" localized=""/>
+			<Exit ENG="Exit" localized=""/>
+			<Back ENG="Back" localized=""/>
+			<OK ENG="OK" localized=""/>
+			<Done ENG="Done" localized=""/>
+			<Cancel ENG="Cancel" localized=""/>
+			<Hot ENG="Sharp" localized=""/>
+			<Yes ENG="Yes" localized=""/>
+			<No ENG="No" localized=""/>
+			<TCPIP_Host ENG="TCP/IP Host" localized=""/>
+			<TCPIP_Client ENG="TCP/IP Client" localized=""/>
+			<HotSeat_New ENG="New Hot Seat" localized=""/>
+			<HotSeat_Load ENG="Load Hot Seat" localized=""/>
+			<Game_New ENG="New Game" localized=""/>
+			<Game_Load ENG="Load Game" localized=""/>
+			<Game_Save ENG="Save Game" localized=""/>
+			<Game_Options ENG="Game Options" localized=""/>
+			<Load ENG="Load" localized=""/>
+			<Save ENG="Save" localized=""/>
+			<Training ENG="Training" localized=""/>
+			<Delete ENG="Delete" localized=""/>
+			<Buy ENG="Buy" localized=""/>
+			<Path ENG="Path" localized=""/>
+			<Build ENG="Build" localized=""/>
+			<Active ENG="Active" localized=""/>
+			<Repair ENG="Repair" localized=""/>
+			<Upgrade ENG="Upgrade" localized=""/>
+			<Reload ENG="Reload" localized=""/>
+			<Host_Start ENG="Start Host" localized=""/>
+		</Button>
 		<Hud>
-			<Files ENG="Files" localized="Dateien"/>
-			<Settings ENG="Settings" localized="PR?FERENZEN"/>
-			<Proceed ENG="Do" localized="Erl."/>
-			<End ENG="End" localized="Ende"/>
-			<Log ENG="Log" localized="Log"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Survey ENG="Survey" localized="Studie"/>
-			<Status ENG="Status" localized="Status"/>
-			<Color ENG="Color" localized="Farben"/>
-			<Hitpoints ENG="Hits" localized="Treffer"/>
-			<Ammo ENG="Ammo" localized="Munition"/>
-			<Range ENG="Range" localized="Reichw."/>
-			<Scan ENG="Scan" localized="Scan"/>
-			<Grid ENG="Grid" localized="Gitter"/>
-			<Fog ENG="Fog" localized="Nebel"/>
-			<Speed ENG="Speed" localized="Geschw."/>
-			<Cargo ENG="Gargo" localized="Ladung"/>
-			<AmmoShort ENG="Ammo" localized="Munni"/>
-			<Shots ENG="Shots" localized="Schuss"/>
-			<Shield ENG="Shield" localized="Schild"/>
-			<Total ENG="Total" localized="Total"/>
-			<Energy ENG="Energy" localized="Energie"/>
-			<Usage ENG="Usage" localized="Verbr."/>
-			<Teams ENG="Teams" localized="Teams"/>
+			<Files ENG="Files" localized=""/>
+			<Settings ENG="Settings" localized=""/>
+			<Proceed ENG="Do" localized=""/>
+			<End ENG="End" localized=""/>
+			<Log ENG="Log" localized=""/>
+			<Chat ENG="Chat" localized=""/>
+			<Survey ENG="Survey" localized=""/>
+			<Status ENG="Status" localized=""/>
+			<Color ENG="Color" localized=""/>
+			<Hitpoints ENG="Hits" localized=""/>
+			<Ammo ENG="Munition" localized=""/>
+			<Range ENG="Range" localized=""/>
+			<Scan ENG="Scan" localized=""/>
+			<Grid ENG="Grid" localized=""/>
+			<Fog ENG="Fog" localized=""/>
+			<Speed ENG="Speed" localized=""/>
+			<Cargo ENG="Gargo" localized=""/>
+			<AmmoShort ENG="Ammo" localized=""/>
+			<Shots ENG="Shots" localized=""/>
+			<Shield ENG="Shield" localized=""/>
+			<Total ENG="Total" localized=""/>
+			<Energy ENG="Energy" localized=""/>
+			<Usage ENG="Usage" localized=""/>
+			<Teams ENG="Teams" localized=""/>
 		</Hud>
-		<Game_Options>
-			<Title_Credits ENG="Credits" localized="Geld"/>
-			<Title_Gold ENG="Gold" localized="Gold"/>
-			<Title_Metal ENG="Metal" localized="Metall"/>
-			<Title_Oil ENG="Oil" localized="?l"/>
-			<Title_BridgeHead ENG="Bridgehead" localized="Br?ckenkopf"/>
-			<Title_Alien_Tech ENG="Alientechnology" localized="Alientechnologie"/>
-			<Title_Resource ENG="Resources" localized="Ressourcen"/>
-			<Title_Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
-			<Title_Game_Type ENG="Game Type" localized="Spielart"/>
-			<Option_Lowest ENG="lowest" localized="kaum"/>
-			<Option_Lower ENG="very low" localized="sehr wenig"/>
-			<Option_Low ENG="low" localized="wenige"/>
-			<Option_Normal ENG="normal" localized="normal"/>
-			<Option_Much ENG="much" localized="viele"/>
-			<Option_More ENG="very much" localized="sehr viel"/>
-			<Option_Most ENG="most" localized="extrem"/>
-			<Option_Thick ENG="thick" localized="dicht"/>
-			<Option_Thin ENG="thin" localized="d?nn"/>
-			<Option_On ENG="on" localized="Ein"/>
-			<Option_Off ENG="off" localized="Aus"/>
-			<Option_Definite ENG="definite" localized="Fest"/>
-			<Option_Mobile ENG="mobile" localized="Mobil"/>
-			<Option_Type_Turns ENG="turns" localized="Rundenbasierend"/>
-			<Option_Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
-		</Game_Options>
-		<Game_Settings>
-			<Title_Preferences ENG="Preferences" localized="Einstellungen"/>
-			<Title_Volume ENG="Volume" localized="Lautst?rke"/>
-			<Title_Music ENG="Music" localized="Musik"/>
-			<Title_Effects ENG="Effects" localized="Effekte"/>
-			<Title_Voices ENG="Voices" localized="Stimmen"/>
-			<Title_Disable ENG="Disable" localized="Deaktivieren"/>
-			<Title_Scrollspeed ENG="Scrollspeed" localized="Scrolltempo"/>
-			<Title_Autosave ENG="Autosave" localized="Autospeichern"/>
-			<Title_Animation ENG="Animations" localized="Animationen"/>
-			<Title_Alphaeffects ENG="Alphaeffects" localized="Alphaeffekte"/>
-			<Title_Shadows ENG="Shadows" localized="Schatteneffekte"/>
-			<Title_ShowDamage ENG="Buildingdamage" localized="Geb?udesch?den"/>
-			<Title_ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugsch?den"/>
-			<Title_Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
-		</Game_Settings>
-		<Game_Start>
-			<Title_Player_Name ENG="Playername:" localized="Spielername:"/>
-			<Title_Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
-			<Title_Team ENG="Team" localized="Team"/>
-			<Title_Human ENG="Human" localized="Mensch"/>
-			<Title_Computer ENG="Computer" localized="Computer"/>
-			<Title_Nobody ENG="Nobody" localized="Niemand"/>
-			<Title_Clan ENG="Clan" localized="Clan"/>
-			<Title_Cargo ENG="Cargo" localized="Ladung"/>
-			<Title_Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
-			<Title_Options ENG="Options" localized="Optionen"/>
-			<Title_Connect ENG="Connect" localized="Verbinden"/>
-			<Title_Send ENG="Send" localized="Senden"/>
-			<Title_Color ENG="Color:" localized="Farbe:"/>
-			<Title_IP ENG="IP" localized="IP"/>
-			<Title_Port ENG="Port" localized="Port"/>
-			<Title_Map ENG="Map" localized="Karte"/>
-			<Title_LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Men?"/>
-			<Title_Load ENG="Load Menu" localized="Laden Men?"/>
-			<Button_Host_Start ENG="Start Host" localized="Starte Host"/>
-			<Title_Updates ENG="Updatemenu" localized="Updatemen?"/>
-			<Title_Build ENG="Buildmenu" localized="Baumen?"/>
-			<Title_Labs ENG="Researchmenu" localized="Forschungsmen?"/>
-			<Title_Mine ENG="Minemanager" localized="Mienenmanager"/>
-		</Game_Start>
-		<Game_MP>
-			<Title_Player ENG="Player" localized="Spieler"/>
-			<Comp_Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
-			<Comp_Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
-			<Comp_Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
-			<Comp_Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
-			<Comp_Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
-			<Comp_Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
-			<Comp_Player_Amount ENG="Amount of players" localized="Bitte w?hlt die Anzahl der Spieler. F?r ein HotSeat Spiel werden mindestens 2 Spieler ben?tigt. Maximal sind 8 Spieler m?glich. "/>
-			<Comp_Player_Turn ENG="'s turn" localized=" ist am Zug"/>
-			<Comp_Network_Error_Socket ENG="Error opening socket" localized="Fehler beim ?ffnen des Sockets"/>
-			<Comp_Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
-			<Comp_Network_Open ENG="Game open" localized="Spiel offen"/>
-			<Comp_Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
-			<Comp_Network_New ENG="New connection" localized="Neue Verbindung"/>
-			<Comp_Network_Connected ENG="Connected" localized="Verbunden"/>
-			<Comp_Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
-			<Comp_Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
-			<Comp_Map_NoSet ENG="--no map set--" localized="--keine Map gew?hlt--"/>
-			<Comp_Option_NoSet ENG="--no options set--" localized="--keine Optionen gew?hlt--"/>
-			<Comp_Go ENG="Let's go" localized="Los gehts"/>
-			<Comp_Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
-			<Comp_Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Fertigmachen"/>
-			<Comp_Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
-			<Comp_Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
-			<Comp_Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
-			<Comp_Go_Check ENG="Check for go" localized="Pr?fe auf Fertig zum Starten"/>
-		</Game_MP>
+		<Option>
+			<Lowest ENG="lowest" localized=""/>
+			<Lower ENG="very low" localized=""/>
+			<Low ENG="low" localized=""/>
+			<Normal ENG="normal" localized=""/>
+			<Much ENG="much" localized=""/>
+			<More ENG="very much" localized=""/>
+			<Most ENG="most" localized=""/>
+			<Thick ENG="thick" localized=""/>
+			<Thin ENG="thin" localized=""/>
+			<On ENG="on" localized=""/>
+			<Off ENG="off" localized=""/>
+			<Definite ENG="definite" localized=""/>
+			<Mobile ENG="mobile" localized=""/>
+			<Type_Turns ENG="turns" localized=""/>
+			<Type_Simu ENG="simultaneous" localized=""/>
+		</Option>
+		<Settings>
+			<Preferences ENG="Preferences" localized=""/>
+			<Volume ENG="Volume" localized=""/>
+			<Music ENG="Music" localized=""/>
+			<Effects ENG="Effects" localized=""/>
+			<Voices ENG="Voices" localized=""/>
+			<Disable ENG="Disable" localized=""/>
+			<Scrollspeed ENG="Scrollspeed" localized=""/>
+			<Autosave ENG="Autosave" localized=""/>
+			<Animation ENG="Animations" localized=""/>
+			<Alphaeffects ENG="Alphaeffects" localized=""/>
+			<Shadows ENG="Shadows" localized=""/>
+			<ShowDamage ENG="Buildingdamage" localized=""/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized=""/>
+			<Tracks ENG="Vehicletracks" localized=""/>
+		</Settings>
+		<Multiplayer>
+			<Player ENG="Player" localized=""/>
+			<Waiting ENG="Waiting for other players..." localized=""/>
+			<Player_Few ENG="Not enough players!" localized=""/>
+			<Player_Many ENG="Too many players!" localized=""/>
+			<Player_Twice ENG="Playername exists twice: " localized=""/>
+			<Player_Wrong ENG="Missing a correct player's name" localized=""/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized=""/>
+			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible." localized=""/>
+			<Player_Turn ENG="'s turn" localized=""/>
+			<Player_Turn_End ENG=" ended turn" localized=""/>
+			<Network_Error_Socket ENG="Error opening socket" localized=""/>
+			<Network_Error_Connect ENG="Could not connect to " localized=""/>
+			<Network_Open ENG="Game open" localized=""/>
+			<Network_Connecting ENG="Connecting to " localized=""/>
+			<Network_New ENG="New connection" localized=""/>
+			<Network_Connected ENG="Connected" localized=""/>
+			<Network_Connected_Not ENG="Not connected" localized=""/>
+			<Network_Closed ENG="Connection closed" localized=""/>
+			<Map_NoSet ENG="--no map set--" localized=""/>
+			<Option_NoSet ENG="--no options set--" localized=""/>
+			<Go ENG="Let's go" localized=""/>
+			<Go_Abort ENG="Go aborted" localized=""/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized=""/>
+			<Go_Host_No ENG="Host wants to go: No go" localized=""/>
+			<Go_Ready ENG="Ready to go" localized=""/>
+			<Go_Ready_No ENG="not ready to go" localized=""/>
+			<Go_Check ENG="Check for go" localized=""/>
+		</Multiplayer>
 		<Vehicles>
-			<Title_Info ENG="Unitinformations" localized="Einheitendetails"/>
-			<Title_Damage ENG="Damage" localized="Angriff"/>
-			<Title_Shoots ENG="Shoots" localized="Sch?sse"/>
-			<Title_Range ENG="Range" localized="Reichweite"/>
-			<Title_Ammo ENG="Ammo" localized="Munition"/>
-			<Title_Armor ENG="Armor" localized="Panzer"/>
-			<Title_Hitpoints ENG="Hitpoints" localized="Treffer"/>
-			<Title_Scan ENG="Scan" localized="Radar"/>
-			<Title_Speed ENG="Speed" localized="Geschw."/>
-			<Title_Cargo ENG="Cargo" localized="Ladung"/>
-			<Title_Costs ENG="Costs" localized="Kosten"/>
-			<Title_Produce ENG="Produces" localized="Produz."/>
-			<Title_Usage ENG="Usage" localized="Verbr."/>
+			<Damage ENG="Attack" localized=""/>
+			<Shoots ENG="Shoots" localized=""/>
+			<Range ENG="Range" localized=""/>
+			<Ammo ENG="Ammo" localized=""/>
+			<Armor ENG="Armor" localized=""/>
+			<Hitpoints ENG="Hits" localized=""/>
+			<Scan ENG="Scan" localized=""/>
+			<Speed ENG="Speed" localized=""/>
+			<Cargo ENG="Cargo" localized=""/>
+			<Costs ENG="Costs" localized=""/>
+			<Produce ENG="Produces" localized=""/>
+			<Usage ENG="Usage" localized=""/>
 		</Vehicles>
 		<Comp>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
-			<Energy_Low ENG="To low energy, disabled consumer!" localized="Zu wenig Energie, Verbraucher werden abgeschaltet!"/>
-			<Metal_Low ENG="To low metal, disabled consumer!" localized="Zu wenig Metall, Verbraucher werden abgeschaltet!"/>
-			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
-			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
-			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
-			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
-			<Destroyed ENG="destroyed" localized="zerst?rt"/>
-			<Defeated ENG="defeated" localized="besiegt"/>
-			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
-			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
-			<Detected ENG="detected" localized="entdeckt"/>
-			<Attacked ENG="is under attack" localized="wird angegriffen"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Wirklich beenden?\n\nNicht gespeicherte Spieldaten gehen dabei verloren."/>
-			<Turn_Start ENG="Start turn" localized="Starten Sie Runde"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Warten Sie bis alle Bewegungen abgeschlossen sind"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Verbleibende Bewegungen werden durchgef?hrt"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Angriffsforschung abgeschlossen"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Sch?sseforschung abgeschlossen"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Reichweitenforschung abgeschlossen"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Panzerungsforschung abgeschlossen"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Trefferpunkteforschung abgeschlossen"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Scanforschung abgeschlossen"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Kostenforschung abgeschlossen"/>
-			<Working ENG="working" localized="arbeitet"/>
-			<Waits ENG="waits" localized="wartet"/>
-			<Disabled ENG="disabled" localized="au?er Gefecht"/>
-			<Producing ENG="Producing" localized="beim Bau"/>
-			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
-			<Moving ENG="moving" localized="in bewegung"/>
-			<Sentry ENG="on sentry" localized="auf wachposten"/>
-			<Clearing ENG="Clearing" localized="Beim R?umen"/>
-			<Clearing_Mine ENG="clearing mines" localized="R?ume Minen"/>
-			<Clearing_Fin ENG="clearing done" localized="R?umen abgeschlossen"/>
-			<Laying ENG="laying mines" localized="Lege Minen"/>
-			<Greenhorn ENG="Greenhorn" localized="Gr?nschnabel"/>
-			<Veteran ENG="Veteran" localized="Veteran"/>
-			<Description ENG="Description" localized="Beschreibung"/>
-			<Repeat ENG="Again" localized="Wieder"/>
-			<Dated ENG="dated" localized="veraltet"/>
-			<Labs ENG="Labs" localized="Labore"/>
-			<Themes ENG="Themes" localized="Bereich"/>
-			<Turns ENG="Turns" localized="Runden"/>
-			<Turn ENG="Turn" localized="Runde"/>
-			<Reserve ENG="Reserve" localized="Reserve"/>
-			<Surveying ENG="surveying" localized="vermesse"/>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized=""/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized=""/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized=""/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized=""/>
+			<Team_Low ENG="To low teams, disabled consumer!" localized=""/>
+			<Energy_Optimize ENG="Energygeneration optimized" localized=""/>
+			<Cheat ENG="used cheat" localized=""/>
+			<Destroyed ENG="destroyed" localized=""/>
+			<Defeated ENG="defeated" localized=""/>
+			<Finished ENG="is finished" localized=""/>
+			<Finished2 ENG="are finished" localized=""/>
+			<Detected ENG="detected" localized=""/>
+			<Attacked ENG="is under attack" localized=""/>
+			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost." localized=""/>
+			<Turn_Start ENG="Start turn" localized=""/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized=""/>
+			<Turn_Automove ENG="Executing remaining movements" localized=""/>
+			<Research_Attack ENG="Research 'Attack' completed" localized=""/>
+			<Research_Shoots ENG="Research 'Shoots' completed" localized=""/>
+			<Research_Range ENG="Research 'Range' completed" localized=""/>
+			<Research_Armor ENG="Research 'Armor' completed" localized=""/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized=""/>
+			<Research_Speed ENG="Research 'Speed' completed" localized=""/>
+			<Research_Scan ENG="Research 'Scan' completed" localized=""/>
+			<Research_Costs ENG="Research 'Costs' completed" localized=""/>
+			<Working ENG="working" localized=""/>
+			<Waits ENG="waits" localized=""/>
+			<Disabled ENG="disabled" localized=""/>
+			<Producing ENG="Producing" localized=""/>
+			<Producing_Fin ENG="finished producing" localized=""/>
+			<Moving ENG="moving" localized=""/>
+			<Sentry ENG="on sentry" localized=""/>
+			<Clearing ENG="Clearing" localized=""/>
+			<Clearing_Mine ENG="clearing mines" localized=""/>
+			<Clearing_Fin ENG="clearing done" localized=""/>
+			<Laying ENG="laying mines" localized=""/>
+			<Greenhorn ENG="Greenhorn" localized=""/>
+			<Veteran ENG="Veteran" localized=""/>
+			<Description ENG="Description" localized=""/>
+			<Repeat ENG="Again" localized=""/>
+			<Dated ENG="dated" localized=""/>
+			<Labs ENG="Labs" localized=""/>
+			<Themes ENG="Themes" localized=""/>
+			<Turns ENG="Turns" localized=""/>
+			<Turn ENG="Turn" localized=""/>
+			<Reserve ENG="Reserve" localized=""/>
+			<Surveying ENG="surveying" localized=""/>
 		</Comp>
 		<Error_Messages>
-			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende ?bersetzung: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Fehler beim Laden der Karte"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht implementiert"/>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized=""/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized=""/>
+			<ERROR_Map_Loading ENG="Error loading map" localized=""/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized=""/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized=""/>
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" ENG="Airtransport" localized="Tranzportflugzeug">Transportflugzeug\n\nSchweres Flugzeug, f?hig bis zu drei Bodeneinheiten zu transportieren.</Unit>
-		<Unit ID="0 2" ENG="Alien Assault" localized="Aliensturmgesch?tz">Aliensturmgesch?tz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittel-gepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgesch?tze ist, sollte das Alien-Sturmgesch?tz dennoch Feindfeuer vermeiden. Alle Alien-Einheiten reparieren sich selbst und verbessern ihre F?higkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 3" ENG="Alien Plane" localized="Alienflugzeug">Alien-J?ger-Bomber\n\nObwohl das Alienflugzeug haupts?chlich f?r einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alien-Einheiten, k?nnen Alienflugzeuge sich selbst reparieren und verbessern ihre F?higkeiten.</Unit>
-		<Unit ID="0 4" ENG="Alien Ship" localized="Alienkanonenboot">Alienkanonenboot\n\nSchwer gepanzertes und bewaffnetes Alien-Kriegsschiff Design: Wie ein menschliches Kanonenboot herausragend beim Zerst?ren von anderen Schiffen und Landzielen in Ufern?he. Alle Alien-Einheiten reparieren sich selbst und verbessern ihre F?higkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 5" ENG="Alien Tank" localized="Alienpanzer">Alienpanzer\n\nSchwer gepanzerter Panzer im Alien-Design. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alien-Einheiten reparieren sich selbst, und verbessern ihre F?higkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 6" ENG="APC" localized="APC">gepanzerter Personentransporter\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten k?nnen ein sich unter Wasser bewegendes APC entdecken.</Unit>
-		<Unit ID="0 7" ENG="Assault" localized="Sturmgesch?tz">Sturmgesch?tz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit gro?er Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
-		<Unit ID="0 8" ENG="AWAC" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar-Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
-		<Unit ID="0 9" ENG="Bomber" localized="Bomber">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Boden-Missilen transportiert. Teuer, aber die Geschwindigkeit und die F?higkeit mit Genehmigung alles au?er J?ger und Luftabwehr anzugreifen ist's wert.</Unit>
-		<Unit ID="0 10" ENG="Bulldozer" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Ger?ll und zerst?rte Geb?ude zu r?umen. Bulldozer k?nnen Material aus Schutt herausfiltern.</Unit>
-		<Unit ID="0 11" ENG="Cargoship" localized="Frachtschiff">Frachtschiff\n\nSchiffe f?r den Transport von Rohstoffen. N?tzlich, um Pionier-Fahrzeuge und See-Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
-		<Unit ID="0 12" ENG="Cluster" localized="Raketenwerfer">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstrecken-Raketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Fl?chen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
-		<Unit ID="0 13" ENG="Commando" localized="Infiltrator">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsf?hrung trainiert ist. Infiltratoren k?nnen feindliche Einheiten unsch?dlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
-		<Unit ID="0 14" ENG="Corvet" localized="Korvette">Korvette\n\nHoch-Geschwindigkeits-Schiff mit Torpedos und Echolot. Korvetten k?nnen jede Marineeinheit angreifen, aber ihre wirkliche St?rke ist die F?higkeit, U-Boote zu sichten und anzugreifen.</Unit>
-		<Unit ID="0 15" ENG="Escort" localized="Eskorte">Eskorte\n\nHochgeschwindigkeits-Schiff mit gutem Radar und Schnellschuss-Luftabwehr-Kanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
-		<Unit ID="0 16" ENG="Fighter" localized="J?ger">J?ger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft-Missilen transportiert. J?ger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Station?re Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
-		<Unit ID="0 17" ENG="Gunboat" localized="Kanonenboot">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer Hoch-Kaliber-Kanone mit mittlerer Reichweite. Exzellent beim Zerst?ren von anderen Schiffen und beim Bombardieren von K?stenzielen.</Unit>
-		<Unit ID="0 18" ENG="Infantery" localized="Infanterie">Infanterie\n\nSoldaten, die mit leichten Panzer-Abwehr-Waffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
-		<Unit ID="0 19" ENG="Constructor" localized="Konstrukteur">Konstrukteur\n\nGro?es Konstruktionsfahrzeug zum Errichten gro?er Geb?ude, wie Bergwerke und Fabriken.</Unit>
-		<Unit ID="0 20" ENG="Minelayer" localized="Minenleger">Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, aussp?hen und entfernen k?nnen. Minenleger k?nnen an Board Rohstoffe in Minen verwandeln. Sie k?nnen diese Minen sp?ter auch wieder entfernen und in Rohstoffe zur?ckverwandeln. Sie k?nnen keine feindlichen Minenfelder entfernen - diese m?ssen mit Kanonen und Raketen zum Explodieren gebracht werden.</Unit>
-		<Unit ID="0 21" ENG="Missel" localized="mobiler Missilenwerfer">mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die station?re Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine Bewegungsf?higkeit wesendlich flexibler.</Unit>
-		<Unit ID="0 22" ENG="Missel Ship" localized="Missilenschiff">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, gro?e Angriffsst?rke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
-		<Unit ID="0 23" ENG="Mobile AntiAir" localized="Luftabwehr">mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Feuer-Kanone zum Abschie?en vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungs-Einheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen k?nnen, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu besch?tzen, nachdem ihre J?ger die feindlichen Bomber verjagt haben.</Unit>
-		<Unit ID="0 24" ENG="Pioneer" localized="Pionier">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Geb?ude und station?re Waffen baut.</Unit>
-		<Unit ID="0 25" ENG="Repairer" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Geb?ude reparieren kann. Peparaturen erfordern Materialien. Je gr??er der Schaden ist, desto mehr Materialien ben?tigt die Instandsetzung. Depots, Docks, Hangars und Kasernen k?nnen auch Einheiten reparieren.</Unit>
-		<Unit ID="0 26" ENG="Scanner" localized="Scanner">Scanner\n\nMobile Radar-Plattform. Langsamer und teuer als ein Sp?her, aber mit einer besseren Scan-Reichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele f?r Einheiten mit sehr gro?er Reichweite wie mobile Missilenwerfer auszusp?hen.</Unit>
-		<Unit ID="0 27" ENG="Scout" localized="Sp?her">Sp?her\n\nHoch-Geschwindigkeits-Sp?her-Fahrzeug, das feindliche Einheiten auskundschaftet und aussp?ht. Kann Wasser ohne Br?cke ?berqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scan-Reichweite, aber viel schw?cher als die meisten Kampfeinheiten.</Unit>
-		<Unit ID="0 28" ENG="Seaminelayer" localized="Seeminenleger">Seeminenleger\n\nSee-Version des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie aussp?hen, und die in Rohstoffe zur?ckverwandeln.</Unit>
-		<Unit ID="0 29" ENG="Seatransport" localized="Seetransporter">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie ?berleben auch eher einen feindlichen Angriff.</Unit>
-		<Unit ID="0 30" ENG="Submarine" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfl?che lauernd, k?nnen sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten k?nnen ein U-Boot aussp?hen. Desweiteren verr?t das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber k?nnen sie angreifen.</Unit>
-		<Unit ID="0 31" ENG="Surveyor" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrund-Rohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
-		<Unit ID="0 32" ENG="Tank" localized="Panzer">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern k?nnen, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgesch?tze und Raketenwerfer zu erreichen.</Unit>
-		<Unit ID="0 33" ENG="Goldtransporter" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum n?chsten zu bewegen.</Unit>
-		<Unit ID="0 34" ENG="Metaltransporter" localized="Metalltransporter">Versorgungs-Lkw\n\nLkw zum Transport von Rohstoffen.N?tzlich, um Pionier-Fahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
-		<Unit ID="0 35" ENG="Oiltransporter" localized="Treibstofftransporter">Treibstofftransporter\n\nLkw, um Treibstoff zu transportieren.</Unit>
-		<Unit ID="1 1" ENG="Baracks" localized="Kaserne">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt f?r Aufr?stung und Reparatur von Ausr?stung, und f?r die Produktion von Munition. Die Kaserne ben?tigt Rohstoffe zum Reparieren, Aufr?sten oder Aufladen, so dass sie an eine Lagereinheit oder ein Berkwerk angeschlossen sein sollte.</Unit>
-		<Unit ID="1 2" ENG="Block" localized="Betonklotz">Betonklotz\n\nGeh?rteter, gepanzerter Block zur Blockade feindlicher Bewegungen.</Unit>
-		<Unit ID="1 3" ENG="Bridge" localized="Br?cke">Br?cke\n\nPontonbr?cke zum ?berqueren von Wasser. Br?cken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht.</Unit>
-		<Unit ID="1 4" ENG="Connector" localized="Kopplung">Kopplung\n\nGeb?ude m?ssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie k?nnen Geb?ude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem Geb?ude zum anderen bauen.</Unit>
-		<Unit ID="1 5" ENG="Depot" localized="Depot">Depot\n\nEin Depot kann Sch?den reparieren, Munition herstellen und Bodeneinheiten mit den neusten Technologien aufr?sten. All diese Operationen erfordern Rohstoffe, so dass ein Depot an die Lagerreserven angeschlossen sein sollte.</Unit>
-		<Unit ID="1 6" ENG="Dock" localized="Dock">Dock\n\nEin Dock kann Sch?den reparieren, Munition liefern und Schiffe mit der neusten Technologie aufr?sten. All diese Operationen erfordern Rohstoffe, daher sollte ein Depot an die Lagerreserven angeschlossen sein.</Unit>
-		<Unit ID="1 7" ENG="Power Station" localized="Energie-Station">Energie-Station\n\nEine Energiestation verbraucht sechs Treibstoffeinheiten in jeder Runde und liefert genug Energie f?r sechs Fabriken oder Berkwerke.\n\nEnergie-Stationen ben?tigen eine l?ngere Bauzeit als Energie-Generatoren, aber sie sind auch effizienter.</Unit>
-		<Unit ID="1 8" ENG="Power Generator" localized="Energie-Generator">Energie-Generator\n\nEin Energie-Generator verbraucht in jeder Runde zwei Treibstoffeinheiten und liefert genug Energie um ein Berkwerk oder eine Fabrik zu betreiben. Der Energie-Generator muss an die Treibstoffquelle (Berkwerk oder Treibstoff-Tank) und an das Geb?ude, das Energie ben?tigt, angeschlossen sein.</Unit>
-		<Unit ID="1 9" ENG="Air Units Plant" localized="Lufteinheiten-Fabrik">Lufteinheiten-Fabrik\n\nBaut J?ger, Bomber, AWACs und Lufttransportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und ben?tigt Energie.</Unit>
-		<Unit ID="1 10" ENG="Alien Units Plant" localized="Alien-Einheiten-Fabrik">Alien-Einheiten-Fabrik</Unit>
-		<Unit ID="1 11" ENG="Heavy Vehical Plant" localized="Schwer-Fahrzeug-Fabrik">Schwer-Fahrzeug-Fabrik\n\nSchwer-Fahrzeug-Fabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, Sturmgesch?tze, Raketenwerfer und mobile Missilenwerfer. Eine Schwer-Fahrzeug-Fabrik verbraucht drei Rohmaterialien pro Runde und ben?tigt Energie.</Unit>
-		<Unit ID="1 12" ENG="Shipyard" localized="Schiffswerft">Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft ben?tigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie.</Unit>
-		<Unit ID="1 13" ENG="Light Vehical Plant" localized="Leicht-Fahrzeug-Fabrik">Leicht-Fahrzeug-Fabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Luftwaffeneinheiten.</Unit>
-		<Unit ID="1 14" ENG="Gold Refinery" localized="Gold-Raffinierie">Gold-Raffinerie\n\nRaffinerie, um Gold in Upgrade-Punkte umzuwandeln. Upgrade-Punkte werden ben?tigt, um Einheiten-Aufr?stungen zu erwerben. Um zu arbeiten, ben?tigt eine Goldraffinerie eine Energiequelle und eine Qolderz-Quelle. Ein Berkwerk kann Golderz produzieren, wenn eine seiner vier Fl?chen eine Fl?che mit unterirdischem Gold bedeckt.</Unit>
-		<Unit ID="1 15" ENG="Anti Aircraft" localized="Luftabwehr">Luftabwehr\n\nKlein-Kaliber-, Hochgeschwindigkeits-Luftabwehr. Luftabwehr machen kurzen Prozess mit Flugzeugen, aber k?nnen Bodeneinheiten nicht angreifen.</Unit>
-		<Unit ID="1 16" ENG="Artillery" localized="Artillerie">Atillerie\n\nStarke station?re Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Langstrecken-Missilen-Turm.</Unit>
-		<Unit ID="1 17" ENG="Missile Launcher" localized="">Missilenwerfer\n\nLangstrecken-Missilenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtst?rmen und Luftabwehr.</Unit>
-		<Unit ID="1 18" ENG="Gun Turret" localized="Gefechtsturm">Gefechtsturm\n\nSchwer gepanzerter station?rer Gefechtsturm. Gefechtst?rme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden k?nnen, sind sie eine gute Wahl, wenn Sie m?glichst schnell Verteidigung ben?tigen.</Unit>
-		<Unit ID="1 19" ENG="Habitat" localized="Behausung">Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder ?ko-Sph?ren zu betreiben. Diese Geb?ude m?ssen an eine Behausung angeschlossen sein, bevor sie operieren k?nnen.</Unit>
-		<Unit ID="1 20" ENG="Hangar" localized="Hangar">Hangar\n\nEin Hangar kann Sch?den reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufr?sten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
-		<Unit ID="1 21" ENG="Claymore" localized="Landmine">Landmine\n\nKleines, schwer zu entdeckendes, explosives Gesch?tz. Nur Gutachter, Minenleger und Infiltratoren k?nnen Minen aussp?hen. Sobald sie entdeckt werden, wird fast jede Besch?digung sie zerst?ren.</Unit>
-		<Unit ID="1 22" ENG="Mine" localized="Bergwerk">Berkwerk\n\nF?rdert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Geb?ude m?ssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergeb?ude vorhanden sind, um ?bersch?ssiges Material zu Lagern, gehen diese ?bersch?sse verloren.</Unit>
-		<Unit ID="1 23" ENG="Deep Mine" localized="Deep Mine">Deep Mine</Unit>
-		<Unit ID="1 24" ENG="Landing Pad" localized="Landefl?che">Landefl?che\n\nLandem?glichkeit f?r Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefl?che wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
-		<Unit ID="1 25" ENG="Water Platform" localized="Wasser-Plattform">Wasser-Plattform\n\nLiefert eine Fl?che auf dem Wasser, auf der andere Geb?ude errichtet werden k?nnen. Pionier-Fahrzeuge k?nnen Wasserplattformen sowohl ?ber Ufer als auch ?ber offenes Gew?sser bauen. Wasser?lattformen sind besonders wichtig auf Insel-Karten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
-		<Unit ID="1 26" ENG="Radar" localized="Radar">Radar\n\nStation?res Radarger?t mit gro?er Reichweite. Einheiten mit gr??erer Reichweite wie Missilenwerfer und Artillerie k?nnen nicht auf etwas schie?en, das sie nicht sehen k?nnen, daher ist es wichtig, einen Scanner oder ein Radar in der N?he zu haben.</Unit>
-		<Unit ID="1 27" ENG="Research Center" localized="Forschungs-Zentrum">Forschungs-Zentrum\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern k?nnen. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, ben?tigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und ben?tigt keine Golderz-Quelle. Ein Forschungszentrum ben?tigt Kolonisten einer Behausung und Energie, um operieren zu k?nnen.</Unit>
-		<Unit ID="1 28" ENG="Road" localized="Stra?e">Stra?e\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit ?ber Stra?en.</Unit>
-		<Unit ID="1 29" ENG="Seamine" localized="Seemine">Seemine\n\nKleines, schwer zu entdeckendes, explosives Gesch?tz. Nur Guachter, Minenleger und Infiltratoren k?nnen Minen aussp?hen. Sobald sie entdeckt werden, wird fast jede Besch?digung sie zerst?ren.</Unit>
-		<Unit ID="1 30" ENG="Shield" localized="Shield">Shield</Unit>
-		<Unit ID="1 31" ENG="Gold Vault" localized="Goldtresor">Goldtresor\n\nBeinhaltet unrafiniertes Golderz. Berkwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Berkwerk mit einem Goldtresor verbunden sein.</Unit>
-		<Unit ID="1 32" ENG="Storage Unit" localized="Lagereinheit">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um ?bersch?ssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
-		<Unit ID="1 33" ENG="Oilstorage" localized="Treibstoff-Tank">Treibstoff-Tank\n\nLagert Treibstoff-Reserven. Berkwerke produzieren in jeder Runde Treibstoff. Um ?bersch?ssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstoff-Tank angeschlossen sein.</Unit>
-		<Unit ID="1 34" ENG="Trainung Hall" localized="Trainings-Halle">Trainings-Halle\n\nTrainiert Infiltratoren, die feindliche Einheiten au?er Gefecht setzen oder gefangen nehmen k?nnen, und Infanterie. Nur Infanterie und andere Infiltratoren k?nnen Infiltratoren aussp?hen. Eine Trainings-Halle ben?tigt Kolonisten einer Behausung und Energie, um operieren zu k?nnen.</Unit>
+		<Unit ID="0 1" ENG="Air Transport" localized="">Air Transport\n\nHeavy aircraft capable of holding up to three ground units.</Unit>
+		<Unit ID="0 2" ENG="Alien Assault" localized="">Alien Assault\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault gunns, the alien assault gun should still avoid enemy fire whenever possible. All alien unitsrepair themselves, and improve their abilities with experience.</Unit>
+		<Unit ID="0 3" ENG="Alien Plane" localized="">Alien Plane\n\nAlien fighter-bomber. While the alien plane is primarily desinged to attack ground targets, it can also fire its missiles at other planes. Though powerful, the alien attack plane is still vulnerable to anti aircraft fire. Like other alien units, alien planes repair themselves and improve their abilities wity experience.</Unit>
+		<Unit ID="0 4" ENG="Alien Ship" localized="">Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience.</Unit>
+		<Unit ID="0 5" ENG="Alien Tank" localized="">Alien Tank\n\nHeavily armored tank of alien design. Alien tanks are best used at the front of an attack to soak up enemy fire. All alien units repair themselves, and improve their abilities with erperience.</Unit>
+		<Unit ID="0 6" ENG="Personnel Carrier" localized="">Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. Tha APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.</Unit>
+		<Unit ID="0 7" ENG="Assault Gun" localized="">Assault Gun\n\nLightly armored vehicle with a long range gun firing high-explosive shells. Fast and effective on the attack, but fragile.</Unit>
+		<Unit ID="0 8" ENG="AWAC" localized="">AWAC\n\nAirborne Warning And Control plane. Basically a flying radar dish, an AWAC is essential to spot enemy anti aircraft before your planes fly info firing range.</Unit>
+		<Unit ID="0 9" ENG="Ground Attack Plane" localized="">Ground Attack Plane\n\nA hevier plane carrying a full load of air to ground missiles. Ground Attack Planes are expencive, but the advantages are worth the cost. Their great speet lets them reach any trouble spot quickly, and once they arrive, only fighters and antiaircraft can defend against them.</Unit>
+		<Unit ID="0 10" ENG="Bulldozer" localized="">Bulldozer\n\nVehicle for clearing rubble and demolishing buildings. Bulldozers can scavenge material from debris.</Unit>
+		<Unit ID="0 11" ENG="Cargo Ship" localized="">Cargo Ship\n\nShips for hauling raw material. Useful for resupplying pioneers and sea combat units with new ammunition.</Unit>
+		<Unit ID="0 12" ENG="Rocket Launcher" localized="">Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.</Unit>
+		<Unit ID="0 13" ENG="Infiltrator" localized="">Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.</Unit>
+		<Unit ID="0 14" ENG="Corvette" localized="">Corvette\n\nHigh speed boat with torpedo tubes and sonar. Corvettes can attack any sea unit, but their real strength is their ability to spot and attack submarines.</Unit>
+		<Unit ID="0 15" ENG="Escort" localized="">Escort\n\nHigh speed boat with good radar and rapid fire anti aircraft cannon. Escorts are the eyes of a fleet, and a fleet's protection from planes.</Unit>
+		<Unit ID="0 16" ENG="Fighter" localized="">Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area.</Unit>
+		<Unit ID="0 17" ENG="Gunboat" localized="">Gunboat\n\nHeavily armored ship with a high caliber, medium range cannon. Excellent at destroying other ships and bombing shore targets.</Unit>
+		<Unit ID="0 18" ENG="Infantery" localized="">Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.</Unit>
+		<Unit ID="0 19" ENG="Constructor" localized="">Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.</Unit>
+		<Unit ID="0 20" ENG="Mine Layer" localized="">Mine Layer\n\nMinelayers are specialized construction vehicles which place, detect, and remove mines. Minelayers convert onboard raw materials into mines. They can also remove those mines later and convert them back into materials. They cannot remove enemy minefields - those must be exploded with gunfire and rockets.</Unit>
+		<Unit ID="0 21" ENG="Missile Crawler" localized="">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.</Unit>
+		<Unit ID="0 22" ENG="Missile Cruiser" localized="">Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength, and medium armor makes this a powerful unit.</Unit>
+		<Unit ID="0 23" ENG="Mobile Anti Aircraft" localized="">Mobile Anti Aircraft\n\nLight, fast vehicle with a rapid fire cannon for shooting down enemy planes. Mobile anti aircraft are generally defensive units, because they aren't as fast as planes, and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.</Unit>
+		<Unit ID="0 24" ENG="Pioneer" localized="">Small construktion vehical for creating small buildings and stationary weapons.</Unit>
+		<Unit ID="0 25" ENG="Repair Unit" localized="">Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require materials. The most extensive the damage, the more materials the repair requires. Depots, docks, hangars and barracks can also repair units.</Unit>
+		<Unit ID="0 26" ENG="Scanner" localized="">Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for very long ranged units like missile crawlers.</Unit>
+		<Unit ID="0 27" ENG="Scout" localized="">Scout\n\nHigh speed scouting vehical for exploration and spotting enemy units. Can cross water without a bridge, but is faster an land.\n\nVery fast and good scan range, but much weaker than most combat units.</Unit>
+		<Unit ID="0 28" ENG="Sea Mine Layer" localized="">Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines, detect them, and convert them back into raw material.</Unit>
+		<Unit ID="0 29" ENG="Sea Transport" localized="">Sea Transport\n\nHeavily armored ship with space to carry up to six land units. Sea transports are much slower than air transports, but also much more likely to survive an enemy attack.</Unit>
+		<Unit ID="0 30" ENG="Submarine" localized="">Submarine\n\nLurking beneath the surface, submarines can sneak close to the enemy to fire their powerful torpedoes. Submarines do not carry active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes, and ground attack planes can attack them.</Unit>
+		<Unit ID="0 31" ENG="Surveyor" localized="">Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are just as fast on water an on Land.</Unit>
+		<Unit ID="0 32" ENG="Tank" localized="">Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.</Unit>
+		<Unit ID="0 33" ENG="Gold Truck" localized="">Gold Truck\n\nUnit for moving gold ore from one location to another.</Unit>
+		<Unit ID="0 34" ENG="Supply Truck" localized="">Supply Truck\n\nTruck for hauling raw materials. Useful for resupplying pioneers and constructors, and for supplying combat units with new ammunition.</Unit>
+		<Unit ID="0 35" ENG="Fuel Truck" localized="">Fuel Truck\n\nTruck for moving fuel.</Unit>
+		<Unit ID="1 1" ENG="Barracks" localized="">Barracks\n\nA barracks holds infiltrators and infantery units. Inside the barracks is a machine shop for repairing and improving powered suits, and for manufacturing ammunition. The barracks needs raw materials to repair, upgrade or resupply, so it should be connected to a storage unit or a minig station.</Unit>
+		<Unit ID="1 2" ENG="Concrete Block" localized="">Concrete Block\n\nHardened, armored block for blocking enemy movement.</Unit>
+		<Unit ID="1 3" ENG="Bridge" localized="">Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships.</Unit>
+		<Unit ID="1 4" ENG="Connector" localized="">Connector\n\nBuildings must be connected to share power, fuel, raw materials and gold. You can connect buildings by placing them next to each other, or by building connectors from one building to the other.</Unit>
+		<Unit ID="1 5" ENG="Depot" localized="">Depot\n\nA depot can repair damage, manufracture ammunition, and refit ground units with the newest technology. All of these operations require raw materials, so depots should be connected to stored materials.</Unit>
+		<Unit ID="1 6" ENG="Dock" localized="">Dock\n\nA dock can repair damage, manufacture ammunition and refit ships with the newest technology. All of these operations require raw materials, so docks should be connected to stored materials.</Unit>
+		<Unit ID="1 7" ENG="Power Station" localized="">Power Station\n\nA power station consumes six fuel each turn, and provides enough power for six factories or mining stations.</Unit>
+		<Unit ID="1 8" ENG="Power Generator" localized="">Power Generator\n\nA power generator consumes two fuel each turn, and provides enough power for one mining station or factory. The power generator must be connected to the fuel source (minig station or fuel tank) and the building that needs the power.</Unit>
+		<Unit ID="1 9" ENG="Air Units Plant" localized="">Air Units Plant\n\nBuilds fighters, ground attack planes, AWACs and air transports. A air units plant needs three raw materials a turn to operate and power.</Unit>
+		<Unit ID="1 10" ENG="Alien Units Plant" localized="">Alien Units Plant</Unit>
+		<Unit ID="1 11" ENG="Heavy Vehicle Plant" localized="">Heavy Vehicle Plant\n\nBuilds construtors, mobile scanners, and the heavy fighting units: tanks, assult guns, rocket launchers and missile crawlers. A heavy vehicle factory needs three raw materials a turn to operate, and power.</Unit>
+		<Unit ID="1 12" ENG="Shipyard" localized="">Shipyard\n\nShipyards manufacture ships, such as submarines, sea transporters and missile cruisers. A shipyard requires three raw materials a turn to operate, an power.</Unit>
+		<Unit ID="1 13" ENG="Light Vehicle Plant" localized="">Light Vehicle Plant\n\nBuilds light vehicles: pioneers, trucks, mobile repair units, scouts and mobile anti-aircraft units. A light vehicle plant requires three raw materials a turn to operate, and power from a power generator or power station.</Unit>
+		<Unit ID="1 14" ENG="Gold Refinery" localized="">Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs a source of gold ore. A mining station can produce gold ore if one of its four spuares covers a spuare with undergound gold.</Unit>
+		<Unit ID="1 15" ENG="Anti Aircraft" localized="">Anti Aircraft\n\nLow caliber, high speed anti aircraft cannon. Anti aircraft make short work of planes, but cannot attack ground units.</Unit>
+		<Unit ID="1 16" ENG="Artillery" localized="">Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap, rugged gun turret and the expensive, long-range missile turret.</Unit>
+		<Unit ID="1 17" ENG="Missile Launcher" localized="">Missile Launcher\n\nLong-range missile launcher on a fixed mount. Exellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti aircraft.</Unit>
+		<Unit ID="1 18" ENG="Gun Turret" localized="">Gun Turret\n\nHeavily armored stationary gun turret. Gun turrets have good firepower, heavy armor, and moderate range. Because they take little time to build, they are a good choice when you need defense in a hurry.</Unit>
+		<Unit ID="1 19" ENG="Habitat" localized="">Habitat\n\nHabitats house colonists. Each habitat houses enough colonists to operate three research centers, training halls or eco-spheres. The colonist buildings must be connected to the habitat befor they can operate.</Unit>
+		<Unit ID="1 20" ENG="Hangar" localized="">Hangar\n\nA hangar can repair damage, manufracture ammunition and refit planes with the newest technology. All of these operations require raw materials, so hangars should be connected to stored materials.</Unit>
+		<Unit ID="1 21" ENG="Land Mine" localized="">Land Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.</Unit>
+		<Unit ID="1 22" ENG="Mining Station" localized="">Mining Station\n\nExtracts raw materials, fuel and gold from the ground everuy turn. Buildings must be connected to a mine to use the resources a mine produces. If there are no storage buildings, to store extra materials, it will be lost.</Unit>
+		<Unit ID="1 23" ENG="Deep Mine" localized="">Deep Mine...</Unit>
+		<Unit ID="1 24" ENG="Landing Pad" localized="">Landing Pad\n\nLanding facility for planes. Does not repair, resupply or refuel planes. To resupply a plane on a landing pad, use a nearby truck or storage unit.</Unit>
+		<Unit ID="1 25" ENG="Water Platform" localized="">Water Platform\n\nProvides a surface over water on which to construct other buildings. Pioneers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps, or when a valuable material deposit is under water.</Unit>
+		<Unit ID="1 26" ENG="Radar" localized="">Radar\n\nStationary, long-range radar. Longer-range units like missile launchers and artillery cannot fire on what thay cannot see, so it's important to have a scanner or radar nearby.</Unit>
+		<Unit ID="1 27" ENG="Research Center" localized="">Research Center\n\nResearch centers investigate ways to improve your units. Unlike upgrades purcased with refined gold, research takes time, and the improvements are small. Hovever, research affects all of your units instead of just one type, and doesn't require a source of gold ore. A research center requires colonists from a habitat to operate, and power.</Unit>
+		<Unit ID="1 28" ENG="Road" localized="">Road\n\nUnits move twice as fast over road spuares.</Unit>
+		<Unit ID="1 29" ENG="Sea Mine" localized="">Sea Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.</Unit>
+		<Unit ID="1 30" ENG="Shield" localized="">Shield</Unit>
+		<Unit ID="1 31" ENG="Gold Vault" localized="">Gold Vault\n\nHolds unrefined gold ore. Minig stations produce gold every turn, if they have gold ore underneath them. To store the ore, a mining station must be connected to a gold vault.</Unit>
+		<Unit ID="1 32" ENG="Storage Unit" localized="">Storage Unit\n\nHolds raw materials. Mining stations produce raw materials ervery turn. To save extra materials, a minig station must be connected to a storage unit.</Unit>
+		<Unit ID="1 33" ENG="Fuel Tank" localized="">Fuel Tank\n\nHolds fuel reserves. Minig stations produce fuel every turn. To save extra fuel, a mining station must be connected to a fuel tank.</Unit>
+		<Unit ID="1 34" ENG="Training Hall" localized="">Training Hall\n\nTrains infiltrators who can disable or capture enemy units, and infantry to guard against infiltrators. A training hall requires colonists from a habitat and power to operate.</Unit>
 	</Units>
 	<Graphic>
+		<Dummy localized=""/>
 	</Graphic>
 	<Speech>
+		<Dummy localized=""/>
 	</Speech>
 </MAX_Language_File>
-
