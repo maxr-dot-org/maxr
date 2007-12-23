@@ -1736,7 +1736,7 @@ sPlayer RunPlayerSelect ( void )
 	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Player_Select" ));
 	font->showTextCentered(100,35, lngPack.i18n ( "Text~Title~Team" ));
 	font->showTextCentered(200,35, lngPack.i18n ( "Text~Title~Human" ));
-	font->showTextCentered(310,35, lngPack.i18n ( "Text~Title~Team" ));
+	font->showTextCentered(310,35, lngPack.i18n ( "Text~Title~Computer" ));
 	font->showTextCentered(420,35, lngPack.i18n ( "Text~Title~Nobody" ));
 	font->showTextCentered(535,35, lngPack.i18n ( "Text~Title~Clan" ));
 
