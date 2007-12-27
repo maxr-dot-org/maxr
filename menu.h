@@ -41,7 +41,15 @@ struct sPlayer{
 // Strukturen ////////////////////////////////////////////////////////////////
 struct sPlayerHS{
   int what[8];
+  string name[8];
   string clan[8];
+};
+
+enum ePlayer
+{
+	PLAYER_N,
+	PLAYER_H,
+	PLAYER_AI
 };
 
 // Struktur für die Optionen:

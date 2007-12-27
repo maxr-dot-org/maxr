@@ -760,7 +760,7 @@ void RunSPMenu ( void )
 					bool bHavePlayer = false;
 					for ( int i = 0; i < 4; i++ ) //check for players
 					{
-						if(players.what[i] != 0)
+						if(players.what[i] != PLAYER_N)
 						{
 							bHavePlayer = true;
 						}
@@ -1783,10 +1783,11 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	for ( int i = 0; i < 8; i++ )
 	{
 		players.clan[i] = "NONE";
-		players.what[i] = 0;
+		players.name[i] = lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + iToStr(i);
+		players.what[i] = PLAYER_N;
 	}
-	players.what[0] = 1;
-	players.what[1] = 1;
+	players.what[0] = PLAYER_H;
+	players.what[1] = PLAYER_H;
 	//END INIT DEFAULT PLAYERS
 	
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
@@ -1825,7 +1826,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 		{
 			for ( int i = 0; i < 8; i++ ) //reset players and exit
 			{
-				players.what[i] = 0;
+				players.what[i] = PLAYER_N;
 			}
 			break;
 		}
@@ -1848,37 +1849,37 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 				if ( mouse->x >= x && mouse->x < x + 35 && mouse->y >= y && mouse->y < y + 35 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );					
-					if ( i == 0 ) players.what[0] = 1;
-					if ( i == 1 ) players.what[0] = 2;
-					if ( i == 2 ) players.what[0] = 0;
+					if ( i == 0 ) players.what[0] = PLAYER_H;
+					if ( i == 1 ) players.what[0] = PLAYER_AI;
+					if ( i == 2 ) players.what[0] = PLAYER_N;
 
-					if ( i == 3 ) players.what[1] = 1;
-					if ( i == 4 ) players.what[1] = 2;
-					if ( i == 5 ) players.what[1] = 0;
+					if ( i == 3 ) players.what[1] = PLAYER_H;
+					if ( i == 4 ) players.what[1] = PLAYER_AI;
+					if ( i == 5 ) players.what[1] = PLAYER_N;
 
-					if ( i == 6 ) players.what[2] = 1;
-					if ( i == 7 ) players.what[2] = 2;
-					if ( i == 8 ) players.what[2] = 0;
+					if ( i == 6 ) players.what[2] = PLAYER_H;
+					if ( i == 7 ) players.what[2] = PLAYER_AI;
+					if ( i == 8 ) players.what[2] = PLAYER_N;
 
-					if ( i == 9 ) players.what[3] = 1;
-					if ( i == 10 ) players.what[3] = 2;
-					if ( i == 11 ) players.what[3] = 0;
+					if ( i == 9 ) players.what[3] = PLAYER_H;
+					if ( i == 10 ) players.what[3] = PLAYER_AI;
+					if ( i == 11 ) players.what[3] = PLAYER_N;
 					
-					if ( i == 12 ) players.what[4] = 1;
-					if ( i == 13 ) players.what[4] = 2;
-					if ( i == 14 ) players.what[4] = 0;
+					if ( i == 12 ) players.what[4] = PLAYER_H;
+					if ( i == 13 ) players.what[4] = PLAYER_AI;
+					if ( i == 14 ) players.what[4] = PLAYER_N;
 
-					if ( i == 15 ) players.what[5] = 1;
-					if ( i == 16 ) players.what[5] = 2;
-					if ( i == 17 ) players.what[5] = 0;
+					if ( i == 15 ) players.what[5] = PLAYER_H;
+					if ( i == 16 ) players.what[5] = PLAYER_AI;
+					if ( i == 17 ) players.what[5] = PLAYER_N;
 
-					if ( i == 18 ) players.what[6] = 1;
-					if ( i == 19 ) players.what[6] = 2;
-					if ( i == 20 ) players.what[6] = 0;
+					if ( i == 18 ) players.what[6] = PLAYER_H;
+					if ( i == 19 ) players.what[6] = PLAYER_AI;
+					if ( i == 20 ) players.what[6] = PLAYER_N;
 
-					if ( i == 21 ) players.what[7] = 1;
-					if ( i == 22 ) players.what[7] = 2;
-					if ( i == 23 ) players.what[7] = 0;
+					if ( i == 21 ) players.what[7] = PLAYER_H;
+					if ( i == 22 ) players.what[7] = PLAYER_AI;
+					if ( i == 23 ) players.what[7] = PLAYER_N;
 					showPlayerStatesHotSeat( players );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -1913,15 +1914,15 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 				bool bAiFound = false;
 				for ( int i = 0; i < 8; i++ ) //check if we have at least two players
 				{
-					if(players.what[i] == 2)
+					if(players.what[i] == PLAYER_AI)
 					{
-						players.what[i] == 1;
+						players.what[i] == PLAYER_H;
 						bAiFound = true;
 						
 					}
 					showPlayerStatesHotSeat( players );
 					
-					if(players.what[i] == 1)
+					if(players.what[i] == PLAYER_H)
 					{
 						iPlayers++;
 					}
@@ -1963,7 +1964,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 			{
 				for ( int i = 0; i < 8; i++ ) //reset players to nobody
 				{
-					players.what[i] = 0;
+					players.what[i] = PLAYER_N;
 				}
 				break;
 			}
@@ -1998,10 +1999,10 @@ sPlayer runPlayerSelection ( void )
 	for ( int i = 0; i < 4; i++ )
 	{
 		players.clan[i] = "NONE";
-		players.what[i] = 0;
+		players.what[i] = PLAYER_N;
 	}
-	players.what[0] = 1;
-	players.what[1] = 2;
+	players.what[0] = PLAYER_H;
+	players.what[1] = PLAYER_AI;
 
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
 	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Player_Select" ));
@@ -2028,7 +2029,7 @@ sPlayer runPlayerSelection ( void )
 		{
 			for ( int i = 0; i < 4; i++ ) //reset players and exit
 			{
-				players.what[i] = 0;
+				players.what[i] = PLAYER_N;
 			}
 			break;
 		}
@@ -2050,21 +2051,21 @@ sPlayer runPlayerSelection ( void )
 				if ( mouse->x >= x && mouse->x < x + 55 && mouse->y >= y && mouse->y < y + 71 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
-					if ( i == 0 ) players.what[0] = 1;
-					if ( i == 1 ) players.what[0] = 2;
-					if ( i == 2 ) players.what[0] = 0;
+					if ( i == 0 ) players.what[0] = PLAYER_H;
+					if ( i == 1 ) players.what[0] = PLAYER_AI;
+					if ( i == 2 ) players.what[0] = PLAYER_N;
 
-					if ( i == 3 ) players.what[1] = 1;
-					if ( i == 4 ) players.what[1] = 2;
-					if ( i == 5 ) players.what[1] = 0;
+					if ( i == 3 ) players.what[1] = PLAYER_H;
+					if ( i == 4 ) players.what[1] = PLAYER_AI;
+					if ( i == 5 ) players.what[1] = PLAYER_N;
 
-					if ( i == 6 ) players.what[2] = 1;
-					if ( i == 7 ) players.what[2] = 2;
-					if ( i == 8 ) players.what[2] = 0;
+					if ( i == 6 ) players.what[2] = PLAYER_H;
+					if ( i == 7 ) players.what[2] = PLAYER_AI;
+					if ( i == 8 ) players.what[2] = PLAYER_N;
 
-					if ( i == 9 ) players.what[3] = 1;
-					if ( i == 10 ) players.what[3] = 2;
-					if ( i == 11 ) players.what[3] = 0;
+					if ( i == 9 ) players.what[3] = PLAYER_H;
+					if ( i == 10 ) players.what[3] = PLAYER_AI;
+					if ( i == 11 ) players.what[3] = PLAYER_N;
 					ShowPlayerStates ( players );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -2078,7 +2079,7 @@ sPlayer runPlayerSelection ( void )
 			}
 		}
 		// Ok:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29 && ( players.what[0] == 1 || players.what[1] == 1 || players.what[2] == 1 || players.what[3] == 1 ) )
+		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29 && ( players.what[0] == PLAYER_H || players.what[1] == PLAYER_H || players.what[2] == PLAYER_H || players.what[3] == PLAYER_H ) )
 		{
 			if ( b&&!lb )
 			{
@@ -2116,7 +2117,7 @@ sPlayer runPlayerSelection ( void )
 			{
 				for ( int i = 0; i < 4; i++ ) //reset players to nobody
 				{
-					players.what[i] = 0;
+					players.what[i] = PLAYER_N;
 				}
 				break;
 			}
@@ -2149,9 +2150,11 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 	dest.y = DIALOG_Y+66;
 	for ( int i = 0; i< 8;i++ )
 	{
+		
 		dest.y = norm1.y = norm2.y = DIALOG_Y+66 + 45*i;
+		font->showText(DIALOG_X + 45, dest.y + 10 + i, players.name[i]); //FIXME: adjust backgroundgraphicbars for names proper
 		// Nichts
-		if ( players.what[i] == 0 )
+		if ( players.what[i] == PLAYER_N )
 		{
 			dest.x = FIELD3;
 			SDL_FillRect(buffer, &dest, 0xFC0000);
@@ -2160,7 +2163,7 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			norm2.x = FIELD2;
 		}
 		// Spieler
-		if ( players.what[i] == 1 )
+		if ( players.what[i] == PLAYER_H )
 		{
 			norm1.x = FIELD2;
 			norm2.x = FIELD3;
@@ -2169,7 +2172,7 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			//SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
 		}
 		// Computer
-		if ( players.what[i] == 2 )
+		if ( players.what[i] == PLAYER_AI )
 		{
 			norm1.x = FIELD1;
 			norm2.x = FIELD3;
@@ -2195,7 +2198,7 @@ void ShowPlayerStates ( sPlayer players )
 	{
 		dest.y = norm1.y = norm2.y = 67 + 92*i;
 		// Nichts
-		if ( players.what[i] == 0 )
+		if ( players.what[i] == PLAYER_N )
 		{
 			dest.x = 394;
 			SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
@@ -2203,7 +2206,7 @@ void ShowPlayerStates ( sPlayer players )
 			norm2.x = 394 - 219;
 		}
 		// Spieler
-		if ( players.what[i] == 1 )
+		if ( players.what[i] == PLAYER_H )
 		{
 			norm1.x = 394 - 110;
 			norm2.x = 394;
@@ -2211,7 +2214,7 @@ void ShowPlayerStates ( sPlayer players )
 			SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
 		}
 		// Computer
-		if ( players.what[i] == 2 )
+		if ( players.what[i] == PLAYER_AI )
 		{
 			norm1.x = 394;
 			norm2.x = 394 - 219;
@@ -6270,7 +6273,7 @@ void HeatTheSeat ( void )
 	
 	for ( int i = 0; i < 8; i++ )
 	{
-		if(players.what[i] != 0)
+		if(players.what[i] != PLAYER_N)
 		{
 			PlayerAnz ++;
 		}
@@ -6311,9 +6314,7 @@ void HeatTheSeat ( void )
 	list=new cList<cPlayer*>;
 	for ( i=1;i<=PlayerAnz;i++ )
 	{
-		stmp = lngPack.i18n ( "Text~Multiplayer~Player" );
-		stmp+=iToStr(i);
-		list->Add ( p=new cPlayer ( stmp,OtherData.colors[ ( i-1 ) %8],i ) );
+		list->Add ( p=new cPlayer ( players.name[i],OtherData.colors[ ( i-1 ) %8],i ) );
 		p->Credits=options.credits;
 	}
 
