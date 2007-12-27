@@ -202,6 +202,13 @@ int GetColorNr(SDL_Surface *sf);
  * @param  
  */
 void HeatTheSeat(void);
+
+/**
+ * 
+ * @param players 
+ */
+void showPlayerStatesHotSeat(sPlayerHS players);
+
 /**
  * 
  * @param players 

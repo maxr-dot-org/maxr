@@ -1760,8 +1760,216 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 
 sPlayerHS runPlayerSelectionHotSeat ( void )
 {
+	//TODO: add support to define player names
+	//TODO: use some eyecandy pictures instead of filled rects
+	//TODO: add clan support
+	//TODO: interpret _all_ playersettings (not just amount) later
+	//TODO: readjust background picture - last box-combos are misaligned on background gfx
+
 	sPlayerHS players;
-	//TODO: generate player selection dialog for hotseat featureing hotseatplayers.pcx -- beko
+	#define FIELD1 DIALOG_X+194
+	#define FIELD2 DIALOG_X+304
+	#define FIELD3 DIALOG_X+414
+	bool OKPressed=false;
+	bool BackPressed=false;
+	int b,lb=0,offset=0,lx=-1,ly=-1;
+	Uint8 *keystate;
+	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
+	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
+	SDL_Rect rBtnOk = { DIALOG_X + 390,DIALOG_Y + 440, 200, 29 };
+	SDL_Surface *sfTmp = NULL;
+			
+	//BEGIN INIT DEFAULT PLAYERS
+	for ( int i = 0; i < 8; i++ )
+	{
+		players.clan[i] = "NONE";
+		players.what[i] = 0;
+	}
+	players.what[0] = 1;
+	players.what[1] = 1;
+	//END INIT DEFAULT PLAYERS
+	
+	//need a tmpsf since I can't tell LoadPCXtoSF any dest
+	//what is vital for resolutions > 640*480
+	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
+	LoadPCXtoSF ( GFXOD_PLAYERHS_SELECT,sfTmp );
+	
+ 	//some menus don't support bigger resolutions yet and to
+ 	// prevent old graphic garbage in the background we refill
+ 	// with black -- beko
+	SDL_FillRect(buffer, NULL, 0x0000);
+
+	SDL_BlitSurface (sfTmp, NULL, buffer, &dest);
+
+	font->showTextCentered(DIALOG_X + 320, DIALOG_Y + 11, lngPack.i18n ( "Text~Title~Player_Select" ));
+	font->showTextCentered(DIALOG_X + 100,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Player_Name" ));
+	font->showTextCentered(DIALOG_X + 210,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Human" ));
+	font->showTextCentered(DIALOG_X + 320,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Computer" ));
+	font->showTextCentered(DIALOG_X + 430,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Nobody" ));
+	font->showTextCentered(DIALOG_X + 535,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Clan" ));
+
+	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false , rBtnOk.x,  rBtnOk.y);
+	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, rBtnCancel.x, rBtnCancel.y );
+
+	showPlayerStatesHotSeat ( players );
+	
+	mouse->Show();
+	mouse->SetCursor ( CHand );
+	SHOW_SCREEN
+	while ( 1 )
+	{
+		// Events holen:
+		SDL_PumpEvents();
+		keystate=SDL_GetKeyState ( NULL );
+		if ( keystate[SDLK_ESCAPE] )
+		{
+			for ( int i = 0; i < 8; i++ ) //reset players and exit
+			{
+				players.what[i] = 0;
+			}
+			break;
+		}
+		// Die Maus machen:
+		mouse->GetPos();
+		b=mouse->GetMouseButton();
+
+		if ( mouse->x!=lx||mouse->y!=ly )
+		{
+			mouse->draw ( true,screen );
+		}
+		// Änderungen:
+		if ( b&&!lb )
+		{
+			int x = FIELD1;
+			int y = DIALOG_Y + 66;
+	
+			for ( int i = 0; i < 24; i++ ) //playermatrix 3 * 8 fields
+			{
+				if ( mouse->x >= x && mouse->x < x + 35 && mouse->y >= y && mouse->y < y + 35 )
+				{
+					PlayFX ( SoundData.SNDObjectMenu );					
+					if ( i == 0 ) players.what[0] = 1;
+					if ( i == 1 ) players.what[0] = 2;
+					if ( i == 2 ) players.what[0] = 0;
+
+					if ( i == 3 ) players.what[1] = 1;
+					if ( i == 4 ) players.what[1] = 2;
+					if ( i == 5 ) players.what[1] = 0;
+
+					if ( i == 6 ) players.what[2] = 1;
+					if ( i == 7 ) players.what[2] = 2;
+					if ( i == 8 ) players.what[2] = 0;
+
+					if ( i == 9 ) players.what[3] = 1;
+					if ( i == 10 ) players.what[3] = 2;
+					if ( i == 11 ) players.what[3] = 0;
+					
+					if ( i == 12 ) players.what[4] = 1;
+					if ( i == 13 ) players.what[4] = 2;
+					if ( i == 14 ) players.what[4] = 0;
+
+					if ( i == 15 ) players.what[5] = 1;
+					if ( i == 16 ) players.what[5] = 2;
+					if ( i == 17 ) players.what[5] = 0;
+
+					if ( i == 18 ) players.what[6] = 1;
+					if ( i == 19 ) players.what[6] = 2;
+					if ( i == 20 ) players.what[6] = 0;
+
+					if ( i == 21 ) players.what[7] = 1;
+					if ( i == 22 ) players.what[7] = 2;
+					if ( i == 23 ) players.what[7] = 0;
+					showPlayerStatesHotSeat( players );
+					SHOW_SCREEN
+					mouse->draw ( false,screen );
+				}
+				
+				if(x == FIELD1)  //go through columns and/or go to next row on end
+					x = FIELD2;
+				else if(x == FIELD2)
+					x = FIELD3;
+				else
+				{
+					x = FIELD1;
+					y += 45;
+				}
+			}
+		}
+		
+		// Ok:
+		if ( mouse->x >= rBtnOk.x && mouse->x < rBtnOk.x + rBtnOk.w && mouse->y >= rBtnOk.y && mouse->y < rBtnOk.y + rBtnOk.h  )
+		{
+			if ( b&&!lb )
+			{
+				OKPressed=true;
+				PlayFX ( SoundData.SNDMenuButton );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, rBtnOk.x, rBtnOk.y );
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+			}
+			else if ( !b&&OKPressed )
+			{
+				int iPlayers = 0;
+				for ( int i = 0; i < 8; i++ ) //check if we have at least two players
+				{
+					if(players.what[i] != 0)
+					{
+						iPlayers++;
+					}
+				}
+				if(iPlayers >= 2)
+				{
+						break;
+				}
+				else
+				{
+					ShowOK ( lngPack.i18n ( "Text~Multiplayer~Player_Amount" ), true );
+				}
+			}
+		}
+		else if ( OKPressed )
+		{
+			OKPressed=false;
+			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, rBtnOk.x, rBtnOk.y );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		
+		// Zurück:
+		if ( mouse->x >= rBtnCancel.x && mouse->x < rBtnCancel.x + rBtnCancel.w && mouse->y >= rBtnCancel.y && mouse->y < rBtnCancel.y + rBtnCancel.h )
+		{
+			if ( b&&!lb )
+			{
+				BackPressed=true;
+				PlayFX ( SoundData.SNDMenuButton );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, rBtnCancel.x, rBtnCancel.y);
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+			}
+			else if ( !b&&BackPressed )
+			{
+				for ( int i = 0; i < 8; i++ ) //reset players to nobody
+				{
+					players.what[i] = 0;
+				}
+				break;
+			}
+		}
+		else if ( BackPressed )
+		{
+			BackPressed=false;
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, rBtnCancel.x, rBtnCancel.y );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		
+		lx=mouse->x;
+		ly=mouse->y;
+		lb=b;
+		SDL_Delay ( 1 );
+	}	
+	
+	SDL_FreeSurface(sfTmp);	
 	return players;
 }
 
@@ -1826,7 +2034,7 @@ sPlayer runPlayerSelection ( void )
 			int y = 67;
 			for ( int i = 0; i < 12; i++ )
 			{
-				if ( mouse->x>=x&&mouse->x<x+55&&mouse->y>=y&&mouse->y<y+71 )
+				if ( mouse->x >= x && mouse->x < x + 55 && mouse->y >= y && mouse->y < y + 71 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					if ( i == 0 ) players.what[0] = 1;
@@ -1914,6 +2122,53 @@ sPlayer runPlayerSelection ( void )
 		SDL_Delay ( 1 );
 	}
 	return players;
+}
+
+void showPlayerStatesHotSeat ( sPlayerHS players )
+{
+	SDL_Rect dest,norm1,norm2;
+	dest.w = norm1.w = norm2.w = 35;
+	dest.h = norm1.h = norm2.h = 35;
+	#define FIELD1 DIALOG_X+194
+	#define FIELD2 DIALOG_X+304
+	#define FIELD3 DIALOG_X+414
+	dest.x = DIALOG_X+304;
+	dest.y = DIALOG_Y+66;
+	for ( int i = 0; i< 8;i++ )
+	{
+		dest.y = norm1.y = norm2.y = DIALOG_Y+66 + 45*i;
+		// Nichts
+		if ( players.what[i] == 0 )
+		{
+			dest.x = FIELD3;
+			SDL_FillRect(buffer, &dest, 0xFC0000);
+			//SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
+			norm1.x = FIELD1;
+			norm2.x = FIELD2;
+		}
+		// Spieler
+		if ( players.what[i] == 1 )
+		{
+			norm1.x = FIELD2;
+			norm2.x = FIELD3;
+			dest.x = FIELD1;
+			SDL_FillRect(buffer, &dest, 0xFF0000);
+			//SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
+		}
+		// Computer
+		if ( players.what[i] == 2 )
+		{
+			norm1.x = FIELD1;
+			norm2.x = FIELD3;
+			dest.x = FIELD2;
+			SDL_FillRect(buffer, &dest, 0xFC00F0);
+			//SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
+		}
+		SDL_FillRect(buffer, &norm1, 0x000000);
+		SDL_FillRect(buffer, &norm2, 0x000000);
+		//SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm1,buffer,&norm1 );
+		//SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm2,buffer,&norm2 );
+	}
 }
 
 void ShowPlayerStates ( sPlayer players )
@@ -5995,9 +6250,22 @@ void HeatTheSeat ( void )
 {
 	string stmp;
 	// Anzahl der Spieler holen:
-	int PlayerAnz;
-	PlayerAnz=ShowNumberInput ( lngPack.i18n ( "Text~Multiplayer~Player_Amount" ), MAXPLAYER_HOTSEAT, 2 );
-	if ( PlayerAnz<2 ) PlayerAnz=2;
+	int PlayerAnz = 0;
+	sPlayerHS players;
+
+	players = runPlayerSelectionHotSeat();
+	
+	for ( int i = 0; i < 8; i++ )
+	{
+		if(players.what[i] != 0)
+		{
+			PlayerAnz ++;
+		}
+	}
+	if(PlayerAnz == 0) //got no players - cancel
+	{
+		return;
+	}
 
 	// Spiel erstellen:
 	string MapName;

@@ -47,12 +47,13 @@
 	#define GFXOD_HELP          "gfx\\help_screen.pcx"
 	#define GFXOD_OPTIONS       "gfx\\options.pcx"
 	#define GFXOD_PLANET_SELECT "gfx\\planet_select.pcx"
+	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
+	#define GFXOD_PLAYERHS_SELECT "gfx\\hotseatplayers.pcx"
 	#define GFXOD_HANGAR        "gfx\\hangar.pcx"
 	#define GFXOD_MULT          "gfx\\multi.pcx"
 	#define GFXOD_DIALOG4		"gfx\\dialog4.pcx"
 	#define GFXOD_DIALOG5		"gfx\\dialog5.pcx"
 	#define GFXOD_DIALOG6		"gfx\\dialog6.pcx"
-	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #else
 	#ifndef PATH_DELIMITER
 		#define PATH_DELIMITER "//"
@@ -65,12 +66,13 @@
 	#define GFXOD_HELP          "gfx//help_screen.pcx"
 	#define GFXOD_OPTIONS       "gfx//options.pcx"
 	#define GFXOD_PLANET_SELECT "gfx//planet_select.pcx"
+	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
+	#define GFXOD_PLAYERHS_SELECT "gfx//hotseatplayers.pcx"
 	#define GFXOD_HANGAR        "gfx//hangar.pcx"
 	#define GFXOD_MULT          "gfx//multi.pcx"
 	#define GFXOD_DIALOG4		"gfx//dialog4.pcx"
 	#define GFXOD_DIALOG5		"gfx//dialog5.pcx"
 	#define GFXOD_DIALOG6		"gfx//dialog6.pcx"
-	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
 #endif
 
 // We have to take care of these manually !
