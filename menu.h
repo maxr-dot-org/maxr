@@ -38,6 +38,12 @@ struct sPlayer{
   string clan[4];
 };
 
+// Strukturen ////////////////////////////////////////////////////////////////
+struct sPlayerHS{
+  int what[8];
+  string clan[8];
+};
+
 // Struktur für die Optionen:
 struct sOptions{
   int metal,oil,gold,dichte;
@@ -116,12 +122,20 @@ void ShowPlanets(cList<string> *files,int offset,int selected, SDL_Surface *surf
  * @return 
  */
 sOptions RunOptionsMenu(sOptions *init);
+
+/**
+ * @author beko
+ * @param  
+ * @return 
+ */
+sPlayerHS runPlayerSelectionHotSeat(void);
+
 /**
  * 
  * @param  
  * @return 
  */
-sPlayer RunPlayerSelect(void);
+sPlayer runPlayerSelection(void);
 /**
  * 
  * @param str 

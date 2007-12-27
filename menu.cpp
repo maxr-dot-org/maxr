@@ -755,7 +755,7 @@ void RunSPMenu ( void )
 						break;
 					}
 					map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
-					players = RunPlayerSelect();
+					players = runPlayerSelection();
 												
 					bool bHavePlayer = false;
 					for ( int i = 0; i < 4; i++ ) //check for players
@@ -1757,8 +1757,16 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 	}
 }
 
+
+sPlayerHS runPlayerSelectionHotSeat ( void )
+{
+	sPlayerHS players;
+	//TODO: generate player selection dialog for hotseat featureing hotseatplayers.pcx -- beko
+	return players;
+}
+
 // Startet die Spielerauswahl (gibt die Spielereinstellungen):
-sPlayer RunPlayerSelect ( void )
+sPlayer runPlayerSelection ( void )
 {
 	bool OKPressed=false;
 	bool BackPressed=false;
