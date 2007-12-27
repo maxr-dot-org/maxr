@@ -1783,7 +1783,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	for ( int i = 0; i < 8; i++ )
 	{
 		players.clan[i] = "NONE";
-		players.name[i] = lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + iToStr(i);
+		players.name[i] = lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + iToStr(i+1);
 		players.what[i] = PLAYER_N;
 	}
 	players.what[0] = PLAYER_H;
@@ -2168,7 +2168,7 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			norm1.x = FIELD2;
 			norm2.x = FIELD3;
 			dest.x = FIELD1;
-			SDL_FillRect(buffer, &dest, 0xFF0000);
+			SDL_FillRect(buffer, &dest, 0x00FF00);
 			//SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
 		}
 		// Computer
@@ -2177,7 +2177,7 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			norm1.x = FIELD1;
 			norm2.x = FIELD3;
 			dest.x = FIELD2;
-			SDL_FillRect(buffer, &dest, 0xFC00F0);
+			SDL_FillRect(buffer, &dest, 0x0000FF);
 			//SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
 		}
 		SDL_FillRect(buffer, &norm1, 0x000000);
