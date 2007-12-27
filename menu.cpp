@@ -1424,6 +1424,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 string RunPlanetSelect ( void )
 {
 	bool OKPressed=false;
+	bool BackPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
@@ -1451,6 +1452,7 @@ string RunPlanetSelect ( void )
 	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Choose_Planet" ));
 
 	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
+	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
 
 	int k = 1;
 
@@ -1567,6 +1569,30 @@ string RunPlanetSelect ( void )
 					scr.y+=197;
 				}
 			}
+		}
+		
+		// Zurück:
+		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
+		{
+			if ( b&&!lb )
+			{
+				BackPressed=true;
+				PlayFX ( SoundData.SNDMenuButton );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,440);
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+			}
+			else if ( !b&&BackPressed )
+			{
+				break;
+			}
+		}
+		else if ( BackPressed )
+		{
+			BackPressed=false;
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
 		}
 
 		lx=mouse->x;
