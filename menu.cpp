@@ -756,7 +756,21 @@ void RunSPMenu ( void )
 					}
 					map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 					players = RunPlayerSelect();
-
+												
+					bool bHavePlayer = false;
+					for ( int i = 0; i < 4; i++ ) //check for players
+					{
+						if(players.what[i] != 0)
+						{
+							bHavePlayer = true;
+						}
+					}
+					if(!bHavePlayer) //no players - break
+					{
+						delete map;
+						ExitMenu();
+						break;
+					}
 					list=new cList<cPlayer*>;
 					list->Add ( p=new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
 					list->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
@@ -1747,8 +1761,10 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 sPlayer RunPlayerSelect ( void )
 {
 	bool OKPressed=false;
+	bool BackPressed=false;
 	int b,lb=0,offset=0,lx=-1,ly=-1;
 	sPlayer players;
+	Uint8 *keystate;
 
 	for ( int i = 0; i < 4; i++ )
 	{
@@ -1767,6 +1783,8 @@ sPlayer RunPlayerSelect ( void )
 	font->showTextCentered(535,35, lngPack.i18n ( "Text~Title~Clan" ));
 
 	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false ,390,440 );
+	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
+
 	ShowPlayerStates ( players );
 
 	mouse->Show();
@@ -1776,6 +1794,15 @@ sPlayer RunPlayerSelect ( void )
 	{
 		// Events holen:
 		SDL_PumpEvents();
+		keystate=SDL_GetKeyState ( NULL );
+		if ( keystate[SDLK_ESCAPE] )
+		{
+			for ( int i = 0; i < 4; i++ ) //reset players and exit
+			{
+				players.what[i] = 0;
+			}
+			break;
+		}
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
@@ -1844,6 +1871,35 @@ sPlayer RunPlayerSelect ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
+		
+		// Zurück:
+		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
+		{
+			if ( b&&!lb )
+			{
+				BackPressed=true;
+				PlayFX ( SoundData.SNDMenuButton );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,440);
+				SHOW_SCREEN
+				mouse->draw ( false,screen );
+			}
+			else if ( !b&&BackPressed )
+			{
+				for ( int i = 0; i < 4; i++ ) //reset players to nobody
+				{
+					players.what[i] = 0;
+				}
+				break;
+			}
+		}
+		else if ( BackPressed )
+		{
+			BackPressed=false;
+			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		
 		lx=mouse->x;
 		ly=mouse->y;
 		lb=b;
