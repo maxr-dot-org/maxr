@@ -1910,16 +1910,29 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 			else if ( !b&&OKPressed )
 			{
 				int iPlayers = 0;
+				bool bAiFound = false;
 				for ( int i = 0; i < 8; i++ ) //check if we have at least two players
 				{
-					if(players.what[i] != 0)
+					if(players.what[i] == 2)
+					{
+						players.what[i] == 1;
+						bAiFound = true;
+						
+					}
+					showPlayerStatesHotSeat( players );
+					
+					if(players.what[i] == 1)
 					{
 						iPlayers++;
 					}
 				}
 				if(iPlayers >= 2)
 				{
-						break;
+					if(bAiFound)
+					{
+						ShowOK ( "AI is currently not supported\n\nChanged AI slot(s) to human players!", true );
+					}
+					break;
 				}
 				else
 				{
@@ -6286,6 +6299,12 @@ void HeatTheSeat ( void )
 		return;
 	}
 	options=RunOptionsMenu ( NULL );
+	
+	if(options.metal == -1)
+	{
+		delete map;
+		return;
+	}
 
 	map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 
