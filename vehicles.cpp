@@ -5056,29 +5056,35 @@ void cVehicle::ShowStorage ( void )
 	bool FertigPressed = false;
 	bool DownPressed = false, DownEnabled = false;
 	bool UpPressed = false, UpEnabled = false;
-	bool AlleAktivierenEnabled = false;
+	//bool AlleAktivierenEnabled = false;
 	int offset = 0;
+
+	#define BUTTON__W 77
+	#define BUTTON__H 23
+
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+
+	SDL_Rect rBtnDone = {rDialog.x + 518, rDialog.y + 371, BUTTON__W, BUTTON__H};
 
 	LoadActive = false;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
 	scr.x = 480;
 	scr.y = 0;
-	scr.w = 640 - 480;
-	scr.h = 480;
-	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &scr );
-	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, NULL );
+	dest.w = scr.w = 640 - 480;
+	dest.h = scr.h = 480;
+	dest.x = rDialog.x + scr.x;
+	dest.y = rDialog.y + scr.y;
+	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+	dest.x = rDialog.x;
+	dest.y = rDialog.y;
+	dest.w = 480;
+	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, &dest );
 	to = 6;
 
 	// Alle Buttons machen:
 	// Fertig-Button:
-	scr.w = dest.w = 94;
-	scr.h = dest.h = 23;
-	scr.x = 0;
-	scr.y = 468;
-	dest.x = 510;
-	dest.y = 371;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 	// Down:
 
 	if ( StoredVehicles->iCount > to )
@@ -5093,6 +5099,7 @@ void cVehicle::ShowStorage ( void )
 	}
 
 	// Alle Aktivieren:
+	/*
 	scr.x = 0;
 
 	scr.y = 376;
@@ -5109,7 +5116,7 @@ void cVehicle::ShowStorage ( void )
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		AlleAktivierenEnabled = true;
-	}
+	} */
 
 	// Vehicles anzeigen:
 	DrawStored ( offset );
@@ -5150,15 +5157,15 @@ void cVehicle::ShowStorage ( void )
 		// Down-Button:
 		if ( DownEnabled )
 		{
-			if ( x >= 530 && x < 530 + 25 && y >= 426 && y < 426 + 25 && b && !DownPressed )
+			if ( x >= rDialog.x + 530 && x < rDialog.x +  530 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !DownPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 530;
 				scr.y = 426;
 				dest.w = scr.w = 25;
 				dest.h = scr.h = 25;
-				dest.x = 530;
-				dest.y = 426;
+				dest.x = rDialog.x + 530;
+				dest.y = rDialog.y + 426;
 
 				offset += to;
 
@@ -5177,9 +5184,9 @@ void cVehicle::ShowStorage ( void )
 
 				dest.h = scr.h = 25;
 
-				dest.x = 504;
+				dest.x = rDialog.x + 504;
 
-				dest.y = 426;
+				dest.y = rDialog.y + 426;
 
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 
@@ -5197,8 +5204,8 @@ void cVehicle::ShowStorage ( void )
 					scr.y = 452;
 					dest.w = scr.w = 25;
 					dest.h = scr.h = 25;
-					dest.x = 530;
-					dest.y = 426;
+					dest.x = rDialog.x + 530;
+					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
@@ -5209,15 +5216,15 @@ void cVehicle::ShowStorage ( void )
 		// Up-Button:
 		if ( UpEnabled )
 		{
-			if ( x >= 504 && x < 504 + 25 && y >= 426 && y < 426 + 25 && b && !UpPressed )
+			if ( x >= rDialog.x + 504 && x < rDialog.x + 504 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !UpPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 504;
 				scr.y = 426;
 				dest.w = scr.w = 25;
 				dest.h = scr.h = 25;
-				dest.x = 504;
-				dest.y = 426;
+				dest.x = rDialog.x + 504;
+				dest.y = rDialog.y + 426;
 
 				offset -= to;
 
@@ -5238,8 +5245,8 @@ void cVehicle::ShowStorage ( void )
 					scr.x = 103;
 					scr.y = 452;
 					dest.h = scr.h = dest.w = scr.w = 25;
-					dest.x = 530;
-					dest.y = 426;
+					dest.x = rDialog.x + 530;
+					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 				}
 
@@ -5252,8 +5259,8 @@ void cVehicle::ShowStorage ( void )
 					scr.y = 452;
 					dest.w = scr.w = 25;
 					dest.h = scr.h = 25;
-					dest.x = 504;
-					dest.y = 426;
+					dest.x = rDialog.x + 504;
+					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
@@ -5262,18 +5269,12 @@ void cVehicle::ShowStorage ( void )
 		}
 
 		// Fertig-Button:
-		if ( x >= 510 && x < 510 + 94 && y >= 371 && y < 371 + 23 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b && !FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				scr.w = dest.w = 94;
-				scr.h = dest.h = 23;
-				scr.x = 510;
-				scr.y = 371;
-				dest.x = 510;
-				dest.y = 371;
-				SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = true;
@@ -5287,19 +5288,14 @@ void cVehicle::ShowStorage ( void )
 		else
 			if ( FertigPressed )
 			{
-				scr.w = dest.w = 94;
-				scr.h = dest.h = 23;
-				scr.x = 0;
-				scr.y = 468;
-				dest.x = 510;
-				dest.y = 371;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				FertigPressed = false;
 			}
 
-		// Alle Aktivieren:
+		// Alle Aktivieren: uncommented because this "feature" is odd for vehicles. -- beko
+		/*
 		if ( x >= 511 && x < 511 + 94 && y >= 251 && y < 251 + 23 && b && !LastB && AlleAktivierenEnabled )
 		{
 			sVehicle *typ;
@@ -5389,7 +5385,8 @@ void cVehicle::ShowStorage ( void )
 
 			return;
 		}
-
+		*/
+		
 		// Buttons unter den Vehicles:
 		dest.w = 73;
 
@@ -5402,41 +5399,40 @@ void cVehicle::ShowStorage ( void )
 			if ( StoredVehicles->iCount <= i + offset )
 				break;
 
-			if ( i == 0 )
+			switch ( i )
 			{
-				dest.x = 8;
-				dest.y = 191;
+
+				case 0:
+					dest.x = rDialog.x + 8;
+					dest.y = rDialog.y + 191;
+					break;
+
+				case 1:
+					dest.x = rDialog.x + 163;
+					dest.y = rDialog.y + 191;
+					break;
+
+				case 2:
+					dest.x = rDialog.x + 318;
+					dest.y = rDialog.y + 191;
+					break;
+
+				case 3:
+					dest.x = rDialog.x + 8;
+					dest.y = rDialog.y + 426;
+					break;
+
+				case  4:
+					dest.x = rDialog.x + 163;
+					dest.y = rDialog.y + 426;
+					break;
+
+				case 5:
+					dest.x = rDialog.x + 318;
+					dest.y = rDialog.y + 426;
+					break;
 			}
-			else
-				if ( i == 1 )
-				{
-					dest.x = 163;
-					dest.y = 191;
-				}
-				else
-					if ( i == 2 )
-					{
-						dest.x = 318;
-						dest.y = 191;
-					}
-					else
-						if ( i == 3 )
-						{
-							dest.x = 8;
-							dest.y = 426;
-						}
-						else
-							if ( i == 4 )
-							{
-								dest.x = 163;
-								dest.y = 426;
-							}
-							else
-								if ( i == 5 )
-								{
-									dest.x = 318;
-									dest.y = 426;
-								}
+			
 
 			// Aktivieren:
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB )
@@ -5444,7 +5440,7 @@ void cVehicle::ShowStorage ( void )
 				PlayFX ( SoundData.SNDMenuButton );
 				ActivatingVehicle = true;
 				VehicleToActivate = i + offset;
-				SDL_BlitSurface ( sf, &dest, buffer, &dest );
+				drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 
@@ -5459,6 +5455,7 @@ void cVehicle::ShowStorage ( void )
 				mouse->MoveCallback = true;
 				return;
 			}
+			
 		}
 
 		LastMouseX = x;
@@ -5474,13 +5471,16 @@ void cVehicle::ShowStorage ( void )
 void cVehicle::DrawStored ( int off )
 {
 	SDL_Rect scr, dest;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Surface *sf;
 	cVehicle *v;
 	int i, to;
 
 	to = 6;
-	sf = GraphicsData.gfx_storage_ground;
 
+	sf = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, sf, NULL );
+	
 	for ( i = 0;i < to;i++ )
 	{
 		if ( i + off >= StoredVehicles->iCount )
@@ -5493,47 +5493,43 @@ void cVehicle::DrawStored ( int off )
 		}
 
 		// Das Bild malen:
-		if ( i == 0 )
+		switch ( i )
 		{
-			dest.x = 17;
-			dest.y = 9;
+
+			case 0 :
+				dest.x = rDialog.x + ( scr.x = 17 );
+				dest.y = rDialog.y + ( scr.y = 9 );
+				break;
+
+			case 1 :
+				dest.x = rDialog.x + ( scr.x = 172 );
+				dest.y = rDialog.y + ( scr.y = 9 );
+				break;
+
+			case 2 :
+				dest.x = rDialog.x + ( scr.x = 327 );
+				dest.y = rDialog.y + ( scr.y = 9 );
+				break;
+
+			case 3 :
+				dest.x = rDialog.x + ( scr.x = 17 );
+				dest.y = rDialog.y + ( scr.y = 244 );
+				break;
+
+			case 4 :
+				dest.x = rDialog.x + ( scr.x = 172 );
+				dest.y = rDialog.y + ( scr.y = 244 );
+				break;
+
+			case 5 :
+				dest.x = rDialog.x + ( scr.x = 327 );
+				dest.y = rDialog.y + ( scr.y = 244 );
+				break;
 		}
-		else
-			if ( i == 1 )
-			{
-				dest.x = 172;
-				dest.y = 9;
-			}
-			else
-				if ( i == 2 )
-				{
-					dest.x = 327;
-					dest.y = 9;
-				}
-				else
-					if ( i == 3 )
-					{
-						dest.x = 17;
-						dest.y = 244;
-					}
-					else
-						if ( i == 4 )
-						{
-							dest.x = 172;
-							dest.y = 244;
-						}
-						else
-							if ( i == 5 )
-							{
-								dest.x = 327;
-								dest.y = 244;
-							}
 
-		dest.w = 128;
-
-		dest.h = 128;
-
-		SDL_BlitSurface ( sf, &dest, buffer, &dest );
+		dest.w = scr.w = 128; //hangarwidth
+		dest.h = scr.h = 128; //hangarsize
+		SDL_BlitSurface ( sf, &scr, buffer, &dest );
 
 		if ( v )
 		{
@@ -5571,30 +5567,33 @@ void cVehicle::DrawStored ( int off )
 
 		dest.y += 182;
 
-		scr.w = dest.w = 73;
-		scr.h = dest.h = 23;
-
+		dest.w = 73;
+		dest.h = 23;
+		
 		if ( v )
 		{
-			scr.x = 156;
-			scr.y = 431;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, dest.x, dest.y, buffer );
 		}
 		else
 		{
-			SDL_BlitSurface ( sf, &dest, buffer, &dest );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 		}
+		
 
 		// Die zusätzlichen Infos anzeigen:
 		dest.x += 9;
 
 		dest.y -= 44 - 6;
 
-		dest.w = 128;
+		scr.w = dest.w = 128;
 
-		dest.h = 30;
+		scr.h = dest.h = 30;
 
-		SDL_BlitSurface ( sf, &dest, buffer, &dest );
+		scr.x = dest.x - rDialog.x;
+
+		scr.y = dest.y - rDialog.y;
+
+		SDL_BlitSurface ( sf, &scr, buffer, &dest );
 
 		dest.x += 6;
 
@@ -5617,6 +5616,7 @@ void cVehicle::DrawStored ( int off )
 			}
 		}
 	}
+	SDL_FreeSurface(sf);
 }
 
 // Läd ein Vehicle aus:
