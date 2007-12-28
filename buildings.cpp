@@ -3485,7 +3485,7 @@ void cBuilding::ShowResearch ( void )
 
 		// Die Schieber machen:
 		if ( b && !LastB )
-			MakeResearchSchieber ( x, y );
+			MakeResearchSchieber (x, y );
 
 		LastMouseX = x;
 
@@ -3514,8 +3514,8 @@ void cBuilding::ShowResearchSchieber ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_research, &scr, buffer, &dest );
 
 		// Texte ausgeben:
-		font->showTextCentered ( dest.x + 21 + 2, dest.y + 3, iToStr ( owner->ResearchTechs[i].working_on ) );
-		font->showTextCentered ( 258 + rDialog.x, dest.y + 3, dToStr ( owner->ResearchTechs[i].level*100 ) );
+		font->showTextCentered ( dest.x + 21 + 2, dest.y + 1, iToStr ( owner->ResearchTechs[i].working_on ) );
+		font->showTextCentered ( 258 + rDialog.x, dest.y + 1, dToStr ( owner->ResearchTechs[i].level*100 ) );
 
 
 
@@ -3524,7 +3524,7 @@ void cBuilding::ShowResearchSchieber ( void )
 		{
 			int iTmp = ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining / ( double ) owner->ResearchTechs[i].working_on );
 
-			font->showTextCentered ( 313 + 140, dest.y + 3, iToStr ( iTmp ) );
+			font->showTextCentered (rDialog.x + 313, dest.y + 1, iToStr ( iTmp ) );
 		}
 
 		// Den Pfeil nach links:
@@ -3612,13 +3612,16 @@ void cBuilding::ShowResearchSchieber ( void )
 // Prüft, ob die Schieber geändert wurden:
 void cBuilding::MakeResearchSchieber ( int x, int y )
 {
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
+	SDL_Rect rArrowLeft = {rDialog.x + 71 , rDialog.y + 70 , 19, 18 };
+	SDL_Rect rArrowRight = {rDialog.x + 143 , rDialog.y + 70 , 19, 18 };
 	bool changed = false;
 	int i;
 
 	for ( i = 0;i < 8;i++ )
 	{
 		// Den Pfeil nach links:
-		if ( x >= 71 + 140 && x < 71 + 140 + 19 && y >= 70 + 74 + i*28 && y < 70 + 74 + i*28 + 18 && owner->ResearchTechs[i].working_on )
+		if ( x >= rArrowLeft.x && x < rArrowLeft.x +  rArrowLeft.w && y >= rArrowLeft.y + i*28 && y < rArrowLeft.y + rArrowLeft.h + i*28 && owner->ResearchTechs[i].working_on )
 		{
 			owner->ResearchTechs[i].working_on--;
 			owner->UnusedResearch++;
@@ -3626,7 +3629,7 @@ void cBuilding::MakeResearchSchieber ( int x, int y )
 		}
 
 		// Den Pfeil nach rechts:
-		if ( x >= 143 + 140 && x < 143 + 140 + 19 && y >= 70 + 74 + i*28 && y < 70 + 74 + i*28 + 18 && owner->UnusedResearch > 0 )
+		if ( x >= rArrowRight.x && x < rArrowRight.x +  rArrowRight.w && y >= rArrowRight.y + i*28 && y < rArrowRight.y + rArrowRight.h + i*28 && owner->UnusedResearch > 0 )
 		{
 			owner->ResearchTechs[i].working_on++;
 
