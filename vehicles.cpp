@@ -862,8 +862,9 @@ void cVehicle::Deselct ( void )
 // Erzeugt den Namen für das Vehicle aus der Versionsnummer:
 void cVehicle::GenerateName ( void )
 {
-	string rome;
+	string rome, tmp_name;
 	int nr, tmp;
+	string::size_type tmp_name_idx;
 	rome = "";
 	nr = data.version;
 
@@ -933,11 +934,52 @@ void cVehicle::GenerateName ( void )
 	}
 
 	// Den Namen zusammenbauen:
-	name = ( string ) data.name;
-
-	name += " MK ";
-
-	name += rome;
+	if ( name.length() == 0 )
+	{
+		// prefix
+		name = "MK ";
+		name += rome;
+		name += " ";
+		// object name
+		name += ( string ) data.name;
+	}
+	else
+	{
+		// check for MK prefix
+		tmp_name = name.substr(0,2);
+		if ( 0 == (int)tmp_name.compare("MK") )
+		{
+			// current name, without prefix
+			tmp_name_idx = name.find_first_of(" ", 4 );
+			if( tmp_name_idx != string::npos )
+			{
+				tmp_name = ( string )name.substr(tmp_name_idx);
+				// prefix			
+				name = "MK ";
+				name += rome;
+				// name
+				name += tmp_name;
+			}
+			else
+			{
+				tmp_name = name;
+				// prefix
+				name = "MK ";
+				name += rome;
+				name += " ";
+				// name
+				name += tmp_name;
+			}
+		}
+		else
+		{
+			tmp_name = name;
+			name = "MK ";
+			name += rome;
+			name += " ";
+			name += tmp_name;		
+		}
+	}
 }
 
 bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
