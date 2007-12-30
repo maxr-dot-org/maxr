@@ -449,17 +449,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	}
 	
 	sLicence4 = ssLicence4.str();
-	
-	int k; //search and replace @ with (at) in string since we don't support the @ in our fontset
-	do{
-		k = ( int ) sLicence4.find("@");
-		if(k != string::npos)
-		{
-			sLicence4.erase(k, 1);
-			sLicence4.insert(k, "(at)");
-		}
-	}
-	while ( k != string::npos);
 	//END CREATING AUTHORS TEXT
 	//END CREATING LICENCE TEXTS
 
