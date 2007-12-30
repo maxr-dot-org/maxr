@@ -388,17 +388,21 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround->iCount;i++ )
+		if(WachpostenGround) //FIXME: workaround since sometimes WachpostenGround is already deleted -> seg fault -- beko
 		{
-			ptr=WachpostenGround->Items[i];
-			if ( ptr->b==b )
+			for ( i=0;i<WachpostenGround->iCount;i++ )
 			{
-				WachpostenGround->Delete ( i );
-				delete ptr;
-				break;
+				ptr=WachpostenGround->Items[i];
+				if ( ptr->b==b )
+				{
+					WachpostenGround->Delete ( i );
+					delete ptr;
+					break;
+				}
 			}
 		}
 		RefreshWacheGround();
+
 	}
 }
 
