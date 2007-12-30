@@ -75,6 +75,15 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	ActivatingVehicle = false;
 	RepeatBuild = false;
 
+	if ( data.can_attack )
+	{
+		Wachposten = true;
+	}
+	else
+	{
+		Wachposten = false;
+	}
+
 	if ( data.is_expl_mine )
 	{
 		detected = false;
@@ -171,7 +180,7 @@ cBuilding::~cBuilding ( void )
 		delete StoredVehicles;
 	}
 
-	if ( data.can_attack )
+	if ( Wachposten )
 	{
 		owner->DeleteWachpostenB ( this );
 	}
@@ -296,6 +305,10 @@ string cBuilding::GetStatusStr ( void )
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
 		sText += iToStr ( Disabled ) + ")";
 		return ( char * ) sText.c_str();
+	}
+	if ( Wachposten )
+	{
+		return lngPack.i18n ( "Text~Comp~Sentry" );
 	}
 
 	return lngPack.i18n ( "Text~Comp~Waits" );
@@ -971,6 +984,9 @@ int cBuilding::GetMenuPointAnz ( void )
 		nr++;
 
 	if ( typ->data.is_mine )
+		nr++;
+
+	if ( Wachposten || data.can_attack )
 		nr++;
 
 	if ( typ->data.can_load == TRANS_VEHICLES || typ->data.can_load == TRANS_MEN || typ->data.can_load == TRANS_AIR )
@@ -8111,6 +8127,42 @@ void cBuilding::DrawMenu ( void )
 		}
 
 		scr.x = 210;
+
+		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
+		dest.y += 22;
+		nr++;
+	}
+
+	// Wachposten:
+	if ( Wachposten || data.can_attack )
+	{
+		if ( SelMenu == nr || Wachposten == true )
+			scr.y = 21;
+		else
+			scr.y = 0;
+
+		if ( ExeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			Wachposten = !Wachposten;
+			// TODO: networkmessage for changing sentrymode of buildings
+			/*if ( game->engine->network )
+			{
+				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
+			}*/
+			if ( Wachposten )
+			{
+				owner->AddWachpostenB ( this );
+			}
+			else
+			{
+				owner->DeleteWachpostenB ( this );
+			}
+			return;
+		}
+
+		scr.x = 84;
 
 		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;

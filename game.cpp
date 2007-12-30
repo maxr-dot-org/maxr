@@ -3407,6 +3407,7 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_1 ( RepeatBuild )
 	FSAVE_B_1 ( detected )
 	FSAVE_B_4 ( Disabled )
+	FSAVE_B_1 ( Wachposten )
 
 	if ( b->BuildList&&b->BuildList->iCount )
 	{
@@ -3591,6 +3592,7 @@ bool cGame::Save ( string sName, int iNumber )
 void cGame::Load ( string name,int AP,bool MP )
 {
 	cList<cVehicle*> *StoredVehicles;
+	int iVersionPart1, iVersionPart2, iVersionPart3;
 	int i,t,typ;
 	char *str;
 	FILE *fp;
@@ -3610,10 +3612,13 @@ void cGame::Load ( string name,int AP,bool MP )
 	fread ( str,sizeof ( char ),i,fp );
 	sSaveVersion = str;
 	sGameVersion = MAX_VERSION;
+	iVersionPart1 = atoi( sGameVersion.substr( 0, sGameVersion.find( ".",0 ) ).c_str() );
+	iVersionPart2 = atoi( sGameVersion.substr( sGameVersion.find( ".",0 )+1, sGameVersion.find( ".",sGameVersion.find( ".",0 ) ) ).c_str() );
+	iVersionPart3 = atoi( sGameVersion.substr( sGameVersion.find_last_of( ".", sGameVersion.length() ), sGameVersion.length() ).c_str() );
 	// Only read saves of same version as the game ones
-	if( atoi( sSaveVersion.substr( 0, sSaveVersion.find( ".",0 ) ).c_str() ) != atoi( sGameVersion.substr( 0, sGameVersion.find( ".",0 ) ).c_str() ) ||
-		atoi( sSaveVersion.substr( sSaveVersion.find( ".",0 )+1, sSaveVersion.find( ".",sSaveVersion.find( ".",0 ) ) ).c_str() ) != atoi( sGameVersion.substr( sGameVersion.find( ".",0 )+1, sGameVersion.find( ".",sGameVersion.find( ".",0 ) ) ).c_str() ) ||
-		atoi( sSaveVersion.substr( sSaveVersion.find_last_of( ".", sSaveVersion.length() ), sSaveVersion.length() ).c_str() ) != atoi( sGameVersion.substr( sGameVersion.find_last_of( ".", sGameVersion.length() ), sGameVersion.length() ).c_str() ) )
+	if( atoi( sSaveVersion.substr( 0, sSaveVersion.find( ".",0 ) ).c_str() ) != iVersionPart1 ||
+		atoi( sSaveVersion.substr( sSaveVersion.find( ".",0 )+1, sSaveVersion.find( ".",sSaveVersion.find( ".",0 ) ) ).c_str() ) != iVersionPart2 ||
+		atoi( sSaveVersion.substr( sSaveVersion.find_last_of( ".", sSaveVersion.length() ), sSaveVersion.length() ).c_str() ) != iVersionPart3 )
 	{
 		cLog::write ( "Savegame" + name + "has a wrong version", LOG_TYPE_WARNING );
 		free ( str );
@@ -3900,6 +3905,9 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_B_1 ( RepeatBuild )
 				FLOAD_B_1 ( detected )
 				FLOAD_B_4 ( Disabled )
+				if( iVersionPart3 >= 4 ) FLOAD_B_1 ( Wachposten )
+				else b->Wachposten = true;
+
 
 				if ( ( i=fgetc ( fp ) ) >0&&b->BuildList )
 				{
@@ -4189,7 +4197,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (int)b->base ) + " sub_base: " + iToStr ((int)b->SubBase );	
+	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (int)b->base ) + " sub_base: " + iToStr ((int)b->SubBase );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

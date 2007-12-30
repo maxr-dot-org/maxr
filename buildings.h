@@ -109,6 +109,7 @@ public:
   int EffectAlpha; // Alphawert für den Effekt
   bool EffectInc;  // Gibt an, ob der Effect rauf, oder runter gezählt wird
   bool IsWorking;  // Gibt an, ob das Gebäude grade arbeitet
+  bool Wachposten;  // Gibt an, ob das Gebäude auf Wachposten ist
   bool Transfer;   // Gibt an, ob ein Transfer statfinden soll
   int MetalProd,OilProd,GoldProd; // Produktion des gebäudes
   int MaxMetalProd,MaxOilProd,MaxGoldProd; // Maximal mögliche Produktion
