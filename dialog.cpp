@@ -109,7 +109,7 @@ bool ShowYesNo ( string text )
 		}
 
 		// Nein Button:
-		if ( x >= rButtonNo.x && x <= rButtonNo.x + rButtonNo.w && y >= rButtonNo.x && y <= rButtonNo.y + rButtonNo.h )
+		if ( x >= rButtonNo.x && x <= rButtonNo.x + rButtonNo.w && y >= rButtonNo.y && y <= rButtonNo.y + rButtonNo.h )
 		{
 			if ( b && !lb )
 			{
