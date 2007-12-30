@@ -103,7 +103,7 @@ cPlayer::~cPlayer ( void )
 	{
 		cBuilding *ptr;
 		ptr=BuildingList->next;
-
+		BuildingList->Wachposten=false;
 		delete BuildingList;
 		BuildingList=ptr;
 	}

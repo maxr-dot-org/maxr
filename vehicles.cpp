@@ -2380,7 +2380,7 @@ void cVehicle::DrawMenu ( void )
 	// Wachposten:
 	if ( Wachposten || data.can_attack )
 	{
-		if ( SelMenu == nr )
+		if ( SelMenu == nr || Wachposten == true )
 			scr.y = 21;
 		else
 			scr.y = 0;
