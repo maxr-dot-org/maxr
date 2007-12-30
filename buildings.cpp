@@ -4516,25 +4516,25 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 		u[i].active = true;
 		u[i].value = & ( d->damage );
 		u[i].NextPrice = 2 * CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.damage, 0 );
-		u[i].name = "damage";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
 		i++;
 		// Shots:
 		u[i].active = true;
 		u[i].value = & ( d->max_shots );
 		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_shots, 2 );
-		u[i].name = "shots";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Shots" );
 		i++;
 		// Range:
 		u[i].active = true;
 		u[i].value = & ( d->range );
 		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.range, 3 );
-		u[i].name = "range";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
 		i++;
 		// Ammo:
 		u[i].active = true;
 		u[i].value = & ( d->max_ammo );
 		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_ammo, 0 );
-		u[i].name = "ammo";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
 		i++;
 	}
 
@@ -4550,7 +4550,7 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.armor, 0 );
 
-	u[i].name = "armor";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
 
 	i++;
 
@@ -4561,7 +4561,7 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_hit_points, 0 );
 
-	u[i].name = "hitpoints";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
 
 	i++;
 
@@ -4572,7 +4572,7 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.scan, 3 );
 
-	u[i].name = "scan";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
 
 	i++;
 
@@ -4583,7 +4583,7 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_speed, 1 );
 
-	u[i].name = "speed";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Speed" );
 
 	i++;
 
@@ -4622,7 +4622,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 		u[i].active = true;
 		u[i].value = & ( d->damage );
 		u[i].NextPrice = 2 * CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.damage, 0 );
-		u[i].name = "damage";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
 		i++;
 
 		if ( !d->is_expl_mine )
@@ -4631,19 +4631,19 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 			u[i].active = true;
 			u[i].value = & ( d->max_shots );
 			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_shots, 2 );
-			u[i].name = "shots";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Shots" );
 			i++;
 			// Range:
 			u[i].active = true;
 			u[i].value = & ( d->range );
 			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.range, 3 );
-			u[i].name = "range";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
 			i++;
 			// Ammo:
 			u[i].active = true;
 			u[i].value = & ( d->max_ammo );
 			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_ammo, 0 );
-			u[i].name = "ammo";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
 			i++;
 		}
 	}
@@ -4654,7 +4654,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 		u[i].active = true;
 		u[i].value = & ( d->range );
 		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.range, 3 );
-		u[i].name = "range";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
 		i++;
 	}
 
@@ -4680,7 +4680,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.armor, 0 );
 
-	u[i].name = "armor";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
 
 	i++;
 
@@ -4691,7 +4691,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 
 	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_hit_points, 0 );
 
-	u[i].name = "hitpoints";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
 
 	i++;
 
@@ -4701,7 +4701,7 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 		u[i].active = true;
 		u[i].value = & ( d->scan );
 		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.scan, 3 );
-		u[i].name = "scan";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
 		i++;
 	}
 
