@@ -1761,7 +1761,6 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 sPlayerHS runPlayerSelectionHotSeat ( void )
 {
 	//TODO: add support to define player names
-	//TODO: use some eyecandy pictures instead of filled rects
 	//TODO: add clan support
 	//TODO: interpret _all_ playersettings (not just amount) later
 	//TODO: readjust background picture - last box-combos are misaligned on background gfx
@@ -1784,9 +1783,11 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	{
 		players.clan[i] = "NONE";
 		players.name[i] = lngPack.i18n ( "Text~Multiplayer~Player" ) + " " + iToStr(i+1);
+		players.iColor[i] = i;
 		players.what[i] = PLAYER_N;
 	}
 	players.what[0] = PLAYER_H;
+	players.name[0] = SettingsData.sPlayerName;
 	players.what[1] = PLAYER_H;
 	//END INIT DEFAULT PLAYERS
 	
@@ -2141,6 +2142,7 @@ sPlayer runPlayerSelection ( void )
 void showPlayerStatesHotSeat ( sPlayerHS players )
 {
 	SDL_Rect dest,norm1,norm2;
+	SDL_Rect rSrc = { 0, 0, 35, 35 };
 	dest.w = norm1.w = norm2.w = 35;
 	dest.h = norm1.h = norm2.h = 35;
 	#define FIELD1 DIALOG_X+194
@@ -2157,8 +2159,8 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 		if ( players.what[i] == PLAYER_N )
 		{
 			dest.x = FIELD3;
-			SDL_FillRect(buffer, &dest, 0xFC0000);
-			//SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
+			//SDL_FillRect(buffer, &dest, 0xFC0000);
+			SDL_BlitSurface ( OtherData.colors[i],&rSrc,buffer,&dest );
 			norm1.x = FIELD1;
 			norm2.x = FIELD2;
 		}
@@ -2168,8 +2170,8 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			norm1.x = FIELD2;
 			norm2.x = FIELD3;
 			dest.x = FIELD1;
-			SDL_FillRect(buffer, &dest, 0x00FF00);
-			//SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
+			//SDL_FillRect(buffer, &dest, 0x00FF00);
+			SDL_BlitSurface ( OtherData.colors[i],&rSrc,buffer,&dest );
 		}
 		// Computer
 		if ( players.what[i] == PLAYER_AI )
@@ -2177,8 +2179,8 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 			norm1.x = FIELD1;
 			norm2.x = FIELD3;
 			dest.x = FIELD2;
-			SDL_FillRect(buffer, &dest, 0x0000FF);
-			//SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
+			//SDL_FillRect(buffer, &dest, 0x0000FF);
+			SDL_BlitSurface ( OtherData.colors[i],&rSrc,buffer,&dest );
 		}
 		SDL_FillRect(buffer, &norm1, 0x000000);
 		SDL_FillRect(buffer, &norm2, 0x000000);
@@ -6312,10 +6314,16 @@ void HeatTheSeat ( void )
 	map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 
 	list=new cList<cPlayer*>;
-	for ( i=1;i<=PlayerAnz;i++ )
+	
+	int iPlayerNumber = 1;
+	for ( int i = 0; i < 8; i++ )
 	{
-		list->Add ( p=new cPlayer ( players.name[i],OtherData.colors[ ( i-1 ) %8],i ) );
-		p->Credits=options.credits;
+		if(players.what[i] == PLAYER_H)
+		{
+			list->Add ( p=new cPlayer ( players.name[i],OtherData.colors[players.iColor[i]],iPlayerNumber ) );
+			p->Credits=options.credits;
+			iPlayerNumber ++;
+		}
 	}
 
 	game=new cGame ( NULL, map );

@@ -41,6 +41,7 @@ struct sPlayer{
 // Strukturen ////////////////////////////////////////////////////////////////
 struct sPlayerHS{
   int what[8];
+  int iColor[8];
   string name[8];
   string clan[8];
 };
