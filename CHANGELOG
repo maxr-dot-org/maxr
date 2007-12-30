@@ -1,3 +1,15 @@
+M.A.X. Reloaded 0.1.4
+=======================================================================
+-added new language russian (RUS)
+-added sentry mode for turrets
+-added new menu for playerselection in hotseat
+-fixed upgrade bug (alien units still buggy)
+-fixed buggy menus/dialogs
+-fixed segfault exiting game in hotseat
+-overworked save format (incompatible with old saves!)
+-some more bugs fixed
+
+
 M.A.X. Reloaded 0.1.3
 =======================================================================
 -added unique TCP/IP msg ids and resend system
