@@ -93,7 +93,6 @@ cPlayer::~cPlayer ( void )
 	while ( VehicleList )
 	{
 		cVehicle *ptr;
-
 		ptr=VehicleList->next;
 		VehicleList->Wachposten=false;
 		delete VehicleList;
@@ -104,6 +103,16 @@ cPlayer::~cPlayer ( void )
 		cBuilding *ptr;
 		ptr=BuildingList->next;
 		BuildingList->Wachposten=false;
+
+		// Stored Vehicles are already deleted; just clear the list
+		if ( BuildingList->StoredVehicles )
+		{
+			while( BuildingList->StoredVehicles->iCount > 0 )
+			{
+				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->iCount - 1 );
+			}
+		}
+
 		delete BuildingList;
 		BuildingList=ptr;
 	}
