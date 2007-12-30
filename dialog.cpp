@@ -32,8 +32,7 @@
 #include "loaddata.h"
 #include "networkmessages.h"
 
-//TODO: dialogs don't interpret \n e.g. from translation files and just print \n in the text on the dialog -- beko
-// Zeigt einen Ja/Nein Dialog an:
+// shows a yes/no dialog
 bool ShowYesNo ( string text )
 {
 	#define DIALOG_W 300
@@ -265,25 +264,42 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	return value;
 }
 
-void ShowOK ( string text, bool pure )
+void ShowOK ( string sText, bool bPurgeHud )
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0;
-	SDL_Rect dest;
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
+	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 	Uint8 *keystate;
 	bool bLastKeystate = false;
+	SDL_Surface *SfDialog = NULL;
+	SDL_Surface *SfBackground = NULL;
 
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SfBackground = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
+	if (FileExists(GFXOD_DIALOG4))
+	{	
+		LoadPCXtoSF ( GFXOD_DIALOG2, SfDialog ); //load dialog2.pxc
+	}
+	
+	SDL_BlitSurface( buffer, &rDialog, SfBackground, NULL); //store background
+	
 	mouse->SetCursor ( CHand );
 
-	if ( !pure )
+	if ( !bPurgeHud )
 	{
+		SDL_Rect dest;
+		
 		dest.x = 180;
 		dest.y = 18;
 		dest.w = dest.h = 448;
 		SDL_FillRect ( buffer, &dest, 0 );
 		SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 		dest.x = 15;
-		dest.y = 356;
-		dest.w = dest.h = 112;
+		dest.y = 354;
+		dest.w = 112;
+		dest.h = 113;
 		SDL_FillRect ( buffer, &dest, 0 );
 
 		if ( SettingsData.bAlphaEffects )
@@ -292,26 +308,16 @@ void ShowOK ( string text, bool pure )
 		}
 	}
 
-	LoadPCXtoSF ( ( char * ) GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog );
-
-	dest.x = 640 / 2 - 300 / 2;
-	dest.y = 480 / 2 - 231 / 2;
-	dest.w = 300;
-	dest.h = 231;
-	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &dest );
-	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, false );
-	dest.x += 20;
-	dest.w -= 40;
-	dest.y += 20;
-	dest.h -= 150;
-	font->showTextAsBlock(dest, text);
+	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );	
+	font->showTextAsBlock(rText, sText);
+	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
 	SDL_Delay ( 200 );
 	while ( 1 )
 	{
-		if ( !pure && game )
+		if ( !bPurgeHud && game )
 		{
 			game->engine->Run();
 			game->HandleTimer();
@@ -336,30 +342,40 @@ void ShowOK ( string text, bool pure )
 		}
 
 		// OK Button:
-		if ( ( x >= 640 / 2 - 300 / 2 + 80 && x < 640 / 2 - 300 / 2 + 80 + 150 && y >= 480 / 2 - 231 / 2 + 185 && y < 480 / 2 - 231 / 2 + 185 + 29 ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
+		if ( ( x >= rButtonOk.x && x < rButtonOk.x + rButtonOk.w && y >= rButtonOk.y && y < rButtonOk.y + rButtonOk.h ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
 		{
 			if ( ( b && !lb ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, true );	
 				SHOW_SCREEN
+				SDL_Delay(200);	
 				mouse->draw ( false, screen );
 				break;
 			}
 		}
 
 		lx = x;
-
 		ly = y;
 		lb = b;
 		SDL_Delay ( 1 );
 		bLastKeystate = keystate[SDLK_RETURN];
 	}
-
-	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
-
-	if ( !pure )
+	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
+	SHOW_SCREEN
+	
+	if ( !bPurgeHud )
+	{
 		game->fDrawMap = true;
+	}
+	else
+	{
+		SDL_BlitSurface( SfBackground, NULL, buffer, &rDialog); //restore background
+		SHOW_SCREEN
+	}
+	
+	SDL_FreeSurface(SfDialog);
+	SDL_FreeSurface(SfBackground);
 }
 
 /** shows licence infobox on screen (don't call this within game since I this doesn't care about ongoing engine 

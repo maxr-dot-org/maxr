@@ -21,7 +21,7 @@
 #include "defines.h"
 #include "main.h"
 
-void ShowDialog(string text,bool pure,string path,int SaveLoad=-1);
+void ShowDialog(string text,bool bPurgeHud,string path,int SaveLoad=-1);
 
 //void ShowDialogList(cList *list,int offset);
 
@@ -33,10 +33,10 @@ bool ShowYesNo(string text);
 int ShowNumberInput(string text, int iMaxValue, int iDefaultValue);
  /**
  * Shows dialogbox with localized OK button
- * @param text Text to show on button
- * @param pure 
+ * @param sText Text to show on button
+ * @param bPurgeHud Clean hud (infoscreens) and black out gamewindow
  */
-void ShowOK(string text,bool pure=false);
+void ShowOK(string sText,bool bPurgeHud=false);
 /** Shows selfdestruction dialog with safe feature. User has to click twice to blow something up
  * @author beko
  * @return true on blast<br>false on cancel
