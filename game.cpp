@@ -1878,7 +1878,6 @@ void cGame::HandleMessages ( void )
 	for ( i=0;i<messages->iCount;i++ )
 	{
 		m=messages->Items[i];
-		if(SettingsData.bDebug) cLog::write(m->msg, cLog::eLOG_TYPE_DEBUG);
 		font->showTextAsBlock(dest, m->msg);
 		dest.y+=14+11*m->len/300;
 	}
@@ -1896,6 +1895,7 @@ void cGame::AddMessage ( const char *msg )
 	m->len=font->getTextWide(msg);
 	m->age=Frame;
 	messages->Add ( m );
+	if(SettingsData.bDebug) cLog::write(m->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
 // Fügt eine neue Nachricht ein:
