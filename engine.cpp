@@ -1770,7 +1770,13 @@ void cEngine::HandleGameMessages()
 					v = map->GO[atoi( Strings->Items[0].c_str() ) ].plane;
 				}
 				
-				if( !v ) break;
+				if( !v )
+				{
+					delete Strings;
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
 				if( v->owner == game->ActivePlayer )
 				{
 					AddMoveJob(v->PosX + v->PosY * map->size,atoi( Strings->Items[1].c_str() ),true,atoi( Strings->Items[2].c_str() ) );
@@ -1818,7 +1824,12 @@ void cEngine::HandleGameMessages()
 			// notification of pressed end-turn button:
 			case MSG_ENDE_PRESSED:
 			{
-				if( atoi ( sMsgString.c_str() ) == game->ActivePlayer->Nr ) break;
+				if( atoi ( sMsgString.c_str() ) == game->ActivePlayer->Nr )
+				{
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
 				if( network->bServer )
 				{
 					EndePressed ( atoi ( sMsgString.c_str() ) );
@@ -2777,7 +2788,13 @@ void cEngine::HandleGameMessages()
 				{
 					Vehicle = map->GO[atoi ( Strings->Items[3].c_str())].vehicle;
 				}
-				if( !Vehicle || Vehicle->owner != Player ) break;
+				if( !Vehicle || Vehicle->owner != Player )
+				{
+					delete Strings;
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
 
 				Vehicle->PosX = atoi ( Strings->Items[3].c_str() ) % map->size;
 				Vehicle->PosY = atoi ( Strings->Items[3].c_str() ) / map->size;
@@ -2834,7 +2851,13 @@ void cEngine::HandleGameMessages()
 				{
 					Building = map->GO[atoi ( Strings->Items[3].c_str() )].subbase;
 				}
-				if( !Building || Building->owner != Player ) break;
+				if( !Building || Building->owner != Player )
+				{
+					delete Strings;
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
 
 				Building->PosX = atoi ( Strings->Items[3].c_str() ) % map->size;
 				Building->PosY = atoi ( Strings->Items[3].c_str() ) / map->size;
@@ -2925,7 +2948,12 @@ void cEngine::HandleGameMessages()
 					}
 				}
 				Ping = PingList->Items[iIndex];
-				if( Ping->rx_count >= PING_COUNT ) break;
+				if( Ping->rx_count >= PING_COUNT )
+				{
+					delete network->NetMessageList->Items[iNum];
+					network->NetMessageList->Delete ( iNum );
+					break;
+				}
 				Ping->rx[Ping->rx_count++] = atoi( sMsgString.c_str() );
 
 				delete network->NetMessageList->Items[iNum];

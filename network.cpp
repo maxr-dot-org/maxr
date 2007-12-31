@@ -46,8 +46,27 @@ cTCP::cTCP ( bool server )
 cTCP::~cTCP()
 {
 	TCPClose();
+
+	while( WaitOKList->iCount > 0 )
+	{
+		delete WaitOKList->Items[WaitOKList->iCount - 1];
+		WaitOKList->Delete( WaitOKList->iCount - 1 );
+	}
 	delete WaitOKList;
+
+	while( NetMessageList->iCount > 0 )
+	{
+		delete NetMessageList->Items[NetMessageList->iCount - 1];
+		NetMessageList->Delete( NetMessageList->iCount - 1 );
+	}
 	delete NetMessageList;
+
+	while( LastReceived->iCount > 0 )
+	{
+		delete LastReceived->Items[LastReceived->iCount - 1];
+		LastReceived->Delete( LastReceived->iCount - 1 );
+	}
+	delete LastReceived;
 }
 
 
@@ -134,6 +153,7 @@ bool cTCP::TCPOpen ( void )
 				sNetBuffer *WaitBuffer = new sNetBuffer;
 				memcpy( WaitBuffer, NetBuffer, sizeof( sNetBuffer ) );
 				WaitOKList->Add( WaitBuffer ); // Add package to waitlist
+				delete NetBuffer;
 			}
 		}
 		iStatus=STAT_CONNECTED;
@@ -241,6 +261,7 @@ bool cTCP::TCPReceive()
 				sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
 				ReceivedMsgData->iID = NetBuffer->iID;
 				ReceivedMsgData->iTime = SDL_GetTicks();
+
 				bool bIgnore = false;
 				for (int j = 0; j < LastReceived->iCount; j++ )
 				{
@@ -249,7 +270,8 @@ bool cTCP::TCPReceive()
 						string sTmp;
 						sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 						cLog::write(sTmp, LOG_TYPE_NETWORK);
-						bIgnore = true;	// Received message twice - ignoring 
+						bIgnore = true;	// Received message twice - ignoring
+						delete ReceivedMsgData;
 						break;
 					}
 				}
@@ -315,6 +337,7 @@ bool cTCP::TCPReceive()
 				sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
 				cLog::write(sTmp, LOG_TYPE_NETWORK);
 				bIgnore = true;	// Received message twice - ignoring 
+				delete ReceivedMsgData;
 				break;
 			}
 		}
