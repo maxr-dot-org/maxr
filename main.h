@@ -94,7 +94,7 @@ struct sReport;
 #define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
 #define MOVE_SPEED         16       // Geschwindigkeit der Fahrzeuge
 #define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
-#define MAX_PATHFINDING    5000     // Maximale Endpunktezal fürs Pathfinding
+#define MAX_PATHFINDING    3890     // Maximale Endpunktezal fürs Pathfinding
 
 // Colors /////////////////////////////////////////////////////////////////////
 #define cl_red 0
