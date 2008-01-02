@@ -629,6 +629,7 @@ int main ( int argc, char* argv[] )
 		if( !res )
 		{
 			cout << "Could not open resourcefile\n";
+			exit(1);
 		}
 		else
 		{
