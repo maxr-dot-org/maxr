@@ -129,7 +129,7 @@
 			<Grid ENG="Grid"/>
 			<Fog ENG="Fog"/>
 			<Speed ENG="Speed"/>
-			<Cargo ENG="Gargo"/>
+			<Cargo ENG="Cargo"/>
 			<AmmoShort ENG="Ammo"/>
 			<Shots ENG="Shots"/>
 			<Shield ENG="Shield"/>
