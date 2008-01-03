@@ -20,9 +20,9 @@
         <EnableMakeTracks YN="Yes" />
         <ScrollSpeed Num="22" />
         <Net>
-            <IP Text="127.0.0.1" />
-            <Port Num="58634" />
-            <PlayerName Text="Juchudfdf" />
+            <IP Text="maxthegame.dyndns.org" />
+            <Port Num="58600" />
+            <PlayerName Text="Commander" />
         </Net>
         <Sound>
             <Enabled YN="Yes" />
