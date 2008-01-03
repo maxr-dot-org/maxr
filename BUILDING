@@ -9,51 +9,69 @@ build M.A.X. Reloaded:
 
 SDL libraries can be found at http://www.libsdl.org
 
-The .tar.gz file is distributed with a working set of configure files. They
-are not in the SVN repository. Consequently, if you are building from
-SVN, you will need autoconf (>= 2.59) and automake (>= 1.9).
+The .tar.gz file is distributed with a working set of configure and 
+makefiles. They are not in the SVN repository. Consequently, if you 
+are building from SVN, you will have to set up these files on your
+own (or simply configure a new c++/sdl project in the IDE of your
+choice).
 
 Sourcecode:
 
 You can get it here:
 
- http://www.maxthegame.de/<coming soon>
+http://maxthegame.de/wiki/index.php5?title=Downloads
+
+Or fresh from the SVN here:
+
+svn://maxthegame.dyndns.org/MAX/trunk
 
 WINDOWS
 
+There's for now only a (german) howto set up Visual Studio for MAX:
+
+http://maxthegame.de/wiki/index.php5?title=MAX-Reloaded_unter_VS
 
 LINUX
 
 First untar the package:
 
- $ tar xfzv max-x.y.z.tar.gz
+ $ tar xfzv maxr-x.y.z.tar.gz
 
-then
+Then change to the new directory:
 
- $ cd max-x.y.z
+ $ cd maxr-x.y.z
 
-The usual
+Set up the Makefiles and create the configure scripts:
+
+ $ ./bootstrap.sh
+
+If everything went well you should now be able to run ./configure
+and make. We highly recommend to run with --prefix=$HOME/games
+to install maxr to your homedirectory or something like that since
+maxr doesn't support homedirectorys yet and that way you can not
+install maxr systemwide without granting writepermissions to maxr
+game config and save directory!
+
 
  $ ./configure
  $ make
  $ make install
 
-only compiles the max binary and installs it along with the game
+Compiles the maxr binary and installs it along with the game
 data to the default prefix which is probably /usr/local.
 
 Rebuilding:
 
-You should clean your existing max release build first with:
+You should clean your existing maxr release build first with:
 
  $ make distclean
 
-If you want to clean your max SVN build do:
+If you want to clean your maxr SVN build do:
 
  $ make maintainer-clean
 
 Starting:
 
 After installing currently needed original gamedata (see INSTALL) 
-you can start M.A.X. Reloaded executing ./max in the gamedirectory
-
+you can start M.A.X. Reloaded executing ./maxr in the gamedirectory
 

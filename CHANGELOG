@@ -1,3 +1,11 @@
+M.A.X. Reloaded SVN
+=======================================================================
+-added new language hungarian (HUN)
+-added iso-8559-2 fonts
+-fixed bug seg fault exiting game having units in depot
+-fixed memleak during network game
+-tons of bugs fixed
+
 M.A.X. Reloaded 0.1.4
 =======================================================================
 -added new language russian (RUS)

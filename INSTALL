@@ -1,7 +1,7 @@
 PREREQUISOTES
 
-You'll need to have these libraries (with equivalent devel versions) to
-build M.A.X. Reloaded:
+You'll need to have these libraries (with equivalent devel versions
+for building) to play M.A.X. Reloaded:
 
  libsdl1.2
  libsdl-mixer1.2 (with Vorbis support)
@@ -11,17 +11,18 @@ SDL libraries can be found at http://www.libsdl.org
 
 WINDOWS
 
-Download the required SDL-libraries and install them to your system32 directory - e.g. c:\windows\system32
+Download the required SDL-libraries and install them to your system32
+directory - e.g. c:\windows\system32
 
 http://www.libsdl.org/release/SDL-1.2.12-win32.zip
 http://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-1.2.8-win32.zip
 http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7-win32.zip
 
-Now unzip max-x.y.z.zip to a folder of your choise - e.g.
-C:\Program Files\MAX Reloaded\
+Now unrar MAX-Reloaded_-x.y.z.rar to a folder of your choise - e.g.
+C:\Program Files\
 
 After installing currently needed original gamedata you can 
-start M.A.X. Reloaded executing MAX.EXE
+start M.A.X. Reloaded executing Max-Reloaded.exe
 
 LINUX
 
@@ -32,9 +33,16 @@ BOTH
 Due the copyright we are not allowed to provide any game content
 from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
-We can only provide you with dummy-files so you can see where files
-from an original gamecd belong. We're going to write an install
-script for easy installing the needed files in our game structure.
+MAXR is currently in need of unofficial gfx data and WILL NOT start
+without the required files. Due the copyright we are not allowed to
+provide you with the missing files. You have to get the files for
+yourself and copy them to their proper locations. Please check the
+bbs at maxthegame.de/bbs for more informations.
+
+If you do own an original Mechanized Assault & Exploration CD
+(c) 1996 Interplay or if you downloaded the original game from
+cdosabandonware you can however make use of the tool resinstaller
+and extract the needed gfx automagically from your existing max.res
 
 If you don't own an original maxcd you've another chance in downloading
 Mechanized Assault and Exploration from cdosabandonware.com since you
