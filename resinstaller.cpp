@@ -37,7 +37,7 @@ int installVehicleGraphics()
 
 	//air_transport
 	cout << "air_transport\n";
-	path = sOutputPath + "vehicles\\air_transport\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -48,7 +48,7 @@ int installVehicleGraphics()
 
 	//alien_assault
 	cout << "alien_assault\n";
-	path = sOutputPath + "vehicles\\alien_assault\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_assault" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -59,7 +59,7 @@ int installVehicleGraphics()
 
 	//alien_plane
 	cout << "alien_plane\n";
-	path = sOutputPath + "vehicles\\alien_plane\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_plane" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -70,7 +70,7 @@ int installVehicleGraphics()
 
 	//alien_ship
 	cout << "alien_ship\n";
-	path = sOutputPath + "vehicles\\alien_ship\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_ship" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -81,7 +81,7 @@ int installVehicleGraphics()
 
 	//alien_tank
 	cout << "alien_tank\n";
-	path = sOutputPath + "vehicles\\alien_tank\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_tank" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -92,7 +92,7 @@ int installVehicleGraphics()
 
 	//apc
 	cout << "apc\n";
-	path = sOutputPath + "vehicles\\apc\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "apc" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
@@ -103,7 +103,7 @@ int installVehicleGraphics()
 
 	//assault
 	cout << "assault\n";
-	path = sOutputPath + "vehicles\\assault\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "assault" + PATH_DELIMITER;
 	src_rect.h = 64;
 	src_rect.w = 64;
 	src_rect.x = 23;
@@ -127,142 +127,142 @@ int installVehicleGraphics()
 
 	//awac
 	cout << "awac\n";
-	path = sOutputPath + "vehicles\\awac\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "awac" + PATH_DELIMITER;
 	copyFileFromRes("A_AWAC", path + "store.pcx");
 
 	//bomber
 	cout << "bomber\n";
-	path = sOutputPath + "vehicles\\bomber\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bomber" + PATH_DELIMITER;
 	copyFileFromRes("A_BOMBER", path + "store.pcx");
 
 	//bulldozer
 	cout << "bulldozer\n";
-	path = sOutputPath + "vehicles\\bulldozer\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
 	copyFileFromRes("A_BULLDZ", path + "store.pcx");
 
 	//cargoship
 	cout << "cargoship\n";
-	path = sOutputPath + "vehicles\\cargoship\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cargoship" + PATH_DELIMITER;
 	copyFileFromRes("A_CARGOS", path + "store.pcx");
 
 	//cluster
 	cout << "cluster\n";
-	path = sOutputPath + "vehicles\\cluster\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cluster" + PATH_DELIMITER;
 	copyFileFromRes("A_ROCKET", path + "store.pcx");
 
 	//commando
 	cout << "commando\n";
-	path = sOutputPath + "vehicles\\commando\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
 	copyFileFromRes("A_COMMAN", path + "store.pcx");
 
 	//corvet
 	cout << "corvet\n";
-	path = sOutputPath + "vehicles\\corvet\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
 	copyFileFromRes("A_CORVET", path + "store.pcx");
 
 	//escort
 	cout << "escort\n";
-	path = sOutputPath + "vehicles\\escort\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "escort" + PATH_DELIMITER;
 	copyFileFromRes("A_ESCORT", path + "store.pcx");
 
 	//fighter
 	cout << "fighter\n";
-	path = sOutputPath + "vehicles\\fighter\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
 	copyFileFromRes("A_FIGHTR", path + "store.pcx");
 
 	//gunboat
 	cout << "gunboat\n";
-	path = sOutputPath + "vehicles\\gunboat\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "gunboat" + PATH_DELIMITER;
 	copyFileFromRes("A_GUNBT", path + "store.pcx");
 
 	//infantery
 	cout << "infantery\n";
-	path = sOutputPath + "vehicles\\infantery\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
 	copyFileFromRes("A_INFANT", path + "store.pcx");
 
 	//konstrukt
 	cout << "konstrukt\n";
-	path = sOutputPath + "vehicles\\konstrukt\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
 	copyFileFromRes("A_CONTRC", path + "store.pcx");
 
 	//minelayer
 	cout << "minelayer\n";
-	path = sOutputPath + "vehicles\\minelayer\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
 	copyFileFromRes("A_MNELAY", path + "store.pcx");
 
 	//missel
 	cout << "missel\n";
-	path = sOutputPath + "vehicles\\missel\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
 	copyFileFromRes("A_MISSIL", path + "store.pcx");
 
 	//missel_ship
 	cout << "missel_ship\n";
-	path = sOutputPath + "vehicles\\missel_ship\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel_ship" + PATH_DELIMITER;
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
 
 	//mobile_aa
 	cout << "mobile_aa\n";
-	path = sOutputPath + "vehicles\\mobile_aa\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
 	copyFileFromRes("A_AA", path + "store.pcx");
 
 	//pionier
 	cout << "pionier\n";
-	path = sOutputPath + "vehicles\\pionier\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "pionier" + PATH_DELIMITER;
 	copyFileFromRes("A_ENGINR", path + "store.pcx");
 
 	//repair
 	cout << "repair\n";
-	path = sOutputPath + "vehicles\\repair\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
 	copyFileFromRes("A_REPAIR", path + "store.pcx");
 
 	//scanner
 	cout << "scanner\n";
-	path = sOutputPath + "vehicles\\scanner\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scanner" + PATH_DELIMITER;
 	copyFileFromRes("A_SCANNR", path + "store.pcx");
 
 	//scout
 	cout << "scout\n";
-	path = sOutputPath + "vehicles\\scout\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scout" + PATH_DELIMITER;
 	copyFileFromRes("A_SCOUT", path + "store.pcx");
 
 	//sea_minelayer
 	cout << "sea_minelayer\n";
-	path = sOutputPath + "vehicles\\sea_minelayer\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_minelayer" + PATH_DELIMITER;
 	copyFileFromRes("A_SEAMNL", path + "store.pcx");
 
 	//sea_transport
 	cout << "sea_transport\n";
-	path = sOutputPath + "vehicles\\sea_transport\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_transport" + PATH_DELIMITER;
 	copyFileFromRes("A_SEATRN", path + "store.pcx");
 
 	//sub
 	cout << "sub\n";
-	path = sOutputPath + "vehicles\\sub\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sub" + PATH_DELIMITER;
 	copyFileFromRes("A_SUB", path + "store.pcx");
 
 	//surveyor
 	cout << "surveyor\n";
-	path = sOutputPath + "vehicles\\surveyor\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "surveyor" + PATH_DELIMITER;
 	copyFileFromRes("A_SURVEY", path + "store.pcx");
 
 	//tank
 	cout << "tank\n";
-	path = sOutputPath + "vehicles\\tank\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "tank" + PATH_DELIMITER;
 	copyFileFromRes("A_TANK", path + "store.pcx");
 
 	//trans_gold
 	cout << "trans_gold\n";
-	path = sOutputPath + "vehicles\\trans_gold\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_gold" + PATH_DELIMITER;
 	copyFileFromRes("A_GOLDTR", path + "store.pcx");
 	
 	//trans_metal
 	cout << "trans_metal\n";
-	path = sOutputPath + "vehicles\\trans_metal\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_metal" + PATH_DELIMITER;
 	copyFileFromRes("A_SPLYTR", path + "store.pcx");
 	
 	//trans_oil
 	cout << "trans_oil\n";
-	path = sOutputPath + "vehicles\\trans_oil\\";
+	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_oil" + PATH_DELIMITER;
 	copyFileFromRes("A_FUELTR", path + "store.pcx");
 
 	return 1;
@@ -277,7 +277,7 @@ int installBuildingGraphics()
 
 	//Barracks
 	cout << "Barracks\n";
-	path = sOutputPath + "buildings\\barracks\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "barracks" + PATH_DELIMITER;
 	copyFileFromRes_rpc("BARRACKS", path + "img.pcx", 1 );
 	copyFileFromRes("P_BARRCK", path + "info.pcx");
 	copyFileFromRes("S_BARRAC", path + "shw.pcx");
@@ -285,7 +285,7 @@ int installBuildingGraphics()
 
 	//block
 	cout << "block\n";
-	path = sOutputPath + "buildings\\block\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "block" + PATH_DELIMITER;
 	copyFileFromRes("BLOCK", path + "img.pcx");
 	copyFileFromRes("P_BLOCK", path + "info.pcx");
 	copyFileFromRes("S_BLOCK", path + "shw.pcx");
@@ -293,7 +293,7 @@ int installBuildingGraphics()
 
 	//bridge
 	cout << "bridge\n";
-	path = sOutputPath + "buildings\\bridge\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "bridge" + PATH_DELIMITER;
 	copyFileFromRes_rpc("BRIDGE", path + "img.pcx");
 	copyFileFromRes("P_BRIDGE", path + "info.pcx");
 	copyFileFromRes("S_BRIDGE", path + "shw.pcx");
@@ -302,7 +302,7 @@ int installBuildingGraphics()
 	//connector
 	cout << "connector\n";
 	SDL_Surface* output_s, *surface_s;
-	path = sOutputPath + "buildings\\connector\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "connector" + PATH_DELIMITER;
 	surface = getImage("CNCT_4W", 0);
 	surface_s = getImage("S_CNCT4W", 0);
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024, 64,8,0,0,0,0);
@@ -448,7 +448,7 @@ int installBuildingGraphics()
 
 	//depot
 	cout << "depot\n";
-	path = sOutputPath + "buildings\\depot\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "depot" + PATH_DELIMITER;
 	copyFileFromRes_rpc("DEPOT", path + "img.pcx", 1);
 	copyFileFromRes("P_DEPOT", path + "info.pcx");
 	copyFileFromRes("S_DEPOT", path + "shw.pcx", 1);
@@ -458,7 +458,7 @@ int installBuildingGraphics()
 
 	//dock
 	cout << "dock\n";
-	path = sOutputPath + "buildings\\dock\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "dock" + PATH_DELIMITER;
 	copyFileFromRes_rpc("DOCK", path + "img.pcx");
 	copyFileFromRes("S_DOCK", path + "shw.pcx");
 	copyFileFromRes("P_DOCK", path + "info.pcx");
@@ -466,7 +466,7 @@ int installBuildingGraphics()
 
 	//energy big
 	cout << "energy big\n";
-	path = sOutputPath + "buildings\\energy_big\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
 	copyFileFromRes_rpc("POWERSTN", path + "img.pcx");
 	copyFileFromRes("S_POWERS", path + "shw.pcx");
 	copyFileFromRes("P_POWSTN", path + "info.pcx");
@@ -474,7 +474,7 @@ int installBuildingGraphics()
 
 	//energy small
 	cout << "energy small\n";
-	path = sOutputPath + "buildings\\energy_small\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_small" + PATH_DELIMITER;
 	copyFileFromRes_rpc("POWGEN", path + "img.pcx");
 	copyFileFromRes("S_POWGEN", path + "shw.pcx");
 	copyFileFromRes("P_POWGEN", path + "info.pcx");
@@ -482,7 +482,7 @@ int installBuildingGraphics()
 
 	//fac air
 	cout << "fac air\n";
-	path = sOutputPath + "buildings\\fac_air\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_air" + PATH_DELIMITER;
 	copyFileFromRes_rpc("AIRPLT", path + "img.pcx");
 	copyFileFromRes("S_AIRPLT", path + "shw.pcx");
 	copyFileFromRes("P_AIRPLT", path + "info.pcx");
@@ -490,7 +490,7 @@ int installBuildingGraphics()
 
 	//fac alien
 	cout << "fac alien\n";
-	path = sOutputPath + "buildings\\fac_alien\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_alien" + PATH_DELIMITER;
 	copyFileFromRes_rpc("RECCENTR", path + "img.pcx");
 	copyFileFromRes("S_RECCEN", path + "shw.pcx");
 	copyFileFromRes("P_RECCTR", path + "info.pcx");
@@ -498,7 +498,7 @@ int installBuildingGraphics()
 
 	//fac big
 	cout << "fac big\n";
-	path = sOutputPath + "buildings\\fac_big\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_big" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LANDPLT", path + "img.pcx");
 	copyFileFromRes("S_LANDPL", path + "shw.pcx");
 	copyFileFromRes("P_HVYPLT", path + "info.pcx");
@@ -506,7 +506,7 @@ int installBuildingGraphics()
 
 	//fac ship
 	cout << "fac ship\n";
-	path = sOutputPath + "buildings\\fac_ship\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_ship" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SHIPYARD", path + "img.pcx");
 	copyFileFromRes("S_SHIPYA", path + "shw.pcx");
 	copyFileFromRes("P_SHIPYD", path + "info.pcx");
@@ -514,7 +514,7 @@ int installBuildingGraphics()
 
 	//fac small
 	cout << "fac small\n";
-	path = sOutputPath + "buildings\\fac_small\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_small" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LIGHTPLT", path + "img.pcx");
 	copyFileFromRes("S_LIGHTP", path + "shw.pcx");
 	copyFileFromRes("P_LGHTPL", path + "info.pcx");
@@ -522,7 +522,7 @@ int installBuildingGraphics()
 
 	//goldraff
 	cout << "goldraff\n";
-	path = sOutputPath + "buildings\\goldraff\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "goldraff" + PATH_DELIMITER;
 	copyFileFromRes_rpc("COMMTWR", path + "img.pcx");
 	copyFileFromRes("S_COMMTW", path + "shw.pcx");
 	copyFileFromRes("P_TRANSP", path + "info.pcx");
@@ -530,7 +530,7 @@ int installBuildingGraphics()
 
 	//gun aa
 	cout << "gun aa\n";
-	path = sOutputPath + "buildings\\gun_aa\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_aa" + PATH_DELIMITER;
 	surface = getImage("ANTIAIR");
 	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
@@ -567,7 +567,7 @@ int installBuildingGraphics()
 
 	//gun ari
 	cout << "gun ari\n";
-	path = sOutputPath + "buildings\\gun_ari\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_ari" + PATH_DELIMITER;
 	surface = getImage("ARTYTRRT");
 	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
@@ -603,7 +603,7 @@ int installBuildingGraphics()
 
 	//gun missile
 	cout << "gun missile\n";
-	path = sOutputPath + "buildings\\gun_missel\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_missel" + PATH_DELIMITER;
 	surface = getImage("ANTIMSSL", 0);
 	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
@@ -638,7 +638,7 @@ int installBuildingGraphics()
 
 	//gun turret
 	cout << "gun turret\n";
-	path = sOutputPath + "buildings\\gun_turret\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_turret" + PATH_DELIMITER;
 	surface = getImage("GUNTURRT", 0);
 	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
@@ -674,7 +674,7 @@ int installBuildingGraphics()
 
 	//habitat
 	cout << "habitat\n";
-	path = sOutputPath + "buildings\\habitat\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "habitat" + PATH_DELIMITER;
 	copyFileFromRes_rpc("HABITAT", path + "img.pcx", 1);
 	copyFileFromRes("S_HABITA", path + "shw.pcx", 1);
 	copyFileFromRes("P_HABITA", path + "info.pcx");
@@ -682,7 +682,7 @@ int installBuildingGraphics()
 
 	//hangar
 	cout << "hangar\n";
-	path = sOutputPath + "buildings\\hangar\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "hangar" + PATH_DELIMITER;
 	copyFileFromRes_rpc("HANGAR", path + "img.pcx", 1);
 	copyFileFromRes("S_HANGAR", path + "shw.pcx", 1);
 	copyFileFromRes("P_HANGAR", path + "info.pcx");
@@ -690,7 +690,7 @@ int installBuildingGraphics()
 
 	//landmine
 	cout << "landmine\n";
-	path = sOutputPath + "buildings\\landmine\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
 	surface = getImage("LANDMINE");
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
 	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -719,7 +719,7 @@ int installBuildingGraphics()
 
 	//mine
 	cout << "mine; Graphic is temporary, until the clans will be implemented\n";
-	path = sOutputPath + "buildings\\mine\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine" + PATH_DELIMITER;
 	copyFileFromRes_rpc("MININGST", path + "img.pcx");	//this is temorary!
 														//until the clans will be implemented
 	copyFileFromRes("S_MINING", path + "shw.pcx");
@@ -728,7 +728,7 @@ int installBuildingGraphics()
 
 	//mine deep
 	cout << "mine deep\n";
-	path = sOutputPath + "buildings\\mine_deep\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SUPRTPLT", path + "img.pcx");
 	copyFileFromRes("S_SUPRTP", path + "shw.pcx");
 	copyFileFromRes("P_LIFESP", path + "info.pcx");
@@ -736,7 +736,7 @@ int installBuildingGraphics()
 
 	//pad
 	cout << "pad\n";
-	path = sOutputPath + "buildings\\pad\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "pad" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LANDPAD", path + "img.pcx");
 	copyFileFromRes("S_LANDPA", path + "shw.pcx");
 	copyFileFromRes("P_LANDPD", path + "info.pcx");
@@ -744,7 +744,7 @@ int installBuildingGraphics()
 
 	//platform
 	cout << "platform\n";
-	path = sOutputPath + "buildings\\platform\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "platform" + PATH_DELIMITER;
 	copyFileFromRes_rpc("WTRPLTFM", path + "img.pcx");
 	copyFileFromRes("S_WTRPLT", path + "shw.pcx");
 	copyFileFromRes("P_WATER", path + "info.pcx");
@@ -752,7 +752,7 @@ int installBuildingGraphics()
 	
 	//radar
 	cout << "radar\n";
-	path = sOutputPath + "buildings\\radar\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
 	surface = getImage("RADAR", 0);
 	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024,64,8,0,0,0,0);
@@ -779,7 +779,7 @@ int installBuildingGraphics()
 
 	//road
 	cout << "road\n";
-	path = sOutputPath + "buildings\\road\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "road" + PATH_DELIMITER;
 	copyFileFromRes("ROAD", path + "img.pcx");
 	copyFileFromRes("S_ROAD", path + "shw.pcx");
 	copyFileFromRes("P_ROAD", path + "info.pcx");
@@ -787,7 +787,7 @@ int installBuildingGraphics()
 
 	//seamine
 	cout << "seamine\n";
-	path = sOutputPath + "buildings\\seamine\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "seamine" + PATH_DELIMITER;
 	surface = getImage("SEAMINE");
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
 	output->pitch = output->w;					//workaround for an SDL-Bug
@@ -815,7 +815,7 @@ int installBuildingGraphics()
 
 	//shield
 	cout << "shield\n";
-	path = sOutputPath + "buildings\\shield\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "shield" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SHIELDGN", path + "img.pcx");
 	copyFileFromRes("S_SHIELD", path + "shw.pcx");
 	copyFileFromRes("P_SHIELD", path + "info.pcx");
@@ -823,7 +823,7 @@ int installBuildingGraphics()
 
 	//storage gold
 	cout << "storage gold\n";
-	path = sOutputPath + "buildings\\storage_gold\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_gold" + PATH_DELIMITER;
 	copyFileFromRes_rpc("GOLDSM", path + "img.pcx");
 	copyFileFromRes("S_GOLDSM", path + "shw.pcx");
 	copyFileFromRes("P_SMVLT", path + "info.pcx");
@@ -831,7 +831,7 @@ int installBuildingGraphics()
 
 	//storage metal
 	cout << "storage metal\n";
-	path = sOutputPath + "buildings\\storage_metal\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_metal" + PATH_DELIMITER;
 	copyFileFromRes_rpc("ADUMP", path + "img.pcx");
 	copyFileFromRes("S_ADUMP", path + "shw.pcx");
 	copyFileFromRes("P_SMSTOR", path + "info.pcx");
@@ -839,7 +839,7 @@ int installBuildingGraphics()
 
 	//storage oil
 	cout << "storage oil\n";
-	path = sOutputPath + "buildings\\storage_oil\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_oil" + PATH_DELIMITER;
 	copyFileFromRes_rpc("FDUMP", path + "img.pcx");
 	copyFileFromRes("S_FDUMP", path + "shw.pcx");
 	copyFileFromRes("P_SMFUEL", path + "info.pcx");
@@ -847,7 +847,7 @@ int installBuildingGraphics()
 
 	//training
 	cout << "training\n";
-	path = sOutputPath + "buildings\\training\\";
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "training" + PATH_DELIMITER;
 	copyFileFromRes_rpc("TRAINHAL", path + "img.pcx");
 	copyFileFromRes("S_TRAINH", path + "shw.pcx");
 	copyFileFromRes("P_TRNHLL", path + "info.pcx");
@@ -863,7 +863,7 @@ int main ( int argc, char* argv[] )
 	{
 		cout << "Please enter path to MAX-Installation: ";
 		cin >> sMAXPath;
-		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX" + PATH_DELIMITER; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -903,7 +903,9 @@ int main ( int argc, char* argv[] )
 
 	cout << "\nPlease enter path to ouputfolder: \n";
 	cin >> sOutputPath;
-	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	
+	//sOutputPath += PATH_DELIMITER;
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript" + PATH_DELIMITER;
 
 
 
