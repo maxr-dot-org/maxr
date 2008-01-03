@@ -27,7 +27,248 @@
 #include "converter.h"
 #include "pcx.h"
 
-int installBuildingGrafics()
+
+int installVehicleGraphics()
+{
+	string path;
+	SDL_Rect src_rect;
+	char szNum[13];
+	SDL_Surface *surface, *output;
+
+	//air_transport
+	cout << "air_transport\n";
+	path = sOutputPath + "vehicles\\air_transport\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("AIRTRANS", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_AIRTRA", path + "shw" + szNum + ".pcx", i);
+	}
+	copyFileFromRes("A_AIRTRN", path + "store.pcx");
+
+	//alien_assault
+	cout << "alien_assault\n";
+	path = sOutputPath + "vehicles\\alien_assault\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("ALNASGUN", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_ALNASG", path + "shw" + szNum + ".pcx", i);
+	}
+	copyFileFromRes("A_ALNASG", path + "store.pcx");
+
+	//alien_plane
+	cout << "alien_plane\n";
+	path = sOutputPath + "vehicles\\alien_plane\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("ALNPLANE", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_ALNPLA", path + "shw" + szNum + ".pcx", i);
+	}
+	copyFileFromRes("A_ALNPLA", path + "store.pcx");
+
+	//alien_ship
+	cout << "alien_ship\n";
+	path = sOutputPath + "vehicles\\alien_ship\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("JUGGRNT", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_JUGGRN", path + "shw" + szNum + ".pcx", i);
+	}
+	copyFileFromRes("A_JUGGER", path + "store.pcx");
+
+	//alien_tank
+	cout << "alien_tank\n";
+	path = sOutputPath + "vehicles\\alien_tank\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("ALNTANK", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_ALNTAN", path + "shw" + szNum + ".pcx", i);
+	}
+	copyFileFromRes("A_ALNTAN", path + "store.pcx");
+
+	//apc
+	cout << "apc\n";
+	path = sOutputPath + "vehicles\\apc\\";
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("CLNTRANS", path + "img" + szNum + ".pcx", i + 8);
+		copyFileFromRes("S_CLNTRA", path + "shw" + szNum + ".pcx", i + 8);
+	}
+	copyFileFromRes("A_COLNST", path + "store.pcx");
+
+	//assault
+	cout << "assault\n";
+	path = sOutputPath + "vehicles\\assault\\";
+	src_rect.h = 64;
+	src_rect.w = 64;
+	src_rect.x = 23;
+	src_rect.y = 24;
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		surface = getImage("ARTILLRY", i);
+		removePlayerColor( surface );
+		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_BlitSurface(surface, &src_rect, output, 0);
+		SDL_FreeSurface( surface );
+		save_PCX(output, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( output );
+		
+		copyFileFromRes("S_ARTILL", path + "shw" + szNum + ".pcx", i );
+	}
+	copyFileFromRes("A_ARTY", path + "store.pcx");
+
+	//awac
+	cout << "awac\n";
+	path = sOutputPath + "vehicles\\awac\\";
+	copyFileFromRes("A_AWAC", path + "store.pcx");
+
+	//bomber
+	cout << "bomber\n";
+	path = sOutputPath + "vehicles\\bomber\\";
+	copyFileFromRes("A_BOMBER", path + "store.pcx");
+
+	//bulldozer
+	cout << "bulldozer\n";
+	path = sOutputPath + "vehicles\\bulldozer\\";
+	copyFileFromRes("A_BULLDZ", path + "store.pcx");
+
+	//cargoship
+	cout << "cargoship\n";
+	path = sOutputPath + "vehicles\\cargoship\\";
+	copyFileFromRes("A_CARGOS", path + "store.pcx");
+
+	//cluster
+	cout << "cluster\n";
+	path = sOutputPath + "vehicles\\cluster\\";
+	copyFileFromRes("A_ROCKET", path + "store.pcx");
+
+	//commando
+	cout << "commando\n";
+	path = sOutputPath + "vehicles\\commando\\";
+	copyFileFromRes("A_COMMAN", path + "store.pcx");
+
+	//corvet
+	cout << "corvet\n";
+	path = sOutputPath + "vehicles\\corvet\\";
+	copyFileFromRes("A_CORVET", path + "store.pcx");
+
+	//escort
+	cout << "escort\n";
+	path = sOutputPath + "vehicles\\escort\\";
+	copyFileFromRes("A_ESCORT", path + "store.pcx");
+
+	//fighter
+	cout << "fighter\n";
+	path = sOutputPath + "vehicles\\fighter\\";
+	copyFileFromRes("A_FIGHTR", path + "store.pcx");
+
+	//gunboat
+	cout << "gunboat\n";
+	path = sOutputPath + "vehicles\\gunboat\\";
+	copyFileFromRes("A_GUNBT", path + "store.pcx");
+
+	//infantery
+	cout << "infantery\n";
+	path = sOutputPath + "vehicles\\infantery\\";
+	copyFileFromRes("A_INFANT", path + "store.pcx");
+
+	//konstrukt
+	cout << "konstrukt\n";
+	path = sOutputPath + "vehicles\\konstrukt\\";
+	copyFileFromRes("A_CONTRC", path + "store.pcx");
+
+	//minelayer
+	cout << "minelayer\n";
+	path = sOutputPath + "vehicles\\minelayer\\";
+	copyFileFromRes("A_MNELAY", path + "store.pcx");
+
+	//missel
+	cout << "missel\n";
+	path = sOutputPath + "vehicles\\missel\\";
+	copyFileFromRes("A_MISSIL", path + "store.pcx");
+
+	//missel_ship
+	cout << "missel_ship\n";
+	path = sOutputPath + "vehicles\\missel_ship\\";
+	copyFileFromRes("A_MSLCR", path + "store.pcx");
+
+	//mobile_aa
+	cout << "mobile_aa\n";
+	path = sOutputPath + "vehicles\\mobile_aa\\";
+	copyFileFromRes("A_AA", path + "store.pcx");
+
+	//pionier
+	cout << "pionier\n";
+	path = sOutputPath + "vehicles\\pionier\\";
+	copyFileFromRes("A_ENGINR", path + "store.pcx");
+
+	//repair
+	cout << "repair\n";
+	path = sOutputPath + "vehicles\\repair\\";
+	copyFileFromRes("A_REPAIR", path + "store.pcx");
+
+	//scanner
+	cout << "scanner\n";
+	path = sOutputPath + "vehicles\\scanner\\";
+	copyFileFromRes("A_SCANNR", path + "store.pcx");
+
+	//scout
+	cout << "scout\n";
+	path = sOutputPath + "vehicles\\scout\\";
+	copyFileFromRes("A_SCOUT", path + "store.pcx");
+
+	//sea_minelayer
+	cout << "sea_minelayer\n";
+	path = sOutputPath + "vehicles\\sea_minelayer\\";
+	copyFileFromRes("A_SEAMNL", path + "store.pcx");
+
+	//sea_transport
+	cout << "sea_transport\n";
+	path = sOutputPath + "vehicles\\sea_transport\\";
+	copyFileFromRes("A_SEATRN", path + "store.pcx");
+
+	//sub
+	cout << "sub\n";
+	path = sOutputPath + "vehicles\\sub\\";
+	copyFileFromRes("A_SUB", path + "store.pcx");
+
+	//surveyor
+	cout << "surveyor\n";
+	path = sOutputPath + "vehicles\\surveyor\\";
+	copyFileFromRes("A_SURVEY", path + "store.pcx");
+
+	//tank
+	cout << "tank\n";
+	path = sOutputPath + "vehicles\\tank\\";
+	copyFileFromRes("A_TANK", path + "store.pcx");
+
+	//trans_gold
+	cout << "trans_gold\n";
+	path = sOutputPath + "vehicles\\trans_gold\\";
+	copyFileFromRes("A_GOLDTR", path + "store.pcx");
+	
+	//trans_metal
+	cout << "trans_metal\n";
+	path = sOutputPath + "vehicles\\trans_metal\\";
+	copyFileFromRes("A_SPLYTR", path + "store.pcx");
+	
+	//trans_oil
+	cout << "trans_oil\n";
+	path = sOutputPath + "vehicles\\trans_oil\\";
+	copyFileFromRes("A_FUELTR", path + "store.pcx");
+
+	return 1;
+}
+
+int installBuildingGraphics()
 {
 	string path;
 	SDL_Surface* surface;
@@ -618,18 +859,17 @@ int installBuildingGrafics()
 
 int main ( int argc, char* argv[] )
 {
-	char szTmp[256];
 	while ( 1 )
 	{
 		cout << "Please enter path to MAX-Installation: ";
-		//cin >> szTmp;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
 		{
 			cout << "Could not open resourcefile\n";
-			exit(1);
+			//exit(1);
 		}
 		else
 		{
@@ -641,8 +881,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "\nPlease enter path to palette-file: ";
-		//cin >> szTmp;
-		sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\palette.pal";
+		cin >> sPalettePath;
+		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -662,8 +902,8 @@ int main ( int argc, char* argv[] )
 
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	//cin >> szTmp;
-	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	cin >> sOutputPath;
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
@@ -722,30 +962,11 @@ int main ( int argc, char* argv[] )
 		cout << "Error:  [EOD] not found in res-File.";
 		return -1;
 	}
-		
-
-		
-	/*
-	SDL_Init(SDL_INIT_VIDEO);
-	SDL_Surface* screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
-	SDL_Surface* options = getImage("BARRACKS", 1);
-	//SDL_Surface* options = SDL_LoadBMP("C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\Reshacker\\Source\\Debug\\output\\OPTNFRM.bmp");
-	//SDL_FillRect(options, 0, 0);
-	removePlayerColor(options);
-	save_PCX(options, "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\img.pcx");
-	SDL_BlitSurface(options, NULL, screen, NULL);
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
-	cout << "Finished\n";
-	while (1)
-	{
-		SDL_UpdateRect ( screen,0,0,0,0 );
-	};
-	*/
 	
-	installBuildingGrafics();
+	installVehicleGraphics();
+	installBuildingGraphics();
 
-	//while ( 1 );
-
+	
 	free (orig_palette);
 	fclose(res);
 	return 0;

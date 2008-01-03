@@ -71,7 +71,7 @@ void cImage::saveFile()
 		}
 		sOutputname += ".pcx";
 		
-		save_PCX( Images[iNum].surface, (char*) sOutputname.c_str() );
+		save_PCX( Images[iNum].surface, sOutputname );
 		
 		cout << name;
 		if( iImageCount > 1 )
