@@ -318,6 +318,8 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	if(!FileExists(filepath.c_str()))
 	{
 		dest = NULL;
+		cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
@@ -341,7 +343,11 @@ int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const
 	}
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
+	{
+		cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		LoadingData=LOAD_ERROR;
 		return 0;
+	}
 
 	
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
@@ -795,16 +801,7 @@ int ReadMaxXml()
 		cLog::write ( "Can't load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sGfxPath = "gfx";
 	}
-	//Graphics on demmand
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFXOD", NULL)))
-		cLog::write ( "Can't find Path-GFXOD-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sGfxODPath = sTmpString;
-	else
-	{
-		cLog::write ( "Can't load GFXOD-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sGfxODPath = "gfx_od";
-	}
+	
 	//Maps
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
@@ -1506,10 +1503,17 @@ int LoadTerrain(const char* path)
 		}
 		sTmpString.insert(0,PATH_DELIMITER);
 		sTmpString.insert(0,path);
-		if ( !FileExists ( sTmpString.c_str() ) )
-			continue;
 
-		TerrainData.terrain[i].sf_org = LoadPCX ( ( char * ) sTmpString.c_str() );
+		if(FileExists(( char * ) sTmpString.c_str() ))
+		{
+			TerrainData.terrain[i].sf_org = LoadPCX ( ( char * ) sTmpString.c_str() );
+		}
+		else
+		{
+			cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			return -1;
+		}
+		
 		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].sf );
 
 		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].shw_org );
@@ -1797,6 +1801,11 @@ int LoadVehicles()
 					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = LoadPCX ( (char *) sTmpString.c_str() );
 					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
 				}
+				else
+				{
+					cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+					return -1;
+				}
 
 				// load shadow
 				sTmpString.replace(sTmpString.length()-8,3,"shw");
@@ -1826,14 +1835,28 @@ int LoadVehicles()
 		sTmpString += "info.pcx";
 		cLog::write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
+		{
 			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
+		}
+		else
+		{
+			cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			return -1;
+		}
 
 		// load storageimage
 		sTmpString = sVehiclePath;
 		sTmpString += "store.pcx";
 		cLog::write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
+		{
 			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
+		}
+		else
+		{
+			cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			return -1;
+		}
 
 		// load overlaygraphics if necessary
 		cLog::write("Loading overlay", cLog::eLOG_TYPE_DEBUG);
@@ -1845,6 +1868,13 @@ int LoadVehicles()
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = LoadPCX ( (char *) sTmpString.c_str() );
 				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = LoadPCX ( (char *) sTmpString.c_str() );
+			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bHas_Overlay = false;
 			}
 		}
 		else
@@ -1867,6 +1897,13 @@ int LoadVehicles()
 				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].build = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic = false;
+			}
 			// load shadow
 			sTmpString = sVehiclePath;
 			sTmpString += "build_shw.pcx";
@@ -1877,6 +1914,13 @@ int LoadVehicles()
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
+			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic = false;
 			}
 		}
 		else
@@ -1900,6 +1944,13 @@ int LoadVehicles()
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small_shw.pcx";
@@ -1911,6 +1962,13 @@ int LoadVehicles()
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCALPHA,50);
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+			}
 			// load image (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big.pcx";
@@ -1920,6 +1978,13 @@ int LoadVehicles()
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
+			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].build = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
@@ -1931,6 +1996,13 @@ int LoadVehicles()
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
+			}
+			else
+			{
+				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
+				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
 			}
 		}
 		else
@@ -2132,7 +2204,7 @@ int LoadBuildings()
 		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false, atoi(IDList->Items[i].c_str()));
 		translateUnitData( UnitsData.building[UnitsData.building_anz].data.ID, false );
 
-		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
+		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
 		ConvertData(UnitsData.building_anz, false);
 
 		// load img
@@ -2144,6 +2216,11 @@ int LoadBuildings()
 			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img_org,SDL_SRCCOLORKEY,0xFFFFFF );
 			UnitsData.building[UnitsData.building_anz].img = LoadPCX ( (char *) sTmpString.c_str() );
 			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img,SDL_SRCCOLORKEY,0xFFFFFF );
+		}
+		else
+		{
+			cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			return -1;
 		}
 		// load shadow
 		sTmpString = sBuildingPath;

@@ -700,7 +700,6 @@ public:
 	string sFontPath;			// Path to the fonts
 	string sFxPath;				// Path to the effects
 	string sGfxPath;				// Path to the graphics
-	string sGfxODPath;			// Path to the graphics on demand
 	string sMapsPath;				// Path to the maps
 	string sSavesPath;			// Path to the saves
 	string sSoundsPath;			// Path to the sound-files
