@@ -1,54 +1,52 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
-
+<?xml version="1.0" encoding="iso-8859-15" ?>
 <Options>
-	<Start>
-		<Resolution Num="640.480"/>
-		<ColourDepth Num="32"/>
-		<Intro YN="No"/>
-		<Windowmode YN="Yes"/>
-		<Fastmode YN="Yes"/>
-		<Language Text="ENG"/>
-	</Start>
-	<Game>
-		<EnableAutosave YN="Yes"/>
-		<EnableDebug YN="Yes"/>
-		<EnableAnimations YN="Yes"/>
-		<EnableShadows YN="Yes"/>
-		<EnableAlphaEffects YN="Yes"/>
-		<EnableDescribtions YN="Yes"/>
-		<EnableDamageEffects YN="Yes"/>
-		<EnableDamageEffectsVehicles  YN="Yes"/>
-		<EnableMakeTracks YN="Yes"/>		
-		<ScrollSpeed Num="22"/>
-		<Net>
-			<IP Text="127.0.0.1"/>
-			<Port Num="58600"/>
-			<PlayerName Text="Mechkommandant"/>
-		</Net>
-		<Sound>
-			<Enabled  YN="Yes"/>
-			<MusicMute YN="No"/>
-			<SoundMute YN="No"/>
-			<VoiceMute YN="No"/>
-			<MusicVol Num="32"/>
-			<SoundVol Num="32"/>
-			<VoiceVol Num="32"/>
-			<ChunkSize  Num="2048"/>
-			<Frequency  Num="44100"/>
-		</Sound>
-		<Paths>
-			<Fonts Text="fonts"/>
-			<FX Text="fx"/>
-			<GFX Text="gfx"/>
-			<GFXOD Text="gfx_od"/>
-			<Maps Text="maps"/>
-			<Saves Text="save"/>
-			<Sounds Text="sounds"/>
-			<Voices Text="voices"/>
-			<Music Text="music"/>
-			<Terrain Text="terrain"/>
-			<Vehicles Text="vehicles"/>
-			<Buildings Text="buildings"/>
-		</Paths>
-	</Game>
+    <Start>
+        <Resolution Num="640.480" />
+        <ColourDepth Num="32" />
+        <Intro YN="No" />
+        <Windowmode YN="Yes" />
+        <Fastmode YN="Yes" />
+        <Language Text="ger" />
+    </Start>
+    <Game>
+        <EnableAutosave YN="Yes" />
+        <EnableDebug YN="Yes" />
+        <EnableAnimations YN="Yes" />
+        <EnableShadows YN="Yes" />
+        <EnableAlphaEffects YN="Yes" />
+        <EnableDescribtions YN="Yes" />
+        <EnableDamageEffects YN="Yes" />
+        <EnableDamageEffectsVehicles YN="Yes" />
+        <EnableMakeTracks YN="Yes" />
+        <ScrollSpeed Num="22" />
+        <Net>
+            <IP Text="127.0.0.1" />
+            <Port Num="58634" />
+            <PlayerName Text="Juchudfdf" />
+        </Net>
+        <Sound>
+            <Enabled YN="Yes" />
+            <MusicMute YN="No" />
+            <SoundMute YN="No" />
+            <VoiceMute YN="No" />
+            <MusicVol Num="68" />
+            <SoundVol Num="8" />
+            <VoiceVol Num="12" />
+            <ChunkSize Num="2048" />
+            <Frequency Num="44100" />
+        </Sound>
+        <Paths>
+            <Fonts Text="fonts" />
+            <FX Text="fx" />
+            <GFX Text="gfx" />
+            <Maps Text="maps" />
+            <Saves Text="save" />
+            <Sounds Text="sounds" />
+            <Voices Text="voices" />
+            <Music Text="music" />
+            <Terrain Text="terrain" />
+            <Vehicles Text="vehicles" />
+            <Buildings Text="buildings" />
+        </Paths>
+    </Game>
 </Options>
