@@ -57,12 +57,12 @@
 
 #include <map>
 #include <string>
-#include <tinyxml.h>
 #ifndef LOG_H
 	#include "log.h"
 #endif
 #include "defines.h"
 
+#include "tinyxml.h"
 #include "extendedtinyxml.h"
 
 typedef std::map < std::string, std::string > StrStrMap; 
