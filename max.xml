@@ -6,7 +6,7 @@
         <Intro YN="No" />
         <Windowmode YN="Yes" />
         <Fastmode YN="Yes" />
-        <Language Text="ger" />
+        <Language Text="ENG" />
     </Start>
     <Game>
         <EnableAutosave YN="Yes" />
@@ -18,20 +18,20 @@
         <EnableDamageEffects YN="Yes" />
         <EnableDamageEffectsVehicles YN="Yes" />
         <EnableMakeTracks YN="Yes" />
-        <ScrollSpeed Num="22" />
+        <ScrollSpeed Num="50" />
         <Net>
-            <IP Text="maxthegame.dyndns.org" />
+            <IP Text="127.0.0.1" />
             <Port Num="58600" />
-            <PlayerName Text="Commander" />
+            <PlayerName Text="Tuxcommand" />
         </Net>
         <Sound>
             <Enabled YN="Yes" />
             <MusicMute YN="No" />
             <SoundMute YN="No" />
             <VoiceMute YN="No" />
-            <MusicVol Num="68" />
-            <SoundVol Num="8" />
-            <VoiceVol Num="12" />
+            <MusicVol Num="14" />
+            <SoundVol Num="24" />
+            <VoiceVol Num="50" />
             <ChunkSize Num="2048" />
             <Frequency Num="44100" />
         </Sound>

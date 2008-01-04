@@ -50,8 +50,8 @@ and make. We highly recommend to run with --prefix=$HOME/games
 to install maxr to your homedirectory or something like that since
 maxr doesn't support homedirectorys yet and that way you can not
 install maxr systemwide without granting writepermissions to maxr
-game config and save directory!
-
+game directory, max.xml config and save directory! Without these
+maxr will probably just crash during startup.
 
  $ ./configure
  $ make

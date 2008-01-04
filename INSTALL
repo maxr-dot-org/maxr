@@ -75,3 +75,7 @@ an entry in maps.xml
 Known Bugs:
 
 Many. Multiplayer does NOT work. HotSeat does.
+
+If you compile from source and get errors about mix_chunk try upgrading
+your SDL and SDL_mixer installation. We experienced this problems on
+SDL_mixer prior 1.2.8.
