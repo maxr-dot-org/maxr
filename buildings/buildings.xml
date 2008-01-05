@@ -37,7 +37,6 @@
 		<Research directory="research" num="27"/>
 		<Road directory="road" num="28"/>
 		<Seamine directory="seamine" num="29"/>
-		<Shield directory="shield" num="30"/>
 		<Storage_Gold directory="storage_gold" num="31"/>
 		<Storage_Metal directory="storage_metal" num="32"/>
 		<Storage_Oil directory="storage_oil" num="33"/>
