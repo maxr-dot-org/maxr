@@ -72,10 +72,20 @@ bool cLog::open(int TYPE)
 
 	int blocks; //sanity check - is file readable?
 	char buf[256];
-	blocks=SDL_RWread ( logfile,buf,16,256/16 );
-	if ( blocks<0 )
+	
+	if(logfile) //can access logfile
+	{
+		blocks=SDL_RWread ( logfile,buf,16,256/16 );
+	}
+	else
 	{
 		fprintf ( stderr,"(EE): Couldn't open max.log!\n Please check file/directory permissions\n" );
+		bIsRunning = false;
+		return false;
+	}
+	if ( blocks<0 )
+	{
+		fprintf ( stderr,"(EE): Couldn't read max.log!\n Please check file/directory permissions\n" );
 
 		if ( logfile != NULL ) return true;
 		else return false;
@@ -88,34 +98,7 @@ int cLog::write ( const char *str, int TYPE )
 {
 	return write ( std::string ( str ) , TYPE );
 }
-/*	if (open())
-	{
-		char tmp[264] = "(XX): "; //placeholder
-		if (strlen ( str ) > 264 - 7) //message max is 256chars
-		{
-			std::string str = "(EE): sLog recieved to long log message!";
-			str += TEXT_FILE_LF;
-			str += "(EE): Message had more than 256 chars! That should not happen!";
-			str += TEXT_FILE_LF;
-			return writeMessage( str );
-		}
-		else
-		{
-			switch ( TYPE ) //Attach log message type to tmp
-			{
-				case LOG_TYPE_WARNING : strcpy(tmp, WW); break;
-				case LOG_TYPE_ERROR : strcpy(tmp, EE); break;
-				case LOG_TYPE_DEBUG : strcpy(tmp, DD); break;
-				case LOG_TYPE_INFO : strcpy(tmp, II); break;
-				default : strcpy(tmp, II);
-			}
-		}
-		strcat(tmp, str);
-		return writeMessage ( strcat(tmp, TEXT_FILE_LF ) ); //add log message itself to tmp and send it for writing
-	}
-	else return -1;
-}
-*/
+
 int cLog::write ( std::string str, int TYPE )
 {
 	if ( TYPE == LOG_TYPE_DEBUG && SettingsData.bDebug || TYPE != LOG_TYPE_DEBUG ) //in case debug is disabled we skip message
@@ -142,7 +125,6 @@ int cLog::write ( std::string str, int TYPE )
 int cLog::write ( const char *str )
 {
 	return write ( std::string ( str ) , LOG_TYPE_INFO );
-//	return write ( str, LOG_TYPE_INFO );
 }
 
 void cLog::mark()
@@ -156,30 +138,27 @@ int cLog::writeMessage ( char *str )
 {
 	return writeMessage ( std::string ( str ) );
 }
-/*	std::size_t wrote;
-	wrote = SDL_RWwrite ( logfile,str,1, (int)strlen ( str ) );
 
-	if ( wrote<0 ) //sanity check - was file writable?
-	{
-		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str );
-		return -1;
-	}
-	else close(); //after successful writing of all information we close log here and nowhere else!
-	return 0;
-}
-*/
 int cLog::writeMessage ( std::string str )
 {
 	std::size_t wrote;
-	wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , ( int ) str.length() );
-
-	if ( wrote<0 ) //sanity check - was file writable?
+	if(logfile)
+	{
+		wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , ( int ) str.length() );
+		if ( wrote<0 ) //sanity check - was file writable?
+		{
+			fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str.c_str() );
+			return -1;
+		}
+		else close(); //after successful writing of all information we close log here and nowhere else!
+		return 0;
+	}
+	else
 	{
 		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str.c_str() );
-		return -1;
+		bIsRunning = false;
 	}
-	else close(); //after successful writing of all information we close log here and nowhere else!
-	return 0;
+	return -1;	
 }
 
 
