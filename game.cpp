@@ -87,6 +87,12 @@ cGame::cGame ( cTCP *network, cMap *map )
 	AlienTech=false;
 	HotSeat=false;
 	End=false;
+	
+	//reload info part of HUD since a prior game might have left data/gfx on it
+	SDL_Rect rSrc = {0,0,170,224};
+	SDL_Surface *SfTmp = LoadPCX((char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
+	SDL_BlitSurface(SfTmp, &rSrc, GraphicsData.gfx_hud, NULL);
+	SDL_FreeSurface(SfTmp);
 
 	SetWind ( random ( 360,0 ) );
 }
