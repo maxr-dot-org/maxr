@@ -524,7 +524,13 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Language", NULL)))
 		cLog::write ( "Can't find Language-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+	{
+		for(int i=0; i < ( int )sTmpString.size(); i++) //make sure we've only upper characters for compares later
+		{
+			sTmpString[i] = toupper(sTmpString[i]);
+		}
 		SettingsData.sLanguage = sTmpString;
+	}
 	else
 	{
 		cLog::write ( "Can't load Language-Path from max.xml: using default value", LOG_TYPE_WARNING );
@@ -1484,7 +1490,7 @@ int LoadTerrain(const char* path)
 	{
 		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL)))
 		{
-			sTmpString = "Can't read \"\" in terrain.xml"; //FIXME: is it smart to proceed at this point? --beko
+			sTmpString = "Can't read \"\" in terrain.xml";
 			sTmpString.insert(11, sections->Items[i]);
 			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
 			continue;
@@ -2070,7 +2076,7 @@ void translateUnitData( sID ID, bool vehicle )
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 ) //FIXME: add touppercase!
+			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
 			{
 				sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
 			}
