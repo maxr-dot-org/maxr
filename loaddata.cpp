@@ -2070,7 +2070,7 @@ void translateUnitData( sID ID, bool vehicle )
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
+			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 ) //FIXME: add touppercase!
 			{
 				sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
 			}
