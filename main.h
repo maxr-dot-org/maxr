@@ -575,8 +575,7 @@ public:
 	//deletes the pionter at Items[n] and resorts the remaining Items
 	//IMPORTANT: does not delete the object the pionter points to!!!
 	void Delete( int n)
-	{
-		if (n >= iCount) return;
+	{		if (n >= iCount) return;
 		
 		Items[n] = NULL;
 		iCount--;
