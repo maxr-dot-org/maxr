@@ -88,4 +88,15 @@ int copyFileFromRes ( string src, string dst, int number = 0 );
 int copyFileFromRes_rpc(string src, string dst, int number = 0 );
 int copyImageFromFLC(string fileName, string dst);
 
+/** resizes (not scales!) a surface
+* @author Eiko
+* @param surface the surface to resize
+* @param rect rect.h and rect.w are the new size of the surface
+* rect.x and rect.y are used for blitting the content from the old to the resized suface.
+* e. g. when increaseing the x dimension, rect.x determines the x of the destination rect.
+* When decreaseing the x dimention, rect.x determines the x of the source rect.
+*/
+void resizeSurface ( SDL_Surface*& surface, SDL_Rect* rect);
+
+
 #endif // ConvertH

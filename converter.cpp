@@ -113,44 +113,13 @@ void cImage::resampleFile()
 	sHotY = iMaxHotY;
 	
 	//search a free place in color table for background color
-	//don't know how to implement this in a smarter way, yet
-	int backgroundIndex = 64;
-	for(int iF = 0; iF < iImageCount; iF++ )
+	int backgroundIndex;
+	for ( backgroundIndex = 64; backgroundIndex < 256; backgroundIndex++)
 	{
-		for (int iX = 0; iX < sWidth; iX++ )
-		{
-			for (int iY = 0; iY < sHeight; iY++ )
-			{
-				ImageData = Images[iF];
-				if (iX < iMaxHotX - ImageData.sUHotX )
-				{
-					continue; // Image is right than point
-				}
-				if (iY < iMaxHotY - ImageData.sUHotY )
-				{
-					continue; // Image is bottom than point
-				}
-				if (iX >= ImageData.sWidth - ImageData.sUHotX + iMaxHotX )
-				{
-					continue; // Image is left than point
-				}
-				if (iY >= ImageData.sHeight - ImageData.sUHotY + iMaxHotY )
-				{
-					continue; // Image is top than point
-				}
-				if (ImageData.alpha[iX - iMaxHotX + ImageData.sUHotX + (iY - iMaxHotY + ImageData.sUHotY) * ImageData.sWidth] == 0 )
-				{
-					if ( ImageData.data[iX - iMaxHotX + ImageData.sUHotX + (iY - iMaxHotY + ImageData.sUHotY) * ImageData.sWidth] == backgroundIndex )
-					{
-						backgroundIndex++;
-						iF = 0;
-						iX = 0;
-						iY = 0;
-					}
-				}
-			}
-		}
+		if ( (palette[backgroundIndex].Blue == 215) && (palette[backgroundIndex].Green == 7) && (palette[backgroundIndex].Red == 255) )
+			break;
 	}
+
 	if ( backgroundIndex > 255 )
 	{
 		backgroundIndex = 0;
@@ -682,6 +651,7 @@ SDL_Surface* getImage(string file_name, int imageNr)
 }
 
 //sets the player colors in the color table to white
+//note that the information about the player colors are lost, when blitting the surface
 void removePlayerColor( SDL_Surface *surface)
 {
 	for ( int i = 32; i < 40 ; i++ )
@@ -769,3 +739,50 @@ int copyImageFromFLC(string fileName, string dst)
 	return 1;
 }
 
+void resizeSurface ( SDL_Surface*& surface, SDL_Rect* rect)
+{
+	SDL_Rect dst_rect, src_rect;
+	SDL_Surface* resizedSurface;
+
+	if ( surface->format->BitsPerPixel != 8 )
+		return;
+	
+	if ( surface->h > rect->h )
+	{
+		dst_rect.y = 0;
+		src_rect.y = rect->y;
+		src_rect.h = rect->h;
+	}
+	else 
+	{
+		dst_rect.y = rect->y;
+		src_rect.y = 0;
+		src_rect.h = surface->h;
+	}
+
+	if ( surface->w > rect->w )
+	{
+		dst_rect.x = 0;
+		src_rect.x = rect->x;
+		src_rect.w = rect->w;
+	}
+	else 
+	{
+		dst_rect.x = rect->x;
+		src_rect.x = 0;
+		src_rect.w = surface->w;
+	}
+
+	resizedSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, rect->h, rect->w, 8,0,0,0,0);
+	resizedSurface->pitch = resizedSurface->w;	//this seems to be an SDL-Bug...
+												//sometimes the pitch of a surface has an wrong value
+	SDL_SetColors(resizedSurface, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( resizedSurface, 0, SDL_MapRGB( resizedSurface->format, 255, 0, 255));
+	resizedSurface->format->colorkey = surface->format->colorkey;
+
+	SDL_BlitSurface( surface, &src_rect, resizedSurface, &dst_rect);
+
+	SDL_FreeSurface( surface );
+
+	surface = resizedSurface;
+}

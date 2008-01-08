@@ -31,10 +31,12 @@
 int installVehicleGraphics()
 {
 	string path;
-	SDL_Rect src_rect;
+	SDL_Rect src_rect, dst_rect;
 	char szNum[13];
+	char szNum1[13];
+	char szNum2[13];
 	SDL_Surface *surface, *output;
-
+	
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -128,76 +130,372 @@ int installVehicleGraphics()
 	//awac
 	cout << "awac\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "awac" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++)
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("AWAC", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_AWAC", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_AWAC", path + "store.pcx");
 
 	//bomber
 	cout << "bomber\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bomber" + PATH_DELIMITER;
+	src_rect.x = 14;
+	src_rect.y = 18;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	for ( int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		surface = getImage("BOMBER", i);
+		removePlayerColor( surface );
+		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_BlitSurface(surface, &src_rect, output, 0);
+		SDL_FreeSurface( surface );
+		save_PCX(output, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( output );
+		copyFileFromRes("S_BOMBER", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_BOMBER", path + "store.pcx");
 
 	//bulldozer
 	cout << "bulldozer\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("BULLDOZR", path + "img" + szNum + ".pcx");
+		copyFileFromRes("S_BULLDO", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_BULLDZ", path + "store.pcx");
 
 	//cargoship
 	cout << "cargoship\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cargoship" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("CARGOSHP", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_CARGOS", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_CARGOS", path + "store.pcx");
 
 	//cluster
 	cout << "cluster\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cluster" + PATH_DELIMITER;
+	src_rect.x = 15;
+	src_rect.y = 15;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	for ( int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		surface = getImage("ROCKTLCH", i);
+		removePlayerColor( surface );
+		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_BlitSurface(surface, &src_rect, output, 0);
+		SDL_FreeSurface( surface );
+		save_PCX(output, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( output );
+		copyFileFromRes("S_ROCKTL", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_ROCKET", path + "store.pcx");
 
 	//commando
 	cout << "commando\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	src_rect.x = 73;
+	src_rect.y = 73;
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum1, "%d", i);
+		for (int n = 0; n < 13; n++)
+		{
+			sprintf( szNum2, "%.2d", n);
+			surface = getImage("COMMANDO", n * 8 + i );
+			removePlayerColor( surface );
+			output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+			SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+			SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+			SDL_BlitSurface(surface, &src_rect, output, 0);
+			SDL_FreeSurface( surface );
+			save_PCX(output, path + "img" + szNum1 + "_" + szNum2 + ".pcx");
+			SDL_FreeSurface( output );
+		}
+	}
 	copyFileFromRes("A_COMMAN", path + "store.pcx");
 
 	//corvet
 	cout << "corvet\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("CORVETTE", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_CORVET", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_CORVET", path + "store.pcx");
 
 	//escort
 	cout << "escort\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "escort" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("FASTBOAT", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_FASTBO", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_ESCORT", path + "store.pcx");
 
 	//fighter
 	cout << "fighter\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
+	src_rect.x = 17;
+	src_rect.y = 16;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	for ( int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		surface = getImage("FIGHTER", i);
+		removePlayerColor( surface );
+		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_BlitSurface(surface, &src_rect, output, 0);
+		SDL_FreeSurface( surface );
+		save_PCX(output, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( output );
+		copyFileFromRes("S_FIGHTE", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_FIGHTR", path + "store.pcx");
-
+	
 	//gunboat
 	cout << "gunboat\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "gunboat" + PATH_DELIMITER;
+	SDL_Rect src_rect2;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	src_rect.y = 11;
+	src_rect.x = 4;
+	src_rect2.h = 40; 
+	src_rect2.w = 40;
+	src_rect2.x = 18;
+	src_rect2.y = 23;
+	surface = getImage("BATTLSHP", 0);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 3;
+	dst_rect.x = 14;
+	surface = getImage("BATTLSHP", 8);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img0.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 1);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 4;
+	dst_rect.x = 22;
+	surface = getImage("BATTLSHP", 9);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img1.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 2);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 12;
+	dst_rect.x = 23;
+	surface = getImage("BATTLSHP", 10);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img2.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 3);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 20;
+	dst_rect.x = 22;
+	surface = getImage("BATTLSHP", 11);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img3.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 4);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 21;
+	dst_rect.x = 14;
+	surface = getImage("BATTLSHP", 12);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img4.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 5);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 20;
+	dst_rect.x = 6;
+	surface = getImage("BATTLSHP", 13);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img5.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 6);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 12;
+	dst_rect.x = 5;
+	surface = getImage("BATTLSHP", 14);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img6.pcx");
+	SDL_FreeSurface( output );
+
+	surface = getImage("BATTLSHP", 7);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	SDL_BlitSurface(surface, &src_rect, output, 0);
+	SDL_FreeSurface( surface );
+	dst_rect.y = 4;
+	dst_rect.x = 6;
+	surface = getImage("BATTLSHP", 15);
+	SDL_BlitSurface(surface, &src_rect2, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	save_PCX(output, path + "img7.pcx");
+	SDL_FreeSurface( output );
+
+	for (int i = 0; i < 8; i++ )
+	{
+		sprintf(szNum, "%d", i);
+		copyFileFromRes("S_BATTLS", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_GUNBT", path + "store.pcx");
 
 	//infantery
 	cout << "infantery\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	src_rect.x = 73;
+	src_rect.y = 73;
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf( szNum1, "%d", i);
+		for (int n = 0; n < 13; n++)
+		{
+			sprintf( szNum2, "%.2d", n);
+			surface = getImage("INFANTRY", n * 8 + i );
+			removePlayerColor( surface );
+			output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+			SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+			SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+			SDL_BlitSurface(surface, &src_rect, output, 0);
+			SDL_FreeSurface( surface );
+			save_PCX(output, path + "img" + szNum1 + "_" + szNum2 + ".pcx");
+			SDL_FreeSurface( output );
+		}
+	}
 	copyFileFromRes("A_INFANT", path + "store.pcx");
 
 	//konstrukt
 	cout << "konstrukt\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("CONSTRCT", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_CONSTR", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_CONTRC", path + "store.pcx");
 
 	//minelayer
 	cout << "minelayer\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("MINELAYR", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_MINELA", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_MNELAY", path + "store.pcx");
 
 	//missel
 	cout << "missel\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i);
+		copyFileFromRes_rpc("MISSLLCH", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_MISSLL", path + "shw" + szNum + ".pcx", i);
+	}
 	copyFileFromRes("A_MISSIL", path + "store.pcx");
 
 	//missel_ship
 	cout << "missel_ship\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel_ship" + PATH_DELIMITER;
+	src_rect.x = 16;
+	src_rect.y = 16;
+	src_rect.h = 64;
+	src_rect.w = 64;
+	for ( int i = 0; i < 8; i++)
+	{
+		sprintf(szNum, "%d", i);
+		surface = getImage("MSSLBOAT", i);
+		removePlayerColor( surface );
+		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
+		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_BlitSurface(surface, &src_rect, output, 0);
+		SDL_FreeSurface( surface );
+		save_PCX(output, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( output );
+		copyFileFromRes("S_MSSLBO", path + "shw" + szNum + ".pcx");
+	}
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
 
 	//mobile_aa
@@ -863,7 +1161,7 @@ int main ( int argc, char* argv[] )
 	{
 		cout << "Please enter path to MAX-Installation: ";
 		cin >> sMAXPath;
-		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX" + PATH_DELIMITER; //temp
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -882,7 +1180,7 @@ int main ( int argc, char* argv[] )
 	{
 		cout << "\nPlease enter path to palette-file: ";
 		cin >> sPalettePath;
-		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\palette.pal";
+		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -904,8 +1202,7 @@ int main ( int argc, char* argv[] )
 	cout << "\nPlease enter path to ouputfolder: \n";
 	cin >> sOutputPath;
 	
-	//sOutputPath += PATH_DELIMITER;
-	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript" + PATH_DELIMITER;
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
@@ -962,7 +1259,7 @@ int main ( int argc, char* argv[] )
 	if ( lPosBegin == lEndOfFile )
 	{
 		cout << "Error:  [EOD] not found in res-File.";
-		return -1;
+		exit (-1);
 	}
 	
 	installVehicleGraphics();
