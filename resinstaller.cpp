@@ -36,7 +36,7 @@ int installVehicleGraphics()
 	char szNum1[13];
 	char szNum2[13];
 	SDL_Surface *surface, *output;
-	/*
+	
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -407,7 +407,7 @@ int installVehicleGraphics()
 		copyFileFromRes("S_MSSLBO", path + "shw" + szNum + ".pcx");
 	}
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
-	*/
+	
 	//mobile_aa
 	cout << "mobile_aa\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
