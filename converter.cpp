@@ -607,6 +607,9 @@ SDL_Surface* cImage::getSurface(int imageNr)
 	return Images[imageNr].surface;
 }
 
+//TODO: for every call of getImage, all picutes with the given name (and different imageNr) are decoded too
+//this wastes much time
+//I should really think about my interface to the res hacker...
 SDL_Surface* getImage(string file_name, int imageNr)
 {
 	long lPosOfFile = lPosBegin;
@@ -739,7 +742,7 @@ int copyImageFromFLC(string fileName, string dst)
 	return 1;
 }
 
-void resizeSurface ( SDL_Surface*& surface, SDL_Rect* rect)
+void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 {
 	SDL_Rect dst_rect, src_rect;
 	SDL_Surface* resizedSurface;
@@ -747,33 +750,33 @@ void resizeSurface ( SDL_Surface*& surface, SDL_Rect* rect)
 	if ( surface->format->BitsPerPixel != 8 )
 		return;
 	
-	if ( surface->h > rect->h )
+	if ( surface->h > h )
 	{
 		dst_rect.y = 0;
-		src_rect.y = rect->y;
-		src_rect.h = rect->h;
+		src_rect.y = y;
+		src_rect.h = h;
 	}
 	else 
 	{
-		dst_rect.y = rect->y;
+		dst_rect.y = y;
 		src_rect.y = 0;
 		src_rect.h = surface->h;
 	}
 
-	if ( surface->w > rect->w )
+	if ( surface->w > w )
 	{
 		dst_rect.x = 0;
-		src_rect.x = rect->x;
-		src_rect.w = rect->w;
+		src_rect.x = x;
+		src_rect.w = w;
 	}
 	else 
 	{
-		dst_rect.x = rect->x;
+		dst_rect.x = x;
 		src_rect.x = 0;
 		src_rect.w = surface->w;
 	}
 
-	resizedSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, rect->h, rect->w, 8,0,0,0,0);
+	resizedSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, h, w, 8,0,0,0,0);
 	resizedSurface->pitch = resizedSurface->w;	//this seems to be an SDL-Bug...
 												//sometimes the pitch of a surface has an wrong value
 	SDL_SetColors(resizedSurface, surface->format->palette->colors, 0, 256);
