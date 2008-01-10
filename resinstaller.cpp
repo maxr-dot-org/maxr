@@ -26,6 +26,7 @@
 #include "resinstaller.h"
 #include "converter.h"
 #include "pcx.h"
+#include "file.h"
 
 
 int installVehicleGraphics()
