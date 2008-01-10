@@ -1340,8 +1340,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "Please enter path to MAX-Installation: ";
-		//cin >> sMAXPath;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -1359,8 +1359,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "\nPlease enter path to palette-file: ";
-		//cin >> sPalettePath;
-		sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
+		cin >> sPalettePath;
+		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -1380,9 +1380,9 @@ int main ( int argc, char* argv[] )
 
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	//cin >> sOutputPath;
+	cin >> sOutputPath;
 	
-	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
