@@ -58,12 +58,10 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	SDL_RWread ( file,&y,sizeof ( short ),1 );
 	x++;y++;
 	sf=SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
-	SDL_LockSurface ( sf );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	if ( sf == NULL )
 	{
 		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_ERROR); //sdl f*cked up
-		SDL_UnlockSurface ( sf );
 		SDL_RWclose ( file );
 		return NULL; //app will crash using this
 	}
@@ -114,8 +112,7 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	{
 		_ptr[i]=colors[_ptr[i]];
 	}
-	SDL_RWclose ( file );
-	SDL_UnlockSurface ( sf );
+	SDL_RWclose ( file );	
 	return sf;
 }
 
@@ -166,7 +163,6 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	}
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFFFFFF );
-	SDL_LockSurface ( sf );
 	
 	_ptr= ( ( unsigned int* ) sf->pixels );
 	SDL_RWseek ( file,128,SEEK_SET );
@@ -222,6 +218,5 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 		memset ( _ptr+sf->w*y,0, ( sf->w*sf->h-sf->w*y ) *4 );
 	}
 	SDL_RWclose ( file );
-	SDL_UnlockSurface ( sf );
 	return 0;
 }
