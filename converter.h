@@ -99,5 +99,7 @@ int copyImageFromFLC(string fileName, string dst);
 */
 void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w );
 
+void generateAnimationFrame( SDL_Surface* surface, unsigned char frame);
+
 
 #endif // ConvertH

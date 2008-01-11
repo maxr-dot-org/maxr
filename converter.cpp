@@ -657,7 +657,7 @@ SDL_Surface* getImage(string file_name, int imageNr)
 //note that the information about the player colors are lost, when blitting the surface
 void removePlayerColor( SDL_Surface *surface)
 {
-	for ( int i = 32; i < 40 ; i++ )
+	for ( int i = 32; i < 39 ; i++ )
 	{
 		surface->format->palette->colors[i].r = 255;
 		surface->format->palette->colors[i].g = 255;
@@ -788,4 +788,170 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 	SDL_FreeSurface( surface );
 
 	surface = resizedSurface;
+}
+
+void setColor( SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b )
+{
+	surface->format->palette->colors[nr].r = r;
+	surface->format->palette->colors[nr].g = g;
+	surface->format->palette->colors[nr].b = b;
+}
+
+void setAnimationColor( SDL_Surface* surface, unsigned char index, unsigned char frame )
+{
+
+	switch ( index )
+	{
+		case 13:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 255, 255, 159);
+					break;
+				case 1:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 2:
+					setColor( surface, index, 235,  51,  51);
+					break;
+				case 3:
+					setColor( surface, index, 243, 171, 103);
+					break;
+			}
+			break;
+		case 14:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 1:
+					setColor( surface, index, 255, 255, 159);
+					break;
+				case 2:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 3:
+					setColor( surface, index, 235,  51,  51);
+					break;
+			}
+			break;
+		case 15:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 235,  51,  51);
+					break;
+				case 1:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 2:
+					setColor( surface, index, 255, 255, 159);
+					break;
+				case 3:
+					setColor( surface, index, 243, 171, 103);
+					break;
+			}
+			break;
+		case 16:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 1:
+					setColor( surface, index, 235,  51,  51);
+					break;
+				case 2:
+					setColor( surface, index, 243, 171, 103);
+					break;
+				case 3:
+					setColor( surface, index, 255, 255, 159);
+					break;
+			}
+			break;
+		case 21:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 183, 103, 0);
+					break;
+				case 1:
+					setColor( surface, index, 74, 57, 33);
+					break;
+				case 2:
+					setColor( surface, index, 15, 15, 15);
+					break;
+				case 3:
+					setColor( surface, index, 82, 57, 41);
+					break;
+			}
+			break;
+		case 22:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 75, 59, 39);
+					break;
+				case 1:
+					setColor( surface, index, 181, 99, 0);
+					break;
+				case 2:
+					setColor( surface, index, 75, 59, 39);
+					break;
+				case 3:
+					setColor( surface, index, 8, 8, 8);
+					break;
+			}
+			break;
+		case 23:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 15, 15, 15);
+					break;
+				case 1:
+					setColor( surface, index, 74, 57, 33);
+					break;
+				case 2:
+					setColor( surface, index, 181, 99, 0);
+					break;
+				case 3:
+					setColor( surface, index, 74, 57, 33);
+					break;
+			}
+			break;
+
+		case 24:
+			switch ( frame )
+			{
+				case 0:
+					setColor( surface, index, 75, 59, 39);
+					break;
+				case 1:
+					setColor( surface, index, 15, 15, 15);
+					break;
+				case 2:
+					setColor( surface, index, 75, 59, 39);
+					break;
+				case 3:
+					setColor( surface, index, 181, 99, 0);
+					break;
+			}
+			break;
+
+	}	
+}
+
+//change palette of surface to generate an animation frame
+void generateAnimationFrame( SDL_Surface *surface, unsigned char frame)
+{
+	setAnimationColor( surface, 13, frame);
+	setAnimationColor( surface, 14, frame);
+	setAnimationColor( surface, 15, frame);
+	setAnimationColor( surface, 16, frame);
+	setAnimationColor( surface, 21, frame);
+	setAnimationColor( surface, 22, frame);
+	setAnimationColor( surface, 23, frame);
+	setAnimationColor( surface, 24, frame);
 }

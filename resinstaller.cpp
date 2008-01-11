@@ -169,7 +169,7 @@ int installVehicleGraphics()
 		save_PCX(surface, path + "img" + szNum + ".pcx");
 		SDL_FreeSurface( surface );
 
-		copyFileFromRes("S_BOMBER", path + "shw" + szNum + ".pcx");
+		copyFileFromRes("S_BOMBER", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_BOMBER", path + "store.pcx");
 	copyFileFromRes("P_BOMBER", path + "info.pcx");
@@ -180,11 +180,152 @@ int installVehicleGraphics()
 	for ( int i = 0; i < 8; i++ )
 	{
 		sprintf( szNum, "%d", i);
-		copyFileFromRes_rpc("BULLDOZR", path + "img" + szNum + ".pcx");
-		copyFileFromRes("S_BULLDO", path + "shw" + szNum + ".pcx");
+		surface = getImage("BULLDOZR", i);
+		removePlayerColor( surface );
+		resizeSurface( surface, 4, 4, 64, 64);
+		save_PCX( surface, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( surface );
+		
+		surface = getImage("S_BULLDO", i);
+		resizeSurface( surface, 4, 4, 68, 68);
+		save_PCX( surface, path + "shw" + szNum + ".pcx");
+		SDL_FreeSurface( surface );
 	}
 	copyFileFromRes("A_BULLDZ", path + "store.pcx");
 	copyFileFromRes("P_BULLDZ", path + "info.pcx");
+	
+	surface = getImage( "LRGTAPE", 0);
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	output->pitch = output->w;		//this seems to be an SDL-Bug...
+									//sometimes the pitch of a surface has an wrong value
+	dst_rect.x = 0;
+	dst_rect.y = 0;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 128;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("LRGCONES");
+	dst_rect.y = 5;
+	dst_rect.x = 5;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 128;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	dst_rect.x = 36;
+	dst_rect.y = 36;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	//can someone tell me, why I have to reload the surface? :-|
+	//otherwise changeing the palette after the first blit has no effect anymore
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 1);
+	dst_rect.x = 164;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 2);
+	dst_rect.x = 292;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 3);
+	dst_rect.x = 420;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "clear_big.pcx");
+	SDL_FreeSurface( output );
+
+	output = getImage("S_LRGCON");
+	resizeSurface( output, 6, 6, 128, 128 );
+	surface = getImage("S_BULLDO");
+	dst_rect.x = 38;
+	dst_rect.y = 37;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "clear_big_shw.pcx");
+	SDL_FreeSurface( output );
+	
+	surface = getImage("SMLTAPE");
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	output->pitch = output->w;		//this seems to be an SDL-Bug...
+									//sometimes the pitch of a surface has an wrong value
+	dst_rect.x = 0;
+	dst_rect.y = 0;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 64;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("SMLCONES");
+	dst_rect.y = 5;
+	dst_rect.x = 5;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 64;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	dst_rect.x = 4;
+	dst_rect.y = 4;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 1);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 2);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	
+	surface = getImage("BULLDOZR", 8);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 3);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "clear_small.pcx");
+	SDL_FreeSurface( output );
+
+	output = getImage("S_LRGCON");
+	resizeSurface( output, 6, 6, 64, 66 );
+	surface = getImage("S_BULLDO");
+	dst_rect.x = 6;
+	dst_rect.y = 5;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	save_PCX( output, path + "clear_small_shw.pcx");
+	SDL_FreeSurface( output );
 
 	//cargoship
 	cout << "cargoship\n";
@@ -210,7 +351,7 @@ int installVehicleGraphics()
 		save_PCX(surface, path + "img" + szNum + ".pcx");
 		SDL_FreeSurface( surface );
 
-		copyFileFromRes("S_ROCKTL", path + "shw" + szNum + ".pcx");
+		copyFileFromRes("S_ROCKTL", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_ROCKET", path + "store.pcx");
 	copyFileFromRes("P_ROCKET", path + "info.pcx");
@@ -270,7 +411,7 @@ int installVehicleGraphics()
 		save_PCX(surface, path + "img" + szNum + ".pcx");
 		SDL_FreeSurface( surface );
 
-		copyFileFromRes("S_FIGHTE", path + "shw" + szNum + ".pcx");
+		copyFileFromRes("S_FIGHTE", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_FIGHTR", path + "store.pcx");
 	copyFileFromRes("P_FIGHTR", path + "info.pcx");
@@ -373,7 +514,7 @@ int installVehicleGraphics()
 	for (int i = 0; i < 8; i++ )
 	{
 		sprintf(szNum, "%d", i);
-		copyFileFromRes("S_BATTLS", path + "shw" + szNum + ".pcx");
+		copyFileFromRes("S_BATTLS", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_GUNBT", path + "store.pcx");
 	copyFileFromRes("P_GUNBT", path + "info.pcx");
@@ -444,7 +585,7 @@ int installVehicleGraphics()
 		resizeSurface( surface, 16, 16, 64, 64);
 		save_PCX(surface, path + "img" + szNum + ".pcx");
 		SDL_FreeSurface( surface );
-		copyFileFromRes("S_MSSLBO", path + "shw" + szNum + ".pcx");
+		copyFileFromRes("S_MSSLBO", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
 	copyFileFromRes("P_MSLCR", path + "info.pcx");
@@ -579,8 +720,8 @@ int installVehicleGraphics()
 	for (int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
-		copyFileFromRes_rpc("REPAIR", path + "img" + szNum + ".pcx");
-		copyFileFromRes("S_REPAIR", path + "shw" + szNum + ".pcx");
+		copyFileFromRes_rpc("REPAIR", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_REPAIR", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_REPAIR", path + "store.pcx");
 	copyFileFromRes("P_REPAIR", path + "info.pcx");
@@ -599,7 +740,7 @@ int installVehicleGraphics()
 		surface = getImage("S_SCANNE", i);
 		resizeSurface( surface, 8, 8, 61, 60);
 		save_PCX( surface, path + "shw" + szNum + ".pcx");
-
+		SDL_FreeSurface( surface );
 	}
 	copyFileFromRes("A_SCANNR", path + "store.pcx");
 	copyFileFromRes("P_SCANNR", path + "info.pcx");
@@ -665,6 +806,7 @@ int installVehicleGraphics()
 		surface = getImage("S_SURVEY", i);
 		resizeSurface( surface, 2, 2, 69, 72);
 		save_PCX( surface, path + "shw" + szNum + ".pcx");
+		SDL_FreeSurface( surface );
 	}
 	copyFileFromRes("A_SURVEY", path + "store.pcx");
 	copyFileFromRes("P_SURVEY", path + "info.pcx");
@@ -687,9 +829,10 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 		save_PCX( output, path + "img" + szNum + ".pcx");
 		SDL_FreeSurface( output );
-		surface = getImage("S_SCANNE", i);
+		surface = getImage("S_TANK", i);
 		resizeSurface( surface, 2, 2, 69, 72);
 		save_PCX( surface, path + "shw" + szNum + ".pcx");
+		SDL_FreeSurface ( surface );
 	}
 	copyFileFromRes("A_TANK", path + "store.pcx");
 	copyFileFromRes("P_TANK", path + "info.pcx");
@@ -700,8 +843,8 @@ int installVehicleGraphics()
 	for ( int i = 0; i < 8; i++)
 	{
 		sprintf( szNum, "%d", i);
-		copyFileFromRes_rpc("GOLDTRCK", path + "img" + szNum + ".pcx");
-		copyFileFromRes("S_GOLDTR", path + "shw" + szNum + ".pcx");
+		copyFileFromRes_rpc("GOLDTRCK", path + "img" + szNum + ".pcx", i);
+		copyFileFromRes("S_GOLDTR", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_GOLDTR", path + "store.pcx");
 	copyFileFromRes("P_GOLDTR", path + "info.pcx");

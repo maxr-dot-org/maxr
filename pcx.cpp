@@ -252,7 +252,7 @@ int save_PCX ( SDL_Surface* surface, string fileName )
 	{
 		return save_PCX_8bpp( surface, fileName );
 	}
-	else if ( surface->format->BitsPerPixel == 8 )
+	else if ( surface->format->BitsPerPixel == 32 )
 	{
 		return save_PCX_32bpp( surface, fileName );
 	}
