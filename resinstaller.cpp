@@ -37,7 +37,7 @@ int installVehicleGraphics()
 	char szNum1[13];
 	char szNum2[13];
 	SDL_Surface *surface, *output;
-	/*
+	
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -537,7 +537,7 @@ int installVehicleGraphics()
 	}
 	copyFileFromRes("A_INFANT", path + "store.pcx");
 	copyFileFromRes("P_INFANT", path + "info.pcx");
-	*/
+	
 	//konstrukt
 	cout << "konstrukt\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
@@ -878,7 +878,6 @@ int installVehicleGraphics()
 	copyFileFromRes("P_SCANNR", path + "info.pcx");
 
 	surface = getImage("SCANNER", 8);
-	removePlayerColor( surface );
 	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 360, 45, 8,0,0,0,0);
 	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -893,7 +892,6 @@ int installVehicleGraphics()
 	for ( int i = 1; i < 8; i++)
 	{
 		surface = getImage("SCANNER", i*2 + 8);
-		removePlayerColor( surface );
 		resizeSurface( surface, 2, 1, 45, 45);
 		SDL_BlitSurface( surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
@@ -1641,8 +1639,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "Please enter path to MAX-Installation: ";
-		//cin >> sMAXPath;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -1660,8 +1658,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "\nPlease enter path to palette-file: ";
-		//cin >> sPalettePath;
-		sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
+		cin >> sPalettePath;
+		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -1681,9 +1679,9 @@ int main ( int argc, char* argv[] )
 
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	//cin >> sOutputPath;
+	cin >> sOutputPath;
 	
-	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
