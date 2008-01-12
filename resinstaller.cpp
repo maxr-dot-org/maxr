@@ -37,7 +37,7 @@ int installVehicleGraphics()
 	char szNum1[13];
 	char szNum2[13];
 	SDL_Surface *surface, *output;
-	
+	/*
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -316,7 +316,7 @@ int installVehicleGraphics()
 	save_PCX( output, path + "clear_small.pcx");
 	SDL_FreeSurface( output );
 
-	output = getImage("S_LRGCON");
+	output = getImage("S_SMLCON");
 	resizeSurface( output, 6, 6, 64, 66 );
 	surface = getImage("S_BULLDO");
 	dst_rect.x = 6;
@@ -537,7 +537,7 @@ int installVehicleGraphics()
 	}
 	copyFileFromRes("A_INFANT", path + "store.pcx");
 	copyFileFromRes("P_INFANT", path + "info.pcx");
-
+	*/
 	//konstrukt
 	cout << "konstrukt\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
@@ -549,6 +549,72 @@ int installVehicleGraphics()
 	}
 	copyFileFromRes("A_CONTRC", path + "store.pcx");
 	copyFileFromRes("P_CONTRC", path + "info.pcx");
+
+	surface = getImage( "LRGTAPE", 0);
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	output->pitch = output->w;		//this seems to be an SDL-Bug...
+									//sometimes the pitch of a surface has an wrong value
+	dst_rect.x = 0;
+	dst_rect.y = 0;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 128;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("LRGCONES");
+	dst_rect.y = 5;
+	dst_rect.x = 5;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 128;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("CONSTRCT", 16);
+	removePlayerColor( surface );
+	dst_rect.x = 33;
+	dst_rect.y = 36;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("CONSTRCT", 24);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 1);
+	dst_rect.x += 128;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("CONSTRCT", 16);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 2);
+	dst_rect.x += 128;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	
+	surface = getImage("CONSTRCT", 32);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 3);
+	dst_rect.x += 128;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "build.pcx");
+	SDL_FreeSurface( output );
+
+	output = getImage("S_LRGCON");
+	resizeSurface( output, 6, 6, 128, 128 );
+	surface = getImage("S_CONSTR");
+	dst_rect.x = 38;
+	dst_rect.y = 37;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "build_shw.pcx");
+	SDL_FreeSurface( output );
+
 
 	//minelayer
 	cout << "minelayer\n";
@@ -714,6 +780,72 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ENGINR", path + "store.pcx");
 	copyFileFromRes("P_ENGINR", path + "info.pcx");
 
+	surface = getImage("SMLTAPE");
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	output->pitch = output->w;		//this seems to be an SDL-Bug...
+									//sometimes the pitch of a surface has an wrong value
+	dst_rect.x = 0;
+	dst_rect.y = 0;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 64;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("SMLCONES");
+	dst_rect.y = 5;
+	dst_rect.x = 5;
+	for ( int i = 0; i < 4; i++ )
+	{
+		SDL_BlitSurface( surface, 0, output, &dst_rect );
+		dst_rect.x += 64;
+	}
+	SDL_FreeSurface( surface );
+
+	surface = getImage("ENGINEER", 16);
+	removePlayerColor( surface );
+	dst_rect.x = 4;
+	dst_rect.y = 4;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("ENGINEER", 16);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 1);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+
+	surface = getImage("ENGINEER", 16);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 2);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	
+	surface = getImage("ENGINEER", 16);
+	removePlayerColor( surface );
+	generateAnimationFrame( surface, 3);
+	dst_rect.x += 64;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "build.pcx");
+	SDL_FreeSurface( output );
+
+	output = getImage("S_SMLCON");
+	resizeSurface( output, 6, 6, 64, 66 );
+	surface = getImage("S_ENGINE");
+	dst_rect.x = 6;
+	dst_rect.y = 5;
+	SDL_BlitSurface( surface, 0, output, &dst_rect );
+	SDL_FreeSurface( surface );
+	save_PCX( output, path + "build_shw.pcx");
+	SDL_FreeSurface( output );
+
+
 	//repair
 	cout << "repair\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
@@ -744,6 +876,31 @@ int installVehicleGraphics()
 	}
 	copyFileFromRes("A_SCANNR", path + "store.pcx");
 	copyFileFromRes("P_SCANNR", path + "info.pcx");
+
+	surface = getImage("SCANNER", 8);
+	removePlayerColor( surface );
+	output = SDL_CreateRGBSurface(SDL_SWSURFACE, 360, 45, 8,0,0,0,0);
+	SDL_SetColors(output, surface->format->palette->colors, 0, 256);
+	SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+	output->pitch = output->w;		//this seems to be an SDL-Bug...
+									//sometimes the pitch of a surface has an wrong value
+	resizeSurface( surface, 2, 1, 45, 45);
+	dst_rect.x = 0;
+	dst_rect.y = 0;
+	SDL_BlitSurface( surface, 0, output, &dst_rect);
+	SDL_FreeSurface( surface );
+	dst_rect.x = 45;
+	for ( int i = 1; i < 8; i++)
+	{
+		surface = getImage("SCANNER", i*2 + 8);
+		removePlayerColor( surface );
+		resizeSurface( surface, 2, 1, 45, 45);
+		SDL_BlitSurface( surface, 0, output, &dst_rect);
+		SDL_FreeSurface( surface );
+		dst_rect.x += 45;
+	}
+	save_PCX( output, path + "overlay.pcx");
+	SDL_FreeSurface( output );
 
 	//scout
 	cout << "scout\n";
@@ -1484,8 +1641,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "Please enter path to MAX-Installation: ";
-		cin >> sMAXPath;
-		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		//cin >> sMAXPath;
+		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -1503,8 +1660,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "\nPlease enter path to palette-file: ";
-		cin >> sPalettePath;
-		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
+		//cin >> sPalettePath;
+		sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -1524,9 +1681,9 @@ int main ( int argc, char* argv[] )
 
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	cin >> sOutputPath;
+	//cin >> sOutputPath;
 	
-	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
