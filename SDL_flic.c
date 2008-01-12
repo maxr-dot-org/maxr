@@ -426,6 +426,7 @@ int FLI_NextFrame(FLI_Animation *flic) {
                                 break;
                         case FLI_PSTAMP:
                                 /* Ignore this chunk. */
+								SDL_RWseek( flic->rwops, chunk.size - 6, SEEK_CUR );
                                 break;
                         default:
                                 longjmp(flic->error, FLI_CORRUPTEDFILE);
