@@ -2017,16 +2017,56 @@ bool cGame::DoCommand ( char *cmd )
 }
 
 // Fügt einen FX-Effekt ein:
+void cGame::AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param )
+{
+	sFX* n = new sFX;
+	n->typ = typ;
+	n->PosX = x;
+	n->PosY = y;
+	n->StartFrame = Frame;
+	n->param = 0;
+	n->rocketInfo= param;
+	n->smokeInfo = NULL;
+	n->trackInfo = NULL;
+	AddFX( n );
+}
+
+// Fügt einen FX-Effekt ein:
 void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 {
-	sFX *n;
-	n=new sFX;
-	n->typ=typ;
-	n->PosX=x;
-	n->PosY=y;
-	n->StartFrame=Frame;
-	n->param=param;
-	if ( typ==fxTracks||typ==fxTorpedo||typ==fxBubbles||typ==fxCorpse )
+	sFX* n = new sFX;
+	n->typ = typ;
+	n->PosX = x;
+	n->PosY = y;
+	n->StartFrame = Frame;
+	n->param = param;
+	n->rocketInfo= NULL;
+	n->smokeInfo = NULL;
+	n->trackInfo = NULL;
+	AddFX( n );
+}
+
+// Fügt einen FX-Effekt ein:
+void cGame::AddFX ( sFX* n )
+{
+	if ( (n->typ == fxRocket || n->typ == fxTorpedo ) && n->rocketInfo == NULL )
+	{
+		//invalid effect
+		//rocketInfo is missing
+		delete n;
+		return; 
+	}
+	
+	if ( (n->typ != fxRocket && n->typ != fxTorpedo ) && n->rocketInfo != NULL )
+	{
+		//invalid effect
+		//an sFXRocketInfos has been passed, but is not needed for this effect type
+		delete n->rocketInfo;
+		delete n;
+		return;
+	}
+
+	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
 		FXListBottom->Add ( n );
 	}
@@ -2034,12 +2074,12 @@ void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 	{
 		FXList->Add ( n );
 	}
-	switch ( typ )
+	switch ( n->typ )
 	{
 		case fxExploSmall0:
 		case fxExploSmall1:
 		case fxExploSmall2:
-			if ( map->IsWater ( x/64+ ( y/64 ) *map->size ) )
+			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
 				int nr;
 				nr=random ( 3,0 );
@@ -2079,7 +2119,7 @@ void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 		case fxExploBig2:
 		case fxExploBig3:
 		case fxExploBig4:
-			if ( map->IsWater ( x/64+ ( y/64 ) *map->size ) )
+			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
 				if ( random ( 2,0 ) )
 				{
@@ -2121,7 +2161,7 @@ void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 		{
 			sFXRocketInfos *ri;
 			int dx,dy;
-			ri= ( sFXRocketInfos* ) ( n->param );
+			ri= n->rocketInfo;
 			ri->fpx=n->PosX;
 			ri->fpy=n->PosY;
 			dx=ri->ScrX-ri->DestX;
@@ -2147,7 +2187,7 @@ void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 			dsi=new sFXDarkSmoke;
 			dsi->alpha=n->param;
 			if ( dsi->alpha>150 ) dsi->alpha=150;
-			n->param= ( int ) dsi;
+			n->smokeInfo = dsi;
 			dsi->fx=n->PosX;
 			dsi->fy=n->PosY;
 
@@ -2173,7 +2213,7 @@ void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 			tri=new sFXTracks;
 			tri->alpha=100;
 			tri->dir=n->param;
-			n->param= ( int ) tri;
+			n->trackInfo = tri;
 			break;
 		}
 		case fxCorpse:
@@ -2432,7 +2472,7 @@ void cGame::DrawFX ( int i )
 		case fxRocket:
 		{
 			sFXRocketInfos *ri;
-			ri= ( sFXRocketInfos* ) fx->param;
+			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
 				ri->aj->MuzzlePlayed=true;
@@ -2466,7 +2506,7 @@ void cGame::DrawFX ( int i )
 		case fxDarkSmoke:
 		{
 			sFXDarkSmoke *dsi;
-			dsi= ( sFXDarkSmoke* ) ( fx->param );
+			dsi = fx->smokeInfo;
 			if ( Frame-fx->StartFrame>50||dsi->alpha<=1 )
 			{
 				delete fx;
@@ -2526,7 +2566,7 @@ void cGame::DrawFXBottom ( int i )
 		case fxTorpedo:
 		{
 			sFXRocketInfos *ri;
-			ri= ( sFXRocketInfos* ) fx->param;
+			ri = fx->rocketInfo;
 			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
@@ -2578,7 +2618,7 @@ void cGame::DrawFXBottom ( int i )
 		case fxTracks:
 		{
 			sFXTracks *tri;
-			tri= ( sFXTracks* ) ( fx->param );
+			tri = fx->trackInfo;
 			if ( tri->alpha<=1 )
 			{
 				delete fx;

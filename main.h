@@ -51,7 +51,7 @@
 
 using namespace std;
 
-// Predeclarations for the TList Class ////////////////////////////////////////
+// Predeclarations
 class cPlayer;
 class cBuilding;
 class cVehicle;

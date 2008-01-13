@@ -195,13 +195,13 @@ void cAJobs::PlayMuzzle ( void )
 			{
 				ri->ScrX=vehicle->PosX*64;
 				ri->ScrY=vehicle->PosY*64;
-				game->AddFX ( fxRocket,vehicle->PosX*64,vehicle->PosY*64, ( int ) ri );
+				game->AddFX ( fxRocket,vehicle->PosX*64,vehicle->PosY*64, ri );
 			}
 			else
 			{
 				ri->ScrX=building->PosX*64;
 				ri->ScrY=building->PosY*64;
-				game->AddFX ( fxRocket,building->PosX*64,building->PosY*64, ( int ) ri );
+				game->AddFX ( fxRocket,building->PosX*64,building->PosY*64, ri );
 			}
 			break;
 		}
@@ -279,13 +279,13 @@ void cAJobs::PlayMuzzle ( void )
 			{
 				ri->ScrX=vehicle->PosX*64;
 				ri->ScrY=vehicle->PosY*64;
-				game->AddFX ( fxTorpedo,vehicle->PosX*64,vehicle->PosY*64, ( int ) ri );
+				game->AddFX ( fxTorpedo,vehicle->PosX*64,vehicle->PosY*64, ri );
 			}
 			else
 			{
 				ri->ScrX=building->PosX*64;
 				ri->ScrY=building->PosY*64;
-				game->AddFX ( fxTorpedo,building->PosX*64,building->PosY*64, ( int ) ri );
+				game->AddFX ( fxTorpedo,building->PosX*64,building->PosY*64, ri );
 			}
 			break;
 		}

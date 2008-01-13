@@ -66,6 +66,9 @@ struct sFX{
   int PosX,PosY;
   int StartFrame;
   int param;
+  sFXRocketInfos* rocketInfo;
+  sFXDarkSmoke* smokeInfo;
+  sFXTracks* trackInfo;
 };
 
 // Die Game-Klasse ///////////////////////////////////////////////////////////
@@ -149,6 +152,8 @@ public:
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);
   void AddFX(eFXTyps typ,int x,int y,int param);
+  void AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param );
+  void AddFX ( sFX* n );
   void DisplayFX(void);
   void DisplayFXBottom(void);  
   void DrawFX(int i);
