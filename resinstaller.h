@@ -26,6 +26,13 @@
 
 using namespace std;
 
+
+#ifdef _WIN32
+#pragma warning(disable:4312)
+#pragma warning(disable:4996)
+#endif
+
+
 EX string sMAXPath;
 EX string sPalettePath;
 EX string sOutputPath;

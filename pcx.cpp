@@ -24,7 +24,7 @@
 #include "converter.h"
 
 
-int save_PCX_8bpp(SDL_Surface* surface, string fileName)
+int savePCX_8bpp(SDL_Surface* surface, string fileName)
 {
 	int Z_Index, S_Index;			// PCX-Größenangaben
 	
@@ -115,7 +115,7 @@ int save_PCX_8bpp(SDL_Surface* surface, string fileName)
 
 }
 
-int save_PCX_32bpp(SDL_Surface* surface, string fileName)
+int savePCX_32bpp(SDL_Surface* surface, string fileName)
 {
 	int Z_Index, S_Index;			// PCX-Größenangaben
 	
@@ -243,18 +243,18 @@ int save_PCX_32bpp(SDL_Surface* surface, string fileName)
 
 }
 
-int save_PCX ( SDL_Surface* surface, string fileName )
+int savePCX ( SDL_Surface* surface, string fileName )
 {
 	if ( !surface ) 
 		return 0;
 
 	if ( surface->format->BitsPerPixel == 8 )
 	{
-		return save_PCX_8bpp( surface, fileName );
+		return savePCX_8bpp( surface, fileName );
 	}
 	else if ( surface->format->BitsPerPixel == 32 )
 	{
-		return save_PCX_32bpp( surface, fileName );
+		return savePCX_32bpp( surface, fileName );
 	}
 
 	return 1;

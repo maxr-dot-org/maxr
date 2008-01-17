@@ -71,7 +71,7 @@ void cImage::saveFile()
 		}
 		sOutputname += ".pcx";
 		
-		save_PCX( Images[iNum].surface, sOutputname );
+		savePCX( Images[iNum].surface, sOutputname );
 		
 		cout << name;
 		if( iImageCount > 1 )
@@ -702,7 +702,7 @@ int copyFileFromRes ( string src, string dst, int number )
 {
 	SDL_Surface *surface;
 	surface = getImage(src, number);
-	save_PCX ( surface, dst );
+	savePCX ( surface, dst );
 	SDL_FreeSurface ( surface );
 
 	return 1;
@@ -714,7 +714,7 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 	SDL_Surface *surface;
 	surface = getImage(src, number);
 	removePlayerColor( surface );
-	save_PCX( surface, dst);
+	savePCX( surface, dst);
 	SDL_FreeSurface( surface );
 
 	return 1;
@@ -737,7 +737,7 @@ int copyImageFromFLC(string fileName, string dst)
 	if (  error!=0 )
 		return 0;
 	
-	save_PCX(animation->surface, dst);
+	savePCX(animation->surface, dst);
 
 	return 1;
 }
