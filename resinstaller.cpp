@@ -1879,6 +1879,8 @@ int installBuildingSounds()
 	//energy big
 	cout << "energy big\n";
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
+	copyPartOfWAV( sMAXPath + "POWGN17.WAV", sOutputPath + "test.wav", 0, 1389.388);
+	copyPartOfWAV( sMAXPath + "POWGN17.WAV", sOutputPath + "test2.wav", 1389.388, 5262.585);
 	
 	//energy small
 	cout << "energy small\n";
@@ -1994,8 +1996,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "Please enter path to MAX-Installation: ";
-		//cin >> sMAXPath;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
 		if( !res )
@@ -2013,8 +2015,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{
 		cout << "\nPlease enter path to palette-file: ";
-		//cin >> sPalettePath;
-		sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
+		cin >> sPalettePath;
+		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
 
 		
 		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
@@ -2034,9 +2036,9 @@ int main ( int argc, char* argv[] )
 
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	//cin >> sOutputPath;
+	cin >> sOutputPath;
 	
-	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
@@ -2096,12 +2098,11 @@ int main ( int argc, char* argv[] )
 		exit (-1);
 	}
 
-	copyPartOfWAV( sMAXPath + "POWGN17.WAV", sOutputPath + "test.wav", 0, 1389.388);
-	copyPartOfWAV( sMAXPath + "POWGN17.WAV", sOutputPath + "test2.wav", 1389.388, 5262.585);
+	
 
-	//installVehicleVideos();
-	//installVehicleGraphics();
-	//installBuildingGraphics();
+	installVehicleVideos();
+	installVehicleGraphics();
+	installBuildingGraphics();
 
 
 	free (orig_palette);
