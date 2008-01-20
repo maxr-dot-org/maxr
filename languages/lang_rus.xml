@@ -29,13 +29,13 @@
 		</Main>
 		<Init>
 			<Lang ENG="Loading languagepack..." localized="Загрузка языков.."/>
-			<Keys ENG="Loading keys..." localized="Загрузыка клавиш..."/>
+			<Keys ENG="Loading keys..." localized="Загрузка клавиш..."/>
 			<Fonts ENG="Loading fonts..." localized="Загрузка шрифтов..."/>
 			<GFX ENG="Loading gfx..." localized="Загрузыка графики..."/>
 			<Effects ENG="Loading effects..." localized="Загрузка эффектов..."/>
 			<Terrain ENG="Loading terrain..." localized="Загрузка территорий..."/>
 			<Vehicles ENG="Loading vehicles..." localized="Загрузка подразделений..."/>
-			<Buildings ENG="Loading buildings..." localized="Загрузыка зданий..."/>
+			<Buildings ENG="Loading buildings..." localized="Загрузка зданий..."/>
 			<Music ENG="Loading music..." localized="Загрузка музыки..."/>
 			<Sounds ENG="Loading sounds..." localized="Загрузка звуков..."/>
 			<Voices ENG="Loading voices..." localized="Загрузка голосов..."/>
@@ -78,7 +78,7 @@
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
 			<Single_Player ENG="Singleplayer" localized="Одиночная игра"/>
-			<Multi_Player ENG="Multiplayer" localized="Мультиплейер"/>
+			<Multi_Player ENG="Multiplayer" localized="Мультиплеер"/>
 			<Map_Editor ENG="Mapeditor (*)" localized="Редактор карт"/>
 			<Credits ENG="Credits (*)" localized="Разработчики"/>
 			<Mani ENG="Manifestation" localized="Указания"/>
@@ -127,7 +127,7 @@
 			<Scan ENG="Scan" localized="Скан."/>
 			<Grid ENG="Grid" localized="Сетка"/>
 			<Fog ENG="Fog" localized="Туман"/>
-			<Speed ENG="Speed" localized="Скорость"/>
+			<Speed ENG="Speed" localized="Скор."/>
 			<Cargo ENG="Gargo" localized="Груз"/>
 			<AmmoShort ENG="Ammo" localized="Боепр."/>
 			<Shots ENG="Shots" localized="Выстрел"/>
@@ -138,18 +138,18 @@
 			<Teams ENG="Teams" localized="Команды"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="едва"/>
+			<Lowest ENG="lowest" localized="минимально"/>
 			<Lower ENG="very low" localized="очень мало"/>
 			<Low ENG="low" localized="мало"/>
-			<Normal ENG="normal" localized="нормально"/>
+			<Normal ENG="normal" localized="норм."/>
 			<Much ENG="much" localized="много"/>
 			<More ENG="very much" localized="очень много"/>
-			<Most ENG="most" localized="самый большой"/>
-			<Thick ENG="thick" localized="густой"/>
-			<Thin ENG="thin" localized="редкий"/>
-			<On ENG="on" localized="вкл."/>
-			<Off ENG="off" localized="выкл."/>
-			<Definite ENG="definite" localized="точный"/>
+			<Most ENG="most" localized="максимально"/>
+			<Thick ENG="thick" localized="густая"/>
+			<Thin ENG="thin" localized="редкая"/>
+			<On ENG="on" localized="включена"/>
+			<Off ENG="off" localized="выключена"/>
+			<Definite ENG="definite" localized="постоянный"/>
 			<Mobile ENG="mobile" localized="изменяемый"/>
 			<Type_Turns ENG="turns" localized="по очереди"/>
 			<Type_Simu ENG="simultaneous" localized="одновременно"/>
@@ -201,15 +201,15 @@
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Атака"/>
-			<Shoots ENG="Shoots" localized="Выстрелы"/>
+			<Shoots ENG="Shoots" localized="Выстр."/>
 			<Range ENG="Range" localized="Радиус"/>
-			<Ammo ENG="Ammo" localized="Боепр."/>
+			<Ammo ENG="Ammo" localized="Снар."/>
 			<Armor ENG="Armor" localized="Броня"/>
-			<Hitpoints ENG="Hits" localized="Попадания"/>
+			<Hitpoints ENG="Hits" localized="Попад."/>
 			<Scan ENG="Scan" localized="Радар"/>
-			<Speed ENG="Speed" localized="Скорость"/>
+			<Speed ENG="Speed" localized="Скор."/>
 			<Cargo ENG="Cargo" localized="Груз"/>
-			<Costs ENG="Costs" localized="Стоимость"/>
+			<Costs ENG="Costs" localized="Стоит"/>
 			<Produce ENG="Produces" localized="Продук."/>
 			<Usage ENG="Usage" localized="Испол."/>
 		</Vehicles>
@@ -222,7 +222,7 @@
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Оптимизированный энергогенераторы"/>
 			<Cheat ENG="used cheat" localized="использовал чит"/>
 			<Destroyed ENG="destroyed" localized="разрушено"/>
-			<Defeated ENG="defeated" localized="повержено"/>
+			<Defeated ENG="defeated" localized="повержен"/>
 			<Finished ENG="is finished" localized="завершено"/>
 			<Finished2 ENG="are finished" localized="завершены"/>
 			<Detected ENG="detected" localized="повреждено"/>
@@ -244,9 +244,9 @@
 			<Disabled ENG="disabled" localized="сломано"/>
 			<Producing ENG="Producing" localized="производит"/>
 			<Producing_Fin ENG="finished producing" localized="законченное производство"/>
-			<Moving ENG="moving" localized="движется"/>
+			<Moving ENG="moving" localized="едет"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
-			<Clearing ENG="Clearing" localized="уборка"/>
+			<Clearing ENG="Clearing" localized="убирает"/>
 			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<Clearing_Fin ENG="clearing done" localized="уборка закончина"/>
 			<Laying ENG="laying mines" localized="кладёт мины"/>
