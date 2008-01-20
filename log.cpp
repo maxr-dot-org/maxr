@@ -22,7 +22,7 @@
 #include "log.h"
 #include "main.h"
 
-#define LOGFILE "max.log"
+#define LOGFILE "maxr.log"
 #define NETLOGFILE "net.log"
 /** errors */
 #define EE "(EE): "
@@ -79,13 +79,13 @@ bool cLog::open(int TYPE)
 	}
 	else
 	{
-		fprintf ( stderr,"(EE): Couldn't open max.log!\n Please check file/directory permissions\n" );
+		fprintf ( stderr,"(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n" );
 		bIsRunning = false;
 		return false;
 	}
 	if ( blocks<0 )
 	{
-		fprintf ( stderr,"(EE): Couldn't read max.log!\n Please check file/directory permissions\n" );
+		fprintf ( stderr,"(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n" );
 
 		if ( logfile != NULL ) return true;
 		else return false;
@@ -147,7 +147,7 @@ int cLog::writeMessage ( std::string str )
 		wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , ( int ) str.length() );
 		if ( wrote<0 ) //sanity check - was file writable?
 		{
-			fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str.c_str() );
+			fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
 			return -1;
 		}
 		else close(); //after successful writing of all information we close log here and nowhere else!
@@ -155,7 +155,7 @@ int cLog::writeMessage ( std::string str )
 	}
 	else
 	{
-		fprintf ( stderr,"Couldn't write to max.log\nPlease check permissions for max.log\nLog message was:\n%s", str.c_str() );
+		fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
 		bIsRunning = false;
 	}
 	return -1;	
