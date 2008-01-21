@@ -1068,10 +1068,20 @@ void cBuilding::SelfDestructionMenu ( void )
 	{
 		if( !game->engine->network || game->engine->network->bServer )
 		{
+			// Destroy both (platform and top building) if there is a platform and a top building on this place
+			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
+			{
+				game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
+			}
 			game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
 		}
 		else
 		{
+			// Destroy both (platform and top building) if there is a platform and a top building on this place
+			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
+			{
+				SendDestroyObject( PosX + PosY*game->map->size, false );
+			}
 			SendDestroyObject( PosX + PosY*game->map->size, false );
 		}
 	}
