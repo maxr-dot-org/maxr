@@ -880,7 +880,11 @@ void cEngine::DestroyObject ( int off,bool air )
 			if ( map->GO[off].base&&map->GO[off].base->owner )
 			{
 				cBuilding *building=map->GO[off].base;
-				if ( building==game->SelectedBuilding ) building->Deselct();
+				if ( building==game->SelectedBuilding )
+				{
+					building->Deselct();
+					game->SelectedBuilding=NULL;
+				}
 				if ( building->prev )
 				{
 					cBuilding *pb;
