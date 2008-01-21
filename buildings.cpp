@@ -4027,6 +4027,10 @@ void cBuilding::ShowUpgrade ( void )
 							{
 								owner->BuildingData[ptr->id].version++;
 							}
+							else
+							{
+								owner->VehicleData[ptr->id].version++;
+							}
 
 							up = true;
 
