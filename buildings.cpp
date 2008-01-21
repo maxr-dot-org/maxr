@@ -4507,7 +4507,7 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	scr.x = 118;
 	scr.y = 336;
 	scr.w = dest.w = 16;
-	scr.h = dest.h = 115 * ( int ) ( ( owner->Credits / ( float ) StartCredits ) );
+	scr.h = dest.h = ( int ) ( 115 * ( owner->Credits / ( float ) StartCredits ) );
 	dest.x = 375;
 	dest.y = 301 + 115 - dest.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5373,6 +5373,7 @@ int cBuilding::CalcSteigerung ( int org, int variety )
 			if ( org == 28 )
 				tmp = 5;
 
+			tmp = tmp * 2;
 			break;
 		}
 
