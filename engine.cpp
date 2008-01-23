@@ -582,6 +582,13 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 		v->MoveJobActive=false;
 	}
+	
+	// Ggf wieder verstecken
+	if ( v->detection_override )
+	{
+		v->detected = false;
+		v->detection_override = false;
+	}
 
 	// Server only:
 	if( network && network->bServer ){
@@ -1388,7 +1395,11 @@ void cEngine::Rundenende ( void )
 		v=p->VehicleList;
 		while ( v )
 		{
-			if ( v->detection_override ) v->detection_override=false;
+			if ( v->detection_override && v->owner == game->ActivePlayer )
+			{
+				v->detected = false;
+				v->detection_override = false;
+			}
 			if ( v->Disabled )
 			{
 				v->Disabled--;

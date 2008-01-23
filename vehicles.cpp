@@ -5975,7 +5975,7 @@ void cVehicle::DrawCommandoCursor ( struct sGameObjects *go, bool steal )
 
 	SDL_FillRect ( sf, &r, 0xFF0000 );
 
-	r.w = 35 * ( int ) ( CalcCommandoChance ( steal ) / 100.0 );
+	r.w = ( int ) ( 35 * ( float ) ( CalcCommandoChance ( steal ) / 100.0 ) );
 	SDL_FillRect ( sf, &r, 0x00FF00 );
 }
 
@@ -6105,6 +6105,8 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	}
 	else
 	{
+		detected = true;
+		detection_override = true;
 		PlayVoice ( VoiceData.VOICommandoDetected );
 		if ( game->engine->network )
 		{
