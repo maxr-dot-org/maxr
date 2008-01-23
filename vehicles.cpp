@@ -5975,7 +5975,14 @@ void cVehicle::DrawCommandoCursor ( struct sGameObjects *go, bool steal )
 
 	SDL_FillRect ( sf, &r, 0xFF0000 );
 
-	r.w = ( int ) ( 35 * ( float ) ( CalcCommandoChance ( steal ) / 100.0 ) );
+	if( steal && !v->Disabled )
+	{
+		r.w = 0;
+	}
+	else
+	{
+		r.w = ( int ) ( 35 * ( float ) ( CalcCommandoChance ( steal ) / 100.0 ) );
+	}
 	SDL_FillRect ( sf, &r, 0x00FF00 );
 }
 
@@ -5984,6 +5991,7 @@ int cVehicle::CalcCommandoChance ( bool steal )
 {
 	if ( steal )
 	{
+		// FIXME: Set more usefull values
 		switch ( CommandoRank )
 		{
 
@@ -6003,7 +6011,7 @@ int cVehicle::CalcCommandoChance ( bool steal )
 				return 80;
 
 			case 5:
-				return 90;
+				return 80;
 		}
 	}
 	else
@@ -6027,7 +6035,7 @@ int cVehicle::CalcCommandoChance ( bool steal )
 				return 100;
 
 			case 5:
-				return 100;
+				return 90;
 		}
 	}
 
@@ -6046,9 +6054,29 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	chance = CalcCommandoChance ( steal );
 
 	if ( random ( 100, 0 ) < chance )
-		success = true;
+	{
+		if( steal )
+		{
+			cVehicle *vehicle;
+			vehicle = game->map->GO[off].vehicle;
+			if( !vehicle->Disabled )
+			{
+				success = false;
+			}
+			else
+			{
+				success = true;
+			}
+		}
+		else
+		{
+			success = true;
+		}
+	}
 	else
+	{
 		success = false;
+	}
 
 	if ( success )
 	{
