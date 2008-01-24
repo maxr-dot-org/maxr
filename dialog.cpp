@@ -661,8 +661,8 @@ void showPreferences ( void )
 	SDL_Surface *SfDialog;
 	
 	//position x of all sliderbars
-	#define BAR_X 140
-	#define BAR_Y 110
+	#define BAR_X 140 + rDialog.x
+	#define BAR_Y 81 + rDialog.y
 	#define CELLSPACE 20
 	#define CELLSPACE_FONT 20
 
@@ -684,6 +684,14 @@ void showPreferences ( void )
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 400, 422, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
+	SDL_Rect rDialog = { screen->w / 2 - SfDialog->w / 2, screen->h / 2 - SfDialog->h / 2, SfDialog->w, SfDialog->h };
+	SDL_Rect rBtnCancel = { rDialog.x + 118, rDialog.y + 383, 77, 24 };
+	SDL_Rect rBtnDone = { rDialog.x + 208, rDialog.y + 383, 77, 24 };
+	SDL_Rect rSldMusic = { BAR_X,BAR_Y, 57, 10 };
+	SDL_Rect rSldEffect = { BAR_X,BAR_Y+CELLSPACE, 57, 10 };
+	SDL_Rect rSldVoice = { BAR_X,BAR_Y+CELLSPACE*2, 57, 10 };
+	SDL_Rect rSldSpeed = { BAR_X,261+rDialog.y, 57, 10 };
+
 	if ( SettingsData.bAlphaEffects )
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
@@ -703,109 +711,115 @@ void showPreferences ( void )
 
 	}
 	
+	
+	
 	 //blit dialog to buffer
-	dest.x = 120;
-	dest.y = 29;
+	dest.x = rDialog.x;
+	dest.y = rDialog.y;
 	dest.w = SfDialog->w;
 	dest.h = SfDialog->h;
 	
-	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, 118+120, 383+29, buffer); 
-	drawButton(lngPack.i18n( "Text~Button~Done" ), false, 208+120, 383+29, buffer); 
 	
-	rFont.x = 120 + 160; //TOFIX: Text not centered
-	rFont.y = 29 + 15;
-	font->showText(rFont, lngPack.i18n( "Text~Settings~Preferences" ));
+	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
+	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer); 
+	drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer); 
+	
+	rFont.x = rDialog.x + rDialog.w/2; 
+	rFont.y = rDialog.y + 15;
+	font->showTextCentered(rFont.x, rFont.y, lngPack.i18n( "Text~Settings~Preferences" ));
 	
 
 	//BEGIN BLOCK SOUND
 	//Headline
 	sTmp = lngPack.i18n ( "Text~Settings~Volume" ) + ":";
-	rFont.x = 145;
-	rFont.y = 85;
+	rFont.x = rDialog.x + 25;
+	rFont.y = rDialog.y + 56;
 	rFont.w = font->getTextWide(sTmp);
 	font->showText(rFont, sTmp);
 
 	//Music
-	rFont.x = 145; 	rFont.w = 100;
-	rFont.y = 105;
+	rFont.x = rDialog.x + 25;
+	rFont.w = 100;
+	rFont.y = rDialog.y + 76;
 	rFont.h = CELLSPACE_FONT;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Music" ));
-	drawSlider (SfDialog, BAR_X+120,BAR_Y,SettingsData.MusicVol*2,buffer );
-	drawCheckbox ( 210+120,73+29,SettingsData.MusicMute, buffer);
-	rFont.x = 355; 	rFont.w = 140;
+	drawSlider (SfDialog, rSldMusic.x,rSldMusic.y,SettingsData.MusicVol*2,buffer );
+	drawCheckbox ( 210+rDialog.x,73+rDialog.y,SettingsData.MusicMute, buffer);
+	rFont.x = rDialog.x + 235; 	rFont.w = 140;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 
 	//Effectsound
-	rFont.x = 145; 	rFont.w = 100;
+	rFont.x = rDialog.x + 25;
+	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Effects" ));
 
-	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
-	drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
-	rFont.x = 355; 	rFont.w = 140;
+	drawSlider (SfDialog, rSldEffect.x,rSldEffect.y,SettingsData.SoundVol*2, buffer );
+	drawCheckbox ( 210+rDialog.x,93+rDialog.y,SettingsData.SoundMute,buffer );
+	rFont.x = rDialog.x + 235; 
+	rFont.w = 140;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 
 
 	//Voices
-	rFont.x = 145; 	rFont.w = 100;
+	rFont.x = rDialog.x + 25; 	rFont.w = 100;
 	rFont.y += CELLSPACE_FONT;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Voices" ));
-	drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2,buffer );
-	drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
-	rFont.x = 355; 	rFont.w = 140;
+	drawSlider (SfDialog, rSldVoice.x,rSldVoice.y,SettingsData.VoiceVol*2,buffer );
+	drawCheckbox ( 210+rDialog.x,113+rDialog.y,SettingsData.VoiceMute,buffer );
+	rFont.x =  rDialog.x + 235; 	rFont.w = 140;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 	//END BLOCK SOUND
 	//BEGIN BLOCK PLAYERNAME	
 	
 	
-	rFont.x = 145; 	rFont.w = 100;
-	rFont.y = 158+29;
+	rFont.x = rDialog.x + 25; 	rFont.w = 100;
+	rFont.y = 158+rDialog.y;
 	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
-	font->showText(122+120,158+29, game->ActivePlayer->name);
+	font->showText(122+rDialog.x,158+rDialog.y, game->ActivePlayer->name);
 
 	//END BLOCK PLAYERNAME
 
-	rFont.x = 145+25; rFont.w = 100;
-	rFont.y = 193+33;
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 197;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Animation" ));
 
-	drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
+	drawCheckbox ( 25+rDialog.x,193+rDialog.y,SettingsData.bAnimations,buffer );
 	
-	rFont.x = 145+25; rFont.w = 100;
-	rFont.y = 213+33;
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 217;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Shadows" ));
-	drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
+	drawCheckbox ( 25+rDialog.x,213+rDialog.y,SettingsData.bShadows,buffer );
 	
-	rFont.x = 145+25; rFont.w = 100;
-	rFont.y = 233+33;
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 237;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Alphaeffects" ));
-	drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
+	drawCheckbox ( 25+rDialog.x,233+rDialog.y,SettingsData.bAlphaEffects,buffer );
 	
-	rFont.x = 145+210; rFont.w = 100;
-	rFont.y = 193+33;
+	rFont.x = rDialog.x + 25+210; rFont.w = 100;
+	rFont.y = rDialog.y + 197;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamage" ));
-	drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
+	drawCheckbox ( 210+rDialog.x,193+rDialog.y,SettingsData.bDamageEffects,buffer );
 	
-	rFont.x = 145+210; rFont.w = 100;
-	rFont.y = 213+33;
+	rFont.x = rDialog.x + 25+210; rFont.w = 100;
+	rFont.y = rDialog.y + 217;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ));
-	drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
+	drawCheckbox ( 210+rDialog.x,213+rDialog.y,SettingsData.bDamageEffectsVehicles,buffer );
 	
-	rFont.x = 145+210; rFont.w = 100;
-	rFont.y = 233+33;
+	rFont.x = rDialog.x + 25+210; rFont.w = 100;
+	rFont.y = rDialog.y + 237;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Tracks" ));
-	drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
+	drawCheckbox ( 210+rDialog.x,233+rDialog.y,SettingsData.bMakeTracks,buffer );
 	
-	rFont.x = 145; 	rFont.w = 100;
-	rFont.y = 261+25;
+	rFont.x = rDialog.x + 25; 	rFont.w = 100;
+	rFont.y = rDialog.y+232+25;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Scrollspeed" ));
-	drawSlider (SfDialog, BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
+	drawSlider (SfDialog, rSldSpeed.x,rSldSpeed.y,SettingsData.iScrollSpeed*5, buffer );
 	
-	rFont.x = 145+25; rFont.w = 100;
-	rFont.y = 290+33;
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 294;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Autosave" ));
-	drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
+	drawCheckbox ( 25+rDialog.x,290+rDialog.y,SettingsData.bAutoSave,buffer );
 	
 	SHOW_SCREEN
 
@@ -829,12 +843,12 @@ void showPreferences ( void )
 				scr.y=154;
 				dest.w=scr.w=184;
 				dest.h=scr.h=17;
-				dest.x=116+120;
-				dest.y=154+29;
+				dest.x=116+rDialog.x;
+				dest.y=154+rDialog.y;
 				SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
 				if ( InputEnter )
 				{
-					font->showText(122+120,158+29, InputStr);
+					font->showText(122+rDialog.x,158+rDialog.y, InputStr);
 					Input=false;
 					game->ActivePlayer->name=InputStr;
 				}
@@ -848,12 +862,12 @@ void showPreferences ( void )
 					if ( cursor )
 					{
 						stmp = InputStr; stmp += "_";
-						font->showText(122+120,158+29, stmp);
+						font->showText(122+rDialog.x,158+rDialog.y, stmp);
 						
 					}
 					else
 					{
-						font->showText(122+120,158+29, InputStr);
+						font->showText(122+rDialog.x,158+rDialog.y, InputStr);
 					}
 					if ( timer2 ) cursor=!cursor;
 				}
@@ -871,44 +885,44 @@ void showPreferences ( void )
 		}
 		if ( b )
 		{		//firstbar
-			if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=81+29-7&&y<=81+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
+			if ( x >= rSldMusic.x && x < rSldMusic.x + rSldMusic.w && y >= rSldMusic.y - 7 && y <= rSldMusic.y + rSldMusic.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
-				SettingsData.MusicVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
+				SettingsData.MusicVol= ( x- ( rSldMusic.x ) ) * (int)( 128.0/57 );
 				if ( SettingsData.MusicVol>=125 ) SettingsData.MusicVol=128;
-				drawSlider (SfDialog, BAR_X+120,81+29,SettingsData.MusicVol*2, buffer );
+				drawSlider (SfDialog, rSldMusic.x,rSldMusic.y,SettingsData.MusicVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SetMusicVol ( SettingsData.MusicVol );
 			}
-			else if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=BAR_Y+CELLSPACE-7&&y<=BAR_Y+CELLSPACE+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
+			else if ( x >= rSldEffect.x && x < rSldEffect.x + rSldEffect.w && y >= rSldEffect.y - 7 && y <= rSldEffect.y + rSldEffect.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
-				SettingsData.SoundVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
+				SettingsData.SoundVol= ( x- ( rSldEffect.x ) ) * (int)( 128.0/57 );
 				if ( SettingsData.SoundVol>=125 ) SettingsData.SoundVol=128;
-				drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE,SettingsData.SoundVol*2, buffer );
+				drawSlider (SfDialog, rSldEffect.x,rSldEffect.y,SettingsData.SoundVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
-			else if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=BAR_Y+CELLSPACE*2-7&&y<=BAR_Y+CELLSPACE*2+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
+			else if ( x >= rSldVoice.x && x < rSldVoice.x + rSldVoice.w && y >= rSldVoice.y - 7 && y <= rSldVoice.y + rSldVoice.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
-				SettingsData.VoiceVol= ( x- ( BAR_X+120 ) ) * (int)( 128.0/57 );
+				SettingsData.VoiceVol= ( x- ( rSldVoice.x ) ) * (int)( 128.0/57 );
 				if ( SettingsData.VoiceVol>=125 ) SettingsData.VoiceVol=128;
-				drawSlider (SfDialog, BAR_X+120,BAR_Y+CELLSPACE*2,SettingsData.VoiceVol*2, buffer );
+				drawSlider (SfDialog, rSldVoice.x, rSldVoice.y,SettingsData.VoiceVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
-			else if ( x>=BAR_X+120&&x<BAR_X+120+57&&y>=261+29-7&&y<=261+29+10&& ( x!=LastMouseX||y!=LastMouseY||!LastB ) )
+			else if ( x >= rSldSpeed.x && x < rSldSpeed.x + rSldSpeed.w && y >= rSldSpeed.y - 7 && y <= rSldSpeed.y + rSldSpeed.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
-				SettingsData.iScrollSpeed= ( int ) ( ( x- ( BAR_X+120 ) ) * ( 255.0/57 ) ) /5;
-				drawSlider (SfDialog, BAR_X+120,261+29,SettingsData.iScrollSpeed*5, buffer );
+				SettingsData.iScrollSpeed= ( int ) ( ( x- ( rSldSpeed.x ) ) * ( 255.0/57 ) ) /5;
+				drawSlider (SfDialog, rSldSpeed.x,rSldSpeed.y,SettingsData.iScrollSpeed*5, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
 			if ( !LastB )
 			{
-				if ( x>=210+120&&x<210+120+18&&y>=73+29&&y<73+29+17 )
+				if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=73+rDialog.y&&y<73+rDialog.y+17 )
 				{
 					SettingsData.MusicMute=!SettingsData.MusicMute;
-					drawCheckbox ( 210+120,73+29,SettingsData.MusicMute,buffer );
+					drawCheckbox ( 210+rDialog.x,73+rDialog.y,SettingsData.MusicMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					if ( SettingsData.MusicMute )
@@ -920,87 +934,87 @@ void showPreferences ( void )
 						StartMusic();
 					}
 				}
-				else if ( x>=210+120&&x<210+120+18&&y>=93+29&&y<93+29+17 )
+				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=93+rDialog.y&&y<93+rDialog.y+17 )
 				{
 					SettingsData.SoundMute=!SettingsData.SoundMute;
-					drawCheckbox ( 210+120,93+29,SettingsData.SoundMute,buffer );
+					drawCheckbox ( 210+rDialog.x,93+rDialog.y,SettingsData.SoundMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=210+120&&x<210+120+18&&y>=113+29&&y<113+29+17 )
+				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=113+rDialog.y&&y<113+rDialog.y+17 )
 				{
 					SettingsData.VoiceMute=!SettingsData.VoiceMute;
-					drawCheckbox ( 210+120,113+29,SettingsData.VoiceMute,buffer );
+					drawCheckbox ( 210+rDialog.x,113+rDialog.y,SettingsData.VoiceMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=25+120&&x<25+120+18&&y>=290+29&&y<290+29+17 )
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=290+rDialog.y&&y<290+rDialog.y+17 )
 				{
 					SettingsData.bAutoSave=!SettingsData.bAutoSave;
-					drawCheckbox ( 25+120,290+29,SettingsData.bAutoSave,buffer );
+					drawCheckbox ( 25+rDialog.x,290+rDialog.y,SettingsData.bAutoSave,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=25+120&&x<25+120+18&&y>=193+29&&y<193+29+17 )
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=193+rDialog.y&&y<193+rDialog.y+17 )
 				{
 					SettingsData.bAnimations=!SettingsData.bAnimations;
-					drawCheckbox ( 25+120,193+29,SettingsData.bAnimations,buffer );
+					drawCheckbox ( 25+rDialog.x,193+rDialog.y,SettingsData.bAnimations,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=25+120&&x<25+120+18&&y>=213+29&&y<213+29+17 )
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=213+rDialog.y&&y<213+rDialog.y+17 )
 				{
 					SettingsData.bShadows=!SettingsData.bShadows;
-					drawCheckbox ( 25+120,213+29,SettingsData.bShadows,buffer );
+					drawCheckbox ( 25+rDialog.x,213+rDialog.y,SettingsData.bShadows,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=25+120&&x<25+120+18&&y>=233+29&&y<233+29+17 )
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=233+rDialog.y&&y<233+rDialog.y+17 )
 				{
 					SettingsData.bAlphaEffects=!SettingsData.bAlphaEffects;
-					drawCheckbox ( 25+120,233+29,SettingsData.bAlphaEffects,buffer );
+					drawCheckbox ( 25+rDialog.x,233+rDialog.y,SettingsData.bAlphaEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=116+120&&x<116+120+184&&y>=154+29&&y<154+29+17&&!Input )
+				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!Input )
 				{
 					Input=true;
 					InputStr=game->ActivePlayer->name;
 					stmp = InputStr; stmp += "_";
-					font->showText(122+120,158+29, stmp);
+					font->showText(122+rDialog.x,158+rDialog.y, stmp);
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=210+120&&x<210+120+18&&y>=193+29&&y<193+29+17 )
+				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=193+rDialog.y&&y<193+rDialog.y+17 )
 				{
 					SettingsData.bDamageEffects=!SettingsData.bDamageEffects;
-					drawCheckbox ( 210+120,193+29,SettingsData.bDamageEffects,buffer );
+					drawCheckbox ( 210+rDialog.x,193+rDialog.y,SettingsData.bDamageEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=210+120&&x<210+120+18&&y>=213+29&&y<213+29+17 )
+				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=213+rDialog.y&&y<213+rDialog.y+17 )
 				{
 					SettingsData.bDamageEffectsVehicles=!SettingsData.bDamageEffectsVehicles;
-					drawCheckbox ( 210+120,213+29,SettingsData.bDamageEffectsVehicles,buffer );
+					drawCheckbox ( 210+rDialog.x,213+rDialog.y,SettingsData.bDamageEffectsVehicles,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				else if ( x>=210+120&&x<210+120+18&&y>=233+29&&y<233+29+17 )
+				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=233+rDialog.y&&y<233+rDialog.y+17 )
 				{
 					SettingsData.bMakeTracks=!SettingsData.bMakeTracks;
-					drawCheckbox ( 210+120,233+29,SettingsData.bMakeTracks,buffer );
+					drawCheckbox ( 210+rDialog.x,233+rDialog.y,SettingsData.bMakeTracks,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
 			}
 		}
 		// Fertig-Button:
-		if ( x>=208+120&&x<208+120+77&&y>=383+29&&y<382+29+24 )
+		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
 		{
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Done" ), true, 208+120, 383+29, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1039,19 +1053,19 @@ void showPreferences ( void )
 		}
 		else if ( FertigPressed )
 		{
-			drawButton(lngPack.i18n( "Text~Button~Done" ), false, 208+120, 383+29, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
 			
 		}
 		// Abbruch-Button:
-		if ( x>=118+120&&x<118+120+77&&y>=383+29&&y<382+29+24 )
+		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
 		{
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, 118+120, 383+29, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer); 
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1079,7 +1093,7 @@ void showPreferences ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, 118+120, 383+29, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer); 
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1251,11 +1265,10 @@ bool showSelfdestruction()
 	return false;
 }
 
- //FIXME: offset method only works on fixed resolution 640x460. 
- //TODO: beko: rewrite this -- beko
 void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface *surface )
 {
 	SDL_Rect scr, dest;
+	SDL_Rect rDialog = { screen->w / 2 - sfDialog->w / 2, screen->h / 2 - sfDialog->h / 2, sfDialog->w, sfDialog->h };
 	#define SLIDER_W 14
 	#define SLIDER_H 17
 	
@@ -1263,8 +1276,8 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	/*Offset to read clean background from +/- 7 to 
 	*overdraw slider because slider is 14 fat and can
 	*show half over the ends of the sliderbar*/
-	scr.x = offx - 120 - SLIDER_W / 2; //scr.x & scr.y = topleft
-	scr.y = offy - 29 ;
+	scr.x = offx - rDialog.x - SLIDER_W / 2; //scr.x & scr.y = topleft
+	scr.y = offy - rDialog.y ;
 	scr.w = 57 + SLIDER_W;
 	scr.h = SLIDER_H;
 	dest.x = offx - 6;
