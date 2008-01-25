@@ -38,6 +38,8 @@ int installVehicleGraphics()
 	char szNum2[13];
 	SDL_Surface *surface, *output;
 	
+	cout << "Vehicle graphics\n";
+
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -1052,6 +1054,8 @@ int installBuildingGraphics()
 	SDL_Surface* output;
 	SDL_Rect src_rect, dst_rect;
 
+	cout << "Building graphics\n";
+
 	//Barracks
 	cout << "Barracks\n";
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "barracks" + PATH_DELIMITER;
@@ -1657,6 +1661,8 @@ int installVehicleVideos()
 {
 	string path;
 
+	cout << "Vehicle videos\n";
+
 	//air_transport
 	cout << "air_transport\n";
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
@@ -1851,7 +1857,8 @@ int installFX()
 int installBuildingSounds()
 {
 	string path;
-	
+	cout << "Building sounds\n";
+
 	//energy big
 	cout << "energy big\n";
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
@@ -1982,6 +1989,8 @@ int installBuildingSounds()
 int installVehicleSounds()
 {
 	string path;
+
+	cout << "Vehicle Sounds\n";
 
 	//air_transport
 	cout << "air_transport\n";
@@ -2304,11 +2313,15 @@ int main ( int argc, char* argv[] )
 {
 	while ( 1 )
 	{
+		cout << "char: " << sizeof( char ) << "\n";
+		cout << "short: " << sizeof( short ) << "\n";
+		cout << "int: " << sizeof( int ) << "\n";
+		cout << "long: " << sizeof( long ) << "\n";
 		cout << "Please enter path to MAX-Installation: ";
 		cin >> sMAXPath;
 		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
-		res = fopen ( (sMAXPath + "max.res").c_str(), "rb" );
+		res = SDL_RWFromFile ( (sMAXPath + "MAX.RES").c_str(), "rb" );
 		if( !res )
 		{
 			cout << "Could not open resourcefile\n";
@@ -2346,13 +2359,12 @@ int main ( int argc, char* argv[] )
 
 	cout << "\nPlease enter path to ouputfolder: \n";
 	cin >> sOutputPath;
-	
 	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
-	fseek( res, 0, SEEK_END );
-	lEndOfFile = ftell (res);
+	SDL_RWseek( res, 0, SEEK_END );
+	lEndOfFile = SDL_RWtell (res);
 
 	
 	lPosBegin = 15000000;		//the '[EOD]' should be after this position 
@@ -2361,11 +2373,11 @@ int main ( int argc, char* argv[] )
 
 	//a little state maschine for searching the string "[EOD]" in max.res
 	unsigned char temp, state = 0;
-	fseek( res, lPosBegin, SEEK_SET);
+	SDL_RWseek( res, lPosBegin, SEEK_SET);
 
 	while ( lPosBegin < lEndOfFile )
 	{
-		fread( &temp, 1, 1, res );
+		SDL_RWread( res, &temp, sizeof ( char ), 1 );
 		lPosBegin++;
 
 		switch ( state )
@@ -2415,6 +2427,6 @@ int main ( int argc, char* argv[] )
 	
 
 	free (orig_palette);
-	fclose(res);
+	SDL_RWclose(res);
 	return 0;
 }

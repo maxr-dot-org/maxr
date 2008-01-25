@@ -70,8 +70,8 @@ public:
 	~cImage();
 
 	char name[9];
-	long lPos;
-	long lLenght;
+	Sint32 lPos;
+	Sint32 lLenght;
 
 	sPixel *palette;
 

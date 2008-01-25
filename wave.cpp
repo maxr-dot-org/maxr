@@ -228,8 +228,6 @@ int copyPartOfWAV( string src, string dst, Uint8 nr)
 		return 0;
 	}
 
-	string lala = src.substr(src.length() - 11, 11);
-
 	//in the original MAX the smpl chunk of ATTACK5.WAV is missing
 	//so we have to make a dirty workaround here
 	if ( waveFile.smplChunk.ListofSampleLoops == NULL && 

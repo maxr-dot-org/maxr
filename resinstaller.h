@@ -22,6 +22,7 @@
 #ifndef ResinstallerH
 #define ResinstallerH
 #include "defines.h"
+#include <SDL.h>
 #include <iostream>
 
 using namespace std;
@@ -36,11 +37,11 @@ using namespace std;
 EX string sMAXPath;
 EX string sPalettePath;
 EX string sOutputPath;
-EX FILE *res ZERO;
+EX SDL_RWops *res ZERO;
 
 EX unsigned char *orig_palette;
-EX long int lPosBegin;
-EX long int lEndOfFile;
+EX Uint32 lPosBegin;
+EX Uint32 lEndOfFile;
 
 
 #endif // ResinstallerH

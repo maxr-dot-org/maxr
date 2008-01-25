@@ -216,12 +216,18 @@ void cImage::decodeFile()
 
 bool cImage::decodeSimpleImage()
 {
-	short sLocWidth, sLocHeight, sLocHotX, sLocHotY;
-	fseek( res, lPos, SEEK_SET );
-	fread ( &sLocWidth, sizeof( short ), 1, res );
-	fread ( &sLocHeight, sizeof( short ), 1, res );
-	fread ( &sLocHotX, sizeof( short ), 1, res );
-	fread ( &sLocHotY, sizeof( short ), 1, res );
+	Sint16 sLocWidth, sLocHeight, sLocHotX, sLocHotY;
+	SDL_RWseek( res, lPos, SEEK_SET );
+	sLocWidth = (Sint16) SDL_ReadLE16 ( res );
+	sLocHeight = (Sint16) SDL_ReadLE16 ( res );
+	sLocHotX = (Sint16) SDL_ReadLE16 ( res );
+	sLocHotY = (Sint16) SDL_ReadLE16 ( res );
+
+	/*SDL_RWread ( res, &sLocWidth, sizeof( short ), 1 );
+	SDL_RWread ( &sLocHeight, sizeof( short ), 1, res );
+	SDL_RWread ( &sLocHotX, sizeof( short ), 1, res );
+	SDL_RWread ( &sLocHotY, sizeof( short ), 1, res );
+	*/
 
 	if (sLocWidth > 640 || sLocHeight > 480 )
 	{
@@ -245,7 +251,7 @@ bool cImage::decodeSimpleImage()
 	Images[0].sUHotY = 0;
 
 	Images[0].data = ( unsigned char * ) malloc( sizeof( unsigned char ) * sLocWidth * sLocHeight );
-	fread( Images[0].data, sizeof( unsigned char ), sLocWidth * sLocHeight, res );
+	SDL_RWread( res, Images[0].data, sizeof( unsigned char ), sLocWidth * sLocHeight );
 	Images[0].alpha = ( unsigned char * ) malloc( sizeof( unsigned char ) * sLocWidth * sLocHeight );
 	memset( Images[0].alpha, 0, sLocWidth * sLocHeight );
 
@@ -255,16 +261,16 @@ bool cImage::decodeSimpleImage()
 
 bool cImage::decodeMultiShadow()
 {
-	int iX, iY, iBlockIndex, iPicIndex;
-	long lBegin, lEnd, *lBounds, *lRows;
-	short sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
+	Sint32 iX, iY, iBlockIndex, iPicIndex;
+	Sint32 lBegin, lEnd, *lBounds, *lRows;
+	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
     unsigned char Opacity, Color;
 	if( lLenght < 2 )
 	{
 		return false;
 	}
-	fseek( res, lPos, SEEK_SET );
-	fread ( &sCount, sizeof( short ), 1, res );
+	SDL_RWseek( res, lPos, SEEK_SET );
+	sCount = (Sint16) SDL_ReadLE16( res );
 	if( sCount < 1 )
 	{
 		return false;
@@ -273,11 +279,11 @@ bool cImage::decodeMultiShadow()
 	{
 		return false;
 	}
-	lBounds = ( long * ) malloc ( sizeof( long ) *sCount );
+	lBounds = ( Sint32 * ) malloc ( sizeof( Sint32 ) * sCount );
 	for ( iPicIndex = 0 ; iPicIndex < sCount ; iPicIndex++ )
 	{
-		fseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
-		fread ( &lBounds[iPicIndex], sizeof( long ), 1, res );
+		SDL_RWseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
+		lBounds[iPicIndex] = (Sint32) SDL_ReadLE32 ( res );
 		if ( lBounds[iPicIndex] > lLenght )
 		{
 			return false;
@@ -287,8 +293,8 @@ bool cImage::decodeMultiShadow()
 
 	for ( iPicIndex = 0 ; iPicIndex < sCount ; iPicIndex++ )
 	{
-		fseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
-		fread ( &lBegin, sizeof( long ), 1, res );
+		SDL_RWseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
+		lBegin = (Sint32) SDL_ReadLE32( res );
 		lEnd = lLenght;
 		for( iX = 0 ; iX < sCount ; iX++ )
 		{
@@ -300,11 +306,11 @@ bool cImage::decodeMultiShadow()
 		lBegin += lPos;
 		lEnd += lPos;
 
-		fseek( res, lBegin, SEEK_SET );
-		fread ( &sLocWidth, sizeof( short ), 1, res );
-		fread ( &sLocHeight, sizeof( short ), 1, res );
-		fread ( &sLocHotX, sizeof( short ), 1, res );
-		fread ( &sLocHotY, sizeof( short ), 1, res );
+		SDL_RWseek( res, lBegin, SEEK_SET );
+		sLocWidth = (Sint16) SDL_ReadLE16( res );
+		sLocHeight = (Sint16) SDL_ReadLE16( res );
+		sLocHotX = (Sint16) SDL_ReadLE16( res );
+		sLocHotY = (Sint16) SDL_ReadLE16( res );
 
 		if ( sLocWidth < 1 || sLocWidth > 640 || sLocHeight < 1 || sLocHeight > 480 || abs( sLocHotX ) > 640 || abs( sLocHotY ) > 480 ) 
 		{
@@ -322,14 +328,17 @@ bool cImage::decodeMultiShadow()
 		memset( Images[iPicIndex].data, 0, sLocWidth * sLocHeight );
 		Images[iPicIndex].alpha = ( unsigned char * ) malloc ( sizeof( unsigned char ) * sLocWidth * sLocHeight );
 		memset( Images[iPicIndex].alpha, 255, sLocWidth * sLocHeight );
-		lRows  = ( long * ) malloc ( sizeof( long ) * sLocHeight );
+		lRows  = ( Sint32 * ) malloc ( sizeof( Sint32 ) * sLocHeight );
 
 		if( lBegin + 8 + sLocHeight * 4 > lEnd )
 		{
 			return false;
 		}
-		fseek( res, lBegin + 8, SEEK_SET );
-		fread ( lRows, sizeof( long ), sLocHeight, res );
+		SDL_RWseek( res, lBegin + 8, SEEK_SET );
+		for ( int i = 0; i < sLocHeight; i++ )
+			lRows[i] = (Sint32) SDL_ReadLE32 ( res );
+
+		//SDL_WRread ( res, lRows, sizeof( Sint32 ), sLocHeight, );
 		for (iY = 0; iY < sLocHeight; iY++ )
 		{
 			Color = 0;
@@ -338,8 +347,8 @@ bool cImage::decodeMultiShadow()
 			iBlockIndex = 0;
 			unsigned char CurData;
 
-			fseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
-			fread ( &CurData, sizeof( char ), 1, res );
+			SDL_RWseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
+			SDL_RWread ( res, &CurData, sizeof( char ), 1 );
 			while ( lRows[iY] + iBlockIndex < lEnd - lPos && CurData != 255 )
 			{
 				if( iY * sLocWidth + iX + CurData > sLocWidth * sLocHeight )
@@ -353,8 +362,8 @@ bool cImage::decodeMultiShadow()
 				iX += CurData;
 				iBlockIndex++;
 
-				fseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
-				fread ( &CurData, sizeof( char ), 1, res );
+				SDL_RWseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
+				SDL_RWread ( res, &CurData, sizeof( char ), 1 );
 			}
 		}
 	}
@@ -369,17 +378,17 @@ bool cImage::decodeMultiShadow()
 
 bool cImage::decodeMultiImage()
 {
-	int iX, iY, iBlockIndex, iPicIndex;
-	long lBegin, lEnd, *lBounds, *lRows;
-	short sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
+	Sint32 iX, iY, iBlockIndex, iPicIndex;
+	Sint32 lBegin, lEnd, *lBounds, *lRows;
+	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
 	bool bCopyNotSkip;
     unsigned char Opacity;
 	if( lLenght < 2 )
 	{
 		return false;
 	}
-	fseek( res, lPos, SEEK_SET );
-	fread ( &sCount, sizeof( short ), 1, res );
+	SDL_RWseek( res, lPos, SEEK_SET );
+	sCount = (Sint16) SDL_ReadLE16 ( res );
 	if( sCount < 1 )
 	{
 		return false;
@@ -388,11 +397,11 @@ bool cImage::decodeMultiImage()
 	{
 		return false;
 	}
-	lBounds = ( long * ) malloc ( sizeof( long ) *sCount );
+	lBounds = ( Sint32 * ) malloc ( sizeof( long ) *sCount );
 	for ( iPicIndex = 0 ; iPicIndex < sCount ; iPicIndex++ )
 	{
-		fseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
-		fread ( &lBounds[iPicIndex], sizeof( long ), 1, res );
+		SDL_RWseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
+		lBounds[iPicIndex] = (Sint32) SDL_ReadLE32 ( res );
 		if ( lBounds[iPicIndex] > lLenght )
 		{
 			return false;
@@ -402,8 +411,8 @@ bool cImage::decodeMultiImage()
 
 	for ( iPicIndex = 0 ; iPicIndex < sCount ; iPicIndex++ )
 	{
-		fseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
-		fread ( &lBegin, sizeof( long ), 1, res );
+		SDL_RWseek( res, lPos + 2 + iPicIndex * 4, SEEK_SET );
+		lBegin = (Sint32) SDL_ReadLE32 ( res );
 		lEnd = lLenght;
 		for( iX = 0 ; iX < sCount ; iX++ )
 		{
@@ -415,12 +424,12 @@ bool cImage::decodeMultiImage()
 		lBegin += lPos;
 		lEnd += lPos;
 
-		fseek( res, lBegin, SEEK_SET );
-		fread ( &sLocWidth, sizeof( short ), 1, res );
-		fread ( &sLocHeight, sizeof( short ), 1, res );
-		fread ( &sLocHotX, sizeof( short ), 1, res );
-		fread ( &sLocHotY, sizeof( short ), 1, res );
-
+		SDL_RWseek( res, lBegin, SEEK_SET );
+		sLocWidth  = (Sint16) SDL_ReadLE16 ( res );
+		sLocHeight = (Sint16) SDL_ReadLE16 ( res );
+		sLocHotX   = (Sint16) SDL_ReadLE16 ( res );
+		sLocHotY   = (Sint16) SDL_ReadLE16 ( res );
+		
 		if ( sLocWidth < 1 || sLocWidth > 640 || sLocHeight < 1 || sLocHeight > 480 || abs( sLocHotX ) > 640 || abs( sLocHotY ) > 480 ) 
 		{
 			return false;
@@ -437,14 +446,16 @@ bool cImage::decodeMultiImage()
 		memset( Images[iPicIndex].data, 0, sLocWidth * sLocHeight );
 		Images[iPicIndex].alpha = ( unsigned char * ) malloc ( sizeof( unsigned char ) * sLocWidth * sLocHeight );
 		memset( Images[iPicIndex].alpha, 255, sLocWidth * sLocHeight );
-		lRows  = ( long * ) malloc ( sizeof( long ) * sLocHeight );
+		lRows  = ( Sint32 * ) malloc ( sizeof( Sint32 ) * sLocHeight );
 
 		if( lBegin + 8 + sLocHeight * 4 > lEnd )
 		{
 			return false;
 		}
-		fseek( res, lBegin + 8, SEEK_SET );
-		fread ( lRows, sizeof( long ), sLocHeight, res );
+		SDL_RWseek( res, lBegin + 8, SEEK_SET );
+		for ( int i = 0; i < sLocHeight; i++)
+			lRows[i] = (Sint32) SDL_ReadLE32( res );
+
 		for (iY = 0; iY < sLocHeight; iY++ )
 		{
 			bCopyNotSkip = false;
@@ -453,8 +464,8 @@ bool cImage::decodeMultiImage()
 			iBlockIndex = 0;
 			unsigned char CurData;
 
-			fseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
-			fread ( &CurData, sizeof( char ), 1, res );
+			SDL_RWseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
+			SDL_RWread( res, &CurData, sizeof( char ), 1 );
 			while ( lRows[iY] + iBlockIndex < lEnd - lPos && CurData != 255 )
 			{
 				if( iY * sLocWidth + iX + CurData > sLocWidth * sLocHeight )
@@ -465,8 +476,8 @@ bool cImage::decodeMultiImage()
 
 				if ( bCopyNotSkip )
 				{
-					fseek( res, lRows[iY] + iBlockIndex + lPos + 1, SEEK_SET );
-					fread ( &Images[iPicIndex].data[iY * sLocWidth + iX], sizeof( char ), CurData, res );
+					SDL_RWseek( res, lRows[iY] + iBlockIndex + lPos + 1, SEEK_SET );
+					SDL_RWread( res, &Images[iPicIndex].data[iY * sLocWidth + iX], sizeof( char ), CurData );
 					iX += CurData;
 					iBlockIndex += CurData + 1;
 				}
@@ -479,8 +490,8 @@ bool cImage::decodeMultiImage()
 				bCopyNotSkip = !bCopyNotSkip;
 				Opacity = 255 - Opacity;
 
-				fseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
-				fread ( &CurData, sizeof( char ), 1, res );
+				SDL_RWseek( res, lRows[iY] + iBlockIndex + lPos, SEEK_SET );
+				SDL_RWread( res, &CurData, sizeof( char ), 1 );
 			}
 		}
 	}
@@ -493,17 +504,18 @@ bool cImage::decodeMultiImage()
 
 bool cImage::decodeBigImage()
 {
-	short sLocWidth, sLocHeight, sLocHotX, sLocHotY, sCnt;
+	Sint16 sLocWidth, sLocHeight, sLocHotX, sLocHotY, sCnt;
 	int iOutOfs, iInOfs;
 	if( lLenght < 776 )
 	{
 		return false;
 	}
-	fseek( res, lPos, SEEK_SET );
-	fread ( &sLocHotX, sizeof( short ), 1, res );
-	fread ( &sLocHotY, sizeof( short ), 1, res );
-	fread ( &sLocWidth, sizeof( short ), 1, res );
-	fread ( &sLocHeight, sizeof( short ), 1, res );
+	SDL_RWseek( res, lPos, SEEK_SET );
+	sLocHotX   = (Sint16) SDL_ReadLE16( res );
+	sLocHotY   = (Sint16) SDL_ReadLE16( res );
+	sLocWidth  = (Sint16) SDL_ReadLE16( res );
+	sLocHeight = (Sint16) SDL_ReadLE16( res );
+	
 	if ( sLocWidth > 640 || sLocHeight > 480 || sLocWidth < 1 || sLocHeight < 1 )
 	{
 		return false;
@@ -526,8 +538,8 @@ bool cImage::decodeBigImage()
 	unsigned char *Buffer = NULL;
 	while ( iInOfs + 1 < lLenght && iOutOfs < sLocWidth * sLocHeight )
 	{
-		fseek (res, lPos + iInOfs, SEEK_SET );
-		fread ( &sCnt, sizeof( short ), 1, res );
+		SDL_RWseek (res, lPos + iInOfs, SEEK_SET );
+		sCnt = (Sint16) SDL_ReadLE16( res );
 		iInOfs += 2;
 
 		Buffer = (unsigned char *) malloc ( 1 );
@@ -540,8 +552,8 @@ bool cImage::decodeBigImage()
 				return false;
 			}
 
-			fseek( res, lPos + iInOfs, SEEK_SET );
-			fread( Buffer, sizeof( char ), 1, res);
+			SDL_RWseek( res, lPos + iInOfs, SEEK_SET );
+			SDL_RWread( res, Buffer, sizeof( char ), 1 );
 			for(int i = 0; i < sCnt; i++ )
 			{
 				Images[0].data[iOutOfs+i] = Buffer[0];
@@ -556,8 +568,8 @@ bool cImage::decodeBigImage()
 				return false;
 			}
 			
-			fseek( res, lPos + iInOfs, SEEK_SET );
-			fread( Buffer, sizeof( char ), 1, res);
+			SDL_RWseek( res, lPos + iInOfs, SEEK_SET );
+			SDL_RWread( res, Buffer, sizeof( char ), 1 );
 			for(int i = 0; i < sCnt; i++ )
 			{
 				Images[0].data[iOutOfs+i] = Buffer[0];
@@ -565,8 +577,8 @@ bool cImage::decodeBigImage()
 
 			free ( Buffer );
 			Buffer = (unsigned char *) malloc ( sCnt );
-			fseek( res, lPos + iInOfs, SEEK_SET );
-			fread( Buffer, sizeof( char ), sCnt, res);
+			SDL_RWseek( res, lPos + iInOfs, SEEK_SET );
+			SDL_RWread( res, Buffer, sizeof( char ), sCnt );
 			for(int i = 0; i < sCnt; i++ )
 			{
 				Images[0].data[iOutOfs+i] = Buffer[i];
@@ -589,8 +601,8 @@ bool cImage::decodeBigImage()
 	}
 	else
 	{
-		fseek( res, lPos + 8, SEEK_SET );
-		fread( palette, sizeof( char ), 768, res);
+		SDL_RWseek( res, lPos + 8, SEEK_SET );
+		SDL_RWread( res, palette, sizeof( char ), 768 );
 	}
 	
 	iImageCount = 1;
@@ -612,16 +624,16 @@ SDL_Surface* cImage::getSurface(int imageNr)
 //I should really think about my interface to the res hacker...
 SDL_Surface* getImage(string file_name, int imageNr)
 {
-	long lPosOfFile = lPosBegin;
+	Uint32 lPosOfFile = lPosBegin;
 
 	//search desired file in max.res
 	while( lPosOfFile < lEndOfFile )
 	{
 		char name[9];
 
-		fseek( res, lPosOfFile, SEEK_SET );
+		SDL_RWseek( res, lPosOfFile, SEEK_SET );
 
-		fread ( name, sizeof( char ), 8, res );
+		SDL_RWread ( res, name, sizeof( char ), 8 );
 		name[8] = '\0';
 
 		if ( file_name.compare(name) == 0)
@@ -638,8 +650,8 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	cImage Image;
 
 	//read pos and length of image in max.res
-	fread ( &Image.lPos, sizeof( long ), 1, res );
-	fread ( &Image.lLenght, sizeof( long ), 1, res );
+	Image.lPos = (Sint32) SDL_ReadLE32 ( res );
+	Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 	
 	//copy color table
 	Image.palette = (sPixel*) malloc ( 768 );
@@ -667,21 +679,20 @@ void removePlayerColor( SDL_Surface *surface)
 
 int saveAllFiles()
 {
-	long lPosOfFile = lPosBegin;
+	Uint32 lPosOfFile = lPosBegin;
 	while( lPosOfFile < lEndOfFile )
 	{
 		cImage Image;
 
-		fseek( res, lPosOfFile, SEEK_SET );
+		SDL_RWseek( res, lPosOfFile, SEEK_SET );
 
-		fread ( &Image.name, sizeof( char ), 8, res );
+		SDL_RWread ( res, &Image.name, sizeof( char ), 8 );
 		Image.name[8] = '\0';
 
 
 		//read pos and length of image in max.res
-		fread ( &Image.lPos, sizeof( long ), 1, res );
-		fread ( &Image.lLenght, sizeof( long ), 1, res );
-
+		Image.lPos = (Sint32) SDL_ReadLE32 ( res );
+		Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 		
 		//copy color table
 		Image.palette = (sPixel*) malloc ( 768 );

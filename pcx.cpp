@@ -65,7 +65,7 @@ int savePCX_8bpp(SDL_Surface* surface, string fileName)
 	PCXHeader[67] = (S_Index+1)/256;
 	PCXHeader[68] = 1;                           // Farbe
 	
-	SDL_RWwrite(file,PCXHeader, 128, 1);
+	SDL_RWwrite(file, PCXHeader, 128, 1);
 	
 	bild = (unsigned char*) surface->pixels;
 	
@@ -161,8 +161,8 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 	
 	//build color table
 	bild = (unsigned char*) malloc (surface->w * surface->h - 1);
-	unsigned int* surface_data = (unsigned int*) surface->pixels;
-	unsigned int colors[256];
+	Uint32* surface_data = (Uint32*) surface->pixels;
+	Uint32 colors[256];
 	for ( i = 0; i < 256; i++)
 	{
 		colors[i] = 0;
