@@ -194,22 +194,27 @@ void cImage::decodeFile()
 {
 	if( decodeSimpleImage() )
 	{
+		cout << "Image is SimpleImage\n";
 		bDecoded = true;
 	}
 	else if( decodeMultiShadow() )
 	{
+		cout << "Image is MultiShadow\n";
 		bDecoded = true;
 	}
 	else if( decodeMultiImage() )
 	{
+		cout << "Image is MultiImage\n";
 		bDecoded = true;
 	}
 	else if( decodeBigImage() )
 	{
+		cout << "Image is BigImage\n";
 		bDecoded = true;
 	}
 	else
 	{
+		cout << "Error, Image not decoded\n";
 		bDecoded = false;
 	}
 }
@@ -725,7 +730,26 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 	SDL_Surface *surface;
 	surface = getImage(src, number);
 	
-	surface->format->palette->ncolors = 256;
+	char szTemp[8];
+	itoa( surface->format->BitsPerPixel, szTemp, 10);
+	cout << "bpp: " << szTemp << "\n";
+	itoa( surface->format->palette->ncolors, szTemp, 10);
+	cout << "ncolors: " << szTemp << "\n";
+	//itoa( *surface->pixels, szTemp, 10);
+	//cout << "ncolors: " << szTemp << "\n";
+	cout << "Palette after decoding image:\n";
+	for ( int i = 0; i < 256; i++)
+	{
+		itoa( surface->format->palette->colors[i].r, szTemp, 10);
+		cout << " " << szTemp;
+		itoa( surface->format->palette->colors[i].g, szTemp, 10);
+		cout << " " << szTemp;
+		itoa( surface->format->palette->colors[i].b, szTemp, 10);
+		cout << " " << szTemp;
+	}
+	cout << "\n";
+	
+	/*surface->format->palette->ncolors = 256;
 	for ( int i = 0; i < 256; i++ )
 	{
 		surface->format->palette->colors[i].r = orig_palette[i*3];
@@ -736,8 +760,8 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 	surface->format->palette->colors[64].r = 255;
 	surface->format->palette->colors[64].g = 0;
 	surface->format->palette->colors[64].b = 255;
-
-	removePlayerColor( surface );
+	*/
+	//removePlayerColor( surface );
 	savePCX( surface, dst);
 	SDL_FreeSurface( surface );
 

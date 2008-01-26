@@ -250,10 +250,12 @@ int savePCX ( SDL_Surface* surface, string fileName )
 
 	if ( surface->format->BitsPerPixel == 8 )
 	{
+		cout << "saveing Image as 8 bpp\n";
 		return savePCX_8bpp( surface, fileName );
 	}
 	else if ( surface->format->BitsPerPixel == 32 )
 	{
+		cout << "saveing Image as 32 bpp\n";
 		return savePCX_32bpp( surface, fileName );
 	}
 
