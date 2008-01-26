@@ -724,6 +724,19 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 {
 	SDL_Surface *surface;
 	surface = getImage(src, number);
+	
+	surface->format->palette->ncolors = 256;
+	for ( int i = 0; i < 256; i++ )
+	{
+		surface->format->palette->colors[i].r = orig_palette[i*3];
+		surface->format->palette->colors[i].g = orig_palette[i*3+1];
+		surface->format->palette->colors[i].b = orig_palette[i*3+2];
+	}
+
+	surface->format->palette->colors[64].r = 255;
+	surface->format->palette->colors[64].g = 0;
+	surface->format->palette->colors[64].b = 255;
+
 	removePlayerColor( surface );
 	savePCX( surface, dst);
 	SDL_FreeSurface( surface );
