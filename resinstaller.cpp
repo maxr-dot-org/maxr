@@ -1060,10 +1060,10 @@ int installBuildingGraphics()
 	cout << "Barracks\n";
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "barracks" + PATH_DELIMITER;
 	copyFileFromRes_rpc("BARRACKS", path + "img.pcx", 1 );
-	//copyFileFromRes("P_BARRCK", path + "info.pcx");
-	//copyFileFromRes("S_BARRAC", path + "shw.pcx");
-	//copyImageFromFLC( sMAXPath + "BARX_ISO.FLC", path + "video.pcx");
-	/*
+	copyFileFromRes("P_BARRCK", path + "info.pcx");
+	copyFileFromRes("S_BARRAC", path + "shw.pcx");
+	copyImageFromFLC( sMAXPath + "BARX_ISO.FLC", path + "video.pcx");
+	
 	//block
 	cout << "block\n";
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "block" + PATH_DELIMITER;
@@ -1652,7 +1652,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_SMLRBL", path + "dirt_small_shw2.pcx", 2);
 	copyFileFromRes("S_SMLRBL", path + "dirt_small_shw3.pcx", 3);
 	copyFileFromRes("S_SMLRBL", path + "dirt_small_shw4.pcx", 4);
-	*/
+	
 
 	return 1;
 }
@@ -2314,8 +2314,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{		
 		cout << "Please enter path to MAX-Installation: ";
-		cin >> sMAXPath;
-		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		//cin >> sMAXPath;
+		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = SDL_RWFromFile ( (sMAXPath + "MAX.RES").c_str(), "rb" );
 		if( !res )
@@ -2329,33 +2329,9 @@ int main ( int argc, char* argv[] )
 		}
 	}
 
-	FILE *pal;
-	while ( 1 )
-	{
-		cout << "\nPlease enter path to palette-file: ";
-		cin >> sPalettePath;
-		//sPalettePath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\Source\\palette.pal";
-
-		
-		if( ( pal = fopen ( sPalettePath.c_str(), "rb" ) ) == NULL )
-		{
-			cout << "Could not open palette\n";
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	fseek( pal, 0, SEEK_SET );
-	orig_palette = ( unsigned char* ) malloc ( sizeof( unsigned char ) * 768 );
-	fread ( orig_palette, sizeof( unsigned char ), 786, pal );
-	fclose ( pal );
-
-
 	cout << "\nPlease enter path to ouputfolder: \n";
-	cin >> sOutputPath;
-	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	//cin >> sOutputPath;
+	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
@@ -2415,16 +2391,14 @@ int main ( int argc, char* argv[] )
 		exit (-1);
 	}
 
-	//installBuildingSounds();
-	//installVehicleSounds();
-	//installVehicleVideos();
-	//installVehicleGraphics();
+	installBuildingSounds();
+	installVehicleSounds();
+	installVehicleVideos();
+	installVehicleGraphics();
 	installBuildingGraphics();
+
 	
-
-	free (orig_palette);
 	SDL_RWclose(res);
-
-	//while(1);
+	
 	return 0;
 }

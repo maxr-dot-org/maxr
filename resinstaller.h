@@ -39,7 +39,6 @@ EX string sPalettePath;
 EX string sOutputPath;
 EX SDL_RWops *res ZERO;
 
-EX unsigned char *orig_palette;
 EX Uint32 lPosBegin;
 EX Uint32 lEndOfFile;
 

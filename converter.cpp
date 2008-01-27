@@ -25,14 +25,7 @@
 #include "converter.h"
 #include "pcx.h"
 #include "SDL_flic.h"
-#include <sstream>
-
-string iToStr(int x)
-{
- 	stringstream strStream;
- 	strStream << x;
- 	return strStream.str();
-}
+#include "palette.h"
 
 cImage::cImage()
 {
@@ -138,17 +131,7 @@ void cImage::resampleFile()
 		palette[backgroundIndex].Red = 255;
 	}
 
-	cout << "BackgroundIndex is " << iToStr(backgroundIndex) << "\n";
-
-	cout << "Palette in cImage is:\n";
-	for (int i = 0; i < 256; i++)
-	{
-		cout << iToStr( palette[i].Blue) << " ";
-		cout << iToStr( palette[i].Green) << " ";
-		cout << iToStr( palette[i].Red) << " ";
-	}
-	cout << "\n\n";
-
+	
 	for(int iF = 0; iF < iImageCount; iF++ )
 	{
 		//create surface
@@ -168,7 +151,7 @@ void cImage::resampleFile()
 		}
 		if ( backgroundIndex > 0 )
 		{
-			//SDL_SetColorKey( surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
+			SDL_SetColorKey( surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
 		}
 		
 		for (int iX = 0; iX < sWidth; iX++ )
@@ -212,27 +195,22 @@ void cImage::decodeFile()
 {
 	if( decodeSimpleImage() )
 	{
-		cout << "Image is SimpleImage\n";
 		bDecoded = true;
 	}
 	else if( decodeMultiShadow() )
 	{
-		cout << "Image is MultiShadow\n";
 		bDecoded = true;
 	}
 	else if( decodeMultiImage() )
 	{
-		cout << "Image is MultiImage\n";
 		bDecoded = true;
 	}
 	else if( decodeBigImage() )
 	{
-		cout << "Image is BigImage\n";
 		bDecoded = true;
 	}
 	else
 	{
-		cout << "Error, Image not decoded\n";
 		bDecoded = false;
 	}
 }
@@ -245,12 +223,6 @@ bool cImage::decodeSimpleImage()
 	sLocHeight = (Sint16) SDL_ReadLE16 ( res );
 	sLocHotX = (Sint16) SDL_ReadLE16 ( res );
 	sLocHotY = (Sint16) SDL_ReadLE16 ( res );
-
-	/*SDL_RWread ( res, &sLocWidth, sizeof( short ), 1 );
-	SDL_RWread ( &sLocHeight, sizeof( short ), 1, res );
-	SDL_RWread ( &sLocHotX, sizeof( short ), 1, res );
-	SDL_RWread ( &sLocHotY, sizeof( short ), 1, res );
-	*/
 
 	if (sLocWidth > 640 || sLocHeight > 480 )
 	{
@@ -681,11 +653,6 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	Image.lPos = (Sint32) SDL_ReadLE32 ( res );
 	Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 	
-	cout << "Palette loaded from disk is:\n";
-	for ( int i = 0; i < 3*256; i++)
-		cout << iToStr(orig_palette[i]) << " ";
-	cout << "\n\n";
-
 	//copy color table
 	Image.palette = (sPixel*) malloc ( sizeof( sPixel ) * 256 );
 	for ( int i = 0; i < 256; i++ )
@@ -702,6 +669,7 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	return Image.getSurface(imageNr);
 	
 }
+
 
 //sets the player colors in the color table to white
 //note that the information about the player colors are lost, when blitting the surface
@@ -768,47 +736,9 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 {
 	SDL_Surface *surface;
 	surface = getImage(src, number);
-	
-	cout << "bpp: " << iToStr(surface->format->BitsPerPixel) << "\n";
-	cout << "ncolors: " << iToStr(surface->format->palette->ncolors) << "\n";
-	//itoa( *surface->pixels, szTemp, 10);
-	//cout << "ncolors: " << szTemp << "\n";
-	cout << "Palette after decoding image:\n";
-	for ( int i = 0; i < 256; i++)
-	{	
-		cout << iToStr( surface->format->palette->colors[i].r) << " ";
-		cout << iToStr( surface->format->palette->colors[i].g) << " ";
-		cout << iToStr( surface->format->palette->colors[i].b) << " ";
-		
-	}
-	cout << "\n";
-
-	/*SDL_Init(SDL_INIT_VIDEO);
-	SDL_Surface* screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
-	SDL_BlitSurface(surface, NULL, screen, NULL);
-	SDL_UpdateRect(screen, 0, 0, 0, 0); */
-	
-	
-	/*surface->format->palette->ncolors = 256;
-	for ( int i = 0; i < 256; i++ )
-	{
-		surface->format->palette->colors[i].r = orig_palette[i*3];
-		surface->format->palette->colors[i].g = orig_palette[i*3+1];
-		surface->format->palette->colors[i].b = orig_palette[i*3+2];
-	}
-
-	surface->format->palette->colors[64].r = 255;
-	surface->format->palette->colors[64].g = 0;
-	surface->format->palette->colors[64].b = 255;
-	*/
-	//removePlayerColor( surface );
+	removePlayerColor( surface );
 	savePCX( surface, dst);
 	SDL_FreeSurface( surface );
-
-	//while (1)
-	{
-		//SDL_UpdateRect ( screen,0,0,0,0 );
-	};
 
 	return 1;
 }
