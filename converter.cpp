@@ -25,6 +25,7 @@
 #include "converter.h"
 #include "pcx.h"
 #include "SDL_flic.h"
+#include <sstream>
 
 
 cImage::cImage()
@@ -150,7 +151,7 @@ void cImage::resampleFile()
 		}
 		if ( backgroundIndex > 0 )
 		{
-			SDL_SetColorKey( surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
+			//SDL_SetColorKey( surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
 		}
 		
 		for (int iX = 0; iX < sWidth; iX++ )
@@ -724,30 +725,39 @@ int copyFileFromRes ( string src, string dst, int number )
 	return 1;
 }
 
+
+string iToStr(int x)
+{
+ 	stringstream strStream;
+ 	strStream << x;
+ 	return strStream.str();
+}
+
 //rpc stands for "remove player color"
 int copyFileFromRes_rpc(string src, string dst, int number )
 {
 	SDL_Surface *surface;
 	surface = getImage(src, number);
 	
-	char szTemp[8];
-	itoa( surface->format->BitsPerPixel, szTemp, 10);
-	cout << "bpp: " << szTemp << "\n";
-	itoa( surface->format->palette->ncolors, szTemp, 10);
-	cout << "ncolors: " << szTemp << "\n";
+	cout << "bpp: " << iToStr(surface->format->BitsPerPixel) << "\n";
+	cout << "ncolors: " << iToStr(surface->format->palette->ncolors) << "\n";
 	//itoa( *surface->pixels, szTemp, 10);
 	//cout << "ncolors: " << szTemp << "\n";
 	cout << "Palette after decoding image:\n";
 	for ( int i = 0; i < 256; i++)
-	{
-		itoa( surface->format->palette->colors[i].r, szTemp, 10);
-		cout << " " << szTemp;
-		itoa( surface->format->palette->colors[i].g, szTemp, 10);
-		cout << " " << szTemp;
-		itoa( surface->format->palette->colors[i].b, szTemp, 10);
-		cout << " " << szTemp;
+	{	
+		cout << iToStr( surface->format->palette->colors[i].r) << " ";
+		cout << iToStr( surface->format->palette->colors[i].g) << " ";
+		cout << iToStr( surface->format->palette->colors[i].b) << " ";
+		
 	}
 	cout << "\n";
+
+	/*SDL_Init(SDL_INIT_VIDEO);
+	SDL_Surface* screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+	SDL_BlitSurface(surface, NULL, screen, NULL);
+	SDL_UpdateRect(screen, 0, 0, 0, 0); */
+	
 	
 	/*surface->format->palette->ncolors = 256;
 	for ( int i = 0; i < 256; i++ )
@@ -764,6 +774,11 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 	//removePlayerColor( surface );
 	savePCX( surface, dst);
 	SDL_FreeSurface( surface );
+
+	//while (1)
+	{
+		//SDL_UpdateRect ( screen,0,0,0,0 );
+	};
 
 	return 1;
 }

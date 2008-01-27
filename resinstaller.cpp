@@ -2425,6 +2425,6 @@ int main ( int argc, char* argv[] )
 	free (orig_palette);
 	SDL_RWclose(res);
 
-	while(1);
+	//while(1);
 	return 0;
 }
