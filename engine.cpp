@@ -1476,7 +1476,7 @@ void cEngine::Rundenende ( void )
 
 		// Request resync
 		network->TCPSend ( MSG_START_SYNC, iToStr ( SyncNo ).c_str() );
-		font->showTextCentered( 320, 235, "Synchronisieren...", LATIN_BIG, buffer ); // TODO: Translate!!!
+		font->showTextCentered( 320, 235, lngPack.i18n( "Text~Multiplayer~Network_Syncing"), LATIN_BIG, buffer );
 		SHOW_SCREEN
 		mouse->MoveCallback = false;
 		mouse->SetCursor( CHand );
@@ -2488,8 +2488,7 @@ void cEngine::HandleGameMessages()
 					Vehicle->detection_override = true;
 					if( game->ActivePlayer->ScanMap[Vehicle->PosX + Vehicle->PosY * map->size] )
 					{
-						// TODO: Translate!!!
-						game->AddCoords( "Infiltrator entdeckt", Vehicle->PosX, Vehicle->PosY );
+						game->AddCoords( ((string)Vehicle->data.name + " " + lngPack.i18n( "Text~Comp~Detected")), Vehicle->PosX, Vehicle->PosY );
 						if( random( 2, 0 ) == 0 ) PlayVoice( VoiceData.VOIDetected1 );
 						else PlayVoice( VoiceData.VOIDetected2 );
 					}
@@ -2520,8 +2519,7 @@ void cEngine::HandleGameMessages()
 						{
 							if( TargetVehicle->owner == game->ActivePlayer )
 							{
-								// TODO: Translate!!!
-								game->AddCoords( "Einheit gestohlen", TargetVehicle->PosX, TargetVehicle->PosY );
+								game->AddCoords( ((string)TargetVehicle->data.name + " " + lngPack.i18n( "Text~Comp~Stolen")), TargetVehicle->PosX, TargetVehicle->PosY );
 							}
 							TargetVehicle->owner = Vehicle->owner;
 						}
@@ -2529,8 +2527,7 @@ void cEngine::HandleGameMessages()
 						{
 							if( TargetVehicle->owner == game->ActivePlayer )
 							{
-								// TODO: Translate!!!
-								game->AddCoords( "Einheit sabotiert", TargetVehicle->PosX, TargetVehicle->PosY );
+								game->AddCoords( ((string)TargetVehicle->data.name + " " + lngPack.i18n( "Text~Comp~Disabled")), TargetVehicle->PosX, TargetVehicle->PosY );
 							}
 							TargetVehicle->Disabled = 2 + Vehicle->CommandoRank / 2;
 							TargetVehicle->data.speed = 0;
@@ -2548,8 +2545,7 @@ void cEngine::HandleGameMessages()
 					{
 						if( TargetBuilding->owner == game->ActivePlayer )
 						{
-							// TODO: Translate!!!
-							game->AddCoords( "Gebäude sabotiert", TargetBuilding->PosX, TargetBuilding->PosY );
+							game->AddCoords( ((string)TargetBuilding->data.name + " " + lngPack.i18n( "Text~Comp~Disabled")), TargetBuilding->PosX, TargetBuilding->PosY );
 						}
 						TargetBuilding->Disabled = 2 + Vehicle->CommandoRank / 2;
 						TargetBuilding->data.shots = 0;
