@@ -190,6 +190,7 @@
 			<Network_Connected ENG="Connected"/>
 			<Network_Connected_Not ENG="Not connected"/>
 			<Network_Closed ENG="Connection closed"/>
+			<Network_Syncing ENG="Synchronizing..."/>
 			<Map_NoSet ENG="--no map set--"/>
 			<Option_NoSet ENG="--no options set--"/>
 			<Go ENG="Let's go"/>
@@ -227,6 +228,7 @@
 			<Finished ENG="is finished"/>
 			<Finished2 ENG="are finished"/>
 			<Detected ENG="detected"/>
+			<Stolen ENG="stolen"/>
 			<Attacked ENG="is under attack"/>
 			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost."/>
 			<Turn_Start ENG="Start turn"/>

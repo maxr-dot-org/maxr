@@ -190,6 +190,7 @@
 			<Network_Connected ENG="Connected" localized="Verbunden"/>
 			<Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
 			<Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Synchronisieren..."/>
 			<Map_NoSet ENG="--no map set--" localized="--keine Map gewählt--"/>
 			<Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
 			<Go ENG="Let's go" localized="Los gehts"/>
@@ -227,6 +228,7 @@
 			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
 			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
 			<Detected ENG="detected" localized="entdeckt"/>
+			<Stolen ENG="stolen" localized="gestohlen"/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
 			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Wirklich beenden? \n\nNicht gespeicherte Spieldaten gehen dabei verloren."/>
 			<Turn_Start ENG="Start turn" localized="Starten Sie Runde"/>
@@ -242,7 +244,7 @@
 			<Research_Costs ENG="Research 'Costs' completed" localized="Kostenforschung abgeschlossen"/>
 			<Working ENG="working" localized="arbeitet"/>
 			<Waits ENG="waits" localized="wartet"/>
-			<Disabled ENG="disabled" localized="außer Gefecht"/>
+			<Disabled ENG="disabled" localized="außer Gefecht gesetzt"/>
 			<Producing ENG="Producing" localized="beim Bau"/>
 			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
 			<Moving ENG="moving" localized="in bewegung"/>
