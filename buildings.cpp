@@ -1403,7 +1403,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
 		{
-			game->AddMessage ( "Zu wenig Teams, Verbraucher werden ausgeschaltet!" );
+			game->AddMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
 			return false;
 		}
 
@@ -1415,7 +1415,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->OilProd )
 		{
-			game->AddMessage ( "Nicht genug Treibstoff zum Einschalten vorhanden!" );
+			game->AddMessage ( lngPack.i18n( "Text~Comp~Fuel_Insufficient") );
 			return false;
 		}
 		else
@@ -1427,18 +1427,18 @@ bool cBuilding::StartWork ( bool engine_call )
 
 	// Energieverbraucher:
 	else
-		if ( data.energy_need ) //TODO: add i18n
+		if ( data.energy_need )
 		{
 			if ( data.energy_need + SubBase->EnergyNeed > SubBase->MaxEnergyProd )
 			{
-				game->AddMessage ( "Nicht genug Energie zum Einschalten vorhanden!" );
+				game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_Insufficient") );
 				return false;
 			}
 			else
 			{
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
-					game->AddMessage ( "Zu wenig Energie, Generator wird eingeschaltet!" );
+					game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_ToLow") );
 
 					for ( i = 0;i < SubBase->buildings->iCount;i++ )
 					{
@@ -1540,7 +1540,7 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	{
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
 		{
-			game->AddMessage ( "Kann Generator nicht abschalten, Energie wird benötigt!" );
+			game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
 			return;
 		}
 
