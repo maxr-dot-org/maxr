@@ -555,7 +555,7 @@ void cBase::Rundenende ( void )
 				}
 				if ( BuildListItem->metall_remaining<=0 )
 				{
-					// if(b->owner==game->ActivePlayer)game->engine->AddReport(ptr->typ->data.name,true);
+					if( b->owner==game->ActivePlayer ) game->engine->AddReport(BuildListItem->typ->data.name,true);
 					b->StopWork ( false );
 				}
 			}
