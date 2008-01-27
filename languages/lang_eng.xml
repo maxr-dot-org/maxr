@@ -222,6 +222,10 @@
 			<Gold_Low ENG="To low gold, disabled consumer!"/>
 			<Team_Low ENG="To low teams, disabled consumer!"/>
 			<Energy_Optimize ENG="Energygeneration optimized"/>
+			<Energy_Insufficient ENG="Insufficient energy for starting!"/>
+			<Energy_ToLow ENG="Insufficient energy, generator started!"/>
+			<Fuel_Insufficient ENG="Insufficient fuel for starting!"/>
+			<Energy_IsNeeded ENG="Can't disable generator, engery needed!"/>
 			<Cheat ENG="used cheat"/>
 			<Destroyed ENG="destroyed"/>
 			<Defeated ENG="defeated"/>

@@ -222,6 +222,10 @@
 			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
 			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
+			<Energy_Insufficient localized="Nicht genug Energie zum Einschalten vorhanden!"/>
+			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
+			<Fuel_Insufficient ENG="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
+			<Energy_IsNeeded ENG="Kann Generator nicht abschalten, Energie wird benötigt!"/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Defeated ENG="defeated" localized="besiegt"/>
