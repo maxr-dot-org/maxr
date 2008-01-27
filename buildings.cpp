@@ -6381,7 +6381,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 void cBuilding::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
 {
 	SDL_Rect r;
-	int wp, wc, t;
+	int wp, wc, t = 0;
 	cVehicle *v = NULL;
 	cBuilding *b = NULL;
 
@@ -6443,14 +6443,14 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
 
 	if ( v )
 		t = v->data.hit_points;
-	else
+	else if ( b )
 		t = b->data.hit_points;
 
 	if ( t )
 	{
 		if ( v )
 			wc = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
-		else
+		else  if ( b )
 			wc = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
 	}
 	else
@@ -6460,14 +6460,14 @@ void cBuilding::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
 
 	if ( v )
 		t = v->CalcHelth ( data.damage );
-	else
+	else  if ( b )
 		t = b->CalcHelth ( data.damage );
 
 	if ( t )
 	{
 		if ( v )
 			wp = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
-		else
+		else  if ( b )
 			wp = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
 	}
 	else

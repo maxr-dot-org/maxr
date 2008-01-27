@@ -3260,7 +3260,7 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->can_detect_mines = true;
 	else
 		Data->can_detect_mines = false;
-	if(Data->iScan_Range_Sea > 0)
+	if(Data->iScan_Range_Submarine > 0)
 		Data->can_detect_sea = true;
 	else
 		Data->can_detect_sea = false;
