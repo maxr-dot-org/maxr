@@ -22,6 +22,8 @@
 
 #include <SDL.h>
 #include "wave.h"
+//#include "converter.h"
+#include "file.h"
 
 int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
 {
@@ -77,7 +79,7 @@ int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
 int loadWAV( string src, WaveFile& waveFile)
 {
 	SDL_RWops* file;
-	file = SDL_RWFromFile(src.c_str(), "rb");
+	file = openFile( src, "rb");
 	if ( file == NULL )
 		return 0;
 

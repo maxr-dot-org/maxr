@@ -26,6 +26,7 @@
 #include "pcx.h"
 #include "SDL_flic.h"
 #include "palette.h"
+#include "file.h"
 
 cImage::cImage()
 {
@@ -745,7 +746,7 @@ int copyFileFromRes_rpc(string src, string dst, int number )
 	
 int copyImageFromFLC(string fileName, string dst)
 {
-	SDL_RWops* file = SDL_RWFromFile(fileName.c_str(), "rb");
+	SDL_RWops* file = openFile(fileName, "rb");
 	if (!file)
 		return 0;
 

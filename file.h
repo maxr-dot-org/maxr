@@ -23,5 +23,6 @@
 #define file_h
 
 int copyFile( string source, string dest );
+SDL_RWops* openFile( string path, const char* mode);
 
 #endif //file_h

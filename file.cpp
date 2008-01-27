@@ -21,28 +21,65 @@
 
 #include <iostream>
 #include <string>
+#include <SDL.h>
 #include "resinstaller.h"
+
+
+//first tries to open a file with lowercase name
+//if this fails, tries to open the file with uppercase name
+SDL_RWops* openFile( string path, const char* mode)
+{
+	//split string into path and filename
+	int pos = (int) path.rfind(PATH_DELIMITER);
+	string fileName = path.substr( pos + 1, path.length() );
+	path = path.substr( 0, pos + 1 );
+	
+	//try to open with lower case file name
+	int lenght = (int) fileName.size();
+	for(int i=0; i < lenght; i++)
+	{
+		fileName[i] = tolower(fileName[i]); 
+	}
+	SDL_RWops* file = SDL_RWFromFile( (path + fileName).c_str(), mode );
+	if ( file != NULL )
+	{
+		return file;
+	}
+
+	//try to open with upper case file name
+	for(int i=0; i < lenght; i++)
+	{
+		fileName[i] = toupper(fileName[i]); 
+	}
+	file = SDL_RWFromFile( (path + fileName).c_str(), mode );
+	if ( file != NULL )
+	{
+		return file;
+	}
+
+	return NULL;
+}
 
 int copyFile( string source, string dest )
 {
 	long int size;
 	unsigned char* buffer;
-	FILE *sourceFile, *destFile;
+	SDL_RWops *sourceFile, *destFile;
 
-	sourceFile = fopen ( source.c_str(), "rb" );
+	sourceFile = openFile ( source, "rb" );
 	if ( sourceFile == NULL )
 	{
 		return 0;
 	}
 
-	destFile = fopen ( dest.c_str(), "wb" );
+	destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
 	if ( destFile == NULL )
 	{
 		return 0;
 	}
 
-	fseek( sourceFile, 0, SEEK_END );
-	size = ftell( sourceFile );
+	SDL_RWseek( sourceFile, 0, SEEK_END );
+	size = SDL_RWtell( sourceFile );
 
 	buffer = (unsigned char*) malloc( size );
 	if ( buffer == NULL )
@@ -50,14 +87,14 @@ int copyFile( string source, string dest )
 		return 0;
 	}
 
-	fseek( sourceFile, 0, SEEK_SET);
-	fread( buffer, 1, size, sourceFile );
+	SDL_RWseek( sourceFile, 0, SEEK_SET);
+	SDL_RWread( sourceFile, buffer, 1, size );
 
-	fwrite( buffer, 1, size, destFile );
+	SDL_RWwrite( destFile, buffer, 1, size );
 
 	free ( buffer );
-	fclose( sourceFile );
-	fclose( destFile );
+	SDL_RWclose( sourceFile );
+	SDL_RWclose( destFile );
 
 	return 1;
 }

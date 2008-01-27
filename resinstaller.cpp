@@ -2317,7 +2317,7 @@ int main ( int argc, char* argv[] )
 		cin >> sMAXPath;
 		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
-		res = SDL_RWFromFile ( (sMAXPath + "MAX.RES").c_str(), "rb" );
+		res = openFile ( (sMAXPath + "MAX.RES").c_str(), "rb" );
 		if( !res )
 		{
 			cout << "Could not open resourcefile\n";
