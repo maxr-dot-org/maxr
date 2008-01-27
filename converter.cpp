@@ -27,6 +27,12 @@
 #include "SDL_flic.h"
 #include <sstream>
 
+string iToStr(int x)
+{
+ 	stringstream strStream;
+ 	strStream << x;
+ 	return strStream.str();
+}
 
 cImage::cImage()
 {
@@ -131,6 +137,17 @@ void cImage::resampleFile()
 		palette[backgroundIndex].Green = 0;
 		palette[backgroundIndex].Red = 255;
 	}
+
+	cout << "BackgroundIndex is " << iToStr(backgroundIndex) << "\n";
+
+	cout << "Palette in cImage is:\n";
+	for (int i = 0; i < 256; i++)
+	{
+		cout << iToStr( palette[i].Blue) << " ";
+		cout << iToStr( palette[i].Green) << " ";
+		cout << iToStr( palette[i].Red) << " ";
+	}
+	cout << "\n\n";
 
 	for(int iF = 0; iF < iImageCount; iF++ )
 	{
@@ -292,6 +309,7 @@ bool cImage::decodeMultiShadow()
 		lBounds[iPicIndex] = (Sint32) SDL_ReadLE32 ( res );
 		if ( lBounds[iPicIndex] > lLenght )
 		{
+			free( lBounds );
 			return false;
 		}
 	}
@@ -320,6 +338,8 @@ bool cImage::decodeMultiShadow()
 
 		if ( sLocWidth < 1 || sLocWidth > 640 || sLocHeight < 1 || sLocHeight > 480 || abs( sLocHotX ) > 640 || abs( sLocHotY ) > 480 ) 
 		{
+			free ( lBounds );
+			free ( Images );
 			return false;
 		}
 
@@ -338,6 +358,7 @@ bool cImage::decodeMultiShadow()
 
 		if( lBegin + 8 + sLocHeight * 4 > lEnd )
 		{
+			//free memory here
 			return false;
 		}
 		SDL_RWseek( res, lBegin + 8, SEEK_SET );
@@ -359,6 +380,7 @@ bool cImage::decodeMultiShadow()
 			{
 				if( iY * sLocWidth + iX + CurData > sLocWidth * sLocHeight )
 				{
+					//free memory here
 					return false;
 				}
 				memset( &Images[iPicIndex].data[iY * sLocWidth + iX], Color, CurData );
@@ -659,6 +681,11 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	Image.lPos = (Sint32) SDL_ReadLE32 ( res );
 	Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 	
+	cout << "Palette loaded from disk is:\n";
+	for ( int i = 0; i < 3*256; i++)
+		cout << iToStr(orig_palette[i]) << " ";
+	cout << "\n\n";
+
 	//copy color table
 	Image.palette = (sPixel*) malloc ( 768 );
 	memcpy (Image.palette, orig_palette, 768);
@@ -725,13 +752,6 @@ int copyFileFromRes ( string src, string dst, int number )
 	return 1;
 }
 
-
-string iToStr(int x)
-{
- 	stringstream strStream;
- 	strStream << x;
- 	return strStream.str();
-}
 
 //rpc stands for "remove player color"
 int copyFileFromRes_rpc(string src, string dst, int number )
