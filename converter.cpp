@@ -687,8 +687,13 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	cout << "\n\n";
 
 	//copy color table
-	Image.palette = (sPixel*) malloc ( 768 );
-	memcpy (Image.palette, orig_palette, 768);
+	Image.palette = (sPixel*) malloc ( sizeof( sPixel ) * 256 );
+	for ( int i = 0; i < 256; i++ )
+	{
+		Image.palette[i].Blue  = orig_palette[3*i];
+		Image.palette[i].Green = orig_palette[3*i + 1];
+		Image.palette[i].Red   = orig_palette[3*i + 2];
+	}
 
 	//extract image
 	Image.decodeFile();
@@ -728,8 +733,13 @@ int saveAllFiles()
 		Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 		
 		//copy color table
-		Image.palette = (sPixel*) malloc ( 768 );
-		memcpy (Image.palette, orig_palette, 768);
+		Image.palette = (sPixel*) malloc ( sizeof( sPixel ) * 256 );
+		for ( int i = 0; i < 256; i++ )
+		{
+			Image.palette[i].Blue  = orig_palette[i];
+			Image.palette[i].Green = orig_palette[i + 1];
+			Image.palette[i].Red   = orig_palette[i + 2];
+		}	
 
 		//extract image
 		Image.decodeFile();
