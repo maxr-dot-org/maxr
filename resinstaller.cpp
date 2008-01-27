@@ -2314,8 +2314,8 @@ int main ( int argc, char* argv[] )
 	while ( 1 )
 	{		
 		cout << "Please enter path to MAX-Installation: ";
-		//cin >> sMAXPath;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		res = SDL_RWFromFile ( (sMAXPath + "MAX.RES").c_str(), "rb" );
 		if( !res )
@@ -2330,8 +2330,8 @@ int main ( int argc, char* argv[] )
 	}
 
 	cout << "\nPlease enter path to ouputfolder: \n";
-	//cin >> sOutputPath;
-	sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+	cin >> sOutputPath;
+	//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 
 
 
