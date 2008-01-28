@@ -57,6 +57,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 		StoredVehicles = NULL;
 		detected = true;
+		Wachposten = false;
 		return;
 	}
 
