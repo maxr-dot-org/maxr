@@ -30,14 +30,14 @@
 		<Init>
 			<Lang ENG="Loading languagepack..." localized="Nyelvcsomag betöltése..."/>
 			<Keys ENG="Loading keys..." localized="Billentyûk betöltése..."/>
-                        <Fonts ENG="Loading fonts..." localized="Betûkészletek betöltése..."/>
-                        <GFX ENG="Loading gfx..." localized="Grafika betöltése..."/>
-                        <Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
-                        <Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
-                        <Vehicles ENG="Loading vehicles..." localized="Jármûvek betöltése..."/>
-                        <Buildings ENG="Loading buildings..." localized="Épületek betöltése..."/>
-                        <Music ENG="Loading music..." localized="Zene betöltése..."/>
-                        <Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
+            <Fonts ENG="Loading fonts..." localized="Betûkészletek betöltése..."/>
+            <GFX ENG="Loading gfx..." localized="Grafika betöltése..."/>
+            <Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
+            <Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
+            <Vehicles ENG="Loading vehicles..." localized="Jármûvek betöltése..."/>
+            <Buildings ENG="Loading buildings..." localized="Épületek betöltése..."/>
+            <Music ENG="Loading music..." localized="Zene betöltése..."/>
+            <Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
 			<Voices ENG="Loading voices..." localized="Hangok betöltése..."/>
 		</Init>
 		<Title>
@@ -87,7 +87,7 @@
 			<OK ENG="OK" localized="Ok"/>
 			<Done ENG="Done" localized="Kész"/>
 			<Cancel ENG="Cancel" localized="Mégse"/>
-			<Hot ENG="Hot" localized="Hot"/>
+			<Hot ENG="Sharp" localized="Sharp"/>
 			<Yes ENG="Yes" localized="Igen"/>
 			<No ENG="No" localized="Nem"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
@@ -122,7 +122,7 @@
 			<Status ENG="Status" localized="Státusz"/>
 			<Color ENG="Color" localized="Szín"/>
 			<Hitpoints ENG="Hits" localized="Sebzés"/>
-			<Ammo ENG="Ammo" localized="Lõszer"/>
+			<Ammo ENG="Munition" localized="Muníció"/>
 			<Range ENG="Range" localized="Lõtáv"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Grid ENG="Grid" localized="Rács"/>
@@ -178,7 +178,7 @@
 			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplõ játékosnév: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelõ a neve!"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="Körökreosztott játéknál lennie kell host-nak!"/>
-			<Player_Amount ENG="Amount of players" localized="Kérlek állítsd be a játékosok számát. HotSeat esetén minimum kettõ. Maximum 8 játékos lehet. "/>
+			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible." localized="Kérlek állítsd be a játékosok számát. HotSeat esetén minimum kettõ. Maximum 8 játékos lehet. "/>
 			<Player_Turn ENG="'s turn" localized=" köre következik"/>
 			<Player_Turn_End ENG=" ended turn" localized=" befejezte a körét"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyitható"/>
@@ -189,6 +189,7 @@
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
 			<Network_Connected_Not ENG="Not connected" localized="Nincs kapcsolat"/>
 			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>			
 			<Map_NoSet ENG="--no map set--" localized="--nincs Térkép kiválasztva--"/>
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
 			<Go ENG="Let's go" localized="Indítás"/>
@@ -200,7 +201,7 @@
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Damage" localized="Sebzés"/>
+			<Damage ENG="Attack" localized="Támadás"/>
 			<Shoots ENG="Shoots" localized="Lövés"/>
 			<Range ENG="Range" localized="Lõtáv"/>
 			<Ammo ENG="Ammo" localized="Lõszer"/>
@@ -214,20 +215,25 @@
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 		</Vehicles>
 		<Comp>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Nincs elég üzemanyag, generátor kikapcsolva!"/>
-			<Energy_Low ENG="To low energy, disabled consumer!" localized="Nincs elég áram, fogyasztó kikapcsolva!"/>
-			<Metal_Low ENG="To low metal, disabled consumer!" localized="nincs elég érc, fogyasztó kikapcsolva!"/>
-			<Gold_Low ENG="To low gold, disabled consumer!" localized="Nincs elég arany, fogyasztó kikapcsolva!"/>
-			<Team_Low ENG="To low teams, disabled consumer!" localized="Nincs elég munkás, felhasználó leállítva!"/>
+			<Fuel_Low ENG="Too low fuel, generator disabled!" localized="Nincs elég üzemanyag, generátor kikapcsolva!"/>
+			<Energy_Low ENG="Too low energy, disabled consumer!" localized="Nincs elég áram, fogyasztó kikapcsolva!"/>
+			<Metal_Low ENG="Too low metal, disabled consumer!" localized="nincs elég érc, fogyasztó kikapcsolva!"/>
+			<Gold_Low ENG="Too low gold, disabled consumer!" localized="Nincs elég arany, fogyasztó kikapcsolva!"/>
+			<Team_Low ENG="Too low teams, disabled consumer!" localized="Nincs elég munkás, felhasználó leállítva!"/>
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Az energiafelhasználás optimizálva"/>
+			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Nincs elegendõ energia az elindításhoz!"/>
+			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Nincs elegendõ energia, generátor elindítva!"/>
+			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Nincs elegendõ üzemanyag az elindításhoz!"/>
+			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="A generátort nem lehet kikapcsolni, szükség van az energiára!"/>
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Destroyed ENG="destroyed" localized="megsemmisült"/>
 			<Defeated ENG="defeated" localized="vereséget szenvedett"/>
 			<Finished ENG="is finished" localized="elkészült"/>
 			<Finished2 ENG="are finished" localized="elkészült"/>
 			<Detected ENG="detected" localized="észlelve"/>
+			<Stolen ENG="stolen" localized="ellopva"/>
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Valóban kilépsz? \n\nA nem mentett játékadatok elvesznek."/>
+			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost." localized="Valóban kilépsz? \n\nA nem mentett játékadatok elvesznek."/>
 			<Turn_Start ENG="Start turn" localized="Kör kezdése"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Kérlek várd meg, míg az összes lépés végrehajtódik"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Fennmaradó lépések végrehajtása"/>
@@ -266,7 +272,7 @@
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="hiányzik a fordítás: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Hiba a térkép betöltése közben"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializálva lett"/>
+      		<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializálva lett"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Még nincs implementálva"/>
 		</Error_Messages>
 	</Text>
@@ -342,7 +348,9 @@
 		<Unit ID="1 34" localized="Kiképzõközpont">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
 	</Units>
 	<Graphic>
+		<Dummy/>
 	</Graphic>
 	<Speech>
+		<Dummy/>
 	</Speech>
 </MAX_Language_File>

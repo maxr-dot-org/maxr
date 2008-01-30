@@ -216,11 +216,11 @@
 			<Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
-			<Fuel_Low ENG="To low fuel, generator disabled!"/>
-			<Energy_Low ENG="To low energy, disabled consumer!"/>
-			<Metal_Low ENG="To low metal, disabled consumer!"/>
-			<Gold_Low ENG="To low gold, disabled consumer!"/>
-			<Team_Low ENG="To low teams, disabled consumer!"/>
+			<Fuel_Low ENG="Too low fuel, generator disabled!"/>
+			<Energy_Low ENG="Too low energy, disabled consumer!"/>
+			<Metal_Low ENG="Too low metal, disabled consumer!"/>
+			<Gold_Low ENG="Too low gold, disabled consumer!"/>
+			<Team_Low ENG="Too low teams, disabled consumer!"/>
 			<Energy_Optimize ENG="Energygeneration optimized"/>
 			<Energy_Insufficient ENG="Insufficient energy for starting!"/>
 			<Energy_ToLow ENG="Insufficient energy, generator started!"/>
