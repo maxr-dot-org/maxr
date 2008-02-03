@@ -38,9 +38,39 @@ EX string sMAXPath;
 EX string sPalettePath;
 EX string sOutputPath;
 EX SDL_RWops *res ZERO;
+EX SDL_RWops *logFile ZERO;
+
 
 EX Uint32 lPosBegin;
 EX Uint32 lEndOfFile;
+
+EX int iErrors, iInstalledFiles, iTotalFiles;
+EX bool wasError;
+
+
+
+//this exception is thrown, when the installation of the current file failed
+class InstallException
+{
+public:
+	string message;
+	InstallException( string m ) { message = m; };
+};
+
+
+//makes all nessesary aktions after a succsessfull 
+//or unsuccessfull attempt to install a file
+#define END_INSTALL_FILE( file )\
+			catch ( InstallException e )\
+			{\
+				writeLog("Error while installing file '" + file + "'" + TEXT_FILE_LF + e.message );\
+				iErrors++;\
+				wasError = true;\
+			}\
+			iInstalledFiles++;\
+			updateProgressbar();
+		
+
 
 
 #endif // ResinstallerH

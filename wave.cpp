@@ -21,9 +21,11 @@
 
 
 #include <SDL.h>
+#include <string>
 #include "wave.h"
-//#include "converter.h"
 #include "file.h"
+#include "converter.h"
+
 
 int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
 {
@@ -31,7 +33,9 @@ int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
 
 	SDL_RWseek( file, 0, SEEK_SET);
 	if ( SDL_ReadLE32( file ) != RIFF )
+	{
 		return 0;
+	}
 
 	//ftm chunk length
 	SDL_RWseek( file, 16, SEEK_SET);
@@ -80,14 +84,12 @@ int loadWAV( string src, WaveFile& waveFile)
 {
 	SDL_RWops* file;
 	file = openFile( src, "rb");
-	if ( file == NULL )
-		return 0;
-
+	
 	//load audio data and format spec
 	if (SDL_LoadWAV_RW(file, 0, &waveFile.spec, &waveFile.buffer, &waveFile.length) == NULL)
 	{
 		SDL_RWclose( file );
-		return 0;
+		throw InstallException( "File '" + src + "' may be corrupted" + TEXT_FILE_LF);
 	}
 	//load smpl chunk
 	readSmplChunk( file, waveFile );
@@ -96,7 +98,7 @@ int loadWAV( string src, WaveFile& waveFile)
 	return 1;
 }
 
-int saveWAV (string dst, WaveFile& waveFile)
+void saveWAV (string dst, WaveFile& waveFile)
 {
 	int was_error = 0;
 	Chunk chunk;
@@ -114,13 +116,13 @@ int saveWAV (string dst, WaveFile& waveFile)
 	SDL_RWops* file = SDL_RWFromFile( dst.c_str(), "wb");
 	if ( file == NULL )
 	{
-		return 0;
+		throw InstallException( string( "Couldn't open file for writing") + TEXT_FILE_LF );
 	}
 		
 	// Write the magic header
 	if ( SDL_WriteLE32(file, RIFF) == -1 )
 	{
-		return 0;
+		throw InstallException( string( "Couldn't write to file") + TEXT_FILE_LF );
 	}
 	SDL_WriteLE32(file, HEADER_SIZE + audio_len);
 	SDL_WriteLE32(file, WAVE);
@@ -131,7 +133,8 @@ int saveWAV (string dst, WaveFile& waveFile)
 	chunk.data = (Uint8 *)malloc(chunk.length);
 	if ( chunk.data == NULL )
 	{
-		return 0;
+		cout << "out of memory\n";
+		exit ( -1 );
 	}
 	format = (WaveFMT *)chunk.data;
 	format->encoding = PCM_CODE;
@@ -208,99 +211,78 @@ done:
 
 	if ( was_error )
 	{
-		return 0;
+		throw InstallException( string("Error while saving wav file") + TEXT_FILE_LF );	
 	}
-
-	return 1;
 }
 
 
-int copyPartOfWAV( string src, string dst, Uint8 nr)
+void copyPartOfWAV( string src, string dst, Uint8 nr)
 {
 	WaveFile waveFile;
+	waveFile.buffer = NULL;
+	waveFile.smplChunk.ListofSampleLoops = NULL;
 
 	if ( nr > 1 )
 	{
-		return 0;
+		return;
 	}
+	try
+	{
+		//load file from disk
+		loadWAV(src, waveFile );
+		
+		//claculate absolute start/end positions
+		//in the original MAX the smpl chunk of ATTACK5.WAV is missing
+		//so we cut at fixed position, if smpl chunk is missing
 
-	//load file from disk
-	if( loadWAV(src, waveFile ) == 0)
-	{
-		return 0;
-	}
+		Uint8 bytesPerSample = (waveFile.spec.format & 0x00FF) / 8;
 
-	//in the original MAX the smpl chunk of ATTACK5.WAV is missing
-	//so we have to make a dirty workaround here
-	if ( waveFile.smplChunk.ListofSampleLoops == NULL && 
-		src.substr(src.length() - 11, 11).compare("ATTACK5.WAV") != 0)
-	{
-		SDL_FreeWAV ( waveFile.buffer );
-		return 0;
+		Uint32 start, end;
+		if ( waveFile.smplChunk.ListofSampleLoops == 0 )
+		{
+			if ( nr == 0 )
+			{
+				start = 0;
+				end   = 35001;
+			}
+			else if ( nr == 1)
+			{
+				start = 35002;
+				end   = waveFile.length - 1;
+			}
+		}
+		else
+		{
+			if ( nr == 0 )
+			{
+				start = 0;
+				end = (waveFile.smplChunk.ListofSampleLoops[0].Start - 1) * bytesPerSample;
+			}
+			else if ( nr == 1 )
+			{
+				start = waveFile.smplChunk.ListofSampleLoops[0].Start * bytesPerSample;
+				end   = waveFile.smplChunk.ListofSampleLoops[0].End * bytesPerSample;
+			}
+		}
+		
+		//resize the wave buffer and copy the desired part
+		waveFile.length = end - start;
+		Uint8* new_buffer = (Uint8*) malloc( waveFile.length );
+		if ( new_buffer == NULL )
+		{
+			cout << "out of memory\n";
+			exit ( -1);
+		}
+		memcpy( new_buffer, waveFile.buffer + start, waveFile.length );
+		SDL_FreeWAV( waveFile.buffer );
+		waveFile.buffer = new_buffer;
+		
+		//save resized wave
+		saveWAV( dst, waveFile );
 	}
+	END_INSTALL_FILE( dst )
 
-	//claculate absolute start/end positions
-	Uint8 bytesPerSample = (waveFile.spec.format & 0x00FF) / 8;
-	
-	Uint32 start, end;
-	if ( src.substr(src.length() - 11, 11).compare("ATTACK5.WAV") == 0 )
-	{
-		if ( nr == 0 )
-		{
-			start = 0;
-			end   = 35001;
-		}
-		else if ( nr == 1)
-		{
-			start = 35002;
-			end   = waveFile.length - 1;
-		}
-	}
-	else
-	{
-		if ( nr == 0 )
-		{
-			start = 0;
-			end = (waveFile.smplChunk.ListofSampleLoops[0].Start - 1) * bytesPerSample;
-		}
-		else if ( nr == 1 )
-		{
-			start = waveFile.smplChunk.ListofSampleLoops[0].Start * bytesPerSample;
-			end   = waveFile.smplChunk.ListofSampleLoops[0].End * bytesPerSample;
-		}
-	}
-	
-	//resize the wave buffer and copy the desired part
-	waveFile.length = end - start;
-	Uint8* new_buffer = (Uint8*) malloc( waveFile.length );
-	if ( new_buffer == NULL )
-	{
-		SDL_FreeWAV ( waveFile.buffer );
-		if ( waveFile.smplChunk.ListofSampleLoops != NULL )
-		{
-			free ( waveFile.smplChunk.ListofSampleLoops );
-		}
-		return 0;
-	}
-	memcpy( new_buffer, waveFile.buffer + start, waveFile.length );
-	SDL_FreeWAV( waveFile.buffer );
-	waveFile.buffer = new_buffer;
-	
-	//save resized wave
-	if( saveWAV( dst, waveFile ) == 0 )
-	{
-		free ( waveFile.buffer );
-		if ( waveFile.smplChunk.ListofSampleLoops != NULL )
-		{
-			free ( waveFile.smplChunk.ListofSampleLoops );
-		}
-		return 0;
-	}
+	if ( waveFile.buffer) free ( waveFile.buffer );
+	if ( waveFile.smplChunk.ListofSampleLoops ) free ( waveFile.smplChunk.ListofSampleLoops );
 
-	free ( waveFile.buffer );
-	if ( waveFile.smplChunk.ListofSampleLoops != NULL )
-	{
-		free ( waveFile.smplChunk.ListofSampleLoops );
-	}
-	return 1;
 }

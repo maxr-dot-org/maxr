@@ -104,12 +104,12 @@ int readSmplChunk( SDL_RWops* file, WaveFile& waveFile );
 int loadWAV( string src, WaveFile& waveFile);
 
 //saves a WaveFile structure to a physical wav file
-int saveWAV( string dst, WaveFile& waveFile);
+void saveWAV( string dst, WaveFile& waveFile);
 
 //copys a part of the src file to the dst file
 //the parts are defined by the wave files smpl chunk
 //currently 0 means the part before the first SampleLoop
 //and		1 means the first sample loop
-int copyPartOfWAV( string src, string dst, Uint8 nr);
+void copyPartOfWAV( string src, string dst, Uint8 nr);
 
 #endif //wave_h

@@ -23,6 +23,7 @@
 #include <string>
 #include <SDL.h>
 #include "resinstaller.h"
+#include "converter.h"
 
 
 //first tries to open a file with lowercase name
@@ -40,6 +41,7 @@ SDL_RWops* openFile( string path, const char* mode)
 	{
 		fileName[i] = tolower(fileName[i]); 
 	}
+	string lowerCaseFileName = fileName;
 	SDL_RWops* file = SDL_RWFromFile( (path + fileName).c_str(), mode );
 	if ( file != NULL )
 	{
@@ -56,45 +58,49 @@ SDL_RWops* openFile( string path, const char* mode)
 	{
 		return file;
 	}
-
+	
+	throw InstallException( "Couldn't open file '" + path + fileName + "' or '" + lowerCaseFileName + "'" + TEXT_FILE_LF);
 	return NULL;
 }
 
-int copyFile( string source, string dest )
+void copyFile( string source, string dest )
 {
 	long int size;
 	unsigned char* buffer;
-	SDL_RWops *sourceFile, *destFile;
-
-	sourceFile = openFile ( source, "rb" );
-	if ( sourceFile == NULL )
+	SDL_RWops *sourceFile = NULL;
+	SDL_RWops *destFile = NULL;
+	
+	try
 	{
-		return 0;
+		sourceFile = openFile ( source, "rb" );
+		
+
+		destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
+		if ( destFile == NULL )
+		{
+			throw InstallException (string( "Couldn't open file for writing") + TEXT_FILE_LF );
+		}
+
+		SDL_RWseek( sourceFile, 0, SEEK_END );
+		size = SDL_RWtell( sourceFile );
+
+		buffer = (unsigned char*) malloc( size );
+		if ( buffer == NULL )
+		{
+			cout << "out of memory\n";
+			exit (-1);
+		}
+
+		SDL_RWseek( sourceFile, 0, SEEK_SET);
+		SDL_RWread( sourceFile, buffer, 1, size );
+
+		SDL_RWwrite( destFile, buffer, 1, size );
+
+		free ( buffer );
 	}
+	END_INSTALL_FILE( dest );
 
-	destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
-	if ( destFile == NULL )
-	{
-		return 0;
-	}
+	if (sourceFile) SDL_RWclose( sourceFile );
+	if (destFile)   SDL_RWclose( destFile );
 
-	SDL_RWseek( sourceFile, 0, SEEK_END );
-	size = SDL_RWtell( sourceFile );
-
-	buffer = (unsigned char*) malloc( size );
-	if ( buffer == NULL )
-	{
-		return 0;
-	}
-
-	SDL_RWseek( sourceFile, 0, SEEK_SET);
-	SDL_RWread( sourceFile, buffer, 1, size );
-
-	SDL_RWwrite( destFile, buffer, 1, size );
-
-	free ( buffer );
-	SDL_RWclose( sourceFile );
-	SDL_RWclose( destFile );
-
-	return 1;
 }

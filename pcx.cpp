@@ -38,7 +38,7 @@ int savePCX_8bpp(SDL_Surface* surface, string fileName)
 
 	if (file == NULL)
 	{
-		return 0;
+		throw InstallException( string( "Couldn't open file for writing") + TEXT_FILE_LF );
 	}
 	
 	//PCX-Header erzeugen
@@ -129,7 +129,7 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 
 	if (file == NULL)
 	{
-		return 0;
+		throw InstallException( string( "Couldn't open file for writing") + TEXT_FILE_LF );
 	}
 
 	//PCX-Header erzeugen
@@ -185,7 +185,10 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 		if ( j == NrColors )
 		{
 			if ( NrColors > 255 ) 
-				return 0;			//to many colors, table full
+			{
+				//to many colors, table full
+				throw InstallException( string("Couldn't convert image to 8 bpp, color table full") + TEXT_FILE_LF );
+			}
 			colors[NrColors] = surface_data[Index];
 			bild[Index] = NrColors;
 			NrColors++;

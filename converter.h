@@ -25,6 +25,8 @@
 #include "defines.h"
 #include "resinstaller.h"
 
+
+
 struct sPixel
 {
 	unsigned char Blue, Green, Red;
@@ -49,7 +51,6 @@ struct cImageData
 
 class cImage
 {
-	bool bDecoded;
 	short sWidth;
 	short sHeight;
 	cImageData *Images;
@@ -69,6 +70,7 @@ public:
 	cImage();
 	~cImage();
 
+	bool bDecoded;
 	char name[9];
 	Sint32 lPos;
 	Sint32 lLenght;
@@ -84,9 +86,9 @@ public:
 SDL_Surface* getImage(string file_name, int imageNr = 0);
 void removePlayerColor( SDL_Surface *surface);
 int saveAllFiles();
-int copyFileFromRes ( string src, string dst, int number = 0 );
-int copyFileFromRes_rpc(string src, string dst, int number = 0 );
-int copyImageFromFLC(string fileName, string dst);
+void copyFileFromRes ( string src, string dst, int number = 0 );
+void copyFileFromRes_rpc(string src, string dst, int number = 0 );
+void copyImageFromFLC(string fileName, string dst);
 
 /** resizes (not scales!) a surface
 * @author Eiko
@@ -100,6 +102,9 @@ int copyImageFromFLC(string fileName, string dst);
 void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w );
 
 void generateAnimationFrame( SDL_Surface* surface, unsigned char frame);
+string iToStr(int x);
+void updateProgressbar();
+void writeLog( string msg );
 
 
 #endif // ConvertH

@@ -22,11 +22,13 @@
 #include <math.h>
 #include <SDL.h>
 #include <string>
+#include <sstream>
 #include "converter.h"
 #include "pcx.h"
 #include "SDL_flic.h"
 #include "palette.h"
 #include "file.h"
+
 
 cImage::cImage()
 {
@@ -137,6 +139,12 @@ void cImage::resampleFile()
 	{
 		//create surface
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE, sWidth, sHeight,8,0,0,0,0);
+		if ( surface == NULL )
+		{
+			cout << "out of memory\n";
+			exit (-1);
+		}
+
 		surface->pitch = surface->w;	//this seems to be an SDL-Bug...
 										//sometimes the pitch of a surface has an wrong value
 		
@@ -612,8 +620,10 @@ bool cImage::decodeBigImage()
 
 SDL_Surface* cImage::getSurface(int imageNr)
 {
-	if ( imageNr > iImageCount - 1) 
-		return NULL;
+	if ( imageNr > iImageCount - 1)
+	{
+		throw InstallException( string("Image '") + name + "' number " + iToStr(imageNr) + " not found in max.res" );
+	}
 
 	Images[imageNr].surface->refcount++;
 
@@ -625,19 +635,25 @@ SDL_Surface* cImage::getSurface(int imageNr)
 //I should really think about my interface to the res hacker...
 SDL_Surface* getImage(string file_name, int imageNr)
 {
+	if ( res == NULL )
+	{
+		throw InstallException( string("max.res was not opened") + TEXT_FILE_LF );
+	}
+
 	Uint32 lPosOfFile = lPosBegin;
+	cImage Image;
 
 	//search desired file in max.res
 	while( lPosOfFile < lEndOfFile )
 	{
-		char name[9];
 
 		SDL_RWseek( res, lPosOfFile, SEEK_SET );
 
-		SDL_RWread ( res, name, sizeof( char ), 8 );
-		name[8] = '\0';
+		SDL_RWread ( res, Image.name, sizeof( char ), 8 );
+		Image.name[8] = '\0';
+		
 
-		if ( file_name.compare(name) == 0)
+		if ( file_name.compare(Image.name) == 0)
 			break;
 
 		lPosOfFile += 16;
@@ -645,10 +661,8 @@ SDL_Surface* getImage(string file_name, int imageNr)
 
 	if (lPosOfFile >= lEndOfFile)
 	{
-		return NULL;
+		throw InstallException("Image '" + file_name + "' not found in max.res" + TEXT_FILE_LF);
 	}
-
-	cImage Image;
 
 	//read pos and length of image in max.res
 	Image.lPos = (Sint32) SDL_ReadLE32 ( res );
@@ -667,6 +681,11 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	Image.decodeFile();
 	Image.resampleFile();
 	
+	if ( !Image.bDecoded )
+	{
+		throw InstallException("Could not decode image '" + file_name + "' from max.res" + TEXT_FILE_LF);
+	}
+
 	return Image.getSurface(imageNr);
 	
 }
@@ -721,49 +740,58 @@ int saveAllFiles()
 	return 1;
 }
 
-int copyFileFromRes ( string src, string dst, int number )
+void copyFileFromRes ( string src, string dst, int number )
 {
-	SDL_Surface *surface;
-	surface = getImage(src, number);
-	savePCX ( surface, dst );
-	SDL_FreeSurface ( surface );
-
-	return 1;
+	SDL_Surface *surface = NULL;
+	try
+	{
+		surface = getImage(src, number);
+		savePCX ( surface, dst );
+		SDL_FreeSurface ( surface );
+	}
+	END_INSTALL_FILE( dst )
 }
 
 
 //rpc stands for "remove player color"
-int copyFileFromRes_rpc(string src, string dst, int number )
+void copyFileFromRes_rpc(string src, string dst, int number )
 {
-	SDL_Surface *surface;
-	surface = getImage(src, number);
-	removePlayerColor( surface );
-	savePCX( surface, dst);
-	SDL_FreeSurface( surface );
+	SDL_Surface *surface = NULL;
+	try
+	{
+		surface = getImage(src, number);
+		removePlayerColor( surface );
+		savePCX ( surface, dst );
+		SDL_FreeSurface( surface );
+	}
+	END_INSTALL_FILE( dst )
 
-	return 1;
 }
 	
-int copyImageFromFLC(string fileName, string dst)
+void copyImageFromFLC(string fileName, string dst)
 {
-	SDL_RWops* file = openFile(fileName, "rb");
-	if (!file)
-		return 0;
+	try
+	{
+		SDL_RWops* file = openFile(fileName, "rb");
+		int error;
+		FLI_Animation* animation;
 
-	int error;
-	FLI_Animation* animation;
+		animation = FLI_Open( file, &error);
+		if ( error != 0 )
+		{
+			throw InstallException( "FLC-File '" + fileName + "' may be corrupted" + TEXT_FILE_LF );
+		}
 
-	animation = FLI_Open( file, &error);
-	if ( error != 0 )
-		return 0;
-
-	error = FLI_NextFrame( animation );
-	if (  error!=0 )
-		return 0;
-	
-	savePCX(animation->surface, dst);
-
-	return 1;
+		error = FLI_NextFrame( animation );
+		if (  error != 0 )
+		{	
+			FLI_Close( animation );
+			throw InstallException( "FLC-File '" + fileName + "' may be corrupted" + TEXT_FILE_LF);
+		}
+		
+		savePCX(animation->surface, dst);
+	}
+	END_INSTALL_FILE( dst )
 }
 
 void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
@@ -771,6 +799,7 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 	SDL_Rect dst_rect, src_rect;
 	SDL_Surface* resizedSurface;
 
+	
 	if ( surface->format->BitsPerPixel != 8 )
 		return;
 	
@@ -801,6 +830,11 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 	}
 
 	resizedSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, h, w, 8,0,0,0,0);
+	if ( resizedSurface == NULL )
+	{
+		cout << "out of memory";
+		exit (-1);
+	}
 	resizedSurface->pitch = resizedSurface->w;	//this seems to be an SDL-Bug...
 												//sometimes the pitch of a surface has an wrong value
 	SDL_SetColors(resizedSurface, surface->format->palette->colors, 0, 256);
@@ -1049,4 +1083,40 @@ void generateAnimationFrame( SDL_Surface *surface, unsigned char frame)
 	setAnimationColor( surface, 22, frame);
 	setAnimationColor( surface, 23, frame);
 	setAnimationColor( surface, 24, frame);
+}
+
+void updateProgressbar()
+{
+	static int value = 0;
+
+	if ( iInstalledFiles == 1 ) //we are drawing a new progress bar
+	{
+		value = 0;
+	}
+
+	int newValue = (int) ((float) iInstalledFiles * 72 / iTotalFiles);
+
+	for ( int i = value; i < newValue; i++ )
+		cout << ".";
+
+	value = newValue;
+}
+
+string iToStr(int x)
+{
+ 	stringstream strStream;
+ 	strStream << x;
+ 	return strStream.str();
+}
+
+void writeLog( string msg )
+{
+	if ( logFile != NULL )
+	{
+		SDL_RWwrite( logFile, msg.c_str(), (int) msg.length(), 1);
+	}
+	else
+	{
+		cout << msg;
+	}
 }
