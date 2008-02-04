@@ -49,7 +49,3 @@
 #endif
 
 #endif // DefinesH
-
-
-
-

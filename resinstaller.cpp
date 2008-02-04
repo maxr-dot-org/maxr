@@ -2533,7 +2533,7 @@ int main ( int argc, char* argv[] )
 			sMAXPath = sMAXPath + "MAX" + PATH_DELIMITER;
 			break;
 		}
-		catch (...) {}
+		catch ( InstallException ) {}
 		
 		try
 		{
@@ -2541,15 +2541,15 @@ int main ( int argc, char* argv[] )
 			sMAXPath = sMAXPath + PATH_DELIMITER + "MAX" + PATH_DELIMITER;
 			break;
 		}
-		catch (...) {}
-
+		catch ( InstallException ) {}
+		
 		cout << "Could not open resourcefile\n";
 
 	}
 
 	while (1)
 	{
-		cout << "\nPlease enter path to ouputfolder: \n";
+		cout << "\nPlease enter path to ouputfolder: ";
 		cin >> sOutputPath;
 		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		
@@ -2562,7 +2562,7 @@ int main ( int argc, char* argv[] )
 			SDL_RWclose( testFile );
 			break;
 		}
-		catch (...) {}
+		catch ( InstallException ) {}
 
 		try
 		{
@@ -2571,9 +2571,9 @@ int main ( int argc, char* argv[] )
 			SDL_RWclose( testFile );
 			break;
 		}
-		catch (...) {}
+		catch ( InstallException ) {}
 
-		cout << "MAX Reloaded installation not found in given folder.\n";
+		cout << "MAX Reloaded installation not found in the given folder.\n";
 	}
 	
 	//create log file
@@ -2591,7 +2591,6 @@ int main ( int argc, char* argv[] )
 	
 	lPosBegin = 15000000;		//the '[EOD]' should be after this position 
 								//for all versions of max.res, I think 
-								//--eiko
 
 	//a little state maschine for searching the string "[EOD]" in max.res
 	unsigned char temp, state = 0;
@@ -2650,6 +2649,10 @@ int main ( int argc, char* argv[] )
 	if ( wasError )
 	{
 		cout << "There were errors while installing. See 'resinstaller.log' for details.\n";
+	}
+	else
+	{
+		cout << "Finished\n";
 	}
 	
 	SDL_RWclose( res );
