@@ -2543,6 +2543,22 @@ int main ( int argc, char* argv[] )
 			break;
 		}
 		catch ( InstallException ) {}
+
+		try
+		{
+			res = openFile ( (sMAXPath + "max" + PATH_DELIMITER + "MAX.RES").c_str(), "rb" );
+			sMAXPath = sMAXPath + "max" + PATH_DELIMITER;
+			break;
+		}
+		catch ( InstallException ) {}
+		
+		try
+		{
+			res = openFile ( (sMAXPath + PATH_DELIMITER + "max" + PATH_DELIMITER + "MAX.RES").c_str(), "rb" );
+			sMAXPath = sMAXPath + PATH_DELIMITER + "max" + PATH_DELIMITER;
+			break;
+		}
+		catch ( InstallException ) {}
 		
 		cout << "Could not open resourcefile\n";
 
