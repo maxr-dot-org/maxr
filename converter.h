@@ -66,6 +66,7 @@ class cImage
 	bool decodeBigImage();
 
 public:
+	static cImage* Image;
 	
 	cImage();
 	~cImage();

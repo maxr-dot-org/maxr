@@ -29,6 +29,7 @@
 #include "palette.h"
 #include "file.h"
 
+cImage* cImage::Image = NULL;
 
 cImage::cImage()
 {
@@ -630,63 +631,72 @@ SDL_Surface* cImage::getSurface(int imageNr)
 	return Images[imageNr].surface;
 }
 
-//TODO: for every call of getImage, all picutes with the given name (and different imageNr) are decoded too
-//this wastes much time
-//I should really think about my interface to the res hacker...
 SDL_Surface* getImage(string file_name, int imageNr)
 {
 	if ( res == NULL )
 	{
 		throw InstallException( string("max.res was not opened") + TEXT_FILE_LF );
 	}
-
-	Uint32 lPosOfFile = lPosBegin;
-	cImage Image;
-
-	//search desired file in max.res
-	while( lPosOfFile < lEndOfFile )
+	cImage* Image = cImage::Image;
+	if ( Image == NULL || file_name.compare( Image->name ) != 0 )
 	{
-
-		SDL_RWseek( res, lPosOfFile, SEEK_SET );
-
-		SDL_RWread ( res, Image.name, sizeof( char ), 8 );
-		Image.name[8] = '\0';
+		Uint32 lPosOfFile = lPosBegin;
+		
+		Image = new cImage();
 		
 
-		if ( file_name.compare(Image.name) == 0)
-			break;
+		//search desired file in max.res
+		while( lPosOfFile < lEndOfFile )
+		{
 
-		lPosOfFile += 16;
+			SDL_RWseek( res, lPosOfFile, SEEK_SET );
+
+			SDL_RWread ( res, Image->name, sizeof( char ), 8 );
+			Image->name[8] = '\0';
+			
+
+			if ( file_name.compare(Image->name) == 0)
+				break;
+
+			lPosOfFile += 16;
+		}
+
+		if (lPosOfFile >= lEndOfFile)
+		{
+			throw InstallException("Image '" + file_name + "' not found in max.res" + TEXT_FILE_LF);
+		}
+
+		//read pos and length of image in max.res
+		Image->lPos = (Sint32) SDL_ReadLE32 ( res );
+		Image->lLenght = (Sint32) SDL_ReadLE32 ( res );
+		
+		//copy color table
+		Image->palette = (sPixel*) malloc ( sizeof( sPixel ) * 256 );
+		for ( int i = 0; i < 256; i++ )
+		{
+			Image->palette[i].Blue  = orig_palette[3*i];
+			Image->palette[i].Green = orig_palette[3*i + 1];
+			Image->palette[i].Red   = orig_palette[3*i + 2];
+		}
+
+		//extract image
+		Image->decodeFile();
+		Image->resampleFile();
+
+		if ( cImage::Image != NULL )
+		{
+			delete cImage::Image;
+		}
+		cImage::Image = Image;
+
 	}
-
-	if (lPosOfFile >= lEndOfFile)
-	{
-		throw InstallException("Image '" + file_name + "' not found in max.res" + TEXT_FILE_LF);
-	}
-
-	//read pos and length of image in max.res
-	Image.lPos = (Sint32) SDL_ReadLE32 ( res );
-	Image.lLenght = (Sint32) SDL_ReadLE32 ( res );
 	
-	//copy color table
-	Image.palette = (sPixel*) malloc ( sizeof( sPixel ) * 256 );
-	for ( int i = 0; i < 256; i++ )
-	{
-		Image.palette[i].Blue  = orig_palette[3*i];
-		Image.palette[i].Green = orig_palette[3*i + 1];
-		Image.palette[i].Red   = orig_palette[3*i + 2];
-	}
-
-	//extract image
-	Image.decodeFile();
-	Image.resampleFile();
-	
-	if ( !Image.bDecoded )
+	if ( !Image->bDecoded )
 	{
 		throw InstallException("Could not decode image '" + file_name + "' from max.res" + TEXT_FILE_LF);
 	}
 
-	return Image.getSurface(imageNr);
+	return Image->getSurface(imageNr);
 	
 }
 

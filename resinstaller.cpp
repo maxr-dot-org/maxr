@@ -2507,6 +2507,7 @@ int main ( int argc, char* argv[] )
 {
 	while ( 1 )
 	{
+		//fixme: path's with space characters don't work
 		cout << "Please enter path to MAX-Installation or MAX-CD: ";
 		cin >> sMAXPath;
 		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
@@ -2549,7 +2550,8 @@ int main ( int argc, char* argv[] )
 
 	while (1)
 	{
-		cout << "\nPlease enter path to ouputfolder: ";
+		//fixme: path's with space characters don't work
+		cout << "\nPlease enter path to outputfolder: ";
 		cin >> sOutputPath;
 		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		
