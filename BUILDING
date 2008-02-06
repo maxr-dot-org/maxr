@@ -1,4 +1,4 @@
-PREREQUISOTES
+PREREQUISITES
 
 You'll need to have these libraries (with equivalent devel versions) to
 build M.A.X. Reloaded:
@@ -27,9 +27,14 @@ svn://maxthegame.dyndns.org/MAX/trunk
 
 WINDOWS
 
-There's for now only a (german) howto set up Visual Studio for MAX:
+HowTo: Building maxr using MinGW (English)
+
+http://maxthegame.de/wiki/index.php5?title=Building_M.A.X._Reloaded_using_MinGW_Developer_Studio
+
+HowTo: Building maxr using Visual Studio (German):
 
 http://maxthegame.de/wiki/index.php5?title=MAX-Reloaded_unter_VS
+
 
 LINUX
 
@@ -75,3 +80,6 @@ Starting:
 After installing currently needed original gamedata (see INSTALL) 
 you can start M.A.X. Reloaded executing ./maxr in the gamedirectory
 
+If you don't want to install maxr simply move the new binary maxr
+from src to the data directory. Now you can start M.A.X. Reloaded
+executing ./maxr

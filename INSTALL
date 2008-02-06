@@ -1,4 +1,4 @@
-PREREQUISOTES
+PREREQUISITES
 
 You'll need to have these libraries (with equivalent devel versions
 for building) to play M.A.X. Reloaded:
@@ -51,11 +51,22 @@ http://www.cdosabandonware.com/std_games_details.php?gameid=1979
 
 TROUBLESHOOTING
 
-Resolution:
+Compilation problems on 64bit and/or ppc:
+
+Not supported yet, sorry.
+
+Compilation problems:
+
+If you compile from source and get errors about mix_chunk try upgrading
+your SDL and SDL_mixer installation. We experienced this problems on
+SDL_mixer prior 1.2.8.
+
+Screenresolution:
 
 It is possible to increase the resolution in MAX.XML however
 you should keep in mind that all menus and displays are designed for
-640x480. If you experience odd graphical problems you're on your own.
+640x480. If you experience odd graphical problems (and there are!)
+you're on your own.
 
 Sound:
 
@@ -74,8 +85,6 @@ an entry in maps.xml
 
 Known Bugs:
 
-Many. Multiplayer does NOT work. HotSeat does.
-
-If you compile from source and get errors about mix_chunk try upgrading
-your SDL and SDL_mixer installation. We experienced this problems on
-SDL_mixer prior 1.2.8.
+Many. Multiplayer does NOT work. HotSeat does. There is no AI! For more
+known and/or fixed bugs please visit our bugtracker:
+http://maxthegame.dyndns.org:8080/tracker/report/1
