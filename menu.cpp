@@ -513,7 +513,6 @@ void RunMPMenu ( void )
 			mouse->draw ( false,screen );
 		}
 		// TCP Host:
-		#define RELEASE true
 		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
