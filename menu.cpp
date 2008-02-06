@@ -513,6 +513,7 @@ void RunMPMenu ( void )
 			mouse->draw ( false,screen );
 		}
 		// TCP Host:
+		#define RELEASE true
 		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
 		{
 			if ( b&&!lb )
@@ -520,6 +521,14 @@ void RunMPMenu ( void )
 				TCPHostPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
 				drawMenuButton ( TCPIPHOST,true,BTN_1_X,BTN_1_Y );
+				SHOW_SCREEN
+				#ifdef RELEASE
+					TCPHostPressed=false;
+					drawMenuButton ( TCPIPHOST,false,BTN_1_X,BTN_1_Y );
+					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
+				#else
+					//nothing to do here	
+				#endif
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -546,6 +555,14 @@ void RunMPMenu ( void )
 				TCPClientPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
 				drawMenuButton ( TCPIPCLIENT,true,BTN_2_X,BTN_2_Y );
+				SHOW_SCREEN
+				#ifdef RELEASE
+					TCPClientPressed=false;
+					drawMenuButton ( TCPIPCLIENT,false,BTN_2_X,BTN_2_Y );
+					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
+				#else
+					//nothing to do here	
+				#endif
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
