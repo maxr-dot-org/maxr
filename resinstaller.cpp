@@ -2502,7 +2502,63 @@ int installVehicleSounds()
 	return 1;
 }
 
+void installVoices()
+{
+	string path;
+	iTotalFiles = 32;
+	iErrors = 0;
+	iInstalledFiles = 0;
 
+	cout << "========================================================================\n";
+	cout << "Voices\n";
+
+	path = sOutputPath + "voices" + PATH_DELIMITER;
+	copyFile(sVoicePath + "F001.WAV", path + "ok2.wav");
+	copyFile(sVoicePath + "F004.WAV", path + "ok2.wav");
+	copyFile(sVoicePath + "F006.WAV", path + "ok3.wav");
+	copyFile(sVoicePath + "F012.WAV", path + "commando_detected.wav");
+	copyFile(sVoicePath + "F013.WAV", path + "saved.wav");
+	copyFile(sVoicePath + "F053.WAV", path + "start_none.wav");
+	copyFile(sVoicePath + "F070.WAV", path + "detected1.wav");
+	copyFile(sVoicePath + "F071.WAV", path + "detected2.wav");
+	copyFile(sVoicePath + "F085.WAV", path + "loaded.wav");
+	copyFile(sVoicePath + "F093.WAV", path + "research_complete.wav");
+	copyFile(sVoicePath + "F094.WAV", path + "no_path1.wav");
+	copyFile(sVoicePath + "F095.WAV", path + "no_path2.wav");
+	copyFile(sVoicePath + "F138.WAV", path + "low_ammo2.wav");
+	copyFile(sVoicePath + "F142.WAV", path + "low_ammo1.wav");
+	copyFile(sVoicePath + "F145.WAV", path + "no_speed.wav");
+	copyFile(sVoicePath + "F150.WAV", path + "status_yellow.wav");
+	copyFile(sVoicePath + "F154.WAV", path + "status_red.wav");
+	copyFile(sVoicePath + "F158.WAV", path + "wachposten.wav");
+	copyFile(sVoicePath + "F162.WAV", path + "build_done1.wav");
+	copyFile(sVoicePath + "F165.WAV", path + "build_done2.wav");
+	copyFile(sVoicePath + "F166.WAV", path + "start_one.wav");
+	copyFile(sVoicePath + "F171.WAV", path + "clearing.wav");
+	copyFile(sVoicePath + "F181.WAV", path + "laying_mines.wav");
+	copyFile(sVoicePath + "F187.WAV", path + "clearing_mines.wav");
+	//copyFile(sVoicePath + "F191.WAV", path + "surveying.wav");
+	copyFile(sVoicePath + "F206.WAV", path + "start_more.wav");
+	copyFile(sVoicePath + "F220.WAV", path + "repaired.wav");
+	copyFile(sVoicePath + "F224.WAV", path + "transfer_done.wav");
+	copyFile(sVoicePath + "F232.WAV", path + "attacking_us.wav");
+	copyFile(sVoicePath + "F234.WAV", path + "destroyed_us.wav");
+	copyFile(sVoicePath + "F239.WAV", path + "unit_stolen.wav");
+	copyFile(sVoicePath + "F244.WAV", path + "unit_disabled.wav");
+	copyFile(sVoicePath + "F249.WAV", path + "disabled.wav");
+
+
+	if ( logFile != NULL )
+	{
+		writeLog( string("Voices") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+
+}
 int main ( int argc, char* argv[] )
 {
 	while ( 1 )
@@ -2593,7 +2649,144 @@ int main ( int argc, char* argv[] )
 
 		cout << "MAX Reloaded installation not found in the given folder.\n";
 	}
-	
+
+	//check for available languages for voices
+	string testFileName = "F001.WAV";
+
+	bool german = false, italian = false, french = false;
+	bool uppercase;
+	int iLanguages = 0;
+	SDL_RWops* testFile;
+	try
+	{
+		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName, "r" );
+		german = true;
+		iLanguages++;
+		uppercase = false;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	try
+	{
+		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName, "r" );
+		if ( german == false ) iLanguages++;
+		german = true;
+		uppercase = true;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	try
+	{
+		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName, "r" );
+		italian = true;
+		iLanguages++;
+		uppercase = false;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	try
+	{
+		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName, "r" );
+		if ( italian == false ) iLanguages++;
+		italian = true;
+		uppercase = true;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	try
+	{
+		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName, "r" );
+		french = true;
+		iLanguages++;
+		uppercase = false;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	try
+	{
+		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName, "r" );
+		if ( french == false ) iLanguages++;
+		french = true;
+		uppercase = true;
+		SDL_RWclose( testFile );
+	}
+	catch ( InstallException ) {}
+
+	if ( iLanguages == 0 )
+	{
+		//we are not installing from CD
+		sVoicePath = sMAXPath;
+	}
+	else
+	{
+		//make menu
+		cout << "\nThe following languages are available for the voice files:\n";
+		cout << "- english\n";
+		if ( german == true ) cout << "- german\n";
+		if ( italian == true ) cout << "- italian\n";
+		if ( french == true ) cout << "- french\n";
+
+		string input;
+		while ( 1 )
+		{
+			cout << "\nplease enter your prefered language: ";
+			cin >> input;
+
+			if ( input.compare("english") == 0 )
+			{
+				sVoicePath = sMAXPath;
+				break;
+			}
+
+			if ( input.compare("german") == 0 )
+			{
+				if ( uppercase )
+				{
+					sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+				}
+				else
+				{
+					sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
+				}
+				break;
+			}
+
+			if ( input.compare("italian") == 0 )
+			{
+				if ( uppercase )
+				{
+					sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
+				}
+				else
+				{
+					sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
+				}
+				break;
+			}
+
+			if ( input.compare("french") == 0 )
+			{
+				if ( uppercase )
+				{
+					sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
+				}
+				else
+				{
+					sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
+				}
+				break;
+			}
+
+			cout << "language not recognized\n";
+		}
+	}
+
+
 	//create log file
 	logFile = SDL_RWFromFile("resinstaller.log", "w" );
 	if ( logFile == NULL )
@@ -2603,6 +2796,7 @@ int main ( int argc, char* argv[] )
 
 	wasError = 0;
 		
+	//init res converter
 	SDL_RWseek( res, 0, SEEK_END );
 	lEndOfFile = SDL_RWtell (res);
 
@@ -2663,6 +2857,8 @@ int main ( int argc, char* argv[] )
 	installVehicleVideos();
 	installVehicleGraphics();
 	installBuildingGraphics();
+	installVoices();
+	
 
 	if ( wasError )
 	{

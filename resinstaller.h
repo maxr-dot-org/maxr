@@ -35,7 +35,7 @@ using namespace std;
 
 
 EX string sMAXPath;
-EX string sPalettePath;
+EX string sVoicePath;
 EX string sOutputPath;
 EX SDL_RWops *res ZERO;
 EX SDL_RWops *logFile ZERO;
