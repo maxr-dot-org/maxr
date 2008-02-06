@@ -311,8 +311,17 @@ void RunMainMenu ( void )
 			}
 			else if ( !b&&MPPRessed )
 			{
-				RunMPMenu();
-				prepareMenu(true);
+				#ifdef RELEASE
+					
+					MPPRessed=false;
+					drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
+					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
+					mouse->draw ( false,screen );
+				#else
+					RunMPMenu();
+					prepareMenu(true);
+				#endif
+				
 				SHOW_SCREEN
 				SPPressed=false;
 				EscHot=false;
@@ -702,6 +711,8 @@ void RunSPMenu ( void )
 				StartTrainingPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
 				drawMenuButton ( TRAINING,true,BTN_1_X, BTN_1_Y );
+				ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
+				//not implemented yet
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
