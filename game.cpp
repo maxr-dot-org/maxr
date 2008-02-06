@@ -121,15 +121,11 @@ cGame::~cGame ( void )
 		ptr=FXList->Items[0];
 		if ( ptr->typ==fxRocket )
 		{
-			sFXRocketInfos *p2;
-			p2= ( sFXRocketInfos* ) ( ptr->param );
-			delete p2;
+			delete ptr->rocketInfo;
 		}
 		else if ( ptr->typ==fxDarkSmoke )
 		{
-			sFXDarkSmoke *p2;
-			p2= ( sFXDarkSmoke* ) ( ptr->param );
-			delete p2;
+			delete ptr->smokeInfo;
 		}
 		delete ptr;
 		FXList->Delete ( 0 );
@@ -141,21 +137,19 @@ cGame::~cGame ( void )
 		ptr=FXListBottom->Items[0];
 		if ( ptr->typ==fxTorpedo )
 		{
-			sFXRocketInfos *p2;
-			p2= ( sFXRocketInfos* ) ( ptr->param );
-			delete p2;
+			delete ptr->rocketInfo;
 		}
 		else if ( ptr->typ==fxTracks )
 		{
-			sFXTracks *p2;
-			p2= ( sFXTracks* ) ( ptr->param );
-			delete p2;
+			delete ptr->trackInfo;
 		}
 		delete ptr;
 		FXListBottom->Delete ( 0 );
 	}
 	delete FXListBottom;
-	while(DirtList){
+
+	while(DirtList)
+	{
 	  cBuilding *ptr;
 	  ptr=DirtList->next;
 	  delete DirtList;
