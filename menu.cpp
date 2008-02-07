@@ -311,17 +311,8 @@ void RunMainMenu ( void )
 			}
 			else if ( !b&&MPPRessed )
 			{
-				#ifdef RELEASE
-					
-					MPPRessed=false;
-					drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
-					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
-					mouse->draw ( false,screen );
-				#else
-					RunMPMenu();
-					prepareMenu(true);
-				#endif
-				
+				RunMPMenu();
+				prepareMenu(true);
 				SHOW_SCREEN
 				SPPressed=false;
 				EscHot=false;
