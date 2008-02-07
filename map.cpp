@@ -63,104 +63,334 @@ struct sTuple
 	int to;
 };
 
+SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, int iOffToWater, int iWaterCount, bool &overlay  )
+{
+	// Create new surface and copy palette
+	overlay = false;
+	SDL_Surface *surface;
+	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
+	surface->pitch = surface->w;
+
+	surface->format->palette->ncolors = 256;
+	for (int i = 0; i < 256; i++ )
+	{
+		surface->format->palette->colors[i].r = Palette[i].cBlue;
+		surface->format->palette->colors[i].g = Palette[i].cGreen;
+		surface->format->palette->colors[i].b = Palette[i].cRed;
+		// If is not a water graphic it may could be an overlay graphic so index 96 must hava an other color
+		if ( i == 96 && ( iNum >= iOffToWater+iWaterCount || iNum < iOffToWater ) )
+		{
+			surface->format->palette->colors[i].r = 255;
+			surface->format->palette->colors[i].g = 0;
+			surface->format->palette->colors[i].b = 255;
+		}
+	}
+
+	// Go to position of filedata
+	SDL_RWseek ( fpMapFile, iGraphicsPos + 64*64*( iNum ), SEEK_SET );
+
+	// Read pixel data and write to surface
+	for( int iY = 64-1; iY >= 0; iY-- )
+	{
+		for( int iX = 0; iX < 64; iX++ )
+		{
+			unsigned char cColorOffset;
+			SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 );
+			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
+			// If is not a water graphic set all pixels in water color to index 96 with will be a color key
+			if( cColorOffset > 96 && cColorOffset <= 127 && ( iNum >= iOffToWater+iWaterCount || iNum < iOffToWater ) )
+			{
+				*pixel = 96;
+				overlay = true;
+			}
+			else
+			{
+				*pixel = cColorOffset;
+			}
+		}
+	}
+	return surface;
+}
+
+void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX )
+{
+	TerrainData.terrain[iNum].sf_org = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_BlitSurface( surface, NULL, TerrainData.terrain[iNum].sf_org, NULL );
+
+	TerrainData.terrain[iNum].sf = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_FillRect( TerrainData.terrain[iNum].sf, NULL, 0xFF00FF );
+	SDL_BlitSurface( TerrainData.terrain[iNum].sf_org, NULL, TerrainData.terrain[iNum].sf, NULL );
+
+	TerrainData.terrain[iNum].shw_org = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_FillRect( TerrainData.terrain[iNum].shw_org, NULL, 0xFF00FF );
+	SDL_BlitSurface( TerrainData.terrain[iNum].sf_org, NULL, TerrainData.terrain[iNum].shw_org, NULL );
+
+	SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,TerrainData.terrain[iNum].shw_org,NULL );
+
+	TerrainData.terrain[iNum].shw = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_FillRect( TerrainData.terrain[iNum].shw, NULL, 0xFF00FF );
+	SDL_BlitSurface( TerrainData.terrain[iNum].shw_org, NULL, TerrainData.terrain[iNum].shw, NULL );
+}
+
 // Läd das Mapfile:
 bool cMap::LoadMap ( string filename )
 {
-	FILE *fp;
-	char str[100];
-	cList<sTuple*> *index;
-	int nr,i,k;
-
-	MapName = filename;
-	filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
-	ErrorStr="";
-	fp=fopen ( filename.c_str(),"rb" );
-	if ( !fp )
+	if( filename.substr( filename.length()-4, filename.length() ).compare( ".WRL") == 0 || filename.substr( filename.length()-4, filename.length() ).compare( ".wrl") == 0 )
 	{
-		ErrorStr="file not found";
-		return false;
+		SDL_RWops *fpMapFile;
+		short sWidth, sHeight;
+		short sGraphCount;		// Number of terrain graphics for this map
+		sColor Palette[256];	// Palette with all Colors for the terrain graphics
+		int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
+		int iWaterCount = 0, iOffToWater = 0;	// Number of water graphics
+		unsigned char cByte;	// one Byte
+
+		// Open File
+		MapName = filename;
+		filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
+		fpMapFile = SDL_RWFromFile ( filename.c_str(),"rb" );
+		if ( !fpMapFile )
+		{
+			cLog::write("Cannot load map file!", cLog::eLOG_TYPE_WARNING);
+			return false;
+		}
+
+		// Delete old Map
+		DeleteMap();
+
+		// Read informations and get positions from the map-file
+		SDL_RWseek ( fpMapFile, 5, SEEK_SET );					// Ignore WRL-Typ
+		SDL_RWread ( fpMapFile, &sWidth, 2, 1 );
+		SDL_RWread ( fpMapFile, &sHeight, 2, 1 );
+		SDL_RWseek ( fpMapFile, sWidth * sHeight, SEEK_CUR );	// Ignore Mini-Map
+		iDataPos = SDL_RWtell( fpMapFile );						// Map-Data
+		SDL_RWseek ( fpMapFile, sWidth * sHeight * 2, SEEK_CUR );
+		SDL_RWread ( fpMapFile, &sGraphCount, 2, 1 );			// Read PicCount	
+		iGraphicsPos = SDL_RWtell( fpMapFile );					// Terrain Graphics
+		iPalettePos = iGraphicsPos + sGraphCount * 64*64;		// Palette
+		iInfoPos = iPalettePos + 256*3;							// Special informations
+
+		if ( sWidth != sHeight )
+		{
+			cLog::write("Map must be quadratic!", cLog::eLOG_TYPE_WARNING);
+			return false;
+		}
+		size = sWidth;
+
+		// Generate new Map
+		NewMap ( size );
+
+		// Load Color Palette
+		SDL_RWseek ( fpMapFile, iPalettePos , SEEK_SET );
+		SDL_RWread ( fpMapFile, &Palette, 3, 256 );
+
+		// alloc memory for terrains
+		TerrainData.terrain_anz = sGraphCount;
+		TerrainData.terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * sGraphCount );
+
+		// First load water graphics
+		SDL_RWseek ( fpMapFile, iInfoPos , SEEK_SET );
+		SDL_RWread ( fpMapFile, &cByte, 1, 1 );
+		// Get number of water graphics
+		while ( cByte != 1 )
+		{
+			iOffToWater++;
+			SDL_RWread ( fpMapFile, &cByte, 1, 1 );
+		}
+		while ( cByte == 1 )
+		{
+			iWaterCount++;
+			SDL_RWread ( fpMapFile, &cByte, 1, 1 );
+		}
+		// Create new surface for the graphics
+		SDL_Surface *surface;
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64*iWaterCount, 64,32,0,0,0,0);
+		// Load single graphics and put them together
+		for ( int j = iOffToWater; j < iOffToWater+iWaterCount; j++ )
+		{
+			SDL_Rect rect = { 64*(j-iOffToWater), 0, 64, 64 };
+			SDL_Surface *loadsurface;
+			loadsurface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, j, iOffToWater, iWaterCount, TerrainData.terrain[0].overlay );
+			SDL_BlitSurface( loadsurface, NULL, surface, &rect );
+			SDL_FreeSurface ( loadsurface );
+		}
+		CopySrfToTerData ( surface, 0, 64*iWaterCount );
+		SDL_FreeSurface ( surface );
+
+		// Set special informations dor water
+		TerrainData.terrain[0].frames = TerrainData.terrain[0].sf_org->w/64;
+		TerrainData.terrain[0].water = true;
+		TerrainData.terrain[0].blocked = false;
+		TerrainData.terrain[0].coast = false;
+		TerrainInUse->Add( TerrainData.terrain+0 );
+		DefaultWater = 0;
+
+		// Load necessary Terrain Graphics
+		for ( int iNum = 0; iNum < sGraphCount-iWaterCount; iNum++ )
+		{
+			// Load graphic
+			if( iNum < iOffToWater)
+			{
+				CopySrfToTerData ( LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, iOffToWater, iWaterCount, TerrainData.terrain[iNum+1].overlay), iNum+1,64 );
+			}
+			else
+			{
+				CopySrfToTerData ( LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum + iWaterCount, iOffToWater, iWaterCount, TerrainData.terrain[iNum+1].overlay), iNum+1,64 );
+			}
+			TerrainData.terrain[iNum+1].frames = 1;
+
+			// This Terrain will be used
+			TerrainInUse->Add( TerrainData.terrain+iNum+1 );
+
+			// Set ColorKeys if necessary
+			if ( TerrainData.terrain[iNum+1].overlay )
+			{
+				int t=0xFFCD00CD;
+				SDL_SetColorKey ( TerrainData.terrain[iNum+1].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
+				SDL_SetColorKey ( TerrainData.terrain[iNum+1].shw_org,SDL_SRCCOLORKEY,t );
+				SDL_SetColorKey ( TerrainData.terrain[iNum+1].sf,SDL_SRCCOLORKEY,0xFF00FF );
+				SDL_SetColorKey ( TerrainData.terrain[iNum+1].shw,SDL_SRCCOLORKEY,t );
+			}
+		}
+		// Read special informations about terrain graphics
+		SDL_RWseek ( fpMapFile, iInfoPos+iWaterCount , SEEK_SET );
+		for ( int k = 1; k < sGraphCount-iWaterCount; k++ )
+		{
+			SDL_RWread ( fpMapFile, &cByte, 1, 1 );
+
+			if ( cByte == 2 ) TerrainData.terrain[k].coast = true;
+			else TerrainData.terrain[k].coast = false;
+			if ( cByte == 3 ) TerrainData.terrain[k].blocked = true;
+			else TerrainData.terrain[k].blocked = false;
+			TerrainData.terrain[k].water = false;
+		}
+
+		// Load map data
+		SDL_RWseek ( fpMapFile, iDataPos , SEEK_SET );
+		for ( int iY = size-1; iY >= 0; iY-- )
+		{
+			for ( int iX = 0; iX < size; iX++ )
+			{
+				SDL_RWread ( fpMapFile, &Kacheln[iY*size+iX], 2, 1 );
+				if ( Kacheln[iY*size+iX] >= iWaterCount + iOffToWater )
+				{
+					Kacheln[iY*size+iX]-=iWaterCount-1;
+				}
+				else
+				{
+					if ( Kacheln[iY*size+iX] >= iOffToWater )
+					{
+						Kacheln[iY*size+iX] = 0;
+					}
+					else
+					{
+						Kacheln[iY*size+iX]++;
+					}
+				}
+			}
+		}
+
+		SDL_RWclose( fpMapFile );
+		return true;
 	}
-
-	// Header:
-	fread ( str,1,21,fp );
-	if ( strncmp ( str,"[MMs M.A.X.-Map-File]",21 ) !=0 )
+	else
 	{
-		fclose ( fp );
-		ErrorStr="wrong format";
-		return false;
-	}
+		FILE *fp;
+		char str[100];
+		cList<sTuple*> *index;
+		int nr,i,k;
 
-	DeleteMap();
+		MapName = filename;
+		filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
+		ErrorStr="";
+		fp=fopen ( filename.c_str(),"rb" );
+		if ( !fp )
+		{
+			ErrorStr="file not found";
+			return false;
+		}
 
-	// Mapgröße:
-	fread ( &size,sizeof ( int ),1,fp );
-	NewMap ( size );
-	// DefaultWater:
-	fread ( &DefaultWater,sizeof ( int ),1,fp );
-	// Den Index erstellen:
-	index=new cList<sTuple*>;
-	fseek ( fp,sizeof ( int ) *size*size,SEEK_CUR );
-	while ( 1 )
-	{
-		if ( !fread ( &nr,sizeof ( int ),1,fp ) ) break;
-		i=0;
+		// Header:
+		fread ( str,1,21,fp );
+		if ( strncmp ( str,"[MMs M.A.X.-Map-File]",21 ) !=0 )
+		{
+			fclose ( fp );
+			ErrorStr="wrong format";
+			return false;
+		}
+
+		DeleteMap();
+
+		// Mapgröße:
+		fread ( &size,sizeof ( int ),1,fp );
+		NewMap ( size );
+		// DefaultWater:
+		fread ( &DefaultWater,sizeof ( int ),1,fp );
+		// Den Index erstellen:
+		index=new cList<sTuple*>;
+		fseek ( fp,sizeof ( int ) *size*size,SEEK_CUR );
 		while ( 1 )
 		{
-			str[i]=fgetc ( fp );
-			if ( str[i]==0 ) break;
-			i++;
-		}
-
-		for ( i=0;i<TerrainData.terrain_anz;i++ )
-		{
-			if ( strcmp ( TerrainData.terrain[i].id,str ) ==0 )
+			if ( !fread ( &nr,sizeof ( int ),1,fp ) ) break;
+			i=0;
+			while ( 1 )
 			{
-				sTuple *t;
-				t=new sTuple;
-				t->from=nr;
-				t->to=i;
-				index->Add( t );
-				TerrainInUse->Add( TerrainData.terrain+i );
-				break;
+				str[i]=fgetc ( fp );
+				if ( str[i]==0 ) break;
+				i++;
+			}
+
+			for ( i=0;i<TerrainData.terrain_anz;i++ )
+			{
+				if ( strcmp ( TerrainData.terrain[i].id,str ) ==0 )
+				{
+					sTuple *t;
+					t=new sTuple;
+					t->from=nr;
+					t->to=i;
+					index->Add( t );
+					TerrainInUse->Add( TerrainData.terrain+i );
+					break;
+				}
+			}
+			if ( i==TerrainData.terrain_anz )
+			{
+				ErrorStr="terrain not found";
+				cLog::write((string)"terrain not found: " + str,LOG_TYPE_WARNING);
+				while ( index->iCount )
+				{
+					delete index->Items[index->iCount - 1];
+					index->Delete( index->iCount - 1 );
+				}
+				delete index;
+				fclose ( fp );
+				NewMap ( 16 );
+				return false; 
 			}
 		}
-		if ( i==TerrainData.terrain_anz )
+		// Die Karte laden:
+		fseek ( fp,21+4+4,SEEK_SET );
+		for ( i=0;i<size*size;i++ )
 		{
-			ErrorStr="terrain not found";
-			cLog::write((string)"terrain not found: " + str,LOG_TYPE_WARNING);
-			while ( index->iCount )
+			sTuple *t;
+			fread ( &nr,sizeof ( int ),1,fp );
+			for ( k=0;k<index->iCount;k++ )
 			{
-				delete index->Items[index->iCount - 1];
-				index->Delete( index->iCount - 1 );
+				t=index->Items[k];
+				if ( t->from==nr ) break;
 			}
-			delete index;
-			fclose ( fp );
-			NewMap ( 16 );
-			return false; 
+			Kacheln[i]=t->to;
 		}
-	}
-	// Die Karte laden:
-	fseek ( fp,21+4+4,SEEK_SET );
-	for ( i=0;i<size*size;i++ )
-	{
-		sTuple *t;
-		fread ( &nr,sizeof ( int ),1,fp );
-		for ( k=0;k<index->iCount;k++ )
-		{
-			t=index->Items[k];
-			if ( t->from==nr ) break;
-		}
-		Kacheln[i]=t->to;
-	}
 
-	while ( index->iCount )
-	{
-		delete index->Items[0];
-		index->Delete ( 0 );
+		while ( index->iCount )
+		{
+			delete index->Items[0];
+			index->Delete ( 0 );
+		}
+		delete index;
+		fclose ( fp );
+		return true;
 	}
-	delete index;
-	fclose ( fp );
-	return true;
 }
 
 // Erstellt eine neue Map:

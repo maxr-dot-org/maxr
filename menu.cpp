@@ -1552,7 +1552,10 @@ string RunPlanetSelect ( void )
 			{
 				string name;
 				name = files->Items[selected];
-				name.replace ( name.length()-3,3,"map" );
+				if( name.substr( name.length()-4, name.length() ).compare( ".WRL") != 0 && name.substr( name.length()-4, name.length() ).compare( ".wrl") != 0 )
+				{
+					name.replace ( name.length()-3,3,"map" );
+				}
 				
 				SDL_FreeSurface(sfTmp);
 				delete files;
@@ -1651,11 +1654,12 @@ string RunPlanetSelect ( void )
 void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *surface )
 {
 	SDL_Surface *sf;
-	SDL_Rect scr={640, 390, 0, 38},dest;
+	//SDL_Rect scr={640, 390, 0, 38},dest;
+	SDL_Rect scr={0, 38, 640, 390},dest;
 	string sMap;
 	string sPath;
 	int size;
-	FILE *fp;
+	SDL_RWops *fp;
 
 	SDL_BlitSurface ( surface,&scr,buffer,&scr );
 
@@ -1673,18 +1677,62 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 
 		if ( FileExists ( sPath.c_str() ) )
 		{
+			if( sPath.substr( sPath.length()-4, sPath.length() ).compare( ".WRL") == 0 || sPath.substr( sPath.length()-4, sPath.length() ).compare( ".wrl") == 0 )
+			{
+				fp = SDL_RWFromFile ( sPath.c_str(),"rb" );
+				if ( fp )
+				{
+					SDL_RWseek ( fp, 5, SEEK_SET );
+					SDL_RWread ( fp, &size, 2, 1 );
 
-			sf = SDL_LoadBMP ( sPath.c_str() );
+					sColor Palette[256];
+					short sGraphCount;
+					SDL_RWseek ( fp, 2 + size*size*3, SEEK_CUR );
+					SDL_RWread ( fp, &sGraphCount, 2, 1 );
+					SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
+					SDL_RWread ( fp, &Palette, 3, 256 );
+
+					sf = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size,8,0,0,0,0);
+					sf->pitch = sf->w;
+
+					sf->format->palette->ncolors = 256;
+					for (int j = 0; j < 256; j++ )
+					{
+						sf->format->palette->colors[j].r = Palette[j].cBlue;
+						sf->format->palette->colors[j].g = Palette[j].cGreen;
+						sf->format->palette->colors[j].b = Palette[j].cRed;
+					}
+					SDL_RWseek ( fp, 9, SEEK_SET );
+					for( int iY = size-1; iY >= 0; iY-- )
+					{
+						for( int iX = 0; iX < size; iX++ )
+						{
+							unsigned char cColorOffset;
+							SDL_RWread ( fp, &cColorOffset, 1, 1 );
+							Uint8 *pixel = (Uint8*) sf->pixels  + (iY * size + iX);
+							*pixel = cColorOffset;
+						}
+					}
+					SDL_RWclose ( fp );
+				}
+			}
+			else
+			{
+				sf = SDL_LoadBMP ( sPath.c_str() );
+				sPath.replace ( sPath.length()-3, 3, "map" );
+				cLog::write ( sPath.c_str(), cLog::eLOG_TYPE_DEBUG );
+				fp = SDL_RWFromFile ( sPath.c_str(),"rb" );
+				if ( fp )
+				{
+					SDL_RWseek ( fp,21,SEEK_CUR );
+					SDL_RWread ( fp, &size,sizeof ( int ),1 );
+					SDL_RWclose ( fp );
+				}
+			}
 			if ( sf!=NULL )
 			{
 				SDL_BlitSurface ( sf,NULL,buffer,&scr );
 			}
-			sPath.replace ( sPath.length()-3, 3, "map" );
-			cLog::write ( sPath.c_str(), cLog::eLOG_TYPE_DEBUG );
-			fp=fopen ( sPath.c_str(),"rb" );
-			fseek ( fp,21,SEEK_CUR );
-			fread ( &size,sizeof ( int ),1,fp );
-			fclose ( fp );
 
 			SDL_Rect r;
 			r=scr;

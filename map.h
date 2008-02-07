@@ -45,6 +45,11 @@ struct sResources{
 #define RES_OIL   2
 #define RES_GOLD  3
 
+struct sColor
+{
+	unsigned char cBlue, cGreen, cRed;
+};
+
 // Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap{
 public:
@@ -66,7 +71,10 @@ public:
   bool SaveMap(string filename,SDL_Surface *preview);
   bool LoadMap(string filename);
   void UseAllTerrain(void);
-  void PlaceRessources(int Metal,int Oil,int Gold,int Dichte); 
+  void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
+private:
+	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, int iOffToWater, int iWaterCount, bool &overlay );
+	void CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX  );
 };
 
 #endif
