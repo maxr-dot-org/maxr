@@ -2666,8 +2666,8 @@ int main ( int argc, char* argv[] )
 	{
 		//fixme: path's with space characters don't work
 		cout << "Please enter path to MAX-Installation or MAX-CD: ";
-		//cin >> sMAXPath;
-		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		cin >> sMAXPath;
+		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		//now testing different input variations
 		try
@@ -2725,9 +2725,9 @@ int main ( int argc, char* argv[] )
 	{
 		//fixme: path's with space characters don't work
 		cout << "\nPlease enter path to outputfolder: ";
-		//cin >> sOutputPath;
-		cout << "\n";
-		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+		cin >> sOutputPath;
+		//cout << "\n";
+		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		
 		//test for valid output folder
 		string testFileName = "max.xml";
@@ -2976,6 +2976,6 @@ int main ( int argc, char* argv[] )
 	SDL_RWclose( res );
 	SDL_RWclose( logFile );
 	
-	while (1);
+	//while (1);
 	return 0;
 }
