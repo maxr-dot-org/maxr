@@ -2559,14 +2559,115 @@ void installVoices()
 	cout << iToStr( iErrors) << " errors\n";
 
 }
+
+void installMaps()
+{
+	string path;
+	iTotalFiles = 24;
+	iErrors = 0;
+	iInstalledFiles = 0;
+
+	cout << "========================================================================\n";
+	cout << "Maps\n";
+
+	path = sOutputPath + "maps" + PATH_DELIMITER;
+	copyFile(sVoicePath + "CRATER_1.WRL", path + "Eisenkreuz.wrl");
+	copyFile(sVoicePath + "CRATER_2.WRL", path + "Splittersünde.wrl");
+	copyFile(sVoicePath + "CRATER_3.WRL", path + "Versteckspiel.wrl");
+	copyFile(sVoicePath + "CRATER_4.WRL", path + "Valentins Planet.wrl");
+	copyFile(sVoicePath + "CRATER_5.WRL", path + "Drei Ringe.wrl");
+	copyFile(sVoicePath + "CRATER_6.WRL", path + "Großer Graben.wrl");
+	copyFile(sVoicePath + "DESERT_1.WRL", path + "Sommersprossen.wrl");
+	copyFile(sVoicePath + "DESERT_2.WRL", path + "Sandbank.wrl");
+	copyFile(sVoicePath + "DESERT_3.WRL", path + "Großer Kreis.wrl");
+	copyFile(sVoicePath + "DESERT_4.WRL", path + "Lange Passage.wrl");
+	copyFile(sVoicePath + "DESERT_5.WRL", path + "Blitzpunkt.wrl");
+	copyFile(sVoicePath + "DESERT_6.WRL", path + "Engpaß.wrl");
+	copyFile(sVoicePath + "GREEN_1.WRL", path + "Neuer Luzon.wrl");
+	copyFile(sVoicePath + "GREEN_2.WRL", path + "Mittleres Meer.wrl");
+	copyFile(sVoicePath + "GREEN_3.WRL", path + "Harter Aufprall.wrl");
+	copyFile(sVoicePath + "GREEN_4.WRL", path + "Heiligtum.wrl");
+	copyFile(sVoicePath + "GREEN_5.WRL", path + "Islandia.wrl");
+	copyFile(sVoicePath + "GREEN_6.WRL", path + "Hammerkopf.wrl");
+	copyFile(sVoicePath + "SNOW_1.WRL", path + "Schneekrabbe.wrl");
+	copyFile(sVoicePath + "SNOW_2.WRL", path + "Frigia.wrl");
+	copyFile(sVoicePath + "SNOW_3.WRL", path + "Eisberg.wrl");
+	copyFile(sVoicePath + "SNOW_4.WRL", path + "Der Kühler.wrl");
+	copyFile(sVoicePath + "SNOW_5.WRL", path + "Latzte Thule.wrl");
+	copyFile(sVoicePath + "SNOW_6.WRL", path + "Lange Eisschollen.wrl");
+	
+	if ( logFile != NULL )
+	{
+		writeLog( string("Maps") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+}
+
+void installSounds()
+{
+	string path;
+	iTotalFiles = 29;
+	iErrors = 0;
+	iInstalledFiles = 0;
+
+	cout << "========================================================================\n";
+	cout << "Sounds\n";
+
+	path = sOutputPath + "sounds" + PATH_DELIMITER;
+	copyFile( sMAXPath + "ACTIVATE.WAV", path + "activate.wav");
+	copyFile( sMAXPath + "MASTR17.WAV", path + "building.wav");
+	copyFile( sMAXPath + "BULL17.WAV", path + "clearing.wav");
+	copyFile( sMAXPath + "MENGENS4.WAV", path + "HudButton.wav");
+	copyFile( sMAXPath + "IHITS0.WAV", path + "HudSwitch.wav");
+	copyFile( sMAXPath + "MLAYER18.WAV", path + "land_mine_clear.wav");
+	copyFile( sMAXPath + "MLAYER17.WAV", path + "land_mine_place.wav");
+	copyFile( sMAXPath + "LOAD.WAV", path + "load.wav");
+	copyFile( sMAXPath + "MENU38.WAV", path + "MenuButton.wav");
+	copyFile( sMAXPath + "KBUY0.WAV", path + "ObjectMenu.wav");
+	copyFile( sMAXPath + "ICLOS0L.WAV", path + "panel_close.wav");
+	copyFile( sMAXPath + "IOPEN0.WAV", path + "panel_open.wav");
+	copyFile( sMAXPath + "FQUIT.WAV", path + "quitsch.wav");
+	copyFile( sMAXPath + "REPAIR17.WAV", path + "repair.wav");
+	copyFile( sMAXPath + "SMINE17.WAV", path + "sea_mine_place.wav");
+	copyFile( sMAXPath + "SMINE18.WAV", path + "sea_mine_clear.wav");
+	copyFile( sMAXPath + "FTRUCK17.WAV", path + "reload.wav");
+	
+	copyFile( sMAXPath + "BOATEXP1.WAV", path + "exp_small_wet0.wav");
+	copyFile( sMAXPath + "EPLOWET1.WAV", path + "exp_small_wet1.wav");
+	copyFile( sMAXPath + "EPLOWET2.WAV", path + "exp_small_wet2.wav");
+	copyFile( sMAXPath + "EXPLLRGE.WAV", path + "exp_small0.wav");
+	copyFile( sMAXPath + "EXPLMED.WAV", path + "exp_small1.wav");
+	copyFile( sMAXPath + "EXPLSMAL.WAV", path + "exp_small2.wav");
+	copyFile( sMAXPath + "CBLDEXP1.WAV", path + "exp_big_wet0.wav");
+	copyFile( sMAXPath + "CBLDEXP2.WAV", path + "exp_big_wet1.wav");
+	copyFile( sMAXPath + "BLDEXPLG.WAV", path + "exp_big0.wav");
+	copyFile( sMAXPath + "EXPBULD6.WAV", path + "exp_big1.wav");
+	copyFile( sMAXPath + "EXPLBLD1.WAV", path + "exp_big2.wav");
+	copyFile( sMAXPath + "EXPLBLD2.WAV", path + "exp_big3.wav");
+	
+	if ( logFile != NULL )
+	{
+		writeLog( string("Sounds") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+}
+
 int main ( int argc, char* argv[] )
 {
 	while ( 1 )
 	{
 		//fixme: path's with space characters don't work
 		cout << "Please enter path to MAX-Installation or MAX-CD: ";
-		cin >> sMAXPath;
-		//sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
+		//cin >> sMAXPath;
+		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\"; //temp
 
 		//now testing different input variations
 		try
@@ -2624,8 +2725,9 @@ int main ( int argc, char* argv[] )
 	{
 		//fixme: path's with space characters don't work
 		cout << "\nPlease enter path to outputfolder: ";
-		cin >> sOutputPath;
-		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+		//cin >> sOutputPath;
+		cout << "\n";
+		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		
 		//test for valid output folder
 		string testFileName = "max.xml";
@@ -2858,6 +2960,8 @@ int main ( int argc, char* argv[] )
 	installVehicleGraphics();
 	installBuildingGraphics();
 	installVoices();
+	installMaps();
+	installSounds();
 	
 
 	if ( wasError )
@@ -2872,6 +2976,6 @@ int main ( int argc, char* argv[] )
 	SDL_RWclose( res );
 	SDL_RWclose( logFile );
 	
-	//while (1);
+	while (1);
 	return 0;
 }
