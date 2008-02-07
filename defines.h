@@ -79,9 +79,9 @@
 
 // We have to take care of these manually !
 #ifdef RELEASE
-	#define MAXVERSION  "M.A.X. Reloaded 0.1.5 BUILD 200802062120"
+	#define MAXVERSION  "M.A.X. Reloaded 0.1.5 BUILD 200802071915"
 #else
-	#define MAXVERSION  "M.A.X. Reloaded 0.1.5 SVN Rev 922"
+	#define MAXVERSION  "M.A.X. Reloaded 0.1.5 SVN Rev 931"
 #endif
 #define MAX_VERSION     "0.1.5"
 #define MAX_BUILD_DATE  "2007-02-06 21:20:00"
