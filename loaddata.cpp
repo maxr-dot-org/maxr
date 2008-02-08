@@ -23,10 +23,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Defines for more Debuginformations in Log
-
-//#define TERRAIN_DEBUG	// Logs the using of default values while loading terrain
-
 #include "extendedtinyxml.h"
 #include "loaddata.h"
 #include "files.h"
@@ -157,10 +153,10 @@ int LoadData ( void * )
 	}
 	cLog::mark();
 	
-	// Load Terrain
-	MakeLog ( lngPack.i18n ( "Text~Init~Terrain" ), 0, 7 );
+	// Load Vehicles
+	MakeLog ( lngPack.i18n ( "Text~Init~Vehicles" ), 0, 7 );
 	
-	if ( LoadTerrain ( SettingsData.sTerrainPath.c_str() ) != 1 )
+	if ( LoadVehicles() != 1 )
 	{
 		MakeLog("",-1,7);
 		SDL_Delay(5000);
@@ -173,10 +169,10 @@ int LoadData ( void * )
 	}
 	cLog::mark();
 	
-	// Load Vehicles
-	MakeLog ( lngPack.i18n ( "Text~Init~Vehicles" ), 0, 8 );
+	// Load Buildings
+	MakeLog ( lngPack.i18n ( "Text~Init~Buildings" ), 0, 8 );
 	
-	if ( LoadVehicles() != 1 )
+	if ( LoadBuildings() != 1)
 	{
 		MakeLog("",-1,8);
 		SDL_Delay(5000);
@@ -189,10 +185,10 @@ int LoadData ( void * )
 	}
 	cLog::mark();
 	
-	// Load Buildings
-	MakeLog ( lngPack.i18n ( "Text~Init~Buildings" ), 0, 9 );
+	// Load Music
+	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 9 );
 	
-	if ( LoadBuildings() != 1)
+	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,9);
 		SDL_Delay(5000);
@@ -205,10 +201,10 @@ int LoadData ( void * )
 	}
 	cLog::mark();
 	
-	// Load Music
-	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
+	// Load Sounds
+	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 10 );
 	
-	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
+	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,10);
 		SDL_Delay(5000);
@@ -221,10 +217,10 @@ int LoadData ( void * )
 	}
 	cLog::mark();
 	
-	// Load Sounds
-	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 11 );
+	// Load Voices
+	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 11 );
 	
-	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
+	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,11);
 		SDL_Delay(5000);
@@ -234,22 +230,6 @@ int LoadData ( void * )
 	else
 	{
 		MakeLog ( "", 1, 11 );
-	}
-	cLog::mark();
-	
-	// Load Voices
-	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 12 );
-	
-	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
-	{
-		MakeLog("",-1,12);
-		SDL_Delay(5000);
-		LoadingData = LOAD_ERROR;
-		return -1;
-	}	
-	else
-	{
-		MakeLog ( "", 1, 12 );
 	}
 	cLog::mark();
 
@@ -858,16 +838,6 @@ int ReadMaxXml()
 		cLog::write ( "Can't load Music-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sMusicPath = "music";
 	}
-	//Terrain
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Terrain", NULL)))
-		cLog::write ( "Can't find Path-Terrain-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sTerrainPath = sTmpString;
-	else
-	{
-		cLog::write ( "Can't load Terrain-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sTerrainPath = "terrain";
-	}
 	//Vehicles
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", NULL)))
 		cLog::write ( "Can't find Path-Vehicles-Node in max.xml", LOG_TYPE_WARNING );
@@ -1441,155 +1411,6 @@ int LoadGraphics(const char* path)
 
 	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
 
-	return 1;
-}
-
-
-// LoadTerrain ////////////////////////////////////////////////////////////////
-// Loads the Terrain
-int LoadTerrain(const char* path)
-{
-	cLog::write ( "Loading Terrain", LOG_TYPE_INFO );
-	string sTmpString;
-	TiXmlDocument TerrainXml;
-	TiXmlNode *pXmlNode;
-	ExTiXmlNode *pExXmlNode = NULL;
-
-	sTmpString = path;
-	sTmpString += PATH_DELIMITER;
-	sTmpString += "terrain.xml";
-	if( !FileExists( sTmpString.c_str() ) )
-	{
-		LoadingData=LOAD_ERROR;
-		return 0;
-	}
-	if ( !TerrainXml.LoadFile ( sTmpString.c_str() ) )
-	{
-		LoadingData=LOAD_ERROR;
-		cLog::write("Can't load terrain.xml!",LOG_TYPE_ERROR);
-		return 0;
-	}
-		
-	pXmlNode = TerrainXml.FirstChildElement ( "Terrains" );
-
-	cList<string> *sections;
-	sections = new cList<string>(300);
-	pXmlNode = pXmlNode->FirstChildElement();
-	if ( pXmlNode )
-		sections->Add ( pXmlNode->ToElement()->Value() );
-	while ( pXmlNode != NULL)
-	{
-		pXmlNode=pXmlNode->NextSibling();
-		if ( pXmlNode && pXmlNode->Type() ==1 )
-		{
-			sections->Add ( pXmlNode->ToElement()->Value() );
-		}
-	}
-
-	for ( int i=0;i<sections->iCount;i++ )
-	{
-		if(!(pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL)))
-		{
-			sTmpString = "Can't read \"\" in terrain.xml";
-			sTmpString.insert(11, sections->Items[i]);
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			continue;
-		}
-		TerrainData.terrain_anz++;
-		TerrainData.terrain= ( sTerrain* ) realloc ( TerrainData.terrain,sizeof ( sTerrain ) *TerrainData.terrain_anz );
-		if(!TerrainData.terrain) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-
-		
-		if(!(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"file")))
-		{
-			sTmpString = "Can't read fileattribute ";
-			sTmpString += sections->Items[i];
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			continue;
-		}
-		sTmpString.insert(0,PATH_DELIMITER);
-		sTmpString.insert(0,path);
-
-		if(FileExists(( char * ) sTmpString.c_str() ))
-		{
-			TerrainData.terrain[i].sf_org = LoadPCX ( ( char * ) sTmpString.c_str() );
-		}
-		else
-		{
-			cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-			return -1;
-		}
-		
-		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].sf );
-
-		DupSurface ( TerrainData.terrain[i].sf_org,TerrainData.terrain[i].shw_org );
-		SDL_BlitSurface ( GraphicsData.gfx_shadow,NULL,TerrainData.terrain[i].shw_org,NULL );
-		DupSurface ( TerrainData.terrain[i].shw_org,TerrainData.terrain[i].shw );
-
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"water"))
-			TerrainData.terrain[i].water = pExXmlNode->XmlDataToBool(sTmpString);
-		else
-		{
-			#ifdef TERRAIN_DEBUG
-			sTmpString = "Attribute water of \"\" not found: using default value";
-			sTmpString.insert(20,sections->Items[i]);
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			#endif
-			TerrainData.terrain[i].water = false;
-		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"blocked"))
-			TerrainData.terrain[i].blocked = pExXmlNode->XmlDataToBool(sTmpString);
-		else
-		{
-			#ifdef TERRAIN_DEBUG
-			sTmpString = "Attribute blocked of \"\" not found: using default value";
-			sTmpString.insert(22,sections->Items[i]);
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			#endif
-			TerrainData.terrain[i].blocked = false;
-		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"coast"))
-			TerrainData.terrain[i].coast = pExXmlNode->XmlDataToBool(sTmpString);
-		else
-		{
-			#ifdef TERRAIN_DEBUG
-			sTmpString = "Attribute coast of \"\" not found: using default value";
-			sTmpString.insert(20,sections->Items[i]);
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			#endif
-			TerrainData.terrain[i].coast = false;
-		}
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(TerrainXml,"Terrains",sections->Items[i].c_str(), NULL);
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"overlay"))
-			TerrainData.terrain[i].overlay = pExXmlNode->XmlDataToBool(sTmpString);
-		else
-		{
-			#ifdef TERRAIN_DEBUG
-			sTmpString = "Attribute overlay of \"\" not found: using default value";
-			sTmpString.insert(22,sections->Items[i]);
-			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
-			#endif
-			TerrainData.terrain[i].overlay = false;
-		}
-
-		TerrainData.terrain[i].frames = TerrainData.terrain[i].sf_org->w/64;
-		TerrainData.terrain[i].id= ( char* ) malloc ( ( sections->Items[i] ).length() +1 );
-		if(!TerrainData.terrain[i].id) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy ( TerrainData.terrain[i].id, ( sections->Items[i] ).c_str() );
-
-		if ( TerrainData.terrain[i].overlay )
-		{
-			int t=0xFFCD00CD;
-			SDL_SetColorKey ( TerrainData.terrain[i].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( TerrainData.terrain[i].shw_org,SDL_SRCCOLORKEY,t );
-			SDL_SetColorKey ( TerrainData.terrain[i].sf,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( TerrainData.terrain[i].shw,SDL_SRCCOLORKEY,t );
-		}
-	}
-	delete sections;
 	return 1;
 }
 

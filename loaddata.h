@@ -170,12 +170,6 @@ int GenerateMaxXml();
 	*/
 int LoadGraphics(const char* path);
 /**
-	* Loads the Terrain
-	* @param path Directory of the Terrain
-	* @return 1 on success
-	*/
-int LoadTerrain(const char* path);
-/**
 	* ??
 	* @param src Source surface
 	* @param dest Destination surface

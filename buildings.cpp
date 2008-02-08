@@ -2274,7 +2274,7 @@ bool cBuilding::CanExitTo ( int off, sVehicle *typ )
 	else
 		return false;
 
-	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( game->map->GO[off].top && !game->map->GO[off].top->data.is_connector ) || game->map->GO[off].vehicle || TerrainData.terrain[game->map->Kacheln[off]].blocked ) ) ||
+	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( game->map->GO[off].top && !game->map->GO[off].top->data.is_connector ) || game->map->GO[off].vehicle || game->map->terrain[game->map->Kacheln[off]].blocked ) ) ||
 	        ( typ->data.can_drive == DRIVE_AIR && game->map->GO[off].plane ) ||
 	        ( typ->data.can_drive == DRIVE_SEA && ( !game->map->IsWater ( off, true ) || ( game->map->GO[off].base && ( game->map->GO[off].base->data.is_platform || game->map->GO[off].base->data.is_road ) ) ) ) ||
 	        ( typ->data.can_drive == DRIVE_LAND && game->map->IsWater ( off ) && ! ( game->map->GO[off].base && ( game->map->GO[off].base->data.is_platform || game->map->GO[off].base->data.is_road || game->map->GO[off].base->data.is_bridge ) ) ) )

@@ -65,6 +65,8 @@ public:
   string ErrorStr; // Der String mit der Fehlermeldung fürs Laden der Maps.
   string MapName;  // Name der aktuellen Map. 
 
+  sTerrain *terrain; // Terrain graphics
+
   bool IsWater(int off,bool not_coast=false,bool is_ship=false);
   void NewMap(int size);
   void DeleteMap(void);
@@ -73,7 +75,7 @@ public:
   void UseAllTerrain(void);
   void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
 private:
-	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, int iOffToWater, int iWaterCount, bool &overlay );
+	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, bool bWater, bool &overlay );
 	void CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX  );
 };
 

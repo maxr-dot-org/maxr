@@ -1682,13 +1682,13 @@ bool cVehicle::CanDrive ( int MapOff )
 			return true;
 
 		case DRIVE_LANDnSEA:
-			if ( TerrainData.terrain[nr].blocked )
+			if ( game->map->terrain[nr].blocked )
 				return false;
 
 			return true;
 
 		case DRIVE_LAND:
-			if ( TerrainData.terrain[nr].blocked || ( game->map->IsWater ( MapOff ) && ! ( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_bridge || game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) ) )
+			if ( game->map->terrain[nr].blocked || ( game->map->IsWater ( MapOff ) && ! ( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_bridge || game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) ) )
 				return false;
 
 			return true;
@@ -3395,7 +3395,7 @@ void cVehicle::ShowBuildMenu ( void )
 							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 
-						if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+						if ( game->map->terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
 								break;
@@ -3489,7 +3489,7 @@ void cVehicle::ShowBuildMenu ( void )
 							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 
-						if ( TerrainData.terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+						if ( game->map->terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
 								break;
@@ -3895,8 +3895,8 @@ void cVehicle::FindNextband ( void )
 	gms = game->map->size;
 	mouse->GetKachel ( &x, &y );
 
-//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!TerrainData.terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
+//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
+#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
 
 	if ( CHECK_BAND ( -1, -1 ) && CHECK_BAND ( + 0, -1 ) && CHECK_BAND ( -1, + 0 ) )
 		pos[0] = true;
@@ -4987,7 +4987,7 @@ bool cVehicle::CanExitTo ( int off, sVehicle *typ )
 	else
 		return false;
 
-	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( game->map->GO[off].top && !game->map->GO[off].top->data.is_connector ) || game->map->GO[off].vehicle || TerrainData.terrain[game->map->Kacheln[off]].blocked ) ) ||
+	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( game->map->GO[off].top && !game->map->GO[off].top->data.is_connector ) || game->map->GO[off].vehicle || game->map->terrain[game->map->Kacheln[off]].blocked ) ) ||
 	        ( typ->data.can_drive == DRIVE_AIR && game->map->GO[off].plane ) ||
 	        ( typ->data.can_drive == DRIVE_SEA && !game->map->IsWater ( off, true ) ) ||
 	        ( typ->data.can_drive == DRIVE_LAND && game->map->IsWater ( off ) ) )

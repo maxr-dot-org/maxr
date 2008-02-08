@@ -216,7 +216,7 @@ bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 	if ( PosX < 0 || PosY < 0 || PosX >= engine->map->size || PosY >= engine->map->size ) return false; //check map borders
 	
 	int terrainNr=engine->map->Kacheln[PosX + PosY * engine->map->size];
-	if ( TerrainData.terrain[terrainNr].blocked ) return false; //check terrain
+	if ( engine->map->terrain[terrainNr].blocked ) return false; //check terrain
 	
 	sGameObjects objects = engine->map->GO[PosX + PosY * engine->map->size];
 	if ( objects.reserviert || objects.vehicle || ( objects.top && !objects.top->data.is_connector) ) return false; //check if there is another unit on the field

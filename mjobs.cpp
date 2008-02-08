@@ -249,7 +249,7 @@ bool cMJobs::CheckPossiblePoint ( int x,int y )
 	if ( PathCalcMap[x+y*map->size] ) return false;
 	if ( !plane )
 	{
-		if ( TerrainData.terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
+		if ( game->map->terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
 		if ( vehicle->data.can_drive==DRIVE_LAND && map->IsWater ( x+y*map->size ) && !( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_bridge || map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) return false;
 		if ( vehicle->data.can_drive==DRIVE_SEA && (!map->IsWater ( x+y*map->size,true,true ) || ( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) ) return false;
 	}
@@ -416,7 +416,7 @@ void cMJobs::DoTheMove ( void )
 
 	// Ggf Tracks malen:
 	if ( SettingsData.bMakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
-	        ( waypoints&&waypoints->next&&TerrainData.terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
+	        ( waypoints&&waypoints->next&&game->map->terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
 	        ( vehicle->owner==game->ActivePlayer||game->ActivePlayer->ScanMap[vehicle->PosX+vehicle->PosY*game->map->size] ) )
 	{
 		if ( !vehicle->OffX&&!vehicle->OffY )

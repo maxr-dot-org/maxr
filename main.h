@@ -438,7 +438,6 @@ struct sUnitData{
 struct sTerrain{
   SDL_Surface *sf,*sf_org;   // Surfaces des terrains
   SDL_Surface *shw,*shw_org; // Surfaces des terrains im Schatten
-  char *id;
   bool water;       // Gibt an, ob es Wasser ist
   bool coast;       // Gibt an, ob es ein Küstenstück ist
   bool overlay;     // Gibt an, ob es ein Overlay ist
@@ -704,7 +703,6 @@ public:
 	string sSoundsPath;			// Path to the sound-files
 	string sVoicesPath;			// Path to the voice-files
 	string sMusicPath;			// Path to the music-files
-	string sTerrainPath;			// Path to the terrains
 	string sVehiclesPath;		// Path to the vehicles
 	string sBuildingsPath;		// Path to the buildings
 
@@ -813,13 +811,14 @@ public:
 	SDL_Surface *res_gold;
 } EX ResourceData;
 
+/*
 // TerrainData - Class containing all terrain data ////////////////////////////
 class cTerrainData
 {
 public:
 	sTerrain *terrain;
 	int terrain_anz;
-} EX TerrainData;
+} EX TerrainData;*/
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
 class cUnitsData

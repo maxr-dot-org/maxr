@@ -1412,7 +1412,7 @@ bool FreeForLanding ( int x,int y )
 	        game->map->GO[x+y*game->map->size].vehicle||
 	        game->map->GO[x+y*game->map->size].top||
 	        game->map->IsWater ( x+y*game->map->size,false ) ||
-	        TerrainData.terrain[game->map->Kacheln[x+y*game->map->size]].blocked )
+	        game->map->terrain[game->map->Kacheln[x+y*game->map->size]].blocked )
 	{
 		return false;
 	}
@@ -1433,7 +1433,7 @@ void cGame::DrawMap ( bool pure )
 	scr.y=0;
 	scr.h=scr.w=dest.w=dest.h=zoom;
 	dest.y=18-OffY;
-	defwater=TerrainData.terrain+map->DefaultWater;
+	defwater=map->terrain+map->DefaultWater;
 	for ( y=0;y<map->size;y++ )
 	{
 		dest.x=180-OffX;
@@ -1446,7 +1446,7 @@ void cGame::DrawMap ( bool pure )
 				{
 					// Das Terrain malen:
 					tmp=dest;
-					terr=TerrainData.terrain+map->Kacheln[pos];
+					terr=map->terrain+map->Kacheln[pos];
 					// Prüfen, ob es ein Küstenstück ist:
 					if ( terr->overlay )
 					{
@@ -2673,8 +2673,8 @@ void cGame::AddDirt ( int x,int y,int value,bool big )
 {
 	cBuilding *n;
 	if ( value<=0 ) value=1;
-	if ( TerrainData.terrain[map->Kacheln[x+y*map->size]].water||TerrainData.terrain[map->Kacheln[x+y*map->size]].coast ) return;
-	if ( big&& ( TerrainData.terrain[map->Kacheln[x+1+y*map->size]].water||TerrainData.terrain[map->Kacheln[x+ ( y+1 ) *map->size]].water||TerrainData.terrain[map->Kacheln[x+1+ ( y+1 ) *map->size]].water ) ) return;
+	if ( map->terrain[map->Kacheln[x+y*map->size]].water||map->terrain[map->Kacheln[x+y*map->size]].coast ) return;
+	if ( big&& ( map->terrain[map->Kacheln[x+1+y*map->size]].water||map->terrain[map->Kacheln[x+ ( y+1 ) *map->size]].water||map->terrain[map->Kacheln[x+1+ ( y+1 ) *map->size]].water ) ) return;
 	n=new cBuilding ( NULL,NULL,NULL );
 	n->next=DirtList;
 	DirtList=n;
@@ -2854,7 +2854,7 @@ void cGame::DrawMiniMap ( bool pure,SDL_Surface *sf )
 			{
 				if ( hud->Radar&&!ActivePlayer->ScanMap[tx+ty] )
 				{
-					cl=* ( unsigned int* ) TerrainData.terrain[map->Kacheln[tx+ty]].shw_org->pixels;
+					cl=* ( unsigned int* ) map->terrain[map->Kacheln[tx+ty]].shw_org->pixels;
 				}
 				else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !hud->TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
 				{
@@ -2874,20 +2874,20 @@ void cGame::DrawMiniMap ( bool pure,SDL_Surface *sf )
 				}
 				else
 				{
-					cl=* ( unsigned int* ) TerrainData.terrain[map->Kacheln[tx+ty]].sf_org->pixels;
+					cl=* ( unsigned int* ) map->terrain[map->Kacheln[tx+ty]].sf_org->pixels;
 				}
 			}
 			else
 			{
-				cl=* ( unsigned int* ) TerrainData.terrain[map->Kacheln[tx+ty]].sf_org->pixels;
+				cl=* ( unsigned int* ) map->terrain[map->Kacheln[tx+ty]].sf_org->pixels;
 			}
 			if ( cl==0xFF00FF )
 			{
-				cl=* ( unsigned int* ) TerrainData.terrain[map->DefaultWater].sf_org->pixels;
+				cl=* ( unsigned int* ) map->terrain[map->DefaultWater].sf_org->pixels;
 			}
 			else if ( ( cl&0xFFFFFF ) ==0xCD00CD )
 			{
-				cl=* ( unsigned int* ) TerrainData.terrain[map->DefaultWater].shw_org->pixels;
+				cl=* ( unsigned int* ) map->terrain[map->DefaultWater].shw_org->pixels;
 			}
 			if ( !sf )
 			{

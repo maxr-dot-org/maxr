@@ -1461,9 +1461,6 @@ string RunPlanetSelect ( void )
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
 	SDL_Rect scr;
-	TiXmlDocument doc;
-	TiXmlNode* rootnode;
-	TiXmlNode* node;
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
@@ -1486,25 +1483,14 @@ string RunPlanetSelect ( void )
 	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
 	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
 
-	int k = 1;
-
-	if ( !doc.LoadFile ( "maps//maps.xml" ) )
+	files = getFilesOfDirectory ( SettingsData.sMapsPath );
+	for ( int i = 0; i < files->iCount; i++ )
 	{
-		SDL_FreeSurface(sfTmp);
-		cLog::write ( "Could not load maps.xml",1 );
-		return "";
-	}
-	files = new cList<string>;
-	rootnode=doc.FirstChildElement ( "MapData" )->FirstChildElement ( "MapList" );
-
-	node=rootnode->FirstChildElement();
-	if ( node )
-		files->Add ( node->ToElement()->Attribute ( "file" ) );
-	while ( node )
-	{
-		node=node->NextSibling();
-		if ( node && node->Type() ==1 )
-			files->Add ( node->ToElement()->Attribute ( "file" ) );
+		if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "WRL" ) != 0 && files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "wrl" ) != 0 )
+		{
+			files->Delete ( i );
+			i--;
+		}
 	}
 
 	ShowPlanets ( files,offset,selected, sfTmp );
@@ -1668,57 +1654,41 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 
 		if ( FileExists ( sPath.c_str() ) )
 		{
-			if( sPath.substr( sPath.length()-4, sPath.length() ).compare( ".WRL") == 0 || sPath.substr( sPath.length()-4, sPath.length() ).compare( ".wrl") == 0 )
+			fp = SDL_RWFromFile ( sPath.c_str(),"rb" );
+			if ( fp != NULL )
 			{
-				fp = SDL_RWFromFile ( sPath.c_str(),"rb" );
-				if ( fp )
+				SDL_RWseek ( fp, 5, SEEK_SET );
+				size = SDL_ReadLE16( fp );
+
+				sColor Palette[256];
+				short sGraphCount;
+				SDL_RWseek ( fp, 2 + size*size*3, SEEK_CUR );
+				sGraphCount = SDL_ReadLE16( fp );
+				SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
+				SDL_RWread ( fp, &Palette, 1, 768 );
+
+				sf = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size,8,0,0,0,0);
+				sf->pitch = sf->w;
+
+				sf->format->palette->ncolors = 256;
+				for (int j = 0; j < 256; j++ )
 				{
-					SDL_RWseek ( fp, 5, SEEK_SET );
-					SDL_RWread ( fp, &size, 2, 1 );
-
-					sColor Palette[256];
-					short sGraphCount;
-					SDL_RWseek ( fp, 2 + size*size*3, SEEK_CUR );
-					SDL_RWread ( fp, &sGraphCount, 2, 1 );
-					SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
-					SDL_RWread ( fp, &Palette, 3, 256 );
-
-					sf = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size,8,0,0,0,0);
-					sf->pitch = sf->w;
-
-					sf->format->palette->ncolors = 256;
-					for (int j = 0; j < 256; j++ )
-					{
-						sf->format->palette->colors[j].r = Palette[j].cBlue;
-						sf->format->palette->colors[j].g = Palette[j].cGreen;
-						sf->format->palette->colors[j].b = Palette[j].cRed;
-					}
-					SDL_RWseek ( fp, 9, SEEK_SET );
-					for( int iY = size-1; iY >= 0; iY-- )
-					{
-						for( int iX = 0; iX < size; iX++ )
-						{
-							unsigned char cColorOffset;
-							SDL_RWread ( fp, &cColorOffset, 1, 1 );
-							Uint8 *pixel = (Uint8*) sf->pixels  + (iY * size + iX);
-							*pixel = cColorOffset;
-						}
-					}
-					SDL_RWclose ( fp );
+					sf->format->palette->colors[j].r = Palette[j].cBlue;
+					sf->format->palette->colors[j].g = Palette[j].cGreen;
+					sf->format->palette->colors[j].b = Palette[j].cRed;
 				}
-			}
-			else
-			{
-				sf = SDL_LoadBMP ( sPath.c_str() );
-				sPath.replace ( sPath.length()-3, 3, "map" );
-				cLog::write ( sPath.c_str(), cLog::eLOG_TYPE_DEBUG );
-				fp = SDL_RWFromFile ( sPath.c_str(),"rb" );
-				if ( fp )
+				SDL_RWseek ( fp, 9, SEEK_SET );
+				for( int iY = size-1; iY >= 0; iY-- )
 				{
-					SDL_RWseek ( fp,21,SEEK_CUR );
-					SDL_RWread ( fp, &size,sizeof ( int ),1 );
-					SDL_RWclose ( fp );
+					for( int iX = 0; iX < size; iX++ )
+					{
+						unsigned char cColorOffset;
+						SDL_RWread ( fp, &cColorOffset, 1, 1 );
+						Uint8 *pixel = (Uint8*) sf->pixels  + (iY * size + iX);
+						*pixel = cColorOffset;
+					}
 				}
+				SDL_RWclose ( fp );
 			}
 			if ( sf!=NULL )
 			{
@@ -1775,8 +1745,6 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 				scr.x=25;
 				scr.y+=197;
 			}
-
-
 		}
 		else
 		{
@@ -3773,12 +3741,12 @@ void SelectLanding ( int *x,int *y,cMap *map )
 		for ( k=0;k<SettingsData.iScreenH-32;k++ )
 		{
 			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
-			t=TerrainData.terrain+nr;
+			t=map->terrain+nr;
 			off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
 			nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
 			if ( nr==0xFF00FF )
 			{
-				t=TerrainData.terrain+map->DefaultWater;
+				t=map->terrain+map->DefaultWater;
 				off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
 				nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
 			}
@@ -3802,7 +3770,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 	SHOW_SCREEN
 
-	t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
+	t=map->terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
 	if ( mouse->x>=180&&mouse->x<SettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<SettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 	{
 		mouse->SetCursor ( CMove );
@@ -3820,7 +3788,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
-		t=TerrainData.terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
+		t=map->terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
 		if ( mouse->x>=180&&mouse->x<SettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<SettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 		{
 			mouse->SetCursor ( CMove );
