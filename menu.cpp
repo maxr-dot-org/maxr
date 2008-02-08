@@ -1678,7 +1678,7 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 					sf->format->palette->colors[j].b = Palette[j].cRed;
 				}
 				SDL_RWseek ( fp, 9, SEEK_SET );
-				for( int iY = size-1; iY >= 0; iY-- )
+				for( int iY = 0; iY < size; iY++ )
 				{
 					for( int iX = 0; iX < size; iX++ )
 					{

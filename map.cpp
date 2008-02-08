@@ -90,7 +90,7 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColo
 	SDL_RWseek ( fpMapFile, iGraphicsPos + 64*64*( iNum ), SEEK_SET );
 
 	// Read pixel data and write to surface
-	for( int iY = 64-1; iY >= 0; iY-- )
+	for( int iY = 0; iY < 64; iY++ )
 	{
 		for( int iX = 0; iX < 64; iX++ )
 		{
@@ -226,7 +226,7 @@ bool cMap::LoadMap ( string filename )
 
 	// Load map data
 	SDL_RWseek ( fpMapFile, iDataPos , SEEK_SET );
-	for ( int iY = size-1; iY >= 0; iY-- )
+	for ( int iY = 0; iY < size; iY++ )
 	{
 		for ( int iX = 0; iX < size; iX++ )
 		{
