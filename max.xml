@@ -44,7 +44,6 @@
             <Sounds Text="sounds" />
             <Voices Text="voices" />
             <Music Text="music" />
-            <Terrain Text="terrain" />
             <Vehicles Text="vehicles" />
             <Buildings Text="buildings" />
         </Paths>
