@@ -26,7 +26,7 @@ cMap::cMap ( void )
 {
 	TerrainInUse=new cList<sTerrain*>;
 	Kacheln=NULL;
-	NewMap ( 32 );
+	NewMap ( 32, 32 );
 	MapName="";
 }
 
@@ -153,9 +153,6 @@ bool cMap::LoadMap ( string filename )
 		return false;
 	}
 
-	// Delete old Map
-	DeleteMap();
-
 	// check for typ
 	SDL_RWread ( fpMapFile, &szFileTyp, 1, 3 );
 	szFileTyp[3] = '\0';
@@ -187,14 +184,11 @@ bool cMap::LoadMap ( string filename )
 	size = sWidth;
 
 	// Generate new Map
-	NewMap ( size );
+	NewMap ( size, sGraphCount );
 
 	// Load Color Palette
 	SDL_RWseek ( fpMapFile, iPalettePos , SEEK_SET );
 	SDL_RWread ( fpMapFile, &Palette, 1, 768 );
-
-	// alloc memory for terrains
-	terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * sGraphCount );
 
 	DefaultWater = -1;
 	// Load necessary Terrain Graphics
@@ -290,7 +284,7 @@ bool cMap::LoadMap ( string filename )
 }
 
 // Erstellt eine neue Map:
-void cMap::NewMap ( int size )
+void cMap::NewMap ( int size, int iTerrainGrphCount )
 {
 
 	if ( size<16 ) size=16;
@@ -306,6 +300,9 @@ void cMap::NewMap ( int size )
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
 	Resources= ( sResources* ) malloc ( sizeof ( Resources ) *size*size );
+
+	// alloc memory for terrains
+	terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * iTerrainGrphCount );
 }
 
 // Löscht die aktuelle Map:
@@ -316,10 +313,15 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	while ( TerrainInUse->iCount )
+	for ( int i = 0; i < TerrainInUse->iCount; i++ )
 	{
-		TerrainInUse->Delete( 0 );
+		TerrainInUse->Delete( TerrainInUse->iCount );
+		SDL_FreeSurface ( terrain[i].sf_org );
+		SDL_FreeSurface ( terrain[i].sf );
+		SDL_FreeSurface ( terrain[i].shw_org );
+		SDL_FreeSurface ( terrain[i].shw );
 	}
+	free ( terrain );
 }
 
 // Platziert die Ressourcen (0-wenig,3-viel):

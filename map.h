@@ -68,7 +68,7 @@ public:
   sTerrain *terrain; // Terrain graphics
 
   bool IsWater(int off,bool not_coast=false,bool is_ship=false);
-  void NewMap(int size);
+  void NewMap(int size, int iTerrainGrphCount );
   void DeleteMap(void);
   bool SaveMap(string filename,SDL_Surface *preview);
   bool LoadMap(string filename);
