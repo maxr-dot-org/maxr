@@ -1339,7 +1339,7 @@ void cHud::ScaleSurfaces ( void )
 			if ( t->overlay )
 			{
 				SDL_SetColorKey ( t->sf_org,SDL_SRCCOLORKEY,0xFF00FF );
-				SDL_SetColorKey ( t->shw_org,SDL_SRCCOLORKEY,0xFFCD00CD );
+				SDL_SetColorKey ( t->shw_org,SDL_SRCCOLORKEY,0xCD00CD );
 				SDL_SetColorKey ( t->sf,SDL_SRCCOLORKEY,0xFF00FF );
 				SDL_SetColorKey ( t->shw,SDL_SRCCOLORKEY,0xCD00CD );
 			}
@@ -1350,7 +1350,7 @@ void cHud::ScaleSurfaces ( void )
 			ScaleSurface2 ( t->shw_org,t->shw,Zoom );
 			if ( t->overlay )
 			{
-				SDL_SetColorKey ( t->shw,SDL_SRCCOLORKEY,0xFFCD00CD );
+				SDL_SetColorKey ( t->shw,SDL_SRCCOLORKEY,0xCD00CD );
 			}
 		}
 	}
