@@ -244,6 +244,7 @@ bool cMap::LoadMap ( string filename )
 				}
 			}
 			CopySrfToTerData ( fullsurface, iNum, 64*10 );
+			SDL_FreeSurface ( fullsurface );
 		}
 		else
 		{
