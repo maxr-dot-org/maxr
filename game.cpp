@@ -3673,7 +3673,7 @@ void cGame::Load ( string name,int AP,bool MP )
 	fread ( &i,sizeof ( int ),1,fp );
 	str= ( char* ) malloc ( i );
 	fread ( str,1,i,fp );
-	map->LoadMap ( str );
+	if ( !map->LoadMap ( str ) ) return;
 	free ( str );
 	memset ( map->Resources,0,sizeof ( sResources ) *map->size*map->size );
 

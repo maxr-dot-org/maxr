@@ -141,6 +141,7 @@ bool cMap::LoadMap ( string filename )
 	sColor Palette[256];	// Palette with all Colors for the terrain graphics
 	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
 	unsigned char cByte;	// one Byte
+	char szFileTyp[4];
 
 	// Open File
 	MapName = filename;
@@ -148,15 +149,25 @@ bool cMap::LoadMap ( string filename )
 	fpMapFile = SDL_RWFromFile ( filename.c_str(),"rb" );
 	if ( !fpMapFile )
 	{
-		cLog::write("Cannot load map file!", cLog::eLOG_TYPE_WARNING);
+		cLog::write("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 
 	// Delete old Map
 	DeleteMap();
 
+	// check for typ
+	SDL_RWread ( fpMapFile, &szFileTyp, 1, 3 );
+	szFileTyp[3] = '\0';
+	if( strcmp( szFileTyp, "WRL" ) != 0 && strcmp( szFileTyp, "WRX" ) != 0  )
+	{
+		cLog::write("Wrong file format", cLog::eLOG_TYPE_WARNING);
+		SDL_RWclose( fpMapFile );
+		return false;
+	}
+	SDL_RWseek ( fpMapFile, 2, SEEK_CUR );
+
 	// Read informations and get positions from the map-file
-	SDL_RWseek ( fpMapFile, 5, SEEK_SET );					// Ignore WRL-Typ
 	sWidth = SDL_ReadLE16( fpMapFile );
 	sHeight = SDL_ReadLE16( fpMapFile );
 	SDL_RWseek ( fpMapFile, sWidth * sHeight, SEEK_CUR );	// Ignore Mini-Map
@@ -170,6 +181,7 @@ bool cMap::LoadMap ( string filename )
 	if ( sWidth != sHeight )
 	{
 		cLog::write("Map must be quadratic!", cLog::eLOG_TYPE_WARNING);
+		SDL_RWclose( fpMapFile );
 		return false;
 	}
 	size = sWidth;
@@ -202,8 +214,48 @@ bool cMap::LoadMap ( string filename )
 		if ( cByte == 3 ) terrain[iNum].blocked = true;
 		else terrain[iNum].blocked = false;
 
-		surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, terrain[iNum].water, terrain[iNum].overlay);
-		CopySrfToTerData ( surface, iNum, 64 );
+		if ( terrain[iNum].water )
+		{
+			SDL_Surface *fullsurface = SDL_CreateRGBSurface( SDL_HWSURFACE, 64*10, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+			surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, true, terrain[iNum].overlay);
+			SDL_Rect dest = { 0, 0, 64, 64 };
+			SDL_BlitSurface( surface, NULL, fullsurface, &dest );
+			dest.x += 64;
+			for ( int i = 0; i < 5; i++ )
+			{
+				for (int iInd = 0; iInd < 64*64; iInd++ )
+				{
+					Uint8 *pixel = (Uint8*) surface->pixels  + iInd;
+					if ( *pixel > 96 && *pixel <= 102 ) *pixel -= 1;
+					else if ( *pixel == 96 ) *pixel += 6;
+
+					else if ( *pixel > 103 && *pixel < 109 ) *pixel -= 1;
+					else if ( *pixel == 103 ) *pixel += 6;
+
+					else if ( *pixel > 110 && *pixel < 116 ) *pixel -= 1;
+					else if ( *pixel == 110 ) *pixel += 6;
+
+					else if ( *pixel > 117 && *pixel < 122 ) *pixel -= 1;
+					else if ( *pixel == 117 ) *pixel += 5;
+
+					else if ( *pixel > 123 && *pixel < 127 ) *pixel -= 1;
+					else if ( *pixel == 123 ) *pixel += 5;
+				}
+				SDL_BlitSurface( surface, NULL, fullsurface, &dest );
+				if( i < 4)
+				{
+					dest.x += 64*(8-i*2);
+					SDL_BlitSurface( surface, NULL, fullsurface, &dest );
+					dest.x -= 64*(7-i*2);
+				}
+			}
+			CopySrfToTerData ( fullsurface, iNum, 64*10 );
+		}
+		else
+		{
+			surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, terrain[iNum].water, terrain[iNum].overlay);
+			CopySrfToTerData ( surface, iNum, 64 );
+		}
 		terrain[iNum].frames = terrain[iNum].sf_org->w/64;
 
 		// First watergraphic will be the default one for coasts
@@ -215,7 +267,7 @@ bool cMap::LoadMap ( string filename )
 		// Set ColorKeys if necessary
 		if ( terrain[iNum].overlay )
 		{
-			int t=0xFFCD00CD;
+			int t=0xCD00CD;
 			SDL_SetColorKey ( terrain[iNum].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
 			SDL_SetColorKey ( terrain[iNum].shw_org,SDL_SRCCOLORKEY,t );
 			SDL_SetColorKey ( terrain[iNum].sf,SDL_SRCCOLORKEY,0xFF00FF );
