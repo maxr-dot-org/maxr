@@ -1382,20 +1382,18 @@ void cVehicle::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *
 // Zeigt den Hilfebildschirm an:
 void cVehicle::ShowHelp ( void )
 {
-#define DIALOG_W 640
-#define DIALOG_H 480
 #define BUTTON_W 150
 #define BUTTON_H 29
 
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	bool FertigPressed = false;
 	bool ret = false;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
-	SDL_Rect rInfoTxt = {rDialog.x + 11, rDialog.y + 13, typ->info->w, typ->info->h};
-	SDL_Rect rTxt = {rDialog.x + 349, rDialog.y + 66, 277, 181};
-	SDL_Rect rTitle = {rDialog.x + 327, rDialog.y + 11, 160, 15};
-	SDL_Rect rButton = { rDialog.x + 474, rDialog.y + 452, BUTTON_W, BUTTON_H };
+	SDL_Rect rInfoTxt = {MENU_OFFSET_X + 11, MENU_OFFSET_Y + 13, typ->info->w, typ->info->h};
+	SDL_Rect rTxt = {MENU_OFFSET_X + 349, MENU_OFFSET_Y + 66, 277, 181};
+	SDL_Rect rTitle = {MENU_OFFSET_X + 327, MENU_OFFSET_Y + 11, 160, 15};
+	SDL_Rect rButton = { MENU_OFFSET_X + 474, MENU_OFFSET_Y + 452, BUTTON_W, BUTTON_H };
 	SDL_Surface *SfDialog;
 
 	PlayFX ( SoundData.SNDHudButton );
@@ -3110,22 +3108,23 @@ void cVehicle::ShowBuildMenu ( void )
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rTxtDescription = {141, 266, 150, 13};
-	SDL_Rect rTitle = {330, 11, 154, 13};
-	SDL_Rect rBtnDone = {387, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {300, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnPath = {339, 428, BUTTON__W, BUTTON__H};
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
+	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
+	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnPath = {MENU_OFFSET_X + 339, MENU_OFFSET_Y + 428, BUTTON__W, BUTTON__H};
 
 	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
-	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
-	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
-	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
+	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
+	SDL_Rect rBtnSpeed2 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
+	SDL_Rect rBtnSpeed3 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
 
 	BandX = PosX;
 	BandY = PosY;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
-	SDL_BlitSurface ( GraphicsData.gfx_build_screen, NULL, buffer, NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen, NULL, buffer, &rDialog );
 
 	if ( data.can_build != BUILD_BIG )
 	{
@@ -3146,8 +3145,10 @@ void cVehicle::ShowBuildMenu ( void )
 
 	if ( Beschreibung )
 	{
-		dest.x = scr.x = 291;
-		dest.y = scr.y = 264;
+		scr.x = 291;
+		scr.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 17;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
@@ -3156,8 +3157,8 @@ void cVehicle::ShowBuildMenu ( void )
 	{
 		scr.x = 393;
 		scr.y = 46;
-		dest.x = 291;
-		dest.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 18;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -3244,15 +3245,15 @@ void cVehicle::ShowBuildMenu ( void )
 		}
 
 		// Down-Button:
-		if ( x >= 491 && x < 491 + 18 && y >= 440 && y < 440 + 17 && b && !DownPressed )
+		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 491;
-			dest.y = 440;
+			dest.x = MENU_OFFSET_X + 491;
+			dest.y = MENU_OFFSET_Y + 440;
 
 			offset += 9;
 
@@ -3280,8 +3281,8 @@ void cVehicle::ShowBuildMenu ( void )
 				scr.y = 440;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 491;
-				dest.y = 440;
+				dest.x = MENU_OFFSET_X + 491;
+				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -3289,15 +3290,15 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 
 		// Up-Button:
-		if ( x >= 471 && x < 471 + 18 && y >= 440 && y < 440 + 17 && b && !UpPressed )
+		if ( x >= MENU_OFFSET_X + 471 && x < MENU_OFFSET_X + 471 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 471;
-			dest.y = 440;
+			dest.x = MENU_OFFSET_X + 471;
+			dest.y = MENU_OFFSET_Y + 440;
 
 			offset -= 9;
 
@@ -3325,8 +3326,8 @@ void cVehicle::ShowBuildMenu ( void )
 				scr.y = 440;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 471;
-				dest.y = 440;
+				dest.x = MENU_OFFSET_X + 471;
+				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -3519,7 +3520,7 @@ void cVehicle::ShowBuildMenu ( void )
 			}
 
 		// Beschreibung Haken:
-		if ( x >= 292 && x < 292 + 16 && y >= 265 && y < 265 + 15 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung = !Beschreibung;
@@ -3527,8 +3528,10 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( Beschreibung )
 			{
-				dest.x = scr.x = 291;
-				dest.y = scr.y = 264;
+				scr.x = 291;
+				scr.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 17;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
@@ -3537,8 +3540,8 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				scr.x = 393;
 				scr.y = 46;
-				dest.x = 291;
-				dest.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -3581,10 +3584,10 @@ void cVehicle::ShowBuildMenu ( void )
 		}
 
 		// Klick in die Liste:
-		if ( x >= 490 && x < 490 + 70 && y >= 60 && y < 60 + 368 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 490 && x < MENU_OFFSET_X + 490 + 70 && y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 368 && b && !LastB )
 		{
 			int nr;
-			nr = ( y - 60 ) / ( 32 + 10 );
+			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 10 );
 
 			if ( images->iCount < 9 )
 			{
@@ -3634,24 +3637,29 @@ void cVehicle::ShowBuildMenu ( void )
 void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 80, 16};
+
+	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16};
 	int i;
 	scr.x = 479;
 	scr.y = 52;
-	scr.w = 150;
-	scr.h = 378;
-	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 479;
+	dest.y = MENU_OFFSET_Y + 52;
+	scr.w = dest.w = 150;
+	scr.h = dest.h = 378;
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 	scr.x = 373;
 	scr.y = 344;
-	scr.w = 77;
-	scr.h = 72;
-	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 373;
+	dest.y = MENU_OFFSET_Y + 344;
+	scr.w = dest.w = 77;
+	scr.h = dest.w = 72;
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = 32;
 	scr.h = 32;
-	dest.x = 490;
-	dest.y = 58;
+	dest.x = MENU_OFFSET_X + 490;
+	dest.y = MENU_OFFSET_Y + 58;
 	dest.w = 32;
 	dest.h = 32;
 
@@ -3692,8 +3700,8 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 			tmp.x -= 38;
 			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 			// Das Bild neu malen:
-			tmp.x = 11;
-			tmp.y = 13;
+			tmp.x = MENU_OFFSET_X + 11;
+			tmp.y = MENU_OFFSET_Y + 13;
 			tmp.w = UnitsData.building[ptr->id].info->w;
 			tmp.h = UnitsData.building[ptr->id].info->h;
 			SDL_BlitSurface ( UnitsData.building[ptr->id].info, NULL, buffer, &tmp );
@@ -3712,11 +3720,14 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 			// Die Details anzeigen:
 			{
 				cBuilding *tb;
+				SDL_Rect tmp2;
 				tmp.x = 11;
 				tmp.y = 290;
-				tmp.w = 260;
-				tmp.h = 176;
-				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &tmp, buffer, &tmp );
+				tmp2.x = MENU_OFFSET_X + 11;
+				tmp2.y = MENU_OFFSET_Y + 290;
+				tmp.w = tmp2.w = 260;
+				tmp.h = tmp2.h = 176;
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &tmp, buffer, &tmp2 );
 				tb = new cBuilding ( UnitsData.building + ptr->id, game->ActivePlayer, NULL );
 				tb->ShowBigDetails();
 				delete tb;
@@ -3800,11 +3811,11 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 
 
 
-			font->showTextCentered ( 389, 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs / data.iNeeds_Metal ) );
+			font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs / data.iNeeds_Metal ) );
 
 
 
-			font->showTextCentered ( 429, 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
+			font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
 
 			if ( iTurboBuildRounds[1] > 0 )
 			{
@@ -3813,8 +3824,8 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 
 
 
-				font->showTextCentered ( 389, 375, iToStr ( iTurboBuildRounds[1] ) );
-				font->showTextCentered ( 429, 375, iToStr ( iTurboBuildCosts[1] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildRounds[1] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildCosts[1] ) );
 			}
 
 			if ( iTurboBuildRounds[2] > 0 )
@@ -3823,8 +3834,8 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 
 
 
-				font->showTextCentered ( 389, 400, iToStr ( iTurboBuildRounds[2] ) );
-				font->showTextCentered ( 429, 400, iToStr ( iTurboBuildCosts[2] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildRounds[2] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildCosts[2] ) );
 			}
 		}
 
@@ -3844,7 +3855,7 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 		}
 		
 		
-		font->showTextCentered ( 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
@@ -3853,9 +3864,9 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 
 void cVehicle::DrawBuildButtons ( int speed )
 {
-	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed2 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 370, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed3 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 395, BUTTON__W, BUTTON__H};
 
 	string sTmp = lngPack.i18n ( "Text~Button~Build" );
 

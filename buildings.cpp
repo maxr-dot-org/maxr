@@ -1099,7 +1099,7 @@ void cBuilding::ShowBigDetails ( void )
 #define COLUMN_3 dest.x+95
 #define DOLINEBREAK dest.y = y + 14; SDL_FillRect ( buffer, &dest, 0xFC0000 ); y += 19;
 
-	SDL_Rect dest = { SettingsData.iScreenW / 2 - DIALOG_W / 2 + 16, SettingsData.iScreenH / 2 - DIALOG_H / 2, 242, 1 };
+	SDL_Rect dest = { MENU_OFFSET_X + 16, MENU_OFFSET_Y, 242, 1 };
 	int y;
 	y = dest.y + 297;
 
@@ -3736,17 +3736,18 @@ void cBuilding::ShowUpgrade ( void )
 	int selected = 0, offset = 0;
 	int StartCredits = owner->Credits;
 
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, NULL, buffer, NULL );
-
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rBtnDone = {447, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {360, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rTitle = {330, 11, 154, 13};
-	SDL_Rect rTxtDescription = {141, 266, 150, 13};
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rBtnDone = {MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
+	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
+
+	mouse->SetCursor ( CHand );
+	mouse->draw ( false, buffer );
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade, NULL, buffer, &rDialog );
 
 	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
@@ -3761,8 +3762,10 @@ void cBuilding::ShowUpgrade ( void )
 
 	if ( Beschreibung )
 	{
-		dest.x = scr.x = 291;
-		dest.y = scr.y = 264;
+		scr.x = 291;
+		scr.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 17;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
@@ -3771,8 +3774,8 @@ void cBuilding::ShowUpgrade ( void )
 	{
 		scr.x = 393;
 		scr.y = 46;
-		dest.x = 291;
-		dest.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 18;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -3882,15 +3885,15 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Down-Button:
-		if ( x >= 491 && x < 491 + 18 && y >= 386 && y < 386 + 17 && b && !DownPressed )
+		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 && b && !DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 491;
-			dest.y = 386;
+			dest.x = MENU_OFFSET_X + 491;
+			dest.y = MENU_OFFSET_Y + 386;
 
 			if ( offset < selection->iCount - 9 )
 			{
@@ -3915,8 +3918,8 @@ void cBuilding::ShowUpgrade ( void )
 				scr.y = 386;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 491;
-				dest.y = 386;
+				dest.x = MENU_OFFSET_X + 491;
+				dest.y = MENU_OFFSET_Y + 386;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -3924,15 +3927,15 @@ void cBuilding::ShowUpgrade ( void )
 			}
 
 		// Up-Button:
-		if ( x >= 470 && x < 470 + 18 && y >= 386 && y < 386 + 17 && b && !UpPressed )
+		if ( x >= MENU_OFFSET_X + 470 && x < MENU_OFFSET_X + 470 + 18 && y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 && b && !UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 470;
-			dest.y = 386;
+			dest.x = MENU_OFFSET_X + 470;
+			dest.y = MENU_OFFSET_Y + 386;
 
 			if ( offset != 0 )
 			{
@@ -3957,8 +3960,8 @@ void cBuilding::ShowUpgrade ( void )
 				scr.y = 386;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 470;
-				dest.y = 386;
+				dest.x = MENU_OFFSET_X + 470;
+				dest.y = MENU_OFFSET_Y + 386;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -4066,7 +4069,7 @@ void cBuilding::ShowUpgrade ( void )
 			}
 
 		// Beschreibung Haken:
-		if ( x >= 292 && x < 292 + 16 && y >= 265 && y < 265 + 15 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung = !Beschreibung;
@@ -4074,8 +4077,10 @@ void cBuilding::ShowUpgrade ( void )
 
 			if ( Beschreibung )
 			{
-				dest.x = scr.x = 291;
-				dest.y = scr.y = 264;
+				scr.x = 291;
+				scr.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 17;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
@@ -4084,8 +4089,8 @@ void cBuilding::ShowUpgrade ( void )
 			{
 				scr.x = 393;
 				scr.y = 46;
-				dest.x = 291;
-				dest.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -4098,10 +4103,10 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Klick in die Liste:
-		if ( x >= 490 && x < 490 + 70 && y >= 60 && y < 60 + 315 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 490 && x < MENU_OFFSET_X + 490 + 70 && y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 315 && b && !LastB )
 		{
 			int nr;
-			nr = ( y - 60 ) / ( 32 + 2 );
+			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 2 );
 
 			if ( selection->iCount < 9 )
 			{
@@ -4127,7 +4132,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Klick auf einen Upgrade-Slider:
-		if ( b && !LastB && x >= 283 && x < 301 + 18 && selection->iCount )
+		if ( b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection->iCount )
 		{
 			sUpgradeStruct *ptr = selection->Items[selected];
 
@@ -4136,7 +4141,7 @@ void cBuilding::ShowUpgrade ( void )
 				if ( !ptr->upgrades[i].active )
 					continue;
 
-				if ( ptr->upgrades[i].Purchased && x < 283 + 18 && y >= 293 + i*19 && y < 293 + i*19 + 19 )
+				if ( ptr->upgrades[i].Purchased && x < MENU_OFFSET_X + 283 + 18 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
 				{
 					int variety;
 
@@ -4178,7 +4183,7 @@ void cBuilding::ShowUpgrade ( void )
 					break;
 				}
 				else
-					if ( ptr->upgrades[i].NextPrice <= owner->Credits && x >= 301 && y >= 293 + i*19 && y < 293 + i*19 + 19 )
+					if ( ptr->upgrades[i].NextPrice <= owner->Credits && x >= MENU_OFFSET_X + 301 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
 					{
 						int variety;
 						owner->Credits -= ptr->upgrades[i].NextPrice;
@@ -4222,7 +4227,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Klick auf einen der SubSelctionButtons:
-		if ( b && !LastB && x >= 467 && x < 467 + 32 && y >= 411 && y < 411 + 31 )
+		if ( b && !LastB && x >= MENU_OFFSET_X + 467 && x < MENU_OFFSET_X + 467 + 32 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			game->UpShowTank = !game->UpShowTank;
@@ -4233,7 +4238,7 @@ void cBuilding::ShowUpgrade ( void )
 			mouse->draw ( false, screen );
 		}
 		else
-			if ( b && !LastB && x >= 467 + 33 && x < 467 + 32 + 33 && y >= 411 && y < 411 + 31 )
+			if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33 && x < MENU_OFFSET_X + 467 + 32 + 33 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
 			{
 				PlayFX ( SoundData.SNDHudSwitch );
 				game->UpShowPlane = !game->UpShowPlane;
@@ -4244,7 +4249,7 @@ void cBuilding::ShowUpgrade ( void )
 				mouse->draw ( false, screen );
 			}
 			else
-				if ( b && !LastB && x >= 467 + 33*2 && x < 467 + 32 + 33*2 && y >= 411 && y < 411 + 31 )
+				if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*2 && x < MENU_OFFSET_X + 467 + 32 + 33*2 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
 				{
 					PlayFX ( SoundData.SNDHudSwitch );
 					game->UpShowShip = !game->UpShowShip;
@@ -4255,7 +4260,7 @@ void cBuilding::ShowUpgrade ( void )
 					mouse->draw ( false, screen );
 				}
 				else
-					if ( b && !LastB && x >= 467 + 33*3 && x < 467 + 32 + 33*3 && y >= 411 && y < 411 + 31 )
+					if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*3 && x < MENU_OFFSET_X + 467 + 32 + 33*3 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
 					{
 						PlayFX ( SoundData.SNDHudSwitch );
 						game->UpShowBuild = !game->UpShowBuild;
@@ -4266,7 +4271,7 @@ void cBuilding::ShowUpgrade ( void )
 						mouse->draw ( false, screen );
 					}
 					else
-						if ( b && !LastB && x >= 467 + 33*4 && x < 467 + 32 + 33*4 && y >= 411 && y < 411 + 31 )
+						if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*4 && x < MENU_OFFSET_X + 467 + 32 + 33*4 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
 						{
 							PlayFX ( SoundData.SNDHudSwitch );
 							game->UpShowTNT = !game->UpShowTNT;
@@ -4303,19 +4308,21 @@ void cBuilding::ShowUpgrade ( void )
 void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, int offset, bool beschreibung )
 {
 	sUpgradeStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 80, 0 };
+	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
 	int i, k;
 	scr.x = 479;
 	scr.y = 52;
-	scr.w = 150;
-	scr.h = 330;
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 479;
+	dest.y = MENU_OFFSET_Y + 52;
+	scr.w = dest.w = 150;
+	scr.h = dest.h = 330;
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = 32;
 	scr.h = 32;
-	dest.x = 490;
-	dest.y = 58;
+	dest.x = MENU_OFFSET_X + 490;
+	dest.y = MENU_OFFSET_Y + 58;
 	dest.w = 32;
 	dest.h = 32;
 
@@ -4323,14 +4330,18 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 	{
 		scr.x = 0;
 		scr.y = 0;
-		scr.w = 316;
-		scr.h = 256;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &scr );
+		dest.x = MENU_OFFSET_X;
+		dest.y = MENU_OFFSET_Y;
+		scr.w = dest.w = 316;
+		scr.h = dest.h = 256;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 		scr.x = 11;
 		scr.y = 290;
-		scr.w = 346;
-		scr.h = 176;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &scr );
+		dest.x = MENU_OFFSET_X + 11;
+		dest.y = MENU_OFFSET_Y + 290;
+		scr.w = dest.w = 346;
+		scr.h = dest.h = 176;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 		return;
 	}
 
@@ -4347,7 +4358,7 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 		// Ggf noch Rahmen drum:
 		if ( selected == i )
 		{
-			SDL_Rect tmp;
+			SDL_Rect tmp, tmp2;
 			tmp = dest;
 			tmp.x -= 4;
 			tmp.y -= 4;
@@ -4371,8 +4382,8 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 			tmp.x -= 38;
 			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 			// Das Bild neu malen:
-			tmp.x = 11;
-			tmp.y = 13;
+			tmp.x = MENU_OFFSET_X + 11;
+			tmp.y = MENU_OFFSET_Y + 13;
 
 			if ( ptr->vehicle )
 			{
@@ -4413,9 +4424,11 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 				cBuilding *tb;
 				tmp.x = 11;
 				tmp.y = 290;
-				tmp.w = 346;
-				tmp.h = 176;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &tmp, buffer, &tmp );
+				tmp2.x = MENU_OFFSET_X + 11;
+				tmp2.y = MENU_OFFSET_Y + 290;
+				tmp.w = tmp2.w = 346;
+				tmp.h = tmp2.h = 176;
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &tmp, buffer, &tmp2 );
 
 				if ( ptr->vehicle )
 				{
@@ -4441,7 +4454,7 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 
 				//sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
 
-				font->showText ( 322, 296 + k*19, iToStr ( ptr->upgrades[k].NextPrice ) );
+				font->showText ( MENU_OFFSET_X + 322, MENU_OFFSET_Y + 296 + k*19, iToStr ( ptr->upgrades[k].NextPrice ) );
 
 				if ( ptr->upgrades[k].Purchased )
 				{
@@ -4449,8 +4462,8 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 					scr.y = 256;
 					dest.w = scr.w = 18;
 					dest.h = scr.h = 17;
-					dest.x = 283;
-					dest.y = 293 + k * 19;
+					dest.x = MENU_OFFSET_X + 283;
+					dest.y = MENU_OFFSET_Y + 293 + k * 19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 				}
 
@@ -4460,8 +4473,8 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 					scr.y = 256;
 					dest.w = scr.w = 18;
 					dest.h = scr.h = 17;
-					dest.x = 301;
-					dest.y = 293 + k * 19;
+					dest.x = MENU_OFFSET_X + 301;
+					dest.y = MENU_OFFSET_Y + 293 + k * 19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 				}
 			}
@@ -4501,26 +4514,30 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 {
 	//char str[50];
 	SDL_Rect scr, dest;
-	scr.x = dest.x = 371;
-	scr.y = dest.y = 301;
+	scr.x = 371;
+	scr.y = 301;
+	dest.x = MENU_OFFSET_X + 371;
+	dest.y = MENU_OFFSET_Y + 301;
 	scr.w = dest.w = 22;
 	scr.h = dest.h = 115;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
-	scr.x = dest.x = 312;
-	scr.y = dest.y = 265;
+	scr.x = 312;
+	scr.y = 265;
+	dest.x = MENU_OFFSET_X + 312;
+	dest.y = MENU_OFFSET_Y + 265;
 	scr.w = dest.w = 150;
 	scr.h = dest.h = 26;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	//sprintf ( str,"Credits: %d",owner->Credits );
 
-	font->showTextCentered ( 381, 275, "Credits: " + iToStr ( owner->Credits ) );
+	font->showTextCentered ( MENU_OFFSET_X + 381, MENU_OFFSET_Y + 275, "Credits: " + iToStr ( owner->Credits ) );
 
 	scr.x = 118;
 	scr.y = 336;
 	scr.w = dest.w = 16;
 	scr.h = dest.h = ( int ) ( 115 * ( owner->Credits / ( float ) StartCredits ) );
-	dest.x = 375;
-	dest.y = 301 + 115 - dest.h;
+	dest.x = MENU_OFFSET_X + 375;
+	dest.y = MENU_OFFSET_Y + 301 + 115 - dest.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 }
 
@@ -4842,82 +4859,88 @@ void cBuilding::CreateUpgradeList ( cList<sUpgradeStruct*> *selection, cList<sUp
 void cBuilding::MakeUpgradeSubButtons ( void )
 {
 	SDL_Rect scr, dest;
-	scr.x = 152;
-	scr.y = 479;
-	dest.x = 467;
-	dest.y = 411;
+	dest.x = MENU_OFFSET_X + 467;
+	dest.y = MENU_OFFSET_Y + 411;
 	dest.w = scr.w = 32;
 	dest.h = scr.h = 31;
 	// Tank:
 
 	if ( !game->UpShowTank )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &dest, buffer, &dest );
+		scr.x = 467;
+		scr.y = 411;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
 	{
+		scr.x = 152;
+		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
 	dest.x += 33;
-
-	scr.x += 33;
 	// Plane:
 
 	if ( !game->UpShowPlane )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &dest, buffer, &dest );
+		scr.x = 467 + 33;
+		scr.y = 411;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
 	{
+		scr.x = 152 + 33;
+		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
 	dest.x += 33;
-
-	scr.x += 33;
 	// Ship:
 
 	if ( !game->UpShowShip )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &dest, buffer, &dest );
+		scr.x = 467 + 66;
+		scr.y = 411;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
 	{
+		scr.x = 152 + 66;
+		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
 	dest.x += 33;
-
-	scr.x += 33;
 	// Building:
 
 	if ( !game->UpShowBuild )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &dest, buffer, &dest );
+		scr.x = 467 + 99;
+		scr.y = 411;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
 	{
+		scr.x = 152 + 99;
+		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
 	dest.x += 33;
-
-	scr.x += 33;
 	// TNT:
 
 	if ( !game->UpShowTNT )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &dest, buffer, &dest );
+		scr.x = 467 + 132;
+		scr.y = 411;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
 	{
+		scr.x = 152 + 132;
+		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
-
-	dest.x += 33;
-
-	scr.x += 33;
 }
 
 // Berechnet den Preis für ein Upgrade:
@@ -6571,23 +6594,24 @@ void cBuilding::ShowBuildMenu ( void )
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rTxtDescription = {141, 266, 150, 13};
-	SDL_Rect rTitle = {330, 11, 154, 13};
-	SDL_Rect rBtnDone = {387, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {300, 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rTxtRepeat = {370, 326, 76, 17};
-	SDL_Rect rBtnDel = {388, 292, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnBuy = {561, 441, BUTTON__W, BUTTON__H};
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
+	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
+	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
+	SDL_Rect rTxtRepeat = {MENU_OFFSET_X + 370, MENU_OFFSET_Y + 326, 76, 17};
+	SDL_Rect rBtnDel = {MENU_OFFSET_X + 388, MENU_OFFSET_Y + 292, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnBuy = {MENU_OFFSET_X + 561, MENU_OFFSET_Y + 441, BUTTON__W, BUTTON__H};
 
 
 	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
-	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
-	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
-	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
+	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
+	SDL_Rect rBtnSpeed2 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
+	SDL_Rect rBtnSpeed3 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, NULL, buffer, NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, NULL, buffer, &rDialog );
 
 	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
@@ -6606,8 +6630,10 @@ void cBuilding::ShowBuildMenu ( void )
 
 	if ( SettingsData.bShowDescription )
 	{
-		dest.x = scr.x = 291;
-		dest.y = scr.y = 264;
+		scr.x = 291;
+		scr.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 17;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -6616,8 +6642,8 @@ void cBuilding::ShowBuildMenu ( void )
 	{
 		scr.x = 393;
 		scr.y = 46;
-		dest.x = 291;
-		dest.y = 264;
+		dest.x = MENU_OFFSET_X + 291;
+		dest.y = MENU_OFFSET_Y + 264;
 		dest.w = scr.w = 18;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -6769,8 +6795,8 @@ void cBuilding::ShowBuildMenu ( void )
 		// Den Wiederholen Haken machen:
 		scr.x = 393;
 		scr.y = 46;
-		dest.x = 447;
-		dest.y = 322;
+		dest.x = MENU_OFFSET_X + 447;
+		dest.y = MENU_OFFSET_Y + 322;
 		dest.w = scr.w = 18;
 		dest.h = scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -6812,15 +6838,15 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// Down-Button:
-		if ( x >= 491 && x < 491 + 18 && y >= 440 && y < 440 + 17 && b && !DownPressed )
+		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 491;
-			dest.y = 440;
+			dest.x = MENU_OFFSET_X + 491;
+			dest.y = MENU_OFFSET_Y + 440;
 
 			offset += 9;
 
@@ -6853,8 +6879,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 440;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 491;
-				dest.y = 440;
+				dest.x = MENU_OFFSET_X + 491;
+				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -6862,15 +6888,15 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 
 		// Up-Button:
-		if ( x >= 471 && x < 471 + 18 && y >= 440 && y < 440 + 17 && b && !UpPressed )
+		if ( x >= MENU_OFFSET_X + 471 && x < MENU_OFFSET_X + 471 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 471;
-			dest.y = 440;
+			dest.x = MENU_OFFSET_X + 471;
+			dest.y = MENU_OFFSET_Y + 440;
 
 			offset -= 9;
 
@@ -6898,8 +6924,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 440;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 471;
-				dest.y = 440;
+				dest.x = MENU_OFFSET_X + 471;
+				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -6907,15 +6933,15 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 
 		// Down2-Button:
-		if ( x >= 327 && x < 327 + 18 && y >= 293 && y < 293 + 17 && b && !Down2Pressed )
+		if ( x >= MENU_OFFSET_X + 327 && x < MENU_OFFSET_X + 327 + 18 && y >= MENU_OFFSET_Y + 293 && y < MENU_OFFSET_Y + 293 + 17 && b && !Down2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 327;
-			dest.y = 293;
+			dest.x = MENU_OFFSET_X + 327;
+			dest.y = MENU_OFFSET_Y + 293;
 
 			if ( build_offset != 0 )
 			{
@@ -6936,8 +6962,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 293;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 327;
-				dest.y = 293;
+				dest.x = MENU_OFFSET_X + 327;
+				dest.y = MENU_OFFSET_Y + 293;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -6945,15 +6971,15 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 
 		// Up2-Button:
-		if ( x >= 347 && x < 347 + 18 && y >= 293 && y < 293 + 17 && b && !Up2Pressed )
+		if ( x >= MENU_OFFSET_X + 347 && x < MENU_OFFSET_X + 347 + 18 && y >= MENU_OFFSET_Y + 293 && y < MENU_OFFSET_Y + 293 + 17 && b && !Up2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
 			dest.w = scr.w = 18;
 			dest.h = scr.h = 17;
-			dest.x = 347;
-			dest.y = 293;
+			dest.x = MENU_OFFSET_X + 347;
+			dest.y = MENU_OFFSET_Y + 293;
 
 			if ( build_offset < to_build->iCount - 5 )
 			{
@@ -6974,8 +7000,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 293;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
-				dest.x = 347;
-				dest.y = 293;
+				dest.x = MENU_OFFSET_X + 347;
+				dest.y = MENU_OFFSET_Y + 293;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
@@ -7164,7 +7190,7 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 
 		// Beschreibung Haken:
-		if ( x >= 292 && x < 292 + 16 && y >= 265 && y < 265 + 15 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 
@@ -7172,8 +7198,10 @@ void cBuilding::ShowBuildMenu ( void )
 
 			if ( SettingsData.bShowDescription )
 			{
-				dest.x = scr.x = 291;
-				dest.y = scr.y = 264;
+				scr.x = 291;
+				scr.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 17;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -7182,8 +7210,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 393;
 				scr.y = 46;
-				dest.x = 291;
-				dest.y = 264;
+				dest.x = MENU_OFFSET_X + 291;
+				dest.y = MENU_OFFSET_Y + 264;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -7197,15 +7225,17 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// Wiederholen Haken:
-		if ( x >= 447 && x < 447 + 16 && y >= 322 && y < 322 + 15 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 447 && x < MENU_OFFSET_X + 447 + 16 && y >= MENU_OFFSET_Y + 322 && y < MENU_OFFSET_Y + 322 + 15 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wiederholen = !Wiederholen;
 
 			if ( Wiederholen )
 			{
-				dest.x = scr.x = 447;
-				dest.y = scr.y = 322;
+				scr.x = 447;
+				scr.y = 322;
+				dest.x = MENU_OFFSET_X + 447;
+				dest.y = MENU_OFFSET_Y + 322;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -7214,8 +7244,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 393;
 				scr.y = 46;
-				dest.x = 447;
-				dest.y = 322;
+				dest.x = MENU_OFFSET_X + 447;
+				dest.y = MENU_OFFSET_Y + 322;
 				dest.w = scr.w = 18;
 				dest.h = scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -7227,7 +7257,7 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// 1x Button:
-		if ( x >= 292 && x < 292 + 76 && y >= 345 && y < 345 + 22 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 76 && y >= MENU_OFFSET_Y + 345 && y < MENU_OFFSET_Y + 345 + 22 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed = 0;
@@ -7237,7 +7267,7 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// 2x Button:
-		if ( x >= 292 && x < 292 + 76 && y >= 369 && y < 369 + 22 && b && !LastB && data.can_build != BUILD_MAN )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 76 && y >= MENU_OFFSET_Y + 369 && y < MENU_OFFSET_Y + 369 + 22 && b && !LastB && data.can_build != BUILD_MAN )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed = 1;
@@ -7248,7 +7278,7 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// 4x Button:
-		if ( x >= 292 && x < 292 + 76 && y >= 394 && y < 394 + 22 && b && !LastB && data.can_build != BUILD_MAN )
+		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 76 && y >= MENU_OFFSET_Y + 394 && y < MENU_OFFSET_Y + 394 + 22 && b && !LastB && data.can_build != BUILD_MAN )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 			BuildSpeed = 2;
@@ -7258,10 +7288,10 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// Klick in die Liste:
-		if ( x >= 490 && x < 490 + 70 && y >= 60 && y < 60 + 368 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 490 && x < MENU_OFFSET_X + 490 + 70 && y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 368 && b && !LastB )
 		{
 			int nr;
-			nr = ( y - 60 ) / ( 32 + 10 );
+			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
 			if ( images->iCount < 9 )
 			{
@@ -7313,10 +7343,10 @@ void cBuilding::ShowBuildMenu ( void )
 		}
 
 		// Klick in die to_build Liste:
-		if ( x >= 330 && x < 330 + 128 && y >= 60 && y < 60 + 210 && b && !LastB )
+		if ( x >= MENU_OFFSET_X + 330 && x < MENU_OFFSET_X + 330 + 128 && y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 210 && b && !LastB )
 		{
 			int nr;
-			nr = ( y - 60 ) / ( 32 + 10 );
+			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
 			if ( to_build->iCount < 5 )
 			{
@@ -7402,24 +7432,28 @@ void cBuilding::ShowBuildMenu ( void )
 void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text = { 530, 70, 80, 16 };
+	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16 };
 	int i;
 	scr.x = 479;
 	scr.y = 52;
-	scr.w = 150;
-	scr.h = 378;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 479;
+	dest.y = MENU_OFFSET_Y + 52;
+	scr.w = dest.w = 150;
+	scr.h = dest.h = 378;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 	scr.x = 373;
 	scr.y = 344;
-	scr.w = 77;
-	scr.h = 72;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 373;
+	dest.y = MENU_OFFSET_Y + 344;
+	scr.w = dest.w = 77;
+	scr.h = dest.h = 72;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = 32;
 	scr.h = 32;
-	dest.x = 490;
-	dest.y = 58;
+	dest.x = MENU_OFFSET_X + 490;
+	dest.y = MENU_OFFSET_Y + 58;
 	dest.w = 32;
 	dest.h = 32;
 
@@ -7486,8 +7520,8 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 				SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 
 				// Das große Bild neu malen:
-				tmp.x = 11;
-				tmp.y = 13;
+				tmp.x = MENU_OFFSET_X + 11;
+				tmp.y = MENU_OFFSET_Y + 13;
 				tmp.w = UnitsData.vehicle[ptr->id].info->w;
 				tmp.h = UnitsData.vehicle[ptr->id].info->h;
 				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp );
@@ -7508,11 +7542,14 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 				// Die Details anzeigen:
 				{
 					cVehicle *tv;
+					SDL_Rect tmp2;
 					tmp.x = 11;
 					tmp.y = 290;
-					tmp.w = 260;
-					tmp.h = 176;
-					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp );
+					tmp2.x = MENU_OFFSET_X + 11;
+					tmp2.y = MENU_OFFSET_Y + 290;
+					tmp.w = tmp2.w = 260;
+					tmp.h = tmp2.h = 176;
+					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
 					tv = new cVehicle ( UnitsData.vehicle + ptr->id, game->ActivePlayer );
 					tv->ShowBigDetails();
 					delete tv;
@@ -7526,29 +7563,29 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs );
 
 				//sprintf ( str,"%d",iTurboBuildRounds[0]) ;
-				font->showTextCentered ( 389, 350, iToStr ( iTurboBuildRounds[0] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildRounds[0] ) );
 
 				//sprintf ( str,"%d",iTurboBuildCosts[0] );
-				font->showTextCentered ( 429, 350, iToStr ( iTurboBuildCosts[0] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildCosts[0] ) );
 
 
 				if ( iTurboBuildRounds[1] > 0 )
 				{
 
 					//sprintf ( str,"%d", iTurboBuildRounds[1] );
-					font->showTextCentered ( 389, 375, iToStr ( iTurboBuildRounds[1] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildRounds[1] ) );
 
 					//sprintf ( str,"%d", iTurboBuildCosts[1] );
-					font->showTextCentered ( 429, 375, iToStr ( iTurboBuildCosts[1] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildCosts[1] ) );
 
 				}
 
 				if ( iTurboBuildRounds[2] > 0 )
 				{
-					font->showTextCentered ( 389, 400, iToStr ( iTurboBuildRounds[2] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildRounds[2] ) );
 					//sprintf ( str,"%d", iTurboBuildRounds[2] );
 
-					font->showTextCentered ( 429, 400, iToStr ( iTurboBuildCosts[2] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildCosts[2] ) );
 					//sprintf ( str,"%d", iTurboBuildCosts[2] );
 
 				}
@@ -7597,7 +7634,7 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 		}
 
 
-		font->showTextCentered ( 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
 	}
@@ -7606,9 +7643,9 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 //draws the Buildspeed-Buttons
 void cBuilding::DrawBuildButtons ( int speed )
 {
-	SDL_Rect rBtnSpeed1 = {292, 345, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnSpeed2 = {292, 370, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnSpeed3 = {292, 395, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed2 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 370, BUTTON__W, BUTTON__H};
+	SDL_Rect rBtnSpeed3 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 395, BUTTON__W, BUTTON__H};
 
 	string sTmp = lngPack.i18n ( "Text~Button~Build" );
 
@@ -7644,21 +7681,23 @@ void cBuilding::DrawBuildButtons ( int speed )
 void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool showInfo )
 {
 	sBuildStruct *ptr;
-	SDL_Rect scr, dest, text = { 375, 70, 80, 16};
+	SDL_Rect scr, dest, text = { MENU_OFFSET_X + 375, MENU_OFFSET_Y + 70, 80, 16};
 	int i;
 	scr.x = 330;
 	scr.y = 49;
-	scr.w = 128;
-	scr.h = 233;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &scr );
+	dest.x = MENU_OFFSET_X + 330;
+	dest.y = MENU_OFFSET_Y + 49;
+	scr.w = dest.w = 128;
+	scr.h = dest.h = 233;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 
 
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = 32;
 	scr.h = 32;
-	dest.x = 340;
-	dest.y = 58;
+	dest.x = MENU_OFFSET_X + 340;
+	dest.y = MENU_OFFSET_Y + 58;
 	dest.w = 32;
 	dest.h = 32;
 
@@ -7677,7 +7716,7 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 			if ( showInfo == true )
 			{
 				//dopelten Rahmen drum malen
-				SDL_Rect tmp;
+				SDL_Rect tmp, tmp2;
 				tmp = dest;
 				tmp.x -= 3;
 				tmp.y -= 3;
@@ -7725,8 +7764,8 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 				SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 
 				// Das große Bild neu malen:
-				tmp.x = 11;
-				tmp.y = 13;
+				tmp.x = MENU_OFFSET_X + 11;
+				tmp.y = MENU_OFFSET_Y + 13;
 				tmp.w = UnitsData.vehicle[ptr->id].info->w;
 				tmp.h = UnitsData.vehicle[ptr->id].info->h;
 				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp );
@@ -7749,9 +7788,11 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 					cVehicle *tv;
 					tmp.x = 11;
 					tmp.y = 290;
-					tmp.w = 260;
-					tmp.h = 176;
-					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp );
+					tmp2.x = MENU_OFFSET_X + 11;
+					tmp2.y = MENU_OFFSET_Y + 290;
+					tmp.w = tmp2.w = 260;
+					tmp.h = tmp2.h = 176;
+					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
 					tv = new cVehicle ( UnitsData.vehicle + ptr->id, game->ActivePlayer );
 					tv->ShowBigDetails();
 					delete tv;
@@ -7768,38 +7809,42 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 
 				tmp.y = 344;
 
-				tmp.w = 77;
+				tmp2.x = MENU_OFFSET_X + 373;
 
-				tmp.h = 72;
+				tmp2.y = MENU_OFFSET_Y + 344;
 
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp );
+				tmp.w = tmp2.w = 77;
+
+				tmp.h = tmp2.h = 72;
+
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
 
 				//sprintf ( str,"%d",iTurboBuildRounds[0]);
 
-				font->showTextCentered ( 389, 350, iToStr ( iTurboBuildRounds[0] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildRounds[0] ) );
 
 				//sprintf ( str,"%d",iTurboBuildCosts[0] );
 
-				font->showTextCentered ( 429, 350, iToStr ( iTurboBuildCosts[0] ) );
+				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildCosts[0] ) );
 
 				if ( iTurboBuildRounds[1] > 0 )
 				{
 					//sprintf ( str,"%d", iTurboBuildRounds[1] );
 
-					font->showTextCentered ( 389, 375, iToStr ( iTurboBuildRounds[1] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildRounds[1] ) );
 					//sprintf ( str,"%d", iTurboBuildCosts[1] );
 
-					font->showTextCentered ( 429, 375, iToStr ( iTurboBuildCosts[1] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildCosts[1] ) );
 				}
 
 				if ( iTurboBuildRounds[2] > 0 )
 				{
 					//sprintf ( str,"%d", iTurboBuildRounds[2] );
 
-					font->showTextCentered ( 389, 400, iToStr ( iTurboBuildRounds[2] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildRounds[2] ) );
 					//sprintf ( str,"%d", iTurboBuildCosts[2] );
 
-					font->showTextCentered ( 429, 400, iToStr ( iTurboBuildCosts[2] ) );
+					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildCosts[2] ) );
 				}
 			}
 			else

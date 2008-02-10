@@ -34,6 +34,12 @@
 
 #endif
 
+//some defines for typical menus
+#define DIALOG_W 640
+#define DIALOG_H 480
+
+#define MENU_OFFSET_X	( SettingsData.iScreenW / 2 - DIALOG_W / 2 )
+#define MENU_OFFSET_Y	( SettingsData.iScreenH / 2 - DIALOG_H / 2 )
 
 #ifdef WIN32
 	#ifndef PATH_DELIMITER

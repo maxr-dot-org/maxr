@@ -35,13 +35,13 @@
 // shows a yes/no dialog
 bool ShowYesNo ( string text )
 {
-	#define DIALOG_W 300
-	#define DIALOG_H 231
+	#define DIALOGBOX_W 300
+	#define DIALOGBOX_H 231
 	#define BUTTON_W 150
 	#define BUTTON_H 29
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	bool ret = false;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
 	SDL_Rect rButtonYes = {rDialog.x+80, rDialog.y+150, BUTTON_W, BUTTON_H};
 	SDL_Rect rButtonNo = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
@@ -139,11 +139,11 @@ bool ShowYesNo ( string text )
 // Zeigt einen Dialog für eine Zahleneingabe an:
 int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 {
-	#define DIALOG_W 300
-	#define DIALOG_H 231
+	#define DIALOGBOX_W 300
+	#define DIALOGBOX_H 231
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	int value = iDefaultValue;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
 	SDL_Rect rTextBox = {rDialog.x + 30, rDialog.y + 30, 238, 114 };
 	SDL_Rect rTextField = {rDialog.x + 246, rDialog.y + 171, 30, 10 };
 	SDL_Rect rButton = {rDialog.x + 80, rDialog.y + 185,150,29};
@@ -166,7 +166,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 		cLog::write("Got default value bigger than maximum value", cLog::eLOG_TYPE_WARNING); //dev fucked up
 	}
 	
-	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	if (FileExists(GFXOD_DIALOG4))
 	{	
 		LoadPCXtoSF ( GFXOD_DIALOG6, SfDialog ); //load dialog6.pxc
@@ -267,7 +267,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 void ShowOK ( string sText, bool bPurgeHud )
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
 	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 	Uint8 *keystate;
@@ -275,8 +275,8 @@ void ShowOK ( string sText, bool bPurgeHud )
 	SDL_Surface *SfDialog = NULL;
 	SDL_Surface *SfBackground = NULL;
 
-	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SfBackground = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SfBackground = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if (FileExists(GFXOD_DIALOG4))
 	{	
