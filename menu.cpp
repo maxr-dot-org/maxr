@@ -233,7 +233,7 @@ void RunMainMenu ( void )
 {
 	bool SPPressed=false,MPPRessed=false,MEPressed=false,CrPressed=false,BePressed=false,LiPressed=false;
 	bool EscHot=true;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	int b,lb=0,lx=-1,ly=-1;
 	// start main musicfile
 	PlayMusic ( ( char * ) ( SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg" ).c_str() );
@@ -246,7 +246,7 @@ void RunMainMenu ( void )
 		// Events holen:
 		SDL_PumpEvents();
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE]&&EscHot ) break;else if ( !keystate[SDLK_ESCAPE] ) EscHot=true;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -255,12 +255,6 @@ void RunMainMenu ( void )
 		if ( mouse->x!=lx||mouse->y!=ly )
 		{
 			mouse->draw ( true,screen );
-		}
-
-		// Den Focus machen:
-		if ( DoKeyInp ( keystate ) )
-		{
-			//ShowCursor=true;
 		}
 
 		// Klick aufs Bild:
@@ -450,6 +444,7 @@ void RunMainMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 
 	ExitMenu();
 	StopMusic();
@@ -465,7 +460,7 @@ void RunMPMenu ( void )
 #define LOADHOTSEAT lngPack.i18n( "Text~Button~HotSeat_Load")
 #define BACK lngPack.i18n( "Text~Button~Back")
 	bool TCPHostPressed=false,TCPClientPressed=false,BackPressed=false,HotSeatPressed=false,LoadHotSeatPressed=false;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
@@ -484,7 +479,7 @@ void RunMPMenu ( void )
 		// Events holen:
 		SDL_PumpEvents();
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -663,6 +658,7 @@ void RunMPMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 }
 
 void RunSPMenu ( void )
@@ -674,7 +670,7 @@ void RunSPMenu ( void )
 #define LOADGAME lngPack.i18n( "Text~Button~Game_Load")
 #define BACK lngPack.i18n( "Text~Button~Back")
 	bool StartTrainingPressed=false, StartNewPressed=false, LoadPressed=false, BackPressed=false;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
@@ -692,7 +688,7 @@ void RunSPMenu ( void )
 		// Events holen:
 		SDL_PumpEvents();
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -909,6 +905,7 @@ void RunSPMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 }
 
 // Zeigt die Optionen an:
@@ -1457,7 +1454,7 @@ string RunPlanetSelect ( void )
 {
 	bool OKPressed=false;
 	bool BackPressed=false;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
 	SDL_Rect scr;
@@ -1504,7 +1501,7 @@ string RunPlanetSelect ( void )
 		// Events holen:
 		SDL_PumpEvents();
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -1624,6 +1621,7 @@ string RunPlanetSelect ( void )
 
 	delete files;
 	SDL_FreeSurface(sfTmp);
+	free ( keystate );
 	return "";
 }
 
@@ -1806,7 +1804,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	bool OKPressed=false;
 	bool BackPressed=false;
 	int b,lb=0,offset=0,lx=-1,ly=-1;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
 	SDL_Rect rBtnOk = { DIALOG_X + 390,DIALOG_Y + 440, 200, 29 };
@@ -1856,7 +1854,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	{
 		// Events holen:
 		SDL_PumpEvents();
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			for ( int i = 0; i < 8; i++ ) //reset players and exit
@@ -2018,7 +2016,8 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 		SDL_Delay ( 1 );
 	}	
 	
-	SDL_FreeSurface(sfTmp);	
+	SDL_FreeSurface(sfTmp);
+	free ( keystate );
 	return players;
 }
 
@@ -2029,7 +2028,7 @@ sPlayer runPlayerSelection ( void )
 	bool BackPressed=false;
 	int b,lb=0,offset=0,lx=-1,ly=-1;
 	sPlayer players;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 
 	for ( int i = 0; i < 4; i++ )
 	{
@@ -2059,7 +2058,7 @@ sPlayer runPlayerSelection ( void )
 	{
 		// Events holen:
 		SDL_PumpEvents();
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			for ( int i = 0; i < 4; i++ ) //reset players and exit
@@ -2170,6 +2169,7 @@ sPlayer runPlayerSelection ( void )
 		lb=b;
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 	return players;
 }
 
@@ -4202,7 +4202,7 @@ void cMultiPlayer::RunMenu ( void )
 	int b, lb=0,lx=-1,ly=-1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	unsigned int time;
 	int Focus;
 	int LastStatus=STAT_CLOSED;
@@ -4293,7 +4293,7 @@ void cMultiPlayer::RunMenu ( void )
 		// Events holen:
 		SDL_PumpEvents();
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -5249,6 +5249,7 @@ void cMultiPlayer::RunMenu ( void )
 		HandleMenuMessages();
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 	SDL_FreeSurface(sfTmp);
 }
 
@@ -6424,7 +6425,7 @@ int ShowDateiMenu ( bool bSave )
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  BeendenPressed=false, HilfePressed=false, LadenPressed=false, Cursor=true;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	cList<string> *files;
 	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
@@ -6488,7 +6489,7 @@ int ShowDateiMenu ( bool bSave )
 
 		// Tasten prüfen:
 		if ( bSave ) game->HandleTimer();
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			InputStr="";
@@ -6746,6 +6747,7 @@ int ShowDateiMenu ( bool bSave )
 		LastB=b;
 	}
 	delete files;
+	free ( keystate );
 	return -1;
 }
 

@@ -118,8 +118,9 @@ int main ( int argc, char *argv[] )
 	mouse = new cMouse;
 
 
-	//SDL_Thread *EventThread = NULL;
-	//EventThread = SDL_CreateThread ( runEventChecker, NULL);
+	SDL_Thread *EventThread = NULL;
+	EventThread = SDL_CreateThread ( runEventChecker, NULL);
+	EventClass = new cEventClass; // Generate event class for comunication with game and engine
 	
 	// Das Menü starten:
 	RunMainMenu();
@@ -133,67 +134,79 @@ int runEventChecker( void *)
 {
 	bool exit = false;
 	SDL_Event event;
-	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, 2);
+	//SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // This doesn't work?!?!
 	cout << "Eventing\n";
 	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+
+	int iLastPressed = -1, iTimeSinceLastPress = 0;
+
+	#define REPEAT_DELAY 200
+	#define REPEAT_INTERVAL 20
+	#define KEYPRESS_TERMINATION if ( iLastPressed != SYM ) iTimeSinceLastPress = REPEAT_DELAY; else iTimeSinceLastPress = REPEAT_INTERVAL; iLastPressed = SYM;
 	
 	#define SYM event.key.keysym.sym
 	#define MOD event.key.keysym.mod
 	#define ETYPE event.type
 	while(!exit)
 	{
-		
 		SDL_PollEvent ( &event );
 
 		switch (event.type)
 		{
 		case SDL_QUIT:
 			cout << "Quit \n";
-			exit=true;
+			// TODO: Sometimes SDL_QUIT message is send but game will not be quit but EventThread is.
+			// for this reason the next
+			//exit=true;
 			break;
 		
-		case SDL_PRESSED:		
-		if ( SYM == SDLK_RETURN)
-		{
-			cout << "Toggled Enter\n";
-			if(MOD &KMOD_ALT && ETYPE == SDL_KEYUP) //alt+enter makes us go fullscreen|windowmode
+		case SDL_KEYDOWN:
+			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress == 0 || iLastPressed != SYM ) )
 			{
-				cout << "Toggled Fullscreen\n";
-				SettingsData.bWindowMode = !SettingsData.bWindowMode;
-				//SDL_LockSurface(screen);
-				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
+				cout << "Toggled Enter\n";
+				if( MOD &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
+				{
+					cout << "Toggled Fullscreen\n";
+					SettingsData.bWindowMode = !SettingsData.bWindowMode;
+					//SDL_LockSurface(screen);
+					screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
 
-				//SDL_UnlockSurface(screen);
-				SHOW_SCREEN
+					//SDL_UnlockSurface(screen);
+					SHOW_SCREEN
+				}
+				else EventClass->keystate[SYM] = true;
+				KEYPRESS_TERMINATION
 			}
-		}
-
-		if ( SYM == SDLK_ESCAPE )
-		{
-			cout << "Toggled ESC\n";
-		}
-
-		if ( SYM == SDLK_F4 )
-		{
-			if(MOD &KMOD_ALT) //alt+f4 pressed
-			{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
-					cout << "Toggled Alt+F4\n";
-					SDL_Event quit;
-					quit.type = SDL_QUIT;
-					SDL_PushEvent(&quit);
-					Quit();
+			else if ( SYM == SDLK_F4 && ( iTimeSinceLastPress == 0 || iLastPressed != SYM ) )
+			{
+				if( MOD &KMOD_ALT ) //alt+f4 pressed
+				{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
+						cout << "Toggled Alt+F4\n";
+						SDL_Event quit;
+						quit.type = SDL_QUIT;
+						SDL_PushEvent(&quit);
+						Quit();
+				}
+				else EventClass->keystate[SYM] = true;
+				KEYPRESS_TERMINATION
 			}
+			// send keystate to game if doesn't need to be handled specialy
+			else if ( iTimeSinceLastPress == 0 || iLastPressed != SYM )
+			{
+				EventClass->keystate[SYM] = true;
+				EventClass->keystate[SDLK_LALT] = MOD &KMOD_LALT;
+				EventClass->keystate[SDLK_RALT] = MOD &KMOD_RALT;
+				EventClass->keystate[SDLK_LSHIFT] = MOD &KMOD_LSHIFT;
+				EventClass->keystate[SDLK_RSHIFT] = MOD &KMOD_RSHIFT;
+				KEYPRESS_TERMINATION
+			}
+			break;
+		case SDL_KEYUP:
+			iLastPressed = -1;
+			break;
 		}
-		break;
-		}
-		//if ( SYM == SDLK_LEFT )
-// 		SDL_SaveBMP
-		//if ( SYM == SDLK_RIGHT)
-	
 
-
-
-		
+		if ( iTimeSinceLastPress > 0 ) iTimeSinceLastPress--;
 		SDL_Delay ( 1 );
 	}
 	return 0;
@@ -663,4 +676,17 @@ int min (int a, int b )
 	{
 		return a;
 	}
+}
+
+cEventClass::cEventClass( void )
+{
+	// alloc memory for keystatebuffer and set all to null
+	keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST );
+	memset( keystate, 0, sizeof( Uint8 ) * SDLK_LAST );
+}
+
+void cEventClass::GetKeyStates( Uint8 *keystate )
+{
+	memcpy( keystate, this->keystate, sizeof( Uint8 ) * SDLK_LAST );
+	memset( this->keystate, 0, sizeof( Uint8 ) * SDLK_LAST );
 }

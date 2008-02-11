@@ -612,6 +612,16 @@ public:
 
 };
 
+class cEventClass
+{
+public:
+	cEventClass( void );
+
+	void GetKeyStates( Uint8 *keystate );
+
+	Uint8 *keystate;
+} EX *EventClass;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes

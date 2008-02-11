@@ -270,7 +270,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
 	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	bool bLastKeystate = false;
 	SDL_Surface *SfDialog = NULL;
 	SDL_Surface *SfBackground = NULL;
@@ -325,7 +325,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 
 		// Eingaben holen:
 		SDL_PumpEvents();
-		keystate = SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		
 		// Die Maus:
 		mouse->GetPos();
@@ -361,6 +361,8 @@ void ShowOK ( string sText, bool bPurgeHud )
 		SDL_Delay ( 1 );
 		bLastKeystate = keystate[SDLK_RETURN];
 	}
+	free ( keystate );
+
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
 	
@@ -656,7 +658,7 @@ void showPreferences ( void )
 	string stmp;
 	string sTmp;
 	SDL_Rect scr, dest, rFont;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	bool cursor = true;
 	SDL_Surface *SfDialog;
 	
@@ -834,7 +836,7 @@ void showPreferences ( void )
 		SDL_PumpEvents();
 
 		// Tasten prüfen:
-		keystate=SDL_GetKeyState ( NULL );
+		EventClass->GetKeyStates( keystate );
 		if ( Input )
 		{
 			if ( DoKeyInp ( keystate ) ||timer2 )
@@ -1104,6 +1106,7 @@ void showPreferences ( void )
 		LastB=b;
 		SDL_Delay ( 1 );
 	}
+	free ( keystate );
 	SDL_FreeSurface (SfDialog);
 }
 

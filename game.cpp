@@ -691,12 +691,12 @@ int cGame::CheckUser ( void )
 {
 	static int LastMouseButton=0,MouseButton;
 	static bool LastReturn=false;
-	Uint8 *keystate;
+	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
 	// Events holen:
 	SDL_PumpEvents();
 
 	// Tasten prüfen:
-	keystate=SDL_GetKeyState ( NULL );
+	EventClass->GetKeyStates( keystate );
 	if ( ChangeObjectName )
 	{
 		DoKeyInp ( keystate );
@@ -1386,6 +1386,7 @@ int cGame::CheckUser ( void )
 	// Das Scrollen managen:
 	hud->CheckScroll();
 	LastMouseButton=MouseButton;
+	free ( keystate );
 	return 0;
 }
 
