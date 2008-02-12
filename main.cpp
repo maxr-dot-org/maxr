@@ -51,6 +51,7 @@
 #include "loaddata.h"
 #include "tinyxml.h"
 
+
 /*TList::TList ( void )
 {
 	Count = 0;
@@ -117,10 +118,10 @@ int main ( int argc, char *argv[] )
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
-
 	SDL_Thread *EventThread = NULL;
 	EventThread = SDL_CreateThread ( runEventChecker, NULL);
 	EventClass = new cEventClass; // Generate event class for comunication with game and engine
+
 	
 	// Das Menü starten:
 	RunMainMenu();
@@ -142,7 +143,7 @@ int runEventChecker( void *)
 
 	#define REPEAT_DELAY 200
 	#define REPEAT_INTERVAL 20
-	#define KEYPRESS_TERMINATION if ( iLastPressed != SYM ) iTimeSinceLastPress = REPEAT_DELAY; else iTimeSinceLastPress = REPEAT_INTERVAL; iLastPressed = SYM;
+	#define KEYPRESS_TERMINATION if ( iLastPressed != SYM ) iTimeSinceLastPress = SDL_GetTicks() + REPEAT_DELAY; else iTimeSinceLastPress = SDL_GetTicks() + REPEAT_INTERVAL; iLastPressed = SYM;
 	
 	#define SYM event.key.keysym.sym
 	#define MOD event.key.keysym.mod
@@ -161,7 +162,7 @@ int runEventChecker( void *)
 			break;
 		
 		case SDL_KEYDOWN:
-			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress == 0 || iLastPressed != SYM ) )
+			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
 			{
 				cout << "Toggled Enter\n";
 				if( MOD &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
@@ -177,7 +178,7 @@ int runEventChecker( void *)
 				else EventClass->keystate[SYM] = true;
 				KEYPRESS_TERMINATION
 			}
-			else if ( SYM == SDLK_F4 && ( iTimeSinceLastPress == 0 || iLastPressed != SYM ) )
+			else if ( SYM == SDLK_F4 && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
 			{
 				if( MOD &KMOD_ALT ) //alt+f4 pressed
 				{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
@@ -191,7 +192,7 @@ int runEventChecker( void *)
 				KEYPRESS_TERMINATION
 			}
 			// send keystate to game if doesn't need to be handled specialy
-			else if ( iTimeSinceLastPress == 0 || iLastPressed != SYM )
+			else if ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM )
 			{
 				EventClass->keystate[SYM] = true;
 				EventClass->keystate[SDLK_LALT] = MOD &KMOD_LALT;
@@ -202,11 +203,12 @@ int runEventChecker( void *)
 			}
 			break;
 		case SDL_KEYUP:
-			iLastPressed = -1;
+			if( SYM == iLastPressed ) iLastPressed = -1;
 			break;
+		default:
+			memset( EventClass->keystate,0, sizeof( Uint8 ) * SDLK_LAST );
 		}
 
-		if ( iTimeSinceLastPress > 0 ) iTimeSinceLastPress--;
 		SDL_Delay ( 1 );
 	}
 	return 0;
