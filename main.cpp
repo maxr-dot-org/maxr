@@ -50,13 +50,7 @@
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"
-
-
-/*TList::TList ( void )
-{
-	Count = 0;
-}*/
-
+#include "networkmessages.h"
 
 int main ( int argc, char *argv[] )
 {
@@ -118,9 +112,9 @@ int main ( int argc, char *argv[] )
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
+	EventClass = new cEventClass; // Generate event class for comunication with game and engine
 	SDL_Thread *EventThread = NULL;
 	EventThread = SDL_CreateThread ( runEventChecker, NULL);
-	EventClass = new cEventClass; // Generate event class for comunication with game and engine
 
 	
 	// Das Menü starten:
@@ -139,7 +133,8 @@ int runEventChecker( void *)
 	cout << "Eventing\n";
 	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-	int iLastPressed = -1, iTimeSinceLastPress = 0;
+	int iLastPressed = -1;
+	unsigned int iTimeSinceLastPress = 0;
 
 	#define REPEAT_DELAY 200
 	#define REPEAT_INTERVAL 20
@@ -204,6 +199,13 @@ int runEventChecker( void *)
 			break;
 		case SDL_KEYUP:
 			if( SYM == iLastPressed ) iLastPressed = -1;
+			break;
+		case ENGINE_EVENT:
+			if( game && game->engine )
+			{
+				game->engine->addEvent( event.user.code, event.user.data1, event.user.data2 );
+				event.type = 0;
+			}
 			break;
 		default:
 			memset( EventClass->keystate,0, sizeof( Uint8 ) * SDLK_LAST );

@@ -39,7 +39,7 @@ struct sWaypoint{
 // Die MJobs-Klasse //////////////////////////////////////////////////////////
 class cMJobs{
 public:
-  cMJobs(cMap *Map,int ScrOff,int DestOff,bool Plane);
+  cMJobs(cMap *Map,int ScrOff,int DestOff,bool Plane, bool bHost = false, sWaypoint *waypoints = NULL, bool bFinished = false );
   ~cMJobs(void);
 
   cMap *map;

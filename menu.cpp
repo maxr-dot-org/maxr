@@ -4156,7 +4156,6 @@ cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
 			IP=SettingsData.sIP;
 		}
 	}
-//  network->TCPMessageFuntion=ReceiveMenuMessage;
 	Port=SettingsData.iPort;
 
 	map="";

@@ -629,11 +629,6 @@ void cPlayer::DoResearch ( void )
 				double a,b,c,d;
 				int x;
 
-				if ( game->engine->network )
-				{
-					SendResearch( Nr, i );
-				}
-
 				switch ( i )
 				{
 					case 0:

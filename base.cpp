@@ -520,22 +520,12 @@ void cBase::Rundenende ( void )
 					b->data.hit_points=b->data.max_hit_points;
 				}
 				AddMetal ( sb,-1 );
-
-				if( game->engine->network )
-				{
-					SendReloadRepair( true, false, b->PosX + b->PosY * map->size, b->data.max_hit_points, MSG_REPAIR );
-				}
 			}
 			// Aufladen:
 			if ( b->data.can_attack&&b->data.ammo==0&&sb->Metal>=2 )
 			{
 				b->data.ammo=b->data.max_ammo;
 				AddMetal ( sb,-2 );
-
-				if( game->engine->network )
-				{
-					SendReloadRepair( true, false, b->PosX + b->PosY * map->size, b->data.max_ammo, MSG_RELOAD );
-				}
 			}
 			// Bauen:
 			if ( b->IsWorking&&b->data.can_build&&b->BuildList->iCount )

@@ -87,6 +87,7 @@ cGame::cGame ( cTCP *network, cMap *map )
 	AlienTech=false;
 	HotSeat=false;
 	End=false;
+	ReturnData = NULL;
 	
 	//reload info part of HUD since a prior game might have left data/gfx on it
 	SDL_Rect rSrc = {0,0,170,224};
@@ -431,28 +432,6 @@ void cGame::Run ( void )
 				DebugOff+=font->getFontHeight(LATIN_SMALL_WHITE);
 			}
 		}
-		/*if(DebugCom&&engine->network&&fDrawMap){
-		  // Com-Infos:
-		  unsigned short hour,min,sec,msec;
-		  char DebugStr[100];
-		  unsigned int time;
-		  sprintf(DebugStr,"connections: %d",engine->network->GetConnectionCount());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"lags: %d",engine->network->GetLag());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"retrys: %d",engine->network->GetRetrys());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"resends: %d",engine->network->GetResends());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  (Comstart.CurrentTime()-Comstart).DecodeTime(&hour,&min,&sec,&msec);
-		  time=(((int)hour*24+min)*60+sec)*1000+msec;
-		  if(time>1000){
-		    Comstart=Comstart.CurrentTime();
-		    AddDebugComGraph(engine->network->GetTX(),engine->network->GetRX());
-		    engine->network->ResetStats();
-		  }
-		  ShowDebugComGraph(DebugOff);DebugOff+=60;
-		}*/
 		if ( DebugBase&&fDrawMap )
 		{
 			font->showText(550,DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
@@ -951,10 +930,6 @@ int cGame::CheckUser ( void )
 			SelectedVehicle->IsBuilding=true;
 			if ( SelectedVehicle->data.can_build==BUILD_BIG )
 			{
-				if ( engine->network )
-				{
-					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD_BIG);
-				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -967,10 +942,6 @@ int cGame::CheckUser ( void )
 			}
 			else if ( SelectedVehicle->PosX!=SelectedVehicle->BandX||SelectedVehicle->PosY!=SelectedVehicle->BandY )
 			{
-				if ( engine->network )
-				{
-					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD );
-				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -1026,10 +997,6 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedBuilding->StoreVehicle ( off );
-			if ( engine->network )
-			{
-				SendStoreVehicle( SelectedBuilding->data.can_load == TRANS_AIR, true, off, SelectedBuilding->PosX + SelectedBuilding->PosY * map->size, false );
-			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive )
 		{
@@ -1037,10 +1004,6 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedVehicle->StoreVehicle ( off );
-			if ( engine->network )
-			{
-				SendStoreVehicle( false, false, off, SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->data.can_drive == DRIVE_AIR );
-			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive )
 		{
@@ -1063,10 +1026,6 @@ int cGame::CheckUser ( void )
 				{
 					b->data.ammo=b->data.max_ammo;
 				}
-			}
-			if( engine->network )
-			{
-				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.ammo:b->data.ammo ), MSG_RELOAD );
 			}
 			SelectedVehicle->ShowDetails();
 		}
@@ -1091,10 +1050,6 @@ int cGame::CheckUser ( void )
 				{
 					b->data.hit_points=b->data.max_hit_points;
 				}
-			}
-			if( engine->network )
-			{
-				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.hit_points:b->data.hit_points ), MSG_REPAIR );
 			}
 			SelectedVehicle->ShowDetails();
 		}
@@ -1127,23 +1082,18 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->PosY++;
 						changed=true;
 					}
-					if ( engine->network && changed )
-					{
-						SendResetConstructor( SelectedVehicle->BandX + SelectedVehicle->BandY * map->size, SelectedVehicle->PosX - SelectedVehicle->BandX, SelectedVehicle->PosY - SelectedVehicle->BandY);
-					}
 				}
-				// hans
 				if ( keystate[KeysList.KeyCalcPath] )
-					engine->AddMoveJob ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,false,true );
+					pushMoveJobRequest ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,true );
 				else
-					engine->AddMoveJob ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,false );
+					pushMoveJobRequest ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false );
 			}
 			else
 			{
 				if ( keystate[KeysList.KeyCalcPath] )
-					engine->AddMoveJob ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,true,true );
+					pushMoveJobRequest ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),true,true );
 				else
-					engine->AddMoveJob ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),false,true );
+					pushMoveJobRequest ( SelectedVehicle->PosX+SelectedVehicle->PosY*map->size,mouse->GetKachelOff(),true );
 			}
 		}
 		else if ( !HelpActive )
@@ -1175,10 +1125,6 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->mjob->finished=true;
 						SelectedVehicle->mjob=NULL;
 						SelectedVehicle->MoveJobActive=false;
-						if( engine->network && !engine->network->bServer )
-						{
-							SendIntBool(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, ( SelectedVehicle->data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
-						}
 					}
 				}
 				else if ( mouse->cur==GraphicsData.gfx_Cattack&&SelectedBuilding&&!SelectedBuilding->Attacking )
@@ -1909,8 +1855,6 @@ bool cGame::DoCommand ( char *cmd )
 {
 	if ( strcmp ( cmd,"fps on" ) ==0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
 	if ( strcmp ( cmd,"fps off" ) ==0 ) {DebugFPS=false;return true;}
-	/*if(strcmp(cmd,"com on")==0){if(engine->network){engine->network->ResetStats();DebugCom=true;Comstart=Comstart.CurrentTime();}return true;}
-	if(strcmp(cmd,"com off")==0){DebugCom=false;return true;}*/
 	if ( strcmp ( cmd,"base on" ) ==0 ) {DebugBase=true;return true;}
 	if ( strcmp ( cmd,"base off" ) ==0 ) {DebugBase=false;return true;}
 	if ( strcmp ( cmd,"wache on" ) ==0 ) {DebugWache=true;return true;}
@@ -3774,7 +3718,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					fread ( &bClientMove,sizeof ( bool ),1,fp );
 					fread ( &bPlane,sizeof ( bool ),1,fp );
 					fread ( &bSuspended,sizeof ( bool ),1,fp );
-					engine->AddMoveJob( off, iOffX + iOffY * map->size, bClientMove, bPlane, bSuspended);
+					pushMoveJobRequest( off, iOffX + iOffY * map->size, bPlane, bSuspended);
 				}
 				if( fgetc( fp ) == 1 )
 				{
@@ -4367,4 +4311,40 @@ bool cGame::MakeHotSeatEnde ( void )
 	if ( HotSeatPlayer==0 ) return true;
 	engine->MakeRundenstartReport();
 	return false;
+}
+
+cMJobs *cGame::pushMoveJobRequest( int ScrOff,int DestOff,bool plane,bool suspended )
+{
+	unsigned char data1[10];
+	((Uint32*)data1)[0] = ScrOff;
+	((Uint32*)data1)[1] = DestOff;
+	data1[8] = plane;
+	data1[9] = suspended;
+	SDL_Event event;
+	event.type = ENGINE_EVENT;
+	event.user.code = GAME_EVENT_WT_MOVE;
+	event.user.data1 = malloc( 10 );
+	memcpy(event.user.data1, data1, 10);
+	if( !engine->network )
+	{
+		SDL_PushEvent ( &event );
+	}
+	else
+	{
+	}
+	cMJobs *job = (cMJobs *)WaitForReturnData( DEFAULT_RETURN_DELAY );
+	ReturnData = NULL;
+	return job;
+}
+
+void *cGame::WaitForReturnData( int iDelay )
+{
+	while( iDelay )
+	{
+		if( ReturnData != NULL )
+			return ReturnData;
+		iDelay--;
+		SDL_Delay(1);
+	}
+	return NULL;
 }

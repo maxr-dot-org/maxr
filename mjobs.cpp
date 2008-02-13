@@ -25,15 +25,15 @@
 #include "fonts.h"
 
 // Funktionen der MJobs Klasse ///////////////////////////////////////////////
-cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
+cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, bool bHost, sWaypoint *waypoints, bool bFinished )
 {
 	map=Map;
-	finished=false;
-	EndForNow=false;
-	ClientMove=false;
-	Suspended=false;
-	BuildAtTarget=false;
-	waypoints=NULL;
+	finished = bFinished;
+	EndForNow = false;
+	ClientMove = false;
+	Suspended = false;
+	BuildAtTarget = false;
+	this->waypoints = waypoints;
 	SavedSpeed=0;
 	plane=Plane;
 
@@ -55,28 +55,35 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 		}
 		vehicle=map->GO[ScrOff].plane;
 	}
-	if ( vehicle->mjob )
+	if ( !bHost )
 	{
-		vehicle->mjob->Release();
+		if ( vehicle->mjob )
+		{
+			vehicle->mjob->Release();
+		}
+		vehicle->mjob = this;
+
+		if ( vehicle->Wachposten )
+		{
+			vehicle->owner->DeleteWachpostenV ( vehicle );
+			vehicle->Wachposten = false;
+		}
 	}
-	vehicle->mjob=this;
 	ship=vehicle->data.can_drive==DRIVE_SEA;
 	ScrX=ScrOff%map->size;
 	ScrY=ScrOff/map->size;
 	DestX=DestOff%map->size;
 	DestY=DestOff/map->size;
 
-	if ( vehicle->Wachposten )
+	if ( bHost && !CalcPath() )
 	{
-		vehicle->owner->DeleteWachpostenV ( vehicle );
-		vehicle->Wachposten=false;
+		finished = true;
+		return;
 	}
-
-	if ( !CalcPath() )
+	if ( !bHost && finished == true )
 	{
-		finished=true;
 		if ( vehicle->autoMJob && !vehicle->selected) return; //an auto moving surveyor don't need to tell this
-		if ( vehicle->owner==game->ActivePlayer )
+		if ( vehicle->owner == game->ActivePlayer )
 		{
 			if ( random ( 2,0 ) )
 			{
@@ -507,7 +514,7 @@ void cMJobs::DoTheMove ( void )
 		sWaypoint *wp;
 		if(SavedSpeed && game->engine->network && game->engine->network->bServer )
 		{
-			SendSavedSpeed( vehicle->PosX + vehicle->PosY * map->size, SavedSpeed, plane );
+// -NETW			SendSavedSpeed( vehicle->PosX + vehicle->PosY * map->size, SavedSpeed, plane );
 		}
 		// Die Kosten abziehen:
 		vehicle->data.speed+=SavedSpeed;
