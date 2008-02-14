@@ -2711,12 +2711,15 @@ int main ( int argc, char* argv[] )
 {
 	while ( 1 )
 	{
-		//fixme: path's with space characters don't work
 		cout << "Please enter path to MAX-Installation or MAX-CD: ";
 #ifdef EIKO
 		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\";
 #else
-		cin >> sMAXPath;
+		char temp[1024];
+		temp[1023] = '0';
+		cin.getline( temp, 1023 );
+		cin.seekg(0,ios::end);
+		sMAXPath = temp;
 #endif
 
 		//now testing different input variations
@@ -2780,7 +2783,11 @@ int main ( int argc, char* argv[] )
 		cout << "\n";
 		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 #else
-		cin >> sOutputPath;
+		char temp[1024];
+		temp[1023] = '0';
+		cin.getline( temp, 1023 );
+		cin.seekg(0,ios::end);
+		sMAXPath = temp;
 #endif
 		//test for valid output folder
 		string testFileName = "max.xml";
