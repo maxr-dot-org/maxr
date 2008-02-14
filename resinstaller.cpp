@@ -2669,6 +2669,44 @@ void installSounds()
 	cout << iToStr( iErrors) << " errors\n";
 }
 
+void installMusic()
+{
+	string path;
+	iTotalFiles = 14;
+	iErrors = 0;
+	iInstalledFiles = 0;
+
+	oggEncode = 1;
+
+	cout << "========================================================================\n";
+	cout << "Music\n";
+
+	path = sOutputPath + "music" + PATH_DELIMITER;
+	copyWAV( sMAXPath + "MAIN_MSC.MSC", path + "main.wav");
+	copyWAV( sMAXPath + "BKG1_MSC.MSC", path + "bkg1.wav");
+	copyWAV( sMAXPath + "BKG2_MSC.MSC", path + "bkg2.wav");
+	copyWAV( sMAXPath + "BKG3_MSC.MSC", path + "bkg3.wav");
+	copyWAV( sMAXPath + "BKG4_MSC.MSC", path + "bkg4.wav");
+	copyWAV( sMAXPath + "BKG5_MSC.MSC", path + "bkg5.wav");
+	copyWAV( sMAXPath + "BKG6_MSC.MSC", path + "bkg6.wav");
+	copyWAV( sMAXPath + "CRTR_MSC.MSC", path + "crtr.wav");
+	copyWAV( sMAXPath + "DSRT_MSC.MSC", path + "dsrt.wav");
+	copyWAV( sMAXPath + "GREN_MSC.MSC", path + "gren.wav");
+	copyWAV( sMAXPath + "LOSE_MSC.MSC", path + "lose.wav");
+	copyWAV( sMAXPath + "SNOW_MSC.MSC", path + "snow.wav");
+	copyWAV( sMAXPath + "WINR_MSC.MSC", path + "winr.wav");
+	
+	if ( logFile != NULL )
+	{
+		writeLog( string("Music") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+}
+
 int main ( int argc, char* argv[] )
 {
 	while ( 1 )
@@ -2977,6 +3015,7 @@ int main ( int argc, char* argv[] )
 	installVoices();
 	installMaps();
 	installSounds();
+	installMusic();
 
 	if ( wasError )
 	{
