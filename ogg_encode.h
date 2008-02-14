@@ -19,65 +19,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
-#ifndef ResinstallerH
-#define ResinstallerH
-#include "defines.h"
-#include <SDL.h>
-#include <iostream>
+#ifndef Ogg_EncodeH
+#define Ogg_EncodeH
 
-#ifdef WIN32
-#include <conio.h>
-#include <windows.h>
-#endif
+#include "wave.h"
 
-using namespace std;
+#define READ 1024
+#define VORBIS_QUALITY 0.4
+
+void encodeWAV( string fileName, cWaveFile &waveFile );
 
 
-#ifdef _WIN32
-#pragma warning(disable:4312)
-#pragma warning(disable:4996)
-#endif
-
-
-EX string sMAXPath;
-EX string sVoicePath;
-EX string sOutputPath;
-EX SDL_RWops *res ZERO;
-EX SDL_RWops *logFile ZERO;
-
-
-EX Uint32 lPosBegin;
-EX Uint32 lEndOfFile;
-
-EX int iErrors, iInstalledFiles, iTotalFiles;
-EX bool wasError;
-
-EX bool oggEncode;
-
-
-
-//this exception is thrown, when the installation of the current file failed
-class InstallException
-{
-public:
-	string message;
-	InstallException( string m ) { message = m; };
-};
-
-
-//makes all nessesary aktions after a succsessfull 
-//or unsuccessfull attempt to install a file
-#define END_INSTALL_FILE( file )\
-			catch ( InstallException e )\
-			{\
-				writeLog("Error while installing file '" + file + "'" + TEXT_FILE_LF + e.message );\
-				iErrors++;\
-				wasError = true;\
-			}\
-			iInstalledFiles++;\
-			updateProgressbar();
-		
-
-
-
-#endif // ResinstallerH
+#endif //Ogg_EncodeH

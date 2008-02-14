@@ -89,27 +89,37 @@ typedef struct SmplChunk {
 	SampleLoop* ListofSampleLoops;
 } SmplChunk;
 
-typedef struct WaveFile
+class cWaveFile
 {
-	SDL_AudioSpec spec;		//the audio spezification of the file
-	Uint32 length;			//length of the audio data in bytes
-	Uint8 *buffer;			//the audio data
-	SmplChunk smplChunk;	//smpl Chunk, defines loops in the wave file
-} WaveFile;
+	public:
+		cWaveFile();
+		~cWaveFile();
+		SDL_AudioSpec spec;		//the audio spezification of the file
+		Uint32 length;			//length of the audio data in bytes
+		Uint8 *buffer;			//the audio data
+		SmplChunk smplChunk;	//smpl Chunk, defines loops in the wave file
+};
 
 //reads an Smpl chunk if there is any in the wave file
-int readSmplChunk( SDL_RWops* file, WaveFile& waveFile );
+int readSmplChunk( SDL_RWops* file, cWaveFile& waveFile );
 
-//loads an wav file in the WaveFile structure
-int loadWAV( string src, WaveFile& waveFile);
+//loads an wav file into the cWaveFile structure
+int loadWAV( string src, cWaveFile& waveFile);
 
-//saves a WaveFile structure to a physical wav file
-void saveWAV( string dst, WaveFile& waveFile);
+//saves a cWaveFile structure to a physical wav file
+void saveWAV( string dst, cWaveFile& waveFile);
 
 //copys a part of the src file to the dst file
 //the parts are defined by the wave files smpl chunk
 //currently 0 means the part before the first SampleLoop
 //and		1 means the first sample loop
+//if oggEncode is set, this function encodes the file bevor saving it
+//the extension .wav is then automatically replaced by .ogg
 void copyPartOfWAV( string src, string dst, Uint8 nr);
+
+//if oggEncode is set, this function loads encodes and saves a wave file
+//the extension .wav is then automatically replaced by .ogg
+//if oggEncode is 0, the wave file is just copied
+void copyWAV ( string src, string dst );
 
 #endif //wave_h

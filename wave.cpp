@@ -25,9 +25,21 @@
 #include "wave.h"
 #include "file.h"
 #include "converter.h"
+#include "ogg_encode.h"
 
+cWaveFile::cWaveFile()
+{
+	buffer = NULL;
+	smplChunk.ListofSampleLoops = NULL;
+}
 
-int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
+cWaveFile::~cWaveFile()
+{
+	//memoy has to be deleted manually
+	//because we can't determine here if it was allocated by SDL or malloc
+}
+
+int readSmplChunk( SDL_RWops* file, cWaveFile& waveFile )
 {
 	waveFile.smplChunk.ListofSampleLoops = NULL;
 
@@ -80,7 +92,7 @@ int readSmplChunk( SDL_RWops* file, WaveFile& waveFile )
 
 
 
-int loadWAV( string src, WaveFile& waveFile)
+int loadWAV( string src, cWaveFile& waveFile)
 {
 	SDL_RWops* file;
 	file = openFile( src, "rb");
@@ -98,7 +110,7 @@ int loadWAV( string src, WaveFile& waveFile)
 	return 1;
 }
 
-void saveWAV (string dst, WaveFile& waveFile)
+void saveWAV (string dst, cWaveFile& waveFile)
 {
 	int was_error = 0;
 	Chunk chunk;
@@ -218,10 +230,8 @@ done:
 
 void copyPartOfWAV( string src, string dst, Uint8 nr)
 {
-	WaveFile waveFile;
-	waveFile.buffer = NULL;
-	waveFile.smplChunk.ListofSampleLoops = NULL;
-
+	cWaveFile waveFile;
+	
 	if ( nr > 1 )
 	{
 		return;
@@ -278,11 +288,47 @@ void copyPartOfWAV( string src, string dst, Uint8 nr)
 		waveFile.buffer = new_buffer;
 		
 		//save resized wave
-		saveWAV( dst, waveFile );
+		if ( oggEncode )
+		{
+			encodeWAV( dst, waveFile );
+		}
+		else
+		{
+			saveWAV( dst, waveFile );
+		}
+
+
+		if ( waveFile.buffer ) free ( waveFile.buffer );
+		if ( waveFile.smplChunk.ListofSampleLoops ) free ( waveFile.smplChunk.ListofSampleLoops );
+
 	}
 	END_INSTALL_FILE( dst )
+	
+}
 
-	if ( waveFile.buffer) free ( waveFile.buffer );
-	if ( waveFile.smplChunk.ListofSampleLoops ) free ( waveFile.smplChunk.ListofSampleLoops );
+
+void copyWAV ( string src, string dst )
+{
+	
+	if ( oggEncode )
+	{
+		try
+		{
+			//load, encode and save file
+			cWaveFile waveFile;
+			loadWAV( src, waveFile );
+
+			encodeWAV( dst, waveFile );
+
+			if ( waveFile.buffer ) SDL_FreeWAV( waveFile.buffer );
+			if ( waveFile.smplChunk.ListofSampleLoops ) free ( waveFile.smplChunk.ListofSampleLoops );
+		}
+		END_INSTALL_FILE( dst )
+	}
+	else
+	{
+		//just copy file
+		copyFile( src, dst );
+	}
 
 }
