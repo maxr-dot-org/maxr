@@ -789,14 +789,10 @@ public:
 class cEffectsData
 {
 public:
-	SDL_Surface **fx_explo_small0;
-	SDL_Surface **fx_explo_small1;
-	SDL_Surface **fx_explo_small2;
-	SDL_Surface **fx_explo_big0;
-	SDL_Surface **fx_explo_big1;
-	SDL_Surface **fx_explo_big2;
-	SDL_Surface **fx_explo_big3;
-	SDL_Surface **fx_explo_big4;
+	SDL_Surface **fx_explo_big;
+	SDL_Surface **fx_explo_small;
+	SDL_Surface **fx_explo_water;
+	SDL_Surface **fx_explo_air;
 	SDL_Surface **fx_muzzle_big;
 	SDL_Surface **fx_muzzle_small;
 	SDL_Surface **fx_muzzle_med;

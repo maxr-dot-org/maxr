@@ -2015,9 +2015,24 @@ void cGame::AddFX ( sFX* n )
 	}
 	switch ( n->typ )
 	{
-		case fxExploSmall0:
-		case fxExploSmall1:
-		case fxExploSmall2:
+		case fxExploAir:
+			int nr;
+			nr = random ( 3,0 );
+			if ( nr==0 )
+			{
+				PlayFX ( SoundData.EXPSmall0 );
+			}
+			else if ( nr==1 )
+			{
+				PlayFX ( SoundData.EXPSmall1 );
+			}
+			else
+			{
+				PlayFX ( SoundData.EXPSmall2 );
+			}
+			break;
+		case fxExploSmall:
+		case fxExploWater:
 			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
 				int nr;
@@ -2053,11 +2068,7 @@ void cGame::AddFX ( sFX* n )
 				}
 			}
 			break;
-		case fxExploBig0:
-		case fxExploBig1:
-		case fxExploBig2:
-		case fxExploBig3:
-		case fxExploBig4:
+		case fxExploBig:
 			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
 				if ( random ( 2,0 ) )
@@ -2199,7 +2210,7 @@ void cGame::DrawFX ( int i )
 	switch ( fx->typ )
 	{
 		case fxMuzzleBig:
-			if ( Frame-fx->StartFrame>2 )
+			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
 				FXList->Delete ( i );
@@ -2214,7 +2225,7 @@ void cGame::DrawFX ( int i )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_big[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleSmall:
-			if ( Frame-fx->StartFrame>2 )
+			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
 				FXList->Delete ( i );
@@ -2229,7 +2240,7 @@ void cGame::DrawFX ( int i )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_small[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMed:
-			if ( Frame-fx->StartFrame>2 )
+			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
 				FXList->Delete ( i );
@@ -2244,7 +2255,7 @@ void cGame::DrawFX ( int i )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMedLong:
-			if ( Frame-fx->StartFrame>5 )
+			if ( Frame - fx->StartFrame > 5 )
 			{
 				delete fx;
 				FXList->Delete ( i );
@@ -2259,7 +2270,7 @@ void cGame::DrawFX ( int i )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxHit:
-			if ( Frame-fx->StartFrame>5 )
+			if ( Frame - fx->StartFrame > 5 )
 			{
 				delete fx;
 				FXList->Delete ( i );
@@ -2273,125 +2284,65 @@ void cGame::DrawFX ( int i )
 			dest.y=18- ( ( int ) ( ( hud->OffY-fx->PosY ) / ( 64.0/hud->Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_hit[1],&scr,buffer,&dest );
 			break;
-		case fxExploSmall0:
-			if ( Frame-fx->StartFrame>11 )
+		case fxExploSmall:
+			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
 				FXList->Delete ( i );
 				return;
 			}
-			scr.x=hud->Zoom* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom;
-			dest.h=scr.h=hud->Zoom;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-32 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-32 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_small0[1],&scr,buffer,&dest );
+			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
+			scr.y = 0;
+			scr.w = (int) hud->Zoom * 114 / 64.0;
+			scr.h = (int) hud->Zoom * 108 / 64.0;
+			dest.x = 180 - ( (int) ( ( hud->OffX- ( fx->PosX - 25 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18 -  ( (int) ( ( hud->OffY- ( fx->PosY - 22 ) ) / ( 64.0/hud->Zoom ) ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
 			break;
-		case fxExploSmall1:
-			if ( Frame-fx->StartFrame>20 )
+		case fxExploBig:
+			if ( Frame - fx->StartFrame > 28 )
 			{
 				delete fx;
 				FXList->Delete ( i );
 				return;
 			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_small1[1],&scr,buffer,&dest );
+			scr.x = (int) hud->Zoom * 307 * ( Frame - fx->StartFrame ) / 64.0;
+			scr.y = 0;
+			scr.w = (int) hud->Zoom * 307 / 64.0;
+			scr.h = (int) hud->Zoom * 194 / 64.0;
+			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 65 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 65 ) ) / ( 64.0/hud->Zoom ) ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
 			break;
-		case fxExploSmall2:
-			if ( Frame-fx->StartFrame>10 )
+		case fxExploWater:
+			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
 				FXList->Delete ( i );
 				return;
 			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_small2[1],&scr,buffer,&dest );
+			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
+			scr.y = 0;
+			scr.w = (int) hud->Zoom * 114 / 64.0;
+			scr.h = (int) hud->Zoom * 108 / 64.0;
+			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 25 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 22 ) ) / ( 64.0/hud->Zoom ) ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
 			break;
-		case fxExploBig0:
-			if ( Frame-fx->StartFrame>14 )
+		case fxExploAir:
+			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
 				FXList->Delete ( i );
 				return;
 			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_big0[1],&scr,buffer,&dest );
-			break;
-		case fxExploBig1:
-			if ( Frame-fx->StartFrame>13 )
-			{
-				delete fx;
-				FXList->Delete ( i );
-				return;
-			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_big1[1],&scr,buffer,&dest );
-			break;
-		case fxExploBig2:
-			if ( Frame-fx->StartFrame>15 )
-			{
-				delete fx;
-				FXList->Delete ( i );
-				return;
-			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_big2[1],&scr,buffer,&dest );
-			break;
-		case fxExploBig3:
-			if ( Frame-fx->StartFrame>8 )
-			{
-				delete fx;
-				FXList->Delete ( i );
-				return;
-			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_big3[1],&scr,buffer,&dest );
-			break;
-		case fxExploBig4:
-			if ( Frame-fx->StartFrame>10 )
-			{
-				delete fx;
-				FXList->Delete ( i );
-				return;
-			}
-			scr.x=hud->Zoom*2* ( Frame-fx->StartFrame );
-			scr.y=0;
-			dest.w=scr.w=hud->Zoom*2;
-			dest.h=scr.h=hud->Zoom*2;
-			dest.x=180- ( ( int ) ( ( hud->OffX- ( fx->PosX-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( hud->OffY- ( fx->PosY-64 ) ) / ( 64.0/hud->Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_explo_big4[1],&scr,buffer,&dest );
+			scr.x = (int) hud->Zoom * 137 * ( Frame - fx->StartFrame ) / 64.0;
+			scr.y = 0;
+			scr.w = (int) hud->Zoom * 137 / 64.0;
+			scr.h = (int) hud->Zoom * 121 / 64.0;
+			dest.x = 180- ( ( int ) ( ( hud->OffX- ( fx->PosX - 36 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( ( int ) ( ( hud->OffY- ( fx->PosY - 28 ) ) / ( 64.0/hud->Zoom ) ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
 			break;
 		case fxSmoke:
 			if ( Frame-fx->StartFrame>100/4 )

@@ -39,7 +39,7 @@ struct sMessage{
 };
 
 // Der FX-Enum ///////////////////////////////////////////////////////////////
-enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall0,fxExploSmall1,fxExploSmall2,fxExploBig0,fxExploBig1,fxExploBig2,fxExploBig3,fxExploBig4,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
+enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall,fxExploBig,fxExploAir,fxExploWater,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
 // Struktur für Zusatzinfos der Rocket:
 struct sFXRocketInfos{
   int ScrX,ScrY;

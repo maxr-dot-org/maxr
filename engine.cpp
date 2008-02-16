@@ -734,20 +734,19 @@ void cEngine::DestroyObject ( int off,bool air )
 		}
 		// Annimation abspielen:
 		{
-			int nr;
-			nr=random ( 3,0 );
-			if ( nr==0 )
+			if ( air )
 			{
-				game->AddFX ( fxExploSmall0,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
+				game->AddFX ( fxExploAir,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
 			}
-			else if ( nr==1 )
+			else if ( map->IsWater ( vehicle->PosX + vehicle->PosY * map->size ) )
 			{
-				game->AddFX ( fxExploSmall1,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
+				game->AddFX ( fxExploWater,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
 			}
 			else
 			{
-				game->AddFX ( fxExploSmall2,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
+				game->AddFX ( fxExploSmall,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
 			}
+			
 		}
 		// fahrzeug löschen:
 		if ( air ) map->GO[off].plane=NULL;
@@ -833,41 +832,11 @@ void cEngine::DestroyObject ( int off,bool air )
 		// Annimation abspielen:
 		if ( !building->data.is_big )
 		{
-			int nr;
-			nr=random ( 3,0 );
-			if ( nr==0 )
-			{
-				game->AddFX ( fxExploSmall0,building->PosX*64+32,building->PosY*64+32,0 );
-			}
-			else if ( nr==1 )
-			{
-				game->AddFX ( fxExploSmall1,building->PosX*64+32,building->PosY*64+32,0 );
-			}
-			else
-			{
-				game->AddFX ( fxExploSmall2,building->PosX*64+32,building->PosY*64+32,0 );
-			}
+			game->AddFX ( fxExploSmall,building->PosX*64+32,building->PosY*64+32,0 );
 		}
 		else
 		{
-			int nr;
-			nr=random ( 4,0 );
-			if ( nr==0 )
-			{
-				game->AddFX ( fxExploBig0,building->PosX*64+64,building->PosY*64+64,0 );
-			}
-			else if ( nr==1 )
-			{
-				game->AddFX ( fxExploBig1,building->PosX*64+64,building->PosY*64+64,0 );
-			}
-			else if ( nr==2 )
-			{
-				game->AddFX ( fxExploBig2,building->PosX*64+64,building->PosY*64+64,0 );
-			}
-			else
-			{
-				game->AddFX ( fxExploBig2,building->PosX*64+64,building->PosY*64+64,0 );
-			}
+			game->AddFX ( fxExploBig,building->PosX*64+64,building->PosY*64+64,0 );
 		}
 		// Building löschen:
 		if ( map->GO[off].top )
