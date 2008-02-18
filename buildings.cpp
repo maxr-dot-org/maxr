@@ -1067,12 +1067,24 @@ void cBuilding::SelfDestructionMenu ( void )
 {
 	if ( showSelfdestruction() )
 	{
-		// Destroy both (platform and top building) if there is a platform and a top building on this place
-		if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
+		if( !game->engine->network || game->engine->network->bServer )
 		{
+			// Destroy both (platform and top building) if there is a platform and a top building on this place
+			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
+			{
+				game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
+			}
 			game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
 		}
-		game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
+		else
+		{
+			// Destroy both (platform and top building) if there is a platform and a top building on this place
+			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
+			{
+				SendDestroyObject( PosX + PosY*game->map->size, false );
+			}
+			SendDestroyObject( PosX + PosY*game->map->size, false );
+		}
 	}
 
 }
@@ -1502,6 +1514,11 @@ bool cBuilding::StartWork ( bool engine_call )
 
 	ShowDetails();
 
+	if( game->engine->network )
+	{
+		game->engine->network->TCPSend( MSG_START_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
+	}
+
 	if ( data.can_research ) owner->StartAResearch();
 
 	return true;
@@ -1583,6 +1600,11 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	game->ObjectStream = PlayStram();
 
 	ShowDetails();
+
+	if( game->engine->network )
+	{
+		game->engine->network->TCPSend( MSG_STOP_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
+	}
 
 	if ( data.can_research ) owner->StopAReserach();
 }
@@ -2751,6 +2773,8 @@ void cBuilding::ShowStorage ( void )
 				{
 					v->data.ammo = v->data.max_ammo;
 					owner->base->AddMetal ( SubBase, -2 );
+					SendUpdateStored ( i );
+
 					if ( SubBase->Metal < 2 )
 						break;
 				}
@@ -2786,6 +2810,8 @@ void cBuilding::ShowStorage ( void )
 				{
 					v->data.hit_points = v->data.max_hit_points;
 					owner->base->AddMetal ( SubBase, -2 );
+					SendUpdateStored ( i );
+
 					if ( SubBase->Metal < 2 )
 						break;
 				}
@@ -2819,6 +2845,8 @@ void cBuilding::ShowStorage ( void )
 
 					v->GenerateName();
 					owner->base->AddMetal ( SubBase, -2 );
+					SendUpdateStored ( i );
+
 					if ( SubBase->Metal < 2 )
 						break;
 				}
@@ -2958,6 +2986,7 @@ void cBuilding::ShowStorage ( void )
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
+				SendUpdateStored ( i + offset );
 			}
 
 			// Aufladen:
@@ -2978,6 +3007,7 @@ void cBuilding::ShowStorage ( void )
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
+				SendUpdateStored ( i + offset );
 			}
 
 			// Upgrade:
@@ -2996,6 +3026,7 @@ void cBuilding::ShowStorage ( void )
 				ShowStorageMetalBar();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
+				SendUpdateStored ( i + offset );
 			}
 		}
 
@@ -3314,6 +3345,11 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
+
+	if ( game->engine->network && !engine_call )
+	{
+		SendActivateVehicle( true, false, nr, off, PosX + PosY * game->map->size, ptr->data.hit_points, ptr->data.ammo );
+	}
 }
 
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled )
@@ -4013,6 +4049,10 @@ void cBuilding::ShowUpgrade ( void )
 							up = true;
 
 							break;
+						}
+						if ( up && game->engine->network )
+						{
+							SendUpgrade( owner, ptr );
 						}
 					}
 
@@ -8167,6 +8207,11 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten = !Wachposten;
+			// TODO: networkmessage for changing sentrymode of buildings
+			/*if ( game->engine->network )
+			{
+				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
+			}*/
 			if ( Wachposten )
 			{
 				owner->AddWachpostenB ( this );
@@ -8321,6 +8366,11 @@ void cBuilding::DrawMenu ( void )
 					owner->base->AddMetal ( SubBase, -2 );
 
 					count++;
+
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend ( MSG_UPDATE_BUILDING, iToStr ( b->PosX + b->PosY * game->map->size ).c_str() );
+					}
 				}
 			}
 
@@ -8358,6 +8408,11 @@ void cBuilding::DrawMenu ( void )
 				ShowDetails();
 
 			owner->DoScan();
+
+			if ( game->engine->network )
+			{
+				game->engine->network->TCPSend ( MSG_UPDATE_BUILDING,  iToStr ( PosX + PosY * game->map->size ).c_str() );
+			}
 
 			return;
 		}
@@ -9045,4 +9100,20 @@ void cBuilding::ShowHelp ( void )
 	}
 
 	SDL_FreeSurface ( SfDialog );
+}
+
+// Sendet die Update-Nachricht für das gespeicherte Vehicle mit dem Index:
+void cBuilding::SendUpdateStored ( int index )
+{
+	/*if(!game->engine->network||game->engine->network->server)*/
+	return;
+	/*unsigned char msg[3+12+sizeof(sUnitData)];
+	msg[0]='#';
+	msg[1]=3+12+sizeof(sUnitData);
+	msg[2]=MSG_UPDATE_STORED;
+	((int*)(msg+3))[0]=owner->Nr;
+	((int*)(msg+3))[1]=index;
+	((int*)(msg+3))[2]=PosX+PosY*game->map->size;
+	((sUnitData*)(msg+3+12))[0]=((cVehicle*)(StoredVehicles->Items[index]))->data;
+	game->engine->network->Send(msg,msg[1]);*/
 }

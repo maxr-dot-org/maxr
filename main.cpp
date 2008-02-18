@@ -50,7 +50,13 @@
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"
-#include "networkmessages.h"
+
+
+/*TList::TList ( void )
+{
+	Count = 0;
+}*/
+
 
 int main ( int argc, char *argv[] )
 {
@@ -150,7 +156,6 @@ int runEventChecker( void *)
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			cout << "Quit \n";
 			// TODO: Sometimes SDL_QUIT message is send but game will not be quit but EventThread is.
 			// for this reason the next
 			//exit=true;
@@ -159,10 +164,8 @@ int runEventChecker( void *)
 		case SDL_KEYDOWN:
 			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
 			{
-				cout << "Toggled Enter\n";
 				if( MOD &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
 				{
-					cout << "Toggled Fullscreen\n";
 					SettingsData.bWindowMode = !SettingsData.bWindowMode;
 					//SDL_LockSurface(screen);
 					screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
@@ -177,7 +180,6 @@ int runEventChecker( void *)
 			{
 				if( MOD &KMOD_ALT ) //alt+f4 pressed
 				{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
-						cout << "Toggled Alt+F4\n";
 						SDL_Event quit;
 						quit.type = SDL_QUIT;
 						SDL_PushEvent(&quit);
@@ -199,13 +201,6 @@ int runEventChecker( void *)
 			break;
 		case SDL_KEYUP:
 			if( SYM == iLastPressed ) iLastPressed = -1;
-			break;
-		case ENGINE_EVENT:
-			if( game && game->engine )
-			{
-				game->engine->addEvent( event.user.code, event.user.data1, event.user.data2 );
-				event.type = 0;
-			}
 			break;
 		default:
 			memset( EventClass->keystate,0, sizeof( Uint8 ) * SDLK_LAST );

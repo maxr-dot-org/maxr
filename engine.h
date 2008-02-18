@@ -131,7 +131,7 @@ public:
   void AddBuilding(int posx,int posy,sBuilding *b,cPlayer *p,bool init=false);
   void ChangeVehicleName(int posx,int posy,string name,bool override,bool plane);
   void ChangeBuildingName(int posx,int posy,string name,bool override,bool base);  
-  void AddMoveJob( cMJobs *job );
+  cMJobs *AddMoveJob(int ScrOff,int DestOff,bool ClientMove,bool plane,bool suspended=false);
   void AddActiveMoveJob(cMJobs *job);
   void Reservieren(int x,int y,bool plane);
   void MoveVehicle(int FromX,int FromY,int ToX,int ToY,bool override,bool plane);
@@ -145,8 +145,6 @@ public:
   void AddReport(string name,bool vehicle);
   void MakeRundenstartReport(void);
 
-  void addEvent ( int iTyp, void *data1, void *data2 );
-
   void SendChatMessage(const char *str);
   void HandleGameMessages();
   void DestroyObject(int off,bool air);
@@ -155,6 +153,7 @@ public:
   void StartLog(void);
   void StopLog(void);
   void LogMessage(string msg);
+  cList<string> *SplitMessage ( string sMsg );
 
   void Run(void);
 };

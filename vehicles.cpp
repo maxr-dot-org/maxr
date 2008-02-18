@@ -1072,26 +1072,28 @@ void cVehicle::RefreshData ( void )
 			if ( data.cargo >= BuildCostsStart )
 			{
 				if ( BandX < PosX && CheckPathBuild ( PosX - 1 + PosY*game->map->size, BuildingTyp ) )
-					mj = game->pushMoveJobRequest ( PosX + PosY * game->map->size, PosX - 1 + PosY * game->map->size, false );
+					mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX - 1 + PosY * game->map->size, false, false );
 				else
 					if ( BandX > PosX && CheckPathBuild ( PosX + 1 + PosY*game->map->size, BuildingTyp ) )
-						mj = game->pushMoveJobRequest ( PosX + PosY * game->map->size, PosX + 1 + PosY * game->map->size, false );
+						mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + 1 + PosY * game->map->size, false, false );
 					else
 						if ( BandY < PosY && CheckPathBuild ( PosX + ( PosY - 1 ) *game->map->size, BuildingTyp ) )
-							mj = game->pushMoveJobRequest ( PosX + PosY * game->map->size, PosX + ( PosY - 1 ) * game->map->size, false );
+							mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + ( PosY - 1 ) * game->map->size, false, false );
 						else
 							if ( BandY > PosY && CheckPathBuild ( PosX + ( PosY + 1 ) *game->map->size, BuildingTyp ) )
-								mj = game->pushMoveJobRequest ( PosX + PosY * game->map->size, PosX + ( PosY + 1 ) * game->map->size, false );
+								mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + ( PosY + 1 ) * game->map->size, false, false );
 							else
 							{
 								BuildPath = false;
 							}
 
 				{
-					if ( mj && !mj->finished && data.cargo >= BuildCostsStart ) mj->BuildAtTarget = true;
+					if ( mj && !mj->finished && data.cargo >= BuildCostsStart )
+						mj->BuildAtTarget = true;
 					else
 					{
-						if ( mj ) mj->finished = true;
+						if ( mj )
+							mj->finished = true;
 
 						mjob = NULL;
 
@@ -2158,6 +2160,12 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive = false;
 				MenuActive = false;
 				PlayFX ( SoundData.SNDObjectMenu );
+				// Client only
+
+				if ( game->engine->network && !game->engine->network->bServer )
+				{
+					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
+				}
 			}
 
 			MenuActive = false;
@@ -2251,6 +2259,12 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive = false;
 				MenuActive = false;
 				PlayFX ( SoundData.SNDObjectMenu );
+				// Client only
+
+				if ( game->engine->network && !game->engine->network->bServer )
+				{
+					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
+				}
 			}
 			else
 				if ( IsBuilding )
@@ -2259,6 +2273,10 @@ void cVehicle::DrawMenu ( void )
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsBuilding = false;
 					BuildPath = false;
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
+					}
 
 					if ( data.can_build == BUILD_BIG )
 					{
@@ -2282,6 +2300,10 @@ void cVehicle::DrawMenu ( void )
 					MenuActive = false;
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsClearing = false;
+					if ( game->engine->network )
+					{
+						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
+					}
 
 					if ( ClearBig )
 					{
@@ -2338,6 +2360,11 @@ void cVehicle::DrawMenu ( void )
 				game->map->GO[PosX+1+ ( PosY+1 ) *game->map->size].vehicle = this;
 				game->map->GO[PosX+ ( PosY+1 ) *game->map->size].vehicle = this;
 			}
+
+			if ( game->engine->network )
+			{
+				game->engine->network->TCPSend ( MSG_START_CLEAR, iToStr ( PosX + PosY * game->map->size ).c_str() );
+			}
 			return;
 		}
 
@@ -2361,6 +2388,10 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten = !Wachposten;
+			if ( game->engine->network )
+			{
+				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
+			}
 			Wachwechsel();
 			return;
 		}
@@ -3382,6 +3413,10 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( data.can_build != BUILD_BIG )
 					{
 						IsBuilding = true;
+						if ( game->engine->network )
+						{
+							SendStartBuild( PosX + PosY * game->map->size, BuildingTyp, BuildRounds, BuildCosts, BandX, BandY, MSG_START_BUILD );
+						}
 						// Den Building Sound machen:
 						StopFXLoop ( game->ObjectStream );
 						game->ObjectStream = PlayStram();
@@ -5675,6 +5710,11 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
+
+	if ( game->engine->network && !engine_call )
+	{
+		SendActivateVehicle( false, data.can_drive == DRIVE_AIR, nr, off, PosX + PosY * game->map->size, 0, 0 );
+	}
 }
 
 // Prüft, ob das Objekt aufmunitioniert werden kann:
@@ -5788,7 +5828,7 @@ void cVehicle::LayMine ( void )
 
 		if( game->engine->network && !game->engine->network->bServer )
 		{
-// -NETW			SendAddBuilding( PosX, PosY, BNrLandMine, owner->Nr );
+			SendAddBuilding( PosX, PosY, BNrLandMine, owner->Nr );
 		}
 
 		PlayFX ( SoundData.SNDLandMinePlace );
@@ -5816,6 +5856,11 @@ void cVehicle::ClearMine ( void )
 	b = game->map->GO[off].base;
 
 	if ( !b || !b->data.is_expl_mine || b->owner != owner ) return;
+
+	if ( game->engine->network )
+	{
+		game->engine->network->TCPSend ( MSG_CLEAR_MINE, iToStr ( off ).c_str() );
+	}
 
 	// Mine räumen:
 	game->map->GO[off].base = NULL;
@@ -6046,6 +6091,10 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 
 	if ( success )
 	{
+		if ( game->engine->network )
+		{
+			SendCommandoSuccess ( steal, PosX + PosY * game->map->size, off );
+		}
 		if ( steal )
 		{
 			cVehicle *v;
@@ -6098,6 +6147,10 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		detected = true;
 		detection_override = true;
 		PlayVoice ( VoiceData.VOICommandoDetected );
+		if ( game->engine->network )
+		{
+			game->engine->network->TCPSend ( MSG_COMMANDO_MISTAKE, iToStr( PosX + PosY * game->map->size ).c_str() );
+		}
 	}
 
 	if ( game->SelectedVehicle == this )

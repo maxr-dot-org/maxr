@@ -19,16 +19,198 @@
 #ifndef NetworkMessagesH
 #define NetworkMessagesH
 #include "defines.h"
+#include "engine.h"
 
 #define NET_MSG_SEPERATOR	"#"
 
-#define DEFAULT_RETURN_DELAY 1000
-#define ENGINE_EVENT SDL_USEREVENT+0
+/**
+* @author alzi
+*
+* @param iFromX
+* @param iFromY
+* @param iToX
+* @param iToY
+* @param bPlane
+*/
+void SendMoveVehicle(int iFromX, int iFromY, int iToX, int iToY, bool bPlane );
+/**
+* @author alzi
+*
+* @param iOff
+* @param iSavedSpeed
+* @param bPlane
+*/
+void SendSavedSpeed(int iOff, int iSavedSpeed, bool bPlane );
+/**
+* @author alzi
+*
+* @param iScrOff Source offset of unit which will attack
+* @param iDestOff Offset of target unit
+* @param bScrAir is the source unit a plane?
+* @param bDestAir is the taget unit a plane?
+* @param bScrBuilding is the source unit a building?
+*/
+void SendAddAtackJob(int iScrOff, int iDestOff, bool bScrAir, bool bDestAir, bool bScrBuilding);
+/**
+* @author alzi
+*
+* @param iOff Offset off unit to destroy
+* @param bAir Is the unit an plane?
+*/
+void SendDestroyObject(int iOff, bool bAir);
+/**
+* @author alzi
+*
+* @param iScrOff Source offset of unit
+* @param iBuildTyp What typ of building?
+* @param iRounds How many turns will it take
+* @param iCosts How much will it cost?
+* @param iBandX BandX
+* @param iBandY BandY
+* @param iTyp Typ of the Message
+*/
+void SendStartBuild(int iScrOff, int iBuildTyp, int iRounds, int iCosts, int iBandX, int iBandY, int iTyp);
+/**
+* @author alzi
+*
+* @param iPosX Horizontal position
+* @param iPosY Vertikal position
+* @param iBuildTyp What typ of building?
+* @param iPlayerNr Number of player who wants to build
+*/
+void SendAddBuilding(int iPosX, int iPosY, int iBuildTyp, int iPlayerNr);
+/**
+* @author alzi
+*
+* @param iOff
+* @param iExitOffX
+* @param iExitOffY
+*/
+void SendResetConstructor(int iOff, int iExitOffX, int iExitOffY);
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendPlayerSync( sSyncPlayer *SyncData );
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendVehicleSync( sSyncVehicle *SyncData );
+/**
+* @author alzi
+*
+* @param SyncData
+*/
+void SendBuildingSync( sSyncBuilding *SyncData );
+/**
+* @author alzi
+*
+* @param iPlayerNr
+* @param iVehicleNr
+* @param iPosX
+* @param iPosY
+*/
+void SendAddVehicle( int iPlayerNr, int iVehicleNr, int iPosX, int iPosY);
+/**
+* @author alzi
+*
+* @param bDestPlane
+* @param bBuilding
+* @param iDestOff
+* @param iScrOff
+* @param bScrPlane
+*/
+void SendStoreVehicle( bool bDestPlane, bool bBuilding, int iDestOff, int iScrOff, bool bScrPlane );
+/**
+* @author alzi
+*
+* @param bBuilding
+* @param bScrPlane
+* @param iUnitIndex
+* @param iDestOff
+* @param iScrOff
+* @param iHitoints
+* @param iAmmo
+*/
+void SendActivateVehicle( bool bBuilding, bool bScrPlane, int iUnitIndex, int iDestOff, int iScrOff, int iHitoints, int iAmmo );
+/**
+* @author alzi
+*
+* @param Owner
+* @param UpgradeStruct
+*/
+void SendUpgrade( cPlayer *Owner, sUpgradeStruct *UpgradeStruct );
+/**
+* @author alzi
+*
+* @param iPlayerNr
+* @param iResearchNr
+*/
+void SendResearch( int iPlayerNr, int iResearchNr );
+/**
+* @author alzi
+*
+* @param bSteal
+* @param SrcVehicleOff
+* @param TargetVehicleOff
+*/
+void SendCommandoSuccess( bool bSteal, int SrcVehicleOff, int TargetVehicleOff );
+/**
+* @author alzi
+*
+* @param bBuilding
+* @param bPlane
+* @param iUnitOffset
+* @param iDataValue
+* @param iTyp
+*/
+void SendReloadRepair( bool bBuilding, bool bPlane, int iUnitOffset, int iDataValue, int iTyp );
+/**
+* @author alzi
+*
+* @param bPlane
+* @param iUnitOffset
+* @param iDataValue
+*/
+void SendSentryMode( bool bPlane, int iUnitOffset, int iDataValue);
+/**
+* @author alzi
+*
+* @param iPosX
+* @param iPosY
+* @param sName
+* @param bSpecialInformation
+* @param iTyp
+*/
+void SendChangeUnitName( int iPosX, int iPosY, string sName, bool bSpecialInformation, int iTyp );
+/**
+* @author alzi
+*
+* @param iNr
+* @param sName
+*/
+void SendChangePlayerName( int iNr, string sName );
 
-enum EVENT_TYPS
-{
-	GAME_EVENT_WT_MOVE = 0,
-	GAME_EVENT_OK_MOVE
-};
+
+/**
+* @author alzi
+*
+* @param iScrOff Source offset of unit
+* @param iDestOff Offset of target unit
+* @param bScrAir is the source unit a plane?
+* @param iTyp Typ of the Message
+*/
+void SendIntIntBool(int iScrOff, int iDestOff, bool bScrAir, int iTyp);
+/**
+* @author alzi
+*
+* @param iScrOff Source offset of unit
+* @param bScrAir is the source unit a plane?
+* @param iTyp Typ of the Message
+*/
+void SendIntBool(int iScrOff, bool bScrAir, int iTyp);
 
 #endif // NetworkMessagesH

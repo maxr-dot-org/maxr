@@ -20,7 +20,6 @@
 #include "automjobs.h"
 #include "engine.h"
 #include "vehicles.h"
-#include "game.h"
 
 
 
@@ -142,7 +141,7 @@ void cAutoMJob::PlanNextMove()
 
 	if ( maxFactor != FIELD_BLOCKED )
 	{
-		lastMoveJob = game->pushMoveJobRequest(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false);
+		lastMoveJob = engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
 	}	
 	else //no fields to survey next to the surveyor
 	{
@@ -271,7 +270,7 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		lastMoveJob = game->pushMoveJobRequest( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false);
+		lastMoveJob = engine->AddMoveJob( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false, false);
 	}
 	else
 	{
