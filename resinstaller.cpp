@@ -2067,14 +2067,700 @@ int installVehicleVideos()
 
 int installFX()
 {
-	SDL_Surface *surface;
-	string path = sOutputPath + "fx" + PATH_DELIMITER;
+	string path;
+	SDL_Surface *surface, *output;
+	iTotalFiles = 8;
+	iErrors = 0;
+	iInstalledFiles = 0;
 
-	surface = getImage("WALDO");
-	resizeSurface( surface, 8, 7, 64, 64);
-	savePCX( surface, path + "corpse.pcx");
+	cout << "========================================================================\n";
+	cout << "Fx\n";
 
-	return 0;
+	path = sOutputPath + "fx" + PATH_DELIMITER;
+
+	//waldo
+	try
+	{
+		surface = getImage("WALDO");
+		resizeSurface( surface, 8, 7, 64, 64);
+		savePCX( surface, path + "corpse.pcx");
+		SDL_FreeSurface( surface );
+	}
+	END_INSTALL_FILE( path + "corpse.pcx" )
+
+	//hit
+	try
+	{
+		output = getImage("HITEXPLD", 0);
+		resizeSurface( output, 13, 15, 320, 64);
+		
+		SDL_Rect dst_rect = { 64, 15, 0, 0 };
+		for ( int i = 1; i < 5; i++)
+		{
+			surface = getImage("HITEXPLD", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 64;
+		}
+		
+		savePCX( output, path + "hit.pcx"); 
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "hit.pcx" )
+
+	//explo_air
+	try
+	{
+		output = getImage("AIREXPLD", 0);
+		resizeSurface( output, 0, 0, 1918, 121 );
+
+		SDL_Rect dst_rect = { 137, 0, 0, 0 };
+		for ( int i = 1; i < 14; i++)
+		{
+			surface = getImage("AIREXPLD", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 137;
+		}
+		
+		savePCX( output, path + "explo_air.pcx"); 
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "explo_air.pcx" )
+
+	//explo_big
+	try
+	{
+		output = getImage("BLDEXPLD", 0);
+		resizeSurface( output, 0, 0, 8596, 194 );
+
+		SDL_Rect dst_rect = { 307, 0, 0, 0 };
+		for ( int i = 1; i < 28; i++)
+		{
+			surface = getImage("BLDEXPLD", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 307;
+		}
+		
+		savePCX( output, path + "explo_big.pcx"); 
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "explo_big.pcx" )
+
+	//explo_small
+	try
+	{
+		output = getImage("LNDEXPLD", 0);
+		resizeSurface( output, 0, 0, 1596, 108 );
+
+		SDL_Rect dst_rect = { 114, 0, 0, 0 };
+		for ( int i = 1; i < 14; i++)
+		{
+			surface = getImage("LNDEXPLD", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 114;
+		}
+		
+		savePCX( output, path + "explo_small.pcx"); 
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "explo_small.pcx" )
+
+	//explo_water
+	try
+	{
+		output = getImage("SEAEXPLD", 0);
+		resizeSurface( output, 0, 0, 1596, 108 );
+
+		SDL_Rect dst_rect = { 114, 0, 0, 0 };
+		for ( int i = 1; i < 14; i++)
+		{
+			surface = getImage("SEAEXPLD", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 114;
+		}
+		
+		savePCX( output, path + "explo_water.pcx"); 
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "explo_water.pcx" )
+
+	//rocket
+	try
+	{
+		output = getImage( "ROCKET", 0);
+		resizeSurface(output, 0, 0, 224, 28);
+		SDL_Rect dst_rect = { 28, 0, 0, 0 };
+		for ( int i = 1; i < 8; i++ )
+		{
+			surface = getImage("ROCKET", 2*i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 28;
+		}
+		
+		savePCX( output, path + "rocket.pcx"); 
+		SDL_FreeSurface( output );
+
+	}
+	END_INSTALL_FILE( path + "rocket.pcx" )
+
+	//torpedo???
+
+	//saveload.flc
+	copyFile( sMAXPath + "SAVELOAD.FLC", path + "saveload.flc" );
+
+
+
+	if ( logFile != NULL )
+	{
+		writeLog( string("Fx") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+
+	return 1;
+}
+
+int installGfx()
+{
+	string path;
+	SDL_Surface *surface, *output;
+	iTotalFiles = 32;
+	iErrors = 0;
+	iInstalledFiles = 0;
+
+	cout << "========================================================================\n";
+	cout << "Gfx\n";
+
+	path = sOutputPath + "gfx" + PATH_DELIMITER;
+
+	//activate
+	try
+	{
+		output = getImage("ACTVTPTR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "activate.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "activate.pcx" );
+
+	//attack
+	try
+	{
+		output = getImage("ENMY_PTR");
+		setColor( output, 77, 255, 0, 255 );
+		savePCX( output, path + "attack.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "attack.pcx" );
+
+	try
+	{
+		output = getImage("BLDMRK1");
+		setColor( output, 0, 255, 0, 255 );
+		resizeSurface( output, 1, 1, 320, 64 );
+
+		surface = getImage("BLDMRK2");
+		setColor( surface, 0, 255, 0, 255 );
+		SDL_Rect dst_rect = { 65, 1, 0, 0 };
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BLDMRK3");
+		setColor( surface, 0, 255, 0, 255 );
+		dst_rect.x += 64;
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BLDMRK4");
+		setColor( surface, 0, 255, 0, 255 );
+		dst_rect.x += 64;
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BLDMRK5");
+		setColor( surface, 0, 255, 0, 255 );
+		dst_rect.x += 64;
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		savePCX( output, path + "activate_field.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "activate_field.pcx" );
+
+	//band_big
+	copyFileFromRes("LRGTAPE", path + "band_big.pcx", 0);
+
+	//band_big_water
+	//copyFileFromRes("LRGTAPE", path + "band_big_water.pcx", 1);
+
+	//band_small
+	copyFileFromRes("SMLTAPE", path + "band_small.pcx", 0);
+
+	//band_small_water
+	//copyFileFromRes("SMLTAPE", path + "band_big_water.pcx", 1);
+
+	//band_cur
+	try
+	{
+		output = getImage("MAP_PTR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "band_cur.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "band_cur.pcx" );
+
+	//big_beton
+	copyFileFromRes("LRGSLAB", path + "big_beton.pcx");
+	
+	//disable
+	try
+	{
+		output = getImage("DISBLPTR");
+		setColor( output, 77, 255, 0, 255 );
+		savePCX( output, path + "disable.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "disable.pcx" );
+
+	//edock
+	copyFileFromRes("E_DOCK", path + "edock.pcx");
+
+	//edepot
+	copyFileFromRes("E_DEPOT", path + "edepot.pcx");
+
+	//ehangar
+	copyFileFromRes("E_HANGAR", path + "ehangar.pcx");
+
+	//hand
+	try
+	{
+		output = getImage("HANDPTR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "hand.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "hand.pcx" );
+
+	//help
+	try
+	{
+		output = getImage("PTR_HELP");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "help.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "help.pcx" );
+
+	//load
+	try
+	{
+		output = getImage("FRND_LOD");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "load.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "load.pcx" );
+
+	//move
+	try
+	{
+		output = getImage("UNIT_GO");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "move.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "move.pcx" );
+
+	//muni
+	try
+	{
+		output = getImage("PTR_RLD");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "muni.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "muni.pcx" );
+
+	//no
+	try
+	{
+		output = getImage("UNIT_NGO");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "no.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "no.pcx" );
+
+	//object_manu
+	try
+	{
+		output = getImage("UNTBTN_U");
+		setColor( output, 0, 255, 0, 255 );
+		resizeSurface( output, 0, 0, 42, 42 );
+
+		surface = getImage("UNTBTN_D");
+		setColor( surface, 0, 255, 0, 255 );
+		SDL_Rect dst_rect = { 0, 21, 0, 0};
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		savePCX( output, path + "object_menu2.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "object_menu2.pcx" );
+
+	//pf_x
+	try
+	{
+		output = getImage("ARROW_SW");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_1.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_1.pcx" );
+
+	try
+	{
+		output = getImage("ARROW_S");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_2.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_2.pcx" );
+	try
+	{
+		output = getImage("ARROW_SE");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_3.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_3.pcx" );
+	try
+	{
+		output = getImage("ARROW_E");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_4.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_4.pcx" );
+	try
+	{
+		output = getImage("ARROW_NE");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_6.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_6.pcx" );
+	try
+	{
+		output = getImage("ARROW_N");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_7.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_7.pcx" );
+	try
+	{
+		output = getImage("ARROW_NW");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_8.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_8.pcx" );
+	try
+	{
+		output = getImage("ARROW_W");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_9.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_9.pcx" );
+
+	//transfer
+	try
+	{
+		output = getImage("FRND_XFR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "transfer.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "transfer.pcx" );
+
+	//repair
+	try
+	{
+		output = getImage("FRND_FIX");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "repair.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "repair.pcx" );
+
+	//steal
+	try
+	{
+		output = getImage("STEALPTR");
+		setColor( output, 77, 255, 0, 255 );
+		savePCX( output, path + "steal.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "steal.pcx" )
+
+	//select
+	try
+	{
+		output = getImage("FRND_PTR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "select.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "select.pcx" )
+
+	//res
+	try
+	{
+		output = getImage("RAWMSK0");
+		setColor( output, 255, 255, 0, 255 );
+		resizeSurface( output, 13, 13, 1088, 64 );
+
+		for ( int i = 1; i < 17; i++)
+		{
+			surface = getImage("RAWMSK" + iToStr(i) );
+			setColor( surface, 48, 255, 0, 255 );
+			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+		}
+
+		savePCX( output, path + "res.pcx" );
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "res.pcx" )
+	
+	/*
+	//fuel
+	try
+	{
+		output = getImage("FUELMK0");
+		setColor( output, 255, 255, 0, 255 );
+		resizeSurface( output, 13, 13, 1088, 64 );
+
+		for ( int i = 1; i < 17; i++)
+		{
+			surface = getImage("FUELMK" + iToStr(i) );
+			setColor( surface, 48, 255, 0, 255 );
+			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+		}
+
+		savePCX( output, path + "fuel.pcx" );
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "fuel.pcx" )
+
+	//gold
+	try
+	{
+		output = getImage("GOLDMK0");
+		setColor( output, 255, 255, 0, 255 );
+		resizeSurface( output, 13, 13, 1088, 64 );
+
+		for ( int i = 1; i < 17; i++)
+		{
+			surface = getImage("GOLDMK" + iToStr(i) );
+			setColor( surface, 48, 255, 0, 255 );
+			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+		}
+
+		savePCX( output, path + "gold.pcx" );
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "gold.pcx" )
+	*/
+
+	//and now the ugly hud_stuff.pcx :|
+#define COPY_GRAPHIC(name, _x, _y) \
+	surface = getImage( name ); \
+	setColor( surface, backgroundIndex, 255, 0, 255 ); \
+	dst_rect.x = (_x); \
+	dst_rect.y = (_y); \
+	SDL_BlitSurface( surface, NULL, output, &dst_rect ); \
+	SDL_FreeSurface( surface );
+
+	try
+	{
+		output = loadPCX( path + "hud_stuff.pcx");
+		output->pitch = output->w;
+		SDL_Rect dst_rect = {0, 0, 0, 0};
+
+		int backgroundIndex = 17;
+		COPY_GRAPHIC("I_HITS",   11, 109);
+		backgroundIndex = 0;
+		COPY_GRAPHIC("EI_AMMO",  55, 98);
+		COPY_GRAPHIC("EI_SHOTS", 96, 98);
+		COPY_GRAPHIC("EI_POWER", 81, 98);
+		COPY_GRAPHIC("EI_SPEED",  7, 98);
+		COPY_GRAPHIC("SI_POWER", 74, 98);
+		COPY_GRAPHIC("SI_SPEED",  0, 98);
+		COPY_GRAPHIC("EI_HITSB", 20, 98);
+		COPY_GRAPHIC("EI_HITSR", 44, 98);
+		COPY_GRAPHIC("EI_HITSY", 32, 98);
+		COPY_GRAPHIC("SI_HITSB", 14, 98);
+		COPY_GRAPHIC("SI_HITSR", 38, 98);
+		COPY_GRAPHIC("SI_HITSY", 26, 98);
+		COPY_GRAPHIC("EI_FUEL", 112, 98);
+		COPY_GRAPHIC("EI_WORK", 178, 98);
+		COPY_GRAPHIC("SI_FUEL", 104, 98);
+		COPY_GRAPHIC("SI_WORK", 170, 98);
+		COPY_GRAPHIC("EI_GOLD", 129, 98);
+		COPY_GRAPHIC("SI_GOLD", 120, 98);
+		COPY_GRAPHIC("EI_RAW",   67, 98);
+		COPY_GRAPHIC("SI_RAW",   60, 98);
+		COPY_GRAPHIC("SI_AMMO",  50, 98);
+		COPY_GRAPHIC("I_SHOTS",  37, 109);
+		COPY_GRAPHIC("EI_LAND", 154, 98);
+		COPY_GRAPHIC("SI_LAND", 138, 98);
+		COPY_GRAPHIC("I_AMMO",	 18, 109);
+		COPY_GRAPHIC("I_GOLD",  112, 109);
+		COPY_GRAPHIC("I_FUEL",  101, 109);
+		COPY_GRAPHIC("I_SPEED",   0, 109);
+		COPY_GRAPHIC("I_HRDATK", 27, 109);
+		COPY_GRAPHIC("I_ARMOR",  65, 109);
+		COPY_GRAPHIC("EI_AIR",  207, 98);
+		COPY_GRAPHIC("SI_AIR",  186, 98);
+		COPY_GRAPHIC("I_RANGE",  52, 109);
+		COPY_GRAPHIC("I_SCAN",   76, 109);
+		COPY_GRAPHIC("I_RAW",    89, 109);
+		COPY_GRAPHIC("I_LIFE",  138, 109);
+		COPY_GRAPHIC("I_POWER", 125, 109);
+		COPY_GRAPHIC("BARTAPE", 156, 307);
+
+		surface = getImage("SI_SHOTS");
+		setColor( surface, 0, 255, 0, 255 );
+		setColor( surface, 9, 255, 0, 255 );
+		dst_rect.x = 88;
+		dst_rect.y = 98;
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface( surface );
+		
+		SDL_Rect src_rect;
+
+		surface = getImage("SMBRFUEL");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 119;
+		src_rect.y = 0;
+		src_rect.h = 16;
+		src_rect.w = 223;
+		dst_rect.x = 156;
+		dst_rect.y = 273;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("SMBRGOLD");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 119;
+		src_rect.y = 0;
+		src_rect.h = 16;
+		src_rect.w = 223;
+		dst_rect.x = 156;
+		dst_rect.y = 290;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("SMBRRAW");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 62;
+		src_rect.y = 0;
+		src_rect.h = 16;
+		src_rect.w = 223;
+		dst_rect.x = 156;
+		dst_rect.y = 256;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BARRAW");
+		setColor( surface, 17, 255, 0, 255 );
+		src_rect.x = 1;
+		src_rect.y = 0;
+		src_rect.h = 31;
+		src_rect.w = 1000; //?
+		dst_rect.x = 156;
+		dst_rect.y = 338;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BARFUEL");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 33;
+		src_rect.y = 0;
+		src_rect.h = 30; 
+		src_rect.w = 1000; //?
+		dst_rect.x = 156;
+		dst_rect.y = 369;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("BARGOLD");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 1;
+		src_rect.y = 0;
+		src_rect.h = 30; 
+		src_rect.w = 1000; //?
+		dst_rect.x = 156;
+		dst_rect.y = 400;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("VERTRAW");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.x = 0;
+		src_rect.y = 0;
+		src_rect.h = 115;
+		src_rect.w = 20;
+		dst_rect.x = 135;
+		dst_rect.y = 336;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+		surface = getImage("VERTGOLD");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.w = 20;
+		src_rect.h = 115;
+		src_rect.x = 0;
+		src_rect.y = 0;
+		dst_rect.x = 114;
+		dst_rect.y = 336;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
+
+
+		savePCX( output, path + "hud_stuff.pcx");
+	}
+	END_INSTALL_FILE(path + "hud_stuff.pcx");
+
+	if ( logFile != NULL )
+	{
+		writeLog( string("Gfx") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+
+	return 1;
 
 }
 
@@ -2672,7 +3358,7 @@ void installSounds()
 void installMusic()
 {
 	string path;
-	iTotalFiles = 14;
+	iTotalFiles = 13;
 	iErrors = 0;
 	iInstalledFiles = 0;
 
@@ -2776,18 +3462,18 @@ int main ( int argc, char* argv[] )
 
 	while (1)
 	{
-		//fixme: path's with space characters don't work
 		cout << "\nPlease enter path to outputfolder: ";
 	
 #ifdef EIKO
 		cout << "\n";
 		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
 		char temp[1024];
 		temp[1023] = '0';
 		cin.getline( temp, 1023 );
 		cin.seekg(0,ios::end);
-		sMAXPath = temp;
+		sOutputPath = temp;
 #endif
 		//test for valid output folder
 		string testFileName = "max.xml";
@@ -2905,7 +3591,7 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			if ( input.compare("german") == 0 )
+			if ( german && input.compare("german") == 0 )
 			{
 				if ( uppercase )
 				{
@@ -2918,7 +3604,7 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			if ( input.compare("italian") == 0 )
+			if ( italian && input.compare("italian") == 0 )
 			{
 				if ( uppercase )
 				{
@@ -2931,7 +3617,7 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			if ( input.compare("french") == 0 )
+			if ( french && input.compare("french") == 0 )
 			{
 				if ( uppercase )
 				{
@@ -3016,6 +3702,8 @@ int main ( int argc, char* argv[] )
 
 	installBuildingSounds();
 	installVehicleSounds();
+	installFX();
+	installGfx();
 	installVehicleVideos();
 	installVehicleGraphics();
 	installBuildingGraphics();
@@ -3023,7 +3711,7 @@ int main ( int argc, char* argv[] )
 	installMaps();
 	installSounds();
 	installMusic();
-
+	
 	if ( wasError )
 	{
 		cout << "There were errors while installing. See 'resinstaller.log' for details.\n";

@@ -262,3 +262,77 @@ int savePCX ( SDL_Surface* surface, string fileName )
 
 	return 1;
 }
+
+SDL_Surface *loadPCX ( string name )
+{
+	Uint8*_ptr;
+	Uint8 byte;
+	Sint32 k=0,i=0,z,j;
+	SDL_Surface *sf;
+	Sint16 x,y;
+	SDL_RWops *file;
+	
+	//open file
+	file = SDL_RWFromFile ( name.c_str(), "rb" );
+	
+	if ( file == NULL )
+	{
+		//TODO: error handling
+		return NULL;
+	}	
+	
+	//load data
+	SDL_RWseek ( file,8,SEEK_SET );
+	x = SDL_ReadLE16 ( file );
+	y = SDL_ReadLE16 ( file );
+	x++;y++;
+	sf = SDL_CreateRGBSurface ( SDL_SWSURFACE, x, y, 8, 0,0,0,0 );
+	SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
+	
+	_ptr= (Uint8*) sf->pixels;
+	SDL_RWseek ( file, 128, SEEK_SET );
+	do
+	{
+		SDL_RWread ( file, &byte, 1, 1 );
+		if ( byte > 191 )
+		{
+			z = byte - 192;
+			if ( z + k > x )
+				z = x - k;
+			SDL_RWread ( file, &byte, 1, 1 );
+			for ( j = 0; j < z; j++ )
+			{
+				_ptr[k+i*x] = byte;
+				k++;
+				if ( k == x ) break;
+			}
+		}
+		else
+		{
+			_ptr[k+i*x] = byte;
+			k++;
+		}
+		if ( k == x )
+		{
+			k = 0;
+			i++;
+		}
+	}
+	while ( i != y );
+
+	//load color table
+	SDL_RWseek ( file, -768, SEEK_END );
+
+	for ( i = 0; i < 256; i++ )
+	{
+		SDL_RWread ( file, &byte, 1, 1 );
+		sf->format->palette->colors[i].r = byte;
+		SDL_RWread ( file, &byte, 1, 1 );
+		sf->format->palette->colors[i].g = byte;
+		SDL_RWread ( file, &byte, 1, 1 );
+		sf->format->palette->colors[i].b = byte;
+	}
+	
+	SDL_RWclose ( file );	
+	return sf;
+}

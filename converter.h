@@ -101,7 +101,7 @@ void copyImageFromFLC(string fileName, string dst);
 * When decreaseing the x dimention, x is used for the source rect.
 */
 void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w );
-
+void setColor( SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b );
 void generateAnimationFrame( SDL_Surface* surface, unsigned char frame);
 string iToStr(int x);
 void updateProgressbar();
