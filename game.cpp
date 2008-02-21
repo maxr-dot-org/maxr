@@ -2347,12 +2347,13 @@ void cGame::DrawFX ( int i )
 				FXList->Delete ( i );
 				return;
 			}
+			EffectsData.fx_explo_small[0];
 			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
 			scr.w = (int) hud->Zoom * 114 / 64.0;
 			scr.h = (int) hud->Zoom * 108 / 64.0;
-			dest.x = 180 - ( (int) ( ( hud->OffX- ( fx->PosX - 25 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y = 18 -  ( (int) ( ( hud->OffY- ( fx->PosY - 22 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.x = 180 - ( (int) ( ( hud->OffX- ( fx->PosX - 57 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18 -  ( (int) ( ( hud->OffY- ( fx->PosY - 54 ) ) / ( 64.0/hud->Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
 			break;
 		case fxExploBig:
@@ -2366,8 +2367,8 @@ void cGame::DrawFX ( int i )
 			scr.y = 0;
 			scr.w = (int) hud->Zoom * 307 / 64.0;
 			scr.h = (int) hud->Zoom * 194 / 64.0;
-			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 65 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 65 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 134 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 85 ) ) / ( 64.0/hud->Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
 			break;
 		case fxExploWater:
@@ -2381,8 +2382,8 @@ void cGame::DrawFX ( int i )
 			scr.y = 0;
 			scr.w = (int) hud->Zoom * 114 / 64.0;
 			scr.h = (int) hud->Zoom * 108 / 64.0;
-			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 25 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 22 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.x = 180- ( (int) ( ( hud->OffX- ( fx->PosX - 57 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( hud->OffY- ( fx->PosY - 54 ) ) / ( 64.0/hud->Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
 			break;
 		case fxExploAir:
@@ -2396,8 +2397,8 @@ void cGame::DrawFX ( int i )
 			scr.y = 0;
 			scr.w = (int) hud->Zoom * 137 / 64.0;
 			scr.h = (int) hud->Zoom * 121 / 64.0;
-			dest.x = 180- ( ( int ) ( ( hud->OffX- ( fx->PosX - 36 ) ) / ( 64.0/hud->Zoom ) ) );
-			dest.y = 18-  ( ( int ) ( ( hud->OffY- ( fx->PosY - 28 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.x = 180- ( ( int ) ( ( hud->OffX- ( fx->PosX - 61 ) ) / ( 64.0/hud->Zoom ) ) );
+			dest.y = 18-  ( ( int ) ( ( hud->OffY- ( fx->PosY - 68 ) ) / ( 64.0/hud->Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
 			break;
 		case fxSmoke:

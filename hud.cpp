@@ -1426,21 +1426,21 @@ void cHud::ScaleSurfaces ( void )
 	// ScaleSurface2(GraphicsData.gfx_build_finished_org,GraphicsData.gfx_build_finished,Zoom*2);
 
 	// FX:
-#define SCALE_FX(a,b) ScaleSurfaceAdv2(a[0],a[1],(int)((a[0]->w/a[0]->h*(b))),b);
-	SCALE_FX ( EffectsData.fx_explo_small,Zoom );
-	SCALE_FX ( EffectsData.fx_explo_big,Zoom*2 );
-	SCALE_FX ( EffectsData.fx_explo_water,Zoom*2 );
-	SCALE_FX ( EffectsData.fx_explo_air,Zoom*2 );
-	SCALE_FX ( EffectsData.fx_muzzle_big,Zoom );
-	SCALE_FX ( EffectsData.fx_muzzle_small,Zoom );
-	SCALE_FX ( EffectsData.fx_muzzle_med,Zoom );
-	SCALE_FX ( EffectsData.fx_hit,Zoom );
-	SCALE_FX ( EffectsData.fx_smoke, ( int ) ( Zoom/4 ) );
-	SCALE_FX ( EffectsData.fx_rocket, ( int ) ( Zoom/2.28 ) );
-	SCALE_FX ( EffectsData.fx_dark_smoke, ( int ) ( 0.375*Zoom ) );
-	SCALE_FX ( EffectsData.fx_tracks,Zoom );
-	SCALE_FX ( EffectsData.fx_corpse,Zoom );
-	SCALE_FX ( EffectsData.fx_absorb,Zoom );
+#define SCALE_FX(a) ScaleSurfaceAdv2(a[0],a[1], (a[0]->w * Zoom)/64 , (a[0]->h * Zoom)/64);
+	SCALE_FX ( EffectsData.fx_explo_small );
+	SCALE_FX ( EffectsData.fx_explo_big );
+	SCALE_FX ( EffectsData.fx_explo_water );
+	SCALE_FX ( EffectsData.fx_explo_air );
+	SCALE_FX ( EffectsData.fx_muzzle_big );
+	SCALE_FX ( EffectsData.fx_muzzle_small );
+	SCALE_FX ( EffectsData.fx_muzzle_med );
+	SCALE_FX ( EffectsData.fx_hit );
+	SCALE_FX ( EffectsData.fx_smoke );
+	SCALE_FX ( EffectsData.fx_rocket );
+	SCALE_FX ( EffectsData.fx_dark_smoke );
+	SCALE_FX ( EffectsData.fx_tracks );
+	SCALE_FX ( EffectsData.fx_corpse );
+	SCALE_FX ( EffectsData.fx_absorb );
 
 	LastZoom=Zoom;
 }

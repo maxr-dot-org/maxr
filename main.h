@@ -875,6 +875,9 @@ public:
 void ScaleSurface(SDL_Surface *scr,SDL_Surface **dest,int size);
 void ScaleSurface2(SDL_Surface *scr,SDL_Surface *dest,int size);
 void ScaleSurfaceAdv(SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey);
+
+//takes the surfaces src and scales it to match the given size.
+//the result is directly written in the pixel memory of dst
 void ScaleSurfaceAdv2(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 void ScaleSurfaceAdv2Spec(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
