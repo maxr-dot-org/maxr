@@ -2509,7 +2509,7 @@ int installGfx()
 		savePCX( output, path + "transfer.pcx");
 		SDL_FreeSurface( output );
 	}
-	END_INSTALL_FILE( path + "transfer.pcx" );
+	END_INSTALL_FILE( path + "transf.pcx" );
 
 	//repair
 	try
