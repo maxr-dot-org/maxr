@@ -2347,7 +2347,6 @@ void cGame::DrawFX ( int i )
 				FXList->Delete ( i );
 				return;
 			}
-			EffectsData.fx_explo_small[0];
 			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
 			scr.w = (int) hud->Zoom * 114 / 64.0;

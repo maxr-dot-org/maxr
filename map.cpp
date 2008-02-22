@@ -98,7 +98,7 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColo
 			SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 );
 			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
 			// If is not a water graphic set all pixels in water color to index 96 with will be a color key
-			if( cColorOffset > 96 && cColorOffset <= 127 && !bWater )
+			if( ((cColorOffset > 95 && cColorOffset <= 116) || (cColorOffset > 122 && cColorOffset <= 127)) && !bWater )
 			{
 				*pixel = 96;
 				overlay = true;
@@ -210,12 +210,12 @@ bool cMap::LoadMap ( string filename )
 
 		if ( terrain[iNum].water )
 		{
-			SDL_Surface *fullsurface = SDL_CreateRGBSurface( SDL_HWSURFACE, 64*10, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+			SDL_Surface *fullsurface = SDL_CreateRGBSurface( SDL_HWSURFACE, 64* 7, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
 			surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, true, terrain[iNum].overlay);
 			SDL_Rect dest = { 0, 0, 64, 64 };
 			SDL_BlitSurface( surface, NULL, fullsurface, &dest );
 			dest.x += 64;
-			for ( int i = 0; i < 5; i++ )
+			for ( int i = 0; i < 6; i++ )
 			{
 				for (int iInd = 0; iInd < 64*64; iInd++ )
 				{
@@ -223,27 +223,22 @@ bool cMap::LoadMap ( string filename )
 					if ( *pixel > 96 && *pixel <= 102 ) *pixel -= 1;
 					else if ( *pixel == 96 ) *pixel += 6;
 
-					else if ( *pixel > 103 && *pixel < 109 ) *pixel -= 1;
+					else if ( *pixel > 103 && *pixel <= 109 ) *pixel -= 1;
 					else if ( *pixel == 103 ) *pixel += 6;
 
-					else if ( *pixel > 110 && *pixel < 116 ) *pixel -= 1;
+					else if ( *pixel > 110 && *pixel <= 116 ) *pixel -= 1;
 					else if ( *pixel == 110 ) *pixel += 6;
 
-					else if ( *pixel > 117 && *pixel < 122 ) *pixel -= 1;
+					else if ( *pixel > 117 && *pixel <= 122 ) *pixel -= 1;
 					else if ( *pixel == 117 ) *pixel += 5;
 
-					else if ( *pixel > 123 && *pixel < 127 ) *pixel -= 1;
-					else if ( *pixel == 123 ) *pixel += 5;
+					else if ( *pixel > 123 && *pixel <= 127 ) *pixel -= 1;
+					else if ( *pixel == 123 ) *pixel += 4;
 				}
 				SDL_BlitSurface( surface, NULL, fullsurface, &dest );
-				if( i < 4)
-				{
-					dest.x += 64*(8-i*2);
-					SDL_BlitSurface( surface, NULL, fullsurface, &dest );
-					dest.x -= 64*(7-i*2);
-				}
+				dest.x += 64;
 			}
-			CopySrfToTerData ( fullsurface, iNum, 64*10 );
+			CopySrfToTerData ( fullsurface, iNum, 64*7 );
 			SDL_FreeSurface ( fullsurface );
 		}
 		else
