@@ -717,8 +717,17 @@ int installVehicleGraphics()
 	for ( int i = 0; i < 8; i++ )
 	{
 		sprintf( szNum, "%d", i);
-		copyFileFromRes_rpc("MISSLLCH", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_MISSLL", path + "shw" + szNum + ".pcx", i);
+		surface = getImage("MISSLLCH", i);
+		removePlayerColor( surface );
+		resizeSurface( surface, 16, 15, 64, 64);
+		savePCX(surface, path + "img" + szNum + ".pcx");
+		SDL_FreeSurface( surface );
+
+		surface = getImage("S_MISSLL", i);
+		resizeSurface( surface, 16, 16, 64, 64);
+		savePCX( surface, path + "shw" + szNum + ".pcx" );
+		SDL_FreeSurface( surface );
+
 	}
 	copyFileFromRes("A_MISSIL", path + "store.pcx");
 	copyFileFromRes("P_MISSIL", path + "info.pcx");
@@ -1795,7 +1804,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
 	copyFileFromRes("RESEARCH", path + "img.pcx");
 	copyFileFromRes("S_RESEAR", path + "shw.pcx");
-	copyFileFromRes("P_P_RESEAR", path + "info.pcx");
+	copyFileFromRes("P_RESEAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RESEARCH.FLC", path + "video.pcx");
 
 	//road
