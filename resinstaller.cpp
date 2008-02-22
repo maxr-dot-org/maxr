@@ -716,17 +716,25 @@ int installVehicleGraphics()
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
-		sprintf( szNum, "%d", i);
-		surface = getImage("MISSLLCH", i);
-		removePlayerColor( surface );
-		resizeSurface( surface, 16, 15, 64, 64);
-		savePCX(surface, path + "img" + szNum + ".pcx");
-		SDL_FreeSurface( surface );
+		try
+		{
+			sprintf( szNum, "%d", i);
+			surface = getImage("MISSLLCH", i);
+			removePlayerColor( surface );
+			resizeSurface( surface, 16, 15, 64, 64);
+			savePCX(surface, path + "img" + szNum + ".pcx");
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "img" + szNum + ".pcx" );
 
-		surface = getImage("S_MISSLL", i);
-		resizeSurface( surface, 16, 16, 64, 64);
-		savePCX( surface, path + "shw" + szNum + ".pcx" );
-		SDL_FreeSurface( surface );
+		try
+		{
+			surface = getImage("S_MISSLL", i);
+			resizeSurface( surface, 16, 16, 64, 64);
+			savePCX( surface, path + "shw" + szNum + ".pcx" );
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" );
 
 	}
 	copyFileFromRes("A_MISSIL", path + "store.pcx");
@@ -2506,7 +2514,7 @@ int installGfx()
 	{
 		output = getImage("FRND_XFR");
 		setColor( output, 0, 255, 0, 255 );
-		savePCX( output, path + "transfer.pcx");
+		savePCX( output, path + "transf.pcx");
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "transf.pcx" );
@@ -3483,8 +3491,8 @@ int main ( int argc, char* argv[] )
 	
 #ifdef EIKO
 		cout << "\n";
-		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
-		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
+		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
 		char temp[1024];
 		temp[1023] = '\0';
