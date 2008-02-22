@@ -3280,30 +3280,30 @@ void installMaps()
 	cout << "Maps\n";
 
 	path = sOutputPath + "maps" + PATH_DELIMITER;
-	copyFile(sVoicePath + "CRATER_1.WRL", path + "Eisenkreuz.wrl");
-	copyFile(sVoicePath + "CRATER_2.WRL", path + "Splittersünde.wrl");
-	copyFile(sVoicePath + "CRATER_3.WRL", path + "Versteckspiel.wrl");
-	copyFile(sVoicePath + "CRATER_4.WRL", path + "Valentins Planet.wrl");
-	copyFile(sVoicePath + "CRATER_5.WRL", path + "Drei Ringe.wrl");
-	copyFile(sVoicePath + "CRATER_6.WRL", path + "Großer Graben.wrl");
-	copyFile(sVoicePath + "DESERT_1.WRL", path + "Sommersprossen.wrl");
-	copyFile(sVoicePath + "DESERT_2.WRL", path + "Sandbank.wrl");
-	copyFile(sVoicePath + "DESERT_3.WRL", path + "Großer Kreis.wrl");
-	copyFile(sVoicePath + "DESERT_4.WRL", path + "Lange Passage.wrl");
-	copyFile(sVoicePath + "DESERT_5.WRL", path + "Blitzpunkt.wrl");
-	copyFile(sVoicePath + "DESERT_6.WRL", path + "Engpaß.wrl");
-	copyFile(sVoicePath + "GREEN_1.WRL", path + "Neuer Luzon.wrl");
-	copyFile(sVoicePath + "GREEN_2.WRL", path + "Mittleres Meer.wrl");
-	copyFile(sVoicePath + "GREEN_3.WRL", path + "Harter Aufprall.wrl");
-	copyFile(sVoicePath + "GREEN_4.WRL", path + "Heiligtum.wrl");
-	copyFile(sVoicePath + "GREEN_5.WRL", path + "Islandia.wrl");
-	copyFile(sVoicePath + "GREEN_6.WRL", path + "Hammerkopf.wrl");
-	copyFile(sVoicePath + "SNOW_1.WRL", path + "Schneekrabbe.wrl");
-	copyFile(sVoicePath + "SNOW_2.WRL", path + "Frigia.wrl");
-	copyFile(sVoicePath + "SNOW_3.WRL", path + "Eisberg.wrl");
-	copyFile(sVoicePath + "SNOW_4.WRL", path + "Der Kühler.wrl");
-	copyFile(sVoicePath + "SNOW_5.WRL", path + "Latzte Thule.wrl");
-	copyFile(sVoicePath + "SNOW_6.WRL", path + "Lange Eisschollen.wrl");
+	copyFile(sMAXPath + "CRATER_1.WRL", path + "Iron Cross.wrl");
+	copyFile(sMAXPath + "CRATER_2.WRL", path + "Splatterscape.wrl");
+	copyFile(sMAXPath + "CRATER_3.WRL", path + "Peak-a-boo.wrl");
+	copyFile(sMAXPath + "CRATER_4.WRL", path + "Valentine's Planet.wrl");
+	copyFile(sMAXPath + "CRATER_5.WRL", path + "Three Rings.wrl");
+	copyFile(sMAXPath + "CRATER_6.WRL", path + "Great divide.wrl");
+	copyFile(sMAXPath + "DESERT_1.WRL", path + "Freckles.wrl");
+	copyFile(sMAXPath + "DESERT_2.WRL", path + "Sandspit.wrl");
+	copyFile(sMAXPath + "DESERT_3.WRL", path + "Great Circle.wrl");
+	copyFile(sMAXPath + "DESERT_4.WRL", path + "Long Passage.wrl");
+	copyFile(sMAXPath + "DESERT_5.WRL", path + "Flash Point.wrl");
+	copyFile(sMAXPath + "DESERT_6.WRL", path + "Bottleneck.wrl");
+	copyFile(sMAXPath + "GREEN_1.WRL", path + "New Luzon.wrl");
+	copyFile(sMAXPath + "GREEN_2.WRL", path + "Middle Sea.wrl");
+	copyFile(sMAXPath + "GREEN_3.WRL", path + "High Impact.wrl");
+	copyFile(sMAXPath + "GREEN_4.WRL", path + "Sanctuary.wrl");
+	copyFile(sMAXPath + "GREEN_5.WRL", path + "Islandia.wrl");
+	copyFile(sMAXPath + "GREEN_6.WRL", path + "Hammerhead.wrl");
+	copyFile(sMAXPath + "SNOW_1.WRL", path + "Snowcrab.wrl");
+	copyFile(sMAXPath + "SNOW_2.WRL", path + "Frigia.wrl");
+	copyFile(sMAXPath + "SNOW_3.WRL", path + "Ice Berg.wrl");
+	copyFile(sMAXPath + "SNOW_4.WRL", path + "The Cooler.wrl");
+	copyFile(sMAXPath + "SNOW_5.WRL", path + "Ultima Thule.wrl");
+	copyFile(sMAXPath + "SNOW_6.WRL", path + "Long Floes.wrl");
 	
 	if ( logFile != NULL )
 	{
@@ -3418,8 +3418,8 @@ int main ( int argc, char* argv[] )
 		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\";
 #else
 		char temp[1024];
-		temp[1023] = '0';
-		cin.getline( temp, sizeof(temp) - 1 );
+		temp[1023] = '\0';
+		cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
 		cin.seekg(0,ios::end);
 		cin.clear();
 		sMAXPath = temp;
@@ -3487,8 +3487,8 @@ int main ( int argc, char* argv[] )
 		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
 		char temp[1024];
-		temp[1023] = '0';
-		cin.getline( temp, sizeof(temp) - 1 );
+		temp[1023] = '\0';
+		cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
 		cin.seekg(0,ios::end);
 		cin.clear();
 		sOutputPath = temp;
@@ -3601,7 +3601,13 @@ int main ( int argc, char* argv[] )
 		while ( 1 )
 		{
 			cout << "\nplease enter your prefered language: ";
-			cin >> input;
+
+			char temp[1024];
+			temp[1023] = '\0';
+			cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
+			cin.seekg(0,ios::end);
+			cin.clear();
+			input = temp;
 
 			if ( input.compare("english") == 0 )
 			{
