@@ -3419,8 +3419,9 @@ int main ( int argc, char* argv[] )
 #else
 		char temp[1024];
 		temp[1023] = '0';
-		cin.getline( temp, 1023 );
+		cin.getline( temp, sizeof(temp) - 1 );
 		cin.seekg(0,ios::end);
+		cin.clear();
 		sMAXPath = temp;
 #endif
 
@@ -3487,8 +3488,9 @@ int main ( int argc, char* argv[] )
 #else
 		char temp[1024];
 		temp[1023] = '0';
-		cin.getline( temp, 1023 );
+		cin.getline( temp, sizeof(temp) - 1 );
 		cin.seekg(0,ios::end);
+		cin.clear();
 		sOutputPath = temp;
 #endif
 		//test for valid output folder
