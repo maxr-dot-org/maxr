@@ -1228,7 +1228,7 @@ int installVehicleGraphics()
 int installBuildingGraphics()
 {
 	string path;
-	iTotalFiles = 136;
+	iTotalFiles = 140;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	SDL_Surface* surface;
@@ -1790,6 +1790,13 @@ int installBuildingGraphics()
 	copyFileFromRes("S_RADAR", path + "shw.pcx", 14);
 	copyFileFromRes("P_RADAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RADAR.FLC", path + "video.pcx");
+
+	//research
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
+	copyFileFromRes("RESEARCH", path + "img.pcx");
+	copyFileFromRes("S_RESEAR", path + "shw.pcx");
+	copyFileFromRes("P_P_RESEAR", path + "info.pcx");
+	copyImageFromFLC( sMAXPath + "RESEARCH.FLC", path + "video.pcx");
 
 	//road
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "road" + PATH_DELIMITER;
@@ -3206,7 +3213,7 @@ void installVoices()
 	cout << "Voices\n";
 
 	path = sOutputPath + "voices" + PATH_DELIMITER;
-	copyWAV(sVoicePath + "F001.WAV", path + "ok2.wav");
+	copyWAV(sVoicePath + "F001.WAV", path + "ok1.wav");
 	copyWAV(sVoicePath + "F004.WAV", path + "ok2.wav");
 	copyWAV(sVoicePath + "F006.WAV", path + "ok3.wav");
 	copyWAV(sVoicePath + "F012.WAV", path + "commando_detected.wav");
