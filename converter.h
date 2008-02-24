@@ -67,6 +67,7 @@ class cImage
 
 public:
 	static cImage* Image;
+	static void cImage::deleteCache();	//deletes the cached Image
 	
 	cImage();
 	~cImage();

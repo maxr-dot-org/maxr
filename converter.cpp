@@ -634,6 +634,15 @@ SDL_Surface* cImage::getSurface(int imageNr)
 	return Images[imageNr].surface;
 }
 
+void cImage::deleteCache()
+{
+	if ( Image != NULL )
+	{
+		delete Image;
+		Image = NULL;
+	}
+}
+
 SDL_Surface* getImage(string file_name, int imageNr)
 {
 	if ( res == NULL )
