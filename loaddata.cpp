@@ -269,7 +269,7 @@ void MakeLog ( string sTxt,int ok,int pos )
 		break;
 	
 	default:
-		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check max.log!", LATIN_BIG_GOLD);
+		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check maxr.log!", LATIN_BIG_GOLD);
 		break;
 	}
 	
