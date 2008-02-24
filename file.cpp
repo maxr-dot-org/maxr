@@ -87,7 +87,7 @@ void copyFile( string source, string dest )
 		buffer = (unsigned char*) malloc( size );
 		if ( buffer == NULL )
 		{
-			cout << "out of memory\n";
+			cout << "Out of memory\n";
 			exit (-1);
 		}
 

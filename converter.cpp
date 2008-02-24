@@ -142,7 +142,7 @@ void cImage::resampleFile()
 		SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE, sWidth, sHeight,8,0,0,0,0);
 		if ( surface == NULL )
 		{
-			cout << "out of memory\n";
+			cout << "Out of memory\n";
 			exit (-1);
 		}
 
@@ -269,7 +269,8 @@ bool cImage::decodeMultiShadow()
 	Sint32 iX, iY, iBlockIndex, iPicIndex;
 	Sint32 lBegin, lEnd, *lBounds, *lRows;
 	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
-    unsigned char Opacity, Color;
+	unsigned char Opacity, Color;
+	
 	if( lLenght < 2 )
 	{
 		return false;
@@ -392,7 +393,8 @@ bool cImage::decodeMultiImage()
 	Sint32 lBegin, lEnd, *lBounds, *lRows;
 	Sint16 sCount, sLocWidth, sLocHeight, sLocHotX, sLocHotY;
 	bool bCopyNotSkip;
-    unsigned char Opacity;
+	unsigned char Opacity;
+	
 	if( lLenght < 2 )
 	{
 		return false;
@@ -516,6 +518,7 @@ bool cImage::decodeBigImage()
 {
 	Sint16 sLocWidth, sLocHeight, sLocHotX, sLocHotY, sCnt;
 	int iOutOfs, iInOfs;
+	
 	if( lLenght < 776 )
 	{
 		return false;
@@ -693,7 +696,7 @@ SDL_Surface* getImage(string file_name, int imageNr)
 	
 	if ( !Image->bDecoded )
 	{
-		throw InstallException("Could not decode image '" + file_name + "' from max.res" + TEXT_FILE_LF);
+		throw InstallException("Couldn't decode image '" + file_name + "' from max.res" + TEXT_FILE_LF);
 	}
 
 	return Image->getSurface(imageNr);
@@ -842,7 +845,7 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 	resizedSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, h, w, 8,0,0,0,0);
 	if ( resizedSurface == NULL )
 	{
-		cout << "out of memory";
+		cout << "Out of memory";
 		exit (-1);
 	}
 	resizedSurface->pitch = resizedSurface->w;	//this seems to be an SDL-Bug...

@@ -145,7 +145,7 @@ void saveWAV (string dst, cWaveFile& waveFile)
 	chunk.data = (Uint8 *)malloc(chunk.length);
 	if ( chunk.data == NULL )
 	{
-		cout << "out of memory\n";
+		cout << "Out of memory\n";
 		exit ( -1 );
 	}
 	format = (WaveFMT *)chunk.data;
@@ -280,7 +280,7 @@ void copyPartOfWAV( string src, string dst, Uint8 nr)
 		Uint8* new_buffer = (Uint8*) malloc( waveFile.length );
 		if ( new_buffer == NULL )
 		{
-			cout << "out of memory\n";
+			cout << "Out of memory\n";
 			exit ( -1);
 		}
 		memcpy( new_buffer, waveFile.buffer + start, waveFile.length );

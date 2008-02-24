@@ -3418,10 +3418,25 @@ void installMusic()
 }
 
 int main ( int argc, char* argv[] )
-{
+{	
+	cout << "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to\n\
+M.A.X.R. for original game look and feel. For this you need an existing\n\
+M.A.X. installation or an original M.A.X. CD avaible.\n\n";
+	
+	cout << "\
+This program is free software; you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation; either version 2 of the License, or\n\
+(at your option) any later version.\n\
+\n\
+This program is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n\
+GNU General Public License for more details.\n\n";
+
 	while ( 1 )
 	{
-		cout << "Please enter path to MAX-Installation or MAX-CD: ";
+		cout << "Please enter full path to existing M.A.X. installation or mounted cd:\n";
 #ifdef EIKO
 		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\";
 #else
@@ -3481,13 +3496,14 @@ int main ( int argc, char* argv[] )
 		}
 		catch ( InstallException ) {}
 		
-		cout << "Could not open resourcefile\n";
+		cout << "Couldn't find valid M.A.X. installation in given folder:\n";
+		cout << "No max.res found.\n";
 
 	}
 
 	while (1)
 	{
-		cout << "\nPlease enter path to outputfolder: ";
+		cout << "\nPlease enter full path to M.A.X.R. installation for extracted files:\n";
 	
 #ifdef EIKO
 		cout << "\n";
@@ -3521,7 +3537,7 @@ int main ( int argc, char* argv[] )
 		}
 		catch ( InstallException ) {}
 
-		cout << "MAX Reloaded installation not found in the given folder.\n";
+		cout << "Couldn't find valid M.A.X.R. installation in given folder.\n";
 	}
 
 	//check for available languages for voices
@@ -3599,7 +3615,7 @@ int main ( int argc, char* argv[] )
 	else
 	{
 		//make menu
-		cout << "\nThe following languages are available for the voice files:\n";
+		cout << "\nThe following voice samples are available from your install source:\n";
 		cout << "- english\n";
 		if ( german == true ) cout << "- german\n";
 		if ( italian == true ) cout << "- italian\n";
@@ -3608,7 +3624,7 @@ int main ( int argc, char* argv[] )
 		string input;
 		while ( 1 )
 		{
-			cout << "\nplease enter your prefered language: ";
+			cout << "\nEnter your preferred language: ";
 
 			char temp[1024];
 			temp[1023] = '\0';
@@ -3662,7 +3678,8 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			cout << "language not recognized\n";
+			cout << "Language not recognized\n";
+			cout << "Hint: Do not type the leading dashes/blanks!\n";
 		}
 	}
 
@@ -3671,7 +3688,7 @@ int main ( int argc, char* argv[] )
 	logFile = SDL_RWFromFile("resinstaller.log", "w" );
 	if ( logFile == NULL )
 	{
-		cout << "Warning: Couldn't create log file. writing to stdout.\n";
+		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
 	}
 
 	wasError = 0;
@@ -3728,7 +3745,7 @@ int main ( int argc, char* argv[] )
 
 	if ( lPosBegin == lEndOfFile )
 	{
-		cout << "Error:  [EOD] not found in res-File.";
+		cout << "Error: [EOD] not found in resource file. Please contact the developer!";
 		exit (-1);
 	}
 
@@ -3746,7 +3763,7 @@ int main ( int argc, char* argv[] )
 	
 	if ( wasError )
 	{
-		cout << "There were errors while installing. See 'resinstaller.log' for details.\n";
+		cout << "There were errors during install. See 'resinstaller.log' for details.\n";
 	}
 	else
 	{
