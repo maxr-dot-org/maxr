@@ -1595,8 +1595,8 @@ void cGame::DrawMap ( bool pure )
 						tmp=dest;
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=map->GO[pos].top->SubBase;
-						SDL_FillRect ( buffer,&tmp, ( int ) ( sb ) );
-						font->showText(dest.x+1,dest.y+1, iToStr(( int ) ( sb )), LATIN_SMALL_WHITE);
+						SDL_FillRect ( buffer,&tmp, (long int) sb );
+						font->showText(dest.x+1,dest.y+1, iToStr(( long int ) ( sb )), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
 						//sprintf ( dbstr,"m %d/%d %+d",sb->Metal,sb->MaxMetal,sb->MetalProd-sb->MetalNeed );
 						//fonts->OutTextSmall ( dbstr,dest.x+1,dest.y+1+8,ClWhite,buffer );
@@ -2643,7 +2643,7 @@ void cGame::AddDirt ( int x,int y,int value,bool big )
 	}
 	else
 	{
-		n->DirtTyp=random ( 3,0 );
+		n->DirtTyp=random ( 5,0 );
 		n->data.is_big=false;
 	}
 	n->DirtValue=value;
@@ -3787,7 +3787,9 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-			            v->StoredVehicles->Add((cVehicle *)(int *)t); // Die ID (in OffX)
+						cVehicle* v = new cVehicle(UnitsData.vehicle,PlayerList->Items[0]);
+						v->OffX = t;
+			            v->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}
 				}
 
@@ -3918,7 +3920,9 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-			            b->StoredVehicles->Add((cVehicle *)(int *)t); // Die ID (in OffX)
+						cVehicle* v = new cVehicle(UnitsData.vehicle,PlayerList->Items[0]);
+						v->OffX = t;
+			            b->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}
 				}
 				break;
@@ -3947,9 +3951,10 @@ void cGame::Load ( string name,int AP,bool MP )
 			{
 				for ( m=0;m<StoredVehicles->iCount;m++ )
 				{
-					if ( StoredVehicles->Items[m]->OffX== ( ( int ) ( v->StoredVehicles->Items[k] ) ) )
+					if ( StoredVehicles->Items[m]->OffX ==  v->StoredVehicles->Items[k]->OffX )
 					{
 						StoredVehicles->Items[m]->OffX=0;
+						delete v->StoredVehicles->Items[k];
 						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
 						StoredVehicles->Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
@@ -3966,9 +3971,10 @@ void cGame::Load ( string name,int AP,bool MP )
 			{
 				for ( m=0;m<StoredVehicles->iCount;m++ )
 				{
-					if ( StoredVehicles->Items[m]->OffX== ( ( int ) ( v->StoredVehicles->Items[k] ) ) )
+					if ( StoredVehicles->Items[m]->OffX == v->StoredVehicles->Items[k]->OffX )
 					{
 						StoredVehicles->Items[m]->OffX=0;
+						delete v->StoredVehicles->Items[k];
 						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
 						StoredVehicles->Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
@@ -3988,9 +3994,10 @@ void cGame::Load ( string name,int AP,bool MP )
 				{
 					cVehicle *v;
 					v=StoredVehicles->Items[m];
-					if ( v->OffX== ( int ) ( b->StoredVehicles->Items[k] ) )
+					if ( v->OffX == b->StoredVehicles->Items[k]->OffX )
 					{
 						v->OffX=0;
+						delete b->StoredVehicles->Items[k];
 						b->StoredVehicles->Items[k]=v;
 						StoredVehicles->Delete ( m );
 
@@ -4036,16 +4043,17 @@ bool cGame::CheckRecursivLoaded ( cVehicle *v,cList<cVehicle*> *StoredVehicles )
 	cVehicle *vv;
 	int i,k;
 
-	if ( StoredVehicles->iCount&&v->StoredVehicles&&v->StoredVehicles->iCount )
+	if ( StoredVehicles->iCount && v->StoredVehicles && v->StoredVehicles->iCount )
 	{
 		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
 			for ( k=0;k<StoredVehicles->iCount;k++ )
 			{
 				vv=StoredVehicles->Items[k];
-				if ( vv->OffX== ( int ) ( v->StoredVehicles->Items[i] ) )
+				if ( vv->OffX == v->StoredVehicles->Items[i]->OffX )
 				{
 					vv->OffX=0;
+					delete v->StoredVehicles->Items[i];
 					v->StoredVehicles->Items[i]=vv;
 					StoredVehicles->Delete ( k );
 
@@ -4130,7 +4138,7 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 	
-	sTmp = "dir: " + iToStr ( v->dir ) + " selected: " + iToStr ( v->selected ) + " moving: +" + iToStr ( v->moving ) + " rotating: " + iToStr ( v->rotating ) + " mjob: " + iToStr ((int) v->mjob ) + " mj_active: " + iToStr ( v->MoveJobActive ) + " menu_active: " + iToStr ( v->MenuActive );	
+	sTmp = "dir: " + iToStr ( v->dir ) + " selected: " + iToStr ( v->selected ) + " moving: +" + iToStr ( v->moving ) + " rotating: " + iToStr ( v->rotating ) + " mjob: " + iToStr ((long int) v->mjob ) + " mj_active: " + iToStr ( v->MoveJobActive ) + " menu_active: " + iToStr ( v->MenuActive );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 	
@@ -4184,7 +4192,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (int)b->base ) + " sub_base: " + iToStr ((int)b->SubBase );	
+	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (long int)b->base ) + " sub_base: " + iToStr ((long int)b->SubBase );	
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

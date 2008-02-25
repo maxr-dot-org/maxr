@@ -630,6 +630,12 @@ void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
 // returns a random number between 'y' and 'x':
 int random ( int x, int y )
 {
+	if ( y > x )
+	{
+		int temp = y;
+		y = x;
+		x = temp;
+	}
 	return ( ( int ) ( ( ( double ) rand() /RAND_MAX ) * ( ( x-y ) +y ) ) );
 }
 

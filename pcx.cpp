@@ -31,7 +31,7 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	int k=0,i=0,z,j;
 	int colors[256];
 	SDL_Surface *sf;
-	short x,y;
+	Uint16 x,y;
 	SDL_RWops *file;
 	
 	// Die Datei öffnen:
@@ -54,8 +54,8 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
-	SDL_RWread ( file,&x,sizeof ( short ),1 );
-	SDL_RWread ( file,&y,sizeof ( short ),1 );
+	x = SDL_ReadLE16 ( file );
+	y = SDL_ReadLE16 ( file );
 	x++;y++;
 	sf=SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
@@ -94,23 +94,19 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 	}
 	while ( i!=y );
 	// Nun noch die Farbtabelle anpassen:
-	SDL_RWseek ( file,0,SEEK_END );
-	SDL_RWseek ( file,SDL_RWtell ( file )-768,SEEK_SET );
+	SDL_RWseek ( file, -768, SEEK_END );
+
+	Uint8 r, g, b;
 	for ( i=0;i<256;i++ )
 	{
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]= ( temp<<16 );
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]+= ( temp<<8 );
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]+=temp;
+		SDL_RWread ( file,&r,1,1 );
+		SDL_RWread ( file,&g,1,1 );
+		SDL_RWread ( file,&b,1,1 );
+		colors[i] = SDL_MapRGB( sf->format, r, g, b);
 	}
-	for ( i=0;i<x*y;i++ )
+	for ( i=0; i < x*y; i++ )
 	{
-		_ptr[i]=colors[_ptr[i]];
+		_ptr[i] = colors[_ptr[i]];
 	}
 	SDL_RWclose ( file );	
 	return sf;
@@ -124,7 +120,7 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	char tmp[2];
 	int k=0,i=0,z,j;
 	int colors[256];
-	short x,y;
+	Uint16 x,y;
 	SDL_RWops *file;
 
 	// Die Datei öffnen:
@@ -147,8 +143,9 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
-	SDL_RWread ( file,&x,sizeof ( short ),1 );
-	SDL_RWread ( file,&y,sizeof ( short ),1 );
+	x = SDL_ReadLE16 ( file );
+	y = SDL_ReadLE16 ( file );
+	
 	x++;y++;
 	if( sf == NULL)
 	{
@@ -193,20 +190,17 @@ int LoadPCXtoSF ( char *name,SDL_Surface *sf )
 	}
 	while ( i!=y );
 	// Nun noch die Farbtabelle anpassen:
-	SDL_RWseek ( file,0,SEEK_END );
-	SDL_RWseek ( file,SDL_RWtell ( file )-768,SEEK_SET );
+	SDL_RWseek ( file, -768, SEEK_END );
+	
+	Uint8 r, g, b;
 	for ( i=0;i<256;i++ )
 	{
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]= ( temp<<16 );
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]+= ( temp<<8 );
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		colors[i]+=temp;
+		SDL_RWread ( file,&r,1,1 );
+		SDL_RWread ( file,&g,1,1 );
+		SDL_RWread ( file,&b,1,1 );
+		colors[i] = SDL_MapRGB( sf->format, r, g, b);
 	}
+	
 	for ( i=0;i<sf->w*y;i++ )
 	{
 		unsigned int c=_ptr[i];
