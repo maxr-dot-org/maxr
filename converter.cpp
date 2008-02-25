@@ -643,7 +643,7 @@ void cImage::deleteCache()
 	}
 }
 
-SDL_Surface* getImage(string file_name, int imageNr)
+SDL_Surface* getImageFromRes(string file_name, int imageNr)
 {
 	if ( res == NULL )
 	{
@@ -767,7 +767,7 @@ void copyFileFromRes ( string src, string dst, int number )
 	SDL_Surface *surface = NULL;
 	try
 	{
-		surface = getImage(src, number);
+		surface = getImageFromRes(src, number);
 		savePCX ( surface, dst );
 		SDL_FreeSurface ( surface );
 	}
@@ -781,7 +781,7 @@ void copyFileFromRes_rpc(string src, string dst, int number )
 	SDL_Surface *surface = NULL;
 	try
 	{
-		surface = getImage(src, number);
+		surface = getImageFromRes(src, number);
 		removePlayerColor( surface );
 		savePCX ( surface, dst );
 		SDL_FreeSurface( surface );

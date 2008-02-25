@@ -85,7 +85,7 @@ public:
 	SDL_Surface* getSurface(int imageNr = 0);
 };
 
-SDL_Surface* getImage(string file_name, int imageNr = 0);
+SDL_Surface* getImageFromRes(string file_name, int imageNr = 0);
 void removePlayerColor( SDL_Surface *surface);
 int saveAllFiles();
 void copyFileFromRes ( string src, string dst, int number = 0 );

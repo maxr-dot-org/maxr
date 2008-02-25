@@ -120,7 +120,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("ARTILLRY", i);
+			surface = getImageFromRes("ARTILLRY", i);
 			removePlayerColor( surface );
 			resizeSurface ( surface, 23, 24, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -144,7 +144,7 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("AWAC", 8);
+		output = getImageFromRes("AWAC", 8);
 		resizeSurface( output,16 ,14 , 32, 32);
 		resizeSurface( output,0 ,0 ,256, 32);
 		dst_rect.y = 0;
@@ -155,7 +155,7 @@ int installVehicleGraphics()
 		src_rect.w = 32;
 		for ( int i = 1; i < 8; i++)
 		{
-			surface = getImage("AWAC", i*4 +8);
+			surface = getImageFromRes("AWAC", i*4 +8);
 			SDL_BlitSurface( surface, &src_rect, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 32;
@@ -176,7 +176,7 @@ int installVehicleGraphics()
 		sprintf(szNum, "%d", i);
 		try
 		{
-			surface = getImage("BOMBER", i);
+			surface = getImageFromRes("BOMBER", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 14, 18, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -196,7 +196,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("BULLDOZR", i);
+			surface = getImageFromRes("BULLDOZR", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 4, 4, 64, 64);
 			savePCX( surface, path + "img" + szNum + ".pcx");
@@ -206,7 +206,7 @@ int installVehicleGraphics()
 		
 		try
 		{
-			surface = getImage("S_BULLDO", i);
+			surface = getImageFromRes("S_BULLDO", i);
 			resizeSurface( surface, 4, 4, 68, 68);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface( surface );
@@ -218,7 +218,7 @@ int installVehicleGraphics()
 	
 	try
 	{
-		surface = getImage( "LRGTAPE", 0);
+		surface = getImageFromRes( "LRGTAPE", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -233,7 +233,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("LRGCONES");
+		surface = getImageFromRes("LRGCONES");
 		dst_rect.y = 5;
 		dst_rect.x = 5;
 		for ( int i = 0; i < 4; i++ )
@@ -243,7 +243,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		dst_rect.x = 36;
 		dst_rect.y = 36;
@@ -253,7 +253,7 @@ int installVehicleGraphics()
 		//can someone tell me, why I have to reload the surface? :-|
 		//otherwise changeing the palette after the first blit has no effect anymore
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 1);
 		dst_rect.x = 164;
@@ -261,7 +261,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 2);
 		dst_rect.x = 292;
@@ -269,7 +269,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 		
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 3);
 		dst_rect.x = 420;
@@ -282,9 +282,9 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("S_LRGCON");
+		output = getImageFromRes("S_LRGCON");
 		resizeSurface( output, 6, 6, 128, 128 ); 
-		surface = getImage("S_BULLDO");
+		surface = getImageFromRes("S_BULLDO");
 		dst_rect.x = 38;
 		dst_rect.y = 37;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -296,7 +296,7 @@ int installVehicleGraphics()
 	
 	try
 	{
-		surface = getImage("SMLTAPE");
+		surface = getImageFromRes("SMLTAPE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -311,7 +311,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("SMLCONES");
+		surface = getImageFromRes("SMLCONES");
 		dst_rect.y = 5;
 		dst_rect.x = 5;
 		for ( int i = 0; i < 4; i++ )
@@ -321,7 +321,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		dst_rect.x = 4;
 		dst_rect.y = 4;
@@ -329,7 +329,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 1);
 		dst_rect.x += 64;
@@ -337,7 +337,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 2);
 		dst_rect.x += 64;
@@ -345,7 +345,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 		
 		cImage::deleteCache();
-		surface = getImage("BULLDOZR", 8);
+		surface = getImageFromRes("BULLDOZR", 8);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 3);
 		dst_rect.x += 64;
@@ -358,9 +358,9 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("S_SMLCON");
+		output = getImageFromRes("S_SMLCON");
 		resizeSurface( output, 6, 6, 64, 66 );
-		surface = getImage("S_BULLDO");
+		surface = getImageFromRes("S_BULLDO");
 		dst_rect.x = 6;
 		dst_rect.y = 5;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -389,7 +389,7 @@ int installVehicleGraphics()
 		sprintf(szNum, "%d", i);
 		try
 		{
-			surface = getImage("ROCKTLCH", i);
+			surface = getImageFromRes("ROCKTLCH", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 15, 15, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -412,7 +412,7 @@ int installVehicleGraphics()
 			sprintf( szNum2, "%.2d", n);
 			try
 			{
-				surface = getImage("COMMANDO", n * 8 + i );
+				surface = getImageFromRes("COMMANDO", n * 8 + i );
 				removePlayerColor( surface );
 				resizeSurface( surface, 73, 73, 64, 64);
 				savePCX(surface, path + "img" + szNum1 + "_" + szNum2 + ".pcx");
@@ -453,7 +453,7 @@ int installVehicleGraphics()
 		sprintf(szNum, "%d", i);
 		try
 		{
-			surface = getImage("FIGHTER", i);
+			surface = getImageFromRes("FIGHTER", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 17, 16, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -474,12 +474,12 @@ int installVehicleGraphics()
 		src_rect.w = 40;
 		src_rect.x = 18;
 		src_rect.y = 23;
-		output = getImage("BATTLSHP", 0);
+		output = getImageFromRes("BATTLSHP", 0);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 3;
 		dst_rect.x = 14; 
-		surface = getImage("BATTLSHP", 8);
+		surface = getImageFromRes("BATTLSHP", 8);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img0.pcx");
@@ -489,12 +489,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 1);
+		output = getImageFromRes("BATTLSHP", 1);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 4;
 		dst_rect.x = 22;
-		surface = getImage("BATTLSHP", 9);
+		surface = getImageFromRes("BATTLSHP", 9);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img1.pcx");
@@ -504,12 +504,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 2);
+		output = getImageFromRes("BATTLSHP", 2);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 12;
 		dst_rect.x = 23;
-		surface = getImage("BATTLSHP", 10);
+		surface = getImageFromRes("BATTLSHP", 10);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img2.pcx");
@@ -519,12 +519,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 3);
+		output = getImageFromRes("BATTLSHP", 3);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 20;
 		dst_rect.x = 22;
-		surface = getImage("BATTLSHP", 11);
+		surface = getImageFromRes("BATTLSHP", 11);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img3.pcx");
@@ -534,12 +534,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 4);
+		output = getImageFromRes("BATTLSHP", 4);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 21;
 		dst_rect.x = 14;
-		surface = getImage("BATTLSHP", 12);
+		surface = getImageFromRes("BATTLSHP", 12);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img4.pcx");
@@ -549,12 +549,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 5);
+		output = getImageFromRes("BATTLSHP", 5);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 20;
 		dst_rect.x = 6;
-		surface = getImage("BATTLSHP", 13);
+		surface = getImageFromRes("BATTLSHP", 13);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img5.pcx");
@@ -564,12 +564,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 6);
+		output = getImageFromRes("BATTLSHP", 6);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 12;
 		dst_rect.x = 5;
-		surface = getImage("BATTLSHP", 14);
+		surface = getImageFromRes("BATTLSHP", 14);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img6.pcx");
@@ -579,12 +579,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("BATTLSHP", 7);
+		output = getImageFromRes("BATTLSHP", 7);
 		removePlayerColor( output );
 		resizeSurface( output, 4, 11, 64, 64);
 		dst_rect.y = 4;
 		dst_rect.x = 6;
-		surface = getImage("BATTLSHP", 15);
+		surface = getImageFromRes("BATTLSHP", 15);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img7.pcx");
@@ -610,7 +610,7 @@ int installVehicleGraphics()
 			sprintf( szNum2, "%.2d", n);
 			try
 			{
-				surface = getImage("INFANTRY", n * 8 + i );
+				surface = getImageFromRes("INFANTRY", n * 8 + i );
 				removePlayerColor( surface );
 				resizeSurface( surface, 73, 73, 64, 64);
 				savePCX(surface, path + "img" + szNum1 + "_" + szNum2 + ".pcx");
@@ -635,7 +635,7 @@ int installVehicleGraphics()
 
 	try
 	{
-		surface = getImage( "LRGTAPE", 0);
+		surface = getImageFromRes( "LRGTAPE", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -650,7 +650,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("LRGCONES");
+		surface = getImageFromRes("LRGCONES");
 		dst_rect.y = 5;
 		dst_rect.x = 5;
 		for ( int i = 0; i < 4; i++ )
@@ -660,28 +660,28 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CONSTRCT", 16);
+		surface = getImageFromRes("CONSTRCT", 16);
 		removePlayerColor( surface );
 		dst_rect.x = 33;
 		dst_rect.y = 36;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CONSTRCT", 24);
+		surface = getImageFromRes("CONSTRCT", 24);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 1);
 		dst_rect.x += 128;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CONSTRCT", 16);
+		surface = getImageFromRes("CONSTRCT", 16);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 2);
 		dst_rect.x += 128;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
 		SDL_FreeSurface( surface );
 		
-		surface = getImage("CONSTRCT", 32);
+		surface = getImageFromRes("CONSTRCT", 32);
 		removePlayerColor( surface );
 		generateAnimationFrame( surface, 3);
 		dst_rect.x += 128;
@@ -694,9 +694,9 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("S_LRGCON");
+		output = getImageFromRes("S_LRGCON");
 		resizeSurface( output, 6, 6, 128, 128 );
-		surface = getImage("S_CONSTR");
+		surface = getImageFromRes("S_CONSTR");
 		dst_rect.x = 38;
 		dst_rect.y = 37;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -725,7 +725,7 @@ int installVehicleGraphics()
 		try
 		{
 			sprintf( szNum, "%d", i);
-			surface = getImage("MISSLLCH", i);
+			surface = getImageFromRes("MISSLLCH", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 16, 15, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -735,7 +735,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_MISSLL", i);
+			surface = getImageFromRes("S_MISSLL", i);
 			resizeSurface( surface, 16, 16, 64, 64);
 			savePCX( surface, path + "shw" + szNum + ".pcx" );
 			SDL_FreeSurface( surface );
@@ -753,7 +753,7 @@ int installVehicleGraphics()
 		sprintf(szNum, "%d", i);
 		try
 		{
-			surface = getImage("MSSLBOAT", i);
+			surface = getImageFromRes("MSSLBOAT", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 16, 16, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -775,12 +775,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 0);
+		output = getImageFromRes("SP_FLAK", 0);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 3;
 		dst_rect.x = 14; 
-		surface = getImage("SP_FLAK", 8);
+		surface = getImageFromRes("SP_FLAK", 8);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img0.pcx");
@@ -790,12 +790,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 1);
+		output = getImageFromRes("SP_FLAK", 1);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 4;
 		dst_rect.x = 24;
-		surface = getImage("SP_FLAK", 9);
+		surface = getImageFromRes("SP_FLAK", 9);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img1.pcx");
@@ -805,12 +805,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 2);
+		output = getImageFromRes("SP_FLAK", 2);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 15;
 		dst_rect.x = 24;
-		surface = getImage("SP_FLAK", 10);
+		surface = getImageFromRes("SP_FLAK", 10);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img2.pcx");
@@ -820,12 +820,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 3);
+		output = getImageFromRes("SP_FLAK", 3);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 23;
 		dst_rect.x = 22;
-		surface = getImage("SP_FLAK", 11);
+		surface = getImageFromRes("SP_FLAK", 11);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img3.pcx");
@@ -835,12 +835,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 4);
+		output = getImageFromRes("SP_FLAK", 4);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 27;
 		dst_rect.x = 14;
-		surface = getImage("SP_FLAK", 12);
+		surface = getImageFromRes("SP_FLAK", 12);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img4.pcx");
@@ -850,12 +850,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 5);
+		output = getImageFromRes("SP_FLAK", 5);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 22;
 		dst_rect.x = 6;
-		surface = getImage("SP_FLAK", 13);
+		surface = getImageFromRes("SP_FLAK", 13);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img5.pcx");
@@ -865,12 +865,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 6);
+		output = getImageFromRes("SP_FLAK", 6);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 16;
 		dst_rect.x = 4;
-		surface = getImage("SP_FLAK", 14);
+		surface = getImageFromRes("SP_FLAK", 14);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img6.pcx");
@@ -880,12 +880,12 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("SP_FLAK", 7);
+		output = getImageFromRes("SP_FLAK", 7);
 		removePlayerColor( output );
 		resizeSurface( output, 3, 0, 64, 64);
 		dst_rect.y = 8;
 		dst_rect.x = 5;
-		surface = getImage("SP_FLAK", 15);
+		surface = getImageFromRes("SP_FLAK", 15);
 		SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "img7.pcx");
@@ -908,7 +908,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("ENGINEER", i);
+			surface = getImageFromRes("ENGINEER", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 4, 4, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
@@ -918,7 +918,7 @@ int installVehicleGraphics()
 		
 		try
 		{
-			surface = getImage("S_ENGINE", i);
+			surface = getImageFromRes("S_ENGINE", i);
 			resizeSurface( surface, 4, 4, 67, 66);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface( surface );
@@ -930,7 +930,7 @@ int installVehicleGraphics()
 
 	try
 	{
-		surface = getImage("SMLTAPE");
+		surface = getImageFromRes("SMLTAPE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -945,7 +945,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("SMLCONES");
+		surface = getImageFromRes("SMLCONES");
 		dst_rect.y = 5;
 		dst_rect.x = 5;
 		for ( int i = 0; i < 4; i++ )
@@ -955,7 +955,7 @@ int installVehicleGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("ENGINEER", 16);
+		surface = getImageFromRes("ENGINEER", 16);
 		removePlayerColor( surface );
 		dst_rect.x = 4;
 		dst_rect.y = 4;
@@ -964,7 +964,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 
 		cImage::deleteCache();
-		surface = getImage("ENGINEER", 16);
+		surface = getImageFromRes("ENGINEER", 16);
 		generateAnimationFrame( surface, 1);
 		removePlayerColor( surface );
 		dst_rect.x += 64;
@@ -973,7 +973,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 
 		cImage::deleteCache();
-		surface = getImage("ENGINEER", 16);
+		surface = getImageFromRes("ENGINEER", 16);
 		generateAnimationFrame( surface, 2);
 		removePlayerColor( surface );
 		dst_rect.x += 64;
@@ -982,7 +982,7 @@ int installVehicleGraphics()
 		SDL_FreeSurface( surface );
 		
 		cImage::deleteCache();
-		surface = getImage("ENGINEER", 16);
+		surface = getImageFromRes("ENGINEER", 16);
 		generateAnimationFrame( surface, 3);
 		removePlayerColor( surface );
 		dst_rect.x += 64;
@@ -996,9 +996,9 @@ int installVehicleGraphics()
 
 	try
 	{
-		output = getImage("S_SMLCON");
+		output = getImageFromRes("S_SMLCON");
 		resizeSurface( output, 6, 6, 64, 66 );
-		surface = getImage("S_ENGINE");
+		surface = getImageFromRes("S_ENGINE");
 		dst_rect.x = 6;
 		dst_rect.y = 5;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -1027,7 +1027,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("SCANNER", i);
+			surface = getImageFromRes("SCANNER", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 8, 8, 64, 64);
 			savePCX( surface, path + "img" + szNum + ".pcx");
@@ -1037,7 +1037,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_SCANNE", i);
+			surface = getImageFromRes("S_SCANNE", i);
 			resizeSurface( surface, 8, 8, 61, 60);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface( surface );
@@ -1049,7 +1049,7 @@ int installVehicleGraphics()
 
 	try
 	{
-		surface = getImage("SCANNER", 8);
+		surface = getImageFromRes("SCANNER", 8);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 360, 45, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -1063,7 +1063,7 @@ int installVehicleGraphics()
 		dst_rect.x = 45;
 		for ( int i = 1; i < 8; i++)
 		{
-			surface = getImage("SCANNER", i*2 + 8);
+			surface = getImageFromRes("SCANNER", i*2 + 8);
 			resizeSurface( surface, 2, 1, 45, 45);
 			SDL_BlitSurface( surface, 0, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -1124,7 +1124,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("SURVEYOR", i);
+			surface = getImageFromRes("SURVEYOR", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 2, 2, 64, 64);
 			savePCX( surface, path + "img" + szNum + ".pcx");
@@ -1134,7 +1134,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_SURVEY", i);
+			surface = getImageFromRes("S_SURVEY", i);
 			resizeSurface( surface, 2, 2, 69, 72);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface( surface );
@@ -1151,10 +1151,10 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			output = getImage("TANK", i);
+			output = getImageFromRes("TANK", i);
 			removePlayerColor( output );
 			resizeSurface( output, 15, 15, 64, 64);
-			surface = getImage("TANK", i + 8);
+			surface = getImageFromRes("TANK", i + 8);
 			src_rect.x = 15;
 			src_rect.y = 15;
 			src_rect.h = 64;
@@ -1168,7 +1168,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_TANK", i);
+			surface = getImageFromRes("S_TANK", i);
 			resizeSurface( surface, 2, 2, 69, 72);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface ( surface );
@@ -1196,7 +1196,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("SPLYTRCK", i);
+			surface = getImageFromRes("SPLYTRCK", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 4, 4, 64, 64);
 			savePCX( surface, path + "img" + szNum + ".pcx");
@@ -1206,7 +1206,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_SPLYTR", i);
+			surface = getImageFromRes("S_SPLYTR", i);
 			resizeSurface( surface, 4, 4, 64, 64);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface ( surface );
@@ -1223,7 +1223,7 @@ int installVehicleGraphics()
 		sprintf( szNum, "%d", i);
 		try
 		{
-			surface = getImage("FUELTRCK", i);
+			surface = getImageFromRes("FUELTRCK", i);
 			removePlayerColor( surface );
 			resizeSurface( surface, 3, 3, 64, 64);
 			savePCX( surface, path + "img" + szNum + ".pcx");
@@ -1233,7 +1233,7 @@ int installVehicleGraphics()
 
 		try
 		{
-			surface = getImage("S_FUELTR", i);
+			surface = getImageFromRes("S_FUELTR", i);
 			resizeSurface( surface, 3, 3, 66, 66);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface ( surface );
@@ -1293,7 +1293,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "connector" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("CNCT_4W", 0);
+		surface = getImageFromRes("CNCT_4W", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -1305,7 +1305,7 @@ int installBuildingGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CNCT_4W", 2 );
+		surface = getImageFromRes("CNCT_4W", 2 );
 		dst_rect.x = 64;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 320;
@@ -1324,7 +1324,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CNCT_4W", 3 );
+		surface = getImageFromRes("CNCT_4W", 3 );
 		dst_rect.x = 128;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 384;
@@ -1343,7 +1343,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CNCT_4W", 4 );
+		surface = getImageFromRes("CNCT_4W", 4 );
 		dst_rect.x = 192;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 320;
@@ -1362,7 +1362,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("CNCT_4W", 5 );
+		surface = getImageFromRes("CNCT_4W", 5 );
 		dst_rect.x = 256;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 384;
@@ -1388,7 +1388,7 @@ int installBuildingGraphics()
 
 	try
 	{
-		surface = getImage("S_CNCT4W", 0);
+		surface = getImageFromRes("S_CNCT4W", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -1400,7 +1400,7 @@ int installBuildingGraphics()
 		}
 		SDL_FreeSurface( surface );
 
-		surface = getImage("S_CNCT4W", 2);
+		surface = getImageFromRes("S_CNCT4W", 2);
 		dst_rect.x = 64;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 320;
@@ -1419,7 +1419,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("S_CNCT4W", 3);
+		surface = getImageFromRes("S_CNCT4W", 3);
 		dst_rect.x = 128;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 384;
@@ -1438,7 +1438,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("S_CNCT4W", 4);
+		surface = getImageFromRes("S_CNCT4W", 4);
 		dst_rect.x = 192;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 320;
@@ -1457,7 +1457,7 @@ int installBuildingGraphics()
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		SDL_FreeSurface( surface );
 
-		surface = getImage("S_CNCT4W", 5);
+		surface = getImageFromRes("S_CNCT4W", 5);
 		dst_rect.x = 256;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
 		dst_rect.x = 384;
@@ -1560,7 +1560,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_aa" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("ANTIAIR");
+		surface = getImageFromRes("ANTIAIR");
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1581,7 +1581,7 @@ int installBuildingGraphics()
 
 		for ( int i = 1; i < 9; i++ )
 		{
-			surface = getImage("ANTIAIR", i);
+			surface = getImageFromRes("ANTIAIR", i);
 			dst_rect.x = (i - 1)*64;
 			SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -1600,7 +1600,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_ari" + PATH_DELIMITER;
 	try
 		{
-		surface = getImage("ARTYTRRT");
+		surface = getImageFromRes("ARTYTRRT");
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1620,7 +1620,7 @@ int installBuildingGraphics()
 
 		for ( int i = 1; i < 9; i++ )
 		{
-			surface = getImage("ARTYTRRT", i);
+			surface = getImageFromRes("ARTYTRRT", i);
 			dst_rect.x = (i - 1)*64;
 			SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -1639,7 +1639,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_missel" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("ANTIMSSL", 0);
+		surface = getImageFromRes("ANTIMSSL", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1659,7 +1659,7 @@ int installBuildingGraphics()
 
 		for ( int i = 1; i < 9; i++ )
 		{
-			surface = getImage("ANTIMSSL", i);
+			surface = getImageFromRes("ANTIMSSL", i);
 			dst_rect.x = (i - 1)*64;
 			SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -1677,7 +1677,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_turret" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("GUNTURRT", 0);
+		surface = getImageFromRes("GUNTURRT", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1697,7 +1697,7 @@ int installBuildingGraphics()
 
 		for ( int i = 1; i < 9; i++ )
 		{
-			surface = getImage("GUNTURRT", i);
+			surface = getImageFromRes("GUNTURRT", i);
 			dst_rect.x = (i - 1)*64;
 			SDL_BlitSurface(surface, &src_rect, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -1730,7 +1730,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("LANDMINE");
+		surface = getImageFromRes("LANDMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
@@ -1745,7 +1745,7 @@ int installBuildingGraphics()
 
 	try
 	{
-		surface = getImage("S_LANDMI");
+		surface = getImageFromRes("S_LANDMI");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
 		output->pitch = output->w;					//workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1795,7 +1795,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("RADAR", 0);
+		surface = getImageFromRes("RADAR", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024,64,8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1806,7 +1806,7 @@ int installBuildingGraphics()
 		SDL_FreeSurface ( surface );
 		for ( int i = 1; i < 16; i++)
 		{
-			surface = getImage("RADAR", i);
+			surface = getImageFromRes("RADAR", i);
 			removePlayerColor( surface );
 			dst_rect.x = i*64;
 			SDL_BlitSurface(surface, 0, output, &dst_rect);
@@ -1839,7 +1839,7 @@ int installBuildingGraphics()
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "seamine" + PATH_DELIMITER;
 	try
 	{
-		surface = getImage("SEAMINE");
+		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
 		output->pitch = output->w;					//workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1856,7 +1856,7 @@ int installBuildingGraphics()
 	//seamines don't have a shadow in the original. So creating a dummy file here
 	try
 	{
-		surface = getImage("SEAMINE");
+		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
 		output->pitch = output->w;					//workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
@@ -1907,22 +1907,64 @@ int installBuildingGraphics()
 
 	//rubble
 	path = sOutputPath + "buildings" + PATH_DELIMITER;
-	copyFileFromRes("LRGRUBLE", path + "dirt_big.pcx",  0);
-	//copyFileFromRes("LRGRUBLE", path + "dirt_big1.pcx", 1);
-	copyFileFromRes("SMLRUBLE", path + "dirt_small.pcx",  0);
-	//copyFileFromRes("SMLRUBLE", path + "dirt_small1.pcx", 1);
-	//copyFileFromRes("SMLRUBLE", path + "dirt_small2.pcx", 2);
-	//copyFileFromRes("SMLRUBLE", path + "dirt_small3.pcx", 3);
-	//copyFileFromRes("SMLRUBLE", path + "dirt_small4.pcx", 4);
+	try
+	{
+		output = getImageFromRes( "LRGRUBLE", 0);
+		resizeSurface( output, 0, 0, 256, 128 );
+		surface = getImageFromRes( "LRGRUBLE", 1);
+		SDL_Rect dst_rect = { 128, 0, 0, 0 };
+		SDL_BlitSurface ( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface ( surface );
+		savePCX( output, path + "dirt_big.pcx");
+		SDL_FreeSurface ( output );
+	}
+	END_INSTALL_FILE( path + "dirt_big.pcx");
 
-	copyFileFromRes("S_LRGRBL", path + "dirt_big_shw.pcx",  1);
-	//copyFileFromRes("S_LRGRBL", path + "dirt_big_shw1.pcx", 1);
-	copyFileFromRes("S_SMLRBL", path + "dirt_small_shw.pcx",  0);
-	//copyFileFromRes("S_SMLRBL", path + "dirt_small_shw1.pcx", 1);
-	//copyFileFromRes("S_SMLRBL", path + "dirt_small_shw2.pcx", 2);
-	//copyFileFromRes("S_SMLRBL", path + "dirt_small_shw3.pcx", 3);
-	//copyFileFromRes("S_SMLRBL", path + "dirt_small_shw4.pcx", 4);
-	
+	try
+	{
+		output = getImageFromRes( "SMLRUBLE", 0);
+		resizeSurface( output, 0, 0, 320, 64 );
+		SDL_Rect dst_rect = { 64, 0, 0, 0 };
+		for ( int i = 1; i < 5 ; i++ )
+		{
+			surface = getImageFromRes( "SMLRUBLE", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 64;
+		}
+		savePCX( output, path + "dirt_small.pcx");
+	}
+	END_INSTALL_FILE(path + "dirt_small.pcx");
+
+	try
+	{
+		output = getImageFromRes( "S_LRGRBL", 0);
+		resizeSurface( output, 0, 0, 256, 128 );
+		surface = getImageFromRes( "S_LRGRBL", 1);
+		SDL_Rect dst_rect = { 128, 0, 0, 0 };
+		SDL_BlitSurface ( surface, NULL, output, &dst_rect );
+		SDL_FreeSurface ( surface );
+		savePCX( output, path + "dirt_big_shw.pcx");
+		SDL_FreeSurface ( output );
+	}
+	END_INSTALL_FILE( path + "dirt_big_shw.pcx");
+
+	try
+	{
+		output = getImageFromRes( "S_SMLRBL", 0);
+		resizeSurface( output, 0, 0, 320, 64 );
+		SDL_Rect dst_rect = { 64, 0, 0, 0 };
+		for ( int i = 1; i < 5 ; i++ )
+		{
+			surface = getImageFromRes( "S_SMLRBL", i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 64;
+		}
+		savePCX( output, path + "dirt_small_shw.pcx");
+	}
+	END_INSTALL_FILE(path + "dirt_small_shw.pcx");
+
 
 	cout << "\n";
 	cout << iToStr( iErrors) << " errors\n";
@@ -2118,7 +2160,7 @@ int installFX()
 	//waldo
 	try
 	{
-		surface = getImage("WALDO");
+		surface = getImageFromRes("WALDO");
 		resizeSurface( surface, 8, 7, 64, 64);
 		savePCX( surface, path + "corpse.pcx");
 		SDL_FreeSurface( surface );
@@ -2128,13 +2170,13 @@ int installFX()
 	//hit
 	try
 	{
-		output = getImage("HITEXPLD", 0);
+		output = getImageFromRes("HITEXPLD", 0);
 		resizeSurface( output, 13, 15, 320, 64);
 		
 		SDL_Rect dst_rect = { 64, 15, 0, 0 };
 		for ( int i = 1; i < 5; i++)
 		{
-			surface = getImage("HITEXPLD", i );
+			surface = getImageFromRes("HITEXPLD", i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 64;
@@ -2148,13 +2190,13 @@ int installFX()
 	//explo_air
 	try
 	{
-		output = getImage("AIREXPLD", 0);
+		output = getImageFromRes("AIREXPLD", 0);
 		resizeSurface( output, 0, 0, 1918, 121 );
 
 		SDL_Rect dst_rect = { 137, 0, 0, 0 };
 		for ( int i = 1; i < 14; i++)
 		{
-			surface = getImage("AIREXPLD", i );
+			surface = getImageFromRes("AIREXPLD", i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 137;
@@ -2168,13 +2210,13 @@ int installFX()
 	//explo_big
 	try
 	{
-		output = getImage("BLDEXPLD", 0);
+		output = getImageFromRes("BLDEXPLD", 0);
 		resizeSurface( output, 0, 0, 8596, 194 );
 
 		SDL_Rect dst_rect = { 307, 0, 0, 0 };
 		for ( int i = 1; i < 28; i++)
 		{
-			surface = getImage("BLDEXPLD", i );
+			surface = getImageFromRes("BLDEXPLD", i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 307;
@@ -2188,13 +2230,13 @@ int installFX()
 	//explo_small
 	try
 	{
-		output = getImage("LNDEXPLD", 0);
+		output = getImageFromRes("LNDEXPLD", 0);
 		resizeSurface( output, 0, 0, 1596, 108 );
 
 		SDL_Rect dst_rect = { 114, 0, 0, 0 };
 		for ( int i = 1; i < 14; i++)
 		{
-			surface = getImage("LNDEXPLD", i );
+			surface = getImageFromRes("LNDEXPLD", i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 114;
@@ -2208,13 +2250,13 @@ int installFX()
 	//explo_water
 	try
 	{
-		output = getImage("SEAEXPLD", 0);
+		output = getImageFromRes("SEAEXPLD", 0);
 		resizeSurface( output, 0, 0, 1596, 108 );
 
 		SDL_Rect dst_rect = { 114, 0, 0, 0 };
 		for ( int i = 1; i < 14; i++)
 		{
-			surface = getImage("SEAEXPLD", i );
+			surface = getImageFromRes("SEAEXPLD", i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 114;
@@ -2228,12 +2270,12 @@ int installFX()
 	//rocket
 	try
 	{
-		output = getImage( "ROCKET", 0);
+		output = getImageFromRes( "ROCKET", 0);
 		resizeSurface(output, 0, 0, 224, 28);
 		SDL_Rect dst_rect = { 28, 0, 0, 0 };
 		for ( int i = 1; i < 8; i++ )
 		{
-			surface = getImage("ROCKET", 2*i );
+			surface = getImageFromRes("ROCKET", 2*i );
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
 			dst_rect.x += 28;
@@ -2281,7 +2323,7 @@ int installGfx()
 	//activate
 	try
 	{
-		output = getImage("ACTVTPTR");
+		output = getImageFromRes("ACTVTPTR");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "activate.pcx");
 		SDL_FreeSurface( output );
@@ -2291,7 +2333,7 @@ int installGfx()
 	//attack
 	try
 	{
-		output = getImage("ENMY_PTR");
+		output = getImageFromRes("ENMY_PTR");
 		setColor( output, 77, 255, 0, 255 );
 		savePCX( output, path + "attack.pcx");
 		SDL_FreeSurface( output );
@@ -2300,29 +2342,29 @@ int installGfx()
 
 	try
 	{
-		output = getImage("BLDMRK1");
+		output = getImageFromRes("BLDMRK1");
 		setColor( output, 0, 255, 0, 255 );
 		resizeSurface( output, 1, 1, 320, 64 );
 
-		surface = getImage("BLDMRK2");
+		surface = getImageFromRes("BLDMRK2");
 		setColor( surface, 0, 255, 0, 255 );
 		SDL_Rect dst_rect = { 65, 1, 0, 0 };
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BLDMRK3");
+		surface = getImageFromRes("BLDMRK3");
 		setColor( surface, 0, 255, 0, 255 );
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BLDMRK4");
+		surface = getImageFromRes("BLDMRK4");
 		setColor( surface, 0, 255, 0, 255 );
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BLDMRK5");
+		surface = getImageFromRes("BLDMRK5");
 		setColor( surface, 0, 255, 0, 255 );
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
@@ -2348,7 +2390,7 @@ int installGfx()
 	//band_cur
 	try
 	{
-		output = getImage("MAP_PTR");
+		output = getImageFromRes("MAP_PTR");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "band_cur.pcx");
 		SDL_FreeSurface( output );
@@ -2361,7 +2403,7 @@ int installGfx()
 	//disable
 	try
 	{
-		output = getImage("DISBLPTR");
+		output = getImageFromRes("DISBLPTR");
 		setColor( output, 77, 255, 0, 255 );
 		savePCX( output, path + "disable.pcx");
 		SDL_FreeSurface( output );
@@ -2380,7 +2422,7 @@ int installGfx()
 	//hand
 	try
 	{
-		output = getImage("HANDPTR");
+		output = getImageFromRes("HANDPTR");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "hand.pcx");
 		SDL_FreeSurface( output );
@@ -2390,7 +2432,7 @@ int installGfx()
 	//help
 	try
 	{
-		output = getImage("PTR_HELP");
+		output = getImageFromRes("PTR_HELP");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "help.pcx");
 		SDL_FreeSurface( output );
@@ -2400,7 +2442,7 @@ int installGfx()
 	//load
 	try
 	{
-		output = getImage("FRND_LOD");
+		output = getImageFromRes("FRND_LOD");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "load.pcx");
 		SDL_FreeSurface( output );
@@ -2410,7 +2452,7 @@ int installGfx()
 	//move
 	try
 	{
-		output = getImage("UNIT_GO");
+		output = getImageFromRes("UNIT_GO");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "move.pcx");
 		SDL_FreeSurface( output );
@@ -2420,7 +2462,7 @@ int installGfx()
 	//muni
 	try
 	{
-		output = getImage("PTR_RLD");
+		output = getImageFromRes("PTR_RLD");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "muni.pcx");
 		SDL_FreeSurface( output );
@@ -2430,7 +2472,7 @@ int installGfx()
 	//no
 	try
 	{
-		output = getImage("UNIT_NGO");
+		output = getImageFromRes("UNIT_NGO");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "no.pcx");
 		SDL_FreeSurface( output );
@@ -2440,11 +2482,11 @@ int installGfx()
 	//object_manu
 	try
 	{
-		output = getImage("UNTBTN_U");
+		output = getImageFromRes("UNTBTN_U");
 		setColor( output, 0, 255, 0, 255 );
 		resizeSurface( output, 0, 0, 42, 42 );
 
-		surface = getImage("UNTBTN_D");
+		surface = getImageFromRes("UNTBTN_D");
 		setColor( surface, 0, 255, 0, 255 );
 		SDL_Rect dst_rect = { 0, 21, 0, 0};
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
@@ -2458,7 +2500,7 @@ int installGfx()
 	//pf_x
 	try
 	{
-		output = getImage("ARROW_SW");
+		output = getImageFromRes("ARROW_SW");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_1.pcx");
 		SDL_FreeSurface( output );
@@ -2467,7 +2509,7 @@ int installGfx()
 
 	try
 	{
-		output = getImage("ARROW_S");
+		output = getImageFromRes("ARROW_S");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_2.pcx");
 		SDL_FreeSurface( output );
@@ -2475,7 +2517,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_2.pcx" );
 	try
 	{
-		output = getImage("ARROW_SE");
+		output = getImageFromRes("ARROW_SE");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_3.pcx");
 		SDL_FreeSurface( output );
@@ -2483,7 +2525,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_3.pcx" );
 	try
 	{
-		output = getImage("ARROW_E");
+		output = getImageFromRes("ARROW_E");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_4.pcx");
 		SDL_FreeSurface( output );
@@ -2491,7 +2533,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_4.pcx" );
 	try
 	{
-		output = getImage("ARROW_NE");
+		output = getImageFromRes("ARROW_NE");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_6.pcx");
 		SDL_FreeSurface( output );
@@ -2499,7 +2541,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_6.pcx" );
 	try
 	{
-		output = getImage("ARROW_N");
+		output = getImageFromRes("ARROW_N");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_7.pcx");
 		SDL_FreeSurface( output );
@@ -2507,7 +2549,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_7.pcx" );
 	try
 	{
-		output = getImage("ARROW_NW");
+		output = getImageFromRes("ARROW_NW");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_8.pcx");
 		SDL_FreeSurface( output );
@@ -2515,7 +2557,7 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_8.pcx" );
 	try
 	{
-		output = getImage("ARROW_W");
+		output = getImageFromRes("ARROW_W");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_9.pcx");
 		SDL_FreeSurface( output );
@@ -2525,7 +2567,7 @@ int installGfx()
 	//transfer
 	try
 	{
-		output = getImage("FRND_XFR");
+		output = getImageFromRes("FRND_XFR");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "transf.pcx");
 		SDL_FreeSurface( output );
@@ -2535,7 +2577,7 @@ int installGfx()
 	//repair
 	try
 	{
-		output = getImage("FRND_FIX");
+		output = getImageFromRes("FRND_FIX");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "repair.pcx");
 		SDL_FreeSurface( output );
@@ -2545,7 +2587,7 @@ int installGfx()
 	//steal
 	try
 	{
-		output = getImage("STEALPTR");
+		output = getImageFromRes("STEALPTR");
 		setColor( output, 77, 255, 0, 255 );
 		savePCX( output, path + "steal.pcx");
 		SDL_FreeSurface( output );
@@ -2555,7 +2597,7 @@ int installGfx()
 	//select
 	try
 	{
-		output = getImage("FRND_PTR");
+		output = getImageFromRes("FRND_PTR");
 		setColor( output, 0, 255, 0, 255 );
 		savePCX( output, path + "select.pcx");
 		SDL_FreeSurface( output );
@@ -2565,13 +2607,13 @@ int installGfx()
 	//res
 	try
 	{
-		output = getImage("RAWMSK0");
+		output = getImageFromRes("RAWMSK0");
 		setColor( output, 255, 255, 0, 255 );
 		resizeSurface( output, 13, 13, 1088, 64 );
 
 		for ( int i = 1; i < 17; i++)
 		{
-			surface = getImage("RAWMSK" + iToStr(i) );
+			surface = getImageFromRes("RAWMSK" + iToStr(i) );
 			setColor( surface, 48, 255, 0, 255 );
 			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
@@ -2587,13 +2629,13 @@ int installGfx()
 	//fuel
 	try
 	{
-		output = getImage("FUELMK0");
+		output = getImageFromRes("FUELMK0");
 		setColor( output, 255, 255, 0, 255 );
 		resizeSurface( output, 13, 13, 1088, 64 );
 
 		for ( int i = 1; i < 17; i++)
 		{
-			surface = getImage("FUELMK" + iToStr(i) );
+			surface = getImageFromRes("FUELMK" + iToStr(i) );
 			setColor( surface, 48, 255, 0, 255 );
 			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
@@ -2608,13 +2650,13 @@ int installGfx()
 	//gold
 	try
 	{
-		output = getImage("GOLDMK0");
+		output = getImageFromRes("GOLDMK0");
 		setColor( output, 255, 255, 0, 255 );
 		resizeSurface( output, 13, 13, 1088, 64 );
 
 		for ( int i = 1; i < 17; i++)
 		{
-			surface = getImage("GOLDMK" + iToStr(i) );
+			surface = getImageFromRes("GOLDMK" + iToStr(i) );
 			setColor( surface, 48, 255, 0, 255 );
 			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
@@ -2629,7 +2671,7 @@ int installGfx()
 
 	//and now the ugly hud_stuff.pcx :|
 #define COPY_GRAPHIC(name, _x, _y) \
-	surface = getImage( name ); \
+	surface = getImageFromRes( name ); \
 	setColor( surface, backgroundIndex, 255, 0, 255 ); \
 	dst_rect.x = (_x); \
 	dst_rect.y = (_y); \
@@ -2684,7 +2726,7 @@ int installGfx()
 		COPY_GRAPHIC("I_POWER", 125, 109);
 		COPY_GRAPHIC("BARTAPE", 156, 307);
 
-		surface = getImage("SI_SHOTS");
+		surface = getImageFromRes("SI_SHOTS");
 		setColor( surface, 0, 255, 0, 255 );
 		setColor( surface, 9, 255, 0, 255 );
 		dst_rect.x = 88;
@@ -2694,7 +2736,7 @@ int installGfx()
 		
 		SDL_Rect src_rect;
 
-		surface = getImage("SMBRFUEL");
+		surface = getImageFromRes("SMBRFUEL");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 119;
 		src_rect.y = 0;
@@ -2705,7 +2747,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("SMBRGOLD");
+		surface = getImageFromRes("SMBRGOLD");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 119;
 		src_rect.y = 0;
@@ -2716,7 +2758,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("SMBRRAW");
+		surface = getImageFromRes("SMBRRAW");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 62;
 		src_rect.y = 0;
@@ -2727,7 +2769,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BARRAW");
+		surface = getImageFromRes("BARRAW");
 		setColor( surface, 17, 255, 0, 255 );
 		src_rect.x = 1;
 		src_rect.y = 0;
@@ -2738,7 +2780,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BARFUEL");
+		surface = getImageFromRes("BARFUEL");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 33;
 		src_rect.y = 0;
@@ -2749,7 +2791,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("BARGOLD");
+		surface = getImageFromRes("BARGOLD");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 1;
 		src_rect.y = 0;
@@ -2760,7 +2802,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("VERTRAW");
+		surface = getImageFromRes("VERTRAW");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.x = 0;
 		src_rect.y = 0;
@@ -2771,7 +2813,7 @@ int installGfx()
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
 
-		surface = getImage("VERTGOLD");
+		surface = getImageFromRes("VERTGOLD");
 		setColor( surface, 0, 255, 0, 255 );
 		src_rect.w = 20;
 		src_rect.h = 115;
