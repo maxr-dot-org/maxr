@@ -202,9 +202,18 @@ int runEventChecker( void *)
 		case SDL_KEYUP:
 			if( SYM == iLastPressed ) iLastPressed = -1;
 			break;
+
+		case USER_WARPMOUSE:
+			{
+			SDL_WarpMouse ( ((Uint16 *)event.user.data1)[0], ((Uint16 *)event.user.data1)[1] );
+			event.type = 0;
+			}
+			break;
 		default:
 			memset( EventClass->keystate,0, sizeof( Uint8 ) * SDLK_LAST );
 		}
+
+		EventClass->iMouseButton = SDL_GetMouseState( &EventClass->iMouseX, &EventClass->iMouseY);
 
 		SDL_Delay ( 1 );
 	}

@@ -47,7 +47,7 @@ public:
   void GetPos(void);
   void Show(void){LastX=-100;visible=true;}
   void Hide(void){visible=false;}
-  int GetMouseButton(void){return SDL_GetMouseState(NULL,NULL);}
+  int GetMouseButton(void);
   void GetKachel(int *X,int *Y);
   int GetKachelOff(void);  
 };
