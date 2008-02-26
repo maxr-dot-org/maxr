@@ -1635,10 +1635,8 @@ int LoadVehicles()
 				if(FileExists(sTmpString.c_str()))
 				{
 					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n],SDL_SRCCOLORKEY,0xFF00FF );
 					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX ( (char *) sTmpString.c_str() );
 					SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCCOLORKEY,0xFF00FF );
 				}
 			}
 		}
@@ -1733,10 +1731,8 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 			else
 			{
@@ -1780,10 +1776,8 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCALPHA,50);
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 			else
 			{
@@ -1815,10 +1809,8 @@ int LoadVehicles()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org,SDL_SRCCOLORKEY,0xFF00FF);
 				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCCOLORKEY,0xFF00FF);
 			}
 			else
 			{
@@ -2051,10 +2043,8 @@ int LoadBuildings()
 		if(FileExists(sTmpString.c_str()))
 		{
 			UnitsData.building[UnitsData.building_anz].shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].shw_org,SDL_SRCCOLORKEY,0xFF00FF );
 			UnitsData.building[UnitsData.building_anz].shw = LoadPCX ( (char *) sTmpString.c_str() );
 			SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].shw,SDL_SRCALPHA,50 );
-			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].shw,SDL_SRCCOLORKEY,0xFF00FF );
 		}
 
 		// load video
@@ -2077,9 +2067,7 @@ int LoadBuildings()
 			if(FileExists(sTmpString.c_str()))
 			{
 				UnitsData.building[UnitsData.building_anz].eff_org = LoadPCX ( (char *) sTmpString.c_str() );
-				SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].eff_org,SDL_SRCCOLORKEY,0xFF00FF );
 				UnitsData.building[UnitsData.building_anz].eff = LoadPCX ( (char *) sTmpString.c_str() );
-				SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].eff,SDL_SRCCOLORKEY,0xFF00FF );
 				SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].eff,SDL_SRCALPHA,10 );
 			}
 		}
@@ -2120,17 +2108,13 @@ int LoadBuildings()
 
 	// Dirtsurfaces
 	LoadGraphicToSurface ( UnitsData.dirt_big,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
-	SDL_SetColorKey(UnitsData.dirt_big,SDL_SRCCOLORKEY,0xFF00FF);
 	LoadGraphicToSurface ( UnitsData.dirt_big_org,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
-	SDL_SetColorKey(UnitsData.dirt_big_shw,SDL_SRCCOLORKEY,0xFF00FF);
 	SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
-	SDL_SetColorKey(UnitsData.dirt_small,SDL_SRCCOLORKEY,0xFF00FF);
 	LoadGraphicToSurface ( UnitsData.dirt_small_org,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
-	SDL_SetColorKey(UnitsData.dirt_small_shw,SDL_SRCCOLORKEY,0xFF00FF);
 	SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
