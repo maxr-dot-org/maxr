@@ -52,11 +52,6 @@
 #include "tinyxml.h"
 
 
-/*TList::TList ( void )
-{
-	Count = 0;
-}*/
-
 
 int main ( int argc, char *argv[] )
 {

@@ -34,6 +34,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	DirtTyp = 0;
 	DirtValue = 0;
 	EffectAlpha = 0;
+	EffectInc = true;
 	dir = 0;
 	StartUp = 0;
 	IsWorking = false;
@@ -827,7 +828,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 				if ( EffectAlpha > 220 )
 				{
 					EffectAlpha = 255;
-					EffectInc = !EffectInc;
+					EffectInc = false;
 				}
 			}
 			else
@@ -837,7 +838,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 				if ( EffectAlpha < 30 )
 				{
 					EffectAlpha = 0;
-					EffectInc = !EffectInc;
+					EffectInc = true;
 				}
 			}
 		}
