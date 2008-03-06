@@ -2521,7 +2521,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 				Data->iEnergy_Shield_Size = atoi(sTmpString.c_str());
 			// Movement
 			else if(sNodePath.compare(MOVEMENT_NODE + "Movement_Sum;") == 0)
-				Data->iMovement_Max = 2*atoi(sTmpString.c_str());
+				Data->iMovement_Max = 4*atoi(sTmpString.c_str());
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Air;") == 0)
 				Data->fCosts_Air = (float) pExXmlNode->XmlDataToDouble(sTmpString);
 			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Sea;") == 0)

@@ -18,195 +18,224 @@
  ***************************************************************************/
 #ifndef networkH
 #define networkH
-#include <SDL_net.h>
-#include <SDL_thread.h>
+#include <SDL_Net.h>
 #include "defines.h"
 #include "main.h"
 
-#define STAT_OPENED		100
-#define STAT_CLOSED		101
-#define STAT_WAITING	102
-#define STAT_CONNECTED	103
+#define MAX_CLIENTS 10
+#define PACKAGE_LENGHT 256
+#define NETWORK_EVENT SDL_USEREVENT
 
-#define BUFF_TYP_DATA	200
-#define BUFF_TYP_OK		201
-#define BUFF_TYP_RESEND	202
-#define BUFF_TYP_NEWID	203
+/**
+* Callback for the networkthread
+*@author alzi alias DoctorDeath
+*/
+int CallbackHandleNetworkThread( void *arg );
 
-#define PING_COUNT		100
-
-enum MSG_TYPE
+enum EVENT_TYPES
 {
-    // IDs der NET-Messages //////////////////////////////////////////////////////
-    MSG_CHAT            =   1  , // Chatnachricht
-    MSG_ADD_MOVEJOB      =  2  , // Einen Movejob hinzufügen
-    MSG_MOVE_VEHICLE     =  3  , // Ein Fahrzeug umsetzen
-    MSG_MOVE_TO          =  4  , // Ein Fahrzeug um ein Feld bewegen
-    MSG_NO_PATH           = 5  , // Benachrichtigung über einen versperrten Pfad
-    MSG_END_MOVE           = 6  , // Beendet die Bewegung eines Fahrzeugs
-    MSG_CHANGE_VEH_NAME   = 7  , // Ändert den Namen eines Vehicles
-    MSG_END_MOVE_FOR_NOW  = 8  , // Beendet die Bewegung eines Fahrzeugs für diese Runde
-    MSG_CHANGE_PLAYER_NAME  = 9  , // Ändert den Namen eines Spielers
-    MSG_ENDE_PRESSED      = 10 , // Benachrichtigung über einen Druck auf Ende
-    MSG_MJOB_STOP        =  11 , // Wird vom Client übermittelt, wenn er manuell den MJob stoppt
-    MSG_ADD_ATTACKJOB     = 12 , // Einen Attackjob einfügen
-    MSG_DESTROY_OBJECT     = 13 , // Zerstört ein Objekt
-    MSG_ERLEDIGEN        =  14 , // Ein MJob soll erledigt werden
-    MSG_SAVED_SPEED      =  15 , // Teilt einem Client ein Speed Save mit
-    MSG_CHANGE_BUI_NAME  =  16 , // Ändert den Namen eines Buildings
-    MSG_START_BUILD      =  17 , // Startet ein Building zu bauen
-    MSG_STOP_BUILD       =  18 , // Stopt ein Building zu bauen
-    MSG_ADD_BUILDING     =  19 , // Fügt ein Gebäude ein
-    MSG_START_BUILD_BIG  =  20 , // Startet den bau eines großen Gebäudes
-    MSG_RESET_CONSTRUCTOR = 21 , // Setzt den Constructor nach beenden des Bauens neu
-    MSG_START_CLEAR       = 22 , // Startet das Räumen eines Feldes
-    MSG_STORE_VEHICLE     = 23 , // Läd ein Vehicle ein
-    MSG_ACTIVATE_VEHICLE  = 24 , // Aktiviert ein geladenes Vehicle wieder
-    MSG_START_WORK        = 25 , // Startet ein Gebäude
-    MSG_STOP_WORK         = 26 , // Stoppt ein Gebäude
-    MSG_ADD_VEHICLE       = 27 , // Erzeugt ein vehicle
-    MSG_REPAIR            = 28 , // Repariert etwas
-    MSG_RELOAD            = 29 , // Läd etwas nach
-    MSG_WACHE             = 30 , // Ändert den Wachstatus eines Objektes
-    MSG_CLEAR_MINE        = 31 , // Räumt eine Mine
-    MSG_UPGRADE           = 32 , // Upgrade eines Spielers
-    MSG_RESEARCH          = 33 , // Meldet eine abgeschlossene Forschung
-    MSG_UPDATE_BUILDING   = 34 , // Meldet das Upgrade eines Gebäudes
-    MSG_COMMANDO_MISTAKE  = 35 , // Berichtet über einen Fehler eines Commandos
-    MSG_COMMANDO_SUCCESS  = 36 , // Meldet einen Erfolg eines Commandos
-    MSG_START_SYNC        = 37 , // Fordert die Clients zum Synchronisieren auf
-    MSG_SYNC_PLAYER       = 38 , // Sync Player
-    MSG_SYNC_VEHICLE      = 39 , // Sync Vehicle
-    MSG_SYNC_BUILDING     = 40 , // Sync Building
-    MSG_UPDATE_STORED     = 41 , // Aktualisiert ein gespeichertes Vehicle
-    MSG_REPORT_R_E_A      = 42 , // Berichtet über das Ende der RundenendeActions
-    MSG_PING              = 43 , // Anforderung eines Pong
-    MSG_PONG              = 44 , // Rückgabe des Pong
-    MSG_PLAYER_DEFEAT     = 45 , // Medet die Niederlage eines Spielers
-    MSG_HOST_DEFEAT       = 46 , // Meldet die Niederlage des Hostes
-    MSG_PLAY_ROUNDS_NEXT  = 47 , // Nachricht, dass der nächste Spieler dran ist
+	TCP_ACCEPTEVENT,
+	TCP_RECEIVEEVENT,
+	TCP_CLOSEEVENT
+};
 
-    // Nur für das MP-Menü:
-    MSG_SIGNING_IN       = 100 , // Anmeldenachricht eines Spielers
-    MSG_YOUR_ID_IS       = 101 , // Teilt dem Client nach dem Anmelden seine ID mit
-    MSG_MY_NAME_CHANGED  = 102 , // Benachrichtigung wenn ein Client seinen Namen/Farbe ändert
-    MSG_PLAYER_LIST      = 103 , // Übertragng der Spielerliste
-    MSG_OPTIONS          = 104 , // Übertragung der Optionen des Spiels
-    MSG_WHO_ARE_YOU      = 105 , // Fordert den Client auf sich zu identifizieren
-    MSG_CHECK_FOR_GO     = 106 , // Läßt überprüfen, ob alle Clients bereit sind
-    MSG_READY_TO_GO      = 107 , // Meldet der Client wenn er bereit ist zum Starten
-    MSG_NO_GO            = 108 , // Meldet der Client, wenn er nicht bereit ist
-    MSG_LETS_GO          = 109 , // Gibt dem Client das Signal zum Start
-    MSG_RESSOURCES       = 110 , // Überträgt die Ressourcenmap
-    MSG_PLAYER_LANDING   = 111 , // Landedaten eines Players
-    MSG_PLAYER_UPGRADES  = 112 , // Übeträgt alle Upgrades eines Players
-    MSG_SAVEGAME_START   = 113 , // Start der Übertragung des Savegames
-    MSG_SAVEGAME_PART    = 114  // Teil der Übertragung des Savegames
+enum SOCKET_TYPES
+{
+	FREE_SOCKET,
+	SERVER_SOCKET,
+	CLIENT_SOCKET
+};
+
+enum SOCKET_STATES
+{
+	STATE_UNUSED,
+	STATE_READY,
+	STATE_NEW,
+	STATE_DYING,
+	STATE_DELETE
 };
 
 /**
-* 
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
+* Structure with data and its lenght.
+*@author alzi alias DoctorDeath
 */
-struct sReceivedMsgData{
-	int iTime;
-	int iID;
+struct sDataBuffer
+{
+	Uint32 iLenght;
+	char data[PACKAGE_LENGHT];
 };
 
 /**
-* Message class with message, lenght and typ
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
+* Structure for Sockets used by the TCP-Class.
+*@author alzi alias DoctorDeath
 */
-class cNetMessage{
+struct sSocket
+{
+	int iType;
+	int iState;
+
+	TCPsocket socket;
+	sDataBuffer buffer;
+};
+
+/**
+* Class for the handling of events over TCP/IP
+*@author alzi alias DoctorDeath
+*/
+class cTCP
+{
+	SDL_mutex *DataMutex;
+	SDL_mutex *TCPMutex;
+	SDL_cond *WaitForRead;
+	bool bDataLocked;
+	bool bTCPLocked;
+	bool bWaitForRead;
+
+	SDL_Thread *TCPHandleThread;
+	bool bExit;
+
+	int iPort;
+	int iLast_Socket;
+	string sIP;
+	sSocket *Sockets[MAX_CLIENTS];
+	SDLNet_SocketSet SocketSet;
+	IPaddress ipaddr;
+
+	/**
+	* Clears the data buffer and sets his lenght to 0.
+	*@author alzi alias DoctorDeath
+	*@param buffer buffer to be cleared
+	*/
+	void clearBuffer( sDataBuffer *buffer );
+	/**
+	* Searchs for the first unused socket and allocates memory for a new one if there are no free sockets.
+	*@author alzi alias DoctorDeath
+	*@return index of found socket
+	*/
+	int getFreeSocket();
+	/**
+	* Deletes the socket, frees its memory and sorts the rest sockets in the list.
+	*@author alzi alias DoctorDeath
+	*/
+	void deleteSocket( int iNum );
+
+	/**
+	* Locks the network mutex.
+	*@author alzi alias DoctorDeath
+	*/
+	void lockTCP();
+	/**
+	* Unlocks the network mutex.
+	*@author alzi alias DoctorDeath
+	*/
+	void unlockTCP();
+	/**
+	* Locks the data mutex.
+	*@author alzi alias DoctorDeath
+	*/
+	void lockData();
+	/**
+	* Unlocks the data mutex.
+	*@author alzi alias DoctorDeath
+	*/
+	void unlockData();
+	/**
+	* Sends a signal to the conditional variable.
+	*@author alzi alias DoctorDeath
+	*/
+	void sendWaitCondSignal();
+
+	/**
+	* Pushes an event to the event handling
+	*@author alzi alias DoctorDeath
+	*@param iEventType Typ of the event to push ( see EVENT_TYPES ).
+	*@param data1 first data of the event.
+	*@param data2 second data of the event.
+	*@return Allways 0 for success since it waits until the event can be pushed.
+	*/
+	int sendEvent( int iEventType, void *data1, void *data2 );
 public:
-	int typ;
-	int lenght;
-	char msg[256];
+	/**
+	* Creates the mutexes, initialises some variables and the sockets and starts the network thread.
+	*@author alzi alias DoctorDeath
+	*/
+	void init();
+	/**
+	* Destroys the mutexes, the sockets and exits the network thread.
+	*@author alzi alias DoctorDeath
+	*/
+	void kill();
+
+	/**
+	* Creates a new server on the port which has to be set before.
+	*@author alzi alias DoctorDeath
+	*return 0 on succes, -1 if an error occurs
+	*/
+	int create();
+	/**
+	* Connects as client to the IP on the port which both have to be set before.
+	*@author alzi alias DoctorDeath
+	*return 0 on succes, -1 if an error occurs
+	*/
+	int connect();
+	/**
+	* Closes the connection to the socket.
+	*@author alzi alias DoctorDeath
+	*param iClientNumber Number of client/socket to which the connection should be closed.
+	*/
+	void close( int iClientNumber );
+
+	/**
+	* Sends data of an given lenght to the client/socket.
+	*@author alzi alias DoctorDeath
+	*param iClientNumber Number of client/socket to which the data should be send.
+	*param iLenght Lenght of data to be send.
+	*param buffer buffer with data to be send.
+	*return 0 on succes, -1 if an error occurs
+	*/
+	int sendTo( int iClientNumber, int iLenght, char *buffer );
+	/**
+	* Sends the data to all sockets to which this machine is connected.
+	*@author alzi alias DoctorDeath
+	*param iLenght Lenght of data to be send.
+	*param buffer buffer with data to be send.
+	*return 0 on succes, -1 if an error occurs
+	*/
+	int send( int iLenght, char *buffer );
+	/**
+	* Reads data of an given lenght from the client/socket.
+	*@author alzi alias DoctorDeath
+	*param iClientNumber Number of client/socket form which the data should be read.
+	*param iLenght Lenght of data to be read.
+	*param buffer buffer with data to be read.
+	*return 0 on succes, -1 if an error occurs
+	*/
+	int read( int iClientNumber, int iLenght, char *buffer );
+
+	/**
+	* Sets a new port.
+	*@author alzi alias DoctorDeath
+	*param iPort New port number.
+	*/
+	void setPort( int iPort );
+	/**
+	* Sets a new IP.
+	*@author alzi alias DoctorDeath
+	*param iPort New IP.
+	*/
+	void setIP ( string sIP );
+	/**
+	* Gets the number of currently connected sockets.
+	*@author alzi alias DoctorDeath
+	*return Number of sockets.
+	*/
+	int getSocketCount();
+
+	/**
+	* Thread funktion which new incomming connections and data.
+	*@author alzi alias DoctorDeath
+	*/
+	void HandleNetworkThread();
 };
 
-/**
-* Buffer for incomming and outcomming packages
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
-*/
-struct sNetBuffer{
-	unsigned int iID;	// ID of this Message
-	int iTyp;			// Typ of Buffer: see BUFF_TYP_XYZ
-	int iPart;			// Partnumber of message
-	int iMax_parts;		// Maximal number of parts
-	int iTicks;			// Ticktime when this buffer has been send
-	int iDestClientNum;	// Client to which this buffer should be send
-	cNetMessage msg;	// Message for Data-Packages
-};
-
-/**
-* Failsafe TcpIp class.
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
-*/
-class cTCP{
-public:
-	cTCP(bool server);
-	~cTCP();
-	SDL_Thread *TCPReceiveThread;	// Thread for message receiving
-	cList<cNetMessage*> *NetMessageList;				// List with all received messages
-
-	bool bReceiveThreadFinished;		// Has the Receive-Thread finished?
-	bool bServer;						// Is this a server?
-	int iStatus;						// Status of connection
-	int iMax_clients;					// Maximal clients that can connect
-	int iMin_clients;					// Minimal clients needed to run stable
-
-	void TCPCheckResends ();
-	bool TCPOpen(void);
-	bool TCPCreate(void);
-	void TCPClose(void);
-	bool TCPSend(int typ, const char *msg);
-	bool TCPReceive(void);
-
-	void SetTcpIpPort(int port);
-	void SetIp(string ip);
-	int GetConnectionCount(void);
-
-private:
-	unsigned int GenerateNewID();
-	void SendOK(unsigned int iID, int iClientNum /* -1 For server*/ );
-	string SplitMessageID(unsigned int iID);
-	SDL_Thread *TCPResendThread;	// Thread that looks for buffers which must be resend
-
-	int iMyID;						// ID of this Client
-	unsigned int iNextMessageID;	// ID of next Message
-	cList<sReceivedMsgData*> *LastReceived;		// A List with all IDs of messages, the game has received in the last minute
-	cList<sNetBuffer*> *WaitOKList;				// A List with all IDs of messages, the game is waiting for an Reseive-OK
-	int iPlayerId;					// ID of this Player
-	int iNum_clients;				// Number of current clients
-	int iPort;						// Current port
-	string sIp;						// Current ip or hostname
-	IPaddress addr;					// Address for SDL_Net
-	TCPsocket sock_server, sock_client[8];	// Sockets of Server (clients only) or for maximal 16 clients (server only)
-	SDLNet_SocketSet SocketSet;		// The socket-set with all currently connected clients
-};
-
-/**
-* Receive funktion for TCPReceiveThread.
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
-*/
-int Receive(void *);
-/**
-* Open funktion for TCPReceiveThread (server only).
-* In this funktion receiving of messages is integrated while the server is waiting for clients.
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
-*/
-int Open(void *);
-/**
-* Looks for buffers which must be resend
-*
-* @author Albert "alzi" Ziegenhagel alias DoctorDeath
-*/
-int CheckResends(void *);
-
-#endif
+#endif // networkH

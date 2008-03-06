@@ -27,75 +27,6 @@
 #include "ajobs.h"
 #include "network.h"
 
-// Strukturen für die Synchronisation ////////////////////////////////////////
-struct sSyncPlayer{
-  int PlayerID;
-  bool EndOfSync;
-
-  int Credits;
-  sResearch ResearchTechs[8];
-  int ResearchCount;
-  int UnusedResearch;
-
-  // Hud-Einstellungen:
-  bool TNT,Radar,Nebel,Gitter,Scan,Reichweite,Munition,Treffer,Farben,Status,Studie,Lock;
-  bool PlayFLC;
-  int Zoom,OffX,OffY;
-};
-
-struct sSyncVehicle{
-  int PlayerID;
-  int off;
-  bool EndOfSync;
-
-  bool isPlane;
-  bool IsBuilding;
-  int BuildingTyp;
-  int BuildCosts;
-  int BuildRounds;
-  int BuildRoundsStart;
-  int BandX,BandY;
-  bool IsClearing;
-  int ClearingRounds;
-  bool ClearBig;
-  bool ShowBigBeton;
-  int FlightHigh;
-  bool LayMines;
-  bool ClearMines;
-  bool Loaded;
-  int CommandoRank;
-  int Disabled;
-  int Ammo,Cargo;
-
-//  int StoredVehicles;
-};
-
-struct sSyncBuilding{
-  int PlayerID;
-  int off;
-  bool EndOfSync;
-
-  bool isBase;
-  int iTyp;
-  bool IsWorking;
-  int MetalProd,OilProd,GoldProd;
-  int MaxMetalProd,MaxOilProd,MaxGoldProd;
-  int BuildSpeed;
-  bool RepeatBuild;
-  int Disabled;
-  int Ammo,Load;
-//  TList *StoredVehicles;
-
-  int BuildList;
-};
-
-// Strukturen für den Ping ///////////////////////////////////////////////////
-struct sPing{
-  int PlayerID;
-  int rx_count;
-  int rx[PING_COUNT];
-};
-
 // Strukturen für die Reports ////////////////////////////////////////////////
 struct sReport{
   string name;
@@ -122,7 +53,6 @@ public:
   int SyncWaiting;
   int RundenendeActionsReport;
   int SyncNo;
-  cList<sPing*> *PingList;
   int PingStart;
   SDL_RWops *LogFile;
   cList<string> *LogHistory;
@@ -146,9 +76,7 @@ public:
   void MakeRundenstartReport(void);
 
   void SendChatMessage(const char *str);
-  void HandleGameMessages();
   void DestroyObject(int off,bool air);
-  void Ping(void);
   void CheckDefeat(void);
   void StartLog(void);
   void StopLog(void);

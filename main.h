@@ -613,19 +613,6 @@ public:
 
 };
 
-class cEventClass
-{
-public:
-	cEventClass( void );
-
-	void GetKeyStates( Uint8 *keystate );
-
-	Uint8 *keystate;
-	int iMouseButton;
-	int iMouseX, iMouseY;
-} EX *EventClass;
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes
 // ------------------------

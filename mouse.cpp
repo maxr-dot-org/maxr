@@ -196,8 +196,7 @@ void cMouse::GetBack ( SDL_Surface *sf )
 // Liest die aktuelle Mausposition aus:
 void cMouse::GetPos ( void )
 {
-	x = EventClass->iMouseX;
-	y = EventClass->iMouseY;
+	SDL_GetMouseState( &x, &y);
 
 	// Cursor Offset bestimmen:
 	if ( cur==GraphicsData.gfx_Cselect||cur==GraphicsData.gfx_Chelp||cur==GraphicsData.gfx_Cmove||cur==GraphicsData.gfx_Cno||cur==GraphicsData.gfx_Ctransf||cur==GraphicsData.gfx_Cband||cur==GraphicsData.gfx_Cload||cur==GraphicsData.gfx_Cmuni||cur==GraphicsData.gfx_Crepair )
@@ -215,22 +214,12 @@ void cMouse::GetPos ( void )
 		if ( x>SettingsData.iScreenW-cur->w )
 		{
 			x=SettingsData.iScreenW-cur->w;
-			SDL_Event MouseEvent;
-			MouseEvent.type = USER_WARPMOUSE;
-			MouseEvent.user.data1 = malloc ( sizeof (Uint16) * 2 );
-			((Uint16 *)MouseEvent.user.data1)[0] = x;
-			((Uint16 *)MouseEvent.user.data1)[1] = y;
-			SDL_PushEvent( &MouseEvent );
+			SDL_WarpMouse ( x, y );
 		}
 		if ( y>SettingsData.iScreenH-cur->h )
 		{
 			y=SettingsData.iScreenH-cur->h;
-			SDL_Event MouseEvent;
-			MouseEvent.type = USER_WARPMOUSE;
-			MouseEvent.user.data1 = malloc ( sizeof (Uint16) * 2 );
-			((Uint16 *)MouseEvent.user.data1)[0] = x;
-			((Uint16 *)MouseEvent.user.data1)[1] = y;
-			SDL_PushEvent( &MouseEvent );
+			SDL_WarpMouse ( x, y );
 		}
 		DrawX=x;
 		DrawY=y;
@@ -246,7 +235,7 @@ void cMouse::GetPos ( void )
 // Liefert die Koordinaten der Kachel unter der Maus:
 int cMouse::GetMouseButton ( )
 {
-	return EventClass->iMouseButton;
+	return SDL_GetMouseState( NULL, NULL );
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:

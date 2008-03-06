@@ -24,7 +24,7 @@
 #include "mouse.h"
 #include "files.h"
 #include "pcx.h"
-#include "networkmessages.h"
+#include "events.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
@@ -1068,24 +1068,12 @@ void cBuilding::SelfDestructionMenu ( void )
 {
 	if ( showSelfdestruction() )
 	{
-		if( !game->engine->network || game->engine->network->bServer )
+		// Destroy both (platform and top building) if there is a platform and a top building on this place
+		if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
 		{
-			// Destroy both (platform and top building) if there is a platform and a top building on this place
-			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
-			{
-				game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
-			}
 			game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
 		}
-		else
-		{
-			// Destroy both (platform and top building) if there is a platform and a top building on this place
-			if( data.is_platform && game->map->GO[PosX + PosY*game->map->size].top )
-			{
-				SendDestroyObject( PosX + PosY*game->map->size, false );
-			}
-			SendDestroyObject( PosX + PosY*game->map->size, false );
-		}
+		game->engine->DestroyObject ( PosX + PosY*game->map->size, false );
 	}
 
 }
@@ -1515,11 +1503,6 @@ bool cBuilding::StartWork ( bool engine_call )
 
 	ShowDetails();
 
-	if( game->engine->network )
-	{
-		game->engine->network->TCPSend( MSG_START_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
-	}
-
 	if ( data.can_research ) owner->StartAResearch();
 
 	return true;
@@ -1601,11 +1584,6 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	game->ObjectStream = PlayStram();
 
 	ShowDetails();
-
-	if( game->engine->network )
-	{
-		game->engine->network->TCPSend( MSG_STOP_WORK, iToStr( PosX + PosY * game->map->size ).c_str() );
-	}
 
 	if ( data.can_research ) owner->StopAReserach();
 }
@@ -1826,7 +1804,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -2499,7 +2477,7 @@ void cBuilding::ShowStorage ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -2667,7 +2645,7 @@ void cBuilding::ShowStorage ( void )
 
 			while ( b )
 			{
-				SDL_PumpEvents();
+				EventHandler->HandleEvents();
 				b = mouse->GetMouseButton();
 			}
 
@@ -2961,7 +2939,7 @@ void cBuilding::ShowStorage ( void )
 
 				while ( b )
 				{
-					SDL_PumpEvents();
+					EventHandler->HandleEvents();
 					b = mouse->GetMouseButton();
 				}
 
@@ -3346,11 +3324,6 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
-
-	if ( game->engine->network && !engine_call )
-	{
-		SendActivateVehicle( true, false, nr, off, PosX + PosY * game->map->size, ptr->data.hit_points, ptr->data.ammo );
-	}
 }
 
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled )
@@ -3492,7 +3465,7 @@ void cBuilding::ShowResearch ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -3869,7 +3842,7 @@ void cBuilding::ShowUpgrade ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -4050,10 +4023,6 @@ void cBuilding::ShowUpgrade ( void )
 							up = true;
 
 							break;
-						}
-						if ( up && game->engine->network )
-						{
-							SendUpgrade( owner, ptr );
 						}
 					}
 
@@ -5122,8 +5091,8 @@ int cBuilding::CalcPrice ( int value, int org, int variety )
 			// Geschwindgigkeit
 
 		case 1:
-			org = org / 2;
-			value = value / 2;
+			org = org / 4;
+			value = value / 4;
 
 			switch ( org )
 			{
@@ -5397,7 +5366,7 @@ int cBuilding::CalcSteigerung ( int org, int variety )
 
 		case 1:
 		{
-			org = org / 2;
+			org = org / 4;
 
 			if ( org == 5 || org == 6 || org == 7 || org == 9 )
 				tmp = 1;
@@ -5408,7 +5377,7 @@ int cBuilding::CalcSteigerung ( int org, int variety )
 			if ( org == 28 )
 				tmp = 5;
 
-			tmp = tmp * 2;
+			tmp = tmp * 4;
 			break;
 		}
 
@@ -5824,7 +5793,7 @@ void cBuilding::ShowMineManager ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -6822,7 +6791,7 @@ void cBuilding::ShowBuildMenu ( void )
 		game->engine->Run();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -8208,11 +8177,6 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten = !Wachposten;
-			// TODO: networkmessage for changing sentrymode of buildings
-			/*if ( game->engine->network )
-			{
-				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
-			}*/
 			if ( Wachposten )
 			{
 				owner->AddWachpostenB ( this );
@@ -8367,11 +8331,6 @@ void cBuilding::DrawMenu ( void )
 					owner->base->AddMetal ( SubBase, -2 );
 
 					count++;
-
-					if ( game->engine->network )
-					{
-						game->engine->network->TCPSend ( MSG_UPDATE_BUILDING, iToStr ( b->PosX + b->PosY * game->map->size ).c_str() );
-					}
 				}
 			}
 
@@ -8409,11 +8368,6 @@ void cBuilding::DrawMenu ( void )
 				ShowDetails();
 
 			owner->DoScan();
-
-			if ( game->engine->network )
-			{
-				game->engine->network->TCPSend ( MSG_UPDATE_BUILDING,  iToStr ( PosX + PosY * game->map->size ).c_str() );
-			}
 
 			return;
 		}
@@ -9055,7 +9009,7 @@ void cBuilding::ShowHelp ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -9106,15 +9060,5 @@ void cBuilding::ShowHelp ( void )
 // Sendet die Update-Nachricht für das gespeicherte Vehicle mit dem Index:
 void cBuilding::SendUpdateStored ( int index )
 {
-	/*if(!game->engine->network||game->engine->network->server)*/
 	return;
-	/*unsigned char msg[3+12+sizeof(sUnitData)];
-	msg[0]='#';
-	msg[1]=3+12+sizeof(sUnitData);
-	msg[2]=MSG_UPDATE_STORED;
-	((int*)(msg+3))[0]=owner->Nr;
-	((int*)(msg+3))[1]=index;
-	((int*)(msg+3))[2]=PosX+PosY*game->map->size;
-	((sUnitData*)(msg+3+12))[0]=((cVehicle*)(StoredVehicles->Items[index]))->data;
-	game->engine->network->Send(msg,msg[1]);*/
 }

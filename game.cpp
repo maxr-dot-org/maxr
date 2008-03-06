@@ -27,7 +27,7 @@
 #include "dialog.h"
 #include "log.h"
 #include "files.h"
-#include "networkmessages.h"
+#include "events.h"
 #include <sstream>
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
@@ -182,7 +182,7 @@ void cGame::Run ( void )
 	mouse->MoveCallback=true;
 	hud->DoAllHud();
 
-	if( !engine->network ) PlayRounds = false;
+	PlayRounds = false;
 	if ( PlayRounds )
 	{
 		if ( ActiveRoundPlayerNr!=ActivePlayer->Nr )
@@ -431,28 +431,6 @@ void cGame::Run ( void )
 				DebugOff+=font->getFontHeight(LATIN_SMALL_WHITE);
 			}
 		}
-		/*if(DebugCom&&engine->network&&fDrawMap){
-		  // Com-Infos:
-		  unsigned short hour,min,sec,msec;
-		  char DebugStr[100];
-		  unsigned int time;
-		  sprintf(DebugStr,"connections: %d",engine->network->GetConnectionCount());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"lags: %d",engine->network->GetLag());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"retrys: %d",engine->network->GetRetrys());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  sprintf(DebugStr,"resends: %d",engine->network->GetResends());
-		  fonts->OutTextSmall(DebugStr,550,DebugOff,ClWhite,buffer);DebugOff+=10;
-		  (Comstart.CurrentTime()-Comstart).DecodeTime(&hour,&min,&sec,&msec);
-		  time=(((int)hour*24+min)*60+sec)*1000+msec;
-		  if(time>1000){
-		    Comstart=Comstart.CurrentTime();
-		    AddDebugComGraph(engine->network->GetTX(),engine->network->GetRX());
-		    engine->network->ResetStats();
-		  }
-		  ShowDebugComGraph(DebugOff);DebugOff+=60;
-		}*/
 		if ( DebugBase&&fDrawMap )
 		{
 			font->showText(550,DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
@@ -473,78 +451,6 @@ void cGame::Run ( void )
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		}
-		if( engine->PingList )
-		{
-			string DebugStr;
-			unsigned int iTime;
-			int iMissing;
-			iTime = SDL_GetTicks() - engine->PingStart;
-
-			DebugStr = "ping: " + iToStr( 5000 - iTime );
-			font->showText( 550, DebugOff, DebugStr, LATIN_SMALL_WHITE, buffer );
-			DebugOff += 10;
-
-			iMissing = 0;
-			for( int i = 0 ; i < engine->PingList->iCount ; i++ )
-			{
-				sPing *Ping;
-				Ping = engine->PingList->Items[i];
-
-				iMissing += PING_COUNT - Ping->rx_count;
-				DebugStr = "ping: " + iToStr( 5000 - iTime ) + ": " + iToStr( Ping->rx_count ) + "/" + iToStr( PING_COUNT );
-				font->showText( 550, DebugOff, DebugStr, LATIN_SMALL_WHITE, buffer );
-				DebugOff += 10;
-			}
-
-			if( iMissing == 0 )
-			{
-				bool bWrong = false;
-
-				for( int i = 0 ; i < engine->PingList->iCount ; i++ )
-				{
-					sPing *Ping;
-					Ping = engine->PingList->Items[i];
-					for( int k = 0 ; k < Ping->rx_count ; k++ )
-					{
-						if( Ping->rx[k] != k )
-						{
-							bWrong = true;
-							break;
-						}
-					}
-					if( bWrong ) break;
-				}
-
-				if(bWrong)
-				{
-					AddMessage("Ping complete, but wrong order!"); // TODO: Translate?!?
-				}
-				else
-				{
-					AddMessage("Ping ok!"); // TODO: Translate?!?
-				}
-
-				while( engine->PingList->iCount )
-				{
-					delete engine->PingList->Items[0];
-					engine->PingList->Delete( 0 );
-				}
-				delete engine->PingList;
-				engine->PingList = NULL;
-			}
-			else if( iTime > 5000 )
-			{
-				DebugStr = "TIMEOUT! missing: " + iToStr( iMissing ); // TODO: Translate?!?
-				AddMessage( DebugStr );
-				while( engine->PingList->iCount )
-				{
-					delete engine->PingList->Items[0];
-					engine->PingList->Delete( 0 );
-				}
-				delete engine->PingList;
-				engine->PingList = NULL;
-			}
 		}
 		if ( DebugTrace&&fDrawMap )
 		{
@@ -691,12 +597,12 @@ int cGame::CheckUser ( void )
 {
 	static int LastMouseButton=0,MouseButton;
 	static bool LastReturn=false;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	// Events holen:
-	SDL_PumpEvents();
+	EventHandler->HandleEvents();
 
 	// Tasten prüfen:
-	EventClass->GetKeyStates( keystate );
+	keystate = SDL_GetKeyState( NULL );
 	if ( ChangeObjectName )
 	{
 		DoKeyInp ( keystate );
@@ -951,10 +857,6 @@ int cGame::CheckUser ( void )
 			SelectedVehicle->IsBuilding=true;
 			if ( SelectedVehicle->data.can_build==BUILD_BIG )
 			{
-				if ( engine->network )
-				{
-					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD_BIG);
-				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -967,10 +869,6 @@ int cGame::CheckUser ( void )
 			}
 			else if ( SelectedVehicle->PosX!=SelectedVehicle->BandX||SelectedVehicle->PosY!=SelectedVehicle->BandY )
 			{
-				if ( engine->network )
-				{
-					SendStartBuild(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BuildCosts, SelectedVehicle->BandX, SelectedVehicle->BandY, MSG_START_BUILD );
-				}
 				// Den Building Sound machen:
 				StopFXLoop ( ObjectStream );
 				ObjectStream=SelectedVehicle->PlayStram();
@@ -1026,10 +924,6 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedBuilding->StoreVehicle ( off );
-			if ( engine->network )
-			{
-				SendStoreVehicle( SelectedBuilding->data.can_load == TRANS_AIR, true, off, SelectedBuilding->PosX + SelectedBuilding->PosY * map->size, false );
-			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cload&&SelectedVehicle&&SelectedVehicle->LoadActive )
 		{
@@ -1037,10 +931,6 @@ int cGame::CheckUser ( void )
 			off=mouse->GetKachelOff();
 			PlayFX ( SoundData.SNDLoad );
 			SelectedVehicle->StoreVehicle ( off );
-			if ( engine->network )
-			{
-				SendStoreVehicle( false, false, off, SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, SelectedVehicle->data.can_drive == DRIVE_AIR );
-			}
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cmuni&&SelectedVehicle&&SelectedVehicle->MuniActive )
 		{
@@ -1063,10 +953,6 @@ int cGame::CheckUser ( void )
 				{
 					b->data.ammo=b->data.max_ammo;
 				}
-			}
-			if( engine->network )
-			{
-				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.ammo:b->data.ammo ), MSG_RELOAD );
 			}
 			SelectedVehicle->ShowDetails();
 		}
@@ -1091,10 +977,6 @@ int cGame::CheckUser ( void )
 				{
 					b->data.hit_points=b->data.max_hit_points;
 				}
-			}
-			if( engine->network )
-			{
-				SendReloadRepair( b != NULL , v->data.can_drive == DRIVE_AIR, off, ( v?v->data.hit_points:b->data.hit_points ), MSG_REPAIR );
 			}
 			SelectedVehicle->ShowDetails();
 		}
@@ -1126,10 +1008,6 @@ int cGame::CheckUser ( void )
 					{
 						SelectedVehicle->PosY++;
 						changed=true;
-					}
-					if ( engine->network && changed )
-					{
-						SendResetConstructor( SelectedVehicle->BandX + SelectedVehicle->BandY * map->size, SelectedVehicle->PosX - SelectedVehicle->BandX, SelectedVehicle->PosY - SelectedVehicle->BandY);
 					}
 				}
 				// hans
@@ -1175,10 +1053,6 @@ int cGame::CheckUser ( void )
 						SelectedVehicle->mjob->finished=true;
 						SelectedVehicle->mjob=NULL;
 						SelectedVehicle->MoveJobActive=false;
-						if( engine->network && !engine->network->bServer )
-						{
-							SendIntBool(SelectedVehicle->PosX + SelectedVehicle->PosY * map->size, ( SelectedVehicle->data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
-						}
 					}
 				}
 				else if ( mouse->cur==GraphicsData.gfx_Cattack&&SelectedBuilding&&!SelectedBuilding->Attacking )
@@ -1386,7 +1260,6 @@ int cGame::CheckUser ( void )
 	// Das Scrollen managen:
 	hud->CheckScroll();
 	LastMouseButton=MouseButton;
-	free ( keystate );
 	return 0;
 }
 
@@ -1909,15 +1782,12 @@ bool cGame::DoCommand ( char *cmd )
 {
 	if ( strcmp ( cmd,"fps on" ) ==0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
 	if ( strcmp ( cmd,"fps off" ) ==0 ) {DebugFPS=false;return true;}
-	/*if(strcmp(cmd,"com on")==0){if(engine->network){engine->network->ResetStats();DebugCom=true;Comstart=Comstart.CurrentTime();}return true;}
-	if(strcmp(cmd,"com off")==0){DebugCom=false;return true;}*/
 	if ( strcmp ( cmd,"base on" ) ==0 ) {DebugBase=true;return true;}
 	if ( strcmp ( cmd,"base off" ) ==0 ) {DebugBase=false;return true;}
 	if ( strcmp ( cmd,"wache on" ) ==0 ) {DebugWache=true;return true;}
 	if ( strcmp ( cmd,"wache off" ) ==0 ) {DebugWache=false;return true;}
 	if ( strcmp ( cmd,"fx on" ) ==0 ) {DebugFX=true;return true;}
 	if ( strcmp ( cmd,"fx off" ) ==0 ) {DebugFX=false;return true;}
-	if ( strcmp ( cmd,"ping") ==0) {engine->Ping();return true;}
 	if ( strcmp ( cmd,"trace on" ) ==0 ) {DebugTrace=true;return true;}
 	if ( strcmp ( cmd,"trace off" ) ==0 ) {DebugTrace=false;return true;}
 	if ( strcmp ( cmd,"log on" ) ==0 ) {DebugLog=true;engine->StartLog();return true;}

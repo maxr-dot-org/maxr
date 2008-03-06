@@ -18,7 +18,6 @@
  ***************************************************************************/
 #include <SDL.h>
 #include <sstream>
-//#include <dirent.h>
 #include "dialog.h"
 #include "game.h"
 #include "mouse.h"
@@ -30,7 +29,7 @@
 #include "files.h"
 #include "log.h"
 #include "loaddata.h"
-#include "networkmessages.h"
+#include "events.h"
 
 // shows a yes/no dialog
 bool ShowYesNo ( string text )
@@ -77,7 +76,7 @@ bool ShowYesNo ( string text )
 		}
 
 		// Eingaben holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus:
 		mouse->GetPos();
@@ -183,7 +182,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	while ( 1 )
 	{
 		// Eingaben holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Die Maus:
 		mouse->GetPos();
 		b = mouse->GetMouseButton();
@@ -270,7 +269,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
 	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	bool bLastKeystate = false;
 	SDL_Surface *SfDialog = NULL;
 	SDL_Surface *SfBackground = NULL;
@@ -324,8 +323,8 @@ void ShowOK ( string sText, bool bPurgeHud )
 		}
 
 		// Eingaben holen:
-		SDL_PumpEvents();
-		EventClass->GetKeyStates( keystate );
+		EventHandler->HandleEvents();
+		keystate = SDL_GetKeyState( NULL );
 		
 		// Die Maus:
 		mouse->GetPos();
@@ -361,7 +360,6 @@ void ShowOK ( string sText, bool bPurgeHud )
 		SDL_Delay ( 1 );
 		bLastKeystate = keystate[SDLK_RETURN];
 	}
-	free ( keystate );
 
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
@@ -506,7 +504,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 
 	while ( 1 )
 	{
-		SDL_PumpEvents(); //get hid-input
+		EventHandler->HandleEvents(); //get hid-input
 		mouse->GetPos(); //get mouseposition
 		b = mouse->GetMouseButton();
 		x = mouse->x; y = mouse->y;
@@ -658,7 +656,7 @@ void showPreferences ( void )
 	string stmp;
 	string sTmp;
 	SDL_Rect scr, dest, rFont;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	bool cursor = true;
 	SDL_Surface *SfDialog;
 	
@@ -833,10 +831,10 @@ void showPreferences ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( Input )
 		{
 			if ( DoKeyInp ( keystate ) ||timer2 )
@@ -1029,10 +1027,7 @@ void showPreferences ( void )
 				}
 				if ( strcmp ( game->ActivePlayer->name.c_str(),OldName.c_str() ) !=0 )
 				{
-					if( game->engine->network )
-					{
-						SendChangePlayerName( game->ActivePlayer->Nr, game->ActivePlayer->name );
-					}
+					// TODO: NetworkMessage?!?!
 				}
 				// Save new settings to max.xml
 				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
@@ -1106,7 +1101,6 @@ void showPreferences ( void )
 		LastB=b;
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 	SDL_FreeSurface (SfDialog);
 }
 
@@ -1166,7 +1160,7 @@ bool showSelfdestruction()
 		}
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();

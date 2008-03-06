@@ -20,7 +20,6 @@
 #include "player.h"
 #include "game.h"
 #include "menu.h"
-#include "networkmessages.h"
 
 // Funktionen der Player-Klasse //////////////////////////////////////////////
 cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr )
@@ -628,12 +627,6 @@ void cPlayer::DoResearch ( void )
 			{
 				double a,b,c,d;
 				int x;
-
-				if ( game->engine->network )
-				{
-					SendResearch( Nr, i );
-				}
-
 				switch ( i )
 				{
 					case 0:

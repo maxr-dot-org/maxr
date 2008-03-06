@@ -50,6 +50,7 @@
 #include "log.h"
 #include "loaddata.h"
 #include "tinyxml.h"
+#include "events.h"
 
 
 
@@ -113,10 +114,7 @@ int main ( int argc, char *argv[] )
 	// Die Maus erzeugen:
 	mouse = new cMouse;
 
-	EventClass = new cEventClass; // Generate event class for comunication with game and engine
-	SDL_Thread *EventThread = NULL;
-	EventThread = SDL_CreateThread ( runEventChecker, NULL);
-
+	EventHandler = new cEventHandling;
 	
 	// Das Menü starten:
 	RunMainMenu();
@@ -125,6 +123,7 @@ int main ( int argc, char *argv[] )
 	return 0;
 }
 
+/*
 //IMPORTANT: this is highly temporary! -- beko
 int runEventChecker( void *)
 {
@@ -213,7 +212,7 @@ int runEventChecker( void *)
 		SDL_Delay ( 1 );
 	}
 	return 0;
-}
+}*/
 
 // generate SplashScreen
 void showSplash()
@@ -685,17 +684,4 @@ int min (int a, int b )
 	{
 		return a;
 	}
-}
-
-cEventClass::cEventClass( void )
-{
-	// alloc memory for keystatebuffer and set all to null
-	keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST );
-	memset( keystate, 0, sizeof( Uint8 ) * SDLK_LAST );
-}
-
-void cEventClass::GetKeyStates( Uint8 *keystate )
-{
-	memcpy( keystate, this->keystate, sizeof( Uint8 ) * SDLK_LAST );
-	memset( this->keystate, 0, sizeof( Uint8 ) * SDLK_LAST );
 }

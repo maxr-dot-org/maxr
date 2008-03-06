@@ -25,7 +25,6 @@
 #include "keyinp.h"
 #include "fonts.h"
 #include "menu.h"
-#include "networkmessages.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
@@ -938,21 +937,8 @@ void cHud::ChechMouseOver ( void )
 			PlayFX ( SoundData.SNDHudButton );
 			if ( game->SelectedVehicle&&game->SelectedVehicle->mjob&&game->SelectedVehicle->mjob->Suspended&&game->SelectedVehicle->data.speed )
 			{
-				if ( game->engine->network && !game->engine->network->bServer )
-				{
-					// Client
-					game->SelectedVehicle->mjob->finished=true;
-					game->SelectedVehicle->mjob=NULL;
-					game->SelectedVehicle->MoveJobActive=false;    
-
-					SendIntBool( game->SelectedVehicle->PosX + game->SelectedVehicle->PosY * game->map->size, ( game->SelectedVehicle->data.can_drive == DRIVE_AIR ), MSG_ERLEDIGEN);
-				}
-				else
-				{
-					// SP/Host
-					game->SelectedVehicle->mjob->CalcNextDir();
-					game->engine->AddActiveMoveJob ( game->SelectedVehicle->mjob );
-				}
+				game->SelectedVehicle->mjob->CalcNextDir();
+				game->engine->AddActiveMoveJob ( game->SelectedVehicle->mjob );
 			}
 			ErledigenButton ( false );
 		}
@@ -1456,22 +1442,13 @@ void cHud::MakeMeMyEnd ( void )
 	}
 	else
 	{
-//    if(game->engine->DoEndActions()&&(!game->engine->com||game->engine->com->server)){
 		if ( game->engine->DoEndActions() )
 		{
 			game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
-			if ( !game->engine->network || game->engine->network->bServer )
+			game->WantToEnd = true;
+			if( !game->HotSeat )
 			{
-				game->WantToEnd = true;
-				if( !game->HotSeat )
-				{
-					Ende=true;
-				}
-			}
-			else
-			{
-				Ende = false;
-				EndeButton ( false );
+				Ende=true;
 			}
 		}
 		else

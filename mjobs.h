@@ -66,7 +66,7 @@ public:
   void Release(void);
   bool CalcPath(void);
   int CalcDest(int x,int y);
-  bool AddPoint(int x, int y, int m, sPathCalc *p);
+  bool AddPoint(int x, int y, float m, sPathCalc *p);
   bool CreateNextPath(void);
   bool CheckPossiblePoint(int x,int y);
   bool CheckPointNotBlocked(int x,int y);

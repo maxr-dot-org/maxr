@@ -29,7 +29,7 @@
 #include "log.h"
 #include "files.h"
 #include "loaddata.h"
-#include "networkmessages.h"
+#include "events.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -233,7 +233,7 @@ void RunMainMenu ( void )
 {
 	bool SPPressed=false,MPPRessed=false,MEPressed=false,CrPressed=false,BePressed=false,LiPressed=false;
 	bool EscHot=true;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 	// start main musicfile
 	PlayMusic ( ( char * ) ( SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg" ).c_str() );
@@ -244,9 +244,10 @@ void RunMainMenu ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		//EventHandler->HandleEvents();
+		EventHandler->HandleEvents();
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE]&&EscHot ) break;else if ( !keystate[SDLK_ESCAPE] ) EscHot=true;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -444,7 +445,6 @@ void RunMainMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 
 	ExitMenu();
 	StopMusic();
@@ -460,7 +460,7 @@ void RunMPMenu ( void )
 #define LOADHOTSEAT lngPack.i18n( "Text~Button~HotSeat_Load")
 #define BACK lngPack.i18n( "Text~Button~Back")
 	bool TCPHostPressed=false,TCPClientPressed=false,BackPressed=false,HotSeatPressed=false,LoadHotSeatPressed=false;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
@@ -477,9 +477,9 @@ void RunMPMenu ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -519,9 +519,7 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPHostPressed )
 			{
-				MultiPlayer=new cMultiPlayer ( true,true );
-				MultiPlayer->RunMenu();
-				delete MultiPlayer;
+				// TODO: Run menu here
 				break;
 			}
 		}
@@ -553,9 +551,7 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPClientPressed )
 			{
-				MultiPlayer=new cMultiPlayer ( false,true );
-				MultiPlayer->RunMenu();
-				delete MultiPlayer;
+				// TODO: Run menu here
 				break;
 			}
 		}
@@ -658,7 +654,6 @@ void RunMPMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 }
 
 void RunSPMenu ( void )
@@ -670,7 +665,7 @@ void RunSPMenu ( void )
 #define LOADGAME lngPack.i18n( "Text~Button~Game_Load")
 #define BACK lngPack.i18n( "Text~Button~Back")
 	bool StartTrainingPressed=false, StartNewPressed=false, LoadPressed=false, BackPressed=false;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
@@ -686,9 +681,9 @@ void RunSPMenu ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -905,7 +900,6 @@ void RunSPMenu ( void )
 		ly=mouse->y;
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 }
 
 // Zeigt die Optionen an:
@@ -1046,7 +1040,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
@@ -1454,7 +1448,7 @@ string RunPlanetSelect ( void )
 {
 	bool OKPressed=false;
 	bool BackPressed=false;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
 	SDL_Rect scr;
@@ -1499,9 +1493,9 @@ string RunPlanetSelect ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -1621,7 +1615,6 @@ string RunPlanetSelect ( void )
 
 	delete files;
 	SDL_FreeSurface(sfTmp);
-	free ( keystate );
 	return "";
 }
 
@@ -1804,7 +1797,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	bool OKPressed=false;
 	bool BackPressed=false;
 	int b,lb=0,offset=0,lx=-1,ly=-1;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
 	SDL_Rect rBtnOk = { DIALOG_X + 390,DIALOG_Y + 440, 200, 29 };
@@ -1853,8 +1846,8 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
-		EventClass->GetKeyStates( keystate );
+		EventHandler->HandleEvents();
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			for ( int i = 0; i < 8; i++ ) //reset players and exit
@@ -2017,7 +2010,6 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	}	
 	
 	SDL_FreeSurface(sfTmp);
-	free ( keystate );
 	return players;
 }
 
@@ -2028,7 +2020,7 @@ sPlayer runPlayerSelection ( void )
 	bool BackPressed=false;
 	int b,lb=0,offset=0,lx=-1,ly=-1;
 	sPlayer players;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 
 	for ( int i = 0; i < 4; i++ )
 	{
@@ -2057,8 +2049,8 @@ sPlayer runPlayerSelection ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
-		EventClass->GetKeyStates( keystate );
+		EventHandler->HandleEvents();
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			for ( int i = 0; i < 4; i++ ) //reset players and exit
@@ -2169,7 +2161,6 @@ sPlayer runPlayerSelection ( void )
 		lb=b;
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 	return players;
 }
 
@@ -2385,7 +2376,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Die Maus machen:
 		mouse->GetPos();
 		b = mouse->GetMouseButton();
@@ -3352,8 +3343,8 @@ int CalcPrice ( int value,int org, int variety )
 			break;
 			// Geschwindgigkeit
 		case 1:
-			org=org/2;
-			value=value/2;
+			org=org/4;
+			value=value/4;
 			switch ( org )
 			{
 				case 5:
@@ -3538,14 +3529,14 @@ int CalcSteigerung ( int org, int variety )
 		}
 		case 1:
 		{
-			org=org/2;
+			org=org/4;
 			if ( org == 5 || org == 6 || org == 7 || org == 9 )
 				tmp = 1;
 			if ( org == 10 || org == 12 || org ==14 || org == 15 || org == 16 || org == 18 || org == 20 )
 				tmp = 2;
 			if ( org == 28 )
 				tmp = 5;
-			tmp=tmp*2;
+			tmp=tmp*4;
 			break;
 		}
 		case 2:
@@ -3784,7 +3775,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
@@ -4131,78 +4122,15 @@ int GetColorNr ( SDL_Surface *sf )
 	return cl_red;
 }
 
-cMultiPlayer::cMultiPlayer ( bool host,bool tcp )
-{
-	NextPlayerID=0;
-	PlayerList=new cList<cPlayer*>;
-	PlayerList->Add ( MyPlayer=new cPlayer ( SettingsData.sPlayerName,OtherData.colors[cl_red],NextPlayerID++ ) );
-
-	ChatList=new cList<string>;
-	this->host=host;
-	this->tcp=tcp;
-
-	if ( tcp )
-	{
-		if ( host )
-		{
-			network=new cTCP ( true );
-			Titel=lngPack.i18n ( "Text~Button~TCPIP_Host" );
-			IP="-";
-		}
-		else
-		{
-			network=new cTCP ( false );
-			Titel=lngPack.i18n ( "Text~Button~TCPIP_Client" );
-			IP=SettingsData.sIP;
-		}
-	}
-//  network->TCPMessageFuntion=ReceiveMenuMessage;
-	Port=SettingsData.iPort;
-
-	map="";
-	no_options=true;
-	WaitForGo=false;
-	LetsGo=false;
-	game=NULL;
-	map_obj=NULL;
-}
-
-cMultiPlayer::~cMultiPlayer ( void )
-{
-	delete ChatList;
-	while ( PlayerList->iCount )
-	{
-		delete PlayerList->Items[0];
-		PlayerList->Delete ( 0 );
-	}
-	delete PlayerList;
-	if ( game )
-	{
-		while ( game->PlayerList->iCount )
-		{
-			delete game->PlayerList->Items[0];
-			game->PlayerList->Delete ( 0 );
-		}
-		delete game;game=NULL;
-	}
-	if ( map_obj )
-	{
-		delete map_obj;map_obj=NULL;
-	}
-	if ( strcmp ( IP.c_str(),"-" ) ) SettingsData.sIP=IP;
-	delete network;
-	SettingsData.iPort=Port;
-}
-
 // Zeigt das Chatmenü an:
-void cMultiPlayer::RunMenu ( void )
+/*void cMultiPlayer::RunMenu ( void )
 {
 	bool PlanetPressed=false,OptionsPressed=false,StartHostConnect=false,SendenPressed=false;
 	bool OKPressed=false,BackPressed=false,ShowCursor=true,LadenPressed=false;
 	int b, lb=0,lx=-1,ly=-1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	unsigned int time;
 	int Focus;
 	int LastStatus=STAT_CLOSED;
@@ -4291,9 +4219,9 @@ void cMultiPlayer::RunMenu ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 		// Tasten prüfen:
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
 		mouse->GetPos();
@@ -4331,7 +4259,7 @@ void cMultiPlayer::RunMenu ( void )
 					*safed to their proper vals.
 					*
 					*			-- beko
-					*/
+					*_/
 				case FOCUS_IP:
 					i_tmpRedrawLength += font->getTextWide(InputStr);
 					while ( font->getTextWide(InputStr) > 176 )
@@ -4411,7 +4339,7 @@ void cMultiPlayer::RunMenu ( void )
 			if(t>500){
 			  ShowCursor=true;
 			  time=time.CurrentTime();
-			}*/
+			}*_/
 		}
 
 		// Zurück:
@@ -4508,7 +4436,7 @@ void cMultiPlayer::RunMenu ( void )
 
 					         fclose(fp);
 					         free(msg);
-					       }*/
+					       }*_/
 					string msg;
 					msg=iToStr(SettingsData.Checksum) + NET_MSG_SEPERATOR + MAX_VERSION;
 					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Check" ) );
@@ -4731,7 +4659,7 @@ void cMultiPlayer::RunMenu ( void )
 			        if(SaveGame.empty())placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,false);
 			        SHOW_SCREEN
 			        mouse->draw(false,screen);
-			      }*/
+			      }*_/
 		}
 		// Host/Connect:
 		if ( b&&mouse->x>=470&&mouse->x<470+150&&mouse->y>=200&&mouse->y<200+29&&!WaitForGo )
@@ -5094,7 +5022,7 @@ void cMultiPlayer::RunMenu ( void )
 				game->Run();
 				sPlayerName=MyPlayer->name;
 
-				break;*/
+				break;*_/
 			}
 		}
 
@@ -5190,7 +5118,7 @@ void cMultiPlayer::RunMenu ( void )
 			game->Run();
 			sPlayerName=MyPlayer->name;
 
-			break;*/
+			break;*_/
 		}
 
 		// Ggf Chatlogs anzeigen:
@@ -5249,1054 +5177,8 @@ void cMultiPlayer::RunMenu ( void )
 		HandleMenuMessages();
 		SDL_Delay ( 1 );
 	}
-	free ( keystate );
 	SDL_FreeSurface(sfTmp);
-}
-
-// Empfängt eine Nachricht fürs Menü:
-void cMultiPlayer::HandleMenuMessages()
-{
-	cNetMessage *msg;
-	string msgstring;
-	for ( int iNum = 0 ; iNum < network->NetMessageList->iCount; iNum++ )
-	{
-		msg = network->NetMessageList->Items[iNum];
-		msgstring = ( char * ) msg->msg;
-		switch ( msg->typ )
-		{
-			// Chatnachricht:
-			case MSG_CHAT:
-				AddChatLog ( msgstring );
-				PlayFX ( SoundData.SNDChat );
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			// Neuer Spieler meldet sich an:
-			case MSG_SIGNING_IN:
-			{
-				cPlayer *p;
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				p=new cPlayer ( Strings->Items[0],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],NextPlayerID++ );
-				PlayerList->Add ( p );
-				Refresh=true;
-				string smsg;
-				smsg = Strings->Items[2] + NET_MSG_SEPERATOR + iToStr(p->Nr);
-				network->TCPSend ( MSG_YOUR_ID_IS, ( char * ) smsg.c_str());
-				SendPlayerList();
-				SendOptions();
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Mitteilung über die eigene ID:
-			case MSG_YOUR_ID_IS:
-			{
-				cPlayer *p;
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				if ( MyPlayer->Nr!=atoi ( Strings->Items[0].c_str() ) )
-				{
-					delete network->NetMessageList->Items[iNum];
-					network->NetMessageList->Delete ( iNum );
-					break;
-				}
-				for ( int i=0;i<PlayerList->iCount;i++ )
-				{
-					p=PlayerList->Items[i];
-					if ( p==MyPlayer )
-					{
-						p->Nr=atoi ( Strings->Items[1].c_str() );
-						break;
-					}
-				}
-				delete Strings;
-
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Ein Client ändert seinen Namen:
-			case MSG_MY_NAME_CHANGED:
-			{
-				cPlayer *p;
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				int i;
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					p=PlayerList->Items[i];
-					if ( p->Nr!=atoi ( Strings->Items[0].c_str() ) ) continue;
-					p->color=OtherData.colors[atoi ( Strings->Items[1].c_str() ) ];
-					p->name=Strings->Items[2];
-					Refresh=true;
-					SendPlayerList();
-					break;
-				}
-				if ( i==PlayerList->iCount )
-				{
-					p=new cPlayer ( Strings->Items[2],OtherData.colors[atoi ( Strings->Items[1].c_str() ) ],atoi ( Strings->Items[0].c_str() ) );
-					PlayerList->Add ( p );
-					SendPlayerList();
-					Refresh=true;
-				}
-
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Bekommt die Liste mit den Spielern:
-			case MSG_PLAYER_LIST:
-			{
-				int count,myID;
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				myID=MyPlayer->Nr;
-				while ( PlayerList->iCount )
-				{
-					delete PlayerList->Items[0];
-					PlayerList->Delete ( 0 );
-				}
-				count=atoi ( Strings->Items[0].c_str() );
-				for ( int k = 0;count--;k++ )
-				{
-					cPlayer *p;
-					int id,color;
-					id=atoi ( Strings->Items[k*3+1].c_str() );
-					color=atoi ( Strings->Items[k*3+2].c_str() );
-
-					p=new cPlayer ( Strings->Items[k*3+3],OtherData.colors[color],id );
-					if ( id==myID ) MyPlayer=p;
-					PlayerList->Add ( p );
-				}
-
-				delete Strings;
-				Refresh=true;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Überträgt die Optionen:
-			case MSG_OPTIONS:
-			{
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				no_options=atoi ( Strings->Items[0].c_str() );
-
-				SaveGame=Strings->Items[1];
-
-				if ( !no_options )
-				{
-					options.AlienTech=atoi ( Strings->Items[2].c_str() );
-					options.credits=atoi ( Strings->Items[3].c_str() );
-					options.dichte=atoi ( Strings->Items[4].c_str() );
-					options.FixedBridgeHead=atoi ( Strings->Items[5].c_str() );
-					options.gold=atoi ( Strings->Items[6].c_str() );
-					options.metal=atoi ( Strings->Items[7].c_str() );
-					options.oil=atoi ( Strings->Items[8].c_str() );
-					options.PlayRounds=atoi ( Strings->Items[9].c_str() );
-					map=Strings->Items[10];
-				}
-				else
-					map=Strings->Items[4];
-
-				delete Strings;
-				Refresh=true;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Fordert einen Client auf sich zu identifizieren:
-			case MSG_WHO_ARE_YOU:
-			{
-				ChangeFarbeName();
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Prüfen, ob der Client bereit ist zum Go:
-			case MSG_CHECK_FOR_GO:
-			{
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				FILE *fp;
-				string mapstr;
-				mapstr=SettingsData.sMapsPath; mapstr+=PATH_DELIMITER; mapstr+=map;
-				if ( FileExists ( mapstr.c_str() ) )
-				{
-					fp=fopen ( mapstr.c_str(),"rb" );
-				}
-				if ( atoi ( Strings->Items[0].c_str() ) ==SettingsData.Checksum && strcmp ( Strings->Items[1].c_str(),MAX_VERSION ) ==0 && fp )
-				{
-					string new_msg;
-					new_msg=iToStr(MyPlayer->Nr);
-					network->TCPSend ( MSG_READY_TO_GO,new_msg.c_str() );
-					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host" ) );
-				}
-				else
-				{
-					string new_msg;
-					new_msg=iToStr(MyPlayer->Nr);
-					network->TCPSend ( MSG_NO_GO,new_msg.c_str() );
-					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Host_No" ) );
-				}
-				if ( fp ) fclose ( fp );
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Benachrichtigung über einen nicht bereiten Client:
-			case MSG_NO_GO:
-			{
-				cPlayer *p;
-				int i;
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					p=PlayerList->Items[i];
-					if ( p->Nr==atoi ( msgstring.c_str() ) )
-					{
-						string log;
-						log=p->name; log+=": "+lngPack.i18n ( "Text~Multiplayer~Go_Ready_No" );
-						AddChatLog ( log );
-						break;
-					}
-				}
-				WaitForGo=false;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Benachrichtigung über einen bereiten Client:
-			case MSG_READY_TO_GO:
-			{
-				cPlayer *p;
-				int i;
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					p=PlayerList->Items[i];
-					if ( p->Nr==atoi ( msgstring.c_str() ) )
-					{
-						string log;
-						log=p->name; log+=": "+lngPack.i18n ( "Text~Multiplayer~Go_Ready" );
-						AddChatLog ( log );
-						break;
-					}
-				}
-				ClientsToGo--;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Benachrichtigung, dass es jetzt los geht:
-			case MSG_LETS_GO:
-				LetsGo=true;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-				// Die Ressourcen:
-			case MSG_RESSOURCES:
-			{
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				int off;
-				if ( map_obj==NULL ) break;
-				for ( int k=0;k<Strings->iCount;k++ )
-				{
-					off=atoi ( Strings->Items[k].c_str() );
-					map_obj->Resources[off].typ= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
-					map_obj->Resources[off].value= ( unsigned char ) atoi ( Strings->Items[k++].c_str() );
-				}
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Empfang der Upgrades eines Players:
-			case MSG_PLAYER_UPGRADES:
-			{
-				cPlayer *p;
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				int nr,i;
-				nr=atoi ( Strings->Items[0].c_str() );
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					p=PlayerList->Items[i];
-					if ( p->Nr==nr )
-						break;
-				}
-				if ( p==MyPlayer )
-				{
-					delete network->NetMessageList->Items[iNum];
-					network->NetMessageList->Delete ( iNum );
-					break;
-				}
-				for ( int i=1;i<Strings->iCount;i++ )
-				{
-					if ( atoi ( Strings->Items[i].c_str() ) ==0 )
-					{
-						p->VehicleData[i].damage=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].max_shots=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].range=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].max_ammo=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].armor=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].max_hit_points=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].scan=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].max_speed=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].version++;
-					}
-					else
-					{
-						p->BuildingData[i].damage=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].max_shots=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].range=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].max_ammo=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].armor=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].max_hit_points=atoi ( Strings->Items[i++].c_str() );
-						p->BuildingData[i].scan=atoi ( Strings->Items[i++].c_str() );
-						p->VehicleData[i].version++;
-					}
-				}
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			// Landedaten eines Players:
-			case MSG_PLAYER_LANDING:
-			{
-				cList<string> *Strings;
-				Strings = SplitMessage ( msgstring );
-				sClientSettings *cs=NULL;
-				int nr,k,max;
-
-				nr=atoi ( Strings->Items[2].c_str() );
-				if ( nr==MyPlayer->Nr )
-				{
-					delete network->NetMessageList->Items[iNum];
-					network->NetMessageList->Delete ( iNum );
-					break;
-				}
-
-				for ( k=0;k<ClientSettingsList->iCount;k++ )
-				{
-					cs=ClientSettingsList->Items[k];
-					if ( cs->nr==nr )
-					{
-						break;
-					}
-				}
-
-				if ( cs==NULL||k==ClientSettingsList->iCount )
-				{
-					cs=new sClientSettings;
-					cs->LandX=atoi ( Strings->Items[0].c_str() );
-					cs->LandY=atoi ( Strings->Items[1].c_str() );
-					cs->nr=nr;
-					cs->LandingList=new cList<sLanding*>;
-					ClientSettingsList->Add ( cs );
-				}
-				max=atoi ( Strings->Items[3].c_str() );
-
-				for ( k=4;k< ( max*2+4 );k++ )
-				{
-					sLanding *l;
-					l=new sLanding;
-					l->id=atoi ( Strings->Items[k].c_str() );
-					l->cargo=atoi ( Strings->Items[k++].c_str() );
-					cs->LandingList->Add ( l );
-				}
-				delete Strings;
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-			default:
-			{
-				delete network->NetMessageList->Items[iNum];
-				network->NetMessageList->Delete ( iNum );
-				break;
-			}
-		}
-	}
-}
-
-// Zeigt die Settings für das Spiel an:
-void cMultiPlayer::DisplayGameSettings ( SDL_Surface *surface )
-{
-	string str;
-	SDL_Rect r;
-
-	r.x=192;r.y=52;
-	r.w=246;r.h=176;
-
-	if ( !host )
-	{
-		SDL_BlitSurface ( surface,&r,buffer,&r );
-	}
-
-	str="Version: "; str+=MAX_VERSION; str+="\n";
-	str+="Checksum: "+iToStr(SettingsData.Checksum)+"\n\n";
-
-	if ( !host&&network->iStatus!=STAT_CONNECTED )
-	{
-		str+=lngPack.i18n ( "Text~Multiplayer~Network_Connected_Not" );
-		font->showTextAsBlock(r, str);
-		
-		return;
-	}
-
-	if ( !SaveGame.empty() )
-	{
-		char *tmpstr;
-		FILE *fp;
-		int len;
-		str+="Savegame: "; str+=SaveGame; str+="\n";
-		if ( host )
-		{
-			fp=fopen ( ( SaveGame ).c_str(),"rb" );
-			if ( fp==NULL )
-			{
-				str+="Fehler beim Öffnen\n";
-			}
-			else
-			{
-				fread ( &len,sizeof ( int ),1,fp );
-				tmpstr= ( char* ) malloc ( len );
-				fread ( tmpstr,1,len,fp );
-				map=tmpstr;
-				free ( tmpstr );
-				str+="Runde: "; str+=iToStr(game->Runde); str+="\n";
-
-				if ( host&&game )
-				{
-					int i;
-					str+=lngPack.i18n ( "Text~Multiplayer~Player" ) +": ";
-					for ( i=0;i<game->PlayerList->iCount;i++ )
-					{
-						str+=game->PlayerList->Items[i]->name;
-						if ( i<game->PlayerList->iCount-1 ) str+=",";
-					}
-					str+="\n";
-				}
-
-				fclose ( fp );
-			}
-		}
-		str+="\n";
-	}
-
-	if ( !map.empty() )
-	{
-		FILE *fp;
-		/**mappath*/
-		string sMapPath;
-		/**eyecandy mapname*/
-		string sNameNice;
-		/**mapimage*/
-		string sMapImage;
-
-		//set absolute mapname
-		sMapPath=SettingsData.sMapsPath;
-		sMapPath+=PATH_DELIMITER;
-		sMapPath+=map;
-
-		//remove ".map" for eyecandy
-		sNameNice = map;
-		sNameNice.erase ( sNameNice.length()-4,4 );
-
-		//set abolute mapimagename
-		sMapImage=sMapPath;
-		//replace "ma" from ".map" with "bm" so our new ending is .bmp
-		sMapImage.replace ( sMapImage.length()-3,2,"bm" );
-
-		if ( !FileExists ( sMapPath.c_str() ) )
-		{
-			//d'oh, somebody doesn't have the map we've choosen here
-			str+=lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) +" "+map+"\n";
-			cLog::write ( "Couldn't load map "+sMapPath, cLog::eLOG_TYPE_WARNING );
-		}
-		else
-		{
-			//draw mapinfo in game infobox
-			fp=fopen ( sMapPath.c_str(),"rb" );
-			/**rect to draw mapname*/
-			SDL_Rect r = {20,60,150,20};
-			/**Mapsize*/
-			int iSize=0;
-
-			str+=lngPack.i18n ( "Text~Title~Map" ) +": "+sNameNice;
-			if ( fp )
-			{
-				fseek ( fp,21,SEEK_SET );
-				fread ( &iSize,sizeof ( int ),1,fp );
-				fclose ( fp );
-			}
-			str+=" ("; str+=iToStr(iSize); str+="x"; str+=iToStr(iSize); str+=")\n";
-
-			SDL_BlitSurface ( surface,&r,buffer,&r );
-
-			//draw mapname to infobox map
-			font->showTextCentered(90,65, sNameNice);
-			
-			//load mapimage (if exists)
-			if ( FileExists ( sMapImage.c_str() ) )
-			{
-				//draw map in infobox for map
-				fp=fopen ( sMapImage.c_str(),"rb" );
-				SDL_Surface *sf;
-				sf=SDL_LoadBMP ( sMapImage.c_str() );
-				if ( sf!=NULL )
-				{
-					/**rect to draw mapimage*/
-					SDL_Rect dest = {33,106,112,112};
-					SDL_BlitSurface ( sf,NULL,buffer,&dest );
-				}
-				SDL_FreeSurface ( sf );
-			}
-		}
-	}
-	else
-	{
-		if ( SaveGame.empty() ) str+=lngPack.i18n ( "Text~Multiplayer~Map_NoSet" ) +"\n";
-	}
-	str+="\n";
-	if ( SaveGame.empty() )
-	{
-		if ( !no_options )
-		{
-			str+=METAL+": ";
-			str+= ( options.metal<2? ( options.metal<1?LOW:MIDDLE ) : ( options.metal<3?MUCH:MOST ) ); str+="\n";
-
-			str+=OIL+": ";
-			str+= ( options.oil<2? ( options.oil<1?LOW:MIDDLE ) : ( options.oil<3?MUCH:MOST ) ); str+="\n";
-
-			str+=GOLD+": ";
-			str+= ( options.gold<2? ( options.gold<1?LOW:MIDDLE ) : ( options.gold<3?MUCH:MOST ) ); str+="\n";
-
-			str+=RESOURCE+": ";
-			str+= ( options.dichte<2? ( options.dichte<1?THIN:MIDDLE ) : ( options.gold<3?THICK:MOST ) ); str+="\n";
-
-			str+=CREDITS+": "; str+=iToStr(options.credits); str+="\n";
-
-			str+=HEAD+": "; str+= ( options.FixedBridgeHead?DEFINITE:MOBILE ); str+="\n";
-
-			str+=ALIEN+": "; str+= ( options.AlienTech?ON:OFF ); str+="\n";
-
-			str+=GAMETYPE+": "; str+= ( options.PlayRounds?TURNS:SIMU ); str+="\n";
-
-		}
-		else
-		{
-			str+=lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) +"\n";
-		}
-	}
-
-	font->showText(r, str);
-}
-
-
-cList<string>* cMultiPlayer::SplitMessage ( string msg )
-{
-	cList<string> *Strings;
-	Strings = new cList<string>;
-	int npos=0;
-	for ( int i=0; npos!=string::npos; i++ )
-	{
-		Strings->Add( msg.substr ( npos, ( msg.find ( NET_MSG_SEPERATOR,npos )-npos ) ) );
-		npos= ( int ) msg.find ( NET_MSG_SEPERATOR,npos );
-		if ( npos!=string::npos )
-			npos++;
-	}
-	return Strings;
-}
-
-
-void cMultiPlayer::ShowChatLog ( SDL_Surface *surface )
-{
-	string str;
-	int i;
-	if ( !ChatList->iCount ) return;
-	for ( i=ChatList->iCount-1;i>=0;i-- )
-	{
-		str=ChatList->Items[i];
-		while (font->getTextWide(str) >410 )
-		{
-			str.erase ( str.end()-1 );
-		}
-		SDL_Rect scr,dest;
-		scr.x=27;scr.y=298+11;
-		dest.w=scr.w=420;dest.h=scr.h=8*11;
-		dest.x=27;dest.y=298;
-		SDL_BlitSurface ( buffer,&scr,buffer,&dest );
-		dest.y=298+8*11;
-		dest.h=11;
-		SDL_BlitSurface ( surface,&dest,buffer,&dest );
-		font->showText(dest, str);
-	}
-	while ( ChatList->iCount>0 )
-		ChatList->Delete ( 0 );
-	SHOW_SCREEN
-	mouse->draw ( false,screen );
-}
-
-// Fügt einen ChatLogEintrag hinzu:
-void cMultiPlayer::AddChatLog ( string str )
-{
-	ChatList->Add ( str );
-	if ( SettingsData.bDebug ) cLog::write ( str.c_str(), cLog::eLOG_TYPE_DEBUG );
-}
-
-// Zeigt die Liste ,it den Spielern an:
-void cMultiPlayer::DisplayPlayerList ( SDL_Surface *surface )
-{
-	SDL_Rect scr,dest;
-	cPlayer *p;
-	int i;
-	scr.x=465;scr.y=287;
-	scr.w=162;scr.h=116;
-	SDL_BlitSurface ( surface,&scr,buffer,&scr );
-	scr.x=0;scr.y=0;
-	dest.w=dest.h=scr.w=scr.h=10;
-	dest.x=476;dest.y=297;
-
-	for ( i=0;i<PlayerList->iCount;i++ )
-	{
-		p=PlayerList->Items[i];
-
-		SDL_BlitSurface ( p->color,&scr,buffer,&dest );
-		font->showText(dest.x+16,dest.y, p->name);
-		dest.y+=16;
-	}
-	SHOW_SCREEN
-}
-
-// Callback für einen Client, der eine Connection bekommt:
-void cMultiPlayer::ClientConnectedCallBack ( void )
-{
-	string msg;
-	MyPlayer->Nr=100+random ( 1000000,1 );
-	msg = MyPlayer->name + NET_MSG_SEPERATOR + iToStr(GetColorNr ( MyPlayer->color )) + NET_MSG_SEPERATOR + iToStr(MyPlayer->Nr);
-	network->TCPSend ( MSG_SIGNING_IN, ( char * ) msg.c_str() );
-}
-
-// Meldet einen Disconnect, wenn man Client ist:
-void cMultiPlayer::ClientDistconnect ( void )
-{
-	Refresh=true;
-	while ( PlayerList->iCount )
-	{
-		if ( PlayerList->Items[0]!=MyPlayer )
-		{
-			delete PlayerList->Items[0];
-		}
-		PlayerList->Delete ( 0 );
-	}
-	PlayerList->Add ( MyPlayer );
-	MyPlayer->Nr=0;
-}
-
-// Meldet einen Disconnect, wenn man Server ist:
-void cMultiPlayer::ServerDisconnect ( void )
-{
-	while ( PlayerList->iCount )
-	{
-		if ( PlayerList->Items[0]!=MyPlayer )
-		{
-			delete PlayerList->Items[0];
-		}
-		PlayerList->Delete ( 0 );
-	}
-	PlayerList->Add ( MyPlayer );
-
-	network->TCPSend ( MSG_WHO_ARE_YOU,"" );
-	Refresh=true;
-}
-
-// Wird aufgerufen, wenn die Farbe/Name geändert wurden:
-void cMultiPlayer::ChangeFarbeName ( void )
-{
-	string msg;
-	if ( network->bServer && !network->GetConnectionCount() ) return;
-	if ( !network->bServer && network->iStatus!=STAT_CONNECTED ) return;
-
-	if ( network->bServer )
-	{
-		SendPlayerList();
-		return;
-	}
-	msg=iToStr(MyPlayer->Nr) + NET_MSG_SEPERATOR + iToStr(GetColorNr ( MyPlayer->color )) + NET_MSG_SEPERATOR + MyPlayer->name;
-	network->TCPSend ( MSG_MY_NAME_CHANGED, ( char * ) msg.c_str() );
-}
-
-// Versendet eine Liste mit allen Spielern:
-void cMultiPlayer::SendPlayerList ( void )
-{
-	string msg;
-	cPlayer *p;
-	msg = iToStr(PlayerList->iCount) + NET_MSG_SEPERATOR;
-	for ( int i=0; i<PlayerList->iCount; i++ )
-	{
-		p=PlayerList->Items[i];
-		msg += iToStr(p->Nr) + NET_MSG_SEPERATOR + iToStr(GetColorNr ( p->color )) + NET_MSG_SEPERATOR + p->name;
-		if ( i != PlayerList->iCount-1 ) msg += NET_MSG_SEPERATOR;
-	}
-	network->TCPSend ( MSG_PLAYER_LIST, ( char * ) msg.c_str() );
-}
-
-// Überträgt die Spieloptionen:
-void cMultiPlayer::SendOptions ( void )
-{
-	string msg;
-	msg=iToStr(no_options) + NET_MSG_SEPERATOR + SaveGame + NET_MSG_SEPERATOR;
-	if ( !no_options )
-	{
-		msg += iToStr( options.AlienTech ) + NET_MSG_SEPERATOR
-		+ iToStr( options.credits ) + NET_MSG_SEPERATOR
-		+ iToStr( options.dichte ) + NET_MSG_SEPERATOR
-		+ iToStr( options.FixedBridgeHead ) + NET_MSG_SEPERATOR
-		+ iToStr( options.gold ) + NET_MSG_SEPERATOR
-		+ iToStr( options.metal ) + NET_MSG_SEPERATOR
-		+ iToStr( options.oil ) + NET_MSG_SEPERATOR
-		+ iToStr( options.PlayRounds ) + NET_MSG_SEPERATOR;
-	}
-	msg+=map;
-
-	network->TCPSend ( MSG_OPTIONS, msg.c_str() );
-}
-
-// Sendet die Ressourcmap an alle Clients:
-void cMultiPlayer::TransmitRessources ( void )
-{
-	string msg;
-	int i;
-	for ( i=0;i<map_obj->size*map_obj->size;i++ )
-	{
-		if ( !map_obj->Resources[i].typ ) continue;
-		if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
-		msg += iToStr(no_options) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].typ) + NET_MSG_SEPERATOR + iToStr(map_obj->Resources[i].value);
-		if ( msg.length() > 200 )
-		{
-			network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
-			msg = "";
-			SDL_Delay( 5 );
-		}
-	}
-	if ( msg.length() >0 )
-	{
-		network->TCPSend ( MSG_RESSOURCES,msg.c_str() );
-	}
-}
-
-// Wartet auf alle anderen Spieler (als Server):
-void cMultiPlayer::ServerWait ( int LandX,int LandY,cList<sLanding*> *LandingList )
-{
-	int lx=-1,ly=-1;
-	int i;
-	font->showTextCentered(320,235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG);
-	SHOW_SCREEN
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false,screen );
-
-	while ( ClientSettingsList->iCount < PlayerList->iCount-1 )
-	{
-		// Events holen:
-		SDL_PumpEvents();
-		// Die Maus machen:
-		mouse->GetPos();
-
-		if ( mouse->x!=lx||mouse->y!=ly )
-		{
-			mouse->draw ( true,screen );
-		}
-		lx=mouse->x;
-		ly=mouse->y;
-		SDL_Delay ( 1 );
-		HandleMenuMessages();
-	}
-
-	// Alle Upgrades übertragen:
-	for ( i=0;i<PlayerList->iCount;i++ )
-	{
-		TransmitPlayerUpgrades ( PlayerList->Items[i] );
-	}
-
-	TransmitPlayerLanding ( MyPlayer->Nr,LandX,LandY,LandingList );
-	game->MakeLanding ( LandX,LandY,MyPlayer,LandingList,options.FixedBridgeHead );
-
-	// Alle Landungen übertragen:
-	while ( ClientSettingsList->iCount )
-	{
-		sClientSettings *cs;
-		cPlayer *p;
-		cs=ClientSettingsList->Items[0];
-
-		TransmitPlayerLanding ( cs->nr,cs->LandX,cs->LandY,cs->LandingList );
-
-		for ( i=0;i<PlayerList->iCount;i++ )
-		{
-			p=PlayerList->Items[i];
-			if ( p->Nr==cs->nr ) break;
-		}
-		game->MakeLanding ( cs->LandX,cs->LandY,p,cs->LandingList,options.FixedBridgeHead );
-
-		while ( cs->LandingList->iCount )
-		{
-			sLanding *l;
-			l=cs->LandingList->Items[0];
-			delete l;
-			cs->LandingList->Delete ( 0 );
-		}
-		delete cs;
-		ClientSettingsList->Delete ( 0 );
-	}
-	delete ClientSettingsList;
-
-	// Die Ressourcen übertragen:
-	TransmitRessources();
-
-	network->TCPSend ( MSG_LETS_GO,"" );
-}
-
-// Überträgt alle Settings und wartet auf die Daten des Servers:
-void cMultiPlayer::ClientWait ( int LandX,int LandY,cList<sLanding*> *LandingList )
-{
-	int lx=-1,ly=-1;
-	int i;
-	font->showTextCentered(320,235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG);
-	SHOW_SCREEN
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false,screen );
-
-	ClientSettingsList=new cList<sClientSettings*>;
-	TransmitPlayerUpgrades ( MyPlayer );
-	TransmitPlayerLanding ( MyPlayer->Nr,LandX,LandY,LandingList );
-
-	while ( !LetsGo )
-	{
-		// Events holen:
-		SDL_PumpEvents();
-		// Die Maus machen:
-		mouse->GetPos();
-		if ( mouse->x!=lx||mouse->y!=ly )
-		{
-			mouse->draw ( true,screen );
-		}
-		lx=mouse->x;
-		ly=mouse->y;
-		SDL_Delay ( 1 );
-		// Look for messages and handle them
-		if ( network->iStatus==STAT_CONNECTED && network->bReceiveThreadFinished )
-		{
-			SDL_WaitThread ( network->TCPReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
-			network->TCPReceiveThread = SDL_CreateThread ( Receive,NULL );
-		}
-		HandleMenuMessages();
-	}
-
-	// Alle Landungen durchführen:
-	game->MakeLanding ( LandX,LandY,MyPlayer,LandingList,options.FixedBridgeHead );
-	while ( ClientSettingsList->iCount )
-	{
-		sClientSettings *cs;
-		cPlayer *p;
-		cs=ClientSettingsList->Items[0];
-
-		for ( i=0;i<PlayerList->iCount;i++ )
-		{
-			p=PlayerList->Items[i];
-			if ( p->Nr==cs->nr ) break;
-		}
-		game->MakeLanding ( cs->LandX,cs->LandY,p,cs->LandingList,options.FixedBridgeHead );
-
-		while ( cs->LandingList->iCount )
-		{
-			sLanding *l;
-			l=cs->LandingList->Items[0];
-			delete l;
-			cs->LandingList->Delete ( 0 );
-		}
-		delete cs;
-		ClientSettingsList->Delete ( 0 );
-	}
-	delete ClientSettingsList;
-}
-
-// Überträgt alle Upgrades dieses Players:
-void cMultiPlayer::TransmitPlayerUpgrades ( cPlayer *p )
-{
-	string msg;
-	int i;
-	msg=iToStr(p->Nr);
-
-	for ( i=0;i<UnitsData.vehicle_anz;i++ )
-	{
-		if ( p->VehicleData[i].damage!=UnitsData.vehicle[i].data.damage||
-		        p->VehicleData[i].max_shots!=UnitsData.vehicle[i].data.max_shots||
-		        p->VehicleData[i].range!=UnitsData.vehicle[i].data.range||
-		        p->VehicleData[i].max_ammo!=UnitsData.vehicle[i].data.max_ammo||
-		        p->VehicleData[i].armor!=UnitsData.vehicle[i].data.armor||
-		        p->VehicleData[i].max_hit_points!=UnitsData.vehicle[i].data.max_hit_points||
-		        p->VehicleData[i].scan!=UnitsData.vehicle[i].data.scan||
-		        p->VehicleData[i].max_speed!=UnitsData.vehicle[i].data.max_speed )
-		{
-			if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
-			msg += (string)"0" + NET_MSG_SEPERATOR
-			+ iToStr(i) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].damage) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].max_shots) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].range) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].max_ammo) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].armor) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].max_hit_points) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].scan) + NET_MSG_SEPERATOR
-			+ iToStr(p->VehicleData[i].max_speed);
-		}
-		if ( msg.length() >200 )
-		{
-			network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
-			SDL_Delay ( 1 );
-			msg="";
-		}
-	}
-
-	for ( i=0;i<UnitsData.building_anz;i++ )
-	{
-		if ( p->BuildingData[i].damage!=UnitsData.building[i].data.damage||
-		        p->BuildingData[i].max_shots!=UnitsData.building[i].data.max_shots||
-		        p->BuildingData[i].range!=UnitsData.building[i].data.range||
-		        p->BuildingData[i].max_ammo!=UnitsData.building[i].data.max_ammo||
-		        p->BuildingData[i].armor!=UnitsData.building[i].data.armor||
-		        p->BuildingData[i].max_hit_points!=UnitsData.building[i].data.max_hit_points||
-		        p->BuildingData[i].scan!=UnitsData.building[i].data.scan )
-		{
-			if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
-			msg += (string)"1" + NET_MSG_SEPERATOR
-			+ iToStr(i) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].damage) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].max_shots) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].range) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].max_ammo) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].armor) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].max_hit_points) + NET_MSG_SEPERATOR
-			+ iToStr(p->BuildingData[i].scan);
-		}
-		if ( msg.length() >200 )
-		{
-			network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
-			SDL_Delay ( 1 );
-			msg="";
-		}
-	}
-	if ( msg.length() >1 )
-	{
-		network->TCPSend ( MSG_PLAYER_UPGRADES,msg.c_str() );
-		SDL_Delay ( 1 );
-	}
-}
-
-// Überträgt die Landungsdaten des Players:
-void cMultiPlayer::TransmitPlayerLanding ( int nr,int x,int y,cList<sLanding*> *ll )
-{
-	string msg;
-	int i;
-	
-	msg = iToStr(x) + NET_MSG_SEPERATOR + iToStr(y) + NET_MSG_SEPERATOR + iToStr(nr) + NET_MSG_SEPERATOR + iToStr(ll->iCount);
-
-	for ( i=0;i<ll->iCount;i++ )
-	{
-		sLanding *l;
-		l=ll->Items[i];
-		if ( msg.length() >0 ) msg += NET_MSG_SEPERATOR;
-		msg += iToStr(l->id) + NET_MSG_SEPERATOR + iToStr(l->cargo);
-		if ( msg.length() >200 )
-		{
-			network->TCPSend ( MSG_PLAYER_LANDING,msg.c_str() );
-			SDL_Delay ( 1 );
-			msg="";
-		}
-	}
-	if ( msg.length() >0 )
-	{
-		network->TCPSend ( MSG_PLAYER_LANDING,msg.c_str() );
-		SDL_Delay ( 1 );
-	}
-}
-
-// Prüft, ob die Spielerliste ok ist:
-bool cMultiPlayer::TestPlayerList ( void )
-{
-	int i,k;
-	for ( i=0;i<PlayerList->iCount;i++ )
-	{
-		for ( k=0;k<PlayerList->iCount;k++ )
-		{
-			if ( i==k ) continue;
-			if ( strcmp ( PlayerList->Items[i]->name.c_str(),PlayerList->Items[k]->name.c_str() ) ==0 )
-			{
-				string log;
-				log=lngPack.i18n ( "Text~Multiplayer~Player_Twice" );
-				log+=PlayerList->Items[i]->name;
-				AddChatLog ( log );
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-// Prüft, ob alle Spieler aus dem Savegame da sind:
-bool cMultiPlayer::TestPlayerListLoad ( void )
-{
-	int i,k,found;
-	if ( SaveGame.empty() ) return false;
-
-	if ( PlayerList->iCount>game->PlayerList->iCount )
-	{
-		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Many" ) );
-		return false;
-	}
-	if ( PlayerList->iCount<game->PlayerList->iCount )
-	{
-		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Few" ) );
-		return false;
-	}
-
-	found=0;
-	for ( i=0;i<PlayerList->iCount;i++ )
-	{
-		cPlayer *a;
-		a=PlayerList->Items[i];
-		for ( k=0;k<game->PlayerList->iCount;k++ )
-		{
-			cPlayer *b;
-			b=game->PlayerList->Items[k];
-			if ( strcmp ( b->name.c_str(),a->name.c_str() ) ==0 ) {found++;break;}
-		}
-	}
-	if ( found!=PlayerList->iCount )
-	{
-		AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
-		return false;
-	}
-
-	if ( game->PlayRounds && strcmp ( game->PlayerList->Items[0]->name.c_str(),MyPlayer->name.c_str() ) )
-	{
-		string log;
-		lngPack.i18n ( "Text~Multiplayer~Player" );
-		log+=" ";
-		log+=game->PlayerList->Items[0]->name.c_str();
-		log+=" ";
-		log+=lngPack.i18n ( "Text~Multiplayer~Player_MustHost" );
-		AddChatLog ( log );
-		return false;
-	}
-
-	return true;
-}
+}*/
 
 // Startet ein Hot-Seat-Spiel:
 void HeatTheSeat ( void )
@@ -6425,7 +5307,7 @@ int ShowDateiMenu ( bool bSave )
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
 	bool  BeendenPressed=false, HilfePressed=false, LadenPressed=false, Cursor=true;
-	Uint8 *keystate = (Uint8 *) malloc ( sizeof( Uint8 ) * SDLK_LAST ); // alloc memory so musst be freed at the end
+	Uint8 *keystate;
 	cList<string> *files;
 	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
@@ -6485,11 +5367,11 @@ int ShowDateiMenu ( bool bSave )
 	while ( 1 )
 	{
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Tasten prüfen:
 		if ( bSave ) game->HandleTimer();
-		EventClass->GetKeyStates( keystate );
+		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] )
 		{
 			InputStr="";
@@ -6747,7 +5629,6 @@ int ShowDateiMenu ( bool bSave )
 		LastB=b;
 	}
 	delete files;
-	free ( keystate );
 	return -1;
 }
 

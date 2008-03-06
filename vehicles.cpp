@@ -27,7 +27,7 @@
 #include "dialog.h"
 #include "files.h"
 #include "pcx.h"
-#include "networkmessages.h"
+#include "events.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
@@ -1152,10 +1152,10 @@ void cVehicle::ShowDetails ( void )
 	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	// Den Speed anzeigen:
-	DrawNumber ( 31, 201, data.speed / 2, data.max_speed / 2, GraphicsData.gfx_hud );
+	DrawNumber ( 31, 201, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
 
 	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 2, data.max_speed / 2, GraphicsData.gfx_hud );
+	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 
 	if ( data.can_transport && owner == game->ActivePlayer )
@@ -1443,7 +1443,7 @@ void cVehicle::ShowHelp ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -2160,12 +2160,6 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive = false;
 				MenuActive = false;
 				PlayFX ( SoundData.SNDObjectMenu );
-				// Client only
-
-				if ( game->engine->network && !game->engine->network->bServer )
-				{
-					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
-				}
 			}
 
 			MenuActive = false;
@@ -2259,12 +2253,6 @@ void cVehicle::DrawMenu ( void )
 				MoveJobActive = false;
 				MenuActive = false;
 				PlayFX ( SoundData.SNDObjectMenu );
-				// Client only
-
-				if ( game->engine->network && !game->engine->network->bServer )
-				{
-					SendIntBool(PosX + PosY * game->map->size, ( data.can_drive == DRIVE_AIR ), MSG_MJOB_STOP);
-				}
 			}
 			else
 				if ( IsBuilding )
@@ -2273,10 +2261,6 @@ void cVehicle::DrawMenu ( void )
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsBuilding = false;
 					BuildPath = false;
-					if ( game->engine->network )
-					{
-						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
-					}
 
 					if ( data.can_build == BUILD_BIG )
 					{
@@ -2300,10 +2284,6 @@ void cVehicle::DrawMenu ( void )
 					MenuActive = false;
 					PlayFX ( SoundData.SNDObjectMenu );
 					IsClearing = false;
-					if ( game->engine->network )
-					{
-						game->engine->network->TCPSend( MSG_STOP_BUILD, iToStr( PosX + PosY * game->map->size ).c_str() );
-					}
 
 					if ( ClearBig )
 					{
@@ -2360,11 +2340,6 @@ void cVehicle::DrawMenu ( void )
 				game->map->GO[PosX+1+ ( PosY+1 ) *game->map->size].vehicle = this;
 				game->map->GO[PosX+ ( PosY+1 ) *game->map->size].vehicle = this;
 			}
-
-			if ( game->engine->network )
-			{
-				game->engine->network->TCPSend ( MSG_START_CLEAR, iToStr ( PosX + PosY * game->map->size ).c_str() );
-			}
 			return;
 		}
 
@@ -2388,10 +2363,6 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Wachposten = !Wachposten;
-			if ( game->engine->network )
-			{
-				SendSentryMode( data.can_drive == DRIVE_AIR, PosX + PosY * game->map->size, Wachposten );
-			}
 			Wachwechsel();
 			return;
 		}
@@ -3228,7 +3199,7 @@ void cVehicle::ShowBuildMenu ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -3413,10 +3384,6 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( data.can_build != BUILD_BIG )
 					{
 						IsBuilding = true;
-						if ( game->engine->network )
-						{
-							SendStartBuild( PosX + PosY * game->map->size, BuildingTyp, BuildRounds, BuildCosts, BandX, BandY, MSG_START_BUILD );
-						}
 						// Den Building Sound machen:
 						StopFXLoop ( game->ObjectStream );
 						game->ObjectStream = PlayStram();
@@ -4364,7 +4331,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -4813,11 +4780,11 @@ void cVehicle::ShowBigDetails ( void )
 	// Speed:
 
 
-	font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_speed / 2 ) ); //FIXME: might crash if e.g. max_speed = 3
+	font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_speed / 4 ) ); //FIXME: might crash if e.g. max_speed = 3
 
 	font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Speed" ) );
 
-	DrawSymbolBig ( SBSpeed, COLUMN_3 , y - 2, 160, data.max_speed / 2, typ->data.max_speed / 2, buffer );
+	DrawSymbolBig ( SBSpeed, COLUMN_3 , y - 2, 160, data.max_speed / 4, typ->data.max_speed / 4, buffer );
 
 	DOLINEBREAK
 
@@ -5191,7 +5158,7 @@ void cVehicle::ShowStorage ( void )
 		game->HandleTimer();
 
 		// Events holen:
-		SDL_PumpEvents();
+		EventHandler->HandleEvents();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -5364,7 +5331,7 @@ void cVehicle::ShowStorage ( void )
 
 			while ( b )
 			{
-				SDL_PumpEvents();
+				EventHandler->HandleEvents();
 				b = mouse->GetMouseButton();
 			}
 
@@ -5499,7 +5466,7 @@ void cVehicle::ShowStorage ( void )
 
 				while ( b )
 				{
-					SDL_PumpEvents();
+					EventHandler->HandleEvents();
 					b = mouse->GetMouseButton();
 				}
 
@@ -5710,11 +5677,6 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->InWachRange();
 
 	owner->DoScan();
-
-	if ( game->engine->network && !engine_call )
-	{
-		SendActivateVehicle( false, data.can_drive == DRIVE_AIR, nr, off, PosX + PosY * game->map->size, 0, 0 );
-	}
 }
 
 // Prüft, ob das Objekt aufmunitioniert werden kann:
@@ -5825,12 +5787,6 @@ void cVehicle::LayMine ( void )
 	else
 	{
 		game->engine->AddBuilding ( PosX, PosY, UnitsData.building + BNrLandMine, owner, false );
-
-		if( game->engine->network && !game->engine->network->bServer )
-		{
-			SendAddBuilding( PosX, PosY, BNrLandMine, owner->Nr );
-		}
-
 		PlayFX ( SoundData.SNDLandMinePlace );
 	}
 
@@ -5856,11 +5812,6 @@ void cVehicle::ClearMine ( void )
 	b = game->map->GO[off].base;
 
 	if ( !b || !b->data.is_expl_mine || b->owner != owner ) return;
-
-	if ( game->engine->network )
-	{
-		game->engine->network->TCPSend ( MSG_CLEAR_MINE, iToStr ( off ).c_str() );
-	}
 
 	// Mine räumen:
 	game->map->GO[off].base = NULL;
@@ -6091,10 +6042,6 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 
 	if ( success )
 	{
-		if ( game->engine->network )
-		{
-			SendCommandoSuccess ( steal, PosX + PosY * game->map->size, off );
-		}
 		if ( steal )
 		{
 			cVehicle *v;
@@ -6147,10 +6094,6 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		detected = true;
 		detection_override = true;
 		PlayVoice ( VoiceData.VOICommandoDetected );
-		if ( game->engine->network )
-		{
-			game->engine->network->TCPSend ( MSG_COMMANDO_MISTAKE, iToStr( PosX + PosY * game->map->size ).c_str() );
-		}
 	}
 
 	if ( game->SelectedVehicle == this )

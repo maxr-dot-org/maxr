@@ -16,544 +16,370 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include "network.h"
-#include "menu.h"
-#include "log.h"
+#include "events.h"
 
-cTCP::cTCP ( bool server )
+void cTCP::init()
 {
-	this->bServer=server;
-	iNum_clients=0;
-	iMax_clients=8;
-	iPlayerId=-1;
-	SocketSet=NULL;
-	sock_server=NULL;
-	for ( int i=0;i<8;i++ )
+	DataMutex = SDL_CreateMutex();
+	TCPMutex = SDL_CreateMutex();
+	WaitForRead = SDL_CreateCond();
+
+	for ( int i = 0; i < MAX_CLIENTS; i++ )
 	{
-		sock_client[i]=NULL;
+		Sockets[i] = NULL;
 	}
-	iStatus=STAT_CLOSED;
-	WaitOKList = new cList<sNetBuffer*>;
-	NetMessageList = new cList<cNetMessage*>;
-	LastReceived = new cList<sReceivedMsgData*>;
-	iMyID = 0;
-	iNextMessageID = GenerateNewID();
-	bReceiveThreadFinished = true;
-	TCPReceiveThread = NULL;
-	TCPResendThread = SDL_CreateThread ( CheckResends , NULL );
+	SocketSet = SDLNet_AllocSocketSet( MAX_CLIENTS );
+
+	iLast_Socket = 0;
+	sIP = "";
+	iPort = 0;
+	bDataLocked = false;
+	bTCPLocked = false;
+	bWaitForRead = false;
+
+	bExit = false;
+	TCPHandleThread = SDL_CreateThread( CallbackHandleNetworkThread, this );
 }
 
-cTCP::~cTCP()
+void cTCP::kill()
 {
-	TCPClose();
+	bExit = true;
+	SDL_CondSignal( WaitForRead );
+	SDL_WaitThread ( TCPHandleThread, NULL );
 
-	while( WaitOKList->iCount > 0 )
+	for ( int i = 0; i < iLast_Socket; i++ )
 	{
-		delete WaitOKList->Items[WaitOKList->iCount - 1];
-		WaitOKList->Delete( WaitOKList->iCount - 1 );
-	}
-	delete WaitOKList;
-
-	while( NetMessageList->iCount > 0 )
-	{
-		delete NetMessageList->Items[NetMessageList->iCount - 1];
-		NetMessageList->Delete( NetMessageList->iCount - 1 );
-	}
-	delete NetMessageList;
-
-	while( LastReceived->iCount > 0 )
-	{
-		delete LastReceived->Items[LastReceived->iCount - 1];
-		LastReceived->Delete( LastReceived->iCount - 1 );
-	}
-	delete LastReceived;
-}
-
-
-void cTCP::TCPClose()
-{
-	if ( TCPReceiveThread ) SDL_KillThread( TCPReceiveThread );
-	if ( TCPResendThread ) SDL_KillThread( TCPResendThread );
-	if ( SocketSet ) SDLNet_FreeSocketSet ( SocketSet );
-	if ( sock_server ) SDLNet_TCP_Close ( sock_server );
-	for ( int i=0;i<8;i++ )
-	{
-		if ( sock_client[i] ) SDLNet_TCP_Close ( sock_client[i] );
-	}
-	iStatus=STAT_CLOSED;
-	TCPReceiveThread = NULL;
-	TCPResendThread = NULL;
-}
-
-bool cTCP::TCPCreate()
-{
-	// Host
-	if ( bServer )
-	{
-		if ( SDLNet_ResolveHost ( &addr,NULL,iPort ) <0 ) // No address for server
+		if ( Sockets[i]->iType != FREE_SOCKET )
 		{
-			return false;
+			SDLNet_TCP_Close ( Sockets[i]->socket );
 		}
+		free ( Sockets[i] );
 	}
-	// Client
-	else
-	{
-		if ( SDLNet_ResolveHost ( &addr,sIp.c_str(),iPort ) <0 ) // Get server at address
-		{
-			return false;
-		}
-	}
-	return true;
+
+	SDL_DestroyMutex( DataMutex );
+	SDL_DestroyMutex( TCPMutex );
+	SDL_DestroyCond( WaitForRead );
 }
 
-bool cTCP::TCPOpen ( void )
+
+int cTCP::create()
 {
-	TCPCreate();
-	// Host
-	if ( bServer )
+	lockTCP();
+	if( SDLNet_ResolveHost( &ipaddr, NULL, iPort ) == -1 ) { unlockTCP(); return -1; }
+	unlockTCP();
+
+	lockData();
+	int iNum;
+	if ( ( iNum = getFreeSocket() ) == -1 ) { unlockData(); return -1; }
+
+	Sockets[iNum]->socket = SDLNet_TCP_Open ( &ipaddr );
+	if ( !Sockets[iNum]->socket ) { unlockData(); return -1; }
+
+	Sockets[iNum]->iType = SERVER_SOCKET;
+	Sockets[iNum]->iState = STATE_NEW;
+	clearBuffer ( &Sockets[iNum]->buffer );
+
+	unlockData();
+	return 0;
+}
+
+int cTCP::connect()
+{
+	lockTCP();
+	if( SDLNet_ResolveHost( &ipaddr, sIP.c_str(), iPort ) == -1 ) { unlockTCP(); return -1; }
+	unlockTCP();
+
+	lockData();
+	int iNum;
+	if ( ( iNum = getFreeSocket() ) == -1 ) { unlockData(); return -1; }
+
+	Sockets[iNum]->socket = SDLNet_TCP_Open ( &ipaddr );
+	if ( !Sockets[iNum]->socket ) { unlockData(); return -1; }
+
+	Sockets[iNum]->iType = CLIENT_SOCKET;
+	Sockets[iNum]->iState = STATE_NEW;
+	clearBuffer ( &Sockets[iNum]->buffer );
+
+	unlockData();
+	return 0;
+}
+
+int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
+{
+	lockData();
+	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber]->iType == CLIENT_SOCKET && ( Sockets[iClientNumber]->iState == STATE_READY || Sockets[iClientNumber]->iState == STATE_NEW ) )
 	{
-		sock_server = SDLNet_TCP_Open ( &addr ); // open socket
-		if ( sock_server == NULL )
+		if ( iLenght > 0 )
 		{
-			return false;
-		}
-		iStatus = STAT_OPENED;
-		while ( iNum_clients < iMax_clients ) // Wait for more clients
-		{
-			if ( iNum_clients > 0 )
-				TCPReceive(); // If there is minimal one client: look for messages
-			else
-				SDL_Delay ( 1000 ); // else wait a second
-			sock_client[iNum_clients] = SDLNet_TCP_Accept ( sock_server ); // look for new client
-			if ( sock_client[iNum_clients] != NULL ) // New client has connected
+			lockTCP();
+			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber]->socket, buffer, iLenght );
+			unlockTCP();
+			if ( iSendLenght != iLenght )
 			{
-				iNum_clients++;
-				SocketSet = SDLNet_AllocSocketSet ( iNum_clients ); // Alloc socket-set for new client
-				for ( int i=0;i<=iNum_clients;i++ )
-				{
-					SDLNet_TCP_AddSocket ( SocketSet, sock_client[i] ); // Add clients to the socket-set
-				} 
-				// Send the client his ID
-				sNetBuffer *NetBuffer = new sNetBuffer(); //FIXME: sNetBuffer is never deleted, afaics
-
-				NetBuffer->iID = iNextMessageID;
-				iNextMessageID = GenerateNewID();
-				NetBuffer->iTyp = BUFF_TYP_NEWID;
-				NetBuffer->iTicks = SDL_GetTicks();
-				NetBuffer->iDestClientNum = iNum_clients;
-				NetBuffer->msg.lenght = ( int )iToStr( iNum_clients-1 ).length() + 1;
-				strcpy(NetBuffer->msg.msg, iToStr( iNum_clients ).c_str() );
-
-				SDLNet_TCP_Send ( sock_client[iNum_clients-1], NetBuffer, sizeof ( sNetBuffer ) );
-				SDL_Delay ( 1 );
-
-				string sTmp;
-				sTmp = "(Host)Send NewID-Message: -ID " + SplitMessageID( NetBuffer->iID ) + " -Client " + iToStr( iNum_clients-1 ) + "-Message: \"" + NetBuffer->msg.msg + "\"";
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				sNetBuffer *WaitBuffer = new sNetBuffer;
-				memcpy( WaitBuffer, NetBuffer, sizeof( sNetBuffer ) );
-				WaitOKList->Add( WaitBuffer ); // Add package to waitlist
-				delete NetBuffer;
+				Sockets[iClientNumber]->iState = STATE_DYING;
+				void *data = malloc ( sizeof (Sint16) );
+				((Sint16*)data)[0] = iClientNumber;
+				sendEvent ( TCP_CLOSEEVENT, data, NULL );
+				unlockData();
+				return -1;
 			}
 		}
-		iStatus=STAT_CONNECTED;
 	}
-	// Client
-	else
-	{
-		sock_server = SDLNet_TCP_Open ( &addr ); // open socket
-		if ( sock_server == NULL )
-		{
-			return false;
-		}
-		TCPReceive(); // Wait for new id
-		iStatus=STAT_CONNECTED;
-	}
-	return true;
+	unlockData();
+	return 0;
 }
 
-bool cTCP::TCPSend ( int typ,const char *msg)
+int cTCP::send( int iLenght, char *buffer )
 {
-	if (iStatus == STAT_CLOSED) return false;
-	sNetBuffer *NetBuffer = new sNetBuffer();
-	int iPartLenght;
-	int iPartNum = 1;
-	int iMax_PartNum;
-	// Send Message parts
-	iMax_PartNum = ( int )(( float ) ( strlen(msg) + 1 ) / 256) + 1; // How many parts to send?
-	while(iPartNum <= iMax_PartNum)
+	int iReturnVal = 0;
+	for ( int i = 0; i < getSocketCount(); i++ )
 	{
-		// Set the actual message part
-		if(iPartNum < iMax_PartNum)
+		if ( sendTo ( i, iLenght, buffer ) == -1 )
 		{
-			iPartLenght = 256;
+			iReturnVal = -1;
 		}
-		else
-		{
-			iPartLenght = ( int ) ( strlen(msg) - ( ( iMax_PartNum - 1 ) * 255 ) + 1 );
-		}
-		NetBuffer->msg.typ = typ;
-		NetBuffer->msg.lenght = iPartLenght;
-		memcpy ( NetBuffer->msg.msg, msg,iPartLenght );
-		NetBuffer->msg.msg[iPartLenght-1]='\0';
-
-		// Set the buffer
-		NetBuffer->iMax_parts = iMax_PartNum;
-		NetBuffer->iPart = iPartNum;
-		NetBuffer->iTyp = BUFF_TYP_DATA;
-
-		// Host
-		int i = 0;
-		if ( bServer )
-		{
-			while ( sock_client[i] != NULL && i < iMax_clients )
-			{
-				NetBuffer->iID = iNextMessageID;
-				iNextMessageID = GenerateNewID();
-				NetBuffer->iTicks = SDL_GetTicks();
-				NetBuffer->iDestClientNum = i;
-				SDLNet_TCP_Send ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
-				string sTmp;
-				sTmp = "(Host)Send Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				SDL_Delay ( 1 );
-				i++;
-			}
-		}
-		// Client
-		else
-		{
-			NetBuffer->iID = iNextMessageID;
-			iNextMessageID = GenerateNewID();
-			NetBuffer->iTicks = SDL_GetTicks();
-			NetBuffer->iDestClientNum = -1;
-			SDLNet_TCP_Send ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-			string sTmp;
-			sTmp = "(Client)Send Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-			cLog::write(sTmp, LOG_TYPE_NETWORK);
-			SDL_Delay ( 1 );
-		}
-		// Add package to waitlist
-		sNetBuffer *WaitBuffer = new sNetBuffer;
-		memcpy( WaitBuffer, NetBuffer, sizeof( sNetBuffer ) );
-		WaitOKList->Add( WaitBuffer );
-		
-		iPartNum++;
 	}
-	delete NetBuffer;
-	return true;
+	return iReturnVal;
 }
 
-bool cTCP::TCPReceive()
+int cTCP::read( int iClientNumber, int iLenght, char *buffer )
 {
-	sNetBuffer *NetBuffer = new sNetBuffer();
-	// Host
-	int i = 0;
-	if ( bServer )
+	int iMinLenght;
+
+	lockData();
+	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber]->iType == CLIENT_SOCKET )
 	{
-		SDLNet_CheckSockets ( SocketSet, 1000 * 1 );
-		while ( i < iNum_clients )
+		if ( iLenght > 0 )
 		{
-			if ( SDLNet_SocketReady ( sock_client[i] ) )
+			iMinLenght = ( ( ( Sockets[iClientNumber]->buffer.iLenght ) < ( (unsigned int)iLenght ) ) ? ( Sockets[iClientNumber]->buffer.iLenght ) : ( (unsigned int)iLenght ) );
+			memmove ( buffer, Sockets[iClientNumber]->buffer.data, iMinLenght );
+			Sockets[iClientNumber]->buffer.iLenght -= iMinLenght;
+			memmove ( Sockets[iClientNumber]->buffer.data, &Sockets[iClientNumber]->buffer.data[iMinLenght], Sockets[iClientNumber]->buffer.iLenght );
+		}
+	}
+	unlockData();
+
+	bWaitForRead = false;
+	SDL_CondSignal ( WaitForRead );
+
+	return iMinLenght;
+}
+
+int CallbackHandleNetworkThread( void *arg )
+{
+	cTCP *TCP = (cTCP *) arg;
+	TCP->HandleNetworkThread();
+	return 0;
+}
+
+void cTCP::HandleNetworkThread()
+{
+	while( !bExit )
+	{
+		SDLNet_CheckSockets ( SocketSet, 10 );
+
+		lockData();
+
+		// Wait until there is something to read
+		while ( !bExit && bWaitForRead )
+		{
+			bDataLocked = false;
+			SDL_CondWait ( WaitForRead, DataMutex );
+			bDataLocked = true;
+		}
+		// Check all Sockets
+		for ( int i = 0; !bExit && i < iLast_Socket; i++ )
+		{
+			if ( Sockets[i]->iState == STATE_NEW )
 			{
-				SDLNet_TCP_Recv ( sock_client[i], NetBuffer, sizeof ( sNetBuffer ) );
-
-				sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
-				ReceivedMsgData->iID = NetBuffer->iID;
-				ReceivedMsgData->iTime = SDL_GetTicks();
-
-				bool bIgnore = false;
-				for (int j = 0; j < LastReceived->iCount; j++ )
+				lockTCP();
+				if ( SDLNet_TCP_AddSocket ( SocketSet, Sockets[i]->socket ) != -1 )
 				{
-					if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == LastReceived->Items[j]->iID )
+					Sockets[i]->iState = STATE_READY;
+				}
+				else
+				{
+					Sockets[i]->iState = STATE_DELETE;
+				}
+				unlockTCP();
+			}
+			else if ( Sockets[i]->iState == STATE_DELETE )
+			{
+				lockTCP();
+				SDLNet_TCP_DelSocket ( SocketSet, Sockets[i]->socket );
+				deleteSocket ( i );
+				unlockTCP();
+				i--;
+				continue;
+			}
+			else if ( Sockets[i]->iType == SERVER_SOCKET && SDLNet_SocketReady ( Sockets[i]->socket ) )
+			{
+				lockTCP();
+				TCPsocket socket = SDLNet_TCP_Accept ( Sockets[i]->socket );
+				unlockTCP();
+
+				if ( socket != NULL ) 
+				{
+					int iNum;
+					if ( ( iNum = getFreeSocket() ) != -1 )
 					{
-						string sTmp;
-						sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
-						cLog::write(sTmp, LOG_TYPE_NETWORK);
-						bIgnore = true;	// Received message twice - ignoring
-						delete ReceivedMsgData;
-						break;
+						Sockets[iNum]->socket = socket;
+
+						Sockets[iNum]->iType = CLIENT_SOCKET;
+						Sockets[iNum]->iState = STATE_NEW;
+						clearBuffer ( &Sockets[iNum]->buffer );
+						void *data = malloc ( sizeof (Sint16) );
+						((Sint16*)data)[0] = iNum;
+						sendEvent( TCP_ACCEPTEVENT, data, NULL );
 					}
 				}
-				if ( !bIgnore )
+				else SDLNet_TCP_Close ( socket );
+			}
+			else if ( Sockets[i]->iType == CLIENT_SOCKET && Sockets[i]->iState == STATE_READY && SDLNet_SocketReady ( Sockets[i]->socket ) )
+			{
+				if ( Sockets[i]->buffer.iLenght >= PACKAGE_LENGHT )
 				{
-					LastReceived->Add( ReceivedMsgData );
-					// is a new messages
-					if ( NetBuffer->iTyp == BUFF_TYP_DATA )
+					bWaitForRead = true;
+				}
+				else
+				{
+					int iLenght;
+					iLenght = SDLNet_TCP_Recv ( Sockets[i]->socket, Sockets[i]->buffer.data, PACKAGE_LENGHT - Sockets[i]->buffer.iLenght );
+
+					void *data = malloc ( sizeof (Sint16) );
+					((Sint16*)data)[0] = i;
+					if ( iLenght > 0 )
 					{
-						string sTmp;
-						sTmp = "(Host)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-						cLog::write(sTmp, LOG_TYPE_NETWORK);
-						// Add message to list
-						cNetMessage *Message = new cNetMessage();
-						memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
-						NetMessageList->Add( Message );
-						// Send OK to Client
-						SendOK( NetBuffer->iID, i );
-					}
-					// if an OK that messages has been reveived
-					else if( NetBuffer->iTyp == BUFF_TYP_OK )
-					{
-						string sTmp;
-						sTmp = "(Host)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i );
-						cLog::write(sTmp, LOG_TYPE_NETWORK);
-						// Delete Message ID from WaitList
-						for (int k = 0; k < WaitOKList->iCount; k++)
+						int iOldLenght = Sockets[i]->buffer.iLenght;
+						Sockets[i]->buffer.iLenght += iLenght;
+						if ( iOldLenght == 0 )
 						{
-							if( WaitOKList->Items[k]->iID == NetBuffer->iID )
-							{
-								delete WaitOKList->Items[k];
-								WaitOKList->Delete(k);
-								break;
-							}
+							sendEvent ( TCP_RECEIVEEVENT, data, NULL );
 						}
 					}
 					else
 					{
-						string sTmp;
-						sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-						cLog::write(sTmp, LOG_TYPE_NETWORK);
+						Sockets[i]->iState = STATE_DYING;
+						sendEvent ( TCP_CLOSEEVENT, data, NULL );
 					}
 				}
 			}
-			i++;
 		}
+		unlockData();
 	}
-	// Client
-	else
+}
+
+int cTCP::sendEvent( int iEventType, void *data1, void *data2 )
+{
+	SDL_Event event;
+
+	event.type = NETWORK_EVENT;
+	event.user.code = iEventType;
+	event.user.data1 = data1;
+	event.user.data2 = data2;
+
+	if ( bDataLocked )
 	{
-		SDLNet_TCP_Recv ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
+		unlockData();
+		EventHandler->pushEvent ( &event );
+		lockData();
+	}
 
-		sReceivedMsgData *ReceivedMsgData = new sReceivedMsgData();
-		ReceivedMsgData->iID = NetBuffer->iID;
-		ReceivedMsgData->iTime = SDL_GetTicks();
+	return 0;
+}
 
-		bool bIgnore = false;
-		for (int j = 0; j < LastReceived->iCount; j++ )
+void cTCP::close( int iClientNumber )
+{
+	lockData();
+	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && ( Sockets[iClientNumber]->iType == CLIENT_SOCKET || Sockets[iClientNumber]->iType == SERVER_SOCKET ) )
+	{
+		Sockets[iClientNumber]->iState = STATE_DELETE;
+	}
+	unlockData();
+}
+
+void cTCP::deleteSocket( int iNum )
+{
+	lockData();
+	SDLNet_TCP_Close( Sockets[iNum]->socket );
+	for ( int i = iNum; i < iLast_Socket; i++ )
+	{
+		Sockets[i] = Sockets[i+1];
+	}
+	iLast_Socket--;
+	unlockData();
+}
+
+void cTCP::lockTCP()
+{
+	SDL_LockMutex ( TCPMutex );
+	bTCPLocked = true;
+}
+
+void cTCP::unlockTCP()
+{
+	SDL_UnlockMutex ( TCPMutex );
+	bTCPLocked = false;
+}
+
+void cTCP::lockData()
+{
+	SDL_LockMutex ( DataMutex );
+	bDataLocked = true;
+}
+
+void cTCP::unlockData()
+{
+	SDL_UnlockMutex ( DataMutex );
+	bDataLocked = false;
+}
+
+void cTCP::sendWaitCondSignal()
+{
+	bWaitForRead = false;
+	SDL_CondSignal( WaitForRead );
+}
+
+void cTCP::setPort( int iPort )
+{
+	this->iPort = iPort;
+}
+
+void cTCP::setIP ( string sIP )
+{
+	this->sIP = sIP;
+}
+
+int cTCP::getSocketCount()
+{
+	return iLast_Socket;
+}
+
+void cTCP::clearBuffer( sDataBuffer *buffer )
+{
+	buffer->iLenght = 0;
+	memset ( buffer, 0, PACKAGE_LENGHT);
+}
+
+int cTCP::getFreeSocket()
+{
+	int iNum;
+	for( iNum = 0; iNum < iLast_Socket; iNum++ )
+	{
+		if ( Sockets[iNum]->iType == FREE_SOCKET )
 		{
-			if( NetBuffer->iTyp != BUFF_TYP_OK && NetBuffer->iID == LastReceived->Items[j]->iID )
-			{
-				string sTmp;
-				sTmp = "Ignored Messages: -ID: "  + SplitMessageID( NetBuffer->iID );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				bIgnore = true;	// Received message twice - ignoring 
-				delete ReceivedMsgData;
-				break;
-			}
-		}
-		if ( !bIgnore )
-		{
-			LastReceived->Add( ReceivedMsgData );
-			if ( NetBuffer->iTyp == BUFF_TYP_DATA )
-			{
-				string sTmp;
-				sTmp = "(Client)Received Data-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				// Add message to list
-				cNetMessage *Message = new cNetMessage();
-				memcpy( Message, &NetBuffer->msg, sizeof( cNetMessage ) );
-				NetMessageList->Add( Message );
-				// Send OK to Server
-				SendOK( NetBuffer->iID, -1 );
-			}
-			// if an OK that messages has been reveived
-			else if( NetBuffer->iTyp == BUFF_TYP_OK )
-			{
-				string sTmp;
-				sTmp = "(Client)Received OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				// Delete Message ID from WaitList
-				for (int k = 0; k < WaitOKList->iCount; k++)
-				{
-					if( WaitOKList->Items[k]->iID == NetBuffer->iID )
-					{
-						delete WaitOKList->Items[k];
-						WaitOKList->Delete(k);
-						break;
-					}
-				}
-			}
-			// if a new id has been received
-			else if( NetBuffer->iTyp == BUFF_TYP_NEWID )
-			{
-				string sTmp;
-				sTmp = "(Client)Received NewID-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Message: \"" + NetBuffer->msg.msg + "\"";
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-				iMyID = atoi ( (char *) NetBuffer->msg.msg );
-				SendOK( NetBuffer->iID, -1 );
-			}
-			else
-			{
-				string sTmp;
-				sTmp = "(Host)Received unknown Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: " + iToStr( i ) + " -Message: \"" + NetBuffer->msg.msg + "\"" + " -iTyp: " + iToStr( NetBuffer->msg.typ );
-				cLog::write(sTmp, LOG_TYPE_NETWORK);
-			}
+			break;
 		}
 	}
-	if ( !bServer || iStatus==STAT_CONNECTED )
-		bReceiveThreadFinished = true;
-	delete NetBuffer;
-	return true;
-}
-
-unsigned int cTCP::GenerateNewID()
-{
-	unsigned int iReturnID;
-	int iHour, iMin, iSec, iMsec;
-	iHour = SDL_GetTicks() / ( 60*60*1000 );
-	iMin = SDL_GetTicks() / ( 60*1000 ) - iHour*60;
-	iSec = SDL_GetTicks() / 1000 - iMin*60 - iHour*60*60;
-	iMsec = SDL_GetTicks() - iSec*1000 - iMin*60*1000 - iHour*60*60*1000;
-
-	iReturnID = iMyID * 10000000;
-	iReturnID += iMin * 100000;
-	iReturnID += iSec * 1000;
-	iReturnID += iMsec;
-
-	return iReturnID;
-}
-
-string cTCP::SplitMessageID(unsigned int iID)
-{
-	string sResult;
-	sResult = iToStr( iID );
-	while( sResult.size() < 9 )
+	if ( iNum == iLast_Socket )
 	{
-		sResult.insert( 0,"0" );
+		Sockets[iNum] = (sSocket *) malloc ( sizeof ( sSocket ) );
+		Sockets[iNum]->iType = FREE_SOCKET;
+		iLast_Socket++;
 	}
-	sResult.insert( sResult.size()-3,":" );
-	sResult.insert( sResult.size()-6,":" );
-	sResult.insert( sResult.size()-9,":" );
-	return sResult;
-}
+	else if ( iNum > iLast_Socket ) return -1;
 
-void cTCP::SendOK(unsigned int iID, int iClientNum)
-{
-	sNetBuffer *NetBuffer = new sNetBuffer();
-	NetBuffer->iID = iID;
-	NetBuffer->iMax_parts = 1;
-	NetBuffer->iPart = 1;
-	NetBuffer->iTyp = BUFF_TYP_OK;
-	NetBuffer->iTicks = SDL_GetTicks();
-	NetBuffer->iDestClientNum = iClientNum;
-
-	// Client
-	if(iClientNum == -1)
-	{
-		SDLNet_TCP_Send ( sock_server, NetBuffer, sizeof ( sNetBuffer ) );
-		string sTmp;
-		sTmp = "(Client)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID );
-		cLog::write(sTmp, LOG_TYPE_NETWORK);
-		SDL_Delay ( 1 );
-	}
-	// Host
-	else
-	{
-		SDLNet_TCP_Send ( sock_client[iClientNum], NetBuffer, sizeof ( sNetBuffer ) );
-		string sTmp;
-		sTmp = "(Host)Send OK-Message: -ID: "  + SplitMessageID( NetBuffer->iID ) + " -Client: \"" + iToStr( iClientNum ) + "\"";
-		cLog::write(sTmp, LOG_TYPE_NETWORK);
-		SDL_Delay ( 1 );
-	}
-	delete NetBuffer;
-	return ;
-}
-
-void cTCP::SetTcpIpPort ( int iPort )
-{
-	this->iPort=iPort;
-}
-
-void cTCP::SetIp ( string sIp )
-{
-	this->sIp=sIp;
-}
-
-int cTCP::GetConnectionCount()
-{
-	return iNum_clients;
-}
-
-int Receive ( void * )
-{
-	MultiPlayer->network->bReceiveThreadFinished = false;
-	MultiPlayer->network->TCPReceive();
-	MultiPlayer->network->bReceiveThreadFinished = true;
-	return 1;
-}
-
-int Open ( void * )
-{
-	MultiPlayer->network->bReceiveThreadFinished = false;
-	if ( MultiPlayer->network->TCPOpen() )
-	{
-		MultiPlayer->network->bReceiveThreadFinished = true;
-		return 1;
-	}
-	else
-	{
-		MultiPlayer->network->bReceiveThreadFinished = true;
-		return 0;
-	}
-}
-
-int CheckResends ( void * )
-{
-	SDL_Delay(1000);
-	while ( 1 )
-	{
-		SDL_Delay(10);
-		MultiPlayer->network->TCPCheckResends ();
-	}
-	return 1;
-}
-
-void cTCP::TCPCheckResends ()
-{
-	if(WaitOKList)
-	{
-		for(int i = 0; WaitOKList->iCount > i; i++) // Check all Waiting Buffers
-		{
-			if(WaitOKList->Items[i]) // sanity check
-			{
-				int iTime = WaitOKList->Items[i]->iTicks; // Get the Time since this buffer was send the last time
-				if( ( iTime - SDL_GetTicks() ) > 100 )
-				{
-					int iClient = WaitOKList->Items[i]->iDestClientNum; // To which client should the buffer be send
-					if(iClient != -1) // To a Client
-					{
-						if ( sock_client[iClient] != NULL )
-						{
-							SDLNet_TCP_Send ( sock_client[iClient],  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
-						}
-					}
-					else // To the Host
-					{
-						if ( sock_server != NULL )
-						{
-							SDLNet_TCP_Send ( sock_server,  WaitOKList->Items[i], sizeof ( sNetBuffer ) );
-						}
-					}
-					WaitOKList->Items[i]->iTicks = SDL_GetTicks(); // Set the new Time
-					string sTmp;
-					sTmp = "Resend buffer: -ID: " + iToStr( WaitOKList->Items[i]->iID );
-					cLog::write(sTmp, LOG_TYPE_NETWORK);
-				}
-				SDL_Delay ( 1 ) ;
-			}
-		}
-	}
-	if( LastReceived )
-	{
-		for (int i = 0; i < LastReceived->iCount; i++ )
-		{
-			if( LastReceived->Items[i]->iTime - SDL_GetTicks() > 60*1000 )
-			{
-				delete LastReceived->Items[i];
-				LastReceived->Delete(i);
-				break;
-			}
-		}
-	}
-	return ;
+	return iNum;
 }

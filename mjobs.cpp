@@ -20,7 +20,6 @@
 #include "mjobs.h"
 #include "game.h"
 #include "sound.h"
-#include "networkmessages.h"
 
 #include "fonts.h"
 
@@ -162,7 +161,7 @@ int cMJobs::CalcDest ( int x,int y )
 	return ( abs ( x-DestX ) +abs ( y-DestY ) );
 }
 
-bool cMJobs::AddPoint ( int x,int y,int m, sPathCalc *p )
+bool cMJobs::AddPoint ( int x,int y,float m, sPathCalc *p )
 {
 	sPathCalc *n;
 	if ( CheckPossiblePoint ( x,y ) )
@@ -234,10 +233,10 @@ bool cMJobs::CreateNextPath ( void )
 	if ( AddPoint ( p->X+1,p->Y,1,p ) ) return true;
 	if ( AddPoint ( p->X,p->Y+1,1,p ) ) return true;
 	if ( AddPoint ( p->X-1,p->Y,1,p ) ) return true;
-	if ( AddPoint ( p->X-1,p->Y-1,2,p ) ) return true;
-	if ( AddPoint ( p->X+1,p->Y-1,2,p ) ) return true;
-	if ( AddPoint ( p->X+1,p->Y+1,2,p ) ) return true;
-	if ( AddPoint ( p->X-1,p->Y+1,2,p ) ) return true;
+	if ( AddPoint ( p->X-1,p->Y-1,1.5,p ) ) return true;
+	if ( AddPoint ( p->X+1,p->Y-1,1.5,p ) ) return true;
+	if ( AddPoint ( p->X+1,p->Y+1,1.5,p ) ) return true;
+	if ( AddPoint ( p->X-1,p->Y+1,1.5,p ) ) return true;
 
 	return CreateNextPath();
 }
@@ -271,12 +270,12 @@ int cMJobs::GetWayCost ( int x,int y,bool *road )
 {
 	int costs,pos;
 	*road=false;
-	if ( plane||ship ) return 2;
-	costs=2;
+	if ( plane||ship ) return 4;
+	costs=4;
 	pos=x+y*map->size;
-	if ( map->IsWater ( pos ) && !( map->GO[pos].base && !map->GO[pos].base->data.is_expl_mine ) ) costs=4;
-else if ( ( map->GO[pos].base&& ( map->GO[pos].base->data.is_road||map->GO[pos].base->data.is_bridge ) ) || ( map->GO[pos].subbase && map->GO[pos].subbase->data.is_road ) ) {costs=1;*road=true;}
-	if ( vehicle->data.can_survey&&costs>2 ) costs=2;
+	if ( map->IsWater ( pos ) && !( map->GO[pos].base && !map->GO[pos].base->data.is_expl_mine ) ) costs=12;
+else if ( ( map->GO[pos].base&& ( map->GO[pos].base->data.is_road||map->GO[pos].base->data.is_bridge ) ) || ( map->GO[pos].subbase && map->GO[pos].subbase->data.is_road ) ) {costs=2;*road=true;}
+	if ( vehicle->data.can_survey&&costs>4 ) costs=4;
 	return costs;
 }
 
@@ -505,10 +504,6 @@ void cMJobs::DoTheMove ( void )
 	if ( vehicle->OffX>=64||vehicle->OffY>=64||vehicle->OffX<=-64||vehicle->OffY<=-64 )
 	{
 		sWaypoint *wp;
-		if(SavedSpeed && game->engine->network && game->engine->network->bServer )
-		{
-			SendSavedSpeed( vehicle->PosX + vehicle->PosY * map->size, SavedSpeed, plane );
-		}
 		// Die Kosten abziehen:
 		vehicle->data.speed+=SavedSpeed;
 		SavedSpeed=0;
