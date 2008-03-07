@@ -18,7 +18,7 @@
  ***************************************************************************/
 #ifndef networkH
 #define networkH
-#include <SDL_Net.h>
+#include <SDL_net.h>
 #include "defines.h"
 #include "main.h"
 
