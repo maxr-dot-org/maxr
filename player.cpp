@@ -736,8 +736,11 @@ void cPlayer::DoTheResearch ( int i )
 				if ( VehicleData[k].scan!=before ) VehicleData[k].version++;
 				break;
 			case 7:
-				VehicleData[k].iBuilt_Costs+= ( int ) ( UnitsData.vehicle[k].data.iBuilt_Costs * ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].iBuilt_Costs-= ( int ) ( UnitsData.vehicle[k].data.iBuilt_Costs *ResearchTechs[i].level );
+				VehicleData[k].iBuilt_Costs = Round ( UnitsData.vehicle[k].data.iBuilt_Costs * pow( 0.92, ResearchTechs[i].level * 10 ) );
+				if ( VehicleData[k].iBuilt_Costs == 0 )
+				{
+					VehicleData[k].iBuilt_Costs = 1;
+				}
 				cVehicle *veh = VehicleList;
 				while ( veh != NULL )
 				{
@@ -794,8 +797,11 @@ void cPlayer::DoTheResearch ( int i )
 				if ( BuildingData[k].scan!=before ) BuildingData[k].version++;
 				break;
 			case 7:
-				BuildingData[k].iBuilt_Costs+= ( int ) ( UnitsData.building[k].data.iBuilt_Costs * ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].iBuilt_Costs-= ( int ) ( UnitsData.building[k].data.iBuilt_Costs * ResearchTechs[i].level );
+				BuildingData[k].iBuilt_Costs = Round ( UnitsData.building[k].data.iBuilt_Costs * pow( 0.92, ResearchTechs[i].level * 10 ) );
+				if ( BuildingData[k].iBuilt_Costs == 0 )
+				{
+					BuildingData[k].iBuilt_Costs = 1;
+				}
 				cBuilding *bui = BuildingList;
 				while ( bui != NULL )
 				{

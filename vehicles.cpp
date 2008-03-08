@@ -3037,17 +3037,24 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
 		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
 }
 
-// Berechnet die Hitpoints nach einem Treffer:
+// returns the remaining hitpoints after an attack
 int cVehicle::CalcHelth ( int damage )
 {
-	int hp;
-	hp = data.hit_points + data.armor - damage;
+	damage -= data.armor;
 
-	if ( hp > data.hit_points )
-		hp = data.hit_points;
+	if ( damage <= 0 )
+	{
+		//minimum damage is 1
+		damage = 1;
+	}
+
+	int hp;
+	hp = data.hit_points - damage;
 
 	if ( hp < 0 )
+	{
 		return 0;
+	}
 
 	return hp;
 }

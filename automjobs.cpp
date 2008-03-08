@@ -18,24 +18,15 @@
  ***************************************************************************/
 #include "math.h"
 #include "automjobs.h"
-#include "engine.h"
+#include "game.h"
 #include "vehicles.h"
 
 
-
 //static variables
-cEngine *cAutoMJob::engine = NULL;
 cAutoMJob **cAutoMJob::autoMJobs = NULL;
 int cAutoMJob::iCount = 0;
 
 //static functions of cAutoMJob
-
-//static funktion, that initializes the cAutoMJob-Class
-void cAutoMJob::init(cEngine* engine)
-{
-	cAutoMJob::engine = engine;
-	iCount = 0;
-}
 
 //static function that calls DoAutoMove for all active auto move jobs
 //this function is periodically called by the engine
@@ -68,6 +59,12 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 //destruktor for cAutoMJob
 cAutoMJob::~cAutoMJob()
 {
+	if (!playerMJob && lastMoveJob )
+	{
+		lastMoveJob->finished = true;
+		vehicle->mjob = NULL;
+		vehicle->MoveJobActive = false;
+	}
 	int i;
 	for (i = iNumber; i < iCount - 1; i++)
 	{
@@ -103,7 +100,7 @@ void cAutoMJob::DoAutoMove()
 		}
 		if ( vehicle->mjob->Suspended && vehicle->data.speed )
 		{
-			engine->AddActiveMoveJob(vehicle->mjob);
+			game->engine->AddActiveMoveJob(vehicle->mjob);
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
@@ -141,7 +138,7 @@ void cAutoMJob::PlanNextMove()
 
 	if ( maxFactor != FIELD_BLOCKED )
 	{
-		lastMoveJob = engine->AddMoveJob(vehicle->PosX + vehicle->PosY * engine->map->size, bestX + bestY * engine->map->size, false, false);
+		lastMoveJob = game->engine->AddMoveJob(vehicle->PosX + vehicle->PosY * game->engine->map->size, bestX + bestY * game->engine->map->size, false, false);
 	}	
 	else //no fields to survey next to the surveyor
 	{
@@ -166,9 +163,9 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			if ( x == PosX && y == PosY ) continue;
-			if ( x < 0 || y < 0 || x >= engine->map->size || y >= engine->map->size ) continue;
+			if ( x < 0 || y < 0 || x >= game->engine->map->size || y >= game->engine->map->size ) continue;
 
-			if ( vehicle->owner->ResourceMap[x + y * engine->map->size] == 0)
+			if ( vehicle->owner->ResourceMap[x + y * game->engine->map->size] == 0)
 			{
 				NrSurvFields++;
 			}
@@ -213,12 +210,14 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 //checks if the destination field is free
 bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 {
-	if ( PosX < 0 || PosY < 0 || PosX >= engine->map->size || PosY >= engine->map->size ) return false; //check map borders
+	cMap* map = game->engine->map;
+
+	if ( PosX < 0 || PosY < 0 || PosX >= map->size || PosY >= map->size ) return false; //check map borders
 	
-	int terrainNr=engine->map->Kacheln[PosX + PosY * engine->map->size];
-	if ( engine->map->terrain[terrainNr].blocked ) return false; //check terrain
+	int terrainNr = map->Kacheln[PosX + PosY * map->size];
+	if ( map->terrain[terrainNr].blocked ) return false; //check terrain
 	
-	sGameObjects objects = engine->map->GO[PosX + PosY * engine->map->size];
+	sGameObjects objects = map->GO[PosX + PosY * map->size];
 	if ( objects.reserviert || objects.vehicle || ( objects.top && !objects.top->data.is_connector) ) return false; //check if there is another unit on the field
 
 	if ( objects.base && objects.base->data.is_expl_mine && objects.base->owner != vehicle->owner) return false; //check for enemy mines
@@ -235,12 +234,12 @@ void cAutoMJob::PlanLongMove()
 	float tempValue;
 	float minValue = 0;
 
-	for ( x = 0; x < engine->map->size; x++ )
+	for ( x = 0; x < game->engine->map->size; x++ )
 	{
-		for ( y = 0; y < engine->map->size; y++ )
+		for ( y = 0; y < game->engine->map->size; y++ )
 		{
 			if ( !FieldIsFree( x, y) ) continue;
-			if ( vehicle->owner->ResourceMap[x + y * engine->map->size] == 1 ) continue;
+			if ( vehicle->owner->ResourceMap[x + y * game->engine->map->size] == 1 ) continue;
 			
 			//the distance to other surveyors
 			int i;
@@ -270,7 +269,7 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		lastMoveJob = engine->AddMoveJob( vehicle->PosX + vehicle->PosY * engine->map->size , bestX + bestY * engine->map->size, false, false);
+		lastMoveJob = game->engine->AddMoveJob( vehicle->PosX + vehicle->PosY * game->engine->map->size , bestX + bestY * game->engine->map->size, false, false);
 	}
 	else
 	{

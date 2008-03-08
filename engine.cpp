@@ -28,7 +28,6 @@ cEngine::cEngine ( cMap *Map,cTCP *network )
 {
 	map=Map;
 	mjobs=NULL;
-	cAutoMJob::init(this);
 	ActiveMJobs=new cList<cMJobs*>;
 	AJobs=new cList<cAJobs*>;
 	this->network=network;
