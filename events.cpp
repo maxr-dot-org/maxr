@@ -19,6 +19,7 @@
 #include "events.h"
 #include "network.h"
 #include "game.h"
+#include "menu.h"
 
 Uint32 eventTimerCallback(Uint32 interval, void *param)
 {
@@ -146,20 +147,54 @@ int cEventHandling::HandleEvents()
 			{
 			case TCP_ACCEPTEVENT:
 				// new socket accepted
-				// network->sendTo ( ((Sint16 *)event.user.data1)[0], strlen( "Wilkommen" )+1, "Wilkommen\0" );
+				if ( MultiPlayerMenu )
+				{
+					sDataBuffer *DataBuffer = new sDataBuffer;
+					((Uint16*)DataBuffer->data)[0] = MU_MSG_NEW_PLAYER;
+					((Uint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
+					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+				}
 				break;
 			case TCP_RECEIVEEVENT:
 				// new Data received
-				/*char buffer[PACKAGE_LENGHT];
-				memset ( buffer, 0, PACKAGE_LENGHT );
-				if ( network->read ( ((Sint16 *)event.user.data1)[0], PACKAGE_LENGHT, buffer ) != 0 )
 				{
-					;
-				}*/
+				sDataBuffer *DataBuffer = new sDataBuffer;
+				memset ( DataBuffer->data, 0, PACKAGE_LENGHT );
+				if ( !network ) break;
+				if ( ( DataBuffer->iLenght = network->read ( ((Sint16 *)event.user.data1)[0], PACKAGE_LENGHT, DataBuffer->data ) ) != 0 )
+				{
+					if ( ((Uint16*)DataBuffer->data)[0] < FIRST_MENU_MESSAGE ) // Eventtypes for the game
+					{
+						// will look like something this way:
+						/*SDL_Event event;
+						event.type = GAME_EVENT;
+						event.user.code = ((Uint16*)DataBuffer->data)[0];
+						event.user.data1 = DataBuffer->data;
+						event.user.data2 = NULL;
+						pushEvent( &event );*/
+
+						delete DataBuffer;
+					}
+					else // No events for the menus, here the data is a simple message
+					{
+						if ( MultiPlayerMenu )
+						{
+							MultiPlayerMenu->MessageList->Add ( DataBuffer );
+						}
+					}
+				}
 				break;
+				}
 			case TCP_CLOSEEVENT:
 				// Socket should be closed
-				game->engine->network->close ( ((Sint16 *)event.user.data1)[0] );
+				network->close ( ((Sint16 *)event.user.data1)[0] );
+				if ( MultiPlayerMenu )
+				{
+					sDataBuffer *DataBuffer = new sDataBuffer;
+					((Uint16*)DataBuffer->data)[0] = MU_MSG_DEL_PLAYER;
+					((Uint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
+					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+				}
 				break;
 			}
 			break;

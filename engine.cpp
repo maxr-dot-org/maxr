@@ -24,13 +24,12 @@
 #include "events.h"
 
 // Funktionen der Engine Klasse //////////////////////////////////////////////
-cEngine::cEngine ( cMap *Map,cTCP *network )
+cEngine::cEngine ( cMap *Map )
 {
 	map=Map;
 	mjobs=NULL;
 	ActiveMJobs=new cList<cMJobs*>;
 	AJobs=new cList<cAJobs*>;
-	this->network=network;
 	mutex = SDL_CreateMutex();
 	EndeCount=0;
 	RundenendeActionsReport=0;

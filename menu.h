@@ -78,12 +78,75 @@ struct sLanding{
 };
 
 // Struktur für die ClientSettings:
-struct sClientSettings{
-  cList<sLanding*> *LandingList;
-  int LandX,LandY;
-  int nr;
+struct sClientLandData
+{
+	cList <sLanding*> *LandingList;
+	int iLandX, iLandY;
+	int iNr;
 };
 
+enum MESSAGE_TYPES
+{
+	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
+	MU_MSG_NEW_PLAYER,			// a new player has connected
+	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identifacation of this player
+	MU_MSG_IDENTIFIKATION,		// player send his idenetification
+	MU_MSG_DEL_PLAYER,			// a player should be deleted
+	MU_MSG_PLAYERLIST,			// a list with all players and their data
+	MU_MSG_OPTINS,				// all options selected by the host
+	MU_MSG_GO,					// host wants to start the game
+	MU_MSG_WT_LAND,				// a player wants to land at this position
+	MU_MSG_LAND_AT,				// a player has to land at this position
+	MU_MSG_RESOURCES,			// the resources on the map
+	MU_MSG_UPGRADES				// data of upgraded units
+};
+
+class cMultiPlayerMenu
+{
+	SDL_Surface *sfTmp;
+	bool bRefresh;
+	bool bHost;
+	bool bOptions;
+	bool bStartSelecting;
+	string sIP;
+	string sSaveGame;
+	string sMap;
+	int iFocus;
+	int iPort;
+	int iLandXOK, iLandYOK;
+	cMap *Map;
+	sOptions Options;
+
+	cList<cPlayer*> *PlayerList;
+	bool *ReadyList;
+	int iNextPlayerNr;
+	cPlayer *ActualPlayer;
+	cList<string> *ChatLog;
+	cList<sClientLandData*> *ClientDataList;
+
+	void init();
+	void kill();
+
+	void addChatLog( string sMsg );
+	void showChatLog();
+	void displayGameSettings();
+	void displayPlayerList();
+
+	void sendIdentification();
+	void sendPlayerList();
+	void sendOptions();
+	void sendResources();
+	void sendLandingInfo( int iLandX, int iLandY, cList<sLanding*> *LandingList );
+	void sendUpgrades();
+
+	int testAllReady();
+
+	void HandleMessages();
+
+public:
+	cList<sDataBuffer*> *MessageList;
+	void runNetworkMenu( bool bHost );
+} EX *MultiPlayerMenu;
 
 // Prototypen ////////////////////////////////////////////////////////////////
 void RunMainMenu(void);

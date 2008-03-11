@@ -244,7 +244,6 @@ void RunMainMenu ( void )
 	while ( 1 )
 	{
 		// Events holen:
-		//EventHandler->HandleEvents();
 		EventHandler->HandleEvents();
 		// Tasten prüfen:
 		keystate = SDL_GetKeyState( NULL );
@@ -519,7 +518,8 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPHostPressed )
 			{
-				// TODO: Run menu here
+				MultiPlayerMenu = new cMultiPlayerMenu;
+				MultiPlayerMenu->runNetworkMenu( true );
 				break;
 			}
 		}
@@ -551,7 +551,8 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPClientPressed )
 			{
-				// TODO: Run menu here
+				MultiPlayerMenu = new cMultiPlayerMenu;
+				MultiPlayerMenu->runNetworkMenu( false );
 				break;
 			}
 		}
@@ -603,7 +604,7 @@ void RunMPMenu ( void )
 				{
 					cMap *map;
 					map=new cMap();
-					game=new cGame ( NULL, map );
+					game=new cGame ( map );
 					ExitMenu();
 					if ( !SaveLoadFile.empty() )
 					{
@@ -784,7 +785,7 @@ void RunSPMenu ( void )
 					list->Add ( p=new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
 					list->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
-					game = new cGame ( NULL, map );
+					game = new cGame ( map );
 					game->AlienTech = options.AlienTech;
 					game->PlayRounds = options.PlayRounds;
 					game->ActiveRoundPlayerNr = p->Nr;
@@ -850,7 +851,7 @@ void RunSPMenu ( void )
 				{
 					cMap *map;
 					map=new cMap();
-					game=new cGame ( NULL, map );
+					game=new cGame ( map );
 					ExitMenu();
 					if ( !SaveLoadFile.empty() )
 					{
@@ -4122,19 +4123,87 @@ int GetColorNr ( SDL_Surface *sf )
 	return cl_red;
 }
 
-// Zeigt das Chatmenü an:
-/*void cMultiPlayer::RunMenu ( void )
+void cMultiPlayerMenu::init()
 {
-	bool PlanetPressed=false,OptionsPressed=false,StartHostConnect=false,SendenPressed=false;
-	bool OKPressed=false,BackPressed=false,ShowCursor=true,LadenPressed=false;
-	int b, lb=0,lx=-1,ly=-1;
+	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0 );
+	PlayerList = new cList<cPlayer*>;
+	ChatLog = new cList<string>;
+	MessageList = new cList<sDataBuffer*>;
+	PlayerList->Add ( ActualPlayer );
+	iNextPlayerNr = 1;
+	ReadyList = (bool *) malloc ( sizeof( bool ) );
+	ReadyList[0] = false;
+	bOptions = false;
+	bStartSelecting = false;
+
+	iLandXOK = iLandYOK = -1;
+
+	if ( bHost ) sIP = "-";
+	else sIP = SettingsData.sIP;
+	iPort = SettingsData.iPort;
+
+	network = new cTCP;
+	network->init();
+}
+
+void cMultiPlayerMenu::kill()
+{
+	network->kill();
+	delete network;
+
+	while ( PlayerList->iCount ) PlayerList->Delete ( PlayerList->iCount-1 );
+	delete PlayerList;
+
+	while ( ChatLog->iCount ) ChatLog->Delete ( ChatLog->iCount-1 );
+	delete ChatLog;
+}
+
+void cMultiPlayerMenu::addChatLog( string sMsg )
+{
+	// Delete old chat messages
+	while( ChatLog->iCount > 7 )
+	{
+		ChatLog->Delete( 0 );
+	}
+	// Add the new message
+	ChatLog->Add ( sMsg );
+}
+
+void cMultiPlayerMenu::showChatLog()
+{
+	string sMsg;
+	SDL_Rect rect;
+	// clear chat window
+	rect.x = 20;
+	rect.y = 290;
+	rect.w = 425;
+	rect.h = 110;
+	SDL_BlitSurface( sfTmp, &rect, buffer, &rect );
+	// now fill chat window new
+	for( int i = 0; i < ChatLog->iCount; i++ )
+	{
+		sMsg = ChatLog->Items[ChatLog->iCount-1-i];
+		while ( font->getTextWide( sMsg ) > 410 )
+		{
+			sMsg.erase( sMsg.length()-1 );
+		}
+		font->showText( 25, 387-12*i, sMsg, LATIN_NORMAL, buffer );
+	}
+	SHOW_SCREEN
+	mouse->draw( false, screen );
+}
+
+void cMultiPlayerMenu::runNetworkMenu( bool bHost )
+{
+	this->bHost = bHost;
+	init();
+
+	bool bPlanetSelPressed = false, bOptionsPressed = false, bStartHostConnect = false, bSendPressed = false;
+	bool bLoadPressed = false, bOKPressed = false, bBackPressed = false, bShowCursor = true;
+	int b, lb = 0, lx = -1, ly = -1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
 	Uint8 *keystate;
-	unsigned int time;
-	int Focus;
-	int LastStatus=STAT_CLOSED;
-	int LastConnectionCount=0;
 
 #define FOCUS_IP   0
 #define FOCUS_PORT 1
@@ -4142,41 +4211,41 @@ int GetColorNr ( SDL_Surface *sf )
 #define FOCUS_CHAT 3
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
-	SDL_Surface *sfTmp;
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_MULT,sfTmp );
-	
- 	//some menus don't support bigger resolutions yet and to
+
+	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
 	SDL_FillRect(buffer, NULL, 0x0000);
-	
+
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
+	// prepare the focus
+	iFocus = FOCUS_NAME;
+	InputStr = ActualPlayer->name;
 
-	Focus=FOCUS_NAME;
-	ChatStr="";
-	font->showTextCentered(320,11, Titel);
-
+	ChatStr = "";
 	font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
-	font->showText(20,260, IP);
+	font->showText(20,260, sIP);
 	
 	font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
-	font->showText(228,260, iToStr(Port));
+	font->showText(228,260, iToStr( iPort ) );
 	
 	font->showText(352, 245, lngPack.i18n ( "Text~Title~Player_Name" ));
-	font->showText(352,260, MyPlayer->name);
+	font->showText(352,260, ActualPlayer->name);
 	
 	font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-	dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-	SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
+	dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y=  0;
+	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
 
-	if ( host )
+	if ( bHost )
 	{
+		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 		placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ) ,470,42,false );
 		placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ) ,470,42+35,false );
 		placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ) ,470,42+35*2,false );
@@ -4185,65 +4254,48 @@ int GetColorNr ( SDL_Surface *sf )
 	}
 	else
 	{
+		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Client" ) );
 		placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
 	}
 	placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 
 	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
 
-	// Den Focus vorbereiten:
-	switch ( Focus )
-	{
-		case FOCUS_IP:
-			InputStr=IP;
-			break;
-		case FOCUS_PORT:
-			InputStr=Port;
-			break;
-		case FOCUS_NAME:
-			InputStr=MyPlayer->name;
-			break;
-		case FOCUS_CHAT:
-			InputStr=ChatStr;
-			break;
-	}
-
 	mouse->SetCursor ( CHand );
-	DisplayGameSettings(sfTmp);
-	DisplayPlayerList(sfTmp);
+	displayGameSettings();
+	displayPlayerList();
 	SHOW_SCREEN
-	mouse->draw ( false,screen );
-	time=SDL_GetTicks();
-	Refresh=false;
+	mouse->draw ( false, screen );
+	bRefresh = false;
 
 	while ( 1 )
 	{
-		// Events holen:
+		// get Events
 		EventHandler->HandleEvents();
-		// Tasten prüfen:
+		// check keyboard input
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
-		// Die Maus machen:
+		// do the mouse stuff
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
 
-		if ( mouse->x!=lx||mouse->y!=ly )
+		if ( mouse->x != lx || mouse->y != ly )
 		{
-			mouse->draw ( true,screen );
+			mouse->draw ( true, screen );
 		}
 
-		// Den Focus machen:
+		// do the focus
 		if ( DoKeyInp ( keystate ) )
 		{
-			ShowCursor=true;
+			bShowCursor = true;
 		}
-		if ( ShowCursor )
+		if ( bShowCursor )
 		{
-			static bool CursorOn=false;
-			ShowCursor=false;
-			CursorOn=!CursorOn;
-			int i_tmpRedrawLength=20; //20 choosen by random to make sure we erase _all_ the old garbage on screen - should be calculated in a better way when fonts come from ttf and not from jpg -- beko
-			switch ( Focus )
+			static bool CursorOn = false;
+			bShowCursor = false;
+			CursorOn = !CursorOn;
+			int i_tmpRedrawLength = 20; //20 choosen by random to make sure we erase _all_ the old garbage on screen - should be calculated in a better way when fonts come from ttf and not from jpg -- beko
+			switch ( iFocus )
 			{
 					/*okej, what we are trying to to here
 					*is that: first we get a focus. Then
@@ -4259,7 +4311,7 @@ int GetColorNr ( SDL_Surface *sf )
 					*safed to their proper vals.
 					*
 					*			-- beko
-					*_/
+					*/
 				case FOCUS_IP:
 					i_tmpRedrawLength += font->getTextWide(InputStr);
 					while ( font->getTextWide(InputStr) > 176 )
@@ -4268,7 +4320,7 @@ int GetColorNr ( SDL_Surface *sf )
 					}
 					stmp = InputStr; stmp += "_";
 
-					IP=InputStr;
+					sIP = InputStr;
 					scr.x=20;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
@@ -4278,13 +4330,13 @@ int GetColorNr ( SDL_Surface *sf )
 					i_tmpRedrawLength += font->getTextWide(InputStr);
 					if ( atoi ( InputStr.c_str() ) > 65535 ) //ports over 65535 are impossible
 					{
-						Port = 58600; //default Port 58600 - why is this our default Port? -- beko
+						iPort = 58600; //default Port 58600 - why is this our default Port? -- beko
 						stmp = "58600_";
 					}
 					else
 					{
-						stmp = InputStr; stmp += "_";
-						Port= atoi ( InputStr.c_str() );
+						stmp = InputStr + "_";
+						iPort = atoi ( InputStr.c_str() );
 					}
 					scr.x=228;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
@@ -4297,13 +4349,13 @@ int GetColorNr ( SDL_Surface *sf )
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
-					stmp = InputStr;  stmp += "_";
+					stmp = InputStr + "_";
 
-					if ( strcmp ( MyPlayer->name.c_str(),InputStr.c_str() ) )
+					if ( strcmp ( ActualPlayer->name.c_str(),InputStr.c_str() ) )
 					{
-						MyPlayer->name=InputStr;
-						DisplayPlayerList(sfTmp);
-						ChangeFarbeName();
+						ActualPlayer->name=InputStr;
+						displayPlayerList();
+						sendIdentification();
 					}
 					scr.x=352;
 					scr.y=260;
@@ -4314,13 +4366,13 @@ int GetColorNr ( SDL_Surface *sf )
 					break;
 				case FOCUS_CHAT:
 					i_tmpRedrawLength += font->getTextWide(InputStr);
-					while ( font->getTextWide(InputStr) > 410 - font->getTextWide ( ( MyPlayer->name+": " ) ) ) //keeping playername lenght in mind
+					while ( font->getTextWide(InputStr) > 410 - font->getTextWide ( ( ActualPlayer->name+": " ) ) ) //keeping playername lenght in mind
 					{
 						InputStr.erase ( InputStr.end()-1 );
 					}
-					stmp = InputStr; stmp += "_";
+					stmp = InputStr + "_";
 
-					ChatStr=InputStr;
+					ChatStr = InputStr;
 					scr.x=20;scr.y=423;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
@@ -4330,397 +4382,305 @@ int GetColorNr ( SDL_Surface *sf )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else
+		// Back:
+		if ( mouse->x >= 50 && mouse->x < 50+200 && mouse->y >= 440 && mouse->y < 440+29 )
 		{
-			/*unsigned short hour,min,sec,msec;
-			int t;
-			(time.CurrentTime()-time).DecodeTime(&hour,&min,&sec,&msec);
-			t=(((int)hour*24+min)*60+sec)*1000+msec;
-			if(t>500){
-			  ShowCursor=true;
-			  time=time.CurrentTime();
-			}*_/
-		}
-
-		// Zurück:
-		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
-		{
-			if ( b&&!lb )
+			if ( b && !lb )
 			{
-				BackPressed=true;
+				bBackPressed=true;
 				PlayFX ( SoundData.SNDMenuButton );
 				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,450);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
-			else if ( !b&&BackPressed )
+			else if ( !b && bBackPressed )
 			{
 				// Save changed name, port or ip to max.xml
-				SettingsData.sPlayerName = MyPlayer->name;
+				SettingsData.sPlayerName = ActualPlayer->name;
 				SaveOption ( SAVETYPE_NAME );
 				SaveOption ( SAVETYPE_IP );
 				SaveOption ( SAVETYPE_PORT );
 				break;
 			}
 		}
-		else if ( BackPressed )
+		else if ( bBackPressed )
 		{
-			BackPressed=false;
+			bBackPressed=false;
 			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 		// Ok:
-		if ( host&&mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29&& ( ( !no_options&&!map.empty() ) || ( !SaveGame.empty() ) ) &&!WaitForGo )
+		if ( bHost && mouse->x >= 390 && mouse->x < 390+200 && mouse->y >= 440 && mouse->y < 440+29 )
 		{
-			if ( b&&!lb )
+			if ( b && !lb )
 			{
-				OKPressed=true;
+				bOKPressed = true;
 				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,450 );
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390, 450 );
 				SHOW_SCREEN
-				mouse->draw ( false,screen );
+				mouse->draw ( false, screen );
 			}
-			else if ( !b&&OKPressed )
+			else if ( !b && bOKPressed )
 			{
-				// Save changed name, port or ip to max.xml
-				SettingsData.sPlayerName = MyPlayer->name;
-				SaveOption ( SAVETYPE_NAME );
-				SaveOption ( SAVETYPE_IP );
-				SaveOption ( SAVETYPE_PORT );
-				if ( TestPlayerList() && ( TestPlayerListLoad() ||SaveGame.empty() ) )
+				int iPlayerNum;
+				if ( ( !bOptions || sMap.empty() ) && sSaveGame.empty() )
 				{
-					/*if(!SaveGame.empty()){
-					         unsigned char *msg,*ptr;
-					         int file_size,blocks,half,buffer_size;
-					         bool start=true;
-					         FILE *fp;
-					         // Savegame übertragen:
-					         fp=fopen((SavePath+SaveGame).c_str(),"rb");
-					         if(!fp){
-					           break;
-					         }
-					         fseek(fp,0,SEEK_END);
-					         file_size=ftell(fp);
-					         fseek(fp,0,SEEK_SET);
-					         blocks=(file_size/240);
-					         half=file_size-blocks*240;
-					         buffer_size=blocks*243+half+3;
-
-					         ptr=msg=(unsigned char*)malloc(buffer_size);
-					         while(blocks--){
-					           ptr[0]='#';
-					           ptr[1]=243;
-					           if(start){
-					             start=false;
-					             ptr[2]=MSG_SAVEGAME_START;
-					           }else{
-					             ptr[2]=MSG_SAVEGAME_PART;
-					           }
-					           fread(ptr+3,1,240,fp);
-					           ptr+=243;
-					         }
-					         if(half){
-					           ptr[0]='#';
-					           ptr[1]=half+3;
-					           if(start){
-					             start=false;
-					             ptr[2]=MSG_SAVEGAME_START;
-					           }else{
-					             ptr[2]=MSG_SAVEGAME_PART;
-					           }
-					           fread(ptr+3,1,half,fp);
-					         }
-
-					         network->Send(msg,buffer_size);
-
-					         fclose(fp);
-					         free(msg);
-					       }*_/
-					string msg;
-					msg=iToStr(SettingsData.Checksum) + NET_MSG_SEPERATOR + MAX_VERSION;
-					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Check" ) );
-
-					WaitForGo=true;
-					ClientsToGo=network->GetConnectionCount();
-					network->TCPSend ( MSG_CHECK_FOR_GO,msg.c_str());
+					// TODO: Translation!!
+					addChatLog ( "Options, map or Savegame not set" );
 				}
-				OKPressed=false;
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-		}
-		else if ( OKPressed )
-		{
-			OKPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Farbe-Next:
-		if ( b&&!lb&&mouse->x>=596&&mouse->x<596+18&&mouse->y>=256&&mouse->y<256+18&&!WaitForGo )
-		{
-			int nr;
-			PlayFX ( SoundData.SNDObjectMenu );
-			nr=GetColorNr ( MyPlayer->color ) +1;
-			if ( nr>7 ) nr=0;
-			MyPlayer->color=OtherData.colors[nr];
-			font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-			DisplayPlayerList(sfTmp);
-			ChangeFarbeName();
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Farbe-Prev:
-		if ( b&&!lb&&mouse->x>=478&&mouse->x<478+18&&mouse->y>=256&&mouse->y<256+18&&!WaitForGo )
-		{
-			int nr;
-			PlayFX ( SoundData.SNDObjectMenu );
-			nr=GetColorNr ( MyPlayer->color )-1;
-			if ( nr<0 ) nr=7;
-			MyPlayer->color=OtherData.colors[nr];
-			font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-			dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-			SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-			DisplayPlayerList(sfTmp);
-			ChangeFarbeName();
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Host-Buttons:
-		if ( host&&SaveGame.empty() )
-		{
-			// Planet wählen:
-			if ( mouse->x>=470&&mouse->x<470+150&&mouse->y>=42&&mouse->y<42+29 )
-			{
-				if ( b&&!lb )
+				else if ( ( iPlayerNum = testAllReady() ) != -1 )
 				{
-					PlanetPressed=true;
-					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ).c_str(),470,42,true );
-					SHOW_SCREEN
-					mouse->draw ( false,screen );
-				}
-				else if ( !b&&PlanetPressed )
-				{
-					map=RunPlanetSelect();
-					SaveGame="";
-					LoadPCXtoSF ( GFXOD_MULT,sfTmp );
-					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
-					DisplayGameSettings(sfTmp);
-					DisplayPlayerList(sfTmp);
-					
-					font->showTextCentered(320,11, Titel);
-					font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
-					font->showText(20,260, IP);
-					font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
-					font->showText(228,260, iToStr(Port));
-					font->showText(352,245, lngPack.i18n ( "Text~Title~Player_Name" ));
-					font->showText(352,260, MyPlayer->name);
-					font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-					
-					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ),470,42,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ),470,42+35*2,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ),false, 50,450 );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450);
-					SHOW_SCREEN
-					mouse->draw ( false,screen );
-					SendOptions();
-				}
-			}
-			else if ( PlanetPressed )
-			{
-				PlanetPressed=false;
-				placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ) ,470,42,false );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			// Optionen:
-			if ( mouse->x>=470&&mouse->x<470+150&&mouse->y>=42+35&&mouse->y<42+29+35&&!WaitForGo )
-			{
-				if ( b&&!lb )
-				{
-					OptionsPressed=true;
-					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,true );
-					SHOW_SCREEN
-					mouse->draw ( false,screen );
-				}
-				else if ( !b&&OptionsPressed )
-				{
-					if ( no_options )
-					{
-						options=RunOptionsMenu ( NULL );
-					}
-					else
-					{
-						options=RunOptionsMenu ( &options );
-					}
-					no_options=false;
-					SaveGame="";
-					LoadPCXtoSF ( GFXOD_MULT,sfTmp );
-					SDL_BlitSurface ( sfTmp,NULL,buffer,NULL );
-					DisplayGameSettings(sfTmp);
-					DisplayPlayerList(sfTmp);
-					
-					font->showTextCentered(320,11, Titel);
-					font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
-					font->showText(20,260, IP);
-					font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
-					font->showText(228,260, iToStr(Port));
-					font->showText(352,245, lngPack.i18n ( "Text~Title~Player_Name" ));
-					font->showText(352,260, MyPlayer->name);
-					font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-										
-										
-					dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-					SDL_BlitSurface ( MyPlayer->color,&scr,buffer,&dest );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ),470,42,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470,42+35*2,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false,50,450 );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
-					SHOW_SCREEN
-					mouse->draw ( false,screen );
-					SendOptions();
-				}
-			}
-			else if ( OptionsPressed )
-			{
-				OptionsPressed=false;
-				placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ),470,42+35,false );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			// Spiel laden:
-			/*	  if(mouse->x>=470&&mouse->x<470+150&&mouse->y>=42+35*2&&mouse->y<42+29+32*2){
-			        if(b&&!lb){
-			          LadenPressed=true;
-			          PlayFX(SoundData.SNDMenuButton);
-			          placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,true);
-			          SHOW_SCREEN
-			          mouse->draw(false,screen);
-					}else if(!b&&LadenPressed){
-			          string tmp;
-			          tmp=InputStr;
-			          ShowDialog("Dateiname:",true,SavePath,1);
-			          if(!InputStr.IsEmpty()){
-			            SaveGame=InputStr;
-
-			            map_obj=new cMap;
-			            game=new cGame(network,map_obj);
-			            game->Load(SaveGame,0,true);
-			          }
-			          {
-			            InputStr=tmp;
-			            TmpSf=GraphicsData.gfx_shadow;
-			            SDL_SetAlpha(TmpSf,SDL_SRCALPHA,255);
-			            if(FileExists(GFXOD_MULT))
-			            {
-			            	LoadPCXtoSF(GfxODPath+GFXOD_MULT,TmpSf);
-			            }
-			            SDL_BlitSurface(TmpSf,NULL,buffer,NULL);
-			            DisplayGameSettings();
-			            DisplayPlayerList();
-			            TODO: fonts->OutTextCenter(Titel.c_str(),320,11,buffer);
-			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~IP").c_str(),20,245,buffer);
-			            TODO: fonts->OutText(IP.c_str(),20,260,buffer);
-			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Port").c_str(),228,245,buffer);
-			            TODO: fonts->OutText(((AnsiString)Port).c_str(),228,260,buffer);
-			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Player_Name").c_str(),352,245,buffer);
-			            TODO: fonts->OutText(MyPlayer->name.c_str(),352,260,buffer);
-			            TODO: fonts->OutText(lngPack.i18n( "Text~Title~Color").c_str(),500,245,buffer);
-			            dest.x=505;dest.y=260;scr.w=dest.w=83;scr.h=dest.h=10;scr.x=0;scr.y=0;
-			            SDL_BlitSurface(MyPlayer->color,&scr,buffer,&dest);
-			            if(SaveGame.IsEmpty())placeSmallButton("Planet wählen",470,42,false);
-			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.i18n( "Text~Title~Options").c_str(),470,42+35,false);
-			            if(SaveGame.IsEmpty())placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,false);
-			            placeSmallButton(lngPack.i18n( "Text~Button~Host_Start").c_str(),470,200,false);
-			            placeSmallButton(lngPack.i18n( "Text~Title~Send").c_str(), 470,416,false);
-			            drawMenuButton(lngPack.i18n( "Text~Button~Back"),false, 50,450);
-			            drawMenuButton(lngPack.i18n( "Text~Button~OK"),false, 390,450);
-			            SHOW_SCREEN
-			            mouse->draw(false,screen);
-			            SendOptions();
-			          }
-			        }
-			      }else if(LadenPressed){
-			        LadenPressed=false;
-			        if(SaveGame.empty())placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2,false);
-			        SHOW_SCREEN
-			        mouse->draw(false,screen);
-			      }*_/
-		}
-		// Host/Connect:
-		if ( b&&mouse->x>=470&&mouse->x<470+150&&mouse->y>=200&&mouse->y<200+29&&!WaitForGo )
-		{
-			if ( !lb )
-			{
-				StartHostConnect=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				if ( host ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,true );
-				else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,true );
-//FIXME: error opening socket when we choose map and options before starting host -- beko
-				if ( host )
-				{
-					network->TCPClose();
-					network->SetTcpIpPort ( Port );
-					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
-					if ( network->iStatus==STAT_OPENED )
-					{
-						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Socket" ) );
-						cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
-					}
-					else
-					{
-						stmp=lngPack.i18n ( "Text~Multiplayer~Network_Open" );
-						stmp+=" (";
-						stmp+=lngPack.i18n ( "Text~Title~Port" );
-						stmp+=": ";
-						stmp+=iToStr(Port);
-						stmp+=")";
-						AddChatLog ( stmp );
-						stmp="Game open (Port: "+iToStr(Port)+")";
-						cLog::write ( stmp, cLog::eLOG_TYPE_INFO );
-					}
+					// TODO: Translation!!
+					addChatLog ( "Player " + PlayerList->Items[iPlayerNum]->name + " not ready" );
 				}
 				else
 				{
-					network->TCPClose();
-					network->SetIp ( IP );
-					network->SetTcpIpPort ( Port );
+					// Save changed name, port or ip to max.xml
+					SettingsData.sPlayerName = ActualPlayer->name;
+					SaveOption ( SAVETYPE_NAME );
+					SaveOption ( SAVETYPE_IP );
+					SaveOption ( SAVETYPE_PORT );
 
-					AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) +IP+":"+iToStr(Port) ); // e.g. Connecting to 127.0.0.1:55800
-					cLog::write ( ( "Connecting to "+IP+":"+iToStr(Port) ), cLog::eLOG_TYPE_INFO );
-					
+					bStartSelecting = true;
+				}
+
+				bOKPressed = false;
+				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
+			}
+		}
+		else if ( bOKPressed )
+		{
+			bOKPressed = false;
+			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450 );
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+		}
+		// Next color:
+		if ( b && !lb && mouse->x >= 596 && mouse->x < 596+18 && mouse->y >= 256 && mouse->y < 256+18 )
+		{
+			int nr;
+			PlayFX ( SoundData.SNDObjectMenu );
+			nr = GetColorNr ( ActualPlayer->color )+1;
+			if ( nr > 7 ) nr = 0;
+			ActualPlayer->color = OtherData.colors[nr];
+			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+			dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y = 0;
+			SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+			displayPlayerList();
+			sendIdentification();
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+		// prev Color:
+		if ( b && !lb && mouse->x >= 478 && mouse->x < 478+18 && mouse->y >= 256 && mouse->y < 256+18 )
+		{
+			int nr;
+			PlayFX ( SoundData.SNDObjectMenu );
+			nr = GetColorNr ( ActualPlayer->color )-1;
+			if ( nr < 0 ) nr = 7;
+			ActualPlayer->color = OtherData.colors[nr];
+			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+			dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y = 0;
+			SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+			displayPlayerList();
+			sendIdentification();
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+
+		// Host buttons:
+		if ( bHost && sSaveGame.empty() )
+		{
+			// select planet:
+			if ( mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 42 && mouse->y < 42+29 )
+			{
+				if ( b && !lb )
+				{
+					bPlanetSelPressed = true;
+					PlayFX ( SoundData.SNDMenuButton );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ).c_str(), 470, 42, true );
 					SHOW_SCREEN
+					mouse->draw ( false, screen );
+				}
+				else if ( !b && bPlanetSelPressed )
+				{
+					sMap = RunPlanetSelect();
+					sSaveGame = "";
+					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+					displayGameSettings();
+					displayPlayerList();
 					
-					network->TCPReceiveThread = SDL_CreateThread ( Open,NULL );
-					for ( int i=0;i<10;i++ ) //wait some seconds for connection - break in case we got one earlier
+					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
+					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
+					font->showText( 20, 260, sIP);
+					font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
+					font->showText( 228, 260, iToStr( iPort ) );
+					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
+					font->showText( 352, 260, ActualPlayer->name );
+					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+					
+					dest.x = 505;
+					dest.y = 260;
+					scr.w = dest.w = 83;
+					scr.h = dest.h = 10;
+					scr.x = 0;
+					scr.y = 0;
+					SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50, 450 );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450);
+					SHOW_SCREEN
+					mouse->draw ( false, screen );
+					sendOptions();
+				}
+			}
+			else if ( bPlanetSelPressed )
+			{
+				bPlanetSelPressed = false;
+				placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
+			}
+			// options:
+			if ( mouse->x >= 470 && mouse-> x < 470+150 && mouse->y >= 42+35 && mouse->y < 42+29+35 )
+			{
+				if ( b && !lb )
+				{
+					bOptionsPressed = true;
+					PlayFX ( SoundData.SNDMenuButton );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42 + 35, true );
+					SHOW_SCREEN
+					mouse->draw ( false,screen );
+				}
+				else if ( !b && bOptionsPressed )
+				{
+					if ( !bOptions )
 					{
-						SDL_Delay ( 500 );
-						if ( network->iStatus==STAT_CONNECTED ) i = 10;
-
+						Options = RunOptionsMenu ( NULL );
 					}
-					if( ! network->bReceiveThreadFinished )
+					else
 					{
-						SDL_KillThread ( network->TCPReceiveThread ) ;
+						Options = RunOptionsMenu ( &Options );
 					}
+					bOptions = true;
+					sSaveGame = "";
+					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+					displayGameSettings();
+					displayPlayerList();
+					
+					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
+					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
+					font->showText( 20, 260, sIP);
+					font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
+					font->showText( 228, 260, iToStr( iPort ) );
+					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
+					font->showText( 352, 260, ActualPlayer->name );
+					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+					
+					dest.x = 505;
+					dest.y = 260;
+					scr.w = dest.w = 83;
+					scr.h = dest.h = 10;
+					scr.x = 0;
+					scr.y = 0;
+					SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
+					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50, 450 );
+					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450);
+					SHOW_SCREEN
+					mouse->draw ( false, screen );
+					sendOptions();
+				}
+			}
+			else if ( bOptionsPressed )
+			{
+				bOptionsPressed = false;
+				placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
+			}
+			// load game:
+			if( mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 42+35*2 && mouse->y < 42+29+32*2 )
+			{
+				if( b && !lb )
+				{
+					bLoadPressed = true;
+					PlayFX(SoundData.SNDMenuButton);
+					placeSmallButton( lngPack.i18n( "Text~Button~Game_Load").c_str(), 470, 42+35*2, true );
+					SHOW_SCREEN
+					mouse->draw(false,screen);
+				}
+				else if( !b && bLoadPressed)
+				{
+					;
+				}
+			}
+			else if( bLoadPressed )
+			{
+				bLoadPressed = false;
+				if( sSaveGame.empty() ) placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2, false );
+				SHOW_SCREEN
+				mouse->draw( false, screen );
+			}
+		}
 
-					if ( network->iStatus!=STAT_CONNECTED )
+
+		// Host/Connect:
+		if ( b && mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 200 && mouse->y < 200+29 )
+		{
+			bStartHostConnect = true;
+			if ( !lb )
+			{
+				PlayFX ( SoundData.SNDMenuButton );
+				if ( bHost ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,true );
+				else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,true );
+
+				if ( network->getConnectionStatus() == 0 ) // Connect only if there isn't a connection jet
+				{
+					if ( bHost )
 					{
-						AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Connect" ) +IP+":"+iToStr(Port) );
-						cLog::write ( "Error on connecting "+IP+":"+iToStr(Port), cLog::eLOG_TYPE_WARNING );
+						network->setPort ( iPort );
+
+						if ( network->create() == -1 )
+						{
+							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Socket" ) );
+							cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
+						}
+						else
+						{
+							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Open" ) + " (" + lngPack.i18n ( "Text~Title~Port" ) + ": "  + iToStr( iPort ) + ")" );
+							cLog::write ( "Game open (Port: " + iToStr( iPort ) + ")", cLog::eLOG_TYPE_INFO );
+						}
+					}
+					else
+					{
+						network->setPort ( iPort );
+						network->setIP ( sIP );
+
+						addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) + sIP + ":" + iToStr( iPort ) ); // e.g. Connecting to 127.0.0.1:55800
+						cLog::write ( ( "Connecting to " + sIP + ":" + iToStr ( iPort ) ), cLog::eLOG_TYPE_INFO );
+
+						if ( network->connect() == -1 )
+						{
+							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Connect" ) + sIP + ":" + iToStr( iPort ) );
+							cLog::write ( "Error on connecting " + sIP + ":" + iToStr( iPort ), cLog::eLOG_TYPE_WARNING );
+						}
+						else
+						{
+							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
+							cLog::write ( "Connected", cLog::eLOG_TYPE_INFO );
+						}
 					}
 				}
 
@@ -4728,38 +4688,55 @@ int GetColorNr ( SDL_Surface *sf )
 				mouse->draw ( false,screen );
 			}
 		}
-		else if ( StartHostConnect )
+		else if ( bStartHostConnect )
 		{
-			StartHostConnect=false;
-			if ( host ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+			bStartHostConnect = false;
+			if ( bHost ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
 			else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Senden:
-		if ( ( b&&mouse->x>=470&&mouse->x<470+150&&mouse->y>=416&&mouse->y<416+29 ) || ( InputEnter&&Focus==FOCUS_CHAT ) )
+		// Send:
+		if ( ( b && mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 416 && mouse->y < 416+29 ) || ( InputEnter && iFocus==FOCUS_CHAT ) )
 		{
-			if ( !lb|| ( InputEnter&&Focus==FOCUS_CHAT ) )
+			if ( !lb || ( InputEnter && iFocus==FOCUS_CHAT ) )
 			{
-				SendenPressed=true;
+				bSendPressed = true;
 				PlayFX ( SoundData.SNDMenuButton );
 				placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,true );
 
 				if ( !ChatStr.empty() )
 				{
 					PlayFX ( SoundData.SNDChat );
-					ChatStr.insert ( 0,": " );
-					ChatStr.insert ( 0,MyPlayer->name );
-
-					if ( ChatStr.length() >=200 )
+					if ( ChatStr.compare( "\\ready" ) == 0 )
 					{
-						ChatStr.erase ( 200 );
+						int iPlayerIndex;
+						for ( iPlayerIndex = 0; iPlayerIndex < PlayerList->iCount; iPlayerIndex++ )
+						{
+							if ( PlayerList->Items[iPlayerIndex] == ActualPlayer ) break;
+						}
+						ReadyList[iPlayerIndex] = !ReadyList[iPlayerIndex];
+						displayPlayerList();
+						sendIdentification();
 					}
-					network->TCPSend ( MSG_CHAT, ( char * ) ChatStr.c_str());
+					else
+					{
+						ChatStr.insert ( 0,": " );
+						ChatStr.insert ( 0, ActualPlayer->name );
 
-					AddChatLog ( ChatStr );
+						if ( ChatStr.length() >= PACKAGE_LENGHT-3 )
+						{
+							ChatStr.erase ( PACKAGE_LENGHT-3 );
+						}
+						char msg[PACKAGE_LENGHT];
+						((Uint16*)msg)[0] = MU_MSG_CHAT;
+						strcpy( msg+2, ChatStr.c_str());
+						network->send ( PACKAGE_LENGHT, msg );
+
+						addChatLog ( ChatStr );
+					}
 					ChatStr="";
-					if ( Focus==FOCUS_CHAT ) InputStr="";
+					if ( iFocus==FOCUS_CHAT ) InputStr = "";
 					scr.x = 20;
 					scr.y = 423;
 					scr.w = 430;
@@ -4773,412 +4750,846 @@ int GetColorNr ( SDL_Surface *sf )
 				mouse->draw ( false,screen );
 			}
 		}
-		else if ( SendenPressed )
+		else if ( bSendPressed )
 		{
-			SendenPressed=false;
+			bSendPressed = false;
 			placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Klick auf die IP:
-		if ( !host&&b&&!lb&&mouse->x>=20&&mouse->x<20+188&&mouse->y>=250&&mouse->y<250+30 )
-		{
-			Focus=FOCUS_IP;
-			InputStr=IP;
-			ShowCursor=true;
-			
-			scr.x = 20;
-			scr.y = 260;
-			scr.w = 188;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 260, IP);
-			scr.x = 228;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(228, 260, iToStr(Port));
-			scr.x = 352;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(352, 260, MyPlayer->name);
-			scr.x = 20;
-			scr.y = 423;
-			scr.w = 430;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 423, ChatStr);
-			// Klick auf den Port:
-		}
-		else if ( b&&!lb&&mouse->x>=228&&mouse->x<228+108&&mouse->y>=250&&mouse->y<250+30 )
-		{
-			Focus = FOCUS_PORT;
-			InputStr = iToStr(Port);
-			ShowCursor = true;
-			scr.x = 20;
-			scr.y = 260;
-			scr.w = 188;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
 
-			font->showText(20, 260, IP);
-			scr.x = 228;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(228, 260, iToStr(Port));
-			scr.x = 352;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(352, 260, MyPlayer->name);
-			scr.x = 20;
-			scr.y = 423;
-			scr.w = 430;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 423, ChatStr);
-			// Klick auf den Namen:
-		}
-		else if ( b&&!lb&&mouse->x>=352&&mouse->x<352+108&&mouse->y>=250&&mouse->y<250+30 )
+		// Set new Focus
+		if ( ( !bHost && b && !lb && mouse->x >= 20 && mouse->x < 20+188 && mouse->y >= 250 && mouse->y < 250+30 ) ||
+				( b && !lb && mouse->x >= 228 && mouse->x < 228+108 && mouse->y >= 250 && mouse->y < 250+30 ) ||
+				( b && !lb && mouse->x >= 352 && mouse->x < 352+108 && mouse->y >= 250 && mouse->y < 250+30 ) ||
+				( b && !lb && mouse->x >= 20 && mouse->x < 20+425 && mouse->y >= 420 && mouse->y < 420+30 ) )
 		{
-			Focus = FOCUS_NAME;
-			InputStr = MyPlayer->name; //TODO: hey, this stuff gets repeated all the time beside Focus and InputStr..
-			ShowCursor = true;
-			scr.x = 20;
-			scr.y = 260;
-			scr.w = 188;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 260, IP);
-			scr.x = 228;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(228, 260, iToStr(Port));
-			scr.x = 352;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(352, 260, MyPlayer->name);
-			scr.x = 20;
-			scr.y = 423;
-			scr.w = 430;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 423, ChatStr);
-			// Klick auf den ChatStr:
-		}
-		else if ( b&&!lb&&mouse->x>=20&&mouse->x<20+425&&mouse->y>=420&&mouse->y<420+30 )
-		{
-			Focus = FOCUS_CHAT;
-			InputStr = ChatStr;
-			ShowCursor = true;
-			scr.x = 20;
-			scr.y = 260;
-			scr.w = 188;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 260, IP);
-			scr.x = 228;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(228, 260, iToStr(Port));
-			scr.x = 352;
-			scr.y = 260;
-			scr.w = 108;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(352, 260, MyPlayer->name);
-			scr.x = 20;
-			scr.y = 423;
-			scr.w = 430;
-			scr.h = 16;
-			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
-			font->showText(20, 423, ChatStr);
-		}
-
-		// Das WaitForGo machen:
-		if ( host&&WaitForGo )
-		{
-			if ( ClientsToGo>network->GetConnectionCount() )
+			if ( !bHost && b && !lb && mouse->x >= 20 && mouse->x < 20+188 && mouse->y >= 250 && mouse->y < 250+30 )
 			{
-				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go_Abort" ) );
-				WaitForGo=false;
+				iFocus = FOCUS_IP;
+				InputStr = sIP;
 			}
-			else if ( ClientsToGo<=0&&SaveGame.empty() )
+			else if( b && !lb && mouse->x >= 228 && mouse->x < 228+108 && mouse->y >= 250 && mouse->y < 250+30 )
 			{
-				ClientSettingsList=new cList<sClientSettings*>;
+				iFocus = FOCUS_PORT;
+				InputStr = iToStr( iPort );
+			}
+			else if( b && !lb && mouse->x >= 352 && mouse->x < 352+108 && mouse->y >= 250 && mouse->y < 250+30 )
+			{
+				iFocus = FOCUS_NAME;
+				InputStr = ActualPlayer->name;
+			}
+			else if( b && !lb && mouse->x >= 20 && mouse->x < 20+425 && mouse->y >= 420 && mouse->y < 420+30 )
+			{
+				iFocus = FOCUS_CHAT;
+				InputStr = ChatStr;
+			}
 
-				AddChatLog ( lngPack.i18n ( "Text~Multiplayer~Go" ) );
-				network->TCPSend ( MSG_LETS_GO,"");
+			bShowCursor = true;
+			
+			scr.x = 20;
+			scr.y = 260;
+			scr.w = 188;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 260, sIP);
+			scr.x = 228;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(228, 260, iToStr(iPort));
+			scr.x = 352;
+			scr.y = 260;
+			scr.w = 108;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(352, 260, ActualPlayer->name);
+			scr.x = 20;
+			scr.y = 423;
+			scr.w = 430;
+			scr.h = 16;
+			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+			
+			font->showText(20, 423, ChatStr);
+		}
 
-				// Das Spiel machen:
-				cList<sLanding*> *LandingList;
-				int i,LandX,LandY;
-				map_obj=new cMap();
-				if ( map_obj->LoadMap ( map ) )
+		// show chat log if necessary
+		showChatLog();
+		// show other data if necessary
+		if ( bRefresh )
+		{
+			bRefresh = false;
+			displayGameSettings();
+			displayPlayerList();
+		}
+
+		if ( bStartSelecting )
+		{
+			if( !sSaveGame.empty() )
+			{
+				if ( bHost )
 				{
+					// Send savegame
+				}
+				else
+				{
+					// for savegame
+				}
+			}
+			else
+			{
+				if ( bHost )
+				{
+					char msg[PACKAGE_LENGHT];
+					((Uint16*)msg)[0] = MU_MSG_GO;
+					network->send ( PACKAGE_LENGHT, msg );
+				}
 
-					map_obj->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
-					game=new cGame ( network,map_obj );
-					game->AlienTech=options.AlienTech;
-					game->PlayRounds=options.PlayRounds;
-					game->ActiveRoundPlayerNr=MyPlayer->Nr;
-					game->Init ( PlayerList,0 );
-
-					for ( i=0;i<PlayerList->iCount;i++ )
+				int iLandX, iLandY;
+				cList<sLanding*> *LandingList;
+				Map = new cMap;
+				if ( Map->LoadMap ( sMap ) )
+				{
+					if ( bHost ) Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
+					else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
+												
+					game = new cGame ( Map );
+					game->AlienTech = Options.AlienTech;
+					game->PlayRounds = Options.PlayRounds;
+					if ( bHost )
 					{
-						PlayerList->Items[i]->InitMaps ( map_obj->size );
+						game->ActiveRoundPlayerNr = ActualPlayer->Nr;
+						game->Init ( PlayerList, 0 );
 					}
-					MyPlayer->Credits=options.credits;
+					else
+					{
+						game->ActiveRoundPlayerNr = -1;
+						int iAcPlayerInd;
+						for ( iAcPlayerInd = 0; iAcPlayerInd < PlayerList->iCount; iAcPlayerInd++ )
+						{
+							if ( PlayerList->Items[iAcPlayerInd] == ActualPlayer ) break;
+						}
+						game->Init ( PlayerList, iAcPlayerInd );
+					}
 
-					LandingList=new cList<sLanding*>;
-					RunHangar ( MyPlayer,LandingList );
+					for ( int i = 0; i < PlayerList->iCount; i++ )
+					{
+						PlayerList->Items[i]->InitMaps ( Map->size );
+					}
 
-					SelectLanding ( &LandX,&LandY,map_obj );
+					ActualPlayer->Credits = Options.credits;
 
-					ServerWait ( LandX,LandY,LandingList );
+					LandingList = new cList<sLanding*>;
+					RunHangar ( ActualPlayer, LandingList );
+
+					if ( !bHost ) sendUpgrades();
+
+					SelectLanding ( &iLandX, &iLandY, Map );
+
+					if ( bHost )
+					{
+						// wait for other players
+						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
+						SHOW_SCREEN
+						ClientDataList = new cList<sClientLandData*>;
+						while ( ClientDataList->iCount < PlayerList->iCount-1 )
+						{
+							if ( network->getSocketCount() < PlayerList->iCount-1 )
+							{
+								;// Should not happen oO :P
+							}
+							EventHandler->HandleEvents();
+							mouse->GetPos();
+
+							if ( mouse->x != lx || mouse->y != ly )
+							{
+								mouse->draw ( true, screen );
+							}
+
+							HandleMessages();
+
+							lx = mouse->x;
+							ly = mouse->y;
+							lb = b;
+							SDL_Delay ( 1 );
+						}
+
+						// make all landings
+						game->MakeLanding ( iLandX, iLandY, ActualPlayer, LandingList, Options.FixedBridgeHead );
+						for ( int i = 0; i < ClientDataList->iCount; i++ )
+						{
+							cPlayer *Player;
+							for ( int n = 0; n < PlayerList->iCount; n++ )
+							{
+								if ( PlayerList->Items[n]->Nr == ClientDataList->Items[i]->iNr )
+								{
+									Player = PlayerList->Items[n];
+									break;
+								}
+							}
+							game->MakeLanding( ClientDataList->Items[i]->iLandX, ClientDataList->Items[i]->iLandY, Player, ClientDataList->Items[i]->LandingList, Options.FixedBridgeHead );
+
+							// TODO: set right landing positions
+						}
+
+						sendResources();
+
+						while ( ClientDataList->iCount )
+						{
+							char msg[PACKAGE_LENGHT];
+							memset ( msg, 0, PACKAGE_LENGHT );
+							((Sint16*)msg)[0] = MU_MSG_LAND_AT;
+							((Sint16*)msg)[1] = ClientDataList->Items[0]->iNr;
+							((Sint16*)msg)[2] = ClientDataList->Items[0]->iLandX;
+							((Sint16*)msg)[3] = ClientDataList->Items[0]->iLandY;
+							network->send ( PACKAGE_LENGHT, msg );
+
+							delete ClientDataList->Items[0]->LandingList;
+							delete ClientDataList->Items[0];
+							ClientDataList->Delete ( 0 );
+						}
+					}
+					else
+					{
+						sendLandingInfo( iLandX, iLandY, LandingList );
+						// wait for other players
+						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
+						SHOW_SCREEN
+						while ( iLandXOK < 0 || iLandYOK < 0 )
+						{
+							EventHandler->HandleEvents();
+							mouse->GetPos();
+
+							if ( mouse->x != lx || mouse->y != ly )
+							{
+								mouse->draw ( true, screen );
+							}
+
+							HandleMessages();
+
+							lx = mouse->x;
+							ly = mouse->y;
+							lb = b;
+							SDL_Delay ( 1 );
+						}
+						game->MakeLanding( iLandXOK, iLandYOK, ActualPlayer, LandingList, Options.FixedBridgeHead );
+					}
 
 					while ( LandingList->iCount )
 					{
-						delete LandingList->Items[0];
-						LandingList->Delete ( 0 );
+						delete LandingList->Items[LandingList->iCount - 1];
+						LandingList->Delete(LandingList->iCount - 1);
 					}
 					delete LandingList;
 
 					ExitMenu();
 
-					network->iMin_clients=PlayerList->iCount-1;
 					game->Run();
-					SettingsData.sPlayerName=MyPlayer->name;
 
+					SettingsData.sPlayerName = ActualPlayer->name;
 					while ( PlayerList->iCount )
 					{
-						delete PlayerList->Items[0];
+						delete ( PlayerList->Items[0] );
 						PlayerList->Delete ( 0 );
 					}
-					delete game;game=NULL;
+					delete game;
+					game = NULL;
 					break;
 				}
-				else
-				{
-					AddChatLog ( lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) );
-					cLog::write ( "Error loading map", cLog::eLOG_TYPE_WARNING );
-					delete ClientSettingsList;
-				}
-			}
-			else if ( ClientsToGo<=0&&!SaveGame.empty() )
-			{
-				/*unsigned char msg[3];
-				int i;
-
-				msg[0]='#';
-				msg[1]=3;
-				msg[2]=MSG_LETS_GO;
-				network->Send(msg,3);
-
-				ExitMenu();
-				network->RxFunc=game->engine->ReceiveNetMsg;
-				TmpSf=NULL;
-
-				for(i=0;i<game->PlayerList->iCount;i++){
-				  if(((cPlayer*)(game->PlayerList->Items[i]))->name==MyPlayer->name){
-				    game->ActivePlayer=(cPlayer*)(game->PlayerList->Items[i]);
-				    break;
-				  }
-				}
-
-				network->MinConnections=PlayerList->iCount-1;
-				*(game->hud)=game->ActivePlayer->HotHud;
-				if(game->hud->Zoom!=64){
-				  game->hud->LastZoom=-1;
-				  game->hud->ScaleSurfaces();
-				}
-				game->Run();
-				sPlayerName=MyPlayer->name;
-
-				break;*_/
 			}
 		}
 
-		// Das LetsGo machen:
-		if ( !host&&LetsGo&&SaveGame.empty() )
-		{
-			// Das Spiel machen:
-			int i,LandX,LandY,nr;
-			cList<sLanding*> *LandingList;
-			map_obj=new cMap();
-			LetsGo=false;
-			if ( map_obj->LoadMap ( map ) )
-			{
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					if ( PlayerList->Items[i]==MyPlayer ) {nr=i;break;}
-				}
+		HandleMessages();
 
-				game=new cGame ( network,map_obj );
-				game->AlienTech=options.AlienTech;
-				game->PlayRounds=options.PlayRounds;
-				game->ActiveRoundPlayerNr=-1;
-				game->Init ( PlayerList,nr );
-
-				for ( i=0;i<PlayerList->iCount;i++ )
-				{
-					PlayerList->Items[i]->InitMaps ( map_obj->size );
-				}
-
-				MyPlayer->Credits=options.credits;
-
-				LandingList=new cList<sLanding*>;
-				RunHangar ( MyPlayer,LandingList );
-
-				SelectLanding ( &LandX,&LandY,map_obj );
-
-				// Settings übertragen:
-				ClientWait ( LandX,LandY,LandingList );
-
-				while ( LandingList->iCount )
-				{
-					delete LandingList->Items[0];
-					LandingList->Delete ( 0 );
-				}
-				delete LandingList;
-
-				ExitMenu();
-
-				network->iMax_clients = network->iMin_clients = PlayerList->iCount-1; // set maximal and minimal players for this game
-				game->Run();
-				SettingsData.sPlayerName=MyPlayer->name;
-
-				while ( PlayerList->iCount )
-				{
-					delete PlayerList->Items[0];
-					PlayerList->Delete ( 0 );
-				}
-				delete game;game=NULL;
-				break;
-			}
-			else
-			{
-				AddChatLog ( lngPack.i18n ( "Text~Error_Messages~ERROR_Map_Loading" ) );
-				cLog::write ( "Error loading map", cLog::eLOG_TYPE_WARNING );
-				delete map_obj;map_obj=NULL;
-			}
-		}
-		else if ( !host&&LetsGo&&!SaveGame.empty() )
-		{
-			/*int i;
-
-			map_obj=new cMap;
-			game=new cGame(network,map_obj);
-			game->Load(SaveGame,0,true);
-
-			ExitMenu();
-			TmpSf=NULL;
-			network->RxFunc=game->engine->ReceiveNetMsg;
-
-			for(i=0;i<game->PlayerList->iCount;i++){
-			  if(((cPlayer*)(game->PlayerList->Items[i]))->name==MyPlayer->name){
-			    game->ActivePlayer=(cPlayer*)(game->PlayerList->Items[i]);
-			    break;
-			  }
-			}
-
-			network->MinConnections=PlayerList->iCount-1;
-			*(game->hud)=game->ActivePlayer->HotHud;
-			if(game->hud->Zoom!=64){
-			  game->hud->LastZoom=-1;
-			  game->hud->ScaleSurfaces();
-			}
-			game->Run();
-			sPlayerName=MyPlayer->name;
-
-			break;*_/
-		}
-
-		// Ggf Chatlogs anzeigen:
-		ShowChatLog(sfTmp);
-		// Ggf weitere Daten anzeigen:
-		if ( Refresh )
-		{
-			Refresh=false;
-			DisplayGameSettings(sfTmp);
-			DisplayPlayerList(sfTmp);
-		}
-
-		// Ggf Meldung über Statusänderung machen:
-		if ( LastStatus!=network->iStatus )
-		{
-			LastStatus=network->iStatus;
-			switch ( LastStatus )
-			{
-				case STAT_CONNECTED:
-					if ( host )
-					{
-						AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_New" ) );
-						cLog::write ( "New connection", cLog::eLOG_TYPE_DEBUG );
-					}
-					else
-					{
-						AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
-						cLog::write ( "Connected", cLog::eLOG_TYPE_DEBUG );
-						ClientConnectedCallBack();
-					}
-					break;
-				case STAT_CLOSED:
-					AddChatLog ( "network: "+lngPack.i18n ( "Text~Multiplayer~Network_Closed" ) );
-					cLog::write ( "Connection closed", cLog::eLOG_TYPE_DEBUG );
-					if ( !host ) ClientDistconnect();
-					break;
-			}
-		}
-		if ( host )
-		{
-			if ( LastConnectionCount>network->GetConnectionCount() )
-			{
-				ServerDisconnect();
-			}
-			LastConnectionCount=network->GetConnectionCount();
-		}
-
-		lx=mouse->x;
-		ly=mouse->y;
-		lb=b;
-		if ( network->iStatus==STAT_CONNECTED && network->bReceiveThreadFinished )
-		{
-			SDL_WaitThread ( network->TCPReceiveThread, NULL ); // free the last memory allocated by the thread. If not done so, SDL_CreateThread will hang after about 1010 successfully created threads
-			network->TCPReceiveThread = SDL_CreateThread ( Receive,NULL );
-		}
-		HandleMenuMessages();
+		lx = mouse->x;
+		ly = mouse->y;
+		lb = b;
 		SDL_Delay ( 1 );
 	}
 	SDL_FreeSurface(sfTmp);
-}*/
+	kill();
+}
+
+void cMultiPlayerMenu::HandleMessages()
+{
+#define SWITCH_MESSAGE_END { delete Message; MessageList->Delete ( iMsgNum ); iMsgNum--; break; }
+
+	for ( int iMsgNum = 0; iMsgNum < MessageList->iCount; iMsgNum++ )
+	{
+		// The data buffer with the data and the socket number,
+		// from which the data is received, stored in the variable iLenght
+		sDataBuffer *Message = MessageList->Items[iMsgNum];
+		switch ( ((Uint16*)Message->data)[0] )
+		{
+		case MU_MSG_CHAT:
+			addChatLog( Message->data+2 );
+			SWITCH_MESSAGE_END
+		case MU_MSG_NEW_PLAYER:
+			{
+				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr );
+				Player->iSocketNum = ((Uint16*)Message->data)[1];
+				PlayerList->Add ( Player );
+				ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
+				ReadyList[PlayerList->iCount-1] = false;
+				char msg[PACKAGE_LENGHT];
+				memset ( msg, 0, PACKAGE_LENGHT );
+				((Sint16*)msg)[0] = MU_MSG_REQ_IDENTIFIKATION;
+				((Sint16*)msg)[1] = iNextPlayerNr;
+				iNextPlayerNr++;
+				network->sendTo ( Player->iSocketNum, PACKAGE_LENGHT, msg );
+			}
+			SWITCH_MESSAGE_END
+		case MU_MSG_DEL_PLAYER:
+			for ( int i = 0; i < PlayerList->iCount; i++ )
+			{
+				if ( PlayerList->Items[i]->iSocketNum == ((Uint16*)Message->data)[1] )
+				{
+					PlayerList->Delete ( i );
+					for (int j = i; j < PlayerList->iCount; j++ ) ReadyList[j] = ReadyList[j+1];
+					ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
+				}
+			}
+			displayPlayerList();
+			sendPlayerList();
+			SWITCH_MESSAGE_END
+		case MU_MSG_REQ_IDENTIFIKATION:
+			ActualPlayer->Nr = ((Uint16*)Message->data)[1];
+			sendIdentification();
+			SWITCH_MESSAGE_END
+		case MU_MSG_IDENTIFIKATION:
+			{
+				int iPlayerNum;
+				for ( iPlayerNum = 0; iPlayerNum < PlayerList->iCount; iPlayerNum++ )
+				{
+					if ( PlayerList->Items[iPlayerNum]->Nr == ((Uint16*)Message->data)[1] ) break;
+				}
+				PlayerList->Items[iPlayerNum]->name = Message->data+7;
+				PlayerList->Items[iPlayerNum]->color = OtherData.colors[((Uint16*)Message->data)[2]];
+				ReadyList[iPlayerNum] = Message->data[6];
+				displayPlayerList();
+				sendPlayerList();
+				sendOptions();
+			}
+			SWITCH_MESSAGE_END
+		case MU_MSG_PLAYERLIST:
+			{
+				while ( PlayerList->iCount > 0 ) PlayerList->Delete ( 0 );
+				ReadyList = (bool *)realloc( ReadyList, ((Sint16*)Message->data)[1] );
+				int iPos = 4;
+				for ( int i = 0; i < ((Sint16*)Message->data)[1]; i++ )
+				{
+					cPlayer *Player = new cPlayer ( Message->data+iPos+5, OtherData.colors[((Sint16*)(Message->data+iPos))[1]], ((Sint16*)(Message->data+iPos))[0] );
+					PlayerList->Add ( Player );
+					if ( Player->Nr == ActualPlayer->Nr ) ActualPlayer = Player;
+					ReadyList[i] = Message->data[iPos+4];
+					iPos += (int)PlayerList->Items[i]->name.length()+1+5;
+				}
+				displayPlayerList();
+				SWITCH_MESSAGE_END
+			}
+		case MU_MSG_OPTINS:
+			{
+				int iPos = 3;
+				if ( ( bOptions = Message->data[2] ) != 0 )
+				{
+					Options.metal = ((Sint16*)(Message->data+iPos))[0];
+					Options.oil = ((Sint16*)(Message->data+iPos))[1];
+					Options.gold = ((Sint16*)(Message->data+iPos))[2];
+					Options.dichte = ((Sint16*)(Message->data+iPos))[3];
+					Options.credits = ((Sint16*)(Message->data+iPos))[4];
+					Options.FixedBridgeHead = Message->data[iPos+10];
+					Options.AlienTech = Message->data[iPos+11];
+					Options.PlayRounds = Message->data[iPos+12];
+					iPos += 13;
+				}
+				else iPos += 1;
+				if ( ((Sint16*)(Message->data+iPos))[0] > 0 )
+				{
+					sMap = Message->data+iPos+2;
+					iPos += ((Sint16*)(Message->data+iPos))[0]+2;
+				}
+				else iPos += 2;
+				if ( ((Sint16*)(Message->data+iPos))[0] > 0 )
+				{
+					sSaveGame = Message->data+iPos+2;
+				}
+				bRefresh = true;
+			}
+			SWITCH_MESSAGE_END
+		case MU_MSG_GO:
+			bStartSelecting = true;
+			SWITCH_MESSAGE_END
+		case MU_MSG_WT_LAND:
+			{
+				sClientLandData *ClientData;
+				ClientData = new sClientLandData;
+				ClientData->LandingList = new cList<sLanding*>;
+				ClientData->iLandX = ((Sint16*)(Message->data))[1];
+				ClientData->iLandY = ((Sint16*)(Message->data))[2];
+				ClientData->iNr = ((Sint16*)(Message->data))[3];
+				for ( int i = 0; i < ((Sint16*)(Message->data))[4]; i++ )
+				{
+					sLanding *Landing;
+					Landing = new sLanding;
+					Landing->cargo = ((Sint16*)(Message->data+10+4*i))[0];
+					Landing->id = ((Sint16*)(Message->data+10+4*i))[1];
+					ClientData->LandingList->Add ( Landing );
+				}
+
+				ClientDataList->Add ( ClientData );
+			}
+			SWITCH_MESSAGE_END
+		case MU_MSG_LAND_AT:
+			if ( ((Sint16*)(Message->data))[1] != ActualPlayer->Nr ) SWITCH_MESSAGE_END
+			iLandXOK = ((Sint16*)(Message->data))[2];
+			iLandYOK = ((Sint16*)(Message->data))[3];
+			SWITCH_MESSAGE_END
+		case MU_MSG_RESOURCES:
+			{
+				int iOff;
+				int iPos = 2;
+				while ( ( iOff = ((Sint16*)(Message->data+iPos))[0] ) != 0 && iPos < PACKAGE_LENGHT )
+				{
+					Map->Resources[iOff].typ = Message->data[iPos+2];
+					Map->Resources[iOff].value = Message->data[iPos+3];
+					iPos += 4;
+				}
+			}
+			SWITCH_MESSAGE_END
+		case MU_MSG_UPGRADES:
+			{
+				cPlayer *Player;
+				for ( int i = 0; i < PlayerList->iCount; i++ )
+				{
+					if ( PlayerList->Items[i]->Nr == ((Uint16*)Message->data)[1] )
+					{
+						Player = PlayerList->Items[i];
+						break;
+					}
+				}
+				int iPos = 6;
+				for ( int i = 0; i < ((Uint16*)Message->data)[2]; i++ )
+				{
+					bool bVehicle = Message->data[iPos];
+					int iNum = ((Uint16*)(Message->data+iPos+1))[0];
+					if ( bVehicle )
+					{
+						Player->VehicleData[iNum].damage = ((Uint16*)(Message->data+iPos+1))[1];
+						Player->VehicleData[iNum].max_shots = ((Uint16*)(Message->data+iPos+1))[3];
+						Player->VehicleData[iNum].range = ((Uint16*)(Message->data+iPos+1))[3];
+						Player->VehicleData[iNum].max_ammo = ((Uint16*)(Message->data+iPos+1))[4];
+						Player->VehicleData[iNum].armor = ((Uint16*)(Message->data+iPos+1))[5];
+						Player->VehicleData[iNum].max_hit_points = ((Uint16*)(Message->data+iPos+1))[6];
+						Player->VehicleData[iNum].scan = ((Uint16*)(Message->data+iPos+1))[7];
+						Player->VehicleData[iNum].max_speed = ((Uint16*)(Message->data+iPos+1))[8];
+						Player->VehicleData[iNum].version++;
+						iPos += i+9*2;
+					}
+					else
+					{
+						Player->BuildingData[iNum].damage = ((Uint16*)(Message->data+iPos+1))[1];
+						Player->BuildingData[iNum].max_shots = ((Uint16*)(Message->data+iPos+1))[3];
+						Player->BuildingData[iNum].range = ((Uint16*)(Message->data+iPos+1))[3];
+						Player->BuildingData[iNum].max_ammo = ((Uint16*)(Message->data+iPos+1))[4];
+						Player->BuildingData[iNum].armor = ((Uint16*)(Message->data+iPos+1))[5];
+						Player->BuildingData[iNum].max_hit_points = ((Uint16*)(Message->data+iPos+1))[6];
+						Player->BuildingData[iNum].scan = ((Uint16*)(Message->data+iPos+1))[7];
+						Player->BuildingData[iNum].version++;
+						iPos += i+9*2;
+					}
+				}
+			}
+			SWITCH_MESSAGE_END
+		default:
+			SWITCH_MESSAGE_END
+		}
+	}
+}
+
+void cMultiPlayerMenu::sendResources()
+{
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	int iMsgLenght = 0;
+	for ( int i = 0; i < Map->size*Map->size; i++ )
+	{
+		if ( iMsgLenght == 0 )
+		{
+			memset ( msg, 0, PACKAGE_LENGHT );
+			((Sint16*)msg)[0] = MU_MSG_RESOURCES;
+			iMsgLenght += 2;
+		}
+		if ( Map->Resources[i].typ == 0 ) continue;
+		((Sint16*)(msg+iMsgLenght))[0] = i;
+		msg[iMsgLenght+2] = Map->Resources[i].typ;
+		msg[iMsgLenght+3] = Map->Resources[i].value;
+		iMsgLenght+=4;
+		if ( iMsgLenght > PACKAGE_LENGHT-4 )
+		{
+			network->send ( PACKAGE_LENGHT, msg );
+			iMsgLenght = 0;
+		}
+	}
+	if ( iMsgLenght > 2 ) network->send ( PACKAGE_LENGHT, msg );
+}
+
+void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*> *LandingList )
+{
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	((Sint16*)msg)[0] = MU_MSG_WT_LAND;
+	((Sint16*)msg)[1] = iLandX;
+	((Sint16*)msg)[2] = iLandY;
+	((Sint16*)msg)[3] = ActualPlayer->Nr;
+	((Sint16*)msg)[4] = LandingList->iCount;
+	for ( int i = 0; i < LandingList->iCount; i++ )
+	{
+		// break if package will be to big
+		// this is very improbable becouse player must have selected over 61 units
+		// at the standard PACKAGE_LENGHT of 256bytes
+		if ( 10+4*i > PACKAGE_LENGHT-4 ) break;
+
+		((Sint16*)(msg+10+4*i))[0] = LandingList->Items[0]->cargo;
+		((Sint16*)(msg+10+4*i))[1] = LandingList->Items[0]->id;
+	}
+	network->send ( PACKAGE_LENGHT, msg );
+}
+
+void cMultiPlayerMenu::sendUpgrades()
+{
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	int iMsgLenght = 0;
+	for ( int i = 0; i < UnitsData.vehicle_anz; i++ )
+	{
+		if ( iMsgLenght == 0 )
+		{
+			memset ( msg, 0, PACKAGE_LENGHT );
+			((Sint16*)msg)[0] = MU_MSG_UPGRADES;
+			((Sint16*)msg)[1] = ActualPlayer->Nr;
+			((Sint16*)msg)[2] = 0; // Buffer for Number of items in this message
+			iMsgLenght += 6;
+		}
+		if ( ActualPlayer->VehicleData[i].damage != UnitsData.vehicle[i].data.damage ||
+			ActualPlayer->VehicleData[i].max_shots != UnitsData.vehicle[i].data.max_shots ||
+			ActualPlayer->VehicleData[i].range != UnitsData.vehicle[i].data.range ||
+			ActualPlayer->VehicleData[i].max_ammo != UnitsData.vehicle[i].data.max_ammo ||
+			ActualPlayer->VehicleData[i].armor != UnitsData.vehicle[i].data.armor ||
+			ActualPlayer->VehicleData[i].max_hit_points != UnitsData.vehicle[i].data.max_hit_points ||
+			ActualPlayer->VehicleData[i].scan != UnitsData.vehicle[i].data.scan ||
+			ActualPlayer->VehicleData[i].max_speed != UnitsData.vehicle[i].data.max_speed )
+		{
+			msg[iMsgLenght] = 1; // One for vehicles
+			((Sint16*)(msg+iMsgLenght+1))[0] = i;
+			((Sint16*)(msg+iMsgLenght+1))[1] = ActualPlayer->VehicleData[i].damage;
+			((Sint16*)(msg+iMsgLenght+1))[2] = ActualPlayer->VehicleData[i].max_shots;
+			((Sint16*)(msg+iMsgLenght+1))[3] = ActualPlayer->VehicleData[i].range;
+			((Sint16*)(msg+iMsgLenght+1))[4] = ActualPlayer->VehicleData[i].max_ammo;
+			((Sint16*)(msg+iMsgLenght+1))[5] = ActualPlayer->VehicleData[i].armor;
+			((Sint16*)(msg+iMsgLenght+1))[6] = ActualPlayer->VehicleData[i].max_hit_points;
+			((Sint16*)(msg+iMsgLenght+1))[7] = ActualPlayer->VehicleData[i].scan;
+			((Sint16*)(msg+iMsgLenght+1))[8] = ActualPlayer->VehicleData[i].max_speed;
+			iMsgLenght += 1+9*2;
+		}
+		if ( iMsgLenght > PACKAGE_LENGHT-(1+9*2) )
+		{
+			((Sint16*)msg)[2] = (iMsgLenght-6)/(1+9*2);
+			network->send ( PACKAGE_LENGHT, msg );
+			iMsgLenght = 0;
+		}
+	}
+	if ( iMsgLenght > 2 )
+	{
+		((Sint16*)msg)[2] = (iMsgLenght-6)/(1+9*2);
+		network->send ( PACKAGE_LENGHT, msg );
+	}
+
+	iMsgLenght = 0;
+	for ( int i = 0; i < UnitsData.building_anz; i++ )
+	{
+		if ( iMsgLenght == 0 )
+		{
+			memset ( msg, 0, PACKAGE_LENGHT );
+			((Sint16*)msg)[0] = MU_MSG_UPGRADES;
+			((Sint16*)msg)[1] = ActualPlayer->Nr;
+			((Sint16*)msg)[2] = 0; // Buffer for Number of items in this message
+			iMsgLenght += 6;
+		}
+		if ( ActualPlayer->BuildingData[i].damage != UnitsData.building[i].data.damage ||
+			ActualPlayer->BuildingData[i].max_shots != UnitsData.building[i].data.max_shots ||
+			ActualPlayer->BuildingData[i].range != UnitsData.building[i].data.range ||
+			ActualPlayer->BuildingData[i].max_ammo != UnitsData.building[i].data.max_ammo ||
+			ActualPlayer->BuildingData[i].armor != UnitsData.building[i].data.armor ||
+			ActualPlayer->BuildingData[i].max_hit_points != UnitsData.building[i].data.max_hit_points ||
+			ActualPlayer->BuildingData[i].scan != UnitsData.building[i].data.scan )
+		{
+			msg[iMsgLenght] = 0; // Null for buildings
+			((Sint16*)(msg+iMsgLenght+1))[0] = i;
+			((Sint16*)(msg+iMsgLenght+1))[1] = ActualPlayer->BuildingData[i].damage;
+			((Sint16*)(msg+iMsgLenght+1))[2] = ActualPlayer->BuildingData[i].max_shots;
+			((Sint16*)(msg+iMsgLenght+1))[3] = ActualPlayer->BuildingData[i].range;
+			((Sint16*)(msg+iMsgLenght+1))[4] = ActualPlayer->BuildingData[i].max_ammo;
+			((Sint16*)(msg+iMsgLenght+1))[5] = ActualPlayer->BuildingData[i].armor;
+			((Sint16*)(msg+iMsgLenght+1))[6] = ActualPlayer->BuildingData[i].max_hit_points;
+			((Sint16*)(msg+iMsgLenght+1))[7] = ActualPlayer->BuildingData[i].scan;
+			iMsgLenght += 1+8*2;
+		}
+		if ( iMsgLenght > PACKAGE_LENGHT-(1+8*2) )
+		{
+			((Sint16*)msg)[2] = (iMsgLenght-6)/(1+8*2);
+			network->send ( PACKAGE_LENGHT, msg );
+			iMsgLenght = 0;
+		}
+	}
+	if ( iMsgLenght > 2 )
+	{
+		((Sint16*)msg)[2] = (iMsgLenght-6)/(1+8*2);
+		network->send ( PACKAGE_LENGHT, msg );
+	}
+}
+
+int cMultiPlayerMenu::testAllReady()
+{
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		if ( ReadyList[i] != true ) return i;
+	}
+	return -1;
+}
+
+void cMultiPlayerMenu::sendIdentification()
+{
+	if ( bHost )
+	{
+		sendPlayerList();
+		return;
+	}
+
+	int iPlayerNum;
+	for ( iPlayerNum = 0; iPlayerNum < PlayerList->iCount; iPlayerNum++ )
+	{
+		if ( PlayerList->Items[iPlayerNum] == ActualPlayer ) break;
+	}
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	((Sint16*)msg)[0] = MU_MSG_IDENTIFIKATION;
+	((Sint16*)msg)[1] = ActualPlayer->Nr;
+	((Sint16*)msg)[2] = GetColorNr( ActualPlayer->color );
+	msg[6] = ReadyList[iPlayerNum];
+	strcpy ( msg+7, ActualPlayer->name.c_str() );
+	network->send ( PACKAGE_LENGHT, msg );
+}
+
+void cMultiPlayerMenu::sendPlayerList()
+{
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	((Sint16*)msg)[0] = MU_MSG_PLAYERLIST;
+	((Sint16*)msg)[1] = PlayerList->iCount;
+	int iPos = 4;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		((Sint16*)(msg+iPos))[0] = PlayerList->Items[i]->Nr;
+		((Sint16*)(msg+iPos))[1] = GetColorNr( PlayerList->Items[i]->color );
+		msg[iPos+4] = ReadyList[i];
+		strcpy ( msg+(iPos+5), PlayerList->Items[i]->name.c_str() );
+		iPos += 5 + (int)PlayerList->Items[i]->name.length()+1;
+	}
+	network->send ( PACKAGE_LENGHT, msg );
+}
+
+void cMultiPlayerMenu::sendOptions()
+{
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	((Sint16*)msg)[0] = MU_MSG_OPTINS;
+
+	int iPos = 3;
+	msg[2] = bOptions;
+	if ( bOptions )
+	{
+		((Sint16*)(msg+iPos))[0] = Options.metal;
+		((Sint16*)(msg+iPos))[1] = Options.oil;
+		((Sint16*)(msg+iPos))[2] = Options.gold;
+		((Sint16*)(msg+iPos))[3] = Options.dichte;
+		((Sint16*)(msg+iPos))[4] = Options.credits;
+		msg[iPos+10] = Options.FixedBridgeHead;
+		msg[iPos+11] = Options.AlienTech;
+		msg[iPos+12] = Options.PlayRounds;
+		iPos += 13;
+	}
+	else iPos += 1;
+	if ( !sMap.empty() )
+	{
+		((Sint16*)(msg+iPos))[0] = (int)sMap.length()+1;
+		strcpy( msg+iPos+2, sMap.c_str() );
+		iPos += (int)sMap.length()+1+2;
+	}
+	else
+	{
+		((Sint16*)(msg+iPos))[0] = 0;
+		iPos += 2;
+	}
+	if ( !sSaveGame.empty() )
+	{
+		((Sint16*)(msg+iPos))[0] = (int)sSaveGame.length()+1;
+		strcpy( msg+iPos+2, sSaveGame.c_str() );
+	}
+	else ((Sint16*)(msg+iPos))[0] = 0;
+	network->send ( PACKAGE_LENGHT, msg );
+}
+
+void cMultiPlayerMenu::displayGameSettings()
+{
+	string OptionString;
+	SDL_Rect rect;
+
+	rect.x = 192; rect.y = 52;
+	rect.w = 246; rect.h = 176;
+
+	if( !bHost )
+	{
+		SDL_BlitSurface( sfTmp, &rect, buffer, &rect );
+	}
+
+	OptionString = lngPack.i18n ( "Text~Main~Version", MAX_VERSION ) + "\n";
+	OptionString += "Checksum: " + iToStr( SettingsData.Checksum ) + "\n\n";
+
+	if( !bHost && !network )
+	{
+		OptionString += lngPack.i18n ( "Text~Multiplayer~Network_Connected_Not" );
+		font->showTextAsBlock( rect, OptionString );
+	}
+
+	if( !sSaveGame.empty() )
+	{
+		;
+	}
+
+	if ( !sMap.empty() )
+	{
+		string sMapName = sMap;
+		sMapName.erase( sMapName.length() - 4 );
+		if ( !FileExists( (SettingsData.sMapsPath + PATH_DELIMITER + sMap).c_str() ) )
+		{
+			OptionString += lngPack.i18n ( "Text~Error_Messages~ERROR_File_Not_Found", sMap );
+		}
+		else
+		{
+			SDL_Surface *sfMapPic;
+			int size;
+			SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + sMap).c_str(),"rb" );
+			if ( fp != NULL )
+			{
+				OptionString += lngPack.i18n ( "Text~Title~Map" ) + ": " + sMapName;
+				SDL_RWseek ( fp, 5, SEEK_SET );
+				size = SDL_ReadLE16( fp );
+				OptionString += " (" + iToStr( size ) + "x" + iToStr( size ) + ")\n";
+
+				sColor Palette[256];
+				short sGraphCount;
+				SDL_RWseek ( fp, 2 + size*size*3, SEEK_CUR );
+				sGraphCount = SDL_ReadLE16( fp );
+				SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
+				SDL_RWread ( fp, &Palette, 1, 768 );
+
+				sfMapPic = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size,8,0,0,0,0);
+				sfMapPic->pitch = sfMapPic->w;
+
+				sfMapPic->format->palette->ncolors = 256;
+				for (int j = 0; j < 256; j++ )
+				{
+					sfMapPic->format->palette->colors[j].r = Palette[j].cBlue;
+					sfMapPic->format->palette->colors[j].g = Palette[j].cGreen;
+					sfMapPic->format->palette->colors[j].b = Palette[j].cRed;
+				}
+				SDL_RWseek ( fp, 9, SEEK_SET );
+				for( int iY = 0; iY < size; iY++ )
+				{
+					for( int iX = 0; iX < size; iX++ )
+					{
+						unsigned char cColorOffset;
+						SDL_RWread ( fp, &cColorOffset, 1, 1 );
+						Uint8 *pixel = (Uint8*) sfMapPic->pixels  + (iY * size + iX);
+						*pixel = cColorOffset;
+					}
+				}
+				SDL_RWclose ( fp );
+			}
+			if ( sfMapPic != NULL )
+			{
+				SDL_Rect dest;
+				dest.w = dest.h = 112;
+				dest.x = 33;
+				dest.y = 106;
+				SDL_BlitSurface ( sfMapPic, NULL, buffer, &dest );
+			}
+			SDL_FreeSurface ( sfMapPic );
+			font->showTextCentered( 90, 65, sMapName + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")" );
+		}
+	}
+	else if ( sSaveGame.empty() )
+	{
+		OptionString += lngPack.i18n ( "Text~Multiplayer~Map_NoSet" ) + "\n";
+	}
+	OptionString += "\n";
+
+	if ( sSaveGame.empty() )
+	{
+		if ( bOptions )
+		{
+			OptionString += lngPack.i18n ( "Text~Title~Metal" ) + ": " + ( Options.metal < 2 ? ( Options.metal < 1 ? lngPack.i18n ( "Text~Option~Low" ) : lngPack.i18n ( "Text~Option~Normal" ) ) : ( Options.metal < 3 ? lngPack.i18n ( "Text~Option~Much" ) : lngPack.i18n ( "Text~Option~Most" ) ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Oil" ) + ": " + ( Options.oil < 2 ? ( Options.oil < 1 ? lngPack.i18n ( "Text~Option~Low" ) : lngPack.i18n ( "Text~Option~Normal" ) ) : ( Options.oil < 3 ? lngPack.i18n ( "Text~Option~Much" ) : lngPack.i18n ( "Text~Option~Most" ) ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Gold" ) + ": " + ( Options.gold < 2 ? ( Options.gold < 1 ? lngPack.i18n ( "Text~Option~Low" ) : lngPack.i18n ( "Text~Option~Normal" ) ) : ( Options.gold < 3 ? lngPack.i18n ( "Text~Option~Much" ) : lngPack.i18n ( "Text~Option~Most" ) ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Resource_Density" ) + ": " + ( Options.dichte < 2 ? ( Options.dichte < 1 ? lngPack.i18n ( "Text~Option~Thin" ) : lngPack.i18n ( "Text~Option~Normal" ) ) : ( Options.dichte < 3 ? lngPack.i18n ( "Text~Option~Thick" ) : lngPack.i18n ( "Text~Option~Most" ) ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Credits" )  + ": " + iToStr( Options.credits ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~BridgeHead" ) + ": " + ( Options.FixedBridgeHead ? lngPack.i18n ( "Text~Option~Definite" ) : lngPack.i18n ( "Text~Option~Mobile" ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( Options.AlienTech ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
+			OptionString += lngPack.i18n ( "Text~Title~Game_Type" ) + ": " + ( Options.PlayRounds ? lngPack.i18n ( "Text~Option~Type_Turns" ) : lngPack.i18n ( "Text~Option~Type_Simu" ) ) + "\n";
+		}
+		else
+		{
+			OptionString += lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) + "\n";
+		}
+	}
+
+	font->showTextAsBlock ( rect, OptionString );
+}
+
+void cMultiPlayerMenu::displayPlayerList()
+{
+	SDL_Rect scr, dest;
+
+	scr.x = 465;
+	scr.y = 287;
+	scr.w = 162;
+	scr.h = 116;
+	SDL_BlitSurface( sfTmp, &scr, buffer, &scr);
+
+	scr.x = 0;
+	scr.y = 0;
+	dest.w = dest.h = scr.w = scr.h = 10;
+	dest.x = 476;
+	dest.y = 297;
+	for( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		SDL_BlitSurface( PlayerList->Items[i]->color, &scr, buffer, &dest );
+		font->showText( dest.x+16, dest.y, PlayerList->Items[i]->name );
+
+		if ( ReadyList[i] == false ) scr.x = 0; // red if not ready
+		else scr.x = 10; // green if ready
+
+		dest.x += 135;
+		SDL_BlitSurface( GraphicsData.gfx_player_ready, &scr, buffer, &dest );
+		dest.x = 476;
+
+		dest.y+=16;
+	}
+}
 
 // Startet ein Hot-Seat-Spiel:
 void HeatTheSeat ( void )
@@ -5243,7 +5654,7 @@ void HeatTheSeat ( void )
 		}
 	}
 
-	game=new cGame ( NULL, map );
+	game=new cGame ( map );
 	game->AlienTech=options.AlienTech;
 	game->PlayRounds=options.PlayRounds;
 	game->ActiveRoundPlayerNr=p->Nr;

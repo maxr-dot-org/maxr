@@ -40,13 +40,12 @@ struct sReport{
 // Die Engine-Klasse /////////////////////////////////////////////////////////
 class cEngine{
 public:
-  cEngine(cMap *Map, cTCP *network);
+  cEngine(cMap *Map);
   ~cEngine(void);
 
   cMap *map;
   cMJobs *mjobs;
   cList<cMJobs*> *ActiveMJobs;
-  cTCP *network;
   SDL_mutex *mutex;
   int EndeCount;
   cList<cAJobs*> *AJobs;

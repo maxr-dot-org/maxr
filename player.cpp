@@ -59,6 +59,7 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr )
 	ReportBuildings=new cList<sReport*>;
 	ReportForschungFinished=false;
 	LockList=new cList<sLockElem*>;
+	iSocketNum = -1;
 }
 
 cPlayer::~cPlayer ( void )

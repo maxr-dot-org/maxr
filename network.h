@@ -25,6 +25,7 @@
 #define MAX_CLIENTS 10
 #define PACKAGE_LENGHT 256
 #define NETWORK_EVENT SDL_USEREVENT
+#define FIRST_MENU_MESSAGE 100
 
 /**
 * Callback for the networkthread
@@ -230,12 +231,17 @@ public:
 	*return Number of sockets.
 	*/
 	int getSocketCount();
+	/**
+	* Gets the sttus of the connection.
+	*@author alzi alias DoctorDeath
+	*return 1 if connected, 0 if not.
+	*/
+	int getConnectionStatus();
 
 	/**
 	* Thread funktion which new incomming connections and data.
 	*@author alzi alias DoctorDeath
 	*/
 	void HandleNetworkThread();
-};
-
+} EX *network;
 #endif // networkH

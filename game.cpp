@@ -31,7 +31,7 @@
 #include <sstream>
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
-cGame::cGame ( cTCP *network, cMap *map )
+cGame::cGame ( cMap *map )
 {
 	this->map=map;
 	PlayerCheat="";
@@ -48,7 +48,7 @@ cGame::cGame ( cTCP *network, cMap *map )
 	FLCname="";
 	video=NULL;
 	hud=new cHud;
-	engine=new cEngine ( map, network );
+	engine=new cEngine ( map );
 	HelpActive=false;
 	ChangeObjectName=false;
 	ChatInput=false;
@@ -3351,7 +3351,7 @@ bool cGame::Save ( string sName, int iNumber )
 	{
 		fwrite ( "HOT\0",sizeof ( char ),4,fp );
 	}
-	else if ( engine->network )
+	else if ( network )
 	{
 		fwrite ( "MUL\0",sizeof ( char ),4,fp );
 	}

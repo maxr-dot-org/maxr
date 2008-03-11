@@ -1025,10 +1025,6 @@ void showPreferences ( void )
 				{
 					game->ActivePlayer->name=InputStr;
 				}
-				if ( strcmp ( game->ActivePlayer->name.c_str(),OldName.c_str() ) !=0 )
-				{
-					// TODO: NetworkMessage?!?!
-				}
 				// Save new settings to max.xml
 				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
 				if( SettingsData.SoundMute != OldSoundMute ) SaveOption ( SAVETYPE_SOUNDMUTE );

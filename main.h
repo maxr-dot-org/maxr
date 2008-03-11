@@ -769,6 +769,7 @@ public:
 	SDL_Surface *gfx_exitpoints_org;
 	SDL_Surface *gfx_exitpoints;
 	SDL_Surface *gfx_menu_buttons;
+	SDL_Surface *gfx_player_ready;
 
 	string DialogPath;
 	string Dialog2Path;

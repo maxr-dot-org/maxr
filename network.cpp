@@ -357,6 +357,12 @@ int cTCP::getSocketCount()
 	return iLast_Socket;
 }
 
+int cTCP::getConnectionStatus()
+{
+	if ( iLast_Socket  > 0 ) return 1;
+	return 0;
+}
+
 void cTCP::clearBuffer( sDataBuffer *buffer )
 {
 	buffer->iLenght = 0;
@@ -365,6 +371,7 @@ void cTCP::clearBuffer( sDataBuffer *buffer )
 
 int cTCP::getFreeSocket()
 {
+	if ( iLast_Socket == MAX_CLIENTS ) return -1;
 	int iNum;
 	for( iNum = 0; iNum < iLast_Socket; iNum++ )
 	{
