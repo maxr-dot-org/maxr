@@ -4729,6 +4729,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 							ChatStr.erase ( PACKAGE_LENGHT-3 );
 						}
 						char msg[PACKAGE_LENGHT];
+						memset ( msg, 0, PACKAGE_LENGHT );
 						((Uint16*)msg)[0] = MU_MSG_CHAT;
 						strcpy( msg+2, ChatStr.c_str());
 						network->send ( PACKAGE_LENGHT, msg );
@@ -4837,7 +4838,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				}
 				else
 				{
-					// for savegame
+					// Wait for savegame
 				}
 			}
 			else
@@ -4845,6 +4846,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				if ( bHost )
 				{
 					char msg[PACKAGE_LENGHT];
+					memset ( msg, 0, PACKAGE_LENGHT );
 					((Uint16*)msg)[0] = MU_MSG_GO;
 					network->send ( PACKAGE_LENGHT, msg );
 				}
