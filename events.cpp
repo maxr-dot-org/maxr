@@ -177,7 +177,6 @@ int cEventHandling::HandleEvents()
 						// push event only if the event has not be send from this player
 						if ( ((Sint16*)DataBuffer->data)[1] != game->ActivePlayer->Nr ) pushEvent( &event );
 
-						if ( network->isHost() ) network->sendEvent( &event, PACKAGE_LENGHT-2 );
 						delete DataBuffer;
 					}
 					else // No events for the menus, here the data is a simple message

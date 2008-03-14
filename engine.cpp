@@ -1260,6 +1260,7 @@ void cEngine::HandleEvent( SDL_Event *event )
 	{
 	case GAME_EV_CHAT:
 		game->addMessage( (char*)data );
+		if ( network && network->isHost() ) network->sendEvent( event, PACKAGE_LENGHT-2 );
 		break;
 	}
 }

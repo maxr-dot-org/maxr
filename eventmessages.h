@@ -21,11 +21,16 @@
 #include "defines.h"
 #include "main.h"
 
-enum GEME_EVENT_TYPES
+enum GAME_EVENT_TYPES
 {
 	GAME_EV_CHAT = 1	// simple text message
 };
 
+/**
+* generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
+*@author alzi alias DoctorDeath
+*@param sMsg the chat message.
+*/
 void sendChatMessage ( string sMsg );
 
 #endif // eventmessagesH

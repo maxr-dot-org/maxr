@@ -25,9 +25,9 @@ void sendChatMessage ( string sMsg )
 	SDL_Event event;
 	event.type = GAME_EVENT;
 	event.user.code = GAME_EV_CHAT;
-	event.user.data1 = malloc ( sMsg.length()+3 );
+	event.user.data1 = malloc ( sMsg.length()+1 );
 	memcpy ( event.user.data1, sMsg.c_str(), sMsg.length()+1 );
 	event.user.data2 = NULL;
 	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
-	network->sendEvent( &event, (int)sMsg.length() );
+	else network->sendEvent( &event, (int)sMsg.length() );
 }
