@@ -24,7 +24,6 @@
 
 #define MAX_CLIENTS 10
 #define PACKAGE_LENGHT 256
-#define NETWORK_EVENT SDL_USEREVENT
 #define FIRST_MENU_MESSAGE 100
 
 /**
@@ -94,6 +93,7 @@ class cTCP
 
 	SDL_Thread *TCPHandleThread;
 	bool bExit;
+	bool bHost;
 
 	int iPort;
 	int iLast_Socket;
@@ -154,7 +154,7 @@ class cTCP
 	*@param data2 second data of the event.
 	*@return Allways 0 for success since it waits until the event can be pushed.
 	*/
-	int sendEvent( int iEventType, void *data1, void *data2 );
+	int pushEvent( int iEventType, void *data1, void *data2 );
 public:
 	/**
 	* Creates the mutexes, initialises some variables and the sockets and starts the network thread.
@@ -204,6 +204,13 @@ public:
 	*/
 	int send( int iLenght, char *buffer );
 	/**
+	* Converts the event to a network message sends it over the TCP connection.
+	*@author alzi alias DoctorDeath
+	*param event The SDL_Event to be send.
+	*param iLenght Lenght of data1 of the event to be send. data2 will be ignored.
+	*/
+	void sendEvent( SDL_Event *event, int iLenght );
+	/**
 	* Reads data of an given lenght from the client/socket.
 	*@author alzi alias DoctorDeath
 	*param iClientNumber Number of client/socket form which the data should be read.
@@ -232,11 +239,17 @@ public:
 	*/
 	int getSocketCount();
 	/**
-	* Gets the sttus of the connection.
+	* Gets the status of the connection.
 	*@author alzi alias DoctorDeath
 	*return 1 if connected, 0 if not.
 	*/
 	int getConnectionStatus();
+	/**
+	* looks if this machine is the host.
+	*@author alzi alias DoctorDeath
+	*return true if is host, false if not.
+	*/
+	bool isHost();
 
 	/**
 	* Thread funktion which new incomming connections and data.

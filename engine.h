@@ -46,7 +46,6 @@ public:
   cMap *map;
   cMJobs *mjobs;
   cList<cMJobs*> *ActiveMJobs;
-  SDL_mutex *mutex;
   int EndeCount;
   cList<cAJobs*> *AJobs;
   int SyncWaiting;
@@ -82,6 +81,7 @@ public:
   void LogMessage(string msg);
   cList<string> *SplitMessage ( string sMsg );
 
+  void HandleEvent( SDL_Event *event );
   void Run(void);
 };
 

@@ -25,6 +25,7 @@
 #include "keyinp.h"
 #include "fonts.h"
 #include "menu.h"
+#include "eventmessages.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
@@ -906,7 +907,7 @@ void cHud::ChechMouseOver ( void )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			//TODO: Log-Menü aufrufen...
-			game->AddMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
+			sendChatMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
 
 			LogButton ( false );
 		}
@@ -1438,13 +1439,13 @@ void cHud::MakeMeMyEnd ( void )
 	if ( game->engine->CheckVehiclesMoving ( false ) )
 	{
 		EndeButton ( false );
-		game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Wait") );
+		sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Wait") );
 	}
 	else
 	{
 		if ( game->engine->DoEndActions() )
 		{
-			game->AddMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
+			sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
 			game->WantToEnd = true;
 			if( !game->HotSeat )
 			{

@@ -25,6 +25,7 @@
 #include "files.h"
 #include "pcx.h"
 #include "events.h"
+#include "eventmessages.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
@@ -1393,7 +1394,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
 		{
-			game->AddMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
+			sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
 			return false;
 		}
 
@@ -1405,7 +1406,7 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->OilProd )
 		{
-			game->AddMessage ( lngPack.i18n( "Text~Comp~Fuel_Insufficient") );
+			sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Insufficient") );
 			return false;
 		}
 		else
@@ -1421,14 +1422,14 @@ bool cBuilding::StartWork ( bool engine_call )
 		{
 			if ( data.energy_need + SubBase->EnergyNeed > SubBase->MaxEnergyProd )
 			{
-				game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_Insufficient") );
+				sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Insufficient") );
 				return false;
 			}
 			else
 			{
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
-					game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_ToLow") );
+					sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_ToLow") );
 
 					for ( i = 0;i < SubBase->buildings->iCount;i++ )
 					{
@@ -1525,7 +1526,7 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	{
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
 		{
-			game->AddMessage ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
+			sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
 			return;
 		}
 
@@ -8343,7 +8344,7 @@ void cBuilding::DrawMenu ( void )
 			owner->DoScan();
 
 			sprintf ( str, "%d von %d aufgerüstet.", count, sum );
-			game->AddMessage ( str );
+			sendChatMessage ( str );
 
 			return;
 		}

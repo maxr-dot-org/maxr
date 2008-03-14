@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <sstream>
 #include "math.h"
 #include "game.h"
 #include "main.h"
@@ -28,7 +29,7 @@
 #include "log.h"
 #include "files.h"
 #include "events.h"
-#include <sstream>
+#include "eventmessages.h"
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame ( cMap *map )
@@ -1269,7 +1270,7 @@ void cGame::AddCoords (const char *msg,int x,int y )
  	stringstream strStream;
  	//e.g. [85,22] missel MK I is under attack (F1)
  	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString ( KeysList.KeyJumpToAction ) << ")";
-	AddMessage ( strStream.str() );
+	sendChatMessage ( strStream.str() );
 	MsgCoordsX=x;
 	MsgCoordsY=y;
 }
@@ -1758,25 +1759,20 @@ void cGame::HandleMessages ( void )
 }
 
 // Fügt eine neue Nachricht ein:
-void cGame::AddMessage ( const char *msg )
+void cGame::addMessage ( string sMsg )
 {
-	sMessage *m;
-	m= ( sMessage* ) malloc ( sizeof ( sMessage ) );
-	m->chars= ( int ) strlen ( msg );
-	m->msg= ( char* ) malloc ( m->chars+1 );
-	strcpy ( m->msg,msg );
-	if ( m->chars>500 ) m->msg[500]=0;
-	m->len=font->getTextWide(msg);
-	m->age=Frame;
-	messages->Add ( m );
-	if(SettingsData.bDebug) cLog::write(m->msg, cLog::eLOG_TYPE_DEBUG);
+	sMessage *Message;
+	Message = new sMessage;
+	Message->chars = (int)sMsg.length();
+	Message->msg = ( char* ) malloc ( Message->chars+1 );
+	strcpy ( Message->msg, sMsg.c_str() );
+	if ( Message->chars > 500 ) Message->msg[500]=0;
+	Message->len = font->getTextWide( sMsg );
+	Message->age = Frame;
+	messages->Add ( Message );
+	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
-// Fügt eine neue Nachricht ein:
-void cGame::AddMessage ( std::string msg )
-{
-	AddMessage ( msg.c_str() );
-}
 // Führt das übergebene Kommando aus, und gibt false zurück, falls es keins war:
 bool cGame::DoCommand ( char *cmd )
 {
@@ -4191,7 +4187,7 @@ bool cGame::MakeHotSeatEnde ( void )
 		if ( !strcmp ( sstmp.c_str(),ActivePlayer->name.c_str() ) )
 			PlayerCheat="";
 		else
-			game->AddMessage ( ( char* ) game->PlayerCheat.c_str() );
+			sendChatMessage ( game->PlayerCheat );
 	}
 	if ( HotSeatPlayer==0 ) return true;
 	engine->MakeRundenstartReport();

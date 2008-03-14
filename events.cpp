@@ -166,13 +166,18 @@ int cEventHandling::HandleEvents()
 					if ( ((Uint16*)DataBuffer->data)[0] < FIRST_MENU_MESSAGE ) // Eventtypes for the game
 					{
 						// will look like something this way:
-						/*SDL_Event event;
+						SDL_Event event;
 						event.type = GAME_EVENT;
 						event.user.code = ((Uint16*)DataBuffer->data)[0];
-						event.user.data1 = DataBuffer->data;
-						event.user.data2 = NULL;
-						pushEvent( &event );*/
 
+						// data1 is the real data
+						event.user.data1 = malloc ( PACKAGE_LENGHT );
+						memcpy ( event.user.data1, DataBuffer->data+2, PACKAGE_LENGHT-2 );
+
+						// push event only if the event has not be send from this player
+						if ( ((Sint16*)DataBuffer->data)[1] != game->ActivePlayer->Nr ) pushEvent( &event );
+
+						if ( network->isHost() ) network->sendEvent( &event, PACKAGE_LENGHT-2 );
 						delete DataBuffer;
 					}
 					else // No events for the menus, here the data is a simple message
@@ -197,6 +202,9 @@ int cEventHandling::HandleEvents()
 				}
 				break;
 			}
+			break;
+		case GAME_EVENT:
+			game->engine->HandleEvent( &event );
 			break;
 
 		default:

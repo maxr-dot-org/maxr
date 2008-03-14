@@ -19,6 +19,7 @@
 
 #include "network.h"
 #include "events.h"
+#include "game.h"
 
 void cTCP::init()
 {
@@ -38,6 +39,7 @@ void cTCP::init()
 	bDataLocked = false;
 	bTCPLocked = false;
 	bWaitForRead = false;
+	bHost = false;
 
 	bExit = false;
 	TCPHandleThread = SDL_CreateThread( CallbackHandleNetworkThread, this );
@@ -81,6 +83,7 @@ int cTCP::create()
 	Sockets[iNum]->iState = STATE_NEW;
 	clearBuffer ( &Sockets[iNum]->buffer );
 
+	bHost = true; // is the host
 	unlockData();
 	return 0;
 }
@@ -102,6 +105,7 @@ int cTCP::connect()
 	Sockets[iNum]->iState = STATE_NEW;
 	clearBuffer ( &Sockets[iNum]->buffer );
 
+	bHost = false;	// is nor the host
 	unlockData();
 	return 0;
 }
@@ -121,7 +125,7 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 				Sockets[iClientNumber]->iState = STATE_DYING;
 				void *data = malloc ( sizeof (Sint16) );
 				((Sint16*)data)[0] = iClientNumber;
-				sendEvent ( TCP_CLOSEEVENT, data, NULL );
+				pushEvent ( TCP_CLOSEEVENT, data, NULL );
 				unlockData();
 				return -1;
 			}
@@ -142,6 +146,16 @@ int cTCP::send( int iLenght, char *buffer )
 		}
 	}
 	return iReturnVal;
+}
+
+void cTCP::sendEvent( SDL_Event *event, int iLenght )
+{
+	if ( iLenght > PACKAGE_LENGHT-2 ) iLenght = PACKAGE_LENGHT-2;
+	char msg[PACKAGE_LENGHT];
+	memset ( msg, 0, PACKAGE_LENGHT );
+	((Sint16*)msg)[0] = event->user.code;
+	memcpy( msg+2, event->user.data1, iLenght );
+	send( PACKAGE_LENGHT, msg );
 }
 
 int cTCP::read( int iClientNumber, int iLenght, char *buffer )
@@ -232,7 +246,7 @@ void cTCP::HandleNetworkThread()
 						clearBuffer ( &Sockets[iNum]->buffer );
 						void *data = malloc ( sizeof (Sint16) );
 						((Sint16*)data)[0] = iNum;
-						sendEvent( TCP_ACCEPTEVENT, data, NULL );
+						pushEvent( TCP_ACCEPTEVENT, data, NULL );
 					}
 				}
 				else SDLNet_TCP_Close ( socket );
@@ -256,13 +270,13 @@ void cTCP::HandleNetworkThread()
 						Sockets[i]->buffer.iLenght += iLenght;
 						if ( iOldLenght == 0 )
 						{
-							sendEvent ( TCP_RECEIVEEVENT, data, NULL );
+							pushEvent ( TCP_RECEIVEEVENT, data, NULL );
 						}
 					}
 					else
 					{
 						Sockets[i]->iState = STATE_DYING;
-						sendEvent ( TCP_CLOSEEVENT, data, NULL );
+						pushEvent ( TCP_CLOSEEVENT, data, NULL );
 					}
 				}
 			}
@@ -271,7 +285,7 @@ void cTCP::HandleNetworkThread()
 	}
 }
 
-int cTCP::sendEvent( int iEventType, void *data1, void *data2 )
+int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 {
 	SDL_Event event;
 
@@ -361,6 +375,10 @@ int cTCP::getConnectionStatus()
 {
 	if ( iLast_Socket  > 0 ) return 1;
 	return 0;
+}
+bool cTCP::isHost()
+{
+	return bHost;
 }
 
 void cTCP::clearBuffer( sDataBuffer *buffer )

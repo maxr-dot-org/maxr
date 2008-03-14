@@ -4708,7 +4708,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				if ( !ChatStr.empty() )
 				{
 					PlayFX ( SoundData.SNDChat );
-					if ( ChatStr.compare( "\\ready" ) == 0 )
+					if ( ChatStr.compare( "/ready" ) == 0 )
 					{
 						int iPlayerIndex;
 						for ( iPlayerIndex = 0; iPlayerIndex < PlayerList->iCount; iPlayerIndex++ )

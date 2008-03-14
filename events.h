@@ -22,6 +22,9 @@
 #include "defines.h"
 #include "main.h"
 
+#define NETWORK_EVENT	SDL_USEREVENT
+#define GAME_EVENT		SDL_USEREVENT+1
+
 Uint32 eventTimerCallback(Uint32 interval, void *param);
 
 /**

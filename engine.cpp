@@ -22,6 +22,7 @@
 #include "fonts.h"
 #include "mouse.h"
 #include "events.h"
+#include "eventmessages.h"
 
 // Funktionen der Engine Klasse //////////////////////////////////////////////
 cEngine::cEngine ( cMap *Map )
@@ -30,7 +31,6 @@ cEngine::cEngine ( cMap *Map )
 	mjobs=NULL;
 	ActiveMJobs=new cList<cMJobs*>;
 	AJobs=new cList<cAJobs*>;
-	mutex = SDL_CreateMutex();
 	EndeCount=0;
 	RundenendeActionsReport=0;
 	SyncNo=-1;
@@ -55,7 +55,6 @@ cEngine::~cEngine ( void )
 	}
 	delete AJobs;
 	StopLog();
-	SDL_DestroyMutex(mutex);
 }
 
 // Lässt die Engine laufen:
@@ -64,7 +63,6 @@ void cEngine::Run ( void )
 	int i;
 	// Diese Aktionen nur Zeitgebunden ausführen:
 	if ( !timer0 ) return;
-	SDL_LockMutex(mutex);
 
 	//run auto move jobs
 	cAutoMJob::handleAutoMoveJobs();
@@ -295,7 +293,6 @@ void cEngine::Run ( void )
 		AJobs->Delete ( i );
 		i--;
 	}
-	SDL_UnlockMutex(mutex);
 }
 
 // Ändert den Namen eines Vehicles:
@@ -342,10 +339,8 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 	string sMessage;
 	job=new cMJobs ( map,ScrOff,DestOff,plane );
 	job->ClientMove=ClientMove;
-	SDL_LockMutex(mutex);
 	job->next=mjobs;
 	mjobs=job;
-	SDL_UnlockMutex(mutex);
 
 	if ( !job->finished )
 	{
@@ -418,10 +413,8 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 // Fügt einen Movejob in die Liste der aktiven Jobs ein:
 void cEngine::AddActiveMoveJob ( cMJobs *job )
 {
-	SDL_LockMutex(mutex);
 	ActiveMJobs->Add ( job );
 	job->Suspended=false;
-	SDL_UnlockMutex(mutex);
 }
 
 // Reserviert ein Feld in der GO-Map:
@@ -451,7 +444,6 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		v=map->GO[FromX+FromY*map->size].plane;
 	}
 	if ( !v ) return;
-	SDL_LockMutex(mutex);
 	if ( !plane )
 	{
 		map->GO[FromX+FromY*map->size].vehicle=NULL;
@@ -869,7 +861,7 @@ void cEngine::CheckDefeat ( void )
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
 			sTmpString += p->name + " ";
 			sTmpString += lngPack.i18n( "Text~Comp~Defeated") + "!";
-			game->AddMessage ( sTmpString );
+			sendChatMessage ( sTmpString );
 
 			if ( game->HotSeat )
 			{
@@ -941,7 +933,7 @@ void cEngine::MakeRundenstartReport ( void )
 	string sReportMsg = "";
 	string stmp = "";
 	string sTmp = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr(game->Runde);
-	game->AddMessage(sTmp);
+	sendChatMessage(sTmp);
 	int anz = 0;
 	
 	while ( game->ActivePlayer->ReportBuildings->iCount )
@@ -982,7 +974,7 @@ void cEngine::MakeRundenstartReport ( void )
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;
-	game->AddMessage ( sReportMsg );
+	sendChatMessage ( sReportMsg );
 }
 
 // Bereitet das Logging vor:
@@ -1257,6 +1249,17 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 // Sends a chat-message:
 void cEngine::SendChatMessage(const char *str)
 {
-	game->AddMessage(str);
+	sendChatMessage(str);
 	PlayFX(SoundData.SNDChat);
+}
+
+void cEngine::HandleEvent( SDL_Event *event )
+{
+	void *data = event->user.data1;
+	switch ( event->user.code )
+	{
+	case GAME_EV_CHAT:
+		game->addMessage( (char*)data );
+		break;
+	}
 }
