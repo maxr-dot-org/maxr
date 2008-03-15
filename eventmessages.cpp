@@ -20,14 +20,20 @@
 #include "network.h"
 #include "events.h"
 
-void sendChatMessage ( string sMsg )
+SDL_Event generateEvent ( int iTyp, int iLenght, void *data )
 {
 	SDL_Event event;
 	event.type = GAME_EVENT;
-	event.user.code = GAME_EV_CHAT;
-	event.user.data1 = malloc ( sMsg.length()+1 );
-	memcpy ( event.user.data1, sMsg.c_str(), sMsg.length()+1 );
+	event.user.code = iTyp;
+	event.user.data1 = malloc ( iLenght );
+	memcpy ( event.user.data1, data, iLenght );
 	event.user.data2 = NULL;
+	return event;
+}
+
+void sendChatMessage ( string sMsg )
+{
+	SDL_Event event = generateEvent ( GAME_EV_CHAT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
 	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
 	else network->sendEvent( &event, (int)sMsg.length() );
 }
