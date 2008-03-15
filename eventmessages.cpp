@@ -35,5 +35,14 @@ void sendChatMessage ( string sMsg )
 {
 	SDL_Event event = generateEvent ( GAME_EV_CHAT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
 	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
-	else network->sendEvent( &event, (int)sMsg.length() );
+	else network->sendEvent( &event, (int)sMsg.length()+1 );
+}
+
+void sendDelPlayer ( int iPlayerNum )
+{
+	char data[2];
+	((Sint16*)data)[0] = iPlayerNum;
+	SDL_Event event = generateEvent ( GAME_EV_DEL_PLAYER, 2, data );
+	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
+	else network->sendEvent( &event, 2 );
 }

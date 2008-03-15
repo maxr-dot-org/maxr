@@ -20,6 +20,7 @@
 #include "network.h"
 #include "game.h"
 #include "menu.h"
+#include "eventmessages.h"
 
 Uint32 eventTimerCallback(Uint32 interval, void *param)
 {
@@ -166,16 +167,16 @@ int cEventHandling::HandleEvents()
 					if ( ((Uint16*)DataBuffer->data)[0] < FIRST_MENU_MESSAGE ) // Eventtypes for the game
 					{
 						// will look like something this way:
-						SDL_Event event;
-						event.type = GAME_EVENT;
-						event.user.code = ((Uint16*)DataBuffer->data)[0];
+						SDL_Event NewEvent;
+						NewEvent.type = GAME_EVENT;
+						NewEvent.user.code = ((Uint16*)DataBuffer->data)[0];
 
 						// data1 is the real data
-						event.user.data1 = malloc ( PACKAGE_LENGHT );
-						memcpy ( event.user.data1, DataBuffer->data+2, PACKAGE_LENGHT-2 );
+						NewEvent.user.data1 = malloc ( PACKAGE_LENGHT );
+						memcpy ( NewEvent.user.data1, DataBuffer->data+2, PACKAGE_LENGHT-2 );
 
-						// push event only if the event has not be send from this player
-						if ( ((Sint16*)DataBuffer->data)[1] != game->ActivePlayer->Nr ) pushEvent( &event );
+						NewEvent.user.data2 = NULL;
+						pushEvent( &NewEvent );
 
 						delete DataBuffer;
 					}
@@ -192,12 +193,23 @@ int cEventHandling::HandleEvents()
 			case TCP_CLOSEEVENT:
 				// Socket should be closed
 				network->close ( ((Sint16 *)event.user.data1)[0] );
-				if ( MultiPlayerMenu )
+				if ( !game )
 				{
 					sDataBuffer *DataBuffer = new sDataBuffer;
 					((Uint16*)DataBuffer->data)[0] = MU_MSG_DEL_PLAYER;
 					((Uint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
 					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+				}
+				else
+				{
+					// Lost Connection
+					SDL_Event NewEvent;
+					NewEvent.type = GAME_EVENT;
+					NewEvent.user.code = GAME_EV_LOST_CONNECTION;
+					NewEvent.user.data1 = malloc ( sizeof ( Sint16 ) );
+					((Uint16*)NewEvent.user.data1)[0] = ((Sint16*)event.user.data1)[0];
+					NewEvent.user.data2 = NULL;
+					pushEvent( &NewEvent );
 				}
 				break;
 			}

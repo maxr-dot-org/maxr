@@ -23,7 +23,9 @@
 
 enum GAME_EVENT_TYPES
 {
-	GAME_EV_CHAT = 1	// simple text message
+	GAME_EV_LOST_CONNECTION = 1,	// connection on a socket has been lost
+	GAME_EV_CHAT,					// simple text message
+	GAME_EV_DEL_PLAYER,				// a Player should be deleted
 };
 
 /**
@@ -41,5 +43,12 @@ SDL_Event generateEvent ( int iTyp, int iLenght, void *data );
 *@param sMsg the chat message.
 */
 void sendChatMessage ( string sMsg );
+
+/**
+* Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
+*@author alzi alias DoctorDeath
+*@param sMsg the chat message.
+*/
+void sendDelPlayer ( int iPlayerNum );
 
 #endif // eventmessagesH

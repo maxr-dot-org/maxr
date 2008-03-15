@@ -1258,9 +1258,42 @@ void cEngine::HandleEvent( SDL_Event *event )
 	void *data = event->user.data1;
 	switch ( event->user.code )
 	{
+	case GAME_EV_LOST_CONNECTION:
+		// this event is only for network games
+		if ( network && network->isHost() )
+		{
+			// Host must delete the player
+			for ( int i = 0; i < game->PlayerList->iCount ; i++ )
+			{
+				if ( game->PlayerList->Items[i]->iSocketNum == ((Sint16*)data)[0] )
+				{
+					sendDelPlayer ( game->PlayerList->Items[i]->Nr );
+					delete game->PlayerList->Items[i];
+					game->PlayerList->Delete( i );
+					break;
+				}
+			}
+		}
+		else if ( network )
+		{
+			// Client has lost connection to host, so close game
+			game->End = true;
+		}
+		break;
 	case GAME_EV_CHAT:
 		game->addMessage( (char*)data );
 		if ( network && network->isHost() ) network->sendEvent( event, PACKAGE_LENGHT-2 );
+		break;
+	case GAME_EV_DEL_PLAYER:
+		for ( int i = 0; i < game->PlayerList->iCount ; i++ )
+		{
+			if ( game->PlayerList->Items[i]->Nr == ((Sint16*)data)[0] )
+			{
+				delete game->PlayerList->Items[i];
+				game->PlayerList->Delete( i );
+				break;
+			}
+		}
 		break;
 	}
 }
