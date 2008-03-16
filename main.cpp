@@ -246,6 +246,12 @@ void showGameWindow()
 	
 	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
 	
+	if ( screen == NULL )
+	{
+		cLog::write("Couldn't set video mode w: " + iToStr( buffer->w ) +  " h: " + iToStr ( buffer->h ) + " bpp: " + iToStr ( buffer->format->BitsPerPixel ) + (SettingsData.bWindowMode?" window":" fullscreen"), cLog::eLOG_TYPE_ERROR);
+		Quit();
+	}
+
 	SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
 	SDL_WM_SetCaption ( MAXVERSION, NULL ); //set caption
 	SDL_ShowCursor ( 0 );
