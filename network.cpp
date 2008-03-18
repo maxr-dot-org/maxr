@@ -153,7 +153,7 @@ void cTCP::sendEvent( SDL_Event *event, int iLenght )
 	if ( iLenght > PACKAGE_LENGHT-2 ) iLenght = PACKAGE_LENGHT-2;
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = event->user.code;
+	((Sint16*)msg)[0] = SDL_SwapLE16( event->user.code );
 	memcpy( msg+2, event->user.data1, iLenght );
 	send( PACKAGE_LENGHT, msg );
 }

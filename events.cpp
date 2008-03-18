@@ -151,8 +151,8 @@ int cEventHandling::HandleEvents()
 				if ( MultiPlayerMenu )
 				{
 					sDataBuffer *DataBuffer = new sDataBuffer;
-					((Uint16*)DataBuffer->data)[0] = MU_MSG_NEW_PLAYER;
-					((Uint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
+					((Sint16*)DataBuffer->data)[0] = MU_MSG_NEW_PLAYER;
+					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
 					MultiPlayerMenu->MessageList->Add ( DataBuffer );
 				}
 				break;
@@ -162,14 +162,14 @@ int cEventHandling::HandleEvents()
 				sDataBuffer *DataBuffer = new sDataBuffer;
 				memset ( DataBuffer->data, 0, PACKAGE_LENGHT );
 				if ( !network ) break;
-				if ( ( DataBuffer->iLenght = network->read ( ((Sint16 *)event.user.data1)[0], PACKAGE_LENGHT, DataBuffer->data ) ) != 0 )
+				if ( ( DataBuffer->iLenght = network->read ( SDL_SwapLE16( ((Sint16 *)event.user.data1)[0] ), PACKAGE_LENGHT, DataBuffer->data ) ) != 0 )
 				{
-					if ( ((Uint16*)DataBuffer->data)[0] < FIRST_MENU_MESSAGE ) // Eventtypes for the game
+					if ( SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the game
 					{
 						// will look like something this way:
 						SDL_Event NewEvent;
 						NewEvent.type = GAME_EVENT;
-						NewEvent.user.code = ((Uint16*)DataBuffer->data)[0];
+						NewEvent.user.code = SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] );
 
 						// data1 is the real data
 						NewEvent.user.data1 = malloc ( PACKAGE_LENGHT );
@@ -196,8 +196,8 @@ int cEventHandling::HandleEvents()
 				if ( !game )
 				{
 					sDataBuffer *DataBuffer = new sDataBuffer;
-					((Uint16*)DataBuffer->data)[0] = MU_MSG_DEL_PLAYER;
-					((Uint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
+					((Sint16*)DataBuffer->data)[0] = MU_MSG_DEL_PLAYER;
+					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
 					MultiPlayerMenu->MessageList->Add ( DataBuffer );
 				}
 				else
@@ -207,7 +207,7 @@ int cEventHandling::HandleEvents()
 					NewEvent.type = GAME_EVENT;
 					NewEvent.user.code = GAME_EV_LOST_CONNECTION;
 					NewEvent.user.data1 = malloc ( sizeof ( Sint16 ) );
-					((Uint16*)NewEvent.user.data1)[0] = ((Sint16*)event.user.data1)[0];
+					((Sint16*)NewEvent.user.data1)[0] = ((Sint16*)event.user.data1)[0];
 					NewEvent.user.data2 = NULL;
 					pushEvent( &NewEvent );
 				}

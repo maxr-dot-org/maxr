@@ -1287,7 +1287,7 @@ void cEngine::HandleEvent( SDL_Event *event )
 	case GAME_EV_DEL_PLAYER:
 		for ( int i = 0; i < game->PlayerList->iCount ; i++ )
 		{
-			if ( game->PlayerList->Items[i]->Nr == ((Sint16*)data)[0] )
+			if ( game->PlayerList->Items[i]->Nr == SDL_SwapLE16( ((Sint16*)data)[0] ) )
 			{
 				delete game->PlayerList->Items[i];
 				game->PlayerList->Delete( i );

@@ -4730,7 +4730,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 						char msg[PACKAGE_LENGHT];
 						memset ( msg, 0, PACKAGE_LENGHT );
-						((Uint16*)msg)[0] = MU_MSG_CHAT;
+						((Sint16*)msg)[0] = SDL_SwapLE16(MU_MSG_CHAT);
 						strcpy( msg+2, ChatStr.c_str());
 						network->send ( PACKAGE_LENGHT, msg );
 
@@ -4847,7 +4847,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				{
 					char msg[PACKAGE_LENGHT];
 					memset ( msg, 0, PACKAGE_LENGHT );
-					((Uint16*)msg)[0] = MU_MSG_GO;
+					((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_GO );
 					network->send ( PACKAGE_LENGHT, msg );
 				}
 
@@ -4944,10 +4944,10 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						{
 							char msg[PACKAGE_LENGHT];
 							memset ( msg, 0, PACKAGE_LENGHT );
-							((Sint16*)msg)[0] = MU_MSG_LAND_AT;
-							((Sint16*)msg)[1] = ClientDataList->Items[0]->iNr;
-							((Sint16*)msg)[2] = ClientDataList->Items[0]->iLandX;
-							((Sint16*)msg)[3] = ClientDataList->Items[0]->iLandY;
+							((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_LAND_AT );
+							((Sint16*)msg)[1] = SDL_SwapLE16( ClientDataList->Items[0]->iNr );
+							((Sint16*)msg)[2] = SDL_SwapLE16( ClientDataList->Items[0]->iLandX );
+							((Sint16*)msg)[3] = SDL_SwapLE16( ClientDataList->Items[0]->iLandY );
 							network->send ( PACKAGE_LENGHT, msg );
 
 							delete ClientDataList->Items[0]->LandingList;
@@ -5025,7 +5025,7 @@ void cMultiPlayerMenu::HandleMessages()
 		// The data buffer with the data and the socket number,
 		// from which the data is received, stored in the variable iLenght
 		sDataBuffer *Message = MessageList->Items[iMsgNum];
-		switch ( ((Uint16*)Message->data)[0] )
+		switch ( SDL_SwapLE16 ( ((Sint16*)Message->data)[0] ) )
 		{
 		case MU_MSG_CHAT:
 			addChatLog( Message->data+2 );
@@ -5033,14 +5033,14 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_NEW_PLAYER:
 			{
 				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr );
-				Player->iSocketNum = ((Uint16*)Message->data)[1];
+				Player->iSocketNum = SDL_SwapLE16( ((Sint16*)Message->data)[1] );
 				PlayerList->Add ( Player );
 				ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
 				ReadyList[PlayerList->iCount-1] = false;
 				char msg[PACKAGE_LENGHT];
 				memset ( msg, 0, PACKAGE_LENGHT );
-				((Sint16*)msg)[0] = MU_MSG_REQ_IDENTIFIKATION;
-				((Sint16*)msg)[1] = iNextPlayerNr;
+				((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_REQ_IDENTIFIKATION );
+				((Sint16*)msg)[1] = SDL_SwapLE16( iNextPlayerNr );
 				iNextPlayerNr++;
 				network->sendTo ( Player->iSocketNum, PACKAGE_LENGHT, msg );
 			}
@@ -5048,7 +5048,7 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_DEL_PLAYER:
 			for ( int i = 0; i < PlayerList->iCount; i++ )
 			{
-				if ( PlayerList->Items[i]->iSocketNum == ((Uint16*)Message->data)[1] )
+				if ( PlayerList->Items[i]->iSocketNum == SDL_SwapLE16( ((Sint16*)Message->data)[1] ) )
 				{
 					PlayerList->Delete ( i );
 					for (int j = i; j < PlayerList->iCount; j++ ) ReadyList[j] = ReadyList[j+1];
@@ -5059,7 +5059,7 @@ void cMultiPlayerMenu::HandleMessages()
 			sendPlayerList();
 			SWITCH_MESSAGE_END
 		case MU_MSG_REQ_IDENTIFIKATION:
-			ActualPlayer->Nr = ((Uint16*)Message->data)[1];
+			ActualPlayer->Nr = SDL_SwapLE16( ((Sint16*)Message->data)[1] );
 			sendIdentification();
 			SWITCH_MESSAGE_END
 		case MU_MSG_IDENTIFIKATION:
@@ -5067,10 +5067,10 @@ void cMultiPlayerMenu::HandleMessages()
 				int iPlayerNum;
 				for ( iPlayerNum = 0; iPlayerNum < PlayerList->iCount; iPlayerNum++ )
 				{
-					if ( PlayerList->Items[iPlayerNum]->Nr == ((Uint16*)Message->data)[1] ) break;
+					if ( PlayerList->Items[iPlayerNum]->Nr == SDL_SwapLE16( ((Sint16*)Message->data)[1] ) ) break;
 				}
 				PlayerList->Items[iPlayerNum]->name = Message->data+7;
-				PlayerList->Items[iPlayerNum]->color = OtherData.colors[((Uint16*)Message->data)[2]];
+				PlayerList->Items[iPlayerNum]->color = OtherData.colors[SDL_SwapLE16( ((Sint16*)Message->data)[2] )];
 				ReadyList[iPlayerNum] = Message->data[6];
 				displayPlayerList();
 				sendPlayerList();
@@ -5080,11 +5080,11 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_PLAYERLIST:
 			{
 				while ( PlayerList->iCount > 0 ) PlayerList->Delete ( 0 );
-				ReadyList = (bool *)realloc( ReadyList, ((Sint16*)Message->data)[1] );
+				ReadyList = (bool *)realloc( ReadyList, SDL_SwapLE16( ((Sint16*)Message->data)[1] ) );
 				int iPos = 4;
 				for ( int i = 0; i < ((Sint16*)Message->data)[1]; i++ )
 				{
-					cPlayer *Player = new cPlayer ( Message->data+iPos+5, OtherData.colors[((Sint16*)(Message->data+iPos))[1]], ((Sint16*)(Message->data+iPos))[0] );
+					cPlayer *Player = new cPlayer ( Message->data+iPos+5, OtherData.colors[SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[1] )], SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] ) );
 					PlayerList->Add ( Player );
 					if ( Player->Nr == ActualPlayer->Nr ) ActualPlayer = Player;
 					ReadyList[i] = Message->data[iPos+4];
@@ -5098,24 +5098,24 @@ void cMultiPlayerMenu::HandleMessages()
 				int iPos = 3;
 				if ( ( bOptions = Message->data[2] ) != 0 )
 				{
-					Options.metal = ((Sint16*)(Message->data+iPos))[0];
-					Options.oil = ((Sint16*)(Message->data+iPos))[1];
-					Options.gold = ((Sint16*)(Message->data+iPos))[2];
-					Options.dichte = ((Sint16*)(Message->data+iPos))[3];
-					Options.credits = ((Sint16*)(Message->data+iPos))[4];
+					Options.metal = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] );
+					Options.oil = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[1] );
+					Options.gold = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[2] );
+					Options.dichte = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[3] );
+					Options.credits = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[4] );
 					Options.FixedBridgeHead = Message->data[iPos+10];
 					Options.AlienTech = Message->data[iPos+11];
 					Options.PlayRounds = Message->data[iPos+12];
 					iPos += 13;
 				}
 				else iPos += 1;
-				if ( ((Sint16*)(Message->data+iPos))[0] > 0 )
+				if ( SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] ) > 0 )
 				{
 					sMap = Message->data+iPos+2;
-					iPos += ((Sint16*)(Message->data+iPos))[0]+2;
+					iPos += SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] )+2;
 				}
 				else iPos += 2;
-				if ( ((Sint16*)(Message->data+iPos))[0] > 0 )
+				if ( SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] ) > 0 )
 				{
 					sSaveGame = Message->data+iPos+2;
 				}
@@ -5130,15 +5130,15 @@ void cMultiPlayerMenu::HandleMessages()
 				sClientLandData *ClientData;
 				ClientData = new sClientLandData;
 				ClientData->LandingList = new cList<sLanding*>;
-				ClientData->iLandX = ((Sint16*)(Message->data))[1];
-				ClientData->iLandY = ((Sint16*)(Message->data))[2];
-				ClientData->iNr = ((Sint16*)(Message->data))[3];
-				for ( int i = 0; i < ((Sint16*)(Message->data))[4]; i++ )
+				ClientData->iLandX = SDL_SwapLE16( ((Sint16*)(Message->data))[1] );
+				ClientData->iLandY = SDL_SwapLE16( ((Sint16*)(Message->data))[2] );
+				ClientData->iNr = SDL_SwapLE16( ((Sint16*)(Message->data))[3] );
+				for ( int i = 0; i < SDL_SwapLE16( ((Sint16*)(Message->data))[4] ); i++ )
 				{
 					sLanding *Landing;
 					Landing = new sLanding;
-					Landing->cargo = ((Sint16*)(Message->data+10+4*i))[0];
-					Landing->id = ((Sint16*)(Message->data+10+4*i))[1];
+					Landing->cargo = SDL_SwapLE16( ((Sint16*)(Message->data+10+4*i))[0] );
+					Landing->id = SDL_SwapLE16( ((Sint16*)(Message->data+10+4*i))[1] );
 					ClientData->LandingList->Add ( Landing );
 				}
 
@@ -5146,15 +5146,15 @@ void cMultiPlayerMenu::HandleMessages()
 			}
 			SWITCH_MESSAGE_END
 		case MU_MSG_LAND_AT:
-			if ( ((Sint16*)(Message->data))[1] != ActualPlayer->Nr ) SWITCH_MESSAGE_END
-			iLandXOK = ((Sint16*)(Message->data))[2];
-			iLandYOK = ((Sint16*)(Message->data))[3];
+			if ( SDL_SwapLE16( ((Sint16*)(Message->data))[1] ) != ActualPlayer->Nr ) SWITCH_MESSAGE_END
+			iLandXOK = SDL_SwapLE16( ((Sint16*)(Message->data))[2] );
+			iLandYOK = SDL_SwapLE16( ((Sint16*)(Message->data))[3] );
 			SWITCH_MESSAGE_END
 		case MU_MSG_RESOURCES:
 			{
 				int iOff;
 				int iPos = 2;
-				while ( ( iOff = ((Sint16*)(Message->data+iPos))[0] ) != 0 && iPos < PACKAGE_LENGHT )
+				while ( ( iOff = SDL_SwapLE16( ((Sint16*)(Message->data+iPos))[0] ) ) != 0 && iPos < PACKAGE_LENGHT )
 				{
 					Map->Resources[iOff].typ = Message->data[iPos+2];
 					Map->Resources[iOff].value = Message->data[iPos+3];
@@ -5167,39 +5167,39 @@ void cMultiPlayerMenu::HandleMessages()
 				cPlayer *Player;
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
-					if ( PlayerList->Items[i]->Nr == ((Uint16*)Message->data)[1] )
+					if ( PlayerList->Items[i]->Nr == SDL_SwapLE16( ((Sint16*)Message->data)[1] ) )
 					{
 						Player = PlayerList->Items[i];
 						break;
 					}
 				}
 				int iPos = 6;
-				for ( int i = 0; i < ((Uint16*)Message->data)[2]; i++ )
+				for ( int i = 0; i < SDL_SwapLE16( ((Sint16*)Message->data)[2] ); i++ )
 				{
 					bool bVehicle = Message->data[iPos];
-					int iNum = ((Uint16*)(Message->data+iPos+1))[0];
+					int iNum = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[0] );
 					if ( bVehicle )
 					{
-						Player->VehicleData[iNum].damage = ((Uint16*)(Message->data+iPos+1))[1];
-						Player->VehicleData[iNum].max_shots = ((Uint16*)(Message->data+iPos+1))[3];
-						Player->VehicleData[iNum].range = ((Uint16*)(Message->data+iPos+1))[3];
-						Player->VehicleData[iNum].max_ammo = ((Uint16*)(Message->data+iPos+1))[4];
-						Player->VehicleData[iNum].armor = ((Uint16*)(Message->data+iPos+1))[5];
-						Player->VehicleData[iNum].max_hit_points = ((Uint16*)(Message->data+iPos+1))[6];
-						Player->VehicleData[iNum].scan = ((Uint16*)(Message->data+iPos+1))[7];
-						Player->VehicleData[iNum].max_speed = ((Uint16*)(Message->data+iPos+1))[8];
+						Player->VehicleData[iNum].damage = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[1] );
+						Player->VehicleData[iNum].max_shots = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[3] );
+						Player->VehicleData[iNum].range = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[3] );
+						Player->VehicleData[iNum].max_ammo = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[4] );
+						Player->VehicleData[iNum].armor = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[5] );
+						Player->VehicleData[iNum].max_hit_points = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[6] );
+						Player->VehicleData[iNum].scan = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[7] );
+						Player->VehicleData[iNum].max_speed = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[8] );
 						Player->VehicleData[iNum].version++;
 						iPos += i+9*2;
 					}
 					else
 					{
-						Player->BuildingData[iNum].damage = ((Uint16*)(Message->data+iPos+1))[1];
-						Player->BuildingData[iNum].max_shots = ((Uint16*)(Message->data+iPos+1))[3];
-						Player->BuildingData[iNum].range = ((Uint16*)(Message->data+iPos+1))[3];
-						Player->BuildingData[iNum].max_ammo = ((Uint16*)(Message->data+iPos+1))[4];
-						Player->BuildingData[iNum].armor = ((Uint16*)(Message->data+iPos+1))[5];
-						Player->BuildingData[iNum].max_hit_points = ((Uint16*)(Message->data+iPos+1))[6];
-						Player->BuildingData[iNum].scan = ((Uint16*)(Message->data+iPos+1))[7];
+						Player->BuildingData[iNum].damage = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[1] );
+						Player->BuildingData[iNum].max_shots = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[3] );
+						Player->BuildingData[iNum].range = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[3] );
+						Player->BuildingData[iNum].max_ammo = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[4] );
+						Player->BuildingData[iNum].armor = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[5] );
+						Player->BuildingData[iNum].max_hit_points = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[6] );
+						Player->BuildingData[iNum].scan = SDL_SwapLE16( ((Sint16*)(Message->data+iPos+1))[7] );
 						Player->BuildingData[iNum].version++;
 						iPos += i+9*2;
 					}
@@ -5217,16 +5217,16 @@ void cMultiPlayerMenu::sendResources()
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
 	int iMsgLenght = 0;
-	for ( int i = 0; i < Map->size*Map->size; i++ )
+	for ( Sint16 i = 0; i < Map->size*Map->size; i++ )
 	{
 		if ( iMsgLenght == 0 )
 		{
 			memset ( msg, 0, PACKAGE_LENGHT );
-			((Sint16*)msg)[0] = MU_MSG_RESOURCES;
+			((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_RESOURCES );
 			iMsgLenght += 2;
 		}
 		if ( Map->Resources[i].typ == 0 ) continue;
-		((Sint16*)(msg+iMsgLenght))[0] = i;
+		((Sint16*)(msg+iMsgLenght))[0] = SDL_SwapLE16( i );
 		msg[iMsgLenght+2] = Map->Resources[i].typ;
 		msg[iMsgLenght+3] = Map->Resources[i].value;
 		iMsgLenght+=4;
@@ -5243,11 +5243,11 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 {
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = MU_MSG_WT_LAND;
-	((Sint16*)msg)[1] = iLandX;
-	((Sint16*)msg)[2] = iLandY;
-	((Sint16*)msg)[3] = ActualPlayer->Nr;
-	((Sint16*)msg)[4] = LandingList->iCount;
+	((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_WT_LAND );
+	((Sint16*)msg)[1] = SDL_SwapLE16( iLandX );
+	((Sint16*)msg)[2] = SDL_SwapLE16( iLandY );
+	((Sint16*)msg)[3] = SDL_SwapLE16( ActualPlayer->Nr );
+	((Sint16*)msg)[4] = SDL_SwapLE16( LandingList->iCount );
 	for ( int i = 0; i < LandingList->iCount; i++ )
 	{
 		// break if package will be to big
@@ -5255,8 +5255,8 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 		// at the standard PACKAGE_LENGHT of 256bytes
 		if ( 10+4*i > PACKAGE_LENGHT-4 ) break;
 
-		((Sint16*)(msg+10+4*i))[0] = LandingList->Items[0]->cargo;
-		((Sint16*)(msg+10+4*i))[1] = LandingList->Items[0]->id;
+		((Sint16*)(msg+10+4*i))[0] = SDL_SwapLE16( LandingList->Items[0]->cargo );
+		((Sint16*)(msg+10+4*i))[1] = SDL_SwapLE16( LandingList->Items[0]->id );
 	}
 	network->send ( PACKAGE_LENGHT, msg );
 }
@@ -5265,15 +5265,15 @@ void cMultiPlayerMenu::sendUpgrades()
 {
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	int iMsgLenght = 0;
-	for ( int i = 0; i < UnitsData.vehicle_anz; i++ )
+	Sint16 iMsgLenght = 0;
+	for ( Sint16 i = 0; i < UnitsData.vehicle_anz; i++ )
 	{
 		if ( iMsgLenght == 0 )
 		{
 			memset ( msg, 0, PACKAGE_LENGHT );
-			((Sint16*)msg)[0] = MU_MSG_UPGRADES;
-			((Sint16*)msg)[1] = ActualPlayer->Nr;
-			((Sint16*)msg)[2] = 0; // Buffer for Number of items in this message
+			((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_UPGRADES );
+			((Sint16*)msg)[1] = SDL_SwapLE16( ActualPlayer->Nr );
+			((Sint16*)msg)[2] = SDL_SwapLE16( 0 ); // Buffer for Number of items in this message
 			iMsgLenght += 6;
 		}
 		if ( ActualPlayer->VehicleData[i].damage != UnitsData.vehicle[i].data.damage ||
@@ -5286,39 +5286,39 @@ void cMultiPlayerMenu::sendUpgrades()
 			ActualPlayer->VehicleData[i].max_speed != UnitsData.vehicle[i].data.max_speed )
 		{
 			msg[iMsgLenght] = 1; // One for vehicles
-			((Sint16*)(msg+iMsgLenght+1))[0] = i;
-			((Sint16*)(msg+iMsgLenght+1))[1] = ActualPlayer->VehicleData[i].damage;
-			((Sint16*)(msg+iMsgLenght+1))[2] = ActualPlayer->VehicleData[i].max_shots;
-			((Sint16*)(msg+iMsgLenght+1))[3] = ActualPlayer->VehicleData[i].range;
-			((Sint16*)(msg+iMsgLenght+1))[4] = ActualPlayer->VehicleData[i].max_ammo;
-			((Sint16*)(msg+iMsgLenght+1))[5] = ActualPlayer->VehicleData[i].armor;
-			((Sint16*)(msg+iMsgLenght+1))[6] = ActualPlayer->VehicleData[i].max_hit_points;
-			((Sint16*)(msg+iMsgLenght+1))[7] = ActualPlayer->VehicleData[i].scan;
-			((Sint16*)(msg+iMsgLenght+1))[8] = ActualPlayer->VehicleData[i].max_speed;
+			((Sint16*)(msg+iMsgLenght+1))[0] = SDL_SwapLE16( i );
+			((Sint16*)(msg+iMsgLenght+1))[1] = SDL_SwapLE16( ActualPlayer->VehicleData[i].damage );
+			((Sint16*)(msg+iMsgLenght+1))[2] = SDL_SwapLE16( ActualPlayer->VehicleData[i].max_shots );
+			((Sint16*)(msg+iMsgLenght+1))[3] = SDL_SwapLE16( ActualPlayer->VehicleData[i].range );
+			((Sint16*)(msg+iMsgLenght+1))[4] = SDL_SwapLE16( ActualPlayer->VehicleData[i].max_ammo );
+			((Sint16*)(msg+iMsgLenght+1))[5] = SDL_SwapLE16( ActualPlayer->VehicleData[i].armor );
+			((Sint16*)(msg+iMsgLenght+1))[6] = SDL_SwapLE16( ActualPlayer->VehicleData[i].max_hit_points );
+			((Sint16*)(msg+iMsgLenght+1))[7] = SDL_SwapLE16( ActualPlayer->VehicleData[i].scan );
+			((Sint16*)(msg+iMsgLenght+1))[8] = SDL_SwapLE16( ActualPlayer->VehicleData[i].max_speed );
 			iMsgLenght += 1+9*2;
 		}
 		if ( iMsgLenght > PACKAGE_LENGHT-(1+9*2) )
 		{
-			((Sint16*)msg)[2] = (iMsgLenght-6)/(1+9*2);
+			((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+9*2) );
 			network->send ( PACKAGE_LENGHT, msg );
 			iMsgLenght = 0;
 		}
 	}
 	if ( iMsgLenght > 2 )
 	{
-		((Sint16*)msg)[2] = (iMsgLenght-6)/(1+9*2);
+		((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+9*2) );
 		network->send ( PACKAGE_LENGHT, msg );
 	}
 
 	iMsgLenght = 0;
-	for ( int i = 0; i < UnitsData.building_anz; i++ )
+	for ( Sint16 i = 0; i < UnitsData.building_anz; i++ )
 	{
 		if ( iMsgLenght == 0 )
 		{
 			memset ( msg, 0, PACKAGE_LENGHT );
-			((Sint16*)msg)[0] = MU_MSG_UPGRADES;
-			((Sint16*)msg)[1] = ActualPlayer->Nr;
-			((Sint16*)msg)[2] = 0; // Buffer for Number of items in this message
+			((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_UPGRADES );
+			((Sint16*)msg)[1] = SDL_SwapLE16( ActualPlayer->Nr );
+			((Sint16*)msg)[2] = SDL_SwapLE16( 0 ); // Buffer for Number of items in this message
 			iMsgLenght += 6;
 		}
 		if ( ActualPlayer->BuildingData[i].damage != UnitsData.building[i].data.damage ||
@@ -5330,26 +5330,26 @@ void cMultiPlayerMenu::sendUpgrades()
 			ActualPlayer->BuildingData[i].scan != UnitsData.building[i].data.scan )
 		{
 			msg[iMsgLenght] = 0; // Null for buildings
-			((Sint16*)(msg+iMsgLenght+1))[0] = i;
-			((Sint16*)(msg+iMsgLenght+1))[1] = ActualPlayer->BuildingData[i].damage;
-			((Sint16*)(msg+iMsgLenght+1))[2] = ActualPlayer->BuildingData[i].max_shots;
-			((Sint16*)(msg+iMsgLenght+1))[3] = ActualPlayer->BuildingData[i].range;
-			((Sint16*)(msg+iMsgLenght+1))[4] = ActualPlayer->BuildingData[i].max_ammo;
-			((Sint16*)(msg+iMsgLenght+1))[5] = ActualPlayer->BuildingData[i].armor;
-			((Sint16*)(msg+iMsgLenght+1))[6] = ActualPlayer->BuildingData[i].max_hit_points;
-			((Sint16*)(msg+iMsgLenght+1))[7] = ActualPlayer->BuildingData[i].scan;
+			((Sint16*)(msg+iMsgLenght+1))[0] = SDL_SwapLE16( i );
+			((Sint16*)(msg+iMsgLenght+1))[1] = SDL_SwapLE16( ActualPlayer->BuildingData[i].damage );
+			((Sint16*)(msg+iMsgLenght+1))[2] = SDL_SwapLE16( ActualPlayer->BuildingData[i].max_shots );
+			((Sint16*)(msg+iMsgLenght+1))[3] = SDL_SwapLE16( ActualPlayer->BuildingData[i].range );
+			((Sint16*)(msg+iMsgLenght+1))[4] = SDL_SwapLE16( ActualPlayer->BuildingData[i].max_ammo );
+			((Sint16*)(msg+iMsgLenght+1))[5] = SDL_SwapLE16( ActualPlayer->BuildingData[i].armor );
+			((Sint16*)(msg+iMsgLenght+1))[6] = SDL_SwapLE16( ActualPlayer->BuildingData[i].max_hit_points );
+			((Sint16*)(msg+iMsgLenght+1))[7] = SDL_SwapLE16( ActualPlayer->BuildingData[i].scan );
 			iMsgLenght += 1+8*2;
 		}
 		if ( iMsgLenght > PACKAGE_LENGHT-(1+8*2) )
 		{
-			((Sint16*)msg)[2] = (iMsgLenght-6)/(1+8*2);
+			((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+8*2) );
 			network->send ( PACKAGE_LENGHT, msg );
 			iMsgLenght = 0;
 		}
 	}
 	if ( iMsgLenght > 2 )
 	{
-		((Sint16*)msg)[2] = (iMsgLenght-6)/(1+8*2);
+		((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+8*2) );
 		network->send ( PACKAGE_LENGHT, msg );
 	}
 }
@@ -5378,9 +5378,9 @@ void cMultiPlayerMenu::sendIdentification()
 	}
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = MU_MSG_IDENTIFIKATION;
-	((Sint16*)msg)[1] = ActualPlayer->Nr;
-	((Sint16*)msg)[2] = GetColorNr( ActualPlayer->color );
+	((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_IDENTIFIKATION );
+	((Sint16*)msg)[1] = SDL_SwapLE16( ActualPlayer->Nr );
+	((Sint16*)msg)[2] = SDL_SwapLE16( GetColorNr( ActualPlayer->color ) );
 	msg[6] = ReadyList[iPlayerNum];
 	strcpy ( msg+7, ActualPlayer->name.c_str() );
 	network->send ( PACKAGE_LENGHT, msg );
@@ -5390,13 +5390,13 @@ void cMultiPlayerMenu::sendPlayerList()
 {
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = MU_MSG_PLAYERLIST;
-	((Sint16*)msg)[1] = PlayerList->iCount;
+	((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_PLAYERLIST );
+	((Sint16*)msg)[1] = SDL_SwapLE16( PlayerList->iCount );
 	int iPos = 4;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		((Sint16*)(msg+iPos))[0] = PlayerList->Items[i]->Nr;
-		((Sint16*)(msg+iPos))[1] = GetColorNr( PlayerList->Items[i]->color );
+		((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( PlayerList->Items[i]->Nr );
+		((Sint16*)(msg+iPos))[1] = SDL_SwapLE16( GetColorNr( PlayerList->Items[i]->color ) );
 		msg[iPos+4] = ReadyList[i];
 		strcpy ( msg+(iPos+5), PlayerList->Items[i]->name.c_str() );
 		iPos += 5 + (int)PlayerList->Items[i]->name.length()+1;
@@ -5408,17 +5408,17 @@ void cMultiPlayerMenu::sendOptions()
 {
 	char msg[PACKAGE_LENGHT];
 	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = MU_MSG_OPTINS;
+	((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_OPTINS );
 
 	int iPos = 3;
 	msg[2] = bOptions;
 	if ( bOptions )
 	{
-		((Sint16*)(msg+iPos))[0] = Options.metal;
-		((Sint16*)(msg+iPos))[1] = Options.oil;
-		((Sint16*)(msg+iPos))[2] = Options.gold;
-		((Sint16*)(msg+iPos))[3] = Options.dichte;
-		((Sint16*)(msg+iPos))[4] = Options.credits;
+		((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( Options.metal );
+		((Sint16*)(msg+iPos))[1] = SDL_SwapLE16( Options.oil );
+		((Sint16*)(msg+iPos))[2] = SDL_SwapLE16( Options.gold );
+		((Sint16*)(msg+iPos))[3] = SDL_SwapLE16( Options.dichte );
+		((Sint16*)(msg+iPos))[4] = SDL_SwapLE16( Options.credits );
 		msg[iPos+10] = Options.FixedBridgeHead;
 		msg[iPos+11] = Options.AlienTech;
 		msg[iPos+12] = Options.PlayRounds;
@@ -5427,21 +5427,21 @@ void cMultiPlayerMenu::sendOptions()
 	else iPos += 1;
 	if ( !sMap.empty() )
 	{
-		((Sint16*)(msg+iPos))[0] = (int)sMap.length()+1;
+		((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( (Sint16)sMap.length()+1 );
 		strcpy( msg+iPos+2, sMap.c_str() );
 		iPos += (int)sMap.length()+1+2;
 	}
 	else
 	{
-		((Sint16*)(msg+iPos))[0] = 0;
+		((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( 0 );
 		iPos += 2;
 	}
 	if ( !sSaveGame.empty() )
 	{
-		((Sint16*)(msg+iPos))[0] = (int)sSaveGame.length()+1;
+		((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( (Sint16)sSaveGame.length()+1 );
 		strcpy( msg+iPos+2, sSaveGame.c_str() );
 	}
-	else ((Sint16*)(msg+iPos))[0] = 0;
+	else ((Sint16*)(msg+iPos))[0] = SDL_SwapLE16( 0 );
 	network->send ( PACKAGE_LENGHT, msg );
 }
 

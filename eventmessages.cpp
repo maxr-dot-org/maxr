@@ -41,7 +41,7 @@ void sendChatMessage ( string sMsg )
 void sendDelPlayer ( int iPlayerNum )
 {
 	char data[2];
-	((Sint16*)data)[0] = iPlayerNum;
+	((Sint16*)data)[0] = SDL_SwapLE16( iPlayerNum );
 	SDL_Event event = generateEvent ( GAME_EV_DEL_PLAYER, 2, data );
 	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
 	else network->sendEvent( &event, 2 );
