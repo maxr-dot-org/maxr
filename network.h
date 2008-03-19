@@ -24,6 +24,9 @@
 
 #define MAX_CLIENTS 10
 #define PACKAGE_LENGHT 256
+
+// the first client message must be smaller then the first menu message!
+#define FIRST_CLIENT_MESSAGE 50
 #define FIRST_MENU_MESSAGE 100
 
 /**
@@ -147,7 +150,7 @@ class cTCP
 	void sendWaitCondSignal();
 
 	/**
-	* Pushes an event to the event handling
+	* Pushes an event to the event handling or to the server eventqueue
 	*@author alzi alias DoctorDeath
 	*@param iEventType Typ of the event to push ( see EVENT_TYPES ).
 	*@param data1 first data of the event.

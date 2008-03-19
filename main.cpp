@@ -51,8 +51,8 @@
 #include "loaddata.h"
 #include "tinyxml.h"
 #include "events.h"
-
-
+#include "client.h"
+#include "server.h"
 
 int main ( int argc, char *argv[] )
 {

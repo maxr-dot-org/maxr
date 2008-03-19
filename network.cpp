@@ -19,7 +19,7 @@
 
 #include "network.h"
 #include "events.h"
-#include "game.h"
+#include "server.h"
 
 void cTCP::init()
 {
@@ -297,7 +297,16 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 	if ( bDataLocked )
 	{
 		unlockData();
-		EventHandler->pushEvent ( &event );
+		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[0] ) < FIRST_CLIENT_MESSAGE ) )
+		{
+			// Event for the Server
+			if ( Server != NULL ) Server->pushEvent ( &event );
+		}
+		else
+		{
+			// Event for the client or message for the menu
+			EventHandler->pushEvent ( &event );
+		}
 		lockData();
 	}
 

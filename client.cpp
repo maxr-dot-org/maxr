@@ -16,41 +16,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef eventmessagesH
-#define eventmessagesH
-#include "defines.h"
-#include "main.h"
-#include "network.h"
+#include "client.h"
+#include "events.h"
+#include "eventmessages.h"
 
-enum GAME_EVENT_TYPES
+void cClient::init()
 {
-	GAME_EV_LOST_CONNECTION = 0,	// connection on a socket has been lost
-	GAME_EV_CHAT,					// simple text message
+	bExit = false;
+}
 
-	GAME_EV_DEL_PLAYER = FIRST_CLIENT_MESSAGE,	// a Player should be deleted
-};
+void cClient::run()
+{
+	while ( !bExit )
+	{
+		EventHandler->HandleEvents();
+		SDL_Delay( 10 );
+	}
+}
 
-/**
-* Generates a new GAME_EVENT event.
-*@author alzi alias DoctorDeath
-*@param iTyp Typ of the new event. Will be set to event.user.code
-*@param iLenght Lenght of the data for the event.
-*@param data Data for the event. Will be set to event.user.data1. Should not be longer than PACKAGE_LENGHT-2
-*/
-SDL_Event generateEvent ( int iTyp, int iLenght, void *data );
-
-/**
-* Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
-*@author alzi alias DoctorDeath
-*@param sMsg the chat message.
-*/
-void sendChatMessage ( string sMsg );
-
-/**
-* Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
-*@author alzi alias DoctorDeath
-*@param sMsg the chat message.
-*/
-void sendDelPlayer ( int iPlayerNum );
-
-#endif // eventmessagesH
+int cClient::HandleEvent( SDL_Event *event )
+{
+	void *data = event->user.data1;
+	switch ( event->user.code )
+	{
+	case GAME_EV_CHAT:
+		break;
+	case GAME_EV_DEL_PLAYER:
+		break;
+	}
+	return 0;
+}
