@@ -207,12 +207,20 @@ public:
 	*/
 	int send( int iLenght, char *buffer );
 	/**
-	* Converts the event to a network message sends it over the TCP connection.
+	* Converts the event to a network message and sends it over the TCP connection to the client.
+	*@author alzi alias DoctorDeath
+	*param iClientNumber Number of client/socket to which the event should be send.
+	*param event The SDL_Event to be send.
+	*param iLenght Lenght of data1 of the event to be send. data2 will be ignored.
+	*/
+	int sendEventTo( int iClientNumber, SDL_Event *event, int iLenght );
+	/**
+	* Converts the event to a network message sends it over the TCP connection to all clients.
 	*@author alzi alias DoctorDeath
 	*param event The SDL_Event to be send.
 	*param iLenght Lenght of data1 of the event to be send. data2 will be ignored.
 	*/
-	void sendEvent( SDL_Event *event, int iLenght );
+	int sendEvent( SDL_Event *event, int iLenght );
 	/**
 	* Reads data of an given lenght from the client/socket.
 	*@author alzi alias DoctorDeath

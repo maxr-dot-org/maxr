@@ -19,12 +19,12 @@
 #include "hud.h"
 #include "main.h"
 #include "mouse.h"
-#include "game.h"
 #include "sound.h"
 #include "dialog.h"
 #include "keyinp.h"
 #include "fonts.h"
 #include "menu.h"
+#include "client.h"
 #include "eventmessages.h"
 
 
@@ -73,8 +73,8 @@ void cHud::SwitchTNT ( bool set )
 
 	BlitButton(scr, dest, "", false);
 	TNT=set;
-	game->fDrawHud=true;
-	game->fDrawMMap=true;
+	Client->bFlagDrawHud=true;
+	Client->bFlagDrawMMap=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -89,8 +89,8 @@ void cHud::SwitchRadar ( bool set )
 
 	BlitButton(scr, dest, "", false);
 	Radar=set;
-	game->fDrawHud=true;
-	game->fDrawMMap=true;
+	Client->bFlagDrawHud=true;
+	Client->bFlagDrawMMap=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -105,7 +105,7 @@ void cHud::SwitchNebel ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Fog"),  set, true);
 	Nebel=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -120,8 +120,8 @@ void cHud::SwitchGitter ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Grid"), set, true);
 	Gitter=set;
-	game->fDrawHud=true;
-	game->fDrawMap=true;
+	Client->bFlagDrawHud=true;
+	Client->bFlagDrawMap=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -136,7 +136,7 @@ void cHud::SwitchScan ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Scan"), set, true);
 	Scan=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -151,7 +151,7 @@ void cHud::SwitchReichweite ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Range"), set, true);
 	Reichweite=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -166,7 +166,7 @@ void cHud::SwitchMunition ( bool set )
 	
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Ammo"),  set, true);
 	Munition=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -181,7 +181,7 @@ void cHud::SwitchTreffer ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Hitpoints"), set, true);
 	Treffer=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -196,7 +196,7 @@ void cHud::SwitchFarben ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Color"),  set, true);
 	Farben=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -211,7 +211,7 @@ void cHud::SwitchStatus ( bool set )
 
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Status"),  set, true);
 	Status=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -226,7 +226,7 @@ void cHud::SwitchStudie ( bool set )
 		
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Survey"), set, true);
 	Studie=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -241,7 +241,7 @@ void cHud::SwitchLock ( bool set )
 
 	BlitButton(scr, dest, "", false);
 	Lock=set;
-	game->fDrawHud=true;
+	Client->bFlagDrawHud=true;
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
@@ -249,8 +249,7 @@ void cHud::DoZoom ( int x,int y )
 {
 	if ( x<=12 ) x=0;else x-=12;
 	if ( x>104 ) x=104;
-//  x=64-(int)(x*(64-((448.0/game->map->size)<5?5:(448.0/game->map->size)))/104);
-	x=64- ( int ) ( x* ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) ) /104 );
+	x=64- ( int ) ( x* ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) ) /104 );
 	if ( x<1 ) x=1;
 	SetZoom ( x,y );
 }
@@ -259,13 +258,13 @@ void cHud::SetZoom ( int zoom,int DestY )
 {
 	static int lastz=64;
 	SDL_Rect scr,dest;
-//  if(zoom<448/game->map->size)zoom=448/game->map->size;
-	if ( zoom< ( SettingsData.iScreenW-192 ) /game->map->size ) zoom= ( SettingsData.iScreenW-192 ) /game->map->size;
+//  if(zoom<448/Client->Map->size)zoom=448/Client->Map->size;
+	if ( zoom< ( SettingsData.iScreenW-192 ) /Client->Map->size ) zoom= ( SettingsData.iScreenW-192 ) /Client->Map->size;
 	if ( zoom<5 ) zoom=5;
 	else if ( zoom>64 ) zoom=64;
 	Zoom=zoom;
-//  zoom-=((448.0/game->map->size)<5?5:(448.0/game->map->size));
-	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) );
+//  zoom-=((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size));
+	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) );
 	scr.x=0;
 	scr.y=0;
 	dest.x=19;
@@ -273,8 +272,8 @@ void cHud::SetZoom ( int zoom,int DestY )
 	dest.w=scr.w=132;
 	dest.h=scr.h=20;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-//  zoom=106-(int)(zoom*106.0/(64-((448.0/game->map->size)<5?5:(448.0/game->map->size))));
-	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /game->map->size ) ) ) );
+//  zoom=106-(int)(zoom*106.0/(64-((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size))));
+	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) ) );
 	scr.x=132;
 	scr.y=1;
 	dest.x=20+zoom;
@@ -282,9 +281,9 @@ void cHud::SetZoom ( int zoom,int DestY )
 	dest.w=scr.w=25;
 	dest.h=scr.h=14;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	game->fDrawHud=true;
-	game->fDrawMap=true;
-	game->fDrawMMap=true;
+	Client->bFlagDrawHud=true;
+	Client->bFlagDrawMap=true;
+	Client->bFlagDrawMMap=true;
 
 	if ( lastz!=Zoom )
 	{
@@ -295,8 +294,8 @@ void cHud::SetZoom ( int zoom,int DestY )
 
 		OffX+=off;
 		OffY+=off;
-//    off=game->map->size*64-(int)((448.0/Zoom)*64);
-		off=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+//    off=Client->Map->size*64-(int)((448.0/Zoom)*64);
+		off=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
 		while ( OffX>off ) OffX--;
 		while ( OffY>off ) OffY--;
 		while ( OffX<0 ) OffX++;
@@ -394,74 +393,74 @@ void cHud::CheckScroll ( bool pure )
 	{
 		if ( mouse->SetCursor ( CHand ) )
 		{
-			game->fDrawMap=true;
+			Client->bFlagDrawMap=true;
 		}
 		return;
 	}
 
-	if ( game->SelectedVehicle&&game->SelectedVehicle->PlaceBand&&game->SelectedVehicle->owner==game->ActivePlayer )
+	if ( Client->SelectedVehicle&&Client->SelectedVehicle->PlaceBand&&Client->SelectedVehicle->owner==Client->ActivePlayer )
 	{
 		if ( x>=180 )
 		{
 			if ( mouse->SetCursor ( CBand ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
 		}
 		else
 		{
 			if ( mouse->SetCursor ( CNo ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
 		}
 	}
-	else if ( ( game->SelectedVehicle&&game->SelectedVehicle->Transfer&&game->SelectedVehicle->owner==game->ActivePlayer ) || ( game->SelectedBuilding&&game->SelectedBuilding->Transfer&&game->SelectedBuilding->owner==game->ActivePlayer ) )
+	else if ( ( Client->SelectedVehicle&&Client->SelectedVehicle->Transfer&&Client->SelectedVehicle->owner==Client->ActivePlayer ) || ( Client->SelectedBuilding&&Client->SelectedBuilding->Transfer&&Client->SelectedBuilding->owner==Client->ActivePlayer ) )
 	{
-		if ( game->SelectedVehicle )
+		if ( Client->SelectedVehicle )
 		{
-			if ( game->OverObject&&game->SelectedVehicle->CanTransferTo ( game->OverObject ) )
+			if ( Client->OverObject&&Client->SelectedVehicle->CanTransferTo ( Client->OverObject ) )
 			{
 				if ( mouse->SetCursor ( CTransf ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
 		else
 		{
-			if ( game->OverObject&&game->SelectedBuilding->CanTransferTo ( game->OverObject ) )
+			if ( Client->OverObject&&Client->SelectedBuilding->CanTransferTo ( Client->OverObject ) )
 			{
 				if ( mouse->SetCursor ( CTransf ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
 	}
-	else if ( !game->HelpActive )
+	else if ( !Client->bHelpActive )
 	{
 
 		if ( x<180 )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				game->OverObject=NULL;
-				game->fDrawMap=true;
+				Client->OverObject=NULL;
+				Client->bFlagDrawMap=true;
 			}
 			return;
 		}
@@ -470,260 +469,260 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
-			game->OverObject=NULL;
+			Client->OverObject=NULL;
 			LastOverEnde=true;
 			return;
 		}
 		else if ( LastOverEnde )
 		{
 			LastOverEnde=false;
-			MouseMoveCallback ( true );
+			Client->mouseMoveCallback ( true );
 		}
 
-		if ( ( game->SelectedVehicle&&game->SelectedVehicle->MenuActive&&game->SelectedVehicle->MouseOverMenu ( x,y ) ) ||
-		        ( game->SelectedBuilding&&game->SelectedBuilding->MenuActive&&game->SelectedBuilding->MouseOverMenu ( x,y ) ) )
+		if ( ( Client->SelectedVehicle&&Client->SelectedVehicle->MenuActive&&Client->SelectedVehicle->MouseOverMenu ( x,y ) ) ||
+		        ( Client->SelectedBuilding&&Client->SelectedBuilding->MenuActive&&Client->SelectedBuilding->MouseOverMenu ( x,y ) ) )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->AttackMode&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->AttackMode&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( game->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CAttack ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->StealActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->StealActive&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
+			if ( Client->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
 			{
 				if ( mouse->SetCursor ( CSteal ) )
 				{
-					game->fDrawMap=true;
-					MouseMoveCallback ( true );
+					Client->bFlagDrawMap=true;
+					Client->mouseMoveCallback ( true );
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->DisableActive&&game->SelectedVehicle->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->DisableActive&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( game->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
+			if ( Client->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
 			{
 				if ( mouse->SetCursor ( CDisable ) )
 				{
-					game->fDrawMap=true;
-					MouseMoveCallback ( true );
+					Client->bFlagDrawMap=true;
+					Client->mouseMoveCallback ( true );
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->AttackMode&&game->SelectedBuilding->owner==game->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->AttackMode&&Client->SelectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( game->SelectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CAttack ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->CanAttackObject ( mouse->GetKachelOff() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{
-				game->fDrawMap=true;
-				MouseMoveCallback ( true );
+				Client->bFlagDrawMap=true;
+				Client->mouseMoveCallback ( true );
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->CanAttackObject ( mouse->GetKachelOff() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{
-				game->fDrawMap=true;
-				MouseMoveCallback ( true );
+				Client->bFlagDrawMap=true;
+				Client->mouseMoveCallback ( true );
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->MuniActive )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->MuniActive )
 		{
-			if ( game->SelectedVehicle->CanMuni ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->CanMuni ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CMuni ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->RepairActive )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->RepairActive )
 		{
-			if ( game->SelectedVehicle->CanRepair ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->CanRepair ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CRepair ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->OverObject&&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( game->SelectedVehicle->data.can_drive!=DRIVE_AIR&&!game->OverObject->vehicle&& ( !game->OverObject->top||game->OverObject->top->data.is_connector ) ) || ( game->SelectedVehicle->data.can_drive==DRIVE_AIR&&!game->OverObject->plane ) ) ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->iCount&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->LoadActive ) &&! ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->ActivatingVehicle ) &&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->LoadActive )
-		          &&! ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->ActivatingVehicle ) )
+		else if ( Client->OverObject&&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&& ( ( Client->SelectedVehicle->data.can_drive!=DRIVE_AIR&&!Client->OverObject->vehicle&& ( !Client->OverObject->top||Client->OverObject->top->data.is_connector ) ) || ( Client->SelectedVehicle->data.can_drive==DRIVE_AIR&&!Client->OverObject->plane ) ) ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->BuildList&&Client->SelectedBuilding->BuildList->iCount&&!Client->SelectedBuilding->IsWorking&&Client->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->LoadActive ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->ActivatingVehicle ) &&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->LoadActive )
+		          &&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->ActivatingVehicle ) )
 		{
 			if ( mouse->SetCursor ( CSelect ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&& ( ( !game->SelectedVehicle->IsBuilding&&!game->SelectedVehicle->IsClearing&&!game->SelectedVehicle->LoadActive&&!game->SelectedVehicle->ActivatingVehicle ) || ( game->SelectedVehicle->IsBuilding&&game->SelectedVehicle->BuildRounds==0 ) || ( game->SelectedVehicle->IsClearing&&game->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&& ( ( !Client->SelectedVehicle->IsBuilding&&!Client->SelectedVehicle->IsClearing&&!Client->SelectedVehicle->LoadActive&&!Client->SelectedVehicle->ActivatingVehicle ) || ( Client->SelectedVehicle->IsBuilding&&Client->SelectedVehicle->BuildRounds==0 ) || ( Client->SelectedVehicle->IsClearing&&Client->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
 		{
-			if ( game->SelectedVehicle->MoveJobActive )
+			if ( Client->SelectedVehicle->MoveJobActive )
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
-			else if ( game->SelectedVehicle->CanDrive ( mouse->GetKachelOff() ) )
+			else if ( Client->SelectedVehicle->CanDrive ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CMove ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->BuildList&&game->SelectedBuilding->BuildList->iCount&&!game->SelectedBuilding->IsWorking&&game->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 )
+		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->BuildList&&Client->SelectedBuilding->BuildList->iCount&&!Client->SelectedBuilding->IsWorking&&Client->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 )
 		{
-			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->BuildList->Items[0]->typ ) )
+			if ( Client->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),Client->SelectedBuilding->BuildList->Items[0]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->ActivatingVehicle )
+		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->ActivatingVehicle )
 		{
-			if ( game->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),game->SelectedBuilding->StoredVehicles->Items[game->SelectedBuilding->VehicleToActivate]->typ ) )
+			if ( Client->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),Client->SelectedBuilding->StoredVehicles->Items[Client->SelectedBuilding->VehicleToActivate]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->ActivatingVehicle )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->ActivatingVehicle )
 		{
-			if ( game->SelectedVehicle->CanExitTo ( mouse->GetKachelOff(),game->SelectedVehicle->StoredVehicles->Items[game->SelectedVehicle->VehicleToActivate]->typ ) )
+			if ( Client->SelectedVehicle->CanExitTo ( mouse->GetKachelOff(),Client->SelectedVehicle->StoredVehicles->Items[Client->SelectedVehicle->VehicleToActivate]->typ ) )
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedBuilding&&game->SelectedBuilding->owner==game->ActivePlayer&&game->SelectedBuilding->LoadActive )
+		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->LoadActive )
 		{
-			if ( game->SelectedBuilding->CanLoad ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedBuilding->CanLoad ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CLoad ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
-		else if ( game->SelectedVehicle&&game->SelectedVehicle->owner==game->ActivePlayer&&game->SelectedVehicle->LoadActive )
+		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->LoadActive )
 		{
-			if ( game->SelectedVehicle->CanLoad ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->CanLoad ( mouse->GetKachelOff() ) )
 			{
 				if ( mouse->SetCursor ( CLoad ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 			else
 			{
 				if ( mouse->SetCursor ( CNo ) )
 				{
-					game->fDrawMap=true;
+					Client->bFlagDrawMap=true;
 				}
 			}
 		}
@@ -731,7 +730,7 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				game->fDrawMap=true;
+				Client->bFlagDrawMap=true;
 			}
 		}
 	}
@@ -739,7 +738,7 @@ void cHud::CheckScroll ( bool pure )
 	{
 		if ( mouse->SetCursor ( CHelp ) )
 		{
-			game->fDrawMap=true;
+			Client->bFlagDrawMap=true;
 		}
 	}
 }
@@ -749,11 +748,11 @@ void cHud::DoScroll ( int dir )
 	static int lx=0,ly=0;
 	cHud *hud;
 	int step;
-	if ( game->SelectedBuilding )
+	if ( Client->SelectedBuilding )
 	{
-		game->SelectedBuilding->MenuActive=false;
+		Client->SelectedBuilding->MenuActive=false;
 	}
-	hud=game->hud;
+	hud = Client->Hud;
 	step=64/Zoom;
 	step*=SettingsData.iScrollSpeed;
 	switch ( dir )
@@ -789,14 +788,13 @@ void cHud::DoScroll ( int dir )
 	}
 	if ( hud->OffX<0 ) hud->OffX=0;
 	if ( hud->OffY<0 ) hud->OffY=0;
-//  step=game->map->size*64-(int)((448.0/Zoom)*64);
-	step=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
 	if ( hud->OffX>=step ) hud->OffX=step;
-	step=game->map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
+	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
 	if ( hud->OffY>=step ) hud->OffY=step;
 	if ( lx==OffX&&ly==OffY ) return;
-	game->fDrawMap=true;
-	game->fDrawMMap=true;
+	Client->bFlagDrawMap=true;
+	Client->bFlagDrawMMap=true;
 	lx=OffX;ly=OffY;
 }
 
@@ -805,14 +803,14 @@ void cHud::DoMinimapClick ( int x,int y )
 	static int lx=0,ly=0;
 	if ( lx==x&&ly==y ) return;
 	lx=x;ly=y;
-	OffX= ( int ) ( ( game->map->size/112.0 ) * ( x-15 ) *64- ( 224.0/Zoom ) *64 );
-	OffY= ( int ) ( ( game->map->size/112.0 ) * ( y-356 ) *64- ( 224.0/Zoom ) *64 );
-	game->fDrawMMap=true;
-	game->fDrawMap=true;
+	OffX= ( int ) ( ( Client->Map->size/112.0 ) * ( x-15 ) *64- ( 224.0/Zoom ) *64 );
+	OffY= ( int ) ( ( Client->Map->size/112.0 ) * ( y-356 ) *64- ( 224.0/Zoom ) *64 );
+	Client->bFlagDrawMMap=true;
+	Client->bFlagDrawMap=true;
 	DoScroll ( 0 );
 }
 
-void cHud::ChechMouseOver ( void )
+void cHud::CheckMouseOver ( void )
 {
 	static int lb=0;
 	int x,y,b;
@@ -828,8 +826,8 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			game->ChangeObjectName=false;
-			game->ChatInput=false;
+			Client->bChangeObjectName=false;
+			Client->bChatInput=false;
 			showPreferences();
 			PraeferenzenButton ( false );
 		}
@@ -875,7 +873,7 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			game->HelpActive=true;
+			Client->bHelpActive=true;
 			HelpButton ( false );
 		}
 	}
@@ -890,7 +888,7 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			game->ChatInput=true;
+			Client->bChatInput=true;
 			InputStr="";
 			ChatButton ( false );
 		}
@@ -936,10 +934,11 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			if ( game->SelectedVehicle&&game->SelectedVehicle->mjob&&game->SelectedVehicle->mjob->Suspended&&game->SelectedVehicle->data.speed )
+			if ( Client->SelectedVehicle&&Client->SelectedVehicle->mjob&&Client->SelectedVehicle->mjob->Suspended&&Client->SelectedVehicle->data.speed )
 			{
-				game->SelectedVehicle->mjob->CalcNextDir();
-				game->engine->AddActiveMoveJob ( game->SelectedVehicle->mjob );
+				Client->SelectedVehicle->mjob->CalcNextDir();
+				//TODO: no engine!
+				//Client->engine->AddActiveMoveJob ( Client->SelectedVehicle->mjob );
 			}
 			ErledigenButton ( false );
 		}
@@ -956,18 +955,18 @@ void cHud::ChechMouseOver ( void )
 		{
 			cVehicle *v;
 			PlayFX ( SoundData.SNDHudButton );
-			v=game->ActivePlayer->GetNextVehicle();
+			v=Client->ActivePlayer->GetNextVehicle();
 			if ( v )
 			{
-				if ( game->SelectedVehicle )
+				if ( Client->SelectedVehicle )
 				{
-					game->SelectedVehicle->Deselct();
-					StopFXLoop ( game->ObjectStream );
+					Client->SelectedVehicle->Deselct();
+					StopFXLoop ( Client->iObjectStream );
 				}
 				v->Select();
 				v->Center();
-				game->ObjectStream=v->PlayStram();
-				game->SelectedVehicle=v;
+				Client->iObjectStream=v->PlayStram();
+				Client->SelectedVehicle=v;
 			}
 			NextButton ( false );
 		}
@@ -984,18 +983,18 @@ void cHud::ChechMouseOver ( void )
 		{
 			cVehicle *v;
 			PlayFX ( SoundData.SNDHudButton );
-			v=game->ActivePlayer->GetPrevVehicle();
+			v=Client->ActivePlayer->GetPrevVehicle();
 			if ( v )
 			{
-				if ( game->SelectedVehicle )
+				if ( Client->SelectedVehicle )
 				{
-					game->SelectedVehicle->Deselct();
-					StopFXLoop ( game->ObjectStream );
+					Client->SelectedVehicle->Deselct();
+					StopFXLoop ( Client->iObjectStream );
 				}
 				v->Select();
 				v->Center();
-				game->ObjectStream=v->PlayStram();
-				game->SelectedVehicle=v;
+				Client->iObjectStream=v->PlayStram();
+				Client->SelectedVehicle=v;
 			}
 			PrevButton ( false );
 		}
@@ -1011,13 +1010,13 @@ void cHud::ChechMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			if ( game->SelectedVehicle )
+			if ( Client->SelectedVehicle )
 			{
-				game->SelectedVehicle->Center();
+				Client->SelectedVehicle->Center();
 			}
-			else if ( game->SelectedBuilding )
+			else if ( Client->SelectedBuilding )
 			{
-				game->SelectedBuilding->Center();
+				Client->SelectedBuilding->Center();
 			}
 			CenterButton ( false );
 		}
@@ -1179,8 +1178,8 @@ void cHud::ShowRunde ( void )
 	dest.x=471;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	font->showTextCentered(498,7, iToStr(game->Runde), LATIN_NORMAL, GraphicsData.gfx_hud);
-	game->fDrawHud=true;
+	font->showTextCentered(498,7, iToStr(Client->iTurn), LATIN_NORMAL, GraphicsData.gfx_hud);
+	Client->bFlagDrawHud=true;
 }
 
 void cHud::ErledigenButton ( bool set )
@@ -1307,7 +1306,7 @@ void cHud::ScaleSurfaces ( void )
 	if ( Zoom==LastZoom ) return;
 
 	// Terrain:
-	tlist=game->map->TerrainInUse;
+	tlist=Client->Map->TerrainInUse;
 	for ( i=0;i<tlist->iCount;i++ )
 	{
 		sTerrain *t;
@@ -1435,38 +1434,38 @@ void cHud::ScaleSurfaces ( void )
 // Drück Ende:
 void cHud::MakeMeMyEnd ( void )
 {
-	PlayFX ( SoundData.SNDHudButton );
-	if ( game->engine->CheckVehiclesMoving ( false ) )
+	/*PlayFX ( SoundData.SNDHudButton );
+	if ( Client->engine->CheckVehiclesMoving ( false ) false )
 	{
 		EndeButton ( false );
 		sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Wait") );
 	}
 	else
 	{
-		if ( game->engine->DoEndActions() )
+		if ( Client->engine->DoEndActions() )
 		{
 			sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
-			game->WantToEnd = true;
-			if( !game->HotSeat )
+			Client->WantToEnd = true;
+			if( !Client->HotSeat )
 			{
 				Ende=true;
 			}
 		}
 		else
 		{
-			if ( game->HotSeat )
+			if ( Client->HotSeat )
 			{
-				if ( game->MakeHotSeatEnde() )
+				if ( Client->MakeHotSeatEnde() )
 				{
-					game->engine->EndePressed ( game->ActivePlayer->Nr );
+					Client->engine->EndePressed ( Client->ActivePlayer->Nr );
 					Ende=true;
 				}
 			}
 			else
 			{
-				game->engine->EndePressed ( game->ActivePlayer->Nr );
+				Client->engine->EndePressed ( Client->ActivePlayer->Nr );
 				Ende=true;
 			}
 		}
-	}
+	}*/
 }

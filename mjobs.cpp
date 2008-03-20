@@ -20,7 +20,7 @@
 #include "mjobs.h"
 #include "game.h"
 #include "sound.h"
-
+#include "client.h"
 #include "fonts.h"
 
 // Funktionen der MJobs Klasse ///////////////////////////////////////////////
@@ -540,7 +540,7 @@ void cMJobs::DoTheMove ( void )
 		}
 
 		// Die Maus refreshen:
-		MouseMoveCallback ( true );
+		Client->mouseMoveCallback ( true );
 
 		if ( waypoints->next==NULL )
 		{

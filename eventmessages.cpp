@@ -19,6 +19,7 @@
 #include "eventmessages.h"
 #include "network.h"
 #include "events.h"
+#include "server.h"
 
 SDL_Event generateEvent ( int iTyp, int iLenght, void *data )
 {
@@ -45,4 +46,20 @@ void sendDelPlayer ( int iPlayerNum )
 	SDL_Event event = generateEvent ( GAME_EV_DEL_PLAYER, 2, data );
 	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
 	else network->sendEvent( &event, 2 );
+}
+
+void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
+{
+	char data[9];
+	((Sint16*)data)[0] = SDL_SwapLE16( iPosX );
+	((Sint16*)data)[1] = SDL_SwapLE16( iPosY );
+	((Sint16*)data)[2] = SDL_SwapLE16( iUnitNum );
+	((Sint16*)data)[3] = SDL_SwapLE16( iPlayer );
+	data[8] = bInit;
+
+	SDL_Event event;
+	if ( bVehicle ) event = generateEvent ( GAME_EV_ADD_VEHICLE, 9, data );
+	else event = generateEvent ( GAME_EV_ADD_BUILDING, 9, data );
+
+	if ( Server ) Server->sendEvent ( &event, 9, iPlayer );
 }

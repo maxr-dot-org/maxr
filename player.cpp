@@ -20,6 +20,7 @@
 #include "player.h"
 #include "game.h"
 #include "menu.h"
+#include "client.h"
 #include "eventmessages.h"
 
 // Funktionen der Player-Klasse //////////////////////////////////////////////
@@ -166,12 +167,12 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	n->next=VehicleList;
 	VehicleList=n;
 	n->GenerateName();
-	SpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+	Client->drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
 	return n;
 }
 
 // Erstellt die Maps:
-void cPlayer::InitMaps ( int MapSizeX )
+void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 {
 	MapSize=MapSizeX*MapSizeX;
 	// Scanner-Map:
@@ -181,7 +182,7 @@ void cPlayer::InitMaps ( int MapSizeX )
 	ResourceMap= ( char* ) malloc ( MapSize );
 	memset ( ResourceMap,0,MapSize );
 
-	base->map=game->map;
+	base->map = map;
 	// Wach-Map:
 	WachMapAir= ( char* ) malloc ( MapSize );
 	memset ( WachMapAir,0,MapSize );
@@ -204,7 +205,7 @@ void cPlayer::InitMaps ( int MapSizeX )
 	}
 
 	// Die Shield-Map:
-	if ( game->AlienTech )
+	if ( Client->bAlienTech )
 	{
 		ShieldMap= ( char* ) malloc ( MapSize );
 		memset ( ShieldMap,0,MapSize );
@@ -233,8 +234,8 @@ cBuilding *cPlayer::AddBuilding ( int posx,int posy,sBuilding *b )
 	if ( n->data.is_mine ) n->CheckRessourceProd();
 	if ( n->data.scan )
 	{
-		if ( n->data.is_big ) SpecialCircleBig ( n->PosX,n->PosY,n->data.scan,ScanMap );
-		else SpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+		if ( n->data.is_big ) Client->drawSpecialCircleBig ( n->PosX,n->PosY,n->data.scan,ScanMap );
+		else Client->drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
 	}
 	if ( n->data.can_attack ) AddWachpostenB ( n );
 	return n;
@@ -250,19 +251,19 @@ void cPlayer::AddWachpostenV ( cVehicle *v )
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
 		WachpostenAir->Add ( n );
-		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
+		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
 		WachpostenAir->Add ( n );
-		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
+		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
-		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 	else
 	{
 		WachpostenGround->Add ( n );
-		SpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 }
 
@@ -276,19 +277,19 @@ void cPlayer::AddWachpostenB ( cBuilding *b )
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
 		WachpostenAir->Add ( n );
-		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
+		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
 		WachpostenAir->Add ( n );
-		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
+		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
-		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 	else
 	{
 		WachpostenGround->Add ( n );
-		SpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 }
 
@@ -427,11 +428,11 @@ void cPlayer::RefreshWacheAir ( void )
 		ptr=WachpostenAir->Items[i];
 		if ( ptr->v )
 		{
-			SpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
+			Client->drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
 		}
 		else
 		{
-			SpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapAir );
+			Client->drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapAir );
 		}
 	}
 }
@@ -447,11 +448,11 @@ void cPlayer::RefreshWacheGround ( void )
 		ptr=WachpostenGround->Items[i];
 		if ( ptr->v )
 		{
-			SpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
+			Client->drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
 		}
 		else
 		{
-			SpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapGround );
+			Client->drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapGround );
 		}
 	}
 }
@@ -478,20 +479,20 @@ void cPlayer::DoScan ( void )
 
 		if ( vp->Disabled )
 		{
-			ScanMap[vp->PosX+vp->PosY*game->map->size]=1;
+			ScanMap[vp->PosX+vp->PosY*Client->Map->size]=1;
 		}
 		else
 		{
-			SpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
+			Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
 
 			// Detection:
 			if ( vp->data.can_detect_land )
 			{
-				SpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectLandMap );
+				Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectLandMap );
 			}
 			else if ( vp->data.can_detect_sea )
 			{
-				SpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectSeaMap );
+				Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectSeaMap );
 			}
 		}
 
@@ -504,14 +505,14 @@ void cPlayer::DoScan ( void )
 
 		if ( bp->Disabled )
 		{
-			ScanMap[bp->PosX+bp->PosY*game->map->size]=1;
+			ScanMap[bp->PosX+bp->PosY*Client->Map->size]=1;
 		}
 		else
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.is_big ) SpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
-				else SpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
+				if ( bp->data.is_big ) Client->drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
+				else Client->drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
 			}
 		}
 		bp=bp->next;
@@ -524,9 +525,9 @@ cVehicle *cPlayer::GetNextVehicle ( void )
 {
 	cVehicle *v,*start;
 	bool next=false;
-	if ( game->SelectedVehicle&&game->SelectedVehicle->owner==this )
+	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner==this )
 	{
-		start=game->SelectedVehicle;
+		start=Client->SelectedVehicle;
 		next=true;
 	}
 	else
@@ -557,9 +558,9 @@ cVehicle *cPlayer::GetPrevVehicle ( void )
 {
 	cVehicle *v,*start;
 	bool next=false;
-	if ( game->SelectedVehicle&&game->SelectedVehicle->owner==this )
+	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner==this )
 	{
-		start=game->SelectedVehicle;
+		start=Client->SelectedVehicle;
 		next=true;
 	}
 	else
@@ -829,7 +830,7 @@ void cPlayer::CalcShields ( void )
 	{
 		if ( b->data.max_shield&&b->data.shield )
 		{
-			SpecialCircleBig ( b->PosX,b->PosY,b->data.range,ShieldMap );
+			Client->drawSpecialCircleBig ( b->PosX,b->PosY,b->data.range,ShieldMap );
 		}
 		b=b->next;
 	}
@@ -854,13 +855,13 @@ bool cPlayer::ShieldImpact ( int dest,int damage )
 			{
 				b->data.shield-=damage;
 				damage=0;
-				if ( b==game->SelectedBuilding ) b->ShowDetails();
+				if ( b==Client->SelectedBuilding ) b->ShowDetails();
 			}
 			else
 			{
 				damage-=b->data.shield;
 				b->data.shield=0;
-				if ( b==game->SelectedBuilding ) b->ShowDetails();
+				if ( b==Client->SelectedBuilding ) b->ShowDetails();
 			}
 			if ( damage==0 ) break;
 		}
@@ -1004,7 +1005,7 @@ void cPlayer::DrawLockList ( cHud *hud )
 		elem=LockList->Items[i];
 		if ( elem->v )
 		{
-			off=elem->v->PosX+elem->v->PosY*game->map->size;
+			off=elem->v->PosX+elem->v->PosY*Client->Map->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->v );
@@ -1043,7 +1044,7 @@ void cPlayer::DrawLockList ( cHud *hud )
 		}
 		else if ( elem->b )
 		{
-			off=elem->b->PosX+elem->b->PosY*game->map->size;
+			off=elem->b->PosX+elem->b->PosY*Client->Map->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->b );

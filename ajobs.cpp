@@ -19,6 +19,7 @@
 #include <math.h>
 #include "ajobs.h"
 #include "game.h"
+#include "client.h"
 
 // Funktionen der AJobs Klasse ///////////////////////////////////////////////
 cAJobs::cAJobs ( cMap *Map,int ScrOff,int DestOff,bool scr_air,bool dest_air,bool scr_building,bool wache )
@@ -407,8 +408,8 @@ bool cAJobs::MakeImpact ( void )
 			{
 				PlayImpact=true;
 				if ( game->SelectedVehicle&&game->SelectedVehicle==target ) target->ShowDetails();
-				if ( vehicle&&vehicle->owner==game->ActivePlayer ) MouseMoveCallback ( true );
-				else if ( building&&building->owner==game->ActivePlayer ) MouseMoveCallback ( true );
+				if ( vehicle&&vehicle->owner==game->ActivePlayer ) Client->mouseMoveCallback ( true );
+				else if ( building&&building->owner==game->ActivePlayer ) Client->mouseMoveCallback ( true );
 				if ( MineDetonation ) DetonateMine();
 			}
 			else
@@ -427,8 +428,8 @@ bool cAJobs::MakeImpact ( void )
 			{
 				PlayImpact=true;
 				if ( game->SelectedBuilding&&game->SelectedBuilding==btarget ) btarget->ShowDetails();
-				if ( vehicle&&vehicle->owner==game->ActivePlayer ) MouseMoveCallback ( true );
-				else if ( building&&building->owner==game->ActivePlayer ) MouseMoveCallback ( true );
+				if ( vehicle&&vehicle->owner==game->ActivePlayer ) Client->mouseMoveCallback ( true );
+				else if ( building&&building->owner==game->ActivePlayer ) Client->mouseMoveCallback ( true );
 			}
 			else
 			{

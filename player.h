@@ -25,6 +25,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 #include "base.h"
+#include "map.h"
 
 struct sVehicle;
 struct sUnitData;
@@ -57,6 +58,8 @@ struct sResearch{
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
 friend class cEngine;
+friend class cServer;
+friend class cClient;
 public:
   cPlayer(string Name,SDL_Surface *Color,int nr);
   ~cPlayer(void);
@@ -91,7 +94,7 @@ public:
   cList<sLockElem*> *LockList;           // Liste mit gelockten Objekten.
   int iSocketNum;			// Number of socket over which this player is connected in network game
 
-  void InitMaps(int MapSizeX);
+  void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
   void DoScan(void);
   cVehicle *GetNextVehicle(void);
   cVehicle *GetPrevVehicle(void);

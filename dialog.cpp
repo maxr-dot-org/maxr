@@ -30,6 +30,7 @@
 #include "log.h"
 #include "loaddata.h"
 #include "events.h"
+#include "client.h"
 
 // shows a yes/no dialog
 bool ShowYesNo ( string text )
@@ -46,9 +47,9 @@ bool ShowYesNo ( string text )
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 
 	mouse->SetCursor ( CHand );
-	if(game)
+	if( Client )
 	{
-		game->DrawMap ( false );
+		Client->drawMap ( false );
 	}
 	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 
@@ -69,10 +70,9 @@ bool ShowYesNo ( string text )
 
 	while ( 1 )
 	{
-		if ( game )
+		if ( Client )
 		{
-			game->engine->Run();
-			game->HandleTimer();
+			Client->handleTimer();
 		}
 
 		// Eingaben holen:
@@ -128,9 +128,9 @@ bool ShowYesNo ( string text )
 	}
 
 	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
-	if(game)
+	if( Client )
 	{
-		game->fDrawMap = true;
+		Client->bFlagDrawMap = true;
 	}
 	return ret;
 }
@@ -316,10 +316,9 @@ void ShowOK ( string sText, bool bPurgeHud )
 	SDL_Delay ( 200 );
 	while ( 1 )
 	{
-		if ( !bPurgeHud && game )
+		if ( !bPurgeHud && Client )
 		{
-			game->engine->Run();
-			game->HandleTimer();
+			Client->handleTimer();
 		}
 
 		// Eingaben holen:
@@ -366,7 +365,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 	
 	if ( !bPurgeHud )
 	{
-		game->fDrawMap = true;
+		Client->bFlagDrawMap = true;
 	}
 	else
 	{
@@ -677,7 +676,7 @@ void showPreferences ( void )
 	OldMusicVol = SettingsData.MusicVol;
 	OldSoundVol = SettingsData.SoundVol;
 	OldVoiceVol = SettingsData.VoiceVol;
-	OldName = game->ActivePlayer->name;
+	OldName = Client->ActivePlayer->name;
 	OldbDamageEffects = SettingsData.bDamageEffects;
 	OldbDamageEffectsVehicles = SettingsData.bDamageEffectsVehicles;
 	OldbMakeTracks = SettingsData.bMakeTracks;
@@ -776,7 +775,7 @@ void showPreferences ( void )
 	rFont.x = rDialog.x + 25; 	rFont.w = 100;
 	rFont.y = 158+rDialog.y;
 	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
-	font->showText(122+rDialog.x,158+rDialog.y, game->ActivePlayer->name);
+	font->showText(122+rDialog.x,158+rDialog.y, Client->ActivePlayer->name);
 
 	//END BLOCK PLAYERNAME
 
@@ -827,8 +826,7 @@ void showPreferences ( void )
 	while ( 1 )
 	{
 		// Die Engine laufen lassen:
-		game->engine->Run();
-		game->HandleTimer();
+		Client->handleTimer();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -850,7 +848,7 @@ void showPreferences ( void )
 				{
 					font->showText(122+rDialog.x,158+rDialog.y, InputStr);
 					Input=false;
-					game->ActivePlayer->name=InputStr;
+					Client->ActivePlayer->name=InputStr;
 				}
 				else
 				{
@@ -979,7 +977,7 @@ void showPreferences ( void )
 				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!Input )
 				{
 					Input=true;
-					InputStr=game->ActivePlayer->name;
+					InputStr=Client->ActivePlayer->name;
 					stmp = InputStr; stmp += "_";
 					font->showText(122+rDialog.x,158+rDialog.y, stmp);
 					SHOW_SCREEN
@@ -1023,7 +1021,7 @@ void showPreferences ( void )
 			{
 				if ( Input )
 				{
-					game->ActivePlayer->name=InputStr;
+					Client->ActivePlayer->name=InputStr;
 				}
 				// Save new settings to max.xml
 				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
@@ -1040,7 +1038,8 @@ void showPreferences ( void )
 				if( SettingsData.bDamageEffects != OldbDamageEffects ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
 				if( SettingsData.bDamageEffectsVehicles != OldbDamageEffectsVehicles ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
 				if( SettingsData.bMakeTracks != OldbMakeTracks ) SaveOption ( SAVETYPE_TRACKS );
-				if( OldName.compare ( game->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
+				// TODO: remove game
+				if( OldName.compare ( Client->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
 				return;
 			}
 		}
@@ -1079,7 +1078,7 @@ void showPreferences ( void )
 				SettingsData.bDamageEffects = OldbDamageEffects;
 				SettingsData.bDamageEffectsVehicles = OldbDamageEffectsVehicles;
 				SettingsData.bMakeTracks = OldbMakeTracks;
-				game->ActivePlayer->name = OldName;
+				Client->ActivePlayer->name = OldName;
 				SetMusicVol ( SettingsData.MusicVol );
 				return;
 			}
@@ -1127,9 +1126,9 @@ bool showSelfdestruction()
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false,buffer );
-	if(game)
+	if( Client )
 	{
-		game->DrawMap();
+		Client->drawMap();
 	}
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 	if ( SettingsData.bAlphaEffects )
@@ -1147,12 +1146,10 @@ bool showSelfdestruction()
 	mouse->GetBack ( buffer );
 	while ( 1 )
 	{
-		if(game)
+		if(Client)
 		{
-			if ( game->SelectedBuilding==NULL ) break;
-			// Die Engine laufen lassen:
-			game->engine->Run();
-			game->HandleTimer();
+			if ( Client->SelectedBuilding == NULL ) break;
+			Client->handleTimer();
 		}
 
 		// Events holen:
@@ -1215,7 +1212,7 @@ bool showSelfdestruction()
 			ScharfPressed=false;
 		}
 		// Das Schutzglas hochfahren:
-		if ( Scharf&&GlasHeight>0&&timer0 )
+		if ( Scharf&&GlasHeight>0&&Client->iTimer0 )
 		{
 			SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDestroySrc,buffer,&rDestroyDest );
 			GlasHeight-=10;

@@ -30,6 +30,8 @@
 #include "files.h"
 #include "loaddata.h"
 #include "events.h"
+#include "client.h"
+#include "server.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -745,83 +747,116 @@ void RunSPMenu ( void )
 			else if ( !b&&StartNewPressed )
 			{
 				sOptions options;
-				string MapName = "";
+				string sMapName = "";
 				options = RunOptionsMenu ( NULL );
 				if ( options.metal == -1 ) break;
-				MapName = RunPlanetSelect();
+				sMapName = RunPlanetSelect();
 
-				if ( !MapName.empty() )
+				if ( !sMapName.empty() )
 				{
-					int i,LandX,LandY;
-					cList<cPlayer*> *list;
+					int iLandX, iLandY;
+					cList<cPlayer*> *PlayerList;
 					cList<sLanding*> *LandingList;
-					cMap *map;
-					cPlayer *p;
-					map=new cMap;
+					cMap *Map, *ServerMap;
+					cPlayer *Player;
+					Map = new cMap;
 					sPlayer players;
-					if ( !map->LoadMap ( MapName ) )
+					if ( !Map->LoadMap ( sMapName ) )
 					{
-						delete map;
+						delete Map;
 						break;
 					}
-					map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
+					Map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
+					// copy map for server
+					ServerMap = new cMap;
+					ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+					ServerMap->DefaultWater = Map->DefaultWater;
+					ServerMap->MapName = Map->MapName;
+					memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
+					memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
+					for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
+					{
+						ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
+						ServerMap->terrain[i].coast = Map->terrain[i].coast;
+						ServerMap->terrain[i].water = Map->terrain[i].water;
+					}
+
 					players = runPlayerSelection();
 												
 					bool bHavePlayer = false;
 					for ( int i = 0; i < 4; i++ ) //check for players
 					{
-						if(players.what[i] != PLAYER_N)
+						if( players.what[i] != PLAYER_N )
 						{
 							bHavePlayer = true;
 						}
 					}
 					if(!bHavePlayer) //no players - break
 					{
-						delete map;
+						delete Map;
+						delete ServerMap;
 						ExitMenu();
 						break;
 					}
-					list=new cList<cPlayer*>;
-					list->Add ( p=new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
-					list->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
+					// player for client
+					Player = new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 );
 
-					game = new cGame ( map );
-					game->AlienTech = options.AlienTech;
-					game->PlayRounds = options.PlayRounds;
-					game->ActiveRoundPlayerNr = p->Nr;
-					game->Init ( list,0 );
+					// playerlist for server
+					PlayerList = new cList<cPlayer*>;
+					PlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
+					PlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
-					for ( i=0;i<list->iCount;i++ )
-						list->Items[i]->InitMaps ( map->size );
+					// init client and his player
+					Client = new cClient;
+					Client->init( Map );
+					Client->initPlayer ( Player );
+					Player->InitMaps ( Map->size, Map );
+					Player->Credits = options.credits;
 
-					p->Credits=options.credits;
+					// init the players of playerlist
+					for ( int i = 0; i < PlayerList->iCount; i++ )
+					{
+						PlayerList->Items[i]->InitMaps ( Map->size, Map );
+						PlayerList->Items[i]->Credits = options.credits;
+					}
+					// init server
+					Server = new cServer;
+					Server->init( ServerMap, PlayerList );
 
+					// land the player
 					LandingList = new cList<sLanding*>;
-					RunHangar ( p, LandingList );
-					SelectLanding ( &LandX, &LandY, map );
-					game->MakeLanding ( LandX,LandY,p,LandingList,options.FixedBridgeHead );
+					RunHangar ( Player, LandingList );
+					SelectLanding ( &iLandX, &iLandY, Map );
+
+					Server->makeLanding ( iLandX, iLandY, Player, LandingList, options.FixedBridgeHead ); 
 
 					while ( LandingList->iCount )
 					{
 						delete LandingList->Items[LandingList->iCount - 1];
-						LandingList->Delete(LandingList->iCount - 1);
+						LandingList->Delete( LandingList->iCount - 1);
 					}
 					delete LandingList;
 
+					// exit menu and start game
 					ExitMenu();
 
-					game->Run();
+					Client->run();
 
-					SettingsData.sPlayerName=p->name;
-					while ( list->iCount )
+					Server->kill();
+					Client->kill();
+					SettingsData.sPlayerName = Player->name;
+					delete Player;
+					while ( PlayerList->iCount )
 					{
-						delete ( list->Items[0] );
-						list->Delete ( 0 );
+						delete ( PlayerList->Items[0] );
+						PlayerList->Delete ( 0 );
 					}
-					delete game; game=NULL;
-					delete map;
+					delete Client; Client = NULL;
+					delete Server; Server = NULL;
+					delete Map;
+					delete ServerMap;
 					
-					delete list;
+					delete PlayerList;
 					break;
 				}
 				break;
@@ -3723,8 +3758,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	int b,lx=-1,ly=-1,i,k,nr,fakx,faky,off;
 	sTerrain *t;
 
-	fakx= ( int ) ( ( SettingsData.iScreenW-192.0 ) /game->map->size );
-	faky= ( int ) ( ( SettingsData.iScreenH-32.0 ) /game->map->size );
+	fakx= ( int ) ( ( SettingsData.iScreenW-192.0 ) / map->size );
+	faky= ( int ) ( ( SettingsData.iScreenH-32.0 ) / map->size );
 
 	// Die Karte malen:
 	SDL_LockSurface ( buffer );
@@ -3748,7 +3783,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	SDL_UnlockSurface ( buffer );
 
 	// Hud drüber legen:
-	game->hud->DoAllHud();
+	Client->Hud->DoAllHud();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
@@ -3799,8 +3834,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/game->map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 ) ) );
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/game->map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 ) ) );
+			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 ) ) );
+			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 ) ) );
 			break;
 		}
 
@@ -5878,7 +5913,7 @@ int ShowDateiMenu ( bool bSave )
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				BeendenPressed=false;
-				game->End = true;
+				Client->bExit = true;
 				delete files;
 				return -1;
 			}

@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include "mouse.h"
 #include "main.h"
+#include "client.h"
 
 // Funktionen der Maus-Klasse ////////////////////////////////////////////////
 cMouse::cMouse ( void )
@@ -226,10 +227,8 @@ void cMouse::GetPos ( void )
 	}
 	if ( MoveCallback )
 	{
-		MouseMoveCallback ( false );
-	}/*else if(MoveCallbackEditor){
-	    MouseMoveCallbackEditor();
-	  }*/
+		Client->mouseMoveCallback ( false );
+	}
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:
@@ -243,11 +242,11 @@ void cMouse::GetKachel ( int *X,int *Y )
 {
 	cHud *hud;
 	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) {*X=-1;*Y=-1;return;}
-	hud=game->hud;
+	hud=Client->Hud;
 	*X= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
 	*Y= (int)(( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
-	if ( *X>=game->map->size ) *X=game->map->size-1;
-	if ( *Y>=game->map->size ) *Y=game->map->size-1;
+	if ( *X>=Client->Map->size ) *X=Client->Map->size-1;
+	if ( *Y>=Client->Map->size ) *Y=Client->Map->size-1;
 }
 
 // Liefert den Offset der Kachel unter der Maus:
@@ -256,8 +255,8 @@ int cMouse::GetKachelOff ( void )
 	cHud *hud;
 	int ret;
 	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) return -1;
-	hud=game->hud;
+	hud=Client->Hud;
 	ret= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
-	ret+= ( ( int ) ( ( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom ) ) *game->map->size;
+	ret+= ( ( int ) ( ( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom ) ) *Client->Map->size;
 	return ret;
 }

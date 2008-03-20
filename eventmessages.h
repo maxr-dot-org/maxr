@@ -28,6 +28,9 @@ enum GAME_EVENT_TYPES
 	GAME_EV_CHAT,					// simple text message
 
 	GAME_EV_DEL_PLAYER = FIRST_CLIENT_MESSAGE,	// a Player should be deleted
+	GAME_EV_ADD_BUILDING,			// adds a building
+	GAME_EV_ADD_VEHICLE,			// adds a vehicle
+	GAME_EV_DEL_BUILDING,			// deletes a building
 };
 
 /**
@@ -52,5 +55,8 @@ void sendChatMessage ( string sMsg );
 *@param sMsg the chat message.
 */
 void sendDelPlayer ( int iPlayerNum );
+
+void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
+void sendDelBuilding ( int  );
 
 #endif // eventmessagesH

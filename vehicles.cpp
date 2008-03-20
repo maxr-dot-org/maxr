@@ -28,6 +28,7 @@
 #include "files.h"
 #include "pcx.h"
 #include "events.h"
+#include "client.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
@@ -172,8 +173,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		MoveJobActive = false;
 		moving = false;
 		rotating = false;
-		StopFXLoop ( game->ObjectStream );
-		game->ObjectStream = PlayStram();
+		StopFXLoop ( Client->iObjectStream );
+		Client->iObjectStream = PlayStram();
 	}
 
 	if ( mjob && moving && !MoveJobActive )
@@ -191,18 +192,18 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schadenseffekt machen:
-	if ( timer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && !moving && ( owner == game->ActivePlayer || game->ActivePlayer->ScanMap[PosX+PosY*game->map->size] ) )
+	if ( Client->iTimer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && !moving && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hit_points / data.max_hit_points ) );
-		game->AddFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
+		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
 	}
 
 	// Prüfen, ob das Vehicle gemalt werden soll:
-	if ( ( data.is_stealth_sea || data.is_stealth_land ) && game->ActivePlayer != owner )
+	if ( ( data.is_stealth_sea || data.is_stealth_land ) && Client->ActivePlayer != owner )
 	{
 		if ( data.is_stealth_land )
 		{
-			if ( game->ActivePlayer->DetectLandMap[PosX+PosY*game->map->size] || detection_override )
+			if ( Client->ActivePlayer->DetectLandMap[PosX+PosY*Client->Map->size] || detection_override )
 			{
 				detected = true;
 			}
@@ -213,7 +214,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			if ( game->ActivePlayer->DetectSeaMap[PosX+PosY*game->map->size] || !game->map->IsWater ( PosX + PosY*game->map->size, true ) )
+			if ( Client->ActivePlayer->DetectSeaMap[PosX+PosY*Client->Map->size] || !Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) )
 			{
 				detected = true;
 			}
@@ -227,7 +228,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			return;
 	}
 
-	float newzoom = ( 64.0 / game->hud->Zoom );
+	float newzoom = ( 64.0 / Client->Hud->Zoom );
 
 	if ( OffX )
 		ox = ( int ) ( OffX / newzoom );
@@ -250,7 +251,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	// Prüfen, ob gebaut wird:
 	if ( ( !IsBuilding && !IsClearing ) || dir != 0 || BuildOverride )
 	{
-		if ( ( IsBuilding || IsClearing ) && timer0 )
+		if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
 		{
 			// Vehicle drehen:
 			RotateTo ( 0 );
@@ -262,7 +263,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		scr.h = dest->h = typ->img[dir]->h;
 
 		// Den Schatten malen:
-		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && game->map->IsWater ( PosX + PosY*game->map->size, true ) ) )
+		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
 		{
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
@@ -286,7 +287,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				else
 				{
 					int high;
-					high = ( ( int ) ( game->hud->Zoom * ( FlightHigh / 64.0 ) ) );
+					high = ( ( int ) ( Client->Hud->Zoom * ( FlightHigh / 64.0 ) ) );
 					tmp.x += high + ditherX;
 					tmp.y += high + ditherY;
 					SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
@@ -316,9 +317,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					cBuilding *b;
 					int high;
 					// Prüfen, ob das Flugzeug landen soll:
-					b = game->map->GO[PosX+PosY*game->map->size].top;
+					b = Client->Map->GO[PosX+PosY*Client->Map->size].top;
 
-					if ( timer0 )
+					if ( Client->iTimer0 )
 					{
 						if ( b && b->owner == owner && b->data.is_pad && !mjob && !rotating && !Attacking )
 						{
@@ -335,7 +336,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					// Schatten malen:
 					if ( FlightHigh > 0 )
 					{
-						high = ( ( int ) ( game->hud->Zoom * ( FlightHigh / 64.0 ) ) );
+						high = ( ( int ) ( Client->Hud->Zoom * ( FlightHigh / 64.0 ) ) );
 						tmp.x += high + ditherX;
 						tmp.y += high + ditherY;
 					}
@@ -384,7 +385,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 
-			if ( timer0 )
+			if ( Client->iTimer0 )
 				StartUp += 25;
 
 			if ( StartUp >= 255 )
@@ -392,7 +393,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			if ( data.is_stealth_sea && game->map->IsWater ( PosX + PosY*game->map->size, true ) )
+			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
 				SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
@@ -409,10 +410,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		{
 			tmp = *dest;
 			scr.h = scr.w = typ->overlay->h;
-			tmp.x += game->hud->Zoom / 2 - scr.h / 2 + ox + ditherX;
-			tmp.y += game->hud->Zoom / 2 - scr.h / 2 + oy + ditherY;
+			tmp.x += Client->Hud->Zoom / 2 - scr.h / 2 + ox + ditherX;
+			tmp.y += Client->Hud->Zoom / 2 - scr.h / 2 + oy + ditherY;
 			scr.y = 0;
-//      scr.x=scr.h*((game->Frame%(typ->overlay->w/scr.h)));
 
 			if ( Disabled )
 			{
@@ -420,7 +420,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 			else
 			{
-				scr.x = ( int ) ( ( typ->overlay_org->h * ( ( game->Frame % ( typ->overlay->w / scr.h ) ) ) ) / newzoom );
+				scr.x = ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( typ->overlay->w / scr.h ) ) ) ) / newzoom );
 			}
 
 			if ( StartUp && SettingsData.bAlphaEffects )
@@ -429,7 +429,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				SDL_BlitSurface ( typ->overlay, &scr, buffer, &tmp );
 				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
 
-				if ( timer0 )
+				if ( Client->iTimer0 )
 					StartUp += 25;
 
 				if ( StartUp >= 255 )
@@ -453,7 +453,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 				if ( BigBetonAlpha < 255 )
 				{
-					if ( timer0 )
+					if ( Client->iTimer0 )
 						BigBetonAlpha += 25;
 
 					if ( BigBetonAlpha > 255 )
@@ -472,7 +472,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			scr.h = scr.w = typ->build->h;
 
-			scr.x = ( game->Frame % 4 ) * scr.w;
+			scr.x = ( Client->iFrame % 4 ) * scr.w;
 
 			SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
@@ -492,39 +492,19 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 
 			// Ggf Markierung blitten, wenn der Bauvorgang abgeschlossen ist:
-			if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == game->ActivePlayer )
+			if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer )
 			{
-				/*SDL_Rect d;
-				   int nr1;//,nr2;
-				   nr1=0xFF00-((game->Frame%0x8)*0x1000);
-				SDL_SetColorKey(GraphicsData.gfx_build_finished_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				d.x=d.y=0;
-				d.h=d.w=GraphicsData.gfx_build_finished->w;
-				// GraphicsData.gfx_build_finished=SDL_CreateRGBSurface(SDL_HWSURFACE,GraphicsData.gfx_build_finished_org->w,GraphicsData.gfx_build_finished_org->h,32,0,0,0,0);
-				SDL_FillRect(GraphicsData.gfx_build_finished, NULL, nr1);
-				SDL_BlitSurface(GraphicsData.gfx_build_finished_org,NULL,GraphicsData.gfx_build_finished,NULL);
-				SDL_SetColorKey(GraphicsData.gfx_build_finished,SDL_SRCCOLORKEY,0xFF00FF);
-				   SDL_BlitSurface(GraphicsData.gfx_build_finished,&d,buffer,&tmp);*_/
-				SDL_Rect sr, de;
-				int nr, zoom;
-				zoom = game->hud->Zoom;
-				nr = game->Frame % 5;
-				sr.x = nr * (zoom * 2); sr.y = 0;
-				de.h = de.w = sr.h = sr.w = zoom * 2;
-				de.x = tmp.x; de.y = tmp.y;
-				SDL_BlitSurface(GraphicsData.gfx_build_finished,&sr,buffer,&de);*/
-
 				SDL_Rect d, t;
 				int max, nr;
-				nr = 0xFF00 - ( ( game->Frame % 0x8 ) * 0x1000 );
+				nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
 
 				if ( data.can_build == BUILD_BIG || IsClearing )
 				{
-					max = ( game->hud->Zoom - 3 ) * 2;
+					max = ( Client->Hud->Zoom - 3 ) * 2;
 				}
 				else
 				{
-					max = game->hud->Zoom - 3;
+					max = Client->Hud->Zoom - 3;
 				}
 
 				d.x = dest->x + 2 + ox;
@@ -562,7 +542,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			scr.h = scr.w = typ->clear_small->h;
 
-			scr.x = ( game->Frame % 4 ) * scr.w;
+			scr.x = ( Client->iFrame % 4 ) * scr.w;
 
 			SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
@@ -582,12 +562,12 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 
 			// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
-			if ( ClearingRounds == 0 && owner == game->ActivePlayer )
+			if ( ClearingRounds == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_Rect d, t;
 				int max, nr;
-				nr = 0xFF00 - ( ( game->Frame % 0x8 ) * 0x1000 );
-				max = game->hud->Zoom - 3;
+				nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
+				max = Client->Hud->Zoom - 3;
 				d.x = dest->x + 2 + ox;
 				d.y = dest->y + 2 + oy;
 				d.w = max;
@@ -611,7 +591,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 
 	// Ggf den farbigen Rahmen malen:
-	if ( game->hud->Farben )
+	if ( Client->Hud->Farben )
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -619,11 +599,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
 		{
-			max = ( game->hud->Zoom - 1 ) * 2;
+			max = ( Client->Hud->Zoom - 1 ) * 2;
 		}
 		else
 		{
-			max = game->hud->Zoom - 1;
+			max = Client->Hud->Zoom - 1;
 		}
 
 		d.x = dest->x + 1 + ox;
@@ -656,11 +636,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
 		{
-			max = game->hud->Zoom * 2;
+			max = Client->Hud->Zoom * 2;
 		}
 		else
 		{
-			max = game->hud->Zoom;
+			max = Client->Hud->Zoom;
 		}
 
 		len = max / 4;
@@ -670,41 +650,41 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.x = dest->x + 1 + ox;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.y = dest->y + 1 + oy;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
 		d.x = dest->x + 1 + ox;
-		SDL_FillRect ( buffer, &d, game->BlinkColor );
+		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 	}
 
 	// Das Dithering machen:
 
-	if ( data.can_drive == DRIVE_AIR && timer0 )
+	if ( data.can_drive == DRIVE_AIR && Client->iTimer0 )
 	{
 		if ( moving || game->Frame % 10 == 0 )
 		{
@@ -721,71 +701,71 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	// Ggf die Brücke drüber malen:
 	if ( data.can_drive == DRIVE_SEA )
 	{
-#define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<game->map->size&&PosY+y>=0&&PosY+y<game->map->size&&game->map->GO[PosX+(x)+(PosY+(y))*game->map->size].base&&game->map->GO[PosX+(x)+(PosY+(y))*game->map->size].base->data.is_bridge
+#define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<Client->Map->size&&PosY+y>=0&&PosY+y<Client->Map->size&&Client->Map->GO[PosX+(x)+(PosY+(y))*Client->Map->size].base&&Client->Map->GO[PosX+(x)+(PosY+(y))*Client->Map->size].base->data.is_bridge
 
 		if ( TEST_BRIDGE ( 0, 0 ) )
 		{
-			game->map->GO[PosX+PosY*game->map->size].base->Draw ( dest );
+			Client->Map->GO[PosX+PosY*Client->Map->size].base->Draw ( dest );
 		}
 
 		if ( OffX > 0 && OffY == 0 && TEST_BRIDGE ( 1, 0 ) )
 		{
 			tmp = *dest;
-			tmp.x += game->hud->Zoom;
-			game->map->GO[PosX+1+PosY*game->map->size].base->Draw ( &tmp );
+			tmp.x += Client->Hud->Zoom;
+			Client->Map->GO[PosX+1+PosY*Client->Map->size].base->Draw ( &tmp );
 		}
 		else
 			if ( OffX < 0 && OffY == 0 && TEST_BRIDGE ( -1, 0 ) )
 			{
 				tmp = *dest;
-				tmp.x -= game->hud->Zoom;
-				game->map->GO[PosX-1+PosY*game->map->size].base->Draw ( &tmp );
+				tmp.x -= Client->Hud->Zoom;
+				Client->Map->GO[PosX-1+PosY*Client->Map->size].base->Draw ( &tmp );
 			}
 			else
 				if ( OffX == 0 && OffY > 0 && TEST_BRIDGE ( 0, 1 ) )
 				{
 					tmp = *dest;
-					tmp.y += game->hud->Zoom;
-					game->map->GO[PosX+ ( PosY+1 ) *game->map->size].base->Draw ( &tmp );
+					tmp.y += Client->Hud->Zoom;
+					Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 				}
 				else
 					if ( OffX == 0 && OffY < 0 && TEST_BRIDGE ( 0, -1 ) )
 					{
 						tmp = *dest;
-						tmp.y -= game->hud->Zoom;
-						game->map->GO[PosX+ ( PosY-1 ) *game->map->size].base->Draw ( &tmp );
+						tmp.y -= Client->Hud->Zoom;
+						Client->Map->GO[PosX+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 					}
 					else
 						if ( OffX > 0 && OffY > 0 && TEST_BRIDGE ( 1, 1 ) )
 						{
 							tmp = *dest;
-							tmp.x += game->hud->Zoom;
-							tmp.y += game->hud->Zoom;
-							game->map->GO[PosX+1+ ( PosY+1 ) *game->map->size].base->Draw ( &tmp );
+							tmp.x += Client->Hud->Zoom;
+							tmp.y += Client->Hud->Zoom;
+							Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 						}
 						else
 							if ( OffX < 0 && OffY < 0 && TEST_BRIDGE ( -1, -1 ) )
 							{
 								tmp = *dest;
-								tmp.x -= game->hud->Zoom;
-								tmp.y -= game->hud->Zoom;
-								game->map->GO[PosX-1+ ( PosY-1 ) *game->map->size].base->Draw ( &tmp );
+								tmp.x -= Client->Hud->Zoom;
+								tmp.y -= Client->Hud->Zoom;
+								Client->Map->GO[PosX-1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 							}
 							else
 								if ( OffX > 0 && OffY < 0 && TEST_BRIDGE ( 1, -1 ) )
 								{
 									tmp = *dest;
-									tmp.x += game->hud->Zoom;
-									tmp.y -= game->hud->Zoom;
-									game->map->GO[PosX+1+ ( PosY-1 ) *game->map->size].base->Draw ( &tmp );
+									tmp.x += Client->Hud->Zoom;
+									tmp.y -= Client->Hud->Zoom;
+									Client->Map->GO[PosX+1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 								}
 								else
 									if ( OffX < 0 && OffY > 0 && TEST_BRIDGE ( -1, 1 ) )
 									{
 										tmp = *dest;
-										tmp.x -= game->hud->Zoom;
-										tmp.y += game->hud->Zoom;
-										game->map->GO[PosX-1+ ( PosY+1 ) *game->map->size].base->Draw ( &tmp );
+										tmp.x -= Client->Hud->Zoom;
+										tmp.y += Client->Hud->Zoom;
+										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 									}
 	}
 }
@@ -796,33 +776,32 @@ void cVehicle::Select ( void )
 	int error;
 	selected = true;
 	// Das Video laden:
-
-	if ( strcmp ( game->FLCname.c_str(), typ->FLCFile ) )
+	if ( strcmp ( Client->sFLCname.c_str(), typ->FLCFile ) )
 	{
-		if ( game->FLC != NULL )
+		if ( Client->FLC != NULL )
 		{
-			FLI_Close ( game->FLC );
+			FLI_Close ( Client->FLC );
 		}
 
-		if ( game->video )
+		if ( Client->video )
 		{
-			game->video = NULL;
+			Client->video = NULL;
 		}
 
-		game->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
+		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
 
-		game->FLCname = typ->FLCFile;
+		Client->sFLCname = typ->FLCFile;
 
 		if ( error != 0 )
 		{
-			game->hud->ResetVideoMonitor();
-			game->FLC = NULL;
+			Client->Hud->ResetVideoMonitor();
+			Client->FLC = NULL;
 			return;
 		}
 
-		FLI_Rewind ( game->FLC );
+		FLI_Rewind ( Client->FLC );
 
-		FLI_NextFrame ( game->FLC );
+		FLI_NextFrame ( Client->FLC );
 	}
 
 	// Meldung machen:
@@ -855,8 +834,8 @@ void cVehicle::Deselct ( void )
 	dest.x = 8;
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
-	StopFXLoop ( game->ObjectStream );
-	game->ObjectStream = -1;
+	StopFXLoop ( Client->iObjectStream );
+	Client->iObjectStream = -1;
 }
 
 // Erzeugt den Namen für das Vehicle aus der Versionsnummer:
@@ -986,14 +965,14 @@ bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
 {
 	if ( UnitsData.building[iBuildingTyp].data.is_base )
 	{
-		if ( ( ( game->map->GO[iOff].base && ! ( game->map->GO[iOff].base->data.is_road || game->map->GO[iOff].base->data.is_platform ) ) || ( game->map->GO[iOff].top && !game->map->GO[iOff].top->data.is_connector ) ) )
+		if ( ( ( Client->Map->GO[iOff].base && ! ( Client->Map->GO[iOff].base->data.is_road || Client->Map->GO[iOff].base->data.is_platform ) ) || ( Client->Map->GO[iOff].top && !Client->Map->GO[iOff].top->data.is_connector ) ) )
 		{
 			return false;
 		}
 	}
 	else
 	{
-		if ( game->map->GO[iOff].top && !game->map->GO[iOff].top->data.is_connector )
+		if ( Client->Map->GO[iOff].top && !Client->Map->GO[iOff].top->data.is_connector )
 		{
 			return false;
 		}
@@ -1001,14 +980,14 @@ bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
 
 	if ( UnitsData.building[iBuildingTyp].data.build_on_water )
 	{
-		if ( !game->map->IsWater ( iOff ) )
+		if ( !Client->Map->IsWater ( iOff ) )
 		{
 			return false;
 		}
 	}
 	else
 	{
-		if ( game->map->IsWater ( iOff ) && ! ( game->map->GO[iOff].base && game->map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
+		if ( Client->Map->IsWater ( iOff ) && ! ( Client->Map->GO[iOff].base && Client->Map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
 		{
 			return false;
 		}
@@ -1049,13 +1028,13 @@ void cVehicle::RefreshData ( void )
 
 		BuildRounds--;
 
-		if ( BuildRounds == 0 && game->SelectedVehicle == this )
+		if ( BuildRounds == 0 && Client->SelectedVehicle == this )
 		{
-			StopFXLoop ( game->ObjectStream );
-			game->ObjectStream = PlayStram();
+			StopFXLoop ( Client->iObjectStream );
+			Client->iObjectStream = PlayStram();
 		}
 
-		if ( BuildRounds == 0 && owner == game->ActivePlayer )
+		if ( BuildRounds == 0 && owner == Client->ActivePlayer )
 			game->engine->AddReport ( ( UnitsData.building + BuildingTyp )->data.name, false );
 
 		if ( BuildRounds == 0 && ( UnitsData.building[BuildingTyp].data.is_base || UnitsData.building[BuildingTyp].data.is_connector ) && ( ! ( BandX != PosX || BandY != PosY ) || data.cargo == 0 ) )
@@ -1065,23 +1044,23 @@ void cVehicle::RefreshData ( void )
 			game->engine->AddBuilding ( PosX, PosY, UnitsData.building + BuildingTyp, owner );
 		}
 
-		if ( BuildPath && ( owner == game->ActivePlayer || game->HotSeat ) && BuildRounds == 0 && data.can_build == BUILD_SMALL && ( BandX != PosX || BandY != PosY ) )
+		if ( BuildPath && ( owner == Client->ActivePlayer || game->HotSeat ) && BuildRounds == 0 && data.can_build == BUILD_SMALL && ( BandX != PosX || BandY != PosY ) )
 		{
 			cMJobs *mj = NULL;
 
 			if ( data.cargo >= BuildCostsStart )
 			{
-				if ( BandX < PosX && CheckPathBuild ( PosX - 1 + PosY*game->map->size, BuildingTyp ) )
-					mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX - 1 + PosY * game->map->size, false, false );
+				if ( BandX < PosX && CheckPathBuild ( PosX - 1 + PosY*Client->Map->size, BuildingTyp ) )
+					mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX - 1 + PosY * Client->Map->size, false, false );
 				else
-					if ( BandX > PosX && CheckPathBuild ( PosX + 1 + PosY*game->map->size, BuildingTyp ) )
-						mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + 1 + PosY * game->map->size, false, false );
+					if ( BandX > PosX && CheckPathBuild ( PosX + 1 + PosY*Client->Map->size, BuildingTyp ) )
+						mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + 1 + PosY * Client->Map->size, false, false );
 					else
-						if ( BandY < PosY && CheckPathBuild ( PosX + ( PosY - 1 ) *game->map->size, BuildingTyp ) )
-							mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + ( PosY - 1 ) * game->map->size, false, false );
+						if ( BandY < PosY && CheckPathBuild ( PosX + ( PosY - 1 ) *Client->Map->size, BuildingTyp ) )
+							mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + ( PosY - 1 ) * Client->Map->size, false, false );
 						else
-							if ( BandY > PosY && CheckPathBuild ( PosX + ( PosY + 1 ) *game->map->size, BuildingTyp ) )
-								mj = game->engine->AddMoveJob ( PosX + PosY * game->map->size, PosX + ( PosY + 1 ) * game->map->size, false, false );
+							if ( BandY > PosY && CheckPathBuild ( PosX + ( PosY + 1 ) *Client->Map->size, BuildingTyp ) )
+								mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + ( PosY + 1 ) * Client->Map->size, false, false );
 							else
 							{
 								BuildPath = false;
@@ -1126,10 +1105,10 @@ void cVehicle::RefreshData ( void )
 	{
 		ClearingRounds--;
 
-		if ( ClearingRounds == 0 && game->SelectedVehicle == this )
+		if ( ClearingRounds == 0 && Client->SelectedVehicle == this )
 		{
-			StopFXLoop ( game->ObjectStream );
-			game->ObjectStream = PlayStram();
+			StopFXLoop ( Client->iObjectStream );
+			Client->iObjectStream = PlayStram();
 		}
 	}
 }
@@ -1158,7 +1137,7 @@ void cVehicle::ShowDetails ( void )
 	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 
-	if ( data.can_transport && owner == game->ActivePlayer )
+	if ( data.can_transport && owner == Client->ActivePlayer )
 	{
 		// Transport:
 		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
@@ -1192,7 +1171,7 @@ void cVehicle::ShowDetails ( void )
 	else
 		if ( data.can_attack )
 		{
-			if ( owner == game->ActivePlayer )
+			if ( owner == Client->ActivePlayer )
 			{
 				// Munition:
 				DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
@@ -1438,9 +1417,7 @@ void cVehicle::ShowHelp ( void )
 
 	while ( 1 )
 	{
-		// Die Engine laufen lassen:
-		game->engine->Run();
-		game->HandleTimer();
+		Client->handleTimer();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -1629,42 +1606,42 @@ bool cVehicle::CanDrive ( int MapOff )
 {
 	int nr;
 
-	if ( MapOff < 0 || MapOff >= game->map->size*game->map->size )
+	if ( MapOff < 0 || MapOff >= Client->Map->size*Client->Map->size )
 		return false;
 
 	if ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) )
 	{
 		int off;
 		// Kann nur 1 Feld im Umkreis befahren:
-		off = PosX + PosY * game->map->size;
+		off = PosX + PosY * Client->Map->size;
 
 		if ( data.can_build == BUILD_BIG || ClearBig )
 		{
-			if ( ( MapOff < 0 ) || ( MapOff > game->map->size*MapOff > game->map->size ) ||
-			        ( MapOff >= off - 1 - game->map->size && MapOff <= off + 2 - game->map->size ) ||
+			if ( ( MapOff < 0 ) || ( MapOff > Client->Map->size*MapOff > Client->Map->size ) ||
+			        ( MapOff >= off - 1 - Client->Map->size && MapOff <= off + 2 - Client->Map->size ) ||
 			        ( MapOff >= off - 1 && MapOff <= off + 2 ) ||
-			        ( MapOff >= off - 1 + game->map->size && MapOff <= off + 2 + game->map->size ) ||
-			        ( MapOff >= off - 1 + game->map->size*2 && MapOff <= off + 2 + game->map->size*2 ) )
+			        ( MapOff >= off - 1 + Client->Map->size && MapOff <= off + 2 + Client->Map->size ) ||
+			        ( MapOff >= off - 1 + Client->Map->size*2 && MapOff <= off + 2 + Client->Map->size*2 ) )
 				{}
 			else
 				return false;
 		}
 		else
 		{
-			if ( ( MapOff < 0 ) || ( MapOff > game->map->size*MapOff > game->map->size ) ||
-			        ( MapOff >= off - 1 - game->map->size && MapOff <= off + 1 - game->map->size ) ||
+			if ( ( MapOff < 0 ) || ( MapOff > Client->Map->size*MapOff > Client->Map->size ) ||
+			        ( MapOff >= off - 1 - Client->Map->size && MapOff <= off + 1 - Client->Map->size ) ||
 			        ( MapOff >= off - 1 && MapOff <= off + 1 ) ||
-			        ( MapOff >= off - 1 + game->map->size && MapOff <= off + 1 + game->map->size ) )
+			        ( MapOff >= off - 1 + Client->Map->size && MapOff <= off + 1 + Client->Map->size ) )
 				{}
 			else
 				return false;
 		}
 
-		if ( game->map->GO[MapOff].reserviert || game->map->GO[MapOff].vehicle || ( game->map->GO[MapOff].top && !game->map->GO[MapOff].top->data.is_connector ) )
+		if ( Client->Map->GO[MapOff].reserviert || Client->Map->GO[MapOff].vehicle || ( Client->Map->GO[MapOff].top && !Client->Map->GO[MapOff].top->data.is_connector ) )
 			return false;
 	}
 
-	nr = game->map->Kacheln[MapOff];
+	nr = Client->Map->Kacheln[MapOff];
 
 	switch ( data.can_drive )
 	{
@@ -1674,19 +1651,19 @@ bool cVehicle::CanDrive ( int MapOff )
 
 		case DRIVE_SEA:
 
-			if ( !game->map->IsWater ( MapOff, true ) || ( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) )
+			if ( !Client->Map->IsWater ( MapOff, true ) || ( Client->Map->GO[MapOff].base && ( Client->Map->GO[MapOff].base->data.is_platform || Client->Map->GO[MapOff].base->data.is_road ) ) )
 				return false;
 
 			return true;
 
 		case DRIVE_LANDnSEA:
-			if ( game->map->terrain[nr].blocked )
+			if ( Client->Map->terrain[nr].blocked )
 				return false;
 
 			return true;
 
 		case DRIVE_LAND:
-			if ( game->map->terrain[nr].blocked || ( game->map->IsWater ( MapOff ) && ! ( game->map->GO[MapOff].base && ( game->map->GO[MapOff].base->data.is_bridge || game->map->GO[MapOff].base->data.is_platform || game->map->GO[MapOff].base->data.is_road ) ) ) )
+			if ( Client->Map->terrain[nr].blocked || ( Client->Map->IsWater ( MapOff ) && ! ( Client->Map->GO[MapOff].base && ( Client->Map->GO[MapOff].base->data.is_bridge || Client->Map->GO[MapOff].base->data.is_platform || Client->Map->GO[MapOff].base->data.is_road ) ) ) )
 				return false;
 
 			return true;
@@ -1698,13 +1675,13 @@ bool cVehicle::CanDrive ( int MapOff )
 // Liefert die X-Position des Vehicles auf dem Screen zurück:
 int cVehicle::GetScreenPosX ( void )
 {
-	return 180 - ( ( int ) ( ( game->hud->OffX - OffX ) / ( 64.0 / game->hud->Zoom ) ) ) + game->hud->Zoom*PosX;
+	return 180 - ( ( int ) ( ( Client->Hud->OffX - OffX ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosX;
 }
 
 // Liefert die Y-Position des Vehicles auf dem Screen zurück:
 int cVehicle::GetScreenPosY ( void )
 {
-	return 18 - ( ( int ) ( ( game->hud->OffY - OffY ) / ( 64.0 / game->hud->Zoom ) ) ) + game->hud->Zoom*PosY;
+	return 18 - ( ( int ) ( ( Client->Hud->OffY - OffY ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosY;
 }
 
 // Malt den Path des Vehicles:
@@ -1714,12 +1691,12 @@ void cVehicle::DrawPath ( void )
 	SDL_Rect dest, ndest;
 	sWaypoint *wp;
 
-	if ( !mjob || !mjob->waypoints || owner != game->ActivePlayer )
+	if ( !mjob || !mjob->waypoints || owner != Client->ActivePlayer )
 	{
 		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand )
 			return;
 
-		zoom = game->hud->Zoom;
+		zoom = Client->Hud->Zoom;
 
 		mx = PosX;
 
@@ -1738,8 +1715,8 @@ void cVehicle::DrawPath ( void )
 
 		while ( mx != BandX || my != BandY )
 		{
-			dest.x = 180 - ( int ) ( game->hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
-			dest.y = 18 - ( int ) ( game->hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
+			dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
+			dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
 			dest.w = zoom;
 			dest.h = zoom;
 
@@ -1758,9 +1735,9 @@ void cVehicle::DrawPath ( void )
 					my--;
 		}
 
-		dest.x = 180 - ( int ) ( game->hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
+		dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
 
-		dest.y = 18 - ( int ) ( game->hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
+		dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
 		dest.w = zoom;
 		dest.h = zoom;
 		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
@@ -1777,11 +1754,11 @@ void cVehicle::DrawPath ( void )
 	else
 		save = mjob->SavedSpeed;
 
-	zoom = game->hud->Zoom;
+	zoom = Client->Hud->Zoom;
 
-	dest.x = 180 - ( int ) ( game->hud->OffX / ( 64.0 / zoom ) ) + zoom * PosX;
+	dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * PosX;
 
-	dest.y = 18 - ( int ) ( game->hud->OffY / ( 64.0 / zoom ) ) + zoom * PosY;
+	dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * PosY;
 
 	dest.w = zoom;
 
@@ -1892,7 +1869,7 @@ string cVehicle::GetStatusStr ( void )
 			else
 				if ( IsBuilding )
 				{
-					if ( owner != game->ActivePlayer )
+					if ( owner != Client->ActivePlayer )
 					{
 						return lngPack.i18n ( "Text~Comp~Producing" );
 					}
@@ -1950,7 +1927,7 @@ string cVehicle::GetStatusStr ( void )
 								}
 							}
 							else
-								if ( data.is_commando && owner == game->ActivePlayer )
+								if ( data.is_commando && owner == Client->ActivePlayer )
 								{
 									string sTmp = lngPack.i18n ( "Text~Comp~Waits" ) + "\n";
 
@@ -2033,7 +2010,7 @@ int cVehicle::PlayStram ( void )
 			return PlayFXLoop ( SoundData.SNDClearing );
 		}
 		else
-			if ( game->map->IsWater ( PosX + PosY*game->map->size ) && data.can_drive != DRIVE_AIR )
+			if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && data.can_drive != DRIVE_AIR )
 			{
 				return PlayFXLoop ( typ->WaitWater );
 			}
@@ -2051,19 +2028,19 @@ void cVehicle::StartMoveSound ( void )
 	MenuActive = false;
 	// Prüfen, ob ein Sound zu spielen ist:
 
-	if ( this != game->SelectedVehicle )
+	if ( this != Client->SelectedVehicle )
 		return;
 
 	if ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA )
 	{
-		water = game->map->IsWater ( PosX + PosY * game->map->size ) && ! ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge || game->map->GO[PosX+PosY*game->map->size].base->data.is_road ) );
+		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) );
 	}
 	else
 	{
-		water = game->map->IsWater ( PosX + PosY * game->map->size && ! ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_road ) ) );
+		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) ) );
 	}
 
-	StopFXLoop ( game->ObjectStream );
+	StopFXLoop ( Client->iObjectStream );
 
 	if ( !MoveJobActive )
 	{
@@ -2079,11 +2056,11 @@ void cVehicle::StartMoveSound ( void )
 
 	if ( water && data.can_drive != DRIVE_AIR )
 	{
-		game->ObjectStream = PlayFXLoop ( typ->DriveWater );
+		Client->iObjectStream = PlayFXLoop ( typ->DriveWater );
 	}
 	else
 	{
-		game->ObjectStream = PlayFXLoop ( typ->Drive );
+		Client->iObjectStream = PlayFXLoop ( typ->Drive );
 	}
 }
 
@@ -2131,8 +2108,8 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = true;
-			game->hud->CheckScroll();
-			MouseMoveCallback ( true );
+			Client->Hud->CheckScroll();
+			Client->mouseMoveCallback ( true );
 			return;
 		}
 
@@ -2264,19 +2241,19 @@ void cVehicle::DrawMenu ( void )
 
 					if ( data.can_build == BUILD_BIG )
 					{
-						game->map->GO[BandX+BandY*game->map->size].vehicle = NULL;
-						game->map->GO[BandX+1+BandY*game->map->size].vehicle = NULL;
-						game->map->GO[BandX+1+ ( BandY+1 ) *game->map->size].vehicle = NULL;
-						game->map->GO[BandX+ ( BandY+1 ) *game->map->size].vehicle = NULL;
-						game->map->GO[BuildBigSavedPos].vehicle = this;
-						PosX = BuildBigSavedPos % game->map->size;
-						PosY = BuildBigSavedPos / game->map->size;
+						Client->Map->GO[BandX+BandY*Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BuildBigSavedPos].vehicle = this;
+						PosX = BuildBigSavedPos % Client->Map->size;
+						PosY = BuildBigSavedPos / Client->Map->size;
 					}
 
-					if ( game->SelectedVehicle && game->SelectedVehicle == this )
+					if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
 					{
-						StopFXLoop ( game->ObjectStream );
-						game->ObjectStream = PlayStram();
+						StopFXLoop ( Client->iObjectStream );
+						Client->iObjectStream = PlayStram();
 					}
 				}
 				else
@@ -2287,15 +2264,15 @@ void cVehicle::DrawMenu ( void )
 
 					if ( ClearBig )
 					{
-						game->map->GO[BandX+1+BandY*game->map->size].vehicle = NULL;
-						game->map->GO[BandX+1+ ( BandY+1 ) *game->map->size].vehicle = NULL;
-						game->map->GO[BandX+ ( BandY+1 ) *game->map->size].vehicle = NULL;
+						Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
+						Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
 					}
 
-					if ( game->SelectedVehicle && game->SelectedVehicle == this )
+					if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
 					{
-						StopFXLoop ( game->ObjectStream );
-						game->ObjectStream = PlayStram();
+						StopFXLoop ( Client->iObjectStream );
+						Client->iObjectStream = PlayStram();
 					}
 				}
 
@@ -2310,7 +2287,7 @@ void cVehicle::DrawMenu ( void )
 	}
 
 	// Entfernen:
-	if ( data.can_clear && game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner && !IsClearing )
 	{
 		if ( SelMenu == nr )
 			scr.y = 21;
@@ -2322,23 +2299,23 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			IsClearing = true;
-			ClearingRounds = game->map->GO[PosX+PosY*game->map->size].base->DirtValue / 4 + 1;
-			ClearBig = game->map->GO[PosX+PosY*game->map->size].base->data.is_big;
+			ClearingRounds = Client->Map->GO[PosX+PosY*Client->Map->size].base->DirtValue / 4 + 1;
+			ClearBig = Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_big;
 			// Den Clearing Sound machen:
-			StopFXLoop ( game->ObjectStream );
-			game->ObjectStream = PlayStram();
+			StopFXLoop ( Client->iObjectStream );
+			Client->iObjectStream = PlayStram();
 			// Umsetzen, wenn es großer Dreck ist:
 
 			if ( ClearBig )
 			{
-				PosX = game->map->GO[PosX+PosY*game->map->size].base->PosX;
-				PosY = game->map->GO[PosX+PosY*game->map->size].base->PosY;
+				PosX = Client->Map->GO[PosX+PosY*Client->Map->size].base->PosX;
+				PosY = Client->Map->GO[PosX+PosY*Client->Map->size].base->PosY;
 				BandX = PosX;
 				BandY = PosY;
-				game->map->GO[PosX+PosY*game->map->size].vehicle = this;
-				game->map->GO[PosX+1+PosY*game->map->size].vehicle = this;
-				game->map->GO[PosX+1+ ( PosY+1 ) *game->map->size].vehicle = this;
-				game->map->GO[PosX+ ( PosY+1 ) *game->map->size].vehicle = this;
+				Client->Map->GO[PosX+PosY*Client->Map->size].vehicle = this;
+				Client->Map->GO[PosX+1+PosY*Client->Map->size].vehicle = this;
+				Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].vehicle = this;
+				Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].vehicle = this;
 			}
 			return;
 		}
@@ -2616,7 +2593,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	if ( mjob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 		nr++;
 
-	if ( data.can_clear && game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner && !IsClearing )
 		nr++;
 
 	if ( Wachposten || data.can_attack )
@@ -2652,7 +2629,7 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 	dest.y = GetScreenPosY();
 	dest.h = i = GetMenuPointAnz() * 22;
 	dest.w = 42;
-	size = game->hud->Zoom;
+	size = Client->Hud->Zoom;
 
 	if ( IsBuilding && data.can_build == BUILD_BIG )
 		size *= 2;
@@ -2716,7 +2693,7 @@ void cVehicle::DecSpeed ( int value )
 			data.shots = s;
 	}
 
-	if ( game->SelectedVehicle == this )
+	if ( Client->SelectedVehicle == this )
 		ShowDetails();
 }
 
@@ -2725,13 +2702,13 @@ void cVehicle::DrawMunBar ( void )
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = game->hud->Zoom;
-	r2.h = ( r1.h = game->hud->Zoom / 6 ) - 2;
+	r1.w = Client->Hud->Zoom;
+	r2.h = ( r1.h = Client->Hud->Zoom / 6 ) - 2;
 
 	if ( r1.h < 2 )
 		r2.h = 1;
 
-	r2.y = ( int ) ( r1.y = game->hud->Zoom - r1.h + GetScreenPosY() ) + 1;
+	r2.y = ( int ) ( r1.y = Client->Hud->Zoom - r1.h + GetScreenPosY() ) + 1;
 
 	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_ammo ) * data.ammo );
 
@@ -2758,8 +2735,8 @@ void cVehicle::DrawHelthBar ( void )
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = game->hud->Zoom;
-	r2.h = ( r1.h = game->hud->Zoom / 6 ) - 2;
+	r1.w = Client->Hud->Zoom;
+	r2.h = ( r1.h = Client->Hud->Zoom / 6 ) - 2;
 
 	if ( r1.h < 2 )
 		r2.h = 1;
@@ -2789,10 +2766,10 @@ void cVehicle::DrawHelthBar ( void )
 // Zentriert auf dieses Vehicle:
 void cVehicle::Center ( void )
 {
-	game->hud->OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / game->hud->Zoom ) * 64 ) ) + 32;
-	game->hud->OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / game->hud->Zoom ) * 64 ) ) + 32;
-	game->fDrawMap = true;
-	game->hud->DoScroll ( 0 );
+	Client->Hud->OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
+	Client->Hud->OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
+	Client->bFlagDrawMap = true;
+	Client->Hud->DoScroll ( 0 );
 }
 
 // Prüft, ob das Vehicle das Objekt angreifen kann:
@@ -2821,21 +2798,21 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 
 	if ( data.can_attack != ATTACK_AIR )
 	{
-		v = game->map->GO[off].vehicle;
+		v = Client->Map->GO[off].vehicle;
 
-		if ( game->map->GO[off].top )
+		if ( Client->Map->GO[off].top )
 		{
-			b = game->map->GO[off].top;
+			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( game->map->GO[off].base && game->map->GO[off].base->owner && game->map->GO[off].base->detected )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->detected )
 			{
-				b = game->map->GO[off].base;
+				b = Client->Map->GO[off].base;
 			}
 	}
 	else
 	{
-		v = game->map->GO[off].plane;
+		v = Client->Map->GO[off].plane;
 	}
 
 	if ( v && v->data.is_stealth_sea && data.can_attack != ATTACK_SUB_LAND )
@@ -2867,8 +2844,8 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 bool cVehicle::IsInRange ( int off )
 {
 	int x, y;
-	x = off % game->map->size;
-	y = off / game->map->size;
+	x = off % Client->Map->size;
+	y = off / Client->Map->size;
 	x -= PosX;
 	y -= PosY;
 
@@ -2969,7 +2946,7 @@ void cVehicle::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
 		}
 	}
 
-	if ( ( v && v == game->SelectedVehicle ) || ( b && b == game->SelectedBuilding ) || ( !v && !b ) )
+	if ( ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) || ( !v && !b ) )
 	{
 		r.x = 1;
 		r.y = 29;
@@ -3159,7 +3136,7 @@ void cVehicle::ShowBuildMenu ( void )
 		if ( data.can_build == BUILD_SMALL && UnitsData.building[i].data.is_big )
 			continue;
 
-		if ( !game->AlienTech && UnitsData.building[i].data.is_alien )
+		if ( !Client->bAlienTech && UnitsData.building[i].data.is_alien )
 			continue;
 
 		ScaleSurface ( UnitsData.building[i].img_org, &sf2, 32 );
@@ -3170,7 +3147,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
 
-		SDL_BlitSurface ( game->ActivePlayer->color, NULL, sf, NULL );
+		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
 
 		SDL_BlitSurface ( sf2, NULL, sf, NULL );
 
@@ -3197,13 +3174,10 @@ void cVehicle::ShowBuildMenu ( void )
 
 	while ( 1 )
 	{
-		if ( game->SelectedVehicle == NULL )
+		if ( Client->SelectedVehicle == NULL )
 			break;
 
-		// Die Engine laufen lassen:
-		game->engine->Run();
-
-		game->HandleTimer();
+		Client->handleTimer();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -3355,17 +3329,17 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( BuildSpeed < 0 )
 						break;
 
-					if ( game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner )
+					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
 						break;
 
 					BuildingTyp = images->Items[selected]->id;
 
-					if ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
+					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
 
-					if ( ( !game->map->GO[PosX+PosY*game->map->size].base || !game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
+					if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
 					{
-						if ( game->map->IsWater ( PosX + PosY*game->map->size ) )
+						if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.build_on_water )
 								break;
@@ -3374,13 +3348,13 @@ void cVehicle::ShowBuildMenu ( void )
 							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 
-						if ( game->map->terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+						if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
 								break;
 						}
 						else
-							if ( !game->map->IsWater ( PosX + PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+							if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 					}
 
@@ -3392,15 +3366,15 @@ void cVehicle::ShowBuildMenu ( void )
 					{
 						IsBuilding = true;
 						// Den Building Sound machen:
-						StopFXLoop ( game->ObjectStream );
-						game->ObjectStream = PlayStram();
+						StopFXLoop ( Client->iObjectStream );
+						Client->iObjectStream = PlayStram();
 					}
 					else
 					{
 						PlaceBand = true;
-						BuildBigSavedPos = PosX + PosY * game->map->size;
+						BuildBigSavedPos = PosX + PosY * Client->Map->size;
 
-						if ( !game->map->IsWater ( PosX + PosY*game->map->size ) )
+						if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
 						{
 							ShowBigBeton = true;
 							BigBetonAlpha = 10;
@@ -3445,17 +3419,17 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( BuildSpeed < 0 )
 						break;
 
-					if ( game->map->GO[PosX+PosY*game->map->size].base && !game->map->GO[PosX+PosY*game->map->size].base->owner )
+					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
 						break;
 
 					BuildingTyp = images->Items[selected]->id;
 
-					if ( game->map->GO[PosX+PosY*game->map->size].base && ( game->map->GO[PosX+PosY*game->map->size].base->data.is_platform || game->map->GO[PosX+PosY*game->map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
+					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
 
-					if ( ( !game->map->GO[PosX+PosY*game->map->size].base || !game->map->GO[PosX+PosY*game->map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
+					if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
 					{
-						if ( game->map->IsWater ( PosX + PosY*game->map->size ) )
+						if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.build_on_water )
 								break;
@@ -3464,13 +3438,13 @@ void cVehicle::ShowBuildMenu ( void )
 							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 
-						if ( game->map->terrain[game->map->Kacheln[PosX+PosY*game->map->size]].coast )
+						if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
 						{
 							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
 								break;
 						}
 						else
-							if ( !game->map->IsWater ( PosX + PosY*game->map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+							if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
 								break;
 					}
 
@@ -3702,7 +3676,7 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 				tmp.w = tmp2.w = 260;
 				tmp.h = tmp2.h = 176;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &tmp, buffer, &tmp2 );
-				tb = new cBuilding ( UnitsData.building + ptr->id, game->ActivePlayer, NULL );
+				tb = new cBuilding ( UnitsData.building + ptr->id, Client->ActivePlayer, NULL );
 				tb->ShowBigDetails();
 				delete tb;
 			}
@@ -3877,11 +3851,11 @@ void cVehicle::FindNextband ( void )
 {
 	bool pos[4];
 	int x, y, gms;
-	gms = game->map->size;
+	gms = Client->Map->size;
 	mouse->GetKachel ( &x, &y );
 
-//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].water||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!game->map->GO[PosX a+(PosY b)*gms].vehicle&&!game->map->GO[PosX a+(PosY b)*gms].reserviert&&!(game->map->GO[PosX a+(PosY b)*gms].top&&!game->map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].coast||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!game->map->IsWater(PosX a+(PosY b)*gms)||(game->map->GO[PosX a+(PosY b)*gms].base&&game->map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!game->map->terrain[game->map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?game->map->IsWater(PosX a+(PosY b)*gms):1))
+//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].water||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked)
+#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->IsWater(PosX a+(PosY b)*gms)||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?Client->Map->IsWater(PosX a+(PosY b)*gms):1))
 
 	if ( CHECK_BAND ( -1, -1 ) && CHECK_BAND ( + 0, -1 ) && CHECK_BAND ( -1, + 0 ) )
 		pos[0] = true;
@@ -3978,37 +3952,37 @@ void cVehicle::DoSurvey ( void )
 	if ( !ptr )
 		return;
 
-	ptr[PosX+PosY*game->map->size] = 1;
+	ptr[PosX+PosY*Client->Map->size] = 1;
 
 	if ( PosX > 0 )
-		ptr[PosX-1+PosY*game->map->size] = 1;
+		ptr[PosX-1+PosY*Client->Map->size] = 1;
 
-	if ( PosX < game->map->size - 1 )
-		ptr[PosX+1+PosY*game->map->size] = 1;
+	if ( PosX < Client->Map->size - 1 )
+		ptr[PosX+1+PosY*Client->Map->size] = 1;
 
 	if ( PosY > 0 )
-		ptr[PosX+ ( PosY-1 ) *game->map->size] = 1;
+		ptr[PosX+ ( PosY-1 ) *Client->Map->size] = 1;
 
 	if ( PosX > 0 && PosY > 0 )
-		ptr[PosX-1+ ( PosY-1 ) *game->map->size] = 1;
+		ptr[PosX-1+ ( PosY-1 ) *Client->Map->size] = 1;
 
-	if ( PosX < game->map->size - 1 && PosY > 0 )
-		ptr[PosX+1+ ( PosY-1 ) *game->map->size] = 1;
+	if ( PosX < Client->Map->size - 1 && PosY > 0 )
+		ptr[PosX+1+ ( PosY-1 ) *Client->Map->size] = 1;
 
-	if ( PosY < game->map->size - 1 )
-		ptr[PosX+ ( PosY+1 ) *game->map->size] = 1;
+	if ( PosY < Client->Map->size - 1 )
+		ptr[PosX+ ( PosY+1 ) *Client->Map->size] = 1;
 
-	if ( PosX > 0 && PosY < game->map->size - 1 )
-		ptr[PosX-1+ ( PosY+1 ) *game->map->size] = 1;
+	if ( PosX > 0 && PosY < Client->Map->size - 1 )
+		ptr[PosX-1+ ( PosY+1 ) *Client->Map->size] = 1;
 
-	if ( PosX < game->map->size - 1 && PosY < game->map->size - 1 )
-		ptr[PosX+1+ ( PosY+1 ) *game->map->size] = 1;
+	if ( PosX < Client->Map->size - 1 && PosY < Client->Map->size - 1 )
+		ptr[PosX+1+ ( PosY+1 ) *Client->Map->size] = 1;
 }
 
 // Macht Meldung:
 void cVehicle::MakeReport ( void )
 {
-	if ( owner != game->ActivePlayer )
+	if ( owner != Client->ActivePlayer )
 		return;
 
 	if ( Disabled )
@@ -4136,7 +4110,7 @@ bool cVehicle::CanTransferTo ( sGameObjects *go )
 		if ( v == this )
 			return false;
 
-		if ( v->owner != game->ActivePlayer )
+		if ( v->owner != Client->ActivePlayer )
 			return false;
 
 		if ( v->data.can_transport != data.can_transport )
@@ -4149,7 +4123,7 @@ bool cVehicle::CanTransferTo ( sGameObjects *go )
 		{
 			b = go->top;
 
-			if ( b->owner != game->ActivePlayer )
+			if ( b->owner != Client->ActivePlayer )
 				return false;
 
 			if ( data.can_transport == TRANS_METAL && b->SubBase->MaxMetal == 0 )
@@ -4211,7 +4185,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 
 	SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	SDL_BlitSurface ( game->ActivePlayer->color, NULL, img, NULL );
+	SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
 
 	SDL_BlitSurface ( typ->img[0], NULL, img, NULL );
 
@@ -4237,7 +4211,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 		ScaleSurfaceAdv2 ( pv->typ->img_org[0], pv->typ->img[0], pv->typ->img_org[0]->w / 2, pv->typ->img_org[0]->h / 2 );
 		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, pv->typ->img[0]->w, pv->typ->img[0]->h, 32, 0, 0, 0, 0 );
 		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-		SDL_BlitSurface ( game->ActivePlayer->color, NULL, img, NULL );
+		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
 		SDL_BlitSurface ( pv->typ->img[0], NULL, img, NULL );
 	}
 	else
@@ -4247,7 +4221,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			ScaleSurfaceAdv2 ( pb->typ->img_org, pb->typ->img, pb->typ->img_org->w / 4, pb->typ->img_org->h / 4 );
 			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, pb->typ->img->w, pb->typ->img->h, 32, 0, 0, 0, 0 );
 			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( game->ActivePlayer->color, NULL, img, NULL );
+			SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
 			SDL_BlitSurface ( pb->typ->img, NULL, img, NULL );
 		}
 		else
@@ -4265,7 +4239,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 
 			if ( !pb->data.is_connector )
 			{
-				SDL_BlitSurface ( game->ActivePlayer->color, NULL, img, NULL );
+				SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
 			}
 
 			SDL_BlitSurface ( pb->typ->img, NULL, img, NULL );
@@ -4329,13 +4303,10 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 
 	while ( 1 )
 	{
-		if ( game->SelectedVehicle == NULL )
+		if (  Client->SelectedVehicle == NULL )
 			break;
 
-		// Die Engine laufen lassen:
-		game->engine->Run();
-
-		game->HandleTimer();
+		Client->handleTimer();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -4522,7 +4493,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	}
 
 	// Die Images wiederherstellen:
-	float newzoom = ( game->hud->Zoom / 64.0 );
+	float newzoom = ( Client->Hud->Zoom / 64.0 );
 
 	ScaleSurfaceAdv2 ( typ->img_org[0], typ->img[0], ( int ) ( typ->img_org[0]->w* newzoom ), ( int ) ( typ->img_org[0]->h* newzoom ) );
 
@@ -4825,7 +4796,7 @@ bool cVehicle::InWachRange ( void )
 	int i, off, k;
 	cPlayer *p;
 
-	off = PosX + PosY * game->map->size;
+	off = PosX + PosY * Client->Map->size;
 
 	for ( i = 0;i < game->PlayerList->iCount;i++ )
 	{
@@ -4852,7 +4823,7 @@ bool cVehicle::InWachRange ( void )
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
-					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*game->map->size, off, false, false, true, true, true );
+					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*Client->Map->size, off, false, false, true, true, true );
 
 					if ( mjob )
 					{
@@ -4865,7 +4836,7 @@ bool cVehicle::InWachRange ( void )
 
 				if ( w->v && w->v->CanAttackObject ( off, true ) )
 				{
-					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*game->map->size, off, false, w->v->data.can_drive == DRIVE_AIR, true, false, true );
+					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*Client->Map->size, off, false, w->v->data.can_drive == DRIVE_AIR, true, false, true );
 
 					if ( mjob )
 					{
@@ -4889,7 +4860,7 @@ bool cVehicle::InWachRange ( void )
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
-					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*game->map->size, off, false, false, false, true, true );
+					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*Client->Map->size, off, false, false, false, true, true );
 
 					if ( mjob )
 					{
@@ -4902,7 +4873,7 @@ bool cVehicle::InWachRange ( void )
 
 				if ( w->v && w->v->CanAttackObject ( off, true ) )
 				{
-					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*game->map->size, off, false, w->v->data.can_drive == DRIVE_AIR, false, false, true );
+					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*Client->Map->size, off, false, w->v->data.can_drive == DRIVE_AIR, false, false, true );
 
 					if ( mjob )
 					{
@@ -4925,57 +4896,57 @@ void cVehicle::DrawExitPoints ( sVehicle *typ )
 	int spx, spy, size;
 	spx = GetScreenPosX();
 	spy = GetScreenPosY();
-	size = game->map->size;
+	size = Client->Map->size;
 
 	if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx - game->hud->Zoom, spy - game->hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy - Client->Hud->Zoom );
 
 	if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx, spy - game->hud->Zoom );
+		Client->drawExitPoint ( spx, spy - Client->Hud->Zoom );
 
 	if ( PosY - 1 >= 0 && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx + game->hud->Zoom, spy - game->hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy - Client->Hud->Zoom );
 
 	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-		game->DrawExitPoint ( spx - game->hud->Zoom, spy );
+		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy );
 
 	if ( PosX + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY ) *size, typ ) )
-		game->DrawExitPoint ( spx + game->hud->Zoom, spy );
+		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy );
 
 	if ( PosX - 1 >= 0 && PosY + 1 < size && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx - game->hud->Zoom, spy + game->hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy + Client->Hud->Zoom );
 
 	if ( PosY + 1 < size && CanExitTo ( PosX + ( PosY + 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx, spy + game->hud->Zoom );
+		Client->drawExitPoint ( spx, spy + Client->Hud->Zoom );
 
 	if ( PosY + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 1 ) *size, typ ) )
-		game->DrawExitPoint ( spx + game->hud->Zoom, spy + game->hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy + Client->Hud->Zoom );
 }
 
 bool cVehicle::CanExitTo ( int off, sVehicle *typ )
 {
 	int boff;
 
-	if ( off < 0 || off >= game->map->size*game->map->size )
+	if ( off < 0 || off >= Client->Map->size*Client->Map->size )
 		return false;
 
-	if ( abs ( ( off % game->map->size ) - PosX ) > 8 || abs ( ( off / game->map->size ) - PosY ) > 8 )
+	if ( abs ( ( off % Client->Map->size ) - PosX ) > 8 || abs ( ( off / Client->Map->size ) - PosY ) > 8 )
 		return false;
 
-	boff = PosX + PosY * game->map->size;
+	boff = PosX + PosY * Client->Map->size;
 
-	if ( ( off > game->map->size*off > game->map->size ) ||
-	        ( off >= boff - 1 - game->map->size && off <= boff + 2 - game->map->size ) ||
+	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
+	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
 	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + game->map->size && off <= boff + 2 + game->map->size ) )
+	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
 		{}
 	else
 		return false;
 
-	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( game->map->GO[off].top && !game->map->GO[off].top->data.is_connector ) || game->map->GO[off].vehicle || game->map->terrain[game->map->Kacheln[off]].blocked ) ) ||
-	        ( typ->data.can_drive == DRIVE_AIR && game->map->GO[off].plane ) ||
-	        ( typ->data.can_drive == DRIVE_SEA && !game->map->IsWater ( off, true ) ) ||
-	        ( typ->data.can_drive == DRIVE_LAND && game->map->IsWater ( off ) ) )
+	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( Client->Map->GO[off].top && !Client->Map->GO[off].top->data.is_connector ) || Client->Map->GO[off].vehicle || Client->Map->terrain[Client->Map->Kacheln[off]].blocked ) ) ||
+	        ( typ->data.can_drive == DRIVE_AIR && Client->Map->GO[off].plane ) ||
+	        ( typ->data.can_drive == DRIVE_SEA && !Client->Map->IsWater ( off, true ) ) ||
+	        ( typ->data.can_drive == DRIVE_LAND && Client->Map->IsWater ( off ) ) )
 	{
 		return false;
 	}
@@ -4990,26 +4961,26 @@ bool cVehicle::CanLoad ( int off )
 	if ( data.cargo == data.max_cargo )
 		return false;
 
-	boff = PosX + PosY * game->map->size;
+	boff = PosX + PosY * Client->Map->size;
 
-	if ( ( off > game->map->size*off > game->map->size ) ||
-	        ( off >= boff - 1 - game->map->size && off <= boff + 2 - game->map->size ) ||
+	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
+	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
 	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + game->map->size && off <= boff + 2 + game->map->size ) )
+	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
 		{}
 	else
 		return false;
 
-	if ( !game->map->GO[off].vehicle )
+	if ( !Client->Map->GO[off].vehicle )
 		return false;
 
-	if ( data.can_drive != DRIVE_AIR && game->map->GO[off].vehicle->data.can_drive == DRIVE_SEA )
+	if ( data.can_drive != DRIVE_AIR && Client->Map->GO[off].vehicle->data.can_drive == DRIVE_SEA )
 		return false;
 
-	if ( data.can_transport == TRANS_MEN && !game->map->GO[off].vehicle->data.is_human )
+	if ( data.can_transport == TRANS_MEN && !Client->Map->GO[off].vehicle->data.is_human )
 		return false;
 
-	if ( game->map->GO[off].vehicle && game->map->GO[off].vehicle->owner == owner && !game->map->GO[off].vehicle->IsBuilding && !game->map->GO[off].vehicle->IsClearing )
+	if ( Client->Map->GO[off].vehicle && Client->Map->GO[off].vehicle->owner == owner && !Client->Map->GO[off].vehicle->IsBuilding && !Client->Map->GO[off].vehicle->IsClearing )
 		return true;
 
 	return false;
@@ -5024,20 +4995,20 @@ void cVehicle::StoreVehicle ( int off )
 
 	if ( data.can_transport == TRANS_VEHICLES )
 	{
-		v = game->map->GO[off].vehicle;
+		v = Client->Map->GO[off].vehicle;
 
 		if ( v->data.can_drive == DRIVE_SEA && data.can_drive == DRIVE_SEA )
 		{
 			return;
 		}
 
-		game->map->GO[off].vehicle = NULL;
+		Client->Map->GO[off].vehicle = NULL;
 	}
 	else
 		if ( data.can_transport == TRANS_MEN )
 		{
-			v = game->map->GO[off].vehicle;
-			game->map->GO[off].vehicle = NULL;
+			v = Client->Map->GO[off].vehicle;
+			Client->Map->GO[off].vehicle = NULL;
 		}
 
 	if ( !v )
@@ -5061,15 +5032,15 @@ void cVehicle::StoreVehicle ( int off )
 	StoredVehicles->Add ( v );
 	data.cargo++;
 
-	if ( game->SelectedVehicle && game->SelectedVehicle == this )
+	if (  Client->SelectedVehicle &&  Client->SelectedVehicle == this )
 	{
 		ShowDetails();
 	}
 
-	if ( v == game->SelectedVehicle )
+	if ( v ==  Client->SelectedVehicle )
 	{
 		v->Deselct();
-		game->SelectedVehicle = NULL;
+		 Client->SelectedVehicle = NULL;
 	}
 
 	owner->DoScan();
@@ -5156,13 +5127,10 @@ void cVehicle::ShowStorage ( void )
 
 	while ( 1 )
 	{
-		if ( game->SelectedVehicle == NULL )
+		if (  Client->SelectedVehicle == NULL )
 			break;
 
-		// Die Engine laufen lassen:
-		game->engine->Run();
-
-		game->HandleTimer();
+		Client->handleTimer();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -5347,7 +5315,7 @@ void cVehicle::ShowStorage ( void )
 			mouse->MoveCallback = true;
 
 			PlayFX ( SoundData.SNDActivate );
-			size = game->map->size;
+			size = Client->Map->size;
 
 			for ( i = 0;i < StoredVehicles->iCount; )
 			{
@@ -5477,7 +5445,7 @@ void cVehicle::ShowStorage ( void )
 					b = mouse->GetMouseButton();
 				}
 
-				game->OverObject = NULL;
+				Client->OverObject = NULL;
 
 				mouse->MoveCallback = true;
 				return;
@@ -5662,23 +5630,23 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 
 	ActivatingVehicle = false;
 
-	if ( this == game->SelectedVehicle )
+	if ( this ==  Client->SelectedVehicle )
 	{
 		ShowDetails();
 	}
 
 	if ( ptr->data.can_drive == DRIVE_AIR )
 	{
-		game->map->GO[off].plane = ptr;
+		Client->Map->GO[off].plane = ptr;
 	}
 	else
 	{
-		game->map->GO[off].vehicle = ptr;
+		Client->Map->GO[off].vehicle = ptr;
 	}
 
-	ptr->PosX = off % game->map->size;
+	ptr->PosX = off % Client->Map->size;
 
-	ptr->PosY = off / game->map->size;
+	ptr->PosY = off / Client->Map->size;
 	ptr->Loaded = false;
 	ptr->data.shots = 0;
 	ptr->InWachRange();
@@ -5696,20 +5664,20 @@ bool cVehicle::CanMuni ( int off )
 	if ( data.cargo < 2 )
 		return false;
 
-	boff = PosX + PosY * game->map->size;
+	boff = PosX + PosY * Client->Map->size;
 
-	if ( ( off > game->map->size*off > game->map->size ) ||
-	        ( off >= boff - 1 - game->map->size && off <= boff + 2 - game->map->size ) ||
+	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
+	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
 	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + game->map->size && off <= boff + 2 + game->map->size ) )
+	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
 		{}
 	else
 		return false;
 
-	v = game->map->GO[off].vehicle;
+	v = Client->Map->GO[off].vehicle;
 
-	if ( !v && game->map->GO[off].plane && game->map->GO[off].plane->FlightHigh == 0 )
-		v = game->map->GO[off].plane;
+	if ( !v && Client->Map->GO[off].plane && Client->Map->GO[off].plane->FlightHigh == 0 )
+		v = Client->Map->GO[off].plane;
 
 	if ( v )
 	{
@@ -5719,7 +5687,7 @@ bool cVehicle::CanMuni ( int off )
 		return true;
 	}
 
-	b = game->map->GO[off].top;
+	b = Client->Map->GO[off].top;
 
 	if ( b )
 	{
@@ -5741,20 +5709,20 @@ bool cVehicle::CanRepair ( int off )
 	if ( data.cargo < 2 )
 		return false;
 
-	boff = PosX + PosY * game->map->size;
+	boff = PosX + PosY * Client->Map->size;
 
-	if ( ( off > game->map->size*off > game->map->size ) ||
-	        ( off >= boff - 1 - game->map->size && off <= boff + 2 - game->map->size ) ||
+	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
+	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
 	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + game->map->size && off <= boff + 2 + game->map->size ) )
+	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
 		{}
 	else
 		return false;
 
-	v = game->map->GO[off].vehicle;
+	v = Client->Map->GO[off].vehicle;
 
-	if ( !v && game->map->GO[off].plane && game->map->GO[off].plane->FlightHigh == 0 )
-		v = game->map->GO[off].plane;
+	if ( !v && Client->Map->GO[off].plane && Client->Map->GO[off].plane->FlightHigh == 0 )
+		v = Client->Map->GO[off].plane;
 
 	if ( v )
 	{
@@ -5764,7 +5732,7 @@ bool cVehicle::CanRepair ( int off )
 		return true;
 	}
 
-	b = game->map->GO[off].top;
+	b = Client->Map->GO[off].top;
 
 	if ( b )
 	{
@@ -5783,7 +5751,7 @@ void cVehicle::LayMine ( void )
 	if ( !data.cargo )
 		return;
 
-	if ( game->map->GO[PosX+PosY*game->map->size].base && game->map->GO[PosX+PosY*game->map->size].base->data.is_expl_mine )
+	if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_expl_mine )
 		return;
 
 	if ( data.can_drive == DRIVE_SEA )
@@ -5799,7 +5767,7 @@ void cVehicle::LayMine ( void )
 
 	data.cargo--;
 
-	if ( game->SelectedVehicle == this )
+	if (  Client->SelectedVehicle == this )
 	{
 		ShowDetails();
 	}
@@ -5814,14 +5782,14 @@ void cVehicle::ClearMine ( void )
 	if ( data.cargo == data.max_cargo )
 		return;
 
-	off = PosX + PosY * game->map->size;
+	off = PosX + PosY * Client->Map->size;
 
-	b = game->map->GO[off].base;
+	b = Client->Map->GO[off].base;
 
 	if ( !b || !b->data.is_expl_mine || b->owner != owner ) return;
 
 	// Mine räumen:
-	game->map->GO[off].base = NULL;
+	Client->Map->GO[off].base = NULL;
 
 	if ( b->prev )
 	{
@@ -5853,7 +5821,7 @@ void cVehicle::ClearMine ( void )
 
 	data.cargo++;
 
-	if ( game->SelectedVehicle == this )
+	if (  Client->SelectedVehicle == this )
 	{
 		ShowDetails();
 	}
@@ -5863,10 +5831,10 @@ void cVehicle::ClearMine ( void )
 void cVehicle::DetectMines ( void )
 {
 	int off, size;
-	size = game->map->size;
+	size = Client->Map->size;
 	off = PosX + PosY * size;
 
-#define DETECT_MINE(a) if((a)>=0&&(a)<size*size&&game->map->GO[(a)].base&&game->map->GO[(a)].base->data.is_expl_mine)game->map->GO[(a)].base->detected=true;
+#define DETECT_MINE(a) if((a)>=0&&(a)<size*size&&Client->Map->GO[(a)].base&&Client->Map->GO[(a)].base->data.is_expl_mine)Client->Map->GO[(a)].base->detected=true;
 	DETECT_MINE ( off - size - 1 )
 	DETECT_MINE ( off - size )
 	DETECT_MINE ( off - size + 1 )
@@ -5883,20 +5851,20 @@ bool cVehicle::IsInRangeCommando ( int off, bool steal )
 {
 	sGameObjects *go;
 	int boff;
-	boff = PosX + PosY * game->map->size;
+	boff = PosX + PosY * Client->Map->size;
 
 	if ( off == boff )
 		return false;
 
-	if ( ( off > game->map->size*off > game->map->size ) ||
-	        ( off >= boff - 1 - game->map->size && off <= boff + 2 - game->map->size ) ||
+	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
+	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
 	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + game->map->size && off <= boff + 2 + game->map->size ) )
+	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
 		{}
 	else
 		return false;
 
-	go = game->map->GO + off;
+	go = Client->Map->GO + off;
 
 	if ( steal && go->vehicle && go->vehicle->owner != owner )
 		return true;
@@ -6027,7 +5995,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		if( steal )
 		{
 			cVehicle *vehicle;
-			vehicle = game->map->GO[off].vehicle;
+			vehicle = Client->Map->GO[off].vehicle;
 			if( !vehicle->Disabled )
 			{
 				success = false;
@@ -6052,7 +6020,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		if ( steal )
 		{
 			cVehicle *v;
-			v = game->map->GO[off].vehicle;
+			v = Client->Map->GO[off].vehicle;
 
 			if ( v )
 				v->owner = owner;
@@ -6063,7 +6031,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		{
 			cVehicle *v;
 			cBuilding *b;
-			v = game->map->GO[off].vehicle;
+			v = Client->Map->GO[off].vehicle;
 			PlayVoice ( VoiceData.VOIUnitDisabled );
 
 			if ( v )
@@ -6082,7 +6050,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 			}
 			else
 			{
-				b = game->map->GO[off].top;
+				b = Client->Map->GO[off].top;
 
 				if ( b )
 				{
@@ -6103,7 +6071,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		PlayVoice ( VoiceData.VOICommandoDetected );
 	}
 
-	if ( game->SelectedVehicle == this )
+	if (  Client->SelectedVehicle == this )
 	{
 		ShowDetails();
 	}

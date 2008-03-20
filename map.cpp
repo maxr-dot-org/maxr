@@ -295,7 +295,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
-	Resources= ( sResources* ) malloc ( sizeof ( Resources ) *size*size );
+	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
 
 	// alloc memory for terrains
 	terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * iTerrainGrphCount );
@@ -331,7 +331,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	int x,y;
 	int nest=0;
 
-	memset ( Resources,0,sizeof ( Resources ) *size*size );
+	memset ( Resources,0,sizeof ( sResources ) *size*size );
 	if ( Metal>3 ) Metal=3;
 	if ( Oil>3 ) Oil=3;
 	if ( Gold>3 ) Gold=3;

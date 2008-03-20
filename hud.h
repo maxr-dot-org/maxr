@@ -75,7 +75,7 @@ public:
   void CheckOneClick(void);
   void DoAllHud(void);
   void CheckScroll(bool pure=false);
-  void ChechMouseOver(void);
+  void CheckMouseOver(void);
   void ResetVideoMonitor(void);
   void ShowRunde(void);
   void MakeMeMyEnd(void);

@@ -883,13 +883,13 @@ int cGame::CheckUser ( void )
 		{
 			SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate,mouse->GetKachelOff(),false );
 			PlayFX ( SoundData.SNDActivate );
-			MouseMoveCallback ( true );
+			//MouseMoveCallback ( true );
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedVehicle&&SelectedVehicle->ActivatingVehicle )
 		{
 			SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
 			PlayFX ( SoundData.SNDActivate );
-			MouseMoveCallback ( true );
+			//MouseMoveCallback ( true );
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->iCount )
 		{
@@ -917,7 +917,7 @@ int cGame::CheckUser ( void )
 					SelectedBuilding->StartWork();
 				}
 			}
-			MouseMoveCallback ( true );
+			//MouseMoveCallback ( true );
 		}
 		else if ( mouse->cur==GraphicsData.gfx_Cload&&SelectedBuilding&&SelectedBuilding->LoadActive )
 		{
@@ -1257,7 +1257,7 @@ int cGame::CheckUser ( void )
 	{
 		hud->CheckOneClick();
 	}
-	hud->ChechMouseOver();
+	hud->CheckMouseOver();
 	// Das Scrollen managen:
 	hud->CheckScroll();
 	LastMouseButton=MouseButton;

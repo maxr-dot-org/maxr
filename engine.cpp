@@ -771,7 +771,7 @@ void cEngine::DestroyObject ( int off,bool air )
 		}
 		vehicle->owner->DoScan();
 		delete vehicle;
-		MouseMoveCallback ( true );
+		//MouseMoveCallback ( true );
 	}
 	else if ( building&&building->owner )
 	{
@@ -841,7 +841,7 @@ void cEngine::DestroyObject ( int off,bool air )
 		}
 		building->owner->DoScan();
 		delete building;
-		MouseMoveCallback ( true );
+		//MouseMoveCallback ( true );
 	}
 	game->fDrawMMap=true;
 }
