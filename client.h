@@ -204,6 +204,12 @@ class cClient
 	void addFX( eFXTyps typ, int iX, int iY, int iParam );
 	void addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param );
 	void addFX( sFX* iNum );
+	/**
+	* checks whether the input is a comman
+	*@author alzi alias DoctorDeath
+	*@param sCmd the input string
+	*/
+	bool doCommand ( string sCmd );
 
 	/**
 	* adds the unit to the map and player.

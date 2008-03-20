@@ -275,8 +275,9 @@ void cTCP::HandleNetworkThread()
 					int iLenght;
 					iLenght = SDLNet_TCP_Recv ( Sockets[i]->socket, Sockets[i]->buffer.data, PACKAGE_LENGHT - Sockets[i]->buffer.iLenght );
 
-					void *data = malloc ( sizeof (Sint16) );
+					void *data = malloc ( sizeof (Sint16)*2 );
 					((Sint16*)data)[0] = i;
+					((Sint16*)data)[1] = ((Sint16*)Sockets[i]->buffer.data)[0];
 					if ( iLenght > 0 )
 					{
 						int iOldLenght = Sockets[i]->buffer.iLenght;
@@ -310,7 +311,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 	if ( bDataLocked )
 	{
 		unlockData();
-		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[0] ) < FIRST_CLIENT_MESSAGE ) )
+		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
 		{
 			// Event for the Server
 			if ( Server != NULL ) Server->pushEvent ( &event );

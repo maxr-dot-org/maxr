@@ -4171,7 +4171,7 @@ void cMultiPlayerMenu::init()
 	bOptions = false;
 	bStartSelecting = false;
 
-	iLandXOK = iLandYOK = -1;
+	bAllLanded = false;
 
 	if ( bHost ) sIP = "-";
 	else sIP = SettingsData.sIP;
@@ -4885,40 +4885,50 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_GO );
 					network->send ( PACKAGE_LENGHT, msg );
 				}
-
 				int iLandX, iLandY;
 				cList<sLanding*> *LandingList;
 				Map = new cMap;
+				cMap *ServerMap = new cMap;
 				if ( Map->LoadMap ( sMap ) )
 				{
-					if ( bHost ) Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
-					else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
-												
-					game = new cGame ( Map );
-					game->AlienTech = Options.AlienTech;
-					game->PlayRounds = Options.PlayRounds;
 					if ( bHost )
 					{
-						game->ActiveRoundPlayerNr = ActualPlayer->Nr;
-						game->Init ( PlayerList, 0 );
-					}
-					else
-					{
-						game->ActiveRoundPlayerNr = -1;
-						int iAcPlayerInd;
-						for ( iAcPlayerInd = 0; iAcPlayerInd < PlayerList->iCount; iAcPlayerInd++ )
+						Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
+						// copy map for server
+						ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+						ServerMap->DefaultWater = Map->DefaultWater;
+						ServerMap->MapName = Map->MapName;
+						memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
+						memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
+						for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
 						{
-							if ( PlayerList->Items[iAcPlayerInd] == ActualPlayer ) break;
+							ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
+							ServerMap->terrain[i].coast = Map->terrain[i].coast;
+							ServerMap->terrain[i].water = Map->terrain[i].water;
 						}
-						game->Init ( PlayerList, iAcPlayerInd );
 					}
+					else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
 
-					for ( int i = 0; i < PlayerList->iCount; i++ )
-					{
-						PlayerList->Items[i]->InitMaps ( Map->size );
-					}
-
+					// init client and his player
+					Client = new cClient;
+					Client->init( Map );
+					Client->initPlayer ( ActualPlayer );
+					ActualPlayer->InitMaps ( Map->size, Map );
 					ActualPlayer->Credits = Options.credits;
+
+					if ( bHost )
+					{
+						// init the players of playerlist
+						for ( int i = 0; i < PlayerList->iCount; i++ )
+						{
+							PlayerList->Items[i]->InitMaps ( ServerMap->size, ServerMap );
+							PlayerList->Items[i]->Credits = Options.credits;
+						}
+
+						// init server
+						Server = new cServer;
+						Server->init( ServerMap, PlayerList );
+					}
 
 					LandingList = new cList<sLanding*>;
 					RunHangar ( ActualPlayer, LandingList );
@@ -4956,7 +4966,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 
 						// make all landings
-						game->MakeLanding ( iLandX, iLandY, ActualPlayer, LandingList, Options.FixedBridgeHead );
+						Server->makeLanding ( iLandX, iLandY, ActualPlayer, LandingList, Options.FixedBridgeHead );
 						for ( int i = 0; i < ClientDataList->iCount; i++ )
 						{
 							cPlayer *Player;
@@ -4968,27 +4978,18 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 									break;
 								}
 							}
-							game->MakeLanding( ClientDataList->Items[i]->iLandX, ClientDataList->Items[i]->iLandY, Player, ClientDataList->Items[i]->LandingList, Options.FixedBridgeHead );
-
-							// TODO: set right landing positions
+							Server->makeLanding( ClientDataList->Items[i]->iLandX, ClientDataList->Items[i]->iLandY, Player, ClientDataList->Items[i]->LandingList, Options.FixedBridgeHead );
 						}
+						// copy changed resources from server map to client map
+						memcpy ( Map->Resources, ServerMap->Resources, sizeof ( sResources )*Map->size*Map->size );
+
+						// send clients that all players have been landed
+						char msg[PACKAGE_LENGHT];
+						memset ( msg, 0, PACKAGE_LENGHT );
+						((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_ALL_LANDED );
+						network->send ( PACKAGE_LENGHT, msg );
 
 						sendResources();
-
-						while ( ClientDataList->iCount )
-						{
-							char msg[PACKAGE_LENGHT];
-							memset ( msg, 0, PACKAGE_LENGHT );
-							((Sint16*)msg)[0] = SDL_SwapLE16( MU_MSG_LAND_AT );
-							((Sint16*)msg)[1] = SDL_SwapLE16( ClientDataList->Items[0]->iNr );
-							((Sint16*)msg)[2] = SDL_SwapLE16( ClientDataList->Items[0]->iLandX );
-							((Sint16*)msg)[3] = SDL_SwapLE16( ClientDataList->Items[0]->iLandY );
-							network->send ( PACKAGE_LENGHT, msg );
-
-							delete ClientDataList->Items[0]->LandingList;
-							delete ClientDataList->Items[0];
-							ClientDataList->Delete ( 0 );
-						}
 					}
 					else
 					{
@@ -4996,7 +4997,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						// wait for other players
 						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
 						SHOW_SCREEN
-						while ( iLandXOK < 0 || iLandYOK < 0 )
+						while ( bAllLanded )
 						{
 							EventHandler->HandleEvents();
 							mouse->GetPos();
@@ -5013,7 +5014,6 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 							lb = b;
 							SDL_Delay ( 1 );
 						}
-						game->MakeLanding( iLandXOK, iLandYOK, ActualPlayer, LandingList, Options.FixedBridgeHead );
 					}
 
 					while ( LandingList->iCount )
@@ -5025,16 +5025,20 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 
 					ExitMenu();
 
-					game->Run();
+					Client->run();
 
+					Client->kill();
+					Server->kill();
 					SettingsData.sPlayerName = ActualPlayer->name;
 					while ( PlayerList->iCount )
 					{
 						delete ( PlayerList->Items[0] );
 						PlayerList->Delete ( 0 );
 					}
-					delete game;
-					game = NULL;
+					delete Client;
+					Client = NULL;
+					delete Server;
+					Server = NULL;
 					break;
 				}
 			}
@@ -5180,10 +5184,8 @@ void cMultiPlayerMenu::HandleMessages()
 				ClientDataList->Add ( ClientData );
 			}
 			SWITCH_MESSAGE_END
-		case MU_MSG_LAND_AT:
-			if ( SDL_SwapLE16( ((Sint16*)(Message->data))[1] ) != ActualPlayer->Nr ) SWITCH_MESSAGE_END
-			iLandXOK = SDL_SwapLE16( ((Sint16*)(Message->data))[2] );
-			iLandYOK = SDL_SwapLE16( ((Sint16*)(Message->data))[3] );
+		case MU_MSG_ALL_LANDED:
+			bAllLanded = true;
 			SWITCH_MESSAGE_END
 		case MU_MSG_RESOURCES:
 			{

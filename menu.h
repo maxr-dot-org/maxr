@@ -96,7 +96,7 @@ enum MESSAGE_TYPES
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_GO,					// host wants to start the game
 	MU_MSG_WT_LAND,				// a player wants to land at this position
-	MU_MSG_LAND_AT,				// a player has to land at this position
+	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 	MU_MSG_RESOURCES,			// the resources on the map
 	MU_MSG_UPGRADES				// data of upgraded units
 };
@@ -113,7 +113,7 @@ class cMultiPlayerMenu
 	string sMap;
 	int iFocus;
 	int iPort;
-	int iLandXOK, iLandYOK;
+	bool bAllLanded;
 	cMap *Map;
 	sOptions Options;
 

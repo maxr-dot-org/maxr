@@ -539,7 +539,7 @@ int cClient::checkUser()
 		if ( InputEnter )
 		{
 			bChatInput=false;
-			if ( !InputStr.empty() /*&&!DoCommand ( ( char * ) InputStr.c_str() )*/ )
+			if ( !InputStr.empty() && !doCommand ( InputStr ) )
 			{
 				// TODO: no engine: Chat input
 				//engine->SendChatMessage((ActivePlayer->name+": "+InputStr).c_str());
@@ -2098,6 +2098,105 @@ void cClient::addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param )
 
 void cClient::addFX( sFX* iNum )
 {
+}
+
+bool cClient::doCommand ( string sCmd )
+{
+	/*if ( sCmd.compare( "fps on" ) == 0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
+	if ( sCmd.compare( "fps off" ) == 0 ) {DebugFPS=false;return true;}*/
+	if ( sCmd.compare( "base on" ) == 0 ) { bDebugBase = true; return true; }
+	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBase = false; return true; }
+	if ( sCmd.compare( "wache on" ) == 0 ) { bDebugWache =true; return true; }
+	if ( sCmd.compare( "wache off" ) == 0 ) { bDebugWache =false; return true; }
+	if ( sCmd.compare( "fx on" ) == 0 ) { bDebugFX = true; return true; }
+	if ( sCmd.compare( "fx off" ) == 0 ) { bDebugFX = false; return true; }
+	if ( sCmd.compare( "trace on" ) == 0 ) { bDebugTrace = true; return true; }
+	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTrace = false; return true; }
+
+	if ( sCmd.substr( 0, 6 ).compare( "color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
+	if ( sCmd.compare( "fog off" ) == 0 ) 
+	{
+		//memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
+		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat+=" \"Fog Off\"";
+		return true;
+	}
+
+	if ( sCmd.compare( "survey" ) == 0 ) 
+	{
+		//memset ( ActivePlayer->ResourceMap,1,Map->size*Map->size );
+		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat+=" \"Survey\"";
+		return true;
+	}
+
+	if ( sCmd.compare( "credits" ) == 0 )
+	{
+		//ActivePlayer->Credits+=1000;
+		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat+=" \"Credits\"";
+		return true;
+	}
+	if ( sCmd.substr( 0, 5 ).compare( "kill " ) == 0 )
+	{
+		int x,y;
+		sscanf ( sCmd.c_str(),"kill %d,%d",&x,&y );
+		/*engine->DestroyObject ( x+y*Map->size,false );
+		engine->DestroyObject ( x+y*Map->size,true );*/
+		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat+=" \"Kill\"";
+		return true;
+	}
+	if ( sCmd.compare( "god off" ) == 0 ) 
+	{
+		int i;
+		for ( i=0;i<Map->size*Map->size;i++ ) 
+		{
+			if ( Map->GO[i].plane ) 
+			{
+				//engine->DestroyObject ( i,true );
+			}
+			if ( Map->GO[i].vehicle || ( Map->GO[i].base&&Map->GO[i].base->owner ) ||Map->GO[i].top )
+			{
+				//engine->DestroyObject ( i,false );
+			}
+			memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
+		}
+		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat += " \"God Off\"";
+		return true;
+	}
+	if ( sCmd.compare( "load" ) == 0 )
+	{
+		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
+		sPlayerCheat += " \"Load\"";
+		
+		/*if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammo=SelectedVehicle->data.max_ammo;SelectedVehicle->ShowDetails();}
+		else if ( SelectedBuilding )
+		{
+			if ( SelectedBuilding->data.can_load==TRANS_METAL )
+			{
+				SelectedBuilding->SubBase->Metal-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Metal+=SelectedBuilding->data.cargo;
+			}
+			else if ( SelectedBuilding->data.can_load==TRANS_OIL )
+			{
+				SelectedBuilding->SubBase->Oil-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Oil+=SelectedBuilding->data.cargo;
+			}
+			else if ( SelectedBuilding->data.can_load==TRANS_GOLD )
+			{
+				SelectedBuilding->SubBase->Gold-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Gold+=SelectedBuilding->data.cargo;
+			}
+			SelectedBuilding->data.ammo=SelectedBuilding->data.max_ammo;SelectedBuilding->ShowDetails();
+		}*/
+		return true;
+	}
+	return false;
 }
 
 void cClient::mouseMoveCallback ( bool bForce )
