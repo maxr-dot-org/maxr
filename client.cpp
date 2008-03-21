@@ -2397,6 +2397,7 @@ int cClient::HandleEvent( SDL_Event *event )
 	case GAME_EV_DEL_BUILDING:
 		break;
 	}
+	free ( data );
 	return 0;
 }
 
@@ -2409,12 +2410,12 @@ void cClient::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, bool bInit )
 	if ( AddedVehicle->data.can_drive != DRIVE_AIR )
 	{
 		int iOff = iPosX+Map->size*iPosY;
-		if ( Map->GO[iOff].vehicle == NULL ) Map->GO[iOff].vehicle = AddedVehicle;
+		Map->GO[iOff].vehicle = AddedVehicle;
 	}
 	else
 	{
 		int iOff = iPosX+Map->size*iPosY;
-		if ( Map->GO[iOff].plane == NULL ) Map->GO[iOff].plane = AddedVehicle;
+		Map->GO[iOff].plane = AddedVehicle;
 	}
 	// startup:
 	if ( !bInit ) AddedVehicle->StartUp = 10;

@@ -154,6 +154,7 @@ int cEventHandling::HandleEvents()
 					((Sint16*)DataBuffer->data)[0] = MU_MSG_NEW_PLAYER;
 					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
 					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+					free ( event.user.data1 );
 				}
 				break;
 			case TCP_RECEIVEEVENT:
@@ -188,6 +189,7 @@ int cEventHandling::HandleEvents()
 						}
 					}
 				}
+				free ( event.user.data1 );
 				break;
 				}
 			case TCP_CLOSEEVENT:
@@ -200,6 +202,7 @@ int cEventHandling::HandleEvents()
 					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
 					MultiPlayerMenu->MessageList->Add ( DataBuffer );
 				}
+				free ( event.user.data1 );
 				break;
 			}
 			break;

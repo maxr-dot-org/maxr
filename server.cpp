@@ -121,6 +121,7 @@ void cServer::run()
 
 						NewEvent.user.data2 = NULL;
 						pushEvent( &NewEvent );
+						free ( event.user.data1 );
 					}
 					break;
 				case TCP_CLOSEEVENT:
@@ -135,6 +136,7 @@ void cServer::run()
 						((Sint16*)NewEvent.user.data1)[0] = ((Sint16*)event.user.data1)[0];
 						NewEvent.user.data2 = NULL;
 						pushEvent( &NewEvent );
+						free ( event.user.data1 );
 					}
 					break;
 				}
@@ -162,6 +164,7 @@ int cServer::HandleEvent( SDL_Event *event )
 	case GAME_EV_CHAT:
 		break;
 	}
+	free ( data );
 	return 0;
 }
 
