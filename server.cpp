@@ -99,7 +99,7 @@ void cServer::run()
 	while ( !bExit )
 	{
 		SDL_Event event;
-		if ( pollEvent ( &event ) != NULL )
+		if ( !pollEvent ( &event ) )
 		{
 			switch ( event.type )
 			{
