@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <math.h>
 #include "client.h"
+#include "server.h"
 #include "events.h"
 #include "eventmessages.h"
 #include "pcx.h"
@@ -131,6 +132,14 @@ void cClient::kill()
 		delete DirtList;
 		DirtList=ptr;
 	}
+}
+
+void cClient::sendEvent ( SDL_Event *event, int iLenght )
+{
+	// push it to the lokal server in singleplayer or if this machine is the host
+	if ( !network || network->isHost() ) Server->pushEvent ( event );
+	// else send it over the net
+	else if ( network ) network->sendEvent ( event, iLenght );
 }
 
 void cClient::Timer()

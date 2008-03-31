@@ -144,6 +144,7 @@ public:
 	* sends the event to the client on which the player with 'iPlayerNum' is playing
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be send.
+	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
 	*@param iPlayerNum Number of player who should receive this event.
 	*/
 	void sendEvent( SDL_Event *event, int iLenght, int iPlayerNum );
