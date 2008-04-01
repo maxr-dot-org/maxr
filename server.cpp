@@ -286,6 +286,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 		}
 		if ( Landing->cargo && Vehicle )
 		{
+			// TODO: send cargo to clients
 			Vehicle->data.cargo = Landing->cargo;
 		}
 	}

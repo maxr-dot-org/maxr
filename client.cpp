@@ -33,10 +33,12 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	return interval;
 }
 
-void cClient::init( cMap *Map )
+void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 {
 	this->Map = Map;
 	bExit = false;
+
+	this->PlayerList = PlayerList;
 
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
@@ -2405,7 +2407,42 @@ int cClient::HandleEvent( SDL_Event *event )
 		addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[2] ), ((bool*)data)[8] );
 		break;
 	case GAME_EV_ADD_VEHICLE:
-		addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[2] ), ((bool*)data)[8] );
+		{
+			cVehicle *AddedVehicle;
+			AddedVehicle = ActivePlayer->AddVehicle ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+
+			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, ((bool*)data)[6] );
+		}
+		break;
+	case GAME_EV_ADD_ENEM_VEHICLE:
+		{
+			cVehicle *AddedVehicle;
+			cPlayer *Player;
+			for ( int i = 0; i < PlayerList->iCount; i++ )
+			{
+				if ( PlayerList->Items[i]->Nr == SDL_SwapLE16 ( ((Sint16*)data)[2] ) )
+				{
+					Player = PlayerList->Items[i];
+					break;
+				}
+			}
+			AddedVehicle = Player->AddVehicle ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[3] ) );
+
+			AddedVehicle->data.max_hit_points = SDL_SwapLE16 ( ((Sint16*)data)[4] );
+			AddedVehicle->data.max_ammo = SDL_SwapLE16 ( ((Sint16*)data)[5] );
+			AddedVehicle->data.max_speed = SDL_SwapLE16 ( ((Sint16*)data)[6] );
+			AddedVehicle->data.max_shots = SDL_SwapLE16 ( ((Sint16*)data)[7] );
+			AddedVehicle->data.damage = SDL_SwapLE16 ( ((Sint16*)data)[8] );
+			AddedVehicle->data.range = SDL_SwapLE16 ( ((Sint16*)data)[9] );
+			AddedVehicle->data.scan = SDL_SwapLE16 ( ((Sint16*)data)[10] );
+			AddedVehicle->data.armor = SDL_SwapLE16 ( ((Sint16*)data)[11] );
+			AddedVehicle->data.costs = SDL_SwapLE16 ( ((Sint16*)data)[12] );
+			AddedVehicle->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[13] );
+			AddedVehicle->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[14] );
+			AddedVehicle->data.speed = SDL_SwapLE16 ( ((Sint16*)data)[15] );
+
+			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, false );
+		}
 		break;
 	case GAME_EV_DEL_BUILDING:
 		break;
@@ -2414,11 +2451,8 @@ int cClient::HandleEvent( SDL_Event *event )
 	return 0;
 }
 
-void cClient::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, bool bInit )
+void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit )
 {
-	cVehicle *AddedVehicle;
-	// generate the vehicle:
-	AddedVehicle = ActivePlayer->AddVehicle ( iPosX, iPosY, Vehicle );
 	// place the vehicle:
 	if ( AddedVehicle->data.can_drive != DRIVE_AIR )
 	{
@@ -2437,7 +2471,7 @@ void cClient::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, bool bInit )
 	{
 		AddedVehicle->DoSurvey();
 	}
-	if ( !bInit ) AddedVehicle->InWachRange();
+	//if ( !bInit ) AddedVehicle->InWachRange();
 }
 
 void cClient::addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit )

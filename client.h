@@ -41,6 +41,8 @@ class cClient
 	friend class cBuilding;
 	friend class cVehicle;
 
+	/** List with all players */
+	cList<cPlayer*> *PlayerList;
 	/** if a player has entered a chat */
 	string sPlayerCheat;
 	/** ID of the timer */
@@ -221,7 +223,7 @@ class cClient
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	void addUnit( int iPosX, int iPosY, sVehicle *Vehicle, bool bInit = false );
+	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false );
 	void addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit = false );
 	/**
 	* deletes the building
@@ -281,7 +283,7 @@ public:
 	* initialises the client class
 	*@author alzi alias DoctorDeath
 	*/
-	void init( cMap *Map );
+	void init( cMap *Map, cList<cPlayer*> *PlayerList );
 	/**
 	* kills the client class
 	*@author alzi alias DoctorDeath

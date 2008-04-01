@@ -755,10 +755,11 @@ void RunSPMenu ( void )
 				if ( !sMapName.empty() )
 				{
 					int iLandX, iLandY;
-					cList<cPlayer*> *PlayerList;
+					cList<cPlayer*> *ServerPlayerList;
+					cList<cPlayer*> *ClientPlayerList;
 					cList<sLanding*> *LandingList;
-					cMap *Map, *ServerMap;
 					cPlayer *Player;
+					cMap *Map, *ServerMap;
 					Map = new cMap;
 					sPlayer players;
 					if ( !Map->LoadMap ( sMapName ) )
@@ -800,35 +801,41 @@ void RunSPMenu ( void )
 					}
 					// player for client
 					Player = new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 );
+					ClientPlayerList = new cList<cPlayer*>;
+					ClientPlayerList->Add ( Player );
+					ClientPlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
 					// playerlist for server
-					PlayerList = new cList<cPlayer*>;
-					PlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
-					PlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
+					ServerPlayerList = new cList<cPlayer*>;
+					ServerPlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
+					ServerPlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
 
 					// init client and his player
 					Client = new cClient;
-					Client->init( Map );
+					Client->init( Map, ClientPlayerList );
 					Client->initPlayer ( Player );
-					Player->InitMaps ( Map->size, Map );
-					Player->Credits = options.credits;
+					for ( int i = 0; i < ClientPlayerList->iCount; i++ )
+					{
+						ClientPlayerList->Items[i]->InitMaps ( Map->size, Map );
+						ClientPlayerList->Items[i]->Credits = options.credits;
+					}
 
 					// init the players of playerlist
-					for ( int i = 0; i < PlayerList->iCount; i++ )
+					for ( int i = 0; i < ServerPlayerList->iCount; i++ )
 					{
-						PlayerList->Items[i]->InitMaps ( Map->size, Map );
-						PlayerList->Items[i]->Credits = options.credits;
+						ServerPlayerList->Items[i]->InitMaps ( Map->size, Map );
+						ServerPlayerList->Items[i]->Credits = options.credits;
 					}
 					// init server
 					Server = new cServer;
-					Server->init( ServerMap, PlayerList );
+					Server->init( ServerMap, ServerPlayerList );
 
 					// land the player
 					LandingList = new cList<sLanding*>;
 					RunHangar ( Player, LandingList );
 					SelectLanding ( &iLandX, &iLandY, Map );
 
-					Server->makeLanding ( iLandX, iLandY, Player, LandingList, options.FixedBridgeHead ); 
+					Server->makeLanding ( iLandX, iLandY, ServerPlayerList->Items[0], LandingList, options.FixedBridgeHead ); 
 
 					while ( LandingList->iCount )
 					{
@@ -845,18 +852,23 @@ void RunSPMenu ( void )
 					Server->kill();
 					Client->kill();
 					SettingsData.sPlayerName = Player->name;
-					delete Player;
-					while ( PlayerList->iCount )
+					while ( ClientPlayerList->iCount )
 					{
-						delete ( PlayerList->Items[0] );
-						PlayerList->Delete ( 0 );
+						delete ( ClientPlayerList->Items[0] );
+						ClientPlayerList->Delete ( 0 );
+					}
+					while ( ServerPlayerList->iCount )
+					{
+						delete ( ServerPlayerList->Items[0] );
+						ServerPlayerList->Delete ( 0 );
 					}
 					delete Client; Client = NULL;
 					delete Server; Server = NULL;
 					delete Map;
 					delete ServerMap;
 					
-					delete PlayerList;
+					delete ClientPlayerList;
+					delete ServerPlayerList;
 					break;
 				}
 				break;
@@ -4909,12 +4921,23 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					}
 					else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
 
+					// copy playerlist for client
+					cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
+					cPlayer *ActualPlayerClient;
+					for ( int i = 0; i < PlayerList->iCount; i++ )
+					{
+						ClientPlayerList->Add ( new cPlayer( PlayerList->Items[i]->name, PlayerList->Items[i]->color, PlayerList->Items[i]->Nr ) );
+						if ( ClientPlayerList->Items[i]->Nr == ActualPlayer->Nr ) ActualPlayerClient = ClientPlayerList->Items[i];
+					}
 					// init client and his player
 					Client = new cClient;
-					Client->init( Map );
-					Client->initPlayer ( ActualPlayer );
-					ActualPlayer->InitMaps ( Map->size, Map );
-					ActualPlayer->Credits = Options.credits;
+					Client->init( Map, ClientPlayerList );
+					Client->initPlayer ( ActualPlayerClient );
+					for ( int i = 0; i < ClientPlayerList->iCount; i++ )
+					{
+						ClientPlayerList->Items[i]->InitMaps ( Map->size, Map );
+						ClientPlayerList->Items[i]->Credits = Options.credits;
+					}
 
 					if ( bHost )
 					{
