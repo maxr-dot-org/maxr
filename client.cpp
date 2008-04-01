@@ -136,10 +136,14 @@ void cClient::kill()
 
 void cClient::sendEvent ( SDL_Event *event, int iLenght )
 {
-	// push it to the lokal server in singleplayer or if this machine is the host
+	// push an event to the lokal server in singleplayer or if this machine is the host
 	if ( !network || network->isHost() ) Server->pushEvent ( event );
 	// else send it over the net
-	else if ( network ) network->sendEvent ( event, iLenght );
+	else if ( network ) 
+	{
+		network->sendEvent ( event, iLenght );
+		delete event;
+	}
 }
 
 void cClient::Timer()

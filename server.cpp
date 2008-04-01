@@ -55,19 +55,19 @@ void cServer::kill()
 	SDL_DestroyMutex ( QueueMutex );
 }
 
-int cServer::pollEvent( SDL_Event *event )
+SDL_Event* cServer::pollEvent()
 {
+	SDL_Event* event;
 	if ( EventQueue->iCount <= 0 )
 	{
-		event = NULL;
-		return 0;
+		return NULL;
 	}
 
 	SDL_LockMutex( QueueMutex );
 	event = EventQueue->Items[0];
 	EventQueue->Delete( 0 );
 	SDL_UnlockMutex( QueueMutex );
-	return 1;
+	return event;
 }
 
 int cServer::pushEvent( SDL_Event *event )
@@ -83,6 +83,7 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 	if ( iPlayerNum == -1 )
 	{
 		if ( network ) network->sendEvent( event, iLenght );
+		delete event;
 		return;
 	}
 	cPlayer *Player;
@@ -90,61 +91,77 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 	{
 		if ( ( Player = PlayerList->Items[i])->Nr == iPlayerNum ) break;
 	}
-	if ( Player->iSocketNum == -1 ) EventHandler->pushEvent ( event );
-	else if ( network ) network->sendEventTo( Player->iSocketNum, event, iLenght );
+	if ( Player->iSocketNum == -1 )
+	{
+		EventHandler->pushEvent ( event );
+	}
+	else 
+	{
+		if ( network ) network->sendEventTo( Player->iSocketNum, event, iLenght );
+		delete event;
+	}
+
 }
 
 void cServer::run()
 {
 	while ( !bExit )
 	{
-		SDL_Event event;
-		if ( !pollEvent ( &event ) )
+		SDL_Event* event = pollEvent();
+
+		if ( event )
 		{
-			switch ( event.type )
+			switch ( event->type )
 			{
 			case NETWORK_EVENT:
-				switch ( event.user.code )
+				switch ( event->user.code )
 				{
 				case TCP_ACCEPTEVENT:
+					delete event;
 					break;
 				case TCP_RECEIVEEVENT:
 					// new Data received
 					{
-						SDL_Event NewEvent;
-						NewEvent.type = GAME_EVENT;
-						NewEvent.user.code = SDL_SwapLE16( ((Sint16*)event.user.data1)[0] );
+						SDL_Event* NewEvent = new SDL_Event;
+						NewEvent->type = GAME_EVENT;
+						NewEvent->user.code = SDL_SwapLE16( ((Sint16*)event->user.data1)[0] );
 
 						// data1 is the real data
-						NewEvent.user.data1 = malloc ( PACKAGE_LENGHT-2 );
-						memcpy ( NewEvent.user.data1, (char*)event.user.data1+2, PACKAGE_LENGHT-2 );
+						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT-2 );
+						memcpy ( NewEvent->user.data1, (char*)event->user.data1+2, PACKAGE_LENGHT-2 );
 
-						NewEvent.user.data2 = NULL;
-						pushEvent( &NewEvent );
-						free ( event.user.data1 );
+						NewEvent->user.data2 = NULL;
+						pushEvent( NewEvent );
+						free ( event->user.data1 );
+						delete event;
 					}
 					break;
 				case TCP_CLOSEEVENT:
 					{
 						// Socket should be closed
-						network->close ( ((Sint16 *)event.user.data1)[0] );
+						network->close ( ((Sint16 *)event->user.data1)[0] );
 						// Lost Connection
-						SDL_Event NewEvent;
-						NewEvent.type = GAME_EVENT;
-						NewEvent.user.code = GAME_EV_LOST_CONNECTION;
-						NewEvent.user.data1 = malloc ( sizeof ( Sint16 ) );
-						((Sint16*)NewEvent.user.data1)[0] = ((Sint16*)event.user.data1)[0];
-						NewEvent.user.data2 = NULL;
-						pushEvent( &NewEvent );
-						free ( event.user.data1 );
+						SDL_Event* NewEvent = new SDL_Event;
+						NewEvent->type = GAME_EVENT;
+						NewEvent->user.code = GAME_EV_LOST_CONNECTION;
+						NewEvent->user.data1 = malloc ( sizeof ( Sint16 ) );
+						((Sint16*)NewEvent->user.data1)[0] = ((Sint16*)event->user.data1)[0];
+						NewEvent->user.data2 = NULL;
+						pushEvent( NewEvent );
+						free ( event->user.data1 );
+						delete event;
 					}
 					break;
+				default:
+					delete event;
 				}
 			case GAME_EVENT:
-				HandleEvent( &event );
+				HandleEvent( event );
+				delete event;
 				break;
 
 			default:
+				delete event;
 				break;
 			}
 		}

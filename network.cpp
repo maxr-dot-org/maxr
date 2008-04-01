@@ -301,29 +301,29 @@ void cTCP::HandleNetworkThread()
 
 int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 {
-	SDL_Event event;
+	SDL_Event* event = new SDL_Event;
 
-	event.type = NETWORK_EVENT;
-	event.user.code = iEventType;
-	event.user.data1 = malloc ( PACKAGE_LENGHT );
-	memcpy ( event.user.data1, data1, sizeof ( Sint16 ) * 2 );
+	event->type = NETWORK_EVENT;
+	event->user.code = iEventType;
+	event->user.data1 = malloc ( PACKAGE_LENGHT );
+	memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 2 );
 	free ( data1 );
-	event.user.data2 = data2;
+	event->user.data2 = data2;
 
 	if ( bDataLocked )
 	{
 		unlockData();
-		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)event.user.data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
+		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)event->user.data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
 		{
 			// Read data for server and add it to the event
-			read( SDL_SwapLE16 ( ((Sint16*)data1)[0] ), PACKAGE_LENGHT-2, (char *)event.user.data1+2 );
+			read( SDL_SwapLE16 ( ((Sint16*)data1)[0] ), PACKAGE_LENGHT-2, (char *)event->user.data1+2 );
 			// Send the event to the server
-			if ( Server != NULL ) Server->pushEvent ( &event );
+			if ( Server != NULL ) Server->pushEvent ( event );
 		}
 		else
 		{
 			// Event for the client or message for the menu
-			EventHandler->pushEvent ( &event );
+			EventHandler->pushEvent ( event );
 		}
 		lockData();
 	}

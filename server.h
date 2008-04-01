@@ -70,11 +70,11 @@ class cServer
 	int iSaveLoadNumber;
 
 	/**
-	* gets the next event of the eventqueue and stores it to 'event'. If the queue is empty 'event' will be set to NULL.
+	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
 	*@author alzi alias DoctorDeath
 	*@return 1 for success, 0 if the eventqueue is empty
 	*/
-	int pollEvent( SDL_Event *event );
+	SDL_Event* pollEvent();
 	/**
 	* processes everything that is need for this event.
 	*@author alzi alias DoctorDeath

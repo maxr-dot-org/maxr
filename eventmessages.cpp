@@ -20,32 +20,32 @@
 #include "network.h"
 #include "events.h"
 #include "server.h"
+#include "client.h"
 
-SDL_Event generateEvent ( int iTyp, int iLenght, void *data )
+SDL_Event* generateEvent ( int iTyp, int iLenght, void *data )
 {
-	SDL_Event event;
-	event.type = GAME_EVENT;
-	event.user.code = iTyp;
-	event.user.data1 = malloc ( iLenght );
-	memcpy ( event.user.data1, data, iLenght );
-	event.user.data2 = NULL;
+	SDL_Event* event = new SDL_Event;
+	event->type = GAME_EVENT;
+	event->user.code = iTyp;
+	event->user.data1 = malloc ( iLenght );
+	memcpy ( event->user.data1, data, iLenght );
+	event->user.data2 = NULL;
 	return event;
 }
 
 void sendChatMessage ( string sMsg )
 {
-	SDL_Event event = generateEvent ( GAME_EV_CHAT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
-	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
-	else network->sendEvent( &event, (int)sMsg.length()+1 );
+	SDL_Event* event = generateEvent ( GAME_EV_CHAT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
+	Client->sendEvent( event, (int)sMsg.length()+1 );
 }
 
 void sendDelPlayer ( int iPlayerNum )
 {
 	char data[2];
 	((Sint16*)data)[0] = SDL_SwapLE16( iPlayerNum );
-	SDL_Event event = generateEvent ( GAME_EV_DEL_PLAYER, 2, data );
-	if ( !network || network->isHost() ) EventHandler->pushEvent( &event );
-	else network->sendEvent( &event, 2 );
+	SDL_Event* event = generateEvent ( GAME_EV_DEL_PLAYER, 2, data );
+	if ( !network || network->isHost() ) EventHandler->pushEvent( event );
+	else network->sendEvent( event, 2 );
 }
 
 void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
@@ -57,9 +57,9 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 	((Sint16*)data)[3] = SDL_SwapLE16( iPlayer );
 	data[8] = bInit;
 
-	SDL_Event event;
+	SDL_Event* event;
 	if ( bVehicle ) event = generateEvent ( GAME_EV_ADD_VEHICLE, 9, data );
 	else event = generateEvent ( GAME_EV_ADD_BUILDING, 9, data );
 
-	if ( Server ) Server->sendEvent ( &event, 9, iPlayer );
+	if ( Server ) Server->sendEvent ( event, 9, iPlayer );
 }

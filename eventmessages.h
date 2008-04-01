@@ -40,7 +40,7 @@ enum GAME_EVENT_TYPES
 *@param iLenght Lenght of the data for the event.
 *@param data Data for the event. Will be set to event.user.data1. Should not be longer than PACKAGE_LENGHT-2
 */
-SDL_Event generateEvent ( int iTyp, int iLenght, void *data );
+SDL_Event* generateEvent ( int iTyp, int iLenght, void *data );
 
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary

@@ -230,14 +230,6 @@ class cClient
 	*/
 	void deleteBuilding ( cBuilding *Building );
 
-
-	/**
-	* sends the event to the server
-	*@author alzi alias DoctorDeath
-	*@param event The SDL_Event to be send.
-	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
-	*/
-	void sendEvent ( SDL_Event *event, int iLenght );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
@@ -270,6 +262,13 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();
+	/**
+	* sends the event to the server
+	*@author alzi alias DoctorDeath
+	*@param event The SDL_Event to be send.
+	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
+	*/
+	void sendEvent ( SDL_Event *event, int iLenght );
 	/**
 	* draws the map and everything on it
 	*@author alzi alias DoctorDeath
