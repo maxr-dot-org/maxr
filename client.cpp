@@ -2490,7 +2490,7 @@ int cClient::HandleEvent( SDL_Event *event )
 			AddedBuilding->data.costs = SDL_SwapLE16 ( ((Sint16*)data)[11] );
 			AddedBuilding->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[12] );
 			AddedBuilding->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[13] );
-			AddedBuilding->Wachposten = ((bool *)data)[26];
+			AddedBuilding->Wachposten = ((bool *)data)[28];
 
 			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedBuilding, false );
 		}

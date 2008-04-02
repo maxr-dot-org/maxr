@@ -106,7 +106,7 @@ void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 
 void sendAddEnemyBuilding ( cBuilding *Building, int iPlayer )
 {
-	char data[27];
+	char data[29];
 	((Sint16*)data)[0] = SDL_SwapLE16( Building->PosX );
 	((Sint16*)data)[1] = SDL_SwapLE16( Building->PosY );
 	((Sint16*)data)[2] = SDL_SwapLE16( Building->owner->Nr );
@@ -124,10 +124,10 @@ void sendAddEnemyBuilding ( cBuilding *Building, int iPlayer )
 	((Sint16*)data)[12] = SDL_SwapLE16( Building->data.hit_points );
 	((Sint16*)data)[13] = SDL_SwapLE16( Building->data.shots );
 
-	data[26] = Building->Wachposten;
+	data[28] = Building->Wachposten;
 
 	SDL_Event* event;
-	event = generateEvent ( GAME_EV_ADD_ENEM_BUILDING, 27, data );
+	event = generateEvent ( GAME_EV_ADD_ENEM_BUILDING, 29, data );
 
-	if ( Server ) Server->sendEvent ( event, 27, iPlayer );
+	if ( Server ) Server->sendEvent ( event, 29, iPlayer );
 }
