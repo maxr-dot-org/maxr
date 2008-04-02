@@ -65,7 +65,7 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 
 void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 {
-	char data[32];
+	char data[37];
 	((Sint16*)data)[0] = SDL_SwapLE16( Vehicle->PosX );
 	((Sint16*)data)[1] = SDL_SwapLE16( Vehicle->PosY );
 	((Sint16*)data)[2] = SDL_SwapLE16( Vehicle->owner->Nr );
@@ -85,8 +85,13 @@ void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 	((Sint16*)data)[14] = SDL_SwapLE16( Vehicle->data.shots );
 	((Sint16*)data)[15] = SDL_SwapLE16( Vehicle->data.speed );
 
-	SDL_Event* event;
-	event = generateEvent ( GAME_EV_ADD_ENEM_VEHICLE, 32, data );
+	((Sint16*)data)[16] = SDL_SwapLE16( Vehicle->dir );
+	data[34] = Vehicle->Wachposten;
+	data[35] = Vehicle->IsBuilding;
+	data[36] = Vehicle->IsClearing;
 
-	if ( Server ) Server->sendEvent ( event, 32, iPlayer );
+	SDL_Event* event;
+	event = generateEvent ( GAME_EV_ADD_ENEM_VEHICLE, 37, data );
+
+	if ( Server ) Server->sendEvent ( event, 37, iPlayer );
 }

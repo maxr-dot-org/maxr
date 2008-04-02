@@ -173,7 +173,7 @@ int cTCP::sendEventTo( int iClientNumber, SDL_Event *event, int iLenght )
 
 int cTCP::read( int iClientNumber, int iLenght, char *buffer )
 {
-	int iMinLenght;
+	int iMinLenght = 0;
 
 	lockData();
 	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber]->iType == CLIENT_SOCKET )

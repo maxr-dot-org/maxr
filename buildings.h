@@ -89,6 +89,8 @@ public:
   cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
   ~cBuilding(void);
 
+  /** a list were the numbers of all players who can see this building are stored in */
+  cList<int*> *SeenByPlayerList;
   int PosX,PosY;   // Position auf der Karte
   sBuilding *typ;  // Typ des Buildings
   bool selected;   // Gibt an, ob das Building ausgewählt ist

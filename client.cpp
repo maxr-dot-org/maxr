@@ -2440,6 +2440,10 @@ int cClient::HandleEvent( SDL_Event *event )
 			AddedVehicle->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[13] );
 			AddedVehicle->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[14] );
 			AddedVehicle->data.speed = SDL_SwapLE16 ( ((Sint16*)data)[15] );
+			AddedVehicle->dir = SDL_SwapLE16 ( ((Sint16*)data)[16] );
+			AddedVehicle->Wachposten = ((bool *)data)[34];
+			AddedVehicle->IsBuilding = ((bool *)data)[35];
+			AddedVehicle->IsClearing = ((bool *)data)[36];
 
 			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, false );
 		}
@@ -2471,7 +2475,6 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit 
 	{
 		AddedVehicle->DoSurvey();
 	}
-	//if ( !bInit ) AddedVehicle->InWachRange();
 }
 
 void cClient::addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit )

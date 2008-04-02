@@ -91,16 +91,19 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 	{
 		if ( ( Player = PlayerList->Items[i])->Nr == iPlayerNum ) break;
 	}
-	if ( Player->iSocketNum == -1 )
+	// break for unknow socket
+	if ( Player->iSocketNum == -1 ) return;
+	// Socketnumber MAX_CLIENTS for lokal client
+	if ( Player->iSocketNum == MAX_CLIENTS )
 	{
 		EventHandler->pushEvent ( event );
 	}
+	// on all other sockets the event will be send over TCP/IP
 	else 
 	{
 		if ( network ) network->sendEventTo( Player->iSocketNum, event, iLenght );
 		delete event;
 	}
-
 }
 
 void cServer::run()
@@ -155,6 +158,7 @@ void cServer::run()
 				default:
 					delete event;
 				}
+				break;
 			case GAME_EVENT:
 				HandleEvent( event );
 				delete event;
@@ -165,6 +169,9 @@ void cServer::run()
 				break;
 			}
 		}
+
+		checkPlayerUnits();
+
 		SDL_Delay( 10 );
 	}
 }
@@ -425,4 +432,85 @@ void cServer::deleteBuilding( cBuilding *Building )
 	}
 
 	// TODO: event to clients
+}
+
+void cServer::checkPlayerUnits ()
+{
+	cPlayer *UnitPlayer, *MapPlayer;
+	for ( int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->iCount; iUnitPlayerNum++ )
+	{
+		UnitPlayer = PlayerList->Items[iUnitPlayerNum];
+		cVehicle *NextVehicle = UnitPlayer->VehicleList;
+		while ( NextVehicle != NULL )
+		{
+			for ( int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
+			{
+				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
+				MapPlayer = PlayerList->Items[iMapPlayerNum];
+				if ( MapPlayer->ScanMap[NextVehicle->PosX+NextVehicle->PosY*Map->size] == 1 )
+				{
+					int i;
+					for ( i = 0; i < NextVehicle->SeenByPlayerList->iCount; i++ )
+					{
+						if ( *NextVehicle->SeenByPlayerList->Items[i] == MapPlayer->Nr ) break;
+					}
+					if ( i == NextVehicle->SeenByPlayerList->iCount )
+					{
+						NextVehicle->SeenByPlayerList->Add ( &MapPlayer->Nr );
+						sendAddEnemyVehicle( NextVehicle, MapPlayer->Nr );
+					}
+				}
+				else
+				{
+					int i;
+					for ( i = 0; i < NextVehicle->SeenByPlayerList->iCount; i++ )
+					{
+						if ( *NextVehicle->SeenByPlayerList->Items[i] == MapPlayer->Nr )
+						{
+							NextVehicle->SeenByPlayerList->Delete ( i );
+							// TODO: add sendDelEnemyVehicle here!
+							break;
+						}
+					}
+				}
+			}
+			NextVehicle = NextVehicle->next;
+		}
+		cBuilding *NextBuilding = UnitPlayer->BuildingList;
+		while ( NextBuilding != NULL )
+		{
+			for ( int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
+			{
+				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
+				MapPlayer = PlayerList->Items[iMapPlayerNum];
+				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1 )
+				{
+					int i;
+					for ( i = 0; i < NextBuilding->SeenByPlayerList->iCount; i++ )
+					{
+						if ( *NextBuilding->SeenByPlayerList->Items[i] == MapPlayer->Nr ) break;
+					}
+					if ( i == NextBuilding->SeenByPlayerList->iCount )
+					{
+						NextBuilding->SeenByPlayerList->Add ( &MapPlayer->Nr );
+						// TODO: add sendAddEnemyBuilding here!
+					}
+				}
+				else
+				{
+					int i;
+					for ( i = 0; i < NextBuilding->SeenByPlayerList->iCount; i++ )
+					{
+						if ( *NextBuilding->SeenByPlayerList->Items[i] == MapPlayer->Nr )
+						{
+							NextBuilding->SeenByPlayerList->Delete ( i );
+							// TODO: add sendDelEnemyBuilding here!
+							break;
+						}
+					}
+				}
+			}
+			NextBuilding = NextBuilding->next;
+		}
+	}
 }

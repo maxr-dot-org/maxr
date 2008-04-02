@@ -800,15 +800,15 @@ void RunSPMenu ( void )
 						break;
 					}
 					// player for client
-					Player = new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 );
+					Player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 					ClientPlayerList = new cList<cPlayer*>;
 					ClientPlayerList->Add ( Player );
-					ClientPlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
+					ClientPlayerList->Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 					// playerlist for server
 					ServerPlayerList = new cList<cPlayer*>;
-					ServerPlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(),OtherData.colors[cl_red],1 ) );
-					ServerPlayerList->Add ( new cPlayer ( "Player 2",OtherData.colors[cl_green],2 ) );
+					ServerPlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
+					ServerPlayerList->Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 					// init client and his player
 					Client = new cClient;
@@ -4172,7 +4172,7 @@ int GetColorNr ( SDL_Surface *sf )
 
 void cMultiPlayerMenu::init()
 {
-	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0 );
+	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 	PlayerList = new cList<cPlayer*>;
 	ChatLog = new cList<string>;
 	MessageList = new cList<sDataBuffer*>;
@@ -4926,7 +4926,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					cPlayer *ActualPlayerClient;
 					for ( int i = 0; i < PlayerList->iCount; i++ )
 					{
-						ClientPlayerList->Add ( new cPlayer( PlayerList->Items[i]->name, PlayerList->Items[i]->color, PlayerList->Items[i]->Nr ) );
+						ClientPlayerList->Add ( new cPlayer( PlayerList->Items[i]->name, PlayerList->Items[i]->color, PlayerList->Items[i]->Nr, PlayerList->Items[i]->iSocketNum ) );
 						if ( ClientPlayerList->Items[i]->Nr == ActualPlayer->Nr ) ActualPlayerClient = ClientPlayerList->Items[i];
 					}
 					// init client and his player
@@ -4954,7 +4954,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					}
 
 					LandingList = new cList<sLanding*>;
-					RunHangar ( ActualPlayer, LandingList );
+					RunHangar ( ActualPlayerClient, LandingList );
 
 					if ( !bHost ) sendUpgrades();
 
@@ -5051,8 +5051,8 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					Client->run();
 
 					Client->kill();
-					Server->kill();
-					SettingsData.sPlayerName = ActualPlayer->name;
+					if ( bHost ) Server->kill();
+					SettingsData.sPlayerName = ActualPlayerClient->name;
 					while ( PlayerList->iCount )
 					{
 						delete ( PlayerList->Items[0] );
@@ -5060,8 +5060,11 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					}
 					delete Client;
 					Client = NULL;
-					delete Server;
-					Server = NULL;
+					if ( bHost )
+					{
+						delete Server;
+						Server = NULL;
+					}
 					break;
 				}
 			}
@@ -5094,8 +5097,7 @@ void cMultiPlayerMenu::HandleMessages()
 			SWITCH_MESSAGE_END
 		case MU_MSG_NEW_PLAYER:
 			{
-				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr );
-				Player->iSocketNum = SDL_SwapLE16( ((Sint16*)Message->data)[1] );
+				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr, SDL_SwapLE16( ((Sint16*)Message->data)[1] ) );
 				PlayerList->Add ( Player );
 				ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
 				ReadyList[PlayerList->iCount-1] = false;
@@ -5199,8 +5201,8 @@ void cMultiPlayerMenu::HandleMessages()
 				{
 					sLanding *Landing;
 					Landing = new sLanding;
-					Landing->cargo = SDL_SwapLE16( ((Sint16*)(Message->data+10+4*i))[0] );
-					Landing->id = SDL_SwapLE16( ((Sint16*)(Message->data+10+4*i))[1] );
+					Landing->cargo = SDL_SwapLE16( ((Sint16*)(Message->data+(10+4*i)))[0] );
+					Landing->id = SDL_SwapLE16( ((Sint16*)(Message->data+(10+4*i)))[1] );
 					ClientData->LandingList->Add ( Landing );
 				}
 
@@ -5315,8 +5317,8 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 		// at the standard PACKAGE_LENGHT of 256bytes
 		if ( 10+4*i > PACKAGE_LENGHT-4 ) break;
 
-		((Sint16*)(msg+10+4*i))[0] = SDL_SwapLE16( LandingList->Items[0]->cargo );
-		((Sint16*)(msg+10+4*i))[1] = SDL_SwapLE16( LandingList->Items[0]->id );
+		((Sint16*)(msg+10+4*i))[0] = SDL_SwapLE16( LandingList->Items[i]->cargo );
+		((Sint16*)(msg+10+4*i))[1] = SDL_SwapLE16( LandingList->Items[i]->id );
 	}
 	network->send ( PACKAGE_LENGHT, msg );
 }

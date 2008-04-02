@@ -110,6 +110,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	SubBase = NULL;
 	BuildSpeed = 0;
 	BuildList = NULL;
+	SeenByPlayerList = new cList<int*>;
 
 	if ( data.can_build )
 	{
@@ -200,6 +201,12 @@ cBuilding::~cBuilding ( void )
 			p->DeleteLock ( this );
 		}
 	}
+
+	while ( SeenByPlayerList->iCount )
+	{
+		SeenByPlayerList->Delete ( SeenByPlayerList->iCount-1 );
+	}
+	delete SeenByPlayerList;
 }
 
 // Liefert einen String mit dem aktuellen Status zurück:

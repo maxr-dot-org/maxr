@@ -61,7 +61,7 @@ friend class cEngine;
 friend class cServer;
 friend class cClient;
 public:
-  cPlayer(string Name,SDL_Surface *Color,int nr);
+  cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
   ~cPlayer(void);
 
   string name;
@@ -93,6 +93,7 @@ public:
   bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
   cList<sLockElem*> *LockList;           // Liste mit gelockten Objekten.
   int iSocketNum;			// Number of socket over which this player is connected in network game
+							// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 
   void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
   void DoScan(void);

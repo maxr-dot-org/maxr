@@ -122,6 +122,7 @@ class cServer
 	*/
 	void deleteBuilding ( cBuilding *Building );
 
+	void checkPlayerUnits ();
 public:
 	/**
 	* initialises the server class
