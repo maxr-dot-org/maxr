@@ -82,10 +82,18 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 {
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->sendEvent( event, iLenght );
-		delete event;
+		if ( network ) 
+		{
+			network->sendEvent( event, iLenght );
+			delete event;
+		}
+		else
+		{
+			EventHandler->pushEvent ( event );
+		}
 		return;
 	}
+	
 	cPlayer *Player;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
@@ -183,7 +191,9 @@ int cServer::HandleEvent( SDL_Event *event )
 	{
 	case GAME_EV_LOST_CONNECTION:
 		break;
-	case GAME_EV_CHAT:
+	case GAME_EV_CHAT_CLIENT:
+		string message = string((char*)event->user.data1);
+		sendEvent( generateEvent( GAME_EV_CHAT_SERVER, (int)message.length()+1, (char *)message.c_str() ), (int)message.length() + 1);
 		break;
 	}
 	free ( data );
@@ -228,7 +238,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 	cVehicle *Vehicle;
 	int iWidth, iHeight;
 
-	// Find plaxe for mine if bridgehead is fixed
+	// Find place for mine if bridgehead is fixed
 	if ( bFixed )
 	{
 		bool bPlaced = false;

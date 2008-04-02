@@ -33,11 +33,7 @@ SDL_Event* generateEvent ( int iTyp, int iLenght, void *data )
 	return event;
 }
 
-void sendChatMessage ( string sMsg )
-{
-	SDL_Event* event = generateEvent ( GAME_EV_CHAT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
-	Client->sendEvent( event, (int)sMsg.length()+1 );
-}
+
 
 void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
 {

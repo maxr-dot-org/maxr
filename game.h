@@ -146,7 +146,7 @@ public:
   void RotateBlinkColor(void);
   void DrawFLC(void);
   void HandleMessages(void);
-  void addMessage( string sMsg );
+  //void addMessage( string sMsg );
   bool DoCommand(char *cmd);
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);

@@ -1758,20 +1758,7 @@ void cGame::HandleMessages ( void )
 	}
 }
 
-// Fügt eine neue Nachricht ein:
-void cGame::addMessage ( string sMsg )
-{
-	sMessage *Message;
-	Message = new sMessage;
-	Message->chars = (int)sMsg.length();
-	Message->msg = ( char* ) malloc ( Message->chars+1 );
-	strcpy ( Message->msg, sMsg.c_str() );
-	if ( Message->chars > 500 ) Message->msg[500]=0;
-	Message->len = font->getTextWide( sMsg );
-	Message->age = Frame;
-	messages->Add ( Message );
-	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
-}
+
 
 // Führt das übergebene Kommando aus, und gibt false zurück, falls es keins war:
 bool cGame::DoCommand ( char *cmd )

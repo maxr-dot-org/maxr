@@ -556,8 +556,7 @@ int cClient::checkUser()
 			bChatInput=false;
 			if ( !InputStr.empty() && !doCommand ( InputStr ) )
 			{
-				// TODO: no engine: Chat input
-				//engine->SendChatMessage((ActivePlayer->name+": "+InputStr).c_str());
+				sendChatMessage( ActivePlayer->name+": " + InputStr.c_str());
 			}
 		}
 		else
@@ -2354,6 +2353,21 @@ void cClient::mouseMoveCallback ( bool bForce )
 	}
 }
 
+// Adds an message to be displayed in the game
+void cClient::addMessage ( string sMsg )
+{
+	sMessage *Message;
+	Message = new sMessage;
+	Message->chars = (int)sMsg.length();
+	Message->msg = ( char* ) malloc ( Message->chars+1 );
+	strcpy ( Message->msg, sMsg.c_str() );
+	if ( Message->chars > 500 ) Message->msg[500]=0;
+	Message->len = font->getTextWide( sMsg );
+	Message->age = iFrame;
+	messages->Add ( Message );
+	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
+}
+
 void cClient::handleMessages()
 {
 	SDL_Rect scr, dest;
@@ -2399,7 +2413,8 @@ int cClient::HandleEvent( SDL_Event *event )
 	void *data = event->user.data1;
 	switch ( event->user.code )
 	{
-	case GAME_EV_CHAT:
+	case GAME_EV_CHAT_SERVER:
+		addMessage( string((char*)event->user.data1) );
 		break;
 	case GAME_EV_ADD_BUILDING:
 		{

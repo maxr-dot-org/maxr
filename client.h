@@ -189,6 +189,10 @@ class cClient
 	*/
 	void rotateBlinkColor();
 	/**
+	* Adds an message to be displayed in the game
+	*/
+	void addMessage ( string sMsg );
+	/**
 	* handles the game messages
 	*@author alzi alias DoctorDeath
 	*/

@@ -20,3 +20,9 @@
 #include "network.h"
 #include "events.h"
 #include "client.h"
+
+void sendChatMessage ( string sMsg )
+{
+	SDL_Event* event = generateEvent ( GAME_EV_CHAT_CLIENT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
+	Client->sendEvent( event, (int)sMsg.length()+1 );
+}

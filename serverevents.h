@@ -27,7 +27,7 @@ enum SERVER_EVENT_TYPES
 {
 	// Types between 0 and FIRST_CLIENT_MESSAGE are for the server
 	GAME_EV_LOST_CONNECTION = 0,	// connection on a socket has been lost
-	GAME_EV_CHAT,
+	GAME_EV_CHAT_SERVER,			// a chat message from server to client
 };
 
 /**

@@ -143,12 +143,13 @@ public:
 	int pushEvent( SDL_Event *event );
 	/**
 	* sends the event to the client on which the player with 'iPlayerNum' is playing
+	* deletes the event, when it is send over the net
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be send.
 	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
 	*@param iPlayerNum Number of player who should receive this event.
 	*/
-	void sendEvent( SDL_Event *event, int iLenght, int iPlayerNum );
+	void sendEvent( SDL_Event *event, int iLenght, int iPlayerNum = -1 );
 
 	/**
 	* runs the server. Should only be called by the ServerThread!

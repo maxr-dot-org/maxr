@@ -32,6 +32,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
 	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
+	GAME_EV_CHAT_CLIENT				// a chat message from client to server
 };
 
 #endif // clienteventsH
