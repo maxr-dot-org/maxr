@@ -54,6 +54,23 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 	if ( Server ) Server->sendEvent ( event, 7, iPlayer );
 }
 
+void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iClient, bool bPlane, bool bBase, bool bSubBase )
+{
+	char data[9];
+	((Sint16*)data)[0] = SDL_SwapLE16( iPosX );
+	((Sint16*)data)[1] = SDL_SwapLE16( iPosY );
+	((Sint16*)data)[2] = SDL_SwapLE16( iPlayer );
+	data[6] = bPlane;
+	data[7] = bBase;
+	data[8] = bSubBase;
+
+	SDL_Event* event;
+	if ( bVehicle ) event = generateEvent ( GAME_EV_DEL_VEHICLE, 9, data );
+	else event = generateEvent ( GAME_EV_DEL_BUILDING, 9, data );
+
+	if ( Server ) Server->sendEvent ( event, 9, iClient );
+}
+
 void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 {
 	char data[37];
@@ -85,4 +102,32 @@ void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 	event = generateEvent ( GAME_EV_ADD_ENEM_VEHICLE, 37, data );
 
 	if ( Server ) Server->sendEvent ( event, 37, iPlayer );
+}
+
+void sendAddEnemyBuilding ( cBuilding *Building, int iPlayer )
+{
+	char data[27];
+	((Sint16*)data)[0] = SDL_SwapLE16( Building->PosX );
+	((Sint16*)data)[1] = SDL_SwapLE16( Building->PosY );
+	((Sint16*)data)[2] = SDL_SwapLE16( Building->owner->Nr );
+	((Sint16*)data)[3] = SDL_SwapLE16( Building->typ->nr );
+
+	((Sint16*)data)[4] = SDL_SwapLE16( Building->data.max_hit_points );
+	((Sint16*)data)[5] = SDL_SwapLE16( Building->data.max_ammo );
+	((Sint16*)data)[6] = SDL_SwapLE16( Building->data.max_shots );
+	((Sint16*)data)[7] = SDL_SwapLE16( Building->data.damage );
+	((Sint16*)data)[8] = SDL_SwapLE16( Building->data.range );
+	((Sint16*)data)[9] = SDL_SwapLE16( Building->data.scan );
+	((Sint16*)data)[10] = SDL_SwapLE16( Building->data.armor );
+	((Sint16*)data)[11] = SDL_SwapLE16( Building->data.costs );
+
+	((Sint16*)data)[12] = SDL_SwapLE16( Building->data.hit_points );
+	((Sint16*)data)[13] = SDL_SwapLE16( Building->data.shots );
+
+	data[26] = Building->Wachposten;
+
+	SDL_Event* event;
+	event = generateEvent ( GAME_EV_ADD_ENEM_BUILDING, 27, data );
+
+	if ( Server ) Server->sendEvent ( event, 27, iPlayer );
 }

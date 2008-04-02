@@ -224,14 +224,24 @@ class cClient
 	*@param bInit true if this is a initialisation call.
 	*/
 	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false );
-	void addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit = false );
+	void addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit = false );
+
 	/**
-	* deletes the building
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer *GetPlayerFromNumber ( int iNum );
+
+	/**
+	* deletes the unit
 	*@author alzi alias DoctorDeath
 	*@param Building Building which should be deleted.
+	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteBuilding ( cBuilding *Building );
-
+	void cClient::deleteUnit( cBuilding *Building );
+	void cClient::deleteUnit( cVehicle *Vehicle );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;

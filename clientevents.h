@@ -28,9 +28,10 @@ enum CLIENT_EVENT_TYPES
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
 	GAME_EV_ADD_BUILDING = FIRST_CLIENT_MESSAGE,	// adds a building
 	GAME_EV_ADD_VEHICLE,			// adds a vehicle
+	GAME_EV_DEL_BUILDING,			// deletes a building
+	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
 	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
-	GAME_EV_DEL_BUILDING,			// deletes a building
 };
 
 #endif // clienteventsH

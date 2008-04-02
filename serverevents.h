@@ -47,7 +47,8 @@ SDL_Event* generateEvent ( int iTyp, int iLenght, void *data );
 void sendChatMessage ( string sMsg );
 
 void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
-void sendDelBuilding ( int  );
+void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iClient, bool bPlane = false, bool bBase = false, bool bSubBase = false );
 void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer );
+void sendAddEnemyBuilding ( cBuilding *Building, int iPlayer );
 
 #endif // servereventsH

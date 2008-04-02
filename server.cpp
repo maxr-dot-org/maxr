@@ -426,10 +426,16 @@ void cServer::deleteBuilding( cBuilding *Building )
 		{
 			Building->base->DeleteBuilding( Building );
 		}
+
+		bool bBase, bSubBase;
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) bBase = true;
+		else bBase = false;
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building ) bSubBase = true;
+		else bSubBase = false;
+		sendDeleteUnit( Building->PosX, Building->PosY, Building->owner->Nr, false, Building->owner->Nr, false, bBase, bSubBase );
+
 		delete Building;
 	}
-
-	// TODO: event to clients
 }
 
 void cServer::checkPlayerUnits ()
@@ -466,7 +472,11 @@ void cServer::checkPlayerUnits ()
 						if ( *NextVehicle->SeenByPlayerList->Items[i] == MapPlayer->Nr )
 						{
 							NextVehicle->SeenByPlayerList->Delete ( i );
-							// TODO: add sendDelEnemyVehicle here!
+
+							bool bPlane;
+							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
+							else bPlane = false;
+							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, true, NextVehicle->owner->Nr, bPlane );
 							break;
 						}
 					}
@@ -491,7 +501,7 @@ void cServer::checkPlayerUnits ()
 					if ( i == NextBuilding->SeenByPlayerList->iCount )
 					{
 						NextBuilding->SeenByPlayerList->Add ( &MapPlayer->Nr );
-						// TODO: add sendAddEnemyBuilding here!
+						sendAddEnemyBuilding( NextBuilding, MapPlayer->Nr );
 					}
 				}
 				else
@@ -502,7 +512,14 @@ void cServer::checkPlayerUnits ()
 						if ( *NextBuilding->SeenByPlayerList->Items[i] == MapPlayer->Nr )
 						{
 							NextBuilding->SeenByPlayerList->Delete ( i );
-							// TODO: add sendDelEnemyBuilding here!
+
+							bool bBase, bSubBase;
+							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].base == NextBuilding ) bBase = true;
+							else bBase = false;
+							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
+							else bSubBase = false;
+							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, false, NextBuilding->owner->Nr, false, bBase, bSubBase );
+
 							break;
 						}
 					}

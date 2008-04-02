@@ -2402,7 +2402,12 @@ int cClient::HandleEvent( SDL_Event *event )
 	case GAME_EV_CHAT:
 		break;
 	case GAME_EV_ADD_BUILDING:
-		addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[2] ), ((bool*)data)[8] );
+		{
+			cBuilding *AddedBuilding;
+			AddedBuilding = ActivePlayer->AddBuilding ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+
+			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedBuilding, ((bool*)data)[8] );
+		}
 		break;
 	case GAME_EV_ADD_VEHICLE:
 		{
@@ -2412,18 +2417,41 @@ int cClient::HandleEvent( SDL_Event *event )
 			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, ((bool*)data)[6] );
 		}
 		break;
+	case GAME_EV_DEL_BUILDING:
+		{
+			cBuilding *Building;
+			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+			int iOff = ((Sint16*)data)[0]+((Sint16*)data)[1]*Map->size;
+
+			if ( ((bool *)data)[7] ) Building = Map->GO[iOff].base;
+			else if ( ((bool *)data)[8] ) Building = Map->GO[iOff].subbase;
+			else Building = Map->GO[iOff].top;
+
+			if ( Building && Building->owner == Player )
+			{
+				deleteUnit ( Building );
+			}
+		}
+		break;
+	case GAME_EV_DEL_VEHICLE:
+		{
+			cVehicle *Vehicle;
+			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+			int iOff = ((Sint16*)data)[0]+((Sint16*)data)[1]*Map->size;
+
+			if ( ((bool *)data)[6] ) Vehicle = Map->GO[iOff].plane;
+			else Vehicle = Map->GO[iOff].vehicle;
+
+			if ( Vehicle && Vehicle->owner == Player )
+			{
+				deleteUnit ( Vehicle );
+			}
+		}
+		break;
 	case GAME_EV_ADD_ENEM_VEHICLE:
 		{
 			cVehicle *AddedVehicle;
-			cPlayer *Player;
-			for ( int i = 0; i < PlayerList->iCount; i++ )
-			{
-				if ( PlayerList->Items[i]->Nr == SDL_SwapLE16 ( ((Sint16*)data)[2] ) )
-				{
-					Player = PlayerList->Items[i];
-					break;
-				}
-			}
+			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
 			AddedVehicle = Player->AddVehicle ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[3] ) );
 
 			AddedVehicle->data.max_hit_points = SDL_SwapLE16 ( ((Sint16*)data)[4] );
@@ -2446,7 +2474,26 @@ int cClient::HandleEvent( SDL_Event *event )
 			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, false );
 		}
 		break;
-	case GAME_EV_DEL_BUILDING:
+	case GAME_EV_ADD_ENEM_BUILDING:
+		{
+			cBuilding *AddedBuilding;
+			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+			AddedBuilding = Player->AddBuilding ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[3] ) );
+
+			AddedBuilding->data.max_hit_points = SDL_SwapLE16 ( ((Sint16*)data)[4] );
+			AddedBuilding->data.max_ammo = SDL_SwapLE16 ( ((Sint16*)data)[5] );
+			AddedBuilding->data.max_shots = SDL_SwapLE16 ( ((Sint16*)data)[6] );
+			AddedBuilding->data.damage = SDL_SwapLE16 ( ((Sint16*)data)[7] );
+			AddedBuilding->data.range = SDL_SwapLE16 ( ((Sint16*)data)[8] );
+			AddedBuilding->data.scan = SDL_SwapLE16 ( ((Sint16*)data)[9] );
+			AddedBuilding->data.armor = SDL_SwapLE16 ( ((Sint16*)data)[10] );
+			AddedBuilding->data.costs = SDL_SwapLE16 ( ((Sint16*)data)[11] );
+			AddedBuilding->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[12] );
+			AddedBuilding->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[13] );
+			AddedBuilding->Wachposten = ((bool *)data)[26];
+
+			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedBuilding, false );
+		}
 		break;
 	}
 	free ( data );
@@ -2475,11 +2522,8 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit 
 	}
 }
 
-void cClient::addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit )
+void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
 {
-	cBuilding *AddedBuilding;
-	// generate the building:
-	AddedBuilding = ActivePlayer->AddBuilding ( iPosX, iPosY, Building );
 	// place the building:
 	int iOff = iPosX + Map->size*iPosY;
 	if ( AddedBuilding->data.is_base )
@@ -2538,4 +2582,66 @@ void cClient::addUnit( int iPosX, int iPosY, sBuilding *Building, bool bInit )
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	// intigrate the building to the base:
 	ActivePlayer->base->AddBuilding ( AddedBuilding );
+}
+
+cPlayer *cClient::GetPlayerFromNumber ( int iNum )
+{
+	cPlayer *Player;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		if ( PlayerList->Items[i]->Nr == iNum )
+		{
+			Player = PlayerList->Items[i];
+			break;
+		}
+	}
+	return Player;
+}
+
+void cClient::deleteUnit( cBuilding *Building )
+{
+	if( Building )
+	{
+		if( Building->prev )
+		{
+			Building->prev->next = Building->next;
+			if( Building->next )
+			{
+				Building->next->prev = Building->prev;
+			}
+		}
+		else
+		{
+			Building->owner->BuildingList = Building->next;
+			if( Building->next )
+			{
+				Building->next->prev = NULL;
+			}
+		}
+		delete Building;
+	}
+}
+
+void cClient::deleteUnit( cVehicle *Vehicle )
+{
+	if( Vehicle )
+	{
+		if( Vehicle->prev )
+		{
+			Vehicle->prev->next = Vehicle->next;
+			if( Vehicle->next )
+			{
+				Vehicle->next->prev = Vehicle->prev;
+			}
+		}
+		else
+		{
+			Vehicle->owner->VehicleList = Vehicle->next;
+			if( Vehicle->next )
+			{
+				Vehicle->next->prev = NULL;
+			}
+		}
+		delete Vehicle;
+	}
 }
