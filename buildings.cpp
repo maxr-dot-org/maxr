@@ -25,7 +25,7 @@
 #include "files.h"
 #include "pcx.h"
 #include "events.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 #include "client.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////

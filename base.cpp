@@ -19,7 +19,7 @@
 #include "base.h"
 #include "map.h"
 #include "game.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase ( cPlayer *Owner )

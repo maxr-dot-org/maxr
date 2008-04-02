@@ -21,7 +21,7 @@
 #include "game.h"
 #include "menu.h"
 #include "client.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 
 // Funktionen der Player-Klasse //////////////////////////////////////////////
 cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )

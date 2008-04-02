@@ -22,7 +22,7 @@
 #include "fonts.h"
 #include "mouse.h"
 #include "events.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 
 // Funktionen der Engine Klasse //////////////////////////////////////////////
 cEngine::cEngine ( cMap *Map )
@@ -1267,7 +1267,7 @@ void cEngine::HandleEvent( SDL_Event *event )
 			{
 				if ( game->PlayerList->Items[i]->iSocketNum == ((Sint16*)data)[0] )
 				{
-					sendDelPlayer ( game->PlayerList->Items[i]->Nr );
+					//sendDelPlayer ( game->PlayerList->Items[i]->Nr );
 					delete game->PlayerList->Items[i];
 					game->PlayerList->Delete( i );
 					break;
@@ -1283,17 +1283,6 @@ void cEngine::HandleEvent( SDL_Event *event )
 	case GAME_EV_CHAT:
 		game->addMessage( (char*)data );
 		if ( network && network->isHost() ) network->sendEvent( event, PACKAGE_LENGHT-2 );
-		break;
-	case GAME_EV_DEL_PLAYER:
-		for ( int i = 0; i < game->PlayerList->iCount ; i++ )
-		{
-			if ( game->PlayerList->Items[i]->Nr == SDL_SwapLE16( ((Sint16*)data)[0] ) )
-			{
-				delete game->PlayerList->Items[i];
-				game->PlayerList->Delete( i );
-				break;
-			}
-		}
 		break;
 	}
 }

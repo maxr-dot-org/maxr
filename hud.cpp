@@ -25,7 +25,7 @@
 #include "fonts.h"
 #include "menu.h"
 #include "client.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////

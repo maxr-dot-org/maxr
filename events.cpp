@@ -19,7 +19,7 @@
 #include "events.h"
 #include "network.h"
 #include "menu.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 #include "client.h"
 
 Uint32 eventTimerCallback(Uint32 interval, void *param)

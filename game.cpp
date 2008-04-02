@@ -29,7 +29,7 @@
 #include "log.h"
 #include "files.h"
 #include "events.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame ( cMap *map )

@@ -20,7 +20,7 @@
 #include "client.h"
 #include "server.h"
 #include "events.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 #include "pcx.h"
 #include "mouse.h"
 #include "keyinp.h"
@@ -2400,8 +2400,6 @@ int cClient::HandleEvent( SDL_Event *event )
 	switch ( event->user.code )
 	{
 	case GAME_EV_CHAT:
-		break;
-	case GAME_EV_DEL_PLAYER:
 		break;
 	case GAME_EV_ADD_BUILDING:
 		addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[2] ), ((bool*)data)[8] );

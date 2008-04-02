@@ -19,7 +19,7 @@
 #include "server.h"
 #include "events.h"
 #include "network.h"
-#include "eventmessages.h"
+#include "serverevents.h"
 #include "menu.h"
 
 int CallbackRunServerThread( void *arg )
@@ -182,8 +182,6 @@ int cServer::HandleEvent( SDL_Event *event )
 	switch ( event->user.code )
 	{
 	case GAME_EV_LOST_CONNECTION:
-		break;
-	case GAME_EV_DEL_PLAYER:
 		break;
 	case GAME_EV_CHAT:
 		break;
