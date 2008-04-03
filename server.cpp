@@ -82,15 +82,8 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 {
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) 
-		{
-			network->sendEvent( event, iLenght );
-			delete event;
-		}
-		else
-		{
-			EventHandler->pushEvent ( event );
-		}
+		if ( network ) network->sendEvent( event, iLenght );
+		EventHandler->pushEvent ( event );
 		return;
 	}
 	
@@ -99,8 +92,6 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 	{
 		if ( ( Player = PlayerList->Items[i])->Nr == iPlayerNum ) break;
 	}
-	// break for unknow socket
-	if ( Player->iSocketNum == -1 ) return;
 	// Socketnumber MAX_CLIENTS for lokal client
 	if ( Player->iSocketNum == MAX_CLIENTS )
 	{

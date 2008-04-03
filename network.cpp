@@ -316,7 +316,13 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)event->user.data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
 		{
 			// Read data for server and add it to the event
-			read( SDL_SwapLE16 ( ((Sint16*)data1)[0] ), PACKAGE_LENGHT-2, (char *)event->user.data1+2 );
+			int iMinLenght, iClientNumber;
+			iClientNumber = SDL_SwapLE16 ( ((Sint16*)event->user.data1)[0] );
+			iMinLenght = ( ( ( Sockets[iClientNumber]->buffer.iLenght ) < PACKAGE_LENGHT ) ? ( Sockets[iClientNumber]->buffer.iLenght ) : PACKAGE_LENGHT );
+			memmove ( (char*)event->user.data1, Sockets[iClientNumber]->buffer.data, iMinLenght );
+			Sockets[iClientNumber]->buffer.iLenght -= iMinLenght;
+			memmove ( Sockets[iClientNumber]->buffer.data, &Sockets[iClientNumber]->buffer.data[iMinLenght], Sockets[iClientNumber]->buffer.iLenght );
+
 			// Send the event to the server
 			if ( Server != NULL ) Server->pushEvent ( event );
 		}
