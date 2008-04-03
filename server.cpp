@@ -471,7 +471,7 @@ void cServer::checkPlayerUnits ()
 					if ( i == NextVehicle->SeenByPlayerList->iCount )
 					{
 						NextVehicle->SeenByPlayerList->Add ( &MapPlayer->Nr );
-						sendAddEnemyVehicle( NextVehicle, MapPlayer->Nr );
+						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
 					}
 				}
 				else
@@ -511,7 +511,7 @@ void cServer::checkPlayerUnits ()
 					if ( i == NextBuilding->SeenByPlayerList->iCount )
 					{
 						NextBuilding->SeenByPlayerList->Add ( &MapPlayer->Nr );
-						sendAddEnemyBuilding( NextBuilding, MapPlayer->Nr );
+						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
 					}
 				}
 				else

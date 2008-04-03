@@ -67,7 +67,7 @@ void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iCli
 	if ( Server ) Server->sendEvent ( event, 9, iClient );
 }
 
-void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
+void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
 {
 	char data[37];
 	((Sint16*)data)[0] = SDL_SwapLE16( Vehicle->PosX );
@@ -100,7 +100,7 @@ void sendAddEnemyVehicle ( cVehicle *Vehicle, int iPlayer )
 	if ( Server ) Server->sendEvent ( event, 37, iPlayer );
 }
 
-void sendAddEnemyBuilding ( cBuilding *Building, int iPlayer )
+void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 {
 	char data[29];
 	((Sint16*)data)[0] = SDL_SwapLE16( Building->PosX );
