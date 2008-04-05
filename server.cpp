@@ -21,6 +21,7 @@
 #include "network.h"
 #include "serverevents.h"
 #include "menu.h"
+#include "netmessage.h"
 
 int CallbackRunServerThread( void *arg )
 {
@@ -35,6 +36,8 @@ void cServer::init( cMap *map, cList<cPlayer*> *PlayerList )
 	bExit = false;
 
 	EventQueue = new cList<SDL_Event *>;
+	//NetMessageQueue = new cList<cNetMessage*>;
+
 	QueueMutex = SDL_CreateMutex ();
 
 	this->PlayerList = PlayerList;
@@ -50,13 +53,31 @@ void cServer::kill()
 	while ( EventQueue->iCount )
 	{
 		delete EventQueue->Items[0];
+		EventQueue->Delete (0);
 	}
 	delete EventQueue;
+
+	/*while ( NetMessageQueue->iCount )
+	{
+		delete NetMessageQueue->Items[0];
+		NetMessageQueue->Delete(0);
+	}
+	delete NetMessageQueue; */
+
 	SDL_DestroyMutex ( QueueMutex );
 }
 
+
 SDL_Event* cServer::pollEvent()
 {
+	static SDL_Event* lastEvent = NULL;
+	if ( lastEvent != NULL )
+	{
+		free (lastEvent->user.data1);
+		delete lastEvent;
+		lastEvent = NULL;
+	}
+
 	SDL_Event* event;
 	if ( EventQueue->iCount <= 0 )
 	{
@@ -65,10 +86,26 @@ SDL_Event* cServer::pollEvent()
 
 	SDL_LockMutex( QueueMutex );
 	event = EventQueue->Items[0];
+	lastEvent = event;
 	EventQueue->Delete( 0 );
 	SDL_UnlockMutex( QueueMutex );
 	return event;
 }
+
+/*
+cNetMessage* cServer::pollNetMessage()
+{
+	if ( NetMessageQueue->iCount <= 0 )
+		return NULL;
+	
+	cNetMessage* message;
+	SDL_LockMutex( QueueMutex );
+	message = NetMessageQueue->Items[0];
+	NetMessageQueue->Delete(0);
+	SDL_UnlockMutex( QueueMutex );
+	return message;
+}
+*/
 
 int cServer::pushEvent( SDL_Event *event )
 {
@@ -77,6 +114,16 @@ int cServer::pushEvent( SDL_Event *event )
 	SDL_UnlockMutex( QueueMutex );
 	return 0;
 }
+
+/*int cServer::pushNetMessage( cNetMessage* message )
+{
+	SDL_LockMutex( QueueMutex );
+	NetMessageQueue->Add( message );
+	SDL_UnlockMutex( QueueMutex );
+
+	return 0;
+}
+*/
 
 void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 {
@@ -119,23 +166,19 @@ void cServer::run()
 				switch ( event->user.code )
 				{
 				case TCP_ACCEPTEVENT:
-					delete event;
 					break;
 				case TCP_RECEIVEEVENT:
 					// new Data received
 					{
 						SDL_Event* NewEvent = new SDL_Event;
 						NewEvent->type = GAME_EVENT;
-						NewEvent->user.code = SDL_SwapLE16( ((Sint16*)event->user.data1)[0] );
 
 						// data1 is the real data
-						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT-2 );
-						memcpy ( NewEvent->user.data1, (char*)event->user.data1+2, PACKAGE_LENGHT-2 );
+						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT );
+						memcpy ( NewEvent->user.data1, (char*)event->user.data1, PACKAGE_LENGHT );
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );
-						free ( event->user.data1 );
-						delete event;
 					}
 					break;
 				case TCP_CLOSEEVENT:
@@ -143,31 +186,33 @@ void cServer::run()
 						// Socket should be closed
 						network->close ( ((Sint16 *)event->user.data1)[0] );
 						// Lost Connection
-						SDL_Event* NewEvent = new SDL_Event;
-						NewEvent->type = GAME_EVENT;
-						NewEvent->user.code = GAME_EV_LOST_CONNECTION;
-						NewEvent->user.data1 = malloc ( sizeof ( Sint16 ) );
-						((Sint16*)NewEvent->user.data1)[0] = ((Sint16*)event->user.data1)[0];
-						NewEvent->user.data2 = NULL;
-						pushEvent( NewEvent );
-						free ( event->user.data1 );
-						delete event;
+
+						cNetMessage message(GAME_EV_LOST_CONNECTION );
+						message.pushInt16( ((Sint16*)event->user.data1)[0] );
+						pushEvent( message.getGameEvent() );
 					}
 					break;
-				default:
-					delete event;
 				}
 				break;
 			case GAME_EVENT:
-				HandleEvent( event );
-				delete event;
+				cNetMessage* message;
+				message = new cNetMessage( (char*) event->user.data1 );
+				HandleNetMessage( message );
+				delete message;
 				break;
 
 			default:
-				delete event;
 				break;
 			}
 		}
+
+		/*cNetMessage* message = pollNetMessage();
+
+		if ( message )
+		{
+			HandleNetMessage( message );
+		}
+		*/
 
 		checkPlayerUnits();
 
@@ -175,19 +220,18 @@ void cServer::run()
 	}
 }
 
-int cServer::HandleEvent( SDL_Event *event )
+int cServer::HandleNetMessage( cNetMessage *message )
 {
-	void *data = event->user.data1;
-	switch ( event->user.code )
+	switch ( message->iType )
 	{
 	case GAME_EV_LOST_CONNECTION:
 		break;
 	case GAME_EV_CHAT_CLIENT:
-		string message = string((char*)event->user.data1);
-		sendEvent( generateEvent( GAME_EV_CHAT_SERVER, (int)message.length()+1, (char *)message.c_str() ), (int)message.length() + 1);
+		string chatMsg = message->popString();
+		sendEvent( generateEvent( GAME_EV_CHAT_SERVER, (int)chatMsg.length()+1, (char *)chatMsg.c_str() ), (int)chatMsg.length() + 1);
 		break;
 	}
-	free ( data );
+
 	return 0;
 }
 

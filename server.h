@@ -37,6 +37,10 @@ class cServer
 {
 	/** a list with all events for the server */
 	cList<SDL_Event*> *EventQueue;
+
+	/* a list with all netMessages for the server 
+	cList<cNetMessage*> *NetMessageQueue; */
+
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
 	/** mutex for the eventqueue */
@@ -66,22 +70,26 @@ class cServer
 	int iActiveTurnPlayerNr;
 	/** name of the savegame to load or to save */
 	string sSaveLoadFile;
-	/** ndex number of the savegame to load or to save */
+	/** index number of the savegame to load or to save */
 	int iSaveLoadNumber;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
+	* the returned event and its data structures are valid until the next call of pollEvent()
 	*@author alzi alias DoctorDeath
-	*@return 1 for success, 0 if the eventqueue is empty
+	*@return the next SDL_Event or NULL if queue is empty
 	*/
 	SDL_Event* pollEvent();
+	
+	//cNetMessage* pollNetMessage();
+	
 	/**
-	* processes everything that is need for this event.
-	*@author alzi alias DoctorDeath
-	*@param event The SDL_Event to be handled.
+	* Handels all incoming netMessages from the clients
+	*@author Eiko
+	*@param message The message to be prozessed
 	*@return 0 for success
 	*/
-	int HandleEvent( SDL_Event *event );
+	//int HandleNetMessage( cNetMessage* message );
 
 	/**
 	* checks whether the field is free for landing
@@ -141,6 +149,9 @@ public:
 	*@return 0 for success
 	*/
 	int pushEvent( SDL_Event *event );
+	
+	//int pushNetMessage( cNetMessage* message );
+
 	/**
 	* sends the event to the client on which the player with 'iPlayerNum' is playing
 	* deletes the event, when it is send over the net

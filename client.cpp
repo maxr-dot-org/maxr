@@ -26,6 +26,7 @@
 #include "keyinp.h"
 #include "keys.h"
 #include "fonts.h"
+#include "netmessage.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg)
 {
@@ -136,15 +137,23 @@ void cClient::kill()
 	}
 }
 
-void cClient::sendEvent ( SDL_Event *event, int iLenght )
+void cClient::sendNetMessage(cNetMessage *message)
 {
-	// push an event to the lokal server in singleplayer or if this machine is the host
-	if ( !network || network->isHost() ) Server->pushEvent ( event );
-	// else send it over the net
-	else if ( network ) 
+	message->iPlayerNr = ActivePlayer->Nr;
+	
+	if (!network || network->isHost() ) 
 	{
-		network->sendEvent ( event, iLenght );
-		delete event;
+		//push an event to the lokal server in singleplayer, HotSeat or if this machine is the host
+		Server->pushEvent(message->getGameEvent() );
+		delete message;
+		//Server->pushNetMessage( message );
+	}
+	else // else send it over the net
+	{
+		//the client is only connected to one socket
+		//so netwwork->send() only sends to the server 
+		network->send( message->iLength, message->serialize() );
+		delete message;
 	}
 }
 
@@ -556,7 +565,7 @@ int cClient::checkUser()
 			bChatInput=false;
 			if ( !InputStr.empty() && !doCommand ( InputStr ) )
 			{
-				sendChatMessage( ActivePlayer->name+": " + InputStr.c_str());
+				sendChatMessage( ActivePlayer->name+": " + InputStr);
 			}
 		}
 		else

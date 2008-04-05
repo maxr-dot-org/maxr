@@ -25,6 +25,7 @@
 #include "map.h"
 #include "hud.h"
 #include "game.h"
+#include "netmessage.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -278,20 +279,21 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();
+	
 	/**
-	* sends the event to the server
-	*@author alzi alias DoctorDeath
-	*@param event The SDL_Event to be send.
-	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
+	* sends the netMessage to the server.
+	* do not try to delete a message after calling this function!
+	*@author Eiko
+	*@param message The netMessage to be send.
 	*/
-	void sendEvent ( SDL_Event *event, int iLenght );
+	void sendNetMessage ( cNetMessage *message );
+	
 	/**
 	* draws the map and everything on it
 	*@author alzi alias DoctorDeath
 	*@param bPure if true the map is drawn without the things on it.
 	*/
 	void drawMap( bool bPure = false );
-
 
 	/**
 	* initialises the client class

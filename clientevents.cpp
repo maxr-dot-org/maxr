@@ -23,6 +23,8 @@
 
 void sendChatMessage ( string sMsg )
 {
-	SDL_Event* event = generateEvent ( GAME_EV_CHAT_CLIENT, (int)sMsg.length()+1, (char *)sMsg.c_str() );
-	Client->sendEvent( event, (int)sMsg.length()+1 );
+	
+	cNetMessage* message = new cNetMessage( GAME_EV_CHAT_CLIENT );
+	message->pushString( sMsg );
+	Client->sendNetMessage( message );
 }
