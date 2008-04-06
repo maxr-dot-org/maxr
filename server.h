@@ -152,14 +152,14 @@ public:
 	//int pushNetMessage( cNetMessage* message );
 
 	/**
-	* sends the event to the client on which the player with 'iPlayerNum' is playing
-	* deletes the event, when it is send over the net
+	* sends a netMessage to the client on which the player with 'iPlayerNum' is playing
+	* PlayerNum -1 means all players
+	* message must not be deleted after caling this function
 	*@author alzi alias DoctorDeath
-	*@param event The SDL_Event to be send.
-	*@param iLenght Lenght of data in the event to be send. This should not be longer then PACKAGE_LENGHT -2!
+	*@param message The message to be send.
 	*@param iPlayerNum Number of player who should receive this event.
 	*/
-	void sendEvent( SDL_Event *event, int iLenght, int iPlayerNum = -1 );
+	void sendNetMessage( cNetMessage* message, int iPlayerNum = -1 );
 
 	/**
 	* runs the server. Should only be called by the ServerThread!

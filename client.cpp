@@ -2417,38 +2417,55 @@ void cClient::handleMessages()
 	}
 }
 
-int cClient::HandleEvent( SDL_Event *event )
+int cClient::HandleNetMessage( cNetMessage* message )
 {
-	void *data = event->user.data1;
-	switch ( event->user.code )
+	switch ( message->iType )
 	{
 	case GAME_EV_CHAT_SERVER:
-		addMessage( string((char*)event->user.data1) );
+		addMessage( message->popString() );
 		break;
 	case GAME_EV_ADD_BUILDING:
 		{
 			cBuilding *AddedBuilding;
-			AddedBuilding = ActivePlayer->AddBuilding ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+			bool Init = message->popBool();
+			int UnitNum = message->popInt16();
+			int PosY = message->popInt16();
+			int PosX = message->popInt16();
 
-			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedBuilding, ((bool*)data)[8] );
+			AddedBuilding = ActivePlayer->AddBuilding ( PosX, PosY, UnitsData.building + UnitNum );
+
+			addUnit ( PosX, PosY, AddedBuilding, Init );
 		}
 		break;
 	case GAME_EV_ADD_VEHICLE:
 		{
 			cVehicle *AddedVehicle;
-			AddedVehicle = ActivePlayer->AddVehicle ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
+			bool Init = message->popBool();
+			int UnitNum = message->popInt16();
+			int PosY = message->popInt16();
+			int PosX = message->popInt16();
 
-			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, ((bool*)data)[6] );
+			AddedVehicle = ActivePlayer->AddVehicle ( PosX, PosY, UnitsData.vehicle + UnitNum );
+
+			addUnit ( PosX, PosY, AddedVehicle, Init );
 		}
 		break;
 	case GAME_EV_DEL_BUILDING:
 		{
-			cBuilding *Building;
-			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
-			int iOff = ((Sint16*)data)[0]+((Sint16*)data)[1]*Map->size;
+			cBuilding *Building = NULL;
+			bool bSubBase = message->popBool ();
+			bool bBase = message->popBool ();
+			bool bPlane = message->popBool ();
+			int iPlayer = message->popInt16 ();
+			int iPosY = message->popInt16 ();
+			int iPosX = message->popInt16 ();
+	
+			cPlayer *Player = GetPlayerFromNumber ( iPlayer );
 
-			if ( ((bool *)data)[7] ) Building = Map->GO[iOff].base;
-			else if ( ((bool *)data)[8] ) Building = Map->GO[iOff].subbase;
+			int iOff = iPosX + iPosY*Map->size;
+
+			if ( bBase ) Building = Map->GO[iOff].base;
+			else if ( bSubBase ) Building = Map->GO[iOff].subbase;
 			else Building = Map->GO[iOff].top;
 
 			if ( Building && Building->owner == Player )
@@ -2459,11 +2476,18 @@ int cClient::HandleEvent( SDL_Event *event )
 		break;
 	case GAME_EV_DEL_VEHICLE:
 		{
-			cVehicle *Vehicle;
-			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
-			int iOff = ((Sint16*)data)[0]+((Sint16*)data)[1]*Map->size;
+			cVehicle *Vehicle = NULL;
+			bool bSubBase = message->popBool ();
+			bool bBase = message->popBool ();
+			bool bPlane = message->popBool ();
+			int iPlayer = message->popInt16 ();
+			int iPosY = message->popInt16 ();
+			int iPosX = message->popInt16 ();
 
-			if ( ((bool *)data)[6] ) Vehicle = Map->GO[iOff].plane;
+			cPlayer *Player = GetPlayerFromNumber ( iPlayer );
+			int iOff = iPosX + iPosY*Map->size;
+
+			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
 			else Vehicle = Map->GO[iOff].vehicle;
 
 			if ( Vehicle && Vehicle->owner == Player )
@@ -2475,52 +2499,62 @@ int cClient::HandleEvent( SDL_Event *event )
 	case GAME_EV_ADD_ENEM_VEHICLE:
 		{
 			cVehicle *AddedVehicle;
-			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
-			AddedVehicle = Player->AddVehicle ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.vehicle+SDL_SwapLE16 ( ((Sint16*)data)[3] ) );
+			cPlayer *Player = GetPlayerFromNumber ( message->popInt16() );
 
-			AddedVehicle->data.max_hit_points = SDL_SwapLE16 ( ((Sint16*)data)[4] );
-			AddedVehicle->data.max_ammo = SDL_SwapLE16 ( ((Sint16*)data)[5] );
-			AddedVehicle->data.max_speed = SDL_SwapLE16 ( ((Sint16*)data)[6] );
-			AddedVehicle->data.max_shots = SDL_SwapLE16 ( ((Sint16*)data)[7] );
-			AddedVehicle->data.damage = SDL_SwapLE16 ( ((Sint16*)data)[8] );
-			AddedVehicle->data.range = SDL_SwapLE16 ( ((Sint16*)data)[9] );
-			AddedVehicle->data.scan = SDL_SwapLE16 ( ((Sint16*)data)[10] );
-			AddedVehicle->data.armor = SDL_SwapLE16 ( ((Sint16*)data)[11] );
-			AddedVehicle->data.costs = SDL_SwapLE16 ( ((Sint16*)data)[12] );
-			AddedVehicle->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[13] );
-			AddedVehicle->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[14] );
-			AddedVehicle->data.speed = SDL_SwapLE16 ( ((Sint16*)data)[15] );
-			AddedVehicle->dir = SDL_SwapLE16 ( ((Sint16*)data)[16] );
-			AddedVehicle->Wachposten = ((bool *)data)[34];
-			AddedVehicle->IsBuilding = ((bool *)data)[35];
-			AddedVehicle->IsClearing = ((bool *)data)[36];
+			int iUnitNumber = message->popInt16();
+			int iPosY = message->popInt16();
+			int iPosX = message->popInt16();
+			AddedVehicle = Player->AddVehicle ( iPosX, iPosY, UnitsData.vehicle + iUnitNumber );
 
-			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedVehicle, false );
+			AddedVehicle->IsClearing = message->popBool();
+			AddedVehicle->IsBuilding = message->popBool();
+			AddedVehicle->Wachposten = message->popBool();
+			AddedVehicle->dir = message->popInt16();
+			AddedVehicle->data.speed = message->popInt16();
+			AddedVehicle->data.shots = message->popInt16();
+			AddedVehicle->data.hit_points = message->popInt16();
+			AddedVehicle->data.costs = message->popInt16();
+			AddedVehicle->data.armor = message->popInt16();
+			AddedVehicle->data.scan = message->popInt16();
+			AddedVehicle->data.range = message->popInt16();
+			AddedVehicle->data.damage = message->popInt16();
+			AddedVehicle->data.max_shots = message->popInt16();
+			AddedVehicle->data.max_speed = message->popInt16();
+			AddedVehicle->data.max_ammo = message->popInt16();
+			AddedVehicle->data.max_hit_points = message->popInt16();
+			
+			addUnit ( iPosX, iPosY, AddedVehicle, false );
 		}
 		break;
 	case GAME_EV_ADD_ENEM_BUILDING:
 		{
 			cBuilding *AddedBuilding;
-			cPlayer *Player = GetPlayerFromNumber ( SDL_SwapLE16 ( ((Sint16*)data)[2] ) );
-			AddedBuilding = Player->AddBuilding ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), UnitsData.building+SDL_SwapLE16 ( ((Sint16*)data)[3] ) );
+			cPlayer *Player = GetPlayerFromNumber ( message->popInt16() );
+			int iUnitNumber = message->popInt16();
+			int iPosY = message->popInt16();
+			int iPosX = message->popInt16();
 
-			AddedBuilding->data.max_hit_points = SDL_SwapLE16 ( ((Sint16*)data)[4] );
-			AddedBuilding->data.max_ammo = SDL_SwapLE16 ( ((Sint16*)data)[5] );
-			AddedBuilding->data.max_shots = SDL_SwapLE16 ( ((Sint16*)data)[6] );
-			AddedBuilding->data.damage = SDL_SwapLE16 ( ((Sint16*)data)[7] );
-			AddedBuilding->data.range = SDL_SwapLE16 ( ((Sint16*)data)[8] );
-			AddedBuilding->data.scan = SDL_SwapLE16 ( ((Sint16*)data)[9] );
-			AddedBuilding->data.armor = SDL_SwapLE16 ( ((Sint16*)data)[10] );
-			AddedBuilding->data.costs = SDL_SwapLE16 ( ((Sint16*)data)[11] );
-			AddedBuilding->data.hit_points = SDL_SwapLE16 ( ((Sint16*)data)[12] );
-			AddedBuilding->data.shots = SDL_SwapLE16 ( ((Sint16*)data)[13] );
-			AddedBuilding->Wachposten = ((bool *)data)[28];
+			AddedBuilding = Player->AddBuilding ( iPosX, iPosY, UnitsData.building + iUnitNumber );
 
-			addUnit ( SDL_SwapLE16 ( ((Sint16*)data)[0] ), SDL_SwapLE16 ( ((Sint16*)data)[1] ), AddedBuilding, false );
+			AddedBuilding->Wachposten = message->popBool();
+			AddedBuilding->data.shots = message->popInt16();
+			AddedBuilding->data.hit_points = message->popInt16();
+			AddedBuilding->data.costs = message->popInt16();
+			AddedBuilding->data.armor = message->popInt16();
+			AddedBuilding->data.scan = message->popInt16();
+			AddedBuilding->data.range = message->popInt16();
+			AddedBuilding->data.damage = message->popInt16();
+			AddedBuilding->data.max_shots = message->popInt16();
+			AddedBuilding->data.max_ammo = message->popInt16();
+			AddedBuilding->data.max_hit_points = message->popInt16();
+
+			addUnit ( iPosX, iPosY, AddedBuilding, false );
 		}
 		break;
+	default:
+		cLog::write("Client: Error: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
+		break;
 	}
-	free ( data );
 	return 0;
 }
 
@@ -2604,7 +2638,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 		}
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
-	// intigrate the building to the base:
+	// integrate the building to the base:
 	ActivePlayer->base->AddBuilding ( AddedBuilding );
 }
 

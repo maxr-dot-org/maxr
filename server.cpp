@@ -125,15 +125,18 @@ int cServer::pushEvent( SDL_Event *event )
 }
 */
 
-void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
+void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
+	message->iPlayerNr = iPlayerNum;
+
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->sendEvent( event, iLenght );
-		EventHandler->pushEvent ( event );
+		if ( network ) network->send( message->iLength, message->serialize() );
+		EventHandler->pushEvent( message->getGameEvent() );
+		delete message;
 		return;
 	}
-	
+
 	cPlayer *Player;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
@@ -142,14 +145,14 @@ void cServer::sendEvent( SDL_Event *event, int iLenght, int iPlayerNum )
 	// Socketnumber MAX_CLIENTS for lokal client
 	if ( Player->iSocketNum == MAX_CLIENTS )
 	{
-		EventHandler->pushEvent ( event );
+		EventHandler->pushEvent ( message->getGameEvent() );
 	}
-	// on all other sockets the event will be send over TCP/IP
+	// on all other sockets the netMessage will be send over TCP/IP
 	else 
 	{
-		if ( network ) network->sendEventTo( Player->iSocketNum, event, iLenght );
-		delete event;
+		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize() );
 	}
+	delete message;
 }
 
 void cServer::run()
@@ -195,11 +198,11 @@ void cServer::run()
 				}
 				break;
 			case GAME_EVENT:
-				cNetMessage* message;
-				message = new cNetMessage( (char*) event->user.data1 );
-				HandleNetMessage( message );
-				delete message;
-				break;
+				{
+					cNetMessage message( (char*) event->user.data1 );
+					HandleNetMessage( &message );
+					break;
+				}
 
 			default:
 				break;
@@ -227,9 +230,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_LOST_CONNECTION:
 		break;
 	case GAME_EV_CHAT_CLIENT:
-		string chatMsg = message->popString();
-		sendEvent( generateEvent( GAME_EV_CHAT_SERVER, (int)chatMsg.length()+1, (char *)chatMsg.c_str() ), (int)chatMsg.length() + 1);
+		cNetMessage* newMessage;
+		newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
+		newMessage->pushString( message->popString() );
+		sendNetMessage( newMessage );
 		break;
+
+	default:
+		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 	}
 
 	return 0;

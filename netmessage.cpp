@@ -28,9 +28,9 @@ cNetMessage::~cNetMessage()
 
 char* cNetMessage::serialize()
 {
-	//write iLenght to byte array
-	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iType);
 	//write iType to byte array
+	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iType);
+	//write iLenght to byte array
 	*((Sint16*) (data + 2)) = SDL_SwapLE16( (Sint16)iLength);
 	//write iPlayernr to byte array
 	data[4] = (char) iPlayerNr;
@@ -126,4 +126,19 @@ string cNetMessage::popString()
 	//(data + iLenght) points now to the leading '\0'
 
 	return string( data + iLength + 1 );
+}
+
+void cNetMessage::pushBool( bool b )
+{
+	data = (char*) realloc ( data, iLength + 1 );
+	if ( b != 0 ) data[iLength] = 1;
+	else data[iLength] = 0;
+
+	iLength++;
+}
+
+bool cNetMessage::popBool()
+{
+	iLength--;
+	return data[iLength];
 }

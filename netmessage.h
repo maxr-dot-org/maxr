@@ -100,7 +100,20 @@ public:
 	*/
 	string popString();
 
-	//TODO: types float, bool, ...
+	/** pushes a bool to the end of the netMessage
+	* @author Eiko
+	* @param b the bool to push to the message
+	*/
+	void pushBool( bool b );
+
+	/** pops a bool from the end of the netMessage
+	* @author Eiko
+	* @return the bool poped from the message
+	*/
+	bool popBool();
+	
+
+	//TODO: type float
 
 };
 

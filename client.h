@@ -324,12 +324,12 @@ public:
 	void run();
 
 	/**
-	* processes everything that is need for this event.
+	* processes everything that is need for this netMessage
 	*@author alzi alias DoctorDeath
-	*@param event The SDL_Event to be handled.
+	*@param message The netMessage to be handled.
 	*@return 0 for success
 	*/
-	int HandleEvent( SDL_Event *event );
+	int HandleNetMessage( cNetMessage* message );
 
 	/**
 	* increments the iTimeTimer.

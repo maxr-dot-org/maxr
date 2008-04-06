@@ -119,6 +119,8 @@ int cEventHandling::pushEvent( SDL_Event *event )
 	{
 		SDL_CondWait( EventWait, EventLock );
 	}
+	//since SDL_PushEvent() copies the event, the old one has to be deleted
+	delete event;
 	SDL_UnlockMutex( EventLock );
 	SDL_CondSignal( EventWait );
 
@@ -167,21 +169,19 @@ int cEventHandling::HandleEvents()
 				{
 					if ( SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
 					{
-						// will look like something this way:
-						SDL_Event NewEvent;
-						NewEvent.type = GAME_EVENT;
-						NewEvent.user.code = SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] );
-
+						SDL_Event* NewEvent = new SDL_Event;
+						NewEvent->type = GAME_EVENT;
+						
 						// data1 is the real data
-						NewEvent.user.data1 = malloc ( PACKAGE_LENGHT );
-						memcpy ( NewEvent.user.data1, DataBuffer->data+2, PACKAGE_LENGHT-2 );
+						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT );
+						memcpy ( NewEvent->user.data1, DataBuffer->data, PACKAGE_LENGHT );
 
-						NewEvent.user.data2 = NULL;
-						pushEvent( &NewEvent );
+						NewEvent->user.data2 = NULL;
+						pushEvent( NewEvent );
 
 						delete DataBuffer;
 					}
-					else // No events for the menus, here the data is a simple message
+					else //message for the MultiPlayerMenu
 					{
 						if ( MultiPlayerMenu )
 						{
@@ -207,8 +207,12 @@ int cEventHandling::HandleEvents()
 			}
 			break;
 		case GAME_EVENT:
-			Client->HandleEvent( &event );
-			break;
+			{
+				cNetMessage message( (char*) event.user.data1);
+				free ( event.user.data1 );
+				Client->HandleNetMessage( &message );
+				break;
+			}
 
 		default:
 			break;
