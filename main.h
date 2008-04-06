@@ -148,7 +148,7 @@ struct sID{
 
 // Struktur für die Waffen
 struct sWeaponData{
-	char *szTurret_Gfx;
+	const char *szTurret_Gfx;
 	int iSequence;
 	int iShot_Trajectory;
 #define SHOT_TRAJECTURY_STRAIGHT 0
@@ -189,8 +189,8 @@ struct sWeaponData{
 struct sUnitData{
 	// Main info
 	sID ID;
-	char *szName;
-	char *szDescribtion;
+	const char *szName;
+	const char *szDescribtion;
 	int iVersion;
 
 	// General info

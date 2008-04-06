@@ -89,7 +89,7 @@ class cServer
 	*@param message The message to be prozessed
 	*@return 0 for success
 	*/
-	//int HandleNetMessage( cNetMessage* message );
+	int HandleNetMessage( cNetMessage* message );
 
 	/**
 	* checks whether the field is free for landing
@@ -129,7 +129,6 @@ class cServer
 	*@param Building Building which should be deleted.
 	*/
 	void deleteBuilding ( cBuilding *Building );
-
 	void checkPlayerUnits ();
 public:
 	/**
@@ -180,4 +179,4 @@ public:
 	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *List, bool bFixed );
 } EX *Server;
 
-#endif serverH
+#endif

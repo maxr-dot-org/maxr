@@ -245,8 +245,8 @@ class cClient
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void cClient::deleteUnit( cBuilding *Building );
-	void cClient::deleteUnit( cVehicle *Vehicle );
+	void deleteUnit( cBuilding *Building );
+	void deleteUnit( cVehicle *Vehicle );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
@@ -338,4 +338,4 @@ public:
 	void Timer();
 } EX *Client;
 
-#endif clientH
+#endif

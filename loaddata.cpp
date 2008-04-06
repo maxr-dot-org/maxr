@@ -1895,7 +1895,7 @@ void translateUnitData( sID ID, bool vehicle )
 				sTmpString = pXmlNode->ToElement()->Attribute( "ENG" );
 			}
 			Data->szName = (char *)malloc( sTmpString.length() + 1 );
-			strcpy( Data->szName, sTmpString.c_str() );
+			strcpy( (char *)Data->szName, sTmpString.c_str() );
 
 			sTmpString = pXmlNode->ToElement()->GetText();
 			int iPosition = (int)sTmpString.find("\\n",0);
@@ -1905,7 +1905,7 @@ void translateUnitData( sID ID, bool vehicle )
 				iPosition = (int)sTmpString.find("\\n",iPosition);
 			}
 			Data->szDescribtion = (char *)malloc( sTmpString.length() + 1 );
-			strcpy( Data->szDescribtion, sTmpString.c_str() );
+			strcpy( (char *)Data->szDescribtion, sTmpString.c_str() );
 		}
 		pXmlNode = pXmlNode->NextSibling();
 	}
@@ -2141,7 +2141,7 @@ int LoadBuildings()
 // Loades the unitdata from the data.xml in the unitfolder
 void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 {
-	char *DataStructure[] = {
+	const char *DataStructure[] = {
 		// General
 		"Unit","General_Info","Is_Controllable", NULL,
 		"Unit","General_Info","Can_Be_Captured", NULL,
@@ -2337,7 +2337,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 	{
 		Data->szName = (char *)malloc(sTmpString.length()+1); //+1 for \0 termination of string especially on *nix
 		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy(Data->szName,sTmpString.c_str());
+		strcpy( (char *)Data->szName, sTmpString.c_str());
 
 	}
 	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
@@ -2351,7 +2351,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 		}
 		Data->szDescribtion = (char *)malloc(sTmpString.length()+1);
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy(Data->szDescribtion,sTmpString.c_str());
+		strcpy( (char *) Data->szDescribtion, sTmpString.c_str());
 	}
 
 	// get array count

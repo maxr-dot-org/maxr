@@ -1,5 +1,5 @@
 #include <string>
-#include "netMessage.h"
+#include "netmessage.h"
 #include "events.h"
 
 cNetMessage::cNetMessage( char* c)

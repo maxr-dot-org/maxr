@@ -292,7 +292,7 @@ int LoadKeys ()
 }
 
 // Liefert einen String mit dem Namen der Taste zurück:
-char *GetKeyString ( SDLKey key )
+const char *GetKeyString ( SDLKey key )
 {
 	switch ( key )
 	{

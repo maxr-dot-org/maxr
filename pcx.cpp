@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-SDL_Surface *LoadPCX ( char *name,bool NoHW )
+SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 {
 	unsigned int *_ptr;
 	unsigned char temp;
@@ -113,7 +113,7 @@ SDL_Surface *LoadPCX ( char *name,bool NoHW )
 }
 
 // Läd eine PCX-Datei in das Surface:
-int LoadPCXtoSF ( char *name,SDL_Surface *sf )
+int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 {
 	unsigned int *_ptr;
 	unsigned char temp;

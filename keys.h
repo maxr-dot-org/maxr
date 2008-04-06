@@ -63,7 +63,7 @@ EX eMouseStyle MouseStyle;
 
 // Prototypen ////////////////////////////////////////////////////////////////
 int LoadKeys();
-char *GetKeyString(SDLKey key);
+const char *GetKeyString(SDLKey key);
 SDLKey GetKeyFromString(string key);
 /**
 	* Generats a new keys.xml file
