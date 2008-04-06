@@ -60,7 +60,6 @@ void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_VEHICLE );
 
-
 	message->pushInt16( Vehicle->data.max_hit_points );
 	message->pushInt16( Vehicle->data.max_ammo );
 	message->pushInt16( Vehicle->data.max_speed );
@@ -94,6 +93,7 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_BUILDING );
 
+	//todo: bIsWorking. needed by client to show animation
 	message->pushInt16( Building->data.max_hit_points );
 	message->pushInt16( Building->data.max_ammo );
 	message->pushInt16( Building->data.max_shots );
@@ -112,6 +112,8 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 	message->pushInt16( Building->PosY );
 	message->pushInt16( Building->typ->nr );
 	message->pushInt16( Building->owner->Nr );
+
+	//Todo: unit name?
 
 	Server->sendNetMessage( message, iPlayer );
 }
