@@ -5658,87 +5658,118 @@ void cMultiPlayerMenu::displayPlayerList()
 // Startet ein Hot-Seat-Spiel:
 void HeatTheSeat ( void )
 {
-	string stmp;
-	// Anzahl der Spieler holen:
-	int PlayerAnz = 0;
-	sPlayerHS players;
+	// get number of players:
+	int iPlayerAnz = 0;
+	sPlayerHS Players;
 
-	players = runPlayerSelectionHotSeat();
+	Players = runPlayerSelectionHotSeat();
 	
 	for ( int i = 0; i < 8; i++ )
 	{
-		if(players.what[i] != PLAYER_N)
+		if( Players.what[i] != PLAYER_N )
 		{
-			PlayerAnz ++;
+			iPlayerAnz ++;
 		}
 	}
-	if(PlayerAnz == 0) //got no players - cancel
+	if( iPlayerAnz == 0 ) //got no players - cancel
 	{
 		return;
 	}
 
-	// Spiel erstellen:
-	string MapName;
-	MapName=RunPlanetSelect();
-	if ( MapName.empty() ) return;
+	// generate the game:
+	string sMapName;
+	sOptions Options;
 
-	cList<cPlayer*> *list;
+	Options = RunOptionsMenu ( NULL );
+	if( Options.metal == -1 ) return;
+
+	sMapName = RunPlanetSelect();
+	if ( sMapName.empty() ) return;
+
+	cList<cPlayer*> *ServerPlayerList;
+	cList<cPlayer*> *ClientPlayerList;
 	cList<sLanding*> *LandingList;
-	int i,LandX,LandY;
-	sOptions options;
-	cPlayer *p;
-	cMap *map;
+	int iLandX, iLandY;
+	cPlayer *Player;
+	cMap *Map, *ServerMap;
 
-	map=new cMap;
-	if ( !map->LoadMap ( MapName ) )
+	Map = new cMap;
+	if ( !Map->LoadMap ( sMapName ) )
 	{
-		delete map;
+		delete Map;
 		return;
 	}
-	options=RunOptionsMenu ( NULL );
-	
-	if(options.metal == -1)
+	Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
+	// copy map for server
+	ServerMap = new cMap;
+	ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+	ServerMap->DefaultWater = Map->DefaultWater;
+	ServerMap->MapName = Map->MapName;
+	memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
+	memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
+	for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
 	{
-		delete map;
-		return;
+		ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
+		ServerMap->terrain[i].coast = Map->terrain[i].coast;
+		ServerMap->terrain[i].water = Map->terrain[i].water;
 	}
 
-	map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
-
-	list=new cList<cPlayer*>;
-	
+	// player for client
+	ClientPlayerList = new cList<cPlayer*>;
 	int iPlayerNumber = 1;
 	for ( int i = 0; i < 8; i++ )
 	{
-		if(players.what[i] == PLAYER_H)
+		if( Players.what[i] == PLAYER_H )
 		{
-			list->Add ( p=new cPlayer ( players.name[i],OtherData.colors[players.iColor[i]],iPlayerNumber ) );
-			p->Credits=options.credits;
-			iPlayerNumber ++;
+			ClientPlayerList->Add ( Player = new cPlayer ( Players.name[i], OtherData.colors[Players.iColor[i]], iPlayerNumber, MAX_CLIENTS ) );
+			Player->Credits = Options.credits;
+			iPlayerNumber++;
 		}
 	}
 
-	game=new cGame ( map );
-	game->AlienTech=options.AlienTech;
-	game->PlayRounds=options.PlayRounds;
-	game->ActiveRoundPlayerNr=p->Nr;
-	game->Init ( list,0 );
-
-	for ( i=0;i<list->iCount;i++ )
+	// playerlist for server
+	ServerPlayerList = new cList<cPlayer*>;
+	iPlayerNumber = 1;
+	for ( int i = 0; i < 8; i++ )
 	{
-		p=list->Items[i];
-		p->InitMaps ( map->size );
+		if( Players.what[i] == PLAYER_H )
+		{
+			ServerPlayerList->Add ( Player = new cPlayer ( Players.name[i], OtherData.colors[Players.iColor[i]], iPlayerNumber, MAX_CLIENTS ) );
+			Player->Credits = Options.credits;
+			iPlayerNumber++;
+		}
+	}
 
-		stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
-		ShowOK ( stmp,true );
+	// init client
+	Client = new cClient;
+	Client->init( Map, ClientPlayerList );
+	for ( int i = 0; i < ClientPlayerList->iCount; i++ )
+	{
+		ClientPlayerList->Items[i]->InitMaps ( Map->size, Map );
+		ClientPlayerList->Items[i]->Credits = Options.credits;
+	}
 
-		LandingList=new cList<sLanding*>;
-		RunHangar ( p,LandingList );
+	// init server
+	Server = new cServer;
+	Server->init( ServerMap, ServerPlayerList );
 
-		SelectLanding ( &LandX,&LandY,map );
-		game->ActivePlayer=p;
-		game->MakeLanding ( LandX,LandY,p,LandingList,options.FixedBridgeHead );
-		p->HotHud=* ( game->hud );
+	// land the players
+	for ( int i = 0; i < ServerPlayerList->iCount; i++ )
+	{
+		Player = ServerPlayerList->Items[i];
+		Player->InitMaps ( Map->size, ServerMap );
+		Player->Credits = Options.credits;
+
+		ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
+
+		LandingList = new cList<sLanding*>;
+		RunHangar ( ClientPlayerList->Items[i], LandingList );
+
+		SelectLanding ( &iLandX, &iLandY, Map );
+
+		Client->initPlayer ( ClientPlayerList->Items[i] );
+		Server->makeLanding ( iLandX, iLandY, Player, LandingList, Options.FixedBridgeHead );
+		ClientPlayerList->Items[i]->HotHud = *( Client->Hud );
 
 		while ( LandingList->iCount )
 		{
@@ -5748,30 +5779,35 @@ void HeatTheSeat ( void )
 		delete LandingList;
 	}
 
+	// exit menu and start game
 	ExitMenu();
 
-	p=list->Items[0];
-	game->ActivePlayer=p;
-	* ( game->hud ) =p->HotHud;
-	stmp=p->name; stmp+=lngPack.i18n ( "Text~Multiplayer~Player_Turn" );
-	ShowOK ( stmp,true );
-	game->HotSeat=true;
-	game->HotSeatPlayer=0;
-	game->Run();
+	Player = ClientPlayerList->Items[0];
+	Client->initPlayer ( Player );
+	*( Client->Hud ) = Player->HotHud;
+	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
+	Client->run();
 
-	if(!game->HotSeat) //don't store playername in hotseat games (would crash, too)
+	Server->kill();
+	Client->kill();
+
+	while ( ClientPlayerList->iCount )
 	{
-		SettingsData.sPlayerName=p->name; 
+		delete ( ClientPlayerList->Items[0] );
+		ClientPlayerList->Delete ( 0 );
 	}
+	while ( ServerPlayerList->iCount )
+	{
+		delete ( ServerPlayerList->Items[0] );
+		ServerPlayerList->Delete ( 0 );
+	}
+	delete Client; Client = NULL;
+	delete Server; Server = NULL;
+	delete Map;
+	delete ServerMap;
 	
-	delete game;game=NULL;
-	delete map;
-	while ( list->iCount )
-	{
-		delete list->Items[0];
-		list->Delete(0);
-	}
-	delete list;
+	delete ClientPlayerList;
+	delete ServerPlayerList;
 }
 
 // Zeigt das Laden Menü an:
