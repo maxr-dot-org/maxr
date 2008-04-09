@@ -135,7 +135,7 @@ string cNetMessage::popString()
 {
 	if ( data[iLength - 1] != '\0' )
 	{
-		//Todo: netlog error
+		cLog::write( "Error: invalid popString() from netMessage", cLog::eLOG_TYPE_NETWORK );
 		return NULL;
 	}
 
@@ -161,3 +161,93 @@ bool cNetMessage::popBool()
 	iLength--;
 	return data[iLength];
 }
+
+void cNetMessage::pushFloat( float f )
+{
+
+	
+    long double fnorm;
+    int shift;
+    Uint32 sign, exp, significand;
+    unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
+
+    if (f == 0.0)
+	{
+		pushInt32( 0 );
+		return;
+	}
+
+    // check sign and begin normalization
+    if (f < 0)
+	{ 
+		sign = 1;
+		fnorm = -f;
+	}
+    else
+	{ 
+		sign = 0;
+		fnorm = f;
+	}
+
+    // get the normalized form of f and track the exponent
+    shift = 0;
+    while (fnorm >= 2.0)
+	{
+		fnorm /= 2.0;
+		shift++;
+	}
+    while (fnorm < 1.0)
+	{
+		fnorm *= 2.0;
+		shift--;
+	}
+    fnorm -= 1.0;
+
+    // calculate the binary form (non-float) of the significand data
+    significand = fnorm * ((1LL<<significandbits) + 0.5f);
+
+    // get the biased exponent
+    exp = shift + ((1<<(EXPBITS-1)) - 1); // shift + bias
+
+	//store result in netMessage
+    pushInt32( (sign<<(BITS-1)) | (exp<<(BITS-EXPBITS-1)) | significand );
+
+}
+
+float cNetMessage::popFloat()
+{
+	float result;
+    long long shift;
+    unsigned bias;
+    unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
+
+	//get data from netMessage
+	Uint32 i = popInt32();
+
+    if (i == 0) return 0.0;
+
+    // pull the significand
+    result = ( i & ( (1LL<<significandbits) - 1)); // mask
+    result /= ( 1LL<<significandbits ); // convert back to float
+    result += 1.0f; // add the one back on
+
+    // deal with the exponent
+    bias = (1<<(EXPBITS-1)) - 1;
+    shift = ((i>>significandbits)&((1LL<<EXPBITS)-1)) - bias;
+    while (shift > 0)
+	{
+		result *= 2.0;
+		shift--;
+	}
+    while (shift < 0)
+	{
+		result /= 2.0;
+		shift++;
+	}
+
+    // sign it
+    result *= (i>>(BITS-1))&1 ? -1.0: 1.0;
+
+    return result;
+}
+

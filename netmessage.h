@@ -130,10 +130,20 @@ public:
 	* @return the bool poped from the message
 	*/
 	bool popBool();
+
+	#define BITS 32
+	#define EXPBITS 8
+	/** pushes a float to the end of the netMessage
+	* @author Eiko
+	* @param f the float to push to the message
+	*/
+	void pushFloat( float f );
+	/** pops a float from the end of the netMessage
+	* @author Eiko
+	* @return the float poped from the message
+	*/
+	float popFloat();
 	
-
-	//TODO: type float
-
 };
 
 #endif //#ifndef _net_message_h
