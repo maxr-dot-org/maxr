@@ -100,7 +100,7 @@ Sint16 cNetMessage::popInt16()
 void cNetMessage::pushInt32( Sint32 i )
 {
 	data = (char*) realloc( data, iLength + 4 );
-	*((Sint32*) (data + iLength)) = SDL_Swap32( i );
+	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
 }
 
@@ -165,8 +165,7 @@ bool cNetMessage::popBool()
 void cNetMessage::pushFloat( float f )
 {
 
-	
-    long double fnorm;
+    float fnorm;
     int shift;
     Uint32 sign, exp, significand;
     unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
