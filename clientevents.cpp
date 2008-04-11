@@ -28,3 +28,9 @@ void sendChatMessage ( string sMsg )
 	message->pushString( sMsg );
 	Client->sendNetMessage( message );
 }
+
+void sendWantToEndTurn()
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_TO_END_TURN );
+	Client->sendNetMessage( message );
+}

@@ -28,14 +28,9 @@ enum SERVER_EVENT_TYPES
 	// Types between 0 and FIRST_CLIENT_MESSAGE are for the server
 	GAME_EV_LOST_CONNECTION = 0,	// connection on a socket has been lost
 	GAME_EV_CHAT_CLIENT,			// a chat message from client to server
+	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 };
 
-/**
-* Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
-*@author alzi alias DoctorDeath
-*@param sMsg the chat message.
-*/
-void sendChatMessage ( string sMsg );
 /**
 * Sends an event to a player that a new unit has to be added
 *@author alzi alias DoctorDeath
@@ -69,5 +64,7 @@ void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iCli
 */
 void sendAddEnemyUnit( cVehicle *Vehicle, int iPlayer );
 void sendAddEnemyUnit ( cBuilding *Building, int iPlayer );
+
+void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum );
 
 #endif // servereventsH

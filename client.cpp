@@ -75,6 +75,7 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bDebugWache = false;
 	bDebugFX = false;
 	bDebugTrace = false;
+	bWaitForOthers = false;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX( (char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str() );
@@ -181,6 +182,8 @@ void cClient::run()
 	mouse->SetCursor ( CHand );
 	mouse->MoveCallback = true;
 	Hud->DoAllHud();
+
+	WaitForOtherPlayer( 0 );
 
 	while ( 1 )
 	{
@@ -630,8 +633,8 @@ int cClient::checkUser()
 		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!Hud->Ende )
 		{
 			Hud->EndeButton ( true );
-			Hud->MakeMeMyEnd();
-			bLastReturn=true;
+			handleEnd();
+			bLastReturn = true;
 		}
 		else if ( !keystate[KeysList.KeyEndTurn] ) bLastReturn=false;
 		if ( keystate[KeysList.KeyChat]&&!keystate[SDLK_RALT]&&!keystate[SDLK_LALT] )
@@ -2431,11 +2434,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cBuilding *AddedBuilding;
 			bool Init = message->popBool();
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			int UnitNum = message->popInt16();
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedBuilding = ActivePlayer->AddBuilding ( PosX, PosY, UnitsData.building + UnitNum );
+			AddedBuilding = Player->AddBuilding ( PosX, PosY, UnitsData.building + UnitNum );
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
 		}
@@ -2444,11 +2448,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cVehicle *AddedVehicle;
 			bool Init = message->popBool();
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			int UnitNum = message->popInt16();
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedVehicle = ActivePlayer->AddVehicle ( PosX, PosY, UnitsData.vehicle + UnitNum );
+			AddedVehicle = Player->AddVehicle ( PosX, PosY, UnitsData.vehicle + UnitNum );
 
 			addUnit ( PosX, PosY, AddedVehicle, Init );
 		}
@@ -2463,7 +2468,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosY = message->popInt16 ();
 			int iPosX = message->popInt16 ();
 	
-			cPlayer *Player = GetPlayerFromNumber ( iPlayer );
+			cPlayer *Player = getPlayerFromNumber ( iPlayer );
 
 			int iOff = iPosX + iPosY*Map->size;
 
@@ -2487,7 +2492,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosY = message->popInt16 ();
 			int iPosX = message->popInt16 ();
 
-			cPlayer *Player = GetPlayerFromNumber ( iPlayer );
+			cPlayer *Player = getPlayerFromNumber ( iPlayer );
 			int iOff = iPosX + iPosY*Map->size;
 
 			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
@@ -2502,7 +2507,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ADD_ENEM_VEHICLE:
 		{
 			cVehicle *AddedVehicle;
-			cPlayer *Player = GetPlayerFromNumber ( message->popInt16() );
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 
 			int iUnitNumber = message->popInt16();
 			int iPosY = message->popInt16();
@@ -2532,7 +2537,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ADD_ENEM_BUILDING:
 		{
 			cBuilding *AddedBuilding;
-			cPlayer *Player = GetPlayerFromNumber ( message->popInt16() );
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			int iUnitNumber = message->popInt16();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
@@ -2552,6 +2557,64 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding->data.max_hit_points = message->popInt16();
 
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
+		}
+		break;
+	case GAME_EV_MAKE_TURNEND:
+		{
+			int iNextPlayerNum = message->popInt16();
+			bool bWaitForNextPlayer = message->popBool();
+			bool bEndTurn = message->popBool();
+
+			if ( bEndTurn )
+			{
+				iTurn++;
+				Hud->ShowRunde();
+				Hud->EndeButton ( false );
+			}
+
+			if ( bWaitForNextPlayer )
+			{
+				if ( iNextPlayerNum != ActivePlayer->Nr )
+				{
+					if ( bWaitForOthers == true )
+					{
+						drawMap();
+						SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+						drawMiniMap();
+						drawFLC();
+					}
+					else bWaitForOthers = true;
+					WaitForOtherPlayer( iNextPlayerNum );
+				}
+				else
+				{
+					bWaitForOthers = false;
+				}
+			}
+			else if ( iNextPlayerNum != -1 )
+			{
+				makeHotSeatEnd( iNextPlayerNum );
+			}
+
+			if ( iNextPlayerNum == -1 || iNextPlayerNum == ActivePlayer->Nr )
+			{
+				addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
+
+				switch ( message->popInt16() )
+				{
+				case 0:
+					PlayVoice ( VoiceData.VOIStartNone );
+					break;
+				case 1:
+					addMessage( message->popString() );
+					PlayVoice ( VoiceData.VOIStartOne );
+					break;
+				case 2:
+					addMessage( message->popString() );
+					PlayVoice ( VoiceData.VOIStartMore );
+					break;
+				}
+			}
 		}
 		break;
 	default:
@@ -2642,10 +2705,10 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	// integrate the building to the base:
-	ActivePlayer->base->AddBuilding ( AddedBuilding );
+	AddedBuilding->owner->base->AddBuilding ( AddedBuilding );
 }
 
-cPlayer *cClient::GetPlayerFromNumber ( int iNum )
+cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
 	cPlayer *Player;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
@@ -2704,5 +2767,96 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 			}
 		}
 		delete Vehicle;
+	}
+}
+
+void cClient::handleEnd()
+{
+	if ( false /* (look for moving vehicles) */ )
+	{
+		addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
+	}
+	else
+	{
+		sendWantToEndTurn();
+	}
+}
+
+void cClient::makeHotSeatEnd( int iNextPlayerNum )
+{
+	// clear the messages
+	sMessage *Message;
+	while ( messages->iCount )
+	{
+		Message = messages->Items[0];
+		free ( Message->msg );
+		free ( Message );
+		messages->Delete ( 0 );
+	}
+
+	// save information and set next player
+	int iZoom, iX, iY;
+	ActivePlayer->HotHud = *Hud;
+	iZoom = Hud->LastZoom;
+	ActivePlayer = getPlayerFromNumber( iNextPlayerNum );	// TODO: maybe here must be done more than just set the next player!
+	*Hud = ActivePlayer->HotHud;
+	iX = Hud->OffX;
+	iY = Hud->OffY;
+	if ( Hud->LastZoom != iZoom )
+	{
+		Hud->LastZoom = -1;
+		Hud->ScaleSurfaces();
+	}
+	Hud->DoAllHud();
+	Hud->EndeButton ( false );
+	Hud->OffX = iX;
+	Hud->OffY = iY;
+
+	// reset the screen
+	if ( SelectedBuilding ) { SelectedBuilding->Deselct(); SelectedBuilding = NULL; }
+	if ( SelectedVehicle ) { SelectedVehicle->Deselct(); SelectedVehicle = NULL; }
+	SDL_Surface *sf;
+	SDL_Rect scr;
+	sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,32,0,0,0,0 );
+	scr.x=15;
+	scr.y=356;
+	scr.w=scr.h=112;
+	SDL_BlitSurface ( sf,NULL,buffer,NULL );
+	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
+	SDL_BlitSurface ( sf,&scr,buffer,&scr );
+
+	ShowOK ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn"), true );
+}
+
+void cClient::WaitForOtherPlayer( int iPlayerNum )
+{
+	if ( !bWaitForOthers ) return;
+	int iLastX = -1, iLastY = -1;
+	Uint8 *keystate;
+
+	// TODO: Translate!!!
+	font->showTextCentered( 320, 235, "Bitte warten sie bis " + getPlayerFromNumber( iPlayerNum )->name + " seine Runde beendet hat" ,LATIN_BIG );
+	SHOW_SCREEN
+
+	while ( bWaitForOthers )
+	{
+		EventHandler->HandleEvents();
+		
+		keystate = SDL_GetKeyState( NULL );
+		mouse->GetPos();
+		if ( mouse->x != iLastX || mouse->y != iLastY )
+		{
+			mouse->draw ( true, screen );
+		}
+		iLastX = mouse->x;
+		iLastY = mouse->y;
+
+		if ( keystate[KeysList.KeyExit] && ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
+		{
+			bExit = true;
+			bWaitForOthers = false;
+		}
+
+		SDL_Delay ( 10 );
 	}
 }

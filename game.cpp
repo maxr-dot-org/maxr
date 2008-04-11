@@ -699,7 +699,7 @@ int cGame::CheckUser ( void )
 		if ( keystate[KeysList.KeyEndTurn]&&!LastReturn&&!hud->Ende )
 		{
 			hud->EndeButton ( true );
-			hud->MakeMeMyEnd();
+			//hud->MakeMeMyEnd();
 			LastReturn=true;
 		}
 		else if ( !keystate[KeysList.KeyEndTurn] ) LastReturn=false;

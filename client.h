@@ -230,15 +230,13 @@ class cClient
 	*/
 	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false );
 	void addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit = false );
-
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
 	*@param iNum The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer *GetPlayerFromNumber ( int iNum );
-
+	cPlayer *getPlayerFromNumber ( int iNum );
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
@@ -247,6 +245,18 @@ class cClient
 	*/
 	void deleteUnit( cBuilding *Building );
 	void deleteUnit( cVehicle *Vehicle );
+	/**
+	* handles the end of a turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleEnd();
+	/**
+	* handles the end of a hotseat game
+	*@author alzi alias DoctorDeath
+	*@param iNextPlayerNum Number of Player who has ended his turn
+	*/
+	void makeHotSeatEnd( int iNextPlayerNum );
+	void WaitForOtherPlayer( int iPlayerNum );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
@@ -264,6 +274,8 @@ public:
 	bool bExit;
 	/** diffrent timers */
 	int iTimer0, iTimer1, iTimer2;
+	/** shows if the player has to wait for other players */
+	bool bWaitForOthers;
 
 	/** flag if the hud has to be drawn */
 	bool bFlagDrawHud;

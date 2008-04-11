@@ -32,7 +32,19 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
 	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
-	GAME_EV_CHAT_SERVER				// a chat message from server to client
+	GAME_EV_CHAT_SERVER,			// a chat message from server to client
+	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 };
+
+/**
+* Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
+*@param sMsg the chat message.
+*/
+void sendChatMessage ( string sMsg );
+/**
+* Sends an event that the player wants to end this turn
+*@author alzi alias DoctorDeath
+*/
+void sendWantToEndTurn();
 
 #endif // clienteventsH

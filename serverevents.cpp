@@ -33,6 +33,7 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 	message->pushInt16( iPosX );
 	message->pushInt16( iPosY );
 	message->pushInt16( iUnitNum );
+	message->pushInt16( iPlayer );
 	message->pushBool( bInit );
 
 	Server->sendNetMessage( message, iPlayer );
@@ -116,4 +117,17 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 	//Todo: unit name?
 
 	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_MAKE_TURNEND );
+
+	message->pushString ( sReport );
+	message->pushInt16 ( iVoiceNum );
+	message->pushBool ( bEndTurn );
+	message->pushBool ( bWaitForNextPlayer );
+	message->pushInt16( iNextPlayerNum );
+
+	Server->sendNetMessage( message );
 }

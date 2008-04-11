@@ -22,6 +22,26 @@
 #include "main.h"
 #include "map.h"
 #include "player.h"
+#include "engine.h" // for sReport
+
+/**
+* The Types which are possible for a game
+*/
+#define GAME_TYPE_SINGLE	0	// a singleplayer game
+#define GAME_TYPE_HOTSEAT	1	// a hotseat multiplayer game
+#define GAME_TYPE_TCPIP		2	// a multiplayergame over TCP/IP
+
+/*
+/**
+* Structure for the reports
+*./
+struct sReport
+{
+	/** name of the report *./
+	string name;
+	/** counter for this report *./
+	int anz;
+};*/
 
 /**
 * Callback funktion for the serverthread
@@ -48,8 +68,6 @@ class cServer
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
-
-
 	/** the map */
 	cMap *Map;
 	/** current movejob */
@@ -66,12 +84,18 @@ class cServer
 	int iHotSeatPlayer;
 	/** true if the game should be played in turns */
 	bool bPlayTurns;
-	/** number of active player in multiplayer game */
+	/** number of active player in turn based multiplayer game */
 	int iActiveTurnPlayerNr;
 	/** name of the savegame to load or to save */
 	string sSaveLoadFile;
 	/** index number of the savegame to load or to save */
 	int iSaveLoadNumber;
+	/** the type of the current game */
+	int iGameType;
+	/** Counter how many players have pressed the end-turn button in a simultain TCP/IP game */
+	int iPlayerEndCount;
+	/** number of current turn */
+	int iTurn;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -129,13 +153,58 @@ class cServer
 	*@param Building Building which should be deleted.
 	*/
 	void deleteBuilding ( cBuilding *Building );
+	/**
+	* checks whether a player has detected some new enemy units
+	*@author alzi alias DoctorDeath
+	*/
 	void checkPlayerUnits ();
+	/**
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer *getPlayerFromNumber ( int iNum );
+	/**
+	* handles the pressed end of a player
+	*@author alzi alias DoctorDeath
+	*/
+	void handleEnd ( int iPlayerNum );
+	/**
+	* executes everthing for a turnend
+	*@author alzi alias DoctorDeath
+	*@param iPlayerNum Number of player who has pressed the end turn button
+	*@param bChangeTurn true if all players have ended their turn and the turnnumber has changed
+	*/
+	void makeTurnEnd ( int iPlayerNum , bool bChangeTurn );
+	/**
+	* gets the reportmessage for a player
+	*@author alzi alias DoctorDeath
+	*@param iPlayerNum Number of player for who the report should be generated
+	*@param sReportMsg string buffer for the report string
+	*@param iVoiceNum integer buffer for the number which voice sound should be played
+	*/
+	void getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoiceNum );
+	/**
+	* adds a report to the reportlist
+	*@author alzi alias DoctorDeath
+	*@param sName the report name
+	*@param bVehicle true if the report is about vehicles
+	*@param iPlayerNum Number of player to whos list the report should be added
+	*/
+	void addReport ( string sName, bool bVehicle, int iPlayerNum );
 public:
+	/** true if the game has been started */
+	bool bStarted;
+
 	/**
 	* initialises the server class
 	*@author alzi alias DoctorDeath
+	*@param map The Map for the game
+	*@param PlayerList The list with all players
+	*@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
 	*/
-	void init( cMap *map, cList<cPlayer*> *PlayerList );
+	void init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool bPlayTurns );
 	/**
 	* kills the server class
 	*@author alzi alias DoctorDeath

@@ -914,13 +914,14 @@ void cHud::CheckMouseOver ( void )
 	{
 		LogButton ( false );
 	}
-	// Der Ende-Button:
+	// the end-button:
 	if ( x>=392&&x<460&&y>=5&&y<20 )
 	{
 		if ( b ) EndeButton ( true );
 		else if ( lb&&!Ende )
 		{
-			MakeMeMyEnd();
+			PlayFX ( SoundData.SNDHudButton );
+			Client->handleEnd ();
 		}
 	}
 	else if ( EndePressed&&!Ende )
@@ -1429,43 +1430,4 @@ void cHud::ScaleSurfaces ( void )
 	SCALE_FX ( EffectsData.fx_absorb );
 
 	LastZoom=Zoom;
-}
-
-// Drück Ende:
-void cHud::MakeMeMyEnd ( void )
-{
-	/*PlayFX ( SoundData.SNDHudButton );
-	if ( Client->engine->CheckVehiclesMoving ( false ) false )
-	{
-		EndeButton ( false );
-		sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Wait") );
-	}
-	else
-	{
-		if ( Client->engine->DoEndActions() )
-		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
-			Client->WantToEnd = true;
-			if( !Client->HotSeat )
-			{
-				Ende=true;
-			}
-		}
-		else
-		{
-			if ( Client->HotSeat )
-			{
-				if ( Client->MakeHotSeatEnde() )
-				{
-					Client->engine->EndePressed ( Client->ActivePlayer->Nr );
-					Ende=true;
-				}
-			}
-			else
-			{
-				Client->engine->EndePressed ( Client->ActivePlayer->Nr );
-				Ende=true;
-			}
-		}
-	}*/
 }

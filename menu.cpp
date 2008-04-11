@@ -828,7 +828,7 @@ void RunSPMenu ( void )
 					}
 					// init server
 					Server = new cServer;
-					Server->init( ServerMap, ServerPlayerList );
+					Server->init( ServerMap, ServerPlayerList, GAME_TYPE_SINGLE, false );
 
 					// land the player
 					LandingList = new cList<sLanding*>;
@@ -847,6 +847,7 @@ void RunSPMenu ( void )
 					// exit menu and start game
 					ExitMenu();
 
+					Server->bStarted = true;
 					Client->run();
 
 					Server->kill();
@@ -4197,6 +4198,7 @@ void cMultiPlayerMenu::kill()
 {
 	network->kill();
 	delete network;
+	network = NULL;
 
 	while ( PlayerList->iCount ) PlayerList->Delete ( PlayerList->iCount-1 );
 	delete PlayerList;
@@ -4950,7 +4952,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 
 						// init server
 						Server = new cServer;
-						Server->init( ServerMap, PlayerList );
+						Server->init( ServerMap, PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds );
 					}
 
 					LandingList = new cList<sLanding*>;
@@ -5020,7 +5022,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						// wait for other players
 						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
 						SHOW_SCREEN
-						while ( bAllLanded )
+						while ( !bAllLanded )
 						{
 							EventHandler->HandleEvents();
 							mouse->GetPos();
@@ -5048,6 +5050,8 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 
 					ExitMenu();
 
+					if ( Options.PlayRounds && Client->ActivePlayer->Nr != 0 ) Client->bWaitForOthers = true;
+					if ( bHost ) Server->bStarted = true;
 					Client->run();
 
 					Client->kill();
@@ -5747,11 +5751,12 @@ void HeatTheSeat ( void )
 	{
 		ClientPlayerList->Items[i]->InitMaps ( Map->size, Map );
 		ClientPlayerList->Items[i]->Credits = Options.credits;
+		ClientPlayerList->Items[i]->HotHud = *( Client->Hud );
 	}
 
 	// init server
 	Server = new cServer;
-	Server->init( ServerMap, ServerPlayerList );
+	Server->init( ServerMap, ServerPlayerList, GAME_TYPE_HOTSEAT, false );
 
 	// land the players
 	for ( int i = 0; i < ServerPlayerList->iCount; i++ )
@@ -5767,9 +5772,7 @@ void HeatTheSeat ( void )
 
 		SelectLanding ( &iLandX, &iLandY, Map );
 
-		Client->initPlayer ( ClientPlayerList->Items[i] );
 		Server->makeLanding ( iLandX, iLandY, Player, LandingList, Options.FixedBridgeHead );
-		ClientPlayerList->Items[i]->HotHud = *( Client->Hud );
 
 		while ( LandingList->iCount )
 		{
@@ -5786,6 +5789,7 @@ void HeatTheSeat ( void )
 	Client->initPlayer ( Player );
 	*( Client->Hud ) = Player->HotHud;
 	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
+	Server->bStarted = true;
 	Client->run();
 
 	Server->kill();

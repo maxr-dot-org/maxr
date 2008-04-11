@@ -78,7 +78,6 @@ public:
   void CheckMouseOver(void);
   void ResetVideoMonitor(void);
   void ShowRunde(void);
-  void MakeMeMyEnd(void);
   
 private:
 	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target using normal font

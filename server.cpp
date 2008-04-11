@@ -22,6 +22,7 @@
 #include "serverevents.h"
 #include "menu.h"
 #include "netmessage.h"
+#include "mjobs.h"
 
 int CallbackRunServerThread( void *arg )
 {
@@ -30,17 +31,22 @@ int CallbackRunServerThread( void *arg )
 	return 0;
 }
 
-void cServer::init( cMap *map, cList<cPlayer*> *PlayerList )
+void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool bPlayTurns )
 {
 	Map = map;
+	this->PlayerList = PlayerList;
+	this->iGameType = iGameType;
+	this->bPlayTurns = bPlayTurns;
 	bExit = false;
+	bStarted = false;
+	iActiveTurnPlayerNr = 0;
+	iPlayerEndCount = 0;
+	iTurn = 1;
 
 	EventQueue = new cList<SDL_Event *>;
 	//NetMessageQueue = new cList<cNetMessage*>;
 
 	QueueMutex = SDL_CreateMutex ();
-
-	this->PlayerList = PlayerList;
 
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
@@ -227,6 +233,9 @@ void cServer::run()
 		}
 		*/
 
+		// don't do anything if games hasn't been started yet!
+		if ( !bStarted ) { SDL_Delay( 10 ); continue; }
+
 		checkPlayerUnits();
 
 		SDL_Delay( 10 );
@@ -246,6 +255,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
 		newMessage->pushString( message->popString() );
 		sendNetMessage( newMessage );
+		break;
+	case GAME_EV_WANT_TO_END_TURN:
+		handleEnd ( message->iPlayerNr );
 		break;
 
 	default:
@@ -592,5 +604,265 @@ void cServer::checkPlayerUnits ()
 			}
 			NextBuilding = NextBuilding->next;
 		}
+	}
+}
+
+cPlayer *cServer::getPlayerFromNumber ( int iNum )
+{
+	cPlayer *Player;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		if ( PlayerList->Items[i]->Nr == iNum )
+		{
+			Player = PlayerList->Items[i];
+			break;
+		}
+	}
+	return Player;
+}
+
+void cServer::handleEnd ( int iPlayerNum )
+{
+	if ( /* look if there are some things to to at this turnend "engine->DoEndActions()" */ false )
+	{
+		// send message to client what he has to do
+		//sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
+	}
+	else
+	{
+		// generate the report
+		string sReportMsg = "";
+		int iVoiceNum;
+		getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
+
+		bool bChangeTurn = false;
+		if ( iGameType == GAME_TYPE_SINGLE )
+		{
+			sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum );
+			bChangeTurn = true;
+		}
+		else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
+		{
+			bool bWaitForPlayer = ( iGameType == GAME_TYPE_TCPIP && bPlayTurns );
+			iActiveTurnPlayerNr++;
+			if ( iActiveTurnPlayerNr >= PlayerList->iCount )
+			{
+				iActiveTurnPlayerNr = 0;
+				sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum );
+				bChangeTurn = true;
+			}
+			else sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum );
+			// TODO: in hotseat: maybe send information to client about the next player
+		}
+		else // it's a simultanous TCP/IP multiplayer game
+		{
+			iPlayerEndCount++;
+			if ( iPlayerEndCount >= PlayerList->iCount )
+			{
+				iPlayerEndCount = 0;
+				sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum );
+				bChangeTurn = true;
+			}
+			else
+			{
+				if ( iPlayerEndCount == 1 )
+				{
+					// first player has ended his turn. set timelimt to others
+				}
+				// send the players a message that one has ended his turn
+			}
+		}
+		if ( bChangeTurn ) iTurn++;
+		makeTurnEnd ( iPlayerNum, bChangeTurn );
+	}
+}
+
+void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
+{
+	cPlayer *CallerPlayer = getPlayerFromNumber ( iPlayerNum );
+	// reload all buildings
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		bool bShieldChaned;
+		cBuilding *Building;
+		cPlayer *Player;
+		Player = PlayerList->Items[i];
+
+		bShieldChaned = false;
+		Building = Player->BuildingList;
+		while ( Building )
+		{
+			if ( Building->Disabled )
+			{
+				Building->Disabled--;
+				if ( Building->Disabled )
+				{
+					Building = Building->next;
+					continue;
+				}
+			}
+			if ( Building->data.can_attack && bChangeTurn ) Building->RefreshData();
+			if ( Building->IsWorking && Building->data.max_shield && Building->data.shield < Building->data.max_shield )
+			{
+				Building->data.shield += 10;
+				if ( Building->data.shield > Building->data.max_shield ) Building->data.shield = Building->data.max_shield;
+				bShieldChaned = true;
+			}
+			Building = Building->next;
+			// TODO: send new data values here
+		}
+		if ( bShieldChaned )
+		{
+			Player->CalcShields();
+		}
+	}
+
+	// reload all vehicles
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		cVehicle *Vehicle;
+		cPlayer *Player;
+		Player = PlayerList->Items[i];
+
+		Vehicle = Player->VehicleList;
+		while ( Vehicle )
+		{
+			if ( Vehicle->detection_override && Vehicle->owner == CallerPlayer )
+			{
+				Vehicle->detected = false;
+				Vehicle->detection_override = false;
+			}
+			if ( Vehicle->Disabled )
+			{
+				Vehicle->Disabled--;
+				if ( Vehicle->Disabled )
+				{
+					Vehicle = Vehicle->next;
+					continue;
+				}
+			}
+
+			if ( bChangeTurn ) Vehicle->RefreshData();
+			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
+
+			Vehicle = Vehicle->next;
+			// TODO: send new data values here
+		}
+	}
+	// Gun'em down:
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		cVehicle *Vehicle;
+		cPlayer *Player;
+		Player = PlayerList->Items[i];
+
+		Vehicle = Player->VehicleList;
+		while ( Vehicle )
+		{
+			//Vehicle->InWachRange();
+			Vehicle = Vehicle->next;
+		}
+	}
+
+	// TODO: implement these things
+
+	// produce resources:
+	//game->ActivePlayer->base->Rundenende();
+
+	// do research:
+	//game->ActivePlayer->DoResearch();
+
+	// collect trash:
+	//collectTrash();
+
+	// make autosave
+	if ( SettingsData.bAutoSave )
+	{
+		//makeAutosave();
+	}
+
+	//checkDefeat();
+}
+
+void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoiceNum )
+{
+	sReport *Report;
+	string sTmp;
+	int iCount = 0;
+	
+	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
+	while ( Player->ReportBuildings->iCount )
+	{
+		Report = Player->ReportBuildings->Items[0];
+		if ( iCount ) *sReportMsg += ", ";
+		iCount += Report->anz;
+		sTmp = iToStr( Report->anz ) + " " + Report->name;
+		*sReportMsg += Report->anz > 1 ? sTmp : Report->name;
+		Player->ReportBuildings->Delete ( 0 );
+		delete Report;
+	}
+	while ( Player->ReportVehicles->iCount )
+	{
+		Report = Player->ReportVehicles->Items[0];
+		if ( iCount ) *sReportMsg+=", ";
+		iCount += Report->anz;
+		sTmp = iToStr( Report->anz ) + " " + Report->name;
+		*sReportMsg += Report->anz > 1 ? sTmp : Report->name;
+		Player->ReportVehicles->Delete ( 0 );
+		delete Report;
+	}
+
+	if ( iCount == 0 )
+	{
+		if ( !Player->ReportForschungFinished ) *iVoiceNum = 0;
+	}
+	else if ( iCount == 1 )
+	{
+		*sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished") + ".";
+		if ( !Player->ReportForschungFinished ) *iVoiceNum = 1;
+	}
+	else
+	{
+		*sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished2") + ".";
+		if ( !Player->ReportForschungFinished ) *iVoiceNum = 2;
+	}
+	Player->ReportForschungFinished = false;
+}
+
+void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
+{
+	sReport *Report;
+	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
+	if ( bVehicle )
+	{
+		for ( int i = 0; i < Player->ReportVehicles->iCount; i++ )
+		{
+			Report = Player->ReportVehicles->Items[i];
+			if ( Report->name.compare ( sName ) == 0 )
+			{
+				Report->anz++;
+				return;
+			}
+		}
+		Report = new sReport;
+		Report->name = sName;
+		Report->anz = 1;
+		Player->ReportVehicles->Add ( Report );
+	}
+	else
+	{
+		for ( int i = 0; i < Player->ReportBuildings->iCount; i++ )
+		{
+			Report = Player->ReportBuildings->Items[i];
+			if ( Report->name.compare ( sName ) == 0 )
+			{
+				Report->anz++;
+				return;
+			}
+		}
+		Report = new sReport;
+		Report->name = sName;
+		Report->anz = 1;
+		Player->ReportBuildings->Add ( Report );
 	}
 }
