@@ -256,7 +256,12 @@ class cClient
 	*@param iNextPlayerNum Number of Player who has ended his turn
 	*/
 	void makeHotSeatEnd( int iNextPlayerNum );
-	void WaitForOtherPlayer( int iPlayerNum );
+	/**
+	* waits until this player gets a message, that he can stop waiting. This function is not finished!
+	*@author alzi alias DoctorDeath
+	*@param iPlayerNum Number of player for who this player has to wait
+	*/
+	void waitForOtherPlayer( int iPlayerNum );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;

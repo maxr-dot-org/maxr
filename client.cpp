@@ -183,7 +183,7 @@ void cClient::run()
 	mouse->MoveCallback = true;
 	Hud->DoAllHud();
 
-	WaitForOtherPlayer( 0 );
+	waitForOtherPlayer( 0 );
 
 	while ( 1 )
 	{
@@ -2584,7 +2584,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						drawFLC();
 					}
 					else bWaitForOthers = true;
-					WaitForOtherPlayer( iNextPlayerNum );
+					waitForOtherPlayer( iNextPlayerNum );
 				}
 				else
 				{
@@ -2828,7 +2828,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	ShowOK ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn"), true );
 }
 
-void cClient::WaitForOtherPlayer( int iPlayerNum )
+void cClient::waitForOtherPlayer( int iPlayerNum )
 {
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
