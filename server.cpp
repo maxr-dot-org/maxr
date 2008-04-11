@@ -129,6 +129,8 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
 
+	cLog::write("Server: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+
 	if ( iPlayerNum == -1 )
 	{
 		if ( network ) network->send( message->iLength, message->serialize() );
@@ -137,10 +139,18 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 		return;
 	}
 
-	cPlayer *Player;
+	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
 		if ( ( Player = PlayerList->Items[i])->Nr == iPlayerNum ) break;
+	}
+
+	if ( Player == NULL )
+	{
+		//player not found
+		cLog::write("Server: Error: Player " + iToStr(iPlayerNum) + " not found.", cLog::eLOG_TYPE_NETWORK);
+		delete message;
+		return;
 	}
 	// Socketnumber MAX_CLIENTS for lokal client
 	if ( Player->iSocketNum == MAX_CLIENTS )
@@ -225,6 +235,8 @@ void cServer::run()
 
 int cServer::HandleNetMessage( cNetMessage *message )
 {
+	cLog::write("Server: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+
 	switch ( message->iType )
 	{
 	case GAME_EV_LOST_CONNECTION:

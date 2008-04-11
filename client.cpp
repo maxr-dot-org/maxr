@@ -140,7 +140,8 @@ void cClient::kill()
 void cClient::sendNetMessage(cNetMessage *message)
 {
 	message->iPlayerNr = ActivePlayer->Nr;
-	
+	cLog::write("Client: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+
 	if (!network || network->isHost() ) 
 	{
 		//push an event to the lokal server in singleplayer, HotSeat or if this machine is the host
@@ -2419,6 +2420,8 @@ void cClient::handleMessages()
 
 int cClient::HandleNetMessage( cNetMessage* message )
 {
+	cLog::write("Client: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+
 	switch ( message->iType )
 	{
 	case GAME_EV_CHAT_SERVER:

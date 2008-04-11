@@ -20,12 +20,22 @@
 #include <string>
 #include "netmessage.h"
 #include "events.h"
+#include "network.h"
+#include "clientevents.h"
+#include "serverevents.h"
 
 cNetMessage::cNetMessage( char* c)
 {
 	iType = SDL_SwapLE16( *((Sint16*) c) );
 	iLength = SDL_SwapLE16( *((Sint16*) (c + 2)) );
 	iPlayerNr = c[4];
+
+	if ( iLength > PACKAGE_LENGHT || iLength < 5 )
+	{
+		//invalid netMessage
+		iLength = 5;
+		iType = -1;
+	}
 
 	data = (char*) malloc( iLength );
 	memcpy( data, c, iLength );
@@ -69,17 +79,23 @@ SDL_Event* cNetMessage::getGameEvent()
 	return event;
 }
 
-//Todo: check PACKAGE_LENGHT
 
 void cNetMessage::pushChar( char c)
 {
 	data = (char*) realloc( data, iLength + 1 );
 	data[iLength] = c;
 	iLength ++;
+
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
 }
 
 char cNetMessage::popChar()
 {
+	if ( iLength <= 5 ) 
+	{
+		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		return 0;
+	}
 	iLength--;
 	return data[iLength];
 }
@@ -89,10 +105,17 @@ void cNetMessage::pushInt16( Sint16 i )
 	data = (char*) realloc( data, iLength + 2 );
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
+
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
 }
 
 Sint16 cNetMessage::popInt16()
 {
+	if ( iLength <= 6 ) 
+	{
+		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		return 0;
+	}
 	iLength -= 2;
 	return SDL_SwapLE16( *((Sint16*) (data + iLength)) );
 }
@@ -102,10 +125,17 @@ void cNetMessage::pushInt32( Sint32 i )
 	data = (char*) realloc( data, iLength + 4 );
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
+
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
 }
 
 Sint32 cNetMessage::popInt32()
 {
+	if ( iLength <= 8 ) 
+	{
+		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		return 0;
+	}
 	iLength -= 4;
 	return SDL_SwapLE32( *((Sint32*) (data + iLength)) );
 }
@@ -129,19 +159,29 @@ void cNetMessage::pushString( string &s )
 	memcpy( data + iLength, c, stringLength );
 
 	iLength += stringLength;
+
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
 }
 
 string cNetMessage::popString()
 {
 	if ( data[iLength - 1] != '\0' )
 	{
-		cLog::write( "Error: invalid popString() from netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Warning: invalid popString() from netMessage", cLog::eLOG_TYPE_NETWORK );
 		return NULL;
 	}
 
 	//find begin of string
 	iLength -= 2;
-	while ( data[iLength] != '\0' ) iLength--;
+	while ( data[iLength] != '\0' )
+	{
+		if ( iLength <= 5 ) 
+		{
+			cLog::write( "Warning: pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NETWORK );
+			return string("");
+		}
+		iLength--;
+	}
 	//(data + iLenght) points now to the leading '\0'
 
 	return string( data + iLength + 1 );
@@ -150,16 +190,28 @@ string cNetMessage::popString()
 void cNetMessage::pushBool( bool b )
 {
 	data = (char*) realloc ( data, iLength + 1 );
+	data[iLength] = b;
 	if ( b != 0 ) data[iLength] = 1;
 	else data[iLength] = 0;
 
 	iLength++;
+
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
 }
 
 bool cNetMessage::popBool()
 {
+	if ( iLength <= 5 ) 
+	{
+		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		return 0;
+	}
+
 	iLength--;
-	return data[iLength];
+
+	if ( data[iLength] != 0 ) return 1;
+	else return 0;
+
 }
 
 void cNetMessage::pushFloat( float f )
@@ -250,3 +302,54 @@ float cNetMessage::popFloat()
     return result;
 }
 
+string cNetMessage::getTypeAsString()
+{
+	//find the string representation of the message type for
+	//should be updated when implementing a new message type
+	switch (iType)
+	{
+	case GAME_EV_ADD_BUILDING:
+		return string("GAME_EV_ADD_BUILDING");
+	case GAME_EV_ADD_VEHICLE:
+		return string("GAME_EV_ADD_VEHICLE");
+	case GAME_EV_DEL_BUILDING:
+		return string("GAME_EV_DEL_BUILDING");
+	case GAME_EV_DEL_VEHICLE:
+		return string("GAME_EV_DEL_VEHICLE");
+	case GAME_EV_ADD_ENEM_BUILDING:
+		return string("GAME_EV_ADD_ENEM_BUILDING");
+	case GAME_EV_ADD_ENEM_VEHICLE:
+		return string("GAME_EV_ADD_ENEM_VEHICLE");
+	case GAME_EV_CHAT_SERVER:
+		return string("GAME_EV_CHAT_SERVER");
+	case GAME_EV_LOST_CONNECTION:
+		return string("GAME_EV_LOST_CONNECTION");
+	case GAME_EV_CHAT_CLIENT:
+		return string("GAME_EV_CHAT_CLIENT");
+
+	default:
+		return iToStr( iType );
+	}
+}
+
+
+string cNetMessage::getHexDump()
+{
+	string dump = "0x";
+
+	serialize(); //updates the internal data
+
+	for (int i = 0; i < iLength; i++)
+	{
+		unsigned char byte = data[i];
+		unsigned char temp = byte/16;
+		if ( temp < 10 ) dump += ('0' + temp);
+		else dump += ( 'A' + temp - 10 );
+
+		temp = byte%16;
+		if ( temp < 10 ) dump += ('0' + temp);
+		else dump += ( 'A' + temp - 10 );
+	}
+
+	return dump;
+}

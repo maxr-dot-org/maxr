@@ -138,11 +138,23 @@ public:
 	* @param f the float to push to the message
 	*/
 	void pushFloat( float f );
+
 	/** pops a float from the end of the netMessage
 	* @author Eiko
 	* @return the float poped from the message
 	*/
 	float popFloat();
+
+	/** returns the string representation of iType
+	* this is only for better readability of the netlog
+	* @author Eiko
+	*/
+	string getTypeAsString();
+
+	/** returns the serial hexadecimal representation of the netMessage
+	* @author Eiko
+	*/
+	string getHexDump();
 	
 };
 
