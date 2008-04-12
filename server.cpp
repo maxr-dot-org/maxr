@@ -139,7 +139,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->send( message->iLength, message->serialize() );
+		if ( network ) network->send( PACKAGE_LENGHT, message->serialize() );
 		EventHandler->pushEvent( message->getGameEvent() );
 		delete message;
 		return;
@@ -166,7 +166,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	// on all other sockets the netMessage will be send over TCP/IP
 	else 
 	{
-		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize() );
+		if ( network ) network->sendTo( Player->iSocketNum, PACKAGE_LENGHT, message->serialize() );
 	}
 	delete message;
 }

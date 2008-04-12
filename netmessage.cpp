@@ -37,14 +37,14 @@ cNetMessage::cNetMessage( char* c)
 		iType = -1;
 	}
 
-	data = (char*) malloc( iLength );
+	data = (char*) malloc( PACKAGE_LENGHT );
 	memcpy( data, c, iLength );
 }
 
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = (char*) malloc( 5 * sizeof(char) );  // 0 - 1: reserviert für message typ
+	data = (char*) malloc( PACKAGE_LENGHT );	// 0 - 1: reserviert für message typ
 												// 2 - 3: reserviert für length
 												// 4:	  reserviert für Playernummer
 	iLength = 5;
@@ -82,7 +82,6 @@ SDL_Event* cNetMessage::getGameEvent()
 
 void cNetMessage::pushChar( char c)
 {
-	data = (char*) realloc( data, iLength + 1 );
 	data[iLength] = c;
 	iLength ++;
 
@@ -102,7 +101,6 @@ char cNetMessage::popChar()
 
 void cNetMessage::pushInt16( Sint16 i )
 {
-	data = (char*) realloc( data, iLength + 2 );
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
 
@@ -122,7 +120,6 @@ Sint16 cNetMessage::popInt16()
 
 void cNetMessage::pushInt32( Sint32 i )
 {
-	data = (char*) realloc( data, iLength + 4 );
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
 
@@ -143,10 +140,6 @@ Sint32 cNetMessage::popInt32()
 void cNetMessage::pushString( string &s )
 {
 	int stringLength = (int) s.length() + 2;
-
-	//Todo: netlog warning about stringlength
-
-	data = (char*) realloc( data, iLength + stringLength );
 	
 	//first write a '\0'
 	//in the netMessage both begin and end of the string are marked with a '\0'
@@ -189,11 +182,9 @@ string cNetMessage::popString()
 
 void cNetMessage::pushBool( bool b )
 {
-	data = (char*) realloc ( data, iLength + 1 );
+	
 	data[iLength] = b;
-	if ( b != 0 ) data[iLength] = 1;
-	else data[iLength] = 0;
-
+	
 	iLength++;
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );

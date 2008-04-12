@@ -190,12 +190,7 @@ public:
 	void close( int iClientNumber );
 
 	/**
-	* Sends data of an given lenght to the client/socket.
-	*@author alzi alias DoctorDeath
-	*param iClientNumber Number of client/socket to which the data should be send.
-	*param iLenght Lenght of data to be send.
-	*param buffer buffer with data to be send.
-	*return 0 on succes, -1 if an error occurs
+	* Sends da<
 	*/
 	int sendTo( int iClientNumber, int iLenght, char *buffer );
 	/**
@@ -213,14 +208,14 @@ public:
 	*param event The SDL_Event to be send.
 	*param iLenght Lenght of data1 of the event to be send. data2 will be ignored.
 	*/
-	int sendEventTo( int iClientNumber, SDL_Event *event, int iLenght );
+	//int sendEventTo( int iClientNumber, SDL_Event *event, int iLenght );
 	/**
 	* Converts the event to a network message sends it over the TCP connection to all clients.
 	*@author alzi alias DoctorDeath
 	*param event The SDL_Event to be send.
 	*param iLenght Lenght of data1 of the event to be send. data2 will be ignored.
 	*/
-	int sendEvent( SDL_Event *event, int iLenght );
+	//int sendEvent( SDL_Event *event, int iLenght );
 	/**
 	* Reads data of an given lenght from the client/socket.
 	*@author alzi alias DoctorDeath

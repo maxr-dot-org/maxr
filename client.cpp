@@ -154,7 +154,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 	{
 		//the client is only connected to one socket
 		//so netwwork->send() only sends to the server 
-		network->send( message->iLength, message->serialize() );
+		network->send( PACKAGE_LENGHT, message->serialize() );
 		delete message;
 	}
 }
@@ -2710,7 +2710,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
-	cPlayer *Player;
+	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
 		if ( PlayerList->Items[i]->Nr == iNum )
