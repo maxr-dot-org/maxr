@@ -14,7 +14,7 @@
 			<Editor name="JCK" time="2007-09-30 13:04:00"/>
 			<Editor name="Someone" time="2007-09-30 13:04:00"/>
 		</Author>
-		<Game_Version time="2007-09-30 13:04:00"/>
+		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
 	<Text>
 		<Main>
@@ -200,6 +200,11 @@
 			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
 			<Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
+      <Missing_Settings ENG="Options, map or savegame are not set" localized="Optionen, Karte oder Speicherstand sind nicht gesetzt"/>
+      <Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
+      <Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
+      <Finished_Turn ENG="has finished his turn." localized="hat seine Runde beendet."/>
+      <Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Damage" localized="Angriff"/>
