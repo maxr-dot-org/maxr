@@ -203,7 +203,6 @@
       <Missing_Settings ENG="Options, map or savegame are not set" localized="Optionen, Karte oder Speicherstand sind nicht gesetzt"/>
       <Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
       <Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
-      <Finished_Turn ENG="has finished his turn." localized="hat seine Runde beendet."/>
       <Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
 		</Multiplayer>
 		<Vehicles>

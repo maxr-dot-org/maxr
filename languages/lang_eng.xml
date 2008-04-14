@@ -203,7 +203,6 @@
       <Missing_Settings ENG="Options, map or savegame are not set"/>
       <Not_Ready ENG="is not ready"/>
       <Wait_Until ENG="Please wait until %s has finished his turn."/>
-      <Finished_Turn ENG="has finished his turn."/>
       <Deadline ENG="This turn will end in %s seconds."/>
 		</Multiplayer>
 		<Vehicles>
