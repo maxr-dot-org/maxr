@@ -2628,11 +2628,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( iTimeDelay != -1 )
 			{
-				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Finished_Turn") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
+				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
 				iTurnTime = iTimeDelay;
 				iStartTurnTime = SDL_GetTicks();
 			}
-			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Finished_Turn") );
+			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
 		}
 		break;
 	default:
