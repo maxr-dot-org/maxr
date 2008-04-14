@@ -4475,13 +4475,11 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				int iPlayerNum;
 				if ( ( !bOptions || sMap.empty() ) && sSaveGame.empty() )
 				{
-					// TODO: Translation!!
-					addChatLog ( "Options, map or Savegame not set" );
+					addChatLog ( lngPack.i18n ( "Text~Multiplayer~Missing_Settings" ) );
 				}
 				else if ( ( iPlayerNum = testAllReady() ) != -1 )
 				{
-					// TODO: Translation!!
-					addChatLog ( "Player " + PlayerList->Items[iPlayerNum]->name + " not ready" );
+					addChatLog ( PlayerList->Items[iPlayerNum]->name + " " + lngPack.i18n ( "Text~Multiplayer~Not_Ready" ) );
 				}
 				else
 				{

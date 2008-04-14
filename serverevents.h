@@ -64,7 +64,22 @@ void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iCli
 */
 void sendAddEnemyUnit( cVehicle *Vehicle, int iPlayer );
 void sendAddEnemyUnit ( cBuilding *Building, int iPlayer );
-
-void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum );
+/**
+* A client has to make a turnend
+*@author alzi alias DoctorDeath
+*@param bEndTurn True if the turnnumber has to be increased
+*@param bWaitForNextPlayer True if the receiver has to wait for an other player. (Only if he isn't the next player himselves)
+*@param iNextPlayerNum The number of the player who has to make his turn next.
+*@param sReport The turn start report for this player.
+*@param iVoiceNum Number of voice with the player has to play at his turn beginning.
+*/
+void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum, int iPlayer );
+/**
+* Information for other clients that one player has finished his turn
+*@author alzi alias DoctorDeath
+*@param iPlayerNum Number of player who has finished his turn.
+*@param iTimeDelay Deadline for the rest of the players until the turn will be finished. -1 for no deadline.
+*/
+void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
 
 #endif // servereventsH

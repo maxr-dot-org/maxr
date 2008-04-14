@@ -317,6 +317,12 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_LOST_CONNECTION");
 	case GAME_EV_CHAT_CLIENT:
 		return string("GAME_EV_CHAT_CLIENT");
+	case GAME_EV_WANT_TO_END_TURN:
+		return string("GAME_EV_WANT_TO_END_TURN");
+	case GAME_EV_MAKE_TURNEND:
+		return string("GAME_EV_MAKE_TURNEND");
+	case GAME_EV_FINISHED_TURN:
+		return string("GAME_EV_FINISHED_TURN");
 
 	default:
 		return iToStr( iType );

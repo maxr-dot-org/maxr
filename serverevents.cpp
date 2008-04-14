@@ -119,7 +119,7 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum )
+void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_MAKE_TURNEND );
 
@@ -128,6 +128,16 @@ void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNu
 	message->pushBool ( bEndTurn );
 	message->pushBool ( bWaitForNextPlayer );
 	message->pushInt16( iNextPlayerNum );
+
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendTurnFinished ( int iPlayerNum, int iTimeDelay )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_FINISHED_TURN );
+
+	message->pushInt16 ( iTimeDelay );
+	message->pushInt16( iPlayerNum );
 
 	Server->sendNetMessage( message );
 }

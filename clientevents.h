@@ -34,6 +34,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
 	GAME_EV_CHAT_SERVER,			// a chat message from server to client
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
+	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 };
 
 /**

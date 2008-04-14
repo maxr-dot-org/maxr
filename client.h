@@ -98,6 +98,10 @@ class cClient
 	bool bDebugTrace;
 	/** offset for the debug informations on the top of the gamewindow */
 	int iDebugOff;
+	/** how many seconds will be left for this turn */
+	int iTurnTime;
+	/** Ticks when the TurnTime has been started */
+	unsigned int iStartTurnTime;
 
 	/**
 	* checks the input of the player
@@ -262,6 +266,11 @@ class cClient
 	*@param iPlayerNum Number of player for who this player has to wait
 	*/
 	void waitForOtherPlayer( int iPlayerNum );
+	/**
+	* handles the rest-time of the current turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleTurnTime();
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;

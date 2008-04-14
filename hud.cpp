@@ -1183,6 +1183,20 @@ void cHud::ShowRunde ( void )
 	Client->bFlagDrawHud=true;
 }
 
+void cHud::showTurnTime ( int iTime )
+{
+	SDL_Rect scr,dest;
+	scr.x=156;
+	scr.y=215;
+	dest.w=scr.w=55;
+	dest.h=scr.h=15;
+	dest.x=537;
+	dest.y=5;
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
+	if ( iTime != -1 ) font->showTextCentered(564,7, iToStr( iTime ), LATIN_NORMAL, GraphicsData.gfx_hud);
+	Client->bFlagDrawHud=true;
+}
+
 void cHud::ErledigenButton ( bool set )
 {
 	SDL_Rect scr={132,172,25,24},dest={99,227,25,24};

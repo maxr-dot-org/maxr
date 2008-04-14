@@ -76,6 +76,7 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bDebugFX = false;
 	bDebugTrace = false;
 	bWaitForOthers = false;
+	iTurnTime = 0;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX( (char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str() );
@@ -501,6 +502,7 @@ void cClient::run()
 				FLI_NextFrame ( FLC );
 			}
 		}
+		handleTurnTime();
 		// change the wind direction:
 		if ( iTimer2 && SettingsData.bDamageEffects )
 		{
@@ -2568,8 +2570,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( bEndTurn )
 			{
 				iTurn++;
+				iTurnTime = 0;
 				Hud->ShowRunde();
 				Hud->EndeButton ( false );
+				Hud->showTurnTime ( -1 );
 			}
 
 			if ( bWaitForNextPlayer )
@@ -2615,6 +2619,20 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					break;
 				}
 			}
+		}
+		break;
+	case GAME_EV_FINISHED_TURN:
+		{
+			int iPlayerNum = message->popInt16();
+			int iTimeDelay = message->popInt16();
+
+			if ( iTimeDelay != -1 )
+			{
+				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Finished_Turn") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
+				iTurnTime = iTimeDelay;
+				iStartTurnTime = SDL_GetTicks();
+			}
+			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Finished_Turn") );
 		}
 		break;
 	default:
@@ -2834,8 +2852,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 	int iLastX = -1, iLastY = -1;
 	Uint8 *keystate;
 
-	// TODO: Translate!!!
-	font->showTextCentered( 320, 235, "Bitte warten sie bis " + getPlayerFromNumber( iPlayerNum )->name + " seine Runde beendet hat" ,LATIN_BIG );
+	font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
 	SHOW_SCREEN
 
 	while ( bWaitForOthers )
@@ -2858,5 +2875,15 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 		}
 
 		SDL_Delay ( 10 );
+	}
+}
+
+void cClient::handleTurnTime()
+{
+	if ( iTurnTime > 0 )
+	{
+		int iRestTime = iTurnTime - Round( ( SDL_GetTicks() - iStartTurnTime )/1000 );
+		if ( iRestTime < 0 ) iRestTime = 0;
+		Hud->showTurnTime ( iRestTime );
 	}
 }

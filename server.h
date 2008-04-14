@@ -96,6 +96,10 @@ class cServer
 	int iPlayerEndCount;
 	/** number of current turn */
 	int iTurn;
+	/** deadline in seconds if the first player has finished his turn*/
+	int iTurnDeadline;
+	/** Ticks when the deadline has been initialised*/
+	unsigned int iDeadlineStartTime;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -193,6 +197,11 @@ class cServer
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
 	void addReport ( string sName, bool bVehicle, int iPlayerNum );
+	/**
+	* checks wether the deadline has run down
+	*@author alzi alias DoctorDeath
+	*/
+	void checkDeadline ();
 public:
 	/** true if the game has been started */
 	bool bStarted;
