@@ -61,31 +61,11 @@ void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_VEHICLE );
 
-	message->pushInt16( Vehicle->data.max_hit_points );
-	message->pushInt16( Vehicle->data.max_ammo );
-	message->pushInt16( Vehicle->data.max_speed );
-	message->pushInt16( Vehicle->data.max_shots );
-	message->pushInt16( Vehicle->data.damage );
-	message->pushInt16( Vehicle->data.range );
-	message->pushInt16( Vehicle->data.scan );
-	message->pushInt16( Vehicle->data.armor );
-	message->pushInt16( Vehicle->data.costs );
-
-	message->pushInt16( Vehicle->data.hit_points );
-	message->pushInt16( Vehicle->data.shots );
-	message->pushInt16( Vehicle->data.speed );
-
 	message->pushInt16( Vehicle->dir );
-	message->pushBool ( Vehicle->Wachposten );
-	message->pushBool ( Vehicle->IsBuilding );
-	message->pushBool ( Vehicle->IsClearing );
-	
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
 	message->pushInt16( Vehicle->typ->nr );
 	message->pushInt16( Vehicle->owner->Nr );
-
-	//Todo: Unitname?
 
 	Server->sendNetMessage( message, iPlayer );
 }
@@ -94,27 +74,10 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_BUILDING );
 
-	//todo: bIsWorking. needed by client to show animation
-	message->pushInt16( Building->data.max_hit_points );
-	message->pushInt16( Building->data.max_ammo );
-	message->pushInt16( Building->data.max_shots );
-	message->pushInt16( Building->data.damage );
-	message->pushInt16( Building->data.range );
-	message->pushInt16( Building->data.scan );
-	message->pushInt16( Building->data.armor );
-	message->pushInt16( Building->data.costs );
-
-	message->pushInt16( Building->data.hit_points );
-	message->pushInt16( Building->data.shots );
-
-	message->pushBool ( Building->Wachposten );
-
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
 	message->pushInt16( Building->typ->nr );
 	message->pushInt16( Building->owner->Nr );
-
-	//Todo: unit name?
 
 	Server->sendNetMessage( message, iPlayer );
 }
@@ -140,4 +103,87 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay )
 	message->pushInt16( iPlayerNum );
 
 	Server->sendNetMessage( message );
+}
+
+void sendUnitData( cVehicle *Vehicle, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
+
+	// The unit data values
+	message->pushInt16( Vehicle->data.max_speed );
+	message->pushInt16( Vehicle->data.speed );
+
+	message->pushInt16( Vehicle->data.version );
+	message->pushInt16( Vehicle->data.max_hit_points );
+	message->pushInt16( Vehicle->data.hit_points );
+	message->pushInt16( Vehicle->data.armor );
+	message->pushInt16( Vehicle->data.scan );
+	message->pushInt16( Vehicle->data.range );
+	message->pushInt16( Vehicle->data.max_shots );
+	message->pushInt16( Vehicle->data.shots );
+	message->pushInt16( Vehicle->data.damage );
+	message->pushInt16( Vehicle->data.max_cargo );
+	message->pushInt16( Vehicle->data.cargo );
+	message->pushInt16( Vehicle->data.max_ammo );
+	message->pushInt16( Vehicle->data.ammo );
+	message->pushInt16( Vehicle->data.costs );
+	message->pushInt16( Vehicle->data.shield );
+	message->pushInt16( Vehicle->data.max_shield );
+
+	// Current state of the unit
+	message->pushBool ( Vehicle->Wachposten );
+	message->pushBool ( Vehicle->IsBuilding );
+	message->pushBool ( Vehicle->IsClearing );
+	message->pushInt16 ( Vehicle->Disabled );
+	message->pushString ( Vehicle->name );
+
+	// Data for identifying the unit by the client
+	message->pushBool( Vehicle->data.can_drive == DRIVE_AIR );
+	message->pushInt16( Vehicle->PosX );
+	message->pushInt16( Vehicle->PosY );
+	message->pushBool( true );	// true for vehicles
+	message->pushInt16( Vehicle->owner->Nr );
+
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
+
+	// The unit data values
+	message->pushInt16( Building->data.version );
+	message->pushInt16( Building->data.max_hit_points );
+	message->pushInt16( Building->data.hit_points );
+	message->pushInt16( Building->data.armor );
+	message->pushInt16( Building->data.scan );
+	message->pushInt16( Building->data.range );
+	message->pushInt16( Building->data.max_shots );
+	message->pushInt16( Building->data.shots );
+	message->pushInt16( Building->data.damage );
+	message->pushInt16( Building->data.max_cargo );
+	message->pushInt16( Building->data.cargo );
+	message->pushInt16( Building->data.max_ammo );
+	message->pushInt16( Building->data.ammo );
+	message->pushInt16( Building->data.costs );
+	message->pushInt16( Building->data.shield );
+	message->pushInt16( Building->data.max_shield );
+
+	// Current state of the unit
+	message->pushBool ( Building->Wachposten );
+	message->pushBool ( Building->IsWorking );
+	message->pushInt16 ( Building->Disabled );
+	message->pushString ( Building->name );
+
+	// Data for identifying the unit by the client
+	if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building ) message->pushBool( true );
+	else message->pushBool( false );
+	if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) message->pushBool( true );
+	else message->pushBool( false );
+	message->pushInt16( Building->PosX );
+	message->pushInt16( Building->PosY );
+	message->pushBool( false );	// false for buildings
+	message->pushInt16( Building->owner->Nr );
+
+	Server->sendNetMessage( message, iPlayer );
 }

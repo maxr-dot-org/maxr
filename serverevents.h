@@ -22,6 +22,7 @@
 #include "main.h"
 #include "network.h"
 #include "clientevents.h"
+#include "map.h"
 
 enum SERVER_EVENT_TYPES
 {
@@ -81,5 +82,14 @@ void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNu
 *@param iTimeDelay Deadline for the rest of the players until the turn will be finished. -1 for no deadline.
 */
 void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
+/**
+* Sends the data values of this unit to the client
+*@author alzi alias DoctorDeath
+*@param Vehicle The vehicle from which the data should be taken
+*@param Building The building from which the data should be taken
+*@param iPlayer Player who should receive this message
+*/
+void sendUnitData( cVehicle *Vehicle, int iPlayer );
+void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer );
 
 #endif // servereventsH

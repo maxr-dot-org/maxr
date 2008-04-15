@@ -372,8 +372,8 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 		}
 		if ( Landing->cargo && Vehicle )
 		{
-			// TODO: send cargo to clients
 			Vehicle->data.cargo = Landing->cargo;
+			sendUnitData ( Vehicle, Vehicle->owner->Nr );
 		}
 	}
 }
@@ -543,6 +543,7 @@ void cServer::checkPlayerUnits ()
 					{
 						NextVehicle->SeenByPlayerList->Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
+						sendUnitData( NextVehicle, MapPlayer->Nr );
 					}
 				}
 				else
@@ -583,6 +584,7 @@ void cServer::checkPlayerUnits ()
 					{
 						NextBuilding->SeenByPlayerList->Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
+						sendUnitData( NextBuilding, Map, MapPlayer->Nr );
 					}
 				}
 				else
@@ -749,7 +751,10 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				bShieldChaned = true;
 			}
 			Building = Building->next;
-			// TODO: send new data values here
+			for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+			{
+				sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+			}
 		}
 		if ( bShieldChaned )
 		{
@@ -786,7 +791,10 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
 
 			Vehicle = Vehicle->next;
-			// TODO: send new data values here
+			for ( int k = 0; k < Vehicle->SeenByPlayerList->iCount; k++ )
+			{
+				sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList->Items[k] );
+			}
 		}
 	}
 	// Gun'em down:

@@ -323,6 +323,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_MAKE_TURNEND");
 	case GAME_EV_FINISHED_TURN:
 		return string("GAME_EV_FINISHED_TURN");
+	case GAME_EV_UNIT_DATA:
+		return string("GAME_EV_UNIT_DATA");
 
 	default:
 		return iToStr( iType );

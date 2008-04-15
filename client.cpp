@@ -2516,22 +2516,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosX = message->popInt16();
 			AddedVehicle = Player->AddVehicle ( iPosX, iPosY, UnitsData.vehicle + iUnitNumber );
 
-			AddedVehicle->IsClearing = message->popBool();
-			AddedVehicle->IsBuilding = message->popBool();
-			AddedVehicle->Wachposten = message->popBool();
 			AddedVehicle->dir = message->popInt16();
-			AddedVehicle->data.speed = message->popInt16();
-			AddedVehicle->data.shots = message->popInt16();
-			AddedVehicle->data.hit_points = message->popInt16();
-			AddedVehicle->data.costs = message->popInt16();
-			AddedVehicle->data.armor = message->popInt16();
-			AddedVehicle->data.scan = message->popInt16();
-			AddedVehicle->data.range = message->popInt16();
-			AddedVehicle->data.damage = message->popInt16();
-			AddedVehicle->data.max_shots = message->popInt16();
-			AddedVehicle->data.max_speed = message->popInt16();
-			AddedVehicle->data.max_ammo = message->popInt16();
-			AddedVehicle->data.max_hit_points = message->popInt16();
 			
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 		}
@@ -2545,19 +2530,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosX = message->popInt16();
 
 			AddedBuilding = Player->AddBuilding ( iPosX, iPosY, UnitsData.building + iUnitNumber );
-
-			AddedBuilding->Wachposten = message->popBool();
-			AddedBuilding->data.shots = message->popInt16();
-			AddedBuilding->data.hit_points = message->popInt16();
-			AddedBuilding->data.costs = message->popInt16();
-			AddedBuilding->data.armor = message->popInt16();
-			AddedBuilding->data.scan = message->popInt16();
-			AddedBuilding->data.range = message->popInt16();
-			AddedBuilding->data.damage = message->popInt16();
-			AddedBuilding->data.max_shots = message->popInt16();
-			AddedBuilding->data.max_ammo = message->popInt16();
-			AddedBuilding->data.max_hit_points = message->popInt16();
-
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 		}
 		break;
@@ -2633,6 +2605,80 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iStartTurnTime = SDL_GetTicks();
 			}
 			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
+		}
+		break;
+	case GAME_EV_UNIT_DATA:
+		{
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			sUnitData *Data;
+
+			bool bVehicle = message->popBool();
+			int iPosY = message->popInt16();
+			int iPosX = message->popInt16();
+			// unit is a vehicle
+			if ( bVehicle )
+			{
+				cVehicle *Vehicle = NULL;
+
+				if ( message->popBool() ) Vehicle = Map->GO[iPosX+iPosY*Map->size].plane;
+				else Vehicle = Map->GO[iPosX+iPosY*Map->size].vehicle;
+				if ( !Vehicle )
+				{
+					cLog::write("New vehicle-data received, but can't find the vehicle", cLog::eLOG_TYPE_WARNING);
+					break;
+				}
+
+				Vehicle->name = message->popString();
+				Vehicle->Disabled = message->popInt16();
+				Vehicle->IsClearing = message->popBool();
+				Vehicle->IsBuilding = message->popBool();
+				Vehicle->Wachposten = message->popBool();
+
+				Data = &Vehicle->data;
+			}
+			else
+			{
+				cBuilding *Building = NULL;
+
+				if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].base;
+				else if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].subbase;
+				else Building = Map->GO[iPosX+iPosY*Map->size].top;
+				if ( !Building )
+				{
+					cLog::write("New building-data received, but can't find the building", cLog::eLOG_TYPE_WARNING);
+					break;
+				}
+
+				Building->name = message->popString();
+				Building->Disabled = message->popInt16();
+				Building->IsWorking = message->popBool();
+				Building->Wachposten = message->popBool();
+
+				Data = &Building->data;
+			}
+
+			Data->max_shield = message->popInt16();
+			Data->shield = message->popInt16();
+			Data->costs = message->popInt16();
+			Data->ammo = message->popInt16();
+			Data->max_ammo = message->popInt16();
+			Data->cargo = message->popInt16();
+			Data->max_cargo = message->popInt16();
+			Data->damage = message->popInt16();
+			Data->shots = message->popInt16();
+			Data->max_shots = message->popInt16();
+			Data->range = message->popInt16();
+			Data->scan = message->popInt16();
+			Data->armor = message->popInt16();
+			Data->hit_points = message->popInt16();
+			Data->max_hit_points = message->popInt16();
+			Data->version = message->popInt16();
+
+			if ( bVehicle )
+			{
+				Data->speed = message->popInt16();
+				Data->max_speed = message->popInt16();
+			}
 		}
 		break;
 	default:
