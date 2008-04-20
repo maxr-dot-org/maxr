@@ -187,3 +187,46 @@ void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
 
 	Server->sendNetMessage( message, iPlayer );
 }
+
+void sendChatMessageToClient( string message, int iType, int iPlayer )
+{
+	cNetMessage* newMessage;
+	newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
+	newMessage->pushString( message );
+	newMessage->pushChar( iType );
+	Server->sendNetMessage( newMessage, iPlayer );
+}
+
+void sendDoStartWork( cBuilding* building )
+{
+	int offset = building->PosX + building->PosY * Server->Map->size;
+
+	//check all players
+	for ( int i = 0; i < Server->PlayerList->iCount; i++)
+	{
+		cPlayer* player = Server->PlayerList->Items[i];
+		
+		//do not send to players who can't see the building
+		if ( !player->ScanMap[offset] ) continue;
+
+		cNetMessage* message = new cNetMessage( GAME_EV_DO_START_WORK );
+
+		//send the subbase data only to the owner
+		if ( building->owner->Nr == player->Nr )
+		{
+			sSubBase* subbase = building->SubBase;
+			message->pushInt16( subbase->HumanNeed );
+			message->pushInt16( subbase->EnergyProd );
+			message->pushInt16( subbase->OilNeed );
+			message->pushInt16( subbase->EnergyNeed );
+			message->pushInt16( subbase->MetalNeed );
+			message->pushInt16( subbase->GoldNeed );
+			message->pushInt16( subbase->MetalProd );
+			message->pushInt16( subbase->OilProd );
+			message->pushInt16( subbase->GoldProd );
+		}
+		message->pushInt32( offset );
+
+		Server->sendNetMessage( message, player->Nr );
+	}
+}

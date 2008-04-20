@@ -36,17 +36,33 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
+	GAME_EV_DO_START_WORK,			// starts a building
+};
+
+enum CHAT_MESSAGE_TYPES
+{
+	USER_MESSAGE,
+	SERVER_ERROR_MESSAGE,
+	SERVER_INFO_MESSAGE,
 };
 
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessage ( string sMsg );
+void sendChatMessageToServer ( string sMsg );
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath
 */
 void sendWantToEndTurn();
+
+/**
+* sends a request to start a building to the Server
+*@author Eiko
+*/
+void sendWantStartWork( cBuilding* building);
+
+
 
 #endif // clienteventsH

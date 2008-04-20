@@ -148,29 +148,6 @@ int cTCP::send( int iLenght, char *buffer )
 	return iReturnVal;
 }
 
-/*int cTCP::sendEvent( SDL_Event *event, int iLenght )
-{
-	int iReturnVal = 0;
-	for ( int i = 0; i < getSocketCount(); i++ )
-	{
-		if ( sendEventTo ( i, event, iLenght ) == -1 )
-		{
-			iReturnVal = -1;
-		}
-	}
-	return iReturnVal;
-}*/
-
-/*int cTCP::sendEventTo( int iClientNumber, SDL_Event *event, int iLenght )
-{
-	if ( iLenght > PACKAGE_LENGHT-2 ) iLenght = PACKAGE_LENGHT-2;
-	char msg[PACKAGE_LENGHT];
-	memset ( msg, 0, PACKAGE_LENGHT );
-	((Sint16*)msg)[0] = SDL_SwapLE16( event->user.code );
-	memcpy( msg+2, event->user.data1, iLenght );
-	return sendTo( iClientNumber, PACKAGE_LENGHT, msg );
-}*/
-
 int cTCP::read( int iClientNumber, int iLenght, char *buffer )
 {
 	int iMinLenght = 0;

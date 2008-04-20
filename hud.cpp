@@ -905,7 +905,7 @@ void cHud::CheckMouseOver ( void )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			//TODO: Log-Menü aufrufen...
-			sendChatMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
+			Client->addMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
 
 			LogButton ( false );
 		}

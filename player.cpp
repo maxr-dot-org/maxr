@@ -633,35 +633,35 @@ void cPlayer::DoResearch ( void )
 				switch ( i )
 				{
 					case 0:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Attack" ));
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Attack" ));
 						a=0.5;
 						break;
 					case 1:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Shoots" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Shoots" ) );
 						a=0.5;
 						break;
 					case 2:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Range" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Range" ) );
 						a=1.0;
 						break;
 					case 3:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Armor" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Armor" ) );
 						a=0.25;
 						break;
 					case 4:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Hitpoints" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Hitpoints" ) );
 						a=0.25;
 						break;
 					case 5:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Speed" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Speed" ) );
 						a=0.5;
 						break;
 					case 6:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Scan" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Scan" ) );
 						a=1.0;
 						break;
 					case 7:
-						sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Costs" ) );
+						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Costs" ) );
 						a=1.0;
 						break;
 				}

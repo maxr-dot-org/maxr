@@ -27,6 +27,7 @@
 #include "keys.h"
 #include "fonts.h"
 #include "netmessage.h"
+#include "main.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg)
 {
@@ -571,7 +572,7 @@ int cClient::checkUser()
 			bChatInput=false;
 			if ( !InputStr.empty() && !doCommand ( InputStr ) )
 			{
-				sendChatMessage( ActivePlayer->name+": " + InputStr);
+				sendChatMessageToServer( ActivePlayer->name+": " + InputStr);
 			}
 		}
 		else
@@ -2430,7 +2431,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	switch ( message->iType )
 	{
 	case GAME_EV_CHAT_SERVER:
-		addMessage( message->popString() );
+		switch (message->popChar())
+		{
+		case USER_MESSAGE:
+			//Todo: play sound for incoming user chat message
+			addMessage( message->popString() );
+			break;
+		case SERVER_ERROR_MESSAGE:
+			PlayFX ( SoundData.SNDQuitsch );
+			addMessage( lngPack.i18n( message->popString() ) );
+			break;
+		case SERVER_INFO_MESSAGE:
+			addMessage( lngPack.i18n( message->popString() ) );
+			break;
+		}
+		
 		break;
 	case GAME_EV_ADD_BUILDING:
 		{
@@ -2679,6 +2694,30 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
 			}
+		}
+		break;
+	case GAME_EV_DO_START_WORK:
+		{
+			int offset = message->popInt32();
+			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
+
+			cBuilding* building = Client->Map->GO[offset].top;
+			if ( building == NULL ) break;
+			
+			building->ClientStartWork();
+
+			//if the message is not for the owner of the building, no subbase data follows
+			if ( message->iPlayerNr != building->owner->Nr ) break;
+
+			building->SubBase->GoldProd;
+			building->SubBase->OilProd;
+			building->SubBase->MetalProd;
+			building->SubBase->GoldNeed;
+			building->SubBase->MetalNeed;
+			building->SubBase->EnergyNeed;
+			building->SubBase->OilNeed;
+			building->SubBase->EnergyProd;
+			building->SubBase->HumanNeed;
 		}
 		break;
 	default:

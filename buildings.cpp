@@ -1378,23 +1378,23 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	}
 }
 
-// Startet die Arbeit des Gebäudes:
-bool cBuilding::StartWork ( bool engine_call )
+//starts the building for the server thread
+void cBuilding::ServerStartWork ()
 {
 	cBuilding *b;
 	int i;
 
 	if ( IsWorking )
-		return false;
+	{
+		sendDoStartWork(this);
+		return;
+	}
 
 	if ( Disabled )
-		return false;
-
-	if ( engine_call )
 	{
-		IsWorking = true;
-		EffectAlpha = 0;
-		return true;
+		//Todo: i18n
+		sendChatMessageToClient("Building disabled", SERVER_ERROR_MESSAGE, owner->Nr );
+		return;
 	}
 
 	// Humanverbraucher:
@@ -1402,8 +1402,8 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
-			return false;
+			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
+			return;
 		}
 
 		SubBase->HumanNeed += data.human_need;
@@ -1414,8 +1414,8 @@ bool cBuilding::StartWork ( bool engine_call )
 	{
 		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->OilProd )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Insufficient") );
-			return false;
+			sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+			return;
 		}
 		else
 		{
@@ -1430,14 +1430,14 @@ bool cBuilding::StartWork ( bool engine_call )
 		{
 			if ( data.energy_need + SubBase->EnergyNeed > SubBase->MaxEnergyProd )
 			{
-				sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Insufficient") );
-				return false;
+				sendChatMessageToClient ( "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+				return;
 			}
 			else
 			{
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
-					sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_ToLow") );
+					sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
 
 					for ( i = 0;i < SubBase->buildings->iCount;i++ )
 					{
@@ -1446,7 +1446,7 @@ bool cBuilding::StartWork ( bool engine_call )
 						if ( !b->data.energy_prod || b->data.is_big )
 							continue;
 
-						b->StartWork();
+						b->ServerStartWork();
 
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
@@ -1462,12 +1462,13 @@ bool cBuilding::StartWork ( bool engine_call )
 						if ( !b->data.energy_prod )
 							continue;
 
-						b->StartWork();
+						b->ServerStartWork();
 					}
 
 					if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 					{
-						return false;
+						sendChatMessageToClient("", SERVER_ERROR_MESSAGE, owner->Nr);
+						return;
 					}
 
 					SubBase->EnergyNeed += data.energy_need;
@@ -1499,22 +1500,32 @@ bool cBuilding::StartWork ( bool engine_call )
 		SubBase->GoldProd += GoldProd;
 	}
 
-	// Allgemeines:
+	IsWorking = true;
+	sendDoStartWork(this);
+}
+
+//starts the buildung in the cliend thread
+void cBuilding::ClientStartWork()
+{
+
+	if ( IsWorking ) return;
+
 	IsWorking = true;
 
 	EffectAlpha = 0;
 
-	StopFXLoop ( Client->iObjectStream );
+	if ( selected )
+	{
+		StopFXLoop ( Client->iObjectStream );
+		PlayFX ( typ->Start );
+		Client->iObjectStream = PlayStram();
 
-	PlayFX ( typ->Start );
+		ShowDetails();
+	}
 
-	Client->iObjectStream = PlayStram();
+	//if ( data.can_research ) owner->StartAResearch();
 
-	ShowDetails();
-
-	if ( data.can_research ) owner->StartAResearch();
-
-	return true;
+	return;
 }
 
 // Stoppt die Arbeit des Gebäudes:
@@ -1534,7 +1545,7 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	{
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
+			//sendChatMessager ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
 			return;
 		}
 
@@ -7134,7 +7145,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 					if ( BuildList->iCount > 0 )
 					{
-						StartWork();
+						//StartWork();
 					}
 
 					break;
@@ -8122,12 +8133,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
-			if ( !StartWork() )
-			{
-				PlayFX ( SoundData.SNDQuitsch );
-			}
-
+			sendWantStartWork(this);
 			return;
 		}
 
@@ -8334,7 +8340,7 @@ void cBuilding::DrawMenu ( void )
 			owner->DoScan();
 
 			sprintf ( str, "%d von %d aufgerüstet.", count, sum );
-			sendChatMessage ( str );
+			//sendChatMessage ( str );
 
 			return;
 		}

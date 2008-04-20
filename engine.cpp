@@ -861,7 +861,7 @@ void cEngine::CheckDefeat ( void )
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
 			sTmpString += p->name + " ";
 			sTmpString += lngPack.i18n( "Text~Comp~Defeated") + "!";
-			sendChatMessage ( sTmpString );
+			//sendChatMessage ( sTmpString );
 
 			if ( game->HotSeat )
 			{
@@ -933,7 +933,7 @@ void cEngine::MakeRundenstartReport ( void )
 	string sReportMsg = "";
 	string stmp = "";
 	string sTmp = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr(game->Runde);
-	sendChatMessage(sTmp);
+	//sendChatMessage(sTmp);
 	int anz = 0;
 	
 	while ( game->ActivePlayer->ReportBuildings->iCount )
@@ -974,7 +974,7 @@ void cEngine::MakeRundenstartReport ( void )
 		if ( !game->ActivePlayer->ReportForschungFinished ) PlayVoice ( VoiceData.VOIStartMore );
 	}
 	game->ActivePlayer->ReportForschungFinished=false;
-	sendChatMessage ( sReportMsg );
+	//sendChatMessage ( sReportMsg );
 }
 
 // Bereitet das Logging vor:
@@ -1249,7 +1249,7 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 // Sends a chat-message:
 void cEngine::SendChatMessage(const char *str)
 {
-	sendChatMessage(str);
+	//sendChatMessage(str);
 	PlayFX(SoundData.SNDChat);
 }
 

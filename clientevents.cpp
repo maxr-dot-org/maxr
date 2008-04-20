@@ -21,7 +21,7 @@
 #include "events.h"
 #include "client.h"
 
-void sendChatMessage ( string sMsg )
+void sendChatMessageToServer ( string sMsg )
 {
 	
 	cNetMessage* message = new cNetMessage( GAME_EV_CHAT_CLIENT );
@@ -33,4 +33,12 @@ void sendWantToEndTurn()
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_TO_END_TURN );
 	Client->sendNetMessage( message );
+}
+
+void sendWantStartWork( cBuilding* building)
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_START_WORK );
+	message->pushInt16(building->PosX);
+	message->pushInt16(building->PosY);
+	Client->sendNetMessage(message);
 }

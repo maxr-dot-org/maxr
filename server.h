@@ -68,16 +68,13 @@ class cServer
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
-	/** the map */
-	cMap *Map;
+
 	/** current movejob */
 	cMJobs *mjobs;
 	/** List with all active movejobs */
 	cList<cMJobs*> *ActiveMJobs;
 	/** List with all attackjobs */
 	cList<cAJobs*> *AJobs;
-	/** List with all players */
-	cList<cPlayer*> *PlayerList;
 	/** true if this is a hotseat game */
 	bool bHotSeat;
 	/** number of active player in hotseat */
@@ -202,7 +199,11 @@ class cServer
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDeadline ();
-public:
+public:	
+	/** the map */
+	cMap *Map;
+	/** List with all players */
+	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
 

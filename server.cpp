@@ -255,15 +255,26 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_LOST_CONNECTION:
 		break;
 	case GAME_EV_CHAT_CLIENT:
-		cNetMessage* newMessage;
-		newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
-		newMessage->pushString( message->popString() );
-		sendNetMessage( newMessage );
+		sendChatMessageToClient( message->popString(), USER_MESSAGE );
 		break;
 	case GAME_EV_WANT_TO_END_TURN:
 		handleEnd ( message->iPlayerNr );
 		break;
+	case GAME_EV_WANT_START_WORK:
+		{
+			int PosY = message->popInt16();
+			int PosX = message->popInt16();
 
+			//check for invalid messages
+			if ( PosY < 0 || PosY > Map->size ) break;
+			if ( PosX < 0 || PosX > Map->size ) break;
+			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
+			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
+			
+			//handle message
+			building->ServerStartWork();
+			break;
+		}
 	default:
 		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 	}

@@ -906,7 +906,7 @@ int cGame::CheckUser ( void )
 				SelectedBuilding->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, ptr->typ->data.iBuilt_Costs);
 				ptr->metall_remaining=iTurboBuildCosts[SelectedBuilding->BuildSpeed];
 				SelectedBuilding->BuildList->Add( ptr );
-				SelectedBuilding->StartWork();
+				//SelectedBuilding->StartWork();
 			}
 			else
 			{
@@ -914,7 +914,7 @@ int cGame::CheckUser ( void )
 				SelectedBuilding->BuildList->Delete( 0 );
 				if ( SelectedBuilding->BuildList->iCount )
 				{
-					SelectedBuilding->StartWork();
+					//SelectedBuilding->StartWork();
 				}
 			}
 			//MouseMoveCallback ( true );
@@ -1270,7 +1270,7 @@ void cGame::AddCoords (const char *msg,int x,int y )
  	stringstream strStream;
  	//e.g. [85,22] missel MK I is under attack (F1)
  	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString ( KeysList.KeyJumpToAction ) << ")";
-	sendChatMessage ( strStream.str() );
+	//sendChatMessage ( strStream.str() );
 	MsgCoordsX=x;
 	MsgCoordsY=y;
 }
@@ -4173,8 +4173,8 @@ bool cGame::MakeHotSeatEnde ( void )
 		sstmp = PlayerCheat.substr ( 0,7 );
 		if ( !strcmp ( sstmp.c_str(),ActivePlayer->name.c_str() ) )
 			PlayerCheat="";
-		else
-			sendChatMessage ( game->PlayerCheat );
+		//else
+			//sendChatMessage ( game->PlayerCheat );
 	}
 	if ( HotSeatPlayer==0 ) return true;
 	engine->MakeRundenstartReport();

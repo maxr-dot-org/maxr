@@ -417,7 +417,7 @@ void cBase::Rundenende ( void )
 		if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 )
 		{
 			// Generator muss abgeschaltet werden:
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Low") );
+			//sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Low") );
 			for ( k=0;k<sb->buildings->iCount&&sb->EnergyProd;k++ )
 			{
 				cBuilding *b;
@@ -432,7 +432,7 @@ void cBase::Rundenende ( void )
 		// Energieverbraucher prüfen:
 		if ( sb->EnergyNeed>sb->EnergyProd )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Low") );
+			//sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Low") );
 			for ( k=0;k<sb->buildings->iCount;k++ )
 			{
 				cBuilding *b;
@@ -447,7 +447,7 @@ void cBase::Rundenende ( void )
 		// Metall produzieren/abziehen:
 		if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Metal_Low") );
+			//sendChatMessage ( lngPack.i18n( "Text~Comp~Metal_Low") );
 			for ( k=0;k<sb->buildings->iCount;k++ )
 			{
 				cBuilding *b;
@@ -463,7 +463,7 @@ void cBase::Rundenende ( void )
 		// Gold produzieren/abziehen:
 		if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Gold_Low") );
+			//sendChatMessage ( lngPack.i18n( "Text~Comp~Gold_Low") );
 			for ( k=0;k<sb->buildings->iCount;k++ )
 			{
 				cBuilding *b;
@@ -481,7 +481,7 @@ void cBase::Rundenende ( void )
 		// Humanneed prüfen:
 		if ( sb->HumanNeed>sb->HumanProd )
 		{
-			sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
+			//sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
 			for ( k=0;k<sb->buildings->iCount;k++ )
 			{
 				cBuilding *b;
@@ -496,7 +496,7 @@ void cBase::Rundenende ( void )
 		// Energieoptimierungen:
 		if ( OptimizeEnergy ( sb ) )
 		{
-			sendChatMessage (lngPack.i18n( "Text~Comp~Energy_Optimize"));
+			//sendChatMessage (lngPack.i18n( "Text~Comp~Energy_Optimize"));
 		}
 
 		// Reparaturen durchführen/bauen/aufladen:
@@ -635,7 +635,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 		for ( i=0;i<eb->iCount;i++ )
 		{
 			if ( i>=bneed ) break;
-			eb->Items[i]->StartWork();
+			//eb->Items[i]->StartWork();
 			eb->Delete ( i );
 			i--;
 			bneed--;
@@ -643,7 +643,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 		for ( i=0;i<es->iCount;i++ )
 		{
 			if ( i>=sneed&&sb->EnergyNeed<=sb->EnergyProd ) break;
-			es->Items[i]->StartWork();
+			//es->Items[i]->StartWork();
 			es->Delete ( i );
 			i--;
 			sneed--;

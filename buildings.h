@@ -156,7 +156,8 @@ public:
   void ShowBigDetails(void);
   void CheckNeighbours(void);
   void DrawConnectors(SDL_Rect dest);
-  bool StartWork(bool engine_call=false);
+  void ServerStartWork();
+  void cBuilding::ClientStartWork();
   void StopWork(bool override,bool engine_call=false);
   bool CanTransferTo(struct sGameObjects *go);
   void ShowTransfer(sGameObjects *target);

@@ -30,6 +30,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_LOST_CONNECTION = 0,	// connection on a socket has been lost
 	GAME_EV_CHAT_CLIENT,			// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
+	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 };
 
 /**
@@ -91,5 +92,20 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
 */
 void sendUnitData( cVehicle *Vehicle, int iPlayer );
 void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer );
+
+/**
+* sends a text message to one or all client
+*@author Eiko
+*@param message the message to be send
+*@param iType spezifies if this is an error message, info message from the Server or a text message from an other player
+*@param iPlayer -1 the playernumber or -1 for broatcast
+*/
+void sendChatMessageToClient( string message, int iType, int iPlayer = -1 );
+
+/**
+* sends all nessesary information to all clients to start the building
+*@ author Eiko
+*/
+void sendDoStartWork( cBuilding* building );
 
 #endif // servereventsH
