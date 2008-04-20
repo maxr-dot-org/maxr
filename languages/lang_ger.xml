@@ -228,8 +228,8 @@
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
 			<Energy_Insufficient localized="Nicht genug Energie zum Einschalten vorhanden!"/>
 			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
-			<Fuel_Insufficient ENG="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
-			<Energy_IsNeeded ENG="Kann Generator nicht abschalten, Energie wird benötigt!"/>
+			<Fuel_Insufficient localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
+			<Energy_IsNeeded localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Defeated ENG="defeated" localized="besiegt"/>
