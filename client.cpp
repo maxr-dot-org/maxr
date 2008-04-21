@@ -72,7 +72,8 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bUpShowBuild = true;
 	bUpShowTNT = false;
 	bAlienTech = false;
-	bDebugBase = false;
+	bDebugBaseServer = false;
+	bDebugBaseClient = false;
 	bDebugWache = false;
 	bDebugFX = false;
 	bDebugTrace = false;
@@ -393,9 +394,16 @@ void cClient::run()
 		}
 		// Debugausgaben machen:
 		iDebugOff = 30;
-		if ( bDebugBase && bFlagDrawMap )
+		if ( bDebugBaseClient && bFlagDrawMap )
 		{
 			font->showText(550,iDebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
+		}
+
+		if ( bDebugBaseServer && bFlagDrawMap )
+		{
+			cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
+			font->showText(550,iDebugOff, "subbases: " + iToStr(serverPlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 	
@@ -1227,12 +1235,29 @@ void cClient::drawMap( bool bPure )
 				if ( Map->GO[iPos].top&&Map->GO[iPos].top->PosX==iX&&Map->GO[iPos].top->PosY==iY )
 				{
 					Map->GO[iPos].top->Draw ( &dest );
-					if ( bDebugBase )
+					if ( bDebugBaseClient )
 					{
 						sSubBase *sb;
 						tmp=dest;
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=Map->GO[iPos].top->SubBase;
+						SDL_FillRect ( buffer,&tmp, (long int) sb );
+						font->showText(dest.x+1,dest.y+1, iToStr(( long int ) ( sb )), LATIN_SMALL_WHITE);
+						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
+						
+						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+						font->showText(dest.x+1,dest.y+1+16, sTmp, LATIN_SMALL_WHITE);
+
+						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+						font->showText(dest.x+1,dest.y+1+24, sTmp, LATIN_SMALL_WHITE);
+					}
+					if ( bDebugBaseServer )
+					{
+						sSubBase *sb;
+						tmp=dest;
+						if ( tmp.h>8 ) tmp.h=8;
+						sb=Server->Map->GO[iPos].top->SubBase;
 						SDL_FillRect ( buffer,&tmp, (long int) sb );
 						font->showText(dest.x+1,dest.y+1, iToStr(( long int ) ( sb )), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
@@ -2134,8 +2159,9 @@ bool cClient::doCommand ( string sCmd )
 {
 	/*if ( sCmd.compare( "fps on" ) == 0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
 	if ( sCmd.compare( "fps off" ) == 0 ) {DebugFPS=false;return true;}*/
-	if ( sCmd.compare( "base on" ) == 0 ) { bDebugBase = true; return true; }
-	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBase = false; return true; }
+	if ( sCmd.compare( "base client" ) == 0 ) { bDebugBaseClient = true; bDebugBaseServer = false; return true; }
+	if ( sCmd.compare( "base server" ) == 0 ) { if (Server) bDebugBaseServer = true; bDebugBaseClient = false; return true; }
+	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBaseServer = false; bDebugBaseClient = false; return true; }
 	if ( sCmd.compare( "wache on" ) == 0 ) { bDebugWache =true; return true; }
 	if ( sCmd.compare( "wache off" ) == 0 ) { bDebugWache =false; return true; }
 	if ( sCmd.compare( "fx on" ) == 0 ) { bDebugFX = true; return true; }

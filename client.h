@@ -88,8 +88,10 @@ class cClient
 	int iMsgCoordsX, iMsgCoordsY;
 	/** true if the player has been defeated */
 	bool bDefeated;
-	/** tshow infos about the base */
-	bool bDebugBase;
+	/** show infos about the bases of the server. Only works on the host */
+	bool bDebugBaseServer;
+	/** show infos about the bases of the client */
+	bool bDebugBaseClient;
 	/** show infos about the sentrys */
 	bool bDebugWache;
 	/** show FX-infos */

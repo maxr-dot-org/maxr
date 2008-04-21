@@ -159,13 +159,7 @@ class cServer
 	*@author alzi alias DoctorDeath
 	*/
 	void checkPlayerUnits ();
-	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer *getPlayerFromNumber ( int iNum );
+
 	/**
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
@@ -215,6 +209,13 @@ public:
 	*@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
 	*/
 	void init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool bPlayTurns );
+	/**
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer *getPlayerFromNumber ( int iNum );
 	/**
 	* kills the server class
 	*@author alzi alias DoctorDeath
