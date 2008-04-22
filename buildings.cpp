@@ -1258,29 +1258,29 @@ void cBuilding::ShowBigDetails ( void )
 }
 
 // Prüft, ob es Nachbarn gibt:
-void cBuilding::CheckNeighbours ( void )
+void cBuilding::CheckNeighbours ( cMap *Map )
 {
 	int pos;
-	pos = PosX + PosY * Client->Map->size;
-#define CHECK_NEIGHBOUR(a,m) if(a>=0&&a<Client->Map->size*Client->Map->size&&abs((a)%Client->Map->size-PosX)<4&&abs((a)/Client->Map->size-PosY)<4&&Client->Map->GO[a].top&&Client->Map->GO[a].top->owner==owner&&Client->Map->GO[a].top->SubBase){m=true;}else{m=false;}
+	pos = PosX + PosY * Map->size;
+#define CHECK_NEIGHBOUR(a,m) if(a>=0&&a<Map->size*Map->size&&abs((a)%Map->size-PosX)<4&&abs((a)/Map->size-PosY)<4&&Map->GO[a].top&&Map->GO[a].top->owner==owner&&Map->GO[a].top->SubBase){m=true;}else{m=false;}
 
 	if ( !data.is_big )
 	{
-		CHECK_NEIGHBOUR ( pos - Client->Map->size, BaseN )
+		CHECK_NEIGHBOUR ( pos - Map->size, BaseN )
 		CHECK_NEIGHBOUR ( pos + 1, BaseE )
-		CHECK_NEIGHBOUR ( pos + Client->Map->size, BaseS )
+		CHECK_NEIGHBOUR ( pos + Map->size, BaseS )
 		CHECK_NEIGHBOUR ( pos - 1, BaseW )
 	}
 	else
 	{
-		CHECK_NEIGHBOUR ( pos - Client->Map->size, BaseN )
-		CHECK_NEIGHBOUR ( pos - Client->Map->size + 1, BaseBN )
+		CHECK_NEIGHBOUR ( pos - Map->size, BaseN )
+		CHECK_NEIGHBOUR ( pos - Map->size + 1, BaseBN )
 		CHECK_NEIGHBOUR ( pos + 2, BaseE )
-		CHECK_NEIGHBOUR ( pos + 2 + Client->Map->size, BaseBE )
-		CHECK_NEIGHBOUR ( pos + Client->Map->size*2, BaseS )
-		CHECK_NEIGHBOUR ( pos + Client->Map->size*2 + 1, BaseBS )
+		CHECK_NEIGHBOUR ( pos + 2 + Map->size, BaseBE )
+		CHECK_NEIGHBOUR ( pos + Map->size*2, BaseS )
+		CHECK_NEIGHBOUR ( pos + Map->size*2 + 1, BaseBS )
 		CHECK_NEIGHBOUR ( pos - 1, BaseW )
-		CHECK_NEIGHBOUR ( pos - 1 + Client->Map->size, BaseBW )
+		CHECK_NEIGHBOUR ( pos - 1 + Map->size, BaseBW )
 	}
 }
 

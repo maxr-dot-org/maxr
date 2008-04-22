@@ -823,7 +823,7 @@ void RunSPMenu ( void )
 					// init the players of playerlist
 					for ( int i = 0; i < ServerPlayerList->iCount; i++ )
 					{
-						ServerPlayerList->Items[i]->InitMaps ( Map->size, Map );
+						ServerPlayerList->Items[i]->InitMaps ( ServerMap->size, ServerMap );
 						ServerPlayerList->Items[i]->Credits = options.credits;
 					}
 					// init server

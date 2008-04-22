@@ -51,7 +51,7 @@ void cBase::AddBuilding ( cBuilding *b )
 	NeighbourList=new cList<sSubBase*>;
 	b->SubBase= ( sSubBase* ) 1;
 	// Prüfen, ob ein Gebäude in in der Nähe steht:
-#define CHECK_NEIGHBOUR(a) if(a>=0&&a<map->size*map->size&&map->GO[a].top&&map->GO[a].top->owner==b->owner&&map->GO[a].top->SubBase){NeighbourList->Add(map->GO[a].top->SubBase);map->GO[a].top->CheckNeighbours();}
+#define CHECK_NEIGHBOUR(a) if(a>=0&&a<map->size*map->size&&map->GO[a].top&&map->GO[a].top->owner==b->owner&&map->GO[a].top->SubBase){NeighbourList->Add(map->GO[a].top->SubBase);map->GO[a].top->CheckNeighbours( map );}
 	if ( !b->data.is_big )
 	{
 		// Kleines Gebäude:
@@ -76,7 +76,7 @@ void cBase::AddBuilding ( cBuilding *b )
 	{
 		int i,k;
 		// Nachbarn gefunden:
-		b->CheckNeighbours();
+		b->CheckNeighbours( map );
 		// Die doppelten Einträge löschen:
 		for ( i=0;i<NeighbourList->iCount;i++ )
 		{
