@@ -2735,15 +2735,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			//if the message is not for the owner of the building, no subbase data follows
 			if ( message->iPlayerNr != building->owner->Nr ) break;
 
-			building->SubBase->GoldProd;
-			building->SubBase->OilProd;
-			building->SubBase->MetalProd;
-			building->SubBase->GoldNeed;
-			building->SubBase->MetalNeed;
-			building->SubBase->EnergyNeed;
-			building->SubBase->OilNeed;
-			building->SubBase->EnergyProd;
-			building->SubBase->HumanNeed;
+			building->SubBase->GoldProd = message->popInt16();
+			building->SubBase->OilProd = message->popInt16();
+			building->SubBase->MetalProd = message->popInt16();
+			building->SubBase->GoldNeed = message->popInt16();
+			building->SubBase->MetalNeed = message->popInt16();
+			building->SubBase->EnergyNeed = message->popInt16();
+			building->SubBase->OilNeed = message->popInt16();
+			building->SubBase->EnergyProd = message->popInt16();
+			building->SubBase->HumanNeed = message->popInt16();
 		}
 		break;
 	case GAME_EV_DO_STOP_WORK:
@@ -2759,15 +2759,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			//if the message is not for the owner of the building, no subbase data follows
 			if ( message->iPlayerNr != building->owner->Nr ) break;
 
-			building->SubBase->GoldProd;
-			building->SubBase->OilProd;
-			building->SubBase->MetalProd;
-			building->SubBase->GoldNeed;
-			building->SubBase->MetalNeed;
-			building->SubBase->EnergyNeed;
-			building->SubBase->OilNeed;
-			building->SubBase->EnergyProd;
-			building->SubBase->HumanNeed;
+			building->SubBase->GoldProd = message->popInt16();
+			building->SubBase->OilProd = message->popInt16();
+			building->SubBase->MetalProd = message->popInt16();
+			building->SubBase->GoldNeed = message->popInt16();
+			building->SubBase->MetalNeed = message->popInt16();
+			building->SubBase->EnergyNeed = message->popInt16();
+			building->SubBase->OilNeed = message->popInt16();
+			building->SubBase->EnergyProd = message->popInt16();
+			building->SubBase->HumanNeed = message->popInt16();
 		}
 		break;
 	default:
