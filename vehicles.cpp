@@ -6063,7 +6063,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 				{
 					b->Disabled = 2 + CommandoRank / 2;
 					b->data.shots = 0;
-					b->StopWork ( true );
+					//b->StopWork ( true );
 				}
 			}
 		}

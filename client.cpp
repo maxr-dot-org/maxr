@@ -2746,6 +2746,30 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			building->SubBase->HumanNeed;
 		}
 		break;
+	case GAME_EV_DO_STOP_WORK:
+		{
+			int offset = message->popInt32();
+			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
+
+			cBuilding* building = Client->Map->GO[offset].top;
+			if ( building == NULL ) break;
+			
+			building->ClientStopWork();
+
+			//if the message is not for the owner of the building, no subbase data follows
+			if ( message->iPlayerNr != building->owner->Nr ) break;
+
+			building->SubBase->GoldProd;
+			building->SubBase->OilProd;
+			building->SubBase->MetalProd;
+			building->SubBase->GoldNeed;
+			building->SubBase->MetalNeed;
+			building->SubBase->EnergyNeed;
+			building->SubBase->OilNeed;
+			building->SubBase->EnergyProd;
+			building->SubBase->HumanNeed;
+		}
+		break;
 	default:
 		cLog::write("Client: Error: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 		break;

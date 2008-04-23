@@ -1529,23 +1529,22 @@ void cBuilding::ClientStartWork()
 }
 
 // Stoppt die Arbeit des Gebäudes:
-void cBuilding::StopWork ( bool override, bool engine_call )
+void cBuilding::ServerStopWork ( bool override )
 {
 	if ( !IsWorking )
-		return;
-
-	if ( engine_call )
 	{
-		IsWorking = false;
+		sendDoStopWork(this);
 		return;
 	}
+
+	
 
 	// Energiegeneratoren:
 	if ( data.energy_prod )
 	{
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
 		{
-			//sendChatMessager ( lngPack.i18n( "Text~Comp~Energy_IsNeeded") );
+			sendChatMessageToClient ( "Text~Comp~Energy_IsNeeded", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
 
@@ -1591,21 +1590,29 @@ void cBuilding::StopWork ( bool override, bool engine_call )
 	if ( data.max_shield )
 	{
 		data.shield = 0;
-		owner->CalcShields();
+		//owner->CalcShields();
 	}
 
-	// Allgemeines:
+	IsWorking = false;
+	sendDoStopWork(this);
+}
+
+void cBuilding::ClientStopWork()
+{
+
+	if (!IsWorking) return;
 	IsWorking = false;
 
-	StopFXLoop ( Client->iObjectStream );
+	if (selected)
+	{
+		StopFXLoop ( Client->iObjectStream );
+		PlayFX ( typ->Stop );
+		Client->iObjectStream = PlayStram();
 
-	PlayFX ( typ->Stop );
+		ShowDetails();
+	}
 
-	Client->iObjectStream = PlayStram();
-
-	ShowDetails();
-
-	if ( data.can_research ) owner->StopAReserach();
+	//if ( data.can_research ) owner->StopAReserach();
 }
 
 // Prüft, ob Rohstoffe zu dem GO transferiert werden können:
@@ -7100,7 +7107,7 @@ void cBuilding::ShowBuildMenu ( void )
 					//first set the metal consumption of the factory
 					if ( IsWorking )
 					{
-						StopWork ( false );
+						//StopWork ( false );
 					}
 
 					if ( BuildSpeed == 0 )
@@ -8064,7 +8071,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowBuildMenu();
+			//ShowBuildMenu();
 			return;
 		}
 
@@ -8087,7 +8094,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowMineManager();
+			//ShowMineManager();
 			return;
 		}
 
@@ -8156,7 +8163,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			StopWork ( false );
+			sendWantStopWork(this);
 			return;
 		}
 

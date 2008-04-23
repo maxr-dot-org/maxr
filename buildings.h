@@ -158,8 +158,9 @@ public:
   void CheckNeighbours( cMap *map );
   void DrawConnectors(SDL_Rect dest);
   void ServerStartWork();
-  void cBuilding::ClientStartWork();
-  void StopWork(bool override,bool engine_call=false);
+  void ClientStartWork();
+  void ServerStopWork(bool override);
+  void ClientStopWork();
   bool CanTransferTo(struct sGameObjects *go);
   void ShowTransfer(sGameObjects *target);
   void DrawTransBar(int len);

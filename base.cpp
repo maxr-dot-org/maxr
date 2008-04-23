@@ -423,7 +423,7 @@ void cBase::Rundenende ( void )
 				cBuilding *b;
 				b=sb->buildings->Items[k];
 				if ( !b->data.energy_prod ) continue;
-				b->StopWork ( true );
+				//b->StopWork ( true );
 				if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 ) continue;
 				break;
 			}
@@ -438,7 +438,7 @@ void cBase::Rundenende ( void )
 				cBuilding *b;
 				b=sb->buildings->Items[k];
 				if ( !b->data.energy_need ) continue;
-				b->StopWork ( true );
+				//b->StopWork ( true );
 				if ( sb->EnergyNeed>sb->EnergyProd ) continue;
 				break;
 			}
@@ -453,7 +453,7 @@ void cBase::Rundenende ( void )
 				cBuilding *b;
 				b=sb->buildings->Items[k];
 				if ( !b->data.metal_need ) continue;
-				b->StopWork ( true );
+				//b->StopWork ( true );
 				if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 ) continue;
 				break;
 			}
@@ -469,7 +469,7 @@ void cBase::Rundenende ( void )
 				cBuilding *b;
 				b=sb->buildings->Items[k];
 				if ( !b->data.gold_need ) continue;
-				b->StopWork ( true );
+				//b->StopWork ( true );
 				if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 ) continue;
 				break;
 			}
@@ -487,7 +487,7 @@ void cBase::Rundenende ( void )
 				cBuilding *b;
 				b=sb->buildings->Items[k];
 				if ( !b->data.human_need ) continue;
-				b->StopWork ( true );
+				//b->StopWork ( true );
 				if ( sb->HumanNeed>sb->HumanProd ) continue;
 				break;
 			}
@@ -546,7 +546,7 @@ void cBase::Rundenende ( void )
 				if ( BuildListItem->metall_remaining<=0 )
 				{
 					if( b->owner==game->ActivePlayer ) game->engine->AddReport(BuildListItem->typ->data.name,true);
-					b->StopWork ( false );
+					//b->StopWork ( false );
 				}
 			}
 		}
@@ -580,7 +580,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	{
 		while ( es->iCount )
 		{
-			es->Items[0]->StopWork ( false );
+			//es->Items[0]->StopWork ( false );
 			es->Delete ( 0 );
 			changed=true;
 		}
@@ -589,7 +589,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	{
 		while ( es->iCount )
 		{
-			eb->Items[0]->StopWork ( false );
+			//eb->Items[0]->StopWork ( false );
 			eb->Delete ( 0 );
 			changed=true;
 		}
@@ -599,7 +599,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	{
 		while ( sb->EnergyNeed<sb->EnergyProd&&es->iCount )
 		{
-			es->Items[0]->StopWork ( false );
+			//es->Items[0]->StopWork ( false );
 			es->Delete ( 0 );
 			changed=true;
 		}
@@ -608,7 +608,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	{
 		while ( sb->EnergyProd>=sb->EnergyNeed+6&&eb->iCount )
 		{
-			eb->Items[0]->StopWork ( false );
+			//eb->Items[0]->StopWork ( false );
 			eb->Delete ( 0 );
 			changed=true;
 		}
@@ -650,12 +650,12 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 		}
 		while ( eb->iCount )
 		{
-			eb->Items[0]->StopWork ( false );
+			//eb->Items[0]->StopWork ( false );
 			eb->Delete ( 0 );
 		}
 		while ( es->iCount )
 		{
-			es->Items[0]->StopWork ( false );
+			//es->Items[0]->StopWork ( false );
 			es->Delete ( 0 );
 		}
 

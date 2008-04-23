@@ -161,7 +161,7 @@ string cNetMessage::popString()
 	if ( data[iLength - 1] != '\0' )
 	{
 		cLog::write( "Warning: invalid popString() from netMessage", cLog::eLOG_TYPE_NETWORK );
-		return NULL;
+		return string("");
 	}
 
 	//find begin of string
@@ -325,6 +325,14 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_FINISHED_TURN");
 	case GAME_EV_UNIT_DATA:
 		return string("GAME_EV_UNIT_DATA");
+	case GAME_EV_WANT_START_WORK:
+		return("GAME_EV_WANT_START_WORK");
+	case GAME_EV_WANT_STOP_WORK:
+		return("GAME_EV_WANT_STOP_WORK");
+	case GAME_EV_DO_START_WORK:
+		return("GAME_EV_DO_START_WORK");
+	case GAME_EV_DO_STOP_WORK:
+		return("GAME_EV_DO_STOP_WORK");
 
 	default:
 		return iToStr( iType );

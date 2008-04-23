@@ -37,6 +37,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_DO_START_WORK,			// starts a building
+	GAME_EV_DO_STOP_WORK,			// stops a building
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -62,6 +63,12 @@ void sendWantToEndTurn();
 *@author Eiko
 */
 void sendWantStartWork( cBuilding* building);
+
+/**
+* sends a request to stop a building to the Server
+*@author Eiko
+*/
+void sendWantStopWork( cBuilding* building);
 
 
 

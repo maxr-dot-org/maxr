@@ -31,6 +31,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_CHAT_CLIENT,			// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
+	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
 };
 
 /**
@@ -107,5 +108,11 @@ void sendChatMessageToClient( string message, int iType, int iPlayer = -1 );
 *@ author Eiko
 */
 void sendDoStartWork( cBuilding* building );
+
+/**
+* sends all nessesary information to all clients to stop the building
+*@ author Eiko
+*/
+void sendDoStopWork( cBuilding* building );
 
 #endif // servereventsH

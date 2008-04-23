@@ -275,6 +275,21 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			building->ServerStartWork();
 			break;
 		}
+	case GAME_EV_WANT_STOP_WORK:
+		{
+			int PosY = message->popInt16();
+			int PosX = message->popInt16();
+
+			//check for invalid messages
+			if ( PosY < 0 || PosY > Map->size ) break;
+			if ( PosX < 0 || PosX > Map->size ) break;
+			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
+			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
+			
+			//handle message
+			building->ServerStopWork(false);
+			break;
+		}
 	default:
 		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 	}

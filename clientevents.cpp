@@ -42,3 +42,11 @@ void sendWantStartWork( cBuilding* building)
 	message->pushInt16(building->PosY);
 	Client->sendNetMessage(message);
 }
+
+void sendWantStopWork( cBuilding* building)
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_WORK );
+	message->pushInt16( building->PosX);
+	message->pushInt16( building->PosY);
+	Client->sendNetMessage(message);
+}
