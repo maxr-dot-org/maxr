@@ -30,25 +30,25 @@ COMMANDS
 
 In-game console (TAB or chat-button) offers a variet of commands:
 
-fps [on/off]      shows frames per second
+fps [on/off]      [*not working*]shows frames per second
 com [on/off]      [*not working*] shows network traffic (multiplayer)
-base [on/off]     shows additional informations to basecamps
+base [server/client/off]     shows the informations of the client or the server(only available on the host) to basecamps
 wache [on/off]    shows covered areas
 fx [on/off]       shows additional information to special effects
 ping              [*not working*] checks connectivity in multiplayer
-trace [on/off]    shows additional information about current field
+trace [on/off]    [*not working*] shows additional information about current field
 log [on/off]      [*not working*] creats a logfile by engine
-[show/hide] log   shows log (if active
+[show/hide] log   shows log (if active)
 
 Next commands are considered as cheats and will show up in gamechat
 
-color [0-7]       sets new color for active player
-fog off           disabled fog for a short period
-survey            shows all mapresources
-credits           player gets +1000 credits
-kill [x] [y]      kills whatever is on position x,y
-god off           creates a godless world
-load              reloads active unit
+color [0-7]       [*not working*] sets new color for active player
+fog off           [*not working*] disabled fog for a short period
+survey            [*not working*] shows all mapresources
+credits           [*not working*] player gets +1000 credits
+kill [x] [y]      [*not working*] kills whatever is on position x,y
+god off           [*not working*] creates a godless world
+load              [*not working*] reloads active unit
 
 DESCRIPTION
 
