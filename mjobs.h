@@ -75,7 +75,7 @@ public:
   void DrawPfeil(SDL_Rect dest,SDL_Rect *ldest,bool spezial);
   void CalcNextDir(void);
   void StartMove(void);
-  void DoTheMove(void);
+  bool DoTheMove(void);
 };
 
 #endif

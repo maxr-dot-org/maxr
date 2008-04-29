@@ -32,6 +32,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
+	GAME_EV_MOVE_JOB,				// a message with all waypoints
+	GAME_EV_END_MOVE,				// a client is ready to make the move
 };
 
 /**
@@ -44,7 +46,7 @@ enum SERVER_EVENT_TYPES
 *@param iPlayer The player who should receive this event and get the new unit
 *@param bInit True if this is called by game initialisation
 */
-void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
 /**
 * Sends an event to a player that a unit has to be deleted
 *@author alzi alias DoctorDeath
@@ -57,7 +59,7 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 *@param bBase True if the building is on the ground
 *@param bSubBase True if the building is under an building that is on the ground
 */
-void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iClient, bool bPlane = false, bool bBase = false, bool bSubBase = false );
+void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, int iID, bool bVehicle, int iClient, bool bPlane = false, bool bBase = false, bool bSubBase = false );
 /**
 * Sends an event to a player that he has to detected an enemy unit and should add it
 *@author alzi alias DoctorDeath
@@ -114,5 +116,9 @@ void sendDoStartWork( cBuilding* building );
 *@ author Eiko
 */
 void sendDoStopWork( cBuilding* building );
+
+void sendDoMove( int iSrcOff, int iDestOff, bool bPlane, int iPlayer );
+void sendStopMove( int iOff, bool bPlane, bool bCompletely, int iPlayer );
+void sendMoveJobServer( cMJobs *MJob, int iPlayer );
 
 #endif // servereventsH

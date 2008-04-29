@@ -79,6 +79,7 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bDebugTrace = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
+	ActiveMJobs = new cList<cMJobs*>;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX( (char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str() );
@@ -534,6 +535,7 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
+		handleMoveJobs ();
 	}
 	mouse->MoveCallback = false;
 }
@@ -833,7 +835,30 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud->Ende && !SelectedVehicle->Attacking )
 		{
-			// TODO: add movejob
+			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR );
+			if ( !MJob->finished )
+			{
+				if ( MJob->CalcPath() )
+				{
+					MJob->CalcNextDir();
+					sendMoveJob ( MJob );
+					addActiveMoveJob ( MJob );
+				}
+				else
+				{
+					MJob->finished = true;
+					if ( random ( 2,0 ) ) PlayVoice ( VoiceData.VOINoPath1 );
+					else PlayVoice ( VoiceData.VOINoPath2 );
+				}
+			}
+			if ( MJob->finished )
+			{
+				if ( MJob->vehicle )
+				{
+					MJob->vehicle->mjob = NULL;
+				}
+				delete MJob;
+			}
 		}
 		else if ( !bHelpActive )
 		{
@@ -2483,6 +2508,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosX = message->popInt16();
 
 			AddedBuilding = Player->AddBuilding ( PosX, PosY, UnitsData.building + UnitNum );
+			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
 		}
@@ -2497,6 +2523,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosX = message->popInt16();
 
 			AddedVehicle = Player->AddVehicle ( PosX, PosY, UnitsData.vehicle + UnitNum );
+			AddedVehicle->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedVehicle, Init );
 		}
@@ -2558,6 +2585,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedVehicle = Player->AddVehicle ( iPosX, iPosY, UnitsData.vehicle + iUnitNumber );
 
 			AddedVehicle->dir = message->popInt16();
+			AddedVehicle->iID = message->popInt16();
 			
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 		}
@@ -2571,6 +2599,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosX = message->popInt16();
 
 			AddedBuilding = Player->AddBuilding ( iPosX, iPosY, UnitsData.building + iUnitNumber );
+			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 		}
 		break;
@@ -2656,11 +2685,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			bool bVehicle = message->popBool();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
+
+			cVehicle *Vehicle = NULL;
+			cBuilding *Building = NULL;
+
 			// unit is a vehicle
 			if ( bVehicle )
 			{
-				cVehicle *Vehicle = NULL;
-
 				if ( message->popBool() ) Vehicle = Map->GO[iPosX+iPosY*Map->size].plane;
 				else Vehicle = Map->GO[iPosX+iPosY*Map->size].vehicle;
 				if ( !Vehicle )
@@ -2679,8 +2710,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else
 			{
-				cBuilding *Building = NULL;
-
 				if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].base;
 				else if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].subbase;
 				else Building = Map->GO[iPosX+iPosY*Map->size].top;
@@ -2719,7 +2748,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
+				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 			}
+			else if ( Building == SelectedBuilding ) Building->ShowDetails();
 		}
 		break;
 	case GAME_EV_DO_START_WORK:
@@ -2768,6 +2799,119 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			building->SubBase->OilNeed = message->popInt16();
 			building->SubBase->EnergyProd = message->popInt16();
 			building->SubBase->HumanNeed = message->popInt16();
+		}
+		break;
+	case GAME_EV_MOVE_JOB:
+		{
+			cMJobs *MJob;
+			int iCount = 0;
+			int iWaypointOff;
+
+			int iSrcOff = message->popInt16();
+			int iDestOff = message->popInt16();
+			bool bPlane = message->popBool();
+			int iReceivedCount = message->popInt16();
+
+			// Add the waypoints to the movejob
+			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+			while ( iCount < iReceivedCount )
+			{
+				iWaypointOff = message->popInt16();
+				Waypoint->X = iWaypointOff%Map->size;
+				Waypoint->Y = iWaypointOff/Map->size;
+				Waypoint->Costs = message->popInt16();
+				Waypoint->next = NULL;
+
+				if ( iCount == 0 )
+				{
+					if ( iWaypointOff == iSrcOff )
+					{
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane );
+						MJob->waypoints = Waypoint;
+					}
+					else
+					{
+						cVehicle *Vehicle;
+						if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
+						else Vehicle = Map->GO[iSrcOff].vehicle;
+						if ( !Vehicle )
+						{
+							// warning, here is something wrong! ( out of sync? )
+							break;
+						}
+						MJob = Vehicle->mjob;
+						sWaypoint *LastWaypoint = MJob->waypoints;
+						while ( LastWaypoint->next )
+						{
+							LastWaypoint = LastWaypoint->next;
+						}
+						LastWaypoint->next = Waypoint;
+					}
+				}
+				iCount++;
+
+				if ( iCount < iReceivedCount )
+				{
+					Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+					Waypoint = Waypoint->next;
+				}
+			}
+			// is the last waypoint in this message?
+			if ( iWaypointOff == iDestOff )
+			{
+				addActiveMoveJob ( MJob );
+			}
+		}
+		break;
+	case GAME_EV_DO_MOVE:
+		{
+			bool bPlane = message->popBool();
+			int iSrcOff = message->popInt16();
+			int iDestOff = message->popInt16();
+
+			cVehicle *Vehicle = NULL;
+			if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
+			else Vehicle = Map->GO[iSrcOff].vehicle;
+
+			if ( Vehicle )
+			{
+				Vehicle->moving = true;
+				if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
+				Vehicle->MoveJobActive = true;
+			}
+		}
+		break;
+	case GAME_EV_STOP_MOVE:
+		{
+			bool bPlane = message->popBool();
+			int iOff = message->popInt16();
+			bool bCompletely = message->popBool();
+
+			cVehicle *Vehicle = NULL;
+			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
+			else Vehicle = Map->GO[iOff].vehicle;
+
+			if ( Vehicle && Vehicle->mjob )
+			{
+				bool bWasMoving = Vehicle->MoveJobActive;
+				if ( bCompletely )
+				{
+					Vehicle->mjob->finished = true;
+				}
+				else
+				{
+					Vehicle->mjob->Suspended = true;
+					Vehicle->mjob->EndForNow = true;
+				}
+				// Stop stream
+				if ( Vehicle == SelectedVehicle && bWasMoving )
+				{
+					StopFXLoop ( iObjectStream );
+					if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+					else PlayFX ( Vehicle->typ->Stop );
+					iObjectStream = Vehicle->PlayStram();
+				}
+			}
 		}
 		break;
 	default:
@@ -2988,8 +3132,6 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 	Uint8 *keystate;
 
 	font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
-	SHOW_SCREEN
-
 	while ( bWaitForOthers )
 	{
 		EventHandler->HandleEvents();
@@ -3008,8 +3150,6 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 			bExit = true;
 			bWaitForOthers = false;
 		}
-
-		SDL_Delay ( 10 );
 	}
 }
 
@@ -3020,5 +3160,78 @@ void cClient::handleTurnTime()
 		int iRestTime = iTurnTime - Round( ( SDL_GetTicks() - iStartTurnTime )/1000 );
 		if ( iRestTime < 0 ) iRestTime = 0;
 		Hud->showTurnTime ( iRestTime );
+	}
+}
+
+void cClient::addActiveMoveJob ( cMJobs *MJob )
+{
+	ActiveMJobs->Add ( MJob );
+	MJob->Suspended = false;
+}
+
+void cClient::handleMoveJobs ()
+{
+	if ( !iTimer0 ) return;
+
+	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	{
+		cMJobs *MJob;
+		cVehicle *Vehicle;
+
+		MJob = ActiveMJobs->Items[i];
+		Vehicle = MJob->vehicle;
+
+		if ( MJob->finished )
+		{
+			if ( Vehicle->mjob == MJob )
+			{
+				Vehicle->mjob = NULL;
+				Vehicle->moving = false;
+				Vehicle->rotating = false;
+				Vehicle->MoveJobActive = false;
+			}
+			ActiveMJobs->Delete ( i );
+			delete MJob;
+			continue;
+		}
+		if ( MJob->EndForNow )
+		{
+			Vehicle->MoveJobActive = false;
+			Vehicle->rotating = false;
+			// save speed
+			if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+			{
+				MJob->SavedSpeed += Vehicle->data.speed;
+				Vehicle->data.speed = 0;
+				Vehicle->ShowDetails();
+			}
+			ActiveMJobs->Delete ( i );
+			continue;
+		}
+
+		// rotate vehicle
+		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
+		{
+			Vehicle->rotating = true;
+			if ( iTimer1 )
+			{
+				Vehicle->RotateTo ( MJob->next_dir );
+			}
+			continue;
+		}
+		else
+		{
+			Vehicle->rotating = false;
+		}
+		
+		if ( Vehicle->moving )
+		{
+			int iStartOff = Vehicle->PosX+Vehicle->PosY*Map->size;
+			if ( MJob->DoTheMove() )
+			{
+				sendEndMove( iStartOff, Vehicle->data.can_drive == DRIVE_AIR );
+			}
+			bFlagDrawMap = true;
+		}
 	}
 }

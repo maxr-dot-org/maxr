@@ -50,3 +50,50 @@ void sendWantStopWork( cBuilding* building)
 	message->pushInt16( building->PosY);
 	Client->sendNetMessage(message);
 }
+
+void sendMoveJob( cMJobs *MJob )
+{
+	bool bEnd = false;
+	sWaypoint *LastWaypoint = MJob->waypoints;
+	while ( LastWaypoint ) LastWaypoint = LastWaypoint->next;
+	sWaypoint *Waypoint;
+	while ( !bEnd )
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB );
+
+		int iCount = 0;
+		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
+		{
+			Waypoint = MJob->waypoints;
+			while ( Waypoint != LastWaypoint )
+			{
+				if ( Waypoint->next == LastWaypoint )
+				{
+					LastWaypoint = Waypoint;
+					break;
+				}
+				Waypoint = Waypoint->next;
+			}
+			if ( MJob->waypoints == Waypoint ) bEnd = true;
+
+			message->pushInt16( Waypoint->Costs );
+			message->pushInt16( Waypoint->X+Waypoint->Y*MJob->map->size);
+			iCount++;
+		}
+
+		message->pushInt16( iCount );
+		message->pushBool ( MJob->plane );
+		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
+		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
+
+		Client->sendNetMessage( message );
+	}
+}
+
+void sendEndMove( int iStartOff, bool bPlane )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_END_MOVE );
+	message->pushInt16( iStartOff );
+	message->pushBool ( bPlane );
+	Client->sendNetMessage( message );
+}

@@ -23,13 +23,14 @@
 #include "client.h"
 
 
-void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
 {
 	cNetMessage* message;
 	
 	if ( bVehicle ) message = new cNetMessage ( GAME_EV_ADD_VEHICLE );
 	else message = new cNetMessage ( GAME_EV_ADD_BUILDING );
 
+	message->pushInt16( iID );
 	message->pushInt16( iPosX );
 	message->pushInt16( iPosY );
 	message->pushInt16( iUnitNum );
@@ -40,12 +41,13 @@ void sendAddUnit ( int iPosX, int iPosY, bool bVehicle, int iUnitNum, int iPlaye
 
 }
 
-void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, bool bVehicle, int iClient, bool bPlane, bool bBase, bool bSubBase )
+void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, int iID, bool bVehicle, int iClient, bool bPlane, bool bBase, bool bSubBase )
 {
 	cNetMessage* message;
 	if ( bVehicle ) message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
 	else message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
+	message->pushInt16( iID );
 	message->pushInt16 ( iPosX );
 	message->pushInt16 ( iPosY );
 	message->pushInt16 ( iPlayer );
@@ -61,6 +63,7 @@ void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_VEHICLE );
 
+	message->pushInt16( Vehicle->iID );
 	message->pushInt16( Vehicle->dir );
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
@@ -74,6 +77,7 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_BUILDING );
 
+	message->pushInt16( Building->iID );
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
 	message->pushInt16( Building->typ->nr );
@@ -262,5 +266,62 @@ void sendDoStopWork( cBuilding* building )
 		message->pushInt32( offset );
 
 		Server->sendNetMessage( message, player->Nr );
+	}
+}
+
+void sendDoMove( int iSrcOff, int iDestOff, bool bPlane, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DO_MOVE );
+	message->pushInt16( iDestOff );
+	message->pushInt16( iSrcOff );
+	message->pushBool( bPlane );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendStopMove( int iOff, bool bPlane, bool bCompletely, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_STOP_MOVE );
+	message->pushBool( bCompletely );
+	message->pushInt16( iOff );
+	message->pushBool( bPlane );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendMoveJobServer( cMJobs *MJob, int iPlayer )
+{
+	bool bEnd = false;
+	sWaypoint *LastWaypoint = MJob->waypoints;
+	while ( LastWaypoint ) LastWaypoint = LastWaypoint->next;
+	sWaypoint *Waypoint;
+	while ( !bEnd )
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB );
+
+		int iCount = 0;
+		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
+		{
+			Waypoint = MJob->waypoints;
+			while ( Waypoint != LastWaypoint )
+			{
+				if ( Waypoint->next == LastWaypoint )
+				{
+					LastWaypoint = Waypoint;
+					break;
+				}
+				Waypoint = Waypoint->next;
+			}
+			if ( MJob->waypoints == Waypoint ) bEnd = true;
+
+			message->pushInt16( Waypoint->Costs );
+			message->pushInt16( Waypoint->X+Waypoint->Y*MJob->map->size);
+			iCount++;
+		}
+
+		message->pushInt16( iCount );
+		message->pushBool ( MJob->plane );
+		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
+		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
+
+		Server->sendNetMessage( message, iPlayer );
 	}
 }

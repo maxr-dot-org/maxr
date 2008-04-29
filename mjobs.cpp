@@ -35,6 +35,7 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 	waypoints=NULL;
 	SavedSpeed=0;
 	plane=Plane;
+	vehicle = NULL;
 
 	if ( !plane )
 	{
@@ -56,7 +57,10 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 	}
 	if ( vehicle->mjob )
 	{
-		vehicle->mjob->Release();
+		SavedSpeed = vehicle->mjob->SavedSpeed;
+		delete vehicle->mjob;
+		vehicle->MoveJobActive = false;
+		vehicle->moving = false;
 	}
 	vehicle->mjob=this;
 	ship=vehicle->data.can_drive==DRIVE_SEA;
@@ -65,30 +69,11 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 	DestX=DestOff%map->size;
 	DestY=DestOff/map->size;
 
-	if ( vehicle->Wachposten )
+	/*if ( vehicle->Wachposten )
 	{
 		vehicle->owner->DeleteWachpostenV ( vehicle );
 		vehicle->Wachposten=false;
-	}
-
-	if ( !CalcPath() )
-	{
-		finished=true;
-		if ( vehicle->autoMJob && !vehicle->selected) return; //an auto moving surveyor don't need to tell this
-		if ( vehicle->owner==game->ActivePlayer )
-		{
-			if ( random ( 2,0 ) )
-			{
-				PlayVoice ( VoiceData.VOINoPath1 );
-			}
-			else
-			{
-				PlayVoice ( VoiceData.VOINoPath2 );
-			}
-		}
-		return;
-	}
-	CalcNextDir();
+	}*/
 }
 
 cMJobs::~cMJobs ( void )
@@ -99,7 +84,8 @@ cMJobs::~cMJobs ( void )
 // Veranlasst das Löschen des Move-Jobs:
 void cMJobs::Release ( void )
 {
-	finished=true;
+	finished = true;
+	EndForNow = false;
 }
 
 // Berechnet den kürzesten Weg zum Ziel:
@@ -248,7 +234,7 @@ bool cMJobs::CheckPossiblePoint ( int x,int y )
 	if ( PathCalcMap[x+y*map->size] ) return false;
 	if ( !plane )
 	{
-		if ( game->map->terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
+		if ( map->terrain[map->Kacheln[x+y*map->size]].blocked ) return false;
 		if ( vehicle->data.can_drive==DRIVE_LAND && map->IsWater ( x+y*map->size ) && !( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_bridge || map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) return false;
 		if ( vehicle->data.can_drive==DRIVE_SEA && (!map->IsWater ( x+y*map->size,true,true ) || ( map->GO[x+y*map->size].base && ( map->GO[x+y*map->size].base->data.is_platform || map->GO[x+y*map->size].base->data.is_road ) ) ) ) return false;
 	}
@@ -309,11 +295,11 @@ void cMJobs::DrawPfeil ( SDL_Rect dest,SDL_Rect *ldest,bool spezial )
 	else TESTXY_DP ( <,> ) index=7;
 	if ( spezial )
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[index][64-game->hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[index][64-Client->Hud->Zoom],NULL,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeile[index][64-game->hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeile[index][64-Client->Hud->Zoom],NULL,buffer,&dest );
 	}
 }
 
@@ -394,57 +380,57 @@ void cMJobs::StartMove ( void )
 	game->engine->Reservieren ( waypoints->next->X,waypoints->next->Y,plane );
 }
 
-// Bewegt das Vehicle:
-void cMJobs::DoTheMove ( void )
+// moves the vehicle to the next field:
+bool cMJobs::DoTheMove ( void )
 {
 	int speed;
-	if ( !vehicle ) return;
+	if ( !vehicle ) return false;
 	if ( vehicle->data.is_human )
 	{
 		vehicle->WalkFrame++;
-		if ( vehicle->WalkFrame>=13 ) vehicle->WalkFrame=0;
-		speed=MOVE_SPEED/2;
+		if ( vehicle->WalkFrame >= 13 ) vehicle->WalkFrame = 0;
+		speed = MOVE_SPEED/2;
 	}
-	else if ( !plane&&!ship )
+	else if ( !plane && !ship )
 	{
-		speed=MOVE_SPEED;
+		speed = MOVE_SPEED;
 		if ( waypoints&&waypoints->next&&map->GO[waypoints->next->X+waypoints->next->Y*map->size].base&& ( map->GO[waypoints->next->X+waypoints->next->Y*map->size].base->data.is_road||map->GO[waypoints->next->X+waypoints->next->Y*map->size].base->data.is_bridge ) ) speed*=2;
 	}
-	else if ( plane ) speed=MOVE_SPEED*2;
-	else speed=MOVE_SPEED;
+	else if ( plane ) speed = MOVE_SPEED*2;
+	else speed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( SettingsData.bMakeTracks&&vehicle->data.make_tracks&&!map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
-	        ( waypoints&&waypoints->next&&game->map->terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
-	        ( vehicle->owner==game->ActivePlayer||game->ActivePlayer->ScanMap[vehicle->PosX+vehicle->PosY*game->map->size] ) )
+	if ( SettingsData.bMakeTracks && vehicle->data.make_tracks && !map->IsWater ( vehicle->PosX+vehicle->PosY*map->size,false ) &&!
+	        ( waypoints && waypoints->next && map->terrain[map->Kacheln[waypoints->next->X+waypoints->next->Y*map->size]].water ) &&
+	        ( vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[vehicle->PosX+vehicle->PosY*map->size] ) )
 	{
 		if ( !vehicle->OffX&&!vehicle->OffY )
 		{
 			switch ( vehicle->dir )
 			{
 				case 0:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64-10,0 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64-10,0 );
 					break;
 				case 4:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64+10,0 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64+10,0 );
 					break;
 				case 2:
-					game->AddFX ( fxTracks,vehicle->PosX*64+10,vehicle->PosY*64,2 );
+					Client->addFX ( fxTracks,vehicle->PosX*64+10,vehicle->PosY*64,2 );
 					break;
 				case 6:
-					game->AddFX ( fxTracks,vehicle->PosX*64-10,vehicle->PosY*64,2 );
+					Client->addFX ( fxTracks,vehicle->PosX*64-10,vehicle->PosY*64,2 );
 					break;
 				case 1:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,1 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,1 );
 					break;
 				case 5:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,1 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,1 );
 					break;
 				case 3:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,3 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,3 );
 					break;
 				case 7:
-					game->AddFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,3 );
+					Client->addFX ( fxTracks,vehicle->PosX*64,vehicle->PosY*64,3 );
 					break;
 			}
 		}
@@ -453,16 +439,16 @@ void cMJobs::DoTheMove ( void )
 			switch ( vehicle->dir )
 			{
 				case 1:
-					game->AddFX ( fxTracks,vehicle->PosX*64+26,vehicle->PosY*64-26,1 );
+					Client->addFX ( fxTracks,vehicle->PosX*64+26,vehicle->PosY*64-26,1 );
 					break;
 				case 5:
-					game->AddFX ( fxTracks,vehicle->PosX*64-26,vehicle->PosY*64+26,1 );
+					Client->addFX ( fxTracks,vehicle->PosX*64-26,vehicle->PosY*64+26,1 );
 					break;
 				case 3:
-					game->AddFX ( fxTracks,vehicle->PosX*64+26,vehicle->PosY*64+26,3 );
+					Client->addFX ( fxTracks,vehicle->PosX*64+26,vehicle->PosY*64+26,3 );
 					break;
 				case 7:
-					game->AddFX ( fxTracks,vehicle->PosX*64-26,vehicle->PosY*64-26,3 );
+					Client->addFX ( fxTracks,vehicle->PosX*64-26,vehicle->PosY*64-26,3 );
 					break;
 			}
 		}
@@ -500,65 +486,44 @@ void cMJobs::DoTheMove ( void )
 			break;
 	}
 
-	// Prüfen, ob der Punkt erreicht wurde:
-	if ( vehicle->OffX>=64||vehicle->OffY>=64||vehicle->OffX<=-64||vehicle->OffY<=-64 )
+	// check whether the point has been reached:
+	if ( vehicle->OffX >= 64 || vehicle->OffY >= 64 || vehicle->OffX <= -64 || vehicle->OffY <= -64 )
 	{
 		sWaypoint *wp;
 		// Die Kosten abziehen:
-		vehicle->data.speed+=SavedSpeed;
-		SavedSpeed=0;
+		vehicle->data.speed += SavedSpeed;
+		SavedSpeed = 0;
 		vehicle->DecSpeed ( waypoints->next->Costs );
-		vehicle->moving=false;
-		vehicle->WalkFrame=0;
-		// Weiter zum nächsten Wegpunkt:
-		wp=waypoints->next;
+		vehicle->moving = false;
+		vehicle->WalkFrame = 0;
+		// go to the next point:
+		wp = waypoints->next;
 		free ( waypoints );
-		waypoints=wp;
+		waypoints = wp;
 
-		// Ein durch ein ClientMove bewegtes Fahrzeug wird vom Host umgesetzt:
-		if ( !ClientMove )
+		if ( !plane )
 		{
-			vehicle->OffX=0;
-			vehicle->OffY=0;
+			map->GO[vehicle->PosX+vehicle->PosY*map->size].vehicle = NULL;
+			map->GO[waypoints->X+waypoints->Y*map->size].vehicle = vehicle;
+			map->GO[waypoints->X+waypoints->Y*map->size].reserviert = false;
 		}
-
-		if ( waypoints==NULL )
+		else
 		{
-			finished=true;
-			return;
+			map->GO[vehicle->PosX+vehicle->PosY*map->size].plane = NULL;
+			map->GO[waypoints->X+waypoints->Y*map->size].plane = vehicle;
+			map->GO[waypoints->X+waypoints->Y*map->size].air_reserviert = false;
 		}
+		vehicle->PosX = waypoints->X;
+		vehicle->PosY = waypoints->Y;
+		vehicle->OffX = 0;
+		vehicle->OffY = 0;
 
-		// Das Fahrzeug umsetzen (wenn es kein Client-MoveJob ist):
-		if ( !ClientMove ) game->engine->MoveVehicle ( vehicle->PosX,vehicle->PosY,waypoints->X,waypoints->Y,false,plane );
 		vehicle->owner->DoScan();
-		game->fDrawMMap=true;
+		Client->bFlagDrawMMap = true;
 
-		if ( waypoints==NULL )
-		{
-			finished=true;
-			return;
-		}
-
-		// Die Maus refreshen:
 		Client->mouseMoveCallback ( true );
-
-		if ( waypoints->next==NULL )
-		{
-			free ( waypoints );
-			waypoints=NULL;
-			finished=true;
-			return;
-		}
-
-		if ( waypoints->next->Costs>vehicle->data.speed )
-		{
-			SavedSpeed=vehicle->data.speed;
-			vehicle->data.speed=0;
-			if ( game->SelectedVehicle==vehicle ) vehicle->ShowDetails();
-			EndForNow=true;
-			return;
-		}
-
 		CalcNextDir();
+		return true;
 	}
+	return false;
 }

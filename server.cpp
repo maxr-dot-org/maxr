@@ -44,6 +44,8 @@ void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool 
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
+	ActiveMJobs = new cList<cMJobs *>;
+	iNextUnitID = 0;
 
 	EventQueue = new cList<SDL_Event *>;
 	//NetMessageQueue = new cList<cNetMessage*>;
@@ -242,6 +244,8 @@ void cServer::run()
 
 		checkDeadline();
 
+		handleMoveJobs ();
+
 		SDL_Delay( 10 );
 	}
 }
@@ -290,6 +294,87 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			building->ServerStopWork(false);
 			break;
 		}
+	case GAME_EV_MOVE_JOB:
+		{
+			cMJobs *MJob;
+			int iCount = 0;
+			int iWaypointOff;
+
+			int iSrcOff = message->popInt16();
+			int iDestOff = message->popInt16();
+			bool bPlane = message->popBool();
+			int iReceivedCount = message->popInt16();
+
+			// Add the waypoints to the movejob
+			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+			while ( iCount < iReceivedCount )
+			{
+				iWaypointOff = message->popInt16();
+				Waypoint->X = iWaypointOff%Map->size;
+				Waypoint->Y = iWaypointOff/Map->size;
+				Waypoint->Costs = message->popInt16();
+				Waypoint->next = NULL;
+
+				if ( iCount == 0 )
+				{
+					if ( iWaypointOff == iSrcOff )
+					{
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane );
+						MJob->waypoints = Waypoint;
+					}
+					else
+					{
+						cVehicle *Vehicle;
+						if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
+						else Vehicle = Map->GO[iSrcOff].vehicle;
+						if ( !Vehicle )
+						{
+							// warning, here is something wrong! ( out of sync? )
+							break;
+						}
+						MJob = Vehicle->mjob;
+						sWaypoint *LastWaypoint = MJob->waypoints;
+						while ( LastWaypoint->next )
+						{
+							LastWaypoint = LastWaypoint->next;
+						}
+						LastWaypoint->next = Waypoint;
+					}
+				}
+				iCount++;
+
+				if ( iCount < iReceivedCount )
+				{
+					Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+					Waypoint = Waypoint->next;
+				}
+			}
+			// is the last waypoint in this message?
+			if ( iWaypointOff == iDestOff )
+			{
+				addActiveMoveJob ( MJob );
+				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
+				{
+					sendMoveJobServer ( MJob, *MJob->vehicle->SeenByPlayerList->Items[i] );
+				}
+			}
+		}
+		break;
+	case GAME_EV_END_MOVE:
+		{
+			bool bPlane = message->popBool();
+			int iOff = message->popInt16();
+
+			cVehicle *Vehicle = NULL;
+			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
+			else Vehicle = Map->GO[iOff].vehicle;
+
+			if ( Vehicle )
+			{
+				moveVehicle ( Vehicle );
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 	}
@@ -410,6 +495,8 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	cVehicle *AddedVehicle;
 	// generate the vehicle:
 	AddedVehicle = Player->AddVehicle ( iPosX, iPosY, Vehicle );
+	AddedVehicle->iID = iNextUnitID;
+	iNextUnitID++;
 	// place the vehicle:
 	if ( AddedVehicle->data.can_drive != DRIVE_AIR )
 	{
@@ -430,7 +517,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	}
 	if ( !bInit ) AddedVehicle->InWachRange();
 
-	sendAddUnit ( iPosX, iPosY, true, Vehicle->nr, Player->Nr, bInit );
+	sendAddUnit ( iPosX, iPosY, AddedVehicle->iID, true, Vehicle->nr, Player->Nr, bInit );
 }
 
 void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit )
@@ -438,6 +525,8 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	cBuilding *AddedBuilding;
 	// generate the building:
 	AddedBuilding = Player->AddBuilding ( iPosX, iPosY, Building );
+	AddedBuilding->iID = iNextUnitID;
+	iNextUnitID++;
 	// place the building:
 	int iOff = iPosX + Map->size*iPosY;
 	if ( AddedBuilding->data.is_base )
@@ -507,7 +596,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	// intigrate the building to the base:
 	Player->base->AddBuilding ( AddedBuilding );
 
-	sendAddUnit ( iPosX, iPosY, false, Building->nr, Player->Nr, bInit );
+	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 }
 
 void cServer::deleteBuilding( cBuilding *Building )
@@ -540,7 +629,7 @@ void cServer::deleteBuilding( cBuilding *Building )
 		else bBase = false;
 		if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building ) bSubBase = true;
 		else bSubBase = false;
-		sendDeleteUnit( Building->PosX, Building->PosY, Building->owner->Nr, false, Building->owner->Nr, false, bBase, bSubBase );
+		sendDeleteUnit( Building->PosX, Building->PosY, Building->owner->Nr, Building->iID, false, Building->owner->Nr, false, bBase, bSubBase );
 
 		delete Building;
 	}
@@ -585,7 +674,7 @@ void cServer::checkPlayerUnits ()
 							bool bPlane;
 							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
 							else bPlane = false;
-							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, true, NextVehicle->owner->Nr, bPlane );
+							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, NextVehicle->iID, true, NextVehicle->owner->Nr, bPlane );
 							break;
 						}
 					}
@@ -628,7 +717,7 @@ void cServer::checkPlayerUnits ()
 							else bBase = false;
 							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
 							else bSubBase = false;
-							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, false, NextBuilding->owner->Nr, false, bBase, bSubBase );
+							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, NextBuilding->iID, false, NextBuilding->owner->Nr, false, bBase, bSubBase );
 
 							break;
 						}
@@ -777,11 +866,12 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				if ( Building->data.shield > Building->data.max_shield ) Building->data.shield = Building->data.max_shield;
 				bShieldChaned = true;
 			}
-			Building = Building->next;
 			for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
 			{
 				sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
 			}
+			sendUnitData ( Building, Map, Building->owner->Nr );
+			Building = Building->next;
 		}
 		if ( bShieldChaned )
 		{
@@ -817,11 +907,12 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			if ( bChangeTurn ) Vehicle->RefreshData();
 			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
 
-			Vehicle = Vehicle->next;
 			for ( int k = 0; k < Vehicle->SeenByPlayerList->iCount; k++ )
 			{
 				sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList->Items[k] );
 			}
+			sendUnitData ( Vehicle, Vehicle->owner->Nr );
+			Vehicle = Vehicle->next;
 		}
 	}
 	// Gun'em down:
@@ -961,4 +1052,162 @@ void cServer::checkDeadline ()
 			iDeadlineStartTime = 0;
 		}
 	}
+}
+
+void cServer::addActiveMoveJob ( cMJobs *MJob )
+{
+	ActiveMJobs->Add ( MJob );
+	MJob->Suspended = false;
+}
+
+void cServer::handleMoveJobs ()
+{
+	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	{
+		cMJobs *MJob;
+		cVehicle *Vehicle;
+
+		MJob = ActiveMJobs->Items[i];
+		Vehicle = MJob->vehicle;
+
+		if ( MJob->finished || MJob->EndForNow )
+		{
+			// stop the job
+			if ( MJob->EndForNow )
+			{
+				sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, Vehicle->owner->Nr );
+				for ( int j = 0; j < Vehicle->SeenByPlayerList->iCount; j++ )
+				{
+					sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, *Vehicle->SeenByPlayerList->Items[j] );
+				}
+			}
+			else
+			{
+				if ( Vehicle->mjob == MJob )
+				{
+					Vehicle->mjob = NULL;
+					Vehicle->moving = false;
+					Vehicle->MoveJobActive = false;
+					sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, true, Vehicle->owner->Nr );
+					for ( int j = 0; j < Vehicle->SeenByPlayerList->iCount; j++ )
+					{
+						sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, *Vehicle->SeenByPlayerList->Items[j] );
+					}
+				}
+				delete MJob;
+			}
+			ActiveMJobs->Delete ( i );
+			continue;
+		}
+		
+		if ( !Vehicle->moving )
+		{
+			startMove( MJob );
+		}
+	}
+}
+
+void cServer::startMove ( cMJobs *MJob )
+{
+	bool bWachRange;
+	if ( !MJob->vehicle || !MJob->waypoints || !MJob->waypoints->next ) return;
+	bWachRange = false;//vehicle->InWachRange();
+	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bWachRange )
+	{
+		//sWaypoint *wp;
+		// if the next point would be the last, finish the job here
+		if ( MJob->waypoints->next->X == MJob->DestX && MJob->waypoints->next->Y == MJob->DestY )
+		{
+			MJob->finished = true;
+			return;
+		}
+		// else delete the movejob and inform the client that he has to find a new path
+
+		/*while ( waypoints )
+		{
+			wp=waypoints->next;
+			free ( waypoints );
+			waypoints=wp;
+		}
+		ScrX=vehicle->PosX;
+		ScrY=vehicle->PosY;
+		vehicle->moving=false;
+		vehicle->MoveJobActive=false;
+		vehicle->WalkFrame=0;
+
+		if ( WachRange )
+		{
+			finished = true;
+			return;
+		}
+
+		vehicle->StartMoveSound();
+
+		vehicle->MoveJobActive=true;
+		if ( !CalcPath() )
+		{
+			vehicle->MoveJobActive=false;
+			vehicle->moving=false;
+			finished=true;
+			return;
+		}
+		CalcNextDir();*/
+		return;
+	}
+
+	// not enough waypoints for this move
+	if ( MJob->vehicle->data.speed < MJob->waypoints->next->Costs )
+	{
+		MJob->SavedSpeed += MJob->vehicle->data.speed;
+		MJob->vehicle->data.speed = 0;
+		MJob->EndForNow = true;
+		return;
+	}
+
+	MJob->vehicle->MoveJobActive = true;
+	MJob->vehicle->moving = true;
+
+	// send move command to all players who can see the unit
+	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
+	{
+		sendDoMove ( MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size, MJob->plane, *MJob->vehicle->SeenByPlayerList->Items[i] );
+	}
+	sendDoMove ( MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size, MJob->plane, MJob->vehicle->owner->Nr );
+}
+
+void cServer::moveVehicle ( cVehicle *Vehicle )
+{
+	cMJobs *MJob = Vehicle->mjob;
+	sWaypoint *Waypoint;
+	Waypoint = MJob->waypoints->next;
+	free ( MJob->waypoints );
+	MJob->waypoints = Waypoint;
+
+	if ( Vehicle->data.can_drive == DRIVE_AIR )
+	{
+		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].air_reserviert = false;
+	}
+	else
+	{
+		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].reserviert = false;
+	}
+	Vehicle->PosX = MJob->waypoints->X;
+	Vehicle->PosY = MJob->waypoints->Y;
+
+	if ( MJob->waypoints->next == NULL )
+	{
+		MJob->finished = true;
+	}
+
+	Vehicle->data.speed += MJob->SavedSpeed;
+	MJob->SavedSpeed = 0;
+	Vehicle->DecSpeed ( MJob->waypoints->Costs );
+
+	// TODO: check for results of the move
+
+	Vehicle->moving = false;
 }

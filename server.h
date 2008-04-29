@@ -97,6 +97,8 @@ class cServer
 	int iTurnDeadline;
 	/** Ticks when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
+	/** The ID for the next unit*/
+	unsigned int iNextUnitID;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -193,6 +195,10 @@ class cServer
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDeadline ();
+	void addActiveMoveJob ( cMJobs *MJob );
+	void handleMoveJobs();
+	void startMove ( cMJobs *MJob );
+	void moveVehicle ( cVehicle *Vehicle );
 public:	
 	/** the map */
 	cMap *Map;

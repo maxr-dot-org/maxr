@@ -76,6 +76,8 @@ public:
   cVehicle(sVehicle *v,cPlayer *Owner);
   ~cVehicle(void);
 
+  /** the identification number of this unit */
+  unsigned int iID;
   /** a list were the numbers of all players who can see this vehicle are stored in */
   cList<int*> *SeenByPlayerList;
   int PosX,PosY;   // Position auf der Karte

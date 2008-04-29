@@ -104,6 +104,8 @@ class cClient
 	int iTurnTime;
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
+	/** List with all active movejobs */
+	cList<cMJobs*> *ActiveMJobs;
 
 	/**
 	* checks the input of the player
@@ -205,19 +207,6 @@ class cClient
 	*/
 	void handleMessages();
 	/**
-	* adds an effect
-	*@author alzi alias DoctorDeath
-	*@param typ typ of the effect
-	*@param iX X coordinate were the effect should be added
-	*@param iY Y coordinate were the effect should be added
-	*@param iParam 
-	*@param param 
-	*@param iNum 
-	*/
-	void addFX( eFXTyps typ, int iX, int iY, int iParam );
-	void addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param );
-	void addFX( sFX* iNum );
-	/**
 	* checks whether the input is a comman
 	*@author alzi alias DoctorDeath
 	*@param sCmd the input string
@@ -273,6 +262,8 @@ class cClient
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTurnTime();
+	void addActiveMoveJob ( cMJobs *MJob );
+	void handleMoveJobs ();
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
@@ -358,6 +349,19 @@ public:
 	*@return 0 for success
 	*/
 	int HandleNetMessage( cNetMessage* message );
+	/**
+	* adds an effect
+	*@author alzi alias DoctorDeath
+	*@param typ typ of the effect
+	*@param iX X coordinate were the effect should be added
+	*@param iY Y coordinate were the effect should be added
+	*@param iParam 
+	*@param param 
+	*@param iNum 
+	*/
+	void addFX( eFXTyps typ, int iX, int iY, int iParam );
+	void addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param );
+	void addFX( sFX* iNum );
 
 	/**
 	* increments the iTimeTimer.
