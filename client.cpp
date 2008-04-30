@@ -835,7 +835,7 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud->Ende && !SelectedVehicle->Attacking )
 		{
-			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR );
+			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList );
 			if ( !MJob->finished )
 			{
 				if ( MJob->CalcPath() )
@@ -2801,12 +2801,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			building->SubBase->HumanNeed = message->popInt16();
 		}
 		break;
-	case GAME_EV_MOVE_JOB:
+	case GAME_EV_MOVE_JOB_SERVER:
 		{
 			cMJobs *MJob;
 			int iCount = 0;
 			int iWaypointOff;
 
+			int iID = message->popInt16();
 			int iSrcOff = message->popInt16();
 			int iDestOff = message->popInt16();
 			bool bPlane = message->popBool();
@@ -2826,15 +2827,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					if ( iWaypointOff == iSrcOff )
 					{
-						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane );
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList );
+						if ( MJob->vehicle == NULL )
+						{
+							// warning, here is something wrong! ( out of sync? )
+							break;
+						}
 						MJob->waypoints = Waypoint;
 					}
 					else
 					{
-						cVehicle *Vehicle;
-						if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
-						else Vehicle = Map->GO[iSrcOff].vehicle;
-						if ( !Vehicle )
+						cVehicle *Vehicle = getVehicleFromID ( iID );
+						if ( Vehicle == NULL || Vehicle->mjob == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
 							break;
@@ -2859,57 +2863,130 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			// is the last waypoint in this message?
 			if ( iWaypointOff == iDestOff )
 			{
+				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
 			}
 		}
 		break;
-	case GAME_EV_DO_MOVE:
+	case GAME_EV_NEXT_MOVE:
 		{
-			bool bPlane = message->popBool();
-			int iSrcOff = message->popInt16();
+			int iID = message->popInt16();
 			int iDestOff = message->popInt16();
+			bool bOK = message->popBool();
 
-			cVehicle *Vehicle = NULL;
-			if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
-			else Vehicle = Map->GO[iSrcOff].vehicle;
-
-			if ( Vehicle )
-			{
-				Vehicle->moving = true;
-				if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
-				Vehicle->MoveJobActive = true;
-			}
-		}
-		break;
-	case GAME_EV_STOP_MOVE:
-		{
-			bool bPlane = message->popBool();
-			int iOff = message->popInt16();
-			bool bCompletely = message->popBool();
-
-			cVehicle *Vehicle = NULL;
-			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
-			else Vehicle = Map->GO[iOff].vehicle;
+			cVehicle *Vehicle = getVehicleFromID ( iID );
 
 			if ( Vehicle && Vehicle->mjob )
 			{
 				bool bWasMoving = Vehicle->MoveJobActive;
-				if ( bCompletely )
+				// set vehicle to server position
+				int iDestX = iDestOff%Map->size;
+				int iDestY = iDestOff/Map->size;
+				if ( Vehicle->PosX != iDestX || Vehicle->PosY != iDestY )
 				{
-					Vehicle->mjob->finished = true;
+					// the client is faster then the server and has already
+					// reached the last field or the next will be the last,
+					// then stop the vehicle
+					if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL )
+					{
+						Vehicle->mjob->finished = true;
+						if ( Vehicle == SelectedVehicle && bWasMoving )
+						{
+							StopFXLoop ( iObjectStream );
+							if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+							else PlayFX ( Vehicle->typ->Stop );
+							iObjectStream = Vehicle->PlayStram();
+						}
+						Vehicle->OffX = Vehicle->OffY = 0;
+					}
+					else
+					{
+						// server is one fiels faster then client
+						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
+						{
+							doEndMoveVehicle( Vehicle );
+						}
+						else
+						{
+							// check whether the destination field is one of the next in the waypointlist
+							// if not it must have been one that has been deleted already
+							bool bServerIsFaster = false;
+							sWaypoint *Waypoint = Vehicle->mjob->waypoints->next->next;
+							while ( Waypoint )
+							{
+								if ( Waypoint->X == iDestX && Waypoint->Y == iDestY )
+								{
+									bServerIsFaster = true;
+									break;
+								}
+							}
+							// the server is more then one field faster
+							if ( bServerIsFaster )
+							{
+								if ( Vehicle->data.can_drive == DRIVE_AIR )
+								{
+									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+									Map->GO[iDestX+iDestY*Map->size].plane = Vehicle;
+								}
+								else
+								{
+									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+									Map->GO[iDestX+iDestY*Map->size].vehicle = Vehicle;
+								}
+								Vehicle->PosX = iDestOff%Map->size;
+								Vehicle->PosY = iDestOff/Map->size;
+								Vehicle->OffX = Vehicle->OffY = 0;
+
+								Waypoint = Vehicle->mjob->waypoints;
+								while ( Waypoint )
+								{
+									if ( Waypoint->next->X != iDestX && Waypoint->next->Y != iDestY )
+									{
+										Vehicle->mjob->waypoints = Waypoint->next;
+										free ( Waypoint );
+										Waypoint = Vehicle->mjob->waypoints;
+									}
+									else
+									{
+										Vehicle->mjob->waypoints = Waypoint;
+										break;
+									}
+								}
+							}
+							// the client is faster
+							else
+							{
+								// just stop the vehicle and wait for the next commando of the server
+								Vehicle->mjob->EndForNow = true;
+							}
+						}
+					}
+				}
+				if ( bOK )
+				{
+					Vehicle->moving = true;
+					if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
+					Vehicle->MoveJobActive = true;
 				}
 				else
 				{
-					Vehicle->mjob->Suspended = true;
-					Vehicle->mjob->EndForNow = true;
-				}
-				// Stop stream
-				if ( Vehicle == SelectedVehicle && bWasMoving )
-				{
-					StopFXLoop ( iObjectStream );
-					if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
-					else PlayFX ( Vehicle->typ->Stop );
-					iObjectStream = Vehicle->PlayStram();
+					if ( Vehicle->mjob->waypoints->X == Vehicle->mjob->DestX && Vehicle->mjob->waypoints->Y == Vehicle->mjob->DestY )
+					{
+						Vehicle->mjob->finished = true;
+					}
+					else
+					{
+						Vehicle->mjob->Suspended = true;
+						Vehicle->mjob->EndForNow = true;
+					}
+					// Stop the soundstream
+					if ( Vehicle == SelectedVehicle && bWasMoving )
+					{
+						StopFXLoop ( iObjectStream );
+						if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+						else PlayFX ( Vehicle->typ->Stop );
+						iObjectStream = Vehicle->PlayStram();
+					}
 				}
 			}
 		}
@@ -3179,6 +3256,7 @@ void cClient::handleMoveJobs ()
 		cVehicle *Vehicle;
 
 		MJob = ActiveMJobs->Items[i];
+		if ( MJob->vehicle == NULL ) continue;
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished )
@@ -3224,14 +3302,187 @@ void cClient::handleMoveJobs ()
 			Vehicle->rotating = false;
 		}
 		
-		if ( Vehicle->moving )
+		if ( Vehicle->MoveJobActive )
 		{
-			int iStartOff = Vehicle->PosX+Vehicle->PosY*Map->size;
-			if ( MJob->DoTheMove() )
-			{
-				sendEndMove( iStartOff, Vehicle->data.can_drive == DRIVE_AIR );
-			}
+			moveVehicle( MJob->vehicle );
 			bFlagDrawMap = true;
 		}
 	}
+}
+
+void cClient::moveVehicle( cVehicle *Vehicle )
+{
+	if ( Vehicle == NULL || Vehicle->mjob == NULL ) return;
+	cMJobs *MJob = Vehicle->mjob;
+
+	int iSpeed;
+	if ( !Vehicle ) return;
+	if ( Vehicle->data.is_human )
+	{
+		Vehicle->WalkFrame++;
+		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
+		iSpeed = MOVE_SPEED/2;
+	}
+	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
+	{
+		iSpeed = MOVE_SPEED;
+		if ( MJob->waypoints && MJob->waypoints->next && Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base&& ( Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_road || Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed*=2;
+	}
+	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
+	else iSpeed = MOVE_SPEED;
+
+	// Ggf Tracks malen:
+	if ( SettingsData.bMakeTracks && Vehicle->data.make_tracks && !Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size,false ) &&!
+	        ( MJob->waypoints && MJob->waypoints->next && Map->terrain[Map->Kacheln[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size]].water ) &&
+	        ( Vehicle->owner == Client->ActivePlayer || ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
+	{
+		if ( !Vehicle->OffX && !Vehicle->OffY )
+		{
+			switch ( Vehicle->dir )
+			{
+				case 0:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64-10,0 );
+					break;
+				case 4:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64+10,0 );
+					break;
+				case 2:
+					addFX ( fxTracks,Vehicle->PosX*64+10,Vehicle->PosY*64,2 );
+					break;
+				case 6:
+					addFX ( fxTracks,Vehicle->PosX*64-10,Vehicle->PosY*64,2 );
+					break;
+				case 1:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
+					break;
+				case 5:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
+					break;
+				case 3:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
+					break;
+				case 7:
+					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
+					break;
+			}
+		}
+		else if ( abs ( Vehicle->OffX ) == iSpeed*2 || abs ( Vehicle->OffY ) == iSpeed*2 )
+		{
+			switch ( Vehicle->dir )
+			{
+				case 1:
+					addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64-26,1 );
+					break;
+				case 5:
+					addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64+26,1 );
+					break;
+				case 3:
+					addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64+26,3 );
+					break;
+				case 7:
+					addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64-26,3 );
+					break;
+			}
+		}
+	}
+
+	switch ( MJob->next_dir )
+	{
+		case 0:
+			Vehicle->OffY -= iSpeed;
+			break;
+		case 1:
+			Vehicle->OffY -= iSpeed;
+			Vehicle->OffX += iSpeed;
+			break;
+		case 2:
+			Vehicle->OffX += iSpeed;
+			break;
+		case 3:
+			Vehicle->OffX += iSpeed;
+			Vehicle->OffY += iSpeed;
+			break;
+		case 4:
+			Vehicle->OffY += iSpeed;
+			break;
+		case 5:
+			Vehicle->OffX -= iSpeed;
+			Vehicle->OffY += iSpeed;
+			break;
+		case 6:
+			Vehicle->OffX -= iSpeed;
+			break;
+		case 7:
+			Vehicle->OffX -= iSpeed;
+			Vehicle->OffY -= iSpeed;
+			break;
+	}
+
+	// check whether the point has been reached:
+	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
+	{
+		doEndMoveVehicle ( Vehicle );
+	}
+}
+
+void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
+{
+	if ( Vehicle == NULL || Vehicle->mjob == NULL ) return;
+	cMJobs *MJob = Vehicle->mjob;
+
+	if ( MJob->waypoints->next == NULL )
+	{
+		// this is just to avoid errors, this should normaly never happen.
+		MJob->finished = true;
+		return;
+	}
+
+	Vehicle->data.speed += MJob->SavedSpeed;
+	MJob->SavedSpeed = 0;
+	Vehicle->DecSpeed ( MJob->waypoints->next->Costs );
+	Vehicle->moving = false;
+	Vehicle->WalkFrame = 0;
+
+	sWaypoint *wp;
+	wp = MJob->waypoints->next;
+	free ( MJob->waypoints );
+	MJob->waypoints = wp;
+
+	Vehicle->moving = false;
+
+	if ( !MJob->plane )
+	{
+		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
+	}
+	else
+	{
+		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
+	}
+	Vehicle->PosX = MJob->waypoints->X;
+	Vehicle->PosY = MJob->waypoints->Y;
+	Vehicle->OffX = 0;
+	Vehicle->OffY = 0;
+
+	Vehicle->owner->DoScan();
+	bFlagDrawMMap = true;
+
+	mouseMoveCallback ( true );
+	MJob->CalcNextDir();
+}
+
+cVehicle *cClient::getVehicleFromID ( int iID )
+{
+	cVehicle *Vehicle;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		Vehicle = PlayerList->Items[i]->VehicleList;
+		while ( Vehicle )
+		{
+			if ( Vehicle->iID == iID ) return Vehicle;
+			Vehicle = Vehicle->next;
+		}
+	}
+	return NULL;
 }

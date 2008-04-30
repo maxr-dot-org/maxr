@@ -335,9 +335,9 @@ void cEngine::ChangeBuildingName ( int posx,int posy,string name,bool override,b
 // wird ein Client-MoveJob erstellt:
 cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,bool suspended )
 {
-	cMJobs *job;
+	cMJobs *job = NULL;
 	string sMessage;
-	job=new cMJobs ( map,ScrOff,DestOff,plane );
+	//job=new cMJobs ( map,ScrOff,DestOff,plane );
 	job->ClientMove=ClientMove;
 	job->next=mjobs;
 	mjobs=job;

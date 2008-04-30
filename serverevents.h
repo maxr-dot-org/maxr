@@ -32,8 +32,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
-	GAME_EV_MOVE_JOB,				// a message with all waypoints
-	GAME_EV_END_MOVE,				// a client is ready to make the move
+	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 };
 
 /**
@@ -117,8 +116,7 @@ void sendDoStartWork( cBuilding* building );
 */
 void sendDoStopWork( cBuilding* building );
 
-void sendDoMove( int iSrcOff, int iDestOff, bool bPlane, int iPlayer );
-void sendStopMove( int iOff, bool bPlane, bool bCompletely, int iPlayer );
+void sendNextMove( int iUnitID, int iDestOff, bool bOK, int iPlayer );
 void sendMoveJobServer( cMJobs *MJob, int iPlayer );
 
 #endif // servereventsH

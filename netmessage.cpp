@@ -333,14 +333,12 @@ string cNetMessage::getTypeAsString()
 		return("GAME_EV_DO_START_WORK");
 	case GAME_EV_DO_STOP_WORK:
 		return("GAME_EV_DO_STOP_WORK");
-	case GAME_EV_DO_MOVE:
-		return string("GAME_EV_DO_MOVE");
-	case GAME_EV_STOP_MOVE:
-		return string("GAME_EV_STOP_MOVE");
-	case GAME_EV_MOVE_JOB:
-		return string("GAME_EV_MOVE_JOB");
-	case GAME_EV_END_MOVE:
-		return string("GAME_EV_END_MOVE");
+	case GAME_EV_NEXT_MOVE:
+		return string("GAME_EV_NEXT_MOVE");
+	case GAME_EV_MOVE_JOB_SERVER:
+		return string("GAME_EV_MOVE_JOB_SERVER");
+	case GAME_EV_MOVE_JOB_CLIENT:
+		return string("GAME_EV_MOVE_JOB_CLIENT");
 
 	default:
 		return iToStr( iType );

@@ -269,21 +269,12 @@ void sendDoStopWork( cBuilding* building )
 	}
 }
 
-void sendDoMove( int iSrcOff, int iDestOff, bool bPlane, int iPlayer )
+void sendNextMove( int iUnitID, int iDestOff, bool bOK, int iPlayer )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_DO_MOVE );
+	cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
+	message->pushBool( bOK );
 	message->pushInt16( iDestOff );
-	message->pushInt16( iSrcOff );
-	message->pushBool( bPlane );
-	Server->sendNetMessage( message, iPlayer );
-}
-
-void sendStopMove( int iOff, bool bPlane, bool bCompletely, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_STOP_MOVE );
-	message->pushBool( bCompletely );
-	message->pushInt16( iOff );
-	message->pushBool( bPlane );
+	message->pushInt16( iUnitID );
 	Server->sendNetMessage( message, iPlayer );
 }
 
@@ -295,7 +286,7 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 	sWaypoint *Waypoint;
 	while ( !bEnd )
 	{
-		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB );
+		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_SERVER );
 
 		int iCount = 0;
 		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
@@ -321,6 +312,7 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 		message->pushBool ( MJob->plane );
 		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
 		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
+		message->pushInt16( MJob->vehicle->iID );
 
 		Server->sendNetMessage( message, iPlayer );
 	}

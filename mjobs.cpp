@@ -24,7 +24,7 @@
 #include "fonts.h"
 
 // Funktionen der MJobs Klasse ///////////////////////////////////////////////
-cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
+cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList )
 {
 	map=Map;
 	finished=false;
@@ -35,25 +35,16 @@ cMJobs::cMJobs ( cMap *Map,int ScrOff,int DestOff,bool Plane )
 	waypoints=NULL;
 	SavedSpeed=0;
 	plane=Plane;
-	vehicle = NULL;
 
-	if ( !plane )
+	vehicle = NULL;
+	for ( int i = 0; i < PlayerList->iCount && vehicle == NULL; i++ )
 	{
-		if ( !map->GO[ScrOff].vehicle )
+		vehicle = PlayerList->Items[i]->VehicleList;
+		while ( vehicle )
 		{
-			finished=true;
-			return;
+			if ( vehicle->iID == iVehicleID ) break;
+			vehicle = vehicle->next;
 		}
-		vehicle=map->GO[ScrOff].vehicle;
-	}
-	else
-	{
-		if ( !map->GO[ScrOff].plane )
-		{
-			finished=true;
-			return;
-		}
-		vehicle=map->GO[ScrOff].plane;
 	}
 	if ( vehicle->mjob )
 	{
@@ -381,10 +372,10 @@ void cMJobs::StartMove ( void )
 }
 
 // moves the vehicle to the next field:
-bool cMJobs::DoTheMove ( void )
+void cMJobs::DoTheMove ( void )
 {
 	int speed;
-	if ( !vehicle ) return false;
+	if ( !vehicle ) return;
 	if ( vehicle->data.is_human )
 	{
 		vehicle->WalkFrame++;
@@ -500,6 +491,7 @@ bool cMJobs::DoTheMove ( void )
 		wp = waypoints->next;
 		free ( waypoints );
 		waypoints = wp;
+		vehicle->moving = false;
 
 		if ( !plane )
 		{
@@ -518,12 +510,15 @@ bool cMJobs::DoTheMove ( void )
 		vehicle->OffX = 0;
 		vehicle->OffY = 0;
 
+		if ( waypoints->next == NULL )
+		{
+			finished = true;
+		}
+
 		vehicle->owner->DoScan();
 		Client->bFlagDrawMMap = true;
 
 		Client->mouseMoveCallback ( true );
 		CalcNextDir();
-		return true;
 	}
-	return false;
 }

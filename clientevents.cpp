@@ -59,7 +59,7 @@ void sendMoveJob( cMJobs *MJob )
 	sWaypoint *Waypoint;
 	while ( !bEnd )
 	{
-		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB );
+		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_CLIENT );
 
 		int iCount = 0;
 		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
@@ -85,15 +85,8 @@ void sendMoveJob( cMJobs *MJob )
 		message->pushBool ( MJob->plane );
 		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
 		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
+		message->pushInt16( MJob->vehicle->iID );
 
 		Client->sendNetMessage( message );
 	}
-}
-
-void sendEndMove( int iStartOff, bool bPlane )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_END_MOVE );
-	message->pushInt16( iStartOff );
-	message->pushBool ( bPlane );
-	Client->sendNetMessage( message );
 }

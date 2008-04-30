@@ -38,8 +38,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_DO_START_WORK,			// starts a building
 	GAME_EV_DO_STOP_WORK,			// stops a building
-	GAME_EV_DO_MOVE,				// a vehicle has to be moved
-	GAME_EV_STOP_MOVE,				// a vehicle has to stop his movejob
+	GAME_EV_NEXT_MOVE,				// infos about the next move
+	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -73,8 +73,6 @@ void sendWantStartWork( cBuilding* building);
 void sendWantStopWork( cBuilding* building);
 
 void sendMoveJob( cMJobs *MJob );
-
-void sendEndMove( int iStartOff, bool bPlane );
 
 
 #endif // clienteventsH

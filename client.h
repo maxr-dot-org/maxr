@@ -264,6 +264,9 @@ class cClient
 	void handleTurnTime();
 	void addActiveMoveJob ( cMJobs *MJob );
 	void handleMoveJobs ();
+	void moveVehicle( cVehicle *Vehicle );
+	void doEndMoveVehicle ( cVehicle *Vehicle );
+	cVehicle *getVehicleFromID ( int iID );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;

@@ -39,7 +39,7 @@ struct sWaypoint{
 // Die MJobs-Klasse //////////////////////////////////////////////////////////
 class cMJobs{
 public:
-  cMJobs(cMap *Map,int ScrOff,int DestOff,bool Plane);
+  cMJobs(cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList );
   ~cMJobs(void);
 
   cMap *map;
@@ -75,7 +75,7 @@ public:
   void DrawPfeil(SDL_Rect dest,SDL_Rect *ldest,bool spezial);
   void CalcNextDir(void);
   void StartMove(void);
-  bool DoTheMove(void);
+  void DoTheMove(void);
 };
 
 #endif

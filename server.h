@@ -49,6 +49,9 @@ struct sReport
 */
 int CallbackRunServerThread( void *arg );
 
+
+Uint32 ServerTimerCallback(Uint32 interval, void *arg);
+
 /**
 * Server class which takes all calculations for the game and has the data of all players
 *@author alzi alias DoctorDeath
@@ -99,6 +102,12 @@ class cServer
 	unsigned int iDeadlineStartTime;
 	/** The ID for the next unit*/
 	unsigned int iNextUnitID;
+	/** will be incremented by the Timer */
+	unsigned int iTimerTime;
+	/** diffrent timers */
+	int iTimer0, iTimer1, iTimer2;
+	/** ID of the timer */
+	SDL_TimerID TimerID;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -195,10 +204,17 @@ class cServer
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDeadline ();
+	/**
+	* handles the timers iTimer0, iTimer1 and iTimer2
+	*@author alzi alias DoctorDeath
+	*/
+	void handleTimer();
+
 	void addActiveMoveJob ( cMJobs *MJob );
 	void handleMoveJobs();
-	void startMove ( cMJobs *MJob );
+	void checkMove ( cMJobs *MJob );
 	void moveVehicle ( cVehicle *Vehicle );
+	cVehicle *getVehicleFromID ( int iID );
 public:	
 	/** the map */
 	cMap *Map;
@@ -263,6 +279,12 @@ public:
 	*@param bFixed true if the bridgehead is fixed.
 	*/
 	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *List, bool bFixed );
+	/**
+	* increments the iTimeTimer.
+	*@author alzi alias DoctorDeath
+	*/
+	void Timer();
+
 } EX *Server;
 
 #endif

@@ -24,6 +24,12 @@
 #include "netmessage.h"
 #include "mjobs.h"
 
+Uint32 ServerTimerCallback(Uint32 interval, void *arg)
+{
+	((cServer *)arg)->Timer();
+	return interval;
+}
+
 int CallbackRunServerThread( void *arg )
 {
 	cServer *Server = (cServer *) arg;
@@ -46,6 +52,8 @@ void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool 
 	iTurnDeadline = 10; // just temporary set to 10 seconds
 	ActiveMJobs = new cList<cMJobs *>;
 	iNextUnitID = 0;
+	iTimerTime = 0;
+	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
 
 	EventQueue = new cList<SDL_Event *>;
 	//NetMessageQueue = new cList<cNetMessage*>;
@@ -59,6 +67,7 @@ void cServer::kill()
 {
 	bExit = true;
 	SDL_WaitThread ( ServerThread, NULL );
+	SDL_RemoveTimer ( TimerID );
 
 	while ( EventQueue->iCount )
 	{
@@ -246,6 +255,8 @@ void cServer::run()
 
 		handleMoveJobs ();
 
+		handleTimer();
+
 		SDL_Delay( 10 );
 	}
 }
@@ -294,12 +305,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			building->ServerStopWork(false);
 			break;
 		}
-	case GAME_EV_MOVE_JOB:
+	case GAME_EV_MOVE_JOB_CLIENT:
 		{
 			cMJobs *MJob;
 			int iCount = 0;
 			int iWaypointOff;
 
+			int iID = message->popInt16();
 			int iSrcOff = message->popInt16();
 			int iDestOff = message->popInt16();
 			bool bPlane = message->popBool();
@@ -319,15 +331,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					if ( iWaypointOff == iSrcOff )
 					{
-						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane );
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList );
+						if ( MJob->vehicle == NULL )
+						{
+							// warning, here is something wrong! ( out of sync? )
+							break;
+						}
 						MJob->waypoints = Waypoint;
 					}
 					else
 					{
-						cVehicle *Vehicle;
-						if ( bPlane ) Vehicle = Map->GO[iSrcOff].plane;
-						else Vehicle = Map->GO[iSrcOff].vehicle;
-						if ( !Vehicle )
+						cVehicle *Vehicle = getVehicleFromID( iID );
+						if ( Vehicle == NULL || Vehicle->mjob == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
 							break;
@@ -352,26 +367,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// is the last waypoint in this message?
 			if ( iWaypointOff == iDestOff )
 			{
+				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
+				// send the movejob to all other player who can see this unit
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 				{
 					sendMoveJobServer ( MJob, *MJob->vehicle->SeenByPlayerList->Items[i] );
 				}
-			}
-		}
-		break;
-	case GAME_EV_END_MOVE:
-		{
-			bool bPlane = message->popBool();
-			int iOff = message->popInt16();
-
-			cVehicle *Vehicle = NULL;
-			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
-			else Vehicle = Map->GO[iOff].vehicle;
-
-			if ( Vehicle )
-			{
-				moveVehicle ( Vehicle );
 			}
 		}
 		break;
@@ -637,7 +639,9 @@ void cServer::deleteBuilding( cBuilding *Building )
 
 void cServer::checkPlayerUnits ()
 {
-	cPlayer *UnitPlayer, *MapPlayer;
+	cPlayer *UnitPlayer;	// The player whos unit is it
+	cPlayer *MapPlayer;		// The player who is scaning for new units
+
 	for ( int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->iCount; iUnitPlayerNum++ )
 	{
 		UnitPlayer = PlayerList->Items[iUnitPlayerNum];
@@ -660,6 +664,7 @@ void cServer::checkPlayerUnits ()
 						NextVehicle->SeenByPlayerList->Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
 						sendUnitData( NextVehicle, MapPlayer->Nr );
+						if ( NextVehicle->mjob ) sendMoveJobServer ( NextVehicle->mjob, MapPlayer->Nr );
 					}
 				}
 				else
@@ -1075,11 +1080,11 @@ void cServer::handleMoveJobs ()
 			// stop the job
 			if ( MJob->EndForNow )
 			{
-				sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, Vehicle->owner->Nr );
-				for ( int j = 0; j < Vehicle->SeenByPlayerList->iCount; j++ )
+				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 				{
-					sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, *Vehicle->SeenByPlayerList->Items[j] );
+					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, *MJob->vehicle->SeenByPlayerList->Items[i] );
 				}
+				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
 			}
 			else
 			{
@@ -1088,26 +1093,46 @@ void cServer::handleMoveJobs ()
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
 					Vehicle->MoveJobActive = false;
-					sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, true, Vehicle->owner->Nr );
-					for ( int j = 0; j < Vehicle->SeenByPlayerList->iCount; j++ )
+
+					for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 					{
-						sendStopMove( Vehicle->PosX+Vehicle->PosY*Map->size, MJob->plane, false, *Vehicle->SeenByPlayerList->Items[j] );
+						sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, *MJob->vehicle->SeenByPlayerList->Items[i] );
 					}
+					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
 				}
 				delete MJob;
 			}
 			ActiveMJobs->Delete ( i );
 			continue;
 		}
-		
-		if ( !Vehicle->moving )
+
+		// rotate vehicle
+		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
 		{
-			startMove( MJob );
+			Vehicle->rotating = true;
+			if ( iTimer1 )
+			{
+				Vehicle->RotateTo ( MJob->next_dir );
+			}
+			continue;
+		}
+		else
+		{
+			Vehicle->rotating = false;
+		}
+		
+		if ( !MJob->vehicle->moving )
+		{
+			checkMove( MJob );
+		}
+		else
+		{
+			moveVehicle ( MJob->vehicle );
 		}
 	}
 }
 
-void cServer::startMove ( cMJobs *MJob )
+void cServer::checkMove ( cMJobs *MJob )
 {
 	bool bWachRange;
 	if ( !MJob->vehicle || !MJob->waypoints || !MJob->waypoints->next ) return;
@@ -1170,44 +1195,144 @@ void cServer::startMove ( cMJobs *MJob )
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 	{
-		sendDoMove ( MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size, MJob->plane, *MJob->vehicle->SeenByPlayerList->Items[i] );
+		sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, true, *MJob->vehicle->SeenByPlayerList->Items[i] );
 	}
-	sendDoMove ( MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size, MJob->plane, MJob->vehicle->owner->Nr );
+	sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, true, MJob->vehicle->owner->Nr );
 }
 
 void cServer::moveVehicle ( cVehicle *Vehicle )
 {
+	// just do this every 50 miliseconds
+	if ( !iTimer0 ) return;
+
 	cMJobs *MJob = Vehicle->mjob;
-	sWaypoint *Waypoint;
-	Waypoint = MJob->waypoints->next;
-	free ( MJob->waypoints );
-	MJob->waypoints = Waypoint;
-
-	if ( Vehicle->data.can_drive == DRIVE_AIR )
+	int iSpeed;
+	if ( !Vehicle ) return;
+	if ( Vehicle->data.is_human )
 	{
-		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].air_reserviert = false;
+		Vehicle->WalkFrame++;
+		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
+		iSpeed = MOVE_SPEED/2;
 	}
-	else
+	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
 	{
-		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].reserviert = false;
+		iSpeed = MOVE_SPEED;
+		if ( MJob->waypoints && MJob->waypoints->next && Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base&& ( Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_road || Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed*=2;
 	}
-	Vehicle->PosX = MJob->waypoints->X;
-	Vehicle->PosY = MJob->waypoints->Y;
+	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
+	else iSpeed = MOVE_SPEED;
 
-	if ( MJob->waypoints->next == NULL )
+	switch ( MJob->next_dir )
 	{
-		MJob->finished = true;
+		case 0:
+			Vehicle->OffY -= iSpeed;
+			break;
+		case 1:
+			Vehicle->OffY -= iSpeed;
+			Vehicle->OffX += iSpeed;
+			break;
+		case 2:
+			Vehicle->OffX += iSpeed;
+			break;
+		case 3:
+			Vehicle->OffX += iSpeed;
+			Vehicle->OffY += iSpeed;
+			break;
+		case 4:
+			Vehicle->OffY += iSpeed;
+			break;
+		case 5:
+			Vehicle->OffX -= iSpeed;
+			Vehicle->OffY += iSpeed;
+			break;
+		case 6:
+			Vehicle->OffX -= iSpeed;
+			break;
+		case 7:
+			Vehicle->OffX -= iSpeed;
+			Vehicle->OffY -= iSpeed;
+			break;
 	}
 
-	Vehicle->data.speed += MJob->SavedSpeed;
-	MJob->SavedSpeed = 0;
-	Vehicle->DecSpeed ( MJob->waypoints->Costs );
 
-	// TODO: check for results of the move
+	// check whether the point has been reached:
+	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
+	{
+		cMJobs *MJob = Vehicle->mjob;
+		sWaypoint *Waypoint;
+		Waypoint = MJob->waypoints->next;
+		free ( MJob->waypoints );
+		MJob->waypoints = Waypoint;
 
-	Vehicle->moving = false;
+		if ( Vehicle->data.can_drive == DRIVE_AIR )
+		{
+			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].air_reserviert = false;
+		}
+		else
+		{
+			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].reserviert = false;
+		}
+		Vehicle->OffX = 0;
+		Vehicle->OffY = 0;
+		Vehicle->PosX = MJob->waypoints->X;
+		Vehicle->PosY = MJob->waypoints->Y;
+
+		if ( MJob->waypoints->next == NULL )
+		{
+			MJob->finished = true;
+		}
+
+		Vehicle->data.speed += MJob->SavedSpeed;
+		MJob->SavedSpeed = 0;
+		Vehicle->DecSpeed ( MJob->waypoints->Costs );
+
+		// TODO: check for results of the move
+
+		Vehicle->moving = false;
+		MJob->CalcNextDir();
+	}
+}
+
+void cServer::Timer()
+{
+	iTimerTime++;
+}
+
+void cServer::handleTimer()
+{
+	//iTimer0: 50ms
+	//iTimer1: 100ms
+	//iTimer2: 400ms
+
+	static unsigned int iLast = 0, i = 0;
+	iTimer0 = 0 ;
+	iTimer1 = 0;
+	iTimer2 = 0;
+	if ( iTimerTime != iLast )
+	{
+		iLast = iTimerTime;
+		i++;
+		iTimer0 = 1;
+		if ( i&0x1 ) iTimer1 = 1;
+		if ( ( i&0x3 ) == 3 ) iTimer2 = 1;
+	}
+}
+
+cVehicle *cServer::getVehicleFromID ( int iID )
+{
+	cVehicle *Vehicle;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		Vehicle = PlayerList->Items[i]->VehicleList;
+		while ( Vehicle )
+		{
+			if ( Vehicle->iID == iID ) return Vehicle;
+			Vehicle = Vehicle->next;
+		}
+	}
+	return NULL;
 }
