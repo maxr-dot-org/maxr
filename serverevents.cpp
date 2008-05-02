@@ -311,7 +311,8 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 		message->pushInt16( iCount );
 		message->pushBool ( MJob->plane );
 		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
-		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
+		if ( MJob->waypoints->X != MJob->ScrX || MJob->waypoints->Y != MJob->ScrY ) message->pushInt16( MJob->waypoints->X+MJob->waypoints->Y*MJob->map->size );
+		else message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
 		message->pushInt16( MJob->vehicle->iID );
 
 		Server->sendNetMessage( message, iPlayer );

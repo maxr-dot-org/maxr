@@ -72,6 +72,10 @@ void sendWantStartWork( cBuilding* building);
 */
 void sendWantStopWork( cBuilding* building);
 
+/**
+* sends all waypoints of a movejob to the server.
+*@author alzi alias DoctorDeath
+*/
 void sendMoveJob( cMJobs *MJob );
 
 

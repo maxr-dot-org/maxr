@@ -167,7 +167,7 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	n->next=VehicleList;
 	VehicleList=n;
 	n->GenerateName();
-	Client->drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
 	return n;
 }
 
@@ -234,8 +234,8 @@ cBuilding *cPlayer::AddBuilding ( int posx,int posy,sBuilding *b )
 	if ( n->data.is_mine ) n->CheckRessourceProd();
 	if ( n->data.scan )
 	{
-		if ( n->data.is_big ) Client->drawSpecialCircleBig ( n->PosX,n->PosY,n->data.scan,ScanMap );
-		else Client->drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+		if ( n->data.is_big ) drawSpecialCircleBig ( n->PosX,n->PosY,n->data.scan,ScanMap );
+		else drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
 	}
 	if ( n->data.can_attack ) AddWachpostenB ( n );
 	return n;
@@ -251,19 +251,19 @@ void cPlayer::AddWachpostenV ( cVehicle *v )
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
 		WachpostenAir->Add ( n );
-		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
 		WachpostenAir->Add ( n );
-		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
-		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 	else
 	{
 		WachpostenGround->Add ( n );
-		Client->drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 }
 
@@ -277,19 +277,19 @@ void cPlayer::AddWachpostenB ( cBuilding *b )
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
 		WachpostenAir->Add ( n );
-		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
 		WachpostenAir->Add ( n );
-		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
-		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 	else
 	{
 		WachpostenGround->Add ( n );
-		Client->drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 }
 
@@ -428,11 +428,11 @@ void cPlayer::RefreshWacheAir ( void )
 		ptr=WachpostenAir->Items[i];
 		if ( ptr->v )
 		{
-			Client->drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
+			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
 		}
 		else
 		{
-			Client->drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapAir );
+			drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapAir );
 		}
 	}
 }
@@ -448,11 +448,11 @@ void cPlayer::RefreshWacheGround ( void )
 		ptr=WachpostenGround->Items[i];
 		if ( ptr->v )
 		{
-			Client->drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
+			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
 		}
 		else
 		{
-			Client->drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapGround );
+			drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapGround );
 		}
 	}
 }
@@ -483,16 +483,16 @@ void cPlayer::DoScan ( void )
 		}
 		else
 		{
-			Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
+			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
 
 			// Detection:
 			if ( vp->data.can_detect_land )
 			{
-				Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectLandMap );
+				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectLandMap );
 			}
 			else if ( vp->data.can_detect_sea )
 			{
-				Client->drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectSeaMap );
+				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectSeaMap );
 			}
 		}
 
@@ -511,8 +511,8 @@ void cPlayer::DoScan ( void )
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.is_big ) Client->drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
-				else Client->drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
+				if ( bp->data.is_big ) drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
+				else drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
 			}
 		}
 		bp=bp->next;
@@ -830,7 +830,7 @@ void cPlayer::CalcShields ( void )
 	{
 		if ( b->data.max_shield&&b->data.shield )
 		{
-			Client->drawSpecialCircleBig ( b->PosX,b->PosY,b->data.range,ShieldMap );
+			drawSpecialCircleBig ( b->PosX,b->PosY,b->data.range,ShieldMap );
 		}
 		b=b->next;
 	}
@@ -1105,5 +1105,94 @@ void cPlayer::DrawLockList ( cHud *hud )
 				elem->b->DrawHelthBar();
 			}
 		}
+	}
+}
+
+void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
+{
+	float w=0.017453*45,step;
+	int rx,ry,x1,x2;
+	if ( iRadius ) iRadius--;
+	if ( !iRadius ) return;
+	iRadius *= 10;
+	step=0.017453*90-acos ( 1.0/iRadius );
+	step/=2;
+	for ( float i=0;i<=w;i+=step )
+	{
+		rx= ( int ) ( cos ( i ) *iRadius );
+		ry= ( int ) ( sin ( i ) *iRadius);
+		rx/=10;ry/=10;
+
+		x1=rx+iX;x2=-rx+iX;
+		for ( int k=x2;k<=x1+1;k++ )
+		{
+			if ( k<0 ) continue;
+			if ( k>=Client->Map->size ) break;
+			if ( iY+ry>=0&&iY+ry<Client->Map->size )
+				map[k+ ( iY+ry ) *Client->Map->size]|=1;
+			if ( iY-ry>=0&&iY-ry<Client->Map->size )
+				map[k+ ( iY-ry ) *Client->Map->size]|=1;
+
+			if ( iY+ry+1>=0&&iY+ry+1<Client->Map->size )
+				map[k+ ( iY+ry+1 ) *Client->Map->size]|=1;
+			if ( iY-ry+1>=0&&iY-ry+1<Client->Map->size )
+				map[k+ ( iY-ry+1 ) *Client->Map->size]|=1;
+		}
+
+		x1=ry+iX;x2=-ry+iX;
+		for ( int k=x2;k<=x1+1;k++ )
+		{
+			if ( k<0 ) continue;
+			if ( k>=Client->Map->size ) break;
+			if ( iY+rx>=0&&iY+rx<Client->Map->size )
+				map[k+ ( iY+rx ) *Client->Map->size]|=1;
+			if ( iY-rx>=0&&iY-rx<Client->Map->size )
+				map[k+ ( iY-rx ) *Client->Map->size]|=1;
+
+			if ( iY+rx+1>=0&&iY+rx+1<Client->Map->size )
+				map[k+ ( iY+rx+1 ) *Client->Map->size]|=1;
+			if ( iY-rx+1>=0&&iY-rx+1<Client->Map->size )
+				map[k+ ( iY-rx+1 ) *Client->Map->size]|=1;
+		}
+	}
+}
+
+void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
+{
+	float w=0.017453*45,step;
+	int rx,ry,x1,x2;
+	if ( iRadius ) iRadius--;
+	if ( !iRadius ) return;
+	iRadius *= 10;
+	step=0.017453*90-acos ( 1.0/iRadius );
+	step/=2;
+	for ( float i=0;i<=w;i+=step )
+	{
+		rx= ( int ) ( cos ( i ) *iRadius );
+		ry= ( int ) ( sin ( i ) *iRadius);
+		rx/=10;ry/=10;
+
+		x1=rx+iX;x2=-rx+iX;
+		for ( int k=x2;k<=x1+1;k++ )
+		{
+			if ( k<0 ) continue;
+			if ( k>=Client->Map->size ) break;
+			if ( iY+ry>=0&&iY+ry<Client->Map->size )
+				map[k+ ( iY+ry ) *Client->Map->size]|=1;
+			if ( iY-ry>=0&&iY-ry<Client->Map->size )
+				map[k+ ( iY-ry ) *Client->Map->size]|=1;
+		}
+
+		x1=ry+iX;x2=-ry+iX;
+		for ( int k=x2;k<=x1+1;k++ )
+		{
+			if ( k<0 ) continue;
+			if ( k>=Client->Map->size ) break;
+			if ( iY+rx>=0&&iY+rx<Client->Map->size )
+				map[k+ ( iY+rx ) *Client->Map->size]|=1;
+			if ( iY-rx>=0&&iY-rx<Client->Map->size )
+				map[k+ ( iY-rx ) *Client->Map->size]|=1;
+		}
+
 	}
 }

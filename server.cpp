@@ -46,7 +46,7 @@ void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool 
 	bExit = false;
 	bStarted = false;
 	iActiveTurnPlayerNr = 0;
-	iPlayerEndCount = 0;
+	PlayerEndList = new cList<int*>;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
@@ -679,7 +679,7 @@ void cServer::checkPlayerUnits ()
 							bool bPlane;
 							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
 							else bPlane = false;
-							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, NextVehicle->iID, true, NextVehicle->owner->Nr, bPlane );
+							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, NextVehicle->iID, true, MapPlayer->Nr, bPlane );
 							break;
 						}
 					}
@@ -722,7 +722,7 @@ void cServer::checkPlayerUnits ()
 							else bBase = false;
 							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
 							else bSubBase = false;
-							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, NextBuilding->iID, false, NextBuilding->owner->Nr, false, bBase, bSubBase );
+							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, NextBuilding->iID, false, MapPlayer->Nr, false, bBase, bSubBase );
 
 							break;
 						}
@@ -736,7 +736,7 @@ void cServer::checkPlayerUnits ()
 
 cPlayer *cServer::getPlayerFromNumber ( int iNum )
 {
-	cPlayer *Player;
+	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
 		if ( PlayerList->Items[i]->Nr == iNum )
@@ -810,10 +810,19 @@ void cServer::handleEnd ( int iPlayerNum )
 		}
 		else // it's a simultanous TCP/IP multiplayer game
 		{
-			iPlayerEndCount++;
-			if ( iPlayerEndCount >= PlayerList->iCount )
+			// check whether this player has already finished his turn
+			for ( int i = 0; i < PlayerEndList->iCount; i++ )
 			{
-				iPlayerEndCount = 0;
+				if ( *PlayerEndList->Items[i] == iPlayerNum ) return;
+			}
+			PlayerEndList->Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
+
+			if ( PlayerEndList->iCount >= PlayerList->iCount )
+			{
+				while ( PlayerEndList->iCount )
+				{
+					PlayerEndList->Delete ( 0 );
+				}
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
 					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
@@ -824,7 +833,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 			else
 			{
-				if ( iPlayerEndCount == 1 )
+				if ( PlayerEndList->iCount == 1 )
 				{
 					sendTurnFinished ( iPlayerNum, iTurnDeadline );
 					iDeadlineStartTime = SDL_GetTicks();
@@ -894,7 +903,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
-			if ( Vehicle->detection_override && Vehicle->owner == CallerPlayer )
+			if ( CallerPlayer && Vehicle->detection_override && Vehicle->owner == CallerPlayer )
 			{
 				Vehicle->detected = false;
 				Vehicle->detection_override = false;
@@ -1044,7 +1053,10 @@ void cServer::checkDeadline ()
 	{
 		if ( SDL_GetTicks() - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
-			iPlayerEndCount = 0;
+			while ( PlayerEndList->iCount )
+			{
+				PlayerEndList->Delete ( 0 );
+			}
 			string sReportMsg = "";
 			int iVoiceNum;
 
@@ -1055,6 +1067,7 @@ void cServer::checkDeadline ()
 			}
 			iTurn++;
 			iDeadlineStartTime = 0;
+			makeTurnEnd( -1, true );
 		}
 	}
 }
@@ -1291,6 +1304,8 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		Vehicle->DecSpeed ( MJob->waypoints->Costs );
 
 		// TODO: check for results of the move
+
+		Vehicle->owner->DoScan();
 
 		Vehicle->moving = false;
 		MJob->CalcNextDir();

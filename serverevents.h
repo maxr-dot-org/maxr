@@ -116,7 +116,17 @@ void sendDoStartWork( cBuilding* building );
 */
 void sendDoStopWork( cBuilding* building );
 
+/**
+* sends information about the move to the next field of a client
+*@author alzi alias DoctorDeath
+*/
 void sendNextMove( int iUnitID, int iDestOff, bool bOK, int iPlayer );
+
+/**
+* sends all waypoints of a movejob to a client. If the movejob is already running,
+* the sourceoffset will be changed to the actual position of the vehicle
+*@author alzi alias DoctorDeath
+*/
 void sendMoveJobServer( cMJobs *MJob, int iPlayer );
 
 #endif // servereventsH

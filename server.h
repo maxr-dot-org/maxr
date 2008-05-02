@@ -92,8 +92,8 @@ class cServer
 	int iSaveLoadNumber;
 	/** the type of the current game */
 	int iGameType;
-	/** Counter how many players have pressed the end-turn button in a simultain TCP/IP game */
-	int iPlayerEndCount;
+	/** a list with the numbers of all players who have ended theire turn */
+	cList<int*> *PlayerEndList;
 	/** number of current turn */
 	int iTurn;
 	/** deadline in seconds if the first player has finished his turn*/
@@ -209,11 +209,34 @@ class cServer
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();
-
+	/**
+	* adds an new movejob
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be added
+	*/
 	void addActiveMoveJob ( cMJobs *MJob );
+	/**
+	* handles all active movejobs
+	*@author alzi alias DoctorDeath
+	*/
 	void handleMoveJobs();
+	/**
+	* checks whether the next waypoint is not blocked
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be checked
+	*/
 	void checkMove ( cMJobs *MJob );
+	/**
+	* moves a vehicle one step closer to the next field
+	*@author alzi alias DoctorDeath
+	*@param Vehicle The vehicle to be moved
+	*/
 	void moveVehicle ( cVehicle *Vehicle );
+	/**
+	* gets the vehicle with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the vehicle
+	*/
 	cVehicle *getVehicleFromID ( int iID );
 public:	
 	/** the map */

@@ -120,6 +120,24 @@ public:
   bool InLockList(cVehicle *v);
   void ToggelLock(struct sGameObjects *OverObject);
   void DrawLockList(cHud *hud);
+	/**
+	* draws a circle on the map for the fog
+	*@author alzi alias DoctorDeath
+	*@param iX X coordinate to the center of the circle
+	*@param iY Y coordinate to the center of the circle
+	*@param iRadius radius of the circle
+	*@param map map were to store the data of the circle
+	*/
+	void drawSpecialCircle( int iX, int iY, int iRadius, char *map );
+	/**
+	* draws a big circle on the map for the fog
+	*@author alzi alias DoctorDeath
+	*@param iX X coordinate to the center of the circle
+	*@param iY Y coordinate to the center of the circle
+	*@param iRadius radius of the circle
+	*@param map map were to store the data of the circle
+	*/
+	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map );
 
 private:
   cVehicle *AddVehicle(int posx,int posy,sVehicle *v);

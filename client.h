@@ -96,8 +96,10 @@ class cClient
 	bool bDebugWache;
 	/** show FX-infos */
 	bool bDebugFX;
-	/** show infos about the unit under the mouse */
-	bool bDebugTrace;
+	/** show infos from the server about the unit under the mouse */
+	bool bDebugTraceServer;
+	/** show infos from the client about the unit under the mouse */
+	bool bDebugTraceClient;
 	/** offset for the debug informations on the top of the gamewindow */
 	int iDebugOff;
 	/** how many seconds will be left for this turn */
@@ -155,24 +157,6 @@ class cClient
 	*@param surface surface to drae the circle in
 	*/
 	void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface );
-	/**
-	* draws a circle on the map for the fog
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate to the center of the circle
-	*@param iY Y coordinate to the center of the circle
-	*@param iRadius radius of the circle
-	*@param map map were to store the data of the circle
-	*/
-	void drawSpecialCircle( int iX, int iY, int iRadius, char *map );
-	/**
-	* draws a big circle on the map for the fog
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate to the center of the circle
-	*@param iY Y coordinate to the center of the circle
-	*@param iRadius radius of the circle
-	*@param map map were to store the data of the circle
-	*/
-	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map );
 	/**
 	* draws an exitpoint on the ground
 	*@author alzi alias DoctorDeath
@@ -262,11 +246,55 @@ class cClient
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTurnTime();
+	/**
+	* adds an new movejob
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be added
+	*/
 	void addActiveMoveJob ( cMJobs *MJob );
+	/**
+	* handles all active movejobs
+	*@author alzi alias DoctorDeath
+	*/
 	void handleMoveJobs ();
+	/**
+	* moves a vehicle one step closer to the next field
+	*@author alzi alias DoctorDeath
+	*@param Vehicle The vehicle to be moved
+	*/
 	void moveVehicle( cVehicle *Vehicle );
+	/**
+	* sets a vehicle to the next waypoint and makes it ready for the next move
+	*@author alzi alias DoctorDeath
+	*/
 	void doEndMoveVehicle ( cVehicle *Vehicle );
+	/**
+	* gets the vehicle with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the vehicle
+	*/
 	cVehicle *getVehicleFromID ( int iID );
+	/**
+	* shows the information for the field under the mouse
+	*@author alzi alias DoctorDeath
+	*/
+	void trace ();
+	/**
+	* displays information about the vehicle on the screen
+	*@author alzi alias DoctorDeath
+	*@param Vehicle The vehicle for that the information should be displayed
+	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
+	*@param iX The X coords where the text should be drawn
+	*/
+	void traceVehicle ( cVehicle *Vehicle, int *iY, int iX );
+	/**
+	* displays information about the building on the screen
+	*@author alzi alias DoctorDeath
+	*@param Building The building for that the information should be displayed
+	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
+	*@param iX The X coords where the text should be drawn
+	*/
+	void traceBuilding ( cBuilding *Building, int *iY, int iX );
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;

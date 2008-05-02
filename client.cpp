@@ -76,7 +76,8 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bDebugBaseClient = false;
 	bDebugWache = false;
 	bDebugFX = false;
-	bDebugTrace = false;
+	bDebugTraceServer = false;
+	bDebugTraceClient = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	ActiveMJobs = new cList<cMJobs*>;
@@ -423,10 +424,9 @@ void cClient::run()
 			font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
-		if ( bDebugTrace && bFlagDrawMap )
+		if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
 		{
-			//TODO: implement
-			//Trace();
+			trace();
 		}
 		// check whether the hud has to be drawn:
 		if ( bFlagDrawHud || bFlagDrawMap )
@@ -1991,95 +1991,6 @@ void cClient::drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *
 	SDL_UnlockSurface ( surface );
 }
 
-void cClient::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
-{
-	float w=0.017453*45,step;
-	int rx,ry,x1,x2;
-	if ( iRadius ) iRadius--;
-	if ( !iRadius ) return;
-	iRadius *= 10;
-	step=0.017453*90-acos ( 1.0/iRadius );
-	step/=2;
-	for ( float i=0;i<=w;i+=step )
-	{
-		rx= ( int ) ( cos ( i ) *iRadius );
-		ry= ( int ) ( sin ( i ) *iRadius);
-		rx/=10;ry/=10;
-
-		x1=rx+iX;x2=-rx+iX;
-		for ( int k=x2;k<=x1+1;k++ )
-		{
-			if ( k<0 ) continue;
-			if ( k>=Map->size ) break;
-			if ( iY+ry>=0&&iY+ry<Map->size )
-				map[k+ ( iY+ry ) *Map->size]|=1;
-			if ( iY-ry>=0&&iY-ry<Map->size )
-				map[k+ ( iY-ry ) *Map->size]|=1;
-
-			if ( iY+ry+1>=0&&iY+ry+1<Map->size )
-				map[k+ ( iY+ry+1 ) *Map->size]|=1;
-			if ( iY-ry+1>=0&&iY-ry+1<Map->size )
-				map[k+ ( iY-ry+1 ) *Map->size]|=1;
-		}
-
-		x1=ry+iX;x2=-ry+iX;
-		for ( int k=x2;k<=x1+1;k++ )
-		{
-			if ( k<0 ) continue;
-			if ( k>=Map->size ) break;
-			if ( iY+rx>=0&&iY+rx<Map->size )
-				map[k+ ( iY+rx ) *Map->size]|=1;
-			if ( iY-rx>=0&&iY-rx<Map->size )
-				map[k+ ( iY-rx ) *Map->size]|=1;
-
-			if ( iY+rx+1>=0&&iY+rx+1<Map->size )
-				map[k+ ( iY+rx+1 ) *Map->size]|=1;
-			if ( iY-rx+1>=0&&iY-rx+1<Map->size )
-				map[k+ ( iY-rx+1 ) *Map->size]|=1;
-		}
-	}
-}
-
-void cClient::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
-{
-	float w=0.017453*45,step;
-	int rx,ry,x1,x2;
-	if ( iRadius ) iRadius--;
-	if ( !iRadius ) return;
-	iRadius *= 10;
-	step=0.017453*90-acos ( 1.0/iRadius );
-	step/=2;
-	for ( float i=0;i<=w;i+=step )
-	{
-		rx= ( int ) ( cos ( i ) *iRadius );
-		ry= ( int ) ( sin ( i ) *iRadius);
-		rx/=10;ry/=10;
-
-		x1=rx+iX;x2=-rx+iX;
-		for ( int k=x2;k<=x1+1;k++ )
-		{
-			if ( k<0 ) continue;
-			if ( k>=Map->size ) break;
-			if ( iY+ry>=0&&iY+ry<Map->size )
-				map[k+ ( iY+ry ) *Map->size]|=1;
-			if ( iY-ry>=0&&iY-ry<Map->size )
-				map[k+ ( iY-ry ) *Map->size]|=1;
-		}
-
-		x1=ry+iX;x2=-ry+iX;
-		for ( int k=x2;k<=x1+1;k++ )
-		{
-			if ( k<0 ) continue;
-			if ( k>=Map->size ) break;
-			if ( iY+rx>=0&&iY+rx<Map->size )
-				map[k+ ( iY+rx ) *Map->size]|=1;
-			if ( iY-rx>=0&&iY-rx<Map->size )
-				map[k+ ( iY-rx ) *Map->size]|=1;
-		}
-
-	}
-}
-
 void cClient::drawExitPoint( int iX, int iY )
 {
 	SDL_Rect dest, scr;
@@ -2191,8 +2102,9 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "wache off" ) == 0 ) { bDebugWache =false; return true; }
 	if ( sCmd.compare( "fx on" ) == 0 ) { bDebugFX = true; return true; }
 	if ( sCmd.compare( "fx off" ) == 0 ) { bDebugFX = false; return true; }
-	if ( sCmd.compare( "trace on" ) == 0 ) { bDebugTrace = true; return true; }
-	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTrace = false; return true; }
+	if ( sCmd.compare( "trace server" ) == 0 ) { if ( Server ) bDebugTraceServer = true; bDebugTraceClient = false; return true; }
+	if ( sCmd.compare( "trace client" ) == 0 ) { bDebugTraceClient = true; bDebugTraceServer = false; return true; }
+	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTraceServer = false; bDebugTraceClient = false; return true; }
 
 	if ( sCmd.substr( 0, 6 ).compare( "color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
 	if ( sCmd.compare( "fog off" ) == 0 ) 
@@ -2803,7 +2715,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
 		{
-			cMJobs *MJob;
+			cMJobs *MJob = NULL;
 			int iCount = 0;
 			int iWaypointOff;
 
@@ -2861,7 +2773,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 			}
 			// is the last waypoint in this message?
-			if ( iWaypointOff == iDestOff )
+			if ( iWaypointOff == iDestOff && MJob )
 			{
 				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
@@ -2879,6 +2791,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Vehicle && Vehicle->mjob )
 			{
 				bool bWasMoving = Vehicle->MoveJobActive;
+
 				// set vehicle to server position
 				int iDestX = iDestOff%Map->size;
 				int iDestY = iDestOff/Map->size;
@@ -2889,6 +2802,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// then stop the vehicle
 					if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL )
 					{
+						cLog::write ( "client has already reached the last field" );
 						Vehicle->mjob->finished = true;
 						if ( Vehicle == SelectedVehicle && bWasMoving )
 						{
@@ -2904,6 +2818,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						// server is one fiels faster then client
 						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
 						{
+							cLog::write ( "server is one fiels faster then client" );
 							doEndMoveVehicle( Vehicle );
 						}
 						else
@@ -2919,10 +2834,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 									bServerIsFaster = true;
 									break;
 								}
+								Waypoint = Waypoint->next;
 							}
 							// the server is more then one field faster
 							if ( bServerIsFaster )
 							{
+								cLog::write ( "the server is more then one field faster" );
 								if ( Vehicle->data.can_drive == DRIVE_AIR )
 								{
 									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
@@ -2956,6 +2873,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the client is faster
 							else
 							{
+								cLog::write ( "the client is faster (one or more fields)" );
 								// just stop the vehicle and wait for the next commando of the server
 								Vehicle->mjob->EndForNow = true;
 							}
@@ -3116,6 +3034,10 @@ void cClient::deleteUnit( cBuilding *Building )
 				Building->next->prev = NULL;
 			}
 		}
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].top == Building ) Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+		else if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
+		else  Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
+		if ( SelectedBuilding == Building ) SelectedBuilding = NULL;
 		delete Building;
 	}
 }
@@ -3140,6 +3062,9 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 				Vehicle->next->prev = NULL;
 			}
 		}
+		if ( Vehicle->data.can_drive == DRIVE_AIR ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+		else  Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+		if ( SelectedVehicle == Vehicle ) SelectedVehicle = NULL;
 		delete Vehicle;
 	}
 }
@@ -3227,6 +3152,9 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 			bExit = true;
 			bWaitForOthers = false;
 		}
+
+		handleTimer();
+		handleMoveJobs ();
 	}
 }
 
@@ -3485,4 +3413,154 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 		}
 	}
 	return NULL;
+}
+
+void cClient::trace ()
+{
+	int iY, iX;
+	sGameObjects *GO;
+
+	mouse->GetKachel ( &iX, &iY );
+	if ( iX < 0 || iY < 0 ) return;
+	if ( bDebugTraceServer ) GO = Server->Map->GO + ( Server->Map->size*iY+iX );
+	else GO = Map->GO + ( Map->size*iY+iX );
+
+	if ( GO->reserviert ) font->showText(180+5,18+5, "reserviert", LATIN_SMALL_WHITE);
+	if ( GO->air_reserviert ) font->showText(180+5+100,18+5, "air-reserviert", LATIN_SMALL_WHITE);
+	iY = 18+5+8;
+	iX = 180+5;
+
+	if ( GO->vehicle ) { traceVehicle ( GO->vehicle, &iY, iX ); iY += 20; }
+	if ( GO->plane ) { traceVehicle ( GO->plane, &iY, iX ); iY += 20; }
+	if ( GO->top ) { traceBuilding ( GO->top, &iY, iX ); iY += 20; }
+	if ( GO->base ) traceBuilding ( GO->base, &iY, iX );
+}
+
+void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
+{
+	string sTmp;
+	
+	sTmp = "name: \"" + Vehicle->name + "\" owner: \"" + Vehicle->owner->name + "\" posX: +" + iToStr ( Vehicle->PosX ) + " posY: " + iToStr ( Vehicle->PosY ) + " offX: " + iToStr ( Vehicle->OffX ) + " offY: " + iToStr ( Vehicle->OffY );
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+	
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: " + iToStr ((long int) Vehicle->mjob ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+	
+	sTmp = "attack_mode: " + iToStr ( Vehicle->AttackMode ) + " attacking: " + iToStr ( Vehicle->Attacking ) + " wachpost: +" + iToStr ( Vehicle->Wachposten ) + " transfer: " + iToStr ( Vehicle->Transfer ) + " ditherx: " + iToStr (Vehicle->ditherX ) + " dithery: " + iToStr ( Vehicle->ditherY );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "is_building: " + iToStr ( Vehicle->IsBuilding ) + " building_typ: " + iToStr ( Vehicle->BuildingTyp ) + " build_costs: +" + iToStr ( Vehicle->BuildCosts ) + " build_rounds: " + iToStr ( Vehicle->BuildRounds ) + " build_round_start: " + iToStr (Vehicle->BuildRoundsStart );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "place_band: " + iToStr ( Vehicle->PlaceBand ) + " bandx: " + iToStr ( Vehicle->BandX ) + " bandy: +" + iToStr ( Vehicle->BandY ) + " build_big_saved_pos: " + iToStr ( Vehicle->BuildBigSavedPos ) + " build_path: " + iToStr (Vehicle->BuildPath );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+	
+	sTmp = "build_override: " + iToStr ( Vehicle->BuildOverride ) + " is_clearing: " + iToStr ( Vehicle->IsClearing ) + " clearing_rounds: +" + iToStr ( Vehicle->ClearingRounds ) + " clear_big: " + iToStr ( Vehicle->ClearBig ) + " loaded: " + iToStr (Vehicle->Loaded );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "commando_rank: " + iToStr ( Vehicle->CommandoRank ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) + " detection_override: " + iToStr (Vehicle->detection_override );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "is_locked: " + iToStr ( Vehicle->IsLocked ) + " detected: " + iToStr ( Vehicle->detected ) + " clear_mines: +" + iToStr ( Vehicle->ClearMines ) + " lay_mines: " + iToStr ( Vehicle->LayMines ) + " repair_active: " + iToStr (Vehicle->RepairActive ) + " muni_active: " + iToStr (Vehicle->MuniActive );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "load_active: " + iToStr ( Vehicle->LoadActive ) + " activating_vehicle: " + iToStr ( Vehicle->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( Vehicle->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( Vehicle->StoredVehicles?Vehicle->StoredVehicles->iCount:0 ) );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	if ( Vehicle->StoredVehicles && Vehicle->StoredVehicles->iCount )
+	{
+		cVehicle *StoredVehicle;
+		for ( int i = 0; i < Vehicle->StoredVehicles->iCount; i++ )
+		{
+			StoredVehicle = Vehicle->StoredVehicles->Items[i];
+			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
+			*iY += 8;
+		}
+	}
+
+	if ( bDebugTraceServer )
+	{
+		sTmp = "seen by players: owner";
+		for ( int i = 0; i < Vehicle->SeenByPlayerList->iCount; i++ )
+		{
+			sTmp += ", \"" + getPlayerFromNumber ( *Vehicle->SeenByPlayerList->Items[i] )->name + "\"";
+		}
+		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+		*iY+=8;
+	}
+}
+
+void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
+{
+	string sTmp;
+
+	sTmp = "name: \"" + Building->name + "\" owner: \"" + ( Building->owner?Building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( Building->PosX ) + " posY: " + iToStr ( Building->PosY ) + " selected: " + iToStr ( Building->selected );
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "dir: " + iToStr ( Building->dir ) + " menu_active: " + iToStr ( Building->MenuActive ) + " wachpost: +" + iToStr ( Building->Wachposten ) + " attacking_mode: +" + iToStr ( Building->AttackMode ) + " base: " + iToStr ( (long int)Building->base ) + " sub_base: " + iToStr ((long int)Building->SubBase );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->DirtValue ) + " big_dirt: " + iToStr ( Building->BigDirt ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "metal_prod: " + iToStr ( Building->MetalProd ) + " oil_prod: " + iToStr ( Building->OilProd ) + " gold_prod: +" + iToStr ( Building->GoldProd ) + " max_metal_p: " + iToStr ( Building->MaxMetalProd ) + " max_oil_p: " + iToStr (Building->MaxOilProd ) + " max_gold_p: " + iToStr (Building->MaxGoldProd );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "is_locked: " + iToStr ( Building->IsLocked ) + " disabled: " + iToStr ( Building->Disabled ) + " detected: +" + iToStr ( Building->detected ) + " activating_vehicle: " + iToStr ( Building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (Building->VehicleToActivate );	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	sTmp = "load_active: " + iToStr ( Building->LoadActive ) + " stored_vehicles_count: " + iToStr (( Building->StoredVehicles?Building->StoredVehicles->iCount:0 ));	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	if ( Building->StoredVehicles&&Building->StoredVehicles->iCount )
+	{
+		cVehicle *StoredVehicle;
+		for ( int i = 0; i < Building->StoredVehicles->iCount; i++ )
+		{
+			StoredVehicle = Building->StoredVehicles->Items[i];
+			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
+			*iY+=8;
+		}
+	}
+
+	sTmp = "build_speed: " + iToStr ( Building->BuildSpeed ) + " repeat_build: " + iToStr ( Building->RepeatBuild ) + " build_list_count: +" + iToStr (( Building->BuildList?Building->BuildList->iCount:0 ));	
+	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	*iY+=8;
+
+	if ( Building->BuildList&&Building->BuildList->iCount )
+	{
+		sBuildList *BuildingList;
+		for ( int i = 0; i < Building->BuildList->iCount; i++ )
+		{
+			BuildingList = Building->BuildList->Items[i];
+			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
+			*iY+=8;
+		}
+	}
+
+	if ( bDebugTraceServer )
+	{
+		sTmp = "seen by players: owner";
+		for ( int i = 0; i < Building->SeenByPlayerList->iCount; i++ )
+		{
+			sTmp += ", \"" + getPlayerFromNumber ( *Building->SeenByPlayerList->Items[i] )->name + "\"";
+		}
+		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+		*iY+=8;
+	}
 }
