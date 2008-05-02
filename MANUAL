@@ -36,7 +36,7 @@ base [server/client/off]     shows the informations of the client or the server(
 wache [on/off]    shows covered areas
 fx [on/off]       shows additional information to special effects
 ping              [*not working*] checks connectivity in multiplayer
-trace [on/off]    [*not working*] shows additional information about current field
+trace [server/client/off]    [*not working*] shows additional information of the client or the server(only available on the host) about current field
 log [on/off]      [*not working*] creats a logfile by engine
 [show/hide] log   shows log (if active)
 
