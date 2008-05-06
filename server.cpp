@@ -1152,44 +1152,26 @@ void cServer::checkMove ( cMJobs *MJob )
 	bWachRange = false;//vehicle->InWachRange();
 	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bWachRange )
 	{
-		//sWaypoint *wp;
+		cLog::write( "next point is blocked", LOG_TYPE_INFO );
+		sWaypoint *Waypoint;
 		// if the next point would be the last, finish the job here
 		if ( MJob->waypoints->next->X == MJob->DestX && MJob->waypoints->next->Y == MJob->DestY )
 		{
 			MJob->finished = true;
-			return;
 		}
 		// else delete the movejob and inform the client that he has to find a new path
-
-		/*while ( waypoints )
+		else
 		{
-			wp=waypoints->next;
-			free ( waypoints );
-			waypoints=wp;
+			while ( MJob->waypoints )
+			{
+				Waypoint = MJob->waypoints->next;
+				free ( MJob->waypoints );
+				MJob->waypoints = Waypoint;
+			}
+			// for now, just stop the vehicle
+			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
+			delete MJob;
 		}
-		ScrX=vehicle->PosX;
-		ScrY=vehicle->PosY;
-		vehicle->moving=false;
-		vehicle->MoveJobActive=false;
-		vehicle->WalkFrame=0;
-
-		if ( WachRange )
-		{
-			finished = true;
-			return;
-		}
-
-		vehicle->StartMoveSound();
-
-		vehicle->MoveJobActive=true;
-		if ( !CalcPath() )
-		{
-			vehicle->MoveJobActive=false;
-			vehicle->moving=false;
-			finished=true;
-			return;
-		}
-		CalcNextDir();*/
 		return;
 	}
 

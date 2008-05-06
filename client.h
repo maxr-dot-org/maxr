@@ -274,6 +274,7 @@ class cClient
 	*@param iID The ID of the vehicle
 	*/
 	cVehicle *getVehicleFromID ( int iID );
+	cBuilding *getBuildingFromID ( int iID );
 	/**
 	* shows the information for the field under the mouse
 	*@author alzi alias DoctorDeath

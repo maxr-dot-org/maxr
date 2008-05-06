@@ -2594,6 +2594,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			sUnitData *Data;
 
+			int iID = message->popInt16();
 			bool bVehicle = message->popBool();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
@@ -2604,12 +2605,26 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			// unit is a vehicle
 			if ( bVehicle )
 			{
-				if ( message->popBool() ) Vehicle = Map->GO[iPosX+iPosY*Map->size].plane;
-				else Vehicle = Map->GO[iPosX+iPosY*Map->size].vehicle;
+				bool bPlane = message->popBool();
+				Vehicle = getVehicleFromID ( iID );
+
 				if ( !Vehicle )
 				{
-					cLog::write("New vehicle-data received, but can't find the vehicle", cLog::eLOG_TYPE_WARNING);
+					cLog::write("Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
 					break;
+				}
+				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
+				{
+					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					// set to server position
+					if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+					else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+
+					if ( bPlane ) Map->GO[iPosX+iPosY*Map->size].plane = Vehicle;
+					else Map->GO[iPosX+iPosY*Map->size].vehicle = Vehicle;
+
+					Vehicle->PosX = iPosX;
+					Vehicle->PosY = iPosY;
 				}
 
 				Vehicle->name = message->popString();
@@ -2622,13 +2637,29 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else
 			{
-				if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].base;
-				else if ( message->popBool() ) Building = Map->GO[iPosX+iPosY*Map->size].subbase;
-				else Building = Map->GO[iPosX+iPosY*Map->size].top;
+				bool bBase = message->popBool();
+				bool bSubBase = message->popBool();
+				Building = getBuildingFromID ( iID );
+
 				if ( !Building )
 				{
-					cLog::write("New building-data received, but can't find the building", cLog::eLOG_TYPE_WARNING);
+					cLog::write("Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
 					break;
+				}
+				if ( Building->PosX != iPosX || Building->PosY != iPosY )
+				{
+					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					// set to server position
+					if ( bBase ) Map->GO[iPosX+iPosY*Map->size].base = NULL;
+					else if ( bSubBase ) Map->GO[iPosX+iPosY*Map->size].subbase = NULL;
+					else Map->GO[iPosX+iPosY*Map->size].top = NULL;
+
+					if ( bBase ) Map->GO[Building->PosX+Building->PosY*Map->size].base = Building;
+					else if ( bSubBase ) Map->GO[Building->PosX+Building->PosY*Map->size].subbase = Building;
+					else Map->GO[Building->PosX+Building->PosY*Map->size].top = Building;
+
+					Building->PosX = iPosX;
+					Building->PosY = iPosY;
 				}
 
 				Building->name = message->popString();
@@ -3410,6 +3441,21 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
 			Vehicle = Vehicle->next;
+		}
+	}
+	return NULL;
+}
+
+cBuilding *cClient::getBuildingFromID ( int iID )
+{
+	cBuilding *Building;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		Building = PlayerList->Items[i]->BuildingList;
+		while ( Building )
+		{
+			if ( Building->iID == iID ) return Building;
+			Building = Building->next;
 		}
 	}
 	return NULL;

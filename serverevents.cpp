@@ -146,6 +146,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
 	message->pushBool( true );	// true for vehicles
+	message->pushInt16 ( Vehicle->iID );
 	message->pushInt16( Vehicle->owner->Nr );
 
 	Server->sendNetMessage( message, iPlayer );
@@ -187,6 +188,7 @@ void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
 	message->pushBool( false );	// false for buildings
+	message->pushInt16 ( Building->iID );
 	message->pushInt16( Building->owner->Nr );
 
 	Server->sendNetMessage( message, iPlayer );
