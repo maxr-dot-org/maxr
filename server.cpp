@@ -377,6 +377,31 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_ATTACK:
+		{
+			//identify agressor
+			bool bIsVehicle = message->popBool();
+			cVehicle* attackingVehicle = NULL;
+			cBuilding* attackingBuilding = NULL;
+			if ( bIsVehicle )
+			{
+				attackingVehicle = getVehicleFromID( message->popInt32() );
+				if ( attackingVehicle == NULL ) break;
+				if ( attackingVehicle->owner->Nr != message->iPlayerNr ) break;
+			}
+			else
+			{
+				int offset = message->popInt32();
+				if ( offset < 0 || offset > Map->size * Map->size ) break;
+				attackingBuilding = Map->GO[offset].top;
+				if ( attackingBuilding == NULL ) break;
+				if ( attackingBuilding->owner->Nr != message->iPlayerNr ) break;
+			}
+
+			//find target
+			sendChatMessageToClient("BUMM!!!!", USER_MESSAGE, message->iPlayerNr);
+		}
+		break;
 	default:
 		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
 	}

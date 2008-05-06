@@ -339,6 +339,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_MOVE_JOB_SERVER");
 	case GAME_EV_MOVE_JOB_CLIENT:
 		return string("GAME_EV_MOVE_JOB_CLIENT");
+	case GAME_EV_WANT_ATTACK:
+		return string("GAME_EV_WANT_ATTACK");
 
 	default:
 		return iToStr( iType );

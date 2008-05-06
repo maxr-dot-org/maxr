@@ -90,3 +90,13 @@ void sendMoveJob( cMJobs *MJob )
 		Client->sendNetMessage( message );
 	}
 }
+
+void sendWantAttack ( int targetID, int targetOffset, int agressor, bool isVehicle)
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_ATTACK );
+	message->pushInt32( targetID );
+	message->pushInt32( targetOffset );
+	message->pushInt32( agressor );
+	message->pushBool ( isVehicle );
+	Client->sendNetMessage(message);
+}

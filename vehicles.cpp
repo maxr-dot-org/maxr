@@ -2791,6 +2791,9 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( !data.shots )
 		return false;
 
+	if ( !data.ammo )
+		return false;
+
 	if ( Attacking )
 		return false;
 

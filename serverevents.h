@@ -33,6 +33,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
+	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 };
 
 /**

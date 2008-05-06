@@ -489,6 +489,7 @@ void cClient::run()
 			if ( bStartup )
 			{
 				makePanel ( true );
+				if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
 				bStartup = false;
 			}
 			SHOW_SCREEN
@@ -869,14 +870,39 @@ int cClient::checkUser()
 			{
 			}
 			else
-				// Prüfen, ob geschossen werden soll:
+				// check, if the player wants to attack:
 				if ( mouse->cur==GraphicsData.gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive )
 				{
-					// TODO: add attack job
+					//find target ID
+					int targetId = 0;
+					if (SelectedVehicle->data.can_attack == ATTACK_AIR || ATTACK_AIRnLAND )
+					{
+						cVehicle* target = Map->GO[mouse->GetKachelOff()].plane;
+						if (target) targetId = target->iID;
+					}
+					else if (SelectedVehicle->data.can_attack == ATTACK_LAND || ATTACK_AIRnLAND || ATTACK_SUB_LAND )
+					{
+						cVehicle* target = Map->GO[mouse->GetKachelOff()].vehicle;
+						if (target) targetId = target->iID;
+					}
+					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
 				}
 				else if ( mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
 				{
-					// TODO: add attack job
+					//find target ID
+					int targetId = 0;
+					if (SelectedBuilding->data.can_attack == ATTACK_AIR || ATTACK_AIRnLAND )
+					{
+						cVehicle* target = Map->GO[mouse->GetKachelOff()].plane;
+						if (target) targetId = target->iID;
+					}
+					else if (SelectedVehicle->data.can_attack == ATTACK_LAND || ATTACK_AIRnLAND || ATTACK_SUB_LAND )
+					{
+						cVehicle* target = Map->GO[mouse->GetKachelOff()].vehicle;
+						if (target) targetId = target->iID;
+					}
+					int offset = SelectedBuilding->PosX + SelectedBuilding->PosY * Map->size;
+					sendWantAttack( targetId, mouse->GetKachelOff(), offset, false );
 				}
 				else if ( mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 				{
