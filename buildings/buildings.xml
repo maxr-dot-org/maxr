@@ -30,7 +30,6 @@
 		<Hangar directory="hangar" num="20"/>
 		<Landmine directory="landmine" num="21"/>
 		<Mine directory="mine" num="22"/>
-		<Mine_Deep directory="mine_deep" num="23"/>
 		<Pad directory="pad" num="24"/>
 		<Platform directory="platform" num="25"/>
 		<Radar directory="radar" num="26"/>
