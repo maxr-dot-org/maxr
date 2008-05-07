@@ -46,9 +46,9 @@ bool cLog::open(int TYPE)
 
 	bIsRunning = true;
 
-	if ( logfile == NULL || (TYPE == LOG_TYPE_NETWORK && !bNetlogStarted) )
+	if ( logfile == NULL || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted) )
 	{
-		if(TYPE == LOG_TYPE_NETWORK)
+		if(TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
 		{
 			logfile = SDL_RWFromFile ( NETLOGFILE,"w+t" ); //Start new network-log and write at beginning of file
 			bNetlogStarted = true;
@@ -60,7 +60,7 @@ bool cLog::open(int TYPE)
 	}
 	else
 	{
-		if(TYPE == LOG_TYPE_NETWORK)
+		if(TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
 		{
 			logfile = SDL_RWFromFile ( NETLOGFILE,"a+t" ); //Reopen network-log and write at end of file
 		}
@@ -101,25 +101,29 @@ int cLog::write ( const char *str, int TYPE )
 
 int cLog::write ( std::string str, int TYPE )
 {
-	if ( TYPE == LOG_TYPE_DEBUG && SettingsData.bDebug || TYPE != LOG_TYPE_DEBUG ) //in case debug is disabled we skip message
+	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !SettingsData.bDebug ) //in case debug is disabled we skip message
 	{
-		if ( open(TYPE) )
-		{
-			switch ( TYPE ) //Attach log message type to tmp
-			{
-				case LOG_TYPE_WARNING : str = str.insert ( 0 , WW ); break;
-				case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); break;
-				case LOG_TYPE_DEBUG :   str = str.insert ( 0 , DD ); break;
-				case LOG_TYPE_INFO :    str = str.insert ( 0 , II ); break;
-				case LOG_TYPE_MEM :	 str = str.insert ( 0 , MM ); break;
-				default :				str = str.insert ( 0 , II );
-			}
-			str += TEXT_FILE_LF;
-			return writeMessage ( str ); //add log message itself to tmp and send it for writing
-		}
-		else return -1;
+		return 0;
 	}
-	else return 0;
+
+	if ( open(TYPE) )
+	{
+		switch ( TYPE ) //Attach log message type to tmp
+		{
+			case LOG_TYPE_NET_WARNING :
+			case LOG_TYPE_WARNING : str = str.insert ( 0 , WW ); break;
+			case LOG_TYPE_NET_ERROR :
+			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); break;
+			case LOG_TYPE_NET_DEBUG :
+			case LOG_TYPE_DEBUG :   str = str.insert ( 0 , DD ); break;
+			case LOG_TYPE_INFO :    str = str.insert ( 0 , II ); break;
+			case LOG_TYPE_MEM :	 str = str.insert ( 0 , MM ); break;
+			default :				str = str.insert ( 0 , II );
+		}
+		str += TEXT_FILE_LF;
+		return writeMessage ( str ); //add log message itself to tmp and send it for writing
+	}
+	else return -1;
 }
 
 int cLog::write ( const char *str )

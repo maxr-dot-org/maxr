@@ -28,7 +28,9 @@
 #define LOG_TYPE_DEBUG 3
 #define LOG_TYPE_INFO 4
 #define LOG_TYPE_MEM 5
-#define LOG_TYPE_NETWORK 6
+#define LOG_TYPE_NET_DEBUG 6
+#define LOG_TYPE_NET_WARNING 7
+#define LOG_TYPE_NET_ERROR 8
 
 /**
 * Log class. Simple log class :-)
@@ -92,7 +94,9 @@ public:
 		eLOG_TYPE_DEBUG   = 3,
 		eLOG_TYPE_INFO    = 4,
 		eLOG_TYPE_MEM	  = 5,
-		eLOG_TYPE_NETWORK = 6,
+		eLOG_TYPE_NET_DEBUG = 6,
+		eLOG_TYPE_NET_WARNING = 7,
+		eLOG_TYPE_NET_ERROR = 8,
 	};
 
 	/**

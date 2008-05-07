@@ -3215,15 +3215,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 			i++;
 		}
 	}
-	if ( d->max_shield )
-	{
-		// Range:
-		u[i].active=true;
-		u[i].value=& ( d->range );
-		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
-		u[i].name = "range";
-		i++;
-	}
+	
 	if ( d->can_load==TRANS_METAL||d->can_load==TRANS_OIL||d->can_load==TRANS_GOLD )
 	{
 		i++;

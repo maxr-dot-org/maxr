@@ -89,7 +89,6 @@ struct sReport;
 #define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
 #define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises für Land
 #define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
-#define RANGE_SHIELD_COLOR 0x9CFFA5 // Farbe des Reichweiten Kreises für Schild
 #define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
 #define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
 #define MOVE_SPEED         16       // Geschwindigkeit der Fahrzeuge
@@ -848,7 +847,6 @@ class cOtherData
 {
 public:
 	SDL_Surface **colors;
-	SDL_Surface **ShieldColors;
 
 	SDL_Surface *WayPointPfeile[8][60];
 	SDL_Surface *WayPointPfeileSpecial[8][60];
@@ -873,7 +871,6 @@ void ScaleSurfaceAdv2(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 void ScaleSurfaceAdv2Spec(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
 void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
-void MakeShieldColor(SDL_Surface **dest,SDL_Surface *scr);
 int random(int x, int y);
 /**Converts integer to string
 */

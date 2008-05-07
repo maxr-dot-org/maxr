@@ -62,8 +62,8 @@ int main ( int argc, char *argv[] )
 		str += MAX_BUILD_DATE;
 		cLog::write ( str , cLog::eLOG_TYPE_INFO );
 		cLog::mark();
-		cLog::write ( MAXVERSION , cLog::eLOG_TYPE_NETWORK );
-		cLog::write ( str , cLog::eLOG_TYPE_NETWORK );
+		cLog::write ( MAXVERSION , cLog::eLOG_TYPE_NET_DEBUG );
+		cLog::write ( str , cLog::eLOG_TYPE_NET_DEBUG );
 	}
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
@@ -608,32 +608,6 @@ void line ( int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf )
 	}
 }
 
-// CreatePfeil ////////////////////////////////////////////////////////////////
-// Erzeugt eine Schield-Farbe:
-void MakeShieldColor ( SDL_Surface **dest,SDL_Surface *scr )
-{
-	SDL_Rect r;
-	int i;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,64,64,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_BlitSurface ( scr,NULL,*dest,NULL );
-	SDL_SetColorKey ( *dest,SDL_SRCCOLORKEY,0xFF00FF );
-	r.w=64;
-	r.h=1;
-	r.x=0;
-	for ( i=1;i<64;i+=2 )
-	{
-		r.y=i;
-		SDL_FillRect ( *dest,&r,0xFF00FF );
-	}
-	r.w=1;
-	r.h=64;
-	r.y=0;
-	for ( i=1;i<64;i+=2 )
-	{
-		r.x=i;
-		SDL_FillRect ( *dest,&r,0xFF00FF );
-	}
-}
 
 // random ////////////////////////////////////////////////////////////////
 // returns a random number between 'y' and 'x':

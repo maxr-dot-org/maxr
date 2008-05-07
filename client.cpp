@@ -146,7 +146,7 @@ void cClient::kill()
 void cClient::sendNetMessage(cNetMessage *message)
 {
 	message->iPlayerNr = ActivePlayer->Nr;
-	cLog::write("Client: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+	cLog::write("Client: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	if (!network || network->isHost() ) 
 	{
@@ -354,21 +354,7 @@ void cClient::run()
 				             spy+Hud->Zoom/2,
 				             SelectedBuilding->data.range*Hud->Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			if ( Hud->Reichweite&&SelectedBuilding->data.max_shield )
-			{
-				if ( SelectedBuilding->data.is_big )
-				{
-					drawCircle ( spx+Hud->Zoom,
-					             spy+Hud->Zoom,
-					             SelectedBuilding->data.range*Hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-				else
-				{
-					drawCircle ( spx+Hud->Zoom/2,
-					             spy+Hud->Zoom/2,
-					             SelectedBuilding->data.range*Hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-			}
+			
 			if ( Hud->Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
 			{
 				SelectedBuilding->DrawMunBar();
@@ -1331,14 +1317,7 @@ void cClient::drawMap( bool bPure )
 	dest.y=18-iOffY+iZoom*iStartY;
 	scr.x=0;scr.y=0;
 	scr.h=scr.w=iZoom;
-	if ( SettingsData.bAlphaEffects )
-	{
-		SDL_SetAlpha ( ActivePlayer->ShieldColor,SDL_SRCALPHA,150 );
-	}
-	else
-	{
-		SDL_SetAlpha ( ActivePlayer->ShieldColor,SDL_SRCALPHA,255 );
-	}
+	
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
 		dest.x=180-iOffX+iZoom*iStartX;
@@ -1350,11 +1329,6 @@ void cClient::drawMap( bool bPure )
 				if ( Map->GO[iPos].plane )
 				{
 					Map->GO[iPos].plane->Draw ( &dest );
-				}
-				if ( Hud->Status&&ActivePlayer->ShieldMap&&ActivePlayer->ShieldMap[iPos] )
-				{
-					tmp=dest;
-					SDL_BlitSurface ( ActivePlayer->ShieldColor,&scr,buffer,&tmp );
 				}
 			}
 			iPos++;
@@ -2415,7 +2389,7 @@ void cClient::handleMessages()
 
 int cClient::HandleNetMessage( cNetMessage* message )
 {
-	cLog::write("Client: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+	cLog::write("Client: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	switch ( message->iType )
 	{
@@ -2696,8 +2670,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data = &Building->data;
 			}
 
-			Data->max_shield = message->popInt16();
-			Data->shield = message->popInt16();
 			Data->costs = message->popInt16();
 			Data->ammo = message->popInt16();
 			Data->max_ammo = message->popInt16();
@@ -2967,7 +2939,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	default:
-		cLog::write("Client: Error: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
+		cLog::write("Client: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 		break;
 	}
 	return 0;

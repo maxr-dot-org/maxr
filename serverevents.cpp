@@ -131,9 +131,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->data.max_ammo );
 	message->pushInt16( Vehicle->data.ammo );
 	message->pushInt16( Vehicle->data.costs );
-	message->pushInt16( Vehicle->data.shield );
-	message->pushInt16( Vehicle->data.max_shield );
-
+	
 	// Current state of the unit
 	message->pushBool ( Vehicle->Wachposten );
 	message->pushBool ( Vehicle->IsBuilding );
@@ -171,9 +169,7 @@ void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
 	message->pushInt16( Building->data.max_ammo );
 	message->pushInt16( Building->data.ammo );
 	message->pushInt16( Building->data.costs );
-	message->pushInt16( Building->data.shield );
-	message->pushInt16( Building->data.max_shield );
-
+	
 	// Current state of the unit
 	message->pushBool ( Building->Wachposten );
 	message->pushBool ( Building->IsWorking );

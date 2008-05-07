@@ -148,7 +148,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
 
-	cLog::write("Server: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+	cLog::write("Server: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_ERROR );
 
 	if ( iPlayerNum == -1 )
 	{
@@ -167,7 +167,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	if ( Player == NULL )
 	{
 		//player not found
-		cLog::write("Server: Error: Player " + iToStr(iPlayerNum) + " not found.", cLog::eLOG_TYPE_NETWORK);
+		cLog::write("Server: Can't send message. Player " + iToStr(iPlayerNum) + " not found.", cLog::eLOG_TYPE_NET_WARNING);
 		delete message;
 		return;
 	}
@@ -263,7 +263,7 @@ void cServer::run()
 
 int cServer::HandleNetMessage( cNetMessage *message )
 {
-	cLog::write("Server: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NETWORK );
+	cLog::write("Server: received message, type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	switch ( message->iType )
 	{
@@ -398,12 +398,35 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( attackingBuilding->owner->Nr != message->iPlayerNr ) break;
 			}
 
-			//find target
-			sendChatMessageToClient("BUMM!!!!", USER_MESSAGE, message->iPlayerNr);
+			//find target offset
+			int targetOffset = message->popInt32();
+			if ( targetOffset < 0 || targetOffset > Map->size * Map->size ) break;
+
+			int targetID = message->popInt32();
+			if ( targetID != 0 )
+			{
+				cVehicle* targetVehicle = getVehicleFromID( targetID );
+				if ( targetVehicle == NULL ) break;
+				targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
+			}
+			
+			//check if attack is possible
+			//TODO: allow attacking empty terains
+			if ( bIsVehicle )
+			{
+				if ( !attackingVehicle->CanAttackObject( targetOffset ) ) break;
+			}
+			else
+			{
+				if ( !attackingBuilding->CanAttackObject( targetOffset ) ) break;
+			}
+			
+			//attackJobs verteilen
+			sendChatMessageToClient("BUMM!!!!", USER_MESSAGE);
 		}
 		break;
 	default:
-		cLog::write("Server: Error: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NETWORK);
+		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	return 0;
@@ -880,12 +903,10 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	// reload all buildings
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		bool bShieldChaned;
 		cBuilding *Building;
 		cPlayer *Player;
 		Player = PlayerList->Items[i];
 
-		bShieldChaned = false;
 		Building = Player->BuildingList;
 		while ( Building )
 		{
@@ -899,22 +920,13 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				}
 			}
 			if ( Building->data.can_attack && bChangeTurn ) Building->RefreshData();
-			if ( Building->IsWorking && Building->data.max_shield && Building->data.shield < Building->data.max_shield )
-			{
-				Building->data.shield += 10;
-				if ( Building->data.shield > Building->data.max_shield ) Building->data.shield = Building->data.max_shield;
-				bShieldChaned = true;
-			}
+			
 			for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
 			{
 				sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
 			}
 			sendUnitData ( Building, Map, Building->owner->Nr );
 			Building = Building->next;
-		}
-		if ( bShieldChaned )
-		{
-			Player->CalcShields();
 		}
 	}
 

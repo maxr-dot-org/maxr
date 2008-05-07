@@ -66,7 +66,6 @@ public:
 
   string name;
   SDL_Surface *color;
-  SDL_Surface *ShieldColor;
   int Nr;
 
   sUnitData *VehicleData; // Daten aller Vehicles für diesen Player.
@@ -87,7 +86,6 @@ public:
   int ResearchCount;         // Anzahl an Forschungszentren (die arbeiten).
   int UnusedResearch;        // Nicht benutzte Forschungskapazitäten.
   int Credits;               // Anzahl der erworbenen Credits.
-  char *ShieldMap;           // Map mit den gebieten, die durch ein Schild geschützt sind.
   cHud HotHud;               // Gespeichertes Hud für Hot-Seat-Spiele.
   cList<sReport*> *ReportVehicles,*ReportBuildings; // Reportlisten.
   bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
@@ -109,8 +107,6 @@ public:
   void StopAReserach(void);
   void DoResearch(void);
   void DoTheResearch(int i);
-  void CalcShields(void);
-  bool ShieldImpact(int dest,int damage);
   bool IsDefeated(void);
   void AddLock(cBuilding *b);
   void AddLock(cVehicle *v);

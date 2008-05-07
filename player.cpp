@@ -50,7 +50,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	VehicleList=NULL;
 	BuildingList=NULL;
 	ResourceMap=NULL;
-	ShieldMap=NULL;
 	base=new cBase ( this );
 	WachpostenAir=new cList<sWachposten*>;
 	WachpostenGround=new cList<sWachposten*>;
@@ -124,7 +123,6 @@ cPlayer::~cPlayer ( void )
 	if ( WachMapAir ) free ( WachMapAir );
 	if ( WachMapGround ) free ( WachMapGround );
 	if ( ResourceMap ) free ( ResourceMap );
-	if ( ShieldMap ) free ( ShieldMap );
 	delete base;
 
 	if ( DetectLandMap ) free ( DetectLandMap );
@@ -204,15 +202,6 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 		ResearchTechs[i].RoundsRemaining=ResearchTechs[i].MaxRounds;
 	}
 
-	// Die Shield-Map:
-	if ( Client->bAlienTech )
-	{
-		ShieldMap= ( char* ) malloc ( MapSize );
-		memset ( ShieldMap,0,MapSize );
-	}
-
-	// ShieldColor zuweisen:
-	ShieldColor=OtherData.ShieldColors[GetColorNr ( color ) ];
 }
 
 // Fügt ein Building in die Listes des Spielser ein:
@@ -819,56 +808,6 @@ void cPlayer::DoTheResearch ( int i )
 	}
 }
 
-// Berechnet alle Schilde neu:
-void cPlayer::CalcShields ( void )
-{
-	cBuilding *b;
-	if ( !ShieldMap ) return;
-	memset ( ShieldMap,0,MapSize );
-	b=BuildingList;
-	while ( b )
-	{
-		if ( b->data.max_shield&&b->data.shield )
-		{
-			drawSpecialCircleBig ( b->PosX,b->PosY,b->data.range,ShieldMap );
-		}
-		b=b->next;
-	}
-}
-
-// Macht einen Einschlag auf ein Schild und gibt true zurück,
-// wenn er aufgehalten wurde:
-bool cPlayer::ShieldImpact ( int dest,int damage )
-{
-	cBuilding *b;
-	b=BuildingList;
-
-	// Alle Gebäude durchgehen:
-	while ( b )
-	{
-		if ( b->data.shield&&b->IsInRange ( dest ) )
-		{
-			int t;
-			t=damage;
-			t-=b->data.shield;
-			if ( t<=0 )
-			{
-				b->data.shield-=damage;
-				damage=0;
-				if ( b==Client->SelectedBuilding ) b->ShowDetails();
-			}
-			else
-			{
-				damage-=b->data.shield;
-				b->data.shield=0;
-				if ( b==Client->SelectedBuilding ) b->ShowDetails();
-			}
-			if ( damage==0 ) break;
-		}
-		b=b->next;
-	}
-	return damage==0;
-}
 
 // Prüft, ob der Spieler besiegt ist:
 bool cPlayer::IsDefeated ( void )
@@ -1081,21 +1020,7 @@ void cPlayer::DrawLockList ( cHud *hud )
 				             spy+hud->Zoom/2,
 				             elem->b->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			if ( hud->Reichweite&&elem->b->data.max_shield )
-			{
-				if ( elem->b->data.is_big )
-				{
-					DrawCircle ( spx+hud->Zoom,
-					             spy+hud->Zoom,
-					             elem->b->data.range*hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-				else
-				{
-					DrawCircle ( spx+hud->Zoom/2,
-					             spy+hud->Zoom/2,
-					             elem->b->data.range*hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-			}
+			
 			if ( hud->Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
 			{
 				elem->b->DrawMunBar();

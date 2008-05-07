@@ -1332,17 +1332,7 @@ int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( OtherData.colors[cl_purple],path,"cl_purple.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_aqua],path,"cl_aqua.pcx" );
 
-	OtherData.ShieldColors= ( SDL_Surface** ) malloc ( sizeof ( SDL_Surface* ) *8 );
-	if(!OtherData.ShieldColors) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	MakeShieldColor ( & ( OtherData.ShieldColors[0] ),OtherData.colors[0] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[1] ),OtherData.colors[1] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[2] ),OtherData.colors[2] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[3] ),OtherData.colors[3] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[4] ),OtherData.colors[4] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[5] ),OtherData.colors[5] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[6] ),OtherData.colors[6] );
-	MakeShieldColor ( & ( OtherData.ShieldColors[7] ),OtherData.colors[7] );
-
+	
 	cLog::write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
 	// Shadow:
 	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,

@@ -1055,12 +1055,12 @@ void cEngine::Rundenende ( void )
 	// Alle Buildings wieder aufladen:
 	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
-		bool ShieldChaned;
+		
 		cBuilding *b;
 		cPlayer *p;
 		p=game->PlayerList->Items[i];
 
-		ShieldChaned=false;
+		
 		b=p->BuildingList;
 		while ( b )
 		{
@@ -1074,17 +1074,8 @@ void cEngine::Rundenende ( void )
 				}
 			}
 			if ( b->data.can_attack&&!game->HotSeat&&!game->PlayRounds ) b->RefreshData();
-			if ( b->IsWorking&&b->data.max_shield&&b->data.shield<b->data.max_shield )
-			{
-				b->data.shield+=10;
-				if ( b->data.shield>b->data.max_shield ) b->data.shield=b->data.max_shield;
-				ShieldChaned=true;
-			}
+			
 			b=b->next;
-		}
-		if ( ShieldChaned )
-		{
-			p->CalcShields();
 		}
 	}
 

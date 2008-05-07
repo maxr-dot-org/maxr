@@ -382,19 +382,6 @@ bool cAJobs::MakeImpact ( void )
 		else target=NULL;
 	}
 
-	// Ggf Schild:
-	if ( game->AlienTech )
-	{
-		cPlayer *s=NULL;
-		if ( target&&target->owner->ShieldMap[dest] ) s=target->owner;
-		else if ( btarget&&btarget->owner->ShieldMap[dest] ) s=btarget->owner;
-		if ( s )
-		{
-			game->AddFX ( fxAbsorb,DestX*64,DestY*64,0 );
-			if ( s->ShieldImpact ( dest, ( /*vehicle?vehicle->data.damage:*/building->data.damage ) ) ) return false;
-		}
-	}
-
 	// Impact:
 	if ( !target&&!btarget ) PlayImpact=true;
 	else

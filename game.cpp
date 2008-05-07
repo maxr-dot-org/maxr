@@ -365,21 +365,7 @@ void cGame::Run ( void )
 				             spy+hud->Zoom/2,
 				             SelectedBuilding->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			if ( hud->Reichweite&&SelectedBuilding->data.max_shield )
-			{
-				if ( SelectedBuilding->data.is_big )
-				{
-					DrawCircle ( spx+hud->Zoom,
-					             spy+hud->Zoom,
-					             SelectedBuilding->data.range*hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-				else
-				{
-					DrawCircle ( spx+hud->Zoom/2,
-					             spy+hud->Zoom/2,
-					             SelectedBuilding->data.range*hud->Zoom+3,RANGE_SHIELD_COLOR,buffer );
-				}
-			}
+			
 			if ( hud->Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
 			{
 				SelectedBuilding->DrawMunBar();
@@ -1493,14 +1479,7 @@ void cGame::DrawMap ( bool pure )
 	dest.y=18-OffY+zoom*startY;
 	scr.x=0;scr.y=0;
 	scr.h=scr.w=zoom;
-	if ( SettingsData.bAlphaEffects )
-	{
-		SDL_SetAlpha ( ActivePlayer->ShieldColor,SDL_SRCALPHA,150 );
-	}
-	else
-	{
-		SDL_SetAlpha ( ActivePlayer->ShieldColor,SDL_SRCALPHA,255 );
-	}
+	
 	for ( y=startY;y<=endY;y++ )
 	{
 		dest.x=180-OffX+zoom*startX;
@@ -1512,11 +1491,6 @@ void cGame::DrawMap ( bool pure )
 				if ( map->GO[pos].plane )
 				{
 					map->GO[pos].plane->Draw ( &dest );
-				}
-				if ( hud->Status&&ActivePlayer->ShieldMap&&ActivePlayer->ShieldMap[pos] )
-				{
-					tmp=dest;
-					SDL_BlitSurface ( ActivePlayer->ShieldColor,&scr,buffer,&tmp );
 				}
 			}
 			pos++;
@@ -3790,7 +3764,6 @@ void cGame::Load ( string name,int AP,bool MP )
 		cPlayer *p;
 		p=PlayerList->Items[i];
 		p->base->RefreshSubbases();
-		p->CalcShields();
 	}
 
 	// Sich um die gespeicherten Vehicle kümmern:

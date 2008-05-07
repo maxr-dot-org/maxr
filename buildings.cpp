@@ -1101,15 +1101,6 @@ void cBuilding::ShowBigDetails ( void )
 	int y;
 	y = dest.y + 297;
 
-	if ( data.max_shield )
-	{
-		// Range:
-		font->showTextCentered ( COLUMN_1, y, iToStr ( data.range ) );
-		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Range" ) );
-		DrawSymbolBig ( SBRange, COLUMN_3, y - 2, 160, data.range, typ->data.range, buffer );
-		DOLINEBREAK
-	}
-
 	if ( data.can_attack )
 	{
 		// Damage:
@@ -1584,13 +1575,6 @@ void cBuilding::ServerStopWork ( bool override )
 		SubBase->MetalProd -= MetalProd;
 		SubBase->OilProd -= OilProd;
 		SubBase->GoldProd -= GoldProd;
-	}
-
-	// Schildgeneratoren:
-	if ( data.max_shield )
-	{
-		data.shield = 0;
-		//owner->CalcShields();
 	}
 
 	IsWorking = false;
@@ -3647,7 +3631,7 @@ void cBuilding::ShowResearchSchieber ( void )
 				break;
 
 			case 3:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Shield" );
+				sTxtTheme = lngPack.i18n ( "Text~Hud~Armor" );
 				break;
 
 			case 4:
@@ -4679,16 +4663,6 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 			u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
 			i++;
 		}
-	}
-
-	if ( d->max_shield )
-	{
-		// Range:
-		u[i].active = true;
-		u[i].value = & ( d->range );
-		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.range, 3 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
-		i++;
 	}
 
 	if ( d->can_load == TRANS_METAL || d->can_load == TRANS_OIL || d->can_load == TRANS_GOLD )
@@ -8600,15 +8574,6 @@ void cBuilding::ShowDetails ( void )
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 
-	if ( data.max_shield )
-	{
-		// Schild:
-		DrawNumber ( 31, 189, data.shield, data.max_shield, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Shield" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-
-		DrawSymbol ( SShield, 88, 186, 70, data.shield, data.max_shield, GraphicsData.gfx_hud );
-	}
-
 	if ( data.can_load && owner == Client->ActivePlayer )
 	{
 		// Load:
@@ -8874,14 +8839,6 @@ void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, in
 			empty.w = full.w = 21;
 			empty.h = full.h = 8;
 			empty.x = 207;
-			break;
-
-		case SShield:
-			full.x = 228;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 8;
-			empty.x = 236;
 			break;
 	}
 

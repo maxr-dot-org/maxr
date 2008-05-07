@@ -85,14 +85,14 @@ void cNetMessage::pushChar( char c)
 	data[iLength] = c;
 	iLength ++;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 char cNetMessage::popChar()
 {
 	if ( iLength <= 5 ) 
 	{
-		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength--;
@@ -104,14 +104,14 @@ void cNetMessage::pushInt16( Sint16 i )
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint16 cNetMessage::popInt16()
 {
 	if ( iLength <= 6 ) 
 	{
-		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength -= 2;
@@ -123,14 +123,14 @@ void cNetMessage::pushInt32( Sint32 i )
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint32 cNetMessage::popInt32()
 {
 	if ( iLength <= 8 ) 
 	{
-		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength -= 4;
@@ -153,14 +153,14 @@ void cNetMessage::pushString( string s )
 
 	iLength += stringLength;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 string cNetMessage::popString()
 {
 	if ( data[iLength - 1] != '\0' )
 	{
-		cLog::write( "Warning: invalid popString() from netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Invalid popString() from netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return string("");
 	}
 
@@ -170,7 +170,7 @@ string cNetMessage::popString()
 	{
 		if ( iLength <= 5 ) 
 		{
-			cLog::write( "Warning: pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NETWORK );
+			cLog::write( "Pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NET_ERROR );
 			return string("");
 		}
 		iLength--;
@@ -187,14 +187,14 @@ void cNetMessage::pushBool( bool b )
 	
 	iLength++;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Warning: size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NETWORK );
+	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 bool cNetMessage::popBool()
 {
 	if ( iLength <= 5 ) 
 	{
-		cLog::write( "Warning: pop from empty netMessage", cLog::eLOG_TYPE_NETWORK );
+		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 
