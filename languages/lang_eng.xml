@@ -132,7 +132,7 @@
 			<Cargo ENG="Cargo"/>
 			<AmmoShort ENG="Ammo"/>
 			<Shots ENG="Shots"/>
-			<Shield ENG="Shield"/>
+			<Armor ENG="Armor"/>
 			<Total ENG="Total"/>
 			<Energy ENG="Energy"/>
 			<Usage ENG="Usage"/>

@@ -132,7 +132,7 @@
 			<Cargo ENG="Gargo" localized="Ladung"/>
 			<AmmoShort ENG="Ammo" localized="Munni"/>
 			<Shots ENG="Shots" localized="Schuss"/>
-			<Shield ENG="Shield" localized="Schild"/>
+			<Armor ENG="Armor" localized="Panzer."/>
 			<Total ENG="Total" localized="Total"/>
 			<Energy ENG="Energy" localized="Energie"/>
 			<Usage ENG="Usage" localized="Verbr."/>
