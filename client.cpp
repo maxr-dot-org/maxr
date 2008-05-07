@@ -197,12 +197,16 @@ void cClient::run()
 		// check user
 		if ( checkUser() == -1 )
 		{
+			drawMap();
+			SHOW_SCREEN
 			makePanel ( false );
 			break;
 		}
 		// end truth save/load menu
 		if ( bExit )
 		{
+			drawMap();
+			SHOW_SCREEN
 			makePanel ( false );
 			break;
 		}
@@ -474,8 +478,17 @@ void cClient::run()
 			//iFrames++;
 			if ( bStartup )
 			{
+				Hud->SetZoom(1);
+				drawMap();
+				SHOW_SCREEN
 				makePanel ( true );
-				if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
+
+				Hud->SetZoom(64);
+				if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
+				else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
+				drawMap();
+				SHOW_SCREEN
+				
 				bStartup = false;
 			}
 			SHOW_SCREEN
