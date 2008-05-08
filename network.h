@@ -29,6 +29,10 @@
 #define FIRST_CLIENT_MESSAGE 50
 #define FIRST_MENU_MESSAGE 100
 
+#define NETMESSAGE_CONTROLCHAR 0xFF
+#define NETMESSAGE_STARTCHAR 0x00
+#define NETMESSAGE_NOTSTARTCHAR 0xFF
+
 /**
 * Callback for the networkthread
 *@author alzi alias DoctorDeath
@@ -158,6 +162,15 @@ class cTCP
 	*@return Allways 0 for success since it waits until the event can be pushed.
 	*/
 	int pushEvent( int iEventType, void *data1, void *data2 );
+	/**
+	* gets the position of the next NETMESSAGE_CONTROLCHAR character
+	*@author alzi alias DoctorDeath
+	*@param iStartPos The start position from which the search should beginn.
+	*@param data Data in which the search should take place.
+	*@param iLength The length of the data.
+	*@return Position of the first NETMESSAGE_CONTROLCHAR charcter or -1 if non has been found
+	*/
+	int findNextMessageStart ( int iStartPos, char *data, int iLength );
 public:
 	/**
 	* Creates the mutexes, initialises some variables and the sockets and starts the network thread.

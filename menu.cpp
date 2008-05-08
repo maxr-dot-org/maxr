@@ -5286,7 +5286,7 @@ void cMultiPlayerMenu::sendResources()
 		msg[iMsgLenght+2] = Map->Resources[i].typ;
 		msg[iMsgLenght+3] = Map->Resources[i].value;
 		iMsgLenght+=4;
-		if ( iMsgLenght > PACKAGE_LENGHT-4 )
+		if ( iMsgLenght > PACKAGE_LENGHT-6 )
 		{
 			network->send ( PACKAGE_LENGHT, msg );
 			iMsgLenght = 0;
@@ -5309,7 +5309,7 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 		// break if package will be to big
 		// this is very improbable becouse player must have selected over 61 units
 		// at the standard PACKAGE_LENGHT of 256bytes
-		if ( 10+4*i > PACKAGE_LENGHT-4 ) break;
+		if ( 10+4*i > PACKAGE_LENGHT-6 ) break;
 
 		((Sint16*)(msg+10+4*i))[0] = SDL_SwapLE16( LandingList->Items[i]->cargo );
 		((Sint16*)(msg+10+4*i))[1] = SDL_SwapLE16( LandingList->Items[i]->id );
@@ -5353,7 +5353,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			((Sint16*)(msg+iMsgLenght+1))[8] = SDL_SwapLE16( ActualPlayer->VehicleData[i].max_speed );
 			iMsgLenght += 1+9*2;
 		}
-		if ( iMsgLenght > PACKAGE_LENGHT-(1+9*2) )
+		if ( iMsgLenght > PACKAGE_LENGHT-2-(1+9*2) )
 		{
 			((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+9*2) );
 			network->send ( PACKAGE_LENGHT, msg );
@@ -5396,7 +5396,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			((Sint16*)(msg+iMsgLenght+1))[7] = SDL_SwapLE16( ActualPlayer->BuildingData[i].scan );
 			iMsgLenght += 1+8*2;
 		}
-		if ( iMsgLenght > PACKAGE_LENGHT-(1+8*2) )
+		if ( iMsgLenght > PACKAGE_LENGHT-2-(1+8*2) )
 		{
 			((Sint16*)msg)[2] = SDL_SwapLE16( (iMsgLenght-6)/(1+8*2) );
 			network->send ( PACKAGE_LENGHT, msg );

@@ -156,6 +156,24 @@ public:
 	*/
 	string getHexDump();
 	
+	/** gets the position of the next NETMESSAGE_CONTROLCHAR character in the data of the message
+	*@author alzi alias DoctorDeath
+	*@param iStartPos position from which the search should beginn
+	*@return Position of the first NETMESSAGE_CONTROLCHAR charcter or -1 if non has been found
+	*/
+	int findNextControlChar ( int iStartPos );
+
+	/** finds all NETMESSAGE_CONTROLCHAR from the iStartPos until the end and adds the charcter NETMESSAGE_NOTSTARTCHAR behind all of them
+	*@author alzi alias DoctorDeath
+	*@param iStartPos position from which the search should beginn
+	*/
+
+	void checkControlChars( int iStartPos );
+	/** removes the NETMESSAGE_NOTSTARTCHAR charcters behind all control-characters in the messagedata.
+	* Don't call this function for one NetMessage twice!
+	*@author alzi alias DoctorDeath
+	*/
+	void refertControlChars();
 };
 
 #endif //#ifndef _net_message_h

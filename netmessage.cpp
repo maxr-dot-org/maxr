@@ -63,7 +63,6 @@ char* cNetMessage::serialize()
 	*((Sint16*) (data + 2)) = SDL_SwapLE16( (Sint16)iLength);
 	//write iPlayernr to byte array
 	data[4] = (char) iPlayerNr;
-
 	return data;
 }
 
@@ -84,6 +83,7 @@ void cNetMessage::pushChar( char c)
 {
 	data[iLength] = c;
 	iLength ++;
+	checkControlChars( iLength-1 );
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
@@ -103,6 +103,7 @@ void cNetMessage::pushInt16( Sint16 i )
 {
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
+	checkControlChars( iLength-2 );
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
@@ -122,6 +123,7 @@ void cNetMessage::pushInt32( Sint32 i )
 {
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
+	checkControlChars( iLength-4 );
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
@@ -152,6 +154,7 @@ void cNetMessage::pushString( string s )
 	memcpy( data + iLength, c, stringLength );
 
 	iLength += stringLength;
+	checkControlChars( iLength-stringLength );
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
 }
@@ -184,7 +187,6 @@ void cNetMessage::pushBool( bool b )
 {
 	
 	data[iLength] = b;
-	
 	iLength++;
 
 	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
@@ -367,4 +369,54 @@ string cNetMessage::getHexDump()
 	}
 
 	return dump;
+}
+
+int cNetMessage::findNextControlChar ( int iStartPos )
+{
+	for ( int iPos = iStartPos; iPos < iLength; iPos++ )
+	{
+		if ( data[iPos] == (char)NETMESSAGE_CONTROLCHAR ) return iPos;
+	}
+	return -1;
+}
+
+void cNetMessage::checkControlChars( int iStartPos )
+{
+	int iPos = iStartPos;
+	// add to all NETMESSAGE_CONTROLCHAR the NETMESSAGE_NOTSTARTCHAR
+	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
+	{
+		if ( iLength >= PACKAGE_LENGHT ) return;
+
+		char *tmpBuffer = (char *) malloc ( iLength-iPos-1 );
+		memcpy( tmpBuffer, &data[iPos+1], iLength-iPos-1 );
+		memcpy( &data[iPos+2], tmpBuffer, iLength-iPos-1 );
+		data[iPos+1] = (char)NETMESSAGE_NOTSTARTCHAR;
+		free ( tmpBuffer );
+
+		iLength++;
+		iPos += 2;
+	}
+}
+
+void cNetMessage::refertControlChars()
+{
+	int iPos = 0;
+	// remove the NETMESSAGE_NOTSTARTCHAR from all NETMESSAGE_CONTROLCHAR
+	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
+	{
+		if ( iLength >= PACKAGE_LENGHT ) return;
+		if ( data[iPos+1] == (char)NETMESSAGE_NOTSTARTCHAR )
+		{
+			char *tmpBuffer = (char *) malloc ( iLength-iPos-2 );
+			memcpy( tmpBuffer, &data[iPos+2], iLength-iPos-2 );
+			memcpy( &data[iPos+1], tmpBuffer, iLength-iPos-2 );
+			data[iLength-1] = 0;
+			free ( tmpBuffer );
+
+			iLength--;
+			iPos++;
+		}
+		else iPos += 2;
+	}
 }

@@ -159,7 +159,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 	{
 		//the client is only connected to one socket
 		//so netwwork->send() only sends to the server 
-		network->send( PACKAGE_LENGHT, message->serialize() );
+		network->send( message->iLength, message->serialize() );
 		delete message;
 	}
 }

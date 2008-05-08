@@ -84,6 +84,25 @@ int main ( int argc, char *argv[] )
 	DataThread = SDL_CreateThread ( LoadData,NULL );
 
 
+	/*cNetMessage *Message = new cNetMessage ( 0 );
+	Message->pushInt16 ( 65314 );
+	Message->pushChar ( 255 );
+	Message->pushInt32 ( 22222 );
+	Message->pushChar ( 255 );
+	char *c = (char*) malloc (2);
+	c[0] = 255;
+	c[1] = '\0';
+	string str = c;
+	for ( int i = 0; i < 5; i++ )
+	{
+		str += c;
+	}
+	str += "\0";
+	Message->pushString ( str );
+
+	string str1 = Message->getHexDump();
+	Message->refertControlChars();
+	string str3 = Message->getHexDump();*/
 
 	SDL_Event event;
 	while ( LoadingData != LOAD_FINISHED )

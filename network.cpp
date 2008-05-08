@@ -115,12 +115,22 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 	lockData();
 	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber]->iType == CLIENT_SOCKET && ( Sockets[iClientNumber]->iState == STATE_READY || Sockets[iClientNumber]->iState == STATE_NEW ) )
 	{
+		if ( iLenght >= PACKAGE_LENGHT-1 ) iLenght = PACKAGE_LENGHT-2;
+
 		if ( iLenght > 0 )
 		{
+			char *sendBuffer = (char *) malloc ( iLenght+2 );
+			sendBuffer[0] = (char)NETMESSAGE_CONTROLCHAR;
+			sendBuffer[1] = (char)NETMESSAGE_STARTCHAR;
+			memcpy ( &sendBuffer[2], buffer, iLenght );
+
 			lockTCP();
-			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber]->socket, buffer, iLenght );
+			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber]->socket, sendBuffer, iLenght+2 );
 			unlockTCP();
-			if ( iSendLenght != iLenght )
+
+			free ( sendBuffer );
+
+			if ( iSendLenght != iLenght+2 )
 			{
 				Sockets[iClientNumber]->iState = STATE_DYING;
 				void *data = malloc ( sizeof (Sint16) );
@@ -250,22 +260,63 @@ void cTCP::HandleNetworkThread()
 				else
 				{
 					int iLenght;
-					iLenght = SDLNet_TCP_Recv ( Sockets[i]->socket, Sockets[i]->buffer.data, PACKAGE_LENGHT - Sockets[i]->buffer.iLenght );
+					iLenght = SDLNet_TCP_Recv ( Sockets[i]->socket, &Sockets[i]->buffer.data[Sockets[i]->buffer.iLenght], PACKAGE_LENGHT-Sockets[i]->buffer.iLenght );
 
-					void *data = malloc ( sizeof (Sint16)*2 );
-					((Sint16*)data)[0] = i;
-					((Sint16*)data)[1] = ((Sint16*)Sockets[i]->buffer.data)[0];
+					// check whether everything has been read
+					bool bAllRead = true;
+					SDLNet_CheckSockets ( SocketSet, 10 );
+					if ( SDLNet_SocketReady ( Sockets[i]->socket ) )
+					{
+						bAllRead = false;
+					}
+
+					if ( iLenght < 256 )
+						int haha = 0;
+
+					static int iRestData = 0;
+					//iRestData = 0;
+					int iMsgStartOffset = Sockets[i]->buffer.iLenght;
 					if ( iLenght > 0 )
 					{
-						int iOldLenght = Sockets[i]->buffer.iLenght;
-						Sockets[i]->buffer.iLenght += iLenght;
-						if ( iOldLenght == 0 )
+						int iStartPos = iMsgStartOffset-iRestData;
+						while ( ( iStartPos = findNextMessageStart ( iStartPos, Sockets[i]->buffer.data, iMsgStartOffset+iLenght ) ) != -1 )
 						{
-							pushEvent ( TCP_RECEIVEEVENT, data, NULL );
+							int iEndPos = findNextMessageStart ( iStartPos+2, Sockets[i]->buffer.data, iMsgStartOffset+iLenght );
+							if ( ( iEndPos != -1 || iStartPos == 0 ) || bAllRead )
+							{
+								if ( iEndPos == -1 ) iEndPos = iMsgStartOffset+iLenght;
+
+								void *data = malloc ( sizeof (Sint16)*3 );
+								((Sint16*)data)[0] = i;
+								((Sint16*)data)[1] = ((Sint16*)(Sockets[i]->buffer.data+iStartPos+2))[0];
+								((Sint16*)data)[2] = iEndPos-iStartPos;
+
+								Sockets[i]->buffer.iLenght += iEndPos-iStartPos-iRestData;
+								iRestData = 0;
+								pushEvent ( TCP_RECEIVEEVENT, data, NULL );
+								iStartPos = iEndPos;
+							}
+							else
+							{
+								if ( iRestData == 0 )
+								{
+									iRestData = iMsgStartOffset+iLenght-iStartPos;
+									Sockets[i]->buffer.iLenght += iRestData;
+								}
+								else
+								{
+									iRestData += iLenght;
+									Sockets[i]->buffer.iLenght += iLenght;
+								}
+								break;
+							}
 						}
 					}
 					else
 					{
+						void *data = malloc ( sizeof (Sint16)*2 );
+						((Sint16*)data)[0] = i;
+
 						Sockets[i]->iState = STATE_DYING;
 						pushEvent ( TCP_CLOSEEVENT, data, NULL );
 					}
@@ -283,9 +334,11 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 	event->type = NETWORK_EVENT;
 	event->user.code = iEventType;
 	event->user.data1 = malloc ( PACKAGE_LENGHT );
-	memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 2 );
+	memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 3 );
 	free ( data1 );
 	event->user.data2 = data2;
+
+	int iMessageLength = ((Sint16*)event->user.data1)[2];
 
 	if ( bDataLocked )
 	{
@@ -295,7 +348,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 			// Read data for server and add it to the event
 			int iMinLenght, iClientNumber;
 			iClientNumber = SDL_SwapLE16 ( ((Sint16*)event->user.data1)[0] );
-			iMinLenght = ( ( ( Sockets[iClientNumber]->buffer.iLenght ) < PACKAGE_LENGHT ) ? ( Sockets[iClientNumber]->buffer.iLenght ) : PACKAGE_LENGHT );
+			iMinLenght = ( ( ( Sockets[iClientNumber]->buffer.iLenght ) < (unsigned int)iMessageLength ) ? ( Sockets[iClientNumber]->buffer.iLenght ) : iMessageLength );
 			memmove ( (char*)event->user.data1, Sockets[iClientNumber]->buffer.data, iMinLenght );
 			Sockets[iClientNumber]->buffer.iLenght -= iMinLenght;
 			memmove ( Sockets[iClientNumber]->buffer.data, &Sockets[iClientNumber]->buffer.data[iMinLenght], Sockets[iClientNumber]->buffer.iLenght );
@@ -417,4 +470,13 @@ int cTCP::getFreeSocket()
 	else if ( iNum > iLast_Socket ) return -1;
 
 	return iNum;
+}
+
+int cTCP::findNextMessageStart ( int iStartPos, char *data, int iLength )
+{
+	for ( int iPos = iStartPos; iPos < iLength; iPos++ )
+	{
+		if ( data[iPos] == (char)NETMESSAGE_CONTROLCHAR && data[iPos+1] == (char)NETMESSAGE_STARTCHAR ) return iPos;
+	}
+	return -1;
 }

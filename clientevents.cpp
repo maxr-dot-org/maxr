@@ -62,7 +62,7 @@ void sendMoveJob( cMJobs *MJob )
 		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_CLIENT );
 
 		int iCount = 0;
-		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
+		do
 		{
 			Waypoint = MJob->waypoints;
 			while ( Waypoint != LastWaypoint )
@@ -80,12 +80,16 @@ void sendMoveJob( cMJobs *MJob )
 			message->pushInt16( Waypoint->X+Waypoint->Y*MJob->map->size);
 			iCount++;
 		}
+		while ( message->iLength <= PACKAGE_LENGHT-19 && !bEnd );
 
 		message->pushInt16( iCount );
 		message->pushBool ( MJob->plane );
 		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
 		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
 		message->pushInt16( MJob->vehicle->iID );
+
+		// since there is an failure in the code yet, don't send movejobs that are to long
+		if ( !bEnd ) return;
 
 		Client->sendNetMessage( message );
 	}

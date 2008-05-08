@@ -165,16 +165,23 @@ int cEventHandling::HandleEvents()
 				sDataBuffer *DataBuffer = new sDataBuffer;
 				memset ( DataBuffer->data, 0, PACKAGE_LENGHT );
 				if ( !network ) break;
-				if ( ( DataBuffer->iLenght = network->read ( SDL_SwapLE16( ((Sint16 *)event.user.data1)[0] ), PACKAGE_LENGHT, DataBuffer->data ) ) != 0 )
+				if ( ( DataBuffer->iLenght = network->read ( SDL_SwapLE16( ((Sint16 *)event.user.data1)[0] ), ((Sint16 *)event.user.data1)[2], DataBuffer->data ) ) != 0 )
 				{
+					// remove startcharacters from data
+					memmove( DataBuffer->data, (DataBuffer->data+2), DataBuffer->iLenght-2 );
+					DataBuffer->iLenght -= 2;
+
 					if ( SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
 					{
+						// devite into messages
+						int iPos = 0;
+						/*while ( )*/
 						SDL_Event* NewEvent = new SDL_Event;
 						NewEvent->type = GAME_EVENT;
 						
 						// data1 is the real data
-						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT );
-						memcpy ( NewEvent->user.data1, DataBuffer->data, PACKAGE_LENGHT );
+						NewEvent->user.data1 = malloc ( DataBuffer->iLenght );
+						memcpy ( NewEvent->user.data1, DataBuffer->data, DataBuffer->iLenght );
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );
@@ -210,6 +217,7 @@ int cEventHandling::HandleEvents()
 			{
 				cNetMessage message( (char*) event.user.data1);
 				free ( event.user.data1 );
+				message.refertControlChars();
 				Client->HandleNetMessage( &message );
 				break;
 			}

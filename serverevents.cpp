@@ -287,7 +287,7 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_SERVER );
 
 		int iCount = 0;
-		while ( message->iLength+7 <= PACKAGE_LENGHT-4 && !bEnd)
+		do
 		{
 			Waypoint = MJob->waypoints;
 			while ( Waypoint != LastWaypoint )
@@ -305,6 +305,7 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 			message->pushInt16( Waypoint->X+Waypoint->Y*MJob->map->size);
 			iCount++;
 		}
+		while ( message->iLength <= PACKAGE_LENGHT-19 && !bEnd );
 
 		message->pushInt16( iCount );
 		message->pushBool ( MJob->plane );

@@ -152,7 +152,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->send( PACKAGE_LENGHT, message->serialize() );
+		if ( network ) network->send( message->iLength, message->serialize() );
 		EventHandler->pushEvent( message->getGameEvent() );
 		delete message;
 		return;
@@ -179,7 +179,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	// on all other sockets the netMessage will be send over TCP/IP
 	else 
 	{
-		if ( network ) network->sendTo( Player->iSocketNum, PACKAGE_LENGHT, message->serialize() );
+		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize() );
 	}
 	delete message;
 }
@@ -229,6 +229,7 @@ void cServer::run()
 			case GAME_EVENT:
 				{
 					cNetMessage message( (char*) event->user.data1 );
+					message.refertControlChars();
 					HandleNetMessage( &message );
 					break;
 				}
@@ -329,7 +330,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				if ( iCount == 0 )
 				{
-					if ( iWaypointOff == iSrcOff )
+					if ( iWaypointOff == iSrcOff || iWaypointOff == iDestOff )
 					{
 						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList );
 						if ( MJob->vehicle == NULL )
