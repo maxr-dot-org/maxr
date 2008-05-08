@@ -148,7 +148,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
 
-	cLog::write("Server: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_ERROR );
+	cLog::write("Server: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	if ( iPlayerNum == -1 )
 	{

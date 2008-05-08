@@ -2656,12 +2656,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( !Building )
 				{
-					cLog::write("Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					cLog::write("Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
 				if ( Building->PosX != iPosX || Building->PosY != iPosY )
 				{
-					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// set to server position
 					if ( bBase ) Map->GO[iPosX+iPosY*Map->size].base = NULL;
 					else if ( bSubBase ) Map->GO[iPosX+iPosY*Map->size].subbase = NULL;
@@ -2832,8 +2832,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( Vehicle && Vehicle->mjob )
 			{
-				bool bWasMoving = Vehicle->MoveJobActive;
-
 				// set vehicle to server position
 				int iDestX = iDestOff%Map->size;
 				int iDestY = iDestOff/Map->size;
@@ -2844,15 +2842,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// then stop the vehicle
 					if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL )
 					{
-						cLog::write ( "client has already reached the last field" );
+						cLog::write ( "client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
 						Vehicle->mjob->finished = true;
-						if ( Vehicle == SelectedVehicle && bWasMoving )
-						{
-							StopFXLoop ( iObjectStream );
-							if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
-							else PlayFX ( Vehicle->typ->Stop );
-							iObjectStream = Vehicle->PlayStram();
-						}
 						Vehicle->OffX = Vehicle->OffY = 0;
 					}
 					else
@@ -2860,7 +2851,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						// server is one fiels faster then client
 						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
 						{
-							cLog::write ( "server is one fiels faster then client" );
+							cLog::write ( "server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
 							doEndMoveVehicle( Vehicle );
 						}
 						else
@@ -2881,7 +2872,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the server is more then one field faster
 							if ( bServerIsFaster )
 							{
-								cLog::write ( "the server is more then one field faster" );
+								cLog::write ( "the server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
 								if ( Vehicle->data.can_drive == DRIVE_AIR )
 								{
 									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
@@ -2915,7 +2906,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the client is faster
 							else
 							{
-								cLog::write ( "the client is faster (one or more fields)" );
+								cLog::write ( "the client is faster (one or more fields)", cLog::eLOG_TYPE_NET_DEBUG );
 								// just stop the vehicle and wait for the next commando of the server
 								Vehicle->mjob->EndForNow = true;
 							}
@@ -2938,14 +2929,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					{
 						Vehicle->mjob->Suspended = true;
 						Vehicle->mjob->EndForNow = true;
-					}
-					// Stop the soundstream
-					if ( Vehicle == SelectedVehicle && bWasMoving )
-					{
-						StopFXLoop ( iObjectStream );
-						if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
-						else PlayFX ( Vehicle->typ->Stop );
-						iObjectStream = Vehicle->PlayStram();
 					}
 				}
 			}
@@ -3229,32 +3212,44 @@ void cClient::handleMoveJobs ()
 		if ( MJob->vehicle == NULL ) continue;
 		Vehicle = MJob->vehicle;
 
-		if ( MJob->finished )
+		if ( MJob->finished || MJob->EndForNow )
 		{
-			if ( Vehicle->mjob == MJob )
+			// Stop the soundstream
+			if ( Vehicle == SelectedVehicle && Vehicle->MoveJobActive )
 			{
-				Vehicle->mjob = NULL;
-				Vehicle->moving = false;
-				Vehicle->rotating = false;
+				StopFXLoop ( iObjectStream );
+				if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+				else PlayFX ( Vehicle->typ->Stop );
+				iObjectStream = Vehicle->PlayStram();
+			}
+
+			if ( MJob->finished )
+			{
+				if ( Vehicle->mjob == MJob )
+				{
+					Vehicle->mjob = NULL;
+					Vehicle->moving = false;
+					Vehicle->rotating = false;
+					Vehicle->MoveJobActive = false;
+				}
+				ActiveMJobs->Delete ( i );
+				delete MJob;
+				continue;
+			}
+			if ( MJob->EndForNow )
+			{
 				Vehicle->MoveJobActive = false;
+				Vehicle->rotating = false;
+				// save speed
+				if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+				{
+					MJob->SavedSpeed += Vehicle->data.speed;
+					Vehicle->data.speed = 0;
+					Vehicle->ShowDetails();
+				}
+				ActiveMJobs->Delete ( i );
+				continue;
 			}
-			ActiveMJobs->Delete ( i );
-			delete MJob;
-			continue;
-		}
-		if ( MJob->EndForNow )
-		{
-			Vehicle->MoveJobActive = false;
-			Vehicle->rotating = false;
-			// save speed
-			if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
-			{
-				MJob->SavedSpeed += Vehicle->data.speed;
-				Vehicle->data.speed = 0;
-				Vehicle->ShowDetails();
-			}
-			ActiveMJobs->Delete ( i );
-			continue;
 		}
 
 		// rotate vehicle
@@ -3422,16 +3417,35 @@ void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
 
 	if ( !MJob->plane )
 	{
-		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
+		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle != NULL || Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top != NULL )
+		{
+			cLog::write ( "Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + " is blocked by an other unit", cLog::eLOG_TYPE_ERROR );
+			MJob->finished = true;
+		}
+		else
+		{
+			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
+			Vehicle->PosX = MJob->waypoints->X;
+			Vehicle->PosY = MJob->waypoints->Y;
+		}
 	}
 	else
 	{
 		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-		Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
+		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane != NULL )
+		{
+			cLog::write ( "Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + " is blocked by an other plane", cLog::eLOG_TYPE_ERROR );
+			MJob->finished = true;
+		}
+		else
+		{
+			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
+			Vehicle->PosX = MJob->waypoints->X;
+			Vehicle->PosY = MJob->waypoints->Y;
+		}
 	}
-	Vehicle->PosX = MJob->waypoints->X;
-	Vehicle->PosY = MJob->waypoints->Y;
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 
