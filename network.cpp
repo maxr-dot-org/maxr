@@ -383,14 +383,12 @@ void cTCP::close( int iClientNumber )
 
 void cTCP::deleteSocket( int iNum )
 {
-	lockData();
 	SDLNet_TCP_Close( Sockets[iNum]->socket );
 	for ( int i = iNum; i < iLast_Socket; i++ )
 	{
 		Sockets[i] = Sockets[i+1];
 	}
 	iLast_Socket--;
-	unlockData();
 }
 
 void cTCP::lockTCP()

@@ -5001,7 +5001,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						string str = Message->getHexDump();
 						network->send ( Message->iLength, Message->serialize() );
 						delete Message;
-						//sendResources();
+						sendResources();
 					}
 					else
 					{
