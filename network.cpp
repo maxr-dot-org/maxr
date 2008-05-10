@@ -23,9 +23,7 @@
 
 void cTCP::init()
 {
-	DataMutex = SDL_CreateMutex();
 	TCPMutex = SDL_CreateMutex();
-	WaitForRead = SDL_CreateCond();
 
 	for ( int i = 0; i < MAX_CLIENTS; i++ )
 	{
@@ -48,7 +46,6 @@ void cTCP::init()
 void cTCP::kill()
 {
 	bExit = true;
-	SDL_CondSignal( WaitForRead );
 	SDL_WaitThread ( TCPHandleThread, NULL );
 
 	for ( int i = 0; i < iLast_Socket; i++ )
@@ -60,9 +57,9 @@ void cTCP::kill()
 		free ( Sockets[i] );
 	}
 
-	SDL_DestroyMutex( DataMutex );
 	SDL_DestroyMutex( TCPMutex );
-	SDL_DestroyCond( WaitForRead );
+	sendReadFinished();
+	unlockData();
 }
 
 
@@ -77,7 +74,12 @@ int cTCP::create()
 	if ( ( iNum = getFreeSocket() ) == -1 ) { unlockData(); return -1; }
 
 	Sockets[iNum]->socket = SDLNet_TCP_Open ( &ipaddr );
-	if ( !Sockets[iNum]->socket ) { unlockData(); return -1; }
+	if ( !Sockets[iNum]->socket )
+	{
+		unlockData();
+		deleteSocket ( iNum );
+		return -1;
+	}
 
 	Sockets[iNum]->iType = SERVER_SOCKET;
 	Sockets[iNum]->iState = STATE_NEW;
@@ -99,13 +101,18 @@ int cTCP::connect()
 	if ( ( iNum = getFreeSocket() ) == -1 ) { unlockData(); return -1; }
 
 	Sockets[iNum]->socket = SDLNet_TCP_Open ( &ipaddr );
-	if ( !Sockets[iNum]->socket ) { unlockData(); return -1; }
+	if ( !Sockets[iNum]->socket )
+	{
+		unlockData();
+		deleteSocket ( iNum );
+		return -1;
+	}
 
 	Sockets[iNum]->iType = CLIENT_SOCKET;
 	Sockets[iNum]->iState = STATE_NEW;
 	clearBuffer ( &Sockets[iNum]->buffer );
 
-	bHost = false;	// is nor the host
+	bHost = false;	// is not the host
 	unlockData();
 	return 0;
 }
@@ -175,8 +182,7 @@ int cTCP::read( int iClientNumber, int iLenght, char *buffer )
 	}
 	unlockData();
 
-	bWaitForRead = false;
-	SDL_CondSignal ( WaitForRead );
+	sendReadFinished();
 
 	return iMinLenght;
 }
@@ -199,9 +205,7 @@ void cTCP::HandleNetworkThread()
 		// Wait until there is something to read
 		while ( !bExit && bWaitForRead )
 		{
-			bDataLocked = false;
-			SDL_CondWait ( WaitForRead, DataMutex );
-			bDataLocked = true;
+			waitForRead();
 		}
 		// Check all Sockets
 		for ( int i = 0; !bExit && i < iLast_Socket; i++ )
@@ -270,11 +274,7 @@ void cTCP::HandleNetworkThread()
 						bAllRead = false;
 					}
 
-					if ( iLenght < 256 )
-						int haha = 0;
-
 					static int iRestData = 0;
-					//iRestData = 0;
 					int iMsgStartOffset = Sockets[i]->buffer.iLenght;
 					if ( iLenght > 0 )
 					{
@@ -363,6 +363,10 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 		}
 		lockData();
 	}
+	else
+	{
+		cLog::write( "Fatal Error when trying to push event", cLog::eLOG_TYPE_NET_ERROR );
+	}
 
 	return 0;
 }
@@ -403,20 +407,31 @@ void cTCP::unlockTCP()
 
 void cTCP::lockData()
 {
-	SDL_LockMutex ( DataMutex );
+	while ( bDataLocked )
+	{
+		SDL_Delay ( 10 );
+	}
 	bDataLocked = true;
 }
 
 void cTCP::unlockData()
 {
-	SDL_UnlockMutex ( DataMutex );
 	bDataLocked = false;
 }
 
-void cTCP::sendWaitCondSignal()
+void cTCP::sendReadFinished()
 {
 	bWaitForRead = false;
-	SDL_CondSignal( WaitForRead );
+}
+
+void cTCP::waitForRead()
+{
+	unlockData();
+	while ( bWaitForRead )
+	{
+		SDL_Delay( 10 );
+	}
+	lockData();
 }
 
 void cTCP::setPort( int iPort )

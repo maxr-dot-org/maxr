@@ -207,7 +207,7 @@ void cServer::run()
 
 						// data1 is the real data
 						NewEvent->user.data1 = malloc ( PACKAGE_LENGHT );
-						memcpy ( NewEvent->user.data1, (char*)event->user.data1, PACKAGE_LENGHT );
+						memcpy ( NewEvent->user.data1, &((char*)event->user.data1)[2], PACKAGE_LENGHT-2 );
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );

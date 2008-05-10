@@ -144,7 +144,7 @@ class cMultiPlayerMenu
 	void HandleMessages();
 
 public:
-	cList<sDataBuffer*> *MessageList;
+	cList<cNetMessage*> *MessageList;
 	void runNetworkMenu( bool bHost );
 } EX *MultiPlayerMenu;
 

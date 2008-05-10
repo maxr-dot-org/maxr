@@ -91,9 +91,7 @@ struct sSocket
 */
 class cTCP
 {
-	SDL_mutex *DataMutex;
 	SDL_mutex *TCPMutex;
-	SDL_cond *WaitForRead;
 	bool bDataLocked;
 	bool bTCPLocked;
 	bool bWaitForRead;
@@ -151,7 +149,8 @@ class cTCP
 	* Sends a signal to the conditional variable.
 	*@author alzi alias DoctorDeath
 	*/
-	void sendWaitCondSignal();
+	void sendReadFinished();
+	void waitForRead();
 
 	/**
 	* Pushes an event to the event handling or to the server eventqueue

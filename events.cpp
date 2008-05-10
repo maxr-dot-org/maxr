@@ -152,10 +152,9 @@ int cEventHandling::HandleEvents()
 				// new socket accepted
 				if ( MultiPlayerMenu )
 				{
-					sDataBuffer *DataBuffer = new sDataBuffer;
-					((Sint16*)DataBuffer->data)[0] = MU_MSG_NEW_PLAYER;
-					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
-					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+					cNetMessage *Message = new cNetMessage( MU_MSG_NEW_PLAYER );
+					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
+					MultiPlayerMenu->MessageList->Add ( Message );
 					free ( event.user.data1 );
 				}
 				break;
@@ -185,16 +184,17 @@ int cEventHandling::HandleEvents()
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );
-
-						delete DataBuffer;
 					}
 					else //message for the MultiPlayerMenu
 					{
 						if ( MultiPlayerMenu )
 						{
-							MultiPlayerMenu->MessageList->Add ( DataBuffer );
+							cNetMessage *Message = new cNetMessage ( (char*) DataBuffer->data );
+							Message->refertControlChars();
+							MultiPlayerMenu->MessageList->Add ( Message );
 						}
 					}
+					delete DataBuffer;
 				}
 				free ( event.user.data1 );
 				break;
@@ -204,10 +204,9 @@ int cEventHandling::HandleEvents()
 				network->close ( ((Sint16 *)event.user.data1)[0] );
 				if ( MultiPlayerMenu )
 				{
-					sDataBuffer *DataBuffer = new sDataBuffer;
-					((Sint16*)DataBuffer->data)[0] = MU_MSG_DEL_PLAYER;
-					((Sint16*)DataBuffer->data)[1] = ((Sint16 *)event.user.data1)[0];
-					MultiPlayerMenu->MessageList->Add ( DataBuffer );
+					cNetMessage *Message = new cNetMessage( MU_MSG_DEL_PLAYER );
+					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
+					MultiPlayerMenu->MessageList->Add ( Message );
 				}
 				free ( event.user.data1 );
 				break;
