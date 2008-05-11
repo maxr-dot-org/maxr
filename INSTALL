@@ -48,6 +48,8 @@ If you don't own an original maxcd you've another chance in downloading
 Mechanized Assault and Exploration from cdosabandonware.com since you
 won't find any gamecds from this any more on stores - too old.
 http://www.cdosabandonware.com/std_games_details.php?gameid=1979
+This version is however lacking some files like videos, music and some
+sounds.
 
 TROUBLESHOOTING
 
@@ -72,16 +74,14 @@ Sound:
 
 If you experience problems with soundquality (especially on WinXP) you
 may increase the chunksize in MAX.XML. Default is 1024 and 2205Hz. Next
-proper value is 2048 or 4096. Ih you increasing frequency you have to 
+proper value is 2048 or 4096. If you increasing frequency you have to 
 increase the chunksize, too. However inceasing frequency has only a
 small benefit to the backgroundmusic.
 
 Maps:
 
-The mapeditor from MM's Max is (currently) not included. The old maps
-are however 100% compatible. MM's Editor can still be used to create or
-modify maps. Just save them on our maps folder and add 
-an entry in maps.xml
+The mapeditor from MM's Max is (currently) not included. The orignal
+maps are however 100% compatible.
 
 Known Bugs:
 
