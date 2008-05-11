@@ -2410,7 +2410,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		switch (message->popChar())
 		{
 		case USER_MESSAGE:
-			//Todo: play sound for incoming user chat message
+			//TODO: play sound for incoming user chat message
 			addMessage( message->popString() );
 			break;
 		case SERVER_ERROR_MESSAGE:

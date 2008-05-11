@@ -1383,8 +1383,7 @@ void cBuilding::ServerStartWork ()
 
 	if ( Disabled )
 	{
-		//Todo: i18n
-		sendChatMessageToClient("Building disabled", SERVER_ERROR_MESSAGE, owner->Nr );
+		sendChatMessageToClient("Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner->Nr );
 		return;
 	}
 
