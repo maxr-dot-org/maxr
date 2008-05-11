@@ -38,32 +38,32 @@ http://maxthegame.de/wiki/index.php5?title=MAX-Reloaded_unter_VS
 
 LINUX
 
-First untar the package:
-
- $ tar xfzv maxr-x.y.z.tar.gz
-
-Then change to the new directory:
-
- $ cd maxr-x.y.z
-
-Set up the Makefiles and create the configure scripts:
-
- $ ./bootstrap.sh
-
-If everything went well you should now be able to run ./configure
-and make. We highly recommend to run with --prefix=$HOME/games
-to install maxr to your homedirectory or something like that since
-maxr doesn't support homedirectorys yet and that way you can not
-install maxr systemwide without granting writepermissions to maxr
-game directory, max.xml config and save directory! Without these
-maxr will probably just crash during startup.
-
- $ ./configure
- $ make
- $ make install
-
-Compiles the maxr binary and installs it along with the game
-data to the default prefix which is probably /usr/local.
+	First untar the package:
+	
+	$ tar xfzv maxr-x.y.z.tar.gz
+	
+	Then change to the new directory:
+	
+	$ cd maxr-x.y.z
+	
+	Set up the Makefiles and create the configure scripts:
+	
+	$ ./bootstrap.sh
+	
+	If everything went well you should now be able to run ./configure
+	and make. We highly recommend to run with --prefix=$HOME/games
+	to install maxr to your homedirectory or something like that since
+	maxr doesn't support homedirectorys yet and that way you can not
+	install maxr systemwide without granting writepermissions to maxr
+	game directory, max.xml config and save directory! Without these
+	maxr will probably just crash during startup.
+	
+	$ ./configure
+	$ make
+	$ make install
+	
+	Compiles the maxr binary and installs it along with the game
+	data to the default prefix which is probably /usr/local.
 
 Rebuilding:
 
@@ -78,7 +78,7 @@ If you want to clean your maxr SVN build do:
 Starting:
 
 After installing currently needed original gamedata (see INSTALL) 
-you can start M.A.X. Reloaded executing ./maxr in the gamedirectory
+you can start M.A.X. Reloaded executing ./maxr in the datadirectory
 
 If you don't want to install maxr simply move the new binary maxr
 from src to the data directory. Now you can start M.A.X. Reloaded
