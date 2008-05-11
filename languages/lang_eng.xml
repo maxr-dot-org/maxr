@@ -225,6 +225,7 @@
 			<Metal_Low ENG="Too low metal, disabled consumer!"/>
 			<Gold_Low ENG="Too low gold, disabled consumer!"/>
 			<Team_Low ENG="Too low teams, disabled consumer!"/>
+			<Building_Disabled ENG="Building disabled"/>
 			<Energy_Optimize ENG="Energygeneration optimized"/>
 			<Energy_Insufficient ENG="Insufficient energy for starting!"/>
 			<Energy_ToLow ENG="Insufficient energy, generator started!"/>
