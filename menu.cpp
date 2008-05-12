@@ -5211,7 +5211,7 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_RESOURCES:
 			{
 				int iOff;
-				while ( ( iOff = Message->popInt32() ) != 0 && Message->iLength-5 > 0 )
+				while ( Message->iLength-5 > 0 && ( iOff = Message->popInt32() ) != 0 )
 				{
 					Map->Resources[iOff].typ = Message->popInt16();
 					Map->Resources[iOff].value = Message->popInt16();
