@@ -835,7 +835,7 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud->Ende && !SelectedVehicle->Attacking )
 		{
-			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList );
+			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList, false );
 			if ( !MJob->finished )
 			{
 				if ( MJob->CalcPath() )
@@ -2781,7 +2781,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					if ( iWaypointOff == iSrcOff )
 					{
-						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList );
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, false );
 						if ( MJob->vehicle == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
@@ -3209,13 +3209,12 @@ void cClient::handleMoveJobs ()
 		cVehicle *Vehicle;
 
 		MJob = ActiveMJobs->Items[i];
-		if ( MJob->vehicle == NULL ) continue;
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished || MJob->EndForNow )
 		{
 			// Stop the soundstream
-			if ( Vehicle == SelectedVehicle && Vehicle->MoveJobActive )
+			if ( Vehicle && Vehicle == SelectedVehicle && Vehicle->MoveJobActive )
 			{
 				StopFXLoop ( iObjectStream );
 				if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
@@ -3225,7 +3224,7 @@ void cClient::handleMoveJobs ()
 
 			if ( MJob->finished )
 			{
-				if ( Vehicle->mjob == MJob )
+				if ( Vehicle && Vehicle->mjob == MJob )
 				{
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
@@ -3238,19 +3237,24 @@ void cClient::handleMoveJobs ()
 			}
 			if ( MJob->EndForNow )
 			{
-				Vehicle->MoveJobActive = false;
-				Vehicle->rotating = false;
-				// save speed
-				if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+				if ( Vehicle )
 				{
-					MJob->SavedSpeed += Vehicle->data.speed;
-					Vehicle->data.speed = 0;
-					Vehicle->ShowDetails();
+					Vehicle->MoveJobActive = false;
+					Vehicle->rotating = false;
+					// save speed
+					if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+					{
+						MJob->SavedSpeed += Vehicle->data.speed;
+						Vehicle->data.speed = 0;
+						Vehicle->ShowDetails();
+					}
 				}
 				ActiveMJobs->Delete ( i );
 				continue;
 			}
 		}
+
+		if ( MJob->vehicle == NULL ) continue;
 
 		// rotate vehicle
 		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
@@ -3634,4 +3638,13 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
 	}
+}
+
+void cClient::releaseMoveJob ( cMJobs *MJob )
+{
+	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	{
+		if ( MJob == ActiveMJobs->Items[i] ) return;
+	}
+	addActiveMoveJob ( MJob );
 }

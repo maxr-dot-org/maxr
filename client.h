@@ -400,6 +400,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void Timer();
+
+	void releaseMoveJob ( cMJobs *MJob );
 } EX *Client;
 
 #endif

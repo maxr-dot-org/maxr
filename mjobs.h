@@ -39,7 +39,7 @@ struct sWaypoint{
 // Die MJobs-Klasse //////////////////////////////////////////////////////////
 class cMJobs{
 public:
-  cMJobs(cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList );
+  cMJobs(cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList, bool bServerCall );
   ~cMJobs(void);
 
   cMap *map;
@@ -54,6 +54,7 @@ public:
   bool Suspended;
   bool plane,ship;
   bool BuildAtTarget;
+  bool bIsServerJob;
 
   char *PathCalcMap;
   sPathCalc *PathCalcRoot;
@@ -63,7 +64,7 @@ public:
 
   sWaypoint *waypoints;
 
-  void Release(void);
+  void release();
   bool CalcPath(void);
   int CalcDest(int x,int y);
   bool AddPoint(int x, int y, float m, sPathCalc *p);

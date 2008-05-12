@@ -332,7 +332,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					if ( iWaypointOff == iSrcOff || iWaypointOff == iDestOff )
 					{
-						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList );
+						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, true );
 						if ( MJob->vehicle == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
@@ -1139,7 +1139,7 @@ void cServer::handleMoveJobs ()
 			}
 			else
 			{
-				if ( Vehicle->mjob == MJob )
+				if ( Vehicle && Vehicle->mjob == MJob )
 				{
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
@@ -1156,6 +1156,8 @@ void cServer::handleMoveJobs ()
 			ActiveMJobs->Delete ( i );
 			continue;
 		}
+
+		if ( Vehicle == NULL ) continue;
 
 		// rotate vehicle
 		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
@@ -1370,4 +1372,13 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 		}
 	}
 	return NULL;
+}
+
+void cServer::releaseMoveJob ( cMJobs *MJob )
+{
+	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	{
+		if ( MJob == ActiveMJobs->Items[i] ) return;
+	}
+	addActiveMoveJob ( MJob );
 }

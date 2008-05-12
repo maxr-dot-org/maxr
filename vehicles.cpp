@@ -108,8 +108,8 @@ cVehicle::~cVehicle ( void )
 {
 	if ( mjob )
 	{
+		mjob->release();
 		mjob->vehicle = NULL;
-		mjob->Release();
 	}
 
 	if ( autoMJob )

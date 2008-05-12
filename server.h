@@ -308,6 +308,7 @@ public:
 	*/
 	void Timer();
 
+	void releaseMoveJob ( cMJobs *MJob );
 } EX *Server;
 
 #endif

@@ -22,9 +22,10 @@
 #include "sound.h"
 #include "client.h"
 #include "fonts.h"
+#include "server.h"
 
 // Funktionen der MJobs Klasse ///////////////////////////////////////////////
-cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList )
+cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList, bool bServerCall )
 {
 	map=Map;
 	finished=false;
@@ -35,6 +36,7 @@ cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID,
 	waypoints=NULL;
 	SavedSpeed=0;
 	plane=Plane;
+	bIsServerJob = bServerCall;
 
 	vehicle = NULL;
 	for ( int i = 0; i < PlayerList->iCount && vehicle == NULL; i++ )
@@ -49,9 +51,9 @@ cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID,
 	if ( vehicle->mjob )
 	{
 		SavedSpeed = vehicle->mjob->SavedSpeed;
-		delete vehicle->mjob;
-		vehicle->MoveJobActive = false;
+		vehicle->mjob->release();
 		vehicle->moving = false;
+		vehicle->MoveJobActive = false;
 	}
 	vehicle->mjob=this;
 	ship=vehicle->data.can_drive==DRIVE_SEA;
@@ -73,10 +75,11 @@ cMJobs::~cMJobs ( void )
 }
 
 // Veranlasst das Löschen des Move-Jobs:
-void cMJobs::Release ( void )
+void cMJobs::release ()
 {
 	finished = true;
-	EndForNow = false;
+	if ( bIsServerJob && Server ) Server->releaseMoveJob ( this );
+	else if ( Client ) Client->releaseMoveJob ( this );
 }
 
 // Berechnet den kürzesten Weg zum Ziel:
