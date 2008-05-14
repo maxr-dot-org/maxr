@@ -13,7 +13,7 @@
 		<Author name="klei">
 			<Editor name="klei" time="2007-12-30 16:45:00"/>
 		</Author>
-		<Game_Version time="2007-12-30 16:45:00"/>
+		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
 	<Text>
 		<Main>
@@ -131,7 +131,7 @@
 			<Cargo ENG="Cargo" localized="Rakomány"/>
 			<AmmoShort ENG="Ammo" localized="Lõszer"/>
 			<Shots ENG="Shots" localized="Lövés"/>
-			<Shield ENG="Shield" localized="Pajzs"/>
+			<Armor ENG="Armor" localized="Páncél"/>
 			<Total ENG="Total" localized="Összes"/>
 			<Energy ENG="Energy" localized="Áram"/>
 			<Usage ENG="Usage" localized="Fogyaszt"/>
@@ -199,6 +199,10 @@
 			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
 			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
+      <Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
+      <Not_Ready ENG="is not ready" localized="nem készült el"/>
+      <Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
+      <Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Támadás"/>
@@ -206,7 +210,7 @@
 			<Range ENG="Range" localized="Lõtáv"/>
 			<Ammo ENG="Ammo" localized="Lõszer"/>
 			<Armor ENG="Armor" localized="Páncél"/>
-			<Hitpoints ENG="Hitpoints" localized="Életerõ"/>
+			<Hitpoints ENG="Hits" localized="Élet"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Speed ENG="Speed" localized="Sebess."/>
 			<Cargo ENG="Cargo" localized="Rakomány"/>
@@ -220,6 +224,7 @@
 			<Metal_Low ENG="Too low metal, disabled consumer!" localized="nincs elég érc, fogyasztó kikapcsolva!"/>
 			<Gold_Low ENG="Too low gold, disabled consumer!" localized="Nincs elég arany, fogyasztó kikapcsolva!"/>
 			<Team_Low ENG="Too low teams, disabled consumer!" localized="Nincs elég munkás, felhasználó leállítva!"/>
+			<Building_Disabled ENG="Building disabled" localized="Épület mûködésképtelen"/>
 			<Energy_Optimize ENG="Energygeneration optimized" localized="Az energiafelhasználás optimizálva"/>
 			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Nincs elegendõ energia az elindításhoz!"/>
 			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Nincs elegendõ energia, generátor elindítva!"/>
@@ -277,12 +282,12 @@
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" localized="Szállítórepülõ">Transportflugzeug\n\nSchweres Flugzeug, fähig bis zu drei Bodeneinheiten zu transportieren.</Unit>
-		<Unit ID="0 2" localized="Idegen Rohamtank">Aliensturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittelgepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgeschütze ist, sollte das Aliensturmgeschütz dennoch Feindfeuer vermeiden. Alle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 3" localized="Idegen Vadászbombázó">Alien Jäger Bomber\n\nObwohl das Alienflugzeug hauptsächlich für einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alieneinheiten, können Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten.</Unit>
-		<Unit ID="0 4" localized="Idegen Hadihajó">Alienkanonenboot\n\nSchwer gepanzertes und bewaffnetes Alien Kriegsschiff Design: Wie ein menschliches Kanonenboot herausragend beim Zerstören von anderen Schiffen und Landzielen in Ufernähe. Alle Alien Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 5" localized="Idegen Tank">Alienpanzer\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 6" localized="Csapatszállító">Gepanzerter Personentransporter\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
+		<Unit ID="0 1" localized="Szállítórepülõ">Szállítórepülõ\n\nNehéz repülõgép-hordozó, ami három földi egységet képes szállítani.</Unit>
+		<Unit ID="0 2" localized="Idegen Rohamtank">Idegen Rohamtank\n\nErõs plazmafegyver, amit egy gyors, közepesen páncélozott alvázra szereltek. Habár nem olyan sebezhetõ, mint az emberi rohamtank, az idegen rohamtanknak ugyan úgy kerülnie kell az ellenséges tüzet, amikor csak lehet. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket.</Unit>
+		<Unit ID="0 3" localized="Idegen Vadászbombázó">Idegen Vadászbombázó\n\nIdegen Vadászbombázó. Míg az idegen repülõt elsõdlegesen földi célpontok megsemmisítésére tervezték, más repülõkre is képes kilõni rakétáit. Habár nagyon erõs, az idegen támadó gép így is sebezhetõ a légvédelmi ágyúk tüzével szemben. Mint a többi idegen egység, az idegen repülõ is javítja önmagát, és tapasztalatszerzéssel javítja képességeit.</Unit>
+		<Unit ID="0 4" localized="Idegen Hadihajó">Idegen Hadihajó\n\nNehézpáncélzattal és nehézfegyverekkel ellátott idegen eredetû hadihajó. Akár az emberi ágyúnaszád, az idegen hadihajó is más hajók és parthoz közeli földi célpontok elpusztításában tûnik ki. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket.</Unit>
+		<Unit ID="0 5" localized="Idegen Tank">Idegen Tank\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 6" localized="Csapatszállító">Csapatszállító\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
 		<Unit ID="0 7" localized="Rohamtank">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
 		<Unit ID="0 8" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
 		<Unit ID="0 9" localized="Légibombázó">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert.</Unit>
@@ -334,7 +339,7 @@
 		<Unit ID="1 20" localized="Hangár">Hangar\n\nEin Hangar kann Schäden reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
 		<Unit ID="1 21" localized="Szárazföldi Akna">Landmine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Gutachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
 		<Unit ID="1 22" localized="Bányászati Állomás">Berkwerk\n\nFördert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Gebäude müssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergebäude vorhanden sind, um überschüssiges Material zu Lagern, gehen diese Überschüsse verloren.</Unit>
-		<Unit ID="1 23" localized="Idegen Bányászati Állomás">Alien Bergwerk\n\n unbekannt</Unit>
+		<Unit ID="1 23" localized="Idegen Bányászati Állomás">Deep Mine...</Unit>
 		<Unit ID="1 24" localized="Leszállóplatform">Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
 		<Unit ID="1 25" localized="Hídtalapzat">Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserülattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
 		<Unit ID="1 26" localized="Radar">Radar\n\nStationäres Radargerät mit großer Reichweite. Einheiten mit größerer Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen können, daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben.</Unit>

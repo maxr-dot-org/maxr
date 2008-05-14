@@ -284,7 +284,7 @@
 	</Text>
 	<Units>
 		<Unit ID="0 1" ENG="Air Transport">Air Transport\n\nHeavy aircraft capable of holding up to three ground units.</Unit>
-		<Unit ID="0 2" ENG="Alien Assault">Alien Assault\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault gunns, the alien assault gun should still avoid enemy fire whenever possible. All alien unitsrepair themselves, and improve their abilities with experience.</Unit>
+		<Unit ID="0 2" ENG="Alien Assault">Alien Assault\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault guns, the alien assault gun should still avoid enemy fire whenever possible. All alien units repair themselves, and improve their abilities with experience.</Unit>
 		<Unit ID="0 3" ENG="Alien Plane">Alien Plane\n\nAlien fighter-bomber. While the alien plane is primarily desinged to attack ground targets, it can also fire its missiles at other planes. Though powerful, the alien attack plane is still vulnerable to anti aircraft fire. Like other alien units, alien planes repair themselves and improve their abilities wity experience.</Unit>
 		<Unit ID="0 4" ENG="Alien Ship">Alien Ship\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore. All alien units repair themselves, and improve their abilities with experience.</Unit>
 		<Unit ID="0 5" ENG="Alien Tank">Alien Tank\n\nHeavily armored tank of alien design. Alien tanks are best used at the front of an attack to soak up enemy fire. All alien units repair themselves, and improve their abilities with erperience.</Unit>
