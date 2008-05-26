@@ -4769,8 +4769,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 						cNetMessage *Message = new cNetMessage ( MU_MSG_CHAT );
 						Message->pushString ( ChatStr );
-						network->send ( Message->iLength, Message->serialize() );
-						delete Message;
+						sendMessage ( Message );
 
 						if ( network->isHost() ) addChatLog ( ChatStr );
 					}
@@ -4884,8 +4883,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 				if ( bHost )
 				{
 					cNetMessage *Message = new cNetMessage ( MU_MSG_GO );
-					network->send ( Message->iLength, Message->serialize() );
-					delete Message;
+					sendMessage ( Message );
 				}
 				int iLandX, iLandY;
 				cList<sLanding*> *LandingList;
@@ -4998,9 +4996,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 
 						// send clients that all players have been landed
 						cNetMessage *Message = new cNetMessage ( MU_MSG_ALL_LANDED );
-						string str = Message->getHexDump();
-						network->send ( Message->iLength, Message->serialize() );
-						delete Message;
+						sendMessage ( Message );
 						sendResources();
 					}
 					else
@@ -5084,8 +5080,10 @@ void cMultiPlayerMenu::HandleMessages()
 		{
 		case MU_MSG_CHAT:
 			{
-				if ( network->isHost() ) network->send ( Message->iLength, Message->serialize() );
+				cNetMessage *SendMessage = new cNetMessage( MU_MSG_CHAT );
 				string sChatString = Message->popString();
+				SendMessage->pushString( sChatString );
+				if ( network->isHost() ) sendMessage ( SendMessage, -1 );
 				addChatLog( sChatString );
 			}
 			SWITCH_MESSAGE_END
@@ -5098,8 +5096,7 @@ void cMultiPlayerMenu::HandleMessages()
 				cNetMessage *SendMessage = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
 				SendMessage->pushInt16( iNextPlayerNr );
 				iNextPlayerNr++;
-				network->sendTo( Player->iSocketNum, SendMessage->iLength, SendMessage->serialize() );
-				delete SendMessage;
+				sendMessage ( SendMessage, Player->iSocketNum );
 			}
 			SWITCH_MESSAGE_END
 		case MU_MSG_DEL_PLAYER:
@@ -5283,15 +5280,13 @@ void cMultiPlayerMenu::sendResources()
 
 		if ( Message->iLength > PACKAGE_LENGHT-12 )
 		{
-			network->send ( Message->iLength, Message->serialize() );
-			delete Message;
+			sendMessage ( Message );
 			Message = NULL;
 		}
 	}
 	if ( Message != NULL )
 	{
-		network->send ( Message->iLength, Message->serialize() );
-		delete Message;
+		sendMessage ( Message );
 	}
 }
 
@@ -5314,8 +5309,7 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 	Message->pushInt16( iLandY );
 	Message->pushInt16( iLandX );
 
-	network->send ( Message->iLength, Message->serialize() );
-	delete Message;
+	sendMessage ( Message );
 }
 
 void cMultiPlayerMenu::sendUpgrades()
@@ -5358,8 +5352,7 @@ void cMultiPlayerMenu::sendUpgrades()
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
-			network->send ( Message->iLength, Message->serialize() );
-			delete Message;
+			sendMessage ( Message );
 			Message = NULL;
 			iCount = 0;
 		}
@@ -5368,8 +5361,7 @@ void cMultiPlayerMenu::sendUpgrades()
 	{
 		Message->pushInt16 ( iCount );
 		Message->pushInt16 ( ActualPlayer->Nr );
-		network->send ( Message->iLength, Message->serialize() );
-		delete Message;
+		sendMessage ( Message );
 		Message = NULL;
 		iCount = 0;
 	}
@@ -5406,8 +5398,7 @@ void cMultiPlayerMenu::sendUpgrades()
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
-			network->send ( Message->iLength, Message->serialize() );
-			delete Message;
+			sendMessage ( Message );
 			Message = NULL;
 			iCount = 0;
 		}
@@ -5416,8 +5407,7 @@ void cMultiPlayerMenu::sendUpgrades()
 	{
 		Message->pushInt16 ( iCount );
 		Message->pushInt16 ( ActualPlayer->Nr );
-		network->send ( Message->iLength, Message->serialize() );
-		delete Message;
+		sendMessage ( Message );
 	}
 }
 
@@ -5448,8 +5438,7 @@ void cMultiPlayerMenu::sendIdentification()
 	Message->pushString ( ActualPlayer->name );
 	Message->pushInt16( GetColorNr( ActualPlayer->color ) );
 	Message->pushInt16( ActualPlayer->Nr );
-	network->send ( Message->iLength, Message->serialize() );
-	delete Message;
+	sendMessage ( Message );
 }
 
 void cMultiPlayerMenu::sendPlayerList()
@@ -5464,8 +5453,7 @@ void cMultiPlayerMenu::sendPlayerList()
 		Message->pushString ( PlayerList->Items[i]->name );
 	}
 	Message->pushInt16 ( PlayerList->iCount );
-	network->send ( Message->iLength, Message->serialize() );
-	delete Message;
+	sendMessage ( Message );
 }
 
 void cMultiPlayerMenu::sendOptions()
@@ -5491,8 +5479,7 @@ void cMultiPlayerMenu::sendOptions()
 	}
 	Message->pushBool ( bOptions );
 
-	network->send ( Message->iLength, Message->serialize() );
-	delete Message;
+	sendMessage ( Message );
 }
 
 void cMultiPlayerMenu::displayGameSettings()
@@ -6359,4 +6346,17 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 		}
 		y += 76;
 	}
+}
+
+void cMultiPlayerMenu::sendMessage( cNetMessage *Message, int iPlayer )
+{
+	if ( iPlayer == -1 )
+	{
+		network->send ( Message->iLength, Message->serialize( true ) );
+	}
+	else
+	{
+		network->sendTo ( iPlayer, Message->iLength, Message->serialize( true ) );
+	}
+	delete Message;
 }

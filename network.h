@@ -29,9 +29,10 @@
 #define FIRST_CLIENT_MESSAGE 50
 #define FIRST_MENU_MESSAGE 100
 
+// All three chars have to be different!
 #define NETMESSAGE_CONTROLCHAR 0xFF
 #define NETMESSAGE_STARTCHAR 0x00
-#define NETMESSAGE_NOTSTARTCHAR 0xFF
+#define NETMESSAGE_NOTSTARTCHAR 0xEE
 
 /**
 * Callback for the networkthread

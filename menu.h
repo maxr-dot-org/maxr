@@ -142,6 +142,7 @@ class cMultiPlayerMenu
 	int testAllReady();
 
 	void HandleMessages();
+	void sendMessage( cNetMessage *Message, int iPlayer = -1 );
 
 public:
 	cList<cNetMessage*> *MessageList;

@@ -63,7 +63,7 @@ public:
 	* following Bytes: the pushed data
 	* @author Eiko
 	*/
-	char* serialize();
+	char* serialize( bool bCheckChars = false );
 	
 	/** allocates a new SDL_Event containing the serial representation of the netMessage
 	* @author Eiko
@@ -166,9 +166,10 @@ public:
 	/** finds all NETMESSAGE_CONTROLCHAR from the iStartPos until the end and adds the charcter NETMESSAGE_NOTSTARTCHAR behind all of them
 	*@author alzi alias DoctorDeath
 	*@param iStartPos position from which the search should beginn
+	*@param iEndPos position until that the control chars should be checked. -1 for a search until the message end.
 	*/
+	void checkControlChars( int iStartPos, int iEndPos = -1);
 
-	void checkControlChars( int iStartPos );
 	/** removes the NETMESSAGE_NOTSTARTCHAR charcters behind all control-characters in the messagedata.
 	* Don't call this function for one NetMessage twice!
 	*@author alzi alias DoctorDeath

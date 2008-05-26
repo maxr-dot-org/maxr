@@ -55,7 +55,7 @@ cNetMessage::~cNetMessage()
 	free ( data );
 }
 
-char* cNetMessage::serialize()
+char* cNetMessage::serialize( bool bCheckChars )
 {
 	//write iType to byte array
 	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iType);
@@ -63,6 +63,10 @@ char* cNetMessage::serialize()
 	*((Sint16*) (data + 2)) = SDL_SwapLE16( (Sint16)iLength);
 	//write iPlayernr to byte array
 	data[4] = (char) iPlayerNr;
+
+	// check for controlchars in the standard values
+	if ( bCheckChars ) checkControlChars( 0, 5 );
+
 	return data;
 }
 
@@ -380,13 +384,14 @@ int cNetMessage::findNextControlChar ( int iStartPos )
 	return -1;
 }
 
-void cNetMessage::checkControlChars( int iStartPos )
+void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
 {
 	int iPos = iStartPos;
 	// add to all NETMESSAGE_CONTROLCHAR the NETMESSAGE_NOTSTARTCHAR
 	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
 	{
 		if ( iLength >= PACKAGE_LENGHT ) return;
+		if ( iEndPos != -1 && iPos > iEndPos ) return;
 
 		char *tmpBuffer = (char *) malloc ( iLength-iPos-1 );
 		memcpy( tmpBuffer, &data[iPos+1], iLength-iPos-1 );
@@ -395,6 +400,7 @@ void cNetMessage::checkControlChars( int iStartPos )
 		free ( tmpBuffer );
 
 		iLength++;
+		iEndPos++;
 		iPos += 2;
 	}
 }
@@ -414,7 +420,7 @@ void cNetMessage::refertControlChars()
 			data[iLength-1] = 0;
 			free ( tmpBuffer );
 
-			iLength--;
+			if ( iPos > 4 ) iLength--;
 			iPos++;
 		}
 		else iPos += 2;

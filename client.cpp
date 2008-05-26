@@ -146,6 +146,7 @@ void cClient::kill()
 void cClient::sendNetMessage(cNetMessage *message)
 {
 	message->iPlayerNr = ActivePlayer->Nr;
+
 	cLog::write("Client: sending message,  type: " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	if (!network || network->isHost() ) 
@@ -159,7 +160,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 	{
 		//the client is only connected to one socket
 		//so netwwork->send() only sends to the server 
-		network->send( message->iLength, message->serialize() );
+		network->send( message->iLength, message->serialize( true ) );
 		delete message;
 	}
 }
