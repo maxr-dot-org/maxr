@@ -3665,7 +3665,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 
 void cClient::releaseMoveJob ( cMJobs *MJob )
 {
-	cLog::write ( "(Client) Released old movejob of vehicle: " + iToStr( MJob->vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+	cLog::write ( "(Client) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
 		if ( MJob == ActiveMJobs->Items[i] ) return;

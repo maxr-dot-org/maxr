@@ -1391,7 +1391,7 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 
 void cServer::releaseMoveJob ( cMJobs *MJob )
 {
-	cLog::write ( "(Server) Released old movejob of vehicle: " + iToStr( MJob->vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+	cLog::write ( "(Server) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
 		if ( MJob == ActiveMJobs->Items[i] ) return;
