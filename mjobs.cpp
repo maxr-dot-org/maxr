@@ -77,6 +77,7 @@ cMJobs::~cMJobs ( void )
 // Veranlasst das Löschen des Move-Jobs:
 void cMJobs::release ()
 {
+	EndForNow = false;
 	finished = true;
 	if ( bIsServerJob && Server ) Server->releaseMoveJob ( this );
 	else if ( Client ) Client->releaseMoveJob ( this );

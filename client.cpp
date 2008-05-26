@@ -843,6 +843,7 @@ int cClient::checkUser()
 					MJob->CalcNextDir();
 					sendMoveJob ( MJob );
 					addActiveMoveJob ( MJob );
+					cLog::write("(Client) Added new movejob: VehicleID: " + iToStr ( SelectedVehicle->iID ) + ", SrcX: " + iToStr ( SelectedVehicle->PosX ) + ", SrcY: " + iToStr ( SelectedVehicle->PosY ) + ", DestX: " + iToStr ( MJob->DestX ) + ", DestY: " + iToStr ( MJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 				}
 				else
 				{
@@ -2615,6 +2616,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = NULL;
 			cBuilding *Building = NULL;
 
+			cLog::write("Received Unit Data: Vehicle: " + iToStr ( (int)bVehicle ) + ", ID: " + iToStr ( iID ) + ", XPos: " + iToStr ( iPosX ) + ", YPos: " +iToStr ( iPosY ), cLog::eLOG_TYPE_NET_DEBUG);
 			// unit is a vehicle
 			if ( bVehicle )
 			{
@@ -2623,12 +2625,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( !Vehicle )
 				{
-					cLog::write("Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					cLog::write("Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
 				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
 				{
-					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_WARNING);
+					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
 					// set to server position
 					if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
 					else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
@@ -2661,7 +2663,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				if ( Building->PosX != iPosX || Building->PosY != iPosY )
 				{
-					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position"  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
 					// set to server position
 					if ( bBase ) Map->GO[iPosX+iPosY*Map->size].base = NULL;
 					else if ( bSubBase ) Map->GO[iPosX+iPosY*Map->size].subbase = NULL;
@@ -2767,6 +2769,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			bool bPlane = message->popBool();
 			int iReceivedCount = message->popInt16();
 
+			cLog::write("(Client) Received MoveJob: VehicleID: " + iToStr( iID ) + ", SrcX: " + iToStr( iSrcOff%Map->size ) + ", SrcY: " + iToStr( iSrcOff/Map->size ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 			// Add the waypoints to the movejob
 			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
 			while ( iCount < iReceivedCount )
@@ -2785,6 +2788,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						if ( MJob->vehicle == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
+							cLog::write("(Client) Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
 							break;
 						}
 						MJob->waypoints = Waypoint;
@@ -2795,6 +2799,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						if ( Vehicle == NULL || Vehicle->mjob == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
+							cLog::write("(Client) Error while adding waypoints: Can't find vehicle or movejob", cLog::eLOG_TYPE_NET_WARNING);
 							break;
 						}
 						MJob = Vehicle->mjob;
@@ -2819,6 +2824,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
+				cLog::write("(Client) Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 		break;
@@ -2828,8 +2834,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iDestOff = message->popInt16();
 			bool bOK = message->popBool();
 
-			cVehicle *Vehicle = getVehicleFromID ( iID );
+			cLog::write("(Client) Received information for next move: ID: " + iToStr ( iID ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", OK: " + iToStr ( (int)bOK ), cLog::eLOG_TYPE_NET_DEBUG);
 
+			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle && Vehicle->mjob )
 			{
 				// set vehicle to server position
@@ -2842,7 +2849,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// then stop the vehicle
 					if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL )
 					{
-						cLog::write ( "client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
+						cLog::write ( "(Client) Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
 						Vehicle->mjob->finished = true;
 						Vehicle->OffX = Vehicle->OffY = 0;
 					}
@@ -2851,7 +2858,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						// server is one fiels faster then client
 						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
 						{
-							cLog::write ( "server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
+							cLog::write ( "(Client) Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
 							doEndMoveVehicle( Vehicle );
 						}
 						else
@@ -2872,7 +2879,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the server is more then one field faster
 							if ( bServerIsFaster )
 							{
-								cLog::write ( "the server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
+								cLog::write ( "(Client) Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
 								if ( Vehicle->data.can_drive == DRIVE_AIR )
 								{
 									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
@@ -2906,7 +2913,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the client is faster
 							else
 							{
-								cLog::write ( "the client is faster (one or more fields)", cLog::eLOG_TYPE_NET_DEBUG );
+								cLog::write ( "(Client) Client is faster (one or more fields)", cLog::eLOG_TYPE_NET_DEBUG );
 								// just stop the vehicle and wait for the next commando of the server
 								Vehicle->mjob->EndForNow = true;
 							}
@@ -2923,14 +2930,20 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					if ( Vehicle->mjob->waypoints->X == Vehicle->mjob->DestX && Vehicle->mjob->waypoints->Y == Vehicle->mjob->DestY )
 					{
+						cLog::write("(Client) The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
 						Vehicle->mjob->finished = true;
 					}
 					else
 					{
+						cLog::write("(Client) The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 						Vehicle->mjob->Suspended = true;
 						Vehicle->mjob->EndForNow = true;
 					}
 				}
+			}
+			else
+			{
+				cLog::write("(Client) Can't find vehicle or no movejob", cLog::eLOG_TYPE_NET_WARNING);
 			}
 		}
 		break;
@@ -3226,17 +3239,20 @@ void cClient::handleMoveJobs ()
 			{
 				if ( Vehicle && Vehicle->mjob == MJob )
 				{
+					cLog::write("(Client) Movejob is finished an will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
 					Vehicle->MoveJobActive = false;
 				}
+				else cLog::write("(Client) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs->Delete ( i );
 				delete MJob;
 				continue;
 			}
 			if ( MJob->EndForNow )
 			{
+				cLog::write("(Client) Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				if ( Vehicle )
 				{
 					Vehicle->MoveJobActive = false;
@@ -3390,6 +3406,7 @@ void cClient::moveVehicle( cVehicle *Vehicle )
 	// check whether the point has been reached:
 	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
 	{
+		cLog::write("(Client) Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", Y: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		doEndMoveVehicle ( Vehicle );
 	}
 }
@@ -3423,7 +3440,7 @@ void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
 	{
 		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle != NULL || Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top != NULL )
 		{
-			cLog::write ( "Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + " is blocked by an other unit", cLog::eLOG_TYPE_ERROR );
+			cLog::write ( "(Client) Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other unit", cLog::eLOG_TYPE_NET_ERROR );
 			MJob->finished = true;
 		}
 		else
@@ -3439,7 +3456,7 @@ void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
 		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
 		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane != NULL )
 		{
-			cLog::write ( "Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + " is blocked by an other plane", cLog::eLOG_TYPE_ERROR );
+			cLog::write ( "(Client) Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane", cLog::eLOG_TYPE_NET_ERROR );
 			MJob->finished = true;
 		}
 		else
@@ -3642,9 +3659,11 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 
 void cClient::releaseMoveJob ( cMJobs *MJob )
 {
+	cLog::write ( "(Client) Released old movejob of vehicle: " + iToStr( MJob->vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
 		if ( MJob == ActiveMJobs->Items[i] ) return;
 	}
 	addActiveMoveJob ( MJob );
+	cLog::write ( "(Client) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }

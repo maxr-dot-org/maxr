@@ -318,6 +318,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			bool bPlane = message->popBool();
 			int iReceivedCount = message->popInt16();
 
+			cLog::write("(Server) Received MoveJob: VehicleID: " + iToStr( iID ) + ", SrcX: " + iToStr( iSrcOff%Map->size ) + ", SrcY: " + iToStr( iSrcOff/Map->size ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 			// Add the waypoints to the movejob
 			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
 			while ( iCount < iReceivedCount )
@@ -336,6 +337,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						if ( MJob->vehicle == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
+							cLog::write("(Server) Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
 							break;
 						}
 						MJob->waypoints = Waypoint;
@@ -346,6 +348,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						if ( Vehicle == NULL || Vehicle->mjob == NULL )
 						{
 							// warning, here is something wrong! ( out of sync? )
+							cLog::write("(Server) Error while adding waypoints: Can't find vehicle or movejob", cLog::eLOG_TYPE_NET_WARNING);
 							break;
 						}
 						MJob = Vehicle->mjob;
@@ -370,6 +373,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
+				cLog::write("(Server) Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 				// send the movejob to all other player who can see this unit
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 				{
@@ -1129,8 +1133,9 @@ void cServer::handleMoveJobs ()
 		if ( MJob->finished || MJob->EndForNow )
 		{
 			// stop the job
-			if ( MJob->EndForNow )
+			if ( MJob->EndForNow && Vehicle )
 			{
+				cLog::write("(Server) Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 				{
 					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, *MJob->vehicle->SeenByPlayerList->Items[i] );
@@ -1141,6 +1146,7 @@ void cServer::handleMoveJobs ()
 			{
 				if ( Vehicle && Vehicle->mjob == MJob )
 				{
+					cLog::write("(Server) Movejob is finished an will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
 					Vehicle->MoveJobActive = false;
@@ -1151,6 +1157,7 @@ void cServer::handleMoveJobs ()
 					}
 					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
 				}
+				else cLog::write("(Server) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				delete MJob;
 			}
 			ActiveMJobs->Delete ( i );
@@ -1192,7 +1199,7 @@ void cServer::checkMove ( cMJobs *MJob )
 	bWachRange = false;//vehicle->InWachRange();
 	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bWachRange )
 	{
-		cLog::write( "next point is blocked", LOG_TYPE_INFO );
+		cLog::write( "(Server) Next point is blocked: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		sWaypoint *Waypoint;
 		// if the next point would be the last, finish the job here
 		if ( MJob->waypoints->next->X == MJob->DestX && MJob->waypoints->next->Y == MJob->DestY )
@@ -1211,6 +1218,7 @@ void cServer::checkMove ( cMJobs *MJob )
 			// for now, just stop the vehicle
 			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
 			delete MJob;
+			cLog::write( "(Server) Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
 		}
 		return;
 	}
@@ -1218,6 +1226,7 @@ void cServer::checkMove ( cMJobs *MJob )
 	// not enough waypoints for this move
 	if ( MJob->vehicle->data.speed < MJob->waypoints->next->Costs )
 	{
+		cLog::write( "(Server) Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		MJob->SavedSpeed += MJob->vehicle->data.speed;
 		MJob->vehicle->data.speed = 0;
 		MJob->EndForNow = true;
@@ -1293,6 +1302,7 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 	// check whether the point has been reached:
 	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
 	{
+		cLog::write("(Server) Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", Y: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		cMJobs *MJob = Vehicle->mjob;
 		sWaypoint *Waypoint;
 		Waypoint = MJob->waypoints->next;
@@ -1376,9 +1386,11 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 
 void cServer::releaseMoveJob ( cMJobs *MJob )
 {
+	cLog::write ( "(Server) Released old movejob of vehicle: " + iToStr( MJob->vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
 		if ( MJob == ActiveMJobs->Items[i] ) return;
 	}
 	addActiveMoveJob ( MJob );
+	cLog::write ( "(Server) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
