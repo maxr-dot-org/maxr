@@ -121,7 +121,7 @@ void sendDoStopWork( cBuilding* building );
 * sends information about the move to the next field of a client
 *@author alzi alias DoctorDeath
 */
-void sendNextMove( int iUnitID, int iDestOff, bool bOK, int iPlayer );
+void sendNextMove( int iUnitID, int iDestOff, int iType, int iPlayer );
 
 /**
 * sends all waypoints of a movejob to a client. If the movejob is already running,

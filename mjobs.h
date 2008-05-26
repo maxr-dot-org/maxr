@@ -21,62 +21,72 @@
 #include "map.h"
 #include "vehicles.h"
 
-// Struktur für die Wegberechnung ////////////////////////////////////////////
-struct sPathCalc{
-  sPathCalc *prev;
-  int X,Y;
-  int WayCosts;
-  int CostsGes;
-  bool road;
+enum MJOB_TYPES
+{
+	MJOB_OK,
+	MJOB_STOP,
+	MJOB_BLOCKED
 };
 
-struct sWaypoint{
-  sWaypoint *next;
-  int X,Y;
-  int Costs;
+// structures for the calculation of the path /////////////////////////////////
+struct sPathCalc
+{
+	sPathCalc *prev;
+	int X,Y;
+	int WayCosts;
+	int CostsGes;
+	bool road;
 };
 
-// Die MJobs-Klasse //////////////////////////////////////////////////////////
-class cMJobs{
+struct sWaypoint
+{
+	sWaypoint *next;
+	int X,Y;
+	int Costs;
+};
+
+// The MJob-class /////////////////////////////////////////////////////////////
+class cMJobs
+{
 public:
-  cMJobs(cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList, bool bServerCall );
-  ~cMJobs(void);
+	cMJobs(cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID, cList<cPlayer*> *PlayerList, bool bServerCall );
+	~cMJobs(void);
 
-  cMap *map;
-  int ScrX,ScrY,DestX,DestY;
-  cMJobs *next;
-  bool finished;
-  bool EndForNow;
-  bool ClientMove;
-  cVehicle *vehicle;
-  int next_dir;
-  int SavedSpeed;
-  bool Suspended;
-  bool plane,ship;
-  bool BuildAtTarget;
-  bool bIsServerJob;
+	cMap *map;
+	int ScrX,ScrY,DestX,DestY;
+	cMJobs *next;
+	bool finished;
+	bool EndForNow;
+	bool ClientMove;
+	cVehicle *vehicle;
+	int next_dir;
+	int SavedSpeed;
+	bool Suspended;
+	bool plane,ship;
+	bool BuildAtTarget;
+	bool bIsServerJob;
 
-  char *PathCalcMap;
-  sPathCalc *PathCalcRoot;
-  cList<sPathCalc*> *PathCalcEnds;
-  cList<sPathCalc*> *PathCalcAll;
-  sPathCalc *FoundEnd;
+	char *PathCalcMap;
+	sPathCalc *PathCalcRoot;
+	cList<sPathCalc*> *PathCalcEnds;
+	cList<sPathCalc*> *PathCalcAll;
+	sPathCalc *FoundEnd;
 
-  sWaypoint *waypoints;
+	sWaypoint *waypoints;
 
-  void release();
-  bool CalcPath(void);
-  int CalcDest(int x,int y);
-  bool AddPoint(int x, int y, float m, sPathCalc *p);
-  bool CreateNextPath(void);
-  bool CheckPossiblePoint(int x,int y);
-  bool CheckPointNotBlocked(int x,int y);
-  int GetWayCost(int x,int y,bool *road);
-  void DeleteWaypoints(void);
-  void DrawPfeil(SDL_Rect dest,SDL_Rect *ldest,bool spezial);
-  void CalcNextDir(void);
-  void StartMove(void);
-  void DoTheMove(void);
+	void release();
+	bool CalcPath(void);
+	int CalcDest(int x,int y);
+	bool AddPoint(int x, int y, float m, sPathCalc *p);
+	bool CreateNextPath(void);
+	bool CheckPossiblePoint(int x,int y);
+	bool CheckPointNotBlocked(int x,int y);
+	int GetWayCost(int x,int y,bool *road);
+	void DeleteWaypoints(void);
+	void DrawPfeil(SDL_Rect dest,SDL_Rect *ldest,bool spezial);
+	void CalcNextDir(void);
+	void StartMove(void);
+	void DoTheMove(void);
 };
 
 #endif

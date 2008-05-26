@@ -267,10 +267,10 @@ void sendDoStopWork( cBuilding* building )
 	}
 }
 
-void sendNextMove( int iUnitID, int iDestOff, bool bOK, int iPlayer )
+void sendNextMove( int iUnitID, int iDestOff, int iType, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
-	message->pushBool( bOK );
+	message->pushInt16( iType );
 	message->pushInt16( iDestOff );
 	message->pushInt16( iUnitID );
 	Server->sendNetMessage( message, iPlayer );

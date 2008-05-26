@@ -1138,24 +1138,24 @@ void cServer::handleMoveJobs ()
 				cLog::write("(Server) Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 				{
-					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, *MJob->vehicle->SeenByPlayerList->Items[i] );
+					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList->Items[i] );
 				}
-				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
+				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
 			}
 			else
 			{
 				if ( Vehicle && Vehicle->mjob == MJob )
 				{
-					cLog::write("(Server) Movejob is finished an will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
+					cLog::write("(Server) Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
 					Vehicle->MoveJobActive = false;
 
 					for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 					{
-						sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, *MJob->vehicle->SeenByPlayerList->Items[i] );
+						sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList->Items[i] );
 					}
-					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
+					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
 				}
 				else cLog::write("(Server) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				delete MJob;
@@ -1200,7 +1200,6 @@ void cServer::checkMove ( cMJobs *MJob )
 	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bWachRange )
 	{
 		cLog::write( "(Server) Next point is blocked: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
-		sWaypoint *Waypoint;
 		// if the next point would be the last, finish the job here
 		if ( MJob->waypoints->next->X == MJob->DestX && MJob->waypoints->next->Y == MJob->DestY )
 		{
@@ -1209,14 +1208,20 @@ void cServer::checkMove ( cMJobs *MJob )
 		// else delete the movejob and inform the client that he has to find a new path
 		else
 		{
-			while ( MJob->waypoints )
+			for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 			{
-				Waypoint = MJob->waypoints->next;
-				free ( MJob->waypoints );
-				MJob->waypoints = Waypoint;
+				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, *MJob->vehicle->SeenByPlayerList->Items[i] );
 			}
-			// for now, just stop the vehicle
-			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, false, MJob->vehicle->owner->Nr );
+			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, MJob->vehicle->owner->Nr );
+
+			for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+			{
+				if ( MJob == ActiveMJobs->Items[i] )
+				{
+					ActiveMJobs->Delete ( i );
+					break;
+				}
+			}
 			delete MJob;
 			cLog::write( "(Server) Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
 		}
@@ -1239,9 +1244,9 @@ void cServer::checkMove ( cMJobs *MJob )
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )
 	{
-		sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, true, *MJob->vehicle->SeenByPlayerList->Items[i] );
+		sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_OK, *MJob->vehicle->SeenByPlayerList->Items[i] );
 	}
-	sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, true, MJob->vehicle->owner->Nr );
+	sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_OK, MJob->vehicle->owner->Nr );
 }
 
 void cServer::moveVehicle ( cVehicle *Vehicle )

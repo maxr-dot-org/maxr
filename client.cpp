@@ -2832,9 +2832,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			int iID = message->popInt16();
 			int iDestOff = message->popInt16();
-			bool bOK = message->popBool();
+			int iType = message->popInt16();
 
-			cLog::write("(Client) Received information for next move: ID: " + iToStr ( iID ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", OK: " + iToStr ( (int)bOK ), cLog::eLOG_TYPE_NET_DEBUG);
+			cLog::write("(Client) Received information for next move: ID: " + iToStr ( iID ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
 
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle && Vehicle->mjob )
@@ -2920,13 +2920,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						}
 					}
 				}
-				if ( bOK )
+				if ( iType == MJOB_OK )	// move is OK
 				{
 					Vehicle->moving = true;
 					if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
 					Vehicle->MoveJobActive = true;
 				}
-				else
+				else if ( iType == MJOB_STOP )	// move has to be stoped
 				{
 					if ( Vehicle->mjob->waypoints->X == Vehicle->mjob->DestX && Vehicle->mjob->waypoints->Y == Vehicle->mjob->DestY )
 					{
@@ -2939,6 +2939,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						Vehicle->mjob->Suspended = true;
 						Vehicle->mjob->EndForNow = true;
 					}
+				}
+				else if ( iType == MJOB_BLOCKED ) // next field is blocked
+				{
+					cLog::write("(Client) Movejob is finished becouse the next field is blocked", cLog::eLOG_TYPE_NET_DEBUG);
+					Vehicle->mjob->finished = true;
+					// TODO: Calc a new path and start the new job
 				}
 			}
 			else
