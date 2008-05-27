@@ -202,11 +202,17 @@ int cEventHandling::HandleEvents()
 			case TCP_CLOSEEVENT:
 				// Socket should be closed
 				network->close ( ((Sint16 *)event.user.data1)[0] );
-				if ( MultiPlayerMenu )
+				if ( MultiPlayerMenu && !Client )
 				{
 					cNetMessage *Message = new cNetMessage( MU_MSG_DEL_PLAYER );
 					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
 					MultiPlayerMenu->MessageList->Add ( Message );
+				}
+				else if ( Client )
+				{
+					cNetMessage message( GAME_EV_LOST_CONNECTION );
+					message.pushInt16( ((Sint16*)event.user.data1)[0] );
+					pushEvent( message.getGameEvent() );
 				}
 				free ( event.user.data1 );
 				break;

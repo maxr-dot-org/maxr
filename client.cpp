@@ -2408,6 +2408,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 	switch ( message->iType )
 	{
+	case GAME_EV_LOST_CONNECTION:
+		// This is just temporary so doesn't need to be translated
+		addMessage( "Lost connection to Server" );
+		break;
 	case GAME_EV_CHAT_SERVER:
 		switch (message->popChar())
 		{
@@ -2835,7 +2839,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iDestOff = message->popInt16();
 			int iType = message->popInt16();
 
-			cLog::write("(Client) Received information for next move: ID: " + iToStr ( iID ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
+			cLog::write("(Client) Received information for next move: ID: " + iToStr ( iID ) + ", SrcX: " + iToStr( iDestOff%Map->size ) + ", SrcY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
 
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle && Vehicle->mjob )
@@ -2856,7 +2860,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 					else
 					{
-						// server is one fiels faster then client
+						// server is one field faster then client
 						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
 						{
 							cLog::write ( "(Client) Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
@@ -2926,6 +2930,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Vehicle->moving = true;
 					if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
 					Vehicle->MoveJobActive = true;
+					cLog::write("(Client) The movejob is ok: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 				}
 				else if ( iType == MJOB_STOP )	// move has to be stoped
 				{
@@ -2943,14 +2948,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				else if ( iType == MJOB_BLOCKED ) // next field is blocked
 				{
-					cLog::write("(Client) Movejob is finished becouse the next field is blocked", cLog::eLOG_TYPE_NET_DEBUG);
+					cLog::write("(Client) Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->mjob->finished = true;
 					// TODO: Calc a new path and start the new job
 				}
 			}
 			else
 			{
-				cLog::write("(Client) Can't find vehicle or no movejob", cLog::eLOG_TYPE_NET_WARNING);
+				if ( Vehicle == NULL ) cLog::write("(Client) Can't find vehicle", cLog::eLOG_TYPE_NET_WARNING);
+				else cLog::write("(Client) Vehicle has no movejob", cLog::eLOG_TYPE_NET_WARNING);
 			}
 		}
 		break;

@@ -269,6 +269,32 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	switch ( message->iType )
 	{
 	case GAME_EV_LOST_CONNECTION:
+		{
+			int iSocketNum = message->popInt16();
+			// This is just temporary so doesn't need to be translated
+			string sMessage = "Lost connection to ";
+			// get the name of player to who the connection has been lost
+			for ( int i = 0; i < PlayerList->iCount; i++ )
+			{
+				if ( PlayerList->Items[i]->iSocketNum == iSocketNum )
+				{
+					sMessage += PlayerList->Items[i]->name;
+					break;
+				}
+			}
+			// get the lokal player number
+			int iPlayerNum;
+			for ( int i = 0; i < PlayerList->iCount; i++ )
+			{
+				if ( PlayerList->Items[i]->iSocketNum == MAX_CLIENTS )
+				{
+					iPlayerNum = PlayerList->Items[i]->Nr;
+					break;
+				}
+			}
+			// send a message to the lokal client
+			sendChatMessageToClient( sMessage.c_str(), USER_MESSAGE, iPlayerNum );
+		}
 		break;
 	case GAME_EV_CHAT_CLIENT:
 		sendChatMessageToClient( message->popString(), USER_MESSAGE );
