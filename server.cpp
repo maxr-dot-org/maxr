@@ -1248,6 +1248,7 @@ void cServer::checkMove ( cMJobs *MJob )
 					break;
 				}
 			}
+			MJob->vehicle->mjob = NULL;
 			delete MJob;
 			cLog::write( "(Server) Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
 		}
@@ -1266,6 +1267,10 @@ void cServer::checkMove ( cMJobs *MJob )
 
 	MJob->vehicle->MoveJobActive = true;
 	MJob->vehicle->moving = true;
+
+	// reserv the next field
+	if ( !MJob->plane ) Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].reserviert = true;
+	else Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].air_reserviert = true;
 
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList->iCount; i++ )

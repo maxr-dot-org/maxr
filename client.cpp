@@ -2921,6 +2921,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 								cLog::write ( "(Client) Client is faster (one or more fields)", cLog::eLOG_TYPE_NET_DEBUG );
 								// just stop the vehicle and wait for the next commando of the server
 								Vehicle->mjob->EndForNow = true;
+								break;
 							}
 						}
 					}
@@ -3545,7 +3546,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 {
 	string sTmp;
 	
-	sTmp = "name: \"" + Vehicle->name + "\" owner: \"" + Vehicle->owner->name + "\" posX: +" + iToStr ( Vehicle->PosX ) + " posY: " + iToStr ( Vehicle->PosY ) + " offX: " + iToStr ( Vehicle->OffX ) + " offY: " + iToStr ( Vehicle->OffY );
+	sTmp = "name: \"" + Vehicle->name + "\" id: \"" + iToStr ( Vehicle->iID ) + "\" owner: \"" + Vehicle->owner->name + "\" posX: +" + iToStr ( Vehicle->PosX ) + " posY: " + iToStr ( Vehicle->PosY ) + " offX: " + iToStr ( Vehicle->OffX ) + " offY: " + iToStr ( Vehicle->OffY );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 	
@@ -3608,7 +3609,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 {
 	string sTmp;
 
-	sTmp = "name: \"" + Building->name + "\" owner: \"" + ( Building->owner?Building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( Building->PosX ) + " posY: " + iToStr ( Building->PosY ) + " selected: " + iToStr ( Building->selected );
+	sTmp = "name: \"" + Building->name + "\" id: \"" + iToStr ( Building->iID ) + "\" owner: \"" + ( Building->owner?Building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( Building->PosX ) + " posY: " + iToStr ( Building->PosY ) + " selected: " + iToStr ( Building->selected );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
