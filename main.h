@@ -91,7 +91,7 @@ struct sReport;
 #define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
 #define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
 #define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
-#define MOVE_SPEED         1       // Geschwindigkeit der Fahrzeuge
+#define MOVE_SPEED         16       // Geschwindigkeit der Fahrzeuge
 #define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
 #define MAX_PATHFINDING    3890     // Maximale Endpunktezal fürs Pathfinding
 #define USER_WARPMOUSE		SDL_USEREVENT+0	// An Event for moving the mouse; this is the first UserEvent

@@ -509,8 +509,8 @@ void cClient::run()
 		{
 			SDL_Delay ( 10 ); // theres northing to do.
 		}
-		// handle the timers:
-		handleTimer();
+		// handle the timers and do game actions:
+		doGameActions();
 		if ( iTimer1 )
 		{
 			iFrame++;
@@ -544,9 +544,6 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
-		handleMoveJobs ();
-		cClientAttackJob::handleAttackJobs();
-
 	}
 	mouse->MoveCallback = false;
 }
@@ -3233,7 +3230,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 			bWaitForOthers = false;
 		}
 
-		handleTimer();
+		//handleTimer();
 		Client->doGameActions();
 	}
 }
@@ -3256,7 +3253,6 @@ void cClient::addActiveMoveJob ( cMJobs *MJob )
 
 void cClient::handleMoveJobs ()
 {
-
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
 		cMJobs *MJob;
