@@ -317,3 +317,31 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer )
 		Server->sendNetMessage( message, iPlayer );
 	}
 }
+
+void sendResources( cVehicle *Vehicle, cMap *Map )
+{
+	int iCount = 0;
+	cNetMessage* message = new cNetMessage( GAME_EV_RESOURCES );
+
+	// only send new scaned resources
+	for ( int iOff = Vehicle->PosX-1+(Vehicle->PosY-1)*Map->size; iOff <= Vehicle->PosX+1+(Vehicle->PosY+1)*Map->size; iOff++ )
+	{
+		if ( iOff%Map->size > Vehicle->PosX+1 )
+		{
+			iOff += Map->size;
+			iOff -= 3;
+		}
+
+		if ( iOff <= 0 || iOff >= Client->Map->size*Client->Map->size ) continue;
+
+		if ( Vehicle->owner->ResourceMap[iOff] != 0 ) continue;
+
+		message->pushInt16( Map->Resources[iOff].value );
+		message->pushInt16( Map->Resources[iOff].typ );
+		message->pushInt32( iOff );
+		iCount++;
+	}
+	message->pushInt16( iCount );
+
+	Server->sendNetMessage( message, Vehicle->owner->Nr );
+}

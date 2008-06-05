@@ -2981,6 +2981,19 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Client->attackJobs->Add( job );
 		}
 		break;
+	case GAME_EV_RESOURCES:
+		{
+			int iCount = message->popInt16();
+			for ( int i = 0; i < iCount; i++ )
+			{
+				int iOff = message->popInt32();
+				ActivePlayer->ResourceMap[iOff] = 1;
+
+				Map->Resources[iOff].typ = message->popInt16();
+				Map->Resources[iOff].value = message->popInt16();
+			}
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -3003,11 +3016,6 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit 
 	}
 	// startup:
 	if ( !bInit ) AddedVehicle->StartUp = 10;
-	// scan with surveyor:
-	if ( AddedVehicle->data.can_survey )
-	{
-		AddedVehicle->DoSurvey();
-	}
 }
 
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
@@ -3143,7 +3151,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 void cClient::handleEnd()
 {
-	if ( false /* (look for moving vehicles) */ )
+	if ( ActiveMJobs->iCount > 0 )
 	{
 		addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
 	}

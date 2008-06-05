@@ -147,18 +147,6 @@ class cServer
 	*/
 	cVehicle *landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player );
 	/**
-	* adds the unit to the map and player.
-	*@author alzi alias DoctorDeath
-	*@param iPosX The X were the unit should be added.
-	*@param iPosY The Y were the unit should be added.
-	*@param Vehicle Vehicle which should be added.
-	*@param Building Building which should be added.
-	*@param Player Player whose vehicle should be added.
-	*@param bInit true if this is a initialisation call.
-	*/
-	void addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false );
-	void addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
-	/**
 	* deletes the building
 	*@author alzi alias DoctorDeath
 	*@param Building Building which should be deleted.
@@ -293,6 +281,18 @@ public:
 	*/
 	void run();
 
+	/**
+	* adds the unit to the map and player.
+	*@author alzi alias DoctorDeath
+	*@param iPosX The X were the unit should be added.
+	*@param iPosY The Y were the unit should be added.
+	*@param Vehicle Vehicle which should be added.
+	*@param Building Building which should be added.
+	*@param Player Player whose vehicle should be added.
+	*@param bInit true if this is a initialisation call.
+	*/
+	void addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false );
+	void addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath

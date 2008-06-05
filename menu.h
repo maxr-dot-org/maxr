@@ -135,7 +135,6 @@ class cMultiPlayerMenu
 	void sendIdentification();
 	void sendPlayerList();
 	void sendOptions();
-	void sendResources();
 	void sendLandingInfo( int iLandX, int iLandY, cList<sLanding*> *LandingList );
 	void sendUpgrades();
 

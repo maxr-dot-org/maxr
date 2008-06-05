@@ -597,7 +597,8 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	// scan with surveyor:
 	if ( AddedVehicle->data.can_survey )
 	{
-		AddedVehicle->DoSurvey();
+		sendResources( AddedVehicle, Map );
+		AddedVehicle->doSurvey();
 	}
 	if ( !bInit ) AddedVehicle->InWachRange();
 
@@ -1374,7 +1375,64 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		MJob->SavedSpeed = 0;
 		Vehicle->DecSpeed ( MJob->waypoints->Costs );
 
-		// TODO: check for results of the move
+		// check for results of the move
+
+		// make mines explode if necessary
+		if ( !Vehicle->data.can_detect_mines && Vehicle->data.can_drive != DRIVE_AIR && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->data.is_expl_mine && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->owner != Vehicle->owner )
+		{
+			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->detonate();
+			Vehicle->moving = false;
+			Vehicle->WalkFrame = 0;
+			if ( Vehicle->mjob )
+			{
+				Vehicle->mjob->release();
+			}
+		}
+
+		// hide again if necessary
+		if ( Vehicle->detection_override )
+		{
+			Vehicle->detected = false;
+			Vehicle->detection_override = false;
+		}
+
+		// search for resources if necessary
+		if ( Vehicle->data.can_survey )
+		{
+			sendResources( Vehicle, Map );
+			Vehicle->doSurvey();
+		}
+
+		// TODO: let other units fire on this one
+		//Vehicle->InWachRange();
+
+		// search for mines if necessary
+		/*if ( Vehicle->data.can_detect_mines )
+		{
+			// TODO: implement this function
+			//Vehicle->detectMines();
+		}
+
+		// lay/clear mines if necessary
+		if ( Vehicle->data.can_lay_mines )
+		{
+			if ( Vehicle->LayMines )
+			{
+				Vehicle->layMine();
+				if ( Vehicle->data.cargo <= 0 )
+				{
+					Vehicle->LayMines = false;
+				}
+			}
+			else if ( Vehicle->ClearMines true )
+			{
+				Vehicle->clearMine();
+				if ( Vehicle->data.cargo >= Vehicle->data.max_cargo )
+				{
+					Vehicle->ClearMines = false;
+				}
+			}
+		}*/
 
 		Vehicle->owner->DoScan();
 

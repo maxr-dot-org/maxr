@@ -464,7 +464,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	// Ggf Minen zur Detonation bringen:
 	if ( !v->data.can_detect_mines&&v->data.can_drive!=DRIVE_AIR&&map->GO[v->PosX+v->PosY*map->size].base&&map->GO[v->PosX+v->PosY*map->size].base->data.is_expl_mine&&map->GO[v->PosX+v->PosY*map->size].base->owner!=v->owner )
 	{
-		map->GO[v->PosX+v->PosY*map->size].base->Detonate();
+		map->GO[v->PosX+v->PosY*map->size].base->detonate();
 		v->moving=false;
 		v->WalkFrame=0;
 		if ( v->mjob )
@@ -484,21 +484,21 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	// Ggf nach Rohstoffen suchen:
 	if ( v->data.can_survey )
 	{
-		v->DoSurvey();
+		v->doSurvey();
 	}
 	// Ggf beschießen lassen:
 	v->InWachRange();
 	// Ggf Minen suchen:
 	if ( v->data.can_detect_mines&&v->owner==game->ActivePlayer )
 	{
-		v->DetectMines();
+		v->detectMines();
 	}
 	// Ggf Minen legen/räumen:
 	if ( v->data.can_lay_mines&&v->owner==game->ActivePlayer )
 	{
 		if ( v->LayMines )
 		{
-			v->LayMine();
+			v->layMine();
 			if ( v->data.cargo<=0 )
 			{
 				v->LayMines=false;
@@ -506,7 +506,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 		else if ( v->ClearMines )
 		{
-			v->ClearMine();
+			v->clearMine();
 			if ( v->data.cargo>=v->data.max_cargo )
 			{
 				v->ClearMines=false;
@@ -553,7 +553,7 @@ void cEngine::AddVehicle ( int posx,int posy,sVehicle *v,cPlayer *p,bool init,bo
 	// Ggf mit dem Gutachter scannen:
 	if ( n->data.can_survey )
 	{
-		n->DoSurvey();
+		n->doSurvey();
 	}
 	if ( !init ) n->InWachRange();
 }

@@ -129,5 +129,10 @@ void sendNextMove( int iUnitID, int iDestOff, int iType, int iPlayer );
 *@author alzi alias DoctorDeath
 */
 void sendMoveJobServer( cMJobs *MJob, int iPlayer );
+/**
+* sends the resourcedata of new scaned fields around the unit to a client
+*@author alzi alias DoctorDeath
+*/
+void sendResources(  cVehicle *Vehicle, cMap *Map );
 
 #endif // servereventsH

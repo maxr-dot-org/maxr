@@ -3403,14 +3403,15 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 	}
 }
 
-// Bring eine Mine zur Detonation:
-void cBuilding::Detonate ( void )
+// makes a mine exploding:
+void cBuilding::detonate ( void )
 {
 	int off;
 	off = PosX + PosY * Client->Map->size;
 
-	// Das Ziel beschädigen/zerstören:
-	game->engine->AddAttackJob ( off, off, false, false, false, true );
+	// demage/destroy the target
+	// TODO: implement if attack jobs are implemented
+	//game->engine->AddAttackJob ( off, off, false, false, false, true );
 }
 
 // Zeigt den Researchbildschirm an:

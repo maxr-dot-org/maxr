@@ -4997,7 +4997,6 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						// send clients that all players have been landed
 						cNetMessage *Message = new cNetMessage ( MU_MSG_ALL_LANDED );
 						sendMessage ( Message );
-						sendResources();
 					}
 					else
 					{
@@ -5205,16 +5204,6 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_ALL_LANDED:
 			bAllLanded = true;
 			SWITCH_MESSAGE_END
-		case MU_MSG_RESOURCES:
-			{
-				int iOff;
-				while ( Message->iLength-5 > 0 && ( iOff = Message->popInt32() ) != 0 )
-				{
-					Map->Resources[iOff].typ = Message->popInt16();
-					Map->Resources[iOff].value = Message->popInt16();
-				}
-			}
-			SWITCH_MESSAGE_END
 		case MU_MSG_UPGRADES:
 			{
 				cPlayer *Player;
@@ -5261,32 +5250,6 @@ void cMultiPlayerMenu::HandleMessages()
 		default:
 			SWITCH_MESSAGE_END
 		}
-	}
-}
-
-void cMultiPlayerMenu::sendResources()
-{
-	cNetMessage *Message = NULL;
-	for ( int i = 0; i < Map->size*Map->size; i++ )
-	{
-		if ( Message == NULL )
-		{
-			Message = new cNetMessage ( MU_MSG_RESOURCES );
-		}
-		if ( Map->Resources[i].typ == 0 ) continue;
-		Message->pushInt16 ( Map->Resources[i].value );
-		Message->pushInt16 ( Map->Resources[i].typ );
-		Message->pushInt32 ( i );
-
-		if ( Message->iLength > PACKAGE_LENGHT-12 )
-		{
-			sendMessage ( Message );
-			Message = NULL;
-		}
-	}
-	if ( Message != NULL )
-	{
-		sendMessage ( Message );
 	}
 }
 

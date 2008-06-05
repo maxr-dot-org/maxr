@@ -172,7 +172,7 @@ public:
   void ShowBuildList(cList<sBuildStruct*> *list,int selected,int offset,bool beschreibung,int *buildspeed, int *iTurboBuildCosts, int *TurboBuildRounds );
   void DrawBuildButtons(int speed);
   void FindNextband(void);
-  void DoSurvey(void);
+  void doSurvey(void);
   void MakeReport(void);
   bool CanTransferTo(sGameObjects *go);
   void ShowTransfer(sGameObjects *target);
@@ -190,9 +190,9 @@ public:
   void ExitVehicleTo(int nr,int off,bool engine_call);
   bool CanMuni(int off);
   bool CanRepair(int off);
-  void LayMine(void);
-  void ClearMine(void);
-  void DetectMines(void);
+  void layMine(void);
+  void clearMine(void);
+  void detectMines(void);
   bool IsInRangeCommando(int off,bool steal);
   void DrawCommandoCursor(struct sGameObjects *go,bool steal);
   int CalcCommandoChance(bool steal);
