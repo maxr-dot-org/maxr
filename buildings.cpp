@@ -77,6 +77,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	Attacking = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
+	bIsBeeingAttacked = false;
 	RepeatBuild = false;
 
 	if ( data.can_attack )
@@ -972,6 +973,8 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		d.x = dest->x + 1;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 	}
+	//debug
+	//if ( bAttackDebug && bIsBeeingAttacked) font->showText(dest->x,dest->y, "locked", LATIN_SMALL_WHITE);
 }
 
 // Liefert die Anzahl der Menüpunkte:
@@ -1080,9 +1083,9 @@ void cBuilding::SelfDestructionMenu ( void )
 		// Destroy both (platform and top building) if there is a platform and a top building on this place
 		if( data.is_platform && Client->Map->GO[PosX + PosY*Client->Map->size].top )
 		{
-			game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
+			//game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
 		}
-		game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
+		//game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
 	}
 
 }
@@ -1809,6 +1812,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -2479,6 +2483,7 @@ void cBuilding::ShowStorage ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -2649,6 +2654,7 @@ void cBuilding::ShowStorage ( void )
 
 			while ( b )
 			{
+				Client->doGameActions();
 				EventHandler->HandleEvents();
 				b = mouse->GetMouseButton();
 			}
@@ -2943,6 +2949,7 @@ void cBuilding::ShowStorage ( void )
 
 				while ( b )
 				{
+					Client->doGameActions();
 					EventHandler->HandleEvents();
 					b = mouse->GetMouseButton();
 				}
@@ -3464,6 +3471,7 @@ void cBuilding::ShowResearch ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -3838,6 +3846,7 @@ void cBuilding::ShowUpgrade ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -5776,9 +5785,11 @@ void cBuilding::ShowMineManager ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
+		Client->doGameActions();
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -6773,6 +6784,8 @@ void cBuilding::ShowBuildMenu ( void )
 	{
 		if (  Client->SelectedBuilding == NULL )
 			break;
+
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -8194,7 +8207,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowStorage();
+			//ShowStorage();
 			return;
 		}
 
@@ -8238,7 +8251,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowResearch();
+			//ShowResearch();
 			return;
 		}
 
@@ -8262,7 +8275,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowUpgrade();
+			//ShowUpgrade();
 			return;
 		}
 
@@ -8974,6 +8987,7 @@ void cBuilding::ShowHelp ( void )
 	while ( 1 )
 	{
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();

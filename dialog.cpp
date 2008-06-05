@@ -73,6 +73,7 @@ bool ShowYesNo ( string text )
 		if ( Client )
 		{
 			Client->handleTimer();
+			Client->doGameActions();
 		}
 
 		// Eingaben holen:
@@ -319,6 +320,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 		if ( !bPurgeHud && Client )
 		{
 			Client->handleTimer();
+			Client->doGameActions();
 		}
 
 		// Eingaben holen:
@@ -827,6 +829,7 @@ void showPreferences ( void )
 	{
 		// Die Engine laufen lassen:
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -1150,6 +1153,7 @@ bool showSelfdestruction()
 		{
 			if ( Client->SelectedBuilding == NULL ) break;
 			Client->handleTimer();
+			Client->doGameActions();
 		}
 
 		// Events holen:

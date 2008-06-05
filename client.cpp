@@ -28,6 +28,7 @@
 #include "fonts.h"
 #include "netmessage.h"
 #include "main.h"
+#include "attackJobs.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg)
 {
@@ -81,6 +82,7 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	ActiveMJobs = new cList<cMJobs*>;
+	attackJobs = new cList<cClientAttackJob*>;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX( (char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str() );
@@ -133,6 +135,12 @@ void cClient::kill()
 		FXListBottom->Delete ( 0 );
 	}
 	delete FXListBottom;
+	
+	for (int i = 0; i < attackJobs->iCount; i++ )
+	{
+		delete attackJobs->Items[i];
+	}
+	delete attackJobs;
 
 	while( DirtList )
 	{
@@ -537,6 +545,8 @@ void cClient::run()
 			else iNextChange--;
 		}
 		handleMoveJobs ();
+		cClientAttackJob::handleAttackJobs();
+
 	}
 	mouse->MoveCallback = false;
 }
@@ -2427,7 +2437,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addMessage( lngPack.i18n( message->popString() ) );
 			break;
 		}
-		
 		break;
 	case GAME_EV_ADD_BUILDING:
 		{
@@ -2961,6 +2970,17 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_ATTACKJOB_LOCK_TARGET:
+		{
+			cClientAttackJob::clientLockTarget( message );
+		}
+		break;
+	case GAME_EV_ATTACKJOB_FIRE:
+		{
+			cClientAttackJob* job = new cClientAttackJob( message );
+			Client->attackJobs->Add( job );
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -3206,7 +3226,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 		}
 
 		handleTimer();
-		handleMoveJobs ();
+		Client->doGameActions();
 	}
 }
 
@@ -3228,7 +3248,6 @@ void cClient::addActiveMoveJob ( cMJobs *MJob )
 
 void cClient::handleMoveJobs ()
 {
-	if ( !iTimer0 ) return;
 
 	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
 	{
@@ -3680,4 +3699,15 @@ void cClient::releaseMoveJob ( cMJobs *MJob )
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Client) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
+}
+
+void cClient::doGameActions()
+{
+	handleTimer();
+	if ( !iTimer0 ) return;
+
+	//run attackJobs
+	cClientAttackJob::handleAttackJobs();
+	//run moveJobs
+	handleMoveJobs();
 }

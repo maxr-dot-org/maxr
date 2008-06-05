@@ -95,6 +95,7 @@ public:
   bool MenuActive; // Gibt an, ob das Menü aktiv ist
   bool AttackMode; // Gibt an, ob der Attack-Modus aktiv ist
   bool Attacking;  // Gibt an, ob das Fahrzeug gerade angreift
+  bool bIsBeeingAttacked; /** true when an attack on this vehicle is running */
   int ditherX,ditherY; // Dithering für Flugzeuge
   bool IsBuilding;  // Gibt an ob was gebaut wird
   int BuildingTyp;  // Gibt an, was gebaut wird

@@ -40,6 +40,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
+	GAME_EV_ATTACKJOB_LOCK_TARGET,	// prepares a mapsquare for beeing attacked
+	GAME_EV_ATTACKJOB_FIRE,		// plays the muzzle flash on a client
 };
 
 enum CHAT_MESSAGE_TYPES

@@ -1991,7 +1991,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 				{
 					if(players.what[i] == PLAYER_AI)
 					{
-						players.what[i] == PLAYER_H;
+						players.what[i] = PLAYER_H;
 						bAiFound = true;
 						
 					}
@@ -5856,7 +5856,11 @@ int ShowDateiMenu ( bool bSave )
 		EventHandler->HandleEvents();
 
 		// Tasten prüfen:
-		if ( bSave ) game->HandleTimer();
+		if ( Client )
+		{
+			Client->handleTimer();
+			Client->doGameActions();
+		}
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] )
 		{

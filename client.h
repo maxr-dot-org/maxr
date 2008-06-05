@@ -26,6 +26,7 @@
 #include "hud.h"
 #include "game.h"
 #include "netmessage.h"
+#include "attackJobs.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -269,13 +270,6 @@ class cClient
 	*/
 	void doEndMoveVehicle ( cVehicle *Vehicle );
 	/**
-	* gets the vehicle with the ID
-	*@author alzi alias DoctorDeath
-	*@param iID The ID of the vehicle
-	*/
-	cVehicle *getVehicleFromID ( int iID );
-	cBuilding *getBuildingFromID ( int iID );
-	/**
 	* shows the information for the field under the mouse
 	*@author alzi alias DoctorDeath
 	*/
@@ -299,6 +293,8 @@ class cClient
 public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
+	/** list with the running clientAttackJobs */
+	cList<cClientAttackJob*> *attackJobs;
 	/** the map */
 	cMap *Map;
 	/** the hud */
@@ -338,7 +334,13 @@ public:
 	*@param message The netMessage to be send.
 	*/
 	void sendNetMessage ( cNetMessage *message );
-	
+	/**
+	* gets the vehicle with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the vehicle
+	*/
+	cVehicle *getVehicleFromID ( int iID );
+	cBuilding *getBuildingFromID ( int iID );
 	/**
 	* draws the map and everything on it
 	*@author alzi alias DoctorDeath
@@ -373,6 +375,11 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void run();
+	/**
+	* handles move and attack jobs
+	* this function should be called in all menu loops
+	*/
+	void doGameActions();
 
 	/**
 	* processes everything that is need for this netMessage

@@ -347,7 +347,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_MOVE_JOB_CLIENT");
 	case GAME_EV_WANT_ATTACK:
 		return string("GAME_EV_WANT_ATTACK");
-
+	case GAME_EV_ATTACKJOB_LOCK_TARGET:
+		return string("GAME_EV_ATTACKJOB_LOCK_TARGET");
+	case GAME_EV_ATTACKJOB_FIRE:
+		return string("GAME_EV_ATTACKJOB_FIRE");
 	default:
 		return iToStr( iType );
 	}

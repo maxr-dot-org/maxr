@@ -103,6 +103,7 @@ public:
   cBuilding *next,*prev; // Zeiger für die Verkettung
   bool MenuActive; // Gibt an, ob das Menü grad aktiv ist
   bool AttackMode; // Gibt an, ob der AttackMode grad aktiv ist
+  bool bIsBeeingAttacked; /** true when an attack on this building is running */
   int DirtTyp;     // Typ des Drecks
   int DirtValue;   // Wert des Drecks
   bool BigDirt;    // Gibt an, ob es sich um großen Dreck handelt

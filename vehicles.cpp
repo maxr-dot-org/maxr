@@ -89,6 +89,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	DisableActive = false;
 	detection_override = false;
 	IsLocked = false;
+	bIsBeeingAttacked = false;
 	StoredVehicles = NULL;
 	SeenByPlayerList = new cList<int*>;
 
@@ -125,31 +126,15 @@ cVehicle::~cVehicle ( void )
 	if ( StoredVehicles )
 		DeleteStored();
 
-	if ( Attacking )
-	{
-		int i;
-
-		for ( i = 0;i < game->engine->AJobs->iCount;i++ )
-		{
-			cAJobs *a;
-			a = game->engine->AJobs->Items[i];
-
-			if ( a->vehicle == this )
-			{
-				game->engine->AJobs->Delete ( i );
-				break;
-			}
-		}
-	}
-
+	
 	if ( IsLocked )
 	{
 		cPlayer *p;
 		int i;
 
-		for ( i = 0;i < game->PlayerList->iCount;i++ )
+		for ( i = 0;i < Client->PlayerList->iCount;i++ )
 		{
-			p = game->PlayerList->Items[i];
+			p = Client->PlayerList->Items[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -775,6 +760,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 									}
 	}
+	//debug
+	//if ( bAttackDebug && bIsBeeingAttacked ) font->showText(dest->x,dest->y, "locked", LATIN_SMALL_WHITE);
 }
 
 // Wählt dieses Vehicle aus:
@@ -1425,6 +1412,7 @@ void cVehicle::ShowHelp ( void )
 	while ( 1 )
 	{
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -2149,7 +2137,7 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowBuildMenu();
+			//ShowBuildMenu();
 			return;
 		}
 
@@ -3188,6 +3176,7 @@ void cVehicle::ShowBuildMenu ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -4317,6 +4306,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -5141,6 +5131,7 @@ void cVehicle::ShowStorage ( void )
 			break;
 
 		Client->handleTimer();
+		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
@@ -5317,6 +5308,7 @@ void cVehicle::ShowStorage ( void )
 			while ( b )
 			{
 				EventHandler->HandleEvents();
+				Client->doGameActions();
 				b = mouse->GetMouseButton();
 			}
 
@@ -5452,6 +5444,7 @@ void cVehicle::ShowStorage ( void )
 				while ( b )
 				{
 					EventHandler->HandleEvents();
+					Client->doGameActions();
 					b = mouse->GetMouseButton();
 				}
 

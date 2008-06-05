@@ -22,6 +22,7 @@
 #include "main.h"
 #include "map.h"
 #include "player.h"
+#include "attackJobs.h"
 #include "engine.h" // for sReport
 
 /**
@@ -76,8 +77,6 @@ class cServer
 	cMJobs *mjobs;
 	/** List with all active movejobs */
 	cList<cMJobs*> *ActiveMJobs;
-	/** List with all attackjobs */
-	cList<cAJobs*> *AJobs;
 	/** true if this is a hotseat game */
 	bool bHotSeat;
 	/** number of active player in hotseat */
@@ -241,6 +240,8 @@ class cServer
 public:	
 	/** the map */
 	cMap *Map;
+	/** List with all attackjobs */
+	cList<cServerAttackJob*> *AJobs;
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */

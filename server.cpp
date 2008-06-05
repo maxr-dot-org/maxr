@@ -23,6 +23,7 @@
 #include "menu.h"
 #include "netmessage.h"
 #include "mjobs.h"
+#include "attackJobs.h"
 
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
 {
@@ -51,7 +52,8 @@ void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool 
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
 	ActiveMJobs = new cList<cMJobs *>;
-	iNextUnitID = 0;
+	AJobs = new cList<cServerAttackJob*>;
+	iNextUnitID = 1;
 	iTimerTime = 0;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
 
@@ -443,17 +445,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			
 			//check if attack is possible
 			//TODO: allow attacking empty terains
+			//TODO: implement deleting of cAttackJobs
 			if ( bIsVehicle )
 			{
 				if ( !attackingVehicle->CanAttackObject( targetOffset ) ) break;
+				AJobs->Add( new cServerAttackJob( attackingVehicle, targetOffset ));
 			}
 			else
 			{
 				if ( !attackingBuilding->CanAttackObject( targetOffset ) ) break;
+				AJobs->Add( new cServerAttackJob( attackingBuilding, targetOffset )); 
 			}
 			
-			//attackJobs verteilen
-			sendChatMessageToClient("BUMM!!!!", USER_MESSAGE);
 		}
 		break;
 	default:
