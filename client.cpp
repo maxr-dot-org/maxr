@@ -843,7 +843,8 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud->Ende && !SelectedVehicle->Attacking )
 		{
-			cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList, false );
+			addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
+			/*cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList, false );
 			if ( !MJob->finished )
 			{
 				if ( MJob->CalcPath() )
@@ -867,7 +868,7 @@ int cClient::checkUser()
 					MJob->vehicle->mjob = NULL;
 				}
 				delete MJob;
-			}
+			}*/
 		}
 		else if ( !bHelpActive )
 		{
@@ -1103,6 +1104,38 @@ int cClient::checkUser()
 	Hud->CheckScroll();
 	iLastMouseButton = iMouseButton;
 	return 0;
+}
+
+void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
+{
+	cMJobs *MJob = new cMJobs ( Map, vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle->iID, PlayerList, false );
+	if ( !MJob->finished )
+	{
+		if ( MJob->CalcPath() )
+		{
+			MJob->CalcNextDir();
+			sendMoveJob ( MJob );
+			addActiveMoveJob ( MJob );
+			cLog::write("(Client) Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MJob->DestX ) + ", DestY: " + iToStr ( MJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+		}
+		else
+		{
+			MJob->finished = true;
+			if (!vehicle || !vehicle->autoMJob) //automoving suveyors must not tell this
+			{
+				if ( random ( 2,0 ) ) PlayVoice ( VoiceData.VOINoPath1 );
+				else PlayVoice ( VoiceData.VOINoPath2 );
+			}
+		}
+	}
+	if ( MJob->finished )
+	{
+		if ( MJob->vehicle )
+		{
+			MJob->vehicle->mjob = NULL;
+		}
+		delete MJob;
+	}
 }
 
 void cClient::handleTimer()
@@ -3710,6 +3743,8 @@ void cClient::doGameActions()
 	handleTimer();
 	if ( !iTimer0 ) return;
 
+	//run surveyor ai
+	cAutoMJob::handleAutoMoveJobs();
 	//run attackJobs
 	cClientAttackJob::handleAttackJobs();
 	//run moveJobs

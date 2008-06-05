@@ -326,7 +326,12 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();
-	
+	/**
+	* creates a new moveJob an transmits it to the server
+	* @param vehicle the vehicle to be moved
+	* @param iDestOffset the Destination
+	*/
+	void addMoveJob(cVehicle* vehicle, int iDestOffset);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!

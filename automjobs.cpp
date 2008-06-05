@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "math.h"
+#include "client.h"
 #include "automjobs.h"
-#include "game.h"
 #include "vehicles.h"
 
 
@@ -78,18 +78,20 @@ cAutoMJob::~cAutoMJob()
 //performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
 void cAutoMJob::DoAutoMove()
 {
-	if (vehicle->mjob == NULL || vehicle->mjob->finished )
+	if ( vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
-		
-		if (n > WAIT_FRAMES)
+		if ( vehicle->data.speed )
 		{
-			changeOP();
-			PlanNextMove();
-			n = 0;			
-		}
-		else
-		{
-			n++;
+			if (n > WAIT_FRAMES)
+			{
+				changeOP();
+				PlanNextMove();
+				n = 0;			
+			}
+			else
+			{
+				n++;
+			}
 		}
 	}
 	else 
@@ -98,9 +100,14 @@ void cAutoMJob::DoAutoMove()
 		{
 			playerMJob = true;
 		}
-		if ( vehicle->mjob->Suspended && vehicle->data.speed )
+		if ( vehicle->mjob->Suspended )
 		{
-			game->engine->AddActiveMoveJob(vehicle->mjob);
+			//TODO: addActiveMoveJob();
+			//just deleting old one for now
+			//game->engine->AddActiveMoveJob(vehicle->mjob);
+			//Client->addMoveJob( vehicle, lastMoveJob->DestX + lastMoveJob->DestY * Client->Map->size);
+			lastMoveJob->release();
+			lastMoveJob = vehicle->mjob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
@@ -138,7 +145,8 @@ void cAutoMJob::PlanNextMove()
 
 	if ( maxFactor != FIELD_BLOCKED )
 	{
-		lastMoveJob = game->engine->AddMoveJob(vehicle->PosX + vehicle->PosY * game->engine->map->size, bestX + bestY * game->engine->map->size, false, false);
+		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size );
+		lastMoveJob = vehicle->mjob;
 	}	
 	else //no fields to survey next to the surveyor
 	{
@@ -163,9 +171,9 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			if ( x == PosX && y == PosY ) continue;
-			if ( x < 0 || y < 0 || x >= game->engine->map->size || y >= game->engine->map->size ) continue;
+			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
-			if ( vehicle->owner->ResourceMap[x + y * game->engine->map->size] == 0)
+			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0)
 			{
 				NrSurvFields++;
 			}
@@ -210,7 +218,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 //checks if the destination field is free
 bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 {
-	cMap* map = game->engine->map;
+	cMap* map = Client->Map;
 
 	if ( PosX < 0 || PosY < 0 || PosX >= map->size || PosY >= map->size ) return false; //check map borders
 	
@@ -234,12 +242,12 @@ void cAutoMJob::PlanLongMove()
 	float tempValue;
 	float minValue = 0;
 
-	for ( x = 0; x < game->engine->map->size; x++ )
+	for ( x = 0; x < Client->Map->size; x++ )
 	{
-		for ( y = 0; y < game->engine->map->size; y++ )
+		for ( y = 0; y < Client->Map->size; y++ )
 		{
 			if ( !FieldIsFree( x, y) ) continue;
-			if ( vehicle->owner->ResourceMap[x + y * game->engine->map->size] == 1 ) continue;
+			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
 			
 			//the distance to other surveyors
 			int i;
@@ -269,7 +277,8 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		lastMoveJob = game->engine->AddMoveJob( vehicle->PosX + vehicle->PosY * game->engine->map->size , bestX + bestY * game->engine->map->size, false, false);
+		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size);
+		lastMoveJob = vehicle->mjob;
 	}
 	else
 	{

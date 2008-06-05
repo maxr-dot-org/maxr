@@ -20,7 +20,7 @@
 #define automjobsH
 
 #define FIELD_BLOCKED -10000
-#define WAIT_FRAMES 10
+#define WAIT_FRAMES 4
 
 //main tuning knobs of the AI:
 #define A 1.0	//how impottant is it, to survey as much fields as possible with each move	
