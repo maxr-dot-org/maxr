@@ -52,7 +52,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 OPX = vehicle->PosX;
 	 OPY = vehicle->PosY;
 	 playerMJob = false;
-	 lastMoveJob = NULL;
+	 lastMoveJob = vehicle->mjob;
 	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
 }
 
@@ -93,7 +93,7 @@ void cAutoMJob::DoAutoMove()
 	}
 	else 
 	{
-		if ( vehicle->mjob != lastMoveJob && !vehicle->mjob->Suspended && vehicle->data.speed )
+		if ( vehicle->mjob != lastMoveJob && !vehicle->mjob->Suspended  )
 		{
 			playerMJob = true;
 		}
@@ -101,8 +101,7 @@ void cAutoMJob::DoAutoMove()
 		{
 			//TODO: addActiveMoveJob();
 			//game->engine->AddActiveMoveJob(vehicle->mjob);
-			Client->addMoveJob( vehicle, lastMoveJob->DestX + lastMoveJob->DestY * Client->Map->size);
-			if ( lastMoveJob) lastMoveJob->finished = true;
+			Client->addMoveJob( vehicle, vehicle->mjob->DestX + vehicle->mjob->DestY * Client->Map->size);
 			lastMoveJob = vehicle->mjob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
