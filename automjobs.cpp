@@ -52,7 +52,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 OPX = vehicle->PosX;
 	 OPY = vehicle->PosY;
 	 playerMJob = false;
-	 lastMoveJob = vehicle->mjob;
+	 lastMoveJob = NULL;
 	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
 }
 
