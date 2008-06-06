@@ -30,6 +30,7 @@
 #include "events.h"
 #include "client.h"
 #include "server.h"
+#include "clientevents.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
@@ -2440,7 +2441,7 @@ void cVehicle::DrawMenu ( void )
 	// Minen legen:
 	if ( data.can_lay_mines && data.cargo > 0 )
 	{
-		if ( SelMenu == nr )
+		if ( SelMenu == nr || LayMines )
 			scr.y = 21;
 		else
 			scr.y = 0;
@@ -2451,8 +2452,7 @@ void cVehicle::DrawMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			LayMines = !LayMines;
 			ClearMines = false;
-			// TOFIX: only server should run this function
-			//layMine();
+			sendMineLayerStatus( this );
 			return;
 		}
 
@@ -2466,7 +2466,7 @@ void cVehicle::DrawMenu ( void )
 	// Minen sammeln:
 	if ( data.can_lay_mines && data.cargo < data.max_cargo )
 	{
-		if ( SelMenu == nr )
+		if ( SelMenu == nr || ClearMines )
 			scr.y = 21;
 		else
 			scr.y = 0;
@@ -2477,8 +2477,7 @@ void cVehicle::DrawMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			ClearMines = !ClearMines;
 			LayMines = false;
-			// TOFIX: only server should run this function
-			//clearMine();
+			sendMineLayerStatus ( this );
 			return;
 		}
 
@@ -5734,88 +5733,38 @@ bool cVehicle::CanRepair ( int off )
 	return false;
 }
 
-// lays a mine:
-void cVehicle::layMine ( void )
+bool cVehicle::layMine ()
 {
-	if ( !data.cargo )
-		return;
+	if ( data.cargo < 0 ) return false;
+	if ( Server->Map->GO[PosX+PosY*Server->Map->size].base && Server->Map->GO[PosX+PosY*Server->Map->size].base->data.is_expl_mine ) return false;
 
-	if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_expl_mine )
-		return;
-
-	if ( data.can_drive == DRIVE_SEA )
-	{
-		Server->addUnit ( PosX, PosY, UnitsData.building + BNrSeaMine, owner, false );
-		PlayFX ( SoundData.SNDSeaMinePlace );
-	}
-	else
-	{
-		Server->addUnit ( PosX, PosY, UnitsData.building + BNrLandMine, owner, false );
-		PlayFX ( SoundData.SNDLandMinePlace );
-	}
-
+	if ( data.can_drive == DRIVE_SEA ) Server->addUnit ( PosX, PosY, UnitsData.building + BNrSeaMine, owner, false );
+	else Server->addUnit ( PosX, PosY, UnitsData.building + BNrLandMine, owner, false );
 	data.cargo--;
+
+	if ( data.cargo <= 0 ) LayMines = false;
+	
+	return true;
 }
 
-// clears a mine:
-void cVehicle::clearMine ( void )
+bool cVehicle::clearMine ()
 {
-	cBuilding *Mine;
-	int off;
+	cBuilding *Mine = Server->Map->GO[PosX+PosY*Server->Map->size].base;
+	if ( !Mine || !Mine->data.is_expl_mine || Mine->owner != owner || data.cargo >= data.max_cargo ) return false;
 
-	if ( data.cargo == data.max_cargo )
-		return;
-
-	off = PosX + PosY * Client->Map->size;
-
-	Mine = Server->Map->GO[off].base;
-
-	if ( !Mine || !Mine->data.is_expl_mine || Mine->owner != owner ) return;
-
-	// clear the mine:
-	Server->Map->GO[off].base = NULL;
-
-	if ( Mine->prev )
-	{
-		cBuilding *pb;
-		pb = Mine->prev;
-		pb->next = Mine->next;
-
-		if ( pb->next )
-			pb->next->prev = pb;
-	}
-	else
-	{
-		Mine->owner->BuildingList = Mine->next;
-
-		if ( Mine->next )
-			Mine->next->prev = NULL;
-	}
-
-	delete Mine;
-
-	if ( data.can_drive == DRIVE_SEA )
-	{
-		PlayFX ( SoundData.SNDSeaMineClear );
-	}
-	else
-	{
-		PlayFX ( SoundData.SNDLandMineClear );
-	}
-
+	Server->deleteBuilding ( Mine );
 	data.cargo++;
 
-	if ( Client && Client->SelectedVehicle == this )
-	{
-		ShowDetails();
-	}
+	if ( data.cargo >= data.max_cargo ) ClearMines = false;
+	
+	return true;
 }
 
 // searches for mines:
 void cVehicle::detectMines ( void )
 {
 	int off, size;
-	size = Client->Map->size;
+	size = Server->Map->size;
 	off = PosX + PosY * size;
 
 #define DETECT_MINE(a) if((a)>=0&&(a)<size*size&&Client->Map->GO[(a)].base&&Client->Map->GO[(a)].base->data.is_expl_mine)Client->Map->GO[(a)].base->detected=true;

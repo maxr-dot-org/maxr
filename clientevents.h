@@ -92,6 +92,13 @@ void sendMoveJob( cMJobs *MJob );
 */
 void sendWantAttack ( int targetID, int targetOffset, int aggressor, bool isVehicle);
 
+/**
+* sends whether a minelayer is laying or clearing mines
+*@author alzi alias DoctorDeath
+*@param Vehicle the vehicle which status has to be send
+*/
+void sendMineLayerStatus( cVehicle *Vehicle );
+
 
 
 #endif // clienteventsH

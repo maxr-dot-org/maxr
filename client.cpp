@@ -2481,6 +2481,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
+
+			// play placesound if it is a mine
+			if ( UnitNum == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
+			else if ( UnitNum == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMinePlace );
 		}
 		break;
 	case GAME_EV_ADD_VEHICLE:
@@ -2515,6 +2519,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( bBase ) Building = Map->GO[iOff].base;
 			else if ( bSubBase ) Building = Map->GO[iOff].subbase;
 			else Building = Map->GO[iOff].top;
+
+			// play clearsound if it is a mine
+			if ( Building->typ->nr == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
+			else if ( Building->typ->nr == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
 
 			if ( Building && Building->owner == Player )
 			{
@@ -2674,16 +2682,25 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
 				{
-					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
-					// set to server position
-					if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-					else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+					// if the vehicle is moving it is normal that the positions are not the same,
+					// so the log message will just be an debug one
+					int iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 
-					if ( bPlane ) Map->GO[iPosX+iPosY*Map->size].plane = Vehicle;
-					else Map->GO[iPosX+iPosY*Map->size].vehicle = Vehicle;
+					// set to server position if vehicle is not moving
+					if ( !Vehicle->moving )
+					{
+						iLogType = cLog::eLOG_TYPE_NET_WARNING;
 
-					Vehicle->PosX = iPosX;
-					Vehicle->PosY = iPosY;
+						if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
+						else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+
+						if ( bPlane ) Map->GO[iPosX+iPosY*Map->size].plane = Vehicle;
+						else Map->GO[iPosX+iPosY*Map->size].vehicle = Vehicle;
+
+						Vehicle->PosX = iPosX;
+						Vehicle->PosY = iPosY;
+					}
+					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
 				}
 
 				Vehicle->name = message->popString();
@@ -2746,6 +2763,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( bVehicle )
 			{
+				if ( Data->can_lay_mines )
+				{
+					if ( Data->cargo <= 0 ) Vehicle->LayMines = false;
+					if ( Data->cargo >= Data->max_cargo ) Vehicle->ClearMines = false;
+				}
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
 				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();

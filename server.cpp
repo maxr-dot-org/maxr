@@ -459,6 +459,21 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			
 		}
 		break;
+	case GAME_EV_MINELAYERSTATUS:
+		{
+			cVehicle *Vehicle = getVehicleFromID( message->popInt16() );
+			if ( Vehicle )
+			{
+				bool bWasClearing = Vehicle->ClearMines;
+				bool bWasLaying = Vehicle->LayMines;
+				Vehicle->ClearMines = message->popBool();
+				Vehicle->LayMines = message->popBool();
+
+				if ( !bWasClearing && Vehicle->ClearMines ) Vehicle->clearMine();
+				if ( !bWasLaying && Vehicle->LayMines ) Vehicle->layMine();
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -710,10 +725,22 @@ void cServer::deleteBuilding( cBuilding *Building )
 		}
 
 		bool bBase, bSubBase;
-		if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) bBase = true;
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building )
+		{
+			Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
+			bBase = true;
+		}
 		else bBase = false;
-		if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building ) bSubBase = true;
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building )
+		{
+			Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
+			bSubBase = true;
+		}
 		else bSubBase = false;
+		if ( !bBase && !bSubBase )
+		{
+			Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+		}
 		sendDeleteUnit( Building->PosX, Building->PosY, Building->owner->Nr, Building->iID, false, Building->owner->Nr, false, bBase, bSubBase );
 
 		delete Building;
@@ -1407,7 +1434,7 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		//Vehicle->InWachRange();
 
 		// search for mines if necessary
-		/*if ( Vehicle->data.can_detect_mines )
+		if ( Vehicle->data.can_detect_mines )
 		{
 			// TODO: implement this function
 			//Vehicle->detectMines();
@@ -1416,23 +1443,19 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		// lay/clear mines if necessary
 		if ( Vehicle->data.can_lay_mines )
 		{
-			if ( Vehicle->LayMines )
+			bool bResult = false;
+			if ( Vehicle->LayMines ) bResult = Vehicle->layMine();
+			else if ( Vehicle->ClearMines ) bResult = Vehicle->clearMine();
+			if ( bResult )
 			{
-				Vehicle->layMine();
-				if ( Vehicle->data.cargo <= 0 )
+				// send new unit values
+				sendUnitData( Vehicle, Vehicle->owner->Nr );
+				for ( int i = 0; i < Vehicle->SeenByPlayerList->iCount; i++ )
 				{
-					Vehicle->LayMines = false;
+					sendUnitData( Vehicle, *Vehicle->SeenByPlayerList->Items[i] );
 				}
 			}
-			else if ( Vehicle->ClearMines true )
-			{
-				Vehicle->clearMine();
-				if ( Vehicle->data.cargo >= Vehicle->data.max_cargo )
-				{
-					Vehicle->ClearMines = false;
-				}
-			}
-		}*/
+		}
 
 		Vehicle->owner->DoScan();
 

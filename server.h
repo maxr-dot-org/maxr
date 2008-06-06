@@ -147,12 +147,6 @@ class cServer
 	*/
 	cVehicle *landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player );
 	/**
-	* deletes the building
-	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*/
-	void deleteBuilding ( cBuilding *Building );
-	/**
 	* checks whether a player has detected some new enemy units
 	*@author alzi alias DoctorDeath
 	*/
@@ -281,6 +275,12 @@ public:
 	*/
 	void run();
 
+	/**
+	* deletes the building
+	*@author alzi alias DoctorDeath
+	*@param Building Building which should be deleted.
+	*/
+	void deleteBuilding ( cBuilding *Building );
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath

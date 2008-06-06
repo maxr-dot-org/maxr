@@ -104,3 +104,12 @@ void sendWantAttack ( int targetID, int targetOffset, int agressor, bool isVehic
 	message->pushBool ( isVehicle );
 	Client->sendNetMessage(message);
 }
+
+void sendMineLayerStatus( cVehicle *Vehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_MINELAYERSTATUS );
+	message->pushBool ( Vehicle->LayMines );
+	message->pushBool ( Vehicle->ClearMines );
+	message->pushInt16 ( Vehicle->iID );
+	Client->sendNetMessage(message);
+}

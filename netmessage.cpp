@@ -353,6 +353,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_ATTACKJOB_FIRE");
 	case GAME_EV_RESOURCES:
 		return string("GAME_EV_RESOURCES");
+	case GAME_EV_MINELAYERSTATUS:
+		return string("GAME_EV_MINELAYERSTATUS");
 	default:
 		return iToStr( iType );
 	}
