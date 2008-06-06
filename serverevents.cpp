@@ -324,21 +324,21 @@ void sendResources( cVehicle *Vehicle, cMap *Map )
 	cNetMessage* message = new cNetMessage( GAME_EV_RESOURCES );
 
 	// only send new scaned resources
-	for ( int iOff = Vehicle->PosX-1+(Vehicle->PosY-1)*Map->size; iOff <= Vehicle->PosX+1+(Vehicle->PosY+1)*Map->size; iOff++ )
+	for ( int iX = Vehicle->PosX-1, iY = Vehicle->PosY-1; iY <= Vehicle->PosY+1; iX++ )
 	{
-		if ( iOff%Map->size > Vehicle->PosX+1 )
+		if ( iX > Vehicle->PosX+1 )
 		{
-			iOff += Map->size;
-			iOff -= 3;
+			iX = Vehicle->PosX-1;
+			iY++;
 		}
 
-		if ( iOff <= 0 || iOff >= Client->Map->size*Client->Map->size ) continue;
+		if ( iY > Vehicle->PosY+1 ) break;
+		if ( iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size ) continue;
+		if ( Vehicle->owner->ResourceMap[iX+iY*Map->size] != 0 ) continue;
 
-		if ( Vehicle->owner->ResourceMap[iOff] != 0 ) continue;
-
-		message->pushInt16( Map->Resources[iOff].value );
-		message->pushInt16( Map->Resources[iOff].typ );
-		message->pushInt32( iOff );
+		message->pushInt16( Map->Resources[iX+iY*Map->size].value );
+		message->pushInt16( Map->Resources[iX+iY*Map->size].typ );
+		message->pushInt32( iX+iY*Map->size );
 		iCount++;
 	}
 	message->pushInt16( iCount );
