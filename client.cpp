@@ -3606,7 +3606,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 	
-	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: " + iToStr ((long int) Vehicle->mjob ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );	
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: "  + iToStr ((long int) Vehicle->mjob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );	
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 	
@@ -3743,10 +3743,10 @@ void cClient::doGameActions()
 	handleTimer();
 	if ( !iTimer0 ) return;
 
-	//run surveyor ai
-	cAutoMJob::handleAutoMoveJobs();
 	//run attackJobs
 	cClientAttackJob::handleAttackJobs();
-	//run moveJobs
+	//run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();
+	//run surveyor ai
+	cAutoMJob::handleAutoMoveJobs();
 }
