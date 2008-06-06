@@ -80,8 +80,6 @@ void cAutoMJob::DoAutoMove()
 {
 	if ( vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
-		if ( vehicle->data.speed )
-		{
 			if (n > WAIT_FRAMES)
 			{
 				changeOP();
@@ -92,7 +90,6 @@ void cAutoMJob::DoAutoMove()
 			{
 				n++;
 			}
-		}
 	}
 	else 
 	{
@@ -100,13 +97,12 @@ void cAutoMJob::DoAutoMove()
 		{
 			playerMJob = true;
 		}
-		if ( vehicle->mjob->Suspended )
+		if ( vehicle->mjob->Suspended && vehicle->data.speed )
 		{
 			//TODO: addActiveMoveJob();
-			//just deleting old one for now
 			//game->engine->AddActiveMoveJob(vehicle->mjob);
-			//Client->addMoveJob( vehicle, lastMoveJob->DestX + lastMoveJob->DestY * Client->Map->size);
-			lastMoveJob->release();
+			Client->addMoveJob( vehicle, lastMoveJob->DestX + lastMoveJob->DestY * Client->Map->size);
+			if ( lastMoveJob) lastMoveJob->finished = true;
 			lastMoveJob = vehicle->mjob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
