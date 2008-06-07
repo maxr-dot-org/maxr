@@ -85,7 +85,7 @@ public:
   cHud *hud;             // Das Hud.
   cEngine *engine;       // Die Game-Engine.
   unsigned int FPSstart;        // Zeit für die fps Berechnung.
-  unsigned int Comstart;        // Zeit für die Com-Infos.  
+  unsigned int Comstart;        // Zeit für die Com-Infos.
   bool DebugFPS;         // Frames pro Sekunde anzeigen.
   bool DebugCom;         // Com-Infos anzeigen.
   bool DebugBase;        // Basis infos anzeigen.
@@ -154,9 +154,9 @@ public:
   void AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param );
   void AddFX ( sFX* n );
   void DisplayFX(void);
-  void DisplayFXBottom(void);  
+  void DisplayFXBottom(void);
   void DrawFX(int i);
-  void DrawFXBottom(int i);  
+  void DrawFXBottom(int i);
   void AddDirt(int x,int y,int value,bool big);
   void DrawExitPoint(int x,int y);
   void DeleteDirt(cBuilding *ptr);

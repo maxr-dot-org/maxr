@@ -118,7 +118,7 @@ cNetMessage* cServer::pollNetMessage()
 {
 	if ( NetMessageQueue->iCount <= 0 )
 		return NULL;
-	
+
 	cNetMessage* message;
 	SDL_LockMutex( QueueMutex );
 	message = NetMessageQueue->Items[0];
@@ -179,7 +179,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 		EventHandler->pushEvent ( message->getGameEvent() );
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
-	else 
+	else
 	{
 		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize( true ) );
 	}
@@ -314,7 +314,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( PosX < 0 || PosX > Map->size ) break;
 			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
 			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
-			
+
 			//handle message
 			building->ServerStartWork();
 			break;
@@ -329,7 +329,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( PosX < 0 || PosX > Map->size ) break;
 			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
 			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
-			
+
 			//handle message
 			building->ServerStopWork(false);
 			break;
@@ -442,7 +442,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( targetVehicle == NULL ) break;
 				targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
 			}
-			
+
 			//check if attack is possible
 			//TODO: allow attacking empty terains
 			//TODO: implement deleting of cAttackJobs
@@ -454,9 +454,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			else
 			{
 				if ( !attackingBuilding->CanAttackObject( targetOffset ) ) break;
-				AJobs->Add( new cServerAttackJob( attackingBuilding, targetOffset )); 
+				AJobs->Add( new cServerAttackJob( attackingBuilding, targetOffset ));
 			}
-			
+
 		}
 		break;
 	case GAME_EV_MINELAYERSTATUS:
@@ -982,7 +982,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				}
 			}
 			if ( Building->data.can_attack && bChangeTurn ) Building->RefreshData();
-			
+
 			for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
 			{
 				sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
@@ -1068,7 +1068,7 @@ void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoi
 	sReport *Report;
 	string sTmp;
 	int iCount = 0;
-	
+
 	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
 	while ( Player->ReportBuildings->iCount )
 	{

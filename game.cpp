@@ -88,7 +88,7 @@ cGame::cGame ( cMap *map )
 	AlienTech=false;
 	HotSeat=false;
 	End=false;
-	
+
 	//reload info part of HUD since a prior game might have left data/gfx on it
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX((char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
@@ -365,7 +365,7 @@ void cGame::Run ( void )
 				             spy+hud->Zoom/2,
 				             SelectedBuilding->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			
+
 			if ( hud->Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
 			{
 				SelectedBuilding->DrawMunBar();
@@ -423,7 +423,7 @@ void cGame::Run ( void )
 			font->showText(550,DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
-	
+
 		if ( DebugWache && fDrawMap )
 		{
 			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir->iCount), LATIN_SMALL_WHITE);
@@ -431,7 +431,7 @@ void cGame::Run ( void )
 			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround->iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
-		
+
 		if ( DebugFX && fDrawMap )
 		{
 			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList->iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
@@ -474,11 +474,11 @@ void cGame::Run ( void )
 		// Ggf die Chateingabe anzeigen:
 		if ( ChatInput&&fDrawMap )
 		{
-			string OutTxt = ">"; 
+			string OutTxt = ">";
 			OutTxt += InputStr;
 			if ( Frame%2 )
 			{
-							
+
 			}
 			else
 			{
@@ -635,7 +635,7 @@ int cGame::CheckUser ( void )
 	}
 	else
 	{
-	
+
 		//TODO: read keystates more sensitive - e.g. take care of ALT and STRG modifiers
 		//TODO: add more keys:
 		/*
@@ -665,9 +665,9 @@ int cGame::CheckUser ( void )
 		/*
 		mousewheel UP zoom out
 		mousewheel DOWN zoom in
-		
+
 		*/
-	
+
 		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
 		{
 			game->DrawMap ( false );
@@ -1461,7 +1461,7 @@ void cGame::DrawMap ( bool pure )
 						//sprintf ( dbstr,"m %d/%d %+d",sb->Metal,sb->MaxMetal,sb->MetalProd-sb->MetalNeed );
 						//fonts->OutTextSmall ( dbstr,dest.x+1,dest.y+1+8,ClWhite,buffer );
 						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
-						
+
 						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
 						font->showText(dest.x+1,dest.y+1+16, sTmp, LATIN_SMALL_WHITE);
 
@@ -1479,7 +1479,7 @@ void cGame::DrawMap ( bool pure )
 	dest.y=18-OffY+zoom*startY;
 	scr.x=0;scr.y=0;
 	scr.h=scr.w=zoom;
-	
+
 	for ( y=startY;y<=endY;y++ )
 	{
 		dest.x=180-OffX+zoom*startX;
@@ -1753,7 +1753,7 @@ bool cGame::DoCommand ( char *cmd )
 	if ( strcmp ( cmd,"hide log" ) ==0 ) {ShowLog=false;return true;}
 
 	if ( strncmp ( cmd,"color ",6 ) ==0 ) {int cl=0;sscanf ( cmd,"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
-	if ( strcmp ( cmd,"fog off" ) ==0 ) 
+	if ( strcmp ( cmd,"fog off" ) ==0 )
 	{
 		memset ( ActivePlayer->ScanMap,1,map->size*map->size );
 		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
@@ -1761,7 +1761,7 @@ bool cGame::DoCommand ( char *cmd )
 		return true;
 	}
 
-	if ( strcmp ( cmd,"survey" ) ==0 ) 
+	if ( strcmp ( cmd,"survey" ) ==0 )
 	{
 		memset ( ActivePlayer->ResourceMap,1,map->size*map->size );
 		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
@@ -1776,7 +1776,7 @@ bool cGame::DoCommand ( char *cmd )
 		PlayerCheat+=" \"Credits\"";
 		return true;
 	}
-	if ( strncmp ( cmd,"kill ",5 ) ==0 ) 
+	if ( strncmp ( cmd,"kill ",5 ) ==0 )
 	{
 		int x,y;
 		sscanf ( cmd,"kill %d,%d",&x,&y );
@@ -1786,12 +1786,12 @@ bool cGame::DoCommand ( char *cmd )
 		PlayerCheat+=" \"Kill\"";
 		return true;
 	}
-	if ( strcmp ( cmd,"god off" ) ==0 ) 
+	if ( strcmp ( cmd,"god off" ) ==0 )
 	{
 		int i;
-		for ( i=0;i<map->size*map->size;i++ ) 
+		for ( i=0;i<map->size*map->size;i++ )
 		{
-			if ( map->GO[i].plane ) 
+			if ( map->GO[i].plane )
 			{
 				engine->DestroyObject ( i,true );
 			}
@@ -1809,7 +1809,7 @@ bool cGame::DoCommand ( char *cmd )
 	{
 		PlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		PlayerCheat+=" \"Load\"";
-		
+
 		if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammo=SelectedVehicle->data.max_ammo;SelectedVehicle->ShowDetails();}
 		else if ( SelectedBuilding )
 		{
@@ -1876,9 +1876,9 @@ void cGame::AddFX ( sFX* n )
 		//invalid effect
 		//rocketInfo is missing
 		delete n;
-		return; 
+		return;
 	}
-	
+
 	if ( (n->typ != fxRocket && n->typ != fxTorpedo ) && n->rocketInfo != NULL )
 	{
 		//invalid effect
@@ -2715,7 +2715,7 @@ void MouseMoveCallback ( bool force )
 	static int lx=-1,ly=-1;
 	SDL_Rect scr,dest;
 	sGameObjects *GO;
-	
+
 	int x,y;
 	mouse->GetKachel ( &x,&y );
 	if ( x==lx&&y==ly&&!force ) return;
@@ -2738,13 +2738,13 @@ void MouseMoveCallback ( bool force )
 		return;
 	}
 	// Die Koordinaten malen:
-	/*array to get map coords in sceme XXX-YYY\0 = 8 characters 
+	/*array to get map coords in sceme XXX-YYY\0 = 8 characters
 	a case where I accept an array since I don't know a better
 	method to format x and y easily with leading 0 -- beko */
-	char str[8]; 
+	char str[8];
 	sprintf ( str, "%0.3d-%0.3d", x, y );
 	font->showTextCentered(265+32, ( SettingsData.iScreenH-21 ) +4, str, LATIN_NORMAL, GraphicsData.gfx_hud);
-	
+
 	if ( !game->ActivePlayer->ScanMap[x+y*game->map->size] )
 	{
 		game->OverObject=NULL;
@@ -3942,7 +3942,7 @@ void cGame::Trace ( void )
 			font->showText(180+5+100,18+5, "air-reserviert", LATIN_SMALL_WHITE);
 		return;
 	}
-	if ( OverObject->reserviert ) 
+	if ( OverObject->reserviert )
 		font->showText(180+5,18+5, "reserviert", LATIN_SMALL_WHITE);
 	if ( OverObject->air_reserviert )
 		font->showText(180+5+100,18+5, "air-reserviert", LATIN_SMALL_WHITE);
@@ -3959,40 +3959,40 @@ void cGame::Trace ( void )
 void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 {
 	string sTmp;
-	
+
 	sTmp = "name: \"" + v->name + "\" owner: \"" + v->owner->name + "\" posX: +" + iToStr ( v->PosX ) + " posY: " + iToStr ( v->PosY ) + " offX: " + iToStr ( v->OffX ) + " offY: " + iToStr ( v->OffY );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
-	
-	sTmp = "dir: " + iToStr ( v->dir ) + " selected: " + iToStr ( v->selected ) + " moving: +" + iToStr ( v->moving ) + " rotating: " + iToStr ( v->rotating ) + " mjob: " + iToStr ((long int) v->mjob ) + " mj_active: " + iToStr ( v->MoveJobActive ) + " menu_active: " + iToStr ( v->MenuActive );	
-	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
-	*y+=8;
-	
-	sTmp = "attack_mode: " + iToStr ( v->AttackMode ) + " attacking: " + iToStr ( v->Attacking ) + " wachpost: +" + iToStr ( v->Wachposten ) + " transfer: " + iToStr ( v->Transfer ) + " ditherx: " + iToStr (v->ditherX ) + " dithery: " + iToStr ( v->ditherY );	
+
+	sTmp = "dir: " + iToStr ( v->dir ) + " selected: " + iToStr ( v->selected ) + " moving: +" + iToStr ( v->moving ) + " rotating: " + iToStr ( v->rotating ) + " mjob: " + iToStr ((long int) v->mjob ) + " mj_active: " + iToStr ( v->MoveJobActive ) + " menu_active: " + iToStr ( v->MenuActive );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "is_building: " + iToStr ( v->IsBuilding ) + " building_typ: " + iToStr ( v->BuildingTyp ) + " build_costs: +" + iToStr ( v->BuildCosts ) + " build_rounds: " + iToStr ( v->BuildRounds ) + " build_round_start: " + iToStr (v->BuildRoundsStart );	
+	sTmp = "attack_mode: " + iToStr ( v->AttackMode ) + " attacking: " + iToStr ( v->Attacking ) + " wachpost: +" + iToStr ( v->Wachposten ) + " transfer: " + iToStr ( v->Transfer ) + " ditherx: " + iToStr (v->ditherX ) + " dithery: " + iToStr ( v->ditherY );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "place_band: " + iToStr ( v->PlaceBand ) + " bandx: " + iToStr ( v->BandX ) + " bandy: +" + iToStr ( v->BandY ) + " build_big_saved_pos: " + iToStr ( v->BuildBigSavedPos ) + " build_path: " + iToStr (v->BuildPath );	
-	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
-	*y+=8;
-	
-	sTmp = "build_override: " + iToStr ( v->BuildOverride ) + " is_clearing: " + iToStr ( v->IsClearing ) + " clearing_rounds: +" + iToStr ( v->ClearingRounds ) + " clear_big: " + iToStr ( v->ClearBig ) + " loaded: " + iToStr (v->Loaded );	
+	sTmp = "is_building: " + iToStr ( v->IsBuilding ) + " building_typ: " + iToStr ( v->BuildingTyp ) + " build_costs: +" + iToStr ( v->BuildCosts ) + " build_rounds: " + iToStr ( v->BuildRounds ) + " build_round_start: " + iToStr (v->BuildRoundsStart );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "commando_rank: " + iToStr ( v->CommandoRank ) + " steal_active: " + iToStr ( v->StealActive ) + " disable_active: +" + iToStr ( v->DisableActive ) + " disabled: " + iToStr ( v->Disabled ) + " detection_override: " + iToStr (v->detection_override );	
+	sTmp = "place_band: " + iToStr ( v->PlaceBand ) + " bandx: " + iToStr ( v->BandX ) + " bandy: +" + iToStr ( v->BandY ) + " build_big_saved_pos: " + iToStr ( v->BuildBigSavedPos ) + " build_path: " + iToStr (v->BuildPath );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "is_locked: " + iToStr ( v->IsLocked ) + " detected: " + iToStr ( v->detected ) + " clear_mines: +" + iToStr ( v->ClearMines ) + " lay_mines: " + iToStr ( v->LayMines ) + " repair_active: " + iToStr (v->RepairActive ) + " muni_active: " + iToStr (v->MuniActive );	
+	sTmp = "build_override: " + iToStr ( v->BuildOverride ) + " is_clearing: " + iToStr ( v->IsClearing ) + " clearing_rounds: +" + iToStr ( v->ClearingRounds ) + " clear_big: " + iToStr ( v->ClearBig ) + " loaded: " + iToStr (v->Loaded );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->iCount:0 ) );	
+	sTmp = "commando_rank: " + iToStr ( v->CommandoRank ) + " steal_active: " + iToStr ( v->StealActive ) + " disable_active: +" + iToStr ( v->DisableActive ) + " disabled: " + iToStr ( v->Disabled ) + " detection_override: " + iToStr (v->detection_override );
+	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
+	*y+=8;
+
+	sTmp = "is_locked: " + iToStr ( v->IsLocked ) + " detected: " + iToStr ( v->detected ) + " clear_mines: +" + iToStr ( v->ClearMines ) + " lay_mines: " + iToStr ( v->LayMines ) + " repair_active: " + iToStr (v->RepairActive ) + " muni_active: " + iToStr (v->MuniActive );
+	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
+	*y+=8;
+
+	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->iCount:0 ) );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4018,23 +4018,23 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (long int)b->base ) + " sub_base: " + iToStr ((long int)b->SubBase );	
+	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (long int)b->base ) + " sub_base: " + iToStr ((long int)b->SubBase );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "attacking: " + iToStr ( b->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( b->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( b->DirtValue ) + " big_dirt: " + iToStr ( b->BigDirt ) + " is_working: " + iToStr (b->IsWorking ) + " transfer: " + iToStr (b->Transfer );	
+	sTmp = "attacking: " + iToStr ( b->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( b->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( b->DirtValue ) + " big_dirt: " + iToStr ( b->BigDirt ) + " is_working: " + iToStr (b->IsWorking ) + " transfer: " + iToStr (b->Transfer );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "metal_prod: " + iToStr ( b->MetalProd ) + " oil_prod: " + iToStr ( b->OilProd ) + " gold_prod: +" + iToStr ( b->GoldProd ) + " max_metal_p: " + iToStr ( b->MaxMetalProd ) + " max_oil_p: " + iToStr (b->MaxOilProd ) + " max_gold_p: " + iToStr (b->MaxGoldProd );	
+	sTmp = "metal_prod: " + iToStr ( b->MetalProd ) + " oil_prod: " + iToStr ( b->OilProd ) + " gold_prod: +" + iToStr ( b->GoldProd ) + " max_metal_p: " + iToStr ( b->MaxMetalProd ) + " max_oil_p: " + iToStr (b->MaxOilProd ) + " max_gold_p: " + iToStr (b->MaxGoldProd );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "is_locked: " + iToStr ( b->IsLocked ) + " disabled: " + iToStr ( b->Disabled ) + " detected: +" + iToStr ( b->detected ) + " activating_vehicle: " + iToStr ( b->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (b->VehicleToActivate );	
+	sTmp = "is_locked: " + iToStr ( b->IsLocked ) + " disabled: " + iToStr ( b->Disabled ) + " detected: +" + iToStr ( b->detected ) + " activating_vehicle: " + iToStr ( b->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (b->VehicleToActivate );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->iCount:0 ));	
+	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->iCount:0 ));
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4050,7 +4050,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 		}
 	}
 
-	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->iCount:0 ));	
+	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->iCount:0 ));
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

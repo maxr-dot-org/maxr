@@ -442,7 +442,7 @@ void cBuilding::GenerateName ( void )
 			if( tmp_name_idx != string::npos )
 			{
 				tmp_name = ( string )name.substr(tmp_name_idx);
-				// prefix			
+				// prefix
 				name = "MK ";
 				name += rome;
 				// name
@@ -465,7 +465,7 @@ void cBuilding::GenerateName ( void )
 			name = "MK ";
 			name += rome;
 			name += " ";
-			name += tmp_name;		
+			name += tmp_name;
 		}
 	}
 }
@@ -1530,7 +1530,7 @@ void cBuilding::ServerStopWork ( bool override )
 		return;
 	}
 
-	
+
 
 	// Energiegeneratoren:
 	if ( data.energy_prod )
@@ -3723,7 +3723,7 @@ void cBuilding::ShowUpgrade ( void )
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rBtnDone = {MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
 	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
@@ -4481,7 +4481,7 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 		{
 			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
-		
+
 		text.y += 32 + 2;
 		dest.y += 32 + 2;
 	}
@@ -6564,7 +6564,7 @@ void cBuilding::ShowBuildMenu ( void )
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
 	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
@@ -7847,7 +7847,7 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 		// Text ausgeben:
 
 		string sTmp = UnitsData.vehicle[ptr->id].data.name;
-		
+
 
 		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{

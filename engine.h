@@ -58,7 +58,7 @@ public:
   void AddVehicle(int posx,int posy,sVehicle *v,cPlayer *p,bool init=false,bool engine_call=false);
   void AddBuilding(int posx,int posy,sBuilding *b,cPlayer *p,bool init=false);
   void ChangeVehicleName(int posx,int posy,string name,bool override,bool plane);
-  void ChangeBuildingName(int posx,int posy,string name,bool override,bool base);  
+  void ChangeBuildingName(int posx,int posy,string name,bool override,bool base);
   cMJobs *AddMoveJob(int ScrOff,int DestOff,bool ClientMove,bool plane,bool suspended=false);
   void AddActiveMoveJob(cMJobs *job);
   void Reservieren(int x,int y,bool plane);

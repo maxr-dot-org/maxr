@@ -146,7 +146,7 @@ cPlayer::~cPlayer ( void )
 		LockList->Delete ( 0 );
 	}
 	delete LockList;
-	
+
 }
 
 // Fügt ein Vehicle in die Listes des Spielser ein:
@@ -1020,7 +1020,7 @@ void cPlayer::DrawLockList ( cHud *hud )
 				             spy+hud->Zoom/2,
 				             elem->b->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			
+
 			if ( hud->Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
 			{
 				elem->b->DrawMunBar();

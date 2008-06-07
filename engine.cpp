@@ -474,7 +474,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 		v->MoveJobActive=false;
 	}
-	
+
 	// Ggf wieder verstecken
 	if ( v->detection_override )
 	{
@@ -518,7 +518,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	{
 		string sTmp = v->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
 		game->AddCoords ( sTmp, v->PosX, v->PosY );
-	
+
 		if ( random ( 2, 0 ) == 0 )
 		{
 			PlayVoice ( VoiceData.VOIDetected1 );
@@ -714,7 +714,7 @@ void cEngine::DestroyObject ( int off,bool air )
 			{
 				game->AddFX ( fxExploSmall,vehicle->PosX*64+32,vehicle->PosY*64+32,0 );
 			}
-			
+
 		}
 		// fahrzeug löschen:
 		if ( air ) map->GO[off].plane=NULL;
@@ -935,7 +935,7 @@ void cEngine::MakeRundenstartReport ( void )
 	string sTmp = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr(game->Runde);
 	//sendChatMessage(sTmp);
 	int anz = 0;
-	
+
 	while ( game->ActivePlayer->ReportBuildings->iCount )
 	{
 		r=game->ActivePlayer->ReportBuildings->Items[0];
@@ -1055,12 +1055,12 @@ void cEngine::Rundenende ( void )
 	// Alle Buildings wieder aufladen:
 	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
-		
+
 		cBuilding *b;
 		cPlayer *p;
 		p=game->PlayerList->Items[i];
 
-		
+
 		b=p->BuildingList;
 		while ( b )
 		{
@@ -1074,7 +1074,7 @@ void cEngine::Rundenende ( void )
 				}
 			}
 			if ( b->data.can_attack&&!game->HotSeat&&!game->PlayRounds ) b->RefreshData();
-			
+
 			b=b->next;
 		}
 	}

@@ -53,7 +53,7 @@ private:
 	static void close();
 
 	/**
-	* Opens the Logfile. 
+	* Opens the Logfile.
 	*
 	* @return true on success
 	*/

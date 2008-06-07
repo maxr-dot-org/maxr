@@ -65,7 +65,7 @@
 #include "tinyxml.h"
 #include "extendedtinyxml.h"
 
-typedef std::map < std::string, std::string > StrStrMap; 
+typedef std::map < std::string, std::string > StrStrMap;
 
 class cLanguage
 {

@@ -25,7 +25,7 @@ void ShowDialog(string text,bool bPurgeHud,string path,int SaveLoad=-1);
 
 //void ShowDialogList(cList *list,int offset);
 
-/** Shows localized Yes/No dialog 
+/** Shows localized Yes/No dialog
  * @param text Text to show on button
  * @return true on Yes<br>false on No
  */
@@ -51,7 +51,7 @@ void showLicence();
  */
 void showPreferences(void);
  /**
- * 
+ *
  */
 void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
 /**
@@ -78,7 +78,7 @@ void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
  * @author beko
  * @param sText Text displayed centered on button
  * @param bPressed clickstatus
- * @param x x position 
+ * @param x x position
  * @param y y position
  * @param *surface SDL_Surface to draw on
  */
@@ -89,7 +89,7 @@ void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *sur
  * @author beko
  * @param sText Text displayed centered on button
  * @param bPressed clickstatus
- * @param x x position 
+ * @param x x position
  * @param y y position
  * @param *surface SDL_Surface to draw on
  */
@@ -100,7 +100,7 @@ void drawButtonBig (std::string sText, bool bPressed, int x, int y, SDL_Surface 
  * @author beko
  * @param sText Text displayed centered on button
  * @param bPressed clickstatus
- * @param x x position 
+ * @param x x position
  * @param y y position
  * @param *surface SDL_Surface to draw on - default is buffer
  */

@@ -34,11 +34,11 @@ class cNetMessage
 	char* data;		//the data of the netMessage
 
 public:
-	
+
 	/** length of the containing data in bytes */
-	int iLength;	
+	int iLength;
 	/** should be set by the send function. Client->Host: message source, Host->Client: message destiantion */
-	int iPlayerNr;	
+	int iPlayerNr;
 	/** the type of the message */
 	int iType;
 
@@ -64,7 +64,7 @@ public:
 	* @author Eiko
 	*/
 	char* serialize( bool bCheckChars = false );
-	
+
 	/** allocates a new SDL_Event containing the serial representation of the netMessage
 	* @author Eiko
 	* @return the SDL_Event
@@ -155,7 +155,7 @@ public:
 	* @author Eiko
 	*/
 	string getHexDump();
-	
+
 	/** gets the position of the next NETMESSAGE_CONTROLCHAR character in the data of the message
 	*@author alzi alias DoctorDeath
 	*@param iStartPos position from which the search should beginn

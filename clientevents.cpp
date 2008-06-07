@@ -23,7 +23,7 @@
 
 void sendChatMessageToServer ( string sMsg )
 {
-	
+
 	cNetMessage* message = new cNetMessage( GAME_EV_CHAT_CLIENT );
 	message->pushString( sMsg );
 	Client->sendNetMessage( message );

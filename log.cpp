@@ -72,7 +72,7 @@ bool cLog::open(int TYPE)
 
 	int blocks; //sanity check - is file readable?
 	char buf[256];
-	
+
 	if(logfile) //can access logfile
 	{
 		blocks=SDL_RWread ( logfile,buf,16,256/16 );
@@ -162,7 +162,7 @@ int cLog::writeMessage ( std::string str )
 		fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
 		bIsRunning = false;
 	}
-	return -1;	
+	return -1;
 }
 
 

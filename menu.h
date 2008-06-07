@@ -158,173 +158,173 @@ void RunMainMenu(void);
 */
 void showUnitPicture(void);
 /**
- * 
- * @param bIAmMain 
+ *
+ * @param bIAmMain
  */
 void prepareMenu(bool bIAmMain=false);
 /**
- * 
- * @param  
+ *
+ * @param
  */
 void ExitMenu(void);
 /**
- * 
- * @param  
+ *
+ * @param
  */
 void RunSPMenu(void);
 /**
- * 
- * @param  
- * @return 
+ *
+ * @param
+ * @return
  */
 string RunPlanetSelect(void);
 /**
- * 
- * @param files 
- * @param offset 
- * @param selected 
+ *
+ * @param files
+ * @param offset
+ * @param selected
  * @param surface Source Surface for proper background drawing
  */
 void ShowPlanets(cList<string> *files,int offset,int selected, SDL_Surface *surface);
 /**
- * 
- * @param init 
- * @return 
+ *
+ * @param init
+ * @return
  */
 sOptions RunOptionsMenu(sOptions *init);
 
 /**
  * @author beko
- * @param  
- * @return 
+ * @param
+ * @return
  */
 sPlayerHS runPlayerSelectionHotSeat(void);
 
 /**
- * 
- * @param  
- * @return 
+ *
+ * @param
+ * @return
  */
 sPlayer runPlayerSelection(void);
 /**
- * 
- * @param str 
- * @param x 
- * @param y 
- * @param checked 
+ *
+ * @param str
+ * @param x
+ * @param y
+ * @param checked
  * @param surface Source Surface for proper background drawing
- * @param center 
+ * @param center
  */
 void placeSelectableText(std::string sText,int x,int y,bool checked, SDL_Surface *surface, bool center=true);
 /**
- * 
- * @param player 
- * @param LandingList 
+ *
+ * @param player
+ * @param LandingList
  */
 void RunHangar(cPlayer *player, cList<sLanding*> *LandingList);
 /**
- * 
- * @param x 
- * @param y 
- * @param map 
+ *
+ * @param x
+ * @param y
+ * @param map
  */
 void SelectLanding(int *x,int *y,cMap *map);
 /**
- * 
- * @param x 
- * @param y 
- * @return 
+ *
+ * @param x
+ * @param y
+ * @return
  */
 int GetKachelBig(int x,int y);
 /**
- * 
- * @param  
+ *
+ * @param
  */
 void RunMPMenu(void);
 /**
- * 
- * @param  
+ *
+ * @param
  */
 void placeSmallButton(std::string sText,int x,int y,bool pressed);
 /**
- * 
- * @param files 
- * @param offset 
- * @param selected 
+ *
+ * @param files
+ * @param offset
+ * @param selected
  */
 void PlaceMenuButton(std::string sText,int x,int y, int darkness, bool pressed);
 /**
- * 
- * @param sText 
- * @param x 
- * @param y 
- * @param pressed 
+ *
+ * @param sText
+ * @param x
+ * @param y
+ * @param pressed
  */
 void PlaceSmallMenuButton(std::string sText,int x,int y,bool pressed);
 /**
- * 
- * @param sf 
- * @return 
+ *
+ * @param sf
+ * @return
  */
 int GetColorNr(SDL_Surface *sf);
 /**
- * 
- * @param  
+ *
+ * @param
  */
 void HeatTheSeat(void);
 
 /**
- * 
- * @param players 
+ *
+ * @param players
  */
 void showPlayerStatesHotSeat(sPlayerHS players);
 
 /**
- * 
- * @param players 
+ *
+ * @param players
  */
 void ShowPlayerStates(sPlayer players);
 /**
- * 
- * @param list 
- * @param selected 
- * @param offset 
+ *
+ * @param list
+ * @param selected
+ * @param offset
  * @param surface Source Surface for proper background drawing
  */
 void ShowLandingList(cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface);
 /**
- * 
- * @param selection 
- * @param images 
- * @param selected 
- * @param offset 
- * @param tank 
- * @param plane 
- * @param ship 
- * @param build 
- * @param tnt 
- * @param kauf 
+ *
+ * @param selection
+ * @param images
+ * @param selected
+ * @param offset
+ * @param tank
+ * @param plane
+ * @param ship
+ * @param build
+ * @param tnt
+ * @param kauf
  */
 void CreateSelectionList(cList<sHUp*> *selection,cList<sHUp*> *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
 /**
- * 
+ *
  * @param bSave Should you can load savegames in this menu?
- * @return 
+ * @return
  */
 int ShowDateiMenu( bool bSave );
 /**
- * 
- * @param files 
- * @param offset 
- * @param selected 
+ *
+ * @param files
+ * @param offset
+ * @param selected
  * @param rDialog SDL_Rect with real Dialog rect depending on screen resolution
  */
 void ShowFiles(cList<string> *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog);
 /**
- * 
- * @param sFileName 
- * @param sTime 
- * @param sSavegameName 
+ *
+ * @param sFileName
+ * @param sTime
+ * @param sSavegameName
  * @param sMode
  */
 void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode );

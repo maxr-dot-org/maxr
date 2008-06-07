@@ -451,7 +451,7 @@ bool cAJobs::MakeImpact ( void )
 			sMessage += " ";
 			if ( destroyed||target->data.hit_points<=0 )
 			{
-				
+
 				sMessage += lngPack.i18n( "Text~Comp~Destroyed");
 				PlayVoice ( VoiceData.VOIDestroyedUs );
 			}

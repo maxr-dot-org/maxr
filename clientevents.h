@@ -82,7 +82,7 @@ void sendWantStopWork( cBuilding* building);
 void sendMoveJob( cMJobs *MJob );
 
 /**
-* sends all nessesary information to identify agressor 
+* sends all nessesary information to identify agressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
 *@param targetOffset the offset, where the player has aimed

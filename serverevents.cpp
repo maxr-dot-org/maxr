@@ -26,7 +26,7 @@
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
 {
 	cNetMessage* message;
-	
+
 	if ( bVehicle ) message = new cNetMessage ( GAME_EV_ADD_VEHICLE );
 	else message = new cNetMessage ( GAME_EV_ADD_BUILDING );
 
@@ -131,7 +131,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->data.max_ammo );
 	message->pushInt16( Vehicle->data.ammo );
 	message->pushInt16( Vehicle->data.costs );
-	
+
 	// Current state of the unit
 	message->pushBool ( Vehicle->Wachposten );
 	message->pushBool ( Vehicle->IsBuilding );
@@ -169,7 +169,7 @@ void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
 	message->pushInt16( Building->data.max_ammo );
 	message->pushInt16( Building->data.ammo );
 	message->pushInt16( Building->data.costs );
-	
+
 	// Current state of the unit
 	message->pushBool ( Building->Wachposten );
 	message->pushBool ( Building->IsWorking );
@@ -207,7 +207,7 @@ void sendDoStartWork( cBuilding* building )
 	for ( int i = 0; i < Server->PlayerList->iCount; i++)
 	{
 		cPlayer* player = Server->PlayerList->Items[i];
-		
+
 		//do not send to players who can't see the building
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
 
@@ -241,7 +241,7 @@ void sendDoStopWork( cBuilding* building )
 	for ( int i = 0; i < Server->PlayerList->iCount; i++)
 	{
 		cPlayer* player = Server->PlayerList->Items[i];
-		
+
 		//do not send to players who can't see the building
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
 

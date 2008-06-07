@@ -41,7 +41,7 @@ bool ShowYesNo ( string text )
 	#define BUTTON_H 29
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	bool ret = false;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
 	SDL_Rect rButtonYes = {rDialog.x+80, rDialog.y+150, BUTTON_W, BUTTON_H};
 	SDL_Rect rButtonNo = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
@@ -143,7 +143,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	#define DIALOGBOX_H 231
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	int value = iDefaultValue;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
 	SDL_Rect rTextBox = {rDialog.x + 30, rDialog.y + 30, 238, 114 };
 	SDL_Rect rTextField = {rDialog.x + 246, rDialog.y + 171, 30, 10 };
 	SDL_Rect rButton = {rDialog.x + 80, rDialog.y + 185,150,29};
@@ -153,7 +153,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	bool Cursor = true;
 	string stmp = iToStr(iDefaultValue);
 	SDL_Surface *SfDialog = NULL;
-	
+
 	if(iMaxValue < 0 || iDefaultValue < 0)
 	{
 		SDL_FreeSurface(SfDialog);
@@ -165,18 +165,18 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 		iDefaultValue = iMaxValue;
 		cLog::write("Got default value bigger than maximum value", cLog::eLOG_TYPE_WARNING); //dev fucked up
 	}
-	
+
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	if (FileExists(GFXOD_DIALOG4))
-	{	
+	{
 		LoadPCXtoSF ( GFXOD_DIALOG6, SfDialog ); //load dialog6.pxc
 	}
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
-	
+
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButton.x, rButton.y, false );
 	font->showTextAsBlock(rTextBox, text);
 	font->showText(rTextField, stmp);
-	
+
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -248,7 +248,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				}
 				stmp = iToStr(value);
 				font->showText(rTextField, stmp);
-				
+
 				SHOW_SCREEN
 			}
 		}
@@ -267,7 +267,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 void ShowOK ( string sText, bool bPurgeHud )
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
 	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 	Uint8 *keystate;
@@ -279,18 +279,18 @@ void ShowOK ( string sText, bool bPurgeHud )
 	SfBackground = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if (FileExists(GFXOD_DIALOG4))
-	{	
+	{
 		LoadPCXtoSF ( GFXOD_DIALOG2, SfDialog ); //load dialog2.pxc
 	}
-	
+
 	SDL_BlitSurface( buffer, &rDialog, SfBackground, NULL); //store background
-	
+
 	mouse->SetCursor ( CHand );
 
 	if ( !bPurgeHud )
 	{
 		SDL_Rect dest;
-		
+
 		dest.x = 180;
 		dest.y = 18;
 		dest.w = dest.h = 448;
@@ -308,7 +308,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 		}
 	}
 
-	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );	
+	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	font->showTextAsBlock(rText, sText);
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
@@ -326,7 +326,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 		// Eingaben holen:
 		EventHandler->HandleEvents();
 		keystate = SDL_GetKeyState( NULL );
-		
+
 		// Die Maus:
 		mouse->GetPos();
 
@@ -347,9 +347,9 @@ void ShowOK ( string sText, bool bPurgeHud )
 			if ( ( b && !lb ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
 			{
 				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, true );	
+				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, true );
 				SHOW_SCREEN
-				SDL_Delay(200);	
+				SDL_Delay(200);
 				mouse->draw ( false, screen );
 				break;
 			}
@@ -364,7 +364,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
-	
+
 	if ( !bPurgeHud )
 	{
 		Client->bFlagDrawMap = true;
@@ -374,12 +374,12 @@ void ShowOK ( string sText, bool bPurgeHud )
 		SDL_BlitSurface( SfBackground, NULL, buffer, &rDialog); //restore background
 		SHOW_SCREEN
 	}
-	
+
 	SDL_FreeSurface(SfDialog);
 	SDL_FreeSurface(SfBackground);
 }
 
-/** shows licence infobox on screen (don't call this within game since I this doesn't care about ongoing engine 
+/** shows licence infobox on screen (don't call this within game since I this doesn't care about ongoing engine
 *@author beko
 */
 void showLicence ()
@@ -404,7 +404,7 @@ void showLicence ()
  	sLicenceIntro1 = "\"M.A.X. Reloaded\"";
 	sLicenceIntro2 = "(C) 2007 by it's authors";
 	sLicence4Intro1 = "AUTHORS:";
- 	
+
 	sLicence1 = "\
 This program is free software; you can redistribute it and/or modify \
 it under the terms of the GNU General Public License as published by \
@@ -420,7 +420,7 @@ You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	//BEGIN CREATING AUTHORS TEXT
-	FILE *fp = NULL; 
+	FILE *fp = NULL;
 	char line[72];
 	stringstream ssLicence4;
 
@@ -430,12 +430,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	{
 		fp = fopen (  "AUTHORS.txt", "r"  );
 	}
-	#else	
+	#else
 	if (FileExists("AUTHORS"))  //others
 	{
 		fp = fopen (  "AUTHORS", "r"  );
 	}
-	#endif	
+	#endif
 	if ( fp != NULL  )
 	{	//read authors from file
 		while(fgets(line, 72, fp)) //snip entrys longer 72
@@ -448,7 +448,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	{
 		ssLicence4 << "Couldn't read AUTHORS"; //missing file - naughty
 	}
-	
+
 	sLicence4 = ssLicence4.str();
 	//END CREATING AUTHORS TEXT
 	//END CREATING LICENCE TEXTS
@@ -458,33 +458,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 300, 231, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	if (FileExists(GFXOD_DIALOG4))
-	{	
+	{
 		LoadPCXtoSF ( GFXOD_DIALOG4, SfDialog ); //load dialog4.pxc
 	}
-	
+
 	//set some rects
 	rDialog.x = screen->w / 2 - SfDialog->w / 2;
 	rDialog.y = screen->h / 2 - SfDialog->h / 2;
-	
-	rDialogOnScreen.x = rDialog.x + 35; 
+
+	rDialogOnScreen.x = rDialog.x + 35;
 	rDialogBoxBlack.x=32;
-	rDialogOnScreen.w = 232; 
+	rDialogOnScreen.w = 232;
 	rDialogBoxBlack.w=SfDialog->w-32;
-	rDialogOnScreen.y = rDialog.y + 30 + 3* font->getFontHeight(); 
+	rDialogOnScreen.y = rDialog.y + 30 + 3* font->getFontHeight();
 	rDialogBoxBlack.y=28;
-	rDialogOnScreen.h = 142; 
+	rDialogOnScreen.h = 142;
 	rDialogBoxBlack.h=SfDialog->h-28;
-	
+
 	rDialogBoxBlackOffset.x = screen->w / 2 - SfDialog->w / 2 + 32;
 	rDialogBoxBlackOffset.y = screen->h / 2 - SfDialog->h / 2 + 28; //w, h not needed since SDL_BlitSurface ignores these for destination rect
-	
+
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 	font->showTextAsBlock(rDialogOnScreen, sLicence1);
-	
+
 	//draw left arrow "up"
 	rArrowUp.x = screen->w / 2 - SfDialog->w / 2 + 241;
 	rArrowUp.y = screen->h / 2 - SfDialog->h / 2 + 187;
@@ -498,7 +498,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	rArrowDown.w = 18;
 	rArrowDown.h = 17;
 	//drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //uncommented since we want Up-Arrow to be active at start
-	
+
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -536,30 +536,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
-				
+
 				switch(index)
 				{
-					case 1 : 
-						index = 0; 
+					case 1 :
+						index = 0;
 						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); //first entry in list needs this to disable arrow
 						font->showTextAsBlock(rDialogOnScreen, sLicence1);
 						break;
-					case 2 : 
-						index = 1; 
+					case 2 :
+						index = 1;
 						PlayFX ( SoundData.SNDHudButton );
 						font->showTextAsBlock(rDialogOnScreen, sLicence2);
 						break;
 					case 3: index = 2;
 						PlayFX ( SoundData.SNDHudButton );
 						font->showTextAsBlock(rDialogOnScreen, sLicence3);
-						break;						
+						break;
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
-						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP); 
+						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP);
 						font->showTextAsBlock(rDialogOnScreen, sLicence1);
 				}
-								
+
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 			}
@@ -571,18 +571,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			{
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
-				
+
 				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
 
 				switch(index)
 				{
-					case 0 : 
+					case 0 :
 						index = 1;
 						PlayFX ( SoundData.SNDHudButton );
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 						font->showTextAsBlock(rDialogOnScreen, sLicence2);
 						break;
-					case 1 : 
+					case 1 :
 						index = 2;
 						PlayFX ( SoundData.SNDHudButton );
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
@@ -594,18 +594,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //last entry in list needs this to disable arrow
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
 						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
-						break;					
+						break;
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
-						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); 
+						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
 						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
 				}
-				
+
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 			}
-		}		
+		}
 
 		lx = x;
 
@@ -626,18 +626,18 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 		case ARROW_TYPE_UP :
 			scr.x = 230;
 			break;
-		case ARROW_TYPE_DOWN : 
+		case ARROW_TYPE_DOWN :
 			scr.x = 249;
 			break;
-		default: 
+		default:
 			cLog::write("Invalid arrow type - can't serve here", cLog::eLOG_TYPE_WARNING);
 			break;
 	}
-	
+
 	if(surface)
 	{
 		//get gfx arrow from menu graphic and blit it to tmp
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,dest ); 
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,dest );
 	}
 	else
 	{
@@ -648,7 +648,7 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 // showPreferences ////////////////////////////////////////////////////////////
 // Zeigt das Präferenzenfenster an:
 void showPreferences ( void )
-{	
+{
 	bool OldMusicMute, OldSoundMute, OldVoiceMute, OldbAutoSave, OldbAnimations, OldbShadows, OldbAlphaEffects, OldbDamageEffects, OldbDamageEffectsVehicles, OldbMakeTracks;
 	bool FertigPressed = false, AbbruchPressed = false, Input = false;
 	int OldiScrollSpeed, OldMusicVol, OldSoundVol, OldVoiceVol;
@@ -660,7 +660,7 @@ void showPreferences ( void )
 	Uint8 *keystate;
 	bool cursor = true;
 	SDL_Surface *SfDialog;
-	
+
 	//position x of all sliderbars
 	#define BAR_X 140 + rDialog.x
 	#define BAR_Y 81 + rDialog.y
@@ -700,7 +700,7 @@ void showPreferences ( void )
 
 	if(FileExists(GFXOD_DIALOG5))
 	{
-		LoadPCXtoSF (GFXOD_DIALOG5, SfDialog );	
+		LoadPCXtoSF (GFXOD_DIALOG5, SfDialog );
 		//blit black titlebar behind textfield for playername
 		scr.x=108;
 		scr.y=12;
@@ -708,27 +708,27 @@ void showPreferences ( void )
 		dest.h=scr.h=18;
 		dest.x=108;
 		dest.y=154;
-		SDL_BlitSurface ( SfDialog,&scr,SfDialog,&dest ); 
+		SDL_BlitSurface ( SfDialog,&scr,SfDialog,&dest );
 
 	}
-	
-	
-	
+
+
+
 	 //blit dialog to buffer
 	dest.x = rDialog.x;
 	dest.y = rDialog.y;
 	dest.w = SfDialog->w;
 	dest.h = SfDialog->h;
-	
-	
+
+
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer); 
-	drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer); 
-	
-	rFont.x = rDialog.x + rDialog.w/2; 
+	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer);
+	drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer);
+
+	rFont.x = rDialog.x + rDialog.w/2;
 	rFont.y = rDialog.y + 15;
 	font->showTextCentered(rFont.x, rFont.y, lngPack.i18n( "Text~Settings~Preferences" ));
-	
+
 
 	//BEGIN BLOCK SOUND
 	//Headline
@@ -757,7 +757,7 @@ void showPreferences ( void )
 
 	drawSlider (SfDialog, rSldEffect.x,rSldEffect.y,SettingsData.SoundVol*2, buffer );
 	drawCheckbox ( 210+rDialog.x,93+rDialog.y,SettingsData.SoundMute,buffer );
-	rFont.x = rDialog.x + 235; 
+	rFont.x = rDialog.x + 235;
 	rFont.w = 140;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 
@@ -771,9 +771,9 @@ void showPreferences ( void )
 	rFont.x =  rDialog.x + 235; 	rFont.w = 140;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Disable" ));
 	//END BLOCK SOUND
-	//BEGIN BLOCK PLAYERNAME	
-	
-	
+	//BEGIN BLOCK PLAYERNAME
+
+
 	rFont.x = rDialog.x + 25; 	rFont.w = 100;
 	rFont.y = 158+rDialog.y;
 	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
@@ -786,42 +786,42 @@ void showPreferences ( void )
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Animation" ));
 
 	drawCheckbox ( 25+rDialog.x,193+rDialog.y,SettingsData.bAnimations,buffer );
-	
+
 	rFont.x = rDialog.x + 50; rFont.w = 100;
 	rFont.y = rDialog.y + 217;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Shadows" ));
 	drawCheckbox ( 25+rDialog.x,213+rDialog.y,SettingsData.bShadows,buffer );
-	
+
 	rFont.x = rDialog.x + 50; rFont.w = 100;
 	rFont.y = rDialog.y + 237;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Alphaeffects" ));
 	drawCheckbox ( 25+rDialog.x,233+rDialog.y,SettingsData.bAlphaEffects,buffer );
-	
+
 	rFont.x = rDialog.x + 25+210; rFont.w = 100;
 	rFont.y = rDialog.y + 197;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamage" ));
 	drawCheckbox ( 210+rDialog.x,193+rDialog.y,SettingsData.bDamageEffects,buffer );
-	
+
 	rFont.x = rDialog.x + 25+210; rFont.w = 100;
 	rFont.y = rDialog.y + 217;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ));
 	drawCheckbox ( 210+rDialog.x,213+rDialog.y,SettingsData.bDamageEffectsVehicles,buffer );
-	
+
 	rFont.x = rDialog.x + 25+210; rFont.w = 100;
 	rFont.y = rDialog.y + 237;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Tracks" ));
 	drawCheckbox ( 210+rDialog.x,233+rDialog.y,SettingsData.bMakeTracks,buffer );
-	
+
 	rFont.x = rDialog.x + 25; 	rFont.w = 100;
 	rFont.y = rDialog.y+232+25;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Scrollspeed" ));
 	drawSlider (SfDialog, rSldSpeed.x,rSldSpeed.y,SettingsData.iScrollSpeed*5, buffer );
-	
+
 	rFont.x = rDialog.x + 50; rFont.w = 100;
 	rFont.y = rDialog.y + 294;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Autosave" ));
 	drawCheckbox ( 25+rDialog.x,290+rDialog.y,SettingsData.bAutoSave,buffer );
-	
+
 	SHOW_SCREEN
 
 	mouse->GetBack ( buffer );
@@ -864,7 +864,7 @@ void showPreferences ( void )
 					{
 						stmp = InputStr; stmp += "_";
 						font->showText(122+rDialog.x,158+rDialog.y, stmp);
-						
+
 					}
 					else
 					{
@@ -1015,7 +1015,7 @@ void showPreferences ( void )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -1048,11 +1048,11 @@ void showPreferences ( void )
 		}
 		else if ( FertigPressed )
 		{
-			drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
-			
+
 		}
 		// Abbruch-Button:
 		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
@@ -1060,7 +1060,7 @@ void showPreferences ( void )
 			if ( b&&!AbbruchPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer); 
+				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer);
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				AbbruchPressed=true;
@@ -1088,7 +1088,7 @@ void showPreferences ( void )
 		}
 		else if ( AbbruchPressed )
 		{
-			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer); 
+			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			AbbruchPressed=false;
@@ -1118,7 +1118,7 @@ bool showSelfdestruction()
 	#define DSTR_H 56
 
 	int GlasHeight=DSTR_H;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_W / 2, SettingsData.iScreenH / 2 - DLG_H / 2, DLG_W, DLG_H }; 
+	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_W / 2, SettingsData.iScreenH / 2 - DLG_H / 2, DLG_W, DLG_H };
 	SDL_Rect rDialogSrc = { 0,0,DLG_W, DLG_H};
 	SDL_Rect rButtonHot = {rDialog.x+89, rDialog.y+14, BTN_W, BTN_H};
 	SDL_Rect rButtonCancel = {rDialog.x+89, rDialog.y+46, BTN_W, BTN_H};
@@ -1265,9 +1265,9 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	SDL_Rect rDialog = { screen->w / 2 - sfDialog->w / 2, screen->h / 2 - sfDialog->h / 2, sfDialog->w, sfDialog->h };
 	#define SLIDER_W 14
 	#define SLIDER_H 17
-	
+
 	//BEGIN REDRAW DIALOG UNDER SLIDER
-	/*Offset to read clean background from +/- 7 to 
+	/*Offset to read clean background from +/- 7 to
 	*overdraw slider because slider is 14 fat and can
 	*show half over the ends of the sliderbar*/
 	scr.x = offx - rDialog.x - SLIDER_W / 2; //scr.x & scr.y = topleft
@@ -1275,19 +1275,19 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	scr.w = 57 + SLIDER_W;
 	scr.h = SLIDER_H;
 	dest.x = offx - 6;
-	dest.y = offy - 7;	
+	dest.y = offy - 7;
 	dest.w = scr.w + SLIDER_W;
 	dest.h = SLIDER_H;
 	SDL_BlitSurface ( sfDialog,&scr,surface,&dest );
 	//END REDRAW DIALOG UNDER SLIDER
-	
+
 	//BEGIN DRAW SLIDERBAR
 	scr.x=334; //get sliderbar from hud_stuff.pxc
 	scr.y=82;
 	scr.w=58;
-	scr.h=3;	
+	scr.h=3;
 	dest.y += 7;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); 
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
 	//END DRAW SLIDERBAR
 
 	//BEGIN DRAW SLIDER
@@ -1295,7 +1295,7 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	scr.y=46;
 	scr.w=SLIDER_W;
 	scr.h=SLIDER_H;
-	
+
 	dest.w=scr.w;
 	dest.h=scr.h;
 	dest.x=offx-6+ ( int ) ( ( 57/255.0 ) *value );

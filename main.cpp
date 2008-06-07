@@ -104,7 +104,7 @@ int main ( int argc, char *argv[] )
 
 	SDL_WaitThread ( DataThread, NULL );
 //	SDL_Delay ( 3000 ); //debug only
-	
+
 	//screen = SDL_SetVideoMode(640,480,8,SDL_FULLSCREEN);
 
 	showGameWindow(); //start game-window
@@ -113,10 +113,10 @@ int main ( int argc, char *argv[] )
 	mouse = new cMouse;
 
 	EventHandler = new cEventHandling;
-	
+
 	// Das Menü starten:
 	RunMainMenu();
-	
+
 	Quit();
 	return 0;
 }
@@ -137,7 +137,7 @@ int runEventChecker( void *)
 	#define REPEAT_DELAY 200
 	#define REPEAT_INTERVAL 20
 	#define KEYPRESS_TERMINATION if ( iLastPressed != SYM ) iTimeSinceLastPress = SDL_GetTicks() + REPEAT_DELAY; else iTimeSinceLastPress = SDL_GetTicks() + REPEAT_INTERVAL; iLastPressed = SYM;
-	
+
 	#define SYM event.key.keysym.sym
 	#define MOD event.key.keysym.mod
 	#define ETYPE event.type
@@ -152,7 +152,7 @@ int runEventChecker( void *)
 			// for this reason the next
 			//exit=true;
 			break;
-		
+
 		case SDL_KEYDOWN:
 			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
 			{
@@ -229,7 +229,7 @@ void showSplash()
 		}
 
 	}
-	
+
 	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
@@ -239,11 +239,11 @@ void showSplash()
 
 void showGameWindow()
 {
-	SDL_FreeSurface(buffer); //delete splash image 
+	SDL_FreeSurface(buffer); //delete splash image
 	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
-	
+
 	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
-	
+
 	if ( screen == NULL )
 	{
 		cLog::write("Couldn't set video mode w: " + iToStr( buffer->w ) +  " h: " + iToStr ( buffer->h ) + " bpp: " + iToStr ( buffer->format->BitsPerPixel ) + (SettingsData.bWindowMode?" window":" fullscreen"), cLog::eLOG_TYPE_ERROR);
@@ -268,7 +268,7 @@ int initSDL()
 	}
 	else
 	{
-		cLog::write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO ); 
+		cLog::write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO );
 		cLog::mark();
 		//made it - enough to start game
 		return 0;

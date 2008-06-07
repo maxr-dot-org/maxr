@@ -94,7 +94,7 @@ void cNetMessage::pushChar( char c)
 
 char cNetMessage::popChar()
 {
-	if ( iLength <= 5 ) 
+	if ( iLength <= 5 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -114,7 +114,7 @@ void cNetMessage::pushInt16( Sint16 i )
 
 Sint16 cNetMessage::popInt16()
 {
-	if ( iLength <= 6 ) 
+	if ( iLength <= 6 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -134,7 +134,7 @@ void cNetMessage::pushInt32( Sint32 i )
 
 Sint32 cNetMessage::popInt32()
 {
-	if ( iLength <= 8 ) 
+	if ( iLength <= 8 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -146,7 +146,7 @@ Sint32 cNetMessage::popInt32()
 void cNetMessage::pushString( string s )
 {
 	int stringLength = (int) s.length() + 2;
-	
+
 	//first write a '\0'
 	//in the netMessage both begin and end of the string are marked with a '\0'
 	//so we are able to pop it correctly
@@ -175,7 +175,7 @@ string cNetMessage::popString()
 	iLength -= 2;
 	while ( data[iLength] != '\0' )
 	{
-		if ( iLength <= 5 ) 
+		if ( iLength <= 5 )
 		{
 			cLog::write( "Pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NET_ERROR );
 			return string("");
@@ -189,7 +189,7 @@ string cNetMessage::popString()
 
 void cNetMessage::pushBool( bool b )
 {
-	
+
 	data[iLength] = b;
 	iLength++;
 
@@ -198,7 +198,7 @@ void cNetMessage::pushBool( bool b )
 
 bool cNetMessage::popBool()
 {
-	if ( iLength <= 5 ) 
+	if ( iLength <= 5 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -227,12 +227,12 @@ void cNetMessage::pushFloat( float f )
 
     // check sign and begin normalization
     if (f < 0)
-	{ 
+	{
 		sign = 1;
 		fnorm = -f;
 	}
     else
-	{ 
+	{
 		sign = 0;
 		fnorm = f;
 	}

@@ -309,13 +309,13 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 			return;
 		}
 	}
-	
+
 	int unitID = message->popInt32();
 	if ( unitID != 0 )	//agressor in sight?
 	{
 		vehicle = Client->getVehicleFromID( unitID );
 		building = Client->getBuildingFromID( unitID );
-		if ( !vehicle && !building ) 
+		if ( !vehicle && !building )
 		{
 			bMuzzlePlayed = true;
 			return; //we are out of sync!!!

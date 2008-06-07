@@ -238,7 +238,7 @@ void cTCP::HandleNetworkThread()
 				TCPsocket socket = SDLNet_TCP_Accept ( Sockets[i]->socket );
 				unlockTCP();
 
-				if ( socket != NULL ) 
+				if ( socket != NULL )
 				{
 					int iNum;
 					if ( ( iNum = getFreeSocket() ) != -1 )

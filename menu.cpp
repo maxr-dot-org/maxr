@@ -36,7 +36,7 @@
 #define DIALOG_W 640
 #define DIALOG_H 480
 #define DIALOG_X (SettingsData.iScreenW / 2 - DIALOG_W / 2)
-#define DIALOG_Y (SettingsData.iScreenH / 2 - DIALOG_H / 2)	
+#define DIALOG_Y (SettingsData.iScreenH / 2 - DIALOG_H / 2)
 #define TITLE_X DIALOG_X+320
 #define TITLE_Y DIALOG_Y+147
 #define INFO_IMG_X DIALOG_X+16
@@ -59,7 +59,7 @@
 #define BTN_5_Y BTN_1_Y+BTN_SPACE*4
 #define BTN_6_X BTN_1_X
 #define BTN_6_Y BTN_1_Y+BTN_SPACE*5
-	
+
 /** int for showUnitPicture to prevent same graphic shown twice on click*/
 static int s_iLastUnitShown = 0;
 
@@ -69,25 +69,25 @@ void prepareMenu ( bool bIAmMain )
 	//BEGIN MENU REDRAW
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_MAIN,sfTmp );
-	
+
  	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
 	SDL_FillRect(buffer, NULL, 0x0000);
-	
+
 	//blit sfTmp to buffer and delete it
 	SDL_BlitSurface (sfTmp, NULL, buffer, &dest);
-	SDL_FreeSurface(sfTmp);	
+	SDL_FreeSurface(sfTmp);
 
 	//draw infostring with maxversion at the bottom
 	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.i18n ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
 	//END MENU REDRAW
-		
+
 	//we came back from a submenu so we have to redraw main menu
 	if(bIAmMain)
 	{
@@ -103,9 +103,9 @@ void prepareMenu ( bool bIAmMain )
 
 	//display random unit
 	showUnitPicture();
-	
+
 	//show mouse
-	mouse->Show();	
+	mouse->Show();
 	mouse->SetCursor ( CHand );
 }
 
@@ -240,7 +240,7 @@ void RunMainMenu ( void )
 	// start main musicfile
 	PlayMusic ( ( char * ) ( SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg" ).c_str() );
 
-	prepareMenu(true);	
+	prepareMenu(true);
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -416,7 +416,7 @@ void RunMainMenu ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		
+
 		// Beenden:
 		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT )
 		{
@@ -513,7 +513,7 @@ void RunMPMenu ( void )
 					drawMenuButton ( TCPIPHOST,false,BTN_1_X,BTN_1_Y );
 					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
 				#else
-					//nothing to do here	
+					//nothing to do here
 				#endif
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -546,7 +546,7 @@ void RunMPMenu ( void )
 					drawMenuButton ( TCPIPCLIENT,false,BTN_2_X,BTN_2_Y );
 					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
 				#else
-					//nothing to do here	
+					//nothing to do here
 				#endif
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
@@ -783,7 +783,7 @@ void RunSPMenu ( void )
 					}
 
 					players = runPlayerSelection();
-												
+
 					bool bHavePlayer = false;
 					for ( int i = 0; i < 4; i++ ) //check for players
 					{
@@ -835,7 +835,7 @@ void RunSPMenu ( void )
 					RunHangar ( Player, LandingList );
 					SelectLanding ( &iLandX, &iLandY, Map );
 
-					Server->makeLanding ( iLandX, iLandY, ServerPlayerList->Items[0], LandingList, options.FixedBridgeHead ); 
+					Server->makeLanding ( iLandX, iLandY, ServerPlayerList->Items[0], LandingList, options.FixedBridgeHead );
 
 					while ( LandingList->iCount )
 					{
@@ -867,7 +867,7 @@ void RunSPMenu ( void )
 					delete Server; Server = NULL;
 					delete Map;
 					delete ServerMap;
-					
+
 					delete ClientPlayerList;
 					delete ServerPlayerList;
 					break;
@@ -1007,17 +1007,17 @@ sOptions RunOptionsMenu ( sOptions *init )
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_OPTIONS,sfTmp );
-	
+
  	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
 	SDL_FillRect(buffer, NULL, 0x0000);
-	
+
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 	font->showTextCentered(320, 11, GAMEOPTIONS);
@@ -1504,17 +1504,17 @@ string RunPlanetSelect ( void )
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_PLANET_SELECT,sfTmp );
-	
+
  	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
 	SDL_FillRect(buffer, NULL, 0x0000);
-	
+
 	//blit sfTmp to buffer
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
@@ -1573,7 +1573,7 @@ string RunPlanetSelect ( void )
 				{
 					name.replace ( name.length()-3,3,"map" );
 				}
-				
+
 				SDL_FreeSurface(sfTmp);
 				delete files;
 				return name;
@@ -1631,7 +1631,7 @@ string RunPlanetSelect ( void )
 				}
 			}
 		}
-		
+
 		// Zurück:
 		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
 		{
@@ -1778,7 +1778,7 @@ void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *su
 				sMap.insert ( sMap.length(),")" );
 			}
 			font->showTextCentered(scr.x+77-21,scr.y-42, sMap);
-			
+
 			scr.x+=158;
 			if ( i==3 )
 			{
@@ -1851,7 +1851,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
 	SDL_Rect rBtnOk = { DIALOG_X + 390,DIALOG_Y + 440, 200, 29 };
 	SDL_Surface *sfTmp = NULL;
-			
+
 	//BEGIN INIT DEFAULT PLAYERS
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -1864,12 +1864,12 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	players.name[0] = SettingsData.sPlayerName;
 	players.what[1] = PLAYER_H;
 	//END INIT DEFAULT PLAYERS
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_PLAYERHS_SELECT,sfTmp );
-	
+
  	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
@@ -1888,7 +1888,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, rBtnCancel.x, rBtnCancel.y );
 
 	showPlayerStatesHotSeat ( players );
-	
+
 	mouse->Show();
 	mouse->SetCursor ( CHand );
 	SHOW_SCREEN
@@ -1918,12 +1918,12 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 		{
 			int x = FIELD1;
 			int y = DIALOG_Y + 66;
-	
+
 			for ( int i = 0; i < 24; i++ ) //playermatrix 3 * 8 fields
 			{
 				if ( mouse->x >= x && mouse->x < x + 35 && mouse->y >= y && mouse->y < y + 35 )
 				{
-					PlayFX ( SoundData.SNDObjectMenu );					
+					PlayFX ( SoundData.SNDObjectMenu );
 					if ( i == 0 ) players.what[0] = PLAYER_H;
 					if ( i == 1 ) players.what[0] = PLAYER_AI;
 					if ( i == 2 ) players.what[0] = PLAYER_N;
@@ -1939,7 +1939,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 					if ( i == 9 ) players.what[3] = PLAYER_H;
 					if ( i == 10 ) players.what[3] = PLAYER_AI;
 					if ( i == 11 ) players.what[3] = PLAYER_N;
-					
+
 					if ( i == 12 ) players.what[4] = PLAYER_H;
 					if ( i == 13 ) players.what[4] = PLAYER_AI;
 					if ( i == 14 ) players.what[4] = PLAYER_N;
@@ -1959,7 +1959,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
-				
+
 				if(x == FIELD1)  //go through columns and/or go to next row on end
 					x = FIELD2;
 				else if(x == FIELD2)
@@ -1971,7 +1971,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 				}
 			}
 		}
-		
+
 		// Ok:
 		if ( mouse->x >= rBtnOk.x && mouse->x < rBtnOk.x + rBtnOk.w && mouse->y >= rBtnOk.y && mouse->y < rBtnOk.y + rBtnOk.h  )
 		{
@@ -1993,10 +1993,10 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 					{
 						players.what[i] = PLAYER_H;
 						bAiFound = true;
-						
+
 					}
 					showPlayerStatesHotSeat( players );
-					
+
 					if(players.what[i] == PLAYER_H)
 					{
 						iPlayers++;
@@ -2023,7 +2023,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		
+
 		// Zurück:
 		if ( mouse->x >= rBtnCancel.x && mouse->x < rBtnCancel.x + rBtnCancel.w && mouse->y >= rBtnCancel.y && mouse->y < rBtnCancel.y + rBtnCancel.h )
 		{
@@ -2051,13 +2051,13 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		
+
 		lx=mouse->x;
 		ly=mouse->y;
 		lb=b;
 		SDL_Delay ( 1 );
-	}	
-	
+	}
+
 	SDL_FreeSurface(sfTmp);
 	return players;
 }
@@ -2176,7 +2176,7 @@ sPlayer runPlayerSelection ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		
+
 		// Zurück:
 		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
 		{
@@ -2204,7 +2204,7 @@ sPlayer runPlayerSelection ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		
+
 		lx=mouse->x;
 		ly=mouse->y;
 		lb=b;
@@ -2226,7 +2226,7 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 	dest.y = DIALOG_Y+66;
 	for ( int i = 0; i< 8;i++ )
 	{
-		
+
 		dest.y = norm1.y = norm2.y = DIALOG_Y+66 + 45*i;
 		font->showText(DIALOG_X + 45, dest.y + 10 + i, players.name[i]); //FIXME: adjust backgroundgraphicbars for names proper
 		// Nichts
@@ -2322,10 +2322,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	int LandingOffset=0,LandingSelected=0;
 	SDL_Rect scr;
 	cList<sHUp*> *list,*selection;
-	
+
 	#define BUTTON_W 77
-	#define BUTTON_H 23	
-	
+	#define BUTTON_H 23
+
 	SDL_Rect rBtnDone = {447, 452, BUTTON_W, BUTTON_H};
 	SDL_Rect rBtnBuy = {561, 388, BUTTON_W, BUTTON_H};
 	SDL_Rect rBtnDel = {388, 240, BUTTON_W, BUTTON_H};
@@ -2333,12 +2333,12 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
-	
+
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
 	sfTmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, DIALOG_W, DIALOG_H, SettingsData.iColourDepth,0,0,0,0 );
 	LoadPCXtoSF ( GFXOD_HANGAR,sfTmp );
-	
+
  	//some menus don't support bigger resolutions yet and to
  	// prevent old graphic garbage in the background we refill
  	// with black -- beko
@@ -2350,7 +2350,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	drawButton(lngPack.i18n( "Text~Button~Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
 	drawButton(lngPack.i18n( "Text~Button~Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
 	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.i18n( "Text~Comp~Description" ));
-	
+
 	//blit sfTmp to buffer
 
 
@@ -2767,7 +2767,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			player->Credits-=n->costs;
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-			
+
 			drawButton(lngPack.i18n( "Text~Button~Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -3089,7 +3089,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	delete list;
 	delete selection;
 	SDL_FreeSurface(sfTmp);
-	
+
 }
 
 // Macht die Upgradeschieber für Vehicle:
@@ -3215,7 +3215,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 			i++;
 		}
 	}
-	
+
 	if ( d->can_load==TRANS_METAL||d->can_load==TRANS_OIL||d->can_load==TRANS_GOLD )
 	{
 		i++;
@@ -3897,9 +3897,9 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 		}
 		// Text ausgeben:
-	
+
 		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > text.w )
-		{				
+		{
 			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 			font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
 			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
@@ -3909,13 +3909,13 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 			font->showText ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
 		}
 
-		
-		
+
+
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
 			int value = ptr->cargo;
 			int maxval = UnitsData.vehicle[ptr->id].data.max_cargo;
-			
+
 			if(value == 0)
 			{
 				font->showText(text.x,text.y+10, "(empty)", LATIN_SMALL_WHITE);
@@ -3932,8 +3932,8 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 			{
 				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_GREEN);
 			}
-			
-			
+
+
 		}
 		text.y+=32+10;
 		dest.y+=32+10;
@@ -4143,7 +4143,7 @@ void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschre
 			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
 
-		
+
 		text.y+=32+2;
 		dest.y+=32+2;
 	}
@@ -4273,13 +4273,13 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 	ChatStr = "";
 	font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
 	font->showText(20,260, sIP);
-	
+
 	font->showText(228,245, lngPack.i18n ( "Text~Title~Port" ));
 	font->showText(228,260, iToStr( iPort ) );
-	
+
 	font->showText(352, 245, lngPack.i18n ( "Text~Title~Player_Name" ));
 	font->showText(352,260, ActualPlayer->name);
-	
+
 	font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 	dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y=  0;
 	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
@@ -4551,7 +4551,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
 					displayGameSettings();
 					displayPlayerList();
-					
+
 					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
 					font->showText( 20, 260, sIP);
@@ -4560,7 +4560,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
 					font->showText( 352, 260, ActualPlayer->name );
 					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
-					
+
 					dest.x = 505;
 					dest.y = 260;
 					scr.w = dest.w = 83;
@@ -4613,7 +4613,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
 					displayGameSettings();
 					displayPlayerList();
-					
+
 					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
 					font->showText( 20, 260, sIP);
@@ -4622,7 +4622,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
 					font->showText( 352, 260, ActualPlayer->name );
 					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
-					
+
 					dest.x = 505;
 					dest.y = 260;
 					scr.w = dest.w = 83;
@@ -4780,7 +4780,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					scr.w = 430;
 					scr.h = 16;
 					SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-					
+
 					font->showText(20, 423, ChatStr);
 				}
 
@@ -4824,34 +4824,34 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 			}
 
 			bShowCursor = true;
-			
+
 			scr.x = 20;
 			scr.y = 260;
 			scr.w = 188;
 			scr.h = 16;
 			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
+
 			font->showText(20, 260, sIP);
 			scr.x = 228;
 			scr.y = 260;
 			scr.w = 108;
 			scr.h = 16;
 			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
+
 			font->showText(228, 260, iToStr(iPort));
 			scr.x = 352;
 			scr.y = 260;
 			scr.w = 108;
 			scr.h = 16;
 			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
+
 			font->showText(352, 260, ActualPlayer->name);
 			scr.x = 20;
 			scr.y = 423;
 			scr.w = 430;
 			scr.h = 16;
 			SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-			
+
 			font->showText(20, 423, ChatStr);
 		}
 
@@ -5601,7 +5601,7 @@ void HeatTheSeat ( void )
 	sPlayerHS Players;
 
 	Players = runPlayerSelectionHotSeat();
-	
+
 	for ( int i = 0; i < 8; i++ )
 	{
 		if( Players.what[i] != PLAYER_N )
@@ -5779,7 +5779,7 @@ int ShowDateiMenu ( bool bSave )
 		font->showTextCentered(rTitle.x, rTitle.y, lngPack.i18n ( "Text~Title~Load" ));
 
 	// Buttons setzen;
-	drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
+	drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );
 	// PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
 	if ( bSave )
 	{
@@ -5883,7 +5883,7 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!FertigPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),true,rBtnBack.x,rBtnBack.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),true,rBtnBack.x,rBtnBack.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				FertigPressed=true;
@@ -5896,7 +5896,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( FertigPressed )
 		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			FertigPressed=false;
@@ -5907,14 +5907,14 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!BeendenPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				BeendenPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				BeendenPressed=false;
@@ -5925,7 +5925,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( BeendenPressed )
 		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			BeendenPressed=false;
@@ -5936,14 +5936,14 @@ int ShowDateiMenu ( bool bSave )
 			if ( b&&!SpeichernPressed )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),true,rBtnSave.x,rBtnSave.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),true,rBtnSave.x,rBtnSave.y,buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SpeichernPressed=true;
 			}
 			else if ( !b&&LastB )
 			{
-				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
 				if ( selected != -1 )
 				{
 					ShowFiles ( files,offset,selected,true,false,false, rDialog );
@@ -5970,7 +5970,7 @@ int ShowDateiMenu ( bool bSave )
 		}
 		else if ( SpeichernPressed )
 		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );	
+			drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			SpeichernPressed=false;

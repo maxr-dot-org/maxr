@@ -163,7 +163,7 @@ void cHud::SwitchMunition ( bool set )
 			scr.x=55;
 			scr.y=61;
 		}
-	
+
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Ammo"),  set, true);
 	Munition=set;
 	Client->bFlagDrawHud=true;
@@ -223,7 +223,7 @@ void cHud::SwitchStudie ( bool set )
 			scr.x=0;
 			scr.y=44;
 		}
-		
+
 	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Survey"), set, true);
 	Studie=set;
 	Client->bFlagDrawHud=true;
@@ -345,7 +345,7 @@ void cHud::DoAllHud ( void )
 	bool s;
 	s=SettingsData.bSoundEnabled;
 	SettingsData.bSoundEnabled=false;
-	
+
 	DateiButton(false);
 	PraeferenzenButton(false);
 	PrevButton(false);
@@ -1134,7 +1134,7 @@ void cHud::ChatButton ( bool set )
 	{
 		ChatPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Chat"), set, true ); 
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Chat"), set, true );
 }
 
 void cHud::LogButton ( bool set )
@@ -1150,7 +1150,7 @@ void cHud::LogButton ( bool set )
 	{
 		LogPressed=false;
 	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Log"), set, true ); 
+	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Log"), set, true );
 }
 
 void cHud::EndeButton ( bool set )
@@ -1264,7 +1264,7 @@ void cHud::CenterButton ( bool set )
 void cHud::DateiButton ( bool set )
 {
 	SDL_Rect scr={71,151,67,20},dest={17,3,67,20};
-	
+
 	if ( set )
 		{
 			scr.x=93; //change source position
@@ -1298,13 +1298,13 @@ int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_
 		font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, sfDest);
 	}
 	else
-	{	
+	{
 		if(bPressed)
 		{
 			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+2, sText, LATIN_SMALL_GREEN, sfDest);
 			//iPx only +2 because small buttons aren't big enough for moving text on them
 		}
-		else 
+		else
 		{
 			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+3, sText, LATIN_SMALL_RED, sfDest);
 		}

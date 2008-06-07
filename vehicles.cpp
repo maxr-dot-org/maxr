@@ -128,7 +128,7 @@ cVehicle::~cVehicle ( void )
 	if ( StoredVehicles )
 		DeleteStored();
 
-	
+
 	if ( IsLocked )
 	{
 		cPlayer *p;
@@ -929,7 +929,7 @@ void cVehicle::GenerateName ( void )
 			if( tmp_name_idx != string::npos )
 			{
 				tmp_name = ( string )name.substr(tmp_name_idx);
-				// prefix			
+				// prefix
 				name = "MK ";
 				name += rome;
 				// name
@@ -952,7 +952,7 @@ void cVehicle::GenerateName ( void )
 			name = "MK ";
 			name += rome;
 			name += " ";
-			name += tmp_name;		
+			name += tmp_name;
 		}
 	}
 }
@@ -3063,7 +3063,7 @@ void cVehicle::ShowBuildMenu ( void )
 #define BUTTON__W 77
 #define BUTTON__H 23
 
-	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H }; 
+	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
 	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
@@ -3789,9 +3789,9 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 		}
 
 		// Text ausgeben:
-		
+
 		string sTmp = UnitsData.building[ptr->id].data.name;
-		
+
 		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
 			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
@@ -3802,8 +3802,8 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 		{
 			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
 		}
-		
-		
+
+
 		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
 
 		text.y += 32 + 10;
@@ -5368,7 +5368,7 @@ void cVehicle::ShowStorage ( void )
 			return;
 		}
 		*/
-		
+
 		// Buttons unter den Vehicles:
 		dest.w = 73;
 
@@ -5414,7 +5414,7 @@ void cVehicle::ShowStorage ( void )
 					dest.y = rDialog.y + 426;
 					break;
 			}
-			
+
 
 			// Aktivieren:
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB )
@@ -5438,7 +5438,7 @@ void cVehicle::ShowStorage ( void )
 				mouse->MoveCallback = true;
 				return;
 			}
-			
+
 		}
 
 		LastMouseX = x;
@@ -5463,7 +5463,7 @@ void cVehicle::DrawStored ( int off )
 
 	sf = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, sf, NULL );
-	
+
 	for ( i = 0;i < to;i++ )
 	{
 		if ( i + off >= StoredVehicles->iCount )
@@ -5529,11 +5529,11 @@ void cVehicle::DrawStored ( int off )
 				{
 					str[strlen ( str )-1]=0;
 				}
-				
+
 			}
 			else
 			{
-				
+
 			}*/
 		}
 
@@ -5552,7 +5552,7 @@ void cVehicle::DrawStored ( int off )
 
 		dest.w = 73;
 		dest.h = 23;
-		
+
 		if ( v )
 		{
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, dest.x, dest.y, buffer );
@@ -5561,7 +5561,7 @@ void cVehicle::DrawStored ( int off )
 		{
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 		}
-		
+
 
 		// Die zusätzlichen Infos anzeigen:
 		dest.x += 9;
@@ -5743,7 +5743,7 @@ bool cVehicle::layMine ()
 	data.cargo--;
 
 	if ( data.cargo <= 0 ) LayMines = false;
-	
+
 	return true;
 }
 
@@ -5756,7 +5756,7 @@ bool cVehicle::clearMine ()
 	data.cargo++;
 
 	if ( data.cargo >= data.max_cargo ) ClearMines = false;
-	
+
 	return true;
 }
 

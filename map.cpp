@@ -170,7 +170,7 @@ bool cMap::LoadMap ( string filename )
 	SDL_RWseek ( fpMapFile, sWidth * sHeight, SEEK_CUR );	// Ignore Mini-Map
 	iDataPos = SDL_RWtell( fpMapFile );						// Map-Data
 	SDL_RWseek ( fpMapFile, sWidth * sHeight * 2, SEEK_CUR );
-	sGraphCount = SDL_ReadLE16( fpMapFile );				// Read PicCount	
+	sGraphCount = SDL_ReadLE16( fpMapFile );				// Read PicCount
 	iGraphicsPos = SDL_RWtell( fpMapFile );					// Terrain Graphics
 	iPalettePos = iGraphicsPos + sGraphCount * 64*64;		// Palette
 	iInfoPos = iPalettePos + 256*3;							// Special informations

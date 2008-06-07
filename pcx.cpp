@@ -33,7 +33,7 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	SDL_Surface *sf;
 	Uint16 x,y;
 	SDL_RWops *file;
-	
+
 	// Die Datei öffnen:
 	if(FileExists(name))
 	{
@@ -44,14 +44,14 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 		//file not found - creating empty surface
 		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return sf;
-	}	
+	}
 	if ( file==NULL )
 	{
 		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
 		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return sf;
-	}	
-	
+	}
+
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
 	x = SDL_ReadLE16 ( file );
@@ -108,7 +108,7 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	{
 		_ptr[i] = colors[_ptr[i]];
 	}
-	SDL_RWclose ( file );	
+	SDL_RWclose ( file );
 	return sf;
 }
 
@@ -140,12 +140,12 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return -1;
 	}
-	
+
 	// Die Datei laden:
 	SDL_RWseek ( file,8,SEEK_SET );
 	x = SDL_ReadLE16 ( file );
 	y = SDL_ReadLE16 ( file );
-	
+
 	x++;y++;
 	if( sf == NULL)
 	{
@@ -160,7 +160,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	}
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFFFFFF );
-	
+
 	_ptr= ( ( unsigned int* ) sf->pixels );
 	SDL_RWseek ( file,128,SEEK_SET );
 	do
@@ -191,7 +191,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	while ( i!=y );
 	// Nun noch die Farbtabelle anpassen:
 	SDL_RWseek ( file, -768, SEEK_END );
-	
+
 	Uint8 r, g, b;
 	for ( i=0;i<256;i++ )
 	{
@@ -200,7 +200,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 		SDL_RWread ( file,&b,1,1 );
 		colors[i] = SDL_MapRGB( sf->format, r, g, b);
 	}
-	
+
 	for ( i=0;i<sf->w*y;i++ )
 	{
 		unsigned int c=_ptr[i];

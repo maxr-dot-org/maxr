@@ -38,7 +38,7 @@ void cAutoMJob::handleAutoMoveJobs()
 		autoMJobs[i]->DoAutoMove();
 		if ( autoMJobs[i]->finished )
 		{
-			delete autoMJobs[i];			
+			delete autoMJobs[i];
 		}
 	}
 }
@@ -91,14 +91,14 @@ void cAutoMJob::DoAutoMove()
 			{
 				changeOP();
 				PlanNextMove();
-				n = 0;			
+				n = 0;
 			}
 			else
 			{
 				n++;
 			}
 	}
-	else 
+	else
 	{
 		if ( vehicle->mjob != lastMoveJob && !vehicle->mjob->Suspended  )
 		{
@@ -130,7 +130,7 @@ void cAutoMJob::PlanNextMove()
 	float maxFactor = FIELD_BLOCKED;
 
 	for ( x = vehicle->PosX - 1; x <= vehicle->PosX + 1; x ++)
-	{	
+	{
 		for (y = vehicle->PosY - 1; y <= vehicle->PosY + 1; y++)
 		{
 			if ( x == vehicle->PosX && y == vehicle->PosY ) continue;
@@ -149,7 +149,7 @@ void cAutoMJob::PlanNextMove()
 	{
 		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size );
 		lastMoveJob = vehicle->mjob;
-	}	
+	}
 	else //no fields to survey next to the surveyor
 	{
 		PlanLongMove();
@@ -163,13 +163,13 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	if ( !FieldIsFree(PosX, PosY) ) return FIELD_BLOCKED;
 
 	//calculate some values, on which the "impotance-factor" may depend
-	
+
 	//the number of fields which would be surveyed by this move
-	float NrSurvFields = 0; 
+	float NrSurvFields = 0;
 	int x, y;
 
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
-	{	
+	{
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			if ( x == PosX && y == PosY ) continue;
@@ -186,10 +186,10 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	{
 		NrSurvFields /= 2;
 	}
-	
+
 	//the distance to the OP
 	float newDistanceOP = sqrt( (float) (PosX - OPX) * (PosX - OPX) + (PosY - OPY) * (PosY - OPY) );
-	
+
 	//the distance to other surveyors
 	int i;
 	float newDistancesSurv = 0;
@@ -198,17 +198,17 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	{
 		if ( i == iNumber ) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-		
+
 		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
 		newDistancesSurv += pow( temp, EXP);
 	}
-	
+
 	//and now calc the "importance-factor"
 
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
-	
+
 	float factor = A * NrSurvFields - B * newDistanceOP - C * newDistancesSurv;
-	
+
 	if (factor < FIELD_BLOCKED)
 	{
 		factor = FIELD_BLOCKED;
@@ -224,10 +224,10 @@ bool cAutoMJob::FieldIsFree(int PosX, int PosY)
 	cMap* map = Client->Map;
 
 	if ( PosX < 0 || PosY < 0 || PosX >= map->size || PosY >= map->size ) return false; //check map borders
-	
+
 	int terrainNr = map->Kacheln[PosX + PosY * map->size];
 	if ( map->terrain[terrainNr].blocked ) return false; //check terrain
-	
+
 	sGameObjects objects = map->GO[PosX + PosY * map->size];
 	if ( objects.reserviert || objects.vehicle || ( objects.top && !objects.top->data.is_connector) ) return false; //check if there is another unit on the field
 
@@ -251,7 +251,7 @@ void cAutoMJob::PlanLongMove()
 		{
 			if ( !FieldIsFree( x, y) ) continue;
 			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
-			
+
 			//the distance to other surveyors
 			int i;
 			float distancesSurv = 0;
@@ -260,7 +260,7 @@ void cAutoMJob::PlanLongMove()
 			{
 				if ( i == iNumber ) continue;
 				if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-		
+
 				temp = sqrt( pow( (float) x - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) y - autoMJobs[i]->vehicle->PosY , 2) );
 				distancesSurv += pow( temp, EXP2);
 			}
