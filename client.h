@@ -412,6 +412,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void Timer();
+	/** displays a message with 'goto' coordinates */
+	void addCoords (const string msg,int x,int y );
 
 	void releaseMoveJob ( cMJobs *MJob );
 } EX *Client;

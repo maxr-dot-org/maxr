@@ -54,6 +54,7 @@ class cAutoMJob {
 	cVehicle *vehicle;		//the vehicle the auto move job belongs to
 	int iNumber;			//index of the AutoMJob in autoMJobs[]
 	int n;					//frame delay counter
+	bool finished;			//true when the job can be deleted
 	
 	
 	void DoAutoMove();

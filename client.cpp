@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <math.h>
+#include <sstream>
 #include "client.h"
 #include "server.h"
 #include "events.h"
@@ -2134,17 +2135,226 @@ void cClient::rotateBlinkColor()
 	}
 }
 
-void cClient::addFX( eFXTyps typ, int iX, int iY, int iParam )
+// Fügt einen FX-Effekt ein:
+void cClient::addFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param )
 {
+	sFX* n = new sFX;
+	n->typ = typ;
+	n->PosX = x;
+	n->PosY = y;
+	n->StartFrame = iFrame;
+	n->param = 0;
+	n->rocketInfo= param;
+	n->smokeInfo = NULL;
+	n->trackInfo = NULL;
+	addFX( n );
 }
 
-void cClient::addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param )
+// Fügt einen FX-Effekt ein:
+void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 {
+	sFX* n = new sFX;
+	n->typ = typ;
+	n->PosX = x;
+	n->PosY = y;
+	n->StartFrame = iFrame;
+	n->param = param;
+	n->rocketInfo= NULL;
+	n->smokeInfo = NULL;
+	n->trackInfo = NULL;
+	addFX( n );
 }
 
-void cClient::addFX( sFX* iNum )
+// Fügt einen FX-Effekt ein:
+void cClient::addFX ( sFX* n )
 {
+	if ( (n->typ == fxRocket || n->typ == fxTorpedo ) && n->rocketInfo == NULL )
+	{
+		//invalid effect
+		//rocketInfo is missing
+		delete n;
+		return; 
+	}
+	
+	if ( (n->typ != fxRocket && n->typ != fxTorpedo ) && n->rocketInfo != NULL )
+	{
+		//invalid effect
+		//an sFXRocketInfos has been passed, but is not needed for this effect type
+		delete n->rocketInfo;
+		delete n;
+		return;
+	}
+
+	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
+	{
+		FXListBottom->Add ( n );
+	}
+	else
+	{
+		FXList->Add ( n );
+	}
+	switch ( n->typ )
+	{
+		case fxExploAir:
+			int nr;
+			nr = random ( 3,0 );
+			if ( nr==0 )
+			{
+				PlayFX ( SoundData.EXPSmall0 );
+			}
+			else if ( nr==1 )
+			{
+				PlayFX ( SoundData.EXPSmall1 );
+			}
+			else
+			{
+				PlayFX ( SoundData.EXPSmall2 );
+			}
+			break;
+		case fxExploSmall:
+		case fxExploWater:
+			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
+			{
+				int nr;
+				nr=random ( 3,0 );
+				if ( nr==0 )
+				{
+					PlayFX ( SoundData.EXPSmallWet0 );
+				}
+				else if ( nr==1 )
+				{
+					PlayFX ( SoundData.EXPSmallWet1 );
+				}
+				else
+				{
+					PlayFX ( SoundData.EXPSmallWet2 );
+				}
+			}
+			else
+			{
+				int nr;
+				nr=random ( 3,0 );
+				if ( nr==0 )
+				{
+					PlayFX ( SoundData.EXPSmall0 );
+				}
+				else if ( nr==1 )
+				{
+					PlayFX ( SoundData.EXPSmall1 );
+				}
+				else
+				{
+					PlayFX ( SoundData.EXPSmall2 );
+				}
+			}
+			break;
+		case fxExploBig:
+			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
+			{
+				if ( random ( 2,0 ) )
+				{
+					PlayFX ( SoundData.EXPBigWet0 );
+				}
+				else
+				{
+					PlayFX ( SoundData.EXPBigWet1 );
+				}
+			}
+			else
+			{
+				int nr;
+				nr=random ( 4,0 );
+				if ( nr==0 )
+				{
+					PlayFX ( SoundData.EXPBig0 );
+				}
+				else if ( nr==1 )
+				{
+					PlayFX ( SoundData.EXPBig1 );
+				}
+				else if ( nr==2 )
+				{
+					PlayFX ( SoundData.EXPBig2 );
+				}
+				else
+				{
+					PlayFX ( SoundData.EXPBig3 );
+				}
+			}
+			break;
+		case fxSmoke:
+		case fxBubbles:
+			n->param=0;
+			break;
+		case fxRocket:
+		case fxTorpedo:
+		{
+			sFXRocketInfos *ri;
+			int dx,dy;
+			ri= n->rocketInfo;
+			ri->fpx=n->PosX;
+			ri->fpy=n->PosY;
+			dx=ri->ScrX-ri->DestX;
+			dy=ri->ScrY-ri->DestY;
+			if ( abs ( dx ) >abs ( dy ) )
+			{
+				if ( ri->ScrX>ri->DestX ) ri->mx=-1;
+				else ri->mx=1;
+				ri->my=dy/ ( float ) dx* ( -ri->mx );
+			}
+			else
+			{
+				if ( ri->ScrY<ri->DestY ) ri->my=-1;
+				else ri->my=1;
+				ri->mx=dx/ ( float ) dy* ( -ri->my );
+			}
+			break;
+		}
+		case fxDarkSmoke:
+		{
+			float x,y,ax,ay;
+			sFXDarkSmoke *dsi;
+			dsi=new sFXDarkSmoke;
+			dsi->alpha=n->param;
+			if ( dsi->alpha>150 ) dsi->alpha=150;
+			n->smokeInfo = dsi;
+			dsi->fx=n->PosX;
+			dsi->fy=n->PosY;
+
+			ax=x=sin ( fWindDir );
+			ay=y=cos ( fWindDir );
+			if ( ax<0 ) ax=-ax;
+			if ( ay<0 ) ay=-ay;
+			if ( ax>ay )
+			{
+				dsi->dx=x*2+ ( random ( 5,0 ) /10.0 );
+				dsi->dy=y*2+ ( ( random ( 15,0 )-7 ) /14.0 );
+			}
+			else
+			{
+				dsi->dx=x*2+ ( ( random ( 15,0 )-7 ) /14.0 );
+				dsi->dy=y*2+ ( random ( 5,0 ) /10.0 );
+			}
+			break;
+		}
+		case fxTracks:
+		{
+			sFXTracks *tri;
+			tri=new sFXTracks;
+			tri->alpha=100;
+			tri->dir=n->param;
+			n->trackInfo = tri;
+			break;
+		}
+		case fxCorpse:
+			n->param=255;
+			break;
+		case fxAbsorb:
+			PlayFX ( SoundData.SNDAbsorb );
+			break;
+	}
 }
+
 
 bool cClient::doCommand ( string sCmd )
 {
@@ -2400,6 +2610,17 @@ void cClient::addMessage ( string sMsg )
 	Message->age = iFrame;
 	messages->Add ( Message );
 	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
+}
+
+// displays a message with 'goto' coordinates
+void cClient::addCoords (const string msg,int x,int y )
+{
+ 	stringstream strStream;
+ 	//e.g. [85,22] missel MK I is under attack (F1)
+ 	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString ( KeysList.KeyJumpToAction ) << ")";
+	Client->addMessage ( strStream.str() );
+	iMsgCoordsX=x;
+	iMsgCoordsY=y;
 }
 
 void cClient::handleMessages()

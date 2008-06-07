@@ -36,6 +36,10 @@ void cAutoMJob::handleAutoMoveJobs()
 	for ( i = 0; i < iCount; i++)
 	{
 		autoMJobs[i]->DoAutoMove();
+		if ( autoMJobs[i]->finished )
+		{
+			delete autoMJobs[i];			
+		}
 	}
 }
 
@@ -49,6 +53,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 iNumber = iCount;
 	 iCount++;
 	 this->vehicle = vehicle;
+	 finished = false;
 	 OPX = vehicle->PosX;
 	 OPY = vehicle->PosY;
 	 playerMJob = false;
@@ -73,6 +78,8 @@ cAutoMJob::~cAutoMJob()
 	}
 	iCount--;
 	autoMJobs = (cAutoMJob **) realloc(autoMJobs, iCount * sizeof(this));
+
+	vehicle->autoMJob = NULL;
 }
 
 //performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
@@ -168,7 +175,8 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 			if ( x == PosX && y == PosY ) continue;
 			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
-			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0)
+			int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size];
+			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
@@ -233,7 +241,7 @@ void cAutoMJob::PlanLongMove()
 {
 	int x, y;
 	int bestX, bestY;
-	float destinationOP, destinationSurv;
+	float distanceOP, distanceSurv;
 	float tempValue;
 	float minValue = 0;
 
@@ -257,9 +265,9 @@ void cAutoMJob::PlanLongMove()
 				distancesSurv += pow( temp, EXP2);
 			}
 
-			destinationOP = sqrt( (float) (x - OPX) * (x - OPX) + (y - OPY) * (y - OPY) );
-			destinationSurv = sqrt( (float) (x - vehicle->PosX) * (x - vehicle->PosX) + (y - vehicle->PosY) * (y - vehicle->PosY) );
-			tempValue = D * destinationOP + E * destinationSurv + F * distancesSurv;
+			distanceOP = sqrt( (float) (x - OPX) * (x - OPX) + (y - OPY) * (y - OPY) );
+			distanceSurv = sqrt( (float) (x - vehicle->PosX) * (x - vehicle->PosX) + (y - vehicle->PosY) * (y - vehicle->PosY) );
+			tempValue = D * distanceOP + E * distanceSurv + F * distancesSurv;
 
 			if ( (tempValue < minValue) || (minValue == 0) )
 			{
@@ -274,10 +282,16 @@ void cAutoMJob::PlanLongMove()
 	{
 		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size);
 		lastMoveJob = vehicle->mjob;
+		if ( !lastMoveJob || lastMoveJob->finished )
+		{
+			Client->addCoords( "Surveyor AI: I'm totally confused. Don't know what to do...", vehicle->PosX, vehicle->PosY );
+			finished = true;
+		}
 	}
 	else
 	{
-		//TODO: disable automove
+		Client->addCoords( "Surveyor AI: My life is so senseless. I've nothing to do...", vehicle->PosX, vehicle->PosY );
+		finished = true;
 	}
 }
 
