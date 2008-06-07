@@ -487,7 +487,7 @@ int cTCP::getFreeSocket()
 
 int cTCP::findNextMessageStart ( int iStartPos, char *data, int iLength )
 {
-	for ( int iPos = iStartPos; iPos < iLength; iPos++ )
+	for ( int iPos = iStartPos; iPos < iLength-1; iPos++ )
 	{
 		if ( data[iPos] == (char)NETMESSAGE_CONTROLCHAR && data[iPos+1] == (char)NETMESSAGE_STARTCHAR ) return iPos;
 	}

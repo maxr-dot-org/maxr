@@ -5100,7 +5100,7 @@ void cMultiPlayerMenu::HandleMessages()
 			SWITCH_MESSAGE_END
 		case MU_MSG_DEL_PLAYER:
 			{
-				int iClientNum = Message->popInt32();
+				int iClientNum = Message->popInt16();
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
 					if ( PlayerList->Items[i]->iSocketNum == iClientNum )
