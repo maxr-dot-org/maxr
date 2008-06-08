@@ -184,7 +184,7 @@ public:
   void ShowBuildMenu(void);
   void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
   void DrawBuildButtons(int speed);
-  void ShowToBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
+  void ShowToBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
   void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
   void DrawExitPoints(sVehicle *typ);
   bool CanExitTo(int off,sVehicle *typ);

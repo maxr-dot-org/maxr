@@ -6549,7 +6549,6 @@ void cBuilding::ShowBuildMenu ( void )
 	bool Up2Pressed = false;
 	bool BauenPressed = false;
 	bool EntfernenPressed = false;
-	cList<sBuildStruct*> *to_build;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
 	int  iTurboBuildRounds[3];		//Costs and
@@ -6700,7 +6699,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 
 	// Die Bauliste anlegen:
-	to_build = new cList<sBuildStruct*>;
+	cList<sBuildStruct*> to_build;
 
 	for ( i = 0;i < BuildList->iCount;i++ )
 	{
@@ -6723,7 +6722,7 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				n->id = images.Items[k]->id;
 				n->sf = images.Items[k]->sf;
-				to_build->Add ( n );
+				to_build.Add ( n );
 
 				break;
 			}
@@ -6733,7 +6732,7 @@ void cBuilding::ShowBuildMenu ( void )
 	BuildSpeed = this->BuildSpeed;
 
 	//show details of the first item in to_build list, if it exists
-	if ( to_build->iCount > 0 )
+	if ( to_build.iCount > 0 )
 	{
 		showDetailsBuildlist = false;
 	}
@@ -6937,7 +6936,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.x = MENU_OFFSET_X + 347;
 			dest.y = MENU_OFFSET_Y + 293;
 
-			if ( build_offset < to_build->iCount - 5 )
+			if ( build_offset < to_build.iCount - 5 )
 			{
 				build_offset++;
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
@@ -6982,11 +6981,11 @@ void cBuilding::ShowBuildMenu ( void )
 				n->sf = images.Items[selected]->sf;
 				n->iRemainingMetal = -1;
 
-				to_build->Add ( n );
+				to_build.Add ( n );
 
-				if ( to_build->iCount > build_offset + 5 )
+				if ( to_build.iCount > build_offset + 5 )
 				{
-					build_offset = to_build->iCount - 5;
+					build_offset = to_build.iCount - 5;
 				}
 
 				if ( build_selected < build_offset )
@@ -7015,17 +7014,17 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( EntfernenPressed && !b && LastB )
 			{
 				// Vehicle aus der Bauliste entfernen:
-				if ( to_build->iCount && to_build->iCount > build_selected && build_selected >= 0 )
+				if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
 				{
-					delete to_build->Items[build_selected];
-					to_build->Delete ( build_selected );
+					delete to_build.Items[build_selected];
+					to_build.Delete ( build_selected );
 
-					if ( build_selected >= to_build->iCount )
+					if ( build_selected >= to_build.iCount )
 					{
 						build_selected--;
 					}
 
-					if ( to_build->iCount - build_offset < 5 && build_offset > 0 )
+					if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
 					{
 						build_offset--;
 					}
@@ -7109,9 +7108,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 					//calculate actual costs of the vehicles
 					//and add is to the BuildList
-					for ( int counter = 0; counter < to_build->iCount; counter++ )
+					for ( int counter = 0; counter < to_build.iCount; counter++ )
 					{
-						sBuildStruct *bs = to_build->Items[counter];
+						sBuildStruct *bs = to_build.Items[counter];
 
 						CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[bs->id].iBuilt_Costs, bs->iRemainingMetal );
 
@@ -7276,11 +7275,11 @@ void cBuilding::ShowBuildMenu ( void )
 					n->sf = images.Items[selected]->sf;
 					n->iRemainingMetal = -1;
 
-					to_build->Add ( n );
+					to_build.Add ( n );
 
-					if ( to_build->iCount > build_offset + 5 )
+					if ( to_build.iCount > build_offset + 5 )
 					{
-						build_offset = to_build->iCount - 5;
+						build_offset = to_build.iCount - 5;
 					}
 
 					if ( build_selected < build_offset )
@@ -7304,9 +7303,9 @@ void cBuilding::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
-			if ( to_build->iCount < 5 )
+			if ( to_build.iCount < 5 )
 			{
-				if ( nr >= to_build->iCount )
+				if ( nr >= to_build.iCount )
 					nr = -1;
 			}
 			else
@@ -7326,17 +7325,17 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( build_selected == nr ) && !showDetailsBuildlist )
 				{
 					//remove vehicle from to_build queue
-					if ( to_build->iCount && to_build->iCount > build_selected && build_selected >= 0 )
+					if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
 					{
-						delete to_build->Items[build_selected];
-						to_build->Delete ( build_selected );
+						delete to_build.Items[build_selected];
+						to_build.Delete ( build_selected );
 
-						if ( build_selected >= to_build->iCount )
+						if ( build_selected >= to_build.iCount )
 						{
 							build_selected--;
 						}
 
-						if ( to_build->iCount - build_offset < 5 && build_offset > 0 )
+						if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
 						{
 							build_offset--;
 						}
@@ -7371,13 +7370,11 @@ void cBuilding::ShowBuildMenu ( void )
 		images.Delete( 0 );
 	}
 
-	while ( to_build->iCount )
+	while ( to_build.iCount )
 	{
-		delete  to_build->Items[0];
-		to_build->Delete ( 0 );
+		delete  to_build.Items[0];
+		to_build.Delete ( 0 );
 	}
-
-	delete to_build;
 
 	mouse->MoveCallback = true;
 }
@@ -7632,7 +7629,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 }
 
 // Zeigt die Liste mit den Bauaufträgen an, und wenn show Info==true auch sämtliche Details zur gewählten Einheit
-void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool showInfo )
+void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
 	SDL_Rect scr, dest, text = { MENU_OFFSET_X + 375, MENU_OFFSET_Y + 70, 80, 16};
@@ -7655,12 +7652,12 @@ void cBuilding::ShowToBuildList ( cList<sBuildStruct*> *list, int selected, int 
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list->iCount;i++ )
+	for ( i = offset;i < list.iCount;i++ )
 	{
 		if ( i >= offset + 5 )
 			break;
 
-		ptr = list->Items[i];
+		ptr = list.Items[i];
 
 		// Das Bild malen:
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
