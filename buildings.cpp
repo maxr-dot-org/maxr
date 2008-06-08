@@ -3719,7 +3719,6 @@ void cBuilding::ShowUpgrade ( void )
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
-	cList<sUpgradeStruct*> *images, *selection;
 	int selected = 0, offset = 0;
 	int StartCredits = owner->Credits;
 
@@ -3769,7 +3768,7 @@ void cBuilding::ShowUpgrade ( void )
 	}
 
 	// Die Images erstellen:
-	images = new cList<sUpgradeStruct*>;
+	cList<sUpgradeStruct*> images;
 
 	float newzoom = ( Client->Hud->Zoom / 64.0 );
 
@@ -3788,7 +3787,7 @@ void cBuilding::ShowUpgrade ( void )
 		n->id = i;
 		n->vehicle = true;
 		MakeUpgradeSliderVehicle ( n->upgrades, i );
-		images->Add ( n );
+		images.Add ( n );
 	}
 
 	for ( i = 0;i < UnitsData.building_anz;i++ )
@@ -3826,10 +3825,10 @@ void cBuilding::ShowUpgrade ( void )
 		n->id = i;
 		n->vehicle = false;
 		MakeUpgradeSliderBuilding ( n->upgrades, i );
-		images->Add ( n );
+		images.Add ( n );
 	}
 
-	selection = new cList<sUpgradeStruct*>;
+	cList<sUpgradeStruct*> selection;
 
 	CreateUpgradeList ( selection, images, &selected, &offset );
 	ShowUpgradeList ( selection, selected, offset, Beschreibung );
@@ -3880,7 +3879,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
 
-			if ( offset < selection->iCount - 9 )
+			if ( offset < selection.iCount - 9 )
 			{
 				offset++;
 
@@ -3970,10 +3969,10 @@ void cBuilding::ShowUpgrade ( void )
 					// Alle Upgrades zurücksetzen:
 					owner->Credits = StartCredits;
 
-					for ( i = 0;i < images->iCount;i++ )
+					for ( i = 0;i < images.iCount;i++ )
 					{
 						sUpgradeStruct *ptr;
-						ptr = images->Items[i];
+						ptr = images.Items[i];
 
 						for ( k = 0;k < 8;k++ )
 						{
@@ -4011,11 +4010,11 @@ void cBuilding::ShowUpgrade ( void )
 				if ( !b && LastB )
 				{
 					// Alle Upgrades durchführen:
-					for ( i = 0;i < images->iCount;i++ )
+					for ( i = 0;i < images.iCount;i++ )
 					{
 						bool up = false;
 						sUpgradeStruct *ptr;
-						ptr = images->Items[i];
+						ptr = images.Items[i];
 
 						for ( k = 0;k < 8;k++ )
 						{
@@ -4089,9 +4088,9 @@ void cBuilding::ShowUpgrade ( void )
 			int nr;
 			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 2 );
 
-			if ( selection->iCount < 9 )
+			if ( selection.iCount < 9 )
 			{
-				if ( nr >= selection->iCount )
+				if ( nr >= selection.iCount )
 					nr = -1;
 			}
 			else
@@ -4113,9 +4112,9 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Klick auf einen Upgrade-Slider:
-		if ( b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection->iCount )
+		if ( b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection.iCount )
 		{
-			sUpgradeStruct *ptr = selection->Items[selected];
+			sUpgradeStruct *ptr = selection.Items[selected];
 
 			for ( i = 0;i < 8;i++ )
 			{
@@ -4270,23 +4269,20 @@ void cBuilding::ShowUpgrade ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images->iCount )
+	while ( images.iCount )
 	{
 		sUpgradeStruct *ptr;
-		ptr = images->Items[0];
+		ptr = images.Items[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->Delete ( 0 );
+		images.Delete ( 0 );
 	}
 
-	delete images;
-
-	delete selection;
 	mouse->MoveCallback = true;
 }
 
 // Zeigt die Liste mit den Images an:
-void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, int offset, bool beschreibung )
+void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected, int const offset, bool const beschreibung)
 {
 	sUpgradeStruct *ptr;
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
@@ -4307,7 +4303,7 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 	dest.w = 32;
 	dest.h = 32;
 
-	if ( list->iCount == 0 )
+	if ( list.iCount == 0 )
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -4326,13 +4322,13 @@ void cBuilding::ShowUpgradeList ( cList<sUpgradeStruct*> *list, int selected, in
 		return;
 	}
 
-	for ( i = offset;i < list->iCount;i++ )
+	for ( i = offset;i < list.iCount;i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
-		ptr = list->Items[i];
+		ptr = list.Items[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
@@ -4761,25 +4757,25 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 }
 
 // Stellt die Selectionlist zusammen:
-void cBuilding::CreateUpgradeList ( cList<sUpgradeStruct*> *selection, cList<sUpgradeStruct*> *images, int *selected, int *offset )
+void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int* const selected, int* const offset)
 {
 	sUnitData *bd;
 	sUnitData *vd;
 	int i;
 
-	while ( selection->iCount )
+	while ( selection.iCount )
 	{
-		selection->Delete ( 0 );
+		selection.Delete ( 0 );
 	}
 
-	for ( i = 0;i < images->iCount;i++ )
+	for ( i = 0;i < images.iCount;i++ )
 	{
-		if ( images->Items[i]->vehicle )
+		if ( images.Items[i]->vehicle )
 		{
 			if ( ! ( Client->bUpShowTank || Client->bUpShowShip || Client->bUpShowPlane ) )
 				continue;
 
-			vd = & ( UnitsData.vehicle[images->Items[i]->id].data );
+			vd = & ( UnitsData.vehicle[images.Items[i]->id].data );
 
 			if ( Client->bUpShowTNT && !vd->can_attack )
 				continue;
@@ -4793,33 +4789,33 @@ void cBuilding::CreateUpgradeList ( cList<sUpgradeStruct*> *selection, cList<sUp
 			if ( ( vd->can_drive == DRIVE_LAND || vd->can_drive == DRIVE_LANDnSEA ) && !Client->bUpShowTank )
 				continue;
 
-			selection->Add ( images->Items[i] );
+			selection.Add ( images.Items[i] );
 		}
 		else
 		{
 			if ( !Client->bUpShowBuild )
 				continue;
 
-			bd = & ( UnitsData.building[images->Items[i]->id].data );
+			bd = & ( UnitsData.building[images.Items[i]->id].data );
 
 			if ( Client->bUpShowTNT && !bd->can_attack )
 				continue;
 
-			selection->Add ( images->Items[i] );
+			selection.Add ( images.Items[i] );
 		}
 	}
 
-	if ( *offset >= selection->iCount - 9 )
+	if ( *offset >= selection.iCount - 9 )
 	{
-		*offset = selection->iCount - 9;
+		*offset = selection.iCount - 9;
 
 		if ( *offset < 0 )
 			*offset = 0;
 	}
 
-	if ( *selected >= selection->iCount )
+	if ( *selected >= selection.iCount )
 	{
-		*selected = selection->iCount - 1;
+		*selected = selection.iCount - 1;
 
 		if ( *selected < 0 )
 			*selected = 0;

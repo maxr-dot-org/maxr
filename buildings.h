@@ -200,11 +200,11 @@ public:
   void ShowResearchSchieber(void);
   void MakeResearchSchieber(int x,int y);
   void ShowUpgrade(void);
-  void ShowUpgradeList(cList<sUpgradeStruct*> *list,int selected,int offset,bool beschreibung);
+  void ShowUpgradeList(cList<sUpgradeStruct*>& list, int selected, int offset, bool beschreibung);
   void ShowGoldBar(int StartCredits);
   void MakeUpgradeSliderVehicle(sUpgrades *u,int nr);
   void MakeUpgradeSliderBuilding(sUpgrades *u,int nr);
-  void CreateUpgradeList(cList<sUpgradeStruct*> *selection,cList<sUpgradeStruct*> *images,int *selected,int *offset);
+  void CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int* selected, int* offset);
   void MakeUpgradeSubButtons(void);
   int CalcPrice(int value,int org, int variety);
   int CalcSteigerung(int org, int variety);
