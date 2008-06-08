@@ -2102,7 +2102,8 @@ static int LoadBuildings()
 		SetDefaultUnitData(UnitsData.building_anz, false);
 		// Load Data from data.xml
 		LoadUnitData(UnitsData.building_anz, sBuildingPath.c_str(), false, atoi(IDList.Items[i].c_str()));
-		translateUnitData( UnitsData.building[UnitsData.building_anz].data.ID, false );
+		sBuilding& b = UnitsData.building[UnitsData.building_anz];
+		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
 		ConvertData(UnitsData.building_anz, false);
@@ -2112,10 +2113,10 @@ static int LoadBuildings()
 		sTmpString += "img.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.building[UnitsData.building_anz].img_org = LoadPCX(sTmpString.c_str());
-			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img_org,SDL_SRCCOLORKEY,0xFFFFFF );
-			UnitsData.building[UnitsData.building_anz].img = LoadPCX(sTmpString.c_str());
-			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img,SDL_SRCCOLORKEY,0xFFFFFF );
+			b.img_org = LoadPCX(sTmpString.c_str());
+			SDL_SetColorKey(b.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+			b.img = LoadPCX(sTmpString.c_str());
+			SDL_SetColorKey(b.img, SDL_SRCCOLORKEY, 0xFFFFFF);
 		}
 		else
 		{
@@ -2127,65 +2128,65 @@ static int LoadBuildings()
 		sTmpString += "shw.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.building[UnitsData.building_anz].shw_org = LoadPCX(sTmpString.c_str());
-			UnitsData.building[UnitsData.building_anz].shw = LoadPCX(sTmpString.c_str());
-			SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].shw,SDL_SRCALPHA,50 );
+			b.shw_org = LoadPCX(sTmpString.c_str());
+			b.shw     = LoadPCX(sTmpString.c_str());
+			SDL_SetAlpha(b.shw, SDL_SRCALPHA, 50);
 		}
 
 		// load video
 		sTmpString = sBuildingPath;
 		sTmpString += "video.pcx";
 		if(FileExists(sTmpString.c_str()))
-			UnitsData.building[UnitsData.building_anz].video = LoadPCX(sTmpString.c_str());
+			b.video = LoadPCX(sTmpString.c_str());
 
 		// load infoimage
 		sTmpString = sBuildingPath;
 		sTmpString += "info.pcx";
 		if(FileExists(sTmpString.c_str()))
-			UnitsData.building[UnitsData.building_anz].info = LoadPCX(sTmpString.c_str());
+			b.info = LoadPCX(sTmpString.c_str());
 
 		// load effectgraphics if necessary
-		if(UnitsData.building[UnitsData.building_anz].data.bPower_On_Grafic)
+		if (b.data.bPower_On_Grafic)
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.building[UnitsData.building_anz].eff_org = LoadPCX(sTmpString.c_str());
-				UnitsData.building[UnitsData.building_anz].eff = LoadPCX(sTmpString.c_str());
-				SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].eff,SDL_SRCALPHA,10 );
+				b.eff_org = LoadPCX(sTmpString.c_str());
+				b.eff     = LoadPCX(sTmpString.c_str());
+				SDL_SetAlpha(b.eff, SDL_SRCALPHA, 10);
 			}
 		}
 		else
 		{
-			UnitsData.building[UnitsData.building_anz].eff_org = NULL;
-			UnitsData.building[UnitsData.building_anz].eff = NULL;
+			b.eff_org = NULL;
+			b.eff     = NULL;
 		}
 
 		// load sounds
-		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Start,sBuildingPath.c_str(),"start.wav");
-		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Running,sBuildingPath.c_str(),"running.wav");
-		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Stop,sBuildingPath.c_str(),"stop.wav");
-		LoadUnitSoundfile(UnitsData.building[UnitsData.building_anz].Attack,sBuildingPath.c_str(),"attack.wav");
+		LoadUnitSoundfile(b.Start,   sBuildingPath.c_str(), "start.wav");
+		LoadUnitSoundfile(b.Running, sBuildingPath.c_str(), "running.wav");
+		LoadUnitSoundfile(b.Stop,    sBuildingPath.c_str(), "stop.wav");
+		LoadUnitSoundfile(b.Attack,  sBuildingPath.c_str(), "attack.wav");
 
 		// Get Ptr if necessary:
-		if(UnitsData.building[UnitsData.building_anz].data.is_connector)
+		if (b.data.is_connector)
 		{
-			UnitsData.ptr_connector = UnitsData.building[UnitsData.building_anz].img;
+			UnitsData.ptr_connector = b.img;
 			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
-			UnitsData.ptr_connector_shw = UnitsData.building[UnitsData.building_anz].shw;
+			UnitsData.ptr_connector_shw = b.shw;
 			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
 		}
-		else if(UnitsData.building[UnitsData.building_anz].data.is_road)
+		else if (b.data.is_road)
 		{
-			UnitsData.ptr_small_beton = UnitsData.building[UnitsData.building_anz].img;
+			UnitsData.ptr_small_beton = b.img;
 			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
 		}
 
 		// Check if there is more than one frame
-		if(UnitsData.building[UnitsData.building_anz].img_org->w > 128 && !UnitsData.building[UnitsData.building_anz].data.is_connector)
+		if (b.img_org->w > 128 && !b.data.is_connector)
 		{
-			UnitsData.building[UnitsData.building_anz].data.has_frames = UnitsData.building[UnitsData.building_anz].img_org->w / UnitsData.building[UnitsData.building_anz].img_org->h;
+			b.data.has_frames = b.img_org->w / b.img_org->h;
 		}
 
 		UnitsData.building_anz++;
