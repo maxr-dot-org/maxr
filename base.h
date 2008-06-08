@@ -66,7 +66,7 @@ public:
   ~cBase(void);
 
   cPlayer *owner;
-  cList<sSubBase*> *SubBases;
+  cList<sSubBase*> SubBases;
   cMap *map;
 
   void AddBuilding(cBuilding *b);

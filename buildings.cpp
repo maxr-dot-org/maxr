@@ -8302,10 +8302,9 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			for ( i = 0;i < owner->base->SubBases->iCount;i++ )
+			for (i = 0; i < owner->base->SubBases.iCount; ++i)
 			{
-				sSubBase *sb;
-				sb = owner->base->SubBases->Items[i];
+				sSubBase* const sb = owner->base->SubBases.Items[i];
 
 				for ( k = 0;k < sb->buildings->iCount;k++ )
 				{

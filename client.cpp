@@ -398,14 +398,14 @@ void cClient::run()
 		iDebugOff = 30;
 		if ( bDebugBaseClient && bFlagDrawMap )
 		{
-			font->showText(550,iDebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 
 		if ( bDebugBaseServer && bFlagDrawMap )
 		{
 			cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-			font->showText(550,iDebugOff, "subbases: " + iToStr(serverPlayer->base->SubBases->iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base->SubBases.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 

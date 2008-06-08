@@ -25,20 +25,17 @@
 cBase::cBase ( cPlayer *Owner )
 {
 	owner=Owner;
-	SubBases=new cList<sSubBase*>;
 }
 
 cBase::~cBase ( void )
 {
-	while ( SubBases->iCount )
+	while (SubBases.iCount != 0)
 	{
-		sSubBase *sb;
-		sb=SubBases->Items[0];
+		sSubBase* const sb = SubBases.Items[0];
 		delete sb->buildings;
 		delete sb;
-		SubBases->Delete ( 0 );
+		SubBases.Delete(0);
 	}
-	delete SubBases;
 }
 
 // Fügt ein neues Building in die Base ein:
@@ -102,7 +99,7 @@ void cBase::AddBuilding ( cBuilding *b )
 			b->SubBase=n;
 			n->buildings=new cList<cBuilding*>;
 			AddBuildingToSubBase ( b,n );
-			SubBases->Add ( n );
+			SubBases.Add(n);
 			// Alle gefundenen Subbases durchgehen:
 			while ( NeighbourList->iCount )
 			{
@@ -117,11 +114,11 @@ void cBase::AddBuilding ( cBuilding *b )
 				}
 				delete sb->buildings;
 				// Die Subbase aus der Subbaseliste löschen:
-				for ( i=0;i<SubBases->iCount;i++ )
+				for (i = 0; i < SubBases.iCount ; ++i)
 				{
-					if ( SubBases->Items[i]==sb )
+					if (SubBases.Items[i] == sb)
 					{
-						SubBases->Delete ( i );
+						SubBases.Delete(i);
 						break;
 					}
 				}
@@ -156,7 +153,7 @@ void cBase::AddBuilding ( cBuilding *b )
 		b->SubBase=n;
 		n->buildings=new cList<cBuilding*>;
 		AddBuildingToSubBase ( b,n );
-		SubBases->Add ( n );
+		SubBases.Add(n);
 	}
 	delete NeighbourList;
 }
@@ -174,11 +171,11 @@ void cBase::DeleteBuilding ( cBuilding *b )
 	{
 		sb->buildings->Items[i]->SubBase=NULL;
 	}
-	for ( i=0;i<SubBases->iCount;i++ )
+	for (i = 0; i < SubBases.iCount ; ++i)
 	{
-		if ( SubBases->Items[i]==sb )
+		if (SubBases.Items[i] == sb)
 		{
-			SubBases->Delete ( i );
+			SubBases.Delete(i);
 			break;
 		}
 	}
@@ -408,11 +405,10 @@ void cBase::AddGold ( sSubBase *sb,int value )
 void cBase::Rundenende ( void )
 {
 	int i,k;
-	sSubBase *sb;
 
-	for ( i=0;i<SubBases->iCount;i++ )
+	for (i = 0; i < SubBases.iCount ; ++i)
 	{
-		sb=SubBases->Items[i];
+		sSubBase* const sb = SubBases.Items[i];
 		// Öl produzieren/abziehen:
 		if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 )
 		{
@@ -671,21 +667,20 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 void cBase::RefreshSubbases ( void )
 {
 	cList<sSubBase*> *OldSubBases;
-	sSubBase *sb;
 	cBuilding *n;
 	int i;
 
 	OldSubBases=new cList<sSubBase*>;
-	while ( SubBases->iCount )
+	while (SubBases.iCount != 0)
 	{
-		sb=SubBases->Items[0];
-		OldSubBases->Add ( sb );
-		SubBases->Delete ( 0 );
+		sSubBase* const sb = SubBases.Items[0];
+		OldSubBases->Add(sb);
+		SubBases.Delete(0);
 	}
 
 	while ( OldSubBases->iCount )
 	{
-		sb=OldSubBases->Items[0];
+		sSubBase* const sb = OldSubBases->Items[0];
 
 		// Alle SubBases auf NULL setzen:
 		for ( i=0;i<sb->buildings->iCount;i++ )
