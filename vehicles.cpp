@@ -3043,8 +3043,14 @@ int cVehicle::CalcHelth ( int damage )
 
 struct sBuildStruct
 {
-	SDL_Surface *sf;
-	int id;
+public:
+	sBuildStruct(SDL_Surface* const sf_, int const id_) :
+		sf(sf_),
+		id(id_)
+	{}
+
+	SDL_Surface* const sf;
+	int          const id;
 };
 
 // Zeigt das Build-Menü an:
@@ -3126,7 +3132,6 @@ void cVehicle::ShowBuildMenu ( void )
 
 	for ( i = 0;i < UnitsData.building_anz;i++ )
 	{
-		sBuildStruct *n;
 		SDL_Surface *sf, *sf2;
 
 		if ( UnitsData.building[i].data.is_expl_mine )
@@ -3155,12 +3160,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		SDL_FreeSurface ( sf2 );
 
-		n = new sBuildStruct;
-
-		n->sf = sf;
-
-		n->id = i;
-
+		sBuildStruct* const n = new sBuildStruct(sf, i);
 		images.Add ( n );
 	}
 
