@@ -755,31 +755,26 @@ void RunSPMenu ( void )
 				if ( !sMapName.empty() )
 				{
 					int iLandX, iLandY;
-					cList<cPlayer*> *ServerPlayerList;
-					cList<cPlayer*> *ClientPlayerList;
-					cList<sLanding*> *LandingList;
 					cPlayer *Player;
-					cMap *Map, *ServerMap;
-					Map = new cMap;
+					cMap Map;
 					sPlayer players;
-					if ( !Map->LoadMap ( sMapName ) )
+					if ( !Map.LoadMap ( sMapName ) )
 					{
-						delete Map;
 						break;
 					}
-					Map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
+					Map.PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 					// copy map for server
-					ServerMap = new cMap;
-					ServerMap->NewMap( Map->size, Map->TerrainInUse.iCount );
-					ServerMap->DefaultWater = Map->DefaultWater;
-					ServerMap->MapName = Map->MapName;
-					memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
-					memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-					for ( int i = 0; i < Map->TerrainInUse.iCount; i++ )
+					cMap ServerMap;
+					ServerMap.NewMap( Map.size, Map.TerrainInUse.iCount );
+					ServerMap.DefaultWater = Map.DefaultWater;
+					ServerMap.MapName = Map.MapName;
+					memcpy ( ServerMap.Kacheln, Map.Kacheln, sizeof ( int )*Map.size*Map.size );
+					memcpy ( ServerMap.Resources, Map.Resources, sizeof ( sResources )*Map.size*Map.size );
+					for ( int i = 0; i < Map.TerrainInUse.iCount; i++ )
 					{
-						ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
-						ServerMap->terrain[i].coast = Map->terrain[i].coast;
-						ServerMap->terrain[i].water = Map->terrain[i].water;
+						ServerMap.terrain[i].blocked = Map.terrain[i].blocked;
+						ServerMap.terrain[i].coast = Map.terrain[i].coast;
+						ServerMap.terrain[i].water = Map.terrain[i].water;
 					}
 
 					players = runPlayerSelection();
@@ -794,55 +789,52 @@ void RunSPMenu ( void )
 					}
 					if(!bHavePlayer) //no players - break
 					{
-						delete Map;
-						delete ServerMap;
 						ExitMenu();
 						break;
 					}
 					// player for client
 					Player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
-					ClientPlayerList = new cList<cPlayer*>;
-					ClientPlayerList->Add ( Player );
-					ClientPlayerList->Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
+					cList<cPlayer*> ClientPlayerList;
+					ClientPlayerList.Add ( Player );
+					ClientPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 					// playerlist for server
-					ServerPlayerList = new cList<cPlayer*>;
-					ServerPlayerList->Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
-					ServerPlayerList->Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
+					cList<cPlayer*> ServerPlayerList;
+					ServerPlayerList.Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
+					ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 					// init client and his player
 					Client = new cClient;
-					Client->init( Map, ClientPlayerList );
+					Client->init( &Map, &ClientPlayerList );
 					Client->initPlayer ( Player );
-					for ( int i = 0; i < ClientPlayerList->iCount; i++ )
+					for ( int i = 0; i < ClientPlayerList.iCount; i++ )
 					{
-						ClientPlayerList->Items[i]->InitMaps ( Map->size, Map );
-						ClientPlayerList->Items[i]->Credits = options.credits;
+						ClientPlayerList.Items[i]->InitMaps ( Map.size, &Map );
+						ClientPlayerList.Items[i]->Credits = options.credits;
 					}
 
 					// init the players of playerlist
-					for ( int i = 0; i < ServerPlayerList->iCount; i++ )
+					for ( int i = 0; i < ServerPlayerList.iCount; i++ )
 					{
-						ServerPlayerList->Items[i]->InitMaps ( ServerMap->size, ServerMap );
-						ServerPlayerList->Items[i]->Credits = options.credits;
+						ServerPlayerList.Items[i]->InitMaps ( ServerMap.size, &ServerMap );
+						ServerPlayerList.Items[i]->Credits = options.credits;
 					}
 					// init server
 					Server = new cServer;
-					Server->init( ServerMap, ServerPlayerList, GAME_TYPE_SINGLE, false );
+					Server->init( &ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false );
 
 					// land the player
-					LandingList = new cList<sLanding*>;
-					RunHangar ( Player, LandingList );
-					SelectLanding ( &iLandX, &iLandY, Map );
+					cList<sLanding*> LandingList;
+					RunHangar ( Player, &LandingList );
+					SelectLanding ( &iLandX, &iLandY, &Map );
 
-					Server->makeLanding ( iLandX, iLandY, ServerPlayerList->Items[0], LandingList, options.FixedBridgeHead );
+					Server->makeLanding ( iLandX, iLandY, ServerPlayerList.Items[0], &LandingList, options.FixedBridgeHead );
 
-					while ( LandingList->iCount )
+					while ( LandingList.iCount )
 					{
-						delete LandingList->Items[LandingList->iCount - 1];
-						LandingList->Delete( LandingList->iCount - 1);
+						delete LandingList.Items[LandingList.iCount - 1];
+						LandingList.Delete( LandingList.iCount - 1);
 					}
-					delete LandingList;
 
 					// exit menu and start game
 					ExitMenu();
@@ -853,23 +845,19 @@ void RunSPMenu ( void )
 					Server->kill();
 					Client->kill();
 					SettingsData.sPlayerName = Player->name;
-					while ( ClientPlayerList->iCount )
+					while ( ClientPlayerList.iCount )
 					{
-						delete ( ClientPlayerList->Items[0] );
-						ClientPlayerList->Delete ( 0 );
+						delete ( ClientPlayerList.Items[0] );
+						ClientPlayerList.Delete ( 0 );
 					}
-					while ( ServerPlayerList->iCount )
+					while ( ServerPlayerList.iCount )
 					{
-						delete ( ServerPlayerList->Items[0] );
-						ServerPlayerList->Delete ( 0 );
+						delete ( ServerPlayerList.Items[0] );
+						ServerPlayerList.Delete ( 0 );
 					}
 					delete Client; Client = NULL;
 					delete Server; Server = NULL;
-					delete Map;
-					delete ServerMap;
 
-					delete ClientPlayerList;
-					delete ServerPlayerList;
 					break;
 				}
 				break;
