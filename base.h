@@ -29,6 +29,11 @@ class cMap;
 
 // Die SubBase Struktur //////////////////////////////////////////////////////
 struct sSubBase{
+public:
+	sSubBase();
+	~sSubBase();
+
+public:
   cList<cBuilding*> *buildings;
 
   int MaxMetal;

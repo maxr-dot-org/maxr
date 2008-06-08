@@ -21,6 +21,40 @@
 #include "game.h"
 #include "serverevents.h"
 
+
+sSubBase::sSubBase() :
+  buildings(new cList<cBuilding*>),
+  MaxMetal(),
+  Metal(),
+  MaxOil(),
+  Oil(),
+  MaxGold(),
+  Gold(),
+  MaxEnergyProd(),
+  EnergyProd(),
+  MaxEnergyNeed(),
+  EnergyNeed(),
+  MetalNeed(),
+  OilNeed(),
+  GoldNeed(),
+  MaxMetalNeed(),
+  MaxOilNeed(),
+  MaxGoldNeed(),
+  MetalProd(),
+  OilProd(),
+  GoldProd(),
+  HumanProd(),
+  HumanNeed(),
+  MaxHumanNeed()
+{}
+
+
+sSubBase::~sSubBase()
+{
+	delete buildings;
+}
+
+
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase ( cPlayer *Owner )
 {
@@ -32,7 +66,6 @@ cBase::~cBase ( void )
 	while (SubBases.iCount != 0)
 	{
 		sSubBase* const sb = SubBases.Items[0];
-		delete sb->buildings;
 		delete sb;
 		SubBases.Delete(0);
 	}
@@ -94,9 +127,7 @@ void cBase::AddBuilding ( cBuilding *b )
 			cBuilding *sbb;
 			// neue Subbase anlegen:
 			n=new sSubBase;
-			memset ( n,0,sizeof ( sSubBase ) );
 			b->SubBase=n;
-			n->buildings=new cList<cBuilding*>;
 			AddBuildingToSubBase ( b,n );
 			SubBases.Add(n);
 			// Alle gefundenen Subbases durchgehen:
@@ -111,7 +142,6 @@ void cBase::AddBuilding ( cBuilding *b )
 					sbb->SubBase=n;
 					sb->buildings->Delete ( 0 );
 				}
-				delete sb->buildings;
 				// Die Subbase aus der Subbaseliste löschen:
 				for (i = 0; i < SubBases.iCount ; ++i)
 				{
@@ -147,9 +177,7 @@ void cBase::AddBuilding ( cBuilding *b )
 		b->BaseW=false;
 		// Neue Subbase anlegen:
 		n=new sSubBase;
-		memset ( n,0,sizeof ( sSubBase ) );
 		b->SubBase=n;
-		n->buildings=new cList<cBuilding*>;
 		AddBuildingToSubBase ( b,n );
 		SubBases.Add(n);
 	}
@@ -184,7 +212,6 @@ void cBase::DeleteBuilding ( cBuilding *b )
 		AddBuilding ( n );
 	}
 	if ( b->IsWorking&&b->data.can_research ) b->owner->StopAReserach();
-	delete sb->buildings;
 	delete sb;
 }
 
