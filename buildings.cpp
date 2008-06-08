@@ -6573,12 +6573,6 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_Rect rBtnDel = {MENU_OFFSET_X + 388, MENU_OFFSET_Y + 292, BUTTON__W, BUTTON__H};
 	SDL_Rect rBtnBuy = {MENU_OFFSET_X + 561, MENU_OFFSET_Y + 441, BUTTON__W, BUTTON__H};
 
-
-	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
-	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
-	SDL_Rect rBtnSpeed2 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 370, BUTTON__W, BUTTON__H}; //buildspeed * 2
-	SDL_Rect rBtnSpeed3 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 395, BUTTON__W, BUTTON__H}; //buildspeed * 4
-
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, NULL, buffer, &rDialog );
@@ -8935,7 +8929,6 @@ void cBuilding::ShowHelp ( void )
 
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	bool FertigPressed = false;
-	bool ret = false;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {rDialog.x + 11, rDialog.y + 13, typ->info->w, typ->info->h};

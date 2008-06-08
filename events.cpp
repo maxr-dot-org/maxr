@@ -173,8 +173,6 @@ int cEventHandling::HandleEvents()
 					if ( SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
 					{
 						// devite into messages
-						int iPos = 0;
-						/*while ( )*/
 						SDL_Event* NewEvent = new SDL_Event;
 						NewEvent->type = GAME_EVENT;
 						

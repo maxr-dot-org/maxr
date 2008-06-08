@@ -1362,7 +1362,6 @@ void cVehicle::ShowHelp ( void )
 
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	bool FertigPressed = false;
-	bool ret = false;
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {MENU_OFFSET_X + 11, MENU_OFFSET_Y + 13, typ->info->w, typ->info->h};

@@ -22,14 +22,8 @@
 #include "defines.h"
 #include "main.h"
 
-#ifdef WIN32
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "\\"
-	#endif
-#else
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "//"
-	#endif
+#ifndef PATH_DELIMITER
+#	define PATH_DELIMITER "//"
 #endif
 
 

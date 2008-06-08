@@ -175,8 +175,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 			if ( x == PosX && y == PosY ) continue;
 			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
-			int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size];
-			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
+			if (vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0)
 			{
 				NrSurvFields++;
 			}

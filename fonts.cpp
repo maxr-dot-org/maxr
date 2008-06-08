@@ -504,8 +504,8 @@ void cBitmapFont::buildFont(SDL_Surface *surface)
 	int cellW = sfTmp->w / 16;
 	int cellH = sfTmp->h / 16;
 	int currentChar = 0;
-	register int pX = 0;
-	register int pY = 0;
+	int pX = 0;
+	int pY = 0;
 
 	//go through the rows
 	for( int rows = 0; rows < 16; rows ++)

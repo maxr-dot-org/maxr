@@ -407,8 +407,6 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 			if ( next>2 ) next=0;
 
 			// Ressurcen dumherum platzieren:
-			if ( pos>30000 )
-				int k = 1;
 			x=pos%size;
 			y=pos/size;
 			if ( x>0&&y>0 )

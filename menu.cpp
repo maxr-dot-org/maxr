@@ -233,7 +233,7 @@ void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *s
 // Zeigt das Hauptmenü an:
 void RunMainMenu ( void )
 {
-	bool SPPressed=false,MPPRessed=false,MEPressed=false,CrPressed=false,BePressed=false,LiPressed=false;
+	bool SPPressed=false,MPPRessed=false,CrPressed=false,BePressed=false,LiPressed=false;
 	bool EscHot=true;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
@@ -1005,7 +1005,6 @@ sOptions RunOptionsMenu ( sOptions *init )
 		options=*init;
 	}
 
-	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
 
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
@@ -1502,7 +1501,6 @@ string RunPlanetSelect ( void )
 	cList<string> *files;
 	SDL_Rect scr;
 
-	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
 
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
@@ -1845,7 +1843,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	#define FIELD3 DIALOG_X+414
 	bool OKPressed=false;
 	bool BackPressed=false;
-	int b,lb=0,offset=0,lx=-1,ly=-1;
+	int b,lb=0,lx=-1,ly=-1;
 	Uint8 *keystate;
 	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
@@ -2067,7 +2065,7 @@ sPlayer runPlayerSelection ( void )
 {
 	bool OKPressed=false;
 	bool BackPressed=false;
-	int b,lb=0,offset=0,lx=-1,ly=-1;
+	int b,lb=0,lx=-1,ly=-1;
 	sPlayer players;
 	Uint8 *keystate;
 
@@ -5755,14 +5753,13 @@ int ShowDateiMenu ( bool bSave )
 	SDL_Rect scr;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
-	bool  BeendenPressed=false, HilfePressed=false, LadenPressed=false, Cursor=true;
+	bool  BeendenPressed=false, LadenPressed=false, Cursor=true;
 	Uint8 *keystate;
 	cList<string> *files;
 	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnLoad = {rDialog.x+514,rDialog.y+438, 106, 40};
 	SDL_Rect rBtnSave = {rDialog.x+132,rDialog.y+438, 106, 40};
-	SDL_Rect rBtnHelp = {rDialog.x+464,rDialog.y+438, 40, 40};
 	SDL_Rect rArrowUp = {rDialog.x+33, rDialog.y+438, 28, 29};
 	SDL_Rect rArrowDown = {rDialog.x+63, rDialog.y+438, 28, 29};
 	SDL_Rect rTitle = { rDialog.x+320, rDialog.y+12, 150, 12 };
@@ -5780,7 +5777,6 @@ int ShowDateiMenu ( bool bSave )
 
 	// Buttons setzen;
 	drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );
-	// PlaceSmallMenuButton ( "? ",rBtnHelp.x,rBtnHelp.y,false ); //TODO: move this to dialog.cpp and rewrite it
 	if ( bSave )
 	{
 		drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );

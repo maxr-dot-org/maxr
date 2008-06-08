@@ -35,7 +35,6 @@
 /**mem error*/
 #define MM "(MM): "
 static SDL_RWops *logfile = NULL;
-static SDL_mutex *mutex;
 bool bNetlogStarted;
 bool bIsRunning=false;
 

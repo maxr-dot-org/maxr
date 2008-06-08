@@ -150,7 +150,6 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	SDL_Rect rArrowUp = { rDialog.x + 241, rDialog.y + 187, 18, 17};
 	SDL_Rect rArrowDown = { rDialog.x + 261, rDialog.y + 187, 18, 17};
 	SDL_Rect scr = {rTextField.x - rDialog.x, rTextField.y - rDialog.y, rTextField.w, rTextField.h}; //remove offset
-	bool Cursor = true;
 	string stmp = iToStr(iDefaultValue);
 	SDL_Surface *SfDialog = NULL;
 

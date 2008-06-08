@@ -275,7 +275,7 @@ static void handlecolor256(FLI_Animation *flic, FLI_Chunk *chunk) {
 
 static void handless2(FLI_Animation *flic, FLI_Chunk *chunk) {
         int   numlines, y, code, size;
-        Uint8 *p, c;
+        Uint8 *p;
 
         (void)chunk;
         if (flic->format == FLI_FLI)

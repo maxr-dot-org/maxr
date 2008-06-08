@@ -1423,7 +1423,6 @@ int LoadVehicles()
 	TiXmlDocument VehiclesXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
-	ExTiXmlNode *pExXmlNode = NULL;
 
 	sTmpString = SettingsData.sVehiclesPath;
 	sTmpString += PATH_DELIMITER;
@@ -1529,7 +1528,7 @@ int LoadVehicles()
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
 		// laod infantery graphics
-		register int n = 0;
+		int n = 0;
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
 			SDL_Surface *sfTempSurface;
@@ -1601,7 +1600,7 @@ int LoadVehicles()
 		// load other vehicle graphics
 		else
 		{
-			for(n; n < 8; n++)
+			for(int n = 0; n < 8; n++)
 			{
 				// load image
 				sTmpString = sVehiclePath;
@@ -1913,7 +1912,6 @@ int LoadBuildings()
 	TiXmlDocument BuildingsXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
-	ExTiXmlNode *pExXmlNode = NULL;
 
 	// read buildings.xml
 	sTmpString = SettingsData.sBuildingsPath;
