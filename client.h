@@ -38,6 +38,10 @@ Uint32 TimerCallback(Uint32 interval, void *arg);
 */
 class cClient
 {
+public:
+	cClient(cMap* Map, cList<cPlayer*>* PlayerList);
+
+private:
 	friend class cHud;
 	friend class cPlayer;
 	friend class cBuilding;
@@ -353,11 +357,6 @@ public:
 	*/
 	void drawMap( bool bPure = false );
 
-	/**
-	* initialises the client class
-	*@author alzi alias DoctorDeath
-	*/
-	void init( cMap *Map, cList<cPlayer*> *PlayerList );
 	/**
 	* kills the client class
 	*@author alzi alias DoctorDeath

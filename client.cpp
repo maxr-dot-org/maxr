@@ -37,7 +37,7 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	return interval;
 }
 
-void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
+cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 {
 	this->Map = Map;
 	bExit = false;

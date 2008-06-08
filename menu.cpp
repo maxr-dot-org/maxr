@@ -804,8 +804,7 @@ void RunSPMenu ( void )
 					ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 					// init client and his player
-					Client = new cClient;
-					Client->init( &Map, &ClientPlayerList );
+					Client = new cClient(&Map, &ClientPlayerList);
 					Client->initPlayer ( Player );
 					for ( int i = 0; i < ClientPlayerList.iCount; i++ )
 					{
@@ -4902,8 +4901,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						if ( ClientPlayerList->Items[i]->Nr == ActualPlayer->Nr ) ActualPlayerClient = ClientPlayerList->Items[i];
 					}
 					// init client and his player
-					Client = new cClient;
-					Client->init( Map, ClientPlayerList );
+					Client = new cClient(Map, ClientPlayerList);
 					Client->initPlayer ( ActualPlayerClient );
 					for ( int i = 0; i < ClientPlayerList->iCount; i++ )
 					{
@@ -5658,8 +5656,7 @@ void HeatTheSeat ( void )
 	}
 
 	// init client
-	Client = new cClient;
-	Client->init(&Map, &ClientPlayerList );
+	Client = new cClient(&Map, &ClientPlayerList);
 	for ( int i = 0; i < ClientPlayerList.iCount; i++ )
 	{
 		ClientPlayerList.Items[i]->InitMaps ( Map.size, &Map );
