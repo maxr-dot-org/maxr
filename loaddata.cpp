@@ -1494,12 +1494,8 @@ static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int i
 
 /**
  * Sets all unitdata to default values
- * @param unitnum Indexnumber of unit for which the data should be loaded.
- * @param vehicle Should be true if unit is a vehicle
- * @param ID The ID which the unit should have
- * @return 1 on success
  */
-static void SetDefaultUnitData(int unitnum, bool vehicle);
+static void SetDefaultUnitData(sUnitData*);
 
 /**
  * Gets the name and the description for the unit from the selected language file
@@ -1608,13 +1604,12 @@ static int LoadVehicles()
 		if(!UnitsData.vehicle) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 
 
-		// Set default data-values
 		cLog::write("Setting default values", cLog::eLOG_TYPE_DEBUG);
-		SetDefaultUnitData(UnitsData.vehicle_anz, true);
+		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
+		SetDefaultUnitData(&v.data);
 		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(UnitsData.vehicle_anz, sVehiclePath.c_str(), true, atoi(IDList.Items[i].c_str()));
-		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
 		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
@@ -2098,11 +2093,10 @@ static int LoadBuildings()
 		UnitsData.building = ( sBuilding* ) realloc ( UnitsData.building,sizeof ( sBuilding ) * (UnitsData.building_anz+1) );
 		if(!UnitsData.building) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 
-		// Set default data-values
-		SetDefaultUnitData(UnitsData.building_anz, false);
+		sBuilding& b = UnitsData.building[UnitsData.building_anz];
+		SetDefaultUnitData(&b.data);
 		// Load Data from data.xml
 		LoadUnitData(UnitsData.building_anz, sBuildingPath.c_str(), false, atoi(IDList.Items[i].c_str()));
-		sBuilding& b = UnitsData.building[UnitsData.building_anz];
 		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
@@ -2833,14 +2827,8 @@ static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int i
 	return ;
 }
 
-static void SetDefaultUnitData(int unitnum, bool vehicle)
+static void SetDefaultUnitData(sUnitData* const Data)
 {
-	sUnitData *Data;
-	if(vehicle)
-		Data = &UnitsData.vehicle[unitnum].data;
-	else
-		Data = &UnitsData.building[unitnum].data;
-
 	// Main info
 	Data->ID.iFirstPart = -1;
 	Data->ID.iSecondPart = -1;
