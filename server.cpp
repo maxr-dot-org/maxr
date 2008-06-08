@@ -571,12 +571,12 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 	for ( int i = 0; i < List->iCount; i++ )
 	{
 		Landing = List->Items[i];
-		Vehicle = landVehicle ( iX, iY, iWidth, iHeight, UnitsData.vehicle+Landing->id, Player );
+		Vehicle = landVehicle(iX, iY, iWidth, iHeight, &UnitsData.vehicle[Landing->id], Player);
 		while ( !Vehicle )
 		{
 			iWidth += 2;
 			iHeight += 2;
-			Vehicle = landVehicle ( iX, iY, iWidth, iHeight, UnitsData.vehicle+Landing->id, Player );
+			Vehicle = landVehicle(iX, iY, iWidth, iHeight, &UnitsData.vehicle[Landing->id], Player);
 		}
 		if ( Landing->cargo && Vehicle )
 		{

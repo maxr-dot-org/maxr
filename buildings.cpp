@@ -3729,7 +3729,7 @@ void cBuilding::MakeResearchSchieber ( int x, int y )
 // Zeigt den Upgradeschirm an:
 void cBuilding::ShowUpgrade ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, k;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
 	SDL_Rect scr, dest;
 	bool AbbruchPressed = false;
 	bool FertigPressed = false;
@@ -3789,7 +3789,7 @@ void cBuilding::ShowUpgrade ( void )
 
 	float newzoom = ( Client->Hud.Zoom / 64.0 );
 
-	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		SDL_Surface *sf;
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
@@ -3803,7 +3803,7 @@ void cBuilding::ShowUpgrade ( void )
 		images.Add ( n );
 	}
 
-	for ( i = 0;i < UnitsData.building_anz;i++ )
+	for (size_t i = 0;i < UnitsData.building_anz;i++ )
 	{
 		SDL_Surface *sf;
 
@@ -3978,7 +3978,7 @@ void cBuilding::ShowUpgrade ( void )
 					// Alle Upgrades zurücksetzen:
 					owner->Credits = StartCredits;
 
-					for ( i = 0;i < images.iCount;i++ )
+					for (size_t i = 0;i < images.iCount;i++ )
 					{
 						sUpgradeStruct *ptr;
 						ptr = images.Items[i];
@@ -4019,7 +4019,7 @@ void cBuilding::ShowUpgrade ( void )
 				if ( !b && LastB )
 				{
 					// Alle Upgrades durchführen:
-					for ( i = 0;i < images.iCount;i++ )
+					for (size_t i = 0;i < images.iCount;i++ )
 					{
 						bool up = false;
 						sUpgradeStruct *ptr;
@@ -4125,7 +4125,7 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			sUpgradeStruct *ptr = selection.Items[selected];
 
-			for ( i = 0;i < 8;i++ )
+			for (size_t i = 0;i < 8;i++ )
 			{
 				if ( !ptr->upgrades[i].active )
 					continue;
@@ -4416,7 +4416,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 
 				if ( ptr->vehicle )
 				{
-					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
 					tv.ShowBigDetails();
 				}
 				else
@@ -6550,7 +6550,7 @@ public:
 // Zeigt das Build-Menü an:
 void cBuilding::ShowBuildMenu ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, k;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
 	SDL_Rect scr, dest;
 	bool AbbruchPressed = false;
 	bool FertigPressed = false;
@@ -6624,7 +6624,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 	float newzoom = ( Client->Hud.Zoom / 64.0 );
 
-	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		SDL_Surface *sf;
 		bool land = false, water = false;
@@ -6707,7 +6707,7 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Bauliste anlegen:
 	cList<sBuildStruct*> to_build;
 
-	for ( i = 0;i < BuildList->iCount;i++ )
+	for (size_t i = 0;i < BuildList->iCount;i++ )
 	{
 		sBuildList *ptr;
 		ptr = BuildList->Items[i];
@@ -7493,7 +7493,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
 					tv.ShowBigDetails();
 				}
 
@@ -7734,7 +7734,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
 					tv.ShowBigDetails();
 				}
 

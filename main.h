@@ -73,6 +73,7 @@ struct sBuildStruct;
 struct sFX;
 struct sPathCalc;
 struct sReport;
+struct sVehicle;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Defines
@@ -655,8 +656,7 @@ class cUnitsData
 {
 public:
 	// Vehicles
-	struct sVehicle *vehicle;
-	int vehicle_anz;
+	cList<sVehicle> vehicle;
 
 	// Buildings
 	struct sBuilding *building;

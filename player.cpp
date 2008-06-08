@@ -27,19 +27,18 @@
 cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	base(this)
 {
-	int i;
 	name=Name;
 	color=Color;
 	Nr=nr;
 	// Die Vehicle Eigenschaften kopieren:
-	VehicleData= ( sUnitData* ) malloc ( sizeof ( sUnitData ) *UnitsData.vehicle_anz );
-	for ( i=0;i<UnitsData.vehicle_anz;i++ )
+	VehicleData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.vehicle.Size());
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		VehicleData[i]=UnitsData.vehicle[i].data;
 	}
 	// Die Building Eigenschaften kopieren:
 	BuildingData= ( sUnitData* ) malloc ( sizeof ( sUnitData ) *UnitsData.building_anz );
-	for ( i=0;i<UnitsData.building_anz;i++ )
+	for (size_t i=0;i<UnitsData.building_anz;i++ )
 	{
 		BuildingData[i]=UnitsData.building[i].data;
 	}
@@ -663,9 +662,7 @@ void cPlayer::DoResearch ( void )
 // Führt eine konkrete Forschung durch:
 void cPlayer::DoTheResearch ( int i )
 {
-	int k;
-
-	for ( k=0;k<UnitsData.vehicle_anz;k++ )
+	for (size_t k = 0; k < UnitsData.vehicle.Size(); ++k)
 	{
 		int before;
 		switch ( i )
@@ -730,7 +727,7 @@ void cPlayer::DoTheResearch ( int i )
 				break;
 		}
 	}
-	for ( k=0;k<UnitsData.building_anz;k++ )
+	for (size_t k=0;k<UnitsData.building_anz;k++ )
 	{
 		int before;
 		switch ( i )

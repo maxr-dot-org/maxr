@@ -1669,12 +1669,12 @@ void cGame::MakeLanding ( int x,int y, cPlayer *p, cList<sLanding*> *list, bool 
 	for ( i=0;i<list->iCount;i++ )
 	{
 		ptr=list->Items[i];
-		v=LandVehicle ( x,y,w,h,UnitsData.vehicle+ptr->id,p );
+		v = LandVehicle (x, y, w, h, &UnitsData.vehicle[ptr->id], p);
 		while ( !v )
 		{
 			w+=2;
 			h+=2;
-			v=LandVehicle ( x,y,w,h,UnitsData.vehicle+ptr->id,p );
+			v = LandVehicle(x, y, w, h, &UnitsData.vehicle[ptr->id], p);
 		}
 		if ( ptr->cargo&&v )
 		{
@@ -3344,7 +3344,7 @@ bool cGame::Save ( string sName, int iNumber )
 		fwrite ( & ( p->ResearchCount ),sizeof ( int ),1,fp );
 		fwrite ( & ( p->UnusedResearch ),sizeof ( int ),1,fp );
 
-		fwrite ( p->VehicleData,sizeof ( sUnitData ),UnitsData.vehicle_anz,fp ); // Vehicle-Data
+		fwrite(p->VehicleData, sizeof(sUnitData), UnitsData.vehicle.Size(), fp); // Vehicle-Data
 		fwrite ( p->BuildingData,sizeof ( sUnitData ),UnitsData.building_anz,fp ); // Building-Data
 
 		fwrite ( & ( p->HotHud ),sizeof ( cHud ),1,fp ); // Hud-Einstellungen
@@ -3485,7 +3485,7 @@ void cGame::Load ( string name,int AP,bool MP )
 		fread ( & ( p->ResearchCount ),sizeof ( int ),1,fp );
 		fread ( & ( p->UnusedResearch ),sizeof ( int ),1,fp );
 
-		fread ( p->VehicleData,sizeof ( sUnitData ),UnitsData.vehicle_anz,fp ); // Vehicle-Data
+		fread(p->VehicleData, sizeof(sUnitData), UnitsData.vehicle.Size(), fp); // Vehicle-Data
 		fread ( p->BuildingData,sizeof ( sUnitData ),UnitsData.building_anz,fp ); // Building-Data
 
 		fread ( & ( p->HotHud ),sizeof ( cHud ),1,fp ); // Hud-Einstellungen
@@ -3522,7 +3522,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				}
 				fread ( &typnr,sizeof ( int ),1,fp ); // Typ-Nr
 
-				engine->AddVehicle ( off%map->size,off/map->size,UnitsData.vehicle+typnr,p,true );
+				engine->AddVehicle(off %  map->size, off /  map->size, &UnitsData.vehicle[typnr], p, true);
 				if ( plane )
 				{
 					v=map->GO[off].plane;
@@ -3605,7 +3605,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-						cVehicle* v = new cVehicle(UnitsData.vehicle,PlayerList->Items[0]);
+						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], PlayerList->Items[0]);
 						v->OffX = t;
 			            v->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}
@@ -3728,7 +3728,7 @@ void cGame::Load ( string name,int AP,bool MP )
 						fread ( & ( t ),sizeof ( int ),1,fp );
 						fread ( & ( bl->metall_remaining ),sizeof ( int ),1,fp );
 
-						bl->typ=UnitsData.vehicle+t;
+						bl->typ = &UnitsData.vehicle[t];
 					}
 				}
 
@@ -3738,7 +3738,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-						cVehicle* v = new cVehicle(UnitsData.vehicle,PlayerList->Items[0]);
+						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], PlayerList->Items[0]);
 						v->OffX = t;
 			            b->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}

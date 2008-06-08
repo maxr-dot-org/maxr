@@ -17,6 +17,9 @@ template<typename T> class cList
 
 		size_t Size() const { return iCount; }
 
+		T&       Back()       { return Items[iCount - 1]; }
+		T const& Back() const { return Items[iCount - 1]; }
+
 		T&       operator [](size_t const idx)       { return Items[idx]; }
 		T const& operator [](size_t const idx) const { return Items[idx]; }
 

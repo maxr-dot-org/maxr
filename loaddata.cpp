@@ -1586,7 +1586,7 @@ static int LoadVehicles()
 		}
 	}
 	// load found units
-	UnitsData.vehicle_anz = 0;
+	UnitsData.vehicle.Reserve(0);
 	for (int i = 0; i < VehicleList.iCount; i++)
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
@@ -1595,19 +1595,18 @@ static int LoadVehicles()
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.vehicle = ( sVehicle* ) realloc ( UnitsData.vehicle, sizeof ( sVehicle ) * (UnitsData.vehicle_anz+1));
-		if(!UnitsData.vehicle) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+		UnitsData.vehicle.Add(sVehicle());
 
 
 		cLog::write("Setting default values", cLog::eLOG_TYPE_DEBUG);
-		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
+		sVehicle& v = UnitsData.vehicle.Back();
 		SetDefaultUnitData(&v.data);
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList.Items[i].c_str()));
 		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
-		ConvertData(UnitsData.vehicle_anz, true);
+		ConvertData(UnitsData.vehicle.Size() - 1, true);
 
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
@@ -1919,11 +1918,9 @@ static int LoadVehicles()
 		LoadUnitSoundfile(v.Drive,      sVehiclePath.c_str(), "drive.wav");
 		LoadUnitSoundfile(v.DriveWater, sVehiclePath.c_str(), "drive_water.wav");
 		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.wav");
-
-		UnitsData.vehicle_anz++;
 	}
 
-	for ( int i = 0 ; i < UnitsData.vehicle_anz; i++ ) UnitsData.vehicle[i].nr = i;
+	for (size_t i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = i;
 	return 1;
 }
 
@@ -1935,7 +1932,7 @@ static void translateUnitData(sID ID, bool vehicle)
 
 	if ( vehicle )
 	{
-		for (int i = 0; i <= UnitsData.vehicle_anz; i++)
+		for (size_t i = 0; i <= UnitsData.vehicle.Size(); ++i)
 		{
 			if ( UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart )
 			{
@@ -2359,7 +2356,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 			Data->ID.iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
 			if(Data->ID.iFirstPart == 0)
 			{
-				for( i = 0; i < UnitsData.vehicle_anz; i++)
+				for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 				{
 					if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
 					{

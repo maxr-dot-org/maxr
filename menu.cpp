@@ -136,7 +136,7 @@ void showUnitPicture ( void )
 	{
 		do
 		{
-			iUnitShow = random ( UnitsData.vehicle_anz,0 );
+			iUnitShow = random(UnitsData.vehicle.Size(), 0);
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.vehicle[iUnitShow].info,NULL,buffer,&rDest );
@@ -2300,7 +2300,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	bool DownPressed=false,UpPressed=false,KaufPressed=false;
 	bool Down2Pressed=false,Up2Pressed=false,EntfernenPressed=false;
 	bool LadungUpPressed=false,LadungDownPressed=false;
-	int b,lb=0,i,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
+	int b,lb=0,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
 	int LandingOffset=0,LandingSelected=0;
 	SDL_Rect scr;
 
@@ -2338,7 +2338,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 	// Die Liste erstellen:
 	cList<sHUp*> list;
-	for ( i=0;i<UnitsData.vehicle_anz;i++ )
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		sHUp *n;
 		SDL_Surface *sf;
@@ -2356,7 +2356,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list.Add ( n );
 	}
-	for ( i=0;i<UnitsData.building_anz;i++ )
+	for (size_t i=0;i<UnitsData.building_anz;i++ )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
@@ -2592,7 +2592,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		if ( b&&!lb&&x>=283&&x<301+18&&selection.iCount )
 		{
 			sHUp *ptr=selection.Items[selected];
-			for ( i=0;i<8;i++ )
+			for (size_t i=0;i<8;i++ )
 			{
 				if ( !ptr->upgrades[i].active ) continue;
 				if ( ptr->upgrades[i].Purchased&&x<283+18&&y>=293+i*19&&y<293+i*19+19 )
@@ -3048,7 +3048,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	{
 		sHUp *ptr;
 		ptr = list.Items[0];
-		for ( i=0;i<8;i++ )
+		for (size_t i=0;i<8;i++ )
 		{
 			if ( ptr->upgrades[i].active&&ptr->upgrades[i].Purchased )
 			{
@@ -4061,7 +4061,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					cVehicle tv(UnitsData.vehicle + ptr->id, p);
+					cVehicle tv(&UnitsData.vehicle[ptr->id], p);
 					tv.ShowBigDetails();
 				}
 				else
@@ -5249,7 +5249,7 @@ void cMultiPlayerMenu::sendUpgrades()
 	int iCount = 0;
 
 	// send vehicles
-	for ( int i = 0; i < UnitsData.vehicle_anz; i++ )
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		if ( Message == NULL )
 		{

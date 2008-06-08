@@ -2708,7 +2708,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedVehicle = Player->AddVehicle ( PosX, PosY, UnitsData.vehicle + UnitNum );
+			AddedVehicle = Player->AddVehicle(PosX, PosY, &UnitsData.vehicle[UnitNum]);
 			AddedVehicle->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedVehicle, Init );
@@ -2772,7 +2772,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iUnitNumber = message->popInt16();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
-			AddedVehicle = Player->AddVehicle ( iPosX, iPosY, UnitsData.vehicle + iUnitNumber );
+			AddedVehicle = Player->AddVehicle(iPosX, iPosY, &UnitsData.vehicle[iUnitNumber]);
 
 			AddedVehicle->dir = message->popInt16();
 			AddedVehicle->iID = message->popInt16();

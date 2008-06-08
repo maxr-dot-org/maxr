@@ -1314,13 +1314,13 @@ int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_
 
 void cHud::ScaleSurfaces ( void )
 {
-	int i, k, sizex, sizey;
+	int k, sizex, sizey;
 	float fak;
 	if ( Zoom==LastZoom ) return;
 
 	// Terrain:
 	cList<sTerrain*>& tlist = Client->Map->TerrainInUse;
-	for ( i=0;i<tlist.iCount;i++ )
+	for (size_t i = 0; i < tlist.iCount; ++i)
 	{
 		sTerrain *t;
 		t= tlist.Items[i];
@@ -1355,7 +1355,7 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Vehicles:
 	fak = ( float ) ( Zoom/64.0 );
-	for ( i=0;i<UnitsData.vehicle_anz;i++ )
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		for ( k=0;k<8;k++ )
 		{
@@ -1393,7 +1393,7 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Buildings:
 	fak= ( float ) ( Zoom/64.0 );
-	for ( i=0;i<UnitsData.building_anz;i++ )
+	for (size_t i = 0; i < UnitsData.building_anz; ++i)
 	{
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img, (int) ( UnitsData.building[i].img_org->w * fak ), (int) ( UnitsData.building[i].img_org->h * fak ) );
 		ScaleSurfaceAdv2 ( UnitsData.building[i].shw_org,UnitsData.building[i].shw, (int) ( UnitsData.building[i].shw_org->w * fak ), (int) ( UnitsData.building[i].shw_org->h * fak ) );
