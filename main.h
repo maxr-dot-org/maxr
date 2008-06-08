@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // Hides some warnings from the eye of VS users ///////////////////////////////
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning(disable:4996)
 #pragma warning(disable:4244)
 #pragma warning(disable:4800)
