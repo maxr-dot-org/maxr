@@ -99,6 +99,12 @@ public:
 	 */
 	cTCP();
 
+	/**
+	 * Destroys the mutexes, the sockets and exits the network thread.
+	 *@author alzi alias DoctorDeath
+	 */
+	~cTCP();
+
 private:
 	SDL_mutex *TCPMutex;
 	bool bDataLocked;
@@ -180,12 +186,6 @@ private:
 	*/
 	int findNextMessageStart ( int iStartPos, char *data, int iLength );
 public:
-	/**
-	* Destroys the mutexes, the sockets and exits the network thread.
-	*@author alzi alias DoctorDeath
-	*/
-	void kill();
-
 	/**
 	* Creates a new server on the port which has to be set before.
 	*@author alzi alias DoctorDeath

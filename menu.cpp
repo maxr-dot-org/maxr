@@ -4168,7 +4168,6 @@ void cMultiPlayerMenu::init()
 
 void cMultiPlayerMenu::kill()
 {
-	network->kill();
 	delete network;
 	network = NULL;
 

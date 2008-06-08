@@ -43,7 +43,7 @@ cTCP::cTCP()
 	TCPHandleThread = SDL_CreateThread( CallbackHandleNetworkThread, this );
 }
 
-void cTCP::kill()
+cTCP::~cTCP()
 {
 	bExit = true;
 	SDL_WaitThread ( TCPHandleThread, NULL );
