@@ -80,152 +80,16 @@ EX int LoadingData;
 	*/
 int LoadData(void *);
 /**
-	* Writes a Logmessage on the SplashScreen
-	* @param sTxt Text to write
-	* @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
-	* @param pos Horizontal Positionindex on SplashScreen
-	*/
-void MakeLog(std::string sTxt, int ok,int pos);
-/**
-	* Loades a graphic to the surface
-	* @param dest Destination surface
-	* @param directory Directory of the file
-	* @param filename Name of the file
-	* @return 1 on success
-	*/
-int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename);
-/**
-	* Loades a effectgraphic to the surface
-	* @param dest Destination surface
-	* @param directory Directory of the file
-	* @param filename Name of the file
-	* @return 1 on success
-	*/
-int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename);
-/**
-	* Loades a effectgraphic with alpha to the surface
-	* @param dest Destination surface
-	* @param directory Directory of the file
-	* @param filename Name of the file
-	* @param aplha Strength og alpha (from 0=transparent to 255=opaque)
-	* @return 1 on success
-	*/
-int LoadEffectAplhaToSurface(SDL_Surface** &dest, const char* directory, const char* filename, int alpha);
-/**
-	* Loades a soundfile to the Mix_Chunk
-	* @param dest Destination Mix_Chunk
-	* @param directory Directory of the file
-	* @param filename Name of the file
-	* @return 1 on success
-	*/
-int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename);
-/**
-	* Loades a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
-	* @param dest Destination Mix_Chunk
-	* @param directory Directory of the file, relativ to the main vehicles directory
-	* @param filename Name of the file
-	*/
-void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filename);
-/**
-	* Loades the unitdata from the data.xml in the unitfolder
-	* @param unitnum Indexnumber of unit for which the data should be loaded.
-	* @param directory Unitdirectory , relativ to the main game directory
-	* @param vehicle Should be true if unit is a vehicle
-	* @return 1 on success
-	*/
-void LoadUnitData(int unitnum, const char* directory, bool vehicle, int ID);
-/**
-	* Sets all unitdata to default values
-	* @param unitnum Indexnumber of unit for which the data should be loaded.
-	* @param vehicle Should be true if unit is a vehicle
-	* @param ID The ID which the unit should have
-	* @return 1 on success
-	*/
-void SetDefaultUnitData(int unitnum, bool vehicle);
-/**
-	* Checks whether a file exits
-	* @param directory Directory to the file
-	* @param filename Name of the file
-	* @return 1 on success
-	*/
-int CheckFile(const char* directory, const char* filename);
-/**
 	* Reads the Information out of the max.xml
 	*/
 int ReadMaxXml();
-/**
-	* Loads the selected languagepack
-	* @return 1 on success
-	*/
-int LoadLanguage();
-/**
-	* Generats a new max.xml file
-	*/
-int GenerateMaxXml();
 
-/**
-	* Loads all Graphics
-	* @param path Directory of the graphics
-	* @return 1 on success
-	*/
-int LoadGraphics(const char* path);
 /**
 	* ??
 	* @param src Source surface
 	* @param dest Destination surface
 	*/
 void DupSurface(SDL_Surface *&src,SDL_Surface *&dest);
-/**
-	* Loads the Effects
-	* @param path Directory of the Effects
-	* @return 1 on success
-	*/
-int LoadEffects(const char* path);
-/**
-	* Loads all Buildings
-	* @param path Directory of the Buildings
-	* @return 1 on success
-	*/
-int LoadBuildings();
-/**
-	* Loads all Vehicles
-	* @param path Directory of the Vehicles
-	* @return 1 on success
-	*/
-int LoadVehicles();
-/**
-	* Gets the name and the description for the unit from the selected language file
-	* @param ID Id of the unit
-	*/
-void translateUnitData( sID ID, bool vehicle );
-/**
-	* Loads all Musicfiles
-	* @param path Directory of the Vehicles
-	* @return 1 on success
-	*/
-int LoadMusic(const char* path);
-/**
-	* Loads all Sounds
-	* @param path Directory of the Vehicles
-	* @return 1 on success
-	*/
-int LoadSounds(const char* path);
-/**
-	* Loads all Voices
-	* @param path Directory of the Vehicles
-	* @return 1 on success
-	*/
-int LoadVoices(const char* path);
-/**
-	* Saves the value. Do not use bye yourselve. Only used by SaveOption()-function.
-	* @param pXmlNode Node to which the value should be set
-	* @param sAttributName Name (which means typ) of the attribut to set ("YN", "Num" or "Text")
-	* @param bValue bool value to set
-	* @param iValue int value to set
-	* @param sValue string value to set
-	* @return 1 on success
-	*/
-void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue);
 /**
 	* Saves the acctual value of an option to the max.xml file
 	* @param Typ of Data to write (see SAVETYPE-defines)

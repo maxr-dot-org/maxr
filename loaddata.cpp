@@ -36,9 +36,68 @@
 
 TiXmlDocument LanguageFile;
 
-// i18ns the loaded data to the old data structure.
-// This should be just used temporarily while the game doesn't undestand new structure.
-void ConvertData(int unitnum, bool vehicle);
+/**
+ * Writes a Logmessage on the SplashScreen
+ * @param sTxt Text to write
+ * @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
+ * @param pos Horizontal Positionindex on SplashScreen
+ */
+static void MakeLog(std::string sTxt, int ok,int pos);
+
+/**
+ * Loads the selected languagepack
+ * @return 1 on success
+ */
+static int LoadLanguage();
+
+/**
+ * Loads all Graphics
+ * @param path Directory of the graphics
+ * @return 1 on success
+ */
+static int LoadGraphics(const char* path);
+
+/**
+ * Loads the Effects
+ * @param path Directory of the Effects
+ * @return 1 on success
+ */
+static int LoadEffects(const char* path);
+
+/**
+ * Loads all Buildings
+ * @param path Directory of the Buildings
+ * @return 1 on success
+ */
+static int LoadBuildings();
+
+/**
+ * Loads all Vehicles
+ * @param path Directory of the Vehicles
+ * @return 1 on success
+ */
+static int LoadVehicles();
+
+/**
+ * Loads all Musicfiles
+ * @param path Directory of the Vehicles
+ * @return 1 on success
+ */
+static int LoadMusic(const char* path);
+
+/**
+ * Loads all Sounds
+ * @param path Directory of the Vehicles
+ * @return 1 on success
+ */
+static int LoadSounds(const char* path);
+
+/**
+ * Loads all Voices
+ * @param path Directory of the Vehicles
+ * @return 1 on success
+ */
+static int LoadVoices(const char* path);
 
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and datas:
@@ -284,9 +343,14 @@ void MakeLog ( string sTxt,int ok,int pos )
 	return;
 }
 
-// LoadGraphicToSurface ///////////////////////////////////////////////////////
-// Loades a graphic to the surface:
-int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename)
+/**
+ * Loades a graphic to the surface
+ * @param dest Destination surface
+ * @param directory Directory of the file
+ * @param filename Name of the file
+ * @return 1 on success
+ */
+static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if(strcmp(directory,""))
@@ -311,9 +375,14 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 	return 1;
 }
 
-// LoadEffectGraphicToSurface /////////////////////////////////////////////////
-// Loades a effectgraphic to the surface:
-int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename)
+/**
+ * Loades a effectgraphic to the surface
+ * @param dest Destination surface
+ * @param directory Directory of the file
+ * @param filename Name of the file
+ * @return 1 on success
+ */
+static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if(strcmp(directory,""))
@@ -368,9 +437,14 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 	return 1;
 }
 
-// LoadSoundfile //////////////////////////////////////////////////////////////
-// Loades a sounfile to the Mix_Chunk
-int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
+/**
+ * Loades a soundfile to the Mix_Chunk
+ * @param dest Destination Mix_Chunk
+ * @param directory Directory of the file
+ * @param filename Name of the file
+ * @return 1 on success
+ */
+static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if(strcmp(directory,""))
@@ -387,9 +461,13 @@ int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
 	return 1;
 }
 
-// LoadUnitSoundfile //////////////////////////////////////////////////////////
-// Loades a unitsoundfile to the Mix_Chunk
-void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filename)
+/**
+ * Loades a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
+ * @param dest Destination Mix_Chunk
+ * @param directory Directory of the file, relativ to the main vehicles directory
+ * @param filename Name of the file
+ */
+static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filename)
 {
 	SDL_RWops *file;
 	string filepath;
@@ -417,6 +495,11 @@ void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filenam
 
 	dest = Mix_LoadWAV(filepath.c_str());
 }
+
+/**
+ * Generats a new max.xml file
+ */
+static int GenerateMaxXml();
 
 // ReadMaxXml /////////////////////////////////////////////////////////////////
 // Reads the Information from the max.xml:
@@ -950,9 +1033,7 @@ int ReadMaxXml()
 	return 0;
 }
 
-// LoadLanguage ///////////////////////////////////////////////////////////////
-// Loads the selected languagepack:
-int LoadLanguage()
+static int LoadLanguage()
 {
 	if( lngPack.SetCurrentLanguage(SettingsData.sLanguage) != 0 )			// Set the language code
 	{
@@ -969,9 +1050,7 @@ int LoadLanguage()
 	return 1;
 }
 
-// GenerateMaxXml /////////////////////////////////////////////////////////////
-// Generats a new max.xml file
-int GenerateMaxXml()
+static int GenerateMaxXml()
 {
 	static int iGenerateTrys = 0;
 	iGenerateTrys++;
@@ -979,9 +1058,7 @@ int GenerateMaxXml()
 	// return 0; // Generate success
 }
 
-// LoadEffects ///////////////////////////////////////////////////////////////////
-// Loads all Effects
-int LoadEffects(const char* path)
+static int LoadEffects(const char* path)
 {
 	cLog::write ( "Loading Effects", LOG_TYPE_INFO );
 
@@ -1003,9 +1080,7 @@ int LoadEffects(const char* path)
 	return 1;
 }
 
-// LoadMusic ///////////////////////////////////////////////////////////////////
-// Loads all Musicfiles
-int LoadMusic(const char* path)
+static int LoadMusic(const char* path)
 {
 	cLog::write ( "Loading music", LOG_TYPE_INFO );
 	string sTmpString;
@@ -1083,9 +1158,7 @@ int LoadMusic(const char* path)
 	return 1;
 }
 
-// LoadSounds ///////////////////////////////////////////////////////////////////
-// Loads all Sounds
-int LoadSounds(const char* path)
+static int LoadSounds(const char* path)
 {
 	cLog::write ( "Loading Sounds", LOG_TYPE_INFO );
 
@@ -1125,9 +1198,7 @@ int LoadSounds(const char* path)
 	return 1;
 }
 
-// LoadVoices ///////////////////////////////////////////////////////////////////
-// Loads all Voices
-int LoadVoices(const char* path)
+static int LoadVoices(const char* path)
 {
 	cLog::write ( "Loading Voices", LOG_TYPE_INFO );
 
@@ -1167,9 +1238,7 @@ int LoadVoices(const char* path)
 	return 1;
 }
 
-// LoadGFX ///////////////////////////////////////////////////////////////////
-// Loads all graphics
-int LoadGraphics(const char* path)
+static int LoadGraphics(const char* path)
 {
 	cLog::write ( "Loading Graphics", LOG_TYPE_INFO );
 	string stmp;
@@ -1410,9 +1479,35 @@ void DupSurface(SDL_Surface *&src,SDL_Surface *&dest)
 	return;
 }
 
-// LoadVehicles ///////////////////////////////////////////////////////////////
-// Loads all Vehicles
-int LoadVehicles()
+// i18ns the loaded data to the old data structure.
+// This should be just used temporarily while the game doesn't undestand new structure.
+static void ConvertData(int unitnum, bool vehicle);
+
+/**
+ * Loades the unitdata from the data.xml in the unitfolder
+ * @param unitnum Indexnumber of unit for which the data should be loaded.
+ * @param directory Unitdirectory , relativ to the main game directory
+ * @param vehicle Should be true if unit is a vehicle
+ * @return 1 on success
+ */
+static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID);
+
+/**
+ * Sets all unitdata to default values
+ * @param unitnum Indexnumber of unit for which the data should be loaded.
+ * @param vehicle Should be true if unit is a vehicle
+ * @param ID The ID which the unit should have
+ * @return 1 on success
+ */
+static void SetDefaultUnitData(int unitnum, bool vehicle);
+
+/**
+ * Gets the name and the description for the unit from the selected language file
+ * @param ID Id of the unit
+ */
+static void translateUnitData(sID ID, bool vehicle);
+
+static int LoadVehicles()
 {
 	cLog::write ( "Loading Vehicles", LOG_TYPE_INFO );
 
@@ -1845,7 +1940,7 @@ int LoadVehicles()
 	return 1;
 }
 
-void translateUnitData( sID ID, bool vehicle )
+static void translateUnitData(sID ID, bool vehicle)
 {
 	sUnitData *Data = NULL;
 	TiXmlNode * pXmlNode = NULL;
@@ -1906,9 +2001,7 @@ void translateUnitData( sID ID, bool vehicle )
 	}
 }
 
-// LoadBuildings //////////////////////////////////////////////////////////////
-// Loads all Buildings
-int LoadBuildings()
+static int LoadBuildings()
 {
 	cLog::write ( "Loading Buildings", LOG_TYPE_INFO );
 
@@ -2131,9 +2224,7 @@ int LoadBuildings()
 	return 1;
 }
 
-// LoadUnitData ////////////////////////////////////////////////////////////////
-// Loades the unitdata from the data.xml in the unitfolder
-void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
+static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 {
 	const char *DataStructure[] = {
 		// General
@@ -2747,9 +2838,7 @@ void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
 	return ;
 }
 
-// SetDefaultUnitData /////////////////////////////////////////////////////////
-// Sets all unitdata to default values
-void SetDefaultUnitData(int unitnum, bool vehicle)
+static void SetDefaultUnitData(int unitnum, bool vehicle)
 {
 	sUnitData *Data;
 	if(vehicle)
@@ -2915,7 +3004,7 @@ void SetDefaultUnitData(int unitnum, bool vehicle)
 	return ;
 }
 
-void ConvertData(int unitnum, bool vehicle)
+static void ConvertData(int unitnum, bool vehicle)
 {
 	sUnitData *Data;
 	if(vehicle)
@@ -3196,7 +3285,16 @@ void ConvertData(int unitnum, bool vehicle)
 	Data->has_frames = 0;
 }
 
-void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue )
+/**
+ * Saves the value. Do not use bye yourselve. Only used by SaveOption()-function.
+ * @param pXmlNode Node to which the value should be set
+ * @param sAttributName Name (which means typ) of the attribut to set ("YN", "Num" or "Text")
+ * @param bValue bool value to set
+ * @param iValue int value to set
+ * @param sValue string value to set
+ * @return 1 on success
+ */
+static void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue)
 {
 	if( !pXmlNode )
 	{
