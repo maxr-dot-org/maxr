@@ -3404,7 +3404,6 @@ bool cGame::Save ( string sName, int iNumber )
 // Läd das Spiel:
 void cGame::Load ( string name,int AP,bool MP )
 {
-	cList<cVehicle*> *StoredVehicles;
 	int i,t,typ;
 	char *str;
 	FILE *fp;
@@ -3415,7 +3414,7 @@ void cGame::Load ( string name,int AP,bool MP )
 		return ;
 	}
 
-	StoredVehicles = new cList<cVehicle*>;
+	cList<cVehicle*> StoredVehicles;
 
 	// Read version
 	string sSaveVersion, sGameVersion;
@@ -3591,7 +3590,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_V_4 ( OffX ) // ID zum wiederfinden wenn gestored
 				if ( v->OffX!=0 )
 				{
-					StoredVehicles->Add ( v );
+					StoredVehicles.Add ( v );
 					if ( plane )
 					{
 						if ( map->GO[off].plane==v ) map->GO[off].plane=NULL;
@@ -3769,14 +3768,14 @@ void cGame::Load ( string name,int AP,bool MP )
 			int k,m;
 			for ( k=0;k<v->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->iCount;m++ )
+				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
-					if ( StoredVehicles->Items[m]->OffX ==  v->StoredVehicles->Items[k]->OffX )
+					if ( StoredVehicles.Items[m]->OffX ==  v->StoredVehicles->Items[k]->OffX )
 					{
-						StoredVehicles->Items[m]->OffX=0;
+						StoredVehicles.Items[m]->OffX=0;
 						delete v->StoredVehicles->Items[k];
-						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
-						StoredVehicles->Delete ( m );
+						v->StoredVehicles->Items[k]=v2=StoredVehicles.Items[m];
+						StoredVehicles.Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
 					}
@@ -3789,14 +3788,14 @@ void cGame::Load ( string name,int AP,bool MP )
 			int k,m;
 			for ( k=0;k<v->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->iCount;m++ )
+				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
-					if ( StoredVehicles->Items[m]->OffX == v->StoredVehicles->Items[k]->OffX )
+					if ( StoredVehicles.Items[m]->OffX == v->StoredVehicles->Items[k]->OffX )
 					{
-						StoredVehicles->Items[m]->OffX=0;
+						StoredVehicles.Items[m]->OffX=0;
 						delete v->StoredVehicles->Items[k];
-						v->StoredVehicles->Items[k]=v2=StoredVehicles->Items[m];
-						StoredVehicles->Delete ( m );
+						v->StoredVehicles->Items[k]=v2=StoredVehicles.Items[m];
+						StoredVehicles.Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
 					}
@@ -3810,16 +3809,16 @@ void cGame::Load ( string name,int AP,bool MP )
 			if ( b->PosX!=i%map->size||b->PosY!=i/map->size ) continue;
 			for ( k=0;k<b->StoredVehicles->iCount;k++ )
 			{
-				for ( m=0;m<StoredVehicles->iCount;m++ )
+				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
 					cVehicle *v;
-					v=StoredVehicles->Items[m];
+					v=StoredVehicles.Items[m];
 					if ( v->OffX == b->StoredVehicles->Items[k]->OffX )
 					{
 						v->OffX=0;
 						delete b->StoredVehicles->Items[k];
 						b->StoredVehicles->Items[k]=v;
-						StoredVehicles->Delete ( m );
+						StoredVehicles.Delete ( m );
 
 						CheckRecursivLoaded ( v,StoredVehicles );
 						break;
@@ -3828,9 +3827,8 @@ void cGame::Load ( string name,int AP,bool MP )
 			}
 		}
 		else continue;
-		if ( !StoredVehicles->iCount ) break;
+		if ( !StoredVehicles.iCount ) break;
 	}
-	delete StoredVehicles;
 
 	if ( !MP )
 	{
@@ -3858,24 +3856,24 @@ void cGame::Load ( string name,int AP,bool MP )
 }
 
 // Prüft, ob das Vehicle auch wieder was geladen hat:
-bool cGame::CheckRecursivLoaded ( cVehicle *v,cList<cVehicle*> *StoredVehicles )
+bool cGame::CheckRecursivLoaded(cVehicle* v, cList<cVehicle*>& StoredVehicles)
 {
 	cVehicle *vv;
 	int i,k;
 
-	if ( StoredVehicles->iCount && v->StoredVehicles && v->StoredVehicles->iCount )
+	if ( StoredVehicles.iCount && v->StoredVehicles && v->StoredVehicles->iCount )
 	{
 		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
-			for ( k=0;k<StoredVehicles->iCount;k++ )
+			for ( k=0;k<StoredVehicles.iCount;k++ )
 			{
-				vv=StoredVehicles->Items[k];
+				vv=StoredVehicles.Items[k];
 				if ( vv->OffX == v->StoredVehicles->Items[i]->OffX )
 				{
 					vv->OffX=0;
 					delete v->StoredVehicles->Items[i];
 					v->StoredVehicles->Items[i]=vv;
-					StoredVehicles->Delete ( k );
+					StoredVehicles.Delete ( k );
 
 					CheckRecursivLoaded ( vv,StoredVehicles );
 					break;

@@ -168,7 +168,7 @@ public:
   void MakeLanding(int x,int y,cPlayer *p,cList<sLanding*> *list,bool fixed);
   bool Save(string name, int iNumber);
   void Load(string name,int AP,bool MP=false);
-  bool CheckRecursivLoaded(cVehicle *v,cList<cVehicle*> *StoredVehicles);
+  bool CheckRecursivLoaded(cVehicle *v,cList<cVehicle*>& StoredVehicles);
   void MakeAutosave(void);
   void Trace(void);
   void TraceVehicle(cVehicle *v,int *y,int x);
