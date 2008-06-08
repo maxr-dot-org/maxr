@@ -1615,7 +1615,8 @@ static int LoadVehicles()
 		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true, atoi(IDList->Items[i].c_str()));
-		translateUnitData( UnitsData.vehicle[UnitsData.vehicle_anz].data.ID, true );
+		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
+		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
 		ConvertData(UnitsData.vehicle_anz, true);
@@ -1623,15 +1624,15 @@ static int LoadVehicles()
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
 		// laod infantery graphics
-		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
+		if (v.data.bAnimation_Movement)
 		{
 			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
-				SDL_FillRect ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],NULL,0xFF00FF );
+				v.img[n] = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_FillRect(v.img[n], NULL, 0xFF00FF);
 				
 				for ( int j = 0; j < 13; j++ )
 				{
@@ -1654,41 +1655,41 @@ static int LoadVehicles()
 							rcDest.y = 32 - sfTempSurface->h/2;
 							rcDest.w = sfTempSurface->w;
 							rcDest.h = sfTempSurface->h;
-							SDL_BlitSurface ( sfTempSurface, NULL, UnitsData.vehicle[UnitsData.vehicle_anz].img[n], &rcDest );
+							SDL_BlitSurface(sfTempSurface, NULL, v.img[n], &rcDest);
 						}
 						SDL_FreeSurface ( sfTempSurface );
 					}
 				}
-				UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
-				SDL_FillRect ( UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n], NULL, 0xFFFFFF );
-				SDL_BlitSurface ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],NULL,UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n], NULL );
+				v.img_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_FillRect(v.img_org[n], NULL, 0xFFFFFF);
+				SDL_BlitSurface(v.img[n], NULL, v.img_org[n], NULL);
 
-				UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey (UnitsData.vehicle[UnitsData.vehicle_anz].shw[n], SDL_SRCCOLORKEY, 0xFF00FF );
-				SDL_FillRect ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n], NULL, 0xFF00FF );
-				UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-				SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF );
-				SDL_FillRect ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n], NULL, 0xFF00FF );
+				v.shw[n] = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				SDL_SetColorKey(v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF);
+				SDL_FillRect(v.shw[n], NULL, 0xFF00FF);
+				v.shw_org[n] = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				SDL_SetColorKey(v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF);
+				SDL_FillRect(v.shw_org[n], NULL, 0xFF00FF);
 
 				int *ptr;
 				rcDest.x=3;
 				rcDest.y=3;
 				rcDest.w=64*13;
 				rcDest.h=64;
-				SDL_BlitSurface ( UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n], NULL, UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n], &rcDest );
-				SDL_LockSurface ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] );
-				ptr = ( int* ) ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n]->pixels );
+				SDL_BlitSurface(v.img_org[n], NULL, v.shw_org[n], &rcDest);
+				SDL_LockSurface(v.shw_org[n]);
+				ptr = (int*)(v.shw_org[n]->pixels);
 				for ( int j = 0; j < 64*13*64; j++ )
 				{
 					if ( *ptr != 0xFF00FF )
 						*ptr=0;
 					ptr++;
 				}
-				SDL_UnlockSurface ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] );
-				SDL_BlitSurface ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n], NULL, UnitsData.vehicle[UnitsData.vehicle_anz].shw[n], NULL );
-				SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n], SDL_SRCALPHA, 50 );
-				SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n], SDL_SRCALPHA, 50 );
+				SDL_UnlockSurface(v.shw_org[n]);
+				SDL_BlitSurface(v.shw_org[n], NULL, v.shw[n], NULL);
+				SDL_SetAlpha(v.shw_org[n], SDL_SRCALPHA, 50);
+				SDL_SetAlpha(v.shw[n], SDL_SRCALPHA, 50);
 			}
 		}
 		// load other vehicle graphics
@@ -1703,10 +1704,10 @@ static int LoadVehicles()
 				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if(FileExists(sTmpString.c_str()))
 				{
-					UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n] = LoadPCX(sTmpString.c_str());
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
-					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = LoadPCX(sTmpString.c_str());
-					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
+					v.img_org[n] = LoadPCX(sTmpString.c_str());
+					SDL_SetColorKey(v.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+					v.img[n] = LoadPCX(sTmpString.c_str());
+					SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				}
 				else
 				{
@@ -1718,14 +1719,14 @@ static int LoadVehicles()
 				sTmpString.replace(sTmpString.length()-8,3,"shw");
 				if(FileExists(sTmpString.c_str()))
 				{
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = LoadPCX(sTmpString.c_str());
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX(sTmpString.c_str());
-					SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
+					v.shw_org[n] = LoadPCX(sTmpString.c_str());
+					v.shw[n] = LoadPCX(sTmpString.c_str());
+					SDL_SetAlpha(v.shw[n], SDL_SRCALPHA, 50);
 				}
 				else
 				{
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = NULL;
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = NULL;
+					v.shw_org[n] = NULL;
+					v.shw[n]     = NULL;
 				}
 			}
 		}
@@ -1737,9 +1738,9 @@ static int LoadVehicles()
 		{
 			sTmpString = "";
 		}
-		UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sTmpString.length() +1 );
-		if(!UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sTmpString.c_str() );
+		v.FLCFile= (char*)malloc(sTmpString.length() + 1);
+		if (!v.FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+		strcpy(v.FLCFile, sTmpString.c_str());
 
 
 		// load infoimage
@@ -1748,7 +1749,7 @@ static int LoadVehicles()
 		cLog::write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX(sTmpString.c_str());
+			v.info = LoadPCX(sTmpString.c_str());
 		}
 		else
 		{
@@ -1762,7 +1763,7 @@ static int LoadVehicles()
 		cLog::write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX(sTmpString.c_str());
+			v.storage = LoadPCX(sTmpString.c_str());
 		}
 		else
 		{
@@ -1772,164 +1773,164 @@ static int LoadVehicles()
 
 		// load overlaygraphics if necessary
 		cLog::write("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bHas_Overlay)
+		if (v.data.bHas_Overlay)
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = LoadPCX(sTmpString.c_str());
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = LoadPCX(sTmpString.c_str());
+				v.overlay_org = LoadPCX(sTmpString.c_str());
+				v.overlay     = LoadPCX(sTmpString.c_str());
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bHas_Overlay = false;
+				v.overlay_org       = NULL;
+				v.overlay           = NULL;
+				v.data.bHas_Overlay = false;
 			}
 		}
 		else
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].overlay = NULL;
+			v.overlay_org = NULL;
+			v.overlay     = NULL;
 		}
 
 		// load buildgraphics if necessary
 		cLog::write("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic)
+		if (v.data.bBuild_Up_Grafic)
 		{
 			// load image
 			sTmpString = sVehiclePath;
 			sTmpString += "build.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
+				v.build_org = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.build = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic = false;
+				v.build_org             = NULL;
+				v.build                 = NULL;
+				v.data.bBuild_Up_Grafic = false;
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
 			sTmpString += "build_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX(sTmpString.c_str());
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX(sTmpString.c_str());
-				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
+				v.build_shw_org = LoadPCX(sTmpString.c_str());
+				v.build_shw     = LoadPCX(sTmpString.c_str());
+				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bBuild_Up_Grafic = false;
+				v.build_shw_org         = NULL;
+				v.build_shw             = NULL;
+				v.data.bBuild_Up_Grafic = false;
 			}
 		}
 		else
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].build_org = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].build = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
+			v.build_org     = NULL;
+			v.build         = NULL;
+			v.build_shw_org = NULL;
+			v.build_shw     = NULL;
 		}
 		// load cleargraphics if necessary
 		cLog::write("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area)
+		if (v.data.bCan_Clear_Area)
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small,SDL_SRCCOLORKEY,0xFFFFFF);
+				v.clear_small_org = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.clear_small = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+				v.clear_small_org      = NULL;
+				v.clear_small          = NULL;
+				v.data.bCan_Clear_Area = false;
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = LoadPCX(sTmpString.c_str());
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = LoadPCX(sTmpString.c_str());
-				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCALPHA,50);
+				v.clear_small_shw_org = LoadPCX(sTmpString.c_str());
+				v.clear_small_shw     = LoadPCX(sTmpString.c_str());
+				SDL_SetAlpha(v.clear_small_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+				v.clear_small_shw_org  = NULL;
+				v.clear_small_shw      = NULL;
+				v.data.bCan_Clear_Area = false;
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX(sTmpString.c_str());
-				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
+				v.build_org = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.build = LoadPCX(sTmpString.c_str());
+				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+				v.build_org            = NULL;
+				v.build                = NULL;
+				v.data.bCan_Clear_Area = false;
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX(sTmpString.c_str());
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX(sTmpString.c_str());
-				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
+				v.build_shw_org = LoadPCX(sTmpString.c_str());
+				v.build_shw     = LoadPCX(sTmpString.c_str());
+				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = NULL;
-				UnitsData.vehicle[UnitsData.vehicle_anz].data.bCan_Clear_Area = false;
+				v.build_shw_org        = NULL;
+				v.build_shw            = NULL;
+				v.data.bCan_Clear_Area = false;
 			}
 		}
 		else
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = NULL;
-			UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = NULL;
+			v.clear_small_org     = NULL;
+			v.clear_small         = NULL;
+			v.clear_small_shw_org = NULL;
+			v.clear_small_shw     = NULL;
 		}
 
 		// load sounds
 		cLog::write("Loading sounds", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Wait,sVehiclePath.c_str(),"wait.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].WaitWater,sVehiclePath.c_str(),"wait_water.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Start,sVehiclePath.c_str(),"start.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].StartWater,sVehiclePath.c_str(),"start_water.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Stop,sVehiclePath.c_str(),"stop.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].StopWater,sVehiclePath.c_str(),"stop_water.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Drive,sVehiclePath.c_str(),"drive.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].DriveWater,sVehiclePath.c_str(),"drive_water.wav");
-		LoadUnitSoundfile(UnitsData.vehicle[UnitsData.vehicle_anz].Attack,sVehiclePath.c_str(),"attack.wav");
+		LoadUnitSoundfile(v.Wait,       sVehiclePath.c_str(), "wait.wav");
+		LoadUnitSoundfile(v.WaitWater,  sVehiclePath.c_str(), "wait_water.wav");
+		LoadUnitSoundfile(v.Start,      sVehiclePath.c_str(), "start.wav");
+		LoadUnitSoundfile(v.StartWater, sVehiclePath.c_str(), "start_water.wav");
+		LoadUnitSoundfile(v.Stop,       sVehiclePath.c_str(), "stop.wav");
+		LoadUnitSoundfile(v.StopWater,  sVehiclePath.c_str(), "stop_water.wav");
+		LoadUnitSoundfile(v.Drive,      sVehiclePath.c_str(), "drive.wav");
+		LoadUnitSoundfile(v.DriveWater, sVehiclePath.c_str(), "drive_water.wav");
+		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.wav");
 
 		UnitsData.vehicle_anz++;
 	}
