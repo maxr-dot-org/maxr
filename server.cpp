@@ -807,13 +807,13 @@ void cServer::checkPlayerUnits ()
 				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1 )
 				{
 					int i;
-					for ( i = 0; i < NextBuilding->SeenByPlayerList->iCount; i++ )
+					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextBuilding->SeenByPlayerList->Items[i] == MapPlayer->Nr ) break;
+						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
 					}
-					if ( i == NextBuilding->SeenByPlayerList->iCount )
+					if ( i == NextBuilding->SeenByPlayerList.iCount )
 					{
-						NextBuilding->SeenByPlayerList->Add ( &MapPlayer->Nr );
+						NextBuilding->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
 						sendUnitData( NextBuilding, Map, MapPlayer->Nr );
 					}
@@ -821,11 +821,11 @@ void cServer::checkPlayerUnits ()
 				else
 				{
 					int i;
-					for ( i = 0; i < NextBuilding->SeenByPlayerList->iCount; i++ )
+					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextBuilding->SeenByPlayerList->Items[i] == MapPlayer->Nr )
+						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr )
 						{
-							NextBuilding->SeenByPlayerList->Delete ( i );
+							NextBuilding->SeenByPlayerList.Delete ( i );
 
 							bool bBase, bSubBase;
 							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].base == NextBuilding ) bBase = true;
@@ -977,9 +977,9 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				Building->Disabled--;
 				if ( Building->Disabled )
 				{
-					for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+					for ( int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 					{
-						sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+						sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
 					}
 					sendUnitData ( Building, Map, Building->owner->Nr );
 
@@ -989,9 +989,9 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			}
 			if ( Building->data.can_attack && bChangeTurn && Building->refreshData() )
 			{
-				for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+				for ( int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 				{
-					sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+					sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
 				}
 				sendUnitData ( Building, Map, Building->owner->Nr );
 			}

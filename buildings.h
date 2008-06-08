@@ -93,7 +93,7 @@ public:
   /** the identification number of this unit */
   unsigned int iID;
   /** a list were the numbers of all players who can see this building are stored in */
-  cList<int*> *SeenByPlayerList;
+  cList<int*> SeenByPlayerList;
   int PosX,PosY;   // Position auf der Karte
   sBuilding *typ;  // Typ des Buildings
   bool selected;   // Gibt an, ob das Building ausgewählt ist

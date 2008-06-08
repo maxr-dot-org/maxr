@@ -3963,9 +3963,9 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for ( int i = 0; i < Building->SeenByPlayerList->iCount; i++ )
+		for ( int i = 0; i < Building->SeenByPlayerList.iCount; i++ )
 		{
-			sTmp += ", \"" + getPlayerFromNumber ( *Building->SeenByPlayerList->Items[i] )->name + "\"";
+			sTmp += ", \"" + getPlayerFromNumber ( *Building->SeenByPlayerList.Items[i] )->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
