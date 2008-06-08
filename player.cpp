@@ -51,7 +51,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	BuildingList=NULL;
 	ResourceMap=NULL;
 	base=new cBase ( this );
-	WachpostenGround=new cList<sWachposten*>;
 	ResearchCount=0;
 	UnusedResearch=0;
 	Credits=0;
@@ -71,12 +70,11 @@ cPlayer::~cPlayer ( void )
 		WachpostenAir.Delete( WachpostenAir.iCount - 1 );
 	}
 
-	while ( WachpostenGround->iCount )
+	while ( WachpostenGround.iCount )
 	{
-		delete WachpostenGround->Items[WachpostenGround->iCount - 1];
-		WachpostenGround->Delete( WachpostenGround->iCount - 1 );
+		delete WachpostenGround.Items[WachpostenGround.iCount - 1];
+		WachpostenGround.Delete( WachpostenGround.iCount - 1 );
 	}
-	delete WachpostenGround;
 
 	// Erst alle geladenen Vehicles löschen:
 	cVehicle *ptr=VehicleList;
@@ -244,12 +242,12 @@ void cPlayer::AddWachpostenV ( cVehicle *v )
 	{
 		WachpostenAir.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
-		WachpostenGround->Add ( n );
+		WachpostenGround.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 	else
 	{
-		WachpostenGround->Add ( n );
+		WachpostenGround.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
 	}
 }
@@ -270,12 +268,12 @@ void cPlayer::AddWachpostenB ( cBuilding *b )
 	{
 		WachpostenAir.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
-		WachpostenGround->Add ( n );
+		WachpostenGround.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 	else
 	{
-		WachpostenGround->Add ( n );
+		WachpostenGround.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
 	}
 }
@@ -311,12 +309,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround->iCount;i++ )
+		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround->Items[i];
+			ptr=WachpostenGround.Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenGround->Delete ( i );
+				WachpostenGround.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -326,12 +324,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround->iCount;i++ )
+		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround->Items[i];
+			ptr=WachpostenGround.Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenGround->Delete ( i );
+				WachpostenGround.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -371,12 +369,12 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround->iCount;i++ )
+		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround->Items[i];
+			ptr=WachpostenGround.Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenGround->Delete ( i );
+				WachpostenGround.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -386,17 +384,14 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else
 	{
-		if(WachpostenGround) //FIXME: workaround since sometimes WachpostenGround is already deleted -> seg fault -- beko
+		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			for ( i=0;i<WachpostenGround->iCount;i++ )
+			ptr=WachpostenGround.Items[i];
+			if ( ptr->b==b )
 			{
-				ptr=WachpostenGround->Items[i];
-				if ( ptr->b==b )
-				{
-					WachpostenGround->Delete ( i );
-					delete ptr;
-					break;
-				}
+				WachpostenGround.Delete ( i );
+				delete ptr;
+				break;
 			}
 		}
 		RefreshWacheGround();
@@ -430,9 +425,9 @@ void cPlayer::RefreshWacheGround ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapGround,0,MapSize );
-	for ( i=0;i<WachpostenGround->iCount;i++ )
+	for ( i=0;i<WachpostenGround.iCount;i++ )
 	{
-		ptr=WachpostenGround->Items[i];
+		ptr=WachpostenGround.Items[i];
 		if ( ptr->v )
 		{
 			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );

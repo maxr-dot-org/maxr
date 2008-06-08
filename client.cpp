@@ -413,7 +413,7 @@ void cClient::run()
 		{
 			font->showText(550,iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550,iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround->iCount), LATIN_SMALL_WHITE);
+			font->showText(550,iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 

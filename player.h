@@ -78,7 +78,7 @@ public:
   cBase *base;               // Die Basis dieses Spielers.
   cList<sWachposten*> WachpostenAir;      // Liste mit den Vehicles/Buildings auf Wachposten.
   char *WachMapAir;          // Map mit dem abgedeckten Bereich.
-  cList<sWachposten*> *WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.
+  cList<sWachposten*> WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.
   char *WachMapGround;       // Map mit dem abgedeckten Bereich.
   char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden können.
   char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden können.
