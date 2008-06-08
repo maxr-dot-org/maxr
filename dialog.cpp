@@ -401,7 +401,7 @@ void showLicence ()
 	string sLicence3;
  	string sLicence4;
  	sLicenceIntro1 = "\"M.A.X. Reloaded\"";
-	sLicenceIntro2 = "(C) 2007 by it's authors";
+	sLicenceIntro2 = "(C) 2007 by its authors";
 	sLicence4Intro1 = "AUTHORS:";
 
 	sLicence1 = "\
