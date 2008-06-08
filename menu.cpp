@@ -819,8 +819,7 @@ void RunSPMenu ( void )
 						ServerPlayerList.Items[i]->Credits = options.credits;
 					}
 					// init server
-					Server = new cServer;
-					Server->init( &ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false );
+					Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
 
 					// land the player
 					cList<sLanding*> LandingList;
@@ -4918,8 +4917,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 
 						// init server
-						Server = new cServer;
-						Server->init( ServerMap, PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds );
+						Server = new cServer(ServerMap, PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
 					}
 
 					cList<sLanding*> LandingList;
@@ -5663,8 +5661,7 @@ void HeatTheSeat ( void )
 	}
 
 	// init server
-	Server = new cServer;
-	Server->init(&ServerMap, &ServerPlayerList, GAME_TYPE_HOTSEAT, false );
+	Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_HOTSEAT, false);
 
 	// land the players
 	for ( int i = 0; i < ServerPlayerList.iCount; i++ )

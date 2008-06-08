@@ -38,7 +38,7 @@ int CallbackRunServerThread( void *arg )
 	return 0;
 }
 
-void cServer::init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool bPlayTurns )
+cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const iGameType, bool const bPlayTurns)
 {
 	Map = map;
 	this->PlayerList = PlayerList;

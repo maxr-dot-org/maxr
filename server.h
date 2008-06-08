@@ -60,6 +60,17 @@ Uint32 ServerTimerCallback(Uint32 interval, void *arg);
 */
 class cServer
 {
+public:
+	/**
+	 * initialises the server class
+	 *@author alzi alias DoctorDeath
+	 *@param map The Map for the game
+	 *@param PlayerList The list with all players
+	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
+	 */
+	cServer(cMap* map, cList<cPlayer*>* PlayerList, int iGameType, bool bPlayTurns);
+
+private:
 	/** a list with all events for the server */
 	cList<SDL_Event*> *EventQueue;
 
@@ -230,14 +241,6 @@ public:
 	/** true if the game has been started */
 	bool bStarted;
 
-	/**
-	* initialises the server class
-	*@author alzi alias DoctorDeath
-	*@param map The Map for the game
-	*@param PlayerList The list with all players
-	*@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
-	*/
-	void init( cMap *map, cList<cPlayer*> *PlayerList, int iGameType, bool bPlayTurns );
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
