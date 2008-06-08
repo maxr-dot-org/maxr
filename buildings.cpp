@@ -6549,7 +6549,6 @@ void cBuilding::ShowBuildMenu ( void )
 	bool Up2Pressed = false;
 	bool BauenPressed = false;
 	bool EntfernenPressed = false;
-	cList<sBuildStruct*> *images;
 	cList<sBuildStruct*> *to_build;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
@@ -6610,7 +6609,7 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Die Images erstellen:
-	images = new cList<sBuildStruct*>;
+	cList<sBuildStruct*> images;
 
 	float newzoom = ( Client->Hud->Zoom / 64.0 );
 
@@ -6696,8 +6695,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 		n->id = i;
 
-		images->Add( n );
-
+		images.Add( n );
 	}
 
 
@@ -6716,15 +6714,15 @@ void cBuilding::ShowBuildMenu ( void )
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
-		for ( k = 0;k < images->iCount;k++ )
+		for ( k = 0;k < images.iCount;k++ )
 		{
 			sBuildStruct *bs;
-			bs = images->Items[k];
+			bs = images.Items[k];
 
 			if ( UnitsData.vehicle[bs->id].nr == ptr->typ->nr )
 			{
-				n->id = images->Items[k]->id;
-				n->sf = images->Items[k]->sf;
+				n->id = images.Items[k]->id;
+				n->sf = images.Items[k]->sf;
 				to_build->Add ( n );
 
 				break;
@@ -6808,9 +6806,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images->iCount - 9 )
+			if ( offset > images.iCount - 9 )
 			{
-				offset = images->iCount - 9;
+				offset = images.iCount - 9;
 			}
 			if ( offset < 0 )
 			{
@@ -6980,8 +6978,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				// Vehicle in die Bauliste aufnehmen:
 				sBuildStruct *n = new sBuildStruct;
-				n->id = images->Items[selected]->id;
-				n->sf = images->Items[selected]->sf;
+				n->id = images.Items[selected]->id;
+				n->sf = images.Items[selected]->sf;
 				n->iRemainingMetal = -1;
 
 				to_build->Add ( n );
@@ -7251,9 +7249,9 @@ void cBuilding::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
-			if ( images->iCount < 9 )
+			if ( images.iCount < 9 )
 			{
-				if ( nr >= images->iCount )
+				if ( nr >= images.iCount )
 					nr = -1;
 			}
 			else
@@ -7274,8 +7272,8 @@ void cBuilding::ShowBuildMenu ( void )
 				{
 					//insert selected Vehicle in to_build list
 					sBuildStruct *n = new sBuildStruct;
-					n->id = images->Items[selected]->id;
-					n->sf = images->Items[selected]->sf;
+					n->id = images.Items[selected]->id;
+					n->sf = images.Items[selected]->sf;
 					n->iRemainingMetal = -1;
 
 					to_build->Add ( n );
@@ -7364,16 +7362,14 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images->iCount )
+	while ( images.iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images->Items[0];
+		ptr = images.Items[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->Delete( 0 );
+		images.Delete( 0 );
 	}
-
-	delete images;
 
 	while ( to_build->iCount )
 	{
@@ -7387,7 +7383,7 @@ void cBuilding::ShowBuildMenu ( void )
 }
 
 // Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch sämtliche Infos zur ausgewählten Einheit
-void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool showInfo )
+void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16 };
@@ -7415,13 +7411,13 @@ void cBuilding::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int of
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list->iCount;i++ )
+	for ( i = offset;i < list.iCount;i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
-		ptr = list->Items[i];
+		ptr = list.Items[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 

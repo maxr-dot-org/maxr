@@ -182,7 +182,7 @@ public:
   void DrawAttackCursor(struct sGameObjects *go,int can_attack);
   void RotateTo(int Dir);
   void ShowBuildMenu(void);
-  void ShowBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
+  void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
   void DrawBuildButtons(int speed);
   void ShowToBuildList(cList<sBuildStruct*> *list,int selected,int offset, bool showInfo);
   void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
