@@ -41,14 +41,13 @@ cBase::~cBase ( void )
 // Fügt ein neues Building in die Base ein:
 void cBase::AddBuilding ( cBuilding *b )
 {
-	cList<sSubBase*> *NeighbourList;
 	int pos;
 	if ( b->data.is_base ) return;
 	pos=b->PosX+b->PosY*map->size;
-	NeighbourList=new cList<sSubBase*>;
+	cList<sSubBase*> NeighbourList;
 	b->SubBase= ( sSubBase* ) 1;
 	// Prüfen, ob ein Gebäude in in der Nähe steht:
-#define CHECK_NEIGHBOUR(a) if(a>=0&&a<map->size*map->size&&map->GO[a].top&&map->GO[a].top->owner==b->owner&&map->GO[a].top->SubBase){NeighbourList->Add(map->GO[a].top->SubBase);map->GO[a].top->CheckNeighbours( map );}
+#define CHECK_NEIGHBOUR(a) if(a>=0&&a<map->size*map->size&&map->GO[a].top&&map->GO[a].top->owner==b->owner&&map->GO[a].top->SubBase){NeighbourList.Add(map->GO[a].top->SubBase);map->GO[a].top->CheckNeighbours( map );}
 	if ( !b->data.is_big )
 	{
 		// Kleines Gebäude:
@@ -69,29 +68,29 @@ void cBase::AddBuilding ( cBuilding *b )
 		CHECK_NEIGHBOUR ( pos-1 )
 		CHECK_NEIGHBOUR ( pos-1+map->size )
 	}
-	if ( NeighbourList->iCount )
+	if (NeighbourList.iCount != 0)
 	{
 		int i,k;
 		// Nachbarn gefunden:
 		b->CheckNeighbours( map );
 		// Die doppelten Einträge löschen:
-		for ( i=0;i<NeighbourList->iCount;i++ )
+		for (i = 0; i < NeighbourList.iCount; ++i)
 		{
-			for ( k=i+1;k<NeighbourList->iCount;k++ )
+			for (k = i + 1; k < NeighbourList.iCount; ++k)
 			{
-				if ( NeighbourList->Items[i]==NeighbourList->Items[k] )
+				if (NeighbourList.Items[i] == NeighbourList.Items[k])
 				{
-					NeighbourList->Delete ( i );
+					NeighbourList.Delete(i);
 					i--;
 					break;
 				}
 			}
 		}
 		// Prüfen, ob Subbases zusammengefügt werden müssen:
-		if ( NeighbourList->iCount>1 )
+		if (NeighbourList.iCount > 1)
 		{
 			// Die Basen zu einer zusammenfügen:
-			sSubBase *n,*sb;
+			sSubBase *n;
 			cBuilding *sbb;
 			// neue Subbase anlegen:
 			n=new sSubBase;
@@ -101,9 +100,9 @@ void cBase::AddBuilding ( cBuilding *b )
 			AddBuildingToSubBase ( b,n );
 			SubBases.Add(n);
 			// Alle gefundenen Subbases durchgehen:
-			while ( NeighbourList->iCount )
+			while (NeighbourList.iCount)
 			{
-				sb=NeighbourList->Items[0];
+				sSubBase* const sb = NeighbourList.Items[0];
 				// Alle Buildungs der Subbase durchgehen:
 				while ( sb->buildings->iCount )
 				{
@@ -123,14 +122,13 @@ void cBase::AddBuilding ( cBuilding *b )
 					}
 				}
 				delete sb;
-				NeighbourList->Delete ( 0 );
+				NeighbourList.Delete(0);
 			}
 		}
 		else
 		{
-			sSubBase *sb;
 			// Das Building nur der Base hinzufügen:
-			sb=NeighbourList->Items[0];
+			sSubBase* const sb = NeighbourList.Items[0];
 			AddBuildingToSubBase ( b,sb );
 			b->SubBase=sb;
 		}
@@ -155,7 +153,6 @@ void cBase::AddBuilding ( cBuilding *b )
 		AddBuildingToSubBase ( b,n );
 		SubBases.Add(n);
 	}
-	delete NeighbourList;
 }
 
 // Löscht ein Building aus der Base:
@@ -555,12 +552,11 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 {
 	bool changed=false;
 	int i;
-	cList<cBuilding*> *eb,*es;
 
 	if ( sb->EnergyProd==0 ) return false;
 
-	eb=new cList<cBuilding*>;
-	es=new cList<cBuilding*>;
+	cList<cBuilding*> eb;
+	cList<cBuilding*> es;
 
 	for ( i=0;i<sb->buildings->iCount;i++ )
 	{
@@ -568,119 +564,116 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 		b=sb->buildings->Items[i];
 		if ( !b->data.energy_prod ) continue;
 
-		if ( b->data.energy_prod==1 ) es->Add ( b );
-		else eb->Add ( b );
+		if (b->data.energy_prod == 1) es.Add(b);
+		else eb.Add(b);
 	}
 
-	if ( !sb->EnergyNeed&&es->iCount )
+	if (!sb->EnergyNeed && es.iCount != 0)
 	{
-		while ( es->iCount )
+		while (es.iCount)
 		{
-			//es->Items[0]->StopWork ( false );
-			es->Delete ( 0 );
+			//es.Items[0]->StopWork(false);
+			es.Delete(0);
 			changed=true;
 		}
 	}
-	if ( !sb->EnergyNeed&&eb->iCount )
+	if (!sb->EnergyNeed && eb.iCount != 0)
 	{
-		while ( es->iCount )
+		while (es.iCount != 0)
 		{
-			//eb->Items[0]->StopWork ( false );
-			eb->Delete ( 0 );
+			//eb.Items[0]->StopWork(false);
+			eb.Delete(0);
 			changed=true;
 		}
 	}
 
-	if ( es->iCount&&!eb->iCount )
+	if (es.iCount != 0 && eb.iCount == 0)
 	{
-		while ( sb->EnergyNeed<sb->EnergyProd&&es->iCount )
+		while (sb->EnergyNeed < sb->EnergyProd && es.iCount != 0)
 		{
-			//es->Items[0]->StopWork ( false );
-			es->Delete ( 0 );
+			//es.Items[0]->StopWork(false);
+			es.Delete(0);
 			changed=true;
 		}
 	}
-	else if ( eb->iCount&&!es->iCount )
+	else if (eb.iCount != 0&& es.iCount == 0)
 	{
-		while ( sb->EnergyProd>=sb->EnergyNeed+6&&eb->iCount )
+		while (sb->EnergyProd >= sb->EnergyNeed + 6 && eb.iCount != 0)
 		{
-			//eb->Items[0]->StopWork ( false );
-			eb->Delete ( 0 );
+			//eb.Items[0]->StopWork(false);
+			eb.Delete(0);
 			changed=true;
 		}
 	}
-	else if ( es->iCount&&eb->iCount )
+	else if (es.iCount != 0 && eb.iCount != 0)
 	{
 		int bneed,sneed,i,pre;
 
 		pre=sb->EnergyProd;
 		bneed=sb->EnergyNeed/6;
 		sneed=sb->EnergyNeed%6;
-		if ( sneed>=3&&bneed<eb->iCount )
+		if (sneed >= 3 && bneed < eb.iCount)
 		{
 			bneed++;
 			sneed=0;
 		}
 
-		if ( sneed>es->iCount&&bneed<eb->iCount )
+		if (sneed > es.iCount && bneed < eb.iCount)
 		{
 			sneed=0;
 			bneed++;
 		}
 
-		for ( i=0;i<eb->iCount;i++ )
+		for (i = 0; i < eb.iCount; ++i)
 		{
 			if ( i>=bneed ) break;
-			//eb->Items[i]->StartWork();
-			eb->Delete ( i );
+			//eb.Items[i]->StartWork();
+			eb.Delete(i);
 			i--;
 			bneed--;
 		}
-		for ( i=0;i<es->iCount;i++ )
+		for (i = 0; i < es.iCount; ++i)
 		{
 			if ( i>=sneed&&sb->EnergyNeed<=sb->EnergyProd ) break;
-			//es->Items[i]->StartWork();
-			es->Delete ( i );
+			//es.Items[i]->StartWork();
+			es.Delete(i);
 			i--;
 			sneed--;
 		}
-		while ( eb->iCount )
+		while (eb.iCount)
 		{
-			//eb->Items[0]->StopWork ( false );
-			eb->Delete ( 0 );
+			//eb.Items[0]->StopWork(false);
+			eb.Delete(0);
 		}
-		while ( es->iCount )
+		while (es.iCount != 0)
 		{
-			//es->Items[0]->StopWork ( false );
-			es->Delete ( 0 );
+			//es.Items[0]->StopWork(false);
+			es.Delete(0);
 		}
 
 		changed=pre!=sb->EnergyProd;
 	}
 
-	delete eb;
-	delete es;
 	return changed;
 }
 
 // Berechnet alle Subbases neu (für ein Load):
 void cBase::RefreshSubbases ( void )
 {
-	cList<sSubBase*> *OldSubBases;
 	cBuilding *n;
 	int i;
 
-	OldSubBases=new cList<sSubBase*>;
+	cList<sSubBase*> OldSubBases;
 	while (SubBases.iCount != 0)
 	{
 		sSubBase* const sb = SubBases.Items[0];
-		OldSubBases->Add(sb);
+		OldSubBases.Add(sb);
 		SubBases.Delete(0);
 	}
 
-	while ( OldSubBases->iCount )
+	while (OldSubBases.iCount != 0)
 	{
-		sSubBase* const sb = OldSubBases->Items[0];
+		sSubBase* const sb = OldSubBases.Items[0];
 
 		// Alle SubBases auf NULL setzen:
 		for ( i=0;i<sb->buildings->iCount;i++ )
@@ -695,7 +688,6 @@ void cBase::RefreshSubbases ( void )
 		}
 
 		delete sb;
-		OldSubBases->Delete ( 0 );
+		OldSubBases.Delete(0);
 	}
-	delete OldSubBases;
 }
