@@ -81,17 +81,6 @@ public:
 	inline long XmlDataToLong( std::string &rstrData ){ return atol(rstrData.c_str()); };
 	inline double XmlDataToDouble( std::string &rstrData ){ return atof(rstrData.c_str()); };
 	int CheckTimeStamp( std::string &rstrData );
-
-
-	// Overrides. Do not use them !
-	void Print( FILE* cfile, int depth ) const {}
-	const char* Parse(	const char* p, TiXmlParsingData* data, TiXmlEncoding encoding  ){}
-	ExTiXmlNode* Clone() const {}
-	bool Accept( TiXmlVisitor* visitor ) const {}
-	#ifdef TIXML_USE_STL
-		void StreamIn( std::istream* in, TIXML_STRING* tag ){}
-	#endif
-
 };
 
 

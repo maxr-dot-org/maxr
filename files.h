@@ -23,7 +23,7 @@
 #include "main.h"
 
 #ifndef PATH_DELIMITER
-#	define PATH_DELIMITER "//"
+#	define PATH_DELIMITER "/"
 #endif
 
 

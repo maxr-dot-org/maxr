@@ -432,8 +432,8 @@ const char *GetKeyString ( SDLKey key )
 		case SDLK_POWER:return "POWER";
 		case SDLK_EURO:return "EURO";
 		case SDLK_UNDO:return "UNDO";
+		default: return "?";
 	}
-	return "?";
 }
 
 // Liefert den Code der Taste zurück:
