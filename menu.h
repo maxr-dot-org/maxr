@@ -294,20 +294,6 @@ void ShowPlayerStates(sPlayer players);
 void ShowLandingList(cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface);
 /**
  *
- * @param selection
- * @param images
- * @param selected
- * @param offset
- * @param tank
- * @param plane
- * @param ship
- * @param build
- * @param tnt
- * @param kauf
- */
-void CreateSelectionList(cList<sHUp*> *selection,cList<sHUp*> *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf);
-/**
- *
  * @param bSave Should you can load savegames in this menu?
  * @return
  */

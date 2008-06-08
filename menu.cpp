@@ -2295,7 +2295,9 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p );
 int CalcSteigerung ( int org, int variety );
 int CalcPrice ( int value,int org, int variety );
 void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface );
-void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschreibung,int credits,cPlayer *p );
+
+static void ShowSelectionList(cList<sHUp*>& list, int selected, int offset, bool beschreibung, int credits, cPlayer* p);
+static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, int* selected, int* offset, bool tank, bool plane, bool ship, bool build, bool tnt, bool kauf);
 
 void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 {
@@ -2307,7 +2309,6 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	int b,lb=0,i,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
 	int LandingOffset=0,LandingSelected=0;
 	SDL_Rect scr;
-	cList<sHUp*> *list,*selection;
 
 	#define BUTTON_W 77
 	#define BUTTON_H 23
@@ -2342,7 +2343,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 
 	// Die Liste erstellen:
-	list=new cList<sHUp*>;
+	cList<sHUp*> list;
 	for ( i=0;i<UnitsData.vehicle_anz;i++ )
 	{
 		sHUp *n;
@@ -2359,7 +2360,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
-		list->Add ( n );
+		list.Add ( n );
 	}
 	for ( i=0;i<UnitsData.building_anz;i++ )
 	{
@@ -2391,10 +2392,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		n->costs=UnitsData.building[i].data.iBuilt_Costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
-		list->Add ( n );
+		list.Add ( n );
 	}
 	// Die Selection erstellen:
-	selection=new cList<sHUp*>;
+	cList<sHUp*> selection;
 	CreateSelectionList ( selection,list,&selected,&offset,tank,plane,ship,build,tnt,kauf );
 	ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 	MakeUpgradeSubButtons ( tank,plane,ship,build,tnt,kauf, sfTmp );
@@ -2484,7 +2485,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			dest.h=scr.h=17;
 			dest.x=491;
 			dest.y=386;
-			if ( offset<selection->iCount-9 )
+			if ( offset<selection.iCount-9 )
 			{
 				offset++;
 				if ( selected<offset ) selected=offset;
@@ -2547,9 +2548,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		{
 			int nr;
 			nr= ( y-60 ) / ( 32+2 );
-			if ( selection->iCount<9 )
+			if ( selection.iCount<9 )
 			{
-				if ( nr>=selection->iCount ) nr=-1;
+				if ( nr>=selection.iCount ) nr=-1;
 			}
 			else
 			{
@@ -2563,28 +2564,28 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				selected=nr;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 				// Doppelklick prüfen:
-				if ( last_selected==nr&&selection->Items[selected]->costs<=player->Credits )
+				if ( last_selected==nr&&selection.Items[selected]->costs<=player->Credits )
 				{
 					// Don't add buildings, humans, planes, etc...
-					if ( selection->Items[selected]->vehicle &&
-						!UnitsData.vehicle[selection->Items[selected]->id].data.is_human &&
-						!UnitsData.vehicle[selection->Items[selected]->id].data.is_alien &&
-						!(UnitsData.vehicle[selection->Items[selected]->id].data.can_drive == DRIVE_AIR) &&
-						!(UnitsData.vehicle[selection->Items[selected]->id].data.can_drive == DRIVE_SEA) )
+					if ( selection.Items[selected]->vehicle &&
+						!UnitsData.vehicle[selection.Items[selected]->id].data.is_human &&
+						!UnitsData.vehicle[selection.Items[selected]->id].data.is_alien &&
+						!(UnitsData.vehicle[selection.Items[selected]->id].data.can_drive == DRIVE_AIR) &&
+						!(UnitsData.vehicle[selection.Items[selected]->id].data.can_drive == DRIVE_SEA) )
 					{
 						sLanding *n;
 						n=new sLanding;
 						n->cargo=0;
-						n->sf=selection->Items[selected]->sf;
-						n->id=selection->Items[selected]->id;
-						n->costs=selection->Items[selected]->costs;
+						n->sf=selection.Items[selected]->sf;
+						n->id=selection.Items[selected]->id;
+						n->costs=selection.Items[selected]->costs;
 						LandingList->Add ( n );
 						LandingSelected=LandingList->iCount-1;
 						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
 
 						if ( LandingSelected<0 ) LandingSelected=0;
 						ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
-						player->Credits-=selection->Items[selected]->costs;
+						player->Credits-=selection.Items[selected]->costs;
 						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 					}
@@ -2594,9 +2595,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			}
 		}
 		// Klick auf einen Upgrade-Slider:
-		if ( b&&!lb&&x>=283&&x<301+18&&selection->iCount )
+		if ( b&&!lb&&x>=283&&x<301+18&&selection.iCount )
 		{
-			sHUp *ptr=selection->Items[selected];
+			sHUp *ptr=selection.Items[selected];
 			for ( i=0;i<8;i++ )
 			{
 				if ( !ptr->upgrades[i].active ) continue;
@@ -2733,16 +2734,16 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			mouse->draw ( false,screen );
 		}
 		// Kauf-Button:
-		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection->Items[selected]->costs <= player->Credits && kauf )
+		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection.Items[selected]->costs <= player->Credits && kauf )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
 			sLanding *n;
 			n=new sLanding;
 			n->cargo=0;
-			n->sf=selection->Items[selected]->sf;
-			n->id=selection->Items[selected]->id;
-			n->costs=selection->Items[selected]->costs;
+			n->sf=selection.Items[selected]->sf;
+			n->id=selection.Items[selected]->id;
+			n->costs=selection.Items[selected]->costs;
 			LandingList->Add ( n );
 			LandingSelected=LandingList->iCount-1;
 			while ( LandingSelected>=LandingOffset+5 )
@@ -3049,10 +3050,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		SDL_Delay ( 1 );
 	}
 
-	while ( list->iCount )
+	while ( list.iCount )
 	{
 		sHUp *ptr;
-		ptr = list->Items[0];
+		ptr = list.Items[0];
 		for ( i=0;i<8;i++ )
 		{
 			if ( ptr->upgrades[i].active&&ptr->upgrades[i].Purchased )
@@ -3070,10 +3071,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		}
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		list->Delete ( 0 );
+		list.Delete ( 0 );
 	}
-	delete list;
-	delete selection;
 	SDL_FreeSurface(sfTmp);
 
 }
@@ -3927,14 +3926,14 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 }
 
 // Stellt die Selectionlist zusammen:
-void CreateSelectionList ( cList<sHUp*> *selection,cList<sHUp*> *images,int *selected,int *offset,bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf )
+static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, int* const selected, int* const offset, bool const tank, bool plane, bool ship, bool build, bool const tnt, bool const kauf)
 {
 	sUnitData *bd;
 	sUnitData *vd;
 	int i;
-	while ( selection->iCount )
+	while ( selection.iCount )
 	{
-		selection->Delete ( 0 );
+		selection.Delete ( 0 );
 	}
 	if ( kauf )
 	{
@@ -3942,42 +3941,42 @@ void CreateSelectionList ( cList<sHUp*> *selection,cList<sHUp*> *images,int *sel
 		ship=false;
 		build=false;
 	}
-	for ( i=0;i<images->iCount;i++ )
+	for ( i=0;i<images.iCount;i++ )
 	{
-		if ( images->Items[i]->vehicle )
+		if ( images.Items[i]->vehicle )
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			vd=& ( UnitsData.vehicle[images->Items[i]->id].data );
+			vd=& ( UnitsData.vehicle[images.Items[i]->id].data );
 			if ( vd->is_alien&&kauf ) continue;
 			if ( vd->is_human&&kauf ) continue;
 			if ( tnt&&!vd->can_attack ) continue;
 			if ( vd->can_drive==DRIVE_AIR&&!plane ) continue;
 			if ( vd->can_drive==DRIVE_SEA&&!ship ) continue;
 			if ( ( vd->can_drive==DRIVE_LAND||vd->can_drive==DRIVE_LANDnSEA ) &&!tank ) continue;
-			selection->Add ( images->Items[i] );
+			selection.Add ( images.Items[i] );
 		}
 		else
 		{
 			if ( !build ) continue;
-			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images->Items[i] ) )->id].data );
+			bd=& ( UnitsData.building[ ( ( sHUp* ) ( images.Items[i] ) )->id].data );
 			if ( tnt&&!bd->can_attack ) continue;
-			selection->Add ( images->Items[i] );
+			selection.Add ( images.Items[i] );
 		}
 	}
-	if ( *offset>=selection->iCount-9 )
+	if ( *offset>=selection.iCount-9 )
 	{
-		*offset=selection->iCount-9;
+		*offset=selection.iCount-9;
 		if ( *offset<0 ) *offset=0;
 	}
-	if ( *selected>=selection->iCount )
+	if ( *selected>=selection.iCount )
 	{
-		*selected=selection->iCount-1;
+		*selected=selection.iCount-1;
 		if ( *selected<0 ) *selected=0;
 	}
 }
 
 // Zeigt die Liste mit den Images an:
-void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschreibung,int credits, cPlayer *p )
+static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const offset, bool const beschreibung, int const credits, cPlayer* const p)
 {
 	sHUp *ptr;
 	SDL_Rect dest,scr,text = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
@@ -3989,7 +3988,7 @@ void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschre
 	scr.w=32;scr.h=32;
 	dest.x=490;dest.y=58;
 	dest.w=32;dest.h=32;
-	if ( list->iCount==0 )
+	if ( list.iCount==0 )
 	{
 		scr.x=0;scr.y=0;
 		scr.w=316;scr.h=256;
@@ -3999,11 +3998,11 @@ void ShowSelectionList ( cList<sHUp*> *list,int selected,int offset,bool beschre
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
 		return;
 	}
-	for ( i=offset;i<list->iCount;i++ )
+	for ( i=offset;i<list.iCount;i++ )
 	{
 		if ( i>=offset+9 ) break;
 		// Das Bild malen:
-		ptr = list->Items[i];
+		ptr = list.Items[i];
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
