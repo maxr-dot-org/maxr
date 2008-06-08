@@ -746,52 +746,51 @@ void cHud::CheckScroll ( bool pure )
 void cHud::DoScroll ( int dir )
 {
 	static int lx=0,ly=0;
-	cHud *hud;
 	int step;
 	if ( Client->SelectedBuilding )
 	{
 		Client->SelectedBuilding->MenuActive=false;
 	}
-	hud = Client->Hud;
+	cHud& hud = Client->Hud;
 	step=64/Zoom;
 	step*=SettingsData.iScrollSpeed;
 	switch ( dir )
 	{
 		case 1:
-			hud->OffX-=step;
-			hud->OffY+=step;
+			hud.OffX-=step;
+			hud.OffY+=step;
 			break;
 		case 2:
-			hud->OffY+=step;
+			hud.OffY+=step;
 			break;
 		case 3:
-			hud->OffX+=step;
-			hud->OffY+=step;
+			hud.OffX+=step;
+			hud.OffY+=step;
 			break;
 		case 4:
-			hud->OffX-=step;
+			hud.OffX-=step;
 			break;
 		case 6:
-			hud->OffX+=step;
+			hud.OffX+=step;
 			break;
 		case 7:
-			hud->OffX-=step;
-			hud->OffY-=step;
+			hud.OffX-=step;
+			hud.OffY-=step;
 			break;
 		case 8:
-			hud->OffY-=step;
+			hud.OffY-=step;
 			break;
 		case 9:
-			hud->OffX+=step;
-			hud->OffY-=step;
+			hud.OffX+=step;
+			hud.OffY-=step;
 			break;
 	}
-	if ( hud->OffX<0 ) hud->OffX=0;
-	if ( hud->OffY<0 ) hud->OffY=0;
+	if ( hud.OffX<0 ) hud.OffX=0;
+	if ( hud.OffY<0 ) hud.OffY=0;
 	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
-	if ( hud->OffX>=step ) hud->OffX=step;
+	if ( hud.OffX>=step ) hud.OffX=step;
 	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
-	if ( hud->OffY>=step ) hud->OffY=step;
+	if ( hud.OffY>=step ) hud.OffY=step;
 	if ( lx==OffX&&ly==OffY ) return;
 	Client->bFlagDrawMap=true;
 	Client->bFlagDrawMMap=true;

@@ -304,7 +304,7 @@ public:
 	/** the map */
 	cMap *Map;
 	/** the hud */
-	cHud *Hud;
+	cHud Hud;
 	/** the currently selected vehicle */
 	cVehicle *SelectedVehicle;
 	/** the currently selected building */

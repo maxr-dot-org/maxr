@@ -219,7 +219,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			return;
 	}
 
-	float newzoom = ( 64.0 / Client->Hud->Zoom );
+	float newzoom = ( 64.0 / Client->Hud.Zoom );
 
 	if ( OffX )
 		ox = ( int ) ( OffX / newzoom );
@@ -278,7 +278,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				else
 				{
 					int high;
-					high = ( ( int ) ( Client->Hud->Zoom * ( FlightHigh / 64.0 ) ) );
+					high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
 					tmp.x += high + ditherX;
 					tmp.y += high + ditherY;
 					SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
@@ -327,7 +327,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					// Schatten malen:
 					if ( FlightHigh > 0 )
 					{
-						high = ( ( int ) ( Client->Hud->Zoom * ( FlightHigh / 64.0 ) ) );
+						high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
 						tmp.x += high + ditherX;
 						tmp.y += high + ditherY;
 					}
@@ -401,8 +401,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		{
 			tmp = *dest;
 			scr.h = scr.w = typ->overlay->h;
-			tmp.x += Client->Hud->Zoom / 2 - scr.h / 2 + ox + ditherX;
-			tmp.y += Client->Hud->Zoom / 2 - scr.h / 2 + oy + ditherY;
+			tmp.x += Client->Hud.Zoom / 2 - scr.h / 2 + ox + ditherX;
+			tmp.y += Client->Hud.Zoom / 2 - scr.h / 2 + oy + ditherY;
 			scr.y = 0;
 
 			if ( Disabled )
@@ -491,11 +491,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 				if ( data.can_build == BUILD_BIG || IsClearing )
 				{
-					max = ( Client->Hud->Zoom - 3 ) * 2;
+					max = ( Client->Hud.Zoom - 3 ) * 2;
 				}
 				else
 				{
-					max = Client->Hud->Zoom - 3;
+					max = Client->Hud.Zoom - 3;
 				}
 
 				d.x = dest->x + 2 + ox;
@@ -558,7 +558,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				SDL_Rect d, t;
 				int max, nr;
 				nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
-				max = Client->Hud->Zoom - 3;
+				max = Client->Hud.Zoom - 3;
 				d.x = dest->x + 2 + ox;
 				d.y = dest->y + 2 + oy;
 				d.w = max;
@@ -582,7 +582,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 
 	// Ggf den farbigen Rahmen malen:
-	if ( Client->Hud->Farben )
+	if ( Client->Hud.Farben )
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -590,11 +590,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
 		{
-			max = ( Client->Hud->Zoom - 1 ) * 2;
+			max = ( Client->Hud.Zoom - 1 ) * 2;
 		}
 		else
 		{
-			max = Client->Hud->Zoom - 1;
+			max = Client->Hud.Zoom - 1;
 		}
 
 		d.x = dest->x + 1 + ox;
@@ -627,11 +627,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
 		{
-			max = Client->Hud->Zoom * 2;
+			max = Client->Hud.Zoom * 2;
 		}
 		else
 		{
-			max = Client->Hud->Zoom;
+			max = Client->Hud.Zoom;
 		}
 
 		len = max / 4;
@@ -702,60 +702,60 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		if ( OffX > 0 && OffY == 0 && TEST_BRIDGE ( 1, 0 ) )
 		{
 			tmp = *dest;
-			tmp.x += Client->Hud->Zoom;
+			tmp.x += Client->Hud.Zoom;
 			Client->Map->GO[PosX+1+PosY*Client->Map->size].base->Draw ( &tmp );
 		}
 		else
 			if ( OffX < 0 && OffY == 0 && TEST_BRIDGE ( -1, 0 ) )
 			{
 				tmp = *dest;
-				tmp.x -= Client->Hud->Zoom;
+				tmp.x -= Client->Hud.Zoom;
 				Client->Map->GO[PosX-1+PosY*Client->Map->size].base->Draw ( &tmp );
 			}
 			else
 				if ( OffX == 0 && OffY > 0 && TEST_BRIDGE ( 0, 1 ) )
 				{
 					tmp = *dest;
-					tmp.y += Client->Hud->Zoom;
+					tmp.y += Client->Hud.Zoom;
 					Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 				}
 				else
 					if ( OffX == 0 && OffY < 0 && TEST_BRIDGE ( 0, -1 ) )
 					{
 						tmp = *dest;
-						tmp.y -= Client->Hud->Zoom;
+						tmp.y -= Client->Hud.Zoom;
 						Client->Map->GO[PosX+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 					}
 					else
 						if ( OffX > 0 && OffY > 0 && TEST_BRIDGE ( 1, 1 ) )
 						{
 							tmp = *dest;
-							tmp.x += Client->Hud->Zoom;
-							tmp.y += Client->Hud->Zoom;
+							tmp.x += Client->Hud.Zoom;
+							tmp.y += Client->Hud.Zoom;
 							Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 						}
 						else
 							if ( OffX < 0 && OffY < 0 && TEST_BRIDGE ( -1, -1 ) )
 							{
 								tmp = *dest;
-								tmp.x -= Client->Hud->Zoom;
-								tmp.y -= Client->Hud->Zoom;
+								tmp.x -= Client->Hud.Zoom;
+								tmp.y -= Client->Hud.Zoom;
 								Client->Map->GO[PosX-1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 							}
 							else
 								if ( OffX > 0 && OffY < 0 && TEST_BRIDGE ( 1, -1 ) )
 								{
 									tmp = *dest;
-									tmp.x += Client->Hud->Zoom;
-									tmp.y -= Client->Hud->Zoom;
+									tmp.x += Client->Hud.Zoom;
+									tmp.y -= Client->Hud.Zoom;
 									Client->Map->GO[PosX+1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
 								}
 								else
 									if ( OffX < 0 && OffY > 0 && TEST_BRIDGE ( -1, 1 ) )
 									{
 										tmp = *dest;
-										tmp.x -= Client->Hud->Zoom;
-										tmp.y += Client->Hud->Zoom;
+										tmp.x -= Client->Hud.Zoom;
+										tmp.y += Client->Hud.Zoom;
 										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 									}
 	}
@@ -787,7 +787,7 @@ void cVehicle::Select ( void )
 
 		if ( error != 0 )
 		{
-			Client->Hud->ResetVideoMonitor();
+			Client->Hud.ResetVideoMonitor();
 			Client->FLC = NULL;
 		}
 		else
@@ -1675,13 +1675,13 @@ bool cVehicle::CanDrive ( int MapOff )
 // Liefert die X-Position des Vehicles auf dem Screen zurück:
 int cVehicle::GetScreenPosX ( void )
 {
-	return 180 - ( ( int ) ( ( Client->Hud->OffX - OffX ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosX;
+	return 180 - ( ( int ) ( ( Client->Hud.OffX - OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
 // Liefert die Y-Position des Vehicles auf dem Screen zurück:
 int cVehicle::GetScreenPosY ( void )
 {
-	return 18 - ( ( int ) ( ( Client->Hud->OffY - OffY ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosY;
+	return 18 - ( ( int ) ( ( Client->Hud.OffY - OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
 }
 
 // Malt den Path des Vehicles:
@@ -1696,7 +1696,7 @@ void cVehicle::DrawPath ( void )
 		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand )
 			return;
 
-		zoom = Client->Hud->Zoom;
+		zoom = Client->Hud.Zoom;
 
 		mx = PosX;
 
@@ -1715,8 +1715,8 @@ void cVehicle::DrawPath ( void )
 
 		while ( mx != BandX || my != BandY )
 		{
-			dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
-			dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
+			dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
+			dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
 			dest.w = zoom;
 			dest.h = zoom;
 
@@ -1735,9 +1735,9 @@ void cVehicle::DrawPath ( void )
 					my--;
 		}
 
-		dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * mx;
+		dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
 
-		dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * my;
+		dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
 		dest.w = zoom;
 		dest.h = zoom;
 		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
@@ -1754,11 +1754,11 @@ void cVehicle::DrawPath ( void )
 	else
 		save = mjob->SavedSpeed;
 
-	zoom = Client->Hud->Zoom;
+	zoom = Client->Hud.Zoom;
 
-	dest.x = 180 - ( int ) ( Client->Hud->OffX / ( 64.0 / zoom ) ) + zoom * PosX;
+	dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * PosX;
 
-	dest.y = 18 - ( int ) ( Client->Hud->OffY / ( 64.0 / zoom ) ) + zoom * PosY;
+	dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * PosY;
 
 	dest.w = zoom;
 
@@ -2108,7 +2108,7 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = true;
-			Client->Hud->CheckScroll();
+			Client->Hud.CheckScroll();
 			Client->mouseMoveCallback ( true );
 			return;
 		}
@@ -2629,7 +2629,7 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 	dest.y = GetScreenPosY();
 	dest.h = i = GetMenuPointAnz() * 22;
 	dest.w = 42;
-	size = Client->Hud->Zoom;
+	size = Client->Hud.Zoom;
 
 	if ( IsBuilding && data.can_build == BUILD_BIG )
 		size *= 2;
@@ -2702,13 +2702,13 @@ void cVehicle::DrawMunBar ( void )
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = Client->Hud->Zoom;
-	r2.h = ( r1.h = Client->Hud->Zoom / 6 ) - 2;
+	r1.w = Client->Hud.Zoom;
+	r2.h = ( r1.h = Client->Hud.Zoom / 6 ) - 2;
 
 	if ( r1.h < 2 )
 		r2.h = 1;
 
-	r2.y = ( int ) ( r1.y = Client->Hud->Zoom - r1.h + GetScreenPosY() ) + 1;
+	r2.y = ( int ) ( r1.y = Client->Hud.Zoom - r1.h + GetScreenPosY() ) + 1;
 
 	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_ammo ) * data.ammo );
 
@@ -2735,8 +2735,8 @@ void cVehicle::DrawHelthBar ( void )
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = Client->Hud->Zoom;
-	r2.h = ( r1.h = Client->Hud->Zoom / 6 ) - 2;
+	r1.w = Client->Hud.Zoom;
+	r2.h = ( r1.h = Client->Hud.Zoom / 6 ) - 2;
 
 	if ( r1.h < 2 )
 		r2.h = 1;
@@ -2766,10 +2766,10 @@ void cVehicle::DrawHelthBar ( void )
 // Zentriert auf dieses Vehicle:
 void cVehicle::Center ( void )
 {
-	Client->Hud->OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
-	Client->Hud->OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
+	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
+	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
 	Client->bFlagDrawMap = true;
-	Client->Hud->DoScroll ( 0 );
+	Client->Hud.DoScroll ( 0 );
 }
 
 // Prüft, ob das Vehicle das Objekt angreifen kann:
@@ -4478,7 +4478,7 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	}
 
 	// Die Images wiederherstellen:
-	float newzoom = ( Client->Hud->Zoom / 64.0 );
+	float newzoom = ( Client->Hud.Zoom / 64.0 );
 
 	ScaleSurfaceAdv2 ( typ->img_org[0], typ->img[0], ( int ) ( typ->img_org[0]->w* newzoom ), ( int ) ( typ->img_org[0]->h* newzoom ) );
 
@@ -4884,28 +4884,28 @@ void cVehicle::DrawExitPoints ( sVehicle *typ )
 	size = Client->Map->size;
 
 	if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
 	if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
 
 	if ( PosY - 1 >= 0 && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
 	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
 
 	if ( PosX + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy );
 
 	if ( PosX - 1 >= 0 && PosY + 1 < size && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy + Client->Hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
 
 	if ( PosY + 1 < size && CanExitTo ( PosX + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy + Client->Hud->Zoom );
+		Client->drawExitPoint ( spx, spy + Client->Hud.Zoom );
 
 	if ( PosY + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy + Client->Hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom );
 }
 
 bool cVehicle::CanExitTo ( int off, sVehicle *typ )

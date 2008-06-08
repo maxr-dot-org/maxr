@@ -3767,7 +3767,7 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	SDL_UnlockSurface ( buffer );
 
 	// Hud drüber legen:
-	Client->Hud->DoAllHud();
+	Client->Hud.DoAllHud();
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
@@ -5651,7 +5651,7 @@ void HeatTheSeat ( void )
 	{
 		ClientPlayerList.Items[i]->InitMaps ( Map.size, &Map );
 		ClientPlayerList.Items[i]->Credits = Options.credits;
-		ClientPlayerList.Items[i]->HotHud = *( Client->Hud );
+		ClientPlayerList.Items[i]->HotHud = Client->Hud;
 	}
 
 	// init server
@@ -5686,7 +5686,7 @@ void HeatTheSeat ( void )
 
 	Player = ClientPlayerList.Items[0];
 	Client->initPlayer ( Player );
-	*( Client->Hud ) = Player->HotHud;
+	Client->Hud = Player->HotHud;
 	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
 	Server->bStarted = true;
 	Client->run();

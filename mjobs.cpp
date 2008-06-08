@@ -290,11 +290,11 @@ void cMJobs::DrawPfeil ( SDL_Rect dest,SDL_Rect *ldest,bool spezial )
 	else TESTXY_DP ( <,> ) index=7;
 	if ( spezial )
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[index][64-Client->Hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[index][64-Client->Hud.Zoom],NULL,buffer,&dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeile[index][64-Client->Hud->Zoom],NULL,buffer,&dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeile[index][64-Client->Hud.Zoom],NULL,buffer,&dest );
 	}
 }
 

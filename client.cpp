@@ -56,7 +56,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	FLC = NULL;
 	sFLCname = "";
 	video = NULL;
-	Hud = new cHud;
 	bHelpActive = false;
 	bChangeObjectName = false;
 	bChatInput = false;
@@ -90,8 +89,8 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 
 cClient::~cClient()
 {
-	Hud->Zoom = 64;
-	Hud->ScaleSurfaces();
+	Hud.Zoom = 64;
+	Hud.ScaleSurfaces();
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
 	while ( messages.iCount )
@@ -101,7 +100,6 @@ cClient::~cClient()
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
-	delete Hud;
 	while ( FXList.iCount )
 	{
 		if ( FXList.Items[0]->typ == fxRocket )
@@ -187,7 +185,7 @@ void cClient::run()
 	mouse->Show();
 	mouse->SetCursor ( CHand );
 	mouse->MoveCallback = true;
-	Hud->DoAllHud();
+	Hud.DoAllHud();
 
 	waitForOtherPlayer( 0 );
 
@@ -235,29 +233,29 @@ void cClient::run()
 			int spx,spy;
 			spx = SelectedVehicle->GetScreenPosX();
 			spy = SelectedVehicle->GetScreenPosY();
-			if ( Hud->Scan )
+			if ( Hud.Scan )
 			{
-				drawCircle ( spx+Hud->Zoom/2,
-				             spy+Hud->Zoom/2,
-				             SelectedVehicle->data.scan*Hud->Zoom,SCAN_COLOR,buffer );
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedVehicle->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
 			}
-			if ( Hud->Reichweite&& ( SelectedVehicle->data.can_attack==ATTACK_LAND||SelectedVehicle->data.can_attack==ATTACK_SUB_LAND||SelectedVehicle->data.can_attack==ATTACK_AIRnLAND ) )
+			if ( Hud.Reichweite&& ( SelectedVehicle->data.can_attack==ATTACK_LAND||SelectedVehicle->data.can_attack==ATTACK_SUB_LAND||SelectedVehicle->data.can_attack==ATTACK_AIRnLAND ) )
 			{
-				drawCircle ( spx+Hud->Zoom/2,
-				             spy+Hud->Zoom/2,
-				             SelectedVehicle->data.range*Hud->Zoom+1,RANGE_GROUND_COLOR,buffer );
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedVehicle->data.range*Hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
 			}
-			if ( Hud->Reichweite&&SelectedVehicle->data.can_attack==ATTACK_AIR )
+			if ( Hud.Reichweite&&SelectedVehicle->data.can_attack==ATTACK_AIR )
 			{
-				drawCircle ( spx+Hud->Zoom/2,
-				             spy+Hud->Zoom/2,
-				             SelectedVehicle->data.range*Hud->Zoom+2,RANGE_AIR_COLOR,buffer );
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedVehicle->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			if ( Hud->Munition&&SelectedVehicle->data.can_attack )
+			if ( Hud.Munition&&SelectedVehicle->data.can_attack )
 			{
 				SelectedVehicle->DrawMunBar();
 			}
-			if ( Hud->Treffer )
+			if ( Hud.Treffer )
 			{
 				SelectedVehicle->DrawHelthBar();
 			}
@@ -265,29 +263,29 @@ void cClient::run()
 			{
 				if ( SelectedVehicle->data.can_build==BUILD_BIG||SelectedVehicle->ClearBig )
 				{
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom*2,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom*2,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy+Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom*2,spy+Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy+Hud->Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud->Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom,spy+Hud->Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom*2,spy+Hud->Zoom*2 );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy+Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom*2 );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud.Zoom*2 );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy+Hud.Zoom*2 );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy+Hud.Zoom*2 );
 				}
 				else
 				{
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom,spy-Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud->Zoom,spy+Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud->Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud->Zoom,spy+Hud->Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy-Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud.Zoom );
+					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy+Hud.Zoom );
 				}
 			}
 			if ( SelectedVehicle->PlaceBand )
@@ -295,8 +293,8 @@ void cClient::run()
 				if ( SelectedVehicle->data.can_build==BUILD_BIG )
 				{
 					SDL_Rect dest;
-					dest.x=180- ( ( int ) ( ( Hud->OffX ) / ( 64.0/Hud->Zoom ) ) ) +Hud->Zoom*SelectedVehicle->BandX;
-					dest.y=18- ( ( int ) ( ( Hud->OffY ) / ( 64.0/Hud->Zoom ) ) ) +Hud->Zoom*SelectedVehicle->BandY;
+					dest.x=180- ( ( int ) ( ( Hud.OffX ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*SelectedVehicle->BandX;
+					dest.y=18- ( ( int ) ( ( Hud.OffY ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*SelectedVehicle->BandY;
 					dest.h=dest.w=GraphicsData.gfx_band_big->h;
 					SDL_BlitSurface ( GraphicsData.gfx_band_big,NULL,buffer,&dest );
 				}
@@ -307,8 +305,8 @@ void cClient::run()
 					mouse->GetKachel ( &x,&y );
 					if ( x==SelectedVehicle->PosX||y==SelectedVehicle->PosY )
 					{
-						dest.x=180- ( ( int ) ( ( Hud->OffX ) / ( 64.0/Hud->Zoom ) ) ) +Hud->Zoom*x;
-						dest.y=18- ( ( int ) ( ( Hud->OffY ) / ( 64.0/Hud->Zoom ) ) ) +Hud->Zoom*y;
+						dest.x=180- ( ( int ) ( ( Hud.OffX ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*x;
+						dest.y=18- ( ( int ) ( ( Hud.OffY ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*y;
 						dest.h=dest.w=GraphicsData.gfx_band_small->h;
 						SDL_BlitSurface ( GraphicsData.gfx_band_small,NULL,buffer,&dest );
 						SelectedVehicle->BandX=x;
@@ -332,39 +330,39 @@ void cClient::run()
 			int spx,spy;
 			spx=SelectedBuilding->GetScreenPosX();
 			spy=SelectedBuilding->GetScreenPosY();
-			if ( Hud->Scan )
+			if ( Hud.Scan )
 			{
 				if ( SelectedBuilding->data.is_big )
 				{
-					drawCircle ( spx+Hud->Zoom,
-					             spy+Hud->Zoom,
-					             SelectedBuilding->data.scan*Hud->Zoom,SCAN_COLOR,buffer );
+					drawCircle ( spx+Hud.Zoom,
+					             spy+Hud.Zoom,
+					             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
 				}
 				else
 				{
-					drawCircle ( spx+Hud->Zoom/2,
-					             spy+Hud->Zoom/2,
-					             SelectedBuilding->data.scan*Hud->Zoom,SCAN_COLOR,buffer );
+					drawCircle ( spx+Hud.Zoom/2,
+					             spy+Hud.Zoom/2,
+					             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
 				}
 			}
-			if ( Hud->Reichweite&& ( SelectedBuilding->data.can_attack==ATTACK_LAND||SelectedBuilding->data.can_attack==ATTACK_SUB_LAND ) &&!SelectedBuilding->data.is_expl_mine )
+			if ( Hud.Reichweite&& ( SelectedBuilding->data.can_attack==ATTACK_LAND||SelectedBuilding->data.can_attack==ATTACK_SUB_LAND ) &&!SelectedBuilding->data.is_expl_mine )
 			{
-				drawCircle ( spx+Hud->Zoom/2,
-				             spy+Hud->Zoom/2,
-				             SelectedBuilding->data.range*Hud->Zoom+2,RANGE_GROUND_COLOR,buffer );
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
 			}
-			if ( Hud->Reichweite&&SelectedBuilding->data.can_attack==ATTACK_AIR )
+			if ( Hud.Reichweite&&SelectedBuilding->data.can_attack==ATTACK_AIR )
 			{
-				drawCircle ( spx+Hud->Zoom/2,
-				             spy+Hud->Zoom/2,
-				             SelectedBuilding->data.range*Hud->Zoom+2,RANGE_AIR_COLOR,buffer );
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
 
-			if ( Hud->Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
+			if ( Hud.Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
 			{
 				SelectedBuilding->DrawMunBar();
 			}
-			if ( Hud->Treffer )
+			if ( Hud.Treffer )
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
@@ -377,7 +375,7 @@ void cClient::run()
 				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
 			}
 		}
-		ActivePlayer->DrawLockList ( Hud );
+		ActivePlayer->DrawLockList(&Hud);
 		// draw the minimap:
 		if ( bFlagDrawMMap )
 		{
@@ -479,12 +477,12 @@ void cClient::run()
 			//iFrames++;
 			if ( bStartup )
 			{
-				Hud->SetZoom(1);
+				Hud.SetZoom(1);
 				drawMap();
 				SHOW_SCREEN
 				makePanel ( true );
 
-				Hud->SetZoom(64);
+				Hud.SetZoom(64);
 				if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
 				else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
 				drawMap();
@@ -508,7 +506,7 @@ void cClient::run()
 			iFrame++;
 			bFlagDrawMap = true;
 			rotateBlinkColor();
-			if ( FLC != NULL && Hud->PlayFLC )
+			if ( FLC != NULL && Hud.PlayFLC )
 			{
 				FLI_NextFrame ( FLC );
 			}
@@ -637,15 +635,15 @@ int cClient::checkUser()
 		}
 		if ( keystate[KeysList.KeyJumpToAction]&&iMsgCoordsX!=-1 )
 		{
-			Hud->OffX = iMsgCoordsX*64- ( ( int ) ( ( ( float ) 224/Hud->Zoom ) *64 ) ) +32;
-			Hud->OffY = iMsgCoordsY*64- ( ( int ) ( ( ( float ) 224/Hud->Zoom ) *64 ) ) +32;
+			Hud.OffX = iMsgCoordsX*64- ( ( int ) ( ( ( float ) 224/Hud.Zoom ) *64 ) ) +32;
+			Hud.OffY = iMsgCoordsY*64- ( ( int ) ( ( ( float ) 224/Hud.Zoom ) *64 ) ) +32;
 			bFlagDrawMap=true;
-			Hud->DoScroll ( 0 );
+			Hud.DoScroll ( 0 );
 			iMsgCoordsX=-1;
 		}
-		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!Hud->Ende )
+		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!Hud.Ende )
 		{
-			Hud->EndeButton ( true );
+			Hud.EndeButton ( true );
 			handleEnd();
 			bLastReturn = true;
 		}
@@ -655,28 +653,28 @@ int cClient::checkUser()
 			bChatInput = true;
 			InputStr = "";
 		}
-		if ( keystate[KeysList.KeyScroll8a]||keystate[KeysList.KeyScroll8b] ) Hud->DoScroll ( 8 );
-		if ( keystate[KeysList.KeyScroll2a]||keystate[KeysList.KeyScroll2b] ) Hud->DoScroll ( 2 );
-		if ( keystate[KeysList.KeyScroll6a]||keystate[KeysList.KeyScroll6b] ) Hud->DoScroll ( 6 );
-		if ( keystate[KeysList.KeyScroll4a]||keystate[KeysList.KeyScroll4b] ) Hud->DoScroll ( 4 );
-		if ( keystate[KeysList.KeyScroll7] ) Hud->DoScroll ( 7 );
-		if ( keystate[KeysList.KeyScroll9] ) Hud->DoScroll ( 9 );
-		if ( keystate[KeysList.KeyScroll1] ) Hud->DoScroll ( 1 );
-		if ( keystate[KeysList.KeyScroll3] ) Hud->DoScroll ( 3 );
-		if ( keystate[KeysList.KeyZoomIna]||keystate[KeysList.KeyZoomInb] ) Hud->SetZoom ( Hud->Zoom+1 );
-		if ( keystate[KeysList.KeyZoomOuta]||keystate[KeysList.KeyZoomOutb] ) Hud->SetZoom ( Hud->Zoom-1 );
+		if ( keystate[KeysList.KeyScroll8a]||keystate[KeysList.KeyScroll8b] ) Hud.DoScroll ( 8 );
+		if ( keystate[KeysList.KeyScroll2a]||keystate[KeysList.KeyScroll2b] ) Hud.DoScroll ( 2 );
+		if ( keystate[KeysList.KeyScroll6a]||keystate[KeysList.KeyScroll6b] ) Hud.DoScroll ( 6 );
+		if ( keystate[KeysList.KeyScroll4a]||keystate[KeysList.KeyScroll4b] ) Hud.DoScroll ( 4 );
+		if ( keystate[KeysList.KeyScroll7] ) Hud.DoScroll ( 7 );
+		if ( keystate[KeysList.KeyScroll9] ) Hud.DoScroll ( 9 );
+		if ( keystate[KeysList.KeyScroll1] ) Hud.DoScroll ( 1 );
+		if ( keystate[KeysList.KeyScroll3] ) Hud.DoScroll ( 3 );
+		if ( keystate[KeysList.KeyZoomIna]||keystate[KeysList.KeyZoomInb] ) Hud.SetZoom ( Hud.Zoom+1 );
+		if ( keystate[KeysList.KeyZoomOuta]||keystate[KeysList.KeyZoomOutb] ) Hud.SetZoom ( Hud.Zoom-1 );
 
 		{
 			static SDLKey last_key=SDLK_UNKNOWN;
-			if ( keystate[KeysList.KeyFog] ) {if ( last_key!=KeysList.KeyFog ) {Hud->SwitchNebel ( !Hud->Nebel );last_key=KeysList.KeyFog;}}
-			else if ( keystate[KeysList.KeyGrid] ) {if ( last_key!=KeysList.KeyGrid ) {Hud->SwitchGitter ( !Hud->Gitter );last_key=KeysList.KeyGrid;}}
-			else if ( keystate[KeysList.KeyScan] ) {if ( last_key!=KeysList.KeyScan ) {Hud->SwitchScan ( !Hud->Scan );last_key=KeysList.KeyScan;}}
-			else if ( keystate[KeysList.KeyRange] ) {if ( last_key!=KeysList.KeyRange ) {Hud->SwitchReichweite ( !Hud->Reichweite );last_key=KeysList.KeyRange;}}
-			else if ( keystate[KeysList.KeyAmmo] ) {if ( last_key!=KeysList.KeyAmmo ) {Hud->SwitchMunition ( !Hud->Munition );last_key=KeysList.KeyAmmo;}}
-			else if ( keystate[KeysList.KeyHitpoints] ) {if ( last_key!=KeysList.KeyHitpoints ) {Hud->SwitchTreffer ( !Hud->Treffer );last_key=KeysList.KeyHitpoints;}}
-			else if ( keystate[KeysList.KeyColors] ) {if ( last_key!=KeysList.KeyColors ) {Hud->SwitchFarben ( !Hud->Farben );last_key=KeysList.KeyColors;}}
-			else if ( keystate[KeysList.KeyStatus] ) {if ( last_key!=KeysList.KeyStatus ) {Hud->SwitchStatus ( !Hud->Status );last_key=KeysList.KeyStatus;}}
-			else if ( keystate[KeysList.KeySurvey] ) {if ( last_key!=KeysList.KeySurvey ) {Hud->SwitchStudie ( !Hud->Studie );last_key=KeysList.KeySurvey;}}
+			if ( keystate[KeysList.KeyFog] ) {if ( last_key!=KeysList.KeyFog ) {Hud.SwitchNebel ( !Hud.Nebel );last_key=KeysList.KeyFog;}}
+			else if ( keystate[KeysList.KeyGrid] ) {if ( last_key!=KeysList.KeyGrid ) {Hud.SwitchGitter ( !Hud.Gitter );last_key=KeysList.KeyGrid;}}
+			else if ( keystate[KeysList.KeyScan] ) {if ( last_key!=KeysList.KeyScan ) {Hud.SwitchScan ( !Hud.Scan );last_key=KeysList.KeyScan;}}
+			else if ( keystate[KeysList.KeyRange] ) {if ( last_key!=KeysList.KeyRange ) {Hud.SwitchReichweite ( !Hud.Reichweite );last_key=KeysList.KeyRange;}}
+			else if ( keystate[KeysList.KeyAmmo] ) {if ( last_key!=KeysList.KeyAmmo ) {Hud.SwitchMunition ( !Hud.Munition );last_key=KeysList.KeyAmmo;}}
+			else if ( keystate[KeysList.KeyHitpoints] ) {if ( last_key!=KeysList.KeyHitpoints ) {Hud.SwitchTreffer ( !Hud.Treffer );last_key=KeysList.KeyHitpoints;}}
+			else if ( keystate[KeysList.KeyColors] ) {if ( last_key!=KeysList.KeyColors ) {Hud.SwitchFarben ( !Hud.Farben );last_key=KeysList.KeyColors;}}
+			else if ( keystate[KeysList.KeyStatus] ) {if ( last_key!=KeysList.KeyStatus ) {Hud.SwitchStatus ( !Hud.Status );last_key=KeysList.KeyStatus;}}
+			else if ( keystate[KeysList.KeySurvey] ) {if ( last_key!=KeysList.KeySurvey ) {Hud.SwitchStudie ( !Hud.Studie );last_key=KeysList.KeySurvey;}}
 			else last_key=SDLK_UNKNOWN;
 		}
 	}
@@ -788,7 +786,7 @@ int cClient::checkUser()
 	}
 	if ( iMouseButton && !iLastMouseButton && iMouseButton != 4 )
 	{
-		if ( OverObject && Hud->Lock ) ActivePlayer->ToggelLock ( OverObject );
+		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
 		if ( SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			//TODO: transfer
@@ -835,7 +833,7 @@ int cClient::checkUser()
 		{
 			// TODO: repair
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud->Ende && !SelectedVehicle->Attacking )
+		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
 		{
 			addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
 			/*cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList, false );
@@ -866,7 +864,7 @@ int cClient::checkUser()
 		}
 		else if ( !bHelpActive )
 		{
-			Hud->CheckButtons();
+			Hud.CheckButtons();
 			// check whether the mouse is over an unit menu:
 			if ( ( SelectedVehicle&&SelectedVehicle->MenuActive&&SelectedVehicle->MouseOverMenu ( mouse->x,mouse->y ) ) ||
 			        ( SelectedBuilding&&SelectedBuilding->MenuActive&&SelectedBuilding->MouseOverMenu ( mouse->x,mouse->y ) ) )
@@ -917,7 +915,7 @@ int cClient::checkUser()
 				}
 				else
 					// select the unit:
-					if ( OverObject && !Hud->Ende )
+					if ( OverObject && !Hud.Ende )
 					{
 						if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
 						{
@@ -1092,10 +1090,10 @@ int cClient::checkUser()
 	}
 	if ( iMouseButton && !bHelpActive )
 	{
-		Hud->CheckOneClick();
+		Hud.CheckOneClick();
 	}
-	Hud->CheckMouseOver();
-	Hud->CheckScroll();
+	Hud.CheckMouseOver();
+	Hud.CheckScroll();
 	iLastMouseButton = iMouseButton;
 	return 0;
 }
@@ -1157,10 +1155,10 @@ void cClient::drawMap( bool bPure )
 	int iX, iY, iPos, iZoom, iOffX, iOffY, iStartX, iStartY, iEndX, iEndY;
 	struct sTerrain *terr, *defwater;
 	SDL_Rect dest, tmp, scr;
-	iZoom = Hud->Zoom;
+	iZoom = Hud.Zoom;
 	float f = 64.0;
-	iOffX = ( int ) ( Hud->OffX/ ( f/iZoom ) );
-	iOffY = ( int ) ( Hud->OffY/ ( f/iZoom ) );
+	iOffX = ( int ) ( Hud.OffX/ ( f/iZoom ) );
+	iOffY = ( int ) ( Hud.OffY/ ( f/iZoom ) );
 	scr.y = 0;
 	scr.h = scr.w = dest.w = dest.h = iZoom;
 	dest.y = 18-iOffY;
@@ -1182,7 +1180,7 @@ void cClient::drawMap( bool bPure )
 					if ( terr->overlay )
 					{
 						scr.x= ( iFrame%defwater->frames ) *iZoom;
-						if ( Hud->Nebel&&!ActivePlayer->ScanMap[iPos] )
+						if ( Hud.Nebel&&!ActivePlayer->ScanMap[iPos] )
 						{
 							SDL_BlitSurface ( defwater->shw,&scr,buffer,&tmp );
 						}
@@ -1193,7 +1191,7 @@ void cClient::drawMap( bool bPure )
 						tmp=dest;
 					}
 					// draw the fog:
-					if ( Hud->Nebel&&!ActivePlayer->ScanMap[iPos] )
+					if ( Hud.Nebel&&!ActivePlayer->ScanMap[iPos] )
 					{
 						if ( terr->sf_org->w>64 )
 						{
@@ -1227,7 +1225,7 @@ void cClient::drawMap( bool bPure )
 		if ( dest.y>SettingsData.iScreenH-15 ) break;
 	}
 	// draw the grid:
-	if ( Hud->Gitter )
+	if ( Hud.Gitter )
 	{
 		dest.x=180;
 		dest.y=18+iZoom- ( iOffY%iZoom );
@@ -1254,13 +1252,13 @@ void cClient::drawMap( bool bPure )
 	displayFXBottom();
 
 	// draw sub- and basebuildings:
-	iStartX= ( Hud->OffX-1 ) /64;if ( iStartX<0 ) iStartX=0;
-	iStartY= ( Hud->OffY-1 ) /64;if ( iStartY<0 ) iStartY=0;
+	iStartX= ( Hud.OffX-1 ) /64;if ( iStartX<0 ) iStartX=0;
+	iStartY= ( Hud.OffY-1 ) /64;if ( iStartY<0 ) iStartY=0;
 	iStartX-=1;if ( iStartX<0 ) iStartX=0;
 	iStartY-=1;if ( iStartY<0 ) iStartY=0;
-	iEndX=Hud->OffX/64+ ( SettingsData.iScreenW-192 ) /Hud->Zoom+1;
+	iEndX=Hud.OffX/64+ ( SettingsData.iScreenW-192 ) /Hud.Zoom+1;
 	if ( iEndX>=Map->size ) iEndX=Map->size-1;
-	iEndY=Hud->OffY/64+ ( SettingsData.iScreenH-32 ) /Hud->Zoom+1;
+	iEndY=Hud.OffY/64+ ( SettingsData.iScreenH-32 ) /Hud.Zoom+1;
 	if ( iEndY>=Map->size ) iEndY=Map->size-1;
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
@@ -1386,7 +1384,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 	// draw the resources:
-	if ( Hud->Studie|| ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&SelectedVehicle->data.can_survey ) )
+	if ( Hud.Studie|| ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&SelectedVehicle->data.can_survey ) )
 	{
 		scr.y=0;
 		scr.h=scr.w=iZoom;
@@ -1493,23 +1491,23 @@ void cClient::drawMiniMap()
 		for ( x=0;x<112;x++ )
 		{
 			tx= ( int ) ( ( Map->size/112.0 ) *x );
-			if ( Hud->Radar&&!ActivePlayer->ScanMap[tx+ty] )
+			if ( Hud.Radar&&!ActivePlayer->ScanMap[tx+ty] )
 			{
 				cl=* ( unsigned int* ) Map->terrain[Map->Kacheln[tx+ty]].shw_org->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud->TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].base->owner->color->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].top&& ( !Hud->TNT|| ( GO[tx+ty].top->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].top&& ( !Hud.TNT|| ( GO[tx+ty].top->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].top->owner->color->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].plane&& ( !Hud->TNT|| ( GO[tx+ty].plane->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].plane&& ( !Hud.TNT|| ( GO[tx+ty].plane->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].plane->owner->color->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&&GO[tx+ty].vehicle->detected&& ( !Hud->TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&&GO[tx+ty].vehicle->detected&& ( !Hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].vehicle->owner->color->pixels;
 			}
@@ -1531,10 +1529,10 @@ void cClient::drawMiniMap()
 		}
 	}
 	// draw the borders:
-	tx= ( int ) ( ( Hud->OffX/64.0 ) * ( 112.0/Map->size ) );
-	ty= ( int ) ( ( Hud->OffY/64.0 ) * ( 112.0/Map->size ) );
-	ex= ( int ) ( 112/ ( Map->size/ ( ( ( SettingsData.iScreenW-192.0 ) /Hud->Zoom ) ) ) );
-	ey= ( int ) ( ty+112/ ( Map->size/ ( ( ( SettingsData.iScreenH-32.0 ) /Hud->Zoom ) ) ) );
+	tx= ( int ) ( ( Hud.OffX/64.0 ) * ( 112.0/Map->size ) );
+	ty= ( int ) ( ( Hud.OffY/64.0 ) * ( 112.0/Map->size ) );
+	ex= ( int ) ( 112/ ( Map->size/ ( ( ( SettingsData.iScreenW-192.0 ) /Hud.Zoom ) ) ) );
+	ey= ( int ) ( ty+112/ ( Map->size/ ( ( ( SettingsData.iScreenH-32.0 ) /Hud.Zoom ) ) ) );
 	ex+=tx;
 	for ( y=ty;y<ey;y++ )
 	{
@@ -1652,12 +1650,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom*fx->param;
+			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_big[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleSmall:
@@ -1667,12 +1665,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom*fx->param;
+			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_small[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMed:
@@ -1682,12 +1680,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom*fx->param;
+			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMedLong:
@@ -1697,12 +1695,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom*fx->param;
+			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxHit:
@@ -1712,12 +1710,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom* ( iFrame-fx->StartFrame );
+			scr.x=Hud.Zoom* ( iFrame-fx->StartFrame );
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_hit[1],&scr,buffer,&dest );
 			break;
 		case fxExploSmall:
@@ -1727,12 +1725,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud->Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
-			scr.w = (int) Hud->Zoom * 114 / 64.0;
-			scr.h = (int) Hud->Zoom * 108 / 64.0;
-			dest.x = 180 - ( (int) ( ( Hud->OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y = 18 -  ( (int) ( ( Hud->OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud->Zoom ) ) );
+			scr.w = (int) Hud.Zoom * 114 / 64.0;
+			scr.h = (int) Hud.Zoom * 108 / 64.0;
+			dest.x = 180 - ( (int) ( ( Hud.OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y = 18 -  ( (int) ( ( Hud.OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
 			break;
 		case fxExploBig:
@@ -1742,12 +1740,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud->Zoom * 307 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) Hud.Zoom * 307 * ( iFrame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
-			scr.w = (int) Hud->Zoom * 307 / 64.0;
-			scr.h = (int) Hud->Zoom * 194 / 64.0;
-			dest.x = 180- ( (int) ( ( Hud->OffX- ( fx->PosX - 134 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y = 18-  ( (int) ( ( Hud->OffY- ( fx->PosY - 85 ) ) / ( 64.0/Hud->Zoom ) ) );
+			scr.w = (int) Hud.Zoom * 307 / 64.0;
+			scr.h = (int) Hud.Zoom * 194 / 64.0;
+			dest.x = 180- ( (int) ( ( Hud.OffX- ( fx->PosX - 134 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( Hud.OffY- ( fx->PosY - 85 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
 			break;
 		case fxExploWater:
@@ -1757,12 +1755,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud->Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
-			scr.w = (int) Hud->Zoom * 114 / 64.0;
-			scr.h = (int) Hud->Zoom * 108 / 64.0;
-			dest.x = 180- ( (int) ( ( Hud->OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y = 18-  ( (int) ( ( Hud->OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud->Zoom ) ) );
+			scr.w = (int) Hud.Zoom * 114 / 64.0;
+			scr.h = (int) Hud.Zoom * 108 / 64.0;
+			dest.x = 180- ( (int) ( ( Hud.OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y = 18-  ( (int) ( ( Hud.OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
 			break;
 		case fxExploAir:
@@ -1772,12 +1770,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud->Zoom * 137 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) Hud.Zoom * 137 * ( iFrame - fx->StartFrame ) / 64.0;
 			scr.y = 0;
-			scr.w = (int) Hud->Zoom * 137 / 64.0;
-			scr.h = (int) Hud->Zoom * 121 / 64.0;
-			dest.x = 180- ( ( int ) ( ( Hud->OffX- ( fx->PosX - 61 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y = 18-  ( ( int ) ( ( Hud->OffY- ( fx->PosY - 68 ) ) / ( 64.0/Hud->Zoom ) ) );
+			scr.w = (int) Hud.Zoom * 137 / 64.0;
+			scr.h = (int) Hud.Zoom * 121 / 64.0;
+			dest.x = 180- ( ( int ) ( ( Hud.OffX- ( fx->PosX - 61 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y = 18-  ( ( int ) ( ( Hud.OffY- ( fx->PosY - 68 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
 			break;
 		case fxSmoke:
@@ -1791,8 +1789,8 @@ void cClient::drawFX( int iNum )
 			scr.y=scr.x=0;
 			dest.w=scr.w=EffectsData.fx_smoke[1]->h;
 			dest.h=scr.h=EffectsData.fx_smoke[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
 			break;
 		case fxRocket:
@@ -1824,8 +1822,8 @@ void cClient::drawFX( int iNum )
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
 			break;
 		}
@@ -1840,12 +1838,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x= ( int ) ( 0.375*Hud->Zoom ) * ( iFrame-fx->StartFrame );
+			scr.x= ( int ) ( 0.375*Hud.Zoom ) * ( iFrame-fx->StartFrame );
 			scr.y=0;
 			dest.w=scr.w=EffectsData.fx_dark_smoke[1]->h;
 			dest.h=scr.h=EffectsData.fx_dark_smoke[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( ( int ) dsi->fx ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( ( int ) dsi->fy ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( ( int ) dsi->fx ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( ( int ) dsi->fy ) ) / ( 64.0/Hud.Zoom ) ) );
 
 			SDL_SetAlpha ( EffectsData.fx_dark_smoke[1],SDL_SRCALPHA,dsi->alpha );
 			SDL_BlitSurface ( EffectsData.fx_dark_smoke[1],&scr,buffer,&dest );
@@ -1867,12 +1865,12 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x=Hud->Zoom* ( iFrame-fx->StartFrame );
+			scr.x=Hud.Zoom* ( iFrame-fx->StartFrame );
 			scr.y=0;
-			dest.w=scr.w=Hud->Zoom;
-			dest.h=scr.h=Hud->Zoom;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.w=scr.w=Hud.Zoom;
+			dest.h=scr.h=Hud.Zoom;
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_absorb[1],&scr,buffer,&dest );
 			break;
 		}
@@ -1919,12 +1917,12 @@ void cClient::drawFXBottom( int iNum )
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
 
-			x= ( ( int ) ( ( ( dest.x-180 ) +Hud->OffX/ ( 64.0/Hud->Zoom ) ) /Hud->Zoom ) );
-			y= ( ( int ) ( ( ( dest.y-18 ) +Hud->OffY/ ( 64.0/Hud->Zoom ) ) /Hud->Zoom ) );
+			x= ( ( int ) ( ( ( dest.x-180 ) +Hud.OffX/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
+			y= ( ( int ) ( ( ( dest.y-18 ) +Hud.OffY/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
 
 			if ( !Map->IsWater ( x+y*Map->size,false ) &&
 			        ! ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 ) &&
@@ -1954,8 +1952,8 @@ void cClient::drawFXBottom( int iNum )
 			scr.y=0;
 			dest.w=scr.w=dest.h=scr.h=EffectsData.fx_tracks[1]->h;
 			scr.x=tri->dir*scr.w;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( fx->PosX ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( fx->PosY ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
 			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );
 
@@ -1976,8 +1974,8 @@ void cClient::drawFXBottom( int iNum )
 			scr.y=scr.x=0;
 			dest.w=scr.w=EffectsData.fx_smoke[1]->h;
 			dest.h=scr.h=EffectsData.fx_smoke[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
 			break;
 		case fxCorpse:
@@ -1985,8 +1983,8 @@ void cClient::drawFXBottom( int iNum )
 			scr.y=scr.x=0;
 			dest.w=scr.w=EffectsData.fx_corpse[1]->h;
 			dest.h=scr.h=EffectsData.fx_corpse[1]->h;
-			dest.x=180- ( ( int ) ( ( Hud->OffX-fx->PosX ) / ( 64.0/Hud->Zoom ) ) );
-			dest.y=18- ( ( int ) ( ( Hud->OffY-fx->PosY ) / ( 64.0/Hud->Zoom ) ) );
+			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
+			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_corpse[1],&scr,buffer,&dest );
 
 			if ( fx->param<=0 )
@@ -2046,7 +2044,7 @@ void cClient::drawExitPoint( int iX, int iY )
 	int iNr;
 	int iZoom;
 	iNr = iFrame%5;
-	iZoom = Hud->Zoom;
+	iZoom = Hud.Zoom;
 	scr.y = 0;
 	scr.h = scr.w = iZoom;
 	scr.x = iZoom*iNr;
@@ -2805,9 +2803,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				iTurn++;
 				iTurnTime = 0;
-				Hud->ShowRunde();
-				Hud->EndeButton ( false );
-				Hud->showTurnTime ( -1 );
+				Hud.ShowRunde();
+				Hud.EndeButton ( false );
+				Hud.showTurnTime ( -1 );
 			}
 
 			if ( bWaitForNextPlayer )
@@ -3441,21 +3439,21 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 
 	// save information and set next player
 	int iZoom, iX, iY;
-	ActivePlayer->HotHud = *Hud;
-	iZoom = Hud->LastZoom;
+	ActivePlayer->HotHud = Hud;
+	iZoom = Hud.LastZoom;
 	ActivePlayer = getPlayerFromNumber( iNextPlayerNum );	// TODO: maybe here must be done more than just set the next player!
-	*Hud = ActivePlayer->HotHud;
-	iX = Hud->OffX;
-	iY = Hud->OffY;
-	if ( Hud->LastZoom != iZoom )
+	Hud = ActivePlayer->HotHud;
+	iX = Hud.OffX;
+	iY = Hud.OffY;
+	if ( Hud.LastZoom != iZoom )
 	{
-		Hud->LastZoom = -1;
-		Hud->ScaleSurfaces();
+		Hud.LastZoom = -1;
+		Hud.ScaleSurfaces();
 	}
-	Hud->DoAllHud();
-	Hud->EndeButton ( false );
-	Hud->OffX = iX;
-	Hud->OffY = iY;
+	Hud.DoAllHud();
+	Hud.EndeButton ( false );
+	Hud.OffX = iX;
+	Hud.OffY = iY;
 
 	// reset the screen
 	if ( SelectedBuilding ) { SelectedBuilding->Deselct(); SelectedBuilding = NULL; }
@@ -3510,7 +3508,7 @@ void cClient::handleTurnTime()
 	{
 		int iRestTime = iTurnTime - Round( ( SDL_GetTicks() - iStartTurnTime )/1000 );
 		if ( iRestTime < 0 ) iRestTime = 0;
-		Hud->showTurnTime ( iRestTime );
+		Hud.showTurnTime ( iRestTime );
 	}
 }
 

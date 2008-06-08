@@ -240,11 +240,10 @@ int cMouse::GetMouseButton ( )
 // Liefert die Koordinaten der Kachel unter der Maus:
 void cMouse::GetKachel ( int *X,int *Y )
 {
-	cHud *hud;
 	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) {*X=-1;*Y=-1;return;}
-	hud=Client->Hud;
-	*X= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
-	*Y= (int)(( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
+	cHud const& hud = Client->Hud;
+	*X= (int)(( ( x-180 ) +hud.OffX/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
+	*Y= (int)(( ( y-18 ) +hud.OffY/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
 	if ( *X>=Client->Map->size ) *X=Client->Map->size-1;
 	if ( *Y>=Client->Map->size ) *Y=Client->Map->size-1;
 }
@@ -252,11 +251,10 @@ void cMouse::GetKachel ( int *X,int *Y )
 // Liefert den Offset der Kachel unter der Maus:
 int cMouse::GetKachelOff ( void )
 {
-	cHud *hud;
 	int ret;
 	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) return -1;
-	hud=Client->Hud;
-	ret= (int)(( ( x-180 ) +hud->OffX/ ( 64.0/hud->Zoom ) ) /hud->Zoom);
-	ret+= ( ( int ) ( ( ( y-18 ) +hud->OffY/ ( 64.0/hud->Zoom ) ) /hud->Zoom ) ) *Client->Map->size;
+	cHud const& hud=Client->Hud;
+	ret= (int)(( ( x-180 ) +hud.OffX/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
+	ret+= ( ( int ) ( ( ( y-18 ) +hud.OffY/ ( 64.0/hud.Zoom ) ) /hud.Zoom ) ) *Client->Map->size;
 	return ret;
 }

@@ -535,8 +535,8 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.has_frames )
 		{
-			dest->w = scr.w = Client->Hud->Zoom;
-			dest->h = scr.h = Client->Hud->Zoom;
+			dest->w = scr.w = Client->Hud.Zoom;
+			dest->h = scr.h = Client->Hud.Zoom;
 		}
 		else
 		{
@@ -766,11 +766,11 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			{
 				if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
 				{
-					scr.x = ( Client->iFrame % data.has_frames ) * Client->Hud->Zoom;
+					scr.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
 				}
 				else
 				{
-					scr.x = dir * Client->Hud->Zoom;
+					scr.x = dir * Client->Hud.Zoom;
 				}
 
 				SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
@@ -863,7 +863,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		SDL_Rect d, t;
 		int max, nr;
 		nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
-		max = ( Client->Hud->Zoom - 2 ) * 2;
+		max = ( Client->Hud.Zoom - 2 ) * 2;
 		d.x = dest->x + 2;
 		d.y = dest->y + 2;
 		d.w = max;
@@ -886,7 +886,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf den farbigen Rahmen malen:
-	if ( Client->Hud->Farben )
+	if ( Client->Hud.Farben )
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -894,11 +894,11 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 		if ( data.is_big )
 		{
-			max = ( Client->Hud->Zoom - 1 ) * 2;
+			max = ( Client->Hud.Zoom - 1 ) * 2;
 		}
 		else
 		{
-			max = Client->Hud->Zoom - 1;
+			max = Client->Hud.Zoom - 1;
 		}
 
 		d.x = dest->x + 1;
@@ -931,11 +931,11 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 		if ( data.is_big )
 		{
-			max = Client->Hud->Zoom * 2;
+			max = Client->Hud.Zoom * 2;
 		}
 		else
 		{
-			max = Client->Hud->Zoom;
+			max = Client->Hud.Zoom;
 		}
 
 		len = max / 4;
@@ -1030,7 +1030,7 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 	dest.y = GetScreenPosY();
 	dest.h = i = GetMenuPointAnz() * 22;
 	dest.w = 42;
-	size = Client->Hud->Zoom;
+	size = Client->Hud.Zoom;
 
 	if ( data.is_big )
 		size *= 2;
@@ -1286,7 +1286,7 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
 	SDL_Rect scr, tmp;
 	int zoom;
-	zoom = Client->Hud->Zoom;
+	zoom = Client->Hud.Zoom;
 	tmp = dest;
 	scr.y = 0;
 	scr.h = scr.w = zoom;
@@ -2014,7 +2014,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	}
 
 	// Die Images wiederherstellen:
-	float newzoom = Client->Hud->Zoom / 64.0;
+	float newzoom = Client->Hud.Zoom / 64.0;
 
 	ScaleSurfaceAdv2 ( typ->img_org, typ->img, ( int ) ( typ->img_org->w* newzoom ) , ( int ) ( typ->img_org->h* newzoom ) );
 
@@ -2209,40 +2209,40 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 	size = Client->Map->size;
 
 	if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
 	if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
 
 	if ( PosY - 1 >= 0 && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
 	if ( PosX + 2 < size && PosY - 1 >= 0 && CanExitTo ( PosX + 2 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom*2, spy - Client->Hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy - Client->Hud.Zoom );
 
 	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
 
 	if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom*2, spy );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy );
 
 	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy + Client->Hud->Zoom );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
 
 	if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom*2, spy + Client->Hud->Zoom );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom );
 
 	if ( PosX - 1 >= 0 && PosY + 2 < size && CanExitTo ( PosX - 1 + ( PosY + 2 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud->Zoom, spy + Client->Hud->Zoom*2 );
+		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
 
 	if ( PosY + 2 < size && CanExitTo ( PosX + ( PosY + 2 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy + Client->Hud->Zoom*2 );
+		Client->drawExitPoint ( spx, spy + Client->Hud.Zoom*2 );
 
 	if ( PosY + 2 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 2 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom, spy + Client->Hud->Zoom*2 );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
 
 	if ( PosX + 2 < size && PosY + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 2 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud->Zoom*2, spy + Client->Hud->Zoom*2 );
+		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom*2 );
 }
 
 // Prüft, ob das Vehicle das Gebäude zu dem übergebenen Feld verlassen kann:
@@ -3770,7 +3770,7 @@ void cBuilding::ShowUpgrade ( void )
 	// Die Images erstellen:
 	cList<sUpgradeStruct*> images;
 
-	float newzoom = ( Client->Hud->Zoom / 64.0 );
+	float newzoom = ( Client->Hud.Zoom / 64.0 );
 
 	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
 	{
@@ -6606,7 +6606,7 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Images erstellen:
 	cList<sBuildStruct*> images;
 
-	float newzoom = ( Client->Hud->Zoom / 64.0 );
+	float newzoom = ( Client->Hud.Zoom / 64.0 );
 
 	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
 	{
@@ -7932,13 +7932,13 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 // Liefert die X-Position des Buildings auf dem Screen zurück:
 int cBuilding::GetScreenPosX ( void )
 {
-	return 180 - ( ( int ) ( ( Client->Hud->OffX ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosX;
+	return 180 - ( ( int ) ( ( Client->Hud.OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
 // Liefert die Y-Position des Buildings auf dem Screen zurück:
 int cBuilding::GetScreenPosY ( void )
 {
-	return 18 - ( ( int ) ( ( Client->Hud->OffY ) / ( 64.0 / Client->Hud->Zoom ) ) ) + Client->Hud->Zoom*PosY;
+	return 18 - ( ( int ) ( ( Client->Hud.OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
 }
 
 // returns the remaining hitpoints after an attack
@@ -8012,7 +8012,7 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = true;
-			Client->Hud->CheckScroll();
+			Client->Hud.CheckScroll();
 			Client->mouseMoveCallback ( true );
 			return;
 		}
@@ -8417,17 +8417,17 @@ void cBuilding::DrawMenu ( void )
 // Zentriert auf dieses Building:
 void cBuilding::Center ( void )
 {
-	Client->Hud->OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
-	Client->Hud->OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud->Zoom ) * 64 ) ) + 32;
+	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
+	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
 	Client->bFlagDrawMap = true;
-	Client->Hud->DoScroll ( 0 );
+	Client->Hud.DoScroll ( 0 );
 }
 
 // Malt die Munitionsanzeige über das Buildings:
 void cBuilding::DrawMunBar ( void )
 {
 	SDL_Rect r1, r2;
-	int w = Client->Hud->Zoom;
+	int w = Client->Hud.Zoom;
 
 	if ( data.is_big )
 		w <<= 1;
@@ -8464,7 +8464,7 @@ void cBuilding::DrawMunBar ( void )
 void cBuilding::DrawHelthBar ( void )
 {
 	SDL_Rect r1, r2;
-	int w = Client->Hud->Zoom;
+	int w = Client->Hud.Zoom;
 
 	if ( data.is_big )
 		w <<= 1;
