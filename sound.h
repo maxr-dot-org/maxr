@@ -125,7 +125,7 @@ int InitSound(int frequency,int chunksize);
 void CloseSound(void);
 void PlayVoice(sSOUND *snd);
 void PlayFX(sSOUND *snd);
-void PlayMusic(char *file);
+void PlayMusic(char const* file);
 void SetMusicVol(int vol);
 void StopMusic(void);
 void StartMusic(void);

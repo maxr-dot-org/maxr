@@ -91,7 +91,7 @@ void PlayFX ( sSOUND *snd )
 }
 
 // Spielt die übergebene ogg/wav/mod-Datei:
-void PlayMusic ( char *file )
+void PlayMusic(char const* const file)
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.MusicMute ) return;
 	music_stream = Mix_LoadMUS ( file );
@@ -124,7 +124,7 @@ void StopMusic ( void )
 void StartMusic ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
-	PlayMusic ( ( char * ) MusicFiles->Items[random ( MusicAnz,0 ) ].c_str() );
+	PlayMusic(MusicFiles->Items[random(MusicAnz, 0)].c_str());
 }
 
 // Callback, wenn Musik am Ende:
@@ -132,7 +132,7 @@ void MusicFinished ( void )
 {
 	if ( !SettingsData.bSoundEnabled/*||in_credits*/ ) return;
 	srand ( ( unsigned ) time ( NULL ) );
-	PlayMusic ( ( char * ) MusicFiles->Items[random ( MusicAnz,0 ) ].c_str() );
+	PlayMusic(MusicFiles->Items[random(MusicAnz, 0)].c_str());
 }
 
 // Startet einen Loop-Sound:

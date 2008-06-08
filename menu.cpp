@@ -238,7 +238,7 @@ void RunMainMenu ( void )
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 	// start main musicfile
-	PlayMusic ( ( char * ) ( SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg" ).c_str() );
+	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg").c_str());
 
 	prepareMenu(true);
 	SHOW_SCREEN
