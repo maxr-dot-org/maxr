@@ -47,7 +47,7 @@ public:
   cMJobs *mjobs;
   cList<cMJobs*> ActiveMJobs;
   int EndeCount;
-  cList<cAJobs*> *AJobs;
+  cList<cAJobs*> AJobs;
   int SyncWaiting;
   int RundenendeActionsReport;
   int SyncNo;

@@ -29,7 +29,6 @@ cEngine::cEngine ( cMap *Map )
 {
 	map=Map;
 	mjobs=NULL;
-	AJobs=new cList<cAJobs*>;
 	EndeCount=0;
 	RundenendeActionsReport=0;
 	SyncNo=-1;
@@ -47,11 +46,10 @@ cEngine::~cEngine ( void )
 		delete mjobs;
 		mjobs=next;
 	}
-	while ( AJobs->iCount )
+	while ( AJobs.iCount )
 	{
-		delete AJobs->Items[AJobs->iCount - 1];
+		delete AJobs.Items[AJobs.iCount - 1];
 	}
-	delete AJobs;
 	StopLog();
 }
 
@@ -178,11 +176,11 @@ void cEngine::Run ( void )
 		game->fDrawMap=true;
 	}
 	// Alle Attack-Jobs bearbeiten:
-	for ( i=0;i<AJobs->iCount;i++ )
+	for ( i=0;i<AJobs.iCount;i++ )
 	{
 		bool destroyed;
 		cAJobs *aj;
-		aj=AJobs->Items[i];
+		aj=AJobs.Items[i];
 		// Prüfen, ob das Vehicle gedreht werden muss:
 		if ( aj->vehicle )
 		{
@@ -288,7 +286,7 @@ void cEngine::Run ( void )
 		}
 
 		delete aj;
-		AJobs->Delete ( i );
+		AJobs.Delete ( i );
 		i--;
 	}
 }
@@ -1232,7 +1230,7 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 	}
 	cAJobs *aj;
 	aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
-	AJobs->Add ( aj );
+	AJobs.Add ( aj );
 }
 
 // Sends a chat-message:
