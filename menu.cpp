@@ -770,12 +770,12 @@ void RunSPMenu ( void )
 					Map->PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 					// copy map for server
 					ServerMap = new cMap;
-					ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+					ServerMap->NewMap( Map->size, Map->TerrainInUse.iCount );
 					ServerMap->DefaultWater = Map->DefaultWater;
 					ServerMap->MapName = Map->MapName;
 					memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
 					memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-					for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
+					for ( int i = 0; i < Map->TerrainInUse.iCount; i++ )
 					{
 						ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
 						ServerMap->terrain[i].coast = Map->terrain[i].coast;
@@ -4893,12 +4893,12 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					{
 						Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
 						// copy map for server
-						ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+						ServerMap->NewMap( Map->size, Map->TerrainInUse.iCount );
 						ServerMap->DefaultWater = Map->DefaultWater;
 						ServerMap->MapName = Map->MapName;
 						memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
 						memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-						for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
+						for ( int i = 0; i < Map->TerrainInUse.iCount; i++ )
 						{
 							ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
 							ServerMap->terrain[i].coast = Map->terrain[i].coast;
@@ -5638,12 +5638,12 @@ void HeatTheSeat ( void )
 	Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
 	// copy map for server
 	ServerMap = new cMap;
-	ServerMap->NewMap( Map->size, Map->TerrainInUse->iCount );
+	ServerMap->NewMap( Map->size, Map->TerrainInUse.iCount );
 	ServerMap->DefaultWater = Map->DefaultWater;
 	ServerMap->MapName = Map->MapName;
 	memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
 	memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-	for ( int i = 0; i < Map->TerrainInUse->iCount; i++ )
+	for ( int i = 0; i < Map->TerrainInUse.iCount; i++ )
 	{
 		ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
 		ServerMap->terrain[i].coast = Map->terrain[i].coast;

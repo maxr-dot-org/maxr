@@ -61,7 +61,7 @@ public:
   int DefaultWater; // Nummer des Wassers für Küsten
   sGameObjects *GO; // Feld mit den Gameobjects für einen schnelleren Zugriff.
   sResources *Resources; // Feld mit den Resourcen.
-  cList<sTerrain*> *TerrainInUse; // Liste mit Zeigern auf die terrains, die benutzt werden.
+  cList<sTerrain*> TerrainInUse; // Liste mit Zeigern auf die terrains, die benutzt werden.
   string ErrorStr; // Der String mit der Fehlermeldung fürs Laden der Maps.
   string MapName;  // Name der aktuellen Map. 
 

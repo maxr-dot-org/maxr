@@ -1316,16 +1316,15 @@ int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_
 void cHud::ScaleSurfaces ( void )
 {
 	int i, k, sizex, sizey;
-	cList<sTerrain*> *tlist;
 	float fak;
 	if ( Zoom==LastZoom ) return;
 
 	// Terrain:
-	tlist=Client->Map->TerrainInUse;
-	for ( i=0;i<tlist->iCount;i++ )
+	cList<sTerrain*>& tlist = Client->Map->TerrainInUse;
+	for ( i=0;i<tlist.iCount;i++ )
 	{
 		sTerrain *t;
-		t= tlist->Items[i];
+		t= tlist.Items[i];
 		if ( Zoom==64 )
 		{
 			t->sf->w=t->sf_org->w;t->sf->h=t->sf_org->h;

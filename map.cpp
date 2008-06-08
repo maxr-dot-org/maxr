@@ -24,7 +24,6 @@
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap ( void )
 {
-	TerrainInUse=new cList<sTerrain*>;
 	Kacheln=NULL;
 	NewMap ( 32, 32 );
 	MapName="";
@@ -33,7 +32,6 @@ cMap::cMap ( void )
 cMap::~cMap ( void )
 {
 	DeleteMap();
-	delete TerrainInUse;
 }
 
 // Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
@@ -252,7 +250,7 @@ bool cMap::LoadMap ( string filename )
 		if( terrain[iNum].water && DefaultWater == -1 ) DefaultWater = iNum;
 
 		// This Terrain will be used
-		TerrainInUse->Add( terrain+( iNum ) );
+		TerrainInUse.Add( terrain+( iNum ) );
 
 		// Set ColorKeys if necessary
 		if ( terrain[iNum].overlay )
@@ -309,9 +307,9 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	for ( int i = 0; i < TerrainInUse->iCount; i++ )
+	for ( int i = 0; i < TerrainInUse.iCount; i++ )
 	{
-		TerrainInUse->Delete( TerrainInUse->iCount );
+		TerrainInUse.Delete( TerrainInUse.iCount );
 		SDL_FreeSurface ( terrain[i].sf_org );
 		SDL_FreeSurface ( terrain[i].sf );
 		SDL_FreeSurface ( terrain[i].shw_org );
