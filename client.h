@@ -77,7 +77,7 @@ private:
 	/** true if a chat message is being entered */
 	bool bChatInput;
 	/** list with all messages */
-	cList<sMessage*> *messages;
+	cList<sMessage*> messages;
 	/** number of current turn */
 	int iTurn;
 	/** true if the turn should be end after all movejobs have been finished */

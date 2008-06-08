@@ -60,7 +60,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bHelpActive = false;
 	bChangeObjectName = false;
 	bChatInput = false;
-	messages=new cList<sMessage*>;
 	bDefeated = false;
 	iMsgCoordsX = -1;
 	iMsgCoordsY = -1;
@@ -99,13 +98,12 @@ cClient::~cClient()
 	Hud->ScaleSurfaces();
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
-	while ( messages->iCount )
+	while ( messages.iCount )
 	{
-		free ( messages->Items[0]->msg );
-		free ( messages->Items[0] );
-		messages->Delete ( 0 );
+		free ( messages.Items[0]->msg );
+		free ( messages.Items[0] );
+		messages.Delete ( 0 );
 	}
-	delete messages;
 	if ( FLC ) FLI_Close ( FLC );
 	delete Hud;
 	while ( FXList->iCount )
@@ -2610,7 +2608,7 @@ void cClient::addMessage ( string sMsg )
 	if ( Message->chars > 500 ) Message->msg[500]=0;
 	Message->len = font->getTextWide( sMsg );
 	Message->age = iFrame;
-	messages->Add ( Message );
+	messages.Add ( Message );
 	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
@@ -2630,22 +2628,22 @@ void cClient::handleMessages()
 	SDL_Rect scr, dest;
 	int iHeight;
 	sMessage *message;
-	if ( messages->iCount == 0 ) return;
+	if ( messages.iCount == 0 ) return;
 	iHeight = 0;
 	// Alle alten Nachrichten löschen:
-	for ( int i = messages->iCount-1; i >= 0; i-- )
+	for ( int i = messages.iCount-1; i >= 0; i-- )
 	{
-		message = messages->Items[i];
+		message = messages.Items[i];
 		if ( message->age+MSG_FRAMES < iFrame || iHeight > 200 )
 		{
 			free ( message->msg );
 			free ( message );
-			messages->Delete ( i );
+			messages.Delete ( i );
 			continue;
 		}
 		iHeight += 14+11*message->len/296;
 	}
-	if ( messages->iCount == 0 ) return;
+	if ( messages.iCount == 0 ) return;
 	if ( SettingsData.bAlphaEffects )
 	{
 		scr.x = 0; scr.y = 0;
@@ -2657,9 +2655,9 @@ void cClient::handleMessages()
 	dest.x = 180+2; dest.y = 34;
 	dest.w = 250-4;
 	dest.h = iHeight;
-	for ( int i = 0; i < messages->iCount; i++ )
+	for ( int i = 0; i < messages.iCount; i++ )
 	{
-		message = messages->Items[i];
+		message = messages.Items[i];
 		font->showTextAsBlock( dest, message->msg );
 		dest.y += 14+11*message->len/300;
 	}
@@ -3440,12 +3438,12 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 {
 	// clear the messages
 	sMessage *Message;
-	while ( messages->iCount )
+	while ( messages.iCount )
 	{
-		Message = messages->Items[0];
+		Message = messages.Items[0];
 		free ( Message->msg );
 		free ( Message );
-		messages->Delete ( 0 );
+		messages.Delete ( 0 );
 	}
 
 	// save information and set next player
