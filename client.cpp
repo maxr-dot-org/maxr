@@ -93,7 +93,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	setWind ( random ( 360,0 ) );
 }
 
-void cClient::kill()
+cClient::~cClient()
 {
 	Hud->Zoom = 64;
 	Hud->ScaleSurfaces();

@@ -842,7 +842,6 @@ void RunSPMenu ( void )
 					Client->run();
 
 					Server->kill();
-					Client->kill();
 					SettingsData.sPlayerName = Player->name;
 					while ( ClientPlayerList.iCount )
 					{
@@ -5017,7 +5016,6 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					if ( bHost ) Server->bStarted = true;
 					Client->run();
 
-					Client->kill();
 					if ( bHost ) Server->kill();
 					SettingsData.sPlayerName = ActualPlayerClient->name;
 					while ( PlayerList->iCount )
@@ -5703,7 +5701,6 @@ void HeatTheSeat ( void )
 	Client->run();
 
 	Server->kill();
-	Client->kill();
 
 	while ( ClientPlayerList.iCount )
 	{

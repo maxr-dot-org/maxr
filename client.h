@@ -40,6 +40,7 @@ class cClient
 {
 public:
 	cClient(cMap* Map, cList<cPlayer*>* PlayerList);
+	~cClient();
 
 private:
 	friend class cHud;
@@ -357,11 +358,6 @@ public:
 	*/
 	void drawMap( bool bPure = false );
 
-	/**
-	* kills the client class
-	*@author alzi alias DoctorDeath
-	*/
-	void kill();
 	/**
 	* initialises this client for the player.
 	*@author alzi alias DoctorDeath
