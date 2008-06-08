@@ -84,7 +84,7 @@ private:
 	bool bWantToEnd;
 	/** lists with all FX-Animation */
 	cList<sFX*> FXList;
-	cList<sFX*>* FXListBottom;
+	cList<sFX*> FXListBottom;
 	/** list with the dirt */
 	cBuilding *DirtList;
 	/** direction from which the wind is comming */

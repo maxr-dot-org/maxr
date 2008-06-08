@@ -65,7 +65,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	iMsgCoordsY = -1;
 	iTurn = 1;
 	bWantToEnd = false;
-	FXListBottom = new cList<sFX*>;
 	bUpShowTank = true;
 	bUpShowPlane = true;
 	bUpShowShip = true;
@@ -117,20 +116,19 @@ cClient::~cClient()
 		delete FXList.Items[0];
 		FXList.Delete ( 0 );
 	}
-	while ( FXListBottom->iCount )
+	while ( FXListBottom.iCount )
 	{
-		if ( FXListBottom->Items[0]->typ == fxTorpedo )
+		if ( FXListBottom.Items[0]->typ == fxTorpedo )
 		{
-			delete FXListBottom->Items[0]->rocketInfo;
+			delete FXListBottom.Items[0]->rocketInfo;
 		}
-		else if ( FXListBottom->Items[0]->typ == fxTracks )
+		else if ( FXListBottom.Items[0]->typ == fxTracks )
 		{
-			delete FXListBottom->Items[0]->trackInfo;
+			delete FXListBottom.Items[0]->trackInfo;
 		}
-		delete FXListBottom->Items[0];
-		FXListBottom->Delete ( 0 );
+		delete FXListBottom.Items[0];
+		FXListBottom.Delete ( 0 );
 	}
-	delete FXListBottom;
 
 	for (int i = 0; i < attackJobs->iCount; i++ )
 	{
@@ -414,7 +412,7 @@ void cClient::run()
 
 		if ( bDebugFX && bFlagDrawMap )
 		{
-			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -1632,9 +1630,9 @@ void cClient::displayFX()
 
 void cClient::displayFXBottom()
 {
-	if ( !FXListBottom->iCount ) return;
+	if ( !FXListBottom.iCount ) return;
 
-	for ( int i = FXListBottom->iCount-1; i >= 0; i-- )
+	for ( int i = FXListBottom.iCount-1; i >= 0; i-- )
 	{
 		drawFXBottom ( i );
 	}
@@ -1888,7 +1886,7 @@ void cClient::drawFXBottom( int iNum )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXListBottom->Items[iNum];
+	fx=FXListBottom.Items[iNum];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxTorpedo ) return;
 	switch ( fx->typ )
 	{
@@ -1902,7 +1900,7 @@ void cClient::drawFXBottom( int iNum )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXListBottom->Delete ( iNum );
+				FXListBottom.Delete ( iNum );
 				return;
 			}
 
@@ -1914,7 +1912,7 @@ void cClient::drawFXBottom( int iNum )
 					if ( SettingsData.bAlphaEffects ) addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFXBottom ( FXListBottom->iCount-1 );
+					drawFXBottom ( FXListBottom.iCount-1 );
 				}
 			}
 
@@ -1939,7 +1937,7 @@ void cClient::drawFXBottom( int iNum )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXListBottom->Delete ( iNum );
+				FXListBottom.Delete ( iNum );
 				return;
 			}
 			break;
@@ -1952,7 +1950,7 @@ void cClient::drawFXBottom( int iNum )
 			{
 				delete fx;
 				delete tri;
-				FXListBottom->Delete ( iNum );
+				FXListBottom.Delete ( iNum );
 				return;
 			}
 			scr.y=0;
@@ -1973,7 +1971,7 @@ void cClient::drawFXBottom( int iNum )
 			if ( iFrame-fx->StartFrame>100/4 )
 			{
 				delete fx;
-				FXListBottom->Delete ( iNum );
+				FXListBottom.Delete ( iNum );
 				return;
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( iFrame-fx->StartFrame ) *4 );
@@ -1996,7 +1994,7 @@ void cClient::drawFXBottom( int iNum )
 			if ( fx->param<=0 )
 			{
 				delete fx;
-				FXListBottom->Delete ( iNum );
+				FXListBottom.Delete ( iNum );
 				return;
 			}
 			break;
@@ -2184,7 +2182,7 @@ void cClient::addFX ( sFX* n )
 
 	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
-		FXListBottom->Add ( n );
+		FXListBottom.Add ( n );
 	}
 	else
 	{
