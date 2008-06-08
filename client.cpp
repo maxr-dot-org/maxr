@@ -81,7 +81,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceClient = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
-	ActiveMJobs = new cList<cMJobs*>;
 	attackJobs = new cList<cClientAttackJob*>;
 
 	SDL_Rect rSrc = {0,0,170,224};
@@ -3424,7 +3423,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 void cClient::handleEnd()
 {
-	if ( ActiveMJobs->iCount > 0 )
+	if ( ActiveMJobs.iCount > 0 )
 	{
 		addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
 	}
@@ -3523,18 +3522,18 @@ void cClient::handleTurnTime()
 
 void cClient::addActiveMoveJob ( cMJobs *MJob )
 {
-	ActiveMJobs->Add ( MJob );
+	ActiveMJobs.Add ( MJob );
 	MJob->Suspended = false;
 }
 
 void cClient::handleMoveJobs ()
 {
-	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
 		cMJobs *MJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs->Items[i];
+		MJob = ActiveMJobs.Items[i];
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished || MJob->EndForNow )
@@ -3559,7 +3558,7 @@ void cClient::handleMoveJobs ()
 					Vehicle->MoveJobActive = false;
 				}
 				else cLog::write("(Client) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-				ActiveMJobs->Delete ( i );
+				ActiveMJobs.Delete ( i );
 				delete MJob;
 				continue;
 			}
@@ -3578,7 +3577,7 @@ void cClient::handleMoveJobs ()
 						Vehicle->ShowDetails();
 					}
 				}
-				ActiveMJobs->Delete ( i );
+				ActiveMJobs.Delete ( i );
 				continue;
 			}
 		}
@@ -3973,9 +3972,9 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 void cClient::releaseMoveJob ( cMJobs *MJob )
 {
 	cLog::write ( "(Client) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
-		if ( MJob == ActiveMJobs->Items[i] ) return;
+		if ( MJob == ActiveMJobs.Items[i] ) return;
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Client) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );

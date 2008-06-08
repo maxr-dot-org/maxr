@@ -113,7 +113,7 @@ private:
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	/** List with all active movejobs */
-	cList<cMJobs*> *ActiveMJobs;
+	cList<cMJobs*> ActiveMJobs;
 
 	/**
 	* checks the input of the player
