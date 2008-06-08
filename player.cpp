@@ -55,7 +55,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	UnusedResearch=0;
 	Credits=0;
 	ReportForschungFinished=false;
-	LockList=new cList<sLockElem*>;
 	this->iSocketNum = iSocketNum;
 }
 
@@ -132,13 +131,11 @@ cPlayer::~cPlayer ( void )
 		delete ReportBuildings.Items[0];
 		ReportBuildings.Delete ( 0 );
 	}
-	while ( LockList->iCount )
+	while ( LockList.iCount )
 	{
-		delete LockList->Items[0];
-		LockList->Delete ( 0 );
+		delete LockList.Items[0];
+		LockList.Delete ( 0 );
 	}
-	delete LockList;
-
 }
 
 // Fügt ein Vehicle in die Listes des Spielser ein:
@@ -825,7 +822,7 @@ void cPlayer::AddLock ( cBuilding *b )
 	elem=new sLockElem;
 	elem->b=b;
 	b->IsLocked=true;
-	LockList->Add ( elem );
+	LockList.Add ( elem );
 }
 
 // Fügt ein Vehicle in die Lock-Liste ein:
@@ -836,7 +833,7 @@ void cPlayer::AddLock ( cVehicle *v )
 	elem->v=v;
 	elem->b=NULL;
 	v->IsLocked=true;
-	LockList->Add ( elem );
+	LockList.Add ( elem );
 }
 
 // FLöscht ein Vehicle aus der Lock-Liste:
@@ -844,14 +841,14 @@ void cPlayer::DeleteLock ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->iCount;i++ )
+	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList->Items[i];
+		elem=LockList.Items[i];
 		if ( elem->v==v )
 		{
 			v->IsLocked=false;
 			delete elem;
-			LockList->Delete ( i );
+			LockList.Delete ( i );
 			return;
 		}
 	}
@@ -862,14 +859,14 @@ void cPlayer::DeleteLock ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->iCount;i++ )
+	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList->Items[i];
+		elem=LockList.Items[i];
 		if ( elem->b==b )
 		{
 			b->IsLocked=false;
 			delete elem;
-			LockList->Delete ( i );
+			LockList.Delete ( i );
 			return;
 		}
 	}
@@ -880,9 +877,9 @@ bool cPlayer::InLockList ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->iCount;i++ )
+	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList->Items[i];
+		elem=LockList.Items[i];
 		if ( elem->b==b ) return true;
 	}
 	return false;
@@ -893,9 +890,9 @@ bool cPlayer::InLockList ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList->iCount;i++ )
+	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList->Items[i];
+		elem=LockList.Items[i];
 		if ( elem->v==v ) return true;
 	}
 	return false;
@@ -928,9 +925,9 @@ void cPlayer::DrawLockList ( cHud *hud )
 	sLockElem *elem;
 	int i,spx,spy,off;
 
-	for ( i=0;i<LockList->iCount;i++ )
+	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList->Items[i];
+		elem=LockList.Items[i];
 		if ( elem->v )
 		{
 			off=elem->v->PosX+elem->v->PosY*Client->Map->size;

@@ -90,7 +90,7 @@ public:
   cList<sReport*> ReportVehicles; // Reportlisten.
   cList<sReport*> ReportBuildings; // Reportlisten.
   bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
-  cList<sLockElem*> *LockList;           // Liste mit gelockten Objekten.
+  cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
   int iSocketNum;			// Number of socket over which this player is connected in network game
 							// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 
