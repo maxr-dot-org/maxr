@@ -4871,7 +4871,6 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					sendMessage ( Message );
 				}
 				int iLandX, iLandY;
-				cList<sLanding*> *LandingList;
 				Map = new cMap;
 				cMap *ServerMap = new cMap;
 				if ( Map->LoadMap ( sMap ) )
@@ -4926,8 +4925,8 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						Server->init( ServerMap, PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds );
 					}
 
-					LandingList = new cList<sLanding*>;
-					RunHangar ( ActualPlayerClient, LandingList );
+					cList<sLanding*> LandingList;
+					RunHangar ( ActualPlayerClient, &LandingList );
 
 					if ( !bHost ) sendUpgrades();
 
@@ -4962,7 +4961,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 
 						// make all landings
-						Server->makeLanding ( iLandX, iLandY, ActualPlayer, LandingList, Options.FixedBridgeHead );
+						Server->makeLanding ( iLandX, iLandY, ActualPlayer, &LandingList, Options.FixedBridgeHead );
 						for ( int i = 0; i < ClientDataList->iCount; i++ )
 						{
 							cPlayer *Player;
@@ -4985,7 +4984,7 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					}
 					else
 					{
-						sendLandingInfo( iLandX, iLandY, LandingList );
+						sendLandingInfo( iLandX, iLandY, &LandingList );
 						// wait for other players
 						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
 						SHOW_SCREEN
@@ -5008,12 +5007,11 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 						}
 					}
 
-					while ( LandingList->iCount )
+					while ( LandingList.iCount )
 					{
-						delete LandingList->Items[LandingList->iCount - 1];
-						LandingList->Delete(LandingList->iCount - 1);
+						delete LandingList.Items[LandingList.iCount - 1];
+						LandingList.Delete(LandingList.iCount - 1);
 					}
-					delete LandingList;
 
 					ExitMenu();
 
