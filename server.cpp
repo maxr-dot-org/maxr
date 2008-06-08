@@ -51,7 +51,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
-	ActiveMJobs = new cList<cMJobs *>;
 	AJobs = new cList<cServerAttackJob*>;
 	iNextUnitID = 1;
 	iTimerTime = 0;
@@ -1188,18 +1187,18 @@ void cServer::checkDeadline ()
 
 void cServer::addActiveMoveJob ( cMJobs *MJob )
 {
-	ActiveMJobs->Add ( MJob );
+	ActiveMJobs.Add ( MJob );
 	MJob->Suspended = false;
 }
 
 void cServer::handleMoveJobs ()
 {
-	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
 		cMJobs *MJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs->Items[i];
+		MJob = ActiveMJobs.Items[i];
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished || MJob->EndForNow )
@@ -1232,7 +1231,7 @@ void cServer::handleMoveJobs ()
 				else cLog::write("(Server) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				delete MJob;
 			}
-			ActiveMJobs->Delete ( i );
+			ActiveMJobs.Delete ( i );
 			continue;
 		}
 
@@ -1286,11 +1285,11 @@ void cServer::checkMove ( cMJobs *MJob )
 			}
 			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, MJob->vehicle->owner->Nr );
 
-			for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+			for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 			{
-				if ( MJob == ActiveMJobs->Items[i] )
+				if ( MJob == ActiveMJobs.Items[i] )
 				{
-					ActiveMJobs->Delete ( i );
+					ActiveMJobs.Delete ( i );
 					break;
 				}
 			}
@@ -1522,9 +1521,9 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 void cServer::releaseMoveJob ( cMJobs *MJob )
 {
 	cLog::write ( "(Server) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for ( int i = 0; i < ActiveMJobs->iCount; i++ )
+	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
-		if ( MJob == ActiveMJobs->Items[i] ) return;
+		if ( MJob == ActiveMJobs.Items[i] ) return;
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Server) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );

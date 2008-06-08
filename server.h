@@ -90,7 +90,7 @@ private:
 	/** current movejob */
 	cMJobs *mjobs;
 	/** List with all active movejobs */
-	cList<cMJobs*> *ActiveMJobs;
+	cList<cMJobs*> ActiveMJobs;
 	/** true if this is a hotseat game */
 	bool bHotSeat;
 	/** number of active player in hotseat */
