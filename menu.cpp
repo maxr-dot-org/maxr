@@ -4054,8 +4054,6 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			}
 			// Die Details anzeigen:
 			{
-				cVehicle *tv;
-				cBuilding *tb;
 				tmp.x=11;
 				tmp.y=290;
 				tmp.w=346;
@@ -4063,15 +4061,13 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
 				if ( ptr->vehicle )
 				{
-					tv=new cVehicle ( UnitsData.vehicle+ptr->id,p );
-					tv->ShowBigDetails();
-					delete tv;
+					cVehicle tv(UnitsData.vehicle + ptr->id, p);
+					tv.ShowBigDetails();
 				}
 				else
 				{
-					tb=new cBuilding ( UnitsData.building+ptr->id,p,NULL );
-					tb->ShowBigDetails();
-					delete tb;
+					cBuilding tb(UnitsData.building + ptr->id, p, NULL);
+					tb.ShowBigDetails();
 				}
 			}
 			// Die Texte anzeigen/Slider machen:
