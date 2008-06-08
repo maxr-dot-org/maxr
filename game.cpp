@@ -77,7 +77,6 @@ cGame::cGame ( cMap *map )
 	ComAvgRead=0;
 	Runde=1;
 	WantToEnd=false;
-	FXListBottom=new cList<sFX*>;
 	UpShowTank=true;
 	UpShowPlane=true;
 	UpShowShip=true;
@@ -128,10 +127,10 @@ cGame::~cGame ( void )
 		delete ptr;
 		FXList.Delete ( 0 );
 	}
-	while ( FXListBottom->iCount )
+	while ( FXListBottom.iCount )
 	{
 		sFX *ptr;
-		ptr=FXListBottom->Items[0];
+		ptr=FXListBottom.Items[0];
 		if ( ptr->typ==fxTorpedo )
 		{
 			delete ptr->rocketInfo;
@@ -141,9 +140,8 @@ cGame::~cGame ( void )
 			delete ptr->trackInfo;
 		}
 		delete ptr;
-		FXListBottom->Delete ( 0 );
+		FXListBottom.Delete ( 0 );
 	}
-	delete FXListBottom;
 
 	while(DirtList)
 	{
@@ -430,7 +428,7 @@ void cGame::Run ( void )
 
 		if ( DebugFX && fDrawMap )
 		{
-			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom.iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -1886,7 +1884,7 @@ void cGame::AddFX ( sFX* n )
 
 	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
-		FXListBottom->Add ( n );
+		FXListBottom.Add ( n );
 	}
 	else
 	{
@@ -2070,9 +2068,9 @@ void cGame::DisplayFX ( void )
 void cGame::DisplayFXBottom ( void )
 {
 	int i;
-	if ( !FXListBottom->iCount ) return;
+	if ( !FXListBottom.iCount ) return;
 
-	for ( i=FXListBottom->iCount-1;i>=0;i-- )
+	for ( i=FXListBottom.iCount-1;i>=0;i-- )
 	{
 		DrawFXBottom ( i );
 	}
@@ -2328,7 +2326,7 @@ void cGame::DrawFXBottom ( int i )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXListBottom->Items[i];
+	fx=FXListBottom.Items[i];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) &&fx->typ!=fxTorpedo ) return;
 	switch ( fx->typ )
 	{
@@ -2342,7 +2340,7 @@ void cGame::DrawFXBottom ( int i )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXListBottom->Delete ( i );
+				FXListBottom.Delete ( i );
 				return;
 			}
 
@@ -2354,7 +2352,7 @@ void cGame::DrawFXBottom ( int i )
 					if ( SettingsData.bAlphaEffects ) AddFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					DrawFXBottom ( FXListBottom->iCount-1 );
+					DrawFXBottom ( FXListBottom.iCount-1 );
 				}
 			}
 
@@ -2379,7 +2377,7 @@ void cGame::DrawFXBottom ( int i )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXListBottom->Delete ( i );
+				FXListBottom.Delete ( i );
 				return;
 			}
 			break;
@@ -2392,7 +2390,7 @@ void cGame::DrawFXBottom ( int i )
 			{
 				delete fx;
 				delete tri;
-				FXListBottom->Delete ( i );
+				FXListBottom.Delete ( i );
 				return;
 			}
 			scr.y=0;
@@ -2413,7 +2411,7 @@ void cGame::DrawFXBottom ( int i )
 			if ( Frame-fx->StartFrame>100/4 )
 			{
 				delete fx;
-				FXListBottom->Delete ( i );
+				FXListBottom.Delete ( i );
 				return;
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( Frame-fx->StartFrame ) *4 );
@@ -2436,7 +2434,7 @@ void cGame::DrawFXBottom ( int i )
 			if ( fx->param<=0 )
 			{
 				delete fx;
-				FXListBottom->Delete ( i );
+				FXListBottom.Delete ( i );
 				return;
 			}
 			break;
