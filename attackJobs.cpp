@@ -270,15 +270,15 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 
 void cClientAttackJob::handleAttackJobs()
 {
-	for ( int i = 0; i < Client->attackJobs->iCount; i++ )
+	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
 	{
-		cClientAttackJob* job = Client->attackJobs->Items[i];
+		cClientAttackJob* job = Client->attackJobs.Items[i];
 		if ( job->bMuzzlePlayed )
 		{
 			//TODO: attackjob auch im destruktor von cVehicle löschen
 			job->sendFinishMessage();
 			delete job;
-			Client->attackJobs->Delete(i);
+			Client->attackJobs.Delete(i);
 		}
 		else if ( job->bPlayingMuzzle )
 		{
@@ -299,9 +299,9 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	iTargetOffset = -1;
 
 	//check for duplicate jobs
-	for ( int i = 0; i < Client->attackJobs->iCount; i++ )
+	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
 	{
-		if ( Client->attackJobs->Items[i]->iID == this->iID )
+		if ( Client->attackJobs.Items[i]->iID == this->iID )
 		{
 			bMuzzlePlayed = true;
 			return;

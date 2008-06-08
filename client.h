@@ -300,7 +300,7 @@ public:
 	/** the active Player */
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
-	cList<cClientAttackJob*> *attackJobs;
+	cList<cClientAttackJob*> attackJobs;
 	/** the map */
 	cMap *Map;
 	/** the hud */

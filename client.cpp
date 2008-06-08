@@ -79,7 +79,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceClient = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
-	attackJobs = new cList<cClientAttackJob*>;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX((SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
@@ -130,11 +129,10 @@ cClient::~cClient()
 		FXListBottom.Delete ( 0 );
 	}
 
-	for (int i = 0; i < attackJobs->iCount; i++ )
+	for (int i = 0; i < attackJobs.iCount; i++ )
 	{
-		delete attackJobs->Items[i];
+		delete attackJobs.Items[i];
 	}
-	delete attackJobs;
 
 	while( DirtList )
 	{
@@ -3246,7 +3244,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ATTACKJOB_FIRE:
 		{
 			cClientAttackJob* job = new cClientAttackJob( message );
-			Client->attackJobs->Add( job );
+			Client->attackJobs.Add( job );
 		}
 		break;
 	case GAME_EV_RESOURCES:
