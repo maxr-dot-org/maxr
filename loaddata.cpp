@@ -303,7 +303,7 @@ int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* 
 		return 0;
 	}
 
-	dest = LoadPCX((char *)filepath.c_str());
+	dest = LoadPCX(filepath.c_str());
 
 	filepath.insert(0,"File loaded: ");
 	cLog::write ( filepath.c_str(), LOG_TYPE_DEBUG );
@@ -332,8 +332,8 @@ int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const
 	
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX((char *)filepath.c_str());
-	dest[1] = LoadPCX((char *)filepath.c_str());
+	dest[0] = LoadPCX(filepath.c_str());
+	dest[1] = LoadPCX(filepath.c_str());
 
 	filepath.insert(0,"Effect successful loaded: ");
 	cLog::write ( filepath.c_str(), LOG_TYPE_DEBUG );
@@ -357,9 +357,9 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 	
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX((char *)filepath.c_str());
+	dest[0] = LoadPCX(filepath.c_str());
 	SDL_SetAlpha(dest[0],SDL_SRCALPHA,alpha);
-	dest[1] = LoadPCX((char *)filepath.c_str());
+	dest[1] = LoadPCX(filepath.c_str());
 	SDL_SetAlpha(dest[1],SDL_SRCALPHA,alpha);
 
 	filepath.insert(0,"Effectalpha loaded: ");
@@ -1548,7 +1548,7 @@ int LoadVehicles()
 
 					if(FileExists(sTmpString.c_str()))
 					{
-						sfTempSurface = LoadPCX ( (char *) sTmpString.c_str() );
+						sfTempSurface = LoadPCX(sTmpString.c_str());
 						if(!sfTempSurface)
 						{
 							cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -1608,9 +1608,9 @@ int LoadVehicles()
 				cLog::write(sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if(FileExists(sTmpString.c_str()))
 				{
-					UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n] = LoadPCX(sTmpString.c_str());
 					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img_org[n],SDL_SRCCOLORKEY,0xFFFFFF );
-					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = LoadPCX(sTmpString.c_str());
 					SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
 				}
 				else
@@ -1623,8 +1623,8 @@ int LoadVehicles()
 				sTmpString.replace(sTmpString.length()-8,3,"shw");
 				if(FileExists(sTmpString.c_str()))
 				{
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = LoadPCX ( (char *) sTmpString.c_str() );
-					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX ( (char *) sTmpString.c_str() );
+					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = LoadPCX(sTmpString.c_str());
+					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX(sTmpString.c_str());
 					SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
 				}
 			}
@@ -1646,7 +1646,7 @@ int LoadVehicles()
 		cLog::write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.vehicle[UnitsData.vehicle_anz].info = LoadPCX(sTmpString.c_str());
 		}
 		else
 		{
@@ -1660,7 +1660,7 @@ int LoadVehicles()
 		cLog::write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.vehicle[UnitsData.vehicle_anz].storage = LoadPCX(sTmpString.c_str());
 		}
 		else
 		{
@@ -1676,8 +1676,8 @@ int LoadVehicles()
 			sTmpString += "overlay.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = LoadPCX ( (char *) sTmpString.c_str() );
-				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].overlay_org = LoadPCX(sTmpString.c_str());
+				UnitsData.vehicle[UnitsData.vehicle_anz].overlay = LoadPCX(sTmpString.c_str());
 			}
 			else
 			{
@@ -1702,9 +1702,9 @@ int LoadVehicles()
 			sTmpString += "build.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			else
@@ -1719,8 +1719,8 @@ int LoadVehicles()
 			sTmpString += "build_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX(sTmpString.c_str());
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX(sTmpString.c_str());
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
 			}
 			else
@@ -1747,9 +1747,9 @@ int LoadVehicles()
 			sTmpString += "clear_small.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			else
@@ -1764,8 +1764,8 @@ int LoadVehicles()
 			sTmpString += "clear_small_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw_org = LoadPCX(sTmpString.c_str());
+				UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw = LoadPCX(sTmpString.c_str());
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].clear_small_shw,SDL_SRCALPHA,50);
 			}
 			else
@@ -1780,9 +1780,9 @@ int LoadVehicles()
 			sTmpString += "clear_big.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_org = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build_org,SDL_SRCCOLORKEY,0xFFFFFF);
-				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(UnitsData.vehicle[UnitsData.vehicle_anz].build,SDL_SRCCOLORKEY,0xFFFFFF);
 			}
 			else
@@ -1797,8 +1797,8 @@ int LoadVehicles()
 			sTmpString += "clear_big_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw_org = LoadPCX(sTmpString.c_str());
+				UnitsData.vehicle[UnitsData.vehicle_anz].build_shw = LoadPCX(sTmpString.c_str());
 				SDL_SetAlpha(UnitsData.vehicle[UnitsData.vehicle_anz].build_shw,SDL_SRCALPHA,50);
 			}
 			else
@@ -2015,9 +2015,9 @@ int LoadBuildings()
 		sTmpString += "img.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.building[UnitsData.building_anz].img_org = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.building[UnitsData.building_anz].img_org = LoadPCX(sTmpString.c_str());
 			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img_org,SDL_SRCCOLORKEY,0xFFFFFF );
-			UnitsData.building[UnitsData.building_anz].img = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.building[UnitsData.building_anz].img = LoadPCX(sTmpString.c_str());
 			SDL_SetColorKey ( UnitsData.building[UnitsData.building_anz].img,SDL_SRCCOLORKEY,0xFFFFFF );
 		}
 		else
@@ -2030,8 +2030,8 @@ int LoadBuildings()
 		sTmpString += "shw.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			UnitsData.building[UnitsData.building_anz].shw_org = LoadPCX ( (char *) sTmpString.c_str() );
-			UnitsData.building[UnitsData.building_anz].shw = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.building[UnitsData.building_anz].shw_org = LoadPCX(sTmpString.c_str());
+			UnitsData.building[UnitsData.building_anz].shw = LoadPCX(sTmpString.c_str());
 			SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].shw,SDL_SRCALPHA,50 );
 		}
 
@@ -2039,13 +2039,13 @@ int LoadBuildings()
 		sTmpString = sBuildingPath;
 		sTmpString += "video.pcx";
 		if(FileExists(sTmpString.c_str()))
-			UnitsData.building[UnitsData.building_anz].video = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.building[UnitsData.building_anz].video = LoadPCX(sTmpString.c_str());
 
 		// load infoimage
 		sTmpString = sBuildingPath;
 		sTmpString += "info.pcx";
 		if(FileExists(sTmpString.c_str()))
-			UnitsData.building[UnitsData.building_anz].info = LoadPCX ( (char *) sTmpString.c_str() );
+			UnitsData.building[UnitsData.building_anz].info = LoadPCX(sTmpString.c_str());
 
 		// load effectgraphics if necessary
 		if(UnitsData.building[UnitsData.building_anz].data.bPower_On_Grafic)
@@ -2054,8 +2054,8 @@ int LoadBuildings()
 			sTmpString += "effect.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				UnitsData.building[UnitsData.building_anz].eff_org = LoadPCX ( (char *) sTmpString.c_str() );
-				UnitsData.building[UnitsData.building_anz].eff = LoadPCX ( (char *) sTmpString.c_str() );
+				UnitsData.building[UnitsData.building_anz].eff_org = LoadPCX(sTmpString.c_str());
+				UnitsData.building[UnitsData.building_anz].eff = LoadPCX(sTmpString.c_str());
 				SDL_SetAlpha ( UnitsData.building[UnitsData.building_anz].eff,SDL_SRCALPHA,10 );
 			}
 		}

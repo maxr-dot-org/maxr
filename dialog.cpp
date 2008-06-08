@@ -58,7 +58,7 @@ bool ShowYesNo ( string text )
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
 	}
 
-	LoadPCXtoSF ( ( char * ) GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog );
+	LoadPCXtoSF(GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog);
 
 
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
@@ -128,7 +128,7 @@ bool ShowYesNo ( string text )
 		SDL_Delay ( 1 );
 	}
 
-	LoadPCXtoSF ( ( char * ) GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog );
+	LoadPCXtoSF(GraphicsData.DialogPath.c_str(), GraphicsData.gfx_dialog);
 	if( Client )
 	{
 		Client->bFlagDrawMap = true;

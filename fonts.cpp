@@ -52,13 +52,13 @@ cBitmapFont::cBitmapFont()
 
 	//BEGIN NORMAL FONTS
 	//load fonts
-	sfLatinNormal = LoadPCX((char*)(sFontPath + "latin_normal.pcx").c_str());
+	sfLatinNormal = LoadPCX((sFontPath + "latin_normal.pcx").c_str());
 
 	//load languagedepending charset
 	sISO8850 = sFontPath + "latin_normal_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
 	if(FileExists(sISO8850.c_str()))
 	{
-		sfNormalISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		sfNormalISO = LoadPCX(sISO8850.c_str());  //get file for languagedepending charset
 		SDL_BlitSurface(sfNormalISO, NULL, sfLatinNormal, &rIsoDest); //blit special characters of lang to fonts
 	}
 
@@ -73,13 +73,13 @@ cBitmapFont::cBitmapFont()
 	rIsoDest.h = sfSmallISO->h;
 
 	//load fonts
-	sfLatinSmallWhite = LoadPCX((char*)(sFontPath + "latin_small.pcx").c_str());
+	sfLatinSmallWhite = LoadPCX((sFontPath + "latin_small.pcx").c_str());
 
 	//load languagedepending charset
 	sISO8850 = sFontPath + "latin_small_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
 	if(FileExists(sISO8850.c_str()))
 	{
-		sfSmallISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		sfSmallISO = LoadPCX(sISO8850.c_str());  //get file for languagedepending charset
 		SDL_BlitSurface(sfSmallISO, NULL, sfLatinSmallWhite, &rIsoDest); //blit special characters of lang to fonts
 	}
 
@@ -115,13 +115,13 @@ cBitmapFont::cBitmapFont()
 	rIsoDest.h = sfBigISO->h;
 
 	//load fonts
-	sfLatinBig = LoadPCX((char*)(sFontPath + "latin_big.pcx").c_str());
+	sfLatinBig = LoadPCX((sFontPath + "latin_big.pcx").c_str());
 
 	//load languagedepending charset
 	sISO8850 = sFontPath + "latin_big_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
 	if(FileExists(sISO8850.c_str()))
 	{
-		sfBigISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		sfBigISO = LoadPCX(sISO8850.c_str());  //get file for languagedepending charset
 		SDL_BlitSurface(sfBigISO, NULL, sfLatinBig, &rIsoDest); //blit special characters of lang to fonts
 	}
 
@@ -129,13 +129,13 @@ cBitmapFont::cBitmapFont()
 	copyArray(chars, LatinBig); //store offsets
 
 	//load fonts
-	sfLatinBigGold = LoadPCX((char*)(sFontPath + "latin_big_gold.pcx").c_str());
+	sfLatinBigGold = LoadPCX((sFontPath + "latin_big_gold.pcx").c_str());
 
 	//load languagedepending charset
 	sISO8850 = sFontPath + "latin_big_gold_iso-8559-" + iToStr(getIsoTable(getLang())) + ".pcx";
 	if(FileExists(sISO8850.c_str()))
 	{
-		sfBigISO = LoadPCX((char*)sISO8850.c_str());  //get file for languagedepending charset
+		sfBigISO = LoadPCX(sISO8850.c_str());  //get file for languagedepending charset
 		SDL_BlitSurface(sfBigISO, NULL, sfLatinBigGold, &rIsoDest); //blit special characters of lang to fonts
 	}
 

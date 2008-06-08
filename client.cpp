@@ -86,7 +86,7 @@ void cClient::init( cMap *Map, cList<cPlayer*> *PlayerList )
 	attackJobs = new cList<cClientAttackJob*>;
 
 	SDL_Rect rSrc = {0,0,170,224};
-	SDL_Surface *SfTmp = LoadPCX( (char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str() );
+	SDL_Surface *SfTmp = LoadPCX((SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
 	SDL_BlitSurface( SfTmp, &rSrc, GraphicsData.gfx_hud, NULL );
 	SDL_FreeSurface( SfTmp );
 

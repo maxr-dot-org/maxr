@@ -91,7 +91,7 @@ cGame::cGame ( cMap *map )
 
 	//reload info part of HUD since a prior game might have left data/gfx on it
 	SDL_Rect rSrc = {0,0,170,224};
-	SDL_Surface *SfTmp = LoadPCX((char*) (SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
+	SDL_Surface *SfTmp = LoadPCX((SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
 	SDL_BlitSurface(SfTmp, &rSrc, GraphicsData.gfx_hud, NULL);
 	SDL_FreeSurface(SfTmp);
 

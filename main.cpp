@@ -257,8 +257,8 @@ void showGameWindow()
 
 int initSDL()
 {
-	putenv ( (char *)"SDL_VIDEO_WINDOW_POS=center" ); //Set env for SDL - must be done _before_ init_sdl
-	putenv ( (char *)"SDL_VIDEO_CENTERED=1" );
+	putenv("SDL_VIDEO_WINDOW_POS=center"); //Set env for SDL - must be done _before_ init_sdl
+	putenv("SDL_VIDEO_CENTERED=1");
 
 	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{

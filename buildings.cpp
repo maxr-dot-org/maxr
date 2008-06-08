@@ -305,7 +305,7 @@ string cBuilding::GetStatusStr ( void )
 			sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 			sText += lngPack.i18n ( "Text~Title~Credits" ) + ": ";
 			sText += iToStr ( owner->Credits );
-			return ( char * ) sText.c_str();
+			return sText.c_str();
 		}
 
 		return lngPack.i18n ( "Text~Comp~Working" );
@@ -316,7 +316,7 @@ string cBuilding::GetStatusStr ( void )
 		string sText;
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
 		sText += iToStr ( Disabled ) + ")";
-		return ( char * ) sText.c_str();
+		return sText.c_str();
 	}
 	if ( Wachposten )
 	{
