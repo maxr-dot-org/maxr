@@ -29,7 +29,6 @@ cEngine::cEngine ( cMap *Map )
 {
 	map=Map;
 	mjobs=NULL;
-	ActiveMJobs=new cList<cMJobs*>;
 	AJobs=new cList<cAJobs*>;
 	EndeCount=0;
 	RundenendeActionsReport=0;
@@ -48,7 +47,6 @@ cEngine::~cEngine ( void )
 		delete mjobs;
 		mjobs=next;
 	}
-	delete ActiveMJobs;
 	while ( AJobs->iCount )
 	{
 		delete AJobs->Items[AJobs->iCount - 1];
@@ -68,12 +66,12 @@ void cEngine::Run ( void )
 	cAutoMJob::handleAutoMoveJobs();
 
 	// Alle Move-Jobs bearbeiten:
-	for ( i=0;i<ActiveMJobs->iCount;i++ )
+	for ( i=0;i<ActiveMJobs.iCount;i++ )
 	{
 		bool WasMoving,BuildAtTarget;
 		cMJobs *job;
 		cVehicle *v;
-		job=ActiveMJobs->Items[i];
+		job=ActiveMJobs.Items[i];
 		v=job->vehicle;
 		if ( v )
 		{
@@ -93,7 +91,7 @@ void cEngine::Run ( void )
 			if ( job->EndForNow&&v )
 			{
 				v->MoveJobActive = false;
-				ActiveMJobs->Delete ( i );
+				ActiveMJobs.Delete ( i );
 			}
 			else
 			{
@@ -102,7 +100,7 @@ void cEngine::Run ( void )
 					v->MoveJobActive = false;
 					v->mjob=NULL;
 				}
-				ActiveMJobs->Delete ( i );
+				ActiveMJobs.Delete ( i );
 				ptr=mjobs;
 				last=NULL;
 				while ( ptr )
@@ -413,7 +411,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 // Fügt einen Movejob in die Liste der aktiven Jobs ein:
 void cEngine::AddActiveMoveJob ( cMJobs *job )
 {
-	ActiveMJobs->Add ( job );
+	ActiveMJobs.Add ( job );
 	job->Suspended=false;
 }
 
@@ -1176,7 +1174,7 @@ bool cEngine::DoEndActions ( void )
 // Prüft ob sich noch Fahrzeuge bewegen:
 bool cEngine::CheckVehiclesMoving ( bool WantToEnd )
 {
-	return ActiveMJobs->iCount>0;
+	return ActiveMJobs.iCount>0;
 }
 
 // Sammelt den gesammten Müll ein:
@@ -1188,11 +1186,11 @@ void cEngine::CollectTrash ( void )
 	while ( mjobs&&mjobs->finished )
 	{
 		j=mjobs->next;
-		for ( i=0;i<ActiveMJobs->iCount;i++ )
+		for ( i=0;i<ActiveMJobs.iCount;i++ )
 		{
-			if ( ActiveMJobs->Items[i] == mjobs )
+			if ( ActiveMJobs.Items[i] == mjobs )
 			{
-				ActiveMJobs->Delete ( i );
+				ActiveMJobs.Delete ( i );
 				break;
 			}
 		}

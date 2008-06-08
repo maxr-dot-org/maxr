@@ -45,7 +45,7 @@ public:
 
   cMap *map;
   cMJobs *mjobs;
-  cList<cMJobs*> *ActiveMJobs;
+  cList<cMJobs*> ActiveMJobs;
   int EndeCount;
   cList<cAJobs*> *AJobs;
   int SyncWaiting;
