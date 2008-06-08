@@ -79,7 +79,7 @@ public:
 	/** the identification number of this unit */
 	unsigned int iID;
 	/** a list were the numbers of all players who can see this vehicle are stored in */
-	cList<int*> *SeenByPlayerList;
+	cList<int*> SeenByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	int OffX,OffY;   // Offset während der Bewegung
 	sVehicle *typ;   // Typ des Vehicles

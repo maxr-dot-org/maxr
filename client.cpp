@@ -3897,9 +3897,9 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for ( int i = 0; i < Vehicle->SeenByPlayerList->iCount; i++ )
+		for ( int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 		{
-			sTmp += ", \"" + getPlayerFromNumber ( *Vehicle->SeenByPlayerList->Items[i] )->name + "\"";
+			sTmp += ", \"" + getPlayerFromNumber ( *Vehicle->SeenByPlayerList.Items[i] )->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;

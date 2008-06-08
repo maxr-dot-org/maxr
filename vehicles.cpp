@@ -93,7 +93,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsLocked = false;
 	bIsBeeingAttacked = false;
 	StoredVehicles = NULL;
-	SeenByPlayerList = new cList<int*>;
 
 	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
 	{
@@ -140,11 +139,10 @@ cVehicle::~cVehicle ( void )
 		}
 	}
 
-	while ( SeenByPlayerList->iCount )
+	while ( SeenByPlayerList.iCount )
 	{
-		SeenByPlayerList->Delete ( SeenByPlayerList->iCount-1 );
+		SeenByPlayerList.Delete ( SeenByPlayerList.iCount-1 );
 	}
-	delete SeenByPlayerList;
 }
 
 // Malt das Vehicle:
