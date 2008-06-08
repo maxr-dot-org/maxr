@@ -32,17 +32,18 @@
 #define GAME_TYPE_HOTSEAT	1	// a hotseat multiplayer game
 #define GAME_TYPE_TCPIP		2	// a multiplayergame over TCP/IP
 
-/*
+#if 0
 /**
-* Structure for the reports
-*./
+ * Structure for the reports
+ */
 struct sReport
 {
-	/** name of the report *./
+	/** name of the report */
 	string name;
-	/** counter for this report *./
+	/** counter for this report */
 	int anz;
-};*/
+};
+#endif
 
 /**
 * Callback funktion for the serverthread
