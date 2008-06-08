@@ -5687,7 +5687,6 @@ void cBuilding::ShowMineManager ( void )
 	bool DecGoldPressed = false;
 	int MaxM = 0, MaxO = 0, MaxG = 0;
 	int FreeM = 0, FreeO = 0, FreeG = 0;
-	cList<cBuilding*> *mines;
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rBtnDone = {rDialog.x + 514, rDialog.y + 430, 106, 40};
@@ -5745,7 +5744,7 @@ void cBuilding::ShowMineManager ( void )
 	drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
 
 	// Liste mit Minen erstellen:
-	mines = new cList<cBuilding*>;
+	cList<cBuilding*> mines;
 
 	for ( x = 0;x < SubBase->buildings->iCount;x++ )
 	{
@@ -5753,18 +5752,18 @@ void cBuilding::ShowMineManager ( void )
 		{
 			cBuilding *b;
 			b = SubBase->buildings->Items[x];
-			mines->Add ( b );
+			mines.Add ( b );
 			MaxM += b->MaxMetalProd;
 			MaxO += b->MaxOilProd;
 			MaxG += b->MaxGoldProd;
 		}
 	}
 
-//#define DO_MINE_INC(a,b) for(i=0;i<mines->iCount;i++){if(mines->Items[i]->MetalProd+mines->Items[i]->OilProd+mines->Items[i]->GoldProd<16&&mines->Items[i]->a<mines->Items[i]->b){mines->Items[i]->a++;break;}}
-#define DO_MINE_INC(a,b) for(i=0;i<mines->iCount;i++){if(mines->Items[i]->MetalProd+mines->Items[i]->OilProd+mines->Items[i]->GoldProd<(mines->Items[i]->data.is_alien?24:16)&&mines->Items[i]->a<mines->Items[i]->b){mines->Items[i]->a++;break;}}
-#define DO_MINE_DEC(a) for(i=0;i<mines->iCount;i++){if(mines->Items[i]->a>0){mines->Items[i]->a--;break;}}
-//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines->iCount;i++){int ges=mines->Items[i]->MetalProd+mines->Items[i]->OilProd+mines->Items[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines->Items[i]->MaxMetalProd-mines->Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines->Items[i]->MaxOilProd-mines->Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines->Items[i]->MaxGoldProd-mines->Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
-#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines->iCount;i++){int ges=mines->Items[i]->MetalProd+mines->Items[i]->OilProd+mines->Items[i]->GoldProd;if(ges<(mines->Items[i]->data.is_alien?24:16)){int t;ges=(mines->Items[i]->data.is_alien?24:16)-ges;t=mines->Items[i]->MaxMetalProd-mines->Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines->Items[i]->MaxOilProd-mines->Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines->Items[i]->MaxGoldProd-mines->Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+//#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<16&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
+#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<(mines.Items[i]->data.is_alien?24:16)&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
+#define DO_MINE_DEC(a) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->a>0){mines.Items[i]->a--;break;}}
+//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<(mines.Items[i]->data.is_alien?24:16)){int t;ges=(mines.Items[i]->data.is_alien?24:16)-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
 
 	CALC_MINE_FREE
 
@@ -6175,8 +6174,6 @@ void cBuilding::ShowMineManager ( void )
 		LastMouseY = y;
 		LastB = b;
 	}
-
-	delete mines;
 }
 
 // Malt die Minenmanager-Bars:
