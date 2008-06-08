@@ -4397,8 +4397,6 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 
 			// Die Details anzeigen:
 			{
-				cVehicle *tv;
-				cBuilding *tb;
 				tmp.x = 11;
 				tmp.y = 290;
 				tmp2.x = MENU_OFFSET_X + 11;
@@ -4409,15 +4407,13 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 
 				if ( ptr->vehicle )
 				{
-					tv = new cVehicle ( UnitsData.vehicle + ptr->id, Client->ActivePlayer );
-					tv->ShowBigDetails();
-					delete tv;
+					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					tv.ShowBigDetails();
 				}
 				else
 				{
-					tb = new cBuilding ( UnitsData.building + ptr->id, Client->ActivePlayer, NULL );
-					tb->ShowBigDetails();
-					delete tb;
+					cBuilding tb(UnitsData.building + ptr->id, Client->ActivePlayer, NULL);
+					tb.ShowBigDetails();
 				}
 			}
 
@@ -7492,7 +7488,6 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 
 				// Die Details anzeigen:
 				{
-					cVehicle *tv;
 					SDL_Rect tmp2;
 					tmp.x = 11;
 					tmp.y = 290;
@@ -7501,9 +7496,8 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					tv = new cVehicle ( UnitsData.vehicle + ptr->id, Client->ActivePlayer );
-					tv->ShowBigDetails();
-					delete tv;
+					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					tv.ShowBigDetails();
 				}
 
 				// Die Bauzeiten eintragen:
@@ -7736,7 +7730,6 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 
 				// Die Details anzeigen:
 				{
-					cVehicle *tv;
 					tmp.x = 11;
 					tmp.y = 290;
 					tmp2.x = MENU_OFFSET_X + 11;
@@ -7744,9 +7737,8 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					tv = new cVehicle ( UnitsData.vehicle + ptr->id, Client->ActivePlayer );
-					tv->ShowBigDetails();
-					delete tv;
+					cVehicle tv(UnitsData.vehicle + ptr->id, Client->ActivePlayer);
+					tv.ShowBigDetails();
 				}
 
 				// Die Bauzeiten eintragen:
