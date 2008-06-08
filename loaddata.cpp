@@ -1514,7 +1514,6 @@ static int LoadVehicles()
 	string sTmpString, sVehiclePath;
 	char sztmp[16];
 	const char *pszTmp;
-	cList<string> *VehicleList, *IDList;
 	TiXmlDocument VehiclesXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -1540,15 +1539,15 @@ static int LoadVehicles()
 		return 0;
 	}
 	// read vehicles.xml
-	VehicleList = new cList<string>;
-	IDList = new cList<string>;
+	cList<string> VehicleList;
+	cList<string> IDList;
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
 	{
 		pszTmp = pXmlElement->Attribute( "directory" );
 		if(pszTmp != 0)
-			VehicleList->Add ( pszTmp );
+			VehicleList.Add(pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -1557,10 +1556,10 @@ static int LoadVehicles()
 		}
 		pszTmp = pXmlElement->Attribute( "num" );
 		if(pszTmp != 0)
-			IDList->Add ( pszTmp );
+			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList->Delete(VehicleList->iCount);
+			VehicleList.Delete(VehicleList.iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1577,7 +1576,7 @@ static int LoadVehicles()
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute( "directory" );
 		if(pszTmp != 0)
-			VehicleList->Add ( pszTmp );
+			VehicleList.Add(pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -1586,10 +1585,10 @@ static int LoadVehicles()
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
 		if(pszTmp != 0)
-			IDList->Add ( pszTmp );
+			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList->Delete(VehicleList->iCount);
+			VehicleList.Delete(VehicleList.iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1597,11 +1596,11 @@ static int LoadVehicles()
 	}
 	// load found units
 	UnitsData.vehicle_anz = 0;
-	for( int i = 0; i < VehicleList->iCount; i++)
+	for (int i = 0; i < VehicleList.iCount; i++)
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
 		sVehiclePath += PATH_DELIMITER;
-		sVehiclePath += VehicleList->Items[i];
+		sVehiclePath += VehicleList.Items[i];
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
@@ -1614,7 +1613,7 @@ static int LoadVehicles()
 		SetDefaultUnitData(UnitsData.vehicle_anz, true);
 		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData(UnitsData.vehicle_anz,sVehiclePath.c_str(), true, atoi(IDList->Items[i].c_str()));
+		LoadUnitData(UnitsData.vehicle_anz, sVehiclePath.c_str(), true, atoi(IDList.Items[i].c_str()));
 		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
 		translateUnitData(v.data.ID, true);
 
@@ -1935,8 +1934,6 @@ static int LoadVehicles()
 		UnitsData.vehicle_anz++;
 	}
 
-	delete VehicleList;
-	delete IDList;
 	for ( int i = 0 ; i < UnitsData.vehicle_anz; i++ ) UnitsData.vehicle[i].nr = i;
 	return 1;
 }
@@ -2008,7 +2005,6 @@ static int LoadBuildings()
 
 	string sTmpString, sBuildingPath;
 	const char *pszTmp;
-	cList<string> *BuildingList, *IDList;
 	TiXmlDocument BuildingsXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
@@ -2034,15 +2030,15 @@ static int LoadBuildings()
 		cLog::write("Can't read \"BuildingData->Building\" node!",LOG_TYPE_ERROR);
 		return 0;
 	}
-	BuildingList = new cList<string>;
-	IDList = new cList<string>;
+	cList<string> BuildingList;
+	cList<string> IDList;
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
 	{
 		pszTmp = pXmlElement->Attribute( "directory" );
 		if(pszTmp != 0)
-			BuildingList->Add ( pszTmp );
+			BuildingList.Add(pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -2051,10 +2047,10 @@ static int LoadBuildings()
 		}
 		pszTmp = pXmlElement->Attribute( "num" );
 		if(pszTmp != 0)
-			IDList->Add ( pszTmp );
+			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList->Delete(BuildingList->iCount);
+			BuildingList.Delete(BuildingList.iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2071,7 +2067,7 @@ static int LoadBuildings()
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute( "directory" );
 		if(pszTmp != 0)
-			BuildingList->Add ( pszTmp );
+			BuildingList.Add(pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -2080,10 +2076,10 @@ static int LoadBuildings()
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
 		if(pszTmp != 0)
-			IDList->Add ( pszTmp );
+			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList->Delete(BuildingList->iCount);
+			BuildingList.Delete(BuildingList.iCount);
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2091,11 +2087,11 @@ static int LoadBuildings()
 	}
 	// load found units
 	UnitsData.building_anz = 0;
-	for( int i = 0; i < BuildingList->iCount; i++)
+	for( int i = 0; i < BuildingList.iCount; i++)
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
 		sBuildingPath += PATH_DELIMITER;
-		sBuildingPath += BuildingList->Items[i];
+		sBuildingPath += BuildingList.Items[i];
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
@@ -2105,7 +2101,7 @@ static int LoadBuildings()
 		// Set default data-values
 		SetDefaultUnitData(UnitsData.building_anz, false);
 		// Load Data from data.xml
-		LoadUnitData(UnitsData.building_anz,sBuildingPath.c_str(), false, atoi(IDList->Items[i].c_str()));
+		LoadUnitData(UnitsData.building_anz, sBuildingPath.c_str(), false, atoi(IDList.Items[i].c_str()));
 		translateUnitData( UnitsData.building[UnitsData.building_anz].data.ID, false );
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
@@ -2218,9 +2214,6 @@ static int LoadBuildings()
 		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = i;
 		else BNrLandMine = i;
 	}
-
-	delete BuildingList;
-	delete IDList;
 
 	return 1;
 }
