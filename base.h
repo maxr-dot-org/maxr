@@ -34,7 +34,7 @@ public:
 	~sSubBase();
 
 public:
-  cList<cBuilding*> *buildings;
+  cList<cBuilding*> buildings;
 
   int MaxMetal;
   int Metal;

@@ -23,7 +23,7 @@
 
 
 sSubBase::sSubBase() :
-  buildings(new cList<cBuilding*>),
+  buildings(),
   MaxMetal(),
   Metal(),
   MaxOil(),
@@ -50,9 +50,7 @@ sSubBase::sSubBase() :
 
 
 sSubBase::~sSubBase()
-{
-	delete buildings;
-}
+{}
 
 
 // Funktionen der Base Klasse ////////////////////////////////////////////////
@@ -135,12 +133,12 @@ void cBase::AddBuilding ( cBuilding *b )
 			{
 				sSubBase* const sb = NeighbourList.Items[0];
 				// Alle Buildungs der Subbase durchgehen:
-				while ( sb->buildings->iCount )
+				while ( sb->buildings.iCount )
 				{
-					sbb=sb->buildings->Items[0];
+					sbb=sb->buildings.Items[0];
 					AddBuildingToSubBase ( sbb,n );
 					sbb->SubBase=n;
-					sb->buildings->Delete ( 0 );
+					sb->buildings.Delete ( 0 );
 				}
 				// Die Subbase aus der Subbaseliste löschen:
 				for (i = 0; i < SubBases.iCount ; ++i)
@@ -192,9 +190,9 @@ void cBase::DeleteBuilding ( cBuilding *b )
 	if ( b->data.is_road||b->data.is_platform||b->data.is_bridge||b->data.is_expl_mine ) return;
 	sb=b->SubBase;
 	// Alle SubBases auf NULL setzen:
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
-		sb->buildings->Items[i]->SubBase=NULL;
+		sb->buildings.Items[i]->SubBase=NULL;
 	}
 	for (i = 0; i < SubBases.iCount ; ++i)
 	{
@@ -205,9 +203,9 @@ void cBase::DeleteBuilding ( cBuilding *b )
 		}
 	}
 	// Alle Gebäude neu einsetzen:
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
-		n=sb->buildings->Items[i];
+		n=sb->buildings.Items[i];
 		if ( n==b ) continue;
 		AddBuilding ( n );
 	}
@@ -218,7 +216,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 // Fügt ein Gebäude in eine Subbase ein:
 void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 {
-	sb->buildings->Add ( b );
+	sb->buildings.Add ( b );
 	// Ladung ausrechnen:
 	switch ( b->data.can_load )
 	{
@@ -305,9 +303,9 @@ void cBase::AddMetal ( sSubBase *sb,int value )
 	if ( sb->Metal+value<0 ) value-=sb->Metal+value;
 	if ( !value ) return;
 	sb->Metal+=value;
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
-		b=sb->buildings->Items[i];
+		b=sb->buildings.Items[i];
 		if ( b->data.can_load!=TRANS_METAL ) continue;
 		if ( value<0 )
 		{
@@ -348,9 +346,9 @@ void cBase::AddOil ( sSubBase *sb,int value )
 	if ( sb->Oil+value<0 ) value-=sb->Oil+value;
 	if ( !value ) return;
 	sb->Oil+=value;
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
-		b=sb->buildings->Items[i];
+		b=sb->buildings.Items[i];
 		if ( b->data.can_load!=TRANS_OIL ) continue;
 		if ( value<0 )
 		{
@@ -391,9 +389,9 @@ void cBase::AddGold ( sSubBase *sb,int value )
 	if ( sb->Gold+value<0 ) value-=sb->Gold+value;
 	if ( !value ) return;
 	sb->Gold+=value;
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
-		b=sb->buildings->Items[i];
+		b=sb->buildings.Items[i];
 		if ( b->data.can_load!=TRANS_GOLD ) continue;
 		if ( value<0 )
 		{
@@ -438,10 +436,10 @@ void cBase::Rundenende ( void )
 		{
 			// Generator muss abgeschaltet werden:
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Low") );
-			for ( k=0;k<sb->buildings->iCount&&sb->EnergyProd;k++ )
+			for ( k=0;k<sb->buildings.iCount&&sb->EnergyProd;k++ )
 			{
 				cBuilding *b;
-				b=sb->buildings->Items[k];
+				b=sb->buildings.Items[k];
 				if ( !b->data.energy_prod ) continue;
 				//b->StopWork ( true );
 				if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 ) continue;
@@ -453,10 +451,10 @@ void cBase::Rundenende ( void )
 		if ( sb->EnergyNeed>sb->EnergyProd )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Low") );
-			for ( k=0;k<sb->buildings->iCount;k++ )
+			for ( k=0;k<sb->buildings.iCount;k++ )
 			{
 				cBuilding *b;
-				b=sb->buildings->Items[k];
+				b=sb->buildings.Items[k];
 				if ( !b->data.energy_need ) continue;
 				//b->StopWork ( true );
 				if ( sb->EnergyNeed>sb->EnergyProd ) continue;
@@ -468,10 +466,10 @@ void cBase::Rundenende ( void )
 		if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Metal_Low") );
-			for ( k=0;k<sb->buildings->iCount;k++ )
+			for ( k=0;k<sb->buildings.iCount;k++ )
 			{
 				cBuilding *b;
-				b=sb->buildings->Items[k];
+				b=sb->buildings.Items[k];
 				if ( !b->data.metal_need ) continue;
 				//b->StopWork ( true );
 				if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 ) continue;
@@ -484,10 +482,10 @@ void cBase::Rundenende ( void )
 		if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Gold_Low") );
-			for ( k=0;k<sb->buildings->iCount;k++ )
+			for ( k=0;k<sb->buildings.iCount;k++ )
 			{
 				cBuilding *b;
-				b=sb->buildings->Items[k];
+				b=sb->buildings.Items[k];
 				if ( !b->data.gold_need ) continue;
 				//b->StopWork ( true );
 				if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 ) continue;
@@ -502,10 +500,10 @@ void cBase::Rundenende ( void )
 		if ( sb->HumanNeed>sb->HumanProd )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
-			for ( k=0;k<sb->buildings->iCount;k++ )
+			for ( k=0;k<sb->buildings.iCount;k++ )
 			{
 				cBuilding *b;
-				b=sb->buildings->Items[k];
+				b=sb->buildings.Items[k];
 				if ( !b->data.human_need ) continue;
 				//b->StopWork ( true );
 				if ( sb->HumanNeed>sb->HumanProd ) continue;
@@ -520,10 +518,10 @@ void cBase::Rundenende ( void )
 		}
 
 		// Reparaturen durchführen/bauen/aufladen:
-		for ( k=0;k<sb->buildings->iCount&&sb->Metal;k++ )
+		for ( k=0;k<sb->buildings.iCount&&sb->Metal;k++ )
 		{
 			cBuilding *b;
-			b=sb->buildings->Items[k];
+			b=sb->buildings.Items[k];
 			// Reparatur:
 			if ( b->data.hit_points<b->data.max_hit_points&&sb->Metal>0 )
 			{
@@ -585,10 +583,10 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	cList<cBuilding*> eb;
 	cList<cBuilding*> es;
 
-	for ( i=0;i<sb->buildings->iCount;i++ )
+	for ( i=0;i<sb->buildings.iCount;i++ )
 	{
 		cBuilding *b;
-		b=sb->buildings->Items[i];
+		b=sb->buildings.Items[i];
 		if ( !b->data.energy_prod ) continue;
 
 		if (b->data.energy_prod == 1) es.Add(b);
@@ -703,14 +701,14 @@ void cBase::RefreshSubbases ( void )
 		sSubBase* const sb = OldSubBases.Items[0];
 
 		// Alle SubBases auf NULL setzen:
-		for ( i=0;i<sb->buildings->iCount;i++ )
+		for ( i=0;i<sb->buildings.iCount;i++ )
 		{
-			sb->buildings->Items[i]->SubBase=NULL;
+			sb->buildings.Items[i]->SubBase=NULL;
 		}
 		// Alle Gebäude neu einsetzen:
-		for ( i=0;i<sb->buildings->iCount;i++ )
+		for ( i=0;i<sb->buildings.iCount;i++ )
 		{
-			n=sb->buildings->Items[i];
+			n=sb->buildings.Items[i];
 			AddBuilding ( n );
 		}
 

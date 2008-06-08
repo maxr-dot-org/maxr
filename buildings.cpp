@@ -1435,9 +1435,9 @@ void cBuilding::ServerStartWork ()
 				{
 					sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
 
-					for ( i = 0;i < SubBase->buildings->iCount;i++ )
+					for ( i = 0;i < SubBase->buildings.iCount;i++ )
 					{
-						b = SubBase->buildings->Items[i];
+						b = SubBase->buildings.Items[i];
 
 						if ( !b->data.energy_prod || b->data.is_big )
 							continue;
@@ -1448,12 +1448,12 @@ void cBuilding::ServerStartWork ()
 							break;
 					}
 
-					for ( i = 0;i < SubBase->buildings->iCount;i++ )
+					for ( i = 0;i < SubBase->buildings.iCount;i++ )
 					{
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
 
-						b = SubBase->buildings->Items[i];
+						b = SubBase->buildings.Items[i];
 
 						if ( !b->data.energy_prod )
 							continue;
@@ -1622,9 +1622,9 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		if ( v->data.can_transport != data.can_load )
 			return false;
 
-		for ( i = 0;i < SubBase->buildings->iCount;i++ )
+		for ( i = 0;i < SubBase->buildings.iCount;i++ )
 		{
-			b = SubBase->buildings->Items[i];
+			b = SubBase->buildings.Items[i];
 
 			if ( b->data.is_big )
 			{
@@ -5746,12 +5746,12 @@ void cBuilding::ShowMineManager ( void )
 	// Liste mit Minen erstellen:
 	cList<cBuilding*> mines;
 
-	for ( x = 0;x < SubBase->buildings->iCount;x++ )
+	for ( x = 0;x < SubBase->buildings.iCount;x++ )
 	{
-		if ( SubBase->buildings->Items[x]->data.is_mine && SubBase->buildings->Items[x]->IsWorking )
+		if ( SubBase->buildings.Items[x]->data.is_mine && SubBase->buildings.Items[x]->IsWorking )
 		{
 			cBuilding *b;
-			b = SubBase->buildings->Items[x];
+			b = SubBase->buildings.Items[x];
 			mines.Add ( b );
 			MaxM += b->MaxMetalProd;
 			MaxO += b->MaxOilProd;
@@ -8290,10 +8290,10 @@ void cBuilding::DrawMenu ( void )
 			{
 				sSubBase* const sb = owner->base->SubBases.Items[i];
 
-				for ( k = 0;k < sb->buildings->iCount;k++ )
+				for ( k = 0;k < sb->buildings.iCount;k++ )
 				{
 					cBuilding *b;
-					b = sb->buildings->Items[k];
+					b = sb->buildings.Items[k];
 
 					if ( b->typ != typ )
 						continue;
