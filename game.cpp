@@ -4129,14 +4129,14 @@ bool cGame::MakeHotSeatEnde ( void )
 	v=ActivePlayer->VehicleList;
 	while ( v )
 	{
-		v->RefreshData();
+		v->refreshData();
 		v=v->next;
 	}
 
 	b=ActivePlayer->BuildingList;
 	while ( b )
 	{
-		if ( b->data.can_attack ) b->RefreshData();
+		if ( b->data.can_attack ) b->refreshData();
 		b=b->next;
 	}
 

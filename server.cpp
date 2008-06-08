@@ -895,7 +895,7 @@ void cServer::handleEnd ( int iPlayerNum )
 					for ( int i = 0; i < PlayerList->iCount; i++ )
 					{
 						getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
+						sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
 					}
 				}
 				bChangeTurn = true;
@@ -977,17 +977,24 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				Building->Disabled--;
 				if ( Building->Disabled )
 				{
+					for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+					{
+						sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+					}
+					sendUnitData ( Building, Map, Building->owner->Nr );
+
 					Building = Building->next;
 					continue;
 				}
 			}
-			if ( Building->data.can_attack && bChangeTurn ) Building->RefreshData();
-
-			for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+			if ( Building->data.can_attack && bChangeTurn && Building->refreshData() )
 			{
-				sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+				for ( int k = 0; k < Building->SeenByPlayerList->iCount; k++ )
+				{
+					sendUnitData ( Building, Map, *Building->SeenByPlayerList->Items[k] );
+				}
+				sendUnitData ( Building, Map, Building->owner->Nr );
 			}
-			sendUnitData ( Building, Map, Building->owner->Nr );
 			Building = Building->next;
 		}
 	}
@@ -1012,19 +1019,27 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				Vehicle->Disabled--;
 				if ( Vehicle->Disabled )
 				{
+					for ( int k = 0; k < Vehicle->SeenByPlayerList->iCount; k++ )
+					{
+						sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList->Items[k] );
+					}
+					sendUnitData ( Vehicle, Vehicle->owner->Nr );
+
 					Vehicle = Vehicle->next;
 					continue;
 				}
 			}
 
-			if ( bChangeTurn ) Vehicle->RefreshData();
-			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
-
-			for ( int k = 0; k < Vehicle->SeenByPlayerList->iCount; k++ )
+			if ( bChangeTurn && Vehicle->refreshData() )
 			{
-				sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList->Items[k] );
+				for ( int k = 0; k < Vehicle->SeenByPlayerList->iCount; k++ )
+				{
+					sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList->Items[k] );
+				}
+				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
-			sendUnitData ( Vehicle, Vehicle->owner->Nr );
+
+			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
 			Vehicle = Vehicle->next;
 		}
 	}

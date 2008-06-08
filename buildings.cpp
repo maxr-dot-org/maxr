@@ -138,7 +138,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 		DamageFXPointY = random ( 64 - 24, 0 );
 	}
 
-	RefreshData();
+	refreshData();
 }
 
 cBuilding::~cBuilding ( void )
@@ -327,16 +327,21 @@ string cBuilding::GetStatusStr ( void )
 }
 
 // Aktalisiert alle Daten auf ihre Max-Werte:
-void cBuilding::RefreshData ( void )
+int cBuilding::refreshData ()
 {
-	if ( data.ammo >= data.max_shots )
+	if ( data.shots < data.max_shots )
 	{
-		data.shots = data.max_shots;
+		if ( data.ammo >= data.max_shots )
+		{
+			data.shots = data.max_shots;
+		}
+		else
+		{
+			data.shots = data.ammo;
+		}
+		return 1;
 	}
-	else
-	{
-		data.shots = data.ammo;
-	}
+	else return 0;
 }
 
 // Erzeugt den Namen für das Buildings aus der Versionsnummer:

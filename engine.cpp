@@ -1073,7 +1073,7 @@ void cEngine::Rundenende ( void )
 					continue;
 				}
 			}
-			if ( b->data.can_attack&&!game->HotSeat&&!game->PlayRounds ) b->RefreshData();
+			if ( b->data.can_attack&&!game->HotSeat&&!game->PlayRounds ) b->refreshData();
 
 			b=b->next;
 		}
@@ -1104,7 +1104,7 @@ void cEngine::Rundenende ( void )
 				}
 			}
 
-			if ( !game->HotSeat&&!game->PlayRounds ) v->RefreshData();
+			if ( !game->HotSeat&&!game->PlayRounds ) v->refreshData();
 			if ( v->mjob ) v->mjob->EndForNow=false;
 
 			v=v->next;

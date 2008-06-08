@@ -143,7 +143,12 @@ public:
   std::string GetStatusStr(void);
   void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
   void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
-  void RefreshData(void);
+  /**
+  * refreshes the shots of this building
+  *@author alzi alias DoctorDeath
+  *@return 1 if there has been refreshed something else 0.
+  */
+  int refreshData();
   void ShowHelp(void);
   void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
   void Center(void);

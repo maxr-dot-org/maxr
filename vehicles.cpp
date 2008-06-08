@@ -103,8 +103,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	DamageFXPointX = random ( 7, 0 ) + 26 - 3;
 
 	DamageFXPointY = random ( 7, 0 ) + 26 - 3;
-	RefreshData();
-
+	refreshData();
 }
 
 cVehicle::~cVehicle ( void )
@@ -994,25 +993,31 @@ bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
 }
 
 // Aktalisiert alle Daten auf ihre Max-Werte:
-void cVehicle::RefreshData ( void )
+int cVehicle::refreshData ()
 {
-	data.speed = data.max_speed;
-
-	if ( data.ammo >= data.max_shots )
+	if ( data.speed < data.max_speed || data.shots < data.max_shots )
 	{
-		data.shots = data.max_shots;
-	}
-	else
-	{
-		data.shots = data.ammo;
-	}
+		data.speed = data.max_speed;
 
-	// Regenerieren:
-	if ( data.is_alien && data.hit_points < data.max_hit_points )
-	{
-		data.hit_points++;
-	}
+		if ( data.ammo >= data.max_shots )
+		{
+			data.shots = data.max_shots;
+		}
+		else
+		{
+			data.shots = data.ammo;
+		}
 
+		/*// Regenerieren:
+		if ( data.is_alien && data.hit_points < data.max_hit_points )
+		{
+			data.hit_points++;
+		}*/
+		return 1;
+	}
+	else return 0;
+
+	/*
 	// Bauen:
 	if ( IsBuilding && BuildRounds )
 	{
@@ -1107,7 +1112,7 @@ void cVehicle::RefreshData ( void )
 			StopFXLoop ( Client->iObjectStream );
 			Client->iObjectStream = PlayStram();
 		}
-	}
+	}*/
 }
 
 // Zeigt die Eigenschaften des Vehicles an:

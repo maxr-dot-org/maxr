@@ -143,7 +143,12 @@ public:
 	void Deselct(void);
 	void ShowDetails(void);
 	void GenerateName(void);
-	void RefreshData(void);
+	/**
+	* refreshes speed and shots and continues building or clearing
+	*@author alzi alias DoctorDeath
+	*@return 1 if there has been refreshed something else 0.
+	*/
+	int refreshData();
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	void ShowHelp(void);
