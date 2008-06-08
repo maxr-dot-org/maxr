@@ -2728,6 +2728,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *Building = NULL;
 			bool bSubBase = message->popBool ();
 			bool bBase = message->popBool ();
+			bool bPlane = message->popBool ();
 			int iPlayer = message->popInt16 ();
 			int iPosY = message->popInt16 ();
 			int iPosX = message->popInt16 ();
@@ -2753,6 +2754,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_DEL_VEHICLE:
 		{
 			cVehicle *Vehicle = NULL;
+			bool bSubBase = message->popBool ();
+			bool bBase = message->popBool ();
 			bool bPlane = message->popBool ();
 			int iPlayer = message->popInt16 ();
 			int iPosY = message->popInt16 ();
@@ -2875,6 +2878,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_UNIT_DATA:
 		{
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			sUnitData *Data;
 
 			int iID = message->popInt16();

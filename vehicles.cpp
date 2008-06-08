@@ -772,7 +772,7 @@ void cVehicle::Select ( void )
 	int error;
 	selected = true;
 	// Das Video laden:
-	if ( Client->sFLCname == typ->FLCFile )
+	if ( Client->sFLCname != typ->FLCFile )
 	{
 		if ( Client->FLC != NULL )
 		{
