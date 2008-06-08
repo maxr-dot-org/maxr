@@ -77,7 +77,6 @@ cGame::cGame ( cMap *map )
 	ComAvgRead=0;
 	Runde=1;
 	WantToEnd=false;
-	FXList=new cList<sFX*>;
 	FXListBottom=new cList<sFX*>;
 	UpShowTank=true;
 	UpShowPlane=true;
@@ -114,10 +113,10 @@ cGame::~cGame ( void )
 	if ( FLC ) FLI_Close ( FLC );
 	delete hud;
 	delete engine;
-	while ( FXList->iCount )
+	while ( FXList.iCount )
 	{
 		sFX *ptr;
-		ptr=FXList->Items[0];
+		ptr=FXList.Items[0];
 		if ( ptr->typ==fxRocket )
 		{
 			delete ptr->rocketInfo;
@@ -127,9 +126,8 @@ cGame::~cGame ( void )
 			delete ptr->smokeInfo;
 		}
 		delete ptr;
-		FXList->Delete ( 0 );
+		FXList.Delete ( 0 );
 	}
-	delete FXList;
 	while ( FXListBottom->iCount )
 	{
 		sFX *ptr;
@@ -432,7 +430,7 @@ void cGame::Run ( void )
 
 		if ( DebugFX && fDrawMap )
 		{
-			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList->iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -1892,7 +1890,7 @@ void cGame::AddFX ( sFX* n )
 	}
 	else
 	{
-		FXList->Add ( n );
+		FXList.Add ( n );
 	}
 	switch ( n->typ )
 	{
@@ -2060,9 +2058,9 @@ void cGame::AddFX ( sFX* n )
 void cGame::DisplayFX ( void )
 {
 	int i;
-	if ( !FXList->iCount ) return;
+	if ( !FXList.iCount ) return;
 
-	for ( i=FXList->iCount-1;i>=0;i-- )
+	for ( i=FXList.iCount-1;i>=0;i-- )
 	{
 		DrawFX ( i );
 	}
@@ -2086,7 +2084,7 @@ void cGame::DrawFX ( int i )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXList->Items[i];
+	fx=FXList.Items[i];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) &&fx->typ!=fxRocket ) return;
 	switch ( fx->typ )
 	{
@@ -2094,7 +2092,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom*fx->param;
@@ -2109,7 +2107,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom*fx->param;
@@ -2124,7 +2122,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom*fx->param;
@@ -2139,7 +2137,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 5 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom*fx->param;
@@ -2154,7 +2152,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 5 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom* ( Frame-fx->StartFrame );
@@ -2169,7 +2167,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
@@ -2184,7 +2182,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 28 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x = (int) hud->Zoom * 307 * ( Frame - fx->StartFrame ) / 64.0;
@@ -2199,7 +2197,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x = (int) hud->Zoom * 114 * ( Frame - fx->StartFrame ) / 64.0;
@@ -2214,7 +2212,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x = (int) hud->Zoom * 137 * ( Frame - fx->StartFrame ) / 64.0;
@@ -2229,7 +2227,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame-fx->StartFrame>100/4 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( Frame-fx->StartFrame ) *4 );
@@ -2249,7 +2247,7 @@ void cGame::DrawFX ( int i )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			if ( timer0 )
@@ -2260,7 +2258,7 @@ void cGame::DrawFX ( int i )
 					if ( SettingsData.bAlphaEffects ) AddFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					DrawFX ( FXList->iCount-1 );
+					DrawFX ( FXList.iCount-1 );
 				}
 			}
 
@@ -2282,7 +2280,7 @@ void cGame::DrawFX ( int i )
 			{
 				delete fx;
 				delete dsi;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x= ( int ) ( 0.375*hud->Zoom ) * ( Frame-fx->StartFrame );
@@ -2309,7 +2307,7 @@ void cGame::DrawFX ( int i )
 			if ( Frame-fx->StartFrame>10 )
 			{
 				delete fx;
-				FXList->Delete ( i );
+				FXList.Delete ( i );
 				return;
 			}
 			scr.x=hud->Zoom* ( Frame-fx->StartFrame );

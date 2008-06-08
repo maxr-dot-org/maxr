@@ -115,7 +115,8 @@ public:
   int ComAvgRead;        // Durchschitt der empfangenen Bytes.
   int Runde;             // Nummer der aktuellen Runde.
   bool WantToEnd;        // Gibt an, ob die Runde beendet werden soll, sobald alle Bewegungen abgeschlossen sind.
-  cList<sFX*> *FXList,*FXListBottom; // Liste mit FX-Effekten.
+  cList<sFX*> FXList; // Liste mit FX-Effekten.
+  cList<sFX*>* FXListBottom; // Liste mit FX-Effekten.
   cBuilding *DirtList;   // Liste mit dem Dreck.
   float WindDir;         // Richtung, aus der der Wind kommt (0-2pi).
   bool UpShowTank,UpShowPlane,UpShowShip,UpShowBuild,UpShowTNT; // Flags, was in der Raffinerie angezeigt werden soll.
