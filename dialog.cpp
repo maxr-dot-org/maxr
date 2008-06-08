@@ -419,22 +419,17 @@ You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	//BEGIN CREATING AUTHORS TEXT
-	FILE *fp = NULL;
 	char line[72];
 	stringstream ssLicence4;
 
 	//open AUTHOR
-	#ifdef _WIN32
-	if (FileExists("AUTHORS.txt")) //wintendo
-	{
-		fp = fopen (  "AUTHORS.txt", "r"  );
-	}
-	#else
-	if (FileExists("AUTHORS"))  //others
-	{
-		fp = fopen (  "AUTHORS", "r"  );
-	}
-	#endif
+	char const* const authors_filename =
+#ifdef _WIN32
+		"AUTHORS.txt";
+#else
+		"AUTHORS";
+#endif
+	FILE* const fp = fopen(authors_filename, "r");
 	if ( fp != NULL  )
 	{	//read authors from file
 		while(fgets(line, 72, fp)) //snip entrys longer 72
