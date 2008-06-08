@@ -1649,9 +1649,9 @@ void cGame::MakeLanding ( int x,int y, cPlayer *p, cList<sLanding*> *list, bool 
 						}
 
 						// Gebäude platzieren:
-						game->engine->AddBuilding ( x+k,y+i,UnitsData.building+BNrOilStore,p,true );
-						game->engine->AddBuilding ( x+k,y+i+1,UnitsData.building+BNrSmallGen,p,true );
-						game->engine->AddBuilding ( x+k+1,y+i,UnitsData.building+BNrMine,p,true );
+						game->engine->AddBuilding(x + k,     y + i,     &UnitsData.building[BNrOilStore], p, true);
+						game->engine->AddBuilding(x + k,     y + i + 1, &UnitsData.building[BNrSmallGen], p, true);
+						game->engine->AddBuilding(x + k + 1, y + i,     &UnitsData.building[BNrMine],     p, true);
 						b=game->map->GO[x+k+ ( y+i ) *game->map->size].top;
 						p->base.AddOil ( b->SubBase,4 );
 						break;
@@ -3344,8 +3344,8 @@ bool cGame::Save ( string sName, int iNumber )
 		fwrite ( & ( p->ResearchCount ),sizeof ( int ),1,fp );
 		fwrite ( & ( p->UnusedResearch ),sizeof ( int ),1,fp );
 
-		fwrite(p->VehicleData, sizeof(sUnitData), UnitsData.vehicle.Size(), fp); // Vehicle-Data
-		fwrite ( p->BuildingData,sizeof ( sUnitData ),UnitsData.building_anz,fp ); // Building-Data
+		fwrite(p->VehicleData,  sizeof(sUnitData), UnitsData.vehicle.Size(),  fp); // Vehicle-Data
+		fwrite(p->BuildingData, sizeof(sUnitData), UnitsData.building.Size(), fp); // Building-Data
 
 		fwrite ( & ( p->HotHud ),sizeof ( cHud ),1,fp ); // Hud-Einstellungen
 	}
@@ -3485,8 +3485,8 @@ void cGame::Load ( string name,int AP,bool MP )
 		fread ( & ( p->ResearchCount ),sizeof ( int ),1,fp );
 		fread ( & ( p->UnusedResearch ),sizeof ( int ),1,fp );
 
-		fread(p->VehicleData, sizeof(sUnitData), UnitsData.vehicle.Size(), fp); // Vehicle-Data
-		fread ( p->BuildingData,sizeof ( sUnitData ),UnitsData.building_anz,fp ); // Building-Data
+		fread(p->VehicleData,  sizeof(sUnitData), UnitsData.vehicle.Size(),  fp); // Vehicle-Data
+		fread(p->BuildingData, sizeof(sUnitData), UnitsData.building.Size(), fp); // Building-Data
 
 		fread ( & ( p->HotHud ),sizeof ( cHud ),1,fp ); // Hud-Einstellungen
 
@@ -3662,7 +3662,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				}
 				else
 				{
-					engine->AddBuilding ( i%map->size,i/map->size,UnitsData.building+typnr,p,true );
+					engine->AddBuilding(i%map->size, i / map->size, &UnitsData.building[typnr], p, true);
 
 					if ( base )
 					{

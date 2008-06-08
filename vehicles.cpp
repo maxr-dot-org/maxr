@@ -3056,7 +3056,7 @@ public:
 // Zeigt das Build-Menü an:
 void cVehicle::ShowBuildMenu ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
 	bool AbbruchPressed = false;
 	bool FertigPressed = false;
@@ -3130,7 +3130,7 @@ void cVehicle::ShowBuildMenu ( void )
 	// Die Images erstellen:
 	cList<sBuildStruct*> images;
 
-	for ( i = 0;i < UnitsData.building_anz;i++ )
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		SDL_Surface *sf, *sf2;
 
@@ -3668,7 +3668,6 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 
 			// Die Details anzeigen:
 			{
-				cBuilding *tb;
 				SDL_Rect tmp2;
 				tmp.x = 11;
 				tmp.y = 290;
@@ -3677,9 +3676,8 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 				tmp.w = tmp2.w = 260;
 				tmp.h = tmp2.h = 176;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &tmp, buffer, &tmp2 );
-				tb = new cBuilding ( UnitsData.building + ptr->id, Client->ActivePlayer, NULL );
-				tb->ShowBigDetails();
-				delete tb;
+				cBuilding tb(&UnitsData.building[ptr->id], Client->ActivePlayer, NULL);
+				tb.ShowBigDetails();
 			}
 
 			// calculate building time and costs
@@ -5738,8 +5736,8 @@ bool cVehicle::layMine ()
 	if ( data.cargo < 0 ) return false;
 	if ( Server->Map->GO[PosX+PosY*Server->Map->size].base && Server->Map->GO[PosX+PosY*Server->Map->size].base->data.is_expl_mine ) return false;
 
-	if ( data.can_drive == DRIVE_SEA ) Server->addUnit ( PosX, PosY, UnitsData.building + BNrSeaMine, owner, false );
-	else Server->addUnit ( PosX, PosY, UnitsData.building + BNrLandMine, owner, false );
+	if (data.can_drive == DRIVE_SEA) Server->addUnit(PosX, PosY, &UnitsData.building[BNrSeaMine], owner, false);
+	else Server->addUnit(PosX, PosY, &UnitsData.building[BNrLandMine], owner, false);
 	data.cargo--;
 
 	if ( data.cargo <= 0 ) LayMines = false;

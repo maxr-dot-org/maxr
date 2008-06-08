@@ -37,8 +37,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 		VehicleData[i]=UnitsData.vehicle[i].data;
 	}
 	// Die Building Eigenschaften kopieren:
-	BuildingData= ( sUnitData* ) malloc ( sizeof ( sUnitData ) *UnitsData.building_anz );
-	for (size_t i=0;i<UnitsData.building_anz;i++ )
+	BuildingData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.building.Size());
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		BuildingData[i]=UnitsData.building[i].data;
 	}
@@ -727,7 +727,7 @@ void cPlayer::DoTheResearch ( int i )
 				break;
 		}
 	}
-	for (size_t k=0;k<UnitsData.building_anz;k++ )
+	for (size_t k = 0; k < UnitsData.building.Size(); ++k)
 	{
 		int before;
 		switch ( i )

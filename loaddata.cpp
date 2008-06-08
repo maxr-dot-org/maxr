@@ -1943,7 +1943,7 @@ static void translateUnitData(sID ID, bool vehicle)
 	}
 	else
 	{
-		for (int i = 0; i <= UnitsData.building_anz; i++)
+		for (size_t i = 0; i <= UnitsData.building.Size(); ++i)
 		{
 			if ( UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart )
 			{
@@ -2072,7 +2072,7 @@ static int LoadBuildings()
 		}
 	}
 	// load found units
-	UnitsData.building_anz = 0;
+	UnitsData.building.Reserve(0);
 	for( int i = 0; i < BuildingList.iCount; i++)
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
@@ -2081,16 +2081,15 @@ static int LoadBuildings()
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.building = ( sBuilding* ) realloc ( UnitsData.building,sizeof ( sBuilding ) * (UnitsData.building_anz+1) );
-		if(!UnitsData.building) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+		UnitsData.building.Add(sBuilding());
 
-		sBuilding& b = UnitsData.building[UnitsData.building_anz];
+		sBuilding& b = UnitsData.building.Back();
 		SetDefaultUnitData(&b.data);
 		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList.Items[i].c_str()));
 		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
-		ConvertData(UnitsData.building_anz, false);
+		ConvertData(UnitsData.building.Size() - 1, false);
 
 		// load img
 		sTmpString = sBuildingPath;
@@ -2172,8 +2171,6 @@ static int LoadBuildings()
 		{
 			b.data.has_frames = b.img_org->w / b.img_org->h;
 		}
-
-		UnitsData.building_anz++;
 	}
 
 	// Dirtsurfaces
@@ -2189,7 +2186,7 @@ static int LoadBuildings()
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
 	// Get numbers of important buildings + set building numbers
-	for ( int i = 0 ; i < UnitsData.building_anz; i++ )
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		UnitsData.building[i].nr = i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=i;
@@ -2326,7 +2323,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 		"Unit","Graphic","Animations","Movement", NULL,
 		"Unit","Graphic","Animations","Power_On", NULL
 	};
-	int i, n, arraycount;
+	int n, arraycount;
 	string sTmpString, sVehicleDataPath, sNodePath="";
 	char szTmp[100];
 	TiXmlDocument VehicleDataXml;
@@ -2368,7 +2365,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 			}
 			else
 			{
-				for( i = 0; i < UnitsData.building_anz; i++)
+				for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 				{
 					if( UnitsData.building[i].data.ID.iSecondPart == atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
 					{
@@ -2414,7 +2411,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 	}
 
 	// get array count
-	i = sizeof(DataStructure);
+	int i = sizeof(DataStructure);
 	arraycount = 0;
 	while(i)
 	{

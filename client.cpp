@@ -2689,7 +2689,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedBuilding = Player->AddBuilding ( PosX, PosY, UnitsData.building + UnitNum );
+			AddedBuilding = Player->AddBuilding(PosX, PosY, &UnitsData.building[UnitNum]);
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
@@ -2788,7 +2788,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
 
-			AddedBuilding = Player->AddBuilding ( iPosX, iPosY, UnitsData.building + iUnitNumber );
+			AddedBuilding = Player->AddBuilding(iPosX, iPosY, &UnitsData.building[iUnitNumber]);
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 		}

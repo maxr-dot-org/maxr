@@ -3803,7 +3803,7 @@ void cBuilding::ShowUpgrade ( void )
 		images.Add ( n );
 	}
 
-	for (size_t i = 0;i < UnitsData.building_anz;i++ )
+	for (size_t i = 0;i < UnitsData.building.Size(); ++i)
 	{
 		SDL_Surface *sf;
 
@@ -4421,7 +4421,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 				}
 				else
 				{
-					cBuilding tb(UnitsData.building + ptr->id, Client->ActivePlayer, NULL);
+					cBuilding tb(&UnitsData.building[ptr->id], Client->ActivePlayer, NULL);
 					tb.ShowBigDetails();
 				}
 			}

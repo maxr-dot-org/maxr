@@ -1393,7 +1393,7 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Buildings:
 	fak= ( float ) ( Zoom/64.0 );
-	for (size_t i = 0; i < UnitsData.building_anz; ++i)
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img, (int) ( UnitsData.building[i].img_org->w * fak ), (int) ( UnitsData.building[i].img_org->h * fak ) );
 		ScaleSurfaceAdv2 ( UnitsData.building[i].shw_org,UnitsData.building[i].shw, (int) ( UnitsData.building[i].shw_org->w * fak ), (int) ( UnitsData.building[i].shw_org->h * fak ) );

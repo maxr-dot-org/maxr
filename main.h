@@ -59,6 +59,7 @@ class cVehicle;
 class cMJobs;
 class cAJobs;
 class cNetMessage;
+struct sBuilding;
 struct sUpgrades;
 struct sTuple;
 struct sBuildList;
@@ -659,8 +660,7 @@ public:
 	cList<sVehicle> vehicle;
 
 	// Buildings
-	struct sBuilding *building;
-	int building_anz;
+	cList<sBuilding> building;
 
 	SDL_Surface *dirt_small_org;
 	SDL_Surface *dirt_small;

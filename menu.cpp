@@ -127,7 +127,7 @@ void showUnitPicture ( void )
 	{
 		do
 		{
-			iUnitShow = random ( UnitsData.building_anz,0 );
+			iUnitShow = random(UnitsData.building.Size(), 0);
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.building[iUnitShow].info,NULL,buffer,&rDest );
@@ -2356,7 +2356,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
 		list.Add ( n );
 	}
-	for (size_t i=0;i<UnitsData.building_anz;i++ )
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		sHUp *n;
 		SDL_Surface *sf;
@@ -4066,7 +4066,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				}
 				else
 				{
-					cBuilding tb(UnitsData.building + ptr->id, p, NULL);
+					cBuilding tb(&UnitsData.building[ptr->id], p, NULL);
 					tb.ShowBigDetails();
 				}
 			}
@@ -5297,7 +5297,7 @@ void cMultiPlayerMenu::sendUpgrades()
 	}
 
 	// send buildings
-	for ( int i = 0; i < UnitsData.building_anz; i++ )
+	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		if ( Message == NULL )
 		{
