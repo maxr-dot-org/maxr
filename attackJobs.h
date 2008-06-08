@@ -32,7 +32,7 @@ public:
 	bool bMuzzlePlayed;
 	int iTargetOff;
 
-	cList<cPlayer*>* executingClients; /** the clients on which the attack job is currently running */
+	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
 	cBuilding* building;
 	cVehicle* vehicle;
 

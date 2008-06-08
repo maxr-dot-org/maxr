@@ -28,7 +28,6 @@ int cServerAttackJob::iNextID = 0;
 
 cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 {
-	executingClients = new cList<cPlayer*>;
 	iID = iNextID;
 	iNextID++;
 	bMuzzlePlayed = false;
@@ -53,7 +52,6 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 
 cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 {
-	executingClients = new cList<cPlayer*>;
 	iID = iNextID;
 	iNextID++;
 	bMuzzlePlayed = false;
@@ -213,7 +211,7 @@ void cServerAttackJob::sendFireCommand()
 		//send message to all player who can see the attacking unit
 		if ( player->ScanMap[iAgressorOff] )
 		{
-			executingClients->Add(player);
+			executingClients.Add(player);
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
 			if ( bMuzzleIsRocketType ) message->pushInt32( iTargetOff );
 			message->pushBool( bMuzzleIsRocketType );
@@ -226,7 +224,7 @@ void cServerAttackJob::sendFireCommand()
 		//TODO: avoid sending agressor coordinates to players who can't see the attacking unit
 		else if ( bMuzzleIsRocketType && player->ScanMap[iTargetOff] )
 		{
-			executingClients->Add( player );
+			executingClients.Add(player);
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
 			message->pushInt32( iTargetOff );
 			message->pushInt32( iAgressorOff );
