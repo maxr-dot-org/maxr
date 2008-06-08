@@ -800,11 +800,13 @@ int cClient::checkUser()
 		if ( OverObject && Hud->Lock ) ActivePlayer->ToggelLock ( OverObject );
 		if ( SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
-			SelectedVehicle->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
+			//TODO: transfer
+			//SelectedVehicle->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
 		}
 		else if ( SelectedBuilding&&mouse->cur==GraphicsData.gfx_Ctransf )
 		{
-			SelectedBuilding->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
+			//TODO: transfer
+			//SelectedBuilding->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
 		}
 		else if ( SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
