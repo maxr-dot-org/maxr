@@ -51,7 +51,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	BuildingList=NULL;
 	ResourceMap=NULL;
 	base=new cBase ( this );
-	WachpostenAir=new cList<sWachposten*>;
 	WachpostenGround=new cList<sWachposten*>;
 	ResearchCount=0;
 	UnusedResearch=0;
@@ -66,12 +65,11 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 cPlayer::~cPlayer ( void )
 {
 
-	while ( WachpostenAir->iCount )
+	while ( WachpostenAir.iCount )
 	{
-		delete WachpostenAir->Items[WachpostenAir->iCount - 1];
-		WachpostenAir->Delete( WachpostenAir->iCount - 1 );
+		delete WachpostenAir.Items[WachpostenAir.iCount - 1];
+		WachpostenAir.Delete( WachpostenAir.iCount - 1 );
 	}
-	delete WachpostenAir;
 
 	while ( WachpostenGround->iCount )
 	{
@@ -239,12 +237,12 @@ void cPlayer::AddWachpostenV ( cVehicle *v )
 	n->v=v;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir->Add ( n );
+		WachpostenAir.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir->Add ( n );
+		WachpostenAir.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
@@ -265,12 +263,12 @@ void cPlayer::AddWachpostenB ( cBuilding *b )
 	n->v=NULL;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir->Add ( n );
+		WachpostenAir.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir->Add ( n );
+		WachpostenAir.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
 		WachpostenGround->Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
@@ -289,12 +287,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	int i;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir->iCount;i++ )
+		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir->Items[i];
+			ptr=WachpostenAir.Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenAir->Delete ( i );
+				WachpostenAir.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -303,12 +301,12 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir->iCount;i++ )
+		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir->Items[i];
+			ptr=WachpostenAir.Items[i];
 			if ( ptr->v==v )
 			{
-				WachpostenAir->Delete ( i );
+				WachpostenAir.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -349,12 +347,12 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	int i;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir->iCount;i++ )
+		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir->Items[i];
+			ptr=WachpostenAir.Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenAir->Delete ( i );
+				WachpostenAir.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -363,12 +361,12 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir->iCount;i++ )
+		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir->Items[i];
+			ptr=WachpostenAir.Items[i];
 			if ( ptr->b==b )
 			{
-				WachpostenAir->Delete ( i );
+				WachpostenAir.Delete ( i );
 				delete ptr;
 				break;
 			}
@@ -412,9 +410,9 @@ void cPlayer::RefreshWacheAir ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapAir,0,MapSize );
-	for ( i=0;i<WachpostenAir->iCount;i++ )
+	for ( i=0;i<WachpostenAir.iCount;i++ )
 	{
-		ptr=WachpostenAir->Items[i];
+		ptr=WachpostenAir.Items[i];
 		if ( ptr->v )
 		{
 			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );

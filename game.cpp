@@ -420,7 +420,7 @@ void cGame::Run ( void )
 
 		if ( DebugWache && fDrawMap )
 		{
-			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir->iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround->iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);

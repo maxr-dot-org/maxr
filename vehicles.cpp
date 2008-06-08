@@ -4807,9 +4807,9 @@ bool cVehicle::InWachRange ( void )
 				return false;
 
 			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenAir->iCount;k++ )
+			for ( k = 0;k < p->WachpostenAir.iCount;k++ )
 			{
-				w = p->WachpostenAir->Items[k];
+				w = p->WachpostenAir.Items[k];
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
