@@ -82,7 +82,7 @@ public:
   string PlayerCheat;	 // Wenn ein Spieler ein Cheat eingegeben hat.
   cPlayer *ActivePlayer; // Der aktive Player.
   cMap *map;             // Die Karte.
-  cHud *hud;             // Das Hud.
+  cHud hud;             // Das Hud.
   cEngine *engine;       // Die Game-Engine.
   unsigned int FPSstart;        // Zeit für die fps Berechnung.
   unsigned int Comstart;        // Zeit für die Com-Infos.

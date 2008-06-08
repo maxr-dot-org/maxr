@@ -862,7 +862,7 @@ void cEngine::CheckDefeat ( void )
 				{
 					game->HotSeatPlayer++;
 					if ( game->HotSeatPlayer>=game->PlayerList->iCount ) game->HotSeatPlayer=0;
-					game->ActivePlayer->HotHud=* ( game->hud );
+					game->ActivePlayer->HotHud= game->hud;
 					game->ActivePlayer=game->PlayerList->Items[game->HotSeatPlayer];
 
 					delete p;
@@ -1039,11 +1039,11 @@ void cEngine::Rundenende ( void )
 	EndeCount=0;
 	if ( !game->PlayRounds )
 	{
-		game->hud->Ende = false;
-		game->hud->EndeButton ( false );
+		game->hud.Ende = false;
+		game->hud.EndeButton ( false );
 	}
 	game->Runde++;
-	game->hud->ShowRunde();
+	game->hud.ShowRunde();
 
 	// Alle Buildings wieder aufladen:
 	for ( i=0;i<game->PlayerList->iCount;i++ )
