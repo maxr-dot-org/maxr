@@ -54,7 +54,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	ResearchCount=0;
 	UnusedResearch=0;
 	Credits=0;
-	ReportVehicles=new cList<sReport*>;
 	ReportBuildings=new cList<sReport*>;
 	ReportForschungFinished=false;
 	LockList=new cList<sLockElem*>;
@@ -124,12 +123,11 @@ cPlayer::~cPlayer ( void )
 	if ( DetectLandMap ) free ( DetectLandMap );
 	if ( DetectSeaMap ) free ( DetectSeaMap );
 
-	while ( ReportVehicles->iCount )
+	while ( ReportVehicles.iCount )
 	{
-		delete ReportVehicles->Items[0];
-		ReportVehicles->Delete ( 0 );
+		delete ReportVehicles.Items[0];
+		ReportVehicles.Delete ( 0 );
 	}
-	delete ReportVehicles;
 	while ( ReportBuildings->iCount )
 	{
 		delete ReportBuildings->Items[0];

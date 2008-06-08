@@ -1095,14 +1095,14 @@ void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoi
 		Player->ReportBuildings->Delete ( 0 );
 		delete Report;
 	}
-	while ( Player->ReportVehicles->iCount )
+	while ( Player->ReportVehicles.iCount )
 	{
-		Report = Player->ReportVehicles->Items[0];
+		Report = Player->ReportVehicles.Items[0];
 		if ( iCount ) *sReportMsg+=", ";
 		iCount += Report->anz;
 		sTmp = iToStr( Report->anz ) + " " + Report->name;
 		*sReportMsg += Report->anz > 1 ? sTmp : Report->name;
-		Player->ReportVehicles->Delete ( 0 );
+		Player->ReportVehicles.Delete ( 0 );
 		delete Report;
 	}
 
@@ -1129,9 +1129,9 @@ void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
 	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
 	if ( bVehicle )
 	{
-		for ( int i = 0; i < Player->ReportVehicles->iCount; i++ )
+		for ( int i = 0; i < Player->ReportVehicles.iCount; i++ )
 		{
-			Report = Player->ReportVehicles->Items[i];
+			Report = Player->ReportVehicles.Items[i];
 			if ( Report->name.compare ( sName ) == 0 )
 			{
 				Report->anz++;
@@ -1141,7 +1141,7 @@ void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
 		Report = new sReport;
 		Report->name = sName;
 		Report->anz = 1;
-		Player->ReportVehicles->Add ( Report );
+		Player->ReportVehicles.Add ( Report );
 	}
 	else
 	{

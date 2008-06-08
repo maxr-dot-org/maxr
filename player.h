@@ -87,7 +87,8 @@ public:
   int UnusedResearch;        // Nicht benutzte Forschungskapazitäten.
   int Credits;               // Anzahl der erworbenen Credits.
   cHud HotHud;               // Gespeichertes Hud für Hot-Seat-Spiele.
-  cList<sReport*> *ReportVehicles,*ReportBuildings; // Reportlisten.
+  cList<sReport*> ReportVehicles; // Reportlisten.
+  cList<sReport*>* ReportBuildings; // Reportlisten.
   bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
   cList<sLockElem*> *LockList;           // Liste mit gelockten Objekten.
   int iSocketNum;			// Number of socket over which this player is connected in network game
