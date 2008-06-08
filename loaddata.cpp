@@ -1485,12 +1485,9 @@ static void ConvertData(int unitnum, bool vehicle);
 
 /**
  * Loades the unitdata from the data.xml in the unitfolder
- * @param unitnum Indexnumber of unit for which the data should be loaded.
  * @param directory Unitdirectory , relativ to the main game directory
- * @param vehicle Should be true if unit is a vehicle
- * @return 1 on success
  */
-static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID);
+static void LoadUnitData(sUnitData*, char const* directory, int iID);
 
 /**
  * Sets all unitdata to default values
@@ -1607,9 +1604,8 @@ static int LoadVehicles()
 		cLog::write("Setting default values", cLog::eLOG_TYPE_DEBUG);
 		sVehicle& v = UnitsData.vehicle[UnitsData.vehicle_anz];
 		SetDefaultUnitData(&v.data);
-		// Load Data from data.xml
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData(UnitsData.vehicle_anz, sVehiclePath.c_str(), true, atoi(IDList.Items[i].c_str()));
+		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList.Items[i].c_str()));
 		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
@@ -2095,8 +2091,7 @@ static int LoadBuildings()
 
 		sBuilding& b = UnitsData.building[UnitsData.building_anz];
 		SetDefaultUnitData(&b.data);
-		// Load Data from data.xml
-		LoadUnitData(UnitsData.building_anz, sBuildingPath.c_str(), false, atoi(IDList.Items[i].c_str()));
+		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList.Items[i].c_str()));
 		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
@@ -2213,7 +2208,7 @@ static int LoadBuildings()
 	return 1;
 }
 
-static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int iID)
+static void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
 {
 	const char *DataStructure[] = {
 		// General
@@ -2336,11 +2331,6 @@ static void LoadUnitData(int unitnum, const char *directory, bool vehicle, int i
 		"Unit","Graphic","Animations","Movement", NULL,
 		"Unit","Graphic","Animations","Power_On", NULL
 	};
-	sUnitData *Data;
-	if(vehicle)
-		Data = &UnitsData.vehicle[unitnum].data;
-	else
-		Data = &UnitsData.building[unitnum].data;
 	int i, n, arraycount;
 	string sTmpString, sVehicleDataPath, sNodePath="";
 	char szTmp[100];
