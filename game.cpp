@@ -53,7 +53,6 @@ cGame::cGame ( cMap *map )
 	HelpActive=false;
 	ChangeObjectName=false;
 	ChatInput=false;
-	messages=new cList<sMessage*>;
 	DebugFPS=false;
 	DebugCom=false;
 	DebugBase=false;
@@ -104,15 +103,14 @@ cGame::~cGame ( void )
 	hud->ScaleSurfaces();
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( ObjectStream );
-	while ( messages->iCount )
+	while ( messages.iCount )
 	{
 		sMessage *msg;
-		msg = messages->Items[0];
+		msg = messages.Items[0];
 		free ( msg->msg );
 		free ( msg );
-		messages->Delete ( 0 );
+		messages.Delete ( 0 );
 	}
-	delete messages;
 	if ( FLC ) FLI_Close ( FLC );
 	delete hud;
 	delete engine;
@@ -1697,22 +1695,22 @@ void cGame::HandleMessages ( void )
 	SDL_Rect scr,dest;
 	int i,height;
 	sMessage *m;
-	if ( messages->iCount==0 ) return;
+	if ( messages.iCount==0 ) return;
 	height=0;
 	// Alle alten Nachrichten löschen:
-	for ( i=messages->iCount-1;i>=0;i-- )
+	for ( i=messages.iCount-1;i>=0;i-- )
 	{
-		m=messages->Items[i];
+		m=messages.Items[i];
 		if ( m->age+MSG_FRAMES<Frame||height>200 )
 		{
 			free ( m->msg );
 			free ( m );
-			messages->Delete ( i );
+			messages.Delete ( i );
 			continue;
 		}
 		height+=14+11*m->len/296;
 	}
-	if ( messages->iCount==0 ) return;
+	if ( messages.iCount==0 ) return;
 	if ( SettingsData.bAlphaEffects )
 	{
 		scr.x=0;scr.y=0;
@@ -1724,9 +1722,9 @@ void cGame::HandleMessages ( void )
 	dest.x=180+2;dest.y=34;
 	dest.w=250-4;
 	dest.h=height;
-	for ( i=0;i<messages->iCount;i++ )
+	for ( i=0;i<messages.iCount;i++ )
 	{
-		m=messages->Items[i];
+		m=messages.Items[i];
 		font->showTextAsBlock(dest, m->msg);
 		dest.y+=14+11*m->len/300;
 	}
@@ -4077,12 +4075,12 @@ bool cGame::MakeHotSeatEnde ( void )
 	string stmp;
 
 	sMessage *m;
-	while ( messages->iCount )
+	while ( messages.iCount )
 	{
-		m=messages->Items[0];
+		m=messages.Items[0];
 		free ( m->msg );
 		free ( m );
-		messages->Delete ( 0 );
+		messages.Delete ( 0 );
 	}
 
 	HotSeatPlayer++;

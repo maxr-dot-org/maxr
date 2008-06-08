@@ -109,7 +109,7 @@ public:
   bool HelpActive;       // Gibt an, ob der Help-Cursor angezeigt werden soll.
   bool ChangeObjectName; // Gibt an, ob gerade der Name eines Objektes geändert wird.
   bool ChatInput;        // Gibt an, ob gerade eine Chat-Nachricht eingegeben werden soll.
-  cList<sMessage*> *messages;       // Liste mit allen Nachrichten.
+  cList<sMessage*> messages;       // Liste mit allen Nachrichten.
   int DebugIndex;        // Index im Buffer.
   int ComAvgSend;        // Durchschitt der gesendeten Bytes.
   int ComAvgRead;        // Durchschitt der empfangenen Bytes.
