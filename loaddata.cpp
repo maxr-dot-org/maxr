@@ -1528,12 +1528,11 @@ int LoadVehicles()
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
 		// laod infantery graphics
-		int n = 0;
 		if(UnitsData.vehicle[UnitsData.vehicle_anz].data.bAnimation_Movement)
 		{
 			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
-			for(n; n < 8; n++)
+			for (int n = 0; n < 8; n++)
 			{
 				UnitsData.vehicle[UnitsData.vehicle_anz].img[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
 				SDL_SetColorKey ( UnitsData.vehicle[UnitsData.vehicle_anz].img[n],SDL_SRCCOLORKEY,0xFFFFFF );
