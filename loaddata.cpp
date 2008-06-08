@@ -1627,18 +1627,25 @@ int LoadVehicles()
 					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = LoadPCX(sTmpString.c_str());
 					SDL_SetAlpha ( UnitsData.vehicle[UnitsData.vehicle_anz].shw[n],SDL_SRCALPHA,50 );
 				}
+				else
+				{
+					UnitsData.vehicle[UnitsData.vehicle_anz].shw_org[n] = NULL;
+					UnitsData.vehicle[UnitsData.vehicle_anz].shw[n] = NULL;
+				}
 			}
 		}
 		// load video
 		sTmpString = sVehiclePath;
 		sTmpString += "video.flc";
 		cLog::write("Loading video " + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if(FileExists(sTmpString.c_str()))
+		if( !FileExists(sTmpString.c_str()))
 		{
-			UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sTmpString.length() +1 );
-			if(!UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
-			strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sTmpString.c_str() );
+			sTmpString = "";
 		}
+		UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile= ( char* ) malloc ( sTmpString.length() +1 );
+		if(!UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
+		strcpy ( UnitsData.vehicle[UnitsData.vehicle_anz].FLCFile,sTmpString.c_str() );
+
 
 		// load infoimage
 		sTmpString = sVehiclePath;

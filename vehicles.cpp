@@ -792,12 +792,13 @@ void cVehicle::Select ( void )
 		{
 			Client->Hud->ResetVideoMonitor();
 			Client->FLC = NULL;
-			return;
 		}
+		else
+		{
+			FLI_Rewind ( Client->FLC );
 
-		FLI_Rewind ( Client->FLC );
-
-		FLI_NextFrame ( Client->FLC );
+			FLI_NextFrame ( Client->FLC );
+		}
 	}
 
 	// Meldung machen:

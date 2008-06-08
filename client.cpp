@@ -1560,7 +1560,7 @@ void cClient::drawFLC()
 {
 	SDL_Rect dest;
 	string stmp;
-	if ( ( FLC == NULL && video == NULL ) || ( SelectedVehicle == NULL && SelectedBuilding == NULL ) ) return;
+	if (  FLC == NULL || ( SelectedVehicle == NULL && SelectedBuilding == NULL ) ) return;
 	// draw the video:
 	dest.x=10;
 	dest.y=29;
