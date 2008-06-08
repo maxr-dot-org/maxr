@@ -83,7 +83,8 @@ private:
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
 	/** lists with all FX-Animation */
-	cList<sFX*> *FXList,*FXListBottom;
+	cList<sFX*> FXList;
+	cList<sFX*>* FXListBottom;
 	/** list with the dirt */
 	cBuilding *DirtList;
 	/** direction from which the wind is comming */

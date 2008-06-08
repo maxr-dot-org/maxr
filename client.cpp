@@ -65,7 +65,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	iMsgCoordsY = -1;
 	iTurn = 1;
 	bWantToEnd = false;
-	FXList = new cList<sFX*>;
 	FXListBottom = new cList<sFX*>;
 	bUpShowTank = true;
 	bUpShowPlane = true;
@@ -105,20 +104,19 @@ cClient::~cClient()
 	}
 	if ( FLC ) FLI_Close ( FLC );
 	delete Hud;
-	while ( FXList->iCount )
+	while ( FXList.iCount )
 	{
-		if ( FXList->Items[0]->typ == fxRocket )
+		if ( FXList.Items[0]->typ == fxRocket )
 		{
-			delete FXList->Items[0]->rocketInfo;
+			delete FXList.Items[0]->rocketInfo;
 		}
-		else if ( FXList->Items[0]->typ == fxDarkSmoke )
+		else if ( FXList.Items[0]->typ == fxDarkSmoke )
 		{
-			delete FXList->Items[0]->smokeInfo;
+			delete FXList.Items[0]->smokeInfo;
 		}
-		delete FXList->Items[0];
-		FXList->Delete ( 0 );
+		delete FXList.Items[0];
+		FXList.Delete ( 0 );
 	}
-	delete FXList;
 	while ( FXListBottom->iCount )
 	{
 		if ( FXListBottom->Items[0]->typ == fxTorpedo )
@@ -416,7 +414,7 @@ void cClient::run()
 
 		if ( bDebugFX && bFlagDrawMap )
 		{
-			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList->iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom->iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -1624,9 +1622,9 @@ void cClient::drawFLC()
 
 void cClient::displayFX()
 {
-	if ( !FXList->iCount ) return;
+	if ( !FXList.iCount ) return;
 
-	for ( int i = FXList->iCount-1; i >= 0; i-- )
+	for ( int i = FXList.iCount-1; i >= 0; i-- )
 	{
 		drawFX ( i );
 	}
@@ -1647,7 +1645,7 @@ void cClient::drawFX( int iNum )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXList->Items[iNum];
+	fx=FXList.Items[iNum];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxRocket ) return;
 	switch ( fx->typ )
 	{
@@ -1655,7 +1653,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom*fx->param;
@@ -1670,7 +1668,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom*fx->param;
@@ -1685,7 +1683,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom*fx->param;
@@ -1700,7 +1698,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom*fx->param;
@@ -1715,7 +1713,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom* ( iFrame-fx->StartFrame );
@@ -1730,7 +1728,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x = (int) Hud->Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
@@ -1745,7 +1743,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 28 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x = (int) Hud->Zoom * 307 * ( iFrame - fx->StartFrame ) / 64.0;
@@ -1760,7 +1758,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x = (int) Hud->Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
@@ -1775,7 +1773,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x = (int) Hud->Zoom * 137 * ( iFrame - fx->StartFrame ) / 64.0;
@@ -1790,7 +1788,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame-fx->StartFrame>100/4 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( iFrame-fx->StartFrame ) *4 );
@@ -1810,7 +1808,7 @@ void cClient::drawFX( int iNum )
 				ri->aj->MuzzlePlayed=true;
 				delete ri;
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			if ( iTimer0 )
@@ -1821,7 +1819,7 @@ void cClient::drawFX( int iNum )
 					if ( SettingsData.bAlphaEffects ) addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFX ( FXList->iCount-1 );
+					drawFX ( FXList.iCount-1 );
 				}
 			}
 
@@ -1843,7 +1841,7 @@ void cClient::drawFX( int iNum )
 			{
 				delete fx;
 				delete dsi;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x= ( int ) ( 0.375*Hud->Zoom ) * ( iFrame-fx->StartFrame );
@@ -1870,7 +1868,7 @@ void cClient::drawFX( int iNum )
 			if ( iFrame-fx->StartFrame>10 )
 			{
 				delete fx;
-				FXList->Delete ( iNum );
+				FXList.Delete ( iNum );
 				return;
 			}
 			scr.x=Hud->Zoom* ( iFrame-fx->StartFrame );
@@ -2190,7 +2188,7 @@ void cClient::addFX ( sFX* n )
 	}
 	else
 	{
-		FXList->Add ( n );
+		FXList.Add ( n );
 	}
 	switch ( n->typ )
 	{
