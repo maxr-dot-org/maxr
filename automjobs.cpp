@@ -22,9 +22,7 @@
 #include "vehicles.h"
 
 
-//static variables
-cAutoMJob **cAutoMJob::autoMJobs = NULL;
-int cAutoMJob::iCount = 0;
+static cList<cAutoMJob*> autoMJobs;
 
 //static functions of cAutoMJob
 
@@ -32,8 +30,7 @@ int cAutoMJob::iCount = 0;
 //this function is periodically called by the engine
 void cAutoMJob::handleAutoMoveJobs()
 {
-	int i;
-	for ( i = 0; i < iCount; i++)
+	for (size_t i = 0; i < autoMJobs.Size(); ++i)
 	{
 		autoMJobs[i]->DoAutoMove();
 		if ( autoMJobs[i]->finished )
@@ -48,10 +45,8 @@ void cAutoMJob::handleAutoMoveJobs()
 //construktor for cAutoMJob
 cAutoMJob::cAutoMJob(cVehicle *vehicle)
 {
-	 autoMJobs = (cAutoMJob **) realloc(autoMJobs, (iCount + 1) * sizeof(this));
-	 autoMJobs[iCount] = this;
-	 iNumber = iCount;
-	 iCount++;
+	 iNumber = autoMJobs.Size();
+	 autoMJobs.Add(this);
 	 this->vehicle = vehicle;
 	 finished = false;
 	 OPX = vehicle->PosX;
@@ -70,14 +65,12 @@ cAutoMJob::~cAutoMJob()
 		vehicle->mjob = NULL;
 		vehicle->MoveJobActive = false;
 	}
-	int i;
-	for (i = iNumber; i < iCount - 1; i++)
+	for (size_t i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
 		autoMJobs[i]->iNumber = i;
 	}
-	iCount--;
-	autoMJobs = (cAutoMJob **) realloc(autoMJobs, iCount * sizeof(this));
+	autoMJobs.PopBack();
 
 	vehicle->autoMJob = NULL;
 }
@@ -191,10 +184,9 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	float newDistanceOP = sqrt( (float) (PosX - OPX) * (PosX - OPX) + (PosY - OPY) * (PosY - OPY) );
 
 	//the distance to other surveyors
-	int i;
 	float newDistancesSurv = 0;
 	float temp;
-	for ( i = 0; i < iCount ; i++)
+	for (size_t i = 0; i < autoMJobs.Size(); ++i)
 	{
 		if ( i == iNumber ) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
@@ -253,10 +245,9 @@ void cAutoMJob::PlanLongMove()
 			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
 
 			//the distance to other surveyors
-			int i;
 			float distancesSurv = 0;
 			float temp;
-			for ( i = 0; i < iCount ; i++)
+			for (size_t i = 0; i < autoMJobs.Size(); ++i)
 			{
 				if ( i == iNumber ) continue;
 				if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;

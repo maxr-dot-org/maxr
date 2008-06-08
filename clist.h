@@ -15,9 +15,16 @@ template<typename T> class cList
 
 		~cList() { Reserve(0); }
 
+		size_t Size() const { return iCount; }
+
+		T&       operator [](size_t const idx)       { return Items[idx]; }
+		T const& operator [](size_t const idx) const { return Items[idx]; }
+
 		void Add(T const& elem);
 
 		void Delete(size_t idx);
+
+		void PopBack();
 
 		void Reserve(size_t n);
 
@@ -42,6 +49,12 @@ template<typename T> void cList<T>::Delete(size_t const idx)
 	if (idx >= iCount) return; // XXX should throw exception
 
 	for (size_t i = idx; i < iCount - 1; ++i) Items[i] = Items[i + 1];
+	PopBack();
+}
+
+
+template<typename T> void cList<T>::PopBack()
+{
 	--iCount;
 	Items[iCount].~T();
 }
