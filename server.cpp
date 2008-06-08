@@ -65,7 +65,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
 
-void cServer::kill()
+cServer::~cServer()
 {
 	bExit = true;
 	SDL_WaitThread ( ServerThread, NULL );

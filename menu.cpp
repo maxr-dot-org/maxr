@@ -840,7 +840,6 @@ void RunSPMenu ( void )
 					Server->bStarted = true;
 					Client->run();
 
-					Server->kill();
 					SettingsData.sPlayerName = Player->name;
 					while ( ClientPlayerList.iCount )
 					{
@@ -5014,7 +5013,6 @@ void cMultiPlayerMenu::runNetworkMenu( bool bHost )
 					if ( bHost ) Server->bStarted = true;
 					Client->run();
 
-					if ( bHost ) Server->kill();
 					SettingsData.sPlayerName = ActualPlayerClient->name;
 					while ( PlayerList->iCount )
 					{
@@ -5696,8 +5694,6 @@ void HeatTheSeat ( void )
 	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
 	Server->bStarted = true;
 	Client->run();
-
-	Server->kill();
 
 	while ( ClientPlayerList.iCount )
 	{

@@ -70,6 +70,8 @@ public:
 	 */
 	cServer(cMap* map, cList<cPlayer*>* PlayerList, int iGameType, bool bPlayTurns);
 
+	~cServer();
+
 private:
 	/** a list with all events for the server */
 	cList<SDL_Event*> *EventQueue;
@@ -248,11 +250,6 @@ public:
 	*@return The wanted player.
 	*/
 	cPlayer *getPlayerFromNumber ( int iNum );
-	/**
-	* kills the server class
-	*@author alzi alias DoctorDeath
-	*/
-	void kill();
 	/**
 	* pushes an event to the eventqueue of the server. This is threadsafe.
 	*@author alzi alias DoctorDeath
