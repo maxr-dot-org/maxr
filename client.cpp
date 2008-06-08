@@ -375,7 +375,7 @@ void cClient::run()
 				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
 			}
 		}
-		ActivePlayer->DrawLockList(&Hud);
+		ActivePlayer->DrawLockList(Hud);
 		// draw the minimap:
 		if ( bFlagDrawMMap )
 		{

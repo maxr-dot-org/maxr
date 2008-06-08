@@ -375,7 +375,7 @@ void cGame::Run ( void )
 				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
 			}
 		}
-		ActivePlayer->DrawLockList (&hud );
+		ActivePlayer->DrawLockList(hud);
 		// Die Minimap malen:
 		if ( fDrawMMap )
 		{

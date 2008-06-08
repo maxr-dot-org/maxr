@@ -115,7 +115,7 @@ public:
   bool InLockList(cBuilding *b);
   bool InLockList(cVehicle *v);
   void ToggelLock(struct sGameObjects *OverObject);
-  void DrawLockList(cHud *hud);
+  void DrawLockList(cHud const&);
 	/**
 	* draws a circle on the map for the fog
 	*@author alzi alias DoctorDeath

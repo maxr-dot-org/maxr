@@ -919,7 +919,7 @@ void cPlayer::ToggelLock ( sGameObjects *OverObject )
 }
 
 // Malt alle Einträge der Lock-Liste:
-void cPlayer::DrawLockList ( cHud *hud )
+void cPlayer::DrawLockList(cHud const& hud)
 {
 	sLockElem *elem;
 	int i,spx,spy,off;
@@ -939,29 +939,29 @@ void cPlayer::DrawLockList ( cHud *hud )
 			spx=elem->v->GetScreenPosX();
 			spy=elem->v->GetScreenPosY();
 
-			if ( hud->Scan )
+			if ( hud.Scan )
 			{
-				DrawCircle ( spx+hud->Zoom/2,
-				             spy+hud->Zoom/2,
-				             elem->v->data.scan*hud->Zoom,SCAN_COLOR,buffer );
+				DrawCircle ( spx+hud.Zoom/2,
+				             spy+hud.Zoom/2,
+				             elem->v->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 			}
-			if ( hud->Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
+			if ( hud.Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
 			{
-				DrawCircle ( spx+hud->Zoom/2,
-				             spy+hud->Zoom/2,
-				             elem->v->data.range*hud->Zoom+1,RANGE_GROUND_COLOR,buffer );
+				DrawCircle ( spx+hud.Zoom/2,
+				             spy+hud.Zoom/2,
+				             elem->v->data.range*hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
 			}
-			if ( hud->Reichweite&&elem->v->data.can_attack==ATTACK_AIR )
+			if ( hud.Reichweite&&elem->v->data.can_attack==ATTACK_AIR )
 			{
-				DrawCircle ( spx+hud->Zoom/2,
-				             spy+hud->Zoom/2,
-				             elem->v->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
+				DrawCircle ( spx+hud.Zoom/2,
+				             spy+hud.Zoom/2,
+				             elem->v->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
-			if ( hud->Munition&&elem->v->data.can_attack )
+			if ( hud.Munition&&elem->v->data.can_attack )
 			{
 				elem->v->DrawMunBar();
 			}
-			if ( hud->Treffer )
+			if ( hud.Treffer )
 			{
 				elem->v->DrawHelthBar();
 			}
@@ -978,39 +978,39 @@ void cPlayer::DrawLockList ( cHud *hud )
 			spx=elem->b->GetScreenPosX();
 			spy=elem->b->GetScreenPosY();
 
-			if ( hud->Scan )
+			if ( hud.Scan )
 			{
 				if ( elem->b->data.is_big )
 				{
-					DrawCircle ( spx+hud->Zoom,
-					             spy+hud->Zoom,
-					             elem->b->data.scan*hud->Zoom,SCAN_COLOR,buffer );
+					DrawCircle ( spx+hud.Zoom,
+					             spy+hud.Zoom,
+					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 				}
 				else
 				{
-					DrawCircle ( spx+hud->Zoom/2,
-					             spy+hud->Zoom/2,
-					             elem->b->data.scan*hud->Zoom,SCAN_COLOR,buffer );
+					DrawCircle ( spx+hud.Zoom/2,
+					             spy+hud.Zoom/2,
+					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 				}
 			}
-			if ( hud->Reichweite&& ( elem->b->data.can_attack==ATTACK_LAND||elem->b->data.can_attack==ATTACK_SUB_LAND ) &&!elem->b->data.is_expl_mine )
+			if ( hud.Reichweite&& ( elem->b->data.can_attack==ATTACK_LAND||elem->b->data.can_attack==ATTACK_SUB_LAND ) &&!elem->b->data.is_expl_mine )
 			{
-				DrawCircle ( spx+hud->Zoom/2,
-				             spy+hud->Zoom/2,
-				             elem->b->data.range*hud->Zoom+2,RANGE_GROUND_COLOR,buffer );
+				DrawCircle ( spx+hud.Zoom/2,
+				             spy+hud.Zoom/2,
+				             elem->b->data.range*hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
 			}
-			if ( hud->Reichweite&&elem->b->data.can_attack==ATTACK_AIR )
+			if ( hud.Reichweite&&elem->b->data.can_attack==ATTACK_AIR )
 			{
-				DrawCircle ( spx+hud->Zoom/2,
-				             spy+hud->Zoom/2,
-				             elem->b->data.range*hud->Zoom+2,RANGE_AIR_COLOR,buffer );
+				DrawCircle ( spx+hud.Zoom/2,
+				             spy+hud.Zoom/2,
+				             elem->b->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
 
-			if ( hud->Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
+			if ( hud.Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
 			{
 				elem->b->DrawMunBar();
 			}
-			if ( hud->Treffer )
+			if ( hud.Treffer )
 			{
 				elem->b->DrawHelthBar();
 			}
