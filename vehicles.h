@@ -174,7 +174,7 @@ public:
 	void DrawAttackCursor(struct sGameObjects *go,int can_attack);
 	int CalcHelth(int damage);
 	void ShowBuildMenu(void);
-	void ShowBuildList(cList<sBuildStruct*> *list,int selected,int offset,bool beschreibung,int *buildspeed, int *iTurboBuildCosts, int *TurboBuildRounds );
+	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool beschreibung, int* buildspeed, int* iTurboBuildCosts, int* TurboBuildRounds);
 	void DrawBuildButtons(int speed);
 	void FindNextband(void);
 	void doSurvey(void);

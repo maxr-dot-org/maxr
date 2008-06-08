@@ -3058,7 +3058,6 @@ void cVehicle::ShowBuildMenu ( void )
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
-	cList<sBuildStruct*> *images;
 	int selected = 0, offset = 0, BuildSpeed = 1;
 	int iTurboBuildCosts[3];	//costs for the 3 turbo build steps
 	int iTurboBuildRounds[3];	// needed rounds for the 3 turbo build steps
@@ -3123,7 +3122,7 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Die Images erstellen:
-	images = new cList<sBuildStruct*>;
+	cList<sBuildStruct*> images;
 
 	for ( i = 0;i < UnitsData.building_anz;i++ )
 	{
@@ -3162,7 +3161,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		n->id = i;
 
-		images->Add ( n );
+		images.Add ( n );
 	}
 
 	ShowBuildList ( images, selected, offset, Beschreibung, &BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
@@ -3213,9 +3212,9 @@ void cVehicle::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images->iCount - 9 )
+			if ( offset > images.iCount - 9 )
 			{
-				offset = images->iCount - 9;
+				offset = images.iCount - 9;
 			}
 
 			if ( selected < offset )
@@ -3336,7 +3335,7 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
 						break;
 
-					BuildingTyp = images->Items[selected]->id;
+					BuildingTyp = images.Items[selected]->id;
 
 					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
@@ -3426,7 +3425,7 @@ void cVehicle::ShowBuildMenu ( void )
 					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
 						break;
 
-					BuildingTyp = images->Items[selected]->id;
+					BuildingTyp = images.Items[selected]->id;
 
 					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
 						break;
@@ -3541,9 +3540,9 @@ void cVehicle::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 10 );
 
-			if ( images->iCount < 9 )
+			if ( images.iCount < 9 )
 			{
-				if ( nr >= images->iCount )
+				if ( nr >= images.iCount )
 					nr = -1;
 			}
 			else
@@ -3571,22 +3570,20 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images->iCount )
+	while ( images.iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images->Items[images->iCount - 1];
+		ptr = images.Items[images.iCount - 1];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images->Delete ( images->iCount - 1 );
+		images.Delete ( images.iCount - 1 );
 	}
-
-	delete images;
 
 	mouse->MoveCallback = true;
 }
 
 // Zeigt die Liste mit den Images an:
-void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int offset, bool beschreibung, int *buildspeed, int *iTurboBuildCosts, int *iTurboBuildRounds )
+void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const beschreibung, int* const buildspeed, int* const iTurboBuildCosts, int* const iTurboBuildRounds)
 {
 	sBuildStruct *ptr;
 
@@ -3615,13 +3612,13 @@ void cVehicle::ShowBuildList ( cList<sBuildStruct*> *list, int selected, int off
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list->iCount;i++ )
+	for ( i = offset;i < list.iCount;i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
-		ptr = list->Items[i];
+		ptr = list.Items[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
