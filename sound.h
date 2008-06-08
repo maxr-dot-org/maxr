@@ -36,7 +36,7 @@ extern DECLSPEC void SDLCALL Mix_FreeChunk(struct Mix_Chunk *chunk);
 EX int MusicAnz;
 EX string MainMusicFile;
 EX string CreditsMusicFile;
-EX cList<string> *MusicFiles;
+EX cList<string> MusicFiles;
 
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData

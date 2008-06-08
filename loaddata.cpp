@@ -1129,9 +1129,6 @@ static int LoadMusic(const char* path)
 		return 0;
 	}
 	
-		
-	
-	MusicFiles = new cList<string>;
 	for ( int i=1;i <= MusicAnz; i++ )
 	{
 		sprintf ( sztmp,"%d",i );
@@ -1152,7 +1149,7 @@ static int LoadMusic(const char* path)
 		}
 		if(!FileExists(sTmpString.c_str()))
 			continue;
-		MusicFiles->Add ( sTmpString );
+		MusicFiles.Add ( sTmpString );
 	}
 
 	return 1;
