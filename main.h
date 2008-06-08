@@ -68,7 +68,6 @@ struct sClientSettings;
 struct sMessage;
 struct sWachposten;
 struct sLockElem;
-struct sUpgradeStruct;
 struct sSubBase;
 struct sBuildStruct;
 struct sFX;

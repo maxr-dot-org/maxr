@@ -28,6 +28,23 @@
 #include "serverevents.h"
 #include "client.h"
 
+
+// Struktur für die Upgrade-List:
+struct sUpgradeStruct
+{
+public:
+	sUpgradeStruct(SDL_Surface* const sf_, bool const vehicle_, int const id_) :
+		sf(sf_),
+		vehicle(vehicle_),
+		id(id_)
+	{}
+
+	SDL_Surface* const sf;
+	bool         const vehicle;
+	int          const id;
+	sUpgrades          upgrades[8];
+};
+
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 {
@@ -3774,7 +3791,6 @@ void cBuilding::ShowUpgrade ( void )
 
 	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
 	{
-		sUpgradeStruct *n;
 		SDL_Surface *sf;
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
 		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.vehicle[i].img[0]->w, UnitsData.vehicle[i].img[0]->h, 32, 0, 0, 0, 0 );
@@ -3782,17 +3798,13 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0], NULL, sf, NULL );
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
-		n = new sUpgradeStruct;
-		n->sf = sf;
-		n->id = i;
-		n->vehicle = true;
+		sUpgradeStruct* const n = new sUpgradeStruct(sf, true, i);
 		MakeUpgradeSliderVehicle ( n->upgrades, i );
 		images.Add ( n );
 	}
 
 	for ( i = 0;i < UnitsData.building_anz;i++ )
 	{
-		sUpgradeStruct *n;
 		SDL_Surface *sf;
 
 		if ( UnitsData.building[i].data.is_big )
@@ -3820,10 +3832,7 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_BlitSurface ( UnitsData.building[i].img, NULL, sf, NULL );
 
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org, UnitsData.building[i].img, ( int ) ( UnitsData.building[i].img_org->w* newzoom ), ( int ) ( UnitsData.building[i].img_org->h* newzoom ) );
-		n = new sUpgradeStruct;
-		n->sf = sf;
-		n->id = i;
-		n->vehicle = false;
+		sUpgradeStruct* const n = new sUpgradeStruct(sf, false, i);
 		MakeUpgradeSliderBuilding ( n->upgrades, i );
 		images.Add ( n );
 	}
