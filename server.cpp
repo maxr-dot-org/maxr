@@ -47,7 +47,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	bExit = false;
 	bStarted = false;
 	iActiveTurnPlayerNr = 0;
-	PlayerEndList = new cList<int*>;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
@@ -920,17 +919,17 @@ void cServer::handleEnd ( int iPlayerNum )
 		else // it's a simultanous TCP/IP multiplayer game
 		{
 			// check whether this player has already finished his turn
-			for ( int i = 0; i < PlayerEndList->iCount; i++ )
+			for ( int i = 0; i < PlayerEndList.iCount; i++ )
 			{
-				if ( *PlayerEndList->Items[i] == iPlayerNum ) return;
+				if ( *PlayerEndList.Items[i] == iPlayerNum ) return;
 			}
-			PlayerEndList->Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
+			PlayerEndList.Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
 
-			if ( PlayerEndList->iCount >= PlayerList->iCount )
+			if ( PlayerEndList.iCount >= PlayerList->iCount )
 			{
-				while ( PlayerEndList->iCount )
+				while ( PlayerEndList.iCount )
 				{
-					PlayerEndList->Delete ( 0 );
+					PlayerEndList.Delete ( 0 );
 				}
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
@@ -942,7 +941,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 			else
 			{
-				if ( PlayerEndList->iCount == 1 )
+				if ( PlayerEndList.iCount == 1 )
 				{
 					sendTurnFinished ( iPlayerNum, iTurnDeadline );
 					iDeadlineStartTime = SDL_GetTicks();
@@ -1166,9 +1165,9 @@ void cServer::checkDeadline ()
 	{
 		if ( SDL_GetTicks() - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
-			while ( PlayerEndList->iCount )
+			while ( PlayerEndList.iCount )
 			{
-				PlayerEndList->Delete ( 0 );
+				PlayerEndList.Delete ( 0 );
 			}
 			string sReportMsg = "";
 			int iVoiceNum;

@@ -106,7 +106,7 @@ private:
 	/** the type of the current game */
 	int iGameType;
 	/** a list with the numbers of all players who have ended theire turn */
-	cList<int*> *PlayerEndList;
+	cList<int*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;
 	/** deadline in seconds if the first player has finished his turn*/
