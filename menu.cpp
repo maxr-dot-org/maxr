@@ -520,8 +520,7 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPHostPressed )
 			{
-				MultiPlayerMenu = new cMultiPlayerMenu;
-				MultiPlayerMenu->runNetworkMenu( true );
+				MultiPlayerMenu = new cMultiPlayerMenu(true);
 				break;
 			}
 		}
@@ -553,8 +552,7 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPClientPressed )
 			{
-				MultiPlayerMenu = new cMultiPlayerMenu;
-				MultiPlayerMenu->runNetworkMenu( false );
+				MultiPlayerMenu = new cMultiPlayerMenu(false);
 				break;
 			}
 		}
@@ -4213,7 +4211,7 @@ void cMultiPlayerMenu::showChatLog()
 	mouse->draw( false, screen );
 }
 
-void cMultiPlayerMenu::runNetworkMenu( bool bHost )
+cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
 	this->bHost = bHost;
 	init();

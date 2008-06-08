@@ -103,6 +103,10 @@ enum MESSAGE_TYPES
 
 class cMultiPlayerMenu
 {
+public:
+	cMultiPlayerMenu(bool bHost);
+
+private:
 	SDL_Surface *sfTmp;
 	bool bRefresh;
 	bool bHost;
@@ -145,7 +149,6 @@ class cMultiPlayerMenu
 
 public:
 	cList<cNetMessage*> *MessageList;
-	void runNetworkMenu( bool bHost );
 } EX *MultiPlayerMenu;
 
 // Prototypen ////////////////////////////////////////////////////////////////
