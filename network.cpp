@@ -21,7 +21,7 @@
 #include "events.h"
 #include "server.h"
 
-void cTCP::init()
+cTCP::cTCP()
 {
 	TCPMutex = SDL_CreateMutex();
 

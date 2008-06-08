@@ -92,6 +92,14 @@ struct sSocket
 */
 class cTCP
 {
+public:
+	/**
+	 * Creates the mutexes, initialises some variables and the sockets and starts the network thread.
+	 *@author alzi alias DoctorDeath
+	 */
+	cTCP();
+
+private:
 	SDL_mutex *TCPMutex;
 	bool bDataLocked;
 	bool bTCPLocked;
@@ -172,11 +180,6 @@ class cTCP
 	*/
 	int findNextMessageStart ( int iStartPos, char *data, int iLength );
 public:
-	/**
-	* Creates the mutexes, initialises some variables and the sockets and starts the network thread.
-	*@author alzi alias DoctorDeath
-	*/
-	void init();
 	/**
 	* Destroys the mutexes, the sockets and exits the network thread.
 	*@author alzi alias DoctorDeath

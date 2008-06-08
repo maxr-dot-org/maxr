@@ -4164,7 +4164,6 @@ void cMultiPlayerMenu::init()
 	iPort = SettingsData.iPort;
 
 	network = new cTCP;
-	network->init();
 }
 
 void cMultiPlayerMenu::kill()
