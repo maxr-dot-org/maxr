@@ -39,47 +39,31 @@
 #define MENU_OFFSET_X	( SettingsData.iScreenW / 2 - DIALOG_W / 2 )
 #define MENU_OFFSET_Y	( SettingsData.iScreenH / 2 - DIALOG_H / 2 )
 
-#ifdef WIN32
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "\\"
-	#endif
-	#ifndef TEXT_FILE_LF
-		#define TEXT_FILE_LF "\r\n"
-	#endif
-		// GFX On Demand /////////////////////////////////////////////////////////////
-	#define GFXOD_MAIN          "gfx\\main.pcx"
-	#define GFXOD_HELP          "gfx\\help_screen.pcx"
-	#define GFXOD_OPTIONS       "gfx\\options.pcx"
-	#define GFXOD_PLANET_SELECT "gfx\\planet_select.pcx"
-	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
-	#define GFXOD_PLAYERHS_SELECT "gfx\\hotseatplayers.pcx"
-	#define GFXOD_HANGAR        "gfx\\hangar.pcx"
-	#define GFXOD_MULT          "gfx\\multi.pcx"
-	#define GFXOD_DIALOG2		"gfx\\dialog2.pcx"
-	#define GFXOD_DIALOG4		"gfx\\dialog4.pcx"
-	#define GFXOD_DIALOG5		"gfx\\dialog5.pcx"
-	#define GFXOD_DIALOG6		"gfx\\dialog6.pcx"
-#else
-	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "//"
-	#endif
-	#ifndef TEXT_FILE_LF
-		#define TEXT_FILE_LF "\n"
-	#endif
-		// GFX On Demand /////////////////////////////////////////////////////////////
-	#define GFXOD_MAIN          "gfx//main.pcx"
-	#define GFXOD_HELP          "gfx//help_screen.pcx"
-	#define GFXOD_OPTIONS       "gfx//options.pcx"
-	#define GFXOD_PLANET_SELECT "gfx//planet_select.pcx"
-	#define GFXOD_PLAYER_SELECT "customgame_menu.pcx"
-	#define GFXOD_PLAYERHS_SELECT "gfx//hotseatplayers.pcx"
-	#define GFXOD_HANGAR        "gfx//hangar.pcx"
-	#define GFXOD_MULT          "gfx//multi.pcx"
-	#define GFXOD_DIALOG2		"gfx//dialog2.pcx"
-	#define GFXOD_DIALOG4		"gfx//dialog4.pcx"
-	#define GFXOD_DIALOG5		"gfx//dialog5.pcx"
-	#define GFXOD_DIALOG6		"gfx//dialog6.pcx"
+#ifndef PATH_DELIMITER
+#	define PATH_DELIMITER "/"
 #endif
+
+#ifndef TEXT_FILE_LF
+#	ifdef WIN32
+#		define TEXT_FILE_LF "\r\n"
+#	else
+#		define TEXT_FILE_LF "\n"
+#	endif
+#endif
+
+// GFX On Demand /////////////////////////////////////////////////////////////
+#define GFXOD_MAIN            "gfx/main.pcx"
+#define GFXOD_HELP            "gfx/help_screen.pcx"
+#define GFXOD_OPTIONS         "gfx/options.pcx"
+#define GFXOD_PLANET_SELECT   "gfx/planet_select.pcx"
+#define GFXOD_PLAYER_SELECT   "customgame_menu.pcx"
+#define GFXOD_PLAYERHS_SELECT "gfx/hotseatplayers.pcx"
+#define GFXOD_HANGAR          "gfx/hangar.pcx"
+#define GFXOD_MULT            "gfx/multi.pcx"
+#define GFXOD_DIALOG2         "gfx/dialog2.pcx"
+#define GFXOD_DIALOG4         "gfx/dialog4.pcx"
+#define GFXOD_DIALOG5         "gfx/dialog5.pcx"
+#define GFXOD_DIALOG6         "gfx/dialog6.pcx"
 
 // We have to take care of these manually !
 #ifdef RELEASE
