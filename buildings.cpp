@@ -6525,6 +6525,13 @@ void cBuilding::RotateTo ( int Dir )
 
 struct sBuildStruct
 {
+public:
+	sBuildStruct(SDL_Surface* const sf_, int const id_, int const iRemainingMetal_ = -1) :
+		sf(sf_),
+		id(id_),
+		iRemainingMetal(iRemainingMetal_)
+	{}
+
 	SDL_Surface *sf;
 	int id;
 	int iRemainingMetal;
@@ -6610,7 +6617,6 @@ void cBuilding::ShowBuildMenu ( void )
 
 	for ( i = 0;i < UnitsData.vehicle_anz;i++ )
 	{
-		sBuildStruct *n;
 		SDL_Surface *sf;
 		bool land = false, water = false;
 
@@ -6684,12 +6690,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 
-		n = new sBuildStruct;
-
-		n->sf = sf;
-
-		n->id = i;
-
+		sBuildStruct* const n = new sBuildStruct(sf, i);
 		images.Add( n );
 	}
 
@@ -6702,10 +6703,6 @@ void cBuilding::ShowBuildMenu ( void )
 		sBuildList *ptr;
 		ptr = BuildList->Items[i];
 
-		sBuildStruct *n;
-		n = new sBuildStruct;
-		n->iRemainingMetal = ptr->metall_remaining;
-
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
@@ -6716,8 +6713,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 			if ( UnitsData.vehicle[bs->id].nr == ptr->typ->nr )
 			{
-				n->id = images.Items[k]->id;
-				n->sf = images.Items[k]->sf;
+				sBuildStruct* const n = new sBuildStruct(images.Items[k]->sf, images.Items[k]->id, ptr->metall_remaining);
 				to_build.Add ( n );
 
 				break;
@@ -6972,11 +6968,7 @@ void cBuilding::ShowBuildMenu ( void )
 			if ( BauenPressed && !b && LastB )
 			{
 				// Vehicle in die Bauliste aufnehmen:
-				sBuildStruct *n = new sBuildStruct;
-				n->id = images.Items[selected]->id;
-				n->sf = images.Items[selected]->sf;
-				n->iRemainingMetal = -1;
-
+				sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
 				to_build.Add ( n );
 
 				if ( to_build.iCount > build_offset + 5 )
@@ -7266,11 +7258,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( nr == selected ) && showDetailsBuildlist )
 				{
 					//insert selected Vehicle in to_build list
-					sBuildStruct *n = new sBuildStruct;
-					n->id = images.Items[selected]->id;
-					n->sf = images.Items[selected]->sf;
-					n->iRemainingMetal = -1;
-
+					sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
 					to_build.Add ( n );
 
 					if ( to_build.iCount > build_offset + 5 )
