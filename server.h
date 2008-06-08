@@ -237,7 +237,7 @@ public:
 	/** the map */
 	cMap *Map;
 	/** List with all attackjobs */
-	cList<cServerAttackJob*> *AJobs;
+	cList<cServerAttackJob*> AJobs;
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */

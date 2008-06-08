@@ -50,7 +50,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 10; // just temporary set to 10 seconds
-	AJobs = new cList<cServerAttackJob*>;
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
@@ -447,12 +446,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( bIsVehicle )
 			{
 				if ( !attackingVehicle->CanAttackObject( targetOffset ) ) break;
-				AJobs->Add( new cServerAttackJob( attackingVehicle, targetOffset ));
+				AJobs.Add( new cServerAttackJob( attackingVehicle, targetOffset ));
 			}
 			else
 			{
 				if ( !attackingBuilding->CanAttackObject( targetOffset ) ) break;
-				AJobs->Add( new cServerAttackJob( attackingBuilding, targetOffset ));
+				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset ));
 			}
 
 		}
