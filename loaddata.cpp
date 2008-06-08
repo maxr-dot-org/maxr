@@ -23,6 +23,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "buildings.h"
 #include "extendedtinyxml.h"
 #include "loaddata.h"
 #include "files.h"

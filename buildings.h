@@ -20,7 +20,6 @@
 #define buildingsH
 #include "defines.h"
 #include "sound.h"
-#include "player.h"
 #include "main.h"
 #include "SDL.h"
 #include "base.h"

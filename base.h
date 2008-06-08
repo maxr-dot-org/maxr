@@ -20,7 +20,6 @@
 #define baseH
 #include "defines.h"
 #include "SDL.h"
-#include "player.h"
 #include "buildings.h"
 
 class cPlayer;

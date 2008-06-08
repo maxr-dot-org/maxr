@@ -656,7 +656,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 	}
 	if ( !init ) n->StartUp=10;
 	// Das Gebäude in die Basis integrieren:
-	p->base->AddBuilding ( n );
+	p->base.AddBuilding ( n );
 }
 
 // Wird aufgerufen, wenn ein Objekt zerstört werden soll:
@@ -789,10 +789,7 @@ void cEngine::DestroyObject ( int off,bool air )
 			if ( building->next ) building->next->prev=NULL;
 		}
 		// Die Basis neu berechnen:
-		if ( building->owner->base )
-		{
-			building->owner->base->DeleteBuilding ( building );
-		}
+		building->owner->base.DeleteBuilding ( building );
 		// Annimation abspielen:
 		if ( !building->data.is_big )
 		{
@@ -1122,7 +1119,7 @@ void cEngine::Rundenende ( void )
 	}
 
 	// Rohstoffe produzieren:
-	game->ActivePlayer->base->Rundenende();
+	game->ActivePlayer->base.Rundenende();
 
 	// Forschen:
 	game->ActivePlayer->DoResearch();

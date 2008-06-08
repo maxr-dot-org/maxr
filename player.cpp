@@ -24,7 +24,8 @@
 #include "serverevents.h"
 
 // Funktionen der Player-Klasse //////////////////////////////////////////////
-cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
+cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
+	base(this)
 {
 	int i;
 	name=Name;
@@ -50,7 +51,6 @@ cPlayer::cPlayer ( string Name,SDL_Surface *Color,int nr, int iSocketNum )
 	VehicleList=NULL;
 	BuildingList=NULL;
 	ResourceMap=NULL;
-	base=new cBase ( this );
 	ResearchCount=0;
 	UnusedResearch=0;
 	Credits=0;
@@ -116,7 +116,6 @@ cPlayer::~cPlayer ( void )
 	if ( WachMapAir ) free ( WachMapAir );
 	if ( WachMapGround ) free ( WachMapGround );
 	if ( ResourceMap ) free ( ResourceMap );
-	delete base;
 
 	if ( DetectLandMap ) free ( DetectLandMap );
 	if ( DetectSeaMap ) free ( DetectSeaMap );
@@ -169,7 +168,7 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 	ResourceMap= ( char* ) malloc ( MapSize );
 	memset ( ResourceMap,0,MapSize );
 
-	base->map = map;
+	base.map = map;
 	// Wach-Map:
 	WachMapAir= ( char* ) malloc ( MapSize );
 	memset ( WachMapAir,0,MapSize );
@@ -198,7 +197,7 @@ cBuilding *cPlayer::AddBuilding ( int posx,int posy,sBuilding *b )
 {
 	cBuilding *n;
 
-	n=new cBuilding ( b,this,base );
+	n=new cBuilding ( b,this,&base );
 	n->PosX=posx;
 	n->PosY=posy;
 	n->prev=NULL;

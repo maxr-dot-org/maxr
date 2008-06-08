@@ -21,7 +21,6 @@
 #include "defines.h"
 #include "SDL.h"
 #include "main.h"
-#include "player.h"
 #include "sound.h"
 #include "automjobs.h"
 

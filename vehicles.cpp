@@ -4369,16 +4369,16 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 					{
 						if ( data.can_transport == TRANS_METAL )
 						{
-							pb->owner->base->AddMetal ( pb->SubBase, Transf );
+							pb->owner->base.AddMetal ( pb->SubBase, Transf );
 						}
 						else
 							if ( data.can_transport == TRANS_OIL )
 							{
-								pb->owner->base->AddOil ( pb->SubBase, Transf );
+								pb->owner->base.AddOil ( pb->SubBase, Transf );
 							}
 							else
 							{
-								pb->owner->base->AddGold ( pb->SubBase, Transf );
+								pb->owner->base.AddGold ( pb->SubBase, Transf );
 							}
 					}
 

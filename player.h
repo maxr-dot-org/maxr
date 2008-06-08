@@ -33,7 +33,6 @@ struct sBuilding;
 class cVehicle;
 class cBuilding;
 class cEngine;
-class cBase;
 
 // Die Wachposten Struktur ///////////////////////////////////////////////////
 struct sWachposten{
@@ -75,7 +74,7 @@ public:
   int MapSize;               // Kartengröße
   char *ScanMap;             // Map mit dem Scannerflags.
   char *ResourceMap;         // Map mit aufgedeckten Resourcen.
-  cBase *base;               // Die Basis dieses Spielers.
+  cBase base;               // Die Basis dieses Spielers.
   cList<sWachposten*> WachpostenAir;      // Liste mit den Vehicles/Buildings auf Wachposten.
   char *WachMapAir;          // Map mit dem abgedeckten Bereich.
   cList<sWachposten*> WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.

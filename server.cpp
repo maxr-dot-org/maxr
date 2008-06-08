@@ -553,7 +553,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 						addUnit ( iX+k, iY+i+1, UnitsData.building+BNrSmallGen, Player, true );
 						addUnit ( iX+k+1, iY+i, UnitsData.building+BNrMine, Player, true );
 						Building = Map->GO[iX+k+ ( iY+i ) *Map->size].top;
-						Player->base->AddOil ( Building->SubBase, 4 );
+						Player->base.AddOil ( Building->SubBase, 4 );
 						// TODO: send message that oil should be added here
 						break;
 					}
@@ -691,7 +691,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	// intigrate the building to the base:
-	Player->base->AddBuilding ( AddedBuilding );
+	Player->base.AddBuilding ( AddedBuilding );
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 }

@@ -414,7 +414,7 @@ void cGame::Run ( void )
 		}
 		if ( DebugBase&&fDrawMap )
 		{
-			font->showText(550, DebugOff, "subbases: " + iToStr(ActivePlayer->base->SubBases.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, DebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.iCount), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 
@@ -1655,7 +1655,7 @@ void cGame::MakeLanding ( int x,int y, cPlayer *p, cList<sLanding*> *list, bool 
 						game->engine->AddBuilding ( x+k,y+i+1,UnitsData.building+BNrSmallGen,p,true );
 						game->engine->AddBuilding ( x+k+1,y+i,UnitsData.building+BNrMine,p,true );
 						b=game->map->GO[x+k+ ( y+i ) *game->map->size].top;
-						p->base->AddOil ( b->SubBase,4 );
+						p->base.AddOil ( b->SubBase,4 );
 						break;
 					}
 				}
@@ -3684,15 +3684,15 @@ void cGame::Load ( string name,int AP,bool MP )
 					b->data.cargo=0;
 					if(b->data.can_load==TRANS_METAL)
 					{
-						b->owner->base->AddMetal(b->SubBase,c);
+						b->owner->base.AddMetal(b->SubBase,c);
 					}
 					else if(b->data.can_load==TRANS_OIL)
 					{
-						b->owner->base->AddOil(b->SubBase,c);
+						b->owner->base.AddOil(b->SubBase,c);
 					}
 					else if(b->data.can_load==TRANS_GOLD)
 					{
-						b->owner->base->AddGold(b->SubBase,c);
+						b->owner->base.AddGold(b->SubBase,c);
 					}
 				}
 
@@ -3756,7 +3756,7 @@ void cGame::Load ( string name,int AP,bool MP )
 	{
 		cPlayer *p;
 		p=PlayerList->Items[i];
-		p->base->RefreshSubbases();
+		p->base.RefreshSubbases();
 	}
 
 	// Sich um die gespeicherten Vehicle kümmern:
@@ -4112,7 +4112,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	ShowOK ( stmp,true );
 	if ( HotSeatPlayer!=0 )
 	{
-		ActivePlayer->base->Rundenende();
+		ActivePlayer->base.Rundenende();
 		ActivePlayer->DoResearch();
 		if ( SelectedVehicle ) SelectedVehicle->ShowDetails();
 		else if ( SelectedBuilding ) SelectedBuilding->ShowDetails();

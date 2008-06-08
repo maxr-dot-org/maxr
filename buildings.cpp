@@ -1889,15 +1889,15 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 						{
 
 							case TRANS_METAL:
-								owner->base->AddMetal ( SubBase, -Transf );
+								owner->base.AddMetal ( SubBase, -Transf );
 								break;
 
 							case TRANS_OIL:
-								owner->base->AddOil ( SubBase, -Transf );
+								owner->base.AddOil ( SubBase, -Transf );
 								break;
 
 							case TRANS_GOLD:
-								owner->base->AddGold ( SubBase, -Transf );
+								owner->base.AddGold ( SubBase, -Transf );
 								break;
 						}
 
@@ -2764,7 +2764,7 @@ void cBuilding::ShowStorage ( void )
 				if ( v->data.ammo != v->data.max_ammo )
 				{
 					v->data.ammo = v->data.max_ammo;
-					owner->base->AddMetal ( SubBase, -2 );
+					owner->base.AddMetal ( SubBase, -2 );
 					SendUpdateStored ( i );
 
 					if ( SubBase->Metal < 2 )
@@ -2801,7 +2801,7 @@ void cBuilding::ShowStorage ( void )
 				if ( v->data.hit_points != v->data.max_hit_points )
 				{
 					v->data.hit_points = v->data.max_hit_points;
-					owner->base->AddMetal ( SubBase, -2 );
+					owner->base.AddMetal ( SubBase, -2 );
 					SendUpdateStored ( i );
 
 					if ( SubBase->Metal < 2 )
@@ -2836,7 +2836,7 @@ void cBuilding::ShowStorage ( void )
 					Update ( v->data, owner->VehicleData[v->typ->nr] )
 
 					v->GenerateName();
-					owner->base->AddMetal ( SubBase, -2 );
+					owner->base.AddMetal ( SubBase, -2 );
 					SendUpdateStored ( i );
 
 					if ( SubBase->Metal < 2 )
@@ -2970,7 +2970,7 @@ void cBuilding::ShowStorage ( void )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
 
-				owner->base->AddMetal ( SubBase, -2 );
+				owner->base.AddMetal ( SubBase, -2 );
 				v->data.hit_points = v->data.max_hit_points;
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOIRepaired );
@@ -2991,7 +2991,7 @@ void cBuilding::ShowStorage ( void )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
 
-				owner->base->AddMetal ( SubBase, -2 );
+				owner->base.AddMetal ( SubBase, -2 );
 				v->data.ammo = v->data.max_ammo;
 				DrawStored ( offset );
 				PlayVoice ( VoiceData.VOILoaded );
@@ -3012,7 +3012,7 @@ void cBuilding::ShowStorage ( void )
 
 				Update ( v->data, owner->VehicleData[v->typ->nr] )
 				v->GenerateName();
-				owner->base->AddMetal ( SubBase, -2 );
+				owner->base.AddMetal ( SubBase, -2 );
 				DrawStored ( offset );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
@@ -8286,9 +8286,9 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			for (i = 0; i < owner->base->SubBases.iCount; ++i)
+			for (i = 0; i < owner->base.SubBases.iCount; ++i)
 			{
-				sSubBase* const sb = owner->base->SubBases.Items[i];
+				sSubBase* const sb = owner->base.SubBases.Items[i];
 
 				for ( k = 0;k < sb->buildings.iCount;k++ )
 				{
@@ -8310,7 +8310,7 @@ void cBuilding::DrawMenu ( void )
 					if ( b ==  Client->SelectedBuilding )
 						ShowDetails();
 
-					owner->base->AddMetal ( SubBase, -2 );
+					owner->base.AddMetal ( SubBase, -2 );
 
 					count++;
 				}
@@ -8344,7 +8344,7 @@ void cBuilding::DrawMenu ( void )
 
 			UpdateBuilding ( data, owner->BuildingData[typ->nr] );
 			GenerateName();
-			owner->base->AddMetal ( SubBase, -2 );
+			owner->base.AddMetal ( SubBase, -2 );
 
 			if ( this ==  Client->SelectedBuilding )
 				ShowDetails();
