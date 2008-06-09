@@ -23,31 +23,16 @@
 #include "client.h"
 
 
-void cEventHandling::pumpEvents()
-{
-	SDL_PumpEvents();
-}
-
-void cEventHandling::waitEvent(SDL_Event* const e)
-{
-	while (SDL_WaitEvent(e) == 0) {}
-}
-
-int cEventHandling::pollEvent(SDL_Event* const e)
-{
-	return SDL_PollEvent(e);
-}
-
 void cEventHandling::pushEvent(SDL_Event* const e)
 {
 	while (SDL_PushEvent(e) != 0) {}
 	delete e;
 }
 
-int cEventHandling::HandleEvents()
+void cEventHandling::HandleEvents()
 {
 	SDL_Event event;
-	while ( pollEvent ( &event ) )
+	while (SDL_PollEvent(&event))
 	{
 		switch ( event.type )
 		{
@@ -146,5 +131,4 @@ int cEventHandling::HandleEvents()
 			break;
 		}
 	}
-	return 0;
 }

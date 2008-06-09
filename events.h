@@ -35,28 +35,6 @@ class cEventHandling
 {
 public:
 	/**
-	 * Pushes all events from the input devices to the event queue.
-	 * @author alzi alias DoctorDeath
-	 */
-	void pumpEvents();
-
-	/**
-	 * Checks wether there are any events in the event queue
-	 * and if there are it puts the first one to the pointer 'event'.
-	 * @author alzi alias DoctorDeath
-	 * @param event pointer were the found event should be stored in.
-	 * @return see SDL_PollEvent
-	 */
-	int pollEvent(SDL_Event*);
-
-	/**
-	 * Waits until an event is placed in the queue and then copies it to the pointer 'event'
-	 * @author alzi alias DoctorDeath
-	 * @param event pointer were the found event should be stored in.
-	 */
-	void waitEvent(SDL_Event*);
-
-	/**
 	 * Places the event in the event queue.
 	 * If the event queue is full it waits until there is room in the queue.
 	 * @author alzi alias DoctorDeath
@@ -69,7 +47,7 @@ public:
 	 * Should be the only functions which polls the event queue.
 	 * @author alzi alias DoctorDeath
 	 */
-	int HandleEvents();
+	void HandleEvents();
 } EX *EventHandler;
 
 #endif
