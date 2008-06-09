@@ -105,6 +105,9 @@ class cMultiPlayerMenu
 {
 public:
 	cMultiPlayerMenu(bool bHost);
+	~cMultiPlayerMenu();
+
+	void runNetworkMenu();
 
 private:
 	SDL_Surface *sfTmp;
@@ -127,9 +130,6 @@ private:
 	cPlayer *ActualPlayer;
 	cList<string> *ChatLog;
 	cList<sClientLandData*> *ClientDataList;
-
-	void init();
-	void kill();
 
 	void addChatLog( string sMsg );
 	void showChatLog();

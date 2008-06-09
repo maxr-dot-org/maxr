@@ -520,7 +520,10 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPHostPressed )
 			{
-				MultiPlayerMenu = new cMultiPlayerMenu(true);
+				cMultiPlayerMenu m(true);
+				MultiPlayerMenu = &m;
+				m.runNetworkMenu();
+				MultiPlayerMenu = 0;
 				break;
 			}
 		}
@@ -552,7 +555,10 @@ void RunMPMenu ( void )
 			}
 			else if ( !b&&TCPClientPressed )
 			{
-				MultiPlayerMenu = new cMultiPlayerMenu(false);
+				cMultiPlayerMenu m(false);
+				MultiPlayerMenu = &m;
+				m.runNetworkMenu();
+				MultiPlayerMenu = 0;
 				break;
 			}
 		}
@@ -4138,8 +4144,9 @@ int GetColorNr ( SDL_Surface *sf )
 	return cl_red;
 }
 
-void cMultiPlayerMenu::init()
+cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
+	this->bHost = bHost;
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 	PlayerList = new cList<cPlayer*>;
 	ChatLog = new cList<string>;
@@ -4160,7 +4167,7 @@ void cMultiPlayerMenu::init()
 	network = new cTCP;
 }
 
-void cMultiPlayerMenu::kill()
+cMultiPlayerMenu::~cMultiPlayerMenu()
 {
 	delete network;
 	network = NULL;
@@ -4207,11 +4214,8 @@ void cMultiPlayerMenu::showChatLog()
 	mouse->draw( false, screen );
 }
 
-cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
+void cMultiPlayerMenu::runNetworkMenu()
 {
-	this->bHost = bHost;
-	init();
-
 	bool bPlanetSelPressed = false, bOptionsPressed = false, bStartHostConnect = false, bSendPressed = false;
 	bool bLoadPressed = false, bOKPressed = false, bBackPressed = false, bShowCursor = true;
 	int b, lb = 0, lx = -1, ly = -1;
@@ -5031,7 +5035,6 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 		SDL_Delay ( 1 );
 	}
 	SDL_FreeSurface(sfTmp);
-	kill();
 }
 
 void cMultiPlayerMenu::HandleMessages()
