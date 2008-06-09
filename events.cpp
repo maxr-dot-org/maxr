@@ -30,49 +30,16 @@ Uint32 eventTimerCallback(Uint32 interval, void *param)
 
 cEventHandling::cEventHandling()
 {
-	EventLock = NULL;
-	EventWait = NULL;
-	EventTimer = 0;
-	init();
+	EventLock  = SDL_CreateMutex();
+	EventWait  = SDL_CreateCond();
+	EventTimer = SDL_AddTimer(10, eventTimerCallback, NULL);
 }
 
 cEventHandling::~cEventHandling()
 {
-	quit();
-}
-
-int cEventHandling::init()
-{
-	EventLock = SDL_CreateMutex();
-	if ( EventLock == NULL )
-	{
-		return -1;
-	}
-
-	EventWait = SDL_CreateCond();
-	if ( EventWait == NULL )
-	{
-		return -1;
-	}
-
-	EventTimer = SDL_AddTimer(10, eventTimerCallback, NULL);
-	if ( EventTimer == NULL  )
-	{
-		return -1;
-	}
-
-	return 0;
-}
-
-void cEventHandling::quit()
-{
-	SDL_DestroyMutex( EventLock );
-	EventLock = NULL;
-
-	SDL_DestroyCond( EventWait );
-	EventWait = NULL;
-
-	SDL_RemoveTimer( EventTimer );
+	SDL_DestroyMutex(EventLock);
+	SDL_DestroyCond(EventWait);
+	SDL_RemoveTimer(EventTimer);
 }
 
 void cEventHandling::pumpEvents()

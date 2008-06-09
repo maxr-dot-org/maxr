@@ -42,17 +42,6 @@ public:
 	~cEventHandling();
 
 	/**
-	* Initialises the mutexes and starts the timer.
-	*@author alzi alias DoctorDeath
-	*/
-	int init();
-	/**
-	* Destroys the mutexes and removes the timer.
-	*@author alzi alias DoctorDeath
-	*/
-	void quit();
-
-	/**
 	* Pushes all events from the input devices to the event queue.
 	*@author alzi alias DoctorDeath
 	*/
