@@ -56,8 +56,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 
 	//NetMessageQueue = new cList<cNetMessage*>;
 
-	QueueMutex = SDL_CreateMutex ();
-
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
 
@@ -79,8 +77,6 @@ cServer::~cServer()
 		NetMessageQueue->Delete(0);
 	}
 	delete NetMessageQueue; */
-
-	SDL_DestroyMutex ( QueueMutex );
 }
 
 
@@ -100,11 +96,10 @@ SDL_Event* cServer::pollEvent()
 		return NULL;
 	}
 
-	SDL_LockMutex( QueueMutex );
+	cMutex::Lock l(QueueMutex);
 	event = EventQueue.Items[0];
 	lastEvent = event;
 	EventQueue.Delete( 0 );
-	SDL_UnlockMutex( QueueMutex );
 	return event;
 }
 
@@ -115,28 +110,24 @@ cNetMessage* cServer::pollNetMessage()
 		return NULL;
 
 	cNetMessage* message;
-	SDL_LockMutex( QueueMutex );
+	cMutex::Lock l(QueueMutex);
 	message = NetMessageQueue->Items[0];
 	NetMessageQueue->Delete(0);
-	SDL_UnlockMutex( QueueMutex );
 	return message;
 }
 */
 
 int cServer::pushEvent( SDL_Event *event )
 {
-	SDL_LockMutex( QueueMutex );
+	cMutex::Lock l(QueueMutex);
 	EventQueue.Add ( event );
-	SDL_UnlockMutex( QueueMutex );
 	return 0;
 }
 
 /*int cServer::pushNetMessage( cNetMessage* message )
 {
-	SDL_LockMutex( QueueMutex );
+	cMutex::Lock l(QueueMutex);
 	NetMessageQueue->Add( message );
-	SDL_UnlockMutex( QueueMutex );
-
 	return 0;
 }
 */

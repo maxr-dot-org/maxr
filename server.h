@@ -18,6 +18,7 @@
  ***************************************************************************/
 #ifndef serverH
 #define serverH
+#include "cmutex.h"
 #include "defines.h"
 #include "main.h"
 #include "map.h"
@@ -82,7 +83,7 @@ private:
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
 	/** mutex for the eventqueue */
-	SDL_mutex *QueueMutex;
+	cMutex QueueMutex;
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
