@@ -4148,7 +4148,6 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
 	this->bHost = bHost;
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
-	ChatLog = new cList<string>;
 	MessageList = new cList<cNetMessage*>;
 	PlayerList.Add ( ActualPlayer );
 	iNextPlayerNr = 1;
@@ -4173,19 +4172,18 @@ cMultiPlayerMenu::~cMultiPlayerMenu()
 
 	while ( PlayerList.iCount ) PlayerList.Delete ( PlayerList.iCount-1 );
 
-	while ( ChatLog->iCount ) ChatLog->Delete ( ChatLog->iCount-1 );
-	delete ChatLog;
+	while ( ChatLog.iCount ) ChatLog.Delete ( ChatLog.iCount-1 );
 }
 
 void cMultiPlayerMenu::addChatLog( string sMsg )
 {
 	// Delete old chat messages
-	while( ChatLog->iCount > 7 )
+	while( ChatLog.iCount > 7 )
 	{
-		ChatLog->Delete( 0 );
+		ChatLog.Delete( 0 );
 	}
 	// Add the new message
-	ChatLog->Add ( sMsg );
+	ChatLog.Add ( sMsg );
 }
 
 void cMultiPlayerMenu::showChatLog()
@@ -4199,9 +4197,9 @@ void cMultiPlayerMenu::showChatLog()
 	rect.h = 110;
 	SDL_BlitSurface( sfTmp, &rect, buffer, &rect );
 	// now fill chat window new
-	for( int i = 0; i < ChatLog->iCount; i++ )
+	for( int i = 0; i < ChatLog.iCount; i++ )
 	{
-		sMsg = ChatLog->Items[ChatLog->iCount-1-i];
+		sMsg = ChatLog.Items[ChatLog.iCount-1-i];
 		while ( font->getTextWide( sMsg ) > 410 )
 		{
 			sMsg.erase( sMsg.length()-1 );

@@ -128,7 +128,7 @@ private:
 	bool *ReadyList;
 	int iNextPlayerNr;
 	cPlayer *ActualPlayer;
-	cList<string> *ChatLog;
+	cList<string> ChatLog;
 	cList<sClientLandData*> *ClientDataList;
 
 	void addChatLog( string sMsg );
