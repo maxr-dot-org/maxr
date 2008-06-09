@@ -124,7 +124,7 @@ private:
 	cMap *Map;
 	sOptions Options;
 
-	cList<cPlayer*> *PlayerList;
+	cList<cPlayer*> PlayerList;
 	bool *ReadyList;
 	int iNextPlayerNr;
 	cPlayer *ActualPlayer;

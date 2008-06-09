@@ -4148,10 +4148,9 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
 	this->bHost = bHost;
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
-	PlayerList = new cList<cPlayer*>;
 	ChatLog = new cList<string>;
 	MessageList = new cList<cNetMessage*>;
-	PlayerList->Add ( ActualPlayer );
+	PlayerList.Add ( ActualPlayer );
 	iNextPlayerNr = 1;
 	ReadyList = (bool *) malloc ( sizeof( bool ) );
 	ReadyList[0] = false;
@@ -4172,8 +4171,7 @@ cMultiPlayerMenu::~cMultiPlayerMenu()
 	delete network;
 	network = NULL;
 
-	while ( PlayerList->iCount ) PlayerList->Delete ( PlayerList->iCount-1 );
-	delete PlayerList;
+	while ( PlayerList.iCount ) PlayerList.Delete ( PlayerList.iCount-1 );
 
 	while ( ChatLog->iCount ) ChatLog->Delete ( ChatLog->iCount-1 );
 	delete ChatLog;
@@ -4448,7 +4446,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				}
 				else if ( ( iPlayerNum = testAllReady() ) != -1 )
 				{
-					addChatLog ( PlayerList->Items[iPlayerNum]->name + " " + lngPack.i18n ( "Text~Multiplayer~Not_Ready" ) );
+					addChatLog ( PlayerList.Items[iPlayerNum]->name + " " + lngPack.i18n ( "Text~Multiplayer~Not_Ready" ) );
 				}
 				else
 				{
@@ -4727,9 +4725,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 					if ( ChatStr.compare( "/ready" ) == 0 )
 					{
 						int iPlayerIndex;
-						for ( iPlayerIndex = 0; iPlayerIndex < PlayerList->iCount; iPlayerIndex++ )
+						for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.iCount; iPlayerIndex++ )
 						{
-							if ( PlayerList->Items[iPlayerIndex] == ActualPlayer ) break;
+							if ( PlayerList.Items[iPlayerIndex] == ActualPlayer ) break;
 						}
 						ReadyList[iPlayerIndex] = !ReadyList[iPlayerIndex];
 						displayPlayerList();
@@ -4888,9 +4886,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 					// copy playerlist for client
 					cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
 					cPlayer *ActualPlayerClient;
-					for ( int i = 0; i < PlayerList->iCount; i++ )
+					for ( int i = 0; i < PlayerList.iCount; i++ )
 					{
-						ClientPlayerList->Add ( new cPlayer( PlayerList->Items[i]->name, PlayerList->Items[i]->color, PlayerList->Items[i]->Nr, PlayerList->Items[i]->iSocketNum ) );
+						ClientPlayerList->Add ( new cPlayer( PlayerList.Items[i]->name, PlayerList.Items[i]->color, PlayerList.Items[i]->Nr, PlayerList.Items[i]->iSocketNum ) );
 						if ( ClientPlayerList->Items[i]->Nr == ActualPlayer->Nr ) ActualPlayerClient = ClientPlayerList->Items[i];
 					}
 					// init client and his player
@@ -4905,14 +4903,14 @@ void cMultiPlayerMenu::runNetworkMenu()
 					if ( bHost )
 					{
 						// init the players of playerlist
-						for ( int i = 0; i < PlayerList->iCount; i++ )
+						for ( int i = 0; i < PlayerList.iCount; i++ )
 						{
-							PlayerList->Items[i]->InitMaps ( ServerMap->size, ServerMap );
-							PlayerList->Items[i]->Credits = Options.credits;
+							PlayerList.Items[i]->InitMaps ( ServerMap->size, ServerMap );
+							PlayerList.Items[i]->Credits = Options.credits;
 						}
 
 						// init server
-						Server = new cServer(ServerMap, PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
+						Server = new cServer(ServerMap, &PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
 					}
 
 					cList<sLanding*> LandingList;
@@ -4928,9 +4926,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 						font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
 						SHOW_SCREEN
 						ClientDataList = new cList<sClientLandData*>;
-						while ( ClientDataList->iCount < PlayerList->iCount-1 )
+						while ( ClientDataList->iCount < PlayerList.iCount-1 )
 						{
-							if ( network->getSocketCount() < PlayerList->iCount-1 )
+							if ( network->getSocketCount() < PlayerList.iCount-1 )
 							{
 								;// Should not happen oO :P
 							}
@@ -4955,11 +4953,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 						for ( int i = 0; i < ClientDataList->iCount; i++ )
 						{
 							cPlayer *Player;
-							for ( int n = 0; n < PlayerList->iCount; n++ )
+							for ( int n = 0; n < PlayerList.iCount; n++ )
 							{
-								if ( PlayerList->Items[n]->Nr == ClientDataList->Items[i]->iNr )
+								if ( PlayerList.Items[n]->Nr == ClientDataList->Items[i]->iNr )
 								{
-									Player = PlayerList->Items[n];
+									Player = PlayerList.Items[n];
 									break;
 								}
 							}
@@ -5010,10 +5008,10 @@ void cMultiPlayerMenu::runNetworkMenu()
 					Client->run();
 
 					SettingsData.sPlayerName = ActualPlayerClient->name;
-					while ( PlayerList->iCount )
+					while ( PlayerList.iCount )
 					{
-						delete ( PlayerList->Items[0] );
-						PlayerList->Delete ( 0 );
+						delete ( PlayerList.Items[0] );
+						PlayerList.Delete ( 0 );
 					}
 					delete Client;
 					Client = NULL;
@@ -5059,9 +5057,9 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_NEW_PLAYER:
 			{
 				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr, Message->popInt16() );
-				PlayerList->Add ( Player );
-				ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
-				ReadyList[PlayerList->iCount-1] = false;
+				PlayerList.Add ( Player );
+				ReadyList = (bool *)realloc ( ReadyList, PlayerList.iCount );
+				ReadyList[PlayerList.iCount-1] = false;
 				cNetMessage *SendMessage = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
 				SendMessage->pushInt16( iNextPlayerNr );
 				iNextPlayerNr++;
@@ -5071,13 +5069,13 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_DEL_PLAYER:
 			{
 				int iClientNum = Message->popInt16();
-				for ( int i = 0; i < PlayerList->iCount; i++ )
+				for ( int i = 0; i < PlayerList.iCount; i++ )
 				{
-					if ( PlayerList->Items[i]->iSocketNum == iClientNum )
+					if ( PlayerList.Items[i]->iSocketNum == iClientNum )
 					{
-						PlayerList->Delete ( i );
-						for (int j = i; j < PlayerList->iCount; j++ ) ReadyList[j] = ReadyList[j+1];
-						ReadyList = (bool *)realloc ( ReadyList, PlayerList->iCount );
+						PlayerList.Delete ( i );
+						for (int j = i; j < PlayerList.iCount; j++ ) ReadyList[j] = ReadyList[j+1];
+						ReadyList = (bool *)realloc ( ReadyList, PlayerList.iCount );
 					}
 				}
 				displayPlayerList();
@@ -5092,12 +5090,12 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				int iPlayerNum;
 				int iPlayerNr = Message->popInt16();
-				for ( iPlayerNum = 0; iPlayerNum < PlayerList->iCount; iPlayerNum++ )
+				for ( iPlayerNum = 0; iPlayerNum < PlayerList.iCount; iPlayerNum++ )
 				{
-					if ( PlayerList->Items[iPlayerNum]->Nr == iPlayerNr ) break;
+					if ( PlayerList.Items[iPlayerNum]->Nr == iPlayerNr ) break;
 				}
-				PlayerList->Items[iPlayerNum]->color = OtherData.colors[Message->popInt16()];
-				PlayerList->Items[iPlayerNum]->name = Message->popString();
+				PlayerList.Items[iPlayerNum]->color = OtherData.colors[Message->popInt16()];
+				PlayerList.Items[iPlayerNum]->name = Message->popString();
 				ReadyList[iPlayerNum] = Message->popBool();
 				displayPlayerList();
 				sendPlayerList();
@@ -5108,7 +5106,7 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				string str = Message->getHexDump();
 				int iPlayerCount = Message->popInt16();
-				while ( PlayerList->iCount > 0 ) PlayerList->Delete ( 0 );
+				while ( PlayerList.iCount > 0 ) PlayerList.Delete ( 0 );
 				ReadyList = (bool *)realloc( ReadyList, iPlayerCount );
 				for ( int i = 0; i < iPlayerCount; i++ )
 				{
@@ -5116,7 +5114,7 @@ void cMultiPlayerMenu::HandleMessages()
 					int iColor = Message->popInt16();
 					int iNr = Message->popInt16();
 					cPlayer *Player = new cPlayer ( sName, OtherData.colors[iColor], iNr );
-					PlayerList->Add ( Player );
+					PlayerList.Add ( Player );
 					if ( Player->Nr == ActualPlayer->Nr ) ActualPlayer = Player;
 					ReadyList[i] = Message->popBool();
 				}
@@ -5178,11 +5176,11 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				cPlayer *Player;
 				int iPlayerNr = Message->popInt16();
-				for ( int i = 0; i < PlayerList->iCount; i++ )
+				for ( int i = 0; i < PlayerList.iCount; i++ )
 				{
-					if ( PlayerList->Items[i]->Nr == iPlayerNr )
+					if ( PlayerList.Items[i]->Nr == iPlayerNr )
 					{
-						Player = PlayerList->Items[i];
+						Player = PlayerList.Items[i];
 						break;
 					}
 				}
@@ -5346,7 +5344,7 @@ void cMultiPlayerMenu::sendUpgrades()
 
 int cMultiPlayerMenu::testAllReady()
 {
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for ( int i = 0; i < PlayerList.iCount; i++ )
 	{
 		if ( ReadyList[i] != true ) return i;
 	}
@@ -5362,9 +5360,9 @@ void cMultiPlayerMenu::sendIdentification()
 	}
 
 	int iPlayerNum;
-	for ( iPlayerNum = 0; iPlayerNum < PlayerList->iCount; iPlayerNum++ )
+	for ( iPlayerNum = 0; iPlayerNum < PlayerList.iCount; iPlayerNum++ )
 	{
-		if ( PlayerList->Items[iPlayerNum] == ActualPlayer ) break;
+		if ( PlayerList.Items[iPlayerNum] == ActualPlayer ) break;
 	}
 	cNetMessage *Message = new cNetMessage ( MU_MSG_IDENTIFIKATION );
 	Message->pushBool ( ReadyList[iPlayerNum] );
@@ -5378,14 +5376,14 @@ void cMultiPlayerMenu::sendPlayerList()
 {
 	cNetMessage *Message = new cNetMessage ( MU_MSG_PLAYERLIST );
 
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for ( int i = 0; i < PlayerList.iCount; i++ )
 	{
 		Message->pushBool ( ReadyList[i] );
-		Message->pushInt16 ( PlayerList->Items[i]->Nr );
-		Message->pushInt16 ( GetColorNr( PlayerList->Items[i]->color ) );
-		Message->pushString ( PlayerList->Items[i]->name );
+		Message->pushInt16 ( PlayerList.Items[i]->Nr );
+		Message->pushInt16 ( GetColorNr( PlayerList.Items[i]->color ) );
+		Message->pushString ( PlayerList.Items[i]->name );
 	}
-	Message->pushInt16 ( PlayerList->iCount );
+	Message->pushInt16 ( PlayerList.iCount );
 	sendMessage ( Message );
 }
 
@@ -5547,10 +5545,10 @@ void cMultiPlayerMenu::displayPlayerList()
 	dest.w = dest.h = scr.w = scr.h = 10;
 	dest.x = 476;
 	dest.y = 297;
-	for( int i = 0; i < PlayerList->iCount; i++ )
+	for( int i = 0; i < PlayerList.iCount; i++ )
 	{
-		SDL_BlitSurface( PlayerList->Items[i]->color, &scr, buffer, &dest );
-		font->showText( dest.x+16, dest.y, PlayerList->Items[i]->name );
+		SDL_BlitSurface( PlayerList.Items[i]->color, &scr, buffer, &dest );
+		font->showText( dest.x+16, dest.y, PlayerList.Items[i]->name );
 
 		if ( ReadyList[i] == false ) scr.x = 0; // red if not ready
 		else scr.x = 10; // green if ready
