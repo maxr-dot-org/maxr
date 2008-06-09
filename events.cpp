@@ -63,24 +63,25 @@ void cEventHandling::HandleEvents()
 			case TCP_RECEIVEEVENT:
 				// new Data received
 				{
-				sDataBuffer *DataBuffer = new sDataBuffer;
-				memset ( DataBuffer->data, 0, PACKAGE_LENGHT );
 				if ( !network ) break;
-				if ( ( DataBuffer->iLenght = network->read ( SDL_SwapLE16( ((Sint16 *)event.user.data1)[0] ), ((Sint16 *)event.user.data1)[2], DataBuffer->data ) ) != 0 )
+				sDataBuffer DataBuffer;
+				memset(DataBuffer.data, 0, PACKAGE_LENGHT);
+				DataBuffer.iLenght = network->read(SDL_SwapLE16(((Sint16*)event.user.data1)[0]), ((Sint16*)event.user.data1)[2], DataBuffer.data);
+				if (DataBuffer.iLenght != 0)
 				{
 					// remove startcharacters from data
-					memmove( DataBuffer->data, (DataBuffer->data+2), DataBuffer->iLenght-2 );
-					DataBuffer->iLenght -= 2;
+					memmove(DataBuffer.data, DataBuffer.data + 2, DataBuffer.iLenght - 2);
+					DataBuffer.iLenght -= 2;
 
-					if ( SDL_SwapLE16( ((Sint16*)DataBuffer->data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
+					if (SDL_SwapLE16(((Sint16*)DataBuffer.data)[0]) < FIRST_MENU_MESSAGE) // Eventtypes for the client
 					{
 						// devite into messages
 						SDL_Event* NewEvent = new SDL_Event;
 						NewEvent->type = GAME_EVENT;
 						
 						// data1 is the real data
-						NewEvent->user.data1 = malloc ( DataBuffer->iLenght );
-						memcpy ( NewEvent->user.data1, DataBuffer->data, DataBuffer->iLenght );
+						NewEvent->user.data1 = malloc(DataBuffer.iLenght);
+						memcpy(NewEvent->user.data1, DataBuffer.data, DataBuffer.iLenght);
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );
@@ -89,12 +90,11 @@ void cEventHandling::HandleEvents()
 					{
 						if ( MultiPlayerMenu )
 						{
-							cNetMessage *Message = new cNetMessage ( (char*) DataBuffer->data );
+							cNetMessage* const Message = new cNetMessage((char*)DataBuffer.data);
 							Message->refertControlChars();
 							MultiPlayerMenu->MessageList->Add ( Message );
 						}
 					}
-					delete DataBuffer;
 				}
 				free ( event.user.data1 );
 				break;
