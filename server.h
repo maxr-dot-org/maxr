@@ -87,8 +87,6 @@ private:
 	bool bExit;
 
 
-	/** current movejob */
-	cMJobs *mjobs;
 	/** List with all active movejobs */
 	cList<cMJobs*> ActiveMJobs;
 	/** true if this is a hotseat game */
