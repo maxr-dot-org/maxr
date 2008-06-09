@@ -611,7 +611,7 @@ int cGame::CheckUser ( void )
 		if ( InputEnter )
 		{
 			ChatInput=false;
-			if ( !InputStr.empty() &&!DoCommand ( ( char * ) InputStr.c_str() ) )
+			if (!InputStr.empty() && !DoCommand(InputStr.c_str()))
 			{
 				engine->SendChatMessage((ActivePlayer->name+": "+InputStr).c_str());
 			}
@@ -1727,7 +1727,7 @@ void cGame::HandleMessages ( void )
 
 
 // Führt das übergebene Kommando aus, und gibt false zurück, falls es keins war:
-bool cGame::DoCommand ( char *cmd )
+bool cGame::DoCommand(char const* const cmd)
 {
 	if ( strcmp ( cmd,"fps on" ) ==0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
 	if ( strcmp ( cmd,"fps off" ) ==0 ) {DebugFPS=false;return true;}

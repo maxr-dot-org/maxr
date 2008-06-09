@@ -148,7 +148,7 @@ public:
   void DrawFLC(void);
   void HandleMessages(void);
   //void addMessage( string sMsg );
-  bool DoCommand(char *cmd);
+  bool DoCommand(char const* cmd);
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);
   void AddFX(eFXTyps typ,int x,int y,int param);
