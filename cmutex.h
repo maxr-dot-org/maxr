@@ -15,6 +15,8 @@ class cMutex
 
 		~cMutex() { SDL_DestroyMutex(mutex_); }
 
+		operator SDL_mutex*() { return mutex_; }
+
 		class Lock
 		{
 			public:

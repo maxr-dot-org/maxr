@@ -19,6 +19,7 @@
 
 #ifndef eventsH
 #define eventsH
+#include "cmutex.h"
 #include "defines.h"
 #include "main.h"
 
@@ -34,7 +35,7 @@ Uint32 eventTimerCallback(Uint32 interval, void *param);
 class cEventHandling
 {
 public:
-	SDL_mutex *EventLock;
+	cMutex EventLock;
 	SDL_cond *EventWait;
 	SDL_TimerID EventTimer;
 

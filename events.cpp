@@ -30,34 +30,31 @@ Uint32 eventTimerCallback(Uint32 interval, void *param)
 
 cEventHandling::cEventHandling()
 {
-	EventLock  = SDL_CreateMutex();
 	EventWait  = SDL_CreateCond();
 	EventTimer = SDL_AddTimer(10, eventTimerCallback, NULL);
 }
 
 cEventHandling::~cEventHandling()
 {
-	SDL_DestroyMutex(EventLock);
 	SDL_DestroyCond(EventWait);
 	SDL_RemoveTimer(EventTimer);
 }
 
 void cEventHandling::pumpEvents()
 {
-	SDL_LockMutex( EventLock );
+	cMutex::Lock l(EventLock);
 	SDL_PumpEvents();
-	SDL_UnlockMutex( EventLock );
 }
 
 int cEventHandling::waitEvent( SDL_Event *event )
 {
-	int iVal = 0;
-	SDL_LockMutex( EventLock );
-	while ( ( iVal = SDL_PollEvent( event ) ) <= 0 )
-	{
-		SDL_CondWait( EventWait, EventLock );
+	int iVal;
+	{ cMutex::Lock l(EventLock);
+		while ( ( iVal = SDL_PollEvent( event ) ) <= 0 )
+		{
+			SDL_CondWait( EventWait, EventLock );
+		}
 	}
-	SDL_UnlockMutex( EventLock );
 	SDL_CondSignal( EventWait );
 
 	return iVal;
@@ -65,11 +62,10 @@ int cEventHandling::waitEvent( SDL_Event *event )
 
 int cEventHandling::pollEvent( SDL_Event *event )
 {
-	int iVal = 0;
-
-	SDL_LockMutex ( EventLock );
-	iVal = SDL_PollEvent ( event );
-	SDL_UnlockMutex ( EventLock );
+	int iVal;
+	{ cMutex::Lock l(EventLock);
+		iVal = SDL_PollEvent ( event );
+	}
 
 	if ( 0 < iVal )
 	{
@@ -81,14 +77,14 @@ int cEventHandling::pollEvent( SDL_Event *event )
 
 int cEventHandling::pushEvent( SDL_Event *event )
 {
-	SDL_LockMutex( EventLock );
-	while ( SDL_PushEvent( event ) == -1 )
-	{
-		SDL_CondWait( EventWait, EventLock );
+	{ cMutex::Lock l(EventLock);
+		while ( SDL_PushEvent( event ) == -1 )
+		{
+			SDL_CondWait( EventWait, EventLock );
+		}
+		//since SDL_PushEvent() copies the event, the old one has to be deleted
+		delete event;
 	}
-	//since SDL_PushEvent() copies the event, the old one has to be deleted
-	delete event;
-	SDL_UnlockMutex( EventLock );
 	SDL_CondSignal( EventWait );
 
 	return 1;
