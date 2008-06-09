@@ -17,66 +17,59 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef eventsH
-#define eventsH
-#include "cmutex.h"
+#ifndef EVENTS_H
+#define EVENTS_H
+
 #include "defines.h"
 #include "main.h"
 
-#define NETWORK_EVENT	SDL_USEREVENT
-#define GAME_EVENT		SDL_USEREVENT+1
 
-Uint32 eventTimerCallback(Uint32 interval, void *param);
+#define NETWORK_EVENT	SDL_USEREVENT
+#define GAME_EVENT		(SDL_USEREVENT + 1)
 
 /**
-* Class for Event handling.
-*@author alzi alias DoctorDeath
-*/
+ * Class for Event handling.
+ *@author alzi alias DoctorDeath
+ */
 class cEventHandling
 {
 public:
-	cMutex EventLock;
-	SDL_cond *EventWait;
-	SDL_TimerID EventTimer;
-
-	cEventHandling();
-	~cEventHandling();
-
 	/**
-	* Pushes all events from the input devices to the event queue.
-	*@author alzi alias DoctorDeath
-	*/
+	 * Pushes all events from the input devices to the event queue.
+	 * @author alzi alias DoctorDeath
+	 */
 	void pumpEvents();
-	/**
-	* Checks wether there are any events in the event queue
-	* and if there are it puts the first one to the pointer 'event'.
-	*@author alzi alias DoctorDeath
-	*@param event pointer were the found event should be stored in.
-	*@return -1 if there are no events, else 1.
-	*/
-	int pollEvent( SDL_Event *event );
-	/**
-	* Waits until an event is placed in the queue and then copies it to the pointer 'event'
-	*@author alzi alias DoctorDeath
-	*@param event pointer were the found event should be stored in.
-	*@return always 1. If no events will be found it will never return.
-	*/
-	int waitEvent( SDL_Event *event );
-	/**
-	* Places the event in the event queue.
-	* If the event queue is full it waits until there is room in the queue.
-	*@author alzi alias DoctorDeath
-	*@param event pointer to event which should be pushed to the queue
-	*@return always 1. If there never will never be room for the queue it will never return.
-	*/
-	int pushEvent( SDL_Event *event );
 
 	/**
-	* Handles spacial game events and the network events.
-	* Should be the only funktions which polls the event queue.
-	*@author alzi alias DoctorDeath
-	*/
+	 * Checks wether there are any events in the event queue
+	 * and if there are it puts the first one to the pointer 'event'.
+	 * @author alzi alias DoctorDeath
+	 * @param event pointer were the found event should be stored in.
+	 * @return see SDL_PollEvent
+	 */
+	int pollEvent(SDL_Event*);
+
+	/**
+	 * Waits until an event is placed in the queue and then copies it to the pointer 'event'
+	 * @author alzi alias DoctorDeath
+	 * @param event pointer were the found event should be stored in.
+	 */
+	void waitEvent(SDL_Event*);
+
+	/**
+	 * Places the event in the event queue.
+	 * If the event queue is full it waits until there is room in the queue.
+	 * @author alzi alias DoctorDeath
+	 * @param event pointer to event which should be pushed to the queue
+	 */
+	void pushEvent(SDL_Event*);
+
+	/**
+	 * Handles spacial game events and the network events.
+	 * Should be the only functions which polls the event queue.
+	 * @author alzi alias DoctorDeath
+	 */
 	int HandleEvents();
 } EX *EventHandler;
 
-#endif // eventsH
+#endif

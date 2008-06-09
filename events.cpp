@@ -22,72 +22,26 @@
 #include "serverevents.h"
 #include "client.h"
 
-Uint32 eventTimerCallback(Uint32 interval, void *param)
-{
-	SDL_CondBroadcast( EventHandler->EventWait );
-	return interval;
-}
-
-cEventHandling::cEventHandling()
-{
-	EventWait  = SDL_CreateCond();
-	EventTimer = SDL_AddTimer(10, eventTimerCallback, NULL);
-}
-
-cEventHandling::~cEventHandling()
-{
-	SDL_DestroyCond(EventWait);
-	SDL_RemoveTimer(EventTimer);
-}
 
 void cEventHandling::pumpEvents()
 {
-	cMutex::Lock l(EventLock);
 	SDL_PumpEvents();
 }
 
-int cEventHandling::waitEvent( SDL_Event *event )
+void cEventHandling::waitEvent(SDL_Event* const e)
 {
-	int iVal;
-	{ cMutex::Lock l(EventLock);
-		while ( ( iVal = SDL_PollEvent( event ) ) <= 0 )
-		{
-			SDL_CondWait( EventWait, EventLock );
-		}
-	}
-	SDL_CondSignal( EventWait );
-
-	return iVal;
+	while (SDL_WaitEvent(e) == 0) {}
 }
 
-int cEventHandling::pollEvent( SDL_Event *event )
+int cEventHandling::pollEvent(SDL_Event* const e)
 {
-	int iVal;
-	{ cMutex::Lock l(EventLock);
-		iVal = SDL_PollEvent ( event );
-	}
-
-	if ( 0 < iVal )
-	{
-		SDL_CondSignal( EventWait );
-	}
-
-	return iVal;
+	return SDL_PollEvent(e);
 }
 
-int cEventHandling::pushEvent( SDL_Event *event )
+void cEventHandling::pushEvent(SDL_Event* const e)
 {
-	{ cMutex::Lock l(EventLock);
-		while ( SDL_PushEvent( event ) == -1 )
-		{
-			SDL_CondWait( EventWait, EventLock );
-		}
-		//since SDL_PushEvent() copies the event, the old one has to be deleted
-		delete event;
-	}
-	SDL_CondSignal( EventWait );
-
-	return 1;
+	while (SDL_PushEvent(e) != 0) {}
+	delete e;
 }
 
 int cEventHandling::HandleEvents()
