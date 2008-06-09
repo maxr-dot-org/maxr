@@ -54,7 +54,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iTimerTime = 0;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
 
-	EventQueue = new cList<SDL_Event *>;
 	//NetMessageQueue = new cList<cNetMessage*>;
 
 	QueueMutex = SDL_CreateMutex ();
@@ -68,12 +67,11 @@ cServer::~cServer()
 	SDL_WaitThread ( ServerThread, NULL );
 	SDL_RemoveTimer ( TimerID );
 
-	while ( EventQueue->iCount )
+	while ( EventQueue.iCount )
 	{
-		delete EventQueue->Items[0];
-		EventQueue->Delete (0);
+		delete EventQueue.Items[0];
+		EventQueue.Delete (0);
 	}
-	delete EventQueue;
 
 	/*while ( NetMessageQueue->iCount )
 	{
@@ -97,15 +95,15 @@ SDL_Event* cServer::pollEvent()
 	}
 
 	SDL_Event* event;
-	if ( EventQueue->iCount <= 0 )
+	if ( EventQueue.iCount <= 0 )
 	{
 		return NULL;
 	}
 
 	SDL_LockMutex( QueueMutex );
-	event = EventQueue->Items[0];
+	event = EventQueue.Items[0];
 	lastEvent = event;
-	EventQueue->Delete( 0 );
+	EventQueue.Delete( 0 );
 	SDL_UnlockMutex( QueueMutex );
 	return event;
 }
@@ -128,7 +126,7 @@ cNetMessage* cServer::pollNetMessage()
 int cServer::pushEvent( SDL_Event *event )
 {
 	SDL_LockMutex( QueueMutex );
-	EventQueue->Add ( event );
+	EventQueue.Add ( event );
 	SDL_UnlockMutex( QueueMutex );
 	return 0;
 }

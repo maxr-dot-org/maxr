@@ -74,7 +74,7 @@ public:
 
 private:
 	/** a list with all events for the server */
-	cList<SDL_Event*> *EventQueue;
+	cList<SDL_Event*> EventQueue;
 
 	/* a list with all netMessages for the server 
 	cList<cNetMessage*> *NetMessageQueue; */
