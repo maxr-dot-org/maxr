@@ -4148,7 +4148,6 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
 	this->bHost = bHost;
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
-	MessageList = new cList<cNetMessage*>;
 	PlayerList.Add ( ActualPlayer );
 	iNextPlayerNr = 1;
 	ReadyList = (bool *) malloc ( sizeof( bool ) );
@@ -5035,11 +5034,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 void cMultiPlayerMenu::HandleMessages()
 {
-#define SWITCH_MESSAGE_END { delete Message; MessageList->Delete ( iMsgNum ); iMsgNum--; break; }
+#define SWITCH_MESSAGE_END { delete Message; MessageList.Delete ( iMsgNum ); iMsgNum--; break; }
 
-	for ( int iMsgNum = 0; iMsgNum < MessageList->iCount; iMsgNum++ )
+	for ( int iMsgNum = 0; iMsgNum < MessageList.iCount; iMsgNum++ )
 	{
-		cNetMessage *Message = MessageList->Items[iMsgNum];
+		cNetMessage *Message = MessageList.Items[iMsgNum];
 
 		switch ( Message->iType )
 		{

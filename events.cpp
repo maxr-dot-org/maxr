@@ -56,7 +56,7 @@ void cEventHandling::HandleEvents()
 				{
 					cNetMessage *Message = new cNetMessage( MU_MSG_NEW_PLAYER );
 					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					MultiPlayerMenu->MessageList->Add ( Message );
+					MultiPlayerMenu->MessageList.Add ( Message );
 					free ( event.user.data1 );
 				}
 				break;
@@ -92,7 +92,7 @@ void cEventHandling::HandleEvents()
 						{
 							cNetMessage* const Message = new cNetMessage((char*)DataBuffer.data);
 							Message->refertControlChars();
-							MultiPlayerMenu->MessageList->Add ( Message );
+							MultiPlayerMenu->MessageList.Add ( Message );
 						}
 					}
 				}
@@ -106,7 +106,7 @@ void cEventHandling::HandleEvents()
 				{
 					cNetMessage *Message = new cNetMessage( MU_MSG_DEL_PLAYER );
 					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					MultiPlayerMenu->MessageList->Add ( Message );
+					MultiPlayerMenu->MessageList.Add ( Message );
 				}
 				else if ( Client )
 				{

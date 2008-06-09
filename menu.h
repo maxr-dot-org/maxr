@@ -148,7 +148,7 @@ private:
 	void sendMessage( cNetMessage *Message, int iPlayer = -1 );
 
 public:
-	cList<cNetMessage*> *MessageList;
+	cList<cNetMessage*> MessageList;
 } EX *MultiPlayerMenu;
 
 // Prototypen ////////////////////////////////////////////////////////////////
