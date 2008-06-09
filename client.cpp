@@ -95,8 +95,7 @@ cClient::~cClient()
 	StopFXLoop ( iObjectStream );
 	while ( messages.iCount )
 	{
-		free ( messages.Items[0]->msg );
-		free ( messages.Items[0] );
+		delete messages.Items[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
@@ -2591,15 +2590,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 // Adds an message to be displayed in the game
 void cClient::addMessage ( string sMsg )
 {
-	sMessage *Message;
-	Message = new sMessage;
-	Message->chars = (int)sMsg.length();
-	Message->msg = ( char* ) malloc ( Message->chars+1 );
-	strcpy ( Message->msg, sMsg.c_str() );
-	if ( Message->chars > 500 ) Message->msg[500]=0;
-	Message->len = font->getTextWide( sMsg );
-	Message->age = iFrame;
-	messages.Add ( Message );
+	sMessage* const Message = new sMessage(sMsg, iFrame);
 	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
@@ -2627,8 +2618,7 @@ void cClient::handleMessages()
 		message = messages.Items[i];
 		if ( message->age+MSG_FRAMES < iFrame || iHeight > 200 )
 		{
-			free ( message->msg );
-			free ( message );
+			delete message;
 			messages.Delete ( i );
 			continue;
 		}
@@ -3432,8 +3422,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	while ( messages.iCount )
 	{
 		Message = messages.Items[0];
-		free ( Message->msg );
-		free ( Message );
+		delete Message;
 		messages.Delete ( 0 );
 	}
 

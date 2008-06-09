@@ -31,6 +31,24 @@
 #include "events.h"
 #include "serverevents.h"
 
+
+sMessage::sMessage(std::string const& s, unsigned int const age_)
+{
+	chars = (int)s.length();
+	msg = (char*)malloc(chars + 1);
+	strcpy(msg, s.c_str());
+	if (chars > 500) msg[500] = '\0';
+	len = font->getTextWide(s);
+	age = age_;
+}
+
+
+sMessage::~sMessage()
+{
+	free(msg);
+}
+
+
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame ( cMap *map )
 {
@@ -102,10 +120,7 @@ cGame::~cGame ( void )
 	StopFXLoop ( ObjectStream );
 	while ( messages.iCount )
 	{
-		sMessage *msg;
-		msg = messages.Items[0];
-		free ( msg->msg );
-		free ( msg );
+		delete messages.Items[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
@@ -1697,8 +1712,7 @@ void cGame::HandleMessages ( void )
 		m=messages.Items[i];
 		if ( m->age+MSG_FRAMES<Frame||height>200 )
 		{
-			free ( m->msg );
-			free ( m );
+			delete m;
 			messages.Delete ( i );
 			continue;
 		}
@@ -4070,8 +4084,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	while ( messages.iCount )
 	{
 		m=messages.Items[0];
-		free ( m->msg );
-		free ( m );
+		delete m;
 		messages.Delete ( 0 );
 	}
 

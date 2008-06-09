@@ -32,10 +32,17 @@
 #define SAVE_BUILDING 2
 
 // Die Message-Struktur //////////////////////////////////////////////////////
-struct sMessage{
-  char *msg;
-  int chars,len;
-  unsigned int age;
+struct sMessage
+{
+	public:
+		sMessage(std::string const&, unsigned int age);
+		~sMessage();
+
+	public:
+		char*        msg;
+		int          chars;
+		int          len;
+		unsigned int age;
 };
 
 // Der FX-Enum ///////////////////////////////////////////////////////////////
