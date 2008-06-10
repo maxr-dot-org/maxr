@@ -143,15 +143,15 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	if ( data.is_big )
 	{
-		DamageFXPointX = random ( 64, 0 ) + 32;
-		DamageFXPointY = random ( 64, 0 ) + 32;
-		DamageFXPointX2 = random ( 64, 0 ) + 32;
-		DamageFXPointY2 = random ( 64, 0 ) + 32;
+		DamageFXPointX  = random(64) + 32;
+		DamageFXPointY  = random(64) + 32;
+		DamageFXPointX2 = random(64) + 32;
+		DamageFXPointY2 = random(64) + 32;
 	}
 	else
 	{
-		DamageFXPointX = random ( 64 - 24, 0 );
-		DamageFXPointY = random ( 64 - 24, 0 );
+		DamageFXPointX = random(64 - 24);
+		DamageFXPointY = random(64 - 24);
 	}
 
 	refreshData();

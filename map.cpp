@@ -356,7 +356,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	{
 		for ( i=0;i<10;i++ )
 		{
-			PosMap[i]=random ( size*size - 1,0 );
+			PosMap[i] = random(size * size - 1);
 		}
 		pos=GaussMap[PosMap[0]];
 		index=0;
@@ -377,25 +377,25 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 		}
 
 		// Ggf ein Nest erstellen:
-		if ( random ( 15,0 ) ==0 )
-			nest=random ( 3,0 ) +1;
+		if (random(15) == 0)
+			nest = random(3) + 1;
 
 		do
 		{
 			if ( next==0 )
 			{
 				Resources[pos].typ=RES_METAL;
-				Resources[pos].value+=4*Metal+4+random ( 5,0 )-2;
+				Resources[pos].value += 4 * Metal + 4 + random(5) - 2;
 			}
 			else if ( next==1 )
 			{
 				Resources[pos].typ=RES_OIL;
-				Resources[pos].value+=4*Oil+4+random ( 5,0 )-2;
+				Resources[pos].value += 4 * Oil + 4 + random(5) - 2;
 			}
 			else
 			{
 				Resources[pos].typ=RES_GOLD;
-				Resources[pos].value+=4*Gold+4+random ( 5,0 )-2;
+				Resources[pos].value += 4 * Gold + 4 + random(5) - 2;
 			}
 			if ( Resources[pos].value>16 )
 			{
@@ -410,8 +410,8 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 			if ( x>0&&y>0 )
 			{
 				x--;y--;
-				Resources[x+y*size].typ=random ( 3,0 ) +1;
-				Resources[x+y*size].value+=random ( 4,0 );
+				Resources[x + y * size].typ    = random(3) + 1;
+				Resources[x + y * size].value += random(4);
 				if ( Resources[x+y*size].value>16 )
 				{
 					Resources[x+y*size].value=16;
@@ -421,8 +421,8 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 			if ( x<size-1&&y>0 )
 			{
 				x++;y--;
-				Resources[x+y*size].typ=random ( 3,0 ) +1;
-				Resources[x+y*size].value+=random ( 4,0 );
+				Resources[x + y * size].typ    = random(3) + 1;
+				Resources[x + y * size].value += random(4);
 				if ( Resources[x+y*size].value>16 )
 				{
 					Resources[x+y*size].value=16;
@@ -432,8 +432,8 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 			if ( x>0&&y<size-1 )
 			{
 				x--;y++;
-				Resources[x+y*size].typ=random ( 3,0 ) +1;
-				Resources[x+y*size].value+=random ( 4,0 );
+				Resources[x + y * size].typ    = random(3) + 1;
+				Resources[x + y * size].value += random(4);
 				if ( Resources[x+y*size].value>16 )
 				{
 					Resources[x+y*size].value=16;
@@ -443,8 +443,8 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 			if ( x<size-1&&y<size-1 )
 			{
 				x++;y++;
-				Resources[x+y*size].typ=random ( 3,0 ) +1;
-				Resources[x+y*size].value=1+random ( 4,0 );
+				Resources[x + y * size].typ   = random(3) + 1;
+				Resources[x + y * size].value = random(4) + 1;
 				x--;y--;
 			}
 
@@ -454,8 +454,8 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 				do
 				{
 					pos=old;
-					pos+=random ( 6,0 )-3;
-					pos+= ( random ( 6,0 )-3 ) *size;
+					pos += random(6) - 3;
+					pos += (random(6) - 3) *size;
 				}
 				while ( pos<0||pos>=size*size );
 			}

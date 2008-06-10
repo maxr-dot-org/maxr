@@ -84,7 +84,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	SDL_BlitSurface( SfTmp, &rSrc, GraphicsData.gfx_hud, NULL );
 	SDL_FreeSurface( SfTmp );
 
-	setWind ( random ( 360,0 ) );
+	setWind(random(360));
 }
 
 cClient::~cClient()
@@ -517,7 +517,7 @@ void cClient::run()
 			static int iNextChange = 25, iNextDirChange = 25, iDir = 90, iChange = 3;
 			if ( iNextChange == 0 )
 			{
-				iNextChange = 10+random ( 20,0 );
+				iNextChange = 10 + random(20);
 				iDir += iChange;
 				setWind ( iDir );
 				if ( iDir >= 360 ) iDir -= 360;
@@ -525,8 +525,8 @@ void cClient::run()
 
 				if ( iNextDirChange==0 )
 				{
-					iNextDirChange = 10+random ( 25,0 );
-					iChange = random ( 11,0 )-5;
+					iNextDirChange = random(25) + 10;
+					iChange        = random(11) -  5;
 				}
 				else iNextDirChange--;
 
@@ -848,7 +848,7 @@ int cClient::checkUser()
 				else
 				{
 					MJob->finished = true;
-					if ( random ( 2,0 ) ) PlayVoice ( VoiceData.VOINoPath1 );
+					if (random(2)) PlayVoice(VoiceData.VOINoPath1);
 					else PlayVoice ( VoiceData.VOINoPath2 );
 				}
 			}
@@ -1114,7 +1114,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 			MJob->finished = true;
 			if (!vehicle || !vehicle->autoMJob) //automoving suveyors must not tell this
 			{
-				if ( random ( 2,0 ) ) PlayVoice ( VoiceData.VOINoPath1 );
+				if (random(2)) PlayVoice(VoiceData.VOINoPath1);
 				else PlayVoice ( VoiceData.VOINoPath2 );
 			}
 		}
@@ -2187,7 +2187,7 @@ void cClient::addFX ( sFX* n )
 	{
 		case fxExploAir:
 			int nr;
-			nr = random ( 3,0 );
+			nr = random(3);
 			if ( nr==0 )
 			{
 				PlayFX ( SoundData.EXPSmall0 );
@@ -2206,7 +2206,7 @@ void cClient::addFX ( sFX* n )
 			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
 			{
 				int nr;
-				nr=random ( 3,0 );
+				nr = random(3);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPSmallWet0 );
@@ -2223,7 +2223,7 @@ void cClient::addFX ( sFX* n )
 			else
 			{
 				int nr;
-				nr=random ( 3,0 );
+				nr =  random(3);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPSmall0 );
@@ -2241,7 +2241,7 @@ void cClient::addFX ( sFX* n )
 		case fxExploBig:
 			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
 			{
-				if ( random ( 2,0 ) )
+				if (random(2))
 				{
 					PlayFX ( SoundData.EXPBigWet0 );
 				}
@@ -2253,7 +2253,7 @@ void cClient::addFX ( sFX* n )
 			else
 			{
 				int nr;
-				nr=random ( 4,0 );
+				nr = random(4);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPBig0 );
@@ -2317,13 +2317,13 @@ void cClient::addFX ( sFX* n )
 			if ( ay<0 ) ay=-ay;
 			if ( ax>ay )
 			{
-				dsi->dx=x*2+ ( random ( 5,0 ) /10.0 );
-				dsi->dy=y*2+ ( ( random ( 15,0 )-7 ) /14.0 );
+				dsi->dx = x * 2 + random(5)        / 10.0;
+				dsi->dy = y * 2 + (random(15) - 7) / 14.0;
 			}
 			else
 			{
-				dsi->dx=x*2+ ( ( random ( 15,0 )-7 ) /14.0 );
-				dsi->dy=y*2+ ( random ( 5,0 ) /10.0 );
+				dsi->dx = x * 2 + (random(15) - 7) / 14.0;
+				dsi->dy = y * 2 + random(5)        / 10.0;
 			}
 			break;
 		}

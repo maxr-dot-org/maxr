@@ -109,7 +109,7 @@ cGame::cGame ( cMap *map )
 	SDL_BlitSurface(SfTmp, &rSrc, GraphicsData.gfx_hud, NULL);
 	SDL_FreeSurface(SfTmp);
 
-	SetWind ( random ( 360,0 ) );
+	SetWind(random(360));
 }
 
 cGame::~cGame ( void )
@@ -565,7 +565,7 @@ void cGame::Run ( void )
 			static int NextChange=25,NextDirChange=25,dir=90,change=3;
 			if ( NextChange==0 )
 			{
-				NextChange=10+random ( 20,0 );
+				NextChange = 10 + random(20);
 				dir+=change;
 				SetWind ( dir );
 				if ( dir>=360 ) dir-=360;
@@ -573,8 +573,8 @@ void cGame::Run ( void )
 
 				if ( NextDirChange==0 )
 				{
-					NextDirChange=10+random ( 25,0 );
-					change=random ( 11,0 )-5;
+					NextDirChange = random(25) + 10;
+					change        = random(11) -  5;
 				}
 				else NextDirChange--;
 
@@ -1906,7 +1906,7 @@ void cGame::AddFX ( sFX* n )
 	{
 		case fxExploAir:
 			int nr;
-			nr = random ( 3,0 );
+			nr = random(3);
 			if ( nr==0 )
 			{
 				PlayFX ( SoundData.EXPSmall0 );
@@ -1925,7 +1925,7 @@ void cGame::AddFX ( sFX* n )
 			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
 				int nr;
-				nr=random ( 3,0 );
+				nr = random(3);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPSmallWet0 );
@@ -1942,7 +1942,7 @@ void cGame::AddFX ( sFX* n )
 			else
 			{
 				int nr;
-				nr=random ( 3,0 );
+				nr = random(3);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPSmall0 );
@@ -1960,7 +1960,7 @@ void cGame::AddFX ( sFX* n )
 		case fxExploBig:
 			if ( map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *map->size ) )
 			{
-				if ( random ( 2,0 ) )
+				if (random(2))
 				{
 					PlayFX ( SoundData.EXPBigWet0 );
 				}
@@ -1972,7 +1972,7 @@ void cGame::AddFX ( sFX* n )
 			else
 			{
 				int nr;
-				nr=random ( 4,0 );
+				nr = random(4);
 				if ( nr==0 )
 				{
 					PlayFX ( SoundData.EXPBig0 );
@@ -2036,13 +2036,13 @@ void cGame::AddFX ( sFX* n )
 			if ( ay<0 ) ay=-ay;
 			if ( ax>ay )
 			{
-				dsi->dx=x*2+ ( random ( 5,0 ) /10.0 );
-				dsi->dy=y*2+ ( ( random ( 15,0 )-7 ) /14.0 );
+				dsi->dx = x * 2 + random(5)        / 10.0;
+				dsi->dy = y * 2 + (random(15) - 7) / 14.0;
 			}
 			else
 			{
-				dsi->dx=x*2+ ( ( random ( 15,0 )-7 ) /14.0 );
-				dsi->dy=y*2+ ( random ( 5,0 ) /10.0 );
+				dsi->dx = x * 2 + (random(15) - 7) / 14.0;
+				dsi->dy = y * 2 + random(5)        / 10.0;
 			}
 			break;
 		}
@@ -2471,12 +2471,12 @@ void cGame::AddDirt ( int x,int y,int value,bool big )
 		map->GO[x+1+y*map->size].base=n;
 		map->GO[x+1+ ( y+1 ) *map->size].base=n;
 		map->GO[x+ ( y+1 ) *map->size].base=n;
-		n->DirtTyp=random ( 2,0 );
+		n->DirtTyp = random(2);
 		n->data.is_big=true;
 	}
 	else
 	{
-		n->DirtTyp=random ( 5,0 );
+		n->DirtTyp = random(5);
 		n->data.is_big=false;
 	}
 	n->DirtValue=value;

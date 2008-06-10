@@ -515,7 +515,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		string sTmp = v->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
 		game->AddCoords ( sTmp, v->PosX, v->PosY );
 
-		if ( random ( 2, 0 ) == 0 )
+		if (random(2) == 0)
 		{
 			PlayVoice ( VoiceData.VOIDetected1 );
 		}

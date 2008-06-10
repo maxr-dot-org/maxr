@@ -99,9 +99,8 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 		StoredVehicles = new cList<cVehicle*>;
 	}
 
-	DamageFXPointX = random ( 7, 0 ) + 26 - 3;
-
-	DamageFXPointY = random ( 7, 0 ) + 26 - 3;
+	DamageFXPointX = random(7) + 26 - 3;
+	DamageFXPointY = random(7) + 26 - 3;
 	refreshData();
 }
 
@@ -684,8 +683,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			ditherX = random ( 2, 0 ) - 1;
-			ditherY = random ( 2, 0 ) - 1;
+			ditherX = random(2) - 1;
+			ditherY = random(2) - 1;
 		}
 	}
 
@@ -3988,7 +3987,7 @@ void cVehicle::MakeReport ( void )
 					if ( !BuildRounds )
 					{
 						// Bau beendet:
-						if ( random ( 2, 0 ) )
+						if (random(2))
 						{
 							PlayVoice ( VoiceData.VOIBuildDone1 );
 						}
@@ -4015,7 +4014,7 @@ void cVehicle::MakeReport ( void )
 						if ( data.can_attack && !data.ammo )
 						{
 							// Keine Munition:
-							if ( random ( 2, 0 ) )
+							if (random(2))
 							{
 								PlayVoice ( VoiceData.VOILowAmmo1 );
 							}
@@ -4044,7 +4043,7 @@ void cVehicle::MakeReport ( void )
 									{
 										int nr;
 										// Alles OK:
-										nr = random ( 3, 0 );
+										nr = random(3);
 
 										if ( nr == 0 )
 										{
@@ -5921,7 +5920,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 
 	chance = CalcCommandoChance ( steal );
 
-	if ( random ( 100, 0 ) < chance )
+	if (random(100) < chance)
 	{
 		if( steal )
 		{

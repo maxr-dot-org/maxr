@@ -705,7 +705,10 @@ void ScaleSurfaceAdv2(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 void ScaleSurfaceAdv2Spec(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
 void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
-int random(int x, int y);
+
+// returns a random number in the range 0 <= r < x
+int random(int x);
+
 /**Converts integer to string
 */
 std::string iToStr(int x);

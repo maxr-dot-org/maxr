@@ -607,17 +607,9 @@ void line ( int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf )
 }
 
 
-// random ////////////////////////////////////////////////////////////////
-// returns a random number between 'y' and 'x':
-int random ( int x, int y )
+int random(int const x)
 {
-	if ( y > x )
-	{
-		int temp = y;
-		y = x;
-		x = temp;
-	}
-	return ( ( int ) ( ( ( double ) rand() /RAND_MAX ) * ( ( x-y ) +y ) ) );
+	return (int)((double)rand() / RAND_MAX * x);
 }
 
 string iToStr(int x)

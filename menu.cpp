@@ -113,7 +113,7 @@ void prepareMenu ( bool bIAmMain )
 void showUnitPicture ( void )
 {
 	/**To randomize whether to show a vehicles or a building*/
-	int iShowBuilding = random ( 3,1 );
+	int const iShowBuilding = random(3);
 	/*I want 3 possible random numbers
 	since a chance of 50:50 is boring (and
 	vehicles are way more cool so I prefer
@@ -127,7 +127,7 @@ void showUnitPicture ( void )
 	{
 		do
 		{
-			iUnitShow = random(UnitsData.building.Size(), 0);
+			iUnitShow = random(UnitsData.building.Size());
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.building[iUnitShow].info,NULL,buffer,&rDest );
@@ -136,7 +136,7 @@ void showUnitPicture ( void )
 	{
 		do
 		{
-			iUnitShow = random(UnitsData.vehicle.Size(), 0);
+			iUnitShow = random(UnitsData.vehicle.Size());
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.vehicle[iUnitShow].info,NULL,buffer,&rDest );
