@@ -2623,6 +2623,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 void cClient::addMessage ( string sMsg )
 {
 	sMessage* const Message = new sMessage(sMsg, iFrame);
+	messages.Add(Message);
 	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
