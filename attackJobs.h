@@ -46,6 +46,7 @@ public:
 
 };
 
+
 class cClientAttackJob
 {
 public:
@@ -53,10 +54,11 @@ public:
 	int iID;
 	cVehicle* vehicle;
 	cBuilding* building;
-	int fireDir;
+	int iFireDir;
 	int iMuzzleType;
 	int iAgressorOffset;
 	int iTargetOffset;
+	int wait;
 
 	bool bPlayingMuzzle;
 	bool bMuzzlePlayed;

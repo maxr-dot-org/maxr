@@ -2194,8 +2194,8 @@ void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOf
 	sFXRocketInfos* ri = n->rocketInfo;
 	ri->ScrX = x;
 	ri->ScrY = y;
-	ri->DestX = iDestOff * 64 / Client->Map->size;
-	ri->DestY = iDestOff * 64 % Client->Map->size;
+	ri->DestX = (iDestOff % Client->Map->size) * 64;
+	ri->DestY = iDestOff * 64 / Client->Map->size;
 	ri->aj = aj;
 	ri->dir = iFireDir;
 	addFX( n );

@@ -295,6 +295,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 {
 	bPlayingMuzzle = false;
 	bMuzzlePlayed = false;
+	wait = 0;
 	this->iID = message->popInt16();
 	iTargetOffset = -1;
 
@@ -318,7 +319,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 			bMuzzlePlayed = true;
 			return; //we are out of sync!!!
 		}
-		fireDir = message->popChar();
+		iFireDir = message->popChar();
 		bool bMuzzleIsRocketType = message->popBool();
 		if ( bMuzzleIsRocketType )
 		{
@@ -354,20 +355,22 @@ void cClientAttackJob::rotate()
 {
 	if ( vehicle )
 	{
-		if ( vehicle->dir != fireDir )
+		if ( vehicle->dir != iFireDir )
 		{
-			vehicle->RotateTo( fireDir );
+			vehicle->rotating = true;
+			vehicle->RotateTo( iFireDir );
 		}
 		else
 		{
+			vehicle->rotating = false;
 			bPlayingMuzzle = true;
 		}
 	}
 	else if ( building )
 	{
-		if ( building->dir != fireDir )
+		if ( building->dir != iFireDir && !building->data.is_expl_mine )
 		{
-			building->RotateTo( fireDir );
+			building->RotateTo( iFireDir );
 		}
 		else
 		{
@@ -382,7 +385,202 @@ void cClientAttackJob::rotate()
 
 void cClientAttackJob::playMuzzle()
 {
+	
+	int offx=0,offy=0;
+	
+	/*if ( building&&building->data.is_expl_mine )
+	{
+		MuzzlePlayed=true;
+		PlayFX ( building->typ->Attack );
+		return;
+	}*/
+	switch ( iMuzzleType )
+	{
+		case MUZZLE_BIG:
+			if ( wait++!=0 )
+			{
+				if ( wait>2 ) bMuzzlePlayed = true;
+				return;
+			}
+			switch ( iFireDir )
+			{
+				case 0:
+					offy-=40;
+					break;
+				case 1:
+					offx+=32;
+					offy-=32;
+					break;
+				case 2:
+					offx+=40;
+					break;
+				case 3:
+					offx+=32;
+					offy+=32;
+					break;
+				case 4:
+					offy+=40;
+					break;
+				case 5:
+					offx-=32;
+					offy+=32;
+					break;
+				case 6:
+					offx-=40;
+					break;
+				case 7:
+					offx-=32;
+					offy-=32;
+					break;
+			}
+			if ( vehicle )
+			{
+				Client->addFX ( fxMuzzleBig,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
+			}
+			else
+			{
+				Client->addFX ( fxMuzzleBig,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
+			}
+			break;
+		case MUZZLE_SMALL:
+			if ( wait++!=0 )
+			{
+				if ( wait>2 ) bMuzzlePlayed=true;
+				return;
+			}
+			if ( vehicle )
+			{
+				Client->addFX ( fxMuzzleSmall,vehicle->PosX*64,vehicle->PosY*64,iFireDir );
+			}
+			else
+			{
+				Client->addFX ( fxMuzzleSmall,building->PosX*64,building->PosY*64,iFireDir );
+			}
+			break;
+		case MUZZLE_ROCKET:
+		case MUZZLE_ROCKET_CLUSTER:
+		{
+			if ( wait++!=0 ) return;
+			
+			if ( vehicle )
+			{
+				Client->addFX ( fxRocket,vehicle->PosX*64,vehicle->PosY*64, this, iTargetOffset, iFireDir );
+			}
+			else
+			{
+				Client->addFX ( fxRocket,building->PosX*64,building->PosY*64, this, iTargetOffset, iFireDir );
+			}
+			break;
+		}
+		case MUZZLE_MED:
+		case MUZZLE_MED_LONG:
+			if ( wait++!=0 )
+			{
+				if ( wait>2 ) bMuzzlePlayed=true;
+				return;
+			}
+			switch ( iFireDir )
+			{
+				case 0:
+					offy-=20;
+					break;
+				case 1:
+					offx+=12;
+					offy-=12;
+					break;
+				case 2:
+					offx+=20;
+					break;
+				case 3:
+					offx+=12;
+					offy+=12;
+					break;
+				case 4:
+					offy+=20;
+					break;
+				case 5:
+					offx-=12;
+					offy+=12;
+					break;
+				case 6:
+					offx-=20;
+					break;
+				case 7:
+					offx-=12;
+					offy-=12;
+					break;
+			}
+			if ( iMuzzleType == MUZZLE_MED )
+			{
+				if ( vehicle )
+				{
+					Client->addFX ( fxMuzzleMed,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
+				}
+				else
+				{
+					Client->addFX ( fxMuzzleMed,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
+				}
+			}
+			else
+			{
+				if ( vehicle )
+				{
+					Client->addFX ( fxMuzzleMedLong,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
+				}
+				else
+				{
+					Client->addFX ( fxMuzzleMedLong,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
+				}
+			}
+			break;
+		case MUZZLE_TORPEDO:
+		{
+			if ( wait++!=0 ) return;
+			if ( vehicle )
+			{
+				Client->addFX ( fxTorpedo,vehicle->PosX*64,vehicle->PosY*64, this, iTargetOffset, iFireDir );
+			}
+			else
+			{
+				Client->addFX ( fxTorpedo,building->PosX*64,building->PosY*64, this, iTargetOffset, iFireDir );
+			}
+			break;
+		}
+		case MUZZLE_SNIPER:
+			bMuzzlePlayed=true;
+			break;
+	}
+	if ( vehicle )
+	{
+		PlayFX ( vehicle->typ->Attack );
+	}
+	else
+	{
+		PlayFX ( building->typ->Attack );
+	}
 
+	// Die Stats ändern:
+	if ( vehicle )
+	{
+		vehicle->data.shots--;
+		vehicle->data.ammo--;
+		if ( !vehicle->data.shots ) vehicle->AttackMode=false;
+		if ( !vehicle->data.can_drive_and_fire ) vehicle->data.speed-= (int)(( ( float ) vehicle->data.max_speed ) /vehicle->data.max_shots);
+		if ( Client->SelectedVehicle&&Client->SelectedVehicle==vehicle )
+		{
+			vehicle->ShowDetails();
+		}
+	}
+	else
+	{
+		building->data.shots--;
+		building->data.ammo--;
+		if ( !building->data.shots ) building->AttackMode=false;
+		if ( Client->SelectedBuilding&&Client->SelectedBuilding==building )
+		{
+			building->ShowDetails();
+		}
+	}
 }
 
 void cClientAttackJob::sendFinishMessage()
