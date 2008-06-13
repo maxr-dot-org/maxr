@@ -30,7 +30,61 @@
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
-//enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall,fxExploBig,fxExploAir,fxExploWater,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
+
+/** structure for the messages displayed in the game */
+struct sMessage
+{
+	public:
+		sMessage(std::string const&, unsigned int age);
+		~sMessage();
+
+	public:
+		char*        msg;
+		int          chars;
+		int          len;
+		unsigned int age;
+};
+
+/** FX types */
+enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall,fxExploBig,fxExploAir,fxExploWater,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
+
+/** struct for the rocked data */
+struct sFXRocketInfos{
+  int ScrX,ScrY;
+  int DestX,DestY;
+  int dir;
+  float fpx,fpy,mx,my;
+  cClientAttackJob *aj;
+};
+
+/** struct for the dark smoke data */
+struct sFXDarkSmoke{
+  int alpha;
+  float fx,fy;
+  float dx,dy;
+};
+
+/** struct for the tracks effect */
+struct sFXTracks{
+  int alpha;
+  int dir;
+};
+
+/** struct for an FX effect */
+struct sFX
+{
+	public:
+		sFX( eFXTyps typ, int x, int y);
+		~sFX();
+
+		eFXTyps typ;
+		int PosX,PosY;
+		int StartFrame;
+		int param;
+		sFXRocketInfos* rocketInfo;
+		sFXDarkSmoke* smokeInfo;
+		sFXTracks* trackInfo;
+};
 
 /**
 * Client class which handles the in and output for a player
@@ -56,8 +110,6 @@ private:
 	SDL_TimerID TimerID;
 	/** will be incremented by the Timer */
 	unsigned int iTimerTime;
-	/** framecounter for the animations */
-	unsigned int iFrame;
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
 	/** Object that is under the mouse cursor */
@@ -297,6 +349,8 @@ private:
 	*/
 	void traceBuilding ( cBuilding *Building, int *iY, int iX );
 public:
+	/** framecounter for the animations */
+	unsigned int iFrame;
 	/** the active Player */
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
@@ -400,7 +454,7 @@ public:
 	*@param iNum 
 	*/
 	void addFX( eFXTyps typ, int iX, int iY, int iParam );
-	void addFX( eFXTyps typ, int iX, int iY, sFXRocketInfos* param );
+	void addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOff, int iFireDir );
 	void addFX( sFX* iNum );
 
 	/**

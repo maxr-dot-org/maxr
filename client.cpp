@@ -31,6 +31,74 @@
 #include "main.h"
 #include "attackJobs.h"
 
+
+sMessage::sMessage(std::string const& s, unsigned int const age_)
+{
+	chars = (int)s.length();
+	msg = (char*)malloc(chars + 1);
+	strcpy(msg, s.c_str());
+	if (chars > 500) msg[500] = '\0';
+	len = font->getTextWide(s);
+	age = age_;
+}
+
+
+sMessage::~sMessage()
+{
+	free(msg);
+}
+
+sFX::sFX( eFXTyps typ, int x, int y )
+{
+	this->typ = typ;
+	PosX = x;
+	PosY = y;
+	StartFrame = Client->iFrame;
+	param = 0;
+	rocketInfo = NULL;
+	smokeInfo = NULL;
+	trackInfo = NULL;
+	param = 0;
+
+	switch ( typ )
+	{
+	case fxRocket:
+	case fxTorpedo:
+		rocketInfo = new sFXRocketInfos();
+		rocketInfo->ScrX = 0;
+		rocketInfo->ScrY = 0;
+		rocketInfo->DestX = 0;
+		rocketInfo->DestY = 0;
+		rocketInfo->dir = 0;
+		rocketInfo->fpx = 0;
+		rocketInfo->fpy = 0;
+		rocketInfo->mx = 0;
+		rocketInfo->my = 0;
+		rocketInfo->aj = NULL;
+		break;
+	case fxDarkSmoke:
+		smokeInfo = new sFXDarkSmoke();
+		smokeInfo->alpha = 0;
+		smokeInfo->fx = 0;
+		smokeInfo->fy = 0;
+		smokeInfo->dx = 0;
+		smokeInfo->dy = 0;
+		break;
+	case fxTracks:
+		trackInfo = new sFXTracks();
+		trackInfo->alpha = 0;
+		trackInfo->dir = 0;
+		break;
+	}
+}
+
+sFX::~sFX()
+{
+	if ( rocketInfo ) delete rocketInfo;
+	if ( smokeInfo ) delete smokeInfo;
+	if ( trackInfo ) delete trackInfo;
+}
+
 Uint32 TimerCallback(Uint32 interval, void *arg)
 {
 	((cClient *)arg)->Timer();
@@ -1798,8 +1866,7 @@ void cClient::drawFX( int iNum )
 			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->MuzzlePlayed=true;
-				delete ri;
+				ri->aj->bMuzzlePlayed=true;
 				delete fx;
 				FXList.Delete ( iNum );
 				return;
@@ -1833,7 +1900,6 @@ void cClient::drawFX( int iNum )
 			if ( iFrame-fx->StartFrame>50||dsi->alpha<=1 )
 			{
 				delete fx;
-				delete dsi;
 				FXList.Delete ( iNum );
 				return;
 			}
@@ -1892,8 +1958,7 @@ void cClient::drawFXBottom( int iNum )
 			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->MuzzlePlayed=true;
-				delete ri;
+				ri->aj->bMuzzlePlayed=true;
 				delete fx;
 				FXListBottom.Delete ( iNum );
 				return;
@@ -1927,10 +1992,8 @@ void cClient::drawFXBottom( int iNum )
 			        ! ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 ) &&
 			        ! ( Map->GO[x+y*Map->size].base&&Map->GO[x+y*Map->size].base->owner&& ( Map->GO[x+y*Map->size].base->data.is_bridge||Map->GO[x+y*Map->size].base->data.is_platform ) ) )
 			{
-				ri->aj->DestX=ri->aj->ScrX;
-				ri->aj->DestY=ri->aj->ScrY;
-				ri->aj->MuzzlePlayed=true;
-				delete ri;
+				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
+				ri->aj->bMuzzlePlayed=true;
 				delete fx;
 				FXListBottom.Delete ( iNum );
 				return;
@@ -1944,7 +2007,6 @@ void cClient::drawFXBottom( int iNum )
 			if ( tri->alpha<=1 )
 			{
 				delete fx;
-				delete tri;
 				FXListBottom.Delete ( iNum );
 				return;
 			}
@@ -2126,55 +2188,31 @@ void cClient::rotateBlinkColor()
 }
 
 // Fügt einen FX-Effekt ein:
-void cClient::addFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param )
+void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOff, int iFireDir )
 {
-	sFX* n = new sFX;
-	n->typ = typ;
-	n->PosX = x;
-	n->PosY = y;
-	n->StartFrame = iFrame;
-	n->param = 0;
-	n->rocketInfo= param;
-	n->smokeInfo = NULL;
-	n->trackInfo = NULL;
+	sFX* n = new sFX(typ, x, y);
+	sFXRocketInfos* ri = n->rocketInfo;
+	ri->ScrX = x;
+	ri->ScrY = y;
+	ri->DestX = iDestOff * 64 / Client->Map->size;
+	ri->DestY = iDestOff * 64 % Client->Map->size;
+	ri->aj = aj;
+	ri->dir = iFireDir;
 	addFX( n );
 }
 
 // Fügt einen FX-Effekt ein:
 void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 {
-	sFX* n = new sFX;
-	n->typ = typ;
-	n->PosX = x;
-	n->PosY = y;
-	n->StartFrame = iFrame;
+	sFX* n = new sFX(typ, x, y);
 	n->param = param;
-	n->rocketInfo= NULL;
-	n->smokeInfo = NULL;
-	n->trackInfo = NULL;
 	addFX( n );
 }
 
 // Fügt einen FX-Effekt ein:
 void cClient::addFX ( sFX* n )
 {
-	if ( (n->typ == fxRocket || n->typ == fxTorpedo ) && n->rocketInfo == NULL )
-	{
-		//invalid effect
-		//rocketInfo is missing
-		delete n;
-		return;
-	}
-
-	if ( (n->typ != fxRocket && n->typ != fxTorpedo ) && n->rocketInfo != NULL )
-	{
-		//invalid effect
-		//an sFXRocketInfos has been passed, but is not needed for this effect type
-		delete n->rocketInfo;
-		delete n;
-		return;
-	}
-
+	
 	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
 		FXListBottom.Add ( n );
@@ -2272,10 +2310,6 @@ void cClient::addFX ( sFX* n )
 				}
 			}
 			break;
-		case fxSmoke:
-		case fxBubbles:
-			n->param=0;
-			break;
 		case fxRocket:
 		case fxTorpedo:
 		{
@@ -2303,11 +2337,9 @@ void cClient::addFX ( sFX* n )
 		case fxDarkSmoke:
 		{
 			float x,y,ax,ay;
-			sFXDarkSmoke *dsi;
-			dsi=new sFXDarkSmoke;
+			sFXDarkSmoke *dsi = n->smokeInfo;
 			dsi->alpha=n->param;
 			if ( dsi->alpha>150 ) dsi->alpha=150;
-			n->smokeInfo = dsi;
 			dsi->fx=n->PosX;
 			dsi->fy=n->PosY;
 
@@ -2329,11 +2361,9 @@ void cClient::addFX ( sFX* n )
 		}
 		case fxTracks:
 		{
-			sFXTracks *tri;
-			tri=new sFXTracks;
-			tri->alpha=100;
-			tri->dir=n->param;
-			n->trackInfo = tri;
+			sFXTracks *tri = n->trackInfo;
+			tri->alpha = 100;
+			tri->dir = n->param;
 			break;
 		}
 		case fxCorpse:
@@ -2341,6 +2371,8 @@ void cClient::addFX ( sFX* n )
 			break;
 		case fxAbsorb:
 			PlayFX ( SoundData.SNDAbsorb );
+			break;
+		default:
 			break;
 	}
 }

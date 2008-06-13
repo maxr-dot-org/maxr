@@ -25,58 +25,13 @@
 #include "player.h"
 #include "SDL_flic.h"
 #include "engine.h"
+#include "client.h"
 
 // Objekttypen für das Savegame //////////////////////////////////////////////
 #define SAVE_RES      0
 #define SAVE_VEHICLE  1
 #define SAVE_BUILDING 2
 
-// Die Message-Struktur //////////////////////////////////////////////////////
-struct sMessage
-{
-	public:
-		sMessage(std::string const&, unsigned int age);
-		~sMessage();
-
-	public:
-		char*        msg;
-		int          chars;
-		int          len;
-		unsigned int age;
-};
-
-// Der FX-Enum ///////////////////////////////////////////////////////////////
-enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall,fxExploBig,fxExploAir,fxExploWater,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
-// Struktur für Zusatzinfos der Rocket:
-struct sFXRocketInfos{
-  int ScrX,ScrY;
-  int DestX,DestY;
-  int dir;
-  float fpx,fpy,mx,my;
-  cAJobs *aj;
-};
-// Struktur für Zusatzinfos des DarkSmoke:
-struct sFXDarkSmoke{
-  int alpha;
-  float fx,fy;
-  float dx,dy;
-};
-// Struktur für Zusatzinfos der Tracks:
-struct sFXTracks{
-  int alpha;
-  int dir;
-};
-
-// Die FX-Struktur ///////////////////////////////////////////////////////////
-struct sFX{
-  eFXTyps typ;
-  int PosX,PosY;
-  int StartFrame;
-  int param;
-  sFXRocketInfos* rocketInfo;
-  sFXDarkSmoke* smokeInfo;
-  sFXTracks* trackInfo;
-};
 
 // Die Game-Klasse ///////////////////////////////////////////////////////////
 class cGame{
@@ -158,8 +113,8 @@ public:
   bool DoCommand(char const* cmd);
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);
-  void AddFX(eFXTyps typ,int x,int y,int param);
-  void AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param );
+  void AddFX ( enum eFXTyps typ,int x,int y,int param);
+  void AddFX ( enum eFXTyps typ,int x,int y, struct sFXRocketInfos* param );
   void AddFX ( sFX* n );
   void DisplayFX(void);
   void DisplayFXBottom(void);

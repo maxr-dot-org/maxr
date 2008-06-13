@@ -32,22 +32,6 @@
 #include "serverevents.h"
 
 
-sMessage::sMessage(std::string const& s, unsigned int const age_)
-{
-	chars = (int)s.length();
-	msg = (char*)malloc(chars + 1);
-	strcpy(msg, s.c_str());
-	if (chars > 500) msg[500] = '\0';
-	len = font->getTextWide(s);
-	age = age_;
-}
-
-
-sMessage::~sMessage()
-{
-	free(msg);
-}
-
 
 // Funktionen der Game-Klasse ////////////////////////////////////////////////
 cGame::cGame ( cMap *map )
@@ -1847,7 +1831,7 @@ bool cGame::DoCommand(char const* const cmd)
 // Fügt einen FX-Effekt ein:
 void cGame::AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param )
 {
-	sFX* n = new sFX;
+	sFX* n = NULL;
 	n->typ = typ;
 	n->PosX = x;
 	n->PosY = y;
@@ -1862,7 +1846,7 @@ void cGame::AddFX ( eFXTyps typ,int x,int y, sFXRocketInfos* param )
 // Fügt einen FX-Effekt ein:
 void cGame::AddFX ( eFXTyps typ,int x,int y,int param )
 {
-	sFX* n = new sFX;
+	sFX* n = NULL;
 	n->typ = typ;
 	n->PosX = x;
 	n->PosY = y;
@@ -2254,7 +2238,7 @@ void cGame::DrawFX ( int i )
 			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->MuzzlePlayed=true;
+				ri->aj->bMuzzlePlayed=true;
 				delete ri;
 				delete fx;
 				FXList.Delete ( i );
@@ -2349,7 +2333,7 @@ void cGame::DrawFXBottom ( int i )
 			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->MuzzlePlayed=true;
+				ri->aj->bMuzzlePlayed=true;
 				delete ri;
 				delete fx;
 				FXListBottom.Delete ( i );
@@ -2384,9 +2368,8 @@ void cGame::DrawFXBottom ( int i )
 			        ! ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 ) &&
 			        ! ( map->GO[x+y*map->size].base&&map->GO[x+y*map->size].base->owner&& ( map->GO[x+y*map->size].base->data.is_bridge||map->GO[x+y*map->size].base->data.is_platform ) ) )
 			{
-				ri->aj->DestX=ri->aj->ScrX;
-				ri->aj->DestY=ri->aj->ScrY;
-				ri->aj->MuzzlePlayed=true;
+				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
+				ri->aj->bMuzzlePlayed=true;
 				delete ri;
 				delete fx;
 				FXListBottom.Delete ( i );

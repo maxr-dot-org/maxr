@@ -190,7 +190,7 @@ void cAJobs::PlayMuzzle ( void )
 			ri=new sFXRocketInfos;
 			ri->DestX=DestX*64;
 			ri->DestY=DestY*64;
-			ri->aj=this;
+			//ri->aj=this;
 			ri->dir=FireDir;
 			if ( vehicle )
 			{
@@ -274,7 +274,7 @@ void cAJobs::PlayMuzzle ( void )
 			ri=new sFXRocketInfos;
 			ri->DestX=DestX*64;
 			ri->DestY=DestY*64;
-			ri->aj=this;
+			//ri->aj=this;
 			ri->dir=FireDir;
 			if ( vehicle )
 			{

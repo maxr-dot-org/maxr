@@ -26,6 +26,7 @@
 #include "attackJobs.h"
 #include "engine.h" // for sReport
 
+
 /**
 * The Types which are possible for a game
 */
