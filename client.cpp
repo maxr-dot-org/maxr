@@ -170,27 +170,11 @@ cClient::~cClient()
 	if ( FLC ) FLI_Close ( FLC );
 	while ( FXList.iCount )
 	{
-		if ( FXList.Items[0]->typ == fxRocket )
-		{
-			delete FXList.Items[0]->rocketInfo;
-		}
-		else if ( FXList.Items[0]->typ == fxDarkSmoke )
-		{
-			delete FXList.Items[0]->smokeInfo;
-		}
 		delete FXList.Items[0];
 		FXList.Delete ( 0 );
 	}
 	while ( FXListBottom.iCount )
 	{
-		if ( FXListBottom.Items[0]->typ == fxTorpedo )
-		{
-			delete FXListBottom.Items[0]->rocketInfo;
-		}
-		else if ( FXListBottom.Items[0]->typ == fxTracks )
-		{
-			delete FXListBottom.Items[0]->trackInfo;
-		}
 		delete FXListBottom.Items[0];
 		FXListBottom.Delete ( 0 );
 	}
