@@ -152,9 +152,9 @@ public:
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	void ShowHelp(void);
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	bool CanDrive(int MapOff);
-	int GetScreenPosX(void);
-	int GetScreenPosY(void);
+	bool CanDrive(int MapOff) const;
+	int GetScreenPosX(void) const;
+	int GetScreenPosY(void) const;
 	void DrawPath(void);
 	void RotateTo(int Dir);
 	std::string GetStatusStr(void);
@@ -165,8 +165,8 @@ public:
 	SDL_Rect GetMenuSize(void);
 	bool MouseOverMenu(int mx,int my);
 	void DecSpeed(int value);
-	void DrawMunBar(void);
-	void DrawHelthBar(void);
+	void DrawMunBar(void) const;
+	void DrawHelthBar(void) const;
 	void Center(void);
 	bool CanAttackObject(int off,bool override=false);
 	bool IsInRange(int off);
@@ -185,8 +185,8 @@ public:
 	void ShowBigDetails(void);
 	void Wachwechsel(void);
 	bool InWachRange(void);
-	void DrawExitPoints(sVehicle *typ);
-	bool CanExitTo(int off,sVehicle *typ);
+	void DrawExitPoints(sVehicle*) const;
+	bool CanExitTo(int off, sVehicle*) const;
 	bool CanLoad(int off);
 	void StoreVehicle(int off);
 	void ShowStorage(void);

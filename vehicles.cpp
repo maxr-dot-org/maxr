@@ -1601,7 +1601,7 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 }
 
 // Prüft, ob das Vehicle auf der Kachel an dem Offset fahren kann:
-bool cVehicle::CanDrive ( int MapOff )
+bool cVehicle::CanDrive(int const MapOff) const
 {
 	int nr;
 
@@ -1672,13 +1672,13 @@ bool cVehicle::CanDrive ( int MapOff )
 }
 
 // Liefert die X-Position des Vehicles auf dem Screen zurück:
-int cVehicle::GetScreenPosX ( void )
+int cVehicle::GetScreenPosX(void) const
 {
 	return 180 - ( ( int ) ( ( Client->Hud.OffX - OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
 // Liefert die Y-Position des Vehicles auf dem Screen zurück:
-int cVehicle::GetScreenPosY ( void )
+int cVehicle::GetScreenPosY(void) const
 {
 	return 18 - ( ( int ) ( ( Client->Hud.OffY - OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
 }
@@ -2697,7 +2697,7 @@ void cVehicle::DecSpeed ( int value )
 }
 
 // Malt die Munitionsanzeige über das Fahrzeug:
-void cVehicle::DrawMunBar ( void )
+void cVehicle::DrawMunBar(void) const
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
@@ -2730,7 +2730,7 @@ void cVehicle::DrawMunBar ( void )
 }
 
 // Malt die Trefferanzeige über das Fahrzeug:
-void cVehicle::DrawHelthBar ( void )
+void cVehicle::DrawHelthBar(void) const
 {
 	SDL_Rect r1, r2;
 	r2.x = ( r1.x = GetScreenPosX() ) + 1;
@@ -4873,7 +4873,7 @@ bool cVehicle::InWachRange ( void )
 }
 
 // Malt Ausgangspunkte für auszuladende Fahrzeuge:
-void cVehicle::DrawExitPoints ( sVehicle *typ )
+void cVehicle::DrawExitPoints(sVehicle* const typ) const
 {
 	int spx, spy, size;
 	spx = GetScreenPosX();
@@ -4905,7 +4905,7 @@ void cVehicle::DrawExitPoints ( sVehicle *typ )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom );
 }
 
-bool cVehicle::CanExitTo ( int off, sVehicle *typ )
+bool cVehicle::CanExitTo(int const off, sVehicle* const typ) const
 {
 	int boff;
 
