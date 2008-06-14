@@ -1650,7 +1650,7 @@ void cClient::drawFLC()
 {
 	SDL_Rect dest;
 	string stmp;
-	if (  FLC == NULL || ( SelectedVehicle == NULL && SelectedBuilding == NULL ) ) return;
+	if ( SelectedVehicle == NULL && SelectedBuilding == NULL ) return;
 	// draw the video:
 	dest.x=10;
 	dest.y=29;
@@ -1660,7 +1660,7 @@ void cClient::drawFLC()
 	{
 		SDL_BlitSurface ( FLC->surface, NULL, buffer, &dest );
 	}
-	else
+	else if ( video )
 	{
 		SDL_BlitSurface ( video, NULL, buffer, &dest );
 	}

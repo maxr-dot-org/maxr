@@ -775,10 +775,8 @@ void cVehicle::Select ( void )
 			FLI_Close ( Client->FLC );
 		}
 
-		if ( Client->video )
-		{
-			Client->video = NULL;
-		}
+		Client->video = NULL;
+		
 
 		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
 

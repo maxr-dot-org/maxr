@@ -8506,10 +8506,8 @@ void cBuilding::Select ( void )
 		Client->sFLCname = "";
 	}
 
-	if ( Client->video != typ->video )
-	{
-		Client->video = typ->video;
-	}
+	Client->video = typ->video;
+	
 
 	// Sound abspielen:
 	if ( !IsWorking )
