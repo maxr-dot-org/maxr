@@ -24,7 +24,6 @@
 #include "player.h"
 #include "map.h"
 #include "hud.h"
-#include "game.h"
 #include "netmessage.h"
 #include "attackJobs.h"
 

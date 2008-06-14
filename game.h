@@ -113,8 +113,8 @@ public:
   bool DoCommand(char const* cmd);
   void ShowDebugComGraph(int Off);
   void AddDebugComGraph(int Send,int Read);
-  void AddFX ( enum eFXTyps typ,int x,int y,int param);
-  void AddFX ( enum eFXTyps typ,int x,int y, struct sFXRocketInfos* param );
+  void AddFX(eFXTyps, int x, int y, int param);
+  void AddFX(eFXTyps, int x, int y, struct sFXRocketInfos* param);
   void AddFX ( sFX* n );
   void DisplayFX(void);
   void DisplayFXBottom(void);

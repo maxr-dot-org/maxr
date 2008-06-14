@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "clientevents.h"
+#include "mjobs.h"
 #include "network.h"
 #include "events.h"
 #include "client.h"
