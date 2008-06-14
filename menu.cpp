@@ -850,6 +850,7 @@ void RunSPMenu ( void )
 						delete ( ClientPlayerList.Items[0] );
 						ClientPlayerList.Delete ( 0 );
 					}
+					//FIXME: race condition! deleting server players before server thread is stoped
 					while ( ServerPlayerList.iCount )
 					{
 						delete ( ServerPlayerList.Items[0] );

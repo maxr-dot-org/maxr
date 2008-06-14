@@ -1352,36 +1352,6 @@ void cClient::drawMap( bool bPure )
 		}
 		dest.y+=iZoom;
 	}
-	// draw vehicles:
-	dest.y=18-iOffY+iZoom*iStartY;
-	for ( iY=iStartY;iY<=iEndY;iY++ )
-	{
-		dest.x=180-iOffX+iZoom*iStartX;
-		iPos=iY*Map->size+iStartX;
-		for ( iX=iStartX;iX<=iEndX;iX++ )
-		{
-			if ( ActivePlayer->ScanMap[iPos] )
-			{
-				cVehicle* vehicle = Map->GO[iPos].vehicle;
-				if ( vehicle && vehicle->PosX == iX && vehicle->PosY == iY )
-				{
-					vehicle->Draw ( &dest );
-					if ( bDebugAjobs )
-					{
-						cVehicle* serverVehicle = NULL;
-						if ( Server ) serverVehicle = Server->Map->GO[iPos].vehicle;
-						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
-						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
-					}
-				}
-			}
-			iPos++;
-			dest.x+=iZoom;
-		}
-		dest.y+=iZoom;
-	}
 	// draw top buildings:
 	iStartY-=1;if ( iStartY<0 ) iStartY=0;
 	iStartX-=1;if ( iStartX<0 ) iStartX=0;
@@ -1441,6 +1411,36 @@ void cClient::drawMap( bool bPure )
 
 						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
 						font->showText(dest.x+1,dest.y+1+24, sTmp, LATIN_SMALL_WHITE);
+					}
+				}
+			}
+			iPos++;
+			dest.x+=iZoom;
+		}
+		dest.y+=iZoom;
+	}
+	// draw vehicles:
+	dest.y=18-iOffY+iZoom*iStartY;
+	for ( iY=iStartY;iY<=iEndY;iY++ )
+	{
+		dest.x=180-iOffX+iZoom*iStartX;
+		iPos=iY*Map->size+iStartX;
+		for ( iX=iStartX;iX<=iEndX;iX++ )
+		{
+			if ( ActivePlayer->ScanMap[iPos] )
+			{
+				cVehicle* vehicle = Map->GO[iPos].vehicle;
+				if ( vehicle && vehicle->PosX == iX && vehicle->PosY == iY )
+				{
+					vehicle->Draw ( &dest );
+					if ( bDebugAjobs )
+					{
+						cVehicle* serverVehicle = NULL;
+						if ( Server ) serverVehicle = Server->Map->GO[iPos].vehicle;
+						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
+						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
 					}
 				}
 			}
