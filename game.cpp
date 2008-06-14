@@ -2238,7 +2238,7 @@ void cGame::DrawFX ( int i )
 			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete ri;
 				delete fx;
 				FXList.Delete ( i );
@@ -2333,7 +2333,7 @@ void cGame::DrawFXBottom ( int i )
 			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete ri;
 				delete fx;
 				FXListBottom.Delete ( i );
@@ -2369,7 +2369,7 @@ void cGame::DrawFXBottom ( int i )
 			        ! ( map->GO[x+y*map->size].base&&map->GO[x+y*map->size].base->owner&& ( map->GO[x+y*map->size].base->data.is_bridge||map->GO[x+y*map->size].base->data.is_platform ) ) )
 			{
 				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete ri;
 				delete fx;
 				FXListBottom.Delete ( i );

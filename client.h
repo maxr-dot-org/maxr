@@ -146,6 +146,8 @@ private:
 	int iMsgCoordsX, iMsgCoordsY;
 	/** true if the player has been defeated */
 	bool bDefeated;
+	/** show infos about the running attackjobs */
+	bool bDebugAjobs;
 	/** show infos about the bases of the server. Only works on the host */
 	bool bDebugBaseServer;
 	/** show infos about the bases of the client */

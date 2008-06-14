@@ -138,6 +138,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bUpShowBuild = true;
 	bUpShowTNT = false;
 	bAlienTech = false;
+	bDebugAjobs = false;
 	bDebugBaseServer = false;
 	bDebugBaseClient = false;
 	bDebugWache = false;
@@ -458,6 +459,17 @@ void cClient::run()
 		}
 		// Debugausgaben machen:
 		iDebugOff = 30;
+		if ( bDebugAjobs && bFlagDrawMap)
+		{
+			font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr( Client->attackJobs.iCount), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			if ( Server ) 
+			{
+				font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr( Server->AJobs.iCount), LATIN_SMALL_WHITE);
+				iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			}
+		}
+
 		if ( bDebugBaseClient && bFlagDrawMap )
 		{
 			font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.iCount), LATIN_SMALL_WHITE);
@@ -1366,9 +1378,19 @@ void cClient::drawMap( bool bPure )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
-				if ( Map->GO[iPos].vehicle&&Map->GO[iPos].vehicle->PosX==iX&&Map->GO[iPos].vehicle->PosY==iY )
+				cVehicle* vehicle = Map->GO[iPos].vehicle;
+				if ( vehicle && vehicle->PosX == iX && vehicle->PosY == iY )
 				{
-					Map->GO[iPos].vehicle->Draw ( &dest );
+					vehicle->Draw ( &dest );
+					if ( bDebugAjobs )
+					{
+						cVehicle* serverVehicle = NULL;
+						if ( Server ) serverVehicle = Server->Map->GO[iPos].vehicle;
+						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
+						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+					}
 				}
 			}
 			iPos++;
@@ -1386,12 +1408,22 @@ void cClient::drawMap( bool bPure )
 		iPos=iY*Map->size+iStartX;
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
+			cBuilding* building = Map->GO[iPos].top;
 			if ( ActivePlayer->ScanMap[iPos]||
-			        ( Map->GO[iPos].top&&Map->GO[iPos].top->data.is_big&& ( ( iX<iEndX&&ActivePlayer->ScanMap[iPos+1] ) || ( iY<iEndY&&ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX<iEndX&&iY<iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
+			        ( building && building->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
 			{
-				if ( Map->GO[iPos].top&&Map->GO[iPos].top->PosX==iX&&Map->GO[iPos].top->PosY==iY )
+				if ( building && building->PosX == iX && building->PosY == iY )
 				{
-					Map->GO[iPos].top->Draw ( &dest );
+					building->Draw ( &dest );
+					if ( bDebugAjobs )
+					{
+						cBuilding* serverBuilding = NULL;
+						if ( Server ) serverBuilding = Server->Map->GO[iPos].top;
+						if ( building->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
+						if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
+						if ( building->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
+						if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+					}
 					if ( bDebugBaseClient )
 					{
 						sSubBase *sb;
@@ -1446,9 +1478,19 @@ void cClient::drawMap( bool bPure )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
-				if ( Map->GO[iPos].plane )
+				cVehicle* plane = Map->GO[iPos].plane;
+				if ( plane )
 				{
-					Map->GO[iPos].plane->Draw ( &dest );
+					plane->Draw ( &dest );
+					if ( bDebugAjobs )
+					{
+						cVehicle* serverPlane = NULL;
+						if ( Server ) serverPlane = Server->Map->GO[iPos].plane;
+						if ( plane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
+						if ( serverPlane && serverPlane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
+						if ( plane->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
+						if ( serverPlane && serverPlane->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+					}
 				}
 			}
 			iPos++;
@@ -1872,7 +1914,7 @@ void cClient::drawFX( int iNum )
 			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete fx;
 				FXList.Delete ( iNum );
 				return;
@@ -1964,7 +2006,7 @@ void cClient::drawFXBottom( int iNum )
 			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete fx;
 				FXListBottom.Delete ( iNum );
 				return;
@@ -1999,7 +2041,7 @@ void cClient::drawFXBottom( int iNum )
 			        ! ( Map->GO[x+y*Map->size].base&&Map->GO[x+y*Map->size].base->owner&& ( Map->GO[x+y*Map->size].base->data.is_bridge||Map->GO[x+y*Map->size].base->data.is_platform ) ) )
 			{
 				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
-				ri->aj->bMuzzlePlayed=true;
+				ri->aj->state = cClientAttackJob::FINISHED;
 				delete fx;
 				FXListBottom.Delete ( iNum );
 				return;
@@ -2398,6 +2440,8 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "trace server" ) == 0 ) { if ( Server ) bDebugTraceServer = true; bDebugTraceClient = false; return true; }
 	if ( sCmd.compare( "trace client" ) == 0 ) { bDebugTraceClient = true; bDebugTraceServer = false; return true; }
 	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTraceServer = false; bDebugTraceClient = false; return true; }
+	if ( sCmd.compare( "ajobs on" ) == 0 ) { bDebugAjobs = true; return true; }
+	if ( sCmd.compare( "ajobs off" ) == 0 ) { bDebugAjobs = false; return true; }
 
 	if ( sCmd.substr( 0, 6 ).compare( "color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
 	if ( sCmd.compare( "fog off" ) == 0 )

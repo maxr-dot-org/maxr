@@ -273,28 +273,41 @@ void cClientAttackJob::handleAttackJobs()
 	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
 	{
 		cClientAttackJob* job = Client->attackJobs.Items[i];
-		if ( job->bMuzzlePlayed )
+		switch ( job->state )
 		{
-			//TODO: attackjob auch im destruktor von cVehicle löschen
-			job->sendFinishMessage();
-			delete job;
-			Client->attackJobs.Delete(i);
-		}
-		else if ( job->bPlayingMuzzle )
-		{
-			job->playMuzzle();
-		}
-		else
-		{
-			job->rotate();
+		case FINISHED:
+			{
+				//TODO: attackjob auch im destruktor von cVehicle/cBuilding löschen
+				job->sendFinishMessage();
+				delete job;
+				Client->attackJobs.Delete(i);
+				break;
+			}
+		case UPDATE_AGRESSOR_DATA:
+			{
+				job->updateAgressorData();
+				job->state = PLAYING_MUZZLE;
+				job->playMuzzle();
+				break;
+			}
+		case PLAYING_MUZZLE:
+			{
+				job->playMuzzle();
+				break;
+			}
+		case ROTATING:
+			{
+				job->rotate();
+				break;
+			}
+		
 		}
 	}		
 }
 
 cClientAttackJob::cClientAttackJob( cNetMessage* message )
 {
-	bPlayingMuzzle = false;
-	bMuzzlePlayed = false;
+	state = ROTATING;
 	wait = 0;
 	this->iID = message->popInt16();
 	iTargetOffset = -1;
@@ -304,7 +317,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	{
 		if ( Client->attackJobs.Items[i]->iID == this->iID )
 		{
-			bMuzzlePlayed = true;
+			state = FINISHED;
 			return;
 		}
 	}
@@ -316,7 +329,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		building = Client->getBuildingFromID( unitID );
 		if ( !vehicle && !building )
 		{
-			bMuzzlePlayed = true;
+			state = FINISHED;
 			return; //we are out of sync!!!
 		}
 		iFireDir = message->popChar();
@@ -340,7 +353,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		iMuzzleType = message->popChar();
 		if ( iMuzzleType != MUZZLE_ROCKET || iMuzzleType != MUZZLE_ROCKET_CLUSTER || iMuzzleType != MUZZLE_TORPEDO )
 		{
-			bMuzzlePlayed = true;
+			state = FINISHED;
 			return;
 		}
 		iAgressorOffset = message->popInt32();
@@ -363,7 +376,7 @@ void cClientAttackJob::rotate()
 		else
 		{
 			vehicle->rotating = false;
-			bPlayingMuzzle = true;
+			state = UPDATE_AGRESSOR_DATA;
 		}
 	}
 	else if ( building )
@@ -374,12 +387,12 @@ void cClientAttackJob::rotate()
 		}
 		else
 		{
-			bPlayingMuzzle = true;
+			state = UPDATE_AGRESSOR_DATA;
 		}
 	}
 	else
 	{
-		bPlayingMuzzle = true;
+		state = UPDATE_AGRESSOR_DATA;
 	}
 }
 
@@ -399,7 +412,7 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_BIG:
 			if ( wait++!=0 )
 			{
-				if ( wait>2 ) bMuzzlePlayed = true;
+				if ( wait>2 ) state = FINISHED;
 				return;
 			}
 			switch ( iFireDir )
@@ -445,7 +458,7 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_SMALL:
 			if ( wait++!=0 )
 			{
-				if ( wait>2 ) bMuzzlePlayed=true;
+				if ( wait>2 ) state = FINISHED;
 				return;
 			}
 			if ( vehicle )
@@ -476,7 +489,7 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_MED_LONG:
 			if ( wait++!=0 )
 			{
-				if ( wait>2 ) bMuzzlePlayed=true;
+				if ( wait>2 ) state = FINISHED;
 				return;
 			}
 			switch ( iFireDir )
@@ -547,7 +560,7 @@ void cClientAttackJob::playMuzzle()
 			break;
 		}
 		case MUZZLE_SNIPER:
-			bMuzzlePlayed=true;
+			state = FINISHED;
 			break;
 	}
 	if ( vehicle )
@@ -559,14 +572,22 @@ void cClientAttackJob::playMuzzle()
 		PlayFX ( building->typ->Attack );
 	}
 
-	// Die Stats ändern:
+}
+
+void cClientAttackJob::sendFinishMessage()
+{
+
+}
+
+void cClientAttackJob::updateAgressorData()
+{
 	if ( vehicle )
 	{
 		vehicle->data.shots--;
 		vehicle->data.ammo--;
-		if ( !vehicle->data.shots ) vehicle->AttackMode=false;
-		if ( !vehicle->data.can_drive_and_fire ) vehicle->data.speed-= (int)(( ( float ) vehicle->data.max_speed ) /vehicle->data.max_shots);
-		if ( Client->SelectedVehicle&&Client->SelectedVehicle==vehicle )
+		if ( !vehicle->data.shots ) vehicle->AttackMode = false;
+		if ( !vehicle->data.can_drive_and_fire ) vehicle->data.speed -= (int)(( ( float ) vehicle->data.max_speed ) /vehicle->data.max_shots);
+		if ( Client->SelectedVehicle && Client->SelectedVehicle == vehicle )
 		{
 			vehicle->ShowDetails();
 		}
@@ -575,15 +596,10 @@ void cClientAttackJob::playMuzzle()
 	{
 		building->data.shots--;
 		building->data.ammo--;
-		if ( !building->data.shots ) building->AttackMode=false;
-		if ( Client->SelectedBuilding&&Client->SelectedBuilding==building )
+		if ( !building->data.shots ) building->AttackMode = false;
+		if ( Client->SelectedBuilding && Client->SelectedBuilding == building )
 		{
 			building->ShowDetails();
 		}
 	}
-}
-
-void cClientAttackJob::sendFinishMessage()
-{
-
 }

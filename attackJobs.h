@@ -60,8 +60,8 @@ public:
 	int iTargetOffset;
 	int wait;
 
-	bool bPlayingMuzzle;
-	bool bMuzzlePlayed;
+	enum eAJStates { UPDATE_AGRESSOR_DATA, ROTATING, PLAYING_MUZZLE, FINISHED };
+	eAJStates state;
 
 	/** prepares a mapspuare to be attacked
 	* @author Eiko
@@ -74,6 +74,7 @@ public:
 	void rotate();
 	void playMuzzle();
 	void sendFinishMessage();
+	void updateAgressorData();
 };
 
 
