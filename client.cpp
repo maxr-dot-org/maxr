@@ -295,101 +295,107 @@ void cClient::run()
 			SelectedBuilding=NULL;
 		}
 		// Die Objekt-Kreise malen:
-		if ( SelectedVehicle )
+		if (SelectedVehicle)
 		{
-			int spx,spy;
-			spx = SelectedVehicle->GetScreenPosX();
-			spy = SelectedVehicle->GetScreenPosY();
-			if ( Hud.Scan )
+			cVehicle& v   = *SelectedVehicle; // XXX not const is suspicious
+			int const spx = v.GetScreenPosX();
+			int const spy = v.GetScreenPosY();
+			if (Hud.Scan)
 			{
-				drawCircle ( spx+Hud.Zoom/2,
-				             spy+Hud.Zoom/2,
-				             SelectedVehicle->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
+				drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer);
 			}
-			if ( Hud.Reichweite&& ( SelectedVehicle->data.can_attack==ATTACK_LAND||SelectedVehicle->data.can_attack==ATTACK_SUB_LAND||SelectedVehicle->data.can_attack==ATTACK_AIRnLAND ) )
+			if (Hud.Reichweite)
 			{
-				drawCircle ( spx+Hud.Zoom/2,
-				             spy+Hud.Zoom/2,
-				             SelectedVehicle->data.range*Hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
-			}
-			if ( Hud.Reichweite&&SelectedVehicle->data.can_attack==ATTACK_AIR )
-			{
-				drawCircle ( spx+Hud.Zoom/2,
-				             spy+Hud.Zoom/2,
-				             SelectedVehicle->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			}
-			if ( Hud.Munition&&SelectedVehicle->data.can_attack )
-			{
-				SelectedVehicle->DrawMunBar();
-			}
-			if ( Hud.Treffer )
-			{
-				SelectedVehicle->DrawHelthBar();
-			}
-			if ( ( ( SelectedVehicle->IsBuilding&&SelectedVehicle->BuildRounds==0 ) || ( SelectedVehicle->IsClearing&&SelectedVehicle->ClearingRounds==0 ) ) &&SelectedVehicle->owner==ActivePlayer )
-			{
-				if ( SelectedVehicle->data.can_build==BUILD_BIG||SelectedVehicle->ClearBig )
+				switch (v.data.can_attack)
 				{
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy+Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud.Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy+Hud.Zoom*2 );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+2 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom*2,spy+Hud.Zoom*2 );
+					case ATTACK_LAND:
+					case ATTACK_SUB_LAND:
+					case ATTACK_AIRnLAND:
+						drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 1, RANGE_GROUND_COLOR, buffer);
+						break;
+
+					case ATTACK_AIR:
+						drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 2, RANGE_AIR_COLOR, buffer);
+						break;
+				}
+			}
+			if (Hud.Munition && v.data.can_attack)
+			{
+				v.DrawMunBar();
+			}
+			if (Hud.Treffer)
+			{
+				v.DrawHelthBar();
+			}
+			if (v.owner == ActivePlayer &&
+					(
+						v.IsBuilding && v.BuildRounds    == 0 ||
+						v.IsClearing && v.ClearingRounds == 0
+					))
+			{
+				if (v.data.can_build == BUILD_BIG || v.ClearBig)
+				{
+					if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,                spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX + 2 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy);
+					if (v.CanDrive(v.PosX + 2 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy);
+					if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom);
+					if (v.CanDrive(v.PosX + 2 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom);
+					if (v.CanDrive(v.PosX - 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom * 2);
+					if (v.CanDrive(v.PosX     + (v.PosY + 2) * Map->size)) drawExitPoint(spx,                spy + Hud.Zoom * 2);
+					if (v.CanDrive(v.PosX + 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy + Hud.Zoom * 2);
+					if (v.CanDrive(v.PosX + 2 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom * 2);
 				}
 				else
 				{
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy-Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx-Hud.Zoom,spy+Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx,spy+Hud.Zoom );
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 ) *Map->size ) ) drawExitPoint ( spx+Hud.Zoom,spy+Hud.Zoom );
+					if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,            spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy - Hud.Zoom);
+					if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy);
+					if (v.CanDrive(v.PosX + 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy);
+					if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy + Hud.Zoom);
+					if (v.CanDrive(v.PosX     + (v.PosY + 1) * Map->size)) drawExitPoint(spx,            spy + Hud.Zoom);
+					if (v.CanDrive(v.PosX + 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy + Hud.Zoom);
 				}
 			}
-			if ( SelectedVehicle->PlaceBand )
+			if (v.PlaceBand)
 			{
-				if ( SelectedVehicle->data.can_build==BUILD_BIG )
+				if (v.data.can_build == BUILD_BIG)
 				{
 					SDL_Rect dest;
-					dest.x=180- ( ( int ) ( ( Hud.OffX ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*SelectedVehicle->BandX;
-					dest.y=18- ( ( int ) ( ( Hud.OffY ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*SelectedVehicle->BandY;
-					dest.h=dest.w=GraphicsData.gfx_band_big->h;
-					SDL_BlitSurface ( GraphicsData.gfx_band_big,NULL,buffer,&dest );
+					dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
+					dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandY;
+					dest.w = dest.h = GraphicsData.gfx_band_big->h;
+					SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
 				}
 				else
 				{
-					SDL_Rect dest;
-					int x,y;
-					mouse->GetKachel ( &x,&y );
-					if ( x==SelectedVehicle->PosX||y==SelectedVehicle->PosY )
+					int x;
+					int y;
+					mouse->GetKachel(&x, &y);
+					if (x == v.PosX || y == v.PosY)
 					{
-						dest.x=180- ( ( int ) ( ( Hud.OffX ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*x;
-						dest.y=18- ( ( int ) ( ( Hud.OffY ) / ( 64.0/Hud.Zoom ) ) ) +Hud.Zoom*y;
-						dest.h=dest.w=GraphicsData.gfx_band_small->h;
-						SDL_BlitSurface ( GraphicsData.gfx_band_small,NULL,buffer,&dest );
-						SelectedVehicle->BandX=x;
-						SelectedVehicle->BandY=y;
-						SelectedVehicle->BuildPath=true;
+						SDL_Rect dest;
+						dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * x;
+						dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * y;
+						dest.h = dest.w = GraphicsData.gfx_band_small->h;
+						SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
+						v.BandX     = x;
+						v.BandY     = y;
+						v.BuildPath = true;
 					}
 					else
 					{
-						SelectedVehicle->BandX=SelectedVehicle->PosX;
-						SelectedVehicle->BandY=SelectedVehicle->PosY;
+						v.BandX = v.PosX;
+						v.BandY = v.PosY;
 					}
 				}
 			}
-			if ( SelectedVehicle->ActivatingVehicle&&SelectedVehicle->owner==ActivePlayer )
+			if (v.ActivatingVehicle && v.owner == ActivePlayer)
 			{
-				SelectedVehicle->DrawExitPoints ( SelectedVehicle->StoredVehicles->Items[SelectedVehicle->VehicleToActivate]->typ );
+				v.DrawExitPoints(v.StoredVehicles->Items[v.VehicleToActivate]->typ);
 			}
 		}
 		else if ( SelectedBuilding )
