@@ -769,14 +769,15 @@ void cServer::checkPlayerUnits ()
 				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 				if ( MapPlayer->ScanMap[iOff] == 1 &&
 					( !NextVehicle->data.is_stealth_land || Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectLandMap[iOff] == 1 ) &&
-					( !NextVehicle->data.is_stealth_sea || !Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectSeaMap[iOff] == 1 ) )
+					( !NextVehicle->data.is_stealth_sea || !Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectSeaMap[iOff] == 1 ) &&
+					NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextVehicle->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
 					}
-					if ( i == NextVehicle->SeenByPlayerList.iCount && NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
+					if ( i == NextVehicle->SeenByPlayerList.iCount )
 					{
 						NextVehicle->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
@@ -811,14 +812,15 @@ void cServer::checkPlayerUnits ()
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = PlayerList->Items[iMapPlayerNum];
-				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1 )
+				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1  &&
+					NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
 					}
-					if ( i == NextBuilding->SeenByPlayerList.iCount && NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
+					if ( i == NextBuilding->SeenByPlayerList.iCount )
 					{
 						NextBuilding->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
