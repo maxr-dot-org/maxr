@@ -307,6 +307,18 @@ bool MenuButton::CheckClick(int const x, int const y, bool const down, bool cons
 }
 
 
+static void CheckUnitImageClick(int const x, int const y, bool const down)
+{
+	if (!down) return;
+	if (x < INFO_IMG_X || INFO_IMG_X + INFO_IMG_WIDTH  <= x) return;
+	if (y < INFO_IMG_Y || INFO_IMG_Y + INFO_IMG_HEIGHT <= y) return;
+	PlayFX(SoundData.SNDObjectMenu);
+	showUnitPicture();
+	SHOW_SCREEN
+	mouse->draw(false, screen);
+}
+
+
 // Zeigt das Hauptmenü an:
 void RunMainMenu ( void )
 {
@@ -349,16 +361,7 @@ void RunMainMenu ( void )
 		bool const down = b > lb;
 		bool const up   = b < lb;
 
-		// Klick aufs Bild:
-		if (down &&
-				INFO_IMG_X <= x && x < INFO_IMG_X + INFO_IMG_WIDTH &&
-				INFO_IMG_Y <= y && y < INFO_IMG_Y + INFO_IMG_HEIGHT)
-		{
-			PlayFX(SoundData.SNDObjectMenu);
-			showUnitPicture();
-			SHOW_SCREEN
-			mouse->draw(false, screen);
-		}
+		CheckUnitImageClick(x, y, down);
 
 		if (btn_single.CheckClick(x, y, down, up))
 		{
@@ -451,19 +454,12 @@ void RunMPMenu ( void )
 			mouse->draw ( true,screen );
 		}
 
-		// Klick aufs Bild:
-		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			showUnitPicture();
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-
 		int  const x    = mouse->x;
 		int  const y    = mouse->y;
 		bool const down = b > lb;
 		bool const up   = b < lb;
+
+		CheckUnitImageClick(x, y, down);
 
 		if (btn_host.CheckClick(x, y, down, up))
 		{
@@ -561,19 +557,13 @@ void RunSPMenu ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		// Klick aufs Bild:
-		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			showUnitPicture();
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
 
 		int  const x    = mouse->x;
 		int  const y    = mouse->y;
 		bool const down = b > lb;
 		bool const up   = b < lb;
+
+		CheckUnitImageClick(x, y, down);
 
 		if (btn_train.CheckClick(x, y, down, up))
 		{
