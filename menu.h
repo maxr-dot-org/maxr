@@ -154,13 +154,6 @@ public:
 // Prototypen ////////////////////////////////////////////////////////////////
 void RunMainMenu(void);
 /**
-*Shows a vehicle or a building in the mainscreen. There's
-*a 33% chance that it shows a building and a 66% chance to
-*show a vehicle. A unit won't be shown twice in order.
-*@author beko
-*/
-void showUnitPicture(void);
-/**
  *
  * @param bIAmMain
  */

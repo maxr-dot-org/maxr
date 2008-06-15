@@ -63,6 +63,15 @@
 /** int for showUnitPicture to prevent same graphic shown twice on click*/
 static int s_iLastUnitShown = 0;
 
+
+/**
+ * Shows a vehicle or a building in the mainscreen. There's a 33% chance that
+ * it shows a building and a 66% chance to show a vehicle. A unit won't be
+ * shown twice in order.
+ * @author beko
+ */
+static void showUnitPicture(void);
+
 // Menü vorbereiten:
 void prepareMenu ( bool bIAmMain )
 {
@@ -110,7 +119,7 @@ void prepareMenu ( bool bIAmMain )
 }
 
 // shows the randomized unit picture
-void showUnitPicture ( void )
+static void showUnitPicture(void)
 {
 	/**To randomize whether to show a vehicles or a building*/
 	int const iShowBuilding = random(3);
