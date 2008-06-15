@@ -239,10 +239,77 @@ void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *s
 	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 }
 
+
+class MenuButton
+{
+	public:
+		MenuButton(int const x, int const y, char const* const text) :
+			x_(x),
+			y_(y),
+			text_(text),
+			down_(false)
+		{}
+
+		void Draw(bool down = false) const;
+
+		bool CheckClick(int x, int y, bool down, bool up);
+
+	private:
+		int         x_;
+		int         y_;
+		char const* text_;
+		bool        down_;
+};
+
+
+void MenuButton::Draw(bool const down) const
+{
+	drawMenuButton(lngPack.i18n(text_), down, x_, y_);
+}
+
+bool MenuButton::CheckClick(int const x, int const y, bool const down, bool const up)
+{
+	if (x_ <= x && x < x_ + BTN_WIDTH &&
+			y_ <= y && y < y_ + BTN_HEIGHT)
+	{
+		if (down_)
+		{
+			if (up)
+			{
+				down_ = false;
+				Draw(false);
+				return true;
+			}
+		}
+		else
+		{
+			if (down)
+			{
+				down_ = true;
+				PlayFX(SoundData.SNDMenuButton);
+				Draw(true);
+				SHOW_SCREEN
+					mouse->draw(false, screen);
+			}
+		}
+	}
+	else
+	{
+		if (down_)
+		{
+			down_ = false;
+			Draw(false);
+			SHOW_SCREEN
+				mouse->draw(false, screen);
+		}
+	}
+	return false;
+}
+
+
 // Zeigt das Hauptmenü an:
 void RunMainMenu ( void )
 {
-	bool SPPressed=false,MPPRessed=false,CrPressed=false,BePressed=false,LiPressed=false;
 	bool EscHot=true;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
@@ -251,6 +318,15 @@ void RunMainMenu ( void )
 
 	prepareMenu(true);
 	SHOW_SCREEN
+
+	MenuButton btn_single( BTN_1_X, BTN_1_Y, "Text~Button~Single_Player");
+	MenuButton btn_multi(  BTN_2_X, BTN_2_Y, "Text~Button~Multi_Player");
+#if 0
+	MenuButton btn_editor( BTN_3_X, BTN_3_Y, "Text~Button~Map_Editor");
+	MenuButton btn_credits(BTN_4_X, BTN_4_Y, "Text~Button~Credits");
+#endif
+	MenuButton btn_license(BTN_5_X, BTN_5_Y, "Text~Button~Mani");
+	MenuButton btn_exit(   BTN_6_X, BTN_6_Y, "Text~Button~Exit");
 
 	while ( 1 )
 	{
@@ -268,186 +344,63 @@ void RunMainMenu ( void )
 			mouse->draw ( true,screen );
 		}
 
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
 		// Klick aufs Bild:
-		if ( b && !lb && mouse->x >= INFO_IMG_X && mouse->x < INFO_IMG_X + INFO_IMG_WIDTH && mouse->y >= INFO_IMG_Y && mouse->y < INFO_IMG_Y + INFO_IMG_HEIGHT )
+		if (down &&
+				INFO_IMG_X <= x && x < INFO_IMG_X + INFO_IMG_WIDTH &&
+				INFO_IMG_Y <= y && y < INFO_IMG_Y + INFO_IMG_HEIGHT)
 		{
-			PlayFX ( SoundData.SNDObjectMenu );
+			PlayFX(SoundData.SNDObjectMenu);
 			showUnitPicture();
 			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Einzelspieler:
-		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				SPPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),true,BTN_1_X,BTN_1_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&SPPressed )
-			{
-				RunSPMenu();
-				prepareMenu(true);
-				SHOW_SCREEN
-				SPPressed=false;
-				EscHot=false;
-			}
-		}
-		else if ( SPPressed )
-		{
-			SPPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),false,BTN_1_X,BTN_1_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Mehrspieler:
-		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				MPPRessed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ), true,BTN_2_X,BTN_2_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&MPPRessed )
-			{
-				RunMPMenu();
-				prepareMenu(true);
-				SHOW_SCREEN
-				SPPressed=false;
-				EscHot=false;
-			}
-		}
-		else if ( MPPRessed )
-		{
-			MPPRessed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Map-Editor:
-		/*
-		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				MEPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),true,BTN_3_X,BTN_3_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&MEPressed )
-			{
-				//cMapEditor *me;
-				//ExitMenu();
-				//
-				//me=new cMapEditor();
-				//me->Run();
-				//delete me;
-
-				prepareMenu(true);
-				SHOW_SCREEN
-				MEPressed=false;
-				EscHot=false;
-			}
-		}
-		else if ( MEPressed )
-		{
-			MEPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),false,BTN_3_X,BTN_3_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		} */
-		// Credits:
-		/*
-		if ( mouse->x >= BTN_4_X && mouse->x < BTN_4_X + BTN_WIDTH && mouse->y >= BTN_4_Y && mouse->y < BTN_4_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				CrPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),true,BTN_4_X,BTN_4_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&CrPressed )
-			{
-// 				cCredits *cred;
-// 				cred=new cCredits();
-// 				cred->Run();
-// 				delete cred;
-				prepareMenu(true);
-				SHOW_SCREEN
-				EscHot=false;
-				CrPressed=false;
-			}
-		}
-		else if ( CrPressed )
-		{
-			CrPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),false,BTN_4_X,BTN_4_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-*/
-		//Licence
-		if ( mouse->x >= BTN_5_X && mouse->x < BTN_5_X + BTN_WIDTH && mouse->y >= BTN_5_Y  && mouse->y < BTN_5_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				LiPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),true,BTN_5_X,BTN_5_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&LiPressed )
-			{
-				mouse->draw ( false,screen );
-				//SHOW_SCREEN
-				showLicence();
-				prepareMenu(true);
-				SHOW_SCREEN
-				LiPressed=false;
-				CrPressed=false;
-			}
-		}
-		else if ( CrPressed )
-		{
-			CrPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),false,BTN_5_X,BTN_5_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			mouse->draw(false, screen);
 		}
 
-		// Beenden:
-		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT )
+		if (btn_single.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				BePressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),true,BTN_6_X,BTN_6_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BePressed )
-			{
-				break;
-			}
-		}
-		else if ( BePressed )
-		{
-			BePressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),false,BTN_6_X,BTN_6_Y );
+			RunSPMenu();
+			prepareMenu(true);
 			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			EscHot = false;
+		}
+		if (btn_multi.CheckClick(x, y, down, up))
+		{
+			RunMPMenu();
+			prepareMenu(true);
+			SHOW_SCREEN
+			EscHot = false;
+		}
+#if 0
+		if (btn_editor.CheckClick(x, y, down, up))
+		{
+			ExitMenu();
+			{ cMapEditor me; me.Run(); }
+			prepareMenu(true);
+			SHOW_SCREEN
+			EscHot = false;
+		}
+		if (btn_credits.CheckClick(x, y, down, up))
+		{
+			{ cCredits cred; cred.Run(); }
+			prepareMenu(true);
+			SHOW_SCREEN
+			EscHot = false;
+		}
+#endif
+		if (btn_license.CheckClick(x, y, down, up))
+		{
+			mouse->draw(false, screen);
+			showLicence();
+			prepareMenu(true);
+			SHOW_SCREEN
+		}
+		if (btn_exit.CheckClick(x, y, down, up))
+		{
+			break;
 		}
 
 		lb=b;
@@ -463,25 +416,23 @@ void RunMainMenu ( void )
 // Zeigt das Multiplayermenü an:
 void RunMPMenu ( void )
 {
-	//defines for translation since I'm very lazy --beko
-#define TCPIPHOST lngPack.i18n("Text~Button~TCPIP_Host")
-#define TCPIPCLIENT lngPack.i18n( "Text~Button~TCPIP_Client")
-#define NEWHOTSEAT lngPack.i18n( "Text~Button~HotSeat_New")
-#define LOADHOTSEAT lngPack.i18n( "Text~Button~HotSeat_Load")
-#define BACK lngPack.i18n( "Text~Button~Back")
-	bool TCPHostPressed=false,TCPClientPressed=false,BackPressed=false,HotSeatPressed=false,LoadHotSeatPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
 	font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n ( "Text~Button~Multi_Player" ));
 
-	drawMenuButton ( TCPIPHOST, false, BTN_1_X, BTN_1_Y );
-	drawMenuButton ( TCPIPCLIENT, false, BTN_2_X, BTN_2_Y );
-	drawMenuButton ( NEWHOTSEAT, false, BTN_3_X, BTN_3_Y );
-	drawMenuButton ( LOADHOTSEAT, false, BTN_4_X, BTN_4_Y );
-	drawMenuButton ( BACK, false, BTN_6_X, BTN_6_Y );
+	MenuButton btn_host(    BTN_1_X, BTN_1_Y, "Text~Button~TCPIP_Host");
+	MenuButton btn_client(  BTN_2_X, BTN_2_Y, "Text~Button~TCPIP_Client");
+	MenuButton btn_new_hot( BTN_3_X, BTN_3_Y, "Text~Button~HotSeat_New");
+	MenuButton btn_load_hot(BTN_4_X, BTN_4_Y, "Text~Button~HotSeat_Load");
+	MenuButton btn_back    (BTN_6_X, BTN_6_Y, "Text~Button~Back");
 
+	btn_host.Draw();
+	btn_client.Draw();
+	btn_new_hot.Draw();
+	btn_load_hot.Draw();
+	btn_back.Draw();
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -508,163 +459,67 @@ void RunMPMenu ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// TCP Host:
-		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
+
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_host.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				TCPHostPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( TCPIPHOST,true,BTN_1_X,BTN_1_Y );
-				SHOW_SCREEN
-				#ifdef RELEASE
-					TCPHostPressed=false;
-					drawMenuButton ( TCPIPHOST,false,BTN_1_X,BTN_1_Y );
-					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
-				#else
-					//nothing to do here
-				#endif
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&TCPHostPressed )
-			{
-				cMultiPlayerMenu m(true);
-				MultiPlayerMenu = &m;
-				m.runNetworkMenu();
-				MultiPlayerMenu = 0;
-				break;
-			}
+#ifdef RELEASE
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+#else
+			cMultiPlayerMenu m(true);
+			MultiPlayerMenu = &m;
+			m.runNetworkMenu();
+			MultiPlayerMenu = 0;
+			break;
+#endif
 		}
-		else if ( TCPHostPressed )
+		if (btn_client.CheckClick(x, y, down, up))
 		{
-			TCPHostPressed=false;
-			drawMenuButton ( TCPIPHOST,false,BTN_1_X,BTN_1_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+#ifdef RELEASE
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+#else
+			cMultiPlayerMenu m(false);
+			MultiPlayerMenu = &m;
+			m.runNetworkMenu();
+			MultiPlayerMenu = 0;
+			break;
+#endif
 		}
-		// TCP Client:
-		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT)
+		if (btn_new_hot.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				TCPClientPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( TCPIPCLIENT,true,BTN_2_X,BTN_2_Y );
-				SHOW_SCREEN
-				#ifdef RELEASE
-					TCPClientPressed=false;
-					drawMenuButton ( TCPIPCLIENT,false,BTN_2_X,BTN_2_Y );
-					ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
-				#else
-					//nothing to do here
-				#endif
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&TCPClientPressed )
-			{
-				cMultiPlayerMenu m(false);
-				MultiPlayerMenu = &m;
-				m.runNetworkMenu();
-				MultiPlayerMenu = 0;
-				break;
-			}
+			HeatTheSeat();
+			break;
 		}
-		else if ( TCPClientPressed )
+		if (btn_load_hot.CheckClick(x, y, down, up))
 		{
-			TCPClientPressed=false;
-			drawMenuButton ( TCPIPCLIENT,false,BTN_2_X,BTN_2_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Hot Seat:
-		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT)
-		{
-			if ( b&&!lb )
+			if (ShowDateiMenu(false) != -1)
 			{
-				HotSeatPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( NEWHOTSEAT,true,BTN_3_X, BTN_3_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&HotSeatPressed )
-			{
-				HeatTheSeat();
-				break;
-			}
-		}
-		else if ( HotSeatPressed )
-		{
-			HotSeatPressed=false;
-			drawMenuButton ( NEWHOTSEAT,false,BTN_3_X, BTN_3_Y);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Hot Seat laden:
-		if ( mouse->x >= BTN_4_X && mouse->x < BTN_4_X + BTN_WIDTH && mouse->y >= BTN_4_Y && mouse->y < BTN_4_Y + BTN_HEIGHT)
-		{
-			if ( b&&!lb )
-			{
-				LoadHotSeatPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( LOADHOTSEAT,true,BTN_4_X,BTN_4_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&LoadHotSeatPressed )
-			{
-				if ( ShowDateiMenu( false ) != -1 )
+				cMap *map;
+				map  = new cMap();
+				game = new cGame(map);
+				ExitMenu();
+				if (!SaveLoadFile.empty())
 				{
-					cMap *map;
-					map=new cMap();
-					game=new cGame ( map );
-					ExitMenu();
-					if ( !SaveLoadFile.empty() )
-					{
-						game->HotSeat=true;
-						game->Load ( SaveLoadFile,0 );
-					}
-					delete game;game=NULL;
-					delete map;
-					break;
+					game->HotSeat = true;
+					game->Load(SaveLoadFile, 0);
 				}
-				prepareMenu();
-				RunSPMenu();
+				delete game; game = NULL;
+				delete map;
 				break;
 			}
+			prepareMenu();
+			RunSPMenu();
+			break;
 		}
-		else if ( LoadHotSeatPressed )
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			LoadHotSeatPressed=false;
-			drawMenuButton ( LOADHOTSEAT,false,BTN_4_X,BTN_4_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			break;
 		}
-		// Zurück:
-		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT)
-		{
-			if ( b&&!lb )
-			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( BACK,true,BTN_6_X, BTN_6_Y);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
-				break;
-			}
-		}
-		else if ( BackPressed )
-		{
-			BackPressed=false;
-			drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
+
 		lb=b;
 		lx=mouse->x;
 		ly=mouse->y;
@@ -674,24 +529,21 @@ void RunMPMenu ( void )
 
 void RunSPMenu ( void )
 {
-	//defines for translation since I'm very lazy --beko
-#define SINGLEPLAYER lngPack.i18n("Text~Button~Single_Player")
-#define TRAINING lngPack.i18n( "Text~Button~Training")
-#define NEWGAME lngPack.i18n( "Text~Button~Game_New")
-#define LOADGAME lngPack.i18n( "Text~Button~Game_Load")
-#define BACK lngPack.i18n( "Text~Button~Back")
-	bool StartTrainingPressed=false, StartNewPressed=false, LoadPressed=false, BackPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,lx=-1,ly=-1;
 
 	prepareMenu();
-	font->showTextCentered(TITLE_X, TITLE_Y, SINGLEPLAYER);
+	font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n("Text~Button~Single_Player"));
 
-	drawMenuButton ( TRAINING,false,BTN_1_X, BTN_1_Y );
-	drawMenuButton ( NEWGAME,false,BTN_2_X, BTN_2_Y );
-	drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
-	drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y );
+	MenuButton btn_train(BTN_1_X, BTN_1_Y, "Text~Button~Training");
+	MenuButton btn_new(  BTN_2_X, BTN_2_Y, "Text~Button~Game_New");
+	MenuButton btn_load( BTN_3_X, BTN_3_Y, "Text~Button~Game_Load");
+	MenuButton btn_back( BTN_6_X, BTN_6_Y, "Text~Button~Back");
 
+	btn_train.Draw();
+	btn_new.Draw();
+	btn_load.Draw();
+	btn_back.Draw();
 	SHOW_SCREEN
 
 	while ( 1 )
@@ -717,226 +569,151 @@ void RunSPMenu ( void )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Training starten:
-		if ( mouse->x >= BTN_1_X && mouse->x < BTN_1_X + BTN_WIDTH && mouse->y >= BTN_1_Y && mouse->y < BTN_1_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				StartTrainingPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( TRAINING,true,BTN_1_X, BTN_1_Y );
-				ShowOK(lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ), true);
-				//not implemented yet
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&StartTrainingPressed )
-			{
-				StartTrainingPressed=false;
-				drawMenuButton ( TRAINING,false,BTN_1_X, BTN_1_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-		}
-		else if ( StartTrainingPressed )
-		{
-			StartTrainingPressed=false;
-			drawMenuButton ( TRAINING,false,BTN_1_X,BTN_1_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
 
-		// Neues Spiel starten:
-		if ( mouse->x >= BTN_2_X && mouse->x < BTN_2_X + BTN_WIDTH && mouse->y >= BTN_2_Y && mouse->y < BTN_2_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				StartNewPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( NEWGAME,true,BTN_2_X,BTN_2_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&StartNewPressed )
-			{
-				sOptions options;
-				string sMapName = "";
-				options = RunOptionsMenu ( NULL );
-				if ( options.metal == -1 ) break;
-				sMapName = RunPlanetSelect();
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
 
-				if ( !sMapName.empty() )
+		if (btn_train.CheckClick(x, y, down, up))
+		{
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+		}
+		if (btn_new.CheckClick(x, y, down, up))
+		{
+			sOptions options;
+			string sMapName = "";
+			options = RunOptionsMenu ( NULL );
+			if ( options.metal == -1 ) break;
+			sMapName = RunPlanetSelect();
+
+			if ( !sMapName.empty() )
+			{
+				int iLandX, iLandY;
+				cPlayer *Player;
+				cMap Map;
+				sPlayer players;
+				if ( !Map.LoadMap ( sMapName ) )
 				{
-					int iLandX, iLandY;
-					cPlayer *Player;
-					cMap Map;
-					sPlayer players;
-					if ( !Map.LoadMap ( sMapName ) )
-					{
-						break;
-					}
-					Map.PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
-					// copy map for server
-					cMap ServerMap;
-					ServerMap.NewMap( Map.size, Map.TerrainInUse.iCount );
-					ServerMap.DefaultWater = Map.DefaultWater;
-					ServerMap.MapName = Map.MapName;
-					memcpy ( ServerMap.Kacheln, Map.Kacheln, sizeof ( int )*Map.size*Map.size );
-					memcpy ( ServerMap.Resources, Map.Resources, sizeof ( sResources )*Map.size*Map.size );
-					for ( int i = 0; i < Map.TerrainInUse.iCount; i++ )
-					{
-						ServerMap.terrain[i].blocked = Map.terrain[i].blocked;
-						ServerMap.terrain[i].coast = Map.terrain[i].coast;
-						ServerMap.terrain[i].water = Map.terrain[i].water;
-					}
-
-					players = runPlayerSelection();
-
-					bool bHavePlayer = false;
-					for ( int i = 0; i < 4; i++ ) //check for players
-					{
-						if( players.what[i] != PLAYER_N )
-						{
-							bHavePlayer = true;
-						}
-					}
-					if(!bHavePlayer) //no players - break
-					{
-						ExitMenu();
-						break;
-					}
-					// player for client
-					Player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
-					cList<cPlayer*> ClientPlayerList;
-					ClientPlayerList.Add ( Player );
-					ClientPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
-
-					// playerlist for server
-					cList<cPlayer*> ServerPlayerList;
-					ServerPlayerList.Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
-					ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
-
-					// init client and his player
-					Client = new cClient(&Map, &ClientPlayerList);
-					Client->initPlayer ( Player );
-					for ( int i = 0; i < ClientPlayerList.iCount; i++ )
-					{
-						ClientPlayerList.Items[i]->InitMaps ( Map.size, &Map );
-						ClientPlayerList.Items[i]->Credits = options.credits;
-					}
-
-					// init the players of playerlist
-					for ( int i = 0; i < ServerPlayerList.iCount; i++ )
-					{
-						ServerPlayerList.Items[i]->InitMaps ( ServerMap.size, &ServerMap );
-						ServerPlayerList.Items[i]->Credits = options.credits;
-					}
-					// init server
-					Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
-
-					// land the player
-					cList<sLanding*> LandingList;
-					RunHangar ( Player, &LandingList );
-					SelectLanding ( &iLandX, &iLandY, &Map );
-
-					Server->makeLanding ( iLandX, iLandY, ServerPlayerList.Items[0], &LandingList, options.FixedBridgeHead );
-
-					while ( LandingList.iCount )
-					{
-						delete LandingList.Items[LandingList.iCount - 1];
-						LandingList.Delete( LandingList.iCount - 1);
-					}
-
-					// exit menu and start game
-					ExitMenu();
-
-					Server->bStarted = true;
-					Client->run();
-
-					SettingsData.sPlayerName = Player->name;
-					while ( ClientPlayerList.iCount )
-					{
-						delete ( ClientPlayerList.Items[0] );
-						ClientPlayerList.Delete ( 0 );
-					}
-					
-					delete Client; Client = NULL;
-					delete Server; Server = NULL;
-
 					break;
 				}
-				break;
-			}
-		}
-		else if ( StartNewPressed )
-		{
-			StartNewPressed=false;
-			drawMenuButton ( NEWGAME,false,BTN_2_X,BTN_2_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Spiel laden:
-		if ( mouse->x >= BTN_3_X && mouse->x < BTN_3_X + BTN_WIDTH && mouse->y >= BTN_3_Y && mouse->y < BTN_3_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
-			{
-				LoadPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&LoadPressed )
-			{
-				if ( ShowDateiMenu( false ) != -1 )
+				Map.PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
+				// copy map for server
+				cMap ServerMap;
+				ServerMap.NewMap( Map.size, Map.TerrainInUse.iCount );
+				ServerMap.DefaultWater = Map.DefaultWater;
+				ServerMap.MapName = Map.MapName;
+				memcpy ( ServerMap.Kacheln, Map.Kacheln, sizeof ( int )*Map.size*Map.size );
+				memcpy ( ServerMap.Resources, Map.Resources, sizeof ( sResources )*Map.size*Map.size );
+				for ( int i = 0; i < Map.TerrainInUse.iCount; i++ )
 				{
-					cMap *map;
-					map=new cMap();
-					game=new cGame ( map );
-					ExitMenu();
-					if ( !SaveLoadFile.empty() )
+					ServerMap.terrain[i].blocked = Map.terrain[i].blocked;
+					ServerMap.terrain[i].coast = Map.terrain[i].coast;
+					ServerMap.terrain[i].water = Map.terrain[i].water;
+				}
+
+				players = runPlayerSelection();
+
+				bool bHavePlayer = false;
+				for ( int i = 0; i < 4; i++ ) //check for players
+				{
+					if( players.what[i] != PLAYER_N )
 					{
-						game->Load ( SaveLoadFile,0 );
+						bHavePlayer = true;
 					}
-					delete game; game=NULL;
-					delete map;
+				}
+				if(!bHavePlayer) //no players - break
+				{
+					ExitMenu();
 					break;
 				}
-				prepareMenu();
-				RunSPMenu();
+				// player for client
+				Player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
+				cList<cPlayer*> ClientPlayerList;
+				ClientPlayerList.Add ( Player );
+				ClientPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
+
+				// playerlist for server
+				cList<cPlayer*> ServerPlayerList;
+				ServerPlayerList.Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
+				ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
+
+				// init client and his player
+				Client = new cClient(&Map, &ClientPlayerList);
+				Client->initPlayer ( Player );
+				for ( int i = 0; i < ClientPlayerList.iCount; i++ )
+				{
+					ClientPlayerList.Items[i]->InitMaps ( Map.size, &Map );
+					ClientPlayerList.Items[i]->Credits = options.credits;
+				}
+
+				// init the players of playerlist
+				for ( int i = 0; i < ServerPlayerList.iCount; i++ )
+				{
+					ServerPlayerList.Items[i]->InitMaps ( ServerMap.size, &ServerMap );
+					ServerPlayerList.Items[i]->Credits = options.credits;
+				}
+				// init server
+				Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
+
+				// land the player
+				cList<sLanding*> LandingList;
+				RunHangar ( Player, &LandingList );
+				SelectLanding ( &iLandX, &iLandY, &Map );
+
+				Server->makeLanding ( iLandX, iLandY, ServerPlayerList.Items[0], &LandingList, options.FixedBridgeHead );
+
+				while ( LandingList.iCount )
+				{
+					delete LandingList.Items[LandingList.iCount - 1];
+					LandingList.Delete( LandingList.iCount - 1);
+				}
+
+				// exit menu and start game
+				ExitMenu();
+
+				Server->bStarted = true;
+				Client->run();
+
+				SettingsData.sPlayerName = Player->name;
+				while ( ClientPlayerList.iCount )
+				{
+					delete ( ClientPlayerList.Items[0] );
+					ClientPlayerList.Delete ( 0 );
+				}
+
+				delete Client; Client = NULL;
+				delete Server; Server = NULL;
+
 				break;
 			}
+			break;
 		}
-		else if ( LoadPressed )
+		if (btn_load.CheckClick(x, y, down, up))
 		{
-			LoadPressed=false;
-			drawMenuButton ( LOADGAME,false,BTN_3_X, BTN_3_Y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Zurück:
-		if ( mouse->x >= BTN_6_X && mouse->x < BTN_6_X + BTN_WIDTH && mouse->y >= BTN_6_Y && mouse->y < BTN_6_Y + BTN_HEIGHT )
-		{
-			if ( b&&!lb )
+			if (ShowDateiMenu(false) != -1)
 			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( BACK,true,BTN_6_X, BTN_6_Y);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
+				cMap *map;
+				map  = new cMap();
+				game = new cGame(map);
+				ExitMenu();
+				if (!SaveLoadFile.empty())
+				{
+					game->Load(SaveLoadFile, 0);
+				}
+				delete game; game = NULL;
+				delete map;
 				break;
 			}
+			prepareMenu();
+			RunSPMenu();
+			break;
 		}
-		else if ( BackPressed )
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			BackPressed=false;
-			drawMenuButton ( BACK,false,BTN_6_X, BTN_6_Y);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			break;
 		}
+
 		lb=b;
 		lx=mouse->x;
 		ly=mouse->y;
@@ -949,8 +726,6 @@ sOptions RunOptionsMenu ( sOptions *init )
 {
 	//defines for translation since I'm very lazy --beko
 #define GAMEOPTIONS lngPack.i18n("Text~Button~Game_Options")
-#define OK lngPack.i18n( "Text~Button~OK")
-#define BACK lngPack.i18n( "Text~Button~Back")
 
 #define LOWEST lngPack.i18n( "Text~Option~Lowest")
 #define LOWER lngPack.i18n( "Text~Option~Lower")
@@ -978,7 +753,6 @@ sOptions RunOptionsMenu ( sOptions *init )
 #define GAMETYPE lngPack.i18n( "Text~Title~Game_Type")
 	//beko IS lazy. fact is.
 
-	bool OKPressed=false, BackPressed=false;
 	sOptions options;
 	int b,lb=0,lx=-1,ly=-1;
 
@@ -1073,8 +847,11 @@ sOptions RunOptionsMenu ( sOptions *init )
 	placeSelectableText ( SIMU,452,281,!options.PlayRounds, sfTmp,false );
 	placeSelectableText ( TURNS,452,281+20,options.PlayRounds, sfTmp,false );
 
-	drawMenuButton ( OK,false,390,440);
-	drawMenuButton ( BACK,false,50,440);
+	MenuButton btn_back( 50, 440, "Text~Button~Back");
+	MenuButton btn_ok(  390, 440, "Text~Button~OK");
+
+	btn_back.Draw();
+	btn_ok.Draw();
 	SHOW_SCREEN
 	mouse->draw ( false,screen );
 
@@ -1427,53 +1204,22 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Zurück:
-		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
+
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( BACK,true,50,440);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
-				options.metal=-1;
-				break;
-			}
+			options.metal = -1;
+			break;
 		}
-		else if ( BackPressed )
+		if (btn_ok.CheckClick(x, y, down, up))
 		{
-			BackPressed=false;
-			drawMenuButton ( BACK,false,50,440);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			break;
 		}
-		// Ok:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29 )
-		{
-			if ( b&&!lb )
-			{
-				OKPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( OK,true,390,440 );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&OKPressed )
-			{
-				break;
-			}
-		}
-		else if ( OKPressed )
-		{
-			OKPressed=false;
-			drawMenuButton ( OK,false,390,440 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
+
 		lb=b;
 		lx=mouse->x;
 		ly=mouse->y;
@@ -1487,8 +1233,6 @@ sOptions RunOptionsMenu ( sOptions *init )
 // Startet die Planetenauswahl (gibt den Namen des Planeten zurück):
 string RunPlanetSelect ( void )
 {
-	bool OKPressed=false;
-	bool BackPressed=false;
 	Uint8 *keystate;
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
@@ -1511,8 +1255,11 @@ string RunPlanetSelect ( void )
 
 	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Choose_Planet" ));
 
-	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
-	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
+	MenuButton btn_back( 50, 440, "Text~Button~Back");
+	MenuButton btn_ok(  390, 440, "Text~Button~OK");
+
+	btn_back.Draw();
+	btn_ok.Draw();
 
 	files = getFilesOfDirectory ( SettingsData.sMapsPath );
 	for ( int i = 0; i < files->iCount; i++ )
@@ -1545,37 +1292,24 @@ string RunPlanetSelect ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		// Ok:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29&&selected>=0 )
-		{
-			if ( b&&!lb )
-			{
-				OKPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,440 );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&OKPressed )
-			{
-				string name;
-				name = files->Items[selected];
-				if( name.substr( name.length()-4, name.length() ).compare( ".WRL") != 0 && name.substr( name.length()-4, name.length() ).compare( ".wrl") != 0 )
-				{
-					name.replace ( name.length()-3,3,"map" );
-				}
 
-				SDL_FreeSurface(sfTmp);
-				delete files;
-				return name;
-			}
-		}
-		else if ( OKPressed )
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (selected >= 0 && btn_ok.CheckClick(x, y, down, up))
 		{
-			OKPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			string name = files->Items[selected];
+			if (name.substr(name.length() - 4, name.length()).compare(".WRL") != 0 &&
+					name.substr(name.length() - 4, name.length()).compare(".wrl") != 0)
+			{
+				name.replace(name.length() - 3, 3, "map");
+			}
+
+			SDL_FreeSurface(sfTmp);
+			delete files;
+			return name;
 		}
 		// Up:
 		if ( mouse->x>=293&&mouse->x<293+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&offset>0 )
@@ -1623,28 +1357,9 @@ string RunPlanetSelect ( void )
 			}
 		}
 
-		// Zurück:
-		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,440);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
-				break;
-			}
-		}
-		else if ( BackPressed )
-		{
-			BackPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			break;
 		}
 
 		lx=mouse->x;
@@ -1834,13 +1549,9 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	#define FIELD1 DIALOG_X+194
 	#define FIELD2 DIALOG_X+304
 	#define FIELD3 DIALOG_X+414
-	bool OKPressed=false;
-	bool BackPressed=false;
 	int b,lb=0,lx=-1,ly=-1;
 	Uint8 *keystate;
 	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
-	SDL_Rect rBtnCancel = { DIALOG_X + 50, DIALOG_Y + 440, 200, 29 };
-	SDL_Rect rBtnOk = { DIALOG_X + 390,DIALOG_Y + 440, 200, 29 };
 	SDL_Surface *sfTmp = NULL;
 
 	//BEGIN INIT DEFAULT PLAYERS
@@ -1875,8 +1586,11 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 	font->showTextCentered(DIALOG_X + 430,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Nobody" ));
 	font->showTextCentered(DIALOG_X + 535,DIALOG_Y + 35, lngPack.i18n ( "Text~Title~Clan" ));
 
-	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false , rBtnOk.x,  rBtnOk.y);
-	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, rBtnCancel.x, rBtnCancel.y );
+	MenuButton btn_back(DIALOG_X +  50, DIALOG_Y + 440, "Text~Button~Back");
+	MenuButton btn_ok(  DIALOG_X + 390, DIALOG_Y + 440, "Text~Button~OK");
+
+	btn_back.Draw();
+	btn_ok.Draw();
 
 	showPlayerStatesHotSeat ( players );
 
@@ -1963,84 +1677,50 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 			}
 		}
 
-		// Ok:
-		if ( mouse->x >= rBtnOk.x && mouse->x < rBtnOk.x + rBtnOk.w && mouse->y >= rBtnOk.y && mouse->y < rBtnOk.y + rBtnOk.h  )
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_ok.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
+			int iPlayers = 0;
+			bool bAiFound = false;
+			for ( int i = 0; i < 8; i++ ) //check if we have at least two players
 			{
-				OKPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, rBtnOk.x, rBtnOk.y );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&OKPressed )
-			{
-				int iPlayers = 0;
-				bool bAiFound = false;
-				for ( int i = 0; i < 8; i++ ) //check if we have at least two players
+				if(players.what[i] == PLAYER_AI)
 				{
-					if(players.what[i] == PLAYER_AI)
-					{
-						players.what[i] = PLAYER_H;
-						bAiFound = true;
+					players.what[i] = PLAYER_H;
+					bAiFound = true;
 
-					}
-					showPlayerStatesHotSeat( players );
+				}
+				showPlayerStatesHotSeat( players );
 
-					if(players.what[i] == PLAYER_H)
-					{
-						iPlayers++;
-					}
-				}
-				if(iPlayers >= 2)
+				if(players.what[i] == PLAYER_H)
 				{
-					if(bAiFound)
-					{
-						ShowOK ( "AI is currently not supported\n\nChanged AI slot(s) to human players!", true );
-					}
-					break;
-				}
-				else
-				{
-					ShowOK ( lngPack.i18n ( "Text~Multiplayer~Player_Amount" ), true );
+					iPlayers++;
 				}
 			}
-		}
-		else if ( OKPressed )
-		{
-			OKPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, rBtnOk.x, rBtnOk.y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-
-		// Zurück:
-		if ( mouse->x >= rBtnCancel.x && mouse->x < rBtnCancel.x + rBtnCancel.w && mouse->y >= rBtnCancel.y && mouse->y < rBtnCancel.y + rBtnCancel.h )
-		{
-			if ( b&&!lb )
+			if(iPlayers >= 2)
 			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, rBtnCancel.x, rBtnCancel.y);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
-				for ( int i = 0; i < 8; i++ ) //reset players to nobody
+				if(bAiFound)
 				{
-					players.what[i] = PLAYER_N;
+					ShowOK ( "AI is currently not supported\n\nChanged AI slot(s) to human players!", true );
 				}
 				break;
 			}
+			else
+			{
+				ShowOK ( lngPack.i18n ( "Text~Multiplayer~Player_Amount" ), true );
+			}
 		}
-		else if ( BackPressed )
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			BackPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, rBtnCancel.x, rBtnCancel.y );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			for (int i = 0; i < 8; ++i) //reset players to nobody
+			{
+				players.what[i] = PLAYER_N;
+			}
+			break;
 		}
 
 		lx=mouse->x;
@@ -2056,8 +1736,6 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 // Startet die Spielerauswahl (gibt die Spielereinstellungen):
 sPlayer runPlayerSelection ( void )
 {
-	bool OKPressed=false;
-	bool BackPressed=false;
 	int b,lb=0,lx=-1,ly=-1;
 	sPlayer players;
 	Uint8 *keystate;
@@ -2078,8 +1756,11 @@ sPlayer runPlayerSelection ( void )
 	font->showTextCentered(420,35, lngPack.i18n ( "Text~Title~Nobody" ));
 	font->showTextCentered(535,35, lngPack.i18n ( "Text~Title~Clan" ));
 
-	drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false ,390,440 );
-	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
+	MenuButton btn_back( 50, 440, "Text~Button~Back");
+	MenuButton btn_ok(  390, 440, "Text~Button~OK");
+
+	btn_back.Draw();
+	btn_ok.Draw();
 
 	ShowPlayerStates ( players );
 
@@ -2144,56 +1825,23 @@ sPlayer runPlayerSelection ( void )
 				else x += 110;
 			}
 		}
-		// Ok:
-		if ( mouse->x>=390&&mouse->x<390+200&&mouse->y>=440&&mouse->y<440+29 && ( players.what[0] == PLAYER_H || players.what[1] == PLAYER_H || players.what[2] == PLAYER_H || players.what[3] == PLAYER_H ) )
-		{
-			if ( b&&!lb )
-			{
-				OKPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390,440 );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&OKPressed )
-			{
-				return players;
-			}
-		}
-		else if ( OKPressed )
-		{
-			OKPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,440 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
 
-		// Zurück:
-		if ( mouse->x>=50&&mouse->x<50+200&&mouse->y>=440&&mouse->y<440+29 )
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_ok.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				BackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,440);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&BackPressed )
-			{
-				for ( int i = 0; i < 4; i++ ) //reset players to nobody
-				{
-					players.what[i] = PLAYER_N;
-				}
-				break;
-			}
+			return players;
 		}
-		else if ( BackPressed )
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			BackPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,440 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			for (int i = 0; i < 4; ++i) //reset players to nobody
+			{
+				players.what[i] = PLAYER_N;
+			}
+			break;
 		}
 
 		lx=mouse->x;
