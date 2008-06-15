@@ -78,9 +78,6 @@ private:
 	/** a list with all events for the server */
 	cList<SDL_Event*> EventQueue;
 
-	/* a list with all netMessages for the server 
-	cList<cNetMessage*> *NetMessageQueue; */
-
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
 	/** mutex for the eventqueue */
@@ -130,7 +127,6 @@ private:
 	*/
 	SDL_Event* pollEvent();
 	
-	//cNetMessage* pollNetMessage();
 	
 	/**
 	* Handels all incoming netMessages from the clients
@@ -258,7 +254,6 @@ public:
 	*/
 	int pushEvent( SDL_Event *event );
 	
-	//int pushNetMessage( cNetMessage* message );
 
 	/**
 	* sends a netMessage to the client on which the player with 'iPlayerNum' is playing

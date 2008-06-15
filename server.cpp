@@ -54,8 +54,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iTimerTime = 0;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
 
-	//NetMessageQueue = new cList<cNetMessage*>;
-
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
 
@@ -77,12 +75,6 @@ cServer::~cServer()
 		PlayerList->Delete ( 0 );
 	}
 
-	/*while ( NetMessageQueue->iCount )
-	{
-		delete NetMessageQueue->Items[0];
-		NetMessageQueue->Delete(0);
-	}
-	delete NetMessageQueue; */
 }
 
 
@@ -109,34 +101,12 @@ SDL_Event* cServer::pollEvent()
 	return event;
 }
 
-/*
-cNetMessage* cServer::pollNetMessage()
-{
-	if ( NetMessageQueue->iCount <= 0 )
-		return NULL;
-
-	cNetMessage* message;
-	cMutex::Lock l(QueueMutex);
-	message = NetMessageQueue->Items[0];
-	NetMessageQueue->Delete(0);
-	return message;
-}
-*/
-
 int cServer::pushEvent( SDL_Event *event )
 {
 	cMutex::Lock l(QueueMutex);
 	EventQueue.Add ( event );
 	return 0;
 }
-
-/*int cServer::pushNetMessage( cNetMessage* message )
-{
-	cMutex::Lock l(QueueMutex);
-	NetMessageQueue->Add( message );
-	return 0;
-}
-*/
 
 void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
@@ -232,14 +202,6 @@ void cServer::run()
 				break;
 			}
 		}
-
-		/*cNetMessage* message = pollNetMessage();
-
-		if ( message )
-		{
-			HandleNetMessage( message );
-		}
-		*/
 
 		// don't do anything if games hasn't been started yet!
 		if ( !bStarted ) { SDL_Delay( 10 ); continue; }
