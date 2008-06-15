@@ -71,6 +71,12 @@ cServer::~cServer()
 		EventQueue.Delete (0);
 	}
 
+	while ( PlayerList->iCount )
+	{
+		delete ( PlayerList->Items[0] );
+		PlayerList->Delete ( 0 );
+	}
+
 	/*while ( NetMessageQueue->iCount )
 	{
 		delete NetMessageQueue->Items[0];
