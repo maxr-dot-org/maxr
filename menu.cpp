@@ -3855,7 +3855,7 @@ void cMultiPlayerMenu::showChatLog()
 void cMultiPlayerMenu::runNetworkMenu()
 {
 	bool bPlanetSelPressed = false, bOptionsPressed = false, bStartHostConnect = false, bSendPressed = false;
-	bool bLoadPressed = false, bOKPressed = false, bBackPressed = false, bShowCursor = true;
+	bool bLoadPressed = false, bShowCursor = true;
 	int b, lb = 0, lx = -1, ly = -1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
@@ -3899,6 +3899,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 	dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y=  0;
 	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
 
+	MenuButton btn_back( 50, 450, "Text~Button~Back");
+	MenuButton btn_ok(  390, 450, "Text~Button~OK");
+
 	if ( bHost )
 	{
 		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
@@ -3906,7 +3909,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 		placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ) ,470,42+35,false );
 		placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ) ,470,42+35*2,false );
 		placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
-		drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
+		btn_ok.Draw();
 	}
 	else
 	{
@@ -3915,7 +3918,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 	}
 	placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 
-	drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
+	btn_back.Draw();
 
 	mouse->SetCursor ( CHand );
 	displayGameSettings();
@@ -4038,80 +4041,47 @@ void cMultiPlayerMenu::runNetworkMenu()
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Back:
-		if ( mouse->x >= 50 && mouse->x < 50+200 && mouse->y >= 440 && mouse->y < 440+29 )
+
+		int  const x    = mouse->x;
+		int  const y    = mouse->y;
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			if ( b && !lb )
+			// Save changed name, port or ip to max.xml
+			SettingsData.sPlayerName = ActualPlayer->name;
+			SaveOption(SAVETYPE_NAME);
+			SaveOption(SAVETYPE_IP);
+			SaveOption(SAVETYPE_PORT);
+			break;
+		}
+		if (bHost && btn_ok.CheckClick(x, y, down, up))
+		{
+			int iPlayerNum;
+			if ((!bOptions || sMap.empty()) && sSaveGame.empty())
 			{
-				bBackPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), true, 50,450);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
+				addChatLog(lngPack.i18n("Text~Multiplayer~Missing_Settings"));
 			}
-			else if ( !b && bBackPressed )
+			else if ((iPlayerNum = testAllReady()) != -1)
+			{
+				addChatLog(PlayerList.Items[iPlayerNum]->name + " " + lngPack.i18n("Text~Multiplayer~Not_Ready"));
+			}
+			else
 			{
 				// Save changed name, port or ip to max.xml
 				SettingsData.sPlayerName = ActualPlayer->name;
-				SaveOption ( SAVETYPE_NAME );
-				SaveOption ( SAVETYPE_IP );
-				SaveOption ( SAVETYPE_PORT );
-				break;
-			}
-		}
-		else if ( bBackPressed )
-		{
-			bBackPressed=false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50,450 );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Ok:
-		if ( bHost && mouse->x >= 390 && mouse->x < 390+200 && mouse->y >= 440 && mouse->y < 440+29 )
-		{
-			if ( b && !lb )
-			{
-				bOKPressed = true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), true, 390, 450 );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-			}
-			else if ( !b && bOKPressed )
-			{
-				int iPlayerNum;
-				if ( ( !bOptions || sMap.empty() ) && sSaveGame.empty() )
-				{
-					addChatLog ( lngPack.i18n ( "Text~Multiplayer~Missing_Settings" ) );
-				}
-				else if ( ( iPlayerNum = testAllReady() ) != -1 )
-				{
-					addChatLog ( PlayerList.Items[iPlayerNum]->name + " " + lngPack.i18n ( "Text~Multiplayer~Not_Ready" ) );
-				}
-				else
-				{
-					// Save changed name, port or ip to max.xml
-					SettingsData.sPlayerName = ActualPlayer->name;
-					SaveOption ( SAVETYPE_NAME );
-					SaveOption ( SAVETYPE_IP );
-					SaveOption ( SAVETYPE_PORT );
+				SaveOption(SAVETYPE_NAME);
+				SaveOption(SAVETYPE_IP);
+				SaveOption(SAVETYPE_PORT);
 
-					bStartSelecting = true;
-				}
-
-				bOKPressed = false;
-				drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390,450 );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
+				bStartSelecting = true;
 			}
-		}
-		else if ( bOKPressed )
-		{
-			bOKPressed = false;
-			drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450 );
+
 			SHOW_SCREEN
-			mouse->draw ( false, screen );
+			mouse->draw(false, screen);
 		}
+
 		// Next color:
 		if ( b && !lb && mouse->x >= 596 && mouse->x < 596+18 && mouse->y >= 256 && mouse->y < 256+18 )
 		{
@@ -4188,8 +4158,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
 					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
 					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50, 450 );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450);
+					btn_back.Draw();
+					btn_ok.Draw();
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					sendOptions();
@@ -4250,8 +4220,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
 					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
 					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~Back" ), false, 50, 450 );
-					drawMenuButton ( lngPack.i18n ( "Text~Button~OK" ), false, 390, 450);
+					btn_back.Draw();
+					btn_ok.Draw();
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					sendOptions();
