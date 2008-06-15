@@ -1594,7 +1594,7 @@ void cClient::drawMiniMap()
 			{
 				cl=* ( unsigned int* ) Map->terrain[Map->Kacheln[tx+ty]].shw_org->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].base->owner->color->pixels;
 			}
@@ -1606,7 +1606,7 @@ void cClient::drawMiniMap()
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].plane->owner->color->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&&GO[tx+ty].vehicle->detected&& ( !Hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&& ( !Hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].vehicle->owner->color->pixels;
 			}
@@ -2571,7 +2571,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	{
 		SelectedVehicle->DrawCommandoCursor ( GO,false );
 	}
-	if ( GO->vehicle != NULL&& ( GO->vehicle->detected || GO->vehicle->owner == ActivePlayer ) )
+	if ( GO->vehicle != NULL )
 	{
 		OverObject=GO;
 		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->vehicle->name, LATIN_NORMAL, GraphicsData.gfx_hud);
@@ -2619,7 +2619,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 			}
 		}
 	}
-	else if ( GO->base!=NULL&&GO->base->owner&&(GO->base->owner == ActivePlayer || GO->base->detected) )
+	else if ( GO->base != NULL && GO->base->owner )
 	{
 		OverObject=GO;
 		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->base->name, LATIN_NORMAL, GraphicsData.gfx_hud);
@@ -3916,11 +3916,11 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "commando_rank: " + iToStr ( Vehicle->CommandoRank ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) + " detection_override: " + iToStr (Vehicle->detection_override );
+	sTmp = "commando_rank: " + iToStr ( Vehicle->CommandoRank ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) /*+ " detection_override: " + iToStr (Vehicle->detection_override )*/;
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "is_locked: " + iToStr ( Vehicle->IsLocked ) + " detected: " + iToStr ( Vehicle->detected ) + " clear_mines: +" + iToStr ( Vehicle->ClearMines ) + " lay_mines: " + iToStr ( Vehicle->LayMines ) + " repair_active: " + iToStr (Vehicle->RepairActive ) + " muni_active: " + iToStr (Vehicle->MuniActive );
+	sTmp = "is_locked: " + iToStr ( Vehicle->IsLocked ) + /*" detected: " + iToStr ( Vehicle->detected ) +*/ " clear_mines: +" + iToStr ( Vehicle->ClearMines ) + " lay_mines: " + iToStr ( Vehicle->LayMines ) + " repair_active: " + iToStr (Vehicle->RepairActive ) + " muni_active: " + iToStr (Vehicle->MuniActive );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -3971,7 +3971,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "is_locked: " + iToStr ( Building->IsLocked ) + " disabled: " + iToStr ( Building->Disabled ) + " detected: +" + iToStr ( Building->detected ) + " activating_vehicle: " + iToStr ( Building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (Building->VehicleToActivate );
+	sTmp = "is_locked: " + iToStr ( Building->IsLocked ) + " disabled: " + iToStr ( Building->Disabled ) /*+ " detected: +" + iToStr ( Building->detected )*/ + " activating_vehicle: " + iToStr ( Building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (Building->VehicleToActivate );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 

@@ -472,11 +472,11 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	}
 
 	// Ggf wieder verstecken
-	if ( v->detection_override )
+	/*if ( v->detection_override )
 	{
 		v->detected = false;
 		v->detection_override = false;
-	}
+	}*/
 	// Ggf nach Rohstoffen suchen:
 	if ( v->data.can_survey )
 	{
@@ -510,7 +510,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		}
 	}
 	// Ggf Meldung machen:
-	if ( v->owner != game->ActivePlayer && game->ActivePlayer->ScanMap[ToX+ToY*map->size] && !game->ActivePlayer->ScanMap[FromX+FromY*map->size] && v->detected )
+	if ( v->owner != game->ActivePlayer && game->ActivePlayer->ScanMap[ToX+ToY*map->size] && !game->ActivePlayer->ScanMap[FromX+FromY*map->size] /*&& v->detected*/ )
 	{
 		string sTmp = v->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
 		game->AddCoords ( sTmp, v->PosX, v->PosY );
@@ -1082,11 +1082,11 @@ void cEngine::Rundenende ( void )
 		v=p->VehicleList;
 		while ( v )
 		{
-			if ( v->detection_override && v->owner == game->ActivePlayer )
+			/*if ( v->detection_override && v->owner == game->ActivePlayer )
 			{
 				v->detected = false;
 				v->detection_override = false;
-			}
+			}*/
 			if ( v->Disabled )
 			{
 				v->Disabled--;

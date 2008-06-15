@@ -85,6 +85,8 @@ public:
   unsigned int iID;
   /** a list were the numbers of all players who can see this building are stored in */
   cList<int*> SeenByPlayerList;
+  /** a list were the numbers of all players who have deteced this vehicle are stored in */
+  cList<int*> DetectedByPlayerList;
   int PosX,PosY;   // Position auf der Karte
   sBuilding *typ;  // Typ des Buildings
   bool selected;   // Gibt an, ob das Building ausgewählt ist
@@ -120,7 +122,6 @@ public:
   cList<cVehicle*> *StoredVehicles; // Liste mit geladenen Vehicles
   int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
   bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
-  bool detected;   // Merker, ob die Mine entdeckt wurde (vom aktiven Spieler)
   int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
   int Disabled;    // Gibt an, für wie lange diese Einheit disabled ist
   bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
@@ -200,6 +201,13 @@ public:
   int CalcPrice(int value,int org, int variety);
   int CalcSteigerung(int org, int variety);
   void SendUpdateStored(int index); 
+  /**
+  * returns whether this player has detected this unit or not
+  *@author alzi alias DoctorDeath
+  *@param iPlayerNum number of player for which the stauts sould be checked
+  *@return true if the player has detected the unit
+  */
+  bool isDetectedByPlayer( int iPlayerNum );
 };
 
 #endif

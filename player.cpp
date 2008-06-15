@@ -1017,88 +1017,93 @@ void cPlayer::DrawLockList(cHud const& hud)
 
 void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
 {
-	float w=0.017453*45,step;
-	int rx,ry,x1,x2;
-	if ( iRadius ) iRadius--;
-	if ( !iRadius ) return;
+	float w = 0.017453*45, step;
+	int rx, ry, x1, x2;
+	if ( iRadius <= 0 ) return;
 	iRadius *= 10;
-	step=0.017453*90-acos ( 1.0/iRadius );
-	step/=2;
-	for ( float i=0;i<=w;i+=step )
+	step = 0.017453*90-acos ( 1.0/iRadius );
+	step /= 2;
+	for ( float i = 0; i <= w; i += step )
 	{
 		rx= ( int ) ( cos ( i ) *iRadius );
 		ry= ( int ) ( sin ( i ) *iRadius);
-		rx/=10;ry/=10;
+		rx /= 10;
+		ry /= 10;
 
-		x1=rx+iX;x2=-rx+iX;
-		for ( int k=x2;k<=x1+1;k++ )
+		x1 = rx+iX;
+		x2 = -rx+iX;
+		for ( int k = x2; k <= x1; k++ )
 		{
-			if ( k<0 ) continue;
-			if ( k>=Client->Map->size ) break;
-			if ( iY+ry>=0&&iY+ry<Client->Map->size )
-				map[k+ ( iY+ry ) *Client->Map->size]|=1;
-			if ( iY-ry>=0&&iY-ry<Client->Map->size )
-				map[k+ ( iY-ry ) *Client->Map->size]|=1;
-
-			if ( iY+ry+1>=0&&iY+ry+1<Client->Map->size )
-				map[k+ ( iY+ry+1 ) *Client->Map->size]|=1;
-			if ( iY-ry+1>=0&&iY-ry+1<Client->Map->size )
-				map[k+ ( iY-ry+1 ) *Client->Map->size]|=1;
+			if ( k < 0 ) continue;
+			if ( k >= Client->Map->size ) break;
+			if ( iY+ry >= 0 && iY+ry < Client->Map->size )
+				map[k+ ( iY+ry ) *Client->Map->size] |= 1;
+			if ( iY-ry >= 0 && iY-ry < Client->Map->size )
+				map[k+ ( iY-ry ) *Client->Map->size] |= 1;
 		}
 
-		x1=ry+iX;x2=-ry+iX;
-		for ( int k=x2;k<=x1+1;k++ )
+		x1 = ry+iX;
+		x2 = -ry+iX;
+		for ( int k = x2; k <= x1; k++ )
 		{
-			if ( k<0 ) continue;
-			if ( k>=Client->Map->size ) break;
-			if ( iY+rx>=0&&iY+rx<Client->Map->size )
-				map[k+ ( iY+rx ) *Client->Map->size]|=1;
-			if ( iY-rx>=0&&iY-rx<Client->Map->size )
-				map[k+ ( iY-rx ) *Client->Map->size]|=1;
-
-			if ( iY+rx+1>=0&&iY+rx+1<Client->Map->size )
-				map[k+ ( iY+rx+1 ) *Client->Map->size]|=1;
-			if ( iY-rx+1>=0&&iY-rx+1<Client->Map->size )
-				map[k+ ( iY-rx+1 ) *Client->Map->size]|=1;
+			if ( k < 0 ) continue;
+			if ( k >= Client->Map->size ) break;
+			if ( iY+rx >= 0 && iY+rx < Client->Map->size )
+				map[k+ ( iY+rx ) *Client->Map->size] |= 1;
+			if ( iY-rx >= 0 && iY-rx < Client->Map->size )
+				map[k+ ( iY-rx ) *Client->Map->size] |= 1;
 		}
 	}
 }
 
 void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
 {
-	float w=0.017453*45,step;
-	int rx,ry,x1,x2;
-	if ( iRadius ) iRadius--;
-	if ( !iRadius ) return;
+	float w=0.017453*45, step;
+	int rx, ry, x1, x2;
+	if ( iRadius > 0 ) iRadius--;
+	else return;
 	iRadius *= 10;
-	step=0.017453*90-acos ( 1.0/iRadius );
-	step/=2;
-	for ( float i=0;i<=w;i+=step )
+	step = 0.017453*90-acos ( 1.0/iRadius );
+	step /= 2;
+	for ( float i = 0; i <= w; i += step )
 	{
 		rx= ( int ) ( cos ( i ) *iRadius );
 		ry= ( int ) ( sin ( i ) *iRadius);
-		rx/=10;ry/=10;
+		rx /= 10;
+		ry /= 10;
 
-		x1=rx+iX;x2=-rx+iX;
-		for ( int k=x2;k<=x1+1;k++ )
+		x1 = rx+iX;
+		x2 = -rx+iX;
+		for ( int k = x2; k <= x1+1; k++ )
 		{
-			if ( k<0 ) continue;
-			if ( k>=Client->Map->size ) break;
-			if ( iY+ry>=0&&iY+ry<Client->Map->size )
-				map[k+ ( iY+ry ) *Client->Map->size]|=1;
-			if ( iY-ry>=0&&iY-ry<Client->Map->size )
-				map[k+ ( iY-ry ) *Client->Map->size]|=1;
+			if ( k < 0 ) continue;
+			if ( k >= Client->Map->size ) break;
+			if ( iY+ry >= 0 && iY+ry < Client->Map->size )
+				map[k+ ( iY+ry ) *Client->Map->size] |= 1;
+			if ( iY-ry >= 0 && iY-ry < Client->Map->size )
+				map[k+ ( iY-ry ) *Client->Map->size] |= 1;
+
+			if( iY+ry+1 >= 0&& iY+ry+1 < Client->Map->size)
+				map[k+( iY+ry+1 ) *Client->Map->size] |= 1;
+			if( iY-ry+1 >= 0 && iY-ry+1 < Client->Map->size)
+				map[k+( iY-ry+1 ) *Client->Map->size] |= 1;
 		}
 
-		x1=ry+iX;x2=-ry+iX;
-		for ( int k=x2;k<=x1+1;k++ )
+		x1 = ry+iX;
+		x2 = -ry+iX;
+		for ( int k = x2; k <= x1+1; k++ )
 		{
-			if ( k<0 ) continue;
-			if ( k>=Client->Map->size ) break;
-			if ( iY+rx>=0&&iY+rx<Client->Map->size )
-				map[k+ ( iY+rx ) *Client->Map->size]|=1;
-			if ( iY-rx>=0&&iY-rx<Client->Map->size )
-				map[k+ ( iY-rx ) *Client->Map->size]|=1;
+			if ( k < 0 ) continue;
+			if ( k >= Client->Map->size ) break;
+			if ( iY+rx >= 0 && iY+rx < Client->Map->size )
+				map[k+ ( iY+rx ) *Client->Map->size] |= 1;
+			if ( iY-rx >= 0 && iY-rx < Client->Map->size )
+				map[k+ ( iY-rx ) *Client->Map->size] |= 1;
+
+			if( iY+rx+1 >= 0 && iY+rx+1 < Client->Map->size)
+				map[k+( iY+rx+1 ) *Client->Map->size] |= 1;
+			if( iY-rx+1 >= 0 && iY-rx+1 < Client->Map->size)
+				map[k+( iY-rx+1 ) *Client->Map->size] |= 1;
 		}
 
 	}

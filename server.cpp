@@ -603,6 +603,15 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	}
 	if ( !bInit ) AddedVehicle->InWachRange();
 
+	// if this is not a commando unit the vehicle doesn't need to be detected
+	if ( !AddedVehicle->data.is_commando )
+	{
+		for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
+		{
+			AddedVehicle->DetectedByPlayerList.Add ( &PlayerList->Items[i]->Nr );
+		}
+	}
+
 	sendAddUnit ( iPosX, iPosY, AddedVehicle->iID, true, Vehicle->nr, Player->Nr, bInit );
 }
 
@@ -682,6 +691,15 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	// intigrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
 
+	// if this is not an explode mine the building doesn't need to be detected
+	if ( !AddedBuilding->data.is_expl_mine )
+	{
+		for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
+		{
+			AddedBuilding->DetectedByPlayerList.Add ( &PlayerList->Items[i]->Nr );
+		}
+	}
+
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 }
 
@@ -738,24 +756,27 @@ void cServer::checkPlayerUnits ()
 	cPlayer *UnitPlayer;	// The player whos unit is it
 	cPlayer *MapPlayer;		// The player who is scaning for new units
 
-	for ( int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->iCount; iUnitPlayerNum++ )
+	for ( unsigned int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->iCount; iUnitPlayerNum++ )
 	{
 		UnitPlayer = PlayerList->Items[iUnitPlayerNum];
 		cVehicle *NextVehicle = UnitPlayer->VehicleList;
 		while ( NextVehicle != NULL )
 		{
-			for ( int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
+			for ( unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = PlayerList->Items[iMapPlayerNum];
-				if ( MapPlayer->ScanMap[NextVehicle->PosX+NextVehicle->PosY*Map->size] == 1 )
+				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
+				if ( MapPlayer->ScanMap[iOff] == 1 &&
+					( !NextVehicle->data.is_stealth_land || Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectLandMap[iOff] == 1 ) &&
+					( !NextVehicle->data.is_stealth_sea || !Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectSeaMap[iOff] == 1 ) )
 				{
-					int i;
+					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextVehicle->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
 					}
-					if ( i == NextVehicle->SeenByPlayerList.iCount )
+					if ( i == NextVehicle->SeenByPlayerList.iCount && NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
 					{
 						NextVehicle->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
@@ -765,7 +786,7 @@ void cServer::checkPlayerUnits ()
 				}
 				else
 				{
-					int i;
+					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextVehicle->SeenByPlayerList.Items[i] == MapPlayer->Nr )
@@ -786,18 +807,18 @@ void cServer::checkPlayerUnits ()
 		cBuilding *NextBuilding = UnitPlayer->BuildingList;
 		while ( NextBuilding != NULL )
 		{
-			for ( int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
+			for ( unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = PlayerList->Items[iMapPlayerNum];
 				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1 )
 				{
-					int i;
+					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
 					}
-					if ( i == NextBuilding->SeenByPlayerList.iCount )
+					if ( i == NextBuilding->SeenByPlayerList.iCount && NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
 					{
 						NextBuilding->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
@@ -806,7 +827,7 @@ void cServer::checkPlayerUnits ()
 				}
 				else
 				{
-					int i;
+					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
 						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr )
@@ -995,11 +1016,6 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
-			if ( CallerPlayer && Vehicle->detection_override && Vehicle->owner == CallerPlayer )
-			{
-				Vehicle->detected = false;
-				Vehicle->detection_override = false;
-			}
 			if ( Vehicle->Disabled )
 			{
 				Vehicle->Disabled--;
@@ -1415,13 +1431,6 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 			{
 				Vehicle->mjob->release();
 			}
-		}
-
-		// hide again if necessary
-		if ( Vehicle->detection_override )
-		{
-			Vehicle->detected = false;
-			Vehicle->detection_override = false;
 		}
 
 		// search for resources if necessary

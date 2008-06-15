@@ -79,6 +79,8 @@ public:
 	unsigned int iID;
 	/** a list were the numbers of all players who can see this vehicle are stored in */
 	cList<int*> SeenByPlayerList;
+	/** a list were the numbers of all players who have deteced this vehicle are stored in */
+	cList<int*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	int OffX,OffY;   // Offset während der Bewegung
 	sVehicle *typ;   // Typ des Vehicles
@@ -124,14 +126,12 @@ public:
 	bool RepairActive; // Gibt an, ob grad repariert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
-	bool detected;    // Gibt an, ob das Vehicle vom aktuellen Spieler entdeckt wurde
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde
 	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	int WalkFrame;    // Frame der Geh-Annimation
 	int CommandoRank; // Rang des Commandos
 	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
-	bool detection_override; // Override für die Detection
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
 
 	cVehicle *next,*prev; // Verkettungselemente
@@ -213,6 +213,13 @@ public:
 	void CommandoOperation(int off,bool steal);
 	void DeleteStored(void);
 	bool CheckPathBuild(int iOff, int iBuildingTyp);
+	/**
+	* returns whether this player has detected this unit or not
+	*@author alzi alias DoctorDeath
+	*@param iPlayerNum number of player for which the stauts sould be checked
+	*@return true if the player has detected the unit
+	*/
+	bool isDetectedByPlayer( int iPlayerNum );
 };
 
 #endif

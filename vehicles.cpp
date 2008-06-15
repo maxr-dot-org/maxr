@@ -85,11 +85,9 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	BuildPath = false;
 	LayMines = false;
 	ClearMines = false;
-	detected = true;
 	Loaded = false;
 	StealActive = false;
 	DisableActive = false;
-	detection_override = false;
 	IsLocked = false;
 	bIsBeeingAttacked = false;
 	StoredVehicles = NULL;
@@ -186,36 +184,6 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hit_points / data.max_hit_points ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
-	}
-
-	// Prüfen, ob das Vehicle gemalt werden soll:
-	if ( ( data.is_stealth_sea || data.is_stealth_land ) && Client->ActivePlayer != owner )
-	{
-		if ( data.is_stealth_land )
-		{
-			if ( Client->ActivePlayer->DetectLandMap[PosX+PosY*Client->Map->size] || detection_override )
-			{
-				detected = true;
-			}
-			else
-			{
-				detected = false;
-			}
-		}
-		else
-		{
-			if ( Client->ActivePlayer->DetectSeaMap[PosX+PosY*Client->Map->size] || !Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) )
-			{
-				detected = true;
-			}
-			else
-			{
-				detected = false;
-			}
-		}
-
-		if ( !detected )
-			return;
 	}
 
 	float newzoom = ( 64.0 / Client->Hud.Zoom );
@@ -2805,7 +2773,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->detected )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer ( owner->Nr ) )
 			{
 				b = Client->Map->GO[off].base;
 			}
@@ -2821,7 +2789,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->detected )
+	if ( v && v->isDetectedByPlayer( owner->Nr ) )
 	{
 		if ( v->owner == owner )
 			return false;
@@ -5758,7 +5726,7 @@ bool cVehicle::clearMine ()
 // searches for mines:
 void cVehicle::detectMines ( void )
 {
-	int off, size;
+	/*int off, size;
 	size = Server->Map->size;
 	off = PosX + PosY * size;
 
@@ -5771,7 +5739,7 @@ void cVehicle::detectMines ( void )
 	DETECT_MINE ( off + 1 )
 	DETECT_MINE ( off + size - 1 )
 	DETECT_MINE ( off + size )
-	DETECT_MINE ( off + size + 1 )
+	DETECT_MINE ( off + size + 1 )*/
 }
 
 // Prüft, ob das Ziel direkt neben einem steht, und ob es gestohlen werden kann:
@@ -5994,8 +5962,6 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	}
 	else
 	{
-		detected = true;
-		detection_override = true;
 		PlayVoice ( VoiceData.VOICommandoDetected );
 	}
 
@@ -6041,4 +6007,13 @@ void cVehicle::DeleteStored ( void )
 	delete StoredVehicles;
 
 	StoredVehicles = NULL;
+}
+
+bool cVehicle::isDetectedByPlayer( int iPlayerNum )
+{
+	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
+	{
+		if ( *DetectedByPlayerList.Items[i] == iPlayerNum ) return true;
+	}
+	return false;
 }

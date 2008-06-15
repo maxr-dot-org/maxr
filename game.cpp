@@ -2624,7 +2624,7 @@ void cGame::DrawMiniMap ( bool pure,SDL_Surface *sf )
 				{
 					cl=* ( unsigned int* ) map->terrain[map->Kacheln[tx+ty]].shw_org->pixels;
 				}
-				else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&GO[tx+ty].base->detected&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+				else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base/*&&GO[tx+ty].base->detected*/&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
 				{
 					cl=* ( unsigned int* ) GO[tx+ty].base->owner->color->pixels;
 				}
@@ -2636,7 +2636,7 @@ void cGame::DrawMiniMap ( bool pure,SDL_Surface *sf )
 				{
 					cl=* ( unsigned int* ) GO[tx+ty].plane->owner->color->pixels;
 				}
-				else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&&GO[tx+ty].vehicle->detected&& ( !hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
+				else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle/*&&GO[tx+ty].vehicle->detected*/&& ( !hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
 				{
 					cl=* ( unsigned int* ) GO[tx+ty].vehicle->owner->color->pixels;
 				}
@@ -2757,7 +2757,7 @@ void MouseMoveCallback ( bool force )
 	{
 		game->SelectedVehicle->DrawCommandoCursor ( GO,false );
 	}
-	if ( GO->vehicle!=NULL&& ( GO->vehicle->detected||GO->vehicle->owner==game->ActivePlayer ) )
+	if ( GO->vehicle!=NULL/*&& ( GO->vehicle->detected||GO->vehicle->owner==game->ActivePlayer ) */)
 	{
 		game->OverObject=GO;
 		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->vehicle->name, LATIN_NORMAL, GraphicsData.gfx_hud);
@@ -2808,7 +2808,7 @@ void MouseMoveCallback ( bool force )
 			}
 		}
 	}
-	else if ( GO->base!=NULL&&GO->base->owner&&(GO->base->owner == game->ActivePlayer || GO->base->detected) )
+	else if ( GO->base!=NULL&&GO->base->owner/*&&(GO->base->owner == game->ActivePlayer || GO->base->detected)*/ )
 	{
 		game->OverObject=GO;
 		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->base->name, LATIN_NORMAL, GraphicsData.gfx_hud);
@@ -3122,11 +3122,11 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	FSAVE_V_4 ( FlightHigh )
 	FSAVE_V_1 ( LayMines )
 	FSAVE_V_1 ( ClearMines )
-	FSAVE_V_1 ( detected )
+//	FSAVE_V_1 ( detected )
 	FSAVE_V_1 ( Loaded )
 	FSAVE_V_4 ( CommandoRank )
 	FSAVE_V_4 ( Disabled )
-	FSAVE_V_1 ( detection_override )
+//	FSAVE_V_1 ( detection_override )
 	FSAVE_V_4 ( BigBetonAlpha )
 
 	// ID zum wiederfinden wenn gestored:
@@ -3213,7 +3213,7 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_4 ( dir )
 	FSAVE_B_4 ( BuildSpeed )
 	FSAVE_B_1 ( RepeatBuild )
-	FSAVE_B_1 ( detected )
+//	FSAVE_B_1 ( detected )
 	FSAVE_B_4 ( Disabled )
 	FSAVE_B_1 ( Wachposten )
 
@@ -3575,11 +3575,11 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_V_4 ( FlightHigh )
 				FLOAD_V_1 ( LayMines )
 				FLOAD_V_1 ( ClearMines )
-				FLOAD_V_1 ( detected )
+//				FLOAD_V_1 ( detected )
 				FLOAD_V_1 ( Loaded )
 				FLOAD_V_4 ( CommandoRank )
 				FLOAD_V_4 ( Disabled )
-				FLOAD_V_1 ( detection_override )
+//				FLOAD_V_1 ( detection_override )
 				FLOAD_V_4 ( BigBetonAlpha )
 
 				FLOAD_V_4 ( OffX ) // ID zum wiederfinden wenn gestored
@@ -3708,7 +3708,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_B_4 ( dir )
 				FLOAD_B_4 ( BuildSpeed )
 				FLOAD_B_1 ( RepeatBuild )
-				FLOAD_B_1 ( detected )
+//				FLOAD_B_1 ( detected )
 				FLOAD_B_4 ( Disabled )
 				FLOAD_B_1 ( Wachposten )
 
@@ -3971,11 +3971,11 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "commando_rank: " + iToStr ( v->CommandoRank ) + " steal_active: " + iToStr ( v->StealActive ) + " disable_active: +" + iToStr ( v->DisableActive ) + " disabled: " + iToStr ( v->Disabled ) + " detection_override: " + iToStr (v->detection_override );
+	sTmp = "commando_rank: " + iToStr ( v->CommandoRank ) + " steal_active: " + iToStr ( v->StealActive ) + " disable_active: +" + iToStr ( v->DisableActive ) + " disabled: " + iToStr ( v->Disabled ) /*+ " detection_override: " + iToStr (v->detection_override )*/;
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "is_locked: " + iToStr ( v->IsLocked ) + " detected: " + iToStr ( v->detected ) + " clear_mines: +" + iToStr ( v->ClearMines ) + " lay_mines: " + iToStr ( v->LayMines ) + " repair_active: " + iToStr (v->RepairActive ) + " muni_active: " + iToStr (v->MuniActive );
+	sTmp = "is_locked: " + iToStr ( v->IsLocked ) /*+ " detected: " + iToStr ( v->detected )*/ + " clear_mines: +" + iToStr ( v->ClearMines ) + " lay_mines: " + iToStr ( v->LayMines ) + " repair_active: " + iToStr (v->RepairActive ) + " muni_active: " + iToStr (v->MuniActive );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4017,7 +4017,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "is_locked: " + iToStr ( b->IsLocked ) + " disabled: " + iToStr ( b->Disabled ) + " detected: +" + iToStr ( b->detected ) + " activating_vehicle: " + iToStr ( b->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (b->VehicleToActivate );
+	sTmp = "is_locked: " + iToStr ( b->IsLocked ) + " disabled: " + iToStr ( b->Disabled ) /*+ " detected: +" + iToStr ( b->detected )*/ + " activating_vehicle: " + iToStr ( b->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (b->VehicleToActivate );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

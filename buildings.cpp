@@ -76,7 +76,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 		BuildList = NULL;
 
 		StoredVehicles = NULL;
-		detected = true;
 		Wachposten = false;
 		return;
 	}
@@ -104,15 +103,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	else
 	{
 		Wachposten = false;
-	}
-
-	if ( data.is_expl_mine )
-	{
-		detected = false;
-	}
-	else
-	{
-		detected = true;
 	}
 
 	MetalProd = 0;
@@ -510,10 +500,6 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX2, PosY*64 + DamageFXPointY2, intense );
 		}
 	}
-
-	// Prüfen, ob die Mine gemalt werden soll:
-	if ( data.is_expl_mine && owner != Client->ActivePlayer && !detected )
-		return;
 
 	// Prüfen, ob es Dreck ist:
 	if ( !owner )
@@ -6337,7 +6323,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->detected )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
 			{
 				b = Client->Map->GO[off].base;
 			}
@@ -6353,7 +6339,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->detected )
+	if ( v && v->isDetectedByPlayer ( owner->Nr ) )
 	{
 		if ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer )
 			return false;
@@ -9011,4 +8997,13 @@ void cBuilding::ShowHelp ( void )
 void cBuilding::SendUpdateStored ( int index )
 {
 	return;
+}
+
+bool cBuilding::isDetectedByPlayer( int iPlayerNum )
+{
+	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
+	{
+		if ( *DetectedByPlayerList.Items[i] == iPlayerNum ) return true;
+	}
+	return false;
 }

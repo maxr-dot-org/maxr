@@ -518,7 +518,7 @@ void cAJobs::MakeClusters ( void )
 	damage= ( vehicle?vehicle->data.damage:building->data.damage );
 	( vehicle?vehicle->data.damage/=2:building->data.damage/=2 );
 
-#define CLUSTERUS if(DestX>=0&&DestX<size&&DestY>=0&&DestY<size&&((map->GO[dest].vehicle&&map->GO[dest].vehicle->owner!=p&&map->GO[dest].vehicle->detected)||(map->GO[dest].base&&map->GO[dest].base->owner&&map->GO[dest].base->owner!=p&&map->GO[dest].base->detected)||(map->GO[dest].top&&map->GO[dest].top->owner!=p))){MakeImpact();}dest=d;DestX=dx;DestY=dy;
+#define CLUSTERUS if(DestX>=0&&DestX<size&&DestY>=0&&DestY<size&&((map->GO[dest].vehicle&&map->GO[dest].vehicle->owner!=p&&map->GO[dest].vehicle->isDetectedByPlayer( p->Nr ))||(map->GO[dest].base&&map->GO[dest].base->owner&&map->GO[dest].base->owner!=p&&map->GO[dest].base->isDetectedByPlayer ( p->Nr ))||(map->GO[dest].top&&map->GO[dest].top->owner!=p))){MakeImpact();}dest=d;DestX=dx;DestY=dy;
 
 	dest--;DestX--;
 	CLUSTERUS
