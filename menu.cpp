@@ -220,7 +220,10 @@ class MenuButton
 
 void MenuButton::Draw(bool const down) const
 {
-	drawMenuButton(lngPack.i18n(text_), down, x_, y_);
+	SDL_Rect src = { 0, down ? 30 : 0, 200, 29 };
+	SDL_Rect dst = { x_, y_, 0, 0 };
+	SDL_BlitSurface(GraphicsData.gfx_menu_stuff, &src, buffer, &dst);
+	font->showTextCentered(x_ + 100, y_ + 7, lngPack.i18n(text_), LATIN_BIG, buffer);
 }
 
 bool MenuButton::CheckClick(int const x, int const y, bool const down, bool const up)

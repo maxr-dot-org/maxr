@@ -95,17 +95,6 @@ void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *sur
  */
 void drawButtonBig (std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
-/** Draws a menu button e.g. for main menu<br>
- * Size is 200x29
- * @author beko
- * @param sText Text displayed centered on button
- * @param bPressed clickstatus
- * @param x x position
- * @param y y position
- * @param *surface SDL_Surface to draw on - default is buffer
- */
-void drawMenuButton(std::string sText, bool bPressed, int x,int y, SDL_Surface *surface=buffer);
-
 
 enum ARROW_TYPE
 {

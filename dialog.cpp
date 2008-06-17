@@ -1362,16 +1362,3 @@ void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surf
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
 	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_BIG, surface);
 }
-
-
-void drawMenuButton ( string sText, bool bPressed ,int x,int y, SDL_Surface *surface )
-{
-	SDL_Rect scr = {0, 0, 200, 29};
-	SDL_Rect dest = {x, y, 200, 29};
-	if ( bPressed )
-	{
-		scr.y = 30;
-	}
-	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,surface,&dest );
-	font->showTextCentered(x+100,y+7, sText, LATIN_BIG, surface);
-}
