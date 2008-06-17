@@ -155,11 +155,6 @@ public:
 void RunMainMenu(void);
 /**
  *
- * @param bIAmMain
- */
-void prepareMenu(bool bIAmMain=false);
-/**
- *
  * @param
  */
 void ExitMenu(void);

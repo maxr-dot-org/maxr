@@ -73,7 +73,7 @@ static int s_iLastUnitShown = 0;
 static void showUnitPicture(void);
 
 // Menü vorbereiten:
-void prepareMenu ( bool bIAmMain )
+static void prepareMenu(bool const bIAmMain = false)
 {
 	//BEGIN MENU REDRAW
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
