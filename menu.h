@@ -244,13 +244,6 @@ void RunMPMenu(void);
 void placeSmallButton(std::string sText,int x,int y,bool pressed);
 /**
  *
- * @param files
- * @param offset
- * @param selected
- */
-void PlaceMenuButton(std::string sText,int x,int y, int darkness, bool pressed);
-/**
- *
  * @param sf
  * @return
  */
