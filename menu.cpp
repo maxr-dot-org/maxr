@@ -193,21 +193,6 @@ void PlaceMenuButton (string sText,int x,int y, int darkness, bool pressed )
 	font->showTextCentered(x+109/2,y+11, sText, LATIN_BIG);
 }
 
-// Platziert einen kleinen spezielen Menübutton:
-void PlaceSmallMenuButton ( string sText,int x,int y,bool pressed )
-{
-	SDL_Rect scr,dest;
-	scr.w=dest.w=48;
-	scr.h=dest.h=40;
-	scr.y=40;
-	if ( pressed ) scr.x=49;else scr.x=0;
-	dest.x=x;
-	dest.y=y;
-	SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&dest );
-
-	font->showTextCentered(x+48/2,y+11, sText, LATIN_BIG);
-}
-
 // Platziert einen auswählbaren Text (zentriert):
 void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {

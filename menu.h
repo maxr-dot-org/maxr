@@ -251,14 +251,6 @@ void placeSmallButton(std::string sText,int x,int y,bool pressed);
 void PlaceMenuButton(std::string sText,int x,int y, int darkness, bool pressed);
 /**
  *
- * @param sText
- * @param x
- * @param y
- * @param pressed
- */
-void PlaceSmallMenuButton(std::string sText,int x,int y,bool pressed);
-/**
- *
  * @param sf
  * @return
  */
