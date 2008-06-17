@@ -29,6 +29,7 @@ SRCS += attackJobs.cpp
 SRCS += automjobs.cpp
 SRCS += base.cpp
 SRCS += buildings.cpp
+SRCS += buttons.cpp
 SRCS += client.cpp
 SRCS += clientevents.cpp
 SRCS += dialog.cpp

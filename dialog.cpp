@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <SDL.h>
 #include <sstream>
+#include "buttons.h"
 #include "dialog.h"
 #include "game.h"
 #include "mouse.h"
@@ -42,8 +43,6 @@ bool ShowYesNo ( string text )
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	bool ret = false;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
-	SDL_Rect rButtonYes = {rDialog.x+80, rDialog.y+150, BUTTON_W, BUTTON_H};
-	SDL_Rect rButtonNo = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 
 	mouse->SetCursor ( CHand );
@@ -60,10 +59,12 @@ bool ShowYesNo ( string text )
 
 	LoadPCXtoSF(GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog);
 
+	SmallButton btn_yes(rDialog.x + 80, rDialog.y + 150, "Text~Button~Yes", SoundData.SNDHudButton);
+	SmallButton btn_no( rDialog.x + 80, rDialog.y + 185, "Text~Button~No",  SoundData.SNDHudButton);
 
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
-	placeSmallButton ( lngPack.i18n ( "Text~Button~Yes" ).c_str(), rButtonYes.x, rButtonYes.y, false );
-	placeSmallButton ( lngPack.i18n ( "Text~Button~No" ).c_str(), rButtonNo.x, rButtonNo.y, false );
+	btn_yes.Draw();
+	btn_no.Draw();
 	font->showTextAsBlock(rText, text);
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
@@ -93,32 +94,17 @@ bool ShowYesNo ( string text )
 			mouse->draw ( true, screen );
 		}
 
-		// Ja Button:
-		if ( x >= rButtonYes.x && x <= rButtonYes.x + rButtonYes.w && y >= rButtonYes.y && y <= rButtonYes.y + rButtonYes.h )
+		bool const down = b > lb;
+		bool const up   = b < lb;
+		if (btn_yes.CheckClick(x, y, down, up))
 		{
-			if ( b && !lb )
-			{
-				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~Yes" ).c_str(), rButtonYes.x, rButtonYes.y, true );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				ret = true;
-				break;
-			}
+			ret = true;
+			break;
 		}
-
-		// Nein Button:
-		if ( x >= rButtonNo.x && x <= rButtonNo.x + rButtonNo.w && y >= rButtonNo.y && y <= rButtonNo.y + rButtonNo.h )
+		if (btn_no.CheckClick(x, y, down, up))
 		{
-			if ( b && !lb )
-			{
-				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~No" ).c_str(), rButtonNo.x, rButtonNo.y, true );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				ret = false;
-				break;
-			}
+			ret = false;
+			break;
 		}
 
 		lx = x;
@@ -146,7 +132,6 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
 	SDL_Rect rTextBox = {rDialog.x + 30, rDialog.y + 30, 238, 114 };
 	SDL_Rect rTextField = {rDialog.x + 246, rDialog.y + 171, 30, 10 };
-	SDL_Rect rButton = {rDialog.x + 80, rDialog.y + 185,150,29};
 	SDL_Rect rArrowUp = { rDialog.x + 241, rDialog.y + 187, 18, 17};
 	SDL_Rect rArrowDown = { rDialog.x + 261, rDialog.y + 187, 18, 17};
 	SDL_Rect scr = {rTextField.x - rDialog.x, rTextField.y - rDialog.y, rTextField.w, rTextField.h}; //remove offset
@@ -172,7 +157,9 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	}
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 
-	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButton.x, rButton.y, false );
+	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+
+	btn_ok.Draw();
 	font->showTextAsBlock(rTextBox, text);
 	font->showText(rTextField, stmp);
 
@@ -195,16 +182,9 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 		}
 
 		// OK Button:
-		if ( x >= rButton.x && x <= rButton.x + rButton.w && y >= rButton.y && y <= rButton.y + rButton.h )
+		if (btn_ok.CheckClick(x, y, b > lb, b < lb))
 		{
-			if ( b && !lb )
-			{
-				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButton.x, rButton.y, true );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				break;
-			}
+			break;
 		}
 		//arrow up "increase" numbers
 		if ( x >= rArrowUp.x && x <= rArrowUp.x + rArrowUp.w && y >= rArrowUp.y && y <= rArrowUp.y + rArrowUp.h )
@@ -267,7 +247,6 @@ void ShowOK ( string sText, bool bPurgeHud )
 {
 	int b, x, y, lx = 0, ly = 0, lb = 0;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOGBOX_W / 2, SettingsData.iScreenH / 2 - DIALOGBOX_H / 2, DIALOGBOX_W, DIALOGBOX_H };
-	SDL_Rect rButtonOk = {rDialog.x+80, rDialog.y+185, BUTTON_W, BUTTON_H};
 	SDL_Rect rText = {rDialog.x+20, rDialog.y+20,rDialog.w-40, rDialog.h-150};
 	Uint8 *keystate;
 	bool bLastKeystate = false;
@@ -307,9 +286,11 @@ void ShowOK ( string sText, bool bPurgeHud )
 		}
 	}
 
+	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	font->showTextAsBlock(rText, sText);
-	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
+	btn_ok.Draw();
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 
@@ -340,18 +321,10 @@ void ShowOK ( string sText, bool bPurgeHud )
 			mouse->draw ( true, screen );
 		}
 
-		// OK Button:
-		if ( ( x >= rButtonOk.x && x < rButtonOk.x + rButtonOk.w && y >= rButtonOk.y && y < rButtonOk.y + rButtonOk.h ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
+		if ((bLastKeystate && !keystate[SDLK_RETURN]) ||
+				btn_ok.CheckClick(x, y, b > lb, b < lb))
 		{
-			if ( ( b && !lb ) || ( bLastKeystate && !keystate[SDLK_RETURN] ) )
-			{
-				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, true );
-				SHOW_SCREEN
-				SDL_Delay(200);
-				mouse->draw ( false, screen );
-				break;
-			}
+			break;
 		}
 
 		lx = x;
@@ -361,7 +334,6 @@ void ShowOK ( string sText, bool bPurgeHud )
 		bLastKeystate = keystate[SDLK_RETURN];
 	}
 
-	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rButtonOk.x, rButtonOk.y, false );
 	SHOW_SCREEN
 
 	if ( !bPurgeHud )
@@ -472,9 +444,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	rDialogBoxBlackOffset.x = screen->w / 2 - SfDialog->w / 2 + 32;
 	rDialogBoxBlackOffset.y = screen->h / 2 - SfDialog->h / 2 + 28; //w, h not needed since SDL_BlitSurface ignores these for destination rect
 
+	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
-	placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+	btn_ok.Draw();
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 	font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
 	font->showTextAsBlock(rDialogOnScreen, sLicence1);
@@ -510,16 +484,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 		}
 
 		// OK Button:
-		if ( x >= rDialog.x + 80 && x < rDialog.x + 80 + 150 && y >= rDialog.y + 185 && y < rDialog.y + 185 + 29 )
+		if (btn_ok.CheckClick(x, y, b > lb, b < lb))
 		{
-			if ( b && !lb )
-			{
-				PlayFX ( SoundData.SNDHudButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), 640 / 2 - 300 / 2 + 80, 480 / 2 - 231 / 2 + 185, true );
-				mouse->draw ( false, screen );
-				SDL_Delay ( 2 );
-				break;
-			}
+			break;
 		}
 		//button up (left)
 		else if ( x >= rDialog.x + 241 && x < rDialog.x + 241 + 18 && y >= rDialog.y + 187 && y < rDialog.y + 187 + 17 )
@@ -529,7 +496,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicenceIntro2);
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				btn_ok.Draw();
 
 				switch(index)
 				{
@@ -565,8 +532,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 			{
 				SDL_BlitSurface ( SfDialog, &rDialogBoxBlack, buffer, &rDialogBoxBlackOffset );  //redraw empty textbox
 				font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30, sLicenceIntro1);
-
-				placeSmallButton ( lngPack.i18n ( "Text~Button~OK" ).c_str(), rDialog.x + 80, rDialog.y + 185, false );
+				btn_ok.Draw();
 
 				switch(index)
 				{

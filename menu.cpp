@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <time.h>
 #include <math.h>
+#include "buttons.h"
 #include "menu.h"
 #include "pcx.h"
 #include "fonts.h"
@@ -148,22 +149,6 @@ void ExitMenu ( void )
 }
 
 
-// Platziert einen kleinen Button:
-void placeSmallButton (string sText,int x,int y,bool pressed )
-{
-	SDL_Rect scr,dest;
-	scr.w=dest.w=150;
-	scr.h=dest.h=29;
-	scr.x=0;
-	if ( pressed ) scr.y=90;else scr.y=60;
-	dest.x=x;
-	dest.y=y;
-	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff,&scr,buffer,&dest );
-
-	font->showTextCentered(x+150/2,y+7, sText, LATIN_BIG);
-}
-
-
 // Platziert einen auswählbaren Text (zentriert):
 void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {
@@ -226,6 +211,7 @@ void MenuButton::Draw(bool const down) const
 	font->showTextCentered(x_ + 100, y_ + 7, lngPack.i18n(text_), LATIN_BIG, buffer);
 }
 
+
 bool MenuButton::CheckClick(int const x, int const y, bool const down, bool const up)
 {
 	if (x_ <= x && x < x_ + BTN_WIDTH &&
@@ -248,7 +234,7 @@ bool MenuButton::CheckClick(int const x, int const y, bool const down, bool cons
 				PlayFX(SoundData.SNDMenuButton);
 				Draw(true);
 				SHOW_SCREEN
-					mouse->draw(false, screen);
+				mouse->draw(false, screen);
 			}
 		}
 	}
@@ -259,7 +245,7 @@ bool MenuButton::CheckClick(int const x, int const y, bool const down, bool cons
 			down_ = false;
 			Draw(false);
 			SHOW_SCREEN
-				mouse->draw(false, screen);
+			mouse->draw(false, screen);
 		}
 	}
 	return false;
@@ -3822,8 +3808,7 @@ void cMultiPlayerMenu::showChatLog()
 
 void cMultiPlayerMenu::runNetworkMenu()
 {
-	bool bPlanetSelPressed = false, bOptionsPressed = false, bStartHostConnect = false, bSendPressed = false;
-	bool bLoadPressed = false, bShowCursor = true;
+	bool bShowCursor = true;
 	int b, lb = 0, lx = -1, ly = -1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
@@ -3867,25 +3852,31 @@ void cMultiPlayerMenu::runNetworkMenu()
 	dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y=  0;
 	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
 
-	MenuButton btn_back( 50, 450, "Text~Button~Back");
-	MenuButton btn_ok(  390, 450, "Text~Button~OK");
+	SmallButton btn_send(   470, 416, "Text~Title~Send");
+	MenuButton  btn_back(    50, 450, "Text~Button~Back");
+	MenuButton  btn_ok(     390, 450, "Text~Button~OK");
+	SmallButton btn_planet( 470,  42, "Text~Title~Choose_Planet");
+	SmallButton btn_options(470,  77, "Text~Title~Options");
+	SmallButton btn_load(   470, 112, "Text~Button~Game_Load");
+	SmallButton btn_start(  470, 200, "Text~Button~Host_Start");
+	SmallButton btn_connect(470, 200, "Text~Title~Connect");
 
 	if ( bHost )
 	{
 		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
-		placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ) ,470,42,false );
-		placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ) ,470,42+35,false );
-		placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ) ,470,42+35*2,false );
-		placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
+		btn_planet.Draw();
+		btn_options.Draw();
+		btn_load.Draw();
+		btn_start.Draw();
 		btn_ok.Draw();
 	}
 	else
 	{
 		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Client" ) );
-		placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
+		btn_connect.Draw();
 	}
-	placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
 
+	btn_send.Draw();
 	btn_back.Draw();
 
 	mouse->SetCursor ( CHand );
@@ -4086,265 +4077,186 @@ void cMultiPlayerMenu::runNetworkMenu()
 		// Host buttons:
 		if ( bHost && sSaveGame.empty() )
 		{
-			// select planet:
-			if ( mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 42 && mouse->y < 42+29 )
+			if (btn_planet.CheckClick(x, y, down, up))
 			{
-				if ( b && !lb )
-				{
-					bPlanetSelPressed = true;
-					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ).c_str(), 470, 42, true );
-					SHOW_SCREEN
-					mouse->draw ( false, screen );
-				}
-				else if ( !b && bPlanetSelPressed )
-				{
-					sMap = RunPlanetSelect();
-					sSaveGame = "";
-					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
-					displayGameSettings();
-					displayPlayerList();
+				sMap = RunPlanetSelect();
+				sSaveGame = "";
+				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+				displayGameSettings();
+				displayPlayerList();
 
-					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
-					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
-					font->showText( 20, 260, sIP);
-					font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
-					font->showText( 228, 260, iToStr( iPort ) );
-					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
-					font->showText( 352, 260, ActualPlayer->name );
-					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+				font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
+				font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
+				font->showText( 20, 260, sIP);
+				font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
+				font->showText( 228, 260, iToStr( iPort ) );
+				font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
+				font->showText( 352, 260, ActualPlayer->name );
+				font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
 
-					dest.x = 505;
-					dest.y = 260;
-					scr.w = dest.w = 83;
-					scr.h = dest.h = 10;
-					scr.x = 0;
-					scr.y = 0;
-					SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
-					btn_back.Draw();
-					btn_ok.Draw();
-					SHOW_SCREEN
-					mouse->draw ( false, screen );
-					sendOptions();
-				}
-			}
-			else if ( bPlanetSelPressed )
-			{
-				bPlanetSelPressed = false;
-				placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
+				dest.x = 505;
+				dest.y = 260;
+				scr.w = dest.w = 83;
+				scr.h = dest.h = 10;
+				scr.x = 0;
+				scr.y = 0;
+				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+				btn_planet.Draw();
+				btn_options.Draw();
+				btn_load.Draw();
+				btn_start.Draw();
+				btn_send.Draw();
+				btn_back.Draw();
+				btn_ok.Draw();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
+				sendOptions();
 			}
-			// options:
-			if ( mouse->x >= 470 && mouse-> x < 470+150 && mouse->y >= 42+35 && mouse->y < 42+29+35 )
+			if (btn_options.CheckClick(x, y, down, up))
 			{
-				if ( b && !lb )
+				if ( !bOptions )
 				{
-					bOptionsPressed = true;
-					PlayFX ( SoundData.SNDMenuButton );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42 + 35, true );
-					SHOW_SCREEN
-					mouse->draw ( false,screen );
+					Options = RunOptionsMenu ( NULL );
 				}
-				else if ( !b && bOptionsPressed )
+				else
 				{
-					if ( !bOptions )
-					{
-						Options = RunOptionsMenu ( NULL );
-					}
-					else
-					{
-						Options = RunOptionsMenu ( &Options );
-					}
-					bOptions = true;
-					sSaveGame = "";
-					SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
-					displayGameSettings();
-					displayPlayerList();
-
-					font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
-					font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
-					font->showText( 20, 260, sIP);
-					font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
-					font->showText( 228, 260, iToStr( iPort ) );
-					font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
-					font->showText( 352, 260, ActualPlayer->name );
-					font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
-
-					dest.x = 505;
-					dest.y = 260;
-					scr.w = dest.w = 83;
-					scr.h = dest.h = 10;
-					scr.x = 0;
-					scr.y = 0;
-					SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Choose_Planet" ), 470, 42, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Game_Load" ), 470, 42+35*2, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ), 470, 200, false );
-					placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470, 416, false );
-					btn_back.Draw();
-					btn_ok.Draw();
-					SHOW_SCREEN
-					mouse->draw ( false, screen );
-					sendOptions();
+					Options = RunOptionsMenu ( &Options );
 				}
-			}
-			else if ( bOptionsPressed )
-			{
-				bOptionsPressed = false;
-				placeSmallButton ( lngPack.i18n ( "Text~Title~Options" ), 470, 42+35, false );
+				bOptions = true;
+				sSaveGame = "";
+				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+				displayGameSettings();
+				displayPlayerList();
+
+				font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
+				font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
+				font->showText( 20, 260, sIP);
+				font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
+				font->showText( 228, 260, iToStr( iPort ) );
+				font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
+				font->showText( 352, 260, ActualPlayer->name );
+				font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+
+				dest.x = 505;
+				dest.y = 260;
+				scr.w = dest.w = 83;
+				scr.h = dest.h = 10;
+				scr.x = 0;
+				scr.y = 0;
+				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+				btn_planet.Draw();
+				btn_options.Draw();
+				btn_load.Draw();
+				btn_start.Draw();
+				btn_send.Draw();
+				btn_back.Draw();
+				btn_ok.Draw();
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
+				sendOptions();
 			}
-			// load game:
-			if( mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 42+35*2 && mouse->y < 42+29+32*2 )
+			if (btn_load.CheckClick(x, y, down, up))
 			{
-				if( b && !lb )
-				{
-					bLoadPressed = true;
-					PlayFX(SoundData.SNDMenuButton);
-					placeSmallButton( lngPack.i18n( "Text~Button~Game_Load").c_str(), 470, 42+35*2, true );
-					SHOW_SCREEN
-					mouse->draw(false,screen);
-				}
-				else if( !b && bLoadPressed)
-				{
-					;
-				}
-			}
-			else if( bLoadPressed )
-			{
-				bLoadPressed = false;
-				if( sSaveGame.empty() ) placeSmallButton(lngPack.i18n( "Text~Button~Game_Load").c_str(), 470,42+35*2, false );
-				SHOW_SCREEN
-				mouse->draw( false, screen );
+				// TODO implement
 			}
 		}
 
-
-		// Host/Connect:
-		if ( b && mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 200 && mouse->y < 200+29 )
+		if (bHost)
 		{
-			bStartHostConnect = true;
-			if ( !lb )
+			if (btn_start.CheckClick(x, y, down, up))
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				if ( bHost ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,true );
-				else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,true );
-
-				if ( network->getConnectionStatus() == 0 ) // Connect only if there isn't a connection jet
+				if (network->getConnectionStatus() == 0) // Connect only if there isn't a connection jet
 				{
-					if ( bHost )
-					{
-						network->setPort ( iPort );
+					network->setPort(iPort);
 
-						if ( network->create() == -1 )
-						{
-							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Socket" ) );
-							cLog::write ( "Error opening socket", cLog::eLOG_TYPE_WARNING );
-						}
-						else
-						{
-							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Open" ) + " (" + lngPack.i18n ( "Text~Title~Port" ) + ": "  + iToStr( iPort ) + ")" );
-							cLog::write ( "Game open (Port: " + iToStr( iPort ) + ")", cLog::eLOG_TYPE_INFO );
-						}
+					if (network->create() == -1)
+					{
+						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Error_Socket"));
+						cLog::write("Error opening socket", cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
-						network->setPort ( iPort );
-						network->setIP ( sIP );
-
-						addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connecting" ) + sIP + ":" + iToStr( iPort ) ); // e.g. Connecting to 127.0.0.1:55800
-						cLog::write ( ( "Connecting to " + sIP + ":" + iToStr ( iPort ) ), cLog::eLOG_TYPE_INFO );
-
-						if ( network->connect() == -1 )
-						{
-							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Error_Connect" ) + sIP + ":" + iToStr( iPort ) );
-							cLog::write ( "Error on connecting " + sIP + ":" + iToStr( iPort ), cLog::eLOG_TYPE_WARNING );
-						}
-						else
-						{
-							addChatLog ( lngPack.i18n ( "Text~Multiplayer~Network_Connected" ) );
-							cLog::write ( "Connected", cLog::eLOG_TYPE_INFO );
-						}
+						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n("Text~Title~Port") + ": "  + iToStr(iPort) + ")");
+						cLog::write("Game open (Port: " + iToStr(iPort) + ")", cLog::eLOG_TYPE_INFO);
 					}
 				}
 
 				SHOW_SCREEN
-				mouse->draw ( false,screen );
+				mouse->draw(false, screen);
 			}
 		}
-		else if ( bStartHostConnect )
+		else
 		{
-			bStartHostConnect = false;
-			if ( bHost ) placeSmallButton ( lngPack.i18n ( "Text~Button~Host_Start" ),470,200,false );
-			else placeSmallButton ( lngPack.i18n ( "Text~Title~Connect" ), 470,200,false );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-		}
-		// Send:
-		if ( ( b && mouse->x >= 470 && mouse->x < 470+150 && mouse->y >= 416 && mouse->y < 416+29 ) || ( InputEnter && iFocus==FOCUS_CHAT ) )
-		{
-			if ( !lb || ( InputEnter && iFocus==FOCUS_CHAT ) )
+			if (btn_connect.CheckClick(x, y, down, up))
 			{
-				bSendPressed = true;
-				PlayFX ( SoundData.SNDMenuButton );
-				placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,true );
-
-				if ( !ChatStr.empty() )
+				if (network->getConnectionStatus() == 0) // Connect only if there isn't a connection jet
 				{
-					PlayFX ( SoundData.SNDChat );
-					if ( ChatStr.compare( "/ready" ) == 0 )
+					network->setPort(iPort);
+					network->setIP(sIP);
+
+					addChatLog(lngPack.i18n("Text~Multiplayer~Network_Connecting") + sIP + ":" + iToStr(iPort)); // e.g. Connecting to 127.0.0.1:55800
+					cLog::write(("Connecting to " + sIP + ":" + iToStr(iPort)), cLog::eLOG_TYPE_INFO);
+
+					if (network->connect() == -1)
 					{
-						int iPlayerIndex;
-						for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.iCount; iPlayerIndex++ )
-						{
-							if ( PlayerList.Items[iPlayerIndex] == ActualPlayer ) break;
-						}
-						ReadyList[iPlayerIndex] = !ReadyList[iPlayerIndex];
-						displayPlayerList();
-						sendIdentification();
+						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Error_Connect") + sIP + ":" + iToStr(iPort));
+						cLog::write("Error on connecting " + sIP + ":" + iToStr(iPort), cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
-						ChatStr.insert ( 0,": " );
-						ChatStr.insert ( 0, ActualPlayer->name );
-
-						if ( ChatStr.length() > PACKAGE_LENGHT-7 )
-						{
-							ChatStr.erase ( PACKAGE_LENGHT-7 );
-						}
-						cNetMessage *Message = new cNetMessage ( MU_MSG_CHAT );
-						Message->pushString ( ChatStr );
-						sendMessage ( Message );
-
-						if ( network->isHost() ) addChatLog ( ChatStr );
+						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Connected"));
+						cLog::write("Connected", cLog::eLOG_TYPE_INFO);
 					}
-					ChatStr="";
-					if ( iFocus==FOCUS_CHAT ) InputStr = "";
-					scr.x = 20;
-					scr.y = 423;
-					scr.w = 430;
-					scr.h = 16;
-					SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
-
-					font->showText(20, 423, ChatStr);
 				}
 
 				SHOW_SCREEN
-				mouse->draw ( false,screen );
+				mouse->draw(false, screen);
 			}
 		}
-		else if ( bSendPressed )
+
+		if ((InputEnter && iFocus == FOCUS_CHAT) ||
+				btn_send.CheckClick(x, y, down, up))
 		{
-			bSendPressed = false;
-			placeSmallButton ( lngPack.i18n ( "Text~Title~Send" ), 470,416,false );
+			if ( !ChatStr.empty() )
+			{
+				PlayFX ( SoundData.SNDChat );
+				if ( ChatStr.compare( "/ready" ) == 0 )
+				{
+					int iPlayerIndex;
+					for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.iCount; iPlayerIndex++ )
+					{
+						if ( PlayerList.Items[iPlayerIndex] == ActualPlayer ) break;
+					}
+					ReadyList[iPlayerIndex] = !ReadyList[iPlayerIndex];
+					displayPlayerList();
+					sendIdentification();
+				}
+				else
+				{
+					ChatStr.insert ( 0,": " );
+					ChatStr.insert ( 0, ActualPlayer->name );
+
+					if ( ChatStr.length() > PACKAGE_LENGHT-7 )
+					{
+						ChatStr.erase ( PACKAGE_LENGHT-7 );
+					}
+					cNetMessage *Message = new cNetMessage ( MU_MSG_CHAT );
+					Message->pushString ( ChatStr );
+					sendMessage ( Message );
+
+					if ( network->isHost() ) addChatLog ( ChatStr );
+				}
+				ChatStr="";
+				if ( iFocus==FOCUS_CHAT ) InputStr = "";
+				scr.x = 20;
+				scr.y = 423;
+				scr.w = 430;
+				scr.h = 16;
+				SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
+
+				font->showText(20, 423, ChatStr);
+			}
+
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}

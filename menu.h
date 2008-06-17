@@ -234,11 +234,6 @@ int GetKachelBig(int x,int y);
 void RunMPMenu(void);
 /**
  *
- * @param
- */
-void placeSmallButton(std::string sText,int x,int y,bool pressed);
-/**
- *
  * @param sf
  * @return
  */
