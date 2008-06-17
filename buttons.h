@@ -11,8 +11,12 @@ class Button
 			x_(x),
 			y_(y),
 			text_(text),
-			down_(false)
+			down_(false),
+			locked_(false)
 		{}
+
+		void Lock()   { locked_ = true;  Draw(); }
+		void Unlock() { locked_ = false; Draw(); }
 
 		void Draw(bool down = false) const;
 
@@ -26,7 +30,8 @@ class Button
 		int         x_;
 		int         y_;
 		char const* text_;
-		bool        down_;
+		bool        down_:1;
+		bool        locked_:1;
 };
 
 

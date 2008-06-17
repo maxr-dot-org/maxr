@@ -10,7 +10,7 @@ void Button::Draw(bool const down) const
 {
 	SDL_Rect const& r   = GfxRect();
 	SDL_Rect        src = r;
-	if (down) src.y += 30;
+	if (down || locked_) src.y += 30;
 	SDL_Rect dst = { x_, y_, 0, 0 };
 	SDL_BlitSurface(GraphicsData.gfx_menu_stuff, &src, buffer, &dst);
 	font->showTextCentered(x_ + r.w / 2, y_ + 7, lngPack.i18n(text_), LATIN_BIG);
@@ -19,6 +19,8 @@ void Button::Draw(bool const down) const
 
 bool Button::CheckClick(int const x, int const y, bool const down, bool const up)
 {
+	if (locked_) return false;
+
 	SDL_Rect const& r = GfxRect();
 	if (x_ <= x && x < x_ + r.w &&
 			y_ <= y && y < y_ + r.h)

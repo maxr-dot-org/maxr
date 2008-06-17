@@ -1130,7 +1130,7 @@ string RunPlanetSelect ( void )
 	MenuButton btn_ok(  390, 440, "Text~Button~OK");
 
 	btn_back.Draw();
-	btn_ok.Draw();
+	btn_ok.Lock();
 
 	files = getFilesOfDirectory ( SettingsData.sMapsPath );
 	for ( int i = 0; i < files->iCount; i++ )
@@ -1169,7 +1169,7 @@ string RunPlanetSelect ( void )
 		bool const down = b > lb;
 		bool const up   = b < lb;
 
-		if (selected >= 0 && btn_ok.CheckClick(x, y, down, up))
+		if (btn_ok.CheckClick(x, y, down, up))
 		{
 			string name = files->Items[selected];
 			if (name.substr(name.length() - 4, name.length()).compare(".WRL") != 0 &&
@@ -1212,6 +1212,7 @@ string RunPlanetSelect ( void )
 				if ( mouse->x>=scr.x&&mouse->x<scr.x+112&&mouse->y>=scr.y&&mouse->y<scr.y+112 )
 				{
 					selected=i+offset;
+					btn_ok.Unlock();
 					PlayFX ( SoundData.SNDObjectMenu );
 					ShowPlanets ( files,offset,selected, sfTmp );
 					SHOW_SCREEN
@@ -3793,7 +3794,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 		btn_planet.Draw();
 		btn_options.Draw();
-		btn_load.Draw();
+		btn_load.Lock();
 		btn_start.Draw();
 		btn_ok.Draw();
 	}
