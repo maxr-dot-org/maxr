@@ -73,7 +73,7 @@ static int s_iLastUnitShown = 0;
 static void showUnitPicture(void);
 
 // Menü vorbereiten:
-static void prepareMenu(bool const bIAmMain = false)
+static void prepareMenu()
 {
 	//BEGIN MENU REDRAW
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
@@ -96,19 +96,6 @@ static void prepareMenu(bool const bIAmMain = false)
 	//draw infostring with maxversion at the bottom
 	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.i18n ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
 	//END MENU REDRAW
-
-	//we came back from a submenu so we have to redraw main menu
-	if(bIAmMain)
-	{
-		font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n ( "Text~Title~MainMenu" ));
-		drawMenuButton ( lngPack.i18n ( "Text~Button~Single_Player" ),false,BTN_1_X,BTN_1_Y );
-		drawMenuButton ( lngPack.i18n ( "Text~Button~Multi_Player" ),false,BTN_2_X,BTN_2_Y );
-		//uncommented since no need for right now -- beko
-		//drawMenuButton ( lngPack.i18n ( "Text~Button~Map_Editor" ),false,BTN_3_X,BTN_3_Y );
-		//drawMenuButton ( lngPack.i18n ( "Text~Button~Credits" ),false,BTN_4_X,BTN_4_Y );
-		drawMenuButton ( lngPack.i18n ( "Text~Button~Mani" ),false,BTN_5_X,BTN_5_Y );
-		drawMenuButton ( lngPack.i18n ( "Text~Button~Exit" ),false,BTN_6_X,BTN_6_Y );
-	}
 
 	//display random unit
 	showUnitPicture();
@@ -297,9 +284,6 @@ void RunMainMenu ( void )
 	// start main musicfile
 	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg").c_str());
 
-	prepareMenu(true);
-	SHOW_SCREEN
-
 	MenuButton btn_single( BTN_1_X, BTN_1_Y, "Text~Button~Single_Player");
 	MenuButton btn_multi(  BTN_2_X, BTN_2_Y, "Text~Button~Multi_Player");
 #if 0
@@ -309,8 +293,25 @@ void RunMainMenu ( void )
 	MenuButton btn_license(BTN_5_X, BTN_5_Y, "Text~Button~Mani");
 	MenuButton btn_exit(   BTN_6_X, BTN_6_Y, "Text~Button~Exit");
 
+	bool redraw = true;
 	while ( 1 )
 	{
+		if (redraw)
+		{
+			prepareMenu();
+			font->showTextCentered(TITLE_X, TITLE_Y, lngPack.i18n ("Text~Title~MainMenu"));
+			btn_single.Draw();
+			btn_multi.Draw();
+#if 0
+			btn_editor.Draw();
+			btn_credits.Draw();
+#endif
+			btn_license.Draw();
+			btn_exit.Draw();
+			SHOW_SCREEN
+			redraw = false;
+		}
+
 		// Events holen:
 		EventHandler->HandleEvents();
 		// Tasten prüfen:
@@ -335,40 +336,35 @@ void RunMainMenu ( void )
 		if (btn_single.CheckClick(x, y, down, up))
 		{
 			RunSPMenu();
-			prepareMenu(true);
-			SHOW_SCREEN
 			EscHot = false;
+			redraw = true;
 		}
 		if (btn_multi.CheckClick(x, y, down, up))
 		{
 			RunMPMenu();
-			prepareMenu(true);
-			SHOW_SCREEN
 			EscHot = false;
+			redraw = true;
 		}
 #if 0
 		if (btn_editor.CheckClick(x, y, down, up))
 		{
 			ExitMenu();
 			{ cMapEditor me; me.Run(); }
-			prepareMenu(true);
-			SHOW_SCREEN
 			EscHot = false;
+			redraw = true;
 		}
 		if (btn_credits.CheckClick(x, y, down, up))
 		{
 			{ cCredits cred; cred.Run(); }
-			prepareMenu(true);
-			SHOW_SCREEN
 			EscHot = false;
+			redraw = true;
 		}
 #endif
 		if (btn_license.CheckClick(x, y, down, up))
 		{
 			mouse->draw(false, screen);
 			showLicence();
-			prepareMenu(true);
-			SHOW_SCREEN
+			redraw = true;
 		}
 		if (btn_exit.CheckClick(x, y, down, up))
 		{
