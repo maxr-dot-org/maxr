@@ -1101,6 +1101,10 @@ sOptions RunOptionsMenu ( sOptions *init )
 	return options;
 }
 
+
+static void ShowPlanets(cList<string>* const files, int const offset, int const selected, SDL_Surface* const surface);
+
+
 // Startet die Planetenauswahl (gibt den Namen des Planeten zurück):
 string RunPlanetSelect ( void )
 {
@@ -1245,8 +1249,9 @@ string RunPlanetSelect ( void )
 	return "";
 }
 
+
 // Zeigt die Planeten an:
-void ShowPlanets ( cList<string> *files,int offset,int selected, SDL_Surface *surface )
+static void ShowPlanets(cList<string>* files, int offset, int selected, SDL_Surface* surface)
 {
 	SDL_Surface *sf;
 	//SDL_Rect scr={640, 390, 0, 38},dest;

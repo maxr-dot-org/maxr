@@ -171,14 +171,6 @@ void RunSPMenu(void);
 string RunPlanetSelect(void);
 /**
  *
- * @param files
- * @param offset
- * @param selected
- * @param surface Source Surface for proper background drawing
- */
-void ShowPlanets(cList<string> *files,int offset,int selected, SDL_Surface *surface);
-/**
- *
  * @param init
  * @return
  */
