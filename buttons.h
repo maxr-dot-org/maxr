@@ -4,14 +4,13 @@
 #include "sound.h"
 
 
-class SmallButton
+class Button
 {
 	public:
-		SmallButton(int const x, int const y, char const* const text, sSOUND* sound = SoundData.SNDMenuButton) :
+		Button(int const x, int const y, char const* const text) :
 			x_(x),
 			y_(y),
 			text_(text),
-			sound_(sound),
 			down_(false)
 		{}
 
@@ -19,12 +18,39 @@ class SmallButton
 
 		bool CheckClick(int x, int y, bool down, bool up);
 
+		virtual SDL_Rect const& GfxRect() const = 0;
+
+		virtual sSOUND* Sound() const;
+
 	private:
 		int         x_;
 		int         y_;
 		char const* text_;
-		sSOUND*     sound_;
 		bool        down_;
+};
+
+
+class MenuButton : public Button
+{
+	public:
+		MenuButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
+		SDL_Rect const& GfxRect() const;
+};
+
+
+class SmallButton : public Button
+{
+	public:
+		SmallButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
+		SDL_Rect const& GfxRect() const;
+};
+
+
+class SmallButtonHUD : public SmallButton
+{
+	public:
+		SmallButtonHUD(int const x, int const y, char const* const text) : SmallButton(x, y, text) {}
+		sSOUND* Sound() const;
 };
 
 #endif

@@ -1,22 +1,27 @@
+#include <SDL_video.h>
+
 #include "buttons.h"
 #include "fonts.h"
 #include "main.h"
 #include "mouse.h"
 
 
-void SmallButton::Draw(bool const down) const
+void Button::Draw(bool const down) const
 {
-	SDL_Rect src = { 0, down ? 90 : 60, 150, 29 };
+	SDL_Rect const& r   = GfxRect();
+	SDL_Rect        src = r;
+	if (down) src.y += 30;
 	SDL_Rect dst = { x_, y_, 0, 0 };
 	SDL_BlitSurface(GraphicsData.gfx_menu_stuff, &src, buffer, &dst);
-	font->showTextCentered(x_ + 150 / 2, y_ + 7, lngPack.i18n(text_), LATIN_BIG);
+	font->showTextCentered(x_ + r.w / 2, y_ + 7, lngPack.i18n(text_), LATIN_BIG);
 }
 
 
-bool SmallButton::CheckClick(int const x, int const y, bool const down, bool const up)
+bool Button::CheckClick(int const x, int const y, bool const down, bool const up)
 {
-	if (x_ <= x && x < x_ + 150 &&
-			y_ <= y && y < y_ +  29)
+	SDL_Rect const& r = GfxRect();
+	if (x_ <= x && x < x_ + r.w &&
+			y_ <= y && y < y_ + r.h)
 	{
 		if (down_)
 		{
@@ -32,7 +37,7 @@ bool SmallButton::CheckClick(int const x, int const y, bool const down, bool con
 			if (down)
 			{
 				down_ = true;
-				PlayFX(sound_);
+				PlayFX(Sound());
 				Draw(true);
 				SHOW_SCREEN
 				mouse->draw(false, screen);
@@ -51,3 +56,23 @@ bool SmallButton::CheckClick(int const x, int const y, bool const down, bool con
 	}
 	return false;
 }
+
+
+sSOUND* Button::Sound() const { return SoundData.SNDMenuButton; }
+
+
+SDL_Rect const& MenuButton::GfxRect() const
+{
+	static SDL_Rect r = { 0, 0, 200, 29 };
+	return r;
+}
+
+
+SDL_Rect const& SmallButton::GfxRect() const
+{
+	static SDL_Rect r = { 0, 60, 150, 29 };
+	return r;
+}
+
+
+sSOUND* SmallButtonHUD::Sound() const { return SoundData.SNDHudButton; }

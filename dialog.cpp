@@ -59,8 +59,8 @@ bool ShowYesNo ( string text )
 
 	LoadPCXtoSF(GraphicsData.Dialog2Path.c_str(), GraphicsData.gfx_dialog);
 
-	SmallButton btn_yes(rDialog.x + 80, rDialog.y + 150, "Text~Button~Yes", SoundData.SNDHudButton);
-	SmallButton btn_no( rDialog.x + 80, rDialog.y + 185, "Text~Button~No",  SoundData.SNDHudButton);
+	SmallButtonHUD btn_yes(rDialog.x + 80, rDialog.y + 150, "Text~Button~Yes");
+	SmallButtonHUD btn_no( rDialog.x + 80, rDialog.y + 185, "Text~Button~No");
 
 	SDL_BlitSurface ( GraphicsData.gfx_dialog, NULL, buffer, &rDialog );
 	btn_yes.Draw();
@@ -157,7 +157,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	}
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 
-	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+	SmallButtonHUD btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK");
 
 	btn_ok.Draw();
 	font->showTextAsBlock(rTextBox, text);
@@ -286,7 +286,7 @@ void ShowOK ( string sText, bool bPurgeHud )
 		}
 	}
 
-	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+	SmallButtonHUD btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK");
 
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );
 	font->showTextAsBlock(rText, sText);
@@ -444,7 +444,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	rDialogBoxBlackOffset.x = screen->w / 2 - SfDialog->w / 2 + 32;
 	rDialogBoxBlackOffset.y = screen->h / 2 - SfDialog->h / 2 + 28; //w, h not needed since SDL_BlitSurface ignores these for destination rect
 
-	SmallButton btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK", SoundData.SNDHudButton);
+	SmallButtonHUD btn_ok(rDialog.x + 80, rDialog.y + 185, "Text~Button~OK");
 
 	//create start dialog
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &rDialog );

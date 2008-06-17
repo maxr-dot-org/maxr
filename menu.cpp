@@ -46,8 +46,6 @@
 #define INFO_IMG_HEIGHT 240
 
 #define BTN_SPACE 35
-#define BTN_WIDTH 200
-#define BTN_HEIGHT 29
 #define BTN_1_X DIALOG_X+390
 #define BTN_1_Y DIALOG_Y+190
 #define BTN_2_X BTN_1_X
@@ -178,77 +176,6 @@ void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *s
 	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
 	r.x+=len+8;
 	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
-}
-
-
-class MenuButton
-{
-	public:
-		MenuButton(int const x, int const y, char const* const text) :
-			x_(x),
-			y_(y),
-			text_(text),
-			down_(false)
-		{}
-
-		void Draw(bool down = false) const;
-
-		bool CheckClick(int x, int y, bool down, bool up);
-
-	private:
-		int         x_;
-		int         y_;
-		char const* text_;
-		bool        down_;
-};
-
-
-void MenuButton::Draw(bool const down) const
-{
-	SDL_Rect src = { 0, down ? 30 : 0, 200, 29 };
-	SDL_Rect dst = { x_, y_, 0, 0 };
-	SDL_BlitSurface(GraphicsData.gfx_menu_stuff, &src, buffer, &dst);
-	font->showTextCentered(x_ + 100, y_ + 7, lngPack.i18n(text_), LATIN_BIG, buffer);
-}
-
-
-bool MenuButton::CheckClick(int const x, int const y, bool const down, bool const up)
-{
-	if (x_ <= x && x < x_ + BTN_WIDTH &&
-			y_ <= y && y < y_ + BTN_HEIGHT)
-	{
-		if (down_)
-		{
-			if (up)
-			{
-				down_ = false;
-				Draw(false);
-				return true;
-			}
-		}
-		else
-		{
-			if (down)
-			{
-				down_ = true;
-				PlayFX(SoundData.SNDMenuButton);
-				Draw(true);
-				SHOW_SCREEN
-				mouse->draw(false, screen);
-			}
-		}
-	}
-	else
-	{
-		if (down_)
-		{
-			down_ = false;
-			Draw(false);
-			SHOW_SCREEN
-			mouse->draw(false, screen);
-		}
-	}
-	return false;
 }
 
 
