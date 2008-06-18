@@ -1,12 +1,26 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
+#include "fonts.h"
 #include "sound.h"
 
 
 class Button
 {
 	public:
+		struct Gfx
+		{
+			SDL_Surface* surface;
+			SDL_Rect     rect;
+		};
+
+		struct FontInfo
+		{
+			eBitmapFontType font;
+			int             off_x;
+			int             off_y;
+		};
+
 		Button(int const x, int const y, char const* const text) :
 			x_(x),
 			y_(y),
@@ -22,7 +36,10 @@ class Button
 
 		bool CheckClick(int x, int y, bool down, bool up);
 
-		virtual SDL_Rect const& GfxRect() const = 0;
+		virtual Gfx const& GfxUp()   const = 0;
+		virtual Gfx const& GfxDown() const = 0;
+
+		virtual FontInfo const& Font() const;
 
 		virtual sSOUND* Sound() const;
 
@@ -39,7 +56,8 @@ class MenuButton : public Button
 {
 	public:
 		MenuButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
-		SDL_Rect const& GfxRect() const;
+		Gfx const& GfxUp()   const;
+		Gfx const& GfxDown() const;
 };
 
 
@@ -47,7 +65,8 @@ class SmallButton : public Button
 {
 	public:
 		SmallButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
-		SDL_Rect const& GfxRect() const;
+		Gfx const& GfxUp()   const;
+		Gfx const& GfxDown() const;
 };
 
 
@@ -56,6 +75,16 @@ class SmallButtonHUD : public SmallButton
 	public:
 		SmallButtonHUD(int const x, int const y, char const* const text) : SmallButton(x, y, text) {}
 		sSOUND* Sound() const;
+};
+
+
+class NormalButton : public Button
+{
+	public:
+		NormalButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
+		FontInfo const& Font()    const;
+		Gfx      const& GfxUp()   const;
+		Gfx      const& GfxDown() const;
 };
 
 #endif

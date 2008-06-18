@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "buttons.h"
 #include "math.h"
 #include "buildings.h"
 #include "main.h"
@@ -1673,8 +1674,6 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;//i;
 	SDL_Rect scr, dest;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
 	bool IncPressed = false;
 	bool DecPressed = false;
 	bool MouseHot = false;
@@ -1683,10 +1682,6 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	SDL_Surface *img;
 	cVehicle *pv = NULL;
 	cBuilding *pb = NULL;
-
-#define POS_CANCEL_BTN 74+166, 125+159
-#define POS_DONE___BTN 165+166, 125+159
-
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
@@ -1804,9 +1799,10 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	// Den Bar malen:
 	MakeTransBar ( &Transf, MaxTarget, Target );
 
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
-
+	NormalButton btn_cancel( 74 + 166, 125 + 159, "Text~Button~Cancel");
+	NormalButton btn_done(  165 + 166, 125 + 159, "Text~Button~Done");
+	btn_cancel.Draw();
+	btn_done.Draw();
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -1843,98 +1839,59 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 			mouse->draw ( true, screen );
 		}
 
-		// Abbruch-Button:
-		if ( x >= 76 + 166 && x < 153 + 166 && y >= 125 + 159 && y < 145 + 159 )
-		{
-			if ( b && !AbbruchPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, POS_CANCEL_BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
-		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
 
-		// Fertig-Button:
-		if ( x >= 165 + 166 && x < 165 + 77 + 166 && y >= 125 + 159 && y < 125 + 23 + 159 )
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !FertigPressed )
+			break;
+		}
+
+		if (btn_done.CheckClick(x, y, down, up))
+		{
+			if ( !Transf )
+				break;
+
+			if ( pv )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, POS_DONE___BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
+				switch ( data.can_load )
 				{
-					if ( !Transf )
+
+					case TRANS_METAL:
+						owner->base.AddMetal ( SubBase, -Transf );
 						break;
 
-					if ( pv )
-					{
-						switch ( data.can_load )
-						{
+					case TRANS_OIL:
+						owner->base.AddOil ( SubBase, -Transf );
+						break;
 
-							case TRANS_METAL:
-								owner->base.AddMetal ( SubBase, -Transf );
-								break;
-
-							case TRANS_OIL:
-								owner->base.AddOil ( SubBase, -Transf );
-								break;
-
-							case TRANS_GOLD:
-								owner->base.AddGold ( SubBase, -Transf );
-								break;
-						}
-
-						pv->data.cargo += Transf;
-					}
-					else
-					{
-						if ( data.cargo > Transf )
-						{
-							data.cargo -= Transf;
-						}
-						else
-						{
-							Transf = data.cargo;
-							data.cargo = 0;
-						}
-
-						pb->data.cargo += Transf;
-					}
-
-					ShowDetails();
-
-					PlayVoice ( VoiceData.VOITransferDone );
-					break;
+					case TRANS_GOLD:
+						owner->base.AddGold ( SubBase, -Transf );
+						break;
 				}
-		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
+
+				pv->data.cargo += Transf;
 			}
+			else
+			{
+				if ( data.cargo > Transf )
+				{
+					data.cargo -= Transf;
+				}
+				else
+				{
+					Transf = data.cargo;
+					data.cargo = 0;
+				}
+
+				pb->data.cargo += Transf;
+			}
+
+			ShowDetails();
+
+			PlayVoice ( VoiceData.VOITransferDone );
+			break;
+		}
 
 		// Inc-Button:
 		if ( x >= 277 + 166 && x < 277 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !IncPressed )
@@ -2393,7 +2350,6 @@ void cBuilding::ShowStorage ( void )
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, to;
 	SDL_Surface *sf;
 	SDL_Rect scr, dest;
-	bool FertigPressed = false;
 	bool DownPressed = false, DownEnabled = false;
 	bool UpPressed = false, UpEnabled = false;
 	bool AlleAktivierenEnabled = false;
@@ -2407,7 +2363,6 @@ void cBuilding::ShowStorage ( void )
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 
-	SDL_Rect rBtnDone = {rDialog.x + 518, rDialog.y + 371, BUTTON__W, BUTTON__H};
 	SDL_Rect rBtnAllActive = {rDialog.x + 518, rDialog.y + 246, BUTTON__W, BUTTON__H};
 
 	//IMPORTANT: These are just for reference! If you change them you'll
@@ -2443,8 +2398,8 @@ void cBuilding::ShowStorage ( void )
 
 	// Alle Buttons machen:
 
-	// Fertig-Button:
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	NormalButton btn_done(rDialog.x + 518, rDialog.y + 371, "Text~Button~Done");
+	btn_done.Draw();
 
 	// Down:
 	if ( StoredVehicles->iCount > to )
@@ -2622,30 +2577,10 @@ void cBuilding::ShowStorage ( void )
 				}
 		}
 
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			if ( b && !FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		// Alle Aktivieren:
 		if ( x >= rBtnAllActive.x && x < rBtnAllActive.x + rBtnAllActive.w && y >= rBtnAllActive.y && y < rBtnAllActive.y + rBtnAllActive.h && b && !LastB && AlleAktivierenEnabled )
@@ -3424,8 +3359,6 @@ void cBuilding::detonate ( void )
 void cBuilding::ShowResearch ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
 
 	//Dialog Research width
 #define DLG_RSRCH_W GraphicsData.gfx_research->w
@@ -3437,9 +3370,6 @@ void cBuilding::ShowResearch ( void )
 	SDL_Rect rTxtLabs = {rDialog.x + 24, rDialog.y + 52, 68, 21};
 	SDL_Rect rTxtThemes = {rDialog.x + 177, rDialog.y + 52, 45, 21};
 	SDL_Rect rTxtRounds = {rDialog.x + 291, rDialog.y + 52, 45, 21};
-
-	SDL_Rect rBtnDone = {rDialog.x + 193, rDialog.y + 294, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {rDialog.x + 91, rDialog.y + 294, BUTTON__W, BUTTON__H};
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
@@ -3459,11 +3389,10 @@ void cBuilding::ShowResearch ( void )
 	font->showTextCentered ( rTxtThemes.x + rTxtThemes.w / 2, rTxtThemes.y, lngPack.i18n ( "Text~Comp~Themes" ) );
 	font->showTextCentered ( rTxtRounds.x + rTxtRounds.w / 2, rTxtRounds.y, lngPack.i18n ( "Text~Comp~Turns" ) );
 
-	//draw button Cancel
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-	//draw button Done
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-
+	NormalButton btn_cancel(rDialog.x +  91, rDialog.y + 294, "Text~Button~Cancel");
+	NormalButton btn_done(  rDialog.x + 193, rDialog.y + 294, "Text~Button~Done");
+	btn_cancel.Draw();
+	btn_done.Draw();
 
 	// Schieber malen:
 	ShowResearchSchieber();
@@ -3497,57 +3426,18 @@ void cBuilding::ShowResearch ( void )
 			mouse->draw ( true, screen );
 		}
 
-		// Abbruch-Button:
-		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
-		{
-			if ( b && !AbbruchPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
-		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
 
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
+
+		if (btn_done.CheckClick(x, y, down, up))
+		{
+			break;
+		}
 
 		// Die Schieber machen:
 		if ( b && !LastB )
@@ -3717,8 +3607,6 @@ void cBuilding::ShowUpgrade ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
 	SDL_Rect scr, dest;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
@@ -3729,8 +3617,6 @@ void cBuilding::ShowUpgrade ( void )
 #define BUTTON__H 23
 
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
-	SDL_Rect rBtnDone = {MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
 	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
 
@@ -3738,8 +3624,11 @@ void cBuilding::ShowUpgrade ( void )
 	mouse->draw ( false, buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, NULL, buffer, &rDialog );
 
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
+	NormalButton btn_cancel(MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, "Text~Button~Cancel");
+	NormalButton btn_done(  MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, "Text~Button~Done");
+	btn_cancel.Draw();
+	btn_done.Draw();
+
 	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Updates" ) );
 
 
@@ -3947,101 +3836,60 @@ void cBuilding::ShowUpgrade ( void )
 				UpPressed = false;
 			}
 
-		// Abbruch-Button:
-		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !AbbruchPressed )
+			// Alle Upgrades zurücksetzen:
+			owner->Credits = StartCredits;
+
+			for (size_t i = 0;i < images.iCount;i++ )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
-			}
-			else
-				if ( !b && LastB )
+				sUpgradeStruct *ptr;
+				ptr = images.Items[i];
+
+				for ( k = 0;k < 8;k++ )
 				{
-					// Alle Upgrades zurücksetzen:
-					owner->Credits = StartCredits;
+					if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
+						continue;
 
-					for (size_t i = 0;i < images.iCount;i++ )
+					* ( ptr->upgrades[k].value ) = ptr->upgrades[k].StartValue;
+				}
+			}
+			break;
+		}
+
+		if (btn_done.CheckClick(x, y, down, up))
+		{
+			// Alle Upgrades durchführen:
+			for (size_t i = 0;i < images.iCount;i++ )
+			{
+				bool up = false;
+				sUpgradeStruct *ptr;
+				ptr = images.Items[i];
+
+				for ( k = 0;k < 8;k++ )
+				{
+					if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
+						continue;
+
+					if ( !ptr->vehicle )
 					{
-						sUpgradeStruct *ptr;
-						ptr = images.Items[i];
-
-						for ( k = 0;k < 8;k++ )
-						{
-							if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
-								continue;
-
-							* ( ptr->upgrades[k].value ) = ptr->upgrades[k].StartValue;
-						}
+						owner->BuildingData[ptr->id].version++;
 					}
+					else
+					{
+						owner->VehicleData[ptr->id].version++;
+					}
+
+					up = true;
 
 					break;
 				}
+			}
+			break;
 		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
-
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
-		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					// Alle Upgrades durchführen:
-					for (size_t i = 0;i < images.iCount;i++ )
-					{
-						bool up = false;
-						sUpgradeStruct *ptr;
-						ptr = images.Items[i];
-
-						for ( k = 0;k < 8;k++ )
-						{
-							if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
-								continue;
-
-							if ( !ptr->vehicle )
-							{
-								owner->BuildingData[ptr->id].version++;
-							}
-							else
-							{
-								owner->VehicleData[ptr->id].version++;
-							}
-
-							up = true;
-
-							break;
-						}
-					}
-
-					break;
-				}
-		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		// Beschreibung Haken:
 		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
@@ -6538,15 +6386,11 @@ void cBuilding::ShowBuildMenu ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
 	SDL_Rect scr, dest;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
 	bool Wiederholen = false;
 	bool DownPressed = false;
 	bool UpPressed = false;
 	bool Down2Pressed = false;
 	bool Up2Pressed = false;
-	bool BauenPressed = false;
-	bool EntfernenPressed = false;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
 	int  iTurboBuildRounds[3];		//Costs and
@@ -6559,20 +6403,20 @@ void cBuilding::ShowBuildMenu ( void )
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
-	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
 	SDL_Rect rTxtRepeat = {MENU_OFFSET_X + 370, MENU_OFFSET_Y + 326, 76, 17};
-	SDL_Rect rBtnDel = {MENU_OFFSET_X + 388, MENU_OFFSET_Y + 292, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnBuy = {MENU_OFFSET_X + 561, MENU_OFFSET_Y + 441, BUTTON__W, BUTTON__H};
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, NULL, buffer, &rDialog );
 
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
+	NormalButton btn_cancel(MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, "Text~Button~Cancel");
+	NormalButton btn_done(  MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, "Text~Button~Done");
+	NormalButton btn_delete(MENU_OFFSET_X + 388, MENU_OFFSET_Y + 292, "Text~Button~Delete");
+	NormalButton btn_build( MENU_OFFSET_X + 561, MENU_OFFSET_Y + 441, "Text~Button~Build");
+	btn_cancel.Draw();
+	btn_done.Draw();
+	btn_delete.Draw();
+	btn_build.Draw();
 
 	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
 
@@ -6950,182 +6794,116 @@ void cBuilding::ShowBuildMenu ( void )
 				Up2Pressed = false;
 			}
 
-		// Bauen-Button:
-		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !BauenPressed )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_build.CheckClick(x, y, down, up))
 		{
-			PlayFX ( SoundData.SNDMenuButton );
-			drawButton ( lngPack.i18n ( "Text~Button~Build" ), true, rBtnBuy.x, rBtnBuy.y, buffer );
+			// Vehicle in die Bauliste aufnehmen:
+			sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
+			to_build.Add ( n );
+
+			if ( to_build.iCount > build_offset + 5 )
+			{
+				build_offset = to_build.iCount - 5;
+			}
+
+			if ( build_selected < build_offset )
+				build_selected = build_offset;
+
+			ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
+
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
-			BauenPressed = true;
 		}
-		else
-			if ( BauenPressed && !b && LastB )
-			{
-				// Vehicle in die Bauliste aufnehmen:
-				sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
-				to_build.Add ( n );
 
-				if ( to_build.iCount > build_offset + 5 )
+		if (btn_delete.CheckClick(x, y, down, up))
+		{
+			// Vehicle aus der Bauliste entfernen:
+			if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
+			{
+				delete to_build.Items[build_selected];
+				to_build.Delete ( build_selected );
+
+				if ( build_selected >= to_build.iCount )
 				{
-					build_offset = to_build.iCount - 5;
+					build_selected--;
 				}
 
-				if ( build_selected < build_offset )
-					build_selected = build_offset;
+				if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
+				{
+					build_offset--;
+				}
 
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
-
-				drawButton ( lngPack.i18n ( "Text~Button~Build" ), false, rBtnBuy.x, rBtnBuy.y, buffer );
-
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-
-				BauenPressed = false;
 			}
 
-		// Entfernen-Button:
-		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
-		{
-			PlayFX ( SoundData.SNDMenuButton );
-			drawButton ( lngPack.i18n ( "Text~Button~Delete" ), true, rBtnDel.x, rBtnDel.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
-			EntfernenPressed = true;
 		}
-		else
-			if ( EntfernenPressed && !b && LastB )
-			{
-				// Vehicle aus der Bauliste entfernen:
-				if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
-				{
-					delete to_build.Items[build_selected];
-					to_build.Delete ( build_selected );
 
-					if ( build_selected >= to_build.iCount )
-					{
-						build_selected--;
-					}
-
-					if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
-					{
-						build_offset--;
-					}
-
-					ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
-				}
-
-				drawButton ( lngPack.i18n ( "Text~Button~Delete" ), false, rBtnDel.x, rBtnDel.y, buffer );
-
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				EntfernenPressed = false;
-			}
-
-		// Abbruch-Button:
-		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !AbbruchPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
 
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( b && !FertigPressed )
+			//perform all changes
+
+			//first set the metal consumption of the factory
+			if ( IsWorking )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
+				//StopWork ( false );
 			}
-			else
-				if ( !b && LastB )
-				{
-					//perform all changes
 
-					//first set the metal consumption of the factory
-					if ( IsWorking )
-					{
-						//StopWork ( false );
-					}
+			if ( BuildSpeed == 0 )
+				MetalPerRound =  1 * data.iNeeds_Metal;
 
-					if ( BuildSpeed == 0 )
-						MetalPerRound =  1 * data.iNeeds_Metal;
+			if ( BuildSpeed == 1 )
+				MetalPerRound =  4 * data.iNeeds_Metal;
 
-					if ( BuildSpeed == 1 )
-						MetalPerRound =  4 * data.iNeeds_Metal;
-
-					if ( BuildSpeed == 2 )
-						MetalPerRound = 12 * data.iNeeds_Metal;
+			if ( BuildSpeed == 2 )
+				MetalPerRound = 12 * data.iNeeds_Metal;
 
 
-					//delete old BuildList
-					while ( BuildList->iCount )
-					{
-						sBuildList *ptr;
-						ptr = BuildList->Items[0];
-						delete ptr;
-						BuildList->Delete( 0 );
-					}
+			//delete old BuildList
+			while ( BuildList->iCount )
+			{
+				sBuildList *ptr;
+				ptr = BuildList->Items[0];
+				delete ptr;
+				BuildList->Delete( 0 );
+			}
 
-					//calculate actual costs of the vehicles
-					//and add is to the BuildList
-					for ( int counter = 0; counter < to_build.iCount; counter++ )
-					{
-						sBuildStruct *bs = to_build.Items[counter];
+			//calculate actual costs of the vehicles
+			//and add is to the BuildList
+			for ( int counter = 0; counter < to_build.iCount; counter++ )
+			{
+				sBuildStruct *bs = to_build.Items[counter];
 
-						CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[bs->id].iBuilt_Costs, bs->iRemainingMetal );
+				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[bs->id].iBuilt_Costs, bs->iRemainingMetal );
 
-						sBuildList *bl = new sBuildList;
-						bl->metall_remaining = iTurboBuildCosts[BuildSpeed];
-						bl->typ = &UnitsData.vehicle[bs->id];
+				sBuildList *bl = new sBuildList;
+				bl->metall_remaining = iTurboBuildCosts[BuildSpeed];
+				bl->typ = &UnitsData.vehicle[bs->id];
 
-						BuildList->Add( bl );
-					}
+				BuildList->Add( bl );
+			}
 
-					this->BuildSpeed = BuildSpeed;
+			this->BuildSpeed = BuildSpeed;
 
-					RepeatBuild = Wiederholen;
+			RepeatBuild = Wiederholen;
 
-					//start facrory, if there is something in the build queue
+			//start facrory, if there is something in the build queue
 
-					if ( BuildList->iCount > 0 )
-					{
-						//StartWork();
-					}
+			if ( BuildList->iCount > 0 )
+			{
+				//StartWork();
+			}
 
-					break;
-				}
+			break;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		// Beschreibung Haken:
 		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
@@ -8889,13 +8667,11 @@ void cBuilding::ShowHelp ( void )
 #define BUTTON_H 29
 
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	bool FertigPressed = false;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {rDialog.x + 11, rDialog.y + 13, typ->info->w, typ->info->h};
 	SDL_Rect rTxt = {rDialog.x + 345, rDialog.y + 66, 274, 181};
 	SDL_Rect rTitle = {rDialog.x + 332, rDialog.y + 11, 152, 15};
-	SDL_Rect rButton = { rDialog.x + 474, rDialog.y + 452, BUTTON_W, BUTTON_H };
 	SDL_Surface *SfDialog;
 
 	PlayFX ( SoundData.SNDHudButton );
@@ -8933,8 +8709,8 @@ void cBuilding::ShowHelp ( void )
 	// get unit details
 	ShowBigDetails();
 
-	//draw button
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
+	NormalButton btn_done(rDialog.x + 474, rDialog.y + 452, "Text~Button~Done");
+	btn_done.Draw();
 
 	SHOW_SCREEN 	// Den Buffer anzeigen
 	mouse->GetBack ( buffer );
@@ -8958,31 +8734,10 @@ void cBuilding::ShowHelp ( void )
 			mouse->draw ( true, screen );
 		}
 
-		// Fertig-Button:
-		if ( x >= rButton.x && x < rButton.x + rButton.w  && y >= rButton.y && y < rButton.y + rButton.w )
+		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rButton.x, rButton.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					return;
-				}
+			return;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		LastMouseX = x;
 

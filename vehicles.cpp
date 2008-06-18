@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "buttons.h"
 #include "math.h"
 #include "vehicles.h"
 #include "fonts.h"
@@ -1330,13 +1331,11 @@ void cVehicle::ShowHelp ( void )
 #define BUTTON_H 29
 
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	bool FertigPressed = false;
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
 	SDL_Rect rInfoTxt = {MENU_OFFSET_X + 11, MENU_OFFSET_Y + 13, typ->info->w, typ->info->h};
 	SDL_Rect rTxt = {MENU_OFFSET_X + 349, MENU_OFFSET_Y + 66, 277, 181};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 327, MENU_OFFSET_Y + 11, 160, 15};
-	SDL_Rect rButton = { MENU_OFFSET_X + 474, MENU_OFFSET_Y + 452, BUTTON_W, BUTTON_H };
 	SDL_Surface *SfDialog;
 
 	PlayFX ( SoundData.SNDHudButton );
@@ -1373,8 +1372,8 @@ void cVehicle::ShowHelp ( void )
 	// get unit details
 	ShowBigDetails();
 
-	//draw button
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
+	NormalButton btn_done(MENU_OFFSET_X + 474, MENU_OFFSET_Y + 452, "Text~Button~Done");
+	btn_done.Draw();
 
 	SHOW_SCREEN 	// Den Buffer anzeigen
 	mouse->GetBack ( buffer );
@@ -1398,31 +1397,10 @@ void cVehicle::ShowHelp ( void )
 			mouse->draw ( true, screen );
 		}
 
-		// Fertig-Button:
-		if ( x >= rButton.x && x < rButton.x + rButton.w  && y >= rButton.y && y < rButton.y + rButton.w )
+		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rButton.x, rButton.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					return;
-				}
+			return;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rButton.x, rButton.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		LastMouseX = x;
 
@@ -3023,9 +3001,6 @@ void cVehicle::ShowBuildMenu ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
-	bool PfadPressed = false;
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
@@ -3039,9 +3014,6 @@ void cVehicle::ShowBuildMenu ( void )
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
 	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
-	SDL_Rect rBtnDone = {MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnCancel = {MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, BUTTON__W, BUTTON__H};
-	SDL_Rect rBtnPath = {MENU_OFFSET_X + 339, MENU_OFFSET_Y + 428, BUTTON__W, BUTTON__H};
 
 	//IMPORTANT: just for reference. If you change these coordinates you'll have to change DrawBuildButtons, too! -- beko
 	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H}; //buildspeed * 1
@@ -3054,15 +3026,12 @@ void cVehicle::ShowBuildMenu ( void )
 	mouse->draw ( false, buffer );
 	SDL_BlitSurface ( GraphicsData.gfx_build_screen, NULL, buffer, &rDialog );
 
-	if ( data.can_build != BUILD_BIG )
-	{
-		drawButton ( lngPack.i18n ( "Text~Button~Path" ), false, rBtnPath.x, rBtnPath.y, buffer );
-	}
-
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-
+	NormalButton btn_path(  MENU_OFFSET_X + 339, MENU_OFFSET_Y + 428, "Text~Button~Path");
+	NormalButton btn_done(  MENU_OFFSET_X + 387, MENU_OFFSET_Y + 452, "Text~Button~Done");
+	NormalButton btn_cancel(MENU_OFFSET_X + 300, MENU_OFFSET_Y + 452, "Text~Button~Cancel");
+	if (data.can_build != BUILD_BIG) btn_path.Draw();
+	btn_done.Draw();
+	btn_cancel.Draw();
 
 	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
 
@@ -3254,186 +3223,127 @@ void cVehicle::ShowBuildMenu ( void )
 				UpPressed = false;
 			}
 
-		// Abbruch-Button:
-		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !AbbruchPressed )
+			break;
+		}
+
+		if (btn_done.CheckClick(x, y, down, up))
+		{
+			if ( BuildSpeed < 0 )
+				break;
+
+			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
+				break;
+
+			BuildingTyp = images.Items[selected]->id;
+
+			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
+				break;
+
+			if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
+				if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
+				{
+					if ( !UnitsData.building[BuildingTyp].data.build_on_water )
+						break;
+				}
+				else
+					if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+						break;
+
+				if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
+				{
+					if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
+						break;
+				}
+				else
+					if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+						break;
+			}
+
+			BuildRounds = iTurboBuildRounds[BuildSpeed];
+
+			BuildCosts  = iTurboBuildCosts[BuildSpeed];
+
+			if ( data.can_build != BUILD_BIG )
+			{
+				IsBuilding = true;
+				// Den Building Sound machen:
+				StopFXLoop ( Client->iObjectStream );
+				Client->iObjectStream = PlayStram();
 			}
 			else
-				if ( !b && LastB )
+			{
+				PlaceBand = true;
+				BuildBigSavedPos = PosX + PosY * Client->Map->size;
+
+				if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
 				{
-					break;
+					ShowBigBeton = true;
+					BigBetonAlpha = 10;
 				}
-		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
-
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
-		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
+				else
 				{
-					if ( BuildSpeed < 0 )
-						break;
-
-					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
-						break;
-
-					BuildingTyp = images.Items[selected]->id;
-
-					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
-						break;
-
-					if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
-					{
-						if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-						{
-							if ( !UnitsData.building[BuildingTyp].data.build_on_water )
-								break;
-						}
-						else
-							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-								break;
-
-						if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
-						{
-							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
-								break;
-						}
-						else
-							if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-								break;
-					}
-
-					BuildRounds = iTurboBuildRounds[BuildSpeed];
-
-					BuildCosts  = iTurboBuildCosts[BuildSpeed];
-
-					if ( data.can_build != BUILD_BIG )
-					{
-						IsBuilding = true;
-						// Den Building Sound machen:
-						StopFXLoop ( Client->iObjectStream );
-						Client->iObjectStream = PlayStram();
-					}
-					else
-					{
-						PlaceBand = true;
-						BuildBigSavedPos = PosX + PosY * Client->Map->size;
-
-						if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-						{
-							ShowBigBeton = true;
-							BigBetonAlpha = 10;
-						}
-						else
-						{
-							ShowBigBeton = false;
-							BigBetonAlpha = 255;
-						}
-
-						FindNextband();
-					}
-
-					BuildRoundsStart = BuildRounds;
-
-					break;
+					ShowBigBeton = false;
+					BigBetonAlpha = 255;
 				}
-		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
+
+				FindNextband();
 			}
+
+			BuildRoundsStart = BuildRounds;
+
+			break;
+		}
 
 		// Pfad-Button:
-		if ( data.can_build != BUILD_BIG && x >= rBtnPath.x && x < rBtnPath.x + rBtnPath.w && y >= rBtnPath.y && y < rBtnPath.y + rBtnPath.h )
+		if (data.can_build != BUILD_BIG && btn_path.CheckClick(x, y, down, up))
 		{
-			if ( b && !PfadPressed )
+			if ( BuildSpeed < 0 )
+				break;
+
+			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
+				break;
+
+			BuildingTyp = images.Items[selected]->id;
+
+			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
+				break;
+
+			if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Path" ), true, rBtnPath.x, rBtnPath.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				PfadPressed = true;
-			}
-			else
-				if ( !b && LastB )
+				if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
 				{
-					if ( BuildSpeed < 0 )
+					if ( !UnitsData.building[BuildingTyp].data.build_on_water )
 						break;
-
-					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
-						break;
-
-					BuildingTyp = images.Items[selected]->id;
-
-					if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
-						break;
-
-					if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
-					{
-						if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-						{
-							if ( !UnitsData.building[BuildingTyp].data.build_on_water )
-								break;
-						}
-						else
-							if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-								break;
-
-						if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
-						{
-							if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
-								break;
-						}
-						else
-							if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-								break;
-					}
-
-					BuildRounds = iTurboBuildRounds[BuildSpeed];
-
-					BuildCosts  = iTurboBuildCosts[BuildSpeed];
-
-					BuildRoundsStart = BuildRounds;
-					BuildCostsStart = BuildCosts;
-					PlaceBand = true;
-					break;
 				}
-		}
-		else
-			if ( PfadPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Path" ), false, rBtnPath.x, rBtnPath.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				PfadPressed = false;
+				else
+					if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+						break;
+
+				if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
+				{
+					if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
+						break;
+				}
+				else
+					if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
+						break;
 			}
+
+			BuildRounds = iTurboBuildRounds[BuildSpeed];
+
+			BuildCosts  = iTurboBuildCosts[BuildSpeed];
+
+			BuildRoundsStart = BuildRounds;
+			BuildCostsStart = BuildCosts;
+			PlaceBand = true;
+			break;
+		}
 
 		// Beschreibung Haken:
 		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
@@ -4093,8 +4003,6 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
-	bool AbbruchPressed = false;
-	bool FertigPressed = false;
 	bool IncPressed = false;
 	bool DecPressed = false;
 	bool MouseHot = false;
@@ -4103,9 +4011,6 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	SDL_Surface *img;
 	cVehicle *pv = NULL;
 	cBuilding *pb = NULL;
-
-#define POS_CANCEL_BTN 74+166, 125+159
-#define POS_DONE___BTN 165+166, 125+159
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
@@ -4239,8 +4144,10 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 	// Den Bar malen:
 	MakeTransBar ( &Transf, MaxTarget, Target );
 
-	drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
+	NormalButton btn_cancel( 74 + 166, 125 + 159, "Text~Button~Cancel");
+	NormalButton btn_done(  165 + 166, 125 + 159, "Text~Button~Done");
+	btn_cancel.Draw();
+	btn_done.Draw();
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -4279,86 +4186,47 @@ void cVehicle::ShowTransfer ( sGameObjects *target )
 			mouse->draw ( true, screen );
 		}
 
-		// Abbruch-Button:
-		if ( x >= 76 + 166 && x < 153 + 166 && y >= 125 + 159 && y < 145 + 159 )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b && !AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), true, POS_CANCEL_BTN, buffer );
-				PlayFX ( SoundData.SNDMenuButton );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( AbbruchPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Cancel" ), false, POS_CANCEL_BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				AbbruchPressed = false;
-			}
 
-		// Fertig-Button:
-		if ( x >= 165 + 166 && x < 165 + 77 + 166 && y >= 125 + 159 && y < 125 + 23 + 159 )
+		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( b && !FertigPressed )
+			if ( !Transf )
+				break;
+
+			data.cargo -= Transf;
+
+			if ( pv )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, POS_DONE___BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
+				pv->data.cargo += Transf;
 			}
 			else
-				if ( !b && LastB )
+			{
+				if ( data.can_transport == TRANS_METAL )
 				{
-					if ( !Transf )
-						break;
-
-					data.cargo -= Transf;
-
-					if ( pv )
+					pb->owner->base.AddMetal ( pb->SubBase, Transf );
+				}
+				else
+					if ( data.can_transport == TRANS_OIL )
 					{
-						pv->data.cargo += Transf;
+						pb->owner->base.AddOil ( pb->SubBase, Transf );
 					}
 					else
 					{
-						if ( data.can_transport == TRANS_METAL )
-						{
-							pb->owner->base.AddMetal ( pb->SubBase, Transf );
-						}
-						else
-							if ( data.can_transport == TRANS_OIL )
-							{
-								pb->owner->base.AddOil ( pb->SubBase, Transf );
-							}
-							else
-							{
-								pb->owner->base.AddGold ( pb->SubBase, Transf );
-							}
+						pb->owner->base.AddGold ( pb->SubBase, Transf );
 					}
-
-					ShowDetails();
-
-					PlayVoice ( VoiceData.VOITransferDone );
-					break;
-				}
-		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, POS_DONE___BTN, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
 			}
+
+			ShowDetails();
+
+			PlayVoice ( VoiceData.VOITransferDone );
+			break;
+		}
 
 		// Inc-Button:
 		if ( x >= 277 + 166 && x < 277 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !IncPressed )
@@ -4999,7 +4867,6 @@ void cVehicle::ShowStorage ( void )
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, to;
 	SDL_Surface *sf;
 	SDL_Rect scr, dest;
-	bool FertigPressed = false;
 	bool DownPressed = false, DownEnabled = false;
 	bool UpPressed = false, UpEnabled = false;
 	//bool AlleAktivierenEnabled = false;
@@ -5009,8 +4876,6 @@ void cVehicle::ShowStorage ( void )
 	#define BUTTON__H 23
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
-
-	SDL_Rect rBtnDone = {rDialog.x + 518, rDialog.y + 371, BUTTON__W, BUTTON__H};
 
 	LoadActive = false;
 	mouse->SetCursor ( CHand );
@@ -5029,8 +4894,8 @@ void cVehicle::ShowStorage ( void )
 	to = 6;
 
 	// Alle Buttons machen:
-	// Fertig-Button:
-	drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	NormalButton btn_done(rDialog.x + 518, rDialog.y + 371, "Text~Button~Done");
+	btn_done.Draw();
 	// Down:
 
 	if ( StoredVehicles->iCount > to )
@@ -5212,31 +5077,10 @@ void cVehicle::ShowStorage ( void )
 				}
 		}
 
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButton ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		// Alle Aktivieren: uncommented because this "feature" is odd for vehicles. -- beko
 		/*

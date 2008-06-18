@@ -1832,9 +1832,9 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 {
 	bool tank=true,plane=false,ship=false,build=false,tnt=false,kauf=true;
-	bool FertigPressed=false,Beschreibung=SettingsData.bShowDescription;
-	bool DownPressed=false,UpPressed=false,KaufPressed=false;
-	bool Down2Pressed=false,Up2Pressed=false,EntfernenPressed=false;
+	bool Beschreibung=SettingsData.bShowDescription;
+	bool DownPressed=false,UpPressed=false;
+	bool Down2Pressed=false,Up2Pressed=false;
 	bool LadungUpPressed=false,LadungDownPressed=false;
 	int b,lb=0,selected=0,offset=0,x,y,StartCredits=player->Credits,lx=-1,ly=-1;
 	int LandingOffset=0,LandingSelected=0;
@@ -1843,9 +1843,6 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	#define BUTTON_W 77
 	#define BUTTON_H 23
 
-	SDL_Rect rBtnDone = {447, 452, BUTTON_W, BUTTON_H};
-	SDL_Rect rBtnBuy = {561, 388, BUTTON_W, BUTTON_H};
-	SDL_Rect rBtnDel = {388, 240, BUTTON_W, BUTTON_H};
 	SDL_Rect rTxtDescription = {141,266,150,13};
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
@@ -1863,9 +1860,13 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
 
-	drawButton(lngPack.i18n( "Text~Button~Done"), false, rBtnDone.x, rBtnDone.y, buffer);
-	drawButton(lngPack.i18n( "Text~Button~Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
-	drawButton(lngPack.i18n( "Text~Button~Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+	NormalButton btn_done(  447, 452, "Text~Button~Done");
+	NormalButton btn_buy(   561, 388, "Text~Button~Buy");
+	NormalButton btn_delete(388, 240, "Text~Button~Delete");
+
+	btn_done.Draw();
+	btn_buy.Draw();
+	btn_delete.Draw();
 	font->showTextCentered(rTxtDescription.x+rTxtDescription.w/2, rTxtDescription.y, lngPack.i18n( "Text~Comp~Description" ));
 
 	//blit sfTmp to buffer
@@ -1954,28 +1955,12 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			mouse->draw ( true,screen );
 		}
 
-		// Fertig:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		bool const down = b > lb;
+		bool const up   = b < lb;
+
+		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( b&&!lb )
-			{
-				FertigPressed=true;
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Done"), true, rBtnDone.x, rBtnDone.y, buffer);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
-			else if ( !b&&FertigPressed )
-			{
-				break;
-			}
-		}
-		else if ( FertigPressed )
-		{
-			FertigPressed=false;
-			drawButton(lngPack.i18n( "Text~Button~Done"), false, rBtnDone.x, rBtnDone.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
+			break;
 		}
 		// Beschreibung Haken:
 		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!lb )
@@ -2263,11 +2248,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Kauf-Button:
-		if ( x >= rBtnBuy.x && x < rBtnBuy.x + rBtnBuy.w && y >= rBtnBuy.y && y < rBtnBuy.y + rBtnBuy.h && b && !KaufPressed && selection.Items[selected]->costs <= player->Credits && kauf )
-		{
-			PlayFX ( SoundData.SNDMenuButton );
 
+		if (btn_buy.CheckClick(x, y, down, up) && selection.Items[selected]->costs <= player->Credits && kauf)
+		{
 			sLanding *n;
 			n=new sLanding;
 			n->cargo=0;
@@ -2284,19 +2267,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			player->Credits-=n->costs;
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
 
-			drawButton(lngPack.i18n( "Text~Button~Buy"), true, rBtnBuy.x, rBtnBuy.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			KaufPressed=true;
-		}
-		else if ( !b&&KaufPressed )
-		{
-			drawButton(lngPack.i18n( "Text~Button~Buy"), false, rBtnBuy.x, rBtnBuy.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			KaufPressed=false;
-		}
 		// Down2-Button:
 		if ( x>=327&&x<327+18&&y>=240&&y<240+17&&b&&!Down2Pressed )
 		{
@@ -2365,45 +2339,32 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			mouse->draw ( false,screen );
 			Up2Pressed=false;
 		}
-		// Entfernen-Button:
-		if ( x >= rBtnDel.x && x < rBtnDel.x + rBtnDel.w && y >= rBtnDel.y && y < rBtnDel.y + rBtnDel.h && b && !EntfernenPressed )
-		{
-			PlayFX ( SoundData.SNDMenuButton );
-			drawButton(lngPack.i18n( "Text~Button~Delete"), true, rBtnDel.x, rBtnDel.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			EntfernenPressed=true;
-		}
-		else if ( EntfernenPressed&&!b&&lb )
+
+		if (btn_delete.CheckClick(x, y, down, up) && LandingList->iCount && LandingList->iCount > LandingSelected&& LandingSelected >= 0)
 		{
 			// Vehicle aus der Liste entfernen:
-			if ( LandingList->iCount&&LandingList->iCount>LandingSelected&&LandingSelected>=0 )
+			player->Credits+=LandingList->Items[LandingSelected]->costs;
+			player->Credits+=LandingList->Items[LandingSelected]->cargo/5;
+
+			delete LandingList->Items[LandingSelected];
+			LandingList->Delete ( LandingSelected );
+			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
+			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
+
+			if ( LandingSelected>=LandingList->iCount )
 			{
-				player->Credits+=LandingList->Items[LandingSelected]->costs;
-				player->Credits+=LandingList->Items[LandingSelected]->cargo/5;
-
-				delete LandingList->Items[LandingSelected];
-				LandingList->Delete ( LandingSelected );
-				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
-				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-
-				if ( LandingSelected>=LandingList->iCount )
-				{
-					LandingSelected--;
-				}
-				if ( LandingList->iCount-LandingOffset<5&&LandingOffset>0 )
-				{
-					LandingOffset--;
-				}
-				if ( LandingSelected<0 ) LandingSelected=0;
-				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
+				LandingSelected--;
 			}
-
-			drawButton(lngPack.i18n( "Text~Button~Delete"), false, rBtnDel.x, rBtnDel.y, buffer);
+			if ( LandingList->iCount-LandingOffset<5&&LandingOffset>0 )
+			{
+				LandingOffset--;
+			}
+			if ( LandingSelected<0 ) LandingSelected=0;
+			ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			EntfernenPressed=false;
 		}
+
 		// Klick in die LandingListe:
 		if ( x>=330&&x<330+128&&y>=22&&y<22+210&&b&&!lb )
 		{

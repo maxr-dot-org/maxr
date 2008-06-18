@@ -610,7 +610,7 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 void showPreferences ( void )
 {
 	bool OldMusicMute, OldSoundMute, OldVoiceMute, OldbAutoSave, OldbAnimations, OldbShadows, OldbAlphaEffects, OldbDamageEffects, OldbDamageEffectsVehicles, OldbMakeTracks;
-	bool FertigPressed = false, AbbruchPressed = false, Input = false;
+	bool Input = false;
 	int OldiScrollSpeed, OldMusicVol, OldSoundVol, OldVoiceVol;
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	string OldName;
@@ -646,8 +646,6 @@ void showPreferences ( void )
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 400, 422, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	SDL_Rect rDialog = { screen->w / 2 - SfDialog->w / 2, screen->h / 2 - SfDialog->h / 2, SfDialog->w, SfDialog->h };
-	SDL_Rect rBtnCancel = { rDialog.x + 118, rDialog.y + 383, 77, 24 };
-	SDL_Rect rBtnDone = { rDialog.x + 208, rDialog.y + 383, 77, 24 };
 	SDL_Rect rSldMusic = { BAR_X,BAR_Y, 57, 10 };
 	SDL_Rect rSldEffect = { BAR_X,BAR_Y+CELLSPACE, 57, 10 };
 	SDL_Rect rSldVoice = { BAR_X,BAR_Y+CELLSPACE*2, 57, 10 };
@@ -680,10 +678,12 @@ void showPreferences ( void )
 	dest.w = SfDialog->w;
 	dest.h = SfDialog->h;
 
+	NormalButton btn_cancel(rDialog.x + 118, rDialog.y + 383, "Text~Button~Cancel");
+	NormalButton btn_done(  rDialog.x + 208, rDialog.y + 383, "Text~Button~Done");
 
 	SDL_BlitSurface ( SfDialog, NULL, buffer, &dest );
-	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer);
-	drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer);
+	btn_cancel.Draw();
+	btn_done.Draw();
 
 	rFont.x = rDialog.x + rDialog.w/2;
 	rFont.y = rDialog.y + 15;
@@ -969,91 +969,56 @@ void showPreferences ( void )
 				}
 			}
 		}
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
-		{
-			if ( b&&!FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				FertigPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				if ( Input )
-				{
-					Client->ActivePlayer->name=InputStr;
-				}
-				// Save new settings to max.xml
-				if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
-				if( SettingsData.SoundMute != OldSoundMute ) SaveOption ( SAVETYPE_SOUNDMUTE );
-				if( SettingsData.VoiceMute != OldVoiceMute ) SaveOption ( SAVETYPE_VOICEMUTE );
-				if( SettingsData.bAutoSave != OldbAutoSave ) SaveOption ( SAVETYPE_AUTOSAVE );
-				if( SettingsData.bAnimations != OldbAnimations ) SaveOption ( SAVETYPE_ANIMATIONS );
-				if( SettingsData.bShadows != OldbShadows ) SaveOption ( SAVETYPE_SHADOWS );
-				if( SettingsData.bAlphaEffects != OldbAlphaEffects ) SaveOption ( SAVETYPE_ALPHA );
-				if( SettingsData.iScrollSpeed != OldiScrollSpeed ) SaveOption ( SAVETYPE_SCROLLSPEED );
-				if( SettingsData.MusicVol != OldMusicVol ) SaveOption ( SAVETYPE_MUSICVOL );
-				if( SettingsData.SoundVol != OldSoundVol ) SaveOption ( SAVETYPE_SOUNDVOL );
-				if( SettingsData.VoiceVol != OldVoiceVol ) SaveOption ( SAVETYPE_VOICEVOL );
-				if( SettingsData.bDamageEffects != OldbDamageEffects ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
-				if( SettingsData.bDamageEffectsVehicles != OldbDamageEffectsVehicles ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
-				if( SettingsData.bMakeTracks != OldbMakeTracks ) SaveOption ( SAVETYPE_TRACKS );
-				// TODO: remove game
-				if( OldName.compare ( Client->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
-				return;
-			}
-		}
-		else if ( FertigPressed )
-		{
-			drawButton(lngPack.i18n( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			FertigPressed=false;
 
-		}
-		// Abbruch-Button:
-		if ( x >= rBtnCancel.x && x < rBtnCancel.x + rBtnCancel.w && y >= rBtnCancel.y && y < rBtnCancel.y + rBtnCancel.h )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( b&&!AbbruchPressed )
+			if ( Input )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rBtnCancel.x, rBtnCancel.y, buffer);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				AbbruchPressed=true;
+				Client->ActivePlayer->name=InputStr;
 			}
-			else if ( !b&&LastB )
-			{
-				SettingsData.MusicMute = OldMusicMute;
-				SettingsData.SoundMute = OldSoundMute;
-				SettingsData.VoiceMute = OldVoiceMute;
-				SettingsData.bAutoSave = OldbAutoSave;
-				SettingsData.bAnimations = OldbAnimations;
-				SettingsData.bShadows = OldbShadows;
-				SettingsData.bAlphaEffects = OldbAlphaEffects;
-				SettingsData.iScrollSpeed = OldiScrollSpeed;
-				SettingsData.MusicVol = OldMusicVol;
-				SettingsData.SoundVol = OldSoundVol;
-				SettingsData.VoiceVol = OldVoiceVol;
-				SettingsData.bDamageEffects = OldbDamageEffects;
-				SettingsData.bDamageEffectsVehicles = OldbDamageEffectsVehicles;
-				SettingsData.bMakeTracks = OldbMakeTracks;
-				Client->ActivePlayer->name = OldName;
-				SetMusicVol ( SettingsData.MusicVol );
-				return;
-			}
-		}
-		else if ( AbbruchPressed )
-		{
-			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rBtnCancel.x, rBtnCancel.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			AbbruchPressed=false;
+			// Save new settings to max.xml
+			if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
+			if( SettingsData.SoundMute != OldSoundMute ) SaveOption ( SAVETYPE_SOUNDMUTE );
+			if( SettingsData.VoiceMute != OldVoiceMute ) SaveOption ( SAVETYPE_VOICEMUTE );
+			if( SettingsData.bAutoSave != OldbAutoSave ) SaveOption ( SAVETYPE_AUTOSAVE );
+			if( SettingsData.bAnimations != OldbAnimations ) SaveOption ( SAVETYPE_ANIMATIONS );
+			if( SettingsData.bShadows != OldbShadows ) SaveOption ( SAVETYPE_SHADOWS );
+			if( SettingsData.bAlphaEffects != OldbAlphaEffects ) SaveOption ( SAVETYPE_ALPHA );
+			if( SettingsData.iScrollSpeed != OldiScrollSpeed ) SaveOption ( SAVETYPE_SCROLLSPEED );
+			if( SettingsData.MusicVol != OldMusicVol ) SaveOption ( SAVETYPE_MUSICVOL );
+			if( SettingsData.SoundVol != OldSoundVol ) SaveOption ( SAVETYPE_SOUNDVOL );
+			if( SettingsData.VoiceVol != OldVoiceVol ) SaveOption ( SAVETYPE_VOICEVOL );
+			if( SettingsData.bDamageEffects != OldbDamageEffects ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
+			if( SettingsData.bDamageEffectsVehicles != OldbDamageEffectsVehicles ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
+			if( SettingsData.bMakeTracks != OldbMakeTracks ) SaveOption ( SAVETYPE_TRACKS );
+			// TODO: remove game
+			if( OldName.compare ( Client->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
+			return;
 		}
 
+		if (btn_cancel.CheckClick(x, y, down, up))
+		{
+			SettingsData.MusicMute = OldMusicMute;
+			SettingsData.SoundMute = OldSoundMute;
+			SettingsData.VoiceMute = OldVoiceMute;
+			SettingsData.bAutoSave = OldbAutoSave;
+			SettingsData.bAnimations = OldbAnimations;
+			SettingsData.bShadows = OldbShadows;
+			SettingsData.bAlphaEffects = OldbAlphaEffects;
+			SettingsData.iScrollSpeed = OldiScrollSpeed;
+			SettingsData.MusicVol = OldMusicVol;
+			SettingsData.SoundVol = OldSoundVol;
+			SettingsData.VoiceVol = OldVoiceVol;
+			SettingsData.bDamageEffects = OldbDamageEffects;
+			SettingsData.bDamageEffectsVehicles = OldbDamageEffectsVehicles;
+			SettingsData.bMakeTracks = OldbMakeTracks;
+			Client->ActivePlayer->name = OldName;
+			SetMusicVol ( SettingsData.MusicVol );
+			return;
+		}
 
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
@@ -1065,8 +1030,6 @@ void showPreferences ( void )
 bool showSelfdestruction()
 {
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,y,b;
-	bool AbbruchPressed=false;
-	bool ScharfPressed=false;
 	bool DestroyPressed=true;
 	bool Scharf=false;
 
@@ -1080,8 +1043,6 @@ bool showSelfdestruction()
 	int GlasHeight=DSTR_H;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_W / 2, SettingsData.iScreenH / 2 - DLG_H / 2, DLG_W, DLG_H };
 	SDL_Rect rDialogSrc = { 0,0,DLG_W, DLG_H};
-	SDL_Rect rButtonHot = {rDialog.x+89, rDialog.y+14, BTN_W, BTN_H};
-	SDL_Rect rButtonCancel = {rDialog.x+89, rDialog.y+46, BTN_W, BTN_H};
 	SDL_Rect rGlass = {rDialog.x+15, rDialog.y+13, DSTR_W, DSTR_H};
 	SDL_Rect rDestroySrc = {15,13,DSTR_W,DSTR_H}; //red button
 	SDL_Rect rDestroyPressedSrc = {15,95,DSTR_W,DSTR_H}; //red button pressed
@@ -1100,9 +1061,11 @@ bool showSelfdestruction()
 	}
 	SDL_BlitSurface ( GraphicsData.gfx_destruction,&rDialogSrc,buffer,&rDialog ); //blit dialog
 	SDL_BlitSurface ( GraphicsData.gfx_destruction_glas,NULL,buffer,&rGlass ); //blit security glass
-	drawButton(lngPack.i18n( "Text~Button~Hot" ), false, rButtonHot.x, rButtonHot.y, buffer); //blit sharp-button
-	drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rButtonCancel.x, rButtonCancel.y, buffer); //blit cancel button
 
+	NormalButton btn_hot(   rDialog.x + 89, rDialog.y + 14, "Text~Button~Hot");
+	NormalButton btn_cancel(rDialog.x + 89, rDialog.y + 46, "Text~Button~Cancel");
+	btn_hot.Draw();
+	btn_cancel.Draw();
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
@@ -1128,53 +1091,21 @@ bool showSelfdestruction()
 			mouse->draw ( true,screen );
 		}
 
-		// Abbruch-Button:
-		if ( x>= rButtonCancel.x &&x <= rButtonCancel.x + rButtonCancel.w &&y>= rButtonCancel.y &&y <= rButtonCancel.y + rButtonCancel.h )
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_cancel.CheckClick(x, y, down, up))
 		{
-			if ( b&&!AbbruchPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton ); //pressed
-				drawButton(lngPack.i18n( "Text~Button~Cancel" ), true, rButtonCancel.x, rButtonCancel.y, buffer);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				AbbruchPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				return false;
-			}
+			return false;
 		}
-		else if ( AbbruchPressed )
+
+		if (btn_hot.CheckClick(x, y, down, up))
 		{
-			drawButton(lngPack.i18n( "Text~Button~Cancel" ), false, rButtonCancel.x, rButtonCancel.y ,buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			AbbruchPressed=false;
+			btn_hot.Lock();
+			PlayFX(SoundData.SNDArm);
+			Scharf = true;
 		}
-		// Scharf-Button:
-		if ( !Scharf&&x>= rButtonHot.x &&x<= rButtonHot.x + rButtonHot.w &&y>= rButtonHot.y &&y< rButtonHot.y + rButtonHot.h )
-		{
-			if ( b&&!ScharfPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButton(lngPack.i18n( "Text~Button~Hot" ), true, rButtonHot.x, rButtonHot.y,buffer);
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				ScharfPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				Scharf=true;
-				PlayFX ( SoundData.SNDArm );
-			}
-		}
-		else if ( !Scharf&&ScharfPressed )
-		{
-			drawButton(lngPack.i18n( "Text~Button~Hot" ), false,  rButtonHot.x, rButtonHot.y, buffer);
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			ScharfPressed=false;
-		}
+
 		// Das Schutzglas hochfahren:
 		if ( Scharf&&GlasHeight>0&&Client->iTimer0 )
 		{
