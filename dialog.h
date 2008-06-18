@@ -84,17 +84,6 @@ void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
  */
 void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
-/** Draws a big button<br>
- * Size is 106x40
- * @author beko
- * @param sText Text displayed centered on button
- * @param bPressed clickstatus
- * @param x x position
- * @param y y position
- * @param *surface SDL_Surface to draw on
- */
-void drawButtonBig (std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
-
 
 enum ARROW_TYPE
 {

@@ -5517,7 +5517,6 @@ void cBuilding::ShowMineManager ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i;
 	SDL_Rect scr, dest;
-	bool FertigPressed = false;
 	bool IncMetalPressed = false;
 	bool DecMetalPressed = false;
 	bool IncOilPressed = false;
@@ -5528,7 +5527,6 @@ void cBuilding::ShowMineManager ( void )
 	int FreeM = 0, FreeO = 0, FreeG = 0;
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
-	SDL_Rect rBtnDone = {rDialog.x + 514, rDialog.y + 430, 106, 40};
 	SDL_Rect rTitle = {rDialog.x + 230, rDialog.y + 11, 174, 13};
 	SDL_Rect rInfo1 = {rDialog.x + 46, rDialog.y + 78, 70, 11};
 	SDL_Rect rInfo2 = {rInfo1.x, rInfo1.y + 37, rInfo1.w, rInfo1.h};
@@ -5579,8 +5577,8 @@ void cBuilding::ShowMineManager ( void )
 		rInfo3.y += 121;
 	}
 
-	//draw big button
-	drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
+	BigButton btn_done(rDialog.x + 514, rDialog.y + 430, "Text~Button~Done");
+	btn_done.Draw();
 
 	// Liste mit Minen erstellen:
 	cList<cBuilding*> mines;
@@ -5643,31 +5641,10 @@ void cBuilding::ShowMineManager ( void )
 			mouse->draw ( true, screen );
 		}
 
-		// Fertig-Button:
-		if ( x >= rBtnDone.x && x < rBtnDone.x + rBtnDone.w && y >= rBtnDone.y && y < rBtnDone.y + rBtnDone.h )
+		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			if ( b && !FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), true, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = true;
-			}
-			else
-				if ( !b && LastB )
-				{
-					break;
-				}
+			break;
 		}
-		else
-			if ( FertigPressed )
-			{
-				drawButtonBig ( lngPack.i18n ( "Text~Button~Done" ), false, rBtnDone.x, rBtnDone.y, buffer );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				FertigPressed = false;
-			}
 
 		// Aufs Metall geklickt:
 		if ( x >= rDialog.x + 174 && x < rDialog.x + 174 + 240 && y >= rDialog.y + 70 && y < rDialog.y + 70 + 30 && b && !LastB )

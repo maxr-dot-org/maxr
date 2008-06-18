@@ -1236,26 +1236,3 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
 	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, surface);
 }
-
-void drawButtonBig (string sText, bool bPressed, int x, int y, SDL_Surface *surface)
-{
-	SDL_Rect scr, dest;
-	int iPx; //for moving fonts 1 pixel down on click
-	if(bPressed)
-	{
-		scr.y=411; //clicked button
-		iPx = 12;
-	}
-	else
-	{
-		scr.y=370; //unclicked button
-		iPx = 11;
-	}
-	scr.x=0; //get button from gfx_hud.pcx
-	dest.w=scr.w=106;
-	dest.h=scr.h=40;
-	dest.x = x;
-	dest.y = y;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_BIG, surface);
-}

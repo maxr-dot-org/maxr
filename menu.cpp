@@ -5087,14 +5087,10 @@ int ShowDateiMenu ( bool bSave )
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect scr;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
-	bool SpeichernPressed=false, FertigPressed=false, UpPressed=false, DownPressed=false;
-	bool  BeendenPressed=false, LadenPressed=false, Cursor=true;
+	bool UpPressed=false, DownPressed=false;
+	bool Cursor=true;
 	Uint8 *keystate;
 	cList<string> *files;
-	SDL_Rect rBtnBack = {rDialog.x+353,rDialog.y+438, 106, 40};
-	SDL_Rect rBtnExit = {rDialog.x+246,rDialog.y+438, 106, 40};
-	SDL_Rect rBtnLoad = {rDialog.x+514,rDialog.y+438, 106, 40};
-	SDL_Rect rBtnSave = {rDialog.x+132,rDialog.y+438, 106, 40};
 	SDL_Rect rArrowUp = {rDialog.x+33, rDialog.y+438, 28, 29};
 	SDL_Rect rArrowDown = {rDialog.x+63, rDialog.y+438, 28, 29};
 	SDL_Rect rTitle = { rDialog.x+320, rDialog.y+12, 150, 12 };
@@ -5110,16 +5106,20 @@ int ShowDateiMenu ( bool bSave )
 	else
 		font->showTextCentered(rTitle.x, rTitle.y, lngPack.i18n ( "Text~Title~Load" ));
 
-	// Buttons setzen;
-	drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );
+	BigButton btn_back(rDialog.x + 353, rDialog.y + 438, "Text~Button~Back");
+	BigButton btn_save(rDialog.x + 132, rDialog.y + 438, "Text~Button~Save");
+	BigButton btn_exit(rDialog.x + 246, rDialog.y + 438, "Text~Button~Exit");
+	BigButton btn_load(rDialog.x + 514, rDialog.y + 438, "Text~Button~Load");
+
+	btn_back.Draw();
 	if ( bSave )
 	{
-		drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
-		drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
+		btn_save.Draw();
+		btn_exit.Draw();
 	}
 	else
 	{
-		drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
+		btn_load.Draw();
 	}
 	//BEGIN ARROW CODE
 	scr.y=40;
@@ -5208,136 +5208,62 @@ int ShowDateiMenu ( bool bSave )
 				mouse->draw ( false,screen );
 			}
 		}
-		// Fertig-Button:
-		if ( x >= rBtnBack.x && x < rBtnBack.x + rBtnBack.w && y >= rBtnBack.y && y < rBtnBack.y + rBtnBack.h )
+
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if (btn_back.CheckClick(x, y, down, up))
 		{
-			if ( b&&!FertigPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),true,rBtnBack.x,rBtnBack.y,buffer );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				FertigPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				delete files;
-				return -1;
-			}
+			delete files;
+			return -1;
 		}
-		else if ( FertigPressed )
+
+		if (bSave && btn_exit.CheckClick(x, y, down, up))
 		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Back" ),false,rBtnBack.x,rBtnBack.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			FertigPressed=false;
+			Client->bExit = true;
+			delete files;
+			return -1;
 		}
-		// Beenden-Button:
-		if (  bSave && ( x >= rBtnExit.x && x < rBtnExit.x + rBtnExit.w && y >= rBtnExit.y && y < rBtnExit.y + rBtnExit.h ) )
+
+		if (bSave && btn_save.CheckClick(x, y, down, up))
 		{
-			if ( b&&!BeendenPressed )
+			if ( selected != -1 )
 			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),true,rBtnExit.x,rBtnExit.y,buffer );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				BeendenPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				BeendenPressed=false;
-				Client->bExit = true;
-				delete files;
-				return -1;
-			}
-		}
-		else if ( BeendenPressed )
-		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Exit" ),false,rBtnExit.x,rBtnExit.y,buffer );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			BeendenPressed=false;
-		}
-		// Speichern-Button:
-		if ( bSave && ( x >= rBtnSave.x && x < rBtnSave.x + rBtnSave.w && y >= rBtnSave.y && y < rBtnSave.y + rBtnSave.h ) )
-		{
-			if ( b&&!SpeichernPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),true,rBtnSave.x,rBtnSave.y,buffer );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				SpeichernPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
-				if ( selected != -1 )
+				ShowFiles ( files,offset,selected,true,false,false, rDialog );
+				if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
 				{
-					ShowFiles ( files,offset,selected,true,false,false, rDialog );
-					if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
-					{
-						delete files;
-						files = getFilesOfDirectory ( SettingsData.sSavesPath );
-						for ( int i = 0; i < files->iCount; i++ )
-						{
-							if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
-							{
-								files->Delete ( i );
-								i--;
-							}
-						}
-						selected = -1;
-					}
-					ShowFiles ( files,offset,selected,true,false,false, rDialog );
-				}
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				SpeichernPressed=false;
-			}
-		}
-		else if ( SpeichernPressed )
-		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Save" ),false,rBtnSave.x,rBtnSave.y,buffer );
-			SHOW_SCREEN
-			mouse->draw ( false,screen );
-			SpeichernPressed=false;
-		}
-		// Laden-Button:
-		if ( !bSave && ( x >= rBtnLoad.x && x < rBtnLoad.x + rBtnLoad.w && y >= rBtnLoad.y && y < rBtnLoad.y + rBtnLoad.h ) )
-		{
-			if ( b&&!LadenPressed )
-			{
-				PlayFX ( SoundData.SNDMenuButton );
-				drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),true,rBtnLoad.x,rBtnLoad.y,buffer );
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				LadenPressed=true;
-			}
-			else if ( !b&&LastB )
-			{
-				drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
-				if ( selected != -1 )
-				{
-					ShowFiles ( files,offset,selected,false,false,false, rDialog );
 					delete files;
-					return 1;
+					files = getFilesOfDirectory ( SettingsData.sSavesPath );
+					for ( int i = 0; i < files->iCount; i++ )
+					{
+						if( files->Items[i].substr( files->Items[i].length() -3, 3 ).compare ( "sav" ) != 0 )
+						{
+							files->Delete ( i );
+							i--;
+						}
+					}
+					selected = -1;
 				}
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-				LadenPressed=false;
+				ShowFiles ( files,offset,selected,true,false,false, rDialog );
 			}
-		}
-		else if ( LadenPressed )
-		{
-			drawButtonBig( lngPack.i18n ( "Text~Button~Load" ),false,rBtnLoad.x,rBtnLoad.y,buffer );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
-			LadenPressed=false;
 		}
+
+		if (!bSave && btn_load.CheckClick(x, y, down, up))
+		{
+			if ( selected != -1 )
+			{
+				ShowFiles ( files,offset,selected,false,false,false, rDialog );
+				delete files;
+				return 1;
+			}
+			SHOW_SCREEN
+			mouse->draw ( false,screen );
+		}
+
 		// Up-Button:
 		if ( x >= rArrowUp.x && x < rArrowUp.x + rArrowUp.w && y >= rArrowUp.y && y < rArrowUp.y + rArrowUp.h )
 		{

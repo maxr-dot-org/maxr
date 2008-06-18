@@ -119,3 +119,24 @@ Button::Gfx const& NormalButton::GfxDown() const
 	static Gfx const gfx = { GraphicsData.gfx_hud_stuff, { 230, 455, 77, 23 } };
 	return gfx;
 }
+
+
+Button::FontInfo const& BigButton::Font() const
+{
+	static FontInfo const fi = { LATIN_BIG, 0, 11 };
+	return fi;
+}
+
+
+Button::Gfx const& BigButton::GfxUp() const
+{
+	static Gfx const gfx = { GraphicsData.gfx_hud_stuff, { 0, 370, 106, 40 } };
+	return gfx;
+}
+
+
+Button::Gfx const& BigButton::GfxDown() const
+{
+	static Gfx const gfx = { GraphicsData.gfx_hud_stuff, { 0, 411, 106, 40 } };
+	return gfx;
+}

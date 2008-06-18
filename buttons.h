@@ -87,4 +87,13 @@ class NormalButton : public Button
 		Gfx      const& GfxDown() const;
 };
 
+class BigButton : public Button
+{
+	public:
+		BigButton(int const x, int const y, char const* const text) : Button(x, y, text) {}
+		FontInfo const& Font()    const;
+		Gfx      const& GfxUp()   const;
+		Gfx      const& GfxDown() const;
+};
+
 #endif
