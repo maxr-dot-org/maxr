@@ -712,6 +712,12 @@ void cServer::deleteBuilding( cBuilding *Building )
 		if ( !bBase && !bSubBase )
 		{
 			Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+			if ( Building->data.is_big )
+			{
+				Map->GO[Building->PosX+Building->PosY*Map->size+1].top = NULL;
+				Map->GO[Building->PosX+Building->PosY*Map->size+Map->size].top = NULL;
+				Map->GO[Building->PosX+Building->PosY*Map->size+Map->size+1].top = NULL;
+			}
 		}
 		sendDeleteUnit( Building->iID, false, Building->owner->Nr );
 
