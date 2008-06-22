@@ -60,7 +60,7 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 *@param bBase True if the building is on the ground
 *@param bSubBase True if the building is under an building that is on the ground
 */
-void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, int iID, bool bVehicle, int iClient, bool bPlane = false, bool bBase = false, bool bSubBase = false );
+void sendDeleteUnit ( int iID, bool bVehicle, int iClient );
 /**
 * Sends an event to a player that he has to detected an enemy unit and should add it
 *@author alzi alias DoctorDeath

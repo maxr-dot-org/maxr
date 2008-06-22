@@ -41,19 +41,13 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 
 }
 
-void sendDeleteUnit ( int iPosX, int iPosY, int iPlayer, int iID, bool bVehicle, int iClient, bool bPlane, bool bBase, bool bSubBase )
+void sendDeleteUnit ( int iID, bool bVehicle, int iClient )
 {
 	cNetMessage* message;
 	if ( bVehicle ) message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
 	else message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
 	message->pushInt16( iID );
-	message->pushInt16 ( iPosX );
-	message->pushInt16 ( iPosY );
-	message->pushInt16 ( iPlayer );
-	message->pushBool ( bPlane );
-	message->pushBool ( bBase );
-	message->pushBool ( bSubBase );
 
 	Server->sendNetMessage( message, iClient );
 

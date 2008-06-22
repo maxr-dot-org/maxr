@@ -2773,49 +2773,27 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DEL_BUILDING:
 		{
-			cBuilding *Building = NULL;
-			bool bSubBase = message->popBool ();
-			bool bBase = message->popBool ();
-			bool bPlane = message->popBool ();
-			int iPlayer = message->popInt16 ();
-			int iPosY = message->popInt16 ();
-			int iPosX = message->popInt16 ();
+			cBuilding *Building;
 
-			cPlayer *Player = getPlayerFromNumber ( iPlayer );
+			Building = getBuildingFromID ( message->popInt16() );
 
-			int iOff = iPosX + iPosY*Map->size;
-
-			if ( bBase ) Building = Map->GO[iOff].base;
-			else if ( bSubBase ) Building = Map->GO[iOff].subbase;
-			else Building = Map->GO[iOff].top;
-
-			// play clearsound if it is a mine
-			if ( Building->typ->nr == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
-			else if ( Building->typ->nr == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
-
-			if ( Building && Building->owner == Player )
+			if ( Building )
 			{
+				// play clearsound if it is a mine
+				if ( Building->typ->nr == BNrLandMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
+				else if ( Building->typ->nr == BNrSeaMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
+
 				deleteUnit ( Building );
 			}
 		}
 		break;
 	case GAME_EV_DEL_VEHICLE:
 		{
-			cVehicle *Vehicle = NULL;
-			bool bSubBase = message->popBool ();
-			bool bBase = message->popBool ();
-			bool bPlane = message->popBool ();
-			int iPlayer = message->popInt16 ();
-			int iPosY = message->popInt16 ();
-			int iPosX = message->popInt16 ();
+			cVehicle *Vehicle;
 
-			cPlayer *Player = getPlayerFromNumber ( iPlayer );
-			int iOff = iPosX + iPosY*Map->size;
+			Vehicle = getVehicleFromID ( message->popInt16() );
 
-			if ( bPlane ) Vehicle = Map->GO[iOff].plane;
-			else Vehicle = Map->GO[iOff].vehicle;
-
-			if ( Vehicle && Vehicle->owner == Player )
+			if ( Vehicle )
 			{
 				deleteUnit ( Vehicle );
 			}
@@ -3359,10 +3337,6 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	{
 		if ( AddedBuilding->data.is_big )
 		{
-			Map->GO[iOff].top;
-			Map->GO[iOff+1].top;
-			Map->GO[iOff+Map->size].top;
-			Map->GO[iOff+Map->size+1].top;
 			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
@@ -3435,7 +3409,16 @@ void cClient::deleteUnit( cBuilding *Building )
 				Building->next->prev = NULL;
 			}
 		}
-		if ( Map->GO[Building->PosX+Building->PosY*Map->size].top == Building ) Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+		if ( Map->GO[Building->PosX+Building->PosY*Map->size].top == Building )
+		{
+			Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+			if ( Building->data.is_big )
+			{
+				Map->GO[Building->PosX+Building->PosY*Map->size+1].top = NULL;
+				Map->GO[Building->PosX+Building->PosY*Map->size+Map->size].top = NULL;
+				Map->GO[Building->PosX+Building->PosY*Map->size+1+Map->size].top = NULL;
+			}
+		}
 		else if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
 		else  Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
 		if ( SelectedBuilding == Building ) SelectedBuilding = NULL;

@@ -713,7 +713,7 @@ void cServer::deleteBuilding( cBuilding *Building )
 		{
 			Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
 		}
-		sendDeleteUnit( Building->PosX, Building->PosY, Building->owner->Nr, Building->iID, false, Building->owner->Nr, false, bBase, bSubBase );
+		sendDeleteUnit( Building->iID, false, Building->owner->Nr );
 
 		delete Building;
 	}
@@ -765,7 +765,7 @@ void cServer::checkPlayerUnits ()
 							bool bPlane;
 							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
 							else bPlane = false;
-							sendDeleteUnit( NextVehicle->PosX, NextVehicle->PosY, NextVehicle->owner->Nr, NextVehicle->iID, true, MapPlayer->Nr, bPlane );
+							sendDeleteUnit( NextVehicle->iID, true, MapPlayer->Nr );
 							break;
 						}
 					}
@@ -809,7 +809,7 @@ void cServer::checkPlayerUnits ()
 							else bBase = false;
 							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
 							else bSubBase = false;
-							sendDeleteUnit( NextBuilding->PosX, NextBuilding->PosY, NextBuilding->owner->Nr, NextBuilding->iID, false, MapPlayer->Nr, false, bBase, bSubBase );
+							sendDeleteUnit( NextBuilding->iID, false, MapPlayer->Nr );
 
 							break;
 						}
