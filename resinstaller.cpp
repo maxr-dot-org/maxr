@@ -3472,11 +3472,23 @@ void installMusic()
 	cout << iToStr( iErrors) << " errors\n";
 }
 
+// this is needed to prevent a linker error with MinGW
+#ifdef main
+#undef main
+#endif
+
 int main ( int argc, char* argv[] )
-{	
+{
+    // at startup SDL_Init should be called before all other SDL functions
+    SDL_Init(SDL_INIT_VIDEO);
+    // added code to prevent writing to stdout.txt and stderr.txt
+    freopen( "CON", "w", stdout );
+    freopen( "CON", "w", stderr );
+    // assign SDL_Quit() function to exit event
+    atexit(SDL_Quit);	
 	cout << "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to\n\
 M.A.X.R. for original game look and feel. For this you need an existing\n\
-M.A.X. installation or an original M.A.X. CD avaible.\n\n";
+M.A.X. installation or an original M.A.X. CD available.\n\n";
 	
 	cout << "\
 This program is free software; you can redistribute it and/or modify\n\
