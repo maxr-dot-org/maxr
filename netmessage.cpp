@@ -75,7 +75,7 @@ SDL_Event* cNetMessage::getGameEvent()
 	SDL_Event* event = new SDL_Event;
 	event->type = GAME_EVENT;
 	event->user.data1 = malloc( iLength );
-	memcpy( event->user.data1, serialize(), iLength );
+	memcpy( event->user.data1, serialize( true ), iLength );
 
 	event->user.data2 = NULL;
 
