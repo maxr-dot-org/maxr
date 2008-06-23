@@ -3582,7 +3582,7 @@ void cClient::handleMoveJobs ()
 			{
 				if ( Vehicle && Vehicle->mjob == MJob )
 				{
-					cLog::write("(Client) Movejob is finished an will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
+					cLog::write("(Client) Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->mjob = NULL;
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
