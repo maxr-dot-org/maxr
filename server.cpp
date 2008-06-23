@@ -1422,8 +1422,7 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		// search for mines if necessary
 		if ( Vehicle->data.can_detect_mines )
 		{
-			// TODO: implement this function
-			//Vehicle->detectMines();
+			Vehicle->detectMines();
 		}
 
 		// lay/clear mines if necessary

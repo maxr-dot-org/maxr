@@ -3165,6 +3165,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						cLog::write ( "(Client) Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
 						Vehicle->mjob->finished = true;
 						Vehicle->OffX = Vehicle->OffY = 0;
+						break;
 					}
 					else
 					{

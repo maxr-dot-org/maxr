@@ -206,7 +206,12 @@ public:
 	*@return true if there was a mine to be cleared
 	*/
 	bool clearMine();
-	void detectMines(void);
+	/**
+	* seraches for mines in the direct closeness and declares them as detected if there has been found some.
+	* Should only be called by the server!
+	*@author alzi alias DoctorDeath
+	*/
+	void detectMines();
 	bool IsInRangeCommando(int off,bool steal);
 	void DrawCommandoCursor(struct sGameObjects *go,bool steal);
 	int CalcCommandoChance(bool steal);

@@ -5567,23 +5567,24 @@ bool cVehicle::clearMine ()
 	return true;
 }
 
-// searches for mines:
-void cVehicle::detectMines ( void )
+void cVehicle::detectMines ()
 {
-	/*int off, size;
-	size = Server->Map->size;
-	off = PosX + PosY * size;
+	if ( Server == NULL ) return;
+	cMap *Map = Server->Map;
 
-#define DETECT_MINE(a) if((a)>=0&&(a)<size*size&&Client->Map->GO[(a)].base&&Client->Map->GO[(a)].base->data.is_expl_mine)Client->Map->GO[(a)].base->detected=true;
-	DETECT_MINE ( off - size - 1 )
-	DETECT_MINE ( off - size )
-	DETECT_MINE ( off - size + 1 )
-	DETECT_MINE ( off - 1 )
-	DETECT_MINE ( off )
-	DETECT_MINE ( off + 1 )
-	DETECT_MINE ( off + size - 1 )
-	DETECT_MINE ( off + size )
-	DETECT_MINE ( off + size + 1 )*/
+	for ( int iY = PosY-1; iY <= PosY+1; iY++ )
+	{
+		if (iY < 0 || iY >= Map->size ) continue;
+		for ( int iX = PosX-1; iX <= PosX+1; iX++ )
+		{
+			if (iX < 0 || iX >= Map->size ) continue;
+			int iOff = iX+iY*Map->size;
+			if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_expl_mine )
+			{
+				Map->GO[iOff].base->DetectedByPlayerList.Add ( &owner->Nr );
+			}
+		}
+	}
 }
 
 // Prüft, ob das Ziel direkt neben einem steht, und ob es gestohlen werden kann:
