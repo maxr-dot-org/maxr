@@ -870,7 +870,15 @@ int cClient::checkUser()
 		}
 		else if ( SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
-			// TODO: Build big
+			SelectedVehicle->PlaceBand = false;
+			if ( UnitsData.building[SelectedVehicle->BuildingTyp].data.is_big )
+			{
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
+			}
+			else
+			{
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size );
+			}
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
 		{
@@ -906,32 +914,23 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
 		{
-			addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
-			/*cMJobs *MJob = new cMJobs ( Map, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, mouse->GetKachelOff(), SelectedVehicle->data.can_drive == DRIVE_AIR, SelectedVehicle->iID, PlayerList, false );
-			if ( !MJob->finished )
+			if ( SelectedVehicle->IsBuilding )
 			{
-				if ( MJob->CalcPath() )
+				if ( SelectedVehicle->data.can_build == BUILD_BIG )
 				{
-					MJob->CalcNextDir();
-					sendMoveJob ( MJob );
-					addActiveMoveJob ( MJob );
-					cLog::write("(Client) Added new movejob: VehicleID: " + iToStr ( SelectedVehicle->iID ) + ", SrcX: " + iToStr ( SelectedVehicle->PosX ) + ", SrcY: " + iToStr ( SelectedVehicle->PosY ) + ", DestX: " + iToStr ( MJob->DestX ) + ", DestY: " + iToStr ( MJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+					Map->GO[SelectedVehicle->PosX+1+SelectedVehicle->PosY*Map->size].vehicle = NULL;
+					Map->GO[SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 )*Map->size].vehicle = NULL;
+					Map->GO[SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 )*Map->size].vehicle = NULL;
 				}
-				else
-				{
-					MJob->finished = true;
-					if (random(2)) PlayVoice(VoiceData.VOINoPath1);
-					else PlayVoice ( VoiceData.VOINoPath2 );
-				}
+
+				int iX, iY;
+				mouse->GetKachel ( &iX, &iY );
+				sendEndBuilding ( SelectedVehicle, iX, iY );
 			}
-			if ( MJob->finished )
+			else
 			{
-				if ( MJob->vehicle )
-				{
-					MJob->vehicle->mjob = NULL;
-				}
-				delete MJob;
-			}*/
+				addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
+			}
 		}
 		else if ( !bHelpActive )
 		{
@@ -2938,7 +2937,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// set to server position if vehicle is not moving
 					if ( !Vehicle->moving )
 					{
-						iLogType = cLog::eLOG_TYPE_NET_WARNING;
+						// when the vehicle was building it is normal that the position should be changed
+						if ( !Vehicle->IsBuilding ) iLogType = cLog::eLOG_TYPE_NET_WARNING;
 
 						if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
 						else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
@@ -2956,6 +2956,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->Disabled = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
 				Vehicle->IsBuilding = message->popBool();
+				Vehicle->BuildRounds = message->popInt16();
 				Vehicle->Wachposten = message->popBool();
 
 				Data = &Vehicle->data;
@@ -3293,6 +3294,48 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				Map->Resources[iOff].typ = message->popInt16();
 				Map->Resources[iOff].value = message->popInt16();
+			}
+		}
+		break;
+	case GAME_EV_BUILD_ANSWER:
+		{
+			cVehicle *Vehicle;
+			bool bOK = message->popBool();
+
+			Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			if ( !bOK )
+			{
+				// TODO: translate
+				addMessage ( "Buildposition is blocked" );
+				Vehicle->BuildRounds = 0;
+				Vehicle->BuildingTyp = 0;
+				break;
+			}
+
+			int iBuildOff = message->popInt32();
+			int iBuildingType = message->popInt16();
+			int iBuildRounds = message->popInt16();
+
+			if ( UnitsData.building[iBuildingType].data.is_big )
+			{
+				Vehicle->PosX = iBuildOff%Map->size;
+				Vehicle->PosY = iBuildOff/Map->size;
+				Map->GO[iBuildOff].vehicle = Vehicle;
+				Map->GO[iBuildOff+1].vehicle = Vehicle;
+				Map->GO[iBuildOff+Map->size].vehicle = Vehicle;
+				Map->GO[iBuildOff+Map->size+1].vehicle = Vehicle;
+			}
+
+			Vehicle->BuildRounds = iBuildRounds;
+			Vehicle->BuildingTyp = iBuildingType;
+			Vehicle->IsBuilding = true;
+
+			if ( Vehicle == SelectedVehicle )
+			{
+				StopFXLoop ( iObjectStream );
+				iObjectStream = Vehicle->PlayStram();
 			}
 		}
 		break;
@@ -3817,7 +3860,7 @@ void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
 
 	if ( !MJob->plane )
 	{
-		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle != NULL || Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top != NULL )
+		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle != NULL || Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top != NULL && !Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top->data.is_connector )
 		{
 			cLog::write ( "(Client) Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other unit", cLog::eLOG_TYPE_NET_ERROR );
 			MJob->finished = true;

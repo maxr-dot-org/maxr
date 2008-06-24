@@ -114,3 +114,22 @@ void sendMineLayerStatus( cVehicle *Vehicle )
 	message->pushInt16 ( Vehicle->iID );
 	Client->sendNetMessage(message);
 }
+
+void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILD );
+	message->pushInt32 ( iBuildOff );
+	message->pushInt16 ( iBuildSpeed );
+	message->pushInt16 ( iBuildingType );
+	message->pushInt16 ( iVehicleID );
+	Client->sendNetMessage( message );
+}
+
+void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_END_BUILDING );
+	message->pushInt16 ( EscapeY );
+	message->pushInt16 ( EscapeX );
+	message->pushInt16 ( Vehicle->iID );
+	Client->sendNetMessage( message );
+}

@@ -183,14 +183,6 @@ private:
 	*/
 	void getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoiceNum );
 	/**
-	* adds a report to the reportlist
-	*@author alzi alias DoctorDeath
-	*@param sName the report name
-	*@param bVehicle true if the report is about vehicles
-	*@param iPlayerNum Number of player to whos list the report should be added
-	*/
-	void addReport ( string sName, bool bVehicle, int iPlayerNum );
-	/**
 	* checks wether the deadline has run down
 	*@author alzi alias DoctorDeath
 	*/
@@ -229,6 +221,7 @@ private:
 	*@param iID The ID of the vehicle
 	*/
 	cVehicle *getVehicleFromID ( int iID );
+	bool checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data );
 public:	
 	/** the map */
 	cMap *Map;
@@ -304,6 +297,14 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void Timer();
+	/**
+	* adds a report to the reportlist
+	*@author alzi alias DoctorDeath
+	*@param sName the report name
+	*@param bVehicle true if the report is about vehicles
+	*@param iPlayerNum Number of player to whos list the report should be added
+	*/
+	void addReport ( string sName, bool bVehicle, int iPlayerNum );
 
 	void releaseMoveJob ( cMJobs *MJob );
 } EX *Server;

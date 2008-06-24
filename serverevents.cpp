@@ -128,6 +128,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 
 	// Current state of the unit
 	message->pushBool ( Vehicle->Wachposten );
+	message->pushInt16 ( Vehicle->BuildRounds );
 	message->pushBool ( Vehicle->IsBuilding );
 	message->pushBool ( Vehicle->IsClearing );
 	message->pushInt16 ( Vehicle->Disabled );
@@ -338,4 +339,15 @@ void sendResources( cVehicle *Vehicle, cMap *Map )
 	message->pushInt16( iCount );
 
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
+}
+
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
+	message->pushInt16( iBuildRounds );
+	message->pushInt16( iBuildingType );
+	message->pushInt32( iOff );
+	message->pushInt16( iVehicleID );
+	message->pushBool ( bOK );
+	Server->sendNetMessage( message, iPlayer );
 }

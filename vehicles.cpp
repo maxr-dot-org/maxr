@@ -959,6 +959,7 @@ bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
 // Aktalisiert alle Daten auf ihre Max-Werte:
 int cVehicle::refreshData ()
 {
+	int iReturn = 0;
 	if ( data.speed < data.max_speed || data.shots < data.max_shots )
 	{
 		data.speed = data.max_speed;
@@ -977,11 +978,10 @@ int cVehicle::refreshData ()
 		{
 			data.hit_points++;
 		}*/
-		return 1;
+		iReturn = 1;
 	}
-	else return 0;
 
-	/*
+	
 	// Bauen:
 	if ( IsBuilding && BuildRounds )
 	{
@@ -989,12 +989,26 @@ int cVehicle::refreshData ()
 		data.cargo -= ( BuildCosts / BuildRounds );
 		BuildCosts -= ( BuildCosts / BuildRounds );
 
-		if ( data.cargo < 0 )
-			data.cargo = 0;
+		if ( data.cargo < 0 ) data.cargo = 0;
 
 		BuildRounds--;
 
-		if ( BuildRounds == 0 && Client->SelectedVehicle == this )
+		if ( BuildRounds == 0 )
+		{
+			Server->addReport ( UnitsData.building[BuildingTyp].data.name, false, owner->Nr );
+			if ( UnitsData.building.Items[BuildingTyp].data.is_base || UnitsData.building.Items[BuildingTyp].data.is_connector )
+			{
+				IsBuilding = false;
+				Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
+			}
+		}
+
+		for ( unsigned int i = 0; i < SeenByPlayerList.iCount; i++ )
+		{
+			sendUnitData ( this, *SeenByPlayerList[i] );
+		}
+		sendUnitData ( this, owner->Nr );
+		/*if ( BuildRounds == 0 && Client->SelectedVehicle == this )
 		{
 			StopFXLoop ( Client->iObjectStream );
 			Client->iObjectStream = PlayStram();
@@ -1059,15 +1073,11 @@ int cVehicle::refreshData ()
 		{
 			if ( !BuildRounds )
 				BuildPath = false;
-		}
-	}
-	else
-	{
-		BuildPath = false;
+		}*/
 	}
 
 	// Räumen:
-	if ( IsClearing && ClearingRounds )
+	/*if ( IsClearing && ClearingRounds )
 	{
 		ClearingRounds--;
 
@@ -1077,6 +1087,7 @@ int cVehicle::refreshData ()
 			Client->iObjectStream = PlayStram();
 		}
 	}*/
+	return iReturn;
 }
 
 // Zeigt die Eigenschaften des Vehicles an:
@@ -2085,7 +2096,7 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 
 			PlayFX ( SoundData.SNDObjectMenu );
-			//ShowBuildMenu();
+			ShowBuildMenu();
 			return;
 		}
 
@@ -2166,7 +2177,7 @@ void cVehicle::DrawMenu ( void )
 
 		if ( ExeNr == nr )
 		{
-			if ( mjob )
+			/*if ( mjob )
 			{
 				mjob->finished = true;
 				mjob = NULL;
@@ -2217,7 +2228,7 @@ void cVehicle::DrawMenu ( void )
 						StopFXLoop ( Client->iObjectStream );
 						Client->iObjectStream = PlayStram();
 					}
-				}
+				}*/
 
 			return;
 		}
@@ -3233,48 +3244,11 @@ void cVehicle::ShowBuildMenu ( void )
 
 		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( BuildSpeed < 0 )
-				break;
-
-			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
-				break;
-
-			BuildingTyp = images.Items[selected]->id;
-
-			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
-				break;
-
-			if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
-			{
-				if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-				{
-					if ( !UnitsData.building[BuildingTyp].data.build_on_water )
-						break;
-				}
-				else
-					if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-						break;
-
-				if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
-				{
-					if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
-						break;
-				}
-				else
-					if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-						break;
-			}
-
-			BuildRounds = iTurboBuildRounds[BuildSpeed];
-
-			BuildCosts  = iTurboBuildCosts[BuildSpeed];
+			if ( BuildSpeed < 0 ) break;
 
 			if ( data.can_build != BUILD_BIG )
 			{
-				IsBuilding = true;
-				// Den Building Sound machen:
-				StopFXLoop ( Client->iObjectStream );
-				Client->iObjectStream = PlayStram();
+				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size );
 			}
 			else
 			{
@@ -3292,10 +3266,12 @@ void cVehicle::ShowBuildMenu ( void )
 					BigBetonAlpha = 255;
 				}
 
+				// save building information temporary to have them when placing band is finished
+				BuildingTyp = images.Items[selected]->id;
+				BuildRounds = BuildSpeed;
+
 				FindNextband();
 			}
-
-			BuildRoundsStart = BuildRounds;
 
 			break;
 		}
@@ -3303,44 +3279,11 @@ void cVehicle::ShowBuildMenu ( void )
 		// Pfad-Button:
 		if (data.can_build != BUILD_BIG && btn_path.CheckClick(x, y, down, up))
 		{
-			if ( BuildSpeed < 0 )
-				break;
-
-			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner )
-				break;
+			if ( BuildSpeed < 0 ) break;
 
 			BuildingTyp = images.Items[selected]->id;
+			BuildRounds = BuildSpeed;
 
-			if ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge ) && ( UnitsData.building[BuildingTyp].data.is_base && !UnitsData.building[BuildingTyp].data.is_road ) )
-				break;
-
-			if ( ( !Client->Map->GO[PosX+PosY*Client->Map->size].base || !Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform ) && !UnitsData.building[BuildingTyp].data.is_connector )
-			{
-				if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-				{
-					if ( !UnitsData.building[BuildingTyp].data.build_on_water )
-						break;
-				}
-				else
-					if ( UnitsData.building[BuildingTyp].data.build_on_water && ! ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-						break;
-
-				if ( Client->Map->terrain[Client->Map->Kacheln[PosX+PosY*Client->Map->size]].coast )
-				{
-					if ( !UnitsData.building[BuildingTyp].data.is_bridge && !UnitsData.building[BuildingTyp].data.is_platform )
-						break;
-				}
-				else
-					if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && ( UnitsData.building[BuildingTyp].data.is_bridge || UnitsData.building[BuildingTyp].data.is_platform ) )
-						break;
-			}
-
-			BuildRounds = iTurboBuildRounds[BuildSpeed];
-
-			BuildCosts  = iTurboBuildCosts[BuildSpeed];
-
-			BuildRoundsStart = BuildRounds;
-			BuildCostsStart = BuildCosts;
 			PlaceBand = true;
 			break;
 		}

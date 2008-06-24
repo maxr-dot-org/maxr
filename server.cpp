@@ -428,6 +428,131 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_BUILD:
+		{
+			cVehicle *Vehicle;
+			sUnitData *Data;
+			int iBuildingType, iBuildSpeed, iBuildOff;
+
+			Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			iBuildingType = message->popInt16();
+			Data = &UnitsData.building[iBuildingType].data;
+			iBuildSpeed = message->popInt16();
+			iBuildOff = message->popInt32();
+
+			if ( Data->is_big )
+			{
+				if ( Vehicle->data.can_build != BUILD_BIG ) break;
+
+				if ( checkBlockedBuildField ( iBuildOff, Vehicle, Data ) ||
+					checkBlockedBuildField ( iBuildOff+1, Vehicle, Data ) ||
+					checkBlockedBuildField ( iBuildOff+Map->size, Vehicle, Data ) ||
+					checkBlockedBuildField ( iBuildOff+Map->size+1, Vehicle, Data ) )
+				{
+					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, Vehicle->owner->Nr );
+					break;
+				}
+				Vehicle->BuildBigSavedPos = Vehicle->PosX+Vehicle->PosY*Map->size;
+
+				// set vehicle to build position
+				Vehicle->PosX = iBuildOff%Map->size;
+				Vehicle->PosY = iBuildOff/Map->size;
+				Map->GO[iBuildOff].vehicle = Vehicle;
+				Map->GO[iBuildOff+1].vehicle = Vehicle;
+				Map->GO[iBuildOff+Map->size].vehicle = Vehicle;
+				Map->GO[iBuildOff+Map->size+1].vehicle = Vehicle;
+			}
+			else
+			{
+				if ( iBuildOff != Vehicle->PosX+Vehicle->PosY*Map->size ) break;
+
+				if ( checkBlockedBuildField ( iBuildOff, Vehicle, Data ) )
+				{
+					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, Vehicle->owner->Nr );
+					break;
+				}
+			}
+
+			Vehicle->IsBuilding = true;
+			Vehicle->BuildingTyp = iBuildingType;
+			// TOFIX: only default values for now
+			Vehicle->BuildCosts = 10;
+			Vehicle->BuildRounds = 3;
+			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
+
+			if ( Vehicle->BuildCosts > Vehicle->data.cargo ) break;
+
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
+			{
+				sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, *Vehicle->SeenByPlayerList.Items[i] );
+			}
+			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->owner->Nr );
+		}
+		break;
+	case GAME_EV_END_BUILDING:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			int iEscapeX = message->popInt16();
+			int iEscapeY = message->popInt16();
+
+			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
+
+			// end building
+			Vehicle->IsBuilding = false;
+
+			if ( Vehicle->data.can_build == BUILD_BIG )
+			{
+				Map->GO[Vehicle->PosX+1+Vehicle->PosY*Map->size].vehicle = NULL;
+				Map->GO[Vehicle->PosX+1+ ( Vehicle->PosY+1 )*Map->size].vehicle = NULL;
+				Map->GO[Vehicle->PosX+ ( Vehicle->PosY+1 )*Map->size].vehicle = NULL;
+			}
+			addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
+
+			// set the vehicle to the border
+			if ( Vehicle->data.can_build == BUILD_BIG )
+			{
+				Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+				if ( abs ( iEscapeX - ( Vehicle->PosX+1 ) ) <= 1 && abs ( iEscapeY - Vehicle->PosY ) <= 1 )
+				{
+					Vehicle->PosX++;
+				}
+				else if ( abs ( iEscapeX -( Vehicle->PosX+1 ) ) <= 1 && abs ( iEscapeY - ( Vehicle->PosY+1 ) ) <= 1 )
+				{
+					Vehicle->PosX++;
+					Vehicle->PosY++;
+				}
+				else if ( abs ( iEscapeX - Vehicle->PosX ) <= 1 && abs ( iEscapeY - ( Vehicle->PosY+1 ) ) <= 1 )
+				{
+					Vehicle->PosY++;
+				}
+				Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = Vehicle;
+				// refresh SeenByPlayerLists
+				checkPlayerUnits();
+			}
+
+			// send new vehicle status and position
+			sendUnitData ( Vehicle, Vehicle->owner->Nr );
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
+			{
+				sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[i] );
+			}
+
+			// drive away from the building lot
+			cMJobs *MJob = new cMJobs( Map, Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, false, Vehicle->iID, PlayerList, true );
+			MJob->CalcPath();
+			MJob->CalcNextDir();
+			sendMoveJobServer ( MJob, Vehicle->owner->Nr );
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
+			{
+				sendMoveJobServer ( MJob, *Vehicle->SeenByPlayerList.Items[i] );
+			}
+			addActiveMoveJob ( MJob );
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -1490,4 +1615,31 @@ void cServer::releaseMoveJob ( cMJobs *MJob )
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Server) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
+}
+
+bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data )
+{
+	// cannot build on dirt
+	if ( Map->GO[iOff].base && !Map->GO[iOff].base->owner ) return true;
+
+	// cannot build e.g. landingplattforms on waterplattforms or bridges
+	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && ! Data->is_road ) ) return true;
+
+	// the rest has only to be checked if the building is no connector and if there is no base building under it excepting an waterplattform
+	if ( ( !Map->GO[iOff].base || Map->GO[iOff].base->data.is_platform ) && !Data->is_connector )
+	{
+		// cannot build normal buildings on water
+		if ( Map->IsWater ( iOff ) && !Data->build_on_water ) return true;
+
+		// cannot build water buildings excepting a bridge or a waterplattform on not water terrain but maybe coasts
+		if ( !Map->IsWater ( iOff ) && Data->build_on_water && !( Data->is_bridge || Data->is_platform ) ) return true;
+
+		// only platforms and bridges can be build on coasts
+		if ( Map->terrain[Map->Kacheln[iOff]].coast && !Data->is_bridge && !Data->is_platform ) return true;
+
+		// cannot build plattforms or bridges on nowater or nocoast terrain
+		if ( !Map->terrain[Map->Kacheln[iOff]].coast && !Map->IsWater ( iOff ) && ( Data->is_bridge || Data->is_platform ) ) return true;
+	}
+
+	return false;
 }

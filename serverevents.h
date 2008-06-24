@@ -35,6 +35,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
+	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
+	GAME_EV_END_BUILDING			// a vehicle has finished building and will leave the building lot now
 };
 
 /**
@@ -135,5 +137,6 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer );
 *@author alzi alias DoctorDeath
 */
 void sendResources(  cVehicle *Vehicle, cMap *Map );
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iPlayer );
 
 #endif // servereventsH
