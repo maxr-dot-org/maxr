@@ -843,103 +843,95 @@ cPlayer *cServer::getPlayerFromNumber ( int iNum )
 
 void cServer::handleEnd ( int iPlayerNum )
 {
-	if ( /* look if there are some things to to at this turnend "engine->DoEndActions()" */ false )
+	string sReportMsg = "";
+	int iVoiceNum;
+
+	bool bChangeTurn = false;
+	if ( iGameType == GAME_TYPE_SINGLE )
 	{
-		// send message to client what he has to do
-		//sendChatMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
+		getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
+
+		sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, iPlayerNum );
+		bChangeTurn = true;
 	}
-	else
+	else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
 	{
-		string sReportMsg = "";
-		int iVoiceNum;
-
-		bool bChangeTurn = false;
-		if ( iGameType == GAME_TYPE_SINGLE )
+		bool bWaitForPlayer = ( iGameType == GAME_TYPE_TCPIP && bPlayTurns );
+		iActiveTurnPlayerNr++;
+		if ( iActiveTurnPlayerNr >= PlayerList->iCount )
 		{
-			getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-
-			sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, iPlayerNum );
-			bChangeTurn = true;
-		}
-		else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
-		{
-			bool bWaitForPlayer = ( iGameType == GAME_TYPE_TCPIP && bPlayTurns );
-			iActiveTurnPlayerNr++;
-			if ( iActiveTurnPlayerNr >= PlayerList->iCount )
+			iActiveTurnPlayerNr = 0;
+			if ( iGameType == GAME_TYPE_HOTSEAT )
 			{
-				iActiveTurnPlayerNr = 0;
-				if ( iGameType == GAME_TYPE_HOTSEAT )
-				{
-					getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
-				}
-				else
-				{
-					for ( int i = 0; i < PlayerList->iCount; i++ )
-					{
-						getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-						sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
-					}
-				}
-				bChangeTurn = true;
+				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
+				sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
 			}
 			else
 			{
-				if ( iGameType == GAME_TYPE_HOTSEAT )
-				{
-					getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
-					// TODO: in hotseat: maybe send information to client about the next player
-				}
-				else
-				{
-					for ( int i = 0; i < PlayerList->iCount; i++ )
-					{
-						getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-						sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
-					}
-				}
-			}
-		}
-		else // it's a simultanous TCP/IP multiplayer game
-		{
-			// check whether this player has already finished his turn
-			for ( int i = 0; i < PlayerEndList.iCount; i++ )
-			{
-				if ( *PlayerEndList.Items[i] == iPlayerNum ) return;
-			}
-			PlayerEndList.Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
-
-			if ( PlayerEndList.iCount >= PlayerList->iCount )
-			{
-				while ( PlayerEndList.iCount )
-				{
-					PlayerEndList.Delete ( 0 );
-				}
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
 					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, i );
+					sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
 				}
-				iDeadlineStartTime = 0;
-				bChangeTurn = true;
+			}
+			bChangeTurn = true;
+		}
+		else
+		{
+			if ( iGameType == GAME_TYPE_HOTSEAT )
+			{
+				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
+				sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
+				// TODO: in hotseat: maybe send information to client about the next player
 			}
 			else
 			{
-				if ( PlayerEndList.iCount == 1 )
+				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
-					sendTurnFinished ( iPlayerNum, iTurnDeadline );
-					iDeadlineStartTime = SDL_GetTicks();
-				}
-				else
-				{
-					sendTurnFinished ( iPlayerNum, -1 );
+					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
+					sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
 				}
 			}
 		}
-		if ( bChangeTurn ) iTurn++;
-		makeTurnEnd ( iPlayerNum, bChangeTurn );
 	}
+	else // it's a simultanous TCP/IP multiplayer game
+	{
+		// check whether this player has already finished his turn
+		for ( int i = 0; i < PlayerEndList.iCount; i++ )
+		{
+			if ( *PlayerEndList.Items[i] == iPlayerNum ) return;
+		}
+		PlayerEndList.Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
+
+		if ( PlayerEndList.iCount >= PlayerList->iCount )
+		{
+			while ( PlayerEndList.iCount )
+			{
+				PlayerEndList.Delete ( 0 );
+			}
+			for ( int i = 0; i < PlayerList->iCount; i++ )
+			{
+				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
+				sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, i );
+			}
+			iDeadlineStartTime = 0;
+			bChangeTurn = true;
+		}
+		else
+		{
+			if ( PlayerEndList.iCount == 1 )
+			{
+				sendTurnFinished ( iPlayerNum, iTurnDeadline );
+				iDeadlineStartTime = SDL_GetTicks();
+			}
+			else
+			{
+				sendTurnFinished ( iPlayerNum, -1 );
+			}
+		}
+	}
+	if ( bChangeTurn ) iTurn++;
+	makeTurnEnd ( iPlayerNum, bChangeTurn );
 }
 
 void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )

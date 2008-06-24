@@ -603,6 +603,8 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
+		// end turn if all actions have finished now
+		if ( bWantToEnd ) handleEnd();
 	}
 	mouse->MoveCallback = false;
 }
@@ -3458,12 +3460,45 @@ void cClient::handleEnd()
 {
 	if ( ActiveMJobs.iCount > 0 )
 	{
-		addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
+		if ( !bWantToEnd ) addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
+		bWantToEnd = true;
 	}
 	else
 	{
-		sendWantToEndTurn();
+		if ( checkEndActions() )
+		{
+			if ( !bWantToEnd ) addMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
+			bWantToEnd = true;
+		}
+		else
+		{
+			sendWantToEndTurn();
+			bWantToEnd = false;
+		}
 	}
+}
+
+bool cClient::checkEndActions()
+{
+	cVehicle *NextVehicle;
+	bool bReturn = false;
+	NextVehicle = ActivePlayer->VehicleList;
+	while ( NextVehicle != NULL )
+	{
+		if ( NextVehicle->mjob && NextVehicle->data.speed > 0 )
+		{
+			// restart movejob
+			NextVehicle->mjob->CalcNextDir();
+			NextVehicle->mjob->EndForNow = false;
+			NextVehicle->mjob->ScrX = NextVehicle->PosX;
+			NextVehicle->mjob->ScrY = NextVehicle->PosY;
+			sendMoveJob ( NextVehicle->mjob );
+			addActiveMoveJob ( NextVehicle->mjob );
+			bReturn = true;
+		}
+		NextVehicle = NextVehicle->next;
+	}
+	return bReturn;
 }
 
 void cClient::makeHotSeatEnd( int iNextPlayerNum )

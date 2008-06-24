@@ -290,6 +290,12 @@ private:
 	*/
 	void handleEnd();
 	/**
+	* checks whether there are some vehicles that have to move before this turn is ending.
+	*@author alzi alias DoctorDeath
+	*@return true if there were some vehicles which had to move.
+	*/
+	bool checkEndActions();
+	/**
 	* handles the end of a hotseat game
 	*@author alzi alias DoctorDeath
 	*@param iNextPlayerNum Number of Player who has ended his turn
