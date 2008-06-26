@@ -451,7 +451,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					checkBlockedBuildField ( iBuildOff+Map->size, Vehicle, Data ) ||
 					checkBlockedBuildField ( iBuildOff+Map->size+1, Vehicle, Data ) )
 				{
-					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, Vehicle->owner->Nr );
+					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, 0, Vehicle->owner->Nr );
 					break;
 				}
 				Vehicle->BuildBigSavedPos = Vehicle->PosX+Vehicle->PosY*Map->size;
@@ -470,7 +470,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				if ( checkBlockedBuildField ( iBuildOff, Vehicle, Data ) )
 				{
-					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, Vehicle->owner->Nr );
+					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, 0, Vehicle->owner->Nr );
 					break;
 				}
 			}
@@ -480,15 +480,21 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// TOFIX: only default values for now
 			Vehicle->BuildCosts = 10;
 			Vehicle->BuildRounds = 3;
+			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
 			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
+			Vehicle->BuildPath = message->popBool();
 
-			if ( Vehicle->BuildCosts > Vehicle->data.cargo ) break;
+			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
+			{
+				sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, 0, Vehicle->owner->Nr );
+				break;
+			}
 
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 			{
-				sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, *Vehicle->SeenByPlayerList.Items[i] );
+				sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, *Vehicle->SeenByPlayerList.Items[i] );
 			}
-			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->owner->Nr );
+			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, Vehicle->owner->Nr );
 		}
 		break;
 	case GAME_EV_END_BUILDING:
@@ -503,6 +509,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			// end building
 			Vehicle->IsBuilding = false;
+			Vehicle->BuildPath = false;
 
 			if ( Vehicle->data.can_build == BUILD_BIG )
 			{

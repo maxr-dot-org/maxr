@@ -355,6 +355,12 @@ private:
 	*@param iX The X coords where the text should be drawn
 	*/
 	void traceBuilding ( cBuilding *Building, int *iY, int iX );
+	/**
+	* continues the path of a building vehicle
+	*@author alzi alias DoctorDeath
+	*@param Vehicle The vehicle that will continue its path
+	*/
+	void continuePathBuilding ( cVehicle *Vehicle );
 public:
 	/** framecounter for the animations */
 	unsigned int iFrame;
@@ -471,7 +477,11 @@ public:
 	void Timer();
 	/** displays a message with 'goto' coordinates */
 	void addCoords (const string msg,int x,int y );
-
+	/**
+	* releases a movejob to be deleted
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be released
+	*/
 	void releaseMoveJob ( cMJobs *MJob );
 } EX *Client;
 

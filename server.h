@@ -305,7 +305,11 @@ public:
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
 	void addReport ( string sName, bool bVehicle, int iPlayerNum );
-
+	/**
+	* releases a movejob to be deleted
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be released
+	*/
 	void releaseMoveJob ( cMJobs *MJob );
 } EX *Server;
 

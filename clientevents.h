@@ -99,7 +99,23 @@ void sendWantAttack ( int targetID, int targetOffset, int aggressor, bool isVehi
 *@param Vehicle the vehicle which status has to be send
 */
 void sendMineLayerStatus( cVehicle *Vehicle );
-void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff );
+/**
+* sends that a vehicle wants to start building
+*@author alzi alias DoctorDeath
+*@param iVehicleID the ID of the vehicle which wants to start building
+*@param iBuildingType type of the building to be build
+*@param iBuildSpeed speed of building ( 1x, 2x or 4x )
+*@param iBuildOff the offest were to build. Upper left coner on big buildings
+*@param bBuildPath true if the vehicle is building in path
+*/
+void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath );
+/**
+* sends that a vehicle wants to leave the building lot
+*@author alzi alias DoctorDeath
+*@param Vehicle the vehicle which has finished building
+*@param EscapeX X coordinate to which he wants do move now
+*@param EscapeY Y coordinate to which he wants do move now
+*/
 void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
 
 

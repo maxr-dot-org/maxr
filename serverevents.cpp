@@ -341,9 +341,10 @@ void sendResources( cVehicle *Vehicle, cMap *Map )
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
 }
 
-void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iPlayer )
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
+	message->pushInt16( iBuildCosts );
 	message->pushInt16( iBuildRounds );
 	message->pushInt16( iBuildingType );
 	message->pushInt32( iOff );

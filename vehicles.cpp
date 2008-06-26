@@ -995,10 +995,12 @@ int cVehicle::refreshData ()
 
 		if ( BuildRounds == 0 )
 		{
-			Server->addReport ( UnitsData.building[BuildingTyp].data.name, false, owner->Nr );
+			// TOFIX: Reports came to late
+			//Server->addReport ( UnitsData.building[BuildingTyp].data.name, false, owner->Nr );
+
 			if ( UnitsData.building.Items[BuildingTyp].data.is_base || UnitsData.building.Items[BuildingTyp].data.is_connector )
 			{
-				IsBuilding = false;
+				if ( !BuildPath || data.cargo < BuildCostsStart ) IsBuilding = false;
 				Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
 			}
 		}
@@ -1008,72 +1010,6 @@ int cVehicle::refreshData ()
 			sendUnitData ( this, *SeenByPlayerList[i] );
 		}
 		sendUnitData ( this, owner->Nr );
-		/*if ( BuildRounds == 0 && Client->SelectedVehicle == this )
-		{
-			StopFXLoop ( Client->iObjectStream );
-			Client->iObjectStream = PlayStram();
-		}
-
-		if ( BuildRounds == 0 && owner == Client->ActivePlayer )
-			game->engine->AddReport ( ( UnitsData.building + BuildingTyp )->data.name, false );
-
-		if ( BuildRounds == 0 && ( UnitsData.building[BuildingTyp].data.is_base || UnitsData.building[BuildingTyp].data.is_connector ) && ( ! ( BandX != PosX || BandY != PosY ) || data.cargo == 0 ) )
-		{
-			IsBuilding = false;
-			BuildPath = false;
-			game->engine->AddBuilding ( PosX, PosY, UnitsData.building + BuildingTyp, owner );
-		}
-
-		if ( BuildPath && ( owner == Client->ActivePlayer || game->HotSeat ) && BuildRounds == 0 && data.can_build == BUILD_SMALL && ( BandX != PosX || BandY != PosY ) )
-		{
-			cMJobs *mj = NULL;
-
-			if ( data.cargo >= BuildCostsStart )
-			{
-				if ( BandX < PosX && CheckPathBuild ( PosX - 1 + PosY*Client->Map->size, BuildingTyp ) )
-					mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX - 1 + PosY * Client->Map->size, false, false );
-				else
-					if ( BandX > PosX && CheckPathBuild ( PosX + 1 + PosY*Client->Map->size, BuildingTyp ) )
-						mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + 1 + PosY * Client->Map->size, false, false );
-					else
-						if ( BandY < PosY && CheckPathBuild ( PosX + ( PosY - 1 ) *Client->Map->size, BuildingTyp ) )
-							mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + ( PosY - 1 ) * Client->Map->size, false, false );
-						else
-							if ( BandY > PosY && CheckPathBuild ( PosX + ( PosY + 1 ) *Client->Map->size, BuildingTyp ) )
-								mj = game->engine->AddMoveJob ( PosX + PosY * Client->Map->size, PosX + ( PosY + 1 ) * Client->Map->size, false, false );
-							else
-							{
-								BuildPath = false;
-							}
-
-				{
-					if ( mj && !mj->finished && data.cargo >= BuildCostsStart )
-						mj->BuildAtTarget = true;
-					else
-					{
-						if ( mj )
-							mj->finished = true;
-
-						mjob = NULL;
-
-						moving = false;
-
-						IsBuilding = true;
-
-						BuildPath = false;
-					}
-				}
-			}
-			else
-			{
-				BuildPath = false;
-			}
-		}
-		else
-		{
-			if ( !BuildRounds )
-				BuildPath = false;
-		}*/
 	}
 
 	// Räumen:
@@ -3248,7 +3184,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( data.can_build != BUILD_BIG )
 			{
-				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size );
+				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size, false );
 			}
 			else
 			{

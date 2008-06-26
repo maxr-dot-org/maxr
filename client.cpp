@@ -316,7 +316,7 @@ void cClient::run()
 					(
 						v.IsBuilding && v.BuildRounds    == 0 ||
 						v.IsClearing && v.ClearingRounds == 0
-					))
+						) && !v.BuildPath )
 			{
 				if (v.data.can_build == BUILD_BIG || v.ClearBig)
 				{
@@ -873,11 +873,11 @@ int cClient::checkUser()
 			SelectedVehicle->PlaceBand = false;
 			if ( UnitsData.building[SelectedVehicle->BuildingTyp].data.is_big )
 			{
-				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false );
 			}
 			else
 			{
-				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size );
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, true );
 			}
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
@@ -2908,6 +2908,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			sUnitData *Data;
 
+			bool bWasBuilding = false;
 			int iID = message->popInt16();
 			bool bVehicle = message->popBool();
 			int iPosY = message->popInt16();
@@ -2955,6 +2956,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->name = message->popString();
 				Vehicle->Disabled = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
+				bWasBuilding = Vehicle->IsBuilding;
 				Vehicle->IsBuilding = message->popBool();
 				Vehicle->BuildRounds = message->popInt16();
 				Vehicle->Wachposten = message->popBool();
@@ -3020,7 +3022,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
+
 				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
+				if ( bWasBuilding && !Vehicle->IsBuilding )StopFXLoop ( iObjectStream );
+				if ( Vehicle->BuildPath && Vehicle->BuildRounds == 0 ) continuePathBuilding ( Vehicle );
 			}
 			else if ( Building == SelectedBuilding ) Building->ShowDetails();
 		}
@@ -3311,12 +3316,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				addMessage ( "Buildposition is blocked" );
 				Vehicle->BuildRounds = 0;
 				Vehicle->BuildingTyp = 0;
+				Vehicle->BuildPath = false;
 				break;
 			}
 
 			int iBuildOff = message->popInt32();
 			int iBuildingType = message->popInt16();
-			int iBuildRounds = message->popInt16();
 
 			if ( UnitsData.building[iBuildingType].data.is_big )
 			{
@@ -3328,8 +3333,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Map->GO[iBuildOff+Map->size+1].vehicle = Vehicle;
 			}
 
-			Vehicle->BuildRounds = iBuildRounds;
 			Vehicle->BuildingTyp = iBuildingType;
+			Vehicle->BuildRounds = message->popInt16();
+			Vehicle->BuildCosts = message->popInt16();
+			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
 			Vehicle->IsBuilding = true;
 
 			if ( Vehicle == SelectedVehicle )
@@ -3666,6 +3673,19 @@ void cClient::handleMoveJobs ()
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
 					Vehicle->MoveJobActive = false;
+
+					// continue path building if necessary
+					if ( Vehicle->BuildPath )
+					{
+						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
+						{
+							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, Vehicle->BuildRounds, Vehicle->PosX+Vehicle->PosY*Map->size, true );
+						}
+						else
+						{
+							Vehicle->BuildPath = false;
+						}
+					}
 				}
 				else cLog::write("(Client) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs.Delete ( i );
@@ -4101,4 +4121,35 @@ void cClient::doGameActions()
 	handleMoveJobs();
 	//run surveyor ai
 	cAutoMJob::handleAutoMoveJobs();
+}
+
+void cClient::continuePathBuilding ( cVehicle *Vehicle )
+{
+	if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
+	{
+		if ( Vehicle->BandX < Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX - 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
+		{
+			sendEndBuilding ( SelectedVehicle, Vehicle->PosX-1, Vehicle->PosY );
+		}
+		else if ( Vehicle->BandX > Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX + 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
+		{
+			sendEndBuilding ( SelectedVehicle, Vehicle->PosX+1, Vehicle->PosY );
+		}
+		else if ( Vehicle->BandY < Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY - 1 ) *Map->size, Vehicle->BuildingTyp ) )
+		{
+			sendEndBuilding ( SelectedVehicle, Vehicle->PosX, Vehicle->PosY-1 );
+		}
+		else if ( Vehicle->BandY > Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY + 1 ) *Map->size, Vehicle->BuildingTyp ) )
+		{
+			sendEndBuilding ( SelectedVehicle, Vehicle->PosX, Vehicle->PosY+1 );
+		}
+		else
+		{
+			Vehicle->BuildPath = false;
+		}
+	}
+	else
+	{
+		Vehicle->BuildPath = false;
+	}
 }

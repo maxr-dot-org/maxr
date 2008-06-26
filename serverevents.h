@@ -137,6 +137,10 @@ void sendMoveJobServer( cMJobs *MJob, int iPlayer );
 *@author alzi alias DoctorDeath
 */
 void sendResources(  cVehicle *Vehicle, cMap *Map );
-void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iPlayer );
+/**
+* sends an answer to a client wheter and how he has to build.
+*@author alzi alias DoctorDeath
+*/
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
 
 #endif // servereventsH
