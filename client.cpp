@@ -873,11 +873,11 @@ int cClient::checkUser()
 			SelectedVehicle->PlaceBand = false;
 			if ( UnitsData.building[SelectedVehicle->BuildingTyp].data.is_big )
 			{
-				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false );
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false, 0 );
 			}
 			else
 			{
-				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, true );
+				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
 			}
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
@@ -3679,7 +3679,7 @@ void cClient::handleMoveJobs ()
 					{
 						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
 						{
-							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, Vehicle->BuildRounds, Vehicle->PosX+Vehicle->PosY*Map->size, true );
+							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, Vehicle->BuildRounds, Vehicle->PosX+Vehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
 						}
 						else
 						{

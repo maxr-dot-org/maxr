@@ -115,9 +115,10 @@ void sendMineLayerStatus( cVehicle *Vehicle )
 	Client->sendNetMessage(message);
 }
 
-void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath )
+void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILD );
+	message->pushInt32 ( iPathOff );
 	message->pushBool ( bBuildPath );
 	message->pushInt32 ( iBuildOff );
 	message->pushInt16 ( iBuildSpeed );

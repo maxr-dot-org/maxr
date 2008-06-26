@@ -432,7 +432,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			cVehicle *Vehicle;
 			sUnitData *Data;
-			int iBuildingType, iBuildSpeed, iBuildOff;
+			int iBuildingType, iBuildSpeed, iBuildOff, iPathOff;
 			int iTurboBuildRounds[3];
 			int iTurboBuildCosts[3];
 
@@ -487,6 +487,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
 			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 			Vehicle->BuildPath = message->popBool();
+			iPathOff = message->popInt32();
+			Vehicle->BandX = iPathOff%Map->size;
+			Vehicle->BandY = iPathOff/Map->size;
 
 			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
 			{

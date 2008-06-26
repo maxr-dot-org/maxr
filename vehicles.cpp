@@ -1000,7 +1000,7 @@ int cVehicle::refreshData ()
 
 			if ( UnitsData.building.Items[BuildingTyp].data.is_base || UnitsData.building.Items[BuildingTyp].data.is_connector )
 			{
-				if ( !BuildPath || data.cargo < BuildCostsStart ) IsBuilding = false;
+				if ( !BuildPath || data.cargo < BuildCostsStart || ( PosX == BandX && PosY == BandY ) ) IsBuilding = false;
 				Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
 			}
 		}
@@ -3184,7 +3184,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( data.can_build != BUILD_BIG )
 			{
-				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size, false );
+				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size, false, 0 );
 			}
 			else
 			{

@@ -104,11 +104,12 @@ void sendMineLayerStatus( cVehicle *Vehicle );
 *@author alzi alias DoctorDeath
 *@param iVehicleID the ID of the vehicle which wants to start building
 *@param iBuildingType type of the building to be build
-*@param iBuildSpeed speed of building ( 1x, 2x or 4x )
+*@param iBuildSpeed speed of building ( 0->1x, 1->2x or 2->4x )
 *@param iBuildOff the offest were to build. Upper left coner on big buildings
 *@param bBuildPath true if the vehicle is building in path
+*@param iPathOff offset were the path will end
 */
-void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath );
+void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff );
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath
