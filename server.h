@@ -221,7 +221,16 @@ private:
 	*@param iID The ID of the vehicle
 	*/
 	cVehicle *getVehicleFromID ( int iID );
+	/**
+	* checks whether the next field is blocked for building on it
+	*@author alzi alias DoctorDeath
+	*/
 	bool checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data );
+	/**
+	* calculates the tuns and resource costs needed to build the building by the vehicle
+	*@author alzi alias DoctorDeath
+	*/
+	void calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int iTurboBuildRounds[3], int iTurboBuildCosts[3] );
 public:	
 	/** the map */
 	cMap *Map;
