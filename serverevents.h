@@ -36,7 +36,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
-	GAME_EV_END_BUILDING			// a vehicle has finished building and will leave the building lot now
+	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
+	GAME_EV_WANT_TRANSFER			//
 };
 
 /**

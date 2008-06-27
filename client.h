@@ -362,6 +362,9 @@ private:
 	*/
 	void continuePathBuilding ( cVehicle *Vehicle );
 	sSubBase *getSubBaseFromID ( int iID );
+	void showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuilding *DestBuilding, cVehicle *DestVehicle );
+	void drawTransBar ( int iLenght, int iType );
+	void makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle );
 public:
 	/** framecounter for the animations */
 	unsigned int iFrame;

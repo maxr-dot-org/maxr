@@ -222,6 +222,12 @@ private:
 	*/
 	cVehicle *getVehicleFromID ( int iID );
 	/**
+	* gets the bulding with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the building
+	*/
+	cBuilding *getBuildingFromID ( int iID );
+	/**
 	* checks whether the next field is blocked for building on it
 	*@author alzi alias DoctorDeath
 	*/

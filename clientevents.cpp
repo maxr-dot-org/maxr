@@ -135,3 +135,15 @@ void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
 	message->pushInt16 ( Vehicle->iID );
 	Client->sendNetMessage( message );
 }
+
+void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_TRANSFER );
+	message->pushInt16 ( iType );
+	message->pushInt16 ( iTransferValue );
+	message->pushInt16 ( iDestID );
+	message->pushBool ( bDestVehicle );
+	message->pushInt16 ( iSrcID );
+	message->pushBool ( bSrcVehicle );
+	Client->sendNetMessage( message );
+}

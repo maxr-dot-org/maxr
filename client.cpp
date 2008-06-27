@@ -30,6 +30,7 @@
 #include "netmessage.h"
 #include "main.h"
 #include "attackJobs.h"
+#include "buttons.h"
 
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
@@ -860,13 +861,12 @@ int cClient::checkUser()
 		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
 		if ( SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
-			//TODO: transfer
-			//SelectedVehicle->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
+			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( NULL, SelectedVehicle, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
+			else if ( Map->GO[mouse->GetKachelOff()].top ) showTransfer ( NULL, SelectedVehicle, Map->GO[mouse->GetKachelOff()].top, NULL );
 		}
 		else if ( SelectedBuilding&&mouse->cur==GraphicsData.gfx_Ctransf )
 		{
-			//TODO: transfer
-			//SelectedBuilding->ShowTransfer ( Map->GO+mouse->GetKachelOff() );
+			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( SelectedBuilding, NULL, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
 		}
 		else if ( SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
@@ -4264,4 +4264,488 @@ sSubBase *cClient::getSubBaseFromID ( int iID )
 		}
 	}
 	return SubBase;
+}
+
+void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuilding *DestBuilding, cVehicle *DestVehicle )
+{
+	if ( ( SrcBuilding == NULL && SrcVehicle == NULL ) || ( DestBuilding == NULL && DestVehicle == NULL ) ) return;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
+	SDL_Rect scr, dest;
+	bool IncPressed = false;
+	bool DecPressed = false;
+	bool MouseHot = false;
+	int iMaxDestCargo, iDestCargo;
+	int iTransf = 0;
+	SDL_Surface *img;
+	cVehicle *pv = NULL;
+	cBuilding *pb = NULL;
+
+	mouse->SetCursor ( CHand );
+	mouse->draw ( false, buffer );
+	Client->drawMap();
+	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+
+	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+
+	dest.x = 166;
+	dest.y = 159;
+	dest.w = GraphicsData.gfx_transfer->w;
+	dest.h = GraphicsData.gfx_transfer->h;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer, NULL, buffer, &dest );
+
+	// create the images
+	if ( SrcBuilding != NULL )
+	{
+		if ( SrcBuilding->data.is_big ) ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 4, SrcBuilding->typ->img_org->h / 4 );
+		else ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 2, SrcBuilding->typ->img_org->h / 2 );
+
+		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, SrcBuilding->typ->img->w, SrcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+	}
+	else
+	{
+		ScaleSurfaceAdv2 ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], SrcVehicle->typ->img_org[0]->w / 2, SrcVehicle->typ->img_org[0]->h / 2 );
+		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, SrcVehicle->typ->img[0]->w, SrcVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+	}
+
+	SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
+	if ( SrcBuilding != NULL )
+	{
+		SDL_BlitSurface ( SrcBuilding->owner->color, NULL, img, NULL );
+		SDL_BlitSurface ( SrcBuilding->typ->img, NULL, img, NULL );
+	}
+	else
+	{
+		SDL_BlitSurface ( SrcVehicle->owner->color, NULL, img, NULL );
+		SDL_BlitSurface ( SrcVehicle->typ->img[0], NULL, img, NULL );
+	}
+	dest.x = 88 + 166;
+	dest.y = 20 + 159;
+	dest.h = img->h;
+	dest.w = img->w;
+	SDL_BlitSurface ( img, NULL, buffer, &dest );
+	SDL_FreeSurface ( img );
+
+	if ( DestBuilding )
+	{
+		if ( DestBuilding->data.is_big )
+		{
+			ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 4, DestBuilding->typ->img_org->h / 4 );
+			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, DestBuilding->typ->img->w, DestBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( DestBuilding->owner->color, NULL, img, NULL );
+			SDL_BlitSurface ( DestBuilding->typ->img, NULL, img, NULL );
+		}
+		else
+		{
+			ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 2, DestBuilding->typ->img_org->h / 2 );
+
+			if ( DestBuilding->data.has_frames || DestBuilding->data.is_connector )
+			{
+				DestBuilding->typ->img->h = DestBuilding->typ->img->w = 32;
+			}
+
+			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, DestBuilding->typ->img->w, DestBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
+
+			if ( !DestBuilding->data.is_connector )
+			{
+				SDL_BlitSurface ( DestBuilding->owner->color, NULL, img, NULL );
+			}
+			SDL_BlitSurface ( DestBuilding->typ->img, NULL, img, NULL );
+		}
+	}
+	else
+	{
+		ScaleSurfaceAdv2 ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], DestVehicle->typ->img_org[0]->w / 2, DestVehicle->typ->img_org[0]->h / 2 );
+		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, DestVehicle->typ->img[0]->w, DestVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
+		SDL_BlitSurface ( DestVehicle->owner->color, NULL, img, NULL );
+		SDL_BlitSurface ( DestVehicle->typ->img[0], NULL, img, NULL );
+	}
+
+	dest.x = 192 + 166;
+	dest.y = 20 + 159;
+	dest.h = dest.w = 32;
+	SDL_BlitSurface ( img, NULL, buffer, &dest );
+	SDL_FreeSurface ( img );
+
+	// show texts:
+	if ( SrcBuilding ) font->showTextCentered ( 102 + 166, 64 + 159, SrcBuilding->typ->data.name );
+	else font->showTextCentered ( 102 + 166, 64 + 159, SrcVehicle->typ->data.name );
+
+
+	if ( DestBuilding )
+	{
+		font->showTextCentered ( 208 + 166, 64 + 159, DestBuilding->typ->data.name );
+
+		switch ( SrcVehicle->data.can_transport )
+		{
+			case TRANS_METAL:
+				{
+					iMaxDestCargo = DestBuilding->SubBase->MaxMetal;
+					iDestCargo = DestBuilding->SubBase->Metal;
+				}
+				break;
+			case TRANS_OIL:
+				{
+					iMaxDestCargo = DestBuilding->SubBase->MaxOil;
+					iDestCargo = DestBuilding->SubBase->Oil;
+				}
+				break;
+			case TRANS_GOLD:
+				{
+					iMaxDestCargo = DestBuilding->SubBase->MaxGold;
+					iDestCargo = DestBuilding->SubBase->Gold;
+				}
+				break;
+		}
+		iTransf = iMaxDestCargo;
+
+		makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+	}
+	else
+	{
+		font->showTextCentered ( 208 + 166, 64 + 159, DestVehicle->typ->data.name );
+
+		iMaxDestCargo = DestVehicle->data.max_cargo;
+		iDestCargo = DestVehicle->data.cargo;
+		iTransf = iMaxDestCargo;
+
+		if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
+		else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+	}
+	NormalButton btn_cancel( 74 + 166, 125 + 159, "Text~Button~Cancel");
+	NormalButton btn_done(  165 + 166, 125 + 159, "Text~Button~Done");
+	btn_cancel.Draw();
+	btn_done.Draw();
+
+	// Den Buffer anzeigen:
+	SHOW_SCREEN
+	mouse->GetBack ( buffer );
+
+	while ( 1 )
+	{
+		if ( SrcBuilding != NULL && Client->SelectedBuilding == NULL ) break;
+		if ( SrcVehicle != NULL && Client->SelectedVehicle == NULL ) break;
+
+		handleTimer();
+		doGameActions();
+
+		// Events holen:
+		EventHandler->HandleEvents();
+
+		// Die Maus machen:
+		mouse->GetPos();
+
+		b = mouse->GetMouseButton();
+
+		if ( !b ) MouseHot = true;
+
+		if ( !MouseHot ) b = 0;
+
+		x = mouse->x;
+
+		y = mouse->y;
+
+		if ( x != LastMouseX || y != LastMouseY )
+		{
+			mouse->draw ( true, screen );
+		}
+
+		bool const down = b > LastB;
+		bool const up   = b < LastB;
+
+		if ( btn_cancel.CheckClick( x, y, down, up ) ) break;
+
+		if ( btn_done.CheckClick( x, y, down, up ) )
+		{
+			if ( !iTransf ) break;
+
+			if ( SrcBuilding ) sendWantTransfer ( false, SrcBuilding->iID, true, DestVehicle->iID, iTransf, SrcBuilding->data.can_load );
+			else
+			{
+				if ( DestBuilding ) sendWantTransfer ( true, SrcVehicle->iID, false, DestBuilding->iID, iTransf, SrcVehicle->data.can_transport );
+				else sendWantTransfer ( true, SrcVehicle->iID, true, DestVehicle->iID, iTransf, SrcVehicle->data.can_transport );
+			}
+
+			/*if ( pv )
+			{
+				switch ( data.can_load )
+				{
+
+					case TRANS_METAL:
+						owner->base.AddMetal ( SubBase, -Transf );
+						break;
+
+					case TRANS_OIL:
+						owner->base.AddOil ( SubBase, -Transf );
+						break;
+
+					case TRANS_GOLD:
+						owner->base.AddGold ( SubBase, -Transf );
+						break;
+				}
+
+				pv->data.cargo += Transf;
+			}
+			else
+			{
+				if ( data.cargo > Transf )
+				{
+					data.cargo -= Transf;
+				}
+				else
+				{
+					Transf = data.cargo;
+					data.cargo = 0;
+				}
+
+				pb->data.cargo += Transf;
+			}
+
+			ShowDetails();*/
+
+			PlayVoice ( VoiceData.VOITransferDone );
+			break;
+		}
+
+		// Inc-Button:
+		if ( x >= 277 + 166 && x < 277 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !IncPressed )
+		{
+			PlayFX ( SoundData.SNDObjectMenu );
+			scr.x = 257;
+			scr.y = 177;
+			dest.w = scr.w = 19;
+			dest.h = scr.h = 18;
+			dest.x = 277 + 166;
+			dest.y = 88 + 159;
+			iTransf++;
+			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			else
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			}
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+			IncPressed = true;
+		}
+		else
+			if ( !b && IncPressed )
+			{
+				scr.x = 277;
+				scr.y = 88;
+				dest.w = scr.w = 19;
+				dest.h = scr.h = 18;
+				dest.x = 277 + 166;
+				dest.y = 88 + 159;
+				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
+				IncPressed = false;
+			}
+
+		// Dec-Button:
+		if ( x >= 16 + 166 && x < 16 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !DecPressed )
+		{
+			PlayFX ( SoundData.SNDObjectMenu );
+			scr.x = 237;
+			scr.y = 177;
+			dest.w = scr.w = 19;
+			dest.h = scr.h = 18;
+			dest.x = 16 + 166;
+			dest.y = 88 + 159;
+			iTransf--;
+			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			else
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			}
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+			DecPressed = true;
+		}
+		else
+			if ( !b && DecPressed )
+			{
+				scr.x = 16;
+				scr.y = 88;
+				dest.w = scr.w = 19;
+				dest.h = scr.h = 18;
+				dest.x = 16 + 166;
+				dest.y = 88 + 159;
+				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
+				DecPressed = false;
+			}
+
+		// Klick auf den Bar:
+		if ( x >= 44 + 166 && x < 44 + 223 + 166 && y >= 86 + 159 && y < 86 + 20 + 159 && b && !LastB )
+		{
+			PlayFX ( SoundData.SNDObjectMenu );
+			iTransf = Round ( ( x - ( 44 +  166 ) ) * ( iMaxDestCargo / 223.0 ) - iDestCargo );
+			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			else
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			}
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+		}
+
+		LastMouseX = x;
+
+		LastMouseY = y;
+		LastB = b;
+	}
+
+	float fNewZoom = Hud.Zoom / 64.0;
+
+	if ( SrcBuilding != NULL )
+	{
+		ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, ( int ) ( SrcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( SrcBuilding->typ->img_org->h* fNewZoom ) );
+		SrcBuilding->Transfer = false;
+	}
+	else
+	{
+		ScaleSurfaceAdv2 ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], ( int ) ( SrcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) ( SrcVehicle->typ->img_org[0]->h* fNewZoom ) );
+		SrcVehicle->Transfer = false;
+	}
+
+	if ( DestBuilding ) ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, ( int ) ( DestBuilding->typ->img_org->w* fNewZoom ), ( int ) ( DestBuilding->typ->img_org->h* fNewZoom ) );
+	else ScaleSurfaceAdv2 ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], ( int ) ( DestVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( DestVehicle->typ->img_org[0]->h* fNewZoom ) );
+}
+
+void cClient::drawTransBar ( int iLenght, int iType )
+{
+	SDL_Rect scr, dest;
+
+	if ( iLenght < 0 ) iLenght = 0;
+
+	if ( iLenght > 223 ) iLenght = 223;
+
+	scr.x = 44;
+	scr.y = 90;
+	dest.w = scr.w = 223;
+	dest.h = scr.h = 16;
+	dest.x = 44 + 166;
+	dest.y = 90 + 159;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+	scr.x = 156 + ( 223 - iLenght );
+	dest.w = scr.w = 223 - ( 223 - iLenght );
+
+	if ( iType == TRANS_METAL )
+	{
+		scr.y = 256;
+	}
+	else
+		if ( iType == TRANS_OIL )
+		{
+			scr.y = 273;
+		}
+		else
+		{
+			scr.y = 290;
+		}
+
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+}
+
+void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle )
+{
+	int iCargo, iMaxCargo;
+	SDL_Rect scr, dest;
+	string sText;
+
+	if ( SubBase != NULL )
+	{
+		switch ( iType )
+		{
+			case TRANS_METAL:
+				iCargo = SubBase->Metal;
+				iMaxCargo = SubBase->MaxMetal;
+				break;
+
+			case TRANS_OIL:
+				iCargo = SubBase->Oil;
+				iMaxCargo = SubBase->MaxOil;
+				break;
+
+			case TRANS_GOLD:
+				iCargo = SubBase->Gold;
+				iMaxCargo = SubBase->MaxGold;
+				break;
+		}
+	}
+	else if ( Vehicle != NULL )
+	{
+		iCargo = Vehicle->data.cargo;
+		iMaxCargo = Vehicle->data.max_cargo;
+	}
+	else return;
+
+	if ( iCargo - *iTransfer < 0 ) *iTransfer += iCargo - *iTransfer;
+	if ( iDestCargo + *iTransfer < 0 ) *iTransfer -= iDestCargo + *iTransfer;
+	if ( iDestCargo + *iTransfer > iMaxDestCargo ) *iTransfer -= ( iDestCargo + *iTransfer ) - iMaxDestCargo;
+	if ( iCargo - *iTransfer > iMaxCargo ) *iTransfer += ( iCargo - *iTransfer ) - iMaxCargo;
+
+	// Die Nummern machen:
+	scr.x = 4;
+	scr.y = 30;
+	dest.x = 4 + 166;
+	dest.y = 30 + 159;
+	dest.w = scr.w = 78;
+	dest.h = scr.h = 14;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+	sText = iToStr ( iCargo - *iTransfer );
+
+	font->showTextCentered ( 4 + 39 + 166, 30 + 159, sText );
+	scr.x = 229;
+	dest.x = 229 + 166;
+	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+	sText = iToStr ( iDestCargo + *iTransfer );
+
+
+	font->showTextCentered ( 229 + 39 + 166, 30 + 159, sText );
+	scr.x = 141;
+	scr.y = 15;
+	dest.x = 141 + 166;
+	dest.y = 15 + 159;
+	dest.w = scr.w = 29;
+	dest.h = scr.h = 21;
+
+	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+
+	sText = iToStr ( abs ( *iTransfer ) );
+
+	font->showTextCentered ( 155 + 166, 21 + 159, sText );
+
+	// Den Pfeil malen:
+	if ( *iTransfer < 0 )
+	{
+		scr.x = 122;
+		scr.y = 263;
+		dest.x = 143 + 166;
+		dest.y = 44 + 159;
+		dest.w = scr.w = 30;
+		dest.h = scr.h = 16;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	}
+	else
+	{
+		scr.x = 143;
+		scr.y = 44;
+		dest.x = 143 + 166;
+		dest.y = 44 + 159;
+		dest.w = scr.w = 30;
+		dest.h = scr.h = 16;
+		SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
+	}
+
+	drawTransBar ( ( int ) ( 223 * ( float ) ( iDestCargo + *iTransfer ) / iMaxDestCargo ), iType );
 }

@@ -122,6 +122,7 @@ void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBui
 *@param EscapeY Y coordinate to which he wants do move now
 */
 void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
+void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType );
 
 
 #endif // clienteventsH

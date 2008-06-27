@@ -577,6 +577,97 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			addActiveMoveJob ( MJob );
 		}
 		break;
+	case GAME_EV_WANT_TRANSFER:
+		{
+			cVehicle *SrcVehicle = NULL, *DestVehicle = NULL;
+			cBuilding *SrcBuilding = NULL, *DestBuilding = NULL;
+
+			if ( message->popBool() ) SrcVehicle = getVehicleFromID ( message->popInt16() );
+			else SrcBuilding = getBuildingFromID ( message->popInt16() );
+
+			if ( message->popBool() ) DestVehicle = getVehicleFromID ( message->popInt16() );
+			else DestBuilding = getBuildingFromID ( message->popInt16() );
+
+			if ( ( !SrcBuilding && !SrcVehicle ) || ( !DestBuilding && !DestVehicle ) ) break;
+			if ( SrcBuilding && DestBuilding ) break;
+
+			int iTranfer = message->popInt16();
+			int iType = message->popInt16();
+
+			if ( SrcBuilding )
+			{
+				bool bBreakSwitch = false;
+				if ( DestVehicle->data.can_transport != iType ) break;
+				if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
+				switch ( iType )
+				{
+					case TRANS_METAL:
+						{
+							if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
+					case TRANS_OIL:
+						{
+							if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
+					case TRANS_GOLD:
+						{
+							if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
+				}
+				if ( bBreakSwitch ) break;
+				sendSubbaseValues ( SrcBuilding->SubBase, SrcBuilding->owner->Nr );
+				DestVehicle->data.cargo += iTranfer;
+				sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
+			}
+			else
+			{
+				if ( SrcVehicle->data.can_transport != iType ) break;
+				if ( SrcVehicle->data.cargo-iTranfer > SrcVehicle->data.max_cargo || SrcVehicle->data.cargo-iTranfer < 0 ) break;
+				if ( DestBuilding )
+				{
+					bool bBreakSwitch = false;
+					switch ( iType )
+					{
+						case TRANS_METAL:
+							{
+								if ( DestBuilding->SubBase->Metal+iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal+iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) DestBuilding->owner->base.AddMetal ( DestBuilding->SubBase, iTranfer );
+							}
+							break;
+						case TRANS_OIL:
+							{
+								if ( DestBuilding->SubBase->Oil+iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil+iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) DestBuilding->owner->base.AddOil ( DestBuilding->SubBase, iTranfer );
+							}
+							break;
+						case TRANS_GOLD:
+							{
+								if ( DestBuilding->SubBase->Gold+iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold+iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) DestBuilding->owner->base.AddGold ( DestBuilding->SubBase, iTranfer );
+							}
+							break;
+					}
+					if ( bBreakSwitch ) break;
+					sendSubbaseValues ( DestBuilding->SubBase, DestBuilding->owner->Nr );
+				}
+				else
+				{
+					if ( DestVehicle->data.can_transport != iType ) break;
+					if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
+					DestVehicle->data.cargo += iTranfer;
+					sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
+				}
+				SrcVehicle->data.cargo -= iTranfer;
+				sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -1629,6 +1720,21 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
 			Vehicle = Vehicle->next;
+		}
+	}
+	return NULL;
+}
+
+cBuilding *cServer::getBuildingFromID ( int iID )
+{
+	cBuilding *Building;
+	for ( int i = 0; i < PlayerList->iCount; i++ )
+	{
+		Building = PlayerList->Items[i]->BuildingList;
+		while ( Building )
+		{
+			if ( Building->iID == iID ) return Building;
+			Building = Building->next;
 		}
 	}
 	return NULL;
