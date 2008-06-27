@@ -3803,7 +3803,7 @@ void cClient::handleMoveJobs ()
 					{
 						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
 						{
-							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, -1, Vehicle->PosX+Vehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
+							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, -1, Vehicle->PosX+Vehicle->PosY*Map->size, true, Vehicle->BandX+Vehicle->BandY*Map->size );
 						}
 						else
 						{
