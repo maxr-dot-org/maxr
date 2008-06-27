@@ -361,9 +361,26 @@ private:
 	*@param Vehicle The vehicle that will continue its path
 	*/
 	void continuePathBuilding ( cVehicle *Vehicle );
+	/**
+	* gets the subbase with the id
+	*@author alzi alias DoctorDeath
+	*@param iID Id of the subbase
+	*/
 	sSubBase *getSubBaseFromID ( int iID );
+	/**
+	* displays the tranfer dialog.
+	*@author alzi alias DoctorDeath
+	*/
 	void showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuilding *DestBuilding, cVehicle *DestVehicle );
+	/**
+	* draws the transferbars on the transfer dialog.
+	*@author alzi alias DoctorDeath
+	*/
 	void drawTransBar ( int iLenght, int iType );
+	/**
+	* handles the transferbars.
+	*@author alzi alias DoctorDeath
+	*/
 	void makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle );
 public:
 	/** framecounter for the animations */

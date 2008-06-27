@@ -369,6 +369,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_SUBBASE_BUILDINGS");
 	case GAME_EV_SUBBASE_VALUES:
 		return string("GAME_EV_SUBBASE_VALUES");
+	case GAME_EV_WANT_TRANSFER:
+		return string("GAME_EV_WANT_TRANSFER");
 	default:
 		return iToStr( iType );
 	}

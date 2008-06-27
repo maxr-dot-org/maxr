@@ -37,7 +37,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
-	GAME_EV_WANT_TRANSFER			//
+	GAME_EV_WANT_TRANSFER			// information about a resource transfer
 };
 
 /**
@@ -143,10 +143,30 @@ void sendResources(  cVehicle *Vehicle, cMap *Map );
 *@author alzi alias DoctorDeath
 */
 void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
-
+/**
+* send information about a new subbase.
+*@author alzi alias DoctorDeath
+*@param SubBase the new subbase
+*/
 void sendNewSubbase ( sSubBase *SubBase, int iPlayer );
+/**
+* sends the client a message that he has to delete this subbase.
+*@author alzi alias DoctorDeath
+*@param SubBase the subbase that should be deleted
+*/
 void sendDeleteSubbase ( sSubBase *SubBase, int iPlayer );
+/**
+* sends information of all buildings or just one new building that should be added to a subbase.
+*@author alzi alias DoctorDeath
+*@param Building if only one building should be added to the subbase, this parameter has to be this building.
+*@param SubBase the subbase to which the buildings will be added. If Building == NULL then all buildings of the subbase will be send
+*/
 void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlayer );
+/**
+* send the values if a subbase.
+*@author alzi alias DoctorDeath
+*@param SubBase the subbase which values should be send
+*/
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer );
 
 #endif // servereventsH

@@ -46,7 +46,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_NEW_SUBBASE,			// a new subbase
 	GAME_EV_DELETE_SUBBASE,			// delete a subbase
-	GAME_EV_SUBBASE_BUILDINGS,		//
+	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES			// the values of a subbase
 };
 
@@ -122,6 +122,16 @@ void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBui
 *@param EscapeY Y coordinate to which he wants do move now
 */
 void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
+/**
+* sends that the client wants to tranfer resources
+*@author alzi alias DoctorDeath
+*@param bSrcVehicle true if the source unit is a vehicle
+*@param iSrcID ID of the source unit
+*@param bDestVehicle true if the destination unit is a vehicleow
+*@param iDestID ID of the destination unit
+*@param iTransferValue value of the transfer
+*@param iType Type of resources which will be transfered. ( See: NEED_METAL, NEED_OIL or NEED_GOLD )
+*/
 void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType );
 
 
