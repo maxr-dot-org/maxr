@@ -433,7 +433,7 @@ void sendBuildList ( cBuilding *Building )
 	message->pushBool ( Building->RepeatBuild );
 	message->pushInt16 ( Building->BuildSpeed );
 	message->pushInt16 ( Building->MetalPerRound );
-	for ( int i = 0; i < Building->BuildList->iCount; i++ )
+	for ( int i = Building->BuildList->iCount-1; i >= 0; i-- )
 	{
 		message->pushInt16 ( Building->BuildList->Items[i]->metall_remaining );
 		message->pushInt16 ( Building->BuildList->Items[i]->typ->nr );
