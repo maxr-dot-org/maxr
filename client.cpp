@@ -4253,19 +4253,19 @@ void cClient::continuePathBuilding ( cVehicle *Vehicle )
 	{
 		if ( Vehicle->BandX < Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX - 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
 		{
-			sendEndBuilding ( SelectedVehicle, Vehicle->PosX-1, Vehicle->PosY );
+			sendEndBuilding ( Vehicle, Vehicle->PosX-1, Vehicle->PosY );
 		}
 		else if ( Vehicle->BandX > Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX + 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
 		{
-			sendEndBuilding ( SelectedVehicle, Vehicle->PosX+1, Vehicle->PosY );
+			sendEndBuilding ( Vehicle, Vehicle->PosX+1, Vehicle->PosY );
 		}
 		else if ( Vehicle->BandY < Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY - 1 ) *Map->size, Vehicle->BuildingTyp ) )
 		{
-			sendEndBuilding ( SelectedVehicle, Vehicle->PosX, Vehicle->PosY-1 );
+			sendEndBuilding ( Vehicle, Vehicle->PosX, Vehicle->PosY-1 );
 		}
 		else if ( Vehicle->BandY > Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY + 1 ) *Map->size, Vehicle->BuildingTyp ) )
 		{
-			sendEndBuilding ( SelectedVehicle, Vehicle->PosX, Vehicle->PosY+1 );
+			sendEndBuilding ( Vehicle, Vehicle->PosX, Vehicle->PosY+1 );
 		}
 		else
 		{
