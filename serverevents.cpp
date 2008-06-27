@@ -426,3 +426,19 @@ void sendSubbaseValues ( sSubBase *SubBase, int iPlayer )
 	message->pushInt16 ( SubBase->iID );
 	Server->sendNetMessage( message, iPlayer );
 }
+
+void sendBuildList ( cBuilding *Building )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_BUILDLIST );
+	message->pushBool ( Building->RepeatBuild );
+	message->pushInt16 ( Building->BuildSpeed );
+	message->pushInt16 ( Building->MetalPerRound );
+	for ( int i = 0; i < Building->BuildList->iCount; i++ )
+	{
+		message->pushInt16 ( Building->BuildList->Items[i]->metall_remaining );
+		message->pushInt16 ( Building->BuildList->Items[i]->typ->nr );
+	}
+	message->pushInt16 ( Building->BuildList->iCount );
+	message->pushInt16 ( Building->iID );
+	Server->sendNetMessage( message, Building->owner->Nr );
+}

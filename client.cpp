@@ -894,7 +894,9 @@ int cClient::checkUser()
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount )
 		{
-			// TODO: Building vehicle finished
+			int iX, iY;
+			mouse->GetKachel ( &iX, &iY );
+			sendWantExitFinishedVehicle ( SelectedBuilding, iX, iY );
 		}
 		else if ( mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
@@ -3442,6 +3444,30 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			SubBase->EnergyProd = message->popInt16();
 
 			if ( SelectedBuilding ) SelectedBuilding->ShowDetails();
+		}
+		break;
+	case GAME_EV_BUILDLIST:
+		{
+			cBuilding *Building = getBuildingFromID ( message->popInt16() );
+			if ( Building == NULL ) break;
+
+			while ( Building->BuildList->iCount )
+			{
+				delete Building->BuildList->Items[0];
+				Building->BuildList->Delete( 0 );
+			}
+			int iCount = message->popInt16();
+			for ( int i = 0; i < iCount; i++ )
+			{
+				sBuildList *BuildListItem = new sBuildList;
+				BuildListItem->typ = &UnitsData.vehicle[message->popInt16()];
+				BuildListItem->metall_remaining = message->popInt16();
+				Building->BuildList->Add ( BuildListItem );
+			}
+
+			Building->MetalPerRound = message->popInt16();
+			Building->BuildSpeed = message->popInt16();
+			Building->RepeatBuild = message->popBool();
 		}
 		break;
 	default:

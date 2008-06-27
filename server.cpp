@@ -668,6 +668,126 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_BUILDLIST:
+		{
+			int iTurboBuildRounds[3], iTurboBuildCosts[3];
+			bool bLand = false, bWater = false;
+			int iX, iY;
+
+			cBuilding *Building = getBuildingFromID ( message->popInt16() );
+			if ( Building == NULL ) break;
+
+			// check whether the building has water and land fields around it
+			iX = Building->PosX - 2;
+			iY = Building->PosY - 1;
+			for ( int i = 0; i < 12; i++ )
+			{
+				if ( i == 4 ||  i == 6 || i == 8 )
+				{
+					iX -= 3;
+					iY += 1;
+				}
+				else
+				{
+					if ( i == 5 || i == 7 ) iX += 3;
+					else iX++;
+				}
+
+				int iOff = iX + iY * Map->size;
+
+				if ( !Map->IsWater ( iOff, true, true ) || ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_bridge || Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_road ) ) ) bLand = true;
+				else bWater = true;
+			}
+
+			// reset building status
+			if ( Building->IsWorking )
+			{
+				Building->ServerStopWork ( false );
+			}
+
+			int iBuildSpeed = message->popInt16();
+			if ( iBuildSpeed == 0 ) Building->MetalPerRound =  1 * Building->data.iNeeds_Metal;
+			if ( iBuildSpeed == 1 ) Building->MetalPerRound =  4 * Building->data.iNeeds_Metal;
+			if ( iBuildSpeed == 2 ) Building->MetalPerRound = 12 * Building->data.iNeeds_Metal;
+
+			while ( Building->BuildList->iCount )
+			{
+				delete Building->BuildList->Items[0];
+				Building->BuildList->Delete( 0 );
+			}
+
+			int iCount = message->popInt16();
+			for ( int i = 0; i < iCount; i++ )
+			{
+				int iType = message->popInt16();
+
+				// check whether this building can build this unit
+				if ( UnitsData.vehicle[iType].data.can_drive == DRIVE_SEA && !bWater )
+					continue;
+				else if ( UnitsData.vehicle[iType].data.can_drive == DRIVE_LAND && !bLand )
+					continue;
+
+				if ( Building->data.can_build == BUILD_AIR && UnitsData.vehicle[iType].data.can_drive != DRIVE_AIR )
+					continue;
+				else if ( Building->data.can_build == BUILD_BIG && !UnitsData.vehicle[iType].data.build_by_big )
+					continue;
+				else if ( Building->data.can_build == BUILD_SEA && UnitsData.vehicle[iType].data.can_drive != DRIVE_SEA )
+					continue;
+				else if ( Building->data.can_build == BUILD_SMALL && ( UnitsData.vehicle[iType].data.can_drive == DRIVE_AIR || UnitsData.vehicle[iType].data.can_drive == DRIVE_SEA || UnitsData.vehicle[iType].data.build_by_big || UnitsData.vehicle[iType].data.is_human ) )
+					continue;
+				else if ( Building->data.can_build == BUILD_MAN && !UnitsData.vehicle[iType].data.is_human )
+					continue;
+
+				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Building->owner->VehicleData[iType].iBuilt_Costs );
+
+				sBuildList *BuildListItem = new sBuildList;
+				BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
+				BuildListItem->typ = &UnitsData.vehicle[iType];
+
+				Building->BuildList->Add( BuildListItem );
+			}
+
+			
+			if ( Building->BuildList->iCount > 0 )
+			{
+				Building->RepeatBuild = message->popBool();
+				Building->BuildSpeed = iBuildSpeed;
+				Building->ServerStartWork ();
+			}
+			sendBuildList ( Building );
+		}
+		break;
+	case GAME_EV_WANT_EXIT_FIN_VEH:
+		{
+			sBuildList *BuildingListItem;
+
+			cBuilding *Building = getBuildingFromID ( message->popInt16() );
+			if ( Building == NULL ) break;
+
+			int iX = message->popInt16();
+			int iY = message->popInt16();
+
+			BuildingListItem = Building->BuildList->Items[0];
+			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
+			if ( Building->RepeatBuild )
+			{
+				Building->BuildList->Delete( 0 );
+				int iTurboBuildCosts[3];
+				int iTurboBuildRounds[3];
+				Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.iBuilt_Costs);
+				BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
+				Building->BuildList->Add( BuildingListItem );
+				Building->ServerStartWork();
+			}
+			else
+			{
+				delete BuildingListItem;
+				Building->BuildList->Delete( 0 );
+				if ( Building->BuildList->iCount > 0) Building->ServerStartWork();
+			}
+			sendBuildList ( Building );
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -808,7 +928,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 		sendResources( AddedVehicle, Map );
 		AddedVehicle->doSurvey();
 	}
-	if ( !bInit ) AddedVehicle->InWachRange();
+	//if ( !bInit ) AddedVehicle->InWachRange();
 
 	// if this is not a commando unit the vehicle doesn't need to be detected
 	if ( !AddedVehicle->data.is_commando )

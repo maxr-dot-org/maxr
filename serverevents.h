@@ -37,7 +37,9 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
-	GAME_EV_WANT_TRANSFER			// information about a resource transfer
+	GAME_EV_WANT_TRANSFER,			// information about a resource transfer
+	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
+	GAME_EV_WANT_EXIT_FIN_VEH		// 
 };
 
 /**
@@ -168,5 +170,6 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 *@param SubBase the subbase which values should be send
 */
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer );
+void sendBuildList ( cBuilding *Building );
 
 #endif // servereventsH

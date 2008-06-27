@@ -20,6 +20,7 @@
 #include "map.h"
 #include "game.h"
 #include "serverevents.h"
+#include "server.h"
 
 
 sSubBase::sSubBase( int iNextID ) :
@@ -464,7 +465,7 @@ void cBase::handleTurnend ()
 				cBuilding *Building;
 				Building = SubBase->buildings.Items[k];
 				if ( !Building->data.energy_prod ) continue;
-				//Building->StopWork ( true );
+				Building->ServerStopWork ( true );
 				if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 ) continue;
 				break;
 			}
@@ -479,7 +480,7 @@ void cBase::handleTurnend ()
 				cBuilding *Building;
 				Building = SubBase->buildings.Items[k];
 				if ( !Building->data.energy_need ) continue;
-				//Building->StopWork ( true );
+				Building->ServerStopWork ( true );
 				if ( SubBase->EnergyNeed>SubBase->EnergyProd ) continue;
 				break;
 			}
@@ -494,7 +495,7 @@ void cBase::handleTurnend ()
 				cBuilding *Building;
 				Building = SubBase->buildings.Items[k];
 				if ( !Building->data.metal_need ) continue;
-				//Building->StopWork ( true );
+				Building->ServerStopWork ( true );
 				if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) < 0 ) continue;
 				break;
 			}
@@ -510,7 +511,7 @@ void cBase::handleTurnend ()
 				cBuilding *Building;
 				Building = SubBase->buildings.Items[k];
 				if ( !Building->data.gold_need ) continue;
-				//Building->StopWork ( true );
+				Building->ServerStopWork ( true );
 				if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 ) continue;
 				break;
 			}
@@ -528,7 +529,7 @@ void cBase::handleTurnend ()
 				cBuilding *Building;
 				Building = SubBase->buildings.Items[k];
 				if ( !Building->data.human_need ) continue;
-				//Building->StopWork ( true );
+				Building->ServerStopWork ( true );
 				if ( SubBase->HumanNeed > SubBase->HumanProd ) continue;
 				break;
 			}
@@ -541,12 +542,11 @@ void cBase::handleTurnend ()
 		}*/
 
 		// make repairs/build/reload
-		/*for ( unsigned int k = 0 ;k < sb->buildings.iCount && sb->Metal; k++ )
+		for ( unsigned int k = 0 ;k < SubBase->buildings.iCount && SubBase->Metal; k++ )
 		{
-			cBuilding *b;
-			b=sb->buildings.Items[k];
+			cBuilding *Building = SubBase->buildings.Items[k];
 			// Reparatur:
-			if ( b->data.hit_points<b->data.max_hit_points&&sb->Metal>0 )
+			/*if ( b->data.hit_points<b->data.max_hit_points&&sb->Metal>0 )
 			{
 				if ( b->data.max_hit_points/10>2 )
 				{
@@ -567,30 +567,33 @@ void cBase::handleTurnend ()
 			{
 				b->data.ammo=b->data.max_ammo;
 				AddMetal ( sb,-2 );
-			}
+			}*/
+
 			// Bauen:
-			if ( b->IsWorking&&b->data.can_build&&b->BuildList->iCount )
+			if ( Building->IsWorking && Building->data.can_build && Building->BuildList->iCount )
 			{
 				sBuildList *BuildListItem;
-				BuildListItem=b->BuildList->Items[0];
+				BuildListItem = Building->BuildList->Items[0];
 				if ( BuildListItem->metall_remaining > 0 )
 				{
 					//in this block the metal consumption of the factory in the next round can change
 					//so we first substract the old value from MetalNeed and then add the new one, to hold the base up to date
-					sb->MetalNeed -= min( b->MetalPerRound, BuildListItem->metall_remaining);
+					SubBase->MetalNeed -= min( Building->MetalPerRound, BuildListItem->metall_remaining);
 
-					BuildListItem->metall_remaining -= min( b->MetalPerRound, BuildListItem->metall_remaining);
-					if (BuildListItem->metall_remaining < 0) BuildListItem->metall_remaining = 0;
+					BuildListItem->metall_remaining -= min( Building->MetalPerRound, BuildListItem->metall_remaining);
+					if ( BuildListItem->metall_remaining < 0 ) BuildListItem->metall_remaining = 0;
 
-					sb->MetalNeed += min( b->MetalPerRound, BuildListItem->metall_remaining);
+					SubBase->MetalNeed += min( Building->MetalPerRound, BuildListItem->metall_remaining );
+					sendBuildList ( Building );
+					sendSubbaseValues ( SubBase, Building->owner->Nr );
 				}
-				if ( BuildListItem->metall_remaining<=0 )
+				if ( BuildListItem->metall_remaining <= 0 )
 				{
-					if( b->owner==game->ActivePlayer ) game->engine->AddReport(BuildListItem->typ->data.name,true);
-					//b->StopWork ( false );
+					Server->addReport ( BuildListItem->typ->data.name, true, Building->owner->Nr );
+					Building->ServerStopWork ( false );
 				}
 			}
-		}*/
+		}
 	}
 }
 

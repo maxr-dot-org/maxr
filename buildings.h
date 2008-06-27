@@ -69,6 +69,20 @@ enum eSymbols {SSpeed,SHits,SAmmo,SMetal,SEnergy,SShots,SOil,SGold,STrans,SHuman
 enum eSymbolsBig {SBSpeed,SBHits,SBAmmo,SBAttack,SBShots,SBRange,SBArmor,SBScan,SBMetal,SBOil,SBGold,SBEnergy,SBHuman};
 #endif
 
+struct sBuildStruct
+{
+public:
+	sBuildStruct(SDL_Surface* const sf_, int const id_, int const iRemainingMetal_ = -1) :
+		sf(sf_),
+		id(id_),
+		iRemainingMetal(iRemainingMetal_)
+	{}
+
+	SDL_Surface *sf;
+	int id;
+	int iRemainingMetal;
+};
+
 // Struktur für die Bauliste:
 struct sBuildList{
   struct sVehicle *typ;

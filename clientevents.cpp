@@ -147,3 +147,26 @@ void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDe
 	message->pushBool ( bSrcVehicle );
 	Client->sendNetMessage( message );
 }
+
+void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, bool bRepeat )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILDLIST );
+	message->pushBool ( bRepeat );
+	for ( unsigned int i = 0; i < BuildList->iCount; i++ )
+	{
+		message->pushInt16 ( BuildList->Items[i]->id );
+	}
+	message->pushInt16 ( BuildList->iCount );
+	message->pushInt16 ( Building->BuildSpeed );
+	message->pushInt16 ( Building->iID );
+	Client->sendNetMessage( message );
+}
+
+void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_EXIT_FIN_VEH );
+	message->pushInt16 ( iY );
+	message->pushInt16 ( iX );
+	message->pushInt16 ( Building->iID );
+	Client->sendNetMessage( message );
+}

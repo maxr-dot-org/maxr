@@ -2930,7 +2930,7 @@ int cVehicle::CalcHelth ( int damage )
 }
 
 // Struktur für die Build-List:
-
+/*
 struct sBuildStruct
 {
 public:
@@ -2941,7 +2941,7 @@ public:
 
 	SDL_Surface* const sf;
 	int          const id;
-};
+};*/
 
 // Zeigt das Build-Menü an:
 void cVehicle::ShowBuildMenu ( void )

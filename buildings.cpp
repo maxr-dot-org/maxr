@@ -6346,22 +6346,6 @@ void cBuilding::RotateTo ( int Dir )
 			dir -= 8;
 }
 
-// Struktur für die Build-List:
-
-struct sBuildStruct
-{
-public:
-	sBuildStruct(SDL_Surface* const sf_, int const id_, int const iRemainingMetal_ = -1) :
-		sf(sf_),
-		id(id_),
-		iRemainingMetal(iRemainingMetal_)
-	{}
-
-	SDL_Surface *sf;
-	int id;
-	int iRemainingMetal;
-};
-
 #include "pcx.h"
 // Zeigt das Build-Menü an:
 void cBuilding::ShowBuildMenu ( void )
@@ -6831,59 +6815,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 		if (btn_done.CheckClick(x, y, down, up))
 		{
-			//perform all changes
-
-			//first set the metal consumption of the factory
-			if ( IsWorking )
-			{
-				//StopWork ( false );
-			}
-
-			if ( BuildSpeed == 0 )
-				MetalPerRound =  1 * data.iNeeds_Metal;
-
-			if ( BuildSpeed == 1 )
-				MetalPerRound =  4 * data.iNeeds_Metal;
-
-			if ( BuildSpeed == 2 )
-				MetalPerRound = 12 * data.iNeeds_Metal;
-
-
-			//delete old BuildList
-			while ( BuildList->iCount )
-			{
-				sBuildList *ptr;
-				ptr = BuildList->Items[0];
-				delete ptr;
-				BuildList->Delete( 0 );
-			}
-
-			//calculate actual costs of the vehicles
-			//and add is to the BuildList
-			for ( int counter = 0; counter < to_build.iCount; counter++ )
-			{
-				sBuildStruct *bs = to_build.Items[counter];
-
-				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[bs->id].iBuilt_Costs, bs->iRemainingMetal );
-
-				sBuildList *bl = new sBuildList;
-				bl->metall_remaining = iTurboBuildCosts[BuildSpeed];
-				bl->typ = &UnitsData.vehicle[bs->id];
-
-				BuildList->Add( bl );
-			}
-
+			// send build list to server
 			this->BuildSpeed = BuildSpeed;
-
-			RepeatBuild = Wiederholen;
-
-			//start facrory, if there is something in the build queue
-
-			if ( BuildList->iCount > 0 )
-			{
-				//StartWork();
-			}
-
+			sendWantBuildList ( this, &to_build, Wiederholen );
 			break;
 		}
 
@@ -7779,7 +7713,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			//ShowBuildMenu();
+			ShowBuildMenu();
 			return;
 		}
 
