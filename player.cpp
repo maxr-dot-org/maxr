@@ -192,29 +192,27 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 }
 
 // Fügt ein Building in die Listes des Spielser ein:
-cBuilding *cPlayer::AddBuilding ( int posx,int posy,sBuilding *b )
+cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 {
-	cBuilding *n;
+	cBuilding *Building;
 
-	n=new cBuilding ( b,this,&base );
-	n->PosX=posx;
-	n->PosY=posy;
-	n->prev=NULL;
-	if ( BuildingList!=NULL )
+	Building = new cBuilding ( b, this, &base );
+	Building->PosX = posx;
+	Building->PosY = posy;
+	Building->prev = NULL;
+	if ( BuildingList != NULL )
 	{
-		BuildingList->prev=n;
+		BuildingList->prev = Building;
 	}
-	n->next=BuildingList;
-	BuildingList=n;
-	n->GenerateName();
-	if ( n->data.is_mine ) n->CheckRessourceProd();
-	if ( n->data.scan )
+	Building->next = BuildingList;
+	BuildingList = Building;
+	Building->GenerateName();
+	if ( Building->data.scan )
 	{
-		if ( n->data.is_big ) drawSpecialCircleBig ( n->PosX,n->PosY,n->data.scan,ScanMap );
-		else drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+		if ( Building->data.is_big ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap );
+		else drawSpecialCircle ( Building->PosX, Building->PosY, Building->data.scan, ScanMap );
 	}
-	if ( n->data.can_attack ) AddWachpostenB ( n );
-	return n;
+	return Building;
 }
 
 // Fügt einen Wachposten ein:

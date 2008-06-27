@@ -143,4 +143,9 @@ void sendResources(  cVehicle *Vehicle, cMap *Map );
 */
 void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
 
+void sendNewSubbase ( sSubBase *SubBase, int iPlayer );
+void sendDeleteSubbase ( sSubBase *SubBase, int iPlayer );
+void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlayer );
+void sendSubbaseValues ( sSubBase *SubBase, int iPlayer );
+
 #endif // servereventsH

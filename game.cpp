@@ -4106,7 +4106,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	ShowOK ( stmp,true );
 	if ( HotSeatPlayer!=0 )
 	{
-		ActivePlayer->base.Rundenende();
+//		ActivePlayer->base.Rundenende();
 		ActivePlayer->DoResearch();
 		if ( SelectedVehicle ) SelectedVehicle->ShowDetails();
 		else if ( SelectedBuilding ) SelectedBuilding->ShowDetails();

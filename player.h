@@ -136,8 +136,8 @@ public:
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map );
 
 private:
-  cVehicle *AddVehicle(int posx,int posy,sVehicle *v);
-  cBuilding *AddBuilding(int posx,int posy,sBuilding *b);
+  cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
+  cBuilding *addBuilding( int posx, int posy, sBuilding *b );
 };
 
 #endif

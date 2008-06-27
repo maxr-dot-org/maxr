@@ -361,6 +361,7 @@ private:
 	*@param Vehicle The vehicle that will continue its path
 	*/
 	void continuePathBuilding ( cVehicle *Vehicle );
+	sSubBase *getSubBaseFromID ( int iID );
 public:
 	/** framecounter for the animations */
 	unsigned int iFrame;

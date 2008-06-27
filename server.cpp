@@ -444,9 +444,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			iBuildSpeed = message->popInt16();
 			iBuildOff = message->popInt32();
 
-			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
-			calcBuildRoundsAndCosts ( Vehicle, iBuildingType, iTurboBuildRounds, iTurboBuildCosts );
-
 			if ( Data->is_big )
 			{
 				if ( Vehicle->data.can_build != BUILD_BIG ) break;
@@ -480,16 +477,29 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 			}
 
-			Vehicle->IsBuilding = true;
 			Vehicle->BuildingTyp = iBuildingType;
-			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 			Vehicle->BuildPath = message->popBool();
 			iPathOff = message->popInt32();
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
+
+			if ( iBuildSpeed == -1 && Vehicle->BuildPath )
+			{
+				Vehicle->BuildCosts = Vehicle->BuildCostsStart;
+				Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
+			}
+			else
+			{
+				if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
+				calcBuildRoundsAndCosts ( Vehicle, iBuildingType, iTurboBuildRounds, iTurboBuildCosts );
+
+				Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
+				Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
+				Vehicle->BuildCostsStart = Vehicle->BuildCosts;
+				Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
+			}
+
+			Vehicle->IsBuilding = true;
 
 			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
 			{
@@ -650,7 +660,6 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 						addUnit(iX + k + 1, iY + i,     &UnitsData.building[BNrMine],     Player, true);
 						Building = Map->GO[iX+k+ ( iY+i ) *Map->size].top;
 						Player->base.AddOil ( Building->SubBase, 4 );
-						// TODO: send message that oil should be added here
 						break;
 					}
 				}
@@ -726,7 +735,10 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 {
 	cBuilding *AddedBuilding;
 	// generate the building:
-	AddedBuilding = Player->AddBuilding ( iPosX, iPosY, Building );
+	AddedBuilding = Player->addBuilding ( iPosX, iPosY, Building );
+	if ( AddedBuilding->data.is_mine ) AddedBuilding->CheckRessourceProd();
+	//if ( AddedBuilding->data.can_attack ) Player->AddWachpostenB ( AddedBuilding );
+
 	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
 	// place the building:
@@ -795,9 +807,6 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 		}
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
-	// intigrate the building to the base:
-	Player->base.AddBuilding ( AddedBuilding );
-
 	// if this is not an explode mine the building doesn't need to be detected
 	if ( !AddedBuilding->data.is_expl_mine )
 	{
@@ -808,6 +817,8 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	}
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
+	// intigrate the building to the base:
+	Player->base.AddBuilding ( AddedBuilding );
 }
 
 void cServer::deleteBuilding( cBuilding *Building )
@@ -1077,7 +1088,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 {
 	cPlayer *CallerPlayer = getPlayerFromNumber ( iPlayerNum );
 	// reload all buildings
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 	{
 		cBuilding *Building;
 		cPlayer *Player;
@@ -1091,7 +1102,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				Building->Disabled--;
 				if ( Building->Disabled )
 				{
-					for ( int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
+					for ( unsigned int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 					{
 						sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
 					}
@@ -1103,7 +1114,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			}
 			if ( Building->data.can_attack && bChangeTurn && Building->refreshData() )
 			{
-				for ( int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
+				for ( unsigned int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 				{
 					sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
 				}
@@ -1114,7 +1125,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	}
 
 	// reload all vehicles
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 	{
 		cVehicle *Vehicle;
 		cPlayer *Player;
@@ -1128,7 +1139,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				Vehicle->Disabled--;
 				if ( Vehicle->Disabled )
 				{
-					for ( int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
+					for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
 					{
 						sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[k] );
 					}
@@ -1141,7 +1152,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 
 			if ( bChangeTurn && Vehicle->refreshData() )
 			{
-				for ( int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
+				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
 				{
 					sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[k] );
 				}
@@ -1153,7 +1164,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 		}
 	}
 	// Gun'em down:
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 	{
 		cVehicle *Vehicle;
 		cPlayer *Player;
@@ -1169,8 +1180,11 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 
 	// TODO: implement these things
 
-	// produce resources:
-	//game->ActivePlayer->base->Rundenende();
+	// produce resources
+	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
+	{
+		PlayerList->Items[i]->base.handleTurnend();
+	}
 
 	// do research:
 	//game->ActivePlayer->DoResearch();

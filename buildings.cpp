@@ -28,6 +28,7 @@
 #include "events.h"
 #include "serverevents.h"
 #include "client.h"
+#include "server.h"
 
 
 // Struktur für die Upgrade-List:
@@ -88,9 +89,13 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	AttackMode = false;
 	Transfer = false;
 	BaseN = false;
+	BaseBN = false;
 	BaseE = false;
+	BaseBE = false;
 	BaseS = false;
+	BaseBS = false;
 	BaseW = false;
+	BaseBW = false;
 	Attacking = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
@@ -5391,72 +5396,72 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 void cBuilding::CheckRessourceProd ( void )
 {
 	int pos, max_cap;
-	pos = PosX + PosY * Client->Map->size;
+	pos = PosX + PosY * Server->Map->size;
 
-	if ( Client->Map->Resources[pos].typ == RES_METAL )
+	if ( Server->Map->Resources[pos].typ == RES_METAL )
 	{
-		MaxMetalProd += Client->Map->Resources[pos].value;
+		MaxMetalProd += Server->Map->Resources[pos].value;
 	}
 	else
-		if ( Client->Map->Resources[pos].typ == RES_OIL )
+		if ( Server->Map->Resources[pos].typ == RES_OIL )
 		{
-			MaxOilProd += Client->Map->Resources[pos].value;
+			MaxOilProd += Server->Map->Resources[pos].value;
 		}
 		else
-			if ( Client->Map->Resources[pos].typ == RES_GOLD )
+			if ( Server->Map->Resources[pos].typ == RES_GOLD )
 			{
-				MaxGoldProd += Client->Map->Resources[pos].value;
+				MaxGoldProd += Server->Map->Resources[pos].value;
 			}
 
 	pos++;
 
-	if ( Client->Map->Resources[pos].typ == RES_METAL )
+	if ( Server->Map->Resources[pos].typ == RES_METAL )
 	{
-		MaxMetalProd += Client->Map->Resources[pos].value;
+		MaxMetalProd += Server->Map->Resources[pos].value;
 	}
 	else
-		if ( Client->Map->Resources[pos].typ == RES_OIL )
+		if ( Server->Map->Resources[pos].typ == RES_OIL )
 		{
-			MaxOilProd += Client->Map->Resources[pos].value;
+			MaxOilProd += Server->Map->Resources[pos].value;
 		}
 		else
-			if ( Client->Map->Resources[pos].typ == RES_GOLD )
+			if ( Server->Map->Resources[pos].typ == RES_GOLD )
 			{
-				MaxGoldProd += Client->Map->Resources[pos].value;
+				MaxGoldProd += Server->Map->Resources[pos].value;
 			}
 
-	pos += Client->Map->size;
+	pos += Server->Map->size;
 
-	if ( Client->Map->Resources[pos].typ == RES_METAL )
+	if ( Server->Map->Resources[pos].typ == RES_METAL )
 	{
-		MaxMetalProd += Client->Map->Resources[pos].value;
+		MaxMetalProd += Server->Map->Resources[pos].value;
 	}
 	else
-		if ( Client->Map->Resources[pos].typ == RES_OIL )
+		if ( Server->Map->Resources[pos].typ == RES_OIL )
 		{
-			MaxOilProd += Client->Map->Resources[pos].value;
+			MaxOilProd += Server->Map->Resources[pos].value;
 		}
 		else
-			if ( Client->Map->Resources[pos].typ == RES_GOLD )
+			if ( Server->Map->Resources[pos].typ == RES_GOLD )
 			{
-				MaxGoldProd += Client->Map->Resources[pos].value;
+				MaxGoldProd += Server->Map->Resources[pos].value;
 			}
 
 	pos--;
 
-	if ( Client->Map->Resources[pos].typ == RES_METAL )
+	if ( Server->Map->Resources[pos].typ == RES_METAL )
 	{
-		MaxMetalProd += Client->Map->Resources[pos].value;
+		MaxMetalProd += Server->Map->Resources[pos].value;
 	}
 	else
-		if ( Client->Map->Resources[pos].typ == RES_OIL )
+		if ( Server->Map->Resources[pos].typ == RES_OIL )
 		{
-			MaxOilProd += Client->Map->Resources[pos].value;
+			MaxOilProd += Server->Map->Resources[pos].value;
 		}
 		else
-			if ( Client->Map->Resources[pos].typ == RES_GOLD )
+			if ( Server->Map->Resources[pos].typ == RES_GOLD )
 			{
-				MaxGoldProd += Client->Map->Resources[pos].value;
+				MaxGoldProd += Server->Map->Resources[pos].value;
 			}
 
 	if ( data.is_alien )

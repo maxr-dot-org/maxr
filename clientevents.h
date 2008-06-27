@@ -43,7 +43,11 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_ATTACKJOB_LOCK_TARGET,	// prepares a mapsquare for beeing attacked
 	GAME_EV_ATTACKJOB_FIRE,			// plays the muzzle flash on a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
-	GAME_EV_BUILD_ANSWER			// the answer of the server to a build request of a client
+	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
+	GAME_EV_NEW_SUBBASE,			// a new subbase
+	GAME_EV_DELETE_SUBBASE,			// delete a subbase
+	GAME_EV_SUBBASE_BUILDINGS,		//
+	GAME_EV_SUBBASE_VALUES			// the values of a subbase
 };
 
 enum CHAT_MESSAGE_TYPES

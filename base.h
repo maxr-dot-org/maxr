@@ -29,12 +29,13 @@ class cMap;
 // Die SubBase Struktur //////////////////////////////////////////////////////
 struct sSubBase{
 public:
-	sSubBase();
+	sSubBase( int iNextID );
 	~sSubBase();
 
 public:
   cList<cBuilding*> buildings;
 
+  int iID;
   int MaxMetal;
   int Metal;
   int MaxOil;
@@ -70,6 +71,7 @@ public:
   ~cBase(void);
 
   cPlayer *owner;
+  int iNextSubBaseID;
   cList<sSubBase*> SubBases;
   cMap *map;
 
@@ -79,9 +81,10 @@ public:
   void AddMetal(sSubBase *sb,int value);
   void AddOil(sSubBase *sb,int value);
   void AddGold(sSubBase *sb,int value);
-  void Rundenende(void);
+  void handleTurnend();
   bool OptimizeEnergy(sSubBase *sb);
   void RefreshSubbases(void);
+  sSubBase *checkNeighbour ( int iOff, cBuilding *Building );
 };
 
 #endif

@@ -1386,7 +1386,7 @@ void cClient::drawMap( bool bPure )
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=Map->GO[iPos].top->SubBase;
 						SDL_FillRect ( buffer,&tmp, (long int) sb );
-						font->showText(dest.x+1,dest.y+1, iToStr(( long int ) ( sb )), LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
 						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
 
@@ -1403,7 +1403,7 @@ void cClient::drawMap( bool bPure )
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=Server->Map->GO[iPos].top->SubBase;
 						SDL_FillRect ( buffer,&tmp, (long int) sb );
-						font->showText(dest.x+1,dest.y+1, iToStr(( long int ) ( sb )), LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
 						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
 
@@ -2747,7 +2747,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedBuilding = Player->AddBuilding(PosX, PosY, &UnitsData.building[UnitNum]);
+			AddedBuilding = Player->addBuilding( PosX, PosY, &UnitsData.building[UnitNum] );
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
@@ -2824,7 +2824,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
 
-			AddedBuilding = Player->AddBuilding(iPosX, iPosY, &UnitsData.building[iUnitNumber]);
+			AddedBuilding = Player->addBuilding( iPosX, iPosY, &UnitsData.building[iUnitNumber] );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 		}
@@ -3346,6 +3346,104 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_NEW_SUBBASE:
+		{
+			sSubBase *NewSubBase;
+			// generate new subbase
+			NewSubBase = new sSubBase ( message->popInt16() );
+			ActivePlayer->base.SubBases.Add( NewSubBase );
+		}
+		break;
+	case GAME_EV_DELETE_SUBBASE:
+		{
+			int iID = message->popInt16();
+			sSubBase *SubBase = NULL;
+			for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
+			{
+				if ( ActivePlayer->base.SubBases.Items[i]->iID == iID )
+				{
+					SubBase = ActivePlayer->base.SubBases.Items[i];
+					ActivePlayer->base.SubBases.Delete ( i );
+					break;
+				}
+			}
+			if ( SubBase == NULL ) break;
+			for ( unsigned int i = 0; i < SubBase->buildings.iCount; i++ )
+			{
+				SubBase->buildings.Items[i]->SubBase = NULL;
+			}
+			delete SubBase;
+		}
+		break;
+	case GAME_EV_SUBBASE_BUILDINGS:
+		{
+			sSubBase *SubBase = getSubBaseFromID ( message->popInt16() );
+			if ( SubBase == NULL ) break;
+			int iCount = message->popInt16();
+			for ( unsigned int i = 0; i < iCount; i++ )
+			{
+				int iBuildingID =  message->popInt16();
+				cBuilding *Building = getBuildingFromID ( iBuildingID );
+				if ( Building != NULL )
+				{
+					SubBase->buildings.Add ( Building );
+					Building->SubBase = SubBase;
+
+					// update neighbours
+					int iPosOff = Building->PosX+Building->PosY*Map->size;
+					if ( !Building->data.is_big )
+					{
+						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+1, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff-1, Building );
+					}
+					else
+					{
+						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size+1, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+2, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+2+Map->size, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size*2, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size*2+1, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff-1, Building );
+						ActivePlayer->base.checkNeighbour ( iPosOff-1+Map->size, Building );
+					}
+					Building->CheckNeighbours( Map );
+				}
+			}
+		}
+		break;
+	case GAME_EV_SUBBASE_VALUES:
+		{
+			sSubBase *SubBase = getSubBaseFromID ( message->popInt16() );
+
+			SubBase->HumanProd = message->popInt16();
+			SubBase->MaxHumanNeed = message->popInt16();
+			SubBase->HumanNeed = message->popInt16();
+			SubBase->OilProd = message->popInt16();
+			SubBase->MaxOilNeed = message->popInt16();
+			SubBase->OilNeed = message->popInt16();
+			SubBase->MaxOil = message->popInt16();
+			SubBase->Oil = message->popInt16();
+			SubBase->GoldProd = message->popInt16();
+			SubBase->MaxGoldNeed = message->popInt16();
+			SubBase->GoldNeed = message->popInt16();
+			SubBase->MaxGold = message->popInt16();
+			SubBase->Gold = message->popInt16();
+			SubBase->MetalProd = message->popInt16();
+			SubBase->MaxMetalNeed = message->popInt16();
+			SubBase->MetalNeed = message->popInt16();
+			SubBase->MaxMetal = message->popInt16();
+			SubBase->Metal = message->popInt16();
+			SubBase->MaxEnergyNeed  = message->popInt16();
+			SubBase->MaxEnergyProd = message->popInt16();
+			SubBase->EnergyNeed = message->popInt16();
+			SubBase->EnergyProd = message->popInt16();
+
+			if ( SelectedBuilding ) SelectedBuilding->ShowDetails();
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -3425,7 +3523,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	// integrate the building to the base:
-	AddedBuilding->owner->base.AddBuilding ( AddedBuilding );
+	//AddedBuilding->owner->base.AddBuilding ( AddedBuilding );
 }
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
@@ -3679,7 +3777,7 @@ void cClient::handleMoveJobs ()
 					{
 						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
 						{
-							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, Vehicle->BuildRounds, Vehicle->PosX+Vehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
+							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, -1, Vehicle->PosX+Vehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
 						}
 						else
 						{
@@ -4152,4 +4250,18 @@ void cClient::continuePathBuilding ( cVehicle *Vehicle )
 	{
 		Vehicle->BuildPath = false;
 	}
+}
+
+sSubBase *cClient::getSubBaseFromID ( int iID )
+{
+	sSubBase *SubBase = NULL;
+	for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
+	{
+		if ( ActivePlayer->base.SubBases.Items[i]->iID == iID )
+		{
+			SubBase = ActivePlayer->base.SubBases.Items[i];
+			break;
+		}
+	}
+	return SubBase;
 }

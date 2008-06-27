@@ -22,30 +22,31 @@
 #include "serverevents.h"
 
 
-sSubBase::sSubBase() :
-  buildings(),
-  MaxMetal(),
-  Metal(),
-  MaxOil(),
-  Oil(),
-  MaxGold(),
-  Gold(),
-  MaxEnergyProd(),
-  EnergyProd(),
-  MaxEnergyNeed(),
-  EnergyNeed(),
-  MetalNeed(),
-  OilNeed(),
-  GoldNeed(),
-  MaxMetalNeed(),
-  MaxOilNeed(),
-  MaxGoldNeed(),
-  MetalProd(),
-  OilProd(),
-  GoldProd(),
-  HumanProd(),
-  HumanNeed(),
-  MaxHumanNeed()
+sSubBase::sSubBase( int iNextID ) :
+	buildings(),
+	MaxMetal(),
+	Metal(),
+	MaxOil(),
+	Oil(),
+	MaxGold(),
+	Gold(),
+	MaxEnergyProd(),
+	EnergyProd(),
+	MaxEnergyNeed(),
+	EnergyNeed(),
+	MetalNeed(),
+	OilNeed(),
+	GoldNeed(),
+	MaxMetalNeed(),
+	MaxOilNeed(),
+	MaxGoldNeed(),
+	MetalProd(),
+	OilProd(),
+	GoldProd(),
+	HumanProd(),
+	HumanNeed(),
+	MaxHumanNeed(),
+	iID( iNextID )
 {}
 
 
@@ -57,6 +58,7 @@ sSubBase::~sSubBase()
 cBase::cBase ( cPlayer *Owner )
 {
 	owner=Owner;
+	iNextSubBaseID = 0;
 }
 
 cBase::~cBase ( void )
@@ -69,47 +71,57 @@ cBase::~cBase ( void )
 	}
 }
 
+sSubBase *cBase::checkNeighbour ( int iOff, cBuilding *Building )
+{
+	if( iOff >= 0 && iOff < map->size*map->size && map->GO[iOff].top && map->GO[iOff].top->owner == Building->owner && map->GO[iOff].top->SubBase )
+	{
+		map->GO[iOff].top->CheckNeighbours( map );
+		return map->GO[iOff].top->SubBase ;
+	}
+	else return NULL;
+}
+
 // Fügt ein neues Building in die Base ein:
-void cBase::AddBuilding ( cBuilding *b )
+void cBase::AddBuilding ( cBuilding *Building )
 {
 	int pos;
-	if ( b->data.is_base ) return;
-	pos=b->PosX+b->PosY*map->size;
+	if ( Building->data.is_base ) return;
+	pos = Building->PosX+Building->PosY*map->size;
 	cList<sSubBase*> NeighbourList;
-	b->SubBase= ( sSubBase* ) 1;
+	Building->SubBase = ( sSubBase* ) 1;
 	// Prüfen, ob ein Gebäude in in der Nähe steht:
-#define CHECK_NEIGHBOUR(a) if(a>=0&&a<map->size*map->size&&map->GO[a].top&&map->GO[a].top->owner==b->owner&&map->GO[a].top->SubBase){NeighbourList.Add(map->GO[a].top->SubBase);map->GO[a].top->CheckNeighbours( map );}
-	if ( !b->data.is_big )
+	if ( !Building->data.is_big )
 	{
-		// Kleines Gebäude:
-		CHECK_NEIGHBOUR ( pos-map->size )
-		CHECK_NEIGHBOUR ( pos+1 )
-		CHECK_NEIGHBOUR ( pos+map->size )
-		CHECK_NEIGHBOUR ( pos-1 )
+		// small building
+		sSubBase *SubBase;
+		if ( ( SubBase = checkNeighbour ( pos-map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos-1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
 	}
 	else
 	{
-		// Großes Gebäude:
-		CHECK_NEIGHBOUR ( pos-map->size )
-		CHECK_NEIGHBOUR ( pos-map->size+1 )
-		CHECK_NEIGHBOUR ( pos+2 )
-		CHECK_NEIGHBOUR ( pos+2+map->size )
-		CHECK_NEIGHBOUR ( pos+map->size*2 )
-		CHECK_NEIGHBOUR ( pos+map->size*2+1 )
-		CHECK_NEIGHBOUR ( pos-1 )
-		CHECK_NEIGHBOUR ( pos-1+map->size )
+		// big building
+		sSubBase *SubBase;
+		if ( ( SubBase = checkNeighbour ( pos-map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos-map->size+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+2, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+2+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+map->size*2, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos+map->size*2+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos-1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( ( SubBase = checkNeighbour ( pos-1+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
 	}
-	if (NeighbourList.iCount != 0)
+	if ( NeighbourList.iCount > 0 )
 	{
-		int i,k;
-		// Nachbarn gefunden:
-		b->CheckNeighbours( map );
-		// Die doppelten Einträge löschen:
-		for (i = 0; i < NeighbourList.iCount; ++i)
+		// found neighbours
+		Building->CheckNeighbours( map );
+		// remove duplicate entrys
+		for ( unsigned int i = 0; i < NeighbourList.iCount; i++ )
 		{
-			for (k = i + 1; k < NeighbourList.iCount; ++k)
+			for ( unsigned int k = i + 1; k < NeighbourList.iCount; k++ )
 			{
-				if (NeighbourList.Items[i] == NeighbourList.Items[k])
+				if ( NeighbourList.Items[i] == NeighbourList.Items[k] )
 				{
 					NeighbourList.Delete(i);
 					i--;
@@ -117,67 +129,78 @@ void cBase::AddBuilding ( cBuilding *b )
 				}
 			}
 		}
-		// Prüfen, ob Subbases zusammengefügt werden müssen:
-		if (NeighbourList.iCount > 1)
+		// check whether there have to merge subbases
+		if ( NeighbourList.iCount > 1 )
 		{
-			// Die Basen zu einer zusammenfügen:
-			sSubBase *n;
-			cBuilding *sbb;
-			// neue Subbase anlegen:
-			n=new sSubBase;
-			b->SubBase=n;
-			AddBuildingToSubBase ( b,n );
-			SubBases.Add(n);
-			// Alle gefundenen Subbases durchgehen:
-			while (NeighbourList.iCount)
+			// merge the subbases to one
+			sSubBase *NewSubBase;
+			cBuilding *SubBaseBuilding;
+			// generate new subbase
+			NewSubBase = new sSubBase( iNextSubBaseID );
+			iNextSubBaseID++;
+			Building->SubBase = NewSubBase;
+			AddBuildingToSubBase ( Building, NewSubBase );
+			SubBases.Add( NewSubBase );
+			sendNewSubbase ( NewSubBase, Building->owner->Nr );
+			// go through all found subbases
+			while ( NeighbourList.iCount )
 			{
-				sSubBase* const sb = NeighbourList.Items[0];
-				// Alle Buildungs der Subbase durchgehen:
-				while ( sb->buildings.iCount )
+				sSubBase* const SubBase = NeighbourList.Items[0];
+				// go through all buildings of the subbases
+				while ( SubBase->buildings.iCount )
 				{
-					sbb=sb->buildings.Items[0];
-					AddBuildingToSubBase ( sbb,n );
-					sbb->SubBase=n;
-					sb->buildings.Delete ( 0 );
+					SubBaseBuilding = SubBase->buildings.Items[0];
+					AddBuildingToSubBase ( SubBaseBuilding, NewSubBase );
+					SubBaseBuilding->SubBase = NewSubBase;
+					SubBase->buildings.Delete ( 0 );
 				}
-				// Die Subbase aus der Subbaseliste löschen:
-				for (i = 0; i < SubBases.iCount ; ++i)
+				// delete the subbase from the subbase list
+				for ( unsigned int i = 0; i < SubBases.iCount ; i++ )
 				{
-					if (SubBases.Items[i] == sb)
+					if ( SubBases.Items[i] == SubBase )
 					{
-						SubBases.Delete(i);
+						SubBases.Delete( i );
 						break;
 					}
 				}
-				delete sb;
-				NeighbourList.Delete(0);
+				sendDeleteSubbase ( SubBase, Building->owner->Nr );
+				delete SubBase;
+				NeighbourList.Delete( 0 );
 			}
+			sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
+			sendSubbaseValues ( NewSubBase, Building->owner->Nr );
 		}
 		else
 		{
-			// Das Building nur der Base hinzufügen:
-			sSubBase* const sb = NeighbourList.Items[0];
-			AddBuildingToSubBase ( b,sb );
-			b->SubBase=sb;
+			// just add the building to the subbase
+			sSubBase* const SubBase = NeighbourList.Items[0];
+			AddBuildingToSubBase ( Building, SubBase );
+			Building->SubBase = SubBase;
+			sendAddSubbaseBuildings ( Building, SubBase, Building->owner->Nr );
+			sendSubbaseValues ( SubBase, Building->owner->Nr );
 		}
 	}
 	else
 	{
-		sSubBase *n;
-		// Keine Nachbarn gefunden:
-		b->BaseBE=false;
-		b->BaseBN=false;
-		b->BaseBS=false;
-		b->BaseBW=false;
-		b->BaseE=false;
-		b->BaseN=false;
-		b->BaseS=false;
-		b->BaseW=false;
-		// Neue Subbase anlegen:
-		n=new sSubBase;
-		b->SubBase=n;
-		AddBuildingToSubBase ( b,n );
-		SubBases.Add(n);
+		sSubBase *NewSubBase;
+		// no neigbours found
+		Building->BaseBE = false;
+		Building->BaseBN = false;
+		Building->BaseBS = false;
+		Building->BaseBW = false;
+		Building->BaseE = false;
+		Building->BaseN = false;
+		Building->BaseS = false;
+		Building->BaseW = false;
+		// generate new subbase
+		NewSubBase = new sSubBase ( iNextSubBaseID );
+		iNextSubBaseID++;
+		Building->SubBase = NewSubBase;
+		AddBuildingToSubBase ( Building, NewSubBase );
+		SubBases.Add( NewSubBase );
+		sendNewSubbase ( NewSubBase, Building->owner->Nr );
+		sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
+		sendSubbaseValues ( NewSubBase, Building->owner->Nr );
 	}
 }
 
@@ -335,6 +358,7 @@ void cBase::AddMetal ( sSubBase *sb,int value )
 		}
 		if ( value==0 ) break;
 	}
+	sendSubbaseValues ( sb, owner->Nr );
 }
 
 // Fügt Öl zu der Subbase hinzu:
@@ -378,6 +402,7 @@ void cBase::AddOil ( sSubBase *sb,int value )
 		}
 		if ( value==0 ) break;
 	}
+	sendSubbaseValues ( sb, owner->Nr );
 }
 
 // Fügt Gold zu der Subbase hinzu:
@@ -421,104 +446,102 @@ void cBase::AddGold ( sSubBase *sb,int value )
 		}
 		if ( value==0 ) break;
 	}
+	sendSubbaseValues ( sb, owner->Nr );
 }
 
-// Alle Aktionen zum Rundenende durchführen:
-void cBase::Rundenende ( void )
+void cBase::handleTurnend ()
 {
-	int i,k;
-
-	for (i = 0; i < SubBases.iCount ; ++i)
+	for ( unsigned int i = 0; i < SubBases.iCount ; ++i)
 	{
-		sSubBase* const sb = SubBases.Items[i];
-		// Öl produzieren/abziehen:
-		if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 )
+		sSubBase* const SubBase = SubBases.Items[i];
+		// produce/reduce oil
+		if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 )
 		{
-			// Generator muss abgeschaltet werden:
+			// generator has to stop work
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Low") );
-			for ( k=0;k<sb->buildings.iCount&&sb->EnergyProd;k++ )
+			for ( unsigned int k=0;k<SubBase->buildings.iCount&&SubBase->EnergyProd;k++ )
 			{
-				cBuilding *b;
-				b=sb->buildings.Items[k];
-				if ( !b->data.energy_prod ) continue;
-				//b->StopWork ( true );
-				if ( sb->OilProd-sb->OilNeed<0&&sb->Oil+ ( sb->OilProd-sb->OilNeed ) <0 ) continue;
+				cBuilding *Building;
+				Building = SubBase->buildings.Items[k];
+				if ( !Building->data.energy_prod ) continue;
+				//Building->StopWork ( true );
+				if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		AddOil ( sb,sb->OilProd-sb->OilNeed );
-		// Energieverbraucher prüfen:
-		if ( sb->EnergyNeed>sb->EnergyProd )
+		AddOil ( SubBase, SubBase->OilProd-SubBase->OilNeed );
+		// check energy consumers
+		if ( SubBase->EnergyNeed > SubBase->EnergyProd )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Low") );
-			for ( k=0;k<sb->buildings.iCount;k++ )
+			for ( unsigned int k = 0; k < SubBase->buildings.iCount; k++ )
 			{
-				cBuilding *b;
-				b=sb->buildings.Items[k];
-				if ( !b->data.energy_need ) continue;
-				//b->StopWork ( true );
-				if ( sb->EnergyNeed>sb->EnergyProd ) continue;
+				cBuilding *Building;
+				Building = SubBase->buildings.Items[k];
+				if ( !Building->data.energy_need ) continue;
+				//Building->StopWork ( true );
+				if ( SubBase->EnergyNeed>SubBase->EnergyProd ) continue;
 				break;
 			}
 		}
 
-		// Metall produzieren/abziehen:
-		if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 )
+		// produce/reduce metal
+		if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) <0 )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Metal_Low") );
-			for ( k=0;k<sb->buildings.iCount;k++ )
+			for ( unsigned int k = 0; k < SubBase->buildings.iCount; k++ )
 			{
-				cBuilding *b;
-				b=sb->buildings.Items[k];
-				if ( !b->data.metal_need ) continue;
-				//b->StopWork ( true );
-				if ( sb->Metal+ ( sb->MetalProd-sb->MetalNeed ) <0 ) continue;
+				cBuilding *Building;
+				Building = SubBase->buildings.Items[k];
+				if ( !Building->data.metal_need ) continue;
+				//Building->StopWork ( true );
+				if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		AddMetal ( sb,sb->MetalProd-sb->MetalNeed );
+		AddMetal ( SubBase, SubBase->MetalProd-SubBase->MetalNeed );
 
-		// Gold produzieren/abziehen:
-		if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 )
+		// produce/reduce gold
+		if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Gold_Low") );
-			for ( k=0;k<sb->buildings.iCount;k++ )
+			for ( unsigned int k = 0; k < SubBase->buildings.iCount; k++ )
 			{
-				cBuilding *b;
-				b=sb->buildings.Items[k];
-				if ( !b->data.gold_need ) continue;
-				//b->StopWork ( true );
-				if ( sb->Gold+ ( sb->GoldProd-sb->GoldNeed ) <0 ) continue;
+				cBuilding *Building;
+				Building = SubBase->buildings.Items[k];
+				if ( !Building->data.gold_need ) continue;
+				//Building->StopWork ( true );
+				if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		AddGold ( sb,sb->GoldProd-sb->GoldNeed );
-		// Credits erzeugen:
-		owner->Credits+=sb->GoldNeed;
+		AddGold ( SubBase, SubBase->GoldProd-SubBase->GoldNeed );
+		// get credits
+		//owner->Credits += SubBase->GoldNeed;
 
-		// Humanneed prüfen:
-		if ( sb->HumanNeed>sb->HumanProd )
+		// check humanneed
+		if ( SubBase->HumanNeed > SubBase->HumanProd )
 		{
 			//sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
-			for ( k=0;k<sb->buildings.iCount;k++ )
+			for ( unsigned int k = 0; k < SubBase->buildings.iCount; k++ )
 			{
-				cBuilding *b;
-				b=sb->buildings.Items[k];
-				if ( !b->data.human_need ) continue;
-				//b->StopWork ( true );
-				if ( sb->HumanNeed>sb->HumanProd ) continue;
+				cBuilding *Building;
+				Building = SubBase->buildings.Items[k];
+				if ( !Building->data.human_need ) continue;
+				//Building->StopWork ( true );
+				if ( SubBase->HumanNeed > SubBase->HumanProd ) continue;
 				break;
 			}
 		}
 
-		// Energieoptimierungen:
-		if ( OptimizeEnergy ( sb ) )
+		// Optimize energy
+		/*if ( OptimizeEnergy ( sb ) )
 		{
 			//sendChatMessage (lngPack.i18n( "Text~Comp~Energy_Optimize"));
-		}
+		}*/
 
-		// Reparaturen durchführen/bauen/aufladen:
-		for ( k=0;k<sb->buildings.iCount&&sb->Metal;k++ )
+		// make repairs/build/reload
+		/*for ( unsigned int k = 0 ;k < sb->buildings.iCount && sb->Metal; k++ )
 		{
 			cBuilding *b;
 			b=sb->buildings.Items[k];
@@ -567,9 +590,8 @@ void cBase::Rundenende ( void )
 					//b->StopWork ( false );
 				}
 			}
-		}
+		}*/
 	}
-	if ( game->SelectedBuilding ) game->SelectedBuilding->ShowDetails();
 }
 
 // Optimiert den Energieverbrauch der Basis:

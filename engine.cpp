@@ -588,7 +588,7 @@ void cEngine::AddBuilding ( int posx,int posy,sBuilding *b,cPlayer *p,bool init 
 	cBuilding *n;
 	int off;
 	// Das Building erzeugen:
-	n = p->AddBuilding ( posx,posy,b );
+//	n = p->AddBuilding ( posx,posy,b );
 	// Das Building platzieren:
 	off=posx+map->size*posy;
 	if ( n->data.is_base )
@@ -1119,7 +1119,7 @@ void cEngine::Rundenende ( void )
 	}
 
 	// Rohstoffe produzieren:
-	game->ActivePlayer->base.Rundenende();
+//	game->ActivePlayer->base.Rundenende();
 
 	// Forschen:
 	game->ActivePlayer->DoResearch();
