@@ -89,15 +89,19 @@ struct sBuildList{
   int metall_remaining;
 };
 
+enum ResourceKind
+{
+	TYPE_METAL = 0,
+	TYPE_OIL   = 1,
+	TYPE_GOLD  = 2
+};
+
 struct sMineValues
 {
-	int& GetProd(int type);
+	int& GetProd(ResourceKind);
 
-	int GetMaxProd(int type) const;
+	int GetMaxProd(ResourceKind) const;
 
-#define TYPE_METAL 0
-#define TYPE_OIL 1
-#define TYPE_GOLD 2
 	int iMetalProd, iOilProd, iGoldProd;
 	int iMaxMetalProd, iMaxOilProd, iMaxGoldProd;
 
@@ -196,8 +200,8 @@ public:
   void MakeTransBar(int *trans,int MaxTarget,int Target);
   void CheckRessourceProd(void);
   void showMineManager();
-  void doMineInc(int iType, cList<sMineValues*>& Mines);
-  void doMineDec(int iType, cList<sMineValues*>& Mines);
+  void doMineInc(ResourceKind, cList<sMineValues*>& Mines);
+  void doMineDec(ResourceKind, cList<sMineValues*>& Mines);
   void calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFreeO, int *iFreeG );
   void MakeMineBars(int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG);
   void DrawMineBar(int typ,int value,int max_value,int offy,bool number,int fixed);

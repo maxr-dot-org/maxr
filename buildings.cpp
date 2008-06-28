@@ -31,28 +31,28 @@
 #include "server.h"
 
 
-int& sMineValues::GetProd(int const type)
+int& sMineValues::GetProd(ResourceKind const resource)
 {
-	switch (type)
+	switch (resource)
 	{
 		case TYPE_METAL: return iMetalProd;
 		case TYPE_OIL:   return iOilProd;
 		case TYPE_GOLD:  return iGoldProd;
 
-		default: throw std::logic_error("Invalid resource type");
+		default: throw std::logic_error("Invalid resource kind");
 	}
 }
 
 
-int sMineValues::GetMaxProd(int const type) const
+int sMineValues::GetMaxProd(ResourceKind const resource) const
 {
-	switch (type)
+	switch (resource)
 	{
 		case TYPE_METAL: return iMaxMetalProd;
 		case TYPE_OIL:   return iMaxOilProd;
 		case TYPE_GOLD:  return iMaxGoldProd;
 
-		default: throw std::logic_error("Invalid resource type");
+		default: throw std::logic_error("Invalid resource kind");
 	}
 }
 
@@ -8722,24 +8722,24 @@ bool cBuilding::isDetectedByPlayer( int iPlayerNum )
 	return false;
 }
 
-void cBuilding::doMineInc(int const iType, cList<sMineValues*>& Mines)
+void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
 	for (unsigned int i = 0; i < Mines.iCount; ++i)
 	{
 		sMineValues& m = *Mines[i];
 		if (m.iMetalProd + m.iOilProd + m.iGoldProd >= 16) continue;
 
-		int&      prod     = m.GetProd(iType);
-		int const max_prod = m.GetMaxProd(iType);
+		int&      prod     = m.GetProd(resource);
+		int const max_prod = m.GetMaxProd(resource);
 		if (prod < max_prod) ++prod;
 	}
 }
 
-void cBuilding::doMineDec(int const iType, cList<sMineValues*>& Mines)
+void cBuilding::doMineDec(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
 	for (unsigned int i = 0; i < Mines.iCount; ++i)
 	{
-		int& prod = Mines[i]->GetProd(iType);
+		int& prod = Mines[i]->GetProd(resource);
 		if (prod > 0) --prod;
 	}
 }
