@@ -4318,8 +4318,6 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	int iMaxDestCargo, iDestCargo;
 	int iTransf = 0;
 	SDL_Surface *img;
-	cVehicle *pv = NULL;
-	cBuilding *pb = NULL;
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );

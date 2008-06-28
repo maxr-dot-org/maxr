@@ -1433,7 +1433,6 @@ void cServer::handleEnd ( int iPlayerNum )
 
 void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 {
-	cPlayer *CallerPlayer = getPlayerFromNumber ( iPlayerNum );
 	// reload all buildings
 	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 	{

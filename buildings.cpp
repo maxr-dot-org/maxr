@@ -5546,7 +5546,7 @@ void cBuilding::CheckRessourceProd ( void )
 // Zeigt den Minenmanager an:
 void cBuilding::showMineManager ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
 	bool IncMetalPressed = false;
 	bool DecMetalPressed = false;
@@ -6402,8 +6402,6 @@ void cBuilding::ShowBuildMenu ( void )
 	bool Up2Pressed = false;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
-	int  iTurboBuildRounds[3];		//Costs and
-	int  iTurboBuildCosts[3];		//durations of the tree build speeds
 	bool showDetailsBuildlist = true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
 
 #define BUTTON__W 77
