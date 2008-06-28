@@ -2167,7 +2167,8 @@ static int LoadBuildings()
 		}
 
 		// Check if there is more than one frame
-		if (b.img_org->w > 128 && !b.data.is_connector)
+		// use 129 here becouse some images from the res_installer are one pixel to large
+		if (b.img_org->w > 129 && !b.data.is_connector)
 		{
 			b.data.has_frames = b.img_org->w / b.img_org->h;
 		}

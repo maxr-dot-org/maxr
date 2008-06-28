@@ -237,6 +237,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int iTurboBuildRounds[3], int iTurboBuildCosts[3] );
+	bool checkExitBlocked ( int iX, int iY, sVehicle *Type );
 public:	
 	/** the map */
 	cMap *Map;

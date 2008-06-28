@@ -768,7 +768,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iY = message->popInt16();
 
 			BuildingListItem = Building->BuildList->Items[0];
+
+			if ( checkExitBlocked ( iX, iY, BuildingListItem->typ ) ) break;
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
+
 			if ( Building->RepeatBuild )
 			{
 				Building->BuildList->Delete( 0 );
@@ -1877,19 +1880,19 @@ bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *D
 	if ( Map->GO[iOff].base && !Map->GO[iOff].base->owner ) return true;
 
 	// cannot build e.g. landingplattforms on waterplattforms or bridges
-	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && ! Data->is_road ) ) return true;
+	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && !Data->is_road ) ) return true;
 
 	// the rest has only to be checked if the building is no connector and if there is no base building under it excepting an waterplattform
 	if ( ( !Map->GO[iOff].base || Map->GO[iOff].base->data.is_platform ) && !Data->is_connector )
 	{
-		// cannot build normal buildings on water
-		if ( Map->IsWater ( iOff ) && !Data->build_on_water ) return true;
+		// cannot build normal buildings on water without platform
+		if ( Map->IsWater ( iOff ) && !Data->build_on_water && !Map->GO[iOff].base->data.is_platform ) return true;
 
 		// cannot build water buildings excepting a bridge or a waterplattform on not water terrain but maybe coasts
 		if ( !Map->IsWater ( iOff ) && Data->build_on_water && !( Data->is_bridge || Data->is_platform ) ) return true;
 
-		// only platforms and bridges can be build on coasts
-		if ( Map->terrain[Map->Kacheln[iOff]].coast && !Data->is_bridge && !Data->is_platform ) return true;
+		// only platforms and bridges can be build on coasts without a platform
+		if ( Map->terrain[Map->Kacheln[iOff]].coast && !Data->is_bridge && !Data->is_platform && !Map->GO[iOff].base->data.is_platform ) return true;
 
 		// cannot build plattforms or bridges on nowater or nocoast terrain
 		if ( !Map->terrain[Map->Kacheln[iOff]].coast && !Map->IsWater ( iOff ) && ( Data->is_bridge || Data->is_platform ) ) return true;
@@ -1949,4 +1952,18 @@ void cServer::calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int
 				break;
 		}
 	}
+}
+
+bool cServer::checkExitBlocked ( int iX, int iY, sVehicle *Type )
+{
+	int iOff = iX+iY*Map->size;
+
+	if ( iOff < 0 || iOff >= Map->size*Map->size ) return true;
+
+	if ( Type->data.can_drive == DRIVE_AIR && Map->GO[iOff].plane ) return true;
+	if ( Map->GO[iOff].vehicle || Map->GO[iOff].top ) return true;
+	if ( Type->data.can_drive == DRIVE_SEA && ( !Map->IsWater ( iOff, true ) || Map->GO[iOff].base || Map->GO[iOff].subbase ) ) return true;
+	if ( Type->data.can_drive == DRIVE_LAND && Map->IsWater ( iOff ) && ( !Map->GO[iOff].base || ( !Map->GO[iOff].base->data.is_platform && !Map->GO[iOff].subbase->data.is_road && !Map->GO[iOff].base->data.is_expl_mine ) ) ) return true;
+
+	return false;
 }
