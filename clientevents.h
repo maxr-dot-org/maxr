@@ -48,7 +48,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DELETE_SUBBASE,			// delete a subbase
 	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
-	GAME_EV_BUILDLIST				//
+	GAME_EV_BUILDLIST,				//
+	GAME_EV_PRODUCE_VALUES			//
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -137,6 +138,7 @@ void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDe
 
 void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, bool bRepeat );
 void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY );
+void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, int iGoldProd );
 
 
 #endif // clienteventsH

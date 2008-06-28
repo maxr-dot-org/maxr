@@ -2441,7 +2441,9 @@ bool cClient::doCommand ( string sCmd )
 
 	if ( sCmd.compare( "survey" ) == 0 )
 	{
-		//memset ( ActivePlayer->ResourceMap,1,Map->size*Map->size );
+		if ( network && !network->isHost() ) return false;
+		memcpy ( Map->Resources , Server->Map->Resources, Map->size*Map->size*sizeof ( sResources ) );
+		memset ( ActivePlayer->ResourceMap,1,Map->size*Map->size );
 		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Survey\"";
 		return true;
@@ -3468,6 +3470,19 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Building->MetalPerRound = message->popInt16();
 			Building->BuildSpeed = message->popInt16();
 			Building->RepeatBuild = message->popBool();
+		}
+		break;
+	case GAME_EV_PRODUCE_VALUES:
+		{
+			cBuilding *Building = getBuildingFromID ( message->popInt16() );
+			if ( Building == NULL ) break;
+
+			Building->MetalProd = message->popInt16();
+			Building->MaxMetalProd = message->popInt16();
+			Building->OilProd = message->popInt16();
+			Building->MaxOilProd = message->popInt16();
+			Building->GoldProd = message->popInt16();
+			Building->MaxGoldProd = message->popInt16();
 		}
 		break;
 	default:

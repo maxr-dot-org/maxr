@@ -645,7 +645,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 	if ( data.can_drive == DRIVE_AIR && Client->iTimer0 )
 	{
-		if ( moving || game->Frame % 10 == 0 )
+		if ( moving || Client->iFrame % 10 == 0 )
 		{
 			ditherX = 0;
 			ditherY = 0;

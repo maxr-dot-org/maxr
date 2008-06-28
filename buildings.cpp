@@ -5518,7 +5518,7 @@ void cBuilding::CheckRessourceProd ( void )
 }
 
 // Zeigt den Minenmanager an:
-void cBuilding::ShowMineManager ( void )
+void cBuilding::showMineManager ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i;
 	SDL_Rect scr, dest;
@@ -5529,7 +5529,8 @@ void cBuilding::ShowMineManager ( void )
 	bool IncGoldPressed = false;
 	bool DecGoldPressed = false;
 	int MaxM = 0, MaxO = 0, MaxG = 0;
-	int FreeM = 0, FreeO = 0, FreeG = 0;
+	int iFreeM = 0, iFreeO = 0, iFreeG = 0;
+	int iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd;
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rTitle = {rDialog.x + 230, rDialog.y + 11, 174, 13};
@@ -5585,34 +5586,49 @@ void cBuilding::ShowMineManager ( void )
 	BigButton btn_done(rDialog.x + 514, rDialog.y + 430, "Text~Button~Done");
 	btn_done.Draw();
 
-	// Liste mit Minen erstellen:
-	cList<cBuilding*> mines;
+	// generate list with mine datas. only use temporary cache so that original data wound be changed
+	cList<sMineValues*> Mines;
 
-	for ( x = 0;x < SubBase->buildings.iCount;x++ )
+	for ( x = 0; x < SubBase->buildings.iCount; x++ )
 	{
 		if ( SubBase->buildings.Items[x]->data.is_mine && SubBase->buildings.Items[x]->IsWorking )
 		{
-			cBuilding *b;
-			b = SubBase->buildings.Items[x];
-			mines.Add ( b );
-			MaxM += b->MaxMetalProd;
-			MaxO += b->MaxOilProd;
-			MaxG += b->MaxGoldProd;
+			cBuilding *Building;
+			Building = SubBase->buildings.Items[x];
+
+			sMineValues *MineValues = new sMineValues;
+			MineValues->iMetalProd = Building->MetalProd;
+			MineValues->iOilProd = Building->OilProd;
+			MineValues->iGoldProd = Building->GoldProd;
+
+			MineValues->iMaxMetalProd = Building->MaxMetalProd;
+			MineValues->iMaxOilProd = Building->MaxOilProd;
+			MineValues->iMaxGoldProd = Building->MaxGoldProd;
+
+			Mines.Add ( MineValues );
+
+			MaxM += Building->MaxMetalProd;
+			MaxO += Building->MaxOilProd;
+			MaxG += Building->MaxGoldProd;
 		}
 	}
 
+	iTempSBMetalProd = SubBase->MetalProd;
+	iTempSBOilProd = SubBase->OilProd;
+	iTempSBGoldProd = SubBase->GoldProd;
+/*
 //#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<16&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
 #define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<(mines.Items[i]->data.is_alien?24:16)&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
 #define DO_MINE_DEC(a) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->a>0){mines.Items[i]->a--;break;}}
 //#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
 #define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<(mines.Items[i]->data.is_alien?24:16)){int t;ges=(mines.Items[i]->data.is_alien?24:16)-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+*/
+	calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 
-	CALC_MINE_FREE
-
-	MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+	MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 
 	// Die Reserve malen:
-	DrawMineBar ( TRANS_METAL, SubBase->Metal, SubBase->MaxMetal, 2, true, 0 );
+	DrawMineBar ( TRANS_METAL, iTempSBMetalProd, SubBase->MaxMetal, 2, true, 0 );
 	DrawMineBar ( TRANS_OIL, SubBase->Oil, SubBase->MaxOil, 2, true, 0 );
 	DrawMineBar ( TRANS_GOLD, SubBase->Gold, SubBase->MaxGold, 2, true, 0 );
 
@@ -5646,8 +5662,9 @@ void cBuilding::ShowMineManager ( void )
 			mouse->draw ( true, screen );
 		}
 
-		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
+		if ( btn_done.CheckClick( x, y, b > LastB, b < LastB ) )
 		{
+			sendChangeResources ( this, iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd );
 			break;
 		}
 
@@ -5658,27 +5675,27 @@ void cBuilding::ShowMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			t =  Round ( ( x - 174 ) * ( MaxM / 240.0 ) );
 
-			if ( t < SubBase->MetalProd )
+			if ( t < iTempSBMetalProd )
 			{
-				for ( ;abs ( SubBase->MetalProd - t ) && SubBase->MetalProd > 0; )
+				for ( ;abs ( iTempSBMetalProd - t ) && iTempSBMetalProd > 0; )
 				{
-					SubBase->MetalProd--;
-					DO_MINE_DEC ( MetalProd )
+					iTempSBMetalProd--;
+					doMineDec ( TYPE_METAL, &Mines );
 				}
 
-				CALC_MINE_FREE
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 			}
 			else
 			{
-				for ( ;abs ( SubBase->MetalProd - t ) && FreeM; )
+				for ( ;abs ( iTempSBMetalProd - t ) && iFreeM; )
 				{
-					SubBase->MetalProd++;
-					DO_MINE_INC ( MetalProd, MaxMetalProd )
-					CALC_MINE_FREE
+					iTempSBMetalProd++;
+					doMineInc ( TYPE_METAL, &Mines );
+					calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				}
 			}
 
-			MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+			MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5691,27 +5708,27 @@ void cBuilding::ShowMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			t = Round ( ( x - 174 ) * ( MaxO / 240.0 ) );
 
-			if ( t < SubBase->OilProd )
+			if ( t < iTempSBOilProd )
 			{
-				for ( ;abs ( SubBase->OilProd - t ) && SubBase->OilProd > 0; )
+				for ( ;abs ( iTempSBOilProd - t ) && iTempSBOilProd > 0; )
 				{
-					SubBase->OilProd--;
-					DO_MINE_DEC ( OilProd )
+					iTempSBOilProd--;
+					doMineDec ( TYPE_OIL, &Mines );
 				}
 
-				CALC_MINE_FREE
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 			}
 			else
 			{
-				for ( ;abs ( SubBase->OilProd - t ) && FreeO; )
+				for ( ;abs ( iTempSBOilProd - t ) && iFreeO; )
 				{
-					SubBase->OilProd++;
-					DO_MINE_INC ( OilProd, MaxOilProd )
-					CALC_MINE_FREE
+					iTempSBOilProd++;
+					doMineInc ( TYPE_OIL, &Mines );
+					calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				}
 			}
 
-			MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+			MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5724,27 +5741,27 @@ void cBuilding::ShowMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			t = Round ( ( x - 174 ) * ( MaxG / 240.0 ) );
 
-			if ( t < SubBase->GoldProd )
+			if ( t < iTempSBGoldProd )
 			{
-				for ( ;abs ( SubBase->GoldProd - t ) && SubBase->GoldProd > 0; )
+				for ( ;abs ( iTempSBGoldProd - t ) && iTempSBGoldProd > 0; )
 				{
-					SubBase->GoldProd--;
-					DO_MINE_DEC ( GoldProd )
+					iTempSBGoldProd--;
+					doMineDec ( TYPE_GOLD, &Mines );
 				}
 
-				CALC_MINE_FREE
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 			}
 			else
 			{
-				for ( ;abs ( SubBase->GoldProd - t ) && FreeG; )
+				for ( ;abs ( iTempSBGoldProd - t ) && iFreeG; )
 				{
-					SubBase->GoldProd++;
-					DO_MINE_INC ( GoldProd, MaxGoldProd )
-					CALC_MINE_FREE
+					iTempSBGoldProd++;
+					doMineInc ( TYPE_GOLD, &Mines );
+					calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				}
 			}
 
-			MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+			MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5761,12 +5778,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 71;
 
-			if ( FreeM )
+			if ( iFreeM )
 			{
-				SubBase->MetalProd++;
-				DO_MINE_INC ( MetalProd, MaxMetalProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBMetalProd++;
+				doMineInc ( TYPE_METAL, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5801,12 +5818,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 71;
 
-			if ( SubBase->MetalProd > 0 )
+			if ( iTempSBMetalProd > 0 )
 			{
-				SubBase->MetalProd--;
-				DO_MINE_DEC ( MetalProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBMetalProd--;
+				doMineDec ( TYPE_METAL, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5841,12 +5858,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 191;
 
-			if ( FreeO )
+			if ( iFreeO )
 			{
-				SubBase->OilProd++;
-				DO_MINE_INC ( OilProd, MaxOilProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBOilProd++;
+				doMineInc ( TYPE_OIL, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5881,12 +5898,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 191;
 
-			if ( SubBase->OilProd > 0 )
+			if ( iTempSBOilProd > 0 )
 			{
-				SubBase->OilProd--;
-				DO_MINE_DEC ( OilProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBOilProd--;
+				doMineDec ( TYPE_OIL, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5921,12 +5938,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 311;
 
-			if ( FreeG )
+			if ( iFreeG )
 			{
-				SubBase->GoldProd++;
-				DO_MINE_INC ( GoldProd, MaxGoldProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBGoldProd++;
+				doMineInc ( TYPE_GOLD, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5961,12 +5978,12 @@ void cBuilding::ShowMineManager ( void )
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 311;
 
-			if ( SubBase->GoldProd > 0 )
+			if ( iTempSBGoldProd > 0 )
 			{
-				SubBase->GoldProd--;
-				DO_MINE_DEC ( GoldProd )
-				CALC_MINE_FREE
-				MakeMineBars ( MaxM, MaxO, MaxG, &FreeM, &FreeO, &FreeG );
+				iTempSBGoldProd--;
+				doMineDec ( TYPE_GOLD, &Mines );
+				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
+				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -5998,27 +6015,27 @@ void cBuilding::ShowMineManager ( void )
 }
 
 // Malt die Minenmanager-Bars:
-void cBuilding::MakeMineBars ( int MaxM, int MaxO, int MaxG, int *FreeM, int *FreeO, int *FreeG )
+void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM, int MaxO, int MaxG, int *FreeM, int *FreeO, int *FreeG )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	string sTmp1 = "";
 	string sTmp2 = " / " + lngPack.i18n ( "Text~Comp~Turn" ) + ")";
-	DrawMineBar ( TRANS_METAL, SubBase->MetalProd, MaxM, 0, true, MaxM - SubBase->MetalProd - *FreeM );
-	DrawMineBar ( TRANS_OIL, SubBase->OilProd, MaxO, 0, true, MaxO - SubBase->OilProd - *FreeO );
-	DrawMineBar ( TRANS_GOLD, SubBase->GoldProd, MaxG, 0, true, MaxG - SubBase->GoldProd - *FreeG );
+	DrawMineBar ( TRANS_METAL, iTempSBMetalProd, MaxM, 0, true, MaxM - iTempSBMetalProd - *FreeM );
+	DrawMineBar ( TRANS_OIL, iTempSBOilProd, MaxO, 0, true, MaxO - iTempSBOilProd - *FreeO );
+	DrawMineBar ( TRANS_GOLD, iTempSBGoldProd, MaxG, 0, true, MaxG - iTempSBGoldProd - *FreeG );
 
 	DrawMineBar ( TRANS_METAL, SubBase->MetalNeed, SubBase->MaxMetalNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->MetalNeed ) + " (" + iToStr ( SubBase->MetalProd - SubBase->MetalNeed );
+	sTmp1 = iToStr ( SubBase->MetalNeed ) + " (" + iToStr ( iTempSBMetalProd - SubBase->MetalNeed );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 70 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
 
 	DrawMineBar ( TRANS_OIL, SubBase->OilNeed, SubBase->MaxOilNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->OilNeed ) + " (" + iToStr ( SubBase->OilProd - SubBase->OilNeed );
+	sTmp1 = iToStr ( SubBase->OilNeed ) + " (" + iToStr ( iTempSBOilProd - SubBase->OilNeed );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 190 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
 
 	DrawMineBar ( TRANS_GOLD, SubBase->GoldNeed, SubBase->MaxGoldNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->GoldNeed ) + " (" + iToStr ( SubBase->GoldProd - SubBase->GoldNeed );
+	sTmp1 = iToStr ( SubBase->GoldNeed ) + " (" + iToStr ( iTempSBGoldProd - SubBase->GoldNeed );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 310 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
 }
@@ -7736,7 +7753,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			//ShowMineManager();
+			showMineManager();
 			return;
 		}
 
@@ -8677,4 +8694,94 @@ bool cBuilding::isDetectedByPlayer( int iPlayerNum )
 		if ( *DetectedByPlayerList.Items[i] == iPlayerNum ) return true;
 	}
 	return false;
+}
+
+void cBuilding::doMineInc ( int iType, cList<sMineValues*> *Mines )
+{
+	for( unsigned int i = 0; i < Mines->iCount; i++ )
+	{
+		switch ( iType )
+		{
+		case TYPE_METAL:
+			{
+				if( Mines->Items[i]->iMetalProd+Mines->Items[i]->iOilProd+Mines->Items[i]->iGoldProd < 16 && Mines->Items[i]->iMetalProd < Mines->Items[i]->iMaxMetalProd )
+				{
+					Mines->Items[i]->iMetalProd++;
+				}
+			}
+			break;
+		case TYPE_OIL:
+			{
+				if( Mines->Items[i]->iMetalProd+Mines->Items[i]->iOilProd+Mines->Items[i]->iGoldProd < 16 && Mines->Items[i]->iOilProd < Mines->Items[i]->iMaxOilProd )
+				{
+					Mines->Items[i]->iOilProd++;
+				}
+			}
+			break;
+		case TYPE_GOLD:
+			{
+				if( Mines->Items[i]->iMetalProd+Mines->Items[i]->iOilProd+Mines->Items[i]->iGoldProd < 16 && Mines->Items[i]->iGoldProd < Mines->Items[i]->iMaxGoldProd )
+				{
+					Mines->Items[i]->iGoldProd++;
+				}
+			}
+			break;
+		}
+	}
+}
+
+void cBuilding::doMineDec ( int iType, cList<sMineValues*> *Mines )
+{
+	for( unsigned int i = 0; i < Mines->iCount; i++ )
+	{
+		switch ( iType )
+		{
+		case TYPE_METAL:
+			{
+				if( Mines->Items[i]->iMetalProd > 0 )
+				{
+					Mines->Items[i]->iMetalProd--;
+				}
+			}
+			break;
+		case TYPE_OIL:
+			{
+				if( Mines->Items[i]->iOilProd > 0 )
+				{
+					Mines->Items[i]->iOilProd--;
+				}
+			}
+			break;
+		case TYPE_GOLD:
+			{
+				if( Mines->Items[i]->iGoldProd > 0 )
+				{
+					Mines->Items[i]->iGoldProd--;
+				}
+			}
+			break;
+		}
+	}
+}
+
+void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFreeO, int *iFreeG )
+{
+	*iFreeM = 0;
+	*iFreeO = 0;
+	*iFreeG = 0;
+	for( unsigned int i = 0; i < Mines->iCount; i++ )
+	{
+		int iGes = Mines->Items[i]->iMetalProd+Mines->Items[i]->iOilProd+Mines->Items[i]->iGoldProd;
+		if ( iGes < 16 )
+		{
+			int t;
+			iGes = 16 - iGes;
+			t = Mines->Items[i]->iMaxMetalProd-Mines->Items[i]->iMetalProd;
+			*iFreeM += ( iGes < t ? iGes : t );
+			t = Mines->Items[i]->iMaxOilProd-Mines->Items[i]->iOilProd;
+			*iFreeO += ( iGes < t ? iGes : t );
+			t = Mines->Items[i]->iMaxGoldProd-Mines->Items[i]->iGoldProd;
+			*iFreeG += ( iGes < t ? iGes : t );
+		}
+	}
 }

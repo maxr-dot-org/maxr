@@ -377,6 +377,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_BUILDLIST");
 	case GAME_EV_WANT_EXIT_FIN_VEH:
 		return string("GAME_EV_WANT_EXIT_FIN_VEH");
+	case GAME_EV_PRODUCE_VALUES:
+		return string("GAME_EV_PRODUCE_VALUES");
+	case GAME_EV_CHANGE_RESOURCES:
+		return string("GAME_EV_CHANGE_RESOURCES");
 	default:
 		return iToStr( iType );
 	}

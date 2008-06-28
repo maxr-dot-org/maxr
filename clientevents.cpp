@@ -170,3 +170,13 @@ void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY )
 	message->pushInt16 ( Building->iID );
 	Client->sendNetMessage( message );
 }
+
+void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, int iGoldProd )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_CHANGE_RESOURCES );
+	message->pushInt16 ( iGoldProd );
+	message->pushInt16 ( iOilProd );
+	message->pushInt16 ( iMetalProd );
+	message->pushInt16 ( Building->iID );
+	Client->sendNetMessage( message );
+}
