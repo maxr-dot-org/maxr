@@ -854,7 +854,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				if ( iTempSBMetalProd < iMetalProd && iFreeMetal )
 				{
-					Building->doMineInc ( TYPE_METAL, &Mines );
+					Building->doMineInc(TYPE_METAL, Mines);
 					iTempSBMetalProd++;
 					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
 					bDone = true;
@@ -869,7 +869,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				if ( iTempSBOilProd < iOilProd && iFreeOil )
 				{
-					Building->doMineInc ( TYPE_OIL, &Mines );
+					Building->doMineInc(TYPE_OIL, Mines);
 					iTempSBOilProd++;
 					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
 					bDone = true;
@@ -884,7 +884,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				if ( iTempSBGoldProd < iGoldProd && iFreeGold )
 				{
-					Building->doMineInc ( TYPE_GOLD, &Mines );
+					Building->doMineInc(TYPE_GOLD, Mines);
 					iTempSBGoldProd++;
 					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
 					bDone = true;
