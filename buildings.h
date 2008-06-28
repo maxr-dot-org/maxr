@@ -91,6 +91,8 @@ struct sBuildList{
 
 struct sMineValues
 {
+	int& GetProd(int type);
+
 #define TYPE_METAL 0
 #define TYPE_OIL 1
 #define TYPE_GOLD 2
@@ -193,7 +195,7 @@ public:
   void CheckRessourceProd(void);
   void showMineManager();
   void doMineInc ( int iType, cList<sMineValues*> *Mines );
-  void doMineDec ( int iType, cList<sMineValues*> *Mines );
+  void doMineDec(int iType, cList<sMineValues*>& Mines);
   void calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFreeO, int *iFreeG );
   void MakeMineBars(int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG);
   void DrawMineBar(int typ,int value,int max_value,int offy,bool number,int fixed);

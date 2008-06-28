@@ -31,6 +31,19 @@
 #include "server.h"
 
 
+int& sMineValues::GetProd(int const type)
+{
+	switch (type)
+	{
+		case TYPE_METAL: return iMetalProd;
+		case TYPE_OIL:   return iOilProd;
+		case TYPE_GOLD:  return iGoldProd;
+
+		default: throw std::logic_error("Invalid resource type");
+	}
+}
+
+
 // Struktur für die Upgrade-List:
 struct sUpgradeStruct
 {
@@ -5680,7 +5693,7 @@ void cBuilding::showMineManager ( void )
 				for ( ;abs ( iTempSBMetalProd - t ) && iTempSBMetalProd > 0; )
 				{
 					iTempSBMetalProd--;
-					doMineDec ( TYPE_METAL, &Mines );
+					doMineDec(TYPE_METAL, Mines);
 				}
 
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
@@ -5713,7 +5726,7 @@ void cBuilding::showMineManager ( void )
 				for ( ;abs ( iTempSBOilProd - t ) && iTempSBOilProd > 0; )
 				{
 					iTempSBOilProd--;
-					doMineDec ( TYPE_OIL, &Mines );
+					doMineDec(TYPE_OIL, Mines);
 				}
 
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
@@ -5746,7 +5759,7 @@ void cBuilding::showMineManager ( void )
 				for ( ;abs ( iTempSBGoldProd - t ) && iTempSBGoldProd > 0; )
 				{
 					iTempSBGoldProd--;
-					doMineDec ( TYPE_GOLD, &Mines );
+					doMineDec(TYPE_GOLD, Mines);
 				}
 
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
@@ -5821,7 +5834,7 @@ void cBuilding::showMineManager ( void )
 			if ( iTempSBMetalProd > 0 )
 			{
 				iTempSBMetalProd--;
-				doMineDec ( TYPE_METAL, &Mines );
+				doMineDec(TYPE_METAL, Mines);
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
@@ -5901,7 +5914,7 @@ void cBuilding::showMineManager ( void )
 			if ( iTempSBOilProd > 0 )
 			{
 				iTempSBOilProd--;
-				doMineDec ( TYPE_OIL, &Mines );
+				doMineDec(TYPE_OIL, Mines);
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
@@ -5981,7 +5994,7 @@ void cBuilding::showMineManager ( void )
 			if ( iTempSBGoldProd > 0 )
 			{
 				iTempSBGoldProd--;
-				doMineDec ( TYPE_GOLD, &Mines );
+				doMineDec(TYPE_GOLD, Mines);
 				calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
@@ -8730,37 +8743,12 @@ void cBuilding::doMineInc ( int iType, cList<sMineValues*> *Mines )
 	}
 }
 
-void cBuilding::doMineDec ( int iType, cList<sMineValues*> *Mines )
+void cBuilding::doMineDec(int const iType, cList<sMineValues*>& Mines)
 {
-	for( unsigned int i = 0; i < Mines->iCount; i++ )
+	for (unsigned int i = 0; i < Mines.iCount; ++i)
 	{
-		switch ( iType )
-		{
-		case TYPE_METAL:
-			{
-				if( Mines->Items[i]->iMetalProd > 0 )
-				{
-					Mines->Items[i]->iMetalProd--;
-				}
-			}
-			break;
-		case TYPE_OIL:
-			{
-				if( Mines->Items[i]->iOilProd > 0 )
-				{
-					Mines->Items[i]->iOilProd--;
-				}
-			}
-			break;
-		case TYPE_GOLD:
-			{
-				if( Mines->Items[i]->iGoldProd > 0 )
-				{
-					Mines->Items[i]->iGoldProd--;
-				}
-			}
-			break;
-		}
+		int& prod = Mines[i]->GetProd(iType);
+		if (prod > 0) --prod;
 	}
 }
 
