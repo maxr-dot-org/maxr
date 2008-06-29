@@ -8729,7 +8729,11 @@ void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mine
 
 		int&      prod     = m.GetProd(resource);
 		int const max_prod = m.GetMaxProd(resource);
-		if (prod < max_prod) ++prod;
+		if (prod < max_prod)
+		{
+			++prod;
+			break;
+		}
 	}
 }
 
@@ -8738,7 +8742,11 @@ void cBuilding::doMineDec(ResourceKind const resource, cList<sMineValues*>& Mine
 	for (unsigned int i = 0; i < Mines.iCount; ++i)
 	{
 		int& prod = Mines[i]->GetProd(resource);
-		if (prod > 0) --prod;
+		if (prod > 0)
+		{
+			--prod;
+			break;
+		}
 	}
 }
 
