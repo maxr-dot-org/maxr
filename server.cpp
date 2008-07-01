@@ -75,6 +75,12 @@ cServer::~cServer()
 		PlayerList->Delete ( 0 );
 	}
 
+	while ( AJobs.iCount )
+	{
+		delete AJobs.Items[0];
+		AJobs.Delete(0);
+	}
+
 }
 
 
@@ -399,7 +405,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			//check if attack is possible
 			//TODO: allow attacking empty terains
-			//TODO: implement deleting of cAttackJobs
 			if ( bIsVehicle )
 			{
 				if ( !attackingVehicle->CanAttackObject( targetOffset ) ) break;
@@ -411,6 +416,33 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset ));
 			}
 
+		}
+		break;
+	case GAME_EV_ATTACKJOB_FINISHED:
+		{
+			int ID = message->popInt16();
+			cServerAttackJob* aJob = NULL;
+			
+			int i = 0;
+			for ( ; i < AJobs.iCount; i++ )
+			{
+				if ( AJobs.Items[i]->iID == ID ) 
+				{
+					aJob = AJobs.Items[i];
+					break;
+				}
+			}
+			if ( aJob == NULL ) //attack job not found
+			{
+				cLog::write("Server: ServerAttackJob not found",cLog::eLOG_TYPE_NET_ERROR);
+				break;
+			}
+			aJob->clientFinished( message->iPlayerNr );
+			if ( aJob->executingClients.iCount == 0 )
+			{
+				AJobs.Delete(i);
+				delete aJob;
+			}
 		}
 		break;
 	case GAME_EV_MINELAYERSTATUS:
@@ -1109,45 +1141,45 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 			Map->GO[iOff+1].top;
 			Map->GO[iOff+Map->size].top;
 			Map->GO[iOff+Map->size+1].top;
-			deleteBuilding ( Map->GO[iOff].top );
+			deleteUnit ( Map->GO[iOff].top );
 			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
-				deleteBuilding ( Map->GO[iOff].base );
+				deleteUnit ( Map->GO[iOff].base );
 				Map->GO[iOff].base = NULL;
 			}
 			iOff++;
-			deleteBuilding ( Map->GO[iOff].top );
+			deleteUnit ( Map->GO[iOff].top );
 			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
-				deleteBuilding ( Map->GO[iOff].base );
+				deleteUnit ( Map->GO[iOff].base );
 				Map->GO[iOff].base=NULL;
 			}
 			iOff+=Map->size;
-			deleteBuilding ( Map->GO[iOff].top );
+			deleteUnit ( Map->GO[iOff].top );
 			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
-				deleteBuilding ( Map->GO[iOff].base );
+				deleteUnit ( Map->GO[iOff].base );
 				Map->GO[iOff].base=NULL;
 			}
 			iOff--;
-			deleteBuilding ( Map->GO[iOff].top );
+			deleteUnit ( Map->GO[iOff].top );
 			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
-				deleteBuilding ( Map->GO[iOff].base );
+				deleteUnit ( Map->GO[iOff].base );
 				Map->GO[iOff].base=NULL;
 			}
 		}
 		else
 		{
-			deleteBuilding ( Map->GO[iOff].top );
+			deleteUnit ( Map->GO[iOff].top );
 			Map->GO[iOff].top=AddedBuilding;
 			if ( !AddedBuilding->data.is_connector&&Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
-				deleteBuilding ( Map->GO[iOff].base );
+				deleteUnit ( Map->GO[iOff].base );
 				Map->GO[iOff].base=NULL;
 			}
 		}
@@ -1168,58 +1200,105 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	Player->base.AddBuilding ( AddedBuilding );
 }
 
-void cServer::deleteBuilding( cBuilding *Building )
+void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 {
-	if( Building )
+	if( !Building ) return;
+	if( !Building->owner ) Map->deleteRubble( Building );
+
+	if( Building->prev )
 	{
-		if( Building->prev )
+		Building->prev->next = Building->next;
+		if( Building->next )
 		{
-			Building->prev->next = Building->next;
-			if( Building->next )
-			{
-				Building->next->prev = Building->prev;
-			}
+			Building->next->prev = Building->prev;
 		}
-		else
-		{
-			Building->owner->BuildingList = Building->next;
-			if( Building->next )
-			{
-				Building->next->prev = NULL;
-			}
-		}
-		if( Building->base )
-		{
-			Building->base->DeleteBuilding( Building );
-		}
-
-		bool bBase, bSubBase;
-		if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building )
-		{
-			Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
-			bBase = true;
-		}
-		else bBase = false;
-		if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building )
-		{
-			Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
-			bSubBase = true;
-		}
-		else bSubBase = false;
-		if ( !bBase && !bSubBase )
-		{
-			Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
-			if ( Building->data.is_big )
-			{
-				Map->GO[Building->PosX+Building->PosY*Map->size+1].top = NULL;
-				Map->GO[Building->PosX+Building->PosY*Map->size+Map->size].top = NULL;
-				Map->GO[Building->PosX+Building->PosY*Map->size+Map->size+1].top = NULL;
-			}
-		}
-		sendDeleteUnit( Building->iID, false, Building->owner->Nr );
-
-		delete Building;
 	}
+	else
+	{
+		Building->owner->BuildingList = Building->next;
+		if( Building->next )
+		{
+			Building->next->prev = NULL;
+		}
+	}
+	if( Building->base )
+	{
+		Building->base->DeleteBuilding( Building );
+	}
+
+	bool bBase, bSubBase;
+	if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building )
+	{
+		Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
+		bBase = true;
+	}
+	else bBase = false;
+	if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building )
+	{
+		Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
+		bSubBase = true;
+	}
+	else bSubBase = false;
+	if ( !bBase && !bSubBase )
+	{
+		Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
+		if ( Building->data.is_big )
+		{
+			Map->GO[Building->PosX+Building->PosY*Map->size+1].top = NULL;
+			Map->GO[Building->PosX+Building->PosY*Map->size+Map->size].top = NULL;
+			Map->GO[Building->PosX+Building->PosY*Map->size+Map->size+1].top = NULL;
+		}
+	}
+	
+	if ( notifyClient ) sendDeleteUnit( Building, -1 );
+
+	cPlayer* owner = Building->owner;
+	delete Building;
+
+	if ( owner ) owner->DoScan();
+}
+
+void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
+{
+	if( !vehicle ) return;
+
+	if( vehicle->prev )
+	{
+		vehicle->prev->next = vehicle->next;
+		if( vehicle->next )
+		{
+			vehicle->next->prev = vehicle->prev;
+		}
+	}
+	else
+	{
+		vehicle->owner->VehicleList = vehicle->next;
+		if( vehicle->next )
+		{
+			vehicle->next->prev = NULL;
+		}
+	}
+
+	int offset = vehicle->PosX + vehicle->PosY * Map->size;
+
+	if ( vehicle->data.can_drive == DRIVE_AIR ) Map->GO[offset].plane = NULL;
+	else if ( vehicle->IsBuilding && vehicle->data.can_build == BUILD_BIG )
+	{
+		Map->GO[offset			 	  ].vehicle = NULL;
+		Map->GO[offset + 1		 	  ].vehicle = NULL;
+		Map->GO[offset + Map->size 	  ].vehicle = NULL;
+		Map->GO[offset + Map->size + 1].vehicle = NULL;
+	}
+	else
+		Map->GO[offset].vehicle = NULL;
+
+	if ( notifyClient ) sendDeleteUnit( vehicle, -1 );
+
+	
+	cPlayer* owner = vehicle->owner;
+	delete vehicle;
+
+	if ( owner ) owner->DoScan();
 }
 
 void cServer::checkPlayerUnits ()
@@ -1268,7 +1347,7 @@ void cServer::checkPlayerUnits ()
 							bool bPlane;
 							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
 							else bPlane = false;
-							sendDeleteUnit( NextVehicle->iID, true, MapPlayer->Nr );
+							sendDeleteUnit( NextVehicle, MapPlayer->Nr );
 							break;
 						}
 					}
@@ -1312,7 +1391,7 @@ void cServer::checkPlayerUnits ()
 							else bBase = false;
 							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
 							else bSubBase = false;
-							sendDeleteUnit( NextBuilding->iID, false, MapPlayer->Nr );
+							sendDeleteUnit( NextBuilding, MapPlayer->Nr );
 
 							break;
 						}
@@ -2099,3 +2178,52 @@ bool cServer::checkExitBlocked ( int iX, int iY, sVehicle *Type )
 
 	return false;
 }
+
+void cServer::destroyUnit( cVehicle* vehicle )
+{
+	int offset = vehicle->PosX + vehicle->PosY*Map->size;
+	int value = vehicle->data.iBuilt_Costs/2;
+
+	//delete other units here!
+
+	deleteUnit( vehicle, false );
+
+	Map->addRubble( offset, value, false );
+}
+
+void cServer::destroyUnit(cBuilding *building)
+{
+	int offset = building->PosX + building->PosY * Map->size;
+	int value = 0;
+	bool big = false;
+
+	if ( Map->GO[offset].top && Map->GO[offset].top->data.is_big )
+	{
+		big = true;
+
+		if ( Map->GO[offset + 1].base ) value += Map->GO[offset + 1].base->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + 1            ].base );
+		if ( Map->GO[offset + Map->size].base ) value += Map->GO[offset + Map->size].base->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + Map->size    ].base );
+		if ( Map->GO[offset + Map->size + 1].base ) value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + Map->size + 1].base );
+		
+		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + 1            ].subbase );
+		if ( Map->GO[offset + Map->size].subbase ) value += Map->GO[offset + Map->size].subbase->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + Map->size    ].subbase );
+		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
+	}
+
+	if ( Map->GO[offset].top ) value += Map->GO[offset].top->data.iBuilt_Costs;
+	deleteUnit( Map->GO[offset].top );
+	if ( Map->GO[offset].base ) value += Map->GO[offset].base->data.iBuilt_Costs;
+	deleteUnit( Map->GO[offset].base );
+	if ( Map->GO[offset].subbase ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
+	deleteUnit( Map->GO[offset].subbase );
+
+	Map->addRubble( offset, value/2, big );
+
+}
+

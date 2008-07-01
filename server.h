@@ -281,11 +281,23 @@ public:
 	void run();
 
 	/**
-	* deletes the building
+	* deletes a Unit
 	*@author alzi alias DoctorDeath
 	*@param Building Building which should be deleted.
+	*@param notifyClient when fasle, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
 	*/
-	void deleteBuilding ( cBuilding *Building );
+	void deleteUnit ( cBuilding *Building, bool notifyClient = true );
+	void deleteUnit( cVehicle* vehicle, bool notifyClient = true );
+
+	/**
+	* deletes an unit (and additional units on the same field if nessesarry) 
+	* from the game, creates rubble
+	* does not notify the client! the the caller has to take care of the nessesary actions on the client
+	*/
+	void destroyUnit( cVehicle* vehicle );
+	void destroyUnit( cBuilding* building );
+
+
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath
@@ -327,6 +339,7 @@ public:
 	*@param MJob the movejob to be released
 	*/
 	void releaseMoveJob ( cMJobs *MJob );
+
 } EX *Server;
 
 #endif

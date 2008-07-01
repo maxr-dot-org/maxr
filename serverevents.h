@@ -35,6 +35,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
+	GAME_EV_ATTACKJOB_FINISHED,		// the client has finished animating the muzzle flash
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
 	GAME_EV_WANT_TRANSFER,			// information about a resource transfer
@@ -56,17 +57,12 @@ enum SERVER_EVENT_TYPES
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
 /**
 * Sends an event to a player that a unit has to be deleted
-*@author alzi alias DoctorDeath
-*@param iPosX The X position of the unit
-*@param iPosY The Y position of the unit
-*@param iPlayer The player whos unit should be deleted
-*@param bVehicle True if the unit is an vehicle
-*@param iClient The client who schould receive this event
-*@param bPlane True for planes
-*@param bBase True if the building is on the ground
-*@param bSubBase True if the building is under an building that is on the ground
+*@param vehicle vehicle that has to be deleted
+*@param building building that has to be deleted
+*@param iClient The client who schould receive this event. -1 for all Clients who can see the unit
 */
-void sendDeleteUnit ( int iID, bool bVehicle, int iClient );
+void sendDeleteUnit ( cVehicle* vehicle, int iCLient);
+void sendDeleteUnit ( cBuilding* building, int iCLient);
 /**
 * Sends an event to a player that he has to detected an enemy unit and should add it
 *@author alzi alias DoctorDeath

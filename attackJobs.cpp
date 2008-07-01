@@ -74,6 +74,12 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 		
 }
 
+cServerAttackJob::~cServerAttackJob() 
+{
+	if ( building ) building->Attacking = false;
+	if ( vehicle  ) vehicle->Attacking = false;
+}
+
 void cServerAttackJob::lockTarget(int offset)
 {
 	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
@@ -233,6 +239,163 @@ void cServerAttackJob::sendFireCommand()
 			message->pushInt16( iID );
 			Server->sendNetMessage( message, player->Nr );
 		}
+	}
+}
+
+void cServerAttackJob::clientFinished( int playerNr )
+{
+	for ( int i = 0; i < executingClients.iCount; i++ )
+	{
+		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
+	}
+
+	if ( executingClients.iCount == 0 ) makeImpact();
+}
+
+
+void cServerAttackJob::makeImpact()
+{
+	int attackMode = vehicle ? vehicle->data.can_attack : building->data.can_attack;
+
+	//Todo: cluster
+	sendAttackJobImpact( iTargetOff, vehicle?vehicle->data.damage:building->data.damage, attackMode );
+	
+	cVehicle* targetVehicle = NULL;
+	cBuilding* targetBuilding = NULL;
+
+	//select target
+	if ( attackMode == ATTACK_AIRnLAND )
+	{
+		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
+		targetBuilding = Server->Map->GO[iTargetOff].top;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetVehicle = Server->Map->GO[iTargetOff].plane;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].subbase;
+
+	}
+	else if ( attackMode == ATTACK_LAND )
+	{
+		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
+		targetBuilding = Server->Map->GO[iTargetOff].top;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].subbase;
+
+	}
+	else if ( attackMode == ATTACK_AIR )
+	{
+		targetVehicle = Server->Map->GO[iTargetOff].plane;
+	}
+	else if ( attackMode == ATTACK_SUB_LAND )
+	{
+		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
+		targetBuilding = Server->Map->GO[iTargetOff].top;
+
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+			targetVehicle = NULL;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Server->Map->GO[iTargetOff].subbase;
+
+	}
+
+	//check for rubble
+	if ( targetBuilding && !targetBuilding->owner )
+		targetBuilding = NULL;
+
+	//no target found
+	if ( targetBuilding || targetVehicle ) 
+	{
+		int damage = vehicle ? vehicle->data.damage : building->data.damage;
+
+		if ( targetVehicle )
+		{
+			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
+
+			if (targetVehicle->data.hit_points <= 0)
+			{
+				Server->destroyUnit( targetVehicle );
+			}
+		}
+		else
+		{
+			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+
+			if ( targetBuilding->data.hit_points <= 0 )
+			{
+				Server->destroyUnit( targetBuilding );
+			}
+		}
+	}
+	
+	//clean up
+	if ( attackMode == ATTACK_AIR )
+	{
+		cVehicle* target = Server->Map->GO[iTargetOff].plane;
+		if ( target )
+		{
+			if ( target->mjob ) target->mjob->EndForNow = false;
+			target->bIsBeeingAttacked = false;
+		}
+	}
+	if ( attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_LAND || attackMode ==  ATTACK_SUB_LAND )
+	{
+		cVehicle* targetVehicle = Server->Map->GO[iTargetOff].vehicle;
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea && attackMode != ATTACK_SUB_LAND )
+		{
+			targetVehicle = NULL;
+		}
+
+			
+		if ( Server->Map->GO[iTargetOff].top )
+		{
+			Server->Map->GO[iTargetOff].top->bIsBeeingAttacked = false;	
+		}
+		if ( Server->Map->GO[iTargetOff].base )
+		{
+			Server->Map->GO[iTargetOff].base->bIsBeeingAttacked = false;
+		}
+		if ( Server->Map->GO[iTargetOff].subbase )
+		{
+			Server->Map->GO[iTargetOff].subbase->bIsBeeingAttacked = false;
+		}
+
+		if ( targetVehicle )
+		{
+			if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = false;
+			targetVehicle->bIsBeeingAttacked = false;
+		}
+	}
+}
+
+void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMode )
+{
+	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
+	{
+		cPlayer* player = Server->PlayerList->Items[i];
+		
+		//targed in sight?
+		if ( player->ScanMap[offset] == 0 ) continue;
+
+		cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_IMPACT );
+		message->pushInt32( offset );
+		message->pushInt16( damage );
+		message->pushInt16( attackMode );
+
+		Server->sendNetMessage( message, player->Nr );
+
 	}
 }
 
@@ -576,7 +739,9 @@ void cClientAttackJob::playMuzzle()
 
 void cClientAttackJob::sendFinishMessage()
 {
-
+	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FINISHED );
+	message->pushInt16( iID );
+	Client->sendNetMessage( message );
 }
 
 void cClientAttackJob::updateAgressorData()
@@ -592,7 +757,7 @@ void cClientAttackJob::updateAgressorData()
 			vehicle->ShowDetails();
 		}
 	}
-	else
+	else if ( building )
 	{
 		building->data.shots--;
 		building->data.ammo--;
@@ -601,5 +766,176 @@ void cClientAttackJob::updateAgressorData()
 		{
 			building->ShowDetails();
 		}
+	}
+}
+
+void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
+{
+	cVehicle* targetVehicle = NULL;
+	cBuilding* targetBuilding = NULL;
+
+	if ( attackMode == ATTACK_AIRnLAND )
+	{
+		targetVehicle = Client->Map->GO[offset].vehicle;
+		targetBuilding = Client->Map->GO[offset].top;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetVehicle = Client->Map->GO[offset].plane;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].subbase;
+
+	}
+	else if ( attackMode == ATTACK_LAND )
+	{
+		targetVehicle = Client->Map->GO[offset].vehicle;
+		targetBuilding = Client->Map->GO[offset].top;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].subbase;
+
+	}
+	else if ( attackMode == ATTACK_AIR )
+	{
+		targetVehicle = Client->Map->GO[offset].plane;
+	}
+	else if ( attackMode == ATTACK_SUB_LAND )
+	{
+		targetVehicle = Client->Map->GO[offset].vehicle;
+		targetBuilding = Client->Map->GO[offset].top;
+
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+			targetVehicle = NULL;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].base;
+
+		if ( !targetBuilding && !targetVehicle )
+			targetBuilding = Client->Map->GO[offset].subbase;
+	}
+
+	//check for rubble
+	if ( targetBuilding && !targetBuilding->owner )
+		targetBuilding = NULL;
+
+	bool playImpact = false;
+	bool ownUnit = false;
+	bool destroyed = false;
+	string name;
+
+	//no target found
+	if ( !targetBuilding && !targetVehicle )
+	{
+		playImpact = true;
+	}
+	else
+	{
+
+		if ( targetVehicle )
+		{
+			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
+			name = targetVehicle->name;
+			if ( targetVehicle->owner == Client->ActivePlayer ) ownUnit = true;
+
+			if (targetVehicle->data.hit_points <= 0)
+			{
+				Client->destroyUnit( targetVehicle );
+				destroyed = true;
+			}
+			else
+			{
+				playImpact = true;
+				if ( Client->SelectedVehicle == targetVehicle ) targetVehicle->ShowDetails();
+				Client->mouseMoveCallback( true );
+			}
+		}
+		else
+		{
+			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+			name = targetBuilding->name;
+			if ( targetBuilding->owner == Client->ActivePlayer ) ownUnit = true;
+
+			if ( targetBuilding->data.hit_points <= 0 )
+			{
+				Client->destroyUnit( targetBuilding );
+				destroyed = true;
+			}
+			else
+			{
+				playImpact = true;
+				if ( Client->SelectedBuilding == targetBuilding ) targetBuilding->ShowDetails();
+				Client->mouseMoveCallback( true );
+			}
+		}	
+	}
+
+	int x = offset % Client->Map->size;
+	int y = offset / Client->Map->size;
+
+	if ( playImpact && SettingsData.bAlphaEffects )
+	{
+		Client->addFX( fxHit, x ,y , 0);
+	}
+
+	string message;
+	if ( ownUnit )
+	{
+		if ( destroyed )
+		{
+			message = name + " " + lngPack.i18n("Text~Comp~Destroyed");
+			Client->addCoords( message, x, y );
+			PlayVoice( VoiceData.VOIDestroyedUs );
+		}
+		else
+		{
+			message = name + " " + lngPack.i18n("Text~Comp~Attacked");
+			Client->addCoords( message, x, y );
+			PlayVoice( VoiceData.VOIAttackingUs );
+		}
+	}
+
+	//clean up
+	if ( attackMode == ATTACK_AIR )
+	{
+		cVehicle* target = Server->Map->GO[offset].plane;
+		if ( target )
+		{
+			if ( target->mjob ) target->mjob->EndForNow = false;
+			target->bIsBeeingAttacked = false;
+		}
+	}
+	if ( attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_LAND || attackMode ==  ATTACK_SUB_LAND )
+	{
+		cVehicle* targetVehicle = Server->Map->GO[offset].vehicle;
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea && attackMode != ATTACK_SUB_LAND )
+		{
+			targetVehicle = NULL;
+		}
+			
+		if ( Client->Map->GO[offset].top )
+		{
+			Client->Map->GO[offset].top->bIsBeeingAttacked = false;	
+		}
+		if ( Client->Map->GO[offset].base )
+		{
+			Client->Map->GO[offset].base->bIsBeeingAttacked = false;
+		}
+		if ( Client->Map->GO[offset].subbase )
+		{
+			Client->Map->GO[offset].subbase->bIsBeeingAttacked = false;
+		}
+
+		if ( targetVehicle )
+		{
+			if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = false;
+			targetVehicle->bIsBeeingAttacked = false;
+		}
+	
 	}
 }

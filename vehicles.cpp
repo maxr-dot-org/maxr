@@ -3696,7 +3696,7 @@ void cVehicle::FindNextband ( void )
 	PlaceBand = false;
 }
 
-// Scanes for resources ( This function is only called be the server)
+// Scanes for resources ( This function is only called by the server)
 void cVehicle::doSurvey ( void )
 {
 	char *ptr;
@@ -5438,7 +5438,7 @@ bool cVehicle::clearMine ()
 	cBuilding *Mine = Server->Map->GO[PosX+PosY*Server->Map->size].base;
 	if ( !Mine || !Mine->data.is_expl_mine || Mine->owner != owner || data.cargo >= data.max_cargo ) return false;
 
-	Server->deleteBuilding ( Mine );
+	Server->deleteUnit ( Mine );
 	data.cargo++;
 
 	if ( data.cargo >= data.max_cargo ) ClearMines = false;

@@ -41,16 +41,52 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 
 }
 
-void sendDeleteUnit ( int iID, bool bVehicle, int iClient )
+void sendDeleteUnit ( cBuilding* building, int iClient )
 {
 	cNetMessage* message;
-	if ( bVehicle ) message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-	else message = new cNetMessage ( GAME_EV_DEL_BUILDING );
+	if ( iClient == -1 )
+	{
+		for ( int i = 0; i < building->SeenByPlayerList.iCount; i++)
+		{
+			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
-	message->pushInt16( iID );
+			message->pushInt16( building->iID );
+			
+			Server->sendNetMessage( message, *building->SeenByPlayerList.Items[i] );
+		}
+	}
+	else
+	{
+		message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
-	Server->sendNetMessage( message, iClient );
+		message->pushInt16( building->iID );
+			
+		Server->sendNetMessage( message, iClient );
+	}
+}
 
+void sendDeleteUnit ( cVehicle* vehicle, int iClient )
+{
+	cNetMessage* message;
+	if ( iClient == -1 )
+	{
+		for ( int i = 0; i < vehicle->SeenByPlayerList.iCount; i++)
+		{
+			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
+			
+			message->pushInt16( vehicle->iID );
+			
+			Server->sendNetMessage( message, *vehicle->SeenByPlayerList[i] );
+		}
+	}
+	else
+	{
+		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
+		
+		message->pushInt16( vehicle->iID );
+			
+		Server->sendNetMessage( message, iClient );
+	}
 }
 
 void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )

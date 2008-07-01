@@ -38,11 +38,15 @@ public:
 
 	cServerAttackJob( cBuilding* building, int targetOff );
 	cServerAttackJob( cVehicle* vehicle, int targetOff );
+	cServerAttackJob::~cServerAttackJob();
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko
 	*/
 	void lockTarget( int offset );
 	void sendFireCommand();
+	void clientFinished( int playerNr );
+	void makeImpact();
+	void sendAttackJobImpact(int offset, int damage, int attackMode );
 
 };
 
@@ -68,6 +72,7 @@ public:
 	*/
 	static void clientLockTarget( cNetMessage* message );
 	static void handleAttackJobs();
+	static void makeImpact(int offset, int damage, int attackMode);
 
 	cClientAttackJob( cNetMessage* message );
 

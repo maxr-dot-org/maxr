@@ -504,6 +504,12 @@ public:
 	*@param MJob the movejob to be released
 	*/
 	void releaseMoveJob ( cMJobs *MJob );
+	/**
+	*destroys a unit
+	*play FX, add rubble and delete Unit
+	*/
+	void destroyUnit( cVehicle* vehicle );
+	void destroyUnit( cBuilding* building );
 } EX *Client;
 
 #endif
