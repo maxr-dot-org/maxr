@@ -51,7 +51,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
 			message->pushInt16( building->iID );
-			
+
 			Server->sendNetMessage( message, *building->SeenByPlayerList.Items[i] );
 		}
 	}
@@ -60,7 +60,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 		message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
 		message->pushInt16( building->iID );
-			
+
 		Server->sendNetMessage( message, iClient );
 	}
 }
@@ -73,18 +73,18 @@ void sendDeleteUnit ( cVehicle* vehicle, int iClient )
 		for ( int i = 0; i < vehicle->SeenByPlayerList.iCount; i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-			
+
 			message->pushInt16( vehicle->iID );
-			
+
 			Server->sendNetMessage( message, *vehicle->SeenByPlayerList[i] );
 		}
 	}
 	else
 	{
 		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-		
+
 		message->pushInt16( vehicle->iID );
-			
+
 		Server->sendNetMessage( message, iClient );
 	}
 }

@@ -8228,7 +8228,7 @@ void cBuilding::Select ( void )
 	}
 
 	Client->video = typ->video;
-	
+
 
 	// Sound abspielen:
 	if ( !IsWorking )

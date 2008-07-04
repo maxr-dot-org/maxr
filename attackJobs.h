@@ -54,7 +54,7 @@ public:
 class cClientAttackJob
 {
 public:
-	
+
 	int iID;
 	cVehicle* vehicle;
 	cBuilding* building;

@@ -500,7 +500,7 @@ void cMap::addRubble( int offset, int value, bool big )
 {
 	if ( value <= 0 ) value = 1;
 
-	if ( terrain[Kacheln[offset]].water || 
+	if ( terrain[Kacheln[offset]].water ||
 		 terrain[Kacheln[offset]].coast ||
 		 terrain[Kacheln[offset]].blocked ||
 		 GO[offset].base ||
@@ -516,7 +516,7 @@ void cMap::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		 terrain[Kacheln[offset + 1]].water || 
+		 terrain[Kacheln[offset + 1]].water ||
 		 terrain[Kacheln[offset + 1]].coast ||
 		 GO[offset + 1].base ||
 		 GO[offset + 1].subbase ))
@@ -528,7 +528,7 @@ void cMap::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		terrain[Kacheln[offset + size]].water || 
+		terrain[Kacheln[offset + size]].water ||
 		terrain[Kacheln[offset + size]].coast ||
 		GO[offset + size].base ||
 		GO[offset + size].subbase ))
@@ -540,7 +540,7 @@ void cMap::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		terrain[Kacheln[offset + size + 1]].water || 
+		terrain[Kacheln[offset + size + 1]].water ||
 		terrain[Kacheln[offset + size + 1]].coast ||
 		GO[offset + size + 1].base ||
 		GO[offset + size + 1].subbase ))

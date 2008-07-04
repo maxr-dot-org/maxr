@@ -31,7 +31,7 @@ struct sGameObjects{
   cBuilding *subbase;		// Normaley base-buildings but in this special case they are under an other base-building (for examble plattform under street)
   cBuilding *top;			// Normal buildings on the ground
   bool reserviert;
-  bool air_reserviert;  
+  bool air_reserviert;
 };
 
 // Resources Struktur ////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
   sResources *Resources; // Feld mit den Resourcen.
   cList<sTerrain*> TerrainInUse; // Liste mit Zeigern auf die terrains, die benutzt werden.
   string ErrorStr; // Der String mit der Fehlermeldung fürs Laden der Maps.
-  string MapName;  // Name der aktuellen Map. 
+  string MapName;  // Name der aktuellen Map.
   /** a list of all rubble objects */
   cBuilding* rubbleList;
 

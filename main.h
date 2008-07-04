@@ -79,7 +79,7 @@ struct sVehicle;
 ///////////////////////////////////////////////////////////////////////////////
 // Defines
 // ------------------------
-// 
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 /** Slashscreen width  */
@@ -111,7 +111,7 @@ struct sVehicle;
 ///////////////////////////////////////////////////////////////////////////////
 // Globals
 // ------------------------
-// 
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 // Languagepack ////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ extern int ResearchInits[8];
 ///////////////////////////////////////////////////////////////////////////////
 // Structures
 // ------------------------
-// 
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 // Struktur für die IDs
@@ -475,9 +475,9 @@ public:
 	/**start in windowmode*/
 	bool bWindowMode;
 	/**start in fastmode */
-	bool bFastMode;	
+	bool bFastMode;
 	/**start in fastmode */
-	string sLanguage;	
+	string sLanguage;
 
 	//GAME
 	/** enable debug*/
@@ -528,7 +528,7 @@ public:
 	bool SoundMute;
 	/**mute voices */
 	bool VoiceMute;	// Muteeigenschaften der Sounds
-	
+
 	//PATHS
 	string sFontPath;			// Path to the fonts
 	string sFxPath;				// Path to the effects
@@ -690,7 +690,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations
 // ------------------------
-// 
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -750,23 +750,23 @@ int Round ( double num );
 void Quit();
 
 /**
-*Inits SDL 
+*Inits SDL
 *@author beko
-*@return -1 on error<br>0 on success<br>1 with warnings 
+*@return -1 on error<br>0 on success<br>1 with warnings
 */
 int initSDL();
 
 /**
 *Inits SDL_sound
 *@author beko
-*@return -1 on error<br>0 on success<br>1 with warnings 
+*@return -1 on error<br>0 on success<br>1 with warnings
 */
 int initSound();
 
 /**
 *Inits SDL_net
 *@author beko
-*@return -1 on error<br>0 on success<br>1 with warnings 
+*@return -1 on error<br>0 on success<br>1 with warnings
 */
 int initNet();
 

@@ -28,7 +28,7 @@
 //  user-friendly.
 //
 //	Example for usage is added in "ExtendedTinyXml.h"
-// 
+//
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -43,7 +43,7 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char 
 {
 	va_list pvaArg;
 	va_start(pvaArg, pszCurrent);
-	
+
 	TiXmlNode * pXmlNode;
 
 	if( rTiXmlDoc.Value() == NULL )
@@ -143,7 +143,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 					bDataFoundPossible = false; // Get only the first data !
 				}
 				pXmlNode = pXmlNode->NextSibling();
-				if( pXmlNode == NULL ) 
+				if( pXmlNode == NULL )
 				{
 					bDataFoundPossible = false; // Last sibling already checked
 				}
@@ -166,7 +166,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 					bDataFoundPossible = false; // Get only the first data !
 				}
 				pXmlNode = pXmlNode->NextSibling();
-				if( pXmlNode == NULL ) 
+				if( pXmlNode == NULL )
 				{
 					bDataFoundPossible = false; // Last sibling already checked
 				}

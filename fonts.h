@@ -140,7 +140,7 @@ class cBitmapFont{
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
 		void showTextAsBlock ( SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer );
-		
+
 		/**
 		 * Calculates the needed space for a text in pixels
 		 * @param sText text to check
@@ -154,25 +154,25 @@ class cBitmapFont{
 		 * @return Height of fonttype in pixels
 		 */
 		int getFontHeight(int eBitmapFontType=LATIN_NORMAL);
-		
-		
+
+
 		/**
 		 * Holds languagecode eFontLangCode
-		 * @return eFontLangCode 
+		 * @return eFontLangCode
 		 */
 		int getLang(void);
 
 		/**
-		 * Displays a text centered on given X 
+		 * Displays a text centered on given X
 		 * @param rDest DL_Rect for position.<br>Use X for position to center on.<br>Y is not taken care of!
 		 * @param sText text to draw
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
 		void showTextCentered(SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer);
-		
+
 		/**
-		 * Displays a text centered on given X 
+		 * Displays a text centered on given X
 		 * @param x Use X for position to center on.<br>Y is not taken care of!
 		 * @param y position y to start drawing
 		 * @param sText text to draw

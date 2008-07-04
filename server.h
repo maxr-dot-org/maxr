@@ -126,8 +126,8 @@ private:
 	*@return the next SDL_Event or NULL if queue is empty
 	*/
 	SDL_Event* pollEvent();
-	
-	
+
+
 	/**
 	* Handels all incoming netMessages from the clients
 	*@author Eiko
@@ -238,7 +238,7 @@ private:
 	*/
 	void calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int iTurboBuildRounds[3], int iTurboBuildCosts[3] );
 	bool checkExitBlocked ( int iX, int iY, sVehicle *Type );
-public:	
+public:
 	/** the map */
 	cMap *Map;
 	/** List with all attackjobs */
@@ -262,7 +262,7 @@ public:
 	*@return 0 for success
 	*/
 	int pushEvent( SDL_Event *event );
-	
+
 
 	/**
 	* sends a netMessage to the client on which the player with 'iPlayerNum' is playing
@@ -290,7 +290,7 @@ public:
 	void deleteUnit( cVehicle* vehicle, bool notifyClient = true );
 
 	/**
-	* deletes an unit (and additional units on the same field if nessesarry) 
+	* deletes an unit (and additional units on the same field if nessesarry)
 	* from the game, creates rubble
 	* does not notify the client! the the caller has to take care of the nessesary actions on the client
 	*/

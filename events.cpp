@@ -78,7 +78,7 @@ void cEventHandling::HandleEvents()
 						// devite into messages
 						SDL_Event* NewEvent = new SDL_Event;
 						NewEvent->type = GAME_EVENT;
-						
+
 						// data1 is the real data
 						NewEvent->user.data1 = malloc(DataBuffer.iLenght);
 						memcpy(NewEvent->user.data1, DataBuffer.data, DataBuffer.iLenght);

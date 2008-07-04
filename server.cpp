@@ -422,11 +422,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			int ID = message->popInt16();
 			cServerAttackJob* aJob = NULL;
-			
+
 			int i = 0;
 			for ( ; i < AJobs.iCount; i++ )
 			{
-				if ( AJobs.Items[i]->iID == ID ) 
+				if ( AJobs.Items[i]->iID == ID )
 				{
 					aJob = AJobs.Items[i];
 					break;
@@ -779,7 +779,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Building->BuildList->Add( BuildListItem );
 			}
 
-			
+
 			if ( Building->BuildList->iCount > 0 )
 			{
 				Building->RepeatBuild = message->popBool();
@@ -927,7 +927,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// bDone must stay true when the server has reached the client values
 				else if ( iTempSBMetalProd != iMetalProd || iTempSBOilProd != iOilProd || iTempSBGoldProd != iGoldProd ) bDone = false;
 			}
-			
+
 			// set new values
 			if ( bDone )
 			{
@@ -1249,7 +1249,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 			Map->GO[Building->PosX+Building->PosY*Map->size+Map->size+1].top = NULL;
 		}
 	}
-	
+
 	if ( notifyClient ) sendDeleteUnit( Building, -1 );
 
 	cPlayer* owner = Building->owner;
@@ -1294,7 +1294,7 @@ void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
 
 	if ( notifyClient ) sendDeleteUnit( vehicle, -1 );
 
-	
+
 	cPlayer* owner = vehicle->owner;
 	delete vehicle;
 
@@ -1800,7 +1800,7 @@ void cServer::handleMoveJobs ()
 		{
 			Vehicle->rotating = false;
 		}
-		
+
 		if ( !MJob->vehicle->moving )
 		{
 			checkMove( MJob );
@@ -2207,7 +2207,7 @@ void cServer::destroyUnit(cBuilding *building)
 		deleteUnit( Map->GO[offset + Map->size    ].base );
 		if ( Map->GO[offset + Map->size + 1].base ) value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size + 1].base );
-		
+
 		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + 1            ].subbase );
 		if ( Map->GO[offset + Map->size].subbase ) value += Map->GO[offset + Map->size].subbase->data.iBuilt_Costs;
@@ -2226,4 +2226,3 @@ void cServer::destroyUnit(cBuilding *building)
 	Map->addRubble( offset, value/2, big );
 
 }
-

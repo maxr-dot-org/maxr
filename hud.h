@@ -62,14 +62,14 @@ public:
   void PlayButton(bool set);
   void HelpButton(bool set);
   void ChatButton(bool set);
-  void LogButton(bool set);  
+  void LogButton(bool set);
   void EndeButton(bool set);
   void ErledigenButton(bool set);
   void NextButton(bool set);
   void PrevButton(bool set);
   void CenterButton(bool set);
   void DateiButton(bool set);
-  void ScaleSurfaces(void);    
+  void ScaleSurfaces(void);
 
   void CheckButtons(void);
   void CheckOneClick(void);
@@ -79,7 +79,7 @@ public:
   void ResetVideoMonitor(void);
   void ShowRunde(void);
   void showTurnTime( int iTime );
-  
+
 private:
 	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target using normal font
 	*@author beko
@@ -90,7 +90,7 @@ private:
 	*@return 0 on success
 	*/
 	int BlitButton(SDL_Rect scr, SDL_Rect dest, std::string sText, bool bPressed);
-	
+
 	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target
 	*@author beko
 	*@param scr SDL_Rect for position on source Surface

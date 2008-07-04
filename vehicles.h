@@ -49,11 +49,11 @@ struct sVehicle{
   SDL_Surface *clear_small,*clear_small_org;         // Surfaces beim Clearen (die große wird in build geladen)
   SDL_Surface *clear_small_shw,*clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die große wird in build geladen)
   SDL_Surface *overlay,*overlay_org;     // Overlays
-  SDL_Surface *storage; // Bild des Vehicles im Lager  
+  SDL_Surface *storage; // Bild des Vehicles im Lager
   char *FLCFile;       // FLC-Video
   sUnitData data;   // Grunddaten des Vehicles
   char id[4];          // ID dieses Elements
-  int nr;              // Nr dieses Elements  
+  int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
   char *text;          // Infotext
 
@@ -66,7 +66,7 @@ struct sVehicle{
   struct Mix_Chunk *StopWater;
   struct Mix_Chunk *Drive;
   struct Mix_Chunk *DriveWater;
-  struct Mix_Chunk *Attack;  
+  struct Mix_Chunk *Attack;
 };
 
 // Die Vehicle Klasse ////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ public:
 	bool Wachposten;  // Gibt an, ob das Behicle auf Wachposten
 	bool Transfer;    // Gibt an, ob gerade ein Transfer statfinden soll
 	int StartUp;      // Zähler für die Startupannimation
-	int FlightHigh;   // Die Flughöhe des Flugzeugs 
+	int FlightHigh;   // Die Flughöhe des Flugzeugs
 	bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
 	cList<cVehicle*> *StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll

@@ -223,7 +223,7 @@ public:
 	*return 0 on succes, -1 if an error occurs
 	*/
 	int send( int iLenght, char *buffer );
-	
+
 	/**
 	* Reads data of an given lenght from the client/socket.
 	*@author alzi alias DoctorDeath

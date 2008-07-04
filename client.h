@@ -483,9 +483,9 @@ public:
 	*@param typ typ of the effect
 	*@param iX X coordinate were the effect should be added
 	*@param iY Y coordinate were the effect should be added
-	*@param iParam 
-	*@param param 
-	*@param iNum 
+	*@param iParam
+	*@param param
+	*@param iNum
 	*/
 	void addFX( eFXTyps typ, int iX, int iY, int iParam );
 	void addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOff, int iFireDir );

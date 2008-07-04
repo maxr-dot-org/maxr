@@ -19,7 +19,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Loads all relevant files and datas at the start of the game.
-// 
+//
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -110,17 +110,17 @@ int LoadData ( void * )
 
 	// Load fonts for SplashMessages
 	cLog::write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
-	
+
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
-	
+
 	font = new cBitmapFont; //init ascii fonts
 
 	cLog::mark();
 
-	
+
 	MakeLog(MAXVERSION,0,0);
 
 	// Load Languagepack
@@ -147,23 +147,23 @@ int LoadData ( void * )
 		MakeLog ( "", 1, 2 );
 	}
 	cLog::mark();
-	
+
 	// Load Keys
 	MakeLog ( lngPack.i18n ( "Text~Init~Keys" ), 0, 3 );
-	
+
 	if(LoadKeys()!=1)
 	{
 		MakeLog("",-1,3);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 3 );
 	}
 	cLog::mark();
-	
+
 	// Load Fonts
 	MakeLog ( lngPack.i18n ( "Text~Init~Fonts" ), 0, 4 );
 	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
@@ -173,16 +173,16 @@ int LoadData ( void * )
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{*/
 		MakeLog ( "", 1, 4 );
 	//}
 	cLog::mark();
-	
+
 	// Load Graphics
 	MakeLog ( lngPack.i18n ( "Text~Init~GFX" ), 0, 5 );
-	
+
 	if ( LoadGraphics ( SettingsData.sGfxPath.c_str() ) != 1 )
 	{
 		MakeLog("",-1,5);
@@ -190,103 +190,103 @@ int LoadData ( void * )
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 5 );
 	}
 	cLog::mark();
-		
+
 	// Load Effects
 	MakeLog ( lngPack.i18n ( "Text~Init~Effects" ), 0, 6 );
-	
+
 	if(LoadEffects ( SettingsData.sFxPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,6);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 6 );
 	}
 	cLog::mark();
-	
+
 	// Load Vehicles
 	MakeLog ( lngPack.i18n ( "Text~Init~Vehicles" ), 0, 7 );
-	
+
 	if ( LoadVehicles() != 1 )
 	{
 		MakeLog("",-1,7);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 7 );
 	}
 	cLog::mark();
-	
+
 	// Load Buildings
 	MakeLog ( lngPack.i18n ( "Text~Init~Buildings" ), 0, 8 );
-	
+
 	if ( LoadBuildings() != 1)
 	{
 		MakeLog("",-1,8);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 8 );
 	}
 	cLog::mark();
-	
+
 	// Load Music
 	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 9 );
-	
+
 	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,9);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 9 );
 	}
 	cLog::mark();
-	
+
 	// Load Sounds
 	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 10 );
-	
+
 	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,10);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 10 );
 	}
 	cLog::mark();
-	
+
 	// Load Voices
 	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 11 );
-	
+
 	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,11);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
-	}	
+	}
 	else
 	{
 		MakeLog ( "", 1, 11 );
@@ -315,7 +315,7 @@ void MakeLog ( string sTxt,int ok,int pos )
 		if(pos == 0) //need full line for first entry version information
 		{
 			SDL_BlitSurface ( buffer, NULL, screen, NULL );
-			SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w+rDest2.w, rDest.h );			
+			SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w+rDest2.w, rDest.h );
 		}
 		else
 		{
@@ -323,16 +323,16 @@ void MakeLog ( string sTxt,int ok,int pos )
 			SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w, rDest.h );
 		}
 		break;
-	
+
 	case 1:
 		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "OK", LATIN_BIG_GOLD);
 		break;
-	
+
 	default:
 		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check maxr.log!", LATIN_BIG_GOLD);
 		break;
 	}
-	
+
 	if ( ok != 0 )
 	{
 		rSrc=rDest2;
@@ -340,7 +340,7 @@ void MakeLog ( string sTxt,int ok,int pos )
 		SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
 		SDL_UpdateRect ( screen, rDest2.x, rDest2.y + rDest2.h*pos, rDest2.w, rDest2.h );
 	}
-	
+
 	return;
 }
 
@@ -399,7 +399,7 @@ static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory
 		return 0;
 	}
 
-	
+
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX(filepath.c_str());
@@ -424,7 +424,7 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 	filepath += filename;
 	if(!FileExists(filepath.c_str()))
 		return 0;
-	
+
 	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX(filepath.c_str());
@@ -694,7 +694,7 @@ int ReadMaxXml()
 		cLog::write ( "Can't load EnableDamageEffectsVehicles from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.bDamageEffectsVehicles = true;
 	}
-	// EnableMakeTracks  
+	// EnableMakeTracks
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", NULL)))
 		cLog::write ( "Can't find EnableMakeTracks-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
@@ -841,7 +841,7 @@ int ReadMaxXml()
 	}
 
 	// PATHs
-	//Fonts 
+	//Fonts
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", NULL)))
 		cLog::write ( "Can't find Path-Fonts-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
@@ -851,7 +851,7 @@ int ReadMaxXml()
 		cLog::write ( "Can't load FontsPath from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sFontPath = "fonts";
 	}
-	//FX 
+	//FX
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", NULL)))
 		cLog::write ( "Can't find Path-FX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
@@ -871,7 +871,7 @@ int ReadMaxXml()
 		cLog::write ( "Can't load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sGfxPath = "gfx";
 	}
-	
+
 	//Maps
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
@@ -942,12 +942,12 @@ int ReadMaxXml()
 		cLog::write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sBuildingsPath = "buildings";
 	}
-	
+
 	if(SettingsData.bDebug) //Print settingslist to log
 	{
 		stringstream strStream;
 		string sTmp;
-		
+
 		#define SON "Enabled"
 		#define SOFF "Disabled"
 		cLog::mark();
@@ -956,7 +956,7 @@ int ReadMaxXml()
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-	
+
 		sTmp =  SettingsData.bIntro?SON:SOFF;
 		cLog::write ("Intro         == "+sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bWindowMode?SON:SOFF;
@@ -966,7 +966,7 @@ int ReadMaxXml()
 		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
 		//cLog::write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bAutoSave?SON:SOFF;
-		cLog::write ("Autosave      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);	
+		cLog::write ("Autosave      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bAnimations?SON:SOFF;
 		cLog::write ("Animation     == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bShadows?SON:SOFF;
@@ -982,52 +982,52 @@ int ReadMaxXml()
 		sTmp =  SettingsData.bShowDescription?SON:SOFF;
 		cLog::write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		cLog::write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
-		
+
 		strStream << "Scrollspeed   == " << SettingsData.iScrollSpeed;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-	
+
 		cLog::write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
-		
+
 		strStream << "Port          == " << SettingsData.iPort;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-		
+
 		cLog::write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
-	
+
 		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
 		cLog::write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-	
+
 		strStream << "Chunksize     == " << SettingsData.iChunkSize;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-	
+
 		strStream << "Frequency     == " << SettingsData.iFrequency;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-		
+
 		sTmp =  SettingsData.MusicMute?SON:SOFF;
 		strStream << "Musicvolume   == " << SettingsData.MusicVol << " Mute: " << sTmp;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-		
+
 		sTmp =  SettingsData.SoundMute?SON:SOFF;
 		strStream << "Soundvolume   == " << SettingsData.SoundVol << " Mute: " << sTmp;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-		
+
 		sTmp =  SettingsData.VoiceMute?SON:SOFF;
 		strStream << "Voicevolume   == " << SettingsData.VoiceVol << " Mute: " << sTmp;
 		cLog::write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
 		strStream.str(""); //reset sequence
 		strStream.clear(stringstream::goodbit); //reset goodbit
-		
+
 		cLog::mark();
 
 	}
@@ -1129,7 +1129,7 @@ static int LoadMusic(const char* path)
 		LoadingData=LOAD_ERROR;
 		return 0;
 	}
-	
+
 	for ( int i=1;i <= MusicAnz; i++ )
 	{
 		sprintf ( sztmp,"%d",i );
@@ -1144,7 +1144,7 @@ static int LoadMusic(const char* path)
 		{
 			sTmpString = "Can't find \"bkg\" in music.xml";
 			sprintf ( sztmp,"%d",i );
-			sTmpString.insert(16,sztmp); 
+			sTmpString.insert(16,sztmp);
 			cLog::write ( sTmpString.c_str(), LOG_TYPE_WARNING );
 			continue;
 		}
@@ -1399,7 +1399,7 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( OtherData.colors[cl_purple],path,"cl_purple.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_aqua],path,"cl_aqua.pcx" );
 
-	
+
 	cLog::write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
 	// Shadow:
 	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
@@ -1620,13 +1620,13 @@ static int LoadVehicles()
 				v.img[n] = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
 				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				SDL_FillRect(v.img[n], NULL, 0xFF00FF);
-				
+
 				for ( int j = 0; j < 13; j++ )
 				{
 					sTmpString = sVehiclePath;
 					sprintf(sztmp,"img%d_%0.2d.pcx",n,j);
 					sTmpString += sztmp;
-					
+
 
 
 					if(FileExists(sTmpString.c_str()))
@@ -3057,7 +3057,7 @@ static void ConvertData(int unitnum, bool vehicle)
 
 	Data->max_shield = Data->iEnergy_Shield_Strength_Max;
 	Data->shield = Data->iEnergy_Shield_Strength;
-	
+
 	if(Data->fCosts_Ground > 0.0)
 		if(Data->fCosts_Sea > 0.0)
 			Data->can_drive = DRIVE_LANDnSEA;

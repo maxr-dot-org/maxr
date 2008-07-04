@@ -43,7 +43,7 @@ struct sUpgrades{
 struct sBuilding{
   SDL_Surface *img,*img_org; // Surface des Buildings
   SDL_Surface *shw,*shw_org; // Surfaces des Schattens
-  SDL_Surface *eff,*eff_org; // Surfaces des Effektes  
+  SDL_Surface *eff,*eff_org; // Surfaces des Effektes
   SDL_Surface *video;  // Video
   sUnitData data;  // Grunddaten des Buildings
   char id[4];          // ID dieses Elements
@@ -136,7 +136,7 @@ public:
   int StartUp;     // Zähler für die Startupannimation
   cBase *base;     // Die Basis des Gebäudes
   bool BaseN,BaseE,BaseS,BaseW; // Gibt an, ob das Gebäude in einer Richting verbunden ist
-  bool BaseBN,BaseBE,BaseBS,BaseBW; // Gibt an, ob das Gebäude in einer Richting verbunden ist (zusätzlich für große Gebäude)  
+  bool BaseBN,BaseBE,BaseBS,BaseBW; // Gibt an, ob das Gebäude in einer Richting verbunden ist (zusätzlich für große Gebäude)
   struct sSubBase *SubBase;     // Die SubBase dieses Gebäudes
   int EffectAlpha; // Alphawert für den Effekt
   bool EffectInc;  // Gibt an, ob der Effect rauf, oder runter gezählt wird
@@ -236,7 +236,7 @@ public:
   void MakeUpgradeSubButtons(void);
   int CalcPrice(int value,int org, int variety);
   int CalcSteigerung(int org, int variety);
-  void SendUpdateStored(int index); 
+  void SendUpdateStored(int index);
   /**
   * returns whether this player has detected this unit or not
   *@author alzi alias DoctorDeath
@@ -247,4 +247,3 @@ public:
 };
 
 #endif
-

@@ -36,7 +36,7 @@ public:
   SDL_Surface *cur; // Der aktuelle Cursor.
   SDL_Surface *back; // Zum Speichern des Maushintergrundes.
   int x,y; // Die Position der Maus.
-  int LastX,LastY; // Die letzte Position der Maus. 
+  int LastX,LastY; // Die letzte Position der Maus.
   int DrawX,DrawY; // Die Position, an die die Maus gezeichnet werden soll.
   bool MoveCallback; // Gibt an, ob die MoveCallback-Funktion aufgerufen werden soll.
   bool MoveCallbackEditor; // Gibt an, ob die MoveCallback-Funktion des Editors aufgerufen werden soll.
@@ -49,7 +49,7 @@ public:
   void Hide(void){visible=false;}
   int GetMouseButton(void);
   void GetKachel(int *X,int *Y);
-  int GetKachelOff(void);  
+  int GetKachelOff(void);
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

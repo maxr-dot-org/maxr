@@ -35,7 +35,7 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	this->building = NULL;
 	this->vehicle = vehicle;
 
-	iMuzzleType = vehicle->data.muzzle_typ;	
+	iMuzzleType = vehicle->data.muzzle_typ;
 	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
 
 	//do local actions
@@ -61,7 +61,7 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 
 	iMuzzleType = building->data.muzzle_typ;
 	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
-			
+
 	//do local actions
 	building->data.shots--;
 	building->data.ammo--;
@@ -71,10 +71,10 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	//TODO: cluster
 	lockTarget( targetOff );
 	sendFireCommand();
-		
+
 }
 
-cServerAttackJob::~cServerAttackJob() 
+cServerAttackJob::~cServerAttackJob()
 {
 	if ( building ) building->Attacking = false;
 	if ( vehicle  ) vehicle->Attacking = false;
@@ -85,10 +85,10 @@ void cServerAttackJob::lockTarget(int offset)
 	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
 	{
 		cPlayer* player = Server->PlayerList->Items[i];
-		
+
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
-		
+
 		int attackMode = building ? building->data.can_attack : vehicle->data.can_attack;
 		if ( attackMode == ATTACK_AIR )
 		{
@@ -134,7 +134,7 @@ void cServerAttackJob::lockTarget(int offset)
 			}
 
 			if ( !targetVehicle && !targetBuilding ) continue;
-			
+
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_LOCK_TARGET );
 			if ( targetVehicle )
 			{
@@ -213,7 +213,7 @@ void cServerAttackJob::sendFireCommand()
 	for ( int i = 0; i < Server->PlayerList->iCount; i++)
 	{
 		cPlayer* player = Server->PlayerList->Items[i];
-		
+
 		//send message to all player who can see the attacking unit
 		if ( player->ScanMap[iAgressorOff] )
 		{
@@ -259,7 +259,7 @@ void cServerAttackJob::makeImpact()
 
 	//Todo: cluster
 	sendAttackJobImpact( iTargetOff, vehicle?vehicle->data.damage:building->data.damage, attackMode );
-	
+
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
 
@@ -316,7 +316,7 @@ void cServerAttackJob::makeImpact()
 		targetBuilding = NULL;
 
 	//no target found
-	if ( targetBuilding || targetVehicle ) 
+	if ( targetBuilding || targetVehicle )
 	{
 		int damage = vehicle ? vehicle->data.damage : building->data.damage;
 
@@ -339,7 +339,7 @@ void cServerAttackJob::makeImpact()
 			}
 		}
 	}
-	
+
 	//clean up
 	if ( attackMode == ATTACK_AIR )
 	{
@@ -358,10 +358,10 @@ void cServerAttackJob::makeImpact()
 			targetVehicle = NULL;
 		}
 
-			
+
 		if ( Server->Map->GO[iTargetOff].top )
 		{
-			Server->Map->GO[iTargetOff].top->bIsBeeingAttacked = false;	
+			Server->Map->GO[iTargetOff].top->bIsBeeingAttacked = false;
 		}
 		if ( Server->Map->GO[iTargetOff].base )
 		{
@@ -385,7 +385,7 @@ void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMod
 	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
 	{
 		cPlayer* player = Server->PlayerList->Items[i];
-		
+
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
 
@@ -412,7 +412,7 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 		vehicle->bIsBeeingAttacked = true;
 		if ( vehicle->mjob ) vehicle->mjob->EndForNow = true;
 		//TODO: synchronize position
-		
+
 	}
 	if ( !bIsAir )
 	{
@@ -463,9 +463,9 @@ void cClientAttackJob::handleAttackJobs()
 				job->rotate();
 				break;
 			}
-		
+
 		}
-	}		
+	}
 }
 
 cClientAttackJob::cClientAttackJob( cNetMessage* message )
@@ -561,9 +561,9 @@ void cClientAttackJob::rotate()
 
 void cClientAttackJob::playMuzzle()
 {
-	
+
 	int offx=0,offy=0;
-	
+
 	/*if ( building&&building->data.is_expl_mine )
 	{
 		MuzzlePlayed=true;
@@ -637,7 +637,7 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_ROCKET_CLUSTER:
 		{
 			if ( wait++!=0 ) return;
-			
+
 			if ( vehicle )
 			{
 				Client->addFX ( fxRocket,vehicle->PosX*64,vehicle->PosY*64, this, iTargetOffset, iFireDir );
@@ -872,7 +872,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 				if ( Client->SelectedBuilding == targetBuilding ) targetBuilding->ShowDetails();
 				Client->mouseMoveCallback( true );
 			}
-		}	
+		}
 	}
 
 	int x = offset % Client->Map->size;
@@ -917,10 +917,10 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		{
 			targetVehicle = NULL;
 		}
-			
+
 		if ( Client->Map->GO[offset].top )
 		{
-			Client->Map->GO[offset].top->bIsBeeingAttacked = false;	
+			Client->Map->GO[offset].top->bIsBeeingAttacked = false;
 		}
 		if ( Client->Map->GO[offset].base )
 		{
@@ -936,6 +936,6 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 			if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = false;
 			targetVehicle->bIsBeeingAttacked = false;
 		}
-	
+
 	}
 }

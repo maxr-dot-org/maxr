@@ -417,10 +417,10 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 		fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 		m_bLeftToRight = true;
 	}
-	if( strResult == "left-to-right" ) 
+	if( strResult == "left-to-right" )
 	{
 		m_bLeftToRight = true;
-	}else if( strResult == "right-to-left" ) 
+	}else if( strResult == "right-to-left" )
 	{
 		m_bLeftToRight = false;
 	}else
@@ -446,11 +446,11 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 			int iTestResult = pXmlNode->CheckTimeStamp( strResult );
 			switch( iTestResult )
 			{
-				case -1 : 
+				case -1 :
 					strErrorMsg = "Language file (" + szLanguageCode+ "): game version attribute has wrong format!";
 					fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 					break;
-				case 0 : 
+				case 0 :
 					strErrorMsg = "Language file (" + szLanguageCode+ "): may be outdated!";
 					fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 					break;

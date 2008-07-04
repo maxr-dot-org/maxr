@@ -448,7 +448,7 @@ void cClient::run()
 		{
 			font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr( Client->attackJobs.iCount), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			if ( Server ) 
+			if ( Server )
 			{
 				font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr( Server->AJobs.iCount), LATIN_SMALL_WHITE);
 				iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -2247,7 +2247,7 @@ void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 // Fügt einen FX-Effekt ein:
 void cClient::addFX ( sFX* n )
 {
-	
+
 	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
 		FXListBottom.Add ( n );
@@ -3594,7 +3594,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	if( !Building ) return;
 
 	bFlagDrawMMap = true;
-	
+
 	if( Building->prev )
 	{
 		Building->prev->next = Building->next;
@@ -3623,12 +3623,12 @@ void cClient::deleteUnit( cBuilding *Building )
 	}
 	else if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
 	else  Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
-	if ( SelectedBuilding == Building ) 
+	if ( SelectedBuilding == Building )
 	{
 		Building->Deselct();
 		SelectedBuilding = NULL;
 	}
-	
+
 	cPlayer* owner = Building->owner;
 	delete Building;
 
@@ -3641,7 +3641,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	if( !Vehicle ) return;
 
 	bFlagDrawMMap = true;
-	
+
 	if( Vehicle->prev )
 	{
 		Vehicle->prev->next = Vehicle->next;
@@ -4876,7 +4876,7 @@ void cClient::destroyUnit(cBuilding *building)
 		deleteUnit( Map->GO[offset + Map->size    ].base );
 		if ( Map->GO[offset + Map->size + 1].base ) value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size + 1].base );
-		
+
 		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + 1            ].subbase );
 		if ( Map->GO[offset + Map->size].subbase ) value += Map->GO[offset + Map->size].subbase->data.iBuilt_Costs;

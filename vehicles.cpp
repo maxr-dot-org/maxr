@@ -745,7 +745,7 @@ void cVehicle::Select ( void )
 		}
 
 		Client->video = NULL;
-		
+
 
 		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
 
@@ -981,7 +981,7 @@ int cVehicle::refreshData ()
 		iReturn = 1;
 	}
 
-	
+
 	// Bauen:
 	if ( IsBuilding && BuildRounds )
 	{
