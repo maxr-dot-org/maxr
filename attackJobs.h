@@ -38,7 +38,7 @@ public:
 
 	cServerAttackJob( cBuilding* building, int targetOff );
 	cServerAttackJob( cVehicle* vehicle, int targetOff );
-	cServerAttackJob::~cServerAttackJob();
+	~cServerAttackJob();
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko
 	*/
