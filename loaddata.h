@@ -85,12 +85,6 @@ int LoadData(void *);
 int ReadMaxXml();
 
 /**
-	* ??
-	* @param src Source surface
-	* @param dest Destination surface
-	*/
-void DupSurface(SDL_Surface *&src,SDL_Surface *&dest);
-/**
 	* Saves the acctual value of an option to the max.xml file
 	* @param Typ of Data to write (see SAVETYPE-defines)
 	* @return 1 on success

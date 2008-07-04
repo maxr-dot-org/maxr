@@ -1468,14 +1468,6 @@ static int LoadGraphics(const char* path)
 	return 1;
 }
 
-// DupSurface ////////////////////////////////////////////////////////////////
-void DupSurface(SDL_Surface *&src,SDL_Surface *&dest)
-{
-	dest = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCCOLORKEY,src->w,src->h,SettingsData.iColourDepth,0,0,0,0);
-	SDL_FillRect(dest,NULL,0xFF00FF);
-	SDL_BlitSurface(src,NULL,dest,NULL);
-	return;
-}
 
 // i18ns the loaded data to the old data structure.
 // This should be just used temporarily while the game doesn't undestand new structure.
