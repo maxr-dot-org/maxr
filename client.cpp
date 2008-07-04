@@ -962,6 +962,7 @@ int cClient::checkUser()
 						cVehicle* target = Map->GO[mouse->GetKachelOff()].vehicle;
 						if (target) targetId = target->iID;
 					}
+					cLog::write("(Client) want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
 					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
 				}
 				else if ( mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
@@ -4879,18 +4880,20 @@ void cClient::destroyUnit(cBuilding *building)
 	{
 		big = true;
 
-		if ( Map->GO[offset + 1].base ) value += Map->GO[offset + 1].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + 1            ].base )    value += Map->GO[offset + 1            ].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].base )    value += Map->GO[offset + Map->size    ].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size + 1].base )    value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + 1            ].subbase ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].subbase ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+		
 		deleteUnit( Map->GO[offset + 1            ].base );
-		if ( Map->GO[offset + Map->size].base ) value += Map->GO[offset + Map->size].base->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size    ].base );
-		if ( Map->GO[offset + Map->size + 1].base ) value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size + 1].base );
 
 		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + 1            ].subbase );
-		if ( Map->GO[offset + Map->size].subbase ) value += Map->GO[offset + Map->size].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size    ].subbase );
-		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
 
 		Client->addFX( fxExploBig, Map->GO[offset].top->PosX * 64 + 64, Map->GO[offset].top->PosY * 64 + 64, 0);
@@ -4900,11 +4903,12 @@ void cClient::destroyUnit(cBuilding *building)
 		Client->addFX( fxExploSmall, Map->GO[offset].top->PosX * 64 + 32, Map->GO[offset].top->PosY * 64 + 32, 0);
 	}
 
-	if ( Map->GO[offset].top ) value += Map->GO[offset].top->data.iBuilt_Costs;
-	deleteUnit( Map->GO[offset].top );
-	if ( Map->GO[offset].base ) value += Map->GO[offset].base->data.iBuilt_Costs;
-	deleteUnit( Map->GO[offset].base );
+	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;
+	if ( Map->GO[offset].base )    value += Map->GO[offset].base->data.iBuilt_Costs;
 	if ( Map->GO[offset].subbase ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
+	
+	deleteUnit( Map->GO[offset].top );
+	deleteUnit( Map->GO[offset].base );
 	deleteUnit( Map->GO[offset].subbase );
 
 	Map->addRubble( offset, value/2, big );

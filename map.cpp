@@ -553,6 +553,7 @@ void cMap::addRubble( int offset, int value, bool big )
 
 	cBuilding* rubble = new cBuilding( NULL, NULL, NULL );
 	rubble->next = rubbleList;
+	if ( rubbleList ) rubbleList->prev = rubble;
 	rubbleList = rubble;
 	rubble->prev = NULL;
 

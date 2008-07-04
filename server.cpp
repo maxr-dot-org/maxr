@@ -380,28 +380,57 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cBuilding* attackingBuilding = NULL;
 			if ( bIsVehicle )
 			{
-				attackingVehicle = getVehicleFromID( message->popInt32() );
-				if ( attackingVehicle == NULL ) break;
-				if ( attackingVehicle->owner->Nr != message->iPlayerNr ) break;
+				int ID = message->popInt32();
+				attackingVehicle = getVehicleFromID( ID );
+				if ( attackingVehicle == NULL ) 
+				{
+					cLog::write(" (Server) vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
+				if ( attackingVehicle->owner->Nr != message->iPlayerNr )
+				{
+					cLog::write(" (Server) Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 			}
 			else
 			{
 				int offset = message->popInt32();
-				if ( offset < 0 || offset > Map->size * Map->size ) break;
+				if ( offset < 0 || offset > Map->size * Map->size ) 
+				{
+					cLog::write(" (Server) Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 				attackingBuilding = Map->GO[offset].top;
-				if ( attackingBuilding == NULL ) break;
-				if ( attackingBuilding->owner->Nr != message->iPlayerNr ) break;
+				if ( attackingBuilding == NULL )
+				{
+					cLog::write(" (Server) No Building at agressor offset", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
+				if ( attackingBuilding->owner->Nr != message->iPlayerNr )
+				{
+					cLog::write(" (Server) Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 			}
 
 			//find target offset
 			int targetOffset = message->popInt32();
-			if ( targetOffset < 0 || targetOffset > Map->size * Map->size ) break;
+			if ( targetOffset < 0 || targetOffset > Map->size * Map->size )
+			{
+				cLog::write(" (Server) Invalid target offset!", cLog::eLOG_TYPE_NET_WARNING);
+				break;
+			}
 
 			int targetID = message->popInt32();
 			if ( targetID != 0 )
 			{
 				cVehicle* targetVehicle = getVehicleFromID( targetID );
-				if ( targetVehicle == NULL ) break;
+				if ( targetVehicle == NULL )
+				{
+					cLog::write(" (Server) vehicle with ID " + iToStr(targetID) + " not found!", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 				targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
 			}
 
@@ -409,12 +438,20 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			//TODO: allow attacking empty terains
 			if ( bIsVehicle )
 			{
-				if ( !attackingVehicle->CanAttackObject( targetOffset ) ) break;
+				if ( !attackingVehicle->CanAttackObject( targetOffset ) )
+				{
+					cLog::write(" (Server) The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 				AJobs.Add( new cServerAttackJob( attackingVehicle, targetOffset ));
 			}
 			else
 			{
-				if ( !attackingBuilding->CanAttackObject( targetOffset ) ) break;
+				if ( !attackingBuilding->CanAttackObject( targetOffset ) )
+				{
+					cLog::write(" (Server) The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
+					break;
+				}
 				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset ));
 			}
 
@@ -436,7 +473,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			if ( aJob == NULL ) //attack job not found
 			{
-				cLog::write("Server: ServerAttackJob not found",cLog::eLOG_TYPE_NET_ERROR);
+				cLog::write(" (Server) ServerAttackJob not found",cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 			aJob->clientFinished( message->iPlayerNr );
@@ -2197,26 +2234,27 @@ void cServer::destroyUnit(cBuilding *building)
 	{
 		big = true;
 
-		if ( Map->GO[offset + 1].base ) value += Map->GO[offset + 1].base->data.iBuilt_Costs;
-		deleteUnit( Map->GO[offset + 1            ].base );
-		if ( Map->GO[offset + Map->size].base ) value += Map->GO[offset + Map->size].base->data.iBuilt_Costs;
-		deleteUnit( Map->GO[offset + Map->size    ].base );
-		if ( Map->GO[offset + Map->size + 1].base ) value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
-		deleteUnit( Map->GO[offset + Map->size + 1].base );
-
-		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
-		deleteUnit( Map->GO[offset + 1            ].subbase );
-		if ( Map->GO[offset + Map->size].subbase ) value += Map->GO[offset + Map->size].subbase->data.iBuilt_Costs;
-		deleteUnit( Map->GO[offset + Map->size    ].subbase );
+		if ( Map->GO[offset + 1            ].base )    value += Map->GO[offset + 1            ].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].base )    value += Map->GO[offset + Map->size    ].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size + 1].base )    value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
+		if ( Map->GO[offset + 1            ].subbase ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].subbase ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+
+		deleteUnit( Map->GO[offset + 1            ].base );
+		deleteUnit( Map->GO[offset + Map->size    ].base );
+		deleteUnit( Map->GO[offset + Map->size + 1].base );
+		deleteUnit( Map->GO[offset + 1            ].subbase );
+		deleteUnit( Map->GO[offset + Map->size    ].subbase );
 		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
 	}
 
 	if ( Map->GO[offset].top ) value += Map->GO[offset].top->data.iBuilt_Costs;
-	deleteUnit( Map->GO[offset].top );
 	if ( Map->GO[offset].base ) value += Map->GO[offset].base->data.iBuilt_Costs;
-	deleteUnit( Map->GO[offset].base );
 	if ( Map->GO[offset].subbase ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
+
+	deleteUnit( Map->GO[offset].top );
+	deleteUnit( Map->GO[offset].base );
 	deleteUnit( Map->GO[offset].subbase );
 
 	Map->addRubble( offset, value/2, big );

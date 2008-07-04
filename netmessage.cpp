@@ -383,6 +383,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_PRODUCE_VALUES");
 	case GAME_EV_CHANGE_RESOURCES:
 		return string("GAME_EV_CHANGE_RESOURCES");
+	case GAME_EV_ATTACKJOB_IMPACT:
+		return string("GAME_EV_ATTACKJOB_IMPACT");
 	default:
 		return iToStr( iType );
 	}

@@ -457,12 +457,11 @@ bool cAJobs::MakeImpact ( void )
 			}
 			else
 			{
-				sMessage += lngPack.i18n( "Text~Comp~Attacked");
-				PlayVoice ( VoiceData.VOIAttackingUs );
+				sMessage += lngPack.i18n( "Text~Comp~");
 			}
 			game->AddCoords ( sMessage,DestX,DestY );
 		}
-		else if ( btarget&&btarget->owner==game->ActivePlayer )
+		else if ( btarget&&btarget->owner== game->ActivePlayer )
 		{
 			sMessage = name;
 			sMessage += " ";

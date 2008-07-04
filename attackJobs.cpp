@@ -24,6 +24,8 @@
 #include "serverevents.h"
 #include "netmessage.h"
 
+
+
 int cServerAttackJob::iNextID = 0;
 
 cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
@@ -249,6 +251,8 @@ void cServerAttackJob::clientFinished( int playerNr )
 		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
 	}
 
+	cLog::write( " (Server) waiting for " + iToStr(executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
+
 	if (executingClients.Size() == 0) makeImpact();
 }
 
@@ -324,6 +328,8 @@ void cServerAttackJob::makeImpact()
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
 
+			cLog::write(" (Server) vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+
 			if (targetVehicle->data.hit_points <= 0)
 			{
 				Server->destroyUnit( targetVehicle );
@@ -332,6 +338,8 @@ void cServerAttackJob::makeImpact()
 		else
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+
+			cLog::write(" (Server) Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if ( targetBuilding->data.hit_points <= 0 )
 			{
@@ -771,6 +779,12 @@ void cClientAttackJob::updateAgressorData()
 
 void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 {
+	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )
+	{
+		cLog::write(" (Client) Invalid offset", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
+
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
 
@@ -819,6 +833,11 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		if ( !targetBuilding && !targetVehicle )
 			targetBuilding = Client->Map->GO[offset].subbase;
 	}
+	else
+	{
+		cLog::write(" (Client) Invalid attack mode", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
 
 	//check for rubble
 	if ( targetBuilding && !targetBuilding->owner )
@@ -840,6 +859,9 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		if ( targetVehicle )
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
+
+			cLog::write(" (Client) vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+
 			name = targetVehicle->name;
 			if ( targetVehicle->owner == Client->ActivePlayer ) ownUnit = true;
 
@@ -858,6 +880,9 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		else
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+
+			cLog::write(" (Client) building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+
 			name = targetBuilding->name;
 			if ( targetBuilding->owner == Client->ActivePlayer ) ownUnit = true;
 
