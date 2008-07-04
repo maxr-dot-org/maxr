@@ -674,9 +674,15 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->BuildList&&Client->SelectedBuilding->BuildList->iCount&&!Client->SelectedBuilding->IsWorking&&Client->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 )
+		else if (
+				Client->SelectedBuilding                                &&
+				Client->SelectedBuilding->owner == Client->ActivePlayer &&
+				Client->SelectedBuilding->BuildList                     &&
+				Client->SelectedBuilding->BuildList->iCount             &&
+				!Client->SelectedBuilding->IsWorking                    &&
+				(*Client->SelectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
-			if ( Client->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),Client->SelectedBuilding->BuildList->Items[0]->typ ) )
+			if (Client->SelectedBuilding->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedBuilding->BuildList)[0]->typ))
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
@@ -693,7 +699,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->ActivatingVehicle )
 		{
-			if ( Client->SelectedBuilding->CanExitTo ( mouse->GetKachelOff(),Client->SelectedBuilding->StoredVehicles->Items[Client->SelectedBuilding->VehicleToActivate]->typ ) )
+			if (Client->SelectedBuilding->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedBuilding->StoredVehicles)[Client->SelectedBuilding->VehicleToActivate]->typ))
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
@@ -710,7 +716,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->ActivatingVehicle )
 		{
-			if ( Client->SelectedVehicle->CanExitTo ( mouse->GetKachelOff(),Client->SelectedVehicle->StoredVehicles->Items[Client->SelectedVehicle->VehicleToActivate]->typ ) )
+			if (Client->SelectedVehicle->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedVehicle->StoredVehicles)[Client->SelectedVehicle->VehicleToActivate]->typ))
 			{
 				if ( mouse->SetCursor ( CActivate ) )
 				{
@@ -1356,7 +1362,7 @@ void cHud::ScaleSurfaces ( void )
 	for (size_t i = 0; i < tlist.iCount; ++i)
 	{
 		sTerrain *t;
-		t= tlist.Items[i];
+		t = tlist[i];
 		if ( Zoom==64 )
 		{
 			t->sf->w=t->sf_org->w;t->sf->h=t->sf_org->h;

@@ -65,19 +65,19 @@ cServer::~cServer()
 
 	while ( EventQueue.iCount )
 	{
-		delete EventQueue.Items[0];
+		delete EventQueue[0];
 		EventQueue.Delete (0);
 	}
 
 	while ( PlayerList->iCount )
 	{
-		delete ( PlayerList->Items[0] );
+		delete (*PlayerList)[0];
 		PlayerList->Delete ( 0 );
 	}
 
 	while ( AJobs.iCount )
 	{
-		delete AJobs.Items[0];
+		delete AJobs[0];
 		AJobs.Delete(0);
 	}
 
@@ -101,7 +101,7 @@ SDL_Event* cServer::pollEvent()
 	}
 
 	cMutex::Lock l(QueueMutex);
-	event = EventQueue.Items[0];
+	event = EventQueue[0];
 	lastEvent = event;
 	EventQueue.Delete( 0 );
 	return event;
@@ -131,7 +131,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		if ( ( Player = PlayerList->Items[i])->Nr == iPlayerNum ) break;
+		if ((Player = (*PlayerList)[i])->Nr == iPlayerNum) break;
 	}
 
 	if ( Player == NULL )
@@ -238,9 +238,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// get the name of player to who the connection has been lost
 			for ( int i = 0; i < PlayerList->iCount; i++ )
 			{
-				if ( PlayerList->Items[i]->iSocketNum == iSocketNum )
+				cPlayer const* const p = (*PlayerList)[i];
+				if (p->iSocketNum == iSocketNum)
 				{
-					sMessage += PlayerList->Items[i]->name;
+					sMessage += p->name;
 					break;
 				}
 			}
@@ -248,9 +249,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iPlayerNum;
 			for ( int i = 0; i < PlayerList->iCount; i++ )
 			{
-				if ( PlayerList->Items[i]->iSocketNum == MAX_CLIENTS )
+				cPlayer const* const p = (*PlayerList)[i];
+				if (p->iSocketNum == MAX_CLIENTS)
 				{
-					iPlayerNum = PlayerList->Items[i]->Nr;
+					iPlayerNum = p->Nr;
 					break;
 				}
 			}
@@ -365,7 +367,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// send the movejob to all other player who can see this unit
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.iCount; i++ )
 				{
-					sendMoveJobServer ( MJob, *MJob->vehicle->SeenByPlayerList.Items[i] );
+					sendMoveJobServer(MJob, *MJob->vehicle->SeenByPlayerList[i]);
 				}
 			}
 		}
@@ -426,9 +428,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int i = 0;
 			for ( ; i < AJobs.iCount; i++ )
 			{
-				if ( AJobs.Items[i]->iID == ID )
+				if (AJobs[i]->iID == ID)
 				{
-					aJob = AJobs.Items[i];
+					aJob = AJobs[i];
 					break;
 				}
 			}
@@ -541,7 +543,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 			{
-				sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, *Vehicle->SeenByPlayerList.Items[i] );
+				sendBuildAnswer(true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, *Vehicle->SeenByPlayerList[i]);
 			}
 			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, Vehicle->owner->Nr );
 		}
@@ -594,7 +596,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 			{
-				sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[i] );
+				sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
 			}
 
 			// drive away from the building lot
@@ -604,7 +606,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			sendMoveJobServer ( MJob, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 			{
-				sendMoveJobServer ( MJob, *Vehicle->SeenByPlayerList.Items[i] );
+				sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
 			}
 			addActiveMoveJob ( MJob );
 		}
@@ -744,7 +746,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			while ( Building->BuildList->iCount )
 			{
-				delete Building->BuildList->Items[0];
+				delete (*Building->BuildList)[0];
 				Building->BuildList->Delete( 0 );
 			}
 
@@ -799,7 +801,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iX = message->popInt16();
 			int iY = message->popInt16();
 
-			BuildingListItem = Building->BuildList->Items[0];
+			BuildingListItem = (*Building->BuildList)[0];
 
 			if ( checkExitBlocked ( iX, iY, BuildingListItem->typ ) ) break;
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
@@ -842,11 +844,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cList<sMineValues*> Mines;
 			for ( unsigned int i = 0; i < SubBase->buildings.iCount; i++ )
 			{
-				if ( SubBase->buildings.Items[i]->data.is_mine && SubBase->buildings.Items[i]->IsWorking )
+				cBuilding* const Mine = SubBase->buildings[i];
+				if (Mine->data.is_mine && Mine->IsWorking)
 				{
-					cBuilding *Mine;
-					Mine = SubBase->buildings.Items[i];
-
 					sMineValues *MineValues = new sMineValues;
 					MineValues->iMetalProd = Mine->MetalProd;
 					MineValues->iOilProd = Mine->OilProd;
@@ -933,7 +933,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				for ( unsigned int i = 0; i < Mines.iCount; i++ )
 				{
-					sMineValues *MineValues = Mines.Items[i];
+					sMineValues *MineValues = Mines[i];
 					cBuilding *Mine = getBuildingFromID ( MineValues->iBuildingID );
 
 					Mine->MetalProd = MineValues->iMetalProd;
@@ -1053,7 +1053,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 	iHeight = 2;
 	for ( int i = 0; i < List->iCount; i++ )
 	{
-		Landing = List->Items[i];
+		Landing = (*List)[i];
 		Vehicle = landVehicle(iX, iY, iWidth, iHeight, &UnitsData.vehicle[Landing->id], Player);
 		while ( !Vehicle )
 		{
@@ -1102,7 +1102,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	{
 		for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 		{
-			AddedVehicle->DetectedByPlayerList.Add ( &PlayerList->Items[i]->Nr );
+			AddedVehicle->DetectedByPlayerList.Add(&(*PlayerList)[i]->Nr);
 		}
 	}
 
@@ -1190,7 +1190,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	{
 		for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 		{
-			AddedBuilding->DetectedByPlayerList.Add ( &PlayerList->Items[i]->Nr );
+			AddedBuilding->DetectedByPlayerList.Add(&(*PlayerList)[i]->Nr);
 		}
 	}
 
@@ -1308,14 +1308,14 @@ void cServer::checkPlayerUnits ()
 
 	for ( unsigned int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->iCount; iUnitPlayerNum++ )
 	{
-		UnitPlayer = PlayerList->Items[iUnitPlayerNum];
+		UnitPlayer = (*PlayerList)[iUnitPlayerNum];
 		cVehicle *NextVehicle = UnitPlayer->VehicleList;
 		while ( NextVehicle != NULL )
 		{
 			for ( unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
-				MapPlayer = PlayerList->Items[iMapPlayerNum];
+				MapPlayer = (*PlayerList)[iMapPlayerNum];
 				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 				if ( MapPlayer->ScanMap[iOff] == 1 &&
 					( !NextVehicle->data.is_stealth_land || Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectLandMap[iOff] == 1 ) &&
@@ -1325,7 +1325,7 @@ void cServer::checkPlayerUnits ()
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextVehicle->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
+						if (*NextVehicle->SeenByPlayerList[i] == MapPlayer->Nr) break;
 					}
 					if ( i == NextVehicle->SeenByPlayerList.iCount )
 					{
@@ -1340,7 +1340,7 @@ void cServer::checkPlayerUnits ()
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextVehicle->SeenByPlayerList.Items[i] == MapPlayer->Nr )
+						if (*NextVehicle->SeenByPlayerList[i] == MapPlayer->Nr)
 						{
 							NextVehicle->SeenByPlayerList.Delete ( i );
 
@@ -1361,14 +1361,14 @@ void cServer::checkPlayerUnits ()
 			for ( unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->iCount; iMapPlayerNum++ )
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
-				MapPlayer = PlayerList->Items[iMapPlayerNum];
+				MapPlayer = (*PlayerList)[iMapPlayerNum];
 				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1  &&
 					NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr ) break;
+						if (*NextBuilding->SeenByPlayerList[i] == MapPlayer->Nr) break;
 					}
 					if ( i == NextBuilding->SeenByPlayerList.iCount )
 					{
@@ -1382,7 +1382,7 @@ void cServer::checkPlayerUnits ()
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.iCount; i++ )
 					{
-						if ( *NextBuilding->SeenByPlayerList.Items[i] == MapPlayer->Nr )
+						if (*NextBuilding->SeenByPlayerList[i] == MapPlayer->Nr)
 						{
 							NextBuilding->SeenByPlayerList.Delete ( i );
 
@@ -1405,16 +1405,12 @@ void cServer::checkPlayerUnits ()
 
 cPlayer *cServer::getPlayerFromNumber ( int iNum )
 {
-	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		if ( PlayerList->Items[i]->Nr == iNum )
-		{
-			Player = PlayerList->Items[i];
-			break;
-		}
+		cPlayer* const p = (*PlayerList)[i];
+		if (p->Nr == iNum) return p;
 	}
-	return Player;
+	return NULL;
 }
 
 void cServer::handleEnd ( int iPlayerNum )
@@ -1440,14 +1436,14 @@ void cServer::handleEnd ( int iPlayerNum )
 			if ( iGameType == GAME_TYPE_HOTSEAT )
 			{
 				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
+				sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum);
 			}
 			else
 			{
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
 					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( true, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
+					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i);
 				}
 			}
 			bChangeTurn = true;
@@ -1457,7 +1453,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			if ( iGameType == GAME_TYPE_HOTSEAT )
 			{
 				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum );
+				sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum);
 				// TODO: in hotseat: maybe send information to client about the next player
 			}
 			else
@@ -1465,7 +1461,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				for ( int i = 0; i < PlayerList->iCount; i++ )
 				{
 					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd ( false, bWaitForPlayer, PlayerList->Items[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i );
+					sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i);
 				}
 			}
 		}
@@ -1475,7 +1471,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		// check whether this player has already finished his turn
 		for ( int i = 0; i < PlayerEndList.iCount; i++ )
 		{
-			if ( *PlayerEndList.Items[i] == iPlayerNum ) return;
+			if (*PlayerEndList[i] == iPlayerNum) return;
 		}
 		PlayerEndList.Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
 
@@ -1517,7 +1513,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	{
 		cBuilding *Building;
 		cPlayer *Player;
-		Player = PlayerList->Items[i];
+		Player = (*PlayerList)[i];
 
 		Building = Player->BuildingList;
 		while ( Building )
@@ -1529,7 +1525,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				{
 					for ( unsigned int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 					{
-						sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
+						sendUnitData(Building, Map, *Building->SeenByPlayerList[k]);
 					}
 					sendUnitData ( Building, Map, Building->owner->Nr );
 
@@ -1541,7 +1537,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			{
 				for ( unsigned int k = 0; k < Building->SeenByPlayerList.iCount; k++ )
 				{
-					sendUnitData ( Building, Map, *Building->SeenByPlayerList.Items[k] );
+					sendUnitData(Building, Map, *Building->SeenByPlayerList[k]);
 				}
 				sendUnitData ( Building, Map, Building->owner->Nr );
 			}
@@ -1554,7 +1550,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	{
 		cVehicle *Vehicle;
 		cPlayer *Player;
-		Player = PlayerList->Items[i];
+		Player = (*PlayerList)[i];
 
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
@@ -1566,7 +1562,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				{
 					for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
 					{
-						sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[k] );
+						sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[k]);
 					}
 					sendUnitData ( Vehicle, Vehicle->owner->Nr );
 
@@ -1579,7 +1575,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			{
 				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.iCount; k++ )
 				{
-					sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList.Items[k] );
+					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[k]);
 				}
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
@@ -1593,7 +1589,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	{
 		cVehicle *Vehicle;
 		cPlayer *Player;
-		Player = PlayerList->Items[i];
+		Player = (*PlayerList)[i];
 
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
@@ -1608,7 +1604,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 	// produce resources
 	for ( unsigned int i = 0; i < PlayerList->iCount; i++ )
 	{
-		PlayerList->Items[i]->base.handleTurnend();
+		(*PlayerList)[i]->base.handleTurnend();
 	}
 
 	// do research:
@@ -1635,7 +1631,7 @@ void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoi
 	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
 	while ( Player->ReportBuildings.iCount )
 	{
-		Report = Player->ReportBuildings.Items[0];
+		Report = Player->ReportBuildings[0];
 		if ( iCount ) *sReportMsg += ", ";
 		iCount += Report->anz;
 		sTmp = iToStr( Report->anz ) + " " + Report->name;
@@ -1645,7 +1641,7 @@ void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoi
 	}
 	while ( Player->ReportVehicles.iCount )
 	{
-		Report = Player->ReportVehicles.Items[0];
+		Report = Player->ReportVehicles[0];
 		if ( iCount ) *sReportMsg+=", ";
 		iCount += Report->anz;
 		sTmp = iToStr( Report->anz ) + " " + Report->name;
@@ -1679,7 +1675,7 @@ void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
 	{
 		for ( int i = 0; i < Player->ReportVehicles.iCount; i++ )
 		{
-			Report = Player->ReportVehicles.Items[i];
+			Report = Player->ReportVehicles[i];
 			if ( Report->name.compare ( sName ) == 0 )
 			{
 				Report->anz++;
@@ -1695,7 +1691,7 @@ void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
 	{
 		for ( int i = 0; i < Player->ReportBuildings.iCount; i++ )
 		{
-			Report = Player->ReportBuildings.Items[i];
+			Report = Player->ReportBuildings[i];
 			if ( Report->name.compare ( sName ) == 0 )
 			{
 				Report->anz++;
@@ -1747,7 +1743,7 @@ void cServer::handleMoveJobs ()
 		cMJobs *MJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs.Items[i];
+		MJob = ActiveMJobs[i];
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished || MJob->EndForNow )
@@ -1758,7 +1754,7 @@ void cServer::handleMoveJobs ()
 				cLog::write("(Server) Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.iCount; i++ )
 				{
-					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList.Items[i] );
+					sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList[i]);
 				}
 				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
 			}
@@ -1773,7 +1769,7 @@ void cServer::handleMoveJobs ()
 
 					for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.iCount; i++ )
 					{
-						sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList.Items[i] );
+						sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList[i]);
 					}
 					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
 				}
@@ -1830,13 +1826,13 @@ void cServer::checkMove ( cMJobs *MJob )
 		{
 			for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.iCount; i++ )
 			{
-				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, *MJob->vehicle->SeenByPlayerList.Items[i] );
+				sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_BLOCKED, *MJob->vehicle->SeenByPlayerList[i]);
 			}
 			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, MJob->vehicle->owner->Nr );
 
 			for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 			{
-				if ( MJob == ActiveMJobs.Items[i] )
+				if (MJob == ActiveMJobs[i])
 				{
 					ActiveMJobs.Delete ( i );
 					break;
@@ -1869,7 +1865,7 @@ void cServer::checkMove ( cMJobs *MJob )
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.iCount; i++ )
 	{
-		sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_OK, *MJob->vehicle->SeenByPlayerList.Items[i] );
+		sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_OK, *MJob->vehicle->SeenByPlayerList[i]);
 	}
 	sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_OK, MJob->vehicle->owner->Nr );
 }
@@ -2007,7 +2003,7 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 				sendUnitData( Vehicle, Vehicle->owner->Nr );
 				for ( int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 				{
-					sendUnitData( Vehicle, *Vehicle->SeenByPlayerList.Items[i] );
+					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
 				}
 			}
 		}
@@ -2049,7 +2045,7 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 	cVehicle *Vehicle;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		Vehicle = PlayerList->Items[i]->VehicleList;
+		Vehicle = (*PlayerList)[i]->VehicleList;
 		while ( Vehicle )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
@@ -2064,7 +2060,7 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 	cBuilding *Building;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		Building = PlayerList->Items[i]->BuildingList;
+		Building = (*PlayerList)[i]->BuildingList;
 		while ( Building )
 		{
 			if ( Building->iID == iID ) return Building;
@@ -2079,7 +2075,7 @@ void cServer::releaseMoveJob ( cMJobs *MJob )
 	cLog::write ( "(Server) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
-		if ( MJob == ActiveMJobs.Items[i] ) return;
+		if (MJob == ActiveMJobs[i]) return;
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Server) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );

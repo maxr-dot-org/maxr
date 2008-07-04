@@ -52,7 +52,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 
 			message->pushInt16( building->iID );
 
-			Server->sendNetMessage( message, *building->SeenByPlayerList.Items[i] );
+			Server->sendNetMessage(message, *building->SeenByPlayerList[i]);
 		}
 	}
 	else
@@ -237,7 +237,7 @@ void sendDoStartWork( cBuilding* building )
 	//check all players
 	for ( unsigned int i = 0; i < Server->PlayerList->iCount; i++)
 	{
-		cPlayer* player = Server->PlayerList->Items[i];
+		cPlayer* player = (*Server->PlayerList)[i];
 
 		//do not send to players who can't see the building
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
@@ -271,7 +271,7 @@ void sendDoStopWork( cBuilding* building )
 	//check all players
 	for ( unsigned int i = 0; i < Server->PlayerList->iCount; i++)
 	{
-		cPlayer* player = Server->PlayerList->Items[i];
+		cPlayer* player = (*Server->PlayerList)[i];
 
 		//do not send to players who can't see the building
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
@@ -419,7 +419,7 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 				iCount = 0;
 				message = new cNetMessage( GAME_EV_SUBBASE_BUILDINGS );
 			}
-			message->pushInt16 ( SubBase->buildings.Items[i]->iID );
+			message->pushInt16(SubBase->buildings[i]->iID);
 			iCount++;
 		}
 	}
@@ -471,8 +471,8 @@ void sendBuildList ( cBuilding *Building )
 	message->pushInt16 ( Building->MetalPerRound );
 	for ( int i = Building->BuildList->iCount-1; i >= 0; i-- )
 	{
-		message->pushInt16 ( Building->BuildList->Items[i]->metall_remaining );
-		message->pushInt16 ( Building->BuildList->Items[i]->typ->nr );
+		message->pushInt16((*Building->BuildList)[i]->metall_remaining);
+		message->pushInt16((*Building->BuildList)[i]->typ->nr);
 	}
 	message->pushInt16 ( Building->BuildList->iCount );
 	message->pushInt16 ( Building->iID );

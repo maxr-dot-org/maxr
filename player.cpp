@@ -62,13 +62,13 @@ cPlayer::~cPlayer ( void )
 
 	while ( WachpostenAir.iCount )
 	{
-		delete WachpostenAir.Items[WachpostenAir.iCount - 1];
+		delete WachpostenAir[WachpostenAir.iCount - 1];
 		WachpostenAir.Delete( WachpostenAir.iCount - 1 );
 	}
 
 	while ( WachpostenGround.iCount )
 	{
-		delete WachpostenGround.Items[WachpostenGround.iCount - 1];
+		delete WachpostenGround[WachpostenGround.iCount - 1];
 		WachpostenGround.Delete( WachpostenGround.iCount - 1 );
 	}
 
@@ -121,17 +121,17 @@ cPlayer::~cPlayer ( void )
 
 	while ( ReportVehicles.iCount )
 	{
-		delete ReportVehicles.Items[0];
+		delete ReportVehicles[0];
 		ReportVehicles.Delete ( 0 );
 	}
 	while ( ReportBuildings.iCount )
 	{
-		delete ReportBuildings.Items[0];
+		delete ReportBuildings[0];
 		ReportBuildings.Delete ( 0 );
 	}
 	while ( LockList.iCount )
 	{
-		delete LockList.Items[0];
+		delete LockList[0];
 		LockList.Delete ( 0 );
 	}
 }
@@ -276,7 +276,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	{
 		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir.Items[i];
+			ptr = WachpostenAir[i];
 			if ( ptr->v==v )
 			{
 				WachpostenAir.Delete ( i );
@@ -290,7 +290,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	{
 		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir.Items[i];
+			ptr = WachpostenAir[i];
 			if ( ptr->v==v )
 			{
 				WachpostenAir.Delete ( i );
@@ -300,7 +300,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 		}
 		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround.Items[i];
+			ptr = WachpostenGround[i];
 			if ( ptr->v==v )
 			{
 				WachpostenGround.Delete ( i );
@@ -315,7 +315,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	{
 		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround.Items[i];
+			ptr = WachpostenGround[i];
 			if ( ptr->v==v )
 			{
 				WachpostenGround.Delete ( i );
@@ -336,7 +336,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	{
 		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir.Items[i];
+			ptr = WachpostenAir[i];
 			if ( ptr->b==b )
 			{
 				WachpostenAir.Delete ( i );
@@ -350,7 +350,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	{
 		for ( i=0;i<WachpostenAir.iCount;i++ )
 		{
-			ptr=WachpostenAir.Items[i];
+			ptr = WachpostenAir[i];
 			if ( ptr->b==b )
 			{
 				WachpostenAir.Delete ( i );
@@ -360,7 +360,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 		}
 		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround.Items[i];
+			ptr = WachpostenGround[i];
 			if ( ptr->b==b )
 			{
 				WachpostenGround.Delete ( i );
@@ -375,7 +375,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	{
 		for ( i=0;i<WachpostenGround.iCount;i++ )
 		{
-			ptr=WachpostenGround.Items[i];
+			ptr = WachpostenGround[i];
 			if ( ptr->b==b )
 			{
 				WachpostenGround.Delete ( i );
@@ -396,7 +396,7 @@ void cPlayer::RefreshWacheAir ( void )
 	memset ( WachMapAir,0,MapSize );
 	for ( i=0;i<WachpostenAir.iCount;i++ )
 	{
-		ptr=WachpostenAir.Items[i];
+		ptr = WachpostenAir[i];
 		if ( ptr->v )
 		{
 			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
@@ -416,7 +416,7 @@ void cPlayer::RefreshWacheGround ( void )
 	memset ( WachMapGround,0,MapSize );
 	for ( i=0;i<WachpostenGround.iCount;i++ )
 	{
-		ptr=WachpostenGround.Items[i];
+		ptr = WachpostenGround[i];
 		if ( ptr->v )
 		{
 			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
@@ -837,7 +837,7 @@ void cPlayer::DeleteLock ( cVehicle *v )
 	int i;
 	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList.Items[i];
+		elem = LockList[i];
 		if ( elem->v==v )
 		{
 			v->IsLocked=false;
@@ -855,7 +855,7 @@ void cPlayer::DeleteLock ( cBuilding *b )
 	int i;
 	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList.Items[i];
+		elem = LockList[i];
 		if ( elem->b==b )
 		{
 			b->IsLocked=false;
@@ -873,7 +873,7 @@ bool cPlayer::InLockList ( cBuilding *b )
 	int i;
 	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList.Items[i];
+		elem = LockList[i];
 		if ( elem->b==b ) return true;
 	}
 	return false;
@@ -886,7 +886,7 @@ bool cPlayer::InLockList ( cVehicle *v )
 	int i;
 	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList.Items[i];
+		elem = LockList[i];
 		if ( elem->v==v ) return true;
 	}
 	return false;
@@ -921,7 +921,7 @@ void cPlayer::DrawLockList(cHud const& hud)
 
 	for ( i=0;i<LockList.iCount;i++ )
 	{
-		elem=LockList.Items[i];
+		elem = LockList[i];
 		if ( elem->v )
 		{
 			off=elem->v->PosX+elem->v->PosY*Client->Map->size;

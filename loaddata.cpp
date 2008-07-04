@@ -1583,7 +1583,7 @@ static int LoadVehicles()
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
 		sVehiclePath += PATH_DELIMITER;
-		sVehiclePath += VehicleList.Items[i];
+		sVehiclePath += VehicleList[i];
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
@@ -1594,7 +1594,7 @@ static int LoadVehicles()
 		sVehicle& v = UnitsData.vehicle.Back();
 		SetDefaultUnitData(&v.data);
 		cLog::write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList.Items[i].c_str()));
+		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList[i].c_str()));
 		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
@@ -2069,7 +2069,7 @@ static int LoadBuildings()
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
 		sBuildingPath += PATH_DELIMITER;
-		sBuildingPath += BuildingList.Items[i];
+		sBuildingPath += BuildingList[i];
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
@@ -2077,7 +2077,7 @@ static int LoadBuildings()
 
 		sBuilding& b = UnitsData.building.Back();
 		SetDefaultUnitData(&b.data);
-		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList.Items[i].c_str()));
+		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList[i].c_str()));
 		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!

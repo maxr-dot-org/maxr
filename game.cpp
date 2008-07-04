@@ -104,7 +104,7 @@ cGame::~cGame ( void )
 	StopFXLoop ( ObjectStream );
 	while ( messages.iCount )
 	{
-		delete messages.Items[0];
+		delete messages[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
@@ -112,7 +112,7 @@ cGame::~cGame ( void )
 	while ( FXList.iCount )
 	{
 		sFX *ptr;
-		ptr=FXList.Items[0];
+		ptr = FXList[0];
 		if ( ptr->typ==fxRocket )
 		{
 			delete ptr->rocketInfo;
@@ -127,7 +127,7 @@ cGame::~cGame ( void )
 	while ( FXListBottom.iCount )
 	{
 		sFX *ptr;
-		ptr=FXListBottom.Items[0];
+		ptr = FXListBottom[0];
 		if ( ptr->typ==fxTorpedo )
 		{
 			delete ptr->rocketInfo;
@@ -159,7 +159,7 @@ void cGame::Init ( cList<cPlayer*> *Player,int APNo )
 	fDrawMap=true;
 	fDraw=true;
 	fDrawMMap=true;
-	ActivePlayer=PlayerList->Items[APNo];
+	ActivePlayer = (*PlayerList)[APNo];
 }
 
 // Run ///////////////////////////////////////////////////////////////////////
@@ -321,7 +321,7 @@ void cGame::Run ( void )
 			}
 			if ( SelectedVehicle->ActivatingVehicle&&SelectedVehicle->owner==ActivePlayer )
 			{
-				SelectedVehicle->DrawExitPoints ( SelectedVehicle->StoredVehicles->Items[SelectedVehicle->VehicleToActivate]->typ );
+				SelectedVehicle->DrawExitPoints((*SelectedVehicle->StoredVehicles)[SelectedVehicle->VehicleToActivate]->typ);
 			}
 		}
 		else if ( SelectedBuilding )
@@ -365,13 +365,13 @@ void cGame::Run ( void )
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
-			if ( SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && SelectedBuilding->BuildList->Items[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer )
+			if (SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && (*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer)
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->BuildList->Items[0]->typ );
+				SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
 			}
 			if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
+				SelectedBuilding->DrawExitPoints((*SelectedBuilding->StoredVehicles)[SelectedBuilding->VehicleToActivate]->typ);
 			}
 		}
 		ActivePlayer->DrawLockList(hud);
@@ -438,7 +438,7 @@ void cGame::Run ( void )
 		{
 			for ( i=0;i<engine->LogHistory->iCount;i++ )
 			{
-				font->showText(184,20+i*8, engine->LogHistory->Items[i], LATIN_SMALL_WHITE);
+				font->showText(184, 20 + i * 8, (*engine->LogHistory)[i], LATIN_SMALL_WHITE);
 			}
 		}
 		// Prüfen, ob das Hud neu gemalt werden muss:
@@ -873,7 +873,7 @@ int cGame::CheckUser ( void )
 			sBuildList *ptr;
 			int x,y;
 			mouse->GetKachel ( &x,&y );
-			ptr=SelectedBuilding->BuildList->Items[0];
+			ptr = (*SelectedBuilding->BuildList)[0];
 			engine->AddVehicle ( x,y,ptr->typ,ActivePlayer,false );
 			if ( SelectedBuilding->RepeatBuild )
 			{
@@ -1667,7 +1667,7 @@ void cGame::MakeLanding ( int x,int y, cPlayer *p, cList<sLanding*> *list, bool 
 	w=2;h=2;
 	for ( i=0;i<list->iCount;i++ )
 	{
-		ptr=list->Items[i];
+		ptr = (*list)[i];
 		v = LandVehicle (x, y, w, h, &UnitsData.vehicle[ptr->id], p);
 		while ( !v )
 		{
@@ -1693,7 +1693,7 @@ void cGame::HandleMessages ( void )
 	// Alle alten Nachrichten löschen:
 	for ( i=messages.iCount-1;i>=0;i-- )
 	{
-		m=messages.Items[i];
+		m = messages[i];
 		if ( m->age+MSG_FRAMES<Frame||height>200 )
 		{
 			delete m;
@@ -1716,7 +1716,7 @@ void cGame::HandleMessages ( void )
 	dest.h=height;
 	for ( i=0;i<messages.iCount;i++ )
 	{
-		m=messages.Items[i];
+		m = messages[i];
 		font->showTextAsBlock(dest, m->msg);
 		dest.y+=14+11*m->len/300;
 	}
@@ -2078,7 +2078,7 @@ void cGame::DrawFX ( int i )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXList.Items[i];
+	fx = FXList[i];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) &&fx->typ!=fxRocket ) return;
 	switch ( fx->typ )
 	{
@@ -2322,7 +2322,7 @@ void cGame::DrawFXBottom ( int i )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXListBottom.Items[i];
+	fx = FXListBottom[i];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) &&fx->typ!=fxTorpedo ) return;
 	switch ( fx->typ )
 	{
@@ -3147,13 +3147,13 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=v->StoredVehicles->Items[i];
+			s = (*v->StoredVehicles)[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
 		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=v->StoredVehicles->Items[i];
+			s = (*v->StoredVehicles)[i];
 			SaveVehicle ( s,fp );
 		}
 	}
@@ -3224,7 +3224,7 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 		for ( i=0;i<b->BuildList->iCount;i++ )
 		{
 			sBuildList *bl;
-			bl=b->BuildList->Items[i];
+			bl = (*b->BuildList)[i];
 			fwrite ( & ( bl->typ->nr ),sizeof ( int ),1,fp );
 			fwrite ( & ( bl->metall_remaining ),sizeof ( int ),1,fp );
 		}
@@ -3241,13 +3241,13 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=b->StoredVehicles->Items[i];
+			s = (*b->StoredVehicles)[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
 		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
 			cVehicle *s;
-			s=b->StoredVehicles->Items[i];
+			s = (*b->StoredVehicles)[i];
 			SaveVehicle ( s,fp );
 		}
 	}
@@ -3329,7 +3329,7 @@ bool cGame::Save ( string sName, int iNumber )
 	for ( i=0;i<PlayerList->iCount;i++ )
 	{
 		cPlayer *p;
-		p=PlayerList->Items[i];
+		p = (*PlayerList)[i];
 		t=p->Nr;fwrite ( &t,sizeof ( int ),1,fp ); // Player Nr
 		t=GetColorNr ( p->color );fwrite ( &t,sizeof ( int ),1,fp ); // Color Nr
 		t=p->Credits;fwrite ( &t,sizeof ( int ),1,fp ); // Credits
@@ -3514,7 +3514,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				fread ( &nr,sizeof ( int ),1,fp ); // Player Nr
 				for ( t=0;t<PlayerList->iCount;t++ )
 				{
-					p=PlayerList->Items[t];
+					p = (*PlayerList)[t];
 					if ( p->Nr==nr ) break;
 				}
 				fread ( &typnr,sizeof ( int ),1,fp ); // Typ-Nr
@@ -3602,7 +3602,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], PlayerList->Items[0]);
+						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], (*PlayerList)[0]);
 						v->OffX = t;
 			            v->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}
@@ -3637,7 +3637,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				{
 					for ( t=0;t<PlayerList->iCount;t++ )
 					{
-						p=PlayerList->Items[t];
+						p = (*PlayerList)[t];
 						if ( p->Nr==nr ) break;
 					}
 				}
@@ -3735,7 +3735,7 @@ void cGame::Load ( string name,int AP,bool MP )
 					while ( i-- )
 					{
 						fread ( &t,sizeof ( int ),1,fp );
-						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], PlayerList->Items[0]);
+						cVehicle* const v = new cVehicle(&UnitsData.vehicle[0], (*PlayerList)[0]);
 						v->OffX = t;
 			            b->StoredVehicles->Add( v ); // Die ID (in OffX)
 					}
@@ -3750,7 +3750,7 @@ void cGame::Load ( string name,int AP,bool MP )
 	for ( i=0;i<PlayerList->iCount;i++ )
 	{
 		cPlayer *p;
-		p=PlayerList->Items[i];
+		p = (*PlayerList)[i];
 		p->base.RefreshSubbases();
 	}
 
@@ -3765,11 +3765,11 @@ void cGame::Load ( string name,int AP,bool MP )
 			{
 				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
-					if ( StoredVehicles.Items[m]->OffX ==  v->StoredVehicles->Items[k]->OffX )
+					if (StoredVehicles[m]->OffX ==  (*v->StoredVehicles)[k]->OffX)
 					{
-						StoredVehicles.Items[m]->OffX=0;
-						delete v->StoredVehicles->Items[k];
-						v->StoredVehicles->Items[k]=v2=StoredVehicles.Items[m];
+						StoredVehicles[m]->OffX = 0;
+						delete (*v->StoredVehicles)[k];
+						(*v->StoredVehicles)[k] = v2 = StoredVehicles[m];
 						StoredVehicles.Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
@@ -3785,11 +3785,11 @@ void cGame::Load ( string name,int AP,bool MP )
 			{
 				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
-					if ( StoredVehicles.Items[m]->OffX == v->StoredVehicles->Items[k]->OffX )
+					if (StoredVehicles[m]->OffX == (*v->StoredVehicles)[k]->OffX)
 					{
-						StoredVehicles.Items[m]->OffX=0;
-						delete v->StoredVehicles->Items[k];
-						v->StoredVehicles->Items[k]=v2=StoredVehicles.Items[m];
+						StoredVehicles[m]->OffX = 0;
+						delete (*v->StoredVehicles)[k];
+						(*v->StoredVehicles)[k] = v2 = StoredVehicles[m];
 						StoredVehicles.Delete ( m );
 						CheckRecursivLoaded ( v2,StoredVehicles );
 						break;
@@ -3807,12 +3807,12 @@ void cGame::Load ( string name,int AP,bool MP )
 				for ( m=0;m<StoredVehicles.iCount;m++ )
 				{
 					cVehicle *v;
-					v=StoredVehicles.Items[m];
-					if ( v->OffX == b->StoredVehicles->Items[k]->OffX )
+					v = StoredVehicles[m];
+					if (v->OffX == (*b->StoredVehicles)[k]->OffX)
 					{
 						v->OffX=0;
-						delete b->StoredVehicles->Items[k];
-						b->StoredVehicles->Items[k]=v;
+						delete (*b->StoredVehicles)[k];
+						(*b->StoredVehicles)[k] = v;
 						StoredVehicles.Delete ( m );
 
 						CheckRecursivLoaded ( v,StoredVehicles );
@@ -3830,7 +3830,7 @@ void cGame::Load ( string name,int AP,bool MP )
 
 		if ( HotSeatPlayer!=0&&HotSeat )
 		{
-			ActivePlayer=PlayerList->Items[HotSeatPlayer];
+			ActivePlayer = (*PlayerList)[HotSeatPlayer];
 		}
 		hud=ActivePlayer->HotHud;
 		if ( hud.Zoom!=64 )
@@ -3843,7 +3843,7 @@ void cGame::Load ( string name,int AP,bool MP )
 
 		while ( PlayerList->iCount )
 		{
-			delete PlayerList->Items[0];
+			delete (*PlayerList)[0];
 			PlayerList->Delete ( 0 );
 		}
 		delete PlayerList;
@@ -3862,12 +3862,12 @@ bool cGame::CheckRecursivLoaded(cVehicle* v, cList<cVehicle*>& StoredVehicles)
 		{
 			for ( k=0;k<StoredVehicles.iCount;k++ )
 			{
-				vv=StoredVehicles.Items[k];
-				if ( vv->OffX == v->StoredVehicles->Items[i]->OffX )
+				vv = StoredVehicles[k];
+				if (vv->OffX == (*v->StoredVehicles)[i]->OffX)
 				{
 					vv->OffX=0;
-					delete v->StoredVehicles->Items[i];
-					v->StoredVehicles->Items[i]=vv;
+					delete (*v->StoredVehicles)[i];
+					(*v->StoredVehicles)[i] = vv;
 					StoredVehicles.Delete ( k );
 
 					CheckRecursivLoaded ( vv,StoredVehicles );
@@ -3989,7 +3989,7 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 		int i;
 		for ( i=0;i<v->StoredVehicles->iCount;i++ )
 		{
-			vp=v->StoredVehicles->Items[i];
+			vp = (*v->StoredVehicles)[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}
@@ -4031,7 +4031,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 		int i;
 		for ( i=0;i<b->StoredVehicles->iCount;i++ )
 		{
-			vp=b->StoredVehicles->Items[i];
+			vp = (*b->StoredVehicles)[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}
@@ -4047,7 +4047,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 		int i;
 		for ( i=0;i<b->BuildList->iCount;i++ )
 		{
-			bl=b->BuildList->Items[i];
+			bl = (*b->BuildList)[i];
 			font->showText(x, *y, "  build "+iToStr(i)+": "+iToStr(bl->typ->nr)+" \""+UnitsData.vehicle[bl->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
 			*y+=8;
 		}
@@ -4066,7 +4066,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	sMessage *m;
 	while ( messages.iCount )
 	{
-		m=messages.Items[0];
+		m = messages[0];
 		delete m;
 		messages.Delete ( 0 );
 	}
@@ -4075,7 +4075,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	if ( HotSeatPlayer>=PlayerList->iCount ) HotSeatPlayer=0;
 
 	ActivePlayer->HotHud=hud;
-	ActivePlayer=PlayerList->Items[HotSeatPlayer];
+	ActivePlayer = (*PlayerList)[HotSeatPlayer];
 	zoom=hud.LastZoom;
 	hud=ActivePlayer->HotHud;
 	x=hud.OffX;

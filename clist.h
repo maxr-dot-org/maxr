@@ -11,17 +11,17 @@
 template<typename T> class cList
 {
 	public:
-		cList() : Items(), iCount(), capacity_() {}
+		cList() : v_(), iCount(), capacity_() {}
 
 		~cList() { Reserve(0); }
 
 		size_t Size() const { return iCount; }
 
-		T&       Back()       { return Items[iCount - 1]; }
-		T const& Back() const { return Items[iCount - 1]; }
+		T&       Back()       { return v_[iCount - 1]; }
+		T const& Back() const { return v_[iCount - 1]; }
 
-		T&       operator [](size_t const idx)       { return Items[idx]; }
-		T const& operator [](size_t const idx) const { return Items[idx]; }
+		T&       operator [](size_t const idx)       { return v_[idx]; }
+		T const& operator [](size_t const idx) const { return v_[idx]; }
 
 		void Add(T const& elem);
 
@@ -31,18 +31,18 @@ template<typename T> class cList
 
 		void Reserve(size_t n);
 
-	public:
-		T*     Items;
-		size_t iCount;
 	private:
+		T*     v_;
 		size_t capacity_;
+	public:
+		size_t iCount;
 };
 
 
 template<typename T> void cList<T>::Add(T const& e)
 {
 	if (iCount >= capacity_) Reserve(std::max(1U, iCount * 2));
-	new (&Items[iCount]) T(e);
+	new (&v_[iCount]) T(e);
 	++iCount;
 }
 
@@ -51,7 +51,7 @@ template<typename T> void cList<T>::Delete(size_t const idx)
 {
 	if (idx >= iCount) return; // XXX should throw exception
 
-	for (size_t i = idx; i < iCount - 1; ++i) Items[i] = Items[i + 1];
+	for (size_t i = idx; i < iCount - 1; ++i) v_[i] = v_[i + 1];
 	PopBack();
 }
 
@@ -59,7 +59,7 @@ template<typename T> void cList<T>::Delete(size_t const idx)
 template<typename T> void cList<T>::PopBack()
 {
 	--iCount;
-	Items[iCount].~T();
+	v_[iCount].~T();
 }
 
 
@@ -68,7 +68,7 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 	T* const new_v = n == 0 ? 0 : MALLOCN(T, n);
 
 	size_t       i;
-	T*     const old_v    = Items;
+	T*     const old_v    = v_;
 	size_t const old_size = iCount;
 	size_t const new_size = std::min(old_size, n);
 	try
@@ -82,7 +82,7 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 		throw;
 	}
 
-	Items     = new_v;
+	v_        = new_v;
 	capacity_ = n;
 	iCount    = new_size;
 

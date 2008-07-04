@@ -84,7 +84,7 @@ void cServerAttackJob::lockTarget(int offset)
 {
 	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
 	{
-		cPlayer* player = Server->PlayerList->Items[i];
+		cPlayer* player = (*Server->PlayerList)[i];
 
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
@@ -212,7 +212,7 @@ void cServerAttackJob::sendFireCommand()
 
 	for ( int i = 0; i < Server->PlayerList->iCount; i++)
 	{
-		cPlayer* player = Server->PlayerList->Items[i];
+		cPlayer* player = (*Server->PlayerList)[i];
 
 		//send message to all player who can see the attacking unit
 		if ( player->ScanMap[iAgressorOff] )
@@ -384,7 +384,7 @@ void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMod
 {
 	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
 	{
-		cPlayer* player = Server->PlayerList->Items[i];
+		cPlayer* player = (*Server->PlayerList)[i];
 
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
@@ -435,7 +435,7 @@ void cClientAttackJob::handleAttackJobs()
 {
 	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
 	{
-		cClientAttackJob* job = Client->attackJobs.Items[i];
+		cClientAttackJob* job = Client->attackJobs[i];
 		switch ( job->state )
 		{
 		case FINISHED:
@@ -478,7 +478,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	//check for duplicate jobs
 	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
 	{
-		if ( Client->attackJobs.Items[i]->iID == this->iID )
+		if ( Client->attackJobs[i]->iID == this->iID )
 		{
 			state = FINISHED;
 			return;

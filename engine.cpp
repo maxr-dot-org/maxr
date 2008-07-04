@@ -48,7 +48,7 @@ cEngine::~cEngine ( void )
 	}
 	while ( AJobs.iCount )
 	{
-		delete AJobs.Items[AJobs.iCount - 1];
+		delete AJobs[AJobs.iCount - 1];
 	}
 	StopLog();
 }
@@ -69,7 +69,7 @@ void cEngine::Run ( void )
 		bool WasMoving,BuildAtTarget;
 		cMJobs *job;
 		cVehicle *v;
-		job=ActiveMJobs.Items[i];
+		job = ActiveMJobs[i];
 		v=job->vehicle;
 		if ( v )
 		{
@@ -180,7 +180,7 @@ void cEngine::Run ( void )
 	{
 		bool destroyed;
 		cAJobs *aj;
-		aj=AJobs.Items[i];
+		aj = AJobs[i];
 		// Prüfen, ob das Vehicle gedreht werden muss:
 		if ( aj->vehicle )
 		{
@@ -848,7 +848,7 @@ void cEngine::CheckDefeat ( void )
 
 	for ( i=0;i<game->PlayerList->iCount;i++ )
 	{
-		p=game->PlayerList->Items[i];
+		p = (*game->PlayerList)[i];
 		if ( p->IsDefeated() )
 		{
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
@@ -863,7 +863,7 @@ void cEngine::CheckDefeat ( void )
 					game->HotSeatPlayer++;
 					if ( game->HotSeatPlayer>=game->PlayerList->iCount ) game->HotSeatPlayer=0;
 					game->ActivePlayer->HotHud= game->hud;
-					game->ActivePlayer=game->PlayerList->Items[game->HotSeatPlayer];
+					game->ActivePlayer = (*game->PlayerList)[game->HotSeatPlayer];
 
 					delete p;
 					game->PlayerList->Delete ( i );
@@ -889,7 +889,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 	{
 		for ( i=0;i<game->ActivePlayer->ReportVehicles.iCount;i++ )
 		{
-			r=game->ActivePlayer->ReportVehicles.Items[i];
+			r = game->ActivePlayer->ReportVehicles[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -905,7 +905,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 	{
 		for ( i=0;i<game->ActivePlayer->ReportBuildings.iCount;i++ )
 		{
-			r=game->ActivePlayer->ReportBuildings.Items[i];
+			r = game->ActivePlayer->ReportBuildings[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -931,7 +931,7 @@ void cEngine::MakeRundenstartReport ( void )
 
 	while ( game->ActivePlayer->ReportBuildings.iCount )
 	{
-		r=game->ActivePlayer->ReportBuildings.Items[0];
+		r = game->ActivePlayer->ReportBuildings[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
@@ -941,7 +941,7 @@ void cEngine::MakeRundenstartReport ( void )
 	}
 	while ( game->ActivePlayer->ReportVehicles.iCount )
 	{
-		r=game->ActivePlayer->ReportVehicles.Items[0];
+		r = game->ActivePlayer->ReportVehicles[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
@@ -1005,7 +1005,7 @@ void cEngine::LogMessage ( string msg )
 		string str;
 		if ( LogHistory->iCount>=54 )
 		{
-//      delete LogHistory->Items[0];
+//      delete (*LogHistory)[0];
 			LogHistory->Delete ( 0 );
 		}
 		LogHistory->Add ( str );
@@ -1051,7 +1051,7 @@ void cEngine::Rundenende ( void )
 
 		cBuilding *b;
 		cPlayer *p;
-		p=game->PlayerList->Items[i];
+		p = (*game->PlayerList)[i];
 
 
 		b=p->BuildingList;
@@ -1077,7 +1077,7 @@ void cEngine::Rundenende ( void )
 	{
 		cVehicle *v;
 		cPlayer *p;
-		p=game->PlayerList->Items[i];
+		p = (*game->PlayerList)[i];
 
 		v=p->VehicleList;
 		while ( v )
@@ -1108,7 +1108,7 @@ void cEngine::Rundenende ( void )
 	{
 		cVehicle *v;
 		cPlayer *p;
-		p=game->PlayerList->Items[i];
+		p = (*game->PlayerList)[i];
 
 		v=p->VehicleList;
 		while ( v )
@@ -1183,7 +1183,7 @@ void cEngine::CollectTrash ( void )
 		j=mjobs->next;
 		for ( i=0;i<ActiveMJobs.iCount;i++ )
 		{
-			if ( ActiveMJobs.Items[i] == mjobs )
+			if (ActiveMJobs[i] == mjobs)
 			{
 				ActiveMJobs.Delete ( i );
 				break;
@@ -1249,10 +1249,10 @@ void cEngine::HandleEvent( SDL_Event *event )
 			// Host must delete the player
 			for ( int i = 0; i < game->PlayerList->iCount ; i++ )
 			{
-				if ( game->PlayerList->Items[i]->iSocketNum == ((Sint16*)data)[0] )
+				if ((*game->PlayerList)[i]->iSocketNum == ((Sint16*)data)[0])
 				{
-					//sendDelPlayer ( game->PlayerList->Items[i]->Nr );
-					delete game->PlayerList->Items[i];
+					//sendDelPlayer((*game->PlayerList)[i]->Nr);
+					delete (*game->PlayerList)[i];
 					game->PlayerList->Delete( i );
 					break;
 				}

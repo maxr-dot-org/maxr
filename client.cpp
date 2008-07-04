@@ -165,24 +165,24 @@ cClient::~cClient()
 	StopFXLoop ( iObjectStream );
 	while ( messages.iCount )
 	{
-		delete messages.Items[0];
+		delete messages[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
 	while ( FXList.iCount )
 	{
-		delete FXList.Items[0];
+		delete FXList[0];
 		FXList.Delete ( 0 );
 	}
 	while ( FXListBottom.iCount )
 	{
-		delete FXListBottom.Items[0];
+		delete FXListBottom[0];
 		FXListBottom.Delete ( 0 );
 	}
 
 	for (int i = 0; i < attackJobs.iCount; i++ )
 	{
-		delete attackJobs.Items[i];
+		delete attackJobs[i];
 	}
 
 	while( DirtList )
@@ -381,7 +381,7 @@ void cClient::run()
 			}
 			if (v.ActivatingVehicle && v.owner == ActivePlayer)
 			{
-				v.DrawExitPoints(v.StoredVehicles->Items[v.VehicleToActivate]->typ);
+				v.DrawExitPoints((*v.StoredVehicles)[v.VehicleToActivate]->typ);
 			}
 		}
 		else if ( SelectedBuilding )
@@ -425,13 +425,13 @@ void cClient::run()
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
-			if ( SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && SelectedBuilding->BuildList->Items[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer )
+			if (SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && (*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer)
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->BuildList->Items[0]->typ );
+				SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
 			}
 			if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
 			{
-				SelectedBuilding->DrawExitPoints ( SelectedBuilding->StoredVehicles->Items[SelectedBuilding->VehicleToActivate]->typ );
+				SelectedBuilding->DrawExitPoints((*SelectedBuilding->StoredVehicles)[SelectedBuilding->VehicleToActivate]->typ);
 			}
 		}
 		ActivePlayer->DrawLockList(Hud);
@@ -1741,7 +1741,7 @@ void cClient::drawFX( int iNum )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXList.Items[iNum];
+	fx = FXList[iNum];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxRocket ) return;
 	switch ( fx->typ )
 	{
@@ -1982,7 +1982,7 @@ void cClient::drawFXBottom( int iNum )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx=FXListBottom.Items[iNum];
+	fx = FXListBottom[iNum];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxTorpedo ) return;
 	switch ( fx->typ )
 	{
@@ -2687,7 +2687,7 @@ void cClient::handleMessages()
 	// Alle alten Nachrichten löschen:
 	for ( int i = messages.iCount-1; i >= 0; i-- )
 	{
-		message = messages.Items[i];
+		message = messages[i];
 		if ( message->age+MSG_FRAMES < iFrame || iHeight > 200 )
 		{
 			delete message;
@@ -2710,7 +2710,7 @@ void cClient::handleMessages()
 	dest.h = iHeight;
 	for ( int i = 0; i < messages.iCount; i++ )
 	{
-		message = messages.Items[i];
+		message = messages[i];
 		font->showTextAsBlock( dest, message->msg );
 		dest.y += 14+11*message->len/300;
 	}
@@ -3372,9 +3372,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sSubBase *SubBase = NULL;
 			for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
 			{
-				if ( ActivePlayer->base.SubBases.Items[i]->iID == iID )
+				if (ActivePlayer->base.SubBases[i]->iID == iID)
 				{
-					SubBase = ActivePlayer->base.SubBases.Items[i];
+					SubBase = ActivePlayer->base.SubBases[i];
 					ActivePlayer->base.SubBases.Delete ( i );
 					break;
 				}
@@ -3382,7 +3382,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( SubBase == NULL ) break;
 			for ( unsigned int i = 0; i < SubBase->buildings.iCount; i++ )
 			{
-				SubBase->buildings.Items[i]->SubBase = NULL;
+				SubBase->buildings[i]->SubBase = NULL;
 			}
 			delete SubBase;
 		}
@@ -3463,7 +3463,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			while ( Building->BuildList->iCount )
 			{
-				delete Building->BuildList->Items[0];
+				delete (*Building->BuildList)[0];
 				Building->BuildList->Delete( 0 );
 			}
 			int iCount = message->popInt16();
@@ -3577,16 +3577,12 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
-	cPlayer *Player = NULL;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		if ( PlayerList->Items[i]->Nr == iNum )
-		{
-			Player = PlayerList->Items[i];
-			break;
-		}
+		cPlayer* const p = (*PlayerList)[i];
+		if (p->Nr == iNum) return p;
 	}
-	return Player;
+	return NULL;
 }
 
 void cClient::deleteUnit( cBuilding *Building )
@@ -3735,7 +3731,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	sMessage *Message;
 	while ( messages.iCount )
 	{
-		Message = messages.Items[0];
+		Message = messages[0];
 		delete Message;
 		messages.Delete ( 0 );
 	}
@@ -3828,7 +3824,7 @@ void cClient::handleMoveJobs ()
 		cMJobs *MJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs.Items[i];
+		MJob = ActiveMJobs[i];
 		Vehicle = MJob->vehicle;
 
 		if ( MJob->finished || MJob->EndForNow )
@@ -4102,7 +4098,7 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 	cVehicle *Vehicle;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		Vehicle = PlayerList->Items[i]->VehicleList;
+		Vehicle = (*PlayerList)[i]->VehicleList;
 		while ( Vehicle )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
@@ -4117,7 +4113,7 @@ cBuilding *cClient::getBuildingFromID ( int iID )
 	cBuilding *Building;
 	for ( int i = 0; i < PlayerList->iCount; i++ )
 	{
-		Building = PlayerList->Items[i]->BuildingList;
+		Building = (*PlayerList)[i]->BuildingList;
 		while ( Building )
 		{
 			if ( Building->iID == iID ) return Building;
@@ -4193,7 +4189,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		cVehicle *StoredVehicle;
 		for ( int i = 0; i < Vehicle->StoredVehicles->iCount; i++ )
 		{
-			StoredVehicle = Vehicle->StoredVehicles->Items[i];
+			StoredVehicle = (*Vehicle->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
 			*iY += 8;
 		}
@@ -4204,7 +4200,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		sTmp = "seen by players: owner";
 		for ( int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
 		{
-			sTmp += ", \"" + getPlayerFromNumber ( *Vehicle->SeenByPlayerList.Items[i] )->name + "\"";
+			sTmp += ", \"" + getPlayerFromNumber(*Vehicle->SeenByPlayerList[i])->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
@@ -4244,7 +4240,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		cVehicle *StoredVehicle;
 		for ( int i = 0; i < Building->StoredVehicles->iCount; i++ )
 		{
-			StoredVehicle = Building->StoredVehicles->Items[i];
+			StoredVehicle = (*Building->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
@@ -4259,7 +4255,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		sBuildList *BuildingList;
 		for ( int i = 0; i < Building->BuildList->iCount; i++ )
 		{
-			BuildingList = Building->BuildList->Items[i];
+			BuildingList = (*Building->BuildList)[i];
 			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
@@ -4270,7 +4266,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		sTmp = "seen by players: owner";
 		for ( int i = 0; i < Building->SeenByPlayerList.iCount; i++ )
 		{
-			sTmp += ", \"" + getPlayerFromNumber ( *Building->SeenByPlayerList.Items[i] )->name + "\"";
+			sTmp += ", \"" + getPlayerFromNumber(*Building->SeenByPlayerList[i])->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
@@ -4282,7 +4278,7 @@ void cClient::releaseMoveJob ( cMJobs *MJob )
 	cLog::write ( "(Client) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
 	{
-		if ( MJob == ActiveMJobs.Items[i] ) return;
+		if (MJob == ActiveMJobs[i]) return;
 	}
 	addActiveMoveJob ( MJob );
 	cLog::write ( "(Client) Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
@@ -4337,9 +4333,9 @@ sSubBase *cClient::getSubBaseFromID ( int iID )
 	sSubBase *SubBase = NULL;
 	for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
 	{
-		if ( ActivePlayer->base.SubBases.Items[i]->iID == iID )
+		if (ActivePlayer->base.SubBases[i]->iID == iID)
 		{
-			SubBase = ActivePlayer->base.SubBases.Items[i];
+			SubBase = ActivePlayer->base.SubBases[i];
 			break;
 		}
 	}

@@ -132,7 +132,7 @@ cVehicle::~cVehicle ( void )
 
 		for ( i = 0;i < Client->PlayerList->iCount;i++ )
 		{
-			p = Client->PlayerList->Items[i];
+			p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -998,7 +998,8 @@ int cVehicle::refreshData ()
 			// TOFIX: Reports came to late
 			//Server->addReport ( UnitsData.building[BuildingTyp].data.name, false, owner->Nr );
 
-			if ( UnitsData.building.Items[BuildingTyp].data.is_base || UnitsData.building.Items[BuildingTyp].data.is_connector )
+			if (UnitsData.building[BuildingTyp].data.is_base ||
+					UnitsData.building[BuildingTyp].data.is_connector)
 			{
 				if ( !BuildPath || data.cargo < BuildCostsStart || ( PosX == BandX && PosY == BandY ) ) IsBuilding = false;
 				Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
@@ -3184,7 +3185,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( data.can_build != BUILD_BIG )
 			{
-				sendWantBuild ( iID, images.Items[selected]->id, BuildSpeed, PosX+PosY*Client->Map->size, false, 0 );
+				sendWantBuild(iID, images[selected]->id, BuildSpeed, PosX + PosY * Client->Map->size, false, 0);
 			}
 			else
 			{
@@ -3203,7 +3204,7 @@ void cVehicle::ShowBuildMenu ( void )
 				}
 
 				// save building information temporary to have them when placing band is finished
-				BuildingTyp = images.Items[selected]->id;
+				BuildingTyp = images[selected]->id;
 				BuildRounds = BuildSpeed;
 
 				FindNextband();
@@ -3217,7 +3218,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			if ( BuildSpeed < 0 ) break;
 
-			BuildingTyp = images.Items[selected]->id;
+			BuildingTyp = images[selected]->id;
 			BuildRounds = BuildSpeed;
 
 			PlaceBand = true;
@@ -3327,7 +3328,7 @@ void cVehicle::ShowBuildMenu ( void )
 	while ( images.iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images.Items[images.iCount - 1];
+		ptr = images[images.iCount - 1];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
 		images.Delete ( images.iCount - 1 );
@@ -3372,7 +3373,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 			break;
 
 		// Das Bild malen:
-		ptr = list.Items[i];
+		ptr = list[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
@@ -4495,7 +4496,7 @@ bool cVehicle::InWachRange ( void )
 
 	for ( i = 0;i < game->PlayerList->iCount;i++ )
 	{
-		p = game->PlayerList->Items[i];
+		p = (*game->PlayerList)[i];
 
 		if ( p == owner )
 			continue;
@@ -4514,7 +4515,7 @@ bool cVehicle::InWachRange ( void )
 			// Den finden, der das Vehicle angreifen kann:
 			for ( k = 0;k < p->WachpostenAir.iCount;k++ )
 			{
-				w = p->WachpostenAir.Items[k];
+				w = p->WachpostenAir[k];
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
@@ -4551,7 +4552,7 @@ bool cVehicle::InWachRange ( void )
 			// Den finden, der das Vehicle angreifen kann:
 			for ( k = 0;k < p->WachpostenGround.iCount;k++ )
 			{
-				w = p->WachpostenGround.Items[k];
+				w = p->WachpostenGround[k];
 
 				if ( w->b && w->b->CanAttackObject ( off, true ) )
 				{
@@ -4992,7 +4993,7 @@ void cVehicle::ShowStorage ( void )
 
 			for ( i = 0;i < StoredVehicles->iCount; )
 			{
-				typ = StoredVehicles->Items[i]->typ;
+				typ = (*StoredVehicles)[i]->typ;
 
 				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
 				{
@@ -5158,7 +5159,7 @@ void cVehicle::DrawStored ( int off )
 		}
 		else
 		{
-			v = StoredVehicles->Items[i+off];
+			v = (*StoredVehicles)[i + off];
 		}
 
 		// Das Bild malen:
@@ -5296,7 +5297,7 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
 		return;
 
-	ptr = StoredVehicles->Items[nr];
+	ptr = (*StoredVehicles)[nr];
 
 	StoredVehicles->Delete ( nr );
 
@@ -5703,7 +5704,7 @@ void cVehicle::DeleteStored ( void )
 	while ( StoredVehicles->iCount )
 	{
 		cVehicle *v;
-		v = StoredVehicles->Items[0];
+		v = (*StoredVehicles)[0];
 
 		if ( v->prev )
 		{
@@ -5737,7 +5738,7 @@ bool cVehicle::isDetectedByPlayer( int iPlayerNum )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
 	{
-		if ( *DetectedByPlayerList.Items[i] == iPlayerNum ) return true;
+		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
 	}
 	return false;
 }

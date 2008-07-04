@@ -186,7 +186,7 @@ cBuilding::~cBuilding ( void )
 		while ( BuildList->iCount )
 		{
 			sBuildList *ptr;
-			ptr = BuildList->Items[0];
+			ptr = (*BuildList)[0];
 			delete ptr;
 			BuildList->Delete( 0 );
 		}
@@ -198,7 +198,7 @@ cBuilding::~cBuilding ( void )
 		while ( StoredVehicles->iCount )
 		{
 			cVehicle *v;
-			v = StoredVehicles->Items[0];
+			v = (*StoredVehicles)[0];
 
 			if ( v->prev )
 			{
@@ -236,7 +236,7 @@ cBuilding::~cBuilding ( void )
 
 		for ( i = 0;i < game->PlayerList->iCount;i++ )
 		{
-			p = game->PlayerList->Items[i];
+			p = (*game->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -256,7 +256,7 @@ string cBuilding::GetStatusStr ( void )
 		if ( data.can_build && BuildList && BuildList->iCount && owner == Client->ActivePlayer )
 		{
 			sBuildList *ptr;
-			ptr = BuildList->Items[0];
+			ptr = (*BuildList)[0];
 
 			if ( ptr->metall_remaining > 0 )
 			{
@@ -893,7 +893,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
-	if ( BuildList && BuildList->iCount && !IsWorking && BuildList->Items[0]->metall_remaining <= 0 && owner == Client->ActivePlayer )
+	if (BuildList && BuildList->iCount && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -1472,7 +1472,7 @@ void cBuilding::ServerStartWork ()
 
 					for ( i = 0;i < SubBase->buildings.iCount;i++ )
 					{
-						b = SubBase->buildings.Items[i];
+						b = SubBase->buildings[i];
 
 						if ( !b->data.energy_prod || b->data.is_big )
 							continue;
@@ -1488,7 +1488,7 @@ void cBuilding::ServerStartWork ()
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
 
-						b = SubBase->buildings.Items[i];
+						b = SubBase->buildings[i];
 
 						if ( !b->data.energy_prod )
 							continue;
@@ -1514,7 +1514,7 @@ void cBuilding::ServerStartWork ()
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed += min ( MetalPerRound, BuildList->Items[0]->metall_remaining );
+		SubBase->MetalNeed += min(MetalPerRound, (*BuildList)[0]->metall_remaining);
 	}
 
 	// Goldverbraucher:
@@ -1594,7 +1594,7 @@ void cBuilding::ServerStopWork ( bool override )
 	// Rohstoffverbraucher:
 	if ( data.metal_need )
 	{
-		SubBase->MetalNeed -= min ( MetalPerRound, BuildList->Items[0]->metall_remaining );
+		SubBase->MetalNeed -= min(MetalPerRound, (*BuildList)[0]->metall_remaining);
 	}
 
 	// Goldverbraucher:
@@ -1659,7 +1659,7 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 
 		for ( i = 0;i < SubBase->buildings.iCount;i++ )
 		{
-			b = SubBase->buildings.Items[i];
+			b = SubBase->buildings[i];
 
 			if ( b->data.is_big )
 			{
@@ -2640,7 +2640,7 @@ void cBuilding::ShowStorage ( void )
 
 			for ( i = 0;i < StoredVehicles->iCount; )
 			{
-				typ = StoredVehicles->Items[i]->typ;
+				typ = (*StoredVehicles)[i]->typ;
 
 				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
 				{
@@ -2728,7 +2728,7 @@ void cBuilding::ShowStorage ( void )
 			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->Items[i];
+				v = (*StoredVehicles)[i];
 
 				if ( v->data.ammo != v->data.max_ammo )
 				{
@@ -2765,7 +2765,7 @@ void cBuilding::ShowStorage ( void )
 			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->Items[i];
+				v = (*StoredVehicles)[i];
 
 				if ( v->data.hit_points != v->data.max_hit_points )
 				{
@@ -2797,7 +2797,7 @@ void cBuilding::ShowStorage ( void )
 			for ( i = 0;i < StoredVehicles->iCount;i++ )
 			{
 				cVehicle *v;
-				v = StoredVehicles->Items[i];
+				v = (*StoredVehicles)[i];
 
 				if ( v->data.version != owner->VehicleData[v->typ->nr].version )
 				{
@@ -2844,7 +2844,7 @@ void cBuilding::ShowStorage ( void )
 			if ( StoredVehicles->iCount <= i + offset )
 				break;
 
-			v = StoredVehicles->Items[i+offset];
+			v = (*StoredVehicles)[i + offset];
 
 			if ( data.can_load == TRANS_AIR )
 			{
@@ -3034,7 +3034,7 @@ void cBuilding::DrawStored ( int off )
 		}
 		else
 		{
-			vehicleV = StoredVehicles->Items[i+off];
+			vehicleV = (*StoredVehicles)[i + off];
 		}
 
 		// Das Bild malen:
@@ -3278,7 +3278,7 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
 		return;
 
-	ptr = StoredVehicles->Items[nr];
+	ptr = (*StoredVehicles)[nr];
 
 	StoredVehicles->Delete ( nr );
 
@@ -3327,17 +3327,18 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 	{
 		for ( i = 0;i < StoredVehicles->iCount;i++ )
 		{
-			if ( StoredVehicles->Items[i]->data.ammo != StoredVehicles->Items[i]->data.max_ammo )
+			cVehicle const* const v = (*StoredVehicles)[i];
+			if (v->data.ammo != v->data.max_ammo)
 			{
 				*AlleAufladenEnabled = true;
 			}
 
-			if ( StoredVehicles->Items[i]->data.hit_points != StoredVehicles->Items[i]->data.max_hit_points )
+			if (v->data.hit_points != v->data.max_hit_points)
 			{
 				*AlleReparierenEnabled = true;
 			}
 
-			if ( StoredVehicles->Items[i]->data.version != StoredVehicles->Items[i]->owner->VehicleData[StoredVehicles->Items[i]->typ->nr].version && SubBase->Metal >= 2 )
+			if (v->data.version != v->owner->VehicleData[v->typ->nr].version && SubBase->Metal >= 2)
 			{
 				*AlleUpgradenEnabled = true;
 			}
@@ -3878,7 +3879,7 @@ void cBuilding::ShowUpgrade ( void )
 			for (size_t i = 0;i < images.iCount;i++ )
 			{
 				sUpgradeStruct *ptr;
-				ptr = images.Items[i];
+				ptr = images[i];
 
 				for ( k = 0;k < 8;k++ )
 				{
@@ -3898,7 +3899,7 @@ void cBuilding::ShowUpgrade ( void )
 			{
 				bool up = false;
 				sUpgradeStruct *ptr;
-				ptr = images.Items[i];
+				ptr = images[i];
 
 				for ( k = 0;k < 8;k++ )
 				{
@@ -3988,7 +3989,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Klick auf einen Upgrade-Slider:
 		if ( b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection.iCount )
 		{
-			sUpgradeStruct *ptr = selection.Items[selected];
+			sUpgradeStruct* ptr = selection[selected];
 
 			for (size_t i = 0;i < 8;i++ )
 			{
@@ -4146,7 +4147,7 @@ void cBuilding::ShowUpgrade ( void )
 	while ( images.iCount )
 	{
 		sUpgradeStruct *ptr;
-		ptr = images.Items[0];
+		ptr = images[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
 		images.Delete ( 0 );
@@ -4202,7 +4203,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 			break;
 
 		// Das Bild malen:
-		ptr = list.Items[i];
+		ptr = list[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
@@ -4640,12 +4641,12 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 
 	for ( i = 0;i < images.iCount;i++ )
 	{
-		if ( images.Items[i]->vehicle )
+		if (images[i]->vehicle)
 		{
 			if ( ! ( Client->bUpShowTank || Client->bUpShowShip || Client->bUpShowPlane ) )
 				continue;
 
-			vd = & ( UnitsData.vehicle[images.Items[i]->id].data );
+			vd = &UnitsData.vehicle[images[i]->id].data;
 
 			if ( Client->bUpShowTNT && !vd->can_attack )
 				continue;
@@ -4659,19 +4660,19 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 			if ( ( vd->can_drive == DRIVE_LAND || vd->can_drive == DRIVE_LANDnSEA ) && !Client->bUpShowTank )
 				continue;
 
-			selection.Add ( images.Items[i] );
+			selection.Add(images[i]);
 		}
 		else
 		{
 			if ( !Client->bUpShowBuild )
 				continue;
 
-			bd = & ( UnitsData.building[images.Items[i]->id].data );
+			bd = &UnitsData.building[images[i]->id].data;
 
 			if ( Client->bUpShowTNT && !bd->can_attack )
 				continue;
 
-			selection.Add ( images.Items[i] );
+			selection.Add(images[i]);
 		}
 	}
 
@@ -5617,10 +5618,10 @@ void cBuilding::showMineManager ( void )
 
 	for ( x = 0; x < SubBase->buildings.iCount; x++ )
 	{
-		if ( SubBase->buildings.Items[x]->data.is_mine && SubBase->buildings.Items[x]->IsWorking )
+		if (SubBase->buildings[x]->data.is_mine && SubBase->buildings[x]->IsWorking)
 		{
 			cBuilding *Building;
-			Building = SubBase->buildings.Items[x];
+			Building = SubBase->buildings[x];
 
 			sMineValues *MineValues = new sMineValues;
 			MineValues->iMetalProd = Building->MetalProd;
@@ -5643,11 +5644,11 @@ void cBuilding::showMineManager ( void )
 	iTempSBOilProd = SubBase->OilProd;
 	iTempSBGoldProd = SubBase->GoldProd;
 /*
-//#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<16&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
-#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd<(mines.Items[i]->data.is_alien?24:16)&&mines.Items[i]->a<mines.Items[i]->b){mines.Items[i]->a++;break;}}
-#define DO_MINE_DEC(a) for(i=0;i<mines.iCount;i++){if(mines.Items[i]->a>0){mines.Items[i]->a--;break;}}
-//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
-#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines.Items[i]->MetalProd+mines.Items[i]->OilProd+mines.Items[i]->GoldProd;if(ges<(mines.Items[i]->data.is_alien?24:16)){int t;ges=(mines.Items[i]->data.is_alien?24:16)-ges;t=mines.Items[i]->MaxMetalProd-mines.Items[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines.Items[i]->MaxOilProd-mines.Items[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines.Items[i]->MaxGoldProd-mines.Items[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+//#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<16&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
+#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<(mines[i]->data.is_alien?24:16)&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
+#define DO_MINE_DEC(a) for(i=0;i<mines.iCount;i++){if(mines[i]->a>0){mines[i]->a--;break;}}
+//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<(mines[i]->data.is_alien?24:16)){int t;ges=(mines[i]->data.is_alien?24:16)-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
 */
 	calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 
@@ -6547,7 +6548,7 @@ void cBuilding::ShowBuildMenu ( void )
 	for (size_t i = 0;i < BuildList->iCount;i++ )
 	{
 		sBuildList *ptr;
-		ptr = BuildList->Items[i];
+		ptr = (*BuildList)[i];
 
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
@@ -6555,11 +6556,11 @@ void cBuilding::ShowBuildMenu ( void )
 		for ( k = 0;k < images.iCount;k++ )
 		{
 			sBuildStruct *bs;
-			bs = images.Items[k];
+			bs = images[k];
 
 			if ( UnitsData.vehicle[bs->id].nr == ptr->typ->nr )
 			{
-				sBuildStruct* const n = new sBuildStruct(images.Items[k]->sf, images.Items[k]->id, ptr->metall_remaining);
+				sBuildStruct* const n = new sBuildStruct(images[k]->sf, images[k]->id, ptr->metall_remaining);
 				to_build.Add ( n );
 
 				break;
@@ -6807,7 +6808,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if (btn_build.CheckClick(x, y, down, up))
 		{
 			// Vehicle in die Bauliste aufnehmen:
-			sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
+			sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 			to_build.Add ( n );
 
 			if ( to_build.iCount > build_offset + 5 )
@@ -6829,7 +6830,7 @@ void cBuilding::ShowBuildMenu ( void )
 			// Vehicle aus der Bauliste entfernen:
 			if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
 			{
-				delete to_build.Items[build_selected];
+				delete to_build[build_selected];
 				to_build.Delete ( build_selected );
 
 				if ( build_selected >= to_build.iCount )
@@ -6988,7 +6989,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( nr == selected ) && showDetailsBuildlist )
 				{
 					//insert selected Vehicle in to_build list
-					sBuildStruct* const n = new sBuildStruct(images.Items[selected]->sf, images.Items[selected]->id);
+					sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 					to_build.Add ( n );
 
 					if ( to_build.iCount > build_offset + 5 )
@@ -7041,7 +7042,7 @@ void cBuilding::ShowBuildMenu ( void )
 					//remove vehicle from to_build queue
 					if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
 					{
-						delete to_build.Items[build_selected];
+						delete to_build[build_selected];
 						to_build.Delete ( build_selected );
 
 						if ( build_selected >= to_build.iCount )
@@ -7078,7 +7079,7 @@ void cBuilding::ShowBuildMenu ( void )
 	while ( images.iCount )
 	{
 		sBuildStruct *ptr;
-		ptr = images.Items[0];
+		ptr = images[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
 		images.Delete( 0 );
@@ -7086,7 +7087,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 	while ( to_build.iCount )
 	{
-		delete  to_build.Items[0];
+		delete to_build[0];
 		to_build.Delete ( 0 );
 	}
 
@@ -7128,7 +7129,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 			break;
 
 		// Das Bild malen:
-		ptr = list.Items[i];
+		ptr = list[i];
 
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
 
@@ -7369,7 +7370,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 		if ( i >= offset + 5 )
 			break;
 
-		ptr = list.Items[i];
+		ptr = list[i];
 
 		// Das Bild malen:
 		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
@@ -7697,7 +7698,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 
-	if ( BuildList && BuildList->iCount && !IsWorking && ( BuildList->Items[0] )->metall_remaining <= 0 )
+	if (BuildList && BuildList->iCount && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
 		return;
 
 	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )
@@ -7998,12 +7999,12 @@ void cBuilding::DrawMenu ( void )
 
 			for (i = 0; i < owner->base.SubBases.iCount; ++i)
 			{
-				sSubBase* const sb = owner->base.SubBases.Items[i];
+				sSubBase* const sb = owner->base.SubBases[i];
 
 				for ( k = 0;k < sb->buildings.iCount;k++ )
 				{
 					cBuilding *b;
-					b = sb->buildings.Items[k];
+					b = sb->buildings[k];
 
 					if ( b->typ != typ )
 						continue;
@@ -8715,7 +8716,7 @@ bool cBuilding::isDetectedByPlayer( int iPlayerNum )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
 	{
-		if ( *DetectedByPlayerList.Items[i] == iPlayerNum ) return true;
+		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
 	}
 	return false;
 }
@@ -8757,16 +8758,17 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 	*iFreeG = 0;
 	for( unsigned int i = 0; i < Mines->iCount; i++ )
 	{
-		int iGes = Mines->Items[i]->iMetalProd+Mines->Items[i]->iOilProd+Mines->Items[i]->iGoldProd;
+		sMineValues* const m = (*Mines)[i];
+		int iGes = m->iMetalProd + m->iOilProd + m->iGoldProd;
 		if ( iGes < 16 )
 		{
 			int t;
 			iGes = 16 - iGes;
-			t = Mines->Items[i]->iMaxMetalProd-Mines->Items[i]->iMetalProd;
+			t = m->iMaxMetalProd - m->iMetalProd;
 			*iFreeM += ( iGes < t ? iGes : t );
-			t = Mines->Items[i]->iMaxOilProd-Mines->Items[i]->iOilProd;
+			t = m->iMaxOilProd - m->iOilProd;
 			*iFreeO += ( iGes < t ? iGes : t );
-			t = Mines->Items[i]->iMaxGoldProd-Mines->Items[i]->iGoldProd;
+			t = m->iMaxGoldProd - m->iGoldProd;
 			*iFreeG += ( iGes < t ? iGes : t );
 		}
 	}
