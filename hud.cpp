@@ -609,8 +609,41 @@ void cHud::CheckScroll ( bool pure )
 				}
 			}
 		}
-		else if ( Client->OverObject&&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&& ( ( Client->SelectedVehicle->data.can_drive!=DRIVE_AIR&&!Client->OverObject->vehicle&& ( !Client->OverObject->top||Client->OverObject->top->data.is_connector ) ) || ( Client->SelectedVehicle->data.can_drive==DRIVE_AIR&&!Client->OverObject->plane ) ) ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->BuildList&&Client->SelectedBuilding->BuildList->iCount&&!Client->SelectedBuilding->IsWorking&&Client->SelectedBuilding->BuildList->Items[0]->metall_remaining<=0 ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->LoadActive ) &&! ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->ActivatingVehicle ) &&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->LoadActive )
-		          &&! ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->ActivatingVehicle ) )
+		else if (Client->OverObject && 
+				(
+					!Client->SelectedVehicle                               ||
+					Client->SelectedVehicle->owner != Client->ActivePlayer ||
+					(
+						(
+							Client->SelectedVehicle->data.can_drive == DRIVE_AIR ||
+							Client->OverObject->vehicle ||
+							(
+								Client->OverObject->top &&
+								!Client->OverObject->top->data.is_connector
+							)
+						) &&
+						(
+							Client->SelectedVehicle->data.can_drive != DRIVE_AIR ||
+							Client->OverObject->plane
+						) &&
+						!Client->SelectedVehicle->LoadActive &&
+						!Client->SelectedVehicle->ActivatingVehicle
+					)
+				) &&
+				(
+					!Client->SelectedBuilding                               ||
+					Client->SelectedBuilding->owner != Client->ActivePlayer ||
+					(
+						(
+							!Client->SelectedBuilding->BuildList                    ||
+							!Client->SelectedBuilding->BuildList->iCount            ||
+							Client->SelectedBuilding->IsWorking                     ||
+							(*Client->SelectedBuilding->BuildList)[0]->metall_remaining > 0
+						) &&
+						!Client->SelectedBuilding->LoadActive &&
+						!Client->SelectedBuilding->ActivatingVehicle
+					)
+				))
 		{
 			if ( mouse->SetCursor ( CSelect ) )
 			{
