@@ -905,7 +905,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 
 	if ( playImpact && SettingsData.bAlphaEffects )
 	{
-		Client->addFX( fxHit, x ,y , 0);
+		Client->addFX( fxHit, x*64 ,y*64 , 0);
 	}
 
 	string message;
