@@ -130,16 +130,16 @@ cVehicle::~cVehicle ( void )
 		cPlayer *p;
 		int i;
 
-		for ( i = 0;i < Client->PlayerList->iCount;i++ )
+		for ( i = 0;i < Client->PlayerList->Size();i++ )
 		{
 			p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
 
-	while ( SeenByPlayerList.iCount )
+	while ( SeenByPlayerList.Size() )
 	{
-		SeenByPlayerList.Delete ( SeenByPlayerList.iCount-1 );
+		SeenByPlayerList.Delete ( SeenByPlayerList.Size()-1 );
 	}
 }
 
@@ -1006,7 +1006,7 @@ int cVehicle::refreshData ()
 			}
 		}
 
-		for ( unsigned int i = 0; i < SeenByPlayerList.iCount; i++ )
+		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
 		{
 			sendUnitData ( this, *SeenByPlayerList[i] );
 		}
@@ -3094,9 +3094,9 @@ void cVehicle::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images.iCount - 9 )
+			if ( offset > images.Size() - 9 )
 			{
-				offset = images.iCount - 9;
+				offset = images.Size() - 9;
 			}
 
 			if ( selected < offset )
@@ -3295,9 +3295,9 @@ void cVehicle::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 10 );
 
-			if ( images.iCount < 9 )
+			if ( images.Size() < 9 )
 			{
-				if ( nr >= images.iCount )
+				if ( nr >= images.Size() )
 					nr = -1;
 			}
 			else
@@ -3325,13 +3325,13 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images.iCount )
+	while ( images.Size() )
 	{
 		sBuildStruct *ptr;
-		ptr = images[images.iCount - 1];
+		ptr = images[images.Size() - 1];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images.Delete ( images.iCount - 1 );
+		images.Delete ( images.Size() - 1 );
 	}
 
 	mouse->MoveCallback = true;
@@ -3367,7 +3367,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list.iCount;i++ )
+	for ( i = offset;i < list.Size();i++ )
 	{
 		if ( i >= offset + 9 )
 			break;
@@ -4494,7 +4494,7 @@ bool cVehicle::InWachRange ( void )
 
 	off = PosX + PosY * Client->Map->size;
 
-	for ( i = 0;i < game->PlayerList->iCount;i++ )
+	for ( i = 0;i < game->PlayerList->Size();i++ )
 	{
 		p = (*game->PlayerList)[i];
 
@@ -4513,7 +4513,7 @@ bool cVehicle::InWachRange ( void )
 				return false;
 
 			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenAir.iCount;k++ )
+			for ( k = 0;k < p->WachpostenAir.Size();k++ )
 			{
 				w = p->WachpostenAir[k];
 
@@ -4550,7 +4550,7 @@ bool cVehicle::InWachRange ( void )
 				return false;
 
 			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenGround.iCount;k++ )
+			for ( k = 0;k < p->WachpostenGround.Size();k++ )
 			{
 				w = p->WachpostenGround[k];
 
@@ -4778,7 +4778,7 @@ void cVehicle::ShowStorage ( void )
 	btn_done.Draw();
 	// Down:
 
-	if ( StoredVehicles->iCount > to )
+	if ( StoredVehicles->Size() > to )
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -4803,7 +4803,7 @@ void cVehicle::ShowStorage ( void )
 
 	dest.y = 251;
 
-	if ( StoredVehicles->iCount )
+	if ( StoredVehicles->Size() )
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 		AlleAktivierenEnabled = true;
@@ -4858,7 +4858,7 @@ void cVehicle::ShowStorage ( void )
 
 				offset += to;
 
-				if ( StoredVehicles->iCount <= offset + to )
+				if ( StoredVehicles->Size() <= offset + to )
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -4928,7 +4928,7 @@ void cVehicle::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( StoredVehicles->iCount > to )
+				if ( StoredVehicles->Size() > to )
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -4991,7 +4991,7 @@ void cVehicle::ShowStorage ( void )
 			PlayFX ( SoundData.SNDActivate );
 			size = Client->Map->size;
 
-			for ( i = 0;i < StoredVehicles->iCount; )
+			for ( i = 0;i < StoredVehicles->Size(); )
 			{
 				typ = (*StoredVehicles)[i]->typ;
 
@@ -5065,7 +5065,7 @@ void cVehicle::ShowStorage ( void )
 
 		for ( i = 0;i < to;i++ )
 		{
-			if ( StoredVehicles->iCount <= i + offset )
+			if ( StoredVehicles->Size() <= i + offset )
 				break;
 
 			switch ( i )
@@ -5153,7 +5153,7 @@ void cVehicle::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= StoredVehicles->iCount )
+		if ( i + off >= StoredVehicles->Size() )
 		{
 			v = NULL;
 		}
@@ -5294,7 +5294,7 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
+	if ( !StoredVehicles || StoredVehicles->Size() <= nr )
 		return;
 
 	ptr = (*StoredVehicles)[nr];
@@ -5701,7 +5701,7 @@ void cVehicle::DeleteStored ( void )
 	if ( !StoredVehicles )
 		return;
 
-	while ( StoredVehicles->iCount )
+	while ( StoredVehicles->Size() )
 	{
 		cVehicle *v;
 		v = (*StoredVehicles)[0];
@@ -5736,7 +5736,7 @@ void cVehicle::DeleteStored ( void )
 
 bool cVehicle::isDetectedByPlayer( int iPlayerNum )
 {
-	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
+	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{
 		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
 	}

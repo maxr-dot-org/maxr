@@ -314,9 +314,9 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	for ( int i = 0; i < TerrainInUse.iCount; i++ )
+	for (int i = 0; i < TerrainInUse.Size(); i++)
 	{
-		TerrainInUse.Delete( TerrainInUse.iCount );
+		TerrainInUse.Delete(TerrainInUse.Size());
 		SDL_FreeSurface ( terrain[i].sf_org );
 		SDL_FreeSurface ( terrain[i].sf );
 		SDL_FreeSurface ( terrain[i].shw_org );

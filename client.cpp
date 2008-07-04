@@ -163,24 +163,24 @@ cClient::~cClient()
 	Hud.ScaleSurfaces();
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
-	while ( messages.iCount )
+	while (messages.Size())
 	{
 		delete messages[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
-	while ( FXList.iCount )
+	while (FXList.Size())
 	{
 		delete FXList[0];
 		FXList.Delete ( 0 );
 	}
-	while ( FXListBottom.iCount )
+	while (FXListBottom.Size())
 	{
 		delete FXListBottom[0];
 		FXListBottom.Delete ( 0 );
 	}
 
-	for (int i = 0; i < attackJobs.iCount; i++ )
+	for (int i = 0; i < attackJobs.Size(); i++)
 	{
 		delete attackJobs[i];
 	}
@@ -425,7 +425,11 @@ void cClient::run()
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
-			if (SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && (*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer)
+			if (SelectedBuilding->BuildList                              &&
+					SelectedBuilding->BuildList->Size()                      &&
+					!SelectedBuilding->IsWorking                             &&
+					(*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
+					SelectedBuilding->owner == ActivePlayer)
 			{
 				SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
 			}
@@ -446,39 +450,39 @@ void cClient::run()
 		iDebugOff = 30;
 		if ( bDebugAjobs && bFlagDrawMap)
 		{
-			font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr( Client->attackJobs.iCount), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr(Client->attackJobs.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			if ( Server )
 			{
-				font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr( Server->AJobs.iCount), LATIN_SMALL_WHITE);
+				font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr(Server->AJobs.Size()), LATIN_SMALL_WHITE);
 				iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			}
 		}
 
 		if ( bDebugBaseClient && bFlagDrawMap )
 		{
-			font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 
 		if ( bDebugBaseServer && bFlagDrawMap )
 		{
 			cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-			font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base.SubBases.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 
 		if ( bDebugWache && bFlagDrawMap )
 		{
-			font->showText(550,iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550,iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 
 		if ( bDebugFX && bFlagDrawMap )
 		{
-			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.Size() + FXListBottom.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -892,7 +896,7 @@ int cClient::checkUser()
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount )
+		else if (mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size())
 		{
 			int iX, iY;
 			mouse->GetKachel ( &iX, &iY );
@@ -1718,9 +1722,9 @@ void cClient::drawFLC()
 
 void cClient::displayFX()
 {
-	if ( !FXList.iCount ) return;
+	if (!FXList.Size()) return;
 
-	for ( int i = FXList.iCount-1; i >= 0; i-- )
+	for (int i = FXList.Size() - 1; i >= 0; i--)
 	{
 		drawFX ( i );
 	}
@@ -1728,9 +1732,9 @@ void cClient::displayFX()
 
 void cClient::displayFXBottom()
 {
-	if ( !FXListBottom.iCount ) return;
+	if (!FXListBottom.Size()) return;
 
-	for ( int i = FXListBottom.iCount-1; i >= 0; i-- )
+	for (int i = FXListBottom.Size() - 1; i >= 0; i--)
 	{
 		drawFXBottom ( i );
 	}
@@ -1914,7 +1918,7 @@ void cClient::drawFX( int iNum )
 					if ( SettingsData.bAlphaEffects ) addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFX ( FXList.iCount-1 );
+					drawFX(FXList.Size() - 1);
 				}
 			}
 
@@ -2007,7 +2011,7 @@ void cClient::drawFXBottom( int iNum )
 					if ( SettingsData.bAlphaEffects ) addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFXBottom ( FXListBottom.iCount-1 );
+					drawFXBottom(FXListBottom.Size() - 1);
 				}
 			}
 
@@ -2682,10 +2686,10 @@ void cClient::handleMessages()
 	SDL_Rect scr, dest;
 	int iHeight;
 	sMessage *message;
-	if ( messages.iCount == 0 ) return;
+	if (messages.Size() == 0) return;
 	iHeight = 0;
 	// Alle alten Nachrichten löschen:
-	for ( int i = messages.iCount-1; i >= 0; i-- )
+	for (int i = messages.Size() - 1; i >= 0; i--)
 	{
 		message = messages[i];
 		if ( message->age+MSG_FRAMES < iFrame || iHeight > 200 )
@@ -2696,7 +2700,7 @@ void cClient::handleMessages()
 		}
 		iHeight += 14+11*message->len/296;
 	}
-	if ( messages.iCount == 0 ) return;
+	if (messages.Size() == 0) return;
 	if ( SettingsData.bAlphaEffects )
 	{
 		scr.x = 0; scr.y = 0;
@@ -2708,7 +2712,7 @@ void cClient::handleMessages()
 	dest.x = 180+2; dest.y = 34;
 	dest.w = 250-4;
 	dest.h = iHeight;
-	for ( int i = 0; i < messages.iCount; i++ )
+	for (int i = 0; i < messages.Size(); i++)
 	{
 		message = messages[i];
 		font->showTextAsBlock( dest, message->msg );
@@ -3370,7 +3374,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			int iID = message->popInt16();
 			sSubBase *SubBase = NULL;
-			for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
+			for (unsigned int i = 0; i < ActivePlayer->base.SubBases.Size(); i++)
 			{
 				if (ActivePlayer->base.SubBases[i]->iID == iID)
 				{
@@ -3380,7 +3384,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 			}
 			if ( SubBase == NULL ) break;
-			for ( unsigned int i = 0; i < SubBase->buildings.iCount; i++ )
+			for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 			{
 				SubBase->buildings[i]->SubBase = NULL;
 			}
@@ -3461,7 +3465,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *Building = getBuildingFromID ( message->popInt16() );
 			if ( Building == NULL ) break;
 
-			while ( Building->BuildList->iCount )
+			while (Building->BuildList->Size())
 			{
 				delete (*Building->BuildList)[0];
 				Building->BuildList->Delete( 0 );
@@ -3577,7 +3581,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for (int i = 0; i < PlayerList->Size(); i++)
 	{
 		cPlayer* const p = (*PlayerList)[i];
 		if (p->Nr == iNum) return p;
@@ -3682,7 +3686,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 void cClient::handleEnd()
 {
-	if ( ActiveMJobs.iCount > 0 )
+	if (ActiveMJobs.Size() > 0)
 	{
 		if ( !bWantToEnd ) addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
 		bWantToEnd = true;
@@ -3729,7 +3733,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 {
 	// clear the messages
 	sMessage *Message;
-	while ( messages.iCount )
+	while (messages.Size())
 	{
 		Message = messages[0];
 		delete Message;
@@ -3819,7 +3823,7 @@ void cClient::addActiveMoveJob ( cMJobs *MJob )
 
 void cClient::handleMoveJobs ()
 {
-	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
+	for (int i = 0; i < ActiveMJobs.Size(); i++)
 	{
 		cMJobs *MJob;
 		cVehicle *Vehicle;
@@ -4096,7 +4100,7 @@ void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
 cVehicle *cClient::getVehicleFromID ( int iID )
 {
 	cVehicle *Vehicle;
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for (int i = 0; i < PlayerList->Size(); i++)
 	{
 		Vehicle = (*PlayerList)[i]->VehicleList;
 		while ( Vehicle )
@@ -4111,7 +4115,7 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 cBuilding *cClient::getBuildingFromID ( int iID )
 {
 	cBuilding *Building;
-	for ( int i = 0; i < PlayerList->iCount; i++ )
+	for (int i = 0; i < PlayerList->Size(); i++)
 	{
 		Building = (*PlayerList)[i]->BuildingList;
 		while ( Building )
@@ -4180,14 +4184,18 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "load_active: " + iToStr ( Vehicle->LoadActive ) + " activating_vehicle: " + iToStr ( Vehicle->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( Vehicle->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( Vehicle->StoredVehicles?Vehicle->StoredVehicles->iCount:0 ) );
+	sTmp =
+		"load_active: "            + iToStr(Vehicle->LoadActive) +
+		" activating_vehicle: "    + iToStr(Vehicle->ActivatingVehicle) +
+		" vehicle_to_activate: +"  + iToStr(Vehicle->VehicleToActivate) +
+		" stored_vehicles_count: " + iToStr(Vehicle->StoredVehicles ? Vehicle->StoredVehicles->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	if ( Vehicle->StoredVehicles && Vehicle->StoredVehicles->iCount )
+	if (Vehicle->StoredVehicles && Vehicle->StoredVehicles->Size())
 	{
 		cVehicle *StoredVehicle;
-		for ( int i = 0; i < Vehicle->StoredVehicles->iCount; i++ )
+		for (int i = 0; i < Vehicle->StoredVehicles->Size(); i++)
 		{
 			StoredVehicle = (*Vehicle->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
@@ -4198,7 +4206,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for ( int i = 0; i < Vehicle->SeenByPlayerList.iCount; i++ )
+		for (int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
 		{
 			sTmp += ", \"" + getPlayerFromNumber(*Vehicle->SeenByPlayerList[i])->name + "\"";
 		}
@@ -4231,14 +4239,16 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "load_active: " + iToStr ( Building->LoadActive ) + " stored_vehicles_count: " + iToStr (( Building->StoredVehicles?Building->StoredVehicles->iCount:0 ));
+	sTmp =
+		"load_active: "            + iToStr(Building->LoadActive) +
+		" stored_vehicles_count: " + iToStr(Building->StoredVehicles ? Building->StoredVehicles->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	if ( Building->StoredVehicles&&Building->StoredVehicles->iCount )
+	if (Building->StoredVehicles&&Building->StoredVehicles->Size())
 	{
 		cVehicle *StoredVehicle;
-		for ( int i = 0; i < Building->StoredVehicles->iCount; i++ )
+		for (int i = 0; i < Building->StoredVehicles->Size(); i++)
 		{
 			StoredVehicle = (*Building->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
@@ -4246,14 +4256,17 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		}
 	}
 
-	sTmp = "build_speed: " + iToStr ( Building->BuildSpeed ) + " repeat_build: " + iToStr ( Building->RepeatBuild ) + " build_list_count: +" + iToStr (( Building->BuildList?Building->BuildList->iCount:0 ));
+	sTmp =
+		"build_speed: "        + iToStr(Building->BuildSpeed)  +
+		" repeat_build: "      + iToStr(Building->RepeatBuild) +
+		" build_list_count: +" + iToStr(Building->BuildList ? Building->BuildList->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	if ( Building->BuildList&&Building->BuildList->iCount )
+	if (Building->BuildList && Building->BuildList->Size())
 	{
 		sBuildList *BuildingList;
-		for ( int i = 0; i < Building->BuildList->iCount; i++ )
+		for (int i = 0; i < Building->BuildList->Size(); i++)
 		{
 			BuildingList = (*Building->BuildList)[i];
 			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
@@ -4264,7 +4277,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for ( int i = 0; i < Building->SeenByPlayerList.iCount; i++ )
+		for (int i = 0; i < Building->SeenByPlayerList.Size(); i++)
 		{
 			sTmp += ", \"" + getPlayerFromNumber(*Building->SeenByPlayerList[i])->name + "\"";
 		}
@@ -4276,7 +4289,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 void cClient::releaseMoveJob ( cMJobs *MJob )
 {
 	cLog::write ( "(Client) Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for ( int i = 0; i < ActiveMJobs.iCount; i++ )
+	for (int i = 0; i < ActiveMJobs.Size(); i++)
 	{
 		if (MJob == ActiveMJobs[i]) return;
 	}
@@ -4331,7 +4344,7 @@ void cClient::continuePathBuilding ( cVehicle *Vehicle )
 sSubBase *cClient::getSubBaseFromID ( int iID )
 {
 	sSubBase *SubBase = NULL;
-	for ( unsigned int i = 0; i < ActivePlayer->base.SubBases.iCount; i++ )
+	for (unsigned int i = 0; i < ActivePlayer->base.SubBases.Size(); i++)
 	{
 		if (ActivePlayer->base.SubBases[i]->iID == iID)
 		{

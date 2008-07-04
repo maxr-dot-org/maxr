@@ -11,14 +11,14 @@
 template<typename T> class cList
 {
 	public:
-		cList() : v_(), iCount(), capacity_() {}
+		cList() : v_(), size_(), capacity_() {}
 
 		~cList() { Reserve(0); }
 
-		size_t Size() const { return iCount; }
+		size_t Size() const { return size_; }
 
-		T&       Back()       { return v_[iCount - 1]; }
-		T const& Back() const { return v_[iCount - 1]; }
+		T&       Back()       { return v_[size_ - 1]; }
+		T const& Back() const { return v_[size_ - 1]; }
 
 		T&       operator [](size_t const idx)       { return v_[idx]; }
 		T const& operator [](size_t const idx) const { return v_[idx]; }
@@ -34,32 +34,31 @@ template<typename T> class cList
 	private:
 		T*     v_;
 		size_t capacity_;
-	public:
-		size_t iCount;
+		size_t size_;
 };
 
 
 template<typename T> void cList<T>::Add(T const& e)
 {
-	if (iCount >= capacity_) Reserve(std::max(1U, iCount * 2));
-	new (&v_[iCount]) T(e);
-	++iCount;
+	if (size_ >= capacity_) Reserve(std::max(1U, size_ * 2));
+	new (&v_[size_]) T(e);
+	++size_;
 }
 
 
 template<typename T> void cList<T>::Delete(size_t const idx)
 {
-	if (idx >= iCount) return; // XXX should throw exception
+	if (idx >= size_) return; // XXX should throw exception
 
-	for (size_t i = idx; i < iCount - 1; ++i) v_[i] = v_[i + 1];
+	for (size_t i = idx; i < size_ - 1; ++i) v_[i] = v_[i + 1];
 	PopBack();
 }
 
 
 template<typename T> void cList<T>::PopBack()
 {
-	--iCount;
-	v_[iCount].~T();
+	--size_;
+	v_[size_].~T();
 }
 
 
@@ -69,7 +68,7 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 
 	size_t       i;
 	T*     const old_v    = v_;
-	size_t const old_size = iCount;
+	size_t const old_size = size_;
 	size_t const new_size = std::min(old_size, n);
 	try
 	{
@@ -84,7 +83,7 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 
 	v_        = new_v;
 	capacity_ = n;
-	iCount    = new_size;
+	size_     = new_size;
 
 	for (size_t k = old_size; k != 0;) old_v[--k].~T();
 	free(old_v);

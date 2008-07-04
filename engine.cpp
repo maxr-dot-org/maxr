@@ -46,9 +46,9 @@ cEngine::~cEngine ( void )
 		delete mjobs;
 		mjobs=next;
 	}
-	while ( AJobs.iCount )
+	while (AJobs.Size())
 	{
-		delete AJobs[AJobs.iCount - 1];
+		delete AJobs[AJobs.Size() - 1];
 	}
 	StopLog();
 }
@@ -64,7 +64,7 @@ void cEngine::Run ( void )
 	cAutoMJob::handleAutoMoveJobs();
 
 	// Alle Move-Jobs bearbeiten:
-	for ( i=0;i<ActiveMJobs.iCount;i++ )
+	for (i = 0; i < ActiveMJobs.Size(); i++)
 	{
 		bool WasMoving,BuildAtTarget;
 		cMJobs *job;
@@ -176,7 +176,7 @@ void cEngine::Run ( void )
 		game->fDrawMap=true;
 	}
 	// Alle Attack-Jobs bearbeiten:
-	for ( i=0;i<AJobs.iCount;i++ )
+	for (i = 0; i < AJobs.Size(); i++)
 	{
 		bool destroyed;
 		cAJobs *aj;
@@ -846,7 +846,7 @@ void cEngine::CheckDefeat ( void )
 	int i;
 	string sTmpString;
 
-	for ( i=0;i<game->PlayerList->iCount;i++ )
+	for (i = 0; i < game->PlayerList->Size(); i++)
 	{
 		p = (*game->PlayerList)[i];
 		if ( p->IsDefeated() )
@@ -861,7 +861,7 @@ void cEngine::CheckDefeat ( void )
 				if ( p==game->ActivePlayer )
 				{
 					game->HotSeatPlayer++;
-					if ( game->HotSeatPlayer>=game->PlayerList->iCount ) game->HotSeatPlayer=0;
+					if (game->HotSeatPlayer >= game->PlayerList->Size()) game->HotSeatPlayer = 0;
 					game->ActivePlayer->HotHud= game->hud;
 					game->ActivePlayer = (*game->PlayerList)[game->HotSeatPlayer];
 
@@ -887,7 +887,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 	int i;
 	if ( vehicle )
 	{
-		for ( i=0;i<game->ActivePlayer->ReportVehicles.iCount;i++ )
+		for (i = 0; i < game->ActivePlayer->ReportVehicles.Size(); i++)
 		{
 			r = game->ActivePlayer->ReportVehicles[i];
 			if ( !r->name.compare ( name ) )
@@ -903,7 +903,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 	}
 	else
 	{
-		for ( i=0;i<game->ActivePlayer->ReportBuildings.iCount;i++ )
+		for (i = 0; i < game->ActivePlayer->ReportBuildings.Size(); i++)
 		{
 			r = game->ActivePlayer->ReportBuildings[i];
 			if ( !r->name.compare ( name ) )
@@ -929,7 +929,7 @@ void cEngine::MakeRundenstartReport ( void )
 	//sendChatMessage(sTmp);
 	int anz = 0;
 
-	while ( game->ActivePlayer->ReportBuildings.iCount )
+	while (game->ActivePlayer->ReportBuildings.Size())
 	{
 		r = game->ActivePlayer->ReportBuildings[0];
 		if ( anz ) sReportMsg+=", ";
@@ -939,7 +939,7 @@ void cEngine::MakeRundenstartReport ( void )
 		delete r;
 		game->ActivePlayer->ReportBuildings.Delete ( 0 );
 	}
-	while ( game->ActivePlayer->ReportVehicles.iCount )
+	while (game->ActivePlayer->ReportVehicles.Size())
 	{
 		r = game->ActivePlayer->ReportVehicles[0];
 		if ( anz ) sReportMsg+=", ";
@@ -1003,7 +1003,7 @@ void cEngine::LogMessage ( string msg )
 	if ( game->ShowLog )
 	{
 		string str;
-		if ( LogHistory->iCount>=54 )
+		if (LogHistory->Size() >= 54)
 		{
 //      delete (*LogHistory)[0];
 			LogHistory->Delete ( 0 );
@@ -1046,7 +1046,7 @@ void cEngine::Rundenende ( void )
 	game->hud.ShowRunde();
 
 	// Alle Buildings wieder aufladen:
-	for ( i=0;i<game->PlayerList->iCount;i++ )
+	for (i = 0; i < game->PlayerList->Size(); i++)
 	{
 
 		cBuilding *b;
@@ -1073,7 +1073,7 @@ void cEngine::Rundenende ( void )
 	}
 
 	// Alle Vehicles wieder aufladen:
-	for ( i=0;i<game->PlayerList->iCount;i++ )
+	for (i = 0; i < game->PlayerList->Size(); i++)
 	{
 		cVehicle *v;
 		cPlayer *p;
@@ -1104,7 +1104,7 @@ void cEngine::Rundenende ( void )
 		}
 	}
 	// Gun'em down:
-	for ( i=0;i<game->PlayerList->iCount;i++ )
+	for (i = 0; i < game->PlayerList->Size(); i++)
 	{
 		cVehicle *v;
 		cPlayer *p;
@@ -1169,7 +1169,7 @@ bool cEngine::DoEndActions ( void )
 // Prüft ob sich noch Fahrzeuge bewegen:
 bool cEngine::CheckVehiclesMoving ( bool WantToEnd )
 {
-	return ActiveMJobs.iCount>0;
+	return ActiveMJobs.Size() > 0;
 }
 
 // Sammelt den gesammten Müll ein:
@@ -1181,7 +1181,7 @@ void cEngine::CollectTrash ( void )
 	while ( mjobs&&mjobs->finished )
 	{
 		j=mjobs->next;
-		for ( i=0;i<ActiveMJobs.iCount;i++ )
+		for (i = 0; i < ActiveMJobs.Size(); i++)
 		{
 			if (ActiveMJobs[i] == mjobs)
 			{
@@ -1247,7 +1247,7 @@ void cEngine::HandleEvent( SDL_Event *event )
 		if ( network && network->isHost() )
 		{
 			// Host must delete the player
-			for ( int i = 0; i < game->PlayerList->iCount ; i++ )
+			for (int i = 0; i < game->PlayerList->Size(); i++)
 			{
 				if ((*game->PlayerList)[i]->iSocketNum == ((Sint16*)data)[0])
 				{

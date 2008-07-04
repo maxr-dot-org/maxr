@@ -152,11 +152,11 @@ void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, b
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILDLIST );
 	message->pushBool ( bRepeat );
-	for ( unsigned int i = 0; i < BuildList->iCount; i++ )
+	for (unsigned int i = 0; i < BuildList->Size(); i++)
 	{
 		message->pushInt16((*BuildList)[i]->id);
 	}
-	message->pushInt16 ( BuildList->iCount );
+	message->pushInt16(BuildList->Size());
 	message->pushInt16 ( Building->BuildSpeed );
 	message->pushInt16 ( Building->iID );
 	Client->sendNetMessage( message );

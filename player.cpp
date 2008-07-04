@@ -60,16 +60,16 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 cPlayer::~cPlayer ( void )
 {
 
-	while ( WachpostenAir.iCount )
+	while ( WachpostenAir.Size() )
 	{
-		delete WachpostenAir[WachpostenAir.iCount - 1];
-		WachpostenAir.Delete( WachpostenAir.iCount - 1 );
+		delete WachpostenAir[WachpostenAir.Size() - 1];
+		WachpostenAir.Delete( WachpostenAir.Size() - 1 );
 	}
 
-	while ( WachpostenGround.iCount )
+	while ( WachpostenGround.Size() )
 	{
-		delete WachpostenGround[WachpostenGround.iCount - 1];
-		WachpostenGround.Delete( WachpostenGround.iCount - 1 );
+		delete WachpostenGround[WachpostenGround.Size() - 1];
+		WachpostenGround.Delete( WachpostenGround.Size() - 1 );
 	}
 
 	// Erst alle geladenen Vehicles löschen:
@@ -100,9 +100,9 @@ cPlayer::~cPlayer ( void )
 		// Stored Vehicles are already deleted; just clear the list
 		if ( BuildingList->StoredVehicles )
 		{
-			while( BuildingList->StoredVehicles->iCount > 0 )
+			while( BuildingList->StoredVehicles->Size() > 0 )
 			{
-				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->iCount - 1 );
+				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->Size() - 1 );
 			}
 		}
 
@@ -119,17 +119,17 @@ cPlayer::~cPlayer ( void )
 	if ( DetectLandMap ) free ( DetectLandMap );
 	if ( DetectSeaMap ) free ( DetectSeaMap );
 
-	while ( ReportVehicles.iCount )
+	while ( ReportVehicles.Size() )
 	{
 		delete ReportVehicles[0];
 		ReportVehicles.Delete ( 0 );
 	}
-	while ( ReportBuildings.iCount )
+	while ( ReportBuildings.Size() )
 	{
 		delete ReportBuildings[0];
 		ReportBuildings.Delete ( 0 );
 	}
-	while ( LockList.iCount )
+	while ( LockList.Size() )
 	{
 		delete LockList[0];
 		LockList.Delete ( 0 );
@@ -274,7 +274,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	int i;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir.iCount;i++ )
+		for ( i=0;i<WachpostenAir.Size();i++ )
 		{
 			ptr = WachpostenAir[i];
 			if ( ptr->v==v )
@@ -288,7 +288,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir.iCount;i++ )
+		for ( i=0;i<WachpostenAir.Size();i++ )
 		{
 			ptr = WachpostenAir[i];
 			if ( ptr->v==v )
@@ -298,7 +298,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround.iCount;i++ )
+		for ( i=0;i<WachpostenGround.Size();i++ )
 		{
 			ptr = WachpostenGround[i];
 			if ( ptr->v==v )
@@ -313,7 +313,7 @@ void cPlayer::DeleteWachpostenV ( cVehicle *v )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround.iCount;i++ )
+		for ( i=0;i<WachpostenGround.Size();i++ )
 		{
 			ptr = WachpostenGround[i];
 			if ( ptr->v==v )
@@ -334,7 +334,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	int i;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir.iCount;i++ )
+		for ( i=0;i<WachpostenAir.Size();i++ )
 		{
 			ptr = WachpostenAir[i];
 			if ( ptr->b==b )
@@ -348,7 +348,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir.iCount;i++ )
+		for ( i=0;i<WachpostenAir.Size();i++ )
 		{
 			ptr = WachpostenAir[i];
 			if ( ptr->b==b )
@@ -358,7 +358,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround.iCount;i++ )
+		for ( i=0;i<WachpostenGround.Size();i++ )
 		{
 			ptr = WachpostenGround[i];
 			if ( ptr->b==b )
@@ -373,7 +373,7 @@ void cPlayer::DeleteWachpostenB ( cBuilding *b )
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround.iCount;i++ )
+		for ( i=0;i<WachpostenGround.Size();i++ )
 		{
 			ptr = WachpostenGround[i];
 			if ( ptr->b==b )
@@ -394,7 +394,7 @@ void cPlayer::RefreshWacheAir ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapAir,0,MapSize );
-	for ( i=0;i<WachpostenAir.iCount;i++ )
+	for ( i=0;i<WachpostenAir.Size();i++ )
 	{
 		ptr = WachpostenAir[i];
 		if ( ptr->v )
@@ -414,7 +414,7 @@ void cPlayer::RefreshWacheGround ( void )
 	sWachposten *ptr;
 	int i;
 	memset ( WachMapGround,0,MapSize );
-	for ( i=0;i<WachpostenGround.iCount;i++ )
+	for ( i=0;i<WachpostenGround.Size();i++ )
 	{
 		ptr = WachpostenGround[i];
 		if ( ptr->v )
@@ -835,7 +835,7 @@ void cPlayer::DeleteLock ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList.iCount;i++ )
+	for ( i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v==v )
@@ -853,7 +853,7 @@ void cPlayer::DeleteLock ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList.iCount;i++ )
+	for ( i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->b==b )
@@ -871,7 +871,7 @@ bool cPlayer::InLockList ( cBuilding *b )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList.iCount;i++ )
+	for ( i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->b==b ) return true;
@@ -884,7 +884,7 @@ bool cPlayer::InLockList ( cVehicle *v )
 {
 	sLockElem *elem;
 	int i;
-	for ( i=0;i<LockList.iCount;i++ )
+	for ( i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v==v ) return true;
@@ -919,7 +919,7 @@ void cPlayer::DrawLockList(cHud const& hud)
 	sLockElem *elem;
 	int i,spx,spy,off;
 
-	for ( i=0;i<LockList.iCount;i++ )
+	for ( i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v )

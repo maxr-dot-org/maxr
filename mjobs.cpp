@@ -39,7 +39,7 @@ cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID,
 	bIsServerJob = bServerCall;
 
 	vehicle = NULL;
-	for ( int i = 0; i < PlayerList->iCount && vehicle == NULL; i++ )
+	for ( int i = 0; i < PlayerList->Size() && vehicle == NULL; i++ )
 	{
 		vehicle = (*PlayerList)[i]->VehicleList;
 		while ( vehicle )
@@ -123,7 +123,7 @@ bool cMJobs::CalcPath ( void )
 		waypoints=wp;
 	}
 	// Alle Punkte löschen:
-	while ( PathCalcAll->iCount )
+	while ( PathCalcAll->Size() )
 	{
 		free((*PathCalcAll)[0]);
 		PathCalcAll->Delete( 0 );
@@ -171,13 +171,13 @@ bool cMJobs::CreateNextPath ( void )
 	sPathCalc *p,*pp;
 	int i,index;
 
-	if ( PathCalcEnds->iCount==0||PathCalcAll->iCount>MAX_PATHFINDING ) return false;
+	if ( PathCalcEnds->Size()==0||PathCalcAll->Size()>MAX_PATHFINDING ) return false;
 	// Den Endpunkt mit den geringsten Kosten suchen:
 	p = (*PathCalcEnds)[0];
 	index=0;
 	if ( !plane )
 	{
-		for ( i=0;i<PathCalcEnds->iCount;i++ )
+		for ( i=0;i<PathCalcEnds->Size();i++ )
 		{
 			pp = (*PathCalcEnds)[i];
 			if ( pp->road )
@@ -195,7 +195,7 @@ bool cMJobs::CreateNextPath ( void )
 	}
 	else
 	{
-		for ( i=0;i<PathCalcEnds->iCount;i++ )
+		for ( i=0;i<PathCalcEnds->Size();i++ )
 		{
 			pp = (*PathCalcEnds)[i];
 			if ( pp->CostsGes< ( p->CostsGes ) >>1 )

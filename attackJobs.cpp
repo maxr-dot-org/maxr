@@ -82,7 +82,7 @@ cServerAttackJob::~cServerAttackJob()
 
 void cServerAttackJob::lockTarget(int offset)
 {
-	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
+	for (int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -210,7 +210,7 @@ void cServerAttackJob::sendFireCommand()
 
 	bool bMuzzleIsRocketType = ( iMuzzleType == MUZZLE_ROCKET) || ( iMuzzleType == MUZZLE_TORPEDO) || ( iMuzzleType == MUZZLE_ROCKET_CLUSTER );
 
-	for ( int i = 0; i < Server->PlayerList->iCount; i++)
+	for (int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -244,12 +244,12 @@ void cServerAttackJob::sendFireCommand()
 
 void cServerAttackJob::clientFinished( int playerNr )
 {
-	for ( int i = 0; i < executingClients.iCount; i++ )
+	for (int i = 0; i < executingClients.Size(); i++)
 	{
 		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
 	}
 
-	if ( executingClients.iCount == 0 ) makeImpact();
+	if (executingClients.Size() == 0) makeImpact();
 }
 
 
@@ -382,7 +382,7 @@ void cServerAttackJob::makeImpact()
 
 void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMode )
 {
-	for ( int i = 0; i < Server->PlayerList->iCount; i++ )
+	for (int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -433,7 +433,7 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 
 void cClientAttackJob::handleAttackJobs()
 {
-	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
+	for (int i = 0; i < Client->attackJobs.Size(); i++)
 	{
 		cClientAttackJob* job = Client->attackJobs[i];
 		switch ( job->state )
@@ -476,7 +476,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	iTargetOffset = -1;
 
 	//check for duplicate jobs
-	for ( int i = 0; i < Client->attackJobs.iCount; i++ )
+	for (int i = 0; i < Client->attackJobs.Size(); i++)
 	{
 		if ( Client->attackJobs[i]->iID == this->iID )
 		{

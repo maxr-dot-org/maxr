@@ -102,14 +102,14 @@ cGame::~cGame ( void )
 	hud.ScaleSurfaces();
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( ObjectStream );
-	while ( messages.iCount )
+	while ( messages.Size() )
 	{
 		delete messages[0];
 		messages.Delete ( 0 );
 	}
 	if ( FLC ) FLI_Close ( FLC );
 	delete engine;
-	while ( FXList.iCount )
+	while ( FXList.Size() )
 	{
 		sFX *ptr;
 		ptr = FXList[0];
@@ -124,7 +124,7 @@ cGame::~cGame ( void )
 		delete ptr;
 		FXList.Delete ( 0 );
 	}
-	while ( FXListBottom.iCount )
+	while ( FXListBottom.Size() )
 	{
 		sFX *ptr;
 		ptr = FXListBottom[0];
@@ -365,7 +365,7 @@ void cGame::Run ( void )
 			{
 				SelectedBuilding->DrawHelthBar();
 			}
-			if (SelectedBuilding->BuildList && SelectedBuilding->BuildList->iCount && !SelectedBuilding->IsWorking && (*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer)
+			if (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size() && !SelectedBuilding->IsWorking && (*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 && SelectedBuilding->owner == ActivePlayer)
 			{
 				SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
 			}
@@ -411,21 +411,21 @@ void cGame::Run ( void )
 		}
 		if ( DebugBase&&fDrawMap )
 		{
-			font->showText(550, DebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.iCount), LATIN_SMALL_WHITE);
+			font->showText(550, DebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 		}
 
 		if ( DebugWache && fDrawMap )
 		{
-			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 
 		if ( DebugFX && fDrawMap )
 		{
-			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList.iCount + FXListBottom.iCount), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "fx-count: " + iToStr(FXList.Size() + FXListBottom.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 			font->showText(550,DebugOff, "wind-dir: " + iToStr(( int ) ( WindDir*57.29577 )), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
@@ -436,7 +436,7 @@ void cGame::Run ( void )
 		}
 		if ( DebugLog&&ShowLog&&fDrawMap )
 		{
-			for ( i=0;i<engine->LogHistory->iCount;i++ )
+			for ( i=0;i<engine->LogHistory->Size();i++ )
 			{
 				font->showText(184, 20 + i * 8, (*engine->LogHistory)[i], LATIN_SMALL_WHITE);
 			}
@@ -868,7 +868,7 @@ int cGame::CheckUser ( void )
 			PlayFX ( SoundData.SNDActivate );
 			//MouseMoveCallback ( true );
 		}
-		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->iCount )
+		else if ( mouse->cur==GraphicsData.gfx_Cactivate&&SelectedBuilding&&SelectedBuilding->BuildList&&SelectedBuilding->BuildList->Size() )
 		{
 			sBuildList *ptr;
 			int x,y;
@@ -889,7 +889,7 @@ int cGame::CheckUser ( void )
 			{
 				delete ptr;
 				SelectedBuilding->BuildList->Delete( 0 );
-				if ( SelectedBuilding->BuildList->iCount )
+				if ( SelectedBuilding->BuildList->Size() )
 				{
 					//SelectedBuilding->StartWork();
 				}
@@ -1665,7 +1665,7 @@ void cGame::MakeLanding ( int x,int y, cPlayer *p, cList<sLanding*> *list, bool 
 	}
 
 	w=2;h=2;
-	for ( i=0;i<list->iCount;i++ )
+	for ( i=0;i<list->Size();i++ )
 	{
 		ptr = (*list)[i];
 		v = LandVehicle (x, y, w, h, &UnitsData.vehicle[ptr->id], p);
@@ -1688,10 +1688,10 @@ void cGame::HandleMessages ( void )
 	SDL_Rect scr,dest;
 	int i,height;
 	sMessage *m;
-	if ( messages.iCount==0 ) return;
+	if ( messages.Size()==0 ) return;
 	height=0;
 	// Alle alten Nachrichten löschen:
-	for ( i=messages.iCount-1;i>=0;i-- )
+	for ( i=messages.Size()-1;i>=0;i-- )
 	{
 		m = messages[i];
 		if ( m->age+MSG_FRAMES<Frame||height>200 )
@@ -1702,7 +1702,7 @@ void cGame::HandleMessages ( void )
 		}
 		height+=14+11*m->len/296;
 	}
-	if ( messages.iCount==0 ) return;
+	if ( messages.Size()==0 ) return;
 	if ( SettingsData.bAlphaEffects )
 	{
 		scr.x=0;scr.y=0;
@@ -1714,7 +1714,7 @@ void cGame::HandleMessages ( void )
 	dest.x=180+2;dest.y=34;
 	dest.w=250-4;
 	dest.h=height;
-	for ( i=0;i<messages.iCount;i++ )
+	for ( i=0;i<messages.Size();i++ )
 	{
 		m = messages[i];
 		font->showTextAsBlock(dest, m->msg);
@@ -2052,9 +2052,9 @@ void cGame::AddFX ( sFX* n )
 void cGame::DisplayFX ( void )
 {
 	int i;
-	if ( !FXList.iCount ) return;
+	if ( !FXList.Size() ) return;
 
-	for ( i=FXList.iCount-1;i>=0;i-- )
+	for ( i=FXList.Size()-1;i>=0;i-- )
 	{
 		DrawFX ( i );
 	}
@@ -2064,9 +2064,9 @@ void cGame::DisplayFX ( void )
 void cGame::DisplayFXBottom ( void )
 {
 	int i;
-	if ( !FXListBottom.iCount ) return;
+	if ( !FXListBottom.Size() ) return;
 
-	for ( i=FXListBottom.iCount-1;i>=0;i-- )
+	for ( i=FXListBottom.Size()-1;i>=0;i-- )
 	{
 		DrawFXBottom ( i );
 	}
@@ -2252,7 +2252,7 @@ void cGame::DrawFX ( int i )
 					if ( SettingsData.bAlphaEffects ) AddFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					DrawFX ( FXList.iCount-1 );
+					DrawFX ( FXList.Size()-1 );
 				}
 			}
 
@@ -2348,7 +2348,7 @@ void cGame::DrawFXBottom ( int i )
 					if ( SettingsData.bAlphaEffects ) AddFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					DrawFXBottom ( FXListBottom.iCount-1 );
+					DrawFXBottom ( FXListBottom.Size()-1 );
 				}
 			}
 
@@ -3140,17 +3140,17 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 		fwrite ( &t,sizeof ( int ),1,fp );
 	}
 
-	if ( v->StoredVehicles&&v->StoredVehicles->iCount )
+	if ( v->StoredVehicles&&v->StoredVehicles->Size() )
 	{
 		int i;
-		fputc ( v->StoredVehicles->iCount,fp ); // Vehicle geladen
-		for ( i=0;i<v->StoredVehicles->iCount;i++ )
+		fputc ( v->StoredVehicles->Size(),fp ); // Vehicle geladen
+		for ( i=0;i<v->StoredVehicles->Size();i++ )
 		{
 			cVehicle *s;
 			s = (*v->StoredVehicles)[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
-		for ( i=0;i<v->StoredVehicles->iCount;i++ )
+		for ( i=0;i<v->StoredVehicles->Size();i++ )
 		{
 			cVehicle *s;
 			s = (*v->StoredVehicles)[i];
@@ -3217,11 +3217,11 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_4 ( Disabled )
 	FSAVE_B_1 ( Wachposten )
 
-	if ( b->BuildList&&b->BuildList->iCount )
+	if ( b->BuildList&&b->BuildList->Size() )
 	{
 		int i;
-		fputc ( b->BuildList->iCount,fp ); // BuildList vorhanden
-		for ( i=0;i<b->BuildList->iCount;i++ )
+		fputc ( b->BuildList->Size(),fp ); // BuildList vorhanden
+		for ( i=0;i<b->BuildList->Size();i++ )
 		{
 			sBuildList *bl;
 			bl = (*b->BuildList)[i];
@@ -3234,17 +3234,17 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 		fputc ( 0,fp ); // Keine BuildList
 	}
 
-	if ( b->StoredVehicles&&b->StoredVehicles->iCount )
+	if ( b->StoredVehicles&&b->StoredVehicles->Size() )
 	{
 		int i;
-		fputc ( b->StoredVehicles->iCount,fp ); // Vehicle geladen
-		for ( i=0;i<b->StoredVehicles->iCount;i++ )
+		fputc ( b->StoredVehicles->Size(),fp ); // Vehicle geladen
+		for ( i=0;i<b->StoredVehicles->Size();i++ )
 		{
 			cVehicle *s;
 			s = (*b->StoredVehicles)[i];
 			fwrite ( s,sizeof ( int ),1,fp );
 		}
-		for ( i=0;i<b->StoredVehicles->iCount;i++ )
+		for ( i=0;i<b->StoredVehicles->Size();i++ )
 		{
 			cVehicle *s;
 			s = (*b->StoredVehicles)[i];
@@ -3324,9 +3324,9 @@ bool cGame::Save ( string sName, int iNumber )
 	fwrite ( & ( engine->EndeCount ),sizeof ( int ),1,fp );
 
 	// Player:
-	i=PlayerList->iCount;
+	i=PlayerList->Size();
 	fwrite ( &i,sizeof ( int ),1,fp );
-	for ( i=0;i<PlayerList->iCount;i++ )
+	for ( i=0;i<PlayerList->Size();i++ )
 	{
 		cPlayer *p;
 		p = (*PlayerList)[i];
@@ -3512,7 +3512,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				plane=fgetc ( fp ); // Vehicle oder Plane
 				fread ( &off,sizeof ( int ),1,fp ); // Offset
 				fread ( &nr,sizeof ( int ),1,fp ); // Player Nr
-				for ( t=0;t<PlayerList->iCount;t++ )
+				for ( t=0;t<PlayerList->Size();t++ )
 				{
 					p = (*PlayerList)[t];
 					if ( p->Nr==nr ) break;
@@ -3635,7 +3635,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				fread ( &nr,sizeof ( int ),1,fp ); // Player Nr
 				if ( nr!=-1 )
 				{
-					for ( t=0;t<PlayerList->iCount;t++ )
+					for ( t=0;t<PlayerList->Size();t++ )
 					{
 						p = (*PlayerList)[t];
 						if ( p->Nr==nr ) break;
@@ -3747,7 +3747,7 @@ void cGame::Load ( string name,int AP,bool MP )
 	fclose ( fp );
 
 	// Alle SubBases neu berechnen:
-	for ( i=0;i<PlayerList->iCount;i++ )
+	for ( i=0;i<PlayerList->Size();i++ )
 	{
 		cPlayer *p;
 		p = (*PlayerList)[i];
@@ -3761,9 +3761,9 @@ void cGame::Load ( string name,int AP,bool MP )
 		{
 			cVehicle *v=map->GO[i].vehicle,*v2;
 			int k,m;
-			for ( k=0;k<v->StoredVehicles->iCount;k++ )
+			for ( k=0;k<v->StoredVehicles->Size();k++ )
 			{
-				for ( m=0;m<StoredVehicles.iCount;m++ )
+				for ( m=0;m<StoredVehicles.Size();m++ )
 				{
 					if (StoredVehicles[m]->OffX ==  (*v->StoredVehicles)[k]->OffX)
 					{
@@ -3781,9 +3781,9 @@ void cGame::Load ( string name,int AP,bool MP )
 		{
 			cVehicle *v=map->GO[i].plane,*v2;
 			int k,m;
-			for ( k=0;k<v->StoredVehicles->iCount;k++ )
+			for ( k=0;k<v->StoredVehicles->Size();k++ )
 			{
-				for ( m=0;m<StoredVehicles.iCount;m++ )
+				for ( m=0;m<StoredVehicles.Size();m++ )
 				{
 					if (StoredVehicles[m]->OffX == (*v->StoredVehicles)[k]->OffX)
 					{
@@ -3802,9 +3802,9 @@ void cGame::Load ( string name,int AP,bool MP )
 			cBuilding *b=map->GO[i].top;
 			int k,m;
 			if ( b->PosX!=i%map->size||b->PosY!=i/map->size ) continue;
-			for ( k=0;k<b->StoredVehicles->iCount;k++ )
+			for ( k=0;k<b->StoredVehicles->Size();k++ )
 			{
-				for ( m=0;m<StoredVehicles.iCount;m++ )
+				for ( m=0;m<StoredVehicles.Size();m++ )
 				{
 					cVehicle *v;
 					v = StoredVehicles[m];
@@ -3822,7 +3822,7 @@ void cGame::Load ( string name,int AP,bool MP )
 			}
 		}
 		else continue;
-		if ( !StoredVehicles.iCount ) break;
+		if ( !StoredVehicles.Size() ) break;
 	}
 
 	if ( !MP )
@@ -3841,7 +3841,7 @@ void cGame::Load ( string name,int AP,bool MP )
 
 		Run();
 
-		while ( PlayerList->iCount )
+		while ( PlayerList->Size() )
 		{
 			delete (*PlayerList)[0];
 			PlayerList->Delete ( 0 );
@@ -3856,11 +3856,11 @@ bool cGame::CheckRecursivLoaded(cVehicle* v, cList<cVehicle*>& StoredVehicles)
 	cVehicle *vv;
 	int i,k;
 
-	if ( StoredVehicles.iCount && v->StoredVehicles && v->StoredVehicles->iCount )
+	if ( StoredVehicles.Size() && v->StoredVehicles && v->StoredVehicles->Size() )
 	{
-		for ( i=0;i<v->StoredVehicles->iCount;i++ )
+		for ( i=0;i<v->StoredVehicles->Size();i++ )
 		{
-			for ( k=0;k<StoredVehicles.iCount;k++ )
+			for ( k=0;k<StoredVehicles.Size();k++ )
 			{
 				vv = StoredVehicles[k];
 				if (vv->OffX == (*v->StoredVehicles)[i]->OffX)
@@ -3979,15 +3979,15 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->iCount:0 ) );
+	sTmp = "load_active: " + iToStr ( v->LoadActive ) + " activating_vehicle: " + iToStr ( v->ActivatingVehicle ) + " vehicle_to_activate: +" + iToStr ( v->VehicleToActivate ) + " stored_vehicles_count: " + iToStr ( ( v->StoredVehicles?v->StoredVehicles->Size():0 ) );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( v->StoredVehicles&&v->StoredVehicles->iCount )
+	if ( v->StoredVehicles&&v->StoredVehicles->Size() )
 	{
 		cVehicle *vp;
 		int i;
-		for ( i=0;i<v->StoredVehicles->iCount;i++ )
+		for ( i=0;i<v->StoredVehicles->Size();i++ )
 		{
 			vp = (*v->StoredVehicles)[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
@@ -4021,15 +4021,15 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->iCount:0 ));
+	sTmp = "load_active: " + iToStr ( b->LoadActive ) + " stored_vehicles_count: " + iToStr (( b->StoredVehicles?b->StoredVehicles->Size():0 ));
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( b->StoredVehicles&&b->StoredVehicles->iCount )
+	if ( b->StoredVehicles&&b->StoredVehicles->Size() )
 	{
 		cVehicle *vp;
 		int i;
-		for ( i=0;i<b->StoredVehicles->iCount;i++ )
+		for ( i=0;i<b->StoredVehicles->Size();i++ )
 		{
 			vp = (*b->StoredVehicles)[i];
 			font->showText(x, *y, " store " + iToStr(i)+": \""+vp->name+"\"", LATIN_SMALL_WHITE);
@@ -4037,15 +4037,15 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 		}
 	}
 
-	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->iCount:0 ));
+	sTmp = "build_speed: " + iToStr ( b->BuildSpeed ) + " repeat_build: " + iToStr ( b->RepeatBuild ) + " build_list_count: +" + iToStr (( b->BuildList?b->BuildList->Size():0 ));
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	if ( b->BuildList&&b->BuildList->iCount )
+	if ( b->BuildList&&b->BuildList->Size() )
 	{
 		sBuildList *bl;
 		int i;
-		for ( i=0;i<b->BuildList->iCount;i++ )
+		for ( i=0;i<b->BuildList->Size();i++ )
 		{
 			bl = (*b->BuildList)[i];
 			font->showText(x, *y, "  build "+iToStr(i)+": "+iToStr(bl->typ->nr)+" \""+UnitsData.vehicle[bl->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
@@ -4064,7 +4064,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	string stmp;
 
 	sMessage *m;
-	while ( messages.iCount )
+	while ( messages.Size() )
 	{
 		m = messages[0];
 		delete m;
@@ -4072,7 +4072,7 @@ bool cGame::MakeHotSeatEnde ( void )
 	}
 
 	HotSeatPlayer++;
-	if ( HotSeatPlayer>=PlayerList->iCount ) HotSeatPlayer=0;
+	if ( HotSeatPlayer>=PlayerList->Size() ) HotSeatPlayer=0;
 
 	ActivePlayer->HotHud=hud;
 	ActivePlayer = (*PlayerList)[HotSeatPlayer];

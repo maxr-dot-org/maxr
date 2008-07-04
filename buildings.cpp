@@ -183,7 +183,7 @@ cBuilding::~cBuilding ( void )
 {
 	if ( BuildList )
 	{
-		while ( BuildList->iCount )
+		while (BuildList->Size())
 		{
 			sBuildList *ptr;
 			ptr = (*BuildList)[0];
@@ -195,7 +195,7 @@ cBuilding::~cBuilding ( void )
 
 	if ( StoredVehicles )
 	{
-		while ( StoredVehicles->iCount )
+		while (StoredVehicles->Size())
 		{
 			cVehicle *v;
 			v = (*StoredVehicles)[0];
@@ -234,16 +234,16 @@ cBuilding::~cBuilding ( void )
 		cPlayer *p;
 		int i;
 
-		for ( i = 0;i < game->PlayerList->iCount;i++ )
+		for (i = 0; i < game->PlayerList->Size(); i++)
 		{
 			p = (*game->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
 
-	while ( SeenByPlayerList.iCount )
+	while (SeenByPlayerList.Size())
 	{
-		SeenByPlayerList.Delete ( SeenByPlayerList.iCount-1 );
+		SeenByPlayerList.Delete(SeenByPlayerList.Size() - 1);
 	}
 }
 
@@ -253,7 +253,7 @@ string cBuilding::GetStatusStr ( void )
 	if ( IsWorking )
 	{
 		// Fabrik:
-		if ( data.can_build && BuildList && BuildList->iCount && owner == Client->ActivePlayer )
+		if (data.can_build && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
 		{
 			sBuildList *ptr;
 			ptr = (*BuildList)[0];
@@ -893,7 +893,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
-	if (BuildList && BuildList->iCount && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
+	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -1470,7 +1470,7 @@ void cBuilding::ServerStartWork ()
 				{
 					sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
 
-					for ( i = 0;i < SubBase->buildings.iCount;i++ )
+					for (i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						b = SubBase->buildings[i];
 
@@ -1483,7 +1483,7 @@ void cBuilding::ServerStartWork ()
 							break;
 					}
 
-					for ( i = 0;i < SubBase->buildings.iCount;i++ )
+					for (i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
@@ -1657,7 +1657,7 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		if ( v->data.can_transport != data.can_load )
 			return false;
 
-		for ( i = 0;i < SubBase->buildings.iCount;i++ )
+		for (i = 0; i < SubBase->buildings.Size(); i++)
 		{
 			b = SubBase->buildings[i];
 
@@ -2433,7 +2433,7 @@ void cBuilding::ShowStorage ( void )
 	btn_done.Draw();
 
 	// Down:
-	if ( StoredVehicles->iCount > to )
+	if (StoredVehicles->Size() > to)
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -2445,7 +2445,7 @@ void cBuilding::ShowStorage ( void )
 	}
 
 	// Alle Aktivieren:
-	if ( StoredVehicles->iCount )
+	if (StoredVehicles->Size())
 	{
 		drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 		AlleAktivierenEnabled = true;
@@ -2509,7 +2509,7 @@ void cBuilding::ShowStorage ( void )
 
 				offset += to;
 
-				if ( StoredVehicles->iCount <= offset + to )
+				if (StoredVehicles->Size() <= offset + to)
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -2579,7 +2579,7 @@ void cBuilding::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( StoredVehicles->iCount > to )
+				if (StoredVehicles->Size() > to)
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -2638,7 +2638,7 @@ void cBuilding::ShowStorage ( void )
 			PlayFX ( SoundData.SNDActivate );
 			size = Client->Map->size;
 
-			for ( i = 0;i < StoredVehicles->iCount; )
+			for (i = 0; i < StoredVehicles->Size();)
 			{
 				typ = (*StoredVehicles)[i]->typ;
 
@@ -2725,7 +2725,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for ( i = 0;i < StoredVehicles->iCount;i++ )
+			for (i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -2762,7 +2762,7 @@ void cBuilding::ShowStorage ( void )
 			dest.x = rDialog.x + 511;
 			dest.y = rDialog.y + 251 + 25 * 2;
 
-			for ( i = 0;i < StoredVehicles->iCount;i++ )
+			for (i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -2794,7 +2794,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for ( i = 0;i < StoredVehicles->iCount;i++ )
+			for (i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -2841,7 +2841,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			cVehicle *v;
 
-			if ( StoredVehicles->iCount <= i + offset )
+			if (StoredVehicles->Size() <= i + offset)
 				break;
 
 			v = (*StoredVehicles)[i + offset];
@@ -3028,7 +3028,7 @@ void cBuilding::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= StoredVehicles->iCount )
+		if (i + off >= StoredVehicles->Size())
 		{
 			vehicleV = NULL;
 		}
@@ -3275,7 +3275,7 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if ( !StoredVehicles || StoredVehicles->iCount <= nr )
+	if (!StoredVehicles || StoredVehicles->Size() <= nr)
 		return;
 
 	ptr = (*StoredVehicles)[nr];
@@ -3325,7 +3325,7 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 
 	if ( SubBase->Metal >= 2 )
 	{
-		for ( i = 0;i < StoredVehicles->iCount;i++ )
+		for (i = 0; i < StoredVehicles->Size(); i++)
 		{
 			cVehicle const* const v = (*StoredVehicles)[i];
 			if (v->data.ammo != v->data.max_ammo)
@@ -3795,7 +3795,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
 
-			if ( offset < selection.iCount - 9 )
+			if (offset < selection.Size() - 9)
 			{
 				offset++;
 
@@ -3876,7 +3876,7 @@ void cBuilding::ShowUpgrade ( void )
 			// Alle Upgrades zurücksetzen:
 			owner->Credits = StartCredits;
 
-			for (size_t i = 0;i < images.iCount;i++ )
+			for (size_t i = 0; i < images.Size(); i++)
 			{
 				sUpgradeStruct *ptr;
 				ptr = images[i];
@@ -3895,7 +3895,7 @@ void cBuilding::ShowUpgrade ( void )
 		if (btn_done.CheckClick(x, y, down, up))
 		{
 			// Alle Upgrades durchführen:
-			for (size_t i = 0;i < images.iCount;i++ )
+			for (size_t i = 0; i < images.Size(); i++)
 			{
 				bool up = false;
 				sUpgradeStruct *ptr;
@@ -3963,9 +3963,9 @@ void cBuilding::ShowUpgrade ( void )
 			int nr;
 			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 2 );
 
-			if ( selection.iCount < 9 )
+			if (selection.Size() < 9)
 			{
-				if ( nr >= selection.iCount )
+				if (nr >= selection.Size())
 					nr = -1;
 			}
 			else
@@ -3987,7 +3987,7 @@ void cBuilding::ShowUpgrade ( void )
 		}
 
 		// Klick auf einen Upgrade-Slider:
-		if ( b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection.iCount )
+		if (b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection.Size())
 		{
 			sUpgradeStruct* ptr = selection[selected];
 
@@ -4144,7 +4144,7 @@ void cBuilding::ShowUpgrade ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images.iCount )
+	while (images.Size())
 	{
 		sUpgradeStruct *ptr;
 		ptr = images[0];
@@ -4178,7 +4178,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	dest.w = 32;
 	dest.h = 32;
 
-	if ( list.iCount == 0 )
+	if (list.Size() == 0)
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -4197,7 +4197,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		return;
 	}
 
-	for ( i = offset;i < list.iCount;i++ )
+	for (i = offset; i < list.Size(); i++)
 	{
 		if ( i >= offset + 9 )
 			break;
@@ -4634,12 +4634,12 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 	sUnitData *vd;
 	int i;
 
-	while ( selection.iCount )
+	while (selection.Size())
 	{
 		selection.Delete ( 0 );
 	}
 
-	for ( i = 0;i < images.iCount;i++ )
+	for (i = 0; i < images.Size(); i++)
 	{
 		if (images[i]->vehicle)
 		{
@@ -4676,17 +4676,17 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 		}
 	}
 
-	if ( *offset >= selection.iCount - 9 )
+	if (*offset >= selection.Size() - 9)
 	{
-		*offset = selection.iCount - 9;
+		*offset = selection.Size() - 9;
 
 		if ( *offset < 0 )
 			*offset = 0;
 	}
 
-	if ( *selected >= selection.iCount )
+	if (*selected >= selection.Size())
 	{
-		*selected = selection.iCount - 1;
+		*selected = selection.Size() - 1;
 
 		if ( *selected < 0 )
 			*selected = 0;
@@ -5616,7 +5616,7 @@ void cBuilding::showMineManager ( void )
 	// generate list with mine datas. only use temporary cache so that original data wound be changed
 	cList<sMineValues*> Mines;
 
-	for ( x = 0; x < SubBase->buildings.iCount; x++ )
+	for (x = 0; x < SubBase->buildings.Size(); x++)
 	{
 		if (SubBase->buildings[x]->data.is_mine && SubBase->buildings[x]->IsWorking)
 		{
@@ -5644,11 +5644,11 @@ void cBuilding::showMineManager ( void )
 	iTempSBOilProd = SubBase->OilProd;
 	iTempSBGoldProd = SubBase->GoldProd;
 /*
-//#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<16&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
-#define DO_MINE_INC(a,b) for(i=0;i<mines.iCount;i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<(mines[i]->data.is_alien?24:16)&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
-#define DO_MINE_DEC(a) for(i=0;i<mines.iCount;i++){if(mines[i]->a>0){mines[i]->a--;break;}}
-//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
-#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.iCount;i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<(mines[i]->data.is_alien?24:16)){int t;ges=(mines[i]->data.is_alien?24:16)-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+//#define DO_MINE_INC(a,b) for(i=0;i<mines.Size();i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<16&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
+#define DO_MINE_INC(a,b) for(i=0;i<mines.Size();i++){if(mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd<(mines[i]->data.is_alien?24:16)&&mines[i]->a<mines[i]->b){mines[i]->a++;break;}}
+#define DO_MINE_DEC(a) for(i=0;i<mines.Size();i++){if(mines[i]->a>0){mines[i]->a--;break;}}
+//#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.Size();i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<16){int t;ges=16-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
+#define CALC_MINE_FREE FreeM=0;FreeO=0;FreeG=0;for(i=0;i<mines.Size();i++){int ges=mines[i]->MetalProd+mines[i]->OilProd+mines[i]->GoldProd;if(ges<(mines[i]->data.is_alien?24:16)){int t;ges=(mines[i]->data.is_alien?24:16)-ges;t=mines[i]->MaxMetalProd-mines[i]->MetalProd;FreeM+=(ges<t?ges:t);t=mines[i]->MaxOilProd-mines[i]->OilProd;FreeO+=(ges<t?ges:t);t=mines[i]->MaxGoldProd-mines[i]->GoldProd;FreeG+=(ges<t?ges:t);}}
 */
 	calcMineFree ( &Mines, &iFreeM, &iFreeO, &iFreeG );
 
@@ -6545,7 +6545,7 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Bauliste anlegen:
 	cList<sBuildStruct*> to_build;
 
-	for (size_t i = 0;i < BuildList->iCount;i++ )
+	for (size_t i = 0; i < BuildList->Size(); i++)
 	{
 		sBuildList *ptr;
 		ptr = (*BuildList)[i];
@@ -6553,7 +6553,7 @@ void cBuilding::ShowBuildMenu ( void )
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
-		for ( k = 0;k < images.iCount;k++ )
+		for (k = 0; k < images.Size(); k++)
 		{
 			sBuildStruct *bs;
 			bs = images[k];
@@ -6571,7 +6571,7 @@ void cBuilding::ShowBuildMenu ( void )
 	BuildSpeed = this->BuildSpeed;
 
 	//show details of the first item in to_build list, if it exists
-	if ( to_build.iCount > 0 )
+	if (to_build.Size() > 0)
 	{
 		showDetailsBuildlist = false;
 	}
@@ -6644,9 +6644,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images.iCount - 9 )
+			if (offset > images.Size() - 9)
 			{
-				offset = images.iCount - 9;
+				offset = images.Size() - 9;
 			}
 			if ( offset < 0 )
 			{
@@ -6775,7 +6775,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.x = MENU_OFFSET_X + 347;
 			dest.y = MENU_OFFSET_Y + 293;
 
-			if ( build_offset < to_build.iCount - 5 )
+			if (build_offset < to_build.Size() - 5)
 			{
 				build_offset++;
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
@@ -6811,9 +6811,9 @@ void cBuilding::ShowBuildMenu ( void )
 			sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 			to_build.Add ( n );
 
-			if ( to_build.iCount > build_offset + 5 )
+			if (to_build.Size() > build_offset + 5)
 			{
-				build_offset = to_build.iCount - 5;
+				build_offset = to_build.Size() - 5;
 			}
 
 			if ( build_selected < build_offset )
@@ -6828,17 +6828,17 @@ void cBuilding::ShowBuildMenu ( void )
 		if (btn_delete.CheckClick(x, y, down, up))
 		{
 			// Vehicle aus der Bauliste entfernen:
-			if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
+			if (to_build.Size() && to_build.Size() > build_selected && build_selected >= 0)
 			{
 				delete to_build[build_selected];
 				to_build.Delete ( build_selected );
 
-				if ( build_selected >= to_build.iCount )
+				if (build_selected >= to_build.Size())
 				{
 					build_selected--;
 				}
 
-				if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
+				if (to_build.Size() - build_offset < 5 && build_offset > 0)
 				{
 					build_offset--;
 				}
@@ -6967,9 +6967,9 @@ void cBuilding::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
-			if ( images.iCount < 9 )
+			if (images.Size() < 9)
 			{
-				if ( nr >= images.iCount )
+				if (nr >= images.Size())
 					nr = -1;
 			}
 			else
@@ -6992,9 +6992,9 @@ void cBuilding::ShowBuildMenu ( void )
 					sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 					to_build.Add ( n );
 
-					if ( to_build.iCount > build_offset + 5 )
+					if (to_build.Size() > build_offset + 5)
 					{
-						build_offset = to_build.iCount - 5;
+						build_offset = to_build.Size() - 5;
 					}
 
 					if ( build_selected < build_offset )
@@ -7018,9 +7018,9 @@ void cBuilding::ShowBuildMenu ( void )
 			int nr;
 			nr = ( y - 60 - MENU_OFFSET_Y ) / ( 32 + 10 );
 
-			if ( to_build.iCount < 5 )
+			if (to_build.Size() < 5)
 			{
-				if ( nr >= to_build.iCount )
+				if (nr >= to_build.Size())
 					nr = -1;
 			}
 			else
@@ -7040,17 +7040,17 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( build_selected == nr ) && !showDetailsBuildlist )
 				{
 					//remove vehicle from to_build queue
-					if ( to_build.iCount && to_build.iCount > build_selected && build_selected >= 0 )
+					if (to_build.Size() && to_build.Size() > build_selected && build_selected >= 0)
 					{
 						delete to_build[build_selected];
 						to_build.Delete ( build_selected );
 
-						if ( build_selected >= to_build.iCount )
+						if (build_selected >= to_build.Size())
 						{
 							build_selected--;
 						}
 
-						if ( to_build.iCount - build_offset < 5 && build_offset > 0 )
+						if (to_build.Size() - build_offset < 5 && build_offset > 0)
 						{
 							build_offset--;
 						}
@@ -7076,7 +7076,7 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	// Alles Images löschen:
-	while ( images.iCount )
+	while (images.Size())
 	{
 		sBuildStruct *ptr;
 		ptr = images[0];
@@ -7085,7 +7085,7 @@ void cBuilding::ShowBuildMenu ( void )
 		images.Delete( 0 );
 	}
 
-	while ( to_build.iCount )
+	while (to_build.Size())
 	{
 		delete to_build[0];
 		to_build.Delete ( 0 );
@@ -7123,7 +7123,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list.iCount;i++ )
+	for (i = offset; i < list.Size(); i++)
 	{
 		if ( i >= offset + 9 )
 			break;
@@ -7365,7 +7365,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list.iCount;i++ )
+	for (i = offset; i < list.Size(); i++)
 	{
 		if ( i >= offset + 5 )
 			break;
@@ -7698,7 +7698,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 
-	if (BuildList && BuildList->iCount && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
+	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
 		return;
 
 	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )
@@ -7813,7 +7813,12 @@ void cBuilding::DrawMenu ( void )
 	}
 
 	// Start:
-	if ( typ->data.can_work && !IsWorking && ( ( BuildList && BuildList->iCount ) || typ->data.can_build == BUILD_NONE ) )
+	if (typ->data.can_work &&
+			!IsWorking         &&
+			(
+				(BuildList && BuildList->Size()) ||
+				typ->data.can_build == BUILD_NONE
+			))
 	{
 		if ( SelMenu == nr )
 			scr.y = 21;
@@ -7997,11 +8002,11 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			for (i = 0; i < owner->base.SubBases.iCount; ++i)
+			for (i = 0; i < owner->base.SubBases.Size(); ++i)
 			{
 				sSubBase* const sb = owner->base.SubBases[i];
 
-				for ( k = 0;k < sb->buildings.iCount;k++ )
+				for (k = 0; k < sb->buildings.Size(); k++)
 				{
 					cBuilding *b;
 					b = sb->buildings[k];
@@ -8714,7 +8719,7 @@ void cBuilding::SendUpdateStored ( int index )
 
 bool cBuilding::isDetectedByPlayer( int iPlayerNum )
 {
-	for ( unsigned int i = 0; i < DetectedByPlayerList.iCount; i++ )
+	for (unsigned int i = 0; i < DetectedByPlayerList.Size(); i++)
 	{
 		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
 	}
@@ -8723,7 +8728,7 @@ bool cBuilding::isDetectedByPlayer( int iPlayerNum )
 
 void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
-	for (unsigned int i = 0; i < Mines.iCount; ++i)
+	for (unsigned int i = 0; i < Mines.Size(); ++i)
 	{
 		sMineValues& m = *Mines[i];
 		if (m.iMetalProd + m.iOilProd + m.iGoldProd >= 16) continue;
@@ -8740,7 +8745,7 @@ void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mine
 
 void cBuilding::doMineDec(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
-	for (unsigned int i = 0; i < Mines.iCount; ++i)
+	for (unsigned int i = 0; i < Mines.Size(); ++i)
 	{
 		int& prod = Mines[i]->GetProd(resource);
 		if (prod > 0)
@@ -8756,7 +8761,7 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 	*iFreeM = 0;
 	*iFreeO = 0;
 	*iFreeG = 0;
-	for( unsigned int i = 0; i < Mines->iCount; i++ )
+	for (unsigned int i = 0; i < Mines->Size(); i++)
 	{
 		sMineValues* const m = (*Mines)[i];
 		int iGes = m->iMetalProd + m->iOilProd + m->iGoldProd;

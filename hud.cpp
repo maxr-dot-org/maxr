@@ -636,7 +636,7 @@ void cHud::CheckScroll ( bool pure )
 					(
 						(
 							!Client->SelectedBuilding->BuildList                    ||
-							!Client->SelectedBuilding->BuildList->iCount            ||
+							!Client->SelectedBuilding->BuildList->Size()            ||
 							Client->SelectedBuilding->IsWorking                     ||
 							(*Client->SelectedBuilding->BuildList)[0]->metall_remaining > 0
 						) &&
@@ -678,7 +678,7 @@ void cHud::CheckScroll ( bool pure )
 				Client->SelectedBuilding                                &&
 				Client->SelectedBuilding->owner == Client->ActivePlayer &&
 				Client->SelectedBuilding->BuildList                     &&
-				Client->SelectedBuilding->BuildList->iCount             &&
+				Client->SelectedBuilding->BuildList->Size()             &&
 				!Client->SelectedBuilding->IsWorking                    &&
 				(*Client->SelectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
@@ -1359,7 +1359,7 @@ void cHud::ScaleSurfaces ( void )
 
 	// Terrain:
 	cList<sTerrain*>& tlist = Client->Map->TerrainInUse;
-	for (size_t i = 0; i < tlist.iCount; ++i)
+	for (size_t i = 0; i < tlist.Size(); ++i)
 	{
 		sTerrain *t;
 		t = tlist[i];

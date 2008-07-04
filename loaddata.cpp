@@ -1542,7 +1542,7 @@ static int LoadVehicles()
 			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList.Delete(VehicleList.iCount);
+			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1571,7 +1571,7 @@ static int LoadVehicles()
 			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList.Delete(VehicleList.iCount);
+			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1579,7 +1579,7 @@ static int LoadVehicles()
 	}
 	// load found units
 	UnitsData.vehicle.Reserve(0);
-	for (int i = 0; i < VehicleList.iCount; i++)
+	for (int i = 0; i < VehicleList.Size(); i++)
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
 		sVehiclePath += PATH_DELIMITER;
@@ -2028,7 +2028,7 @@ static int LoadBuildings()
 			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList.Delete(BuildingList.iCount);
+			BuildingList.Delete(BuildingList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2057,7 +2057,7 @@ static int LoadBuildings()
 			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList.Delete(BuildingList.iCount);
+			BuildingList.Delete(BuildingList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			cLog::write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -2065,7 +2065,7 @@ static int LoadBuildings()
 	}
 	// load found units
 	UnitsData.building.Reserve(0);
-	for( int i = 0; i < BuildingList.iCount; i++)
+	for( int i = 0; i < BuildingList.Size(); i++)
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
 		sBuildingPath += PATH_DELIMITER;

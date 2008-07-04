@@ -46,7 +46,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 	cNetMessage* message;
 	if ( iClient == -1 )
 	{
-		for ( int i = 0; i < building->SeenByPlayerList.iCount; i++)
+		for ( int i = 0; i < building->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 
@@ -70,7 +70,7 @@ void sendDeleteUnit ( cVehicle* vehicle, int iClient )
 	cNetMessage* message;
 	if ( iClient == -1 )
 	{
-		for ( int i = 0; i < vehicle->SeenByPlayerList.iCount; i++)
+		for ( int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
 
@@ -235,7 +235,7 @@ void sendDoStartWork( cBuilding* building )
 	int offset = building->PosX + building->PosY * Server->Map->size;
 
 	//check all players
-	for ( unsigned int i = 0; i < Server->PlayerList->iCount; i++)
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -269,7 +269,7 @@ void sendDoStopWork( cBuilding* building )
 	int offset = building->PosX + building->PosY * Server->Map->size;
 
 	//check all players
-	for ( unsigned int i = 0; i < Server->PlayerList->iCount; i++)
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -409,7 +409,7 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 	int iCount = 0;
 	if ( Building == NULL )
 	{
-		for ( unsigned int i = 0; i < SubBase->buildings.iCount; i++ )
+		for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++ )
 		{
 			if ( message->iLength > PACKAGE_LENGHT-16 )
 			{
@@ -469,12 +469,12 @@ void sendBuildList ( cBuilding *Building )
 	message->pushBool ( Building->RepeatBuild );
 	message->pushInt16 ( Building->BuildSpeed );
 	message->pushInt16 ( Building->MetalPerRound );
-	for ( int i = Building->BuildList->iCount-1; i >= 0; i-- )
+	for ( int i = Building->BuildList->Size()-1; i >= 0; i-- )
 	{
 		message->pushInt16((*Building->BuildList)[i]->metall_remaining);
 		message->pushInt16((*Building->BuildList)[i]->typ->nr);
 	}
-	message->pushInt16 ( Building->BuildList->iCount );
+	message->pushInt16 ( Building->BuildList->Size() );
 	message->pushInt16 ( Building->iID );
 	Server->sendNetMessage( message, Building->owner->Nr );
 }
