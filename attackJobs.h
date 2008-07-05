@@ -31,6 +31,8 @@ public:
 	int iMuzzleType;
 	bool bMuzzlePlayed;
 	int iTargetOff;
+	int damage;
+	int attackMode;
 
 	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
 	cBuilding* building;
@@ -63,6 +65,7 @@ public:
 	int iAgressorOffset;
 	int iTargetOffset;
 	int wait;
+	bool mineExplosion;
 
 	enum eAJStates { UPDATE_AGRESSOR_DATA, ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;

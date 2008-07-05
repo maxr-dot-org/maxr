@@ -4906,7 +4906,7 @@ void cClient::destroyUnit(cBuilding *building)
 	}
 	else
 	{
-		Client->addFX( fxExploSmall, Map->GO[offset].top->PosX * 64 + 32, Map->GO[offset].top->PosY * 64 + 32, 0);
+		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
 
 	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;

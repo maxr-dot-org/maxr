@@ -277,14 +277,6 @@ private:
 	*/
 	cPlayer *getPlayerFromNumber ( int iNum );
 	/**
-	* deletes the unit
-	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*@param Vehicle Vehicle which should be deleted.
-	*/
-	void deleteUnit( cBuilding *Building );
-	void deleteUnit( cVehicle *Vehicle );
-	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath
 	*/
@@ -426,6 +418,14 @@ public:
 	* @param iDestOffset the Destination
 	*/
 	void addMoveJob(cVehicle* vehicle, int iDestOffset);
+	/**
+	* deletes the unit
+	*@author alzi alias DoctorDeath
+	*@param Building Building which should be deleted.
+	*@param Vehicle Vehicle which should be deleted.
+	*/
+	void deleteUnit( cBuilding *Building );
+	void deleteUnit( cVehicle *Vehicle );
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!

@@ -3225,7 +3225,7 @@ static void ConvertData(int unitnum, bool vehicle)
 	else
 		Data->is_base = false;
 
-	Data->muzzle_typ = MUZZLE_SMALL;
+	Data->muzzle_typ = MUZZLE_ROCKET;
 	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2) || // Alienassault
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship

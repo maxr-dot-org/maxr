@@ -34,8 +34,10 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	iNextID++;
 	bMuzzlePlayed = false;
 	this->iTargetOff = targetOff;
-	this->building = NULL;
+	building = NULL;
 	this->vehicle = vehicle;
+	damage = vehicle->data.damage;
+	attackMode = vehicle->data.can_attack;
 
 	iMuzzleType = vehicle->data.muzzle_typ;
 	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
@@ -60,6 +62,9 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	iTargetOff = targetOff;
 	this->building = building;
 	vehicle = NULL;
+	damage = building->data.damage;
+	attackMode = building->data.can_attack;
+
 
 	iMuzzleType = building->data.muzzle_typ;
 	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
@@ -73,6 +78,8 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	//TODO: cluster
 	lockTarget( targetOff );
 	sendFireCommand();
+
+	if ( building->data.is_expl_mine ) Server->deleteUnit( building, false );
 
 }
 
@@ -91,7 +98,6 @@ void cServerAttackJob::lockTarget(int offset)
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
 
-		int attackMode = building ? building->data.can_attack : vehicle->data.can_attack;
 		if ( attackMode == ATTACK_AIR )
 		{
 			cVehicle* target = Server->Map->GO[offset].plane;
@@ -164,6 +170,47 @@ void cServerAttackJob::lockTarget(int offset)
 
 void cServerAttackJob::sendFireCommand()
 {
+	//make the agressor visible on all clients who can see the agressor offset
+	for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		cPlayer* player = (*Server->PlayerList)[i];
+		if ( !player->ScanMap[iAgressorOff] ) continue;
+		
+
+		if ( vehicle )
+		{
+			if ( vehicle->owner == player ) continue;
+			int n = 0;
+			for ( ; n < vehicle->SeenByPlayerList.Size(); n++ )
+			{
+				if ( *vehicle->SeenByPlayerList[n] == player->Nr ) break;
+			}
+			if ( n == vehicle->SeenByPlayerList.Size() )
+			{
+				sendAddEnemyUnit( vehicle, player->Nr );
+				sendUnitData( vehicle, player->Nr );
+				vehicle->SeenByPlayerList.Add( &player->Nr );
+				vehicle->DetectedByPlayerList.Add( &player->Nr );
+			}
+		}
+		else
+		{
+			if ( building->owner == player ) continue;
+			int n = 0;
+			for ( ; n < building->SeenByPlayerList.Size(); n++ )
+			{
+				if ( *building->SeenByPlayerList[n] == player->Nr ) break;
+			}
+			if ( n == building->SeenByPlayerList.Size() )
+			{
+				sendAddEnemyUnit( building, player->Nr );
+				sendUnitData( building, Server->Map, player->Nr );
+				building->SeenByPlayerList.Add( &player->Nr );
+				building->DetectedByPlayerList.Add( &player->Nr );
+			}
+		}
+	}
+
 	//calculate fire direction
 	int targetX = iTargetOff % Server->Map->size;
 	int targetY = iTargetOff / Server->Map->size;
@@ -259,10 +306,9 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 void cServerAttackJob::makeImpact()
 {
-	int attackMode = vehicle ? vehicle->data.can_attack : building->data.can_attack;
 
 	//Todo: cluster
-	sendAttackJobImpact( iTargetOff, vehicle?vehicle->data.damage:building->data.damage, attackMode );
+	sendAttackJobImpact( iTargetOff, damage, attackMode );
 
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
@@ -322,8 +368,6 @@ void cServerAttackJob::makeImpact()
 	//if target found
 	if ( targetBuilding || targetVehicle )
 	{
-		int damage = vehicle ? vehicle->data.damage : building->data.damage;
-
 		if ( targetVehicle )
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
@@ -415,12 +459,41 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 	if ( ID != 0 )
 	{
 		cVehicle* vehicle = Client->getVehicleFromID( ID );
-		if ( vehicle == NULL ) return;	//we are out of sync!!!
+		if ( vehicle == NULL ) 
+		{
+			cLog::write(" (Client) vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_ERROR );
+			return;	//we are out of sync!!!
+		}
 
 		vehicle->bIsBeeingAttacked = true;
-		if ( vehicle->mjob ) vehicle->mjob->EndForNow = true;
-		//TODO: synchronize position
+		
+		//TODO: implement attacking moving vehicles
+		//if ( vehicle->mjob ) vehicle->mjob->EndForNow = true;
 
+		//synchonize position
+		int OffY = message->popChar();
+		int OffX = message->popChar();
+		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
+		{
+			if ( bIsAir )
+			{
+				Client->Map->GO[vehicle->PosX + vehicle->PosY * Client->Map->size].plane = NULL;
+				Client->Map->GO[offset].plane = vehicle;
+				vehicle->PosX = offset % Client->Map->size;
+				vehicle->PosY = offset / Client->Map->size;
+				vehicle->OffX = OffX;
+				vehicle->OffY = OffY;
+			}
+			else
+			{
+				Client->Map->GO[vehicle->PosX + vehicle->PosY * Client->Map->size].vehicle = NULL;
+				Client->Map->GO[offset].vehicle = vehicle;
+				vehicle->PosX = offset % Client->Map->size;
+				vehicle->PosY = offset / Client->Map->size;
+				vehicle->OffX = OffX;
+				vehicle->OffY = OffY;
+			}
+		}
 	}
 	if ( !bIsAir )
 	{
@@ -496,11 +569,14 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	int unitID = message->popInt32();
 	if ( unitID != 0 )	//agressor in sight?
 	{
+
 		vehicle = Client->getVehicleFromID( unitID );
 		building = Client->getBuildingFromID( unitID );
+
 		if ( !vehicle && !building )
 		{
 			state = FINISHED;
+			cLog::write(" (Client) agressor with id " + iToStr( unitID ) + " not found", cLog::eLOG_TYPE_NET_ERROR );
 			return; //we are out of sync!!!
 		}
 		iFireDir = message->popChar();
@@ -572,12 +648,22 @@ void cClientAttackJob::playMuzzle()
 
 	int offx=0,offy=0;
 
-	/*if ( building&&building->data.is_expl_mine )
+	if ( building && building->data.is_expl_mine )
 	{
-		MuzzlePlayed=true;
+		state = FINISHED;
 		PlayFX ( building->typ->Attack );
+		if ( Client->Map->IsWater( building->PosX + building->PosY * Client->Map->size ) )
+		{
+			Client->addFX( fxExploWater, building->PosX*64 + 32, building->PosY*64 + 32, 0);
+		}
+		else
+		{
+			Client->addFX( fxExploSmall, building->PosX*64 + 32, building->PosY*64 + 32, 0);
+		}
+		if ( building ) Client->deleteUnit( building );
 		return;
-	}*/
+	}
+
 	switch ( iMuzzleType )
 	{
 		case MUZZLE_BIG:

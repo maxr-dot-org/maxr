@@ -2016,13 +2016,7 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		{
 			AJobs.Add( new cServerAttackJob( building, Vehicle->PosX+Vehicle->PosY*Map->size ));
 			
-			//alzi: how is the vehicle stoped on the client?
-			Vehicle->moving = false;
-			Vehicle->WalkFrame = 0;
-			if ( Vehicle->mjob )
-			{
-				Vehicle->mjob->release();
-			}
+			if ( Vehicle->mjob )  Vehicle->mjob->EndForNow = true;
 		}
 
 		// search for resources if necessary

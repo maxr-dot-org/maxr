@@ -1116,6 +1116,7 @@ bool cBuilding::MouseOverMenu ( int mx, int my )
 // Zeigt das Selbstzerstörungsmenü an:
 void cBuilding::SelfDestructionMenu ( void )
 {
+
 	if ( showSelfdestruction() )
 	{
 		// Destroy both (platform and top building) if there is a platform and a top building on this place
