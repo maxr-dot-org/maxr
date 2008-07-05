@@ -460,7 +460,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	// Ggf Minen zur Detonation bringen:
 	if ( !v->data.can_detect_mines&&v->data.can_drive!=DRIVE_AIR&&map->GO[v->PosX+v->PosY*map->size].base&&map->GO[v->PosX+v->PosY*map->size].base->data.is_expl_mine&&map->GO[v->PosX+v->PosY*map->size].base->owner!=v->owner )
 	{
-		map->GO[v->PosX+v->PosY*map->size].base->detonate();
+		//map->GO[v->PosX+v->PosY*map->size].base->detonate();
 		v->moving=false;
 		v->WalkFrame=0;
 		if ( v->mjob )

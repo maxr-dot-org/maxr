@@ -223,7 +223,6 @@ public:
   void ShowStorageMetalBar(void);
   void ExitVehicleTo(int nr,int off,bool engine_call);
   void MakeStorageButtonsAlle(bool *AlleAufladenEnabled,bool *AlleReparierenEnabled,bool *AlleUpgradenEnabled);
-  void detonate(void);
   void ShowResearch(void);
   void ShowResearchSchieber(void);
   void MakeResearchSchieber(int x,int y);

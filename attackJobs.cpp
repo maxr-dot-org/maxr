@@ -516,7 +516,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		}
 		else
 		{
-			iAgressorOffset = building->PosX + vehicle->PosY * Client->Map->size;
+			iAgressorOffset = building->PosX + building->PosY * Client->Map->size;
 		}
 	}
 	else
@@ -928,7 +928,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 	//clean up
 	if ( attackMode == ATTACK_AIR )
 	{
-		cVehicle* target = Server->Map->GO[offset].plane;
+		cVehicle* target = Client->Map->GO[offset].plane;
 		if ( target )
 		{
 			if ( target->mjob ) target->mjob->EndForNow = false;
@@ -937,7 +937,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 	}
 	if ( attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_LAND || attackMode ==  ATTACK_SUB_LAND )
 	{
-		cVehicle* targetVehicle = Server->Map->GO[offset].vehicle;
+		cVehicle* targetVehicle = Client->Map->GO[offset].vehicle;
 		if ( targetVehicle && targetVehicle->data.is_stealth_sea && attackMode != ATTACK_SUB_LAND )
 		{
 			targetVehicle = NULL;

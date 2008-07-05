@@ -435,10 +435,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			//check if attack is possible
-			//TODO: allow attacking empty terains
 			if ( bIsVehicle )
 			{
-				if ( !attackingVehicle->CanAttackObject( targetOffset ) )
+				if ( !attackingVehicle->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" (Server) The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -447,7 +446,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
-				if ( !attackingBuilding->CanAttackObject( targetOffset ) )
+				if ( !attackingBuilding->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" (Server) The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -2001,9 +2000,12 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 		// check for results of the move
 
 		// make mines explode if necessary
-		if ( !Vehicle->data.can_detect_mines && Vehicle->data.can_drive != DRIVE_AIR && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->data.is_expl_mine && Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->owner != Vehicle->owner )
+		cBuilding* building = Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base;
+		if ( Vehicle->data.can_drive != DRIVE_AIR && building && building->data.is_expl_mine && building->owner != Vehicle->owner )
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base->detonate();
+			AJobs.Add( new cServerAttackJob( building, Vehicle->PosX+Vehicle->PosY*Map->size ));
+			
+			//alzi: how is the vehicle stoped on the client?
 			Vehicle->moving = false;
 			Vehicle->WalkFrame = 0;
 			if ( Vehicle->mjob )
