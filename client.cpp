@@ -1602,7 +1602,8 @@ void cClient::drawMiniMap()
 			{
 				cl=* ( unsigned int* ) Map->terrain[Map->Kacheln[tx+ty]].shw_org->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+			//else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty] && ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
 			{
 				cl=* ( unsigned int* ) GO[tx+ty].base->owner->color->pixels;
 			}
@@ -2030,7 +2031,7 @@ void cClient::drawFXBottom( int iNum )
 
 			if ( !Map->IsWater ( x+y*Map->size,false ) &&
 			        ! ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 ) &&
-			        ! ( Map->GO[x+y*Map->size].base&&Map->GO[x+y*Map->size].base->owner&& ( Map->GO[x+y*Map->size].base->data.is_bridge||Map->GO[x+y*Map->size].base->data.is_platform ) ) )
+			        ! ( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_bridge||Map->GO[x+y*Map->size].base->data.is_platform ) ) )
 			{
 				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
 				ri->aj->state = cClientAttackJob::FINISHED;
@@ -2480,7 +2481,7 @@ bool cClient::doCommand ( string sCmd )
 			{
 				//engine->DestroyObject ( i,true );
 			}
-			if ( Map->GO[i].vehicle || ( Map->GO[i].base&&Map->GO[i].base->owner ) ||Map->GO[i].top )
+			if ( Map->GO[i].vehicle || ( Map->GO[i].base ||Map->GO[i].top ))
 			{
 				//engine->DestroyObject ( i,false );
 			}
@@ -3530,6 +3531,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	{
 		if(Map->GO[iOff].base)
 		{
+			//TODO: delete subbase building, if there is one
 			Map->GO[iOff].subbase = Map->GO[iOff].base;
 			Map->GO[iOff].base = AddedBuilding;
 		}
@@ -3593,6 +3595,12 @@ cPlayer *cClient::getPlayerFromNumber ( int iNum )
 void cClient::deleteUnit( cBuilding *Building )
 {
 	if( !Building ) return;
+
+	if ( !Building->owner )
+	{
+		Map->deleteRubble( Building );
+		return;
+	}
 
 	bFlagDrawMMap = true;
 
@@ -4883,15 +4891,13 @@ void cClient::destroyUnit(cBuilding *building)
 		if ( Map->GO[offset + 1            ].base )    value += Map->GO[offset + 1            ].base->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size    ].base )    value += Map->GO[offset + Map->size    ].base->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size + 1].base )    value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
-		if ( Map->GO[offset + 1            ].subbase ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size    ].subbase ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + 1            ].subbase && Map->GO[offset + 1            ].subbase->owner ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].subbase && Map->GO[offset + Map->size    ].subbase->owner ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size + 1].subbase && Map->GO[offset + Map->size + 1].subbase->owner ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
 		
 		deleteUnit( Map->GO[offset + 1            ].base );
 		deleteUnit( Map->GO[offset + Map->size    ].base );
 		deleteUnit( Map->GO[offset + Map->size + 1].base );
-
-		if ( Map->GO[offset + 1].subbase ) value += Map->GO[offset + 1].subbase->data.iBuilt_Costs;
 		deleteUnit( Map->GO[offset + 1            ].subbase );
 		deleteUnit( Map->GO[offset + Map->size    ].subbase );
 		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
@@ -4905,7 +4911,7 @@ void cClient::destroyUnit(cBuilding *building)
 
 	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;
 	if ( Map->GO[offset].base )    value += Map->GO[offset].base->data.iBuilt_Costs;
-	if ( Map->GO[offset].subbase ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
+	if ( Map->GO[offset].subbase && Map->GO[offset].subbase->owner ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
 	
 	deleteUnit( Map->GO[offset].top );
 	deleteUnit( Map->GO[offset].base );

@@ -1161,6 +1161,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	{
 		if(Map->GO[iOff].base)
 		{
+			//TODO: delete subbase building, if there is one
 			Map->GO[iOff].subbase = Map->GO[iOff].base;
 			Map->GO[iOff].base = AddedBuilding;
 		}
@@ -1238,7 +1239,17 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 {
+
+
 	if( !Building ) return;
+
+	if ( !Building->owner ) 
+	{
+		Map->deleteRubble( Building );
+		return;
+	}
+
+
 	if( !Building->owner ) Map->deleteRubble( Building );
 
 	if( Building->prev )
@@ -2123,7 +2134,7 @@ void cServer::releaseMoveJob ( cMJobs *MJob )
 bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data )
 {
 	// cannot build on dirt
-	if ( Map->GO[iOff].base && !Map->GO[iOff].base->owner ) return true;
+	if ( Map->GO[iOff].subbase && !Map->GO[iOff].subbase->owner ) return true;
 
 	// cannot build e.g. landingplattforms on waterplattforms or bridges
 	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && !Data->is_road ) ) return true;
@@ -2239,10 +2250,10 @@ void cServer::destroyUnit(cBuilding *building)
 		if ( Map->GO[offset + 1            ].base )    value += Map->GO[offset + 1            ].base->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size    ].base )    value += Map->GO[offset + Map->size    ].base->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size + 1].base )    value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
-		if ( Map->GO[offset + 1            ].subbase ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size    ].subbase ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size + 1].subbase ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
-
+		if ( Map->GO[offset + 1            ].subbase && Map->GO[offset + 1            ].subbase->owner ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size    ].subbase && Map->GO[offset + Map->size    ].subbase->owner ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
+		if ( Map->GO[offset + Map->size + 1].subbase && Map->GO[offset + Map->size + 1].subbase->owner ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+		
 		deleteUnit( Map->GO[offset + 1            ].base );
 		deleteUnit( Map->GO[offset + Map->size    ].base );
 		deleteUnit( Map->GO[offset + Map->size + 1].base );
@@ -2251,9 +2262,9 @@ void cServer::destroyUnit(cBuilding *building)
 		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
 	}
 
-	if ( Map->GO[offset].top ) value += Map->GO[offset].top->data.iBuilt_Costs;
-	if ( Map->GO[offset].base ) value += Map->GO[offset].base->data.iBuilt_Costs;
-	if ( Map->GO[offset].subbase ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
+	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;
+	if ( Map->GO[offset].base )    value += Map->GO[offset].base->data.iBuilt_Costs;
+	if ( Map->GO[offset].subbase && Map->GO[offset].subbase->owner ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
 
 	deleteUnit( Map->GO[offset].top );
 	deleteUnit( Map->GO[offset].base );

@@ -564,13 +564,13 @@ void cMap::addRubble( int offset, int value, bool big )
 	rubble->BigDirt = big;
 	rubble->DirtValue = value;
 
-	GO[offset].base = rubble;
+	GO[offset].subbase = rubble;
 
 	if ( big )
 	{
-		GO[offset + 1       ].base = rubble;
-		GO[offset + size    ].base = rubble;
-		GO[offset + size + 1].base = rubble;
+		GO[offset + 1       ].subbase = rubble;
+		GO[offset + size    ].subbase = rubble;
+		GO[offset + size + 1].subbase = rubble;
 		rubble->DirtTyp = random(2);
 	}
 	else
@@ -584,12 +584,12 @@ void cMap::deleteRubble( cBuilding* rubble )
 	int offset = rubble->PosX + rubble->PosY * size;
 	if ( rubble->BigDirt )
 	{
-		GO[offset + 1].base=NULL;
-		GO[offset + size].base=NULL;
-		GO[offset + size + 1].base=NULL;
+		GO[offset + 1].subbase=NULL;
+		GO[offset + size].subbase=NULL;
+		GO[offset + size + 1].subbase=NULL;
 	}
 
-	GO[offset].base=NULL;
+	GO[offset].subbase=NULL;
 
 	if ( !rubble->prev )
 	{

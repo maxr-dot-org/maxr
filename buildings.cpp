@@ -6190,7 +6190,8 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
+			//if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
 			{
 				b = Client->Map->GO[off].base;
 			}

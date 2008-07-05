@@ -2178,7 +2178,7 @@ void cVehicle::DrawMenu ( void )
 	}
 
 	// Entfernen:
-	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
 	{
 		if ( SelMenu == nr )
 			scr.y = 21;
@@ -2190,8 +2190,8 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			IsClearing = true;
-			ClearingRounds = Client->Map->GO[PosX+PosY*Client->Map->size].base->DirtValue / 4 + 1;
-			ClearBig = Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_big;
+			ClearingRounds = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->DirtValue / 4 + 1;
+			ClearBig = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->data.is_big;
 			// Den Clearing Sound machen:
 			StopFXLoop ( Client->iObjectStream );
 			Client->iObjectStream = PlayStram();
@@ -2199,8 +2199,8 @@ void cVehicle::DrawMenu ( void )
 
 			if ( ClearBig )
 			{
-				PosX = Client->Map->GO[PosX+PosY*Client->Map->size].base->PosX;
-				PosY = Client->Map->GO[PosX+PosY*Client->Map->size].base->PosY;
+				PosX = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->PosX;
+				PosY = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->PosY;
 				BandX = PosX;
 				BandY = PosY;
 				Client->Map->GO[PosX+PosY*Client->Map->size].vehicle = this;
@@ -2484,7 +2484,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	if ( mjob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 		nr++;
 
-	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].base && !Client->Map->GO[PosX+PosY*Client->Map->size].base->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
 		nr++;
 
 	if ( Wachposten || data.can_attack )
@@ -2702,7 +2702,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer ( owner->Nr ) )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer ( owner->Nr ) )
 			{
 				b = Client->Map->GO[off].base;
 			}
@@ -3617,7 +3617,7 @@ void cVehicle::FindNextband ( void )
 	mouse->GetKachel ( &x, &y );
 
 //#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].water||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->IsWater(PosX a+(PosY b)*gms)||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?Client->Map->IsWater(PosX a+(PosY b)*gms):1))
+#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].subbase&&Client->Map->GO[PosX a+(PosY b)*gms].subbase->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->IsWater(PosX a+(PosY b)*gms)||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?Client->Map->IsWater(PosX a+(PosY b)*gms):1))
 
 	if ( CHECK_BAND ( -1, -1 ) && CHECK_BAND ( + 0, -1 ) && CHECK_BAND ( -1, + 0 ) )
 		pos[0] = true;

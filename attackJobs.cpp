@@ -319,7 +319,7 @@ void cServerAttackJob::makeImpact()
 	if ( targetBuilding && !targetBuilding->owner )
 		targetBuilding = NULL;
 
-	//no target found
+	//if target found
 	if ( targetBuilding || targetVehicle )
 	{
 		int damage = vehicle ? vehicle->data.damage : building->data.damage;
