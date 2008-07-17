@@ -2221,6 +2221,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 		"Unit","Production","Is_Produced_by", NULL,
 
 		// Weapons
+		"Unit","Weapons","Weapon","Muzzle_Type", NULL,
 		"Unit","Weapons","Weapon","Turret_Gfx", NULL,
 		"Unit","Weapons","Weapon","Shot_Trajectory", NULL,
 		"Unit","Weapons","Weapon","Ammo_Type", NULL,
@@ -2674,7 +2675,46 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Const"))
 		{
 			// Weapons
-			if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
+			if(sNodePath.compare(WEAPONS_NODE + "Muzzle_Type;") == 0)
+			{
+				if(sTmpString.compare("None") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_NONE;
+				}
+				else if(sTmpString.compare("Big") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_BIG;
+				}
+				else if(sTmpString.compare("Rocket") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_ROCKET;
+				}
+				else if(sTmpString.compare("Small") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_SMALL;
+				}
+				else if(sTmpString.compare("Med") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_MED;
+				}
+				else if(sTmpString.compare("Med_Long") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_MED_LONG;
+				}
+				else if(sTmpString.compare("Rocket_Cluster") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_ROCKET_CLUSTER;
+				}
+				else if(sTmpString.compare("Torpedo") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_TORPEDO;
+				}
+				else if(sTmpString.compare("Sniper") == 0)
+				{
+					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_SNIPER;
+				}
+			}
+			else if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
 			{
 				if(sTmpString.compare("straight") == 0)
 				{
@@ -2985,6 +3025,8 @@ static void ConvertData(int unitnum, bool vehicle)
 	Data->hit_points = Data->iHitpoints;
 	Data->armor = Data->iArmor;
 	Data->scan = Data->iScan_Range_Sight;
+	Data->muzzle_typ = Data->Weapons[0].iMuzzleType-1;
+	if ( Data->muzzle_typ < 0 ) Data->muzzle_typ = 0;
 	if(Data->Weapons[0].iTarget_Air_Range > 0)
 		Data->range = Data->Weapons[0].iTarget_Air_Range;
 	else if(Data->Weapons[0].iTarget_Infantry_Range > 0)
@@ -3225,7 +3267,6 @@ static void ConvertData(int unitnum, bool vehicle)
 	else
 		Data->is_base = false;
 
-	Data->muzzle_typ = MUZZLE_ROCKET;
 	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2) || // Alienassault
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
 		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship

@@ -152,6 +152,16 @@ struct sID{
 
 // Struktur für die Waffen
 struct sWeaponData{
+	int iMuzzleType;
+#define MUZZLE_TYPE_NONE 0
+#define MUZZLE_TYPE_BIG 1
+#define MUZZLE_TYPE_ROCKET 2
+#define MUZZLE_TYPE_SMALL 3
+#define MUZZLE_TYPE_MED 4
+#define MUZZLE_TYPE_MED_LONG 5
+#define MUZZLE_TYPE_ROCKET_CLUSTER 6
+#define MUZZLE_TYPE_TORPEDO 7
+#define MUZZLE_TYPE_SNIPER 8
 	const char *szTurret_Gfx;
 	int iSequence;
 	int iShot_Trajectory;
