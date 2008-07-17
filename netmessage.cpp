@@ -385,6 +385,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_CHANGE_RESOURCES");
 	case GAME_EV_ATTACKJOB_IMPACT:
 		return string("GAME_EV_ATTACKJOB_IMPACT");
+	case GAME_EV_TURN_REPORT:
+		return string("GAME_EV_TURN_REPORT");
 	default:
 		return iToStr( iType );
 	}
@@ -437,7 +439,7 @@ void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
 		free ( tmpBuffer );
 
 		iLength++;
-		iEndPos++;
+		if ( iEndPos != -1 ) iEndPos++;
 		iPos += 2;
 	}
 }

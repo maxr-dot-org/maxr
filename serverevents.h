@@ -81,7 +81,7 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer );
 *@param sReport The turn start report for this player.
 *@param iVoiceNum Number of voice with the player has to play at his turn beginning.
 */
-void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, string sReport, int iVoiceNum, int iPlayer );
+void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, int iPlayer );
 /**
 * Information for other clients that one player has finished his turn
 *@author alzi alias DoctorDeath
@@ -169,5 +169,6 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer );
 void sendBuildList ( cBuilding *Building );
 void sendProduceValues ( cBuilding *Building );
+void sendTurnReport ( int iVoiceNum, string sReport, int iPlayer );
 
 #endif // servereventsH

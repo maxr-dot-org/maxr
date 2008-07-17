@@ -50,7 +50,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				//
-	GAME_EV_PRODUCE_VALUES			//
+	GAME_EV_PRODUCE_VALUES,			//
+	GAME_EV_TURN_REPORT				//
 };
 
 enum CHAT_MESSAGE_TYPES

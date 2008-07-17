@@ -2877,26 +2877,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				makeHotSeatEnd( iNextPlayerNum );
 			}
-
-			if ( iNextPlayerNum == -1 || iNextPlayerNum == ActivePlayer->Nr )
-			{
-				addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
-
-				switch ( message->popInt16() )
-				{
-				case 0:
-					PlayVoice ( VoiceData.VOIStartNone );
-					break;
-				case 1:
-					addMessage( message->popString() );
-					PlayVoice ( VoiceData.VOIStartOne );
-					break;
-				case 2:
-					addMessage( message->popString() );
-					PlayVoice ( VoiceData.VOIStartMore );
-					break;
-				}
-			}
 		}
 		break;
 	case GAME_EV_FINISHED_TURN:
@@ -3497,6 +3477,30 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Building->MaxOilProd = message->popInt16();
 			Building->GoldProd = message->popInt16();
 			Building->MaxGoldProd = message->popInt16();
+		}
+		break;
+	case GAME_EV_TURN_REPORT:
+		{
+			int iPlayerNum = message->popInt16();
+			if ( iPlayerNum == -1 || iPlayerNum == ActivePlayer->Nr )
+			{
+				addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
+
+				switch ( message->popInt16() )
+				{
+				case 0:
+					PlayVoice ( VoiceData.VOIStartNone );
+					break;
+				case 1:
+					addMessage( message->popString() );
+					PlayVoice ( VoiceData.VOIStartOne );
+					break;
+				case 2:
+					addMessage( message->popString() );
+					PlayVoice ( VoiceData.VOIStartMore );
+					break;
+				}
+			}
 		}
 		break;
 	default:

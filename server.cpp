@@ -122,8 +122,8 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->send( message->iLength, message->serialize( true ) );
 		EventHandler->pushEvent( message->getGameEvent() );
+		if ( network ) network->send( message->iLength, message->serialize( true ) );
 		delete message;
 		return;
 	}
@@ -1468,9 +1468,7 @@ void cServer::handleEnd ( int iPlayerNum )
 	bool bChangeTurn = false;
 	if ( iGameType == GAME_TYPE_SINGLE )
 	{
-		getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-
-		sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, iPlayerNum );
+		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
 		bChangeTurn = true;
 	}
 	else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
@@ -1482,15 +1480,13 @@ void cServer::handleEnd ( int iPlayerNum )
 			iActiveTurnPlayerNr = 0;
 			if ( iGameType == GAME_TYPE_HOTSEAT )
 			{
-				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum);
+				sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, iPlayerNum);
 			}
 			else
 			{
 				for ( int i = 0; i < PlayerList->Size(); i++ )
 				{
-					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i);
+					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, i);
 				}
 			}
 			bChangeTurn = true;
@@ -1499,16 +1495,14 @@ void cServer::handleEnd ( int iPlayerNum )
 		{
 			if ( iGameType == GAME_TYPE_HOTSEAT )
 			{
-				getTurnstartReport ( iPlayerNum, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, iPlayerNum);
+				sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, iPlayerNum);
 				// TODO: in hotseat: maybe send information to client about the next player
 			}
 			else
 			{
 				for ( int i = 0; i < PlayerList->Size(); i++ )
 				{
-					getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-					sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, sReportMsg, iVoiceNum, i);
+					sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, i);
 				}
 			}
 		}
@@ -1530,8 +1524,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
-				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, i );
+				sendMakeTurnEnd ( true, false, -1, i );
 			}
 			iDeadlineStartTime = 0;
 			bChangeTurn = true;
@@ -1551,6 +1544,15 @@ void cServer::handleEnd ( int iPlayerNum )
 	}
 	if ( bChangeTurn ) iTurn++;
 	makeTurnEnd ( iPlayerNum, bChangeTurn );
+	if ( bChangeTurn )
+	{
+		for ( int i = 0; i < PlayerList->Size(); i++ )
+		{
+			getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
+			sendTurnReport ( iVoiceNum, sReportMsg, i );
+			sReportMsg = "";
+		}
+	}
 }
 
 void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
@@ -1767,12 +1769,16 @@ void cServer::checkDeadline ()
 
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
-				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-				sendMakeTurnEnd ( true, false, -1, sReportMsg, iVoiceNum, i );
+				sendMakeTurnEnd ( true, false, -1, i );
 			}
 			iTurn++;
 			iDeadlineStartTime = 0;
 			makeTurnEnd( -1, true );
+			for ( int i = 0; i < PlayerList->Size(); i++ )
+			{
+				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
+				sendTurnReport ( iVoiceNum, sReportMsg, i );
+			}
 		}
 	}
 }

@@ -589,7 +589,7 @@ void cBase::handleTurnend ()
 				}
 				if ( BuildListItem->metall_remaining <= 0 )
 				{
-					//Server->addReport ( BuildListItem->typ->data.name, true, Building->owner->Nr );
+					Server->addReport ( BuildListItem->typ->data.name, true, Building->owner->Nr );
 					Building->ServerStopWork ( false );
 				}
 			}
