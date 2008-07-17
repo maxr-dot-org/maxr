@@ -429,7 +429,11 @@ void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
 	// add to all NETMESSAGE_CONTROLCHAR the NETMESSAGE_NOTSTARTCHAR
 	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
 	{
-		if ( iLength >= PACKAGE_LENGHT ) return;
+		if ( iLength >= PACKAGE_LENGHT )
+		{
+			cLog::write( "Can't handle control character: Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+			return;
+		}
 		if ( iEndPos != -1 && iPos > iEndPos ) return;
 
 		char *tmpBuffer = (char *) malloc ( iLength-iPos-1 );
