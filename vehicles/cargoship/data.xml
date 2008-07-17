@@ -39,6 +39,7 @@
 
   <Weapons>
     <Weapon>
+      <Muzzle_Type Const="None"/>
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>

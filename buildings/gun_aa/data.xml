@@ -36,6 +36,7 @@
   </Production>
   <Weapons>
     <Weapon>
+      <Muzzle_Type Const="Med_Long"/>
       <Turret_Gfx Text="none" Num="0"/>
       <Shot_Trajectory Const="straight"/>
       <Ammo_Type Const="Standard"/>
@@ -85,6 +86,7 @@
     <Landing_Type Const="None"/>
     <Can_Upgrade YN="No"/>
     <Can_Repair YN="No"/>
+    <Can_Rearm YN="No"/>
     <Can_Research YN="No"/>
     <Is_Kamikaze YN="No"/>
     <Is_Infrastructure YN="No"/>

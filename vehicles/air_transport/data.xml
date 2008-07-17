@@ -92,6 +92,18 @@
     <Weapon>
       <!-- Für jedes Waffensystem wird eine<Weapon>-Sektion benötigt -->
 
+      <Muzzle_Type Const="None"/>
+      <!-- Typ des Geschosses -->
+      <!-- None: Kein Geschoss -->
+      <!-- Big: Ein großes Geschoss -->
+      <!-- Rocket: Eine normale Rackete -->
+      <!-- Small: Ein kleines Geschoss -->
+      <!-- Med: Ein mittleres Geschoss -->
+      <!-- Med_Long: Ein mittelgroßes aber langes Geschoss -->
+      <!-- Rocket_Cluster: Eine Clusterrackete -->
+      <!-- Torpedo: Ein Torpedo -->
+      <!-- Sniper: Eine Gewehrkugel -->
+      
       <Turret_Gfx Text="none" Num="0"/>
       <!-- Für Geschütztürme Text:Dateiname der grafik, Num:Sequenz (noch in keiner Einheit benötigt) -->
       <Shot_Trajectory Const="straight"/>
