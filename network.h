@@ -71,6 +71,12 @@ struct sDataBuffer
 {
 	Uint32 iLenght;
 	char data[PACKAGE_LENGHT];
+
+	/**
+	* Clears the data buffer and sets his lenght to 0.
+	*@author alzi alias DoctorDeath
+	*/
+	void clear();
 };
 
 /**
@@ -79,11 +85,15 @@ struct sDataBuffer
 */
 struct sSocket
 {
+	sSocket();
+	~sSocket();
+
 	int iType;
 	int iState;
 
 	TCPsocket socket;
 	sDataBuffer buffer;
+	int iLeftBytes;
 };
 
 /**
@@ -118,16 +128,10 @@ private:
 	int iPort;
 	int iLast_Socket;
 	string sIP;
-	sSocket *Sockets[MAX_CLIENTS];
+	sSocket Sockets[MAX_CLIENTS];
 	SDLNet_SocketSet SocketSet;
 	IPaddress ipaddr;
 
-	/**
-	* Clears the data buffer and sets his lenght to 0.
-	*@author alzi alias DoctorDeath
-	*@param buffer buffer to be cleared
-	*/
-	void clearBuffer( sDataBuffer *buffer );
 	/**
 	* Searchs for the first unused socket and allocates memory for a new one if there are no free sockets.
 	*@author alzi alias DoctorDeath
@@ -165,6 +169,10 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void sendReadFinished();
+	/**
+	* waits until data will be read
+	*@author alzi alias DoctorDeath
+	*/
 	void waitForRead();
 
 	/**
@@ -213,7 +221,6 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-
 	int sendTo( int iClientNumber, int iLenght, char *buffer );
 	/**
 	* Sends the data to all sockets to which this machine is connected.
@@ -223,7 +230,6 @@ public:
 	*return 0 on succes, -1 if an error occurs
 	*/
 	int send( int iLenght, char *buffer );
-
 	/**
 	* Reads data of an given lenght from the client/socket.
 	*@author alzi alias DoctorDeath
