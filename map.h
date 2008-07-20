@@ -50,6 +50,94 @@ struct sColor
 	unsigned char cBlue, cGreen, cRed;
 };
 
+struct sVehicleList
+{
+	sVehicleList* next;
+	sVehicleList* prev;
+	cVehicle* vehicle;
+};
+
+class cVehicleIterator
+{
+private:
+	sVehicleList* vehicleListItem;
+public:
+	cVehicleIterator(sVehicleList* vli);
+	/** returns the number of vehicles in the List, the Iterator points to. */
+	unsigned int size();
+//	cVehicle& operator[](unsigned const int i) const;
+	cVehicle* operator->() const;
+	cVehicle& operator*() const;
+	/** go to next vehicle on this field */
+	cVehicleIterator operator++(int);
+	/** go to previous vehicle on this field */
+	cVehicleIterator operator--(int);
+	bool operator==(cVehicle* v) const;
+	operator cVehicle*() const;
+	operator bool() const;
+};
+
+struct sBuildingList
+{
+	sBuildingList* next;
+	sBuildingList* prev;
+	cBuilding* building;
+};
+
+class cBuildingIterator
+{
+private:
+	sBuildingList* buildingListItem;
+public:
+	cBuildingIterator( sBuildingList* bli );
+	/** returns the number of buildings in the List, the Iterator points to. */
+	unsigned int size();
+//	cBuilding& operator[](unsigned const int i) const;
+	cBuilding* operator->() const;
+	cBuilding& operator*() const;
+	/** go to next building on this field */
+	cBuildingIterator operator++(int);
+	/** go to next building on this field */
+	cBuildingIterator operator--(int);
+	bool operator==(cBuilding* b) const;
+	operator cBuilding*() const;
+	operator bool() const;
+};
+
+/** contains all information of a map field */
+class cMapField
+{
+private:
+	friend class cMap;
+	/**
+	* list of all vehicles on this field
+	* the top vehicle is always stored at fist position */
+	sVehicleList* vehicleList;
+	/**
+	* list of all planes on this field
+	* the top plane is always stored at fist position */
+	sVehicleList* planeList;
+	/**
+	* list of all buildings on this field
+	* the top building is always stored at fist position */
+	sBuildingList* buildingList;
+public:
+	/* returns a Iterator for the vehicles on this field */
+	cVehicleIterator getVehicles() const;
+	/* returns a Iterator for the planes on this field */
+	cVehicleIterator getPlanes() const;
+	/* returns a Iterator for the buildings on this field */
+	cBuildingIterator getBuildings() const;
+
+	/* returns a pointer to the top building of NULL if the first building is a base type */
+	cBuilding* getTopBuilding() const;
+	/* returns a pointer to the first base building or NULL if there is no base building */
+	cBuilding* getBaseBuilding() const;
+
+	cMapField();
+	~cMapField();
+};
+
 // Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap{
 public:
@@ -89,7 +177,18 @@ public:
   *@param rubble pointer to the rubble
   */
   void deleteRubble( cBuilding* rubble );
+  /**
+  * Access to a map field
+  * @param the offset of the map field
+  * @return an instance of cMapField, which has several methods to access the objects on the field
+  */
+  cMapField& operator[]( unsigned int offset ) const;
 private:
+	/**
+	* the infomation about the fields
+	*/
+	cMapField* fields;
+
 	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, bool bWater, bool &overlay );
 	void CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX  );
 };

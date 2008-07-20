@@ -16,10 +16,211 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-//#include <time.h>
 #include <stdlib.h>
 #include "map.h"
-#include "game.h"
+
+cVehicleIterator::cVehicleIterator(sVehicleList *vli)
+{
+	vehicleListItem = vli;
+}
+
+unsigned int cVehicleIterator::size()
+{
+	sVehicleList* vli = vehicleListItem;
+
+	if (vli == 0) return 0;
+	//rewind
+	while ( vli->prev )
+	{
+		vli = vli->prev;
+	}
+	//count
+	unsigned int count = 0;
+	while ( vli->next )
+	{
+		count++;
+		vli = vli->next;
+	}
+	return count;
+}
+
+cVehicle* cVehicleIterator::operator->() const
+{
+	return vehicleListItem->vehicle;
+}
+
+cVehicle& cVehicleIterator::operator*() const
+{
+	return *(vehicleListItem->vehicle);
+}
+
+cVehicleIterator cVehicleIterator::operator++(int)
+{
+	cVehicleIterator vehicles = *this;
+	if ( vehicleListItem ) vehicleListItem = vehicleListItem->next;
+	return vehicles;
+}
+
+cVehicleIterator cVehicleIterator::operator--(int)
+{
+	cVehicleIterator vehicles = *this;
+	if ( vehicleListItem ) vehicleListItem = vehicleListItem->prev;
+	return vehicles;
+}
+
+bool cVehicleIterator::operator ==(cVehicle* v) const
+{
+	if ( v == NULL && vehicleListItem == NULL ) return true;
+	if ( vehicleListItem && vehicleListItem->vehicle == v ) return true;
+
+	return false;
+}
+
+cVehicleIterator::operator cVehicle *() const
+{
+	return vehicleListItem->vehicle;
+}
+
+cVehicleIterator::operator bool() const
+{
+	return ( vehicleListItem != NULL );
+}
+
+cBuildingIterator::cBuildingIterator(sBuildingList *vli)
+{
+	buildingListItem = vli;
+}
+
+unsigned int cBuildingIterator::size()
+{
+	sBuildingList* bli = buildingListItem;
+
+	if (bli == 0) return 0;
+	//rewind
+	while ( bli->prev )
+	{
+		bli = bli->prev;
+	}
+	//count
+	unsigned int count = 0;
+	while ( bli->next )
+	{
+		count++;
+		bli = bli->next;
+	}
+	return count;
+}
+
+cBuilding* cBuildingIterator::operator->() const
+{
+	return buildingListItem->building;
+}
+
+cBuilding& cBuildingIterator::operator*() const
+{
+	return *(buildingListItem->building);
+}
+
+cBuildingIterator cBuildingIterator::operator++(int)
+{
+	cBuildingIterator buildings = *this;
+	if ( buildingListItem ) buildingListItem = buildingListItem->next;
+	return buildings;
+}
+
+cBuildingIterator cBuildingIterator::operator--(int)
+{
+	cBuildingIterator buildings = *this;
+	if ( buildingListItem ) buildingListItem = buildingListItem->prev;
+	return buildings;
+}
+
+bool cBuildingIterator::operator ==(cBuilding* b) const
+{
+	if ( b == NULL && buildingListItem == NULL ) return true;
+	if ( buildingListItem && buildingListItem->building == b ) return true;
+
+	return false;
+}
+
+cBuildingIterator::operator cBuilding*() const
+{
+	return buildingListItem->building;
+}
+
+cBuildingIterator::operator bool() const
+{
+	return ( buildingListItem != NULL );
+}
+
+cMapField::cMapField()
+{
+	vehicleList = NULL;
+	planeList = NULL;
+	buildingList = NULL;
+}
+
+cMapField::~cMapField()
+{
+	while ( vehicleList )
+	{
+		sVehicleList* vli = vehicleList->next;
+		delete vehicleList;
+		vehicleList = vli;
+	}
+	while ( planeList )
+	{
+		sVehicleList* vli = planeList->next;
+		delete planeList;
+		planeList = vli;
+	}
+	while( buildingList )
+	{
+		sBuildingList* bli = buildingList->next;
+		delete buildingList;
+		buildingList = bli;
+	}
+}
+
+cVehicleIterator cMapField::getVehicles() const
+{
+	cVehicleIterator vehicles(this->vehicleList);
+	return vehicles;
+}
+
+cVehicleIterator cMapField::getPlanes() const
+{
+	cVehicleIterator planes(this->vehicleList);
+	return planes;
+}
+
+cBuildingIterator cMapField::getBuildings() const
+{
+	cBuildingIterator buildings(this->buildingList);
+	return buildings;
+}
+
+
+cBuilding* cMapField::getTopBuilding() const
+{
+	cBuildingIterator building(this->buildingList);
+	if ( building && !building->data.is_base )
+		return building;
+	else
+		return NULL;
+}
+
+cBuilding* cMapField::getBaseBuilding() const
+{
+	cBuildingIterator building(this->buildingList);
+	while ( building )
+	{
+		if ( building->data.is_base ) return building;
+	}
+
+	return NULL;
+}
+
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap ( void )
@@ -39,6 +240,11 @@ cMap::~cMap ( void )
 		delete ptr;
 	}
 	DeleteMap();
+}
+
+cMapField& cMap::operator[]( unsigned int offset ) const
+{
+	return fields[offset];
 }
 
 // Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
@@ -298,6 +504,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	DefaultWater=0;
 
+	fields = new cMapField[size*size];
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
 	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
@@ -311,6 +518,7 @@ void cMap::DeleteMap ( void )
 {
 	if ( !Kacheln ) return;
 	free ( Kacheln );
+	delete[] fields;
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
