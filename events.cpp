@@ -67,13 +67,14 @@ void cEventHandling::HandleEvents()
 				sDataBuffer DataBuffer;
 				memset(DataBuffer.data, 0, PACKAGE_LENGHT);
 				DataBuffer.iLenght = network->read(SDL_SwapLE16(((Sint16*)event.user.data1)[0]), ((Sint16*)event.user.data1)[2], DataBuffer.data);
-				if (DataBuffer.iLenght != 0)
-				{
-					// remove startcharacters from data
-					memmove(DataBuffer.data, DataBuffer.data + 2, DataBuffer.iLenght - 2);
-					DataBuffer.iLenght -= 2;
 
-					if (SDL_SwapLE16(((Sint16*)DataBuffer.data)[0]) < FIRST_MENU_MESSAGE) // Eventtypes for the client
+				if ( DataBuffer.iLenght != 0 )
+				{
+					// remove start and end characters from data
+					memmove( DataBuffer.data, DataBuffer.data+2, DataBuffer.iLenght-4 );
+					DataBuffer.iLenght -= 4;
+
+					if ( SDL_SwapLE16( ((Sint16*)DataBuffer.data)[0] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
 					{
 						// devite into messages
 						SDL_Event* NewEvent = new SDL_Event;

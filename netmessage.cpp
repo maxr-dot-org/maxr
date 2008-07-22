@@ -30,21 +30,21 @@ cNetMessage::cNetMessage( char* c)
 	iLength = SDL_SwapLE16( *((Sint16*) (c + 2)) );
 	iPlayerNr = c[4];
 
-	if ( iLength > PACKAGE_LENGHT || iLength < 5 )
+	if ( iLength > MAX_MESSAGE_LENGTH || iLength < 5 )
 	{
 		//invalid netMessage
 		iLength = 5;
 		iType = -1;
 	}
 
-	data = (char*) malloc( PACKAGE_LENGHT );
+	data = (char*) malloc( MAX_MESSAGE_LENGTH );
 	memcpy( data, c, iLength );
 }
 
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = (char*) malloc( PACKAGE_LENGHT );	// 0 - 1: reserviert für message typ
+	data = (char*) malloc( MAX_MESSAGE_LENGTH );	// 0 - 1: reserviert für message typ
 												// 2 - 3: reserviert für length
 												// 4:	  reserviert für Playernummer
 	iLength = 5;
@@ -89,7 +89,7 @@ void cNetMessage::pushChar( char c)
 	iLength ++;
 	checkControlChars( iLength-1 );
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 char cNetMessage::popChar()
@@ -109,7 +109,7 @@ void cNetMessage::pushInt16( Sint16 i )
 	iLength += 2;
 	checkControlChars( iLength-2 );
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint16 cNetMessage::popInt16()
@@ -129,7 +129,7 @@ void cNetMessage::pushInt32( Sint32 i )
 	iLength += 4;
 	checkControlChars( iLength-4 );
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint32 cNetMessage::popInt32()
@@ -160,7 +160,7 @@ void cNetMessage::pushString( string s )
 	iLength += stringLength;
 	checkControlChars( iLength-stringLength );
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 string cNetMessage::popString()
@@ -193,7 +193,7 @@ void cNetMessage::pushBool( bool b )
 	data[iLength] = b;
 	iLength++;
 
-	if ( iLength > PACKAGE_LENGHT ) cLog::write( "Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 bool cNetMessage::popBool()
@@ -429,9 +429,9 @@ void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
 	// add to all NETMESSAGE_CONTROLCHAR the NETMESSAGE_NOTSTARTCHAR
 	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
 	{
-		if ( iLength >= PACKAGE_LENGHT )
+		if ( iLength >= MAX_MESSAGE_LENGTH )
 		{
-			cLog::write( "Can't handle control character: Size of netMessage exceeds PACKAGE_LENGHT", cLog::eLOG_TYPE_NET_ERROR );
+			cLog::write( "Can't handle control character: Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 			return;
 		}
 		if ( iEndPos != -1 && iPos > iEndPos ) return;
@@ -454,7 +454,7 @@ void cNetMessage::refertControlChars()
 	// remove the NETMESSAGE_NOTSTARTCHAR from all NETMESSAGE_CONTROLCHAR
 	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
 	{
-		if ( iLength >= PACKAGE_LENGHT ) return;
+		if ( iLength >= MAX_MESSAGE_LENGTH ) return;
 		if ( data[iPos+1] == (char)NETMESSAGE_NOTSTARTCHAR )
 		{
 			char *tmpBuffer = (char *) malloc ( iLength-iPos-2 );

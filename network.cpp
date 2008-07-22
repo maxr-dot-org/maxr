@@ -126,31 +126,33 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 	lockData();
 	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber].iType == CLIENT_SOCKET && ( Sockets[iClientNumber].iState == STATE_READY || Sockets[iClientNumber].iState == STATE_NEW ) )
 	{
-		// if the message is to long cut it.
+		// if the message is to long, cut it.
 		// this will result in an error in nearly all cases
-		if ( iLenght > PACKAGE_LENGHT-2 )
+		if ( iLenght > MAX_MESSAGE_LENGTH )
 		{
 			cLog::write( "Cut size of message!", LOG_TYPE_NET_ERROR );
-			iLenght = PACKAGE_LENGHT-2;
+			iLenght = MAX_MESSAGE_LENGTH;
 		}
 
 		if ( iLenght > 0 )
 		{
-			// add the beginning characters to the message
-			char *sendBuffer = (char *) malloc ( iLenght+2 );
-			sendBuffer[0] = (char)NETMESSAGE_CONTROLCHAR;
-			sendBuffer[1] = (char)NETMESSAGE_STARTCHAR;
+			// add the start and end characters to the message
+			char *sendBuffer = (char *) malloc ( iLenght+4 );
+			sendBuffer[0] = NETMESSAGE_CONTROLCHAR;
+			sendBuffer[1] = NETMESSAGE_STARTCHAR;
+			sendBuffer[iLenght+2] = NETMESSAGE_CONTROLCHAR;
+			sendBuffer[iLenght+3] = NETMESSAGE_ENDCHAR;
 			memcpy ( &sendBuffer[2], buffer, iLenght );
 
 			// send the message
 			lockTCP();
-			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, sendBuffer, iLenght+2 );
+			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, sendBuffer, iLenght+4 );
 			unlockTCP();
 
 			free ( sendBuffer );
 
 			// delete socket when sending fails
-			if ( iSendLenght != iLenght+2 )
+			if ( iSendLenght != iLenght+4 )
 			{
 				Sockets[iClientNumber].iState = STATE_DYING;
 				void *data = malloc ( sizeof (Sint16) );
@@ -287,27 +289,18 @@ void cTCP::HandleNetworkThread()
 					int iLenght;
 					iLenght = SDLNet_TCP_Recv ( Sockets[i].socket, &Sockets[i].buffer.data[Sockets[i].buffer.iLenght], PACKAGE_LENGHT-Sockets[i].buffer.iLenght );
 
-					// check whether everything has been read
-					bool bAllRead = true;
-					SDLNet_CheckSockets ( SocketSet, 10 );
-					if ( SDLNet_SocketReady ( Sockets[i].socket ) )
-					{
-						bAllRead = false;
-					}
-
 					int iMsgStartOffset = Sockets[i].buffer.iLenght;
 					if ( iLenght > 0 )
 					{
 						int iStartPos = iMsgStartOffset-Sockets[i].iLeftBytes;
 						// look for complete messages in the buffer
-						while ( ( iStartPos = findNextMessageStart ( iStartPos, Sockets[i].buffer.data, iMsgStartOffset+iLenght ) ) != -1 )
+						while ( ( iStartPos = findNextControlPosition ( iStartPos, Sockets[i].buffer.data, iMsgStartOffset+iLenght, NETMESSAGE_STARTCHAR ) ) != -1 )
 						{
-							int iEndPos = findNextMessageStart ( iStartPos+2, Sockets[i].buffer.data, iMsgStartOffset+iLenght );
+							int iEndPos = findNextControlPosition ( iStartPos+2, Sockets[i].buffer.data, iMsgStartOffset+iLenght, NETMESSAGE_ENDCHAR );
 							// there has been found the start of an other message in the buffer or the hole buffer is the message
-							if ( ( iEndPos != -1 || iStartPos == 0 ) || bAllRead )
+							if ( iEndPos != -1 )
 							{
-								if ( iEndPos == -1 ) iEndPos = iMsgStartOffset+iLenght;
-
+								iEndPos += 2;
 								void *data = malloc ( sizeof (Sint16)*3 );
 								((Sint16*)data)[0] = i;
 								((Sint16*)data)[1] = ((Sint16*)(Sockets[i].buffer.data+iStartPos+2))[0];
@@ -503,22 +496,19 @@ int cTCP::getFreeSocket()
 	return iNum;
 }
 
-int cTCP::findNextMessageStart ( int iStartPos, char *data, int iLength )
+int cTCP::findNextControlPosition ( int iStartPos, char *data, int iLength, char szType )
 {
 	int iPos;
 	for ( iPos = iStartPos; iPos < iLength; iPos++ )
 	{
 		// look for endings in the buffer
-		if ( data[iPos] == (char)NETMESSAGE_CONTROLCHAR && data[iPos+1] == (char)NETMESSAGE_STARTCHAR )
+		if ( data[iPos] == NETMESSAGE_CONTROLCHAR )
 		{
+			if ( data[iPos+1] == szType )
+		
 			return iPos;
 		}
 	}
-	// if the last byte in the buffer is a control character, this must be the begining of a new message
-	if ( data[iPos-1] == (char)NETMESSAGE_CONTROLCHAR && iPos == PACKAGE_LENGHT )
-	{
-		return iPos-1;
-	}
-	// else there is no message beginning in the buffer
+
 	return -1;
 }
