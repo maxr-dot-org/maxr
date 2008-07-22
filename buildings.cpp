@@ -1290,6 +1290,30 @@ void cBuilding::ShowBigDetails ( void )
 	DrawSymbolBig ( SBMetal, COLUMN_3, y - 2, 160, data.iBuilt_Costs, typ->data.iBuilt_Costs, buffer );
 }
 
+void cBuilding::updateNeighbours( cMap *Map )
+{
+	int iPosOff = PosX+PosY*Map->size;
+	if ( !data.is_big )
+	{
+		owner->base.checkNeighbour ( iPosOff-Map->size, this );
+		owner->base.checkNeighbour ( iPosOff+1, this );
+		owner->base.checkNeighbour ( iPosOff+Map->size, this );
+		owner->base.checkNeighbour ( iPosOff-1, this );
+	}
+	else
+	{
+		owner->base.checkNeighbour ( iPosOff-Map->size, this );
+		owner->base.checkNeighbour ( iPosOff-Map->size+1, this );
+		owner->base.checkNeighbour ( iPosOff+2, this );
+		owner->base.checkNeighbour ( iPosOff+2+Map->size, this );
+		owner->base.checkNeighbour ( iPosOff+Map->size*2, this );
+		owner->base.checkNeighbour ( iPosOff+Map->size*2+1, this );
+		owner->base.checkNeighbour ( iPosOff-1, this );
+		owner->base.checkNeighbour ( iPosOff-1+Map->size, this );
+	}
+	CheckNeighbours( Map );
+}
+
 // Prüft, ob es Nachbarn gibt:
 void cBuilding::CheckNeighbours ( cMap *Map )
 {

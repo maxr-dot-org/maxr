@@ -113,6 +113,12 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 
 	this->PlayerList = PlayerList;
 
+	// generate subbase for enemy players
+	for ( unsigned int i = 1; i < PlayerList->Size(); i++ )
+	{
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -i ) );
+	}
+
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
 	iFrame = 0;
@@ -2837,6 +2843,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding = Player->addBuilding( iPosX, iPosY, &UnitsData.building[iUnitNumber] );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
+
+			Player->base.SubBases[0]->buildings.Add ( AddedBuilding );
+			AddedBuilding->SubBase = Player->base.SubBases[0];
+
+			AddedBuilding->updateNeighbours( Map );
 		}
 		break;
 	case GAME_EV_MAKE_TURNEND:
@@ -3387,27 +3398,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					SubBase->buildings.Add ( Building );
 					Building->SubBase = SubBase;
 
-					// update neighbours
-					int iPosOff = Building->PosX+Building->PosY*Map->size;
-					if ( !Building->data.is_big )
-					{
-						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+1, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff-1, Building );
-					}
-					else
-					{
-						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff-Map->size+1, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+2, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+2+Map->size, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size*2, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff+Map->size*2+1, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff-1, Building );
-						ActivePlayer->base.checkNeighbour ( iPosOff-1+Map->size, Building );
-					}
-					Building->CheckNeighbours( Map );
+					Building->updateNeighbours( Map );
 				}
 			}
 		}
@@ -3581,9 +3572,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 			}
 		}
 	}
-	if ( !bInit ) AddedBuilding->StartUp=10;
-	// integrate the building to the base:
-	//AddedBuilding->owner->base.AddBuilding ( AddedBuilding );
+	if ( !bInit ) AddedBuilding->StartUp = 10;
 }
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )

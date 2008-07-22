@@ -188,6 +188,7 @@ public:
   bool MouseOverMenu(int mx,int my);
   void SelfDestructionMenu(void);
   void ShowBigDetails(void);
+  void updateNeighbours( cMap *map );
   void CheckNeighbours( cMap *map );
   void DrawConnectors(SDL_Rect dest);
   void ServerStartWork();

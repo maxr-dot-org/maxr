@@ -1678,6 +1678,7 @@ void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoi
 	int iCount = 0;
 
 	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
+	if ( Player == NULL ) return;
 	while ( Player->ReportBuildings.Size() )
 	{
 		Report = Player->ReportBuildings[0];
