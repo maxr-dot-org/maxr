@@ -409,7 +409,7 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 	{
 		for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++ )
 		{
-			if ( message->iLength > PACKAGE_LENGHT-16 )
+			if ( message->iLength+14 > MAX_MESSAGE_LENGTH )
 			{
 				message->pushInt16 ( iCount );
 				message->pushInt16 ( SubBase->iID );

@@ -4135,9 +4135,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 					ChatStr.insert ( 0,": " );
 					ChatStr.insert ( 0, ActualPlayer->name );
 
-					if ( ChatStr.length() > PACKAGE_LENGHT-7 )
+					if ( ChatStr.length() > MAX_MESSAGE_LENGTH-8 )
 					{
-						ChatStr.erase ( PACKAGE_LENGHT-7 );
+						ChatStr.erase ( MAX_MESSAGE_LENGTH-8 );
 					}
 					cNetMessage *Message = new cNetMessage ( MU_MSG_CHAT );
 					Message->pushString ( ChatStr );
@@ -4619,11 +4619,6 @@ void cMultiPlayerMenu::sendLandingInfo( int iLandX, int iLandY, cList<sLanding*>
 
 	for ( int i = 0; i < LandingList->Size(); i++ )
 	{
-		// break if package will be to big
-		// this is very improbable becouse player must have selected over 50 units
-		// at the standard PACKAGE_LENGHT of 256bytes
-		if ( Message->iLength+16 > PACKAGE_LENGHT-2 ) break;
-
 		Message->pushInt16((*LandingList)[i]->id);
 		Message->pushInt16((*LandingList)[i]->cargo);
 	}
@@ -4671,7 +4666,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			iCount++;
 		}
 
-		if ( Message->iLength+35 > PACKAGE_LENGHT-2 )
+		if ( Message->iLength+35 > MAX_MESSAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
@@ -4717,7 +4712,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			iCount++;
 		}
 
-		if ( Message->iLength+32 > PACKAGE_LENGHT-2 )
+		if ( Message->iLength+32 > MAX_MESSAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
