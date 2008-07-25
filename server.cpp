@@ -627,6 +627,38 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			addActiveMoveJob ( MJob );
 		}
 		break;
+	case GAME_EV_WANT_STOP_BUILDING:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			int iOldPos = Vehicle->PosX+Vehicle->PosY*Map->size;
+			int iNewPos = Vehicle->PosX+Vehicle->PosY*Map->size;
+			if ( Vehicle->IsBuilding )
+			{
+				Vehicle->IsBuilding = false;
+				Vehicle->BuildPath = false;
+
+				if ( Vehicle->data.can_build == BUILD_BIG )
+				{
+					Map->GO[iOldPos].vehicle = NULL;
+					Map->GO[iOldPos+1].vehicle = NULL;
+					Map->GO[iOldPos+Map->size].vehicle = NULL;
+					Map->GO[iOldPos+Map->size+1].vehicle = NULL;
+					Map->GO[Vehicle->BuildBigSavedPos].vehicle = Vehicle;
+					Vehicle->PosX = Vehicle->BuildBigSavedPos % Map->size;
+					Vehicle->PosY = Vehicle->BuildBigSavedPos / Map->size;
+
+					iNewPos = Vehicle->BuildBigSavedPos;
+				}
+				sendStopBuild ( Vehicle->iID, iOldPos, iNewPos, Vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendStopBuild ( Vehicle->iID, iOldPos, iNewPos, *Vehicle->SeenByPlayerList[i] );
+				}
+			}
+		}
+		break;
 	case GAME_EV_WANT_TRANSFER:
 		{
 			cVehicle *SrcVehicle = NULL, *DestVehicle = NULL;

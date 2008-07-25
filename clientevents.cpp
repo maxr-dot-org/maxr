@@ -134,6 +134,13 @@ void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
 	Client->sendNetMessage( message );
 }
 
+void sendWantStopBuilding( int iVehicleID )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_BUILDING );
+	message->pushInt16 ( iVehicleID );
+	Client->sendNetMessage( message );
+}
+
 void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_TRANSFER );

@@ -3349,6 +3349,39 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_STOP_BUILD:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			int iNewPos = message->popInt32();
+			int iOff = message->popInt32();
+
+			if ( Vehicle->data.can_build == BUILD_BIG )
+			{
+				Map->GO[iOff].vehicle = NULL;
+				Map->GO[iOff+1].vehicle = NULL;
+				Map->GO[iOff+Map->size].vehicle = NULL;
+				Map->GO[iOff+Map->size+1].vehicle = NULL;
+				Map->GO[iNewPos].vehicle = Vehicle;
+				Vehicle->PosX = iNewPos % Map->size;
+				Vehicle->PosY = iNewPos / Map->size;
+			}
+			else
+			{
+				if ( iNewPos != Vehicle->PosX+Vehicle->PosY*Map->size ) break;
+			}
+
+			Vehicle->IsBuilding = false;
+			Vehicle->BuildPath = false;
+
+			if ( SelectedVehicle && SelectedVehicle == Vehicle )
+			{
+				StopFXLoop ( iObjectStream );
+				iObjectStream = Vehicle->PlayStram();
+			}
+		}
+		break;
 	case GAME_EV_NEW_SUBBASE:
 		{
 			sSubBase *NewSubBase;

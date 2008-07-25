@@ -2113,58 +2113,39 @@ void cVehicle::DrawMenu ( void )
 
 		if ( ExeNr == nr )
 		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
 			/*if ( mjob )
 			{
 				mjob->finished = true;
 				mjob = NULL;
 				MoveJobActive = false;
-				MenuActive = false;
-				PlayFX ( SoundData.SNDObjectMenu );
 			}
-			else
-				if ( IsBuilding )
+			else*/
+			if ( IsBuilding )
+			{
+				IsBuilding = false;
+				BuildPath = false;
+
+				sendWantStopBuilding ( iID );
+			}
+			/*else
+			{
+				IsClearing = false;
+
+				if ( ClearBig )
 				{
-					MenuActive = false;
-					PlayFX ( SoundData.SNDObjectMenu );
-					IsBuilding = false;
-					BuildPath = false;
-
-					if ( data.can_build == BUILD_BIG )
-					{
-						Client->Map->GO[BandX+BandY*Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BuildBigSavedPos].vehicle = this;
-						PosX = BuildBigSavedPos % Client->Map->size;
-						PosY = BuildBigSavedPos / Client->Map->size;
-					}
-
-					if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
-					{
-						StopFXLoop ( Client->iObjectStream );
-						Client->iObjectStream = PlayStram();
-					}
+					Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
+					Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
+					Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
 				}
-				else
+
+				if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
 				{
-					MenuActive = false;
-					PlayFX ( SoundData.SNDObjectMenu );
-					IsClearing = false;
-
-					if ( ClearBig )
-					{
-						Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-						Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-					}
-
-					if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
-					{
-						StopFXLoop ( Client->iObjectStream );
-						Client->iObjectStream = PlayStram();
-					}
-				}*/
+					StopFXLoop ( Client->iObjectStream );
+					Client->iObjectStream = PlayStram();
+				}
+			}*/
 
 			return;
 		}

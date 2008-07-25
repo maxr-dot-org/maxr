@@ -361,8 +361,12 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_BUILD");
 	case GAME_EV_BUILD_ANSWER:
 		return string("GAME_EV_BUILD_ANSWER");
+	case GAME_EV_STOP_BUILD:
+		return string("GAME_EV_STOP_BUILD");
 	case GAME_EV_END_BUILDING:
 		return string("GAME_EV_END_BUILDING");
+	case GAME_EV_WANT_STOP_BUILDING:
+		return string("GAME_EV_WANT_STOP_BUILDING");
 	case GAME_EV_NEW_SUBBASE:
 		return string("GAME_EV_NEW_SUBBASE");
 	case GAME_EV_DELETE_SUBBASE:
