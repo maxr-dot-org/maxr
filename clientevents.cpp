@@ -58,42 +58,40 @@ void sendMoveJob( cMJobs *MJob )
 	sWaypoint *LastWaypoint = MJob->waypoints;
 	while ( LastWaypoint ) LastWaypoint = LastWaypoint->next;
 	sWaypoint *Waypoint;
-	while ( !bEnd )
+
+	cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_CLIENT );
+
+	int iCount = 0;
+	do
 	{
-		cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_CLIENT );
-
-		int iCount = 0;
-		do
+		Waypoint = MJob->waypoints;
+		while ( Waypoint != LastWaypoint )
 		{
-			Waypoint = MJob->waypoints;
-			while ( Waypoint != LastWaypoint )
+			if ( Waypoint->next == LastWaypoint )
 			{
-				if ( Waypoint->next == LastWaypoint )
-				{
-					LastWaypoint = Waypoint;
-					break;
-				}
-				Waypoint = Waypoint->next;
+				LastWaypoint = Waypoint;
+				break;
 			}
-			if ( MJob->waypoints == Waypoint ) bEnd = true;
-
-			message->pushInt16( Waypoint->Costs );
-			message->pushInt16( Waypoint->X+Waypoint->Y*MJob->map->size);
-			iCount++;
+			Waypoint = Waypoint->next;
 		}
-		while ( message->iLength <= PACKAGE_LENGHT-19 && !bEnd );
+		if ( MJob->waypoints == Waypoint ) bEnd = true;
 
-		message->pushInt16( iCount );
-		message->pushBool ( MJob->plane );
-		message->pushInt16( MJob->DestX+MJob->DestY*MJob->map->size );
-		message->pushInt16( MJob->ScrX+MJob->ScrY*MJob->map->size );
-		message->pushInt16( MJob->vehicle->iID );
-
-		// since there is an failure in the code yet, don't send movejobs that are to long
-		if ( !bEnd ) return;
-
-		Client->sendNetMessage( message );
+		message->pushInt16( Waypoint->Costs );
+		message->pushInt32( Waypoint->X+Waypoint->Y*MJob->map->size);
+		iCount++;
 	}
+	while ( message->iLength <= MAX_MESSAGE_LENGTH-19 && !bEnd );
+
+	message->pushInt16( iCount );
+	message->pushBool ( MJob->plane );
+	message->pushInt32( MJob->DestX+MJob->DestY*MJob->map->size );
+	message->pushInt32( MJob->ScrX+MJob->ScrY*MJob->map->size );
+	message->pushInt16( MJob->vehicle->iID );
+
+	// don't send movejobs that are to long
+	if ( !bEnd ) return;
+
+	Client->sendNetMessage( message );
 }
 
 void sendWantAttack ( int targetID, int targetOffset, int agressor, bool isVehicle)

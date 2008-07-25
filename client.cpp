@@ -3100,8 +3100,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iWaypointOff;
 
 			int iID = message->popInt16();
-			int iSrcOff = message->popInt16();
-			int iDestOff = message->popInt16();
+			int iSrcOff = message->popInt32();
+			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
 			int iReceivedCount = message->popInt16();
 
@@ -3110,7 +3110,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
 			while ( iCount < iReceivedCount )
 			{
-				iWaypointOff = message->popInt16();
+				iWaypointOff = message->popInt32();
 				Waypoint->X = iWaypointOff%Map->size;
 				Waypoint->Y = iWaypointOff/Map->size;
 				Waypoint->Costs = message->popInt16();
@@ -3118,34 +3118,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( iCount == 0 )
 				{
-					if ( iWaypointOff == iSrcOff )
+					MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, false );
+					if ( MJob->vehicle == NULL )
 					{
-						MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, false );
-						if ( MJob->vehicle == NULL )
-						{
-							// warning, here is something wrong! ( out of sync? )
-							cLog::write("(Client) Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
-							break;
-						}
-						MJob->waypoints = Waypoint;
+						// warning, here is something wrong! ( out of sync? )
+						cLog::write("(Client) Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
+						delete MJob; MJob = NULL;
+						break;
 					}
-					else
-					{
-						cVehicle *Vehicle = getVehicleFromID ( iID );
-						if ( Vehicle == NULL || Vehicle->mjob == NULL )
-						{
-							// warning, here is something wrong! ( out of sync? )
-							cLog::write("(Client) Error while adding waypoints: Can't find vehicle or movejob", cLog::eLOG_TYPE_NET_WARNING);
-							break;
-						}
-						MJob = Vehicle->mjob;
-						sWaypoint *LastWaypoint = MJob->waypoints;
-						while ( LastWaypoint->next )
-						{
-							LastWaypoint = LastWaypoint->next;
-						}
-						LastWaypoint->next = Waypoint;
-					}
+					MJob->waypoints = Waypoint;
 				}
 				iCount++;
 
@@ -3155,8 +3136,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Waypoint = Waypoint->next;
 				}
 			}
-			// is the last waypoint in this message?
-			if ( iWaypointOff == iDestOff && MJob )
+			if ( MJob )
 			{
 				MJob->CalcNextDir();
 				addActiveMoveJob ( MJob );
