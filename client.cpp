@@ -116,7 +116,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	// generate subbase for enemy players
 	for ( unsigned int i = 1; i < PlayerList->Size(); i++ )
 	{
-		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -i ) );
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(signed int)i ) );
 	}
 
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
@@ -238,7 +238,7 @@ void cClient::initPlayer( cPlayer *Player )
 
 void cClient::run()
 {
-	int iLastMouseX, iLastMouseY;
+	int iLastMouseX = 0, iLastMouseY = 0;
 	bool bStartup = true;
 
 	mouse->Show();
@@ -286,165 +286,10 @@ void cClient::run()
 			SelectedBuilding->Deselct();
 			SelectedBuilding=NULL;
 		}
-		// Die Objekt-Kreise malen:
-		if (SelectedVehicle)
-		{
-			cVehicle& v   = *SelectedVehicle; // XXX not const is suspicious
-			int const spx = v.GetScreenPosX();
-			int const spy = v.GetScreenPosY();
-			if (Hud.Scan)
-			{
-				drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer);
-			}
-			if (Hud.Reichweite)
-			{
-				switch (v.data.can_attack)
-				{
-					case ATTACK_LAND:
-					case ATTACK_SUB_LAND:
-					case ATTACK_AIRnLAND:
-						drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 1, RANGE_GROUND_COLOR, buffer);
-						break;
 
-					case ATTACK_AIR:
-						drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 2, RANGE_AIR_COLOR, buffer);
-						break;
-				}
-			}
-			if (Hud.Munition && v.data.can_attack)
-			{
-				v.DrawMunBar();
-			}
-			if (Hud.Treffer)
-			{
-				v.DrawHelthBar();
-			}
-			if (v.owner == ActivePlayer &&
-					(
-						v.IsBuilding && v.BuildRounds    == 0 ||
-						v.IsClearing && v.ClearingRounds == 0
-						) && !v.BuildPath )
-			{
-				if (v.data.can_build == BUILD_BIG || v.ClearBig)
-				{
-					if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,                spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX + 2 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy);
-					if (v.CanDrive(v.PosX + 2 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy);
-					if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom);
-					if (v.CanDrive(v.PosX + 2 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom);
-					if (v.CanDrive(v.PosX - 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom * 2);
-					if (v.CanDrive(v.PosX     + (v.PosY + 2) * Map->size)) drawExitPoint(spx,                spy + Hud.Zoom * 2);
-					if (v.CanDrive(v.PosX + 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy + Hud.Zoom * 2);
-					if (v.CanDrive(v.PosX + 2 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom * 2);
-				}
-				else
-				{
-					if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,            spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy - Hud.Zoom);
-					if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy);
-					if (v.CanDrive(v.PosX + 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy);
-					if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy + Hud.Zoom);
-					if (v.CanDrive(v.PosX     + (v.PosY + 1) * Map->size)) drawExitPoint(spx,            spy + Hud.Zoom);
-					if (v.CanDrive(v.PosX + 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy + Hud.Zoom);
-				}
-			}
-			if (v.PlaceBand)
-			{
-				if (v.data.can_build == BUILD_BIG)
-				{
-					SDL_Rect dest;
-					dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
-					dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandY;
-					dest.w = dest.h = GraphicsData.gfx_band_big->h;
-					SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
-				}
-				else
-				{
-					int x;
-					int y;
-					mouse->GetKachel(&x, &y);
-					if (x == v.PosX || y == v.PosY)
-					{
-						SDL_Rect dest;
-						dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * x;
-						dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * y;
-						dest.h = dest.w = GraphicsData.gfx_band_small->h;
-						SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
-						v.BandX     = x;
-						v.BandY     = y;
-						v.BuildPath = true;
-					}
-					else
-					{
-						v.BandX = v.PosX;
-						v.BandY = v.PosY;
-					}
-				}
-			}
-			if (v.ActivatingVehicle && v.owner == ActivePlayer)
-			{
-				v.DrawExitPoints((*v.StoredVehicles)[v.VehicleToActivate]->typ);
-			}
-		}
-		else if ( SelectedBuilding )
-		{
-			int spx,spy;
-			spx=SelectedBuilding->GetScreenPosX();
-			spy=SelectedBuilding->GetScreenPosY();
-			if ( Hud.Scan )
-			{
-				if ( SelectedBuilding->data.is_big )
-				{
-					drawCircle ( spx+Hud.Zoom,
-					             spy+Hud.Zoom,
-					             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
-				}
-				else
-				{
-					drawCircle ( spx+Hud.Zoom/2,
-					             spy+Hud.Zoom/2,
-					             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
-				}
-			}
-			if ( Hud.Reichweite&& ( SelectedBuilding->data.can_attack==ATTACK_LAND||SelectedBuilding->data.can_attack==ATTACK_SUB_LAND ) &&!SelectedBuilding->data.is_expl_mine )
-			{
-				drawCircle ( spx+Hud.Zoom/2,
-				             spy+Hud.Zoom/2,
-				             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
-			}
-			if ( Hud.Reichweite&&SelectedBuilding->data.can_attack==ATTACK_AIR )
-			{
-				drawCircle ( spx+Hud.Zoom/2,
-				             spy+Hud.Zoom/2,
-				             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			}
+		// draw the unit circles
+		drawUnitCircles();
 
-			if ( Hud.Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
-			{
-				SelectedBuilding->DrawMunBar();
-			}
-			if ( Hud.Treffer )
-			{
-				SelectedBuilding->DrawHelthBar();
-			}
-			if (SelectedBuilding->BuildList                              &&
-					SelectedBuilding->BuildList->Size()                      &&
-					!SelectedBuilding->IsWorking                             &&
-					(*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
-					SelectedBuilding->owner == ActivePlayer)
-			{
-				SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
-			}
-			if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
-			{
-				SelectedBuilding->DrawExitPoints((*SelectedBuilding->StoredVehicles)[SelectedBuilding->VehicleToActivate]->typ);
-			}
-		}
-		ActivePlayer->DrawLockList(Hud);
 		// draw the minimap:
 		if ( bFlagDrawMMap )
 		{
@@ -452,51 +297,10 @@ void cClient::run()
 			drawMiniMap();
 			bFlagDrawHud = true;
 		}
-		// Debugausgaben machen:
-		iDebugOff = 30;
-		if ( bDebugAjobs && bFlagDrawMap)
-		{
-			font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr(Client->attackJobs.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			if ( Server )
-			{
-				font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr(Server->AJobs.Size()), LATIN_SMALL_WHITE);
-				iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			}
-		}
 
-		if ( bDebugBaseClient && bFlagDrawMap )
-		{
-			font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
-		}
+		// draw the debug information
+		displayDebugOutput();
 
-		if ( bDebugBaseServer && bFlagDrawMap )
-		{
-			cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-			font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
-		}
-
-		if ( bDebugWache && bFlagDrawMap )
-		{
-			font->showText(550, iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550, iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		}
-
-		if ( bDebugFX && bFlagDrawMap )
-		{
-			font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.Size() + FXListBottom.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		}
-		if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
-		{
-			trace();
-		}
 		// check whether the hud has to be drawn:
 		if ( bFlagDrawHud || bFlagDrawMap )
 		{
@@ -620,7 +424,7 @@ void cClient::run()
 	mouse->MoveCallback = false;
 }
 
-int cClient::checkUser()
+int cClient::checkUser( bool bChange )
 {
 	static int iLastMouseButton = 0, iMouseButton;
 	static bool bLastReturn = false;
@@ -630,7 +434,7 @@ int cClient::checkUser()
 
 	// check the keys:
 	keystate = SDL_GetKeyState( NULL );
-	if ( bChangeObjectName )
+	if ( bChange && bChangeObjectName )
 	{
 		DoKeyInp ( keystate );
 		if ( InputEnter )
@@ -869,16 +673,16 @@ int cClient::checkUser()
 	if ( iMouseButton && !iLastMouseButton && iMouseButton != 4 )
 	{
 		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
-		if ( SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
+		if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( NULL, SelectedVehicle, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
 			else if ( Map->GO[mouse->GetKachelOff()].top ) showTransfer ( NULL, SelectedVehicle, Map->GO[mouse->GetKachelOff()].top, NULL );
 		}
-		else if ( SelectedBuilding&&mouse->cur==GraphicsData.gfx_Ctransf )
+		else if ( bChange && SelectedBuilding && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( SelectedBuilding, NULL, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
 		}
-		else if ( SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
+		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
 			SelectedVehicle->PlaceBand = false;
 			if ( UnitsData.building[SelectedVehicle->BuildingTyp].data.is_big )
@@ -890,41 +694,41 @@ int cClient::checkUser()
 				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size, true, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size );
 			}
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
 		{
 			SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate, mouse->GetKachelOff(), false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cactivate && SelectedVehicle && SelectedVehicle->ActivatingVehicle )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedVehicle && SelectedVehicle->ActivatingVehicle )
 		{
 			SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
 		}
-		else if (mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size())
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size())
 		{
 			int iX, iY;
 			mouse->GetKachel ( &iX, &iY );
 			sendWantExitFinishedVehicle ( SelectedBuilding, iX, iY );
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
 			// TODO: Load vehcile
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
 			// TODO: Load vehcile
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
 			// TODO: rearm
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
 			// TODO: repair
 		}
-		else if ( mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
 		{
 			if ( SelectedVehicle->IsBuilding )
 			{
@@ -954,7 +758,7 @@ int cClient::checkUser()
 			}
 			else
 				// check, if the player wants to attack:
-				if ( mouse->cur==GraphicsData.gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive )
+				if ( bChange && mouse->cur==GraphicsData.gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive )
 				{
 					//find target ID
 					int targetId = 0;
@@ -971,7 +775,7 @@ int cClient::checkUser()
 					cLog::write("(Client) want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
 					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
 				}
-				else if ( mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
+				else if ( bChange && mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
 				{
 					//find target ID
 					int targetId = 0;
@@ -988,11 +792,11 @@ int cClient::checkUser()
 					int offset = SelectedBuilding->PosX + SelectedBuilding->PosY * Map->size;
 					sendWantAttack( targetId, mouse->GetKachelOff(), offset, false );
 				}
-				else if ( mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
+				else if ( bChange && mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 				{
 					// TODO: add commando steal
 				}
-				else if ( mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
+				else if ( bChange && mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 				{
 					// TODO: add commando disable
 				}
@@ -2160,6 +1964,216 @@ void cClient::drawExitPoint( int iX, int iY )
 	dest.x = iX;
 	dest.w = dest.h = iZoom;
 	SDL_BlitSurface ( GraphicsData.gfx_exitpoints, &scr, buffer, &dest );
+}
+
+void cClient::drawUnitCircles ()
+{
+	if ( SelectedVehicle )
+	{
+		cVehicle& v   = *SelectedVehicle; // XXX not const is suspicious
+		int const spx = v.GetScreenPosX();
+		int const spy = v.GetScreenPosY();
+		if (Hud.Scan)
+		{
+			drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer);
+		}
+		if (Hud.Reichweite)
+		{
+			switch (v.data.can_attack)
+			{
+				case ATTACK_LAND:
+				case ATTACK_SUB_LAND:
+				case ATTACK_AIRnLAND:
+					drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 1, RANGE_GROUND_COLOR, buffer);
+					break;
+
+				case ATTACK_AIR:
+					drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 2, RANGE_AIR_COLOR, buffer);
+					break;
+			}
+		}
+		if (Hud.Munition && v.data.can_attack)
+		{
+			v.DrawMunBar();
+		}
+		if (Hud.Treffer)
+		{
+			v.DrawHelthBar();
+		}
+		if (v.owner == ActivePlayer &&
+				(
+					v.IsBuilding && v.BuildRounds    == 0 ||
+					v.IsClearing && v.ClearingRounds == 0
+					) && !v.BuildPath )
+		{
+			if (v.data.can_build == BUILD_BIG || v.ClearBig)
+			{
+				if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,                spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX + 2 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy);
+				if (v.CanDrive(v.PosX + 2 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy);
+				if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom);
+				if (v.CanDrive(v.PosX + 2 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom);
+				if (v.CanDrive(v.PosX - 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom * 2);
+				if (v.CanDrive(v.PosX     + (v.PosY + 2) * Map->size)) drawExitPoint(spx,                spy + Hud.Zoom * 2);
+				if (v.CanDrive(v.PosX + 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy + Hud.Zoom * 2);
+				if (v.CanDrive(v.PosX + 2 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom * 2);
+			}
+			else
+			{
+				if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,            spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy - Hud.Zoom);
+				if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy);
+				if (v.CanDrive(v.PosX + 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy);
+				if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy + Hud.Zoom);
+				if (v.CanDrive(v.PosX     + (v.PosY + 1) * Map->size)) drawExitPoint(spx,            spy + Hud.Zoom);
+				if (v.CanDrive(v.PosX + 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy + Hud.Zoom);
+			}
+		}
+		if (v.PlaceBand)
+		{
+			if (v.data.can_build == BUILD_BIG)
+			{
+				SDL_Rect dest;
+				dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
+				dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandY;
+				dest.w = dest.h = GraphicsData.gfx_band_big->h;
+				SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
+			}
+			else
+			{
+				int x;
+				int y;
+				mouse->GetKachel(&x, &y);
+				if (x == v.PosX || y == v.PosY)
+				{
+					SDL_Rect dest;
+					dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * x;
+					dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * y;
+					dest.h = dest.w = GraphicsData.gfx_band_small->h;
+					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
+					v.BandX     = x;
+					v.BandY     = y;
+					v.BuildPath = true;
+				}
+				else
+				{
+					v.BandX = v.PosX;
+					v.BandY = v.PosY;
+				}
+			}
+		}
+		if (v.ActivatingVehicle && v.owner == ActivePlayer)
+		{
+			v.DrawExitPoints((*v.StoredVehicles)[v.VehicleToActivate]->typ);
+		}
+	}
+	else if ( SelectedBuilding )
+	{
+		int spx,spy;
+		spx=SelectedBuilding->GetScreenPosX();
+		spy=SelectedBuilding->GetScreenPosY();
+		if ( Hud.Scan )
+		{
+			if ( SelectedBuilding->data.is_big )
+			{
+				drawCircle ( spx+Hud.Zoom,
+				             spy+Hud.Zoom,
+				             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
+			}
+			else
+			{
+				drawCircle ( spx+Hud.Zoom/2,
+				             spy+Hud.Zoom/2,
+				             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
+			}
+		}
+		if ( Hud.Reichweite&& ( SelectedBuilding->data.can_attack==ATTACK_LAND||SelectedBuilding->data.can_attack==ATTACK_SUB_LAND ) &&!SelectedBuilding->data.is_expl_mine )
+		{
+			drawCircle ( spx+Hud.Zoom/2,
+			             spy+Hud.Zoom/2,
+			             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
+		}
+		if ( Hud.Reichweite&&SelectedBuilding->data.can_attack==ATTACK_AIR )
+		{
+			drawCircle ( spx+Hud.Zoom/2,
+			             spy+Hud.Zoom/2,
+			             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
+		}
+
+		if ( Hud.Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
+		{
+			SelectedBuilding->DrawMunBar();
+		}
+		if ( Hud.Treffer )
+		{
+			SelectedBuilding->DrawHelthBar();
+		}
+		if (SelectedBuilding->BuildList                              &&
+				SelectedBuilding->BuildList->Size()                      &&
+				!SelectedBuilding->IsWorking                             &&
+				(*SelectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
+				SelectedBuilding->owner == ActivePlayer)
+		{
+			SelectedBuilding->DrawExitPoints((*SelectedBuilding->BuildList)[0]->typ);
+		}
+		if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
+		{
+			SelectedBuilding->DrawExitPoints((*SelectedBuilding->StoredVehicles)[SelectedBuilding->VehicleToActivate]->typ);
+		}
+	}
+	ActivePlayer->DrawLockList(Hud);
+}
+
+void cClient::displayDebugOutput()
+{
+	iDebugOff = 30;
+	if ( bDebugAjobs && bFlagDrawMap)
+	{
+		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr(Client->attackJobs.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		if ( Server )
+		{
+			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr(Server->AJobs.Size()), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		}
+	}
+
+	if ( bDebugBaseClient && bFlagDrawMap )
+	{
+		font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
+	}
+
+	if ( bDebugBaseServer && bFlagDrawMap )
+	{
+		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
+		font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
+	}
+
+	if ( bDebugWache && bFlagDrawMap )
+	{
+		font->showText(550, iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+	}
+
+	if ( bDebugFX && bFlagDrawMap )
+	{
+		font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.Size() + FXListBottom.Size()), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+	}
+	if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
+	{
+		trace();
+	}
 }
 
 void cClient::setWind( int iDir )
@@ -3780,30 +3794,97 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 {
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
-	Uint8 *keystate;
 
-	font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
 	while ( bWaitForOthers )
 	{
 		EventHandler->HandleEvents();
 
-		keystate = SDL_GetKeyState( NULL );
 		mouse->GetPos();
-		if ( mouse->x != iLastX || mouse->y != iLastY )
-		{
-			mouse->draw ( true, screen );
-		}
-		iLastX = mouse->x;
-		iLastY = mouse->y;
 
-		if ( keystate[KeysList.KeyExit] && ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
+		// check user
+		if ( bExit || checkUser( false ) == -1 )
 		{
 			bExit = true;
 			bWaitForOthers = false;
+			break;
 		}
 
-		//handleTimer();
-		Client->doGameActions();
+		// draw the map:
+		if ( bFlagDrawMap )
+		{
+			drawMap();
+			displayFX();
+		}
+		drawUnitCircles ();
+		displayDebugOutput();
+
+		// draw the minimap:
+		if ( bFlagDrawMMap )
+		{
+			bFlagDrawMMap = false;
+			drawMiniMap();
+			bFlagDrawHud = true;
+		}
+		// check whether the hud has to be drawn:
+		if ( bFlagDrawHud || bFlagDrawMap )
+		{
+			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+			mouse->GetBack ( buffer );
+			bFlagDraw = true;
+		}
+		// draw the video:
+		if ( bFlagDraw || bFlagDrawHud )
+		{
+			drawFLC();
+		}
+		// display the chatinput:
+		if ( bChatInput && bFlagDrawMap )
+		{
+			string OutTxt = ">";
+			OutTxt += InputStr;
+			if ( iFrame%2 ){ }
+			else OutTxt += "_";
+			font->showText(185,440, OutTxt);
+		}
+		// display the messages:
+		if ( bFlagDrawMap )
+		{
+			handleMessages();
+		}
+		// display waiting text
+		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
+		// draw the mouse
+		if ( mouse->x != iLastX || mouse->y != iLastY || bFlagDraw )
+		{
+			if ( bFlagDraw ) mouse->draw ( false, buffer );
+			else mouse->draw ( true, screen );
+			iLastX = mouse->x;
+			iLastY = mouse->y;
+		}
+		// display the buffer:
+		if ( bFlagDraw )
+		{
+			SHOW_SCREEN
+			bFlagDraw = false;
+			bFlagDrawHud = false;
+			bFlagDrawMap = false;
+		}
+		else if ( !SettingsData.bFastMode )
+		{
+			SDL_Delay ( 10 ); // theres northing to do.
+		}
+
+		doGameActions();
+		if ( iTimer1 )
+		{
+			iFrame++;
+			bFlagDrawMap = true;
+			rotateBlinkColor();
+			if ( FLC != NULL && Hud.PlayFLC )
+			{
+				FLI_NextFrame ( FLC );
+			}
+		}
 	}
 }
 

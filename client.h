@@ -174,7 +174,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@return -1 if game should be closed, else 0.
 	*/
-	int checkUser();
+	int checkUser( bool bChange = true );
 	/**
 	* draws the minimap in the hud
 	*@author alzi alias DoctorDeath
@@ -224,6 +224,8 @@ private:
 	*@param iY Y coordinate
 	*/
 	void drawExitPoint( int iX, int iY );
+	void drawUnitCircles ();
+	void displayDebugOutput();
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
