@@ -2844,6 +2844,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedVehicle->iID = message->popInt16();
 
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
+
+			// make report
+			addCoords ( AddedVehicle->name + " " + lngPack.i18n ( "Text~Comp~Detected" ), iPosX, iPosY );
+			if ( random( 2 ) == 0 ) PlayVoice ( VoiceData.VOIDetected1 );
+			else PlayVoice ( VoiceData.VOIDetected2 );
 		}
 		break;
 	case GAME_EV_ADD_ENEM_BUILDING:

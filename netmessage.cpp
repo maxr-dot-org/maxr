@@ -345,6 +345,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_MOVE_JOB_SERVER");
 	case GAME_EV_MOVE_JOB_CLIENT:
 		return string("GAME_EV_MOVE_JOB_CLIENT");
+	case GAME_EV_WANT_STOP_MOVE:
+		return string("GAME_EV_WANT_STOP_MOVE");
 	case GAME_EV_WANT_ATTACK:
 		return string("GAME_EV_WANT_ATTACK");
 	case GAME_EV_ATTACKJOB_LOCK_TARGET:
