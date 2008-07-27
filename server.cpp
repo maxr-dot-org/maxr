@@ -1609,10 +1609,10 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 		}
 	}
-	if ( bChangeTurn ) iTurn++;
-	makeTurnEnd ( iPlayerNum, bChangeTurn );
 	if ( bChangeTurn )
 	{
+		iTurn++;
+		makeTurnEnd ();
 		for ( int i = 0; i < PlayerList->Size(); i++ )
 		{
 			getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
@@ -1622,7 +1622,7 @@ void cServer::handleEnd ( int iPlayerNum )
 	}
 }
 
-void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
+void cServer::makeTurnEnd ()
 {
 	// reload all buildings
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -1649,7 +1649,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 					continue;
 				}
 			}
-			if ( Building->data.can_attack && bChangeTurn && Building->refreshData() )
+			if ( Building->data.can_attack && Building->refreshData() )
 			{
 				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
 				{
@@ -1687,7 +1687,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				}
 			}
 
-			if ( bChangeTurn && Vehicle->refreshData() )
+			if ( Vehicle->refreshData() )
 			{
 				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
 				{
@@ -1841,7 +1841,7 @@ void cServer::checkDeadline ()
 			}
 			iTurn++;
 			iDeadlineStartTime = 0;
-			makeTurnEnd( -1, true );
+			makeTurnEnd();
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
 				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );

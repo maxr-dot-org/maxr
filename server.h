@@ -173,7 +173,7 @@ private:
 	*@param iPlayerNum Number of player who has pressed the end turn button
 	*@param bChangeTurn true if all players have ended their turn and the turnnumber has changed
 	*/
-	void makeTurnEnd ( int iPlayerNum , bool bChangeTurn );
+	void makeTurnEnd ();
 	/**
 	* gets the reportmessage for a player
 	*@author alzi alias DoctorDeath
