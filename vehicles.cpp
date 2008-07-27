@@ -2115,18 +2115,12 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			/*if ( mjob )
+			if ( mjob )
 			{
-				mjob->finished = true;
-				mjob = NULL;
-				MoveJobActive = false;
+				sendWantStopMove ( iID );
 			}
-			else*/
-			if ( IsBuilding )
+			else if ( IsBuilding )
 			{
-				IsBuilding = false;
-				BuildPath = false;
-
 				sendWantStopBuilding ( iID );
 			}
 			/*else

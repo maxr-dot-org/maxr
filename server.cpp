@@ -352,6 +352,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_STOP_MOVE:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+			if ( Vehicle->mjob == NULL ) break;
+			
+			Vehicle->mjob->release();
+		}
+		break;
 	case GAME_EV_WANT_ATTACK:
 		{
 			//identify agressor
@@ -1835,9 +1844,9 @@ void cServer::handleMoveJobs ()
 
 					for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
 					{
-						sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList[i]);
+						sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_FINISHED, *MJob->vehicle->SeenByPlayerList[i]);
 					}
-					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
+					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_FINISHED, MJob->vehicle->owner->Nr );
 				}
 				else cLog::write("(Server) Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				delete MJob;

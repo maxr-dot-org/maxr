@@ -3238,32 +3238,36 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						}
 					}
 				}
-				if ( iType == MJOB_OK )	// move is OK
+				switch ( iType )
 				{
-					Vehicle->moving = true;
-					if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
-					Vehicle->MoveJobActive = true;
-					cLog::write("(Client) The movejob is ok: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-				}
-				else if ( iType == MJOB_STOP )	// move has to be stoped
-				{
-					if ( Vehicle->mjob->waypoints->X == Vehicle->mjob->DestX && Vehicle->mjob->waypoints->Y == Vehicle->mjob->DestY )
+				case MJOB_OK:
 					{
-						cLog::write("(Client) The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
-						Vehicle->mjob->finished = true;
+						Vehicle->moving = true;
+						if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
+						Vehicle->MoveJobActive = true;
+						cLog::write("(Client) The movejob is ok: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 					}
-					else
+					break;
+				case MJOB_STOP:
 					{
 						cLog::write("(Client) The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 						Vehicle->mjob->Suspended = true;
 						Vehicle->mjob->EndForNow = true;
 					}
-				}
-				else if ( iType == MJOB_BLOCKED ) // next field is blocked
-				{
-					cLog::write("(Client) Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-					Vehicle->mjob->finished = true;
-					// TODO: Calc a new path and start the new job
+					break;
+				case MJOB_FINISHED:
+					{
+						cLog::write("(Client) The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
+						Vehicle->mjob->release ();
+					}
+					break;
+				case MJOB_BLOCKED:
+					{
+						cLog::write("(Client) Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+						Vehicle->mjob->finished = true;
+						// TODO: Calc a new path and start the new job
+					}
+					break;
 				}
 			}
 			else

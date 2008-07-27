@@ -33,6 +33,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
 	GAME_EV_MOVE_JOB_CLIENT,		// a message with all waypoints
+	GAME_EV_WANT_STOP_MOVE,			// a client wants to stop a moving vehicle
 	GAME_EV_WANT_ATTACK,			// a client wants to attack an other unit
 	GAME_EV_MINELAYERSTATUS,		// a minelayer changes his laying status
 	GAME_EV_ATTACKJOB_FINISHED,		// the client has finished animating the muzzle flash

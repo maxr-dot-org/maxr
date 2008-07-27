@@ -92,6 +92,12 @@ void sendWantStopWork( cBuilding* building);
 void sendMoveJob( cMJobs *MJob );
 
 /**
+*
+*@author alzi alias DoctorDeath
+*/
+void sendWantStopMove ( int iVehicleID );
+
+/**
 * sends all nessesary information to identify agressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.

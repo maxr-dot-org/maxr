@@ -94,6 +94,13 @@ void sendMoveJob( cMJobs *MJob )
 	Client->sendNetMessage( message );
 }
 
+void sendWantStopMove ( int iVehicleID )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_MOVE );
+	message->pushInt16( iVehicleID );
+	Client->sendNetMessage( message );
+}
+
 void sendWantAttack ( int targetID, int targetOffset, int agressor, bool isVehicle)
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_ATTACK );
