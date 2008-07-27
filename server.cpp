@@ -330,6 +330,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						break;
 					}
 					MJob->waypoints = Waypoint;
+
+					// unset sentry status when moving vehicle
+					if ( MJob->vehicle->bSentryStatus )
+					{
+						MJob->vehicle->owner->deleteSentryVehicle ( MJob->vehicle );
+						MJob->vehicle->bSentryStatus = false;
+					}
+					sendUnitData ( MJob->vehicle, MJob->vehicle->owner->Nr );
+					for ( unsigned int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
+					{
+						sendUnitData ( MJob->vehicle, *MJob->vehicle->SeenByPlayerList[i] );
+					}
 				}
 				iCount++;
 
@@ -1012,6 +1024,40 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_CHANGE_SENTRY:
+		{
+			if ( message->popBool() )	// vehicle
+			{
+				cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+				if ( Vehicle == NULL ) break;
+
+				Vehicle->bSentryStatus = !Vehicle->bSentryStatus;
+				if ( Vehicle->bSentryStatus ) Vehicle->owner->addSentryVehicle ( Vehicle );
+				else Vehicle->owner->deleteSentryVehicle ( Vehicle );
+
+				sendUnitData ( Vehicle, Vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList[i] );
+				}
+			}
+			else	// building
+			{
+				cBuilding *Building = getBuildingFromID ( message->popInt16() );
+				if ( Building == NULL ) break;
+
+				Building->bSentryStatus = !Building->bSentryStatus;
+				if ( Building->bSentryStatus ) Building->owner->addSentryBuilding ( Building );
+				else Building->owner->deleteSentryBuilding ( Building );
+
+				sendUnitData ( Building, Building->owner->Nr );
+				for ( unsigned int i = 0; i < Building->SeenByPlayerList.Size(); i++ )
+				{
+					sendUnitData ( Building, *Building->SeenByPlayerList[i] );
+				}
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -1152,7 +1198,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 		sendResources( AddedVehicle, Map );
 		AddedVehicle->doSurvey();
 	}
-	//if ( !bInit ) AddedVehicle->InWachRange();
+	if ( !bInit ) AddedVehicle->InSentryRange();
 
 	// if this is not a commando unit the vehicle doesn't need to be detected
 	if ( !AddedVehicle->data.is_commando )
@@ -1172,7 +1218,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	// generate the building:
 	AddedBuilding = Player->addBuilding ( iPosX, iPosY, Building );
 	if ( AddedBuilding->data.is_mine ) AddedBuilding->CheckRessourceProd();
-	//if ( AddedBuilding->data.can_attack ) Player->AddWachpostenB ( AddedBuilding );
+	if ( AddedBuilding->bSentryStatus ) Player->addSentryBuilding ( AddedBuilding );
 
 	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
@@ -1442,7 +1488,7 @@ void cServer::checkPlayerUnits ()
 					{
 						NextBuilding->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
-						sendUnitData( NextBuilding, Map, MapPlayer->Nr );
+						sendUnitData( NextBuilding, MapPlayer->Nr );
 					}
 				}
 				else
@@ -1595,9 +1641,9 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 				{
 					for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
 					{
-						sendUnitData(Building, Map, *Building->SeenByPlayerList[k]);
+						sendUnitData(Building, *Building->SeenByPlayerList[k]);
 					}
-					sendUnitData ( Building, Map, Building->owner->Nr );
+					sendUnitData ( Building, Building->owner->Nr );
 
 					Building = Building->next;
 					continue;
@@ -1607,9 +1653,9 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 			{
 				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
 				{
-					sendUnitData(Building, Map, *Building->SeenByPlayerList[k]);
+					sendUnitData(Building, *Building->SeenByPlayerList[k]);
 				}
-				sendUnitData ( Building, Map, Building->owner->Nr );
+				sendUnitData ( Building, Building->owner->Nr );
 			}
 			Building = Building->next;
 		}
@@ -1664,7 +1710,7 @@ void cServer::makeTurnEnd ( int iPlayerNum, bool bChangeTurn )
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
-			//Vehicle->InWachRange();
+			Vehicle->InSentryRange();
 			Vehicle = Vehicle->next;
 		}
 	}
@@ -1885,10 +1931,10 @@ void cServer::handleMoveJobs ()
 
 void cServer::checkMove ( cMJobs *MJob )
 {
-	bool bWachRange;
+	bool bInSentryRange;
 	if ( !MJob->vehicle || !MJob->waypoints || !MJob->waypoints->next ) return;
-	bWachRange = false;//vehicle->InWachRange();
-	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bWachRange )
+	bInSentryRange = MJob->vehicle->InSentryRange();
+	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bInSentryRange )
 	{
 		cLog::write( "(Server) Next point is blocked: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		// if the next point would be the last, finish the job here
@@ -2054,8 +2100,8 @@ void cServer::moveVehicle ( cVehicle *Vehicle )
 			Vehicle->doSurvey();
 		}
 
-		// TODO: let other units fire on this one
-		//Vehicle->InWachRange();
+		// let other units fire on this one
+		Vehicle->InSentryRange();
 
 		// search for mines if necessary
 		if ( Vehicle->data.can_detect_mines )

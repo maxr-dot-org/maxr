@@ -149,6 +149,7 @@ void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDe
 void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, bool bRepeat );
 void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY );
 void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, int iGoldProd );
+void sendChangeSentry ( int iUnitID, bool bVehicle );
 
 
 #endif // clienteventsH

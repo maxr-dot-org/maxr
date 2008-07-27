@@ -152,8 +152,8 @@ private:
 	bool bDebugBaseServer;
 	/** show infos about the bases of the client */
 	bool bDebugBaseClient;
-	/** show infos about the sentrys */
-	bool bDebugWache;
+	/** show infos about the sentries */
+	bool bDebugSentry;
 	/** show FX-infos */
 	bool bDebugFX;
 	/** show infos from the server about the unit under the mouse */

@@ -114,7 +114,7 @@ public:
 	bool ClearBig;    // Gibt an, ob ein großes Feld geräumt werden soll
 	bool ShowBigBeton; // Gibt an, ob eine große Betonfläche gemalt werden soll
 	int BigBetonAlpha; // AlphaWert des großen Betons
-	bool Wachposten;  // Gibt an, ob das Behicle auf Wachposten
+	bool bSentryStatus;		/** true if the vehicle is on sentry */
 	bool Transfer;    // Gibt an, ob gerade ein Transfer statfinden soll
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
@@ -183,8 +183,7 @@ public:
 	void DrawTransBar(int len);
 	void MakeTransBar(int *trans,int MaxTarget,int Target);
 	void ShowBigDetails(void);
-	void Wachwechsel(void);
-	bool InWachRange(void);
+	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
 	bool CanExitTo(int off, sVehicle*) const;
 	bool CanLoad(int off);

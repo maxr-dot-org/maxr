@@ -417,9 +417,9 @@ void cGame::Run ( void )
 
 		if ( DebugWache && fDrawMap )
 		{
-			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-air: " + iToStr(ActivePlayer->SentriesAir.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
+			font->showText(550,DebugOff, "w-ground: " + iToStr(ActivePlayer->SentriesGround.Size()), LATIN_SMALL_WHITE);
 			DebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 
@@ -1550,7 +1550,7 @@ void cGame::DrawMap ( bool pure )
 			pos=y*map->size+startX;
 			for ( x=startX;x<=endX;x++ )
 			{
-				if ( ActivePlayer->WachMapAir[pos] )
+				if ( ActivePlayer->SentriesMapAir[pos] )
 				{
 					if ( ActivePlayer->ScanMap[pos] )
 					{
@@ -1561,7 +1561,7 @@ void cGame::DrawMap ( bool pure )
 						font->showText(dest.x+1,dest.y+1, "A-", LATIN_SMALL_YELLOW);
 					}
 				}
-				if ( ActivePlayer->WachMapGround[pos] )
+				if ( ActivePlayer->SentriesMapGround[pos] )
 				{
 					if ( ActivePlayer->ScanMap[pos] )
 					{
@@ -3118,7 +3118,7 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	FSAVE_V_4 ( ClearingRounds )
 	FSAVE_V_1 ( ClearBig )
 	FSAVE_V_1 ( ShowBigBeton )
-	FSAVE_V_1 ( Wachposten )
+	FSAVE_V_1 ( bSentryStatus )
 	FSAVE_V_4 ( FlightHigh )
 	FSAVE_V_1 ( LayMines )
 	FSAVE_V_1 ( ClearMines )
@@ -3215,7 +3215,7 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 	FSAVE_B_1 ( RepeatBuild )
 //	FSAVE_B_1 ( detected )
 	FSAVE_B_4 ( Disabled )
-	FSAVE_B_1 ( Wachposten )
+	FSAVE_B_1 ( bSentryStatus )
 
 	if ( b->BuildList&&b->BuildList->Size() )
 	{
@@ -3571,7 +3571,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_V_4 ( ClearingRounds )
 				FLOAD_V_1 ( ClearBig )
 				FLOAD_V_1 ( ShowBigBeton )
-				FLOAD_V_1 ( Wachposten )
+				FLOAD_V_1 ( bSentryStatus )
 				FLOAD_V_4 ( FlightHigh )
 				FLOAD_V_1 ( LayMines )
 				FLOAD_V_1 ( ClearMines )
@@ -3615,9 +3615,9 @@ void cGame::Load ( string name,int AP,bool MP )
 					map->GO[off+map->size+1].vehicle=v;
 				}
 
-				if ( v->Wachposten )
+				if ( v->bSentryStatus )
 				{
-					v->owner->AddWachpostenV ( v );
+					v->owner->addSentryVehicle ( v );
 				}
 
 				break;
@@ -3710,7 +3710,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				FLOAD_B_1 ( RepeatBuild )
 //				FLOAD_B_1 ( detected )
 				FLOAD_B_4 ( Disabled )
-				FLOAD_B_1 ( Wachposten )
+				FLOAD_B_1 ( bSentryStatus )
 
 
 				if ( ( i=fgetc ( fp ) ) >0&&b->BuildList )
@@ -3955,7 +3955,7 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "attack_mode: " + iToStr ( v->AttackMode ) + " attacking: " + iToStr ( v->Attacking ) + " wachpost: +" + iToStr ( v->Wachposten ) + " transfer: " + iToStr ( v->Transfer ) + " ditherx: " + iToStr (v->ditherX ) + " dithery: " + iToStr ( v->ditherY );
+	sTmp = "attack_mode: " + iToStr ( v->AttackMode ) + " attacking: " + iToStr ( v->Attacking ) + " wachpost: +" + iToStr ( v->bSentryStatus ) + " transfer: " + iToStr ( v->Transfer ) + " ditherx: " + iToStr (v->ditherX ) + " dithery: " + iToStr ( v->ditherY );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4005,7 +4005,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->Wachposten ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (long int)b->base ) + " sub_base: " + iToStr ((long int)b->SubBase );
+	sTmp = "dir: " + iToStr ( b->dir ) + " menu_active: " + iToStr ( b->MenuActive ) + " wachpost: +" + iToStr ( b->bSentryStatus ) + " attacking_mode: +" + iToStr ( b->AttackMode ) + " base: " + iToStr ( (long int)b->base ) + " sub_base: " + iToStr ((long int)b->SubBase );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

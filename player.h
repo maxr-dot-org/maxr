@@ -34,10 +34,10 @@ class cVehicle;
 class cBuilding;
 class cEngine;
 
-// Die Wachposten Struktur ///////////////////////////////////////////////////
-struct sWachposten{
-  cVehicle *v;
-  cBuilding *b;
+struct sSentry
+{
+	cVehicle *v;
+	cBuilding *b;
 };
 
 // Eintrag in der Lock-Liste /////////////////////////////////////////////////
@@ -75,10 +75,10 @@ public:
   char *ScanMap;             // Map mit dem Scannerflags.
   char *ResourceMap;         // Map mit aufgedeckten Resourcen.
   cBase base;               // Die Basis dieses Spielers.
-  cList<sWachposten*> WachpostenAir;      // Liste mit den Vehicles/Buildings auf Wachposten.
-  char *WachMapAir;          // Map mit dem abgedeckten Bereich.
-  cList<sWachposten*> WachpostenGround;   // Liste mit den Vehicles/Buildings auf Wachposten.
-  char *WachMapGround;       // Map mit dem abgedeckten Bereich.
+  cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
+  char *SentriesMapAir;				/** the covered air area */
+  cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
+  char *SentriesMapGround;			/** the covered ground area */
   char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden können.
   char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden können.
   sResearch ResearchTechs[8];// Map mit den erforschten Technologien.
@@ -97,12 +97,12 @@ public:
   void DoScan(void);
   cVehicle *GetNextVehicle(void);
   cVehicle *GetPrevVehicle(void);
-  void AddWachpostenV(cVehicle *v);
-  void AddWachpostenB(cBuilding *b);
-  void DeleteWachpostenV(cVehicle *v);
-  void DeleteWachpostenB(cBuilding *b);
-  void RefreshWacheAir(void);
-  void RefreshWacheGround(void);
+  void addSentryVehicle( cVehicle *v );
+  void addSentryBuilding( cBuilding *b );
+  void deleteSentryVehicle( cVehicle *v );
+  void deleteSentryBuilding( cBuilding *b) ;
+  void refreshSentryAir();
+  void refreshSentryGround();
   void StartAResearch(void);
   void StopAReserach(void);
   void DoResearch(void);

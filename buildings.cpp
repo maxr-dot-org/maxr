@@ -104,7 +104,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 		BuildList = NULL;
 
 		StoredVehicles = NULL;
-		Wachposten = false;
+		bSentryStatus = false;
 		return;
 	}
 
@@ -130,11 +130,11 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	if ( data.can_attack )
 	{
-		Wachposten = true;
+		bSentryStatus = true;
 	}
 	else
 	{
-		Wachposten = false;
+		bSentryStatus = false;
 	}
 
 	MetalProd = 0;
@@ -224,9 +224,9 @@ cBuilding::~cBuilding ( void )
 		delete StoredVehicles;
 	}
 
-	if ( Wachposten )
+	if ( bSentryStatus )
 	{
-		owner->DeleteWachpostenB ( this );
+		owner->deleteSentryBuilding ( this );
 	}
 
 	if ( IsLocked )
@@ -355,7 +355,7 @@ string cBuilding::GetStatusStr ( void )
 		sText += iToStr ( Disabled ) + ")";
 		return sText.c_str();
 	}
-	if ( Wachposten )
+	if ( bSentryStatus )
 	{
 		return lngPack.i18n ( "Text~Comp~Sentry" );
 	}
@@ -1038,7 +1038,7 @@ int cBuilding::GetMenuPointAnz ( void )
 	if ( typ->data.is_mine )
 		nr++;
 
-	if ( Wachposten || data.can_attack )
+	if ( bSentryStatus || data.can_attack )
 		nr++;
 
 	if ( typ->data.can_load == TRANS_VEHICLES || typ->data.can_load == TRANS_MEN || typ->data.can_load == TRANS_AIR )
@@ -3329,7 +3329,7 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 
 	ptr->PosY = off / Client->Map->size;
 	ptr->Loaded = false;
-	ptr->InWachRange();
+	ptr->InSentryRange();
 
 	owner->DoScan();
 }
@@ -7887,10 +7887,10 @@ void cBuilding::DrawMenu ( void )
 		nr++;
 	}
 
-	// Wachposten:
-	if ( Wachposten || data.can_attack )
+	// Sentry status:
+	if ( bSentryStatus || data.can_attack )
 	{
-		if ( SelMenu == nr || Wachposten == true )
+		if ( SelMenu == nr || bSentryStatus == true )
 			scr.y = 21;
 		else
 			scr.y = 0;
@@ -7899,15 +7899,7 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Wachposten = !Wachposten;
-			if ( Wachposten )
-			{
-				owner->AddWachpostenB ( this );
-			}
-			else
-			{
-				owner->DeleteWachpostenB ( this );
-			}
+			sendChangeSentry ( iID, false );
 			return;
 		}
 

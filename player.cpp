@@ -45,8 +45,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	DetectLandMap=NULL;
 	DetectSeaMap=NULL;
 	ScanMap=NULL;
-	WachMapAir=NULL;
-	WachMapGround=NULL;
+	SentriesMapAir=NULL;
+	SentriesMapGround=NULL;
 	VehicleList=NULL;
 	BuildingList=NULL;
 	ResourceMap=NULL;
@@ -60,16 +60,16 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 cPlayer::~cPlayer ( void )
 {
 
-	while ( WachpostenAir.Size() )
+	while ( SentriesAir.Size() )
 	{
-		delete WachpostenAir[WachpostenAir.Size() - 1];
-		WachpostenAir.Delete( WachpostenAir.Size() - 1 );
+		delete SentriesAir[SentriesAir.Size() - 1];
+		SentriesAir.Delete( SentriesAir.Size() - 1 );
 	}
 
-	while ( WachpostenGround.Size() )
+	while ( SentriesGround.Size() )
 	{
-		delete WachpostenGround[WachpostenGround.Size() - 1];
-		WachpostenGround.Delete( WachpostenGround.Size() - 1 );
+		delete SentriesGround[SentriesGround.Size() - 1];
+		SentriesGround.Delete( SentriesGround.Size() - 1 );
 	}
 
 	// Erst alle geladenen Vehicles löschen:
@@ -87,7 +87,7 @@ cPlayer::~cPlayer ( void )
 	{
 		cVehicle *ptr;
 		ptr=VehicleList->next;
-		VehicleList->Wachposten=false;
+		VehicleList->bSentryStatus = false;
 		delete VehicleList;
 		VehicleList=ptr;
 	}
@@ -95,7 +95,7 @@ cPlayer::~cPlayer ( void )
 	{
 		cBuilding *ptr;
 		ptr=BuildingList->next;
-		BuildingList->Wachposten=false;
+		BuildingList->bSentryStatus = false;
 
 		// Stored Vehicles are already deleted; just clear the list
 		if ( BuildingList->StoredVehicles )
@@ -112,8 +112,8 @@ cPlayer::~cPlayer ( void )
 	free ( VehicleData );
 	free ( BuildingData );
 	if ( ScanMap ) free ( ScanMap );
-	if ( WachMapAir ) free ( WachMapAir );
-	if ( WachMapGround ) free ( WachMapGround );
+	if ( SentriesMapAir ) free ( SentriesMapAir );
+	if ( SentriesMapGround ) free ( SentriesMapGround );
 	if ( ResourceMap ) free ( ResourceMap );
 
 	if ( DetectLandMap ) free ( DetectLandMap );
@@ -168,11 +168,11 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 	memset ( ResourceMap,0,MapSize );
 
 	base.map = map;
-	// Wach-Map:
-	WachMapAir= ( char* ) malloc ( MapSize );
-	memset ( WachMapAir,0,MapSize );
-	WachMapGround= ( char* ) malloc ( MapSize );
-	memset ( WachMapGround,0,MapSize );
+	// Sentry-Map:
+	SentriesMapAir= ( char* ) malloc ( MapSize );
+	memset ( SentriesMapAir,0,MapSize );
+	SentriesMapGround= ( char* ) malloc ( MapSize );
+	memset ( SentriesMapGround,0,MapSize );
 
 	// Detect-Maps:
 	DetectLandMap= ( char* ) malloc ( MapSize );
@@ -215,215 +215,205 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 	return Building;
 }
 
-// Fügt einen Wachposten ein:
-void cPlayer::AddWachpostenV ( cVehicle *v )
+void cPlayer::addSentryVehicle ( cVehicle *v )
 {
-	sWachposten *n;
-	n=new sWachposten;
+	sSentry *n;
+	n=new sSentry;
 	n->b=NULL;
 	n->v=v;
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
+		SentriesAir.Add ( n );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapAir );
-		WachpostenGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		SentriesAir.Add ( n );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir );
+		SentriesGround.Add ( n );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround );
 	}
 	else
 	{
-		WachpostenGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,WachMapGround );
+		SentriesGround.Add ( n );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround );
 	}
 }
 
-// Fügt einen Wachposten ein:
-void cPlayer::AddWachpostenB ( cBuilding *b )
+void cPlayer::addSentryBuilding ( cBuilding *b )
 {
-	sWachposten *n;
-	n=new sWachposten;
+	sSentry *n;
+	n=new sSentry;
 	n->b=b;
 	n->v=NULL;
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
-		WachpostenAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
+		SentriesAir.Add ( n );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		WachpostenAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapAir );
-		WachpostenGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		SentriesAir.Add ( n );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir );
+		SentriesGround.Add ( n );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround );
 	}
 	else
 	{
-		WachpostenGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,WachMapGround );
+		SentriesGround.Add ( n );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround );
 	}
 }
 
-// Löscht einen Wachposten:
-void cPlayer::DeleteWachpostenV ( cVehicle *v )
+void cPlayer::deleteSentryVehicle ( cVehicle *v )
 {
-	sWachposten *ptr;
-	int i;
-	if ( v->data.can_attack==ATTACK_AIR )
+	sSentry *ptr;
+	if ( v->data.can_attack == ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
-			ptr = WachpostenAir[i];
-			if ( ptr->v==v )
+			ptr = SentriesAir[i];
+			if ( ptr->v == v )
 			{
-				WachpostenAir.Delete ( i );
+				SentriesAir.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheAir();
+		refreshSentryAir();
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
-			ptr = WachpostenAir[i];
-			if ( ptr->v==v )
+			ptr = SentriesAir[i];
+			if ( ptr->v == v )
 			{
-				WachpostenAir.Delete ( i );
+				SentriesAir.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
-			ptr = WachpostenGround[i];
-			if ( ptr->v==v )
+			ptr = SentriesGround[i];
+			if ( ptr->v == v )
 			{
-				WachpostenGround.Delete ( i );
+				SentriesGround.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheAir();
-		RefreshWacheGround();
+		refreshSentryAir();
+		refreshSentryGround();
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
-			ptr = WachpostenGround[i];
-			if ( ptr->v==v )
+			ptr = SentriesGround[i];
+			if ( ptr->v == v )
 			{
-				WachpostenGround.Delete ( i );
+				SentriesGround.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheGround();
+		refreshSentryGround();
 	}
 }
 
-// Löscht einen Wachposten:
-void cPlayer::DeleteWachpostenB ( cBuilding *b )
+void cPlayer::deleteSentryBuilding ( cBuilding *b )
 {
-	sWachposten *ptr;
-	int i;
-	if ( b->data.can_attack==ATTACK_AIR )
+	sSentry *ptr;
+	if ( b->data.can_attack == ATTACK_AIR )
 	{
-		for ( i=0;i<WachpostenAir.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
-			ptr = WachpostenAir[i];
-			if ( ptr->b==b )
+			ptr = SentriesAir[i];
+			if ( ptr->b == b )
 			{
-				WachpostenAir.Delete ( i );
+				SentriesAir.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheAir();
+		refreshSentryAir();
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
-		for ( i=0;i<WachpostenAir.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
-			ptr = WachpostenAir[i];
-			if ( ptr->b==b )
+			ptr = SentriesAir[i];
+			if ( ptr->b == b )
 			{
-				WachpostenAir.Delete ( i );
+				SentriesAir.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		for ( i=0;i<WachpostenGround.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
-			ptr = WachpostenGround[i];
-			if ( ptr->b==b )
+			ptr = SentriesGround[i];
+			if ( ptr->b == b )
 			{
-				WachpostenGround.Delete ( i );
+				SentriesGround.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheAir();
-		RefreshWacheGround();
+		refreshSentryAir();
+		refreshSentryGround();
 	}
 	else
 	{
-		for ( i=0;i<WachpostenGround.Size();i++ )
+		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
-			ptr = WachpostenGround[i];
-			if ( ptr->b==b )
+			ptr = SentriesGround[i];
+			if ( ptr->b == b )
 			{
-				WachpostenGround.Delete ( i );
+				SentriesGround.Delete ( i );
 				delete ptr;
 				break;
 			}
 		}
-		RefreshWacheGround();
+		refreshSentryGround();
 
 	}
 }
 
-// Aktualisiert die Luftwache:
-void cPlayer::RefreshWacheAir ( void )
+void cPlayer::refreshSentryAir ()
 {
-	sWachposten *ptr;
-	int i;
-	memset ( WachMapAir,0,MapSize );
-	for ( i=0;i<WachpostenAir.Size();i++ )
+	sSentry *ptr;
+	memset ( SentriesMapAir,0,MapSize );
+	for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 	{
-		ptr = WachpostenAir[i];
+		ptr = SentriesAir[i];
 		if ( ptr->v )
 		{
-			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapAir );
+			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapAir );
 		}
 		else
 		{
-			drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapAir );
+			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapAir );
 		}
 	}
 }
 
-// Aktualisiert die Bodenwache:
-void cPlayer::RefreshWacheGround ( void )
+void cPlayer::refreshSentryGround ()
 {
-	sWachposten *ptr;
-	int i;
-	memset ( WachMapGround,0,MapSize );
-	for ( i=0;i<WachpostenGround.Size();i++ )
+	sSentry *ptr;
+	memset ( SentriesMapGround,0,MapSize );
+	for ( unsigned int i = 0 ; i < SentriesGround.Size(); i++ )
 	{
-		ptr = WachpostenGround[i];
+		ptr = SentriesGround[i];
 		if ( ptr->v )
 		{
-			drawSpecialCircle ( ptr->v->PosX,ptr->v->PosY,ptr->v->data.range,WachMapGround );
+			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapGround );
 		}
 		else
 		{
-			drawSpecialCircle ( ptr->b->PosX,ptr->b->PosY,ptr->b->data.range,WachMapGround );
+			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapGround );
 		}
 	}
 }

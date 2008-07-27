@@ -204,7 +204,7 @@ void cServerAttackJob::sendFireCommand()
 			if ( n == building->SeenByPlayerList.Size() )
 			{
 				sendAddEnemyUnit( building, player->Nr );
-				sendUnitData( building, Server->Map, player->Nr );
+				sendUnitData( building, player->Nr );
 				building->SeenByPlayerList.Add( &player->Nr );
 				building->DetectedByPlayerList.Add( &player->Nr );
 			}

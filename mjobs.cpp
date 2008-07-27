@@ -61,12 +61,6 @@ cMJobs::cMJobs ( cMap *Map, int ScrOff, int DestOff, bool Plane, int iVehicleID,
 	ScrY=ScrOff/map->size;
 	DestX=DestOff%map->size;
 	DestY=DestOff/map->size;
-
-	/*if ( vehicle->Wachposten )
-	{
-		vehicle->owner->DeleteWachpostenV ( vehicle );
-		vehicle->Wachposten=false;
-	}*/
 }
 
 cMJobs::~cMJobs ( void )
@@ -318,7 +312,7 @@ void cMJobs::StartMove ( void )
 {
 	bool WachRange;
 	if ( !vehicle||!waypoints||!waypoints->next ) return;
-	WachRange=vehicle->InWachRange();
+	WachRange=vehicle->InSentryRange();
 	if ( !CheckPointNotBlocked ( waypoints->next->X,waypoints->next->Y ) ||WachRange )
 	{
 		sWaypoint *wp;

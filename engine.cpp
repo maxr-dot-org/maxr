@@ -237,7 +237,7 @@ void cEngine::Run ( void )
 					{
 						v=map->GO[aj->dest].vehicle;
 					}
-					if ( v ) v->InWachRange();
+					if ( v ) v->InSentryRange();
 				}
 			}
 			else if ( aj->ScrAir )
@@ -258,7 +258,7 @@ void cEngine::Run ( void )
 					{
 						v=map->GO[aj->dest].vehicle;
 					}
-					if ( v ) v->InWachRange();
+					if ( v ) v->InSentryRange();
 				}
 			}
 			else
@@ -279,7 +279,7 @@ void cEngine::Run ( void )
 					{
 						v=map->GO[aj->dest].vehicle;
 					}
-					if ( v ) v->InWachRange();
+					if ( v ) v->InSentryRange();
 				}
 			}
 
@@ -348,7 +348,7 @@ cMJobs *cEngine::AddMoveJob ( int ScrOff,int DestOff,bool ClientMove,bool plane,
 		{
 			AddActiveMoveJob ( job );
 		}
-		if ( job->vehicle->InWachRange() )
+		if ( job->vehicle->InSentryRange() )
 		{
 			job->finished=true;
 			return job;
@@ -483,7 +483,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 		v->doSurvey();
 	}
 	// Ggf beschießen lassen:
-	v->InWachRange();
+	v->InSentryRange();
 	// Ggf Minen suchen:
 	if ( v->data.can_detect_mines&&v->owner==game->ActivePlayer )
 	{
@@ -551,7 +551,7 @@ void cEngine::AddVehicle ( int posx,int posy,sVehicle *v,cPlayer *p,bool init,bo
 	{
 		n->doSurvey();
 	}
-	if ( !init ) n->InWachRange();
+	if ( !init ) n->InSentryRange();
 }
 
 void DeleteObject( cBuilding *Building )
@@ -1113,7 +1113,7 @@ void cEngine::Rundenende ( void )
 		v=p->VehicleList;
 		while ( v )
 		{
-			v->InWachRange();
+			v->InSentryRange();
 			v=v->next;
 		}
 	}

@@ -148,7 +148,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugAjobs = false;
 	bDebugBaseServer = false;
 	bDebugBaseClient = false;
-	bDebugWache = false;
+	bDebugSentry = false;
 	bDebugFX = false;
 	bDebugTraceServer = false;
 	bDebugTraceClient = false;
@@ -696,13 +696,15 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
 		{
-			SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate, mouse->GetKachelOff(), false );
+			// TODO: Exit vehcile
+			//SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate, mouse->GetKachelOff(), false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedVehicle && SelectedVehicle->ActivatingVehicle )
 		{
-			SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
+			// TODO: Exit vehcile
+			//SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
 		}
@@ -1350,43 +1352,48 @@ void cClient::drawMap( bool bPure )
 		SelectedVehicle->DrawPath();
 	}
 	// debug sentry:
-	if ( bDebugWache )
+	if ( bDebugSentry )
 	{
-		scr.y=0;
-		scr.h=scr.w=iZoom;
-		dest.y=18-iOffY+iZoom*iStartY;
-		for ( iY=iStartY;iY<=iEndY;iY++ )
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
-			dest.x=180-iOffX+iZoom*iStartX;
-			iPos=iY*Map->size+iStartX;
-			for ( iX=iStartX;iX<=iEndX;iX++ )
+			cPlayer *Player = (*Server->PlayerList)[i];
+
+			scr.y = 0;
+			scr.h = scr.w = iZoom;
+			dest.y = 18-iOffY+iZoom*iStartY;
+			for ( iY = iStartY; iY <= iEndY; iY++ )
 			{
-				if ( ActivePlayer->WachMapAir[iPos] )
+				dest.x = 180-iOffX+iZoom*iStartX;
+				iPos = iY*Map->size+iStartX;
+				for ( iX = iStartX; iX <= iEndX; iX++ )
 				{
-					if ( ActivePlayer->ScanMap[iPos] )
+					if ( Player->SentriesMapAir[iPos] )
 					{
-						font->showText(dest.x+1,dest.y+1, "A+", LATIN_SMALL_YELLOW);
+						if ( Player->ScanMap[iPos] )
+						{
+							font->showText(dest.x+1,dest.y+1, iToStr ( Player->Nr ) + " A+", LATIN_SMALL_YELLOW);
+						}
+						else
+						{
+							font->showText(dest.x+1,dest.y+1, iToStr ( Player->Nr ) + " A-", LATIN_SMALL_YELLOW);
+						}
 					}
-					else
+					if ( Player->SentriesMapGround[iPos] )
 					{
-						font->showText(dest.x+1,dest.y+1, "A-", LATIN_SMALL_YELLOW);
+						if ( Player->ScanMap[iPos] )
+						{
+							font->showText(dest.x+10,dest.y+1, iToStr ( Player->Nr ) + " G+", LATIN_SMALL_YELLOW);
+						}
+						else
+						{
+							font->showText(dest.x+10,dest.y+1, iToStr ( Player->Nr ) + " G-", LATIN_SMALL_YELLOW);
+						}
 					}
+					iPos++;
+					dest.x += iZoom;
 				}
-				if ( ActivePlayer->WachMapGround[iPos] )
-				{
-					if ( ActivePlayer->ScanMap[iPos] )
-					{
-						font->showText(dest.x+10,dest.y+1, "G+", LATIN_SMALL_YELLOW);
-					}
-					else
-					{
-						font->showText(dest.x+10,dest.y+1, "G-", LATIN_SMALL_YELLOW);
-					}
-				}
-				iPos++;
-				dest.x+=iZoom;
+				dest.y += iZoom;
 			}
-			dest.y+=iZoom;
 		}
 	}
 }
@@ -2155,12 +2162,16 @@ void cClient::displayDebugOutput()
 		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 	}
 
-	if ( bDebugWache && bFlagDrawMap )
+	if ( bDebugSentry && bFlagDrawMap )
 	{
-		font->showText(550, iDebugOff, "w-air: " + iToStr(ActivePlayer->WachpostenAir.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		font->showText(550, iDebugOff, "w-ground: " + iToStr(ActivePlayer->WachpostenGround.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			cPlayer *Player = (*Server->PlayerList)[i];
+			font->showText(550, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr(Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			font->showText(550, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr(Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		}
 	}
 
 	if ( bDebugFX && bFlagDrawMap )
@@ -2446,8 +2457,8 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "base client" ) == 0 ) { bDebugBaseClient = true; bDebugBaseServer = false; return true; }
 	if ( sCmd.compare( "base server" ) == 0 ) { if (Server) bDebugBaseServer = true; bDebugBaseClient = false; return true; }
 	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBaseServer = false; bDebugBaseClient = false; return true; }
-	if ( sCmd.compare( "wache on" ) == 0 ) { bDebugWache =true; return true; }
-	if ( sCmd.compare( "wache off" ) == 0 ) { bDebugWache =false; return true; }
+	if ( sCmd.compare( "sentry server" ) == 0 ) { if (Server) bDebugSentry = true; return true; }
+	if ( sCmd.compare( "sentry off" ) == 0 ) { bDebugSentry = false; return true; }
 	if ( sCmd.compare( "fx on" ) == 0 ) { bDebugFX = true; return true; }
 	if ( sCmd.compare( "fx off" ) == 0 ) { bDebugFX = false; return true; }
 	if ( sCmd.compare( "trace server" ) == 0 ) { if ( Server ) bDebugTraceServer = true; bDebugTraceClient = false; return true; }
@@ -2979,7 +2990,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				bWasBuilding = Vehicle->IsBuilding;
 				Vehicle->IsBuilding = message->popBool();
 				Vehicle->BuildRounds = message->popInt16();
-				Vehicle->Wachposten = message->popBool();
+				Vehicle->bSentryStatus = message->popBool();
 
 				Data = &Vehicle->data;
 			}
@@ -3013,7 +3024,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->name = message->popString();
 				Building->Disabled = message->popInt16();
 				Building->IsWorking = message->popBool();
-				Building->Wachposten = message->popBool();
+				Building->bSentryStatus = message->popBool();
 
 				Data = &Building->data;
 			}
@@ -3983,11 +3994,18 @@ void cClient::handleMoveJobs ()
 					Vehicle->MoveJobActive = false;
 					Vehicle->rotating = false;
 					// save speed
-					if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+					if ( MJob->waypoints && MJob->waypoints->next )
 					{
-						MJob->SavedSpeed += Vehicle->data.speed;
-						Vehicle->data.speed = 0;
-						if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
+						if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+						{
+							MJob->SavedSpeed += Vehicle->data.speed;
+							Vehicle->data.speed = 0;
+							if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
+						}
+					}
+					else
+					{
+						cLog::write("(Client) something is goning wrong", cLog::eLOG_TYPE_NET_WARNING);
 					}
 				}
 				ActiveMJobs.Delete ( i );
@@ -4265,7 +4283,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "attack_mode: " + iToStr ( Vehicle->AttackMode ) + " attacking: " + iToStr ( Vehicle->Attacking ) + " wachpost: +" + iToStr ( Vehicle->Wachposten ) + " transfer: " + iToStr ( Vehicle->Transfer ) + " ditherx: " + iToStr (Vehicle->ditherX ) + " dithery: " + iToStr ( Vehicle->ditherY );
+	sTmp = "attack_mode: " + iToStr ( Vehicle->AttackMode ) + " attacking: " + iToStr ( Vehicle->Attacking ) + " on sentry: +" + iToStr ( Vehicle->bSentryStatus ) + " transfer: " + iToStr ( Vehicle->Transfer ) + " ditherx: " + iToStr (Vehicle->ditherX ) + " dithery: " + iToStr ( Vehicle->ditherY );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -4328,7 +4346,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "dir: " + iToStr ( Building->dir ) + " menu_active: " + iToStr ( Building->MenuActive ) + " wachpost: +" + iToStr ( Building->Wachposten ) + " attacking_mode: +" + iToStr ( Building->AttackMode ) + " base: " + iToStr ( (long int)Building->base ) + " sub_base: " + iToStr ((long int)Building->SubBase );
+	sTmp = "dir: " + iToStr ( Building->dir ) + " menu_active: " + iToStr ( Building->MenuActive ) + " on sentry: +" + iToStr ( Building->bSentryStatus ) + " attacking_mode: +" + iToStr ( Building->AttackMode ) + " base: " + iToStr ( (long int)Building->base ) + " sub_base: " + iToStr ((long int)Building->SubBase );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 

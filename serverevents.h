@@ -42,8 +42,9 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_STOP_BUILDING,		// a vehicle wants to stop building
 	GAME_EV_WANT_TRANSFER,			// information about a resource transfer
 	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
-	GAME_EV_WANT_EXIT_FIN_VEH,		//
-	GAME_EV_CHANGE_RESOURCES		//
+	GAME_EV_WANT_EXIT_FIN_VEH,		// a client wants to exit a finished vehicle out of a building
+	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
+	GAME_EV_WANT_CHANGE_SENTRY		// a client wants to change the sentry status of a unit
 };
 
 /**
@@ -99,7 +100,7 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
 *@param iPlayer Player who should receive this message
 */
 void sendUnitData( cVehicle *Vehicle, int iPlayer );
-void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer );
+void sendUnitData ( cBuilding *Building, int iPlayer );
 
 /**
 * sends a text message to one or all client

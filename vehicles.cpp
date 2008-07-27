@@ -77,7 +77,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsClearing = false;
 	ClearBig = false;
 	ShowBigBeton = false;
-	Wachposten = false;
+	bSentryStatus = false;
 	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
@@ -116,9 +116,9 @@ cVehicle::~cVehicle ( void )
 		delete autoMJob;
 	}
 
-	if ( Wachposten )
+	if ( bSentryStatus )
 	{
-		owner->DeleteWachpostenV ( this );
+		owner->deleteSentryVehicle ( this );
 	}
 
 	if ( StoredVehicles )
@@ -1752,7 +1752,7 @@ string cVehicle::GetStatusStr ( void )
 			return lngPack.i18n ( "Text~Comp~Moving" );
 		}
 		else
-			if ( Wachposten )
+			if ( bSentryStatus )
 			{
 				return lngPack.i18n ( "Text~Comp~Sentry" );
 			}
@@ -2192,10 +2192,10 @@ void cVehicle::DrawMenu ( void )
 		nr++;
 	}
 
-	// Wachposten:
-	if ( Wachposten || data.can_attack )
+	// Sentry:
+	if ( bSentryStatus || data.can_attack )
 	{
-		if ( SelMenu == nr || Wachposten == true )
+		if ( SelMenu == nr || bSentryStatus == true )
 			scr.y = 21;
 		else
 			scr.y = 0;
@@ -2204,8 +2204,7 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Wachposten = !Wachposten;
-			Wachwechsel();
+			sendChangeSentry ( iID, true );
 			return;
 		}
 
@@ -2461,7 +2460,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
 		nr++;
 
-	if ( Wachposten || data.can_attack )
+	if ( bSentryStatus || data.can_attack )
 		nr++;
 
 	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
@@ -3762,9 +3761,9 @@ void cVehicle::MakeReport ( void )
 							}
 						}
 						else
-							if ( Wachposten )
+							if ( bSentryStatus )
 							{
-								// Wachposten:
+								// on sentry:
 								PlayVoice ( VoiceData.VOIWachposten );
 							}
 							else
@@ -4454,54 +4453,34 @@ void cVehicle::ShowBigDetails ( void )
 	DrawSymbolBig ( SBMetal, COLUMN_3 , y - 2, 160, data.iBuilt_Costs, typ->data.iBuilt_Costs, buffer );
 }
 
-// Führt alle Maßnahmen durch, die mit einem Wachwechsel eintreten:
-void cVehicle::Wachwechsel ( void )
+bool cVehicle::InSentryRange ()
 {
-	if ( Wachposten )
+	sSentry *Sentry;
+	int iOff; 
+	cPlayer *Player;
+
+	iOff = PosX + PosY * Server->Map->size;
+
+	for ( unsigned int i = 0;i < Server->PlayerList->Size();i++ )
 	{
-		owner->AddWachpostenV ( this );
-	}
-	else
-	{
-		owner->DeleteWachpostenV ( this );
-	}
-}
+		Player = (*Server->PlayerList)[i];
 
-// Prüft, ob sich das Vehicle in der Reichweite von einer Wache befindet:
-bool cVehicle::InWachRange ( void )
-{
-	sWachposten *w;
-	int i, off, k;
-	cPlayer *p;
+		if ( Player == owner ) continue;
 
-	off = PosX + PosY * Client->Map->size;
-
-	for ( i = 0;i < game->PlayerList->Size();i++ )
-	{
-		p = (*game->PlayerList)[i];
-
-		if ( p == owner )
-			continue;
-
-		if ( data.is_stealth_land && !p->DetectLandMap[off] )
-			return false;
-
-		if ( data.is_stealth_sea && !p->DetectSeaMap[off] )
-			return false;
+		if ( data.is_stealth_land && !Player->DetectLandMap[iOff] ) return false;
+		if ( data.is_stealth_sea && !Player->DetectSeaMap[iOff] ) return false;
 
 		if ( data.can_drive == DRIVE_AIR )
 		{
-			if ( ! ( p->WachMapAir[off] && p->ScanMap[off] ) )
-				return false;
+			if ( ! ( Player->SentriesMapAir[iOff] && Player->ScanMap[iOff] ) ) return false;
 
-			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenAir.Size();k++ )
+			for ( unsigned int k = 0; k < Player->SentriesAir.Size(); k++ )
 			{
-				w = p->WachpostenAir[k];
+				Sentry = Player->SentriesAir[k];
 
-				if ( w->b && w->b->CanAttackObject ( off, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
 				{
-					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*Client->Map->size, off, false, false, true, true, true );
+					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
 					if ( mjob )
 					{
@@ -4512,9 +4491,9 @@ bool cVehicle::InWachRange ( void )
 					return true;
 				}
 
-				if ( w->v && w->v->CanAttackObject ( off, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
 				{
-					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*Client->Map->size, off, false, w->v->data.can_drive == DRIVE_AIR, true, false, true );
+					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
 					if ( mjob )
 					{
@@ -4528,17 +4507,15 @@ bool cVehicle::InWachRange ( void )
 		}
 		else
 		{
-			if ( ! ( p->WachMapGround[off] && p->ScanMap[off] ) )
-				return false;
+			if ( ! ( Player->SentriesMapGround[iOff] && Player->ScanMap[iOff] ) ) return false;
 
-			// Den finden, der das Vehicle angreifen kann:
-			for ( k = 0;k < p->WachpostenGround.Size();k++ )
+			for ( unsigned int k = 0;k < Player->SentriesGround.Size();k++ )
 			{
-				w = p->WachpostenGround[k];
+				Sentry = Player->SentriesGround[k];
 
-				if ( w->b && w->b->CanAttackObject ( off, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
 				{
-					game->engine->AddAttackJob ( w->b->PosX + w->b->PosY*Client->Map->size, off, false, false, false, true, true );
+					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
 					if ( mjob )
 					{
@@ -4549,9 +4526,9 @@ bool cVehicle::InWachRange ( void )
 					return true;
 				}
 
-				if ( w->v && w->v->CanAttackObject ( off, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
 				{
-					game->engine->AddAttackJob ( w->v->PosX + w->v->PosY*Client->Map->size, off, false, w->v->data.can_drive == DRIVE_AIR, false, false, true );
+					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
 					if ( mjob )
 					{
@@ -5306,7 +5283,7 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 	ptr->PosY = off / Client->Map->size;
 	ptr->Loaded = false;
 	ptr->data.shots = 0;
-	ptr->InWachRange();
+	ptr->InSentryRange();
 
 	owner->DoScan();
 }

@@ -192,3 +192,11 @@ void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, in
 	message->pushInt16 ( Building->iID );
 	Client->sendNetMessage( message );
 }
+
+void sendChangeSentry ( int iUnitID, bool bVehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CHANGE_SENTRY );
+	message->pushInt16 ( iUnitID );
+	message->pushBool ( bVehicle );
+	Client->sendNetMessage( message );
+}

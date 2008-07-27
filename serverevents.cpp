@@ -161,7 +161,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->data.costs );
 
 	// Current state of the unit
-	message->pushBool ( Vehicle->Wachposten );
+	message->pushBool ( Vehicle->bSentryStatus );
 	message->pushInt16 ( Vehicle->BuildRounds );
 	message->pushBool ( Vehicle->IsBuilding );
 	message->pushBool ( Vehicle->IsClearing );
@@ -179,7 +179,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
+void sendUnitData ( cBuilding *Building, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
 
@@ -200,15 +200,15 @@ void sendUnitData ( cBuilding *Building, cMap *Map, int iPlayer )
 	message->pushInt16( Building->data.costs );
 
 	// Current state of the unit
-	message->pushBool ( Building->Wachposten );
+	message->pushBool ( Building->bSentryStatus );
 	message->pushBool ( Building->IsWorking );
 	message->pushInt16 ( Building->Disabled );
 	message->pushString ( Building->name );
 
 	// Data for identifying the unit by the client
-	if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building ) message->pushBool( true );
+	if ( Server->Map->GO[Building->PosX+Building->PosY*Server->Map->size].subbase == Building ) message->pushBool( true );
 	else message->pushBool( false );
-	if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building ) message->pushBool( true );
+	if ( Server->Map->GO[Building->PosX+Building->PosY*Server->Map->size].base == Building ) message->pushBool( true );
 	else message->pushBool( false );
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
