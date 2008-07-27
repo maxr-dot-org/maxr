@@ -3978,7 +3978,7 @@ void cClient::handleMoveJobs ()
 					{
 						MJob->SavedSpeed += Vehicle->data.speed;
 						Vehicle->data.speed = 0;
-						Vehicle->ShowDetails();
+						if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 					}
 				}
 				ActiveMJobs.Delete ( i );
