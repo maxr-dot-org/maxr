@@ -22,13 +22,22 @@
 cVehicleIterator::cVehicleIterator(sVehicleList *vli)
 {
 	vehicleListItem = vli;
+	if ( vli && vli->vehicle )
+	{
+		end = false;
+		rend = false;
+	}
+	else
+	{
+		end = true;
+		rend = true;
+	}
 }
 
 unsigned int cVehicleIterator::size()
 {
 	sVehicleList* vli = vehicleListItem;
 
-	if (vli == 0) return 0;
 	//rewind
 	while ( vli->prev )
 	{
@@ -46,56 +55,105 @@ unsigned int cVehicleIterator::size()
 
 cVehicle* cVehicleIterator::operator->() const
 {
-	return vehicleListItem->vehicle;
+	if ( !end && !rend )
+		return vehicleListItem->vehicle;
+	else
+		return NULL;
 }
 
 cVehicle& cVehicleIterator::operator*() const
 {
-	return *(vehicleListItem->vehicle);
+	cVehicle* vehicle = NULL;
+	if (!end && !rend ) vehicle = vehicleListItem->vehicle;
+
+	return *vehicle;
 }
 
 cVehicleIterator cVehicleIterator::operator++(int)
 {
 	cVehicleIterator vehicles = *this;
-	if ( vehicleListItem ) vehicleListItem = vehicleListItem->next;
+	if (end) return vehicles;
+	
+	if (rend)
+	{
+		rend = false;
+	}
+	else
+	{
+		vehicleListItem = vehicleListItem->next;
+	}
+	if ( !vehicleListItem->vehicle ) end = true;
+	
 	return vehicles;
 }
 
 cVehicleIterator cVehicleIterator::operator--(int)
 {
 	cVehicleIterator vehicles = *this;
-	if ( vehicleListItem ) vehicleListItem = vehicleListItem->prev;
+	if (rend) return vehicles;
+	
+	if ( vehicleListItem->prev ) 
+	{
+		end = false;
+		vehicleListItem = vehicleListItem->prev;
+	}
+	else
+	{
+		rend = true;
+	}
+
 	return vehicles;
 }
 
 bool cVehicleIterator::operator ==(cVehicle* v) const
 {
-	if ( v == NULL && vehicleListItem == NULL ) return true;
-	if ( vehicleListItem && vehicleListItem->vehicle == v ) return true;
+	if ( v == NULL && (end || rend) ) return true;
+	if ( vehicleListItem->vehicle == v ) return true;
 
 	return false;
 }
 
 cVehicleIterator::operator cVehicle *() const
 {
+	if ( end || rend ) return NULL;
 	return vehicleListItem->vehicle;
 }
 
-cVehicleIterator::operator bool() const
+void cVehicleIterator::insert( cVehicle* vehicle )
 {
-	return ( vehicleListItem != NULL );
+	sVehicleList* vli = new sVehicleList;
+	
+	vli->next = vehicleListItem;
+	vli->prev = vehicleListItem->prev;
+	
+	if ( vli->prev )
+		vli->prev->next = vli;
+
+	vli->next->prev = vli;
+
+	vli->vehicle = vehicle;
+	
 }
 
-cBuildingIterator::cBuildingIterator(sBuildingList *vli)
+cBuildingIterator::cBuildingIterator(sBuildingList *bli)
 {
-	buildingListItem = vli;
+	buildingListItem = bli;
+	if ( bli && bli->building )
+	{
+		end = false;
+		rend = false;
+	}
+	else
+	{
+		end = true;
+		rend = true;
+	}
 }
 
 unsigned int cBuildingIterator::size()
 {
 	sBuildingList* bli = buildingListItem;
 
-	if (bli == 0) return 0;
 	//rewind
 	while ( bli->prev )
 	{
@@ -113,114 +171,172 @@ unsigned int cBuildingIterator::size()
 
 cBuilding* cBuildingIterator::operator->() const
 {
-	return buildingListItem->building;
+	if ( !end && !rend )
+		return buildingListItem->building;
+	else
+		return NULL;
 }
 
 cBuilding& cBuildingIterator::operator*() const
 {
-	return *(buildingListItem->building);
+	cBuilding* building = NULL;
+	if (!end && !rend ) building = buildingListItem->building;
+
+	return *building;
 }
 
 cBuildingIterator cBuildingIterator::operator++(int)
 {
 	cBuildingIterator buildings = *this;
-	if ( buildingListItem ) buildingListItem = buildingListItem->next;
+	if (end) return buildings;
+	
+	if (rend)
+	{
+		rend = false;
+	}
+	else
+	{
+		buildingListItem = buildingListItem->next;
+	}
+	if ( !buildingListItem->building ) end = true;
+	
 	return buildings;
 }
 
 cBuildingIterator cBuildingIterator::operator--(int)
 {
 	cBuildingIterator buildings = *this;
-	if ( buildingListItem ) buildingListItem = buildingListItem->prev;
+	if (rend) return buildings;
+	
+	if ( buildingListItem->prev ) 
+	{
+		end = false;
+		buildingListItem = buildingListItem->prev;
+	}
+	else
+	{
+		rend = true;
+	}
+
 	return buildings;
 }
 
 bool cBuildingIterator::operator ==(cBuilding* b) const
 {
-	if ( b == NULL && buildingListItem == NULL ) return true;
-	if ( buildingListItem && buildingListItem->building == b ) return true;
+	if ( b == NULL && (end || rend) ) return true;
+	if ( buildingListItem->building == b ) return true;
 
 	return false;
 }
 
 cBuildingIterator::operator cBuilding*() const
 {
+	if ( end || rend ) return NULL;
 	return buildingListItem->building;
 }
 
-cBuildingIterator::operator bool() const
+void cBuildingIterator::insert( cBuilding* building )
 {
-	return ( buildingListItem != NULL );
+	sBuildingList* bli = new sBuildingList;
+	
+	bli->next = buildingListItem;
+	bli->prev = buildingListItem->prev;
+	
+	if ( bli->prev )
+		bli->prev->next = bli;
+
+	bli->next->prev = bli;
+
+	bli->building = building;
+	
+}
+
+cVehicleIterator cMapField::getVehicles()
+{
+	cVehicleIterator v(vehicles);
+	return v;
+}
+
+cVehicleIterator cMapField::getPlanes()
+{
+	cVehicleIterator v(planes);
+	return v;
+}
+
+cBuildingIterator cMapField::getBuildings()
+{
+	cBuildingIterator b(buildings);
+	return b;
+}
+
+
+cBuilding* cMapField::getTopBuilding()
+{
+	cBuildingIterator buildingIterator( buildings );
+
+
+	if ( buildingIterator && buildingIterator->data.is_base )
+	{
+		return buildingIterator;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+cBuilding* cMapField::getBaseBuilding()
+{
+	cBuildingIterator building (buildings);
+	
+	while ( !building.end )
+	{
+		if ( building->data.is_base ) return building;
+		building++;
+	}
+	
+	return NULL; 
 }
 
 cMapField::cMapField()
 {
-	vehicleList = NULL;
-	planeList = NULL;
-	buildingList = NULL;
+	vehicles = new sVehicleList;
+	vehicles->next = NULL;
+	vehicles->prev = NULL;
+	vehicles->vehicle = NULL;
+
+	planes = new sVehicleList;
+	planes->next = NULL;
+	planes->prev = NULL;
+	planes->vehicle = NULL;
+
+	buildings = new sBuildingList;
+	buildings->next = NULL;
+	buildings->prev = NULL;
+	buildings->building = NULL;
 }
 
 cMapField::~cMapField()
 {
-	while ( vehicleList )
+	while ( vehicles )
 	{
-		sVehicleList* vli = vehicleList->next;
-		delete vehicleList;
-		vehicleList = vli;
+		sVehicleList* vli = vehicles->next;
+		delete vehicles;
+		vehicles = vli;
 	}
-	while ( planeList )
+	while ( planes )
 	{
-		sVehicleList* vli = planeList->next;
-		delete planeList;
-		planeList = vli;
+		sVehicleList* vli = planes->next;
+		delete planes;
+		planes = vli;
 	}
-	while( buildingList )
+	while( buildings )
 	{
-		sBuildingList* bli = buildingList->next;
-		delete buildingList;
-		buildingList = bli;
+		sBuildingList* bli = buildings->next;
+		delete buildings;
+		buildings = bli;
 	}
 }
-
-cVehicleIterator cMapField::getVehicles() const
-{
-	cVehicleIterator vehicles(this->vehicleList);
-	return vehicles;
-}
-
-cVehicleIterator cMapField::getPlanes() const
-{
-	cVehicleIterator planes(this->vehicleList);
-	return planes;
-}
-
-cBuildingIterator cMapField::getBuildings() const
-{
-	cBuildingIterator buildings(this->buildingList);
-	return buildings;
-}
-
-
-cBuilding* cMapField::getTopBuilding() const
-{
-	cBuildingIterator building(this->buildingList);
-	if ( building && !building->data.is_base )
-		return building;
-	else
-		return NULL;
-}
-
-cBuilding* cMapField::getBaseBuilding() const
-{
-	cBuildingIterator building(this->buildingList);
-	while ( building )
-	{
-		if ( building->data.is_base ) return building;
-	}
-
-	return NULL;
-}
-
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap ( void )
@@ -811,4 +927,84 @@ void cMap::deleteRubble( cBuilding* rubble )
 			rubble->next->prev = rubble->prev;
 	}
 	delete rubble;
+}
+
+bool cMap::addBuilding( cBuilding* building, unsigned int offset )
+{
+	return addBuilding( building, offset%size, offset/size );
+}
+
+bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
+{
+	if ( x > size || y > size ) return false;
+	if ( building->data.is_base && building->data.is_big ) return false; //big base building are not implemented
+	unsigned int offset = x + y * size;
+
+	//TODO: check
+	if ( building->data.is_big )
+	{
+		fields[offset           ].getBuildings().insert( building );
+		fields[offset + 1       ].getBuildings().insert( building );
+		fields[offset + size    ].getBuildings().insert( building );
+		fields[offset + size + 1].getBuildings().insert( building );
+
+		GO[offset].top = building;
+		GO[offset + 1].top = building;
+		GO[offset + size].top = building;
+		GO[offset + size + 1].top = building;
+
+	}
+	else
+	{
+		cBuildingIterator buildingIterator = fields[offset].getBuildings();
+		if ( building->data.is_base )
+		{
+			while( !buildingIterator.end && !buildingIterator->data.is_base ) buildingIterator++;
+			GO[offset].subbase = GO[offset].base;
+			GO[offset].base = building;
+		}
+		else
+		{
+			GO[offset].top = building;
+		}
+
+		buildingIterator.insert( building );
+	}
+
+	return true;
+
+}
+
+bool cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
+{
+	return addVehicle( vehicle, offset%size, offset/size );
+}
+
+bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
+{
+	if ( x > size || y > size ) return false;
+	unsigned int offset = x + y * size;
+
+	//TODO: check
+
+	if ( vehicle->data.can_drive == DRIVE_AIR )
+	{
+		fields[offset].getPlanes().insert( vehicle );
+	}
+	else
+	{
+		fields[offset].getVehicles().insert( vehicle );
+	}
+
+	//backward compatibility 
+	if ( vehicle->data.can_drive == DRIVE_AIR )
+	{
+		GO[offset].plane = vehicle;
+	}
+	else
+	{
+		GO[offset].vehicle = vehicle;
+	}
+
+	return true;
 }
