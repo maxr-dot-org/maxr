@@ -3501,18 +3501,29 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n\
 GNU General Public License for more details.\n\n";
 
+	// look for paths in argv[]
+	if ( argc > 1 ) sMAXPath = argv[1];
+	if ( argc > 2 ) sOutputPath = argv[2];
+
 	while ( 1 )
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:\n";
 #ifdef EIKO
 		sMAXPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\";
 #else
-		char temp[1024];
-		temp[1023] = '\0';
-		cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
-		cin.seekg(0,ios::end);
-		cin.clear();
-		sMAXPath = temp;
+		if ( argc < 2 || sMAXPath.size() == 0 )
+		{
+			char temp[1024];
+			temp[1023] = '\0';
+			cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
+			cin.seekg(0,ios::end);
+			cin.clear();
+			sMAXPath = temp;
+		}
+		else
+		{
+			cout << sMAXPath << "\n";
+		}
 #endif
 
 		//now testing different input variations
@@ -3565,7 +3576,7 @@ GNU General Public License for more details.\n\n";
 		
 		cout << "Couldn't find valid M.A.X. installation in given folder:\n";
 		cout << "No max.res found.\n";
-
+		sMAXPath.clear();
 	}
 
 	while (1)
@@ -3577,12 +3588,19 @@ GNU General Public License for more details.\n\n";
 		//sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		sOutputPath = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
-		char temp[1024];
-		temp[1023] = '\0';
-		cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
-		cin.seekg(0,ios::end);
-		cin.clear();
-		sOutputPath = temp;
+		if ( argc < 3 || sOutputPath.size() == 0 )
+		{
+			char temp[1024];
+			temp[1023] = '\0';
+			cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
+			cin.seekg(0,ios::end);
+			cin.clear();
+			sOutputPath = temp;
+		}
+		else
+		{
+			cout << sOutputPath << "\n";
+		}
 #endif
 		//test for valid output folder
 		string testFileName = "max.xml";
@@ -3605,6 +3623,7 @@ GNU General Public License for more details.\n\n";
 		catch ( InstallException ) {}
 
 		cout << "Couldn't find valid M.A.X.R. installation in given folder.\n";
+		sOutputPath.clear();
 	}
 
 	//check for available languages for voices
