@@ -45,6 +45,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_ATTACKJOB_IMPACT,		// makes impact and target unlocking of an attackjob
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
+	GAME_EV_CONTINUE_PATH_ANSWER,	// 
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
 	GAME_EV_NEW_SUBBASE,			// a new subbase
 	GAME_EV_DELETE_SUBBASE,			// delete a subbase
@@ -132,7 +133,8 @@ void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBui
 *@param EscapeX X coordinate to which he wants do move now
 *@param EscapeY Y coordinate to which he wants do move now
 */
-void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
+void sendWantEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
+void sendWantContinuePathBuild( cVehicle *Vehicle, int iNextX, int iNextY );
 void sendWantStopBuilding( int iVehicleID );
 /**
 * sends that the client wants to tranfer resources

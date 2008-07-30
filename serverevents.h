@@ -39,6 +39,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_ATTACKJOB_FINISHED,		// the client has finished animating the muzzle flash
 	GAME_EV_WANT_BUILD,				// a vehicle wants to start building a building
 	GAME_EV_END_BUILDING,			// a vehicle has finished building and will leave the building lot now
+	GAME_EV_WANT_CONTINUE_PATH,		// 
 	GAME_EV_WANT_STOP_BUILDING,		// a vehicle wants to stop building
 	GAME_EV_WANT_TRANSFER,			// information about a resource transfer
 	GAME_EV_WANT_BUILDLIST,			// a building wants his buildlist to be verified by the server and start work
@@ -145,6 +146,7 @@ void sendResources(  cVehicle *Vehicle, cMap *Map );
 *@author alzi alias DoctorDeath
 */
 void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
+void sendContinuePathAnswer( bool bOK, int iVehicleID, int iPlayer );
 void sendStopBuild ( int iVehicleID, int iOff, int iNewPos, int iPlayer  );
 /**
 * send information about a new subbase.

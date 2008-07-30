@@ -132,11 +132,20 @@ void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBui
 	Client->sendNetMessage( message );
 }
 
-void sendEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
+void sendWantEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_END_BUILDING );
 	message->pushInt16 ( EscapeY );
 	message->pushInt16 ( EscapeX );
+	message->pushInt16 ( Vehicle->iID );
+	Client->sendNetMessage( message );
+}
+
+void sendWantContinuePathBuild( cVehicle *Vehicle, int iNextX, int iNextY )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CONTINUE_PATH );
+	message->pushInt16 ( iNextY );
+	message->pushInt16 ( iNextX );
 	message->pushInt16 ( Vehicle->iID );
 	Client->sendNetMessage( message );
 }

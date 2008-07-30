@@ -638,14 +638,76 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			// drive away from the building lot
 			cMJobs *MJob = new cMJobs( Map, Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, false, Vehicle->iID, PlayerList, true );
-			MJob->CalcPath();
-			MJob->CalcNextDir();
-			sendMoveJobServer ( MJob, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			if ( MJob->CalcPath() )
 			{
-				sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
+				MJob->CalcNextDir();
+				sendMoveJobServer ( MJob, Vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
+				}
+				addActiveMoveJob ( MJob );
 			}
-			addActiveMoveJob ( MJob );
+			else
+			{
+				delete MJob;
+				Vehicle->mjob = NULL;
+			}
+		}
+		break;
+	case GAME_EV_WANT_CONTINUE_PATH:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			int iNextX = message->popInt16();
+			int iNextY = message->popInt16();
+
+			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
+
+			// check whether the exit field is free
+			cMJobs *MJob = new cMJobs( Map, Vehicle->PosX+Vehicle->PosY*Map->size, iNextX+iNextY*Map->size, false, Vehicle->iID, PlayerList, true );
+			if ( Vehicle->checkPathBuild ( iNextX+iNextY*Map->size, Vehicle->BuildingTyp, Map ) && MJob->CalcPath() )
+			{
+				MJob->CalcNextDir();
+
+				addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
+				Vehicle->IsBuilding = false;
+				Vehicle->BuildPath = false;
+
+				sendUnitData ( Vehicle, Vehicle->owner->Nr );
+				sendContinuePathAnswer ( true, Vehicle->iID, Vehicle->owner->Nr );
+				sendMoveJobServer ( MJob, Vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
+					sendContinuePathAnswer ( true, Vehicle->iID, *Vehicle->SeenByPlayerList[i]);
+					sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
+				}
+				addActiveMoveJob ( MJob );
+			}
+			else
+			{
+				delete MJob;
+				Vehicle->mjob = NULL;
+
+				if ( UnitsData.building[Vehicle->BuildingTyp].data.is_base || UnitsData.building[Vehicle->BuildingTyp].data.is_connector )
+				{
+					addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
+					Vehicle->IsBuilding = false;
+					Vehicle->BuildPath = false;
+					sendUnitData ( Vehicle, Vehicle->owner->Nr );
+					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+					{
+						sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
+					}
+				}
+				sendContinuePathAnswer ( false, Vehicle->iID, Vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendContinuePathAnswer ( false, Vehicle->iID, Vehicle->owner->Nr );
+				}
+			}
 		}
 		break;
 	case GAME_EV_WANT_STOP_BUILDING:

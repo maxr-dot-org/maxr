@@ -32,6 +32,7 @@
 class cPlayer;
 class cMJobs;
 class cAutoMJob;
+class cMap;
 
 // Enum für die Symbole
 #ifndef D_eSymbols
@@ -216,7 +217,7 @@ public:
 	int CalcCommandoChance(bool steal);
 	void CommandoOperation(int off,bool steal);
 	void DeleteStored(void);
-	bool CheckPathBuild(int iOff, int iBuildingTyp);
+	bool checkPathBuild( int iOff, int iBuildingTyp, cMap *Map );
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath

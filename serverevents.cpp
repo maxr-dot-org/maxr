@@ -386,6 +386,14 @@ void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int
 	Server->sendNetMessage( message, iPlayer );
 }
 
+void sendContinuePathAnswer( bool bOK, int iVehicleID, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_CONTINUE_PATH_ANSWER );
+	message->pushBool ( bOK );
+	message->pushInt16( iVehicleID );
+	Server->sendNetMessage( message, iPlayer );
+}
+
 void sendStopBuild ( int iVehicleID, int iOff, int iNewPos, int iPlayer  )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_STOP_BUILD );

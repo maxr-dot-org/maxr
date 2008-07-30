@@ -921,18 +921,18 @@ void cVehicle::GenerateName ( void )
 	}
 }
 
-bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
+bool cVehicle::checkPathBuild ( int iOff, int iBuildingTyp, cMap *Map )
 {
 	if ( UnitsData.building[iBuildingTyp].data.is_base )
 	{
-		if ( ( ( Client->Map->GO[iOff].base && ! ( Client->Map->GO[iOff].base->data.is_road || Client->Map->GO[iOff].base->data.is_platform ) ) || ( Client->Map->GO[iOff].top && !Client->Map->GO[iOff].top->data.is_connector ) ) )
+		if ( ( ( Map->GO[iOff].base && ! ( Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_platform ) ) || ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector ) ) )
 		{
 			return false;
 		}
 	}
 	else
 	{
-		if ( Client->Map->GO[iOff].top && !Client->Map->GO[iOff].top->data.is_connector )
+		if ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector )
 		{
 			return false;
 		}
@@ -940,14 +940,14 @@ bool cVehicle::CheckPathBuild ( int iOff, int iBuildingTyp )
 
 	if ( UnitsData.building[iBuildingTyp].data.build_on_water )
 	{
-		if ( !Client->Map->IsWater ( iOff ) )
+		if ( !Map->IsWater ( iOff ) )
 		{
 			return false;
 		}
 	}
 	else
 	{
-		if ( Client->Map->IsWater ( iOff ) && ! ( Client->Map->GO[iOff].base && Client->Map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
+		if ( Map->IsWater ( iOff ) && ! ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
 		{
 			return false;
 		}

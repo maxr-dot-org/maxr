@@ -743,7 +743,7 @@ int cClient::checkUser( bool bChange )
 
 				int iX, iY;
 				mouse->GetKachel ( &iX, &iY );
-				sendEndBuilding ( SelectedVehicle, iX, iY );
+				sendWantEndBuilding ( SelectedVehicle, iX, iY );
 			}
 			else
 			{
@@ -3054,8 +3054,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
 
-				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
-				if ( bWasBuilding && !Vehicle->IsBuilding )StopFXLoop ( iObjectStream );
+				if ( SelectedVehicle && Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
+				if ( bWasBuilding && !Vehicle->IsBuilding ) StopFXLoop ( iObjectStream );
 				if ( Vehicle->BuildPath && Vehicle->BuildRounds == 0 ) continuePathBuilding ( Vehicle );
 			}
 			else if ( Building == SelectedBuilding ) Building->ShowDetails();
@@ -3362,7 +3362,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
 			Vehicle->IsBuilding = true;
 
-			if ( Vehicle == SelectedVehicle )
+			if ( SelectedVehicle && Vehicle == SelectedVehicle )
+			{
+				StopFXLoop ( iObjectStream );
+				iObjectStream = Vehicle->PlayStram();
+			}
+		}
+		break;
+	case GAME_EV_CONTINUE_PATH_ANSWER:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
+
+			Vehicle->BuildPath = message->popBool();
+
+			if ( SelectedVehicle && Vehicle == SelectedVehicle )
 			{
 				StopFXLoop ( iObjectStream );
 				iObjectStream = Vehicle->PlayStram();
@@ -4435,32 +4449,30 @@ void cClient::doGameActions()
 
 void cClient::continuePathBuilding ( cVehicle *Vehicle )
 {
-	if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
-	{
-		if ( Vehicle->BandX < Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX - 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
-		{
-			sendEndBuilding ( Vehicle, Vehicle->PosX-1, Vehicle->PosY );
-		}
-		else if ( Vehicle->BandX > Vehicle->PosX && Vehicle->CheckPathBuild ( Vehicle->PosX + 1 + Vehicle->PosY*Map->size, Vehicle->BuildingTyp ) )
-		{
-			sendEndBuilding ( Vehicle, Vehicle->PosX+1, Vehicle->PosY );
-		}
-		else if ( Vehicle->BandY < Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY - 1 ) *Map->size, Vehicle->BuildingTyp ) )
-		{
-			sendEndBuilding ( Vehicle, Vehicle->PosX, Vehicle->PosY-1 );
-		}
-		else if ( Vehicle->BandY > Vehicle->PosY && Vehicle->CheckPathBuild ( Vehicle->PosX + ( Vehicle->PosY + 1 ) *Map->size, Vehicle->BuildingTyp ) )
-		{
-			sendEndBuilding ( Vehicle, Vehicle->PosX, Vehicle->PosY+1 );
-		}
-		else
-		{
-			Vehicle->BuildPath = false;
-		}
-	}
-	else
+	if ( Vehicle->PosX == Vehicle->BandX && Vehicle->PosY == Vehicle->BandY )
 	{
 		Vehicle->BuildPath = false;
+		return;
+	}
+
+	if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
+	{
+		if ( Vehicle->BandX < Vehicle->PosX )
+		{
+			sendWantContinuePathBuild ( Vehicle, Vehicle->PosX-1, Vehicle->PosY );
+		}
+		else if ( Vehicle->BandX > Vehicle->PosX )
+		{
+			sendWantContinuePathBuild ( Vehicle, Vehicle->PosX+1, Vehicle->PosY );
+		}
+		else if ( Vehicle->BandY < Vehicle->PosY )
+		{
+			sendWantContinuePathBuild ( Vehicle, Vehicle->PosX, Vehicle->PosY-1 );
+		}
+		else if ( Vehicle->BandY > Vehicle->PosY )
+		{
+			sendWantContinuePathBuild ( Vehicle, Vehicle->PosX, Vehicle->PosY+1 );
+		}
 	}
 }
 
