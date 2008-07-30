@@ -3577,6 +3577,8 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit 
 	}
 	// startup:
 	if ( !bInit ) AddedVehicle->StartUp = 10;
+
+	mouseMoveCallback(true);
 }
 
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
@@ -3634,6 +3636,8 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 		}
 	}
 	if ( !bInit ) AddedBuilding->StartUp = 10;
+
+	mouseMoveCallback(true);
 }
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
