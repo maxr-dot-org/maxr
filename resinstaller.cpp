@@ -3486,6 +3486,7 @@ int main ( int argc, char* argv[] )
     freopen( "CON", "w", stderr );
     // assign SDL_Quit() function to exit event
     atexit(SDL_Quit);	
+
 	cout << "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to\n\
 M.A.X.R. for original game look and feel. For this you need an existing\n\
 M.A.X. installation or an original M.A.X. CD available.\n\n";
@@ -3505,6 +3506,15 @@ GNU General Public License for more details.\n\n";
 	if ( argc > 1 ) sMAXPath = argv[1];
 	if ( argc > 2 ) sOutputPath = argv[2];
 
+	//create log file
+	logFile = SDL_RWFromFile("resinstaller.log", "w" );
+	if ( logFile == NULL )
+	{
+		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
+	}
+
+	wasError = 0;
+		
 	while ( 1 )
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:\n";
@@ -3522,6 +3532,7 @@ GNU General Public License for more details.\n\n";
 		}
 		else
 		{
+			writeLog( "sMAXPath from command line: " + sMAXPath );
 			cout << sMAXPath << "\n";
 		}
 #endif
@@ -3599,6 +3610,7 @@ GNU General Public License for more details.\n\n";
 		}
 		else
 		{
+			writeLog( "sOutputPath from command line: " + sOutputPath );
 			cout << sOutputPath << "\n";
 		}
 #endif
@@ -3627,7 +3639,8 @@ GNU General Public License for more details.\n\n";
 	}
 
 	//check for available languages for voices
-	string testFileName = "F001.WAV";
+	string testFileNameLowerCase = "f001.wav";
+	string testFileNameUpperCase = "F001.WAV";
 
 	bool german = false, italian = false, french = false;
 	bool uppercase;
@@ -3635,7 +3648,7 @@ GNU General Public License for more details.\n\n";
 	SDL_RWops* testFile;
 	try
 	{
-		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileNameLowerCase, "r" );
 		german = true;
 		iLanguages++;
 		uppercase = false;
@@ -3645,7 +3658,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileNameUpperCase, "r" );
 		if ( german == false ) iLanguages++;
 		german = true;
 		uppercase = true;
@@ -3655,7 +3668,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileNameLowerCase, "r" );
 		italian = true;
 		iLanguages++;
 		uppercase = false;
@@ -3665,7 +3678,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileNameUpperCase, "r" );
 		if ( italian == false ) iLanguages++;
 		italian = true;
 		uppercase = true;
@@ -3675,7 +3688,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileNameLowerCase, "r" );
 		french = true;
 		iLanguages++;
 		uppercase = false;
@@ -3685,7 +3698,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName, "r" );
+		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileNameUpperCase, "r" );
 		if ( french == false ) iLanguages++;
 		french = true;
 		uppercase = true;
@@ -3769,16 +3782,6 @@ GNU General Public License for more details.\n\n";
 		}
 	}
 
-
-	//create log file
-	logFile = SDL_RWFromFile("resinstaller.log", "w" );
-	if ( logFile == NULL )
-	{
-		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
-	}
-
-	wasError = 0;
-		
 	//init res converter
 	SDL_RWseek( res, 0, SEEK_END );
 	lEndOfFile = SDL_RWtell (res);
