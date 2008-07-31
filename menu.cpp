@@ -4219,6 +4219,20 @@ void cMultiPlayerMenu::runNetworkMenu()
 			font->showText(20, 423, ChatStr);
 		}
 
+		// click on point for ready?
+		int iPlayerIndex;
+		for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.Size(); iPlayerIndex++ )
+		{
+			if (PlayerList[iPlayerIndex] == ActualPlayer) break;
+		}
+		if ( b && !lb && mouse->x >= 611 && mouse->x < 611+10 && mouse->y >= 297 && mouse->y < 297+10+16*iPlayerIndex )
+		{
+			PlayFX ( SoundData.SNDMenuButton );
+			ReadyList[iPlayerIndex] = !ReadyList[iPlayerIndex];
+			displayPlayerList();
+			sendIdentification();
+		}
+
 		// show chat log if necessary
 		showChatLog();
 		// show other data if necessary
