@@ -623,7 +623,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	DefaultWater=0;
 
-	fields = new cMapField[size*size];
+	//fields = new cMapField[size*size];
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
 	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
@@ -637,7 +637,7 @@ void cMap::DeleteMap ( void )
 {
 	if ( !Kacheln ) return;
 	free ( Kacheln );
-	delete[] fields;
+	//delete[] fields;
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
