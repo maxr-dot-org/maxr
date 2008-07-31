@@ -485,7 +485,7 @@ bool cMap::LoadMap ( string filename )
 	szFileTyp[3] = '\0';
 	if( strcmp( szFileTyp, "WRL" ) != 0 && strcmp( szFileTyp, "WRX" ) != 0  )
 	{
-		cLog::write("Wrong file format", cLog::eLOG_TYPE_WARNING);
+		cLog::write("Wrong file format: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose( fpMapFile );
 		return false;
 	}
