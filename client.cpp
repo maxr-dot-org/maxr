@@ -441,6 +441,7 @@ int cClient::checkUser( bool bChange )
 		{
 			bChangeObjectName = false;
 			// TODO: no engine: Change names of units
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			/*if ( SelectedVehicle )
 			{
 				engine->ChangeVehicleName ( SelectedVehicle->PosX,SelectedVehicle->PosY,InputStr,false,SelectedVehicle->data.can_drive==DRIVE_AIR );
@@ -697,6 +698,7 @@ int cClient::checkUser( bool bChange )
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
 		{
 			// TODO: Exit vehcile
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			//SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate, mouse->GetKachelOff(), false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
@@ -704,6 +706,7 @@ int cClient::checkUser( bool bChange )
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedVehicle && SelectedVehicle->ActivatingVehicle )
 		{
 			// TODO: Exit vehcile
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			//SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
 			PlayFX ( SoundData.SNDActivate );
 			mouseMoveCallback ( true );
@@ -717,18 +720,22 @@ int cClient::checkUser( bool bChange )
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
 			// TODO: Load vehcile
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
 			// TODO: Load vehcile
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
 			// TODO: rearm
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
 			// TODO: repair
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
 		{
@@ -797,10 +804,12 @@ int cClient::checkUser( bool bChange )
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 				{
 					// TODO: add commando steal
+					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 				{
 					// TODO: add commando disable
+					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 				}
 				else
 					// select the unit:
