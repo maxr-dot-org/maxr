@@ -344,35 +344,34 @@ void RunMPMenu ( void )
 
 		if (btn_host.CheckClick(x, y, down, up))
 		{
-#ifdef RELEASE
-			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-#else
 			cMultiPlayerMenu m(true);
 			MultiPlayerMenu = &m;
 			m.runNetworkMenu();
 			MultiPlayerMenu = 0;
 			break;
-#endif
 		}
 		if (btn_client.CheckClick(x, y, down, up))
 		{
-#ifdef RELEASE
-			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-#else
 			cMultiPlayerMenu m(false);
 			MultiPlayerMenu = &m;
 			m.runNetworkMenu();
 			MultiPlayerMenu = 0;
 			break;
-#endif
 		}
 		if (btn_new_hot.CheckClick(x, y, down, up))
 		{
+#ifdef RELEASE
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+#else
 			HeatTheSeat();
 			break;
+#endif
 		}
 		if (btn_load_hot.CheckClick(x, y, down, up))
 		{
+#ifdef RELEASE
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+#else
 			if (ShowDateiMenu(false) != -1)
 			{
 				cMap *map;
@@ -391,6 +390,7 @@ void RunMPMenu ( void )
 			prepareMenu();
 			RunSPMenu();
 			break;
+#endif
 		}
 		if (btn_back.CheckClick(x, y, down, up))
 		{
@@ -5234,7 +5234,8 @@ int ShowDateiMenu ( bool bSave )
 
 		if (bSave && btn_save.CheckClick(x, y, down, up))
 		{
-			if ( selected != -1 )
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+			/*if ( selected != -1 )
 			{
 				ShowFiles ( files,offset,selected,true,false,false, rDialog );
 				if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
@@ -5254,19 +5255,20 @@ int ShowDateiMenu ( bool bSave )
 				}
 				ShowFiles ( files,offset,selected,true,false,false, rDialog );
 			}
-			SHOW_SCREEN
+			SHOW_SCREEN*/
 			mouse->draw ( false,screen );
 		}
 
 		if (!bSave && btn_load.CheckClick(x, y, down, up))
 		{
-			if ( selected != -1 )
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+			/*if ( selected != -1 )
 			{
 				ShowFiles ( files,offset,selected,false,false,false, rDialog );
 				delete files;
 				return 1;
 			}
-			SHOW_SCREEN
+			SHOW_SCREEN*/
 			mouse->draw ( false,screen );
 		}
 

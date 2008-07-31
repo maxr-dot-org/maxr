@@ -2231,7 +2231,9 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			ShowStorage();
+			// TODO: implement activating
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			// ShowStorage();
 			return;
 		}
 
