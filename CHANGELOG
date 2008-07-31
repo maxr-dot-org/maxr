@@ -1,3 +1,16 @@
+M.A.X. Reloaded 0.x.y
+=======================================================================
+-written complete new network code
+-changed game to server-client structure
+-disabled hotseat games for release
+-disabled loading/saving
+-included muzzletypes in vehicle XML's
+-added support for original WRL mapfiles; support for old format excluded
+-implemented attacking
+-implemented building
+-implemented moving
+-disabled all other functions
+
 M.A.X. Reloaded 0.1.5
 =======================================================================
 -added new language hungarian (HUN)

@@ -23,28 +23,29 @@ t		hitpoints on/off
 f		color on/off
 n		shild on/off
 d		study on/off
-LShift		calculate path (but don't move)
+LShift		[*not working*] calculate path (but don't move)
 ESC		end game
 
 COMMANDS
 
 In-game console (TAB or chat-button) offers a variet of commands:
 
-fps [on/off]      [*not working*]shows frames per second
-com [on/off]      [*not working*] shows network traffic (multiplayer)
 base [server/client/off]     shows the informations of the client or the server(only available on the host) to basecamps
-wache [on/off]    shows covered areas
-fx [on/off]       shows additional information to special effects
-ping              [*not working*] checks connectivity in multiplayer
-trace [server/client/off]    [*not working*] shows additional information of the client or the server(only available on the host) about current field
-log [on/off]      [*not working*] creats a logfile by engine
-[show/hide] log   shows log (if active)
+sentry [server/off]          shows covered areas by unity on sentry
+fx [on/off]                  shows additional information to special effects
+trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
+ajobs [on/off]               shows additional information about attackjobs
+fps [on/off]                 [*not working*] shows frames per second
+com [on/off]                 [*not working*] shows network traffic (multiplayer)
+log [on/off]                 [*not working*] creats a logfile by engine
+[show/hide] log              [*not working*] shows log (if active)
+ping                         [*not working*] checks connectivity in multiplayer
 
 Next commands are considered as cheats and will show up in gamechat
 
+survey            shows all mapresources (only in singleplayer or on the host)
 color [0-7]       [*not working*] sets new color for active player
 fog off           [*not working*] disabled fog for a short period
-survey            [*not working*] shows all mapresources
 credits           [*not working*] player gets +1000 credits
 kill [x] [y]      [*not working*] kills whatever is on position x,y
 god off           [*not working*] creates a godless world
