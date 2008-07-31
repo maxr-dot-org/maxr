@@ -1706,6 +1706,7 @@ void cVehicle::DrawPath ( void )
 // Dreht das Vehicle in die angegebene Richtung:
 void cVehicle::RotateTo ( int Dir )
 {
+	if ( Dir < 0 || Dir >= 8 ) return;
 	int i, t, dest;
 
 	if ( dir == Dir )

@@ -483,7 +483,10 @@ bool cMap::LoadMap ( string filename )
 	// check for typ
 	SDL_RWread ( fpMapFile, &szFileTyp, 1, 3 );
 	szFileTyp[3] = '\0';
-	if( strcmp( szFileTyp, "WRL" ) != 0 && strcmp( szFileTyp, "WRX" ) != 0  )
+	// WRL - interplays original mapformat
+	// WRX - mapformat from russian mapeditor
+	// DMO - for some reason some original maps have this filetype
+	if( strcmp( szFileTyp, "WRL" ) != 0 && strcmp( szFileTyp, "WRX" ) != 0 && strcmp( szFileTyp, "DMO" ) != 0  )
 	{
 		cLog::write("Wrong file format: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose( fpMapFile );
