@@ -2163,7 +2163,10 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			IsClearing = true;
+
+			// TODO: start clearing
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			/*IsClearing = true;
 			ClearingRounds = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->DirtValue / 4 + 1;
 			ClearBig = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->data.is_big;
 			// Den Clearing Sound machen:
@@ -2181,7 +2184,7 @@ void cVehicle::DrawMenu ( void )
 				Client->Map->GO[PosX+1+PosY*Client->Map->size].vehicle = this;
 				Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].vehicle = this;
 				Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].vehicle = this;
-			}
+			}*/
 			return;
 		}
 

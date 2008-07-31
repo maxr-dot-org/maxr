@@ -7923,6 +7923,8 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
+			// TODOD: implement activating vehicles
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			//ShowStorage();
 			return;
 		}
@@ -7967,6 +7969,8 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
+			// TODO: implement researche
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			//ShowResearch();
 			return;
 		}
@@ -7991,6 +7995,8 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
+			// TODOD: implement upgrades
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			//ShowUpgrade();
 			return;
 		}
@@ -8013,12 +8019,14 @@ void cBuilding::DrawMenu ( void )
 
 		if ( ExeNr == nr )
 		{
-			int i, k, sum = 0, count = 0;
-			char str[50];
+			/*int i, k, sum = 0, count = 0;
+			char str[50];*/
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			for (i = 0; i < owner->base.SubBases.Size(); ++i)
+			// TODO: implemt upgrading all
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			/*for (i = 0; i < owner->base.SubBases.Size(); ++i)
 			{
 				sSubBase* const sb = owner->base.SubBases[i];
 
@@ -8051,7 +8059,7 @@ void cBuilding::DrawMenu ( void )
 			owner->DoScan();
 
 			sprintf ( str, "%d von %d aufgerüstet.", count, sum );
-			//sendChatMessage ( str );
+			//sendChatMessage ( str );*/
 
 			return;
 		}
@@ -8074,14 +8082,16 @@ void cBuilding::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			UpdateBuilding ( data, owner->BuildingData[typ->nr] );
+			// TODO: implement upgrading
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			/*UpdateBuilding ( data, owner->BuildingData[typ->nr] );
 			GenerateName();
 			owner->base.AddMetal ( SubBase, -2 );
 
 			if ( this ==  Client->SelectedBuilding )
 				ShowDetails();
 
-			owner->DoScan();
+			owner->DoScan();*/
 
 			return;
 		}
@@ -8105,7 +8115,9 @@ void cBuilding::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			SelfDestructionMenu();
+			//TODO: implement self destruction
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			//SelfDestructionMenu();
 			return;
 		}
 
