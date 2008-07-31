@@ -4428,6 +4428,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 					}
 					break;
 				}
+				else
+				{
+					delete Map;
+					break;
+				}
 			}
 		}
 
