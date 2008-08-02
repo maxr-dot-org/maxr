@@ -2982,7 +2982,16 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						if ( !Vehicle->IsBuilding ) iLogType = cLog::eLOG_TYPE_NET_WARNING;
 
 						if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-						else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+						else 
+						{
+							Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
+							if ( Vehicle->data.can_build == BUILD_BIG )
+							{
+								Map->GO[Vehicle->PosX + 1 + Vehicle->PosY*Map->size].vehicle = NULL;
+								Map->GO[Vehicle->PosX + 1 + (Vehicle->PosY + 1) *Map->size].vehicle = NULL;
+								Map->GO[Vehicle->PosX + (Vehicle->PosY + 1) * Map->size].vehicle = NULL;
+							}
+						}
 
 						if ( bPlane ) Map->GO[iPosX+iPosY*Map->size].plane = Vehicle;
 						else Map->GO[iPosX+iPosY*Map->size].vehicle = Vehicle;
