@@ -2985,7 +2985,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						else 
 						{
 							Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-							if ( Vehicle->data.can_build == BUILD_BIG )
+							if ( Vehicle->IsBuilding && Vehicle->data.can_build == BUILD_BIG )
 							{
 								Map->GO[Vehicle->PosX + 1 + Vehicle->PosY*Map->size].vehicle = NULL;
 								Map->GO[Vehicle->PosX + 1 + (Vehicle->PosY + 1) *Map->size].vehicle = NULL;
