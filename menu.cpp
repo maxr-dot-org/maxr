@@ -3909,6 +3909,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 		{
 			// Save changed name, port or ip to max.xml
 			SettingsData.sPlayerName = ActualPlayer->name;
+			SettingsData.sIP = sIP;
+			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
 			SaveOption(SAVETYPE_IP);
 			SaveOption(SAVETYPE_PORT);
