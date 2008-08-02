@@ -3909,11 +3909,14 @@ void cMultiPlayerMenu::runNetworkMenu()
 		{
 			// Save changed name, port or ip to max.xml
 			SettingsData.sPlayerName = ActualPlayer->name;
-			SettingsData.sIP = sIP;
 			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
-			SaveOption(SAVETYPE_IP);
 			SaveOption(SAVETYPE_PORT);
+			if ( !bHost )
+			{
+				SettingsData.sIP = sIP;
+				SaveOption(SAVETYPE_IP);
+			}
 			break;
 		}
 		if (bHost && btn_ok.CheckClick(x, y, down, up))
@@ -3929,12 +3932,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 			}
 			else
 			{
-				// Save changed name, port or ip to max.xml
-				SettingsData.sPlayerName = ActualPlayer->name;
-				SaveOption(SAVETYPE_NAME);
-				SaveOption(SAVETYPE_IP);
-				SaveOption(SAVETYPE_PORT);
-
 				bStartSelecting = true;
 			}
 
@@ -4252,6 +4249,17 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 		if ( bStartSelecting )
 		{
+			// Save changed name, port or ip to max.xml
+			SettingsData.sPlayerName = ActualPlayer->name;
+			SettingsData.iPort = iPort;
+			SaveOption(SAVETYPE_NAME);
+			SaveOption(SAVETYPE_PORT);
+			if ( !bHost )
+			{
+				SettingsData.sIP = sIP;
+				SaveOption(SAVETYPE_IP);
+			}
+
 			if( !sSaveGame.empty() )
 			{
 				if ( bHost )
