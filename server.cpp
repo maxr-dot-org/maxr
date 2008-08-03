@@ -1378,9 +1378,6 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 		return;
 	}
 
-
-	if( !Building->owner ) Map->deleteRubble( Building );
-
 	if( Building->prev )
 	{
 		Building->prev->next = Building->next;

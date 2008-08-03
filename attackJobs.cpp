@@ -281,11 +281,13 @@ void cServerAttackJob::sendFireCommand()
 		{
 			executingClients.Add(player);
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
+			message->pushChar( fireDir );
 			message->pushInt32( iTargetOff );
 			message->pushInt32( iAgressorOff );
 			message->pushChar ( vehicle?vehicle->data.muzzle_typ:building->data.muzzle_typ );
 			message->pushInt32( 0 ); //don't send ID, because agressor is not in sight
 			message->pushInt16( iID );
+			
 			Server->sendNetMessage( message, player->Nr );
 		}
 	}
@@ -598,13 +600,14 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	else
 	{
 		iMuzzleType = message->popChar();
-		if ( iMuzzleType != MUZZLE_ROCKET || iMuzzleType != MUZZLE_ROCKET_CLUSTER || iMuzzleType != MUZZLE_TORPEDO )
+		if ( iMuzzleType != MUZZLE_ROCKET && iMuzzleType != MUZZLE_ROCKET_CLUSTER && iMuzzleType != MUZZLE_TORPEDO )
 		{
 			state = FINISHED;
 			return;
 		}
 		iAgressorOffset = message->popInt32();
 		iTargetOffset = message->popInt32();
+		iFireDir = message->popChar();
 		vehicle = NULL;
 		building = NULL;
 
@@ -731,15 +734,11 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_ROCKET_CLUSTER:
 		{
 			if ( wait++!=0 ) return;
-
-			if ( vehicle )
-			{
-				Client->addFX ( fxRocket,vehicle->PosX*64,vehicle->PosY*64, this, iTargetOffset, iFireDir );
-			}
-			else
-			{
-				Client->addFX ( fxRocket,building->PosX*64,building->PosY*64, this, iTargetOffset, iFireDir );
-			}
+			
+			int PosX = iAgressorOffset%Client->Map->size;
+			int PosY = iAgressorOffset/Client->Map->size;
+			Client->addFX ( fxRocket, PosX*64, PosY*64, this, iTargetOffset, iFireDir );
+			
 			break;
 		}
 		case MUZZLE_MED:
@@ -806,14 +805,11 @@ void cClientAttackJob::playMuzzle()
 		case MUZZLE_TORPEDO:
 		{
 			if ( wait++!=0 ) return;
-			if ( vehicle )
-			{
-				Client->addFX ( fxTorpedo,vehicle->PosX*64,vehicle->PosY*64, this, iTargetOffset, iFireDir );
-			}
-			else
-			{
-				Client->addFX ( fxTorpedo,building->PosX*64,building->PosY*64, this, iTargetOffset, iFireDir );
-			}
+
+			int PosX = iAgressorOffset%Client->Map->size;
+			int PosY = iAgressorOffset/Client->Map->size;
+			Client->addFX ( fxTorpedo, PosX*64, PosY*64, this, iTargetOffset, iFireDir );
+
 			break;
 		}
 		case MUZZLE_SNIPER:
@@ -824,7 +820,7 @@ void cClientAttackJob::playMuzzle()
 	{
 		PlayFX ( vehicle->typ->Attack );
 	}
-	else
+	else if ( building )
 	{
 		PlayFX ( building->typ->Attack );
 	}

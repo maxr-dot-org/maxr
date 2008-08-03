@@ -1574,7 +1574,8 @@ void cClient::drawFX( int iNum )
 	sFX *fx;
 
 	fx = FXList[iNum];
-	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxRocket ) return;
+	if ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] && fx->typ != fxRocket ) return;
+
 	switch ( fx->typ )
 	{
 		case fxMuzzleBig:
@@ -1757,7 +1758,10 @@ void cClient::drawFX( int iNum )
 			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+			
+			if ( ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] )
+				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+
 			break;
 		}
 		case fxDarkSmoke:
@@ -1850,7 +1854,11 @@ void cClient::drawFXBottom( int iNum )
 			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+			
+			if ( ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] )
+			{
+				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+			}
 
 			x= ( ( int ) ( ( ( dest.x-180 ) +Hud.OffX/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
 			y= ( ( int ) ( ( ( dest.y-18 ) +Hud.OffY/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
