@@ -2527,29 +2527,21 @@ int installGfx()
 	{
 		output = getImageFromRes("ARROW_E");
 		setColor( output, 1, 255, 0, 255 );
-		savePCX( output, path + "pf_4.pcx");
-		SDL_FreeSurface( output );
-	}
-	END_INSTALL_FILE( path + "pf_4.pcx" );
-	try
-	{
-		output = getImageFromRes("ARROW_NE");
-		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_6.pcx");
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "pf_6.pcx" );
 	try
 	{
-		output = getImageFromRes("ARROW_N");
+		output = getImageFromRes("ARROW_NE");
 		setColor( output, 1, 255, 0, 255 );
-		savePCX( output, path + "pf_7.pcx");
+		savePCX( output, path + "pf_9.pcx");
 		SDL_FreeSurface( output );
 	}
-	END_INSTALL_FILE( path + "pf_7.pcx" );
+	END_INSTALL_FILE( path + "pf_9.pcx" );
 	try
 	{
-		output = getImageFromRes("ARROW_NW");
+		output = getImageFromRes("ARROW_N");
 		setColor( output, 1, 255, 0, 255 );
 		savePCX( output, path + "pf_8.pcx");
 		SDL_FreeSurface( output );
@@ -2557,12 +2549,20 @@ int installGfx()
 	END_INSTALL_FILE( path + "pf_8.pcx" );
 	try
 	{
-		output = getImageFromRes("ARROW_W");
+		output = getImageFromRes("ARROW_NW");
 		setColor( output, 1, 255, 0, 255 );
-		savePCX( output, path + "pf_9.pcx");
+		savePCX( output, path + "pf_7.pcx");
 		SDL_FreeSurface( output );
 	}
-	END_INSTALL_FILE( path + "pf_9.pcx" );
+	END_INSTALL_FILE( path + "pf_7.pcx" );
+	try
+	{
+		output = getImageFromRes("ARROW_W");
+		setColor( output, 1, 255, 0, 255 );
+		savePCX( output, path + "pf_4.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "pf_4.pcx" );
 
 	//transfer
 	try
