@@ -507,7 +507,7 @@ bool cMap::LoadMap ( string filename )
 
 	if ( sWidth != sHeight )
 	{
-		cLog::write("Map must be quadratic!", cLog::eLOG_TYPE_WARNING);
+		cLog::write("Map must be quadratic!: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose( fpMapFile );
 		return false;
 	}
