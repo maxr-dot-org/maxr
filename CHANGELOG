@@ -1,15 +1,18 @@
-M.A.X. Reloaded 0.x.y
+M.A.X. Reloaded 0.2.0
 =======================================================================
--written complete new network code
--changed game to server-client structure
+-added support for original WRL mapfiles
+-added TCP/IP network code
+-changed game engine to server-client structure
+	*implemented attacking
+	*implemented building
+	*implemented moving
+	*implemented building
+-fixed muzzletypes in vehicle xml files
+-disabled support for old map format
 -disabled hotseat games for release
 -disabled loading/saving
--included muzzletypes in vehicle XML's
--added support for original WRL mapfiles; support for old format excluded
--implemented attacking
--implemented building
--implemented moving
--disabled all other functions
+-disabled all other functions that are not yet ready for new structure
+-tons of bugs fixed
 
 M.A.X. Reloaded 0.1.5
 =======================================================================

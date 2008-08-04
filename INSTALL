@@ -21,7 +21,8 @@ http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7-win32.zip
 Now unrar MAX-Reloaded_-x.y.z.rar to a folder of your choise - e.g.
 C:\Program Files\
 
-After installing currently needed original gamedata you can 
+After installing currently needed original gamedata running
+Resinstaller.exe (requires original M.A.X. CD or installation) you can
 start M.A.X. Reloaded executing Max-Reloaded.exe
 
 LINUX
@@ -35,14 +36,16 @@ from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
 MAXR is currently in need of unofficial gfx data and WILL NOT start
 without the required files. Due the copyright we are not allowed to
-provide you with the missing files. You have to get the files for
-yourself and copy them to their proper locations. Please check the
-bbs at maxthegame.de/bbs for more informations.
+provide you with the missing files.
 
 If you do own an original Mechanized Assault & Exploration CD
 (c) 1996 Interplay or if you downloaded the original game from
-cdosabandonware you can however make use of the tool resinstaller
+cdosabandonware you can however make use of the tool "resinstaller"
 and extract the needed gfx automagically from your existing max.res
+
+The tool can be found on our website and easily installs and converts
+the needed data for you. Please check the bbs at maxthegame.de/bbs
+for more informations.
 
 If you don't own an original maxcd you've another chance in downloading
 Mechanized Assault and Exploration from cdosabandonware.com since you
