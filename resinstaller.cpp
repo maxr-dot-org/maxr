@@ -3444,7 +3444,7 @@ void installMusic()
 	oggEncode = 1;
 
 	cout << "========================================================================\n";
-	cout << "Music\n";
+	cout << "Music (May take a while)\n";
 
 	path = sOutputPath + "music" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MAIN_MSC.MSC", path + "main.wav");
@@ -3480,11 +3480,20 @@ void installMusic()
 int main ( int argc, char* argv[] )
 {
     // at startup SDL_Init should be called before all other SDL functions
-    SDL_Init(SDL_INIT_VIDEO);
+    if (SDL_Init(SDL_INIT_VIDEO) == -1)
+	{
+		printf("Can't init SDL:  %s\n", SDL_GetError());
+		exit (-1);
+	}
+
+    /*
+    Uncommented since you do break any terminal I/O for users at least
+    under linux with that too. You may write some WIN32 DEFINED code 
+    to prevend stdout.txt to be created on windows -- beko
+    */
     // added code to prevent writing to stdout.txt and stderr.txt
-    freopen( "CON", "w", stdout );
-    freopen( "CON", "w", stderr );
-    // assign SDL_Quit() function to exit event
+    //freopen( "CON", "w", stdout );
+
     atexit(SDL_Quit);	
 
 	cout << "Resinstaller - installs graphics and sounds from Interplay's M.A.X. to\n\
@@ -3511,6 +3520,10 @@ GNU General Public License for more details.\n\n";
 	if ( logFile == NULL )
 	{
 		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
+	}
+	else
+	{
+		freopen( "resinstaller.log", "a", stderr );	//write errors to log instead stdout(.txt)
 	}
 
 	wasError = 0;
