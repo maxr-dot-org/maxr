@@ -65,7 +65,7 @@ char* cNetMessage::serialize( bool bCheckChars )
 	data[4] = (char) iPlayerNr;
 
 	// check for controlchars in the standard values
-	if ( bCheckChars ) checkControlChars( 0, 5 );
+	if ( bCheckChars ) checkControlChars( 0, 4 );
 
 	return data;
 }

@@ -2942,13 +2942,16 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPlayerNum = message->popInt16();
 			int iTimeDelay = message->popInt16();
 
+			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
+			if ( Player == NULL ) break;
+
 			if ( iTimeDelay != -1 )
 			{
-				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
+				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
 				iTurnTime = iTimeDelay;
 				iStartTurnTime = SDL_GetTicks();
 			}
-			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( getPlayerFromNumber( iPlayerNum )->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
+			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
 		}
 		break;
 	case GAME_EV_UNIT_DATA:
