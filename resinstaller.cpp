@@ -2398,7 +2398,13 @@ int installGfx()
 	END_INSTALL_FILE( path + "band_cur.pcx" );
 
 	//big_beton
-	copyFileFromRes("LRGSLAB", path + "big_beton.pcx");
+	try
+	{
+		output = getImageFromRes("LRGSLAB");
+		resizeSurface(output, 0, 0, 128, 128);
+		savePCX( output, path + "big_beton.pcx");
+	}
+	END_INSTALL_FILE( path + "big_beton.pcx");
 	
 	//disable
 	try
