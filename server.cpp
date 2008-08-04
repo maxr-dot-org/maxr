@@ -1664,7 +1664,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 			else
 			{
-				sendTurnFinished ( iPlayerNum, -1 );
+				sendTurnFinished ( iPlayerNum, iTurnDeadline );
 			}
 		}
 	}
