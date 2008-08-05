@@ -329,6 +329,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						delete MJob; MJob = NULL;
 						break;
 					}
+					if ( MJob->vehicle->bIsBeeingAttacked )
+					{	
+						delete MJob; MJob = NULL;
+						break;
+					}
 					MJob->waypoints = Waypoint;
 
 					// unset sentry status when moving vehicle
@@ -393,6 +398,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					cLog::write(" (Server) Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
+				if ( attackingVehicle->bIsBeeingAttacked ) break;
 			}
 			else
 			{
@@ -413,6 +419,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					cLog::write(" (Server) Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
+				if ( attackingBuilding->bIsBeeingAttacked ) break;
 			}
 
 			//find target offset

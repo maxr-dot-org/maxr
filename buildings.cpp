@@ -20,7 +20,6 @@
 #include "math.h"
 #include "buildings.h"
 #include "main.h"
-#include "game.h"
 #include "fonts.h"
 #include "mouse.h"
 #include "files.h"
@@ -7716,6 +7715,8 @@ void cBuilding::DrawMenu ( void )
 	dest.w = scr.w = 42;
 	dest.h = scr.h = 21;
 
+	if ( bIsBeeingAttacked ) return;
+
 	if ( ActivatingVehicle )
 	{
 		MenuActive = false;
@@ -8806,3 +8807,14 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 		}
 	}
 }
+
+/*unsigned int cBuilding::getX()
+{
+	return PosX;
+}
+
+unsigned int cBuilding::getY()
+{
+	return PosY;
+}
+*/

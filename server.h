@@ -156,12 +156,7 @@ private:
 	*@return NULL if the vehicle could not be landed, else a pointer to the vehicle.
 	*/
 	cVehicle *landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player );
-	/**
-	* checks whether a player has detected some new enemy units
-	*@author alzi alias DoctorDeath
-	*/
-	void checkPlayerUnits ();
-
+	
 	/**
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
@@ -247,6 +242,12 @@ public:
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
+
+	/**
+	* checks whether a player has detected some new enemy units
+	*@author alzi alias DoctorDeath
+	*/
+	void checkPlayerUnits ();
 
 	/**
 	* returns the player with the given number

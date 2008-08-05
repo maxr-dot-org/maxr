@@ -1966,7 +1966,7 @@ void cVehicle::DrawMenu ( void )
 	dest.h = scr.h = 21;
 	Transfer = false;
 
-	if ( moving || rotating )
+	if ( moving || rotating || bIsBeeingAttacked )
 		return;
 
 	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )

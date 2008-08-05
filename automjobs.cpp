@@ -19,6 +19,7 @@
 #include "math.h"
 #include "mjobs.h"
 #include "client.h"
+#include "clientevents.h"
 #include "automjobs.h"
 #include "vehicles.h"
 
@@ -62,9 +63,7 @@ cAutoMJob::~cAutoMJob()
 {
 	if (!playerMJob && lastMoveJob )
 	{
-		lastMoveJob->finished = true;
-		vehicle->mjob = NULL;
-		vehicle->MoveJobActive = false;
+		sendWantStopMove( vehicle->iID );
 	}
 	for (size_t i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
@@ -79,6 +78,7 @@ cAutoMJob::~cAutoMJob()
 //performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
 void cAutoMJob::DoAutoMove()
 {
+	if ( vehicle->bIsBeeingAttacked ) return;
 	if ( vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
 			if (n > WAIT_FRAMES)

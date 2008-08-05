@@ -91,6 +91,9 @@ cServerAttackJob::~cServerAttackJob()
 
 void cServerAttackJob::lockTarget(int offset)
 {
+	//make sure, that the unit data has been send to all clients
+	Server->checkPlayerUnits();
+
 	for (int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];

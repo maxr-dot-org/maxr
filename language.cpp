@@ -101,7 +101,10 @@ std::string cLanguage::i18n(std::string szInputText)
 		}
 	}else
 	{
-		return impTranslation->second ;
+		if ( impTranslation->second != "" )
+			return impTranslation->second ;
+		else
+			return "";
 	}
 }
 

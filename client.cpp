@@ -998,6 +998,8 @@ int cClient::checkUser( bool bChange )
 
 void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 {
+	if ( vehicle->bIsBeeingAttacked ) return;
+
 	cMJobs *MJob = new cMJobs ( Map, vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle->iID, PlayerList, false );
 	if ( !MJob->finished )
 	{
