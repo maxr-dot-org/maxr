@@ -63,9 +63,10 @@ class cVehicleIterator
 private:
 	friend class cMap;
 	sVehicleList* vehicleListItem;
+	sVehicleList** listRoot;
 	void insert( cVehicle* vehicle );
 public:
-	cVehicleIterator(sVehicleList* vli);
+	cVehicleIterator(sVehicleList** vli);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size();
 //	cVehicle& operator[](unsigned const int i) const;
@@ -92,10 +93,11 @@ class cBuildingIterator
 {
 private:
 	friend class cMap;
+	sBuildingList** listRoot;
 	sBuildingList* buildingListItem;
 	void insert( cBuilding* building );
 public:
-	cBuildingIterator(sBuildingList* bli);
+	cBuildingIterator(sBuildingList** bli);
 	/** returns the number of buildings in the List, the Iterator points to. */
 	unsigned int size();
 //	cVehicle& operator[](unsigned const int i) const;
@@ -167,7 +169,6 @@ public:
 	void DeleteMap(void);
 	bool SaveMap(string filename,SDL_Surface *preview);
 	bool LoadMap(string filename);
-	void UseAllTerrain(void);
 	void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
 	/**
 	* places rubble on the map

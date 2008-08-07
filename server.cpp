@@ -329,11 +329,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						delete MJob; MJob = NULL;
 						break;
 					}
-					if ( MJob->vehicle->bIsBeeingAttacked )
-					{	
-						delete MJob; MJob = NULL;
-						break;
-					}
 					MJob->waypoints = Waypoint;
 
 					// unset sentry status when moving vehicle

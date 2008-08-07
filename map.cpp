@@ -19,10 +19,11 @@
 #include <stdlib.h>
 #include "map.h"
 
-cVehicleIterator::cVehicleIterator(sVehicleList *vli)
+cVehicleIterator::cVehicleIterator(sVehicleList **vli)
 {
-	vehicleListItem = vli;
-	if ( vli && vli->vehicle )
+	listRoot = vli;
+	vehicleListItem = *vli;
+	if ( *vli )
 	{
 		end = false;
 		rend = false;
@@ -36,16 +37,11 @@ cVehicleIterator::cVehicleIterator(sVehicleList *vli)
 
 unsigned int cVehicleIterator::size()
 {
-	sVehicleList* vli = vehicleListItem;
+	sVehicleList* vli = *listRoot;
 
-	//rewind
-	while ( vli->prev )
-	{
-		vli = vli->prev;
-	}
 	//count
 	unsigned int count = 0;
-	while ( vli->next )
+	while ( vli )
 	{
 		count++;
 		vli = vli->next;
@@ -77,13 +73,14 @@ cVehicleIterator cVehicleIterator::operator++(int)
 	if (rend)
 	{
 		rend = false;
+		vehicleListItem = *listRoot;
 	}
 	else
 	{
 		vehicleListItem = vehicleListItem->next;
 	}
-	if ( !vehicleListItem->vehicle ) end = true;
-	
+	if ( !vehicleListItem ) end = true;
+
 	return vehicles;
 }
 
@@ -92,15 +89,18 @@ cVehicleIterator cVehicleIterator::operator--(int)
 	cVehicleIterator vehicles = *this;
 	if (rend) return vehicles;
 	
-	if ( vehicleListItem->prev ) 
+	if ( end )
 	{
+		vehicleListItem = *listRoot;
+		while ( vehicleListItem->next ) vehicleListItem = vehicleListItem->next;
+
 		end = false;
-		vehicleListItem = vehicleListItem->prev;
 	}
 	else
 	{
-		rend = true;
+		vehicleListItem = vehicleListItem->prev;
 	}
+	if ( !vehicleListItem ) rend = true;
 
 	return vehicles;
 }
@@ -123,22 +123,40 @@ void cVehicleIterator::insert( cVehicle* vehicle )
 {
 	sVehicleList* vli = new sVehicleList;
 	
-	vli->next = vehicleListItem;
-	vli->prev = vehicleListItem->prev;
-	
+	if ( end )
+	{
+		sVehicleList* lastElement = *listRoot;
+		while ( lastElement && lastElement->next ) lastElement = lastElement->next;
+
+		vli->next = NULL;
+		vli->prev = lastElement;
+	}
+	else if ( rend )
+	{
+		vli->next = *listRoot;
+		vli->prev = NULL;
+	}
+	else
+	{
+		vli->next = vehicleListItem;
+		vli->prev = vehicleListItem->prev;
+	}
+
 	if ( vli->prev )
 		vli->prev->next = vli;
 
-	vli->next->prev = vli;
+	if ( vli->next )
+		vli->next->prev = vli;
 
 	vli->vehicle = vehicle;
 	
 }
 
-cBuildingIterator::cBuildingIterator(sBuildingList *bli)
+cBuildingIterator::cBuildingIterator(sBuildingList **bli)
 {
-	buildingListItem = bli;
-	if ( bli && bli->building )
+	listRoot = bli;
+	buildingListItem = *bli;
+	if ( *bli )
 	{
 		end = false;
 		rend = false;
@@ -152,16 +170,11 @@ cBuildingIterator::cBuildingIterator(sBuildingList *bli)
 
 unsigned int cBuildingIterator::size()
 {
-	sBuildingList* bli = buildingListItem;
-
-	//rewind
-	while ( bli->prev )
-	{
-		bli = bli->prev;
-	}
+	sBuildingList* bli = *listRoot;
+	
 	//count
 	unsigned int count = 0;
-	while ( bli->next )
+	while ( bli )
 	{
 		count++;
 		bli = bli->next;
@@ -193,12 +206,13 @@ cBuildingIterator cBuildingIterator::operator++(int)
 	if (rend)
 	{
 		rend = false;
+		buildingListItem = *listRoot;
 	}
 	else
 	{
 		buildingListItem = buildingListItem->next;
 	}
-	if ( !buildingListItem->building ) end = true;
+	if ( !buildingListItem ) end = true;
 	
 	return buildings;
 }
@@ -208,15 +222,17 @@ cBuildingIterator cBuildingIterator::operator--(int)
 	cBuildingIterator buildings = *this;
 	if (rend) return buildings;
 	
-	if ( buildingListItem->prev ) 
+	if ( end ) 
 	{
 		end = false;
-		buildingListItem = buildingListItem->prev;
+		buildingListItem = *listRoot;
+		while ( buildingListItem && buildingListItem->next ) buildingListItem = buildingListItem->next;
 	}
 	else
 	{
-		rend = true;
+		buildingListItem = buildingListItem->prev;
 	}
+	if ( !buildingListItem ) rend = true;
 
 	return buildings;
 }
@@ -239,40 +255,58 @@ void cBuildingIterator::insert( cBuilding* building )
 {
 	sBuildingList* bli = new sBuildingList;
 	
-	bli->next = buildingListItem;
-	bli->prev = buildingListItem->prev;
-	
+	if ( end )
+	{
+		sBuildingList* lastElement = *listRoot;
+		while ( lastElement && lastElement->next ) lastElement = lastElement->next;
+
+		bli->next = NULL;
+		bli->prev = lastElement;
+	}
+	else if ( rend )
+	{
+		bli->next = *listRoot;
+		bli->prev = NULL;
+	}
+	else
+	{
+		bli->next = buildingListItem;
+		bli->prev = buildingListItem->prev;
+	}
+
 	if ( bli->prev )
 		bli->prev->next = bli;
 
-	bli->next->prev = bli;
+	if ( bli->next )
+		bli->next->prev = bli;
 
 	bli->building = building;
+	
 	
 }
 
 cVehicleIterator cMapField::getVehicles()
 {
-	cVehicleIterator v(vehicles);
+	cVehicleIterator v(&vehicles);
 	return v;
 }
 
 cVehicleIterator cMapField::getPlanes()
 {
-	cVehicleIterator v(planes);
+	cVehicleIterator v(&planes);
 	return v;
 }
 
 cBuildingIterator cMapField::getBuildings()
 {
-	cBuildingIterator b(buildings);
+	cBuildingIterator b(&buildings);
 	return b;
 }
 
 
 cBuilding* cMapField::getTopBuilding()
 {
-	cBuildingIterator buildingIterator( buildings );
+	cBuildingIterator buildingIterator( &buildings );
 
 
 	if ( buildingIterator && buildingIterator->data.is_base )
@@ -287,7 +321,7 @@ cBuilding* cMapField::getTopBuilding()
 
 cBuilding* cMapField::getBaseBuilding()
 {
-	cBuildingIterator building (buildings);
+	cBuildingIterator building (&buildings);
 	
 	while ( !building.end )
 	{
@@ -300,20 +334,9 @@ cBuilding* cMapField::getBaseBuilding()
 
 cMapField::cMapField()
 {
-	vehicles = new sVehicleList;
-	vehicles->next = NULL;
-	vehicles->prev = NULL;
-	vehicles->vehicle = NULL;
-
-	planes = new sVehicleList;
-	planes->next = NULL;
-	planes->prev = NULL;
-	planes->vehicle = NULL;
-
-	buildings = new sBuildingList;
-	buildings->next = NULL;
-	buildings->prev = NULL;
-	buildings->building = NULL;
+	vehicles = NULL;
+	planes = NULL;
+	buildings = NULL;
 }
 
 cMapField::~cMapField()
@@ -623,7 +646,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	DefaultWater=0;
 
-	//fields = new cMapField[size*size];
+	fields = new cMapField[size*size];
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
 	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
@@ -637,7 +660,7 @@ void cMap::DeleteMap ( void )
 {
 	if ( !Kacheln ) return;
 	free ( Kacheln );
-	//delete[] fields;
+	delete[] fields;
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;

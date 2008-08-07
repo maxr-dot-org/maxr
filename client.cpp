@@ -2487,9 +2487,10 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "ajobs off" ) == 0 ) { bDebugAjobs = false; return true; }
 
 	if ( sCmd.substr( 0, 6 ).compare( "color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
-	if ( sCmd.compare( "fog off" ) == 0 )
+	if ( sCmd.compare( "fog off" ) == 0 && Server )
 	{
-		//memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
+		memset ( Server->getPlayerFromNumber(ActivePlayer->Nr)->ScanMap,1,Map->size*Map->size );
+		memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
 		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Fog Off\"";
 		return true;
