@@ -528,7 +528,7 @@ int cClient::checkUser( bool bChange )
 			Hud.DoScroll ( 0 );
 			iMsgCoordsX=-1;
 		}
-		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!Hud.Ende )
+		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!bWantToEnd )
 		{
 			Hud.EndeButton ( true );
 			handleEnd();
@@ -737,7 +737,7 @@ int cClient::checkUser( bool bChange )
 			// TODO: repair
 			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
-		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !Hud.Ende && !SelectedVehicle->Attacking )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !bWantToEnd && !SelectedVehicle->Attacking )
 		{
 			if ( SelectedVehicle->IsBuilding )
 			{
@@ -813,7 +813,7 @@ int cClient::checkUser( bool bChange )
 				}
 				else
 					// select the unit:
-					if ( OverObject && !Hud.Ende )
+					if ( OverObject && !bWantToEnd )
 					{
 						if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
 						{

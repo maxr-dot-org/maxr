@@ -179,10 +179,10 @@ void cGame::Run ( void )
 	{
 		if ( ActiveRoundPlayerNr!=ActivePlayer->Nr )
 		{
-			hud.Ende=true;
+//			hud.Ende=true;
 			hud.EndeButton ( true );
 		}
-		else if ( !hud.Ende )
+//		else if ( !hud.Ende )
 		{
 			hud.EndeButton ( false );
 		}
@@ -491,7 +491,7 @@ void cGame::Run ( void )
 				if ( MakeHotSeatEnde() )
 				{
 					engine->EndePressed ( ActivePlayer->Nr );
-					hud.Ende=true;
+//					hud.Ende=true;
 				}
 			}
 			else
@@ -673,7 +673,7 @@ int cGame::CheckUser ( void )
 			hud.DoScroll ( 0 );
 			MsgCoordsX=-1;
 		}
-		if ( keystate[KeysList.KeyEndTurn]&&!LastReturn&&!hud.Ende )
+		if ( keystate[KeysList.KeyEndTurn]&&!LastReturn)//&&!hud.Ende )
 		{
 			hud.EndeButton ( true );
 			//hud.MakeMeMyEnd();
@@ -958,7 +958,7 @@ int cGame::CheckUser ( void )
 			}
 			SelectedVehicle->ShowDetails();
 		}
-		else if ( mouse->cur==GraphicsData.gfx_Cmove&&SelectedVehicle&&!SelectedVehicle->moving&&!SelectedVehicle->rotating&&!hud.Ende&&!SelectedVehicle->Attacking )
+		else if ( mouse->cur==GraphicsData.gfx_Cmove&&SelectedVehicle&&!SelectedVehicle->moving&&!SelectedVehicle->rotating)//&&!hud.Ende&&!SelectedVehicle->Attacking )
 		{
 			if ( SelectedVehicle->data.can_drive!=DRIVE_AIR )
 			{
@@ -1057,7 +1057,7 @@ int cGame::CheckUser ( void )
 				}
 				else
 					// Das Objekt auswählen:
-					if ( OverObject&&!hud.Ende )
+//					if ( OverObject&&!hud.Ende )
 					{
 						if ( SelectedVehicle&& ( OverObject->plane==SelectedVehicle||OverObject->vehicle==SelectedVehicle ) )
 						{

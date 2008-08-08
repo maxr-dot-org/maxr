@@ -56,7 +56,6 @@ cHud::cHud ( void )
 	NextPressed=false;PrevPressed=false;
 	CenterPressed=false;DateiPressed=false;
 	LogPressed=false;
-	Ende=false;
 }
 
 cHud::~cHud ( void )
@@ -956,13 +955,13 @@ void cHud::CheckMouseOver ( void )
 	if ( x>=392&&x<460&&y>=5&&y<20 )
 	{
 		if ( b ) EndeButton ( true );
-		else if ( lb&&!Ende )
+		else if ( lb&&!Client->bWantToEnd )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			Client->handleEnd ();
 		}
 	}
-	else if ( EndePressed&&!Ende )
+	else if ( EndePressed&&!Client->bWantToEnd )
 	{
 		EndeButton ( false );
 	}

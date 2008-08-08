@@ -1039,7 +1039,7 @@ void cEngine::Rundenende ( void )
 	EndeCount=0;
 	if ( !game->PlayRounds )
 	{
-		game->hud.Ende = false;
+//		game->hud.Ende = false;
 		game->hud.EndeButton ( false );
 	}
 	game->Runde++;

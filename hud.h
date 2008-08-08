@@ -38,7 +38,6 @@ public:
   bool CenterPressed,DateiPressed,LogPressed;
   int Zoom,LastZoom;
   int OffX,OffY;
-  bool Ende;
   bool LastOverEnde;
 
   void SwitchTNT(bool set);

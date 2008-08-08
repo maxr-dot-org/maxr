@@ -131,8 +131,6 @@ private:
 	cList<sMessage*> messages;
 	/** number of current turn */
 	int iTurn;
-	/** true if the turn should be end after all movejobs have been finished */
-	bool bWantToEnd;
 	/** lists with all FX-Animation */
 	cList<sFX*> FXList;
 	cList<sFX*> FXListBottom;
@@ -391,6 +389,8 @@ public:
 	cVehicle *SelectedVehicle;
 	/** the currently selected building */
 	cBuilding *SelectedBuilding;
+	/** true if the turn should be end after all movejobs have been finished */
+	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
 	/** true if the client should end */
