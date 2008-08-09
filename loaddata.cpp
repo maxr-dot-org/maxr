@@ -3168,7 +3168,7 @@ static void ConvertData(int unitnum, bool vehicle)
 	Data->can_research = Data->bCan_Research;
 	Data->can_reload = Data->bCan_Rearm;
 
-	if(Data->Weapons[0].iMovement_Allowed*2 == Data->iMovement_Max)
+	if(Data->Weapons[0].iMovement_Allowed*4 == Data->iMovement_Max)
 		Data->can_drive_and_fire = true;
 	else
 		Data->can_drive_and_fire = false;
