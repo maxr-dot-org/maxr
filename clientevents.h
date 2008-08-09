@@ -53,7 +53,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				//
 	GAME_EV_PRODUCE_VALUES,			//
-	GAME_EV_TURN_REPORT				//
+	GAME_EV_TURN_REPORT,			//
+	GAME_EV_MARK_LOG,				// marks a position in the logfile
 };
 
 enum CHAT_MESSAGE_TYPES

@@ -149,7 +149,7 @@ void cServerAttackJob::lockTarget(int offset)
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_LOCK_TARGET );
 			if ( targetVehicle )
 			{
-				if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = true;
+				if ( targetVehicle->mjob ) targetVehicle->mjob->finished = true;
 				targetVehicle->bIsBeeingAttacked = true;
 
 				message->pushChar ( targetVehicle->OffX );
@@ -303,7 +303,7 @@ void cServerAttackJob::clientFinished( int playerNr )
 		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
 	}
 
-	cLog::write( " (Server) waiting for " + iToStr(executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
+	cLog::write( " Server: waiting for " + iToStr(executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
 
 	if (executingClients.Size() == 0) makeImpact();
 }
@@ -377,7 +377,7 @@ void cServerAttackJob::makeImpact()
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
 
-			cLog::write(" (Server) vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+			cLog::write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if (targetVehicle->data.hit_points <= 0)
 			{
@@ -388,7 +388,7 @@ void cServerAttackJob::makeImpact()
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
 
-			cLog::write(" (Server) Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+			cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if ( targetBuilding->data.hit_points <= 0 )
 			{
@@ -466,20 +466,20 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 		cVehicle* vehicle = Client->getVehicleFromID( ID );
 		if ( vehicle == NULL ) 
 		{
-			cLog::write(" (Client) vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_ERROR );
+			cLog::write(" Client: vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_ERROR );
 			return;	//we are out of sync!!!
 		}
 
 		vehicle->bIsBeeingAttacked = true;
 		
-		//TODO: implement attacking moving vehicles
-		//if ( vehicle->mjob ) vehicle->mjob->EndForNow = true;
+		if ( vehicle->mjob ) vehicle->mjob->finished = true;
 
 		//synchonize position
 		int OffY = message->popChar();
 		int OffX = message->popChar();
 		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
 		{
+			cLog::write(" Client: changed vehicle position to " + iToStr( offset ), cLog::eLOG_TYPE_NET_DEBUG );
 			if ( bIsAir )
 			{
 				Client->Map->GO[vehicle->PosX + vehicle->PosY * Client->Map->size].plane = NULL;
@@ -526,7 +526,6 @@ void cClientAttackJob::handleAttackJobs()
 		{
 		case FINISHED:
 			{
-				//TODO: attackjob auch im destruktor von cVehicle/cBuilding löschen
 				job->sendFinishMessage();
 				delete job;
 				Client->attackJobs.Delete(i);
@@ -581,7 +580,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		if ( !vehicle && !building )
 		{
 			state = FINISHED;
-			cLog::write(" (Client) agressor with id " + iToStr( unitID ) + " not found", cLog::eLOG_TYPE_NET_ERROR );
+			cLog::write(" Client: agressor with id " + iToStr( unitID ) + " not found", cLog::eLOG_TYPE_NET_ERROR );
 			return; //we are out of sync!!!
 		}
 		iFireDir = message->popChar();
@@ -866,7 +865,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 {
 	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )
 	{
-		cLog::write(" (Client) Invalid offset", cLog::eLOG_TYPE_NET_ERROR );
+		cLog::write(" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
 
@@ -920,7 +919,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 	}
 	else
 	{
-		cLog::write(" (Client) Invalid attack mode", cLog::eLOG_TYPE_NET_ERROR );
+		cLog::write(" Client: Invalid attack mode", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
 
@@ -945,7 +944,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
 
-			cLog::write(" (Client) vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+			cLog::write(" Client: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			name = targetVehicle->name;
 			if ( targetVehicle->owner == Client->ActivePlayer ) ownUnit = true;
@@ -966,7 +965,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
 
-			cLog::write(" (Client) building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+			cLog::write(" Client: building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			name = targetBuilding->name;
 			if ( targetBuilding->owner == Client->ActivePlayer ) ownUnit = true;

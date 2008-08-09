@@ -124,7 +124,7 @@ void cEventHandling::HandleEvents()
 				cNetMessage message( (char*) event.user.data1);
 				free ( event.user.data1 );
 				message.refertControlChars();
-				Client->HandleNetMessage( &message );
+				if ( Client) Client->HandleNetMessage( &message );
 				break;
 			}
 

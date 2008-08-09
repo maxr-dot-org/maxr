@@ -2691,11 +2691,6 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 		v = Client->Map->GO[off].plane;
 	}
 
-	//this is just temorary!
-	//attacking moveing vehicles not implemented yet
-	if ( v && ( v->moving || v->rotating ) )
-		return false;
-
 	if ( v && v->data.is_stealth_sea && data.can_attack != ATTACK_SUB_LAND )
 		return false;
 
