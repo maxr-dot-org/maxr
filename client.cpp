@@ -4096,6 +4096,9 @@ void cClient::moveVehicle( cVehicle *Vehicle )
 	if ( Vehicle == NULL || Vehicle->mjob == NULL ) return;
 	cMJobs *MJob = Vehicle->mjob;
 
+	// do not move the vehicle, if the movejob hasn't got any more waypoints
+	if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL ) return;
+
 	int iSpeed;
 	if ( !Vehicle ) return;
 	if ( Vehicle->data.is_human )
