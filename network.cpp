@@ -308,8 +308,20 @@ void cTCP::HandleNetworkThread()
 
 								Sockets[i].buffer.iLenght += iEndPos-iStartPos-Sockets[i].iLeftBytes;
 								Sockets[i].iLeftBytes = 0;
+
+								int iSaveMessageLenght = ((Sint16*)data)[2];		// save the message length before pushing event
+								int iSaveBufferLength = Sockets[i].buffer.iLenght;	// save the buffer length before pushing event
+
 								pushEvent ( TCP_RECEIVEEVENT, data, NULL );
 								iStartPos = iEndPos;
+
+								// if the bufferlength now is smaller then before sending the event,
+								// the event must have been send to the server, and data das been read yet
+								if ( Sockets[i].buffer.iLenght < iSaveBufferLength )
+								{
+									iStartPos -= iSaveMessageLenght;
+									iMsgStartOffset -= iSaveMessageLenght;
+								}
 							}
 							// there hasn't been received the hole data of this message
 							// save the remaining data
@@ -368,8 +380,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 			iMinLenght = ( ( ( Sockets[iClientNumber].buffer.iLenght ) < (unsigned int)iMessageLength ) ? ( Sockets[iClientNumber].buffer.iLenght ) : iMessageLength );
 			memmove ( (char*)event->user.data1, Sockets[iClientNumber].buffer.data, iMinLenght );
 			Sockets[iClientNumber].buffer.iLenght -= iMinLenght;
-			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], Sockets[iClientNumber].buffer.iLenght );
-
+			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], PACKAGE_LENGHT-iMinLenght );
 			// Send the event to the server
 			if ( Server != NULL ) Server->pushEvent ( event );
 		}
@@ -504,9 +515,7 @@ int cTCP::findNextControlPosition ( int iStartPos, char *data, int iLength, char
 		// look for endings in the buffer
 		if ( data[iPos] == NETMESSAGE_CONTROLCHAR )
 		{
-			if ( data[iPos+1] == szType )
-		
-			return iPos;
+			if ( data[iPos+1] == szType ) return iPos;
 		}
 	}
 

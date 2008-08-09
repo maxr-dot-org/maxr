@@ -2985,6 +2985,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
 				{
+					int iOldPosX = Vehicle->PosX;
+					int iOldPosY = Vehicle->PosY;
+
 					// if the vehicle is moving it is normal that the positions are not the same,
 					// so the log message will just be an debug one
 					int iLogType = cLog::eLOG_TYPE_NET_DEBUG;
@@ -3013,7 +3016,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						Vehicle->PosX = iPosX;
 						Vehicle->PosY = iPosY;
 					}
-					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
+					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iOldPosX ) + " Y" + iToStr( iOldPosY ) + "]", iLogType );
 				}
 
 				Vehicle->name = message->popString();
