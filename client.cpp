@@ -2912,6 +2912,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iTurnTime = 0;
 				Hud.ShowRunde();
 				Hud.EndeButton ( false );
+				bWantToEnd = false;
 				Hud.showTurnTime ( -1 );
 			}
 
