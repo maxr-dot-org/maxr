@@ -4471,12 +4471,12 @@ bool cVehicle::InSentryRange ()
 
 		if ( Player == owner ) continue;
 
-		if ( data.is_stealth_land && !Player->DetectLandMap[iOff] ) return false;
-		if ( data.is_stealth_sea && !Player->DetectSeaMap[iOff] ) return false;
+		if ( data.is_stealth_land && !Player->DetectLandMap[iOff] ) continue;	//check next player
+		if ( data.is_stealth_sea && !Player->DetectSeaMap[iOff] ) continue;		//check next player
 
 		if ( data.can_drive == DRIVE_AIR )
 		{
-			if ( ! ( Player->SentriesMapAir[iOff] && Player->ScanMap[iOff] ) ) return false;
+			if ( ! ( Player->SentriesMapAir[iOff] && Player->ScanMap[iOff] ) ) continue; //check next player
 
 			for ( unsigned int k = 0; k < Player->SentriesAir.Size(); k++ )
 			{
@@ -4508,10 +4508,11 @@ bool cVehicle::InSentryRange ()
 					return true;
 				}
 			}
+			cLog::write(" Server: SentriesAirMap was true, but no unit in sentry mode found", cLog::eLOG_TYPE_NET_ERROR);
 		}
 		else
 		{
-			if ( ! ( Player->SentriesMapGround[iOff] && Player->ScanMap[iOff] ) ) return false;
+			if ( ! ( Player->SentriesMapGround[iOff] && Player->ScanMap[iOff] ) ) continue; //check next player
 
 			for ( unsigned int k = 0;k < Player->SentriesGround.Size();k++ )
 			{
@@ -4543,6 +4544,7 @@ bool cVehicle::InSentryRange ()
 					return true;
 				}
 			}
+			cLog::write(" Server: SentriesAirMap was true, but no unit in sentry mode found", cLog::eLOG_TYPE_NET_ERROR);
 		}
 	}
 
