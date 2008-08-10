@@ -331,6 +331,7 @@ void cBase::AddMetal ( sSubBase *sb,int value )
 	{
 		b = sb->buildings[i];
 		if ( b->data.can_load!=TRANS_METAL ) continue;
+		int iStartValue = value;
 		if ( value<0 )
 		{
 			if ( b->data.cargo>-value )
@@ -357,6 +358,7 @@ void cBase::AddMetal ( sSubBase *sb,int value )
 				b->data.cargo=b->data.max_cargo;
 			}
 		}
+		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
 		if ( value==0 ) break;
 	}
 	sendSubbaseValues ( sb, owner->Nr );
@@ -375,6 +377,7 @@ void cBase::AddOil ( sSubBase *sb,int value )
 	{
 		b = sb->buildings[i];
 		if ( b->data.can_load!=TRANS_OIL ) continue;
+		int iStartValue = value;
 		if ( value<0 )
 		{
 			if ( b->data.cargo>-value )
@@ -401,6 +404,7 @@ void cBase::AddOil ( sSubBase *sb,int value )
 				b->data.cargo=b->data.max_cargo;
 			}
 		}
+		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
 		if ( value==0 ) break;
 	}
 	sendSubbaseValues ( sb, owner->Nr );
@@ -419,6 +423,7 @@ void cBase::AddGold ( sSubBase *sb,int value )
 	{
 		b = sb->buildings[i];
 		if ( b->data.can_load!=TRANS_GOLD ) continue;
+		int iStartValue = value;
 		if ( value<0 )
 		{
 			if ( b->data.cargo>-value )
@@ -445,6 +450,7 @@ void cBase::AddGold ( sSubBase *sb,int value )
 				b->data.cargo=b->data.max_cargo;
 			}
 		}
+		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
 		if ( value==0 ) break;
 	}
 	sendSubbaseValues ( sb, owner->Nr );
