@@ -31,9 +31,8 @@
 */
 class cNetMessage
 {
-	char* data;		//the data of the netMessage
-
 public:
+	char* data;		//the data of the netMessage
 
 	/** length of the containing data in bytes */
 	int iLength;

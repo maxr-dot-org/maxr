@@ -123,7 +123,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	if ( iPlayerNum == -1 )
 	{
 		EventHandler->pushEvent( message->getGameEvent() );
-		if ( network ) network->send( message->iLength, message->serialize( true ) );
+		if ( network ) network->send( message->iLength, message->data );
 		delete message;
 		return;
 	}
@@ -1948,6 +1948,7 @@ void cServer::checkDeadline ()
 			{
 				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
 				sendTurnReport ( iVoiceNum, sReportMsg, i );
+				sReportMsg = "";
 			}
 		}
 	}
