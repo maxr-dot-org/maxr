@@ -114,9 +114,10 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	this->PlayerList = PlayerList;
 
 	// generate subbase for enemy players
-	for ( unsigned int i = 1; i < PlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
-		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(signed int)i ) );
+		if ( (*PlayerList)[i] == ActivePlayer ) continue;
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1) ) );
 	}
 
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
