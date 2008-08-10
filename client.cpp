@@ -113,13 +113,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 
 	this->PlayerList = PlayerList;
 
-	// generate subbase for enemy players
-	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-	{
-		if ( (*PlayerList)[i] == ActivePlayer ) continue;
-		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1) ) );
-	}
-
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
 	iFrame = 0;
@@ -234,7 +227,15 @@ void cClient::initPlayer( cPlayer *Player )
 	bFlagDrawMap = true;
 	bFlagDraw = true;
 	bFlagDrawMMap = true;
+
 	ActivePlayer = Player;
+
+	// generate subbase for enemy players
+	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	{
+		if ( (*PlayerList)[i] == ActivePlayer ) continue;
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1) ) );
+	}
 }
 
 void cClient::run()

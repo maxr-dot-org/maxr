@@ -5082,6 +5082,7 @@ void HeatTheSeat ( void )
 
 	// init client
 	Client = new cClient(&Map, &ClientPlayerList);
+	Client->initPlayer ( ClientPlayerList[0] );
 	for ( int i = 0; i < ClientPlayerList.Size(); i++ )
 	{
 		ClientPlayerList[i]->InitMaps(Map.size, &Map);
@@ -5119,8 +5120,6 @@ void HeatTheSeat ( void )
 	// exit menu and start game
 	ExitMenu();
 
-	Player = ClientPlayerList[0];
-	Client->initPlayer ( Player );
 	Client->Hud = Player->HotHud;
 	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
 	Server->bStarted = true;
