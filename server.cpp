@@ -264,7 +264,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		sendChatMessageToClient( message->popString(), USER_MESSAGE );
 		break;
 	case GAME_EV_WANT_TO_END_TURN:
-		handleEnd ( message->iPlayerNr );
+		{
+			if ( bPlayTurns )
+			{
+				cPlayer *Player = getPlayerFromNumber ( message->iPlayerNr );
+				if ( (*PlayerList)[iActiveTurnPlayerNr] != Player ) break;
+			}
+
+			handleEnd ( message->iPlayerNr );
+		}
 		break;
 	case GAME_EV_WANT_START_WORK:
 		{

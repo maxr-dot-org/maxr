@@ -2921,9 +2921,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iTurn++;
 				iTurnTime = 0;
 				Hud.ShowRunde();
-				Hud.EndeButton ( false );
+				if (!bWaitForNextPlayer ) Hud.EndeButton ( false );
 				bWantToEnd = false;
 				Hud.showTurnTime ( -1 );
+				bFlagDrawHud = true;
 				cLog::write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
 			}
 
@@ -2944,6 +2945,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				else
 				{
 					bWaitForOthers = false;
+					Hud.EndeButton ( false );
+					bFlagDrawHud = true;
 				}
 			}
 			else if ( iNextPlayerNum != -1 )
@@ -3823,6 +3826,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 void cClient::handleEnd()
 {
+	if ( bWaitForOthers ) return;
 	if (ActiveMJobs.Size() > 0)
 	{
 		if ( !bWantToEnd ) addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );

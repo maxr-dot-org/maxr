@@ -955,13 +955,13 @@ void cHud::CheckMouseOver ( void )
 	if ( x>=392&&x<460&&y>=5&&y<20 )
 	{
 		if ( b ) EndeButton ( true );
-		else if ( lb&&!Client->bWantToEnd )
+		else if ( lb&&!Client->bWantToEnd&&!Client->bWaitForOthers )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			Client->handleEnd ();
 		}
 	}
-	else if ( EndePressed&&!Client->bWantToEnd )
+	else if ( EndePressed&&!Client->bWantToEnd&&!Client->bWaitForOthers )
 	{
 		EndeButton ( false );
 	}
