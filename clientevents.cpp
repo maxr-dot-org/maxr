@@ -173,7 +173,7 @@ void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, b
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILDLIST );
 	message->pushBool ( bRepeat );
-	for (unsigned int i = 0; i < BuildList->Size(); i++)
+	for (int i = (BuildList->Size()-1); i >= 0; i--)
 	{
 		message->pushInt16((*BuildList)[i]->id);
 	}

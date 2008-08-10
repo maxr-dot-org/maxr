@@ -3835,6 +3835,9 @@ bool cVehicle::CanTransferTo ( sGameObjects *go )
 		if ( v->data.can_transport != data.can_transport )
 			return false;
 
+		if ( v->IsBuilding || v->IsClearing )
+			return false;
+
 		return true;
 	}
 	else

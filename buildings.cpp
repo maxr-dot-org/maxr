@@ -1681,6 +1681,9 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		if ( v->data.can_transport != data.can_load )
 			return false;
 
+		if ( v->IsBuilding || v->IsClearing )
+			return false;
+
 		for (i = 0; i < SubBase->buildings.Size(); i++)
 		{
 			b = SubBase->buildings[i];

@@ -774,6 +774,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( SrcBuilding )
 			{
 				bool bBreakSwitch = false;
+				if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
 				if ( DestVehicle->data.can_transport != iType ) break;
 				if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
 				switch ( iType )
@@ -835,6 +836,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				else
 				{
+					if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
 					if ( DestVehicle->data.can_transport != iType ) break;
 					if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
 					DestVehicle->data.cargo += iTranfer;
@@ -887,16 +889,22 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( iBuildSpeed == 1 ) Building->MetalPerRound =  4 * Building->data.iNeeds_Metal;
 			if ( iBuildSpeed == 2 ) Building->MetalPerRound = 12 * Building->data.iNeeds_Metal;
 
-			while ( Building->BuildList->Size() )
-			{
-				delete (*Building->BuildList)[0];
-				Building->BuildList->Delete( 0 );
-			}
+			cList<sBuildList*> *NewBuildList = new cList<sBuildList*>;
 
 			int iCount = message->popInt16();
 			for ( int i = 0; i < iCount; i++ )
 			{
 				int iType = message->popInt16();
+
+				// if the first unit hasn't changed copy it to the new buildlist
+				if ( Building->BuildList->Size() > 0 && i == 0 && &UnitsData.vehicle[iType] == (*Building->BuildList)[0]->typ )
+				{
+					sBuildList *BuildListItem = new sBuildList;
+					BuildListItem->metall_remaining = (*Building->BuildList)[0]->metall_remaining;
+					BuildListItem->typ = (*Building->BuildList)[0]->typ;
+					NewBuildList->Add ( BuildListItem );
+					continue;
+				}
 
 				// check whether this building can build this unit
 				if ( UnitsData.vehicle[iType].data.can_drive == DRIVE_SEA && !bWater )
@@ -921,9 +929,17 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 				BuildListItem->typ = &UnitsData.vehicle[iType];
 
-				Building->BuildList->Add( BuildListItem );
+				NewBuildList->Add( BuildListItem );
 			}
 
+			// delete all buildings from the list exapt the first one
+			while ( Building->BuildList->Size() )
+			{
+				delete (*Building->BuildList)[0];
+				Building->BuildList->Delete( 0 );
+			}
+			delete Building->BuildList;
+			Building->BuildList = NewBuildList;
 
 			if ( Building->BuildList->Size() > 0 )
 			{
