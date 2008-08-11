@@ -67,11 +67,11 @@
 
 // We have to take care of these manually !
 #ifdef RELEASE
-	#define MAXVERSION  "M.A.X. Reloaded 0.1.5 BUILD 200802071915"
+#define MAXVERSION  "M.A.X. Reloaded 0.2.0 BUILD 200808111742" // Builddate: JJJJMMDDHHMM
 #else
-	#define MAXVERSION  "M.A.X. Reloaded 0.2.0pre SVN Rev 1313"
+	#define MAXVERSION  "M.A.X. Reloaded 0.2.0 SVN Rev 1331"
 #endif
-#define MAX_VERSION     "0.2.0pre"
-#define MAX_BUILD_DATE  "2007-02-06 21:20:00"
+#define MAX_VERSION     "0.2.0"
+#define MAX_BUILD_DATE  "2008-08-11 17:42:00"
 
-//#define MAXVERSION "M.A.X. Reloaded 0.1.5"
+//#define MAXVERSION "M.A.X. Reloaded 0.2.0"
