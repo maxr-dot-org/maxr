@@ -138,8 +138,8 @@ int LoadData ( void * )
 	if ( LoadLanguage()!=1 || !LanguageFile.LoadFile( sTmpString.c_str() ) )
 	{
 		MakeLog("",-1,2);
-		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
+		SDL_Delay(5000);
 		return -1;
 	}
 	else
@@ -364,7 +364,7 @@ static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const
 	{
 		dest = NULL;
 		cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-		LoadingData=LOAD_ERROR;
+		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
@@ -395,7 +395,7 @@ static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory
 	if(!FileExists(filepath.c_str()))
 	{
 		cLog::write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-		LoadingData=LOAD_ERROR;
+		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
@@ -1095,27 +1095,23 @@ static int LoadMusic(const char* path)
 	sTmpString += "music.xml";
 	if(!FileExists(sTmpString.c_str()))
 	{
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	if(!(MusicXml.LoadFile(sTmpString.c_str())))
 	{
 		cLog::write ( "Can't load music.xml ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","main", NULL);
 	if(!(pXmlNode->XmlReadNodeData(MainMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
 	{
 		cLog::write ( "Can't find \"main\" in music.xml ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","credits", NULL);
 	if(!(pXmlNode->XmlReadNodeData(CreditsMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
 	{
 		cLog::write ( "Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
@@ -1126,7 +1122,6 @@ static int LoadMusic(const char* path)
 	else
 	{
 		cLog::write ( "Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR );
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
@@ -1439,31 +1434,33 @@ static int LoadGraphics(const char* path)
 
 	// Resources:
 	cLog::write ( "Resourcegraphics...", LOG_TYPE_DEBUG );
-	LoadGraphicToSurface ( ResourceData.res_metal_org,path,"res.pcx" );
-	SDL_SetColorKey ( ResourceData.res_metal_org,SDL_SRCCOLORKEY,-1 );
-	ResourceData.res_metal=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_BlitSurface ( ResourceData.res_metal_org,NULL,ResourceData.res_metal,NULL );
-	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFFFFFF );
+	if ( LoadGraphicToSurface ( ResourceData.res_metal_org,path,"res.pcx" ) == 1 )
+	{
+		SDL_SetColorKey ( ResourceData.res_metal_org,SDL_SRCCOLORKEY,-1 );
+		ResourceData.res_metal=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
+		SDL_BlitSurface ( ResourceData.res_metal_org,NULL,ResourceData.res_metal,NULL );
+		SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFFFFFF );
 
-	ResourceData.res_oil_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_FillRect ( ResourceData.res_oil_org,NULL,0x00FF00 );
-	SDL_SetColorKey ( ResourceData.res_oil_org,SDL_SRCCOLORKEY,0xFF00FF );
-	SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil_org,NULL );
-	ResourceData.res_oil=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_FillRect ( ResourceData.res_oil,NULL,0x00FF00 );
-	SDL_SetColorKey ( ResourceData.res_oil,SDL_SRCCOLORKEY,0xFF00FF );
-	SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil,NULL );
+		ResourceData.res_oil_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
+		SDL_FillRect ( ResourceData.res_oil_org,NULL,0x00FF00 );
+		SDL_SetColorKey ( ResourceData.res_oil_org,SDL_SRCCOLORKEY,0xFF00FF );
+		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil_org,NULL );
+		ResourceData.res_oil=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
+		SDL_FillRect ( ResourceData.res_oil,NULL,0x00FF00 );
+		SDL_SetColorKey ( ResourceData.res_oil,SDL_SRCCOLORKEY,0xFF00FF );
+		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil,NULL );
 
-	ResourceData.res_gold_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_FillRect ( ResourceData.res_gold_org,NULL,0xFFFF00 );
-	SDL_SetColorKey ( ResourceData.res_gold_org,SDL_SRCCOLORKEY,0xFF00FF );
-	SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold_org,NULL );
-	ResourceData.res_gold=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-	SDL_FillRect ( ResourceData.res_gold,NULL,0xFFFF00 );
-	SDL_SetColorKey ( ResourceData.res_gold,SDL_SRCCOLORKEY,0xFF00FF );
-	SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold,NULL );
+		ResourceData.res_gold_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
+		SDL_FillRect ( ResourceData.res_gold_org,NULL,0xFFFF00 );
+		SDL_SetColorKey ( ResourceData.res_gold_org,SDL_SRCCOLORKEY,0xFF00FF );
+		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold_org,NULL );
+		ResourceData.res_gold=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
+		SDL_FillRect ( ResourceData.res_gold,NULL,0xFFFF00 );
+		SDL_SetColorKey ( ResourceData.res_gold,SDL_SRCCOLORKEY,0xFF00FF );
+		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold,NULL );
 
-	SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
+		SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
+	}
 
 	return 1;
 }
@@ -1506,18 +1503,15 @@ static int LoadVehicles()
 	sTmpString += "vehicles.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	if ( !VehiclesXml.LoadFile ( sTmpString.c_str() ) )
 	{
-		LoadingData=LOAD_ERROR;
 		cLog::write("Can't load vehicles.xml!",LOG_TYPE_ERROR);
 		return 0;
 	}
 	if(!(pXmlNode = VehiclesXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" )))
 	{
-		LoadingData=LOAD_ERROR;
 		cLog::write("Can't read \"VehicleData->Vehicles\" node!",LOG_TYPE_ERROR);
 		return 0;
 	}
@@ -1993,18 +1987,15 @@ static int LoadBuildings()
 	sTmpString += "buildings.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
-		LoadingData=LOAD_ERROR;
 		return 0;
 	}
 	if ( !BuildingsXml.LoadFile ( sTmpString.c_str() ) )
 	{
-		LoadingData=LOAD_ERROR;
 		cLog::write("Can't load buildings.xml!",LOG_TYPE_ERROR);
 		return 0;
 	}
 	if(!(pXmlNode = BuildingsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" )))
 	{
-		LoadingData=LOAD_ERROR;
 		cLog::write("Can't read \"BuildingData->Building\" node!",LOG_TYPE_ERROR);
 		return 0;
 	}

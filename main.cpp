@@ -89,7 +89,7 @@ int main ( int argc, char *argv[] )
 		if ( LoadingData == LOAD_ERROR )
 		{
 			cLog::write ( "Error while loading data!",LOG_TYPE_ERROR );
-			SDL_KillThread ( DataThread );
+			SDL_WaitThread ( DataThread, NULL );
 			Quit();
 		}
 		while ( SDL_PollEvent ( &event ) )
