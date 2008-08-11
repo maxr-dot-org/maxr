@@ -3532,6 +3532,8 @@ GNU General Public License for more details.\n\n";
 		freopen( "resinstaller.log", "a", stderr );	//write errors to log instead stdout(.txt)
 	}
 
+	writeLog(string("resinstaller version ") + VERSION + TEXT_FILE_LF);
+
 	wasError = 0;
 		
 	while ( 1 )
