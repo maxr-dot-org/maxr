@@ -71,7 +71,7 @@
 #else
 	#define MAXVERSION  "M.A.X. Reloaded 0.2.0pre SVN Rev 1313"
 #endif
-#define MAX_VERSION     "0.1.5"
+#define MAX_VERSION     "0.2.0pre"
 #define MAX_BUILD_DATE  "2007-02-06 21:20:00"
 
 //#define MAXVERSION "M.A.X. Reloaded 0.1.5"
