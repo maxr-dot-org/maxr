@@ -18,11 +18,11 @@
         <EnableDamageEffects YN="Yes" />
         <EnableDamageEffectsVehicles YN="Yes" />
         <EnableMakeTracks YN="Yes" />
-        <ScrollSpeed Num="27" />
+        <ScrollSpeed Num="50" />
         <Net>
-            <IP Text="85.176.109.79" />
+            <IP Text="127.0.0.1" />
             <Port Num="58600" />
-            <PlayerName Text="Beko" />
+            <PlayerName Text="Tuxcommand" />
         </Net>
         <Sound>
             <Enabled YN="Yes" />
@@ -30,7 +30,7 @@
             <SoundMute YN="No" />
             <VoiceMute YN="No" />
             <MusicVol Num="14" />
-            <SoundVol Num="86" />
+            <SoundVol Num="24" />
             <VoiceVol Num="50" />
             <ChunkSize Num="2048" />
             <Frequency Num="44100" />
