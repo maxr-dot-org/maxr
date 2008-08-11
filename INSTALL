@@ -23,7 +23,7 @@ C:\Program Files\
 
 After installing currently needed original gamedata running
 Resinstaller.exe (requires original M.A.X. CD or installation) you can
-start M.A.X. Reloaded executing Max-Reloaded.exe
+start M.A.X. Reloaded executing Maxr.exe
 
 LINUX
 
@@ -54,9 +54,14 @@ http://www.cdosabandonware.com/std_games_details.php?gameid=1979
 This version is however lacking some files like videos, music and some
 sounds.
 
+Warning: Resinstaller will overwrite existing graphics. If you want to
+keep existing free graphics for some reasons *backup* the folders fx, 
+gfx, vehicles and buildings. It's save to copy the files back after the
+resinstaller has done it's magic *except* the file gfx/hud_stuff.pcx.
+
 TROUBLESHOOTING
 
-Compilation problems on ppc:
+Compilation problems on ppc/64bit:
 
 Not supported yet, sorry.
 
@@ -68,7 +73,7 @@ SDL_mixer prior 1.2.8.
 
 Screenresolution:
 
-It is possible to increase the resolution in MAX.XML however
+It is possible to increase the resolution in max.xml however
 you should keep in mind that all menus and displays are designed for
 640x480. If you experience odd graphical problems (and there are!)
 you're on your own.
@@ -76,18 +81,21 @@ you're on your own.
 Sound:
 
 If you experience problems with soundquality (especially on WinXP) you
-may increase the chunksize in MAX.XML. Default is 1024 and 2205Hz. Next
+may increase the chunksize in max.xml. Default is 1024 and 2205Hz. Next
 proper value is 2048 or 4096. If you increasing frequency you have to 
-increase the chunksize, too. However inceasing frequency has only a
+increase the chunksize, too. However increasing frequency has only a
 small benefit to the backgroundmusic.
 
 Maps:
 
-The mapeditor from MM's Max is (currently) not included. The orignal
-maps are however 100% compatible.
+The orignal maps are 100% compatible. See BOTH.
 
 Known Bugs:
 
-Many. Multiplayer does NOT work. HotSeat does. There is no AI! For more
-known and/or fixed bugs please visit our bugtracker:
+Many. There is no AI! This is the initial release featuring network
+games using TCP/IP. Expect and report crashes (with backtrace if
+possible) and odd behaivors. Some features that may have worked in
+prior releases are disabled. For more known and/or fixed bugs please
+visit our bugtracker (no registration required): 
+
 http://maxthegame.dyndns.org:8080/tracker/report/1
