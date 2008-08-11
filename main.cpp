@@ -230,7 +230,7 @@ void showSplash()
 
 	}
 
-	SDL_WM_SetIcon ( SDL_LoadBMP ( "MaxIcon.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
+	SDL_WM_SetIcon ( SDL_LoadBMP ( "maxr.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption ( MAXVERSION, NULL );
