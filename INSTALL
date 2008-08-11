@@ -61,7 +61,7 @@ resinstaller has done it's magic *except* the file gfx/hud_stuff.pcx.
 
 TROUBLESHOOTING
 
-Compilation problems on ppc/64bit:
+Compilation problems on ppc:
 
 Not supported yet, sorry.
 
