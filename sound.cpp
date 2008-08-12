@@ -124,6 +124,7 @@ void StopMusic ( void )
 void StartMusic ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
+	if ( MusicFiles.Size() == 0 ) return;
 	PlayMusic(MusicFiles[random(MusicAnz)].c_str());
 }
 
@@ -131,6 +132,7 @@ void StartMusic ( void )
 void MusicFinished ( void )
 {
 	if ( !SettingsData.bSoundEnabled/*||in_credits*/ ) return;
+	if ( MusicFiles.Size() == 0 ) return;
 	srand ( ( unsigned ) time ( NULL ) );
 	PlayMusic(MusicFiles[random(MusicAnz)].c_str());
 }
