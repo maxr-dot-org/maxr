@@ -106,7 +106,6 @@ void cServerAttackJob::lockTarget(int offset)
 			cVehicle* target = Server->Map->GO[offset].plane;
 			if ( target )
 			{
-				if ( target->mjob ) target->mjob->EndForNow = true;
 				target->bIsBeeingAttacked = true;
 
 				cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_LOCK_TARGET );
@@ -115,7 +114,7 @@ void cServerAttackJob::lockTarget(int offset)
 				message->pushInt32( target->iID );
 				message->pushInt32( offset );
 				message->pushBool ( true ); //bIsAir
-				Server->sendNetMessage( message );
+				Server->sendNetMessage( message, player->Nr );
 				continue;
 			}
 		}
@@ -149,7 +148,6 @@ void cServerAttackJob::lockTarget(int offset)
 			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_LOCK_TARGET );
 			if ( targetVehicle )
 			{
-				if ( targetVehicle->mjob ) targetVehicle->mjob->finished = true;
 				targetVehicle->bIsBeeingAttacked = true;
 
 				message->pushChar ( targetVehicle->OffX );
@@ -403,7 +401,6 @@ void cServerAttackJob::makeImpact()
 		cVehicle* target = Server->Map->GO[iTargetOff].plane;
 		if ( target )
 		{
-			if ( target->mjob ) target->mjob->EndForNow = false;
 			target->bIsBeeingAttacked = false;
 		}
 	}
@@ -431,7 +428,6 @@ void cServerAttackJob::makeImpact()
 
 		if ( targetVehicle )
 		{
-			if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = false;
 			targetVehicle->bIsBeeingAttacked = false;
 		}
 	}
@@ -472,8 +468,6 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 
 		vehicle->bIsBeeingAttacked = true;
 		
-		if ( vehicle->mjob ) vehicle->mjob->finished = true;
-
 		//synchonize position
 		int OffY = message->popChar();
 		int OffX = message->popChar();
@@ -931,6 +925,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 	bool ownUnit = false;
 	bool destroyed = false;
 	string name;
+	int offX = 0, offY = 0;
 
 	//no target found
 	if ( !targetBuilding && !targetVehicle )
@@ -957,6 +952,8 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 			else
 			{
 				playImpact = true;
+				offX = targetVehicle->OffX;
+				offY = targetVehicle->OffY;
 				if ( Client->SelectedVehicle == targetVehicle ) targetVehicle->ShowDetails();
 				Client->mouseMoveCallback( true );
 			}
@@ -989,7 +986,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 
 	if ( playImpact && SettingsData.bAlphaEffects )
 	{
-		Client->addFX( fxHit, x*64 ,y*64 , 0);
+		Client->addFX( fxHit, x*64 + offX, y*64 + offY, 0);
 	}
 
 	string message;
