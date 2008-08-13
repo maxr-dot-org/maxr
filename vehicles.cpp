@@ -4508,7 +4508,6 @@ bool cVehicle::InSentryRange ()
 					return true;
 				}
 			}
-			cLog::write(" Server: SentriesAirMap was true, but no unit in sentry mode found", cLog::eLOG_TYPE_NET_ERROR);
 		}
 		else
 		{
@@ -4544,7 +4543,6 @@ bool cVehicle::InSentryRange ()
 					return true;
 				}
 			}
-			cLog::write(" Server: SentriesAirMap was true, but no unit in sentry mode found", cLog::eLOG_TYPE_NET_ERROR);
 		}
 	}
 

@@ -381,6 +381,10 @@ void cServerAttackJob::makeImpact()
 			{
 				Server->destroyUnit( targetVehicle );
 			}
+			else
+			{
+				targetVehicle->InSentryRange();
+			}
 		}
 		else
 		{
