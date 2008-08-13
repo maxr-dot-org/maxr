@@ -79,6 +79,9 @@ cAutoMJob::~cAutoMJob()
 void cAutoMJob::DoAutoMove()
 {
 	if ( vehicle->bIsBeeingAttacked ) return;
+	if ( Client->bWaitForOthers ) return;
+	if ( vehicle->owner != Client->ActivePlayer ) return;
+
 	if ( vehicle->mjob == NULL || vehicle->mjob->finished )
 	{
 			if (n > WAIT_FRAMES)
@@ -100,8 +103,6 @@ void cAutoMJob::DoAutoMove()
 		}
 		if ( vehicle->mjob->Suspended && vehicle->data.speed )
 		{
-			//TODO: addActiveMoveJob();
-			//game->engine->AddActiveMoveJob(vehicle->mjob);
 			Client->addMoveJob( vehicle, vehicle->mjob->DestX + vehicle->mjob->DestY * Client->Map->size);
 			lastMoveJob = vehicle->mjob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
