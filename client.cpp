@@ -4084,8 +4084,9 @@ void cClient::handleMoveJobs ()
 
 		MJob = ActiveMJobs[i];
 		Vehicle = MJob->vehicle;
-
-		if ( MJob->vehicle->bIsBeeingAttacked ) continue;
+		
+		//suspend movejobs of attacked vehicles 
+		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue; 
 
 		if ( MJob->finished || MJob->EndForNow )
 		{
@@ -5106,21 +5107,21 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	//play explosion
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
-		Client->addFX( fxExploAir, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
+		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 	else if ( Map->IsWater(vehicle->PosX + vehicle->PosY*Map->size) )
 	{
-		Client->addFX( fxExploWater, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
+		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 	else
 	{
-		Client->addFX( fxExploSmall, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
+		Client->addFX( fxExploSmall, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 
 	if ( vehicle->data.is_human )
 	{
 		//add corpse
-		Client->addFX( fxCorpse,  vehicle->PosX*64, vehicle->PosY*64, 0);
+		Client->addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
 	}
 	else
 	{
