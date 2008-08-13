@@ -726,7 +726,7 @@ int cClient::checkUser( bool bChange )
 			// TODO: repair
 			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 		}
-		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !bWantToEnd && !SelectedVehicle->Attacking )
+		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
 		{
 			if ( SelectedVehicle->IsBuilding )
 			{
@@ -803,7 +803,7 @@ int cClient::checkUser( bool bChange )
 				}
 				else
 					// select the unit:
-					if ( OverObject && !bWantToEnd )
+					if ( OverObject )
 					{
 						if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
 						{

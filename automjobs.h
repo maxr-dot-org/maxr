@@ -39,7 +39,7 @@
 #define DISTANCE_NEW_OP 7 //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
 
 
-class cEngine;
+
 class cMJobs;
 class cVehicle;
 
@@ -66,7 +66,6 @@ public:
 						//the surveyor tries to stay near this coordinates
 	bool playerMJob;	//the player has chanched the move job
 
-	static void init(cEngine* engine);
 	static void handleAutoMoveJobs();
 	cAutoMJob(cVehicle *vehicle);
 	~cAutoMJob(void);
