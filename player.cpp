@@ -231,6 +231,9 @@ void cPlayer::addSentryVehicle ( cVehicle *v )
 	{
 		SentriesAir.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir );
+		n=new sSentry;
+		n->b=NULL;
+		n->v=v;
 		SentriesGround.Add ( n );
 		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround );
 	}
@@ -256,6 +259,9 @@ void cPlayer::addSentryBuilding ( cBuilding *b )
 	{
 		SentriesAir.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir );
+		n=new sSentry;
+		n->b=b;
+		n->v=NULL;
 		SentriesGround.Add ( n );
 		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround );
 	}
