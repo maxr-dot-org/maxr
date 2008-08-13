@@ -327,17 +327,7 @@ void cClient::run()
 		// display the chatinput:
 		if ( bChatInput && bFlagDrawMap )
 		{
-			string OutTxt = ">";
-			OutTxt += InputStr;
-			if ( iFrame%2 )
-			{
-
-			}
-			else
-			{
-				OutTxt += "_";
-			}
-			font->showText(185,440, OutTxt);
+			displayChatInput();
 		}
 		// display the messages:
 		if ( bFlagDrawMap )
@@ -472,10 +462,9 @@ int cClient::checkUser( bool bChange )
 		}
 		else
 		{
-			string OutTxt = ">"; OutTxt += InputStr; OutTxt += "_";
-			if ( font->getTextWide(OutTxt) >=440 )
+			if ( InputStr.length() >= MAX_MESSAGE_LENGTH-20 )
 			{
-				InputStr.erase ( InputStr.length()-1 );
+				InputStr.erase ( MAX_MESSAGE_LENGTH-20 );
 			}
 		}
 	}
@@ -2204,6 +2193,32 @@ void cClient::displayDebugOutput()
 	if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
 	{
 		trace();
+	}
+}
+
+void cClient::displayChatInput()
+{
+	int y, iParts;
+	string OutTxt = ">";
+	OutTxt += InputStr;
+	if ( iFrame%2 ) {}
+	else OutTxt += "_";
+
+	iParts = font->getTextWide( OutTxt ) / (SettingsData.iScreenW-210)+1;
+	y = SettingsData.iScreenH-40-iParts*font->getFontHeight ();
+	int iStartPos = 0, iLength = 1;
+	for ( int i = 0; i < iParts; i++ )
+	{
+		string sTmpStr = OutTxt.substr( iStartPos, iLength );
+		while ( sTmpStr.length() < OutTxt.length()-iStartPos && font->getTextWide( sTmpStr ) < SettingsData.iScreenW-210 )
+		{
+			iLength++;
+			sTmpStr = OutTxt.substr( iStartPos, iLength );
+		}
+		font->showText( 185, y, sTmpStr );
+		y += font->getFontHeight ();
+		iStartPos += iLength;
+		iLength = 1;
 	}
 }
 
@@ -3998,11 +4013,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 		// display the chatinput:
 		if ( bChatInput && bFlagDrawMap )
 		{
-			string OutTxt = ">";
-			OutTxt += InputStr;
-			if ( iFrame%2 ){ }
-			else OutTxt += "_";
-			font->showText(185,440, OutTxt);
+			displayChatInput();
 		}
 		// display the messages:
 		if ( bFlagDrawMap )

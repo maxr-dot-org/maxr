@@ -224,6 +224,7 @@ private:
 	void drawExitPoint( int iX, int iY );
 	void drawUnitCircles ();
 	void displayDebugOutput();
+	void displayChatInput();
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
