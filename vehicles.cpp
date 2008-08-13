@@ -995,7 +995,7 @@ int cVehicle::refreshData ()
 
 		if ( BuildRounds == 0 )
 		{
-			Server->addReport ( UnitsData.building[BuildingTyp].data.name, false, owner->Nr );
+			Server->addReport ( UnitsData.building[BuildingTyp].nr, false, owner->Nr );
 
 			if (UnitsData.building[BuildingTyp].data.is_base ||
 					UnitsData.building[BuildingTyp].data.is_connector)

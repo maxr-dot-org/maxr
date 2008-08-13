@@ -889,7 +889,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 	{
 		for (i = 0; i < game->ActivePlayer->ReportVehicles.Size(); i++)
 		{
-			r = game->ActivePlayer->ReportVehicles[i];
+			//r = game->ActivePlayer->ReportVehicles[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -899,13 +899,13 @@ void cEngine::AddReport ( string name,bool vehicle )
 		r=new sReport;
 		r->name=name;
 		r->anz=1;
-		game->ActivePlayer->ReportVehicles.Add ( r );
+//		game->ActivePlayer->ReportVehicles.Add ( r );
 	}
 	else
 	{
 		for (i = 0; i < game->ActivePlayer->ReportBuildings.Size(); i++)
 		{
-			r = game->ActivePlayer->ReportBuildings[i];
+			//r = game->ActivePlayer->ReportBuildings[i];
 			if ( !r->name.compare ( name ) )
 			{
 				r->anz++;
@@ -915,7 +915,7 @@ void cEngine::AddReport ( string name,bool vehicle )
 		r=new sReport;
 		r->name=name;
 		r->anz=1;
-		game->ActivePlayer->ReportBuildings.Add ( r );
+//		game->ActivePlayer->ReportBuildings.Add ( r );
 	}
 }
 
@@ -931,7 +931,7 @@ void cEngine::MakeRundenstartReport ( void )
 
 	while (game->ActivePlayer->ReportBuildings.Size())
 	{
-		r = game->ActivePlayer->ReportBuildings[0];
+//		r = game->ActivePlayer->ReportBuildings[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;
@@ -941,7 +941,7 @@ void cEngine::MakeRundenstartReport ( void )
 	}
 	while (game->ActivePlayer->ReportVehicles.Size())
 	{
-		r = game->ActivePlayer->ReportVehicles[0];
+//		r = game->ActivePlayer->ReportVehicles[0];
 		if ( anz ) sReportMsg+=", ";
 		anz+=r->anz;
 		stmp = iToStr(r->anz) + " " + r->name;

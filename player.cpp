@@ -21,6 +21,7 @@
 #include "game.h"
 #include "menu.h"
 #include "client.h"
+#include "server.h"
 #include "serverevents.h"
 
 // Funktionen der Player-Klasse //////////////////////////////////////////////

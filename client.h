@@ -298,7 +298,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iPlayerNum Number of player for who this player has to wait
 	*/
-	void waitForOtherPlayer( int iPlayerNum );
+	void waitForOtherPlayer( int iPlayerNum, bool bStartup = false );
 	/**
 	* handles the rest-time of the current turn
 	*@author alzi alias DoctorDeath

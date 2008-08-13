@@ -24,7 +24,7 @@
 #include "map.h"
 #include "player.h"
 #include "attackJobs.h"
-#include "engine.h" // for sReport
+#include "mjobs.h"
 
 
 /**
@@ -34,18 +34,16 @@
 #define GAME_TYPE_HOTSEAT	1	// a hotseat multiplayer game
 #define GAME_TYPE_TCPIP		2	// a multiplayergame over TCP/IP
 
-#if 0
 /**
  * Structure for the reports
  */
-struct sReport
+struct sTurnstartReport
 {
-	/** name of the report */
-	string name;
+	/** unit type of the report */
+	int iType;
 	/** counter for this report */
-	int anz;
+	int iAnz;
 };
-#endif
 
 /**
 * Callback funktion for the serverthread
@@ -103,13 +101,15 @@ private:
 	/** the type of the current game */
 	int iGameType;
 	/** a list with the numbers of all players who have ended theire turn */
-	cList<int*> PlayerEndList;
+	cList<cPlayer*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;
 	/** deadline in seconds if the first player has finished his turn*/
 	int iTurnDeadline;
 	/** Ticks when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
+	/** Number of the Player who wants to end his turn; -1 for no player, -2 for undifined player */
+	int iWantPlayerEndNum;
 	/** The ID for the next unit*/
 	unsigned int iNextUnitID;
 	/** will be incremented by the Timer */
@@ -170,13 +170,17 @@ private:
 	*/
 	void makeTurnEnd ();
 	/**
-	* gets the reportmessage for a player
+	* rechecks the end actions when a player wanted to finish his turn
 	*@author alzi alias DoctorDeath
-	*@param iPlayerNum Number of player for who the report should be generated
-	*@param sReportMsg string buffer for the report string
-	*@param iVoiceNum integer buffer for the number which voice sound should be played
 	*/
-	void getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoiceNum );
+	void handleWantEnd();
+	/**
+	* checks whether some units are moving and restarts remaining movements
+	*@author alzi alias DoctorDeath
+	*@param iPlayer The player who will receive the messages when the turn can't be finished now; -1 for all players
+	*@return true if there were found some moving units
+	*/
+	bool checkEndActions ( int iPlayer );
 	/**
 	* checks wether the deadline has run down
 	*@author alzi alias DoctorDeath
@@ -333,7 +337,7 @@ public:
 	*@param bVehicle true if the report is about vehicles
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
-	void addReport ( string sName, bool bVehicle, int iPlayerNum );
+	void addReport ( int iType, bool bVehicle, int iPlayerNum );
 	/**
 	* releases a movejob to be deleted
 	*@author alzi alias DoctorDeath

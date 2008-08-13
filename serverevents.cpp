@@ -506,11 +506,35 @@ void sendProduceValues ( cBuilding *Building )
 	Server->sendNetMessage( message, Building->owner->Nr );
 }
 
-void sendTurnReport ( int iVoiceNum, string sReport, int iPlayer )
+void sendTurnReport ( cPlayer *Player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_TURN_REPORT );
-	message->pushString ( sReport );
-	message->pushInt16( iVoiceNum );
-	message->pushInt16 ( iPlayer );
-	Server->sendNetMessage( message, iPlayer );
+	int iCount = 0;
+	sTurnstartReport *Report;
+
+	message->pushBool ( Player->ReportForschungFinished );
+	Player->ReportForschungFinished = false;
+
+	while ( Player->ReportBuildings.Size() )
+	{
+		Report = Player->ReportBuildings[0];
+		message->pushInt16 ( Report->iAnz );
+		message->pushInt16 ( Report->iType );
+		message->pushBool ( false );
+		Player->ReportBuildings.Delete ( 0 );
+		delete Report;
+		iCount++;
+	}
+	while ( Player->ReportVehicles.Size() )
+	{
+		Report = Player->ReportVehicles[0];
+		message->pushInt16 ( Report->iAnz );
+		message->pushInt16 ( Report->iType );
+		message->pushBool ( true );
+		Player->ReportVehicles.Delete ( 0 );
+		delete Report;
+		iCount++;
+	}
+	message->pushInt16 ( iCount );
+	Server->sendNetMessage( message, Player->Nr );
 }

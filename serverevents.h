@@ -176,6 +176,6 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer );
 void sendBuildList ( cBuilding *Building );
 void sendProduceValues ( cBuilding *Building );
-void sendTurnReport ( int iVoiceNum, string sReport, int iPlayer );
+void sendTurnReport ( cPlayer *Player );
 
 #endif // servereventsH

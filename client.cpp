@@ -248,7 +248,7 @@ void cClient::run()
 	mouse->MoveCallback = true;
 	Hud.DoAllHud();
 
-	waitForOtherPlayer( 0 );
+	waitForOtherPlayer( 0, true );
 
 	while ( 1 )
 	{
@@ -420,8 +420,6 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
-		// end turn if all actions have finished now
-		if ( bWantToEnd ) handleEnd();
 	}
 	mouse->MoveCallback = false;
 }
@@ -3296,8 +3294,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							// the client is faster
 							else
 							{
-								cLog::write ( " Client: Client is faster (one or more fields)", cLog::eLOG_TYPE_NET_DEBUG );
+								cLog::write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 								// just stop the vehicle and wait for the next commando of the server
+								for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
+								{
+									if ( ActiveMJobs[i] == Vehicle->mjob ) ActiveMJobs.Delete ( i );
+								}
+								Vehicle->MoveJobActive = false;
 								Vehicle->mjob->EndForNow = true;
 								break;
 							}
@@ -3310,6 +3313,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					{
 						Vehicle->moving = true;
 						if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
+						if ( Vehicle->mjob->EndForNow && !Vehicle->MoveJobActive )
+						{
+							Vehicle->mjob->EndForNow = false;
+							addActiveMoveJob ( Vehicle->mjob );
+							cLog::write ( " Client: reactivated movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+						}
 						Vehicle->MoveJobActive = true;
 						cLog::write(" Client: The movejob is ok: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 					}
@@ -3583,26 +3592,52 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_TURN_REPORT:
 		{
-			int iPlayerNum = message->popInt16();
-			if ( iPlayerNum == -1 || iPlayerNum == ActivePlayer->Nr )
-			{
-				addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
+			string sReportMsg = "";
+			string sTmp;
+			int iCount = 0;
 
-				switch ( message->popInt16() )
+			int iReportAnz = message->popInt16();
+			while ( iReportAnz )
+			{
+				bool bVehicle = message->popBool();
+				int iType = message->popInt16();
+				int iAnz = message->popInt16();
+				if ( bVehicle )
 				{
-				case 0:
-					PlayVoice ( VoiceData.VOIStartNone );
-					break;
-				case 1:
-					addMessage( message->popString() );
-					PlayVoice ( VoiceData.VOIStartOne );
-					break;
-				case 2:
-					addMessage( message->popString() );
-					PlayVoice ( VoiceData.VOIStartMore );
-					break;
+					if ( iCount ) sReportMsg += ", ";
+					iCount += iAnz;
+					sTmp = iToStr( iAnz ) + " " + UnitsData.vehicle[iType].data.name;
+					sReportMsg += iAnz > 1 ? sTmp : UnitsData.vehicle[iType].data.name;
 				}
+				else
+				{
+					if ( iCount ) sReportMsg += ", ";
+					iCount += iAnz;
+					sTmp = iToStr( iAnz ) + " " + UnitsData.building[iType].data.name;
+					sReportMsg += iAnz > 1 ? sTmp : UnitsData.building[iType].data.name;
+				}
+				iReportAnz--;
 			}
+
+			bool bFinishedResearch = message->popBool();
+			if ( iCount == 0 )
+			{
+				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartNone );
+			}
+			else if ( iCount == 1 )
+			{
+				sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished") + ".";
+				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartOne );
+			}
+			else
+			{
+				sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished2") + ".";
+				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartMore );
+			}
+			if ( bFinishedResearch ) PlayVoice ( VoiceData.VOIResearchComplete );
+
+			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
+			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
 		}
 		break;
 	case GAME_EV_MARK_LOG:
@@ -3827,24 +3862,8 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 void cClient::handleEnd()
 {
 	if ( bWaitForOthers ) return;
-	if (ActiveMJobs.Size() > 0)
-	{
-		if ( !bWantToEnd ) addMessage( lngPack.i18n( "Text~Comp~Turn_Wait") );
-		bWantToEnd = true;
-	}
-	else
-	{
-		if ( checkEndActions() )
-		{
-			if ( !bWantToEnd ) addMessage ( lngPack.i18n( "Text~Comp~Turn_Automove") );
-			bWantToEnd = true;
-		}
-		else
-		{
-			sendWantToEndTurn();
-			bWantToEnd = false;
-		}
-	}
+	bWantToEnd = true;
+	sendWantToEndTurn();
 }
 
 bool cClient::checkEndActions()
@@ -3915,7 +3934,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	ShowOK ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn"), true );
 }
 
-void cClient::waitForOtherPlayer( int iPlayerNum )
+void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 {
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
@@ -3954,6 +3973,20 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 		if ( bFlagDrawHud || bFlagDrawMap )
 		{
 			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+			// draw closed panel on startup
+			if ( bStartup )
+			{
+				SDL_Rect Top, Bottom;
+				Top.x = 0;
+				Top.y = ( SettingsData.iScreenH/2 ) - 479;
+				Top.h = 479;
+				Top.w = Bottom.w = 171;
+				Bottom.h = 481;
+				Bottom.x = 0;
+				Bottom.y = ( SettingsData.iScreenH/2 );
+				SDL_BlitSurface ( GraphicsData.gfx_panel_top ,NULL, buffer, &Top );
+				SDL_BlitSurface ( GraphicsData.gfx_panel_bottom, NULL, buffer, &Bottom );
+			}
 			mouse->GetBack ( buffer );
 			bFlagDraw = true;
 		}
@@ -4015,6 +4048,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum )
 
 void cClient::handleTurnTime()
 {
+	if ( !iTimer0 ) return;
 	if ( iTurnTime > 0 )
 	{
 		int iRestTime = iTurnTime - Round( ( SDL_GetTicks() - iStartTurnTime )/1000 );
@@ -4038,9 +4072,6 @@ void cClient::handleMoveJobs ()
 
 		MJob = ActiveMJobs[i];
 		Vehicle = MJob->vehicle;
-
-		//suspend movejobs of attacked vehicles
-		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue;
 
 		if ( MJob->finished || MJob->EndForNow )
 		{
@@ -5061,21 +5092,21 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	//play explosion
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
-		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
+		Client->addFX( fxExploAir, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
 	}
 	else if ( Map->IsWater(vehicle->PosX + vehicle->PosY*Map->size) )
 	{
-		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 +vehicle->OffY + 32, 0);
+		Client->addFX( fxExploWater, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
 	}
 	else
 	{
-		Client->addFX( fxExploSmall, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
+		Client->addFX( fxExploSmall, vehicle->PosX*64 + 32, vehicle->PosY*64 + 32, 0);
 	}
 
 	if ( vehicle->data.is_human )
 	{
 		//add corpse
-		Client->addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
+		Client->addFX( fxCorpse,  vehicle->PosX*64, vehicle->PosY*64, 0);
 	}
 	else
 	{

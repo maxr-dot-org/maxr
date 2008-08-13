@@ -76,7 +76,7 @@ struct sSubBase;
 struct sBuildStruct;
 struct sFX;
 struct sPathCalc;
-struct sReport;
+struct sTurnstartReport;
 struct sVehicle;
 
 ///////////////////////////////////////////////////////////////////////////////

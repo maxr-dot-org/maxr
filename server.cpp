@@ -52,6 +52,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iTurnDeadline = 10; // just temporary set to 10 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
+	iWantPlayerEndNum = -1;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
 
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
@@ -219,6 +220,8 @@ void cServer::run()
 		handleMoveJobs ();
 
 		handleTimer();
+
+		handleWantEnd();
 
 		SDL_Delay( 10 );
 	}
@@ -1631,18 +1634,27 @@ cPlayer *cServer::getPlayerFromNumber ( int iNum )
 
 void cServer::handleEnd ( int iPlayerNum )
 {
-	string sReportMsg = "";
-	int iVoiceNum;
-
-	bool bChangeTurn = false;
 	if ( iGameType == GAME_TYPE_SINGLE )
 	{
+		if ( checkEndActions( iPlayerNum ) )
+		{
+			iWantPlayerEndNum = iPlayerNum;
+			return;
+		}
 		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
-		bChangeTurn = true;
+		iTurn++;
+		makeTurnEnd ();
+		// send report to player
+		sendTurnReport ( (*PlayerList)[0] );
 	}
 	else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
 	{
 		bool bWaitForPlayer = ( iGameType == GAME_TYPE_TCPIP && bPlayTurns );
+		if ( checkEndActions( iPlayerNum ) )
+		{
+			iWantPlayerEndNum = iPlayerNum;
+			return;
+		}
 		iActiveTurnPlayerNr++;
 		if ( iActiveTurnPlayerNr >= PlayerList->Size() )
 		{
@@ -1655,10 +1667,11 @@ void cServer::handleEnd ( int iPlayerNum )
 			{
 				for ( int i = 0; i < PlayerList->Size(); i++ )
 				{
-					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, i);
+					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, (*PlayerList)[i]->Nr);
 				}
 			}
-			bChangeTurn = true;
+			iTurn++;
+			makeTurnEnd ();
 		}
 		else
 		{
@@ -1675,18 +1688,26 @@ void cServer::handleEnd ( int iPlayerNum )
 				}
 			}
 		}
+		// send report to next player
+		sendTurnReport ( (*PlayerList)[iActiveTurnPlayerNr] );
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
 		// check whether this player has already finished his turn
 		for ( int i = 0; i < PlayerEndList.Size(); i++ )
 		{
-			if (*PlayerEndList[i] == iPlayerNum) return;
+			if (PlayerEndList[i]->Nr == iPlayerNum) return;
 		}
-		PlayerEndList.Add ( &getPlayerFromNumber ( iPlayerNum )->Nr );
+		PlayerEndList.Add ( getPlayerFromNumber ( iPlayerNum ) );
 
 		if ( PlayerEndList.Size() >= PlayerList->Size() )
 		{
+			iDeadlineStartTime = 0;
+			if ( checkEndActions( -1 ) )
+			{
+				iWantPlayerEndNum = iPlayerNum;
+				return;
+			}
 			while ( PlayerEndList.Size() )
 			{
 				PlayerEndList.Delete ( 0 );
@@ -1695,8 +1716,14 @@ void cServer::handleEnd ( int iPlayerNum )
 			{
 				sendMakeTurnEnd ( true, false, -1, i );
 			}
-			iDeadlineStartTime = 0;
-			bChangeTurn = true;
+
+			iTurn++;
+			makeTurnEnd ();
+			// send reports to all players
+			for ( int i = 0; i < PlayerList->Size(); i++ )
+			{
+				sendTurnReport ( (*PlayerList)[i] );
+			}
 		}
 		else
 		{
@@ -1711,17 +1738,77 @@ void cServer::handleEnd ( int iPlayerNum )
 			}
 		}
 	}
-	if ( bChangeTurn )
+}
+
+void cServer::handleWantEnd()
+{
+	if ( !iTimer0 ) return;
+	if ( iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2 )
 	{
-		iTurn++;
-		makeTurnEnd ();
-		for ( int i = 0; i < PlayerList->Size(); i++ )
+		for ( unsigned int i = 0; i < PlayerEndList.Size(); i++ )
 		{
-			getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-			sendTurnReport ( iVoiceNum, sReportMsg, i );
-			sReportMsg = "";
+			if ( iWantPlayerEndNum == PlayerEndList[i]->Nr ) PlayerEndList.Delete( i );
+		}
+		handleEnd ( iWantPlayerEndNum );
+	}
+}
+
+bool cServer::checkEndActions ( int iPlayer )
+{
+	string sMessage = "";
+	if ( ActiveMJobs.Size() > 0)
+	{
+		sMessage = "Text~Comp~Turn_Wait";
+	}
+	else
+	{
+		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+		{
+			cVehicle *NextVehicle;
+			NextVehicle = (*PlayerList)[i]->VehicleList;
+			while ( NextVehicle != NULL )
+			{
+				if ( NextVehicle->mjob && NextVehicle->data.speed > 0 && !NextVehicle->moving )
+				{
+					// restart movejob
+					NextVehicle->mjob->CalcNextDir();
+					NextVehicle->mjob->EndForNow = false;
+					NextVehicle->mjob->ScrX = NextVehicle->PosX;
+					NextVehicle->mjob->ScrY = NextVehicle->PosY;
+					for ( unsigned int j = 0; j < NextVehicle->SeenByPlayerList.Size(); j++ )
+					{
+						sendMoveJobServer ( NextVehicle->mjob, *NextVehicle->SeenByPlayerList[j] );
+					}
+					sendMoveJobServer ( NextVehicle->mjob, NextVehicle->owner->Nr );
+					addActiveMoveJob ( NextVehicle->mjob );
+					sMessage = "Text~Comp~Turn_Automove";
+				}
+				NextVehicle = NextVehicle->next;
+			}
 		}
 	}
+	if ( sMessage.length() > 0 )
+	{
+		if ( iPlayer != -1 )
+		{
+			if ( iWantPlayerEndNum == -1 )
+			{
+				sendChatMessageToClient ( sMessage, SERVER_INFO_MESSAGE, iPlayer );
+			}
+		}
+		else
+		{
+			if ( iWantPlayerEndNum == -1 )
+			{
+				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				{
+					sendChatMessageToClient ( sMessage, SERVER_INFO_MESSAGE, (*PlayerList)[i]->Nr );
+				}
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
 void cServer::makeTurnEnd ()
@@ -1838,72 +1925,28 @@ void cServer::makeTurnEnd ()
 	}
 
 	//checkDefeat();
+
+	iWantPlayerEndNum = -1;
 }
 
-void cServer::getTurnstartReport ( int iPlayerNum, string *sReportMsg, int *iVoiceNum )
+void cServer::addReport ( int iType, bool bVehicle, int iPlayerNum )
 {
-	sReport *Report;
-	string sTmp;
-	int iCount = 0;
-
-	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
-	if ( Player == NULL ) return;
-	while ( Player->ReportBuildings.Size() )
-	{
-		Report = Player->ReportBuildings[0];
-		if ( iCount ) *sReportMsg += ", ";
-		iCount += Report->anz;
-		sTmp = iToStr( Report->anz ) + " " + Report->name;
-		*sReportMsg += Report->anz > 1 ? sTmp : Report->name;
-		Player->ReportBuildings.Delete ( 0 );
-		delete Report;
-	}
-	while ( Player->ReportVehicles.Size() )
-	{
-		Report = Player->ReportVehicles[0];
-		if ( iCount ) *sReportMsg+=", ";
-		iCount += Report->anz;
-		sTmp = iToStr( Report->anz ) + " " + Report->name;
-		*sReportMsg += Report->anz > 1 ? sTmp : Report->name;
-		Player->ReportVehicles.Delete ( 0 );
-		delete Report;
-	}
-
-	if ( iCount == 0 )
-	{
-		if ( !Player->ReportForschungFinished ) *iVoiceNum = 0;
-	}
-	else if ( iCount == 1 )
-	{
-		*sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished") + ".";
-		if ( !Player->ReportForschungFinished ) *iVoiceNum = 1;
-	}
-	else
-	{
-		*sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished2") + ".";
-		if ( !Player->ReportForschungFinished ) *iVoiceNum = 2;
-	}
-	Player->ReportForschungFinished = false;
-}
-
-void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
-{
-	sReport *Report;
+	sTurnstartReport *Report;
 	cPlayer *Player = getPlayerFromNumber ( iPlayerNum );
 	if ( bVehicle )
 	{
 		for ( int i = 0; i < Player->ReportVehicles.Size(); i++ )
 		{
 			Report = Player->ReportVehicles[i];
-			if ( Report->name.compare ( sName ) == 0 )
+			if ( Report->iType == iType )
 			{
-				Report->anz++;
+				Report->iAnz++;
 				return;
 			}
 		}
-		Report = new sReport;
-		Report->name = sName;
-		Report->anz = 1;
+		Report = new sTurnstartReport;
+		Report->iType = iType;
+		Report->iAnz = 1;
 		Player->ReportVehicles.Add ( Report );
 	}
 	else
@@ -1911,31 +1954,33 @@ void cServer::addReport ( string sName, bool bVehicle, int iPlayerNum )
 		for ( int i = 0; i < Player->ReportBuildings.Size(); i++ )
 		{
 			Report = Player->ReportBuildings[i];
-			if ( Report->name.compare ( sName ) == 0 )
+			if ( Report->iType == iType )
 			{
-				Report->anz++;
+				Report->iAnz++;
 				return;
 			}
 		}
-		Report = new sReport;
-		Report->name = sName;
-		Report->anz = 1;
+		Report = new sTurnstartReport;
+		Report->iType = iType;
+		Report->iAnz = 1;
 		Player->ReportBuildings.Add ( Report );
 	}
 }
 
 void cServer::checkDeadline ()
 {
+	if ( !iTimer0 ) return;
 	if ( iTurnDeadline >= 0 && iDeadlineStartTime > 0 )
 	{
 		if ( SDL_GetTicks() - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
-			while ( PlayerEndList.Size() )
+			if ( checkEndActions( -1 ) )
 			{
-				PlayerEndList.Delete ( 0 );
+				iWantPlayerEndNum = -2;
+				return;
 			}
-			string sReportMsg = "";
-			int iVoiceNum;
+
+			while ( PlayerEndList.Size() ) PlayerEndList.Delete ( 0 );
 
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
@@ -1946,9 +1991,7 @@ void cServer::checkDeadline ()
 			makeTurnEnd();
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
-				getTurnstartReport ( i, &sReportMsg, &iVoiceNum );
-				sendTurnReport ( iVoiceNum, sReportMsg, i );
-				sReportMsg = "";
+				sendTurnReport ( (*PlayerList)[i] );
 			}
 		}
 	}
