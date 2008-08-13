@@ -49,7 +49,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 10; // just temporary set to 10 seconds
+	iTurnDeadline = 45; // just temporary set to 10 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
