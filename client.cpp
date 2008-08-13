@@ -1368,26 +1368,27 @@ void cClient::drawMap( bool bPure )
 				iPos = iY*Map->size+iStartX;
 				for ( iX = iStartX; iX <= iEndX; iX++ )
 				{
+					int offset = (Player->Nr - 1) * font->getFontHeight( LATIN_SMALL_YELLOW );
 					if ( Player->SentriesMapAir[iPos] )
 					{
 						if ( Player->ScanMap[iPos] )
 						{
-							font->showText(dest.x+1,dest.y+1, iToStr ( Player->Nr ) + " A+", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A+", LATIN_SMALL_YELLOW);
 						}
 						else
 						{
-							font->showText(dest.x+1,dest.y+1, iToStr ( Player->Nr ) + " A-", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A-", LATIN_SMALL_YELLOW);
 						}
 					}
 					if ( Player->SentriesMapGround[iPos] )
 					{
 						if ( Player->ScanMap[iPos] )
 						{
-							font->showText(dest.x+10,dest.y+1, iToStr ( Player->Nr ) + " G+", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G+", LATIN_SMALL_YELLOW);
 						}
 						else
 						{
-							font->showText(dest.x+10,dest.y+1, iToStr ( Player->Nr ) + " G-", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G-", LATIN_SMALL_YELLOW);
 						}
 					}
 					iPos++;
@@ -2176,9 +2177,9 @@ void cClient::displayDebugOutput()
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
 			cPlayer *Player = (*Server->PlayerList)[i];
-			font->showText(550, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr(Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr(Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(550, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr(Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr(Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 	}
@@ -4083,6 +4084,8 @@ void cClient::handleMoveJobs ()
 
 		MJob = ActiveMJobs[i];
 		Vehicle = MJob->vehicle;
+
+		if ( MJob->vehicle->bIsBeeingAttacked ) continue;
 
 		if ( MJob->finished || MJob->EndForNow )
 		{
