@@ -268,6 +268,19 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					}
 					else
 					{
+						/*
+						 * Workaround for the Scout's shadow animation.
+						 *	Most of the shadow graphic rectangles are positioned
+						 *	on top-left of the actual unit's graphic rectangle.
+						 *	The Scout is an exception to this, as it's shadow graphic
+						 *	should be positioned on the bottom-right of the unit's graphic.
+						 */
+						if ( data.ID.iFirstPart == 0 && data.ID.iSecondPart == 27 )
+						{
+							// calculate W and H offsets and switch the position of the shadow
+							tmp.x += (typ->img[dir]->w - typ->shw[dir]->w);
+							tmp.y += (typ->img[dir]->h - typ->shw[dir]->h);
+						}
 						SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
 					}
 				}
