@@ -1790,29 +1790,29 @@ void ShowPlayerStates ( sPlayer players )
 	for ( int i = 0; i<4;i++ )
 	{
 		dest.y = norm1.y = norm2.y = 67 + 92*i;
-		// Nichts
-		if ( players.what[i] == PLAYER_N )
+		switch ( players.what[i] )
 		{
-			dest.x = 394;
-			SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
-			norm1.x = 394 - 110;
-			norm2.x = 394 - 219;
-		}
-		// Spieler
-		if ( players.what[i] == PLAYER_H )
-		{
-			norm1.x = 394 - 110;
-			norm2.x = 394;
-			dest.x = 394 - 219;
-			SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
-		}
-		// Computer
-		if ( players.what[i] == PLAYER_AI )
-		{
-			norm1.x = 394;
-			norm2.x = 394 - 219;
-			dest.x = 394 - 110;
-			SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
+			// Nichts
+			case PLAYER_N :
+				norm1.x = 394 - 110;
+				norm2.x = 394 - 219;
+				dest.x = 394;
+				SDL_BlitSurface ( GraphicsData.gfx_player_none,NULL,buffer,&dest );
+			break;
+			// Spieler
+			case PLAYER_H :
+				norm1.x = 394 - 110;
+				norm2.x = 394;
+				dest.x = 394 - 219;
+				SDL_BlitSurface ( GraphicsData.gfx_player_human,NULL,buffer,&dest );
+			break;
+			// Computer
+			case PLAYER_AI :
+				norm1.x = 394;
+				norm2.x = 394 - 219;
+				dest.x = 394 - 110;
+				SDL_BlitSurface ( GraphicsData.gfx_player_pc,NULL,buffer,&dest );
+			break;
 		}
 		SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm1,buffer,&norm1 );
 		SDL_BlitSurface ( GraphicsData.gfx_player_select,&norm2,buffer,&norm2 );
