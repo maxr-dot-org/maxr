@@ -25,6 +25,8 @@ template<typename T> class cList
 
 		void Add(T const& elem);
 
+		void Insert( size_t const i, T const& e );
+
 		void Delete(size_t idx);
 
 		void PopBack();
@@ -45,6 +47,15 @@ template<typename T> void cList<T>::Add(T const& e)
 	++size_;
 }
 
+template<typename T> void cList<T>::Insert( size_t const i, T const& e )
+{
+	if ( i > size_ ) throw;
+	if (size_ >= capacity_) Reserve(std::max(1U, size_ * 2));
+
+	for (size_t n = size_; n > i; --n ) v_[n] = v_[n - 1];
+	new (&v_[i]) T(e);
+	++size_;
+}
 
 template<typename T> void cList<T>::Delete(size_t const idx)
 {
