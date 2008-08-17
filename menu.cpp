@@ -4305,6 +4305,13 @@ void cMultiPlayerMenu::runNetworkMenu()
 				}
 				else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
 
+				cList<sLanding*> LandingList;
+
+				ActualPlayer->Credits = Options.credits;
+				RunHangar ( ActualPlayer, &LandingList );
+
+				if ( !bHost ) sendUpgrades();
+
 				// copy playerlist for client
 				cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
 				cPlayer *ActualPlayerClient;
@@ -4335,11 +4342,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 					// init server
 					Server = new cServer(ServerMap, &PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
 				}
-
-				cList<sLanding*> LandingList;
-				RunHangar ( ActualPlayerClient, &LandingList );
-
-				if ( !bHost ) sendUpgrades();
 
 				SelectLanding ( &iLandX, &iLandY, Map );
 
