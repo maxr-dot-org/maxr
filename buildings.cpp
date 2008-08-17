@@ -1464,13 +1464,121 @@ void cBuilding::ServerStartWork ()
 		SubBase->HumanNeed += data.human_need;
 	}
 
-	// Energiegeneratoren:
+	// Energiegeneratoren / Energy generators:
 	if ( data.energy_prod )
 	{
+		// check if there is enough Oil for the generators (current prodiction + reserves)
 		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->OilProd )
 		{
-			sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
-			return;
+			int MaxSubBaseOilProd = 0; // maximal possible Oil Production in the current SubBase
+			// not enough Oil, so check if Oil production in current SubBase can be adjusted or not
+			for (i = 0; i < SubBase->buildings.Size(); i++)
+			{
+				// search for active mines in the SubBase
+				if ( !SubBase->buildings[i]->data.is_mine || !SubBase->buildings[i]->IsWorking )
+					continue;
+
+				// store SubBase Oil production information
+				MaxSubBaseOilProd += SubBase->buildings[i]->MaxOilProd;
+			}
+			// will adjusted Oil production help?
+			if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + MaxSubBaseOilProd )
+			{
+				// not enough Oil even with adjustments - so give up
+				sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+				return;
+			}
+			else
+			{
+				// with adjustments, there will be enough Oil to burn - so make adjustments
+
+				int FreeProdPower = 0; // local var - unexploited mining power
+				int FreeOilProdPower = 0; // local var - unexploited Oil mining power
+				int NeededOilAdj = 0; // local var - needed adjustments to Oil production
+				int OrigNeededOilAdj = 0; // local temp variable to hold original NeededOilAdj variable's contents
+
+				OrigNeededOilAdj = NeededOilAdj = data.oil_need + SubBase->OilNeed - SubBase->Oil - SubBase->OilProd;
+				// try to exploit currently unexploited mining power first
+				for (i = 0; i < SubBase->buildings.Size(); i++)
+				{
+					// if made the needed adjustments, exit from the loop cycle
+					if ( NeededOilAdj == 0 )
+						break;
+
+					b = SubBase->buildings[i];
+					// search for active mines in the SubBase
+					if ( !b->data.is_mine || !b->IsWorking )
+						continue;
+
+					// is there unexploited mining power? (max is 16 per mine)
+					FreeProdPower = 16 - b->OilProd - b->MetalProd -b->GoldProd;
+					// possible to increase Oil mining in the current mine?
+					FreeOilProdPower = b->MaxOilProd - b->OilProd;
+					// do checks and make adjustments
+					while ( FreeProdPower > 0 && FreeOilProdPower > 0 && NeededOilAdj > 0 )
+					{
+						FreeProdPower--;
+						FreeOilProdPower--;
+						NeededOilAdj--;
+						b->OilProd++;
+						SubBase->OilProd++;
+					}
+				}
+				// need to make more adjustments? By trying to reduce RAW material production (decrease Metal production first as Gold is more valuable)
+				if ( NeededOilAdj > 0 )
+				{
+					// try to reduce RAW material production
+					for (i = 0; i < SubBase->buildings.Size(); i++)
+					{
+						// if made the needed adjustments, exit from the loop cycle
+						if ( NeededOilAdj == 0 )
+							break;
+
+						b = SubBase->buildings[i];
+						// search for active mines in the SubBase
+						if ( !b->data.is_mine || !b->IsWorking )
+							continue;
+
+						// possible to increase Oil mining in the current mine?
+						FreeOilProdPower = b->MaxOilProd - b->OilProd;
+
+						// do checks and make adjustments
+						while ( FreeOilProdPower > 0 && b->MetalProd > 0 && NeededOilAdj > 0 )
+						{
+							b->MetalProd--; // decrease Metal Production
+							SubBase->MetalProd--;
+							FreeOilProdPower--; // decrease Free Oil production power counter
+							NeededOilAdj--; // decrease needed Adjustments to Oil production in SubBase counter
+							b->OilProd++; // increase Oil production
+							SubBase->OilProd++;
+						}
+					}
+				}
+				// need to make further adjustments? By decreasing even the Gold production?
+/*
+				if ( NeededOilAdj > 0 )
+				{
+					// Who cares... this is relatively imossible to occure - TODO
+				}
+*/
+				// need to make even further adjustments??? - then it's time to give up
+				if ( NeededOilAdj > 0 )
+				{
+					// and send warning message to Client only if actual adjustments has been made
+					if ( OrigNeededOilAdj - NeededOilAdj != 0 ) 
+					sendChatMessageToClient ( "Adjustments made: fuel mining increased by " + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
+					sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+					return;
+				}
+				else
+				{
+					// adjustments successed so send warning message to Client about Adjustments and change EnergyProd and oilNeed info
+					sendChatMessageToClient ( "Adjustments made: fuel mining increased by " + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
+
+					SubBase->EnergyProd += data.energy_prod;
+					SubBase->OilNeed += data.oil_need;
+				}
+			}
 		}
 		else
 		{
@@ -1479,7 +1587,7 @@ void cBuilding::ServerStartWork ()
 		}
 	}
 
-	// Energieverbraucher:
+	// Energieverbraucher / Energy consumers:
 	else
 		if ( data.energy_need )
 		{
@@ -1493,18 +1601,44 @@ void cBuilding::ServerStartWork ()
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
 					sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
+					/*
+					 * Workaround for powering up Mining stations when there's not enough power and Oil.
+					 *	Check unpowered generators, and Oil production limits in current mine.
+					 *	If the circumstances are acceptable, then lie to the offline power generator
+					 *	before calling ServerStartWork() and correct our lies after it powered up.
+					 */
 
 					for (i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						b = SubBase->buildings[i];
-
-						if ( !b->data.energy_prod || b->data.is_big )
+						// in first round, only search for turned off small generators
+						if ( !b->data.energy_prod || b->data.is_big || b->IsWorking )
 							continue;
 
+						// try to start an offline small generator if found
 						b->ServerStartWork();
 
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
+
+						/* Code execution reached this point, so there IS an offline power generator,
+						 * but it could not be started, possibly due to lack of Oil. Now it's time to
+						 * check if we are trying to start an offline mine or something else.
+						 */
+
+						// check if this is an offline mine that has enough Oil production power to start a new small generator or not
+						if ( this->data.is_mine && !this->IsWorking && (this->MaxOilProd >= 2) )
+						{
+							// let's fake the SubBase booking about current Oil production while we starting the new small generator
+							SubBase->OilProd += 2; // we want to start a small generator, that needs 2 barrels of Oil
+							// now try to start the offline small generator we found earlier
+							b->ServerStartWork();
+							// correct the SubBase booking
+							SubBase->OilProd -= 2;
+							// break the loop cycle if we successed this time
+							if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
+								break;
+						}
 					}
 
 					for (i = 0; i < SubBase->buildings.Size(); i++)
@@ -1513,16 +1647,16 @@ void cBuilding::ServerStartWork ()
 							break;
 
 						b = SubBase->buildings[i];
-
-						if ( !b->data.energy_prod )
+						// search for turned off generators
+						if ( !b->data.energy_prod || b->IsWorking )
 							continue;
 
 						b->ServerStartWork();
 					}
-
+					// something went wrong
 					if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 					{
-						sendChatMessageToClient("", SERVER_ERROR_MESSAGE, owner->Nr);
+						sendChatMessageToClient("Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr);
 						return;
 					}
 
@@ -5630,7 +5764,7 @@ void cBuilding::showMineManager ( void )
 	BigButton btn_done(rDialog.x + 514, rDialog.y + 430, "Text~Button~Done");
 	btn_done.Draw();
 
-	// generate list with mine datas. only use temporary cache so that original data wound be changed
+	// generate list with mine datas. only use temporary cache so that original data wouldn't be changed
 	cList<sMineValues*> Mines;
 
 	for (x = 0; x < SubBase->buildings.Size(); x++)
