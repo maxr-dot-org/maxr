@@ -718,8 +718,9 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
-			// TODO: rearm
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			if ( OverObject->vehicle ) sendWantRearm ( OverObject->vehicle->iID, true, SelectedVehicle->iID );
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantRearm ( OverObject->plane->iID, true, SelectedVehicle->iID );
+			else if ( OverObject->top ) sendWantRearm ( OverObject->top->iID, false, SelectedVehicle->iID );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
@@ -3661,6 +3662,24 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cLog::write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
 			cLog::write( message->popString(), cLog::eLOG_TYPE_NET_DEBUG );
 			cLog::write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
+		}
+		break;
+	case GAME_EV_REARM:
+		{
+			if ( message->popBool () ) 
+			{
+				cVehicle *DestVehicle = getVehicleFromID ( message->popInt16() );
+				if ( !DestVehicle ) break;
+				DestVehicle->data.ammo = message->popInt16();
+			}
+			else
+			{
+				cBuilding *DestBuilding = getBuildingFromID ( message->popInt16() );
+				if ( !DestBuilding ) break;
+				DestBuilding->data.ammo = message->popInt16();
+			}
+			PlayVoice ( VoiceData.VOILoaded );
+			PlayFX ( SoundData.SNDReload );
 		}
 		break;
 	default:

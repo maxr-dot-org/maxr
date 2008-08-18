@@ -1166,6 +1166,40 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Server->sendNetMessage( message2 );
 		}
 		break;
+	case GAME_EV_WANT_REARM:
+		{
+			cVehicle *SrcVehicle, *DestVehicle = NULL;
+			cBuilding *DestBuilding = NULL;
+
+			// get the units
+			SrcVehicle = getVehicleFromID ( message->popInt16() );
+			if ( message->popBool() ) DestVehicle = getVehicleFromID ( message->popInt16() );
+			else DestBuilding = getBuildingFromID ( message->popInt16() );
+
+			if ( !SrcVehicle || ( !DestVehicle && !DestBuilding ) ) break;
+
+			// check whether the rearming is ok
+			if ( !SrcVehicle->data.can_reload || SrcVehicle->data.cargo < 1 ) break;
+			if ( DestVehicle && DestVehicle->data.ammo >= DestVehicle->data.max_ammo ) break;
+			if ( DestBuilding && DestBuilding->data.ammo >= DestBuilding->data.max_ammo ) break;
+			// TODO: check whether the units stand close to each other
+
+			// do the rearm
+			SrcVehicle->data.cargo--;
+			sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
+
+			if ( DestVehicle )
+			{
+				DestVehicle->data.ammo = DestVehicle->data.max_ammo;
+				sendRearm ( DestVehicle->iID, true, DestVehicle->data.max_ammo, DestVehicle->owner->Nr );
+			}
+			else
+			{
+				DestBuilding->data.ammo = DestBuilding->data.max_ammo;
+				sendRearm ( DestBuilding->iID, false, DestBuilding->data.max_ammo, DestBuilding->owner->Nr );
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
 	}

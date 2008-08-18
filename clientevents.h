@@ -45,16 +45,17 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_ATTACKJOB_IMPACT,		// makes impact and target unlocking of an attackjob
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
-	GAME_EV_CONTINUE_PATH_ANSWER,	// 
+	GAME_EV_CONTINUE_PATH_ANSWER,	// the answer of a continue path request
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
 	GAME_EV_NEW_SUBBASE,			// a new subbase
 	GAME_EV_DELETE_SUBBASE,			// delete a subbase
 	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
-	GAME_EV_BUILDLIST,				//
-	GAME_EV_PRODUCE_VALUES,			//
-	GAME_EV_TURN_REPORT,			//
+	GAME_EV_BUILDLIST,				// the buildlist of a building
+	GAME_EV_PRODUCE_VALUES,			// the produce values of a building
+	GAME_EV_TURN_REPORT,			// the turnstartreport of a player
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
+	GAME_EV_REARM,					// rearms a unit
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -135,7 +136,15 @@ void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBui
 *@param EscapeY Y coordinate to which he wants do move now
 */
 void sendWantEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY );
+/**
+* sends that a vehicle wants to continue pathbuilding
+*@author alzi alias DoctorDeath
+*/
 void sendWantContinuePathBuild( cVehicle *Vehicle, int iNextX, int iNextY );
+/**
+* sends that the player wants a vehicle to stop building
+*@author alzi alias DoctorDeath
+*/
 void sendWantStopBuilding( int iVehicleID );
 /**
 * sends that the client wants to tranfer resources
@@ -148,11 +157,31 @@ void sendWantStopBuilding( int iVehicleID );
 *@param iType Type of resources which will be transfered. ( See: NEED_METAL, NEED_OIL or NEED_GOLD )
 */
 void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType );
-
+/**
+* sends a request for building all vehicles in the buildlist of the building
+*@author alzi alias DoctorDeath
+*/
 void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, bool bRepeat );
+/**
+* sends that the client wants to exit the finished vehicle
+*@author alzi alias DoctorDeath
+*/
 void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY );
+/**
+* sends that the client wants to change the produce values in the minemanager of a building
+*@author alzi alias DoctorDeath
+*/
 void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, int iGoldProd );
+/**
+* sends that the client wants to change the sentry status of a unit
+*@author alzi alias DoctorDeath
+*/
 void sendChangeSentry ( int iUnitID, bool bVehicle );
+/**
+* sends that the client wants to rearm a unit by an rearmable vehicle
+*@author alzi alias DoctorDeath
+*/
+void sendWantRearm ( int iDestID, bool bDestVehicle, int iSrcID );
 
 
 #endif // clienteventsH

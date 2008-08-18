@@ -209,3 +209,12 @@ void sendChangeSentry ( int iUnitID, bool bVehicle )
 	message->pushBool ( bVehicle );
 	Client->sendNetMessage( message );
 }
+
+void sendWantRearm ( int iDestID, bool bDestVehicle, int iSrcID )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_REARM );
+	message->pushInt16 ( iDestID );
+	message->pushBool ( bDestVehicle );
+	message->pushInt16 ( iSrcID );
+	Client->sendNetMessage( message );
+}
