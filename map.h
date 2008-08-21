@@ -22,6 +22,7 @@
 #include "main.h"
 #include "vehicles.h"
 #include "buildings.h"
+#include "clist.h"
 
 // GameObjects Struktur //////////////////////////////////////////////////////
 struct sGameObjects{
@@ -50,26 +51,18 @@ struct sColor
 	unsigned char cBlue, cGreen, cRed;
 };
 
-struct sVehicleList
-{
-	sVehicleList* next;
-	sVehicleList* prev;
-	cVehicle* vehicle;
-};
-
-
 class cVehicleIterator
 {
 private:
 	friend class cMap;
-	sVehicleList* vehicleListItem;
-	sVehicleList** listRoot;
+	cList<cVehicle*>* vehicleList;
+	int index;
 	void insert( cVehicle* vehicle );
 public:
-	cVehicleIterator(sVehicleList** vli);
+	cVehicleIterator(cList<cVehicle*>* list);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size();
-//	cVehicle& operator[](unsigned const int i) const;
+	cVehicle& operator[](unsigned const int i) const;
 	cVehicle* operator->() const;
 	cVehicle& operator*() const;
 	/** go to next vehicle on this field */
@@ -82,25 +75,18 @@ public:
 	bool rend;
 };
 
-struct sBuildingList
-{
-	sBuildingList* next;
-	sBuildingList* prev;
-	cBuilding* building;
-};
-
 class cBuildingIterator
 {
 private:
 	friend class cMap;
-	sBuildingList** listRoot;
-	sBuildingList* buildingListItem;
+	cList<cBuilding*>* buildingList;
+	int index;
 	void insert( cBuilding* building );
 public:
-	cBuildingIterator(sBuildingList** bli);
+	cBuildingIterator(cList<cBuilding*>* list);
 	/** returns the number of buildings in the List, the Iterator points to. */
 	unsigned int size();
-//	cVehicle& operator[](unsigned const int i) const;
+	cVehicle& operator[](unsigned const int i) const;
 	cBuilding* operator->() const;
 	cBuilding& operator*() const;
 	/** go to next building on this field */
@@ -120,13 +106,13 @@ private:
 	friend class cMap;
 	/**the list with all buildings on this field
 	* the top building is always stored at fist position */
-	sBuildingList* buildings;
+	cList<cBuilding*> buildings;
 	/** the list with all planes on this field
 	* the top plane is always stored at fist position */
-	sVehicleList* planes;
+	cList<cVehicle*> vehicles;
 	/**the list with all vehicles on this field
 	* the top vehicle is always stored at fist position */
-	sVehicleList* vehicles;
+	cList<cVehicle*> planes;
 	
 	
 public:
@@ -141,8 +127,7 @@ public:
 	cBuilding* getTopBuilding();
 	/** returns a pointer to the first base building or NULL if there is no base building */
 	cBuilding* getBaseBuilding();
-	cMapField();
-	~cMapField();
+
 };
 
 // Die Map-Klasse ////////////////////////////////////////////////////////////
@@ -189,7 +174,7 @@ public:
 	* @return an instance of cMapField, which has several methods to access the objects on the field
 	*/
 	cMapField& operator[]( unsigned int offset ) const;
-
+/*
 	bool addBuilding( cBuilding* building, unsigned int x, unsigned int y );
 	bool addBuilding( cBuilding* building, unsigned int offset );
 	bool addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
@@ -202,7 +187,7 @@ public:
 
 	bool deleteBuilding( cBuilding* building );
 	bool deleteVehicle( cVehicle* vehicle );
-
+*/
 private:
 	/**
 	* the infomation about the fields

@@ -16,43 +16,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <stdlib.h>
+
 #include "map.h"
 
-cVehicleIterator::cVehicleIterator(sVehicleList **vli)
+cVehicleIterator::cVehicleIterator(cList<cVehicle*>* list)
 {
-	listRoot = vli;
-	vehicleListItem = *vli;
-	if ( *vli )
-	{
-		end = false;
-		rend = false;
-	}
-	else
+	index = 0;
+	vehicleList = list;
+
+	if ( list->Size() <= 0 )
 	{
 		end = true;
 		rend = true;
+	}
+	else
+	{
+		end = false;
+		rend = false;
 	}
 }
 
 unsigned int cVehicleIterator::size()
 {
-	sVehicleList* vli = *listRoot;
-
-	//count
-	unsigned int count = 0;
-	while ( vli )
-	{
-		count++;
-		vli = vli->next;
-	}
-	return count;
+	return vehicleList->Size();
 }
 
 cVehicle* cVehicleIterator::operator->() const
 {
 	if ( !end && !rend )
-		return vehicleListItem->vehicle;
+		return (*vehicleList)[index];
 	else
 		return NULL;
 }
@@ -60,7 +52,7 @@ cVehicle* cVehicleIterator::operator->() const
 cVehicle& cVehicleIterator::operator*() const
 {
 	cVehicle* vehicle = NULL;
-	if (!end && !rend ) vehicle = vehicleListItem->vehicle;
+	if (!end && !rend ) vehicle = (*vehicleList)[index];
 
 	return *vehicle;
 }
@@ -73,13 +65,13 @@ cVehicleIterator cVehicleIterator::operator++(int)
 	if (rend)
 	{
 		rend = false;
-		vehicleListItem = *listRoot;
+		index = 0;
 	}
 	else
 	{
-		vehicleListItem = vehicleListItem->next;
+		index++;
 	}
-	if ( !vehicleListItem ) end = true;
+	if ( index >= vehicleList->Size() ) end = true;
 
 	return vehicles;
 }
@@ -91,16 +83,14 @@ cVehicleIterator cVehicleIterator::operator--(int)
 	
 	if ( end )
 	{
-		vehicleListItem = *listRoot;
-		while ( vehicleListItem->next ) vehicleListItem = vehicleListItem->next;
-
+		index = vehicleList->Size() - 1;
 		end = false;
 	}
 	else
 	{
-		vehicleListItem = vehicleListItem->prev;
+		index--;
 	}
-	if ( !vehicleListItem ) rend = true;
+	if ( index < 0 ) rend = true;
 
 	return vehicles;
 }
@@ -108,7 +98,7 @@ cVehicleIterator cVehicleIterator::operator--(int)
 bool cVehicleIterator::operator ==(cVehicle* v) const
 {
 	if ( v == NULL && (end || rend) ) return true;
-	if ( vehicleListItem->vehicle == v ) return true;
+	if ( (*vehicleList)[index] == v ) return true;
 
 	return false;
 }
@@ -116,76 +106,40 @@ bool cVehicleIterator::operator ==(cVehicle* v) const
 cVehicleIterator::operator cVehicle *() const
 {
 	if ( end || rend ) return NULL;
-	return vehicleListItem->vehicle;
+	return (*vehicleList)[index];
 }
 
 void cVehicleIterator::insert( cVehicle* vehicle )
 {
-	sVehicleList* vli = new sVehicleList;
-	
-	if ( end )
-	{
-		sVehicleList* lastElement = *listRoot;
-		while ( lastElement && lastElement->next ) lastElement = lastElement->next;
-
-		vli->next = NULL;
-		vli->prev = lastElement;
-	}
-	else if ( rend )
-	{
-		vli->next = *listRoot;
-		vli->prev = NULL;
-	}
-	else
-	{
-		vli->next = vehicleListItem;
-		vli->prev = vehicleListItem->prev;
-	}
-
-	if ( vli->prev )
-		vli->prev->next = vli;
-
-	if ( vli->next )
-		vli->next->prev = vli;
-
-	vli->vehicle = vehicle;
-	
+	vehicleList->Insert( index, vehicle );
 }
 
-cBuildingIterator::cBuildingIterator(sBuildingList **bli)
+cBuildingIterator::cBuildingIterator(cList<cBuilding*>* list)
 {
-	listRoot = bli;
-	buildingListItem = *bli;
-	if ( *bli )
-	{
-		end = false;
-		rend = false;
-	}
-	else
+	buildingList = list;
+	index = 0;
+
+	if ( buildingList->Size() <= 0 )
 	{
 		end = true;
 		rend = true;
+	}
+	else
+	{
+		end = false;
+		rend = false;
 	}
 }
 
 unsigned int cBuildingIterator::size()
 {
-	sBuildingList* bli = *listRoot;
-	
-	//count
-	unsigned int count = 0;
-	while ( bli )
-	{
-		count++;
-		bli = bli->next;
-	}
-	return count;
+	return buildingList->Size();
 }
 
 cBuilding* cBuildingIterator::operator->() const
 {
 	if ( !end && !rend )
-		return buildingListItem->building;
+		return (*buildingList)[index];
 	else
 		return NULL;
 }
@@ -193,7 +147,7 @@ cBuilding* cBuildingIterator::operator->() const
 cBuilding& cBuildingIterator::operator*() const
 {
 	cBuilding* building = NULL;
-	if (!end && !rend ) building = buildingListItem->building;
+	if (!end && !rend ) building = (*buildingList)[index];
 
 	return *building;
 }
@@ -206,13 +160,13 @@ cBuildingIterator cBuildingIterator::operator++(int)
 	if (rend)
 	{
 		rend = false;
-		buildingListItem = *listRoot;
+		index = 0;
 	}
 	else
 	{
-		buildingListItem = buildingListItem->next;
+		index++;
 	}
-	if ( !buildingListItem ) end = true;
+	if ( index >= buildingList->Size() ) end = true;
 	
 	return buildings;
 }
@@ -225,14 +179,13 @@ cBuildingIterator cBuildingIterator::operator--(int)
 	if ( end ) 
 	{
 		end = false;
-		buildingListItem = *listRoot;
-		while ( buildingListItem && buildingListItem->next ) buildingListItem = buildingListItem->next;
+		index = buildingList->Size() - 1;
 	}
 	else
 	{
-		buildingListItem = buildingListItem->prev;
+		index--;
 	}
-	if ( !buildingListItem ) rend = true;
+	if ( index < 0 ) rend = true;
 
 	return buildings;
 }
@@ -240,7 +193,7 @@ cBuildingIterator cBuildingIterator::operator--(int)
 bool cBuildingIterator::operator ==(cBuilding* b) const
 {
 	if ( b == NULL && (end || rend) ) return true;
-	if ( buildingListItem->building == b ) return true;
+	if ( (*buildingList)[index] == b ) return true;
 
 	return false;
 }
@@ -248,41 +201,12 @@ bool cBuildingIterator::operator ==(cBuilding* b) const
 cBuildingIterator::operator cBuilding*() const
 {
 	if ( end || rend ) return NULL;
-	return buildingListItem->building;
+	return (*buildingList)[index];
 }
 
 void cBuildingIterator::insert( cBuilding* building )
 {
-	sBuildingList* bli = new sBuildingList;
-	
-	if ( end )
-	{
-		sBuildingList* lastElement = *listRoot;
-		while ( lastElement && lastElement->next ) lastElement = lastElement->next;
-
-		bli->next = NULL;
-		bli->prev = lastElement;
-	}
-	else if ( rend )
-	{
-		bli->next = *listRoot;
-		bli->prev = NULL;
-	}
-	else
-	{
-		bli->next = buildingListItem;
-		bli->prev = buildingListItem->prev;
-	}
-
-	if ( bli->prev )
-		bli->prev->next = bli;
-
-	if ( bli->next )
-		bli->next->prev = bli;
-
-	bli->building = building;
-	
-	
+	buildingList->Insert( index, building );
 }
 
 cVehicleIterator cMapField::getVehicles()
@@ -330,35 +254,6 @@ cBuilding* cMapField::getBaseBuilding()
 	}
 	
 	return NULL; 
-}
-
-cMapField::cMapField()
-{
-	vehicles = NULL;
-	planes = NULL;
-	buildings = NULL;
-}
-
-cMapField::~cMapField()
-{
-	while ( vehicles )
-	{
-		sVehicleList* vli = vehicles->next;
-		delete vehicles;
-		vehicles = vli;
-	}
-	while ( planes )
-	{
-		sVehicleList* vli = planes->next;
-		delete planes;
-		planes = vli;
-	}
-	while( buildings )
-	{
-		sBuildingList* bli = buildings->next;
-		delete buildings;
-		buildings = bli;
-	}
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
@@ -954,11 +849,12 @@ void cMap::deleteRubble( cBuilding* rubble )
 	}
 	delete rubble;
 }
-
+/*
 bool cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	return addBuilding( building, offset%size, offset/size );
 }
+
 
 bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 {
@@ -1000,7 +896,8 @@ bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 	return true;
 
 }
-
+*/
+/*
 bool cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
 {
 	return addVehicle( vehicle, offset%size, offset/size );
@@ -1034,3 +931,4 @@ bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
 
 	return true;
 }
+*/
