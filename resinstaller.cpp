@@ -248,29 +248,15 @@ int installVehicleGraphics()
 		dst_rect.x = 36;
 		dst_rect.y = 36;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		//can someone tell me, why I have to reload the surface? :-|
-		//otherwise changeing the palette after the first blit has no effect anymore
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
 		generateAnimationFrame( surface, 1);
 		dst_rect.x = 164;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
 		generateAnimationFrame( surface, 2);
 		dst_rect.x = 292;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
-		
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
+
 		generateAnimationFrame( surface, 3);
 		dst_rect.x = 420;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -326,27 +312,15 @@ int installVehicleGraphics()
 		dst_rect.x = 4;
 		dst_rect.y = 4;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
 		generateAnimationFrame( surface, 1);
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
 		generateAnimationFrame( surface, 2);
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
-		
-		cImage::deleteCache();
-		surface = getImageFromRes("BULLDOZR", 8);
-		removePlayerColor( surface );
+
 		generateAnimationFrame( surface, 3);
 		dst_rect.x += 64;
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
@@ -959,34 +933,18 @@ int installVehicleGraphics()
 		removePlayerColor( surface );
 		dst_rect.x = 4;
 		dst_rect.y = 4;
-		savePCX( surface, path + "build1.pcx");
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		cImage::deleteCache();
-		surface = getImageFromRes("ENGINEER", 16);
 		generateAnimationFrame( surface, 1);
-		removePlayerColor( surface );
 		dst_rect.x += 64;
-		savePCX( surface, path + "build2.pcx");
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
 
-		cImage::deleteCache();
-		surface = getImageFromRes("ENGINEER", 16);
 		generateAnimationFrame( surface, 2);
-		removePlayerColor( surface );
 		dst_rect.x += 64;
-		savePCX( surface, path + "build3.pcx");
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
-		SDL_FreeSurface( surface );
-		
-		cImage::deleteCache();
-		surface = getImageFromRes("ENGINEER", 16);
+
 		generateAnimationFrame( surface, 3);
-		removePlayerColor( surface );
 		dst_rect.x += 64;
-		savePCX( surface, path + "build4.pcx");
 		SDL_BlitSurface( surface, 0, output, &dst_rect );
 		SDL_FreeSurface( surface );
 		savePCX( output, path + "build.pcx");

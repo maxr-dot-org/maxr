@@ -634,15 +634,6 @@ SDL_Surface* cImage::getSurface(int imageNr)
 	return Images[imageNr].surface;
 }
 
-void cImage::deleteCache()
-{
-	if ( Image != NULL )
-	{
-		delete Image;
-		Image = NULL;
-	}
-}
-
 SDL_Surface* getImageFromRes(string file_name, int imageNr)
 {
 	if ( res == NULL )
@@ -872,9 +863,11 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 
 void setColor( SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned char g, unsigned char b )
 {
-	surface->format->palette->colors[nr].r = r;
-	surface->format->palette->colors[nr].g = g;
-	surface->format->palette->colors[nr].b = b;
+	SDL_Color color;
+	color.r = r;
+	color.g = g;
+	color.b = b;
+	SDL_SetColors( surface, &color, nr, 1);
 }
 
 void setAnimationColor( SDL_Surface* surface, unsigned char index, unsigned char frame )
