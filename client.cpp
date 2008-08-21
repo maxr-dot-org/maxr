@@ -718,14 +718,15 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
-			if ( OverObject->vehicle ) sendWantRearm ( OverObject->vehicle->iID, true, SelectedVehicle->iID );
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantRearm ( OverObject->plane->iID, true, SelectedVehicle->iID );
-			else if ( OverObject->top ) sendWantRearm ( OverObject->top->iID, false, SelectedVehicle->iID );
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
-			// TODO: repair
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
 		{
@@ -3664,22 +3665,33 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cLog::write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
-	case GAME_EV_REARM:
+	case GAME_EV_SUPPLY:
 		{
+			int iType = message->popChar ();
 			if ( message->popBool () ) 
 			{
 				cVehicle *DestVehicle = getVehicleFromID ( message->popInt16() );
 				if ( !DestVehicle ) break;
-				DestVehicle->data.ammo = message->popInt16();
+				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = message->popInt16();
+				else DestVehicle->data.hit_points = message->popInt16();
 			}
 			else
 			{
 				cBuilding *DestBuilding = getBuildingFromID ( message->popInt16() );
 				if ( !DestBuilding ) break;
-				DestBuilding->data.ammo = message->popInt16();
+				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = message->popInt16();
+				else DestBuilding->data.hit_points = message->popInt16();
 			}
-			PlayVoice ( VoiceData.VOILoaded );
-			PlayFX ( SoundData.SNDReload );
+			if ( iType == SUPPLY_TYPE_REARM )
+			{
+				PlayVoice ( VoiceData.VOILoaded );
+				PlayFX ( SoundData.SNDReload );
+			}
+			else
+			{
+				PlayVoice ( VoiceData.VOIRepaired );
+				PlayFX ( SoundData.SNDRepair );
+			}
 		}
 		break;
 	default:

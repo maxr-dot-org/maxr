@@ -576,7 +576,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->MuniActive )
 		{
-			if ( Client->SelectedVehicle->CanMuni ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REARM ) )
 			{
 				if ( mouse->SetCursor ( CMuni ) )
 				{
@@ -593,7 +593,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->RepairActive )
 		{
-			if ( Client->SelectedVehicle->CanRepair ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REPAIR ) )
 			{
 				if ( mouse->SetCursor ( CRepair ) )
 				{

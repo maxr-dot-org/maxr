@@ -5306,94 +5306,66 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 }
 
 // Prüft, ob das Objekt aufmunitioniert werden kann:
-bool cVehicle::CanMuni ( int off )
+bool cVehicle::canSupply ( int iOff, int iType )
 {
-	cBuilding *b;
-	cVehicle *v;
-	int boff;
+	if ( iOff < 0 || iOff > Client->Map->size*Client->Map->size ) return false;
 
-	if ( data.cargo < 2 )
-		return false;
-
-	boff = PosX + PosY * Client->Map->size;
-
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
-		{}
-	else
-		return false;
-
-	v = Client->Map->GO[off].vehicle;
-
-	if ( !v && Client->Map->GO[off].plane && Client->Map->GO[off].plane->FlightHigh == 0 )
-		v = Client->Map->GO[off].plane;
-
-	if ( v )
-	{
-		if ( v == this || v->owner != owner || !v->data.can_attack || v->data.ammo == v->data.max_ammo || v->moving || v->rotating || v->Attacking )
-			return false;
-
-		return true;
-	}
-
-	b = Client->Map->GO[off].top;
-
-	if ( b )
-	{
-		if ( b->owner != owner || !b->data.can_attack || b->data.ammo == b->data.max_ammo )
-			return false;
-
-		return true;
-	}
+	if ( Client->Map->GO[iOff].vehicle ) return canSupply ( Client->Map->GO[iOff].vehicle, iType );
+	else if ( Client->Map->GO[iOff].plane ) return canSupply ( Client->Map->GO[iOff].plane, iType );
+	else if ( Client->Map->GO[iOff].top ) return canSupply ( Client->Map->GO[iOff].top, iType );
 
 	return false;
 }
 
-bool cVehicle::CanRepair ( int off )
+bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 {
-	cBuilding *b;
-	cVehicle *v;
-	int boff;
+	if ( data.cargo <= 0 ) return false;
 
-	if ( data.cargo < 2 )
+	if ( Vehicle->PosX > PosX+1 || Vehicle->PosX < PosX-1 || Vehicle->PosY > PosY+1 || Vehicle->PosY < PosY-1 ) return false;
+
+	if ( Vehicle->data.can_drive == DRIVE_AIR && Vehicle->FlightHigh > 0 ) return false;
+
+	switch ( iType )
+	{
+	case SUPPLY_TYPE_REARM:
+		if ( Vehicle == this || !Vehicle->data.can_attack || Vehicle->data.ammo >= Vehicle->data.max_ammo || Vehicle->moving || Vehicle->rotating || Vehicle->Attacking ) return false;
+		break;
+	case SUPPLY_TYPE_REPAIR:
+		if ( Vehicle == this || Vehicle->data.hit_points >= Vehicle->data.max_hit_points || Vehicle->moving || Vehicle->rotating || Vehicle->Attacking ) return false;
+		break;
+	default:
 		return false;
+	}
 
-	boff = PosX + PosY * Client->Map->size;
+	return true;
+}
 
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
-		{}
+bool cVehicle::canSupply( cBuilding *Building, int iType )
+{
+	if ( data.cargo <= 0 ) return false;
+
+	if ( !Building->data.is_big )
+	{
+		if ( Building->PosX > PosX+1 || Building->PosX < PosX-1 || Building->PosY > PosY+1 || Building->PosY < PosY-1 ) return false;
+	}
 	else
+	{
+		if ( Building->PosX > PosX+1 || Building->PosX < PosX-2 || Building->PosY > PosY+1 || Building->PosY < PosY-2 ) return false;
+	}
+
+	switch ( iType )
+	{
+	case SUPPLY_TYPE_REARM:
+		if ( !Building->data.can_attack || Building->data.ammo >= Building->data.max_ammo ) return false;
+		break;
+	case SUPPLY_TYPE_REPAIR:
+		if ( Building->data.hit_points >= Building->data.max_hit_points ) return false;
+		break;
+	default:
 		return false;
-
-	v = Client->Map->GO[off].vehicle;
-
-	if ( !v && Client->Map->GO[off].plane && Client->Map->GO[off].plane->FlightHigh == 0 )
-		v = Client->Map->GO[off].plane;
-
-	if ( v )
-	{
-		if ( v == this || v->owner != owner || v->data.hit_points == v->data.max_hit_points || v->moving || v->rotating || v->Attacking )
-			return false;
-
-		return true;
 	}
 
-	b = Client->Map->GO[off].top;
-
-	if ( b )
-	{
-		if ( b->owner != owner || b->data.hit_points == b->data.max_hit_points )
-			return false;
-
-		return true;
-	}
-
-	return false;
+	return true;
 }
 
 bool cVehicle::layMine ()

@@ -539,11 +539,12 @@ void sendTurnReport ( cPlayer *Player )
 	Server->sendNetMessage( message, Player->Nr );
 }
 
-void sendRearm ( int iDestID, bool bDestVehicle, int iAmmoValue, int iPlayerNum )
+void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPlayerNum )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_REARM );
-	message->pushInt16 ( iAmmoValue );
+	cNetMessage* message = new cNetMessage( GAME_EV_SUPPLY );
+	message->pushInt16 ( iValue );
 	message->pushInt16 ( iDestID );
 	message->pushBool ( bDestVehicle );
+	message->pushChar ( iType );
 	Server->sendNetMessage( message, iPlayerNum );
 }

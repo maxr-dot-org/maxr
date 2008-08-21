@@ -1166,37 +1166,54 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Server->sendNetMessage( message2 );
 		}
 		break;
-	case GAME_EV_WANT_REARM:
+	case GAME_EV_WANT_SUPPLY:
 		{
 			cVehicle *SrcVehicle, *DestVehicle = NULL;
 			cBuilding *DestBuilding = NULL;
+			int iType, iValue;
 
 			// get the units
+			iType = message->popChar();
+			if ( iType > SUPPLY_TYPE_REPAIR ) break; // unknown type
 			SrcVehicle = getVehicleFromID ( message->popInt16() );
 			if ( message->popBool() ) DestVehicle = getVehicleFromID ( message->popInt16() );
 			else DestBuilding = getBuildingFromID ( message->popInt16() );
 
 			if ( !SrcVehicle || ( !DestVehicle && !DestBuilding ) ) break;
 
-			// check whether the rearming is ok
-			if ( !SrcVehicle->data.can_reload || SrcVehicle->data.cargo < 1 ) break;
-			if ( DestVehicle && DestVehicle->data.ammo >= DestVehicle->data.max_ammo ) break;
-			if ( DestBuilding && DestBuilding->data.ammo >= DestBuilding->data.max_ammo ) break;
-			// TODO: check whether the units stand close to each other
+			// check whether the supply is ok
+			if ( DestVehicle && !SrcVehicle->canSupply ( DestVehicle, iType ) ) break;
+			if ( DestBuilding && !SrcVehicle->canSupply ( DestBuilding, iType ) ) break;
 
-			// do the rearm
-			SrcVehicle->data.cargo--;
+			// do the supply
+			if ( iType == SUPPLY_TYPE_REARM )
+			{
+				SrcVehicle->data.cargo--;
+				iValue = DestVehicle ? DestVehicle->data.max_ammo : DestBuilding->data.max_ammo;
+			}
+			else
+			{
+				// TODO: calculate costs for repair and/or maximal repair value
+				// temporary a complete repair will cost 2 metal
+				if ( SrcVehicle->data.cargo < 2 ) break;
+				SrcVehicle->data.cargo -= 2;
+				iValue = DestVehicle ? DestVehicle->data.max_hit_points : DestBuilding->data.max_hit_points;
+			}
 			sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 
 			if ( DestVehicle )
 			{
-				DestVehicle->data.ammo = DestVehicle->data.max_ammo;
-				sendRearm ( DestVehicle->iID, true, DestVehicle->data.max_ammo, DestVehicle->owner->Nr );
+				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = DestVehicle->data.max_ammo;
+				else DestVehicle->data.hit_points = DestVehicle->data.max_hit_points;
+
+				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
 			}
 			else
 			{
-				DestBuilding->data.ammo = DestBuilding->data.max_ammo;
-				sendRearm ( DestBuilding->iID, false, DestBuilding->data.max_ammo, DestBuilding->owner->Nr );
+				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = DestBuilding->data.max_ammo;
+				else DestBuilding->data.hit_points = DestBuilding->data.max_hit_points;
+
+				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
 			}
 		}
 		break;

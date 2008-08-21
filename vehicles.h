@@ -192,8 +192,11 @@ public:
 	void ShowStorage(void);
 	void DrawStored(int off);
 	void ExitVehicleTo(int nr,int off,bool engine_call);
-	bool CanMuni(int off);
-	bool CanRepair(int off);
+#define SUPPLY_TYPE_REARM	0
+#define SUPPLY_TYPE_REPAIR	1
+	bool canSupply( int iOff, int iType );
+	bool canSupply( cVehicle *Vehicle, int iType );
+	bool canSupply( cBuilding *Building, int iType );
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath

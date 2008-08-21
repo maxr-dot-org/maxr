@@ -47,7 +47,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
 	GAME_EV_WANT_CHANGE_SENTRY,		// a client wants to change the sentry status of a unit
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
-	GAME_EV_WANT_REARM,				// a clients wants to rearm a vehicle
+	GAME_EV_WANT_SUPPLY				// a clients wants to rearm or repair a unit
 };
 
 /**
@@ -202,13 +202,14 @@ void sendProduceValues ( cBuilding *Building );
 */
 void sendTurnReport ( cPlayer *Player );
 /**
-* sends that a unit has to be rearmed
+* sends that a unit has to be rearmed or repaired
 *@author alzi alias DoctorDeath
 *@param iDestID the ID of the destination unit
 *@param bDestVehicle true if the destination unit is a vehicle
-*@param iAmmoValue the new ammo value to be set
+*@param iValue the new ammo or hitpoint value to be set
+*@param iType SUPPLY_TYPE_REARM or SUPPLY_TYPE_REPAIR
 *@param iPlayerNum number of the player, who will receive the message
 */
-void sendRearm ( int iDestID, bool bDestVehicle, int iAmmoValue, int iPlayerNum );
+void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPlayerNum );
 
 #endif // servereventsH
