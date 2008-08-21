@@ -44,7 +44,6 @@
 #include "vehicles.h"
 #include "player.h"
 #include "base.h"
-#include "ajobs.h"
 #include "mjobs.h"
 #include "network.h"
 #include "log.h"

@@ -48,7 +48,7 @@ cEngine::~cEngine ( void )
 	}
 	while (AJobs.Size())
 	{
-		delete AJobs[AJobs.Size() - 1];
+//		delete AJobs[AJobs.Size() - 1];
 	}
 	StopLog();
 }
@@ -176,7 +176,7 @@ void cEngine::Run ( void )
 		game->fDrawMap=true;
 	}
 	// Alle Attack-Jobs bearbeiten:
-	for (i = 0; i < AJobs.Size(); i++)
+/*	for (i = 0; i < AJobs.Size(); i++)
 	{
 		bool destroyed;
 		cAJobs *aj;
@@ -288,7 +288,7 @@ void cEngine::Run ( void )
 		delete aj;
 		AJobs.Delete ( i );
 		i--;
-	}
+	}*/
 }
 
 // Ändert den Namen eines Vehicles:
@@ -1225,9 +1225,9 @@ void cEngine::AddAttackJob ( int ScrOff,int DestOff,bool override,bool ScrAir,bo
 	{
 		if ( !ScrBuilding||map->GO[ScrOff].base==NULL||map->GO[ScrOff].base->owner==NULL||!map->GO[ScrOff].base->data.is_expl_mine ) return;
 	}
-	cAJobs *aj;
-	aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
-	AJobs.Add ( aj );
+//	cAJobs *aj;
+//	aj=new cAJobs ( map,ScrOff,DestOff,ScrAir,DestAir,ScrBuilding,Wache );
+//	AJobs.Add ( aj );
 }
 
 // Sends a chat-message:

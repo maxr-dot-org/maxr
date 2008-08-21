@@ -24,7 +24,7 @@
 #include "map.h"
 #include "player.h"
 #include "mjobs.h"
-#include "ajobs.h"
+//#include "ajobs.h"
 #include "network.h"
 
 // Strukturen für die Reports ////////////////////////////////////////////////

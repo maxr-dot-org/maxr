@@ -740,8 +740,6 @@ void cVehicle::Draw ( SDL_Rect *dest )
 										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 									}
 	}
-	//debug
-	//if ( bAttackDebug && bIsBeeingAttacked ) font->showText(dest->x,dest->y, "locked", LATIN_SMALL_WHITE);
 }
 
 // Wählt dieses Vehicle aus:

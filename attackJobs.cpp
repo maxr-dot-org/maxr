@@ -188,9 +188,9 @@ void cServerAttackJob::sendFireCommand()
 			}
 			if ( n == vehicle->SeenByPlayerList.Size() )
 			{
-				sendAddEnemyUnit( vehicle, player->Nr );
+				/*sendAddEnemyUnit( vehicle, player->Nr );
 				sendUnitData( vehicle, player->Nr );
-				vehicle->SeenByPlayerList.Add( &player->Nr );
+				vehicle->SeenByPlayerList.Add( &player->Nr );*/
 				vehicle->DetectedByPlayerList.Add( &player->Nr );
 			}
 		}
@@ -204,9 +204,9 @@ void cServerAttackJob::sendFireCommand()
 			}
 			if ( n == building->SeenByPlayerList.Size() )
 			{
-				sendAddEnemyUnit( building, player->Nr );
+				/*sendAddEnemyUnit( building, player->Nr );
 				sendUnitData( building, player->Nr );
-				building->SeenByPlayerList.Add( &player->Nr );
+				building->SeenByPlayerList.Add( &player->Nr );*/
 				building->DetectedByPlayerList.Add( &player->Nr );
 			}
 		}

@@ -8944,14 +8944,3 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 		}
 	}
 }
-
-/*unsigned int cBuilding::getX()
-{
-	return PosX;
-}
-
-unsigned int cBuilding::getY()
-{
-	return PosY;
-}
-*/
