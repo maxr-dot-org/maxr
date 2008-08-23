@@ -22,6 +22,7 @@
 #include "main.h"
 #include "network.h"
 #include "serverevents.h"
+#include "movejobs.h"
 
 enum CLIENT_EVENT_TYPES
 {
@@ -92,7 +93,7 @@ void sendWantStopWork( cBuilding* building);
 * sends all waypoints of a movejob to the server.
 *@author alzi alias DoctorDeath
 */
-void sendMoveJob( cMJobs *MJob );
+void sendMoveJob( cClientMoveJob *MoveJob );
 
 /**
 *

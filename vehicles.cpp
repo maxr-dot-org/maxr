@@ -64,6 +64,8 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	data.hit_points = data.max_hit_points;
 	data.ammo = data.max_ammo;
 	mjob = NULL;
+	ClientMoveJob = NULL;
+	ServerMoveJob = NULL;
 	autoMJob = NULL;
 	moving = false;
 	rotating = false;
@@ -105,10 +107,15 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 
 cVehicle::~cVehicle ( void )
 {
-	if ( mjob )
+	if ( ClientMoveJob )
 	{
-		mjob->release();
-		mjob->vehicle = NULL;
+		ClientMoveJob->release();
+		ClientMoveJob->Vehicle = NULL;
+	}
+	if ( ServerMoveJob )
+	{
+		ServerMoveJob->release();
+		ServerMoveJob->Vehicle = NULL;
 	}
 
 	if ( autoMJob )
@@ -151,13 +158,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 	// Workarounds:
 
-	if ( ( !mjob || !MoveJobActive ) && ( OffX != 0 || OffY != 0 ) )
+	if ( ( !ClientMoveJob || !MoveJobActive ) && ( OffX != 0 || OffY != 0 ) )
 	{
 		OffX = 0;
 		OffY = 0;
 	}
 
-	if ( !mjob && ( MoveJobActive || moving || rotating ) )
+	if ( !ClientMoveJob && ( MoveJobActive || moving || rotating ) )
 	{
 		MoveJobActive = false;
 		moving = false;
@@ -166,16 +173,16 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		Client->iObjectStream = PlayStram();
 	}
 
-	if ( mjob && moving && !MoveJobActive )
+	if ( ClientMoveJob && moving && !MoveJobActive )
 	{
 		try
 		{
-			mjob->finished = true;
+			ClientMoveJob->bFinished = true;
 		}
 		catch ( ... )
 			{}
 
-		mjob = NULL;
+		ClientMoveJob = NULL;
 
 		moving = false;
 	}
@@ -293,7 +300,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 					if ( Client->iTimer0 )
 					{
-						if ( b && b->owner == owner && b->data.is_pad && !mjob && !rotating && !Attacking )
+						if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !rotating && !Attacking )
 						{
 							if ( FlightHigh > 0 )
 								FlightHigh -= 8;
@@ -1592,7 +1599,7 @@ void cVehicle::DrawPath ( void )
 	SDL_Rect dest, ndest;
 	sWaypoint *wp;
 
-	if ( !mjob || !mjob->waypoints || owner != Client->ActivePlayer )
+	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->ActivePlayer )
 	{
 		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand )
 			return;
@@ -1650,10 +1657,10 @@ void cVehicle::DrawPath ( void )
 	if ( sp )
 	{
 		save = 0;
-		sp += mjob->SavedSpeed;
+		sp += ClientMoveJob->iSavedSpeed;
 	}
 	else
-		save = mjob->SavedSpeed;
+		save = ClientMoveJob->iSavedSpeed;
 
 	zoom = Client->Hud.Zoom;
 
@@ -1665,11 +1672,11 @@ void cVehicle::DrawPath ( void )
 
 	dest.h = zoom;
 
-	wp = mjob->waypoints;
+	wp = ClientMoveJob->Waypoints;
 
-	dest.x += mx = wp->X * zoom - mjob->waypoints->X * zoom;
+	dest.x += mx = wp->X * zoom - ClientMoveJob->Waypoints->X * zoom;
 
-	dest.y += my = wp->Y * zoom - mjob->waypoints->Y * zoom;
+	dest.y += my = wp->Y * zoom - ClientMoveJob->Waypoints->Y * zoom;
 
 	ndest = dest;
 
@@ -1688,13 +1695,13 @@ void cVehicle::DrawPath ( void )
 
 		if ( sp == 0 )
 		{
-			mjob->DrawPfeil ( dest, &ndest, true );
+			ClientMoveJob->drawArrow ( dest, &ndest, true );
 			sp += data.max_speed + save;
 			save = 0;
 		}
 		else
 		{
-			mjob->DrawPfeil ( dest, &ndest, false );
+			ClientMoveJob->drawArrow ( dest, &ndest, false );
 		}
 
 		dest = ndest;
@@ -1759,7 +1766,7 @@ string cVehicle::GetStatusStr ( void )
 		return lngPack.i18n ( "Text~Comp~Surveying" );
 	}
 	else
-		if ( mjob )
+		if ( ClientMoveJob )
 		{
 			return lngPack.i18n ( "Text~Comp~Moving" );
 		}
@@ -2032,10 +2039,10 @@ void cVehicle::DrawMenu ( void )
 
 		if ( ExeNr == nr )
 		{
-			if ( mjob )
+			if ( ClientMoveJob )
 			{
-				mjob->finished = true;
-				mjob = NULL;
+				ClientMoveJob->bFinished = true;
+				ClientMoveJob = NULL;
 				MoveJobActive = false;
 				MenuActive = false;
 				PlayFX ( SoundData.SNDObjectMenu );
@@ -2116,7 +2123,7 @@ void cVehicle::DrawMenu ( void )
 	}
 
 	// Stop:
-	if ( mjob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
+	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 	{
 		if ( SelMenu == nr )
 			scr.y = 21;
@@ -2127,7 +2134,7 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			if ( mjob )
+			if ( ClientMoveJob )
 			{
 				sendWantStopMove ( iID );
 			}
@@ -2471,7 +2478,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	if ( data.can_attack && data.shots )
 		nr++;
 
-	if ( mjob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
+	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 		nr++;
 
 	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
@@ -4497,10 +4504,10 @@ bool cVehicle::InSentryRange ()
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
-					if ( mjob )
+					if ( ServerMoveJob )
 					{
-						mjob->finished = true;
-						mjob = NULL;
+						ServerMoveJob->bFinished = true;
+						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4510,10 +4517,10 @@ bool cVehicle::InSentryRange ()
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
-					if ( mjob )
+					if ( ServerMoveJob )
 					{
-						mjob->finished = true;
-						mjob = NULL;
+						ServerMoveJob->bFinished = true;
+						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4532,10 +4539,10 @@ bool cVehicle::InSentryRange ()
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
-					if ( mjob )
+					if ( ServerMoveJob )
 					{
-						mjob->finished = true;
-						mjob = NULL;
+						ServerMoveJob->bFinished = true;
+						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4545,10 +4552,10 @@ bool cVehicle::InSentryRange ()
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
-					if ( mjob )
+					if ( ServerMoveJob )
 					{
-						mjob->finished = true;
-						mjob = NULL;
+						ServerMoveJob->bFinished = true;
+						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4684,15 +4691,15 @@ void cVehicle::StoreVehicle ( int off )
 	if ( !v )
 		return;
 
-	if ( v->mjob )
+	if ( v->ClientMoveJob )
 	{
 		if ( v->moving || v->rotating || v->Attacking || v->MoveJobActive )
 			return;
 
-		if ( v->mjob )
+		if ( v->ClientMoveJob )
 		{
-			v->mjob->finished = true;
-			v->mjob = NULL;
+			v->ClientMoveJob->bFinished = true;
+			v->ClientMoveJob = NULL;
 			v->MoveJobActive = false;
 		}
 	}
@@ -5607,10 +5614,10 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 				v->data.speed = 0;
 				v->data.shots = 0;
 
-				if ( v->mjob )
+				if ( v->ClientMoveJob )
 				{
-					v->mjob->finished = true;
-					v->mjob = NULL;
+					v->ClientMoveJob->bFinished = true;
+					v->ClientMoveJob = NULL;
 					v->moving = false;
 					v->MoveJobActive = false;
 				}

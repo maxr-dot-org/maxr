@@ -137,7 +137,7 @@ void sendNextMove( int iUnitID, int iDestOff, int iType, int iPlayer );
 * the sourceoffset will be changed to the actual position of the vehicle
 *@author alzi alias DoctorDeath
 */
-void sendMoveJobServer( cMJobs *MJob, int iPlayer );
+void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer );
 /**
 * sends the resourcedata of new scaned fields around the unit to a client
 *@author alzi alias DoctorDeath

@@ -33,6 +33,8 @@ class cPlayer;
 class cMJobs;
 class cAutoMJob;
 class cMap;
+class cServerMoveJob;
+class cClientMoveJob;
 
 // Enum für die Symbole
 #ifndef D_eSymbols
@@ -90,6 +92,8 @@ public:
 	string name; // Name des Vehicles
 	cPlayer *owner;  // Eigentümer des Vehicles
 	cMJobs *mjob;    // Der Movejob des Vehicles
+	cServerMoveJob *ServerMoveJob;
+	cClientMoveJob *ClientMoveJob;
 	cAutoMJob *autoMJob; //the auto move AI of the vehicle
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool rotating;   // Gibt an, ob sich das Vehicle grade dreht

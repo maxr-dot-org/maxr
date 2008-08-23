@@ -24,6 +24,7 @@
 #include "netmessage.h"
 #include "mjobs.h"
 #include "attackJobs.h"
+#include "movejobs.h"
 
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
 {
@@ -309,76 +310,22 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_MOVE_JOB_CLIENT:
 		{
-			cMJobs *MJob = NULL;
-			int iCount = 0;
-			int iWaypointOff;
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
 
-			int iID = message->popInt16();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
-			int iReceivedCount = message->popInt16();
 
-			cLog::write(" Server: Received MoveJob: VehicleID: " + iToStr( iID ) + ", SrcX: " + iToStr( iSrcOff%Map->size ) + ", SrcY: " + iToStr( iSrcOff/Map->size ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
-			// Add the waypoints to the movejob
-			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
-			while ( iCount < iReceivedCount )
+			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
+			if ( !MoveJob->generateFromMessage ( message ) ) break;
+
+			addActiveMoveJob ( MoveJob );
+			cLog::write(" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
+			// send the movejob to all other player who can see this unit
+			for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
-				iWaypointOff = message->popInt32();
-				Waypoint->X = iWaypointOff%Map->size;
-				Waypoint->Y = iWaypointOff/Map->size;
-				Waypoint->Costs = message->popInt16();
-				Waypoint->next = NULL;
-
-				if ( iCount == 0 )
-				{
-					MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, true );
-					if ( MJob->vehicle == NULL )
-					{
-						// warning, here is something wrong! ( out of sync? )
-						cLog::write(" Server: Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
-						delete MJob; MJob = NULL;
-						break;
-					}
-					MJob->waypoints = Waypoint;
-
-					// unset sentry status when moving vehicle
-					if ( MJob->vehicle->bSentryStatus )
-					{
-						MJob->vehicle->owner->deleteSentryVehicle ( MJob->vehicle );
-						MJob->vehicle->bSentryStatus = false;
-					}
-					sendUnitData ( MJob->vehicle, MJob->vehicle->owner->Nr );
-					for ( unsigned int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
-					{
-						sendUnitData ( MJob->vehicle, *MJob->vehicle->SeenByPlayerList[i] );
-					}
-				}
-				iCount++;
-
-				if ( iCount < iReceivedCount )
-				{
-					Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
-					Waypoint = Waypoint->next;
-				}
-			}
-			//if the vehicle is under attack, cancel the movejob
-			if ( MJob && MJob->vehicle->bIsBeeingAttacked )
-			{
-				cLog::write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
-				sendNextMove( iID, iSrcOff, MJOB_FINISHED, MJob->vehicle->owner->Nr );
-			}
-
-			if ( MJob )
-			{
-				MJob->CalcNextDir();
-				addActiveMoveJob ( MJob );
-				cLog::write(" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
-				// send the movejob to all other player who can see this unit
-				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendMoveJobServer(MJob, *MJob->vehicle->SeenByPlayerList[i]);
-				}
+				sendMoveJobServer( MoveJob, *Vehicle->SeenByPlayerList[i]);
 			}
 		}
 		break;
@@ -386,9 +333,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( Vehicle == NULL ) break;
-			if ( Vehicle->mjob == NULL ) break;
+			if ( Vehicle->ServerMoveJob == NULL ) break;
 			
-			Vehicle->mjob->release();
+			Vehicle->ServerMoveJob->release();
 		}
 		break;
 	case GAME_EV_WANT_ATTACK:
@@ -660,21 +607,20 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			// drive away from the building lot
-			cMJobs *MJob = new cMJobs( Map, Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, false, Vehicle->iID, PlayerList, true );
-			if ( MJob->CalcPath() )
+			cServerMoveJob *MoveJob = new cServerMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, false, Vehicle );
+			if ( MoveJob->calcPath() )
 			{
-				MJob->CalcNextDir();
-				sendMoveJobServer ( MJob, Vehicle->owner->Nr );
+				sendMoveJobServer ( MoveJob, Vehicle->owner->Nr );
 				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 				{
-					sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
+					sendMoveJobServer( MoveJob, *Vehicle->SeenByPlayerList[i]);
 				}
-				addActiveMoveJob ( MJob );
+				addActiveMoveJob ( MoveJob );
 			}
 			else
 			{
-				delete MJob;
-				Vehicle->mjob = NULL;
+				delete MoveJob;
+				Vehicle->ServerMoveJob = NULL;
 			}
 		}
 		break;
@@ -689,30 +635,28 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
 
 			// check whether the exit field is free
-			cMJobs *MJob = new cMJobs( Map, Vehicle->PosX+Vehicle->PosY*Map->size, iNextX+iNextY*Map->size, false, Vehicle->iID, PlayerList, true );
-			if ( Vehicle->checkPathBuild ( iNextX+iNextY*Map->size, Vehicle->BuildingTyp, Map ) && MJob->CalcPath() )
+			cServerMoveJob *MoveJob = new cServerMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iNextX+iNextY*Map->size, false, Vehicle );
+			if ( Vehicle->checkPathBuild ( iNextX+iNextY*Map->size, Vehicle->BuildingTyp, Map ) && MoveJob->calcPath() )
 			{
-				MJob->CalcNextDir();
-
 				addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
 				Vehicle->IsBuilding = false;
 				Vehicle->BuildPath = false;
 
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 				sendContinuePathAnswer ( true, Vehicle->iID, Vehicle->owner->Nr );
-				sendMoveJobServer ( MJob, Vehicle->owner->Nr );
+				sendMoveJobServer ( MoveJob, Vehicle->owner->Nr );
 				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 				{
 					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
 					sendContinuePathAnswer ( true, Vehicle->iID, *Vehicle->SeenByPlayerList[i]);
-					sendMoveJobServer(MJob, *Vehicle->SeenByPlayerList[i]);
+					sendMoveJobServer( MoveJob, *Vehicle->SeenByPlayerList[i]);
 				}
-				addActiveMoveJob ( MJob );
+				addActiveMoveJob ( MoveJob );
 			}
 			else
 			{
-				delete MJob;
-				Vehicle->mjob = NULL;
+				delete MoveJob;
+				Vehicle->ServerMoveJob = NULL;
 
 				if ( UnitsData.building[Vehicle->BuildingTyp].data.is_base || UnitsData.building[Vehicle->BuildingTyp].data.is_connector )
 				{
@@ -1602,7 +1546,7 @@ void cServer::checkPlayerUnits ()
 						NextVehicle->SeenByPlayerList.Add ( &MapPlayer->Nr );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
 						sendUnitData( NextVehicle, MapPlayer->Nr );
-						if ( NextVehicle->mjob ) sendMoveJobServer ( NextVehicle->mjob, MapPlayer->Nr );
+						if ( NextVehicle->ServerMoveJob ) sendMoveJobServer ( NextVehicle->ServerMoveJob, MapPlayer->Nr );
 					}
 				}
 				else
@@ -1819,19 +1763,19 @@ bool cServer::checkEndActions ( int iPlayer )
 			NextVehicle = (*PlayerList)[i]->VehicleList;
 			while ( NextVehicle != NULL )
 			{
-				if ( NextVehicle->mjob && NextVehicle->data.speed > 0 && !NextVehicle->moving )
+				if ( NextVehicle->ServerMoveJob && NextVehicle->data.speed > 0 && !NextVehicle->moving )
 				{
 					// restart movejob
-					NextVehicle->mjob->CalcNextDir();
-					NextVehicle->mjob->EndForNow = false;
-					NextVehicle->mjob->ScrX = NextVehicle->PosX;
-					NextVehicle->mjob->ScrY = NextVehicle->PosY;
+					NextVehicle->ServerMoveJob->calcNextDir();
+					NextVehicle->ServerMoveJob->bEndForNow = false;
+					NextVehicle->ServerMoveJob->ScrX = NextVehicle->PosX;
+					NextVehicle->ServerMoveJob->ScrY = NextVehicle->PosY;
 					for ( unsigned int j = 0; j < NextVehicle->SeenByPlayerList.Size(); j++ )
 					{
-						sendMoveJobServer ( NextVehicle->mjob, *NextVehicle->SeenByPlayerList[j] );
+						sendMoveJobServer ( NextVehicle->ServerMoveJob, *NextVehicle->SeenByPlayerList[j] );
 					}
-					sendMoveJobServer ( NextVehicle->mjob, NextVehicle->owner->Nr );
-					addActiveMoveJob ( NextVehicle->mjob );
+					sendMoveJobServer ( NextVehicle->ServerMoveJob, NextVehicle->owner->Nr );
+					addActiveMoveJob ( NextVehicle->ServerMoveJob );
 					sMessage = "Text~Comp~Turn_Automove";
 				}
 				NextVehicle = NextVehicle->next;
@@ -1936,7 +1880,7 @@ void cServer::makeTurnEnd ()
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
 
-			if ( Vehicle->mjob ) Vehicle->mjob->EndForNow = false;
+			if ( Vehicle->ServerMoveJob ) Vehicle->ServerMoveJob->bEndForNow = false;
 			Vehicle = Vehicle->next;
 		}
 	}
@@ -2048,54 +1992,53 @@ void cServer::checkDeadline ()
 	}
 }
 
-void cServer::addActiveMoveJob ( cMJobs *MJob )
+void cServer::addActiveMoveJob ( cServerMoveJob *MoveJob )
 {
-	ActiveMJobs.Add ( MJob );
-	MJob->Suspended = false;
+	ActiveMJobs.Add ( MoveJob );
 }
 
 void cServer::handleMoveJobs ()
 {
 	for ( int i = 0; i < ActiveMJobs.Size(); i++ )
 	{
-		cMJobs *MJob;
+		cServerMoveJob *MoveJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs[i];
-		Vehicle = MJob->vehicle;
+		MoveJob = ActiveMJobs[i];
+		Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
 		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue;
 
-		if ( MJob->finished || MJob->EndForNow )
+		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{
 			// stop the job
-			if ( MJob->EndForNow && Vehicle )
+			if ( MoveJob->bEndForNow && Vehicle )
 			{
 				cLog::write(" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-				for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
+				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 				{
-					sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_STOP, *MJob->vehicle->SeenByPlayerList[i]);
+					sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY * Map->size, MJOB_STOP, *Vehicle->SeenByPlayerList[i]);
 				}
-				sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_STOP, MJob->vehicle->owner->Nr );
+				sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_STOP, Vehicle->owner->Nr );
 			}
 			else
 			{
-				if ( Vehicle && Vehicle->mjob == MJob )
+				if ( Vehicle && Vehicle->ServerMoveJob == MoveJob )
 				{
 					cLog::write(" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-					Vehicle->mjob = NULL;
+					Vehicle->ServerMoveJob = NULL;
 					Vehicle->moving = false;
 					Vehicle->MoveJobActive = false;
 
-					for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
+					for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 					{
-						sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_FINISHED, *MJob->vehicle->SeenByPlayerList[i]);
+						sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY * Map->size, MJOB_FINISHED, *Vehicle->SeenByPlayerList[i]);
 					}
-					sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_FINISHED, MJob->vehicle->owner->Nr );
+					sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_FINISHED, Vehicle->owner->Nr );
 				}
 				else cLog::write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-				delete MJob;
+				delete MoveJob;
 			}
 			ActiveMJobs.Delete ( i );
 			continue;
@@ -2104,12 +2047,12 @@ void cServer::handleMoveJobs ()
 		if ( Vehicle == NULL ) continue;
 
 		// rotate vehicle
-		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
+		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
 		{
 			Vehicle->rotating = true;
 			if ( iTimer1 )
 			{
-				Vehicle->RotateTo ( MJob->next_dir );
+				Vehicle->RotateTo ( MoveJob->iNextDir );
 			}
 			continue;
 		}
@@ -2118,218 +2061,27 @@ void cServer::handleMoveJobs ()
 			Vehicle->rotating = false;
 		}
 
-		if ( !MJob->vehicle->moving )
+		if ( !Vehicle->moving )
 		{
-			checkMove( MJob );
-		}
-		else
-		{
-			moveVehicle ( MJob->vehicle );
-		}
-	}
-}
-
-void cServer::checkMove ( cMJobs *MJob )
-{
-	bool bInSentryRange;
-	if ( !MJob->vehicle || !MJob->waypoints || !MJob->waypoints->next ) return;
-	bInSentryRange = MJob->vehicle->InSentryRange();
-	if ( !MJob->CheckPointNotBlocked ( MJob->waypoints->next->X, MJob->waypoints->next->Y ) || bInSentryRange )
-	{
-		cLog::write( " Server: Next point is blocked: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
-		// if the next point would be the last, finish the job here
-		if ( MJob->waypoints->next->X == MJob->DestX && MJob->waypoints->next->Y == MJob->DestY )
-		{
-			MJob->finished = true;
-		}
-		// else delete the movejob and inform the client that he has to find a new path
-		else
-		{
-			for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
+			if ( !MoveJob->checkMove() && !MoveJob->bFinished )
 			{
-				sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_BLOCKED, *MJob->vehicle->SeenByPlayerList[i]);
-			}
-			sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_BLOCKED, MJob->vehicle->owner->Nr );
-
-			for ( int i = 0; i < ActiveMJobs.Size(); i++ )
-			{
-				if (MJob == ActiveMJobs[i])
+				for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
 				{
-					ActiveMJobs.Delete ( i );
-					break;
+					if ( MoveJob == ActiveMJobs[i] )
+					{
+						ActiveMJobs.Delete ( i );
+						break;
+					}
 				}
+				delete MoveJob;
+				Vehicle->ServerMoveJob = NULL;
+				cLog::write( " Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
 			}
-			MJob->vehicle->mjob = NULL;
-			delete MJob;
-			cLog::write( " Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
-		}
-		return;
-	}
-
-	// not enough waypoints for this move
-	if ( MJob->vehicle->data.speed < MJob->waypoints->next->Costs )
-	{
-		cLog::write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( MJob->vehicle->iID ) + ", X: " + iToStr ( MJob->waypoints->next->X ) + ", Y: " + iToStr ( MJob->waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
-		MJob->SavedSpeed += MJob->vehicle->data.speed;
-		MJob->vehicle->data.speed = 0;
-		MJob->EndForNow = true;
-		return;
-	}
-
-	MJob->vehicle->MoveJobActive = true;
-	MJob->vehicle->moving = true;
-
-	// reserv the next field
-	if ( !MJob->plane ) Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].reserviert = true;
-	else Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].air_reserviert = true;
-
-	// send move command to all players who can see the unit
-	for ( int i = 0; i < MJob->vehicle->SeenByPlayerList.Size(); i++ )
-	{
-		sendNextMove(MJob->vehicle->iID, MJob->vehicle->PosX + MJob->vehicle->PosY * Map->size, MJOB_OK, *MJob->vehicle->SeenByPlayerList[i]);
-	}
-	sendNextMove ( MJob->vehicle->iID, MJob->vehicle->PosX+MJob->vehicle->PosY*Map->size, MJOB_OK, MJob->vehicle->owner->Nr );
-}
-
-void cServer::moveVehicle ( cVehicle *Vehicle )
-{
-	// just do this every 50 miliseconds
-	if ( !iTimer0 ) return;
-
-	cMJobs *MJob = Vehicle->mjob;
-	int iSpeed;
-	if ( !Vehicle ) return;
-	if ( Vehicle->data.is_human )
-	{
-		Vehicle->WalkFrame++;
-		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
-		iSpeed = MOVE_SPEED/2;
-	}
-	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
-	{
-		iSpeed = MOVE_SPEED;
-		if ( MJob->waypoints && MJob->waypoints->next && Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base&& ( Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_road || Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed*=2;
-	}
-	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
-	else iSpeed = MOVE_SPEED;
-
-	switch ( MJob->next_dir )
-	{
-		case 0:
-			Vehicle->OffY -= iSpeed;
-			break;
-		case 1:
-			Vehicle->OffY -= iSpeed;
-			Vehicle->OffX += iSpeed;
-			break;
-		case 2:
-			Vehicle->OffX += iSpeed;
-			break;
-		case 3:
-			Vehicle->OffX += iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 4:
-			Vehicle->OffY += iSpeed;
-			break;
-		case 5:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 6:
-			Vehicle->OffX -= iSpeed;
-			break;
-		case 7:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY -= iSpeed;
-			break;
-	}
-
-
-	// check whether the point has been reached:
-	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
-	{
-		cLog::write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", Y: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-		cMJobs *MJob = Vehicle->mjob;
-		sWaypoint *Waypoint;
-		Waypoint = MJob->waypoints->next;
-		free ( MJob->waypoints );
-		MJob->waypoints = Waypoint;
-
-		if ( Vehicle->data.can_drive == DRIVE_AIR )
-		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].air_reserviert = false;
 		}
 		else
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].reserviert = false;
+			if ( Server->iTimer0 ) MoveJob->moveVehicle ();
 		}
-		Vehicle->OffX = 0;
-		Vehicle->OffY = 0;
-		Vehicle->PosX = MJob->waypoints->X;
-		Vehicle->PosY = MJob->waypoints->Y;
-
-		if ( MJob->waypoints->next == NULL )
-		{
-			MJob->finished = true;
-		}
-
-		Vehicle->data.speed += MJob->SavedSpeed;
-		MJob->SavedSpeed = 0;
-		Vehicle->DecSpeed ( MJob->waypoints->Costs );
-
-		// check for results of the move
-
-		// make mines explode if necessary
-		cBuilding* building = Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base;
-		if ( Vehicle->data.can_drive != DRIVE_AIR && building && building->data.is_expl_mine && building->owner != Vehicle->owner )
-		{
-			AJobs.Add( new cServerAttackJob( building, Vehicle->PosX+Vehicle->PosY*Map->size ));
-			
-			if ( Vehicle->mjob )  Vehicle->mjob->EndForNow = true;
-		}
-
-		// search for resources if necessary
-		if ( Vehicle->data.can_survey )
-		{
-			sendResources( Vehicle, Map );
-			Vehicle->doSurvey();
-		}
-
-		// let other units fire on this one
-		Vehicle->InSentryRange();
-
-		// search for mines if necessary
-		if ( Vehicle->data.can_detect_mines )
-		{
-			Vehicle->detectMines();
-		}
-
-		// lay/clear mines if necessary
-		if ( Vehicle->data.can_lay_mines )
-		{
-			bool bResult = false;
-			if ( Vehicle->LayMines ) bResult = Vehicle->layMine();
-			else if ( Vehicle->ClearMines ) bResult = Vehicle->clearMine();
-			if ( bResult )
-			{
-				// send new unit values
-				sendUnitData( Vehicle, Vehicle->owner->Nr );
-				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
-				}
-			}
-		}
-
-		Vehicle->owner->DoScan();
-
-		Vehicle->moving = false;
-		MJob->CalcNextDir();
 	}
 }
 
@@ -2386,17 +2138,6 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 		}
 	}
 	return NULL;
-}
-
-void cServer::releaseMoveJob ( cMJobs *MJob )
-{
-	cLog::write ( " Server: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for ( int i = 0; i < ActiveMJobs.Size(); i++ )
-	{
-		if (MJob == ActiveMJobs[i]) return;
-	}
-	addActiveMoveJob ( MJob );
-	cLog::write ( " Server: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data )

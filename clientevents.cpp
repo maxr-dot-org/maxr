@@ -52,10 +52,10 @@ void sendWantStopWork( cBuilding* building)
 	Client->sendNetMessage(message);
 }
 
-void sendMoveJob( cMJobs *MJob )
+void sendMoveJob( cClientMoveJob *MoveJob )
 {
 	bool bEnd = false;
-	sWaypoint *LastWaypoint = MJob->waypoints;
+	sWaypoint *LastWaypoint = MoveJob->Waypoints;
 	while ( LastWaypoint ) LastWaypoint = LastWaypoint->next;
 	sWaypoint *Waypoint;
 
@@ -64,7 +64,7 @@ void sendMoveJob( cMJobs *MJob )
 	int iCount = 0;
 	do
 	{
-		Waypoint = MJob->waypoints;
+		Waypoint = MoveJob->Waypoints;
 		while ( Waypoint != LastWaypoint )
 		{
 			if ( Waypoint->next == LastWaypoint )
@@ -74,19 +74,19 @@ void sendMoveJob( cMJobs *MJob )
 			}
 			Waypoint = Waypoint->next;
 		}
-		if ( MJob->waypoints == Waypoint ) bEnd = true;
+		if ( MoveJob->Waypoints == Waypoint ) bEnd = true;
 
 		message->pushInt16( Waypoint->Costs );
-		message->pushInt32( Waypoint->X+Waypoint->Y*MJob->map->size);
+		message->pushInt32( Waypoint->X+Waypoint->Y*MoveJob->Map->size);
 		iCount++;
 	}
 	while ( message->iLength <= MAX_MESSAGE_LENGTH-19 && !bEnd );
 
 	message->pushInt16( iCount );
-	message->pushBool ( MJob->plane );
-	message->pushInt32( MJob->DestX+MJob->DestY*MJob->map->size );
-	message->pushInt32( MJob->ScrX+MJob->ScrY*MJob->map->size );
-	message->pushInt16( MJob->vehicle->iID );
+	message->pushBool ( MoveJob->bPlane );
+	message->pushInt32( MoveJob->DestX+MoveJob->DestY*MoveJob->Map->size );
+	message->pushInt32( MoveJob->ScrX+MoveJob->ScrY*MoveJob->Map->size );
+	message->pushInt16( MoveJob->Vehicle->iID );
 
 	// don't send movejobs that are to long
 	if ( !bEnd ) return;

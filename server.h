@@ -25,6 +25,7 @@
 #include "player.h"
 #include "attackJobs.h"
 #include "mjobs.h"
+#include "movejobs.h"
 
 
 /**
@@ -84,8 +85,6 @@ private:
 	bool bExit;
 
 
-	/** List with all active movejobs */
-	cList<cMJobs*> ActiveMJobs;
 	/** true if this is a hotseat game */
 	bool bHotSeat;
 	/** number of active player in hotseat */
@@ -192,12 +191,6 @@ private:
 	*/
 	void handleTimer();
 	/**
-	* adds an new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob ( cMJobs *MJob );
-	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
@@ -242,6 +235,8 @@ public:
 	cMap *Map;
 	/** List with all attackjobs */
 	cList<cServerAttackJob*> AJobs;
+	/** List with all active movejobs */
+	cList<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
@@ -339,11 +334,11 @@ public:
 	*/
 	void addReport ( int iType, bool bVehicle, int iPlayerNum );
 	/**
-	* releases a movejob to be deleted
+	* adds an new movejob
 	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be released
+	*@param MJob the movejob to be added
 	*/
-	void releaseMoveJob ( cMJobs *MJob );
+	void addActiveMoveJob ( cServerMoveJob *MoveJob );
 
 } EX *Server;
 

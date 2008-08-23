@@ -1005,7 +1005,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		cVehicle* target = Client->Map->GO[offset].plane;
 		if ( target )
 		{
-			if ( target->mjob ) target->mjob->EndForNow = false;
+			if ( target->ClientMoveJob ) target->ClientMoveJob->bEndForNow = false;
 			target->bIsBeeingAttacked = false;
 		}
 	}
@@ -1032,7 +1032,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 
 		if ( targetVehicle )
 		{
-			if ( targetVehicle->mjob ) targetVehicle->mjob->EndForNow = false;
+			if ( targetVehicle->ClientMoveJob ) targetVehicle->ClientMoveJob->bEndForNow = false;
 			targetVehicle->bIsBeeingAttacked = false;
 		}
 

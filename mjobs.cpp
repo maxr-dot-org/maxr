@@ -73,8 +73,6 @@ void cMJobs::release ()
 {
 	EndForNow = false;
 	finished = true;
-	if ( bIsServerJob && Server ) Server->releaseMoveJob ( this );
-	else if ( Client ) Client->releaseMoveJob ( this );
 }
 
 // Berechnet den kürzesten Weg zum Ziel:

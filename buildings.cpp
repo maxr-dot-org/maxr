@@ -2504,15 +2504,15 @@ void cBuilding::StoreVehicle ( int off )
 	if ( !v )
 		return;
 
-	if ( v->mjob )
+	if ( v->ClientMoveJob )
 	{
 		if ( v->moving || v->rotating || v->Attacking || v->MoveJobActive )
 			return;
 
-		if ( v->mjob )
+		if ( v->ClientMoveJob )
 		{
-			v->mjob->finished = true;
-			v->mjob = NULL;
+			v->ClientMoveJob->bFinished = true;
+			v->ClientMoveJob = NULL;
 			v->MoveJobActive = false;
 		}
 	}

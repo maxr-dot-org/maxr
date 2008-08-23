@@ -992,33 +992,26 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 {
 	if ( vehicle->bIsBeeingAttacked ) return;
 
-	cMJobs *MJob = new cMJobs ( Map, vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle->iID, PlayerList, false );
-	if ( !MJob->finished )
+	cClientMoveJob *MoveJob = new cClientMoveJob ( vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle );
+	if ( MoveJob->calcPath() )
 	{
-		if ( MJob->CalcPath() )
-		{
-			MJob->CalcNextDir();
-			sendMoveJob ( MJob );
-			addActiveMoveJob ( MJob );
-			cLog::write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MJob->DestX ) + ", DestY: " + iToStr ( MJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
-		}
-		else
-		{
-			MJob->finished = true;
-			if (!vehicle || !vehicle->autoMJob) //automoving suveyors must not tell this
-			{
-				if (random(2)) PlayVoice(VoiceData.VOINoPath1);
-				else PlayVoice ( VoiceData.VOINoPath2 );
-			}
-		}
+		sendMoveJob ( MoveJob );
+		addActiveMoveJob ( MoveJob );
+		cLog::write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 	}
-	if ( MJob->finished )
+	else
 	{
-		if ( MJob->vehicle )
+		if ( !vehicle || !vehicle->autoMJob ) //automoving suveyors must not tell this
 		{
-			MJob->vehicle->mjob = NULL;
+			if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+			else PlayVoice ( VoiceData.VOINoPath2 );
 		}
-		delete MJob;
+
+		if ( MoveJob->Vehicle )
+		{
+			MoveJob->Vehicle->ClientMoveJob = NULL;
+		}
+		delete MoveJob;
 	}
 }
 
@@ -1350,7 +1343,7 @@ void cClient::drawMap( bool bPure )
 		}
 	}
 	// draw the path:
-	if ( SelectedVehicle&& ( ( SelectedVehicle->mjob&&SelectedVehicle->mjob->Suspended ) ||SelectedVehicle->BuildPath ) )
+	if ( SelectedVehicle&& ( ( SelectedVehicle->ClientMoveJob&&SelectedVehicle->ClientMoveJob->bSuspended ) || SelectedVehicle->BuildPath ) )
 	{
 		SelectedVehicle->DrawPath();
 	}
@@ -3177,53 +3170,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
 		{
-			cMJobs *MJob = NULL;
-			int iCount = 0;
-			int iWaypointOff;
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle == NULL ) break;
 
-			int iID = message->popInt16();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
-			int iReceivedCount = message->popInt16();
 
-			cLog::write(" Client: Received MoveJob: VehicleID: " + iToStr( iID ) + ", SrcX: " + iToStr( iSrcOff%Map->size ) + ", SrcY: " + iToStr( iSrcOff/Map->size ) + ", DestX: " + iToStr( iDestOff%Map->size ) + ", DestY: " + iToStr( iDestOff/Map->size ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
-			// Add the waypoints to the movejob
-			sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
-			while ( iCount < iReceivedCount )
-			{
-				iWaypointOff = message->popInt32();
-				Waypoint->X = iWaypointOff%Map->size;
-				Waypoint->Y = iWaypointOff/Map->size;
-				Waypoint->Costs = message->popInt16();
-				Waypoint->next = NULL;
+			cClientMoveJob *MoveJob = new cClientMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
+			if ( !MoveJob->generateFromMessage ( message ) ) break;
 
-				if ( iCount == 0 )
-				{
-					MJob = new cMJobs( Map, iSrcOff, iDestOff, bPlane, iID, PlayerList, false );
-					if ( MJob->vehicle == NULL )
-					{
-						// warning, here is something wrong! ( out of sync? )
-						cLog::write(" Client: Created new movejob but no vehicle found!", cLog::eLOG_TYPE_NET_WARNING);
-						delete MJob; MJob = NULL;
-						break;
-					}
-					MJob->waypoints = Waypoint;
-				}
-				iCount++;
-
-				if ( iCount < iReceivedCount )
-				{
-					Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
-					Waypoint = Waypoint->next;
-				}
-			}
-			if ( MJob )
-			{
-				MJob->CalcNextDir();
-				addActiveMoveJob ( MJob );
-				cLog::write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
-			}
+			addActiveMoveJob ( MoveJob );
+			cLog::write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
 	case GAME_EV_NEXT_MOVE:
@@ -3235,133 +3193,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cLog::write(" Client: Received information for next move: ID: " + iToStr ( iID ) + ", SrcX: " + iToStr( iDestOff%Map->size ) + ", SrcY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
 
 			cVehicle *Vehicle = getVehicleFromID ( iID );
-			if ( Vehicle && Vehicle->mjob )
+			if ( Vehicle && Vehicle->ClientMoveJob )
 			{
-				// set vehicle to server position
-				int iDestX = iDestOff%Map->size;
-				int iDestY = iDestOff/Map->size;
-				if ( Vehicle->PosX != iDestX || Vehicle->PosY != iDestY )
-				{
-					// the client is faster then the server and has already
-					// reached the last field or the next will be the last,
-					// then stop the vehicle
-					if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL )
-					{
-						cLog::write ( " Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
-						Vehicle->mjob->finished = true;
-						Vehicle->OffX = Vehicle->OffY = 0;
-						break;
-					}
-					else
-					{
-						// server is one field faster then client
-						if ( iDestX == Vehicle->mjob->waypoints->next->X && iDestY == Vehicle->mjob->waypoints->next->Y )
-						{
-							cLog::write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
-							doEndMoveVehicle( Vehicle );
-						}
-						else
-						{
-							// check whether the destination field is one of the next in the waypointlist
-							// if not it must have been one that has been deleted already
-							bool bServerIsFaster = false;
-							sWaypoint *Waypoint = Vehicle->mjob->waypoints->next->next;
-							while ( Waypoint )
-							{
-								if ( Waypoint->X == iDestX && Waypoint->Y == iDestY )
-								{
-									bServerIsFaster = true;
-									break;
-								}
-								Waypoint = Waypoint->next;
-							}
-							// the server is more then one field faster
-							if ( bServerIsFaster )
-							{
-								cLog::write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
-								if ( Vehicle->data.can_drive == DRIVE_AIR )
-								{
-									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-									Map->GO[iDestX+iDestY*Map->size].plane = Vehicle;
-								}
-								else
-								{
-									Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-									Map->GO[iDestX+iDestY*Map->size].vehicle = Vehicle;
-								}
-								Vehicle->PosX = iDestOff%Map->size;
-								Vehicle->PosY = iDestOff/Map->size;
-								Vehicle->OffX = Vehicle->OffY = 0;
-
-								Waypoint = Vehicle->mjob->waypoints;
-								while ( Waypoint )
-								{
-									if ( Waypoint->next->X != iDestX && Waypoint->next->Y != iDestY )
-									{
-										Vehicle->mjob->waypoints = Waypoint->next;
-										free ( Waypoint );
-										Waypoint = Vehicle->mjob->waypoints;
-									}
-									else
-									{
-										Vehicle->mjob->waypoints = Waypoint;
-										break;
-									}
-								}
-							}
-							// the client is faster
-							else
-							{
-								cLog::write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
-								// just stop the vehicle and wait for the next commando of the server
-								for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
-								{
-									if ( ActiveMJobs[i] == Vehicle->mjob ) ActiveMJobs.Delete ( i );
-								}
-								Vehicle->MoveJobActive = false;
-								Vehicle->mjob->EndForNow = true;
-								break;
-							}
-						}
-					}
-				}
-				switch ( iType )
-				{
-				case MJOB_OK:
-					{
-						Vehicle->moving = true;
-						if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
-						if ( Vehicle->mjob->EndForNow && !Vehicle->MoveJobActive )
-						{
-							Vehicle->mjob->EndForNow = false;
-							addActiveMoveJob ( Vehicle->mjob );
-							cLog::write ( " Client: reactivated movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
-						}
-						Vehicle->MoveJobActive = true;
-						cLog::write(" Client: The movejob is ok: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-					}
-					break;
-				case MJOB_STOP:
-					{
-						cLog::write(" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
-						Vehicle->mjob->Suspended = true;
-						Vehicle->mjob->EndForNow = true;
-					}
-					break;
-				case MJOB_FINISHED:
-					{
-						cLog::write(" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
-						Vehicle->mjob->release ();
-					}
-					break;
-				case MJOB_BLOCKED:
-					{
-						cLog::write(" Client: Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", DestY: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-						Vehicle->mjob->finished = true;
-						// TODO: Calc a new path and start the new job
-					}
-					break;
-				}
+				Vehicle->ClientMoveJob->handleNextMove( iDestOff%Map->size, iDestOff/Map->size, iType );
 			}
 			else
 			{
@@ -3913,29 +3747,6 @@ void cClient::handleEnd()
 	sendWantToEndTurn();
 }
 
-bool cClient::checkEndActions()
-{
-	cVehicle *NextVehicle;
-	bool bReturn = false;
-	NextVehicle = ActivePlayer->VehicleList;
-	while ( NextVehicle != NULL )
-	{
-		if ( NextVehicle->mjob && NextVehicle->data.speed > 0 )
-		{
-			// restart movejob
-			NextVehicle->mjob->CalcNextDir();
-			NextVehicle->mjob->EndForNow = false;
-			NextVehicle->mjob->ScrX = NextVehicle->PosX;
-			NextVehicle->mjob->ScrY = NextVehicle->PosY;
-			sendMoveJob ( NextVehicle->mjob );
-			addActiveMoveJob ( NextVehicle->mjob );
-			bReturn = true;
-		}
-		NextVehicle = NextVehicle->next;
-	}
-	return bReturn;
-}
-
 void cClient::makeHotSeatEnd( int iNextPlayerNum )
 {
 	// clear the messages
@@ -4100,26 +3911,26 @@ void cClient::handleTurnTime()
 	}
 }
 
-void cClient::addActiveMoveJob ( cMJobs *MJob )
+void cClient::addActiveMoveJob ( cClientMoveJob *MoveJob )
 {
-	ActiveMJobs.Add ( MJob );
-	MJob->Suspended = false;
+	ActiveMJobs.Add ( MoveJob );
+	MoveJob->bSuspended = false;
 }
 
 void cClient::handleMoveJobs ()
 {
 	for (int i = 0; i < ActiveMJobs.Size(); i++)
 	{
-		cMJobs *MJob;
+		cClientMoveJob *MoveJob;
 		cVehicle *Vehicle;
 
-		MJob = ActiveMJobs[i];
-		Vehicle = MJob->vehicle;
+		MoveJob = ActiveMJobs[i];
+		Vehicle = MoveJob->Vehicle;
 		
 		//suspend movejobs of attacked vehicles 
 		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue; 
 
-		if ( MJob->finished || MJob->EndForNow )
+		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{
 			// Stop the soundstream
 			if ( Vehicle && Vehicle == SelectedVehicle && Vehicle->MoveJobActive )
@@ -4130,12 +3941,12 @@ void cClient::handleMoveJobs ()
 				iObjectStream = Vehicle->PlayStram();
 			}
 
-			if ( MJob->finished )
+			if ( MoveJob->bFinished )
 			{
-				if ( Vehicle && Vehicle->mjob == MJob )
+				if ( Vehicle && Vehicle->ClientMoveJob == MoveJob )
 				{
 					cLog::write(" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-					Vehicle->mjob = NULL;
+					Vehicle->ClientMoveJob = NULL;
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
 					Vehicle->MoveJobActive = false;
@@ -4155,10 +3966,10 @@ void cClient::handleMoveJobs ()
 				}
 				else cLog::write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs.Delete ( i );
-				delete MJob;
+				delete MoveJob;
 				continue;
 			}
-			if ( MJob->EndForNow )
+			if ( MoveJob->bEndForNow )
 			{
 				cLog::write(" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				if ( Vehicle )
@@ -4166,11 +3977,11 @@ void cClient::handleMoveJobs ()
 					Vehicle->MoveJobActive = false;
 					Vehicle->rotating = false;
 					// save speed
-					if ( MJob->waypoints && MJob->waypoints->next )
+					if ( MoveJob->Waypoints && MoveJob->Waypoints->next )
 					{
-						if ( Vehicle->data.speed < MJob->waypoints->next->Costs )
+						if ( Vehicle->data.speed < MoveJob->Waypoints->next->Costs )
 						{
-							MJob->SavedSpeed += Vehicle->data.speed;
+							MoveJob->iSavedSpeed += Vehicle->data.speed;
 							Vehicle->data.speed = 0;
 							if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 						}
@@ -4185,15 +3996,15 @@ void cClient::handleMoveJobs ()
 			}
 		}
 
-		if ( MJob->vehicle == NULL ) continue;
+		if ( Vehicle == NULL ) continue;
 
 		// rotate vehicle
-		if ( MJob->next_dir != Vehicle->dir && Vehicle->data.speed )
+		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
 		{
 			Vehicle->rotating = true;
 			if ( iTimer1 )
 			{
-				Vehicle->RotateTo ( MJob->next_dir );
+				Vehicle->RotateTo ( MoveJob->iNextDir );
 			}
 			continue;
 		}
@@ -4204,195 +4015,11 @@ void cClient::handleMoveJobs ()
 
 		if ( Vehicle->MoveJobActive )
 		{
-			moveVehicle( MJob->vehicle );
+			MoveJob->moveVehicle();
 			bFlagDrawMap = true;
+			mouseMoveCallback ( true );
 		}
 	}
-}
-
-void cClient::moveVehicle( cVehicle *Vehicle )
-{
-	if ( Vehicle == NULL || Vehicle->mjob == NULL ) return;
-	cMJobs *MJob = Vehicle->mjob;
-
-	// do not move the vehicle, if the movejob hasn't got any more waypoints
-	if ( Vehicle->mjob->waypoints == NULL || Vehicle->mjob->waypoints->next == NULL ) return;
-
-	int iSpeed;
-	if ( !Vehicle ) return;
-	if ( Vehicle->data.is_human )
-	{
-		Vehicle->WalkFrame++;
-		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
-		iSpeed = MOVE_SPEED/2;
-	}
-	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
-	{
-		iSpeed = MOVE_SPEED;
-		if ( MJob->waypoints && MJob->waypoints->next && Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base&& ( Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_road || Map->GO[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed*=2;
-	}
-	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
-	else iSpeed = MOVE_SPEED;
-
-	// Ggf Tracks malen:
-	if ( SettingsData.bMakeTracks && Vehicle->data.make_tracks && !Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size,false ) &&!
-	        ( MJob->waypoints && MJob->waypoints->next && Map->terrain[Map->Kacheln[MJob->waypoints->next->X+MJob->waypoints->next->Y*Map->size]].water ) &&
-	        ( Vehicle->owner == Client->ActivePlayer || ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
-	{
-		if ( !Vehicle->OffX && !Vehicle->OffY )
-		{
-			switch ( Vehicle->dir )
-			{
-				case 0:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64-10,0 );
-					break;
-				case 4:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64+10,0 );
-					break;
-				case 2:
-					addFX ( fxTracks,Vehicle->PosX*64+10,Vehicle->PosY*64,2 );
-					break;
-				case 6:
-					addFX ( fxTracks,Vehicle->PosX*64-10,Vehicle->PosY*64,2 );
-					break;
-				case 1:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
-					break;
-				case 5:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
-					break;
-				case 3:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
-					break;
-				case 7:
-					addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
-					break;
-			}
-		}
-		else if ( abs ( Vehicle->OffX ) == iSpeed*2 || abs ( Vehicle->OffY ) == iSpeed*2 )
-		{
-			switch ( Vehicle->dir )
-			{
-				case 1:
-					addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64-26,1 );
-					break;
-				case 5:
-					addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64+26,1 );
-					break;
-				case 3:
-					addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64+26,3 );
-					break;
-				case 7:
-					addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64-26,3 );
-					break;
-			}
-		}
-	}
-
-	switch ( MJob->next_dir )
-	{
-		case 0:
-			Vehicle->OffY -= iSpeed;
-			break;
-		case 1:
-			Vehicle->OffY -= iSpeed;
-			Vehicle->OffX += iSpeed;
-			break;
-		case 2:
-			Vehicle->OffX += iSpeed;
-			break;
-		case 3:
-			Vehicle->OffX += iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 4:
-			Vehicle->OffY += iSpeed;
-			break;
-		case 5:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 6:
-			Vehicle->OffX -= iSpeed;
-			break;
-		case 7:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY -= iSpeed;
-			break;
-	}
-
-	// check whether the point has been reached:
-	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
-	{
-		cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Vehicle->mjob->waypoints->next->X ) + ", Y: " + iToStr ( Vehicle->mjob->waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-		doEndMoveVehicle ( Vehicle );
-	}
-}
-
-void cClient::doEndMoveVehicle ( cVehicle *Vehicle )
-{
-	if ( Vehicle == NULL || Vehicle->mjob == NULL ) return;
-	cMJobs *MJob = Vehicle->mjob;
-
-	if ( MJob->waypoints->next == NULL )
-	{
-		// this is just to avoid errors, this should normaly never happen.
-		MJob->finished = true;
-		return;
-	}
-
-	Vehicle->data.speed += MJob->SavedSpeed;
-	MJob->SavedSpeed = 0;
-	Vehicle->DecSpeed ( MJob->waypoints->next->Costs );
-	Vehicle->moving = false;
-	Vehicle->WalkFrame = 0;
-
-	sWaypoint *wp;
-	wp = MJob->waypoints->next;
-	free ( MJob->waypoints );
-	MJob->waypoints = wp;
-
-	Vehicle->moving = false;
-
-	if ( !MJob->plane )
-	{
-		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle != NULL || Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top != NULL && !Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].top->data.is_connector )
-		{
-			cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other unit", cLog::eLOG_TYPE_NET_ERROR );
-			MJob->finished = true;
-		}
-		else
-		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].vehicle = Vehicle;
-			Vehicle->PosX = MJob->waypoints->X;
-			Vehicle->PosY = MJob->waypoints->Y;
-		}
-	}
-	else
-	{
-		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-		if ( Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane != NULL )
-		{
-			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane", cLog::eLOG_TYPE_NET_ERROR );
-			MJob->finished = true;
-		}
-		else
-		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-			Map->GO[MJob->waypoints->X+MJob->waypoints->Y*Map->size].plane = Vehicle;
-			Vehicle->PosX = MJob->waypoints->X;
-			Vehicle->PosY = MJob->waypoints->Y;
-		}
-	}
-	Vehicle->OffX = 0;
-	Vehicle->OffY = 0;
-
-	Vehicle->owner->DoScan();
-	bFlagDrawMMap = true;
-
-	mouseMoveCallback ( true );
-	MJob->CalcNextDir();
 }
 
 cVehicle *cClient::getVehicleFromID ( int iID )
@@ -4454,7 +4081,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: "  + iToStr ((long int) Vehicle->mjob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: "  + iToStr ((long int) Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -4582,17 +4209,6 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
 	}
-}
-
-void cClient::releaseMoveJob ( cMJobs *MJob )
-{
-	cLog::write ( " Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for (int i = 0; i < ActiveMJobs.Size(); i++)
-	{
-		if (MJob == ActiveMJobs[i]) return;
-	}
-	addActiveMoveJob ( MJob );
-	cLog::write ( " Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 void cClient::doGameActions()

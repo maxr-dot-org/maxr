@@ -164,8 +164,6 @@ private:
 	int iTurnTime;
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
-	/** List with all active movejobs */
-	cList<cMJobs*> ActiveMJobs;
 
 	/**
 	* checks the input of the player
@@ -283,12 +281,6 @@ private:
 	*/
 	void handleEnd();
 	/**
-	* checks whether there are some vehicles that have to move before this turn is ending.
-	*@author alzi alias DoctorDeath
-	*@return true if there were some vehicles which had to move.
-	*/
-	bool checkEndActions();
-	/**
 	* handles the end of a hotseat game
 	*@author alzi alias DoctorDeath
 	*@param iNextPlayerNum Number of Player who has ended his turn
@@ -306,27 +298,10 @@ private:
 	*/
 	void handleTurnTime();
 	/**
-	* adds an new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob ( cMJobs *MJob );
-	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs ();
-	/**
-	* moves a vehicle one step closer to the next field
-	*@author alzi alias DoctorDeath
-	*@param Vehicle The vehicle to be moved
-	*/
-	void moveVehicle( cVehicle *Vehicle );
-	/**
-	* sets a vehicle to the next waypoint and makes it ready for the next move
-	*@author alzi alias DoctorDeath
-	*/
-	void doEndMoveVehicle ( cVehicle *Vehicle );
 	/**
 	* shows the information for the field under the mouse
 	*@author alzi alias DoctorDeath
@@ -382,6 +357,8 @@ public:
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
+	/** List with all active movejobs */
+	cList<cClientMoveJob*> ActiveMJobs;
 	/** the map */
 	cMap *Map;
 	/** the hud */
@@ -421,6 +398,12 @@ public:
 	* @param iDestOffset the Destination
 	*/
 	void addMoveJob(cVehicle* vehicle, int iDestOffset);
+	/**
+	* adds an new movejob
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be added
+	*/
+	void addActiveMoveJob ( cClientMoveJob *MJob );
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
@@ -501,12 +484,6 @@ public:
 	void Timer();
 	/** displays a message with 'goto' coordinates */
 	void addCoords (const string msg,int x,int y );
-	/**
-	* releases a movejob to be deleted
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be released
-	*/
-	void releaseMoveJob ( cMJobs *MJob );
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit

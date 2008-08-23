@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "math.h"
-#include "mjobs.h"
+#include "movejobs.h"
 #include "client.h"
 #include "clientevents.h"
 #include "automjobs.h"
@@ -82,7 +82,7 @@ void cAutoMJob::DoAutoMove()
 	if ( Client->bWaitForOthers ) return;
 	if ( vehicle->owner != Client->ActivePlayer ) return;
 
-	if ( vehicle->mjob == NULL || vehicle->mjob->finished )
+	if ( vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished )
 	{
 			if (n > WAIT_FRAMES)
 			{
@@ -97,14 +97,14 @@ void cAutoMJob::DoAutoMove()
 	}
 	else
 	{
-		if ( vehicle->mjob != lastMoveJob && !vehicle->mjob->Suspended  )
+		if ( vehicle->ClientMoveJob != lastMoveJob && !vehicle->ClientMoveJob->bSuspended  )
 		{
 			playerMJob = true;
 		}
-		if ( vehicle->mjob->Suspended && vehicle->data.speed )
+		if ( vehicle->ClientMoveJob->bSuspended && vehicle->data.speed )
 		{
-			Client->addMoveJob( vehicle, vehicle->mjob->DestX + vehicle->mjob->DestY * Client->Map->size);
-			lastMoveJob = vehicle->mjob;
+			Client->addMoveJob( vehicle, vehicle->ClientMoveJob->DestX + vehicle->ClientMoveJob->DestY * Client->Map->size);
+			lastMoveJob = vehicle->ClientMoveJob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
@@ -144,7 +144,7 @@ void cAutoMJob::PlanNextMove()
 	if ( maxFactor != FIELD_BLOCKED )
 	{
 		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size );
-		lastMoveJob = vehicle->mjob;
+		lastMoveJob = vehicle->ClientMoveJob;
 	}
 	else //no fields to survey next to the surveyor
 	{
@@ -292,8 +292,8 @@ void cAutoMJob::PlanLongMove()
 	if ( minValue != 0 )
 	{
 		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size);
-		lastMoveJob = vehicle->mjob;
-		if ( !lastMoveJob || lastMoveJob->finished )
+		lastMoveJob = vehicle->ClientMoveJob;
+		if ( !lastMoveJob || lastMoveJob->bFinished )
 		{
 			Client->addCoords( "Surveyor AI: I'm totally confused. Don't know what to do...", vehicle->PosX, vehicle->PosY );
 			finished = true;

@@ -972,9 +972,9 @@ void cHud::CheckMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			if ( Client->SelectedVehicle&&Client->SelectedVehicle->mjob&&Client->SelectedVehicle->mjob->Suspended&&Client->SelectedVehicle->data.speed )
+			if ( Client->SelectedVehicle&&Client->SelectedVehicle->ClientMoveJob&&Client->SelectedVehicle->ClientMoveJob->bSuspended&&Client->SelectedVehicle->data.speed )
 			{
-				Client->SelectedVehicle->mjob->CalcNextDir();
+				Client->SelectedVehicle->ClientMoveJob->calcNextDir();
 				//TODO: no engine!
 				//Client->engine->AddActiveMoveJob ( Client->SelectedVehicle->mjob );
 			}
