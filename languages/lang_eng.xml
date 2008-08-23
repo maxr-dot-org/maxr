@@ -231,6 +231,7 @@
 			<Energy_ToLow ENG="Insufficient energy, generator started!"/>
 			<Fuel_Insufficient ENG="Insufficient fuel for starting!"/>
 			<Energy_IsNeeded ENG="Can't disable generator, engery needed!"/>
+			<Adjustments_Made ENG="Adjustments made: fuel mining increased by "/>
 			<Cheat ENG="used cheat"/>
 			<Destroyed ENG="destroyed"/>
 			<Defeated ENG="defeated"/>

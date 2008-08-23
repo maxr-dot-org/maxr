@@ -231,6 +231,7 @@
 			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
 			<Fuel_Insufficient localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
 			<Energy_IsNeeded localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
+			<Adjustments_Made localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Defeated ENG="defeated" localized="besiegt"/>
