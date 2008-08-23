@@ -3425,7 +3425,8 @@ void cBuilding::ShowStorageMetalBar ( void )
 	* empty metal zylinder on storage.pcx
 	*								-- beko
 	*/
-	scr.h = dest.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
+	// scr.h = dest.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
+	scr.h = dest.h = Round ( 115 * SubBase->Metal / ( float ) SubBase->MaxMetal ); //	a/(b/c) = a*c/b
 	dest.y += 115 - scr.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	//END fill metal bar

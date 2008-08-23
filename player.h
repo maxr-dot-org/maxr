@@ -73,7 +73,7 @@ public:
   cBuilding *BuildingList;     // Liste aller Buildings des Spielers.
   int MapSize;               // Kartengröße
   char *ScanMap;             // Map mit dem Scannerflags.
-  char *ResourceMap;         // Map mit aufgedeckten Resourcen.
+  char *ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
   cBase base;               // Die Basis dieses Spielers.
   cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
   char *SentriesMapAir;				/** the covered air area */

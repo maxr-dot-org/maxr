@@ -118,7 +118,7 @@ void cAutoMJob::DoAutoMove()
 void cAutoMJob::PlanNextMove()
 {
 
-	//TODO: survey an partly detected area with ressources completly, like in the org MAX
+	//TODO: completely survey a partly explored area with resources, like in the org MAX
 	int x, y;
 	int bestX, bestY;
 	float tempFactor;
@@ -128,6 +128,7 @@ void cAutoMJob::PlanNextMove()
 	{
 		for (y = vehicle->PosY - 1; y <= vehicle->PosY + 1; y++)
 		{
+			// skip the surveyor's current position
 			if ( x == vehicle->PosX && y == vehicle->PosY ) continue;
 
 			tempFactor = CalcFactor( x, y);
@@ -157,24 +158,41 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
 	if ( !FieldIsFree(PosX, PosY) ) return FIELD_BLOCKED;
 
-	//calculate some values, on which the "impotance-factor" may depend
+	//calculate some values, on which the "importance-factor" may depend
 
-	//the number of fields which would be surveyed by this move
+	// calculate the number of fields which would be surveyed by this move
 	float NrSurvFields = 0;
+	// calculate the number of fields which has already revealed resources
+	float NrResFound = 0;
 	int x, y;
-
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
 	{
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
-			if ( x == PosX && y == PosY ) continue;
+			// skip the surveyor's current target position, as it should have been explored already,
+			// but check for already found resources too
+			if ( x == PosX && y == PosY )
+			{
+				if ( Client->Map->Resources[x + y * Client->Map->size].typ != 0 )
+				{
+					NrResFound++;
+				}
+				continue;
+			}
+			// and check for map borders, no need to check for unexplored fields next to the border
 			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
-			int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size];
+			// int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size]; !the line where this variable is needed was commented out earlier!
 			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
+			// check if the surveyor already found some resources in this new direction or not
+			else if ( Client->Map->Resources[x + y * Client->Map->size].typ != 0 )
+			{
+				NrResFound++;
+			}
+
 		}
 	}
 	if (vehicle->PosX != PosX && vehicle->PosY != PosY) //diagonal move
@@ -201,7 +219,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
 
-	float factor = A * NrSurvFields - B * newDistanceOP - C * newDistancesSurv;
+	float factor = A * NrSurvFields + 1.5 * NrResFound - B * newDistanceOP - C * newDistancesSurv;
 
 	if (factor < FIELD_BLOCKED)
 	{

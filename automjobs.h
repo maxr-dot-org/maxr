@@ -23,7 +23,7 @@
 #define WAIT_FRAMES 4
 
 //main tuning knobs of the AI:
-#define A 1.0	//how impottant is it, to survey as much fields as possible with each move
+#define A 1.0	//how important is it, to survey as much fields as possible with each move
 #define B 1.49  //how important is it, to stay near the operation point
 #define C 9.0	//how important is it, to hold a distance to other surveyors
 #define EXP -2	//an negative integer; the influence of other surveyors is falling over the distance with x^EXP
@@ -64,7 +64,7 @@ public:
 
 	int OPX, OPY;		//the operation point of the surveyor
 						//the surveyor tries to stay near this coordinates
-	bool playerMJob;	//the player has chanched the move job
+	bool playerMJob;	//the player has changed the move job
 
 	static void handleAutoMoveJobs();
 	cAutoMJob(cVehicle *vehicle);
