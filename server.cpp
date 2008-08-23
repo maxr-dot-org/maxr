@@ -2522,21 +2522,21 @@ void cServer::destroyUnit(cBuilding *building)
 		if ( Map->GO[offset + Map->size    ].subbase && Map->GO[offset + Map->size    ].subbase->owner ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size + 1].subbase && Map->GO[offset + Map->size + 1].subbase->owner ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
 		
-		deleteUnit( Map->GO[offset + 1            ].base );
-		deleteUnit( Map->GO[offset + Map->size    ].base );
-		deleteUnit( Map->GO[offset + Map->size + 1].base );
-		deleteUnit( Map->GO[offset + 1            ].subbase );
-		deleteUnit( Map->GO[offset + Map->size    ].subbase );
-		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
+		deleteUnit( Map->GO[offset + 1            ].base, false );
+		deleteUnit( Map->GO[offset + Map->size    ].base, false );
+		deleteUnit( Map->GO[offset + Map->size + 1].base, false );
+		deleteUnit( Map->GO[offset + 1            ].subbase, false );
+		deleteUnit( Map->GO[offset + Map->size    ].subbase, false );
+		deleteUnit( Map->GO[offset + Map->size + 1].subbase, false );
 	}
-
+ 
 	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;
 	if ( Map->GO[offset].base )    value += Map->GO[offset].base->data.iBuilt_Costs;
 	if ( Map->GO[offset].subbase && Map->GO[offset].subbase->owner ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
 
-	deleteUnit( Map->GO[offset].top );
-	deleteUnit( Map->GO[offset].base );
-	deleteUnit( Map->GO[offset].subbase );
+	deleteUnit( Map->GO[offset].top, false );
+	deleteUnit( Map->GO[offset].base, false );
+	deleteUnit( Map->GO[offset].subbase, false );
 
 	Map->addRubble( offset, value/2, big );
 

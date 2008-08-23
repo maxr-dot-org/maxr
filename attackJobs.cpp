@@ -79,8 +79,11 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	lockTarget( targetOff );
 	sendFireCommand();
 
-	if ( building->data.is_expl_mine ) Server->deleteUnit( building, false );
-
+	if ( building->data.is_expl_mine )
+	{
+		Server->deleteUnit( building, false );
+		this->building = NULL;
+	}
 }
 
 cServerAttackJob::~cServerAttackJob()
@@ -177,40 +180,26 @@ void cServerAttackJob::sendFireCommand()
 		cPlayer* player = (*Server->PlayerList)[i];
 		if ( !player->ScanMap[iAgressorOff] ) continue;
 		
-
 		if ( vehicle )
 		{
 			if ( vehicle->owner == player ) continue;
-			int n = 0;
-			for ( ; n < vehicle->SeenByPlayerList.Size(); n++ )
+
+			if ( !vehicle->isDetectedByPlayer( player->Nr ) )
 			{
-				if ( *vehicle->SeenByPlayerList[n] == player->Nr ) break;
-			}
-			if ( n == vehicle->SeenByPlayerList.Size() )
-			{
-				/*sendAddEnemyUnit( vehicle, player->Nr );
-				sendUnitData( vehicle, player->Nr );
-				vehicle->SeenByPlayerList.Add( &player->Nr );*/
 				vehicle->DetectedByPlayerList.Add( &player->Nr );
 			}
 		}
 		else
 		{
 			if ( building->owner == player ) continue;
-			int n = 0;
-			for ( ; n < building->SeenByPlayerList.Size(); n++ )
+			
+			if (!building->isDetectedByPlayer( player->Nr ) )
 			{
-				if ( *building->SeenByPlayerList[n] == player->Nr ) break;
-			}
-			if ( n == building->SeenByPlayerList.Size() )
-			{
-				/*sendAddEnemyUnit( building, player->Nr );
-				sendUnitData( building, player->Nr );
-				building->SeenByPlayerList.Add( &player->Nr );*/
 				building->DetectedByPlayerList.Add( &player->Nr );
 			}
 		}
 	}
+	Server->checkPlayerUnits();
 
 	//calculate fire direction
 	int targetX = iTargetOff % Server->Map->size;
