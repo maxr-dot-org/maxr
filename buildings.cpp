@@ -1566,14 +1566,14 @@ void cBuilding::ServerStartWork ()
 				{
 					// and send warning message to Client only if actual adjustments has been made
 					if ( OrigNeededOilAdj - NeededOilAdj != 0 ) 
-					sendChatMessageToClient ( "Adjustments made: fuel mining increased by " + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
+					sendChatMessageToClient ( "Text~Comp~Adjustments_Made"  + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
 					sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 					return;
 				}
 				else
 				{
 					// adjustments successed so send warning message to Client about Adjustments and change EnergyProd and oilNeed info
-					sendChatMessageToClient ( "Adjustments made: fuel mining increased by " + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
+					sendChatMessageToClient ( "Text~Comp~Adjustments_Made"  + iToStr(OrigNeededOilAdj - NeededOilAdj), SERVER_ERROR_MESSAGE, owner->Nr );
 
 					SubBase->EnergyProd += data.energy_prod;
 					SubBase->OilNeed += data.oil_need;
