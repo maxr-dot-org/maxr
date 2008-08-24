@@ -1693,7 +1693,7 @@ void cBuilding::ServerStartWork ()
 	sendDoStartWork(this);
 }
 
-//starts the buildung in the cliend thread
+//starts the building in the cliend thread
 void cBuilding::ClientStartWork()
 {
 

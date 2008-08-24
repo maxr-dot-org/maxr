@@ -1223,7 +1223,8 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 					        freeForLanding ( iX+k,iY+i+1 ) && freeForLanding ( iX+k+1,iY+i+1 ) && freeForLanding ( iX+k+2,iY+i+1 ) )
 					{
 						bPlaced = true;
-						// Rohstoffe platzieren:
+						// TODO: the starting resources under a mine should depend on the game Options, like in org MAX
+						// Rohstoffe platzieren / place resources under players' base based on resource density:
 						Map->Resources[iX+k+1+ ( iY+i ) *Map->size].value = 10;
 						Map->Resources[iX+k+1+ ( iY+i ) *Map->size].typ = RES_METAL;
 						Map->Resources[iX+k+2+ ( iY+i+1 ) *Map->size].value = 6;
@@ -1239,11 +1240,11 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 						}
 
 						// place buildings:
-						addUnit(iX + k,     iY + i,     &UnitsData.building[BNrOilStore], Player, true);
+						//No further need to place oil storage: addUnit(iX + k,     iY + i,     &UnitsData.building[BNrOilStore], Player, true);
 						addUnit(iX + k,     iY + i + 1, &UnitsData.building[BNrSmallGen], Player, true);
 						addUnit(iX + k + 1, iY + i,     &UnitsData.building[BNrMine],     Player, true);
 						Building = Map->GO[iX+k+ ( iY+i ) *Map->size].top;
-						Player->base.AddOil ( Building->SubBase, 4 );
+						//No further need to place oil storage: Player->base.AddOil ( Building->SubBase, 4 );
 						break;
 					}
 				}

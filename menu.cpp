@@ -2425,9 +2425,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			ptr = (*LandingList)[LandingSelected];
 			if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 			{
-
-				// LadungUp-Button:
-				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0 )
+				 // Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
+				// LadungUp-Button: 
+				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0&&ptr->id!=32 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2464,8 +2464,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					mouse->draw ( false,screen );
 					LadungDownPressed=false;
 				}
+				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 				// LadungDown-Button:
-				if ( x>=433&&x<433+18&&y>=424&&y<424+17&&b&&!LadungUpPressed&&ptr->cargo>0 )
+				if ( x>=433&&x<433+18&&y>=424&&y<424+17&&b&&!LadungUpPressed&&ptr->cargo>0&&ptr->id!=32 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
@@ -2502,8 +2503,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					mouse->draw ( false,screen );
 					LadungUpPressed=false;
 				}
+				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 				// Klick auf den Ladungsbalken:
-				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115 )
+				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115&&ptr->id!=32 )
 				{
 					int value;
 					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;

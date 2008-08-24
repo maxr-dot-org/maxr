@@ -34,7 +34,7 @@
 #define E 3		//more likely near his position
 #define EXP2 -2
 #define F 100	//more likely far away from other surveyors
-#define G 1.5	// how important is to go to directions where resources has been found already
+#define G 1.8	// how important is to go to directions where resources has been found already
 
 #define MAX_DISTANCE_OP 19 //when the distance to the OP exceeds this value, the OP is changed
 #define DISTANCE_NEW_OP 7 //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
