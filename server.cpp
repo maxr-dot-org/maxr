@@ -1530,11 +1530,60 @@ void cServer::checkPlayerUnits ()
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
-				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
-				if ( MapPlayer->ScanMap[iOff] == 1 &&
-					( !NextVehicle->data.is_stealth_land || Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectLandMap[iOff] == 1 ) &&
-					( !NextVehicle->data.is_stealth_sea || !Map->terrain[Map->Kacheln[iOff]].water || MapPlayer->DetectSeaMap[iOff] == 1 ) &&
-					NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
+				int iOff;
+
+				//if ( NextVehicle->MoveJobActive )
+				//	iOff = NextVehicle->ServerMoveJob->Waypoints->next->X + NextVehicle->ServerMoveJob->Waypoints->next->Y * Map->size;
+				//else
+					iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
+								
+				//check if the player can detect a stealth unit
+				if	( NextVehicle->data.is_stealth_land )
+				{
+					if (MapPlayer->ScanMap[iOff] &&	( MapPlayer->DetectLandMap[iOff] || Map->IsWater(iOff) ))
+					{
+						//vehicle is detected
+						if ( !NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
+							NextVehicle->DetectedByPlayerList.Add( &MapPlayer->Nr );
+					}
+					else
+					{
+						if ( NextVehicle->MoveJobActive )
+						{
+							//when the vehicle is moving and will not be detected on the next field,
+							//is has to be 'undetected'. we check the next field, so a player will not see
+							//in which direction the vehicle was driving, bevore it is 'undetected'
+
+							for ( int i = 0; i < NextVehicle->DetectedByPlayerList.Size(); i++)
+								if ( *NextVehicle->DetectedByPlayerList[i] == MapPlayer->Nr )
+									NextVehicle->DetectedByPlayerList.Delete(i);
+						}
+					}
+				}
+
+				if	( NextVehicle->data.is_stealth_sea )
+				{
+					if ( MapPlayer->ScanMap[iOff] && ( MapPlayer->DetectSeaMap[iOff] || !Map->IsWater(iOff) ))
+					{
+						//vehicle is detected
+						if ( !NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
+							NextVehicle->DetectedByPlayerList.Add( &MapPlayer->Nr );
+					}
+					else
+					{
+						if ( NextVehicle->MoveJobActive )
+						{
+							//vehicle is not detected
+							for ( int i = 0; i < NextVehicle->DetectedByPlayerList.Size(); i++)
+								if ( *NextVehicle->DetectedByPlayerList[i] == MapPlayer->Nr )
+									NextVehicle->DetectedByPlayerList.Delete(i);
+						}
+					}
+				}
+
+				//now check the unit has to be added or removed to/from a Client
+				iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
+				if ( MapPlayer->ScanMap[iOff] == 1 &&	NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
@@ -1557,10 +1606,6 @@ void cServer::checkPlayerUnits ()
 						if (*NextVehicle->SeenByPlayerList[i] == MapPlayer->Nr)
 						{
 							NextVehicle->SeenByPlayerList.Delete ( i );
-
-							bool bPlane;
-							if ( Map->GO[NextVehicle->PosX+NextVehicle->PosY*Map->size].plane == NextVehicle ) bPlane = true;
-							else bPlane = false;
 							sendDeleteUnit( NextVehicle, MapPlayer->Nr );
 							break;
 						}
@@ -1576,8 +1621,8 @@ void cServer::checkPlayerUnits ()
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
-				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1  &&
-					NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
+
+				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1  && NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )
@@ -1599,12 +1644,6 @@ void cServer::checkPlayerUnits ()
 						if (*NextBuilding->SeenByPlayerList[i] == MapPlayer->Nr)
 						{
 							NextBuilding->SeenByPlayerList.Delete ( i );
-
-							bool bBase, bSubBase;
-							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].base == NextBuilding ) bBase = true;
-							else bBase = false;
-							if ( Map->GO[NextBuilding->PosX+NextBuilding->PosY*Map->size].subbase == NextBuilding ) bSubBase = true;
-							else bSubBase = false;
 							sendDeleteUnit( NextBuilding, MapPlayer->Nr );
 
 							break;
@@ -2149,7 +2188,7 @@ bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *D
 	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && !Data->is_road ) ) return true;
 
 	// the rest has only to be checked if the building is no connector and if there is no base building under it excepting an waterplattform
-	if ( ( !Map->GO[iOff].base || Map->GO[iOff].base->data.is_platform ) && !Data->is_connector )
+	if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_platform && !Data->is_connector )
 	{
 		// cannot build normal buildings on water without platform
 		if ( Map->IsWater ( iOff ) && !Data->build_on_water && !Map->GO[iOff].base->data.is_platform ) return true;
