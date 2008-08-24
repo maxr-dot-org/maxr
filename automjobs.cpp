@@ -75,7 +75,7 @@ cAutoMJob::~cAutoMJob()
 	vehicle->autoMJob = NULL;
 }
 
-//performs the auto move of a vehicle and adds new mjobs to the engine, if nessesary
+//performs the auto move of a vehicle and adds new mjobs to the engine, if necessary
 void cAutoMJob::DoAutoMove()
 {
 	if ( vehicle->bIsBeeingAttacked ) return;
@@ -113,7 +113,7 @@ void cAutoMJob::DoAutoMove()
 
 //think about the next move:
 //the AI looks at all fields next to the surveyor
-//and calculates an factor for each field
+//and calculates a factor for each field
 //the surveyor will move to the field with the highest value
 void cAutoMJob::PlanNextMove()
 {
@@ -169,11 +169,13 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	{
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
+			// calculate current map index only once in a loop cycle
+			int iPos = x + y * Client->Map->size;
 			// skip the surveyor's current target position, as it should have been explored already,
-			// but check for already found resources too
+			// but check for already found resources
 			if ( x == PosX && y == PosY )
 			{
-				if ( Client->Map->Resources[x + y * Client->Map->size].typ != 0 )
+				if ( Client->Map->Resources[iPos].typ != 0 )
 				{
 					NrResFound++;
 				}
@@ -183,12 +185,12 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
 			// int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size]; !the line where this variable is needed was commented out earlier!
-			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
+			if ( vehicle->owner->ResourceMap[iPos] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
 			// check if the surveyor already found some resources in this new direction or not
-			else if ( Client->Map->Resources[x + y * Client->Map->size].typ != 0 )
+			else if ( Client->Map->Resources[iPos].typ != 0 )
 			{
 				NrResFound++;
 			}
@@ -201,7 +203,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	}
 
 	//the distance to the OP
-	float newDistanceOP = sqrt( (float) (PosX - OPX) * (PosX - OPX) + (PosY - OPY) * (PosY - OPY) );
+	float newDistanceOP = sqrt( pow((float) PosX - OPX , 2) + pow((float) PosY - OPY , 2) );
 
 	//the distance to other surveyors
 	float newDistancesSurv = 0;
@@ -210,7 +212,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	{
 		if ( i == iNumber ) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-
+		// take note (maybe will be useful somewhere): sqrt(pow(A,B)) = pow(A,B*0.5);
 		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
 		newDistancesSurv += pow( temp, EXP);
 	}
@@ -219,7 +221,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
 
-	float factor = A * NrSurvFields + 1.5 * NrResFound - B * newDistanceOP - C * newDistancesSurv;
+	float factor = A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv;
 
 	if (factor < FIELD_BLOCKED)
 	{
@@ -254,35 +256,35 @@ void cAutoMJob::PlanLongMove()
 	int x, y;
 	int bestX, bestY;
 	float distanceOP, distanceSurv;
-	float tempValue;
+	float factor;
 	float minValue = 0;
 
 	for ( x = 0; x < Client->Map->size; x++ )
 	{
 		for ( y = 0; y < Client->Map->size; y++ )
 		{
-			if ( !FieldIsFree( x, y) ) continue;
-			if ( vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
+			// if field is not passable/walkable or if it's already has been explored, continue
+			if ( !FieldIsFree( x, y) || vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
 
-			//the distance to other surveyors
+			// calculate the distance to other surveyors
 			float distancesSurv = 0;
 			float temp;
 			for (size_t i = 0; i < autoMJobs.Size(); ++i)
 			{
-				if ( i == iNumber ) continue;
-				if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-
+				// skip our selves and other Players' surveyors
+				if (i == iNumber || autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
 				temp = sqrt( pow( (float) x - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) y - autoMJobs[i]->vehicle->PosY , 2) );
 				distancesSurv += pow( temp, EXP2);
 			}
 
-			distanceOP = sqrt( (float) (x - OPX) * (x - OPX) + (y - OPY) * (y - OPY) );
-			distanceSurv = sqrt( (float) (x - vehicle->PosX) * (x - vehicle->PosX) + (y - vehicle->PosY) * (y - vehicle->PosY) );
-			tempValue = D * distanceOP + E * distanceSurv + F * distancesSurv;
+			distanceOP = sqrt( pow( (float) x - OPX , 2) + pow( (float) y - OPY , 2) );
+			distanceSurv = sqrt( pow( (float) x - vehicle->PosX , 2) + pow( (float) y - vehicle->PosY , 2) );
+			//TODO: take into account the length of the path to the coordinates too (I seen a case, when a surveyor took 7 additional senseless steps just to avoid or by-pass an impassable rocky terrain)
+			factor = D * distanceOP + E * distanceSurv + F * distancesSurv;
 
-			if ( (tempValue < minValue) || (minValue == 0) )
+			if ( (factor < minValue) || (minValue == 0) )
 			{
-				minValue = tempValue;
+				minValue = factor;
 				bestX = x;
 				bestY = y;
 			}
@@ -318,7 +320,7 @@ void cAutoMJob::changeOP()
 	}
 	else
 	{
-		float distanceOP = sqrt( (float) (vehicle->PosX - OPX) * (vehicle->PosX - OPX) + (vehicle->PosY - OPY) * (vehicle->PosY - OPY) );
+		float distanceOP = sqrt( pow( (float) vehicle->PosX - OPX , 2) + pow( (float) vehicle->PosY - OPY , 2) );
 		if ( distanceOP > MAX_DISTANCE_OP )
 		{
 			OPX = (int) (vehicle->PosX + ( OPX - vehicle->PosX ) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);

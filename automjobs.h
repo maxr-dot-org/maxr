@@ -30,10 +30,11 @@
 
 				//when there are no fields to survey next to the surveyor, where should the surveyor resume?
 				//if the surveyor seems to plan long senseless moves, rebalancing the following factors might help
-#define D 1		//more likley near the operation point
-#define E 3		//more likley near his position
+#define D 1		//more likely near the operation point
+#define E 3		//more likely near his position
 #define EXP2 -2
-#define F 100	//more likley far away from other surveyors
+#define F 100	//more likely far away from other surveyors
+#define G 1.5	// how important is to go to directions where resources has been found already
 
 #define MAX_DISTANCE_OP 19 //when the distance to the OP exceeds this value, the OP is changed
 #define DISTANCE_NEW_OP 7 //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
