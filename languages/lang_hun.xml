@@ -230,6 +230,7 @@
 			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Nincs elegendõ energia, generátor elindítva!"/>
 			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Nincs elegendõ üzemanyag az elindításhoz!"/>
 			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="A generátort nem lehet kikapcsolni, szükség van az energiára!"/>
+			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="Módosítások történetek: üzemanyag termelés +"/>
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Destroyed ENG="destroyed" localized="megsemmisült"/>
 			<Defeated ENG="defeated" localized="vereséget szenvedett"/>
