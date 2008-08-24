@@ -44,7 +44,7 @@ void cPathCalculator::calcPath ( int ScrX, int ScrY )
 	PathCalcMap = ( char* ) malloc ( Map->size*Map->size );
 	memset ( PathCalcMap, 0, Map->size*Map->size );
 	FoundEnd=NULL;
-	PathCalcRoot = ( sPathCalc* ) malloc ( sizeof ( sPathCalc ) );
+	PathCalcRoot = new sPathCalc;
 	PathCalcRoot->prev = NULL;
 	PathCalcRoot->X = ScrX;
 	PathCalcRoot->Y = ScrY;
@@ -72,7 +72,7 @@ void cPathCalculator::calcPath ( int ScrX, int ScrY )
 	}
 	while ( PathCalcAll.Size() )
 	{
-		free( PathCalcAll[0] );
+		delete PathCalcAll[0];
 		PathCalcAll.Delete( 0 );
 	}
 	free ( PathCalcMap );
@@ -99,7 +99,7 @@ bool cPathCalculator::addPoint ( int x, int y, float m, sPathCalc *PathCalc )
 	sPathCalc *newPathCalc;
 	if ( checkPossiblePoint ( x, y ) )
 	{
-		newPathCalc = ( sPathCalc* ) malloc ( sizeof ( sPathCalc ) );
+		newPathCalc = new sPathCalc;
 		newPathCalc->prev=  PathCalc;
 		newPathCalc->X = x;
 		newPathCalc->Y = y;
@@ -300,9 +300,9 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 bool cServerMoveJob::calcPath()
 {
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
-	if ( PathCalculator.Waypoints )
+	Waypoints = PathCalculator.Waypoints;
+	if ( Waypoints )
 	{
-		Waypoints = PathCalculator.Waypoints;
 		calcNextDir();
 		return true;
 	}
@@ -609,9 +609,9 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 bool cClientMoveJob::calcPath()
 {
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
-	if ( PathCalculator.Waypoints )
+	Waypoints = PathCalculator.Waypoints;
+	if ( Waypoints )
 	{
-		Waypoints = PathCalculator.Waypoints;
 		calcNextDir();
 		return true;
 	}

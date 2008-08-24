@@ -98,7 +98,7 @@ struct sVehicle;
 #define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
 #define MOVE_SPEED         7       // Geschwindigkeit der Fahrzeuge
 #define MSG_FRAMES         150      // Anzahl an Frames, die eine Nachricht zu sehen ist
-#define MAX_PATHFINDING    3890     // Maximale Endpunktezal fürs Pathfinding
+#define MAX_PATHFINDING    3500     // Maximale Endpunktezal fürs Pathfinding
 #define USER_WARPMOUSE		SDL_USEREVENT+0	// An Event for moving the mouse; this is the first UserEvent
 
 // Colors /////////////////////////////////////////////////////////////////////
