@@ -312,7 +312,7 @@ void cBitmapFont::copyArray(SDL_Rect source[256],SDL_Rect dest[256])
 	}
 }
 
-void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
+int cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFontType, SDL_Surface *surface )
 {
 	if ( DEBUGFONTS )
 		cLog::write ( "Seeking through " + sText, cLog::eLOG_TYPE_DEBUG );
@@ -368,7 +368,7 @@ void cBitmapFont::showTextAsBlock ( SDL_Rect rDest, string sText, int eBitmapFon
 	}
 	while ( k != string::npos );
 
-	drawWithBreakLines(rDest, sText, eBitmapFontType, surface); //draw rest of text
+	return drawWithBreakLines(rDest, sText, eBitmapFontType, surface); //draw rest of text
 
 
 }

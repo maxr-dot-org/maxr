@@ -139,7 +139,7 @@ class cBitmapFont{
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showTextAsBlock ( SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer );
+		int showTextAsBlock ( SDL_Rect rDest, std::string sText, int eBitmapFontType=LATIN_NORMAL, SDL_Surface *surface=buffer );
 
 		/**
 		 * Calculates the needed space for a text in pixels

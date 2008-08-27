@@ -2770,25 +2770,25 @@ void cClient::handleMessages()
 			messages.Delete ( i );
 			continue;
 		}
-		iHeight += 14+11*message->len/296;
+		iHeight += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
 	}
 	if (messages.Size() == 0) return;
 	if ( SettingsData.bAlphaEffects )
 	{
 		scr.x = 0; scr.y = 0;
 		dest.x = 180; dest.y = 30;
-		dest.w = scr.w = 250;
+		dest.w = scr.w = SettingsData.iScreenW - 200;
 		dest.h = scr.h = iHeight+6;
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
 	}
 	dest.x = 180+2; dest.y = 34;
-	dest.w = 250-4;
+	dest.w -= 4;
 	dest.h = iHeight;
 	for (int i = 0; i < messages.Size(); i++)
 	{
 		message = messages[i];
-		font->showTextAsBlock( dest, message->msg );
-		dest.y += 14+11*message->len/300;
+		dest.y = font->showTextAsBlock( dest, message->msg );
+		dest.y += 5;
 	}
 }
 
