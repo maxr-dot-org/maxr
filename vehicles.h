@@ -232,6 +232,21 @@ public:
 	*@return true if the player has detected the unit
 	*/
 	bool isDetectedByPlayer( int iPlayerNum );
+	/**
+	* adds a player to the DetecedByPlayerList
+	*/
+	void resetDetectedByPlayer( int* iPlayerNum );
+	/**
+	* removes a player from the detectedByPlayerList
+	*/
+	void setDetectedByPlayer( int* iPlayerNum );
+	/**
+	* - updates the detection maps of the owner
+	* - detects stealth units in the scan range of the vehicle
+	* - checks whether the vehicle has been detected by an other unit
+	* this function has to be called on the server everytime a unit was moved, builded, loaded, unloaded...
+	*/
+	void makeDetection();
 };
 
 #endif

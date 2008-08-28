@@ -8945,3 +8945,17 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 		}
 	}
 }
+
+void cBuilding::setDetectedByPlayer( int* iPlayerNum )
+{
+	if (!isDetectedByPlayer( *iPlayerNum))
+		DetectedByPlayerList.Add( iPlayerNum );
+}
+
+void cBuilding::resetDetectedByPlayer( int* iPlayerNum )
+{
+	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
+	{
+		if (*DetectedByPlayerList[i] == *iPlayerNum) DetectedByPlayerList.Delete(i);
+	}
+}

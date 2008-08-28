@@ -1304,14 +1304,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	}
 	if ( !bInit ) AddedVehicle->InSentryRange();
 
-	// if this is not a commando unit the vehicle doesn't need to be detected
-	if ( !AddedVehicle->data.is_commando )
-	{
-		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-		{
-			AddedVehicle->DetectedByPlayerList.Add(&(*PlayerList)[i]->Nr);
-		}
-	}
+	AddedVehicle->makeDetection();
 
 	sendAddUnit ( iPosX, iPosY, AddedVehicle->iID, true, Vehicle->nr, Player->Nr, bInit );
 }
@@ -1393,14 +1386,8 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 		}
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
-	// if this is not an explode mine the building doesn't need to be detected
-	if ( !AddedBuilding->data.is_expl_mine )
-	{
-		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-		{
-			AddedBuilding->DetectedByPlayerList.Add(&(*PlayerList)[i]->Nr);
-		}
-	}
+	
+	//AddedBuilding->makeDetection();
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
@@ -1533,58 +1520,10 @@ void cServer::checkPlayerUnits ()
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
 				int iOff;
 
-				//if ( NextVehicle->MoveJobActive )
-				//	iOff = NextVehicle->ServerMoveJob->Waypoints->next->X + NextVehicle->ServerMoveJob->Waypoints->next->Y * Map->size;
-				//else
-					iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
-								
-				//check if the player can detect a stealth unit
-				if	( NextVehicle->data.is_stealth_land )
-				{
-					if (MapPlayer->ScanMap[iOff] &&	( MapPlayer->DetectLandMap[iOff] || Map->IsWater(iOff) ))
-					{
-						//vehicle is detected
-						if ( !NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
-							NextVehicle->DetectedByPlayerList.Add( &MapPlayer->Nr );
-					}
-					else
-					{
-						if ( NextVehicle->MoveJobActive )
-						{
-							//when the vehicle is moving and will not be detected on the next field,
-							//is has to be 'undetected'. we check the next field, so a player will not see
-							//in which direction the vehicle was driving, bevore it is 'undetected'
-
-							for ( int i = 0; i < NextVehicle->DetectedByPlayerList.Size(); i++)
-								if ( *NextVehicle->DetectedByPlayerList[i] == MapPlayer->Nr )
-									NextVehicle->DetectedByPlayerList.Delete(i);
-						}
-					}
-				}
-
-				if	( NextVehicle->data.is_stealth_sea )
-				{
-					if ( MapPlayer->ScanMap[iOff] && ( MapPlayer->DetectSeaMap[iOff] || !Map->IsWater(iOff) ))
-					{
-						//vehicle is detected
-						if ( !NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
-							NextVehicle->DetectedByPlayerList.Add( &MapPlayer->Nr );
-					}
-					else
-					{
-						if ( NextVehicle->MoveJobActive )
-						{
-							//vehicle is not detected
-							for ( int i = 0; i < NextVehicle->DetectedByPlayerList.Size(); i++)
-								if ( *NextVehicle->DetectedByPlayerList[i] == MapPlayer->Nr )
-									NextVehicle->DetectedByPlayerList.Delete(i);
-						}
-					}
-				}
-
-				//now check the unit has to be added or removed to/from a Client
+				//now check whether the unit has to be added or removed to/from a Client
 				iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
-				if ( MapPlayer->ScanMap[iOff] == 1 &&	NextVehicle->isDetectedByPlayer( MapPlayer->Nr ) )
+				bool stealthUnit = NextVehicle->data.is_stealth_land || NextVehicle->data.is_stealth_sea;
+				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer->Nr )) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
@@ -1622,8 +1561,10 @@ void cServer::checkPlayerUnits ()
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
+				int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
+				bool stealthUnit = NextBuilding->data.is_expl_mine;
 
-				if ( MapPlayer->ScanMap[NextBuilding->PosX+NextBuilding->PosY*Map->size] == 1  && NextBuilding->isDetectedByPlayer( MapPlayer->Nr ) )
+				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer->Nr )) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )

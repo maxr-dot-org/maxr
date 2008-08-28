@@ -498,6 +498,11 @@ void cServerMoveJob::moveVehicle()
 		{
 			Vehicle->detectMines();
 		}
+		//temporary undetection
+		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->DetectedByPlayerList.Delete(0);
+
+		//handle detection
+		Vehicle->makeDetection();
 
 		// lay/clear mines if necessary
 		if ( Vehicle->data.can_lay_mines )

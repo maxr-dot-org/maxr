@@ -432,9 +432,7 @@ void cPlayer::DoScan ( void )
 	cBuilding *bp;
 
 	memset ( ScanMap,0,MapSize );
-	memset ( DetectLandMap,0,MapSize );
-	memset ( DetectSeaMap,0,MapSize );
-
+	
 	// Die Vehicle-List durchgehen:
 	vp=VehicleList;
 	while ( vp )
@@ -451,17 +449,7 @@ void cPlayer::DoScan ( void )
 		}
 		else
 		{
-			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
-
-			// Detection:
-			if ( vp->data.can_detect_land )
-			{
-				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectLandMap );
-			}
-			else if ( vp->data.can_detect_sea )
-			{
-				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,DetectSeaMap );
-			}
+			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );			
 		}
 
 		vp=vp->next;

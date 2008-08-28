@@ -184,19 +184,13 @@ void cServerAttackJob::sendFireCommand()
 		{
 			if ( vehicle->owner == player ) continue;
 
-			if ( !vehicle->isDetectedByPlayer( player->Nr ) )
-			{
-				vehicle->DetectedByPlayerList.Add( &player->Nr );
-			}
+			vehicle->setDetectedByPlayer( &player->Nr );
 		}
 		else
 		{
 			if ( building->owner == player ) continue;
 			
-			if (!building->isDetectedByPlayer( player->Nr ) )
-			{
-				building->DetectedByPlayerList.Add( &player->Nr );
-			}
+			building->setDetectedByPlayer( &player->Nr );
 		}
 	}
 	Server->checkPlayerUnits();

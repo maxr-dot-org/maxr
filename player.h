@@ -56,7 +56,7 @@ struct sResearch{
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
-friend class cEngine;
+
 friend class cServer;
 friend class cClient;
 public:

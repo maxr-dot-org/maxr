@@ -2930,20 +2930,6 @@ int cVehicle::CalcHelth ( int damage )
 	return hp;
 }
 
-// Struktur für die Build-List:
-/*
-struct sBuildStruct
-{
-public:
-	sBuildStruct(SDL_Surface* const sf_, int const id_) :
-		sf(sf_),
-		id(id_)
-	{}
-
-	SDL_Surface* const sf;
-	int          const id;
-};*/
-
 // Zeigt das Build-Menü an:
 void cVehicle::ShowBuildMenu ( void )
 {
@@ -5414,7 +5400,7 @@ void cVehicle::detectMines ()
 			int iOff = iX+iY*Map->size;
 			if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_expl_mine )
 			{
-				Map->GO[iOff].base->DetectedByPlayerList.Add ( &owner->Nr );
+				Map->GO[iOff].base->setDetectedByPlayer( &owner->Nr );
 			}
 		}
 	}
@@ -5694,4 +5680,113 @@ bool cVehicle::isDetectedByPlayer( int iPlayerNum )
 		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
 	}
 	return false;
+}
+
+void cVehicle::setDetectedByPlayer( int* iPlayerNum )
+{
+	if (!isDetectedByPlayer( *iPlayerNum))
+		DetectedByPlayerList.Add( iPlayerNum );
+}
+
+void cVehicle::resetDetectedByPlayer( int* iPlayerNum )
+{
+	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
+	{
+		if (*DetectedByPlayerList[i] == *iPlayerNum) DetectedByPlayerList.Delete(i);
+	}
+}
+
+void cVehicle::makeDetection()
+{
+	//check whether the vehicle has been detected by others
+	if ( data.is_stealth_land || data.is_stealth_sea )
+	{
+		int offset = PosX + PosY * Server->Map->size;
+		for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			cPlayer* player = (*Server->PlayerList)[i];
+			if ( player == owner ) continue;
+
+			if ( data.is_stealth_land && ( player->DetectLandMap[offset] || Server->Map->IsWater(offset) ))
+			{
+				setDetectedByPlayer( &player->Nr );
+			}
+			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !Server->Map->IsWater(offset) ))
+			{
+				setDetectedByPlayer( &player->Nr );
+			}
+			//TODO: mines
+		}
+	}
+	
+	//update detection maps of the owner
+	if ( data.can_detect_land )
+	{
+		memset ( owner->DetectLandMap, 0, pow((float)Server->Map->size, 2));
+		
+		cVehicle* vp = owner->VehicleList;
+		while ( vp )
+		{
+			if ( vp->Loaded )
+			{
+				vp = vp->next;
+				continue;
+			}
+
+			if ( data.can_detect_land )
+			{
+				owner->drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, owner->DetectLandMap );
+			}
+			
+			vp = vp->next;
+		}
+	}
+	if ( data.can_detect_sea )
+	{
+		memset ( owner->DetectSeaMap, 0, pow( (float)Server->Map->size, 2));
+
+		cVehicle* vp = owner->VehicleList;
+		while ( vp )
+		{
+			if ( vp->Loaded )
+			{
+				vp = vp->next;
+				continue;
+			}
+
+			if ( vp->data.can_detect_sea )
+			{
+				owner->drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, owner->DetectSeaMap );
+			}
+			
+			vp = vp->next;
+		}
+	}
+		
+	//detect other units
+	if ( data.can_detect_land || data.can_detect_sea )
+	{
+		for ( int x = PosX - data.scan; x < PosX + data.scan; x++)
+		{
+			if ( x < 0 || x > Server->Map->size ) continue;
+			for ( int y = PosY - data.scan; y < PosY + data.scan; y++)
+			{
+				if ( y < 0 || y > Server->Map->size ) continue;
+				
+				int offset = x + y * Server->Map->size;
+				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
+
+				if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
+				{
+					vehicle->setDetectedByPlayer( &owner->Nr );
+				}
+				if ( data.can_detect_sea && owner->DetectSeaMap[offset] && vehicle->data.is_stealth_sea )
+				{
+					vehicle->setDetectedByPlayer( &owner->Nr );
+				}
+
+				//TODO: mines
+			}
+		}
+	}
 }

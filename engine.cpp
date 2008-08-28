@@ -532,7 +532,7 @@ void cEngine::AddVehicle ( int posx,int posy,sVehicle *v,cPlayer *p,bool init,bo
 {
 	cVehicle *n;
 	// Das Fahrzeug erzeugen:
-	n=p->AddVehicle ( posx,posy,v );
+	//n=p->AddVehicle ( posx,posy,v );
 	// Das Fahrzeug platzieren:
 	if ( n->data.can_drive!=DRIVE_AIR )
 	{
