@@ -4437,17 +4437,18 @@ void cMultiPlayerMenu::runNetworkMenu()
 				Client->run();
 
 				SettingsData.sPlayerName = ActualPlayerClient->name;
-				while ( PlayerList.Size() )
-				{
-					delete PlayerList[0];
-					PlayerList.Delete ( 0 );
-				}
+				
 				delete Client;
 				Client = NULL;
 				if ( bHost )
 				{
 					delete Server;
 					Server = NULL;
+				}
+				while ( PlayerList.Size() )
+				{
+					delete PlayerList[0];
+					PlayerList.Delete ( 0 );
 				}
 				break;
 			}
