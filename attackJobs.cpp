@@ -42,16 +42,17 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	iMuzzleType = vehicle->data.muzzle_typ;
 	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
 
+	//lock targets
+	//TODO: cluster
+	lockTarget( targetOff );
+	sendFireCommand();
+
 	//do local actions
 	vehicle->data.shots--;
 	vehicle->data.ammo--;
 	if ( !vehicle->data.can_drive_and_fire ) vehicle->data.speed-= (int)(( ( float ) vehicle->data.max_speed ) /vehicle->data.max_shots);
 	vehicle->Attacking = true;
 
-	//lock targets
-	//TODO: cluster
-	lockTarget( targetOff );
-	sendFireCommand();
 }
 
 cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
