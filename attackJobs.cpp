@@ -336,9 +336,6 @@ void cServerAttackJob::makeImpact()
 		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
 		targetBuilding = Server->Map->GO[iTargetOff].top;
 
-		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
-			targetVehicle = NULL;
-
 		if ( !targetBuilding && !targetVehicle )
 			targetBuilding = Server->Map->GO[iTargetOff].base;
 
