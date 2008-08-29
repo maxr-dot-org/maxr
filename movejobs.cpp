@@ -498,7 +498,8 @@ void cServerMoveJob::moveVehicle()
 		{
 			Vehicle->detectMines();
 		}
-		//temporary undetection
+
+		//hide vehicle
 		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->DetectedByPlayerList.Delete(0);
 
 		//handle detection

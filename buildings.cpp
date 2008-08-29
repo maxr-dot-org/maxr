@@ -6353,7 +6353,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 		}
 		else
 			//if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer( owner ) )
 			{
 				b = Client->Map->GO[off].base;
 			}
@@ -6374,7 +6374,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->isDetectedByPlayer ( owner->Nr ) )
+	if ( v && v->isDetectedByPlayer ( owner ) )
 	{
 		if ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer )
 			return false;
@@ -8884,11 +8884,11 @@ void cBuilding::SendUpdateStored ( int index )
 	return;
 }
 
-bool cBuilding::isDetectedByPlayer( int iPlayerNum )
+bool cBuilding::isDetectedByPlayer( cPlayer* player )
 {
 	for (unsigned int i = 0; i < DetectedByPlayerList.Size(); i++)
 	{
-		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
+		if ( DetectedByPlayerList[i] == player ) return true;
 	}
 	return false;
 }
@@ -8946,16 +8946,16 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 	}
 }
 
-void cBuilding::setDetectedByPlayer( int* iPlayerNum )
+void cBuilding::setDetectedByPlayer( cPlayer* player )
 {
-	if (!isDetectedByPlayer( *iPlayerNum))
-		DetectedByPlayerList.Add( iPlayerNum );
+	if (!isDetectedByPlayer( player ))
+		DetectedByPlayerList.Add( player );
 }
 
-void cBuilding::resetDetectedByPlayer( int* iPlayerNum )
+void cBuilding::resetDetectedByPlayer( cPlayer* player )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{
-		if (*DetectedByPlayerList[i] == *iPlayerNum) DetectedByPlayerList.Delete(i);
+		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
 	}
 }

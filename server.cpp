@@ -1518,12 +1518,10 @@ void cServer::checkPlayerUnits ()
 			{
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
-				int iOff;
+				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 
-				//now check whether the unit has to be added or removed to/from a Client
-				iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 				bool stealthUnit = NextVehicle->data.is_stealth_land || NextVehicle->data.is_stealth_sea;
-				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer->Nr )) )
+				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer )) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
@@ -1564,7 +1562,7 @@ void cServer::checkPlayerUnits ()
 				int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
 				bool stealthUnit = NextBuilding->data.is_expl_mine;
 
-				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer->Nr )) )
+				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer )) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )

@@ -2699,7 +2699,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 			b = Client->Map->GO[off].top;
 		}
 		else
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer ( owner->Nr ) )
+			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer ( owner ) )
 			{
 				b = Client->Map->GO[off].base;
 			}
@@ -2715,7 +2715,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->isDetectedByPlayer( owner->Nr ) )
+	if ( v && v->isDetectedByPlayer( owner ) )
 	{
 		if ( v->owner == owner )
 			return false;
@@ -5400,7 +5400,7 @@ void cVehicle::detectMines ()
 			int iOff = iX+iY*Map->size;
 			if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_expl_mine )
 			{
-				Map->GO[iOff].base->setDetectedByPlayer( &owner->Nr );
+				Map->GO[iOff].base->setDetectedByPlayer( owner );
 			}
 		}
 	}
@@ -5673,26 +5673,26 @@ void cVehicle::DeleteStored ( void )
 	StoredVehicles = NULL;
 }
 
-bool cVehicle::isDetectedByPlayer( int iPlayerNum )
+bool cVehicle::isDetectedByPlayer( cPlayer* player )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{
-		if (*DetectedByPlayerList[i] == iPlayerNum) return true;
+		if (DetectedByPlayerList[i] == player) return true;
 	}
 	return false;
 }
 
-void cVehicle::setDetectedByPlayer( int* iPlayerNum )
+void cVehicle::setDetectedByPlayer( cPlayer* player )
 {
-	if (!isDetectedByPlayer( *iPlayerNum))
-		DetectedByPlayerList.Add( iPlayerNum );
+	if (!isDetectedByPlayer( player ))
+		DetectedByPlayerList.Add( player );
 }
 
-void cVehicle::resetDetectedByPlayer( int* iPlayerNum )
+void cVehicle::resetDetectedByPlayer( cPlayer* player )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{
-		if (*DetectedByPlayerList[i] == *iPlayerNum) DetectedByPlayerList.Delete(i);
+		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
 	}
 }
 
@@ -5709,11 +5709,11 @@ void cVehicle::makeDetection()
 
 			if ( data.is_stealth_land && ( player->DetectLandMap[offset] || Server->Map->IsWater(offset) ))
 			{
-				setDetectedByPlayer( &player->Nr );
+				setDetectedByPlayer( player );
 			}
 			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !Server->Map->IsWater(offset) ))
 			{
-				setDetectedByPlayer( &player->Nr );
+				setDetectedByPlayer( player );
 			}
 			//TODO: mines
 		}
@@ -5778,11 +5778,11 @@ void cVehicle::makeDetection()
 
 				if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
 				{
-					vehicle->setDetectedByPlayer( &owner->Nr );
+					vehicle->setDetectedByPlayer( owner );
 				}
 				if ( data.can_detect_sea && owner->DetectSeaMap[offset] && vehicle->data.is_stealth_sea )
 				{
-					vehicle->setDetectedByPlayer( &owner->Nr );
+					vehicle->setDetectedByPlayer( owner );
 				}
 
 				//TODO: mines

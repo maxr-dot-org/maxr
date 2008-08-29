@@ -185,13 +185,13 @@ void cServerAttackJob::sendFireCommand()
 		{
 			if ( vehicle->owner == player ) continue;
 
-			vehicle->setDetectedByPlayer( &player->Nr );
+			vehicle->setDetectedByPlayer( player );
 		}
 		else
 		{
 			if ( building->owner == player ) continue;
 			
-			building->setDetectedByPlayer( &player->Nr );
+			building->setDetectedByPlayer( player );
 		}
 	}
 	Server->checkPlayerUnits();

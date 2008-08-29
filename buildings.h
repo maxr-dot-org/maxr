@@ -119,7 +119,7 @@ public:
 	/** a list were the numbers of all players who can see this building are stored in */
 	cList<int*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
-	cList<int*> DetectedByPlayerList;
+	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	sBuilding *typ;  // Typ des Buildings
 	bool selected;   // Gibt an, ob das Building ausgewählt ist
@@ -240,18 +240,18 @@ public:
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
-	*@param iPlayerNum number of player for which the stauts sould be checked
+	*@param player player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( int iPlayerNum );
+	bool isDetectedByPlayer( cPlayer* player );
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	void resetDetectedByPlayer( int* iPlayerNum );
+	void resetDetectedByPlayer( cPlayer* player );
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void setDetectedByPlayer( int* iPlayerNum );
+	void setDetectedByPlayer( cPlayer* player );
 };
 
 #endif
