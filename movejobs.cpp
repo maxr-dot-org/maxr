@@ -299,6 +299,8 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 bool cServerMoveJob::calcPath()
 {
+	if ( ScrX == DestX && ScrY == DestY ) return false;
+
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
 	Waypoints = PathCalculator.Waypoints;
 	if ( Waypoints )
@@ -614,6 +616,8 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 
 bool cClientMoveJob::calcPath()
 {
+	if ( ScrX == DestX && ScrY == DestY ) return false;
+
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
 	Waypoints = PathCalculator.Waypoints;
 	if ( Waypoints )
@@ -940,6 +944,9 @@ void cClientMoveJob::doEndMoveVehicle ()
 	Vehicle->OffY = 0;
 
 	Vehicle->owner->DoScan();
+	
+	Client->bFlagDrawMMap = true; 
+	Client->mouseMoveCallback( true ); 
 
 	calcNextDir();
 }
