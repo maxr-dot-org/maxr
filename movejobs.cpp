@@ -294,6 +294,30 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 		}
 	}
 	calcNextDir ();
+
+	//check whether the vehicle has to be hided
+	//we check here the next waypoint of the vehicle, so other payers will not see in which direction the vehicle was driving
+	if ( Waypoints && Waypoints->next && Vehicle->data.speed )
+	{
+		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
+		for ( int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
+		{
+			cPlayer* player = Vehicle->DetectedByPlayerList[i];
+			if ( Vehicle->data.is_stealth_land && ( !player->DetectLandMap[offset] && !Server->Map->IsWater(offset) ))
+			{
+				Vehicle->resetDetectedByPlayer( player );
+				i--;
+			}
+			else if ( Vehicle->data.is_stealth_sea && ( !player->DetectSeaMap[offset] && Server->Map->IsWater(offset) ))
+			{
+				Vehicle->resetDetectedByPlayer( player );
+				i--;
+			}
+		}
+
+		Server->checkPlayerUnits();
+	}
+
 	return true;
 }
 
@@ -501,12 +525,6 @@ void cServerMoveJob::moveVehicle()
 			Vehicle->detectMines();
 		}
 
-		//hide vehicle
-		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->DetectedByPlayerList.Delete(0);
-
-		//handle detection
-		Vehicle->makeDetection();
-
 		// lay/clear mines if necessary
 		if ( Vehicle->data.can_lay_mines )
 		{
@@ -525,6 +543,12 @@ void cServerMoveJob::moveVehicle()
 		}
 
 		Vehicle->owner->DoScan();
+
+		//hide vehicle
+		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->DetectedByPlayerList.Delete(0);
+
+		//handle detection
+		Vehicle->makeDetection();
 
 		Vehicle->moving = false;
 		calcNextDir();

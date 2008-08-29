@@ -241,10 +241,10 @@ public:
 	*/
 	void setDetectedByPlayer( cPlayer* player );
 	/**
-	* - updates the detection maps of the owner
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit
-	* this function has to be called on the server everytime a unit was moved, builded, loaded, unloaded...
+	* the detection maps have to be up to date, when calling this funktion
+	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
 	void makeDetection();
 };

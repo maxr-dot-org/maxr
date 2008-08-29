@@ -3140,7 +3140,7 @@ static void ConvertData(int unitnum, bool vehicle)
 		Data->can_detect_sea = true;
 	else
 		Data->can_detect_sea = false;
-	if(Data->iScan_Range_Ground > 0)
+	if(Data->iScan_Range_Infantry > 0)
 		Data->can_detect_land = true;
 	else
 		Data->can_detect_land = false;

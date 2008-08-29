@@ -1863,6 +1863,21 @@ void cServer::makeTurnEnd ()
 			Vehicle = Vehicle->next;
 		}
 	}
+
+	//hide stealth units
+	for ( int i = 0; i < PlayerList->Size(); i++ )
+	{
+		cPlayer* player = (*PlayerList)[i];
+		player->DoScan();							//make sure the detection maps are up to date
+		cVehicle* vehicle = player->VehicleList;
+		while ( vehicle )
+		{
+			while ( vehicle->DetectedByPlayerList.Size() ) vehicle->DetectedByPlayerList.Delete(0);
+			vehicle->makeDetection();
+			vehicle = vehicle->next;
+		}
+	}
+
 	// Gun'em down:
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{

@@ -154,6 +154,8 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	VehicleList=n;
 	n->GenerateName();
 	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
+	if ( n->data.can_detect_land ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap );
+	if ( n->data.can_detect_sea  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap  );
 	return n;
 }
 
@@ -431,7 +433,9 @@ void cPlayer::DoScan ( void )
 	cVehicle *vp;
 	cBuilding *bp;
 
-	memset ( ScanMap,0,MapSize );
+	memset ( ScanMap      ,0 , MapSize );
+	memset ( DetectLandMap, 0, MapSize);
+	memset ( DetectSeaMap , 0, MapSize);
 	
 	// Die Vehicle-List durchgehen:
 	vp=VehicleList;
@@ -449,11 +453,21 @@ void cPlayer::DoScan ( void )
 		}
 		else
 		{
-			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );			
-		}
+			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
 
+			//detection maps
+			if ( vp->data.can_detect_land )
+			{
+				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap );
+			}
+			else if ( vp->data.can_detect_sea )
+			{
+				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap );
+			}
+		}
 		vp=vp->next;
 	}
+
 	// Die Building-List durchgehen:
 	bp=BuildingList;
 	while ( bp )

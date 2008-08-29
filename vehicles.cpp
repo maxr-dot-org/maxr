@@ -5718,50 +5718,6 @@ void cVehicle::makeDetection()
 			//TODO: mines
 		}
 	}
-	
-	//update detection maps of the owner
-	if ( data.can_detect_land )
-	{
-		memset ( owner->DetectLandMap, 0, pow((float)Server->Map->size, 2));
-		
-		cVehicle* vp = owner->VehicleList;
-		while ( vp )
-		{
-			if ( vp->Loaded )
-			{
-				vp = vp->next;
-				continue;
-			}
-
-			if ( data.can_detect_land )
-			{
-				owner->drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, owner->DetectLandMap );
-			}
-			
-			vp = vp->next;
-		}
-	}
-	if ( data.can_detect_sea )
-	{
-		memset ( owner->DetectSeaMap, 0, pow( (float)Server->Map->size, 2));
-
-		cVehicle* vp = owner->VehicleList;
-		while ( vp )
-		{
-			if ( vp->Loaded )
-			{
-				vp = vp->next;
-				continue;
-			}
-
-			if ( vp->data.can_detect_sea )
-			{
-				owner->drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, owner->DetectSeaMap );
-			}
-			
-			vp = vp->next;
-		}
-	}
 		
 	//detect other units
 	if ( data.can_detect_land || data.can_detect_sea )
@@ -5775,6 +5731,7 @@ void cVehicle::makeDetection()
 				
 				int offset = x + y * Server->Map->size;
 				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
+				if ( !vehicle ) continue;
 
 				if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
 				{
