@@ -25,9 +25,6 @@
 #include "client.h"
 #include "vehicles.h"
 #include "math.h"
-/*
-sPathNode::sPathNode( int x_, int y_, int costG_, int costH_ ) : x(x_), y(y_), costG(costG_), costH(costH_), costF(costG_+costH_) 
-{}*/
 
 cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle )
 {
@@ -40,23 +37,25 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 	Waypoints = NULL;
 	bPlane = Vehicle->data.can_drive == DRIVE_AIR;
 	bShip = Vehicle->data.can_drive == DRIVE_SEA;
+
 	MemBlocks = NULL;
 	blocknum = 0;
 	blocksize = 0;
-
+	heapCount = 0;
 	calcPath ();
 }
 
 void cPathCalculator::calcPath ()
 {
 	// generate open and closed list
+	nodesHeap = (sPathNode**) malloc ( (Map->size*Map->size+1) * sizeof (sPathNode*) );
+	memset ( nodesHeap, 0, (Map->size*Map->size+1) * sizeof (sPathNode*) );
 	openList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
 	memset ( openList, 0, Map->size*Map->size * sizeof (sPathNode*) );
 	closedList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
 	memset ( closedList, 0, Map->size*Map->size * sizeof (sPathNode*) );
 
 	// generate startnode
-	//sPathNode *StartNode = new sPathNode( ScrX, ScrY, 0, heuristicCost ( ScrX, ScrY ) );
 	sPathNode *StartNode = allocNode ();
 	StartNode->x = ScrX;
 	StartNode->y = ScrY;
@@ -66,22 +65,17 @@ void cPathCalculator::calcPath ()
 
 	StartNode->prev = NULL;
 	openList[ScrX+ScrY*Map->size] = StartNode;
-	openListCount = 1;
+	insertToHeap ( StartNode, false );
 
-	while ( openListCount > 0 )
+	while ( heapCount > 0 )
 	{
 		// get the node with the lowest F value
-		sPathNode *CurrentNode = openList[0];
-		for ( int i = 1; i < Map->size*Map->size; i++ )
-		{
-			if ( CurrentNode == NULL || ( openList[i] != NULL && openList[i]->costF < CurrentNode->costF ) )
-				CurrentNode = openList[i];
-		}
+		sPathNode *CurrentNode = nodesHeap[1];
 
 		// move it from the open to the closed list
 		openList[CurrentNode->x+CurrentNode->y*Map->size] = NULL;
 		closedList[CurrentNode->x+CurrentNode->y*Map->size] = CurrentNode;
-		openListCount--;
+		deleteFirstFromHeap();
 
 		// generate waypoints when destination has been reached
 		if ( CurrentNode->x == DestX && CurrentNode->y == DestY )
@@ -129,6 +123,7 @@ void cPathCalculator::calcPath ()
 		expandNodes ( CurrentNode );
 	}
 
+	// there is no path to the destination field
 	Waypoints = NULL;
 
 	for ( int i = 0; i < blocknum; i++ )
@@ -140,6 +135,7 @@ void cPathCalculator::calcPath ()
 
 void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 {
+	// add all nearby nodes
 	for ( int y = ParentNode->y-1; y <= ParentNode->y+1; y++ )
 	{
 		if ( y < 0 || y >= Map->size ) continue;
@@ -154,7 +150,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 
 			if ( openList[x+y*Map->size] == NULL )
 			{
-				//sPathNode *NewNode = sPathNode ( x, y, calcNextCost( ParentNode->x, ParentNode->y, x, y ) + ParentNode->costG, heuristicCost ( x, y ) );
+				// generate new node
 				sPathNode *NewNode = allocNode ();
 				NewNode->x = x;
 				NewNode->y = y;
@@ -163,10 +159,11 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 				NewNode->costF = NewNode->costG+NewNode->costH;
 				NewNode->prev = ParentNode;
 				openList[x+y*Map->size] = NewNode;
-				openListCount++;
+				insertToHeap ( NewNode, false );
 			}
 			else
 			{
+				// modify existing node
 				int costG, costH, costF;
 				costG = calcNextCost( ParentNode->x, ParentNode->y, x,y ) + ParentNode->costG;
 				costH = heuristicCost ( x, y );
@@ -177,6 +174,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 					openList[x+y*Map->size]->costH = costH;
 					openList[x+y*Map->size]->costF = costF;
 					openList[x+y*Map->size]->prev = ParentNode;
+					insertToHeap ( openList[x+y*Map->size], true );
 				}
 			}
 		}
@@ -185,10 +183,11 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 
 sPathNode *cPathCalculator::allocNode()
 {
+	// alloced new memory block if necessary
 	if ( blocksize <= 0 )
 	{
 		MemBlocks = (sPathNode**) realloc ( MemBlocks, (blocknum+1)*sizeof(sPathNode*) );
-		MemBlocks[blocknum] = new sPathNode[10]; //(sPathNode *) malloc ( MEM_BLOCK_SIZE*sizeof(sPathNode) );
+		MemBlocks[blocknum] = new sPathNode[10];
 		blocksize = MEM_BLOCK_SIZE;
 		blocknum++;
 	}
@@ -196,20 +195,75 @@ sPathNode *cPathCalculator::allocNode()
 	return &MemBlocks[blocknum-1][blocksize];
 }
 
-int cPathCalculator::listContainsNode ( cList<sPathNode *> *List, int x, int y )
+void cPathCalculator::insertToHeap( sPathNode *Node, bool exists )
 {
-	for ( int i = 0; i < List->Size(); i++ )
+	int i;
+	if ( exists )
 	{
-		if ( (*List)[i]->x == x &&  (*List)[i]->y == y )
+		// get the number of the existing node
+		for ( int j = 1; j <= heapCount; j++ )
 		{
-			return i;
+			if ( nodesHeap[j] == Node )
+			{
+				i = j;
+				break;
+			}
 		}
 	}
-	return 0;
+	else
+	{
+		// add the new node in the end
+		heapCount++;
+		nodesHeap[heapCount] = Node;
+		i = heapCount;
+	}
+	// resort the nodes
+	while ( i > 1 )
+	{
+		int j = i/2;
+		if ( Node->costF < nodesHeap[i/2]->costF )
+		{
+			sPathNode *TempNode = nodesHeap[i/2];
+			nodesHeap[i/2] = Node;
+			nodesHeap[i] = TempNode;
+		}
+		else break;
+	}
+}
+
+void cPathCalculator::deleteFirstFromHeap()
+{
+	// overwrite the first node by the last one
+	nodesHeap[1] = nodesHeap[heapCount];
+	nodesHeap[heapCount] = NULL;
+	heapCount--;
+	int v = 1, u;
+	while ( true )
+	{
+		u = v;
+		if ( 2*u+1 <= heapCount )	// both children in the heap exists
+		{
+			if ( nodesHeap[u]->costF >= nodesHeap[u*2]->costF ) v = 2*u;
+			if ( nodesHeap[v]->costF >= nodesHeap[u*2+1]->costF ) v = 2*u+1;
+		}
+		else if ( 2*u <= heapCount )	// only one children exists
+		{
+			if ( nodesHeap[u]->costF >= nodesHeap[u*2]->costF ) v = 2*u;
+		}
+		// do the resort
+		if ( u != v )
+		{
+			sPathNode *TempNode = nodesHeap[u];
+			nodesHeap[u] = nodesHeap[v];
+			nodesHeap[v] = TempNode;
+		}
+		else break;
+	}
 }
 
 int cPathCalculator::heuristicCost ( int srcX, int srcY )
 {
+	// calculate the minimal costs with the theorem of pythagoras
 	int deltaX = DestX - srcX;
 	int deltaY = DestY - srcY;
 
@@ -239,17 +293,22 @@ bool cPathCalculator::checkPossiblePoint ( int x, int y )
 int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 {
 	int costs, offset;
+	// costs of planes and ships can't be modified
 	if ( bPlane || bShip )
 	{
-		if ( srcX != destX && srcY != destY ) return 6;
+		if ( srcX != destX && srcY != destY ) return (4*1.5);
 		else return 4;
 	}
 	costs = 4;
 	offset = destX+destY*Map->size;
+	// moving on water will cost more
 	if ( Map->IsWater ( offset ) && !( Map->GO[offset].base && !Map->GO[offset].base->data.is_expl_mine ) ) costs = 12;
+	// moving on a road is cheaper
 	else if ( ( Map->GO[offset].base&& ( Map->GO[offset].base->data.is_road || Map->GO[offset].base->data.is_bridge ) ) || ( Map->GO[offset].subbase && Map->GO[offset].subbase->data.is_road ) ) costs = 2;
+	// for surveyers moving can't be more expensive then 4
 	if ( Vehicle->data.can_survey && costs > 4 ) costs = 4;
 
+	// mutliplicate with the factor 1.5 for diagonal movements
 	if ( srcX != destX && srcY != destY ) costs *= 1.5;
 	return costs;
 }
