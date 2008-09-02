@@ -21,6 +21,18 @@
 
 #include "mjobs.h"	// for MJOB_TYPES, sPathCalc and sWaypoint
 
+#define MEM_BLOCK_SIZE 10
+
+struct sPathNode
+{
+	//sPathNode( int x_, int y_, int costG_, int costH_ );
+	int x, y;
+	int costF, costG, costH;
+	sPathNode *prev, *next;
+
+	int fieldCosts;
+};
+
 class cPathCalculator
 {
 public:
@@ -28,24 +40,27 @@ public:
 
 	cMap *Map;
 	cVehicle *Vehicle;
-	int DestX, DestY;
+	int ScrX, ScrY, DestX, DestY;
 	bool bPlane, bShip;
+
+	sPathNode **MemBlocks;
+	int blocknum, blocksize;
+
+	cList<sPathNode *> OpenList;
+	cList<sPathNode *> ClosedList;
+	sPathNode **openList;
+	sPathNode **closedList;
+	int openListCount;
 
 	sWaypoint *Waypoints;
 
-	char *PathCalcMap;
-	sPathCalc *PathCalcRoot;
-	sPathCalc *FoundEnd;
-	cList<sPathCalc*> PathCalcEnds;
-	cList<sPathCalc*> PathCalcAll;
-
-	void calcPath( int ScrX, int ScrY );
-	int calcDest( int x, int y );
-	bool addPoint( int x, int y, float m, sPathCalc *PathCalc );
-	bool createNextPath();
+	int heuristicCost ( int srcX, int srcY );
+	void calcPath();
+	void expandNodes ( sPathNode *Node );
+	int listContainsNode ( cList<sPathNode *> *ParentNode, int x, int y );
 	bool checkPossiblePoint( int x, int y );
-	bool checkPointNotBlocked ( int x, int y );
-	int getWayCost( int x, int y ,bool *road );
+	int calcNextCost( int srcX, int srcY, int destX, int destY );
+	sPathNode *allocNode();
 };
 
 class cServerMoveJob

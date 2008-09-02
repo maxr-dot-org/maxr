@@ -24,166 +24,210 @@
 #include "server.h"
 #include "client.h"
 #include "vehicles.h"
+#include "math.h"
+/*
+sPathNode::sPathNode( int x_, int y_, int costG_, int costH_ ) : x(x_), y(y_), costG(costG_), costH(costH_), costF(costG_+costH_) 
+{}*/
 
 cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle )
 {
 	this->DestX = DestX;
 	this->DestY = DestY;
+	this->ScrX = ScrX;
+	this->ScrY = ScrY;
 	this->Map = Map;
 	this->Vehicle = Vehicle;
 	Waypoints = NULL;
 	bPlane = Vehicle->data.can_drive == DRIVE_AIR;
 	bShip = Vehicle->data.can_drive == DRIVE_SEA;
+	MemBlocks = NULL;
+	blocknum = 0;
+	blocksize = 0;
 
-	calcPath ( ScrX, ScrY );
+	calcPath ();
 }
 
-void cPathCalculator::calcPath ( int ScrX, int ScrY )
+void cPathCalculator::calcPath ()
 {
-	bool bReturn;
-	PathCalcMap = ( char* ) malloc ( Map->size*Map->size );
-	memset ( PathCalcMap, 0, Map->size*Map->size );
-	FoundEnd=NULL;
-	PathCalcRoot = new sPathCalc;
-	PathCalcRoot->prev = NULL;
-	PathCalcRoot->X = ScrX;
-	PathCalcRoot->Y = ScrY;
-	PathCalcRoot->WayCosts = 0;
-	PathCalcRoot->CostsGes = PathCalcRoot->WayCosts + calcDest ( ScrX,ScrY );
-	PathCalcMap[ScrX+ScrY*Map->size] = 1;
-	PathCalcEnds.Add( PathCalcRoot );
-	PathCalcAll.Add( PathCalcRoot );
+	// generate open and closed list
+	openList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
+	memset ( openList, 0, Map->size*Map->size * sizeof (sPathNode*) );
+	closedList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
+	memset ( closedList, 0, Map->size*Map->size * sizeof (sPathNode*) );
 
-	if ( ( bReturn = createNextPath() ) != false )
+	// generate startnode
+	//sPathNode *StartNode = new sPathNode( ScrX, ScrY, 0, heuristicCost ( ScrX, ScrY ) );
+	sPathNode *StartNode = allocNode ();
+	StartNode->x = ScrX;
+	StartNode->y = ScrY;
+	StartNode->costG = 0;
+	StartNode->costH = heuristicCost ( ScrX, ScrY );
+	StartNode->costF = StartNode->costG+StartNode->costH;
+
+	StartNode->prev = NULL;
+	openList[ScrX+ScrY*Map->size] = StartNode;
+	openListCount = 1;
+
+	while ( openListCount > 0 )
 	{
-		sWaypoint *Waypoint, *PrevWaypoint;
-		PrevWaypoint = NULL;
-		while ( FoundEnd )
+		// get the node with the lowest F value
+		sPathNode *CurrentNode = openList[0];
+		for ( int i = 1; i < Map->size*Map->size; i++ )
 		{
-			Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
-			Waypoint->next = PrevWaypoint;
-			Waypoint->Costs = FoundEnd->WayCosts;
-			Waypoint->X = FoundEnd->X;
-			Waypoint->Y = FoundEnd->Y;
-			PrevWaypoint = Waypoint;
-			FoundEnd = FoundEnd->prev;
+			if ( CurrentNode == NULL || ( openList[i] != NULL && openList[i]->costF < CurrentNode->costF ) )
+				CurrentNode = openList[i];
 		}
-		Waypoints = Waypoint;
-	}
-	while ( PathCalcAll.Size() )
-	{
-		delete PathCalcAll[0];
-		PathCalcAll.Delete( 0 );
-	}
-	free ( PathCalcMap );
-	if ( bReturn == false )
-	{
-		sWaypoint *NextWaypoint;
-		while ( Waypoints )
+
+		// move it from the open to the closed list
+		openList[CurrentNode->x+CurrentNode->y*Map->size] = NULL;
+		closedList[CurrentNode->x+CurrentNode->y*Map->size] = CurrentNode;
+		openListCount--;
+
+		// generate waypoints when destination has been reached
+		if ( CurrentNode->x == DestX && CurrentNode->y == DestY )
 		{
-			NextWaypoint = Waypoints->next;
-			free ( Waypoints );
-			Waypoints = NextWaypoint;
-		}
-		Waypoints = NULL;
-	}
-}
+			sWaypoint *NextWaypoint;
+			Waypoints = new sWaypoint;
 
-int cPathCalculator::calcDest ( int x, int y )
-{
-	return ( abs ( x-DestX ) + abs ( y-DestY ) );
-}
-
-bool cPathCalculator::addPoint ( int x, int y, float m, sPathCalc *PathCalc )
-{
-	sPathCalc *newPathCalc;
-	if ( checkPossiblePoint ( x, y ) )
-	{
-		newPathCalc = new sPathCalc;
-		newPathCalc->prev=  PathCalc;
-		newPathCalc->X = x;
-		newPathCalc->Y = y;
-		newPathCalc->WayCosts = getWayCost ( x, y, &newPathCalc->road )*m;
-		newPathCalc->CostsGes = newPathCalc->WayCosts+calcDest ( newPathCalc->X, newPathCalc->Y );
-		PathCalcEnds.Add ( newPathCalc );
-		PathCalcAll.Add ( newPathCalc );
-		PathCalcMap[x+y*Map->size] = 1;
-		if ( x == DestX && y == DestY )
-		{
-			FoundEnd = newPathCalc;
-			return true;
-		}
-	}
-	return false;
-}
-
-bool cPathCalculator::createNextPath ( )
-{
-	sPathCalc *PathCalc, *PathCalcEnd;
-	int iIndex;
-
-	if ( PathCalcEnds.Size() == 0 || PathCalcAll.Size() > MAX_PATHFINDING ) return false;
-
-	PathCalc = PathCalcEnds[0];
-	iIndex = 0;
-	if ( !bPlane )
-	{
-		for ( unsigned int i = 0; i < PathCalcEnds.Size(); i++ )
-		{
-			PathCalcEnd = PathCalcEnds[i];
-			if ( PathCalcEnd->road )
+			sPathNode *NextNode = CurrentNode;
+			NextNode->next = NULL;
+			do
 			{
-				PathCalc = PathCalcEnd;
-				iIndex = i;
-				break;
+				NextNode->prev->next = NextNode;
+				NextNode = NextNode->prev;
 			}
-			if ( PathCalcEnd->CostsGes < ( PathCalc->CostsGes ) >> 1 )
-			{
-				PathCalc = PathCalcEnd;
-				iIndex = i;
-			}
-		}
-	}
-	else
-	{
-		for ( unsigned int i = 0; i < PathCalcEnds.Size(); i++ )
-		{
-			PathCalcEnd = PathCalcEnds[i];
-			if ( PathCalcEnd->CostsGes < ( PathCalc->CostsGes ) >> 1 )
-			{
-				PathCalc = PathCalcEnd;
-				iIndex = i;
-			}
-		}
-	}
-	PathCalcEnds.Delete ( iIndex );
-	if ( addPoint ( PathCalc->X, PathCalc->Y-1, 1, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X+1, PathCalc->Y, 1, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X, PathCalc->Y+1, 1, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X-1, PathCalc->Y,1, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X-1, PathCalc->Y-1, 1.5, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X+1, PathCalc->Y-1, 1.5, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X+1, PathCalc->Y+1, 1.5, PathCalc ) ) return true;
-	if ( addPoint ( PathCalc->X-1, PathCalc->Y+1, 1.5, PathCalc ) ) return true;
+			while ( NextNode->prev != NULL );
 
-	return createNextPath();
+
+			NextWaypoint = Waypoints;
+			NextWaypoint->X = NextNode->x;
+			NextWaypoint->Y = NextNode->y;
+			NextWaypoint->Costs = 0;
+			do
+			{
+				NextNode = NextNode->next;
+
+				NextWaypoint->next = new sWaypoint;
+				NextWaypoint->next->X = NextNode->x;
+				NextWaypoint->next->Y = NextNode->y;
+				NextWaypoint->next->Costs = calcNextCost ( NextNode->prev->x, NextNode->prev->y, NextWaypoint->next->X, NextWaypoint->next->Y );
+				NextWaypoint = NextWaypoint->next;
+			}
+			while ( NextNode->next != NULL );
+
+			NextWaypoint->next = NULL;
+
+			for ( int i = 0; i < blocknum; i++ )
+			{
+				delete MemBlocks[i];
+			}
+			free ( MemBlocks );
+			return;
+		}
+
+		// expand node
+		expandNodes ( CurrentNode );
+	}
+
+	Waypoints = NULL;
+
+	for ( int i = 0; i < blocknum; i++ )
+	{
+		delete MemBlocks[i];
+	}
+	free ( MemBlocks );
+}
+
+void cPathCalculator::expandNodes ( sPathNode *ParentNode )
+{
+	for ( int y = ParentNode->y-1; y <= ParentNode->y+1; y++ )
+	{
+		if ( y < 0 || y >= Map->size ) continue;
+
+		for ( int x = ParentNode->x-1; x <= ParentNode->x+1; x++ )
+		{
+			if ( x < 0 || x >= Map->size ) continue;
+			if ( x == ParentNode->x && y == ParentNode->y ) continue;
+
+			if ( !checkPossiblePoint ( x, y ) ) continue;
+			if ( closedList[x+y*Map->size] != NULL ) continue;
+
+			if ( openList[x+y*Map->size] == NULL )
+			{
+				//sPathNode *NewNode = sPathNode ( x, y, calcNextCost( ParentNode->x, ParentNode->y, x, y ) + ParentNode->costG, heuristicCost ( x, y ) );
+				sPathNode *NewNode = allocNode ();
+				NewNode->x = x;
+				NewNode->y = y;
+				NewNode->costG = calcNextCost( ParentNode->x, ParentNode->y, x, y ) + ParentNode->costG;
+				NewNode->costH = heuristicCost ( x, y );
+				NewNode->costF = NewNode->costG+NewNode->costH;
+				NewNode->prev = ParentNode;
+				openList[x+y*Map->size] = NewNode;
+				openListCount++;
+			}
+			else
+			{
+				int costG, costH, costF;
+				costG = calcNextCost( ParentNode->x, ParentNode->y, x,y ) + ParentNode->costG;
+				costH = heuristicCost ( x, y );
+				costF = costG+costH;
+				if ( costF < openList[x+y*Map->size]->costF )
+				{
+					openList[x+y*Map->size]->costG = costG;
+					openList[x+y*Map->size]->costH = costH;
+					openList[x+y*Map->size]->costF = costF;
+					openList[x+y*Map->size]->prev = ParentNode;
+				}
+			}
+		}
+	}
+}
+
+sPathNode *cPathCalculator::allocNode()
+{
+	if ( blocksize <= 0 )
+	{
+		MemBlocks = (sPathNode**) realloc ( MemBlocks, (blocknum+1)*sizeof(sPathNode*) );
+		MemBlocks[blocknum] = new sPathNode[10]; //(sPathNode *) malloc ( MEM_BLOCK_SIZE*sizeof(sPathNode) );
+		blocksize = MEM_BLOCK_SIZE;
+		blocknum++;
+	}
+	blocksize--;
+	return &MemBlocks[blocknum-1][blocksize];
+}
+
+int cPathCalculator::listContainsNode ( cList<sPathNode *> *List, int x, int y )
+{
+	for ( int i = 0; i < List->Size(); i++ )
+	{
+		if ( (*List)[i]->x == x &&  (*List)[i]->y == y )
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+int cPathCalculator::heuristicCost ( int srcX, int srcY )
+{
+	int deltaX = DestX - srcX;
+	int deltaY = DestY - srcY;
+
+	return Round ( sqrt ( (double)deltaX*deltaX + deltaY*deltaY ) );
 }
 
 bool cPathCalculator::checkPossiblePoint ( int x, int y )
 {
+	// check whether the terrain is ok for this unit
 	if ( x < 0 || y < 0 || x >= Map->size || y >= Map->size ) return false;
-	if ( PathCalcMap[x+y*Map->size] ) return false;
+	if ( Vehicle->PosX == x && Vehicle->PosY == y ) return true;
 	if ( !bPlane )
 	{
 		if ( Map->terrain[Map->Kacheln[x+y*Map->size]].blocked ) return false;
 		if ( Vehicle->data.can_drive == DRIVE_LAND && Map->IsWater ( x+y*Map->size ) && !( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_bridge || Map->GO[x+y*Map->size].base->data.is_platform || Map->GO[x+y*Map->size].base->data.is_road ) ) ) return false;
 		if ( Vehicle->data.can_drive == DRIVE_SEA && (!Map->IsWater ( x+y*Map->size, true, true ) || ( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_platform || Map->GO[x+y*Map->size].base->data.is_road ) ) ) ) return false;
 	}
-	return checkPointNotBlocked ( x,y );
-}
-
-bool cPathCalculator::checkPointNotBlocked ( int x, int y )
-{
+	// check whether the field isn't blocked
 	if ( !Vehicle->owner->ScanMap[x+y*Map->size] ) return true;
 	if ( !bPlane && ( Map->GO[x+y*Map->size].vehicle || Map->GO[x+y*Map->size].reserviert ) ) return false;
 	else if ( bPlane && ( Map->GO[x+y*Map->size].plane || Map->GO[x+y*Map->size].air_reserviert ) ) return false;
@@ -191,21 +235,23 @@ bool cPathCalculator::checkPointNotBlocked ( int x, int y )
 	return true;
 }
 
-int cPathCalculator::getWayCost ( int x, int y, bool *bRoad )
+
+int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 {
-	int iCosts, iPos;
-	*bRoad = false;
-	if ( bPlane || bShip ) return 4;
-	iCosts = 4;
-	iPos = x+y*Map->size;
-	if ( Map->IsWater ( iPos ) && !( Map->GO[iPos].base && !Map->GO[iPos].base->data.is_expl_mine ) ) iCosts = 12;
-	else if ( ( Map->GO[iPos].base&& ( Map->GO[iPos].base->data.is_road || Map->GO[iPos].base->data.is_bridge ) ) || ( Map->GO[iPos].subbase && Map->GO[iPos].subbase->data.is_road ) )
+	int costs, offset;
+	if ( bPlane || bShip )
 	{
-		iCosts = 2;
-		*bRoad = true;
+		if ( srcX != destX && srcY != destY ) return 6;
+		else return 4;
 	}
-	if ( Vehicle->data.can_survey && iCosts > 4 ) iCosts = 4;
-	return iCosts;
+	costs = 4;
+	offset = destX+destY*Map->size;
+	if ( Map->IsWater ( offset ) && !( Map->GO[offset].base && !Map->GO[offset].base->data.is_expl_mine ) ) costs = 12;
+	else if ( ( Map->GO[offset].base&& ( Map->GO[offset].base->data.is_road || Map->GO[offset].base->data.is_bridge ) ) || ( Map->GO[offset].subbase && Map->GO[offset].subbase->data.is_road ) ) costs = 2;
+	if ( Vehicle->data.can_survey && costs > 4 ) costs = 4;
+
+	if ( srcX != destX && srcY != destY ) costs *= 1.5;
+	return costs;
 }
 
 cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
@@ -223,6 +269,7 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
+	Waypoints = NULL;
 
 	// unset sentry status when moving vehicle
 	if ( Vehicle->bSentryStatus )
@@ -584,6 +631,7 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
+	Waypoints = NULL;
 
 	if ( Vehicle->ClientMoveJob )
 	{
@@ -971,6 +1019,9 @@ void cClientMoveJob::doEndMoveVehicle ()
 	
 	Client->bFlagDrawMMap = true; 
 	Client->mouseMoveCallback( true ); 
+
+	Client->bFlagDrawMMap = true;
+	Client->mouseMoveCallback( true );
 
 	calcNextDir();
 }
