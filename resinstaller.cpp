@@ -3618,16 +3618,15 @@ GNU General Public License for more details.\n\n";
 	}
 
 	//check for available languages for voices
-	string testFileNameLowerCase = "f001.wav";
-	string testFileNameUpperCase = "F001.WAV";
-
+	string testFileName = "f001.wav";
+	
 	bool german = false, italian = false, french = false;
 	bool uppercase;
 	int iLanguages = 0;
 	SDL_RWops* testFile;
 	try
 	{
-		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileNameLowerCase, "r" );
+		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName, "r" );
 		german = true;
 		iLanguages++;
 		uppercase = false;
@@ -3637,7 +3636,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileNameUpperCase, "r" );
+		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName, "r" );
 		if ( german == false ) iLanguages++;
 		german = true;
 		uppercase = true;
@@ -3647,7 +3646,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileNameLowerCase, "r" );
+		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName, "r" );
 		italian = true;
 		iLanguages++;
 		uppercase = false;
@@ -3657,7 +3656,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileNameUpperCase, "r" );
+		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName, "r" );
 		if ( italian == false ) iLanguages++;
 		italian = true;
 		uppercase = true;
@@ -3667,7 +3666,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileNameLowerCase, "r" );
+		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName, "r" );
 		french = true;
 		iLanguages++;
 		uppercase = false;
@@ -3677,7 +3676,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileNameUpperCase, "r" );
+		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName, "r" );
 		if ( french == false ) iLanguages++;
 		french = true;
 		uppercase = true;
