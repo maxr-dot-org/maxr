@@ -42,6 +42,7 @@ class cPathCalculator
 {
 public:
 	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle );
+	~cPathCalculator();
 
 	/* the map on which the path will be calculated */
 	cMap *Map;

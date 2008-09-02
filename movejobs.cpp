@@ -34,26 +34,42 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 	this->ScrY = ScrY;
 	this->Map = Map;
 	this->Vehicle = Vehicle;
-	Waypoints = NULL;
 	bPlane = Vehicle->data.can_drive == DRIVE_AIR;
 	bShip = Vehicle->data.can_drive == DRIVE_SEA;
 
+	Waypoints = NULL;
 	MemBlocks = NULL;
+	nodesHeap = NULL;
+	openList = NULL;
+	closedList = NULL;
+
 	blocknum = 0;
 	blocksize = 0;
 	heapCount = 0;
 	calcPath ();
 }
 
+cPathCalculator::~cPathCalculator()
+{
+	if ( MemBlocks != NULL )
+	{
+		for ( int i = 0; i < blocknum; i++ )
+		{
+			delete MemBlocks[i];
+		}
+		free ( MemBlocks );
+	}
+	if ( nodesHeap != NULL ) free ( nodesHeap );
+	if ( openList != NULL ) free ( openList );
+	if ( closedList != NULL ) free ( closedList );
+}
+
 void cPathCalculator::calcPath ()
 {
 	// generate open and closed list
-	nodesHeap = (sPathNode**) malloc ( (Map->size*Map->size+1) * sizeof (sPathNode*) );
-	memset ( nodesHeap, 0, (Map->size*Map->size+1) * sizeof (sPathNode*) );
-	openList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
-	memset ( openList, 0, Map->size*Map->size * sizeof (sPathNode*) );
-	closedList = (sPathNode**) malloc ( Map->size*Map->size * sizeof (sPathNode*) );
-	memset ( closedList, 0, Map->size*Map->size * sizeof (sPathNode*) );
+	nodesHeap = (sPathNode**) calloc ( Map->size*Map->size+1, sizeof (sPathNode*) );
+	openList = (sPathNode**) calloc ( Map->size*Map->size, sizeof (sPathNode*) );
+	closedList = (sPathNode**) calloc ( Map->size*Map->size, sizeof (sPathNode*) );
 
 	// generate startnode
 	sPathNode *StartNode = allocNode ();
@@ -111,11 +127,6 @@ void cPathCalculator::calcPath ()
 
 			NextWaypoint->next = NULL;
 
-			for ( int i = 0; i < blocknum; i++ )
-			{
-				delete MemBlocks[i];
-			}
-			free ( MemBlocks );
 			return;
 		}
 
@@ -125,12 +136,6 @@ void cPathCalculator::calcPath ()
 
 	// there is no path to the destination field
 	Waypoints = NULL;
-
-	for ( int i = 0; i < blocknum; i++ )
-	{
-		delete MemBlocks[i];
-	}
-	free ( MemBlocks );
 }
 
 void cPathCalculator::expandNodes ( sPathNode *ParentNode )
