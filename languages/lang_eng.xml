@@ -346,14 +346,14 @@
 		<Unit ID="1 22" ENG="Mining Station">Mining Station\n\nExtracts raw materials, fuel and gold from the ground every turn. Buildings must be connected to a mine to use the resources a mine produces. If there are no storage buildings, to store extra materials, it will be lost.</Unit>
 		<Unit ID="1 23" ENG="Deep Mine">Deep Mine...</Unit>
 		<Unit ID="1 24" ENG="Landing Pad">Landing Pad\n\nLanding facility for planes. Does not repair, resupply or refuel planes. To resupply a plane on a landing pad, use a nearby truck or storage unit.</Unit>
-		<Unit ID="1 25" ENG="Water Platform">Water Platform\n\nProvides a surface over water on which to construct other buildings. Pioneers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps, or when a valuable material deposit is under water.</Unit>
+		<Unit ID="1 25" ENG="Water Platform">Water Platform\n\nProvides a surface over water on which to construct other buildings. Engineers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps, or when a valuable material deposit is under water.</Unit>
 		<Unit ID="1 26" ENG="Radar">Radar\n\nStationary, long-range radar. Longer-range units like missile launchers and artillery cannot fire on what thay cannot see, so it's important to have a scanner or radar nearby.</Unit>
 		<Unit ID="1 27" ENG="Research Center">Research Center\n\nResearch centers investigate ways to improve your units. Unlike upgrades purchased with refined gold, research takes time, and the improvements are small. Hovever, research affects all of your units instead of just one type, and doesn't require a source of gold ore. A research center requires colonists from a habitat to operate, and power.</Unit>
 		<Unit ID="1 28" ENG="Road">Road\n\nUnits move twice as fast over road squares.</Unit>
 		<Unit ID="1 29" ENG="Sea Mine">Sea Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltrators can spot mines. Once spotted, almost any damage will destroy it.</Unit>
 		<Unit ID="1 30" ENG="Shield">Shield</Unit>
 		<Unit ID="1 31" ENG="Gold Vault">Gold Vault\n\nHolds unrefined gold ore. Mining stations produce gold every turn, if they have gold ore underneath them. To store the ore, a mining station must be connected to a gold vault.</Unit>
-		<Unit ID="1 32" ENG="Storage Unit">Storage Unit\n\nHolds raw materials. Mining stations produce raw materials ervery turn. To save extra materials, a minig station must be connected to a storage unit.</Unit>
+		<Unit ID="1 32" ENG="Storage Unit">Storage Unit\n\nHolds raw materials. Mining stations produce raw materials every turn. To save extra materials, a minig station must be connected to a storage unit.</Unit>
 		<Unit ID="1 33" ENG="Fuel Tank">Fuel Tank\n\nHolds fuel reserves. Mining stations produce fuel every turn. To save extra fuel, a mining station must be connected to a fuel tank.</Unit>
 		<Unit ID="1 34" ENG="Training Hall">Training Hall\n\nTrains infiltrators who can disable or capture enemy units, and infantry to guard against infiltrators. A training hall requires colonists from a habitat and power to operate.</Unit>
 	</Units>
