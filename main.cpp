@@ -52,7 +52,6 @@
 #include "events.h"
 #include "client.h"
 #include "server.h"
-#include "debughelp.h"
 
 int main ( int argc, char *argv[] )
 {
@@ -65,9 +64,6 @@ int main ( int argc, char *argv[] )
 		cLog::write ( MAXVERSION , cLog::eLOG_TYPE_NET_DEBUG );
 		cLog::write ( str , cLog::eLOG_TYPE_NET_DEBUG );
 	}
-
-	initStackDump();
-
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
