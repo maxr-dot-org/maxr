@@ -81,6 +81,7 @@ public:
   char *SentriesMapGround;			/** the covered ground area */
   char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden können.
   char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden können.
+  char *DetectMinesMap;				/** the area where the player can detect mines */
   sResearch ResearchTechs[8];// Map mit den erforschten Technologien.
   int ResearchCount;         // Anzahl an Forschungszentren (die arbeiten).
   int UnusedResearch;        // Nicht benutzte Forschungskapazitäten.

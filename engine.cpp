@@ -487,7 +487,7 @@ void cEngine::MoveVehicle ( int FromX,int FromY,int ToX,int ToY,bool override,bo
 	// Ggf Minen suchen:
 	if ( v->data.can_detect_mines&&v->owner==game->ActivePlayer )
 	{
-		v->detectMines();
+		//v->detectMines();
 	}
 	// Ggf Minen legen/räumen:
 	if ( v->data.can_lay_mines&&v->owner==game->ActivePlayer )

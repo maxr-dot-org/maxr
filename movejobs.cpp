@@ -630,12 +630,6 @@ void cServerMoveJob::moveVehicle()
 		// let other units fire on this one
 		Vehicle->InSentryRange();
 
-		// search for mines if necessary
-		if ( Vehicle->data.can_detect_mines )
-		{
-			Vehicle->detectMines();
-		}
-
 		// lay/clear mines if necessary
 		if ( Vehicle->data.can_lay_mines )
 		{

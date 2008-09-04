@@ -8954,3 +8954,20 @@ void cBuilding::resetDetectedByPlayer( cPlayer* player )
 		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
 	}
 }
+
+void cBuilding::makeDetection()
+{
+	//check whether the building has been detected by others
+	if ( !data.is_expl_mine ) return;
+
+	int offset = PosX + PosY * Server->Map->size;
+	for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		cPlayer* player = (*Server->PlayerList)[i];
+		if ( player == owner ) continue;
+		if ( player->DetectMinesMap[offset] )
+		{
+			setDetectedByPlayer( player );
+		}
+	}
+}

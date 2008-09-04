@@ -252,6 +252,12 @@ public:
 	* removes a player from the detectedByPlayerList
 	*/
 	void setDetectedByPlayer( cPlayer* player );
+	/**
+	* - checks whether the building has been detected by an other unit
+	* the detection maps have to be up to date, when calling this funktion
+	* this function has to be called on the server everytime a building is added
+	*/
+	void makeDetection();
 };
 
 #endif

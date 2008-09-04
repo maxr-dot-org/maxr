@@ -1387,11 +1387,11 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	}
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	
-	//AddedBuilding->makeDetection();
+	AddedBuilding->makeDetection();
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
-	// intigrate the building to the base:
+	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
 }
 

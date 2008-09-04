@@ -45,6 +45,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	}
 	DetectLandMap=NULL;
 	DetectSeaMap=NULL;
+	DetectMinesMap = NULL;
 	ScanMap=NULL;
 	SentriesMapAir=NULL;
 	SentriesMapGround=NULL;
@@ -119,6 +120,7 @@ cPlayer::~cPlayer ( void )
 
 	if ( DetectLandMap ) free ( DetectLandMap );
 	if ( DetectSeaMap ) free ( DetectSeaMap );
+	if ( DetectMinesMap ) free ( DetectMinesMap );
 
 	while ( ReportVehicles.Size() )
 	{
@@ -156,6 +158,18 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
 	if ( n->data.can_detect_land ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap );
 	if ( n->data.can_detect_sea  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap  );
+	if ( n->data.can_detect_mines)
+	{
+		for ( int x = n->PosX - 1; x <= n->PosX + 1; x++ )
+		{
+			if ( x < 0 || x >= Client->Map->size ) continue;
+			for ( int y = n->PosY - 1; y <= n->PosY + 1; y++ )
+			{
+				if ( y < 0 || y >= Client->Map->size ) continue;
+				DetectMinesMap[x + Client->Map->size*y] = 1;
+			}
+		}
+	}
 	return n;
 }
 
@@ -182,6 +196,8 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 	memset ( DetectLandMap,0,MapSize );
 	DetectSeaMap= ( char* ) malloc ( MapSize );
 	memset ( DetectSeaMap,0,MapSize );
+	DetectMinesMap= ( char* ) malloc ( MapSize );
+	memset ( DetectMinesMap, 0, MapSize );
 
 	// Die Research-Map:
 	memset ( ResearchTechs,0,sizeof ( sResearch ) *8 );
@@ -433,9 +449,10 @@ void cPlayer::DoScan ( void )
 	cVehicle *vp;
 	cBuilding *bp;
 
-	memset ( ScanMap      ,0 , MapSize );
-	memset ( DetectLandMap, 0, MapSize);
-	memset ( DetectSeaMap , 0, MapSize);
+	memset ( ScanMap      , 0, MapSize );
+	memset ( DetectLandMap, 0, MapSize );
+	memset ( DetectSeaMap , 0, MapSize );
+	memset ( DetectMinesMap,0, MapSize );
 	
 	// Die Vehicle-List durchgehen:
 	vp=VehicleList;
@@ -463,6 +480,18 @@ void cPlayer::DoScan ( void )
 			else if ( vp->data.can_detect_sea )
 			{
 				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap );
+			}
+			if ( vp->data.can_detect_mines )
+			{
+				for ( int x = vp->PosX - 1; x <= vp->PosX + 1; x++ )
+				{
+					if ( x < 0 || x >= Client->Map->size ) continue;
+					for ( int y = vp->PosY - 1; y <= vp->PosY + 1; y++ )
+					{
+						if ( y < 0 || y >= Client->Map->size ) continue;
+						DetectMinesMap[x + Client->Map->size*y] = 1;
+					}
+				}
 			}
 		}
 		vp=vp->next;

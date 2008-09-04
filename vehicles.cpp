@@ -5382,26 +5382,6 @@ bool cVehicle::clearMine ()
 	return true;
 }
 
-void cVehicle::detectMines ()
-{
-	if ( Server == NULL ) return;
-	cMap *Map = Server->Map;
-
-	for ( int iY = PosY-1; iY <= PosY+1; iY++ )
-	{
-		if (iY < 0 || iY >= Map->size ) continue;
-		for ( int iX = PosX-1; iX <= PosX+1; iX++ )
-		{
-			if (iX < 0 || iX >= Map->size ) continue;
-			int iOff = iX+iY*Map->size;
-			if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_expl_mine )
-			{
-				Map->GO[iOff].base->setDetectedByPlayer( owner );
-			}
-		}
-	}
-}
-
 // Prüft, ob das Ziel direkt neben einem steht, und ob es gestohlen werden kann:
 bool cVehicle::IsInRangeCommando ( int off, bool steal )
 {
@@ -5711,12 +5691,11 @@ void cVehicle::makeDetection()
 			{
 				setDetectedByPlayer( player );
 			}
-			//TODO: mines
 		}
 	}
 		
 	//detect other units
-	if ( data.can_detect_land || data.can_detect_sea )
+	if ( data.can_detect_land || data.can_detect_sea || data.can_detect_mines )
 	{
 		for ( int x = PosX - data.scan; x < PosX + data.scan; x++)
 		{
@@ -5727,18 +5706,25 @@ void cVehicle::makeDetection()
 				
 				int offset = x + y * Server->Map->size;
 				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
-				if ( !vehicle ) continue;
-
-				if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
+				cBuilding* building = Server->Map->GO[offset].base;
+				if ( vehicle )
 				{
-					vehicle->setDetectedByPlayer( owner );
+					if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
+					{
+						vehicle->setDetectedByPlayer( owner );
+					}
+					if ( data.can_detect_sea && owner->DetectSeaMap[offset] && vehicle->data.is_stealth_sea )
+					{
+						vehicle->setDetectedByPlayer( owner );
+					}
 				}
-				if ( data.can_detect_sea && owner->DetectSeaMap[offset] && vehicle->data.is_stealth_sea )
+				if ( building )
 				{
-					vehicle->setDetectedByPlayer( owner );
-				}
-
-				//TODO: mines
+					if ( data.can_detect_mines && owner->DetectMinesMap[offset] && building->data.is_expl_mine )
+					{
+						building->setDetectedByPlayer( owner );
+					}
+				}	
 			}
 		}
 	}
