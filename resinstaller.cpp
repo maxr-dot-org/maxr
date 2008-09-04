@@ -3625,22 +3625,13 @@ GNU General Public License for more details.\n\n";
 	catch ( InstallException ) {}
 
 	//check for available languages for voices
-<<<<<<< .mine
-=======
-	string testFileName = "f001.wav";
-	
->>>>>>> .r1408
 	bool german = false, italian = false, french = false;
 	bool uppercase;
 	int iLanguages = 0;
 	SDL_RWops* testFile;
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		german = true;
 		iLanguages++;
 		uppercase = false;
@@ -3650,11 +3641,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		if ( german == false ) iLanguages++;
 		german = true;
 		uppercase = true;
@@ -3664,11 +3651,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		italian = true;
 		iLanguages++;
 		uppercase = false;
@@ -3678,11 +3661,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		if ( italian == false ) iLanguages++;
 		italian = true;
 		uppercase = true;
@@ -3692,11 +3671,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		french = true;
 		iLanguages++;
 		uppercase = false;
@@ -3706,11 +3681,7 @@ GNU General Public License for more details.\n\n";
 
 	try
 	{
-<<<<<<< .mine
 		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-=======
-		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName, "r" );
->>>>>>> .r1408
 		if ( french == false ) iLanguages++;
 		french = true;
 		uppercase = true;
