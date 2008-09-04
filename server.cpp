@@ -2221,7 +2221,7 @@ bool cServer::checkExitBlocked ( int iX, int iY, sVehicle *Type )
 	if ( iOff < 0 || iOff >= Map->size*Map->size ) return true;
 
 	if ( Type->data.can_drive == DRIVE_AIR && Map->GO[iOff].plane ) return true;
-	if ( Map->GO[iOff].vehicle || Map->GO[iOff].top ) return true;
+	if ( Map->GO[iOff].vehicle || ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector ) ) return true;
 	if ( Type->data.can_drive == DRIVE_SEA && ( !Map->IsWater ( iOff, true ) || Map->GO[iOff].base || Map->GO[iOff].subbase ) ) return true;
 	if ( Type->data.can_drive == DRIVE_LAND && Map->IsWater ( iOff ) && ( !Map->GO[iOff].base || ( !Map->GO[iOff].base->data.is_platform && !Map->GO[iOff].subbase->data.is_road && !Map->GO[iOff].base->data.is_expl_mine ) ) ) return true;
 
