@@ -4475,8 +4475,8 @@ bool cVehicle::InSentryRange ()
 
 		if ( Player == owner ) continue;
 
-		if ( data.is_stealth_land && !Player->DetectLandMap[iOff] ) continue;	//check next player
-		if ( data.is_stealth_sea && !Player->DetectSeaMap[iOff] ) continue;		//check next player
+		if ( data.is_stealth_land && !isDetectedByPlayer( Player ) ) continue;	//check next player
+		if ( data.is_stealth_sea  && !isDetectedByPlayer( Player ) ) continue;	//check next player
 
 		if ( data.can_drive == DRIVE_AIR )
 		{
@@ -4528,7 +4528,6 @@ bool cVehicle::InSentryRange ()
 					if ( ServerMoveJob )
 					{
 						ServerMoveJob->bFinished = true;
-						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4541,7 +4540,6 @@ bool cVehicle::InSentryRange ()
 					if ( ServerMoveJob )
 					{
 						ServerMoveJob->bFinished = true;
-						ServerMoveJob = NULL;
 					}
 
 					return true;

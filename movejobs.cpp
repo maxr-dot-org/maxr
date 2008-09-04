@@ -408,7 +408,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 	//check whether the vehicle has to be hided
 	//we check here the next waypoint of the vehicle, so other payers will not see in which direction the vehicle was driving
-	if ( Waypoints && Waypoints->next && Vehicle->data.speed )
+	if ( Waypoints && Waypoints->next && Vehicle->data.speed && checkPointNotBlocked( Waypoints->next->X, Waypoints->next->Y ))
 	{
 		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
 		for ( int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )

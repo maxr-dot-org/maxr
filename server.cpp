@@ -2002,7 +2002,8 @@ void cServer::handleMoveJobs ()
 		Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
-		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue;
+		if ( Vehicle && Vehicle->bIsBeeingAttacked ) 
+			continue;
 
 		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{
