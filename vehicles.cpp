@@ -4493,7 +4493,6 @@ bool cVehicle::InSentryRange ()
 					if ( ServerMoveJob )
 					{
 						ServerMoveJob->bFinished = true;
-						ServerMoveJob = NULL;
 					}
 
 					return true;
@@ -4506,7 +4505,6 @@ bool cVehicle::InSentryRange ()
 					if ( ServerMoveJob )
 					{
 						ServerMoveJob->bFinished = true;
-						ServerMoveJob = NULL;
 					}
 
 					return true;
