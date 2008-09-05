@@ -4310,6 +4310,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 				cList<sLanding*> LandingList;
 
 				ActualPlayer->Credits = Options.credits;
+				if ( bHost ) ActualPlayer->InitMaps ( ServerMap->size, ServerMap );
+				else ActualPlayer->InitMaps ( Map->size, Map );
 				RunHangar ( ActualPlayer, &LandingList );
 
 				if ( !bHost ) sendUpgrades();
@@ -4337,7 +4339,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 					// init the players of playerlist
 					for ( int i = 0; i < PlayerList.Size(); i++ )
 					{
-						PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
+						if ( PlayerList[i] != ActualPlayer ) PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
 						PlayerList[i]->Credits = Options.credits;
 					}
 
