@@ -553,6 +553,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				sendBuildAnswer(true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, *Vehicle->SeenByPlayerList[i]);
 			}
 			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, iBuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, Vehicle->owner->Nr );
+
+			if ( Vehicle->ServerMoveJob ) Vehicle->ServerMoveJob->release();
 		}
 		break;
 	case GAME_EV_END_BUILDING:

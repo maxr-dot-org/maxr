@@ -3278,6 +3278,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				StopFXLoop ( iObjectStream );
 				iObjectStream = Vehicle->PlayStram();
 			}
+
+			if ( Vehicle->ClientMoveJob ) Vehicle->ClientMoveJob->release();
 		}
 		break;
 	case GAME_EV_CONTINUE_PATH_ANSWER:
