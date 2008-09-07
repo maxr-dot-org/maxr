@@ -130,6 +130,7 @@ public:
 	int iNextDir;
 	int iSavedSpeed;
 	bool bPlane, bShip;
+	int iReservedOff;
 
 	sWaypoint *Waypoints;
 

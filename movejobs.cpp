@@ -288,8 +288,8 @@ bool cPathCalculator::checkPossiblePoint ( int x, int y )
 	}
 	// check whether the field isn't blocked
 	if ( !Vehicle->owner->ScanMap[x+y*Map->size] ) return true;
-	if ( !bPlane && ( Map->GO[x+y*Map->size].vehicle || Map->GO[x+y*Map->size].reserviert ) ) return false;
-	else if ( bPlane && ( Map->GO[x+y*Map->size].plane || Map->GO[x+y*Map->size].air_reserviert ) ) return false;
+	if ( !bPlane && Map->GO[x+y*Map->size].vehicle ) return false;
+	else if ( bPlane && Map->GO[x+y*Map->size].plane ) return false;
 	if ( !bPlane && Map->GO[x+y*Map->size].top && !Map->GO[x+y*Map->size].top->data.is_connector ) return false;
 	return true;
 }
@@ -334,6 +334,7 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	bEndForNow = false;
 	iSavedSpeed = 0;
 	Waypoints = NULL;
+	iReservedOff = -1;
 
 	// unset sentry status when moving vehicle
 	if ( Vehicle->bSentryStatus )
@@ -359,6 +360,11 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 
 cServerMoveJob::~cServerMoveJob()
 {
+	if ( iReservedOff >= 0 && iReservedOff <= Map->size*Map->size )
+	{
+		if ( !bPlane && Map->GO[iReservedOff].reserviert ) Map->GO[iReservedOff].reserviert = false;
+		if ( bPlane && Map->GO[iReservedOff].air_reserviert ) Map->GO[iReservedOff].air_reserviert = false;
+	}
 	sWaypoint *NextWaypoint;
 	while ( Waypoints )
 	{
@@ -512,8 +518,16 @@ bool cServerMoveJob::checkMove()
 	Vehicle->moving = true;
 
 	// reserv the next field
-	if ( !bPlane ) Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].reserviert = true;
-	else Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].air_reserviert = true;
+	if ( !bPlane )
+	{
+		Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].reserviert = true;
+		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
+	}
+	else
+	{
+		Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].air_reserviert = true;
+		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
+	}
 
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
@@ -589,12 +603,14 @@ void cServerMoveJob::moveVehicle()
 			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane = Vehicle;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].air_reserviert = false;
+			iReservedOff = -1;
 		}
 		else
 		{
 			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle = Vehicle;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].reserviert = false;
+			iReservedOff = -1;
 		}
 		Vehicle->OffX = 0;
 		Vehicle->OffY = 0;
