@@ -262,17 +262,10 @@ cMap::cMap ( void )
 	Kacheln=NULL;
 	NewMap ( 32, 32 );
 	MapName="";
-	rubbleList = NULL;
 }
 
 cMap::~cMap ( void )
 {
-	while ( rubbleList )
-	{
-		cBuilding* ptr = rubbleList;
-		rubbleList = ptr->next;
-		delete ptr;
-	}
 	DeleteMap();
 }
 
@@ -741,114 +734,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	free ( GaussMap );
 }
 
-void cMap::addRubble( int offset, int value, bool big )
-{
-	if ( value <= 0 ) value = 1;
 
-	if ( terrain[Kacheln[offset]].water ||
-		 terrain[Kacheln[offset]].coast ||
-		 terrain[Kacheln[offset]].blocked ||
-		 GO[offset].base ||
-		 GO[offset].subbase )
-	{
-		if ( big )
-		{
-			addRubble( offset + 1, value/4, false);
-			addRubble( offset + size, value/4, false);
-			addRubble( offset + size + 1, value/4, false);
-		}
-		return;
-	}
-
-	if ( big && (
-		 terrain[Kacheln[offset + 1]].water ||
-		 terrain[Kacheln[offset + 1]].coast ||
-		 GO[offset + 1].base ||
-		 GO[offset + 1].subbase ))
-	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + size, value/4, false);
-		addRubble( offset + size + 1, value/4, false);
-		return;
-	}
-
-	if ( big && (
-		terrain[Kacheln[offset + size]].water ||
-		terrain[Kacheln[offset + size]].coast ||
-		GO[offset + size].base ||
-		GO[offset + size].subbase ))
-	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + 1, value/4, false);
-		addRubble( offset + size + 1, value/4, false);
-		return;
-	}
-
-	if ( big && (
-		terrain[Kacheln[offset + size + 1]].water ||
-		terrain[Kacheln[offset + size + 1]].coast ||
-		GO[offset + size + 1].base ||
-		GO[offset + size + 1].subbase ))
-	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + 1, value/4, false);
-		addRubble( offset + size, value/4, false);
-		return;
-	}
-
-	cBuilding* rubble = new cBuilding( NULL, NULL, NULL );
-	rubble->next = rubbleList;
-	if ( rubbleList ) rubbleList->prev = rubble;
-	rubbleList = rubble;
-	rubble->prev = NULL;
-
-	rubble->PosX = offset % size;
-	rubble->PosY = offset / size;
-
-	rubble->data.is_big = big;
-	rubble->BigDirt = big;
-	rubble->DirtValue = value;
-
-	GO[offset].subbase = rubble;
-
-	if ( big )
-	{
-		GO[offset + 1       ].subbase = rubble;
-		GO[offset + size    ].subbase = rubble;
-		GO[offset + size + 1].subbase = rubble;
-		rubble->DirtTyp = random(2);
-	}
-	else
-	{
-		rubble->DirtTyp = random(5);
-	}
-}
-
-void cMap::deleteRubble( cBuilding* rubble )
-{
-	int offset = rubble->PosX + rubble->PosY * size;
-	if ( rubble->BigDirt )
-	{
-		GO[offset + 1].subbase=NULL;
-		GO[offset + size].subbase=NULL;
-		GO[offset + size + 1].subbase=NULL;
-	}
-
-	GO[offset].subbase=NULL;
-
-	if ( !rubble->prev )
-	{
-		rubbleList = rubble->next;
-		rubble->next->prev = NULL;
-	}
-	else
-	{
-		rubble->prev->next = rubble->next;
-		if ( rubble->next )
-			rubble->next->prev = rubble->prev;
-	}
-	delete rubble;
-}
 /*
 bool cMap::addBuilding( cBuilding* building, unsigned int offset )
 {

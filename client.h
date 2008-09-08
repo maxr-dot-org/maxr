@@ -105,6 +105,8 @@ private:
 	cList<cPlayer*> *PlayerList;
 	/** if a player has entered a chat */
 	string sPlayerCheat;
+	/** list with buildings without owner, e. g. rubble fields */
+	cBuilding* neutralBuildings;
 	/** ID of the timer */
 	SDL_TimerID TimerID;
 	/** will be incremented by the Timer */
@@ -134,8 +136,6 @@ private:
 	/** lists with all FX-Animation */
 	cList<sFX*> FXList;
 	cList<sFX*> FXListBottom;
-	/** list with the dirt */
-	cBuilding *DirtList;
 	/** direction from which the wind is comming */
 	float fWindDir;
 	/** flags what should be displaxed in the raffinery */

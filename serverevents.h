@@ -70,6 +70,10 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 void sendDeleteUnit ( cVehicle* vehicle, int iCLient);
 void sendDeleteUnit ( cBuilding* building, int iCLient);
 /**
+* adds a rubble object to the client
+*/
+void sendAddRubble( cBuilding* building, int iPlayer );
+/**
 * Sends an event to a player that he has to detected an enemy unit and should add it
 *@author alzi alias DoctorDeath
 *@param Vehicle The vehicle that should be added by the player

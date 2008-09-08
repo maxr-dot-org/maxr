@@ -47,10 +47,11 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	this->bPlayTurns = bPlayTurns;
 	bExit = false;
 	bStarted = false;
+	neutralBuildings = NULL;
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 45; // just temporary set to 10 seconds
+	iTurnDeadline = 45; // just temporary set to 45 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
@@ -82,7 +83,12 @@ cServer::~cServer()
 		delete AJobs[0];
 		AJobs.Delete(0);
 	}
-
+	while ( neutralBuildings )
+	{
+		cBuilding* nextBuilding = neutralBuildings->next;
+		delete neutralBuildings;
+		neutralBuildings = nextBuilding;
+	}
 }
 
 
@@ -1403,12 +1409,6 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 
 	if( !Building ) return;
 
-	if ( !Building->owner ) 
-	{
-		Map->deleteRubble( Building );
-		return;
-	}
-
 	if( Building->prev )
 	{
 		Building->prev->next = Building->next;
@@ -1595,6 +1595,45 @@ void cServer::checkPlayerUnits ()
 			}
 			NextBuilding = NextBuilding->next;
 		}
+	}
+	
+	//check the neutral objects
+	cBuilding *building = neutralBuildings;
+	while ( building != NULL )
+	{
+		for ( unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->Size(); iMapPlayerNum++ )
+		{
+			MapPlayer = (*PlayerList)[iMapPlayerNum];
+			int iOff = building->PosX + building->PosY * Map->size;
+			
+			if ( MapPlayer->ScanMap[iOff] == 1 )
+			{
+				unsigned int i;
+				for ( i = 0; i < building->SeenByPlayerList.Size(); i++ )
+				{
+					if (*building->SeenByPlayerList[i] == MapPlayer->Nr) break;
+				}
+				if ( i == building->SeenByPlayerList.Size() )
+				{
+					building->SeenByPlayerList.Add ( &MapPlayer->Nr );
+					sendAddRubble( building, MapPlayer->Nr );
+				}
+			}
+			else
+			{
+				unsigned int i;
+				for ( i = 0; i < building->SeenByPlayerList.Size(); i++ )
+				{
+					if (*building->SeenByPlayerList[i] == MapPlayer->Nr)
+					{
+						building->SeenByPlayerList.Delete ( i );
+						sendDeleteUnit( building, MapPlayer->Nr );
+						break;
+					}
+				}
+			}
+		}
+		building = building->next;
 	}
 }
 
@@ -2238,9 +2277,14 @@ void cServer::destroyUnit( cVehicle* vehicle )
 
 	//delete other units here!
 
+
+	if ( vehicle->data.can_drive != DRIVE_AIR && !vehicle->data.is_human )
+	{
+		addRubble( offset, value, false );
+	}
 	deleteUnit( vehicle, false );
 
-	Map->addRubble( offset, value, false );
+	
 }
 
 void cServer::destroyUnit(cBuilding *building)
@@ -2276,6 +2320,120 @@ void cServer::destroyUnit(cBuilding *building)
 	deleteUnit( Map->GO[offset].base, false );
 	deleteUnit( Map->GO[offset].subbase, false );
 
-	Map->addRubble( offset, value/2, big );
+	addRubble( offset, value/2, big );
 
+}
+
+void cServer::addRubble( int offset, int value, bool big )
+{
+	if ( value <= 0 ) value = 1;
+
+	if ( Map->terrain[Map->Kacheln[offset]].water ||
+		 Map->terrain[Map->Kacheln[offset]].coast ||
+		 Map->terrain[Map->Kacheln[offset]].blocked ||
+		 Map->GO[offset].base ||
+		 Map->GO[offset].subbase )
+	{
+		if ( big )
+		{
+			addRubble( offset + 1, value/4, false);
+			addRubble( offset + Map->size, value/4, false);
+			addRubble( offset + Map->size + 1, value/4, false);
+		}
+		return;
+	}
+
+	if ( big && (
+		 Map->terrain[Map->Kacheln[offset + 1]].water ||
+		 Map->terrain[Map->Kacheln[offset + 1]].coast ||
+		 Map->GO[offset + 1].base ||
+		 Map->GO[offset + 1].subbase ))
+	{
+		addRubble( offset, value/4, false);
+		addRubble( offset + Map->size, value/4, false);
+		addRubble( offset + Map->size + 1, value/4, false);
+		return;
+	}
+
+	if ( big && (
+		Map->terrain[Map->Kacheln[offset + Map->size]].water ||
+		Map->terrain[Map->Kacheln[offset + Map->size]].coast ||
+		Map->GO[offset + Map->size].base ||
+		Map->GO[offset + Map->size].subbase ))
+	{
+		addRubble( offset, value/4, false);
+		addRubble( offset + 1, value/4, false);
+		addRubble( offset + Map->size + 1, value/4, false);
+		return;
+	}
+
+	if ( big && (
+		Map->terrain[Map->Kacheln[offset + Map->size + 1]].water ||
+		Map->terrain[Map->Kacheln[offset + Map->size + 1]].coast ||
+		Map->GO[offset + Map->size + 1].base ||
+		Map->GO[offset + Map->size + 1].subbase ))
+	{
+		addRubble( offset, value/4, false);
+		addRubble( offset + 1, value/4, false);
+		addRubble( offset + Map->size, value/4, false);
+		return;
+	}
+
+	cBuilding* rubble = new cBuilding( NULL, NULL, NULL );
+	rubble->next = neutralBuildings;
+	if ( neutralBuildings ) neutralBuildings->prev = rubble;
+	neutralBuildings = rubble;
+	rubble->prev = NULL;
+
+	rubble->iID = iNextUnitID;
+	iNextUnitID++;
+
+	rubble->PosX = offset % Map->size;
+	rubble->PosY = offset / Map->size;
+
+	rubble->data.is_big = big;
+	rubble->BigDirt = big;
+	rubble->DirtValue = value;
+
+	Map->GO[offset].subbase = rubble;
+
+	if ( big )
+	{
+		Map->GO[offset + 1       ].subbase = rubble;
+		Map->GO[offset + Map->size    ].subbase = rubble;
+		Map->GO[offset + Map->size + 1].subbase = rubble;
+		rubble->DirtTyp = random(2);
+	}
+	else
+	{
+		rubble->DirtTyp = random(5);
+	}
+}
+
+void cServer::deleteRubble( cBuilding* rubble )
+{
+	int offset = rubble->PosX + rubble->PosY * Map->size;
+	if ( rubble->BigDirt )
+	{
+		Map->GO[offset + 1].subbase = NULL;
+		Map->GO[offset + Map->size].subbase = NULL;
+		Map->GO[offset + Map->size + 1].subbase = NULL;
+	}
+
+	Map->GO[offset].subbase = NULL;
+
+	if ( !rubble->prev )
+	{
+		neutralBuildings = rubble->next;
+		rubble->next->prev = NULL;
+	}
+	else
+	{
+		rubble->prev->next = rubble->next;
+		if ( rubble->next )
+			rubble->next->prev = rubble->prev;
+	}
+	delete rubble;
+
+	sendDeleteUnit( rubble, -1 );
 }

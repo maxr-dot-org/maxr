@@ -144,8 +144,6 @@ public:
 	cList<sTerrain*> TerrainInUse; // Liste mit Zeigern auf die terrains, die benutzt werden.
 	string ErrorStr; // Der String mit der Fehlermeldung fürs Laden der Maps.
 	string MapName;  // Name der aktuellen Map.
-	/** a list of all rubble objects */
-	cBuilding* rubbleList;
 
 	sTerrain *terrain; // Terrain graphics
 
@@ -155,19 +153,6 @@ public:
 	bool SaveMap(string filename,SDL_Surface *preview);
 	bool LoadMap(string filename);
 	void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
-	/**
-	* places rubble on the map
-	*@param offset place where the rubble should be added
-	*@param value the ressource value of the rubble
-	*@param big true if the rubble is 4 fields big
-	*/
-	void addRubble( int offset, int value, bool big );
-
-	/**
-	* removes rubble from the map
-	*@param rubble pointer to the rubble
-	*/
-	void deleteRubble( cBuilding* rubble );
 	/**
 	* Access to a map field
 	* @param the offset of the map field

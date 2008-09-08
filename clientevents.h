@@ -56,7 +56,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_PRODUCE_VALUES,			// the produce values of a building
 	GAME_EV_TURN_REPORT,			// the turnstartreport of a player
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
-	GAME_EV_SUPPLY					// rearms or repairs a unit
+	GAME_EV_SUPPLY,					// rearms or repairs a unit
+	GAME_EV_ADD_RUBBLE				// adds a rubble field to the client
 };
 
 enum CHAT_MESSAGE_TYPES

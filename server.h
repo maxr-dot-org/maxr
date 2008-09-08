@@ -85,6 +85,8 @@ private:
 	bool bExit;
 
 
+	/** list with buildings without owner, e. g. rubble fields */
+	cBuilding* neutralBuildings;
 	/** true if this is a hotseat game */
 	bool bHotSeat;
 	/** number of active player in hotseat */
@@ -339,6 +341,18 @@ public:
 	*@param MJob the movejob to be added
 	*/
 	void addActiveMoveJob ( cServerMoveJob *MoveJob );
+	/**
+	* adds a new rubble object to the game
+	* @param offset the offset where the rubble is added
+	* @param value the amount of material in the rubble field
+	* @param big size of the rubble field
+	*/
+	void addRubble( int offset, int value, bool big );
+	/**
+	* deletes a rubble object from the game
+	* @param rubble pointer to the rubble object which will be deleted
+	*/
+	void deleteRubble( cBuilding* rubble );
 
 } EX *Server;
 

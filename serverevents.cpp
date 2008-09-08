@@ -41,6 +41,20 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 
 }
 
+void sendAddRubble( cBuilding* building, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_ADD_RUBBLE );
+
+	message->pushInt16( building->PosX );
+	message->pushInt16( building->PosY );
+	message->pushInt16( building->iID );
+	message->pushInt16( building->DirtValue );
+	message->pushInt16( building->DirtTyp );
+	message->pushBool( building->BigDirt );
+
+	Server->sendNetMessage( message, iPlayer );
+}
+
 void sendDeleteUnit ( cBuilding* building, int iClient )
 {
 	cNetMessage* message;

@@ -399,6 +399,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_TURN_REPORT");
 	case GAME_EV_WANT_CHANGE_SENTRY:
 		return string("GAME_EV_WANT_CHANGE_SENTRY");
+	case GAME_EV_ADD_RUBBLE:
+		return string("GAME_EV_ADD_RUBBLE");
 	default:
 		return iToStr( iType );
 	}
