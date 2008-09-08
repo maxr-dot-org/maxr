@@ -3670,7 +3670,8 @@ void cClient::deleteUnit( cBuilding *Building )
 		if ( !Building->prev )
 		{
 			neutralBuildings = Building->next;
-			Building->next->prev = NULL;
+			if ( Building->next )
+				Building->next->prev = NULL;
 		}
 		else
 		{
