@@ -45,11 +45,11 @@
       <Ammo_Quantity Num="16"/>
       <Allowed_Targets>
         <Target_Land>
-          <Damage Num="17"/>
+          <Damage Num="15"/>
           <Range Fd="8"/>
         </Target_Land>
         <Target_Sea>
-          <Damage Num="17"/>
+          <Damage Num="15"/>
           <Range Fd="8"/>
         </Target_Sea>
         <Target_Air>
@@ -57,7 +57,7 @@
           <Range Fd="0"/>
         </Target_Air>
         <Target_Mine>
-          <Damage Num="17"/>
+          <Damage Num="15"/>
           <Range Fd="8"/>
         </Target_Mine>
         <Target_Submarine>
@@ -65,7 +65,7 @@
           <Range Fd="0"/>
         </Target_Submarine>
         <Target_Infantry>
-          <Damage Num="17"/>
+          <Damage Num="15"/>
           <Range Fd="8"/>
         </Target_Infantry>
         <Target_WMD>
