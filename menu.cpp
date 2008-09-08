@@ -515,14 +515,14 @@ void RunSPMenu ( void )
 				for ( int i = 0; i < ClientPlayerList.Size(); i++ )
 				{
 					ClientPlayerList[i]->InitMaps(Map.size, &Map);
-					ClientPlayerList[i]->Credits = options.credits;
+					ClientPlayerList[i]->Credits = 2000;//options.credits;
 				}
 
 				// init the players of playerlist
 				for ( int i = 0; i < ServerPlayerList.Size(); i++ )
 				{
 					ServerPlayerList[i]->InitMaps(ServerMap.size, &ServerMap);
-					ServerPlayerList[i]->Credits = options.credits;
+					ServerPlayerList[i]->Credits = 2000;//options.credits;
 				}
 				// init server
 				Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
@@ -2125,7 +2125,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 						variety = 0;
 					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 						variety = 1;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shoots" ) ) == 0 )
 						variety = 2;
 					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 						variety = 3;
@@ -2158,7 +2158,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 						variety = 0;
 					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
 						variety = 1;
-					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
+					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shoots" ) ) == 0 )
 						variety = 2;
 					else if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
 						variety = 3;
@@ -2673,7 +2673,7 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].active=true;
 		u[i].value=& ( d->damage );
 		u[i].NextPrice=2*CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.damage, 0 );
-		u[i].name = "damage";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
 		i++;
 		if ( !d->is_expl_mine )
 		{
@@ -2681,19 +2681,19 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 			u[i].active=true;
 			u[i].value=& ( d->max_shots );
 			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_shots, 2 );
-			u[i].name = "shots";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Shoots" );
 			i++;
 			// Range:
 			u[i].active=true;
 			u[i].value=& ( d->range );
 			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.range, 3 );
-			u[i].name = "range";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
 			i++;
 			// Ammo:
 			u[i].active=true;
 			u[i].value=& ( d->max_ammo );
 			u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_ammo, 0 );
-			u[i].name = "ammo";
+			u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
 			i++;
 		}
 	}
@@ -2716,14 +2716,14 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].active=true;
 		u[i].value=& ( d->armor );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.armor, 0 );
-		u[i].name = "armor";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
 	}
 	i++;
 	// Hitpoints:
 	u[i].active=true;
 	u[i].value=& ( d->max_hit_points );
 	u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.max_hit_points, 0 );
-	u[i].name = "hitpoints";
+	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
 	i++;
 	// Scan:
 	if ( d->scan && d->scan!=1 )
@@ -2731,9 +2731,10 @@ void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
 		u[i].active=true;
 		u[i].value=& ( d->scan );
 		u[i].NextPrice=CalcPrice ( * ( u[i].value ),UnitsData.building[nr].data.scan, 3 );
-		u[i].name = "scan";
+		u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
 		i++;
 	}
+
 	// Energieverbrauch:
 	if ( d->energy_need )
 	{
@@ -2777,7 +2778,7 @@ int CalcPrice ( int value,int org, int variety )
 			{
 				case 2:
 					if ( value==2 ) return 39;
-					if ( value==3 ) return 321;
+					else return 321;
 					break;
 				case 4:
 					a=0.0016091639;
@@ -2949,7 +2950,7 @@ int CalcPrice ( int value,int org, int variety )
 					break;
 				case 2:
 					if ( value==2 ) return 79;
-					if ( value==3 ) return 641;
+					else return 641;
 					break;
 				default:
 					return 0;
@@ -2962,7 +2963,7 @@ int CalcPrice ( int value,int org, int variety )
 			{
 				case 3:
 					if ( value==3 ) return 61;
-					if ( value==4 ) return 299;
+					else return 299;
 					break;
 				case 4:
 					a=0.010226741;
