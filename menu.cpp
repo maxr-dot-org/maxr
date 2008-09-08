@@ -515,14 +515,14 @@ void RunSPMenu ( void )
 				for ( int i = 0; i < ClientPlayerList.Size(); i++ )
 				{
 					ClientPlayerList[i]->InitMaps(Map.size, &Map);
-					ClientPlayerList[i]->Credits = 2000;//options.credits;
+					ClientPlayerList[i]->Credits = options.credits;
 				}
 
 				// init the players of playerlist
 				for ( int i = 0; i < ServerPlayerList.Size(); i++ )
 				{
 					ServerPlayerList[i]->InitMaps(ServerMap.size, &ServerMap);
-					ServerPlayerList[i]->Credits = 2000;//options.credits;
+					ServerPlayerList[i]->Credits = options.credits;
 				}
 				// init server
 				Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
