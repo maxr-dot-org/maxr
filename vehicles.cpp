@@ -5699,10 +5699,10 @@ void cVehicle::makeDetection()
 	{
 		for ( int x = PosX - data.scan; x < PosX + data.scan; x++)
 		{
-			if ( x < 0 || x > Server->Map->size ) continue;
+			if ( x < 0 || x >= Server->Map->size ) continue;
 			for ( int y = PosY - data.scan; y < PosY + data.scan; y++)
 			{
-				if ( y < 0 || y > Server->Map->size ) continue;
+				if ( y < 0 || y >= Server->Map->size ) continue;
 				
 				int offset = x + y * Server->Map->size;
 				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
