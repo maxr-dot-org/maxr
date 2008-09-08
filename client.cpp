@@ -2860,8 +2860,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Building )
 			{
 				// play clearsound if it is a mine
-				if ( Building->typ->nr == BNrLandMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
-				else if ( Building->typ->nr == BNrSeaMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
+				if ( Building->owner && Building->typ->nr == BNrLandMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
+				else if ( Building->owner && Building->typ->nr == BNrSeaMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
 
 				deleteUnit ( Building );
 			}
