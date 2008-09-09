@@ -2969,7 +2969,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iTimeDelay = message->popInt16();
 
 			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
-			if ( Player == NULL ) break;
+			if ( Player == NULL )
+			{
+				cLog::write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
+				break;
+			}
 
 			if ( iTimeDelay != -1 )
 			{
@@ -2994,7 +2998,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = NULL;
 			cBuilding *Building = NULL;
 
-			cLog::write("Received Unit Data: Vehicle: " + iToStr ( (int)bVehicle ) + ", ID: " + iToStr ( iID ) + ", XPos: " + iToStr ( iPosX ) + ", YPos: " +iToStr ( iPosY ), cLog::eLOG_TYPE_NET_DEBUG);
+			cLog::write(" Client: Received Unit Data: Vehicle: " + iToStr ( (int)bVehicle ) + ", ID: " + iToStr ( iID ) + ", XPos: " + iToStr ( iPosX ) + ", YPos: " +iToStr ( iPosY ), cLog::eLOG_TYPE_NET_DEBUG);
 			// unit is a vehicle
 			if ( bVehicle )
 			{
@@ -3003,7 +3007,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( !Vehicle )
 				{
-					cLog::write("Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					cLog::write(" Client: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					// TODO: Request sync of vehicle
 					break;
 				}
 				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
@@ -3039,7 +3044,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						Vehicle->PosX = iPosX;
 						Vehicle->PosY = iPosY;
 					}
-					cLog::write("Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iOldPosX ) + " Y" + iToStr( iOldPosY ) + "]", iLogType );
+					cLog::write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iOldPosX ) + " Y" + iToStr( iOldPosY ) + "]", iLogType );
 				}
 
 				Vehicle->name = message->popString();
@@ -3060,12 +3065,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( !Building )
 				{
-					cLog::write("Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_ERROR);
+					cLog::write(" Client: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					// TODO: Request sync of building
 					break;
 				}
 				if ( Building->PosX != iPosX || Building->PosY != iPosY )
 				{
-					cLog::write("Building identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
+					cLog::write(" Client: Building identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
 					// set to server position
 					if ( bBase ) Map->GO[iPosX+iPosY*Map->size].base = NULL;
 					else if ( bSubBase ) Map->GO[iPosX+iPosY*Map->size].subbase = NULL;
@@ -3125,7 +3131,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
 
 			cBuilding* building = Client->Map->GO[offset].top;
-			if ( building == NULL ) break;
+			if ( building == NULL )
+			{
+				cLog::write(" Client: Can't start work of building: Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of building
+				break;
+			}
 
 			building->ClientStartWork();
 
@@ -3149,7 +3160,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
 
 			cBuilding* building = Client->Map->GO[offset].top;
-			if ( building == NULL ) break;
+			if ( building == NULL )
+			{
+				cLog::write(" Client: Can't stop work of building: Unknown building Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of building
+				break;
+			}
 
 			building->ClientStopWork();
 
@@ -3169,12 +3185,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
 		{
-			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
-
+			int iVehicleID = message->popInt16();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
+
+			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
+			if ( Vehicle == NULL )
+			{
+				cLog::write(" Client: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: request sync of vehicle
+				break;
+			}
 
 			cClientMoveJob *MoveJob = new cClientMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
@@ -3198,8 +3220,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else
 			{
-				if ( Vehicle == NULL ) cLog::write(" Client: Can't find vehicle", cLog::eLOG_TYPE_NET_WARNING);
-				else cLog::write(" Client: Vehicle has no movejob", cLog::eLOG_TYPE_NET_WARNING);
+				if ( Vehicle == NULL ) cLog::write(" Client: Can't find vehicle with ID " + iToStr(iID), cLog::eLOG_TYPE_NET_WARNING);
+				else cLog::write(" Client: Vehicle with ID " + iToStr(iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: request sync of vehicle
 			}
 		}
 		break;
@@ -3239,9 +3262,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cVehicle *Vehicle;
 			bool bOK = message->popBool();
+			int iID = message->popInt16();
 
-			Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
+			Vehicle = getVehicleFromID ( iID );
+			if ( Vehicle == NULL )
+			{
+				cLog::write(" Client: Vehicle can't start building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of vehicle
+				break;
+			}
 
 			if ( !bOK )
 			{
@@ -3283,8 +3312,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_CONTINUE_PATH_ANSWER:
 		{
-			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
+			int iID = message->popInt16();
+			cVehicle *Vehicle = getVehicleFromID ( iID );
+			if ( Vehicle == NULL )
+			{
+				cLog::write(" Client: Can't continue path building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of vehicle
+				break;
+			}
 
 			Vehicle->BuildPath = message->popBool();
 
@@ -3297,8 +3332,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_STOP_BUILD:
 		{
-			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
+			int iID = message->popInt16();
+			cVehicle *Vehicle = getVehicleFromID ( iID );
+			if ( Vehicle == NULL )
+			{
+				cLog::write(" Client: Can't stop building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of vehicle
+				break;
+			}
 
 			int iNewPos = message->popInt32();
 			int iOff = message->popInt32();
@@ -3349,7 +3390,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					break;
 				}
 			}
-			if ( SubBase == NULL ) break;
+			if ( SubBase == NULL )
+			{
+				cLog::write(" Client: Can't delete subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of subbases
+				break;
+			}
 			for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 			{
 				SubBase->buildings[i]->SubBase = NULL;
@@ -3359,8 +3405,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_SUBBASE_BUILDINGS:
 		{
-			sSubBase *SubBase = getSubBaseFromID ( message->popInt16() );
-			if ( SubBase == NULL ) break;
+			int iID = message->popInt16();
+			sSubBase *SubBase = getSubBaseFromID ( iID );
+			if ( SubBase == NULL )
+			{
+				cLog::write(" Client: Can't add buildings to subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of subbases
+				break;
+			}
 			int iCount = message->popInt16();
 			for ( unsigned int i = 0; i < iCount; i++ )
 			{
@@ -3378,7 +3430,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_SUBBASE_VALUES:
 		{
-			sSubBase *SubBase = getSubBaseFromID ( message->popInt16() );
+			int iID = message->popInt16();
+			sSubBase *SubBase = getSubBaseFromID ( iID );
+			if ( SubBase == NULL )
+			{
+				cLog::write(" Client: Can't add subbase values: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of subbases
+				break;
+			}
 
 			SubBase->HumanProd = message->popInt16();
 			SubBase->MaxHumanNeed = message->popInt16();
@@ -3408,8 +3467,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_BUILDLIST:
 		{
-			cBuilding *Building = getBuildingFromID ( message->popInt16() );
-			if ( Building == NULL ) break;
+			int iID = message->popInt16();
+			cBuilding *Building = getBuildingFromID ( iID );
+			if ( Building == NULL )
+			{
+				cLog::write(" Client: Can't set buildlist: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of building
+				break;
+			}
 
 			while (Building->BuildList->Size())
 			{
@@ -3432,8 +3497,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_PRODUCE_VALUES:
 		{
-			cBuilding *Building = getBuildingFromID ( message->popInt16() );
-			if ( Building == NULL ) break;
+			int iID = message->popInt16();
+			cBuilding *Building = getBuildingFromID ( iID );
+			if ( Building == NULL )
+			{
+				cLog::write(" Client: Can't set produce values of building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				// TODO: Request sync of building
+				break;
+			}
 
 			Building->MetalProd = message->popInt16();
 			Building->MaxMetalProd = message->popInt16();
@@ -3505,15 +3576,27 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iType = message->popChar ();
 			if ( message->popBool () ) 
 			{
-				cVehicle *DestVehicle = getVehicleFromID ( message->popInt16() );
-				if ( !DestVehicle ) break;
+				int iID = message->popInt16();
+				cVehicle *DestVehicle = getVehicleFromID ( iID );
+				if ( !DestVehicle )
+				{
+					cLog::write(" Client: Can't supply vehicle: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					// TODO: Request sync of vehicle
+					break;
+				}
 				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = message->popInt16();
 				else DestVehicle->data.hit_points = message->popInt16();
 			}
 			else
 			{
-				cBuilding *DestBuilding = getBuildingFromID ( message->popInt16() );
-				if ( !DestBuilding ) break;
+				int iID = message->popInt16();
+				cBuilding *DestBuilding = getBuildingFromID ( iID );
+				if ( !DestBuilding )
+				{
+					cLog::write(" Client: Can't supply building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					// TODO: Request sync of building
+					break;
+				}
 				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = message->popInt16();
 				else DestBuilding->data.hit_points = message->popInt16();
 			}
@@ -4036,7 +4119,7 @@ void cClient::handleMoveJobs ()
 					}
 					else
 					{
-						cLog::write(" Client: something is goning wrong", cLog::eLOG_TYPE_NET_WARNING);
+						cLog::write(" Client: movejob has end for now but has no waypoints anymore", cLog::eLOG_TYPE_NET_WARNING);
 					}
 				}
 				ActiveMJobs.Delete ( i );

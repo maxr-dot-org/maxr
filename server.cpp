@@ -316,12 +316,22 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_MOVE_JOB_CLIENT:
 		{
-			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
-
+			int iVehicleID = message->popInt16();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
+
+			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
+			if ( Vehicle == NULL )
+			{
+				cLog::write(" Server: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
+				break;
+			}
+			if ( Vehicle->PosX+Vehicle->PosY*Map->size != iSrcOff )
+			{
+				cLog::write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
+				break;
+			}
 
 			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
