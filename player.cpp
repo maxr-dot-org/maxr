@@ -59,6 +59,40 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	this->iSocketNum = iSocketNum;
 }
 
+cPlayer::cPlayer(const cPlayer &Player) : base(this)
+{
+	name = Player.name;
+	color = Player.color;
+	Nr = Player.Nr;
+	iSocketNum = Player.iSocketNum;
+	Credits = Player.Credits;
+	// copy vehicle and building datas
+	VehicleData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.vehicle.Size());
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); ++i)
+	{
+		VehicleData[i] = Player.VehicleData[i];
+	}
+	BuildingData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.building.Size());
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); ++i)
+	{
+		BuildingData[i] = Player.BuildingData[i];
+	}
+	DetectLandMap=NULL;
+	DetectSeaMap=NULL;
+	DetectMinesMap = NULL;
+	ScanMap=NULL;
+	SentriesMapAir=NULL;
+	SentriesMapGround=NULL;
+	VehicleList=NULL;
+	BuildingList=NULL;
+	ResourceMap=NULL;
+	ResearchCount=0;
+	UnusedResearch=0;
+	Credits=0;
+	ReportForschungFinished=false;
+	this->iSocketNum = iSocketNum;
+}
+
 cPlayer::~cPlayer ( void )
 {
 

@@ -504,11 +504,6 @@ void RunSPMenu ( void )
 				ClientPlayerList.Add ( Player );
 				ClientPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
-				// playerlist for server
-				cList<cPlayer*> ServerPlayerList;
-				ServerPlayerList.Add ( new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ) ); // Socketnumber MAX_CLIENTS for lokal client
-				ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
-
 				// init client and his player
 				Client = new cClient(&Map, &ClientPlayerList);
 				Client->initPlayer ( Player );
@@ -518,18 +513,24 @@ void RunSPMenu ( void )
 					ClientPlayerList[i]->Credits = options.credits;
 				}
 
+				// run the hangar
+				cList<sLanding*> LandingList;
+				RunHangar ( Player, &LandingList );
+
+				// playerlist for server
+				cList<cPlayer*> ServerPlayerList;
+				//cPlayer p = *Player;
+				ServerPlayerList.Add ( new cPlayer ( (*Player) ) ); // Socketnumber MAX_CLIENTS for lokal client
+				ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
+
 				// init the players of playerlist
 				for ( int i = 0; i < ServerPlayerList.Size(); i++ )
 				{
 					ServerPlayerList[i]->InitMaps(ServerMap.size, &ServerMap);
-					ServerPlayerList[i]->Credits = options.credits;
 				}
 				// init server
 				Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
 
-				// land the player
-				cList<sLanding*> LandingList;
-				RunHangar ( Player, &LandingList );
 				SelectLanding ( &iLandX, &iLandY, &Map );
 
 				Server->makeLanding(iLandX, iLandY, ServerPlayerList[0], &LandingList, options.FixedBridgeHead);
@@ -4322,8 +4323,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				cPlayer *ActualPlayerClient;
 				for ( int i = 0; i < PlayerList.Size(); i++ )
 				{
-					cPlayer const* const p = PlayerList[i];
-					ClientPlayerList->Add(new cPlayer(p->name, p->color, p->Nr, p->iSocketNum));
+					ClientPlayerList->Add(new cPlayer( *PlayerList[i] ) );
 					if ((*ClientPlayerList)[i]->Nr == ActualPlayer->Nr) ActualPlayerClient = (*ClientPlayerList)[i];
 				}
 				// init client and his player
@@ -4332,7 +4332,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 				for ( int i = 0; i < ClientPlayerList->Size(); i++ )
 				{
 					(*ClientPlayerList)[i]->InitMaps(Map->size, Map);
-					(*ClientPlayerList)[i]->Credits = Options.credits;
 				}
 
 				if ( bHost )
@@ -4341,7 +4340,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 					for ( int i = 0; i < PlayerList.Size(); i++ )
 					{
 						if ( PlayerList[i] != ActualPlayer ) PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
-						PlayerList[i]->Credits = Options.credits;
 					}
 
 					// init server

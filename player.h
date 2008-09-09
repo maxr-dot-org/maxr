@@ -62,6 +62,7 @@ friend class cClient;
 public:
   cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
   ~cPlayer(void);
+  cPlayer(const cPlayer &Player);
 
   string name;
   SDL_Surface *color;
