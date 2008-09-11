@@ -6369,7 +6369,7 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->isDetectedByPlayer ( owner ) )
+	if ( v )
 	{
 		if ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer )
 			return false;

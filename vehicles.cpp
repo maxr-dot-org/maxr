@@ -2720,7 +2720,7 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	if ( v && v->isDetectedByPlayer( owner ) )
+	if ( v )
 	{
 		if ( v->owner == owner )
 			return false;
