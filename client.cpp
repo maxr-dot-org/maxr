@@ -3639,8 +3639,29 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_DETECTION_STATE:
+		{
+			int id = message->popInt32();
+			cVehicle* vehicle = getVehicleFromID( id );
+			if ( vehicle == NULL )
+			{
+				cLog::write(" Client: Vehicle (ID: " + iToStr(id) + ") not found", cLog::eLOG_TYPE_NET_ERROR);
+				break;
+			}
+			bool detected = message->popBool();
+			if ( detected )
+			{
+				//mark vehicle as detected with size of DetectedByPlayerList > 0
+				vehicle->DetectedByPlayerList.Add(NULL);
+			}
+			else
+			{
+				while ( vehicle->DetectedByPlayerList.Size() > 0 ) vehicle->DetectedByPlayerList.Delete(0);
+			}
+		}
+		break;
 	default:
-		cLog::write("Client: Can not handle message type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
+		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
 	}
 	return 0;

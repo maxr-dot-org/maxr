@@ -666,7 +666,7 @@ void cServerMoveJob::moveVehicle()
 		Vehicle->owner->DoScan();
 
 		//hide vehicle
-		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->DetectedByPlayerList.Delete(0);
+		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
 
 		//handle detection
 		Vehicle->makeDetection();

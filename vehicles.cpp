@@ -369,10 +369,15 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			if ( StartUp >= 255 )
 				StartUp = 0;
+
+			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && 
+				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+				StartUp = 0;
 		}
 		else
 		{
-			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) )
+			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size ) &&
+				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
 				SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
@@ -5660,16 +5665,24 @@ bool cVehicle::isDetectedByPlayer( cPlayer* player )
 
 void cVehicle::setDetectedByPlayer( cPlayer* player )
 {
+	bool wasDetected = ( DetectedByPlayerList.Size() > 0 );
+
 	if (!isDetectedByPlayer( player ))
 		DetectedByPlayerList.Add( player );
+
+	if ( !wasDetected ) sendDetectionState( this );
 }
 
 void cVehicle::resetDetectedByPlayer( cPlayer* player )
 {
+	bool wasDetected = ( DetectedByPlayerList.Size() > 0 );
+
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{
 		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
 	}
+
+	if ( wasDetected && DetectedByPlayerList.Size() == 0 ) sendDetectionState( this );
 }
 
 void cVehicle::makeDetection()

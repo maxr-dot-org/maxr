@@ -401,6 +401,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_CHANGE_SENTRY");
 	case GAME_EV_ADD_RUBBLE:
 		return string("GAME_EV_ADD_RUBBLE");
+	case GAME_EV_WANT_SUPPLY:
+		return string("GAME_EV_WANT_SUPPLY");
 	default:
 		return iToStr( iType );
 	}

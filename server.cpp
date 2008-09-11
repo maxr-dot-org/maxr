@@ -417,7 +417,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				int oldOffset = targetOffset;
 				targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
-				cLog::write( "Server: attacking vehicle " + targetVehicle->name + ", " + iToStr(targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG );
+				cLog::write( " Server: attacking vehicle " + targetVehicle->name + ", " + iToStr(targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG );
 				if ( oldOffset != targetOffset ) cLog::write(" Server: target offset changed from " + iToStr( oldOffset ) + " to " + iToStr( targetOffset ), cLog::eLOG_TYPE_NET_DEBUG );
 			}
 
@@ -1180,7 +1180,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 		break;
 	default:
-		cLog::write("Server: Can not handle message, type " + iToStr(message->iType), cLog::eLOG_TYPE_NET_ERROR);
+		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	return 0;
@@ -1923,7 +1923,7 @@ void cServer::makeTurnEnd ()
 		cVehicle* vehicle = player->VehicleList;
 		while ( vehicle )
 		{
-			while ( vehicle->DetectedByPlayerList.Size() ) vehicle->DetectedByPlayerList.Delete(0);
+			while ( vehicle->DetectedByPlayerList.Size() ) vehicle->resetDetectedByPlayer(vehicle->DetectedByPlayerList[0]);
 			vehicle->makeDetection();
 			vehicle = vehicle->next;
 		}

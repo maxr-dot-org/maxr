@@ -887,9 +887,6 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		targetVehicle = Client->Map->GO[offset].vehicle;
 		targetBuilding = Client->Map->GO[offset].top;
 
-		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
-			targetVehicle = NULL;
-
 		if ( !targetBuilding && !targetVehicle )
 			targetBuilding = Client->Map->GO[offset].base;
 

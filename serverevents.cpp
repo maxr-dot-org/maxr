@@ -562,3 +562,11 @@ void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPl
 	message->pushChar ( iType );
 	Server->sendNetMessage( message, iPlayerNum );
 }
+
+void sendDetectionState( cVehicle* vehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DETECTION_STATE );
+	message->pushBool( vehicle->DetectedByPlayerList.Size() > 0 );
+	message->pushInt32( vehicle->iID );
+	Server->sendNetMessage( message, vehicle->owner->Nr );
+}

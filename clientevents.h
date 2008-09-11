@@ -57,7 +57,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_TURN_REPORT,			// the turnstartreport of a player
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_SUPPLY,					// rearms or repairs a unit
-	GAME_EV_ADD_RUBBLE				// adds a rubble field to the client
+	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
+	GAME_EV_DETECTION_STATE,		// informs a client wether a vehicle has been detected
 };
 
 enum CHAT_MESSAGE_TYPES
