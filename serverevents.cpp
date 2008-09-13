@@ -63,18 +63,19 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 		for ( int i = 0; i < building->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
-
 			message->pushInt16( building->iID );
-
 			Server->sendNetMessage(message, *building->SeenByPlayerList[i]);
 		}
+
+		//send message to owner, since he is not in the SeenByPlayerList
+		message = new cNetMessage ( GAME_EV_DEL_BUILDING );
+		message->pushInt16( building->iID );
+		Server->sendNetMessage(message, building->owner->Nr);
 	}
 	else
 	{
 		message = new cNetMessage ( GAME_EV_DEL_BUILDING );
-
 		message->pushInt16( building->iID );
-
 		Server->sendNetMessage( message, iClient );
 	}
 }
@@ -570,3 +571,4 @@ void sendDetectionState( cVehicle* vehicle )
 	message->pushInt32( vehicle->iID );
 	Server->sendNetMessage( message, vehicle->owner->Nr );
 }
+
