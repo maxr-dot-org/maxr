@@ -30,6 +30,10 @@
 #define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(SettingsData.bWindowMode)SDL_UpdateRect(screen,0,0,0,0);else{SDL_Flip(screen);}
 #define MAXPLAYER_HOTSEAT 8
 
+#ifdef _MSC_VER
+#define CHECK_MEMORY _CrtCheckMemory();
+#endif
+
 #endif
 
 //some defines for typical menus

@@ -5720,7 +5720,8 @@ void cVehicle::makeDetection()
 				int offset = x + y * Server->Map->size;
 				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
 				cBuilding* building = Server->Map->GO[offset].base;
-				if ( vehicle )
+
+				if ( vehicle && vehicle->owner != owner )
 				{
 					if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
 					{
@@ -5731,13 +5732,13 @@ void cVehicle::makeDetection()
 						vehicle->setDetectedByPlayer( owner );
 					}
 				}
-				if ( building )
+				if ( building && building->owner != owner )
 				{
 					if ( data.can_detect_mines && owner->DetectMinesMap[offset] && building->data.is_expl_mine )
 					{
 						building->setDetectedByPlayer( owner );
 					}
-				}	
+				}
 			}
 		}
 	}

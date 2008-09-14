@@ -572,3 +572,36 @@ void sendDetectionState( cVehicle* vehicle )
 	Server->sendNetMessage( message, vehicle->owner->Nr );
 }
 
+void sendCheckVehiclePositions(cPlayer* p )
+{
+	//generate a message for all players
+	for ( int n = 0; n < Server->PlayerList->Size(); n++ )
+	{
+		cPlayer* player = (*Server->PlayerList)[n];
+		if ( p && p != player ) continue;
+
+		cNetMessage* message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
+		for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			cVehicle* vehicle = (*Server->PlayerList)[i]->VehicleList;
+			while ( vehicle )
+			{
+				//check wether the vehicle is visible on the client
+				int x;
+				for ( x = 0; x < vehicle->SeenByPlayerList.Size(); x++ )
+				{
+					if ( *vehicle->SeenByPlayerList[x] == player->Nr ) break;
+				}
+				if ( x < vehicle->SeenByPlayerList.Size() || vehicle->owner == player )
+				{
+					message->pushInt16( vehicle->PosX );
+					message->pushInt16( vehicle->PosY );
+					message->pushInt32( vehicle->iID  );
+				}
+
+				vehicle = vehicle->next;
+			}
+		}
+		Server->sendNetMessage( message, player->Nr );
+	}
+}

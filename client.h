@@ -490,6 +490,9 @@ public:
 	*/
 	void destroyUnit( cVehicle* vehicle );
 	void destroyUnit( cBuilding* building );
+
+	void checkVehiclePositions( cNetMessage* message );
+
 } EX *Client;
 
 #endif

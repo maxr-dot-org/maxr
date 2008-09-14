@@ -216,9 +216,11 @@ void sendTurnReport ( cPlayer *Player );
 */
 void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPlayerNum );
 /**
-* informs the ówner of the vehicle wether the vehicle has been detected by another player.
+* informs the owner of the vehicle wether the vehicle has been detected by another player.
 * this is used by the client for correct drawing of the unit
 */
 void sendDetectionState( cVehicle* vehicle );
+
+void sendCheckVehiclePositions(cPlayer* p = NULL);
 
 #endif // servereventsH

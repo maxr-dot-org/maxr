@@ -1,4 +1,4 @@
-/***************************************************************************
+	/***************************************************************************
  *      Mechanized Assault and Exploration Reloaded Projectfile            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -261,6 +261,7 @@ void cClient::run()
 			makePanel ( false );
 			break;
 		}
+		CHECK_MEMORY;
 		// end truth save/load menu
 		if ( bExit )
 		{
@@ -275,6 +276,7 @@ void cClient::run()
 			drawMap();
 			displayFX();
 		}
+		CHECK_MEMORY;
 
 		// Ggf das Objekt deselektieren:
 		if ( SelectedVehicle&&SelectedVehicle->owner!=ActivePlayer&&!ActivePlayer->ScanMap[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size] )
@@ -290,7 +292,7 @@ void cClient::run()
 
 		// draw the unit circles
 		drawUnitCircles();
-
+		CHECK_MEMORY;
 		// draw the minimap:
 		if ( bFlagDrawMMap )
 		{
@@ -298,7 +300,7 @@ void cClient::run()
 			drawMiniMap();
 			bFlagDrawHud = true;
 		}
-
+		CHECK_MEMORY;
 		// draw the debug information
 		displayDebugOutput();
 
@@ -309,11 +311,13 @@ void cClient::run()
 			mouse->GetBack ( buffer );
 			bFlagDraw = true;
 		}
+		CHECK_MEMORY;
 		// draw the video:
 		if ( bFlagDraw || bFlagDrawHud )
 		{
 			drawFLC();
 		}
+		CHECK_MEMORY;
 		// display the object menu:
 		if ( bFlagDrawMap && SelectedVehicle && SelectedVehicle->MenuActive )
 		{
@@ -323,6 +327,7 @@ void cClient::run()
 		{
 			SelectedBuilding->DrawMenu();
 		}
+		CHECK_MEMORY;
 		// display the chatinput:
 		if ( bChatInput && bFlagDrawMap )
 		{
@@ -333,6 +338,7 @@ void cClient::run()
 		{
 			handleMessages();
 		}
+		CHECK_MEMORY;
 		// draw the mouse:
 		if ( bFlagDraw )
 		{
@@ -365,6 +371,7 @@ void cClient::run()
 
 				bStartup = false;
 			}
+			CHECK_MEMORY;
 			SHOW_SCREEN
 			bFlagDraw = false;
 			bFlagDrawHud = false;
@@ -387,6 +394,7 @@ void cClient::run()
 			}
 		}
 		handleTurnTime();
+		CHECK_MEMORY;
 		// change the wind direction:
 		if ( iTimer2 && SettingsData.bDamageEffects )
 		{
@@ -409,6 +417,7 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
+		CHECK_MEMORY;
 	}
 	mouse->MoveCallback = false;
 }
@@ -2496,6 +2505,10 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTraceServer = false; bDebugTraceClient = false; return true; }
 	if ( sCmd.compare( "ajobs on" ) == 0 ) { bDebugAjobs = true; return true; }
 	if ( sCmd.compare( "ajobs off" ) == 0 ) { bDebugAjobs = false; return true; }
+	if ( sCmd.compare( "checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return true; }
+	if ( sCmd.compare( "checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return true; }
+	if ( sCmd.compare( "checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return true; }
+	
 	if ( sCmd.substr( 0, 5 ).compare( "mark "  ) == 0 )
 	{
 		sCmd.erase(0, 5 );
@@ -2792,11 +2805,15 @@ void cClient::handleMessages()
 }
 
 int cClient::HandleNetMessage( cNetMessage* message )
-{
-	cLog::write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+{	
+	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS )		//do not pollute log file with debug events
+		cLog::write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	switch ( message->iType )
 	{
+	case DEBUG_CHECK_VEHICLE_POSITIONS:
+		checkVehiclePositions( message );
+		break;
 	case GAME_EV_LOST_CONNECTION:
 		// This is just temporary so doesn't need to be translated
 		addMessage( "Lost connection to Server" );
@@ -3664,6 +3681,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
 	}
+
+	CHECK_MEMORY;
 	return 0;
 }
 
@@ -4378,10 +4397,13 @@ void cClient::doGameActions()
 
 	//run attackJobs
 	cClientAttackJob::handleAttackJobs();
+	CHECK_MEMORY;
 	//run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();
+	CHECK_MEMORY;
 	//run surveyor ai
 	cAutoMJob::handleAutoMoveJobs();
+	CHECK_MEMORY;
 }
 
 void cClient::continuePathBuilding ( cVehicle *Vehicle )
@@ -4964,4 +4986,55 @@ void cClient::destroyUnit(cBuilding *building)
 	deleteUnit( Map->GO[offset].base );
 	deleteUnit( Map->GO[offset].subbase );
 
+}
+
+void cClient::checkVehiclePositions(cNetMessage *message)
+{
+	//generate list with all vehicles
+	cList<cVehicle*>  vehicleList;
+	for ( int i = 0; i < Client->PlayerList->Size(); i++ )
+	{
+		cVehicle* vehicle = (*Client->PlayerList)[i]->VehicleList;
+		while ( vehicle )
+		{
+			vehicleList.Add( vehicle );
+			vehicle = vehicle->next;
+		}
+	}
+
+	//check all sent positions
+	while ( message->iLength > 5 )
+	{
+		int id = message->popInt32();
+		int PosY = message->popInt16();
+		int PosX = message->popInt16();
+		cVehicle* vehicle = getVehicleFromID(id);
+		if ( vehicle == NULL )
+		{
+			cLog::write("   --Vehicle not present, ID: " + iToStr(id), cLog::eLOG_TYPE_NET_ERROR );
+			continue;
+		}
+
+		if ( vehicle->PosX != PosX || vehicle->PosY != PosY && !vehicle->MoveJobActive && !vehicle->ClientMoveJob )
+		{
+			cLog::write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR); 
+		}
+
+		//remove vehicle from list
+		for ( int i = 0; i < vehicleList.Size(); i++)
+		{
+			if ( vehicleList[i] == vehicle )
+			{
+				vehicleList.Delete(i);
+				break;
+			}
+		}
+	}
+
+	//check remaining vehicles
+	while ( vehicleList.Size() > 0 )
+	{
+		cLog::write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
+		vehicleList.Delete(0);
+	}
 }

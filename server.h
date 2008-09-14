@@ -120,6 +120,7 @@ private:
 	/** ID of the timer */
 	SDL_TimerID TimerID;
 
+
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
 	* the returned event and its data structures are valid until the next call of pollEvent()
@@ -243,6 +244,7 @@ public:
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
+	bool bDebugCheckPos;
 
 	/**
 	* checks whether a player has detected some new enemy units

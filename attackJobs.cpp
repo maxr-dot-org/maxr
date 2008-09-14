@@ -294,9 +294,6 @@ void cServerAttackJob::clientFinished( int playerNr )
 void cServerAttackJob::makeImpact()
 {
 
-	//Todo: cluster
-	sendAttackJobImpact( iTargetOff, damage, attackMode );
-
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
 
@@ -380,6 +377,11 @@ void cServerAttackJob::makeImpact()
 		}
 	}
 
+	//Todo: cluster
+	sendAttackJobImpact( iTargetOff, damage, attackMode );
+
+
+	//TODO: unlocking here interferes with following attack job by sentry mode.
 	//clean up
 	if ( attackMode == ATTACK_AIR )
 	{

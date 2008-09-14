@@ -403,6 +403,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_ADD_RUBBLE");
 	case GAME_EV_WANT_SUPPLY:
 		return string("GAME_EV_WANT_SUPPLY");
+	case GAME_EV_SUPPLY:
+		return string("GAME_EV_SUPPLY");
+	case GAME_EV_DETECTION_STATE:
+		return string("GAME_EV_DETECTION_STATE");
 	default:
 		return iToStr( iType );
 	}

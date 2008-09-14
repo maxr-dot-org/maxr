@@ -41,6 +41,7 @@ int CallbackRunServerThread( void *arg )
 
 cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const iGameType, bool const bPlayTurns)
 {
+	bDebugCheckPos = false;
 	Map = map;
 	this->PlayerList = PlayerList;
 	this->iGameType = iGameType;
@@ -126,13 +127,15 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
 
-	cLog::write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	if (message->iType != DEBUG_CHECK_VEHICLE_POSITIONS)  //do not pollute log file with debug events
+		cLog::write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	if ( iPlayerNum == -1 )
 	{
 		EventHandler->pushEvent( message->getGameEvent() );
 		if ( network ) network->send( message->iLength, message->data );
 		delete message;
+		if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS && bDebugCheckPos ) sendCheckVehiclePositions();
 		return;
 	}
 
@@ -159,6 +162,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	{
 		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize( true ) );
 	}
+	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS ) sendCheckVehiclePositions(Player);
 	delete message;
 }
 
@@ -209,6 +213,7 @@ void cServer::run()
 					cNetMessage message( (char*) event->user.data1 );
 					message.refertControlChars();
 					HandleNetMessage( &message );
+					CHECK_MEMORY;
 					break;
 				}
 
@@ -221,15 +226,15 @@ void cServer::run()
 		if ( !bStarted ) { SDL_Delay( 10 ); continue; }
 
 		checkPlayerUnits();
-
+		CHECK_MEMORY;
 		checkDeadline();
-
+		CHECK_MEMORY;
 		handleMoveJobs ();
-
+		CHECK_MEMORY;
 		handleTimer();
-
+		CHECK_MEMORY;
 		handleWantEnd();
-
+		CHECK_MEMORY;
 		SDL_Delay( 10 );
 	}
 }
@@ -1191,6 +1196,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
+	CHECK_MEMORY;
 	return 0;
 }
 
