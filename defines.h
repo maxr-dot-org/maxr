@@ -31,7 +31,9 @@
 #define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER
-#define CHECK_MEMORY _CrtCheckMemory();
+	#define CHECK_MEMORY _CrtCheckMemory();
+#else
+	#define CHECK_MEMORY 
 #endif
 
 #endif
