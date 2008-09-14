@@ -1169,6 +1169,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else DestVehicle->data.hit_points = DestVehicle->data.max_hit_points;
 
 				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
+				
+				//send unitdata to the players who are not the owner
+				for ( int i = 0; i < DestVehicle->SeenByPlayerList.Size(); i++)
+					sendUnitData( DestVehicle, *DestVehicle->SeenByPlayerList[i] );
 			}
 			else
 			{
@@ -1176,6 +1180,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else DestBuilding->data.hit_points = DestBuilding->data.max_hit_points;
 
 				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
+								
+				//send unitdata to the players who are not the owner
+				for ( int i = 0; i < DestBuilding->SeenByPlayerList.Size(); i++)
+					sendUnitData( DestBuilding, *DestBuilding->SeenByPlayerList[i] );
 			}
 		}
 		break;
