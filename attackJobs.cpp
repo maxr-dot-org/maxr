@@ -347,6 +347,8 @@ void cServerAttackJob::makeImpact()
 		targetBuilding = NULL;
 
 	int remainingHP = 0;
+	cPlayer* owner = NULL;
+
 	//if target found
 	if ( targetBuilding || targetVehicle )
 	{
@@ -354,6 +356,7 @@ void cServerAttackJob::makeImpact()
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
 			remainingHP = targetVehicle->data.hit_points;
+			owner = targetVehicle->owner;
 			cLog::write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if (targetVehicle->data.hit_points <= 0)
@@ -369,6 +372,8 @@ void cServerAttackJob::makeImpact()
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
 			remainingHP = targetBuilding->data.hit_points;
+			owner = targetBuilding->owner;
+
 			cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if ( targetBuilding->data.hit_points <= 0 )
@@ -377,6 +382,10 @@ void cServerAttackJob::makeImpact()
 			}
 		}
 	}
+
+	//workaround
+	//make sure, the owner gehts the impact message
+	if ( owner ) owner->ScanMap[iTargetOff] = 1;
 
 	//Todo: cluster
 	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
