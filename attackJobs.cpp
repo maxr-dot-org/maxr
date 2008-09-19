@@ -346,13 +346,14 @@ void cServerAttackJob::makeImpact()
 	if ( targetBuilding && !targetBuilding->owner )
 		targetBuilding = NULL;
 
+	int remainingHP = 0;
 	//if target found
 	if ( targetBuilding || targetVehicle )
 	{
 		if ( targetVehicle )
 		{
 			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
-
+			remainingHP = targetVehicle->data.hit_points;
 			cLog::write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if (targetVehicle->data.hit_points <= 0)
@@ -367,7 +368,7 @@ void cServerAttackJob::makeImpact()
 		else
 		{
 			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
-
+			remainingHP = targetBuilding->data.hit_points;
 			cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
 			if ( targetBuilding->data.hit_points <= 0 )
@@ -378,7 +379,7 @@ void cServerAttackJob::makeImpact()
 	}
 
 	//Todo: cluster
-	sendAttackJobImpact( iTargetOff, damage, attackMode );
+	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
 
 
 	//TODO: unlocking here interferes with following attack job by sentry mode.
@@ -842,7 +843,7 @@ void cClientAttackJob::updateAgressorData()
 	}
 }
 
-void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
+void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 {
 	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )
 	{
@@ -921,7 +922,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 
 		if ( targetVehicle )
 		{
-			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
+			targetVehicle->data.hit_points = remainingHP;
 
 			cLog::write(" Client: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
@@ -944,7 +945,7 @@ void cClientAttackJob::makeImpact(int offset, int damage, int attackMode )
 		}
 		else
 		{
-			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+			targetBuilding->data.hit_points = remainingHP;
 
 			cLog::write(" Client: building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
