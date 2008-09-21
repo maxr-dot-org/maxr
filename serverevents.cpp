@@ -594,8 +594,16 @@ void sendCheckVehiclePositions(cPlayer* p )
 				}
 				if ( x < vehicle->SeenByPlayerList.Size() || vehicle->owner == player )
 				{
-					message->pushInt16( vehicle->PosX );
-					message->pushInt16( vehicle->PosY );
+					if ( vehicle->ServerMoveJob )
+					{
+						message->pushInt16( -1 );
+						message->pushInt16( -1 );
+					}
+					else
+					{
+						message->pushInt16( vehicle->PosX );
+						message->pushInt16( vehicle->PosY );
+					}
 					message->pushInt32( vehicle->iID  );
 				}
 

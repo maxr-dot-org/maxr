@@ -135,7 +135,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 		EventHandler->pushEvent( message->getGameEvent() );
 		if ( network ) network->send( message->iLength, message->data );
 		delete message;
-		if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS && bDebugCheckPos ) sendCheckVehiclePositions();
+		//if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS && bDebugCheckPos ) sendCheckVehiclePositions();
 		return;
 	}
 
@@ -162,7 +162,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	{
 		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize( true ) );
 	}
-	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS ) sendCheckVehiclePositions(Player);
+	//if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS ) sendCheckVehiclePositions(Player);
 	delete message;
 }
 
@@ -1195,7 +1195,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	default:
 		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
-
+	
+	sendCheckVehiclePositions();
 	CHECK_MEMORY;
 	return 0;
 }

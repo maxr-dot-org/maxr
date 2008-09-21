@@ -5015,7 +5015,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 			continue;
 		}
 
-		if ( vehicle->PosX != PosX || vehicle->PosY != PosY && !vehicle->MoveJobActive && !vehicle->ClientMoveJob )
+		if ( PosX != -1 && PosY != -1 && vehicle->PosX != PosX || vehicle->PosY != PosY && !vehicle->ClientMoveJob )
 		{
 			cLog::write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR); 
 		}
