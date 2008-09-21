@@ -53,8 +53,8 @@
           <Range Fd="4"/>
         </Target_Sea>
         <Target_Air>
-          <Damage Num="18"/>
-          <Range Fd="4"/>
+          <Damage Num="0"/>
+          <Range Fd="0"/>
         </Target_Air>
         <Target_Mine>
           <Damage Num="0"/>
