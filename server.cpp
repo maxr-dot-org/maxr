@@ -940,7 +940,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iY = message->popInt16();
 			if ( iY < 0 || iY > Map->size ) break;
 
-			if ( Building->BuildList->Size <= 0 ) break;
+			if ( Building->BuildList->Size() <= 0 ) break;
 			BuildingListItem = (*Building->BuildList)[0];
 			if ( BuildingListItem->metall_remaining > 0 ) break;
 
