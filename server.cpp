@@ -936,9 +936,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Building == NULL ) break;
 
 			int iX = message->popInt16();
+			if ( iX < 0 || iX > Map->size ) break;
 			int iY = message->popInt16();
+			if ( iY < 0 || iY > Map->size ) break;
 
+			if ( Building->BuildList->Size <= 0 ) break;
 			BuildingListItem = (*Building->BuildList)[0];
+			if ( BuildingListItem->metall_remaining > 0 ) break;
 
 			if ( checkExitBlocked ( iX, iY, BuildingListItem->typ ) ) break;
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
