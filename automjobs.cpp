@@ -169,8 +169,13 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	int x, y;
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
 	{
+		// check for map borders
+		if ( x < 0 || x >= Client->Map->size ) continue;
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
+			// check for map borders
+			if ( y < 0 || y >= Client->Map->size ) continue;
+
 			// calculate current map index only once in a loop cycle
 			int iPos = x + y * Client->Map->size;
 			// skip the surveyor's current target position, as it should have been explored already,
@@ -183,8 +188,6 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 				}
 				continue;
 			}
-			// and check for map borders, no need to check for unexplored fields next to the border
-			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
 
 			// int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size]; !the line where this variable is needed was commented out earlier!
 			if ( vehicle->owner->ResourceMap[iPos] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
