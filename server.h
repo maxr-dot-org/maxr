@@ -227,11 +227,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	bool checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data );
-	/**
-	* calculates the tuns and resource costs needed to build the building by the vehicle
-	*@author alzi alias DoctorDeath
-	*/
-	void calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int iTurboBuildRounds[3], int iTurboBuildCosts[3] );
 	bool checkExitBlocked ( int iX, int iY, sVehicle *Type );
 public:
 	/** the map */

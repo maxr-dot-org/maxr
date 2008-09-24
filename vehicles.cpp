@@ -3426,65 +3426,11 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 				tb.ShowBigDetails();
 			}
 
-			// calculate building time and costs
+			calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, owner->BuildingData[ptr->id].iBuilt_Costs, owner->BuildingData[ptr->id].iBuilt_Costs_Max );
 
-			//TODO: check, if the algorithm works also correct, if the building costs are reduced by research
-			iTurboBuildRounds[0] = 0;
-
-			iTurboBuildRounds[1] = 0;
-
-			iTurboBuildRounds[2] = 0;
-
-			//prevent division by zero
-			if ( data.iNeeds_Metal == 0 )
-				data.iNeeds_Metal = 1;
-
-			//step 1x
-			if ( data.cargo >= owner->BuildingData[ptr->id].iBuilt_Costs )
+			if ( *buildspeed == -1 && iTurboBuildRounds[0] != 0 )
 			{
-				if ( *buildspeed == -1 )
-				{
-					*buildspeed = 0;
-				}
-
-				iTurboBuildCosts[0] = owner->BuildingData[ptr->id].iBuilt_Costs;
-
-				iTurboBuildRounds[0] = iTurboBuildCosts[0] / data.iNeeds_Metal;
-			}
-
-			//step 2x
-			if ( ( iTurboBuildRounds[0] > 1 ) && ( iTurboBuildCosts[0] + 4 <= owner->BuildingData[ptr->id].iBuilt_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[0] + 4 ) )
-			{
-				iTurboBuildRounds[1] = iTurboBuildRounds[0];
-				iTurboBuildCosts[1] = iTurboBuildCosts[0];
-
-				while ( ( data.cargo >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
-				{
-					iTurboBuildRounds[1]--;
-					iTurboBuildCosts[1] += 4;
-
-					if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0] )
-						break;
-
-					if ( iTurboBuildCosts[1] + 4 > owner->BuildingData[ptr->id].iBuilt_Costs_Max )
-						break;
-				}
-			}
-
-			//step 4x
-			if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= owner->BuildingData[ptr->id].iBuilt_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[1] + 8 ) )
-			{
-				iTurboBuildRounds[2] = iTurboBuildRounds[1];
-				iTurboBuildCosts[2] = iTurboBuildCosts[1];
-
-				while ( ( data.cargo >= iTurboBuildCosts[2] + 8 ) && ( iTurboBuildRounds[2] > 1 ) )
-				{
-					iTurboBuildRounds[2]--;
-					iTurboBuildCosts[2] += 8;
-
-					if ( iTurboBuildCosts[2] + 8 > owner->BuildingData[ptr->id].iBuilt_Costs_Max )
-						break;
-				}
+				*buildspeed = 0;
 			}
 
 			//reduce buildspeed, if necesary
@@ -3503,30 +3449,17 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 			DrawBuildButtons ( *buildspeed );
 
 
-
 			font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs / data.iNeeds_Metal ) );
-
-
-
 			font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
 
 			if ( iTurboBuildRounds[1] > 0 )
 			{
-
-
-
-
-
 				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildRounds[1] ) );
 				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildCosts[1] ) );
 			}
 
 			if ( iTurboBuildRounds[2] > 0 )
 			{
-
-
-
-
 				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildRounds[2] ) );
 				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildCosts[2] ) );
 			}
@@ -3552,6 +3485,61 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
+	}
+}
+
+void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs, int iBuild_Costs_Max )
+{
+	// calculate building time and costs
+
+	iTurboBuildRounds[0] = 0;
+	iTurboBuildRounds[1] = 0;
+	iTurboBuildRounds[2] = 0;
+
+	//prevent division by zero
+	if ( data.iNeeds_Metal == 0 ) data.iNeeds_Metal = 1;
+
+	//step 1x
+	if ( data.cargo >= iBuild_Costs )
+	{
+		iTurboBuildCosts[0] = iBuild_Costs;
+
+		iTurboBuildRounds[0] = iTurboBuildCosts[0] / data.iNeeds_Metal;
+	}
+
+	//step 2x
+	if ( ( iTurboBuildRounds[0] > 1 ) && ( iTurboBuildCosts[0] + 4 <= iBuild_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[0] + 4 ) )
+	{
+		iTurboBuildRounds[1] = iTurboBuildRounds[0];
+		iTurboBuildCosts[1] = iTurboBuildCosts[0];
+
+		while ( ( data.cargo >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
+		{
+			iTurboBuildRounds[1]--;
+			iTurboBuildCosts[1] += 4;
+
+			if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0] )
+				break;
+
+			if ( iTurboBuildCosts[1] + 4 > iBuild_Costs_Max )
+				break;
+		}
+	}
+
+	//step 4x
+	if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= iBuild_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[1] + 8 ) )
+	{
+		iTurboBuildRounds[2] = iTurboBuildRounds[1];
+		iTurboBuildCosts[2] = iTurboBuildCosts[1];
+
+		while ( ( data.cargo >= iTurboBuildCosts[2] + 8 ) && ( iTurboBuildRounds[2] > 1 ) )
+		{
+			iTurboBuildRounds[2]--;
+			iTurboBuildCosts[2] += 8;
+
+			if ( iTurboBuildCosts[2] + 8 > iBuild_Costs_Max )
+				break;
+		}
 	}
 }
 

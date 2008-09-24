@@ -201,6 +201,7 @@ public:
 	bool canSupply( int iOff, int iType );
 	bool canSupply( cVehicle *Vehicle, int iType );
 	bool canSupply( cBuilding *Building, int iType );
+	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs, int iBuilt_Costs_Max );
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath

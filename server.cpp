@@ -553,7 +553,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			else
 			{
 				if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
-				calcBuildRoundsAndCosts ( Vehicle, iBuildingType, iTurboBuildRounds, iTurboBuildCosts );
+				Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs, Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs_Max );
 
 				Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
 				Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
@@ -2230,59 +2230,6 @@ bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *D
 	}
 
 	return false;
-}
-
-void cServer::calcBuildRoundsAndCosts( cVehicle *Vehicle, int iBuildingType, int iTurboBuildRounds[3], int iTurboBuildCosts[3] )
-{
-	iTurboBuildRounds[0] = 0;
-	iTurboBuildRounds[1] = 0;
-	iTurboBuildRounds[2] = 0;
-
-	//prevent division by zero
-	if ( Vehicle->data.iNeeds_Metal == 0 ) Vehicle->data.iNeeds_Metal = 1;
-
-	//step 1x
-	if ( Vehicle->data.cargo >= Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs )
-	{
-		iTurboBuildCosts[0] = Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs;
-
-		iTurboBuildRounds[0] = iTurboBuildCosts[0] / Vehicle->data.iNeeds_Metal;
-	}
-
-	//step 2x
-	if ( ( iTurboBuildRounds[0] > 1 ) && ( iTurboBuildCosts[0] + 4 <= Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs_Max ) && ( Vehicle->data.cargo >= iTurboBuildCosts[0] + 4 ) )
-	{
-		iTurboBuildRounds[1] = iTurboBuildRounds[0];
-		iTurboBuildCosts[1] = iTurboBuildCosts[0];
-
-		while ( ( Vehicle->data.cargo >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
-		{
-			iTurboBuildRounds[1]--;
-			iTurboBuildCosts[1] += 4;
-
-			if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0] )
-				break;
-
-			if ( iTurboBuildCosts[1] + 4 > Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs_Max )
-				break;
-		}
-	}
-
-	//step 4x
-	if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs_Max ) && ( Vehicle->data.cargo >= iTurboBuildCosts[1] + 8 ) )
-	{
-		iTurboBuildRounds[2] = iTurboBuildRounds[1];
-		iTurboBuildCosts[2] = iTurboBuildCosts[1];
-
-		while ( ( Vehicle->data.cargo >= iTurboBuildCosts[2] + 8 ) && ( iTurboBuildRounds[2] > 1 ) )
-		{
-			iTurboBuildRounds[2]--;
-			iTurboBuildCosts[2] += 8;
-
-			if ( iTurboBuildCosts[2] + 8 > Vehicle->owner->BuildingData[iBuildingType].iBuilt_Costs_Max )
-				break;
-		}
-	}
 }
 
 bool cServer::checkExitBlocked ( int iX, int iY, sVehicle *Type )
