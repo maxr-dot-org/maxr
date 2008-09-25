@@ -1322,17 +1322,10 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	AddedVehicle = Player->AddVehicle ( iPosX, iPosY, Vehicle );
 	AddedVehicle->iID = iNextUnitID;
 	iNextUnitID++;
+	
 	// place the vehicle:
-	if ( AddedVehicle->data.can_drive != DRIVE_AIR )
-	{
-		int iOff = iPosX+Map->size*iPosY;
-		if ( Map->GO[iOff].vehicle == NULL ) Map->GO[iOff].vehicle = AddedVehicle;
-	}
-	else
-	{
-		int iOff = iPosX+Map->size*iPosY;
-		if ( Map->GO[iOff].plane == NULL ) Map->GO[iOff].plane = AddedVehicle;
-	}
+	Map->addVehicle( AddedVehicle, iPosX, iPosY );
+
 	// startup:
 	if ( !bInit ) AddedVehicle->StartUp = 10;
 	// scan with surveyor:
@@ -1358,72 +1351,50 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 
 	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
-	// place the building:
+
 	int iOff = iPosX + Map->size*iPosY;
-	if ( AddedBuilding->data.is_base )
-	{
-		if(Map->GO[iOff].base)
-		{
-			//TODO: delete subbase building, if there is one
-			Map->GO[iOff].subbase = Map->GO[iOff].base;
-			Map->GO[iOff].base = AddedBuilding;
-		}
-		else
-		{
-			Map->GO[iOff].base = AddedBuilding;
-		}
-	}
-	else
+	
+	//if this is a top building, delete connectors, mines and roads
+	if ( !AddedBuilding->data.is_base )
 	{
 		if ( AddedBuilding->data.is_big )
 		{
-			Map->GO[iOff].top;
-			Map->GO[iOff+1].top;
-			Map->GO[iOff+Map->size].top;
-			Map->GO[iOff+Map->size+1].top;
 			deleteUnit ( Map->GO[iOff].top );
-			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
 				deleteUnit ( Map->GO[iOff].base );
-				Map->GO[iOff].base = NULL;
 			}
 			iOff++;
 			deleteUnit ( Map->GO[iOff].top );
-			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
 				deleteUnit ( Map->GO[iOff].base );
-				Map->GO[iOff].base=NULL;
 			}
 			iOff+=Map->size;
 			deleteUnit ( Map->GO[iOff].top );
-			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
 				deleteUnit ( Map->GO[iOff].base );
-				Map->GO[iOff].base=NULL;
 			}
 			iOff--;
 			deleteUnit ( Map->GO[iOff].top );
-			Map->GO[iOff].top=AddedBuilding;
 			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
 				deleteUnit ( Map->GO[iOff].base );
-				Map->GO[iOff].base=NULL;
 			}
 		}
 		else
 		{
 			deleteUnit ( Map->GO[iOff].top );
-			Map->GO[iOff].top=AddedBuilding;
 			if ( !AddedBuilding->data.is_connector&&Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
 			{
 				deleteUnit ( Map->GO[iOff].base );
-				Map->GO[iOff].base=NULL;
 			}
 		}
 	}
+
+	Map->addBuilding( AddedBuilding, iPosX, iPosY );
+
 	if ( !bInit ) AddedBuilding->StartUp=10;
 	
 	AddedBuilding->makeDetection();

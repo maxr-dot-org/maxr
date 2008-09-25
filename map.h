@@ -159,7 +159,7 @@ public:
 	* @return an instance of cMapField, which has several methods to access the objects on the field
 	*/
 	cMapField& operator[]( unsigned int offset ) const;
-/*
+
 	bool addBuilding( cBuilding* building, unsigned int x, unsigned int y );
 	bool addBuilding( cBuilding* building, unsigned int offset );
 	bool addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
@@ -172,7 +172,7 @@ public:
 
 	bool deleteBuilding( cBuilding* building );
 	bool deleteVehicle( cVehicle* vehicle );
-*/
+
 private:
 	/**
 	* the infomation about the fields

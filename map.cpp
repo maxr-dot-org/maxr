@@ -735,7 +735,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 }
 
 
-/*
+
 bool cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	return addBuilding( building, offset%size, offset/size );
@@ -744,11 +744,11 @@ bool cMap::addBuilding( cBuilding* building, unsigned int offset )
 
 bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 {
-	if ( x > size || y > size ) return false;
 	if ( building->data.is_base && building->data.is_big ) return false; //big base building are not implemented
 	unsigned int offset = x + y * size;
 
-	//TODO: check
+	//TODO: sort order of buildings in the list
+
 	if ( building->data.is_big )
 	{
 		fields[offset           ].getBuildings().insert( building );
@@ -782,8 +782,8 @@ bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 	return true;
 
 }
-*/
-/*
+
+
 bool cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
 {
 	return addVehicle( vehicle, offset%size, offset/size );
@@ -791,10 +791,7 @@ bool cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
 
 bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
 {
-	if ( x > size || y > size ) return false;
 	unsigned int offset = x + y * size;
-
-	//TODO: check
 
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
@@ -817,4 +814,4 @@ bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
 
 	return true;
 }
-*/
+
