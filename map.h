@@ -58,6 +58,7 @@ private:
 	cList<cVehicle*>* vehicleList;
 	int index;
 	void insert( cVehicle* vehicle );
+	void deleteVehicle();
 public:
 	cVehicleIterator(cList<cVehicle*>* list);
 	/** returns the number of vehicles in the List, the Iterator points to. */
@@ -82,6 +83,7 @@ private:
 	cList<cBuilding*>* buildingList;
 	int index;
 	void insert( cBuilding* building );
+	void deleteBuilding();
 public:
 	cBuildingIterator(cList<cBuilding*>* list);
 	/** returns the number of buildings in the List, the Iterator points to. */
@@ -160,18 +162,18 @@ public:
 	*/
 	cMapField& operator[]( unsigned int offset ) const;
 
-	bool addBuilding( cBuilding* building, unsigned int x, unsigned int y );
-	bool addBuilding( cBuilding* building, unsigned int offset );
-	bool addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
-	bool addVehicle( cVehicle* vehicle, unsigned int offset );
+	void addBuilding( cBuilding* building, unsigned int x, unsigned int y );
+	void addBuilding( cBuilding* building, unsigned int offset );
+	void addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
+	void addVehicle( cVehicle* vehicle, unsigned int offset );
 	
-	bool moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
-	bool moveVehicle( cVehicle* vehicle, unsigned int offset );
-	bool moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y);
-	bool moveVehicleBig( cVehicle* vehicle, unsigned int offset );
+	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
+	void moveVehicle( cVehicle* vehicle, unsigned int offset );
+	void moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y);
+	void moveVehicleBig( cVehicle* vehicle, unsigned int offset );
 
-	bool deleteBuilding( cBuilding* building );
-	bool deleteVehicle( cVehicle* vehicle );
+	void deleteBuilding( cBuilding* building );
+	void deleteVehicle( cVehicle* vehicle );
 
 private:
 	/**

@@ -3721,17 +3721,10 @@ void cClient::deleteUnit( cBuilding *Building )
 	if( !Building ) return;
 	bFlagDrawMMap = true;
 
-	int offset = Building->PosX + Building->PosY * Map->size;
+	Map->deleteBuilding( Building );
+
 	if ( !Building->owner )
 	{
-		if ( Building->BigDirt )
-		{
-			Map->GO[offset             + 1].subbase = NULL;
-			Map->GO[offset + Map->size    ].subbase = NULL;
-			Map->GO[offset + Map->size + 1].subbase = NULL;
-		}
-		Map->GO[offset].subbase = NULL;
-
 		if ( !Building->prev )
 		{
 			neutralBuildings = Building->next;
@@ -3772,18 +3765,7 @@ void cClient::deleteUnit( cBuilding *Building )
 			Building->next->prev = NULL;
 		}
 	}
-	if ( Map->GO[offset].top == Building )
-	{
-		Map->GO[offset].top = NULL;
-		if ( Building->data.is_big )
-		{
-			Map->GO[offset + 1            ].top = NULL;
-			Map->GO[offset +	 Map->size].top = NULL;
-			Map->GO[offset + 1 + Map->size].top = NULL;
-		}
-	}
-	else if ( Map->GO[offset].base == Building ) Map->GO[offset].base = NULL;
-	else  Map->GO[offset].subbase = NULL;
+
 	if ( SelectedBuilding == Building )
 	{
 		Building->Deselct();
@@ -3800,6 +3782,8 @@ void cClient::deleteUnit( cBuilding *Building )
 void cClient::deleteUnit( cVehicle *Vehicle )
 {
 	if( !Vehicle ) return;
+
+	Map->deleteVehicle( Vehicle );
 
 	for ( int i = 0; i < attackJobs.Size(); i++)
 	{
@@ -3827,19 +3811,6 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 			Vehicle->next->prev = NULL;
 		}
 	}
-
-	int offset = Vehicle->PosX + Vehicle->PosY * Map->size;
-
-	if ( Vehicle->data.can_drive == DRIVE_AIR ) Map->GO[offset].plane = NULL;
-	else if ( Vehicle->IsBuilding && Vehicle->data.can_build == BUILD_BIG )
-	{
-		Map->GO[offset			 	  ].vehicle = NULL;
-		Map->GO[offset + 1		 	  ].vehicle = NULL;
-		Map->GO[offset + Map->size 	  ].vehicle = NULL;
-		Map->GO[offset + Map->size + 1].vehicle = NULL;
-	}
-	else
-		Map->GO[offset].vehicle = NULL;
 
 	if ( SelectedVehicle == Vehicle )
 	{

@@ -114,6 +114,11 @@ void cVehicleIterator::insert( cVehicle* vehicle )
 	vehicleList->Insert( index, vehicle );
 }
 
+void cVehicleIterator::deleteVehicle()
+{
+	if ( !end && !rend ) vehicleList->Delete( index );
+}
+
 cBuildingIterator::cBuildingIterator(cList<cBuilding*>* list)
 {
 	buildingList = list;
@@ -207,6 +212,11 @@ cBuildingIterator::operator cBuilding*() const
 void cBuildingIterator::insert( cBuilding* building )
 {
 	buildingList->Insert( index, building );
+}
+
+void cBuildingIterator::deleteBuilding()
+{
+	if (!end && !rend) buildingList->Delete( index );
 }
 
 cVehicleIterator cMapField::getVehicles()
@@ -736,15 +746,15 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 
 
 
-bool cMap::addBuilding( cBuilding* building, unsigned int offset )
+void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	return addBuilding( building, offset%size, offset/size );
 }
 
 
-bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
+void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 {
-	if ( building->data.is_base && building->data.is_big ) return false; //big base building are not implemented
+	if ( building->data.is_base && building->data.is_big ) return; //big base building are not implemented
 	unsigned int offset = x + y * size;
 
 	//TODO: sort order of buildings in the list
@@ -778,18 +788,15 @@ bool cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 
 		buildingIterator.insert( building );
 	}
-
-	return true;
-
 }
 
 
-bool cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
+void cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
 {
 	return addVehicle( vehicle, offset%size, offset/size );
 }
 
-bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
+void cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
 {
 	unsigned int offset = x + y * size;
 
@@ -811,7 +818,98 @@ bool cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
 	{
 		GO[offset].vehicle = vehicle;
 	}
-
-	return true;
 }
 
+void cMap::deleteBuilding( cBuilding* building )
+{
+	int offset = building->PosX + building->PosY * size;
+
+	cBuildingIterator buildings = fields[offset].getBuildings();
+	while ( !buildings.end )
+	{
+		if ( buildings == building ) buildings.deleteBuilding();
+		buildings++;
+	}
+
+	if ( building->data.is_big )
+	{
+		//big building must be a top building
+		//so only check the first building
+		offset++;
+		cBuildingIterator buildings = fields[offset].getBuildings();
+		if ( buildings == building ) buildings.deleteBuilding();
+		
+		offset += size;
+		buildings = fields[offset].getBuildings();
+		if ( buildings == building ) buildings.deleteBuilding();
+		
+		offset--;
+		buildings = fields[offset].getBuildings();
+		if ( buildings == building ) buildings.deleteBuilding();
+		
+	}
+
+	//backward compatibility
+	offset = building->PosX + building->PosY * size;
+
+	if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
+	if ( GO[offset].base    == building ) GO[offset].base    = NULL;
+	if ( GO[offset].top     == building ) GO[offset].top     = NULL;
+	
+
+	if ( building->data.is_big )
+	{
+		offset++;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
+		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
+		if ( GO[offset].top     == building ) GO[offset].top     = NULL;
+
+		offset += size;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
+		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
+		if ( GO[offset].top     == building ) GO[offset].top     = NULL;	
+		
+		offset--;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
+		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
+		if ( GO[offset].top     == building ) GO[offset].top     = NULL;
+	}
+}
+
+void cMap::deleteVehicle( cVehicle* vehicle )
+{
+	int offset = vehicle->PosX + vehicle->PosY *size;
+
+	if ( vehicle->data.can_drive == DRIVE_AIR )
+	{
+		cVehicleIterator vehicles = fields[offset].getPlanes();
+		while ( !vehicles.end )
+		{
+			if ( vehicles == vehicle ) vehicles.deleteVehicle();
+			vehicles++;
+		}
+	}
+	else
+	{
+		fields[offset].getVehicles().deleteVehicle();
+	}
+
+	//backward compatibility
+	if ( vehicle->data.can_drive == DRIVE_AIR ) 
+	{
+		if (GO[offset].plane == vehicle ) GO[offset].plane = NULL;
+	}
+	else
+	{
+		if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
+		if ( vehicle->PosX + 1 < size && vehicle->PosY + 1 < size )
+		{
+			offset++;
+			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
+			offset += size;
+			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
+			offset--;
+			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
+		}
+	}
+}
