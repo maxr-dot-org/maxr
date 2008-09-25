@@ -3688,18 +3688,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit )
 {
-	// place the vehicle:
-	if ( AddedVehicle->data.can_drive != DRIVE_AIR )
-	{
-		int iOff = iPosX+Map->size*iPosY;
-		Map->GO[iOff].vehicle = AddedVehicle;
-	}
-	else
-	{
-		int iOff = iPosX+Map->size*iPosY;
-		Map->GO[iOff].plane = AddedVehicle;
-	}
-	// startup:
+	// place the vehicle
+	Map->addVehicle( AddedVehicle, iPosX, iPosY );
+
 	if ( !bInit ) AddedVehicle->StartUp = 10;
 
 	mouseMoveCallback(true);
@@ -3707,58 +3698,9 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit 
 
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
 {
-	// place the building:
-	int iOff = iPosX + Map->size*iPosY;
-	if ( AddedBuilding->data.is_base )
-	{
-		if(Map->GO[iOff].base)
-		{
-			//TODO: delete subbase building, if there is one
-			Map->GO[iOff].subbase = Map->GO[iOff].base;
-			Map->GO[iOff].base = AddedBuilding;
-		}
-		else
-		{
-			Map->GO[iOff].base = AddedBuilding;
-		}
-	}
-	else
-	{
-		if ( AddedBuilding->data.is_big )
-		{
-			Map->GO[iOff].top=AddedBuilding;
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
-			{
-				Map->GO[iOff].base = NULL;
-			}
-			iOff++;
-			Map->GO[iOff].top=AddedBuilding;
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
-			{
-				Map->GO[iOff].base=NULL;
-			}
-			iOff+=Map->size;
-			Map->GO[iOff].top=AddedBuilding;
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
-			{
-				Map->GO[iOff].base=NULL;
-			}
-			iOff--;
-			Map->GO[iOff].top=AddedBuilding;
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
-			{
-				Map->GO[iOff].base=NULL;
-			}
-		}
-		else
-		{
-			Map->GO[iOff].top=AddedBuilding;
-			if ( !AddedBuilding->data.is_connector&&Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
-			{
-				Map->GO[iOff].base=NULL;
-			}
-		}
-	}
+	// place the building
+	Map->addBuilding( AddedBuilding, iPosX, iPosY);
+
 	if ( !bInit ) AddedBuilding->StartUp = 10;
 
 	mouseMoveCallback(true);
