@@ -877,8 +877,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// if the first unit hasn't changed copy it to the new buildlist
 				if ( Building->BuildList->Size() > 0 && i == 0 && &UnitsData.vehicle[iType] == (*Building->BuildList)[0]->typ )
 				{
+					//recalculate costs, because build speed could have beed changed
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Building->owner->VehicleData[iType].iBuilt_Costs, (*Building->BuildList)[0]->metall_remaining );
 					sBuildList *BuildListItem = new sBuildList;
-					BuildListItem->metall_remaining = (*Building->BuildList)[0]->metall_remaining;
+					BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 					BuildListItem->typ = (*Building->BuildList)[0]->typ;
 					NewBuildList->Add ( BuildListItem );
 					continue;
