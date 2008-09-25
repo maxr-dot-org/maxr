@@ -1326,8 +1326,6 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	// place the vehicle:
 	Map->addVehicle( AddedVehicle, iPosX, iPosY );
 
-	// startup:
-	if ( !bInit ) AddedVehicle->StartUp = 10;
 	// scan with surveyor:
 	if ( AddedVehicle->data.can_survey )
 	{
@@ -1395,8 +1393,6 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 
 	Map->addBuilding( AddedBuilding, iPosX, iPosY );
 
-	if ( !bInit ) AddedBuilding->StartUp=10;
-	
 	AddedBuilding->makeDetection();
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
