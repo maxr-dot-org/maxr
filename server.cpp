@@ -1428,6 +1428,15 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 		Building->base->DeleteBuilding( Building );
 	}
 
+	//detach from attack job
+	if (Building->Attacking)
+	{
+		for ( int i = 0; i < AJobs.Size(); i++ )
+		{
+			if ( AJobs[i]->building == Building ) AJobs[i]->building = NULL;
+		}
+	}
+
 	Map->deleteBuilding( Building );
 
 	if ( notifyClient ) sendDeleteUnit( Building, -1 );
@@ -1456,6 +1465,15 @@ void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
 		if( vehicle->next )
 		{
 			vehicle->next->prev = NULL;
+		}
+	}
+
+	//detach from attack job
+	if (vehicle->Attacking)
+	{
+		for ( int i = 0; i < AJobs.Size(); i++ )
+		{
+			if ( AJobs[i]->vehicle == vehicle ) AJobs[i]->vehicle = NULL;
 		}
 	}
 
