@@ -1403,9 +1403,9 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 {
-
-
 	if( !Building ) return;
+
+	//TODO: delete rubble
 
 	if( Building->prev )
 	{
@@ -1428,29 +1428,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 		Building->base->DeleteBuilding( Building );
 	}
 
-	bool bBase, bSubBase;
-	if ( Map->GO[Building->PosX+Building->PosY*Map->size].base == Building )
-	{
-		Map->GO[Building->PosX+Building->PosY*Map->size].base = NULL;
-		bBase = true;
-	}
-	else bBase = false;
-	if ( Map->GO[Building->PosX+Building->PosY*Map->size].subbase == Building )
-	{
-		Map->GO[Building->PosX+Building->PosY*Map->size].subbase = NULL;
-		bSubBase = true;
-	}
-	else bSubBase = false;
-	if ( !bBase && !bSubBase )
-	{
-		Map->GO[Building->PosX+Building->PosY*Map->size].top = NULL;
-		if ( Building->data.is_big )
-		{
-			Map->GO[Building->PosX+Building->PosY*Map->size+1].top = NULL;
-			Map->GO[Building->PosX+Building->PosY*Map->size+Map->size].top = NULL;
-			Map->GO[Building->PosX+Building->PosY*Map->size+Map->size+1].top = NULL;
-		}
-	}
+	Map->deleteBuilding( Building );
 
 	if ( notifyClient ) sendDeleteUnit( Building, -1 );
 
@@ -1481,18 +1459,7 @@ void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
 		}
 	}
 
-	int offset = vehicle->PosX + vehicle->PosY * Map->size;
-
-	if ( vehicle->data.can_drive == DRIVE_AIR ) Map->GO[offset].plane = NULL;
-	else if ( vehicle->IsBuilding && vehicle->data.can_build == BUILD_BIG )
-	{
-		Map->GO[offset			 	  ].vehicle = NULL;
-		Map->GO[offset + 1		 	  ].vehicle = NULL;
-		Map->GO[offset + Map->size 	  ].vehicle = NULL;
-		Map->GO[offset + Map->size + 1].vehicle = NULL;
-	}
-	else
-		Map->GO[offset].vehicle = NULL;
+	Map->deleteVehicle( vehicle );
 
 	if ( notifyClient ) sendDeleteUnit( vehicle, -1 );
 
