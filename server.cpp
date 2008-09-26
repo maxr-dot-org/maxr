@@ -1334,9 +1334,10 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	}
 	if ( !bInit ) AddedVehicle->InSentryRange();
 
-	AddedVehicle->makeDetection();
-
 	sendAddUnit ( iPosX, iPosY, AddedVehicle->iID, true, Vehicle->nr, Player->Nr, bInit );
+
+	//detection must be done, after the vehicle has been sent to clients
+	AddedVehicle->makeDetection();
 }
 
 void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit )
