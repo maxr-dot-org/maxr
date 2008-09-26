@@ -935,7 +935,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 		while ( !planes.end )
 		{
 			if ( planes == vehicle ) planes.deleteVehicle();
-			planes++
+			planes++;
 		}
 		fields[newOffset].getPlanes().insert( vehicle );
 	}
