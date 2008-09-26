@@ -740,13 +740,6 @@ int cClient::checkUser( bool bChange )
 		{
 			if ( SelectedVehicle->IsBuilding )
 			{
-				if ( SelectedVehicle->data.can_build == BUILD_BIG )
-				{
-					Map->GO[SelectedVehicle->PosX+1+SelectedVehicle->PosY*Map->size].vehicle = NULL;
-					Map->GO[SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 )*Map->size].vehicle = NULL;
-					Map->GO[SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 )*Map->size].vehicle = NULL;
-				}
-
 				int iX, iY;
 				mouse->GetKachel ( &iX, &iY );
 				sendWantEndBuilding ( SelectedVehicle, iX, iY );
