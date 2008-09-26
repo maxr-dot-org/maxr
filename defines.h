@@ -31,7 +31,7 @@
 #define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER
-	#define CHECK_MEMORY _CrtCheckMemory();
+	#define CHECK_MEMORY //_CrtCheckMemory();
 #else
 	#define CHECK_MEMORY 
 #endif
@@ -75,7 +75,7 @@
 #ifdef RELEASE
 #define MAXVERSION  "M.A.X. Reloaded 0.2.0 BUILD 200808111742" // Builddate: JJJJMMDDHHMM
 #else
-	#define MAXVERSION  "M.A.X. Reloaded 0.2.0 SVN Rev 1449"
+	#define MAXVERSION  "M.A.X. Reloaded 0.2.0 SVN Rev 1471"
 #endif
 #define MAX_VERSION     "0.2.0"
 #define MAX_BUILD_DATE  "2008-08-11 17:42:00"

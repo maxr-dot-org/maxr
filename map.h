@@ -167,8 +167,15 @@ public:
 	void addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
 	void addVehicle( cVehicle* vehicle, unsigned int offset );
 	
+	/**
+	* moves a vehicle to the given position
+	*/
 	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
 	void moveVehicle( cVehicle* vehicle, unsigned int offset );
+
+	/*
+	* places a vehicle on the 4 fields to the right and below the given position
+	*/
 	void moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y);
 	void moveVehicleBig( cVehicle* vehicle, unsigned int offset );
 

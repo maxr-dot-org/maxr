@@ -884,6 +884,17 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	{
 		//only one vehicle per field allowed
 		fields[offset].getVehicles().deleteVehicle();
+
+		//check, whether the vehicle is centered on 4 map fields
+		if ( vehicle->data.is_big )
+		{
+			offset++;
+			fields[offset].getVehicles().deleteVehicle();
+			offset += size;
+			fields[offset].getVehicles().deleteVehicle();
+			offset--;
+			fields[offset].getVehicles().deleteVehicle();
+		}
 	}
 
 	//backward compatibility
@@ -931,6 +942,18 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	{
 		//there will be only one vehicle per field
 		fields[oldOffset].getVehicles().deleteVehicle();
+		
+		//check, whether the vehicle is centered on 4 map fields
+		if ( vehicle->data.is_big )
+		{
+			oldOffset++;
+			fields[oldOffset].getVehicles().deleteVehicle();
+			oldOffset += size;
+			fields[oldOffset].getVehicles().deleteVehicle();
+			oldOffset--;
+			fields[oldOffset].getVehicles().deleteVehicle();
+		}
+
 		fields[newOffset].getVehicles().insert( vehicle );
 	}
 
@@ -944,5 +967,35 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	{
 		GO[oldOffset].vehicle = NULL;
 		GO[newOffset].vehicle = vehicle;
+
+		if ( vehicle->IsBuilding || vehicle->IsClearing )
+		{
+			oldOffset++;
+			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
+			oldOffset += size;
+			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
+			oldOffset--;
+			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
+		}
 	}
+}
+
+void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
+{
+	moveVehicleBig( vehicle, x + y * size );
+}
+
+void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
+{
+	int oldOffset = vehicle->PosX + vehicle->PosY * size;
+	fields[oldOffset].getVehicles().deleteVehicle();
+	
+	offset++;
+	fields[offset].getVehicles().insert( vehicle );
+	offset += size;
+	fields[offset].getVehicles().insert( vehicle );
+	offset--;
+	fields[offset].getVehicles().insert( vehicle );
+
+	vehicle->data.is_big = true;
 }
