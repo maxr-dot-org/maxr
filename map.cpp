@@ -746,16 +746,15 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 
 
 
-void cMap::addBuilding( cBuilding* building, unsigned int offset )
+void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 {
-	return addBuilding( building, offset%size, offset/size );
+	addBuilding( building, x + y * size );
 }
 
 
-void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
+void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	if ( building->data.is_base && building->data.is_big ) return; //big base building are not implemented
-	unsigned int offset = x + y * size;
 
 	//TODO: sort order of buildings in the list
 
@@ -791,15 +790,13 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y)
 }
 
 
-void cMap::addVehicle(cVehicle *vehicle, unsigned int offset)
+void cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y )
 {
-	return addVehicle( vehicle, offset%size, offset/size );
+	addVehicle( vehicle, x + y * size );
 }
 
-void cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y)
+void cMap::addVehicle(cVehicle *vehicle, unsigned int offset )
 {
-	unsigned int offset = x + y * size;
-
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
 		fields[offset].getPlanes().insert( vehicle );
@@ -836,7 +833,7 @@ void cMap::deleteBuilding( cBuilding* building )
 		//big building must be a top building
 		//so only check the first building
 		offset++;
-		cBuildingIterator buildings = fields[offset].getBuildings();
+		buildings = fields[offset].getBuildings();
 		if ( buildings == building ) buildings.deleteBuilding();
 		
 		offset += size;
@@ -860,19 +857,13 @@ void cMap::deleteBuilding( cBuilding* building )
 	if ( building->data.is_big )
 	{
 		offset++;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
-		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
-		if ( GO[offset].top     == building ) GO[offset].top     = NULL;
+		if ( GO[offset].top == building ) GO[offset].top = NULL;
 
 		offset += size;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
-		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
-		if ( GO[offset].top     == building ) GO[offset].top     = NULL;	
+		if ( GO[offset].top == building ) GO[offset].top = NULL;	
 		
 		offset--;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
-		if ( GO[offset].base    == building ) GO[offset].base    = NULL;
-		if ( GO[offset].top     == building ) GO[offset].top     = NULL;
+		if ( GO[offset].top == building ) GO[offset].top = NULL;
 	}
 }
 
@@ -891,6 +882,7 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	}
 	else
 	{
+		//only one vehicle per field allowed
 		fields[offset].getVehicles().deleteVehicle();
 	}
 
@@ -911,5 +903,46 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 			offset--;
 			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
 		}
+	}
+}
+
+void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y )
+{
+	moveVehicle( vehicle, x + y * size );
+}
+
+void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
+{
+	int oldOffset = vehicle->PosX + vehicle->PosY * size;
+	
+	vehicle->PosX = newOffset % size;
+	vehicle->PosY = newOffset / size;
+
+	if ( vehicle->data.can_drive == DRIVE_AIR )
+	{
+		cVehicleIterator planes = fields[oldOffset].getPlanes();
+		while ( !planes.end )
+		{
+			if ( planes == vehicle ) planes.deleteVehicle();
+		}
+		fields[newOffset].getPlanes().insert( vehicle );
+	}
+	else
+	{
+		//there will be only one vehicle per field
+		fields[oldOffset].getVehicles().deleteVehicle();
+		fields[newOffset].getVehicles().insert( vehicle );
+	}
+
+	//backward compatibility
+	if ( vehicle->data.can_drive == DRIVE_AIR )
+	{
+		GO[oldOffset].plane = NULL;
+		GO[newOffset].plane = vehicle;
+	}
+	else
+	{
+		GO[oldOffset].vehicle = NULL;
+		GO[newOffset].vehicle = vehicle;
 	}
 }

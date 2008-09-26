@@ -600,23 +600,20 @@ void cServerMoveJob::moveVehicle()
 
 		if ( Vehicle->data.can_drive == DRIVE_AIR )
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane = Vehicle;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].air_reserviert = false;
 			iReservedOff = -1;
 		}
 		else
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle = Vehicle;
 			Map->GO[Waypoints->X+Waypoints->Y*Map->size].reserviert = false;
 			iReservedOff = -1;
 		}
+
+		Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
+
 		Vehicle->OffX = 0;
 		Vehicle->OffY = 0;
-		Vehicle->PosX = Waypoints->X;
-		Vehicle->PosY = Waypoints->Y;
-
+		
 		if ( Waypoints->next == NULL )
 		{
 			bFinished = true;
@@ -1076,15 +1073,11 @@ void cClientMoveJob::doEndMoveVehicle ()
 		}
 		else
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle = Vehicle;
-			Vehicle->PosX = Waypoints->X;
-			Vehicle->PosY = Waypoints->Y;
+			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
 		}
 	}
 	else
 	{
-		Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
 		if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane != NULL )
 		{
 			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane", cLog::eLOG_TYPE_NET_ERROR );
@@ -1092,10 +1085,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 		}
 		else
 		{
-			Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane = Vehicle;
-			Vehicle->PosX = Waypoints->X;
-			Vehicle->PosY = Waypoints->Y;
+			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
 		}
 	}
 	Vehicle->OffX = 0;
@@ -1105,9 +1095,6 @@ void cClientMoveJob::doEndMoveVehicle ()
 	
 	Client->bFlagDrawMMap = true; 
 	Client->mouseMoveCallback( true ); 
-
-	Client->bFlagDrawMMap = true;
-	Client->mouseMoveCallback( true );
 
 	calcNextDir();
 }
