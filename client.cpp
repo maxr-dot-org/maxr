@@ -3012,7 +3012,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			// unit is a vehicle
 			if ( bVehicle )
 			{
-				bool bPlane = message->popBool();
+				bool bBig = message->popBool();
 				Vehicle = getVehicleFromID ( iID );
 
 				if ( !Vehicle )
@@ -3021,40 +3021,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// TODO: Request sync of vehicle
 					break;
 				}
-				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY )
+				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY || Vehicle->data.is_big != bBig )
 				{
-					int iOldPosX = Vehicle->PosX;
-					int iOldPosY = Vehicle->PosY;
-
 					// if the vehicle is moving it is normal that the positions are not the same,
+					// when the vehicle was building it is also normal that the position should be changed
 					// so the log message will just be an debug one
-					int iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+					int iLogType = cLog::eLOG_TYPE_NET_WARNING;
+					if ( Vehicle->IsBuilding || Vehicle->IsClearing | Vehicle->moving ) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+					cLog::write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
 
 					// set to server position if vehicle is not moving
 					if ( !Vehicle->moving )
 					{
-						// when the vehicle was building it is normal that the position should be changed
-						if ( !Vehicle->IsBuilding ) iLogType = cLog::eLOG_TYPE_NET_WARNING;
-
-						if ( bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-						else 
-						{
-							Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-							if ( Vehicle->IsBuilding && Vehicle->data.can_build == BUILD_BIG )
-							{
-								Map->GO[Vehicle->PosX + 1 + Vehicle->PosY*Map->size].vehicle = NULL;
-								Map->GO[Vehicle->PosX + 1 + (Vehicle->PosY + 1) *Map->size].vehicle = NULL;
-								Map->GO[Vehicle->PosX + (Vehicle->PosY + 1) * Map->size].vehicle = NULL;
-							}
-						}
-
-						if ( bPlane ) Map->GO[iPosX+iPosY*Map->size].plane = Vehicle;
-						else Map->GO[iPosX+iPosY*Map->size].vehicle = Vehicle;
-
-						Vehicle->PosX = iPosX;
-						Vehicle->PosY = iPosY;
+						Map->moveVehicle( Vehicle, iPosX, iPosY );
+						if ( bBig ) Map->moveVehicleBig( Vehicle, iPosX, iPosY );
 					}
-					cLog::write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iOldPosX ) + " Y" + iToStr( iOldPosY ) + "]", iLogType );
 				}
 
 				Vehicle->name = message->popString();

@@ -184,7 +184,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushString ( Vehicle->name );
 
 	// Data for identifying the unit by the client
-	message->pushBool( Vehicle->data.can_drive == DRIVE_AIR );
+	message->pushBool( Vehicle->data.is_big );
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
 	message->pushBool( true );	// true for vehicles

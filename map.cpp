@@ -946,8 +946,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	else
 	{
 		GO[oldOffset].vehicle = NULL;
-		GO[newOffset].vehicle = vehicle;
-
+		
 		if ( vehicle->IsBuilding || vehicle->IsClearing || vehicle->data.is_big )
 		{
 			oldOffset++;
@@ -957,6 +956,8 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 			oldOffset--;
 			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
 		}
+
+		GO[newOffset].vehicle = vehicle;
 	}
 }
 
