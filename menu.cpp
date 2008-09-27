@@ -3592,11 +3592,12 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			{
 				tmp.x=11;
 				tmp.y=290;
-				dest.x = tmp.x + DIALOG_X;
-				dest.y = tmp.y + DIALOG_Y;
-				tmp.w=dest.w=346;
-				tmp.h=dest.h=176;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&dest );
+				SDL_Rect temp2;
+				temp2.x = tmp.x + DIALOG_X;
+				temp2.y = tmp.y + DIALOG_Y;
+				tmp.w = temp2.w = 346;
+				tmp.h = temp2.h = 176;
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&temp2 );
 				if ( ptr->vehicle )
 				{
 					cVehicle tv(&UnitsData.vehicle[ptr->id], p);
@@ -3611,22 +3612,29 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			// Die Texte anzeigen/Slider machen:
 			for ( k=0;k<8;k++ )
 			{
+				SDL_Rect temp2;
 				if ( !ptr->upgrades[k].active ) continue;
 				font->showText(DIALOG_X +322,DIALOG_Y +296+k*19, iToStr(ptr->upgrades[k].NextPrice));
-
+				SDL_Rect srcTemp;
 				if ( ptr->upgrades[k].Purchased )
 				{
-					scr.x=380;scr.y=256;
-					dest.w=scr.w=18;dest.h=scr.h=17;
-					dest.x=DIALOG_X +283;dest.y=DIALOG_Y +293+k*19;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+					srcTemp.x = 380;
+					srcTemp.y = 256;
+					temp2.w = srcTemp.w = 18;
+					temp2.h = srcTemp.h = 17;
+					temp2.x = DIALOG_X +283;
+					temp2.y = DIALOG_Y + 293 + k*19;
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&srcTemp,buffer,&temp2 );
 				}
 				if ( ptr->upgrades[k].NextPrice<=credits )
 				{
-					scr.x=399;scr.y=256;
-					dest.w=scr.w=18;dest.h=scr.h=17;
-					dest.x=DIALOG_X +301;dest.y=DIALOG_Y +293+k*19;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
+					srcTemp.x = 399;
+					srcTemp.y = 256;
+					temp2.w = srcTemp.w = 18;
+					temp2.h = srcTemp.h = 17;
+					temp2.x = DIALOG_X + 301;
+					temp2.y = DIALOG_Y + 293 + k*19;
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&srcTemp,buffer,&temp2 );
 				}
 			}
 		}
