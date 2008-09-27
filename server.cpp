@@ -604,16 +604,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Vehicle->data.can_build == BUILD_BIG )
 			{
 				Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-				if ( abs ( iEscapeX - ( Vehicle->PosX+1 ) ) <= 1 && abs ( iEscapeY - Vehicle->PosY ) <= 1 )
+				if ( iEscapeX > Vehicle->PosX )
 				{
 					Vehicle->PosX++;
 				}
-				else if ( abs ( iEscapeX -( Vehicle->PosX+1 ) ) <= 1 && abs ( iEscapeY - ( Vehicle->PosY+1 ) ) <= 1 )
-				{
-					Vehicle->PosX++;
-					Vehicle->PosY++;
-				}
-				else if ( abs ( iEscapeX - Vehicle->PosX ) <= 1 && abs ( iEscapeY - ( Vehicle->PosY+1 ) ) <= 1 )
+				if ( iEscapeY > Vehicle->PosY )
 				{
 					Vehicle->PosY++;
 				}
