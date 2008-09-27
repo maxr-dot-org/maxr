@@ -592,27 +592,17 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->IsBuilding = false;
 			Vehicle->BuildPath = false;
 
-			if ( Vehicle->data.can_build == BUILD_BIG )
-			{
-				Map->GO[Vehicle->PosX+1+Vehicle->PosY*Map->size].vehicle = NULL;
-				Map->GO[Vehicle->PosX+1+ ( Vehicle->PosY+1 )*Map->size].vehicle = NULL;
-				Map->GO[Vehicle->PosX+ ( Vehicle->PosY+1 )*Map->size].vehicle = NULL;
-			}
 			addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
 
 			// set the vehicle to the border
 			if ( Vehicle->data.can_build == BUILD_BIG )
 			{
-				Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-				if ( iEscapeX > Vehicle->PosX )
-				{
-					Vehicle->PosX++;
-				}
-				if ( iEscapeY > Vehicle->PosY )
-				{
-					Vehicle->PosY++;
-				}
-				Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = Vehicle;
+				int x = Vehicle->PosX;
+				int y = Vehicle->PosY;
+				if ( iEscapeX > Vehicle->PosX ) x++;
+				if ( iEscapeY > Vehicle->PosY ) y++;
+				Map->moveVehicle( Vehicle, x, y );
+
 				// refresh SeenByPlayerLists
 				checkPlayerUnits();
 			}
