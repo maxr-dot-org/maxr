@@ -163,6 +163,7 @@ public:
 	
 	/**
 	* moves a vehicle to the given position
+	* resets the vehicle to a single field, when it was centered on four fields
 	*/
 	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
 	void moveVehicle( cVehicle* vehicle, unsigned int offset );

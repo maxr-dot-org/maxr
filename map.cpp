@@ -931,7 +931,8 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 			oldOffset--;
 			fields[oldOffset].vehicles.Delete(0);
 
-			vehicle->data.is_big = false;
+			oldOffset -= size; //temp
+			//vehicle->data.is_big = false;
 		}
 
 		fields[newOffset].vehicles.Insert(0, vehicle );
@@ -959,6 +960,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 
 		GO[newOffset].vehicle = vehicle;
 	}
+	vehicle->data.is_big = false;
 }
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
@@ -971,6 +973,9 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
 	fields[oldOffset].vehicles.Delete(0);
 	
+	vehicle->PosX = offset % size;
+	vehicle->PosY = offset / size;
+
 	offset++;
 	fields[offset].vehicles.Insert(0, vehicle );
 	offset += size;
@@ -979,4 +984,17 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 	fields[offset].vehicles.Insert(0, vehicle );
 
 	vehicle->data.is_big = true;
+
+	//backward compatibility
+	GO[oldOffset].vehicle = NULL;
+
+	offset -=size;
+	GO[offset].vehicle = vehicle;
+	offset++;
+	GO[offset].vehicle = vehicle;
+	offset += size;
+	GO[offset].vehicle = vehicle;
+	offset--;
+	GO[offset].vehicle = vehicle;
+
 }

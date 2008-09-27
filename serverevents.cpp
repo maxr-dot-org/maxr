@@ -405,10 +405,9 @@ void sendContinuePathAnswer( bool bOK, int iVehicleID, int iPlayer )
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendStopBuild ( int iVehicleID, int iOff, int iNewPos, int iPlayer  )
+void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_STOP_BUILD );
-	message->pushInt32( iOff );
 	message->pushInt32( iNewPos );
 	message->pushInt16( iVehicleID );
 	Server->sendNetMessage( message, iPlayer );

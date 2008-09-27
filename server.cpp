@@ -521,12 +521,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Vehicle->BuildBigSavedPos = Vehicle->PosX+Vehicle->PosY*Map->size;
 
 				// set vehicle to build position
-				Vehicle->PosX = iBuildOff%Map->size;
-				Vehicle->PosY = iBuildOff/Map->size;
-				Map->GO[iBuildOff].vehicle = Vehicle;
-				Map->GO[iBuildOff+1].vehicle = Vehicle;
-				Map->GO[iBuildOff+Map->size].vehicle = Vehicle;
-				Map->GO[iBuildOff+Map->size+1].vehicle = Vehicle;
+				Map->moveVehicleBig( Vehicle, iBuildOff );
 			}
 			else
 			{
@@ -689,31 +684,21 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( Vehicle == NULL ) break;
+			if ( !Vehicle->IsBuilding ) break;
+			int iPos = Vehicle->PosX+Vehicle->PosY*Map->size;
 
-			int iOldPos = Vehicle->PosX+Vehicle->PosY*Map->size;
-			int iNewPos = Vehicle->PosX+Vehicle->PosY*Map->size;
-			if ( Vehicle->IsBuilding )
+			Vehicle->IsBuilding = false;
+			Vehicle->BuildPath = false;
+
+			if ( Vehicle->data.can_build == BUILD_BIG )
 			{
-				Vehicle->IsBuilding = false;
-				Vehicle->BuildPath = false;
-
-				if ( Vehicle->data.can_build == BUILD_BIG )
-				{
-					Map->GO[iOldPos].vehicle = NULL;
-					Map->GO[iOldPos+1].vehicle = NULL;
-					Map->GO[iOldPos+Map->size].vehicle = NULL;
-					Map->GO[iOldPos+Map->size+1].vehicle = NULL;
-					Map->GO[Vehicle->BuildBigSavedPos].vehicle = Vehicle;
-					Vehicle->PosX = Vehicle->BuildBigSavedPos % Map->size;
-					Vehicle->PosY = Vehicle->BuildBigSavedPos / Map->size;
-
-					iNewPos = Vehicle->BuildBigSavedPos;
-				}
-				sendStopBuild ( Vehicle->iID, iOldPos, iNewPos, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendStopBuild ( Vehicle->iID, iOldPos, iNewPos, *Vehicle->SeenByPlayerList[i] );
-				}
+				Map->moveVehicle( Vehicle, Vehicle->BuildBigSavedPos );
+				iPos = Vehicle->BuildBigSavedPos;
+			}
+			sendStopBuild ( Vehicle->iID, iPos, Vehicle->owner->Nr );
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			{
+				sendStopBuild ( Vehicle->iID, iPos, *Vehicle->SeenByPlayerList[i] );
 			}
 		}
 		break;

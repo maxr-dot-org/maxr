@@ -3260,12 +3260,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( UnitsData.building[iBuildingType].data.is_big )
 			{
-				Vehicle->PosX = iBuildOff%Map->size;
-				Vehicle->PosY = iBuildOff/Map->size;
-				Map->GO[iBuildOff].vehicle = Vehicle;
-				Map->GO[iBuildOff+1].vehicle = Vehicle;
-				Map->GO[iBuildOff+Map->size].vehicle = Vehicle;
-				Map->GO[iBuildOff+Map->size+1].vehicle = Vehicle;
+				Map->moveVehicleBig(Vehicle, iBuildOff );
 			}
 
 			Vehicle->BuildingTyp = iBuildingType;
@@ -3315,17 +3310,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			int iNewPos = message->popInt32();
-			int iOff = message->popInt32();
 
 			if ( Vehicle->data.can_build == BUILD_BIG )
 			{
-				Map->GO[iOff].vehicle = NULL;
-				Map->GO[iOff+1].vehicle = NULL;
-				Map->GO[iOff+Map->size].vehicle = NULL;
-				Map->GO[iOff+Map->size+1].vehicle = NULL;
-				Map->GO[iNewPos].vehicle = Vehicle;
-				Vehicle->PosX = iNewPos % Map->size;
-				Vehicle->PosY = iNewPos / Map->size;
+				Map->moveVehicle(Vehicle, iNewPos );
 			}
 			else
 			{
@@ -3602,14 +3590,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			rubble->data.is_big = big;
 			rubble->BigDirt = big;
 			
-			int offset = rubble->PosX + rubble->PosY * Map->size;
-			Map->GO[offset].subbase = rubble;
-			if ( big )
-			{
-				Map->GO[offset + 1       ].subbase = rubble;
-				Map->GO[offset + Map->size    ].subbase = rubble;
-				Map->GO[offset + Map->size + 1].subbase = rubble;
-			}
+			Map->addBuilding( rubble, rubble->PosX, rubble->PosY);
 		}
 		break;
 	case GAME_EV_DETECTION_STATE:

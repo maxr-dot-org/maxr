@@ -161,7 +161,7 @@ void sendContinuePathAnswer( bool bOK, int iVehicleID, int iPlayer );
 * sends that a vehicle has to stop building
 *@author alzi alias DoctorDeath
 */
-void sendStopBuild ( int iVehicleID, int iOff, int iNewPos, int iPlayer  );
+void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  );
 /**
 * send information about a new subbase.
 *@author alzi alias DoctorDeath
