@@ -221,10 +221,6 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	message->pushString ( Building->name );
 
 	// Data for identifying the unit by the client
-	if ( Server->Map->GO[Building->PosX+Building->PosY*Server->Map->size].subbase == Building ) message->pushBool( true );
-	else message->pushBool( false );
-	if ( Server->Map->GO[Building->PosX+Building->PosY*Server->Map->size].base == Building ) message->pushBool( true );
-	else message->pushBool( false );
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
 	message->pushBool( false );	// false for buildings

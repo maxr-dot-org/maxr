@@ -3069,30 +3069,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else
 			{
-				bool bBase = message->popBool();
-				bool bSubBase = message->popBool();
 				Building = getBuildingFromID ( iID );
-
 				if ( !Building )
 				{
 					cLog::write(" Client: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// TODO: Request sync of building
 					break;
-				}
-				if ( Building->PosX != iPosX || Building->PosY != iPosY )
-				{
-					cLog::write(" Client: Building identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", cLog::eLOG_TYPE_NET_WARNING);
-					// set to server position
-					if ( bBase ) Map->GO[iPosX+iPosY*Map->size].base = NULL;
-					else if ( bSubBase ) Map->GO[iPosX+iPosY*Map->size].subbase = NULL;
-					else Map->GO[iPosX+iPosY*Map->size].top = NULL;
-
-					if ( bBase ) Map->GO[Building->PosX+Building->PosY*Map->size].base = Building;
-					else if ( bSubBase ) Map->GO[Building->PosX+Building->PosY*Map->size].subbase = Building;
-					else Map->GO[Building->PosX+Building->PosY*Map->size].top = Building;
-
-					Building->PosX = iPosX;
-					Building->PosY = iPosY;
 				}
 
 				Building->name = message->popString();
@@ -3128,7 +3110,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speed = message->popInt16();
 				Data->max_speed = message->popInt16();
 
-				if ( SelectedVehicle && Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
+				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 				if ( bWasBuilding && !Vehicle->IsBuilding ) StopFXLoop ( iObjectStream );
 				if ( Vehicle->BuildPath && Vehicle->BuildRounds == 0 ) continuePathBuilding ( Vehicle );
 			}
