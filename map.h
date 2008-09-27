@@ -54,11 +54,8 @@ struct sColor
 class cVehicleIterator
 {
 private:
-	friend class cMap;
 	cList<cVehicle*>* vehicleList;
 	int index;
-	void insert( cVehicle* vehicle );
-	void deleteVehicle();
 public:
 	cVehicleIterator(cList<cVehicle*>* list);
 	/** returns the number of vehicles in the List, the Iterator points to. */
@@ -79,11 +76,8 @@ public:
 class cBuildingIterator
 {
 private:
-	friend class cMap;
 	cList<cBuilding*>* buildingList;
 	int index;
-	void insert( cBuilding* building );
-	void deleteBuilding();
 public:
 	cBuildingIterator(cList<cBuilding*>* list);
 	/** returns the number of buildings in the List, the Iterator points to. */
@@ -173,7 +167,7 @@ public:
 	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
 	void moveVehicle( cVehicle* vehicle, unsigned int offset );
 
-	/*
+	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
 	void moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y);
