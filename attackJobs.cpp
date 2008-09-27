@@ -470,25 +470,12 @@ void cClientAttackJob::clientLockTarget( cNetMessage* message )
 		int OffX = message->popChar();
 		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
 		{
+			//TODO: handle attacking big vehicles
 			cLog::write(" Client: changed vehicle position to " + iToStr( offset ), cLog::eLOG_TYPE_NET_DEBUG );
-			if ( bIsAir )
-			{
-				Client->Map->GO[vehicle->PosX + vehicle->PosY * Client->Map->size].plane = NULL;
-				Client->Map->GO[offset].plane = vehicle;
-				vehicle->PosX = offset % Client->Map->size;
-				vehicle->PosY = offset / Client->Map->size;
-				vehicle->OffX = OffX;
-				vehicle->OffY = OffY;
-			}
-			else
-			{
-				Client->Map->GO[vehicle->PosX + vehicle->PosY * Client->Map->size].vehicle = NULL;
-				Client->Map->GO[offset].vehicle = vehicle;
-				vehicle->PosX = offset % Client->Map->size;
-				vehicle->PosY = offset / Client->Map->size;
-				vehicle->OffX = OffX;
-				vehicle->OffY = OffY;
-			}
+			Client->Map->moveVehicle( vehicle, offset );
+			
+			vehicle->OffX = OffX;
+			vehicle->OffY = OffY;
 		}
 	}
 	if ( !bIsAir )
