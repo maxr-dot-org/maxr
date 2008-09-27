@@ -1845,7 +1845,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 	#define BUTTON_W 77
 	#define BUTTON_H 23
 
-	SDL_Rect rTxtDescription = {141,266,150,13};
+	SDL_Rect rTxtDescription = {DIALOG_X + 141, DIALOG_Y + 266,150,13};
 
 	SDL_Rect dest = { DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H};
 	SDL_Surface *sfTmp;
@@ -1860,11 +1860,11 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
  	// with black -- beko
 	SDL_FillRect(buffer, NULL, 0x0000);
 
-	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
+	SDL_BlitSurface (sfTmp, NULL, buffer, &dest); //FIXME: making this working > 640x480 breaks some other ingame menus like upgrading from gold raffinery - those have to be fixed for higher resolutions too -- beko
 
-	NormalButton btn_done(  447, 452, "Text~Button~Done");
-	NormalButton btn_buy(   561, 388, "Text~Button~Buy");
-	NormalButton btn_delete(388, 240, "Text~Button~Delete");
+	NormalButton btn_done ( DIALOG_X + 447, DIALOG_Y + 452, "Text~Button~Done" );
+	NormalButton btn_buy ( DIALOG_X + 561, DIALOG_Y +388, "Text~Button~Buy" );
+	NormalButton btn_delete ( DIALOG_X + 388, DIALOG_Y +240, "Text~Button~Delete" );
 
 	btn_done.Draw();
 	btn_buy.Draw();
@@ -1965,15 +1965,17 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			break;
 		}
 		// Beschreibung Haken:
-		if ( x>=292&&x<292+16&&y>=265&&y<265+15&&b&&!lb )
+		if ( x>=DIALOG_X +292&&x<DIALOG_X +292+16&&y>=DIALOG_Y +265&&y<DIALOG_Y +265+15&&b&&!lb )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			Beschreibung=!Beschreibung;
 			SettingsData.bShowDescription=Beschreibung;
 			if ( Beschreibung )
 			{
-				dest.x=scr.x=291;
-				dest.y=scr.y=264;
+				scr.x=291;
+				dest.x=scr.x + DIALOG_X;
+				scr.y=264;
+				dest.y=scr.y + DIALOG_Y;
 				dest.w=scr.w=17;
 				dest.h=scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
@@ -1982,8 +1984,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			{
 				scr.x=393;
 				scr.y=46;
-				dest.x=291;
-				dest.y=264;
+				dest.x=291+ DIALOG_X;
+				dest.y=264+ DIALOG_Y;
 				dest.w=scr.w=18;
 				dest.h=scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -1993,15 +1995,15 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			mouse->draw ( false,screen );
 		}
 		// Down-Button:
-		if ( x>=491&&x<491+18&&y>=386&&y<386+17&&b&&!DownPressed )
+		if ( x>=DIALOG_X +491&&x<DIALOG_X +491+18&&y>=DIALOG_Y +386&&y<DIALOG_Y +386+17&&b&&!DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=491;
-			dest.y=386;
+			dest.x=DIALOG_X + 491;
+			dest.y=DIALOG_Y + 386;
 			if ( offset<selection.Size()-9 )
 			{
 				offset++;
@@ -2019,23 +2021,23 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			scr.y=386;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=491;
-			dest.y=386;
+			dest.x=DIALOG_X + 491;
+			dest.y=DIALOG_Y + 386;
 			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
 		}
 		// Up-Button:
-		if ( x>=470&&x<470+18&&y>=386&&y<386+17&&b&&!UpPressed )
+		if ( x>=DIALOG_X +470&&x<DIALOG_X +470+18&&y>=DIALOG_Y +386&&y<DIALOG_Y +386+17&&b&&!UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=470;
-			dest.y=386;
+			dest.x=DIALOG_X + 470;
+			dest.y=DIALOG_Y + 386;
 			if ( offset!=0 )
 			{
 				offset--;
@@ -2053,18 +2055,18 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			scr.y=386;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=470;
-			dest.y=386;
+			dest.x=DIALOG_X + 470;
+			dest.y=DIALOG_Y + 386;
 			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
 		}
 		// Klick in die Liste:
-		if ( x>=490&&x<490+70&&y>=60&&y<60+315&&b&&!lb )
+		if ( x>=DIALOG_X +490&&x<DIALOG_X +490+70&&y>=DIALOG_Y +60&&y<DIALOG_Y +60+315&&b&&!lb )
 		{
 			int nr;
-			nr= ( y-60 ) / ( 32+2 );
+			nr= ( y-60-DIALOG_Y ) / ( 32+2 );
 			if ( selection.Size()<9 )
 			{
 				if ( nr>=selection.Size() ) nr=-1;
@@ -2113,13 +2115,13 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			}
 		}
 		// Klick auf einen Upgrade-Slider:
-		if ( b&&!lb&&x>=283&&x<301+18&&selection.Size() )
+		if ( b&&!lb&&x>=DIALOG_X +283&&x<DIALOG_X +301+18&&selection.Size() )
 		{
 			sHUp* ptr = selection[selected];
 			for (size_t i=0;i<8;i++ )
 			{
 				if ( !ptr->upgrades[i].active ) continue;
-				if ( ptr->upgrades[i].Purchased&&x<283+18&&y>=293+i*19&&y<293+i*19+19 )
+				if ( ptr->upgrades[i].Purchased&&x<DIALOG_X +283+18&&y>=DIALOG_Y +293+i*19&&y<DIALOG_Y +293+i*19+19 )
 				{
 					int variety;
 					if ( ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
@@ -2151,7 +2153,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					mouse->draw ( false,screen );
 					break;
 				}
-				else if ( ptr->upgrades[i].NextPrice<=player->Credits&&x>=301&&y>=293+i*19&&y<293+i*19+19 )
+				else if ( ptr->upgrades[i].NextPrice<=player->Credits&&x>=DIALOG_X +301&&y>=DIALOG_Y +293+i*19&&y<DIALOG_Y +293+i*19+19 )
 				{
 					int variety;
 					player->Credits-=ptr->upgrades[i].NextPrice;
@@ -2187,7 +2189,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		}
 
 		// Klick auf einen der SubSelctionButtons:
-		if ( b&&!lb&&x>=467&&x<467+32&&y>=411&&y<411+31 )
+		if ( b&&!lb&&x>=DIALOG_X +467&&x<DIALOG_X +467+32&&y>=DIALOG_Y +411&&y<DIALOG_Y +411+31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			tank=!tank;
@@ -2197,7 +2199,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=467+33&&x<467+32+33&&y>=411&&y<411+31 )
+		else if ( b&&!lb&&x>=DIALOG_X +467+33&&x<DIALOG_X +467+32+33&&y>=DIALOG_Y +411&&y<DIALOG_Y +411+31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			plane=!plane;
@@ -2206,7 +2208,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=467+33*2&&x<467+32+33*2&&y>=411&&y<411+31 )
+		else if ( b&&!lb&&x>=DIALOG_X +467+33*2&&x<DIALOG_X +467+32+33*2&&y>=DIALOG_Y +411&&y<DIALOG_Y +411+31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			ship=!ship;
@@ -2215,7 +2217,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=467+33*3&&x<467+32+33*3&&y>=411&&y<411+31 )
+		else if ( b&&!lb&&x>=DIALOG_X +467+33*3&&x<DIALOG_X +467+32+33*3&&y>=DIALOG_Y +411&&y<DIALOG_Y +411+31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			build=!build;
@@ -2224,7 +2226,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=467+33*4&&x<467+32+33*4&&y>=411&&y<411+31 )
+		else if ( b&&!lb&&x>=DIALOG_X +467+33*4&&x<DIALOG_X +467+32+33*4&&y>=DIALOG_Y +411&&y<DIALOG_Y +411+31 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			tnt=!tnt;
@@ -2233,7 +2235,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=542&&x<542+16&&y>=459 )
+		else if ( b&&!lb&&x>=DIALOG_X +542&&x<DIALOG_X +542+16&&y>=DIALOG_Y +459 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=false;
@@ -2242,7 +2244,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&x>=542&&x<542+16&&y>=445 )
+		else if ( b&&!lb&&x>=DIALOG_X +542&&x<DIALOG_X +542+16&&y>=DIALOG_Y +445 )
 		{
 			PlayFX ( SoundData.SNDHudSwitch );
 			kauf=true;
@@ -2275,15 +2277,15 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		}
 
 		// Down2-Button:
-		if ( x>=327&&x<327+18&&y>=240&&y<240+17&&b&&!Down2Pressed )
+		if ( x>=DIALOG_X +327&&x<DIALOG_X +327+18&&y>=DIALOG_Y +240&&y<DIALOG_Y +240+17&&b&&!Down2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=327;
-			dest.y=240;
+			dest.x=DIALOG_X + 327;
+			dest.y=DIALOG_Y + 240;
 			if ( LandingOffset!=0 )
 			{
 				LandingOffset--;
@@ -2301,23 +2303,23 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			scr.y=240;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=327;
-			dest.y=240;
+			dest.x=DIALOG_X + 327;
+			dest.y=DIALOG_Y + 240;
 			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			Down2Pressed=false;
 		}
 		// Up2-Button:
-		if ( x>=347&&x<347+18&&y>=240&&y<240+17&&b&&!Up2Pressed )
+		if ( x>=DIALOG_X +347&&x<DIALOG_X +347+18&&y>=DIALOG_Y +240&&y<DIALOG_Y +240+17&&b&&!Up2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=347;
-			dest.y=240;
+			dest.x=DIALOG_X + 347;
+			dest.y=DIALOG_Y + 240;
 			if ( LandingOffset<LandingList->Size()-5 )
 			{
 				LandingOffset++;
@@ -2335,8 +2337,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			scr.y=240;
 			dest.w=scr.w=18;
 			dest.h=scr.h=17;
-			dest.x=347;
-			dest.y=240;
+			dest.x=DIALOG_X + 347;
+			dest.y=DIALOG_Y + 240;
 			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -2370,10 +2372,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		}
 
 		// Klick in die LandingListe:
-		if ( x>=330&&x<330+128&&y>=22&&y<22+210&&b&&!lb )
+		if ( x>=DIALOG_X +330&&x<DIALOG_X +330+128&&y>=DIALOG_Y +22&&y<DIALOG_Y +22+210&&b&&!lb )
 		{
 			int nr;
-			nr= ( y-22 ) / ( 32+10 );
+			nr= ( y-22-DIALOG_Y ) / ( 32+10 );
 			if ( LandingList->Size()<5 )
 			{
 				if ( nr>=LandingList->Size() ) nr=-1;
@@ -2428,15 +2430,15 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			{
 				 // Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 				// LadungUp-Button: 
-				if ( x>=413&&x<413+18&&y>=424&&y<424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0&&ptr->id!=32 )
+				if ( x>=DIALOG_X +413&&x<DIALOG_X +413+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0&&ptr->id!=32 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
 					scr.y=151;
 					dest.w=scr.w=18;
 					dest.h=scr.h=17;
-					dest.x=413;
-					dest.y=424;
+					dest.x=DIALOG_X + 413;
+					dest.y=DIALOG_Y + 424;
 
 					ptr->cargo+=5;
 					if ( ptr->cargo > UnitsData.vehicle[ptr->id].data.max_cargo )
@@ -2458,8 +2460,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					scr.y=424;
 					dest.w=scr.w=18;
 					dest.h=scr.h=17;
-					dest.x=413;
-					dest.y=424;
+					dest.x=DIALOG_X + 413;
+					dest.y=DIALOG_Y + 424;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -2467,15 +2469,15 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				}
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 				// LadungDown-Button:
-				if ( x>=433&&x<433+18&&y>=424&&y<424+17&&b&&!LadungUpPressed&&ptr->cargo>0&&ptr->id!=32 )
+				if ( x>=DIALOG_X +433&&x<DIALOG_X +433+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungUpPressed&&ptr->cargo>0&&ptr->id!=32 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
 					scr.y=151;
 					dest.w=scr.w=18;
 					dest.h=scr.h=17;
-					dest.x=433;
-					dest.y=424;
+					dest.x=DIALOG_X + 433;
+					dest.y=DIALOG_Y + 424;
 
 					ptr->cargo-=5;
 					if ( ptr->cargo < 0 )
@@ -2497,8 +2499,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					scr.y=424;
 					dest.w=scr.w=18;
 					dest.h=scr.h=17;
-					dest.x=433;
-					dest.y=424;
+					dest.x=DIALOG_X + 433;
+					dest.y=DIALOG_Y + 424;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
@@ -2506,13 +2508,13 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				}
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 				// Klick auf den Ladungsbalken:
-				if ( b&&!lb&&x>=422&&x<422+20&&y>=301&&y<301+115&&ptr->id!=32 )
+				if ( b&&!lb&&x>=DIALOG_X +422&&x<DIALOG_X +422+20&&y>=DIALOG_Y +301&&y<DIALOG_Y +301+115&&ptr->id!=32 )
 				{
 					int value;
-					value= ( ( ( int ) ( ( 115- ( y-301 ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301-DIALOG_Y ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SoundData.SNDObjectMenu );
 
-					if ( ( 115- ( y-301 ) ) >=110 ) value=UnitsData.vehicle[ptr->id].data.max_cargo;
+					if ( ( 115- ( y-301-DIALOG_Y ) ) >=110 ) value=UnitsData.vehicle[ptr->id].data.max_cargo;
 
 					if ( value<ptr->cargo )
 					{
@@ -3085,14 +3087,19 @@ int CalcSteigerung ( int org, int variety )
 // Malt die SubButtons im Upgradefenster:
 void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface )
 {
-	SDL_Rect scr,dest;
+	SDL_Rect scr,dest, orig_dest;
 	scr.x=152;scr.y=479;
-	dest.x=467;dest.y=411;
-	dest.w=scr.w=32;dest.h=scr.h=31;
+	dest.x=orig_dest.x=467;
+	dest.y=orig_dest.y=411;
+	dest.w=scr.w=orig_dest.w=32;dest.h=scr.h=orig_dest.h=31;
+
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+
 	// Tank:
 	if ( !tank )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&orig_dest,buffer,&dest );
 	}
 	else
 	{
@@ -3100,10 +3107,11 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	dest.x+=33;
 	scr.x+=33;
+	orig_dest.x+=33;
 	// Plane:
 	if ( !plane )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&orig_dest,buffer,&dest );
 	}
 	else
 	{
@@ -3111,10 +3119,11 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	dest.x+=33;
 	scr.x+=33;
+	orig_dest.x+=33;
 	// Ship:
 	if ( !ship )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&orig_dest,buffer,&dest );
 	}
 	else
 	{
@@ -3122,10 +3131,11 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	dest.x+=33;
 	scr.x+=33;
+	orig_dest.x+=33;
 	// Building:
 	if ( !build )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&orig_dest,buffer,&dest );
 	}
 	else
 	{
@@ -3133,10 +3143,11 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	dest.x+=33;
 	scr.x+=33;
+	orig_dest.x+=33;
 	// TNT:
 	if ( !tnt )
 	{
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&dest,buffer,&dest );
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&orig_dest,buffer,&dest );
 	}
 	else
 	{
@@ -3144,20 +3155,23 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	// Kauf:
 	scr.x=54;scr.y=352;
-	scr.w=scr.h=dest.w=dest.h=16;
-	dest.x=542;
-	dest.y=446;
+	scr.w=scr.h=dest.w=dest.h=orig_dest.h=orig_dest.w=16;
+	dest.x=orig_dest.x=542;
+	dest.y=orig_dest.y=446;
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+	
 	if ( !kauf )
 	{
-		SDL_BlitSurface ( surface,&dest,buffer,&dest );
-		dest.y=462;
+		SDL_BlitSurface ( surface,&orig_dest,buffer,&dest );
+		dest.y=DIALOG_Y + 462;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
-		dest.y=462;
-		SDL_BlitSurface ( surface,&dest,buffer,&dest );
+		dest.y=DIALOG_Y + 462;
+		SDL_BlitSurface ( surface,&orig_dest,buffer,&dest );
 	}
 }
 
@@ -3166,28 +3180,34 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 {
 	SDL_Rect scr,dest;
 	scr.x=dest.x=371;
+	dest.x += DIALOG_X;
 	scr.y=dest.y=301;
+	dest.y += DIALOG_Y;
 	scr.w=dest.w=22;
 	scr.h=dest.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	scr.x=dest.x=312;
+	dest.x +=DIALOG_X;
 	scr.y=dest.y=265;
+	dest.y +=DIALOG_Y;
 	scr.w=dest.w=150;
 	scr.h=dest.h=30;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
-	font->showTextCentered(381,275, lngPack.i18n ( "Text~Title~Gold" ));
-	font->showTextCentered(381,275+10, iToStr(credits));
+	font->showTextCentered(DIALOG_X +381,DIALOG_Y + 275, lngPack.i18n ( "Text~Title~Gold" ));
+	font->showTextCentered(DIALOG_X +381,DIALOG_Y +275+10, iToStr(credits));
 
 	scr.x=118;
 	scr.y=336;
 	scr.w=dest.w=16;
 	scr.h=dest.h= ( int ) ( 115 * ( credits / ( float ) StartCredits ) );
-	dest.x=375;
-	dest.y=301+115-dest.h;
+	dest.x=DIALOG_X +375;
+	dest.y=DIALOG_Y +301+115-dest.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 
 	scr.x=dest.x=422;
+	dest.x += DIALOG_X;
 	scr.y=dest.y=301;
+	dest.y += DIALOG_Y;
 	scr.w=dest.w=20;
 	scr.h=dest.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
@@ -3198,16 +3218,16 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 		ptr = (*landing)[selected];
 		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
 		{
-			font->showTextCentered(430,275, lngPack.i18n ( "Text~Title~Cargo" ));
-			font->showTextCentered(430,275+10, iToStr(ptr->cargo));
+			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275, lngPack.i18n ( "Text~Title~Cargo" ));
+			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275+10, iToStr(ptr->cargo));
 
 
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
 			scr.h=dest.h= ( int ) ( 115 * ( ptr->cargo / ( float ) UnitsData.vehicle[ptr->id].data.max_cargo ) );
-			dest.x=422;
-			dest.y=301+115-dest.h;
+			dest.x=DIALOG_X +422;
+			dest.y=DIALOG_Y +301+115-dest.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 	}
@@ -3334,18 +3354,22 @@ void SelectLanding ( int *x,int *y,cMap *map )
 	}
 }
 
-// Zeigt die Liste mit den ausgewählten Landefahrzeugen an:
+// shows list of selected units for landing (box upper middle)
 void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface )
 {
 	sLanding *ptr;
-	SDL_Rect scr,dest,text = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect scr = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect dest,text = {DIALOG_X + 375,DIALOG_Y + 32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
 	int i;
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=222;
-	SDL_BlitSurface ( surface,&scr,buffer,&scr );
+	dest.x = scr.x + DIALOG_X;
+	dest.y = scr.y + DIALOG_Y;
+	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
-	dest.x=340;dest.y=20;
+	dest.x=DIALOG_X + 340;
+	dest.y=DIALOG_Y + 20;
 	dest.w=32;dest.h=32;
 	for ( i=offset;i<list->Size();i++ )
 	{
@@ -3475,27 +3499,34 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 	}
 }
 
-// Zeigt die Liste mit den Images an:
+// shows the units of the selection list (box left middle)
 static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const offset, bool const beschreibung, int const credits, cPlayer* const p)
 {
 	sHUp *ptr;
-	SDL_Rect dest,scr,text = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect dest,text = {DIALOG_X + 530, DIALOG_Y +  70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect scr = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
 	int i,k;
 	scr.x=479;scr.y=52;
-	scr.w=150;scr.h=330;
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
+	scr.w=dest.w=150;scr.h=dest.h=330;
+	dest.x = scr.x + DIALOG_X;
+	dest.y = scr.y + DIALOG_Y;
+	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
-	dest.x=490;dest.y=58;
+	dest.x=DIALOG_X + 490;dest.y=DIALOG_Y + 58;
 	dest.w=32;dest.h=32;
 	if ( list.Size()==0 )
 	{
 		scr.x=0;scr.y=0;
-		scr.w=316;scr.h=256;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
+		scr.w=dest.w=316;scr.h=dest.h=256;
+		dest.x = scr.x + DIALOG_X;
+		dest.y = scr.y + DIALOG_Y;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 		scr.x=11;scr.y=290;
-		scr.w=346;scr.h=176;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&scr );
+		scr.w=dest.w=346;scr.h=dest.h=176;
+		dest.x = scr.x + DIALOG_X;
+		dest.y = scr.y + DIALOG_Y;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 		return;
 	}
 	for ( i=offset;i<list.Size();i++ )
@@ -3507,8 +3538,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
 		{
-			SDL_Rect tmp;
-			tmp=dest;
+			SDL_Rect tmp = dest;
 			tmp.x-=4;
 			tmp.y-=4;
 			tmp.h=1;
@@ -3531,7 +3561,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			tmp.x-=38;
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 			// Das Bild neu malen:
-			tmp.x=11;tmp.y=13;
+			tmp.x=DIALOG_X +11;tmp.y=DIALOG_Y +13;
 			if ( ptr->vehicle )
 			{
 				tmp.w=UnitsData.vehicle[ptr->id].info->w;
@@ -3562,9 +3592,11 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			{
 				tmp.x=11;
 				tmp.y=290;
-				tmp.w=346;
-				tmp.h=176;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&tmp );
+				dest.x = tmp.x + DIALOG_X;
+				dest.y = tmp.y + DIALOG_Y;
+				tmp.w=dest.w=346;
+				tmp.h=dest.h=176;
+				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&dest );
 				if ( ptr->vehicle )
 				{
 					cVehicle tv(&UnitsData.vehicle[ptr->id], p);
@@ -3579,22 +3611,21 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			// Die Texte anzeigen/Slider machen:
 			for ( k=0;k<8;k++ )
 			{
-				SDL_Rect scr,dest;
 				if ( !ptr->upgrades[k].active ) continue;
-				font->showText(322,296+k*19, iToStr(ptr->upgrades[k].NextPrice));
+				font->showText(DIALOG_X +322,DIALOG_Y +296+k*19, iToStr(ptr->upgrades[k].NextPrice));
 
 				if ( ptr->upgrades[k].Purchased )
 				{
 					scr.x=380;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
-					dest.x=283;dest.y=293+k*19;
+					dest.x=DIALOG_X +283;dest.y=DIALOG_Y +293+k*19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 				if ( ptr->upgrades[k].NextPrice<=credits )
 				{
 					scr.x=399;scr.y=256;
 					dest.w=scr.w=18;dest.h=scr.h=17;
-					dest.x=301;dest.y=293+k*19;
+					dest.x=DIALOG_X +301;dest.y=DIALOG_Y +293+k*19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 				}
 			}
@@ -3605,7 +3636,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 		if ( ptr->vehicle )
 		{
 			sTmp = UnitsData.vehicle[ptr->id].data.name;
-			font->showTextCentered(616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs), LATIN_SMALL_YELLOW);
+			font->showTextCentered(DIALOG_X +616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs), LATIN_SMALL_YELLOW);
 		}
 		else
 		{
