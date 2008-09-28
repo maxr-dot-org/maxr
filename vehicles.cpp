@@ -77,7 +77,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	PlaceBand = false;
 	BuildOverride = false;
 	IsClearing = false;
-	ClearBig = false;
 	ShowBigBeton = false;
 	bSentryStatus = false;
 	Transfer = false;
@@ -208,10 +207,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 	tmp.y += oy;
 
-	if ( IsBuilding && data.can_build == BUILD_BIG )
-		dir = 0;
-
-	if ( IsClearing && ClearBig )
+	if ( (IsBuilding || IsClearing) && data.is_big )
 		dir = 0;
 
 	// Prüfen, ob gebaut wird:
@@ -426,7 +422,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 	}
 	else
-		if ( IsBuilding || ( IsClearing && ClearBig ) )
+		if ( IsBuilding || ( IsClearing && data.is_big ) )
 		{
 			// Ggf den Beton malen:
 			if ( ShowBigBeton )
@@ -581,7 +577,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		int max, nr;
 		nr = * ( unsigned int* ) owner->color->pixels;
 
-		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
+		if ( ( IsBuilding || IsClearing ) && data.is_big )
 		{
 			max = ( Client->Hud.Zoom - 1 ) * 2;
 		}
@@ -618,7 +614,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		SDL_Rect d, t;
 		int len, max;
 
-		if ( ( IsBuilding && data.can_build == BUILD_BIG ) || ( IsClearing && ClearBig ) )
+		if ( ( IsBuilding || IsClearing ) && data.is_big )
 		{
 			max = Client->Hud.Zoom * 2;
 		}
@@ -1528,7 +1524,7 @@ bool cVehicle::CanDrive(int const MapOff) const
 		// Kann nur 1 Feld im Umkreis befahren:
 		off = PosX + PosY * Client->Map->size;
 
-		if ( data.can_build == BUILD_BIG || ClearBig )
+		if ( data.is_big )
 		{
 			if ( ( MapOff < 0 ) || ( MapOff > Client->Map->size*MapOff > Client->Map->size ) ||
 			        ( MapOff >= off - 1 - Client->Map->size && MapOff <= off + 2 - Client->Map->size ) ||

@@ -260,7 +260,7 @@ void cGame::Run ( void )
 			}
 			if ( ( ( SelectedVehicle->IsBuilding&&SelectedVehicle->BuildRounds==0 ) || ( SelectedVehicle->IsClearing&&SelectedVehicle->ClearingRounds==0 ) ) &&SelectedVehicle->owner==ActivePlayer )
 			{
-				if ( SelectedVehicle->data.can_build==BUILD_BIG||SelectedVehicle->ClearBig )
+//				if ( SelectedVehicle->data.can_build==BUILD_BIG||SelectedVehicle->ClearBig )
 				{
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx-hud.Zoom,spy-hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx,spy-hud.Zoom );
@@ -275,7 +275,7 @@ void cGame::Run ( void )
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+2 ) *map->size ) ) DrawExitPoint ( spx+hud.Zoom,spy+hud.Zoom*2 );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY+2 ) *map->size ) ) DrawExitPoint ( spx+hud.Zoom*2,spy+hud.Zoom*2 );
 				}
-				else
+//				else
 				{
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx-hud.Zoom,spy-hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx,spy-hud.Zoom );
@@ -962,7 +962,7 @@ int cGame::CheckUser ( void )
 		{
 			if ( SelectedVehicle->data.can_drive!=DRIVE_AIR )
 			{
-				if ( ( SelectedVehicle->IsBuilding&&SelectedVehicle->data.can_build==BUILD_BIG ) || ( SelectedVehicle->IsClearing&&SelectedVehicle->ClearBig ) )
+//				if ( ( SelectedVehicle->IsBuilding&&SelectedVehicle->data.can_build==BUILD_BIG ) || ( SelectedVehicle->IsClearing&&SelectedVehicle->ClearBig ) )
 				{
 					// Das Vehicle an den Rand setzen:
 					bool changed=false;
@@ -3117,7 +3117,7 @@ void SaveVehicle ( cVehicle *v,FILE *fp )
 	}
 	FSAVE_V_1 ( IsClearing )
 	FSAVE_V_4 ( ClearingRounds )
-	FSAVE_V_1 ( ClearBig )
+//	FSAVE_V_1 ( ClearBig )
 	FSAVE_V_1 ( ShowBigBeton )
 	FSAVE_V_1 ( bSentryStatus )
 	FSAVE_V_4 ( FlightHigh )
@@ -3570,7 +3570,7 @@ void cGame::Load ( string name,int AP,bool MP )
 				}
 				FLOAD_V_1 ( IsClearing )
 				FLOAD_V_4 ( ClearingRounds )
-				FLOAD_V_1 ( ClearBig )
+//				FLOAD_V_1 ( ClearBig )
 				FLOAD_V_1 ( ShowBigBeton )
 				FLOAD_V_1 ( bSentryStatus )
 				FLOAD_V_4 ( FlightHigh )
@@ -3968,7 +3968,7 @@ void cGame::TraceVehicle ( cVehicle *v,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "build_override: " + iToStr ( v->BuildOverride ) + " is_clearing: " + iToStr ( v->IsClearing ) + " clearing_rounds: +" + iToStr ( v->ClearingRounds ) + " clear_big: " + iToStr ( v->ClearBig ) + " loaded: " + iToStr (v->Loaded );
+//	sTmp = "build_override: " + iToStr ( v->BuildOverride ) + " is_clearing: " + iToStr ( v->IsClearing ) + " clearing_rounds: +" + iToStr ( v->ClearingRounds ) + " clear_big: " + iToStr ( v->ClearBig ) + " loaded: " + iToStr (v->Loaded );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

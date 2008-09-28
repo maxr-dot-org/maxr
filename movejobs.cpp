@@ -383,14 +383,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	int iReceivedCount = message->popInt16();
 
 	cLog::write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
-	//if the vehicle is under attack, cancel the movejob
-	if ( Vehicle->bIsBeeingAttacked )
-	{
-		cLog::write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
-		sendNextMove( Vehicle->iID, ScrX+ScrY*Map->size, MJOB_FINISHED, Vehicle->owner->Nr );
-		return false;
-	}
-
+	
 	// Add the waypoints
 	sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
 	Waypoints = Waypoint;

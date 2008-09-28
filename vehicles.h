@@ -116,7 +116,6 @@ public:
 	bool BuildOverride; // Um nen kleinen Grafikfehler im MP zu beheben
 	bool IsClearing;  // Gibt an, ob einn Feld ger‰umt wird
 	int ClearingRounds; // Gibt an, wie lange ein Feld noch ger‰umt wird
-	bool ClearBig;    // Gibt an, ob ein groﬂes Feld ger‰umt werden soll
 	bool ShowBigBeton; // Gibt an, ob eine groﬂe Betonfl‰che gemalt werden soll
 	int BigBetonAlpha; // AlphaWert des groﬂen Betons
 	bool bSentryStatus;		/** true if the vehicle is on sentry */
