@@ -754,7 +754,7 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 	else
 	{
 		int i = 0;
-		if ( building->data.is_base && !fields[offset].buildings[0]->data.is_base )
+		if ( building->data.is_base && fields[offset].buildings.Size() > 0 && !fields[offset].buildings[0]->data.is_base )
 		{
 			i++;
 			GO[offset].subbase = GO[offset].base;
