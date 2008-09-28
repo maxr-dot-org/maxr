@@ -3582,13 +3582,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			rubble->prev = NULL;
 
 			bool big = message->popBool();
-			rubble->DirtTyp = message->popInt16();
-			rubble->DirtValue = message->popInt16();
+			rubble->RubbleTyp = message->popInt16();
+			rubble->RubbleValue = message->popInt16();
 			rubble->iID = message->popInt16();
 			rubble->PosY = message->popInt16();
 			rubble->PosX = message->popInt16();
 			rubble->data.is_big = big;
-			rubble->BigDirt = big;
 			
 			Map->addBuilding( rubble, rubble->PosX, rubble->PosY);
 		}
@@ -4181,7 +4180,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->DirtValue ) + " big_dirt: " + iToStr ( Building->BigDirt ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );
+	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->RubbleValue ) + " big_dirt: " + iToStr ( Building->data.is_big ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 

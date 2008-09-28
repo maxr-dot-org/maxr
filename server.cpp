@@ -2293,18 +2293,17 @@ void cServer::addRubble( int offset, int value, bool big )
 	rubble->PosY = offset / Map->size;
 
 	rubble->data.is_big = big;
-	rubble->BigDirt = big;
-	rubble->DirtValue = value;
+	rubble->RubbleValue = value;
 
 	Map->addBuilding( rubble, offset );
 
 	if ( big )
 	{
-		rubble->DirtTyp = random(2);
+		rubble->RubbleTyp = random(2);
 	}
 	else
 	{
-		rubble->DirtTyp = random(5);
+		rubble->RubbleTyp = random(5);
 	}
 }
 

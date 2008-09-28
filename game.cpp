@@ -2455,16 +2455,16 @@ void cGame::AddDirt ( int x,int y,int value,bool big )
 		map->GO[x+1+y*map->size].base=n;
 		map->GO[x+1+ ( y+1 ) *map->size].base=n;
 		map->GO[x+ ( y+1 ) *map->size].base=n;
-		n->DirtTyp = random(2);
+		n->RubbleTyp = random(2);
 		n->data.is_big=true;
 	}
 	else
 	{
-		n->DirtTyp = random(5);
+		n->RubbleTyp = random(5);
 		n->data.is_big=false;
 	}
-	n->DirtValue=value;
-	n->BigDirt=big;
+	//n->DirtValue=value;
+	//n->BigDirt=big;
 }
 
 // Malt einen Exitpoint:
@@ -2487,7 +2487,7 @@ void cGame::DrawExitPoint ( int x,int y )
 // Löscht den Dreck:
 void cGame::DeleteDirt ( cBuilding *ptr )
 {
-	if ( ptr->BigDirt )
+//	if ( ptr->BigDirt )
 	{
 		map->GO[ptr->PosX+1+ptr->PosY*map->size].base=NULL;
 		map->GO[ptr->PosX+1+ ( ptr->PosY+1 ) *map->size].base=NULL;
@@ -3200,9 +3200,9 @@ void SaveBuilding ( int off,FILE *fp,int iTyp )
 #define FSAVE_B_4(a) fwrite(&(b->a),sizeof(int),1,fp);
 #define FSAVE_B_1(a) fwrite(&(b->a),1,1,fp);
 
-	FSAVE_B_4 ( DirtTyp )
-	FSAVE_B_4 ( DirtValue )
-	FSAVE_B_1 ( BigDirt )
+//	FSAVE_B_4 ( DirtTyp )
+//	FSAVE_B_4 ( DirtValue )
+//	FSAVE_B_1 ( BigDirt )
 	FSAVE_B_1 ( IsWorking )
 	FSAVE_B_4 ( MetalProd )
 	FSAVE_B_4 ( MetalPerRound )
@@ -3695,9 +3695,9 @@ void cGame::Load ( string name,int AP,bool MP )
 #define FLOAD_B_4(a) fread(&(b->a),sizeof(int),1,fp);
 #define FLOAD_B_1(a) fread(&(b->a),1,1,fp);
 
-				FLOAD_B_4 ( DirtTyp )
-				FLOAD_B_4 ( DirtValue )
-				FLOAD_B_1 ( BigDirt )
+				//FLOAD_B_4 ( DirtTyp )
+//				FLOAD_B_4 ( DirtValue )
+//				FLOAD_B_1 ( BigDirt )
 				FLOAD_B_1 ( IsWorking )
 				FLOAD_B_4 ( MetalProd )
 				FLOAD_B_4 ( MetalPerRound)
@@ -4010,7 +4010,7 @@ void cGame::TraceBuilding ( cBuilding *b,int *y,int x )
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 
-	sTmp = "attacking: " + iToStr ( b->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( b->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( b->DirtValue ) + " big_dirt: " + iToStr ( b->BigDirt ) + " is_working: " + iToStr (b->IsWorking ) + " transfer: " + iToStr (b->Transfer );
+//	sTmp = "attacking: " + iToStr ( b->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( b->DirtTyp ) + " UnitsData.dirt_value: +" + iToStr ( b->DirtValue ) + " big_dirt: " + iToStr ( b->BigDirt ) + " is_working: " + iToStr (b->IsWorking ) + " transfer: " + iToStr (b->Transfer );
 	font->showText(x,*y, sTmp, LATIN_SMALL_WHITE);
 	*y+=8;
 

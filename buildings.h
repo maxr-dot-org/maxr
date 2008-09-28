@@ -130,9 +130,8 @@ public:
 	bool MenuActive; // Gibt an, ob das Menü grad aktiv ist
 	bool AttackMode; // Gibt an, ob der AttackMode grad aktiv ist
 	bool bIsBeeingAttacked; /** true when an attack on this building is running */
-	int DirtTyp;     // Typ des Drecks
-	int DirtValue;   // Wert des Drecks
-	bool BigDirt;    // Gibt an, ob es sich um großen Dreck handelt
+	int RubbleTyp;     // Typ des Drecks
+	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // Zähler für die Startupannimation
 	cBase *base;     // Die Basis des Gebäudes
 	bool BaseN,BaseE,BaseS,BaseW; // Gibt an, ob das Gebäude in einer Richting verbunden ist

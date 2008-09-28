@@ -77,8 +77,8 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 {
 	PosX = 0;
 	PosY = 0;
-	DirtTyp = 0;
-	DirtValue = 0;
+	RubbleTyp = 0;
+	RubbleValue = 0;
 	EffectAlpha = 0;
 	EffectInc = true;
 	dir = 0;
@@ -535,19 +535,19 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	// Prüfen, ob es Dreck ist:
 	if ( !owner )
 	{
-		if ( BigDirt )
+		if ( data.is_big )
 			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_big->h;
 		else
 			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_small->h;
 
-		scr.x = scr.w * DirtTyp;
+		scr.x = scr.w * RubbleTyp;
 
 		scr.y = 0;
 
 		// Den Schatten malen:
 		if ( SettingsData.bShadows )
 		{
-			if ( BigDirt )
+			if ( data.is_big )
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &scr, buffer, &tmp );
 			else
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &scr, buffer, &tmp );
@@ -556,7 +556,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		// Das Building malen:
 		tmp = *dest;
 
-		if ( BigDirt )
+		if ( data.is_big )
 			SDL_BlitSurface ( UnitsData.dirt_big, &scr, buffer, &tmp );
 		else
 			SDL_BlitSurface ( UnitsData.dirt_small, &scr, buffer, &tmp );
@@ -2522,7 +2522,7 @@ void cBuilding::StoreVehicle ( int off )
 	StoredVehicles->Add ( v );
 	data.cargo++;
 
-	if ( Client->SelectedBuilding && Client->SelectedBuilding == this )
+	if ( Client->SelectedBuilding == this )
 	{
 		ShowDetails();
 	}

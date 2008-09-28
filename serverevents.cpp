@@ -48,9 +48,9 @@ void sendAddRubble( cBuilding* building, int iPlayer )
 	message->pushInt16( building->PosX );
 	message->pushInt16( building->PosY );
 	message->pushInt16( building->iID );
-	message->pushInt16( building->DirtValue );
-	message->pushInt16( building->DirtTyp );
-	message->pushBool( building->BigDirt );
+	message->pushInt16( building->RubbleValue );
+	message->pushInt16( building->RubbleTyp );
+	message->pushBool( building->data.is_big );
 
 	Server->sendNetMessage( message, iPlayer );
 }
