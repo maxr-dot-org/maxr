@@ -326,6 +326,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
 
+			//FIXME: I think there are some memleaks. is the client movejob alway deleted? --Eiko
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
 			{
@@ -337,8 +338,24 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cLog::write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
 				break;
 			}
-
+			if ( Vehicle->bIsBeeingAttacked )
+			{
+				cLog::write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
+				break;
+			}
+			if ( Vehicle->IsBuilding )
+			{
+				cLog::write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
+				break;
+			}
+			if ( Vehicle->IsClearing )
+			{
+				cLog::write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
+				break;
+			}
+			
 			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
+			//FIXME: I think here is a memleak. Is MoveJob deleted somewhere, when generateFromMessage fails? --Eiko
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
 
 			addActiveMoveJob ( MoveJob );
