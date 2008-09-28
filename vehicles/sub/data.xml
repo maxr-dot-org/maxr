@@ -73,7 +73,7 @@
           <Range Fd="0"/>
         </Target_WMD>
       </Allowed_Targets>
-      <Shots Num="1"/>
+      <Shots Num="2"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
       <Movement_Allowed Num="0"/>  
