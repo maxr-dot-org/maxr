@@ -1113,6 +1113,7 @@ string RunPlanetSelect ( void )
 	int b,lb=0,offset=0,selected=-1,i,lx=-1,ly=-1;
 	cList<string> *files;
 	SDL_Rect scr;
+	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 
 	SDL_Surface *sfTmp;
 
@@ -1127,12 +1128,12 @@ string RunPlanetSelect ( void )
 	SDL_FillRect(buffer, NULL, 0x0000);
 
 	//blit sfTmp to buffer
-	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
+	SDL_BlitSurface (sfTmp, NULL, buffer, &dest); 
 
-	font->showTextCentered(320,11, lngPack.i18n ( "Text~Title~Choose_Planet" ));
+	font->showTextCentered(DIALOG_X + 320, DIALOG_Y + 11, lngPack.i18n ( "Text~Title~Choose_Planet" ));
 
-	MenuButton btn_back( 50, 440, "Text~Button~Back");
-	MenuButton btn_ok(  390, 440, "Text~Button~OK");
+	MenuButton btn_back( DIALOG_X + 50, DIALOG_Y + 440, "Text~Button~Back");
+	MenuButton btn_ok(  DIALOG_X + 390, DIALOG_Y + 440, "Text~Button~OK");
 
 	btn_back.Draw();
 	btn_ok.Lock();
@@ -1189,7 +1190,7 @@ string RunPlanetSelect ( void )
 			return name;
 		}
 		// Up:
-		if ( mouse->x>=293&&mouse->x<293+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&offset>0 )
+		if ( mouse->x>=DIALOG_X + 293&&mouse->x<DIALOG_X + 293+24&&mouse->y>=DIALOG_Y + 440&&mouse->y<DIALOG_Y + 440+24&&b&&!lb&&offset>0 )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			offset-=4;
@@ -1198,7 +1199,7 @@ string RunPlanetSelect ( void )
 			mouse->draw ( false,screen );
 		}
 		// Down:
-		if ( mouse->x>=321&&mouse->x<321+24&&mouse->y>=440&&mouse->y<440+24&&b&&!lb&&files->Size()-8-offset>0 )
+		if ( mouse->x>=DIALOG_X + 321&&mouse->x<DIALOG_X + 321+24&&mouse->y>=DIALOG_Y + 440&&mouse->y<DIALOG_Y + 440+24&&b&&!lb&&files->Size()-8-offset>0 )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			offset+=4;
@@ -1209,8 +1210,8 @@ string RunPlanetSelect ( void )
 		// Klick auf eine Map:
 		if ( b&&!lb )
 		{
-			scr.x=25;
-			scr.y=90;
+			scr.x=DIALOG_X + 25;
+			scr.y=DIALOG_Y + 90;
 			for ( i=0;i<8;i++ )
 			{
 				if ( i+offset>=files->Size() ) break;
@@ -1229,7 +1230,7 @@ string RunPlanetSelect ( void )
 				scr.x+=158;
 				if ( i==3 )
 				{
-					scr.x=25;
+					scr.x=DIALOG_X + 25;
 					scr.y+=197;
 				}
 			}
@@ -1256,16 +1257,17 @@ string RunPlanetSelect ( void )
 static void ShowPlanets(cList<string>* const files, int const offset, int const selected, SDL_Surface* const surface)
 {
 	SDL_Surface *sf;
-	//SDL_Rect scr={640, 390, 0, 38},dest;
-	SDL_Rect scr={0, 38, 640, 390},dest;
+	SDL_Rect dest = { DIALOG_X , DIALOG_Y + 38, DIALOG_W, DIALOG_H};
+	SDL_Rect scr={0, 38, 640, 390};
 	string sMap;
 	string sPath;
 	int size;
 	SDL_RWops *fp;
 
-	SDL_BlitSurface ( surface,&scr,buffer,&scr );
+	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
-	scr.x=25; scr.y=90; scr.h=scr.w=112;
+	//scr.x=25; scr.y=90; scr.h=scr.w=112;
+	dest.x=DIALOG_X+25; dest.y=DIALOG_Y+90; dest.h=dest.w=112;
 
 	cLog::write ( "Loading Maps", cLog::eLOG_TYPE_INFO );
 
@@ -1317,11 +1319,10 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 			}
 			if ( sf!=NULL )
 			{
-				SDL_BlitSurface ( sf,NULL,buffer,&scr );
+				SDL_BlitSurface ( sf,NULL,buffer,&dest );
 			}
 
-			SDL_Rect r;
-			r=scr;
+			SDL_Rect r = dest;
 			//borders
 #define SELECTED 0x00C000
 #define UNSELECTED 0x000000
@@ -1362,13 +1363,13 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 				sMap.replace ( sMap.length(), 3, iToStr(size) );
 				sMap.insert ( sMap.length(),")" );
 			}
-			font->showTextCentered(scr.x+77-21,scr.y-42, sMap);
+			font->showTextCentered(dest.x+77-21,dest.y-42, sMap);
 
-			scr.x+=158;
+			dest.x+=158;
 			if ( i==3 )
 			{
-				scr.x=25;
-				scr.y+=197;
+				dest.x=DIALOG_X+25;
+				dest.y+=197;
 			}
 		}
 		else
@@ -1384,35 +1385,35 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 	cLog::mark();
 
 	// Die Up-Down Buttons machen:
+
+	dest.x=DIALOG_X + 293;
+	dest.y=DIALOG_Y + 440;
+	dest.h=scr.h=dest.w=scr.w=25;
+
 	if ( offset )
 	{
 		scr.x=130;scr.y=452;
-		dest.h=scr.h=dest.w=scr.w=25;
-		dest.x=293;
-		dest.y=440;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		dest.h=dest.w=25;
-		dest.x=293;
-		dest.y=440;
-		SDL_BlitSurface ( surface,&dest,buffer,&dest );
+		scr.x=293;scr.y=440;
+		SDL_BlitSurface ( surface,&scr,buffer,&dest );
+
 	}
+
+	dest.x=DIALOG_X + 321;
+	dest.y=DIALOG_Y + 440;
+
 	if ( files->Size()-8-offset>0 )
 	{
-		scr.x=103;scr.y=452;
-		dest.h=scr.h=dest.w=scr.w=25;
-		dest.x=321;
-		dest.y=440;
+		scr.x=103; scr.y=452;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 	}
 	else
 	{
-		dest.h=dest.w=25;
-		dest.x=321;
-		dest.y=440;
-		SDL_BlitSurface ( surface,&dest,buffer,&dest );
+		scr.x=321; scr.y=440;
+		SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	}
 }
 
