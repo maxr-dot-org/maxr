@@ -2204,7 +2204,7 @@ void cServer::destroyUnit(cBuilding *building)
 		if ( Map->GO[offset + 1            ].subbase && Map->GO[offset + 1            ].subbase->owner ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size    ].subbase && Map->GO[offset + Map->size    ].subbase->owner ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
 		if ( Map->GO[offset + Map->size + 1].subbase && Map->GO[offset + Map->size + 1].subbase->owner ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
-		
+
 		deleteUnit( Map->GO[offset + 1            ].base, false );
 		deleteUnit( Map->GO[offset + Map->size    ].base, false );
 		deleteUnit( Map->GO[offset + Map->size + 1].base, false );
@@ -2296,13 +2296,10 @@ void cServer::addRubble( int offset, int value, bool big )
 	rubble->BigDirt = big;
 	rubble->DirtValue = value;
 
-	Map->GO[offset].subbase = rubble;
+	Map->addBuilding( rubble, offset );
 
 	if ( big )
 	{
-		Map->GO[offset + 1       ].subbase = rubble;
-		Map->GO[offset + Map->size    ].subbase = rubble;
-		Map->GO[offset + Map->size + 1].subbase = rubble;
 		rubble->DirtTyp = random(2);
 	}
 	else
@@ -2313,15 +2310,7 @@ void cServer::addRubble( int offset, int value, bool big )
 
 void cServer::deleteRubble( cBuilding* rubble )
 {
-	int offset = rubble->PosX + rubble->PosY * Map->size;
-	if ( rubble->BigDirt )
-	{
-		Map->GO[offset + 1].subbase = NULL;
-		Map->GO[offset + Map->size].subbase = NULL;
-		Map->GO[offset + Map->size + 1].subbase = NULL;
-	}
-
-	Map->GO[offset].subbase = NULL;
+	Map->deleteBuilding( rubble );
 
 	if ( !rubble->prev )
 	{

@@ -838,18 +838,8 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 				if ( bServerIsFaster )
 				{
 					cLog::write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
-					if ( Vehicle->data.can_drive == DRIVE_AIR )
-					{
-						Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-						Map->GO[iNextDestX+iNextDestY*Map->size].plane = Vehicle;
-					}
-					else
-					{
-						Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-						Map->GO[iNextDestX+iNextDestY*Map->size].vehicle = Vehicle;
-					}
-					Vehicle->PosX = iNextDestX;
-					Vehicle->PosY = iNextDestY;
+
+					Map->moveVehicle( Vehicle, iNextDestX, iNextDestY );
 					Vehicle->OffX = Vehicle->OffY = 0;
 
 					Waypoint = Waypoints;
