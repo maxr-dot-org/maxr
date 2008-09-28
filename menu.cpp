@@ -151,31 +151,46 @@ void ExitMenu ( void )
 void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {
 	SDL_Rect r;
+	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 	int len;
 	len = font->getTextWide(sText);
+
 	if ( center )
 	{
-		font->showTextCentered(x, y, sText);
+		font->showTextCentered(x+DIALOG_X, y+DIALOG_Y, sText);
 	}
 	else
 	{
-		font->showText(x, y, sText);
+		font->showText(x+DIALOG_X, y+DIALOG_Y, sText);
 		x+=len/2;
 	}
 	r.x=x-len/2-4;
 	r.w=len+8;
 	r.h=1;
 	r.y=y-2;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
+	dest = r;
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+
+	if ( checked ) SDL_FillRect ( buffer,&dest,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&dest );
 	r.y+=14;
 	r.w++;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
+	dest = r;
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+	if ( checked ) SDL_FillRect ( buffer,&dest,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&dest );
 	r.y-=14;
 	r.w=1;
 	r.h=14;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
+	dest = r;
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+	if ( checked ) SDL_FillRect ( buffer,&dest,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&dest );
 	r.x+=len+8;
-	if ( checked ) SDL_FillRect ( buffer,&r,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&r );
+	dest = r;
+	dest.x += DIALOG_X;
+	dest.y += DIALOG_Y;
+	if ( checked ) SDL_FillRect ( buffer,&dest,0xE3DACF );else SDL_BlitSurface ( surface,&r,buffer,&dest );
 }
 
 
@@ -645,6 +660,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 	}
 
 	SDL_Surface *sfTmp;
+	SDL_Rect dest = { DIALOG_X , DIALOG_Y, DIALOG_W, DIALOG_H};
 
 	//need a tmpsf since I can't tell LoadPCXtoSF any dest
 	//what is vital for resolutions > 640*480
@@ -657,32 +673,32 @@ sOptions RunOptionsMenu ( sOptions *init )
 	SDL_FillRect(buffer, NULL, 0x0000);
 
 	//blit sfTmp to buffer
-	SDL_BlitSurface (sfTmp, NULL, buffer, NULL); //FIXME: use dest and make this working > 640x480
-	font->showTextCentered(320, 11, GAMEOPTIONS);
+	SDL_BlitSurface (sfTmp, NULL, buffer, &dest);
+	font->showTextCentered(DIALOG_X + 320, DIALOG_Y + 11, GAMEOPTIONS);
 
 	// Ressourcen:
-	font->showTextCentered(110,56, lngPack.i18n ( "Text~Title~Resource" ));
+	font->showTextCentered(DIALOG_X + 110,DIALOG_Y + 56, lngPack.i18n ( "Text~Title~Resource" ));
 
-	font->showText(17,86, METAL);
+	font->showText(DIALOG_X + 17,DIALOG_Y + 86, METAL);
 	placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
 	placeSelectableText ( MIDDLE,38+45,86+16,options.metal==1, sfTmp);
 	placeSelectableText ( MUCH,38+45*2,86+16,options.metal==2, sfTmp );
 	placeSelectableText ( MOST,38+45*3,86+16,options.metal==3, sfTmp );
 
-	font->showText(17,124, OIL);
+	font->showText(DIALOG_X + 17, DIALOG_Y + 124, OIL);
 	placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
 	placeSelectableText ( MIDDLE,38+45,124+16,options.oil==1 , sfTmp);
 	placeSelectableText ( MUCH,38+45*2,124+16,options.oil==2, sfTmp );
 	placeSelectableText ( MOST,38+45*3,124+16,options.oil==3, sfTmp );
 
-	font->showText(17,162, GOLD);
+	font->showText(DIALOG_X + 17, DIALOG_Y + 162, GOLD);
 	placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
 	placeSelectableText ( MIDDLE,38+45,162+16,options.gold==1, sfTmp );
 	placeSelectableText ( MUCH,38+45*2,162+16,options.gold==2 , sfTmp);
 	placeSelectableText ( MOST,38+45*3,162+16,options.gold==3, sfTmp );
 
 	// Credits:
-	font->showTextCentered(110+211,56, CREDITS);
+	font->showTextCentered(DIALOG_X + 110+211, DIALOG_Y + 56, CREDITS);
 
 	placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
 	placeSelectableText ( LOWER,110+130,86+20,options.credits==50, sfTmp,false );
@@ -693,19 +709,19 @@ sOptions RunOptionsMenu ( sOptions *init )
 	placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 
 	// Brückenkopf:
-	font->showTextCentered(110+211*2,56, HEAD);
+	font->showTextCentered(DIALOG_X + 110+211*2, DIALOG_Y + 56, HEAD);
 
 	placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
 	placeSelectableText ( DEFINITE,452,86+20,options.FixedBridgeHead, sfTmp,false );
 
 	// AlienTechs:
-	font->showTextCentered(110,251, ALIEN);
+	font->showTextCentered(DIALOG_X + 110, DIALOG_Y + 251, ALIEN);
 
 	placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
 	placeSelectableText ( OFF,38,281+20,!options.AlienTech, sfTmp );
 
 	// Ressourcendichte:
-	font->showTextCentered(110+211,251, RESOURCE);
+	font->showTextCentered(DIALOG_X + 110+211, DIALOG_Y + 251, RESOURCE);
 
 	placeSelectableText ( THIN,110+130,281,options.dichte==0, sfTmp,false );
 	placeSelectableText ( MIDDLE,110+130,281+20,options.dichte==1, sfTmp,false );
@@ -713,14 +729,14 @@ sOptions RunOptionsMenu ( sOptions *init )
 	placeSelectableText ( MOST,110+130,281+20*3,options.dichte==3, sfTmp,false );
 
 	// Spielart:
-	font->showTextCentered(110+211*2,251, GAMETYPE);
+	font->showTextCentered(DIALOG_X + 110+211*2, DIALOG_Y + 251, GAMETYPE);
 
 
 	placeSelectableText ( SIMU,452,281,!options.PlayRounds, sfTmp,false );
 	placeSelectableText ( TURNS,452,281+20,options.PlayRounds, sfTmp,false );
 
-	MenuButton btn_back( 50, 440, "Text~Button~Back");
-	MenuButton btn_ok(  390, 440, "Text~Button~OK");
+	MenuButton btn_back( DIALOG_X + 50, DIALOG_Y + 440, "Text~Button~Back");
+	MenuButton btn_ok(  DIALOG_X + 390, DIALOG_Y + 440, "Text~Button~OK");
 
 	btn_back.Draw();
 	btn_ok.Draw();
@@ -741,7 +757,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 		}
 
 		// Klick aufs Metall:
-		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20&&mouse->x< DIALOG_X + 38+20&&mouse->y>=DIALOG_Y + 86+16-4&&mouse->y<DIALOG_Y + 86+16-4+14 )
 		{
 			options.metal=0;
 			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
@@ -752,7 +768,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45&&mouse->x<DIALOG_X + 38+20+45&&mouse->y>=DIALOG_Y + 86+16-4&&mouse->y<DIALOG_Y + 86+16-4+14 )
 		{
 			options.metal=1;
 			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
@@ -763,7 +779,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*2&&mouse->x<DIALOG_X + 38+20+45*2&&mouse->y>=DIALOG_Y + 86+16-4&&mouse->y<DIALOG_Y + 86+16-4+14 )
 		{
 			options.metal=2;
 			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
@@ -774,7 +790,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=86+16-4&&mouse->y<86+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*3&&mouse->x<DIALOG_X + 38+20+45*3&&mouse->y>=DIALOG_Y + 86+16-4&&mouse->y<DIALOG_Y + 86+16-4+14 )
 		{
 			options.metal=3;
 			placeSelectableText ( LOW,38,86+16,options.metal==0, sfTmp );
@@ -786,7 +802,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Klick aufs Öl:
-		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20&&mouse->x<DIALOG_X + 38+20&&mouse->y>=DIALOG_Y + 124+16-4&&mouse->y<DIALOG_Y + 124+16-4+14 )
 		{
 			options.oil=0;
 			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
@@ -797,7 +813,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45&&mouse->x<DIALOG_X + 38+20+45&&mouse->y>=DIALOG_Y + 124+16-4&&mouse->y<DIALOG_Y + 124+16-4+14 )
 		{
 			options.oil=1;
 			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
@@ -808,7 +824,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*2&&mouse->x<DIALOG_X + 38+20+45*2&&mouse->y>=DIALOG_Y + 124+16-4&&mouse->y<DIALOG_Y + 124+16-4+14 )
 		{
 			options.oil=2;
 			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
@@ -819,7 +835,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=124+16-4&&mouse->y<124+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*3&&mouse->x<DIALOG_X + 38+20+45*3&&mouse->y>=DIALOG_Y + 124+16-4&&mouse->y<DIALOG_Y + 124+16-4+14 )
 		{
 			options.oil=3;
 			placeSelectableText ( LOW,38,124+16,options.oil==0, sfTmp );
@@ -831,7 +847,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Klick aufs Gold:
-		if ( b&&!lb&&mouse->x>=38-20&&mouse->x<38+20&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20&&mouse->x<DIALOG_X + 38+20&&mouse->y>=DIALOG_Y + 162+16-4&&mouse->y<DIALOG_Y + 162+16-4+14 )
 		{
 			options.gold=0;
 			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
@@ -842,7 +858,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45&&mouse->x<38+20+45&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45&&mouse->x<DIALOG_X + 38+20+45&&mouse->y>=DIALOG_Y + 162+16-4&&mouse->y<DIALOG_Y + 162+16-4+14 )
 		{
 			options.gold=1;
 			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
@@ -853,7 +869,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*2&&mouse->x<38+20+45*2&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*2&&mouse->x<DIALOG_X + 38+20+45*2&&mouse->y>=DIALOG_Y + 162+16-4&&mouse->y<DIALOG_Y + 162+16-4+14 )
 		{
 			options.gold=2;
 			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
@@ -864,7 +880,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=38-20+45*3&&mouse->x<38+20+45*3&&mouse->y>=162+16-4&&mouse->y<162+16-4+14 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20+45*3&&mouse->x<DIALOG_X + 38+20+45*3&&mouse->y>=DIALOG_Y + 162+16-4&&mouse->y<DIALOG_Y + 162+16-4+14 )
 		{
 			options.gold=3;
 			placeSelectableText ( LOW,38,162+16,options.gold==0, sfTmp );
@@ -876,7 +892,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Klick auf die Credits:
-		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4&&mouse->y<86-4+20 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4&&mouse->y<DIALOG_Y + 86-4+20 )
 		{
 			options.credits=25;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -890,7 +906,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20&&mouse->y<86-4+20+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20&&mouse->y<DIALOG_Y + 86-4+20+20 )
 		{
 			options.credits=50;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -904,7 +920,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*2&&mouse->y<86-4+20+20*2 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20*2&&mouse->y<DIALOG_Y + 86-4+20+20*2 )
 		{
 			options.credits=100;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -918,7 +934,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*3&&mouse->y<86-4+20+20*3 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20*3&&mouse->y<DIALOG_Y + 86-4+20+20*3 )
 		{
 			options.credits=150;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -932,7 +948,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*4&&mouse->y<86-4+20+20*4 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20*4&&mouse->y<DIALOG_Y + 86-4+20+20*4 )
 		{
 			options.credits=200;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -946,7 +962,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*5&&mouse->y<86-4+20+20*5 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20*5&&mouse->y<DIALOG_Y + 86-4+20+20*5 )
 		{
 			options.credits=250;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -960,7 +976,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=86-4+20*6&&mouse->y<86-4+20+20*6 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 86-4+20*6&&mouse->y<DIALOG_Y + 86-4+20+20*6 )
 		{
 			options.credits=300;
 			placeSelectableText ( LOWEST,110+130,86,options.credits==25, sfTmp,false );
@@ -975,7 +991,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Brückenkopf:
-		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4&&mouse->y<86-4+14 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 452&&mouse->x<DIALOG_X + 452+100&&mouse->y>=DIALOG_Y + 86-4&&mouse->y<DIALOG_Y + 86-4+14 )
 		{
 			options.FixedBridgeHead=false;
 			placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
@@ -984,7 +1000,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=86-4+20&&mouse->y<86-4+14+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 452&&mouse->x<DIALOG_X + 452+100&&mouse->y>=DIALOG_Y + 86-4+20&&mouse->y<DIALOG_Y + 86-4+14+20 )
 		{
 			options.FixedBridgeHead=true;
 			placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
@@ -994,7 +1010,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// AlienTech:
-		if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4&&mouse->y<281-4+14 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 30&&mouse->x<DIALOG_X + 38+100&&mouse->y>=DIALOG_Y + 281-4&&mouse->y<DIALOG_Y + 281-4+14 )
 		{
 			options.AlienTech=true;
 			placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
@@ -1003,7 +1019,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=30&&mouse->x<38+100&&mouse->y>=281-4+20&&mouse->y<281-4+14+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 30&&mouse->x<DIALOG_X + 38+100&&mouse->y>=DIALOG_Y + 281-4+20&&mouse->y<DIALOG_Y + 281-4+14+20 )
 		{
 			options.AlienTech=false;
 			placeSelectableText ( ON,38,281,options.AlienTech, sfTmp );
@@ -1013,7 +1029,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Ressourcendichte:
-		if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 281-4&&mouse->y<DIALOG_Y + 281-4+20 )
 		{
 			options.dichte=0;
 			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
@@ -1024,7 +1040,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 281+20-4&&mouse->y<DIALOG_Y + 281+20-4+20 )
 		{
 			options.dichte=1;
 			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
@@ -1035,7 +1051,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*2-4&&mouse->y<281+20*2-4+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 281+20*2-4&&mouse->y<DIALOG_Y + 281+20*2-4+20 )
 		{
 			options.dichte=2;
 			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
@@ -1046,7 +1062,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=110+130&&mouse->x<110+130+100&&mouse->y>=281+20*3-4&&mouse->y<281+20*3-4+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 110+130&&mouse->x<DIALOG_X + 110+130+100&&mouse->y>=DIALOG_Y + 281+20*3-4&&mouse->y<DIALOG_Y + 281+20*3-4+20 )
 		{
 			options.dichte=3;
 			placeSelectableText ( THIN,110+130,281,options.dichte==0,sfTmp,false );
@@ -1058,7 +1074,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			mouse->draw ( false,screen );
 		}
 		// Spielart:
-		if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281-4&&mouse->y<281-4+20 )
+		if ( b&&!lb&&mouse->x>=DIALOG_X + 452&&mouse->x<DIALOG_X + 452+100&&mouse->y>=DIALOG_Y + 281-4&&mouse->y<DIALOG_Y + 281-4+20 )
 		{
 			options.PlayRounds=false;
 			placeSelectableText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
@@ -1067,7 +1083,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		else if ( b&&!lb&&mouse->x>=452&&mouse->x<452+100&&mouse->y>=281+20-4&&mouse->y<281+20-4+20 )
+		else if ( b&&!lb&&mouse->x>=DIALOG_X + 452&&mouse->x<DIALOG_X + 452+100&&mouse->y>=DIALOG_Y + 281+20-4&&mouse->y<DIALOG_Y + 281+20-4+20 )
 		{
 			options.PlayRounds=true;
 			placeSelectableText ( SIMU,452,281,!options.PlayRounds,sfTmp,false );
