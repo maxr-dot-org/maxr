@@ -343,6 +343,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cLog::write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
 				break;
 			}
+			if ( Vehicle->Attacking )
+			{
+				cLog::write(" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG );
+				break;
+			}
 			if ( Vehicle->IsBuilding )
 			{
 				cLog::write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
