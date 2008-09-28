@@ -744,12 +744,6 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 		fields[offset + 1       ].buildings.Insert(0, building );
 		fields[offset + size    ].buildings.Insert(0, building );
 		fields[offset + size + 1].buildings.Insert(0, building );
-
-		GO[offset].top = building;
-		GO[offset + 1].top = building;
-		GO[offset + size].top = building;
-		GO[offset + size + 1].top = building;
-
 	}
 	else
 	{
@@ -757,15 +751,48 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 		if ( building->data.is_base && fields[offset].buildings.Size() > 0 && !fields[offset].buildings[0]->data.is_base )
 		{
 			i++;
-			GO[offset].subbase = GO[offset].base;
-			GO[offset].base = building;
-		}
-		else
-		{
-			GO[offset].top = building;
 		}
 
 		fields[offset].buildings.Insert(i, building);
+	}
+
+	//backward compatibility
+	if ( !building->owner )
+	{
+		if ( building->data.is_big )
+		{
+			GO[offset].subbase = building;
+			GO[offset + 1].subbase = building;
+			GO[offset + size].subbase = building;
+			GO[offset + size + 1].subbase = building;
+		}
+		else
+		{
+			GO[offset].subbase = building;
+		}
+	}
+	else
+	{
+		if ( building->data.is_big )
+		{
+			GO[offset].top = building;
+			GO[offset + 1].top = building;
+			GO[offset + size].top = building;
+			GO[offset + size + 1].top = building;
+
+		}
+		else
+		{
+			if ( building->data.is_base )
+			{
+				if ( GO[offset].base ) GO[offset].subbase = GO[offset].base;
+				GO[offset].base = building;
+			}
+			else
+			{
+				GO[offset].top = building;
+			}
+		}
 	}
 }
 
@@ -809,7 +836,8 @@ void cMap::deleteBuilding( cBuilding* building )
 
 	if ( building->data.is_big )
 	{
-		//big building must be a top building
+		//big building must be a top building or rubble
+		//assumption: there is no rubble under a top building
 		//so only check the first building
 		offset++;
 		buildings = fields[offset].buildings;
@@ -837,12 +865,15 @@ void cMap::deleteBuilding( cBuilding* building )
 	{
 		offset++;
 		if ( GO[offset].top == building ) GO[offset].top = NULL;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
 
 		offset += size;
-		if ( GO[offset].top == building ) GO[offset].top = NULL;	
+		if ( GO[offset].top == building ) GO[offset].top = NULL;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;	
 		
 		offset--;
 		if ( GO[offset].top == building ) GO[offset].top = NULL;
+		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
 	}
 }
 
