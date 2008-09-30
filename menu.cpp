@@ -1632,7 +1632,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 // Startet die Spielerauswahl (gibt die Spielereinstellungen):
 sPlayer runPlayerSelection ( void )
 {
-	//FIXME: this menu is aged. Don't waste your time on this. Settings should be combined with the menu from hot seat games -- beko
+	
 	int b,lb=0,lx=-1,ly=-1;
 	sPlayer players;
 	Uint8 *keystate;
@@ -1644,6 +1644,9 @@ sPlayer runPlayerSelection ( void )
 	}
 	players.what[0] = PLAYER_H;
 	players.what[1] = PLAYER_AI;
+
+//FIXME: this menu is aged. Don't waste your time on this. Settings should be combined with the menu from hot seat games. To save some time for test games startup we simply return with 1 player and 1 (not implemented) AI -- beko
+	return players;
 
 	SDL_FillRect(buffer, NULL, 0x0000);
 	SDL_BlitSurface ( GraphicsData.gfx_player_select,NULL,buffer,NULL );
