@@ -360,8 +360,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			
 			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
-			//FIXME: I think here is a memleak. Is MoveJob deleted somewhere, when generateFromMessage fails? --Eiko
-			if ( !MoveJob->generateFromMessage ( message ) ) break;
+			if ( !MoveJob->generateFromMessage ( message ) )
+			{
+				delete MoveJob;
+				break;
+			}
 
 			addActiveMoveJob ( MoveJob );
 			cLog::write(" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);

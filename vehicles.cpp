@@ -174,16 +174,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 	if ( ClientMoveJob && moving && !MoveJobActive )
 	{
-		try
-		{
-			ClientMoveJob->bFinished = true;
-		}
-		catch ( ... )
-			{}
-
-		ClientMoveJob = NULL;
-
-		moving = false;
+		ClientMoveJob->release();
 	}
 
 	// Den Schadenseffekt machen:
@@ -2042,11 +2033,7 @@ void cVehicle::DrawMenu ( void )
 		{
 			if ( ClientMoveJob )
 			{
-				ClientMoveJob->bFinished = true;
-				ClientMoveJob = NULL;
-				MoveJobActive = false;
-				MenuActive = false;
-				PlayFX ( SoundData.SNDObjectMenu );
+				ClientMoveJob->release();
 			}
 
 			MenuActive = false;
