@@ -1511,32 +1511,6 @@ bool cVehicle::CanDrive(int const MapOff) const
 
 	if ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) )
 	{
-		int off;
-		// Kann nur 1 Feld im Umkreis befahren:
-		off = PosX + PosY * Client->Map->size;
-
-		if ( data.is_big )
-		{
-			if ( ( MapOff < 0 ) || ( MapOff > Client->Map->size*MapOff > Client->Map->size ) ||
-			        ( MapOff >= off - 1 - Client->Map->size && MapOff <= off + 2 - Client->Map->size ) ||
-			        ( MapOff >= off - 1 && MapOff <= off + 2 ) ||
-			        ( MapOff >= off - 1 + Client->Map->size && MapOff <= off + 2 + Client->Map->size ) ||
-			        ( MapOff >= off - 1 + Client->Map->size*2 && MapOff <= off + 2 + Client->Map->size*2 ) )
-				{}
-			else
-				return false;
-		}
-		else
-		{
-			if ( ( MapOff < 0 ) || ( MapOff > Client->Map->size*MapOff > Client->Map->size ) ||
-			        ( MapOff >= off - 1 - Client->Map->size && MapOff <= off + 1 - Client->Map->size ) ||
-			        ( MapOff >= off - 1 && MapOff <= off + 1 ) ||
-			        ( MapOff >= off - 1 + Client->Map->size && MapOff <= off + 1 + Client->Map->size ) )
-				{}
-			else
-				return false;
-		}
-
 		if ( Client->Map->GO[MapOff].reserviert || Client->Map->GO[MapOff].vehicle || ( Client->Map->GO[MapOff].top && !Client->Map->GO[MapOff].top->data.is_connector ) )
 			return false;
 	}
