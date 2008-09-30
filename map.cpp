@@ -907,6 +907,8 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	}
 
 	//backward compatibility
+	offset = vehicle->PosX + vehicle->PosY *size;
+
 	if ( vehicle->data.can_drive == DRIVE_AIR ) 
 	{
 		if (GO[offset].plane == vehicle ) GO[offset].plane = NULL;
