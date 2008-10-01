@@ -177,6 +177,28 @@ public:
 	void deleteBuilding( cBuilding* building );
 	void deleteVehicle( cVehicle* vehicle );
 
+	int getMapLevel( cBuilding* building ) const;
+	int getMapLevel( cVehicle* vehicle ) const;
+
+	/** 
+	* checks, whether the given field is an allowed place for the vehicle
+	* if a player is passed, the function uses the players point of view, so it does not check for units that are not in sight
+	* note, that the function can only check for map border overflows, if you pass xy coordinates instead of an offset
+	*/
+	bool possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player = NULL ) const;
+	bool possiblePlace( const cVehicle* vehicle, int offset, const cPlayer* player = NULL ) const;
+	bool possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player = NULL ) const;
+	bool possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const cPlayer* player = NULL ) const;
+
+	/**
+	* checks, whether the given field is an allowed place for the building
+	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
+	* note, that the function can only check for map border overflows, if you pass xy coordinates instead of an offset
+	*/
+	bool possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL ) const;
+	bool possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL ) const;
+
+
 private:
 	/**
 	* the infomation about the fields
