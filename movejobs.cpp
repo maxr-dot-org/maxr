@@ -309,7 +309,7 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	// moving on water will cost more
 	if ( Map->IsWater ( offset ) && !( Map->GO[offset].base && !Map->GO[offset].base->data.is_expl_mine ) ) costs = 12;
 	// moving on a road is cheaper
-	else if ( ( Map->GO[offset].base&& ( Map->GO[offset].base->data.is_road || Map->GO[offset].base->data.is_bridge ) ) || ( Map->GO[offset].subbase && Map->GO[offset].subbase->data.is_road ) ) costs = 2;
+	else if ( ( Map->GO[offset].base && Map->GO[offset].base->data.is_road ) || ( Map->GO[offset].subbase && Map->GO[offset].subbase->data.is_road ) ) costs = 2;
 	// for surveyers moving can't be more expensive then 4
 	if ( Vehicle->data.can_survey && costs > 4 ) costs = 4;
 
