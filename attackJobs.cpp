@@ -303,6 +303,9 @@ void cServerAttackJob::makeImpact()
 		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
 		targetBuilding = Server->Map->GO[iTargetOff].top;
 
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+			targetVehicle = NULL;
+
 		if ( !targetBuilding && !targetVehicle )
 			targetVehicle = Server->Map->GO[iTargetOff].plane;
 
@@ -317,6 +320,9 @@ void cServerAttackJob::makeImpact()
 	{
 		targetVehicle = Server->Map->GO[iTargetOff].vehicle;
 		targetBuilding = Server->Map->GO[iTargetOff].top;
+
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+			targetVehicle = NULL;
 
 		if ( !targetBuilding && !targetVehicle )
 			targetBuilding = Server->Map->GO[iTargetOff].base;
@@ -349,7 +355,31 @@ void cServerAttackJob::makeImpact()
 	int remainingHP = 0;
 	cPlayer* owner = NULL;
 
-	//if target found
+	//unlock units
+	if ( targetVehicle )
+		targetVehicle->bIsBeeingAttacked = false;
+
+	if ( attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_LAND || attackMode ==  ATTACK_SUB_LAND )
+	{
+		if ( Server->Map->GO[iTargetOff].top )
+		{
+			Server->Map->GO[iTargetOff].top->bIsBeeingAttacked = false;
+		}
+		if ( Server->Map->GO[iTargetOff].base )
+		{
+			Server->Map->GO[iTargetOff].base->bIsBeeingAttacked = false;
+		}
+		if ( Server->Map->GO[iTargetOff].subbase )
+		{
+			Server->Map->GO[iTargetOff].subbase->bIsBeeingAttacked = false;
+		}
+	}
+
+	//clear attacking flags
+	if ( vehicle ) vehicle->Attacking = false;
+	if ( building ) building->Attacking = false;
+
+	//if target found, make the impact
 	if ( targetBuilding || targetVehicle )
 	{
 		if ( targetVehicle )
@@ -390,44 +420,8 @@ void cServerAttackJob::makeImpact()
 	//Todo: cluster
 	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
 
-
-	//TODO: unlocking here interferes with following attack job by sentry mode.
-	//clean up
-	if ( attackMode == ATTACK_AIR )
-	{
-		cVehicle* target = Server->Map->GO[iTargetOff].plane;
-		if ( target )
-		{
-			target->bIsBeeingAttacked = false;
-		}
-	}
-	if ( attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_LAND || attackMode ==  ATTACK_SUB_LAND )
-	{
-		cVehicle* targetVehicle = Server->Map->GO[iTargetOff].vehicle;
-		if ( targetVehicle && targetVehicle->data.is_stealth_sea && attackMode != ATTACK_SUB_LAND )
-		{
-			targetVehicle = NULL;
-		}
-
-
-		if ( Server->Map->GO[iTargetOff].top )
-		{
-			Server->Map->GO[iTargetOff].top->bIsBeeingAttacked = false;
-		}
-		if ( Server->Map->GO[iTargetOff].base )
-		{
-			Server->Map->GO[iTargetOff].base->bIsBeeingAttacked = false;
-		}
-		if ( Server->Map->GO[iTargetOff].subbase )
-		{
-			Server->Map->GO[iTargetOff].subbase->bIsBeeingAttacked = false;
-		}
-
-		if ( targetVehicle )
-		{
-			targetVehicle->bIsBeeingAttacked = false;
-		}
-	}
+	//check whether the agressor itself is in sentry range
+	if ( vehicle ) vehicle->InSentryRange();
 }
 
 void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMode )
