@@ -663,6 +663,17 @@ void cServerMoveJob::moveVehicle()
 
 		Vehicle->moving = false;
 		calcNextDir();
+
+		//workaround for repairing/reloading
+		cBuilding* b = (*Server->Map)[Vehicle->PosX+Vehicle->PosY*Server->Map->size].getBuildings();
+		if ( Vehicle->data.can_drive == DRIVE_AIR && b && b->owner == Vehicle->owner && b->data.is_pad )
+		{
+			Vehicle->FlightHigh = 0;
+		}
+		else
+		{
+			Vehicle->FlightHigh = 64;
+		}
 	}
 }
 
