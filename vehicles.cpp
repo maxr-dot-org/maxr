@@ -2646,11 +2646,11 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !owner->ScanMap[off] )
-		return false;
-
 	if ( !IsInRange ( off ) )
 		return false;
+
+	if ( !owner->ScanMap[off] )
+		return override?true:false;
 
 	if ( data.can_attack != ATTACK_AIR )
 	{
