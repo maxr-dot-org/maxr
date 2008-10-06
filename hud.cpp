@@ -490,7 +490,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->AttackMode&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( Client->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) )
+			if ( Client->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) && !( Client->SelectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
 				if ( mouse->SetCursor ( CAttack ) )
 				{

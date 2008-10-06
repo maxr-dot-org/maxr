@@ -2636,6 +2636,9 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( !IsInRange ( off ) )
 		return false;
 
+	if ( data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( off ) )
+		return false;
+
 	if ( !owner->ScanMap[off] )
 		return override?true:false;
 
