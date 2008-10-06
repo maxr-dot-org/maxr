@@ -545,7 +545,6 @@ void cMap::DeleteMap ( void )
 	Kacheln=NULL;
 	for (int i = 0; i < TerrainInUse.Size(); i++)
 	{
-		TerrainInUse.Delete(TerrainInUse.Size());
 		SDL_FreeSurface ( terrain[i].sf_org );
 		SDL_FreeSurface ( terrain[i].sf );
 		SDL_FreeSurface ( terrain[i].shw_org );
@@ -850,10 +849,10 @@ void cMap::deleteBuilding( cBuilding* building )
 {
 	int offset = building->PosX + building->PosY * size;
 
-	cList<cBuilding*>& buildings = fields[offset].buildings;
-	for ( int i = 0; i < buildings.Size(); i++ )
+	cList<cBuilding*>* buildings = &fields[offset].buildings;
+	for ( int i = 0; i < buildings->Size(); i++ )
 	{
-		if ( buildings[i] == building ) buildings.Delete(i);
+		if ( (*buildings)[i] == building ) buildings->Delete(i);
 	}
 
 	if ( building->data.is_big )
@@ -862,16 +861,16 @@ void cMap::deleteBuilding( cBuilding* building )
 		//assumption: there is no rubble under a top building
 		//so only check the first building
 		offset++;
-		buildings = fields[offset].buildings;
-		if ( buildings[0] == building ) buildings.Delete(0);
+		buildings = &fields[offset].buildings;
+		if ( (*buildings)[0] == building ) buildings->Delete(0);
 		
 		offset += size;
-		buildings = fields[offset].buildings;
-		if ( buildings[0] == building ) buildings.Delete(0);
+		buildings = &fields[offset].buildings;
+		if ( (*buildings)[0] == building ) buildings->Delete(0);
 		
 		offset--;
-		buildings = fields[offset].buildings;
-		if ( buildings[0] == building ) buildings.Delete(0);
+		buildings = &fields[offset].buildings;
+		if ( (*buildings)[0] == building ) buildings->Delete(0);
 		
 	}
 
@@ -1027,10 +1026,11 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 {
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
 	fields[oldOffset].vehicles.Delete(0);
-	
+
 	vehicle->PosX = offset % size;
 	vehicle->PosY = offset / size;
 
+	fields[offset].vehicles.Insert(0, vehicle );
 	offset++;
 	fields[offset].vehicles.Insert(0, vehicle );
 	offset += size;
@@ -1155,6 +1155,8 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, c
 
 bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle ) const
 {
+	//TODO: what about base buildings on base buildings?
+
 	if ( offset < 0 || offset >= size*size ) return false;
 	if ( terrain[Kacheln[offset]].blocked ) return false;
 	cMapField& field = fields[offset];	
