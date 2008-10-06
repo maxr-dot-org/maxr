@@ -211,7 +211,6 @@ void cServer::run()
 			case GAME_EVENT:
 				{
 					cNetMessage message( (char*) event->user.data1 );
-					message.refertControlChars();
 					HandleNetMessage( &message );
 					CHECK_MEMORY;
 					break;

@@ -26,9 +26,33 @@
 
 cNetMessage::cNetMessage( char* c)
 {
-	iType = SDL_SwapLE16( *((Sint16*) c) );
-	iLength = SDL_SwapLE16( *((Sint16*) (c + 2)) );
-	iPlayerNr = c[4];
+	data = (char*) malloc( MAX_MESSAGE_LENGTH );
+
+	//parse the message header
+	int posData = 0;
+	int posC = 0;
+	while ( posData < 5 )
+	{
+		data[posData] = c[posC];
+
+		//after a contol char, only the NETMESSAGE_NOTSTARTCHAR should follow,
+		//because all other control sequenzes must already be removed
+		if ( c[posC] == NETMESSAGE_CONTROLCHAR ) 
+		{
+			posC++;
+			if ( c[posC] != NETMESSAGE_NOTSTARTCHAR )
+			{
+				cLog::write( "Fatal Error: invalid control sequenze in NetMessage", cLog::eLOG_TYPE_NET_ERROR );
+				cLog::write( " character afer the NETMESSAGE_CONTROLCHAR: " + iToStr( c[posC]), cLog::eLOG_TYPE_NET_ERROR );
+			}
+		}
+		posData++;
+		posC++;
+	}
+
+	iType = SDL_SwapLE16( *((Sint16*) data) );
+	iLength = SDL_SwapLE16( *((Sint16*) (data + 2)) );
+	iPlayerNr = data[4];
 
 	if ( iLength > MAX_MESSAGE_LENGTH || iLength < 5 )
 	{
@@ -37,8 +61,25 @@ cNetMessage::cNetMessage( char* c)
 		iType = -1;
 	}
 
-	data = (char*) malloc( MAX_MESSAGE_LENGTH );
-	memcpy( data, c, iLength );
+	//copy message data
+	while ( posData < iLength )
+	{
+		data[posData] = c[posC];
+
+		if ( c[posC] == NETMESSAGE_CONTROLCHAR ) 
+		{
+			posC++;
+			iLength--;
+			if ( c[posC] != NETMESSAGE_NOTSTARTCHAR )
+			{
+				cLog::write( "Fatal Error: invalid control sequenze in NetMessage", cLog::eLOG_TYPE_NET_ERROR );
+				cLog::write( " character afer the NETMESSAGE_CONTROLCHAR: " + iToStr( c[posC]), cLog::eLOG_TYPE_NET_ERROR );
+			}
+		}
+	
+		posData++;
+		posC++;
+	}
 }
 
 cNetMessage::cNetMessage(int iType)
@@ -464,27 +505,5 @@ void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
 		iLength++;
 		if ( iEndPos != -1 ) iEndPos++;
 		iPos += 2;
-	}
-}
-
-void cNetMessage::refertControlChars()
-{
-	int iPos = 0;
-	// remove the NETMESSAGE_NOTSTARTCHAR from all NETMESSAGE_CONTROLCHAR
-	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
-	{
-		if ( iLength >= MAX_MESSAGE_LENGTH ) return;
-		if ( data[iPos+1] == (char)NETMESSAGE_NOTSTARTCHAR )
-		{
-			char *tmpBuffer = (char *) malloc ( iLength-iPos-2 );
-			memcpy( tmpBuffer, &data[iPos+2], iLength-iPos-2 );
-			memcpy( &data[iPos+1], tmpBuffer, iLength-iPos-2 );
-			data[iLength-1] = 0;
-			free ( tmpBuffer );
-
-			if ( iPos > 4 ) iLength--;
-			iPos++;
-		}
-		else iPos += 2;
 	}
 }

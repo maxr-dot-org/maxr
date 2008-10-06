@@ -92,7 +92,6 @@ void cEventHandling::HandleEvents()
 						if ( MultiPlayerMenu )
 						{
 							cNetMessage* const Message = new cNetMessage((char*)DataBuffer.data);
-							Message->refertControlChars();
 							MultiPlayerMenu->MessageList.Add ( Message );
 						}
 					}
@@ -123,7 +122,6 @@ void cEventHandling::HandleEvents()
 			{
 				cNetMessage message( (char*) event.user.data1);
 				free ( event.user.data1 );
-				message.refertControlChars();
 				if ( Client) Client->HandleNetMessage( &message );
 				break;
 			}
