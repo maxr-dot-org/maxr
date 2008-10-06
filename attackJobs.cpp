@@ -355,7 +355,46 @@ void cServerAttackJob::makeImpact()
 	int remainingHP = 0;
 	cPlayer* owner = NULL;
 
-	//unlock units
+
+	//if target found, make the impact
+	if ( targetBuilding || targetVehicle )
+	{
+		if ( targetVehicle )
+		{
+			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
+			remainingHP = targetVehicle->data.hit_points;
+			owner = targetVehicle->owner;
+			cLog::write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+
+			if (targetVehicle->data.hit_points <= 0)
+			{
+				Server->destroyUnit( targetVehicle );
+				targetVehicle = NULL;
+			}
+		}
+		else
+		{
+			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
+			remainingHP = targetBuilding->data.hit_points;
+			owner = targetBuilding->owner;
+
+			cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
+
+			if ( targetBuilding->data.hit_points <= 0 )
+			{
+				Server->destroyUnit( targetBuilding );
+				targetBuilding = NULL;
+			}
+		}
+	}
+
+	//workaround
+	//make sure, the owner gets the impact message
+	if ( owner ) owner->ScanMap[iTargetOff] = 1;
+	//Todo: cluster
+	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
+
+	//clean up
 	if ( targetVehicle )
 		targetVehicle->bIsBeeingAttacked = false;
 
@@ -374,52 +413,12 @@ void cServerAttackJob::makeImpact()
 			Server->Map->GO[iTargetOff].subbase->bIsBeeingAttacked = false;
 		}
 	}
-
-	//clear attacking flags
 	if ( vehicle ) vehicle->Attacking = false;
 	if ( building ) building->Attacking = false;
 
-	//if target found, make the impact
-	if ( targetBuilding || targetVehicle )
-	{
-		if ( targetVehicle )
-		{
-			targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
-			remainingHP = targetVehicle->data.hit_points;
-			owner = targetVehicle->owner;
-			cLog::write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 
-			if (targetVehicle->data.hit_points <= 0)
-			{
-				Server->destroyUnit( targetVehicle );
-			}
-			else
-			{
-				targetVehicle->InSentryRange();
-			}
-		}
-		else
-		{
-			targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
-			remainingHP = targetBuilding->data.hit_points;
-			owner = targetBuilding->owner;
-
-			cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
-
-			if ( targetBuilding->data.hit_points <= 0 )
-			{
-				Server->destroyUnit( targetBuilding );
-			}
-		}
-	}
-
-	//workaround
-	//make sure, the owner gehts the impact message
-	if ( owner ) owner->ScanMap[iTargetOff] = 1;
-
-	//Todo: cluster
-	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
-
+	//check whether a following sentry mode attack is possible
+	if ( targetVehicle ) targetVehicle->InSentryRange();
 	//check whether the agressor itself is in sentry range
 	if ( vehicle ) vehicle->InSentryRange();
 }
