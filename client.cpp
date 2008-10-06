@@ -2815,7 +2815,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		switch (message->popChar())
 		{
 		case USER_MESSAGE:
-			//TODO: play sound for incoming user chat message
+			PlayFX ( SoundData.SNDChat );
 			addMessage( message->popString() );
 			break;
 		case SERVER_ERROR_MESSAGE:
