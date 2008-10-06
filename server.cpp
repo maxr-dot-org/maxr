@@ -907,7 +907,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				NewBuildList->Add( BuildListItem );
 			}
 
-			// delete all buildings from the list exapt the first one
+			// delete all buildings from the list
 			while ( Building->BuildList->Size() )
 			{
 				delete (*Building->BuildList)[0];
@@ -1401,7 +1401,11 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 {
 	if( !Building ) return;
 
-	//TODO: delete rubble
+	if ( !Building->owner )
+	{
+		deleteRubble( Building );
+		return;
+	}
 
 	if( Building->prev )
 	{
@@ -1440,7 +1444,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	cPlayer* owner = Building->owner;
 	delete Building;
 
-	if ( owner ) owner->DoScan();
+	owner->DoScan();
 }
 
 void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
@@ -2246,8 +2250,10 @@ void cServer::destroyUnit(cBuilding *building)
 	deleteUnit( Map->GO[offset].base, false );
 	deleteUnit( Map->GO[offset].subbase, false );
 
-	addRubble( offset, value/2, big );
-
+	if ( !building->data.is_connector )
+	{
+		addRubble( offset, value/2, big );
+	}
 }
 
 void cServer::addRubble( int offset, int value, bool big )
@@ -2256,8 +2262,8 @@ void cServer::addRubble( int offset, int value, bool big )
 
 	if ( Map->terrain[Map->Kacheln[offset]].water ||
 		 Map->terrain[Map->Kacheln[offset]].coast ||
-		 Map->terrain[Map->Kacheln[offset]].blocked ||
 		 Map->GO[offset].base ||
+		 Map->GO[offset].top ||
 		 Map->GO[offset].subbase )
 	{
 		if ( big )
@@ -2272,6 +2278,7 @@ void cServer::addRubble( int offset, int value, bool big )
 	if ( big && (
 		 Map->terrain[Map->Kacheln[offset + 1]].water ||
 		 Map->terrain[Map->Kacheln[offset + 1]].coast ||
+		 Map->GO[offset].top ||
 		 Map->GO[offset + 1].base ||
 		 Map->GO[offset + 1].subbase ))
 	{
@@ -2284,6 +2291,7 @@ void cServer::addRubble( int offset, int value, bool big )
 	if ( big && (
 		Map->terrain[Map->Kacheln[offset + Map->size]].water ||
 		Map->terrain[Map->Kacheln[offset + Map->size]].coast ||
+		Map->GO[offset].top ||
 		Map->GO[offset + Map->size].base ||
 		Map->GO[offset + Map->size].subbase ))
 	{
@@ -2296,6 +2304,7 @@ void cServer::addRubble( int offset, int value, bool big )
 	if ( big && (
 		Map->terrain[Map->Kacheln[offset + Map->size + 1]].water ||
 		Map->terrain[Map->Kacheln[offset + Map->size + 1]].coast ||
+		Map->GO[offset].top ||
 		Map->GO[offset + Map->size + 1].base ||
 		Map->GO[offset + Map->size + 1].subbase ))
 	{
