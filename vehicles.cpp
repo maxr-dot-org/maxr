@@ -1899,7 +1899,7 @@ void cVehicle::StartMoveSound ( void )
 	}
 	else
 	{
-		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) ) );
+		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) );
 	}
 
 	StopFXLoop ( Client->iObjectStream );
