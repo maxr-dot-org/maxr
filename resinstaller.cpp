@@ -108,7 +108,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("CLNTRANS", path + "img" + szNum + ".pcx", i + 8);
-		copyFileFromRes("S_CLNTRA", path + "shw" + szNum + ".pcx", i + 8);
+		try
+		{
+			surface = getImageFromRes("S_CLNTRA", i + 8);
+			resizeSurface( surface, 5, 5, 65, 75 );
+			savePCX( surface, path + "shw" + szNum + ".pcx" );
+			SDL_FreeSurface( surface);
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
 	}
 	copyFileFromRes("A_COLNST", path + "store.pcx");
 	copyFileFromRes("P_COLNST", path + "info.pcx");
@@ -404,7 +411,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("CORVETTE", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_CORVET", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes( "S_CORVET", i);
+			resizeSurface( surface, 5, 5, 64, 64 );
+			savePCX( surface,  path + "shw" + szNum + ".pcx");
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" );
 	}
 	copyFileFromRes("A_CORVET", path + "store.pcx");
 	copyFileFromRes("P_CORVET", path + "info.pcx");
@@ -415,7 +429,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("FASTBOAT", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_FASTBO", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes( "S_FASTBO", i);
+			resizeSurface( surface, 3, 6, 64, 64 );
+			savePCX( surface,  path + "shw" + szNum + ".pcx");
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" );
 	}
 	copyFileFromRes("A_ESCORT", path + "store.pcx");
 	copyFileFromRes("P_ESCORT", path + "info.pcx");
@@ -602,7 +623,15 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("CONSTRCT", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_CONSTR", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes("S_CONSTR", i);
+			resizeSurface( surface, 3, 3, 67, 73 );
+			savePCX( surface, path + "shw" + szNum + ".pcx" );
+			SDL_FreeSurface( surface);
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
+		//copyFileFromRes("S_CONSTR", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_CONTRC", path + "store.pcx");
 	copyFileFromRes("P_CONTRC", path + "info.pcx");
@@ -734,8 +763,14 @@ int installVehicleGraphics()
 			SDL_FreeSurface( surface );
 		}
 		END_INSTALL_FILE( path + "img" + szNum + ".pcx")
-
-		copyFileFromRes("S_MSSLBO", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes( "S_MSSLBO", i);
+			resizeSurface( surface, 8, 8, 66, 66 );
+			savePCX( surface,  path + "shw" + szNum + ".pcx");
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" );
 	}
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
 	copyFileFromRes("P_MSLCR", path + "info.pcx");
@@ -1038,7 +1073,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("SCOUT", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_SCOUT", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes("S_SCOUT", i);
+			resizeSurface( surface, 11, 10, 61, 59 );
+			savePCX( surface, path + "shw" + szNum + ".pcx" );
+			SDL_FreeSurface( surface);
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
 	}
 	copyFileFromRes("A_SCOUT", path + "store.pcx");
 	copyFileFromRes("P_SCOUT", path + "info.pcx");
@@ -1060,7 +1102,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("SEATRANS", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_SEATRA", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes( "S_SEATRA", i);
+			resizeSurface( surface, 10, 10, 68, 68 );
+			savePCX( surface,  path + "shw" + szNum + ".pcx");
+			SDL_FreeSurface( surface );
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" );
 	}
 	copyFileFromRes("A_SEATRN", path + "store.pcx");
 	copyFileFromRes("P_SEATRN", path + "info.pcx");
@@ -1142,7 +1191,14 @@ int installVehicleGraphics()
 	{
 		sprintf( szNum, "%d", i);
 		copyFileFromRes_rpc("GOLDTRCK", path + "img" + szNum + ".pcx", i);
-		copyFileFromRes("S_GOLDTR", path + "shw" + szNum + ".pcx", i);
+		try
+		{
+			surface = getImageFromRes("S_GOLDTR", i);
+			resizeSurface( surface, 6, 6, 76, 74 );
+			savePCX( surface, path + "shw" + szNum + ".pcx" );
+			SDL_FreeSurface( surface);
+		}
+		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
 	}
 	copyFileFromRes("A_GOLDTR", path + "store.pcx");
 	copyFileFromRes("P_GOLDTR", path + "info.pcx");
@@ -1165,7 +1221,7 @@ int installVehicleGraphics()
 		try
 		{
 			surface = getImageFromRes("S_SPLYTR", i);
-			resizeSurface( surface, 4, 4, 64, 64);
+			resizeSurface( surface, 8, 8, 64, 64);
 			savePCX( surface, path + "shw" + szNum + ".pcx");
 			SDL_FreeSurface ( surface );
 		}
@@ -1216,7 +1272,7 @@ int installVehicleGraphics()
 int installBuildingGraphics()
 {
 	string path;
-	iTotalFiles = 140;
+	iTotalFiles = 156;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	SDL_Surface* surface;
@@ -1464,6 +1520,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_POWERS", path + "shw.pcx");
 	copyFileFromRes("P_POWSTN", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "PWRGEN.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//energy small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_small" + PATH_DELIMITER;
@@ -1471,6 +1528,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_POWGEN", path + "shw.pcx");
 	copyFileFromRes("P_POWGEN", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SPWR_ISO.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//fac air
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_air" + PATH_DELIMITER;
@@ -1478,6 +1536,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_AIRPLT", path + "shw.pcx");
 	copyFileFromRes("P_AIRPLT", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "AIRPLNT.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//fac alien
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_alien" + PATH_DELIMITER;
@@ -1485,6 +1544,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_RECCEN", path + "shw.pcx");
 	copyFileFromRes("P_RECCTR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RECNTR.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//fac big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_big" + PATH_DELIMITER;
@@ -1492,6 +1552,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_LANDPL", path + "shw.pcx");
 	copyFileFromRes("P_HVYPLT", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "FVP.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//fac ship
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_ship" + PATH_DELIMITER;
@@ -1499,6 +1560,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_SHIPYA", path + "shw.pcx");
 	copyFileFromRes("P_SHIPYD", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SHPYRD.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//fac small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_small" + PATH_DELIMITER;
@@ -1506,6 +1568,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_LIGHTP", path + "shw.pcx");
 	copyFileFromRes("P_LGHTPL", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "LVP_ISO.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//goldraff
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "goldraff" + PATH_DELIMITER;
@@ -1513,6 +1576,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_COMMTW", path + "shw.pcx");
 	copyFileFromRes("P_TRANSP", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "COMMTWR.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//gun aa
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_aa" + PATH_DELIMITER;
@@ -1676,6 +1740,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_HABITA", path + "shw.pcx", 1);
 	copyFileFromRes("P_HABITA", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "DORM.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//hangar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "hangar" + PATH_DELIMITER;
@@ -1683,6 +1748,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_HANGAR", path + "shw.pcx", 1);
 	copyFileFromRes("P_HANGAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "HANGR.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//landmine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
@@ -1727,6 +1793,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_MINING", path + "shw.pcx");
 	copyFileFromRes("P_MINING", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "MSTRSTAT.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//mine deep
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
@@ -1734,6 +1801,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_SUPRTP", path + "shw.pcx");
 	copyFileFromRes("P_LIFESP", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SVP.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//pad
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "pad" + PATH_DELIMITER;
@@ -1741,6 +1809,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_LANDPA", path + "shw.pcx");
 	copyFileFromRes("P_LANDPD", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "LP_ISO.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//platform
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "platform" + PATH_DELIMITER;
@@ -1785,6 +1854,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_RESEAR", path + "shw.pcx");
 	copyFileFromRes("P_RESEAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RESEARCH.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//road
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "road" + PATH_DELIMITER;
@@ -1834,6 +1904,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_SHIELD", path + "shw.pcx");
 	copyFileFromRes("P_SHIELD", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SHLDGEN.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//storage gold
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_gold" + PATH_DELIMITER;
@@ -1862,6 +1933,7 @@ int installBuildingGraphics()
 	copyFileFromRes("S_TRAINH", path + "shw.pcx");
 	copyFileFromRes("P_TRNHLL", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "THALL.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 	//rubble
 	path = sOutputPath + "buildings" + PATH_DELIMITER;
@@ -3506,7 +3578,7 @@ GNU General Public License for more details.\n\n";
 		}
 		else
 		{
-			writeLog( "sMAXPath from command line: " + sMAXPath );
+			writeLog( "sMAXPath from command line: " + sMAXPath + TEXT_FILE_LF );
 			cout << sMAXPath << "\n";
 		}
 #endif
@@ -3584,7 +3656,7 @@ GNU General Public License for more details.\n\n";
 		}
 		else
 		{
-			writeLog( "sOutputPath from command line: " + sOutputPath );
+			writeLog( "sOutputPath from command line: " + sOutputPath + TEXT_FILE_LF );
 			cout << sOutputPath << "\n";
 		}
 #endif
