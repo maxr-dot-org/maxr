@@ -115,6 +115,31 @@
 			<Reload ENG="Reload"/>
 			<Host_Start ENG="Start Host"/>
 		</Button>
+		<Context>
+			<Clear ENG="Clear"/>
+			<Build ENG="Build"/>
+			<Transfer ENG="X-fer"/>
+			<Sentry ENG="Sentry"/>
+			<Done ENG="Done"/>
+			<Auto ENG="Auto"/>
+			<Stop ENG="Stop"/>
+			<Destroy ENG="Delete"/>
+			<Repair ENG="Repair"/>
+			<Disable ENG="Disable"/>
+			<Steal ENG="Steal"/>
+			<Load ENG="Load"/>
+			<Active ENG="Activ."/>
+			<Dist ENG="Distr."/>
+			<Reload ENG="Reload"/>
+			<Attack ENG="Attack"/>
+			<Seed ENG="Seed"/>
+			<Start ENG="Start"/>
+			<Research ENG="Research"/>
+			<UpAll ENG="Up. all"/>
+			<Upgrades ENG="Upgrades"/>
+			<Upgrade ENG="Upgrade"/>
+			<Info ENG="Info"/>
+		</Context>
 		<Hud>
 			<Files ENG="Files"/>
 			<Settings ENG="Settings"/>

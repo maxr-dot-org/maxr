@@ -112,6 +112,31 @@
 			<Reload ENG="Reload" localized="Aufladen"/>
 			<Host_Start ENG="Start Host" localized="Starte Host"/>
 		</Button>
+		<Context>
+			<Clear ENG="Clear" localized="Entf."/>
+			<Build ENG="Build" localized="Bauen"/>
+			<Transfer ENG="X-fer" localized="Trsfer."/>
+			<Sentry ENG="Sentry" localized="Wachp."/>
+			<Done ENG="Done" localized="Fertig"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Stop ENG="Stop" localized="Stopp"/>
+			<Destroy ENG="Delete" localized="Entf."/>
+			<Repair ENG="Repair" localized="Repar."/>
+			<Disable ENG="Disable" localized="Deakt."/>
+			<Steal ENG="Steal" localized="Stehlen"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Active ENG="Activ." localized="Aktiv."/>
+			<Dist ENG="Distr." localized="Verteil."/>
+			<Reload ENG="Reload" localized="Aufladen"/>
+			<Attack ENG="Attack" localized="Angriff"/>
+			<Seed ENG="Seed" localized="Platz."/>
+			<Start ENG="Start" localized="Start"/>
+			<Research ENG="Research" localized="Forschg."/>
+			<UpAll ENG="Up. all" localized="All. Verb."/>
+			<Upgrades ENG="Upgrades" localized="Kaufen"/>
+			<Upgrade ENG="Upgrade" localized="Upgrade"/>
+			<Info ENG="Info" localized="Info"/>
+		</Context>
 		<Hud>
 			<Files ENG="Files" localized="Dateien"/>
 			<Settings ENG="Settings" localized="PRÄFERENZEN"/>
