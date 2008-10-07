@@ -1266,7 +1266,7 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil7,path,"pf_7.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil8,path,"pf_8.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil9,path,"pf_9.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_object_menu,path,"object_menu.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_context_menu,path,"object_menu2.pcx");
 	LoadGraphicToSurface ( GraphicsData.gfx_destruction,path,"destruction.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_build_screen,path,"build_screen.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_fac_build_screen,path,"fac_build_screen.pcx" );

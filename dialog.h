@@ -84,6 +84,15 @@ void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
  */
 void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
+/** Draws a context menu item
+ * @author beko
+ * @param sText Text to display on item
+ * @param bPressed clickstatus
+ * @param x x position
+ * @param y y position
+ * @param *surface SDL_Surface to draw on
+*/
+void drawContextItem(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
 enum ARROW_TYPE
 {

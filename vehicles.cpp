@@ -1931,10 +1931,11 @@ void cVehicle::DrawMenu ( void )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
 	static int LastNr = -1;
-	SDL_Rect scr, dest;
+	bool bSelection = false;
+	SDL_Rect dest;
 	dest = GetMenuSize();
-	dest.w = scr.w = 42;
-	dest.h = scr.h = 21;
+	dest.w = 42;
+	dest.h = 21;
 	Transfer = false;
 
 	if ( moving || rotating || bIsBeeingAttacked )
@@ -1960,10 +1961,8 @@ void cVehicle::DrawMenu ( void )
 	// Angriff:
 	if ( data.can_attack && data.shots )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -1975,9 +1974,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 588;
+		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -1985,10 +1983,8 @@ void cVehicle::DrawMenu ( void )
 	// Bauen:
 	if ( data.can_build && !IsBuilding )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2004,9 +2000,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 0;
+		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2014,10 +2009,8 @@ void cVehicle::DrawMenu ( void )
 	// Transfer:
 	if ( ( data.can_transport == TRANS_METAL || data.can_transport == TRANS_OIL || data.can_transport == TRANS_GOLD ) && !IsBuilding && !IsClearing )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2027,9 +2020,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 42;
+		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2039,11 +2031,11 @@ void cVehicle::DrawMenu ( void )
 	{
 		if ( ( autoMJob == NULL && SelMenu == nr ) || ( autoMJob != NULL && SelMenu != nr ) )
 		{
-			scr.y = 21;
+			bSelection = true;
 		}
 		else
 		{
-			scr.y = 0;
+			bSelection = false;
 		}
 
 		if ( ExeNr == nr )
@@ -2064,9 +2056,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 168;
+		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2074,10 +2065,8 @@ void cVehicle::DrawMenu ( void )
 	// Stop:
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2112,9 +2101,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 210;
+		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2122,10 +2110,8 @@ void cVehicle::DrawMenu ( void )
 	// Entfernen:
 	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2156,9 +2142,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 252;
+		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2167,9 +2152,9 @@ void cVehicle::DrawMenu ( void )
 	if ( bSentryStatus || data.can_attack )
 	{
 		if ( SelMenu == nr || bSentryStatus == true )
-			scr.y = 21;
+			bSelection = true;
 		else
-			scr.y = 0;
+			bSelection = false;
 
 		if ( ExeNr == nr )
 		{
@@ -2179,9 +2164,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 84;
+		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2190,10 +2174,8 @@ void cVehicle::DrawMenu ( void )
 	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2205,17 +2187,15 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 462;
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
+		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
+
 		dest.y += 22;
 		nr++;
 		// Laden:
 
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2225,9 +2205,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 420;
+		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer ); //TODO: i18n
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2235,10 +2214,8 @@ void cVehicle::DrawMenu ( void )
 	// Aufaden:
 	if ( data.can_reload && data.cargo >= 2 )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2248,9 +2225,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 546;
+		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2258,10 +2234,8 @@ void cVehicle::DrawMenu ( void )
 	// Reparatur:
 	if ( data.can_repair && data.cargo >= 2 )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2271,9 +2245,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 294;
+		drawContextItem( lngPack.i18n ( "Text~Context~Repair" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2282,9 +2255,9 @@ void cVehicle::DrawMenu ( void )
 	if ( data.can_lay_mines && data.cargo > 0 )
 	{
 		if ( SelMenu == nr || LayMines )
-			scr.y = 21;
+			bSelection = true;
 		else
-			scr.y = 0;
+			bSelection = false;
 
 		if ( ExeNr == nr )
 		{
@@ -2296,9 +2269,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 630;
+		drawContextItem( lngPack.i18n ( "Text~Context~Seed" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2307,9 +2279,9 @@ void cVehicle::DrawMenu ( void )
 	if ( data.can_lay_mines && data.cargo < data.max_cargo )
 	{
 		if ( SelMenu == nr || ClearMines )
-			scr.y = 21;
+			bSelection = true;
 		else
-			scr.y = 0;
+			bSelection = false;
 
 		if ( ExeNr == nr )
 		{
@@ -2321,9 +2293,8 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 252;
+		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -2332,10 +2303,8 @@ void cVehicle::DrawMenu ( void )
 	if ( data.is_commando && data.shots )
 	{
 		// Sabotage:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2345,17 +2314,14 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 336;
+		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 		// Stehlen:
 
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -2365,18 +2331,15 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 378;
+		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	if ( SelMenu == nr )
-		scr.y = 21;
-	else
-		scr.y = 0;
+	if ( SelMenu == nr ) { bSelection = true; }
+	else { bSelection = false; }
 
 	if ( ExeNr == nr )
 	{
@@ -2386,17 +2349,14 @@ void cVehicle::DrawMenu ( void )
 		return;
 	}
 
-	scr.x = 840;
+	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), bSelection, dest.x, dest.y, buffer );
 
-	SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 	dest.y += 22;
 	nr++;
 	// Fertig:
 
-	if ( SelMenu == nr )
-		scr.y = 21;
-	else
-		scr.y = 0;
+	if ( SelMenu == nr ) { bSelection = true; }
+	else { bSelection = false; }
 
 	if ( ExeNr == nr )
 	{
@@ -2405,9 +2365,7 @@ void cVehicle::DrawMenu ( void )
 		return;
 	}
 
-	scr.x = 126;
-
-	SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
+	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
 }
 
 // Liefert die Anzahl der Menüpunkte:

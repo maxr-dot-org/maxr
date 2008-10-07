@@ -579,7 +579,7 @@ public:
 	SDL_Surface *gfx_hud_stuff;
 	SDL_Surface *gfx_shadow;
 	SDL_Surface *gfx_tmp;
-	SDL_Surface *gfx_object_menu;
+	SDL_Surface *gfx_context_menu;
 	SDL_Surface *gfx_destruction;
 	SDL_Surface *gfx_destruction_glas;
 	SDL_Surface *gfx_build_screen;

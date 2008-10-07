@@ -7843,10 +7843,11 @@ void cBuilding::DrawMenu ( void )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
 	static int LastNr = -1;
-	SDL_Rect scr, dest;
+	bool bSelection = false;
+	SDL_Rect dest;
 	dest = GetMenuSize();
-	dest.w = scr.w = 42;
-	dest.h = scr.h = 21;
+	dest.w = 42;
+	dest.h = 21;
 
 	if ( bIsBeeingAttacked ) return;
 
@@ -7879,10 +7880,9 @@ void cBuilding::DrawMenu ( void )
 	// Angriff:
 	if ( typ->data.can_attack && data.shots )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
+
 
 		if ( ExeNr == nr )
 		{
@@ -7894,9 +7894,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 588;
+		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -7904,10 +7903,8 @@ void cBuilding::DrawMenu ( void )
 	// Bauen:
 	if ( typ->data.can_build )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -7917,9 +7914,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 0;
+		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -7927,10 +7923,8 @@ void cBuilding::DrawMenu ( void )
 	// Verteilen:
 	if ( typ->data.is_mine && IsWorking )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -7940,9 +7934,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 504;
+		drawContextItem( lngPack.i18n ( "Text~Context~Dist" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -7950,10 +7943,8 @@ void cBuilding::DrawMenu ( void )
 	// Transfer:
 	if ( typ->data.can_load == TRANS_METAL || typ->data.can_load == TRANS_OIL || typ->data.can_load == TRANS_GOLD )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -7963,9 +7954,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 42;
+		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -7978,10 +7968,8 @@ void cBuilding::DrawMenu ( void )
 				typ->data.can_build == BUILD_NONE
 			))
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -7991,9 +7979,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 672;
+		drawContextItem( lngPack.i18n ( "Text~Context~Start" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8001,10 +7988,8 @@ void cBuilding::DrawMenu ( void )
 	// Stop:
 	if ( IsWorking )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8014,9 +7999,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 210;
+		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8025,9 +8009,9 @@ void cBuilding::DrawMenu ( void )
 	if ( bSentryStatus || data.can_attack )
 	{
 		if ( SelMenu == nr || bSentryStatus == true )
-			scr.y = 21;
+			bSelection = true;
 		else
-			scr.y = 0;
+			bSelection = false;
 
 		if ( ExeNr == nr )
 		{
@@ -8037,9 +8021,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 84;
+		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8048,10 +8031,8 @@ void cBuilding::DrawMenu ( void )
 	if ( typ->data.can_load == TRANS_VEHICLES || typ->data.can_load == TRANS_MEN || typ->data.can_load == TRANS_AIR )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8063,17 +8044,14 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 462;
+		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 		// Laden:
 
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8083,9 +8061,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 420;
+		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8094,10 +8071,8 @@ void cBuilding::DrawMenu ( void )
 	if ( typ->data.can_research && IsWorking )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8109,9 +8084,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 714;
+		drawContextItem( lngPack.i18n ( "Text~Context~Research" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8120,10 +8094,8 @@ void cBuilding::DrawMenu ( void )
 	if ( data.gold_need )
 	{
 		// Dies Updaten:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8135,9 +8107,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 798;
+		drawContextItem( lngPack.i18n ( "Text~Context~Upgrades" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8146,10 +8117,8 @@ void cBuilding::DrawMenu ( void )
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase->Metal >= 2 )
 	{
 		// Alle Updaten:
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8198,18 +8167,15 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 756;
+		drawContextItem( lngPack.i18n ( "Text~Context~UpAll" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 
 		// Dies Updaten:
 
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8230,9 +8196,8 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 798;
+		drawContextItem( lngPack.i18n ( "Text~Context~Upgrade" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
@@ -8240,10 +8205,8 @@ void cBuilding::DrawMenu ( void )
 	// Entfernen:
 	if ( !data.is_road )
 	{
-		if ( SelMenu == nr )
-			scr.y = 21;
-		else
-			scr.y = 0;
+		if ( SelMenu == nr ) { bSelection = true; }
+		else { bSelection = false; }
 
 		if ( ExeNr == nr )
 		{
@@ -8255,18 +8218,15 @@ void cBuilding::DrawMenu ( void )
 			return;
 		}
 
-		scr.x = 252;
+		drawContextItem( lngPack.i18n ( "Text~Context~Destroy" ), bSelection, dest.x, dest.y, buffer );
 
-		SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	if ( SelMenu == nr )
-		scr.y = 21;
-	else
-		scr.y = 0;
+	if ( SelMenu == nr ) { bSelection = true; }
+	else { bSelection = false; }
 
 	if ( ExeNr == nr )
 	{
@@ -8276,17 +8236,14 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 
-	scr.x = 840;
+	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), bSelection, dest.x, dest.y, buffer );
 
-	SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
 	dest.y += 22;
 	nr++;
 	// Fertig:
 
-	if ( SelMenu == nr )
-		scr.y = 21;
-	else
-		scr.y = 0;
+	if ( SelMenu == nr ) { bSelection = true; }
+	else { bSelection = false; }
 
 	if ( ExeNr == nr )
 	{
@@ -8295,9 +8252,7 @@ void cBuilding::DrawMenu ( void )
 		return;
 	}
 
-	scr.x = 126;
-
-	SDL_BlitSurface ( GraphicsData.gfx_object_menu, &scr, buffer, &dest );
+	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
 }
 
 // Zentriert auf dieses Building:

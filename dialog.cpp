@@ -1236,3 +1236,15 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
 	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, surface);
 }
+
+void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)
+{
+	SDL_Rect dest={x,y,42,21};
+	SDL_Rect src={0,0,42,21}; //default button deselected
+	if(bPressed) src.y+=21;
+
+	SDL_BlitSurface ( GraphicsData.gfx_context_menu, &src, surface, &dest );
+	font->showTextCentered ( dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight(LATIN_SMALL_WHITE) / 2) +1, sText, LATIN_SMALL_WHITE );
+
+	return;
+}

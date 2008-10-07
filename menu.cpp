@@ -3315,6 +3315,9 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 	// Hud drüber legen:
 	Client->Hud.DoAllHud();
+	Client->Hud.EndeButton(false);
+	Client->Hud.showTurnTime(NULL);
+	
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 
 
@@ -3323,6 +3326,8 @@ void SelectLanding ( int *x,int *y,cMap *map )
 
 	top.h=479;bottom.h=481;
 	bottom.x=0;bottom.y= ( SettingsData.iScreenH/2 );
+	
+
 	SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&top );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom );
 
