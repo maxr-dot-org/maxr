@@ -111,6 +111,8 @@
 			<Reload ENG="Reload" localized="Újratöltés"/>
 			<Host_Start ENG="Start Host" localized="Host Indítása"/>
 		</Button>
+		<Context>
+		</Context>
 		<Hud>
 			<Files ENG="Files" localized="Fájlok"/>
 			<Settings ENG="Settings" localized="Beállítások"/>

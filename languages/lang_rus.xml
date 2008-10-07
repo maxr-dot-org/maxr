@@ -111,6 +111,8 @@
 			<Reload ENG="Reload" localized="Зарядить"/>
 			<Host_Start ENG="Start Host" localized="Начать хост"/>
 		</Button>
+		<Context>
+		</Context>
 		<Hud>
 			<Files ENG="Files" localized="Файлы"/>
 			<Settings ENG="Settings" localized="Настройки"/>
