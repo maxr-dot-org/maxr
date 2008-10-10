@@ -23,18 +23,11 @@
 #include "main.h"
 
 #define MAX_CLIENTS 10
-#define PACKAGE_LENGHT 1024
-#define MAX_MESSAGE_LENGTH PACKAGE_LENGHT-4
+#define PACKAGE_LENGTH 1024
 
 // the first client message must be smaller then the first menu message!
 #define FIRST_CLIENT_MESSAGE 50
 #define FIRST_MENU_MESSAGE 100
-
-// All four chars have to be different!
-#define NETMESSAGE_CONTROLCHAR (char)0xFF
-#define NETMESSAGE_STARTCHAR (char)0x00
-#define NETMESSAGE_ENDCHAR (char)0xDD
-#define NETMESSAGE_NOTSTARTCHAR (char)0xEE
 
 /**
 * Callback for the networkthread
@@ -72,7 +65,7 @@ enum SOCKET_STATES
 struct sDataBuffer
 {
 	Uint32 iLenght;
-	char data[PACKAGE_LENGHT];
+	char data[PACKAGE_LENGTH];
 
 	/**
 	* Clears the data buffer and sets his lenght to 0.
@@ -95,7 +88,8 @@ struct sSocket
 
 	TCPsocket socket;
 	sDataBuffer buffer;
-	int iLeftBytes;
+	int bufferpos;
+	int messagelength;
 };
 
 /**
@@ -186,15 +180,6 @@ private:
 	*@return Allways 0 for success since it waits until the event can be pushed.
 	*/
 	int pushEvent( int iEventType, void *data1, void *data2 );
-	/**
-	* gets the position of the next NETMESSAGE_CONTROLCHAR character
-	*@author alzi alias DoctorDeath
-	*@param iStartPos The start position from which the search should beginn.
-	*@param data Data in which the search should take place.
-	*@param iLength The length of the data.
-	*@return Position of the first NETMESSAGE_CONTROLCHAR charcter or -1 if non has been found
-	*/
-	int findNextControlPosition ( int iStartPos, char *data, int iLength, char iType );
 public:
 	/**
 	* Creates a new server on the port which has to be set before.

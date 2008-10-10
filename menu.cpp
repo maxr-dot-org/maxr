@@ -4206,9 +4206,9 @@ void cMultiPlayerMenu::runNetworkMenu()
 					ChatStr.insert ( 0,": " );
 					ChatStr.insert ( 0, ActualPlayer->name );
 
-					if ( ChatStr.length() > MAX_MESSAGE_LENGTH-8 )
+					if ( ChatStr.length() > PACKAGE_LENGTH-8 )
 					{
-						ChatStr.erase ( MAX_MESSAGE_LENGTH-8 );
+						ChatStr.erase ( PACKAGE_LENGTH-8 );
 					}
 					cNetMessage *Message = new cNetMessage ( MU_MSG_CHAT );
 					Message->pushString ( ChatStr );
@@ -4772,7 +4772,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			iCount++;
 		}
 
-		if ( Message->iLength+35 > MAX_MESSAGE_LENGTH )
+		if ( Message->iLength+35 > PACKAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
@@ -4818,7 +4818,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			iCount++;
 		}
 
-		if ( Message->iLength+32 > MAX_MESSAGE_LENGTH )
+		if ( Message->iLength+32 > PACKAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
@@ -5709,11 +5709,11 @@ void cMultiPlayerMenu::sendMessage( cNetMessage *Message, int iPlayer )
 {
 	if ( iPlayer == -1 )
 	{
-		network->send ( Message->iLength, Message->serialize( true ) );
+		network->send ( Message->iLength, Message->serialize() );
 	}
 	else
 	{
-		network->sendTo ( iPlayer, Message->iLength, Message->serialize( true ) );
+		network->sendTo ( iPlayer, Message->iLength, Message->serialize() );
 	}
 	delete Message;
 }

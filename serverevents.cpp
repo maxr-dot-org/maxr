@@ -343,7 +343,7 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 		message->pushInt32( Waypoint->X+Waypoint->Y*MoveJob->Map->size );
 		iCount++;
 	}
-	while ( message->iLength <= MAX_MESSAGE_LENGTH-19 && !bEnd );
+	while ( message->iLength <= PACKAGE_LENGTH-19 && !bEnd );
 
 	message->pushInt16( iCount );
 	message->pushBool ( MoveJob->bPlane );
@@ -435,7 +435,7 @@ void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlay
 	{
 		for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++ )
 		{
-			if ( message->iLength+14 > MAX_MESSAGE_LENGTH )
+			if ( message->iLength+14 > PACKAGE_LENGTH )
 			{
 				message->pushInt16 ( iCount );
 				message->pushInt16 ( SubBase->iID );

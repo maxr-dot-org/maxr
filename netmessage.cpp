@@ -26,67 +26,19 @@
 
 cNetMessage::cNetMessage( char* c)
 {
-	data = (char*) malloc( MAX_MESSAGE_LENGTH );
+	iLength = SDL_SwapLE16( ((Sint16*)c)[0] );
+	iType = SDL_SwapLE16( ((Sint16*)c)[1] );
+	iPlayerNr = c[4];
 
-	//parse the message header
-	int posData = 0;
-	int posC = 0;
-	while ( posData < 5 )
-	{
-		data[posData] = c[posC];
-
-		//after a contol char, only the NETMESSAGE_NOTSTARTCHAR should follow,
-		//because all other control sequenzes must already be removed
-		if ( c[posC] == NETMESSAGE_CONTROLCHAR ) 
-		{
-			posC++;
-			if ( c[posC] != NETMESSAGE_NOTSTARTCHAR )
-			{
-				cLog::write( "Fatal Error: invalid control sequenze in NetMessage", cLog::eLOG_TYPE_NET_ERROR );
-				cLog::write( " character afer the NETMESSAGE_CONTROLCHAR: " + iToStr( c[posC]), cLog::eLOG_TYPE_NET_ERROR );
-			}
-		}
-		posData++;
-		posC++;
-	}
-
-	iType = SDL_SwapLE16( *((Sint16*) data) );
-	iLength = SDL_SwapLE16( *((Sint16*) (data + 2)) );
-	iPlayerNr = data[4];
-
-	if ( iLength > MAX_MESSAGE_LENGTH || iLength < 5 )
-	{
-		//invalid netMessage
-		iLength = 5;
-		iType = -1;
-	}
-
-	//copy message data
-	while ( posData < iLength )
-	{
-		data[posData] = c[posC];
-
-		if ( c[posC] == NETMESSAGE_CONTROLCHAR ) 
-		{
-			posC++;
-			iLength--;
-			if ( c[posC] != NETMESSAGE_NOTSTARTCHAR )
-			{
-				cLog::write( "Fatal Error: invalid control sequenze in NetMessage", cLog::eLOG_TYPE_NET_ERROR );
-				cLog::write( " character afer the NETMESSAGE_CONTROLCHAR: " + iToStr( c[posC]), cLog::eLOG_TYPE_NET_ERROR );
-			}
-		}
-	
-		posData++;
-		posC++;
-	}
+	data = (char*) malloc( iLength );
+	memcpy ( data, c, iLength );
 }
 
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = (char*) malloc( MAX_MESSAGE_LENGTH );	// 0 - 1: reserviert für message typ
-												// 2 - 3: reserviert für length
+	data = (char*) malloc( PACKAGE_LENGTH );	// 0 - 1: reserviert für length
+												// 2 - 3: reserviert für message typ
 												// 4:	  reserviert für Playernummer
 	iLength = 5;
 }
@@ -96,17 +48,14 @@ cNetMessage::~cNetMessage()
 	free ( data );
 }
 
-char* cNetMessage::serialize( bool bCheckChars )
+char* cNetMessage::serialize()
 {
-	//write iType to byte array
-	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iType);
 	//write iLenght to byte array
-	*((Sint16*) (data + 2)) = SDL_SwapLE16( (Sint16)iLength);
+	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iLength);
+	//write iType to byte array
+	*((Sint16*) (data+2)) = SDL_SwapLE16( (Sint16)iType);
 	//write iPlayernr to byte array
 	data[4] = (char) iPlayerNr;
-
-	// check for controlchars in the standard values
-	if ( bCheckChars ) checkControlChars( 0, 4 );
 
 	return data;
 }
@@ -116,7 +65,7 @@ SDL_Event* cNetMessage::getGameEvent()
 	SDL_Event* event = new SDL_Event;
 	event->type = GAME_EVENT;
 	event->user.data1 = malloc( iLength );
-	memcpy( event->user.data1, serialize( true ), iLength );
+	memcpy( event->user.data1, serialize(), iLength );
 
 	event->user.data2 = NULL;
 
@@ -128,9 +77,8 @@ void cNetMessage::pushChar( char c)
 {
 	data[iLength] = c;
 	iLength ++;
-	checkControlChars( iLength-1 );
 
-	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 char cNetMessage::popChar()
@@ -148,9 +96,8 @@ void cNetMessage::pushInt16( Sint16 i )
 {
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
-	checkControlChars( iLength-2 );
 
-	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint16 cNetMessage::popInt16()
@@ -168,9 +115,8 @@ void cNetMessage::pushInt32( Sint32 i )
 {
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
-	checkControlChars( iLength-4 );
 
-	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint32 cNetMessage::popInt32()
@@ -199,9 +145,8 @@ void cNetMessage::pushString( string s )
 	memcpy( data + iLength, c, stringLength );
 
 	iLength += stringLength;
-	checkControlChars( iLength-stringLength );
 
-	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 string cNetMessage::popString()
@@ -234,7 +179,7 @@ void cNetMessage::pushBool( bool b )
 	data[iLength] = b;
 	iLength++;
 
-	if ( iLength > MAX_MESSAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 bool cNetMessage::popBool()
@@ -472,38 +417,4 @@ string cNetMessage::getHexDump()
 	}
 
 	return dump;
-}
-
-int cNetMessage::findNextControlChar ( int iStartPos )
-{
-	for ( int iPos = iStartPos; iPos < iLength; iPos++ )
-	{
-		if ( data[iPos] == (char)NETMESSAGE_CONTROLCHAR ) return iPos;
-	}
-	return -1;
-}
-
-void cNetMessage::checkControlChars( int iStartPos, int iEndPos )
-{
-	int iPos = iStartPos;
-	// add to all NETMESSAGE_CONTROLCHAR the NETMESSAGE_NOTSTARTCHAR
-	while ( ( iPos = findNextControlChar( iPos ) ) != -1 )
-	{
-		if ( iLength >= MAX_MESSAGE_LENGTH )
-		{
-			cLog::write( "Can't handle control character: Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
-			return;
-		}
-		if ( iEndPos != -1 && iPos > iEndPos ) return;
-
-		char *tmpBuffer = (char *) malloc ( iLength-iPos-1 );
-		memcpy( tmpBuffer, &data[iPos+1], iLength-iPos-1 );
-		memcpy( &data[iPos+2], tmpBuffer, iLength-iPos-1 );
-		data[iPos+1] = (char)NETMESSAGE_NOTSTARTCHAR;
-		free ( tmpBuffer );
-
-		iLength++;
-		if ( iEndPos != -1 ) iEndPos++;
-		iPos += 2;
-	}
 }

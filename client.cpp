@@ -210,7 +210,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 	{
 		//the client is only connected to one socket
 		//so netwwork->send() only sends to the server
-		network->send( message->iLength, message->serialize( true ) );
+		network->send( message->iLength, message->serialize() );
 		delete message;
 	}
 }
@@ -470,9 +470,9 @@ int cClient::checkUser( bool bChange )
 		}
 		else
 		{
-			if ( InputStr.length() >= MAX_MESSAGE_LENGTH-20 )
+			if ( InputStr.length() >= PACKAGE_LENGTH-20 )
 			{
-				InputStr.erase ( MAX_MESSAGE_LENGTH-20 );
+				InputStr.erase ( PACKAGE_LENGTH-20 );
 			}
 		}
 	}

@@ -25,7 +25,8 @@ sSocket::sSocket()
 {
 	iType = FREE_SOCKET;
 	iState = STATE_UNUSED;
-	iLeftBytes = 0;
+	messagelength = 0;
+	bufferpos = 0;
 	buffer.clear();
 }
 
@@ -37,7 +38,7 @@ sSocket::~sSocket()
 void sDataBuffer::clear()
 {
 	iLenght = 0;
-	memset ( data, 0, PACKAGE_LENGHT);
+	memset ( data, 0, PACKAGE_LENGTH);
 }
 
 cTCP::cTCP()
@@ -128,31 +129,21 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 	{
 		// if the message is to long, cut it.
 		// this will result in an error in nearly all cases
-		if ( iLenght > MAX_MESSAGE_LENGTH )
+		if ( iLenght > PACKAGE_LENGTH )
 		{
 			cLog::write( "Cut size of message!", LOG_TYPE_NET_ERROR );
-			iLenght = MAX_MESSAGE_LENGTH;
+			iLenght = PACKAGE_LENGTH;
 		}
 
 		if ( iLenght > 0 )
 		{
-			// add the start and end characters to the message
-			char *sendBuffer = (char *) malloc ( iLenght+4 );
-			sendBuffer[0] = NETMESSAGE_CONTROLCHAR;
-			sendBuffer[1] = NETMESSAGE_STARTCHAR;
-			sendBuffer[iLenght+2] = NETMESSAGE_CONTROLCHAR;
-			sendBuffer[iLenght+3] = NETMESSAGE_ENDCHAR;
-			memcpy ( &sendBuffer[2], buffer, iLenght );
-
 			// send the message
 			lockTCP();
-			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, sendBuffer, iLenght+4 );
+			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, buffer, iLenght );
 			unlockTCP();
 
-			free ( sendBuffer );
-
 			// delete socket when sending fails
-			if ( iSendLenght != iLenght+4 )
+			if ( iSendLenght != iLenght )
 			{
 				Sockets[iClientNumber].iState = STATE_DYING;
 				void *data = malloc ( sizeof (Sint16) );
@@ -194,6 +185,7 @@ int cTCP::read( int iClientNumber, int iLenght, char *buffer )
 			// read the bytes
 			memmove ( buffer, Sockets[iClientNumber].buffer.data, iMinLenght );
 			Sockets[iClientNumber].buffer.iLenght -= iMinLenght;
+			Sockets[iClientNumber].bufferpos -= iMinLenght;
 			// move the remaining bytes in the buffer to the beginning
 			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], Sockets[iClientNumber].buffer.iLenght );
 		}
@@ -279,66 +271,40 @@ void cTCP::HandleNetworkThread()
 			else if ( Sockets[i].iType == CLIENT_SOCKET && Sockets[i].iState == STATE_READY && SDLNet_SocketReady ( Sockets[i].socket ) )
 			{
 				// wait for read when message buffer is full
-				if ( Sockets[i].buffer.iLenght >= PACKAGE_LENGHT )
+				if ( Sockets[i].buffer.iLenght >= PACKAGE_LENGTH )
 				{
 					bWaitForRead = true;
 				}
 				else
 				{
 					// read the bytes from the socket into the buffer
-					int iLenght;
-					iLenght = SDLNet_TCP_Recv ( Sockets[i].socket, &Sockets[i].buffer.data[Sockets[i].buffer.iLenght], PACKAGE_LENGHT-Sockets[i].buffer.iLenght );
+					int recvlength;
+					recvlength = SDLNet_TCP_Recv ( Sockets[i].socket, &Sockets[i].buffer.data[Sockets[i].buffer.iLenght], PACKAGE_LENGTH-Sockets[i].buffer.iLenght );
 
-					int iMsgStartOffset = Sockets[i].buffer.iLenght;
-					if ( iLenght > 0 )
+					if ( recvlength > 0 )
 					{
-						int iStartPos = iMsgStartOffset-Sockets[i].iLeftBytes;
-						// look for complete messages in the buffer
-						while ( ( iStartPos = findNextControlPosition ( iStartPos, Sockets[i].buffer.data, iMsgStartOffset+iLenght, NETMESSAGE_STARTCHAR ) ) != -1 )
+						// get new messagelength if necessary
+						if ( Sockets[i].messagelength == 0 )
 						{
-							int iEndPos = findNextControlPosition ( iStartPos+2, Sockets[i].buffer.data, iMsgStartOffset+iLenght, NETMESSAGE_ENDCHAR );
-							// there has been found the start of an other message in the buffer or the hole buffer is the message
-							if ( iEndPos != -1 )
-							{
-								iEndPos += 2;
-								void *data = malloc ( sizeof (Sint16)*3 );
-								((Sint16*)data)[0] = i;
-								((Sint16*)data)[1] = ((Sint16*)(Sockets[i].buffer.data+iStartPos+2))[0];
-								((Sint16*)data)[2] = iEndPos-iStartPos;
+							if ( Sockets[i].buffer.iLenght == 1 ) Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data)) );
+							else if ( Sockets[i].buffer.iLenght < PACKAGE_LENGTH-1 )Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+Sockets[i].buffer.iLenght)) );
+						}
+						Sockets[i].buffer.iLenght += recvlength;
 
-								Sockets[i].buffer.iLenght += iEndPos-iStartPos-Sockets[i].iLeftBytes;
-								Sockets[i].iLeftBytes = 0;
+						// push all messages
+						while ( Sockets[i].bufferpos+Sockets[i].messagelength <= Sockets[i].buffer.iLenght && Sockets[i].messagelength > 0 )
+						{
+							void *data = malloc ( sizeof (Sint16)*3 );
+							((Sint16*)data)[0] = i;		//socket number
+							((Sint16*)data)[1] = ((Sint16*)(Sockets[i].buffer.data+Sockets[i].bufferpos))[1];	// messagetype
+							((Sint16*)data)[2] = Sockets[i].messagelength;		// messagelength
 
-								int iSaveMessageLenght = ((Sint16*)data)[2];		// save the message length before pushing event
-								int iSaveBufferLength = Sockets[i].buffer.iLenght;	// save the buffer length before pushing event
+							// get next messagelength or set to 0 if there are not enough bytes left in the socketbuffer
+							Sockets[i].bufferpos += Sockets[i].messagelength;
+							if ( Sockets[i].bufferpos+1 < Sockets[i].buffer.iLenght ) Sockets[i].messagelength = SDL_SwapLE16( ((Sint16*)(Sockets[i].buffer.data+Sockets[i].bufferpos))[0] );
+							else Sockets[i].messagelength = 0;
 
-								pushEvent ( TCP_RECEIVEEVENT, data, NULL );
-								iStartPos = iEndPos;
-
-								// if the bufferlength now is smaller then before sending the event,
-								// the event must have been send to the server, and data das been read yet
-								if ( Sockets[i].buffer.iLenght < iSaveBufferLength )
-								{
-									iStartPos -= iSaveMessageLenght;
-									iMsgStartOffset -= iSaveMessageLenght;
-								}
-							}
-							// there hasn't been received the hole data of this message
-							// save the remaining data
-							else
-							{
-								if ( Sockets[i].iLeftBytes == 0 )
-								{
-									Sockets[i].iLeftBytes = iMsgStartOffset+iLenght-iStartPos;
-									Sockets[i].buffer.iLenght += Sockets[i].iLeftBytes;
-								}
-								else
-								{
-									Sockets[i].iLeftBytes += iLenght;
-									Sockets[i].buffer.iLenght += iLenght;
-								}
-								break;
-							}
+							pushEvent ( TCP_RECEIVEEVENT, data, NULL );
 						}
 					}
 					// when reading from this socket has failed the connection has to be dead
@@ -363,7 +329,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 
 	event->type = NETWORK_EVENT;
 	event->user.code = iEventType;
-	event->user.data1 = malloc ( PACKAGE_LENGHT );
+	event->user.data1 = malloc ( PACKAGE_LENGTH );
 	memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 3 );
 	free ( data1 );
 	event->user.data2 = data2;
@@ -380,7 +346,8 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 			iMinLenght = ( ( ( Sockets[iClientNumber].buffer.iLenght ) < (unsigned int)iMessageLength ) ? ( Sockets[iClientNumber].buffer.iLenght ) : iMessageLength );
 			memmove ( (char*)event->user.data1, Sockets[iClientNumber].buffer.data, iMinLenght );
 			Sockets[iClientNumber].buffer.iLenght -= iMinLenght;
-			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], PACKAGE_LENGHT-iMinLenght );
+			Sockets[iClientNumber].bufferpos -= iMinLenght;
+			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], PACKAGE_LENGTH-iMinLenght );
 			// Send the event to the server
 			if ( Server != NULL ) Server->pushEvent ( event );
 		}
@@ -418,7 +385,8 @@ void cTCP::deleteSocket( int iNum )
 	}
 	Sockets[iLast_Socket-1].iType = FREE_SOCKET;
 	Sockets[iLast_Socket-1].iState = STATE_UNUSED;
-	Sockets[iLast_Socket-1].iLeftBytes = 0;
+	Sockets[iLast_Socket-1].messagelength = 0;
+	Sockets[iLast_Socket-1].bufferpos = 0;
 	Sockets[iLast_Socket-1].buffer.clear();
 	iLast_Socket--;
 }
@@ -507,17 +475,3 @@ int cTCP::getFreeSocket()
 	return iNum;
 }
 
-int cTCP::findNextControlPosition ( int iStartPos, char *data, int iLength, char szType )
-{
-	int iPos;
-	for ( iPos = iStartPos; iPos < iLength; iPos++ )
-	{
-		// look for endings in the buffer
-		if ( data[iPos] == NETMESSAGE_CONTROLCHAR )
-		{
-			if ( data[iPos+1] == szType ) return iPos;
-		}
-	}
-
-	return -1;
-}

@@ -80,7 +80,7 @@ void sendMoveJob( cClientMoveJob *MoveJob )
 		message->pushInt32( Waypoint->X+Waypoint->Y*MoveJob->Map->size);
 		iCount++;
 	}
-	while ( message->iLength <= MAX_MESSAGE_LENGTH-19 && !bEnd );
+	while ( message->iLength <= PACKAGE_LENGTH-19 && !bEnd );
 
 	message->pushInt16( iCount );
 	message->pushBool ( MoveJob->bPlane );

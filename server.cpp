@@ -160,7 +160,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	// on all other sockets the netMessage will be send over TCP/IP
 	else
 	{
-		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize( true ) );
+		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize() );
 	}
 	//if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS ) sendCheckVehiclePositions(Player);
 	delete message;
@@ -188,8 +188,8 @@ void cServer::run()
 						NewEvent->type = GAME_EVENT;
 
 						// data1 is the real data
-						NewEvent->user.data1 = malloc ( MAX_MESSAGE_LENGTH );
-						memcpy ( NewEvent->user.data1, &((char*)event->user.data1)[2], MAX_MESSAGE_LENGTH );
+						NewEvent->user.data1 = malloc ( PACKAGE_LENGTH );
+						memcpy ( NewEvent->user.data1, event->user.data1, PACKAGE_LENGTH );
 
 						NewEvent->user.data2 = NULL;
 						pushEvent( NewEvent );
