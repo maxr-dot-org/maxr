@@ -397,57 +397,43 @@ void cHud::CheckScroll ( bool pure )
 		return;
 	}
 
-	if ( Client->SelectedVehicle&&Client->SelectedVehicle->PlaceBand&&Client->SelectedVehicle->owner==Client->ActivePlayer )
+	cVehicle* selectedVehicle = Client->SelectedVehicle;
+	cBuilding* selectedBuilding = Client->SelectedBuilding;
+	SDL_Surface* lastCursor = mouse->cur; //for checking, whether the cursor has been changed
+
+	if ( selectedVehicle&&selectedVehicle->PlaceBand&&selectedVehicle->owner==Client->ActivePlayer )
 	{
 		if ( x>=180 )
 		{
-			if ( mouse->SetCursor ( CBand ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CBand );
 		}
 		else
 		{
-			if ( mouse->SetCursor ( CNo ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CNo );
 		}
 	}
-	else if ( ( Client->SelectedVehicle&&Client->SelectedVehicle->Transfer&&Client->SelectedVehicle->owner==Client->ActivePlayer ) || ( Client->SelectedBuilding&&Client->SelectedBuilding->Transfer&&Client->SelectedBuilding->owner==Client->ActivePlayer ) )
+	else if ( ( selectedVehicle&&selectedVehicle->Transfer&&selectedVehicle->owner==Client->ActivePlayer ) || ( selectedBuilding&&selectedBuilding->Transfer&&selectedBuilding->owner==Client->ActivePlayer ) )
 	{
-		if ( Client->SelectedVehicle )
+		if ( selectedVehicle )
 		{
-			if ( Client->OverObject&&Client->SelectedVehicle->CanTransferTo ( Client->OverObject ) )
+			if ( Client->OverObject&&selectedVehicle->CanTransferTo ( Client->OverObject ) )
 			{
-				if ( mouse->SetCursor ( CTransf ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CTransf );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
 		else
 		{
-			if ( Client->OverObject&&Client->SelectedBuilding->CanTransferTo ( Client->OverObject ) )
+			if ( Client->OverObject&&selectedBuilding->CanTransferTo ( Client->OverObject ) )
 			{
-				if ( mouse->SetCursor ( CTransf ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CTransf );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
 	}
@@ -459,17 +445,14 @@ void cHud::CheckScroll ( bool pure )
 			if ( mouse->SetCursor ( CHand ) )
 			{
 				Client->OverObject=NULL;
-				Client->bFlagDrawMap=true;
 			}
 			return;
 		}
 
 		if ( y<2+21&&y>=2&&x>=390&&x<390+72 )
 		{
-			if ( mouse->SetCursor ( CHand ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CHand );
+			
 			Client->OverObject=NULL;
 			LastOverEnde=true;
 			return;
@@ -480,141 +463,102 @@ void cHud::CheckScroll ( bool pure )
 			Client->mouseMoveCallback ( true );
 		}
 
-		if ( ( Client->SelectedVehicle&&Client->SelectedVehicle->MenuActive&&Client->SelectedVehicle->MouseOverMenu ( x,y ) ) ||
-		        ( Client->SelectedBuilding&&Client->SelectedBuilding->MenuActive&&Client->SelectedBuilding->MouseOverMenu ( x,y ) ) )
+		if ( ( selectedVehicle&&selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( x,y ) ) ||
+		        ( selectedBuilding&&selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( x,y ) ) )
 		{
-			if ( mouse->SetCursor ( CHand ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CHand );
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->AttackMode&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( Client->SelectedVehicle->IsInRange ( mouse->GetKachelOff() ) && !( Client->SelectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
+			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff() ) && !( selectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
-				if ( mouse->SetCursor ( CAttack ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CAttack );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->StealActive&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( Client->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
+			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
 			{
-				if ( mouse->SetCursor ( CSteal ) )
-				{
-					Client->bFlagDrawMap=true;
-					Client->mouseMoveCallback ( true );
-				}
+				mouse->SetCursor ( CSteal );
+				//TODO: is mouseMoveCallback needed here?
+				//Client->mouseMoveCallback ( true );				
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->DisableActive&&Client->SelectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( Client->SelectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
+			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
 			{
-				if ( mouse->SetCursor ( CDisable ) )
-				{
-					Client->bFlagDrawMap=true;
-					Client->mouseMoveCallback ( true );
-				}
+				mouse->SetCursor ( CDisable );
+				//TODO: is mouseMoveCallback needed here?
+				//Client->mouseMoveCallback ( true );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->AttackMode&&Client->SelectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( Client->SelectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
+			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
 			{
-				if ( mouse->SetCursor ( CAttack ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CAttack );			
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->CanAttackObject ( mouse->GetKachelOff() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{
-				Client->bFlagDrawMap=true;
 				Client->mouseMoveCallback ( true );
 			}
 		}
-		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->CanAttackObject ( mouse->GetKachelOff() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{
-				Client->bFlagDrawMap=true;
 				Client->mouseMoveCallback ( true );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->MuniActive )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->MuniActive )
 		{
-			if ( Client->SelectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REARM ) )
+			if ( selectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REARM ) )
 			{
-				if ( mouse->SetCursor ( CMuni ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CMuni );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->RepairActive )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->RepairActive )
 		{
-			if ( Client->SelectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REPAIR ) )
+			if ( selectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REPAIR ) )
 			{
-				if ( mouse->SetCursor ( CRepair ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CRepair );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
 		else if (Client->OverObject && 
 				(
-					!Client->SelectedVehicle                               ||
-					Client->SelectedVehicle->owner != Client->ActivePlayer ||
+					!selectedVehicle                               ||
+					selectedVehicle->owner != Client->ActivePlayer ||
 					(
 						(
-							Client->SelectedVehicle->data.can_drive == DRIVE_AIR ||
+							selectedVehicle->data.can_drive == DRIVE_AIR ||
 							Client->OverObject->vehicle ||
 							(
 								Client->OverObject->top &&
@@ -622,162 +566,119 @@ void cHud::CheckScroll ( bool pure )
 							)
 						) &&
 						(
-							Client->SelectedVehicle->data.can_drive != DRIVE_AIR ||
+							selectedVehicle->data.can_drive != DRIVE_AIR ||
 							Client->OverObject->plane
 						) &&
-						!Client->SelectedVehicle->LoadActive &&
-						!Client->SelectedVehicle->ActivatingVehicle
+						!selectedVehicle->LoadActive &&
+						!selectedVehicle->ActivatingVehicle
 					)
 				) &&
 				(
-					!Client->SelectedBuilding                               ||
-					Client->SelectedBuilding->owner != Client->ActivePlayer ||
+					!selectedBuilding                               ||
+					selectedBuilding->owner != Client->ActivePlayer ||
 					(
 						(
-							!Client->SelectedBuilding->BuildList                    ||
-							!Client->SelectedBuilding->BuildList->Size()            ||
-							Client->SelectedBuilding->IsWorking                     ||
-							(*Client->SelectedBuilding->BuildList)[0]->metall_remaining > 0
+							!selectedBuilding->BuildList                    ||
+							!selectedBuilding->BuildList->Size()            ||
+							selectedBuilding->IsWorking                     ||
+							(*selectedBuilding->BuildList)[0]->metall_remaining > 0
 						) &&
-						!Client->SelectedBuilding->LoadActive &&
-						!Client->SelectedBuilding->ActivatingVehicle
+						!selectedBuilding->LoadActive &&
+						!selectedBuilding->ActivatingVehicle
 					)
 				))
 		{
-			if ( mouse->SetCursor ( CSelect ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CSelect );
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&& ( ( !Client->SelectedVehicle->IsBuilding&&!Client->SelectedVehicle->IsClearing&&!Client->SelectedVehicle->LoadActive&&!Client->SelectedVehicle->ActivatingVehicle ) || ( Client->SelectedVehicle->IsBuilding&&Client->SelectedVehicle->BuildRounds==0 ) || ( Client->SelectedVehicle->IsClearing&&Client->SelectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&& ( ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle ) || ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds==0 ) || ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
 		{
-			if ( Client->SelectedVehicle->MoveJobActive )
+			if ( selectedVehicle->MoveJobActive )
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
-			else if ( Client->SelectedVehicle->CanDrive ( mouse->GetKachelOff() ) )
+			else if ( selectedVehicle->CanDrive ( mouse->GetKachelOff() ) )
 			{
-				if ( mouse->SetCursor ( CMove ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CMove );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
 		else if (
-				Client->SelectedBuilding                                &&
-				Client->SelectedBuilding->owner == Client->ActivePlayer &&
-				Client->SelectedBuilding->BuildList                     &&
-				Client->SelectedBuilding->BuildList->Size()             &&
-				!Client->SelectedBuilding->IsWorking                    &&
-				(*Client->SelectedBuilding->BuildList)[0]->metall_remaining <= 0)
+				selectedBuilding                                &&
+				selectedBuilding->owner == Client->ActivePlayer &&
+				selectedBuilding->BuildList                     &&
+				selectedBuilding->BuildList->Size()             &&
+				!selectedBuilding->IsWorking                    &&
+				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
-			if (Client->SelectedBuilding->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedBuilding->BuildList)[0]->typ))
+			if ( selectedBuilding->CanExitTo(mouse->GetKachelOff(), (*selectedBuilding->BuildList)[0]->typ))
 			{
-				if ( mouse->SetCursor ( CActivate ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CActivate );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->ActivatingVehicle )
+		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->ActivatingVehicle )
 		{
-			if (Client->SelectedBuilding->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedBuilding->StoredVehicles)[Client->SelectedBuilding->VehicleToActivate]->typ))
+			if ( selectedBuilding->CanExitTo(mouse->GetKachelOff(), (*selectedBuilding->StoredVehicles)[selectedBuilding->VehicleToActivate]->typ))
 			{
-				if ( mouse->SetCursor ( CActivate ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CActivate );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->ActivatingVehicle )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->ActivatingVehicle )
 		{
-			if (Client->SelectedVehicle->CanExitTo(mouse->GetKachelOff(), (*Client->SelectedVehicle->StoredVehicles)[Client->SelectedVehicle->VehicleToActivate]->typ))
+			if (selectedVehicle->CanExitTo(mouse->GetKachelOff(), (*selectedVehicle->StoredVehicles)[selectedVehicle->VehicleToActivate]->typ))
 			{
-				if ( mouse->SetCursor ( CActivate ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CActivate );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedBuilding&&Client->SelectedBuilding->owner==Client->ActivePlayer&&Client->SelectedBuilding->LoadActive )
+		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->LoadActive )
 		{
-			if ( Client->SelectedBuilding->CanLoad ( mouse->GetKachelOff() ) )
+			if ( selectedBuilding->CanLoad ( mouse->GetKachelOff() ) )
 			{
-				if ( mouse->SetCursor ( CLoad ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CLoad );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( Client->SelectedVehicle&&Client->SelectedVehicle->owner==Client->ActivePlayer&&Client->SelectedVehicle->LoadActive )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->LoadActive )
 		{
-			if ( Client->SelectedVehicle->CanLoad ( mouse->GetKachelOff() ) )
+			if ( selectedVehicle->CanLoad ( mouse->GetKachelOff() ) )
 			{
-				if ( mouse->SetCursor ( CLoad ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CLoad );
 			}
 			else
 			{
-				if ( mouse->SetCursor ( CNo ) )
-				{
-					Client->bFlagDrawMap=true;
-				}
+				mouse->SetCursor ( CNo );
 			}
 		}
 		else
 		{
-			if ( mouse->SetCursor ( CHand ) )
-			{
-				Client->bFlagDrawMap=true;
-			}
+			mouse->SetCursor ( CHand );
 		}
 	}
 	else
 	{
-		if ( mouse->SetCursor ( CHelp ) )
-		{
-			Client->bFlagDrawMap=true;
-		}
+		mouse->SetCursor ( CHelp );
+	}
+
+	if ( mouse->cur != lastCursor )
+	{
+		Client->bFlagDrawMap = true;
 	}
 }
 
