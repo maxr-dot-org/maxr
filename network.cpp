@@ -293,8 +293,8 @@ void cTCP::HandleNetworkThread()
 							}
 							else if ( Sockets[i].buffer.iLenght < PACKAGE_LENGTH-2 )
 							{
-								if ( Sockets[i].buffer.data[Sockets[i].buffer.iLenght] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
-								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+(Sockets[i].buffer.iLenght+1))) );
+								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
+								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1))) );
 							}
 
 							if ( Sockets[i].messagelength > PACKAGE_LENGTH ) cLog::write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
