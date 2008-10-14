@@ -26,21 +26,26 @@
 
 cNetMessage::cNetMessage( char* c)
 {
-	iLength = SDL_SwapLE16( ((Sint16*)c)[0] );
-	iType = SDL_SwapLE16( ((Sint16*)c)[1] );
-	iPlayerNr = c[4];
+	if ( c[0] != START_CHAR ) cLog::write ( "NetMessage has wrong start character", LOG_TYPE_NET_ERROR );
+
+	iLength = SDL_SwapLE16( ((Sint16*)(c+1))[0] );
+	iType = SDL_SwapLE16( ((Sint16*)(c+1))[1] );
+	iPlayerNr = c[5];
 
 	data = (char*) malloc( iLength );
+	data[0] = START_CHAR;
 	memcpy ( data, c, iLength );
 }
 
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = (char*) malloc( PACKAGE_LENGTH );	// 0 - 1: reserviert für length
-												// 2 - 3: reserviert für message typ
-												// 4:	  reserviert für Playernummer
-	iLength = 5;
+	data = (char*) malloc( PACKAGE_LENGTH );	// 0:	  reserved for startchar
+												// 1 - 2: reserved for length
+												// 3 - 4: reserved for message type
+												// 5:	  reserved for playernumber
+	data[0] = START_CHAR;
+	iLength = 6;
 }
 
 cNetMessage::~cNetMessage()
@@ -50,12 +55,14 @@ cNetMessage::~cNetMessage()
 
 char* cNetMessage::serialize()
 {
+	//set start character
+	data[0] = START_CHAR;
 	//write iLenght to byte array
-	*((Sint16*) data) = SDL_SwapLE16( (Sint16)iLength);
+	*((Sint16*) (data+1)) = SDL_SwapLE16( (Sint16)iLength);
 	//write iType to byte array
-	*((Sint16*) (data+2)) = SDL_SwapLE16( (Sint16)iType);
+	*((Sint16*) (data+3)) = SDL_SwapLE16( (Sint16)iType);
 	//write iPlayernr to byte array
-	data[4] = (char) iPlayerNr;
+	data[5] = (char) iPlayerNr;
 
 	return data;
 }
@@ -83,7 +90,7 @@ void cNetMessage::pushChar( char c)
 
 char cNetMessage::popChar()
 {
-	if ( iLength <= 5 )
+	if ( iLength <= 6 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -102,7 +109,7 @@ void cNetMessage::pushInt16( Sint16 i )
 
 Sint16 cNetMessage::popInt16()
 {
-	if ( iLength <= 6 )
+	if ( iLength <= 7 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -121,7 +128,7 @@ void cNetMessage::pushInt32( Sint32 i )
 
 Sint32 cNetMessage::popInt32()
 {
-	if ( iLength <= 8 )
+	if ( iLength <= 9 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
@@ -161,7 +168,7 @@ string cNetMessage::popString()
 	iLength -= 2;
 	while ( data[iLength] != '\0' )
 	{
-		if ( iLength <= 5 )
+		if ( iLength <= 6 )
 		{
 			cLog::write( "Pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NET_ERROR );
 			return string("");
@@ -184,7 +191,7 @@ void cNetMessage::pushBool( bool b )
 
 bool cNetMessage::popBool()
 {
-	if ( iLength <= 5 )
+	if ( iLength <= 6 )
 	{
 		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;

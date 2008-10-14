@@ -184,15 +184,9 @@ void cServer::run()
 				case TCP_RECEIVEEVENT:
 					// new Data received
 					{
-						SDL_Event* NewEvent = new SDL_Event;
-						NewEvent->type = GAME_EVENT;
-
-						// data1 is the real data
-						NewEvent->user.data1 = malloc ( PACKAGE_LENGTH );
-						memcpy ( NewEvent->user.data1, event->user.data1, PACKAGE_LENGTH );
-
-						NewEvent->user.data2 = NULL;
-						pushEvent( NewEvent );
+						cNetMessage message( (char*) event->user.data1 );
+						HandleNetMessage( &message );
+						CHECK_MEMORY;
 					}
 					break;
 				case TCP_CLOSEEVENT:
@@ -213,8 +207,8 @@ void cServer::run()
 					cNetMessage message( (char*) event->user.data1 );
 					HandleNetMessage( &message );
 					CHECK_MEMORY;
-					break;
 				}
+				break;
 
 			default:
 				break;

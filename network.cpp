@@ -146,7 +146,7 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 			if ( iSendLenght != iLenght )
 			{
 				Sockets[iClientNumber].iState = STATE_DYING;
-				void *data = malloc ( sizeof (Sint16) );
+				void *data = malloc ( sizeof (Sint16)*3 );
 				((Sint16*)data)[0] = iClientNumber;
 				pushEvent ( TCP_CLOSEEVENT, data, NULL );
 				unlockData();
@@ -260,7 +260,7 @@ void cTCP::HandleNetworkThread()
 						Sockets[iNum].iType = CLIENT_SOCKET;
 						Sockets[iNum].iState = STATE_NEW;
 						Sockets[iNum].buffer.clear();
-						void *data = malloc ( sizeof (Sint16) );
+						void *data = malloc ( sizeof (Sint16)*3 );
 						((Sint16*)data)[0] = iNum;
 						pushEvent( TCP_ACCEPTEVENT, data, NULL );
 					}
@@ -286,8 +286,18 @@ void cTCP::HandleNetworkThread()
 						// get new messagelength if necessary
 						if ( Sockets[i].messagelength == 0 )
 						{
-							if ( Sockets[i].buffer.iLenght == 1 ) Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data)) );
-							else if ( Sockets[i].buffer.iLenght < PACKAGE_LENGTH-1 )Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+Sockets[i].buffer.iLenght)) );
+							if ( Sockets[i].buffer.iLenght <= 2 )
+							{
+								if ( Sockets[i].buffer.data[0] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
+								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+1)) );
+							}
+							else if ( Sockets[i].buffer.iLenght < PACKAGE_LENGTH-2 )
+							{
+								if ( Sockets[i].buffer.data[Sockets[i].buffer.iLenght] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
+								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+(Sockets[i].buffer.iLenght+1))) );
+							}
+
+							if ( Sockets[i].messagelength > PACKAGE_LENGTH ) cLog::write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
 						}
 						Sockets[i].buffer.iLenght += recvlength;
 
@@ -296,21 +306,35 @@ void cTCP::HandleNetworkThread()
 						{
 							void *data = malloc ( sizeof (Sint16)*3 );
 							((Sint16*)data)[0] = i;		//socket number
-							((Sint16*)data)[1] = ((Sint16*)(Sockets[i].buffer.data+Sockets[i].bufferpos))[1];	// messagetype
+							((Sint16*)data)[1] = ((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1)))[1];	// messagetype
 							((Sint16*)data)[2] = Sockets[i].messagelength;		// messagelength
+
+							pushEvent ( TCP_RECEIVEEVENT, data, NULL );
 
 							// get next messagelength or set to 0 if there are not enough bytes left in the socketbuffer
 							Sockets[i].bufferpos += Sockets[i].messagelength;
-							if ( Sockets[i].bufferpos+1 < Sockets[i].buffer.iLenght ) Sockets[i].messagelength = SDL_SwapLE16( ((Sint16*)(Sockets[i].buffer.data+Sockets[i].bufferpos))[0] );
+							if ( Sockets[i].bufferpos+2 < Sockets[i].buffer.iLenght )
+							{
+								Sockets[i].messagelength = SDL_SwapLE16( ((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1)))[0] );
+								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR )
+								{
+									cLog::write ( "Wrong start character in next received message", LOG_TYPE_NET_ERROR );
+									break;
+								}
+							}
 							else Sockets[i].messagelength = 0;
 
-							pushEvent ( TCP_RECEIVEEVENT, data, NULL );
+							if ( Sockets[i].messagelength > PACKAGE_LENGTH )
+							{
+								cLog::write ( "Length of next received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
+								break;
+							}
 						}
 					}
 					// when reading from this socket has failed the connection has to be dead
 					else
 					{
-						void *data = malloc ( sizeof (Sint16)*2 );
+						void *data = malloc ( sizeof (Sint16)*3 );
 						((Sint16*)data)[0] = i;
 
 						Sockets[i].iState = STATE_DYING;
@@ -329,30 +353,36 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 
 	event->type = NETWORK_EVENT;
 	event->user.code = iEventType;
-	event->user.data1 = malloc ( PACKAGE_LENGTH );
-	memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 3 );
-	free ( data1 );
 	event->user.data2 = data2;
-
-	int iMessageLength = ((Sint16*)event->user.data1)[2];
 
 	if ( bDataLocked )
 	{
-		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)event->user.data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
+		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
 		{
-			// Read data for server and add it to the event
-			int iMinLenght, iClientNumber;
-			iClientNumber = SDL_SwapLE16 ( ((Sint16*)event->user.data1)[0] );
-			iMinLenght = ( ( ( Sockets[iClientNumber].buffer.iLenght ) < (unsigned int)iMessageLength ) ? ( Sockets[iClientNumber].buffer.iLenght ) : iMessageLength );
-			memmove ( (char*)event->user.data1, Sockets[iClientNumber].buffer.data, iMinLenght );
-			Sockets[iClientNumber].buffer.iLenght -= iMinLenght;
-			Sockets[iClientNumber].bufferpos -= iMinLenght;
-			memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], PACKAGE_LENGTH-iMinLenght );
+			if ( iEventType == TCP_RECEIVEEVENT )
+			{
+				event->user.data1 = malloc ( ((Sint16*)data1)[2] );
+				// Read data for server and add it to the event
+				int iMinLenght, iClientNumber;
+				iClientNumber = SDL_SwapLE16 ( ((Sint16*)data1)[0] );
+				iMinLenght = ( ( ( Sockets[iClientNumber].buffer.iLenght ) < (unsigned int)((Sint16*)data1)[2] ) ? ( Sockets[iClientNumber].buffer.iLenght ) : ((Sint16*)data1)[2] );
+				memmove ( (char*)event->user.data1, Sockets[iClientNumber].buffer.data, iMinLenght );
+				Sockets[iClientNumber].buffer.iLenght -= iMinLenght;
+				Sockets[iClientNumber].bufferpos -= iMinLenght;
+				memmove ( Sockets[iClientNumber].buffer.data, &Sockets[iClientNumber].buffer.data[iMinLenght], PACKAGE_LENGTH-iMinLenght );
+			}
+			else
+			{
+				event->user.data1 = malloc ( sizeof ( Sint16 ) * 3 );
+				memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 3 );
+			}
 			// Send the event to the server
 			if ( Server != NULL ) Server->pushEvent ( event );
 		}
 		else
 		{
+			event->user.data1 = malloc ( sizeof ( Sint16 ) * 3 );
+			memcpy ( event->user.data1, data1, sizeof ( Sint16 ) * 3 );
 			// Event for the client or message for the menu
 			EventHandler->pushEvent ( event );
 		}
@@ -362,6 +392,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 		cLog::write( "Fatal Error when trying to push event", cLog::eLOG_TYPE_NET_ERROR );
 	}
 
+	free ( data1 );
 	return 0;
 }
 

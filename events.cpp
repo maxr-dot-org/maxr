@@ -70,7 +70,7 @@ void cEventHandling::HandleEvents()
 
 				if ( DataBuffer.iLenght != 0 )
 				{
-					if ( SDL_SwapLE16( ((Sint16*)DataBuffer.data)[1] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
+					if ( SDL_SwapLE16( ((Sint16*)(DataBuffer.data+1))[1] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
 					{
 						// devite into messages
 						SDL_Event* NewEvent = new SDL_Event;

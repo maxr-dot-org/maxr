@@ -4852,7 +4852,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	}
 
 	//check all sent positions
-	while ( message->iLength > 5 )
+	while ( message->iLength > 6 )
 	{
 		int id = message->popInt32();
 		int PosY = message->popInt16();
