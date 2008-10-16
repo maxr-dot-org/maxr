@@ -1,3 +1,20 @@
+M.A.X. Reloaded 0.2.1
+=======================================================================
+new features:
+	*implemented rearming
+	*implemented repairing
+	*implemented reloading
+
+-implemented new pathfinding algorithm (A*)
+
+-fixed detection and hiding of stealth units, e. g. submarines, infiltrators
+-fixed upgrades in landing selection menu on gamestart
+-removed fuel storage at game start
+-overworked turn end handling
+-fixed sentry mode
+-tons of crashes fixed
+-tons of 'out of sync'-situations fixed
+
 M.A.X. Reloaded 0.2.0
 =======================================================================
 -added support for original WRL mapfiles
