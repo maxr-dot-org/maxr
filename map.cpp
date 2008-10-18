@@ -1155,8 +1155,6 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, c
 
 bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle ) const
 {
-	//TODO: what about base buildings on base buildings?
-
 	if ( offset < 0 || offset >= size*size ) return false;
 	if ( terrain[Kacheln[offset]].blocked ) return false;
 	cMapField& field = fields[offset];	
@@ -1173,7 +1171,9 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 
 	if ( buildingData.build_on_water )
 	{
-		if ( !terrain[Kacheln[offset]].water ) return false;
+		if ( !buildingData.is_bridge && !buildingData.is_platform && !terrain[Kacheln[offset]].water ) return false;
+		if ( !terrain[Kacheln[offset]].water && !terrain[Kacheln[offset]].coast ) return false;
+
 		if ( !bi.end )
 		{
 			// only brigde and mine can be together on the same field
@@ -1193,9 +1193,12 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 
 	//can only build on platforms and roads
 	if ( bi && !( bi->data.is_road || bi->data.is_platform ) ) return false;
+
+	//can not build a road on a road
+	if ( bi && bi->data.is_road && buildingData.is_road ) return false;
 	
 	//can not build on rubble
-	if ( !bi->owner ) return false;
+	if (bi && !bi->owner ) return false;
 
 	if ( field.vehicles.Size() > 0 )
 	{
