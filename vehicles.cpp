@@ -2481,8 +2481,8 @@ void cVehicle::DrawHelthBar(void) const
 // Zentriert auf dieses Vehicle:
 void cVehicle::Center ( void )
 {
-	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
-	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) 224 / Client->Hud.Zoom ) * 64 ) ) + 32;
+	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
 	Client->bFlagDrawMap = true;
 	Client->Hud.DoScroll ( 0 );
 }
