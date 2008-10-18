@@ -950,7 +950,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			BuildingListItem = (*Building->BuildList)[0];
 			if ( BuildingListItem->metall_remaining > 0 ) break;
 
-			if ( checkExitBlocked ( iX, iY, BuildingListItem->typ ) ) break;
+			if ( !Building->canExitTo( iX, iY, Server->Map, BuildingListItem->typ ) ) break;
+
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
 
 			if ( Building->RepeatBuild )
@@ -2176,20 +2177,6 @@ bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *D
 		// cannot build plattforms or bridges on nowater or nocoast terrain
 		if ( !Map->terrain[Map->Kacheln[iOff]].coast && !Map->IsWater ( iOff ) && ( Data->is_bridge || Data->is_platform ) ) return true;
 	}
-
-	return false;
-}
-
-bool cServer::checkExitBlocked ( int iX, int iY, sVehicle *Type )
-{
-	int iOff = iX+iY*Map->size;
-
-	if ( iOff < 0 || iOff >= Map->size*Map->size ) return true;
-
-	if ( Type->data.can_drive == DRIVE_AIR && Map->GO[iOff].plane ) return true;
-	if ( Type->data.can_drive != DRIVE_AIR && ( Map->GO[iOff].vehicle || ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector ) ) ) return true;
-	if ( Type->data.can_drive == DRIVE_SEA && ( !Map->IsWater ( iOff, true ) || Map->GO[iOff].base || Map->GO[iOff].subbase ) ) return true;
-	if ( Type->data.can_drive == DRIVE_LAND && Map->IsWater ( iOff ) && ( !Map->GO[iOff].base || ( !Map->GO[iOff].base->data.is_platform && !Map->GO[iOff].subbase->data.is_road && !Map->GO[iOff].base->data.is_expl_mine ) ) ) return true;
 
 	return false;
 }

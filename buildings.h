@@ -215,7 +215,7 @@ public:
 	void ShowToBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
-	bool CanExitTo(int off,sVehicle *typ);
+	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
 	bool CanLoad(int off);
 	void StoreVehicle(int off);
 	void ShowStorage(void);
@@ -257,6 +257,10 @@ public:
 	* this function has to be called on the server everytime a building is added
 	*/
 	void makeDetection();
+	/**
+	* checks whether the coordinates are next to the building
+	*/
+	bool isNextTo( int x, int y) const;
 };
 
 #endif

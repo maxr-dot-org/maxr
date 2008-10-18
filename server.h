@@ -190,6 +190,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs();
+
 	/**
 	* checks whether the next waypoint is not blocked
 	*@author alzi alias DoctorDeath
@@ -219,7 +220,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	bool checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data );
-	bool checkExitBlocked ( int iX, int iY, sVehicle *Type );
 public:
 	/** the map */
 	cMap *Map;

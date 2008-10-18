@@ -2352,6 +2352,23 @@ void cBuilding::MakeTransBar ( int *trans, int MaxTarget, int Target )
 	DrawTransBar ( ( int ) ( 223 * ( float ) ( Target + *trans ) / MaxTarget ) );
 }
 
+bool cBuilding::isNextTo( int x, int y) const
+{
+	if ( x + 1 < PosX || y + 1 < PosY ) return false;
+
+	if ( data.is_big )
+	{
+		if ( x - 2 > PosX || y - 2 > PosY ) return false;
+	}
+	else
+	{
+		if ( x - 1 > PosX || y - 1 > PosY ) return false;
+	}
+
+	return true;
+}
+
+
 // Mal die Exitpoints für ein Vehicle des Übergebenen Typs:
 void cBuilding::DrawExitPoints ( sVehicle *typ )
 {
@@ -2360,72 +2377,48 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 	spy = GetScreenPosY();
 	size = Client->Map->size;
 
-	if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
-	if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
+	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
 
-	if ( PosY - 1 >= 0 && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
 
-	if ( PosX + 2 < size && PosY - 1 >= 0 && CanExitTo ( PosX + 2 + ( PosY - 1 ) *size, typ ) )
+	if ( canExitTo ( PosX + 2, PosY - 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy - Client->Hud.Zoom );
 
-	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
+	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) )
 		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
 
-	if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY ) *size, typ ) )
+	if ( canExitTo ( PosX + 2, PosY    , Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy );
 
-	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
 
-	if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 1 ) *size, typ ) )
+	if ( canExitTo ( PosX + 2, PosY + 1, Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom );
 
-	if ( PosX - 1 >= 0 && PosY + 2 < size && CanExitTo ( PosX - 1 + ( PosY + 2 ) *size, typ ) )
+	if ( canExitTo ( PosX - 1, PosY + 2, Client->Map, typ ) )
 		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
 
-	if ( PosY + 2 < size && CanExitTo ( PosX + ( PosY + 2 ) *size, typ ) )
+	if ( canExitTo ( PosX    , PosY + 2, Client->Map, typ ) )
 		Client->drawExitPoint ( spx, spy + Client->Hud.Zoom*2 );
 
-	if ( PosY + 2 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 2 ) *size, typ ) )
+	if ( canExitTo ( PosX + 1, PosY + 2, Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
 
-	if ( PosX + 2 < size && PosY + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 2 ) *size, typ ) )
+	if ( canExitTo ( PosX + 2, PosY + 2, Client->Map, typ ) )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom*2 );
 }
 
-// Prüft, ob das Vehicle das Gebäude zu dem übergebenen Feld verlassen kann:
-bool cBuilding::CanExitTo ( int off, sVehicle *typ )
+
+bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
-	int boff;
-
-	if ( off < 0 || off >= Client->Map->size*Client->Map->size )
-		return false;
-
-	if ( abs ( ( off % Client->Map->size ) - PosX ) > 8 || abs ( ( off / Client->Map->size ) - PosY ) > 8 )
-		return false;
-
-	boff = PosX + PosY * Client->Map->size;
-
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) ||
-	        ( off >= boff - 1 + Client->Map->size*2 && off <= boff + 2 + Client->Map->size*2 ) )
-		{}
-	else
-		return false;
-
-	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( Client->Map->GO[off].top && !Client->Map->GO[off].top->data.is_connector ) || Client->Map->GO[off].vehicle || Client->Map->terrain[Client->Map->Kacheln[off]].blocked ) ) ||
-	        ( typ->data.can_drive == DRIVE_AIR && Client->Map->GO[off].plane ) ||
-	        ( typ->data.can_drive == DRIVE_SEA && ( !Client->Map->IsWater ( off, true ) || ( Client->Map->GO[off].base && ( Client->Map->GO[off].base->data.is_platform || Client->Map->GO[off].base->data.is_road ) ) ) ) ||
-	        ( typ->data.can_drive == DRIVE_LAND && Client->Map->IsWater ( off ) && ! ( Client->Map->GO[off].base && ( Client->Map->GO[off].base->data.is_platform || Client->Map->GO[off].base->data.is_road || Client->Map->GO[off].base->data.is_bridge ) ) ) )
-	{
-		return false;
-	}
+	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
+	if ( !isNextTo(x, y) ) return false;
 
 	return true;
 }
@@ -2802,7 +2795,7 @@ void cBuilding::ShowStorage ( void )
 			for (i = 0; i < StoredVehicles->Size();)
 			{
 				typ = (*StoredVehicles)[i]->typ;
-
+/*
 				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
 				{
 					ExitVehicleTo ( i, PosX - 1 + ( PosY - 1 ) *size, false );
@@ -2874,7 +2867,7 @@ void cBuilding::ShowStorage ( void )
 					ExitVehicleTo ( i, PosX + 2 + ( PosY + 2 ) *size, false );
 					continue;
 				}
-
+*/
 				i++;
 			}
 

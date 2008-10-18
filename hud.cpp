@@ -613,7 +613,9 @@ void cHud::CheckScroll ( bool pure )
 				!selectedBuilding->IsWorking                    &&
 				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
-			if ( selectedBuilding->CanExitTo(mouse->GetKachelOff(), (*selectedBuilding->BuildList)[0]->typ))
+			int x, y;
+			mouse->GetKachel( &x, &y);
+			if ( selectedBuilding->canExitTo(x, y, Client->Map, (*selectedBuilding->BuildList)[0]->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -624,7 +626,9 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->ActivatingVehicle )
 		{
-			if ( selectedBuilding->CanExitTo(mouse->GetKachelOff(), (*selectedBuilding->StoredVehicles)[selectedBuilding->VehicleToActivate]->typ))
+			int x, y;
+			mouse->GetKachel( &x, &y);
+			if ( selectedBuilding->canExitTo(x, y, Client->Map, (*selectedBuilding->StoredVehicles)[selectedBuilding->VehicleToActivate]->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
