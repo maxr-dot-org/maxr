@@ -139,14 +139,6 @@ private:
 	int HandleNetMessage( cNetMessage* message );
 
 	/**
-	* checks whether the field is free for landing
-	*@author alzi alias DoctorDeath
-	*@param iX The X coordinate to check.
-	*@param iY The Y coordinate to check.
-	*@return true if it is free, else false.
-	*/
-	bool freeForLanding ( int iX, int iY );
-	/**
 	* lands the vehicle at a free position in the radius
 	*@author alzi alias DoctorDeath
 	*@param iX The X coordinate to land.

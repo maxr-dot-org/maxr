@@ -447,6 +447,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			//check if attack is possible
 			if ( bIsVehicle )
 			{
+				//FIXME: CanAttackObjekt is accessing the client map!
 				if ( !attackingVehicle->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
@@ -456,6 +457,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
+				//FIXME: CanAttackObjekt is accessing the client map!
 				if ( !attackingBuilding->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
@@ -1195,19 +1197,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	return 0;
 }
 
-bool cServer::freeForLanding ( int iX, int iY )
-{
-	if ( iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size ||
-	        Map->GO[iX+iY*Map->size].vehicle ||
-	        Map->GO[iX+iY*Map->size].top ||
-	        Map->IsWater ( iX+iY*Map->size,false ) ||
-	        Map->terrain[Map->Kacheln[iX+iY*Map->size]].blocked )
-	{
-		return false;
-	}
-	return true;
-}
-
 cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player )
 {
 	cVehicle *VehcilePtr = NULL;
@@ -1215,12 +1204,11 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 	{
 		for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 		{
-			if ( !freeForLanding ( iX+k,iY+i ) )
-			{
-				continue;
-			}
+			
+			if ( !Map->possiblePlaceVehicle( Vehicle->data, iX+k, iY+i )) continue;
+
 			addUnit ( iX+k, iY+i, Vehicle, Player, true );
-			VehcilePtr = Map->GO[iX+k+ ( iY+i ) *Map->size].vehicle;
+			VehcilePtr = (*Map)[iX+k+ (iY+i)*Map->size].getVehicles();
 			return VehcilePtr;
 		}
 	}
@@ -1237,7 +1225,6 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 	if ( bFixed )
 	{
 		bool bPlaced = false;
-		cBuilding *Building;
 		iWidth = 2;
 		iHeight = 2;
 		while ( !bPlaced )
@@ -1246,8 +1233,11 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 			{
 				for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 				{
-					if ( freeForLanding ( iX+k,iY+i ) && freeForLanding ( iX+k+1,iY+i ) && freeForLanding ( iX+k+2,iY+i ) &&
-					        freeForLanding ( iX+k,iY+i+1 ) && freeForLanding ( iX+k+1,iY+i+1 ) && freeForLanding ( iX+k+2,iY+i+1 ) )
+					if ( Map->possiblePlaceBuilding( UnitsData.building[BNrSmallGen].data, iX + k    , iY + i + 1) &&
+						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 1, iY + i    ) &&
+						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 2, iY + i    ) &&
+						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 2, iY + i + 1) &&
+						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 1, iY + i + 1) )
 					{
 						bPlaced = true;
 						// TODO: the starting resources under a mine should depend on the game Options, like in org MAX
@@ -1267,11 +1257,8 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 						}
 
 						// place buildings:
-						//No further need to place oil storage: addUnit(iX + k,     iY + i,     &UnitsData.building[BNrOilStore], Player, true);
 						addUnit(iX + k,     iY + i + 1, &UnitsData.building[BNrSmallGen], Player, true);
 						addUnit(iX + k + 1, iY + i,     &UnitsData.building[BNrMine],     Player, true);
-						Building = Map->GO[iX+k+ ( iY+i ) *Map->size].top;
-						//No further need to place oil storage: Player->base.AddOil ( Building->SubBase, 4 );
 						break;
 					}
 				}
