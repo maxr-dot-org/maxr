@@ -57,7 +57,6 @@ class cAutoMJob {
 	float CalcFactor(int x, int y);
 	void PlanNextMove();
 	void PlanLongMove();
-	bool FieldIsFree( int PosX, int PosY);
 	void changeOP();
 
 

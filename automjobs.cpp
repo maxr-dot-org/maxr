@@ -158,7 +158,8 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
-	if ( !FieldIsFree(PosX, PosY) ) return FIELD_BLOCKED;
+	//TODO: prevent the surveyor from driveing onto enemy mines
+	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY )) return FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -237,24 +238,6 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 
 }
 
-//checks if the destination field is free
-bool cAutoMJob::FieldIsFree(int PosX, int PosY)
-{
-	cMap* map = Client->Map;
-
-	if ( PosX < 0 || PosY < 0 || PosX >= map->size || PosY >= map->size ) return false; //check map borders
-
-	int terrainNr = map->Kacheln[PosX + PosY * map->size];
-	if ( map->terrain[terrainNr].blocked ) return false; //check terrain
-
-	sGameObjects objects = map->GO[PosX + PosY * map->size];
-	if ( objects.reserviert || objects.vehicle || ( objects.top && !objects.top->data.is_connector) ) return false; //check if there is another unit on the field
-
-	if ( objects.base && objects.base->data.is_expl_mine && objects.base->owner != vehicle->owner) return false; //check for enemy mines
-
-	return true;
-}
-
 //searches the map for a location where the surveyor can resume
 void cAutoMJob::PlanLongMove()
 {
@@ -269,7 +252,7 @@ void cAutoMJob::PlanLongMove()
 		for ( y = 0; y < Client->Map->size; y++ )
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if ( !FieldIsFree( x, y) || vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
+			if ( !Client->Map->possiblePlace( vehicle, x, y ) || vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;
