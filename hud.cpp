@@ -590,19 +590,37 @@ void cHud::CheckScroll ( bool pure )
 		{
 			mouse->SetCursor ( CSelect );
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&& ( ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle ) || ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds==0 ) || ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds==0 ) ) &&x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) &&y<18+ ( SettingsData.iScreenH-32 ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) && y<18+ ( SettingsData.iScreenH-32 ) )
 		{
-			if ( selectedVehicle->MoveJobActive )
+			if ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle )
 			{
-				mouse->SetCursor ( CNo );
+				if ( selectedVehicle->MoveJobActive )
+				{
+					mouse->SetCursor ( CNo );
+				}
+				else if ( Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff() ))
+				{
+					mouse->SetCursor ( CMove );
+		
+				}
+				else
+				{
+					mouse->SetCursor ( CNo );
+				}
 			}
-			else if ( selectedVehicle->CanDrive ( mouse->GetKachelOff() ) )
+			else if (( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds==0 ) || 
+					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds==0 ) )
 			{
-				mouse->SetCursor ( CMove );
-			}
-			else
-			{
-				mouse->SetCursor ( CNo );
+				int x, y;
+				mouse->GetKachel( &x, &y );
+				if ( Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff()) && selectedVehicle->isNextTo(x, y))
+				{
+					mouse->SetCursor( CMove );
+				}
+				else
+				{
+					mouse->SetCursor( CNo );
+				}
 			}
 		}
 		else if (

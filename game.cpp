@@ -262,7 +262,7 @@ void cGame::Run ( void )
 			{
 //				if ( SelectedVehicle->data.can_build==BUILD_BIG||SelectedVehicle->ClearBig )
 				{
-					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx-hud.Zoom,spy-hud.Zoom );
+/*					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx-hud.Zoom,spy-hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx,spy-hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx+hud.Zoom,spy-hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+2+ ( SelectedVehicle->PosY-1 ) *map->size ) ) DrawExitPoint ( spx+hud.Zoom*2,spy-hud.Zoom );
@@ -285,6 +285,7 @@ void cGame::Run ( void )
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX-1+ ( SelectedVehicle->PosY+1 ) *map->size ) ) DrawExitPoint ( spx-hud.Zoom,spy+hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+ ( SelectedVehicle->PosY+1 ) *map->size ) ) DrawExitPoint ( spx,spy+hud.Zoom );
 					if ( SelectedVehicle->CanDrive ( SelectedVehicle->PosX+1+ ( SelectedVehicle->PosY+1 ) *map->size ) ) DrawExitPoint ( spx+hud.Zoom,spy+hud.Zoom );
+					*/
 				}
 			}
 			if ( SelectedVehicle->PlaceBand )

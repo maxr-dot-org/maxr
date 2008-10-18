@@ -156,7 +156,6 @@ public:
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	void ShowHelp(void);
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	bool CanDrive(int MapOff) const;
 	int GetScreenPosX(void) const;
 	int GetScreenPosY(void) const;
 	void DrawPath(void);
@@ -240,6 +239,10 @@ public:
 	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
 	void makeDetection();
+	/**
+	* checks whether the offset is next to the vehicle
+	*/
+	bool isNextTo( int x, int y) const;
 };
 
 #endif

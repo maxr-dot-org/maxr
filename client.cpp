@@ -2021,29 +2021,29 @@ void cClient::drawUnitCircles ()
 		{
 			if ( v.data.is_big )
 			{
-				if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,                spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX + 2 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy);
-				if (v.CanDrive(v.PosX + 2 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy);
-				if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom);
-				if (v.CanDrive(v.PosX + 2 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom);
-				if (v.CanDrive(v.PosX - 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom * 2);
-				if (v.CanDrive(v.PosX     + (v.PosY + 2) * Map->size)) drawExitPoint(spx,                spy + Hud.Zoom * 2);
-				if (v.CanDrive(v.PosX + 1 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom,     spy + Hud.Zoom * 2);
-				if (v.CanDrive(v.PosX + 2 + (v.PosY + 2) * Map->size)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom * 2);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY - 1)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX    , v.PosY - 1)) drawExitPoint(spx,                spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX + 1, v.PosY - 1)) drawExitPoint(spx + Hud.Zoom,     spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX + 2, v.PosY - 1)) drawExitPoint(spx + Hud.Zoom * 2, spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY    )) drawExitPoint(spx - Hud.Zoom,     spy);
+				if ( Map->possiblePlace(&v, v.PosX + 2, v.PosY    )) drawExitPoint(spx + Hud.Zoom * 2, spy);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY + 1)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX + 2, v.PosY + 1)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY + 2)) drawExitPoint(spx - Hud.Zoom,     spy + Hud.Zoom * 2);
+				if ( Map->possiblePlace(&v, v.PosX    , v.PosY + 2)) drawExitPoint(spx,                spy + Hud.Zoom * 2);
+				if ( Map->possiblePlace(&v, v.PosX + 1, v.PosY + 2)) drawExitPoint(spx + Hud.Zoom,     spy + Hud.Zoom * 2);
+				if ( Map->possiblePlace(&v, v.PosX + 2, v.PosY + 2)) drawExitPoint(spx + Hud.Zoom * 2, spy + Hud.Zoom * 2);
 			}
 			else
 			{
-				if (v.CanDrive(v.PosX - 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX     + (v.PosY - 1) * Map->size)) drawExitPoint(spx,            spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX + 1 + (v.PosY - 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy - Hud.Zoom);
-				if (v.CanDrive(v.PosX - 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy);
-				if (v.CanDrive(v.PosX + 1 + (v.PosY    ) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy);
-				if (v.CanDrive(v.PosX - 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx - Hud.Zoom, spy + Hud.Zoom);
-				if (v.CanDrive(v.PosX     + (v.PosY + 1) * Map->size)) drawExitPoint(spx,            spy + Hud.Zoom);
-				if (v.CanDrive(v.PosX + 1 + (v.PosY + 1) * Map->size)) drawExitPoint(spx + Hud.Zoom, spy + Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY - 1)) drawExitPoint(spx - Hud.Zoom, spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX    , v.PosY - 1)) drawExitPoint(spx,            spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX + 1, v.PosY - 1)) drawExitPoint(spx + Hud.Zoom, spy - Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY    )) drawExitPoint(spx - Hud.Zoom, spy			);
+				if ( Map->possiblePlace(&v, v.PosX + 1, v.PosY    )) drawExitPoint(spx + Hud.Zoom, spy			);
+				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY + 1)) drawExitPoint(spx - Hud.Zoom, spy + Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX    , v.PosY + 1)) drawExitPoint(spx,            spy + Hud.Zoom);
+				if ( Map->possiblePlace(&v, v.PosX + 1, v.PosY + 1)) drawExitPoint(spx + Hud.Zoom, spy + Hud.Zoom);
 			}
 		}
 		if (v.PlaceBand)

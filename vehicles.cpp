@@ -1453,51 +1453,6 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 	}
 }
 
-// Prüft, ob das Vehicle auf der Kachel an dem Offset fahren kann:
-bool cVehicle::CanDrive(int const MapOff) const
-{
-	int nr;
-
-	if ( MapOff < 0 || MapOff >= Client->Map->size*Client->Map->size )
-		return false;
-
-	if ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) )
-	{
-		if ( Client->Map->GO[MapOff].reserviert || Client->Map->GO[MapOff].vehicle || ( Client->Map->GO[MapOff].top && !Client->Map->GO[MapOff].top->data.is_connector ) )
-			return false;
-	}
-
-	nr = Client->Map->Kacheln[MapOff];
-
-	switch ( data.can_drive )
-	{
-
-		case DRIVE_AIR:
-			return true;
-
-		case DRIVE_SEA:
-
-			if ( !Client->Map->IsWater ( MapOff, true ) || ( Client->Map->GO[MapOff].base && ( Client->Map->GO[MapOff].base->data.is_platform || Client->Map->GO[MapOff].base->data.is_road ) ) )
-				return false;
-
-			return true;
-
-		case DRIVE_LANDnSEA:
-			if ( Client->Map->terrain[nr].blocked )
-				return false;
-
-			return true;
-
-		case DRIVE_LAND:
-			if ( Client->Map->terrain[nr].blocked || ( Client->Map->IsWater ( MapOff ) && ! ( Client->Map->GO[MapOff].base && ( Client->Map->GO[MapOff].base->data.is_bridge || Client->Map->GO[MapOff].base->data.is_platform || Client->Map->GO[MapOff].base->data.is_road ) ) ) )
-				return false;
-
-			return true;
-	}
-
-	return false;
-}
-
 // Liefert die X-Position des Vehicles auf dem Screen zurück:
 int cVehicle::GetScreenPosX(void) const
 {
@@ -5600,4 +5555,20 @@ void cVehicle::makeDetection()
 			}
 		}
 	}
+}
+
+bool cVehicle::isNextTo( int x, int y) const
+{
+	if ( x + 1 < PosX || y + 1 < PosY ) return false;
+
+	if ( data.is_big )
+	{
+		if ( x - 2 > PosX || y - 2 > PosY ) return false;
+	}
+	else
+	{
+		if ( x - 1 > PosX || y - 1 > PosY ) return false;
+	}
+
+	return true;
 }
