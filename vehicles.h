@@ -188,7 +188,7 @@ public:
 	void ShowBigDetails(void);
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
-	bool CanExitTo(int off, sVehicle*) const;
+	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
 	bool CanLoad(int off);
 	void StoreVehicle(int off);
 	void ShowStorage(void);

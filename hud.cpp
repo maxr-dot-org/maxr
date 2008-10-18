@@ -657,7 +657,9 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->ActivatingVehicle )
 		{
-			if (selectedVehicle->CanExitTo(mouse->GetKachelOff(), (*selectedVehicle->StoredVehicles)[selectedVehicle->VehicleToActivate]->typ))
+			int x, y;
+			mouse->GetKachel( &x, &y );
+			if (selectedVehicle->canExitTo(x, y, Client->Map,(*selectedVehicle->StoredVehicles)[selectedVehicle->VehicleToActivate]->typ) )
 			{
 				mouse->SetCursor ( CActivate );
 			}

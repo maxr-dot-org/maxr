@@ -4375,58 +4375,20 @@ void cVehicle::DrawExitPoints(sVehicle* const typ) const
 	spy = GetScreenPosY();
 	size = Client->Map->size;
 
-	if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
-
-	if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
-
-	if ( PosY - 1 >= 0 && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
-
-	if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
-
-	if ( PosX + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy );
-
-	if ( PosX - 1 >= 0 && PosY + 1 < size && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
-
-	if ( PosY + 1 < size && CanExitTo ( PosX + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx, spy + Client->Hud.Zoom );
-
-	if ( PosY + 1 < size && PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 1 ) *size, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom );
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
+	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
+	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
+	if ( canExitTo ( PosX + 1, PosY    , Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy );
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
+	if ( canExitTo ( PosX    , PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx, spy + Client->Hud.Zoom );
+	if ( canExitTo ( PosX + 1, PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom );
 }
 
-bool cVehicle::CanExitTo(int const off, sVehicle* const typ) const
+bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
-	int boff;
-
-	if ( off < 0 || off >= Client->Map->size*Client->Map->size )
-		return false;
-
-	if ( abs ( ( off % Client->Map->size ) - PosX ) > 8 || abs ( ( off / Client->Map->size ) - PosY ) > 8 )
-		return false;
-
-	boff = PosX + PosY * Client->Map->size;
-
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
-		{}
-	else
-		return false;
-
-	if ( ( typ->data.can_drive != DRIVE_AIR && ( ( Client->Map->GO[off].top && !Client->Map->GO[off].top->data.is_connector ) || Client->Map->GO[off].vehicle || Client->Map->terrain[Client->Map->Kacheln[off]].blocked ) ) ||
-	        ( typ->data.can_drive == DRIVE_AIR && Client->Map->GO[off].plane ) ||
-	        ( typ->data.can_drive == DRIVE_SEA && !Client->Map->IsWater ( off, true ) ) ||
-	        ( typ->data.can_drive == DRIVE_LAND && Client->Map->IsWater ( off ) ) )
-	{
-		return false;
-	}
+	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
+	if ( !isNextTo(x, y) ) return false;
 
 	return true;
 }
