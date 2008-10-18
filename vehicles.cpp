@@ -3407,34 +3407,40 @@ void cVehicle::DrawBuildButtons ( int speed )
 // Findet die nächste passende Position für das Band:
 void cVehicle::FindNextband ( void )
 {
-	bool pos[4];
-	int x, y, gms;
-	gms = Client->Map->size;
+	bool pos[4] = {false, false, false, false};
+	int x, y;
 	mouse->GetKachel ( &x, &y );
 
-//#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].water||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked)
-#define CHECK_BAND(a,b) (PosX a>=0&&PosX a<gms&&PosY b>=0&&PosY b<gms&&!Client->Map->GO[PosX a+(PosY b)*gms].vehicle&&!Client->Map->GO[PosX a+(PosY b)*gms].reserviert&&!(Client->Map->GO[PosX a+(PosY b)*gms].top&&!Client->Map->GO[PosX a+(PosY b)*gms].top->data.is_connector)&&!(Client->Map->GO[PosX a+(PosY b)*gms].subbase&&Client->Map->GO[PosX a+(PosY b)*gms].subbase->owner==NULL)&&(!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].coast||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.is_connector)&&(!Client->Map->IsWater(PosX a+(PosY b)*gms)||(Client->Map->GO[PosX a+(PosY b)*gms].base&&Client->Map->GO[PosX a+(PosY b)*gms].base->data.is_platform)||UnitsData.building[BuildingTyp].data.build_on_water||UnitsData.building[BuildingTyp].data.is_connector)&&!Client->Map->terrain[Client->Map->Kacheln[PosX a+(PosY b)*gms]].blocked&&(UnitsData.building[BuildingTyp].data.build_on_water?Client->Map->IsWater(PosX a+(PosY b)*gms):1))
-
-	if ( CHECK_BAND ( -1, -1 ) && CHECK_BAND ( + 0, -1 ) && CHECK_BAND ( -1, + 0 ) )
+	//check, which positions are available
+	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY    ) )
+	{
 		pos[0] = true;
-	else
-		pos[0] = false;
-
-	if ( CHECK_BAND ( + 0, -1 ) && CHECK_BAND ( + 1, -1 ) && CHECK_BAND ( + 1, + 0 ) )
+	}
+	
+	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY    ) )
+	{
 		pos[1] = true;
-	else
-		pos[1] = false;
+	}
 
-	if ( CHECK_BAND ( + 1, + 0 ) && CHECK_BAND ( + 1, + 1 ) && CHECK_BAND ( + 0, + 1 ) )
+	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY    )
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY + 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY + 1) )
+	{
 		pos[2] = true;
-	else
-		pos[2] = false;
+	}
 
-	if ( CHECK_BAND ( -1, + 0 ) && CHECK_BAND ( -1, + 1 ) && CHECK_BAND ( + 0, + 1 ) )
+	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY    )
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY + 1)
+	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY + 1) )
+	{
 		pos[3] = true;
-	else
-		pos[3] = false;
+	}
 
+	//chose the position, which matches the cursor position, if available
 	if ( x <= PosX && y <= PosY && pos[0] )
 	{
 		BandX = PosX - 1;
@@ -3463,6 +3469,7 @@ void cVehicle::FindNextband ( void )
 		return;
 	}
 
+	//if the best position is not available, chose the next free one
 	if ( pos[0] )
 	{
 		BandX = PosX - 1;
