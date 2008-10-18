@@ -498,15 +498,29 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_MINELAYERSTATUS:
 		{
 			cVehicle *Vehicle = getVehicleFromID( message->popInt16() );
-			if ( Vehicle )
-			{
-				bool bWasClearing = Vehicle->ClearMines;
-				bool bWasLaying = Vehicle->LayMines;
-				Vehicle->ClearMines = message->popBool();
-				Vehicle->LayMines = message->popBool();
+			if ( !Vehicle ) break;
 
-				if ( !bWasClearing && Vehicle->ClearMines ) Vehicle->clearMine();
-				if ( !bWasLaying && Vehicle->LayMines ) Vehicle->layMine();
+			Vehicle->ClearMines = message->popBool();
+			Vehicle->LayMines = message->popBool();
+
+			if ( Vehicle->ClearMines && Vehicle->LayMines )
+			{
+				Vehicle->ClearMines = false;
+				Vehicle->LayMines = false;
+				break;
+			}
+
+			bool result = false;
+			if ( Vehicle->ClearMines ) result = Vehicle->clearMine();
+			if ( Vehicle->LayMines ) result = Vehicle->layMine();
+
+			if ( result )
+			{
+				sendUnitData( Vehicle, Vehicle->owner->Nr );
+				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				{
+					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
+				}
 			}
 		}
 		break;
