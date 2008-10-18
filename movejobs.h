@@ -78,11 +78,6 @@ private:
 	*/
 	void calcPath();
 	/**
-	* checks whether moving to this field is possible for the vehicle
-	*@author alzi alias DoctorDeath
-	*/
-	bool checkPossiblePoint( int x, int y );
-	/**
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/

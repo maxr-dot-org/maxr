@@ -150,7 +150,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 			if ( x < 0 || x >= Map->size ) continue;
 			if ( x == ParentNode->x && y == ParentNode->y ) continue;
 
-			if ( !checkPossiblePoint ( x, y ) ) continue;
+			if ( !Map->possiblePlaceVehicle( Vehicle->data, x, y, Vehicle->owner) ) continue;
 			if ( closedList[x+y*Map->size] != NULL ) continue;
 
 			if ( openList[x+y*Map->size] == NULL )
@@ -274,26 +274,6 @@ int cPathCalculator::heuristicCost ( int srcX, int srcY )
 
 	return Round ( sqrt ( (double)deltaX*deltaX + deltaY*deltaY ) );
 }
-
-bool cPathCalculator::checkPossiblePoint ( int x, int y )
-{
-	// check whether the terrain is ok for this unit
-	if ( x < 0 || y < 0 || x >= Map->size || y >= Map->size ) return false;
-	if ( Vehicle->PosX == x && Vehicle->PosY == y ) return true;
-	if ( !bPlane )
-	{
-		if ( Map->terrain[Map->Kacheln[x+y*Map->size]].blocked ) return false;
-		if ( Vehicle->data.can_drive == DRIVE_LAND && Map->IsWater ( x+y*Map->size ) && !( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_bridge || Map->GO[x+y*Map->size].base->data.is_platform || Map->GO[x+y*Map->size].base->data.is_road ) ) ) return false;
-		if ( Vehicle->data.can_drive == DRIVE_SEA && (!Map->IsWater ( x+y*Map->size, true, true ) || ( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_platform || Map->GO[x+y*Map->size].base->data.is_road ) ) ) ) return false;
-	}
-	// check whether the field isn't blocked
-	if ( !Vehicle->owner->ScanMap[x+y*Map->size] ) return true;
-	if ( !bPlane && Map->GO[x+y*Map->size].vehicle ) return false;
-	else if ( bPlane && Map->GO[x+y*Map->size].plane ) return false;
-	if ( !bPlane && Map->GO[x+y*Map->size].top && !Map->GO[x+y*Map->size].top->data.is_connector ) return false;
-	return true;
-}
-
 
 int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 {
