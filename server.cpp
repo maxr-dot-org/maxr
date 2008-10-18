@@ -672,7 +672,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			// check whether the exit field is free
 			cServerMoveJob *MoveJob = new cServerMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iNextX+iNextY*Map->size, false, Vehicle );
-			if ( Vehicle->checkPathBuild ( iNextX+iNextY*Map->size, Vehicle->BuildingTyp, Map ) && MoveJob->calcPath() )
+			if ( Map->possiblePlaceBuilding(UnitsData.building[Vehicle->BuildingTyp].data, iNextX, iNextY ) && MoveJob->calcPath() )
 			{
 				addUnit( Vehicle->PosX, Vehicle->PosY, &UnitsData.building[Vehicle->BuildingTyp], Vehicle->owner );
 				Vehicle->IsBuilding = false;

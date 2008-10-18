@@ -218,7 +218,6 @@ public:
 	int CalcCommandoChance(bool steal);
 	void CommandoOperation(int off,bool steal);
 	void DeleteStored(void);
-	bool checkPathBuild( int iOff, int iBuildingTyp, cMap *Map );
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath

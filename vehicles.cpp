@@ -918,41 +918,6 @@ void cVehicle::GenerateName ( void )
 	}
 }
 
-bool cVehicle::checkPathBuild ( int iOff, int iBuildingTyp, cMap *Map )
-{
-	if ( UnitsData.building[iBuildingTyp].data.is_base )
-	{
-		if ( ( ( Map->GO[iOff].base && ! ( Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_platform ) ) || ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector ) ) )
-		{
-			return false;
-		}
-	}
-	else
-	{
-		if ( Map->GO[iOff].top && !Map->GO[iOff].top->data.is_connector )
-		{
-			return false;
-		}
-	}
-
-	if ( UnitsData.building[iBuildingTyp].data.build_on_water )
-	{
-		if ( !Map->IsWater ( iOff ) )
-		{
-			return false;
-		}
-	}
-	else
-	{
-		if ( Map->IsWater ( iOff ) && ! ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_platform ) && !UnitsData.building[iBuildingTyp].data.is_connector )
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 // Aktalisiert alle Daten auf ihre Max-Werte:
 int cVehicle::refreshData ()
 {
@@ -2954,14 +2919,14 @@ void cVehicle::ShowBuildMenu ( void )
 
 	while ( 1 )
 	{
-		if ( Client->SelectedVehicle == NULL )
-			break;
-
 		Client->handleTimer();
 		Client->doGameActions();
 
 		// Events holen:
 		EventHandler->HandleEvents();
+
+		if ( Client->SelectedVehicle == NULL )
+			break;
 
 		// Die Maus machen:
 		mouse->GetPos();
