@@ -527,7 +527,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_WANT_BUILD:
 		{
 			cVehicle *Vehicle;
-			sUnitData *Data;
 			int iBuildingType, iBuildSpeed, iBuildOff, iPathOff;
 			int iTurboBuildRounds[3];
 			int iTurboBuildCosts[3];
@@ -536,18 +535,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Vehicle == NULL ) break;
 
 			iBuildingType = message->popInt16();
-			Data = &UnitsData.building[iBuildingType].data;
+			const sUnitData& Data = UnitsData.building[iBuildingType].data;
 			iBuildSpeed = message->popInt16();
 			iBuildOff = message->popInt32();
 
-			if ( Data->is_big )
+			if ( Data.is_big )
 			{
 				if ( Vehicle->data.can_build != BUILD_BIG ) break;
 
-				if ( checkBlockedBuildField ( iBuildOff, Vehicle, Data ) ||
-					checkBlockedBuildField ( iBuildOff+1, Vehicle, Data ) ||
-					checkBlockedBuildField ( iBuildOff+Map->size, Vehicle, Data ) ||
-					checkBlockedBuildField ( iBuildOff+Map->size+1, Vehicle, Data ) )
+				if ( !( Map->possiblePlaceBuilding( Data, iBuildOff                , Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, iBuildOff + 1            , Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size    , Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size + 1, Vehicle )) )
 				{
 					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, 0, Vehicle->owner->Nr );
 					break;
@@ -561,7 +560,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if ( iBuildOff != Vehicle->PosX+Vehicle->PosY*Map->size ) break;
 
-				if ( checkBlockedBuildField ( iBuildOff, Vehicle, Data ) )
+				if ( !Map->possiblePlaceBuilding( Data, iBuildOff, Vehicle ))
 				{
 					sendBuildAnswer ( false, Vehicle->iID, 0, 0, 0, 0, Vehicle->owner->Nr );
 					break;
@@ -2152,33 +2151,6 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 		}
 	}
 	return NULL;
-}
-
-bool cServer::checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data )
-{
-	// cannot build on dirt
-	if ( Map->GO[iOff].subbase && !Map->GO[iOff].subbase->owner ) return true;
-
-	// cannot build e.g. landingplattforms on waterplattforms or bridges
-	if ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_bridge ) && ( Data->is_base && !Data->is_road ) ) return true;
-
-	// the rest has only to be checked if the building is no connector and if there is no base building under it excepting an waterplattform
-	if ( Map->GO[iOff].base && Map->GO[iOff].base->data.is_platform && !Data->is_connector )
-	{
-		// cannot build normal buildings on water without platform
-		if ( Map->IsWater ( iOff ) && !Data->build_on_water && !Map->GO[iOff].base->data.is_platform ) return true;
-
-		// cannot build water buildings excepting a bridge or a waterplattform on not water terrain but maybe coasts
-		if ( !Map->IsWater ( iOff ) && Data->build_on_water && !( Data->is_bridge || Data->is_platform ) ) return true;
-
-		// only platforms and bridges can be build on coasts without a platform
-		if ( Map->terrain[Map->Kacheln[iOff]].coast && !Data->is_bridge && !Data->is_platform && !Map->GO[iOff].base->data.is_platform ) return true;
-
-		// cannot build plattforms or bridges on nowater or nocoast terrain
-		if ( !Map->terrain[Map->Kacheln[iOff]].coast && !Map->IsWater ( iOff ) && ( Data->is_bridge || Data->is_platform ) ) return true;
-	}
-
-	return false;
 }
 
 void cServer::destroyUnit( cVehicle* vehicle )

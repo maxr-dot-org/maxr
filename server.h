@@ -192,18 +192,6 @@ private:
 	void handleMoveJobs();
 
 	/**
-	* checks whether the next waypoint is not blocked
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be checked
-	*/
-	void checkMove ( cMJobs *MJob );
-	/**
-	* moves a vehicle one step closer to the next field
-	*@author alzi alias DoctorDeath
-	*@param Vehicle The vehicle to be moved
-	*/
-	void moveVehicle ( cVehicle *Vehicle );
-	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
@@ -215,11 +203,7 @@ private:
 	*@param iID The ID of the building
 	*/
 	cBuilding *getBuildingFromID ( int iID );
-	/**
-	* checks whether the next field is blocked for building on it
-	*@author alzi alias DoctorDeath
-	*/
-	bool checkBlockedBuildField ( int iOff, cVehicle *Vehicle, sUnitData *Data );
+
 public:
 	/** the map */
 	cMap *Map;
