@@ -5145,10 +5145,17 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 bool cVehicle::layMine ()
 {
 	if ( data.cargo < 0 ) return false;
-	if ( Server->Map->GO[PosX+PosY*Server->Map->size].base && Server->Map->GO[PosX+PosY*Server->Map->size].base->data.is_expl_mine ) return false;
-
-	if (data.can_drive == DRIVE_SEA) Server->addUnit(PosX, PosY, &UnitsData.building[BNrSeaMine], owner, false);
-	else Server->addUnit(PosX, PosY, &UnitsData.building[BNrLandMine], owner, false);
+	
+	if (data.can_drive == DRIVE_SEA) 
+	{
+		if ( !Server->Map->possiblePlaceBuilding( UnitsData.building[BNrSeaMine].data, PosX, PosY, this)) return false;
+		Server->addUnit(PosX, PosY, &UnitsData.building[BNrSeaMine], owner, false);
+	}
+	else 
+	{
+		if ( !Server->Map->possiblePlaceBuilding( UnitsData.building[BNrLandMine].data, PosX, PosY, this)) return false;
+		Server->addUnit(PosX, PosY, &UnitsData.building[BNrLandMine], owner, false);
+	}
 	data.cargo--;
 
 	if ( data.cargo <= 0 ) LayMines = false;

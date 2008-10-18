@@ -2203,7 +2203,7 @@ void cServer::destroyUnit(cBuilding *building)
 	deleteUnit( Map->GO[offset].base, false );
 	deleteUnit( Map->GO[offset].subbase, false );
 
-	if ( !building->data.is_connector )
+	if ( !building->data.is_connector || value > 2 )
 	{
 		addRubble( offset, value/2, big );
 	}
