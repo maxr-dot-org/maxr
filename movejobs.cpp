@@ -387,7 +387,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 	//check whether the vehicle has to be hided
 	//we check here the next waypoint of the vehicle, so other payers will not see in which direction the vehicle was driving
-	if ( Waypoints && Waypoints->next && Vehicle->data.speed && checkPointNotBlocked( Waypoints->next->X, Waypoints->next->Y ))
+	if ( Waypoints && Waypoints->next && Vehicle->data.speed && Server->Map->possiblePlace(Vehicle, Waypoints->next->X, Waypoints->next->Y) )
 	{
 		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
 		for ( int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
@@ -438,15 +438,6 @@ void cServerMoveJob::release()
 	cLog::write ( " Server: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
-bool cServerMoveJob::checkPointNotBlocked( int x, int y )
-{
-	if ( !Vehicle->owner->ScanMap[x+y*Map->size] ) return true;
-	if ( !bPlane && ( Map->GO[x+y*Map->size].vehicle || Map->GO[x+y*Map->size].reserviert ) ) return false;
-	else if ( bPlane && ( Map->GO[x+y*Map->size].plane || Map->GO[x+y*Map->size].air_reserviert ) ) return false;
-	if ( !bPlane && Map->GO[x+y*Map->size].top && !Map->GO[x+y*Map->size].top->data.is_connector ) return false;
-	return true;
-}
-
 bool cServerMoveJob::checkMove()
 {
 	bool bInSentryRange;
@@ -457,7 +448,7 @@ bool cServerMoveJob::checkMove()
 	}
 
 	bInSentryRange = Vehicle->InSentryRange();
-	if ( !checkPointNotBlocked ( Waypoints->next->X, Waypoints->next->Y ) || bInSentryRange )
+	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange )
 	{
 		cLog::write( " Server: Next point is blocked: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		// if the next point would be the last, finish the job here

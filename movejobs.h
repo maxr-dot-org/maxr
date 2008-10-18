@@ -132,7 +132,6 @@ public:
 	bool generateFromMessage( cNetMessage *message );
 	bool calcPath();
 	void release();
-	bool checkPointNotBlocked( int x, int y );
 	bool checkMove();
 	void moveVehicle();
 	void calcNextDir();
