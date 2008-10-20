@@ -206,8 +206,13 @@ public:
 	void MakeMineBars(int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG);
 	void DrawMineBar(int typ,int value,int max_value,int offy,bool number,int fixed);
 	bool IsInRange(int off);
+	/*
+	* checks if the unit can attack the offset
+	* when override is false, the funktion only returns true, when there is an enemy unit
+	* ATTENTION: must not be called with override == true from the server thread!
+	*/
 	bool CanAttackObject(int off,bool override=false);
-	void DrawAttackCursor(struct sGameObjects *go,int can_attack);
+	void DrawAttackCursor( int offset );
 	void RotateTo(int Dir);
 	void ShowBuildMenu(void);
 	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);

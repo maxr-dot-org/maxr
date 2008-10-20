@@ -439,7 +439,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					break;
 				}
 				int oldOffset = targetOffset;
-				targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
+				//the target offset doesn't need to match the vehicle position, when it is big
+				if ( !targetVehicle->data.is_big ) 
+				{
+					targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
+				}
 				cLog::write( " Server: attacking vehicle " + targetVehicle->name + ", " + iToStr(targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG );
 				if ( oldOffset != targetOffset ) cLog::write(" Server: target offset changed from " + iToStr( oldOffset ) + " to " + iToStr( targetOffset ), cLog::eLOG_TYPE_NET_DEBUG );
 			}
@@ -447,7 +451,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			//check if attack is possible
 			if ( bIsVehicle )
 			{
-				//FIXME: CanAttackObjekt is accessing the client map!
 				if ( !attackingVehicle->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
@@ -457,7 +460,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
-				//FIXME: CanAttackObjekt is accessing the client map!
 				if ( !attackingBuilding->CanAttackObject( targetOffset, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
@@ -2163,8 +2165,9 @@ void cServer::destroyUnit( cVehicle* vehicle )
 
 	if ( vehicle->data.can_drive != DRIVE_AIR && !vehicle->data.is_human )
 	{
-		addRubble( offset, value, false );
+		addRubble( offset, value, vehicle->data.is_big );
 	}
+
 	deleteUnit( vehicle, false );
 
 	

@@ -21,6 +21,11 @@
 
 #include "player.h"
 
+/**
+* selects a target unit from a map field, depending on the attack mode.
+*/
+void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, int attackMode, cMap* map);
+
 class cServerAttackJob
 {
 public:
@@ -73,7 +78,7 @@ public:
 	/** prepares a mapspuare to be attacked
 	* @author Eiko
 	*/
-	static void clientLockTarget( cNetMessage* message );
+	static void lockTarget( cNetMessage* message );
 	static void handleAttackJobs();
 	static void makeImpact(int offset, int damage, int attackMode);
 

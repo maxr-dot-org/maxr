@@ -233,9 +233,9 @@ cBuilding::~cBuilding ( void )
 		cPlayer *p;
 		int i;
 
-		for (i = 0; i < game->PlayerList->Size(); i++)
+		for (i = 0; i < Client->PlayerList->Size(); i++)
 		{
-			p = (*game->PlayerList)[i];
+			p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -6336,106 +6336,40 @@ bool cBuilding::CanAttackObject ( int off, bool override )
 	if ( !owner->ScanMap[off] )
 		return override?true:false;
 
-	if ( data.can_attack != ATTACK_AIR )
-	{
-		v = Client->Map->GO[off].vehicle;
-
-		if ( Client->Map->GO[off].top )
-		{
-			b = Client->Map->GO[off].top;
-		}
-		else
-			//if ( Client->Map->GO[off].base && Client->Map->GO[off].base->owner && Client->Map->GO[off].base->isDetectedByPlayer( owner->Nr ) )
-			if ( Client->Map->GO[off].base && Client->Map->GO[off].base->isDetectedByPlayer( owner ) )
-			{
-				b = Client->Map->GO[off].base;
-			}
-	}
-	else
-	{
-		v = Client->Map->GO[off].plane;
-	}
-
-	if ( v && v->data.is_stealth_sea && data.can_attack != ATTACK_SUB_LAND )
-		return false;
-
 	if ( override )
 		return true;
+
+	selectTarget(v, b, off, data.can_attack, Client->Map );
 
 	if ( v )
 	{
 		if ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer )
 			return false;
 	}
-	else
-		if ( b )
-		{
-			if ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer )
-				return false;
-		}
-		else
-		{
+	else if ( b )
+	{
+		if ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer )
 			return false;
-		}
+	}
+	else
+	{
+		return false;
+	}
 
 	return true;
 }
 
 // Malt den Attack-Cursor:
-void cBuilding::DrawAttackCursor ( struct sGameObjects *go, int can_attack )
+void cBuilding::DrawAttackCursor ( int offset )
 {
 	SDL_Rect r;
 	int wp, wc, t = 0;
-	cVehicle *v = NULL;
-	cBuilding *b = NULL;
+	cVehicle *v;
+	cBuilding *b;
 
-	if ( can_attack == ATTACK_LAND || can_attack == ATTACK_SUB_LAND )
-	{
-		if ( !go->vehicle && !go->base && !go->top )
-		{
-			r.x = 1;
-			r.y = 29;
-			r.h = 3;
-			r.w = 35;
-			SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
-			return;
-		}
+	selectTarget(v, b, offset, data.can_attack, Client->Map );
 
-		if ( go->top )
-		{
-			b = go->top;
-		}
-		else
-			if ( go->vehicle )
-			{
-				v = go->vehicle;
-			}
-			else
-				if ( go->base && go->base->owner )
-				{
-					b = go->base;
-				}
-
-		if ( v && v->data.is_stealth_sea && can_attack != ATTACK_SUB_LAND )
-			v = NULL;
-	}
-	else
-		if ( can_attack == ATTACK_AIR )
-		{
-			if ( !go->plane )
-			{
-				r.x = 1;
-				r.y = 29;
-				r.h = 3;
-				r.w = 35;
-				SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
-				return;
-			}
-
-			v = go->plane;
-		}
-
-	if ( ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
+	if ( !(v || b) || ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
 	{
 		r.x = 1;
 		r.y = 29;

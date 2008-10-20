@@ -519,8 +519,8 @@ int cClient::checkUser( bool bChange )
 		}
 		if ( keystate[KeysList.KeyJumpToAction]&&iMsgCoordsX!=-1 )
 		{
-			Hud.OffX = iMsgCoordsX*64- ( ( int ) ( ( ( float ) 224/Hud.Zoom ) *64 ) ) +32;
-			Hud.OffY = iMsgCoordsY*64- ( ( int ) ( ( ( float ) 224/Hud.Zoom ) *64 ) ) +32;
+			Hud.OffX = iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+			Hud.OffY = iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
 			bFlagDrawMap=true;
 			Hud.DoScroll ( 0 );
 			iMsgCoordsX=-1;
@@ -763,17 +763,11 @@ int cClient::checkUser( bool bChange )
 				{
 					//find target ID
 					int targetId = 0;
-					int attackMode = SelectedVehicle->data.can_attack;
-					if ( attackMode == ATTACK_AIR || attackMode == ATTACK_AIRnLAND )
-					{
-						cVehicle* target = Map->GO[mouse->GetKachelOff()].plane;
-						if (target) targetId = target->iID;
-					}
-					else if ( attackMode == ATTACK_LAND || attackMode == ATTACK_AIRnLAND || attackMode == ATTACK_SUB_LAND )
-					{
-						cVehicle* target = Map->GO[mouse->GetKachelOff()].vehicle;
-						if (target) targetId = target->iID;
-					}
+					cVehicle* vehicle;
+					cBuilding* building;
+					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedVehicle->data.can_attack, Client->Map);
+					if ( vehicle ) targetId = vehicle->iID;
+
 					cLog::write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
 					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
 				}
@@ -781,16 +775,11 @@ int cClient::checkUser( bool bChange )
 				{
 					//find target ID
 					int targetId = 0;
-					if (SelectedBuilding->data.can_attack == ATTACK_AIR || ATTACK_AIRnLAND )
-					{
-						cVehicle* target = Map->GO[mouse->GetKachelOff()].plane;
-						if (target) targetId = target->iID;
-					}
-					else if (SelectedVehicle->data.can_attack == ATTACK_LAND || ATTACK_AIRnLAND || ATTACK_SUB_LAND )
-					{
-						cVehicle* target = Map->GO[mouse->GetKachelOff()].vehicle;
-						if (target) targetId = target->iID;
-					}
+					cVehicle* vehicle;
+					cBuilding* building;
+					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedBuilding->data.can_attack, Client->Map);
+					if ( vehicle ) targetId = vehicle->iID;
+
 					int offset = SelectedBuilding->PosX + SelectedBuilding->PosY * Map->size;
 					sendWantAttack( targetId, mouse->GetKachelOff(), offset, false );
 				}
@@ -2665,11 +2654,11 @@ void cClient::mouseMoveCallback ( bool bForce )
 		{
 			if ( SelectedVehicle )
 			{
-				SelectedVehicle->DrawAttackCursor ( GO,SelectedVehicle->data.can_attack );
+				SelectedVehicle->DrawAttackCursor ( Map->size*iY+iX );
 			}
 			else if ( SelectedBuilding )
 			{
-				SelectedBuilding->DrawAttackCursor ( GO,SelectedBuilding->data.can_attack );
+				SelectedBuilding->DrawAttackCursor ( Map->size*iY+iX );
 			}
 		}
 	}
@@ -2681,11 +2670,11 @@ void cClient::mouseMoveCallback ( bool bForce )
 		{
 			if ( SelectedVehicle )
 			{
-				SelectedVehicle->DrawAttackCursor ( GO, SelectedVehicle->data.can_attack );
+				SelectedVehicle->DrawAttackCursor ( Map->size*iY+iX );
 			}
 			else if ( SelectedBuilding )
 			{
-				SelectedBuilding->DrawAttackCursor ( GO, SelectedBuilding->data.can_attack );
+				SelectedBuilding->DrawAttackCursor ( Map->size*iY+iX );
 			}
 		}
 	}
@@ -2697,11 +2686,11 @@ void cClient::mouseMoveCallback ( bool bForce )
 		{
 			if ( SelectedVehicle )
 			{
-				SelectedVehicle->DrawAttackCursor ( GO, SelectedVehicle->data.can_attack );
+				SelectedVehicle->DrawAttackCursor ( Map->size*iY+iX );
 			}
 			else if ( SelectedBuilding )
 			{
-				SelectedBuilding->DrawAttackCursor ( GO, SelectedBuilding->data.can_attack );
+				SelectedBuilding->DrawAttackCursor ( Map->size*iY+iX );
 			}
 		}
 	}
@@ -2713,11 +2702,11 @@ void cClient::mouseMoveCallback ( bool bForce )
 		{
 			if ( SelectedVehicle )
 			{
-				SelectedVehicle->DrawAttackCursor ( GO, SelectedVehicle->data.can_attack );
+				SelectedVehicle->DrawAttackCursor ( Map->size*iY+iX );
 			}
 			else if ( SelectedBuilding )
 			{
-				SelectedBuilding->DrawAttackCursor ( GO, SelectedBuilding->data.can_attack );
+				SelectedBuilding->DrawAttackCursor ( Map->size*iY+iX );
 			}
 		}
 	}
@@ -3135,7 +3124,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding* building = Client->Map->GO[offset].top;
 			if ( building == NULL )
 			{
-				cLog::write(" Client: Can't stop work of building: Unknown building Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
+				cLog::write(" Client: Can't stop work of building: Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3201,7 +3190,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_ATTACKJOB_LOCK_TARGET:
 		{
-			cClientAttackJob::clientLockTarget( message );
+			cClientAttackJob::lockTarget( message );
 		}
 		break;
 	case GAME_EV_ATTACKJOB_FIRE:
@@ -3213,9 +3202,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ATTACKJOB_IMPACT:
 		{
 			int attackMode = message->popInt16();
-			int damage = message->popInt16();
+			int remainingHP = message->popInt16();
 			int offset = message->popInt32();
-			cClientAttackJob::makeImpact( offset, damage, attackMode );
+			cClientAttackJob::makeImpact( offset, remainingHP, attackMode );
 			break;
 		}
 	case GAME_EV_RESOURCES:
@@ -3581,13 +3570,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			neutralBuildings = rubble;
 			rubble->prev = NULL;
 
-			bool big = message->popBool();
+			rubble->data.is_big = message->popBool();
 			rubble->RubbleTyp = message->popInt16();
 			rubble->RubbleValue = message->popInt16();
 			rubble->iID = message->popInt16();
 			rubble->PosY = message->popInt16();
 			rubble->PosX = message->popInt16();
-			rubble->data.is_big = big;
 			
 			Map->addBuilding( rubble, rubble->PosX, rubble->PosY);
 		}
@@ -4783,7 +4771,11 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 void cClient::destroyUnit( cVehicle* vehicle )
 {
 	//play explosion
-	if ( vehicle->data.can_drive == DRIVE_AIR )
+	if ( vehicle->data.is_big )
+	{
+		Client->addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
+	}
+	else if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
@@ -4809,14 +4801,11 @@ void cClient::destroyUnit(cBuilding *building)
 {
 	int offset = building->PosX + building->PosY * Map->size;
 	int value = 0;
-	bool big = false;
 
 	//delete all buildings on the field
 	//and if top is big, although all other buildings under the top building
 	if ( Map->GO[offset].top && Map->GO[offset].top->data.is_big )
 	{
-		big = true;
-
 		deleteUnit( Map->GO[offset + 1            ].base );
 		deleteUnit( Map->GO[offset + Map->size    ].base );
 		deleteUnit( Map->GO[offset + Map->size + 1].base );

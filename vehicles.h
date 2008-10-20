@@ -171,9 +171,14 @@ public:
 	void DrawMunBar(void) const;
 	void DrawHelthBar(void) const;
 	void Center(void);
-	bool CanAttackObject(int off,bool override=false);
+	/*
+	* checks if the unit can attack the offset
+	* when override is false, the funktion only returns true, when there is an enemy unit
+	* ATTENTION: must not be called with override == true from the server thread!
+	*/
+	bool CanAttackObject(int off, bool override=false);
 	bool IsInRange(int off);
-	void DrawAttackCursor(struct sGameObjects *go,int can_attack);
+	void DrawAttackCursor( int offset );
 	int CalcHelth(int damage);
 	void ShowBuildMenu(void);
 	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool beschreibung, int* buildspeed, int* iTurboBuildCosts, int* TurboBuildRounds);
@@ -181,7 +186,7 @@ public:
 	void FindNextband(void);
 	void doSurvey(void);
 	void MakeReport(void);
-	bool CanTransferTo(sGameObjects *go);
+	bool CanTransferTo( struct sGameObjects *go);
 	void ShowTransfer(sGameObjects *target);
 	void DrawTransBar(int len);
 	void MakeTransBar(int *trans,int MaxTarget,int Target);

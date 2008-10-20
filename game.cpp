@@ -2768,11 +2768,11 @@ void MouseMoveCallback ( bool force )
 		{
 			if ( game->SelectedVehicle )
 			{
-				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+				//game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
 			}
 			else if ( game->SelectedBuilding )
 			{
-				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
+				//game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
 		}
 	}
@@ -2785,11 +2785,11 @@ void MouseMoveCallback ( bool force )
 		{
 			if ( game->SelectedVehicle )
 			{
-				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+				//game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
 			}
 			else if ( game->SelectedBuilding )
 			{
-				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
+				//game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
 		}
 	}
@@ -2802,11 +2802,11 @@ void MouseMoveCallback ( bool force )
 		{
 			if ( game->SelectedVehicle )
 			{
-				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+				//game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
 			}
 			else if ( game->SelectedBuilding )
 			{
-				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
+				//game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
 		}
 	}
@@ -2819,11 +2819,11 @@ void MouseMoveCallback ( bool force )
 		{
 			if ( game->SelectedVehicle )
 			{
-				game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
+				//game->SelectedVehicle->DrawAttackCursor ( GO,game->SelectedVehicle->data.can_attack );
 			}
 			else if ( game->SelectedBuilding )
 			{
-				game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
+				//game->SelectedBuilding->DrawAttackCursor ( GO,game->SelectedBuilding->data.can_attack );
 			}
 		}
 	}
