@@ -1097,7 +1097,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 				if ( player && !player->ScanMap[offset] ) return false;
 
 				//vehicle can drive on water, if there is a bridge, platform or road
-				if ( building ) return false;
+				if ( !building ) return false;
 				if ( !( building->data.is_road || building->data.is_bridge || building->data.is_platform )) return false;
 			}
 			if ( player && !player->ScanMap[offset] ) return true;			
@@ -1169,25 +1169,29 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 		bi++;
 	}
 
-	if ( buildingData.build_on_water )
+	//don't check terrain for connectors
+	if ( !buildingData.is_connector )
 	{
-		if ( !buildingData.is_bridge && !buildingData.is_platform && !terrain[Kacheln[offset]].water ) return false;
-		if ( !terrain[Kacheln[offset]].water && !terrain[Kacheln[offset]].coast ) return false;
+		if ( buildingData.build_on_water )
+		{
+			if ( !buildingData.is_bridge && !buildingData.is_platform && !terrain[Kacheln[offset]].water ) return false;
+			if ( !terrain[Kacheln[offset]].water && !terrain[Kacheln[offset]].coast ) return false;
 
-		if ( !bi.end )
+			if ( !bi.end )
+			{
+				// only brigde and mine can be together on the same field
+				if ( !buildingData.is_expl_mine ) return false;
+				if ( !bi->data.is_bridge ) return false;
+			}	
+		}
+		else 
 		{
-			// only brigde and mine can be together on the same field
-			if ( !buildingData.is_expl_mine ) return false;
-			if ( !bi->data.is_bridge ) return false;
-		}	
-	}
-	else 
-	{
-		if ( terrain[Kacheln[offset]].water || terrain[Kacheln[offset]].coast )
-		{
-			//can not be built on water, but terrain is water
-			//so a base building is required
-			if ( !bi ) return false;
+			if ( terrain[Kacheln[offset]].water || terrain[Kacheln[offset]].coast )
+			{
+				//can not be built on water, but terrain is water
+				//so a base building is required
+				if ( !bi ) return false;
+			}
 		}
 	}
 
