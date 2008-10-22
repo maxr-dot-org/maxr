@@ -405,6 +405,19 @@ void cServerAttackJob::makeImpact(int x, int y )
 	//if target found, make the impact
 	if ( targetVehicle )
 	{
+		//if taget is a stealth unit, make it visible on all clients
+		if ( targetVehicle->data.is_stealth_land || targetVehicle->data.is_stealth_sea )
+		{
+			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				cPlayer* player = (*Server->PlayerList)[i];
+				if ( targetVehicle->owner == player ) continue;
+				if ( !player->ScanMap[offset] ) continue;
+				targetVehicle->setDetectedByPlayer( player );
+			}
+			Server->checkPlayerUnits();
+		}
+
 		targetVehicle->data.hit_points = targetVehicle->CalcHelth( damage );
 		remainingHP = targetVehicle->data.hit_points;
 		owner = targetVehicle->owner;
@@ -418,6 +431,19 @@ void cServerAttackJob::makeImpact(int x, int y )
 	}
 	else if ( targetBuilding )
 	{
+		//if taget is a stealth unit, make it visible on all clients
+		if ( targetBuilding->data.is_expl_mine )
+		{
+			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				cPlayer* player = (*Server->PlayerList)[i];
+				if ( targetBuilding->owner == player ) continue;
+				if ( !player->ScanMap[offset] ) continue;
+				targetBuilding->setDetectedByPlayer( player );
+			}
+			Server->checkPlayerUnits();
+		}
+
 		targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
 		remainingHP = targetBuilding->data.hit_points;
 		owner = targetBuilding->owner;
@@ -434,7 +460,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 	//workaround
 	//make sure, the owner gets the impact message
 	if ( owner ) owner->ScanMap[offset] = 1;
-	//Todo: cluster
+
 	sendAttackJobImpact( offset, remainingHP, attackMode );
 
 	//attack finished. reset Attacking and bIsBeeingAttacked flags
@@ -539,7 +565,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 	}
 	if ( !bIsAir )
 	{
-		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
+		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
 			buildings->bIsBeeingAttacked = true;
@@ -999,7 +1025,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 	
 	if ( !isAir )
 	{
-		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
+		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
 			buildings->bIsBeeingAttacked = false;
@@ -1007,3 +1033,4 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 		}
 	}
 }
+
