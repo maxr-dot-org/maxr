@@ -41,7 +41,11 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 	}
 	else if ( attackMode == ATTACK_LAND )
 	{
-		targetVehicle = (*map)[offset].getVehicles();
+		targetVehicle = (*map)[offset].getPlanes();
+		if ( targetVehicle && targetVehicle->FlightHigh > 0 )
+			targetVehicle = NULL;
+
+		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
 		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
 			targetVehicle = NULL;
 
@@ -50,10 +54,16 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 	else if ( attackMode == ATTACK_AIR )
 	{
 		targetVehicle = (*map)[offset].getPlanes();
+		if ( targetVehicle && targetVehicle->FlightHigh == 0 )
+			targetVehicle = NULL;
 	}
 	else if ( attackMode == ATTACK_SUB_LAND )
 	{
-		targetVehicle = (*map)[offset].getVehicles();
+		targetVehicle = (*map)[offset].getPlanes();
+		if ( targetVehicle && targetVehicle->FlightHigh > 0 )
+			targetVehicle = NULL;
+
+		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
 	
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
 	}
