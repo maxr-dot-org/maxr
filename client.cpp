@@ -4770,16 +4770,55 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 
 void cClient::destroyUnit( cVehicle* vehicle )
 {
+	int offset = vehicle->PosX + vehicle->PosY*Map->size;
+
+	//delete all buildings on the field, except connectors
+	cBuildingIterator bi = (*Map)[offset].getBuildings();
+	if ( bi && bi->data.is_connector ) bi++;
+	
+	while ( !bi.end )
+	{
+		deleteUnit( bi );
+		bi++;
+	}
+
+	if ( vehicle->data.is_big )
+	{
+		bi = (*Map)[offset + 1].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			deleteUnit( bi );
+			bi++;
+		}
+
+		bi = (*Map)[offset + Map->size].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			deleteUnit( bi );
+			bi++;
+		}
+
+		bi = (*Map)[offset + 1 + Map->size].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			deleteUnit( bi );
+			bi++;
+		}
+	}
+
 	//play explosion
 	if ( vehicle->data.is_big )
 	{
 		Client->addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
 	}
-	else if ( vehicle->data.can_drive == DRIVE_AIR )
+	else if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh == 0 )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
-	else if ( Map->IsWater(vehicle->PosX + vehicle->PosY*Map->size) )
+	else if ( Map->IsWater(offset) )
 	{
 		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}

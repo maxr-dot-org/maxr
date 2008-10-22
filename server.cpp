@@ -2160,10 +2160,48 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	int offset = vehicle->PosX + vehicle->PosY*Map->size;
 	int value = vehicle->data.iBuilt_Costs/2;
 
-	//delete other units here!
+	//delete all buildings on the field, except connectors
+	cBuildingIterator bi = (*Map)[offset].getBuildings();
+	if ( bi && bi->data.is_connector ) bi++;
+	
+	while ( !bi.end )
+	{
+		value += bi->data.iBuilt_Costs;
+		deleteUnit( bi, false );
+		bi++;
+	}
 
+	if ( vehicle->data.is_big )
+	{
+		bi = (*Map)[offset + 1].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			value += bi->data.iBuilt_Costs;
+			deleteUnit( bi, false );
+			bi++;
+		}
 
-	if ( vehicle->data.can_drive != DRIVE_AIR && !vehicle->data.is_human )
+		bi = (*Map)[offset + Map->size].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			value += bi->data.iBuilt_Costs;
+			deleteUnit( bi, false );
+			bi++;
+		}
+
+		bi = (*Map)[offset + 1 + Map->size].getBuildings();
+		if ( bi && bi->data.is_connector ) bi++;
+		while ( !bi.end )
+		{
+			value += bi->data.iBuilt_Costs;
+			deleteUnit( bi, false );
+			bi++;
+		}
+	}
+
+	if ( (vehicle->data.can_drive != DRIVE_AIR || vehicle->FlightHigh == 0) && !vehicle->data.is_human )
 	{
 		addRubble( offset, value, vehicle->data.is_big );
 	}
