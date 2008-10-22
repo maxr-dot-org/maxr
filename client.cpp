@@ -3028,6 +3028,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 
 				Vehicle->name = message->popString();
+				Vehicle->bIsBeeingAttacked = message->popBool();
 				Vehicle->Disabled = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
 				bWasBuilding = Vehicle->IsBuilding;

@@ -181,6 +181,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushBool ( Vehicle->IsBuilding );
 	message->pushBool ( Vehicle->IsClearing );
 	message->pushInt16 ( Vehicle->Disabled );
+	message->pushBool ( Vehicle->bIsBeeingAttacked );
 	message->pushString ( Vehicle->name );
 
 	// Data for identifying the unit by the client
