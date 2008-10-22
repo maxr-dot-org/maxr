@@ -81,8 +81,14 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
 
 	//lock targets
-	//TODO: cluster
-	lockTarget( targetOff );
+	if ( vehicle->data.muzzle_typ == MUZZLE_ROCKET_CLUSTER )
+	{
+		lockTargetCluster();
+	}
+	else
+	{
+		lockTarget( targetOff );
+	}
 	sendFireCommand();
 
 	//do local actions
@@ -114,8 +120,14 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	building->Attacking = true;
 
 	//lock targets
-	//TODO: cluster
-	lockTarget( targetOff );
+	if ( building->data.muzzle_typ == MUZZLE_ROCKET_CLUSTER )
+	{
+		lockTargetCluster();
+	}
+	else
+	{
+		lockTarget( targetOff );
+	}
 	sendFireCommand();
 
 	if ( building->data.is_expl_mine )
@@ -148,9 +160,9 @@ void cServerAttackJob::lockTarget(int offset)
 	{
 		if ( isAir )
 			//TODO: can alien units attack submarines?
-			attackMode = ATTACK_LAND;
-		else
 			attackMode = ATTACK_AIR;
+		else
+			attackMode = ATTACK_LAND;
 	}
 	
 	if ( !isAir )
@@ -197,6 +209,24 @@ void cServerAttackJob::lockTarget(int offset)
 		Server->sendNetMessage( message, player->Nr );
 	}
 }
+
+void cServerAttackJob::lockTargetCluster()
+{
+	int PosX = iTargetOff % Server->Map->size;
+	int PosY = iTargetOff / Server->Map->size;
+
+	for ( int x = PosY - 2; x <= PosY + 2; x++ )
+	{
+		if ( x < 0 || x >= Server->Map->size ) continue;
+		for ( int y = PosY - 2; y <= PosY + 2; y++ )
+		{
+			if ( y < 0 || y >= Server->Map->size ) continue;
+			if ( abs(PosX - x) + abs(PosY - y) > 2 ) continue;
+			lockTarget( x + y * Server->Map->size );
+		}
+	}
+}
+			
 
 void cServerAttackJob::sendFireCommand()
 {
@@ -312,15 +342,43 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 	cLog::write( " Server: waiting for " + iToStr(executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
 
-	if (executingClients.Size() == 0) makeImpact();
+	if (executingClients.Size() == 0)
+	{
+		int muzzleTyp = vehicle?vehicle->data.muzzle_typ:building->data.muzzle_typ;
+		if ( muzzleTyp == MUZZLE_ROCKET_CLUSTER )
+		{
+			makeImpactCluster();
+		}
+		else
+		{
+			makeImpact( iTargetOff % Server->Map->size, iTargetOff / Server->Map->size );
+		}
+	}
 }
 
 
-void cServerAttackJob::makeImpact()
+void cServerAttackJob::makeImpact(int x, int y )
 {
+	if ( x < 0 || x > Server->Map->size ) return;
+	if ( y < 0 || y > Server->Map->size ) return;
+	int offset = x + y * Server->Map->size;
+
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, iTargetOff, attackMode, Server->Map );
+	selectTarget( targetVehicle, targetBuilding, offset, attackMode, Server->Map );
+
+	//check, whether the target is allready in the target list.
+	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
+	for ( int i = 0; i < vehicleTargets.Size(); i++)
+	{
+		if ( vehicleTargets[i] == targetVehicle ) return;
+	}
+	for ( int i = 0; i < buildingTargets.Size(); i++)
+	{
+		if ( buildingTargets[i] == targetBuilding ) return;
+	}
+	if ( targetVehicle  ) vehicleTargets.Add ( targetVehicle  );
+	if ( targetBuilding ) buildingTargets.Add( targetBuilding );
 
 	int remainingHP = 0;
 	cPlayer* owner = NULL;
@@ -331,7 +389,7 @@ void cServerAttackJob::makeImpact()
 	if ( targetVehicle && !targetVehicle->bIsBeeingAttacked )
 	{
 		cLog::write(" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG );
-		lockTarget( iTargetOff );
+		lockTarget( offset );
 	}
 
 	//if target found, make the impact
@@ -365,16 +423,16 @@ void cServerAttackJob::makeImpact()
 
 	//workaround
 	//make sure, the owner gets the impact message
-	if ( owner ) owner->ScanMap[iTargetOff] = 1;
+	if ( owner ) owner->ScanMap[offset] = 1;
 	//Todo: cluster
-	sendAttackJobImpact( iTargetOff, remainingHP, attackMode );
+	sendAttackJobImpact( offset, remainingHP, attackMode );
 
 	//attack finished. reset Attacking and bIsBeeingAttacked flags
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
 
 	if ( !isAir )
 	{	
-		cBuildingIterator buildings = (*Server->Map)[iTargetOff].getBuildings();
+		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
 			buildings->bIsBeeingAttacked = false;
@@ -390,7 +448,39 @@ void cServerAttackJob::makeImpact()
 	if ( vehicle ) vehicle->InSentryRange();
 }
 
-void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMode )
+void cServerAttackJob::makeImpactCluster()
+{
+	int clusterDamage = damage;
+	int PosX = iTargetOff % Server->Map->size;
+	int PosY = iTargetOff / Server->Map->size;
+
+	//full damage
+	makeImpact( PosX, PosY );
+
+	// 3/4 damage
+	damage = (clusterDamage * 3) / 4;
+	makeImpact( PosX - 1, PosY     );
+	makeImpact( PosX + 1, PosY     );
+	makeImpact( PosX    , PosY - 1 );
+	makeImpact( PosX    , PosY + 1 );
+
+	// 1/2 damage
+	damage = clusterDamage / 2;
+	makeImpact( PosX + 1, PosY + 1 );
+	makeImpact( PosX + 1, PosY - 1 );
+	makeImpact( PosX - 1, PosY + 1 );
+	makeImpact( PosX - 1, PosY - 1 );
+
+	// 1/3 damage
+	damage = clusterDamage / 3;
+	makeImpact( PosX - 2, PosY     );	
+	makeImpact( PosX + 2, PosY     );
+	makeImpact( PosX    , PosY - 2 );
+	makeImpact( PosX    , PosY + 2 );
+
+}
+
+void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, int attackMode )
 {
 	for (int i = 0; i < Server->PlayerList->Size(); i++)
 	{
@@ -402,7 +492,7 @@ void cServerAttackJob::sendAttackJobImpact(int offset, int damage, int attackMod
 		//TODO: when multible planes on a field are implemented, the ID of the target plane have to be sent, too
 		cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_IMPACT );
 		message->pushInt32( offset );
-		message->pushInt16( damage );
+		message->pushInt16( remainingHP );
 		message->pushInt16( attackMode );
 
 		Server->sendNetMessage( message, player->Nr );

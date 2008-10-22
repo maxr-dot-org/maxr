@@ -38,6 +38,8 @@ public:
 	int iTargetOff;
 	int damage;
 	int attackMode;
+	cList<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
+	cList<cBuilding*> buildingTargets;
 
 	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
 	cBuilding* building;
@@ -50,10 +52,12 @@ public:
 	* @author Eiko
 	*/
 	void lockTarget( int offset );
+	void lockTargetCluster();
 	void sendFireCommand();
 	void clientFinished( int playerNr );
-	void makeImpact();
-	void sendAttackJobImpact(int offset, int damage, int attackMode );
+	void makeImpact(int x, int y );
+	void makeImpactCluster();
+	void sendAttackJobImpact(int offset, int remainingHP, int attackMode );
 
 };
 
@@ -80,7 +84,7 @@ public:
 	*/
 	static void lockTarget( cNetMessage* message );
 	static void handleAttackJobs();
-	static void makeImpact(int offset, int damage, int attackMode);
+	static void makeImpact(int offset, int remainingHP, int attackMode);
 
 	cClientAttackJob( cNetMessage* message );
 

@@ -209,7 +209,7 @@ public:
 	/*
 	* checks if the unit can attack the offset
 	* when override is false, the funktion only returns true, when there is an enemy unit
-	* ATTENTION: must not be called with override == true from the server thread!
+	* ATTENTION: must not be called with override == false from the server thread!
 	*/
 	bool CanAttackObject(int off,bool override=false);
 	void DrawAttackCursor( int offset );
