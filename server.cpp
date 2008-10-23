@@ -2216,6 +2216,7 @@ void cServer::destroyUnit(cBuilding *building)
 	int offset = building->PosX + building->PosY * Map->size;
 	int value = 0;
 	bool big = false;
+	bool isConnector = building->data.is_connector;
 
 	if ( Map->GO[offset].top && Map->GO[offset].top->data.is_big )
 	{
@@ -2244,7 +2245,7 @@ void cServer::destroyUnit(cBuilding *building)
 	deleteUnit( Map->GO[offset].base, false );
 	deleteUnit( Map->GO[offset].subbase, false );
 
-	if ( !building->data.is_connector || value > 2 )
+	if ( !isConnector || value > 2 )
 	{
 		addRubble( offset, value/2, big );
 	}
