@@ -967,7 +967,6 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 				offX = targetVehicle->OffX;
 				offY = targetVehicle->OffY;
 				if ( Client->SelectedVehicle == targetVehicle ) targetVehicle->ShowDetails();
-				Client->mouseMoveCallback( true );
 			}
 		}
 		else
@@ -989,9 +988,9 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 			{
 				playImpact = true;
 				if ( Client->SelectedBuilding == targetBuilding ) targetBuilding->ShowDetails();
-				Client->mouseMoveCallback( true );
 			}
 		}
+		Client->mouseMoveCallback( true );
 	}
 
 	int x = offset % Client->Map->size;
@@ -1020,7 +1019,6 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 	}
 
 	//clean up
-
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
 	
 	if ( !isAir )
@@ -1033,4 +1031,3 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 		}
 	}
 }
-

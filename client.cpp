@@ -1994,14 +1994,6 @@ void cClient::drawUnitCircles ()
 					break;
 			}
 		}
-		if (Hud.Munition && v.data.can_attack)
-		{
-			v.DrawMunBar();
-		}
-		if (Hud.Treffer)
-		{
-			v.DrawHelthBar();
-		}
 		if (v.owner == ActivePlayer &&
 				(
 					v.IsBuilding && v.BuildRounds    == 0 ||
@@ -2105,15 +2097,7 @@ void cClient::drawUnitCircles ()
 			             spy+Hud.Zoom/2,
 			             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 		}
-
-		if ( Hud.Munition&&SelectedBuilding->data.can_attack&&!SelectedBuilding->data.is_expl_mine )
-		{
-			SelectedBuilding->DrawMunBar();
-		}
-		if ( Hud.Treffer )
-		{
-			SelectedBuilding->DrawHelthBar();
-		}
+		
 		if (SelectedBuilding->BuildList                              &&
 				SelectedBuilding->BuildList->Size()                      &&
 				!SelectedBuilding->IsWorking                             &&

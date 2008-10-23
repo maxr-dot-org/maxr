@@ -1010,8 +1010,18 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		d.x = dest->x + 1;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 	}
-	//debug
-	//if ( bAttackDebug && bIsBeeingAttacked) font->showText(dest->x,dest->y, "locked", LATIN_SMALL_WHITE);
+	
+	//draw health bar
+	if ( Client->Hud.Treffer )
+	{
+		DrawHelthBar();
+	}
+
+	//draw ammo bar
+	if ( Client->Hud.Munition && data.can_attack && data.max_ammo > 0 )
+	{
+		DrawMunBar();
+	}
 }
 
 // Liefert die Anzahl der Menüpunkte:

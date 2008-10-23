@@ -556,7 +556,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		int max, nr;
 		nr = * ( unsigned int* ) owner->color->pixels;
 
-		if ( ( IsBuilding || IsClearing ) && data.is_big )
+		if ( data.is_big )
 		{
 			max = ( Client->Hud.Zoom - 1 ) * 2;
 		}
@@ -726,6 +726,18 @@ void cVehicle::Draw ( SDL_Rect *dest )
 										tmp.y += Client->Hud.Zoom;
 										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
 									}
+	}
+
+	//draw health bar
+	if ( Client->Hud.Treffer )
+	{
+		DrawHelthBar();
+	}
+
+	//draw ammo bar
+	if ( Client->Hud.Munition && data.can_attack)
+	{
+		DrawMunBar();
 	}
 }
 
