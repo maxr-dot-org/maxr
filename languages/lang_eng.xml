@@ -16,6 +16,7 @@
 			<Editor name="Shaktazuki" time="2008-08-29 00:49:00"/>
 			<Editor name="Shaktazuki" time="2008-08-30 10:04:00"/>
 			<Editor name="Shaktazuki" time="2008-09-01 09:30:00"/>
+			<Editor name="Shaktazuki" time="2008-10-20 21:25:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -167,15 +168,15 @@
 			<Teams ENG="Teams"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="none"/>
-			<Lower ENG="low"/>
-			<Low ENG="limited"/>
-			<Normal ENG="normal"/>
-			<Much ENG="high"/>
-			<More ENG="very high"/>
-			<Most ENG="too much!"/>
-			<Thick ENG="rich"/>
-			<Thin ENG="poor"/>
+			<Lowest ENG="Least"/>
+			<Lower ENG="Lower"/>
+			<Low ENG="Low"/>
+			<Normal ENG="Normal"/>
+			<Much ENG="Much"/>
+			<More ENG="More"/>
+			<Most ENG="Most"/>
+			<Thick ENG="Dense"/>
+			<Thin ENG="Sparse"/>
 			<On ENG="on"/>
 			<Off ENG="off"/>
 			<Definite ENG="Built (original)"/>
