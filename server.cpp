@@ -2158,7 +2158,7 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 void cServer::destroyUnit( cVehicle* vehicle )
 {
 	int offset = vehicle->PosX + vehicle->PosY*Map->size;
-	int value = vehicle->data.iBuilt_Costs/2;
+	int value = vehicle->data.iBuilt_Costs;
 
 	//delete all buildings on the field, except connectors
 	cBuildingIterator bi = (*Map)[offset].getBuildings();
@@ -2203,7 +2203,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 
 	if ( (vehicle->data.can_drive != DRIVE_AIR || vehicle->FlightHigh == 0) && !vehicle->data.is_human )
 	{
-		addRubble( offset, value, vehicle->data.is_big );
+		addRubble( offset, value/2, vehicle->data.is_big );
 	}
 
 	deleteUnit( vehicle, false );
