@@ -933,7 +933,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int attackMode )
 	bool playImpact = false;
 	bool ownUnit = false;
 	bool destroyed = false;
-	bool isAir;
+	bool isAir = false;
 	string name;
 	int offX = 0, offY = 0;
 
