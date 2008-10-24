@@ -739,6 +739,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	{
 		DrawMunBar();
 	}
+
+	//draw status info
+	if ( Client->Hud.Status )
+	{
+		drawStatus();
+	}
+
 }
 
 // Wählt dieses Vehicle aus:
@@ -2429,67 +2436,71 @@ void cVehicle::DecSpeed ( int value )
 void cVehicle::DrawMunBar(void) const
 {
 	SDL_Rect r1, r2;
-	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = Client->Hud.Zoom;
-	r2.h = ( r1.h = Client->Hud.Zoom / 6 ) - 2;
+	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
+	r1.w = Client->Hud.Zoom * 8 / 10 ;
+	r1.h = Client->Hud.Zoom / 8;
+	r1.y = GetScreenPosY() + Client->Hud.Zoom/10 + Client->Hud.Zoom / 8;
 
-	if ( r1.h < 2 )
-		r2.h = 1;
+	if ( r1.h <= 2  )
+	{
+		r1.y += 1;
+		r1.h = 3;
+	}
 
-	r2.y = ( int ) ( r1.y = Client->Hud.Zoom - r1.h + GetScreenPosY() ) + 1;
-
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.h = r1.h - 2;
 	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_ammo ) * data.ammo );
+
+	SDL_FillRect ( buffer, &r1, 0 );
 
 	if ( data.ammo > data.max_ammo / 2 )
 	{
-		SDL_FillRect ( buffer, &r1, 0 );
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
+	else if ( data.ammo > data.max_ammo / 4 )
+	{
+		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
+	}
 	else
-		if ( data.ammo > data.max_ammo / 4 )
-		{
-			SDL_FillRect ( buffer, &r1, 0 );
-			SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-		}
-		else
-		{
-			SDL_FillRect ( buffer, &r1, 0 );
-			SDL_FillRect ( buffer, &r2, 0xE60000 );
-		}
+	{
+		SDL_FillRect ( buffer, &r2, 0xE60000 );
+	}
 }
-
 // Malt die Trefferanzeige über das Fahrzeug:
 void cVehicle::DrawHelthBar(void) const
 {
 	SDL_Rect r1, r2;
-	r2.x = ( r1.x = GetScreenPosX() ) + 1;
-	r1.w = Client->Hud.Zoom;
-	r2.h = ( r1.h = Client->Hud.Zoom / 6 ) - 2;
+	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
+	r1.w = Client->Hud.Zoom * 8 / 10 ;
+	r1.h = Client->Hud.Zoom / 8;
+	r1.y = GetScreenPosY() + Client->Hud.Zoom/10;
 
-	if ( r1.h < 2 )
-		r2.h = 1;
+	if ( r1.h <= 2  )
+		r1.h = 3;
 
-	r2.y = ( int ) ( r1.y = GetScreenPosY() ) + 1;
-
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.h = r1.h - 2;
 	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_hit_points ) * data.hit_points );
+
+	SDL_FillRect ( buffer, &r1, 0 );
 
 	if ( data.hit_points > data.max_hit_points / 2 )
 	{
-		SDL_FillRect ( buffer, &r1, 0 );
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
+	else if ( data.hit_points > data.max_hit_points / 4 )
+	{
+		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
+	}
 	else
-		if ( data.hit_points > data.max_hit_points / 4 )
-		{
-			SDL_FillRect ( buffer, &r1, 0 );
-			SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-		}
-		else
-		{
-			SDL_FillRect ( buffer, &r1, 0 );
-			SDL_FillRect ( buffer, &r2, 0xE60000 );
-		}
+	{
+		SDL_FillRect ( buffer, &r2, 0xE60000 );
+	}
 }
+
+
 
 // Zentriert auf dieses Vehicle:
 void cVehicle::Center ( void )
