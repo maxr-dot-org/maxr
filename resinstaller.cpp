@@ -2761,6 +2761,9 @@ int installGfx()
 		COPY_GRAPHIC("I_LIFE",  138, 109);
 		COPY_GRAPHIC("I_POWER", 125, 109);
 		COPY_GRAPHIC("BARTAPE", 156, 307);
+		COPY_GRAPHIC("IL_SPEED",244, 98);
+		COPY_GRAPHIC("IL_SHOTS",254, 98);
+		COPY_GRAPHIC("IL_DSBLD",150,109);
 
 		surface = getImageFromRes("SI_SHOTS");
 		setColor( surface, 0, 255, 0, 255 );
