@@ -875,9 +875,10 @@ bool cPlayer::IsDefeated ( void )
 void cPlayer::AddLock ( cBuilding *b )
 {
 	sLockElem *elem;
-	elem=new sLockElem;
-	elem->b=b;
-	b->IsLocked=true;
+	elem = new sLockElem;
+	elem->b = b;
+	elem->v = NULL;
+	b->IsLocked = true;
 	LockList.Add ( elem );
 }
 
@@ -885,10 +886,10 @@ void cPlayer::AddLock ( cBuilding *b )
 void cPlayer::AddLock ( cVehicle *v )
 {
 	sLockElem *elem;
-	elem=new sLockElem;
-	elem->v=v;
-	elem->b=NULL;
-	v->IsLocked=true;
+	elem = new sLockElem;
+	elem->v = v;
+	elem->b = NULL;
+	v->IsLocked = true;
 	LockList.Add ( elem );
 }
 
@@ -957,21 +958,21 @@ bool cPlayer::InLockList ( cVehicle *v )
 // Schaltet die Lock-Objekte unter der Maus um:
 void cPlayer::ToggelLock ( sGameObjects *OverObject )
 {
-	if ( OverObject->base&&OverObject->base->owner!=this )
+	if ( OverObject->base) && OverObject->base->owner!=this )
 	{
 		if ( InLockList ( OverObject->base ) ) DeleteLock ( OverObject->base );else AddLock ( OverObject->base );
 	}
-	if ( OverObject->top&&OverObject->top->owner!=this )
+	if ( OverObject->top) && OverObject->top->owner!=this )
 	{
 		if ( InLockList ( OverObject->top ) ) DeleteLock ( OverObject->top );else AddLock ( OverObject->top );
 	}
-	if ( OverObject->base&&OverObject->base->owner!=this )
+	if ( OverObject->vehicle) && OverObject->vehicle->owner!=this )
 	{
-		if ( InLockList ( OverObject->base ) ) DeleteLock ( OverObject->base );else AddLock ( OverObject->base );
+		if ( InLockList ( OverObject->vehicle ) ) DeleteLock ( OverObject->vehicle );else AddLock ( OverObject->vehicle );
 	}
-	if ( OverObject->top&&OverObject->top->owner!=this )
+	if ( OverObject->plane) && OverObject->plane->owner!=this )
 	{
-		if ( InLockList ( OverObject->top ) ) DeleteLock ( OverObject->top );else AddLock ( OverObject->top );
+		if ( InLockList ( OverObject->plane ) ) DeleteLock ( OverObject->plane );else AddLock ( OverObject->plane );
 	}
 }
 
