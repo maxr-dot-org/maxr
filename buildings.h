@@ -176,10 +176,11 @@ public:
 	void ShowHelp(void);
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	void Center(void);
-	void DrawMunBar(void);
-	void DrawHelthBar(void);
-	int GetScreenPosX(void);
-	int GetScreenPosY(void);
+	void DrawMunBar(void) const;
+	void DrawHelthBar(void) const;
+	void drawStatus() const;
+	int GetScreenPosX(void) const;
+	int GetScreenPosY(void) const;
 	int CalcHelth(int damage);
 	void DrawMenu(void);
 	int GetMenuPointAnz(void);

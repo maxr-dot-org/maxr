@@ -170,6 +170,7 @@ public:
 	void DecSpeed(int value);
 	void DrawMunBar(void) const;
 	void DrawHelthBar(void) const;
+	void drawStatus() const;
 	void Center(void);
 	/*
 	* checks if the unit can attack the offset

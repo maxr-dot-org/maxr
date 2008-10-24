@@ -2500,7 +2500,38 @@ void cVehicle::DrawHelthBar(void) const
 	}
 }
 
+void cVehicle::drawStatus() const
+{
+	SDL_Rect dest;
+	SDL_Rect speedSymbol = {244, 97, 8, 10 };
+	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
+	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
+	if ( Disabled )
+	{
+		if ( Client->Hud.Zoom < 25 ) return;
+		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 12;
+		dest.y = GetScreenPosY() + Client->Hud.Zoom/2 - 12;
+		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
+	}
+	else
+		{
+		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
+		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		if ( data.speed )
+		{
+			if ( data.shots ) dest.x -= Client->Hud.Zoom/4;
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
+		}
+
+		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		if ( data.shots )
+		{
+			if ( data.speed ) dest.x += Client->Hud.Zoom/4;
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
+		}
+	}
+}
 
 // Zentriert auf dieses Vehicle:
 void cVehicle::Center ( void )

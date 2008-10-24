@@ -1022,6 +1022,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		DrawMunBar();
 	}
+
+	//draw status
+	if ( Client->Hud.Status )
+	{
+		drawStatus();
+	}
 }
 
 // Liefert die Anzahl der Menüpunkte:
@@ -7742,13 +7748,13 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 }
 
 // Liefert die X-Position des Buildings auf dem Screen zurück:
-int cBuilding::GetScreenPosX ( void )
+int cBuilding::GetScreenPosX ( void ) const
 {
 	return 180 - ( ( int ) ( ( Client->Hud.OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
 // Liefert die Y-Position des Buildings auf dem Screen zurück:
-int cBuilding::GetScreenPosY ( void )
+int cBuilding::GetScreenPosY ( void ) const
 {
 	return 18 - ( ( int ) ( ( Client->Hud.OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
 }
@@ -8202,7 +8208,7 @@ void cBuilding::Center ( void )
 }
 
 // Malt die Munitionsanzeige über das Buildings:
-void cBuilding::DrawMunBar ( void )
+void cBuilding::DrawMunBar ( void ) const
 {
 	SDL_Rect r1, r2;
 	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
@@ -8238,7 +8244,7 @@ void cBuilding::DrawMunBar ( void )
 }
 
 // Malt die Trefferanzeige über das Buildings:
-void cBuilding::DrawHelthBar ( void )
+void cBuilding::DrawHelthBar ( void ) const
 {
 	SDL_Rect r1, r2;
 	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
@@ -8273,6 +8279,30 @@ void cBuilding::DrawHelthBar ( void )
 	else
 	{
 		SDL_FillRect ( buffer, &r2, 0xE60000 );
+	}
+}
+
+void cBuilding::drawStatus() const
+{
+	SDL_Rect dest;
+	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
+	SDL_Rect disabledSymbol = {150, 109, 25, 25};
+
+	if ( Disabled )
+	{
+		if ( Client->Hud.Zoom < 25 ) return;
+		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 12;
+		dest.y = GetScreenPosY() + Client->Hud.Zoom/2 - 12;
+		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
+	}
+	else
+	{
+		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
+		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		if ( data.shots )
+		{
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
+		}
 	}
 }
 
