@@ -1977,7 +1977,14 @@ void cClient::drawUnitCircles ()
 		int const spy = v.GetScreenPosY();
 		if (Hud.Scan)
 		{
-			drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer);
+			if ( v.data.is_big )
+			{
+				drawCircle ( spx+ Hud.Zoom, spy + Hud.Zoom, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer );
+			}
+			else
+			{
+				drawCircle ( spx + Hud.Zoom/2, spy + Hud.Zoom/2, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer );
+			}
 		}
 		if (Hud.Reichweite)
 		{
@@ -3235,6 +3242,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( UnitsData.building[iBuildingType].data.is_big )
 			{
 				Map->moveVehicleBig(Vehicle, iBuildOff );
+				Vehicle->owner->DoScan();
 			}
 
 			Vehicle->BuildingTyp = iBuildingType;
@@ -3288,6 +3296,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Vehicle->data.can_build == BUILD_BIG )
 			{
 				Map->moveVehicle(Vehicle, iNewPos );
+				Vehicle->owner->DoScan();
 			}
 			else
 			{

@@ -504,7 +504,14 @@ void cPlayer::DoScan ( void )
 		}
 		else
 		{
-			drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
+			if ( vp->data.is_big )
+			{
+				drawSpecialCircleBig ( vp->PosX, vp->PosY, vp->data.scan, ScanMap );
+			}
+			else
+			{
+				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
+			}
 
 			//detection maps
 			if ( vp->data.can_detect_land )
@@ -958,19 +965,19 @@ bool cPlayer::InLockList ( cVehicle *v )
 // Schaltet die Lock-Objekte unter der Maus um:
 void cPlayer::ToggelLock ( sGameObjects *OverObject )
 {
-	if ( OverObject->base) && OverObject->base->owner!=this )
+	if ( OverObject->base && OverObject->base->owner!=this )
 	{
 		if ( InLockList ( OverObject->base ) ) DeleteLock ( OverObject->base );else AddLock ( OverObject->base );
 	}
-	if ( OverObject->top) && OverObject->top->owner!=this )
+	if ( OverObject->top && OverObject->top->owner!=this )
 	{
 		if ( InLockList ( OverObject->top ) ) DeleteLock ( OverObject->top );else AddLock ( OverObject->top );
 	}
-	if ( OverObject->vehicle) && OverObject->vehicle->owner!=this )
+	if ( OverObject->vehicle && OverObject->vehicle->owner!=this )
 	{
 		if ( InLockList ( OverObject->vehicle ) ) DeleteLock ( OverObject->vehicle );else AddLock ( OverObject->vehicle );
 	}
-	if ( OverObject->plane) && OverObject->plane->owner!=this )
+	if ( OverObject->plane && OverObject->plane->owner!=this )
 	{
 		if ( InLockList ( OverObject->plane ) ) DeleteLock ( OverObject->plane );else AddLock ( OverObject->plane );
 	}
@@ -999,9 +1006,14 @@ void cPlayer::DrawLockList(cHud const& hud)
 
 			if ( hud.Scan )
 			{
-				DrawCircle ( spx+hud.Zoom/2,
-				             spy+hud.Zoom/2,
-				             elem->v->data.scan*hud.Zoom,SCAN_COLOR,buffer );
+				if ( elem->v->data.is_big )
+				{
+					DrawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+				}
+				else
+				{
+					DrawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+				}
 			}
 			if ( hud.Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
 			{
