@@ -239,8 +239,6 @@ public:
 	void MakeUpgradeSliderBuilding(sUpgrades *u,int nr);
 	void CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int* selected, int* offset);
 	void MakeUpgradeSubButtons(void);
-	int CalcPrice(int value,int org, int variety);
-	int CalcSteigerung(int org, int variety);
 	void SendUpdateStored(int index);
 	/**
 	* returns whether this player has detected this unit or not

@@ -28,7 +28,7 @@
 #include "serverevents.h"
 #include "client.h"
 #include "server.h"
-
+#include "upgradecalculator.h"
 
 int& sMineValues::GetProd(ResourceKind const resource)
 {
@@ -4159,32 +4159,34 @@ void cBuilding::ShowUpgrade ( void )
 
 				if ( ptr->upgrades[i].Purchased && x < MENU_OFFSET_X + 283 + 18 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
 				{
-					int variety;
+					int upgradeType = -1;
+					if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+						upgradeType = cUpgradeCalculator::kHitpoints;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+						upgradeType = cUpgradeCalculator::kArmor;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+						upgradeType = cUpgradeCalculator::kAmmo;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+						upgradeType = cUpgradeCalculator::kAttack;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+						upgradeType = cUpgradeCalculator::kSpeed;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+						upgradeType = cUpgradeCalculator::kShots;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+						upgradeType = cUpgradeCalculator::kRange;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+						upgradeType = cUpgradeCalculator::kScan;
 
-					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
-						variety = 0;
-					else
-						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
-							variety = 1;
-						else
-							if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
-								variety = 2;
-							else
-								if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
-									variety = 3;
-								else
-									variety = -1;
-
-					* ( ptr->upgrades[i].value ) -= CalcSteigerung ( ptr->upgrades[i].StartValue, variety );
-
-					// double price for damage
-					if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
+					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
-						ptr->upgrades[i].NextPrice = 2 * CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
+						*(ptr->upgrades[i].value) -= uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
 					}
 					else
 					{
-						ptr->upgrades[i].NextPrice = CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
+						*(ptr->upgrades[i].value) -= 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
 					}
 
 					owner->Credits += ptr->upgrades[i].NextPrice;
@@ -4198,47 +4200,49 @@ void cBuilding::ShowUpgrade ( void )
 					mouse->draw ( false, screen );
 					break;
 				}
-				else
-					if ( ptr->upgrades[i].NextPrice <= owner->Credits && x >= MENU_OFFSET_X + 301 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
+				else if ( ptr->upgrades[i].NextPrice <= owner->Credits && x >= MENU_OFFSET_X + 301 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
+				{
+					owner->Credits -= ptr->upgrades[i].NextPrice;
+
+					int upgradeType = -1;
+					if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+						upgradeType = cUpgradeCalculator::kHitpoints;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+						upgradeType = cUpgradeCalculator::kArmor;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+						upgradeType = cUpgradeCalculator::kAmmo;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+						upgradeType = cUpgradeCalculator::kAttack;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+						upgradeType = cUpgradeCalculator::kSpeed;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+						upgradeType = cUpgradeCalculator::kShots;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+						upgradeType = cUpgradeCalculator::kRange;
+					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+						upgradeType = cUpgradeCalculator::kScan;
+
+					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
-						int variety;
-						owner->Credits -= ptr->upgrades[i].NextPrice;
-
-						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Hitpoints" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Armor" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Ammo" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
-							variety = 0;
-						else
-							if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Speed" ) ) == 0 )
-								variety = 1;
-							else
-								if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Shots" ) ) == 0 )
-									variety = 2;
-								else
-									if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Range" ) ) == 0 || ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Scan" ) ) == 0 )
-										variety = 3;
-									else
-										variety = -1;
-
-						* ( ptr->upgrades[i].value ) += CalcSteigerung ( ptr->upgrades[i].StartValue, variety );
-
-						// double price for damage
-						if ( ptr->upgrades[i].name.compare ( lngPack.i18n ( "Text~Vehicles~Damage" ) ) == 0 )
-						{
-							ptr->upgrades[i].NextPrice = 2 * CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
-						}
-						else
-						{
-							ptr->upgrades[i].NextPrice = CalcPrice ( * ( ptr->upgrades[i].value ), ptr->upgrades[i].StartValue, variety );
-						}
-
-						ptr->upgrades[i].Purchased++;
-
-						PlayFX ( SoundData.SNDObjectMenu );
-						ShowUpgradeList ( selection, selected, offset, Beschreibung );
-						ShowGoldBar ( StartCredits );
-						SHOW_SCREEN
-						mouse->draw ( false, screen );
-						break;
+						*(ptr->upgrades[i].value) += uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
 					}
+					else
+					{
+						*(ptr->upgrades[i].value) += 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
+					}
+
+					ptr->upgrades[i].Purchased++;
+
+					PlayFX ( SoundData.SNDObjectMenu );
+					ShowUpgradeList ( selection, selected, offset, Beschreibung );
+					ShowGoldBar ( StartCredits );
+					SHOW_SCREEN
+					mouse->draw ( false, screen );
+					break;
+				}
 			}
 		}
 
@@ -4572,26 +4576,26 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 		// Damage:
 		u[i].active = true;
 		u[i].value = & ( d->damage );
-		u[i].NextPrice = 2 * CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.damage, 0 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 		// Shots:
 		u[i].active = true;
 		u[i].value = & ( d->max_shots );
-		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_shots, 2 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Shots" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_shots, cUpgradeCalculator::kShots);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 		i++;
 		// Range:
 		u[i].active = true;
 		u[i].value = & ( d->range );
-		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.range, 3 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.range, cUpgradeCalculator::kRange);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 		i++;
 		// Ammo:
 		u[i].active = true;
 		u[i].value = & ( d->max_ammo );
-		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_ammo, 0 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 		i++;
 	}
 
@@ -4602,46 +4606,30 @@ void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
 
 	// Armor:
 	u[i].active = true;
-
 	u[i].value = & ( d->armor );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.armor, 0 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
-
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.armor, cUpgradeCalculator::kArmor);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 
 	// Hitpoints:
 	u[i].active = true;
-
 	u[i].value = & ( d->max_hit_points );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_hit_points, 0 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
-
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 
 	// Scan:
 	u[i].active = true;
-
 	u[i].value = & ( d->scan );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.scan, 3 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
-
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.scan, cUpgradeCalculator::kScan);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 	i++;
 
 	// Speed:
 	u[i].active = true;
-
-	u[i].value = & ( d->max_speed );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.vehicle[nr].data.max_speed, 1 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Speed" );
-
+	u[i].value = &(d->max_speed);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value) / 4, UnitsData.vehicle[nr].data.max_speed / 4, cUpgradeCalculator::kSpeed);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Speed");
 	i++;
 
 	// Costs:
@@ -4678,8 +4666,8 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 		// Damage:
 		u[i].active = true;
 		u[i].value = & ( d->damage );
-		u[i].NextPrice = 2 * CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.damage, 0 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Damage" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 
 		if ( !d->is_expl_mine )
@@ -4687,20 +4675,20 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 			// Shots:
 			u[i].active = true;
 			u[i].value = & ( d->max_shots );
-			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_shots, 2 );
-			u[i].name = lngPack.i18n ( "Text~Vehicles~Shots" );
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_shots, cUpgradeCalculator::kShots);
+			u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 			i++;
 			// Range:
 			u[i].active = true;
 			u[i].value = & ( d->range );
-			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.range, 3 );
-			u[i].name = lngPack.i18n ( "Text~Vehicles~Range" );
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.range, cUpgradeCalculator::kRange);
+			u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 			i++;
 			// Ammo:
 			u[i].active = true;
 			u[i].value = & ( d->max_ammo );
-			u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_ammo, 0 );
-			u[i].name = lngPack.i18n ( "Text~Vehicles~Ammo" );
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+			u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 			i++;
 		}
 	}
@@ -4722,33 +4710,23 @@ void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
 
 	// Armor:
 	u[i].active = true;
-
 	u[i].value = & ( d->armor );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.armor, 0 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Armor" );
-
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.armor, cUpgradeCalculator::kArmor);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
-
 	// Hitpoints:
 	u[i].active = true;
-
 	u[i].value = & ( d->max_hit_points );
-
-	u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.max_hit_points, 0 );
-
-	u[i].name = lngPack.i18n ( "Text~Vehicles~Hitpoints" );
-
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
-
 	// Scan:
 	if ( d->scan )
 	{
 		u[i].active = true;
 		u[i].value = & ( d->scan );
-		u[i].NextPrice = CalcPrice ( * ( u[i].value ), UnitsData.building[nr].data.scan, 3 );
-		u[i].name = lngPack.i18n ( "Text~Vehicles~Scan" );
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.scan, cUpgradeCalculator::kScan);
+		u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 		i++;
 	}
 
@@ -4940,497 +4918,6 @@ void cBuilding::MakeUpgradeSubButtons ( void )
 		scr.y = 479;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
-}
-
-// Berechnet den Preis für ein Upgrade:
-int cBuilding::CalcPrice ( int value, int org, int variety )
-{
-	int tmp;
-	double a, b, c;
-
-	switch ( variety )
-	{
-			// Treffer, Panzerung, Munition & Angriff
-
-		case 0:
-
-			switch ( org )
-			{
-
-				case 2:
-
-					if ( value == 2 )
-						return 39;
-
-					if ( value == 3 )
-						return 321;
-
-					break;
-
-				case 4:
-					a = 0.0016091639;
-
-					b = -0.073815318;
-
-					c = 6.0672869;
-
-					break;
-
-				case 6:
-					a = 0.000034548596;
-
-					b = -0.27217472;
-
-					c = 6.3695123;
-
-					break;
-
-				case 8:
-					a = 0.00037219059;
-
-					b = 2.5148748;
-
-					c = 5.0938608;
-
-					break;
-
-				case 9:
-					a = 0.000059941694;
-
-					b = 1.3962889;
-
-					c = 4.6045196;
-
-					break;
-
-				case 10:
-					a = 0.000033736018;
-
-					b = 1.4674423;
-
-					c = 5.5606209;
-
-					break;
-
-				case 12:
-					a = 0.0000011574058;
-
-					b = 0.23439586;
-
-					c = 6.113616;
-
-					break;
-
-				case 14:
-					a = 0.0000012483447;
-
-					b = 1.4562373;
-
-					c = 5.8250952;
-
-					break;
-
-				case 15:
-					a = 0.00000018548742;
-
-					b = -0.33519669;
-
-					c = 6.3333527;
-
-					break;
-
-				case 16:
-					a = 0.000010898263;
-
-					b = 5.0297434;
-
-					c = 5.0938627;
-
-					break;
-
-				case 18:
-					a = 0.00000017182818;
-
-					b = 2.0009536;
-
-					c = 5.8937153;
-
-					break;
-
-				case 20:
-					a = 0.00000004065782;
-
-					b = 1.6533066;
-
-					c = 6.0601538;
-
-					break;
-
-				case 22:
-					a = 0.0000000076942857;
-
-					b = -0.45461813;
-
-					c = 6.4148588;
-
-					break;
-
-				case 24:
-					a = 0.00000076484313;
-
-					b = 8.0505377;
-
-					c = 5.1465019;
-
-					break;
-
-				case 28:
-					a = 0.00000015199858;
-
-					b = 5.1528048;
-
-					c = 5.4700225;
-
-					break;
-
-				case 32:
-					a = 0.00000030797077;
-
-					b = 8.8830596;
-
-					c = 5.1409486;
-
-					break;
-
-				case 56:
-					a = 0.000000004477053;
-
-					b = 11.454622;
-
-					c = 5.4335099;
-
-					break;
-
-				default:
-					return 0;
-			}
-
-			break;
-
-			// Geschwindgigkeit
-
-		case 1:
-			org = org / 4;
-			value = value / 4;
-
-			switch ( org )
-			{
-
-				case 5:
-					a = 0.00040716128;
-					b = -0.16662054;
-					c = 6.2234362;
-					break;
-
-				case 6:
-					a = 0.00038548127;
-					b = 0.48236948;
-					c = 5.827724;
-					break;
-
-				case 7:
-					a = 0.000019798772;
-					b = -0.31204765;
-					c = 6.3982628;
-					break;
-
-				case 9:
-					a = 0.0000030681294;
-					b = -0.25372812;
-					c = 6.3995668;
-					break;
-
-				case 10:
-					a = 0.0000062019158;
-					b = -0.23774407;
-					c = 6.1901333;
-					break;
-
-				case 12:
-					a = 0.0000064901101;
-					b = 0.93320705;
-					c = 5.8395847;
-					break;
-
-				case 14:
-					a = 0.0000062601892;
-					b = 2.1588132;
-					c = 5.5866699;
-					break;
-
-				case 15:
-					a = 0.00000027748628;
-					b = -0.0031671959;
-					c = 6.2349744;
-					break;
-
-				case 16:
-					a = 0.0000011401659;
-					b = 1.8660343;
-					c = 5.7884287;
-					break;
-
-				case 18:
-					a = 0.00000093928003;
-					b = 2.9224069;
-					c = 5.6503159;
-					break;
-
-				case 20:
-					a = 0.00000003478867;
-					b = 0.44735558;
-					c = 6.2388156;
-					break;
-
-				case 24:
-					a = 0.0000000038623391;
-					b = -0.4486039;
-					c = 6.4245686;
-					break;
-
-				case 28:
-					a = 0.000000039660207;
-					b = 1.6425505;
-					c = 5.8842817;
-					break;
-
-				default:
-					return 0;
-			}
-
-			break;
-
-			// Schüsse
-
-		case 2:
-
-			switch ( org )
-			{
-
-				case 1:
-					return 720;
-					break;
-
-				case 2:
-
-					if ( value == 2 )
-						return 79;
-
-					if ( value == 3 )
-						return 641;
-
-					break;
-
-				default:
-					return 0;
-			}
-
-			break;
-
-			// Reichweite, Scan
-
-		case 3:
-
-			switch ( org )
-			{
-
-				case 3:
-
-					if ( value == 3 )
-						return 61;
-
-					if ( value == 4 )
-						return 299;
-
-					break;
-
-				case 4:
-					a = 0.010226741;
-
-					b = -0.001141961;
-
-					c = 5.8477272;
-
-					break;
-
-				case 5:
-					a = 0.00074684696;
-
-					b = -0.24064936;
-
-					c = 6.2377712;
-
-					break;
-
-				case 6:
-					a = 0.0000004205569;
-
-					b = -2.5074874;
-
-					c = 8.1868728;
-
-					break;
-
-				case 7:
-					a = 0.00018753949;
-
-					b = 0.42735532;
-
-					c = 5.9259322;
-
-					break;
-
-				case 8:
-					a = 0.000026278484;
-
-					b = 0.0026600724;
-
-					c = 6.2281618;
-
-					break;
-
-				case 9:
-					a = 0.000017724816;
-
-					b = 0.35087138;
-
-					c = 6.1028354;
-
-					break;
-
-				case 10:
-					a = 0.000011074461;
-
-					b = -0.41358078;
-
-					c = 6.2067919;
-
-					break;
-
-				case 11:
-					a = 0.0000022011968;
-
-					b = -0.97456761;
-
-					c = 6.4502985;
-
-					break;
-
-				case 12:
-					a = 0.0000000034515189;
-
-					b = -4.4597674;
-
-					c = 7.9715326;
-
-					break;
-
-				case 14:
-					a = 0.0000028257552;
-
-					b = 0.78730358;
-
-					c = 5.9483863;
-
-					break;
-
-				case 18:
-					a = 0.00000024289322;
-
-					b = 0.64536566;
-
-					c = 6.11706;
-
-					break;
-
-				default:
-					return 0;
-			}
-
-			break;
-
-		default:
-			return 0;
-	}
-
-	tmp = Round ( ( a * pow ( ( value - b ), c ) ) );
-
-	return tmp;
-}
-
-// Berechnet die Steigerung bei eim Upgrade:
-int cBuilding::CalcSteigerung ( int org, int variety )
-{
-	int tmp = 0;
-
-	switch ( variety )
-	{
-
-		case 0:
-		{
-			if ( org == 2 || org == 4 || org == 6 || org == 8 )
-				tmp = 1;
-
-			if ( org == 9 || org == 10 || org == 12 || org == 14 || org == 15 || org == 16 || org == 18 || org == 20 || org == 22 || org == 24 )
-				tmp = 2;
-
-			if ( org == 28 || org == 32 )
-				tmp = 5;
-
-			if ( org == 56 )
-				tmp = 10;
-
-			break;
-		}
-
-		case 1:
-		{
-			org = org / 4;
-
-			if ( org == 5 || org == 6 || org == 7 || org == 9 )
-				tmp = 1;
-
-			if ( org == 10 || org == 12 || org == 14 || org == 15 || org == 16 || org == 18 || org == 20 )
-				tmp = 2;
-
-			if ( org == 28 )
-				tmp = 5;
-
-			tmp = tmp * 4;
-			break;
-		}
-
-		case 2:
-			tmp = 1;
-			break;
-
-		case 3:
-		{
-			if ( org == 3 || org == 4 || org == 5 || org == 6 || org == 7 || org == 8 || org == 9 )
-				tmp = 1;
-
-			if ( org == 10 || org == 11 || org == 12 || org == 14 || org == 18 )
-				tmp = 2;
-
-			break;
-		}
-
-		default:
-			tmp = 1;
-			break;
-	}
-
-	return tmp;
 }
 
 // Malt große Symbole für das Info-Fenster:
