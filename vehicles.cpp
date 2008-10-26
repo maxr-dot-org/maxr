@@ -32,7 +32,7 @@
 #include "client.h"
 #include "server.h"
 #include "clientevents.h"
-#include "attackjobs.h"
+#include "attackJobs.h"
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
