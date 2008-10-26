@@ -354,8 +354,7 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 	if (executingClients.Size() == 0)
 	{
-		int muzzleTyp = vehicle?vehicle->data.muzzle_typ:building->data.muzzle_typ;
-		if ( muzzleTyp == MUZZLE_ROCKET_CLUSTER )
+		if ( vehicle && vehicle->data.muzzle_typ == MUZZLE_ROCKET_CLUSTER )
 		{
 			makeImpactCluster();
 		}
@@ -557,10 +556,10 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 		{
 			cLog::write(" Client: changed vehicle position to " + iToStr( offset ), cLog::eLOG_TYPE_NET_DEBUG );
 			Client->Map->moveVehicle( vehicle, offset );
-			
+			vehicle->owner->DoScan();
+
 			vehicle->OffY = message->popChar();
 			vehicle->OffX = message->popChar();
-			
 		}
 	}
 	if ( !bIsAir )

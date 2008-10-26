@@ -557,6 +557,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				// set vehicle to build position
 				Map->moveVehicleBig( Vehicle, iBuildOff );
+				Vehicle->owner->DoScan();
 			}
 			else
 			{
@@ -729,6 +730,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				Map->moveVehicle( Vehicle, Vehicle->BuildBigSavedPos );
 				iPos = Vehicle->BuildBigSavedPos;
+				Vehicle->owner->DoScan();
 			}
 			sendStopBuild ( Vehicle->iID, iPos, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
@@ -2166,6 +2168,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	
 	while ( !bi.end )
 	{
+		if (!bi->owner) continue;
 		value += bi->data.iBuilt_Costs;
 		deleteUnit( bi, false );
 		bi++;
@@ -2351,7 +2354,8 @@ void cServer::deleteRubble( cBuilding* rubble )
 		if ( rubble->next )
 			rubble->next->prev = rubble->prev;
 	}
+	sendDeleteUnit( rubble, -1 );
+
 	delete rubble;
 
-	sendDeleteUnit( rubble, -1 );
 }
