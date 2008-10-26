@@ -12,6 +12,7 @@
 	<Header>
 		<Author name="klei">
 			<Editor name="klei" time="2007-12-30 16:45:00"/>
+			<Editor name="klei" time="2008-10-25 20:50:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -28,10 +29,10 @@
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading languagepack..." localized="Nyelvcsomag betöltése..."/>
+			<Lang ENG="Loading language pack..." localized="Nyelvcsomag betöltése..."/>
 			<Keys ENG="Loading keys..." localized="Billentyûk betöltése..."/>
             <Fonts ENG="Loading fonts..." localized="Betûkészletek betöltése..."/>
-            <GFX ENG="Loading gfx..." localized="Grafika betöltése..."/>
+            <GFX ENG="Loading graphics..." localized="Grafika betöltése..."/>
             <Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
             <Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
             <Vehicles ENG="Loading vehicles..." localized="Jármûvek betöltése..."/>
@@ -44,12 +45,12 @@
 			<MainMenu ENG="Main Menu" localized="Fõmenü"/>
 			<Credits ENG="Credits" localized="Pénz"/>
 			<Gold ENG="Gold" localized="Arany"/>
-			<Metal ENG="Metal" localized="Érc"/>
-			<Oil ENG="Oil" localized="Olaj"/>
-			<BridgeHead ENG="Bridgehead" localized="Támaszpont"/>
-			<Alien_Tech ENG="Alientechnology" localized="Idegen technológia"/>
-			<Resource ENG="Resources" localized="Nyersanyag"/>
-			<Resource_Density ENG="Resources Density" localized="Nyersanyagsûrûség"/>
+			<Metal ENG="Materials" localized="Nyersanyag"/>
+			<Oil ENG="Fuel" localized="Üzemanyag"/>
+			<BridgeHead ENG="Starting Base" localized="Kezdeti bázis"/>
+			<Alien_Tech ENG="Alien technology" localized="Idegen technológia"/>
+			<Resource ENG="Resource density" localized="Nyersanyagsûrûség"/>
+			<Resource_Density ENG="Resource frequency" localized="Nyersanyag gyakoriság"/>
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
 			<Player_Name ENG="Playername:" localized="Játékosnév:"/>
 			<Player_Select ENG="Playeroptions" localized="Játékos beállítások"/>
@@ -69,11 +70,11 @@
 			<Map ENG="Map" localized="Térkép"/>
 			<LoadSave ENG="Load/Save Menu" localized="Betöltés/Mentés Menü"/>
 			<Load ENG="Load Menu" localized="Betöltés Menü"/>
-			<Updates ENG="Updatemenu" localized="Frissítés Menü"/>
-			<Build ENG="Buildmenu" localized="Építkezés Menü"/>
-			<Labs ENG="Researchmenu" localized="Fejlesztés Menü"/>
-			<Mine ENG="Minemanager" localized="Bányaintézõ"/>
-			<Unitinfo ENG="Unitinformations" localized="Egységinformáció"/>
+			<Updates ENG="Update menu" localized="Frissítés Menü"/>
+			<Build ENG="Build menu" localized="Építkezés Menü"/>
+			<Labs ENG="Research menu" localized="Fejlesztés Menü"/>
+			<Mine ENG="Allocation menu" localized="Nyersanyagelosztás menü"/>
+			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyõ"/>
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Fõmenü"/>
@@ -87,7 +88,7 @@
 			<OK ENG="OK" localized="Ok"/>
 			<Done ENG="Done" localized="Kész"/>
 			<Cancel ENG="Cancel" localized="Mégse"/>
-			<Hot ENG="Sharp" localized="Sharp"/>
+			<Hot ENG="Hot" localized="Hot"/>
 			<Yes ENG="Yes" localized="Igen"/>
 			<No ENG="No" localized="Nem"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
@@ -107,11 +108,34 @@
 			<Build ENG="Build" localized="Építés"/>
 			<Active ENG="Active" localized="Aktív"/>
 			<Repair ENG="Repair" localized="Javítás"/>
-			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
+			<Upgrade ENG="Upgrade" localized="Kutatás"/>
 			<Reload ENG="Reload" localized="Újratöltés"/>
 			<Host_Start ENG="Start Host" localized="Host Indítása"/>
 		</Button>
 		<Context>
+			<Clear ENG="Clear" localized="Eltakarítás"/>
+			<Build ENG="Build" localized="Építés"/>
+			<Transfer ENG="X-fer" localized="Átvitel"/>
+			<Sentry ENG="Sentry" localized="Örködés"/>
+			<Done ENG="Done" localized="Kész"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Stop ENG="Stop" localized="Állj"/>
+			<Destroy ENG="Delete" localized="Törlés"/>
+			<Repair ENG="Repair" localized="Javítás"/>
+			<Disable ENG="Disable" localized="Megbénítás"/>
+			<Steal ENG="Steal" localized="Lopás"/>
+			<Load ENG="Load" localized="Behívás"/>
+			<Active ENG="Activ." localized="Aktiválás"/>
+			<Dist ENG="Distr." localized="Distr."/>
+			<Reload ENG="Reload" localized="Újratöltés"/>
+			<Attack ENG="Attack" localized="Támadás"/>
+			<Seed ENG="Seed" localized="Seed"/>
+			<Start ENG="Start" localized="Elindítás"/>
+			<Research ENG="Research" localized="Kutatás"/>
+			<UpAll ENG="Up. all" localized="Összes fejl."/>
+			<Upgrades ENG="Upgrades" localized="Fejlesztések"/>
+			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
+			<Info ENG="Info" localized="Infó"/>
 		</Context>
 		<Hud>
 			<Files ENG="Files" localized="Fájlok"/>
@@ -123,8 +147,8 @@
 			<Survey ENG="Survey" localized="Vizsgál"/>
 			<Status ENG="Status" localized="Státusz"/>
 			<Color ENG="Color" localized="Szín"/>
-			<Hitpoints ENG="Hits" localized="Sebzés"/>
-			<Ammo ENG="Munition" localized="Muníció"/>
+			<Hitpoints ENG="Hits" localized="Élet"/>
+			<Ammo ENG="Ammunition" localized="Muníció"/>
 			<Range ENG="Range" localized="Lõtáv"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Grid ENG="Grid" localized="Rács"/>
@@ -135,26 +159,26 @@
 			<Shots ENG="Shots" localized="Lövés"/>
 			<Armor ENG="Armor" localized="Páncél"/>
 			<Total ENG="Total" localized="Összes"/>
-			<Energy ENG="Energy" localized="Áram"/>
+			<Energy ENG="Power" localized="Energia"/>
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 			<Teams ENG="Teams" localized="Munkások"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="minimális"/>
-			<Lower ENG="very low" localized="nagyon kevés"/>
-			<Low ENG="low" localized="kevés"/>
-			<Normal ENG="normal" localized="normál"/>
-			<Much ENG="much" localized="sok"/>
-			<More ENG="very much" localized="nagyon sok"/>
-			<Most ENG="most" localized="maximális"/>
-			<Thick ENG="thick" localized="sûrû"/>
-			<Thin ENG="thin" localized="ritka"/>
+			<Lowest ENG="Least" localized="Legkevesebb"/>
+			<Lower ENG="Lower" localized="Kevesebb"/>
+			<Low ENG="Low" localized="Kevés"/>
+			<Normal ENG="Normal" localized="Normál"/>
+			<Much ENG="Much" localized="Sok"/>
+			<More ENG="More" localized="Több"/>
+			<Most ENG="Most" localized="Legtöbb"/>
+			<Thick ENG="Dense" localized="Sûrû"/>
+			<Thin ENG="Sparse" localized="Ritka"/>
 			<On ENG="on" localized="Be"/>
 			<Off ENG="off" localized="Ki"/>
-			<Definite ENG="definite" localized="fix"/>
-			<Mobile ENG="mobile" localized="mobil"/>
-			<Type_Turns ENG="turns" localized="körökreosztott"/>
-			<Type_Simu ENG="simultaneous" localized="szimultán"/>
+			<Definite ENG="Built (original)" localized="Felépült (eredeti)"/>
+			<Mobile ENG="Must build" localized="Fel kell építeni"/>
+			<Type_Turns ENG="Turn based" localized="Körökre osztott"/>
+			<Type_Simu ENG="Simultaneous" localized="Egyidejû"/>
 		</Option>
 		<Settings>
 			<Preferences ENG="Preferences" localized="Beállítások"/>
@@ -179,8 +203,8 @@
 			<Player_Many ENG="Too many players!" localized="Túl sok játékos!"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplõ játékosnév: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelõ a neve!"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="Körökreosztott játéknál lennie kell host-nak!"/>
-			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible." localized="Kérlek állítsd be a játékosok számát. HotSeat esetén minimum kettõ. Maximum 8 játékos lehet. "/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="Körökre osztott játéknál lennie kell host-nak!"/>
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
 			<Player_Turn ENG="'s turn" localized=" köre következik"/>
 			<Player_Turn_End ENG=" ended turn" localized=" befejezte a körét"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyitható"/>
@@ -221,17 +245,17 @@
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 		</Vehicles>
 		<Comp>
-			<Fuel_Low ENG="Too low fuel, generator disabled!" localized="Nincs elég üzemanyag, generátor kikapcsolva!"/>
-			<Energy_Low ENG="Too low energy, disabled consumer!" localized="Nincs elég áram, fogyasztó kikapcsolva!"/>
-			<Metal_Low ENG="Too low metal, disabled consumer!" localized="nincs elég érc, fogyasztó kikapcsolva!"/>
-			<Gold_Low ENG="Too low gold, disabled consumer!" localized="Nincs elég arany, fogyasztó kikapcsolva!"/>
-			<Team_Low ENG="Too low teams, disabled consumer!" localized="Nincs elég munkás, felhasználó leállítva!"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Nincs elég üzemanyag, generátor leállítva!"/>
+			<Energy_Low ENG="Power needed, building turned off." localized="Nincs elég áram, fogyasztó leállítva!"/>
+			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elég nyersanyag, épület leállítva!"/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elég arany, feldolgozó leállítva!"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Nincs elég munkás, épület leállítva!"/>
 			<Building_Disabled ENG="Building disabled" localized="Épület mûködésképtelen"/>
-			<Energy_Optimize ENG="Energygeneration optimized" localized="Az energiafelhasználás optimizálva"/>
-			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Nincs elegendõ energia az elindításhoz!"/>
-			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Nincs elegendõ energia, generátor elindítva!"/>
-			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Nincs elegendõ üzemanyag az elindításhoz!"/>
-			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="A generátort nem lehet kikapcsolni, szükség van az energiára!"/>
+			<Energy_Optimize ENG="Power generator turned on." localized="Generátor bekapcsolva."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nem lehet elindítani, több energiára van szükség"/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Nincs elegendõ energia, generátor elindítva."/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nincs elegendõ üzemanyag az elindításhoz."/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="A generátort nem lehet kikapcsolni, szükség van az energiára."/>
 			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="Módosítások történetek: üzemanyag termelés +"/>
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Destroyed ENG="destroyed" localized="megsemmisült"/>
@@ -241,29 +265,29 @@
 			<Detected ENG="detected" localized="észlelve"/>
 			<Stolen ENG="stolen" localized="ellopva"/>
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
-			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost." localized="Valóban kilépsz? \n\nA nem mentett játékadatok elvesznek."/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Kilépés Megerõsítése\n\nA nem mentett játékadatok elvesznek."/>
 			<Turn_Start ENG="Start turn" localized="Kör kezdése"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Kérlek várd meg, míg az összes lépés végrehajtódik"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Fennmaradó lépések végrehajtása"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="A Sebzésnövelõ fejlesztés elkészült"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="A Lövésszám növelõ fejlesztés elkészült"/>
-			<Research_Range ENG="Research 'Range' completed" localized="A Lõtávnövelõ fejlesztés elkészült"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="A Páncélzatnövelõ fejlesztés elkészült"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Az Életerõnövelõ fejlesztés elkészült"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="A Sebességnövelõ fejlesztés elkészült"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="A Radar hatótávnövelõ fejlesztése elkészült"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="A Költséghatékonyságot javító fejlesztés elkészült"/>
+			<Research_Attack ENG="Attack research completed" localized="A Sebzésnövelõ fejlesztés elkészült"/>
+			<Research_Shoots ENG="Shots research completed" localized="A Lövésszám növelõ fejlesztés elkészült"/>
+			<Research_Range ENG="Range research completed" localized="A Lõtávnövelõ fejlesztés elkészült"/>
+			<Research_Armor ENG="Armor research completed" localized="A Páncélzatnövelõ fejlesztés elkészült"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Az Életnövelõ fejlesztés elkészült"/>
+			<Research_Speed ENG="Speed research completed" localized="A Sebességnövelõ fejlesztés elkészült"/>
+			<Research_Scan ENG="Scan research completed" localized="A Radar hatótávnövelõ fejlesztése elkészült"/>
+			<Research_Costs ENG="Cost research completed" localized="A Költséghatékonyságot javító fejlesztés elkészült"/>
 			<Working ENG="working" localized="mûködik"/>
-			<Waits ENG="waits" localized="várakozik"/>
+			<Waits ENG="waiting" localized="várakozik"/>
 			<Disabled ENG="disabled" localized="kikapcsolva"/>
-			<Producing ENG="Producing" localized="Termel"/>
-			<Producing_Fin ENG="finished producing" localized="Gyártás befejezve"/>
+			<Producing ENG="Building" localized="Épít"/>
+			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
 			<Moving ENG="moving" localized="mozog"/>
 			<Sentry ENG="on sentry" localized="õrtáll"/>
 			<Clearing ENG="Clearing" localized="Takarít"/>
-			<Clearing_Mine ENG="clearing mines" localized="Aknát szed fel"/>
-			<Clearing_Fin ENG="clearing done" localized="Elkészült a takarítás"/>
-			<Laying ENG="laying mines" localized="Aknát telepít"/>
+			<Clearing_Mine ENG="clearing mines" localized="aknát szed fel"/>
+			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
+			<Laying ENG="placing mines" localized="aknát telepít"/>
 			<Greenhorn ENG="Greenhorn" localized="Zöldfülû"/>
 			<Veteran ENG="Veteran" localized="Veterán"/>
 			<Description ENG="Description" localized="Leírás"/>
