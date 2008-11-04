@@ -219,3 +219,17 @@ void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, int iType )
 	message->pushChar ( iType );
 	Client->sendNetMessage( message );
 }
+
+void sendWantStartClear ( cVehicle *Vehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_START_CLEAR );
+	message->pushInt16 ( Vehicle->iID );
+	Client->sendNetMessage( message );
+}
+
+void sendWantStopClear ( cVehicle *Vehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_CLEAR );
+	message->pushInt16 ( Vehicle->iID );
+	Client->sendNetMessage( message );
+}

@@ -3025,6 +3025,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				bWasBuilding = Vehicle->IsBuilding;
 				Vehicle->IsBuilding = message->popBool();
 				Vehicle->BuildRounds = message->popInt16();
+				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
 
 				Data = &Vehicle->data;
@@ -3592,6 +3593,66 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			else
 			{
 				while ( vehicle->DetectedByPlayerList.Size() > 0 ) vehicle->DetectedByPlayerList.Delete(0);
+			}
+		}
+		break;
+	case GAME_EV_CLEAR_ANSWER:
+		{
+			switch ( message->popInt16() )
+			{
+			case 0:
+				{
+					int id = message->popInt16();
+					cVehicle *Vehicle = getVehicleFromID ( id );
+					if ( Vehicle == NULL )
+					{
+						cLog::write("Client: Can not find vehicle with id " + iToStr ( id ) + " for clearing", LOG_TYPE_NET_WARNING);
+						break;
+					}
+
+					Vehicle->ClearingRounds = message->popInt16();
+					int bigoffset = message->popInt16();
+					if ( bigoffset >= 0 ) Map->moveVehicleBig ( Vehicle, bigoffset );
+					Vehicle->IsClearing = true;
+
+					if ( SelectedVehicle == Vehicle )
+					{
+						StopFXLoop( Client->iObjectStream );
+						Client->iObjectStream = Vehicle->PlayStram();
+					}
+				}
+				break;
+			case 1:
+				// TODO: add blocked message
+				// addMessage ( "blocked" );
+				break;
+			case 2:
+				cLog::write("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+	case GAME_EV_STOP_CLEARING:
+		{
+			int id = message->popInt16();
+			cVehicle *Vehicle = getVehicleFromID ( id );
+			if ( Vehicle == NULL )
+			{
+				cLog::write("Client: Can not find vehicle with id " + iToStr ( id ) + " for stop clearing", LOG_TYPE_NET_WARNING);
+				break;
+			}
+
+			int bigoffset = message->popInt16();
+			if ( bigoffset >= 0 ) Map->moveVehicle ( Vehicle, bigoffset );
+			Vehicle->IsClearing = false;
+			Vehicle->ClearingRounds = 0;
+
+			if ( SelectedVehicle == Vehicle )
+			{
+				StopFXLoop( Client->iObjectStream );
+				Client->iObjectStream = Vehicle->PlayStram();
 			}
 		}
 		break;

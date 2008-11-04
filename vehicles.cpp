@@ -995,16 +995,41 @@ int cVehicle::refreshData ()
 	}
 
 	// Räumen:
-	/*if ( IsClearing && ClearingRounds )
+	if ( IsClearing && ClearingRounds )
 	{
 		ClearingRounds--;
 
-		if ( ClearingRounds == 0 && Client->SelectedVehicle == this )
+		if ( ClearingRounds == 0 )
 		{
-			StopFXLoop ( Client->iObjectStream );
-			Client->iObjectStream = PlayStram();
+			IsClearing = false;
+			cBuilding *Rubble = Server->Map->GO[PosX+PosY*Server->Map->size].subbase;
+			if ( data.is_big )
+			{
+				Server->Map->moveVehicle ( this, BuildBigSavedPos );
+				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
+				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
+				{
+					sendStopClear ( this, BuildBigSavedPos, *SeenByPlayerList[i] );
+				}
+			}
+			else
+			{
+				sendStopClear ( this, -1, owner->Nr );
+				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
+				{
+					sendStopClear ( this, -1, *SeenByPlayerList[i] );
+				}
+			}
+			data.cargo += Rubble->RubbleValue;
+			if ( data.cargo > data.max_cargo ) data.cargo = data.max_cargo;
+			Server->deleteRubble ( Rubble );
 		}
-	}*/
+		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
+		{
+			sendUnitData ( this, *SeenByPlayerList[i] );
+		}
+		sendUnitData ( this, owner->Nr );
+	}
 	return iReturn;
 }
 
@@ -2020,23 +2045,10 @@ void cVehicle::DrawMenu ( void )
 			{
 				sendWantStopBuilding ( iID );
 			}
-			/*else
+			else if ( IsClearing )
 			{
-				IsClearing = false;
-
-				if ( ClearBig )
-				{
-					Client->Map->GO[BandX+1+BandY*Client->Map->size].vehicle = NULL;
-					Client->Map->GO[BandX+1+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-					Client->Map->GO[BandX+ ( BandY+1 ) *Client->Map->size].vehicle = NULL;
-				}
-
-				if ( Client->SelectedVehicle && Client->SelectedVehicle == this )
-				{
-					StopFXLoop ( Client->iObjectStream );
-					Client->iObjectStream = PlayStram();
-				}
-			}*/
+				sendWantStopClear ( this );
+			}
 
 			return;
 		}
@@ -2058,27 +2070,7 @@ void cVehicle::DrawMenu ( void )
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
-			// TODO: start clearing
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			/*IsClearing = true;
-			ClearingRounds = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->DirtValue / 4 + 1;
-			ClearBig = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->data.is_big;
-			// Den Clearing Sound machen:
-			StopFXLoop ( Client->iObjectStream );
-			Client->iObjectStream = PlayStram();
-			// Umsetzen, wenn es großer Dreck ist:
-
-			if ( ClearBig )
-			{
-				PosX = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->PosX;
-				PosY = Client->Map->GO[PosX+PosY*Client->Map->size].subbase->PosY;
-				BandX = PosX;
-				BandY = PosY;
-				Client->Map->GO[PosX+PosY*Client->Map->size].vehicle = this;
-				Client->Map->GO[PosX+1+PosY*Client->Map->size].vehicle = this;
-				Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].vehicle = this;
-				Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].vehicle = this;
-			}*/
+			sendWantStartClear ( this );
 			return;
 		}
 

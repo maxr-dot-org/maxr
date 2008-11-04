@@ -59,7 +59,9 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SUPPLY,					// rearms or repairs a unit
 	GAME_EV_ADD_RUBBLE,				// adds a rubble field to the client
 	GAME_EV_DETECTION_STATE,		// informs a client wether a vehicle has been detected
-	DEBUG_CHECK_VEHICLE_POSITIONS,	// sends all vehicle positions to the clients to find async vehicles
+	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
+	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
+	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
 enum CHAT_MESSAGE_TYPES
@@ -186,6 +188,16 @@ void sendChangeSentry ( int iUnitID, bool bVehicle );
 *@author alzi alias DoctorDeath
 */
 void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, int iType );
+/**
+* sends that the client wants to start clearing the field under the unit
+*@author alzi alias DoctorDeath
+*/
+void sendWantStartClear ( cVehicle *Vehicle );
+/**
+* sends that the client wants to stop clearing the field under the unit
+*@author alzi alias DoctorDeath
+*/
+void sendWantStopClear ( cVehicle *Vehicle );
 
 
 #endif // clienteventsH

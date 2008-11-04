@@ -1206,6 +1206,85 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_START_CLEAR:
+		{
+			int id = message->popInt16();
+			cVehicle *Vehicle = getVehicleFromID ( id );
+			if ( Vehicle == NULL )
+			{
+				cLog::write("Server: Can not find vehicle with id " + iToStr ( id ) + " for clearing", LOG_TYPE_NET_WARNING);
+				break;
+			}
+
+			int off = Vehicle->PosX+Vehicle->PosY*Map->size;
+			if ( Map->GO[off].subbase && Map->GO[off].subbase->owner == NULL )
+			{
+				int rubbleoffset = -1;
+				cBuilding *Rubble = Map->GO[off].subbase;
+				if ( Rubble->data.is_big )
+				{
+					rubbleoffset = Rubble->PosX+Rubble->PosY*Map->size;
+					if ( ( Map->GO[rubbleoffset].vehicle && rubbleoffset != off ) ||
+						( Map->GO[rubbleoffset+1].vehicle && rubbleoffset+1 != off ) ||
+						( Map->GO[rubbleoffset+Map->size].vehicle && rubbleoffset+Map->size != off ) ||
+						( Map->GO[rubbleoffset+Map->size+1].vehicle && rubbleoffset+Map->size+1 != off ) )
+					{
+						sendClearAnswer ( 1, Vehicle, 0, -1, Vehicle->owner->Nr );
+						break;
+					}
+					else
+					{
+						Vehicle->BuildBigSavedPos = off;
+						Map->moveVehicleBig ( Vehicle, rubbleoffset );
+					}
+				}
+
+				Vehicle->IsClearing = true;
+				Vehicle->ClearingRounds = Rubble->RubbleValue/4+1;
+
+				sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
+				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
+				{
+					sendClearAnswer( 0, Vehicle, 0, rubbleoffset, *Vehicle->SeenByPlayerList[i] );
+				}
+			}
+			else sendClearAnswer ( 2, Vehicle, 0, -1, Vehicle->owner->Nr );
+		}
+		break;
+	case GAME_EV_WANT_STOP_CLEAR:
+		{
+			int id = message->popInt16();
+			cVehicle *Vehicle = getVehicleFromID ( id );
+			if ( Vehicle == NULL )
+			{
+				cLog::write("Server: Can not find vehicle with id " + iToStr ( id ) + " for stop clearing", LOG_TYPE_NET_WARNING);
+				break;
+			}
+
+			if ( Vehicle->IsClearing )
+			{
+				Vehicle->IsClearing = false;
+				Vehicle->ClearingRounds = 0;
+
+				if ( Vehicle->data.is_big )
+				{
+					Map->moveVehicle ( Vehicle, Vehicle->BuildBigSavedPos );
+					sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr );
+					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+					{
+						sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, *Vehicle->SeenByPlayerList[i] );
+					}
+				}
+				else
+				{
+					sendStopClear ( Vehicle, -1, Vehicle->owner->Nr );
+					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+					{
+						sendStopClear ( Vehicle, -1, *Vehicle->SeenByPlayerList[i] );
+					}
+				}
+			}
+		}
 	default:
 		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -1926,8 +2005,6 @@ void cServer::makeTurnEnd ()
 	// do research:
 	//game->ActivePlayer->DoResearch();
 
-	// collect trash:
-	//collectTrash();
 
 	// make autosave
 	if ( SettingsData.bAutoSave )
@@ -2346,7 +2423,7 @@ void cServer::deleteRubble( cBuilding* rubble )
 	if ( !rubble->prev )
 	{
 		neutralBuildings = rubble->next;
-		rubble->next->prev = NULL;
+		if ( rubble->next ) rubble->next->prev = NULL;
 	}
 	else
 	{

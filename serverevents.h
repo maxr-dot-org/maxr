@@ -47,7 +47,9 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
 	GAME_EV_WANT_CHANGE_SENTRY,		// a client wants to change the sentry status of a unit
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
-	GAME_EV_WANT_SUPPLY				// a clients wants to rearm or repair a unit
+	GAME_EV_WANT_SUPPLY,			// a clients wants to rearm or repair a unit
+	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
+	GAME_EV_WANT_STOP_CLEAR			// a bulldowzer wants to stop the clearing
 };
 
 /**
@@ -222,5 +224,8 @@ void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPl
 void sendDetectionState( cVehicle* vehicle );
 
 void sendCheckVehiclePositions(cPlayer* p = NULL);
+
+void sendClearAnswer ( int answertype, cVehicle *Vehicle, int turns, int bigoffset, int iPlayer );
+void sendStopClear ( cVehicle *Vehicle, int bigoffset, int iPlayer );
 
 #endif // servereventsH
