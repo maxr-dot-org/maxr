@@ -989,7 +989,7 @@ int cVehicle::refreshData ()
 
 		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
 		{
-			sendUnitData ( this, *SeenByPlayerList[i] );
+			sendUnitData ( this, SeenByPlayerList[i]->Nr );
 		}
 		sendUnitData ( this, owner->Nr );
 	}
@@ -1009,7 +1009,7 @@ int cVehicle::refreshData ()
 				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
 				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, BuildBigSavedPos, *SeenByPlayerList[i] );
+					sendStopClear ( this, BuildBigSavedPos, SeenByPlayerList[i]->Nr );
 				}
 			}
 			else
@@ -1017,7 +1017,7 @@ int cVehicle::refreshData ()
 				sendStopClear ( this, -1, owner->Nr );
 				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, -1, *SeenByPlayerList[i] );
+					sendStopClear ( this, -1, SeenByPlayerList[i]->Nr );
 				}
 			}
 			data.cargo += Rubble->RubbleValue;
@@ -1026,7 +1026,7 @@ int cVehicle::refreshData ()
 		}
 		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
 		{
-			sendUnitData ( this, *SeenByPlayerList[i] );
+			sendUnitData ( this, SeenByPlayerList[i]->Nr );
 		}
 		sendUnitData ( this, owner->Nr );
 	}

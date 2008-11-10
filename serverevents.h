@@ -227,5 +227,6 @@ void sendCheckVehiclePositions(cPlayer* p = NULL);
 
 void sendClearAnswer ( int answertype, cVehicle *Vehicle, int turns, int bigoffset, int iPlayer );
 void sendStopClear ( cVehicle *Vehicle, int bigoffset, int iPlayer );
+void sendNoFog ( int iPlayer );
 
 #endif // servereventsH

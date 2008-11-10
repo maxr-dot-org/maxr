@@ -64,7 +64,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 		{
 			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 			message->pushInt16( building->iID );
-			Server->sendNetMessage(message, *building->SeenByPlayerList[i]);
+			Server->sendNetMessage(message, building->SeenByPlayerList[i]->Nr );
 		}
 
 		//send message to owner, since he is not in the SeenByPlayerList
@@ -94,7 +94,7 @@ void sendDeleteUnit ( cVehicle* vehicle, int iClient )
 
 			message->pushInt16( vehicle->iID );
 
-			Server->sendNetMessage( message, *vehicle->SeenByPlayerList[i] );
+			Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
 		}
 	}
 	else
@@ -590,7 +590,7 @@ void sendCheckVehiclePositions(cPlayer* p )
 				int x;
 				for ( x = 0; x < vehicle->SeenByPlayerList.Size(); x++ )
 				{
-					if ( *vehicle->SeenByPlayerList[x] == player->Nr ) break;
+					if ( vehicle->SeenByPlayerList[x] == player ) break;
 				}
 				if ( x < vehicle->SeenByPlayerList.Size() || vehicle->owner == player )
 				{
@@ -629,5 +629,11 @@ void sendStopClear ( cVehicle *Vehicle, int bigoffset, int iPlayer )
 	cNetMessage* message = new cNetMessage( GAME_EV_STOP_CLEARING );
 	message->pushInt16( bigoffset );
 	message->pushInt16( Vehicle->iID );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendNoFog ( int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_NOFOG );
 	Server->sendNetMessage( message, iPlayer );
 }

@@ -57,6 +57,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	Credits=0;
 	ReportForschungFinished=false;
 	this->iSocketNum = iSocketNum;
+	isDefeated = false;
 }
 
 cPlayer::cPlayer(const cPlayer &Player) : base(this)
@@ -855,27 +856,6 @@ void cPlayer::DoTheResearch ( int i )
 				break;
 		}
 	}
-}
-
-
-// Prüft, ob der Spieler besiegt ist:
-bool cPlayer::IsDefeated ( void )
-{
-	cBuilding *b;
-	// int i;
-	// if(VehicleList)return false;
-	b=BuildingList;
-	while ( b )
-	{
-		if ( !b->data.is_bridge&&
-		        !b->data.is_connector&&
-		        !b->data.is_expl_mine&&
-		        !b->data.is_pad&&
-		        !b->data.is_platform&&
-		        !b->data.is_road ) return false;
-		b=b->next;
-	}
-	return true;
 }
 
 // Fügt ein Building in die Lock-Liste ein:

@@ -117,7 +117,7 @@ public:
 	/** the identification number of this unit */
 	unsigned int iID;
 	/** a list were the numbers of all players who can see this building are stored in */
-	cList<int*> SeenByPlayerList;
+	cList<cPlayer*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte

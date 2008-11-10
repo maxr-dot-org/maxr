@@ -61,6 +61,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DETECTION_STATE,		// informs a client wether a vehicle has been detected
 	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
+	GAME_EV_NOFOG,					// the player can disable his fog
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 

@@ -119,6 +119,8 @@ private:
 	int iTimer0, iTimer1, iTimer2;
 	/** ID of the timer */
 	SDL_TimerID TimerID;
+	/** if this is true the map will be opened for a defeated player */
+	bool openMapDefeat;
 
 
 	/**
@@ -163,6 +165,11 @@ private:
 	*@param bChangeTurn true if all players have ended their turn and the turnnumber has changed
 	*/
 	void makeTurnEnd ();
+	/**
+	* checks whether a player is defeated
+	*@author alzi alias DoctorDeath
+	*/
+	void checkDefeats ();
 	/**
 	* rechecks the end actions when a player wanted to finish his turn
 	*@author alzi alias DoctorDeath

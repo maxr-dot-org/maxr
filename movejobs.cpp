@@ -325,7 +325,7 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	sendUnitData ( Vehicle, Vehicle->owner->Nr );
 	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 	{
-		sendUnitData ( Vehicle, *Vehicle->SeenByPlayerList[i] );
+		sendUnitData ( Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
 	}
 
 	if ( Vehicle->ServerMoveJob )
@@ -461,7 +461,7 @@ bool cServerMoveJob::checkMove()
 		{
 			for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
-				sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, *Vehicle->SeenByPlayerList[i]);
+				sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, Vehicle->SeenByPlayerList[i]->Nr );
 			}
 			sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, Vehicle->owner->Nr );
 		}
@@ -496,7 +496,7 @@ bool cServerMoveJob::checkMove()
 	// send move command to all players who can see the unit
 	for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 	{
-		sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, *Vehicle->SeenByPlayerList[i]);
+		sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->SeenByPlayerList[i]->Nr );
 	}
 	sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->owner->Nr );
 	return true;
@@ -619,7 +619,7 @@ void cServerMoveJob::moveVehicle()
 				sendUnitData( Vehicle, Vehicle->owner->Nr );
 				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 				{
-					sendUnitData(Vehicle, *Vehicle->SeenByPlayerList[i]);
+					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
 				}
 			}
 		}

@@ -400,6 +400,16 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_SUPPLY");
 	case GAME_EV_DETECTION_STATE:
 		return string("GAME_EV_DETECTION_STATE");
+	case GAME_EV_CLEAR_ANSWER:
+		return string("GAME_EV_CLEAR_ANSWER");
+	case GAME_EV_STOP_CLEARING:
+		return string("GAME_EV_STOP_CLEARING");
+	case GAME_EV_NOFOG:
+		return string("GAME_EV_NOFOG");
+	case GAME_EV_WANT_START_CLEAR:
+		return string("GAME_EV_WANT_START_CLEAR");
+	case GAME_EV_WANT_STOP_CLEAR:
+		return string("GAME_EV_WANT_STOP_CLEAR");
 	default:
 		return iToStr( iType );
 	}

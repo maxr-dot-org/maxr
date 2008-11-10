@@ -3656,6 +3656,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_NOFOG:
+		memset ( ActivePlayer->ScanMap, 1, Map->size*Map->size );
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -4204,7 +4207,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		sTmp = "seen by players: owner";
 		for (int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
 		{
-			sTmp += ", \"" + getPlayerFromNumber(*Vehicle->SeenByPlayerList[i])->name + "\"";
+			sTmp += ", \"" + Vehicle->SeenByPlayerList[i]->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;
@@ -4275,7 +4278,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		sTmp = "seen by players: owner";
 		for (int i = 0; i < Building->SeenByPlayerList.Size(); i++)
 		{
-			sTmp += ", \"" + getPlayerFromNumber(*Building->SeenByPlayerList[i])->name + "\"";
+			sTmp += ", \"" + Building->SeenByPlayerList[i]->name + "\"";
 		}
 		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 		*iY+=8;

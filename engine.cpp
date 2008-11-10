@@ -849,7 +849,7 @@ void cEngine::CheckDefeat ( void )
 	for (i = 0; i < game->PlayerList->Size(); i++)
 	{
 		p = (*game->PlayerList)[i];
-		if ( p->IsDefeated() )
+		if ( p->isDefeated )
 		{
 			sTmpString = lngPack.i18n( "Text~Multiplayer~Player") + " ";
 			sTmpString += p->name + " ";

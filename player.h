@@ -94,6 +94,7 @@ public:
   cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
   int iSocketNum;			// Number of socket over which this player is connected in network game
 							// if MAX_CLIENTS its the lokal connected player; -1 for unknown
+  bool isDefeated;			// true if the player has been defeated
 
   void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
   void DoScan(void);
@@ -109,7 +110,6 @@ public:
   void StopAReserach(void);
   void DoResearch(void);
   void DoTheResearch(int i);
-  bool IsDefeated(void);
   void AddLock(cBuilding *b);
   void AddLock(cVehicle *v);
   void DeleteLock(cBuilding *b);
