@@ -233,3 +233,9 @@ void sendWantStopClear ( cVehicle *Vehicle )
 	message->pushInt16 ( Vehicle->iID );
 	Client->sendNetMessage( message );
 }
+
+void sendAbortWaiting ()
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_ABORT_WAITING );
+	Client->sendNetMessage( message );
+}

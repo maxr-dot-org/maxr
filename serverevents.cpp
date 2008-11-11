@@ -644,3 +644,22 @@ void sendDefeated ( cPlayer *Player, int iPlayer )
 	message->pushInt16( Player->Nr );
 	Server->sendNetMessage( message, iPlayer );
 }
+
+void sendFreeze ( int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_FREEZE );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendDefreeze ( int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DEFREEZE );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendDeletePlayer ( cPlayer *Player, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DEL_PLAYER );
+	message->pushInt16( Player->Nr );
+	Server->sendNetMessage( message, iPlayer );
+}

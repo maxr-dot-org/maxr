@@ -49,7 +49,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
 	GAME_EV_WANT_SUPPLY,			// a clients wants to rearm or repair a unit
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
-	GAME_EV_WANT_STOP_CLEAR			// a bulldowzer wants to stop the clearing
+	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
+	GAME_EV_ABORT_WAITING			// the player wants to abort waiting for the reconnect of a disconnected player
 };
 
 /**
@@ -245,5 +246,12 @@ void sendNoFog ( int iPlayer );
 *@author alzi alias DoctorDeath
 */
 void sendDefeated ( cPlayer *Player, int iPlayerNum = -1 );
+/**
+* sends that a client has to wait untill he will be defrezzed
+*@author alzi alias DoctorDeath
+*/
+void sendFreeze ( int iPlayer = -1 );
+void sendDefreeze ( int iPlayer = -1 );
+void sendDeletePlayer ( cPlayer *Player, int iPlayer = -1 );
 
 #endif // servereventsH

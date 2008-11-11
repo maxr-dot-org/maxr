@@ -63,6 +63,9 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
 	GAME_EV_DEFEATED,				// a player has been defeated
+	GAME_EV_FREEZE,					// a client has to be freezed
+	GAME_EV_DEFREEZE,				// a client has to be defreezed
+	GAME_EV_DEL_PLAYER,				// a client has to delete a player
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -200,6 +203,11 @@ void sendWantStartClear ( cVehicle *Vehicle );
 *@author alzi alias DoctorDeath
 */
 void sendWantStopClear ( cVehicle *Vehicle );
+/**
+* sends that the client wants to abort waiting for the reconnect of a disconnected player
+*@author alzi alias DoctorDeath
+*/
+void sendAbortWaiting ();
 
 
 #endif // clienteventsH

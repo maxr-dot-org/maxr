@@ -192,9 +192,15 @@ void cServer::run()
 				case TCP_CLOSEEVENT:
 					{
 						// Socket should be closed
-						network->close ( ((Sint16 *)event->user.data1)[0] );
-						// Lost Connection
+						int iSocketNumber = ((Sint16 *)event->user.data1)[0];
+						network->close ( iSocketNumber );
 
+						// resort socket numbers of the players
+						for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+						{
+							if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS ) (*PlayerList)[i]->iSocketNum--;
+						}
+						// push lost connection message
 						cNetMessage message(GAME_EV_LOST_CONNECTION );
 						message.pushInt16( ((Sint16*)event->user.data1)[0] );
 						pushEvent( message.getGameEvent() );
@@ -241,31 +247,42 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_LOST_CONNECTION:
 		{
 			int iSocketNum = message->popInt16();
-			// This is just temporary so doesn't need to be translated
-			string sMessage = "Lost connection to ";
-			// get the name of player to who the connection has been lost
+			cPlayer *Player = NULL;
+			// get the player to who the connection has been lost
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
-				cPlayer const* const p = (*PlayerList)[i];
-				if (p->iSocketNum == iSocketNum)
+				if ( (*PlayerList)[i]->iSocketNum == iSocketNum )
 				{
-					sMessage += p->name;
+					Player = (*PlayerList)[i];
 					break;
 				}
 			}
-			// get the lokal player number
-			int iPlayerNum;
+			if ( !Player ) break;
+
+			// freeze clients
+			sendFreeze ();
+			// TODO: translate
+			sendChatMessageToClient( "Lost connection to " + Player->name, USER_MESSAGE );
+
+			// get the local player of the server
+			cPlayer *LocalPlayer;
 			for ( int i = 0; i < PlayerList->Size(); i++ )
 			{
-				cPlayer const* const p = (*PlayerList)[i];
-				if (p->iSocketNum == MAX_CLIENTS)
+				if ( (*PlayerList)[i]->iSocketNum == MAX_CLIENTS )
 				{
-					iPlayerNum = p->Nr;
+					LocalPlayer = (*PlayerList)[i];
 					break;
 				}
 			}
-			// send a message to the lokal client
-			sendChatMessageToClient( sMessage.c_str(), USER_MESSAGE, iPlayerNum );
+			if ( !LocalPlayer )
+			{
+				deletePlayer ( Player );
+				sendDefreeze ();
+			}
+			else
+			{
+				DisconnectedPlayerList.Add ( Player );
+			}
 		}
 		break;
 	case GAME_EV_CHAT_CLIENT:
@@ -1289,6 +1306,30 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 			}
 		}
+	case GAME_EV_ABORT_WAITING:
+		{
+			if ( DisconnectedPlayerList.Size() < 1 ) break; 
+			// only server player can abort the waiting
+			cPlayer *LocalPlayer;
+			for ( int i = 0; i < PlayerList->Size(); i++ )
+			{
+				if ( (*PlayerList)[i]->iSocketNum == MAX_CLIENTS )
+				{
+					LocalPlayer = (*PlayerList)[i];
+					break;
+				}
+			}
+			if ( message->iPlayerNr != LocalPlayer->Nr ) break;
+
+			// delete disconnected players
+			for ( unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++ )
+			{
+				deletePlayer ( DisconnectedPlayerList[i] );
+				DisconnectedPlayerList.Delete( i );
+			}
+			sendDefreeze();
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2491,4 +2532,29 @@ void cServer::deleteRubble( cBuilding* rubble )
 
 	delete rubble;
 
+}
+
+void cServer::deletePlayer( cPlayer *Player )
+{
+	cVehicle *Vehicle = Player->VehicleList;
+	while ( Vehicle )
+	{
+		deleteUnit ( Vehicle );
+		Vehicle = Player->VehicleList;
+	}
+	cBuilding *Building = Player->BuildingList;
+	while ( Building )
+	{
+		deleteUnit ( Building );
+		Building = Player->BuildingList;
+	}
+	sendDeletePlayer ( Player );
+	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	{
+		if ( Player == (*PlayerList)[i] )
+		{
+			PlayerList->Delete ( i );
+			delete Player;
+		}
+	}
 }

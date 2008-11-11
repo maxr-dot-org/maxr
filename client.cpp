@@ -3670,6 +3670,36 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
 		}
 		break;
+	case GAME_EV_FREEZE:
+		bWaitForOthers = true;
+		waitForOtherPlayer ( -1 );
+		break;
+	case GAME_EV_DEFREEZE:
+		bWaitForOthers = false;
+		break;
+	case GAME_EV_DEL_PLAYER:
+		{
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( Player == ActivePlayer )
+			{
+				cLog::write ( "Client: Cannot delete own player!", LOG_TYPE_NET_WARNING );
+				break;
+			}
+			if ( Player->VehicleList || Player->BuildingList )
+			{
+				cLog::write ( "Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR );
+			}
+			addMessage ( Player->name + " has left the game." );
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				if ( Player == (*PlayerList)[i] )
+				{
+					delete (*PlayerList)[i];
+					PlayerList->Delete ( i );
+				}
+			}
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -3941,7 +3971,22 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 			handleMessages();
 		}
 		// display waiting text
-		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
+		if ( iPlayerNum != -1 ) font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
+		else
+		{
+			// TODO: translate!
+			font->showTextCentered( 320, 235, "Waiting for player to reconnect.", LATIN_BIG );
+			font->showTextCentered( 320, 235+font->getFontHeight(LATIN_BIG), "Server, press F2 to abort waiting.", LATIN_NORMAL );
+
+			Uint8 *keystate;
+			keystate = SDL_GetKeyState( NULL );
+			static bool aborted = false;
+			if ( keystate[SDLK_F2] && !aborted )
+			{
+				sendAbortWaiting ();
+				aborted = true;
+			}
+		}
 		// draw the mouse
 		if ( mouse->x != iLastX || mouse->y != iLastY || bFlagDraw )
 		{

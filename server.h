@@ -121,6 +121,8 @@ private:
 	SDL_TimerID TimerID;
 	/** if this is true the map will be opened for a defeated player */
 	bool openMapDefeat;
+	/** List with disconnected players */
+	cList<cPlayer*> DisconnectedPlayerList;
 
 
 	/**
@@ -197,6 +199,11 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs();
+	/**
+	* deletes a player and all his units
+	*@author alzi alias DoctorDeath
+	*/
+	void deletePlayer( cPlayer *Player );
 
 	/**
 	* gets the vehicle with the ID
