@@ -62,6 +62,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_CLEAR_ANSWER,			// the answer to a clearing request
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
+	GAME_EV_DEFEATED,				// a player has been defeated
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 

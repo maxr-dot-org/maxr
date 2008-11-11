@@ -410,6 +410,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_START_CLEAR");
 	case GAME_EV_WANT_STOP_CLEAR:
 		return string("GAME_EV_WANT_STOP_CLEAR");
+	case GAME_EV_DEFEATED:
+		return string("GAME_EV_DEFEATED");
 	default:
 		return iToStr( iType );
 	}

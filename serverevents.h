@@ -225,8 +225,25 @@ void sendDetectionState( cVehicle* vehicle );
 
 void sendCheckVehiclePositions(cPlayer* p = NULL);
 
+/**
+* sends whether and how the unit has to clean the field
+*@author alzi alias DoctorDeath
+*/
 void sendClearAnswer ( int answertype, cVehicle *Vehicle, int turns, int bigoffset, int iPlayer );
+/**
+* sends that a unit has to stop clearing
+*@author alzi alias DoctorDeath
+*/
 void sendStopClear ( cVehicle *Vehicle, int bigoffset, int iPlayer );
+/**
+* sends that the player has to set his hole ScanMap to 1
+*@author alzi alias DoctorDeath
+*/
 void sendNoFog ( int iPlayer );
+/**
+* sends that a player has been defeated
+*@author alzi alias DoctorDeath
+*/
+void sendDefeated ( cPlayer *Player, int iPlayerNum = -1 );
 
 #endif // servereventsH

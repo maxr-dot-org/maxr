@@ -2061,7 +2061,7 @@ void cServer::checkDefeats ()
 			if ( Building != NULL ) continue;
 
 			Player->isDefeated = true;
-			sendChatMessageToClient ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") + ".", USER_MESSAGE );
+			sendDefeated ( Player );
 
 			if ( openMapDefeat )
 			{

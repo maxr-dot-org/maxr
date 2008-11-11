@@ -3659,6 +3659,17 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_NOFOG:
 		memset ( ActivePlayer->ScanMap, 1, Map->size*Map->size );
 		break;
+	case GAME_EV_DEFEATED:
+		{
+			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( Player == NULL )
+			{
+				cLog::write ( "Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING );
+				break;
+			}
+			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

@@ -637,3 +637,10 @@ void sendNoFog ( int iPlayer )
 	cNetMessage* message = new cNetMessage( GAME_EV_NOFOG );
 	Server->sendNetMessage( message, iPlayer );
 }
+
+void sendDefeated ( cPlayer *Player, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DEFEATED );
+	message->pushInt16( Player->Nr );
+	Server->sendNetMessage( message, iPlayer );
+}
