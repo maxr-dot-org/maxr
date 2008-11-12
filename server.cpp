@@ -1225,10 +1225,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( !Buildings.end )
 			{
 				int rubbleoffset = -1;
-				cBuilding *Rubble = &(*Buildings);
-				if ( Rubble->data.is_big )
+				if ( Buildings->data.is_big )
 				{
-					rubbleoffset = Rubble->PosX+Rubble->PosY*Map->size;
+					rubbleoffset = Buildings->PosX+Buildings->PosY*Map->size;
 					if ( ( !Map->possiblePlace ( Vehicle, rubbleoffset ) && rubbleoffset != off ) ||
 						( !Map->possiblePlace ( Vehicle, rubbleoffset+1 ) && rubbleoffset+1 != off ) ||
 						( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size ) && rubbleoffset+Map->size != off ) ||
@@ -1245,7 +1244,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				Vehicle->IsClearing = true;
-				Vehicle->ClearingRounds = Rubble->RubbleValue/4+1;
+				Vehicle->ClearingRounds = Buildings->RubbleValue/4+1;
 
 				sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
 				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
