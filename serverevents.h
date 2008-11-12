@@ -50,7 +50,9 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_SUPPLY,			// a clients wants to rearm or repair a unit
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
-	GAME_EV_ABORT_WAITING			// the player wants to abort waiting for the reconnect of a disconnected player
+	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
+	GAME_EV_IDENTIFICATION,			// a message with the name of the player who wants to reconnect
+	GAME_EV_RECON_SUCESS,			// a client has reconnected sucsessfuly and is ready to receive his game data
 };
 
 /**
@@ -119,7 +121,7 @@ void sendUnitData ( cBuilding *Building, int iPlayer );
 *@param iType spezifies if this is an error message, info message from the Server or a text message from an other player
 *@param iPlayer -1 the playernumber or -1 for broatcast
 */
-void sendChatMessageToClient( string message, int iType, int iPlayer = -1 );
+void sendChatMessageToClient( string message, int iType, int iPlayer = -1, string inserttext = "" );
 
 /**
 * sends all nessesary information to all clients to start the building
@@ -251,7 +253,25 @@ void sendDefeated ( cPlayer *Player, int iPlayerNum = -1 );
 *@author alzi alias DoctorDeath
 */
 void sendFreeze ( int iPlayer = -1 );
+/**
+* sends that the client can abort waiting
+*@author alzi alias DoctorDeath
+*/
 void sendDefreeze ( int iPlayer = -1 );
+/**
+* sends that a player has to be deleted
+*@author alzi alias DoctorDeath
+*/
 void sendDeletePlayer ( cPlayer *Player, int iPlayer = -1 );
+/**
+* the server wants to get an identification of the new connected player
+*@author alzi alias DoctorDeath
+*/
+void sendRequestIdentification ( int iSocket );
+/**
+* the server gives his ok to the reconnection
+*@author alzi alias DoctorDeath
+*/
+void sendOKReconnect ( cPlayer *Player );
 
 #endif // servereventsH

@@ -180,6 +180,7 @@ void cServer::run()
 				switch ( event->user.code )
 				{
 				case TCP_ACCEPTEVENT:
+					sendRequestIdentification ( ((Sint16*)event->user.data1)[0] );
 					break;
 				case TCP_RECEIVEEVENT:
 					// new Data received
@@ -201,7 +202,7 @@ void cServer::run()
 							if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS ) (*PlayerList)[i]->iSocketNum--;
 						}
 						// push lost connection message
-						cNetMessage message(GAME_EV_LOST_CONNECTION );
+						cNetMessage message( GAME_EV_LOST_CONNECTION );
 						message.pushInt16( ((Sint16*)event->user.data1)[0] );
 						pushEvent( message.getGameEvent() );
 					}
@@ -261,28 +262,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			// freeze clients
 			sendFreeze ();
-			// TODO: translate
-			sendChatMessageToClient( "Lost connection to " + Player->name, USER_MESSAGE );
+			sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
 
-			// get the local player of the server
-			cPlayer *LocalPlayer;
-			for ( int i = 0; i < PlayerList->Size(); i++ )
-			{
-				if ( (*PlayerList)[i]->iSocketNum == MAX_CLIENTS )
-				{
-					LocalPlayer = (*PlayerList)[i];
-					break;
-				}
-			}
-			if ( !LocalPlayer )
-			{
-				deletePlayer ( Player );
-				sendDefreeze ();
-			}
-			else
-			{
-				DisconnectedPlayerList.Add ( Player );
-			}
+			DisconnectedPlayerList.Add ( Player );
+
+			memset( Player->ScanMap, 0, Map->size*Map->size );
 		}
 		break;
 	case GAME_EV_CHAT_CLIENT:
@@ -1328,6 +1312,64 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				DisconnectedPlayerList.Delete( i );
 			}
 			sendDefreeze();
+		}
+		break;
+	case GAME_EV_IDENTIFICATION:
+		{
+			string playerName = message->popString();
+			for ( unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++ )
+			{
+				if ( !playerName.compare ( DisconnectedPlayerList[i]->name ) )
+				{
+					DisconnectedPlayerList[i]->iSocketNum = message->popInt16();
+					sendOKReconnect ( DisconnectedPlayerList[i] );
+					break;
+				}
+			}
+		}
+		break;
+	case GAME_EV_RECON_SUCESS:
+		{
+			cPlayer *Player = NULL;
+			int playerNum = message->popInt16();
+			// remove the player from the disconnected list
+			for ( unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++ )
+			{
+				if ( DisconnectedPlayerList[i]->Nr == playerNum )
+				{
+					Player = DisconnectedPlayerList[i];
+					DisconnectedPlayerList.Delete ( i );
+					break;
+				}
+			}
+			// send all unit datas to the client
+			cVehicle *Vehicle = Player->VehicleList;
+			while ( Vehicle )
+			{
+				sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->typ->nr, Player->Nr, false );
+				sendUnitData ( Vehicle, Player->Nr );
+				Vehicle = Vehicle->next;
+			}
+			cBuilding *Building = Player->BuildingList;
+			while ( Building )
+			{
+				sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->typ->nr, Player->Nr, false );
+				sendUnitData ( Building, Player->Nr );
+				Building = Building->next;
+			}
+			// send all subbases
+			for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
+			{
+				sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
+				sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
+				sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
+			}
+			// refresh enemy units
+			Player->DoScan();
+			checkPlayerUnits();
+			// TODO: send upgrades
+
+			sendDefreeze ();
 		}
 		break;
 	default:

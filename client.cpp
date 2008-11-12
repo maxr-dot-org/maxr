@@ -2788,8 +2788,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		checkVehiclePositions( message );
 		break;
 	case GAME_EV_LOST_CONNECTION:
-		// This is just temporary so doesn't need to be translated
-		addMessage( "Lost connection to Server" );
+		addMessage( lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" ) );
 		break;
 	case GAME_EV_CHAT_SERVER:
 		switch (message->popChar())
@@ -2803,7 +2802,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addMessage( lngPack.i18n( message->popString() ) );
 			break;
 		case SERVER_INFO_MESSAGE:
-			addMessage( lngPack.i18n( message->popString() ) );
+			{
+				string translationpath = message->popString();
+				string inserttext = message->popString();
+				if ( !inserttext.compare ( "" ) ) addMessage( lngPack.i18n( translationpath ) );
+				else addMessage( lngPack.i18n( translationpath, inserttext ) );
+			}
 			break;
 		}
 		break;
@@ -3974,9 +3978,8 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 		if ( iPlayerNum != -1 ) font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
 		else
 		{
-			// TODO: translate!
-			font->showTextCentered( 320, 235, "Waiting for player to reconnect.", LATIN_BIG );
-			font->showTextCentered( 320, 235+font->getFontHeight(LATIN_BIG), "Server, press F2 to abort waiting.", LATIN_NORMAL );
+			font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), LATIN_BIG );
+			font->showTextCentered( 320, 235+font->getFontHeight(LATIN_BIG), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ), LATIN_NORMAL );
 
 			Uint8 *keystate;
 			keystate = SDL_GetKeyState( NULL );

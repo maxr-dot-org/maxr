@@ -98,7 +98,9 @@ enum MESSAGE_TYPES
 	MU_MSG_WT_LAND,				// a player wants to land at this position
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 	MU_MSG_RESOURCES,			// the resources on the map
-	MU_MSG_UPGRADES				// data of upgraded units
+	MU_MSG_UPGRADES,			// data of upgraded units
+	GAME_EV_REQ_IDENT,			// a server of a running game requests an identification
+	GAME_EV_OK_RECONNECT		// a server gives his ok to the reconnect
 };
 
 class cMultiPlayerMenu
@@ -123,6 +125,7 @@ private:
 	bool bAllLanded;
 	cMap *Map;
 	sOptions Options;
+	bool bExit;
 
 	cList<cPlayer*> PlayerList;
 	bool *ReadyList;

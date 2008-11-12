@@ -23,6 +23,7 @@
 #include "network.h"
 #include "clientevents.h"
 #include "serverevents.h"
+#include "menu.h"
 
 cNetMessage::cNetMessage( char* c)
 {
@@ -412,6 +413,22 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_STOP_CLEAR");
 	case GAME_EV_DEFEATED:
 		return string("GAME_EV_DEFEATED");
+	case GAME_EV_ABORT_WAITING:
+		return string("GAME_EV_ABORT_WAITING");
+	case GAME_EV_FREEZE:
+		return string("GAME_EV_FREEZE");
+	case GAME_EV_DEFREEZE:
+		return string("GAME_EV_DEFREEZE");
+	case GAME_EV_DEL_PLAYER:
+		return string("GAME_EV_DEL_PLAYER");
+	case GAME_EV_IDENTIFICATION:
+		return string("GAME_EV_IDENTIFICATION");
+	case GAME_EV_RECON_SUCESS:
+		return string("GAME_EV_RECON_SUCESS");
+	case GAME_EV_REQ_IDENT:
+		return string("GAME_EV_REQ_IDENT");
+	case GAME_EV_OK_RECONNECT:
+		return string("GAME_EV_OK_RECONNECT");
 	default:
 		return iToStr( iType );
 	}

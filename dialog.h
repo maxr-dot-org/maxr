@@ -29,7 +29,7 @@ void ShowDialog(string text,bool bPurgeHud,string path,int SaveLoad=-1);
  * @param text Text to show on button
  * @return true on Yes<br>false on No
  */
-bool ShowYesNo(string text);
+bool ShowYesNo(string text,bool bPurgeHud = true);
 int ShowNumberInput(string text, int iMaxValue, int iDefaultValue);
  /**
  * Shows dialogbox with localized OK button

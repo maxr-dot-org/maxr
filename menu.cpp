@@ -33,6 +33,7 @@
 #include "events.h"
 #include "client.h"
 #include "server.h"
+#include "serverevents.h"
 #include "upgradecalculator.h"
 
 #define DIALOG_W 640
@@ -3436,6 +3437,7 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	ReadyList[0] = false;
 	bOptions = false;
 	bStartSelecting = false;
+	bExit = false;
 
 	bAllLanded = false;
 
@@ -3571,7 +3573,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 	mouse->draw ( false, screen );
 	bRefresh = false;
 
-	while ( 1 )
+	while ( !bExit )
 	{
 		// get Events
 		EventHandler->HandleEvents();
@@ -4429,6 +4431,50 @@ void cMultiPlayerMenu::HandleMessages()
 				}
 			}
 			SWITCH_MESSAGE_END
+		case GAME_EV_REQ_IDENT:
+			{
+				if ( ShowYesNo ( lngPack.i18n ( "Text~Multiplayer~Reconnect" ), false ) )
+				{
+					cNetMessage *NewMessage = new cNetMessage ( GAME_EV_IDENTIFICATION );
+					NewMessage->pushInt16 ( Message->popInt16() );
+					NewMessage->pushString ( ActualPlayer->name );
+					sendMessage ( NewMessage );
+				}
+			}
+			SWITCH_MESSAGE_END
+		case GAME_EV_OK_RECONNECT:
+			{
+				ActualPlayer->Nr = Message->popInt16();
+				ActualPlayer->color = OtherData.colors[Message->popInt16()];
+				Map = new cMap;
+				if ( !Map->LoadMap ( Message->popString() ) ) break;
+				ActualPlayer->InitMaps ( Map->size, Map );
+				int iPlayerCount = Message->popInt16();
+				while ( iPlayerCount > 1 )
+				{
+					string playername = Message->popString();
+					int playercolor = Message->popInt16();
+					int playernr = Message->popInt16();
+					PlayerList.Add ( new cPlayer ( playername, OtherData.colors[playercolor], playernr ) );
+					PlayerList[PlayerList.Size()-1]->InitMaps ( Map->size, Map );
+					iPlayerCount--;
+				}
+
+				Client = new cClient( Map, &PlayerList );
+				Client->initPlayer ( ActualPlayer );
+
+				ExitMenu();
+
+				cNetMessage *NewMessage = new cNetMessage ( GAME_EV_RECON_SUCESS );
+				NewMessage->pushInt16 ( ActualPlayer->Nr );
+				sendMessage ( NewMessage );
+
+				Client->run();
+
+				delete Client; Client = NULL;
+
+				bExit = true;
+			}
 		default:
 			SWITCH_MESSAGE_END
 		}

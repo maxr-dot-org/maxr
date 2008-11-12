@@ -21,6 +21,7 @@
 #include "events.h"
 #include "server.h"
 #include "client.h"
+#include "menu.h"
 
 
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
@@ -235,10 +236,11 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendChatMessageToClient( string message, int iType, int iPlayer )
+void sendChatMessageToClient( string message, int iType, int iPlayer, string inserttext )
 {
 	cNetMessage* newMessage;
 	newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
+	newMessage->pushString( inserttext );
 	newMessage->pushString( message );
 	newMessage->pushChar( iType );
 	Server->sendNetMessage( newMessage, iPlayer );
@@ -662,4 +664,30 @@ void sendDeletePlayer ( cPlayer *Player, int iPlayer )
 	cNetMessage* message = new cNetMessage( GAME_EV_DEL_PLAYER );
 	message->pushInt16( Player->Nr );
 	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendRequestIdentification ( int iSocket )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_REQ_IDENT );
+	message->pushInt16 ( iSocket );
+	cLog::write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	network->sendTo( iSocket, message->iLength, message->serialize() );
+}
+
+void sendOKReconnect ( cPlayer *Player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_OK_RECONNECT );
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		cPlayer const *SecondPlayer = (*Server->PlayerList)[i];
+		if ( Player == SecondPlayer ) continue;
+		message->pushInt16 ( SecondPlayer->Nr );
+		message->pushInt16 ( GetColorNr( SecondPlayer->color ) );
+		message->pushString ( SecondPlayer->name );
+	}
+	message->pushInt16 ( Server->PlayerList->Size() );
+	message->pushString ( Server->Map->MapName );
+	message->pushInt16 ( GetColorNr( Player->color ) );
+	message->pushInt16 ( Player->Nr );
+	Server->sendNetMessage( message, Player->Nr );
 }

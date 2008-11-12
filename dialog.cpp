@@ -34,7 +34,7 @@
 #include "client.h"
 
 // shows a yes/no dialog
-bool ShowYesNo ( string text )
+bool ShowYesNo ( string text, bool bPurgeHud )
 {
 	#define DIALOGBOX_W 300
 	#define DIALOGBOX_H 231
@@ -50,7 +50,7 @@ bool ShowYesNo ( string text )
 	{
 		Client->drawMap ( false );
 	}
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+	if ( bPurgeHud ) SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 
 	if ( SettingsData.bAlphaEffects )
 	{
