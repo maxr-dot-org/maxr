@@ -233,6 +233,10 @@
       <Not_Ready ENG="is not ready"/>
       <Wait_Until ENG="Please wait until %s has finished his turn."/>
       <Deadline ENG="This turn will end in %s seconds."/>
+      <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
+      <Lost_Connection ENG="Lost connection to %s."/>
+      <Wait_Reconnect ENG="Waiting for reconnection of player."/>
+      <Abort_Waiting ENG="Server, press F2 to abort waiting."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>

@@ -229,6 +229,10 @@
       <Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
       <Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
       <Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
+      <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Das Spiel läuft bereits. Falls du die Verbindung zu diesem Spiel verloren hast, kannst du dich neu verbinden. Möchtest du dich neu verbinden?"/>
+      <Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
+      <Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
+      <Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, drücke F2 um das Warten abzubrechen"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Damage" localized="Angriff"/>
