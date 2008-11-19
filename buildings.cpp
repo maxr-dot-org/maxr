@@ -5303,7 +5303,7 @@ void cBuilding::showMineManager ( void )
 	MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 
 	// Die Reserve malen:
-	DrawMineBar ( TRANS_METAL, iTempSBMetalProd, SubBase->MaxMetal, 2, true, 0 );
+	DrawMineBar ( TRANS_METAL, SubBase->Metal, SubBase->MaxMetal, 2, true, 0 );
 	DrawMineBar ( TRANS_OIL, SubBase->Oil, SubBase->MaxOil, 2, true, 0 );
 	DrawMineBar ( TRANS_GOLD, SubBase->Gold, SubBase->MaxGold, 2, true, 0 );
 

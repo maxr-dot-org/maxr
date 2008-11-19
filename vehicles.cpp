@@ -3465,7 +3465,7 @@ void cVehicle::doSurvey ( void )
 
 	ptr[PosX+PosY*Server->Map->size] = 1;
 	if ( PosX > 0 ) ptr[PosX-1+PosY*Server->Map->size] = 1;
-	if ( PosX < Client->Map->size - 1 ) ptr[PosX+1+PosY*Server->Map->size] = 1;
+	if ( PosX < Server->Map->size - 1 ) ptr[PosX+1+PosY*Server->Map->size] = 1;
 	if ( PosY > 0 ) ptr[PosX+ ( PosY-1 ) *Server->Map->size] = 1;
 	if ( PosX > 0 && PosY > 0 ) ptr[PosX-1+ ( PosY-1 ) *Server->Map->size] = 1;
 	if ( PosX < Server->Map->size - 1 && PosY > 0 ) ptr[PosX+1+ ( PosY-1 ) *Server->Map->size] = 1;

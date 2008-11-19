@@ -429,6 +429,12 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_REQ_IDENT");
 	case GAME_EV_OK_RECONNECT:
 		return string("GAME_EV_OK_RECONNECT");
+	case GAME_EV_SPECIFIC_UNIT_DATA:
+		return string("GAME_EV_SPECIFIC_UNIT_DATA");
+	case GAME_EV_TURN:
+		return string("GAME_EV_TURN");
+	case GAME_EV_HUD_SETTINGS:
+		return string("GAME_EV_HUD_SETTINGS");
 	default:
 		return iToStr( iType );
 	}

@@ -39,6 +39,7 @@ public:
   int Zoom,LastZoom;
   int OffX,OffY;
   bool LastOverEnde;
+  int tmpSelectedUnitID;
 
   void SwitchTNT(bool set);
   void SwitchRadar(bool set);

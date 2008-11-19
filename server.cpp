@@ -46,6 +46,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	this->PlayerList = PlayerList;
 	this->iGameType = iGameType;
 	this->bPlayTurns = bPlayTurns;
+	bHotSeat = false;
 	bExit = false;
 	bStarted = false;
 	neutralBuildings = NULL;
@@ -1341,32 +1342,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					break;
 				}
 			}
-			// send all unit datas to the client
-			cVehicle *Vehicle = Player->VehicleList;
-			while ( Vehicle )
-			{
-				sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->typ->nr, Player->Nr, false );
-				sendUnitData ( Vehicle, Player->Nr );
-				Vehicle = Vehicle->next;
-			}
-			cBuilding *Building = Player->BuildingList;
-			while ( Building )
-			{
-				sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->typ->nr, Player->Nr, false );
-				sendUnitData ( Building, Player->Nr );
-				Building = Building->next;
-			}
-			// send all subbases
-			for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
-			{
-				sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
-				sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
-				sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
-			}
-			// refresh enemy units
-			Player->DoScan();
-			checkPlayerUnits();
-			// TODO: send upgrades
+			resyncPlayer ( Player );
 
 			sendDefreeze ();
 		}
@@ -1473,7 +1449,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 	}
 }
 
-void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit )
+cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit )
 {
 	cVehicle *AddedVehicle;
 	// generate the vehicle:
@@ -1487,7 +1463,7 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 	// scan with surveyor:
 	if ( AddedVehicle->data.can_survey )
 	{
-		sendResources( AddedVehicle, Map );
+		sendVehicleResources( AddedVehicle, Map );
 		AddedVehicle->doSurvey();
 	}
 	if ( !bInit ) AddedVehicle->InSentryRange();
@@ -1496,9 +1472,10 @@ void cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player,
 
 	//detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection();
+	return AddedVehicle;
 }
 
-void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit )
+cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit )
 {
 	cBuilding *AddedBuilding;
 	// generate the building:
@@ -1558,6 +1535,7 @@ void cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Playe
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
+	return AddedBuilding;
 }
 
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
@@ -2106,7 +2084,8 @@ void cServer::makeTurnEnd ()
 	// make autosave
 	if ( SettingsData.bAutoSave )
 	{
-		//makeAutosave();
+		cSavegame Savegame ( 10 );	// autosaves are always in slot 10
+		Savegame.save ( "Autosave" );
 	}
 
 	checkDefeats();
@@ -2145,7 +2124,7 @@ void cServer::checkDefeats ()
 			Player->isDefeated = true;
 			sendDefeated ( Player );
 
-			if ( openMapDefeat )
+			if ( openMapDefeat && Player->iSocketNum != -1 )
 			{
 				memset ( Player->ScanMap, 1, Map->size*Map->size );
 				checkPlayerUnits();
@@ -2598,4 +2577,41 @@ void cServer::deletePlayer( cPlayer *Player )
 			delete Player;
 		}
 	}
+}
+
+void cServer::resyncPlayer ( cPlayer *Player )
+{
+	sendTurn ( iTurn, Player );
+	sendResources ( Player );
+	// send all units to the client
+	cVehicle *Vehicle = Player->VehicleList;
+	while ( Vehicle )
+	{
+		sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->typ->nr, Player->Nr, false );
+		sendUnitData ( Vehicle, Player->Nr );
+		sendSpecificUnitData ( Vehicle );
+		if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
+		Vehicle = Vehicle->next;
+	}
+	cBuilding *Building = Player->BuildingList;
+	while ( Building )
+	{
+		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->typ->nr, Player->Nr, false );
+		sendUnitData ( Building, Player->Nr );
+		if ( Building->IsWorking && Building->data.is_mine ) sendProduceValues ( Building );
+		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
+		Building = Building->next;
+	}
+	// send all subbases
+	for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
+	{
+		sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
+		sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
+		sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
+	}
+	// refresh enemy units
+	Player->DoScan();
+	checkPlayerUnits();
+	sendHudSettings ( &Player->HotHud, Player );
+	// TODO: send upgrades
 }

@@ -145,9 +145,14 @@ extern int ResearchInits[8];
 ///////////////////////////////////////////////////////////////////////////////
 
 // Struktur für die IDs
-struct sID{
+struct sID
+{
 	int iFirstPart;
 	int iSecondPart;
+	string getText();
+	void generate( string text );
+
+	bool operator==(sID &ID) const;
 };
 
 // Struktur für die Waffen

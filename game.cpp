@@ -3892,7 +3892,7 @@ void cGame::MakeAutosave(void)
 	{
 		// if is not an autosave, rename the file
 		string sName;
-		loadMenudatasFromSave("savegame010.sav", NULL, &sName, NULL);
+		//loadMenudatasFromSave("savegame010.sav", NULL, &sName, NULL);
 		if ( sName.compare ("Autosave" ) != 0 )
 		{
 			for ( int i = 1; i <= 100; i++ )

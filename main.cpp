@@ -52,6 +52,7 @@
 #include "events.h"
 #include "client.h"
 #include "server.h"
+#include "savegame.h"
 
 
 int main ( int argc, char *argv[] )
@@ -656,4 +657,23 @@ int min (int a, int b )
 	{
 		return a;
 	}
+}
+
+string sID::getText()
+{
+	char tmp[6];
+	sprintf ( tmp, "%0.2d %0.2d", iFirstPart, iSecondPart );
+	return tmp;
+}
+
+void sID::generate ( string text )
+{
+	iFirstPart = atoi ( text.substr( 0, text.find( " ", 0 ) ).c_str() );
+	iSecondPart = atoi ( text.substr( text.find( " ", 0 ), text.length() ).c_str() );
+}
+
+bool sID::operator ==(sID &ID) const
+{
+	if ( iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart ) return true;
+	return false;
 }

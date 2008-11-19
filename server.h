@@ -26,6 +26,7 @@
 #include "attackJobs.h"
 #include "mjobs.h"
 #include "movejobs.h"
+#include "savegame.h"
 
 
 /**
@@ -61,6 +62,7 @@ Uint32 ServerTimerCallback(Uint32 interval, void *arg);
 */
 class cServer
 {
+	friend class cSavegame;
 public:
 	/**
 	 * initialises the server class
@@ -297,8 +299,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	void addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false );
-	void addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
+	cVehicle *addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false );
+	cBuilding *addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath
@@ -340,6 +342,8 @@ public:
 	* @param rubble pointer to the rubble object which will be deleted
 	*/
 	void deleteRubble( cBuilding* rubble );
+
+	void resyncPlayer ( cPlayer *Player );
 
 } EX *Server;
 

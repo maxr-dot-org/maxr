@@ -2947,7 +2947,7 @@ static void SetDefaultUnitData(sUnitData* const Data)
 	Data->iScan_Range_Jammer = 0;
 
 	// Movement
-	Data->iMovement_Sum = 1;
+	Data->iMovement_Sum = 0;
 	Data->iMovement_Max = 0;
 	Data->fCosts_Air = 0;
 	Data->fCosts_Sea = 0;

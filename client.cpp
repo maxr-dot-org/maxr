@@ -358,14 +358,19 @@ void cClient::run()
 			//iFrames++;
 			if ( bStartup )
 			{
+				int hudzoom = Hud.Zoom;
 				Hud.SetZoom(1);
 				drawMap();
 				SHOW_SCREEN
 				makePanel ( true );
 
-				Hud.SetZoom(64);
-				if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
-				else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
+				Hud.SetZoom( hudzoom );
+				if ( bStartupHud )
+				{
+					if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
+					else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
+					bStartupHud = false;
+				}
 				drawMap();
 				SHOW_SCREEN
 
@@ -3032,6 +3037,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
 
+				if ( Vehicle->IsBuilding && Vehicle->data.is_big && !Vehicle->ShowBigBeton )
+				{
+					Vehicle->ShowBigBeton = true;
+					Vehicle->BigBetonAlpha = 0;
+				}
 				Data = &Vehicle->data;
 			}
 			else
@@ -3082,6 +3092,26 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( Vehicle->BuildPath && Vehicle->BuildRounds == 0 ) continuePathBuilding ( Vehicle );
 			}
 			else if ( Building == SelectedBuilding ) Building->ShowDetails();
+		}
+		break;
+	case GAME_EV_SPECIFIC_UNIT_DATA:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( !Vehicle ) break;
+			Vehicle->dir = message->popInt16();
+			Vehicle->BuildingTyp = message->popInt16();
+			Vehicle->BuildPath = message->popBool();
+			Vehicle->BandX = message->popInt16();
+			Vehicle->BandY = message->popInt16();
+			if ( Vehicle->BuildPath && !Vehicle->ClientMoveJob )
+			{
+				cClientMoveJob *MoveJob = new cClientMoveJob ( Vehicle->PosX+Vehicle->PosY*Map->size, Vehicle->BandX+Vehicle->BandY*Map->size, false, Vehicle );
+				if ( !MoveJob->calcPath() )
+				{
+					delete MoveJob;
+					Vehicle->ClientMoveJob = NULL;
+				}
+			}
 		}
 		break;
 	case GAME_EV_DO_START_WORK:
@@ -3702,6 +3732,52 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					PlayerList->Delete ( i );
 				}
 			}
+		}
+		break;
+	case GAME_EV_TURN:
+		iTurn = message->popInt16();
+		Hud.ShowRunde();
+		break;
+	case GAME_EV_HUD_SETTINGS:
+		{
+			int unitID = message->popInt16();
+			cBuilding *building = NULL;
+			cVehicle *vehicle = getVehicleFromID ( unitID );
+			if ( !vehicle ) building = getBuildingFromID ( unitID );
+			if ( vehicle || building )
+			{
+				if ( SelectedVehicle ) SelectedVehicle->Deselct();
+				if ( SelectedBuilding ) SelectedBuilding->Deselct();
+				if ( vehicle )
+				{
+					SelectedVehicle = vehicle;
+					vehicle->Select();
+					iObjectStream = SelectedVehicle->PlayStram();
+				}
+				if ( building )
+				{
+					SelectedBuilding = building;
+					building->Select();
+					iObjectStream = SelectedBuilding->PlayStram();
+				}
+			}
+			Hud.OffX = message->popInt16();
+			Hud.OffY = message->popInt16();
+			Hud.SetZoom ( message->popInt16() );
+			Hud.Farben = message->popBool();
+			Hud.Gitter = message->popBool();
+			Hud.Munition = message->popBool();
+			Hud.Nebel = message->popBool();
+			Hud.Radar = message->popBool();
+			Hud.Reichweite = message->popBool();
+			Hud.Scan = message->popBool();
+			Hud.Status = message->popBool();
+			Hud.Studie = message->popBool();
+			Hud.Lock = message->popBool();
+			Hud.Treffer = message->popBool();
+			Hud.TNT = message->popBool();
+			Hud.DoAllHud();
+			bStartupHud = false;
 		}
 		break;
 	default:

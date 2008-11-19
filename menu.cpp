@@ -35,6 +35,7 @@
 #include "server.h"
 #include "serverevents.h"
 #include "upgradecalculator.h"
+#include "savegame.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -391,17 +392,12 @@ void RunMPMenu ( void )
 #else
 			if (ShowDateiMenu(false) != -1)
 			{
-				cMap *map;
-				map  = new cMap();
-				game = new cGame(map);
-				ExitMenu();
-				if (!SaveLoadFile.empty())
+				if ( !SaveLoadFile.empty() )
 				{
-					game->HotSeat = true;
-					game->Load(SaveLoadFile, 0);
+					/*cSavegame Savegame ( SaveLoadNumber );
+					Savegame.load();
+					ExitMenu();*/
 				}
-				delete game; game = NULL;
-				delete map;
 				break;
 			}
 			prepareMenu();
@@ -582,17 +578,45 @@ void RunSPMenu ( void )
 		{
 			if (ShowDateiMenu(false) != -1)
 			{
-				cMap *map;
-				map  = new cMap();
-				game = new cGame(map);
 				ExitMenu();
 				if (!SaveLoadFile.empty())
 				{
-					game->Load(SaveLoadFile, 0);
+					cSavegame Savegame ( SaveLoadNumber );
+					if ( Savegame.load() == 1 )
+					{
+						// copy map for client
+						cMap ClientMap;
+						ClientMap.LoadMap ( Server->Map->MapName );
+
+						cList<cPlayer*> ClientPlayerList;
+
+						// copy players for client
+						for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+						{
+							ClientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
+						}
+						// init client and his player
+						Client = new cClient( &ClientMap, &ClientPlayerList );
+						Client->initPlayer ( ClientPlayerList[0] );
+						for ( int i = 0; i < ClientPlayerList.Size(); i++ )
+						{
+							ClientPlayerList[i]->InitMaps( ClientMap.size, &ClientMap );
+						}
+
+						// in singleplayer only the first player is important
+						(*Server->PlayerList)[0]->iSocketNum = MAX_CLIENTS;
+						Server->resyncPlayer ( (*Server->PlayerList)[0] );
+
+						// exit menu and start game
+						Server->bStarted = true;
+						Client->run();
+
+						delete Client;
+						Client = NULL;
+						delete Server;
+						Server = NULL;
+					}
 				}
-				delete game; game = NULL;
-				delete map;
-				break;
 			}
 			prepareMenu();
 			RunSPMenu();
@@ -5024,7 +5048,7 @@ int ShowDateiMenu ( bool bSave )
 	for ( int i = 0; i < files->Size(); i++ )
 	{
 		string const& f = (*files)[i];
-		if (f.substr(f.length() - 3, 3).compare("sav") != 0)
+		if (f.substr(f.length() - 3, 3).compare("xml") != 0)
 		{
 			files->Delete ( i );
 			i--;
@@ -5119,41 +5143,46 @@ int ShowDateiMenu ( bool bSave )
 
 		if (bSave && btn_save.CheckClick(x, y, down, up))
 		{
-			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-			/*if ( selected != -1 )
+			// TODO: make sure the game is halted befor saving
+			if ( selected != -1 )
 			{
 				ShowFiles ( files,offset,selected,true,false,false, rDialog );
-				if ( game->Save ( SaveLoadFile, SaveLoadNumber ) )
+				// TODO: translate!
+				if ( !Server ) ShowOK ( "Only host can save games" );
+				else
 				{
-					delete files;
-					files = getFilesOfDirectory ( SettingsData.sSavesPath );
-					for ( int i = 0; i < files->Size(); i++ )
+					cSavegame Save( SaveLoadNumber );
+					if ( Save.save( SaveLoadFile ) )
 					{
-						string const& f = (*files)[i];
-						if (f.substr(f.length() - 3, 3).compare("sav") != 0)
+						delete files;
+						files = getFilesOfDirectory ( SettingsData.sSavesPath );
+						for ( int i = 0; i < files->Size(); i++ )
 						{
-							files->Delete ( i );
-							i--;
+							string const& f = (*files)[i];
+							if (f.substr(f.length() - 3, 3).compare("xml") != 0)
+							{
+								files->Delete ( i );
+								i--;
+							}
 						}
+						selected = -1;
 					}
-					selected = -1;
+					ShowFiles ( files,offset,selected,true,false,false, rDialog );
 				}
-				ShowFiles ( files,offset,selected,true,false,false, rDialog );
 			}
-			SHOW_SCREEN*/
+			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 
 		if (!bSave && btn_load.CheckClick(x, y, down, up))
 		{
-			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-			/*if ( selected != -1 )
+			if ( selected != -1 )
 			{
 				ShowFiles ( files,offset,selected,false,false,false, rDialog );
 				delete files;
 				return 1;
 			}
-			SHOW_SCREEN*/
+			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
 
@@ -5233,67 +5262,6 @@ int ShowDateiMenu ( bool bSave )
 	}
 	delete files;
 	return -1;
-}
-
-void loadMenudatasFromSave ( string sFileName, string *sTime, string *sSavegameName, string *sMode )
-{
-	SDL_RWops *pFile;
-	int iLenght;
-	char *szBuffer;
-	string sTmp;
-
-	if ( ( pFile = SDL_RWFromFile( ( SettingsData.sSavesPath + PATH_DELIMITER + sFileName ).c_str(),"rb" ) ) == NULL )
-	{
-		cLog::write ( "Can't open Savegame: " + sFileName, LOG_TYPE_WARNING );
-		return ;
-	}
-	// Ignore version
-	SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
-	SDL_RWseek(pFile, iLenght, SEEK_CUR);
-
-	// Read time
-	if ( sTime != NULL )
-	{
-		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
-		szBuffer = ( char* ) malloc ( iLenght );
-		SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
-		sTmp = szBuffer;
-		*sTime = sTmp;
-		free ( szBuffer );
-	}
-	else
-	{
-		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
-		SDL_RWseek(pFile, iLenght, SEEK_CUR);
-	}
-
-	// Read name
-	if ( sSavegameName != NULL )
-	{
-		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
-		szBuffer = ( char* ) malloc ( iLenght );
-		SDL_RWread(pFile, szBuffer, sizeof ( char ), iLenght);
-		sTmp = szBuffer;
-		*sSavegameName = sTmp;
-		free ( szBuffer );
-	}
-	else
-	{
-		SDL_RWread(pFile, &iLenght, sizeof ( int ), 1);
-		SDL_RWseek(pFile, iLenght, SEEK_CUR);
-	}
-
-	// Read mode
-	if ( sMode != NULL )
-	{
-		szBuffer = ( char* ) malloc ( 4 );
-		SDL_RWread(pFile, szBuffer, sizeof ( char ), 4);
-		sTmp = szBuffer;
-		*sMode = sTmp;
-		free ( szBuffer );
-	}
-
-	SDL_RWclose ( pFile );
 }
 
 // Zeigt die Saves an
@@ -5378,7 +5346,8 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 				{
 					string const& f = (*files)[j];
 					iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-					loadMenudatasFromSave(f, &sTime, &sFilename, &sMode);
+					cSavegame Savegame ( iSaveNumber );
+					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 				}
 				else
 				{
@@ -5439,7 +5408,8 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 				string sFilename, sTime, sMode;
 				string const& f = (*files)[j];
 				iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-				loadMenudatasFromSave(f, &sTime, &sFilename, &sMode);
+				cSavegame Savegame ( iSaveNumber );
+				Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 
 				if ( iSaveNumber == i )
 				{
@@ -5462,6 +5432,7 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 					break;
 				}
 			}
+			SaveLoadNumber = selected;
 		}
 		y += 76;
 	}

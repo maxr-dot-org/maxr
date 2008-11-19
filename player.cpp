@@ -92,6 +92,7 @@ cPlayer::cPlayer(const cPlayer &Player) : base(this)
 	Credits=0;
 	ReportForschungFinished=false;
 	this->iSocketNum = iSocketNum;
+	isDefeated = false;
 }
 
 cPlayer::~cPlayer ( void )
@@ -190,18 +191,18 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	n->next=VehicleList;
 	VehicleList=n;
 	n->GenerateName();
-	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap );
-	if ( n->data.can_detect_land ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap );
-	if ( n->data.can_detect_sea  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap  );
+	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
+	if ( n->data.can_detect_land ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
+	if ( n->data.can_detect_sea  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize )  );
 	if ( n->data.can_detect_mines)
 	{
 		for ( int x = n->PosX - 1; x <= n->PosX + 1; x++ )
 		{
-			if ( x < 0 || x >= Client->Map->size ) continue;
+			if ( x < 0 || x >= (int)sqrt ( (double)MapSize ) ) continue;
 			for ( int y = n->PosY - 1; y <= n->PosY + 1; y++ )
 			{
-				if ( y < 0 || y >= Client->Map->size ) continue;
-				DetectMinesMap[x + Client->Map->size*y] = 1;
+				if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) ) continue;
+				DetectMinesMap[x + (int)sqrt ( (double)MapSize )*y] = 1;
 			}
 		}
 	}
@@ -263,8 +264,8 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 	Building->GenerateName();
 	if ( Building->data.scan )
 	{
-		if ( Building->data.is_big ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap );
-		else drawSpecialCircle ( Building->PosX, Building->PosY, Building->data.scan, ScanMap );
+		if ( Building->data.is_big ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
+		else drawSpecialCircle ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
 	}
 	return Building;
 }
@@ -278,22 +279,22 @@ void cPlayer::addSentryVehicle ( cVehicle *v )
 	if ( v->data.can_attack==ATTACK_AIR )
 	{
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 	}
 	else if ( v->data.can_attack==ATTACK_AIRnLAND )
 	{
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		n=new sSentry;
 		n->b=NULL;
 		n->v=v;
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 	else
 	{
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround );
+		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
 
@@ -306,22 +307,22 @@ void cPlayer::addSentryBuilding ( cBuilding *b )
 	if ( b->data.can_attack==ATTACK_AIR )
 	{
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 	}
 	else if ( b->data.can_attack==ATTACK_AIRnLAND )
 	{
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		n=new sSentry;
 		n->b=b;
 		n->v=NULL;
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 	else
 	{
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround );
+		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
 
@@ -451,11 +452,11 @@ void cPlayer::refreshSentryAir ()
 		ptr = SentriesAir[i];
 		if ( ptr->v )
 		{
-			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapAir );
+			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
 		else
 		{
-			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapAir );
+			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
 	}
 }
@@ -469,11 +470,11 @@ void cPlayer::refreshSentryGround ()
 		ptr = SentriesGround[i];
 		if ( ptr->v )
 		{
-			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapGround );
+			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
 		else
 		{
-			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapGround );
+			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
 	}
 }
@@ -507,21 +508,21 @@ void cPlayer::DoScan ( void )
 		{
 			if ( vp->data.is_big )
 			{
-				drawSpecialCircleBig ( vp->PosX, vp->PosY, vp->data.scan, ScanMap );
+				drawSpecialCircleBig ( vp->PosX, vp->PosY, vp->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 			else
 			{
-				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap );
+				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 
 			//detection maps
 			if ( vp->data.can_detect_land )
 			{
-				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap );
+				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
 			}
 			else if ( vp->data.can_detect_sea )
 			{
-				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap );
+				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize ) );
 			}
 			if ( vp->data.can_detect_mines )
 			{
@@ -552,8 +553,8 @@ void cPlayer::DoScan ( void )
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.is_big ) drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
-				else drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap );
+				if ( bp->data.is_big ) drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
+				else drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
 		bp=bp->next;
@@ -1068,7 +1069,7 @@ void cPlayer::DrawLockList(cHud const& hud)
 	}
 }
 
-void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
+void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize )
 {
 	float w = 0.017453*45, step;
 	int rx, ry, x1, x2;
@@ -1088,11 +1089,11 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
 		for ( int k = x2; k <= x1; k++ )
 		{
 			if ( k < 0 ) continue;
-			if ( k >= Client->Map->size ) break;
-			if ( iY+ry >= 0 && iY+ry < Client->Map->size )
-				map[k+ ( iY+ry ) *Client->Map->size] |= 1;
-			if ( iY-ry >= 0 && iY-ry < Client->Map->size )
-				map[k+ ( iY-ry ) *Client->Map->size] |= 1;
+			if ( k >= mapsize ) break;
+			if ( iY+ry >= 0 && iY+ry < mapsize )
+				map[k+ ( iY+ry ) *mapsize] |= 1;
+			if ( iY-ry >= 0 && iY-ry < mapsize )
+				map[k+ ( iY-ry ) *mapsize] |= 1;
 		}
 
 		x1 = ry+iX;
@@ -1100,16 +1101,16 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map )
 		for ( int k = x2; k <= x1; k++ )
 		{
 			if ( k < 0 ) continue;
-			if ( k >= Client->Map->size ) break;
-			if ( iY+rx >= 0 && iY+rx < Client->Map->size )
-				map[k+ ( iY+rx ) *Client->Map->size] |= 1;
-			if ( iY-rx >= 0 && iY-rx < Client->Map->size )
-				map[k+ ( iY-rx ) *Client->Map->size] |= 1;
+			if ( k >= mapsize ) break;
+			if ( iY+rx >= 0 && iY+rx < mapsize )
+				map[k+ ( iY+rx ) *mapsize] |= 1;
+			if ( iY-rx >= 0 && iY-rx < mapsize )
+				map[k+ ( iY-rx ) *mapsize] |= 1;
 		}
 	}
 }
 
-void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
+void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize )
 {
 	float w=0.017453*45, step;
 	int rx, ry, x1, x2;
@@ -1130,16 +1131,16 @@ void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
 		for ( int k = x2; k <= x1+1; k++ )
 		{
 			if ( k < 0 ) continue;
-			if ( k >= Client->Map->size ) break;
-			if ( iY+ry >= 0 && iY+ry < Client->Map->size )
-				map[k+ ( iY+ry ) *Client->Map->size] |= 1;
-			if ( iY-ry >= 0 && iY-ry < Client->Map->size )
-				map[k+ ( iY-ry ) *Client->Map->size] |= 1;
+			if ( k >= mapsize ) break;
+			if ( iY+ry >= 0 && iY+ry < mapsize )
+				map[k+ ( iY+ry ) *mapsize] |= 1;
+			if ( iY-ry >= 0 && iY-ry < mapsize )
+				map[k+ ( iY-ry ) *mapsize] |= 1;
 
-			if( iY+ry+1 >= 0&& iY+ry+1 < Client->Map->size)
-				map[k+( iY+ry+1 ) *Client->Map->size] |= 1;
-			if( iY-ry+1 >= 0 && iY-ry+1 < Client->Map->size)
-				map[k+( iY-ry+1 ) *Client->Map->size] |= 1;
+			if( iY+ry+1 >= 0&& iY+ry+1 < mapsize)
+				map[k+( iY+ry+1 ) *mapsize] |= 1;
+			if( iY-ry+1 >= 0 && iY-ry+1 < mapsize)
+				map[k+( iY-ry+1 ) *mapsize] |= 1;
 		}
 
 		x1 = ry+iX;
@@ -1147,16 +1148,16 @@ void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map )
 		for ( int k = x2; k <= x1+1; k++ )
 		{
 			if ( k < 0 ) continue;
-			if ( k >= Client->Map->size ) break;
-			if ( iY+rx >= 0 && iY+rx < Client->Map->size )
-				map[k+ ( iY+rx ) *Client->Map->size] |= 1;
-			if ( iY-rx >= 0 && iY-rx < Client->Map->size )
-				map[k+ ( iY-rx ) *Client->Map->size] |= 1;
+			if ( k >= mapsize ) break;
+			if ( iY+rx >= 0 && iY+rx < mapsize )
+				map[k+ ( iY+rx ) *mapsize] |= 1;
+			if ( iY-rx >= 0 && iY-rx < mapsize )
+				map[k+ ( iY-rx ) *mapsize] |= 1;
 
-			if( iY+rx+1 >= 0 && iY+rx+1 < Client->Map->size)
-				map[k+( iY+rx+1 ) *Client->Map->size] |= 1;
-			if( iY-rx+1 >= 0 && iY-rx+1 < Client->Map->size)
-				map[k+( iY-rx+1 ) *Client->Map->size] |= 1;
+			if( iY+rx+1 >= 0 && iY+rx+1 < mapsize)
+				map[k+( iY+rx+1 ) *mapsize] |= 1;
+			if( iY-rx+1 >= 0 && iY-rx+1 < mapsize)
+				map[k+( iY-rx+1 ) *mapsize] |= 1;
 		}
 
 	}

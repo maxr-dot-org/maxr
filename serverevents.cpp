@@ -180,6 +180,8 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->data.costs );
 
 	// Current state of the unit
+	//TODO: remove information such sentrystatus, build or clearrounds from normal data
+	//		becouse this data will be received by enemys, too
 	message->pushBool ( Vehicle->bSentryStatus );
 	message->pushInt16 ( Vehicle->ClearingRounds );
 	message->pushInt16 ( Vehicle->BuildRounds );
@@ -198,6 +200,18 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->owner->Nr );
 
 	Server->sendNetMessage( message, iPlayer );
+}
+
+void sendSpecificUnitData ( cVehicle *Vehicle )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_SPECIFIC_UNIT_DATA );
+	message->pushInt16 ( Vehicle->BandY );
+	message->pushInt16 ( Vehicle->BandX );
+	message->pushBool ( Vehicle->BuildPath );
+	message->pushInt16 ( Vehicle->BuildingTyp );
+	message->pushInt16 ( Vehicle->dir );
+	message->pushInt16 ( Vehicle->iID );
+	Server->sendNetMessage( message, Vehicle->owner->Nr );
 }
 
 void sendUnitData ( cBuilding *Building, int iPlayer )
@@ -364,7 +378,7 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendResources( cVehicle *Vehicle, cMap *Map )
+void sendVehicleResources( cVehicle *Vehicle, cMap *Map )
 {
 	int iCount = 0;
 	cNetMessage* message = new cNetMessage( GAME_EV_RESOURCES );
@@ -390,6 +404,30 @@ void sendResources( cVehicle *Vehicle, cMap *Map )
 	message->pushInt16( iCount );
 
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
+}
+
+void sendResources( cPlayer *Player )
+{
+	int iCount = 0;
+	cNetMessage* message = new cNetMessage( GAME_EV_RESOURCES );
+	for ( int i = 0; i < Player->MapSize; i++ )
+	{
+		if (  Player->ResourceMap[i] == 1 )
+		{
+			message->pushInt16( Server->Map->Resources[i].value );
+			message->pushInt16( Server->Map->Resources[i].typ );
+			message->pushInt32( i );
+			iCount++;
+		}
+		if ( message->iLength >= PACKAGE_LENGTH-10 )
+		{
+			message->pushInt16( iCount );
+			Server->sendNetMessage( message, Player->Nr );
+			iCount = 0;
+		}
+	}
+	message->pushInt16( iCount );
+	Server->sendNetMessage( message, Player->Nr );
 }
 
 void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
@@ -689,5 +727,34 @@ void sendOKReconnect ( cPlayer *Player )
 	message->pushString ( Server->Map->MapName );
 	message->pushInt16 ( GetColorNr( Player->color ) );
 	message->pushInt16 ( Player->Nr );
+	Server->sendNetMessage( message, Player->Nr );
+}
+
+void sendTurn ( int turn, cPlayer *Player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_TURN );
+	message->pushInt16 ( turn );
+	Server->sendNetMessage( message, Player->Nr );
+}
+
+void sendHudSettings ( cHud *Hud, cPlayer *Player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_HUD_SETTINGS );
+	message->pushBool ( Hud->TNT );
+	message->pushBool ( Hud->Treffer );
+	message->pushBool ( Hud->Lock );
+	message->pushBool ( Hud->Studie );
+	message->pushBool ( Hud->Status );
+	message->pushBool ( Hud->Scan );
+	message->pushBool ( Hud->Reichweite );
+	message->pushBool ( Hud->Radar );
+	message->pushBool ( Hud->Nebel );
+	message->pushBool ( Hud->Munition );
+	message->pushBool ( Hud->Gitter );
+	message->pushBool ( Hud->Farben );
+	message->pushInt16 ( Hud->Zoom );
+	message->pushInt16 ( Hud->OffY );
+	message->pushInt16 ( Hud->OffX );
+	message->pushInt16 ( Hud->tmpSelectedUnitID );
 	Server->sendNetMessage( message, Player->Nr );
 }

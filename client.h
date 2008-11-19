@@ -164,6 +164,7 @@ private:
 	int iTurnTime;
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
+	bool bStartupHud;
 
 	/**
 	* checks the input of the player

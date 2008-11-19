@@ -126,7 +126,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle( int iX, int iY, int iRadius, char *map );
+	void drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize );
 	/**
 	* draws a big circle on the map for the fog
 	*@author alzi alias DoctorDeath
@@ -135,7 +135,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map );
+	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
 
 private:
   cVehicle *AddVehicle( int posx, int posy, sVehicle *v );

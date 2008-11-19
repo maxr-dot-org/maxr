@@ -600,7 +600,7 @@ void cServerMoveJob::moveVehicle()
 		// search for resources if necessary
 		if ( Vehicle->data.can_survey )
 		{
-			sendResources( Vehicle, Map );
+			sendVehicleResources( Vehicle, Map );
 			Vehicle->doSurvey();
 		}
 

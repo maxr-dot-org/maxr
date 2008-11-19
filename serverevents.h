@@ -23,6 +23,7 @@
 #include "network.h"
 #include "clientevents.h"
 #include "map.h"
+#include "hud.h"
 
 enum SERVER_EVENT_TYPES
 {
@@ -114,6 +115,8 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
 void sendUnitData( cVehicle *Vehicle, int iPlayer );
 void sendUnitData ( cBuilding *Building, int iPlayer );
 
+void sendSpecificUnitData ( cVehicle *Vehicle );
+
 /**
 * sends a text message to one or all client
 *@author Eiko
@@ -151,7 +154,8 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer );
 * sends the resourcedata of new scaned fields around the unit to a client
 *@author alzi alias DoctorDeath
 */
-void sendResources(  cVehicle *Vehicle, cMap *Map );
+void sendVehicleResources(  cVehicle *Vehicle, cMap *Map );
+void sendResources( cPlayer *Player );
 /**
 * sends an answer to a client wheter and how he has to build.
 *@author alzi alias DoctorDeath
@@ -273,5 +277,7 @@ void sendRequestIdentification ( int iSocket );
 *@author alzi alias DoctorDeath
 */
 void sendOKReconnect ( cPlayer *Player );
+void sendTurn ( int turn, cPlayer *Player );
+void sendHudSettings ( cHud *Hud, cPlayer *Player );
 
 #endif // servereventsH
