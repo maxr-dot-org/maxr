@@ -415,31 +415,34 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	building->iID = tmpinteger;
 	building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
+	TiXmlElement *element;
 	int subbaseID;
-	unitNode->FirstChildElement( "SubBase" )->Attribute ( "num", &subbaseID );
-	for ( unsigned int i = 0; i < SubBasesLoad.Size(); i++ )
+	if ( element = unitNode->FirstChildElement( "SubBase" ) )
 	{
-		if ( SubBasesLoad[i]->Player != owner ) continue;
-		if ( SubBasesLoad[i]->SubBase.iID != subbaseID ) continue;
-		building->SubBase->Metal = SubBasesLoad[i]->SubBase.Metal;
-		building->SubBase->Oil = SubBasesLoad[i]->SubBase.Oil;
-		building->SubBase->Gold = SubBasesLoad[i]->SubBase.Gold;
-		building->SubBase->MetalProd = SubBasesLoad[i]->SubBase.MetalProd;
-		building->SubBase->OilProd = SubBasesLoad[i]->SubBase.OilProd;
-		building->SubBase->GoldProd = SubBasesLoad[i]->SubBase.GoldProd;
-		building->SubBase->EnergyProd = SubBasesLoad[i]->SubBase.EnergyProd;
-		building->SubBase->HumanProd = SubBasesLoad[i]->SubBase.HumanProd;
-		building->SubBase->MetalNeed = SubBasesLoad[i]->SubBase.MetalNeed;
-		building->SubBase->OilNeed = SubBasesLoad[i]->SubBase.OilNeed;
-		building->SubBase->GoldNeed = SubBasesLoad[i]->SubBase.GoldNeed;
-		building->SubBase->EnergyNeed = SubBasesLoad[i]->SubBase.EnergyNeed;
-		building->SubBase->HumanNeed = SubBasesLoad[i]->SubBase.HumanNeed;
-		break;
+		element->Attribute ( "num", &subbaseID );
+		for ( unsigned int i = 0; i < SubBasesLoad.Size(); i++ )
+		{
+			if ( SubBasesLoad[i]->Player != owner ) continue;
+			if ( SubBasesLoad[i]->SubBase.iID != subbaseID ) continue;
+			building->SubBase->Metal = SubBasesLoad[i]->SubBase.Metal;
+			building->SubBase->Oil = SubBasesLoad[i]->SubBase.Oil;
+			building->SubBase->Gold = SubBasesLoad[i]->SubBase.Gold;
+			building->SubBase->MetalProd = SubBasesLoad[i]->SubBase.MetalProd;
+			building->SubBase->OilProd = SubBasesLoad[i]->SubBase.OilProd;
+			building->SubBase->GoldProd = SubBasesLoad[i]->SubBase.GoldProd;
+			building->SubBase->EnergyProd = SubBasesLoad[i]->SubBase.EnergyProd;
+			building->SubBase->HumanProd = SubBasesLoad[i]->SubBase.HumanProd;
+			building->SubBase->MetalNeed = SubBasesLoad[i]->SubBase.MetalNeed;
+			building->SubBase->OilNeed = SubBasesLoad[i]->SubBase.OilNeed;
+			building->SubBase->GoldNeed = SubBasesLoad[i]->SubBase.GoldNeed;
+			building->SubBase->EnergyNeed = SubBasesLoad[i]->SubBase.EnergyNeed;
+			building->SubBase->HumanNeed = SubBasesLoad[i]->SubBase.HumanNeed;
+			break;
+		}
 	}
 
 	loadUnitValues ( unitNode, &building->data );
 
-	TiXmlElement *element;
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
@@ -834,7 +837,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int unitnum )
 	addAttributeElement ( unitNode, "Owner", "num", iToStr ( Building->owner->Nr ) );
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Building->PosX ), "y", iToStr ( Building->PosY ) );
 	addAttributeElement ( unitNode, "Name", "string", Building->name );
-	addAttributeElement ( unitNode, "SubBase", "num", iToStr (Building->SubBase->iID ) );
+	if ( Building->SubBase ) addAttributeElement ( unitNode, "SubBase", "num", iToStr (Building->SubBase->iID ) );
 
 	// write the standard values
 	writeUnitValues ( unitNode, &Building->data, &Building->owner->BuildingData[Building->typ->nr] );
