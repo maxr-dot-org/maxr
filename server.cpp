@@ -1529,12 +1529,12 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 
 	Map->addBuilding( AddedBuilding, iPosX, iPosY );
 
-	AddedBuilding->makeDetection();
-
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->nr, Player->Nr, bInit );
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
+	AddedBuilding->makeDetection();
+
 	return AddedBuilding;
 }
 
@@ -2362,7 +2362,11 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	
 	while ( !bi.end )
 	{
-		if (!bi->owner) continue;
+		if (!bi->owner) 
+		{
+			bi++;
+			continue;
+		}
 		value += bi->data.iBuilt_Costs;
 		deleteUnit( bi, false );
 		bi++;
