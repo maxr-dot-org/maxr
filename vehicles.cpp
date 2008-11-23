@@ -4258,28 +4258,40 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesAir[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, false ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
 				{
-					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
-
-					if ( ServerMoveJob )
+					cVehicle* targetVehicle;
+					cBuilding* targetBuilding;
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.can_attack, Server->Map );
+					if ( targetBuilding || targetVehicle )
 					{
-						ServerMoveJob->bFinished = true;
-					}
+						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
-					return true;
+						if ( ServerMoveJob )
+						{
+							ServerMoveJob->bFinished = true;
+						}
+
+						return true;
+					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, false ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
 				{
-					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
-
-					if ( ServerMoveJob )
+					cVehicle* targetVehicle;
+					cBuilding* targetBuilding;
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.can_attack, Server->Map );
+					if ( targetBuilding || targetVehicle )
 					{
-						ServerMoveJob->bFinished = true;
-					}
+						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
-					return true;
+						if ( ServerMoveJob )
+						{
+							ServerMoveJob->bFinished = true;
+						}
+
+						return true;
+					}
 				}
 			}
 		}
@@ -4293,26 +4305,38 @@ bool cVehicle::InSentryRange ()
 
 				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
 				{
-					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
-
-					if ( ServerMoveJob )
+					cVehicle* targetVehicle;
+					cBuilding* targetBuilding;
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.can_attack, Server->Map );
+					if ( targetBuilding || targetVehicle )
 					{
-						ServerMoveJob->bFinished = true;
-					}
+						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
-					return true;
+						if ( ServerMoveJob )
+						{
+							ServerMoveJob->bFinished = true;
+						}
+
+						return true;
+					}
 				}
 
 				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
 				{
-					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
-
-					if ( ServerMoveJob )
+					cVehicle* targetVehicle;
+					cBuilding* targetBuilding;
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.can_attack, Server->Map );
+					if ( targetBuilding || targetVehicle )
 					{
-						ServerMoveJob->bFinished = true;
-					}
+						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
-					return true;
+						if ( ServerMoveJob )
+						{
+							ServerMoveJob->bFinished = true;
+						}
+
+						return true;
+					}
 				}
 			}
 		}
