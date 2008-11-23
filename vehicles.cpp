@@ -5091,7 +5091,7 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 
 bool cVehicle::layMine ()
 {
-	if ( data.cargo < 0 ) return false;
+	if ( data.cargo <= 0 ) return false;
 	
 	if (data.can_drive == DRIVE_SEA) 
 	{
