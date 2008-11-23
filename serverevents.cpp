@@ -423,11 +423,15 @@ void sendResources( cPlayer *Player )
 		{
 			message->pushInt16( iCount );
 			Server->sendNetMessage( message, Player->Nr );
+			message = new cNetMessage( GAME_EV_RESOURCES );
 			iCount = 0;
 		}
 	}
-	message->pushInt16( iCount );
-	Server->sendNetMessage( message, Player->Nr );
+	if ( iCount > 0 )
+	{
+		message->pushInt16( iCount );
+		Server->sendNetMessage( message, Player->Nr );
+	}
 }
 
 void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
