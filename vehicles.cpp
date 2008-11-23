@@ -4258,7 +4258,7 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesAir[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, false ) )
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
@@ -4270,7 +4270,7 @@ bool cVehicle::InSentryRange ()
 					return true;
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, false ) )
 				{
 					Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
