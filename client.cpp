@@ -1727,10 +1727,13 @@ void cClient::drawFX( int iNum )
 				int k;
 				for ( k=0;k<64;k+=8 )
 				{
-					if ( SettingsData.bAlphaEffects ) addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+					if ( SettingsData.bAlphaEffects )
+					{
+						addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+						drawFX(FXList.Size() - 1);
+					}
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFX(FXList.Size() - 1);
 				}
 			}
 
@@ -1823,10 +1826,13 @@ void cClient::drawFXBottom( int iNum )
 				int k;
 				for ( k=0;k<64;k+=8 )
 				{
-					if ( SettingsData.bAlphaEffects ) addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+					if ( SettingsData.bAlphaEffects )
+					{
+						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+						drawFXBottom(FXListBottom.Size() - 1);
+					}
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
-					drawFXBottom(FXListBottom.Size() - 1);
 				}
 			}
 
