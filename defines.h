@@ -71,6 +71,13 @@
 #define GFXOD_DIALOG5         "gfx/dialog5.pcx"
 #define GFXOD_DIALOG6         "gfx/dialog6.pcx"
 
+// Other Resources /////////////////////////////////////////////////////////////
+#define MAX_XML               "max.xml"
+#define KEYS_XML              "keys.xml"
+#define SPLASH_BACKGROUND     "init.pcx"
+#define MAXR_ICON             "maxr.bmp"
+
+
 // We have to take care of these manually !
 #ifdef RELEASE
 #define MAXVERSION  "M.A.X. Reloaded 0.2.1 BUILD 200810162056" // Builddate: JJJJMMDDHHMM

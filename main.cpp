@@ -117,7 +117,7 @@ int main ( int argc, char *argv[] )
 
 	EventHandler = new cEventHandling;
 
-	// Das Menü starten:
+	// Das Menu starten:
 	RunMainMenu();
 
 	Quit();
@@ -218,12 +218,12 @@ int runEventChecker( void *)
 // generate SplashScreen
 void showSplash()
 {
-	buffer = LoadPCX("init.pcx", false); //load splash with SDL_HWSURFACE
+	buffer = LoadPCX(SPLASH_BACKGROUND, false); //load splash with SDL_HWSURFACE
 	if (buffer == NULL)
 	{ //TODO: at flag for gamewide handling of SDL_HWSURFACE in case it doesn't work
 		cLog::write("Couldn't use hardware acceleration for images", cLog::eLOG_TYPE_ERROR);
 		cLog::write("This is currently not supported. Expect M.A.X. to crash!", cLog::eLOG_TYPE_ERROR);
-		buffer = LoadPCX("init.pcx", true);
+		buffer = LoadPCX(SPLASH_BACKGROUND, true);
 		if (buffer == NULL)
 		{
 			cLog::write("Couldn't use software acceleration, too", cLog::eLOG_TYPE_ERROR);
@@ -233,7 +233,7 @@ void showSplash()
 
 	}
 
-	SDL_WM_SetIcon ( SDL_LoadBMP ( "maxr.bmp" ), NULL ); //JCK: Icon for frame and taskmanager is set
+	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL ); //JCK: Icon for frame and taskmanager is set
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption ( MAXVERSION, NULL );

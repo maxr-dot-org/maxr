@@ -28,12 +28,13 @@ int LoadKeys ()
 	TiXmlDocument KeysXml;
 	ExTiXmlNode * pXmlNode = NULL;
 	string sTmpString;
-	if(!FileExists("keys.xml"))
+		
+	if (!FileExists(KEYS_XML))
 	{
 		cLog::write ( "generating new file", LOG_TYPE_WARNING );
 		GenerateKeysXml();
 	}
-	if(!KeysXml.LoadFile("keys.xml"))
+	if (!KeysXml.LoadFile(KEYS_XML))
 	{
 		cLog::write ( "cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING );
 		GenerateKeysXml();
@@ -291,7 +292,7 @@ int LoadKeys ()
 	return 1;
 }
 
-// Liefert einen String mit dem Namen der Taste zurück:
+// Liefert einen String mit dem Namen der Taste zurueck:
 const char *GetKeyString ( SDLKey key )
 {
 	switch ( key )
@@ -436,7 +437,7 @@ const char *GetKeyString ( SDLKey key )
 	}
 }
 
-// Liefert den Code der Taste zurück:
+// Liefert den Code der Taste zurueck:
 SDLKey GetKeyFromString ( string key )
 {
 	if ( !key.compare ( "UNKNOWN" ) ) return SDLK_UNKNOWN;

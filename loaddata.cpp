@@ -512,15 +512,16 @@ int ReadMaxXml()
 	// Prepare max.xml for reading
 	TiXmlDocument MaxXml;
 	ExTiXmlNode * pXmlNode = NULL;
-	if(!FileExists("max.xml"))
+		
+	if(!FileExists(MAX_XML))
 	{
 		cLog::write ( "Generating new config file max.xml", LOG_TYPE_WARNING );
-		if( GenerateMaxXml() == -1)
+		if (GenerateMaxXml() == -1)
 		{
 			return -1;
 		}
 	}
-	if(!MaxXml.LoadFile("max.xml"))
+	if (!MaxXml.LoadFile(MAX_XML))
 	{
 		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
@@ -3316,7 +3317,7 @@ int SaveOption ( int iTyp )
 	// Prepare max.xml for writing
 	TiXmlDocument MaxXml;
 	ExTiXmlNode * pXmlNode = NULL;
-	if(!FileExists("max.xml"))
+	if(!FileExists(MAX_XML))
 	{
 		cLog::write ( "Generating new config file max.xml (not working yet)", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
@@ -3324,7 +3325,7 @@ int SaveOption ( int iTyp )
 			return -1;
 		}
 	}
-	if(!MaxXml.LoadFile("max.xml"))
+	if(!MaxXml.LoadFile(MAX_XML))
 	{
 		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
