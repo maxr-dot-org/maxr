@@ -218,10 +218,10 @@ void cUpgradeCalculator::setupLookupTables()
 	hitpointsArmorAmmo_36 [56] = 50;
 	hitpointsArmorAmmo_36 [61] = 84;
 	hitpointsArmorAmmo_36 [66] = 137;
-	hitpointsArmorAmmo_36 [71] = 217; // not real value - to be researched
-	hitpointsArmorAmmo_36 [76] = 332; // not real value - to be researched
-	hitpointsArmorAmmo_36 [81] = 494; // not real value - to be researched
-	hitpointsArmorAmmo_36 [86] = 726; // not real value - to be researched
+	hitpointsArmorAmmo_36 [71] = 218;
+	hitpointsArmorAmmo_36 [76] = 332;
+	hitpointsArmorAmmo_36 [81] = 497;
+	hitpointsArmorAmmo_36 [86] = 724;
 
 	hitpointsArmorAmmo_40 [40] = 2;
 	hitpointsArmorAmmo_40 [45] = 6;
@@ -308,9 +308,8 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_11 [15] = 64;
 	attackSpeed_11 [17] = 137;
 	attackSpeed_11 [19] = 269;
-	attackSpeed_11 [21] = 470; // not real value - to be researched
-	attackSpeed_11 [23] = 734; // not real value - to be researched
-
+	attackSpeed_11 [21] = 500;
+	
 	attackSpeed_12 [12] = 8;
 	attackSpeed_12 [14] = 22;
 	attackSpeed_12 [16] = 49;
