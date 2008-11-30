@@ -42,7 +42,7 @@ template<typename T> class cList
 
 template<typename T> void cList<T>::Add(T const& e)
 {
-	if (size_ >= capacity_) Reserve(std::max(1U, size_ * 2));
+	if (size_ >= capacity_) Reserve(std::max((size_t)1U, size_ * 2));
 	new (&v_[size_]) T(e);
 	++size_;
 }
@@ -50,7 +50,7 @@ template<typename T> void cList<T>::Add(T const& e)
 template<typename T> void cList<T>::Insert( size_t const i, T const& e )
 {
 	if ( i > size_ ) throw;
-	if (size_ >= capacity_) Reserve(std::max(1U, size_ * 2));
+	if (size_ >= capacity_) Reserve(std::max((size_t)1U, size_ * 2));
 
 	for (size_t n = size_; n > i; --n ) v_[n] = v_[n - 1];
 	new (&v_[i]) T(e);
