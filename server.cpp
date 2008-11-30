@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "server.h"
+#include "client.h"
 #include "events.h"
 #include "network.h"
 #include "serverevents.h"
@@ -2596,6 +2597,7 @@ void cServer::resyncPlayer ( cPlayer *Player )
 		sendSpecificUnitData ( Vehicle );
 		if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
 		Vehicle = Vehicle->next;
+		if ( Client ) EventHandler->HandleEvents ();
 	}
 	cBuilding *Building = Player->BuildingList;
 	while ( Building )
@@ -2605,6 +2607,7 @@ void cServer::resyncPlayer ( cPlayer *Player )
 		if ( Building->IsWorking && Building->data.is_mine ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
 		Building = Building->next;
+		if ( Client ) EventHandler->HandleEvents ();
 	}
 	// send all subbases
 	for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
@@ -2612,6 +2615,7 @@ void cServer::resyncPlayer ( cPlayer *Player )
 		sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
 		sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
 		sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
+		if ( Client ) EventHandler->HandleEvents ();
 	}
 	// refresh enemy units
 	Player->DoScan();
