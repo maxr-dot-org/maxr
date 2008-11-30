@@ -45,8 +45,8 @@ ping                         [*not working*] checks connectivity in multiplayer
 Next commands are considered as cheats and will show up in gamechat
 
 survey            shows all mapresources (only in singleplayer or on the host)
-color [0-7]       [*not working*] sets new color for active player
-fog off           [*not working*] disabled fog for a short period
+color [0-7]       sets new color for active player
+fog off           disabled fog for a short period
 credits           [*not working*] player gets +1000 credits
 kill [x] [y]      [*not working*] kills whatever is on position x,y
 god off           [*not working*] creates a godless world
