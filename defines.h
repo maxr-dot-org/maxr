@@ -75,8 +75,11 @@
 #define MAX_XML               "max.xml"
 #define KEYS_XML              "keys.xml"
 #define SPLASH_BACKGROUND     "init.pcx"
-#define MAXR_ICON             "maxr.bmp"
-
+#if MAC
+	#define MAXR_ICON             "maxr_mac.bmp"
+#else
+	#define MAXR_ICON             "maxr.bmp"
+#endif
 
 // We have to take care of these manually !
 #ifdef RELEASE
