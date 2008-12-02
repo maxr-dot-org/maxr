@@ -79,6 +79,8 @@
 			<Labs ENG="Research menu"/>
 			<Mine ENG="Allocation menu"/>
 			<Unitinfo ENG="Unit status screen"/>
+      <Savegame ENG="Savegame"/>
+      <Players ENG="Players:"/>
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu"/>
@@ -237,6 +239,7 @@
       <Lost_Connection ENG="Lost connection to %s."/>
       <Wait_Reconnect ENG="Waiting for reconnection of player."/>
       <Abort_Waiting ENG="Server, press F2 to abort waiting."/>
+      <Save_Only_Host ENG="Only the host can save games."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
