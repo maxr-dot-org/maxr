@@ -4876,7 +4876,6 @@ void cMultiPlayerMenu::displayGameSettings()
 
 	if( !savegameString.empty() )
 	{
-		// TODO: translate!
 		OptionString += lngPack.i18n ( "Text~Title~Savegame" ) + ":\n  " + savegameString + "\n";
 	}
 
@@ -5307,7 +5306,6 @@ int ShowDateiMenu ( bool bSave )
 			if ( selected != -1 )
 			{
 				ShowFiles ( files,offset,selected,true,false,false, rDialog );
-				// TODO: translate!
 				if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
 				else
 				{
