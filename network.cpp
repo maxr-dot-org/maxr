@@ -357,7 +357,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 
 	if ( bDataLocked )
 	{
-		if ( ( Server && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
+		if ( ( Server && Server->bStarted && ( iEventType == TCP_CLOSEEVENT || iEventType == TCP_ACCEPTEVENT ) ) || ( iEventType == TCP_RECEIVEEVENT && SDL_SwapLE16 ( ((Sint16*)data1)[1] ) < FIRST_CLIENT_MESSAGE ) )
 		{
 			if ( iEventType == TCP_RECEIVEEVENT )
 			{

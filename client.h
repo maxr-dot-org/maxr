@@ -158,6 +158,8 @@ private:
 	bool bDebugTraceServer;
 	/** show infos from the client about the unit under the mouse */
 	bool bDebugTraceClient;
+	/** show infos from the client about the unit under the mouse */
+	bool bDebugPlayers;
 	/** offset for the debug informations on the top of the gamewindow */
 	int iDebugOff;
 	/** how many seconds will be left for this turn */

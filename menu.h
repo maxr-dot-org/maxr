@@ -25,6 +25,7 @@
 #include "buildings.h"
 #include "player.h"
 #include "network.h"
+#include "savegame.h"
 
 // Globales //////////////////////////////////////////////////////////////////
 EX string SaveLoadFile;	// Name of the savegame to load or to save
@@ -118,7 +119,7 @@ private:
 	bool bOptions;
 	bool bStartSelecting;
 	string sIP;
-	string sSaveGame;
+	string savegameString;
 	string sMap;
 	int iFocus;
 	int iPort;
@@ -133,6 +134,7 @@ private:
 	cPlayer *ActualPlayer;
 	cList<string> ChatLog;
 	cList<sClientLandData*> *ClientDataList;
+	cSavegame *Savegame;
 
 	void addChatLog( string sMsg );
 	void showChatLog();
@@ -140,13 +142,15 @@ private:
 	void displayPlayerList();
 
 	void sendIdentification();
-	void sendPlayerList();
+	void sendPlayerList( cList<cPlayer*> *SendPlayerList = NULL );
 	void sendOptions();
 	void sendLandingInfo( int iLandX, int iLandY, cList<sLanding*> *LandingList );
 	void sendUpgrades();
 
 	int testAllReady();
 
+	void runNewGame ( int b, int lb, int lx, int ly );
+	int runSavedGame ();
 	void HandleMessages();
 	void sendMessage( cNetMessage *Message, int iPlayer = -1 );
 

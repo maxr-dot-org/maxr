@@ -55,6 +55,8 @@ public:
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader( string *name, string *type, string *time );
+	string getMapName();
+	string getPlayerNames();
 
 private:
 	/* the number of the savefile */

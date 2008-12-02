@@ -93,7 +93,16 @@ int cSavegame::load()
 	cMap *map = loadMap();
 	cList<cPlayer *> *PlayerList = loadPlayers ( map );
 
-	Server = new cServer ( map, PlayerList, GAME_TYPE_SINGLE, false );
+	string gametype;
+	loadHeader ( NULL, &gametype, NULL );
+	if ( !gametype.compare ( "IND" )  ) Server = new cServer ( map, PlayerList, GAME_TYPE_SINGLE, false );
+	else if ( !gametype.compare ( "HOT" )  ) Server = new cServer ( map, PlayerList, GAME_TYPE_HOTSEAT, false );
+	else if ( !gametype.compare ( "NET" )  ) Server = new cServer ( map, PlayerList, GAME_TYPE_TCPIP, false );
+	else
+	{
+		cLog::write ( "Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO );
+		Server = new cServer ( map, PlayerList, GAME_TYPE_SINGLE, false );
+	}
 
 	loadGameInfo();
 	loadUnits ();
@@ -113,6 +122,31 @@ void cSavegame::loadHeader( string *name, string *type, string *time )
 	if ( name ) *name = headerNode->FirstChildElement( "Name" )->Attribute ( "string" );
 	if ( type ) *type = headerNode->FirstChildElement( "Type" )->Attribute ( "string" );
 	if ( time ) *time = headerNode->FirstChildElement( "Time" )->Attribute ( "string" );
+}
+
+string cSavegame::getMapName()
+{
+	TiXmlElement *mapNode = SaveFile->RootElement()->FirstChildElement( "Map" );
+	if ( mapNode != NULL ) return mapNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	else return "";
+}
+
+string cSavegame::getPlayerNames()
+{
+	string playernames = "";
+	TiXmlElement *playersNode = SaveFile->RootElement()->FirstChildElement( "Players" );
+	if ( playersNode != NULL )
+	{
+		int playernum = 0;
+		TiXmlElement *playerNode = playersNode->FirstChildElement( "Player_0" );
+		while ( playerNode )
+		{
+			playernames += ((string)playerNode->FirstChildElement ( "Name" )->Attribute ( "string" )) + "\n";
+			playernum++;
+			playerNode = playersNode->FirstChildElement( ("Player_" + iToStr ( playernum )).c_str() );
+		}
+	}
+	return playernames;
 }
 
 void cSavegame::loadGameInfo()

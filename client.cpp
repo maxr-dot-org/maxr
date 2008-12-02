@@ -31,7 +31,7 @@
 #include "main.h"
 #include "attackJobs.h"
 #include "buttons.h"
-
+#include "menu.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -146,6 +146,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugFX = false;
 	bDebugTraceServer = false;
 	bDebugTraceClient = false;
+	bDebugPlayers = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 
@@ -2178,6 +2179,17 @@ void cClient::displayDebugOutput()
 		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 	}
+	if ( bDebugPlayers && bFlagDrawMap )
+	{
+		font->showText(530, iDebugOff, "players: " + iToStr( PlayerList->Size() ), LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+		{
+			if ( (*PlayerList)[i] == ActivePlayer ) font->showText(530, iDebugOff, "> " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + ", cl: " + iToStr ( GetColorNr( (*PlayerList)[i]->color ) ), LATIN_SMALL_WHITE);
+			else font->showText(530, iDebugOff, (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + ", cl: " + iToStr ( GetColorNr( (*PlayerList)[i]->color ) ), LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		}
+	}
 	if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
 	{
 		trace();
@@ -2492,6 +2504,8 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return true; }
 	if ( sCmd.compare( "checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return true; }
 	if ( sCmd.compare( "checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return true; }
+	if ( sCmd.compare( "players on" ) == 0 ) { bDebugPlayers = true; return true; }
+	if ( sCmd.compare( "players off" ) == 0 ) { bDebugPlayers = false; return true; }
 	
 	if ( sCmd.substr( 0, 5 ).compare( "mark "  ) == 0 )
 	{

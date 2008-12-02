@@ -35,7 +35,6 @@
 #include "server.h"
 #include "serverevents.h"
 #include "upgradecalculator.h"
-#include "savegame.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -3462,6 +3461,7 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	bOptions = false;
 	bStartSelecting = false;
 	bExit = false;
+	Savegame = NULL;
 
 	bAllLanded = false;
 
@@ -3480,6 +3480,13 @@ cMultiPlayerMenu::~cMultiPlayerMenu()
 	while ( PlayerList.Size() ) PlayerList.Delete ( PlayerList.Size()-1 );
 
 	while ( ChatLog.Size() ) ChatLog.Delete ( ChatLog.Size()-1 );
+
+	if ( Savegame )
+	{
+		if ( Server ) delete Server;
+		Server = NULL;
+		delete Savegame;
+	}
 }
 
 void cMultiPlayerMenu::addChatLog( string sMsg )
@@ -3577,7 +3584,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 		font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 		btn_planet.Draw();
 		btn_options.Draw();
-		btn_load.Lock();
+		btn_load.Draw();
 		btn_start.Draw();
 		btn_ok.Draw();
 	}
@@ -3734,7 +3741,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 		if (bHost && btn_ok.CheckClick(x, y, down, up))
 		{
 			int iPlayerNum;
-			if ((!bOptions || sMap.empty()) && sSaveGame.empty())
+			if ((!bOptions || sMap.empty()) && !Savegame )
 			{
 				addChatLog(lngPack.i18n("Text~Multiplayer~Missing_Settings"));
 			}
@@ -3785,12 +3792,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 		}
 
 		// Host buttons:
-		if ( bHost && sSaveGame.empty() )
+		if ( bHost )
 		{
-			if (btn_planet.CheckClick(x, y, down, up))
+			if (btn_planet.CheckClick(x, y, down, up) && !Savegame)
 			{
 				sMap = RunPlanetSelect();
-				sSaveGame = "";
 				SDL_FillRect(buffer, NULL, 0x0000);
 				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
 				displayGameSettings();
@@ -3823,7 +3829,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				mouse->draw ( false, screen );
 				sendOptions();
 			}
-			if (btn_options.CheckClick(x, y, down, up))
+			if (btn_options.CheckClick(x, y, down, up) && !Savegame)
 			{
 				if ( !bOptions )
 				{
@@ -3834,7 +3840,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 					Options = RunOptionsMenu ( &Options );
 				}
 				bOptions = true;
-				sSaveGame = "";
 				SDL_FillRect(buffer, NULL, 0x0000);
 				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
 				displayGameSettings();
@@ -3869,7 +3874,51 @@ void cMultiPlayerMenu::runNetworkMenu()
 			}
 			if (btn_load.CheckClick(x, y, down, up))
 			{
-				// TODO implement
+				if ( ShowDateiMenu ( false ) != -1 && !SaveLoadFile.empty() )
+				{
+					if ( Savegame ) delete Savegame;
+					Savegame = new cSavegame ( SaveLoadNumber );
+					Savegame->loadHeader ( &savegameString, NULL, NULL );
+					savegameString += "\n\n" + lngPack.i18n ( "Text~Title~Players" ) +"\n" + Savegame->getPlayerNames();
+					sMap = Savegame->getMapName();
+				}
+				else
+				{
+					if ( Savegame ) delete Savegame;
+					Savegame = NULL;
+					savegameString.clear();
+				}
+
+				SDL_FillRect(buffer, NULL, 0x0000);
+				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+				displayGameSettings();
+				displayPlayerList();
+
+				font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
+				font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
+				font->showText( 20, 260, sIP);
+				font->showText( 228, 245, lngPack.i18n ( "Text~Title~Port" ) );
+				font->showText( 228, 260, iToStr( iPort ) );
+				font->showText( 352, 245, lngPack.i18n ( "Text~Title~Player_Name" ) );
+				font->showText( 352, 260, ActualPlayer->name );
+				font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
+
+				dest.x = 505;
+				dest.y = 260;
+				scr.w = dest.w = 83;
+				scr.h = dest.h = 10;
+				scr.x = 0;
+				scr.y = 0;
+				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
+				btn_planet.Draw();
+				btn_options.Draw();
+				btn_load.Draw();
+				btn_start.Draw();
+				btn_send.Draw();
+				btn_back.Draw();
+				btn_ok.Draw();
+				SHOW_SCREEN
+				mouse->draw ( false, screen );
 			}
 		}
 
@@ -4074,195 +4123,38 @@ void cMultiPlayerMenu::runNetworkMenu()
 				SaveOption(SAVETYPE_IP);
 			}
 
-			if( !sSaveGame.empty() )
+			if( !savegameString.empty() )
 			{
 				if ( bHost )
 				{
-					// Send savegame
+					if ( !runSavedGame() )
+					{
+						bStartSelecting = false;
+						continue;
+					}
 				}
 				else
 				{
-					// Wait for savegame
-				}
-			}
-			else
-			{
-				if ( bHost )
-				{
-					cNetMessage *Message = new cNetMessage ( MU_MSG_GO );
-					sendMessage ( Message );
-				}
-				int iLandX, iLandY;
-				Map = new cMap;
-				cMap *ServerMap = new cMap;
-				if ( !Map->LoadMap ( sMap ) ) 
-				{
-					delete Map;
-					break;
-				}
+					Map = new cMap;
+					Map->LoadMap ( sMap );
 
-				if ( bHost )
-				{
-					Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
-					// copy map for server
-					ServerMap->NewMap( Map->size, Map->TerrainInUse.Size() );
-					ServerMap->DefaultWater = Map->DefaultWater;
-					ServerMap->MapName = Map->MapName;
-					memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
-					memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-					for ( int i = 0; i < Map->TerrainInUse.Size(); i++ )
+					Client = new cClient( Map, &PlayerList );
+					Client->initPlayer ( ActualPlayer );
+					for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 					{
-						ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
-						ServerMap->terrain[i].coast = Map->terrain[i].coast;
-						ServerMap->terrain[i].water = Map->terrain[i].water;
-					}
-				}
-				else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
-
-				cList<sLanding*> LandingList;
-
-				ActualPlayer->Credits = Options.credits;
-				if ( bHost ) ActualPlayer->InitMaps ( ServerMap->size, ServerMap );
-				else ActualPlayer->InitMaps ( Map->size, Map );
-				RunHangar ( ActualPlayer, &LandingList );
-
-				if ( !bHost ) sendUpgrades();
-
-				// copy playerlist for client
-				cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
-				cPlayer *ActualPlayerClient;
-				for ( int i = 0; i < PlayerList.Size(); i++ )
-				{
-					ClientPlayerList->Add(new cPlayer( *PlayerList[i] ) );
-					if ((*ClientPlayerList)[i]->Nr == ActualPlayer->Nr) ActualPlayerClient = (*ClientPlayerList)[i];
-				}
-				// init client and his player
-				Client = new cClient(Map, ClientPlayerList);
-				Client->initPlayer ( ActualPlayerClient );
-				for ( int i = 0; i < ClientPlayerList->Size(); i++ )
-				{
-					(*ClientPlayerList)[i]->InitMaps(Map->size, Map);
-				}
-
-				if ( bHost )
-				{
-					// init the players of playerlist
-					for ( int i = 0; i < PlayerList.Size(); i++ )
-					{
-						if ( PlayerList[i] != ActualPlayer ) PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
+						PlayerList[i]->InitMaps( Map->size, Map );
 					}
 
-					// init server
-					Server = new cServer(ServerMap, &PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
-				}
+					Client->run();
 
-				SelectLanding ( &iLandX, &iLandY, Map );
-
-				if ( bHost )
-				{
-					// wait for other players
-					font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
-					SHOW_SCREEN
-					ClientDataList = new cList<sClientLandData*>;
-					while ( ClientDataList->Size() < PlayerList.Size()-1 )
-					{
-						if ( network->getSocketCount() < PlayerList.Size()-1 )
-						{
-							;// Should not happen oO :P
-						}
-						EventHandler->HandleEvents();
-						mouse->GetPos();
-
-						if ( mouse->x != lx || mouse->y != ly )
-						{
-							mouse->draw ( true, screen );
-						}
-
-						HandleMessages();
-
-						lx = mouse->x;
-						ly = mouse->y;
-						lb = b;
-						SDL_Delay ( 1 );
-					}
-
-					// make all landings
-					Server->makeLanding ( iLandX, iLandY, ActualPlayer, &LandingList, Options.FixedBridgeHead );
-					for ( int i = 0; i < ClientDataList->Size(); i++ )
-					{
-						sClientLandData* const c = (*ClientDataList)[i];
-						cPlayer *Player;
-						for ( int n = 0; n < PlayerList.Size(); n++ )
-						{
-							cPlayer* const p = PlayerList[n];
-							if (p->Nr == c->iNr)
-							{
-								Player = p;
-								break;
-							}
-						}
-						Server->makeLanding(c->iLandX, c->iLandY, Player, c->LandingList, Options.FixedBridgeHead);
-					}
-					// copy changed resources from server map to client map
-					memcpy ( Map->Resources, ServerMap->Resources, sizeof ( sResources )*Map->size*Map->size );
-
-					// send clients that all players have been landed
-					cNetMessage *Message = new cNetMessage ( MU_MSG_ALL_LANDED );
-					sendMessage ( Message );
-				}
-				else
-				{
-					sendLandingInfo( iLandX, iLandY, &LandingList );
-					// wait for other players
-					font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
-					SHOW_SCREEN
-					while ( !bAllLanded )
-					{
-						EventHandler->HandleEvents();
-						mouse->GetPos();
-
-						if ( mouse->x != lx || mouse->y != ly )
-						{
-							mouse->draw ( true, screen );
-						}
-
-						HandleMessages();
-
-						lx = mouse->x;
-						ly = mouse->y;
-						lb = b;
-						SDL_Delay ( 1 );
-					}
-				}
-
-				while ( LandingList.Size() )
-				{
-					delete LandingList[LandingList.Size() - 1];
-					LandingList.Delete(LandingList.Size() - 1);
-				}
-
-				ExitMenu();
-
-				if ( Options.PlayRounds && Client->ActivePlayer->Nr != 0 ) Client->bWaitForOthers = true;
-				if ( bHost ) Server->bStarted = true;
-				Client->run();
-
-				SettingsData.sPlayerName = ActualPlayerClient->name;
-				
-				delete Client;
-				Client = NULL;
-				if ( bHost )
-				{
+					delete Client;
+					Client = NULL;
 					delete Server;
 					Server = NULL;
 				}
-				while ( PlayerList.Size() )
-				{
-					delete PlayerList[0];
-					PlayerList.Delete ( 0 );
-				}
-				break;
 			}
+			else runNewGame( b, lb, lx, ly );
+			break;
 		}
 
 		HandleMessages();
@@ -4273,6 +4165,254 @@ void cMultiPlayerMenu::runNetworkMenu()
 		SDL_Delay ( 1 );
 	}
 	SDL_FreeSurface(sfTmp);
+}
+
+void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
+{
+	if ( bHost )
+	{
+		cNetMessage *Message = new cNetMessage ( MU_MSG_GO );
+		sendMessage ( Message );
+	}
+	int iLandX, iLandY;
+	Map = new cMap;
+	cMap *ServerMap = new cMap;
+	if ( !Map->LoadMap ( sMap ) ) 
+	{
+		delete Map;
+		return;
+	}
+
+	if ( bHost )
+	{
+		Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
+		// copy map for server
+		ServerMap->NewMap( Map->size, Map->TerrainInUse.Size() );
+		ServerMap->DefaultWater = Map->DefaultWater;
+		ServerMap->MapName = Map->MapName;
+		memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
+		memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
+		for ( int i = 0; i < Map->TerrainInUse.Size(); i++ )
+		{
+			ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
+			ServerMap->terrain[i].coast = Map->terrain[i].coast;
+			ServerMap->terrain[i].water = Map->terrain[i].water;
+		}
+	}
+	else memset ( Map->Resources, 0, Map->size*Map->size*sizeof( sResources ) );
+
+	cList<sLanding*> LandingList;
+
+	ActualPlayer->Credits = Options.credits;
+	if ( bHost ) ActualPlayer->InitMaps ( ServerMap->size, ServerMap );
+	else ActualPlayer->InitMaps ( Map->size, Map );
+	RunHangar ( ActualPlayer, &LandingList );
+
+	if ( !bHost ) sendUpgrades();
+
+	// copy playerlist for client
+	cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
+	cPlayer *ActualPlayerClient;
+	for ( int i = 0; i < PlayerList.Size(); i++ )
+	{
+		ClientPlayerList->Add(new cPlayer( *PlayerList[i] ) );
+		if ((*ClientPlayerList)[i]->Nr == ActualPlayer->Nr) ActualPlayerClient = (*ClientPlayerList)[i];
+	}
+	// init client and his player
+	Client = new cClient(Map, ClientPlayerList);
+	Client->initPlayer ( ActualPlayerClient );
+	for ( int i = 0; i < ClientPlayerList->Size(); i++ )
+	{
+		(*ClientPlayerList)[i]->InitMaps(Map->size, Map);
+	}
+
+	if ( bHost )
+	{
+		// init the players of playerlist
+		for ( int i = 0; i < PlayerList.Size(); i++ )
+		{
+			if ( PlayerList[i] != ActualPlayer ) PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
+		}
+
+		// init server
+		Server = new cServer(ServerMap, &PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
+	}
+
+	SelectLanding ( &iLandX, &iLandY, Map );
+
+	if ( bHost )
+	{
+		// wait for other players
+		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
+		SHOW_SCREEN
+		ClientDataList = new cList<sClientLandData*>;
+		while ( ClientDataList->Size() < PlayerList.Size()-1 )
+		{
+			if ( network->getSocketCount() < PlayerList.Size()-1 )
+			{
+				;// Should not happen oO :P
+			}
+			EventHandler->HandleEvents();
+			mouse->GetPos();
+
+			if ( mouse->x != lx || mouse->y != ly )
+			{
+				mouse->draw ( true, screen );
+			}
+
+			HandleMessages();
+
+			lx = mouse->x;
+			ly = mouse->y;
+			lb = b;
+			SDL_Delay ( 1 );
+		}
+
+		// make all landings
+		Server->makeLanding ( iLandX, iLandY, ActualPlayer, &LandingList, Options.FixedBridgeHead );
+		for ( int i = 0; i < ClientDataList->Size(); i++ )
+		{
+			sClientLandData* const c = (*ClientDataList)[i];
+			cPlayer *Player;
+			for ( int n = 0; n < PlayerList.Size(); n++ )
+			{
+				cPlayer* const p = PlayerList[n];
+				if (p->Nr == c->iNr)
+				{
+					Player = p;
+					break;
+				}
+			}
+			Server->makeLanding(c->iLandX, c->iLandY, Player, c->LandingList, Options.FixedBridgeHead);
+		}
+		// copy changed resources from server map to client map
+		memcpy ( Map->Resources, ServerMap->Resources, sizeof ( sResources )*Map->size*Map->size );
+
+		// send clients that all players have been landed
+		cNetMessage *Message = new cNetMessage ( MU_MSG_ALL_LANDED );
+		sendMessage ( Message );
+	}
+	else
+	{
+		sendLandingInfo( iLandX, iLandY, &LandingList );
+		// wait for other players
+		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
+		SHOW_SCREEN
+		while ( !bAllLanded )
+		{
+			EventHandler->HandleEvents();
+			mouse->GetPos();
+
+			if ( mouse->x != lx || mouse->y != ly )
+			{
+				mouse->draw ( true, screen );
+			}
+
+			HandleMessages();
+
+			lx = mouse->x;
+			ly = mouse->y;
+			lb = b;
+			SDL_Delay ( 1 );
+		}
+	}
+
+	while ( LandingList.Size() )
+	{
+		delete LandingList[LandingList.Size() - 1];
+		LandingList.Delete(LandingList.Size() - 1);
+	}
+
+	ExitMenu();
+
+	if ( Options.PlayRounds && Client->ActivePlayer->Nr != 0 ) Client->bWaitForOthers = true;
+	if ( bHost ) Server->bStarted = true;
+	Client->run();
+
+	SettingsData.sPlayerName = ActualPlayerClient->name;
+	
+	delete Client;
+	Client = NULL;
+	if ( bHost )
+	{
+		delete Server;
+		Server = NULL;
+	}
+	while ( PlayerList.Size() )
+	{
+		delete PlayerList[0];
+		PlayerList.Delete ( 0 );
+	}
+	return;
+}
+int cMultiPlayerMenu::runSavedGame()
+{
+	if ( Savegame && Savegame->load() == 1 )
+	{
+		// set sockets
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			if ( (*Server->PlayerList)[i]->name == ActualPlayer->name ) (*Server->PlayerList)[i]->iSocketNum = MAX_CLIENTS;
+			else
+			{
+				for ( unsigned int j = 0; j < PlayerList.Size(); j++ )
+				{
+					if ( (*Server->PlayerList)[i]->name == PlayerList[j]->name )
+					{
+						(*Server->PlayerList)[i]->iSocketNum = PlayerList[j]->iSocketNum;
+						break;
+					}
+					// stop when a player is missing
+					if ( j == PlayerList.Size()-1 )
+					{
+						addChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
+						return 0;
+					}
+				}
+			}
+		}
+		sendPlayerList ( Server->PlayerList );
+		// send client that the game has to be started
+		cNetMessage *Message = new cNetMessage ( MU_MSG_GO );
+		sendMessage ( Message );
+
+		// copy map for client
+		cMap ClientMap;
+		ClientMap.LoadMap ( Server->Map->MapName );
+
+		cList<cPlayer*> ClientPlayerList;
+
+		// copy players for client
+		cPlayer *LocalPlayer;
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			ClientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
+			if ( (*Server->PlayerList)[i]->iSocketNum == MAX_CLIENTS ) LocalPlayer = ClientPlayerList[i];
+		}
+		// init client and his player
+		Client = new cClient( &ClientMap, &ClientPlayerList );
+		Client->initPlayer ( LocalPlayer );
+		for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
+		{
+			ClientPlayerList[i]->InitMaps( ClientMap.size, &ClientMap );
+		}
+
+		// send data to all players
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			Server->resyncPlayer ( (*Server->PlayerList)[i] );
+		}
+
+		// exit menu and start game
+		Server->bStarted = true;
+		Client->run();
+
+		delete Client;
+		Client = NULL;
+		delete Server;
+		Server = NULL;
+	}
+	return 1;
 }
 
 void cMultiPlayerMenu::HandleMessages()
@@ -4355,8 +4495,17 @@ void cMultiPlayerMenu::HandleMessages()
 					int iNr = Message->popInt16();
 					cPlayer *Player = new cPlayer ( sName, OtherData.colors[iColor], iNr );
 					PlayerList.Add ( Player );
-					if ( Player->Nr == ActualPlayer->Nr ) ActualPlayer = Player;
-					ReadyList[i] = Message->popBool();
+					// check if it's the own player by name if there has not been send the menu-plaer-list
+					if ( !Message->popBool() )
+					{
+						if ( Player->name == ActualPlayer->name ) ActualPlayer = Player;
+					}
+					else
+					{
+						// else check by number and get the ready status
+						if ( Player->Nr == ActualPlayer->Nr ) ActualPlayer = Player;
+						ReadyList[i] = Message->popBool();
+					}
 				}
 				displayPlayerList();
 				SWITCH_MESSAGE_END
@@ -4380,7 +4529,7 @@ void cMultiPlayerMenu::HandleMessages()
 				}
 				if ( Message->popBool() )
 				{
-					sSaveGame = Message->popString();
+					savegameString = Message->popString();
 				}
 				bRefresh = true;
 			}
@@ -4651,19 +4800,26 @@ void cMultiPlayerMenu::sendIdentification()
 	sendMessage ( Message );
 }
 
-void cMultiPlayerMenu::sendPlayerList()
+void cMultiPlayerMenu::sendPlayerList( cList<cPlayer*> *SendPlayerList )
 {
+	if ( SendPlayerList == NULL ) SendPlayerList = &PlayerList;
 	cNetMessage *Message = new cNetMessage ( MU_MSG_PLAYERLIST );
 
-	for ( int i = 0; i < PlayerList.Size(); i++ )
+	for ( int i = 0; i < SendPlayerList->Size(); i++ )
 	{
-		Message->pushBool ( ReadyList[i] );
-		cPlayer const* const p = PlayerList[i];
+		// if the menulist is send, the players need the readystate, else not
+		if ( SendPlayerList == &PlayerList )
+		{
+			Message->pushBool ( ReadyList[i] );
+			Message->pushBool ( true );
+		}
+		else Message->pushBool ( false );
+		cPlayer const* const p = (*SendPlayerList)[i];
 		Message->pushInt16(p->Nr);
 		Message->pushInt16(GetColorNr(p->color));
 		Message->pushString(p->name);
 	}
-	Message->pushInt16 ( PlayerList.Size() );
+	Message->pushInt16 ( SendPlayerList->Size() );
 	sendMessage ( Message );
 }
 
@@ -4671,8 +4827,11 @@ void cMultiPlayerMenu::sendOptions()
 {
 	cNetMessage *Message = new cNetMessage ( MU_MSG_OPTINS );
 
-	if ( !sSaveGame.empty() ) Message->pushString ( sSaveGame );
-	Message->pushBool ( !sSaveGame.empty() );
+	if ( Savegame )
+	{
+		Message->pushString ( savegameString );
+	}
+	Message->pushBool ( Savegame != NULL );
 
 	if ( !sMap.empty() ) Message->pushString ( sMap );
 	Message->pushBool ( !sMap.empty() );
@@ -4715,9 +4874,10 @@ void cMultiPlayerMenu::displayGameSettings()
 		font->showTextAsBlock( rect, OptionString );
 	}
 
-	if( !sSaveGame.empty() )
+	if( !savegameString.empty() )
 	{
-		;
+		// TODO: translate!
+		OptionString += lngPack.i18n ( "Text~Title~Savegame" ) + ":\n  " + savegameString + "\n";
 	}
 
 	if ( !sMap.empty() )
@@ -4800,13 +4960,13 @@ void cMultiPlayerMenu::displayGameSettings()
 			font->showTextCentered( 90, 65, sMapName + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")" );
 		}
 	}
-	else if ( sSaveGame.empty() )
+	else if ( savegameString.empty() )
 	{
 		OptionString += lngPack.i18n ( "Text~Multiplayer~Map_NoSet" ) + "\n";
 	}
 	OptionString += "\n";
 
-	if ( sSaveGame.empty() )
+	if ( savegameString.empty() )
 	{
 		if ( bOptions )
 		{
@@ -5148,7 +5308,7 @@ int ShowDateiMenu ( bool bSave )
 			{
 				ShowFiles ( files,offset,selected,true,false,false, rDialog );
 				// TODO: translate!
-				if ( !Server ) ShowOK ( "Only host can save games" );
+				if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
 				else
 				{
 					cSavegame Save( SaveLoadNumber );

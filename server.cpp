@@ -26,6 +26,7 @@
 #include "mjobs.h"
 #include "attackJobs.h"
 #include "movejobs.h"
+#include "client.h"
 
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
 {
