@@ -39,7 +39,6 @@
 #include "keys.h"
 #include "sound.h"
 #include "map.h"
-#include "game.h"
 #include "buildings.h"
 #include "vehicles.h"
 #include "player.h"
@@ -53,7 +52,7 @@
 #include "client.h"
 #include "server.h"
 #include "savegame.h"
-
+#include "MVEPlayer.h"
 
 int main ( int argc, char *argv[] )
 {
@@ -77,6 +76,10 @@ int main ( int argc, char *argv[] )
 		Quit();
 		return -1;
 	}
+
+	// play intro if we're supposed to and the file exists
+	if(SettingsData.bIntro && FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str())) 
+		MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str());
 
 	showSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net

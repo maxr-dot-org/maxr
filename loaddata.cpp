@@ -563,7 +563,7 @@ int ReadMaxXml()
 	else
 	{
 		cLog::write ( "Can't load Intro from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bIntro = false;
+		SettingsData.bIntro = true;
 	}
 	// Windowmode
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL)))
@@ -942,6 +942,16 @@ int ReadMaxXml()
 	{
 		cLog::write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sBuildingsPath = "buildings";
+	}
+	//MVEs
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","MVEs", NULL)))
+		cLog::write ( "Can't find Path-MVEs-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		SettingsData.sMVEPath = sTmpString;
+	else
+	{
+		cLog::write ( "Can't load MVEs-Path from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sMVEPath = "mve";
 	}
 
 	if(SettingsData.bDebug) //Print settingslist to log

@@ -560,6 +560,7 @@ public:
 	string sMusicPath;			// Path to the music-files
 	string sVehiclesPath;		// Path to the vehicles
 	string sBuildingsPath;		// Path to the buildings
+	string sMVEPath;			// Path to the in-game movies (*.mve)
 
 	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften - NOT IN XML-file (yet?)!
 } EX SettingsData;
