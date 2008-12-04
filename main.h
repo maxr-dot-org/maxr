@@ -100,6 +100,8 @@ struct sVehicle;
 #define MSG_FRAMES         300      // Anzahl an Frames, die eine Nachricht zu sehen ist
 #define MAX_PATHFINDING    3500     // Maximale Endpunktezal fürs Pathfinding
 #define USER_WARPMOUSE		SDL_USEREVENT+0	// An Event for moving the mouse; this is the first UserEvent
+#define LANDING_DISTANCE_WARNING 28
+#define LANDING_DISTANCE_TOO_CLOSE 10
 
 // Colors /////////////////////////////////////////////////////////////////////
 #define cl_red 0

@@ -1375,7 +1375,7 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 	return VehcilePtr;
 }
 
-void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *List, bool bFixed )
+void cServer::makeLanding( int iX, int iY, cPlayer *Player, const cList<sLanding*>& List, bool bFixed )
 {
 	sLanding *Landing;
 	cVehicle *Vehicle;
@@ -1432,9 +1432,9 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding*> *Li
 
 	iWidth = 2;
 	iHeight = 2;
-	for ( int i = 0; i < List->Size(); i++ )
+	for ( int i = 0; i < List.Size(); i++ )
 	{
-		Landing = (*List)[i];
+		Landing = List[i];
 		Vehicle = landVehicle(iX, iY, iWidth, iHeight, &UnitsData.vehicle[Landing->id], Player);
 		while ( !Vehicle )
 		{
@@ -1534,9 +1534,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
-	AddedBuilding->makeDetection();
 
 	return AddedBuilding;
+	AddedBuilding->makeDetection();
 }
 
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )

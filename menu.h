@@ -52,6 +52,15 @@ enum ePlayer
 	PLAYER_AI
 };
 
+enum eLandingState
+{
+	LANDING_STATE_UNKNOWN,		//initial state
+	LANDING_POSITION_OK,		//there are no other players near the position
+	LANDING_POSITION_WARNING,	//there are players within the warning distance
+	LANDING_POSITION_TOO_CLOSE,	//the position is too close to another player
+	LANDING_POSITION_CONFIRMED	//warnings about nearby players will be ignored, because the player has confirmed his position
+};
+
 // Struktur für die Optionen:
 struct sOptions{
   int metal,oil,gold,dichte;
@@ -81,9 +90,12 @@ struct sLanding{
 // Struktur für die ClientSettings:
 struct sClientLandData
 {
-	cList <sLanding*> *LandingList;
+	sClientLandData();
+
+	cList <sLanding*> landingList;
 	int iLandX, iLandY;
-	int iNr;
+	eLandingState landingState;
+	int iLastLandX, iLastLandY;
 };
 
 enum MESSAGE_TYPES
@@ -97,6 +109,7 @@ enum MESSAGE_TYPES
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_GO,					// host wants to start the game
 	MU_MSG_WT_LAND,				// a player wants to land at this position
+	MU_MSG_RESELECT_LANDING,	// informs a client that the player has to reselect the landing site
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 	MU_MSG_RESOURCES,			// the resources on the map
 	MU_MSG_UPGRADES,			// data of upgraded units
@@ -133,18 +146,25 @@ private:
 	int iNextPlayerNr;
 	cPlayer *ActualPlayer;
 	cList<string> ChatLog;
-	cList<sClientLandData*> *ClientDataList;
+	sClientLandData c;				 /** the landing information of the local client */
+	sClientLandData *ClientDataList; /** holds a dynamic array of the client landing informations. Sorted by player number */
+	int iLandedClients;				 /** number of clients, which submited their landing information */
 	cSavegame *Savegame;
 
 	void addChatLog( string sMsg );
 	void showChatLog();
 	void displayGameSettings();
 	void displayPlayerList();
+	/**
+	* runs a statemachine, that controlls the landing state of the given player
+	* @return the new landing state of the player
+	*/
+	eLandingState checkLandingState(int playerNr );
 
 	void sendIdentification();
 	void sendPlayerList( cList<cPlayer*> *SendPlayerList = NULL );
 	void sendOptions();
-	void sendLandingInfo( int iLandX, int iLandY, cList<sLanding*> *LandingList );
+	void sendLandingInfo( const sClientLandData& c );
 	void sendUpgrades();
 
 	int testAllReady();
@@ -157,6 +177,17 @@ private:
 public:
 	cList<cNetMessage*> MessageList;
 } EX *MultiPlayerMenu;
+
+class cSelectLandingMenu
+{
+public:
+	cSelectLandingMenu( cMap* map );
+	void run(int *x,int *y, eLandingState landingState = LANDING_STATE_UNKNOWN);
+private:
+	cMap* map;
+	void drawHud();
+	void drawMap();
+};
 
 // Prototypen ////////////////////////////////////////////////////////////////
 void RunMainMenu(void);
@@ -212,13 +243,6 @@ void placeSelectableText(std::string sText,int x,int y,bool checked, SDL_Surface
  * @param LandingList
  */
 void RunHangar(cPlayer *player, cList<sLanding*> *LandingList);
-/**
- *
- * @param x
- * @param y
- * @param map
- */
-void SelectLanding(int *x,int *y,cMap *map);
 /**
  *
  * @param x
