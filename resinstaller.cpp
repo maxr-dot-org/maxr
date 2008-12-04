@@ -30,6 +30,33 @@
 #include "wave.h"
 #include "ogg_encode.h"
 
+int installMVEs()
+{
+	string path;
+	iTotalFiles = 3;
+	iErrors = 0;
+	iInstalledFiles = 0;
+
+	cout << "========================================================================\n";
+	cout << "MVE files\n";
+
+	path = sOutputPath + "mve" + PATH_DELIMITER;
+	copyFile(sMAXPath + "MAXINT.MVE", path + "MAXINT.MVE");
+	copyFile(sMAXPath + "MAXMVE1.MVE", path + "MAXMVE1.MVE");
+	copyFile(sMAXPath + "MAXMVE2.MVE", path + "MAXMVE2.MVE");
+	
+	if ( logFile != NULL )
+	{
+		writeLog( string("MVEs") + TEXT_FILE_LF);
+		writeLog( iToStr( iErrors) + " errors" + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	cout << "\n";
+	cout << iToStr( iErrors) << " errors\n";
+	return 1;
+
+}
 
 int installVehicleGraphics()
 {
@@ -3907,6 +3934,7 @@ GNU General Public License for more details.\n\n";
 	installMaps();
 	installSounds();
 	installMusic();
+	installMVEs();
 	
 	if ( wasError )
 	{
