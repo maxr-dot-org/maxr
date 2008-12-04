@@ -46,6 +46,7 @@
             <Music Text="music" />
             <Vehicles Text="vehicles" />
             <Buildings Text="buildings" />
+            <MVEs Text="mve" />
         </Paths>
     </Game>
 </Options>
