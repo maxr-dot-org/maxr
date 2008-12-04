@@ -256,6 +256,8 @@
 			<Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
+      <Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position."/>
+      <Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off."/>
 			<Energy_Low ENG="Power needed, building turned off."/>
 			<Metal_Low ENG="More raw material needed, building turned off."/>
