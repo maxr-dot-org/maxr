@@ -78,8 +78,23 @@ int main ( int argc, char *argv[] )
 	}
 
 	// play intro if we're supposed to and the file exists
-	if(SettingsData.bIntro && FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str())) 
-		MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str());
+	if(SettingsData.bIntro)
+	{
+		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+		{
+			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+			MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str());
+		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+		}
+		else
+		{
+			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+		}
+	}
+	else
+	{
+		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
+	}
 
 	showSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
@@ -94,7 +109,7 @@ int main ( int argc, char *argv[] )
 	{
 		if ( LoadingData == LOAD_ERROR )
 		{
-			cLog::write ( "Error while loading data!",LOG_TYPE_ERROR );
+			cLog::write ( "Error while loading data!", cLog::eLOG_TYPE_ERROR );
 			SDL_WaitThread ( DataThread, NULL );
 			Quit();
 		}
@@ -126,97 +141,6 @@ int main ( int argc, char *argv[] )
 	Quit();
 	return 0;
 }
-
-/*
-//IMPORTANT: this is highly temporary! -- beko
-int runEventChecker( void *)
-{
-	bool exit = false;
-	SDL_Event event;
-	//SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL); // This doesn't work?!?!
-	cout << "Eventing\n";
-	SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-
-	int iLastPressed = -1;
-	unsigned int iTimeSinceLastPress = 0;
-
-	#define REPEAT_DELAY 200
-	#define REPEAT_INTERVAL 20
-	#define KEYPRESS_TERMINATION if ( iLastPressed != SYM ) iTimeSinceLastPress = SDL_GetTicks() + REPEAT_DELAY; else iTimeSinceLastPress = SDL_GetTicks() + REPEAT_INTERVAL; iLastPressed = SYM;
-
-	#define SYM event.key.keysym.sym
-	#define MOD event.key.keysym.mod
-	#define ETYPE event.type
-	while(!exit)
-	{
-		SDL_PollEvent ( &event );
-
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			// TODO: Sometimes SDL_QUIT message is send but game will not be quit but EventThread is.
-			// for this reason the next
-			//exit=true;
-			break;
-
-		case SDL_KEYDOWN:
-			if ( SYM == SDLK_RETURN && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
-			{
-				if( MOD &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
-				{
-					SettingsData.bWindowMode = !SettingsData.bWindowMode;
-					//SDL_LockSurface(screen);
-					screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
-
-					//SDL_UnlockSurface(screen);
-					SHOW_SCREEN
-				}
-				else EventClass->keystate[SYM] = true;
-				KEYPRESS_TERMINATION
-			}
-			else if ( SYM == SDLK_F4 && ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM ) )
-			{
-				if( MOD &KMOD_ALT ) //alt+f4 pressed
-				{ //TODO: implement me proper. make game ask for really? and exit no matter where we are!
-						SDL_Event quit;
-						quit.type = SDL_QUIT;
-						SDL_PushEvent(&quit);
-						Quit();
-				}
-				else EventClass->keystate[SYM] = true;
-				KEYPRESS_TERMINATION
-			}
-			// send keystate to game if doesn't need to be handled specialy
-			else if ( iTimeSinceLastPress <= SDL_GetTicks() || iLastPressed != SYM )
-			{
-				EventClass->keystate[SYM] = true;
-				EventClass->keystate[SDLK_LALT] = MOD &KMOD_LALT;
-				EventClass->keystate[SDLK_RALT] = MOD &KMOD_RALT;
-				EventClass->keystate[SDLK_LSHIFT] = MOD &KMOD_LSHIFT;
-				EventClass->keystate[SDLK_RSHIFT] = MOD &KMOD_RSHIFT;
-				KEYPRESS_TERMINATION
-			}
-			break;
-		case SDL_KEYUP:
-			if( SYM == iLastPressed ) iLastPressed = -1;
-			break;
-
-		case USER_WARPMOUSE:
-			{
-			SDL_WarpMouse ( ((Uint16 *)event.user.data1)[0], ((Uint16 *)event.user.data1)[1] );
-			event.type = 0;
-			}
-			break;
-		default:
-			memset( EventClass->keystate,0, sizeof( Uint8 ) * SDLK_LAST );
-		}
-
-		EventClass->iMouseButton = SDL_GetMouseState( &EventClass->iMouseX, &EventClass->iMouseY);
-
-		SDL_Delay ( 1 );
-	}
-	return 0;
-}*/
 
 // generate SplashScreen
 void showSplash()
