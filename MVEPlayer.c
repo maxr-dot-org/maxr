@@ -28,10 +28,9 @@
 #include "MVEPlayer.h"
 #include <assert.h>
 #ifdef _MSC_VER
-#include "sdl.h"
+#include "SDL.h"
 #else
-#include <SDL.H>
-#include <SDL/SDL.H>
+#include <SDL.h>
 #endif
 
 /* NOAUDIO enables use of speed up / slow down functionality (f = faster, s = slower) */
