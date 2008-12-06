@@ -144,6 +144,7 @@ int MVEPlayer(const char *filename)
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
 	SDL_Surface *screen = NULL, *frame_buf = NULL;
 	SDL_Rect movie_screen;
+	const SDL_VideoInfo *initial_vid_state;
 
 	/* file handle */
 	SDL_RWops *mve = NULL;
@@ -207,6 +208,8 @@ int MVEPlayer(const char *filename)
 		return SDL_INIT_FAILURE;
 	}
 	atexit(SDL_Quit);
+
+	initial_vid_state = SDL_GetVideoInfo();
 	
 	/*************/
 	/* main loop */
@@ -642,6 +645,9 @@ int MVEPlayer(const char *filename)
 	/* close the file handle */
 	if(mve)
 		SDL_RWclose(mve);
+
+	/* reset video mode to original */
+	SDL_SetVideoMode(initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);
 
 	/* seems to have worked. */
 	return SUCCESS;
