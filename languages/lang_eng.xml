@@ -201,6 +201,9 @@
 			<ShowDamage ENG="Buildingdamage"/>
 			<ShowDamageVehicle ENG="Vehicledamage"/>
 			<Tracks ENG="Vehicletracks"/>
+			<Intro ENG="Show intro"/>
+			<Window ENG="Windowed"/>
+			<Resolution ENG="Resolution"/>
 		</Settings>
 		<Multiplayer>
 			<Player ENG="Player"/>

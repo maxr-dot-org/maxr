@@ -197,6 +197,9 @@
 			<ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
 			<Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
+			<Intro ENG="Show intro" localized="Zeige Intro"/>
+			<Window ENG="Windowed" localized="Fenstermodus"/>
+			<Resolution ENG="Resolution" localized="Auflösung"/>
 		</Settings>
 		<Multiplayer>
 			<Player ENG="Player" localized="Spieler"/>
