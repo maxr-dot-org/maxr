@@ -609,11 +609,12 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 // Zeigt das Präferenzenfenster an:
 void showPreferences ( void )
 {
-	bool OldMusicMute, OldSoundMute, OldVoiceMute, OldbAutoSave, OldbAnimations, OldbShadows, OldbAlphaEffects, OldbDamageEffects, OldbDamageEffectsVehicles, OldbMakeTracks;
+	bool OldMusicMute, OldSoundMute, OldVoiceMute, OldbAutoSave, OldbAnimations, OldbShadows, OldbAlphaEffects, OldbDamageEffects, OldbDamageEffectsVehicles, OldbMakeTracks, bOldIntro, bOldWindowMode;
 	bool Input = false;
 	int OldiScrollSpeed, OldMusicVol, OldSoundVol, OldVoiceVol;
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	string OldName;
+	string sTmpName;
 	string stmp;
 	string sTmp;
 	SDL_Rect scr, dest, rFont;
@@ -638,10 +639,12 @@ void showPreferences ( void )
 	OldMusicVol = SettingsData.MusicVol;
 	OldSoundVol = SettingsData.SoundVol;
 	OldVoiceVol = SettingsData.VoiceVol;
-	OldName = Client->ActivePlayer->name;
+	OldName = sTmpName =SettingsData.sPlayerName;
 	OldbDamageEffects = SettingsData.bDamageEffects;
 	OldbDamageEffectsVehicles = SettingsData.bDamageEffectsVehicles;
 	OldbMakeTracks = SettingsData.bMakeTracks;
+	bOldIntro = SettingsData.bIntro;
+	bOldWindowMode = SettingsData.bWindowMode;
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 400, 422, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
@@ -737,7 +740,7 @@ void showPreferences ( void )
 	rFont.x = rDialog.x + 25; 	rFont.w = 100;
 	rFont.y = 158+rDialog.y;
 	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
-	font->showText(122+rDialog.x,158+rDialog.y, Client->ActivePlayer->name);
+	font->showText(122+rDialog.x,158+rDialog.y, SettingsData.sPlayerName);
 
 	//END BLOCK PLAYERNAME
 
@@ -782,15 +785,27 @@ void showPreferences ( void )
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Autosave" ));
 	drawCheckbox ( 25+rDialog.x,290+rDialog.y,SettingsData.bAutoSave,buffer );
 
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 314;
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Intro" ));
+	drawCheckbox ( 25+rDialog.x,310+rDialog.y,SettingsData.bIntro,buffer );
+
+	rFont.x = rDialog.x + 50; rFont.w = 100;
+	rFont.y = rDialog.y + 334;
+	font->showText(rFont, lngPack.i18n( "Text~Settings~Window" ));
+	drawCheckbox ( 25+rDialog.x,330+rDialog.y,SettingsData.bWindowMode,buffer );
+
 	SHOW_SCREEN
 
 	mouse->GetBack ( buffer );
 	while ( 1 )
 	{
 		// Die Engine laufen lassen:
-		Client->handleTimer();
-		Client->doGameActions();
-
+		if(Client)
+		{
+			Client->handleTimer();
+			Client->doGameActions();
+		}
 		// Events holen:
 		EventHandler->HandleEvents();
 
@@ -811,7 +826,7 @@ void showPreferences ( void )
 				{
 					font->showText(122+rDialog.x,158+rDialog.y, InputStr);
 					Input=false;
-					Client->ActivePlayer->name=InputStr;
+					SettingsData.sPlayerName = sTmpName = InputStr;
 				}
 				else
 				{
@@ -916,6 +931,20 @@ void showPreferences ( void )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=310+rDialog.y&&y<310+rDialog.y+17 )
+				{
+					SettingsData.bIntro=!SettingsData.bIntro;
+					drawCheckbox ( 25+rDialog.x,310+rDialog.y,SettingsData.bIntro,buffer );
+					SHOW_SCREEN
+					mouse->draw ( false,screen );
+				}
+				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=330+rDialog.y&&y<330+rDialog.y+17 )
+				{
+					SettingsData.bWindowMode=!SettingsData.bWindowMode;
+					drawCheckbox ( 25+rDialog.x,330+rDialog.y,SettingsData.bWindowMode,buffer );
+					SHOW_SCREEN
+					mouse->draw ( false,screen );
+				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=193+rDialog.y&&y<193+rDialog.y+17 )
 				{
 					SettingsData.bAnimations=!SettingsData.bAnimations;
@@ -940,7 +969,7 @@ void showPreferences ( void )
 				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!Input )
 				{
 					Input=true;
-					InputStr=Client->ActivePlayer->name;
+					InputStr=sTmpName;
 					stmp = InputStr; stmp += "_";
 					font->showText(122+rDialog.x,158+rDialog.y, stmp);
 					SHOW_SCREEN
@@ -975,27 +1004,30 @@ void showPreferences ( void )
 
 		if (btn_done.CheckClick(x, y, down, up))
 		{
-			if ( Input )
+			if ( Client)
 			{
-				Client->ActivePlayer->name=InputStr;
+				Client->ActivePlayer->name=sTmpName;
 			}
 			// Save new settings to max.xml
-			if( SettingsData.MusicMute != OldMusicMute ) SaveOption ( SAVETYPE_MUSICMUTE );
-			if( SettingsData.SoundMute != OldSoundMute ) SaveOption ( SAVETYPE_SOUNDMUTE );
-			if( SettingsData.VoiceMute != OldVoiceMute ) SaveOption ( SAVETYPE_VOICEMUTE );
-			if( SettingsData.bAutoSave != OldbAutoSave ) SaveOption ( SAVETYPE_AUTOSAVE );
-			if( SettingsData.bAnimations != OldbAnimations ) SaveOption ( SAVETYPE_ANIMATIONS );
-			if( SettingsData.bShadows != OldbShadows ) SaveOption ( SAVETYPE_SHADOWS );
-			if( SettingsData.bAlphaEffects != OldbAlphaEffects ) SaveOption ( SAVETYPE_ALPHA );
-			if( SettingsData.iScrollSpeed != OldiScrollSpeed ) SaveOption ( SAVETYPE_SCROLLSPEED );
-			if( SettingsData.MusicVol != OldMusicVol ) SaveOption ( SAVETYPE_MUSICVOL );
-			if( SettingsData.SoundVol != OldSoundVol ) SaveOption ( SAVETYPE_SOUNDVOL );
-			if( SettingsData.VoiceVol != OldVoiceVol ) SaveOption ( SAVETYPE_VOICEVOL );
-			if( SettingsData.bDamageEffects != OldbDamageEffects ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
-			if( SettingsData.bDamageEffectsVehicles != OldbDamageEffectsVehicles ) SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
-			if( SettingsData.bMakeTracks != OldbMakeTracks ) SaveOption ( SAVETYPE_TRACKS );
+			SaveOption ( SAVETYPE_MUSICMUTE );
+			SaveOption ( SAVETYPE_SOUNDMUTE );
+			SaveOption ( SAVETYPE_VOICEMUTE );
+			SaveOption ( SAVETYPE_AUTOSAVE );
+			SaveOption ( SAVETYPE_ANIMATIONS );
+			SaveOption ( SAVETYPE_SHADOWS );
+			SaveOption ( SAVETYPE_ALPHA );
+			SaveOption ( SAVETYPE_SCROLLSPEED );
+			SaveOption ( SAVETYPE_MUSICVOL );
+			SaveOption ( SAVETYPE_SOUNDVOL );
+			SaveOption ( SAVETYPE_VOICEVOL );
+			SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
+			SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
+			SaveOption ( SAVETYPE_TRACKS );
 			// TODO: remove game
-			if( OldName.compare ( Client->ActivePlayer->name ) != 0 && !game->HotSeat ) SaveOption ( SAVETYPE_NAME );
+			SaveOption ( SAVETYPE_NAME );
+			SaveOption ( SAVETYPE_INTRO );	
+			SaveOption ( SAVETYPE_WINDOW );	
+
 			return;
 		}
 
@@ -1015,7 +1047,9 @@ void showPreferences ( void )
 			SettingsData.bDamageEffects = OldbDamageEffects;
 			SettingsData.bDamageEffectsVehicles = OldbDamageEffectsVehicles;
 			SettingsData.bMakeTracks = OldbMakeTracks;
-			Client->ActivePlayer->name = OldName;
+			SettingsData.bIntro = bOldIntro;
+			SettingsData.bWindowMode = bOldWindowMode;
+			if(Client) Client->ActivePlayer->name = OldName;
 			SetMusicVol ( SettingsData.MusicVol );
 			return;
 		}

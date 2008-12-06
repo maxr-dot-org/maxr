@@ -230,8 +230,8 @@ void RunMainMenu ( void )
 	MenuButton btn_multi(  BTN_2_X, BTN_2_Y, "Text~Button~Multi_Player");
 #if 0
 	MenuButton btn_editor( BTN_3_X, BTN_3_Y, "Text~Button~Map_Editor");
-	MenuButton btn_credits(BTN_4_X, BTN_4_Y, "Text~Button~Credits");
 #endif
+	MenuButton btn_preferences(BTN_4_X, BTN_4_Y, "Text~Settings~Preferences");
 	MenuButton btn_license(BTN_5_X, BTN_5_Y, "Text~Button~Mani");
 	MenuButton btn_exit(   BTN_6_X, BTN_6_Y, "Text~Button~Exit");
 
@@ -246,8 +246,8 @@ void RunMainMenu ( void )
 			btn_multi.Draw();
 #if 0
 			btn_editor.Draw();
-			btn_credits.Draw();
 #endif
+			btn_preferences.Draw();
 			btn_license.Draw();
 			btn_exit.Draw();
 			SHOW_SCREEN
@@ -295,13 +295,15 @@ void RunMainMenu ( void )
 			EscHot = false;
 			redraw = true;
 		}
-		if (btn_credits.CheckClick(x, y, down, up))
+#endif
+		if (btn_preferences.CheckClick(x, y, down, up))
 		{
-			{ cCredits cred; cred.Run(); }
+
+				showPreferences();
+
 			EscHot = false;
 			redraw = true;
 		}
-#endif
 		if (btn_license.CheckClick(x, y, down, up))
 		{
 			mouse->draw(false, screen);

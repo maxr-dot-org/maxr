@@ -3322,7 +3322,7 @@ static void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, 
 }
 int SaveOption ( int iTyp )
 {
-	cLog::write ( "Saving option", LOG_TYPE_INFO );
+	cLog::write ( "Saving option " + iToStr(iTyp), LOG_TYPE_INFO );
 
 	// Prepare max.xml for writing
 	TiXmlDocument MaxXml;
@@ -3412,6 +3412,14 @@ int SaveOption ( int iTyp )
 	case SAVETYPE_SCROLLSPEED:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", NULL);
 		SaveValue ( pXmlNode, "Num",false,SettingsData.iScrollSpeed,"");
+		break;
+	case SAVETYPE_INTRO:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bIntro,0,"");
+		break;
+	case SAVETYPE_WINDOW:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL);
+		SaveValue ( pXmlNode, "YN",SettingsData.bWindowMode,0,"");
 		break;
 	}
 	MaxXml.SaveFile(); // Write the new values to the file
