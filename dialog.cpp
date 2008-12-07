@@ -794,6 +794,62 @@ void showPreferences ( void )
 	rFont.y = rDialog.y + 334;
 	font->showText(rFont, lngPack.i18n( "Text~Settings~Window" ));
 	drawCheckbox ( 25+rDialog.x,330+rDialog.y,SettingsData.bWindowMode,buffer );
+		
+	//BEGIN DRAWING RESOLUTION MODES
+
+	//if(strcmp("640,480",SettingsData.
+	int iResMode;
+	int iNewResMode;
+
+	if(SettingsData.iScreenW == 640 && SettingsData.iScreenH == 480) iResMode = 0;
+	else if(SettingsData.iScreenW == 800 && SettingsData.iScreenH == 600) iResMode = 1;
+	else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 768) iResMode = 2;
+	else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 960) iResMode = 3;
+	else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 960) iResMode = 4;
+	else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 1024) iResMode = 5;
+	else iResMode = -1; //unsupported screen mode - possible but may cause graphical glitches
+	iNewResMode = iResMode;
+	int bMyMode = false;
+
+	const char* sModes[6]; 
+	for(int n=0;n<6;n++) 
+	{ 
+		sModes[n]=(char*) malloc(sizeof(char)*10); 
+	}
+
+	sModes[0]="640x480";
+	sModes[1]="800x600";
+	sModes[2]="1024x768";
+	sModes[3]="1024x960";
+	sModes[4]="1280x960";
+	sModes[5]="1280x1024";
+
+	for (int i = 0; i<3; i++)
+	{
+		if(i==iResMode) bMyMode = true;
+		else bMyMode = false;
+		rFont.x = rDialog.x + 185; rFont.w = 100;
+		rFont.y = rDialog.y + 294+20*i;
+		font->showText(rFont, (char*)sModes[i]);
+		drawCheckbox ( 160+rDialog.x,290+20*i+rDialog.y,bMyMode,buffer );
+	}
+	for (int i = 4; i<7; i++)
+	{
+		if(i-1==iResMode) bMyMode = true;
+		else bMyMode = false;
+		rFont.x = rDialog.x + 285; rFont.w = 100;
+		rFont.y = rDialog.y + 294+20*(i-4);
+		font->showText(rFont, (char*)sModes[i-1]);
+		drawCheckbox ( 260+rDialog.x,290+20*(i-4)+rDialog.y,bMyMode,buffer );
+	}
+
+	if(iResMode == -1)
+	{
+		rFont.x = rDialog.x + 100; rFont.w = 200;
+		rFont.y = rDialog.y + 294+20*3;
+		font->showText(rFont, lngPack.i18n( "Text~Comp~ResolutionWarning" )); //TODO: i18n
+	}
+	//END DRAWING RESOLUTION MODES
 
 	SHOW_SCREEN
 
@@ -995,7 +1051,50 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,233+rDialog.y,SettingsData.bMakeTracks,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+				} //Start of combobox system for resolution modes
+				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*0+rDialog.y&&y<290+20*0+rDialog.y+17)
+				{
+					iNewResMode=0;
 				}
+				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*1+rDialog.y&&y<290+20*1+rDialog.y+17)
+				{
+					iNewResMode=1;
+				}
+				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*2+rDialog.y&&y<290+20*2+rDialog.y+17)
+				{
+					iNewResMode=2;	
+				}
+				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*0+rDialog.y&&y<290+20*0+rDialog.y+17)
+				{
+					iNewResMode=3;
+				}
+				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*1+rDialog.y&&y<290+20*1+rDialog.y+17)
+				{
+					iNewResMode=4;
+				}
+				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*2+rDialog.y&&y<290+20*2+rDialog.y+17)
+				{
+					iNewResMode=5;	
+				}
+
+				if(iResMode != iNewResMode)
+				{
+					iResMode = -1;
+					for (int i = 0; i<3; i++)
+					{
+						if(i==iNewResMode) bMyMode = true;
+						else bMyMode = false;
+						drawCheckbox ( 160+rDialog.x,290+20*i+rDialog.y,bMyMode,buffer );
+					}
+					for (int i = 4; i<7; i++)
+					{
+						if(i-1==iNewResMode) bMyMode = true;
+						else bMyMode = false;
+						drawCheckbox ( 260+rDialog.x,290+20*(i-4)+rDialog.y,bMyMode,buffer );
+					}
+					SHOW_SCREEN
+				}
+				 //End of combobox system for resolution modes
 			}
 		}
 
@@ -1028,6 +1127,50 @@ void showPreferences ( void )
 			SaveOption ( SAVETYPE_INTRO );	
 			SaveOption ( SAVETYPE_WINDOW );	
 
+			if(iNewResMode == -1)
+			{
+				return; //don't attempt to save resolution. this case only happens if a not supported resolution was set in maxr.xml and no new resolution has been choosen in the preferences dialog
+			}
+			else
+			{
+				//store old resolution
+				int iOldScreenW = SettingsData.iScreenW;
+				int iOldScreenH = SettingsData.iScreenH;
+				switch(iNewResMode)
+				{
+					case(0):
+						SettingsData.iScreenW = 640;
+						SettingsData.iScreenH = 480; 
+						break;
+					case(1):
+						SettingsData.iScreenW = 800;
+						SettingsData.iScreenH = 600; 
+						break;
+					case(2):
+						SettingsData.iScreenW = 1024;
+						SettingsData.iScreenH = 768; 
+						break;
+					case(3):
+						SettingsData.iScreenW = 1024;
+						SettingsData.iScreenH = 960; 
+						break;
+					case(4):
+						SettingsData.iScreenW = 1280;
+						SettingsData.iScreenH = 960; 
+						break;
+					case(5):
+						SettingsData.iScreenW = 1280;
+						SettingsData.iScreenH = 1024; 
+						break;
+					default:
+						cLog::write("Can't save unknown resolution mode " + iToStr(iNewResMode), cLog::eLOG_TYPE_WARNING);
+				}
+				SaveOption ( SAVETYPE_RESOLUTION );
+				//restore old resolution
+				SettingsData.iScreenW = iOldScreenW;
+				SettingsData.iScreenH = iOldScreenH;
+				if(iResMode != iNewResMode) ShowOK(lngPack.i18n( "Text~Comp~ResolutionChange" ), true);
+			}
 			return;
 		}
 

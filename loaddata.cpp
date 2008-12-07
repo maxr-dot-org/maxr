@@ -534,7 +534,7 @@ int ReadMaxXml()
 	// Resolution
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
 		cLog::write ( "Can't find Resolution-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 	{
 		SettingsData.iScreenW = atoi(sTmpString.substr(0,sTmpString.find(".",0)).c_str());
 		SettingsData.iScreenH = atoi(sTmpString.substr(sTmpString.find(".",0)+1,sTmpString.length()).c_str());
@@ -3420,6 +3420,10 @@ int SaveOption ( int iTyp )
 	case SAVETYPE_WINDOW:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL);
 		SaveValue ( pXmlNode, "YN",SettingsData.bWindowMode,0,"");
+		break;
+	case SAVETYPE_RESOLUTION:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL);
+		SaveValue ( pXmlNode, "Text", false, 0, iToStr(SettingsData.iScreenW)+"."+iToStr(SettingsData.iScreenH));
 		break;
 	}
 	MaxXml.SaveFile(); // Write the new values to the file

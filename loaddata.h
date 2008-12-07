@@ -59,6 +59,7 @@
 #define SAVETYPE_SCROLLSPEED					16
 #define SAVETYPE_INTRO						17
 #define SAVETYPE_WINDOW						18
+#define SAVETYPE_RESOLUTION					19
 
 #define NECESSARY_FILE_FAILURE { cLog::write ( "File for game needed! ", LOG_TYPE_ERROR ); LoadingData=LOAD_ERROR; return 0; }
 
