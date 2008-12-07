@@ -79,8 +79,8 @@
 			<Labs ENG="Research menu"/>
 			<Mine ENG="Allocation menu"/>
 			<Unitinfo ENG="Unit status screen"/>
-      <Savegame ENG="Savegame"/>
-      <Players ENG="Players:"/>
+			<Savegame ENG="Savegame"/>
+			<Players ENG="Players:"/>
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu"/>
@@ -234,15 +234,15 @@
 			<Go_Ready ENG="Ready to go"/>
 			<Go_Ready_No ENG="not ready to go"/>
 			<Go_Check ENG="Check for go"/>
-      <Missing_Settings ENG="Options, map or savegame are not set"/>
-      <Not_Ready ENG="is not ready"/>
-      <Wait_Until ENG="Please wait until %s has finished his turn."/>
-      <Deadline ENG="This turn will end in %s seconds."/>
-      <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
-      <Lost_Connection ENG="Lost connection to %s."/>
-      <Wait_Reconnect ENG="Waiting for reconnection of player."/>
-      <Abort_Waiting ENG="Server, press F2 to abort waiting."/>
-      <Save_Only_Host ENG="Only the host can save games."/>
+			<Missing_Settings ENG="Options, map or savegame are not set"/>
+			<Not_Ready ENG="is not ready"/>
+			<Wait_Until ENG="Please wait until %s has finished his turn."/>
+			<Deadline ENG="This turn will end in %s seconds."/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
+			<Lost_Connection ENG="Lost connection to %s."/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
+			<Save_Only_Host ENG="Only the host can save games."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
@@ -259,8 +259,8 @@
 			<Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
-      <Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position."/>
-      <Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
+			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position."/>
+			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off."/>
 			<Energy_Low ENG="Power needed, building turned off."/>
 			<Metal_Low ENG="More raw material needed, building turned off."/>
@@ -315,6 +315,8 @@
 			<Turn ENG="Turn"/>
 			<Reserve ENG="Reserve"/>
 			<Surveying ENG="surveying"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and Exploration Reloaded' for changes in the video mode to take effect"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
