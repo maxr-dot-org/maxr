@@ -1,6 +1,6 @@
 /*
     MVEPlayer - Interplay MVE multimedia file player
-    Copyright (C) 2008 Shaktazuki
+    Copyright (C) 2008 Jared Livesey
 
 	This file is part of MVEPlayer.
 
@@ -17,12 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    Shaktazuki
-    shaktazuki at gmail dot com
+    Jared Livesey
+    jaredlivesey at yahoo dot com
 */
 
 /*	MVEPlay.h - include file for MVEPlayer function.
-	Author: Shaktazuki
+	Author: jarli
 */
 #ifdef __cplusplus
 extern "C"

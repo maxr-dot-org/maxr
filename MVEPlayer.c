@@ -1,6 +1,6 @@
 /*
     MVEPlayer - Interplay MVE multimedia file player
-    Copyright (C) 2008 Shaktazuki
+    Copyright (C) 2008 Jared Livesey
 
 	This file is part of MVEPlayer.
 
@@ -17,13 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    Shaktazuki
-    shaktazuki at gmail dot com
+    Jared Livesey
+    jaredlivesey at yahoo dot com
 */
 
 /*	MVEPlayer.c - Plays 8-bit Interplay MVE multimedia files.
-	Author: Shaktazuki
-	FINAL 1.1
+	Author: jarli
 */
 #include "MVEPlayer.h"
 #include <assert.h>
@@ -204,11 +203,11 @@ int MVEPlayer(const char *filename)
 	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0)
 #endif
 	{
-		fprintf(stderr, "Could not initialize SDL: %s", SDL_GetError());
 		return SDL_INIT_FAILURE;
 	}
 	atexit(SDL_Quit);
 
+	/* save initial video state; we'll restore at the end */
 	initial_vid_state = SDL_GetVideoInfo();
 	
 	/*************/
@@ -293,7 +292,6 @@ int MVEPlayer(const char *filename)
 			/* initialize the audio mode */
 			if(SDL_OpenAudio(desired, NULL) < 0)
 			{
-				fprintf(stderr, "Couldn't open audio: %s", SDL_GetError());
 				return COULD_NOT_OPEN_AUDIO;
 			}				
 
@@ -339,7 +337,6 @@ int MVEPlayer(const char *filename)
 					Uint16 truecolor = SDL_ReadLE16(mve);
 					if(truecolor)
 					{
-						fprintf(stderr, "We're sorry.  MVEPlayer can only handle 8 bpp MVE files at this time.\n");
 						return SIXTEEN_BIT_MVE;
 					}
 				}
@@ -523,7 +520,7 @@ int MVEPlayer(const char *filename)
 						SDL_RWread(mve, &r, sizeof(Uint8), 1);
 						SDL_RWread(mve, &g, sizeof(Uint8), 1);
 						SDL_RWread(mve, &b, sizeof(Uint8), 1);
-						/* without this shift, it's too dark */
+						/* interplay divides the palette entries by 4; must multiply by 4. */
 						r <<= 2;
 						g <<= 2;
 						b <<= 2;
@@ -531,7 +528,7 @@ int MVEPlayer(const char *filename)
 					frame_buf->format->palette->colors[i].r = r;
 					frame_buf->format->palette->colors[i].g = g;
 					frame_buf->format->palette->colors[i].b = b;
-					frame_buf->format->palette->colors[i].unused =0;
+					frame_buf->format->palette->colors[i].unused = 0;
 				}
 				
 			/* install the palette in the screen surface */
@@ -1321,22 +1318,15 @@ void MVEPlayerEventHandler()
 				{
 #ifdef NOAUDIO
 				case SDLK_s:
-					printf("slower\n");
 					TIMER_INIT = 1;
 					ms_per_frame *= 2;
 					break;
 				case SDLK_f:
-					printf("faster\n");
 					TIMER_INIT = 1;
 					ms_per_frame /= 2;
 					break;
 #endif
-				case SDLK_q:
-				case SDLK_ESCAPE:
-				case SDLK_RETURN:
-					QUITTING = !QUITTING;
-					break;
-				case SDLK_SPACE:
+				case SDLK_PAUSE:
 					PAUSED = !PAUSED;
 					if(PAUSED)
 					{
@@ -1353,11 +1343,14 @@ void MVEPlayerEventHandler()
 					SDL_WM_ToggleFullScreen(screen);
 					break;*/
 				default:
+					QUITTING = !QUITTING;
 					break;
 				}
 				keyin = 0;
 			}
 			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
 		case SDL_QUIT:
 			QUITTING = !QUITTING;
 			break;
