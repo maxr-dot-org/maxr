@@ -24,6 +24,7 @@ LDFLAGS += -lSDL_net
 
 SRCS :=
 SRCS += SDL_flic.c
+SRCS += MVEPlayer.c
 SRCS += attackJobs.cpp
 SRCS += automjobs.cpp
 SRCS += base.cpp
@@ -54,6 +55,7 @@ SRCS += netmessage.cpp
 SRCS += network.cpp
 SRCS += pcx.cpp
 SRCS += player.cpp
+SRCS += savegame.cpp
 SRCS += server.cpp
 SRCS += serverevents.cpp
 SRCS += sound.cpp
@@ -61,6 +63,7 @@ SRCS += tinystr.cpp
 SRCS += tinyxml.cpp
 SRCS += tinyxmlerror.cpp
 SRCS += tinyxmlparser.cpp
+SRCS += upgradecalculator.cpp
 SRCS += vehicles.cpp
 
 DEPS = $(filter %.d, $(SRCS:.c=.d) $(SRCS:.cpp=.d))
