@@ -77,28 +77,7 @@ int main ( int argc, char *argv[] )
 		return -1;
 	}
 
-	// play intro if we're supposed to and the file exists
-	if(SettingsData.bIntro)
-	{
-		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
-		{
-			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
-			MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str());
-		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
-		}
-		else
-		{
-			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
-		}
-	}
-	else
-	{
-		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
-	}
-
 	showSplash(); //show splashscreen
-	initSound(); //now config is loaded and we can init sound and net
-	initNet();
 
 	// load files
 	SDL_Thread *DataThread = NULL;
@@ -128,6 +107,30 @@ int main ( int argc, char *argv[] )
 
 	//screen = SDL_SetVideoMode(640,480,8,SDL_FULLSCREEN);
 
+	// play intro if we're supposed to and the file exists
+	if(SettingsData.bIntro)
+	{
+		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+		{
+			char mvestatus[3];
+			char mvereturn;
+			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode);
+			cLog::write("MVEPlayer returned " + (string)itoa(mvereturn, mvestatus, 16), cLog::eLOG_TYPE_DEBUG);
+		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+		}
+		else
+		{
+			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+		}
+	}
+	else
+	{
+		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
+	}
+
+	initSound(); //now config is loaded and we can init sound and net
+	initNet();
 	showGameWindow(); //start game-window
 
 	// Die Maus erzeugen:

@@ -32,10 +32,8 @@
 #include <SDL.h>
 #endif
 
-/* NOAUDIO enables use of speed up / slow down functionality (f = faster, s = slower) */
+/* NOAUDIO enables use of speed up / slow down functionality (f = faster, s = slower); useful for debugging */
 //#define NOAUDIO
-/* if you want fullscreen (stretched to fit 640x480), enable this */
-#define FULLSCREEN
 
 /* define (potentially) handled opcode types */
 #define STOP_PLAYBACK			0x00
@@ -114,7 +112,7 @@ void MVEPlayerEventHandler();
 /* primary function entry point */
 /********************************/
 
-int MVEPlayer(const char *filename)
+int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 {	
 	/*************************/
 	/* variable declarations */
@@ -143,7 +141,7 @@ int MVEPlayer(const char *filename)
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
 	SDL_Surface *screen = NULL, *frame_buf = NULL;
 	SDL_Rect movie_screen;
-	const SDL_VideoInfo *initial_vid_state;
+	/*const SDL_VideoInfo *initial_vid_state;*/
 
 	/* file handle */
 	SDL_RWops *mve = NULL;
@@ -196,19 +194,22 @@ int MVEPlayer(const char *filename)
 	if(op.type > 0x15 || op.version > 3) 
 		return MVE_CORRUPT;
 
-	/* initialize SDL */
+	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
 #ifndef NOAUDIO
-	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER) < 0)
+	if(SDL_WasInit(SDL_INIT_AUDIO) != SDL_INIT_AUDIO)
+		SDL_InitSubSystem(SDL_INIT_AUDIO);
+
+	if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER))
 #else
-	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0)
+	if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_TIMER))
 #endif
 	{
 		return SDL_INIT_FAILURE;
 	}
-	atexit(SDL_Quit);
 
 	/* save initial video state; we'll restore at the end */
-	initial_vid_state = SDL_GetVideoInfo();
+	/*if(!fullscreen)
+		initial_vid_state = SDL_GetVideoInfo();*/
 	
 	/*************/
 	/* main loop */
@@ -376,11 +377,11 @@ int MVEPlayer(const char *filename)
 			/* send the buffer to the screen buffer */
 			if(SDL_MUSTLOCK(screen))
 				SDL_LockSurface(screen);
-#ifdef FULLSCREEN
-			SDL_SoftStretch(frame_buf, NULL, screen, NULL);
-#else
-			SDL_BlitSurface(frame_buf, NULL, screen, &movie_screen);
-#endif
+			
+			if(fullscreen)
+				SDL_SoftStretch(frame_buf, NULL, screen, NULL);
+			else
+				SDL_BlitSurface(frame_buf, NULL, screen, &movie_screen);
 
 			if(SDL_MUSTLOCK(screen))
 				SDL_UnlockSurface(screen);
@@ -481,11 +482,12 @@ int MVEPlayer(const char *filename)
 			/* if we've been here before */
 			if(screen)
 				SDL_FreeSurface(screen);
-#ifdef FULLSCREEN
-			screen = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE|SDL_FULLSCREEN);
-#else
-			screen = SDL_SetVideoMode(width, height, 8, SDL_SWSURFACE);
-#endif
+			
+			if(fullscreen)
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, SDL_SWSURFACE|SDL_FULLSCREEN);
+			else
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, SDL_SWSURFACE);
+
 			SDL_WM_SetCaption(filename, NULL);
 
 			/* strip unknown flag word */
@@ -644,7 +646,8 @@ int MVEPlayer(const char *filename)
 		SDL_RWclose(mve);
 
 	/* reset video mode to original */
-	SDL_SetVideoMode(initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);
+	/*if(!fullscreen)
+		SDL_SetVideoMode(initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);*/
 
 	/* seems to have worked. */
 	return SUCCESS;
