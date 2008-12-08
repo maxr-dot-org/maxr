@@ -115,7 +115,7 @@ int main ( int argc, char *argv[] )
 			char mvereturn;
 			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
 			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode);
-			cLog::write("MVEPlayer returned 0x" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+			cLog::write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 		}
 		else
