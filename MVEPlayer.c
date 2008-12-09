@@ -210,6 +210,10 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	/* save initial video state; we'll restore at the end */
 	if(!fullscreen)
 		initial_vid_state = SDL_GetVideoInfo();
+
+	// hide mouse in fullscreen
+	if( fullscreen )
+		SDL_ShowCursor( SDL_DISABLE );
 	
 	/*************/
 	/* main loop */
