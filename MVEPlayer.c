@@ -141,7 +141,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
 	SDL_Surface *screen = NULL, *frame_buf = NULL;
 	SDL_Rect movie_screen;
-	/*const SDL_VideoInfo *initial_vid_state;*/
+	const SDL_VideoInfo *initial_vid_state;
 
 	/* file handle */
 	SDL_RWops *mve = NULL;
@@ -197,7 +197,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
 #ifndef NOAUDIO
 	if(SDL_WasInit(SDL_INIT_AUDIO) != SDL_INIT_AUDIO)
-		SDL_InitSubSystem(SDL_INIT_AUDIO);
+		SDL_Init(SDL_INIT_AUDIO);
 
 	if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER))
 #else
@@ -208,8 +208,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	}
 
 	/* save initial video state; we'll restore at the end */
-	/*if(!fullscreen)
-		initial_vid_state = SDL_GetVideoInfo();*/
+		initial_vid_state = SDL_GetVideoInfo();
 	
 	/*************/
 	/* main loop */
@@ -646,8 +645,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 		SDL_RWclose(mve);
 
 	/* reset video mode to original */
-	/*if(!fullscreen)
-		SDL_SetVideoMode(initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);*/
+	SDL_SetVideoMode(initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);
 
 	/* seems to have worked. */
 	return SUCCESS;
