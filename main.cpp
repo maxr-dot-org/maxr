@@ -77,27 +77,6 @@ int main ( int argc, char *argv[] )
 		return -1;
 	}
 
-		// play intro if we're supposed to and the file exists
-	if(SettingsData.bIntro)
-	{
-		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
-		{
-			char mvereturn;
-			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
-			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode);
-			cLog::write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
-		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
-		}
-		else
-		{
-			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
-		}
-	}
-	else
-	{
-		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
-	}
-
 	showSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
 	initNet();
@@ -123,6 +102,36 @@ int main ( int argc, char *argv[] )
 			}
 		}
 		SDL_Delay ( 100 );
+	}
+
+	// play intro if we're supposed to and the file exists
+	if(SettingsData.bIntro)
+	{
+		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+		{
+			// Close maxr sound for intro movie
+			CloseSound();
+
+			char mvereturn;
+			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode);
+			cLog::write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+
+			// reinit maxr sound
+			if ( SettingsData.bSoundEnabled && !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
+			{
+				cLog::write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+			}
+		}
+		else
+		{
+			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+		}
+	}
+	else
+	{
+		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
 	}
 
 	SDL_WaitThread ( DataThread, NULL );

@@ -48,8 +48,7 @@ int InitSound ( int frequency,int chunksize )
 	Uint16 audio_format;
 
 	// SDL Mixer initialisieren:
-	int haha = Mix_OpenAudio ( frequency,AUDIO_S16,2,chunksize );
-	if ( haha<0 )
+	if ( Mix_OpenAudio ( frequency,AUDIO_S16,2,chunksize ) < 0 )
 	{
 		cLog::write("Could not initialize SDL_mixer", cLog::eLOG_TYPE_ERROR);
 		return 0;
