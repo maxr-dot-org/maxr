@@ -1,3 +1,17 @@
+M.A.X. Reloaded SVN
+=======================================================================
+-added load/save
+-added load/save multiplayer
+-added landing zones
+-added mve player for original intro movie
+-added new settings for preferences
+-added reconnecting
+-fixed MacOSX support
+-fixed upgrade system (pre game start)
+-fixed most HUD buttons
+-fixed stealh units
+-tons of bugs fixed
+
 M.A.X. Reloaded 0.2.1
 =======================================================================
 new features:
@@ -6,7 +20,6 @@ new features:
 	*implemented reloading
 
 -implemented new pathfinding algorithm (A*)
-
 -fixed detection and hiding of stealth units, e. g. submarines, infiltrators
 -fixed upgrades in landing selection menu on gamestart
 -removed fuel storage at game start
