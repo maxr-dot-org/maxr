@@ -24,7 +24,7 @@
 #include "map.h"
 #include "player.h"
 
-#define SAVE_FORMAT_VERSION		"0.1"
+#define SAVE_FORMAT_VERSION		"0.2"
 
 struct sMoveJobLoad
 {
@@ -112,10 +112,15 @@ private:
 	*/
 	void writeRubble ( cBuilding *Building, int rubblenum );
 	/**
-	* saves the unit data values which are identix for buildings and vehicles
+	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
 	void writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnitData *OwnerData );
+	/**
+	* saves the standard unit values from the unit xmls
+	*@author alzi alias DoctorDeath
+	*/
+	void writeStandardUnitValues ( sUnitData *Data, int unitnum );
 
 	/**
 	* loads the main game information
@@ -167,6 +172,11 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data );
+	/**
+	* loads the standard unit values
+	*@author alzi alias DoctorDeath
+	*/
+	void loadStandardUnitValues ( TiXmlElement *unitNode );
 	/**
 	* calculates and adds the movejobs after all units has been loaded
 	*@author alzi alias DoctorDeath

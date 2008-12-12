@@ -35,6 +35,7 @@
 #include "server.h"
 #include "serverevents.h"
 #include "upgradecalculator.h"
+#include "loaddata.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -626,6 +627,8 @@ void RunSPMenu ( void )
 						Client = NULL;
 						delete Server;
 						Server = NULL;
+
+						reloadUnitValues();
 					}
 				}
 			}
@@ -4518,6 +4521,8 @@ int cMultiPlayerMenu::runSavedGame()
 		Client = NULL;
 		delete Server;
 		Server = NULL;
+
+		reloadUnitValues();
 	}
 	return 1;
 }

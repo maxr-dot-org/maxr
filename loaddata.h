@@ -94,4 +94,21 @@ int ReadMaxXml();
 	*/
 int SaveOption (int iTyp);
 
+/**
+ * Loades the unitdata from the data.xml in the unitfolder
+ * @param directory Unitdirectory , relativ to the main game directory
+ */
+void LoadUnitData(sUnitData*, char const* directory, int iID);
+
+/**
+* Sets all unitdata to default values
+*/
+void SetDefaultUnitData(sUnitData*);
+
+// i18ns the loaded data to the old data structure.
+// This should be just used temporarily while the game doesn't undestand new structure.
+void ConvertData(int unitnum, bool vehicle);
+
+void reloadUnitValues ();
+
 #endif

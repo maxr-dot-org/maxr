@@ -1476,22 +1476,6 @@ static int LoadGraphics(const char* path)
 	return 1;
 }
 
-
-// i18ns the loaded data to the old data structure.
-// This should be just used temporarily while the game doesn't undestand new structure.
-static void ConvertData(int unitnum, bool vehicle);
-
-/**
- * Loades the unitdata from the data.xml in the unitfolder
- * @param directory Unitdirectory , relativ to the main game directory
- */
-static void LoadUnitData(sUnitData*, char const* directory, int iID);
-
-/**
- * Sets all unitdata to default values
- */
-static void SetDefaultUnitData(sUnitData*);
-
 /**
  * Gets the name and the description for the unit from the selected language file
  * @param ID Id of the unit
@@ -2195,7 +2179,7 @@ static int LoadBuildings()
 	return 1;
 }
 
-static void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
+void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
 {
 	const char *DataStructure[] = {
 		// General
@@ -2844,7 +2828,7 @@ static void LoadUnitData(sUnitData* const Data, char const* const directory, int
 	return ;
 }
 
-static void SetDefaultUnitData(sUnitData* const Data)
+void SetDefaultUnitData(sUnitData* const Data)
 {
 	// Main info
 	Data->ID.iFirstPart = -1;
@@ -2891,25 +2875,25 @@ static void SetDefaultUnitData(sUnitData* const Data)
 	Data->Weapons[Data->iWeaponsCount].iSequence = 0;
 	Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
 	Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_STANDARD;
-	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = 1;
+	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = 0;
 	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity = 0;
 
-	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Range = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = 1;
-	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Range = 1;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Range = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = 0;
+	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Range = 0;
 
-	Data->Weapons[Data->iWeaponsCount].iShots_Max = 1;
+	Data->Weapons[Data->iWeaponsCount].iShots_Max = 0;
 	Data->Weapons[Data->iWeaponsCount].iShots = 0;
 	Data->Weapons[Data->iWeaponsCount].iDestination_Area = 1;
 	Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_POINT;
@@ -2930,7 +2914,7 @@ static void SetDefaultUnitData(sUnitData* const Data)
 	Data->bIs_Kamikaze = false;
 	Data->bIs_Infrastructure = false;
 	Data->bCan_Place_Mines = false;
-	Data->iMakes_Tracks = 12;
+	Data->iMakes_Tracks = 3;
 	Data->iSelf_Repair_Type = SELF_REPAIR_TYPE_NONE;
 	Data->iConverts_Gold = 0;
 	Data->iNeeds_Energy = 0;
@@ -3004,7 +2988,7 @@ static void SetDefaultUnitData(sUnitData* const Data)
 	return ;
 }
 
-static void ConvertData(int unitnum, bool vehicle)
+void ConvertData(int unitnum, bool vehicle)
 {
 	sUnitData *Data;
 	if(vehicle)
@@ -3045,7 +3029,7 @@ static void ConvertData(int unitnum, bool vehicle)
 		Data->range = 0;
 	Data->max_shots = Data->Weapons[0].iShots_Max;
 	Data->shots = Data->Weapons[0].iShots;
-	if(Data->Weapons[0].iTarget_Air_Range > 0)
+	if(Data->Weapons[0].iTarget_Air_Damage > 0)
 		Data->damage = Data->Weapons[0].iTarget_Air_Damage;
 	else if(Data->Weapons[0].iTarget_Infantry_Damage > 0)
 		Data->damage = Data->Weapons[0].iTarget_Infantry_Damage;
@@ -3134,7 +3118,6 @@ static void ConvertData(int unitnum, bool vehicle)
 	else
 		Data->can_attack = ATTACK_NONE;
 
-	Data->can_reload = 0;
 	Data->can_repair = Data->bCan_Repair;
 	if(Data->iScan_Range_Resources > 0)
 		Data->can_survey = true;
@@ -3428,4 +3411,43 @@ int SaveOption ( int iTyp )
 	}
 	MaxXml.SaveFile(); // Write the new values to the file
 	return 1;
+}
+
+void reloadUnitValues ()
+{
+	TiXmlDocument UnitsXml;
+	TiXmlElement *Element;
+	if( !FileExists( (SettingsData.sVehiclesPath + PATH_DELIMITER + "vehicles.xml").c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile ( (SettingsData.sVehiclesPath + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return;
+	if( !( Element = UnitsXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" ) ) ) return;
+
+	Element = Element->FirstChildElement();
+	while ( Element != NULL )
+	{
+		int num;
+		Element->Attribute( "num", &num );
+		SetDefaultUnitData ( &UnitsData.vehicle[num-1].data );
+		LoadUnitData ( &UnitsData.vehicle[num-1].data, (SettingsData.sVehiclesPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		translateUnitData( UnitsData.vehicle[num-1].data.ID, true );
+		ConvertData ( num-1, true );
+		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
+		else Element = NULL;
+	}
+
+	if( !FileExists( (SettingsData.sBuildingsPath + PATH_DELIMITER + "buildings.xml").c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile ( (SettingsData.sBuildingsPath + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return;
+	if( !( Element = UnitsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" ) ) ) return;
+
+	Element = Element->FirstChildElement();
+	while ( Element != NULL )
+	{
+		int num;
+		Element->Attribute( "num", &num );
+		SetDefaultUnitData ( &UnitsData.building[num-1].data );
+		LoadUnitData ( &UnitsData.building[num-1].data, (SettingsData.sBuildingsPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		translateUnitData( UnitsData.building[num-1].data.ID, false );
+		ConvertData ( num-1, false );
+		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
+		else Element = NULL;
+	}
 }
