@@ -1923,46 +1923,7 @@ void cClient::drawFXBottom( int iNum )
 	}
 }
 
-void cClient::drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
-{
-	int d,da,db,xx,yy,bry;
-	unsigned int *ptr;
-	if ( iX + iRadius < 0 || iX - iRadius > SettingsData.iScreenW || iY + iRadius < 0 || iY - iRadius > SettingsData.iScreenH ) return;
-	SDL_LockSurface ( surface );
-	ptr = ( unsigned int* ) surface->pixels;
-	iY *= SettingsData.iScreenW;
 
-	d = 0;
-	xx = 0;
-	yy = iRadius;
-	bry = ( int ) Round ( 0.70710678*iRadius,0 );
-	while ( yy > bry )
-	{
-		da=d+ ( xx<<1 ) +1;
-		db=da- ( yy<<1 ) +1;
-		if ( abs ( da ) <abs ( db ) )
-		{
-			d=da;
-			xx++;
-		}
-		else
-		{
-			d=db;
-			xx++;
-			yy--;
-		}
-#define PUTC(xxx,yyy) if((xxx)+iX>=0&&(xxx)+iX<SettingsData.iScreenW&&(yyy)*SettingsData.iScreenW+iY>=0&&(yyy)*SettingsData.iScreenW+iY<SettingsData.iScreenH*SettingsData.iScreenW)ptr[(xxx)+iX+(yyy)*SettingsData.iScreenW+iY] = iColor;
-		PUTC ( xx,yy )
-		PUTC ( yy,xx )
-		PUTC ( yy,-xx )
-		PUTC ( xx,-yy )
-		PUTC ( -xx,yy )
-		PUTC ( -yy,xx )
-		PUTC ( -yy,-xx )
-		PUTC ( -xx,-yy )
-	}
-	SDL_UnlockSurface ( surface );
-}
 
 void cClient::drawExitPoint( int iX, int iY )
 {

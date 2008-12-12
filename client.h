@@ -207,16 +207,6 @@ private:
 	*/
 	void drawFXBottom( int iNum );
 	/**
-	* draws a circle
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate to the center of the circle
-	*@param iY Y coordinate to the center of the circle
-	*@param iRadius radius of the circle
-	*@param iColor color of the circle
-	*@param surface surface to drae the circle in
-	*/
-	void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface );
-	/**
 	* draws an exitpoint on the ground
 	*@author alzi alias DoctorDeath
 	*@param iX X coordinate

@@ -18,7 +18,6 @@
  ***************************************************************************/
 #include <math.h>
 #include "player.h"
-#include "game.h"
 #include "menu.h"
 #include "client.h"
 #include "server.h"
@@ -989,22 +988,22 @@ void cPlayer::DrawLockList(cHud const& hud)
 			{
 				if ( elem->v->data.is_big )
 				{
-					DrawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+					drawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
 				}
 				else
 				{
-					DrawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+					drawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
 				}
 			}
 			if ( hud.Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
 			{
-				DrawCircle ( spx+hud.Zoom/2,
+				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
 			}
 			if ( hud.Reichweite&&elem->v->data.can_attack==ATTACK_AIR )
 			{
-				DrawCircle ( spx+hud.Zoom/2,
+				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}
@@ -1033,26 +1032,26 @@ void cPlayer::DrawLockList(cHud const& hud)
 			{
 				if ( elem->b->data.is_big )
 				{
-					DrawCircle ( spx+hud.Zoom,
+					drawCircle ( spx+hud.Zoom,
 					             spy+hud.Zoom,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 				}
 				else
 				{
-					DrawCircle ( spx+hud.Zoom/2,
+					drawCircle ( spx+hud.Zoom/2,
 					             spy+hud.Zoom/2,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 				}
 			}
 			if ( hud.Reichweite&& ( elem->b->data.can_attack==ATTACK_LAND||elem->b->data.can_attack==ATTACK_SUB_LAND ) &&!elem->b->data.is_expl_mine )
 			{
-				DrawCircle ( spx+hud.Zoom/2,
+				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
 			}
 			if ( hud.Reichweite&&elem->b->data.can_attack==ATTACK_AIR )
 			{
-				DrawCircle ( spx+hud.Zoom/2,
+				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 			}

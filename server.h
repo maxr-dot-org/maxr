@@ -24,7 +24,6 @@
 #include "map.h"
 #include "player.h"
 #include "attackJobs.h"
-#include "mjobs.h"
 #include "movejobs.h"
 #include "savegame.h"
 

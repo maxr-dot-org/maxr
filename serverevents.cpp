@@ -22,6 +22,7 @@
 #include "server.h"
 #include "client.h"
 #include "menu.h"
+#include "movejobs.h"
 
 
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )

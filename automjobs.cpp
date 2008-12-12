@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "math.h"
-#include "movejobs.h"
 #include "client.h"
 #include "clientevents.h"
 #include "automjobs.h"
 #include "vehicles.h"
+#include "movejobs.h"
 
 
 static cList<cAutoMJob*> autoMJobs;

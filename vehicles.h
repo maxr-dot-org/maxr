@@ -188,9 +188,6 @@ public:
 	void doSurvey(void);
 	void MakeReport(void);
 	bool CanTransferTo( struct sGameObjects *go);
-	void ShowTransfer(sGameObjects *target);
-	void DrawTransBar(int len);
-	void MakeTransBar(int *trans,int MaxTarget,int Target);
 	void ShowBigDetails(void);
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;

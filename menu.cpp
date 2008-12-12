@@ -26,7 +26,6 @@
 #include "keyinp.h"
 #include "sound.h"
 #include "dialog.h"
-#include "game.h"
 #include "log.h"
 #include "files.h"
 #include "loaddata.h"
@@ -3059,8 +3058,8 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 		int posY = 18  + *y * faky;
 		//for non 4:3 screen resolutions, the size of the circles is
 		//only correct in x dimension, because I don't draw an ellipse
-		DrawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
-		DrawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
+		drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
+		drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
 	}
 	SDL_Rect textArea;
 	textArea.x = 220;
@@ -3120,8 +3119,8 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 			int posY = 18  + *y * faky;
 
 			drawMap();
-			DrawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
-			DrawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
+			drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
+			drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
 			drawHud(); //redraw hud, because the circles may overlap the hud
 
 			SHOW_SCREEN;
@@ -5418,6 +5417,8 @@ int ShowDateiMenu ( bool bSave )
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
+
+	int timer2 = 0;
 	while ( 1 )
 	{
 		// Events holen:
@@ -5427,6 +5428,7 @@ int ShowDateiMenu ( bool bSave )
 		if ( Client )
 		{
 			Client->handleTimer();
+			timer2 = Client->iTimer2;
 			Client->doGameActions();
 		}
 		keystate = SDL_GetKeyState( NULL );

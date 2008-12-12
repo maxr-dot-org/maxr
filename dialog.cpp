@@ -20,7 +20,6 @@
 #include <sstream>
 #include "buttons.h"
 #include "dialog.h"
-#include "game.h"
 #include "mouse.h"
 #include "keyinp.h"
 #include "fonts.h"
@@ -854,12 +853,15 @@ void showPreferences ( void )
 	SHOW_SCREEN
 
 	mouse->GetBack ( buffer );
+
+	int timer2 = 0;
 	while ( 1 )
 	{
 		// Die Engine laufen lassen:
 		if(Client)
 		{
 			Client->handleTimer();
+			timer2 = Client->iTimer2;
 			Client->doGameActions();
 		}
 		// Events holen:

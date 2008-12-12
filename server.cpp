@@ -23,7 +23,6 @@
 #include "serverevents.h"
 #include "menu.h"
 #include "netmessage.h"
-#include "mjobs.h"
 #include "attackJobs.h"
 #include "movejobs.h"
 
@@ -1534,9 +1533,8 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
-
-	return AddedBuilding;
 	AddedBuilding->makeDetection();
+	return AddedBuilding;
 }
 
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )

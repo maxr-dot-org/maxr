@@ -18,7 +18,6 @@
  ***************************************************************************/
 #include "base.h"
 #include "map.h"
-#include "game.h"
 #include "serverevents.h"
 #include "server.h"
 

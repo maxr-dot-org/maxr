@@ -19,10 +19,35 @@
 #ifndef movejobsH
 #define movejobsH
 
-#include "mjobs.h"	// for MJOB_TYPES, sPathCalc and sWaypoint
+#include "map.h"
 
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10
+
+enum MJOB_TYPES
+{
+	MJOB_OK,
+	MJOB_STOP,
+	MJOB_FINISHED,
+	MJOB_BLOCKED
+};
+
+// structures for the calculation of the path
+struct sPathCalc
+{
+	sPathCalc *prev;
+	int X,Y;
+	int WayCosts;
+	int CostsGes;
+	bool road;
+};
+
+struct sWaypoint
+{
+	sWaypoint *next;
+	int X,Y;
+	int Costs;
+};
 
 /* node structure for pathfinding */
 struct sPathNode
