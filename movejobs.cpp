@@ -508,8 +508,6 @@ void cServerMoveJob::moveVehicle()
 	if ( !Vehicle ) return;
 	if ( Vehicle->data.is_human )
 	{
-		Vehicle->WalkFrame++;
-		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
 		iSpeed = MOVE_SPEED/2;
 	}
 	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
@@ -899,7 +897,7 @@ void cClientMoveJob::moveVehicle()
 	if ( Vehicle->data.is_human )
 	{
 		Vehicle->WalkFrame++;
-		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 0;
+		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED/2;
 	}
 	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
