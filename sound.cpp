@@ -122,7 +122,7 @@ void StopMusic ( void )
 // Startet die Musik:
 void StartMusic ( void )
 {
-	if ( !SettingsData.bSoundEnabled ) return;
+	if ( !SettingsData.bSoundEnabled ||SettingsData.MusicMute ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	PlayMusic(MusicFiles[random(MusicAnz)].c_str());
 }
@@ -130,7 +130,7 @@ void StartMusic ( void )
 // Callback, wenn Musik am Ende:
 void MusicFinished ( void )
 {
-	if ( !SettingsData.bSoundEnabled/*||in_credits*/ ) return;
+	if ( !SettingsData.bSoundEnabled /*||in_credits*/ ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	srand ( ( unsigned ) time ( NULL ) );
 	PlayMusic(MusicFiles[random(MusicAnz)].c_str());
@@ -139,7 +139,7 @@ void MusicFinished ( void )
 // Startet einen Loop-Sound:
 int PlayFXLoop ( sSOUND *snd )
 {
-	if ( !SettingsData.bSoundEnabled ) return 0;
+	if ( !SettingsData.bSoundEnabled|| SettingsData.SoundMute  ) return 0;
 	Mix_HaltChannel ( SoundLoopChannel );
 	Mix_PlayChannel ( SoundLoopChannel,snd,-1 );
 	Mix_Volume ( SoundLoopChannel,SettingsData.SoundVol );
