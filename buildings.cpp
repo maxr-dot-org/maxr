@@ -536,9 +536,15 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	if ( !owner )
 	{
 		if ( data.is_big )
+		{
+			if ( !UnitsData.dirt_big ) return;
 			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_big->h;
+		}
 		else
+		{
+			if ( !UnitsData.dirt_small ) return;
 			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_small->h;
+		}
 
 		scr.x = scr.w * RubbleTyp;
 
