@@ -1366,29 +1366,29 @@ void cHud::ScaleSurfaces ( void )
 			else ScaleSurfaceAdv2Spec ( UnitsData.building[i].eff_org,UnitsData.building[i].eff, (int) ( UnitsData.building[i].eff_org->w * fak ), (int) ( UnitsData.building[i].eff_org->h * fak ) );
 		}
 	}
-	ScaleSurfaceAdv2 ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) ( UnitsData.dirt_small_org->w * fak ), (int) ( UnitsData.dirt_small_org->h * fak ) );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) ( UnitsData.dirt_small_shw_org->w * fak ), (int) ( UnitsData.dirt_small_shw_org->h * fak ) );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * fak ), (int) ( UnitsData.dirt_big_org->h * fak ) );
-	ScaleSurfaceAdv2 ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * fak ), (int) ( UnitsData.dirt_big_shw_org->h * fak ) );
+	if ( UnitsData.dirt_small_org && UnitsData.dirt_small ) ScaleSurfaceAdv2 ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) ( UnitsData.dirt_small_org->w * fak ), (int) ( UnitsData.dirt_small_org->h * fak ) );
+	if ( UnitsData.dirt_small_shw_org && UnitsData.dirt_small_shw ) ScaleSurfaceAdv2 ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) ( UnitsData.dirt_small_shw_org->w * fak ), (int) ( UnitsData.dirt_small_shw_org->h * fak ) );
+	if ( UnitsData.dirt_big_org && UnitsData.dirt_big ) ScaleSurfaceAdv2 ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * fak ), (int) ( UnitsData.dirt_big_org->h * fak ) );
+	if ( UnitsData.dirt_big_shw_org && UnitsData.dirt_big_shw ) ScaleSurfaceAdv2 ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * fak ), (int) ( UnitsData.dirt_big_shw_org->h * fak ) );
 
 	// Bänder:
-	ScaleSurface2 ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,Zoom );
-	ScaleSurface2 ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,Zoom*2 );
+	if ( GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small ) ScaleSurface2 ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,Zoom );
+	if ( GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big ) ScaleSurface2 ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,Zoom*2 );
 
 	// Resources:
-	ScaleSurface2 ( ResourceData.res_metal_org,ResourceData.res_metal,Zoom );
-	ScaleSurface2 ( ResourceData.res_oil_org,ResourceData.res_oil,Zoom );
-	ScaleSurface2 ( ResourceData.res_gold_org,ResourceData.res_gold,Zoom );
+	if ( ResourceData.res_metal_org && ResourceData.res_metal ) ScaleSurface2 ( ResourceData.res_metal_org,ResourceData.res_metal,Zoom );
+	if ( ResourceData.res_oil_org && ResourceData.res_oil ) ScaleSurface2 ( ResourceData.res_oil_org,ResourceData.res_oil,Zoom );
+	if ( ResourceData.res_gold_org && ResourceData.res_gold ) ScaleSurface2 ( ResourceData.res_gold_org,ResourceData.res_gold,Zoom );
 
 	// Big Beton:
-	ScaleSurface2 ( GraphicsData.gfx_big_beton_org,GraphicsData.gfx_big_beton,Zoom*2 );
+	if ( GraphicsData.gfx_big_beton_org && GraphicsData.gfx_big_beton ) ScaleSurface2 ( GraphicsData.gfx_big_beton_org,GraphicsData.gfx_big_beton,Zoom*2 );
 
 	// Andere:
-	ScaleSurface2 ( GraphicsData.gfx_exitpoints_org,GraphicsData.gfx_exitpoints,Zoom );
+	if ( GraphicsData.gfx_exitpoints_org && GraphicsData.gfx_exitpoints ) ScaleSurface2 ( GraphicsData.gfx_exitpoints_org,GraphicsData.gfx_exitpoints,Zoom );
 	// ScaleSurface2(GraphicsData.gfx_build_finished_org,GraphicsData.gfx_build_finished,Zoom*2);
 
 	// FX:
-#define SCALE_FX(a) ScaleSurfaceAdv2(a[0],a[1], (a[0]->w * Zoom)/64 , (a[0]->h * Zoom)/64);
+#define SCALE_FX(a) if (a) ScaleSurfaceAdv2(a[0],a[1], (a[0]->w * Zoom)/64 , (a[0]->h * Zoom)/64);
 	SCALE_FX ( EffectsData.fx_explo_small );
 	SCALE_FX ( EffectsData.fx_explo_big );
 	SCALE_FX ( EffectsData.fx_explo_water );

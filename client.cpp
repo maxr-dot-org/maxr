@@ -1563,6 +1563,7 @@ void cClient::drawFX( int iNum )
 	switch ( fx->typ )
 	{
 		case fxMuzzleBig:
+			if ( !EffectsData.fx_muzzle_big ) break;
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -1578,6 +1579,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_big[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleSmall:
+			if ( !EffectsData.fx_muzzle_small ) break;
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -1593,6 +1595,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_small[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMed:
+			if ( !EffectsData.fx_muzzle_med ) break;
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -1608,6 +1611,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxMuzzleMedLong:
+			if ( !EffectsData.fx_muzzle_med ) break;
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
@@ -1623,6 +1627,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
 			break;
 		case fxHit:
+			if ( !EffectsData.fx_hit ) break;
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
@@ -1638,6 +1643,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_hit[1],&scr,buffer,&dest );
 			break;
 		case fxExploSmall:
+			if ( !EffectsData.fx_explo_small ) break;
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -1653,6 +1659,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
 			break;
 		case fxExploBig:
+			if ( !EffectsData.fx_explo_big ) break;
 			if ( iFrame - fx->StartFrame > 28 )
 			{
 				delete fx;
@@ -1668,6 +1675,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
 			break;
 		case fxExploWater:
+			if ( !EffectsData.fx_explo_water ) break;
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -1683,6 +1691,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
 			break;
 		case fxExploAir:
+			if ( !EffectsData.fx_explo_air ) break;
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -1698,6 +1707,7 @@ void cClient::drawFX( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
 			break;
 		case fxSmoke:
+			if ( !EffectsData.fx_smoke ) break;
 			if ( iFrame-fx->StartFrame>100/4 )
 			{
 				delete fx;
@@ -1714,6 +1724,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxRocket:
 		{
+			if ( !EffectsData.fx_rocket ) break;
 			sFXRocketInfos *ri;
 			ri= fx->rocketInfo;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
@@ -1753,6 +1764,7 @@ void cClient::drawFX( int iNum )
 		}
 		case fxDarkSmoke:
 		{
+			if ( !EffectsData.fx_dark_smoke ) break;
 			sFXDarkSmoke *dsi;
 			dsi = fx->smokeInfo;
 			if ( iFrame-fx->StartFrame>50||dsi->alpha<=1 )
@@ -1782,6 +1794,7 @@ void cClient::drawFX( int iNum )
 		}
 		case fxAbsorb:
 		{
+			if ( !EffectsData.fx_absorb ) break;
 			if ( iFrame-fx->StartFrame>10 )
 			{
 				delete fx;

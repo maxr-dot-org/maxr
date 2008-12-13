@@ -2156,12 +2156,12 @@ static int LoadBuildings()
 	LoadGraphicToSurface ( UnitsData.dirt_big,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_big_org,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
-	SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
+	if ( UnitsData.dirt_big_shw ) SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small_org,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
-	SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
+	if ( UnitsData.dirt_small_shw ) SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
 	// Get numbers of important buildings + set building numbers
