@@ -2476,12 +2476,6 @@ int installGfx()
 	//edock
 	copyFileFromRes("E_DOCK", path + "edock.pcx");
 
-	//edepot
-	copyFileFromRes("E_DEPOT", path + "edepot.pcx");
-
-	//ehangar
-	copyFileFromRes("E_HANGAR", path + "ehangar.pcx");
-
 	//hand
 	try
 	{
@@ -3942,7 +3936,7 @@ GNU General Public License for more details.\n\n";
 	}
 	else
 	{
-		cout << "Finished\n";
+		cout << "Finished\nPress any key to exit\n";
 	}
 	
 	SDL_RWclose( res );
