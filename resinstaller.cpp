@@ -2476,6 +2476,12 @@ int installGfx()
 	//edock
 	copyFileFromRes("E_DOCK", path + "edock.pcx");
 
+	//edepot 
+	copyFileFromRes("E_DEPOT", path + "edepot.pcx");
+
+	//ehangar 
+	copyFileFromRes("E_HANGAR", path + "ehangar.pcx");
+
 	//hand
 	try
 	{
