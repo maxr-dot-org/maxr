@@ -43,7 +43,7 @@
 	#endif
 #else
 	#ifndef PATH_DELIMITER
-		#define PATH_DELIMITER "//"
+		#define PATH_DELIMITER "/"
 	#endif
 	#ifndef TEXT_FILE_LF
 		#define TEXT_FILE_LF "\n"

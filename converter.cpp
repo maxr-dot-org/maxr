@@ -29,6 +29,10 @@
 #include "palette.h"
 #include "file.h"
 
+#if MAC
+#include "mac/sources/resinstallerGUI.h"
+#endif
+
 cImage* cImage::Image = NULL;
 
 cImage::cImage()
@@ -1114,7 +1118,11 @@ void updateProgressbar()
 	for ( int i = value; i < newValue; i++ )
 		cout << ".";
 
-	value = newValue;
+	value = newValue;	
+
+#if MAC
+	updateProgressWindow ("", iTotalFiles, iInstalledFiles);
+#endif
 }
 
 string iToStr(int x)

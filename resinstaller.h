@@ -66,8 +66,8 @@ public:
 };
 
 
-//makes all nessesary aktions after a succsessfull 
-//or unsuccessfull attempt to install a file
+// makes all necessary actions after a successfull 
+// or unsuccessfull attempt to install a file
 #define END_INSTALL_FILE( file )\
 			catch ( InstallException e )\
 			{\
