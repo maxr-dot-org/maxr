@@ -5363,6 +5363,7 @@ int ShowDateiMenu ( bool bSave )
 	bool Cursor=true;
 	Uint8 *keystate;
 	cList<string> *files;
+	cList<sSaveFile*> savefiles;
 	SDL_Rect rArrowUp = {rDialog.x+33, rDialog.y+438, 28, 29};
 	SDL_Rect rArrowDown = {rDialog.x+63, rDialog.y+438, 28, 29};
 	SDL_Rect rTitle = { rDialog.x+320, rDialog.y+12, 150, 12 };
@@ -5404,16 +5405,8 @@ int ShowDateiMenu ( bool bSave )
 	//END ARROW CODE
 	// Dateien suchen und Anzeigen:
 	files = getFilesOfDirectory ( SettingsData.sSavesPath );
-	for ( int i = 0; i < files->Size(); i++ )
-	{
-		string const& f = (*files)[i];
-		if (f.substr(f.length() - 3, 3).compare("xml") != 0)
-		{
-			files->Delete ( i );
-			i--;
-		}
-	}
-	ShowFiles ( files,offset,selected,false,false,false, rDialog );
+	loadFiles ( files, savefiles, 0 );
+	displayFiles ( savefiles, offset, selected, false, false, false, rDialog);
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -5443,12 +5436,12 @@ int ShowDateiMenu ( bool bSave )
 			if ( Cursor )
 			{
 				Cursor=false;
-				ShowFiles ( files,offset,selected,true,true,false, rDialog );
+				displayFiles ( savefiles, offset, selected, true, true, false, rDialog );
 			}
 			else
 			{
 				Cursor=true;
-				ShowFiles ( files,offset,selected,true,false,false, rDialog );
+				displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
 			}
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
@@ -5479,7 +5472,7 @@ int ShowDateiMenu ( bool bSave )
 						selected = i+offset;
 					checky+=75;
 				}
-				ShowFiles ( files,offset,selected,bSave,false,true, rDialog );
+				displayFiles ( savefiles, offset, selected, bSave, false, true, rDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 			}
@@ -5508,7 +5501,7 @@ int ShowDateiMenu ( bool bSave )
 			// TODO: make sure the game is halted befor saving
 			if ( selected != -1 )
 			{
-				ShowFiles ( files,offset,selected,true,false,false, rDialog );
+				displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
 				if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
 				else
 				{
@@ -5517,18 +5510,10 @@ int ShowDateiMenu ( bool bSave )
 					{
 						delete files;
 						files = getFilesOfDirectory ( SettingsData.sSavesPath );
-						for ( int i = 0; i < files->Size(); i++ )
-						{
-							string const& f = (*files)[i];
-							if (f.substr(f.length() - 3, 3).compare("xml") != 0)
-							{
-								files->Delete ( i );
-								i--;
-							}
-						}
+						loadFiles ( files, savefiles, offset );
 						selected = -1;
 					}
-					ShowFiles ( files,offset,selected,true,false,false, rDialog );
+					displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
 				}
 			}
 			SHOW_SCREEN
@@ -5539,7 +5524,7 @@ int ShowDateiMenu ( bool bSave )
 		{
 			if ( selected != -1 )
 			{
-				ShowFiles ( files,offset,selected,false,false,false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
 				delete files;
 				return 1;
 			}
@@ -5566,7 +5551,7 @@ int ShowDateiMenu ( bool bSave )
 					offset-=10;
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected,false,false,false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
 				scr.x=96;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 				SHOW_SCREEN
@@ -5599,9 +5584,10 @@ int ShowDateiMenu ( bool bSave )
 				if ( offset<90 )
 				{
 					offset+=10;
+					loadFiles ( files, savefiles, offset );
 					selected=-1;
 				}
-				ShowFiles ( files,offset,selected,false,false,false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
 				scr.x=96+28*2;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 				SHOW_SCREEN
@@ -5623,16 +5609,49 @@ int ShowDateiMenu ( bool bSave )
 		SDL_Delay ( 10 );
 	}
 	delete files;
+	while ( savefiles.Size() > 0 ) savefiles.Delete( 0 );
 	return -1;
 }
 
-// Zeigt die Saves an
-void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
+void loadFiles ( cList<string> *filesList, cList<sSaveFile*> &savesList, int offset )
+{
+	for ( unsigned int i = 0; i < filesList->Size(); i++ )
+	{
+		// only check for xml files and numbers for this offset
+		string const& file = (*filesList)[i];
+		if ( file.substr( file.length() - 3, 3 ).compare( "xml" ) != 0 )
+		{
+			filesList->Delete ( i );
+			i--;
+			continue;
+		}
+		int number;
+		if ( ( number = atoi( file.substr( file.length() - 7, 3 ).c_str() ) ) < offset || number > offset+10 ) continue;
+		// don't add files twice
+		bool found = false;
+		for ( unsigned int j = 0; j < savesList.Size(); j++ )
+		{
+			if ( savesList[j]->number == number )
+			{
+				found = true;
+				break;
+			}
+		}
+		if ( found ) continue;
+		// read the information and add it to the saveslist
+		sSaveFile *savefile = new sSaveFile;
+		savefile->number = number;
+		savefile->filename = file;
+		cSavegame Savegame ( number );
+		Savegame.loadHeader ( &savefile->gamename, &savefile->type, &savefile->time );
+		savesList.Add ( savefile );
+	}
+}
 
+void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
 {
 	SDL_Rect rect, src;
 	int i, x = rDialog.x + 35, y = rDialog.y + 72;
-	// Save Nummern ausgeben
 	rect.x = rDialog.x + (src.x = 25);
 	rect.y = rDialog.y + (src.y = 70);
 	rect.w = src.w = 26;
@@ -5665,7 +5684,6 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 		y += 76;
 	}
 
-	// Savenamen mit evtl. Auswahl ausgeben
 	rect.x = rDialog.x + (src.x=55);
 	rect.y = rDialog.y + (src.y=59);
 	rect.w = src.w = 153;
@@ -5700,97 +5718,57 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 		}
 		if ( bSave )
 		{
-			for ( int j = 0; j < files->Size() || j == 0; j++ )
+			for ( int j = 0; j < savesList.Size() || j == 0; j++ )
 			{
-				int iSaveNumber;
-				string sFilename, sTime, sMode;
-				if ( files->Size() > 0 )
+				if ( savesList[j]->number == i )
 				{
-					string const& f = (*files)[j];
-					iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-				}
-				else
-				{
-					iSaveNumber = -1;
-				}
-				if ( iSaveNumber == i )
-				{
-					cSavegame Savegame ( iSaveNumber );
-					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
-					// Dateinamen anpassen und ausgeben
-					if ( sFilename.length() > 15 )
-					{
-						sFilename.erase ( 15 );
-					}
+					string gamename = savesList[j]->gamename;
+					// cut filename and display it
+					if ( gamename.length() > 15 ) gamename.erase ( 15 );
 					if ( i == selected )
 					{
-						if ( bFirstSelect )
-						{
-							InputStr = sFilename;
-						}
-						else
-						{
-							sFilename = InputStr;
-						}
-						if ( bCursor )
-						{
-							sFilename += "_";
-						}
+						if ( bFirstSelect ) InputStr = gamename;
+						else gamename = InputStr;
+
+						if ( bCursor ) gamename += "_";
+
 						SaveLoadFile = InputStr;
 						SaveLoadNumber = i;
 					}
-					font->showText(x, y, sFilename);
-					// Zeit und Modus ausgeben
-					font->showText(x, y-23, sTime);
-					font->showText(x+113,y-23, sMode);
+					font->showText(x, y, gamename);
+					// display time and gametype
+					font->showText(x, y-23, savesList[j]->time);
+					font->showText(x+113,y-23, savesList[j]->type);
 					break;
 				}
 				else if ( i == selected )
 				{
-					if ( InputStr.length() > 15 )
-					{
-						InputStr.erase ( 15 );
-					}
-					sFilename = InputStr;
-					if ( bCursor )
-					{
-						sFilename += "_";
-					}
+					string gamename;
+					if ( InputStr.length() > 15 ) InputStr.erase ( 15 );
+					gamename = InputStr;
+					if ( bCursor ) gamename += "_";
 					SaveLoadFile = InputStr;
 					SaveLoadNumber = i;
-					font->showText(x, y, sFilename);
+					font->showText(x, y, gamename);
 				}
 			}
 		}
 		else
 		{
-			for ( int j = 0; j < files->Size(); j++ )
+			for ( int j = 0; j < savesList.Size(); j++ )
 			{
-				int iSaveNumber;
-				string sFilename, sTime, sMode;
-				string const& f = (*files)[j];
-				iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-
-				if ( iSaveNumber == i )
+				if ( savesList[j]->number == i )
 				{
-					cSavegame Savegame ( iSaveNumber );
-					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
-					// Dateinamen anpassen und ausgeben
-					if ( sFilename.length() > 15 )
-					{
-						sFilename.erase ( 15 );
-					}
+					string gamename = savesList[j]->gamename;
+					// cut filename and display it
+					if ( gamename.length() > 15 ) gamename.erase ( 15 );
 
-					if ( i == selected )
-					{
-						SaveLoadFile = f;
-					}
+					if ( i == selected ) SaveLoadFile = savesList[j]->filename;
+					font->showText(x, y, savesList[j]->gamename);
 
-					font->showText(x, y, sFilename);
-
-					// Zeit und Modus ausgeben
-					font->showText(x, y - 23, sTime);
-					font->showText(x + 113, y - 23, sMode);
+					// display time and gametype
+					font->showText(x, y - 23, savesList[j]->time);
+					font->showText(x + 113, y - 23, savesList[j]->type);
 					break;
 				}
 			}

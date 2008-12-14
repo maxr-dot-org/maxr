@@ -32,6 +32,15 @@ EX string SaveLoadFile;	// Name of the savegame to load or to save
 EX int SaveLoadNumber;	// Index number of the savegame to load or to save
 
 // Strukturen ////////////////////////////////////////////////////////////////
+struct sSaveFile
+{
+	string filename;
+	string gamename;
+	string type;
+	string time;
+	int number;
+};
+
 struct sPlayer{
   int what[4];
   string clan[4];
@@ -292,14 +301,8 @@ void ShowLandingList(cList<sLanding*> *list,int selected,int offset, SDL_Surface
  * @return
  */
 int ShowDateiMenu( bool bSave );
-/**
- *
- * @param files
- * @param offset
- * @param selected
- * @param rDialog SDL_Rect with real Dialog rect depending on screen resolution
- */
-void ShowFiles(cList<string> *files, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog);
+void loadFiles ( cList<string> *filesList, cList<sSaveFile*> &savesList, int offset );
+void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog );
 /**
  *
  * @param sFileName
