@@ -32,9 +32,6 @@
 #include <SDL.h>
 #endif
 
-/* NOAUDIO enables use of speed up / slow down functionality (f = faster, s = slower); useful for debugging */
-//#define NOAUDIO
-
 /* define (potentially) handled opcode types */
 #define STOP_PLAYBACK			0x00
 #define FETCH_NEXT_CHUNK		0x01
@@ -112,7 +109,7 @@ void MVEPlayerEventHandler();
 /* primary function entry point */
 /********************************/
 
-int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
+int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int audio)
 {	
 	/*************************/
 	/* variable declarations */
@@ -129,11 +126,9 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	float start_time = 0;
 
 	/* audio variables */
-#ifndef NOAUDIO
 	SDL_AudioSpec *desired = NULL;
 	Uint16 file_audio_flags = 0;
 	buffer audio_buffer, audio_data_read, temp_audio_buffer;
-#endif
 
 	/* video variables */
 	Uint32 screen_buffer_size = 0;
@@ -153,7 +148,6 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	/* a counting var */
 	Uint16 i = 0;
 
-#ifndef NOAUDIO
 	/* initialize audio buffers */
 	audio_buffer.data = NULL;
 	audio_buffer.length = 0;
@@ -161,7 +155,6 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	audio_data_read.length = 0;
 	temp_audio_buffer.data = NULL;
 	temp_audio_buffer.length = 0;
-#endif
 
 	/******************************************/
 	/* validate MVE, init SDL, and begin read */
@@ -195,17 +188,18 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 		return MVE_CORRUPT;
 
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
-#ifndef NOAUDIO
-	if(SDL_WasInit(SDL_INIT_AUDIO) != SDL_INIT_AUDIO)
-		SDL_Init(SDL_INIT_AUDIO);
-
-	if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER))
-#else
-	if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_TIMER))
-#endif
+	if(audio)
 	{
-		return SDL_INIT_FAILURE;
+		if(SDL_WasInit(SDL_INIT_AUDIO) != SDL_INIT_AUDIO)
+			SDL_Init(SDL_INIT_AUDIO);
+
+		if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER))
+			return SDL_INIT_FAILURE;
 	}
+
+	if(!audio)
+		if(SDL_WasInit(SDL_INIT_VIDEO|SDL_INIT_TIMER) != (SDL_INIT_VIDEO|SDL_INIT_TIMER))
+			return SDL_INIT_FAILURE;
 
 	/* save initial video state; we'll restore at the end */
 	if(!fullscreen)
@@ -264,8 +258,16 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 			TIMER_INIT = 1;
 
 			break;
-#ifndef NOAUDIO
+
 		case INIT_AUDIO_BUFFERS:
+
+			if(!audio)
+			{
+				/* strip opcode data; don't know how to catch errors here */
+				mve->seek(mve, op.length, SEEK_CUR);
+				break;
+			}
+
 
 			/* init sdl audio settings */
 			desired = malloc(sizeof(SDL_AudioSpec));
@@ -319,13 +321,16 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 
 		case START_AUDIO:
 
+			if(!audio)
+				break;
+
 			AUDIO_PLAYING = 1;
 			if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING)
 			{
 				SDL_PauseAudio(0);
 			}
 			break;
-#endif
+
 		case INIT_VIDEO_BUFFERS:
 
 			/* get the requested dimensions 
@@ -407,8 +412,15 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 			mve->seek(mve, op.length, SEEK_CUR);
 
 			break;
-#ifndef NOAUDIO
+
 		case AUDIO_FRAME:
+
+			if(!audio)
+			{
+				/* strip opcode data; don't know how to catch errors here */
+				mve->seek(mve, op.length, SEEK_CUR);
+				break;
+			}
 
 			/* strip the seq-index and stream-mask */
 			SDL_ReadLE16(mve);
@@ -477,7 +489,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 			audio_data_read.length = 0;
 
 			break;
-#endif
+
 		case INIT_VIDEO_MODE:
 
 			width = SDL_ReadLE16(mve);
@@ -604,28 +616,29 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 	/* cleanup */
 	/***********/
 
-#ifndef NOAUDIO
-	/* stop audio */
-	if(AUDIO_PLAYING)
+	if(audio)
 	{
-		SDL_PauseAudio(1);
-		SDL_CloseAudio();
+		/* stop audio */
+		if(AUDIO_PLAYING)
+		{
+			SDL_PauseAudio(1);
+			SDL_CloseAudio();
+		}
+
+		/* free audio buffers */
+		if(audio_buffer.data)
+			free(audio_buffer.data);
+
+		if(audio_data_read.data)
+			free(audio_data_read.data);
+
+		if(temp_audio_buffer.data)
+			free(temp_audio_buffer.data);
+
+		/* free the audio_spec */
+		if(desired)
+			free(desired);
 	}
-
-	/* free audio buffers */
-	if(audio_buffer.data)
-		free(audio_buffer.data);
-
-	if(audio_data_read.data)
-		free(audio_data_read.data);
-
-	if(temp_audio_buffer.data)
-		free(temp_audio_buffer.data);
-
-	/* free the audio_spec */
-	if(desired)
-		free(desired);
-#endif
 
 	/* free the decoding map */
 	if(map)
@@ -660,7 +673,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen)
 /******************************/
 /* Audio callback entry point */
 /******************************/
-#ifndef NOAUDIO
+
 void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 {
 	Uint8 * temp;
@@ -769,7 +782,6 @@ void MVEPlayerDecodeAudio(buffer * in)
 	in->data = out.data;
 	in->length = out.length;
 }
-#endif
 
 /**************************************/
 /* Video decoding routine entry point */
@@ -1323,16 +1335,6 @@ void MVEPlayerEventHandler()
 			{
 				switch(event.key.keysym.sym)
 				{
-#ifdef NOAUDIO
-				case SDLK_s:
-					TIMER_INIT = 1;
-					ms_per_frame *= 2;
-					break;
-				case SDLK_f:
-					TIMER_INIT = 1;
-					ms_per_frame /= 2;
-					break;
-#endif
 				case SDLK_PAUSE:
 					PAUSED = !PAUSED;
 					if(PAUSED)

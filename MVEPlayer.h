@@ -48,7 +48,7 @@ extern "C"
 #define SIXTEEN_BIT_MVE				0X0C
 
 /* player function prototype */
-int MVEPlayer(const char *MVEfilename, int dwidth, int dheight, int fullscreen);
+int MVEPlayer(const char *MVEfilename, int dwidth, int dheight, int fullscreen, int audio);
 
 #endif /* _MVEPLAYER_H */
 #ifdef __cplusplus
