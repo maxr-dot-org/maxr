@@ -5609,7 +5609,11 @@ int ShowDateiMenu ( bool bSave )
 		SDL_Delay ( 10 );
 	}
 	delete files;
-	while ( savefiles.Size() > 0 ) savefiles.Delete( 0 );
+	while ( savefiles.Size() > 0 )
+	{
+		delete savefiles[0];
+		savefiles.Delete( 0 );
+	}
 	return -1;
 }
 
