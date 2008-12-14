@@ -5620,6 +5620,7 @@ int ShowDateiMenu ( bool bSave )
 
 		LastMouseX=x;LastMouseY=y;
 		LastB=b;
+		SDL_Delay ( 10 );
 	}
 	delete files;
 	return -1;
@@ -5707,8 +5708,6 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 				{
 					string const& f = (*files)[j];
 					iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-					cSavegame Savegame ( iSaveNumber );
-					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 				}
 				else
 				{
@@ -5716,6 +5715,8 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 				}
 				if ( iSaveNumber == i )
 				{
+					cSavegame Savegame ( iSaveNumber );
+					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 					// Dateinamen anpassen und ausgeben
 					if ( sFilename.length() > 15 )
 					{
@@ -5769,11 +5770,11 @@ void ShowFiles ( cList<string> *files, int offset, int selected, bool bSave, boo
 				string sFilename, sTime, sMode;
 				string const& f = (*files)[j];
 				iSaveNumber = atoi(f.substr(f.length() - 7, 3).c_str());
-				cSavegame Savegame ( iSaveNumber );
-				Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 
 				if ( iSaveNumber == i )
 				{
+					cSavegame Savegame ( iSaveNumber );
+					Savegame.loadHeader ( &sFilename, &sMode, &sTime );
 					// Dateinamen anpassen und ausgeben
 					if ( sFilename.length() > 15 )
 					{
