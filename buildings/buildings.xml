@@ -17,7 +17,7 @@
 		<Energy_Big directory="energy_big" num="7"/>
 		<Energy_Small directory="energy_small" num="8"/>
 		<Factory_Air directory="fac_air" num="9"/>
-		<Factory_Alien directory="fac_alien" num="10"/>
+		<!--<Factory_Alien directory="fac_alien" num="10"/>-->
 		<Factory_Big directory="fac_big" num="11"/>
 		<Factory_Ship directory="fac_ship" num="12"/>
 		<Factory_Small directory="fac_small" num="13"/>

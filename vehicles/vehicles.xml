@@ -9,10 +9,10 @@
 	</Header>
 	<Vehicles>
 		<Air_Transporter directory="air_transport" num="1"/>
-		<Alien_Assault directory="alien_assault" num="2"/>
+		<!-- <Alien_Assault directory="alien_assault" num="2"/>
 		<Alien_Plane directory="alien_plane" num="3"/>
 		<Alien_Ship directory="alien_ship" num="4"/>
-		<Alien_Tank directory="alien_tank" num="5"/>
+		<Alien_Tank directory="alien_tank" num="5"/> -->
 		<APC directory="apc" num="6"/>
 		<Assault directory="assault" num="7"/>
 		<AWAC directory="awac" num="8"/>
