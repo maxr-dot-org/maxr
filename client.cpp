@@ -1366,6 +1366,8 @@ void cClient::drawMap( bool bPure )
 
 void cClient::drawMiniMap()
 {
+	//remove TMP HACK TO BLACK OUT DISABLED MINIMAP in loaddata before reactivating this! -- beko
+	//FIXME: draw minimap
 	/*
 	unsigned int cl,*ptr;
 	int x, y, tx, ty, ex, ey;
