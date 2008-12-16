@@ -1034,7 +1034,7 @@ void cClient::handleTimer()
 void cClient::drawMap( bool bPure )
 {
 	int iX, iY, iPos, iZoom, iOffX, iOffY, iStartX, iStartY, iEndX, iEndY;
-	struct sTerrain *terr, *defwater;
+	struct sTerrain *terr;
 	SDL_Rect dest, tmp, scr;
 	iZoom = Hud.Zoom;
 	float f = 64.0;
@@ -1043,7 +1043,10 @@ void cClient::drawMap( bool bPure )
 	scr.y = 0;
 	scr.h = scr.w = dest.w = dest.h = iZoom;
 	dest.y = 18-iOffY;
-	defwater = Map->terrain + Map->DefaultWater;
+
+	if ( iTimer2 ) Map->generateNextAnimationFrame();
+
+	// draw the terrain
 	for ( iY=0;iY<Map->size;iY++ )
 	{
 		dest.x=180-iOffX;
@@ -1054,47 +1057,17 @@ void cClient::drawMap( bool bPure )
 			{
 				if ( dest.x>=180-iZoom )
 				{
-					// draw thr terrain:
 					tmp=dest;
 					terr=Map->terrain+Map->Kacheln[iPos];
-					// check whether it is a coast:
-					if ( terr->overlay )
-					{
-						scr.x= ( iFrame%defwater->frames ) *iZoom;
-						if ( Hud.Nebel&&!ActivePlayer->ScanMap[iPos] )
-						{
-							SDL_BlitSurface ( defwater->shw,&scr,buffer,&tmp );
-						}
-						else
-						{
-							SDL_BlitSurface ( defwater->sf,&scr,buffer,&tmp );
-						}
-						tmp=dest;
-					}
+
 					// draw the fog:
 					if ( Hud.Nebel&&!ActivePlayer->ScanMap[iPos] )
 					{
-						if ( terr->sf_org->w>64 )
-						{
-							scr.x= ( iFrame%terr->frames ) *iZoom;
-							SDL_BlitSurface ( terr->shw,&scr,buffer,&tmp );
-						}
-						else
-						{
-							SDL_BlitSurface ( terr->shw,NULL,buffer,&tmp );
-						}
+						SDL_BlitSurface ( terr->shw,NULL,buffer,&tmp );
 					}
 					else
 					{
-						if ( terr->frames>1 )
-						{
-							scr.x= ( iFrame%terr->frames ) *iZoom;
-							SDL_BlitSurface ( terr->sf,&scr,buffer,&tmp );
-						}
-						else
-						{
-							SDL_BlitSurface ( terr->sf,NULL,buffer,&tmp );
-						}
+						SDL_BlitSurface ( terr->sf,NULL,buffer,&tmp );
 					}
 				}
 				iPos++;
@@ -1393,6 +1366,7 @@ void cClient::drawMap( bool bPure )
 
 void cClient::drawMiniMap()
 {
+	/*
 	unsigned int cl,*ptr;
 	int x, y, tx, ty, ex, ey;
 	sGameObjects *GO;
@@ -1463,6 +1437,7 @@ void cClient::drawMiniMap()
 		ptr[x+15+356*GraphicsData.gfx_hud->w+ ( ty+ey-1-ty ) *GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
 	}
 	SDL_UnlockSurface ( GraphicsData.gfx_hud );
+	*/
 }
 
 void cClient::drawFLC()

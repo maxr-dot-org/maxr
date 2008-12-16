@@ -292,28 +292,13 @@ struct sTuple
 	int to;
 };
 
-SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, bool bWater, bool &overlay  )
+SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum )
 {
 	// Create new surface and copy palette
-	overlay = false;
-	SDL_Surface *surface;
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
+	SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
 	surface->pitch = surface->w;
 
-	surface->format->palette->ncolors = 256;
-	for (int i = 0; i < 256; i++ )
-	{
-		surface->format->palette->colors[i].r = Palette[i].cBlue;
-		surface->format->palette->colors[i].g = Palette[i].cGreen;
-		surface->format->palette->colors[i].b = Palette[i].cRed;
-		// If is not a water graphic it may could be an overlay graphic so index 96 must hava an other color
-		if ( i == 96 && !bWater )
-		{
-			surface->format->palette->colors[i].r = 255;
-			surface->format->palette->colors[i].g = 0;
-			surface->format->palette->colors[i].b = 255;
-		}
-	}
+	SDL_SetColors( surface, Palette, 0, 256 );
 
 	// Go to position of filedata
 	SDL_RWseek ( fpMapFile, iGraphicsPos + 64*64*( iNum ), SEEK_SET );
@@ -326,39 +311,38 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColo
 			unsigned char cColorOffset;
 			SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 );
 			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
-			// If is not a water graphic set all pixels in water color to index 96 with will be a color key
-			if( ((cColorOffset > 95 && cColorOffset <= 116) || (cColorOffset > 122 && cColorOffset <= 127)) && !bWater )
-			{
-				*pixel = 96;
-				overlay = true;
-			}
-			else
-			{
-				*pixel = cColorOffset;
-			}
+			*pixel = cColorOffset;
 		}
 	}
 	return surface;
 }
 
-void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX )
+void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 {
-	terrain[iNum].sf_org = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	//before the surfaces are copied, the colortable of both surfaces has to be equal
+	//This is needed to make sure, that the pixeldata is copied 1:1
+
+	//copy the normal terrains
+	terrain[iNum].sf_org = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	SDL_SetColors( terrain[iNum].sf_org, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].sf_org, NULL );
 
-	terrain[iNum].sf = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SDL_FillRect( terrain[iNum].sf, NULL, 0xFF00FF );
-	SDL_BlitSurface( terrain[iNum].sf_org, NULL, terrain[iNum].sf, NULL );
+	terrain[iNum].sf = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	SDL_SetColors( terrain[iNum].sf, surface->format->palette->colors,0, 256);
+	SDL_BlitSurface( surface, NULL, terrain[iNum].sf, NULL );
 
-	terrain[iNum].shw_org = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SDL_FillRect( terrain[iNum].shw_org, NULL, 0xFF00FF );
-	SDL_BlitSurface( terrain[iNum].sf_org, NULL, terrain[iNum].shw_org, NULL );
+	//copy the terrains with fog
+	terrain[iNum].shw_org = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	SDL_SetColors( terrain[iNum].shw_org, surface->format->palette->colors,0, 256);
+	SDL_BlitSurface( surface, NULL, terrain[iNum].shw_org, NULL );
 
-	SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, terrain[iNum].shw_org, NULL );
+	terrain[iNum].shw = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	SDL_SetColors( terrain[iNum].shw, surface->format->palette->colors,0, 256);
+	SDL_BlitSurface( surface, NULL, terrain[iNum].shw, NULL );
 
-	terrain[iNum].shw = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, iSizeX, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SDL_FillRect( terrain[iNum].shw, NULL, 0xFF00FF );
-	SDL_BlitSurface( terrain[iNum].shw_org, NULL, terrain[iNum].shw, NULL );
+	//now set the palette for the fog terrains
+	SDL_SetColors( terrain[iNum].shw_org, palette_shw,0, 256);
+	SDL_SetColors( terrain[iNum].shw, palette_shw,0, 256);
 }
 
 // Läd das Mapfile:
@@ -367,7 +351,6 @@ bool cMap::LoadMap ( string filename )
 	SDL_RWops *fpMapFile;
 	short sWidth, sHeight;
 	short sGraphCount;		// Number of terrain graphics for this map
-	sColor Palette[256];	// Palette with all Colors for the terrain graphics
 	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
 	unsigned char cByte;	// one Byte
 	char szFileTyp[4];
@@ -420,15 +403,25 @@ bool cMap::LoadMap ( string filename )
 
 	// Load Color Palette
 	SDL_RWseek ( fpMapFile, iPalettePos , SEEK_SET );
-	SDL_RWread ( fpMapFile, &Palette, 1, 768 );
+	for ( int i = 0; i < 256; i++ )
+	{
+		SDL_RWread ( fpMapFile, palette + i, 3, 1 );
+	}
+	//generate palette for terrains with fog
+	for ( int i = 0; i < 256; i++)
+	{
+		palette_shw[i].r = (unsigned char) palette[i].r * 0.6;
+		palette_shw[i].g = (unsigned char) palette[i].g * 0.6;
+		palette_shw[i].b = (unsigned char) palette[i].b * 0.6;
+	}
 
-	DefaultWater = -1;
+
 	// Load necessary Terrain Graphics
 	for ( int iNum = 0; iNum < sGraphCount; iNum++ )
 	{
 		SDL_Surface *surface;	// Temporary surface for fresh loaded graphic
 
-		// Check for typ
+		// load terrain type info
 		SDL_RWseek ( fpMapFile, iInfoPos+iNum, SEEK_SET );
 		SDL_RWread ( fpMapFile, &cByte, 1, 1 );
 
@@ -440,62 +433,11 @@ bool cMap::LoadMap ( string filename )
 		if ( cByte == 3 ) terrain[iNum].blocked = true;
 		else terrain[iNum].blocked = false;
 
-		if ( terrain[iNum].water )
-		{
-			SDL_Surface *fullsurface = SDL_CreateRGBSurface( SDL_HWSURFACE, 64* 7, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
-			surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, true, terrain[iNum].overlay);
-			SDL_Rect dest = { 0, 0, 64, 64 };
-			SDL_BlitSurface( surface, NULL, fullsurface, &dest );
-			dest.x += 64;
-			for ( int i = 0; i < 6; i++ )
-			{
-				for (int iInd = 0; iInd < 64*64; iInd++ )
-				{
-					Uint8 *pixel = (Uint8*) surface->pixels  + iInd;
-					if ( *pixel > 96 && *pixel <= 102 ) *pixel -= 1;
-					else if ( *pixel == 96 ) *pixel += 6;
-
-					else if ( *pixel > 103 && *pixel <= 109 ) *pixel -= 1;
-					else if ( *pixel == 103 ) *pixel += 6;
-
-					else if ( *pixel > 110 && *pixel <= 116 ) *pixel -= 1;
-					else if ( *pixel == 110 ) *pixel += 6;
-
-					else if ( *pixel > 117 && *pixel <= 122 ) *pixel -= 1;
-					else if ( *pixel == 117 ) *pixel += 5;
-
-					else if ( *pixel > 123 && *pixel <= 127 ) *pixel -= 1;
-					else if ( *pixel == 123 ) *pixel += 4;
-				}
-				SDL_BlitSurface( surface, NULL, fullsurface, &dest );
-				dest.x += 64;
-			}
-			CopySrfToTerData ( fullsurface, iNum, 64*7 );
-			SDL_FreeSurface ( fullsurface );
-		}
-		else
-		{
-			surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, Palette, iNum, terrain[iNum].water, terrain[iNum].overlay);
-			CopySrfToTerData ( surface, iNum, 64 );
-		}
-		terrain[iNum].frames = terrain[iNum].sf_org->w/64;
-
-		// First watergraphic will be the default one for coasts
-		if( terrain[iNum].water && DefaultWater == -1 ) DefaultWater = iNum;
-
-		// This Terrain will be used
-		TerrainInUse.Add( terrain+( iNum ) );
-
-		// Set ColorKeys if necessary
-		if ( terrain[iNum].overlay )
-		{
-			int t=0xCD00CD;
-			SDL_SetColorKey ( terrain[iNum].sf_org,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( terrain[iNum].shw_org,SDL_SRCCOLORKEY,t );
-			SDL_SetColorKey ( terrain[iNum].sf,SDL_SRCCOLORKEY,0xFF00FF );
-			SDL_SetColorKey ( terrain[iNum].shw,SDL_SRCCOLORKEY,t );
-		}
+		//load terrain graphic
+		surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, palette, iNum );
+		CopySrfToTerData ( surface, iNum );
 		SDL_FreeSurface ( surface );
+		iNumberOfTerrains++;
 	}
 
 	// Load map data
@@ -523,8 +465,6 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 	Kacheln= ( int* ) malloc ( sizeof ( int ) *size*size );
 	memset ( Kacheln,0,sizeof ( int ) *size*size );
 
-	DefaultWater=0;
-
 	fields = new cMapField[size*size];
 	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
@@ -532,6 +472,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	// alloc memory for terrains
 	terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * iTerrainGrphCount );
+	iNumberOfTerrains = 0;
 }
 
 // Löscht die aktuelle Map:
@@ -543,7 +484,7 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	for (int i = 0; i < TerrainInUse.Size(); i++)
+	for (int i = 0; i < iNumberOfTerrains; i++)
 	{
 		SDL_FreeSurface ( terrain[i].sf_org );
 		SDL_FreeSurface ( terrain[i].sf );
@@ -551,6 +492,37 @@ void cMap::DeleteMap ( void )
 		SDL_FreeSurface ( terrain[i].shw );
 	}
 	free ( terrain );
+	iNumberOfTerrains = 0;
+}
+
+void cMap::generateNextAnimationFrame()
+{
+	//change palettes to display next frame
+	SDL_Color temp = palette[127];
+	memmove( palette + 97, palette + 96, 32 * sizeof(SDL_Color) );
+	palette[96]  = palette[103];
+	palette[103] = palette[110];
+	palette[110] = palette[117];
+	palette[117] = palette[123];
+	palette[123] = temp;
+
+	temp = palette_shw[127];
+	memmove( palette_shw + 97, palette_shw + 96, 32 * sizeof(SDL_Color) );
+	palette_shw[96]  = palette_shw[103];
+	palette_shw[103] = palette_shw[110];
+	palette_shw[110] = palette_shw[117];
+	palette_shw[117] = palette_shw[123];
+	palette_shw[123] = temp;
+
+
+	//set the new palette for all terrain surfaces
+	for ( int i = 0; i < iNumberOfTerrains; i++ )
+	{
+		SDL_SetColors( terrain[i].sf, palette + 96, 96, 127);
+		//SDL_SetColors( TerrainInUse[i]->sf_org, palette + 96, 96, 127);
+		SDL_SetColors( terrain[i].shw, palette_shw + 96, 96, 127);
+		//SDL_SetColors( TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);	
+	}
 }
 
 // Platziert die Ressourcen (0-wenig,3-viel):

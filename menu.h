@@ -31,6 +31,11 @@
 EX string SaveLoadFile;	// Name of the savegame to load or to save
 EX int SaveLoadNumber;	// Index number of the savegame to load or to save
 
+struct sColor
+{
+	unsigned char cBlue, cGreen, cRed;
+};
+
 // Strukturen ////////////////////////////////////////////////////////////////
 struct sSaveFile
 {

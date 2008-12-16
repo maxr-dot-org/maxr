@@ -462,9 +462,7 @@ struct sTerrain{
   SDL_Surface *shw,*shw_org; // Surfaces des terrains im Schatten
   bool water;       // Gibt an, ob es Wasser ist
   bool coast;       // Gibt an, ob es ein Küstenstück ist
-  bool overlay;     // Gibt an, ob es ein Overlay ist
   bool blocked;     // Gibt an, ob es blockiert ist
-  int frames;       // Anzahl an Frames
 };
 
 

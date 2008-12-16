@@ -1282,38 +1282,25 @@ void cHud::ScaleSurfaces ( void )
 	if ( Zoom==LastZoom ) return;
 
 	// Terrain:
-	cList<sTerrain*>& tlist = Client->Map->TerrainInUse;
-	for (size_t i = 0; i < tlist.Size(); ++i)
+	sTerrain*& tlist = Client->Map->terrain;
+	int numberOfTerrains = Client->Map->iNumberOfTerrains;
+	for (size_t i = 0; i < numberOfTerrains; ++i)
 	{
-		sTerrain *t;
-		t = tlist[i];
-		if ( Zoom==64 )
+		sTerrain& t = tlist[i];
+		if ( Zoom == 64 )
 		{
-			t->sf->w=t->sf_org->w;t->sf->h=t->sf_org->h;
-			if ( t->overlay )
-			{
-				SDL_SetColorKey ( t->sf_org,SDL_SRCCOLORKEY,-1 );
-				SDL_SetColorKey ( t->shw_org,SDL_SRCCOLORKEY,-1 );
-			}
-			SDL_BlitSurface ( t->sf_org,NULL,t->sf,NULL );
-			t->shw->w=t->shw_org->w;t->shw->h=t->shw_org->h;
-			SDL_BlitSurface ( t->shw_org,NULL,t->shw,NULL );
-			if ( t->overlay )
-			{
-				SDL_SetColorKey ( t->sf_org,SDL_SRCCOLORKEY,0xFF00FF );
-				SDL_SetColorKey ( t->shw_org,SDL_SRCCOLORKEY,0xCD00CD );
-				SDL_SetColorKey ( t->sf,SDL_SRCCOLORKEY,0xFF00FF );
-				SDL_SetColorKey ( t->shw,SDL_SRCCOLORKEY,0xCD00CD );
-			}
+			t.sf->w = t.sf_org->w;
+			t.sf->h = t.sf_org->h;
+			SDL_BlitSurface ( t.sf_org,NULL,t.sf,NULL );
+
+			t.shw->w = t.shw_org->w;
+			t.shw->h = t.shw_org->h;
+			SDL_BlitSurface ( t.shw_org,NULL,t.shw,NULL );
 		}
 		else
 		{
-			ScaleSurface2 ( t->sf_org,t->sf,Zoom );
-			ScaleSurface2 ( t->shw_org,t->shw,Zoom );
-			if ( t->overlay )
-			{
-				SDL_SetColorKey ( t->shw,SDL_SRCCOLORKEY,0xCD00CD );
-			}
+			ScaleSurface2 ( t.sf_org,t.sf,Zoom );
+			ScaleSurface2 ( t.shw_org,t.shw,Zoom );
 		}
 	}
 	// Vehicles:

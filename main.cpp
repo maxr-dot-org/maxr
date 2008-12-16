@@ -314,7 +314,7 @@ void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
 void ScaleSurface2 ( SDL_Surface *scr,SDL_Surface *dest,int size )
 {
 	int x,y,rx,ry,dx,dy,sizex=size;
-	unsigned int *s,*d;
+	unsigned char *s,*d;
 	if ( scr->w>scr->h )
 	{
 		sizex=scr->w/64*size;
@@ -325,8 +325,9 @@ void ScaleSurface2 ( SDL_Surface *scr,SDL_Surface *dest,int size )
 	dy=0;
 	SDL_LockSurface ( dest );
 	SDL_LockSurface ( scr );
-	s= ( unsigned int* ) scr->pixels;
-	d= ( unsigned int* ) dest->pixels;
+	s= ( unsigned char* ) scr->pixels;
+	d= ( unsigned char* ) dest->pixels;
+	int bpp = scr->format->BytesPerPixel;
 	ry=scr->h;
 	for ( y=0;y<scr->h;y++ )
 	{
@@ -340,7 +341,14 @@ void ScaleSurface2 ( SDL_Surface *scr,SDL_Surface *dest,int size )
 				if ( rx>=scr->w )
 				{
 					rx-=scr->w;
-					d[dx+dy*dest->w]=s[x+y*scr->w];
+					if ( bpp == 1 )
+					{
+						d[dx+dy*dest->w]=s[x+y*scr->w];
+					}
+					else
+					{
+						((int*) d)[dx+dy*dest->w] = ((int*) s)[x+y*scr->w];
+					}
 					dx++;
 				}
 				if ( dx>=sizex ) break;

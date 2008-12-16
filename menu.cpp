@@ -494,12 +494,11 @@ void RunSPMenu ( void )
 				Map.PlaceRessources ( options.metal,options.oil,options.gold,options.dichte );
 				// copy map for server
 				cMap ServerMap;
-				ServerMap.NewMap( Map.size, Map.TerrainInUse.Size() );
-				ServerMap.DefaultWater = Map.DefaultWater;
+				ServerMap.NewMap( Map.size, Map.iNumberOfTerrains );
 				ServerMap.MapName = Map.MapName;
 				memcpy ( ServerMap.Kacheln, Map.Kacheln, sizeof ( int )*Map.size*Map.size );
 				memcpy ( ServerMap.Resources, Map.Resources, sizeof ( sResources )*Map.size*Map.size );
-				for ( int i = 0; i < Map.TerrainInUse.Size(); i++ )
+				for ( int i = 0; i < Map.iNumberOfTerrains; i++ )
 				{
 					ServerMap.terrain[i].blocked = Map.terrain[i].blocked;
 					ServerMap.terrain[i].coast = Map.terrain[i].coast;
@@ -3093,6 +3092,24 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 	{
 		// Events holen:
 		EventHandler->HandleEvents();
+		
+		// generate the animation
+		Client->handleTimer();
+		if ( Client->iTimer2 )
+		{
+			map->generateNextAnimationFrame();
+			drawMap();
+			int posX = 180 + *x * fakx;
+			int posY = 18  + *y * faky;
+			//drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
+			//drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
+			drawHud();
+			SHOW_SCREEN
+
+			mouse->draw ( true,screen );
+		}
+
+
 		// Die Maus machen:
 		mouse->GetPos();
 		b=mouse->GetMouseButton();
@@ -3138,7 +3155,7 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 
 void cSelectLandingMenu::drawMap()
 {
-	int nr,off;
+	unsigned int nr,off;
 	sTerrain *t;
 
 	int fakx= ( int ) ( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
@@ -3153,14 +3170,12 @@ void cSelectLandingMenu::drawMap()
 			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
 			t=map->terrain+nr;
 			off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
-			nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
-			if ( nr==0xFF00FF )
-			{
-				t=map->terrain+map->DefaultWater;
-				off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
-				nr=* ( ( int* ) ( t->sf_org->pixels ) +off );
-			}
-			( ( int* ) ( buffer->pixels ) ) [i+180+ ( k+18 ) *buffer->w]=nr;
+			nr= *( ( unsigned char* ) ( t->sf_org->pixels ) +off );
+
+			unsigned char* pixel = (unsigned char*) &( ( Sint32* ) ( buffer->pixels ) ) [i+180+ ( k+18 ) *buffer->w];
+			pixel[0] = map->palette[nr].b;
+			pixel[1] = map->palette[nr].g;
+			pixel[2] = map->palette[nr].r;
 		}
 	}
 	SDL_UnlockSurface ( buffer );
@@ -4250,12 +4265,11 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	{
 		Map->PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
 		// copy map for server
-		ServerMap->NewMap( Map->size, Map->TerrainInUse.Size() );
-		ServerMap->DefaultWater = Map->DefaultWater;
+		ServerMap->NewMap( Map->size, Map->iNumberOfTerrains );
 		ServerMap->MapName = Map->MapName;
 		memcpy ( ServerMap->Kacheln, Map->Kacheln, sizeof ( int )*Map->size*Map->size );
 		memcpy ( ServerMap->Resources, Map->Resources, sizeof ( sResources )*Map->size*Map->size );
-		for ( int i = 0; i < Map->TerrainInUse.Size(); i++ )
+		for ( int i = 0; i < Map->iNumberOfTerrains; i++ )
 		{
 			ServerMap->terrain[i].blocked = Map->terrain[i].blocked;
 			ServerMap->terrain[i].coast = Map->terrain[i].coast;
@@ -5260,12 +5274,11 @@ void HeatTheSeat ( void )
 	Map.PlaceRessources ( Options.metal, Options.oil, Options.gold, Options.dichte );
 	// copy map for server
 	cMap ServerMap;
-	ServerMap.NewMap( Map.size, Map.TerrainInUse.Size() );
-	ServerMap.DefaultWater = Map.DefaultWater;
+	ServerMap.NewMap( Map.size, Map.iNumberOfTerrains );
 	ServerMap.MapName = Map.MapName;
 	memcpy ( ServerMap.Kacheln, Map.Kacheln, sizeof ( int )*Map.size*Map.size );
 	memcpy ( ServerMap.Resources, Map.Resources, sizeof ( sResources )*Map.size*Map.size );
-	for ( int i = 0; i < Map.TerrainInUse.Size(); i++ )
+	for ( int i = 0; i < Map.iNumberOfTerrains; i++ )
 	{
 		ServerMap.terrain[i].blocked = Map.terrain[i].blocked;
 		ServerMap.terrain[i].coast = Map.terrain[i].coast;

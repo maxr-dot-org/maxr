@@ -46,10 +46,6 @@ struct sResources{
 #define RES_OIL   2
 #define RES_GOLD  3
 
-struct sColor
-{
-	unsigned char cBlue, cGreen, cRed;
-};
 
 class cVehicleIterator
 {
@@ -132,15 +128,16 @@ public:
 	cMap(void);
 	~cMap(void);
 
-	int size;     // Größe der Karte.
-	int *Kacheln; // Map mit den Kacheln.
-	int DefaultWater; // Nummer des Wassers für Küsten
-	sGameObjects *GO; // Feld mit den Gameobjects für einen schnelleren Zugriff.
-	sResources *Resources; // Feld mit den Resourcen.
-	cList<sTerrain*> TerrainInUse; // Liste mit Zeigern auf die terrains, die benutzt werden.
-	string ErrorStr; // Der String mit der Fehlermeldung fürs Laden der Maps.
-	string MapName;  // Name der aktuellen Map.
+	int size;     // size of the map
+	int *Kacheln; // terrain numbers of the map fields
+	sGameObjects *GO; // TODO: remove
+	sResources *Resources; // field with the ressource data
+	string MapName;  // name of the currend map
 
+	SDL_Color palette[256];	//Palette with all Colors for the terrain graphics
+	SDL_Color palette_shw[256];
+	
+	int iNumberOfTerrains;		// Number of terrain graphics for this map
 	sTerrain *terrain; // Terrain graphics
 
 	bool IsWater(int off,bool not_coast=false,bool is_ship=false);
@@ -149,6 +146,7 @@ public:
 	bool SaveMap(string filename,SDL_Surface *preview);
 	bool LoadMap(string filename);
 	void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
+	void generateNextAnimationFrame();
 	/**
 	* Access to a map field
 	* @param the offset of the map field
@@ -205,8 +203,8 @@ private:
 	*/
 	cMapField* fields;
 
-	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, sColor Palette[256], int iNum, bool bWater, bool &overlay );
-	void CopySrfToTerData ( SDL_Surface *surface, int iNum, int iSizeX  );
+	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum );
+	void CopySrfToTerData ( SDL_Surface *surface, int iNum  );
 };
 
 #endif
