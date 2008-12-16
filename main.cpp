@@ -26,6 +26,7 @@
 #include <SDL_thread.h>
 #include <SDL_net.h>
 #include <SDL_mixer.h>
+#include <SDL_getenv.h>
 
 #define __main__
 #include "defines.h"
@@ -171,6 +172,15 @@ void showSplash()
 	}
 
 	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL ); //JCK: Icon for frame and taskmanager is set
+
+	//set window to center of screen.
+	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
+	if(putenv( cVideoPos)!=0)
+	{
+		cLog::write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
+	}
+
+	//made it - enough to start game
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	SDL_WM_SetCaption ( MAXVERSION, NULL );
@@ -181,6 +191,13 @@ void showGameWindow()
 {
 	SDL_FreeSurface(buffer); //delete splash image
 	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
+
+	//set window to center of screen.
+	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
+	if(putenv( cVideoPos)!=0)
+	{
+		cLog::write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
+	}
 
 	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
 
@@ -197,9 +214,6 @@ void showGameWindow()
 
 int initSDL()
 {
-	putenv("SDL_VIDEO_WINDOW_POS=center"); //Set env for SDL - must be done _before_ init_sdl
-	putenv("SDL_VIDEO_CENTERED=1");
-
 	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{
 		cLog::write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
