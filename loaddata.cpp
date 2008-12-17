@@ -1173,7 +1173,11 @@ int GenerateMaxXml()
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PlayerName" );
+	#ifdef WIN32
+	element->SetAttribute ( "Text", "Player");
+	#else
 	element->SetAttribute ( "Text", "Tuxcommand");
+	#endif
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Enabled" );
@@ -1237,7 +1241,11 @@ int GenerateMaxXml()
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
+	#ifdef WIN32
+	sTmp = SettingsData.sExePath;
+	#else
 	sTmp = SettingsData.sHome;
+	#endif
 	sTmp += "save";
 	element = new TiXmlElement ( "Saves" );
 	element->SetAttribute ( "Text", sTmp.c_str());
