@@ -122,6 +122,20 @@ public:
 
 };
 
+struct sTerrain
+{
+	sTerrain();
+	~sTerrain();
+	SDL_Surface *sf;			/** the scaled surface of the terrain */
+	SDL_Surface *sf_org;	/** the original surface of the terrain */
+	SDL_Surface *shw;		/** the scaled surface of the terrain in the fog */
+	SDL_Surface *shw_org;	/** the original surface of the terrain in the fog */
+	bool water;				/** is this terrain water? */
+	bool coast;				/** is this terrain a coast? */
+	bool blocked;			/** is this terrain blocked? */
+};
+
+
 // Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap{
 public:

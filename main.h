@@ -451,15 +451,6 @@ struct sUnitData{
   bool build_alien;
 };
 
-struct sTerrain{
-  SDL_Surface *sf,*sf_org;   // Surfaces des terrains
-  SDL_Surface *shw,*shw_org; // Surfaces des terrains im Schatten
-  bool water;       // Gibt an, ob es Wasser ist
-  bool coast;       // Gibt an, ob es ein Küstenstück ist
-  bool blocked;     // Gibt an, ob es blockiert ist
-};
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Variables-Classes
 // ------------------------

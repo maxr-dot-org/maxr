@@ -20,6 +20,24 @@
 #include "map.h"
 #include "player.h"
 
+sTerrain::sTerrain()
+	:sf(NULL),
+	sf_org(NULL),
+	shw(NULL),
+	shw_org(NULL),
+	water(false),
+	coast(false),
+	blocked(false)
+{};
+
+sTerrain::~sTerrain()
+{
+	if ( sf )		SDL_FreeSurface ( sf );
+	if ( sf_org )	SDL_FreeSurface ( sf_org );
+	if ( shw )		SDL_FreeSurface ( shw );
+	if ( shw_org )	SDL_FreeSurface ( shw_org );
+}
+
 cVehicleIterator::cVehicleIterator(cList<cVehicle*>* list)
 {
 	index = 0;
@@ -309,7 +327,11 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_C
 		for( int iX = 0; iX < 64; iX++ )
 		{
 			unsigned char cColorOffset;
-			SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 );
+			if ( SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 ) == -1 )
+			{
+				SDL_FreeSurface( surface );
+				return NULL;
+			}
 			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
 			*pixel = cColorOffset;
 		}
@@ -350,13 +372,13 @@ bool cMap::LoadMap ( string filename )
 {
 	SDL_RWops *fpMapFile;
 	short sWidth, sHeight;
-	short sGraphCount;		// Number of terrain graphics for this map
 	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
 	unsigned char cByte;	// one Byte
 	char szFileTyp[4];
 
 	// Open File
 	MapName = filename;
+	cLog::write("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
 	filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
 	fpMapFile = SDL_RWFromFile ( filename.c_str(),"rb" );
 	if ( !fpMapFile )
@@ -381,13 +403,16 @@ bool cMap::LoadMap ( string filename )
 
 	// Read informations and get positions from the map-file
 	sWidth = SDL_ReadLE16( fpMapFile );
+	cLog::write("SizeX: " + iToStr(sWidth), cLog::eLOG_TYPE_DEBUG );
 	sHeight = SDL_ReadLE16( fpMapFile );
+	cLog::write("SizeY: " + iToStr(sHeight), cLog::eLOG_TYPE_DEBUG );
 	SDL_RWseek ( fpMapFile, sWidth * sHeight, SEEK_CUR );	// Ignore Mini-Map
 	iDataPos = SDL_RWtell( fpMapFile );						// Map-Data
 	SDL_RWseek ( fpMapFile, sWidth * sHeight * 2, SEEK_CUR );
-	sGraphCount = SDL_ReadLE16( fpMapFile );				// Read PicCount
+	iNumberOfTerrains = SDL_ReadLE16( fpMapFile );				// Read PicCount
+	cLog::write("Number of terrains: " + iToStr(iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG );
 	iGraphicsPos = SDL_RWtell( fpMapFile );					// Terrain Graphics
-	iPalettePos = iGraphicsPos + sGraphCount * 64*64;		// Palette
+	iPalettePos = iGraphicsPos + iNumberOfTerrains * 64*64;		// Palette
 	iInfoPos = iPalettePos + 256*3;							// Special informations
 
 	if ( sWidth != sHeight )
@@ -399,7 +424,7 @@ bool cMap::LoadMap ( string filename )
 	size = sWidth;
 
 	// Generate new Map
-	NewMap ( size, sGraphCount );
+	NewMap ( size, iNumberOfTerrains );
 
 	// Load Color Palette
 	SDL_RWseek ( fpMapFile, iPalettePos , SEEK_SET );
@@ -417,7 +442,7 @@ bool cMap::LoadMap ( string filename )
 
 
 	// Load necessary Terrain Graphics
-	for ( int iNum = 0; iNum < sGraphCount; iNum++ )
+	for ( int iNum = 0; iNum < iNumberOfTerrains; iNum++ )
 	{
 		SDL_Surface *surface;	// Temporary surface for fresh loaded graphic
 
@@ -425,19 +450,37 @@ bool cMap::LoadMap ( string filename )
 		SDL_RWseek ( fpMapFile, iInfoPos+iNum, SEEK_SET );
 		SDL_RWread ( fpMapFile, &cByte, 1, 1 );
 
-		terrain[iNum].water = false;
-		if ( cByte == 1 ) terrain[iNum].water = true;
-		else terrain[iNum].water = false;
-		if ( cByte == 2 ) terrain[iNum].coast = true;
-		else terrain[iNum].coast = false;
-		if ( cByte == 3 ) terrain[iNum].blocked = true;
-		else terrain[iNum].blocked = false;
+		switch ( cByte )
+		{
+		case 0:
+			//normal terrain without special property
+			break; 
+		case 1:
+			terrain[iNum].water = true;
+			break;
+		case 2:
+			terrain[iNum].coast = true;
+			break;
+		case 3:
+			terrain[iNum].blocked = true;
+			break;
+		default:
+			cLog::write("unknown terrain type found", cLog::eLOG_TYPE_WARNING );
+			SDL_RWclose( fpMapFile );
+			return false;
+		}
+
 
 		//load terrain graphic
 		surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, palette, iNum );
+		if ( surface == NULL )
+		{
+			cLog::write("EOF while loading terrain number " + iToStr(iNum), cLog::eLOG_TYPE_WARNING );
+			SDL_RWclose( fpMapFile );
+			return false;
+		}
 		CopySrfToTerData ( surface, iNum );
 		SDL_FreeSurface ( surface );
-		iNumberOfTerrains++;
 	}
 
 	// Load map data
@@ -446,7 +489,14 @@ bool cMap::LoadMap ( string filename )
 	{
 		for ( int iX = 0; iX < size; iX++ )
 		{
-			Kacheln[iY*size+iX] = SDL_ReadLE16( fpMapFile );
+			int Kachel = SDL_ReadLE16( fpMapFile );
+			if ( Kachel >= iNumberOfTerrains )
+			{
+				cLog::write("a map field referred to a nonexisting terrain", cLog::eLOG_TYPE_WARNING );
+				SDL_RWclose( fpMapFile );
+				return false;
+			}
+			Kacheln[iY*size+iX] = Kachel; 
 		}
 	}
 	SDL_RWclose( fpMapFile );
@@ -471,8 +521,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
 
 	// alloc memory for terrains
-	terrain = ( sTerrain * ) malloc ( sizeof( sTerrain ) * iTerrainGrphCount );
-	iNumberOfTerrains = 0;
+	terrain = new sTerrain[iTerrainGrphCount];
 }
 
 // Löscht die aktuelle Map:
@@ -484,15 +533,7 @@ void cMap::DeleteMap ( void )
 	free ( GO );
 	free ( Resources );
 	Kacheln=NULL;
-	for (int i = 0; i < iNumberOfTerrains; i++)
-	{
-		SDL_FreeSurface ( terrain[i].sf_org );
-		SDL_FreeSurface ( terrain[i].sf );
-		SDL_FreeSurface ( terrain[i].shw_org );
-		SDL_FreeSurface ( terrain[i].shw );
-	}
-	free ( terrain );
-	iNumberOfTerrains = 0;
+	delete[] ( terrain );
 }
 
 void cMap::generateNextAnimationFrame()
