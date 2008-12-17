@@ -5737,7 +5737,7 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 		{
 			for ( int j = 0; j < savesList.Size() || j == 0; j++ )
 			{
-				if ( savesList[j]->number == i )
+				if ( savesList.Size() > 0 && savesList[j]->number == i )
 				{
 					string gamename = savesList[j]->gamename;
 					// cut filename and display it
