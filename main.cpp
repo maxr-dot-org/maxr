@@ -52,7 +52,7 @@
 #include "client.h"
 #include "server.h"
 #include "savegame.h"
-#include "MVEPlayer.h"
+#include "mveplayer.h"
 
 int main ( int argc, char *argv[] )
 {

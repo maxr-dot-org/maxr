@@ -190,7 +190,6 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	//set window to center of screen
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	putenv( cVideoPos);
-	
 
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
 	if(audio)
@@ -275,7 +274,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 
 			/* init sdl audio settings */
-			desired = malloc(sizeof(SDL_AudioSpec));
+			desired = (SDL_AudioSpec*)malloc(sizeof(SDL_AudioSpec));
 
 			/* strip the unknown word out */
 			SDL_ReadLE16(mve);
@@ -375,7 +374,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* allocate memory for the backbuffers sufficient for the screen pixel buffer */
 			screen_buffer_size = frame_buf->h * frame_buf->w;
 
-			v_backbuf = calloc(1, screen_buffer_size << 1);
+			v_backbuf = (Uint8 *)calloc(1, screen_buffer_size << 1);
 			assert(v_backbuf);
 
 			frame_hot = v_backbuf;
@@ -439,7 +438,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				/* send in the raw data via audio_data_read; it will be returned the same way */
 				/* read in the compressed data (should be op.length - 4 [the 4 being seq-index and stream-mask]) */
 				audio_data_read.length =  op.length - 4;
-				audio_data_read.data = malloc(audio_data_read.length);
+				audio_data_read.data = (Uint8 *)malloc(audio_data_read.length);
 				assert(audio_data_read.data != NULL);
 
 				if(SDL_RWread(mve, audio_data_read.data, audio_data_read.length, 1) < 0)
@@ -452,7 +451,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				audio_data_read.length = SDL_ReadLE16(mve);
 
 				/* allocate memory sufficient for the data read */
-				audio_data_read.data = malloc(audio_data_read.length);
+				audio_data_read.data = (Uint8 *)malloc(audio_data_read.length);
 				assert(audio_data_read.data != NULL);
 
 				/* get audio data */
@@ -463,7 +462,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 			/* create temp_audio_buffer the size of old audio buffer + new audio data */
 			temp_audio_buffer.length = audio_data_read.length + audio_buffer.length;
-			temp_audio_buffer.data = malloc(temp_audio_buffer.length);
+			temp_audio_buffer.data = (Uint8 *)malloc(temp_audio_buffer.length);
 			assert(temp_audio_buffer.data != NULL);
 
 			/* copy old audio buffer to temp_audio_buffer */
@@ -568,7 +567,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				free(map);
 			
 			/* get new map */
-			map = malloc(sizeof(Uint8) * op.length);
+			map = (Uint8 *)malloc(sizeof(Uint8) * op.length);
 			assert(map != NULL);
 			SDL_RWread(mve, map, op.length, 1);
 			break;
@@ -580,7 +579,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				free(video);
 
 			/* allocate enough memory for the video data array */
-			video = malloc(op.length);
+			video = (Uint8 *)malloc(op.length);
 			assert(video != NULL);
 
 			/* swap the frames so we draw next on the frame that was onscreen 1 frame ago */
@@ -700,7 +699,7 @@ void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 		audio_buffer->length -= len;
 
 		/* now we need to store the data that wasn't read */
-		temp = malloc(audio_buffer->length);
+		temp = (Uint8 *)malloc(audio_buffer->length);
 		assert(temp != NULL);
 
 		/* copy from data address + len length bytes 
@@ -756,7 +755,7 @@ void MVEPlayerDecodeAudio(buffer * in)
 	/* uncompressed streamlen is stream-len bytes */
 	out.length = LE16(in->data);
 	in_pos +=2;
-	out.data = malloc(out.length);
+	out.data = (Uint8 *)malloc(out.length);
 	assert(out.data != NULL);
 
 	/* each byte in the input buffer after the first four (two words: initial L and R values)
