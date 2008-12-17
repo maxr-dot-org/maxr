@@ -133,7 +133,7 @@ cVehicle::~cVehicle ( void )
 	if ( IsLocked )
 	{
 		cPlayer *p;
-		int i;
+		unsigned int i;
 
 		for ( i = 0;i < Client->PlayerList->Size();i++ )
 		{
@@ -183,7 +183,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
 	}
 
-	float newzoom = ( 64.0 / Client->Hud.Zoom );
+	float newzoom = (float)( 64.0 / Client->Hud.Zoom );
 
 	if ( OffX )
 		ox = ( int ) ( OffX / newzoom );
@@ -2803,7 +2803,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		SDL_FreeSurface ( sf2 );
 
-		sBuildStruct* const n = new sBuildStruct(sf, i);
+		sBuildStruct* const n = new sBuildStruct(sf, (int)i);
 		images.Add ( n );
 	}
 
@@ -2855,9 +2855,9 @@ void cVehicle::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if ( offset > images.Size() - 9 )
+			if ( offset > (int)images.Size() - 9 )
 			{
-				offset = images.Size() - 9;
+				offset = (int)images.Size() - 9;
 			}
 
 			if ( selected < offset )
@@ -3058,7 +3058,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( images.Size() < 9 )
 			{
-				if ( nr >= images.Size() )
+				if ( nr >= (int)images.Size() )
 					nr = -1;
 			}
 			else
@@ -3104,7 +3104,6 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 	sBuildStruct *ptr;
 
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16};
-	int i;
 	scr.x = 479;
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
@@ -3128,9 +3127,9 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 	dest.w = 32;
 	dest.h = 32;
 
-	for ( i = offset;i < list.Size();i++ )
+	for ( unsigned int i = offset;i < list.Size();i++ )
 	{
-		if ( i >= offset + 9 )
+		if ( (int)i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
@@ -4024,7 +4023,7 @@ void cVehicle::ShowStorage ( void )
 	btn_done.Draw();
 	// Down:
 
-	if ( StoredVehicles->Size() > to )
+	if ( (int)StoredVehicles->Size() > to )
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -4104,7 +4103,7 @@ void cVehicle::ShowStorage ( void )
 
 				offset += to;
 
-				if ( StoredVehicles->Size() <= offset + to )
+				if ( (int)StoredVehicles->Size() <= offset + to )
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -4174,7 +4173,7 @@ void cVehicle::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( StoredVehicles->Size() > to )
+				if ( (int)StoredVehicles->Size() > to )
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -4311,7 +4310,7 @@ void cVehicle::ShowStorage ( void )
 
 		for ( i = 0;i < to;i++ )
 		{
-			if ( StoredVehicles->Size() <= i + offset )
+			if ( (int)StoredVehicles->Size() <= i + offset )
 				break;
 
 			switch ( i )
@@ -4399,7 +4398,7 @@ void cVehicle::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= StoredVehicles->Size() )
+		if ( i + off >= (int)StoredVehicles->Size() )
 		{
 			v = NULL;
 		}
@@ -4540,7 +4539,7 @@ void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if ( !StoredVehicles || StoredVehicles->Size() <= nr )
+	if ( !StoredVehicles || (int)StoredVehicles->Size() <= nr )
 		return;
 
 	ptr = (*StoredVehicles)[nr];
@@ -4976,7 +4975,7 @@ void cVehicle::makeDetection()
 	if ( data.is_stealth_land || data.is_stealth_sea )
 	{
 		int offset = PosX + PosY * Server->Map->size;
-		for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
 			cPlayer* player = (*Server->PlayerList)[i];
 			if ( player == owner ) continue;

@@ -59,7 +59,7 @@ cList<string> *getFilesOfDirectory(string sDirectory)
 	cList<string> *List = new cList<string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	long lFile = _findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
+	long lFile = (long)_findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
 
 	if( lFile == -1 )
 	{

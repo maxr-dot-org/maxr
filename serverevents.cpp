@@ -62,7 +62,7 @@ void sendDeleteUnit ( cBuilding* building, int iClient )
 	cNetMessage* message;
 	if ( iClient == -1 )
 	{
-		for ( int i = 0; i < building->SeenByPlayerList.Size(); i++)
+		for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
 			message->pushInt16( building->iID );
@@ -90,7 +90,7 @@ void sendDeleteUnit ( cVehicle* vehicle, int iClient )
 	cNetMessage* message;
 	if ( iClient == -1 )
 	{
-		for ( int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
+		for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
 
@@ -543,12 +543,12 @@ void sendBuildList ( cBuilding *Building )
 	message->pushBool ( Building->RepeatBuild );
 	message->pushInt16 ( Building->BuildSpeed );
 	message->pushInt16 ( Building->MetalPerRound );
-	for ( int i = Building->BuildList->Size()-1; i >= 0; i-- )
+	for ( int i = (int)Building->BuildList->Size()-1; i >= 0; i-- )
 	{
 		message->pushInt16((*Building->BuildList)[i]->metall_remaining);
 		message->pushInt16((*Building->BuildList)[i]->typ->nr);
 	}
-	message->pushInt16 ( Building->BuildList->Size() );
+	message->pushInt16 ( (int)Building->BuildList->Size() );
 	message->pushInt16 ( Building->iID );
 	Server->sendNetMessage( message, Building->owner->Nr );
 }
@@ -620,19 +620,19 @@ void sendDetectionState( cVehicle* vehicle )
 void sendCheckVehiclePositions(cPlayer* p )
 {
 	//generate a message for all players
-	for ( int n = 0; n < Server->PlayerList->Size(); n++ )
+	for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
 	{
 		cPlayer* player = (*Server->PlayerList)[n];
 		if ( p && p != player ) continue;
 
 		cNetMessage* message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
-		for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
 			cVehicle* vehicle = (*Server->PlayerList)[i]->VehicleList;
 			while ( vehicle )
 			{
 				//check wether the vehicle is visible on the client
-				int x;
+				unsigned int x;
 				for ( x = 0; x < vehicle->SeenByPlayerList.Size(); x++ )
 				{
 					if ( vehicle->SeenByPlayerList[x] == player ) break;
@@ -728,7 +728,7 @@ void sendOKReconnect ( cPlayer *Player )
 		message->pushInt16 ( GetColorNr( SecondPlayer->color ) );
 		message->pushString ( SecondPlayer->name );
 	}
-	message->pushInt16 ( Server->PlayerList->Size() );
+	message->pushInt16 ( (int)Server->PlayerList->Size() );
 	message->pushString ( Server->Map->MapName );
 	message->pushInt16 ( GetColorNr( Player->color ) );
 	message->pushInt16 ( Player->Nr );

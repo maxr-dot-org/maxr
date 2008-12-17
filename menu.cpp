@@ -133,7 +133,7 @@ static void showUnitPicture(void)
 	{
 		do
 		{
-			iUnitShow = random(UnitsData.building.Size());
+			iUnitShow = random((int)UnitsData.building.Size());
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.building[iUnitShow].info,NULL,buffer,&rDest );
@@ -142,7 +142,7 @@ static void showUnitPicture(void)
 	{
 		do
 		{
-			iUnitShow = random(UnitsData.vehicle.Size());
+			iUnitShow = random((int)UnitsData.vehicle.Size());
 		}
 		while ( iUnitShow == s_iLastUnitShown );	//make sure we don't show same unit twice
 		SDL_BlitSurface ( UnitsData.vehicle[iUnitShow].info,NULL,buffer,&rDest );
@@ -529,7 +529,7 @@ void RunSPMenu ( void )
 				// init client and his player
 				Client = new cClient(&Map, &ClientPlayerList);
 				Client->initPlayer ( Player );
-				for ( int i = 0; i < ClientPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 				{
 					ClientPlayerList[i]->InitMaps(Map.size, &Map);
 					ClientPlayerList[i]->Credits = options.credits;
@@ -546,7 +546,7 @@ void RunSPMenu ( void )
 				ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 				// init the players of playerlist
-				for ( int i = 0; i < ServerPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < ServerPlayerList.Size(); i++ )
 				{
 					ServerPlayerList[i]->InitMaps(ServerMap.size, &ServerMap);
 				}
@@ -601,14 +601,14 @@ void RunSPMenu ( void )
 						cList<cPlayer*> ClientPlayerList;
 
 						// copy players for client
-						for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+						for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 						{
 							ClientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
 						}
 						// init client and his player
 						Client = new cClient( &ClientMap, &ClientPlayerList );
 						Client->initPlayer ( ClientPlayerList[0] );
-						for ( int i = 0; i < ClientPlayerList.Size(); i++ )
+						for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 						{
 							ClientPlayerList[i]->InitMaps( ClientMap.size, &ClientMap );
 						}
@@ -1193,7 +1193,7 @@ string RunPlanetSelect ( void )
 	btn_ok.Lock();
 
 	files = getFilesOfDirectory ( SettingsData.sMapsPath );
-	for ( int i = 0; i < files->Size(); i++ )
+	for ( unsigned int i = 0; i < files->Size(); i++ )
 	{
 		string const& f = (*files)[i];
 		if (f.substr(f.length() - 3, 3).compare("WRL") != 0 && f.substr(f.length() - 3, 3).compare("wrl") != 0)
@@ -1268,7 +1268,7 @@ string RunPlanetSelect ( void )
 			scr.y=DIALOG_Y + 90;
 			for ( i=0;i<8;i++ )
 			{
-				if ( i+offset>=files->Size() ) break;
+				if ( i+offset>=(int)files->Size() ) break;
 
 				if ( mouse->x>=scr.x&&mouse->x<scr.x+112&&mouse->y>=scr.y&&mouse->y<scr.y+112 )
 				{
@@ -1327,7 +1327,7 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 
 	for ( int i=0;i<8;i++ ) //only 8 maps on one screen
 	{
-		if ( i+offset>=files->Size() ) break;
+		if ( i+offset>=(int)files->Size() ) break;
 		sMap = (*files)[i + offset];
 		sPath = sMap;
 		sPath.insert ( 0, PATH_DELIMITER );
@@ -1935,7 +1935,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 	// Die Liste erstellen:
 	cList<sHUp*> list;
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+	for (unsigned int i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		sHUp *n;
 		SDL_Surface *sf;
@@ -1947,10 +1947,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w,UnitsData.vehicle[i].img_org[0]->h );
 		n=new sHUp;
 		n->sf=sf;
-		n->id=i;
+		n->id=(int)i;
 		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
 		n->vehicle=true;
-		MakeUpgradeSliderVehicle ( n->upgrades,i,player );
+		MakeUpgradeSliderVehicle ( n->upgrades,(int)i,player );
 		list.Add ( n );
 	}
 	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
@@ -1979,10 +1979,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w,UnitsData.building[i].img_org->h );
 		n=new sHUp;
 		n->sf=sf;
-		n->id=i;
+		n->id=(int)i;
 		n->costs=UnitsData.building[i].data.iBuilt_Costs;
 		n->vehicle=false;
-		MakeUpgradeSliderBuilding ( n->upgrades,i,player );
+		MakeUpgradeSliderBuilding ( n->upgrades,(int)i,player );
 		list.Add ( n );
 	}
 	// Die Selection erstellen:
@@ -2062,7 +2062,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			dest.h=scr.h=17;
 			dest.x=DIALOG_X + 491;
 			dest.y=DIALOG_Y + 386;
-			if ( offset<selection.Size()-9 )
+			if ( offset<(int)selection.Size()-9 )
 			{
 				offset++;
 				if ( selected<offset ) selected=offset;
@@ -2127,7 +2127,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			nr= ( y-60-DIALOG_Y ) / ( 32+2 );
 			if ( selection.Size()<9 )
 			{
-				if ( nr>=selection.Size() ) nr=-1;
+				if ( nr>=(int)selection.Size() ) nr=-1;
 			}
 			else
 			{
@@ -2158,7 +2158,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 						n->id    = s->id;
 						n->costs = s->costs;
 						LandingList->Add ( n );
-						LandingSelected=LandingList->Size()-1;
+						LandingSelected=(int)LandingList->Size()-1;
 						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
 
 						if ( LandingSelected<0 ) LandingSelected=0;
@@ -2176,7 +2176,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		if ( b&&!lb&&x>=DIALOG_X +283&&x<DIALOG_X +301+18&&selection.Size() )
 		{
 			sHUp* ptr = selection[selected];
-			for (size_t i=0;i<8;i++ )
+			for (int i=0;i<8;i++ )
 			{
 				if ( !ptr->upgrades[i].active ) 
 					continue;
@@ -2349,7 +2349,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			n->id    = selection[selected]->id;
 			n->costs = selection[selected]->costs;
 			LandingList->Add ( n );
-			LandingSelected=LandingList->Size()-1;
+			LandingSelected=(int)LandingList->Size()-1;
 			while ( LandingSelected>=LandingOffset+5 )
 			{
 				LandingOffset++;
@@ -2406,7 +2406,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			dest.h=scr.h=17;
 			dest.x=DIALOG_X + 347;
 			dest.y=DIALOG_Y + 240;
-			if ( LandingOffset<LandingList->Size()-5 )
+			if ( LandingOffset<(int)LandingList->Size()-5 )
 			{
 				LandingOffset++;
 				if ( LandingSelected<LandingOffset ) LandingSelected=LandingOffset;
@@ -2431,7 +2431,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			Up2Pressed=false;
 		}
 
-		if (btn_delete.CheckClick(x, y, down, up) && LandingList->Size() && LandingList->Size() > LandingSelected&& LandingSelected >= 0)
+		if (btn_delete.CheckClick(x, y, down, up) && LandingList->Size() && (int)LandingList->Size() > LandingSelected&& LandingSelected >= 0)
 		{
 			// Vehicle aus der Liste entfernen:
 			sLanding* const sel = (*LandingList)[LandingSelected];
@@ -2443,7 +2443,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
-			if ( LandingSelected>=LandingList->Size() )
+			if ( LandingSelected>=(int)LandingList->Size() )
 			{
 				LandingSelected--;
 			}
@@ -2464,7 +2464,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			nr= ( y-22-DIALOG_Y ) / ( 32+10 );
 			if ( LandingList->Size()<5 )
 			{
-				if ( nr>=LandingList->Size() ) nr=-1;
+				if ( nr>=(int)LandingList->Size() ) nr=-1;
 			}
 			else
 			{
@@ -2481,7 +2481,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				// Doppelklick prüfen:
 				if ( last_selected==nr )
 				{
-					if ( LandingList->Size()&&LandingList->Size()>LandingSelected&&LandingSelected>=0 )
+					if ( LandingList->Size()&&(int)LandingList->Size()>LandingSelected&&LandingSelected>=0 )
 					{
 						sLanding* const sel = (*LandingList)[LandingSelected];
 						player->Credits += sel->costs;
@@ -2491,7 +2491,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 
-						if ( LandingSelected>=LandingList->Size() )
+						if ( LandingSelected>=(int)LandingList->Size() )
 						{
 							LandingSelected--;
 						}
@@ -2508,7 +2508,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			}
 		}
 
-		if ( LandingSelected>=0&&LandingList->Size()&&LandingSelected<LandingList->Size() )
+		if ( LandingSelected>=0&&LandingList->Size()&&LandingSelected<(int)LandingList->Size() )
 		{
 			sLanding *ptr;
 			ptr = (*LandingList)[LandingSelected];
@@ -2987,7 +2987,7 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 	scr.h=dest.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
-	if ( selected>=0&&landing->Size()&&selected<landing->Size() )
+	if ( selected>=0&&landing->Size()&&selected<(int)landing->Size() )
 	{
 		sLanding *ptr;
 		ptr = (*landing)[selected];
@@ -3046,19 +3046,19 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 	int b,lx=-1,ly=-1;
 	sTerrain *t;
 
-	float fakx= ( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
-	float faky= ( ( SettingsData.iScreenH-32.0 ) / map->size );  //pixel per field in y direction
+	float fakx= (float)( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
+	float faky= (float)( ( SettingsData.iScreenH-32.0 ) / map->size );  //pixel per field in y direction
 
 	drawMap();
 
 	if ( landingState != LANDING_STATE_UNKNOWN )
 	{
-		int posX = 180 + *x * fakx;
-		int posY = 18  + *y * faky;
+		int posX = (int)(180 + *x * fakx);
+		int posY = (int)(18  + *y * faky);
 		//for non 4:3 screen resolutions, the size of the circles is
 		//only correct in x dimension, because I don't draw an ellipse
-		drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
-		drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
+		drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
+		drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
 	}
 	SDL_Rect textArea;
 	textArea.x = 220;
@@ -3099,8 +3099,8 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 		{
 			map->generateNextAnimationFrame();
 			drawMap();
-			int posX = 180 + *x * fakx;
-			int posY = 18  + *y * faky;
+			int posX = (int)(180 + *x * fakx);
+			int posY = (int)(18  + *y * faky);
 			//drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
 			//drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
 			drawHud();
@@ -3132,12 +3132,12 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 		{
 			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 ) ) );
 			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 ) ) );
-			int posX = 180 + *x * fakx;
-			int posY = 18  + *y * faky;
+			int posX = (int)(180 + *x * fakx);
+			int posY = (int)(18  + *y * faky);
 
 			drawMap();
-			drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
-			drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
+			drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
+			drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
 			drawHud(); //redraw hud, because the circles may overlap the hud
 
 			SHOW_SCREEN;
@@ -3206,7 +3206,6 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 	sLanding *ptr;
 	SDL_Rect scr = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
 	SDL_Rect dest,text = {DIALOG_X + 375,DIALOG_Y + 32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
-	int i;
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=222;
 	dest.x = scr.x + DIALOG_X;
@@ -3217,9 +3216,9 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 	dest.x=DIALOG_X + 340;
 	dest.y=DIALOG_Y + 20;
 	dest.w=32;dest.h=32;
-	for ( i=offset;i<list->Size();i++ )
+	for ( unsigned int i=offset;i<list->Size();i++ )
 	{
-		if ( i>=offset+5 ) break;
+		if ( (int)i>=offset+5 ) break;
 		ptr = (*list)[i];
 		// Das Bild malen:
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
@@ -3299,7 +3298,6 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 {
 	sUnitData *bd;
 	sUnitData *vd;
-	int i;
 	while ( selection.Size() )
 	{
 		selection.Delete ( 0 );
@@ -3310,7 +3308,7 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 		ship=false;
 		build=false;
 	}
-	for ( i=0;i<images.Size();i++ )
+	for ( unsigned int i=0;i<images.Size();i++ )
 	{
 		sHUp* const s = images[i];
 		if (s->vehicle)
@@ -3333,14 +3331,14 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 			selection.Add(s);
 		}
 	}
-	if ( *offset>=selection.Size()-9 )
+	if ( *offset>=(int)selection.Size()-9 )
 	{
-		*offset=selection.Size()-9;
+		*offset=(int)selection.Size()-9;
 		if ( *offset<0 ) *offset=0;
 	}
-	if ( *selected>=selection.Size() )
+	if ( *selected>=(int)selection.Size() )
 	{
-		*selected=selection.Size()-1;
+		*selected=(int)selection.Size()-1;
 		if ( *selected<0 ) *selected=0;
 	}
 }
@@ -3351,7 +3349,6 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 	sHUp *ptr;
 	SDL_Rect dest,text = {DIALOG_X + 530, DIALOG_Y +  70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
 	SDL_Rect scr = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
-	int i,k;
 	scr.x=479;scr.y=52;
 	scr.w=dest.w=150;scr.h=dest.h=330;
 	dest.x = scr.x + DIALOG_X;
@@ -3375,9 +3372,9 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 		return;
 	}
-	for ( i=offset;i<list.Size();i++ )
+	for ( unsigned int i=offset;i<list.Size();i++ )
 	{
-		if ( i>=offset+9 ) break;
+		if ( (int)i>=offset+9 ) break;
 		// Das Bild malen:
 		ptr = list[i];
 		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
@@ -3456,7 +3453,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				}
 			}
 			// Die Texte anzeigen/Slider machen:
-			for ( k=0;k<8;k++ )
+			for ( int k=0;k<8;k++ )
 			{
 				SDL_Rect temp2;
 				if ( !ptr->upgrades[k].active ) continue;
@@ -3590,7 +3587,7 @@ void cMultiPlayerMenu::showChatLog()
 	rect.h = 110;
 	SDL_BlitSurface( sfTmp, &rect, buffer, &rect );
 	// now fill chat window new
-	for( int i = 0; i < ChatLog.Size(); i++ )
+	for( unsigned int i = 0; i < ChatLog.Size(); i++ )
 	{
 		sMsg = ChatLog[ChatLog.Size() - 1 - i];
 		while ( font->getTextWide( sMsg ) > 410 )
@@ -4063,7 +4060,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				if ( ChatStr.compare( "/ready" ) == 0 )
 				{
 					int iPlayerIndex;
-					for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.Size(); iPlayerIndex++ )
+					for ( iPlayerIndex = 0; iPlayerIndex < (int)PlayerList.Size(); iPlayerIndex++ )
 					{
 						if (PlayerList[iPlayerIndex] == ActualPlayer) break;
 					}
@@ -4162,7 +4159,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 		// click on point for ready?
 		int iPlayerIndex;
-		for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.Size(); iPlayerIndex++ )
+		for ( iPlayerIndex = 0; iPlayerIndex < (int)PlayerList.Size(); iPlayerIndex++ )
 		{
 			if (PlayerList[iPlayerIndex] == ActualPlayer) break;
 		}
@@ -4288,7 +4285,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	// copy playerlist for client
 	cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
 	cPlayer *ActualPlayerClient;
-	for ( int i = 0; i < PlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 	{
 		ClientPlayerList->Add(new cPlayer( *PlayerList[i] ) );
 		if ((*ClientPlayerList)[i]->Nr == ActualPlayer->Nr) ActualPlayerClient = (*ClientPlayerList)[i];
@@ -4296,7 +4293,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	// init client and his player
 	Client = new cClient(Map, ClientPlayerList);
 	Client->initPlayer ( ActualPlayerClient );
-	for ( int i = 0; i < ClientPlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < ClientPlayerList->Size(); i++ )
 	{
 		(*ClientPlayerList)[i]->InitMaps(Map->size, Map);
 	}
@@ -4304,7 +4301,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	if ( bHost )
 	{
 		// init the players of playerlist
-		for ( int i = 0; i < PlayerList.Size(); i++ )
+		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 		{
 			if ( PlayerList[i] != ActualPlayer ) PlayerList[i]->InitMaps(ServerMap->size, ServerMap);
 		}
@@ -4331,7 +4328,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 		while (!bAllLanded)
 		{
 			//wait, that all clients have choosen, where they want to start
-			while ( iLandedClients < PlayerList.Size() )
+			while ( iLandedClients < (int)PlayerList.Size() )
 			{
 
 				EventHandler->HandleEvents();
@@ -4351,7 +4348,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 			}
 
 			//check all landing positions
-			for ( int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+			for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
 			{
 				eLandingState state = checkLandingState( playerNr );
 				if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
@@ -4389,7 +4386,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 
 		// finished selecting landing positions
 		// make all landings
-		for ( int i = 0; i < PlayerList.Size(); i++ )
+		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 		{
 			cPlayer *Player = PlayerList[i];
 			const sClientLandData& c = ClientDataList[Player->Nr];
@@ -4550,7 +4547,7 @@ eLandingState cMultiPlayerMenu::checkLandingState(int playerNr )
 	bool bPositionWarning = false;
 
 	//check distances to all other players
-	for ( int i = 0; i < PlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 	{
 		const sClientLandData& c = ClientDataList[i];
 		if ( i == playerNr ) continue;
@@ -4650,12 +4647,12 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_DEL_PLAYER:
 			{
 				int iClientNum = Message->popInt16();
-				for ( int i = 0; i < PlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 				{
 					if (PlayerList[i]->iSocketNum == iClientNum)
 					{
 						PlayerList.Delete ( i );
-						for (int j = i; j < PlayerList.Size(); j++ ) ReadyList[j] = ReadyList[j+1];
+						for (unsigned int j = i; j < PlayerList.Size(); j++ ) ReadyList[j] = ReadyList[j+1];
 						ReadyList = (bool *)realloc ( ReadyList, PlayerList.Size() );
 					}
 				}
@@ -4669,7 +4666,7 @@ void cMultiPlayerMenu::HandleMessages()
 			break;
 		case MU_MSG_IDENTIFIKATION:
 			{
-				int iPlayerNum;
+				unsigned int iPlayerNum;
 				int iPlayerNr = Message->popInt16();
 				for ( iPlayerNum = 0; iPlayerNum < PlayerList.Size(); iPlayerNum++ )
 				{
@@ -4774,7 +4771,7 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				cPlayer *Player;
 				int iPlayerNr = Message->popInt16();
-				for ( int i = 0; i < PlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 				{
 					if (PlayerList[i]->Nr == iPlayerNr)
 					{
@@ -4870,12 +4867,12 @@ void cMultiPlayerMenu::sendLandingInfo( const sClientLandData& c )
 {
 	cNetMessage *Message = new cNetMessage ( MU_MSG_WT_LAND );
 
-	for ( int i = 0; i < c.landingList.Size(); i++ )
+	for ( unsigned int i = 0; i < c.landingList.Size(); i++ )
 	{
 		Message->pushInt16( c.landingList[i]->id);
 		Message->pushInt16( c.landingList[i]->cargo);
 	}
-	Message->pushInt16( c.landingList.Size() );
+	Message->pushInt16( (int)c.landingList.Size() );
 	Message->pushInt16( c.iLandY );
 	Message->pushInt16( c.iLandX );
 	Message->pushInt16( ActualPlayer->Nr );
@@ -4914,7 +4911,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			Message->pushInt16( ActualPlayer->VehicleData[i].range );
 			Message->pushInt16( ActualPlayer->VehicleData[i].max_shots );
 			Message->pushInt16( ActualPlayer->VehicleData[i].damage );
-			Message->pushInt16( i );
+			Message->pushInt16( (int)i );
 			Message->pushBool( true ); // true for vehciles
 
 			iCount++;
@@ -4960,7 +4957,7 @@ void cMultiPlayerMenu::sendUpgrades()
 			Message->pushInt16( ActualPlayer->BuildingData[i].range );
 			Message->pushInt16( ActualPlayer->BuildingData[i].max_shots );
 			Message->pushInt16( ActualPlayer->BuildingData[i].damage );
-			Message->pushInt16( i );
+			Message->pushInt16( (int)i );
 			Message->pushBool( false ); // false for buildings
 
 			iCount++;
@@ -4985,7 +4982,7 @@ void cMultiPlayerMenu::sendUpgrades()
 
 int cMultiPlayerMenu::testAllReady()
 {
-	for ( int i = 0; i < PlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 	{
 		if ( ReadyList[i] != true ) return i;
 	}
@@ -5000,7 +4997,7 @@ void cMultiPlayerMenu::sendIdentification()
 		return;
 	}
 
-	int iPlayerNum;
+	unsigned int iPlayerNum;
 	for ( iPlayerNum = 0; iPlayerNum < PlayerList.Size(); iPlayerNum++ )
 	{
 		if (PlayerList[iPlayerNum] == ActualPlayer) break;
@@ -5018,7 +5015,7 @@ void cMultiPlayerMenu::sendPlayerList( cList<cPlayer*> *SendPlayerList )
 	if ( SendPlayerList == NULL ) SendPlayerList = &PlayerList;
 	cNetMessage *Message = new cNetMessage ( MU_MSG_PLAYERLIST );
 
-	for ( int i = 0; i < SendPlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < SendPlayerList->Size(); i++ )
 	{
 		// if the menulist is send, the players need the readystate, else not
 		if ( SendPlayerList == &PlayerList )
@@ -5032,7 +5029,7 @@ void cMultiPlayerMenu::sendPlayerList( cList<cPlayer*> *SendPlayerList )
 		Message->pushInt16(GetColorNr(p->color));
 		Message->pushString(p->name);
 	}
-	Message->pushInt16 ( SendPlayerList->Size() );
+	Message->pushInt16 ( (int)SendPlayerList->Size() );
 	sendMessage ( Message );
 }
 
@@ -5109,7 +5106,7 @@ void cMultiPlayerMenu::displayGameSettings()
 
 			//remove Player from readylist
 			int iPlayerIndex;
-			for ( iPlayerIndex = 0; iPlayerIndex < PlayerList.Size(); iPlayerIndex++ )
+			for ( iPlayerIndex = 0; iPlayerIndex < (int)PlayerList.Size(); iPlayerIndex++ )
 			{
 				if (PlayerList[iPlayerIndex] == ActualPlayer) break;
 			}
@@ -5215,7 +5212,7 @@ void cMultiPlayerMenu::displayPlayerList()
 	dest.w = dest.h = scr.w = scr.h = 10;
 	dest.x = 476;
 	dest.y = 297;
-	for( int i = 0; i < PlayerList.Size(); i++ )
+	for( unsigned int i = 0; i < PlayerList.Size(); i++ )
 	{
 		SDL_BlitSurface(PlayerList[i]->color, &scr, buffer, &dest);
 		font->showText(dest.x + 16, dest.y, PlayerList[i]->name);
@@ -5314,7 +5311,7 @@ void HeatTheSeat ( void )
 	// init client
 	Client = new cClient(&Map, &ClientPlayerList);
 	Client->initPlayer ( ClientPlayerList[0] );
-	for ( int i = 0; i < ClientPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 	{
 		ClientPlayerList[i]->InitMaps(Map.size, &Map);
 		ClientPlayerList[i]->Credits = Options.credits;
@@ -5325,7 +5322,7 @@ void HeatTheSeat ( void )
 	Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_HOTSEAT, false);
 
 	// land the players
-	for ( int i = 0; i < ServerPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < ServerPlayerList.Size(); i++ )
 	{
 		Player = ServerPlayerList[i];
 		Player->InitMaps ( Map.size, &ServerMap );
@@ -5735,7 +5732,7 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 		}
 		if ( bSave )
 		{
-			for ( int j = 0; j < savesList.Size() || j == 0; j++ )
+			for ( unsigned int j = 0; j < savesList.Size() || j == 0; j++ )
 			{
 				if ( savesList.Size() > 0 && savesList[j]->number == i )
 				{
@@ -5772,7 +5769,7 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 		}
 		else
 		{
-			for ( int j = 0; j < savesList.Size(); j++ )
+			for ( unsigned int j = 0; j < savesList.Size(); j++ )
 			{
 				if ( savesList[j]->number == i )
 				{

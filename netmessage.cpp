@@ -246,7 +246,7 @@ void cNetMessage::pushFloat( float f )
     fnorm -= 1.0;
 
     // calculate the binary form (non-float) of the significand data
-    significand = fnorm * ((1LL<<significandbits) + 0.5f);
+    significand = Uint32(fnorm * ((1LL<<significandbits) + 0.5f));
 
     // get the biased exponent
     exp = shift + ((1<<(EXPBITS-1)) - 1); // shift + bias
@@ -269,7 +269,7 @@ float cNetMessage::popFloat()
     if (i == 0) return 0.0;
 
     // pull the significand
-    result = ( i & ( (1LL<<significandbits) - 1)); // mask
+    result = float( i & ( (1LL<<significandbits) - 1)); // mask
     result /= ( 1LL<<significandbits ); // convert back to float
     result += 1.0f; // add the one back on
 
@@ -288,7 +288,7 @@ float cNetMessage::popFloat()
 	}
 
     // sign it
-    result *= (i>>(BITS-1))&1 ? -1.0: 1.0;
+    result *= float((i>>(BITS-1))&1 ? -1.0: 1.0);
 
     return result;
 }

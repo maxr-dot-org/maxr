@@ -194,7 +194,7 @@ void cServerAttackJob::lockTarget(int offset)
 		offset = targetVehicle->PosX + targetVehicle->PosY * Server->Map->size;
 	}
 
-	for (int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -241,7 +241,7 @@ void cServerAttackJob::lockTargetCluster()
 void cServerAttackJob::sendFireCommand()
 {
 	//make the agressor visible on all clients who can see the agressor offset
-	for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 		if ( !player->ScanMap[iAgressorOff] ) continue;
@@ -267,8 +267,8 @@ void cServerAttackJob::sendFireCommand()
 	int agressorX = iAgressorOff % Server->Map->size;
 	int agressorY = iAgressorOff / Server->Map->size;
 
-	float dx = targetX - agressorX;
-	float dy =- ( targetY - agressorY );
+	float dx = (float)targetX - (float)agressorX;
+	float dy =(float)-( targetY - agressorY );
 	float r = sqrt ( dx*dx + dy*dy );
 
 	int fireDir = vehicle?vehicle->dir:building->dir;
@@ -280,7 +280,7 @@ void cServerAttackJob::sendFireCommand()
 	{
 		dx /= r;
 		dy /= r;
-		r = asin ( dx ) *57.29577951;
+		r = (float)(asin ( dx ) *57.29577951);
 		if ( dy >= 0 )
 		{
 			if ( r < 0 ) r += 360;
@@ -309,7 +309,7 @@ void cServerAttackJob::sendFireCommand()
 
 	bool bMuzzleIsRocketType = ( iMuzzleType == MUZZLE_ROCKET) || ( iMuzzleType == MUZZLE_TORPEDO) || ( iMuzzleType == MUZZLE_ROCKET_CLUSTER );
 
-	for (int i = 0; i < Server->PlayerList->Size(); i++)
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -345,12 +345,12 @@ void cServerAttackJob::sendFireCommand()
 
 void cServerAttackJob::clientFinished( int playerNr )
 {
-	for (int i = 0; i < executingClients.Size(); i++)
+	for (unsigned int i = 0; i < executingClients.Size(); i++)
 	{
 		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
 	}
 
-	cLog::write( " Server: waiting for " + iToStr(executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
+	cLog::write( " Server: waiting for " + iToStr((int)executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
 
 	if (executingClients.Size() == 0)
 	{
@@ -378,11 +378,11 @@ void cServerAttackJob::makeImpact(int x, int y )
 
 	//check, whether the target is allready in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
-	for ( int i = 0; i < vehicleTargets.Size(); i++)
+	for ( unsigned int i = 0; i < vehicleTargets.Size(); i++)
 	{
 		if ( vehicleTargets[i] == targetVehicle ) return;
 	}
-	for ( int i = 0; i < buildingTargets.Size(); i++)
+	for ( unsigned int i = 0; i < buildingTargets.Size(); i++)
 	{
 		if ( buildingTargets[i] == targetBuilding ) return;
 	}
@@ -407,7 +407,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		//if taget is a stealth unit, make it visible on all clients
 		if ( targetVehicle->data.is_stealth_land || targetVehicle->data.is_stealth_sea )
 		{
-			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
 				cPlayer* player = (*Server->PlayerList)[i];
 				if ( targetVehicle->owner == player ) continue;
@@ -433,7 +433,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		//if taget is a stealth unit, make it visible on all clients
 		if ( targetBuilding->data.is_expl_mine )
 		{
-			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
 				cPlayer* player = (*Server->PlayerList)[i];
 				if ( targetBuilding->owner == player ) continue;
@@ -517,7 +517,7 @@ void cServerAttackJob::makeImpactCluster()
 
 void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, int attackMode )
 {
-	for (int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
@@ -575,7 +575,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 
 void cClientAttackJob::handleAttackJobs()
 {
-	for (int i = 0; i < Client->attackJobs.Size(); i++)
+	for (unsigned int i = 0; i < Client->attackJobs.Size(); i++)
 	{
 		cClientAttackJob* job = Client->attackJobs[i];
 		switch ( job->state )
@@ -617,7 +617,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	iTargetOffset = -1;
 
 	//check for duplicate jobs
-	for (int i = 0; i < Client->attackJobs.Size(); i++)
+	for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++)
 	{
 		if ( Client->attackJobs[i]->iID == this->iID )
 		{

@@ -884,8 +884,7 @@ void cPlayer::AddLock ( cVehicle *v )
 void cPlayer::DeleteLock ( cVehicle *v )
 {
 	sLockElem *elem;
-	int i;
-	for ( i=0;i<LockList.Size();i++ )
+	for ( unsigned int i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v==v )
@@ -902,8 +901,7 @@ void cPlayer::DeleteLock ( cVehicle *v )
 void cPlayer::DeleteLock ( cBuilding *b )
 {
 	sLockElem *elem;
-	int i;
-	for ( i=0;i<LockList.Size();i++ )
+	for ( unsigned int i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->b==b )
@@ -920,8 +918,7 @@ void cPlayer::DeleteLock ( cBuilding *b )
 bool cPlayer::InLockList ( cBuilding *b )
 {
 	sLockElem *elem;
-	int i;
-	for ( i=0;i<LockList.Size();i++ )
+	for ( unsigned int i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->b==b ) return true;
@@ -933,8 +930,7 @@ bool cPlayer::InLockList ( cBuilding *b )
 bool cPlayer::InLockList ( cVehicle *v )
 {
 	sLockElem *elem;
-	int i;
-	for ( i=0;i<LockList.Size();i++ )
+	for ( unsigned int i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v==v ) return true;
@@ -967,9 +963,9 @@ void cPlayer::ToggelLock ( sGameObjects *OverObject )
 void cPlayer::DrawLockList(cHud const& hud)
 {
 	sLockElem *elem;
-	int i,spx,spy,off;
+	int spx,spy,off;
 
-	for ( i=0;i<LockList.Size();i++ )
+	for ( unsigned int i=0;i<LockList.Size();i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v )
@@ -1074,7 +1070,7 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int map
 	int rx, ry, x1, x2;
 	if ( iRadius <= 0 ) return;
 	iRadius *= 10;
-	step = 0.017453*90-acos ( 1.0/iRadius );
+	step = (float)(0.017453*90-acos ( 1.0/iRadius ));
 	step /= 2;
 	for ( float i = 0; i <= w; i += step )
 	{
@@ -1116,7 +1112,7 @@ void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int 
 	if ( iRadius > 0 ) iRadius--;
 	else return;
 	iRadius *= 10;
-	step = 0.017453*90-acos ( 1.0/iRadius );
+	step = (float)(0.017453*90-acos ( 1.0/iRadius ));
 	step /= 2;
 	for ( float i = 0; i <= w; i += step )
 	{

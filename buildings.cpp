@@ -231,9 +231,8 @@ cBuilding::~cBuilding ( void )
 	if ( IsLocked )
 	{
 		cPlayer *p;
-		int i;
 
-		for (i = 0; i < Client->PlayerList->Size(); i++)
+		for (unsigned int i = 0; i < Client->PlayerList->Size(); i++)
 		{
 			p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
@@ -1460,7 +1459,6 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 void cBuilding::ServerStartWork ()
 {
 	cBuilding *b;
-	int i;
 
 	if ( IsWorking )
 	{
@@ -1494,7 +1492,7 @@ void cBuilding::ServerStartWork ()
 		{
 			int MaxSubBaseOilProd = 0; // maximal possible Oil Production in the current SubBase
 			// not enough Oil, so check if Oil production in current SubBase can be adjusted or not
-			for (i = 0; i < SubBase->buildings.Size(); i++)
+			for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 			{
 				// search for active mines in the SubBase
 				if ( !SubBase->buildings[i]->data.is_mine || !SubBase->buildings[i]->IsWorking )
@@ -1521,7 +1519,7 @@ void cBuilding::ServerStartWork ()
 
 				OrigNeededOilAdj = NeededOilAdj = data.oil_need + SubBase->OilNeed - SubBase->Oil - SubBase->OilProd;
 				// try to exploit currently unexploited mining power first
-				for (i = 0; i < SubBase->buildings.Size(); i++)
+				for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 				{
 					// if made the needed adjustments, exit from the loop cycle
 					if ( NeededOilAdj == 0 )
@@ -1550,7 +1548,7 @@ void cBuilding::ServerStartWork ()
 				if ( NeededOilAdj > 0 )
 				{
 					// try to reduce RAW material production
-					for (i = 0; i < SubBase->buildings.Size(); i++)
+					for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						// if made the needed adjustments, exit from the loop cycle
 						if ( NeededOilAdj == 0 )
@@ -1630,7 +1628,7 @@ void cBuilding::ServerStartWork ()
 					 *	before calling ServerStartWork() and correct our lies after it powered up.
 					 */
 
-					for (i = 0; i < SubBase->buildings.Size(); i++)
+					for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						b = SubBase->buildings[i];
 						// in first round, only search for turned off small generators
@@ -1663,7 +1661,7 @@ void cBuilding::ServerStartWork ()
 						}
 					}
 
-					for (i = 0; i < SubBase->buildings.Size(); i++)
+					for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 					{
 						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
 							break;
@@ -1824,7 +1822,7 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 {
 	cBuilding *b;
 	cVehicle *v;
-	int x, y, i;
+	int x, y;
 	mouse->GetKachel ( &x, &y );
 
 	if ( go->vehicle )
@@ -1840,7 +1838,7 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		if ( v->IsBuilding || v->IsClearing )
 			return false;
 
-		for (i = 0; i < SubBase->buildings.Size(); i++)
+		for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 		{
 			b = SubBase->buildings[i];
 
@@ -2188,7 +2186,7 @@ void cBuilding::ShowTransfer ( sGameObjects *target )
 	}
 
 	// Die Images wiederherstellen:
-	float newzoom = Client->Hud.Zoom / 64.0;
+	float newzoom = (float)(Client->Hud.Zoom / 64.0);
 
 	ScaleSurfaceAdv2 ( typ->img_org, typ->img, ( int ) ( typ->img_org->w* newzoom ) , ( int ) ( typ->img_org->h* newzoom ) );
 
@@ -2554,7 +2552,7 @@ void cBuilding::StoreVehicle ( int off )
 // Zeigt den Lagerbildschirm an:
 void cBuilding::ShowStorage ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, to;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, to;
 	SDL_Surface *sf;
 	SDL_Rect scr, dest;
 	bool DownPressed = false, DownEnabled = false;
@@ -2609,7 +2607,7 @@ void cBuilding::ShowStorage ( void )
 	btn_done.Draw();
 
 	// Down:
-	if (StoredVehicles->Size() > to)
+	if ((int)StoredVehicles->Size() > to)
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -2685,7 +2683,7 @@ void cBuilding::ShowStorage ( void )
 
 				offset += to;
 
-				if (StoredVehicles->Size() <= offset + to)
+				if ((int)StoredVehicles->Size() <= offset + to)
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -2755,7 +2753,7 @@ void cBuilding::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if (StoredVehicles->Size() > to)
+				if ((int)StoredVehicles->Size() > to)
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -2814,7 +2812,7 @@ void cBuilding::ShowStorage ( void )
 			PlayFX ( SoundData.SNDActivate );
 			size = Client->Map->size;
 
-			for (i = 0; i < StoredVehicles->Size();)
+			for (unsigned int i = 0; i < StoredVehicles->Size();)
 			{
 				typ = (*StoredVehicles)[i]->typ;
 /*
@@ -2901,7 +2899,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for (i = 0; i < StoredVehicles->Size(); i++)
+			for (unsigned int i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -2938,7 +2936,7 @@ void cBuilding::ShowStorage ( void )
 			dest.x = rDialog.x + 511;
 			dest.y = rDialog.y + 251 + 25 * 2;
 
-			for (i = 0; i < StoredVehicles->Size(); i++)
+			for (unsigned int i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -2970,7 +2968,7 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for (i = 0; i < StoredVehicles->Size(); i++)
+			for (unsigned int i = 0; i < StoredVehicles->Size(); i++)
 			{
 				cVehicle *v;
 				v = (*StoredVehicles)[i];
@@ -3013,11 +3011,11 @@ void cBuilding::ShowStorage ( void )
 			sf = GraphicsData.gfx_storage_ground;
 		}
 
-		for ( i = 0;i < to;i++ )
+		for ( int i = 0;i < to;i++ )
 		{
 			cVehicle *v;
 
-			if (StoredVehicles->Size() <= i + offset)
+			if ((int)StoredVehicles->Size() <= i + offset)
 				break;
 
 			v = (*StoredVehicles)[i + offset];
@@ -3204,7 +3202,7 @@ void cBuilding::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if (i + off >= StoredVehicles->Size())
+		if (i + off >= (int)StoredVehicles->Size())
 		{
 			vehicleV = NULL;
 		}
@@ -3452,7 +3450,7 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 {
 	cVehicle *ptr;
 
-	if (!StoredVehicles || StoredVehicles->Size() <= nr)
+	if (!StoredVehicles || (int)StoredVehicles->Size() <= nr)
 		return;
 
 	ptr = (*StoredVehicles)[nr];
@@ -3488,7 +3486,6 @@ void cBuilding::ExitVehicleTo ( int nr, int off, bool engine_call )
 
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled )
 {
-	int i;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rBtnRefuel = {rDialog.x + 518, rDialog.y + 271, BUTTON__W, BUTTON__H};
 	SDL_Rect rBtnRepair = {rDialog.x + 518, rDialog.y + 271 + 25,  BUTTON__W, BUTTON__H};
@@ -3502,7 +3499,7 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 
 	if ( SubBase->Metal >= 2 )
 	{
-		for (i = 0; i < StoredVehicles->Size(); i++)
+		for (unsigned int i = 0; i < StoredVehicles->Size(); i++)
 		{
 			cVehicle const* const v = (*StoredVehicles)[i];
 			if (v->data.ammo != v->data.max_ammo)
@@ -3861,7 +3858,7 @@ void cBuilding::ShowUpgrade ( void )
 	// Die Images erstellen:
 	cList<sUpgradeStruct*> images;
 
-	float newzoom = ( Client->Hud.Zoom / 64.0 );
+	float newzoom = (float)(Client->Hud.Zoom / 64.0);
 
 	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
@@ -3872,8 +3869,8 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0], NULL, sf, NULL );
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
-		sUpgradeStruct* const n = new sUpgradeStruct(sf, true, i);
-		MakeUpgradeSliderVehicle ( n->upgrades, i );
+		sUpgradeStruct* const n = new sUpgradeStruct(sf, true, (int)i);
+		MakeUpgradeSliderVehicle ( n->upgrades, (int)i );
 		images.Add ( n );
 	}
 
@@ -3906,8 +3903,8 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_BlitSurface ( UnitsData.building[i].img, NULL, sf, NULL );
 
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org, UnitsData.building[i].img, ( int ) ( UnitsData.building[i].img_org->w* newzoom ), ( int ) ( UnitsData.building[i].img_org->h* newzoom ) );
-		sUpgradeStruct* const n = new sUpgradeStruct(sf, false, i);
-		MakeUpgradeSliderBuilding ( n->upgrades, i );
+		sUpgradeStruct* const n = new sUpgradeStruct(sf, false, (int)i);
+		MakeUpgradeSliderBuilding ( n->upgrades, (int)i );
 		images.Add ( n );
 	}
 
@@ -3962,7 +3959,7 @@ void cBuilding::ShowUpgrade ( void )
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
 
-			if (offset < selection.Size() - 9)
+			if (offset < (int)selection.Size() - 9)
 			{
 				offset++;
 
@@ -4132,7 +4129,7 @@ void cBuilding::ShowUpgrade ( void )
 
 			if (selection.Size() < 9)
 			{
-				if (nr >= selection.Size())
+				if (nr >= (int)selection.Size())
 					nr = -1;
 			}
 			else
@@ -4158,7 +4155,7 @@ void cBuilding::ShowUpgrade ( void )
 		{
 			sUpgradeStruct* ptr = selection[selected];
 
-			for (size_t i = 0;i < 8;i++ )
+			for (int i = 0;i < 8;i++ )
 			{
 				if ( !ptr->upgrades[i].active )
 					continue;
@@ -4332,7 +4329,6 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 {
 	sUpgradeStruct *ptr;
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
-	int i, k;
 	scr.x = 479;
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
@@ -4368,9 +4364,9 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		return;
 	}
 
-	for (i = offset; i < list.Size(); i++)
+	for (unsigned int i = offset; i < list.Size(); i++)
 	{
-		if ( i >= offset + 9 )
+		if ( (int)i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
@@ -4464,7 +4460,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 			}
 
 			// Die Texte anzeigen/Slider machen:
-			for ( k = 0;k < 8;k++ )
+			for ( int k = 0;k < 8;k++ )
 			{
 				SDL_Rect scr, dest;
 
@@ -4777,14 +4773,13 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 {
 	sUnitData *bd;
 	sUnitData *vd;
-	int i;
 
 	while (selection.Size())
 	{
 		selection.Delete ( 0 );
 	}
 
-	for (i = 0; i < images.Size(); i++)
+	for (unsigned int i = 0; i < images.Size(); i++)
 	{
 		if (images[i]->vehicle)
 		{
@@ -4821,17 +4816,17 @@ void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgr
 		}
 	}
 
-	if (*offset >= selection.Size() - 9)
+	if (*offset >= (int)selection.Size() - 9)
 	{
-		*offset = selection.Size() - 9;
+		*offset = (int)selection.Size() - 9;
 
 		if ( *offset < 0 )
 			*offset = 0;
 	}
 
-	if (*selected >= selection.Size())
+	if (*selected >= (int)selection.Size())
 	{
-		*selected = selection.Size() - 1;
+		*selected = (int)selection.Size() - 1;
 
 		if ( *selected < 0 )
 			*selected = 0;
@@ -5270,12 +5265,12 @@ void cBuilding::showMineManager ( void )
 	// generate list with mine datas. only use temporary cache so that original data wouldn't be changed
 	cList<sMineValues*> Mines;
 
-	for (x = 0; x < SubBase->buildings.Size(); x++)
+	for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 	{
-		if (SubBase->buildings[x]->data.is_mine && SubBase->buildings[x]->IsWorking)
+		if (SubBase->buildings[i]->data.is_mine && SubBase->buildings[i]->IsWorking)
 		{
 			cBuilding *Building;
-			Building = SubBase->buildings[x];
+			Building = SubBase->buildings[i];
 
 			sMineValues *MineValues = new sMineValues;
 			MineValues->iMetalProd = Building->MetalProd;
@@ -5986,7 +5981,7 @@ void cBuilding::RotateTo ( int Dir )
 // Zeigt das Build-Menü an:
 void cBuilding::ShowBuildMenu ( void )
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
 	bool Wiederholen = false;
 	bool DownPressed = false;
@@ -6052,7 +6047,7 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Images erstellen:
 	cList<sBuildStruct*> images;
 
-	float newzoom = ( Client->Hud.Zoom / 64.0 );
+	float newzoom = (float)(Client->Hud.Zoom / 64.0);
 
 	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
@@ -6129,7 +6124,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 
-		sBuildStruct* const n = new sBuildStruct(sf, i);
+		sBuildStruct* const n = new sBuildStruct(sf, (int)i);
 		images.Add( n );
 	}
 
@@ -6137,7 +6132,7 @@ void cBuilding::ShowBuildMenu ( void )
 	// Die Bauliste anlegen:
 	cList<sBuildStruct*> to_build;
 
-	for (size_t i = 0; i < BuildList->Size(); i++)
+	for (unsigned int i = 0; i < BuildList->Size(); i++)
 	{
 		sBuildList *ptr;
 		ptr = (*BuildList)[i];
@@ -6145,7 +6140,7 @@ void cBuilding::ShowBuildMenu ( void )
 		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
-		for (k = 0; k < images.Size(); k++)
+		for (unsigned int k = 0; k < images.Size(); k++)
 		{
 			sBuildStruct *bs;
 			bs = images[k];
@@ -6236,9 +6231,9 @@ void cBuilding::ShowBuildMenu ( void )
 
 			offset += 9;
 
-			if (offset > images.Size() - 9)
+			if (offset > (int)images.Size() - 9)
 			{
-				offset = images.Size() - 9;
+				offset = (int)images.Size() - 9;
 			}
 			if ( offset < 0 )
 			{
@@ -6367,7 +6362,7 @@ void cBuilding::ShowBuildMenu ( void )
 			dest.x = MENU_OFFSET_X + 347;
 			dest.y = MENU_OFFSET_Y + 293;
 
-			if (build_offset < to_build.Size() - 5)
+			if (build_offset < (int)to_build.Size() - 5)
 			{
 				build_offset++;
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
@@ -6403,9 +6398,9 @@ void cBuilding::ShowBuildMenu ( void )
 			sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 			to_build.Add ( n );
 
-			if (to_build.Size() > build_offset + 5)
+			if ((int)to_build.Size() > build_offset + 5)
 			{
-				build_offset = to_build.Size() - 5;
+				build_offset = (int)to_build.Size() - 5;
 			}
 
 			if ( build_selected < build_offset )
@@ -6420,12 +6415,12 @@ void cBuilding::ShowBuildMenu ( void )
 		if (btn_delete.CheckClick(x, y, down, up))
 		{
 			// Vehicle aus der Bauliste entfernen:
-			if (to_build.Size() && to_build.Size() > build_selected && build_selected >= 0)
+			if (to_build.Size() && (int)to_build.Size() > build_selected && build_selected >= 0)
 			{
 				delete to_build[build_selected];
 				to_build.Delete ( build_selected );
 
-				if (build_selected >= to_build.Size())
+				if (build_selected >= (int)to_build.Size())
 				{
 					build_selected--;
 				}
@@ -6561,7 +6556,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 			if (images.Size() < 9)
 			{
-				if (nr >= images.Size())
+				if (nr >= (int)images.Size())
 					nr = -1;
 			}
 			else
@@ -6584,9 +6579,9 @@ void cBuilding::ShowBuildMenu ( void )
 					sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
 					to_build.Add ( n );
 
-					if (to_build.Size() > build_offset + 5)
+					if ((int)to_build.Size() > build_offset + 5)
 					{
-						build_offset = to_build.Size() - 5;
+						build_offset = (int)to_build.Size() - 5;
 					}
 
 					if ( build_selected < build_offset )
@@ -6612,7 +6607,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 			if (to_build.Size() < 5)
 			{
-				if (nr >= to_build.Size())
+				if (nr >= (int)to_build.Size())
 					nr = -1;
 			}
 			else
@@ -6632,12 +6627,12 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( build_selected == nr ) && !showDetailsBuildlist )
 				{
 					//remove vehicle from to_build queue
-					if (to_build.Size() && to_build.Size() > build_selected && build_selected >= 0)
+					if (to_build.Size() && (int)to_build.Size() > build_selected && build_selected >= 0)
 					{
 						delete to_build[build_selected];
 						to_build.Delete ( build_selected );
 
-						if (build_selected >= to_build.Size())
+						if (build_selected >= (int)to_build.Size())
 						{
 							build_selected--;
 						}
@@ -6691,7 +6686,6 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 {
 	sBuildStruct *ptr;
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16 };
-	int i;
 	scr.x = 479;
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
@@ -6715,9 +6709,9 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 	dest.w = 32;
 	dest.h = 32;
 
-	for (i = offset; i < list.Size(); i++)
+	for (unsigned int i = offset; i < list.Size(); i++)
 	{
-		if ( i >= offset + 9 )
+		if ( (int)i >= offset + 9 )
 			break;
 
 		// Das Bild malen:
@@ -6938,7 +6932,6 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 {
 	sBuildStruct *ptr;
 	SDL_Rect scr, dest, text = { MENU_OFFSET_X + 375, MENU_OFFSET_Y + 70, 80, 16};
-	int i;
 	scr.x = 330;
 	scr.y = 49;
 	dest.x = MENU_OFFSET_X + 330;
@@ -6957,9 +6950,9 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 	dest.w = 32;
 	dest.h = 32;
 
-	for (i = offset; i < list.Size(); i++)
+	for (unsigned int i = offset; i < list.Size(); i++)
 	{
-		if ( i >= offset + 5 )
+		if ( (int)i >= offset + 5 )
 			break;
 
 		ptr = list[i];
@@ -8377,7 +8370,7 @@ void cBuilding::makeDetection()
 	if ( !data.is_expl_mine ) return;
 
 	int offset = PosX + PosY * Server->Map->size;
-	for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 		if ( player == owner ) continue;

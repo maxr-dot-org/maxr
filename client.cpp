@@ -181,7 +181,7 @@ cClient::~cClient()
 		FXListBottom.Delete ( 0 );
 	}
 
-	for (int i = 0; i < attackJobs.Size(); i++)
+	for (unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
 		delete attackJobs[i];
 	}
@@ -1513,7 +1513,7 @@ void cClient::displayFX()
 {
 	if (!FXList.Size()) return;
 
-	for (int i = FXList.Size() - 1; i >= 0; i--)
+	for (int i = (int)FXList.Size() - 1; i >= 0; i--)
 	{
 		drawFX ( i );
 	}
@@ -1523,7 +1523,7 @@ void cClient::displayFXBottom()
 {
 	if (!FXListBottom.Size()) return;
 
-	for (int i = FXListBottom.Size() - 1; i >= 0; i--)
+	for (int i = (int)FXListBottom.Size() - 1; i >= 0; i--)
 	{
 		drawFXBottom ( i );
 	}
@@ -1627,10 +1627,10 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) (Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0);
 			scr.y = 0;
-			scr.w = (int) Hud.Zoom * 114 / 64.0;
-			scr.h = (int) Hud.Zoom * 108 / 64.0;
+			scr.w = (int) (Hud.Zoom * 114 / 64.0);
+			scr.h = (int) (Hud.Zoom * 108 / 64.0);
 			dest.x = 180 - ( (int) ( ( Hud.OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y = 18 -  ( (int) ( ( Hud.OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
@@ -1643,10 +1643,10 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud.Zoom * 307 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) (Hud.Zoom * 307 * ( iFrame - fx->StartFrame ) / 64.0);
 			scr.y = 0;
-			scr.w = (int) Hud.Zoom * 307 / 64.0;
-			scr.h = (int) Hud.Zoom * 194 / 64.0;
+			scr.w = (int) (Hud.Zoom * 307 / 64.0);
+			scr.h = (int) (Hud.Zoom * 194 / 64.0);
 			dest.x = 180- ( (int) ( ( Hud.OffX- ( fx->PosX - 134 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y = 18-  ( (int) ( ( Hud.OffY- ( fx->PosY - 85 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
@@ -1659,10 +1659,10 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) (Hud.Zoom * 114 * ( iFrame - fx->StartFrame ) / 64.0);
 			scr.y = 0;
-			scr.w = (int) Hud.Zoom * 114 / 64.0;
-			scr.h = (int) Hud.Zoom * 108 / 64.0;
+			scr.w = (int) (Hud.Zoom * 114 / 64.0);
+			scr.h = (int) (Hud.Zoom * 108 / 64.0);
 			dest.x = 180- ( (int) ( ( Hud.OffX- ( fx->PosX - 57 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y = 18-  ( (int) ( ( Hud.OffY- ( fx->PosY - 54 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
@@ -1675,10 +1675,10 @@ void cClient::drawFX( int iNum )
 				FXList.Delete ( iNum );
 				return;
 			}
-			scr.x = (int) Hud.Zoom * 137 * ( iFrame - fx->StartFrame ) / 64.0;
+			scr.x = (int) (Hud.Zoom * 137 * ( iFrame - fx->StartFrame ) / 64.0);
 			scr.y = 0;
-			scr.w = (int) Hud.Zoom * 137 / 64.0;
-			scr.h = (int) Hud.Zoom * 121 / 64.0;
+			scr.w = (int) (Hud.Zoom * 137 / 64.0);
+			scr.h = (int) (Hud.Zoom * 121 / 64.0);
 			dest.x = 180- ( ( int ) ( ( Hud.OffX- ( fx->PosX - 61 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y = 18-  ( ( int ) ( ( Hud.OffY- ( fx->PosY - 68 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
@@ -1719,7 +1719,7 @@ void cClient::drawFX( int iNum )
 					if ( SettingsData.bAlphaEffects )
 					{
 						addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-						drawFX(FXList.Size() - 1);
+						drawFX((int)FXList.Size() - 1);
 					}
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
@@ -1820,7 +1820,7 @@ void cClient::drawFXBottom( int iNum )
 					if ( SettingsData.bAlphaEffects )
 					{
 						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-						drawFXBottom(FXListBottom.Size() - 1);
+						drawFXBottom((int)FXListBottom.Size() - 1);
 					}
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
@@ -2089,25 +2089,25 @@ void cClient::displayDebugOutput()
 	iDebugOff = 30;
 	if ( bDebugAjobs && bFlagDrawMap)
 	{
-		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr(Client->attackJobs.Size()), LATIN_SMALL_WHITE);
+		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		if ( Server )
 		{
-			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr(Server->AJobs.Size()), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 	}
 
 	if ( bDebugBaseClient && bFlagDrawMap )
 	{
-		font->showText(550, iDebugOff, "subbases: " + iToStr(ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 	}
 
 	if ( bDebugBaseServer && bFlagDrawMap )
 	{
 		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-		font->showText(550, iDebugOff, "subbases: " + iToStr(serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
 	}
 
@@ -2116,23 +2116,23 @@ void cClient::displayDebugOutput()
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
 			cPlayer *Player = (*Server->PlayerList)[i];
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr(Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr(Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
 			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		}
 	}
 
 	if ( bDebugFX && bFlagDrawMap )
 	{
-		font->showText(550, iDebugOff, "fx-count: " + iToStr(FXList.Size() + FXListBottom.Size()), LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 	}
 	if ( bDebugPlayers && bFlagDrawMap )
 	{
-		font->showText(530, iDebugOff, "players: " + iToStr( PlayerList->Size() ), LATIN_SMALL_WHITE);
+		font->showText(530, iDebugOff, "players: " + iToStr( (int)PlayerList->Size() ), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
 		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 		{
@@ -2175,7 +2175,7 @@ void cClient::displayChatInput()
 
 void cClient::setWind( int iDir )
 {
-	fWindDir = iDir/57.29577;
+	fWindDir = (float)(iDir/57.29577);
 }
 
 void cClient::makePanel( bool bOpen )
@@ -2374,8 +2374,8 @@ void cClient::addFX ( sFX* n )
 			sFXRocketInfos *ri;
 			int dx,dy;
 			ri= n->rocketInfo;
-			ri->fpx=n->PosX;
-			ri->fpy=n->PosY;
+			ri->fpx=(float)n->PosX;
+			ri->fpy=(float)n->PosY;
 			dx=ri->ScrX-ri->DestX;
 			dy=ri->ScrY-ri->DestY;
 			if ( abs ( dx ) >abs ( dy ) )
@@ -2398,8 +2398,8 @@ void cClient::addFX ( sFX* n )
 			sFXDarkSmoke *dsi = n->smokeInfo;
 			dsi->alpha=n->param;
 			if ( dsi->alpha>150 ) dsi->alpha=150;
-			dsi->fx=n->PosX;
-			dsi->fy=n->PosY;
+			dsi->fx=(float)n->PosX;
+			dsi->fy=(float)n->PosY;
 
 			ax=x=sin ( fWindDir );
 			ay=y=cos ( fWindDir );
@@ -2407,13 +2407,13 @@ void cClient::addFX ( sFX* n )
 			if ( ay<0 ) ay=-ay;
 			if ( ax>ay )
 			{
-				dsi->dx = x * 2 + random(5)        / 10.0;
-				dsi->dy = y * 2 + (random(15) - 7) / 14.0;
+				dsi->dx = (float)(x * 2 + random(5)        / 10.0);
+				dsi->dy = (float)(y * 2 + (random(15) - 7) / 14.0);
 			}
 			else
 			{
-				dsi->dx = x * 2 + (random(15) - 7) / 14.0;
-				dsi->dy = y * 2 + random(5)        / 10.0;
+				dsi->dx = (float)(x * 2 + (random(15) - 7) / 14.0);
+				dsi->dy = (float)(y * 2 + random(5)        / 10.0);
 			}
 			break;
 		}
@@ -2722,7 +2722,7 @@ void cClient::handleMessages()
 	if (messages.Size() == 0) return;
 	iHeight = 0;
 	// Alle alten Nachrichten löschen:
-	for (int i = messages.Size() - 1; i >= 0; i--)
+	for (int i = (int)messages.Size() - 1; i >= 0; i--)
 	{
 		message = messages[i];
 		if ( message->age+MSG_FRAMES < iFrame || iHeight > 200 )
@@ -2745,7 +2745,7 @@ void cClient::handleMessages()
 	dest.x = 180+2; dest.y = 34;
 	dest.w -= 4;
 	dest.h = iHeight;
-	for (int i = 0; i < messages.Size(); i++)
+	for (unsigned int i = 0; i < messages.Size(); i++)
 	{
 		message = messages[i];
 		dest.y = font->showTextAsBlock( dest, message->msg );
@@ -3213,8 +3213,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int iOff = message->popInt32();
 				ActivePlayer->ResourceMap[iOff] = 1;
 
-				Map->Resources[iOff].typ = message->popInt16();
-				Map->Resources[iOff].value = message->popInt16();
+				Map->Resources[iOff].typ = (unsigned char)message->popInt16();
+				Map->Resources[iOff].value = (unsigned char)message->popInt16();
 			}
 		}
 		break;
@@ -3364,7 +3364,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 			int iCount = message->popInt16();
-			for ( unsigned int i = 0; i < iCount; i++ )
+			for ( int i = 0; i < iCount; i++ )
 			{
 				int iBuildingID =  message->popInt16();
 				cBuilding *Building = getBuildingFromID ( iBuildingID );
@@ -3782,7 +3782,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
-	for (int i = 0; i < PlayerList->Size(); i++)
+	for ( unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
 		cPlayer* const p = (*PlayerList)[i];
 		if (p->Nr == iNum) return p;
@@ -3815,7 +3815,7 @@ void cClient::deleteUnit( cBuilding *Building )
 		return;
 	}
 
-	for ( int i = 0; i < attackJobs.Size(); i++)
+	for ( unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
 		if ( attackJobs[i]->building == Building )
 		{
@@ -3859,7 +3859,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 	Map->deleteVehicle( Vehicle );
 
-	for ( int i = 0; i < attackJobs.Size(); i++)
+	for ( unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
 		if ( attackJobs[i]->vehicle == Vehicle )
 		{
@@ -4091,7 +4091,7 @@ void cClient::addActiveMoveJob ( cClientMoveJob *MoveJob )
 
 void cClient::handleMoveJobs ()
 {
-	for (int i = 0; i < ActiveMJobs.Size(); i++)
+	for (unsigned int i = 0; i < ActiveMJobs.Size(); i++)
 	{
 		cClientMoveJob *MoveJob;
 		cVehicle *Vehicle;
@@ -4197,7 +4197,7 @@ void cClient::handleMoveJobs ()
 cVehicle *cClient::getVehicleFromID ( int iID )
 {
 	cVehicle *Vehicle;
-	for (int i = 0; i < PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
 		Vehicle = (*PlayerList)[i]->VehicleList;
 		while ( Vehicle )
@@ -4212,7 +4212,7 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 cBuilding *cClient::getBuildingFromID ( int iID )
 {
 	cBuilding *Building;
-	for (int i = 0; i < PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
 		Building = (*PlayerList)[i]->BuildingList;
 		while ( Building )
@@ -4293,14 +4293,14 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		"load_active: "            + iToStr(Vehicle->LoadActive) +
 		" activating_vehicle: "    + iToStr(Vehicle->ActivatingVehicle) +
 		" vehicle_to_activate: +"  + iToStr(Vehicle->VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr(Vehicle->StoredVehicles ? Vehicle->StoredVehicles->Size() : 0);
+		" stored_vehicles_count: " + iToStr(Vehicle->StoredVehicles ? (int)Vehicle->StoredVehicles->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if (Vehicle->StoredVehicles && Vehicle->StoredVehicles->Size())
 	{
 		cVehicle *StoredVehicle;
-		for (int i = 0; i < Vehicle->StoredVehicles->Size(); i++)
+		for (unsigned int i = 0; i < Vehicle->StoredVehicles->Size(); i++)
 		{
 			StoredVehicle = (*Vehicle->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
@@ -4311,7 +4311,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for (int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
 		{
 			sTmp += ", \"" + Vehicle->SeenByPlayerList[i]->name + "\"";
 		}
@@ -4346,14 +4346,14 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 
 	sTmp =
 		"load_active: "            + iToStr(Building->LoadActive) +
-		" stored_vehicles_count: " + iToStr(Building->StoredVehicles ? Building->StoredVehicles->Size() : 0);
+		" stored_vehicles_count: " + iToStr(Building->StoredVehicles ? (int)Building->StoredVehicles->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if (Building->StoredVehicles&&Building->StoredVehicles->Size())
 	{
 		cVehicle *StoredVehicle;
-		for (int i = 0; i < Building->StoredVehicles->Size(); i++)
+		for (unsigned int i = 0; i < Building->StoredVehicles->Size(); i++)
 		{
 			StoredVehicle = (*Building->StoredVehicles)[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
@@ -4364,14 +4364,14 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	sTmp =
 		"build_speed: "        + iToStr(Building->BuildSpeed)  +
 		" repeat_build: "      + iToStr(Building->RepeatBuild) +
-		" build_list_count: +" + iToStr(Building->BuildList ? Building->BuildList->Size() : 0);
+		" build_list_count: +" + iToStr(Building->BuildList ? (int)Building->BuildList->Size() : 0);
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if (Building->BuildList && Building->BuildList->Size())
 	{
 		sBuildList *BuildingList;
-		for (int i = 0; i < Building->BuildList->Size(); i++)
+		for (unsigned int i = 0; i < Building->BuildList->Size(); i++)
 		{
 			BuildingList = (*Building->BuildList)[i];
 			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
@@ -4382,7 +4382,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	if ( bDebugTraceServer )
 	{
 		sTmp = "seen by players: owner";
-		for (int i = 0; i < Building->SeenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < Building->SeenByPlayerList.Size(); i++)
 		{
 			sTmp += ", \"" + Building->SeenByPlayerList[i]->name + "\"";
 		}
@@ -4786,7 +4786,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		LastB = b;
 	}
 
-	float fNewZoom = Hud.Zoom / 64.0;
+	float fNewZoom = (float)(Hud.Zoom / 64.0);
 
 	if ( SrcBuilding != NULL )
 	{
@@ -5033,7 +5033,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 {
 	//generate list with all vehicles
 	cList<cVehicle*>  vehicleList;
-	for ( int i = 0; i < Client->PlayerList->Size(); i++ )
+	for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
 	{
 		cVehicle* vehicle = (*Client->PlayerList)[i]->VehicleList;
 		while ( vehicle )
@@ -5062,7 +5062,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 		}
 
 		//remove vehicle from list
-		for ( int i = 0; i < vehicleList.Size(); i++)
+		for ( unsigned int i = 0; i < vehicleList.Size(); i++)
 		{
 			if ( vehicleList[i] == vehicle )
 			{

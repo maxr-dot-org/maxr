@@ -281,7 +281,7 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	// costs of planes and ships can't be modified
 	if ( bPlane || bShip )
 	{
-		if ( srcX != destX && srcY != destY ) return (4*1.5);
+		if ( srcX != destX && srcY != destY ) return (int)(4*1.5);
 		else return 4;
 	}
 	costs = 4;
@@ -294,7 +294,7 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	if ( Vehicle->data.can_survey && costs > 4 ) costs = 4;
 
 	// mutliplicate with the factor 1.5 for diagonal movements
-	if ( srcX != destX && srcY != destY ) costs *= 1.5;
+	if ( srcX != destX && srcY != destY ) costs = (int)(costs*1.5);
 	return costs;
 }
 
@@ -390,7 +390,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	if ( Waypoints && Waypoints->next && Vehicle->data.speed && Server->Map->possiblePlace(Vehicle, Waypoints->next->X, Waypoints->next->Y) )
 	{
 		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
-		for ( int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
+		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
 		{
 			cPlayer* player = Vehicle->DetectedByPlayerList[i];
 			if ( Vehicle->data.is_stealth_land && ( !player->DetectLandMap[offset] && !Server->Map->IsWater(offset) ))
@@ -459,7 +459,7 @@ bool cServerMoveJob::checkMove()
 		// else delete the movejob and inform the client that he has to find a new path
 		else
 		{
-			for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
 				sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, Vehicle->SeenByPlayerList[i]->Nr );
 			}
@@ -494,7 +494,7 @@ bool cServerMoveJob::checkMove()
 	}
 
 	// send move command to all players who can see the unit
-	for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 	{
 		sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->SeenByPlayerList[i]->Nr );
 	}
@@ -615,7 +615,7 @@ void cServerMoveJob::moveVehicle()
 			{
 				// send new unit values
 				sendUnitData( Vehicle, Vehicle->owner->Nr );
-				for ( int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 				{
 					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
 				}
@@ -761,7 +761,7 @@ void cClientMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	cLog::write ( " Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for (int i = 0; i < Client->ActiveMJobs.Size(); i++)
+	for (unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++)
 	{
 		if ( this == Client->ActiveMJobs[i] ) return;
 	}

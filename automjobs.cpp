@@ -47,7 +47,7 @@ void cAutoMJob::handleAutoMoveJobs()
 //construktor for cAutoMJob
 cAutoMJob::cAutoMJob(cVehicle *vehicle)
 {
-	 iNumber = autoMJobs.Size();
+	 iNumber = (int)autoMJobs.Size();
 	 autoMJobs.Add(this);
 	 this->vehicle = vehicle;
 	 finished = false;
@@ -65,10 +65,10 @@ cAutoMJob::~cAutoMJob()
 	{
 		sendWantStopMove( vehicle->iID );
 	}
-	for (size_t i = iNumber; i < autoMJobs.Size() - 1; i++)
+	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
-		autoMJobs[i]->iNumber = i;
+		autoMJobs[i]->iNumber = (int)i;
 	}
 	autoMJobs.PopBack();
 
@@ -227,7 +227,7 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 
 	if (NrSurvFields == 0) return FIELD_BLOCKED;
 
-	float factor = A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv;
+	float factor = (float)(A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv);
 
 	if (factor < FIELD_BLOCKED)
 	{

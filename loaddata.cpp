@@ -1810,7 +1810,7 @@ static int LoadVehicles()
 	}
 	// load found units
 	UnitsData.vehicle.Reserve(0);
-	for (int i = 0; i < VehicleList.Size(); i++)
+	for ( unsigned int i = 0; i < VehicleList.Size(); i++)
 	{
 		sVehiclePath = SettingsData.sVehiclesPath;
 		sVehiclePath += PATH_DELIMITER;
@@ -1829,7 +1829,7 @@ static int LoadVehicles()
 		translateUnitData(v.data.ID, true);
 
 		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
-		ConvertData(UnitsData.vehicle.Size() - 1, true);
+		ConvertData((int)UnitsData.vehicle.Size() - 1, true);
 
 		cLog::write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
@@ -2143,7 +2143,7 @@ static int LoadVehicles()
 		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.wav");
 	}
 
-	for (size_t i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = i;
+	for (unsigned int i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = (int)i;
 	return 1;
 }
 
@@ -2293,7 +2293,7 @@ static int LoadBuildings()
 	}
 	// load found units
 	UnitsData.building.Reserve(0);
-	for( int i = 0; i < BuildingList.Size(); i++)
+	for( unsigned int i = 0; i < BuildingList.Size(); i++)
 	{
 		sBuildingPath = SettingsData.sBuildingsPath;
 		sBuildingPath += PATH_DELIMITER;
@@ -2309,7 +2309,7 @@ static int LoadBuildings()
 		translateUnitData(b.data.ID, false);
 
 		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
-		ConvertData(UnitsData.building.Size() - 1, false);
+		ConvertData((int)UnitsData.building.Size() - 1, false);
 
 		// load img
 		sTmpString = sBuildingPath;
@@ -2407,15 +2407,15 @@ static int LoadBuildings()
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
 	// Get numbers of important buildings + set building numbers
-	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+	for (unsigned int i = 0; i < UnitsData.building.Size(); ++i)
 	{
-		UnitsData.building[i].nr = i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 33) BNrOilStore=i;
+		UnitsData.building[i].nr = (int)i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=(int)i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=(int)i;
+		if(UnitsData.building[i].data.ID.iSecondPart == 33) BNrOilStore=(int)i;
 		if(!UnitsData.building[i].data.is_expl_mine) continue;
-		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = i;
-		else BNrLandMine = i;
+		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = (int)i;
+		else BNrLandMine = (int)i;
 	}
 
 	return 1;

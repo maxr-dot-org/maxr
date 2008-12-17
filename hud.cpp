@@ -1284,7 +1284,7 @@ void cHud::ScaleSurfaces ( void )
 	// Terrain:
 	sTerrain*& tlist = Client->Map->terrain;
 	int numberOfTerrains = Client->Map->iNumberOfTerrains;
-	for (size_t i = 0; i < numberOfTerrains; ++i)
+	for (int i = 0; i < numberOfTerrains; ++i)
 	{
 		sTerrain& t = tlist[i];
 		if ( Zoom == 64 )

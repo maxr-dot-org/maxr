@@ -383,7 +383,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
 	int tmpinteger, number, x, y;
-	for ( int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
 	{
 		if ( UnitsData.vehicle[i].data.ID == ID )
 		{
@@ -454,7 +454,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
 	int tmpinteger, number, x, y;
-	for ( int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
 		if ( UnitsData.building[i].data.ID == ID )
 		{
@@ -780,7 +780,7 @@ string cSavegame::convertScanMapToString ( char *data, int size )
 
 void cSavegame::convertStringToScanMap ( string str, char *data )
 {
-	for ( int i = 0; i < str.length(); i++ )
+	for ( unsigned int i = 0; i < str.length(); i++ )
 	{
 		if ( !str.substr ( i, 1 ).compare ( "1" ) ) data[i] = 1;
 		else data[i] = 0;

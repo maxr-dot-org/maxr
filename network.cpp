@@ -302,7 +302,7 @@ void cTCP::HandleNetworkThread()
 						Sockets[i].buffer.iLenght += recvlength;
 
 						// push all messages
-						while ( Sockets[i].bufferpos+Sockets[i].messagelength <= Sockets[i].buffer.iLenght && Sockets[i].messagelength > 0 )
+						while ( Sockets[i].bufferpos+Sockets[i].messagelength <= (int)Sockets[i].buffer.iLenght && Sockets[i].messagelength > 0 )
 						{
 							void *data = malloc ( sizeof (Sint16)*3 );
 							((Sint16*)data)[0] = i;		//socket number
@@ -313,7 +313,7 @@ void cTCP::HandleNetworkThread()
 
 							// get next messagelength or set to 0 if there are not enough bytes left in the socketbuffer
 							Sockets[i].bufferpos += Sockets[i].messagelength;
-							if ( Sockets[i].bufferpos+2 < Sockets[i].buffer.iLenght )
+							if ( Sockets[i].bufferpos+2 < (int)Sockets[i].buffer.iLenght )
 							{
 								Sockets[i].messagelength = SDL_SwapLE16( ((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1)))[0] );
 								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR )

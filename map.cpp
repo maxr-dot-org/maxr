@@ -39,7 +39,7 @@ cVehicleIterator::cVehicleIterator(cList<cVehicle*>* list)
 
 unsigned int cVehicleIterator::size()
 {
-	return vehicleList->Size();
+	return (unsigned int)vehicleList->Size();
 }
 
 cVehicle* cVehicleIterator::operator->() const
@@ -72,7 +72,7 @@ cVehicleIterator cVehicleIterator::operator++(int)
 	{
 		index++;
 	}
-	if ( index >= vehicleList->Size() ) end = true;
+	if ( index >= (int)vehicleList->Size() ) end = true;
 
 	return vehicles;
 }
@@ -84,7 +84,7 @@ cVehicleIterator cVehicleIterator::operator--(int)
 	
 	if ( end )
 	{
-		index = vehicleList->Size() - 1;
+		index = (int)vehicleList->Size() - 1;
 		end = false;
 	}
 	else
@@ -129,7 +129,7 @@ cBuildingIterator::cBuildingIterator(cList<cBuilding*>* list)
 
 unsigned int cBuildingIterator::size()
 {
-	return buildingList->Size();
+	return (unsigned int)buildingList->Size();
 }
 
 cBuilding* cBuildingIterator::operator->() const
@@ -162,7 +162,7 @@ cBuildingIterator cBuildingIterator::operator++(int)
 	{
 		index++;
 	}
-	if ( index >= buildingList->Size() ) end = true;
+	if ( index >= (int)buildingList->Size() ) end = true;
 	
 	return buildings;
 }
@@ -175,7 +175,7 @@ cBuildingIterator cBuildingIterator::operator--(int)
 	if ( end ) 
 	{
 		end = false;
-		index = buildingList->Size() - 1;
+		index = (int)buildingList->Size() - 1;
 	}
 	else
 	{
@@ -410,9 +410,9 @@ bool cMap::LoadMap ( string filename )
 	//generate palette for terrains with fog
 	for ( int i = 0; i < 256; i++)
 	{
-		palette_shw[i].r = (unsigned char) palette[i].r * 0.6;
-		palette_shw[i].g = (unsigned char) palette[i].g * 0.6;
-		palette_shw[i].b = (unsigned char) palette[i].b * 0.6;
+		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6);
+		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6);
+		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6);
 	}
 
 
@@ -739,7 +739,7 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 	}
 	else
 	{
-		int i = 0;
+		unsigned int i = 0;
 		int mapLevel = getMapLevel( building );
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel )
 		{
@@ -822,7 +822,7 @@ void cMap::deleteBuilding( cBuilding* building )
 	int offset = building->PosX + building->PosY * size;
 
 	cList<cBuilding*>* buildings = &fields[offset].buildings;
-	for ( int i = 0; i < buildings->Size(); i++ )
+	for ( unsigned int i = 0; i < buildings->Size(); i++ )
 	{
 		if ( (*buildings)[i] == building ) buildings->Delete(i);
 	}
@@ -877,7 +877,7 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
 		cList<cVehicle*>& planes = fields[offset].planes;
-		for ( int i = 0; i < planes.Size(); i++ )
+		for ( unsigned int i = 0; i < planes.Size(); i++ )
 		{
 			if ( planes[i] == vehicle ) planes.Delete(i);
 		}
@@ -936,7 +936,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
 		cList<cVehicle*>& planes = fields[oldOffset].planes;
-		for ( int i = 0; i < planes.Size(); i++ )
+		for ( unsigned int i = 0; i < planes.Size(); i++ )
 		{
 			if ( planes[i] == vehicle ) planes.Delete(i);
 		}
