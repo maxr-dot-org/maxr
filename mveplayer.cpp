@@ -24,7 +24,7 @@
 /*	MVEPlayer.c - Plays 8-bit Interplay MVE multimedia files.
 	Author: jarli
 */
-#include "MVEPlayer.h"
+#include "mveplayer.h"
 #include <assert.h>
 #ifdef _MSC_VER
 #include "SDL.h"

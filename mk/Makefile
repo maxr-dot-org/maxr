@@ -24,7 +24,6 @@ LDFLAGS += -lSDL_net
 
 SRCS :=
 SRCS += SDL_flic.c
-SRCS += MVEPlayer.c
 SRCS += attackJobs.cpp
 SRCS += automjobs.cpp
 SRCS += base.cpp
@@ -48,6 +47,7 @@ SRCS += map.cpp
 SRCS += menu.cpp
 SRCS += mouse.cpp
 SRCS += movejobs.cpp
+SRCS += mveplayer.cpp
 SRCS += netmessage.cpp
 SRCS += network.cpp
 SRCS += pcx.cpp
