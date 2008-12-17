@@ -187,6 +187,11 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	if(op.type > 0x15 || op.version > 3) 
 		return MVE_CORRUPT;
 
+	//set window to center of screen
+	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
+	putenv( cVideoPos);
+	
+
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
 	if(audio)
 	{

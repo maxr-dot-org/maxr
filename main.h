@@ -344,8 +344,9 @@ struct sUnitData{
 	// Old-Stuff!
 	//////
   int version; // Version des Vehicles
-  char name[25];
 
+  //FIXME: this cries for seg fault! -- beko
+  char name[25];
   // Grunddaten:
   int max_speed;
   int speed;
@@ -481,7 +482,18 @@ struct sTerrain{
 class cSettings
 {
 public:
-	//START
+	/**sConfig is where the config is read from - set in setPaths() **/
+	string sConfig;
+	/**sExePath is where the exe is located - set in setPaths*/
+	string sExePath;
+	/**sLog is where the log goes - set in setPaths() **/
+	string sLog;
+	/**sNetLog is where the netlog goes - set in setPaths() **/
+	string sNetLog;
+	/**sHome is where the user has his $HOME dir - set in setPaths() **/
+	string sHome;
+
+	//START-Node
 	/**screen width in pixels */
 	int iScreenW;
 	/**screen height in pixels */
@@ -497,7 +509,7 @@ public:
 	/**start in fastmode */
 	string sLanguage;
 
-	//GAME
+	//GAME-Node
 	/** enable debug*/
 	bool bDebug;
 	/**enable autosafe */

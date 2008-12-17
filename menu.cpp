@@ -5470,7 +5470,7 @@ int ShowDateiMenu ( bool bSave )
 		// Klick auf einen Speicher:
 		if ( ( x >= rDialog.x+15 && x < rDialog.x+15 + 205 && y > rDialog.y+45 && y <  rDialog.y+45 + 375 ) || ( x >=  rDialog.x+417 && x <  rDialog.x+417 + 205 && y >  rDialog.y+45 && y <  rDialog.y+45 + 375 ) )
 		{
-			if ( b&&!LastB )
+			if ( b )
 			{
 				InputStr = "";
 				int checkx = rDialog.x+15, checky = rDialog.y+45;

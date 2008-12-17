@@ -26,6 +26,7 @@
 #include <map>
 #include "main.h"
 #include "sound.h"
+#include "savegame.h"
 
 #ifndef loaddataH
 #define loaddataH
@@ -77,13 +78,15 @@ EX int LoadingData;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
+	/**
 	* Loads all relevant files and datas
 	* @return 1 on success
 	*/
 int LoadData(void *);
-/**
-	* Reads the Information out of the max.xml
+
+	/**
+	* Reads the Information out of the config file
+	* @return 0 on success
 	*/
 int ReadMaxXml();
 
@@ -111,4 +114,14 @@ void ConvertData(int unitnum, bool vehicle);
 
 void reloadUnitValues ();
 
+/**
+* This is where paths are figured out - e.g. $HOME
+*/
+void setPaths ();
+
+/**
+* Generates a new config file.
+* @return 0 on success<br>-1 on fail
+**/
+int GenerateMaxXml();
 #endif

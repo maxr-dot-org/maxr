@@ -96,7 +96,7 @@ int cSavegame::load()
 
 	if ( ((string)SaveFile->RootElement()->Attribute ( "version" )).compare ( SAVE_FORMAT_VERSION ) )
 	{
-		cLog::write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_INFO );
+		cLog::write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING );
 	}
 
 	// load standard unit values

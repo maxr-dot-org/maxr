@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "language.h"
+#include "main.h"
 
 extern cLog fLog;
 
@@ -224,7 +225,7 @@ int cLanguage::ReadLanguagePack()
 			m_mpLanguage[ impPosition->first ] = strResult;
 		}else
 		{
-			// ToDo ?
+			// TODO: ?
 		}
 		impPosition++;
 	}
@@ -237,7 +238,7 @@ int cLanguage::ReadLanguagePack()
 
 int cLanguage::CheckCurrentLanguagePack(bool bInsertMissingEntries)
 {
-	// ToDo - JCK: Check and correct a language pack
+	//TODO: - JCK: Check and correct a language pack
 	return 0;
 }
 
@@ -370,6 +371,8 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	{
 		strFileName = m_szLanguageFile;
 	}
+
+	strFileName = SettingsData.sExePath + strFileName;	
 
 	// Load the file
 	if( !m_XmlDoc.LoadFile( strFileName.c_str() ))

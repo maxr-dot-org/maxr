@@ -23,6 +23,16 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <sstream>
+
+#ifdef WIN32
+
+#else
+	#include <sys/stat.h>
+	#include <unistd.h>
+#endif
+
+
 #include "buildings.h"
 #include "extendedtinyxml.h"
 #include "loaddata.h"
@@ -33,7 +43,6 @@
 #include "keys.h"
 #include "vehicles.h"
 #include "main.h"
-#include <sstream>
 
 TiXmlDocument LanguageFile;
 
@@ -106,7 +115,6 @@ int LoadData ( void * )
 {
 	LoadingData=LOAD_GOING;
 
-	string sTmpString;
 
 	// Load fonts for SplashMessages
 	cLog::write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
@@ -125,17 +133,25 @@ int LoadData ( void * )
 
 	// Load Languagepack
 	MakeLog ( "Loading languagepack...", 0, 2 );
-	sTmpString = SettingsData.sLanguage;
+
+	string sTmpString;
+	string sLang = SettingsData.sLanguage;
+	//FIXME: here is the assumption made that the file always exists with lower cases
 	for(int i=0 ; i<=2 ; i++)
 	{
-		if( sTmpString[i] < 97 )
+		if( sLang[i] < 97 )
 		{
-			sTmpString[i] += 32;
+			sLang[i] += 32;
 		}
 	}
-	sTmpString.insert(0, (string)"languages" + PATH_DELIMITER + "lang_");
+	sTmpString = SettingsData.sExePath;
+	//FIXME: add folder for languages to config!
+	sTmpString += "languages";
+	sTmpString += PATH_DELIMITER;
+	sTmpString += "lang_";
+	sTmpString += sLang;
 	sTmpString += ".xml";
-	if ( LoadLanguage()!=1 || !LanguageFile.LoadFile( sTmpString.c_str() ) )
+	if ( LoadLanguage()!=1 || !FileExists( sTmpString.c_str() ) )
 	{
 		MakeLog("",-1,2);
 		LoadingData = LOAD_ERROR;
@@ -144,6 +160,7 @@ int LoadData ( void * )
 	}
 	else
 	{
+		LanguageFile.LoadFile(sTmpString.c_str());
 		MakeLog ( "", 1, 2 );
 	}
 	cLog::mark();
@@ -497,31 +514,32 @@ static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* 
 	dest = Mix_LoadWAV(filepath.c_str());
 }
 
-/**
- * Generats a new max.xml file
- */
-static int GenerateMaxXml();
 
 // ReadMaxXml /////////////////////////////////////////////////////////////////
 // Reads the Information from the max.xml:
 int ReadMaxXml()
 {
-	cLog::write ( "Reading max.xml", LOG_TYPE_INFO );
 
 	string sTmpString;
 	// Prepare max.xml for reading
 	TiXmlDocument MaxXml;
 	ExTiXmlNode * pXmlNode = NULL;
-		
-	if(!FileExists(MAX_XML))
+
+	if(SettingsData.sConfig.empty() == 1) //we need at least sConfig here
 	{
-		cLog::write ( "Generating new config file max.xml", LOG_TYPE_WARNING );
+		cLog::write ( "sConfig not set!", cLog::eLOG_TYPE_WARNING );
+		SettingsData.sConfig = MAX_XML;
+	}
+
+	if(!FileExists(SettingsData.sConfig.c_str()))
+	{
+		cLog::write ( "Generating new config file max.xml", cLog::eLOG_TYPE_INFO );
 		if (GenerateMaxXml() == -1)
 		{
 			return -1;
 		}
 	}
-	if (!MaxXml.LoadFile(MAX_XML))
+	if (!MaxXml.LoadFile(SettingsData.sConfig.c_str()))
 	{
 		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
@@ -1062,12 +1080,222 @@ static int LoadLanguage()
 	return 1;
 }
 
-static int GenerateMaxXml()
+int GenerateMaxXml()
 {
-	static int iGenerateTrys = 0;
-	iGenerateTrys++;
-	return -1; // Generate fails
-	// return 0; // Generate success
+	TiXmlDocument ConfigDoc;
+	TiXmlElement *element = NULL;
+	TiXmlElement *rootnode = new TiXmlElement ( "Options" );
+	ConfigDoc.LinkEndChild ( rootnode );
+
+	//BEGIN STARTNODE
+
+	TiXmlElement *startnode = new TiXmlElement("Start");
+
+	element = new TiXmlElement ( "Resolution" );
+	element->SetAttribute ( "Text", "640.480");
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "ColourDepth" );
+	element->SetAttribute ( "Num", "32");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Intro" );
+	element->SetAttribute ( "YN", "Yes");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Windowmode" );
+	element->SetAttribute ( "YN", "Yes");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Fastmode" );
+	element->SetAttribute ( "YN", "Yes");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Language" );
+	element->SetAttribute ( "Text", "ENG");
+	startnode->LinkEndChild(element);
+
+	ConfigDoc.RootElement()->LinkEndChild(startnode);
+
+	//END STARTNODE
+	//BEGIN GAMENODE
+	TiXmlElement *gamenode = new TiXmlElement("Game");
+	TiXmlElement *netnode = new TiXmlElement("Net");
+	TiXmlElement *soundnode = new TiXmlElement("Sound");
+	TiXmlElement *pathsnode = new TiXmlElement("Paths");
+
+	element = new TiXmlElement ( "EnableAutosave" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableDebug" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableAnimations" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableShadows" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableAlphaEffects" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableDescribtions" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableDamageEffects" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableDamageEffectsVehicles" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "EnableMakeTracks" );
+	element->SetAttribute ( "YN", "Yes");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "ScrollSpeed" );
+	element->SetAttribute ( "Num", "50");
+	gamenode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "IP" );
+	element->SetAttribute ( "Text", "127.0.0.1");
+	netnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Port" );
+	element->SetAttribute ( "Num", "58600");
+	netnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "PlayerName" );
+	element->SetAttribute ( "Text", "Tuxcommand");
+	netnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Enabled" );
+	element->SetAttribute ( "YN", "Yes");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "MusicMute" );
+	element->SetAttribute ( "YN", "No");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "SoundMute" );
+	element->SetAttribute ( "YN", "No");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "VoiceMute" );
+	element->SetAttribute ( "YN", "No");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "MusicVol" );
+	element->SetAttribute ( "Num", "50");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "SoundVol" );
+	element->SetAttribute ( "Num", "60");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "VoiceVol" );
+	element->SetAttribute ( "Num", "70");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "ChunkSize" );
+	element->SetAttribute ( "Num", "2048");
+	soundnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "Frequency" );
+	element->SetAttribute ( "Num", "44100");
+	soundnode->LinkEndChild(element);
+
+	string sTmp ="";
+	sTmp = SettingsData.sExePath;
+	sTmp += "fonts";
+	element = new TiXmlElement ( "Fonts" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "fx";
+	element = new TiXmlElement ( "FX" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "gfx";
+	element = new TiXmlElement ( "GFX" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "maps";
+	element = new TiXmlElement ( "Maps" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sHome;
+	sTmp += "save";
+	element = new TiXmlElement ( "Saves" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+	
+	sTmp = SettingsData.sExePath;
+	sTmp += "sounds";
+	element = new TiXmlElement ( "Sounds" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "voices";
+	element = new TiXmlElement ( "Voices" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "music";
+	element = new TiXmlElement ( "Music" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "vehicles";
+	element = new TiXmlElement ( "Vehicles" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "buildings";
+	element = new TiXmlElement ( "Buildings" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "mve";
+	element = new TiXmlElement ( "MVEs" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	gamenode->LinkEndChild(netnode);
+	gamenode->LinkEndChild(soundnode);
+	gamenode->LinkEndChild(pathsnode);
+
+	ConfigDoc.RootElement()->LinkEndChild(gamenode);
+
+	//END GAMENODE
+
+	if(!ConfigDoc.SaveFile(SettingsData.sConfig.c_str())) //create new empty config
+	{
+		cLog::write("Could not write new config to " + SettingsData.sConfig, cLog::eLOG_TYPE_ERROR);
+		return -1; // Generate fails
+	}
+	else
+	{
+		return 0; // Generate success
+	}
 }
 
 static int LoadEffects(const char* path)
@@ -3316,17 +3544,17 @@ int SaveOption ( int iTyp )
 	// Prepare max.xml for writing
 	TiXmlDocument MaxXml;
 	ExTiXmlNode * pXmlNode = NULL;
-	if(!FileExists(MAX_XML))
+	if(!FileExists(SettingsData.sConfig.c_str()))
 	{
-		cLog::write ( "Generating new config file max.xml (not working yet)", LOG_TYPE_WARNING );
+		cLog::write ( "Generating new config file", LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
 		{
 			return -1;
 		}
 	}
-	if(!MaxXml.LoadFile(MAX_XML))
+	if(!MaxXml.LoadFile(SettingsData.sConfig.c_str()))
 	{
-		cLog::write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
+		cLog::write ( "Can't read from config file "+SettingsData.sConfig, LOG_TYPE_WARNING );
 		if( GenerateMaxXml() == -1)
 		{
 			return -1;
@@ -3456,4 +3684,139 @@ void reloadUnitValues ()
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 	}
+}
+
+void setPaths()
+{
+	//init absolutly needed paths
+	SettingsData.sLog = MAX_LOG;
+	SettingsData.sNetLog = MAX_NET_LOG;
+	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac -- beko
+
+	#ifdef WIN32
+		SettingsData.sHome=""; //this is where windowsuser should set their %HOME%
+		//this is also a good place to find out where the executable is located
+		SettingsData.sConfig = MAX_XML; //assume config in current working directory
+	#else
+	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
+	bool bCreateConfigDir = false;
+	
+	SettingsData.sHome = getenv("HOME"); //get $HOME on linux
+
+	if(SettingsData.sHome.empty() != 1)
+	{
+		SettingsData.sHome += PATH_DELIMITER;
+		SettingsData.sHome += ".maxr";
+		SettingsData.sHome += PATH_DELIMITER;
+		SettingsData.sConfig = SettingsData.sHome;
+		SettingsData.sConfig += MAX_XML; //set config to $HOME/.maxr/max.xml
+
+		//check whether home dir is set up and readable
+		if(!FileExists(SettingsData.sHome.c_str())) //under linux everything is a file -- beko
+		{
+			if(mkdir(SettingsData.sHome.c_str(), 0755) == 0)
+			{
+				bCreateConfigDir = true;
+				cout << "\n(II): Created new config directory " << SettingsData.sHome;
+			}
+			else
+			{
+				cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
+				SettingsData.sHome = ""; //reset $HOME since we can't create our config directory
+			}
+		}
+		else
+		{
+			cout << "\n(II): Config is read from " << SettingsData.sHome; //config dir can be read - we're fine
+		}
+	}
+	else
+	{
+		cout << "\n(WW): $HOME is not set!";
+		SettingsData.sHome="";
+		SettingsData.sConfig = MAX_XML; //assume config in current working directory
+	}
+	
+	//set new place for logs
+	SettingsData.sLog = SettingsData.sHome + SettingsData.sLog;
+	SettingsData.sNetLog = SettingsData.sHome + SettingsData.sNetLog;
+	cout << "\n(II): Starting logging to: " << SettingsData.sLog;
+
+	//determine full path to application
+	//this needs /proc support that should be avaible on most linux installations
+	if(FileExists("/proc/self/exe"))
+	{
+		int iSize;
+		char cPathToExe[255];
+		iSize = readlink("/proc/self/exe", cPathToExe, sizeof(cPathToExe));
+		if (iSize < 0)
+		{
+			cLog::write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
+		}
+		else if (iSize >= 255)
+		{
+			cLog::write("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLOG_TYPE_WARNING);
+		}
+		else
+		{
+			int iPos = 0;
+			for(int i = 0; i<255;i++)
+			{
+				if(cPathToExe[i] == '/') //snip garbage after last PATH_DELIMITER + executable itself (is reported on some linux systems as well using /proc/self/exe
+					iPos = i;
+				if(cPathToExe[i] == '\0') //skip garbage that might lunger on heap after 0 termination
+					i = 255;	
+			}
+			
+			
+			SettingsData.sExePath = cPathToExe;
+			SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos); 
+			SettingsData.sExePath += PATH_DELIMITER;
+
+			//crude path validation
+			if(FileExists( (SettingsData.sExePath+"init.pcx").c_str() ))
+			{
+				cLog::write("Full path is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
+			}
+			else
+			{	//we got ourself a trailing maxr in the path like /proc seems to do it sometimes. remove it!
+				if(cPathToExe[iPos-1] == 'r' && cPathToExe[iPos-2] == 'x' && cPathToExe[iPos-3] == 'a' && cPathToExe[iPos-4] == 'm' )
+				{
+					SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos-5);
+					cLog::write("Full path is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
+				 }
+			}
+		}
+	}
+	else
+	{
+		cLog::write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
+	}
+
+
+
+	if(bCreateConfigDir)
+	{
+		//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
+		if(ReadMaxXml()==0) 
+		{
+			
+		}
+		else
+		{
+			cLog::write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
+		}
+
+		if(mkdir(SettingsData.sSavesPath.c_str(), 0755) == 0)
+		{
+			cLog::write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
+		}
+		else
+		{
+			cLog::write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
+		}	
+	}
+
+	cout << "\n";
+	#endif
 }

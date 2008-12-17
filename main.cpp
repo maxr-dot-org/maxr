@@ -56,6 +56,11 @@
 
 int main ( int argc, char *argv[] )
 {
+	
+	setPaths(); //first thing: figure out paths
+
+	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
+
 	{
 		cLog::write ( MAXVERSION );
 		std::string str = "Build : ";
@@ -67,7 +72,7 @@ int main ( int argc, char *argv[] )
 	}
 
 
-	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
+	
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 

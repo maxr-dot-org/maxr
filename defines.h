@@ -58,27 +58,29 @@
 #endif
 
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN            "gfx/main.pcx"
-#define GFXOD_HELP            "gfx/help_screen.pcx"
-#define GFXOD_OPTIONS         "gfx/options.pcx"
-#define GFXOD_PLANET_SELECT   "gfx/planet_select.pcx"
-#define GFXOD_PLAYER_SELECT   "customgame_menu.pcx"
-#define GFXOD_PLAYERHS_SELECT "gfx/hotseatplayers.pcx"
-#define GFXOD_HANGAR          "gfx/hangar.pcx"
-#define GFXOD_MULT            "gfx/multi.pcx"
-#define GFXOD_DIALOG2         "gfx/dialog2.pcx"
-#define GFXOD_DIALOG4         "gfx/dialog4.pcx"
-#define GFXOD_DIALOG5         "gfx/dialog5.pcx"
-#define GFXOD_DIALOG6         "gfx/dialog6.pcx"
+#define GFXOD_MAIN            (SettingsData.sGfxPath + PATH_DELIMITER + "main.pcx").c_str()
+#define GFXOD_HELP            (SettingsData.sGfxPath + PATH_DELIMITER + "help_screen.pcx").c_str()
+#define GFXOD_OPTIONS         (SettingsData.sGfxPath + PATH_DELIMITER + "options.pcx").c_str()
+#define GFXOD_PLANET_SELECT   (SettingsData.sGfxPath + PATH_DELIMITER + "planet_select.pcx").c_str()
+#define GFXOD_PLAYER_SELECT   (SettingsData.sGfxPath + PATH_DELIMITER + "customgame_menu.pcx").c_str()
+#define GFXOD_PLAYERHS_SELECT (SettingsData.sGfxPath + PATH_DELIMITER + "hotseatplayers.pcx").c_str()
+#define GFXOD_HANGAR          (SettingsData.sGfxPath + PATH_DELIMITER + "hangar.pcx").c_str()
+#define GFXOD_MULT            (SettingsData.sGfxPath + PATH_DELIMITER + "multi.pcx").c_str()
+#define GFXOD_DIALOG2         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx").c_str()
+#define GFXOD_DIALOG4         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog4.pcx").c_str()
+#define GFXOD_DIALOG5         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()
+#define GFXOD_DIALOG6         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
 #define MAX_XML               "max.xml"
-#define KEYS_XML              "keys.xml"
-#define SPLASH_BACKGROUND     "init.pcx"
+#define MAX_LOG			"maxr.log"
+#define MAX_NET_LOG		"net.log"
+#define KEYS_XML              (SettingsData.sExePath + "keys.xml").c_str()
+#define SPLASH_BACKGROUND     (SettingsData.sExePath + "init.pcx").c_str()
 #if MAC
-	#define MAXR_ICON             "maxr_mac.bmp"
+	#define MAXR_ICON             (SettingsData.sExePath + "maxr_mac.bmp").c_str()
 #else
-	#define MAXR_ICON             "maxr.bmp"
+	#define MAXR_ICON             (SettingsData.sExePath + "maxr.bmp").c_str()
 #endif
 
 // We have to take care of these manually !

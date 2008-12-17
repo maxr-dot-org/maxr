@@ -22,8 +22,8 @@
 #include "log.h"
 #include "main.h"
 
-#define LOGFILE "maxr.log"
-#define NETLOGFILE "net.log"
+#define LOGFILE SettingsData.sLog.c_str()
+#define NETLOGFILE SettingsData.sNetLog.c_str()
 /** errors */
 #define EE "(EE): "
 /** warnings */
