@@ -1169,7 +1169,9 @@ void cClient::drawMap( bool bPure )
 						tmp=dest;
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=Map->GO[iPos].top->SubBase;
-						SDL_FillRect ( buffer,&tmp, (long int) sb );
+						// the VS compiler gives a warning on casting a pointer to long.
+						// therfore we will first cast to long long and then cut this to Unit32 again.
+						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
 						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
 						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
@@ -1186,7 +1188,9 @@ void cClient::drawMap( bool bPure )
 						tmp=dest;
 						if ( tmp.h>8 ) tmp.h=8;
 						sb=Server->Map->GO[iPos].top->SubBase;
-						SDL_FillRect ( buffer,&tmp, (long int) sb );
+						// the VS compiler gives a warning on casting a pointer to long.
+						// therfore we will first cast to long long and then cut this to Unit32 again.
+						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
 						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
 						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
