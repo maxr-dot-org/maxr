@@ -632,6 +632,13 @@ string dToStr(double x)
  	return strStream.str();
 }
 
+std::string pToStr(void *x)
+{
+	stringstream strStream;
+ 	strStream << x;
+ 	return "0x" + strStream.str();
+}
+
 // Round //////////////////////////////////////////////////////////////////////
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 double Round ( double dValueToRound, unsigned int iDecimalPlace )

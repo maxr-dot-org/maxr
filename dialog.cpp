@@ -330,7 +330,8 @@ void ShowOK ( string sText, bool bPurgeHud )
 		ly = y;
 		lb = b;
 		SDL_Delay ( 1 );
-		bLastKeystate = keystate[SDLK_RETURN];
+		if ( keystate[SDLK_RETURN] ) bLastKeystate = true;
+		else bLastKeystate = false;
 	}
 
 	SHOW_SCREEN
@@ -808,7 +809,7 @@ void showPreferences ( void )
 	else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 1024) iResMode = 5;
 	else iResMode = -1; //unsupported screen mode - possible but may cause graphical glitches
 	iNewResMode = iResMode;
-	int bMyMode = false;
+	bool bMyMode = false;
 
 	const char* sModes[6]; 
 	for(int n=0;n<6;n++) 

@@ -1066,7 +1066,7 @@ void cPlayer::DrawLockList(cHud const& hud)
 
 void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize )
 {
-	float w = 0.017453*45, step;
+	float w = (float)(0.017453*45), step;
 	int rx, ry, x1, x2;
 	if ( iRadius <= 0 ) return;
 	iRadius *= 10;
@@ -1107,7 +1107,7 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int map
 
 void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize )
 {
-	float w=0.017453*45, step;
+	float w=(float)(0.017453*45), step;
 	int rx, ry, x1, x2;
 	if ( iRadius > 0 ) iRadius--;
 	else return;

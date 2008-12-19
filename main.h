@@ -25,12 +25,7 @@
 
 // Hides some warnings from the eye of VS users ///////////////////////////////
 #ifdef _MSC_VER
-/*#pragma warning(disable:4996)
-#pragma warning(disable:4800)
-
-#pragma warning(disable:4311)
-#pragma warning(disable:4305)
-#pragma warning(disable:4804)*/
+#pragma warning(disable:4996)
 #endif
 
 #ifndef mainH
@@ -734,7 +729,11 @@ std::string iToStr(int x);
 /**Converts double to string
 */
 std::string dToStr(double x);
+/**Converts pointer to string
+*/
+std::string pToStr(void *x);
 int min (int a, int b );
+
 
 /**
 * Rounds given param num to specified position after decimal point<br>
