@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F2968B60EF4565C001D958A /* MVEPlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F2968B40EF4565C001D958A /* MVEPlayer.c */; };
+		9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
@@ -74,8 +74,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9F2968B40EF4565C001D958A /* MVEPlayer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MVEPlayer.c; path = ../MVEPlayer.c; sourceTree = SOURCE_ROOT; };
-		9F2968B50EF4565C001D958A /* MVEPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVEPlayer.h; path = ../MVEPlayer.h; sourceTree = SOURCE_ROOT; };
+		9F7E432B0EFD1D2200021440 /* mveplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mveplayer.cpp; path = ../mveplayer.cpp; sourceTree = SOURCE_ROOT; };
+		9F7E432C0EFD1D2200021440 /* mveplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mveplayer.h; path = ../mveplayer.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -243,9 +243,9 @@
 				9FC0DBA40EE2B17400F23D2C /* mouse.cpp */,
 				9FC0DBA50EE2B17400F23D2C /* mouse.h */,
 				9FC0DBA60EE2B17400F23D2C /* movejobs.cpp */,
+				9F7E432B0EFD1D2200021440 /* mveplayer.cpp */,
+				9F7E432C0EFD1D2200021440 /* mveplayer.h */,
 				9FC0DBA70EE2B17400F23D2C /* movejobs.h */,
-				9F2968B40EF4565C001D958A /* MVEPlayer.c */,
-				9F2968B50EF4565C001D958A /* MVEPlayer.h */,
 				9FC0DBA80EE2B17400F23D2C /* netmessage.cpp */,
 				9FC0DBA90EE2B17400F23D2C /* netmessage.h */,
 				9FC0DBAA0EE2B17400F23D2C /* network.cpp */,
@@ -411,7 +411,7 @@
 				9FC0DBEC0EE2B17400F23D2C /* upgradecalculator.cpp in Sources */,
 				9FC0DBED0EE2B17400F23D2C /* vehicles.cpp in Sources */,
 				9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */,
-				9F2968B60EF4565C001D958A /* MVEPlayer.c in Sources */,
+				9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
