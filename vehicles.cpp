@@ -752,32 +752,39 @@ void cVehicle::Select ( void )
 	int error;
 	selected = true;
 	// Das Video laden:
-	if ( Client->sFLCname != typ->FLCFile )
+
+	if ( Client->FLC != NULL )
 	{
-		if ( Client->FLC != NULL )
-		{
-			FLI_Close ( Client->FLC );
-		}
-
-		Client->video = NULL;
-
-
-		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
-
-		Client->sFLCname = typ->FLCFile;
-
-		if ( error != 0 )
-		{
-			Client->Hud.ResetVideoMonitor();
-			Client->FLC = NULL;
-		}
-		else
-		{
-			FLI_Rewind ( Client->FLC );
-
-			FLI_NextFrame ( Client->FLC );
-		}
+		FLI_Close ( Client->FLC );
+		
 	}
+
+	Client->FLC = NULL;
+	Client->sFLCname = "";
+	Client->video = NULL;
+	
+
+	if(FileExists(typ->FLCFile))
+	{
+		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
+		Client->sFLCname = typ->FLCFile;
+	}
+	else
+	{	//in case the flc video doesn't exist we use the storage image instead
+		Client->video = typ->storage;
+	}
+
+	if ( error != 0 )
+	{
+		Client->Hud.ResetVideoMonitor();
+	}
+	else
+	{
+		FLI_Rewind ( Client->FLC );
+
+		FLI_NextFrame ( Client->FLC );
+	}
+
 
 	// Meldung machen:
 	MakeReport();
