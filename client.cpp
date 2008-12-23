@@ -1370,80 +1370,64 @@ void cClient::drawMap( bool bPure )
 
 void cClient::drawMiniMap()
 {
-	//remove TMP HACK TO BLACK OUT DISABLED MINIMAP in loaddata before reactivating this! -- beko
-	//FIXME: draw minimap
-	/*
-	unsigned int cl,*ptr;
-	int x, y, tx, ty, ex, ey;
-	sGameObjects *GO;
+	//TODO: implement zoom
+	unsigned int *minimap, color;
+	int terrainx, terrainy;
 
-	GO=Map->GO;
 	SDL_LockSurface ( GraphicsData.gfx_hud );
-	ptr= ( ( unsigned int* ) GraphicsData.gfx_hud->pixels );
-	// draw the background:
-	for ( y=0;y<112;y++ )
+	minimap = ( ( unsigned int* ) GraphicsData.gfx_hud->pixels );
+
+	for ( int mapx = 0; mapx < 112; mapx++ )
 	{
-		ty= ( int ) ( ( Map->size/112.0 ) *y );
-		ty*=Map->size;
-		for ( x=0;x<112;x++ )
+		terrainx = (int)(( Map->size/112.0 )*mapx);
+		for ( int mapy = 0; mapy < 112; mapy++ )
 		{
-			tx= ( int ) ( ( Map->size/112.0 ) *x );
-			if ( Hud.Radar&&!ActivePlayer->ScanMap[tx+ty] )
+			terrainy = (int)(( Map->size/112.0 )*mapy);
+			color = 0;
+
+			cBuildingIterator *building;
+			cVehicleIterator *vehicle;
+			if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( building = &(*Map)[terrainx+terrainy*Map->size].getBuildings() )->size() > 0 )
 			{
-				cl=* ( unsigned int* ) Map->terrain[Map->Kacheln[tx+ty]].shw_org->pixels;
+				if ( !Hud.TNT || (*building)->data.can_attack ) color = * ( unsigned int* ) (*building)->owner->color->pixels;
 			}
-			//else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base->owner&& ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].base&&ActivePlayer->ScanMap[tx+ty] && ( !Hud.TNT|| ( GO[tx+ty].base->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( vehicle = &(*Map)[terrainx+terrainy*Map->size].getVehicles() )->size() > 0 )
 			{
-				cl=* ( unsigned int* ) GO[tx+ty].base->owner->color->pixels;
+				if ( !Hud.TNT || (*vehicle)->data.can_attack ) color = * ( unsigned int* ) (*vehicle)->owner->color->pixels;
 			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].top&& ( !Hud.TNT|| ( GO[tx+ty].top->data.can_attack ) ) )
+			else if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( vehicle = &(*Map)[terrainx+terrainy*Map->size].getPlanes() )->size() > 0 )
 			{
-				cl=* ( unsigned int* ) GO[tx+ty].top->owner->color->pixels;
-			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].plane&& ( !Hud.TNT|| ( GO[tx+ty].plane->data.can_attack ) ) )
-			{
-				cl=* ( unsigned int* ) GO[tx+ty].plane->owner->color->pixels;
-			}
-			else if ( ActivePlayer->ScanMap[tx+ty]&&GO[tx+ty].vehicle&& ( !Hud.TNT|| ( GO[tx+ty].vehicle->data.can_attack ) ) )
-			{
-				cl=* ( unsigned int* ) GO[tx+ty].vehicle->owner->color->pixels;
-			}
-			else
-			{
-				cl=* ( unsigned int* ) Map->terrain[Map->Kacheln[tx+ty]].sf_org->pixels;
+				if ( !Hud.TNT || (*vehicle)->data.can_attack ) color = * ( unsigned int* ) (*vehicle)->owner->color->pixels;
 			}
 
-			if ( cl==0xFF00FF )
+			if ( color == 0 )
 			{
-				cl=* ( unsigned int* ) Map->terrain[Map->DefaultWater].sf_org->pixels;
+				SDL_Color sdlcolor;
+				Uint8 index = *((Uint8* )Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->pixels );
+				sdlcolor = Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->format->palette->colors[index];
+				color = sdlcolor.r*256*256+sdlcolor.g*256+sdlcolor.b;
 			}
-			else if ( ( cl&0xFFFFFF ) ==0xCD00CD )
-			{
-				cl=* ( unsigned int* ) Map->terrain[Map->DefaultWater].shw_org->pixels;
-			}
-
-			ptr[15+356*GraphicsData.gfx_hud->w+x+y*GraphicsData.gfx_hud->w]=cl;
+			minimap[15+356*GraphicsData.gfx_hud->w+mapx+mapy*GraphicsData.gfx_hud->w] = color;
 		}
 	}
 	// draw the borders:
-	tx= ( int ) ( ( Hud.OffX/64.0 ) * ( 112.0/Map->size ) );
-	ty= ( int ) ( ( Hud.OffY/64.0 ) * ( 112.0/Map->size ) );
-	ex= ( int ) ( 112/ ( Map->size/ ( ( ( SettingsData.iScreenW-192.0 ) /Hud.Zoom ) ) ) );
-	ey= ( int ) ( ty+112/ ( Map->size/ ( ( ( SettingsData.iScreenH-32.0 ) /Hud.Zoom ) ) ) );
-	ex+=tx;
-	for ( y=ty;y<ey;y++ )
+	int startx, starty, endx, endy;
+	startx = ( int ) ( ( Hud.OffX/64.0 ) * ( 112.0/Map->size ) );
+	starty = ( int ) ( ( Hud.OffY/64.0 ) * ( 112.0/Map->size ) );
+	endx = startx + ( int ) ( 112/ ( Map->size/ ( ( ( SettingsData.iScreenW-192.0 ) /Hud.Zoom ) ) ) );
+	endy = ( int ) ( starty+112/ ( Map->size/ ( ( ( SettingsData.iScreenH-32.0 ) /Hud.Zoom ) ) ) );
+
+	for ( int y = starty; y < endy; y++ )
 	{
-		ptr[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+tx]=MINIMAP_COLOR;
-		ptr[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+tx+ex-tx-1]=MINIMAP_COLOR;
+		minimap[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+startx] = MINIMAP_COLOR;
+		minimap[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+startx+endx-startx-1] = MINIMAP_COLOR;
 	}
-	for ( x=tx;x<ex;x++ )
+	for ( int x = startx; x < endx; x++ )
 	{
-		ptr[x+15+356*GraphicsData.gfx_hud->w+ty*GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
-		ptr[x+15+356*GraphicsData.gfx_hud->w+ ( ty+ey-1-ty ) *GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
+		minimap[x+15+356*GraphicsData.gfx_hud->w+starty*GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
+		minimap[x+15+356*GraphicsData.gfx_hud->w+ ( starty+endy-1-starty ) *GraphicsData.gfx_hud->w] = MINIMAP_COLOR;
 	}
 	SDL_UnlockSurface ( GraphicsData.gfx_hud );
-	*/
 }
 
 void cClient::drawFLC()

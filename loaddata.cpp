@@ -1561,12 +1561,6 @@ static int LoadGraphics(const char* path)
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, NULL, GraphicsData.gfx_hud, NULL );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
-	//BEGIN TMP HACK TO BLACK OUT DISABLED MINIMAP
-	SDL_Rect r = {15, 356, 112, 112 };
-	SDL_FillRect ( GraphicsData.gfx_hud,&r,0x000000 );
-	SDL_Rect rInner = {17, 358, 110, 110 };
-	font->showTextAsBlock(rInner, lngPack.i18n ("Text~Title~Map") + " " + lngPack.i18n ("Text~Comp~Disabled") +"\n\n"+lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented") + "\n\n"+"Let's show some advertisement instead:\n\nwww.maxthegame.de\nirc.freenode.net:#maxr\nmaxthegame.dyndns.org\n\n ...happy maxing", LATIN_SMALL_WHITE, GraphicsData.gfx_hud);
-	//END TMP HACK TO BLACK OUT DISABLED MINIMAP
 	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_top.pcx" ))
 		return 0;
 	scr.x = 0;
