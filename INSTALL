@@ -90,9 +90,9 @@ The orignal maps are 100% compatible. See BOTH.
 
 Known Bugs:
 
-Many. There is no AI! This is the initial release featuring network
-games using TCP/IP. Expect and report crashes (with backtrace if
-possible) and odd behaivors. Some features that may have worked in
+Many. There is no AI! This is one of the first releases featuring 
+network games using TCP/IP. Expect and report crashes (with backtrace
+if possible) and odd behaivors. Some features that may have worked in
 prior releases are disabled. For more known and/or fixed bugs please
 visit our bugtracker (no registration required): 
 
