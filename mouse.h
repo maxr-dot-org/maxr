@@ -19,7 +19,7 @@
 #ifndef mouseH
 #define mouseH
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "main.h"
 
 // Die Mauszeigertypen ///////////////////////////////////////////////////////

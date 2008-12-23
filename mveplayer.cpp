@@ -27,7 +27,7 @@
 #include "mveplayer.h"
 #include <assert.h>
 #ifdef _MSC_VER
-#include "SDL.h"
+#include <SDL.h>
 #else
 #include <SDL.h>
 #endif

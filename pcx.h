@@ -19,7 +19,7 @@
 #ifndef pcxH
 #define pcxH
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 
 /** Loads an image to a surface
  * @param name path to img

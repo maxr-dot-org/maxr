@@ -22,7 +22,7 @@
 #include <string>
 
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "main.h"
 #include "pcx.h"
 

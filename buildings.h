@@ -21,7 +21,7 @@
 #include "defines.h"
 #include "sound.h"
 #include "main.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "base.h"
 #include "dialog.h"
 #include "map.h"

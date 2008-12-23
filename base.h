@@ -19,7 +19,7 @@
 #ifndef baseH
 #define baseH
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "buildings.h"
 
 class cPlayer;

@@ -19,7 +19,7 @@
 #ifndef hudH
 #define hudH
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 
 #include <string>
 

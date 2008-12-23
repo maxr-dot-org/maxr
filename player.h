@@ -20,7 +20,7 @@
 #define playerH
 #include "defines.h"
 #include "main.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "hud.h"
 #include "buildings.h"
 #include "vehicles.h"

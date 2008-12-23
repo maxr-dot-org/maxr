@@ -19,7 +19,7 @@
 #ifndef vehiclesH
 #define vehiclesH
 #include "defines.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "main.h"
 #include "sound.h"
 #include "automjobs.h"
