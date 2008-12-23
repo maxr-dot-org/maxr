@@ -456,11 +456,19 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	int tmpinteger, number, x, y;
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
+		if ( ID.iSecondPart == 34 )
+			int haha = 1;
+		sBuilding *buil = &UnitsData.building[i];
+		if ( i == 25 )
+			int pupu = 1;
 		if ( UnitsData.building[i].data.ID == ID )
 		{
 			number = i;
+			sBuilding *buil = &UnitsData.building[i];
 			break;
 		}
+		if ( i == UnitsData.building.Size()-1 )
+			return;
 	}
 	unitNode->FirstChildElement( "Owner" )->Attribute ( "num", &tmpinteger );
 	cPlayer *owner = getPlayerFromNumber ( Server->PlayerList, tmpinteger );
@@ -692,6 +700,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	if ( unitNode->FirstChildElement( "Has_Power_On_Grafic" ) ) Data->bPower_On_Grafic = true;
 	if ( unitNode->FirstChildElement( "Has_Overlay" ) ) Data->bHas_Overlay = true;
 
+	translateUnitData ( Data->ID, ID.iFirstPart == 0 );
 	ConvertData ( unitNum, isVehicle );
 }
 
@@ -1107,7 +1116,7 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if ( Data->iScan_Range_Infantry > 0 ) addAttributeElement ( unitNode, "Scan_Range_Infantry", "num", iToStr ( Data->iScan_Range_Infantry ) );
 
 	if ( Data->iMovement_Max > 0 ) addAttributeElement ( unitNode, "Movement", "num", iToStr ( Data->iMovement_Max/4 ) );
-	if ( Data->iMakes_Tracks > 3 ) addAttributeElement ( unitNode, "Makes_Tracks", "num", iToStr ( Data->iMakes_Tracks ) );
+	if ( Data->iMakes_Tracks != 3 ) addAttributeElement ( unitNode, "Makes_Tracks", "num", iToStr ( Data->iMakes_Tracks ) );
 
 	if ( Data->Weapons[0].iMovement_Allowed > 0 ) addAttributeElement ( unitNode, "Movement_Allowed", "num", iToStr ( Data->Weapons[0].iMovement_Allowed ) );
 	if ( Data->Weapons[0].iMuzzleType > 0 ) addAttributeElement ( unitNode, "MuzzleType", "num", iToStr ( Data->Weapons[0].iMuzzleType ) );

@@ -108,6 +108,12 @@ void LoadUnitData(sUnitData*, char const* directory, int iID);
 */
 void SetDefaultUnitData(sUnitData*);
 
+/**
+* Gets the name and the description for the unit from the selected language file
+* @param ID Id of the unit
+*/
+void translateUnitData(sID ID, bool vehicle);
+
 // i18ns the loaded data to the old data structure.
 // This should be just used temporarily while the game doesn't undestand new structure.
 void ConvertData(int unitnum, bool vehicle);

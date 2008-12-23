@@ -1718,12 +1718,6 @@ static int LoadGraphics(const char* path)
 	return 1;
 }
 
-/**
- * Gets the name and the description for the unit from the selected language file
- * @param ID Id of the unit
- */
-static void translateUnitData(sID ID, bool vehicle);
-
 static int LoadVehicles()
 {
 	cLog::write ( "Loading Vehicles", LOG_TYPE_INFO );
@@ -2147,7 +2141,7 @@ static int LoadVehicles()
 	return 1;
 }
 
-static void translateUnitData(sID ID, bool vehicle)
+void translateUnitData(sID ID, bool vehicle)
 {
 	sUnitData *Data = NULL;
 	TiXmlNode * pXmlNode = NULL;
@@ -3664,16 +3658,18 @@ void reloadUnitValues ()
 	if( !( Element = UnitsXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" ) ) ) return;
 
 	Element = Element->FirstChildElement();
+	int i = 0;
 	while ( Element != NULL )
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		SetDefaultUnitData ( &UnitsData.vehicle[num-1].data );
-		LoadUnitData ( &UnitsData.vehicle[num-1].data, (SettingsData.sVehiclesPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
-		translateUnitData( UnitsData.vehicle[num-1].data.ID, true );
-		ConvertData ( num-1, true );
+		SetDefaultUnitData ( &UnitsData.vehicle[i].data );
+		LoadUnitData ( &UnitsData.vehicle[i].data, (SettingsData.sVehiclesPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		translateUnitData( UnitsData.vehicle[i].data.ID, true );
+		ConvertData ( i, true );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
+		i++;
 	}
 
 	if( !FileExists( (SettingsData.sBuildingsPath + PATH_DELIMITER + "buildings.xml").c_str() ) ) return ;
@@ -3681,16 +3677,18 @@ void reloadUnitValues ()
 	if( !( Element = UnitsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" ) ) ) return;
 
 	Element = Element->FirstChildElement();
+	i = 0;
 	while ( Element != NULL )
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		SetDefaultUnitData ( &UnitsData.building[num-1].data );
-		LoadUnitData ( &UnitsData.building[num-1].data, (SettingsData.sBuildingsPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
-		translateUnitData( UnitsData.building[num-1].data.ID, false );
-		ConvertData ( num-1, false );
+		SetDefaultUnitData ( &UnitsData.building[i].data );
+		LoadUnitData ( &UnitsData.building[i].data, (SettingsData.sBuildingsPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		translateUnitData( UnitsData.building[i].data.ID, false );
+		ConvertData ( i, false );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
+		i++;
 	}
 }
 
