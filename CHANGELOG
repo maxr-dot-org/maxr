@@ -6,6 +6,8 @@ M.A.X. Reloaded SVN
 -added mve player for original intro movie
 -added new settings for preferences
 -added reconnecting
+-changed licence to dual licence GPL and GFDL (see COPYING.README)
+-finalized free alternative graphic set (see COPYING.README)
 -fixed MacOSX support
 -fixed upgrade system (pre game start)
 -fixed most HUD buttons
@@ -18,7 +20,6 @@ new features:
 	*implemented rearming
 	*implemented repairing
 	*implemented reloading
-
 -implemented new pathfinding algorithm (A*)
 -fixed detection and hiding of stealth units, e. g. submarines, infiltrators
 -fixed upgrades in landing selection menu on gamestart
