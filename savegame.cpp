@@ -390,6 +390,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 			number = i;
 			break;
 		}
+		if ( i == UnitsData.vehicle.Size()-1 ) return;
 	}
 	unitNode->FirstChildElement( "Owner" )->Attribute ( "num", &tmpinteger );
 	cPlayer *owner = getPlayerFromNumber ( Server->PlayerList, tmpinteger );
@@ -456,19 +457,12 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	int tmpinteger, number, x, y;
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
-		if ( ID.iSecondPart == 34 )
-			int haha = 1;
-		sBuilding *buil = &UnitsData.building[i];
-		if ( i == 25 )
-			int pupu = 1;
 		if ( UnitsData.building[i].data.ID == ID )
 		{
 			number = i;
-			sBuilding *buil = &UnitsData.building[i];
 			break;
 		}
-		if ( i == UnitsData.building.Size()-1 )
-			return;
+		if ( i == UnitsData.building.Size()-1 ) return;
 	}
 	unitNode->FirstChildElement( "Owner" )->Attribute ( "num", &tmpinteger );
 	cPlayer *owner = getPlayerFromNumber ( Server->PlayerList, tmpinteger );
