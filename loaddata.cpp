@@ -1176,7 +1176,15 @@ int GenerateMaxXml()
 	#ifdef WIN32
 	element->SetAttribute ( "Text", "Player");
 	#else
-	element->SetAttribute ( "Text", "Tuxcommand");
+	string sUser = getenv("USER");
+	if(sUser.empty() != 1)
+	{
+		element->SetAttribute ( "Text", sUser.c_str());
+	}
+	else
+	{
+		element->SetAttribute ( "Text", "Tuxcommand");
+	}
 	#endif
 	netnode->LinkEndChild(element);
 
