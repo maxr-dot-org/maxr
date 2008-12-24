@@ -1190,12 +1190,12 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if ( Data->iNeeds_Metal != 0 ) addAttributeElement ( unitNode, "Needs_Metal", "num", iToStr ( Data->iNeeds_Metal ) );
 	if ( Data->iConverts_Gold != 0 ) addAttributeElement ( unitNode, "Converts_Gold", "num", iToStr ( Data->iConverts_Gold ) );
 
-	if( Data->fCosts_Ground > 1.0 ) addAttributeElement ( unitNode, "Costs_Ground", "num", dToStr ( Data->fCosts_Ground ) );
-	if( Data->fCosts_Sea > 0.0 ) addAttributeElement ( unitNode, "Costs_Sea", "num", dToStr ( Data->fCosts_Sea ) );
-	if( Data->fCosts_Air > 0.0 ) addAttributeElement ( unitNode, "Costs_Air", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fCosts_Ground != 1.0 ) addAttributeElement ( unitNode, "Costs_Ground", "num", dToStr ( Data->fCosts_Ground ) );
+	if( Data->fCosts_Sea != 0.0 ) addAttributeElement ( unitNode, "Costs_Sea", "num", dToStr ( Data->fCosts_Sea ) );
+	if( Data->fCosts_Air != 0.0 ) addAttributeElement ( unitNode, "Costs_Air", "num", dToStr ( Data->fCosts_Air ) );
 
-	if( Data->iSize_Length > 1 ) addAttributeElement ( unitNode, "Size_Length", "num", iToStr ( Data->iSize_Length ) );
-	if( Data->iSize_Width > 1 ) addAttributeElement ( unitNode, "Size_Width", "num", iToStr ( Data->iSize_Width ) );
+	if( Data->iSize_Length != 1 ) addAttributeElement ( unitNode, "Size_Length", "num", iToStr ( Data->iSize_Length ) );
+	if( Data->iSize_Width != 1 ) addAttributeElement ( unitNode, "Size_Width", "num", iToStr ( Data->iSize_Width ) );
 
 	if( Data->bCan_Repair ) addMainElement ( unitNode, "Can_Repair" );
 	if( Data->bCan_Rearm ) addMainElement ( unitNode, "Can_Rearm" );
