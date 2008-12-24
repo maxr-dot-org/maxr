@@ -2388,6 +2388,7 @@ static int LoadBuildings()
 		{
 			b.data.has_frames = b.img_org->w / b.img_org->h;
 		}
+		else b.data.has_frames = 0;
 	}
 
 	// Dirtsurfaces
@@ -3503,8 +3504,6 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->build_by_big = true;
 	else
 		Data->build_by_big = false;
-
-	Data->has_frames = 0;
 }
 
 /**

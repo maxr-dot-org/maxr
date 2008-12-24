@@ -1385,7 +1385,7 @@ void cClient::drawMiniMap()
 			cVehicleIterator *vehicle;
 			if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( building = &(*Map)[terrainx+terrainy*Map->size].getBuildings() )->size() > 0 )
 			{
-				if ( !Hud.TNT || (*building)->data.can_attack ) color = * ( unsigned int* ) (*building)->owner->color->pixels;
+				if ( (*building)->owner && ( !Hud.TNT || (*building)->data.can_attack ) ) color = * ( unsigned int* ) (*building)->owner->color->pixels;
 			}
 			else if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( vehicle = &(*Map)[terrainx+terrainy*Map->size].getVehicles() )->size() > 0 )
 			{
