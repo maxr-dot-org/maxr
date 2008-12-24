@@ -298,7 +298,7 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle *addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false );
+	cVehicle *addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false, bool bAddToMap = true );
 	cBuilding *addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
 	/**
 	* lands all units at the given position
@@ -343,6 +343,7 @@ public:
 	void deleteRubble( cBuilding* rubble );
 
 	void resyncPlayer ( cPlayer *Player );
+	void resyncVehicle ( cVehicle *Vehicle, cPlayer *Player );
 
 } EX *Server;
 

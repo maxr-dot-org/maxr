@@ -1347,6 +1347,75 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			sendDefreeze ();
 		}
 		break;
+	case GAME_EV_WANT_LOAD:
+		{
+			cVehicle *StoredVehicle = getVehicleFromID ( message->popInt16() );
+			if ( !StoredVehicle ) break;
+
+			if ( message->popBool() )
+			{
+				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
+				if ( !StoringVehicle ) break;
+
+				if ( StoringVehicle->canLoad ( StoredVehicle ) )
+				{
+					StoringVehicle->storeVehicle ( StoredVehicle, Map );
+					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
+					sendStoreVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->Nr );
+					// TODO: other players
+				}
+			}
+			else
+			{
+				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
+				if ( !StoringBuilding ) break;
+
+				if ( StoringBuilding->canLoad ( StoredVehicle ) )
+				{
+					StoringBuilding->storeVehicle ( StoredVehicle, Map );
+					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
+					sendStoreVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->Nr );
+					// TODO: other players
+				}
+			}
+		}
+		break;
+	case GAME_EV_WANT_EXIT:
+		{
+			cVehicle *StoredVehicle = getVehicleFromID ( message->popInt16() );
+			if ( !StoredVehicle ) break;
+
+			if ( message->popBool() )
+			{
+				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
+				if ( !StoringVehicle ) break;
+
+				int x = message->popInt16 ();
+				int y = message->popInt16 ();
+				if ( StoringVehicle->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
+				{
+					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+					// TODO: other players
+					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
+					StoredVehicle->InSentryRange();
+				}
+			}
+			else
+			{
+				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
+				if ( !StoringBuilding ) break;
+
+				int x = message->popInt16 ();
+				int y = message->popInt16 ();
+				if ( StoringBuilding->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
+				{
+					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+					// TODO: other players
+					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
+				}
+			}
+		}
+		break;
 	default:
 		cLog::write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -1449,7 +1518,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, const cList<sLanding
 	}
 }
 
-cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit )
+cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit, bool bAddToMap )
 {
 	cVehicle *AddedVehicle;
 	// generate the vehicle:
@@ -1458,7 +1527,7 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 	iNextUnitID++;
 	
 	// place the vehicle:
-	Map->addVehicle( AddedVehicle, iPosX, iPosY );
+	if ( bAddToMap ) Map->addVehicle( AddedVehicle, iPosX, iPosY );
 
 	// scan with surveyor:
 	if ( AddedVehicle->data.can_survey )
@@ -2590,17 +2659,19 @@ void cServer::resyncPlayer ( cPlayer *Player )
 	cVehicle *Vehicle = Player->VehicleList;
 	while ( Vehicle )
 	{
-		sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->typ->nr, Player->Nr, false );
-		sendUnitData ( Vehicle, Player->Nr );
-		sendSpecificUnitData ( Vehicle );
-		if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
+		if ( !Vehicle->Loaded ) resyncVehicle ( Vehicle, Player );
 		Vehicle = Vehicle->next;
-		if ( Client ) EventHandler->HandleEvents ();
 	}
 	cBuilding *Building = Player->BuildingList;
 	while ( Building )
 	{
 		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->typ->nr, Player->Nr, false );
+		for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+		{
+			cVehicle *StoredVehicle = Building->StoredVehicles[i];
+			resyncVehicle ( StoredVehicle, Player );
+			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
+		}
 		sendUnitData ( Building, Player->Nr );
 		if ( Building->IsWorking && Building->data.is_mine ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
@@ -2620,4 +2691,19 @@ void cServer::resyncPlayer ( cPlayer *Player )
 	checkPlayerUnits();
 	sendHudSettings ( &Player->HotHud, Player );
 	// TODO: send upgrades
+}
+
+void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
+{
+	sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->typ->nr, Player->Nr, false, !Vehicle->Loaded );
+	if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
+	for ( unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++ )
+	{
+		cVehicle *StoredVehicle = Vehicle->StoredVehicles[i];
+		resyncVehicle ( StoredVehicle, Player );
+		sendStoreVehicle ( Vehicle->iID, true, StoredVehicle->iID, Player->Nr );
+	}
+	sendUnitData ( Vehicle, Player->Nr );
+	sendSpecificUnitData ( Vehicle );
+	if ( Client ) EventHandler->HandleEvents ();
 }

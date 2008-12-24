@@ -25,13 +25,14 @@
 #include "movejobs.h"
 
 
-void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit )
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit, bool bAddToMap )
 {
 	cNetMessage* message;
 
 	if ( bVehicle ) message = new cNetMessage ( GAME_EV_ADD_VEHICLE );
 	else message = new cNetMessage ( GAME_EV_ADD_BUILDING );
 
+	message->pushBool( bAddToMap );
 	message->pushInt16( iID );
 	message->pushInt16( iPosX );
 	message->pushInt16( iPosY );
@@ -762,4 +763,24 @@ void sendHudSettings ( cHud *Hud, cPlayer *Player )
 	message->pushInt16 ( Hud->OffX );
 	message->pushInt16 ( Hud->tmpSelectedUnitID );
 	Server->sendNetMessage( message, Player->Nr );
+}
+
+void sendStoreVehicle ( int unitid, bool vehicle, int storedunitid, int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_STORE_UNIT );
+	message->pushInt16 ( unitid );
+	message->pushBool ( vehicle );
+	message->pushInt16 ( storedunitid );
+	Server->sendNetMessage( message, player );
+}
+
+void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, int y, int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_EXIT_UNIT );
+	message->pushInt16 ( y );
+	message->pushInt16 ( x );
+	message->pushInt16 ( unitid );
+	message->pushBool ( vehicle );
+	message->pushInt16 ( activatunitid );
+	Server->sendNetMessage( message, player );
 }

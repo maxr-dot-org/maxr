@@ -590,6 +590,30 @@ void cHud::CheckScroll ( bool pure )
 		{
 			mouse->SetCursor ( CSelect );
 		}
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->LoadActive )
+		{
+			if ( selectedVehicle->canLoad ( mouse->GetKachelOff(), Client->Map ) )
+			{
+				mouse->SetCursor ( CLoad );
+			}
+			else
+			{
+				mouse->SetCursor ( CNo );
+			}
+		}
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->ActivatingVehicle )
+		{
+			int x, y;
+			mouse->GetKachel( &x, &y );
+			if (selectedVehicle->canExitTo(x, y, Client->Map,selectedVehicle->StoredVehicles[selectedVehicle->VehicleToActivate]->typ) )
+			{
+				mouse->SetCursor ( CActivate );
+			}
+			else
+			{
+				mouse->SetCursor ( CNo );
+			}
+		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) && y<18+ ( SettingsData.iScreenH-32 ) )
 		{
 			if ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle )
@@ -601,7 +625,6 @@ void cHud::CheckScroll ( bool pure )
 				else if ( Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff() ))
 				{
 					mouse->SetCursor ( CMove );
-		
 				}
 				else
 				{
@@ -646,20 +669,7 @@ void cHud::CheckScroll ( bool pure )
 		{
 			int x, y;
 			mouse->GetKachel( &x, &y);
-			if ( selectedBuilding->canExitTo(x, y, Client->Map, (*selectedBuilding->StoredVehicles)[selectedBuilding->VehicleToActivate]->typ))
-			{
-				mouse->SetCursor ( CActivate );
-			}
-			else
-			{
-				mouse->SetCursor ( CNo );
-			}
-		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->ActivatingVehicle )
-		{
-			int x, y;
-			mouse->GetKachel( &x, &y );
-			if (selectedVehicle->canExitTo(x, y, Client->Map,(*selectedVehicle->StoredVehicles)[selectedVehicle->VehicleToActivate]->typ) )
+			if ( selectedBuilding->canExitTo(x, y, Client->Map, selectedBuilding->StoredVehicles[selectedBuilding->VehicleToActivate]->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -670,18 +680,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->LoadActive )
 		{
-			if ( selectedBuilding->CanLoad ( mouse->GetKachelOff() ) )
-			{
-				mouse->SetCursor ( CLoad );
-			}
-			else
-			{
-				mouse->SetCursor ( CNo );
-			}
-		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->LoadActive )
-		{
-			if ( selectedVehicle->CanLoad ( mouse->GetKachelOff() ) )
+			if ( selectedBuilding->canLoad ( mouse->GetKachelOff(), Client->Map ) )
 			{
 				mouse->SetCursor ( CLoad );
 			}

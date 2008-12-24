@@ -435,6 +435,14 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_TURN");
 	case GAME_EV_HUD_SETTINGS:
 		return string("GAME_EV_HUD_SETTINGS");
+	case GAME_EV_WANT_LOAD:
+		return string("GAME_EV_WANT_LOAD");
+	case GAME_EV_WANT_EXIT:
+		return string("GAME_EV_WANT_EXIT");
+	case GAME_EV_STORE_UNIT:
+		return string("GAME_EV_STORE_UNIT");
+	case GAME_EV_EXIT_UNIT:
+		return string("GAME_EV_EXIT_UNIT");
 	default:
 		return iToStr( iType );
 	}

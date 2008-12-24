@@ -700,18 +700,12 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->ActivatingVehicle )
 		{
-			// TODO: Exit vehcile
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//SelectedBuilding->ExitVehicleTo ( SelectedBuilding->VehicleToActivate, mouse->GetKachelOff(), false );
-			PlayFX ( SoundData.SNDActivate );
+			sendWantActivate ( SelectedBuilding->iID, false, SelectedBuilding->StoredVehicles[SelectedBuilding->VehicleToActivate]->iID, mouse->GetKachelOff()%Map->size, mouse->GetKachelOff()/Map->size );
 			mouseMoveCallback ( true );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedVehicle && SelectedVehicle->ActivatingVehicle )
 		{
-			// TODO: Exit vehcile
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//SelectedVehicle->ExitVehicleTo ( SelectedVehicle->VehicleToActivate,mouse->GetKachelOff(),false );
-			PlayFX ( SoundData.SNDActivate );
+			sendWantActivate ( SelectedVehicle->iID, true, SelectedVehicle->StoredVehicles[SelectedVehicle->VehicleToActivate]->iID, mouse->GetKachelOff()%Map->size, mouse->GetKachelOff()/Map->size );
 			mouseMoveCallback ( true );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cactivate && SelectedBuilding && SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size())
@@ -722,13 +716,15 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
-			// TODO: Load vehcile
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			if ( SelectedBuilding->data.can_load != TRANS_AIR && Map->GO[mouse->GetKachelOff()].vehicle ) sendWantLoad ( SelectedBuilding->iID, false, Map->GO[mouse->GetKachelOff()].vehicle->iID );
+			else if ( SelectedBuilding->data.can_load == TRANS_AIR && Map->GO[mouse->GetKachelOff()].plane ) sendWantLoad ( SelectedBuilding->iID, false, Map->GO[mouse->GetKachelOff()].plane->iID );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
-			// TODO: Load vehcile
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			if ( Map->GO[mouse->GetKachelOff()].vehicle )
+			{
+				sendWantLoad ( SelectedVehicle->iID, true, Map->GO[mouse->GetKachelOff()].vehicle->iID );
+			}
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
@@ -2020,7 +2016,7 @@ void cClient::drawUnitCircles ()
 		}
 		if (v.ActivatingVehicle && v.owner == ActivePlayer)
 		{
-			v.DrawExitPoints((*v.StoredVehicles)[v.VehicleToActivate]->typ);
+			v.DrawExitPoints(v.StoredVehicles[v.VehicleToActivate]->typ);
 		}
 	}
 	else if ( SelectedBuilding )
@@ -2066,7 +2062,7 @@ void cClient::drawUnitCircles ()
 		}
 		if ( SelectedBuilding->ActivatingVehicle&&SelectedBuilding->owner==ActivePlayer )
 		{
-			SelectedBuilding->DrawExitPoints((*SelectedBuilding->StoredVehicles)[SelectedBuilding->VehicleToActivate]->typ);
+			SelectedBuilding->DrawExitPoints(SelectedBuilding->StoredVehicles[SelectedBuilding->VehicleToActivate]->typ);
 		}
 	}
 	ActivePlayer->DrawLockList(Hud);
@@ -2805,8 +2801,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			AddedVehicle = Player->AddVehicle(PosX, PosY, &UnitsData.vehicle[UnitNum]);
 			AddedVehicle->iID = message->popInt16();
+			bool bAddToMap = message->popBool();
 
-			addUnit ( PosX, PosY, AddedVehicle, Init );
+			addUnit ( PosX, PosY, AddedVehicle, Init, bAddToMap );
 		}
 		break;
 	case GAME_EV_DEL_BUILDING:
@@ -3739,6 +3736,70 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			bStartupHud = false;
 		}
 		break;
+	case GAME_EV_STORE_UNIT:
+		{
+			cVehicle *StoredVehicle = getVehicleFromID ( message->popInt16() );
+			if ( !StoredVehicle ) break;
+
+			if ( message->popBool() )
+			{
+				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
+				if ( !StoringVehicle ) break;
+				StoringVehicle->storeVehicle ( StoredVehicle, Map );
+
+				if ( SelectedVehicle == StoringVehicle ) StoringVehicle->ShowDetails();
+
+				if ( StoredVehicle == SelectedVehicle )
+				{
+					StoredVehicle->Deselct();
+					SelectedVehicle = NULL;
+				}
+			}
+			else
+			{
+				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
+				if ( !StoringBuilding ) break;
+				StoringBuilding->storeVehicle ( StoredVehicle, Map );
+
+				if ( SelectedBuilding == StoringBuilding ) StoringBuilding->ShowDetails();
+
+				if ( StoredVehicle == SelectedVehicle )
+				{
+					StoredVehicle->Deselct();
+					SelectedVehicle = NULL;
+				}
+			}
+			PlayFX ( SoundData.SNDLoad );
+		}
+		break;
+	case GAME_EV_EXIT_UNIT:
+		{
+			cVehicle *StoredVehicle = getVehicleFromID ( message->popInt16() );
+			if ( !StoredVehicle ) break;
+
+			if ( message->popBool() )
+			{
+				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
+				if ( !StoringVehicle ) break;
+
+				int x = message->popInt16 ();
+				int y = message->popInt16 ();
+				StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+				if ( StoringVehicle == SelectedVehicle ) StoringVehicle->ShowDetails();
+			}
+			else
+			{
+				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
+				if ( !StoringBuilding ) break;
+
+				int x = message->popInt16 ();
+				int y = message->popInt16 ();
+				StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+				if ( StoringBuilding == SelectedBuilding ) StoringBuilding->ShowDetails();
+			}
+			PlayFX ( SoundData.SNDActivate );
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -3748,10 +3809,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	return 0;
 }
 
-void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit )
+void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit, bool bAddToMap )
 {
 	// place the vehicle
-	Map->addVehicle( AddedVehicle, iPosX, iPosY );
+	if ( bAddToMap ) Map->addVehicle( AddedVehicle, iPosX, iPosY );
 
 	if ( !bInit ) AddedVehicle->StartUp = 10;
 
@@ -4281,16 +4342,16 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		"load_active: "            + iToStr(Vehicle->LoadActive) +
 		" activating_vehicle: "    + iToStr(Vehicle->ActivatingVehicle) +
 		" vehicle_to_activate: +"  + iToStr(Vehicle->VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr(Vehicle->StoredVehicles ? (int)Vehicle->StoredVehicles->Size() : 0);
+		" stored_vehicles_count: " + iToStr((int)Vehicle->StoredVehicles.Size());
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	if (Vehicle->StoredVehicles && Vehicle->StoredVehicles->Size())
+	if ( Vehicle->StoredVehicles.Size() )
 	{
 		cVehicle *StoredVehicle;
-		for (unsigned int i = 0; i < Vehicle->StoredVehicles->Size(); i++)
+		for (unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++)
 		{
-			StoredVehicle = (*Vehicle->StoredVehicles)[i];
+			StoredVehicle = Vehicle->StoredVehicles[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
 			*iY += 8;
 		}
@@ -4334,16 +4395,16 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 
 	sTmp =
 		"load_active: "            + iToStr(Building->LoadActive) +
-		" stored_vehicles_count: " + iToStr(Building->StoredVehicles ? (int)Building->StoredVehicles->Size() : 0);
+		" stored_vehicles_count: " + iToStr((int)Building->StoredVehicles.Size());
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	if (Building->StoredVehicles&&Building->StoredVehicles->Size())
+	if (Building->StoredVehicles.Size())
 	{
 		cVehicle *StoredVehicle;
-		for (unsigned int i = 0; i < Building->StoredVehicles->Size(); i++)
+		for (unsigned int i = 0; i < Building->StoredVehicles.Size(); i++)
 		{
-			StoredVehicle = (*Building->StoredVehicles)[i];
+			StoredVehicle = Building->StoredVehicles[i];
 			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
 			*iY+=8;
 		}

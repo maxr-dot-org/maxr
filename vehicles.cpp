@@ -91,12 +91,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	DisableActive = false;
 	IsLocked = false;
 	bIsBeeingAttacked = false;
-	StoredVehicles = NULL;
-
-	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
-	{
-		StoredVehicles = new cList<cVehicle*>;
-	}
 
 	DamageFXPointX = random(7) + 26 - 3;
 	DamageFXPointY = random(7) + 26 - 3;
@@ -126,8 +120,7 @@ cVehicle::~cVehicle ( void )
 		owner->deleteSentryVehicle ( this );
 	}
 
-	if ( StoredVehicles )
-		DeleteStored();
+	DeleteStored();
 
 
 	if ( IsLocked )
@@ -2111,16 +2104,16 @@ void cVehicle::DrawMenu ( void )
 	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		if ( SelMenu == nr ) bSelection = true;
+		else bSelection = false;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			// TODO: implement activating
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			// ShowStorage();
+			//Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			showStorage();
 			return;
 		}
 
@@ -2131,14 +2124,14 @@ void cVehicle::DrawMenu ( void )
 		nr++;
 		// Laden:
 
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		if ( SelMenu == nr || LoadActive ) bSelection = true;
+		else bSelection = false;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			LoadActive = true;
+			LoadActive = !LoadActive;
 			return;
 		}
 
@@ -3902,99 +3895,47 @@ bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVeh
 	return true;
 }
 
-bool cVehicle::CanLoad ( int off )
+bool cVehicle::canLoad ( int off, cMap *Map )
 {
-	int boff;
+	if ( off < 0 || off > Map->size*Map->size ) return false;
 
-	if ( data.cargo == data.max_cargo )
-		return false;
-
-	boff = PosX + PosY * Client->Map->size;
-
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
-		{}
-	else
-		return false;
-
-	if ( !Client->Map->GO[off].vehicle )
-		return false;
-
-	if ( data.can_drive != DRIVE_AIR && Client->Map->GO[off].vehicle->data.can_drive == DRIVE_SEA )
-		return false;
-
-	if ( data.can_transport == TRANS_MEN && !Client->Map->GO[off].vehicle->data.is_human )
-		return false;
-
-	if ( Client->Map->GO[off].vehicle && Client->Map->GO[off].vehicle->owner == owner && !Client->Map->GO[off].vehicle->IsBuilding && !Client->Map->GO[off].vehicle->IsClearing )
-		return true;
+	if ( Map->GO[off].vehicle ) return canLoad ( Map->GO[off].vehicle );
 
 	return false;
 }
 
-void cVehicle::StoreVehicle ( int off )
+bool cVehicle::canLoad ( cVehicle *Vehicle )
 {
-	cVehicle *v = NULL;
+	if ( data.cargo >= data.max_cargo )	return false;
 
-	if ( data.cargo == data.max_cargo )
-		return;
+	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
-	if ( data.can_transport == TRANS_VEHICLES )
-	{
-		v = Client->Map->GO[off].vehicle;
+	if ( data.can_drive == DRIVE_AIR && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
-		if ( v->data.can_drive == DRIVE_SEA && data.can_drive == DRIVE_SEA )
-		{
-			return;
-		}
+	if ( data.can_drive != DRIVE_AIR && Vehicle->data.can_drive == DRIVE_SEA ) return false;
 
-		Client->Map->GO[off].vehicle = NULL;
-	}
-	else
-		if ( data.can_transport == TRANS_MEN )
-		{
-			v = Client->Map->GO[off].vehicle;
-			Client->Map->GO[off].vehicle = NULL;
-		}
+	if ( data.can_transport == TRANS_MEN && !Vehicle->data.is_human ) return false;
 
-	if ( !v )
-		return;
+	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->rotating || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
-	if ( v->ClientMoveJob )
-	{
-		if ( v->moving || v->rotating || v->Attacking || v->MoveJobActive )
-			return;
+	if ( Vehicle->owner == owner && !Vehicle->IsBuilding && !Vehicle->IsClearing ) return true;
 
-		if ( v->ClientMoveJob )
-		{
-			v->ClientMoveJob->bFinished = true;
-			v->ClientMoveJob = NULL;
-			v->MoveJobActive = false;
-		}
-	}
+	return false;
+}
 
-	v->Loaded = true;
+void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
+{
+	Map->deleteVehicle ( Vehicle );
 
-	StoredVehicles->Add ( v );
+	Vehicle->Loaded = true;
+
+	StoredVehicles.Add ( Vehicle );
 	data.cargo++;
-
-	if (  Client->SelectedVehicle &&  Client->SelectedVehicle == this )
-	{
-		ShowDetails();
-	}
-
-	if ( v ==  Client->SelectedVehicle )
-	{
-		v->Deselct();
-		 Client->SelectedVehicle = NULL;
-	}
 
 	owner->DoScan();
 }
 
-void cVehicle::ShowStorage ( void )
+void cVehicle::showStorage ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, to;
 	SDL_Surface *sf;
@@ -4030,7 +3971,7 @@ void cVehicle::ShowStorage ( void )
 	btn_done.Draw();
 	// Down:
 
-	if ( (int)StoredVehicles->Size() > to )
+	if ( (int)StoredVehicles.Size() > to )
 	{
 		DownEnabled = true;
 		scr.x = 103;
@@ -4110,7 +4051,7 @@ void cVehicle::ShowStorage ( void )
 
 				offset += to;
 
-				if ( (int)StoredVehicles->Size() <= offset + to )
+				if ( (int)StoredVehicles.Size() <= offset + to )
 					DownEnabled = false;
 
 				DrawStored ( offset );
@@ -4180,7 +4121,7 @@ void cVehicle::ShowStorage ( void )
 
 				UpPressed = true;
 
-				if ( (int)StoredVehicles->Size() > to )
+				if ( (int)StoredVehicles.Size() > to )
 				{
 					DownEnabled = true;
 					scr.x = 103;
@@ -4317,7 +4258,7 @@ void cVehicle::ShowStorage ( void )
 
 		for ( i = 0;i < to;i++ )
 		{
-			if ( (int)StoredVehicles->Size() <= i + offset )
+			if ( (int)StoredVehicles.Size() <= i + offset )
 				break;
 
 			switch ( i )
@@ -4359,7 +4300,6 @@ void cVehicle::ShowStorage ( void )
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				ActivatingVehicle = true;
 				VehicleToActivate = i + offset;
 				drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, dest.x, dest.y, buffer );
 				SHOW_SCREEN
@@ -4372,8 +4312,10 @@ void cVehicle::ShowStorage ( void )
 					b = mouse->GetMouseButton();
 				}
 
-				Client->OverObject = NULL;
+				if ( data.can_drive == DRIVE_AIR ) sendWantActivate ( iID, true, StoredVehicles[VehicleToActivate]->iID, PosX, PosY );
+				else ActivatingVehicle = true;
 
+				Client->OverObject = NULL;
 				mouse->MoveCallback = true;
 				return;
 			}
@@ -4405,13 +4347,13 @@ void cVehicle::DrawStored ( int off )
 
 	for ( i = 0;i < to;i++ )
 	{
-		if ( i + off >= (int)StoredVehicles->Size() )
+		if ( i + off >= (int)StoredVehicles.Size() )
 		{
 			v = NULL;
 		}
 		else
 		{
-			v = (*StoredVehicles)[i + off];
+			v = StoredVehicles[i + off];
 		}
 
 		// Das Bild malen:
@@ -4542,41 +4484,28 @@ void cVehicle::DrawStored ( int off )
 }
 
 // Läd ein Vehicle aus:
-void cVehicle::ExitVehicleTo ( int nr, int off, bool engine_call )
+void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
-	cVehicle *ptr;
-
-	if ( !StoredVehicles || (int)StoredVehicles->Size() <= nr )
-		return;
-
-	ptr = (*StoredVehicles)[nr];
-
-	StoredVehicles->Delete ( nr );
+	for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
+	{
+		if ( StoredVehicles[i] == Vehicle )
+		{
+			StoredVehicles.Delete ( i );
+			break;
+		}
+		if ( i == StoredVehicles.Size()-1 ) return;
+	}
 
 	data.cargo--;
 
 	ActivatingVehicle = false;
 
-	if ( this ==  Client->SelectedVehicle )
-	{
-		ShowDetails();
-	}
+	Map->addVehicle ( Vehicle, offset );
 
-	if ( ptr->data.can_drive == DRIVE_AIR )
-	{
-		Client->Map->GO[off].plane = ptr;
-	}
-	else
-	{
-		Client->Map->GO[off].vehicle = ptr;
-	}
-
-	ptr->PosX = off % Client->Map->size;
-
-	ptr->PosY = off / Client->Map->size;
-	ptr->Loaded = false;
-	ptr->data.shots = 0;
-	ptr->InSentryRange();
+	Vehicle->PosX = offset % Map->size;
+	Vehicle->PosY = offset / Map->size;
+	Vehicle->Loaded = false;
+	//Vehicle->data.shots = 0;
 
 	owner->DoScan();
 }
@@ -4909,13 +4838,10 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 
 void cVehicle::DeleteStored ( void )
 {
-	if ( !StoredVehicles )
-		return;
-
-	while ( StoredVehicles->Size() )
+	while ( StoredVehicles.Size() )
 	{
 		cVehicle *v;
-		v = (*StoredVehicles)[0];
+		v = StoredVehicles[0];
 
 		if ( v->prev )
 		{
@@ -4937,12 +4863,8 @@ void cVehicle::DeleteStored ( void )
 		v->DeleteStored();
 
 		delete v;
-		StoredVehicles->Delete ( 0 );
+		StoredVehicles.Delete ( 0 );
 	}
-
-	delete StoredVehicles;
-
-	StoredVehicles = NULL;
 }
 
 bool cVehicle::isDetectedByPlayer( cPlayer* player )

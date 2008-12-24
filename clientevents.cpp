@@ -238,3 +238,23 @@ void sendAbortWaiting ()
 	cNetMessage* message = new cNetMessage( GAME_EV_ABORT_WAITING );
 	Client->sendNetMessage( message );
 }
+
+void sendWantLoad ( int unitid, bool vehicle, int loadedunitid )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_LOAD );
+	message->pushInt16 ( unitid );
+	message->pushBool ( vehicle );
+	message->pushInt16 ( loadedunitid );
+	Client->sendNetMessage( message );
+}
+
+void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int y )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_EXIT );
+	message->pushInt16 ( y );
+	message->pushInt16 ( x );
+	message->pushInt16 ( unitid );
+	message->pushBool ( vehicle );
+	message->pushInt16 ( activatunitid );
+	Client->sendNetMessage( message );
+}

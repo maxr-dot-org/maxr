@@ -259,7 +259,7 @@ private:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false );
+	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false, bool bAddToMap = true );
 	void addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit = false );
 	/**
 	* returns the player with the given number

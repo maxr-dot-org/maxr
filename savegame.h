@@ -100,12 +100,12 @@ private:
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit ( cVehicle *Vehicle, int unitnum );
+	TiXmlElement *writeUnit ( cVehicle *Vehicle, int *unitnum );
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit ( cBuilding *Building, int unitnum );
+	void writeUnit ( cBuilding *Building, int *unitnum );
 	/**
 	* saves the information of the rubble
 	*@author alzi alias DoctorDeath

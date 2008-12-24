@@ -918,26 +918,36 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	if ( vehicle->data.can_drive == DRIVE_AIR )
 	{
 		cList<cVehicle*>& planes = fields[offset].planes;
+		if ( planes.Size() <= 0 ) return;
 		for ( unsigned int i = 0; i < planes.Size(); i++ )
 		{
-			if ( planes[i] == vehicle ) planes.Delete(i);
+			if ( planes[i] == vehicle )
+			{
+				planes.Delete(i);
+				break;
+			}
+			if ( i == planes.Size()-1 ) return;
 		}
 	}
 	else
 	{
-		//only one vehicle per field allowed
-		fields[offset].vehicles.Delete(0);
-
-		//check, whether the vehicle is centered on 4 map fields
-		if ( vehicle->data.is_big )
+		if ( fields[offset].vehicles.Size() > 0 && fields[offset].vehicles[0] == vehicle )
 		{
-			offset++;
+			//only one vehicle per field allowed
 			fields[offset].vehicles.Delete(0);
-			offset += size;
-			fields[offset].vehicles.Delete(0);
-			offset--;
-			fields[offset].vehicles.Delete(0);
+
+			//check, whether the vehicle is centered on 4 map fields
+			if ( vehicle->data.is_big )
+			{
+				offset++;
+				fields[offset].vehicles.Delete(0);
+				offset += size;
+				fields[offset].vehicles.Delete(0);
+				offset--;
+				fields[offset].vehicles.Delete(0);
+			}
 		}
+		else return;
 	}
 
 	//backward compatibility

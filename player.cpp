@@ -113,7 +113,7 @@ cPlayer::~cPlayer ( void )
 	cVehicle *ptr=VehicleList;
 	while ( ptr )
 	{
-		if ( ptr->StoredVehicles&&!ptr->Loaded )
+		if ( ptr->StoredVehicles.Size() )
 		{
 			ptr->DeleteStored();
 		}
@@ -135,12 +135,9 @@ cPlayer::~cPlayer ( void )
 		BuildingList->bSentryStatus = false;
 
 		// Stored Vehicles are already deleted; just clear the list
-		if ( BuildingList->StoredVehicles )
+		while( BuildingList->StoredVehicles.Size() > 0 )
 		{
-			while( BuildingList->StoredVehicles->Size() > 0 )
-			{
-				BuildingList->StoredVehicles->Delete( BuildingList->StoredVehicles->Size() - 1 );
-			}
+			BuildingList->StoredVehicles.Delete( BuildingList->StoredVehicles.Size() - 1 );
 		}
 
 		delete BuildingList;
@@ -501,7 +498,7 @@ void cPlayer::DoScan ( void )
 
 		if ( vp->Disabled )
 		{
-			ScanMap[vp->PosX+vp->PosY*Client->Map->size]=1;
+			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )]=1;
 		}
 		else
 		{
@@ -527,11 +524,11 @@ void cPlayer::DoScan ( void )
 			{
 				for ( int x = vp->PosX - 1; x <= vp->PosX + 1; x++ )
 				{
-					if ( x < 0 || x >= Client->Map->size ) continue;
+					if ( x < 0 || x >= (int)sqrt ( (double)MapSize ) ) continue;
 					for ( int y = vp->PosY - 1; y <= vp->PosY + 1; y++ )
 					{
-						if ( y < 0 || y >= Client->Map->size ) continue;
-						DetectMinesMap[x + Client->Map->size*y] = 1;
+						if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) ) continue;
+						DetectMinesMap[x + (int)sqrt ( (double)MapSize )*y] = 1;
 					}
 				}
 			}
@@ -546,7 +543,7 @@ void cPlayer::DoScan ( void )
 
 		if ( bp->Disabled )
 		{
-			ScanMap[bp->PosX+bp->PosY*Client->Map->size]=1;
+			ScanMap[bp->PosX+bp->PosY*(int)sqrt ( (double)MapSize )]=1;
 		}
 		else
 		{

@@ -69,6 +69,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
 	GAME_EV_TURN,					// a message with the current turn
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
+	GAME_EV_STORE_UNIT,				// a unit has to be stored
+	GAME_EV_EXIT_UNIT,				// a unit has to be exit
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -211,6 +213,8 @@ void sendWantStopClear ( cVehicle *Vehicle );
 *@author alzi alias DoctorDeath
 */
 void sendAbortWaiting ();
+void sendWantLoad ( int unitid, bool vehicle, int loadedunitid );
+void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int y );
 
 
 #endif // clienteventsH

@@ -54,6 +54,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
 	GAME_EV_IDENTIFICATION,			// a message with the name of the player who wants to reconnect
 	GAME_EV_RECON_SUCESS,			// a client has reconnected sucsessfuly and is ready to receive his game data
+	GAME_EV_WANT_LOAD,				// a client wants to load a unit into another
+	GAME_EV_WANT_EXIT				// a client wants to exit a stored unit
 };
 
 /**
@@ -66,7 +68,7 @@ enum SERVER_EVENT_TYPES
 *@param iPlayer The player who should receive this event and get the new unit
 *@param bInit True if this is called by game initialisation
 */
-void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit );
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit, bool bAddToMap = true );
 /**
 * Sends an event to a player that a unit has to be deleted
 *@param vehicle vehicle that has to be deleted
@@ -279,5 +281,7 @@ void sendRequestIdentification ( int iSocket );
 void sendOKReconnect ( cPlayer *Player );
 void sendTurn ( int turn, cPlayer *Player );
 void sendHudSettings ( cHud *Hud, cPlayer *Player );
+void sendStoreVehicle ( int unitid, bool vehicle, int storedunitid, int player );
+void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, int y, int player );
 
 #endif // servereventsH

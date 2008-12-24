@@ -151,7 +151,7 @@ public:
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
 	bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
-	cList<cVehicle*> *StoredVehicles; // Liste mit geladenen Vehicles
+	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
@@ -222,12 +222,13 @@ public:
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool CanLoad(int off);
-	void StoreVehicle(int off);
+	bool canLoad( int offset, cMap *Map );
+	bool canLoad( cVehicle *Vehicle );
+	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void ShowStorage(void);
 	void DrawStored(int off);
 	void ShowStorageMetalBar(void);
-	void ExitVehicleTo(int nr,int off,bool engine_call);
+	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled,bool *AlleReparierenEnabled,bool *AlleUpgradenEnabled);
 	void ShowResearch(void);
 	void ShowResearchSchieber(void);

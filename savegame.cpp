@@ -50,14 +50,17 @@ int cSavegame::save( string saveName )
 		cVehicle *Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
-			writeUnit ( Vehicle, unitnum );
-			unitnum++;
+			if ( !Vehicle->Loaded )
+			{
+				writeUnit ( Vehicle, &unitnum );
+				unitnum++;
+			}
 			Vehicle = Vehicle->next;
 		}
 		cBuilding *Building = Player->BuildingList;
 		while ( Building )
 		{
-			writeUnit ( Building, unitnum );
+			writeUnit ( Building, &unitnum );
 			unitnum++;
 			Building = Building->next;
 		}
@@ -397,7 +400,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "Position" )->Attribute ( "x", &x );
 	unitNode->FirstChildElement( "Position" )->Attribute ( "y", &y );
-	cVehicle *vehicle = Server->addUnit ( x, y, &UnitsData.vehicle[number], owner );
+	cVehicle *vehicle = Server->addUnit ( x, y, &UnitsData.vehicle[number], owner, false, unitNode->FirstChildElement( "Stored_In" )==NULL );
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
@@ -448,6 +451,31 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		element->Attribute ( "desty", &MoveJob->destY );
 
 		MoveJobsLoad.Add ( MoveJob );
+	}
+
+	// since we write all stored vehicles imediatly after the storing unit we can be sure that this one has been loaded yet
+	if ( element = unitNode->FirstChildElement( "Stored_In" ) )
+	{
+		int storedInID;
+		int isVehicle;
+		element->Attribute ( "id", &storedInID );
+		element->Attribute ( "is_vehicle", &isVehicle );
+		if ( isVehicle )
+		{
+			cVehicle *StoringVehicle = Server->getVehicleFromID ( storedInID );
+			if ( !StoringVehicle ) return;
+
+			StoringVehicle->data.cargo--;
+			StoringVehicle->storeVehicle ( vehicle, Server->Map );
+		}
+		else
+		{
+			cBuilding *StoringBuilding = Server->getBuildingFromID ( storedInID );
+			if ( !StoringBuilding ) return;
+
+			StoringBuilding->data.cargo--;
+			StoringBuilding->storeVehicle ( vehicle, Server->Map );
+		}
 	}
 }
 
@@ -942,7 +970,7 @@ void cSavegame::writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sU
 	if ( data->scan != originaldata->scan ) addAttributeElement ( upgradeNode, "Scan", "num", iToStr ( data->scan ) );
 }
 
-void cSavegame::writeUnit ( cVehicle *Vehicle, int unitnum )
+TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 {
 	// add units node if it doesn't exists
 	TiXmlElement *unitsNode;
@@ -953,7 +981,7 @@ void cSavegame::writeUnit ( cVehicle *Vehicle, int unitnum )
 	}
 
 	// add the unit node
-	TiXmlElement *unitNode = addMainElement ( unitsNode, "Unit_" + iToStr( unitnum ) );
+	TiXmlElement *unitNode = addMainElement ( unitsNode, "Unit_" + iToStr( *unitnum ) );
 
 	// write main information
 	addAttributeElement ( unitNode, "Type", "string", Vehicle->data.ID.getText() );
@@ -991,9 +1019,18 @@ void cSavegame::writeUnit ( cVehicle *Vehicle, int unitnum )
 	}
 	if ( Vehicle->IsClearing ) addAttributeElement ( unitNode, "Clearing", "turns", iToStr ( Vehicle->ClearingRounds ).c_str(), "savedpos", iToStr ( Vehicle->BuildBigSavedPos ).c_str() );
 	if ( Vehicle->ServerMoveJob ) addAttributeElement ( unitNode, "Movejob", "destx", iToStr ( Vehicle->ServerMoveJob->DestX ).c_str(), "desty", iToStr ( Vehicle->ServerMoveJob->DestY ).c_str()  );
+
+	// write all stored vehicles
+	for ( unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++ )
+	{
+		(*unitnum)++;
+		TiXmlElement *storedNode = writeUnit ( Vehicle->StoredVehicles[i], unitnum );
+		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Vehicle->iID ), "is_vehicle", "1" );
+	}
+	return unitNode;
 }
 
-void cSavegame::writeUnit ( cBuilding *Building, int unitnum )
+void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 {
 	// add units node if it doesn't exists
 	TiXmlElement *unitsNode;
@@ -1004,7 +1041,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int unitnum )
 	}
 
 	// add the unit node
-	TiXmlElement *unitNode = addMainElement ( unitsNode, "Unit_" + iToStr( unitnum ) );
+	TiXmlElement *unitNode = addMainElement ( unitsNode, "Unit_" + iToStr( *unitnum ) );
 
 	// write main information
 	addAttributeElement ( unitNode, "Type", "string", Building->data.ID.getText() );
@@ -1038,6 +1075,14 @@ void cSavegame::writeUnit ( cBuilding *Building, int unitnum )
 		{
 			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type", iToStr ((*Building->BuildList)[i]->typ->nr ), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
 		}
+	}
+
+	// write all stored vehicles
+	for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+	{
+		(*unitnum)++;
+		TiXmlElement *storedNode = writeUnit ( Building->StoredVehicles[i], unitnum );
+		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Building->iID ), "is_vehicle", "0" );
 	}
 }
 
