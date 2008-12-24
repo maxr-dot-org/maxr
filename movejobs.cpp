@@ -349,7 +349,7 @@ cServerMoveJob::~cServerMoveJob()
 	while ( Waypoints )
 	{
 		NextWaypoint = Waypoints->next;
-		free ( Waypoints );
+		delete ( Waypoints );
 		Waypoints = NextWaypoint;
 	}
 	Waypoints = NULL;
@@ -557,7 +557,7 @@ void cServerMoveJob::moveVehicle()
 		cLog::write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		sWaypoint *Waypoint;
 		Waypoint = Waypoints->next;
-		free ( Waypoints );
+		delete ( Waypoints );
 		Waypoints = Waypoint;
 
 		if ( Vehicle->data.can_drive == DRIVE_AIR )
