@@ -779,8 +779,6 @@ void cSavegame::convertStringToData ( string str, int size, sResources *resource
 {
 	for ( int i = 0; i < size; i++ )
 	{
-		if ( i == 79 )
-			int haha = 0;
 		resources[i].typ = getByteValue ( str.substr( i*4, 2 ).c_str() );
 		resources[i].value = getByteValue ( str.substr( i*4+2, 2 ).c_str() );
 	}

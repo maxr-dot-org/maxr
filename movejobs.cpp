@@ -225,7 +225,6 @@ void cPathCalculator::insertToHeap( sPathNode *Node, bool exists )
 	// resort the nodes
 	while ( i > 1 )
 	{
-		int j = i/2;
 		if ( Node->costF < nodesHeap[i/2]->costF )
 		{
 			sPathNode *TempNode = nodesHeap[i/2];

@@ -5052,7 +5052,6 @@ void cClient::destroyUnit( cVehicle* vehicle )
 void cClient::destroyUnit(cBuilding *building)
 {
 	int offset = building->PosX + building->PosY * Map->size;
-	int value = 0;
 
 	//delete all buildings on the field
 	//and if top is big, although all other buildings under the top building
