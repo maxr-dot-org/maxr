@@ -981,7 +981,7 @@ int cVehicle::refreshData ()
 					UnitsData.building[BuildingTyp].data.is_connector)
 			{
 				if ( !BuildPath || data.cargo < BuildCostsStart || ( PosX == BandX && PosY == BandY ) ) IsBuilding = false;
-				Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
+				if ( !BuildPath || !IsBuilding ) Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
 			}
 		}
 

@@ -4313,7 +4313,8 @@ void cClient::trace ()
 	if ( GO->vehicle ) { traceVehicle ( GO->vehicle, &iY, iX ); iY += 20; }
 	if ( GO->plane ) { traceVehicle ( GO->plane, &iY, iX ); iY += 20; }
 	if ( GO->top ) { traceBuilding ( GO->top, &iY, iX ); iY += 20; }
-	if ( GO->base ) traceBuilding ( GO->base, &iY, iX );
+	if ( GO->base ) { traceBuilding ( GO->base, &iY, iX ); iY += 20; }
+	if ( GO->subbase ) traceBuilding ( GO->subbase, &iY, iX );
 }
 
 void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
