@@ -1367,7 +1367,7 @@ void cClient::drawMap( bool bPure )
 void cClient::drawMiniMap()
 {
 	//TODO: implement zoom
-	unsigned int *minimap, color;
+	unsigned int *minimap;
 	int terrainx, terrainy;
 
 	SDL_LockSurface ( GraphicsData.gfx_hud );
@@ -1379,21 +1379,35 @@ void cClient::drawMiniMap()
 		for ( int mapy = 0; mapy < 112; mapy++ )
 		{
 			terrainy = (int)(( Map->size/112.0 )*mapy);
-			color = 0;
 
-			cBuildingIterator *building;
-			cVehicleIterator *vehicle;
-			if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( building = &(*Map)[terrainx+terrainy*Map->size].getBuildings() )->size() > 0 )
+			unsigned int color = 0;
+			if (ActivePlayer->ScanMap[terrainx + terrainy * Map->size])
 			{
-				if ( (*building)->owner && ( !Hud.TNT || (*building)->data.can_attack ) ) color = * ( unsigned int* ) (*building)->owner->color->pixels;
-			}
-			else if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( vehicle = &(*Map)[terrainx+terrainy*Map->size].getVehicles() )->size() > 0 )
-			{
-				if ( !Hud.TNT || (*vehicle)->data.can_attack ) color = * ( unsigned int* ) (*vehicle)->owner->color->pixels;
-			}
-			else if ( ActivePlayer->ScanMap[terrainx+terrainy*Map->size] && ( vehicle = &(*Map)[terrainx+terrainy*Map->size].getPlanes() )->size() > 0 )
-			{
-				if ( !Hud.TNT || (*vehicle)->data.can_attack ) color = * ( unsigned int* ) (*vehicle)->owner->color->pixels;
+				cMapField&               m = (*Map)[terrainx + terrainy * Map->size];
+				cBuildingIterator const& b = m.getBuildings();
+				if (b.size() > 0)
+				{
+					if (b->owner && (!Hud.TNT || b->data.can_attack))
+						color = *(unsigned int*)b->owner->color->pixels;
+				}
+				else
+				{
+					cVehicleIterator const& v = m.getVehicles();
+					if (v.size() > 0)
+					{
+						if (!Hud.TNT || v->data.can_attack)
+							color = *(unsigned int*)v->owner->color->pixels;
+					}
+					else
+					{
+						cVehicleIterator const& p = m.getPlanes();
+						if (p.size() > 0)
+						{
+							if (!Hud.TNT || p->data.can_attack)
+								color = *(unsigned int*)p->owner->color->pixels;
+						}
+					}
+				}
 			}
 
 			if ( color == 0 )

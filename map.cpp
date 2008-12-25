@@ -55,7 +55,7 @@ cVehicleIterator::cVehicleIterator(cList<cVehicle*>* list)
 	}
 }
 
-unsigned int cVehicleIterator::size()
+unsigned int cVehicleIterator::size() const
 {
 	return (unsigned int)vehicleList->Size();
 }
@@ -145,7 +145,7 @@ cBuildingIterator::cBuildingIterator(cList<cBuilding*>* list)
 	}
 }
 
-unsigned int cBuildingIterator::size()
+unsigned int cBuildingIterator::size() const
 {
 	return (unsigned int)buildingList->Size();
 }

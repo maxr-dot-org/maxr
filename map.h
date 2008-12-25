@@ -55,7 +55,7 @@ private:
 public:
 	cVehicleIterator(cList<cVehicle*>* list);
 	/** returns the number of vehicles in the List, the Iterator points to. */
-	unsigned int size();
+	unsigned int size() const;
 	cVehicle& operator[](unsigned const int i) const;
 	cVehicle* operator->() const;
 	cVehicle& operator*() const;
@@ -77,7 +77,7 @@ private:
 public:
 	cBuildingIterator(cList<cBuilding*>* list);
 	/** returns the number of buildings in the List, the Iterator points to. */
-	unsigned int size();
+	unsigned int size() const;
 	cVehicle& operator[](unsigned const int i) const;
 	cBuilding* operator->() const;
 	cBuilding& operator*() const;
