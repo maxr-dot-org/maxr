@@ -348,7 +348,7 @@ cServerMoveJob::~cServerMoveJob()
 	while ( Waypoints )
 	{
 		NextWaypoint = Waypoints->next;
-		delete ( Waypoints );
+		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
 	Waypoints = NULL;
@@ -364,7 +364,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	cLog::write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 	
 	// Add the waypoints
-	sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+	sWaypoint *Waypoint = new sWaypoint;
 	Waypoints = Waypoint;
 	while ( iCount < iReceivedCount )
 	{
@@ -378,7 +378,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 		if ( iCount < iReceivedCount )
 		{
-			Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+			Waypoint->next = new sWaypoint;
 			Waypoint = Waypoint->next;
 		}
 	}
@@ -556,7 +556,7 @@ void cServerMoveJob::moveVehicle()
 		cLog::write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		sWaypoint *Waypoint;
 		Waypoint = Waypoints->next;
-		delete ( Waypoints );
+		delete Waypoints;
 		Waypoints = Waypoint;
 
 		if ( Vehicle->data.can_drive == DRIVE_AIR )
@@ -703,7 +703,7 @@ cClientMoveJob::~cClientMoveJob()
 	while ( Waypoints )
 	{
 		NextWaypoint = Waypoints->next;
-		free ( Waypoints );
+		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
 	Waypoints = NULL;
@@ -719,7 +719,7 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 	cLog::write(" Client: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// Add the waypoints
-	sWaypoint *Waypoint = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+	sWaypoint *Waypoint = new sWaypoint;
 	Waypoints = Waypoint;
 	while ( iCount < iReceivedCount )
 	{
@@ -733,7 +733,7 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 
 		if ( iCount < iReceivedCount )
 		{
-			Waypoint->next = ( sWaypoint* ) malloc ( sizeof ( sWaypoint ) );
+			Waypoint->next = new sWaypoint;
 			Waypoint = Waypoint->next;
 		}
 	}
@@ -820,7 +820,7 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 						if ( Waypoint->next->X != iNextDestX && Waypoint->next->Y != iNextDestY )
 						{
 							Waypoints = Waypoint->next;
-							free ( Waypoint );
+							delete Waypoint;
 							Waypoint = Waypoints;
 						}
 						else
@@ -1021,7 +1021,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 
 	sWaypoint *Waypoint;
 	Waypoint = Waypoints->next;
-	free ( Waypoints );
+	delete Waypoints;
 	Waypoints = Waypoint;
 
 	Vehicle->moving = false;
