@@ -422,7 +422,24 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	if ( element = unitNode->FirstChildElement( "Building" ) )
 	{
 		vehicle->IsBuilding = true;
-		element->Attribute ( "type", &vehicle->BuildingTyp );
+		if ( element->Attribute ( "type_id" ) != NULL )
+		{
+			sID BuildID;
+			BuildID.generate ( element->Attribute ( "type_id" ) );
+			for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+			{
+				if ( BuildID == UnitsData.building[i].data.ID )
+				{
+					vehicle->BuildingTyp = i;
+					break;
+				}
+			}
+		}
+		// be downward compatible and looke for 'type' too 
+		else if ( element->Attribute ( "type" ) != NULL )
+		{
+			element->Attribute ( "type", &vehicle->BuildingTyp );
+		}
 		element->Attribute ( "turns", &vehicle->BuildRounds );
 		element->Attribute ( "costs", &vehicle->BuildCosts );
 		element->Attribute ( "savedpos", &vehicle->BuildBigSavedPos );
@@ -562,9 +579,26 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 		while ( element )
 		{
 			sBuildList *listitem = new sBuildList;
-			int typenr;
-			element->Attribute ( "type", &typenr );
-			listitem->typ = &UnitsData.vehicle[typenr];
+			if ( element->Attribute ( "type_id" ) != NULL )
+			{
+				sID BuildID;
+				BuildID.generate ( element->Attribute ( "type_id" ) );
+				for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+				{
+					if ( BuildID == UnitsData.vehicle[i].data.ID )
+					{
+						listitem->typ = &UnitsData.vehicle[i];
+						break;
+					}
+				}
+			}
+			// be downward compatible and looke for 'type' too 
+			else if ( element->Attribute ( "type" ) != NULL )
+			{
+				int typenr;
+				element->Attribute ( "type", &typenr );
+				listitem->typ = &UnitsData.vehicle[typenr];
+			}
 			element->Attribute ( "metall_remaining", &listitem->metall_remaining );
 			building->BuildList->Add ( listitem );
 
@@ -1001,7 +1035,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->IsBuilding )
 	{
 		TiXmlElement *element = addMainElement ( unitNode, "Building" );
-		element->SetAttribute ( "type", iToStr ( Vehicle->BuildingTyp ).c_str() );
+		element->SetAttribute ( "type_id", UnitsData.building[Vehicle->BuildingTyp].data.ID.getText().c_str() );
 		element->SetAttribute ( "turns", iToStr ( Vehicle->BuildRounds ).c_str() );
 		element->SetAttribute ( "costs", iToStr ( Vehicle->BuildCosts ).c_str() );
 		if ( Vehicle->data.is_big ) element->SetAttribute ( "savedpos", iToStr ( Vehicle->BuildBigSavedPos ).c_str() );
@@ -1071,7 +1105,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 		TiXmlElement *buildlistNode = addMainElement ( buildNode, "BuildList" );
 		for ( unsigned int i = 0; i < Building->BuildList->Size(); i++ )
 		{
-			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type", iToStr ((*Building->BuildList)[i]->typ->nr ), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
+			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type_id", (*Building->BuildList)[i]->typ->data.ID.getText(), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
 		}
 	}
 
