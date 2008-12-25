@@ -524,7 +524,6 @@ void RunSPMenu ( void )
 				Player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 				cList<cPlayer*> ClientPlayerList;
 				ClientPlayerList.Add ( Player );
-				ClientPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 				// init client and his player
 				Client = new cClient(&Map, &ClientPlayerList);
@@ -541,9 +540,7 @@ void RunSPMenu ( void )
 
 				// playerlist for server
 				cList<cPlayer*> ServerPlayerList;
-				//cPlayer p = *Player;
 				ServerPlayerList.Add ( new cPlayer ( (*Player) ) ); // Socketnumber MAX_CLIENTS for lokal client
-				ServerPlayerList.Add ( new cPlayer ( "Player 2", OtherData.colors[cl_green], 2 ) );
 
 				// init the players of playerlist
 				for ( unsigned int i = 0; i < ServerPlayerList.Size(); i++ )
