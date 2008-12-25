@@ -3282,10 +3282,23 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->damage = Data->Weapons[0].iTarget_Submarine_Damage;
 	else
 		Data->damage = 0;
-	if(Data->iCapacity_Metal_Max + Data->iCapacity_Oil_Max + Data->iCapacity_Gold_Max + Data->iCapacity_Units_Air_Max + Data->iCapacity_Units_Sea_Max + Data->iCapacity_Units_Ground_Max + Data->iCapacity_Units_Infantry_Max > 0)
-		Data->max_cargo = Data->iCapacity_Metal_Max + Data->iCapacity_Oil_Max + Data->iCapacity_Gold_Max + Data->iCapacity_Units_Air_Max + Data->iCapacity_Units_Sea_Max + Data->iCapacity_Units_Ground_Max + Data->iCapacity_Units_Infantry_Max;
-	else
-		Data->max_cargo = 0;
+
+	if ( Data->iCapacity_Metal_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Metal_Max;
+	else if ( Data->iCapacity_Oil_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Oil_Max;
+	else if ( Data->iCapacity_Gold_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Gold_Max;
+	else if ( Data->iCapacity_Units_Air_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Units_Air_Max;
+	else if ( Data->iCapacity_Units_Sea_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Units_Sea_Max;
+	else if ( Data->iCapacity_Units_Ground_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Units_Ground_Max;
+	else if ( Data->iCapacity_Units_Infantry_Max > 0 )
+		Data->max_cargo = Data->iCapacity_Units_Infantry_Max;
+	else Data->max_cargo = 0;
+
 	Data->cargo = 0;
 	Data->max_ammo = Data->Weapons[0].iAmmo_Quantity_Max;
 	Data->ammo = Data->Weapons[0].iAmmo_Quantity;
