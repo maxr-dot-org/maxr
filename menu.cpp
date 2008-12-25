@@ -5517,6 +5517,15 @@ int ShowDateiMenu ( bool bSave )
 					{
 						delete files;
 						files = getFilesOfDirectory ( SettingsData.sSavesPath );
+						for ( unsigned int i = 0; i < savefiles.Size(); i++ )
+						{
+							if ( savefiles[i]->number == SaveLoadNumber )
+							{
+								delete savefiles[i];
+								savefiles.Delete ( i );
+								break;
+							}
+						}
 						loadFiles ( files, savefiles, offset );
 						selected = -1;
 					}
