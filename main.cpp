@@ -721,6 +721,7 @@ sUnitData *sID::getUnitData( cPlayer *Owner )
 	default:
 		return NULL;
 	}
+	return NULL;
 }
 
 sVehicle *sID::getVehicle()
