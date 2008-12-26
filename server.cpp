@@ -1076,7 +1076,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				// if in one turn nothing has been done the client values have to be wrong
-				if ( bDone == false ) break;
+				if (!bDone) break;
 				// bDone must stay true when the server has reached the client values
 				else if ( iTempSBMetalProd != iMetalProd || iTempSBOilProd != iOilProd || iTempSBGoldProd != iGoldProd ) bDone = false;
 			}

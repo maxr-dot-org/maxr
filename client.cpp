@@ -2909,7 +2909,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				if ( iNextPlayerNum != ActivePlayer->Nr )
 				{
-					if ( bWaitForOthers == true )
+					if (bWaitForOthers)
 					{
 						drawMap();
 						SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );

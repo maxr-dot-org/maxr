@@ -2081,10 +2081,7 @@ void cVehicle::DrawMenu ( void )
 	// Sentry:
 	if ( bSentryStatus || data.can_attack )
 	{
-		if ( SelMenu == nr || bSentryStatus == true )
-			bSelection = true;
-		else
-			bSelection = false;
+		bSelection = SelMenu == nr || bSentryStatus;
 
 		if ( ExeNr == nr )
 		{

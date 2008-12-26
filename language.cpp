@@ -93,7 +93,7 @@ std::string cLanguage::i18n(std::string szInputText)
 
 	if( impTranslation == m_mpLanguage.end() )
 	{
-		if( m_bErrorMsgTranslationLoaded == true )
+		if (m_bErrorMsgTranslationLoaded)
 		{
 			return i18n( "Text~Error_Messages~ERROR_Missing_Translation" , szInputText );
 		}else
@@ -315,7 +315,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 			szErrorMsg += strResult + "< is missing";
 		}else
 		{
-			if( m_bErrorMsgTranslationLoaded == true )
+			if (m_bErrorMsgTranslationLoaded)
 			{
 				m_mpLanguage[szXmlNodePath] = i18n( "Text~Error_Messages~ERROR_Missing_Translation" ) + szXmlNodePath;
 			}else
@@ -326,7 +326,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		}
 	}else
 	{
-		if( m_bErrorMsgTranslationLoaded == true )
+		if (m_bErrorMsgTranslationLoaded)
 		{
 			m_mpLanguage[szXmlNodePath] = i18n( "Text~Error_Messages~ERROR_Missing_Translation" , szXmlNodePath);
 		}else

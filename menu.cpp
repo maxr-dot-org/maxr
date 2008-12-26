@@ -4981,7 +4981,7 @@ int cMultiPlayerMenu::testAllReady()
 {
 	for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 	{
-		if ( ReadyList[i] != true ) return i;
+		if (!ReadyList[i]) return i;
 	}
 	return -1;
 }
@@ -5214,7 +5214,7 @@ void cMultiPlayerMenu::displayPlayerList()
 		SDL_BlitSurface(PlayerList[i]->color, &scr, buffer, &dest);
 		font->showText(dest.x + 16, dest.y, PlayerList[i]->name);
 
-		if ( ReadyList[i] == false ) scr.x = 0; // red if not ready
+		if (!ReadyList[i]) scr.x = 0; // red if not ready
 		else scr.x = 10; // green if ready
 
 		dest.x += 135;

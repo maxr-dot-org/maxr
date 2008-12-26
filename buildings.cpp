@@ -6632,7 +6632,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 
 		if ( selected == i )
 		{
-			if ( showInfo == true )
+			if (showInfo)
 			{
 				//doppelten Rahmen drum malen
 				SDL_Rect tmp;
@@ -6873,7 +6873,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 
 		if ( selected == i )
 		{
-			if ( showInfo == true )
+			if (showInfo)
 			{
 				//dopelten Rahmen drum malen
 				SDL_Rect tmp, tmp2;
@@ -7348,10 +7348,7 @@ void cBuilding::DrawMenu ( void )
 	// Sentry status:
 	if ( bSentryStatus || data.can_attack )
 	{
-		if ( SelMenu == nr || bSentryStatus == true )
-			bSelection = true;
-		else
-			bSelection = false;
+		bSelection = SelMenu == nr || bSentryStatus;
 
 		if ( ExeNr == nr )
 		{
