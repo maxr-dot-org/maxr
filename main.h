@@ -134,13 +134,20 @@ extern int ResearchInits[8];
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+struct sUnitData;
+
 // Struktur für die IDs
 struct sID
 {
+	sID () : iFirstPart(0), iSecondPart(0) {};
+
 	int iFirstPart;
 	int iSecondPart;
 	string getText();
 	void generate( string text );
+	sUnitData *getUnitData( cPlayer *Owner = NULL );
+	sVehicle *getVehicle();
+	sBuilding *getBuilding();
 
 	bool operator==(sID &ID) const;
 };

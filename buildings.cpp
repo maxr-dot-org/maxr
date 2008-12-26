@@ -6035,7 +6035,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 
-		sBuildStruct* const n = new sBuildStruct(sf, (int)i);
+		sBuildStruct* const n = new sBuildStruct(sf, UnitsData.vehicle[i].data.ID);
 		images.Add( n );
 	}
 
@@ -6056,9 +6056,9 @@ void cBuilding::ShowBuildMenu ( void )
 			sBuildStruct *bs;
 			bs = images[k];
 
-			if ( UnitsData.vehicle[bs->id].nr == ptr->typ->nr )
+			if ( bs->ID.getVehicle()->nr == ptr->typ->nr )
 			{
-				sBuildStruct* const n = new sBuildStruct(images[k]->sf, images[k]->id, ptr->metall_remaining);
+				sBuildStruct* const n = new sBuildStruct(images[k]->sf, images[k]->ID, ptr->metall_remaining);
 				to_build.Add ( n );
 
 				break;
@@ -6306,7 +6306,7 @@ void cBuilding::ShowBuildMenu ( void )
 		if (btn_build.CheckClick(x, y, down, up))
 		{
 			// Vehicle in die Bauliste aufnehmen:
-			sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
+			sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->ID);
 			to_build.Add ( n );
 
 			if ((int)to_build.Size() > build_offset + 5)
@@ -6487,7 +6487,7 @@ void cBuilding::ShowBuildMenu ( void )
 				if ( ( nr == selected ) && showDetailsBuildlist )
 				{
 					//insert selected Vehicle in to_build list
-					sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->id);
+					sBuildStruct* const n = new sBuildStruct(images[selected]->sf, images[selected]->ID);
 					to_build.Add ( n );
 
 					if ((int)to_build.Size() > build_offset + 5)
@@ -6685,9 +6685,9 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 				// Das große Bild neu malen:
 				tmp.x = MENU_OFFSET_X + 11;
 				tmp.y = MENU_OFFSET_Y + 13;
-				tmp.w = UnitsData.vehicle[ptr->id].info->w;
-				tmp.h = UnitsData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp );
+				tmp.w = ptr->ID.getVehicle()->info->w;
+				tmp.h = ptr->ID.getVehicle()->info->h;
+				SDL_BlitSurface ( ptr->ID.getVehicle()->info, NULL, buffer, &tmp );
 
 
 				// Ggf die Beschreibung ausgeben:
@@ -6698,7 +6698,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 					tmp.y += 10;
 					tmp.w -= 20;
 					tmp.h -= 20;
-					font->showTextAsBlock ( tmp, UnitsData.vehicle[ptr->id].text );
+					font->showTextAsBlock ( tmp, ptr->ID.getVehicle()->text );
 
 				}
 
@@ -6712,7 +6712,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
+					cVehicle tv(ptr->ID.getVehicle(), Client->ActivePlayer);
 					tv.ShowBigDetails();
 				}
 
@@ -6721,7 +6721,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 
 				int iTurboBuildCosts[3];
 
-				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs );
+				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, ptr->ID.getUnitData ( owner )->iBuilt_Costs );
 
 				//sprintf ( str,"%d",iTurboBuildRounds[0]) ;
 				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildRounds[0] ) );
@@ -6781,7 +6781,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 		}
 
 		// Text ausgeben:
-		string sTmp = UnitsData.vehicle[ptr->id].data.name;
+		string sTmp = ptr->ID.getUnitData()->name;
 
 		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
@@ -6795,7 +6795,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 		}
 
 
-		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( owner->VehicleData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData ( owner )->iBuilt_Costs ), LATIN_SMALL_WHITE );
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
 	}
@@ -6926,9 +6926,9 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 				// Das große Bild neu malen:
 				tmp.x = MENU_OFFSET_X + 11;
 				tmp.y = MENU_OFFSET_Y + 13;
-				tmp.w = UnitsData.vehicle[ptr->id].info->w;
-				tmp.h = UnitsData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp );
+				tmp.w = ptr->ID.getVehicle()->info->w;
+				tmp.h = ptr->ID.getVehicle()->info->h;
+				SDL_BlitSurface ( ptr->ID.getVehicle()->info, NULL, buffer, &tmp );
 
 
 				// Ggf die Beschreibung ausgeben:
@@ -6939,7 +6939,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 					tmp.y += 10;
 					tmp.w -= 20;
 					tmp.h -= 20;
-					font->showTextAsBlock ( tmp, UnitsData.vehicle[ptr->id].text );
+					font->showTextAsBlock ( tmp, ptr->ID.getVehicle()->text );
 
 				}
 
@@ -6952,7 +6952,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 					tmp.w = tmp2.w = 260;
 					tmp.h = tmp2.h = 176;
 					SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
-					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
+					cVehicle tv(ptr->ID.getVehicle(), Client->ActivePlayer);
 					tv.ShowBigDetails();
 				}
 
@@ -6961,7 +6961,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 
 				int iTurboBuildCosts[3];
 
-				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, owner->VehicleData[ptr->id].iBuilt_Costs, ptr->iRemainingMetal );
+				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, ptr->ID.getUnitData( owner )->iBuilt_Costs, ptr->iRemainingMetal );
 
 				tmp.x = 373;
 
@@ -7036,7 +7036,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 
 		// Text ausgeben:
 
-		string sTmp = UnitsData.vehicle[ptr->id].data.name;
+		string sTmp = ptr->ID.getUnitData()->name;
 
 
 		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )

@@ -119,14 +119,15 @@ void sendMineLayerStatus( cVehicle *Vehicle )
 	Client->sendNetMessage(message);
 }
 
-void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff )
+void sendWantBuild( int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILD );
 	message->pushInt32 ( iPathOff );
 	message->pushBool ( bBuildPath );
 	message->pushInt32 ( iBuildOff );
 	message->pushInt16 ( iBuildSpeed );
-	message->pushInt16 ( iBuildingType );
+	message->pushInt16 ( BuildingTypeID.iSecondPart );
+	message->pushInt16 ( BuildingTypeID.iFirstPart );
 	message->pushInt16 ( iVehicleID );
 	Client->sendNetMessage( message );
 }
@@ -174,7 +175,8 @@ void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, b
 	message->pushBool ( bRepeat );
 	for (int i = (int)BuildList->Size()-1; i >= 0; i--)
 	{
-		message->pushInt16((*BuildList)[i]->id);
+		message->pushInt16((*BuildList)[i]->ID.iSecondPart);
+		message->pushInt16((*BuildList)[i]->ID.iFirstPart);
 	}
 	message->pushInt16((int)BuildList->Size());
 	message->pushInt16 ( Building->BuildSpeed );

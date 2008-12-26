@@ -50,7 +50,8 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	WalkFrame = 0;
 	CommandoRank = 0;
 	Disabled = 0;
-	BuildingTyp = 0;
+	BuildingTyp.iFirstPart = 0;
+	BuildingTyp.iSecondPart = 0;
 	BuildCosts = 0;
 	BuildRounds = 0;
 	BuildRoundsStart = 0;
@@ -975,13 +976,12 @@ int cVehicle::refreshData ()
 
 		if ( BuildRounds == 0 )
 		{
-			Server->addReport ( UnitsData.building[BuildingTyp].nr, false, owner->Nr );
+			Server->addReport ( BuildingTyp, false, owner->Nr );
 
-			if (UnitsData.building[BuildingTyp].data.is_base ||
-					UnitsData.building[BuildingTyp].data.is_connector)
+			if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
 			{
 				if ( !BuildPath || data.cargo < BuildCostsStart || ( PosX == BandX && PosY == BandY ) ) IsBuilding = false;
-				if ( !BuildPath || !IsBuilding ) Server->addUnit( PosX, PosY, &UnitsData.building[BuildingTyp], owner );
+				if ( !BuildPath || !IsBuilding ) Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
 			}
 		}
 
@@ -1705,7 +1705,7 @@ string cVehicle::GetStatusStr ( void )
 							string sText;
 							sText = lngPack.i18n ( "Text~Comp~Producing" );
 							sText += ": ";
-							sText += ( string ) owner->BuildingData[BuildingTyp].name + " (";
+							sText += ( string ) BuildingTyp.getUnitData ( owner )->name + " (";
 							sText += iToStr ( BuildRounds );
 							sText += ")";
 
@@ -1713,7 +1713,7 @@ string cVehicle::GetStatusStr ( void )
 							{
 								sText = lngPack.i18n ( "Text~Comp~Producing" );
 								sText += ":\n";
-								sText += ( string ) owner->BuildingData[BuildingTyp].name + " (";
+								sText += ( string ) BuildingTyp.getUnitData ( owner )->name + " (";
 								sText += iToStr ( BuildRounds );
 								sText += ")";
 							}
@@ -2800,7 +2800,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 		SDL_FreeSurface ( sf2 );
 
-		sBuildStruct* const n = new sBuildStruct(sf, (int)i);
+		sBuildStruct* const n = new sBuildStruct(sf, UnitsData.building[i].data.ID);
 		images.Add ( n );
 	}
 
@@ -2943,7 +2943,7 @@ void cVehicle::ShowBuildMenu ( void )
 
 			if ( data.can_build != BUILD_BIG )
 			{
-				sendWantBuild(iID, images[selected]->id, BuildSpeed, PosX + PosY * Client->Map->size, false, 0);
+				sendWantBuild(iID, images[selected]->ID, BuildSpeed, PosX + PosY * Client->Map->size, false, 0);
 			}
 			else
 			{
@@ -2962,7 +2962,7 @@ void cVehicle::ShowBuildMenu ( void )
 				}
 
 				// save building information temporary to have them when placing band is finished
-				BuildingTyp = images[selected]->id;
+				BuildingTyp = images[selected]->ID;
 				BuildRounds = BuildSpeed;
 
 				FindNextband();
@@ -2976,7 +2976,7 @@ void cVehicle::ShowBuildMenu ( void )
 		{
 			if ( BuildSpeed < 0 ) break;
 
-			BuildingTyp = images[selected]->id;
+			BuildingTyp = images[selected]->ID;
 			BuildRounds = BuildSpeed;
 
 			PlaceBand = true;
@@ -3163,9 +3163,9 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 			// Das Bild neu malen:
 			tmp.x = MENU_OFFSET_X + 11;
 			tmp.y = MENU_OFFSET_Y + 13;
-			tmp.w = UnitsData.building[ptr->id].info->w;
-			tmp.h = UnitsData.building[ptr->id].info->h;
-			SDL_BlitSurface ( UnitsData.building[ptr->id].info, NULL, buffer, &tmp );
+			tmp.w = ptr->ID.getBuilding()->info->w;
+			tmp.h = ptr->ID.getBuilding()->info->h;
+			SDL_BlitSurface ( ptr->ID.getBuilding()->info, NULL, buffer, &tmp );
 			// Ggf die Beschreibung ausgeben:
 
 			if ( beschreibung )
@@ -3175,7 +3175,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 				tmp.w -= 20;
 				tmp.h -= 20;
 
-				font->showTextAsBlock ( tmp, UnitsData.building[ptr->id].text );
+				font->showTextAsBlock ( tmp, ptr->ID.getBuilding()->text );
 			}
 
 			// Die Details anzeigen:
@@ -3188,11 +3188,11 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 				tmp.w = tmp2.w = 260;
 				tmp.h = tmp2.h = 176;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &tmp, buffer, &tmp2 );
-				cBuilding tb(&UnitsData.building[ptr->id], Client->ActivePlayer, NULL);
+				cBuilding tb(ptr->ID.getBuilding(), Client->ActivePlayer, NULL);
 				tb.ShowBigDetails();
 			}
 
-			calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, owner->BuildingData[ptr->id].iBuilt_Costs, owner->BuildingData[ptr->id].iBuilt_Costs_Max );
+			calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, ptr->ID.getUnitData( owner )->iBuilt_Costs, ptr->ID.getUnitData( owner )->iBuilt_Costs_Max );
 
 			if ( *buildspeed == -1 && iTurboBuildRounds[0] != 0 )
 			{
@@ -3215,8 +3215,8 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 			DrawBuildButtons ( *buildspeed );
 
 
-			font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs / data.iNeeds_Metal ) );
-			font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ) );
+			font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( ptr->ID.getUnitData( owner )->iBuilt_Costs / data.iNeeds_Metal ) );
+			font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( ptr->ID.getUnitData( owner )->iBuilt_Costs ) );
 
 			if ( iTurboBuildRounds[1] > 0 )
 			{
@@ -3233,7 +3233,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 
 		// Text ausgeben:
 
-		string sTmp = UnitsData.building[ptr->id].data.name;
+		string sTmp = ptr->ID.getUnitData()->name;
 
 		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
 		{
@@ -3247,7 +3247,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 		}
 
 
-		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( owner->BuildingData[ptr->id].iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData( owner )->iBuilt_Costs ), LATIN_SMALL_WHITE );
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
@@ -3353,30 +3353,31 @@ void cVehicle::FindNextband ( void )
 	mouse->GetKachel ( &x, &y );
 
 	//check, which positions are available
-	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY    ) )
+	sUnitData BuildingType = *BuildingTyp.getUnitData();
+	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    ) )
 	{
 		pos[0] = true;
 	}
 	
-	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY    ) )
+	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY - 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    ) )
 	{
 		pos[1] = true;
 	}
 
-	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY    )
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX + 1, PosY + 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY + 1) )
+	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    )
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY + 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
 	{
 		pos[2] = true;
 	}
 
-	if ( Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY    )
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX - 1, PosY + 1)
-	  && Client->Map->possiblePlaceBuilding(UnitsData.building[BuildingTyp].data, PosX    , PosY + 1) )
+	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    )
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY + 1)
+	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
 	{
 		pos[3] = true;
 	}

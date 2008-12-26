@@ -424,21 +424,12 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		vehicle->IsBuilding = true;
 		if ( element->Attribute ( "type_id" ) != NULL )
 		{
-			sID BuildID;
-			BuildID.generate ( element->Attribute ( "type_id" ) );
-			for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
-			{
-				if ( BuildID == UnitsData.building[i].data.ID )
-				{
-					vehicle->BuildingTyp = i;
-					break;
-				}
-			}
+			vehicle->BuildingTyp.generate ( element->Attribute ( "type_id" ) );
 		}
 		// be downward compatible and looke for 'type' too 
 		else if ( element->Attribute ( "type" ) != NULL )
 		{
-			element->Attribute ( "type", &vehicle->BuildingTyp );
+			//element->Attribute ( "type", &vehicle->BuildingTyp );
 		}
 		element->Attribute ( "turns", &vehicle->BuildRounds );
 		element->Attribute ( "costs", &vehicle->BuildCosts );
@@ -1035,7 +1026,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->IsBuilding )
 	{
 		TiXmlElement *element = addMainElement ( unitNode, "Building" );
-		element->SetAttribute ( "type_id", UnitsData.building[Vehicle->BuildingTyp].data.ID.getText().c_str() );
+		element->SetAttribute ( "type_id", Vehicle->BuildingTyp.getText().c_str() );
 		element->SetAttribute ( "turns", iToStr ( Vehicle->BuildRounds ).c_str() );
 		element->SetAttribute ( "costs", iToStr ( Vehicle->BuildCosts ).c_str() );
 		if ( Vehicle->data.is_big ) element->SetAttribute ( "savedpos", iToStr ( Vehicle->BuildBigSavedPos ).c_str() );

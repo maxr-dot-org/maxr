@@ -689,7 +689,7 @@ int cClient::checkUser( bool bChange )
 		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
 			SelectedVehicle->PlaceBand = false;
-			if ( UnitsData.building[SelectedVehicle->BuildingTyp].data.is_big )
+			if ( SelectedVehicle->BuildingTyp.getUnitData()->is_big )
 			{
 				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false, 0 );
 			}
@@ -2788,32 +2788,36 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ADD_BUILDING:
 		{
 			cBuilding *AddedBuilding;
+			sID UnitID;
 			bool Init = message->popBool();
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
-			int UnitNum = message->popInt16();
+			UnitID.iFirstPart = message->popInt16();
+			UnitID.iSecondPart = message->popInt16();
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedBuilding = Player->addBuilding( PosX, PosY, &UnitsData.building[UnitNum] );
+			AddedBuilding = Player->addBuilding( PosX, PosY, UnitID.getBuilding() );
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
 
 			// play placesound if it is a mine
-			if ( UnitNum == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
-			else if ( UnitNum == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMinePlace );
+			if ( UnitID.getBuilding()->nr == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
+			else if ( UnitID.getBuilding()->nr == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMinePlace );
 		}
 		break;
 	case GAME_EV_ADD_VEHICLE:
 		{
 			cVehicle *AddedVehicle;
+			sID UnitID;
 			bool Init = message->popBool();
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
-			int UnitNum = message->popInt16();
+			UnitID.iFirstPart = message->popInt16();
+			UnitID.iSecondPart = message->popInt16();
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedVehicle = Player->AddVehicle(PosX, PosY, &UnitsData.vehicle[UnitNum]);
+			AddedVehicle = Player->AddVehicle(PosX, PosY, UnitID.getVehicle());
 			AddedVehicle->iID = message->popInt16();
 			bool bAddToMap = message->popBool();
 
@@ -2852,11 +2856,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cVehicle *AddedVehicle;
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			sID UnitID;
 
-			int iUnitNumber = message->popInt16();
+			UnitID.iFirstPart = message->popInt16();
+			UnitID.iSecondPart = message->popInt16();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
-			AddedVehicle = Player->AddVehicle(iPosX, iPosY, &UnitsData.vehicle[iUnitNumber]);
+			AddedVehicle = Player->AddVehicle(iPosX, iPosY, UnitID.getVehicle() );
 
 			AddedVehicle->dir = message->popInt16();
 			AddedVehicle->iID = message->popInt16();
@@ -2873,11 +2879,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cBuilding *AddedBuilding;
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
-			int iUnitNumber = message->popInt16();
+			sID UnitID;
+
+			UnitID.iFirstPart = message->popInt16();
+			UnitID.iSecondPart = message->popInt16();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
 
-			AddedBuilding = Player->addBuilding( iPosX, iPosY, &UnitsData.building[iUnitNumber] );
+			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding() );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 
@@ -3069,7 +3078,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( !Vehicle ) break;
 			Vehicle->dir = message->popInt16();
-			Vehicle->BuildingTyp = message->popInt16();
+			Vehicle->BuildingTyp.iFirstPart = message->popInt16();
+			Vehicle->BuildingTyp.iSecondPart = message->popInt16();
 			Vehicle->BuildPath = message->popBool();
 			Vehicle->BandX = message->popInt16();
 			Vehicle->BandY = message->popInt16();
@@ -3236,21 +3246,22 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				// TODO: translate
 				addMessage ( "Buildposition is blocked" );
 				Vehicle->BuildRounds = 0;
-				Vehicle->BuildingTyp = 0;
+				Vehicle->BuildingTyp.iFirstPart = 0;
+				Vehicle->BuildingTyp.iSecondPart = 0;
 				Vehicle->BuildPath = false;
 				break;
 			}
 
 			int iBuildOff = message->popInt32();
-			int iBuildingType = message->popInt16();
+			Vehicle->BuildingTyp.iFirstPart = message->popInt16();
+			Vehicle->BuildingTyp.iSecondPart = message->popInt16();
 
-			if ( UnitsData.building[iBuildingType].data.is_big )
+			if ( Vehicle->BuildingTyp.getUnitData()->is_big )
 			{
 				Map->moveVehicleBig(Vehicle, iBuildOff );
 				Vehicle->owner->DoScan();
 			}
 
-			Vehicle->BuildingTyp = iBuildingType;
 			Vehicle->BuildRounds = message->popInt16();
 			Vehicle->BuildCosts = message->popInt16();
 			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
@@ -3434,7 +3445,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			for ( int i = 0; i < iCount; i++ )
 			{
 				sBuildList *BuildListItem = new sBuildList;
-				BuildListItem->typ = &UnitsData.vehicle[message->popInt16()];
+				sID UnitID;
+				UnitID.iFirstPart = message->popInt16();
+				UnitID.iSecondPart = message->popInt16();
+				BuildListItem->typ = UnitID.getVehicle();
 				BuildListItem->metall_remaining = message->popInt16();
 				Building->BuildList->Add ( BuildListItem );
 			}
@@ -3472,23 +3486,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iReportAnz = message->popInt16();
 			while ( iReportAnz )
 			{
-				bool bVehicle = message->popBool();
-				int iType = message->popInt16();
+				sID Type;
+				Type.iFirstPart = message->popInt16();
+				Type.iSecondPart = message->popInt16();
 				int iAnz = message->popInt16();
-				if ( bVehicle )
-				{
-					if ( iCount ) sReportMsg += ", ";
-					iCount += iAnz;
-					sTmp = iToStr( iAnz ) + " " + UnitsData.vehicle[iType].data.name;
-					sReportMsg += iAnz > 1 ? sTmp : UnitsData.vehicle[iType].data.name;
-				}
-				else
-				{
-					if ( iCount ) sReportMsg += ", ";
-					iCount += iAnz;
-					sTmp = iToStr( iAnz ) + " " + UnitsData.building[iType].data.name;
-					sReportMsg += iAnz > 1 ? sTmp : UnitsData.building[iType].data.name;
-				}
+				if ( iCount ) sReportMsg += ", ";
+				iCount += iAnz;
+				sTmp = iToStr( iAnz ) + " " + Type.getUnitData()->name;
+				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitData()->name;
 				iReportAnz--;
 			}
 
@@ -4333,7 +4338,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "is_building: " + iToStr ( Vehicle->IsBuilding ) + " building_typ: " + iToStr ( Vehicle->BuildingTyp ) + " build_costs: +" + iToStr ( Vehicle->BuildCosts ) + " build_rounds: " + iToStr ( Vehicle->BuildRounds ) + " build_round_start: " + iToStr (Vehicle->BuildRoundsStart );
+	sTmp = "is_building: " + iToStr ( Vehicle->IsBuilding ) + " building_typ: " + Vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr ( Vehicle->BuildCosts ) + " build_rounds: " + iToStr ( Vehicle->BuildRounds ) + " build_round_start: " + iToStr (Vehicle->BuildRoundsStart );
 	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
 	*iY+=8;
 

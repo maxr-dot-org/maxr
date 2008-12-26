@@ -143,7 +143,7 @@ void sendMineLayerStatus( cVehicle *Vehicle );
 *@param bBuildPath true if the vehicle is building in path
 *@param iPathOff offset were the path will end
 */
-void sendWantBuild( int iVehicleID, int iBuildingType, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff );
+void sendWantBuild( int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff );
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath

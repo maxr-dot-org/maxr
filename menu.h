@@ -88,7 +88,7 @@ struct sOptions{
 struct sHUp{
   SDL_Surface *sf;
   bool vehicle;
-  int id;
+  sID UnitID;
   int costs;
   sUpgrades upgrades[8];
 };
@@ -96,7 +96,7 @@ struct sHUp{
 // Struktur für die Landung:
 struct sLanding{
   SDL_Surface *sf;
-  int id;
+  sID UnitID;
   int costs;
   int cargo;
 };

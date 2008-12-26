@@ -41,7 +41,7 @@
 struct sTurnstartReport
 {
 	/** unit type of the report */
-	int iType;
+	sID Type;
 	/** counter for this report */
 	int iAnz;
 };
@@ -322,7 +322,7 @@ public:
 	*@param bVehicle true if the report is about vehicles
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
-	void addReport ( int iType, bool bVehicle, int iPlayerNum );
+	void addReport ( sID Type, bool bVehicle, int iPlayerNum );
 	/**
 	* adds an new movejob
 	*@author alzi alias DoctorDeath

@@ -682,6 +682,67 @@ void sID::generate ( string text )
 	iSecondPart = atoi ( text.substr( text.find( " ", 0 ), text.length() ).c_str() );
 }
 
+sUnitData *sID::getUnitData( cPlayer *Owner )
+{
+	switch ( iFirstPart )
+	{
+	case 0:
+		if ( Owner )
+		{
+			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+			{
+				if ( Owner->VehicleData[i].ID == *this ) return &Owner->VehicleData[i];
+			}
+		}
+		else
+		{
+			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+			{
+				if ( UnitsData.vehicle[i].data.ID == *this ) return &UnitsData.vehicle[i].data;
+			}
+		}
+		break;
+	case 1:
+		if ( Owner )
+		{
+			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+			{
+				if ( Owner->BuildingData[i].ID == *this ) return &Owner->BuildingData[i];
+			}
+		}
+		else
+		{
+			for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+			{
+				if ( UnitsData.building[i].data.ID == *this ) return &UnitsData.building[i].data;
+			}
+		}
+		break;
+	default:
+		return NULL;
+	}
+}
+
+sVehicle *sID::getVehicle()
+{
+	if ( iFirstPart != 0 ) return NULL;
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	{
+		if ( UnitsData.vehicle[i].data.ID == *this ) return &UnitsData.vehicle[i];
+	}
+	return NULL;
+}
+
+sBuilding *sID::getBuilding()
+{
+	if ( iFirstPart != 1 ) return NULL;
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	{
+		if ( UnitsData.building[i].data.ID == *this ) return &UnitsData.building[i];
+	}
+	return NULL;
+}
+
 bool sID::operator ==(sID &ID) const
 {
 	if ( iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart ) return true;

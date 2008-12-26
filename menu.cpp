@@ -1944,7 +1944,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w,UnitsData.vehicle[i].img_org[0]->h );
 		n=new sHUp;
 		n->sf=sf;
-		n->id=(int)i;
+		n->UnitID=UnitsData.vehicle[i].data.ID;
 		n->costs=UnitsData.vehicle[i].data.iBuilt_Costs;
 		n->vehicle=true;
 		MakeUpgradeSliderVehicle ( n->upgrades,(int)i,player );
@@ -1976,7 +1976,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w,UnitsData.building[i].img_org->h );
 		n=new sHUp;
 		n->sf=sf;
-		n->id=(int)i;
+		n->UnitID = UnitsData.building[i].data.ID;
 		n->costs=UnitsData.building[i].data.iBuilt_Costs;
 		n->vehicle=false;
 		MakeUpgradeSliderBuilding ( n->upgrades,(int)i,player );
@@ -2141,18 +2141,18 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				if (last_selected == nr && selection[selected]->costs <= player->Credits)
 				{
 					// Don't add buildings, humans, planes, etc...
-					sHUp const* const s = selection[selected];
+					sHUp * const s = selection[selected];
 					if (s->vehicle &&
-							!UnitsData.vehicle[s->id].data.is_human &&
-							!UnitsData.vehicle[s->id].data.is_alien &&
-							UnitsData.vehicle[s->id].data.can_drive != DRIVE_AIR &&
-							UnitsData.vehicle[s->id].data.can_drive != DRIVE_SEA)
+						!s->UnitID.getUnitData()->is_human &&
+							!s->UnitID.getUnitData()->is_alien &&
+							s->UnitID.getUnitData()->can_drive != DRIVE_AIR &&
+							s->UnitID.getUnitData()->can_drive != DRIVE_SEA)
 					{
 						sLanding *n;
 						n=new sLanding;
 						n->cargo=0;
-						n->sf    = s->sf;
-						n->id    = s->id;
+						n->sf = s->sf;
+						n->UnitID = s->UnitID;
 						n->costs = s->costs;
 						LandingList->Add ( n );
 						LandingSelected=(int)LandingList->Size()-1;
@@ -2342,8 +2342,8 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			sLanding *n;
 			n=new sLanding;
 			n->cargo=0;
-			n->sf    = selection[selected]->sf;
-			n->id    = selection[selected]->id;
+			n->sf = selection[selected]->sf;
+			n->UnitID = selection[selected]->UnitID;
 			n->costs = selection[selected]->costs;
 			LandingList->Add ( n );
 			LandingSelected=(int)LandingList->Size()-1;
@@ -2509,11 +2509,13 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		{
 			sLanding *ptr;
 			ptr = (*LandingList)[LandingSelected];
-			if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+			if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
 			{
-				 // Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
+				// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
+				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
+
 				// LadungUp-Button: 
-				if ( x>=DIALOG_X +413&&x<DIALOG_X +413+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungDownPressed&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo&&player->Credits>0&&ptr->id!=32 )
+				if ( x>=DIALOG_X +413&&x<DIALOG_X +413+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungDownPressed&&ptr->cargo<ptr->UnitID.getUnitData()->max_cargo&&player->Credits>0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2524,9 +2526,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					dest.y=DIALOG_Y + 424;
 
 					ptr->cargo+=5;
-					if ( ptr->cargo > UnitsData.vehicle[ptr->id].data.max_cargo )
+					if ( ptr->cargo > ptr->UnitID.getUnitData()->max_cargo )
 					{
-						ptr->cargo = UnitsData.vehicle[ptr->id].data.max_cargo;
+						ptr->cargo = ptr->UnitID.getUnitData()->max_cargo;
 					}
 					player->Credits--;
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
@@ -2550,9 +2552,11 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					mouse->draw ( false,screen );
 					LadungDownPressed=false;
 				}
+				// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
+
 				// LadungDown-Button:
-				if ( x>=DIALOG_X +433&&x<DIALOG_X +433+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungUpPressed&&ptr->cargo>0&&ptr->id!=32 )
+				if ( x>=DIALOG_X +433&&x<DIALOG_X +433+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungUpPressed&&ptr->cargo>0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
@@ -2588,16 +2592,17 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungUpPressed=false;
-				}
+				}// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
+
 				// Klick auf den Ladungsbalken:
-				if ( b&&!lb&&x>=DIALOG_X +422&&x<DIALOG_X +422+20&&y>=DIALOG_Y +301&&y<DIALOG_Y +301+115&&ptr->id!=32 )
+				if ( b&&!lb&&x>=DIALOG_X +422&&x<DIALOG_X +422+20&&y>=DIALOG_Y +301&&y<DIALOG_Y +301+115 )
 				{
 					int value;
-					value= ( ( ( int ) ( ( 115- ( y-301-DIALOG_Y ) ) * ( UnitsData.vehicle[ptr->id].data.max_cargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301-DIALOG_Y ) ) * ( ptr->UnitID.getUnitData()->max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SoundData.SNDObjectMenu );
 
-					if ( ( 115- ( y-301-DIALOG_Y ) ) >=110 ) value=UnitsData.vehicle[ptr->id].data.max_cargo;
+					if ( ( 115- ( y-301-DIALOG_Y ) ) >=110 ) value=ptr->UnitID.getUnitData()->max_cargo;
 
 					if ( value<ptr->cargo )
 					{
@@ -2607,15 +2612,15 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					else if ( value>ptr->cargo&&player->Credits>0 )
 					{
 						value-=ptr->cargo;
-						while ( value>0&&player->Credits>0&&ptr->cargo<UnitsData.vehicle[ptr->id].data.max_cargo )
+						while ( value>0&&player->Credits>0&&ptr->cargo<ptr->UnitID.getUnitData()->max_cargo )
 						{
 							ptr->cargo+=5;
 							player->Credits--;
 							value-=5;
 						}
-						if ( ptr->cargo>UnitsData.vehicle[ptr->id].data.max_cargo )
+						if ( ptr->cargo>ptr->UnitID.getUnitData()->max_cargo )
 						{
-							ptr->cargo=UnitsData.vehicle[ptr->id].data.max_cargo;
+							ptr->cargo=ptr->UnitID.getUnitData()->max_cargo;
 						}
 					}
 
@@ -2643,11 +2648,11 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			{
 				if ( ptr->vehicle )
 				{
-					player->VehicleData[ptr->id].version++;
+					ptr->UnitID.getUnitData( player )->version++;
 				}
 				else
 				{
-					player->BuildingData[ptr->id].version++;
+					ptr->UnitID.getUnitData( player )->version++;
 				}
 				break;
 			}
@@ -2988,7 +2993,7 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 	{
 		sLanding *ptr;
 		ptr = (*landing)[selected];
-		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
 		{
 			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275, lngPack.i18n ( "Text~Title~Cargo" ));
 			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275+10, iToStr(ptr->cargo));
@@ -2997,7 +3002,7 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
-			scr.h=dest.h= ( int ) ( 115 * ( ptr->cargo / ( float ) UnitsData.vehicle[ptr->id].data.max_cargo ) );
+			scr.h=dest.h= ( int ) ( 115 * ( ptr->cargo / ( float ) ptr->UnitID.getUnitData()->max_cargo ) );
 			dest.x=DIALOG_X +422;
 			dest.y=DIALOG_Y +301+115-dest.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -3248,23 +3253,23 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 		}
 		// Text ausgeben:
 
-		if ( font->getTextWide ( UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE ) > text.w )
 		{
 			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
+			font->showTextAsBlock ( text, ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
 			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, UnitsData.vehicle[ptr->id].data.name, LATIN_SMALL_WHITE);
+			font->showText ( text, ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
 		}
 
 
 
-		if ( UnitsData.vehicle[ptr->id].data.can_transport==TRANS_METAL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_OIL||UnitsData.vehicle[ptr->id].data.can_transport==TRANS_GOLD )
+		if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
 		{
 			int value = ptr->cargo;
-			int maxval = UnitsData.vehicle[ptr->id].data.max_cargo;
+			int maxval = ptr->UnitID.getUnitData()->max_cargo;
 
 			if(value == 0)
 			{
@@ -3311,7 +3316,7 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 		if (s->vehicle)
 		{
 			if ( ! ( tank||ship||plane ) ) continue;
-			vd = &UnitsData.vehicle[s->id].data;
+			vd = s->UnitID.getUnitData();
 			if ( vd->is_alien&&kauf ) continue;
 			if ( vd->is_human&&kauf ) continue;
 			if ( tnt&&!vd->can_attack ) continue;
@@ -3323,7 +3328,7 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 		else
 		{
 			if ( !build ) continue;
-			bd = &UnitsData.building[s->id].data;
+			bd = s->UnitID.getUnitData();
 			if ( tnt&&!bd->can_attack ) continue;
 			selection.Add(s);
 		}
@@ -3404,15 +3409,15 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 			tmp.x=DIALOG_X +11;tmp.y=DIALOG_Y +13;
 			if ( ptr->vehicle )
 			{
-				tmp.w=UnitsData.vehicle[ptr->id].info->w;
-				tmp.h=UnitsData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=ptr->UnitID.getVehicle()->info->w;
+				tmp.h=ptr->UnitID.getVehicle()->info->h;
+				SDL_BlitSurface ( ptr->UnitID.getVehicle()->info,NULL,buffer,&tmp );
 			}
 			else
 			{
-				tmp.w=UnitsData.building[ptr->id].info->w;
-				tmp.h=UnitsData.building[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.building[ptr->id].info,NULL,buffer,&tmp );
+				tmp.w=ptr->UnitID.getBuilding()->info->w;
+				tmp.h=ptr->UnitID.getBuilding()->info->h;
+				SDL_BlitSurface ( ptr->UnitID.getBuilding()->info,NULL,buffer,&tmp );
 			}
 			// Ggf die Beschreibung ausgeben:
 			if ( beschreibung )
@@ -3421,11 +3426,11 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				tmp.w-=20;tmp.h-=20;
 				if ( ptr->vehicle )
 				{
-					font->showTextAsBlock(tmp, UnitsData.vehicle[ptr->id].text);
+					font->showTextAsBlock(tmp, ptr->UnitID.getVehicle()->text);
 				}
 				else
 				{
-					font->showTextAsBlock(tmp, UnitsData.building[ptr->id].text);
+					font->showTextAsBlock(tmp, ptr->UnitID.getBuilding()->text);
 				}
 			}
 			// Die Details anzeigen:
@@ -3440,12 +3445,12 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&tmp,buffer,&temp2 );
 				if ( ptr->vehicle )
 				{
-					cVehicle tv(&UnitsData.vehicle[ptr->id], p);
+					cVehicle tv(ptr->UnitID.getVehicle(), p);
 					tv.ShowBigDetails();
 				}
 				else
 				{
-					cBuilding tb(&UnitsData.building[ptr->id], p, NULL);
+					cBuilding tb(ptr->UnitID.getBuilding(), p, NULL);
 					tb.ShowBigDetails();
 				}
 			}
@@ -3483,12 +3488,12 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 
 		if ( ptr->vehicle )
 		{
-			sTmp = UnitsData.vehicle[ptr->id].data.name;
-			font->showTextCentered(DIALOG_X +616, text.y, iToStr(UnitsData.vehicle[ptr->id].data.iBuilt_Costs), LATIN_SMALL_YELLOW);
+			sTmp = ptr->UnitID.getUnitData()->name;
+			font->showTextCentered(DIALOG_X +616, text.y, iToStr(ptr->UnitID.getUnitData()->iBuilt_Costs), LATIN_SMALL_YELLOW);
 		}
 		else
 		{
-			sTmp = UnitsData.building[ptr->id].data.name;
+			sTmp = ptr->UnitID.getUnitData()->name;
 		}
 
 
@@ -4751,7 +4756,8 @@ void cMultiPlayerMenu::HandleMessages()
 					sLanding *Landing;
 					Landing = new sLanding;
 					Landing->cargo = Message->popInt16();
-					Landing->id = Message->popInt16();
+					Landing->UnitID.iFirstPart = Message->popInt16();
+					Landing->UnitID.iSecondPart = Message->popInt16();
 					c.landingList.Add ( Landing );
 				}
 			}
@@ -4866,7 +4872,8 @@ void cMultiPlayerMenu::sendLandingInfo( const sClientLandData& c )
 
 	for ( unsigned int i = 0; i < c.landingList.Size(); i++ )
 	{
-		Message->pushInt16( c.landingList[i]->id);
+		Message->pushInt16( c.landingList[i]->UnitID.iSecondPart);
+		Message->pushInt16( c.landingList[i]->UnitID.iFirstPart);
 		Message->pushInt16( c.landingList[i]->cargo);
 	}
 	Message->pushInt16( (int)c.landingList.Size() );

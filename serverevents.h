@@ -68,7 +68,7 @@ enum SERVER_EVENT_TYPES
 *@param iPlayer The player who should receive this event and get the new unit
 *@param bInit True if this is called by game initialisation
 */
-void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit, bool bAddToMap = true );
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap = true );
 /**
 * Sends an event to a player that a unit has to be deleted
 *@param vehicle vehicle that has to be deleted
@@ -162,7 +162,7 @@ void sendResources( cPlayer *Player );
 * sends an answer to a client wheter and how he has to build.
 *@author alzi alias DoctorDeath
 */
-void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, sID BuildingType, int iBuildRounds, int iBuildCosts, int iPlayer );
 /**
 * sends an answer to a client wheter the vehicle has to continue path building
 *@author alzi alias DoctorDeath

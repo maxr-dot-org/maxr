@@ -104,7 +104,7 @@ public:
 	bool bIsBeeingAttacked; /** true when an attack on this vehicle is running */
 	int ditherX,ditherY; // Dithering für Flugzeuge
 	bool IsBuilding;  // Gibt an ob was gebaut wird
-	int BuildingTyp;  // Gibt an, was gebaut wird
+	sID BuildingTyp;  // Gibt an, was gebaut wird
 	int BuildCosts;   // Die verbleibenden Baukosten
 	int BuildRounds;  // Die verbleibenden Baurunden
 	int BuildRoundsStart; // Startwert der Baurunden (fürs Pfadbauen)

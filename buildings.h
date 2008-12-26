@@ -72,14 +72,14 @@ enum eSymbolsBig {SBSpeed,SBHits,SBAmmo,SBAttack,SBShots,SBRange,SBArmor,SBScan,
 struct sBuildStruct
 {
 public:
-	sBuildStruct(SDL_Surface* const sf_, int const id_, int const iRemainingMetal_ = -1) :
+	sBuildStruct(SDL_Surface* const sf_, sID const ID_, int const iRemainingMetal_ = -1) :
 		sf(sf_),
-		id(id_),
+		ID(ID_),
 		iRemainingMetal(iRemainingMetal_)
 	{}
 
 	SDL_Surface *sf;
-	int id;
+	sID ID;
 	int iRemainingMetal;
 };
 

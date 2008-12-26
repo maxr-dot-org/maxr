@@ -25,7 +25,7 @@
 #include "movejobs.h"
 
 
-void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, int iPlayer, bool bInit, bool bAddToMap )
+void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap )
 {
 	cNetMessage* message;
 
@@ -36,7 +36,8 @@ void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, int iUnitNum, i
 	message->pushInt16( iID );
 	message->pushInt16( iPosX );
 	message->pushInt16( iPosY );
-	message->pushInt16( iUnitNum );
+	message->pushInt16( UnitID.iSecondPart );
+	message->pushInt16( UnitID.iFirstPart );
 	message->pushInt16( iPlayer );
 	message->pushBool( bInit );
 
@@ -118,7 +119,8 @@ void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->dir );
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
-	message->pushInt16( Vehicle->typ->nr );
+	message->pushInt16( Vehicle->data.ID.iSecondPart );
+	message->pushInt16( Vehicle->data.ID.iFirstPart );
 	message->pushInt16( Vehicle->owner->Nr );
 
 	Server->sendNetMessage( message, iPlayer );
@@ -131,7 +133,8 @@ void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
 	message->pushInt16( Building->iID );
 	message->pushInt16( Building->PosX );
 	message->pushInt16( Building->PosY );
-	message->pushInt16( Building->typ->nr );
+	message->pushInt16( Building->data.ID.iSecondPart );
+	message->pushInt16( Building->data.ID.iFirstPart );
 	message->pushInt16( Building->owner->Nr );
 
 	Server->sendNetMessage( message, iPlayer );
@@ -210,7 +213,8 @@ void sendSpecificUnitData ( cVehicle *Vehicle )
 	message->pushInt16 ( Vehicle->BandY );
 	message->pushInt16 ( Vehicle->BandX );
 	message->pushBool ( Vehicle->BuildPath );
-	message->pushInt16 ( Vehicle->BuildingTyp );
+	message->pushInt16 ( Vehicle->BuildingTyp.iSecondPart );
+	message->pushInt16 ( Vehicle->BuildingTyp.iFirstPart );
 	message->pushInt16 ( Vehicle->dir );
 	message->pushInt16 ( Vehicle->iID );
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
@@ -436,12 +440,13 @@ void sendResources( cPlayer *Player )
 	}
 }
 
-void sendBuildAnswer( bool bOK, int iVehicleID, int iOff, int iBuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
+void sendBuildAnswer( bool bOK, int iVehicleID, int iOff,  sID BuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
 	message->pushInt16( iBuildCosts );
 	message->pushInt16( iBuildRounds );
-	message->pushInt16( iBuildingType );
+	message->pushInt16( BuildingType.iSecondPart );
+	message->pushInt16( BuildingType.iFirstPart );
 	message->pushInt32( iOff );
 	message->pushInt16( iVehicleID );
 	message->pushBool ( bOK );
@@ -547,7 +552,8 @@ void sendBuildList ( cBuilding *Building )
 	for ( int i = (int)Building->BuildList->Size()-1; i >= 0; i-- )
 	{
 		message->pushInt16((*Building->BuildList)[i]->metall_remaining);
-		message->pushInt16((*Building->BuildList)[i]->typ->nr);
+		message->pushInt16((*Building->BuildList)[i]->typ->data.ID.iSecondPart);
+		message->pushInt16((*Building->BuildList)[i]->typ->data.ID.iFirstPart);
 	}
 	message->pushInt16 ( (int)Building->BuildList->Size() );
 	message->pushInt16 ( Building->iID );
@@ -580,8 +586,8 @@ void sendTurnReport ( cPlayer *Player )
 	{
 		Report = Player->ReportBuildings[0];
 		message->pushInt16 ( Report->iAnz );
-		message->pushInt16 ( Report->iType );
-		message->pushBool ( false );
+		message->pushInt16 ( Report->Type.iSecondPart );
+		message->pushInt16 ( Report->Type.iFirstPart );
 		Player->ReportBuildings.Delete ( 0 );
 		delete Report;
 		iCount++;
@@ -590,8 +596,8 @@ void sendTurnReport ( cPlayer *Player )
 	{
 		Report = Player->ReportVehicles[0];
 		message->pushInt16 ( Report->iAnz );
-		message->pushInt16 ( Report->iType );
-		message->pushBool ( true );
+		message->pushInt16 ( Report->Type.iSecondPart );
+		message->pushInt16 ( Report->Type.iFirstPart );
 		Player->ReportVehicles.Delete ( 0 );
 		delete Report;
 		iCount++;
