@@ -2511,7 +2511,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 			ptr = (*LandingList)[LandingSelected];
 			if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
 			{
-				// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
+				//FIXME: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// LadungUp-Button: 
@@ -2552,7 +2552,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					mouse->draw ( false,screen );
 					LadungDownPressed=false;
 				}
-				// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
+				//FIXME: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// LadungDown-Button:
@@ -2592,7 +2592,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					LadungUpPressed=false;
-				}// TOFIX: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
+				}//FIXME: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// Klick auf den Ladungsbalken:
@@ -3047,7 +3047,10 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 {
 	int b,lx=-1,ly=-1;
 	sTerrain *t;
-
+	SDL_Rect rTextArea;
+	rTextArea.x = 220;
+	rTextArea.y = 235;
+	rTextArea.w = SettingsData.iScreenW - rTextArea.x - 20;
 	float fakx= (float)( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
 	float faky= (float)( ( SettingsData.iScreenH-32.0 ) / map->size );  //pixel per field in y direction
 
@@ -3061,56 +3064,25 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 		//only correct in x dimension, because I don't draw an ellipse
 		drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
 		drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
-	}
-	SDL_Rect textArea;
-	textArea.x = 220;
-	textArea.y = 235;
-	textArea.w = SettingsData.iScreenW - textArea.x - 20;
-	if ( landingState == LANDING_POSITION_TOO_CLOSE )
-	{
-		font->showTextAsBlock( textArea, lngPack.i18n("Text~Comp~Landing_Too_Close"),LATIN_BIG );
-	}
-	else if ( landingState == LANDING_POSITION_WARNING )
-	{
-		font->showTextAsBlock( textArea, lngPack.i18n("Text~Comp~Landing_Warning"),LATIN_BIG );
+		if( landingState == LANDING_POSITION_TOO_CLOSE)
+		{
+			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Too_Close"),LATIN_BIG );
+		}
+		else if ( landingState == LANDING_POSITION_WARNING)
+		{
+			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Warning"),LATIN_BIG );
+
+		}
 	}
 
 	drawHud();
-
 	SHOW_SCREEN
-
-	t=map->terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
-	if ( mouse->x>=180&&mouse->x<SettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<SettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
-	{
-		mouse->SetCursor ( CMove );
-	}
-	else
-	{
-		mouse->SetCursor ( CNo );
-	}
-	mouse->draw ( false,screen );
+	mouse->draw(false, screen);
 
 	while ( 1 )
 	{
 		// Events holen:
 		EventHandler->HandleEvents();
-		
-		// generate the animation
-		Client->handleTimer();
-		if ( Client->iTimer2 )
-		{
-			map->generateNextAnimationFrame();
-			drawMap();
-			int posX = (int)(180 + *x * fakx);
-			int posY = (int)(18  + *y * faky);
-			//drawCircle( posX, posY, (LANDING_DISTANCE_WARNING/2)*fakx, SCAN_COLOR, buffer );
-			//drawCircle( posX, posY, (LANDING_DISTANCE_TOO_CLOSE/2)*fakx, RANGE_GROUND_COLOR, buffer );
-			drawHud();
-			SHOW_SCREEN
-
-			mouse->draw ( true,screen );
-		}
-
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -3132,20 +3104,20 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 
 		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 ) ) );
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 ) ) );
+			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 )));
+			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
+			
+			drawMap();
 			int posX = (int)(180 + *x * fakx);
 			int posY = (int)(18  + *y * faky);
-
-			drawMap();
+			//for non 4:3 screen resolutions, the size of the circles is
+			//only correct in x dimension, because I don't draw an ellipse
 			drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
 			drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
-			drawHud(); //redraw hud, because the circles may overlap the hud
-
-			SHOW_SCREEN;
-			mouse->SetCursor ( CHand );
-			mouse->draw(false, screen);
-			
+			drawHud();
+			SHOW_SCREEN
+			mouse->draw ( true,screen );
+			SDL_Delay ( 1 );
 			break;
 		}
 
