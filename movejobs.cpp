@@ -1030,7 +1030,8 @@ void cClientMoveJob::doEndMoveVehicle ()
 	{
 		if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle != NULL || Map->GO[Waypoints->X+Waypoints->Y*Map->size].top != NULL && !Map->GO[Waypoints->X+Waypoints->Y*Map->size].top->data.is_connector )
 		{
-			cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other unit", cLog::eLOG_TYPE_NET_ERROR );
+			if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle != NULL ) cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			else cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].top->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else
@@ -1042,7 +1043,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 	{
 		if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane != NULL )
 		{
-			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane", cLog::eLOG_TYPE_NET_ERROR );
+			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else
