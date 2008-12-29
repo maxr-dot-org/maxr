@@ -3713,6 +3713,13 @@ void setPaths()
 	SettingsData.sNetLog = MAX_NET_LOG;
 	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac -- beko
 
+	#if MAC 
+		SettingsData.sHome=""; //this is where mac user should set their %HOME%
+		//this is also a good place to find out where the executable is located
+		SettingsData.sConfig = MAX_XML; //assume config in current working directory
+		return;
+	#endif
+
 	#ifdef WIN32
 		SettingsData.sHome=""; //this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located
