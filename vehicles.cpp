@@ -2108,8 +2108,6 @@ void cVehicle::DrawMenu ( void )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			// TODO: implement activating
-			//Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 			showStorage();
 			return;
 		}
@@ -2132,8 +2130,7 @@ void cVehicle::DrawMenu ( void )
 			return;
 		}
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer ); //TODO: i18n
-
+		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 		dest.y += 22;
 		nr++;
 	}
