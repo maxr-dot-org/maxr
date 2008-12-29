@@ -581,5 +581,7 @@ SDLKey GetKeyFromString ( string key )
 
 void GenerateKeysXml()
 {
+	//TODO: add generation of key xml
+	cLog::write("GenerateKeysXML not yet implemented", cLog::eLOG_TYPE_WARNING);
 	return;
 }

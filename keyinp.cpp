@@ -88,7 +88,7 @@ bool DoKeyInp ( Uint8 *keystate )
 	else if ( keystate[SDLK_w] ) c='w';
 	else if ( keystate[SDLK_x]SHIFT ) c='X';
 	else if ( keystate[SDLK_x] ) c='x';
-
+	//FIXME: this breaks keyboard layout on non german keyboards
 	else if ( keystate[39]SHIFT ALT ) c='\'';
 	else if ( keystate[39]ALT ) c='#';
 	else if ( keystate[96]SHIFT ) c='°';
