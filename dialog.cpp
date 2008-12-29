@@ -847,7 +847,7 @@ void showPreferences ( void )
 	{
 		rFont.x = rDialog.x + 100; rFont.w = 200;
 		rFont.y = rDialog.y + 294+20*3;
-		font->showText(rFont, lngPack.i18n( "Text~Comp~ResolutionWarning" )); //TODO: i18n
+		font->showText(rFont, lngPack.i18n( "Text~Comp~ResolutionWarning" ));
 	}
 	//END DRAWING RESOLUTION MODES
 
