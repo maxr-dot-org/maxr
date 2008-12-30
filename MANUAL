@@ -36,6 +36,8 @@ sentry [server/off]          shows covered areas by unity on sentry
 fx [on/off]                  shows additional information to special effects
 trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
 ajobs [on/off]               shows additional information about attackjobs
+players [on/off]             shows additional information about all players in the game
+resync [playernumber]        resyncs all units of the player with the overgiven number or all players if no number was set.
 fps [on/off]                 [*not working*] shows frames per second
 com [on/off]                 [*not working*] shows network traffic (multiplayer)
 log [on/off]                 [*not working*] creats a logfile by engine
