@@ -790,3 +790,9 @@ void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, i
 	message->pushInt16 ( activatunitid );
 	Server->sendNetMessage( message, player );
 }
+
+void sendDeleteEverything ( int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_DELETE_EVERYTHING );
+	Server->sendNetMessage( message, player );
+}

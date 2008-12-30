@@ -96,7 +96,6 @@ cPlayer::cPlayer(const cPlayer &Player) : base(this)
 
 cPlayer::~cPlayer ( void )
 {
-
 	while ( SentriesAir.Size() )
 	{
 		delete SentriesAir[SentriesAir.Size() - 1];

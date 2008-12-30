@@ -2655,8 +2655,9 @@ void cServer::deletePlayer( cPlayer *Player )
 	}
 }
 
-void cServer::resyncPlayer ( cPlayer *Player )
+void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 {
+	if ( firstDelete ) sendDeleteEverything ( Player->Nr );
 	sendTurn ( iTurn, Player );
 	sendResources ( Player );
 	// send all units to the client
@@ -2693,7 +2694,8 @@ void cServer::resyncPlayer ( cPlayer *Player )
 	// refresh enemy units
 	Player->DoScan();
 	checkPlayerUnits();
-	sendHudSettings ( &Player->HotHud, Player );
+	// FIXME: sending hudsettings doesn't work form yet
+	//sendHudSettings ( &Player->HotHud, Player );
 	// TODO: send upgrades
 }
 

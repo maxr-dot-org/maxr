@@ -2456,6 +2456,26 @@ bool cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "players on" ) == 0 ) { bDebugPlayers = true; return true; }
 	if ( sCmd.compare( "players off" ) == 0 ) { bDebugPlayers = false; return true; }
 	
+	if ( sCmd.substr( 0, 6 ).compare( "resync" ) == 0 )
+	{
+		if ( Server == NULL ) return false;
+		if ( sCmd.length() > 6 )
+		{
+			unsigned int playernum = atoi ( sCmd.substr ( 7, 8 ).c_str() );
+			cPlayer *Player = Server->getPlayerFromNumber ( playernum );
+			if ( Player == NULL ) return false;
+			Server->resyncPlayer ( Player, true );
+		}
+		else
+		{
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				Server->resyncPlayer ( (*Server->PlayerList)[i], true );
+			}
+		}
+		bDebugPlayers = false;
+		return true;
+	}
 	if ( sCmd.substr( 0, 5 ).compare( "mark "  ) == 0 )
 	{
 		sCmd.erase(0, 5 );
@@ -3819,6 +3839,58 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			PlayFX ( SoundData.SNDActivate );
 		}
 		break;
+	case GAME_EV_DELETE_EVERYTHING:
+		{
+			SelectedBuilding = NULL;
+			SelectedVehicle = NULL;
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				cPlayer *const Player = (*PlayerList)[i];
+				while ( Player->SentriesAir.Size() )
+				{
+					delete Player->SentriesAir[0];
+					Player->SentriesAir.Delete( 0 );
+				}
+
+				while ( Player->SentriesGround.Size() )
+				{
+					delete Player->SentriesGround[0];
+					Player->SentriesGround.Delete( 0 );
+				}
+
+				cVehicle *vehicle = Player->VehicleList;
+				while ( vehicle )
+				{
+					if ( vehicle->StoredVehicles.Size() ) vehicle->DeleteStored();
+					vehicle = vehicle->next;
+				}
+
+				while ( Player->VehicleList )
+				{
+					vehicle = Player->VehicleList->next;
+					Player->VehicleList->bSentryStatus = false;
+					Map->deleteVehicle ( Player->VehicleList );
+					delete Player->VehicleList;
+					Player->VehicleList = vehicle;
+				}
+				while ( Player->BuildingList )
+				{
+					cBuilding *building;
+					building = Player->BuildingList->next;
+					Player->BuildingList->bSentryStatus = false;
+
+
+					while( Player->BuildingList->StoredVehicles.Size() > 0 )
+					{
+						Player->BuildingList->StoredVehicles.Delete( 0 );
+					}
+
+					Map->deleteBuilding ( Player->BuildingList );
+					delete Player->BuildingList;
+					Player->BuildingList = building;
+				}
+			}
+		}
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

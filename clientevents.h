@@ -71,6 +71,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_HUD_SETTINGS,			// hud settings for a client
 	GAME_EV_STORE_UNIT,				// a unit has to be stored
 	GAME_EV_EXIT_UNIT,				// a unit has to be exit
+	GAME_EV_DELETE_EVERYTHING,		// a client has to delete all units to be ready for a resync
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 

@@ -997,7 +997,6 @@ void cClientMoveJob::moveVehicle()
 	// check whether the point has been reached:
 	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
 	{
-		cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		doEndMoveVehicle ();
 	}
 }
@@ -1037,6 +1036,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 		else
 		{
 			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
+			cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 	}
 	else
@@ -1049,6 +1049,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 		else
 		{
 			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
+			cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 	}
 	Vehicle->OffX = 0;

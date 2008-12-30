@@ -283,5 +283,6 @@ void sendTurn ( int turn, cPlayer *Player );
 void sendHudSettings ( cHud *Hud, cPlayer *Player );
 void sendStoreVehicle ( int unitid, bool vehicle, int storedunitid, int player );
 void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, int y, int player );
+void sendDeleteEverything ( int player );
 
 #endif // servereventsH

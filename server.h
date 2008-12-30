@@ -342,7 +342,7 @@ public:
 	*/
 	void deleteRubble( cBuilding* rubble );
 
-	void resyncPlayer ( cPlayer *Player );
+	void resyncPlayer ( cPlayer *Player, bool firstDelete = false );
 	void resyncVehicle ( cVehicle *Vehicle, cPlayer *Player );
 
 } EX *Server;
