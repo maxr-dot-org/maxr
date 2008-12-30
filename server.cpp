@@ -2657,17 +2657,46 @@ void cServer::deletePlayer( cPlayer *Player )
 
 void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 {
-	if ( firstDelete ) sendDeleteEverything ( Player->Nr );
+	cVehicle *Vehicle;
+	cBuilding *Building;
+	if ( firstDelete )
+	{
+		cPlayer *UnitPlayer;
+		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+		{
+			UnitPlayer = (*PlayerList)[i];
+			if ( UnitPlayer == Player ) continue;
+			Vehicle = UnitPlayer->VehicleList;
+			while ( Vehicle )
+			{
+				for ( unsigned int j = 0; j < Vehicle->SeenByPlayerList.Size(); j++ )
+				{
+					if ( Vehicle->SeenByPlayerList[j] == Player ) Vehicle->SeenByPlayerList.Delete ( j );
+				}
+				Vehicle = Vehicle->next;
+			}
+			Building = UnitPlayer->BuildingList;
+			while ( Building )
+			{
+				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+				{
+					if ( Building->SeenByPlayerList[j] == Player ) Building->SeenByPlayerList.Delete ( j );
+				}
+				Building = Building->next;
+			}
+		}
+		sendDeleteEverything ( Player->Nr );
+	}
 	sendTurn ( iTurn, Player );
 	sendResources ( Player );
 	// send all units to the client
-	cVehicle *Vehicle = Player->VehicleList;
+	Vehicle = Player->VehicleList;
 	while ( Vehicle )
 	{
 		if ( !Vehicle->Loaded ) resyncVehicle ( Vehicle, Player );
 		Vehicle = Vehicle->next;
 	}
-	cBuilding *Building = Player->BuildingList;
+	Building = Player->BuildingList;
 	while ( Building )
 	{
 		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, false );
