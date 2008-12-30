@@ -4321,8 +4321,9 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 				SDL_Delay ( 1 );
 			}
 
+			//FIXME: since landingzones dosn't work form yet they will be disabled temporary
 			//check all landing positions
-			for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+			/*for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
 			{
 				eLandingState state = checkLandingState( playerNr );
 				if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
@@ -4339,7 +4340,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 						sendMessage( message );
 					}
 				}
-			}
+			}*/
 
 			if ( iLandedClients == PlayerList.Size() ) bAllLanded = true;
 		

@@ -2473,7 +2473,6 @@ bool cClient::doCommand ( string sCmd )
 				Server->resyncPlayer ( (*Server->PlayerList)[i], true );
 			}
 		}
-		bDebugPlayers = false;
 		return true;
 	}
 	if ( sCmd.substr( 0, 5 ).compare( "mark "  ) == 0 )
