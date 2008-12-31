@@ -453,7 +453,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			//check if attack is possible
 			if ( bIsVehicle )
 			{
-				if ( !attackingVehicle->CanAttackObject( targetOffset, true ) )
+				if ( !attackingVehicle->CanAttackObject( targetOffset, Server->Map, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -462,7 +462,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
-				if ( !attackingBuilding->CanAttackObject( targetOffset, true ) )
+				if ( !attackingBuilding->CanAttackObject( targetOffset, Server->Map, true ) )
 				{
 					cLog::write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;

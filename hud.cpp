@@ -470,7 +470,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff() ) && !( selectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
+			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff(), Client->Map ) && !( selectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
 				mouse->SetCursor ( CAttack );
 			}
@@ -507,7 +507,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff() ) )
+			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff(), Client->Map ) )
 			{
 				mouse->SetCursor ( CAttack );			
 			}
@@ -516,14 +516,14 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->CanAttackObject ( mouse->GetKachelOff(), Client->Map ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{
 				Client->mouseMoveCallback ( true );
 			}
 		}
-		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->CanAttackObject ( mouse->GetKachelOff() ) )
+		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->CanAttackObject ( mouse->GetKachelOff(), Client->Map ) )
 		{
 			if ( mouse->SetCursor ( CAttack ) )
 			{

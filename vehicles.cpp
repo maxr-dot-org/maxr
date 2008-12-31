@@ -2527,7 +2527,7 @@ void cVehicle::Center ( void )
 }
 
 // Prüft, ob das Vehicle das Objekt angreifen kann:
-bool cVehicle::CanAttackObject ( int off, bool override )
+bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 {
 	cVehicle *v = NULL;
 	cBuilding *b = NULL;
@@ -2550,10 +2550,10 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !IsInRange ( off ) )
+	if ( !IsInRange ( off, Map ) )
 		return false;
 
-	if ( data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( off ) )
+	if ( data.muzzle_typ == MUZZLE_TORPEDO && !Map->IsWater( off ) )
 		return false;
 
 	if ( !owner->ScanMap[off] )
@@ -2562,16 +2562,16 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 	if ( override )
 		return true;
 
-	selectTarget(v, b, off, data.can_attack, Client->Map );
+	selectTarget(v, b, off, data.can_attack, Map );
 	
 	if ( v )
 	{
-		if ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer )
+		if ( Client && ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else if ( b )
 	{
-		if ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer )
+		if ( Client && ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else
@@ -2583,11 +2583,11 @@ bool cVehicle::CanAttackObject ( int off, bool override )
 }
 
 // Prüft, ob das Ziel innerhalb der Reichweite liegt:
-bool cVehicle::IsInRange ( int off )
+bool cVehicle::IsInRange ( int off, cMap *Map )
 {
 	int x, y;
-	x = off % Client->Map->size;
-	y = off / Client->Map->size;
+	x = off % Map->size;
+	y = off / Map->size;
 	x -= PosX;
 	y -= PosY;
 
@@ -3777,7 +3777,7 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesAir[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -3795,7 +3795,7 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -3822,7 +3822,7 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesGround[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -3840,7 +3840,7 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
