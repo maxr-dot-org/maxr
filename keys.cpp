@@ -281,7 +281,7 @@ int LoadKeys ()
 		KeysList.KeyCalcPath = GetKeyFromString ( "LSHIFT" );
 	}
 
-	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","MOUSE_STYLE", NULL);
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Mouse","MOUSE_STYLE", NULL);
 	pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text");
 	if ( sTmpString.compare ( "OLD_SCHOOL" ) == 0 )
 		MouseStyle = OldSchool;
