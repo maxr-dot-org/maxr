@@ -4002,6 +4002,28 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				neutralBuildings = nextBuilding;
 			}
 		}
+	case GAME_EV_UNIT_UPGRADE_VALUES:
+		{
+			sID ID;
+			sUnitData *Data;
+			ID.iFirstPart = message->popInt16();
+			ID.iSecondPart = message->popInt16();
+			Data = ID.getUnitData ( ActivePlayer );
+			if ( Data != NULL )
+			{
+				Data->version = message->popInt16();
+				Data->scan = message->popInt16();
+				Data->range = message->popInt16();
+				Data->damage = message->popInt16();
+				Data->costs = message->popInt16();
+				Data->armor = message->popInt16();
+				Data->max_speed = message->popInt16();
+				Data->max_shots = message->popInt16();
+				Data->max_ammo = message->popInt16();
+				Data->max_hit_points = message->popInt16();
+			}
+		}
+		break;
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

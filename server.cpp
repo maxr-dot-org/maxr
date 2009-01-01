@@ -2732,9 +2732,17 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// refresh enemy units
 	Player->DoScan();
 	checkPlayerUnits();
+	// send upgrades
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	{
+		if ( Player->VehicleData[i].version > 1 ) sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
+	}
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	{
+		if ( Player->BuildingData[i].version > 1 ) sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
+	}
 	// FIXME: sending hudsettings doesn't work form yet
 	//sendHudSettings ( &Player->HotHud, Player );
-	// TODO: send upgrades
 }
 
 void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )

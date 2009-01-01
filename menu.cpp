@@ -601,7 +601,11 @@ void RunSPMenu ( void )
 						for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 						{
 							ClientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
+							// reinit unit values
+							for ( unsigned int j = 0; j < UnitsData.vehicle.Size(); j++) ClientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
+							for ( unsigned int j = 0; j < UnitsData.building.Size(); j++) ClientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
 						}
+						// reinit unitvalues
 						// init client and his player
 						Client = new cClient( &ClientMap, &ClientPlayerList );
 						Client->initPlayer ( ClientPlayerList[0] );
@@ -4483,6 +4487,9 @@ int cMultiPlayerMenu::runSavedGame()
 		{
 			ClientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
 			if ( (*Server->PlayerList)[i]->iSocketNum == MAX_CLIENTS ) LocalPlayer = ClientPlayerList[i];
+			// reinit unit values
+			for ( unsigned int j = 0; j < UnitsData.vehicle.Size(); j++) ClientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
+			for ( unsigned int j = 0; j < UnitsData.building.Size(); j++) ClientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
 		}
 		// init client and his player
 		Client = new cClient( &ClientMap, &ClientPlayerList );

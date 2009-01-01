@@ -342,7 +342,7 @@ void cSavegame::loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data )
 	if ( element = upgradeNode->FirstChildElement( "Speed" ) ) element->Attribute ( "num", &data->max_speed );
 	if ( element = upgradeNode->FirstChildElement( "Armor" ) ) element->Attribute ( "num", &data->armor );
 	if ( element = upgradeNode->FirstChildElement( "Costs" ) ) element->Attribute ( "num", &data->costs );
-	if ( element = upgradeNode->FirstChildElement( "Demage" ) ) element->Attribute ( "num", &data->damage );
+	if ( element = upgradeNode->FirstChildElement( "Damage" ) ) element->Attribute ( "num", &data->damage );
 	if ( element = upgradeNode->FirstChildElement( "Range" ) ) element->Attribute ( "num", &data->range );
 	if ( element = upgradeNode->FirstChildElement( "Scan" ) ) element->Attribute ( "num", &data->scan );
 }
@@ -988,7 +988,7 @@ void cSavegame::writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sU
 	if ( data->max_speed != originaldata->max_speed ) addAttributeElement ( upgradeNode, "Speed", "num", iToStr ( data->max_speed ) );
 	if ( data->armor != originaldata->armor ) addAttributeElement ( upgradeNode, "Armor", "num", iToStr ( data->armor ) );
 	if ( data->costs != originaldata->costs ) addAttributeElement ( upgradeNode, "Costs", "num", iToStr ( data->costs ) );
-	if ( data->damage != originaldata->damage ) addAttributeElement ( upgradeNode, "Demage", "num", iToStr ( data->damage ) );
+	if ( data->damage != originaldata->damage ) addAttributeElement ( upgradeNode, "Damage", "num", iToStr ( data->damage ) );
 	if ( data->range != originaldata->range ) addAttributeElement ( upgradeNode, "Range", "num", iToStr ( data->range ) );
 	if ( data->scan != originaldata->scan ) addAttributeElement ( upgradeNode, "Scan", "num", iToStr ( data->scan ) );
 }

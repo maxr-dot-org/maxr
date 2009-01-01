@@ -796,3 +796,21 @@ void sendDeleteEverything ( int player )
 	cNetMessage* message = new cNetMessage( GAME_EV_DELETE_EVERYTHING );
 	Server->sendNetMessage( message, player );
 }
+
+void sendUnitUpgrades ( sUnitData *Data, int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_UNIT_UPGRADE_VALUES );
+	message->pushInt16 ( Data->max_hit_points );
+	message->pushInt16 ( Data->max_ammo );
+	message->pushInt16 ( Data->max_shots );
+	message->pushInt16 ( Data->max_speed );
+	message->pushInt16 ( Data->armor );
+	message->pushInt16 ( Data->costs );
+	message->pushInt16 ( Data->damage );
+	message->pushInt16 ( Data->range );
+	message->pushInt16 ( Data->scan );
+	message->pushInt16 ( Data->version );
+	message->pushInt16 ( Data->ID.iSecondPart );
+	message->pushInt16 ( Data->ID.iFirstPart );
+	Server->sendNetMessage( message, player );
+}

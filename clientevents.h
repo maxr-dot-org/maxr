@@ -38,6 +38,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
+	GAME_EV_UNIT_UPGRADE_VALUES,	//
 	GAME_EV_DO_START_WORK,			// starts a building
 	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move

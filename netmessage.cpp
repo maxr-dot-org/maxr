@@ -443,6 +443,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_STORE_UNIT");
 	case GAME_EV_EXIT_UNIT:
 		return string("GAME_EV_EXIT_UNIT");
+	case GAME_EV_UNIT_UPGRADE_VALUES:
+		return string("GAME_EV_UNIT_UPGRADE_VALUES");
 	default:
 		return iToStr( iType );
 	}
