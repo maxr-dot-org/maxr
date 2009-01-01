@@ -265,7 +265,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 		if ( hudNode->FirstChildElement( "Status" ) ) Player->HotHud.Status = true;
 		if ( hudNode->FirstChildElement( "Survey" ) ) Player->HotHud.Studie = true;
 		if ( hudNode->FirstChildElement( "Hitpoints" ) ) Player->HotHud.Treffer = true;
-		if ( hudNode->FirstChildElement( "Radar" ) ) Player->HotHud.Radar = true;
+		if ( hudNode->FirstChildElement( "MinimapZoom" ) ) Player->HotHud.MinimapZoom = true;
 		if ( hudNode->FirstChildElement( "TNT" ) ) Player->HotHud.TNT = true;
 		if ( hudNode->FirstChildElement( "Lock" ) ) Player->HotHud.Lock = true;
 		if ( hudNode->FirstChildElement( "SelectedVehicle" ) ) hudNode->FirstChildElement( "SelectedVehicle" )->Attribute ( "num", &Player->HotHud.tmpSelectedUnitID );
@@ -920,7 +920,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 		if ( Client->Hud.Status ) addMainElement ( hudNode, "Status" );
 		if ( Client->Hud.Studie ) addMainElement ( hudNode, "Survey" );
 		if ( Client->Hud.Treffer ) addMainElement ( hudNode, "Hitpoints" );
-		if ( Client->Hud.Radar ) addMainElement ( hudNode, "Radar" );
+		if ( Client->Hud.MinimapZoom ) addMainElement ( hudNode, "MinimapZoom" );
 		if ( Client->Hud.TNT ) addMainElement ( hudNode, "TNT" );
 		if ( Client->Hud.Lock ) addMainElement ( hudNode, "Colors" );
 		if ( Client->SelectedVehicle ) addAttributeElement ( hudNode, "SelectedVehicle", "num", iToStr ( Client->SelectedVehicle->iID ) );

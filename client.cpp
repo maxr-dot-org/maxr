@@ -1376,78 +1376,174 @@ void cClient::drawMap( bool bPure )
 
 void cClient::drawMiniMap()
 {
-	//TODO: implement zoom
-	unsigned int *minimap;
-	int terrainx, terrainy;
 
-	SDL_LockSurface ( GraphicsData.gfx_hud );
-	minimap = ( ( unsigned int* ) GraphicsData.gfx_hud->pixels );
+	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
+	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );	
+		
+	//set zoom factor
+	int zoomFactor = 1;
+	if ( Hud.MinimapZoom )
+		zoomFactor = MINIMAP_ZOOM_FACTOR;
+	Hud.minimapZoomFactor = zoomFactor;
 
-	for ( int mapx = 0; mapx < 112; mapx++ )
+	//set drawing offset, to center the minimap on the screen position
+	int minimapOffsetX = 0, minimapOffsetY = 0;	//position of the upper left edge on the map
+	if ( zoomFactor > 1 )
 	{
-		terrainx = (int)(( Map->size/112.0 )*mapx);
-		for ( int mapy = 0; mapy < 112; mapy++ )
+		int centerPosX = (int) (Hud.OffX / 64.0 + (SettingsData.iScreenW - 192.0) / (Hud.Zoom * 2));
+		int centerPosY = (int) (Hud.OffY / 64.0 + (SettingsData.iScreenH -  32.0) / (Hud.Zoom * 2));
+		minimapOffsetX = centerPosX - (Map->size / (zoomFactor * 2));
+		minimapOffsetY = centerPosY - (Map->size / (zoomFactor * 2));
+
+		if ( minimapOffsetX < 0 ) minimapOffsetX = 0;
+		if ( minimapOffsetY < 0 ) minimapOffsetY = 0;
+		if ( minimapOffsetX > Map->size - (Map->size / zoomFactor) ) minimapOffsetX = Map->size - (Map->size / zoomFactor);
+		if ( minimapOffsetY > Map->size - (Map->size / zoomFactor) ) minimapOffsetY = Map->size - (Map->size / zoomFactor);
+	}
+	Hud.minimapOffsetX = minimapOffsetX;
+	Hud.minimapOffsetY = minimapOffsetY;
+
+	//draw the landscape
+	for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
+	{
+		//calculate the field on the map	
+		int terrainx = (miniMapX * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+
+		//calculate the position within the terrain graphic (for better rendering of maps < 112)
+		int offsetx  = ((miniMapX * Map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+
+		for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
 		{
-			terrainy = (int)(( Map->size/112.0 )*mapy);
+			int terrainy =  (miniMapY * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+			int offsety  = ((miniMapY * Map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
-			unsigned int color = 0;
-			if (ActivePlayer->ScanMap[terrainx + terrainy * Map->size])
-			{
-				cMapField&               m = (*Map)[terrainx + terrainy * Map->size];
-				cBuildingIterator const& b = m.getBuildings();
-				if (b.size() > 0)
-				{
-					if (b->owner && (!Hud.TNT || b->data.can_attack))
-						color = *(unsigned int*)b->owner->color->pixels;
-				}
-				else
-				{
-					cVehicleIterator const& v = m.getVehicles();
-					if (v.size() > 0)
-					{
-						if (!Hud.TNT || v->data.can_attack)
-							color = *(unsigned int*)v->owner->color->pixels;
-					}
-					else
-					{
-						cVehicleIterator const& p = m.getPlanes();
-						if (p.size() > 0)
-						{
-							if (!Hud.TNT || p->data.can_attack)
-								color = *(unsigned int*)p->owner->color->pixels;
-						}
-					}
-				}
-			}
+			SDL_Color sdlcolor;
+			Uint8* terrainPixels = (Uint8*) Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->pixels;
+			Uint8 index = terrainPixels[offsetx + offsety*64];
+			sdlcolor = Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->format->palette->colors[index];
+			Uint32 color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
 
-			if ( color == 0 )
-			{
-				SDL_Color sdlcolor;
-				Uint8 index = *((Uint8* )Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->pixels );
-				sdlcolor = Map->terrain[Map->Kacheln[terrainx+terrainy*Map->size]].sf_org->format->palette->colors[index];
-				color = sdlcolor.r*256*256+sdlcolor.g*256+sdlcolor.b;
-			}
-			minimap[15+356*GraphicsData.gfx_hud->w+mapx+mapy*GraphicsData.gfx_hud->w] = color;
+			minimap[miniMapX+miniMapY*MINIMAP_SIZE] = color;
 		}
 	}
-	// draw the borders:
-	int startx, starty, endx, endy;
-	startx = ( int ) ( ( Hud.OffX/64.0 ) * ( 112.0/Map->size ) );
-	starty = ( int ) ( ( Hud.OffY/64.0 ) * ( 112.0/Map->size ) );
-	endx = startx + ( int ) ( 112/ ( Map->size/ ( ( ( SettingsData.iScreenW-192.0 ) /Hud.Zoom ) ) ) );
-	endy = ( int ) ( starty+112/ ( Map->size/ ( ( ( SettingsData.iScreenH-32.0 ) /Hud.Zoom ) ) ) );
 
-	for ( int y = starty; y < endy; y++ )
+	//draw the fog
+	for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
 	{
-		minimap[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+startx] = MINIMAP_COLOR;
-		minimap[y*GraphicsData.gfx_hud->w+15+356*GraphicsData.gfx_hud->w+startx+endx-startx-1] = MINIMAP_COLOR;
+		int terrainx = (miniMapX * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+		for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
+		{
+			int terrainy = (miniMapY * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+
+			if ( !ActivePlayer->ScanMap[terrainx + terrainy * Map->size] )
+			{
+				Uint8* color = (Uint8*) &minimap[miniMapX+miniMapY*MINIMAP_SIZE];
+				color[0] = (Uint8) ( color[0] * 0.6 );
+				color[1] = (Uint8) ( color[1] * 0.6 );
+				color[2] = (Uint8) ( color[2] * 0.6 );
+			}
+		}
 	}
-	for ( int x = startx; x < endx; x++ )
+
+	//draw the units
+	//here we go through each map field instead of through each minimap pixel,
+	//to make sure, that every unit is diplayed and has the same size on the minimap.
+	
+	//the size of the rect, that is drawn for each unit
+	int size = (int) ceil((float) MINIMAP_SIZE * zoomFactor / Map->size);
+	if ( size < 2 ) size = 2;
+	SDL_Rect rect;	
+	rect.h = size;
+	rect.w = size;
+			
+	for ( int mapx = 0; mapx < Map->size; mapx++ )
 	{
-		minimap[x+15+356*GraphicsData.gfx_hud->w+starty*GraphicsData.gfx_hud->w]=MINIMAP_COLOR;
-		minimap[x+15+356*GraphicsData.gfx_hud->w+ ( starty+endy-1-starty ) *GraphicsData.gfx_hud->w] = MINIMAP_COLOR;
+		rect.x = ( (mapx - minimapOffsetX) * MINIMAP_SIZE * zoomFactor ) / Map->size;
+		if ( rect.x < 0 || rect.x >= MINIMAP_SIZE ) continue; 
+		for ( int mapy = 0; mapy < Map->size; mapy++ )
+		{
+			rect.y = ( (mapy - minimapOffsetY) * MINIMAP_SIZE * zoomFactor ) / Map->size;
+			if ( rect.y < 0 || rect.y >= MINIMAP_SIZE ) continue;
+
+			if ( !ActivePlayer->ScanMap[mapx + mapy * Map->size] ) continue;
+
+			cMapField& field = (*Map)[mapx + mapy * Map->size];
+
+			//draw building
+			cBuilding* building = field.getBuildings();
+			if ( building && building->owner )
+			{
+				if ( !Hud.TNT || building->data.can_attack )
+				{
+					unsigned int color = *( (unsigned int*) building->owner->color->pixels );
+					SDL_FillRect( minimapSurface, &rect, color);
+				}
+			}
+
+			//draw vehicle
+			cVehicle* vehicle = field.getVehicles();
+			if ( vehicle )
+			{
+				if ( !Hud.TNT || vehicle->data.can_attack )
+				{
+					unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
+					SDL_FillRect( minimapSurface, &rect, color);
+				}
+			}
+
+			//draw plane
+			vehicle = field.getPlanes();
+			if ( vehicle )
+			{
+				if ( !Hud.TNT || vehicle->data.can_attack )
+				{
+					unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
+					SDL_FillRect( minimapSurface, &rect, color);
+				}
+			}
+		}
 	}
-	SDL_UnlockSurface ( GraphicsData.gfx_hud );
+
+
+	//draw the screen borders
+	int startx, starty, endx, endy;
+	startx = (int) ((((Hud.OffX / 64.0) - minimapOffsetX) * MINIMAP_SIZE * zoomFactor) / Map->size);
+	starty = (int) ((((Hud.OffY / 64.0) - minimapOffsetY) * MINIMAP_SIZE * zoomFactor) / Map->size);
+	endx = (int) ( startx + ((SettingsData.iScreenW - 192.0) * MINIMAP_SIZE * zoomFactor) / (Map->size * Hud.Zoom));
+	endy = (int) ( starty + ((SettingsData.iScreenH -  32.0) * MINIMAP_SIZE * zoomFactor) / (Map->size * Hud.Zoom));
+
+	if ( endx == MINIMAP_SIZE ) endx = MINIMAP_SIZE - 1; //workaround
+	if ( endy == MINIMAP_SIZE ) endy = MINIMAP_SIZE - 1;
+
+	for ( int y = starty; y <= endy; y++ )
+	{
+		if ( y < 0 || y >= MINIMAP_SIZE ) continue;
+		if ( startx >= 0 && startx < MINIMAP_SIZE )
+		{
+			minimap[y*MINIMAP_SIZE + startx] = MINIMAP_COLOR;
+		}
+		if ( endx >= 0 && endx < MINIMAP_SIZE )
+		{
+			minimap[y*MINIMAP_SIZE + endx] = MINIMAP_COLOR;
+		}
+	}
+	for ( int x = startx; x <= endx; x++ )
+	{
+		if ( x < 0 || x >= MINIMAP_SIZE ) continue;
+		if ( starty >= 0 && starty < MINIMAP_SIZE )
+		{
+			minimap[starty * MINIMAP_SIZE + x] = MINIMAP_COLOR;
+		}
+		if ( endy >= 0 && endy < MINIMAP_SIZE )
+		{
+			minimap[endy * MINIMAP_SIZE + x] = MINIMAP_COLOR;
+		}
+	}
+	
+	//ready. blitt the map to screen
+	SDL_Rect minimapPos = { MINIMAP_POS_X, MINIMAP_POS_Y, 0, 0 };
+	SDL_BlitSurface(minimapSurface, NULL, GraphicsData.gfx_hud, &minimapPos );
+	SDL_FreeSurface( minimapSurface );	
 }
 
 void cClient::drawFLC()
@@ -3772,7 +3868,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Hud.Gitter = message->popBool();
 			Hud.Munition = message->popBool();
 			Hud.Nebel = message->popBool();
-			Hud.Radar = message->popBool();
+			Hud.MinimapZoom = message->popBool();
 			Hud.Reichweite = message->popBool();
 			Hud.Scan = message->popBool();
 			Hud.Status = message->popBool();

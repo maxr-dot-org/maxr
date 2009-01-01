@@ -1121,6 +1121,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 				//vehicle can drive on water, if there is a bridge, platform or road
 				if ( !building ) return false;
+				//FIXME: what about e.g. an explosive mine in a waterplatform?
 				if ( !( building->data.is_road || building->data.is_bridge || building->data.is_platform )) return false;
 			}
 			if ( player && !player->ScanMap[offset] ) return true;			

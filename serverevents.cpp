@@ -759,7 +759,7 @@ void sendHudSettings ( cHud *Hud, cPlayer *Player )
 	message->pushBool ( Hud->Status );
 	message->pushBool ( Hud->Scan );
 	message->pushBool ( Hud->Reichweite );
-	message->pushBool ( Hud->Radar );
+	message->pushBool ( Hud->MinimapZoom );
 	message->pushBool ( Hud->Nebel );
 	message->pushBool ( Hud->Munition );
 	message->pushBool ( Hud->Gitter );

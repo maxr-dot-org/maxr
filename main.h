@@ -78,7 +78,6 @@ struct sVehicle;
 /** Slashscreen height  */
 #define SPLASHHEIGHT 420
 #define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
-#define MINIMAP_COLOR      0xFC0000 // Farbe des Rahmens in der Minimap
 #define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
 #define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises für Land
 #define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
@@ -90,6 +89,13 @@ struct sVehicle;
 #define USER_WARPMOUSE		SDL_USEREVENT+0	// An Event for moving the mouse; this is the first UserEvent
 #define LANDING_DISTANCE_WARNING 28
 #define LANDING_DISTANCE_TOO_CLOSE 10
+
+//minimap configuration
+#define MINIMAP_COLOR		0xFC0000 //color of the screen borders on the minimap
+#define MINIMAP_POS_X		15		 //the position of the map on the screen
+#define MINIMAP_POS_Y		356		 //the position of the map on the screen
+#define MINIMAP_SIZE		112		 //the size of the minimap in pixels
+#define MINIMAP_ZOOM_FACTOR	2		 //the zoomfactor for minimap zoom switch
 
 // Colors /////////////////////////////////////////////////////////////////////
 #define cl_red 0

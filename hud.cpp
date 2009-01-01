@@ -32,7 +32,7 @@
 cHud::cHud ( void )
 {
 	TNT=false;
-	Radar=false;
+	MinimapZoom=false;
 	Nebel=false;
 	Gitter=false;
 	Scan=false;
@@ -48,6 +48,9 @@ cHud::cHud ( void )
 	LastZoom=64;
 	OffX=0;
 	OffY=0;
+	minimapOffsetX = 0;
+	minimapOffsetY = 0;
+	minimapZoomFactor = 0;
 	Praeferenzen=false;
 	PlayFLC=true;
 	PausePressed=false;PlayPressed=false;
@@ -77,7 +80,7 @@ void cHud::SwitchTNT ( bool set )
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
-void cHud::SwitchRadar ( bool set )
+void cHud::SwitchMinimapZoom ( bool set )
 {
 	SDL_Rect scr={334,53,27,26},dest={136,387,27,26};
 	if ( set )
@@ -87,7 +90,7 @@ void cHud::SwitchRadar ( bool set )
 		}
 
 	BlitButton(scr, dest, "", false);
-	Radar=set;
+	MinimapZoom=set;
 	Client->bFlagDrawHud=true;
 	Client->bFlagDrawMMap=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -311,7 +314,7 @@ void cHud::CheckButtons ( void )
 	if ( x<170 )
 	{
 		if ( x>=136&&x<=136+27&&y>=413&&y<=413+28 ) {SwitchTNT ( !TNT );return;}
-		if ( x>=136&&x<=136+27&&y>=387&&y<=387+28 ) {SwitchRadar ( !Radar );return;}
+		if ( x>=136&&x<=136+27&&y>=387&&y<=387+28 ) {SwitchMinimapZoom ( !MinimapZoom );return;}
 		if ( x>=112&&x<=112+55&&y>=332&&y<=332+17 ) {SwitchNebel ( !Nebel );return;}
 		if ( x>=112&&x<=112+55&&y>=314&&y<=314+17 ) {SwitchGitter ( !Gitter );return;}
 		if ( x>=112&&x<=112+55&&y>=296&&y<=296+17 ) {SwitchScan ( !Scan );return;}
@@ -335,7 +338,7 @@ void cHud::CheckOneClick ( void )
 	{
 		if ( x!=lastX&&x>=20&&y>=272&&x<=150&&y<=292 ) {DoZoom ( x-20 );lastX=x;return;}
 	}
-	if ( x>=15&&x<15+112&&y>=356&&y<356+112 ) {DoMinimapClick ( x,y );return;}
+	if ( x>=15&&x<15+112&&y>=356&&y<356+112 ){DoMinimapClick ( x,y );return;}
 	lastX=x;
 }
 
@@ -354,7 +357,7 @@ void cHud::DoAllHud ( void )
 	ChatButton(false);
 	DateiButton(false);
 	SwitchTNT ( TNT );
-	SwitchRadar ( Radar );
+	SwitchMinimapZoom ( MinimapZoom );
 	SwitchNebel ( Nebel );
 	SwitchGitter ( Gitter );
 	SwitchScan ( Scan );
@@ -778,10 +781,31 @@ void cHud::DoMinimapClick ( int x,int y )
 {
 	static int lx=0,ly=0;
 	if ( lx==x&&ly==y ) return;
-	lx=x;ly=y;
-	OffX= ( int ) ( ( Client->Map->size/112.0 ) * ( x-15 ) *64- ( 224.0/Zoom ) *64 );
-	OffY= ( int ) ( ( Client->Map->size/112.0 ) * ( y-356 ) *64- ( 224.0/Zoom ) *64 );
-	Client->bFlagDrawMMap=true;
+
+	OffX = minimapOffsetX * 64 + ((x - MINIMAP_POS_X) * Client->Map->size * 64) / (MINIMAP_SIZE * minimapZoomFactor);
+	OffY = minimapOffsetY * 64 + ((y - MINIMAP_POS_Y) * Client->Map->size * 64) / (MINIMAP_SIZE * minimapZoomFactor);
+	OffX -= (SettingsData.iScreenW - 192) * 64 / (Zoom * 2);
+	OffY -= (SettingsData.iScreenH -  32) * 64 / (Zoom * 2);
+
+	//workaround for click and hold on the minimap while it is zoomed:
+	//we warp the mouse so that it stays over the position of the screen
+	//does not work as intended in some cases --Eiko
+	int lastMinimapOffsetX = minimapOffsetX;
+	int lastMinimapOffsetY = minimapOffsetY;
+	Client->drawMiniMap();
+	if ( lastMinimapOffsetX != minimapOffsetX )
+	{
+		x = MINIMAP_POS_X + MINIMAP_SIZE/2;
+	}
+	if ( lastMinimapOffsetY != minimapOffsetY )
+	{
+		y = MINIMAP_POS_Y - 1 + MINIMAP_SIZE/2;
+	}
+	SDL_WarpMouse( x, y );
+	lx = x;
+	ly = y;
+
+	Client->bFlagDrawHud=true;
 	Client->bFlagDrawMap=true;
 	DoScroll ( 0 );
 }

@@ -30,7 +30,7 @@ public:
   cHud();
   ~cHud();
 
-  bool TNT,Radar,Nebel,Gitter,Scan,Reichweite,Munition,Treffer,Farben,Status,Studie,Lock;
+  bool TNT,MinimapZoom,Nebel,Gitter,Scan,Reichweite,Munition,Treffer,Farben,Status,Studie,Lock;
   bool Praeferenzen;
   bool PlayFLC,PausePressed,PlayPressed;
   bool HelpPressed,ChatPressed,EndePressed;
@@ -40,9 +40,11 @@ public:
   int OffX,OffY;
   bool LastOverEnde;
   int tmpSelectedUnitID;
+  int minimapZoomFactor;
+  int minimapOffsetX, minimapOffsetY;
 
   void SwitchTNT(bool set);
-  void SwitchRadar(bool set);
+  void SwitchMinimapZoom(bool set);
   void SwitchNebel(bool set);
   void SwitchGitter(bool set);
   void SwitchScan(bool set);
