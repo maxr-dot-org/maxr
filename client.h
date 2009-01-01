@@ -174,6 +174,7 @@ private:
 	*@return -1 if game should be closed, else 0.
 	*/
 	int checkUser( bool bChange = true );
+	bool selectUnit( sGameObjects *OverObject, bool base );
 	/**
 	* draws the minimap in the hud
 	*@author alzi alias DoctorDeath

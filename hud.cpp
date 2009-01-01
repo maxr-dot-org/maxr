@@ -26,7 +26,7 @@
 #include "menu.h"
 #include "client.h"
 #include "serverevents.h"
-
+#include "keys.h"
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
@@ -563,11 +563,26 @@ void cHud::CheckScroll ( bool pure )
 							(
 								Client->OverObject->top &&
 								!Client->OverObject->top->data.is_connector
+							) ||
+							(
+								MouseStyle == OldSchool &&
+								Client->OverObject->plane
 							)
 						) &&
 						(
 							selectedVehicle->data.can_drive != DRIVE_AIR ||
-							Client->OverObject->plane
+							Client->OverObject->plane ||
+							(
+								MouseStyle == OldSchool &&
+								(
+									Client->OverObject->vehicle ||
+									(
+										Client->OverObject->top &&
+										!Client->OverObject->top->data.is_connector &&
+										!Client->OverObject->top->data.is_pad
+									)
+								)
+							)
 						) &&
 						!selectedVehicle->LoadActive &&
 						!selectedVehicle->ActivatingVehicle

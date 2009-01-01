@@ -573,14 +573,13 @@ int cClient::checkUser( bool bChange )
 	iMouseButton = mouse->GetMouseButton();
 	if ( MouseStyle == OldSchool && iMouseButton == 4 && iLastMouseButton != 4 && OverObject )
 	{
-		if ( OverObject->vehicle ) OverObject->vehicle->ShowHelp();
-		else if ( OverObject->plane ) OverObject->plane->ShowHelp();
-		else if ( OverObject->base ) OverObject->base->ShowHelp();
-		else if ( OverObject->top ) OverObject->top->ShowHelp();
-		iMouseButton = 0;
+		if ( OverObject->vehicle && OverObject->vehicle == SelectedVehicle ) OverObject->vehicle->ShowHelp();
+		else if ( OverObject->plane && OverObject->plane == SelectedVehicle ) OverObject->plane->ShowHelp();
+		else if ( OverObject->top && OverObject->top == SelectedBuilding ) OverObject->top->ShowHelp();
+		else if ( OverObject->base && OverObject->base == SelectedBuilding ) OverObject->base->ShowHelp();
+		else if ( OverObject ) selectUnit ( OverObject, true );
 	}
-	if ( MouseStyle == OldSchool && iMouseButton == 5 ) iMouseButton = 4;
-	if ( iMouseButton == 4 && iLastMouseButton != 4 )
+	else if ( ( iMouseButton == 4 && iLastMouseButton != 4 ) || ( MouseStyle == OldSchool && iMouseButton == 5 && iLastMouseButton != 5 ) )
 	{
 		if ( bHelpActive )
 		{
@@ -738,19 +737,6 @@ int cClient::checkUser( bool bChange )
 			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
 			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
 		}
-		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
-		{
-			if ( SelectedVehicle->IsBuilding )
-			{
-				int iX, iY;
-				mouse->GetKachel ( &iX, &iY );
-				sendWantEndBuilding ( SelectedVehicle, iX, iY );
-			}
-			else
-			{
-				addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
-			}
-		}
 		else if ( !bHelpActive )
 		{
 			Hud.CheckButtons();
@@ -795,148 +781,43 @@ int cClient::checkUser( bool bChange )
 					// TODO: add commando disable
 					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 				}
-				else
-					// select the unit:
-					if ( OverObject )
+				else if ( MouseStyle == OldSchool && OverObject && selectUnit ( OverObject, false ) )
+				{}
+				else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
+				{
+					if ( SelectedVehicle->IsBuilding )
 					{
-						if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
-						{
-							if ( !SelectedVehicle->moving && !SelectedVehicle->rotating&&SelectedVehicle->owner == ActivePlayer )
-							{
-								SelectedVehicle->MenuActive = true;
-								PlayFX ( SoundData.SNDHudButton );
-							}
-						}
-						else if ( SelectedBuilding&& ( OverObject->base == SelectedBuilding || OverObject->top == SelectedBuilding ) )
-						{
-							if ( SelectedBuilding->owner == ActivePlayer )
-							{
-								SelectedBuilding->MenuActive = true;
-								PlayFX ( SoundData.SNDHudButton );
-							}
-						}
-						else if ( OverObject->plane && !OverObject->plane->moving && !OverObject->plane->rotating )
-						{
-							bChangeObjectName = false;
-							if ( SelectedVehicle == OverObject->plane )
-							{
-								if ( SelectedVehicle->owner == ActivePlayer )
-								{
-									SelectedVehicle->MenuActive = true;
-									PlayFX ( SoundData.SNDHudButton );
-								}
-							}
-							else
-							{
-								if ( SelectedVehicle )
-								{
-									SelectedVehicle->Deselct();
-									SelectedVehicle = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								else if ( SelectedBuilding )
-								{
-									SelectedBuilding->Deselct();
-									SelectedBuilding = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								SelectedVehicle = OverObject->plane;
-								SelectedVehicle->Select();
-								iObjectStream = SelectedVehicle->PlayStram();
-							}
-						}
-						else if ( OverObject->vehicle && !OverObject->vehicle->moving && !OverObject->vehicle->rotating && !( OverObject->plane && ( OverObject->vehicle->MenuActive || OverObject->vehicle->owner != ActivePlayer ) ) )
-						{
-							bChangeObjectName = false;
-							if ( SelectedVehicle == OverObject->vehicle )
-							{
-								if ( SelectedVehicle->owner == ActivePlayer )
-								{
-									SelectedVehicle->MenuActive = true;
-									PlayFX ( SoundData.SNDHudButton );
-								}
-							}
-							else
-							{
-								if ( SelectedVehicle )
-								{
-									SelectedVehicle->Deselct();
-									SelectedVehicle = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								else if ( SelectedBuilding )
-								{
-									SelectedBuilding->Deselct();
-									SelectedBuilding = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								SelectedVehicle = OverObject->vehicle;
-								SelectedVehicle->Select();
-								iObjectStream = SelectedVehicle->PlayStram();
-							}
-						}
-						else if ( OverObject->top )
-						{
-							bChangeObjectName = false;
-							if ( SelectedBuilding == OverObject->top )
-							{
-								if ( SelectedBuilding->owner == ActivePlayer )
-								{
-									SelectedBuilding->MenuActive = true;
-									PlayFX ( SoundData.SNDHudButton );
-								}
-							}
-							else
-							{
-								if ( SelectedVehicle )
-								{
-									SelectedVehicle->Deselct();
-									SelectedVehicle = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								else if ( SelectedBuilding )
-								{
-									SelectedBuilding->Deselct();
-									SelectedBuilding = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								SelectedBuilding = OverObject->top;
-								SelectedBuilding->Select();
-								iObjectStream = SelectedBuilding->PlayStram();
-							}
-						}
-						else if ( OverObject->base && OverObject->base->owner )
-						{
-							bChangeObjectName = false;
-							if ( SelectedBuilding == OverObject->base )
-							{
-								if ( SelectedBuilding->owner == ActivePlayer )
-								{
-									SelectedBuilding->MenuActive = true;
-									PlayFX ( SoundData.SNDHudButton );
-								}
-							}
-							else
-							{
-								if ( SelectedVehicle )
-								{
-									SelectedVehicle->Deselct();
-									SelectedVehicle = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								else if ( SelectedBuilding )
-								{
-									SelectedBuilding->Deselct();
-									SelectedBuilding = NULL;
-									StopFXLoop ( iObjectStream );
-								}
-								SelectedBuilding = OverObject->base;
-								SelectedBuilding->Select();
-								iObjectStream = SelectedBuilding->PlayStram();
-							}
-						}
-
+						int iX, iY;
+						mouse->GetKachel ( &iX, &iY );
+						sendWantEndBuilding ( SelectedVehicle, iX, iY );
 					}
+					else
+					{
+						addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
+					}
+				}
+				else if ( OverObject )
+				{
+					// open unit menu
+					if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
+					{
+						if ( !SelectedVehicle->moving && !SelectedVehicle->rotating&&SelectedVehicle->owner == ActivePlayer )
+						{
+							SelectedVehicle->MenuActive = true;
+							PlayFX ( SoundData.SNDHudButton );
+						}
+					}
+					else if ( SelectedBuilding&& ( OverObject->base == SelectedBuilding || OverObject->top == SelectedBuilding ) )
+					{
+						if ( SelectedBuilding->owner == ActivePlayer )
+						{
+							SelectedBuilding->MenuActive = true;
+							PlayFX ( SoundData.SNDHudButton );
+						}
+					}
+					// select unit when using modern style
+					else if ( MouseStyle == Modern ) selectUnit ( OverObject, true );
+				}
 			// check whether the name of a unit has to be changed:
 			if ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
@@ -978,6 +859,135 @@ int cClient::checkUser( bool bChange )
 	Hud.CheckScroll();
 	iLastMouseButton = iMouseButton;
 	return 0;
+}
+
+bool cClient::selectUnit( sGameObjects *OverObject, bool base )
+{
+	if ( OverObject->plane && !OverObject->plane->moving && !OverObject->plane->rotating )
+	{
+		bChangeObjectName = false;
+		if ( SelectedVehicle == OverObject->plane )
+		{
+			if ( SelectedVehicle->owner == ActivePlayer )
+			{
+				SelectedVehicle->MenuActive = true;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( SelectedVehicle )
+			{
+				SelectedVehicle->Deselct();
+				SelectedVehicle = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			else if ( SelectedBuilding )
+			{
+				SelectedBuilding->Deselct();
+				SelectedBuilding = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			SelectedVehicle = OverObject->plane;
+			SelectedVehicle->Select();
+			iObjectStream = SelectedVehicle->PlayStram();
+		}
+		return true;
+	}
+	else if ( OverObject->vehicle && !OverObject->vehicle->moving && !OverObject->vehicle->rotating && !( OverObject->plane && ( OverObject->vehicle->MenuActive || OverObject->vehicle->owner != ActivePlayer ) ) )
+	{
+		bChangeObjectName = false;
+		if ( SelectedVehicle == OverObject->vehicle )
+		{
+			if ( SelectedVehicle->owner == ActivePlayer )
+			{
+				SelectedVehicle->MenuActive = true;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( SelectedVehicle )
+			{
+				SelectedVehicle->Deselct();
+				SelectedVehicle = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			else if ( SelectedBuilding )
+			{
+				SelectedBuilding->Deselct();
+				SelectedBuilding = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			SelectedVehicle = OverObject->vehicle;
+			SelectedVehicle->Select();
+			iObjectStream = SelectedVehicle->PlayStram();
+		}
+		return true;
+	}
+	else if ( OverObject->top && ( base || ( ( !OverObject->top->data.is_connector || !SelectedVehicle ) && ( !OverObject->top->data.is_pad || ( !SelectedVehicle || SelectedVehicle->data.can_drive != DRIVE_AIR ) ) ) ) )
+	{
+		bChangeObjectName = false;
+		if ( SelectedBuilding == OverObject->top )
+		{
+			if ( SelectedBuilding->owner == ActivePlayer )
+			{
+				SelectedBuilding->MenuActive = true;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( SelectedVehicle )
+			{
+				SelectedVehicle->Deselct();
+				SelectedVehicle = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			else if ( SelectedBuilding )
+			{
+				SelectedBuilding->Deselct();
+				SelectedBuilding = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			SelectedBuilding = OverObject->top;
+			SelectedBuilding->Select();
+			iObjectStream = SelectedBuilding->PlayStram();
+		}
+		return true;
+	}
+	else if ( ( base || !SelectedVehicle )&& OverObject->base && OverObject->base->owner )
+	{
+		bChangeObjectName = false;
+		if ( SelectedBuilding == OverObject->base )
+		{
+			if ( SelectedBuilding->owner == ActivePlayer )
+			{
+				SelectedBuilding->MenuActive = true;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( SelectedVehicle )
+			{
+				SelectedVehicle->Deselct();
+				SelectedVehicle = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			else if ( SelectedBuilding )
+			{
+				SelectedBuilding->Deselct();
+				SelectedBuilding = NULL;
+				StopFXLoop ( iObjectStream );
+			}
+			SelectedBuilding = OverObject->base;
+			SelectedBuilding->Select();
+			iObjectStream = SelectedBuilding->PlayStram();
+		}
+		return true;
+	}
+	return false;
 }
 
 void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
