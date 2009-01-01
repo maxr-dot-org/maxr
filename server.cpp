@@ -2685,6 +2685,15 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 				Building = Building->next;
 			}
 		}
+		Building = neutralBuildings;
+		while ( Building )
+		{
+			for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+			{
+				if ( Building->SeenByPlayerList[j] == Player ) Building->SeenByPlayerList.Delete ( j );
+			}
+			Building = Building->next;
+		}
 		sendDeleteEverything ( Player->Nr );
 	}
 	sendTurn ( iTurn, Player );

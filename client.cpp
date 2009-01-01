@@ -3899,6 +3899,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Player->BuildingList = building;
 				}
 			}
+			while ( neutralBuildings )
+			{
+				cBuilding* nextBuilding = neutralBuildings->next;
+				delete neutralBuildings;
+				neutralBuildings = nextBuilding;
+			}
 		}
 	default:
 		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
