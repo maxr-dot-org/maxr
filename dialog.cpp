@@ -811,11 +811,7 @@ void showPreferences ( void )
 	iNewResMode = iResMode;
 	bool bMyMode = false;
 
-	const char* sModes[6]; 
-	for(int n=0;n<6;n++) 
-	{ 
-		sModes[n]= new char[10]; 
-	}
+	const char* sModes[6];
 
 	sModes[0]="640x480";
 	sModes[1]="800x600";
@@ -848,11 +844,6 @@ void showPreferences ( void )
 		rFont.x = rDialog.x + 100; rFont.w = 200;
 		rFont.y = rDialog.y + 294+20*3;
 		font->showText(rFont, lngPack.i18n( "Text~Comp~ResolutionWarning" ));
-	}
-
-	for(int n=0;n<6;n++) 
-	{ 
-		delete sModes[n]; 
 	}
 	//END DRAWING RESOLUTION MODES
 
