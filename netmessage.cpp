@@ -445,6 +445,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_EXIT_UNIT");
 	case GAME_EV_UNIT_UPGRADE_VALUES:
 		return string("GAME_EV_UNIT_UPGRADE_VALUES");
+	case GAME_EV_WANT_MARK_LOG:
+		return string("GAME_EV_WANT_MARK_LOG");
+	case GAME_EV_MARK_LOG:
+		return string("GAME_EV_MARK_LOG");
 	default:
 		return iToStr( iType );
 	}

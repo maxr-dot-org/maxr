@@ -2947,17 +2947,6 @@ void cVehicle::ShowBuildMenu ( void )
 				PlaceBand = true;
 				BuildBigSavedPos = PosX + PosY * Client->Map->size;
 
-				if ( !Client->Map->IsWater ( PosX + PosY*Client->Map->size ) )
-				{
-					ShowBigBeton = true;
-					BigBetonAlpha = 10;
-				}
-				else
-				{
-					ShowBigBeton = false;
-					BigBetonAlpha = 255;
-				}
-
 				// save building information temporary to have them when placing band is finished
 				BuildingTyp = images[selected]->ID;
 				BuildRounds = BuildSpeed;

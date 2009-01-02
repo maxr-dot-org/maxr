@@ -3385,6 +3385,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				Map->moveVehicleBig(Vehicle, iBuildOff );
 				Vehicle->owner->DoScan();
+
+				Vehicle->ShowBigBeton = true;
+				Vehicle->BigBetonAlpha = 10;
 			}
 
 			Vehicle->BuildRounds = message->popInt16();
