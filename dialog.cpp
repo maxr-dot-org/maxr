@@ -395,13 +395,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	stringstream ssLicence4;
 
 	//open AUTHOR
-	char const* const authors_filename =
+	string sAuthors = SettingsData.sExePath + PATH_DELIMITER +
 #ifdef _WIN32
 		"AUTHORS.txt";
 #else
 		"AUTHORS";
 #endif
-	FILE* const fp = fopen(authors_filename, "r");
+	FILE* const fp = fopen(sAuthors.c_str(), "r");
 	if ( fp != NULL  )
 	{	//read authors from file
 		while(fgets(line, 72, fp)) //snip entrys longer 72
