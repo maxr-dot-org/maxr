@@ -31,13 +31,13 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	color=Color;
 	Nr=nr;
 	// Die Vehicle Eigenschaften kopieren:
-	VehicleData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.vehicle.Size());
+	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
 	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		VehicleData[i]=UnitsData.vehicle[i].data;
 	}
 	// Die Building Eigenschaften kopieren:
-	BuildingData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.building.Size());
+	BuildingData = new sUnitData[UnitsData.building.Size()];
 	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		BuildingData[i]=UnitsData.building[i].data;
@@ -67,12 +67,12 @@ cPlayer::cPlayer(const cPlayer &Player) : base(this)
 	iSocketNum = Player.iSocketNum;
 	Credits = Player.Credits;
 	// copy vehicle and building datas
-	VehicleData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.vehicle.Size());
+	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
 	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		VehicleData[i] = Player.VehicleData[i];
 	}
-	BuildingData = (sUnitData*)malloc(sizeof(sUnitData) * UnitsData.building.Size());
+	BuildingData = new sUnitData[UnitsData.building.Size()];
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		BuildingData[i] = Player.BuildingData[i];
@@ -142,16 +142,16 @@ cPlayer::~cPlayer ( void )
 		delete BuildingList;
 		BuildingList=ptr;
 	}
-	free ( VehicleData );
-	free ( BuildingData );
-	if ( ScanMap ) free ( ScanMap );
-	if ( SentriesMapAir ) free ( SentriesMapAir );
-	if ( SentriesMapGround ) free ( SentriesMapGround );
-	if ( ResourceMap ) free ( ResourceMap );
+	delete [] VehicleData;
+	delete [] BuildingData;
+	if ( ScanMap ) delete [] ScanMap;
+	if ( SentriesMapAir ) delete [] SentriesMapAir;
+	if ( SentriesMapGround ) delete [] SentriesMapGround;
+	if ( ResourceMap ) delete [] ResourceMap;
 
-	if ( DetectLandMap ) free ( DetectLandMap );
-	if ( DetectSeaMap ) free ( DetectSeaMap );
-	if ( DetectMinesMap ) free ( DetectMinesMap );
+	if ( DetectLandMap ) delete [] DetectLandMap;
+	if ( DetectSeaMap ) delete [] DetectSeaMap;
+	if ( DetectMinesMap ) delete [] DetectMinesMap;
 
 	while ( ReportVehicles.Size() )
 	{
@@ -209,25 +209,25 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 {
 	MapSize=MapSizeX*MapSizeX;
 	// Scanner-Map:
-	ScanMap= ( char* ) malloc ( MapSize );
+	ScanMap = new char[MapSize];
 	memset ( ScanMap,0,MapSize );
 	// Ressource-Map
-	ResourceMap= ( char* ) malloc ( MapSize );
+	ResourceMap = new char[MapSize];
 	memset ( ResourceMap,0,MapSize );
 
 	base.map = map;
 	// Sentry-Map:
-	SentriesMapAir= ( char* ) malloc ( MapSize );
+	SentriesMapAir = new char[MapSize];
 	memset ( SentriesMapAir,0,MapSize );
-	SentriesMapGround= ( char* ) malloc ( MapSize );
+	SentriesMapGround = new char[MapSize];
 	memset ( SentriesMapGround,0,MapSize );
 
 	// Detect-Maps:
-	DetectLandMap= ( char* ) malloc ( MapSize );
+	DetectLandMap = new char[MapSize];
 	memset ( DetectLandMap,0,MapSize );
-	DetectSeaMap= ( char* ) malloc ( MapSize );
+	DetectSeaMap = new char[MapSize];
 	memset ( DetectSeaMap,0,MapSize );
-	DetectMinesMap= ( char* ) malloc ( MapSize );
+	DetectMinesMap = new char[MapSize];
 	memset ( DetectMinesMap, 0, MapSize );
 
 	// Die Research-Map:

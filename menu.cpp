@@ -3510,7 +3510,7 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 	PlayerList.Add ( ActualPlayer );
 	iNextPlayerNr = 1;
-	ReadyList = (bool *) malloc ( sizeof( bool ) );
+	ReadyList = (bool *) malloc ( sizeof( bool* ) );
 	ReadyList[0] = false;
 	bOptions = false;
 	bStartSelecting = false;
@@ -3541,6 +3541,7 @@ cMultiPlayerMenu::~cMultiPlayerMenu()
 		Server = NULL;
 		delete Savegame;
 	}
+	free ( ReadyList );
 }
 
 void cMultiPlayerMenu::addChatLog( string sMsg )
@@ -4618,7 +4619,7 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr, Message->popInt16() );
 				PlayerList.Add ( Player );
-				ReadyList = (bool *)realloc ( ReadyList, PlayerList.Size() );
+				ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
 				ReadyList[PlayerList.Size()-1] = false;
 				cNetMessage *SendMessage = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
 				SendMessage->pushInt16( iNextPlayerNr );
@@ -4635,7 +4636,7 @@ void cMultiPlayerMenu::HandleMessages()
 					{
 						PlayerList.Delete ( i );
 						for (unsigned int j = i; j < PlayerList.Size(); j++ ) ReadyList[j] = ReadyList[j+1];
-						ReadyList = (bool *)realloc ( ReadyList, PlayerList.Size() );
+						ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
 					}
 				}
 				displayPlayerList();
@@ -4667,7 +4668,7 @@ void cMultiPlayerMenu::HandleMessages()
 				string str = Message->getHexDump();
 				int iPlayerCount = Message->popInt16();
 				while ( PlayerList.Size() > 0 ) PlayerList.Delete ( 0 );
-				ReadyList = (bool *)realloc( ReadyList, iPlayerCount );
+				ReadyList = (bool *)realloc( ReadyList, sizeof (bool*)*iPlayerCount );
 				for ( int i = 0; i < iPlayerCount; i++ )
 				{
 					string sName = Message->popString();

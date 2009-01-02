@@ -59,17 +59,20 @@ cPathCalculator::~cPathCalculator()
 		}
 		free ( MemBlocks );
 	}
-	if ( nodesHeap != NULL ) free ( nodesHeap );
-	if ( openList != NULL ) free ( openList );
-	if ( closedList != NULL ) free ( closedList );
+	if ( nodesHeap != NULL ) delete [] nodesHeap;
+	if ( openList != NULL ) delete [] openList;
+	if ( closedList != NULL ) delete [] closedList;
 }
 
 void cPathCalculator::calcPath ()
 {
 	// generate open and closed list
-	nodesHeap = (sPathNode**) calloc ( Map->size*Map->size+1, sizeof (sPathNode*) );
-	openList = (sPathNode**) calloc ( Map->size*Map->size, sizeof (sPathNode*) );
-	closedList = (sPathNode**) calloc ( Map->size*Map->size, sizeof (sPathNode*) );
+	nodesHeap = new sPathNode*[Map->size*Map->size+1];
+	openList = new sPathNode*[Map->size*Map->size+1];
+	closedList = new sPathNode*[Map->size*Map->size+1];
+	fill <sPathNode**, sPathNode*> ( nodesHeap, &nodesHeap[Map->size*Map->size+1], NULL );
+	fill <sPathNode**, sPathNode*> ( openList, &openList[Map->size*Map->size+1], NULL );
+	fill <sPathNode**, sPathNode*> ( closedList, &closedList[Map->size*Map->size+1], NULL );
 
 	// generate startnode
 	sPathNode *StartNode = allocNode ();

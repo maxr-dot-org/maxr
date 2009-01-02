@@ -814,7 +814,7 @@ void showPreferences ( void )
 	const char* sModes[6]; 
 	for(int n=0;n<6;n++) 
 	{ 
-		sModes[n]=(char*) malloc(sizeof(char)*10); 
+		sModes[n]= new char[10]; 
 	}
 
 	sModes[0]="640x480";
@@ -848,6 +848,11 @@ void showPreferences ( void )
 		rFont.x = rDialog.x + 100; rFont.w = 200;
 		rFont.y = rDialog.y + 294+20*3;
 		font->showText(rFont, lngPack.i18n( "Text~Comp~ResolutionWarning" ));
+	}
+
+	for(int n=0;n<6;n++) 
+	{ 
+		delete sModes[n]; 
 	}
 	//END DRAWING RESOLUTION MODES
 

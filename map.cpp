@@ -512,13 +512,13 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 
 	DeleteMap();
 	this->size=size;
-	Kacheln= ( int* ) malloc ( sizeof ( int ) *size*size );
-	memset ( Kacheln,0,sizeof ( int ) *size*size );
+	Kacheln = new int[size*size];
+	memset ( Kacheln, 0, sizeof ( int ) *size*size );
 
 	fields = new cMapField[size*size];
-	GO= ( sGameObjects* ) malloc ( sizeof ( sGameObjects ) *size*size );
+	GO = new sGameObjects[size*size];
 	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
-	Resources= ( sResources* ) malloc ( sizeof ( sResources ) *size*size );
+	Resources = new sResources[size*size];
 
 	// alloc memory for terrains
 	terrain = new sTerrain[iTerrainGrphCount];
@@ -528,10 +528,10 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 void cMap::DeleteMap ( void )
 {
 	if ( !Kacheln ) return;
-	free ( Kacheln );
+	delete [] Kacheln;
 	delete[] fields;
-	free ( GO );
-	free ( Resources );
+	delete [] GO;
+	delete [] Resources;
 	Kacheln=NULL;
 	delete[] ( terrain );
 }
@@ -582,7 +582,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 	if ( Oil>3 ) Oil=3;
 	if ( Gold>3 ) Gold=3;
 	if ( Dichte>3 ) Dichte=3;
-	GaussMap= ( int* ) malloc ( size*size*sizeof ( int ) );
+	GaussMap = new int[size*size];
 	memset ( GaussMap,0,sizeof ( int ) *size*size );
 
 	// Dafür sorgen, dass mehr Rohstoffe auf dem Land sind:
@@ -734,7 +734,7 @@ void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
 		GaussMap[pos]+=999;
 
 	}
-	free ( GaussMap );
+	delete [] GaussMap;
 }
 
 

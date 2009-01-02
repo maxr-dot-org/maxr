@@ -417,7 +417,7 @@ static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory
 	}
 
 
-	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	dest = new SDL_Surface*[2];
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX(filepath.c_str());
 	dest[1] = LoadPCX(filepath.c_str());
@@ -442,7 +442,7 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 	if(!FileExists(filepath.c_str()))
 		return 0;
 
-	dest = (SDL_Surface**)malloc(sizeof(SDL_Surface*)*2);
+	dest = new SDL_Surface*[2];
 	if(!dest) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX(filepath.c_str());
 	SDL_SetAlpha(dest[0],SDL_SRCALPHA,alpha);
@@ -1638,7 +1638,7 @@ static int LoadGraphics(const char* path)
 
 	cLog::write ( "Colourgraphics...", LOG_TYPE_DEBUG );
 	// Farben:
-	OtherData.colors= ( SDL_Surface** ) malloc ( sizeof ( SDL_Surface* ) *8 );
+	OtherData.colors = new SDL_Surface*[8];
 	if(!OtherData.colors) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	LoadGraphicToSurface ( OtherData.colors[cl_red],path,"cl_red.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_blue],path,"cl_blue.pcx" );
@@ -1944,7 +1944,7 @@ static int LoadVehicles()
 		{
 			sTmpString = "";
 		}
-		v.FLCFile= (char*)malloc(sTmpString.length() + 1);
+		v.FLCFile = new char[sTmpString.length()+1];
 		if (!v.FLCFile) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy(v.FLCFile, sTmpString.c_str());
 
@@ -2187,7 +2187,7 @@ void translateUnitData(sID ID, bool vehicle)
 			{
 				sTmpString = pXmlNode->ToElement()->Attribute( "ENG" );
 			}
-			Data->szName = (char *)malloc( sTmpString.length() + 1 );
+			Data->szName = new char[sTmpString.length()+1];
 			strcpy( (char *)Data->szName, sTmpString.c_str() );
 
 			sTmpString = pXmlNode->ToElement()->GetText();
@@ -2197,7 +2197,7 @@ void translateUnitData(sID ID, bool vehicle)
 				sTmpString.replace(iPosition,2,"\n");
 				iPosition = (int)sTmpString.find("\\n",iPosition);
 			}
-			Data->szDescribtion = (char *)malloc( sTmpString.length() + 1 );
+			Data->szDescribtion = new char[sTmpString.length()+1];
 			strcpy( (char *)Data->szDescribtion, sTmpString.c_str() );
 		}
 		pXmlNode = pXmlNode->NextSibling();
@@ -2610,7 +2610,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 		}
 	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
 	{
-		Data->szName = (char *)malloc(sTmpString.length()+1); //+1 for \0 termination of string especially on *nix
+		Data->szName = new char[sTmpString.length()+1]; //+1 for \0 termination of string especially on *nix
 		if(!Data->szName) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy( (char *)Data->szName, sTmpString.c_str());
 
@@ -2624,7 +2624,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 			sTmpString.replace(iPosition,2,"\n");
 			iPosition = (int)sTmpString.find("\\n",iPosition);
 		}
-		Data->szDescribtion = (char *)malloc(sTmpString.length()+1);
+		Data->szDescribtion = new char[sTmpString.length()+1];
 		if(!Data->szDescribtion) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy( (char *) Data->szDescribtion, sTmpString.c_str());
 	}
@@ -3099,7 +3099,7 @@ void SetDefaultUnitData(sUnitData* const Data)
 	// Production
 	Data->iBuilt_Costs = 1;
 	Data->iBuilt_Costs_Max = 1;
-	Data->iIs_Produced_by_ID = (sID*) malloc(sizeof(sID));
+	Data->iIs_Produced_by_ID = new sID;
 	if(!Data->iIs_Produced_by_ID) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->iIs_Produced_by_ID->iFirstPart = -1;
 	Data->iIs_Produced_by_ID->iSecondPart = -1;
@@ -3108,7 +3108,7 @@ void SetDefaultUnitData(sUnitData* const Data)
 
 	// Weapons
 	Data->iWeaponsCount = 0;
-	Data->Weapons = ( sWeaponData* ) calloc( 1, sizeof ( sWeaponData ) );
+	Data->Weapons = new sWeaponData;
 	if(!Data->Weapons) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->Weapons[Data->iWeaponsCount].szTurret_Gfx = "None";
 	Data->Weapons[Data->iWeaponsCount].iSequence = 0;
@@ -3214,7 +3214,7 @@ void SetDefaultUnitData(sUnitData* const Data)
 	Data->iCapacity_Units_Sea = 0;
 	Data->iCapacity_Units_Ground = 0;
 	Data->iCapacity_Units_Infantry = 0;
-	Data->iCan_Use_Unit_As_Garage_ID = (sID*) malloc(sizeof(sID));
+	Data->iCan_Use_Unit_As_Garage_ID = new sID;
 	if(!Data->iCan_Use_Unit_As_Garage_ID) { cLog::write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	Data->iCan_Use_Unit_As_Garage_ID[0].iFirstPart = -1;
 	Data->iCan_Use_Unit_As_Garage_ID[0].iSecondPart = -1;
@@ -3233,13 +3233,13 @@ void ConvertData(int unitnum, bool vehicle)
 	if(vehicle)
 	{
 		Data = &UnitsData.vehicle[unitnum].data;
-		UnitsData.vehicle[unitnum].text = (char *) malloc (strlen(Data->szDescribtion)+1);
+		UnitsData.vehicle[unitnum].text = new char [strlen(Data->szDescribtion)+1];
 		strcpy(UnitsData.vehicle[unitnum].text,Data->szDescribtion);
 	}
 	else
 	{
 		Data = &UnitsData.building[unitnum].data;
-		UnitsData.building[unitnum].text = (char *) malloc (strlen(Data->szDescribtion)+1);
+		UnitsData.building[unitnum].text = new char [strlen(Data->szDescribtion)+1];
 		strcpy(UnitsData.building[unitnum].text,Data->szDescribtion);
 	}
 	strcpy(Data->name, Data->szName);

@@ -36,7 +36,7 @@
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
 	chars = (int)s.length();
-	msg = (char*)malloc(chars + 1);
+	msg = new char[chars + 1];
 	strcpy(msg, s.c_str());
 	if (chars > 500) msg[500] = '\0';
 	len = font->getTextWide(s);
@@ -46,7 +46,7 @@ sMessage::sMessage(std::string const& s, unsigned int const age_)
 
 sMessage::~sMessage()
 {
-	free(msg);
+	delete [] msg;
 }
 
 sFX::sFX( eFXTyps typ, int x, int y )

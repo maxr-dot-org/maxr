@@ -33,7 +33,7 @@ cNetMessage::cNetMessage( char* c)
 	iType = SDL_SwapLE16( ((Sint16*)(c+1))[1] );
 	iPlayerNr = c[5];
 
-	data = (char*) malloc( iLength );
+	data = new char[iLength];
 	data[0] = START_CHAR;
 	memcpy ( data, c, iLength );
 }
@@ -41,7 +41,7 @@ cNetMessage::cNetMessage( char* c)
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = (char*) malloc( PACKAGE_LENGTH );	// 0:	  reserved for startchar
+	data = new char[PACKAGE_LENGTH];	// 0:	  reserved for startchar
 												// 1 - 2: reserved for length
 												// 3 - 4: reserved for message type
 												// 5:	  reserved for playernumber
@@ -51,7 +51,7 @@ cNetMessage::cNetMessage(int iType)
 
 cNetMessage::~cNetMessage()
 {
-	free ( data );
+	delete [] data;
 }
 
 char* cNetMessage::serialize()
