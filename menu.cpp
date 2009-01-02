@@ -3064,7 +3064,7 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 	rTextArea.w = SettingsData.iScreenW - rTextArea.x - 20;
 	float fakx= (float)( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
 	float faky= (float)( ( SettingsData.iScreenH-32.0 ) / map->size );  //pixel per field in y direction
-
+	
 	drawMap();
 
 	if ( landingState != LANDING_STATE_UNKNOWN )
@@ -3088,7 +3088,8 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 
 	drawHud();
 	SHOW_SCREEN
-	mouse->draw(false, screen);
+	mouse->SetCursor ( CNo );
+	mouse->draw ( false,screen );
 
 	while ( 1 )
 	{
