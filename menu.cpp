@@ -1394,12 +1394,15 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
 				SDL_FillRect ( buffer,&r,SELECTED );
 
-				sMap.insert ( 0,"> " );
-				sMap.replace ( sMap.length()-4, 2, " (" );
-				sMap.replace ( sMap.length()-2, 3, iToStr(size) );
-				sMap.insert ( sMap.length(),"x" );
-				sMap.replace ( sMap.length(), 3, iToStr(size) );
-				sMap.insert ( sMap.length(),") <" );
+				if ( font->getTextWide ( ">" + sMap.substr( 0, sMap.length()-4 ) + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<" ) > 140 )
+				{
+					while ( font->getTextWide ( ">" + sMap + "... (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<" ) > 140 )
+					{
+						sMap.erase ( sMap.length()-1, sMap.length() );
+					}
+					sMap = ">" + sMap + "... (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<";
+				}
+				else sMap = ">" + sMap.substr( 0, sMap.length()-4 ) + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<";
 			}
 			else
 			{
@@ -1412,11 +1415,15 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 				r.x-=112+4; r.y+=112+4; r.w=112+8; r.h=4;
 				SDL_FillRect ( buffer,&r,UNSELECTED );
 
-				sMap.replace ( sMap.length()-4, 2, " (" );
-				sMap.replace ( sMap.length()-2, 3, iToStr(size) );
-				sMap.insert ( sMap.length(),"x" );
-				sMap.replace ( sMap.length(), 3, iToStr(size) );
-				sMap.insert ( sMap.length(),")" );
+				if ( font->getTextWide ( ">" + sMap.substr( 0, sMap.length()-4 ) + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<" ) > 140 )
+				{
+					while ( font->getTextWide ( ">" + sMap + "... (" + iToStr ( size ) + "x" + iToStr ( size ) + ")<" ) > 140 )
+					{
+						sMap.erase ( sMap.length()-1, sMap.length() );
+					}
+					sMap = sMap + "... (" + iToStr ( size ) + "x" + iToStr ( size ) + ")";
+				}
+				else sMap = sMap.substr( 0, sMap.length()-4 ) + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")";
 			}
 			font->showTextCentered(dest.x+77-21,dest.y-42, sMap);
 
