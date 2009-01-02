@@ -1115,7 +1115,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 		{
 			if ( terrain[Kacheln[offset]].blocked ) return false;
 			
-			if ( terrain[Kacheln[offset]].water || terrain[Kacheln[offset]].coast )
+			if ( terrain[Kacheln[offset]].water || (terrain[Kacheln[offset]].coast && !vehicleData.is_human) )
 			{
 				if ( player && !player->ScanMap[offset] ) return false;
 
