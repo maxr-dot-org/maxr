@@ -337,13 +337,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			if ( StartUp >= 255 )
 				StartUp = 0;
 
-			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && 
+			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && 
 				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 				StartUp = 0;
 		}
 		else
 		{
-			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size ) &&
+			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) &&
 				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
@@ -4908,7 +4908,7 @@ void cVehicle::makeDetection()
 			{
 				setDetectedByPlayer( player );
 			}
-			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !Server->Map->IsWater(offset) ))
+			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !Server->Map->IsWater(offset, true) ))
 			{
 				setDetectedByPlayer( player );
 			}

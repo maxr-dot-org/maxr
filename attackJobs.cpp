@@ -34,7 +34,7 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 		targetVehicle = (*map)[offset].getPlanes();
 
 		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
-		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea && map->IsWater(offset, true) )
 			targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
@@ -46,7 +46,7 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 			targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
-		if ( targetVehicle && targetVehicle->data.is_stealth_sea )
+		if ( targetVehicle && targetVehicle->data.is_stealth_sea && map->IsWater(offset, true) )
 			targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
