@@ -157,6 +157,7 @@ public:
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	int Disabled;    // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
+	int wantRedrawedStoredOffset;
 
 	void Draw(SDL_Rect *dest);
 	void Select(void);

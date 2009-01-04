@@ -1156,38 +1156,64 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_WANT_SUPPLY:
 		{
-			cVehicle *SrcVehicle, *DestVehicle = NULL;
-			cBuilding *DestBuilding = NULL;
+			cVehicle *SrcVehicle = NULL, *DestVehicle = NULL;
+			cBuilding *SrcBuilding = NULL, *DestBuilding = NULL;
 			int iType, iValue;
 
 			// get the units
 			iType = message->popChar();
 			if ( iType > SUPPLY_TYPE_REPAIR ) break; // unknown type
-			SrcVehicle = getVehicleFromID ( message->popInt16() );
+			if ( message->popBool() ) SrcVehicle = getVehicleFromID ( message->popInt16() );
+			else SrcBuilding = getBuildingFromID ( message->popInt16() );
 			if ( message->popBool() ) DestVehicle = getVehicleFromID ( message->popInt16() );
 			else DestBuilding = getBuildingFromID ( message->popInt16() );
 
-			if ( !SrcVehicle || ( !DestVehicle && !DestBuilding ) ) break;
+			if ( ( !SrcVehicle && !SrcBuilding ) || ( !DestVehicle && !DestBuilding ) ) break;
 
 			// check whether the supply is ok
-			if ( DestVehicle && !SrcVehicle->canSupply ( DestVehicle, iType ) ) break;
-			if ( DestBuilding && !SrcVehicle->canSupply ( DestBuilding, iType ) ) break;
-
-			// do the supply
-			if ( iType == SUPPLY_TYPE_REARM )
+			if ( SrcVehicle )
 			{
-				SrcVehicle->data.cargo--;
-				iValue = DestVehicle ? DestVehicle->data.max_ammo : DestBuilding->data.max_ammo;
+				if ( DestVehicle && !SrcVehicle->canSupply ( DestVehicle, iType ) ) break;
+				if ( DestBuilding && !SrcVehicle->canSupply ( DestBuilding, iType ) ) break;
+
+				// do the supply
+				if ( iType == SUPPLY_TYPE_REARM )
+				{
+					SrcVehicle->data.cargo--;
+					iValue = DestVehicle ? DestVehicle->data.max_ammo : DestBuilding->data.max_ammo;
+				}
+				else
+				{
+					// TODO: calculate costs for repair and/or maximal repair value
+					// temporary a complete repair will cost 2 metal
+					if ( SrcVehicle->data.cargo < 2 ) break;
+					SrcVehicle->data.cargo -= 2;
+					iValue = DestVehicle ? DestVehicle->data.max_hit_points : DestBuilding->data.max_hit_points;
+				}
+				sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
 			else
 			{
-				// TODO: calculate costs for repair and/or maximal repair value
-				// temporary a complete repair will cost 2 metal
-				if ( SrcVehicle->data.cargo < 2 ) break;
-				SrcVehicle->data.cargo -= 2;
-				iValue = DestVehicle ? DestVehicle->data.max_hit_points : DestBuilding->data.max_hit_points;
+				// buildings can only supply vehicles
+				if ( !DestVehicle ) break;
+
+				// do the supply
+				if ( iType == SUPPLY_TYPE_REARM )
+				{
+					if ( SrcBuilding->SubBase->Metal < 1 ) break;
+					SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
+					iValue = DestVehicle->data.max_ammo;
+				}
+				else
+				{
+					// TODO: calculate costs for repair and/or maximal repair value
+					// temporary a complete repair will cost 2 metal
+					if ( SrcBuilding->SubBase->Metal < 2 ) break;
+					SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -2 );
+					iValue = DestVehicle->data.max_hit_points;
+				}
+				sendUnitData ( SrcBuilding, SrcBuilding->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
-			sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 
 			if ( DestVehicle )
 			{

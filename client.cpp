@@ -727,15 +727,15 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, SUPPLY_TYPE_REARM);
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, SUPPLY_TYPE_REPAIR);
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
 		}
 		else if ( !bHelpActive )
 		{
@@ -3668,6 +3668,31 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = message->popInt16();
 				else DestVehicle->data.hit_points = message->popInt16();
+				if ( DestVehicle->Loaded )
+				{
+					// get the building which has loaded the unit
+					cBuilding *Building = DestVehicle->owner->BuildingList;
+					while ( Building )
+					{
+						bool found;
+						for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+						{
+							if ( Building->StoredVehicles[i] == DestVehicle )
+							{
+								found = true;
+								break;
+							}
+						}
+						if ( found ) break;
+						Building = Building->next;
+					}
+					if ( Building != NULL )
+					{
+						Building->DrawStored ( Building->wantRedrawedStoredOffset );
+						Building->ShowStorageMetalBar();
+						SHOW_SCREEN
+					}
+				}
 			}
 			else
 			{

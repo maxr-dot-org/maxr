@@ -3028,54 +3028,38 @@ void cBuilding::ShowStorage ( void )
 				mouse->MoveCallback = true;
 				return;
 			}
-			//FIXME: reimplement repair, reload and upgrade
 			// Reparatur:
-			
 			dest.x += 75;
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.hit_points < v->data.max_hit_points )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-				/*
-				owner->base.AddMetal ( SubBase, -2 );
-				v->data.hit_points = v->data.max_hit_points;
-				DrawStored ( offset );
-				PlayVoice ( VoiceData.VOIRepaired );
-				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
+				wantRedrawedStoredOffset = offset;
+				sendWantSupply ( v->iID, true, iID, false, SUPPLY_TYPE_REPAIR );
+				//MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Repair" ), true, dest.x, dest.y, buffer );
-				ShowStorageMetalBar();
-				*/
+
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				//SendUpdateStored ( i + offset );
 			}
 
 			// Aufladen:
 			dest.x -= 75;
-
 			dest.y += 25;
-
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.ammo < v->data.max_ammo )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-				/*
-				owner->base.AddMetal ( SubBase, -2 );
-				v->data.ammo = v->data.max_ammo;
-				DrawStored ( offset );
-				PlayVoice ( VoiceData.VOILoaded );
-				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
+				wantRedrawedStoredOffset = offset;
+				sendWantSupply ( v->iID, true, iID, false, SUPPLY_TYPE_REARM );
+				//MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Reload" ), true, dest.x, dest.y, buffer );
-				ShowStorageMetalBar();
-				*/
+
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				//SendUpdateStored ( i + offset );
 			}
 
+			//FIXME: reimplement upgrade
 			// Upgrade:
 			dest.x += 75;
-
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.version != owner->VehicleData[v->typ->nr].version )
 			{
 				PlayFX ( SoundData.SNDMenuButton );

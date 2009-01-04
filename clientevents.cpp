@@ -211,12 +211,13 @@ void sendChangeSentry ( int iUnitID, bool bVehicle )
 	Client->sendNetMessage( message );
 }
 
-void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, int iType )
+void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_SUPPLY );
 	message->pushInt16 ( iDestID );
 	message->pushBool ( bDestVehicle );
 	message->pushInt16 ( iSrcID );
+	message->pushBool ( bSrcVehicle );
 	message->pushChar ( iType );
 	Client->sendNetMessage( message );
 }

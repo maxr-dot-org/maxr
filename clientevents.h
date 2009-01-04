@@ -199,7 +199,7 @@ void sendChangeSentry ( int iUnitID, bool bVehicle );
 * sends that the client wants to rearm or repair a unit by an rearm-/repairable vehicle
 *@author alzi alias DoctorDeath
 */
-void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, int iType );
+void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType );
 /**
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath
