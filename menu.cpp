@@ -4170,10 +4170,10 @@ void cMultiPlayerMenu::runNetworkMenu()
 		// show data if necessary
 		if ( bRefresh )
 		{
-			bRefresh = false;
 			showChatLog();
 			displayGameSettings();
 			displayPlayerList();
+			bRefresh = false;
 		}
 
 		if ( bStartSelecting )
@@ -5240,6 +5240,7 @@ void cMultiPlayerMenu::displayPlayerList()
 
 		dest.y+=16;
 	}
+	bRefresh = true;
 }
 
 // Startet ein Hot-Seat-Spiel:
