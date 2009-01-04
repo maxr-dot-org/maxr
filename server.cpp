@@ -262,7 +262,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			if ( !Player ) break;
 
-			cPlayer *PLayerNext = (*PlayerList)[2];
 			// freeze clients
 			sendFreeze ();
 			sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
