@@ -3128,7 +3128,8 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 			drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
 			drawHud();
 			SHOW_SCREEN
-			mouse->draw ( true,screen );
+			mouse->SetCursor ( CHand );
+			mouse->draw ( false,screen );
 			SDL_Delay ( 1 );
 			break;
 		}
@@ -3561,6 +3562,7 @@ void cMultiPlayerMenu::addChatLog( string sMsg )
 	}
 	// Add the new message
 	ChatLog.Add ( sMsg );
+	bRefresh = true;
 }
 
 void cMultiPlayerMenu::showChatLog()
@@ -3864,6 +3866,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
 				displayGameSettings();
 				displayPlayerList();
+				showChatLog();
 
 				font->showTextCentered( 320, 11, lngPack.i18n ( "Text~Button~TCPIP_Host" ) );
 				font->showText( 20, 245, lngPack.i18n ( "Text~Title~IP" ) );
@@ -3905,6 +3908,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				bOptions = true;
 				SDL_FillRect(buffer, NULL, 0x0000);
 				SDL_BlitSurface ( sfTmp, NULL, buffer, NULL );
+				showChatLog();
 				displayGameSettings();
 				displayPlayerList();
 
@@ -4079,6 +4083,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 				SDL_BlitSurface ( sfTmp, &scr, buffer, &scr );
 
 				font->showText(20, 423, ChatStr);
+				bRefresh = true;
 			}
 
 			SHOW_SCREEN
@@ -4162,13 +4167,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 				sendIdentification();
 			}
 		}
-
-		// show chat log if necessary
-		showChatLog();
-		// show other data if necessary
+		// show data if necessary
 		if ( bRefresh )
 		{
 			bRefresh = false;
+			showChatLog();
 			displayGameSettings();
 			displayPlayerList();
 		}
@@ -4300,6 +4303,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	cSelectLandingMenu landingMenu( Map );
 	landingMenu.run( &c.iLandX, &c.iLandY );
 	c.landingState = LANDING_POSITION_OK;
+	cLog::write("Server: received landing coords from Player " + iToStr(ActualPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if ( bHost )
 	{
@@ -4334,9 +4338,10 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 				SDL_Delay ( 1 );
 			}
 
-			//FIXME: since landingzones dosn't work form yet they will be disabled temporary
+			cLog::write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG);
+
 			//check all landing positions
-			/*for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+			for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
 			{
 				eLandingState state = checkLandingState( playerNr );
 				if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
@@ -4353,7 +4358,23 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 						sendMessage( message );
 					}
 				}
-			}*/
+
+				if ( state == LANDING_POSITION_TOO_CLOSE )
+					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+				else if ( state == LANDING_POSITION_WARNING )
+					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_WARNING, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+				else if ( state == LANDING_POSITION_OK )
+					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_OK, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+				else if ( state == LANDING_POSITION_CONFIRMED )
+					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+				else if ( state == LANDING_STATE_UNKNOWN )
+					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+				else
+					cLog::write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+
+			}
+
+			cLog::write("Server: waiting for " + iToStr((int)PlayerList.Size() - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
 
 			if ( iLandedClients == PlayerList.Size() ) bAllLanded = true;
 		
@@ -4369,6 +4390,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 				ClientDataList[ActualPlayer->Nr] = c;
 				c.landingState = LANDING_POSITION_OK;
 				iLandedClients++;
+				cLog::write("Server: received landing coords from Player " + iToStr(ActualPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 
@@ -4730,7 +4752,15 @@ void cMultiPlayerMenu::HandleMessages()
 			{
 				iLandedClients++;
 
-				int playerNr = Message->popInt16();
+				if ( iLandedClients > PlayerList.Size() )
+				{
+					cLog::write("Server: too much landing coords received!", cLog::eLOG_TYPE_NET_ERROR);
+				}
+
+				unsigned int playerNr = Message->popInt16();
+				if ( playerNr >= PlayerList.Size() ) break;
+
+				cLog::write("Server: received landing coords from Player " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 				sClientLandData& c = ClientDataList[playerNr];
 				//save last coords, so that a player can confirm his position after a warning about nearby players
 				c.iLastLandX = c.iLandX;
