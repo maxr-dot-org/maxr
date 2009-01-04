@@ -2550,8 +2550,8 @@ void cBuilding::ShowStorage ( void )
 	{
 		drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, rBtnAllActive.x, rBtnAllActive.y, buffer );
 	}
-
-	MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
+	//FIXME: reimplement all repair, all reload and all upgrade
+	//MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 
 	// Vehicles anzeigen:
 	DrawStored ( offset );
@@ -2716,6 +2716,7 @@ void cBuilding::ShowStorage ( void )
 			int size;
 
 			PlayFX ( SoundData.SNDMenuButton );
+			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -3027,14 +3028,15 @@ void cBuilding::ShowStorage ( void )
 				mouse->MoveCallback = true;
 				return;
 			}
-
+			//FIXME: reimplement repair, reload and upgrade
 			// Reparatur:
+			
 			dest.x += 75;
-
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.hit_points < v->data.max_hit_points )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-
+				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+				/*
 				owner->base.AddMetal ( SubBase, -2 );
 				v->data.hit_points = v->data.max_hit_points;
 				DrawStored ( offset );
@@ -3042,9 +3044,10 @@ void cBuilding::ShowStorage ( void )
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Repair" ), true, dest.x, dest.y, buffer );
 				ShowStorageMetalBar();
+				*/
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				SendUpdateStored ( i + offset );
+				//SendUpdateStored ( i + offset );
 			}
 
 			// Aufladen:
@@ -3055,7 +3058,8 @@ void cBuilding::ShowStorage ( void )
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.ammo < v->data.max_ammo )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-
+				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+				/*
 				owner->base.AddMetal ( SubBase, -2 );
 				v->data.ammo = v->data.max_ammo;
 				DrawStored ( offset );
@@ -3063,9 +3067,10 @@ void cBuilding::ShowStorage ( void )
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Reload" ), true, dest.x, dest.y, buffer );
 				ShowStorageMetalBar();
+				*/
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				SendUpdateStored ( i + offset );
+				//SendUpdateStored ( i + offset );
 			}
 
 			// Upgrade:
@@ -3074,18 +3079,19 @@ void cBuilding::ShowStorage ( void )
 			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.version != owner->VehicleData[v->typ->nr].version )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-
-				Update ( v->data, owner->VehicleData[v->typ->nr] )
+				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
+				/*Update ( v->data, owner->VehicleData[v->typ->nr] )
 				v->GenerateName();
 				owner->base.AddMetal ( SubBase, -2 );
 				DrawStored ( offset );
 				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
-				ShowStorageMetalBar();
+				ShowStorageMetalBar(); */
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				SendUpdateStored ( i + offset );
+				//SendUpdateStored ( i + offset );
 			}
+			
 		}
 
 		LastMouseX = x;
