@@ -1393,7 +1393,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringVehicle->storeVehicle ( StoredVehicle, Map );
 					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
 					sendStoreVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->Nr );
-					// TODO: other players
 				}
 			}
 			else
@@ -1406,7 +1405,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringBuilding->storeVehicle ( StoredVehicle, Map );
 					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
 					sendStoreVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->Nr );
-					// TODO: other players
 				}
 			}
 		}
@@ -1746,7 +1744,7 @@ void cServer::checkPlayerUnits ()
 				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 
 				bool stealthUnit = NextVehicle->data.is_stealth_land || NextVehicle->data.is_stealth_sea;
-				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer )) )
+				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer )) && !NextVehicle->Loaded )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
