@@ -5260,7 +5260,7 @@ void cBuilding::showMineManager ( void )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
-			t =  Round ( ( x - 174 ) * ( MaxM / 240.0 ) );
+			t =  Round ( ( x -rDialog.x -174 ) * ( MaxM / 240.0 ) );
 
 			if ( t < iTempSBMetalProd )
 			{
@@ -5293,7 +5293,7 @@ void cBuilding::showMineManager ( void )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
-			t = Round ( ( x - 174 ) * ( MaxO / 240.0 ) );
+			t = Round ( ( x -rDialog.x - 174 ) * ( MaxO / 240.0 ) );
 
 			if ( t < iTempSBOilProd )
 			{
@@ -5326,7 +5326,7 @@ void cBuilding::showMineManager ( void )
 		{
 			int t;
 			PlayFX ( SoundData.SNDObjectMenu );
-			t = Round ( ( x - 174 ) * ( MaxG / 240.0 ) );
+			t = Round ( ( x -rDialog.x - 174 ) * ( MaxG / 240.0 ) );
 
 			if ( t < iTempSBGoldProd )
 			{
