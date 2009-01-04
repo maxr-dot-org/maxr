@@ -256,11 +256,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( (*PlayerList)[i]->iSocketNum == iSocketNum )
 				{
 					Player = (*PlayerList)[i];
+					Player->iSocketNum = -1;
 					break;
 				}
 			}
 			if ( !Player ) break;
 
+			cPlayer *PLayerNext = (*PlayerList)[2];
 			// freeze clients
 			sendFreeze ();
 			sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
