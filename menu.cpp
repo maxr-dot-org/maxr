@@ -4775,30 +4775,19 @@ void cMultiPlayerMenu::HandleMessages()
 				for ( int i = 0; i < iCount; i++ )
 				{
 					bool bVehicle = Message->popBool();
-					int iNum = Message->popInt16();
-					if ( bVehicle )
-					{
-						Player->VehicleData[iNum].damage = Message->popInt16();
-						Player->VehicleData[iNum].max_shots = Message->popInt16();
-						Player->VehicleData[iNum].range = Message->popInt16();
-						Player->VehicleData[iNum].max_ammo = Message->popInt16();
-						Player->VehicleData[iNum].armor = Message->popInt16();
-						Player->VehicleData[iNum].max_hit_points = Message->popInt16();
-						Player->VehicleData[iNum].scan = Message->popInt16();
-						Player->VehicleData[iNum].max_speed = Message->popInt16();
-						Player->VehicleData[iNum].version++;
-					}
-					else
-					{
-						Player->BuildingData[iNum].damage = Message->popInt16();
-						Player->BuildingData[iNum].max_shots = Message->popInt16();
-						Player->BuildingData[iNum].range = Message->popInt16();
-						Player->BuildingData[iNum].max_ammo = Message->popInt16();
-						Player->BuildingData[iNum].armor = Message->popInt16();
-						Player->BuildingData[iNum].max_hit_points = Message->popInt16();
-						Player->BuildingData[iNum].scan = Message->popInt16();
-						Player->BuildingData[iNum].version++;
-					}
+					sID ID;
+					ID.iFirstPart = Message->popInt16();
+					ID.iSecondPart = Message->popInt16();
+
+					ID.getUnitData ( Player )->damage = Message->popInt16();
+					ID.getUnitData ( Player )->max_shots = Message->popInt16();
+					ID.getUnitData ( Player )->range = Message->popInt16();
+					ID.getUnitData ( Player )->max_ammo = Message->popInt16();
+					ID.getUnitData ( Player )->armor = Message->popInt16();
+					ID.getUnitData ( Player )->max_hit_points = Message->popInt16();
+					ID.getUnitData ( Player )->scan = Message->popInt16();
+					if ( bVehicle ) ID.getUnitData ( Player )->max_speed = Message->popInt16();
+					ID.getUnitData ( Player )->version++;
 				}
 			}
 			break;
@@ -4904,13 +4893,14 @@ void cMultiPlayerMenu::sendUpgrades()
 			Message->pushInt16( ActualPlayer->VehicleData[i].range );
 			Message->pushInt16( ActualPlayer->VehicleData[i].max_shots );
 			Message->pushInt16( ActualPlayer->VehicleData[i].damage );
-			Message->pushInt16( (int)i );
+			Message->pushInt16( ActualPlayer->VehicleData[i].ID.iSecondPart );
+			Message->pushInt16( ActualPlayer->VehicleData[i].ID.iFirstPart );
 			Message->pushBool( true ); // true for vehciles
 
 			iCount++;
 		}
 
-		if ( Message->iLength+35 > PACKAGE_LENGTH )
+		if ( Message->iLength+38 > PACKAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
@@ -4950,13 +4940,14 @@ void cMultiPlayerMenu::sendUpgrades()
 			Message->pushInt16( ActualPlayer->BuildingData[i].range );
 			Message->pushInt16( ActualPlayer->BuildingData[i].max_shots );
 			Message->pushInt16( ActualPlayer->BuildingData[i].damage );
-			Message->pushInt16( (int)i );
+			Message->pushInt16( ActualPlayer->BuildingData[i].ID.iSecondPart );
+			Message->pushInt16( ActualPlayer->BuildingData[i].ID.iFirstPart );
 			Message->pushBool( false ); // false for buildings
 
 			iCount++;
 		}
 
-		if ( Message->iLength+32 > PACKAGE_LENGTH )
+		if ( Message->iLength+34 > PACKAGE_LENGTH )
 		{
 			Message->pushInt16 ( iCount );
 			Message->pushInt16 ( ActualPlayer->Nr );
