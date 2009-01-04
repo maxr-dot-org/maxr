@@ -3246,6 +3246,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			building->SubBase->OilNeed = message->popInt16();
 			building->SubBase->EnergyProd = message->popInt16();
 			building->SubBase->HumanNeed = message->popInt16();
+
+			if ( building == SelectedBuilding ) building->ShowDetails();
 		}
 		break;
 	case GAME_EV_DO_STOP_WORK:
@@ -3275,6 +3277,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			building->SubBase->OilNeed = message->popInt16();
 			building->SubBase->EnergyProd = message->popInt16();
 			building->SubBase->HumanNeed = message->popInt16();
+
+			if ( building == SelectedBuilding ) building->ShowDetails();
 		}
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
