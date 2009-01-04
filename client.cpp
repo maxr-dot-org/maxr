@@ -3072,7 +3072,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iTimeDelay = message->popInt16();
 
 			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
-			if ( Player == NULL )
+			if ( Player == NULL && iPlayerNum != -1 )
 			{
 				cLog::write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
 				break;
@@ -3080,11 +3080,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( iTimeDelay != -1 )
 			{
-				if ( iPlayerNum != ActivePlayer->Nr ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
+				if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
 				iTurnTime = iTimeDelay;
 				iStartTurnTime = SDL_GetTicks();
 			}
-			else if ( iPlayerNum != ActivePlayer->Nr ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
+			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
 		}
 		break;
 	case GAME_EV_UNIT_DATA:
@@ -4345,18 +4345,26 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 				FLI_NextFrame ( FLC );
 			}
 		}
+		handleTurnTime();
 	}
 }
 
 void cClient::handleTurnTime()
 {
+	static int lastCheckTime = SDL_GetTicks();
 	if ( !iTimer0 ) return;
+	// stop time when waiting for reconnection
+	if ( bWaitForOthers  )
+	{
+		iStartTurnTime += SDL_GetTicks()-lastCheckTime;
+	}
 	if ( iTurnTime > 0 )
 	{
 		int iRestTime = iTurnTime - Round( ( SDL_GetTicks() - iStartTurnTime )/1000 );
 		if ( iRestTime < 0 ) iRestTime = 0;
 		Hud.showTurnTime ( iRestTime );
 	}
+	lastCheckTime = SDL_GetTicks();
 }
 
 void cClient::addActiveMoveJob ( cClientMoveJob *MoveJob )

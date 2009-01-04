@@ -106,7 +106,7 @@ void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNu
 *@param iPlayerNum Number of player who has finished his turn.
 *@param iTimeDelay Deadline for the rest of the players until the turn will be finished. -1 for no deadline.
 */
-void sendTurnFinished ( int iPlayerNum, int iTimeDelay );
+void sendTurnFinished ( int iPlayerNum, int iTimeDelay, cPlayer *Player = NULL );
 /**
 * Sends the data values of this unit to the client
 *@author alzi alias DoctorDeath

@@ -2247,9 +2247,15 @@ void cServer::addReport ( sID Type, bool bVehicle, int iPlayerNum )
 
 void cServer::checkDeadline ()
 {
+	static int lastCheckTime = SDL_GetTicks();
 	if ( !iTimer0 ) return;
 	if ( iTurnDeadline >= 0 && iDeadlineStartTime > 0 )
 	{
+		// stop time when waiting for reconnection
+		if ( DisconnectedPlayerList.Size() > 0 )
+		{
+			iDeadlineStartTime += SDL_GetTicks()-lastCheckTime;
+		}
 		if ( SDL_GetTicks() - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
 			if ( checkEndActions( -1 ) )
@@ -2273,6 +2279,7 @@ void cServer::checkDeadline ()
 			}
 		}
 	}
+	lastCheckTime = SDL_GetTicks();
 }
 
 void cServer::addActiveMoveJob ( cServerMoveJob *MoveJob )
@@ -2698,6 +2705,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		sendDeleteEverything ( Player->Nr );
 	}
 	sendTurn ( iTurn, Player );
+	if ( iDeadlineStartTime > 0 ) sendTurnFinished ( -1, iTurnDeadline - Round( ( SDL_GetTicks() - iDeadlineStartTime )/1000 ), Player );
 	sendResources ( Player );
 	// send all units to the client
 	Vehicle = Player->VehicleList;

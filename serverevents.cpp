@@ -151,14 +151,15 @@ void sendMakeTurnEnd ( bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNu
 	Server->sendNetMessage( message, iPlayer );
 }
 
-void sendTurnFinished ( int iPlayerNum, int iTimeDelay )
+void sendTurnFinished ( int iPlayerNum, int iTimeDelay, cPlayer *Player )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_FINISHED_TURN );
 
 	message->pushInt16 ( iTimeDelay );
 	message->pushInt16( iPlayerNum );
 
-	Server->sendNetMessage( message );
+	if ( Player != NULL ) Server->sendNetMessage( message, Player->Nr );
+	else Server->sendNetMessage( message );
 }
 
 void sendUnitData( cVehicle *Vehicle, int iPlayer )
