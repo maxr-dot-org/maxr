@@ -4401,6 +4401,10 @@ void cVehicle::DrawStored ( int off )
 
 			}*/
 		}
+		else
+		{
+			SDL_BlitSurface ( GraphicsData.gfx_edepot, NULL, buffer, &dest );
+		}
 
 		// Die Buttons malen:
 		// Aktivieren:

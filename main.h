@@ -610,6 +610,8 @@ public:
 	SDL_Surface *gfx_storage_ground;
 	SDL_Surface *gfx_dialog;
 	SDL_Surface *gfx_edock;
+	SDL_Surface *gfx_ehangar;
+	SDL_Surface *gfx_edepot;
 	SDL_Surface *gfx_Cmuni;
 	SDL_Surface *gfx_Crepair;
 	SDL_Surface *gfx_research;

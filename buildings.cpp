@@ -3228,11 +3228,20 @@ void cBuilding::DrawStored ( int off )
 			}
 		}
 		else
-			if ( data.build_on_water )
+		{
+			if ( data.iCapacity_Units_Sea_Max > 0 )
 			{
 				SDL_BlitSurface ( GraphicsData.gfx_edock, NULL, buffer, &dest );
 			}
-
+			else if (data.iCapacity_Units_Air_Max > 0)
+			{
+				SDL_BlitSurface ( GraphicsData.gfx_ehangar, NULL, buffer, &dest );
+			}
+			else
+			{
+				SDL_BlitSurface ( GraphicsData.gfx_edepot, NULL, buffer, &dest );
+			}
+		}
 		// Die Buttons malen:
 		// Aktivieren:
 		if ( to == 4 )

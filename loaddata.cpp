@@ -1537,6 +1537,8 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_storage_ground,path,"storage_ground.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_dialog,path,"dialog.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_edock,path,"edock.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_edepot,path,"edepot.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_ehangar,path,"ehangar.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_research,path,"research.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_upgrade,path,"upgrade.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_pc,path,"player_pc.pcx" );
