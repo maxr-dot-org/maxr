@@ -727,15 +727,15 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, false, SUPPLY_TYPE_REARM);
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, false, SUPPLY_TYPE_REPAIR);
+			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
 		}
 		else if ( !bHelpActive )
 		{
@@ -3674,7 +3674,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					cBuilding *Building = DestVehicle->owner->BuildingList;
 					while ( Building )
 					{
-						bool found;
+						bool found = false;
 						for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
 						{
 							if ( Building->StoredVehicles[i] == DestVehicle )
