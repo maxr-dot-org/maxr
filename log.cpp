@@ -37,9 +37,26 @@
 static SDL_RWops *logfile = NULL;
 bool bNetlogStarted;
 bool bIsRunning=false;
+bool bFirstRun=true;
+time_t tTime;
+tm *tmTime;
+char timestr[21];
+string sTime;
+
 
 bool cLog::open(int TYPE)
 {
+	if( bFirstRun && SettingsData.bDebug) //add timestamp to netlog
+	{
+		tTime = time ( NULL );
+		tmTime = localtime ( &tTime );
+		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
+		sTime = timestr;
+		SettingsData.sNetLog.erase(SettingsData.sNetLog.size() - 4, SettingsData.sNetLog.size());
+		SettingsData.sNetLog += sTime;
+		bFirstRun = false;
+	}
+
 	while(bIsRunning)
 		SDL_Delay(10);
 
