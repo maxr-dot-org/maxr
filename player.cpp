@@ -93,6 +93,7 @@ cPlayer::cPlayer(const cPlayer &Player) : base(this)
 	ReportForschungFinished=false;
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
+	bFinishedTurn = Player.bFinishedTurn;
 }
 
 cPlayer::~cPlayer ( void )
