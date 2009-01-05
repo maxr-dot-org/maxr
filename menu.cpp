@@ -5211,7 +5211,6 @@ void cMultiPlayerMenu::displayGameSettings()
 	}
 
 	font->showTextAsBlock ( rect, OptionString );
-	//bRefresh = true;
 }
 
 void cMultiPlayerMenu::displayPlayerList()

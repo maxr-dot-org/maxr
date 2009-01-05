@@ -958,6 +958,7 @@ void cPlayer::ToggelLock ( sGameObjects *OverObject )
 // Malt alle Einträge der Lock-Liste:
 void cPlayer::DrawLockList(cHud const& hud)
 {
+	if ( !hud.Lock ) return;
 	sLockElem *elem;
 	int spx,spy,off;
 
