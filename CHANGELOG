@@ -5,13 +5,15 @@ new features:
 	*implemented selfrearming, selfrepairing of buildings
 	*implemented resync command
 	*implemented players on command
+	*implemented minimap zoom
+-deactivated landing zones for release (still buggy)
 -fixed reconnecting of disconnected players
 -tons of bugs fixed
 
 M.A.X. Reloaded 0.2.2
 =======================================================================
--added load/save
--added load/save multiplayer
+-added load/safe
+-added load/safe multiplayer
 -added landing zones
 -added mve player for original intro movie
 -added new settings for preferences
