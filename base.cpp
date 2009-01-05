@@ -547,28 +547,38 @@ void cBase::handleTurnend ()
 		{
 			cBuilding *Building = SubBase->buildings[k];
 			// Reparatur:
-			/*if ( b->data.hit_points<b->data.max_hit_points&&sb->Metal>0 )
+			if ( Building->data.hit_points < Building->data.max_hit_points && SubBase->Metal > 0 )
 			{
-				if ( b->data.max_hit_points/10>2 )
+				if ( Building->data.max_hit_points/10 > 2 )
 				{
-					b->data.hit_points+=b->data.max_hit_points/10;
+					Building->data.hit_points += Building->data.max_hit_points/10;
 				}
 				else
 				{
-					b->data.hit_points+=2;
+					Building->data.hit_points += 2;
 				}
-				if ( b->data.hit_points>b->data.max_hit_points )
+				if ( Building->data.hit_points > Building->data.max_hit_points )
 				{
-					b->data.hit_points=b->data.max_hit_points;
+					Building->data.hit_points = Building->data.max_hit_points;
 				}
-				AddMetal ( sb,-1 );
+				AddMetal ( SubBase, -1 );
+				sendUnitData ( Building, owner->Nr );
+				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+				{
+					sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
+				}
 			}
 			// Aufladen:
-			if ( b->data.can_attack&&b->data.ammo==0&&sb->Metal>=2 )
+			if ( Building->data.can_attack && Building->data.ammo == 0 && SubBase->Metal >= 2 )
 			{
-				b->data.ammo=b->data.max_ammo;
-				AddMetal ( sb,-2 );
-			}*/
+				Building->data.ammo = Building->data.max_ammo;
+				AddMetal ( SubBase, -2 );
+				sendUnitData ( Building, owner->Nr );
+				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+				{
+					sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
+				}
+			}
 
 			// Bauen:
 			if (Building->IsWorking && Building->data.can_build && Building->BuildList->Size())
