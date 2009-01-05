@@ -3696,7 +3696,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if(Player)
 				{
 					Player->bFinishedTurn=false;
-					cout << "Reset Player " << i << " (" << Player->name << ")\n";
 				}
 
 			}
