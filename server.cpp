@@ -2468,10 +2468,12 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	{
 		if (!bi->owner) 
 		{
-			bi++;
-			continue;
+			value += bi->RubbleValue*2;			
 		}
-		value += bi->data.iBuilt_Costs;
+		else
+		{
+			value += bi->data.iBuilt_Costs;
+		}
 		deleteUnit( bi, false );
 		bi++;
 	}
