@@ -44,11 +44,11 @@
       <Allowed_Targets>
 	      <Target_Land>
 	        <Damage Num="28"/>
-	        <Range Fd="11"/>
+	        <Range Fd="12"/>
 	      </Target_Land>
 	      <Target_Sea>
 	        <Damage Num="28"/>
-	        <Range Fd="11"/>
+	        <Range Fd="12"/>
 	      </Target_Sea>
 	      <Target_Air>
 	        <Damage Num="0"/>
@@ -56,7 +56,7 @@
 	      </Target_Air>
 	      <Target_Mine>
 	        <Damage Num="28"/>
-	        <Range Fd="11"/>
+	        <Range Fd="12"/>
 	      </Target_Mine>
 	      <Target_Submarine>
 	        <Damage Num="0"/>
@@ -64,7 +64,7 @@
 	      </Target_Submarine>
 	      <Target_Infantry>
 	        <Damage Num="28"/>
-	        <Range Fd="11"/>
+	        <Range Fd="12"/>
 	      </Target_Infantry>
 	      <Target_WMD>
 	        <Damage Num="0"/>
