@@ -4174,6 +4174,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 			displayGameSettings();
 			displayPlayerList();
 			bRefresh = false;
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
 		}
 
 		if ( bStartSelecting )
@@ -5209,6 +5211,7 @@ void cMultiPlayerMenu::displayGameSettings()
 	}
 
 	font->showTextAsBlock ( rect, OptionString );
+	//bRefresh = true;
 }
 
 void cMultiPlayerMenu::displayPlayerList()
