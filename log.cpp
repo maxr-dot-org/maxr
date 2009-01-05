@@ -165,6 +165,7 @@ int cLog::writeMessage ( std::string str )
 	if(logfile)
 	{
 		wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , ( int ) str.length() );
+		//cout << str;
 		if ( wrote<0 ) //sanity check - was file writable?
 		{
 			fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );

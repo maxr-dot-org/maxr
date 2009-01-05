@@ -2236,13 +2236,50 @@ void cClient::displayDebugOutput()
 	}
 	if ( bDebugPlayers && bFlagDrawMap )
 	{
-		font->showText(530, iDebugOff, "players: " + iToStr( (int)PlayerList->Size() ), LATIN_SMALL_WHITE);
+		font->showText(530, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+
+		SDL_Rect rDest = { 500, iDebugOff, 20, 10 };
+		SDL_Rect rSrc = { 0, 0, 20, 10 };
+		SDL_Rect rDotDest = { 490, iDebugOff, 10, 10 };
+		SDL_Rect rBlackOut = {520, iDebugOff, 0, 10 };
 		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 		{
-			if ( (*PlayerList)[i] == ActivePlayer ) font->showText(530, iDebugOff, "> " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + ", cl: " + iToStr ( GetColorNr( (*PlayerList)[i]->color ) ), LATIN_SMALL_WHITE);
-			else font->showText(530, iDebugOff, (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + ", cl: " + iToStr ( GetColorNr( (*PlayerList)[i]->color ) ), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			//HACK SHOWFINISHEDPLAYERS
+			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
+
+			if( (*PlayerList)[i]->bFinishedTurn && (*PlayerList)[i] != ActivePlayer)
+			{
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+			else if(  (*PlayerList)[i] == ActivePlayer && bWantToEnd )
+			{
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+			else
+			{
+				rDot.x = 0; //for red dot
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+
+			SDL_BlitSurface ( (*PlayerList)[i]->color, &rSrc, buffer, &rDest );
+			if ( (*PlayerList)[i] == ActivePlayer ) 
+			{
+				string sTmpLine = " " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + " << you! ";
+				rBlackOut.w = font->getTextWide(sTmpLine, LATIN_SMALL_WHITE); //black out background for better recognizing
+				SDL_FillRect(buffer, &rBlackOut, 0x000000);
+				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , LATIN_SMALL_WHITE);
+			}
+			else
+			{
+				string sTmpLine = " " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + " ";
+				rBlackOut.w = font->getTextWide(sTmpLine, LATIN_SMALL_WHITE); //black out background for better recognizing
+				SDL_FillRect(buffer, &rBlackOut, 0x000000);
+				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , LATIN_SMALL_WHITE);
+			}
+			iDebugOff += 10; //use 10 for pixel high of dots instead of text high
+			rDest.y = rDotDest.y = rBlackOut.y = iDebugOff;
+
 		}
 	}
 	if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
@@ -3085,6 +3122,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iStartTurnTime = SDL_GetTicks();
 			}
 			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
+			
+			////HACK SHOWFINISHEDPLAYERS player finished his turn
+			Player->bFinishedTurn=true;
 		}
 		break;
 	case GAME_EV_UNIT_DATA:
@@ -3648,6 +3688,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
 			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
+
+			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				cPlayer *Player = getPlayerFromNumber( i );
+				if(Player)
+				{
+					Player->bFinishedTurn=false;
+					cout << "Reset Player " << i << " (" << Player->name << ")\n";
+				}
+
+			}
 		}
 		break;
 	case GAME_EV_MARK_LOG:
@@ -4207,7 +4259,7 @@ void cClient::handleEnd()
 {
 	if ( bWaitForOthers ) return;
 	bWantToEnd = true;
-	sendWantToEndTurn();
+	sendWantToEndTurn();	
 }
 
 void cClient::makeHotSeatEnd( int iNextPlayerNum )

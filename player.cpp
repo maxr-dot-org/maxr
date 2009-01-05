@@ -57,6 +57,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	ReportForschungFinished=false;
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
+	bFinishedTurn = false;
 }
 
 cPlayer::cPlayer(const cPlayer &Player) : base(this)
