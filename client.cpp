@@ -4034,18 +4034,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				cPlayer *const Player = (*PlayerList)[i];
-				while ( Player->SentriesAir.Size() )
-				{
-					delete Player->SentriesAir[0];
-					Player->SentriesAir.Delete( 0 );
-				}
-
-				while ( Player->SentriesGround.Size() )
-				{
-					delete Player->SentriesGround[0];
-					Player->SentriesGround.Delete( 0 );
-				}
-
+				
 				cVehicle *vehicle = Player->VehicleList;
 				while ( vehicle )
 				{
@@ -4081,6 +4070,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			while ( neutralBuildings )
 			{
 				cBuilding* nextBuilding = neutralBuildings->next;
+				Map->deleteBuilding( neutralBuildings );
 				delete neutralBuildings;
 				neutralBuildings = nextBuilding;
 			}
