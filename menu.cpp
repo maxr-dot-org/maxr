@@ -4342,6 +4342,8 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 
 			cLog::write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG);
 
+			// temporary disabled landingzones for release
+			/*
 			//check all landing positions
 			for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
 			{
@@ -4374,7 +4376,7 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 				else
 					cLog::write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 
-			}
+			}*/
 
 			cLog::write("Server: waiting for " + iToStr((int)PlayerList.Size() - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
 
