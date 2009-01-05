@@ -1,3 +1,13 @@
+M.A.X. Reloaded 0.2.3
+=======================================================================
+new features:
+	*implemented loading of units (depots, transporters)
+	*implemented selfrearming, selfrepairing of buildings
+	*implemented resync command
+	*implemented players on command
+-fixed reconnecting of disconnected players
+-tons of bugs fixed
+
 M.A.X. Reloaded 0.2.2
 =======================================================================
 -added load/save
