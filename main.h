@@ -668,15 +668,6 @@ public:
 	SDL_Surface *res_gold;
 } EX ResourceData;
 
-/*
-// TerrainData - Class containing all terrain data ////////////////////////////
-class cTerrainData
-{
-public:
-	sTerrain *terrain;
-	int terrain_anz;
-} EX TerrainData;*/
-
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
 class cUnitsData
 {

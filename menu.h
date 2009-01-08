@@ -101,16 +101,17 @@ struct sLanding{
   int cargo;
 };
 
-// Struktur für die ClientSettings:
+/**
+* struct for handling the client landing positions
+*/
 struct sClientLandData
 {
 	sClientLandData();
-
-	cList <sLanding*> landingList;
 	int iLandX, iLandY;
 	eLandingState landingState;
 	int iLastLandX, iLastLandY;
 };
+
 
 enum MESSAGE_TYPES
 {
@@ -122,27 +123,31 @@ enum MESSAGE_TYPES
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_GO,					// host wants to start the game
-	MU_MSG_WT_LAND,				// a player wants to land at this position
-	MU_MSG_RESELECT_LANDING,	// informs a client that the player has to reselect the landing site
-	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
+	MU_MSG_LANDING_VEHICLES,	// the list of purcased vehicles
 	MU_MSG_RESOURCES,			// the resources on the map
 	MU_MSG_UPGRADES,			// data of upgraded units
 	GAME_EV_REQ_IDENT,			// a server of a running game requests an identification
-	GAME_EV_OK_RECONNECT		// a server gives his ok to the reconnect
+	GAME_EV_OK_RECONNECT,		// a server gives his ok to the reconnect
+	//messages for the landing selectiong menu:
+	MU_MSG_LANDING_COORDS,		// the selected landing coords of a client
+	MU_MSG_RESELECT_LANDING,	// informs a client that the player has to reselect the landing site
+	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
 class cMultiPlayerMenu
 {
 public:
+
 	cMultiPlayerMenu(bool bHost);
 	~cMultiPlayerMenu();
 
 	void runNetworkMenu();
+	void sendMessage( cNetMessage *Message, int iPlayer = -1 );
+	void HandleMessages();
 
 private:
 	SDL_Surface *sfTmp;
 	bool bRefresh;
-	bool bHost;
 	bool bOptions;
 	bool bStartSelecting;
 	string sIP;
@@ -150,7 +155,6 @@ private:
 	string sMap;
 	int iFocus;
 	int iPort;
-	bool bAllLanded;
 	cMap *Map;
 	sOptions Options;
 	bool bExit;
@@ -160,47 +164,57 @@ private:
 	int iNextPlayerNr;
 	cPlayer *ActualPlayer;
 	cList<string> ChatLog;
-	sClientLandData c;				 /** the landing information of the local client */
-	sClientLandData *ClientDataList; /** holds a dynamic array of the client landing informations. Sorted by player number */
-	int iLandedClients;				 /** number of clients, which submited their landing information */
+	sClientLandData* clientLandingCoordsList;  /**the landing coords of all clients*/
+	cList<sLanding>* clientLandingVehicleList; /**the list of purcased vehicles of all clients*/
 	cSavegame *Savegame;
 
 	void addChatLog( string sMsg );
 	void showChatLog();
 	void displayGameSettings();
 	void displayPlayerList();
+	
+	void sendIdentification();
+	void sendPlayerList( cList<cPlayer*> *SendPlayerList = NULL );
+	void sendOptions();
+	void sendLandingVehicles( const cList<sLanding>& c );
+	void sendUpgrades();
+
+	int testAllReady();
+
+	void runNewGame ();
+	int runSavedGame ();
+
+public:
+	cList<cNetMessage*> MessageList;
+	cList<cNetMessage*> landingSelectionMessageList;
+	bool bHost;
+} EX *MultiPlayerMenu;
+
+class cSelectLandingMenu
+{
+public:
+	cSelectLandingMenu( cMap* map, sClientLandData* clientLandData, int iClients, int iLocalClient = 0 );
+	void run();
+private:
+	int iLandedClients;
+	int iClients;
+	int iLocalClient;
+	bool bAllLanded;
+	cMap* map;
+	sClientLandData c;
+	sClientLandData* clientLandData;
+
+	void drawHud();
+	void drawMap();
+	void handleMessages();
+	void selectLandingSite();
 	/**
 	* runs a statemachine, that controlls the landing state of the given player
 	* @return the new landing state of the player
 	*/
 	eLandingState checkLandingState(int playerNr );
 
-	void sendIdentification();
-	void sendPlayerList( cList<cPlayer*> *SendPlayerList = NULL );
-	void sendOptions();
-	void sendLandingInfo( const sClientLandData& c );
-	void sendUpgrades();
-
-	int testAllReady();
-
-	void runNewGame ( int b, int lb, int lx, int ly );
-	int runSavedGame ();
-	void HandleMessages();
-	void sendMessage( cNetMessage *Message, int iPlayer = -1 );
-
-public:
-	cList<cNetMessage*> MessageList;
-} EX *MultiPlayerMenu;
-
-class cSelectLandingMenu
-{
-public:
-	cSelectLandingMenu( cMap* map );
-	void run(int *x,int *y, eLandingState landingState = LANDING_STATE_UNKNOWN);
-private:
-	cMap* map;
-	void drawHud();
-	void drawMap();
+	void sendLandingCoords( sClientLandData& c );
 };
 
 // Prototypen ////////////////////////////////////////////////////////////////
@@ -256,7 +270,7 @@ void placeSelectableText(std::string sText,int x,int y,bool checked, SDL_Surface
  * @param player
  * @param LandingList
  */
-void RunHangar(cPlayer *player, cList<sLanding*> *LandingList);
+void RunHangar(cPlayer *player, cList<sLanding> *LandingList);
 /**
  *
  * @param x
@@ -299,7 +313,7 @@ void ShowPlayerStates(sPlayer players);
  * @param offset
  * @param surface Source Surface for proper background drawing
  */
-void ShowLandingList(cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface);
+void ShowLandingList(cList<sLanding> *list,int selected,int offset, SDL_Surface *surface);
 /**
  *
  * @param bSave Should you can load savegames in this menu?

@@ -309,7 +309,7 @@ public:
 	*@param List List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding( int iX, int iY, cPlayer *Player, const cList<sLanding*>& List, bool bFixed );
+	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& List, bool bFixed );
 	/**
 	* increments the iTimeTimer.
 	*@author alzi alias DoctorDeath

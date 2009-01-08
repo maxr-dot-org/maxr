@@ -53,7 +53,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 45; // just temporary set to 45 seconds
+	iTurnDeadline = 90; // just temporary set to 45 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
@@ -1472,9 +1472,8 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 	return VehcilePtr;
 }
 
-void cServer::makeLanding( int iX, int iY, cPlayer *Player, const cList<sLanding*>& List, bool bFixed )
+void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& List, bool bFixed )
 {
-	sLanding *Landing;
 	cVehicle *Vehicle;
 	int iWidth, iHeight;
 
@@ -1531,17 +1530,17 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, const cList<sLanding
 	iHeight = 2;
 	for ( unsigned int i = 0; i < List.Size(); i++ )
 	{
-		Landing = List[i];
-		Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing->UnitID.getVehicle(), Player);
+		sLanding& Landing = List[i];
+		Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.UnitID.getVehicle(), Player);
 		while ( !Vehicle )
 		{
 			iWidth += 2;
 			iHeight += 2;
-			Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing->UnitID.getVehicle(), Player);
+			Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.UnitID.getVehicle(), Player);
 		}
-		if ( Landing->cargo && Vehicle )
+		if ( Landing.cargo && Vehicle )
 		{
-			Vehicle->data.cargo = Landing->cargo;
+			Vehicle->data.cargo = Landing.cargo;
 			sendUnitData ( Vehicle, Vehicle->owner->Nr );
 		}
 	}

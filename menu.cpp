@@ -483,7 +483,6 @@ void RunSPMenu ( void )
 
 			if ( !sMapName.empty() )
 			{
-				int iLandX, iLandY;
 				cPlayer *Player;
 				cMap Map;
 				sPlayer players;
@@ -535,8 +534,8 @@ void RunSPMenu ( void )
 				}
 
 				// run the hangar
-				cList<sLanding*> LandingList;
-				RunHangar ( Player, &LandingList );
+				cList<sLanding> landingList;
+				RunHangar ( Player, &landingList );
 
 				// playerlist for server
 				cList<cPlayer*> ServerPlayerList;
@@ -550,16 +549,11 @@ void RunSPMenu ( void )
 				// init server
 				Server = new cServer(&ServerMap, &ServerPlayerList, GAME_TYPE_SINGLE, false);
 
-				cSelectLandingMenu landingMenu( &Map );
-				landingMenu.run( &iLandX, &iLandY );
+				sClientLandData c;
+				cSelectLandingMenu landingMenu( &Map, &c, 1 );
+				landingMenu.run();
 
-				Server->makeLanding(iLandX, iLandY, ServerPlayerList[0], LandingList, options.FixedBridgeHead);
-
-				while ( LandingList.Size() )
-				{
-					delete LandingList[LandingList.Size() - 1];
-					LandingList.Delete( LandingList.Size() - 1);
-				}
+				Server->makeLanding(c.iLandX, c.iLandY, ServerPlayerList[0], landingList, options.FixedBridgeHead);
 
 				// exit menu and start game
 				ExitMenu();
@@ -1889,7 +1883,7 @@ void ShowPlayerStates ( sPlayer players )
 }
 
 // Zeigt den Hngar an:
-void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selected, SDL_Surface *surface );
+void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int selected, SDL_Surface *surface );
 void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p );
 void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p );
 void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface );
@@ -1897,7 +1891,7 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 static void ShowSelectionList(cList<sHUp*>& list, int selected, int offset, bool beschreibung, int credits, cPlayer* p);
 static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, int* selected, int* offset, bool tank, bool plane, bool ship, bool build, bool tnt, bool kauf);
 
-void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
+void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 {
 	bool tank=true,plane=false,ship=false,build=false,tnt=false,kauf=true;
 	bool Beschreibung=SettingsData.bShowDescription;
@@ -2159,12 +2153,11 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 							s->UnitID.getUnitData()->can_drive != DRIVE_AIR &&
 							s->UnitID.getUnitData()->can_drive != DRIVE_SEA)
 					{
-						sLanding *n;
-						n=new sLanding;
-						n->cargo=0;
-						n->sf = s->sf;
-						n->UnitID = s->UnitID;
-						n->costs = s->costs;
+						sLanding n;
+						n.cargo=0;
+						n.sf = s->sf;
+						n.UnitID = s->UnitID;
+						n.costs = s->costs;
 						LandingList->Add ( n );
 						LandingSelected=(int)LandingList->Size()-1;
 						while ( LandingSelected>=LandingOffset+5 ) LandingOffset++;
@@ -2350,12 +2343,11 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 		if (btn_buy.CheckClick(x, y, down, up) && selection[selected]->costs <= player->Credits && kauf)
 		{
-			sLanding *n;
-			n=new sLanding;
-			n->cargo=0;
-			n->sf = selection[selected]->sf;
-			n->UnitID = selection[selected]->UnitID;
-			n->costs = selection[selected]->costs;
+			sLanding n;
+			n.cargo=0;
+			n.sf = selection[selected]->sf;
+			n.UnitID = selection[selected]->UnitID;
+			n.costs = selection[selected]->costs;
 			LandingList->Add ( n );
 			LandingSelected=(int)LandingList->Size()-1;
 			while ( LandingSelected>=LandingOffset+5 )
@@ -2363,7 +2355,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				LandingOffset++;
 			}
 			ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
-			player->Credits-=n->costs;
+			player->Credits -= n.costs;
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
 			SHOW_SCREEN
@@ -2442,11 +2434,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 		if (btn_delete.CheckClick(x, y, down, up) && LandingList->Size() && (int)LandingList->Size() > LandingSelected&& LandingSelected >= 0)
 		{
 			// Vehicle aus der Liste entfernen:
-			sLanding* const sel = (*LandingList)[LandingSelected];
-			player->Credits += sel->costs;
-			player->Credits += sel->cargo / 5;
+			const sLanding& sel = (*LandingList)[LandingSelected];
+			player->Credits += sel.costs;
+			player->Credits += sel.cargo / 5;
 
-			delete sel;
 			LandingList->Delete ( LandingSelected );
 			ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp  );
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
@@ -2491,10 +2482,9 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				{
 					if ( LandingList->Size()&&(int)LandingList->Size()>LandingSelected&&LandingSelected>=0 )
 					{
-						sLanding* const sel = (*LandingList)[LandingSelected];
-						player->Credits += sel->costs;
-						player->Credits += sel->cargo / 5;
-						delete sel;
+						const sLanding& sel = (*LandingList)[LandingSelected];
+						player->Credits += sel.costs;
+						player->Credits += sel.cargo / 5;
 						LandingList->Delete ( LandingSelected );
 						ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
 						ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
@@ -2518,15 +2508,14 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 
 		if ( LandingSelected>=0&&LandingList->Size()&&LandingSelected<(int)LandingList->Size() )
 		{
-			sLanding *ptr;
-			ptr = (*LandingList)[LandingSelected];
-			if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
+			sLanding& ptr = (*LandingList)[LandingSelected];
+			if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
 			{
 				//FIXME: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// LadungUp-Button: 
-				if ( x>=DIALOG_X +413&&x<DIALOG_X +413+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungDownPressed&&ptr->cargo<ptr->UnitID.getUnitData()->max_cargo&&player->Credits>0 )
+				if ( x >= DIALOG_X + 413 && x < DIALOG_X + 413 + 18 && y >= DIALOG_Y + 424 && y < DIALOG_Y + 424 + 17 && b && !LadungDownPressed && ptr.cargo < ptr.UnitID.getUnitData()->max_cargo && player->Credits > 0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2536,10 +2525,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					dest.x=DIALOG_X + 413;
 					dest.y=DIALOG_Y + 424;
 
-					ptr->cargo+=5;
-					if ( ptr->cargo > ptr->UnitID.getUnitData()->max_cargo )
+					ptr.cargo += 5;
+					if ( ptr.cargo > ptr.UnitID.getUnitData()->max_cargo )
 					{
-						ptr->cargo = ptr->UnitID.getUnitData()->max_cargo;
+						ptr.cargo = ptr.UnitID.getUnitData()->max_cargo;
 					}
 					player->Credits--;
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
@@ -2567,7 +2556,7 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// LadungDown-Button:
-				if ( x>=DIALOG_X +433&&x<DIALOG_X +433+18&&y>=DIALOG_Y +424&&y<DIALOG_Y +424+17&&b&&!LadungUpPressed&&ptr->cargo>0 )
+				if ( x >= DIALOG_X + 433 && x < DIALOG_X + 433 + 18 && y >= DIALOG_Y + 424 && y < DIALOG_Y + 424 + 17 && b && !LadungUpPressed && ptr.cargo > 0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
@@ -2577,10 +2566,10 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 					dest.x=DIALOG_X + 433;
 					dest.y=DIALOG_Y + 424;
 
-					ptr->cargo-=5;
-					if ( ptr->cargo < 0 )
+					ptr.cargo -= 5;
+					if ( ptr.cargo < 0 )
 					{
-						ptr->cargo = 0;
+						ptr.cargo = 0;
 					}
 					player->Credits++;
 					ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
@@ -2610,28 +2599,28 @@ void RunHangar ( cPlayer *player,cList<sLanding*> *LandingList )
 				if ( b&&!lb&&x>=DIALOG_X +422&&x<DIALOG_X +422+20&&y>=DIALOG_Y +301&&y<DIALOG_Y +301+115 )
 				{
 					int value;
-					value= ( ( ( int ) ( ( 115- ( y-301-DIALOG_Y ) ) * ( ptr->UnitID.getUnitData()->max_cargo/115.0 ) ) ) /5 ) *5;
+					value= ( ( ( int ) ( ( 115- ( y-301-DIALOG_Y ) ) * ( ptr.UnitID.getUnitData()->max_cargo/115.0 ) ) ) /5 ) *5;
 					PlayFX ( SoundData.SNDObjectMenu );
 
-					if ( ( 115- ( y-301-DIALOG_Y ) ) >=110 ) value=ptr->UnitID.getUnitData()->max_cargo;
+					if ( ( 115- ( y-301-DIALOG_Y ) ) >=110 ) value=ptr.UnitID.getUnitData()->max_cargo;
 
-					if ( value<ptr->cargo )
+					if ( value < ptr.cargo )
 					{
-						player->Credits+= ( ptr->cargo-value ) /5;
-						ptr->cargo=value;
+						player->Credits+= ( ptr.cargo-value ) /5;
+						ptr.cargo=value;
 					}
-					else if ( value>ptr->cargo&&player->Credits>0 )
+					else if ( value>ptr.cargo&&player->Credits>0 )
 					{
-						value-=ptr->cargo;
-						while ( value>0&&player->Credits>0&&ptr->cargo<ptr->UnitID.getUnitData()->max_cargo )
+						value-=ptr.cargo;
+						while ( value>0&&player->Credits>0&&ptr.cargo<ptr.UnitID.getUnitData()->max_cargo )
 						{
-							ptr->cargo+=5;
+							ptr.cargo+=5;
 							player->Credits--;
 							value-=5;
 						}
-						if ( ptr->cargo>ptr->UnitID.getUnitData()->max_cargo )
+						if ( ptr.cargo > ptr.UnitID.getUnitData()->max_cargo )
 						{
-							ptr->cargo=ptr->UnitID.getUnitData()->max_cargo;
+							ptr.cargo = ptr.UnitID.getUnitData()->max_cargo;
 						}
 					}
 
@@ -2964,7 +2953,7 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 }
 
 // Zeigt die Bars an:
-void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selected, SDL_Surface *surface )
+void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int selected, SDL_Surface *surface )
 {
 	SDL_Rect scr,dest;
 	scr.x=dest.x=371;
@@ -3002,18 +2991,17 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding*> *landing,int selec
 
 	if ( selected>=0&&landing->Size()&&selected<(int)landing->Size() )
 	{
-		sLanding *ptr;
-		ptr = (*landing)[selected];
-		if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
+		sLanding& ptr = (*landing)[selected];
+		if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
 		{
 			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275, lngPack.i18n ( "Text~Title~Cargo" ));
-			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275+10, iToStr(ptr->cargo));
+			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275+10, iToStr(ptr.cargo));
 
 
 			scr.x=133;
 			scr.y=336;
 			scr.w=dest.w=20;
-			scr.h=dest.h= ( int ) ( 115 * ( ptr->cargo / ( float ) ptr->UnitID.getUnitData()->max_cargo ) );
+			scr.h=dest.h= ( int ) ( 115 * ( ptr.cargo / ( float ) ptr.UnitID.getUnitData()->max_cargo ) );
 			dest.x=DIALOG_X +422;
 			dest.y=DIALOG_Y +301+115-dest.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
@@ -3048,13 +3036,287 @@ int GetKachelBig ( int x,int y, cMap *map )
 	return nr;
 }
 
-cSelectLandingMenu::cSelectLandingMenu(cMap *map)
+cSelectLandingMenu::cSelectLandingMenu(cMap *map, sClientLandData* clientLandData, int iClients, int iLocalClient )
 {
 	this->map = map;
+	this->clientLandData = clientLandData;
+	this->iClients = iClients;
+	this->iLocalClient = iLocalClient;
+
+	iLandedClients = 0;
+	bAllLanded = false;
+	
 }
 
 
-void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
+void cSelectLandingMenu::run()
+{
+	int lx = 0, ly = 0,	lb = 0,	b  = 0;
+
+	if ( !MultiPlayerMenu )	 //single player
+	{
+		selectLandingSite();
+		clientLandData[0].iLandX = c.iLandX;
+		clientLandData[0].iLandY = c.iLandY;
+	}
+	else
+	{	
+		if ( MultiPlayerMenu->bHost )  //menu is running on a network host
+		{
+			while ( !bAllLanded )
+			{
+				//get coords from the local client
+				if ( c.landingState != LANDING_POSITION_OK )
+				{
+					c.iLastLandX = c.iLandX;
+					c.iLastLandY = c.iLandY;
+					selectLandingSite();
+					cLog::write("Server: received landing coords from Player " + iToStr( iLocalClient ), cLog::eLOG_TYPE_NET_DEBUG);
+					iLandedClients++;
+					clientLandData[iLocalClient] = c;
+				}
+
+				//wait for all other clients
+				font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
+				SHOW_SCREEN
+				mouse->draw( false, screen );
+
+				while ( iLandedClients < iClients )
+				{
+					EventHandler->HandleEvents();
+					mouse->GetPos();
+
+					if ( mouse->x != lx || mouse->y != ly )
+					{
+						mouse->draw ( true, screen );
+					}
+
+					handleMessages();
+
+					lx = mouse->x;
+					ly = mouse->y;
+					lb = b;
+					SDL_Delay ( 1 );
+				}
+
+				cLog::write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG); 
+
+				//now check the landing positions
+				for ( int playerNr = 0; playerNr < iClients; playerNr++ )
+				{
+					eLandingState state = checkLandingState( playerNr );
+					if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
+					{
+						iLandedClients--;
+						if ( playerNr == iLocalClient )
+						{
+							c.landingState = state;
+						}
+						else
+						{
+							cNetMessage* message = new cNetMessage(MU_MSG_RESELECT_LANDING);
+							message->pushChar( state );
+							MultiPlayerMenu->sendMessage( message, playerNr );
+						}
+					}
+
+					if ( state == LANDING_POSITION_TOO_CLOSE )
+						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+					else if ( state == LANDING_POSITION_WARNING )
+						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_WARNING, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+					else if ( state == LANDING_POSITION_OK )
+						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_OK, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+					else if ( state == LANDING_POSITION_CONFIRMED )
+						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+					else if ( state == LANDING_STATE_UNKNOWN )
+						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+					else
+						cLog::write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+
+				}
+
+				cLog::write("Server: waiting for " + iToStr(iClients - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
+
+				if ( iLandedClients >= iClients )
+				{
+					bAllLanded = true;
+				}
+			}				
+		}
+		else	//menu is running on a multiplayer client
+		{
+			while ( !bAllLanded )
+			{
+				if ( c.landingState != LANDING_POSITION_OK )
+				{
+					selectLandingSite();
+					sendLandingCoords( c );
+					font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
+					SHOW_SCREEN
+					mouse->draw( false, screen );
+					c.landingState = LANDING_POSITION_OK;
+				}
+	
+				EventHandler->HandleEvents();
+				mouse->GetPos();
+
+				if ( mouse->x != lx || mouse->y != ly )
+				{
+					mouse->draw ( true, screen );
+				}
+
+				handleMessages();
+
+				lx = mouse->x;
+				ly = mouse->y;
+				lb = b;
+				SDL_Delay ( 1 );
+			}
+		}
+	}
+}
+
+void cSelectLandingMenu::sendLandingCoords( sClientLandData& c )
+{
+	cLog::write("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+	cNetMessage* message = new cNetMessage( MU_MSG_LANDING_COORDS );
+	message->pushInt16( c.iLandY );
+	message->pushInt16( c.iLandX );
+	message->pushChar( iLocalClient );
+	MultiPlayerMenu->sendMessage( message );
+}
+
+eLandingState cSelectLandingMenu::checkLandingState(int playerNr )
+{
+	int posX = clientLandData[playerNr].iLandX;
+	int posY = clientLandData[playerNr].iLandY;
+	int lastPosX = clientLandData[playerNr].iLastLandX;
+	int lastPosY = clientLandData[playerNr].iLastLandY;
+	bool bPositionTooClose = false;
+	bool bPositionWarning = false;
+
+	//check distances to all other players
+	for ( int i = 0; i < iClients; i++ )
+	{
+		const sClientLandData& c = clientLandData[i];
+		if ( i == playerNr ) continue;
+
+		int distance = (int) sqrt( pow( (float) c.iLandX - posX, 2) + pow( (float) c.iLandY - posY, 2) );
+
+		if ( distance < LANDING_DISTANCE_TOO_CLOSE ) 
+		{
+			bPositionTooClose = true;
+		}
+		if ( distance < LANDING_DISTANCE_WARNING )
+		{
+			bPositionWarning = true;
+		}
+	}
+	
+	//now set the new landing state, 
+	//depending on the last state, the last position, the current position, bPositionTooClose and bPositionWarning 
+	eLandingState lastState = clientLandData[playerNr].landingState;
+	eLandingState newState = LANDING_STATE_UNKNOWN;
+
+	if ( bPositionTooClose )
+	{
+		newState = LANDING_POSITION_TOO_CLOSE;
+	}
+	else if ( bPositionWarning )
+	{
+		if ( lastState == LANDING_POSITION_WARNING )
+		{
+			int delta = (int) sqrt( pow( (float) posX - lastPosX, 2) + pow( (float) posY - lastPosY, 2) );
+			if ( delta <= LANDING_DISTANCE_TOO_CLOSE )
+			{
+				//the player has choosen the same position after a warning
+				//so further warnings will be ignored
+				newState = LANDING_POSITION_CONFIRMED;
+			}
+			else
+			{
+				newState = LANDING_POSITION_WARNING;
+			}
+		}
+		else if ( lastState == LANDING_POSITION_CONFIRMED )
+		{
+			//player is in state LANDING_POSITION_CONFIRMED, so ignore the warning
+			newState = LANDING_POSITION_CONFIRMED;
+		}
+		else
+		{
+			newState = LANDING_POSITION_WARNING;
+		}
+	}
+	else
+	{
+		if ( lastState == LANDING_POSITION_CONFIRMED )
+		{
+			newState = LANDING_POSITION_CONFIRMED;
+		}
+		else
+		{
+			newState = LANDING_POSITION_OK;
+		}
+	}
+
+	clientLandData[playerNr].landingState = newState;
+	return newState;
+}
+
+void cSelectLandingMenu::handleMessages()
+{
+	if (!MultiPlayerMenu) return;
+
+	MultiPlayerMenu->HandleMessages();
+
+	while ( MultiPlayerMenu->landingSelectionMessageList.Size() > 0 )
+	{
+		cNetMessage* message = MultiPlayerMenu->landingSelectionMessageList[0];
+		
+		switch ( message->iType )
+		{
+		case MU_MSG_LANDING_COORDS:
+			{
+				int playerNr = message->popChar();
+				cLog::write("Server: received landing coords from Player " + iToStr( playerNr ), cLog::eLOG_TYPE_NET_DEBUG);
+
+				if ( playerNr >= iClients ) break;
+			
+				iLandedClients++;
+				if ( iLandedClients > iClients )
+				{
+					cLog::write("Server: received too much landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+				}
+
+				sClientLandData& c = clientLandData[playerNr];
+				//save last coords, so that a player can confirm his position after a warning about nearby players
+				c.iLastLandX = c.iLandX;
+				c.iLastLandY = c.iLandY;
+				c.iLandX = message->popInt16();
+				c.iLandY = message->popInt16();
+			}
+			break;
+		case MU_MSG_RESELECT_LANDING:
+			{
+				cLog::write("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
+				c.landingState = (eLandingState) message->popChar();
+			}
+			break;
+		case MU_MSG_ALL_LANDED:
+			{
+				bAllLanded = true;
+			}
+			break;
+		}
+
+		delete message;
+		MultiPlayerMenu->landingSelectionMessageList.Delete(0);
+	}
+
+}
+
+void cSelectLandingMenu::selectLandingSite()
 {
 	int b,lx=-1,ly=-1;
 	sTerrain *t;
@@ -3067,19 +3329,19 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 	
 	drawMap();
 
-	if ( landingState != LANDING_STATE_UNKNOWN )
+	if ( c.landingState != LANDING_STATE_UNKNOWN )
 	{
-		int posX = (int)(180 + *x * fakx);
-		int posY = (int)(18  + *y * faky);
+		int posX = (int)(180 + c.iLandX * fakx);
+		int posY = (int)(18  + c.iLandY * faky);
 		//for non 4:3 screen resolutions, the size of the circles is
 		//only correct in x dimension, because I don't draw an ellipse
 		drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
 		drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
-		if( landingState == LANDING_POSITION_TOO_CLOSE)
+		if( c.landingState == LANDING_POSITION_TOO_CLOSE)
 		{
 			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Too_Close"),LATIN_BIG );
 		}
-		else if ( landingState == LANDING_POSITION_WARNING)
+		else if ( c.landingState == LANDING_POSITION_WARNING)
 		{
 			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Warning"),LATIN_BIG );
 
@@ -3093,12 +3355,13 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 
 	while ( 1 )
 	{
-		// Events holen:
+		//get events
 		EventHandler->HandleEvents();
-
-		// Die Maus machen:
+		if ( MultiPlayerMenu ) MultiPlayerMenu->HandleMessages();
+		
+		//handle mouse
 		mouse->GetPos();
-		b=mouse->GetMouseButton();
+		b = mouse->GetMouseButton();
 		t=map->terrain+GetKachelBig ( mouse->x-180,mouse->y-18, map );
 		if ( mouse->x>=180&&mouse->x<SettingsData.iScreenW-12&&mouse->y>=18&&mouse->y<SettingsData.iScreenH-14&&! ( t->water||t->coast||t->blocked ) )
 		{
@@ -3108,7 +3371,6 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 		{
 			mouse->SetCursor ( CNo );
 		}
-
 		if ( mouse->x!=lx||mouse->y!=ly )
 		{
 			mouse->draw ( true,screen );
@@ -3116,12 +3378,13 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 
 		if ( b&&mouse->cur==GraphicsData.gfx_Cmove )
 		{
-			*x= ( int ) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 )));
-			*y= ( int ) ( ( mouse->y-18 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
-			
+			c.iLandX = (int) ( ( mouse->x-180 ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 )));
+			c.iLandY = (int) ( ( mouse->y-18  ) / ( 448.0/map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
+			c.landingState = LANDING_POSITION_OK;
+
 			drawMap();
-			int posX = (int)(180 + *x * fakx);
-			int posY = (int)(18  + *y * faky);
+			int posX = (int)(180 + c.iLandX * fakx);
+			int posY = (int)(18  + c.iLandY * faky);
 			//for non 4:3 screen resolutions, the size of the circles is
 			//only correct in x dimension, because I don't draw an ellipse
 			drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, buffer );
@@ -3130,8 +3393,7 @@ void cSelectLandingMenu::run( int *x,int *y, eLandingState landingState )
 			SHOW_SCREEN
 			mouse->SetCursor ( CHand );
 			mouse->draw ( false,screen );
-			SDL_Delay ( 1 );
-			break;
+			return;
 		}
 
 		lx=mouse->x;
@@ -3188,9 +3450,8 @@ void cSelectLandingMenu::drawHud()
 }
 
 // shows list of selected units for landing (box upper middle)
-void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surface *surface )
+void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surface *surface )
 {
-	sLanding *ptr;
 	SDL_Rect scr = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
 	SDL_Rect dest,text = {DIALOG_X + 375,DIALOG_Y + 32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
 	scr.x=330;scr.y=11;
@@ -3206,9 +3467,9 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 	for ( unsigned int i=offset;i<list->Size();i++ )
 	{
 		if ( (int)i>=offset+5 ) break;
-		ptr = (*list)[i];
+		sLanding &ptr = (*list)[i];
 		// Das Bild malen:
-		SDL_BlitSurface ( ptr->sf,&scr,buffer,&dest );
+		SDL_BlitSurface ( ptr.sf,&scr,buffer,&dest );
 		// Ggf noch Rahmen drum:
 		if ( selected==i )
 		{
@@ -3238,23 +3499,23 @@ void ShowLandingList ( cList<sLanding*> *list,int selected,int offset, SDL_Surfa
 		}
 		// Text ausgeben:
 
-		if ( font->getTextWide ( ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE ) > text.w )
 		{
 			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
+			font->showTextAsBlock ( text, ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
 			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, ptr->UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
+			font->showText ( text, ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
 		}
 
 
 
-		if ( ptr->UnitID.getUnitData()->can_transport==TRANS_METAL||ptr->UnitID.getUnitData()->can_transport==TRANS_OIL||ptr->UnitID.getUnitData()->can_transport==TRANS_GOLD )
+		if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
 		{
-			int value = ptr->cargo;
-			int maxval = ptr->UnitID.getUnitData()->max_cargo;
+			int value = ptr.cargo;
+			int maxval = ptr.UnitID.getUnitData()->max_cargo;
 
 			if(value == 0)
 			{
@@ -3525,8 +3786,6 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	bStartSelecting = false;
 	bExit = false;
 	Savegame = NULL;
-
-	bAllLanded = false;
 
 	if ( bHost ) sIP = "-";
 	else sIP = SettingsData.sIP;
@@ -4221,7 +4480,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 					Server = NULL;
 				}
 			}
-			else runNewGame( b, lb, lx, ly );
+			else runNewGame();
 			break;
 		}
 
@@ -4235,7 +4494,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 	SDL_FreeSurface(sfTmp);
 }
 
-void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
+void cMultiPlayerMenu::runNewGame ()
 {
 	if ( bHost )
 	{
@@ -4270,9 +4529,14 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	ActualPlayer->Credits = Options.credits;
 	if ( bHost ) ActualPlayer->InitMaps ( ServerMap->size, ServerMap );
 	else ActualPlayer->InitMaps ( Map->size, Map );
-	RunHangar ( ActualPlayer, &(c.landingList) );
+	cList<sLanding> landingList;
+	RunHangar ( ActualPlayer, &landingList );
 
-	if ( !bHost ) sendUpgrades();
+	if ( !bHost ) 
+	{
+		sendUpgrades();
+		sendLandingVehicles( landingList );
+	}
 
 	// copy playerlist for client
 	cList<cPlayer*> *ClientPlayerList = new cList<cPlayer*>;
@@ -4302,111 +4566,27 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 		Server = new cServer(ServerMap, &PlayerList, GAME_TYPE_TCPIP, Options.PlayRounds);
 	}
 
-	cSelectLandingMenu landingMenu( Map );
-	landingMenu.run( &c.iLandX, &c.iLandY );
-	c.landingState = LANDING_POSITION_OK;
-	cLog::write("Server: received landing coords from Player " + iToStr(ActualPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
-
 	if ( bHost )
 	{
-		// wait for other players
-		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
-		SHOW_SCREEN
+		clientLandingCoordsList = new sClientLandData[PlayerList.Size()];
+		clientLandingVehicleList = new cList<sLanding>[PlayerList.Size()];
 
-		ClientDataList = new sClientLandData[PlayerList.Size()];
-		ClientDataList[ActualPlayer->Nr] = c;
-		iLandedClients = 1;
-
-		//wait, that all clients have a valid start position
-		while (!bAllLanded)
-		{
-			//wait, that all clients have choosen, where they want to start
-			while ( iLandedClients < (int)PlayerList.Size() )
-			{
-
-				EventHandler->HandleEvents();
-				mouse->GetPos();
-
-				if ( mouse->x != lx || mouse->y != ly )
-				{
-					mouse->draw ( true, screen );
-				}
-
-				HandleMessages();
-
-				lx = mouse->x;
-				ly = mouse->y;
-				lb = b;
-				SDL_Delay ( 1 );
-			}
-
-			cLog::write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG);
-
-			// temporary disabled landingzones for release
-			/*
-			//check all landing positions
-			for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
-			{
-				eLandingState state = checkLandingState( playerNr );
-				if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
-				{
-					iLandedClients--;
-					if ( playerNr == ActualPlayer->Nr )
-					{
-						c.landingState = state;
-					}
-					else
-					{
-						cNetMessage* message = new cNetMessage(MU_MSG_RESELECT_LANDING);
-						message->pushChar( state );
-						sendMessage( message );
-					}
-				}
-
-				if ( state == LANDING_POSITION_TOO_CLOSE )
-					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-				else if ( state == LANDING_POSITION_WARNING )
-					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_WARNING, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-				else if ( state == LANDING_POSITION_OK )
-					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_OK, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-				else if ( state == LANDING_POSITION_CONFIRMED )
-					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-				else if ( state == LANDING_STATE_UNKNOWN )
-					cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-				else
-					cLog::write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(ClientDataList[playerNr].iLandX) + "," + iToStr(ClientDataList[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-
-			}*/
-
-			cLog::write("Server: waiting for " + iToStr((int)PlayerList.Size() - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
-
-			if ( iLandedClients == PlayerList.Size() ) bAllLanded = true;
-		
-			//the lokal player on the host must reselect the landing position
-			if ( c.landingState == LANDING_POSITION_WARNING || c.landingState == LANDING_POSITION_TOO_CLOSE )
-			{
-				cSelectLandingMenu landingMenu( Map );
-				c.iLastLandX = c.iLandX;
-				c.iLastLandY = c.iLandY;
-				landingMenu.run( &c.iLandX, &c.iLandY, c.landingState );
-				font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
-				SHOW_SCREEN
-				ClientDataList[ActualPlayer->Nr] = c;
-				c.landingState = LANDING_POSITION_OK;
-				iLandedClients++;
-				cLog::write("Server: received landing coords from Player " + iToStr(ActualPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
-			}
-		}
-
+		cSelectLandingMenu landingMenu( Map, clientLandingCoordsList, (int) PlayerList.Size(), ActualPlayer->Nr );
+		landingMenu.run();
+	
 		// finished selecting landing positions
 		// make all landings
 		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 		{
 			cPlayer *Player = PlayerList[i];
-			const sClientLandData& c = ClientDataList[Player->Nr];
+			sClientLandData& c = clientLandingCoordsList[Player->Nr];
+			cList<sLanding>& landingList = clientLandingVehicleList[Player->Nr];
 
-			Server->makeLanding(c.iLandX, c.iLandY, Player, c.landingList, Options.FixedBridgeHead);
+			Server->makeLanding(c.iLandX, c.iLandY, Player, landingList, Options.FixedBridgeHead);
 		}
+
+		delete[] clientLandingCoordsList;
+		delete[] clientLandingVehicleList;
 
 		// copy changed resources from server map to client map
 		memcpy ( Map->Resources, ServerMap->Resources, sizeof ( sResources )*Map->size*Map->size );
@@ -4417,44 +4597,8 @@ void cMultiPlayerMenu::runNewGame ( int b, int lb, int lx, int ly )
 	}
 	else
 	{
-		sendLandingInfo( c );
-		// wait for other players
-		font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
-		SHOW_SCREEN
-		while ( !bAllLanded )
-		{
-			EventHandler->HandleEvents();
-			mouse->GetPos();
-
-			if ( c.landingState == LANDING_POSITION_WARNING || c.landingState == LANDING_POSITION_TOO_CLOSE )
-			{
-				//have to reselect landing position
-				cSelectLandingMenu landingMenu( Map );
-				landingMenu.run( &c.iLandX, &c.iLandY, c.landingState );
-				font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
-				SHOW_SCREEN
-				c.landingState = LANDING_POSITION_OK;
-				sendLandingInfo( c );
-			}
-
-			if ( mouse->x != lx || mouse->y != ly )
-			{
-				mouse->draw ( true, screen );
-			}
-
-			HandleMessages();
-
-			lx = mouse->x;
-			ly = mouse->y;
-			lb = b;
-			SDL_Delay ( 1 );
-		}
-	}
-
-	while ( c.landingList.Size() )
-	{
-		delete c.landingList[c.landingList.Size() - 1];
-		c.landingList.Delete(c.landingList.Size() - 1);
+		cSelectLandingMenu landingMenu( Map, NULL, 1, ActualPlayer->Nr );
+		landingMenu.run();
 	}
 
 	ExitMenu();
@@ -4554,83 +4698,6 @@ int cMultiPlayerMenu::runSavedGame()
 	return 1;
 }
 
-eLandingState cMultiPlayerMenu::checkLandingState(int playerNr )
-{
-	int posX = ClientDataList[playerNr].iLandX;
-	int posY = ClientDataList[playerNr].iLandY;
-	int lastPosX = ClientDataList[playerNr].iLastLandX;
-	int lastPosY = ClientDataList[playerNr].iLastLandY;
-	bool bPositionTooClose = false;
-	bool bPositionWarning = false;
-
-	//check distances to all other players
-	for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
-	{
-		const sClientLandData& c = ClientDataList[i];
-		if ( i == playerNr ) continue;
-
-		int distance = (int) sqrt( pow( (float) c.iLandX - posX, 2) + pow( (float) c.iLandY - posY, 2) );
-
-		if ( distance < LANDING_DISTANCE_TOO_CLOSE ) 
-		{
-			bPositionTooClose = true;
-		}
-		if ( distance < LANDING_DISTANCE_WARNING )
-		{
-			bPositionWarning = true;
-		}
-	}
-	
-	//now set the new landing state, 
-	//depending on the last state, the last position, the current position, bPositionTooClose and bPositionWarning 
-	eLandingState lastState = ClientDataList[playerNr].landingState;
-	eLandingState newState = LANDING_STATE_UNKNOWN;
-
-	if ( bPositionTooClose )
-	{
-		newState = LANDING_POSITION_TOO_CLOSE;
-	}
-	else if ( bPositionWarning )
-	{
-		if ( lastState == LANDING_POSITION_WARNING )
-		{
-			int delta = (int) sqrt( pow( (float) posX - lastPosX, 2) + pow( (float) posY - lastPosY, 2) );
-			if ( delta <= LANDING_DISTANCE_TOO_CLOSE )
-			{
-				//the player has choosen the same position after a warning
-				//so further warnings will be ignored
-				newState = LANDING_POSITION_CONFIRMED;
-			}
-			else
-			{
-				newState = LANDING_POSITION_WARNING;
-			}
-		}
-		else if ( lastState == LANDING_POSITION_CONFIRMED )
-		{
-			//player is in state LANDING_POSITION_CONFIRMED, so ignore the warning
-			newState = LANDING_POSITION_CONFIRMED;
-		}
-		else
-		{
-			newState = LANDING_POSITION_WARNING;
-		}
-	}
-	else
-	{
-		if ( lastState == LANDING_POSITION_CONFIRMED )
-		{
-			newState = LANDING_POSITION_CONFIRMED;
-		}
-		else
-		{
-			newState = LANDING_POSITION_OK;
-		}
-	}
-
-	ClientDataList[playerNr].landingState = newState;
-	return newState;
-}
 
 void cMultiPlayerMenu::HandleMessages()
 {
@@ -4640,6 +4707,16 @@ void cMultiPlayerMenu::HandleMessages()
 
 		switch ( Message->iType )
 		{
+		case MU_MSG_LANDING_COORDS:
+		case MU_MSG_RESELECT_LANDING:
+		case MU_MSG_ALL_LANDED:
+			{
+				//forward messages for the landing selection menu
+				landingSelectionMessageList.Add( Message );
+				MessageList.Delete(0);
+				continue;
+			}
+			break;
 		case MU_MSG_CHAT:
 			{
 				cNetMessage *SendMessage = new cNetMessage( MU_MSG_CHAT );
@@ -4752,47 +4829,25 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_GO:
 			bStartSelecting = true;
 			break;
-		case MU_MSG_WT_LAND:
+		case MU_MSG_LANDING_VEHICLES:
 			{
-				iLandedClients++;
-
-				if ( iLandedClients > PlayerList.Size() )
-				{
-					cLog::write("Server: too much landing coords received!", cLog::eLOG_TYPE_NET_ERROR);
-				}
-
 				unsigned int playerNr = Message->popInt16();
 				if ( playerNr >= PlayerList.Size() ) break;
 
-				cLog::write("Server: received landing coords from Player " + iToStr(playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-				sClientLandData& c = ClientDataList[playerNr];
-				//save last coords, so that a player can confirm his position after a warning about nearby players
-				c.iLastLandX = c.iLandX;
-				c.iLastLandY = c.iLandY;
-				c.iLandX = Message->popInt16();
-				c.iLandY = Message->popInt16();
+				cList<sLanding>& landingList = clientLandingVehicleList[playerNr];
 
-				while ( c.landingList.Size() > 0 ) c.landingList.Delete( c.landingList.Size() - 1);
 				int iCount = Message->popInt16();
 				for ( int i = 0; i < iCount; i++ )
 				{
-					sLanding *Landing;
-					Landing = new sLanding;
-					Landing->cargo = Message->popInt16();
-					Landing->UnitID.iFirstPart = Message->popInt16();
-					Landing->UnitID.iSecondPart = Message->popInt16();
-					c.landingList.Add ( Landing );
+					sLanding Landing;
+					Landing.cargo = Message->popInt16();
+					Landing.UnitID.iFirstPart = Message->popInt16();
+					Landing.UnitID.iSecondPart = Message->popInt16();
+					landingList.Add ( Landing );
 				}
 			}
 			break;
-		case MU_MSG_RESELECT_LANDING:
-			{
-				c.landingState = (eLandingState) Message->popChar();
-			}
-			break;
-		case MU_MSG_ALL_LANDED:
-			bAllLanded = true;
-			break;
+		
 		case MU_MSG_UPGRADES:
 			{
 				cPlayer *Player;
@@ -4878,19 +4933,17 @@ void cMultiPlayerMenu::HandleMessages()
 	}
 }
 
-void cMultiPlayerMenu::sendLandingInfo( const sClientLandData& c )
+void cMultiPlayerMenu::sendLandingVehicles( const cList<sLanding>& landingList )
 {
-	cNetMessage *Message = new cNetMessage ( MU_MSG_WT_LAND );
+	cNetMessage *Message = new cNetMessage ( MU_MSG_LANDING_VEHICLES );
 
-	for ( unsigned int i = 0; i < c.landingList.Size(); i++ )
+	for ( unsigned int i = 0; i < landingList.Size(); i++ )
 	{
-		Message->pushInt16( c.landingList[i]->UnitID.iSecondPart);
-		Message->pushInt16( c.landingList[i]->UnitID.iFirstPart);
-		Message->pushInt16( c.landingList[i]->cargo);
+		Message->pushInt16( landingList[i].UnitID.iSecondPart);
+		Message->pushInt16( landingList[i].UnitID.iFirstPart);
+		Message->pushInt16( landingList[i].cargo);
 	}
-	Message->pushInt16( (int)c.landingList.Size() );
-	Message->pushInt16( c.iLandY );
-	Message->pushInt16( c.iLandX );
+	Message->pushInt16( (int)landingList.Size() );
 	Message->pushInt16( ActualPlayer->Nr );
 
 	sendMessage ( Message );
@@ -5278,8 +5331,6 @@ void HeatTheSeat ( void )
 	sMapName = RunPlanetSelect();
 	if ( sMapName.empty() ) return;
 
-	cList<sLanding*> *LandingList;
-	int iLandX, iLandY;
 	cPlayer *Player;
 
 	cMap Map;
@@ -5349,20 +5400,14 @@ void HeatTheSeat ( void )
 
 		ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
 
-		LandingList = new cList<sLanding*>;
-		RunHangar(ClientPlayerList[i], LandingList);
+		cList<sLanding> landingList;
+		RunHangar(ClientPlayerList[i], &landingList);
 
-		cSelectLandingMenu landingMenu( &Map );
-		landingMenu.run( &iLandX, &iLandY );
+		sClientLandData c;
+		cSelectLandingMenu landingMenu( &Map, &c, 1 );
+		landingMenu.run();
 
-		Server->makeLanding ( iLandX, iLandY, Player, *LandingList, Options.FixedBridgeHead );
-
-		while ( LandingList->Size() )
-		{
-			delete (*LandingList)[0];
-			LandingList->Delete ( 0 );
-		}
-		delete LandingList;
+		Server->makeLanding ( c.iLandX, c.iLandY, Player, landingList, Options.FixedBridgeHead );
 	}
 
 	// exit menu and start game

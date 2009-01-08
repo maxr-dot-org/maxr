@@ -145,6 +145,10 @@ public:
 	int size;     // size of the map
 	int *Kacheln; // terrain numbers of the map fields
 	sGameObjects *GO; // TODO: remove
+	/**
+	* the infomation about the fields
+	*/
+	cMapField* fields;
 	sResources *Resources; // field with the ressource data
 	string MapName;  // name of the currend map
 
@@ -212,10 +216,6 @@ public:
 
 
 private:
-	/**
-	* the infomation about the fields
-	*/
-	cMapField* fields;
 
 	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum );
 	void CopySrfToTerData ( SDL_Surface *surface, int iNum  );
