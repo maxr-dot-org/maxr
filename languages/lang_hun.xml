@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-2"?>
-<!-- * encoding is needed for selecting the correct code table               -->
-<!--       iso-8859-5  : Cyrillic languages                                  -->
-<!--       iso-8859-15 : western European languages                          -->
+<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
 <!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
@@ -20,364 +17,364 @@
 		<Main>
 			<Game_Title ENG="M.A.X." localized="M.A.X."/>
 			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
-			<Version ENG="version v%s" localized="Verzió V%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönch's M.A.X. (Eredeti az Interplay-től)"/>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake DoctorDeath-től)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded készült az Interplay M.A.X. című játéka alapján"/>
+			<Version ENG="version v%s" localized="VerziĂł V%s"/>
+			<Credits_MM ENG="Michael MĂśnch's M.A.X. (Original by Interplay)" localized="Michael MĂśnch's M.A.X. (Eredeti az Interplay-tĹl)"/>
+			<Credits_Doc ENG="Michael MĂśnch's M.A.X. (Remake by DoctorDeath)" localized="Michael MĂśnchs M.A.X. (Remake DoctorDeath-tĹl)"/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded kĂŠszĂźlt az Interplay M.A.X. cĂ­mĹą jĂĄtĂŠka alapjĂĄn"/>
 			<Remarks>
-				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) még nincs implementálva"/>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) mĂŠg nincs implementĂĄlva"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading language pack..." localized="Nyelvcsomag betöltése..."/>
-			<Keys ENG="Loading keys..." localized="Billentyűk betöltése..."/>
-            <Fonts ENG="Loading fonts..." localized="Betűkészletek betöltése..."/>
-            <GFX ENG="Loading graphics..." localized="Grafika betöltése..."/>
-            <Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
-            <Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
-            <Vehicles ENG="Loading vehicles..." localized="Járművek betöltése..."/>
-            <Buildings ENG="Loading buildings..." localized="Épületek betöltése..."/>
-            <Music ENG="Loading music..." localized="Zene betöltése..."/>
-            <Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
-			<Voices ENG="Loading voices..." localized="Hangok betöltése..."/>
+			<Lang ENG="Loading language pack..." localized="Nyelvcsomag betĂśltĂŠse..."/>
+			<Keys ENG="Loading keys..." localized="BillentyĹąk betĂśltĂŠse..."/>
+            <Fonts ENG="Loading fonts..." localized="BetĹąkĂŠszletek betĂśltĂŠse..."/>
+            <GFX ENG="Loading graphics..." localized="Grafika betĂśltĂŠse..."/>
+            <Effects ENG="Loading effects..." localized="Effektusok betĂśltĂŠse..."/>
+            <Terrain ENG="Loading terrain..." localized="Terep betĂśltĂŠse..."/>
+            <Vehicles ENG="Loading vehicles..." localized="JĂĄrmĹąvek betĂśltĂŠse..."/>
+            <Buildings ENG="Loading buildings..." localized="ĂpĂźletek betĂśltĂŠse..."/>
+            <Music ENG="Loading music..." localized="Zene betĂśltĂŠse..."/>
+            <Sounds ENG="Loading sounds..." localized="HanhatĂĄsok betĂśltĂŠse..."/>
+			<Voices ENG="Loading voices..." localized="Hangok betĂśltĂŠse..."/>
 		</Init>
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Főmenü"/>
-			<Credits ENG="Credits" localized="Pénz"/>
+			<MainMenu ENG="Main Menu" localized="FĹmenĂź"/>
+			<Credits ENG="Credits" localized="PĂŠnz"/>
 			<Gold ENG="Gold" localized="Arany"/>
 			<Metal ENG="Materials" localized="Nyersanyag"/>
-			<Oil ENG="Fuel" localized="Üzemanyag"/>
-			<BridgeHead ENG="Starting Base" localized="Kezdeti bázis"/>
-			<Alien_Tech ENG="Alien technology" localized="Idegen technológia"/>
-			<Resource ENG="Resource density" localized="Nyersanyagsűrűség"/>
-			<Resource_Density ENG="Resource frequency" localized="Nyersanyag gyakoriság"/>
-			<Game_Type ENG="Game Type" localized="Játéktípus"/>
-			<Player_Name ENG="Playername:" localized="Játékosnév:"/>
-			<Player_Select ENG="Playeroptions" localized="Játékos beállítások"/>
+			<Oil ENG="Fuel" localized="Ăzemanyag"/>
+			<BridgeHead ENG="Starting Base" localized="Kezdeti bĂĄzis"/>
+			<Alien_Tech ENG="Alien technology" localized="Idegen technolĂłgia"/>
+			<Resource ENG="Resource density" localized="NyersanyagsĹąrĹąsĂŠg"/>
+			<Resource_Density ENG="Resource frequency" localized="Nyersanyag gyakorisĂĄg"/>
+			<Game_Type ENG="Game Type" localized="JĂĄtĂŠktĂ­pus"/>
+			<Player_Name ENG="Playername:" localized="JĂĄtĂŠkosnĂŠv:"/>
+			<Player_Select ENG="Playeroptions" localized="JĂĄtĂŠkos beĂĄllĂ­tĂĄsok"/>
 			<Team ENG="Team" localized="Csapat"/>
 			<Human ENG="Human" localized="Ember"/>
-			<Computer ENG="Computer" localized="Számítógép"/>
+			<Computer ENG="Computer" localized="SzĂĄmĂ­tĂłgĂŠp"/>
 			<Nobody ENG="Nobody" localized="Senki"/>
-			<Clan ENG="Clan" localized="Klán"/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<Choose_Planet ENG="Planetchoosing" localized="Bolygóválasztás"/>
-			<Options ENG="Options" localized="Beállítások"/>
-			<Connect ENG="Connect" localized="Csatlakozás"/>
-			<Send ENG="Send" localized="Küldés"/>
-			<Color ENG="Color:" localized="Szín:"/>
+			<Clan ENG="Clan" localized="KlĂĄn"/>
+			<Cargo ENG="Cargo" localized="RakomĂĄny"/>
+			<Choose_Planet ENG="Planetchoosing" localized="BolygĂłvĂĄlasztĂĄs"/>
+			<Options ENG="Options" localized="BeĂĄllĂ­tĂĄsok"/>
+			<Connect ENG="Connect" localized="CsatlakozĂĄs"/>
+			<Send ENG="Send" localized="KĂźldĂŠs"/>
+			<Color ENG="Color:" localized="SzĂ­n:"/>
 			<IP ENG="IP" localized="IP"/>
 			<Port ENG="Port" localized="Port"/>
-			<Map ENG="Map" localized="Térkép"/>
-			<LoadSave ENG="Load/Save Menu" localized="Betöltés/Mentés Menü"/>
-			<Load ENG="Load Menu" localized="Betöltés Menü"/>
-			<Updates ENG="Update menu" localized="Frissítés Menü"/>
-			<Build ENG="Build menu" localized="Építkezés Menü"/>
-			<Labs ENG="Research menu" localized="Fejlesztés Menü"/>
-			<Mine ENG="Allocation menu" localized="Nyersanyagelosztás menü"/>
-			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
+			<Map ENG="Map" localized="TĂŠrkĂŠp"/>
+			<LoadSave ENG="Load/Save Menu" localized="BetĂśltĂŠs/MentĂŠs MenĂź"/>
+			<Load ENG="Load Menu" localized="BetĂśltĂŠs MenĂź"/>
+			<Updates ENG="Update menu" localized="FrissĂ­tĂŠs MenĂź"/>
+			<Build ENG="Build menu" localized="ĂpĂ­tkezĂŠs MenĂź"/>
+			<Labs ENG="Research menu" localized="FejlesztĂŠs MenĂź"/>
+			<Mine ENG="Allocation menu" localized="NyersanyagelosztĂĄs menĂź"/>
+			<Unitinfo ENG="Unit status screen" localized="EgysĂŠgstĂĄtusz kĂŠpernyĹ"/>
 		</Title>
 		<Button>
-			<Title_Main_Menu ENG="Main Menu" localized="Főmenü"/>
-			<Single_Player ENG="Singleplayer" localized="Egyjátékos Mód"/>
-			<Multi_Player ENG="Multiplayer" localized="Többjátékos Mód"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Térképszerkesztő (*)"/>
-			<Credits ENG="Credits (*)" localized="Készítők (*)"/>
+			<Title_Main_Menu ENG="Main Menu" localized="FĹmenĂź"/>
+			<Single_Player ENG="Singleplayer" localized="EgyjĂĄtĂŠkos MĂłd"/>
+			<Multi_Player ENG="Multiplayer" localized="TĂśbbjĂĄtĂŠkos MĂłd"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="TĂŠrkĂŠpszerkesztĹ (*)"/>
+			<Credits ENG="Credits (*)" localized="KĂŠszĂ­tĹk (*)"/>
 			<Mani ENG="Manifestation" localized="Nyilatkozat"/>
-			<Exit ENG="Exit" localized="Kilépés"/>
+			<Exit ENG="Exit" localized="KilĂŠpĂŠs"/>
 			<Back ENG="Back" localized="Vissza"/>
 			<OK ENG="OK" localized="Ok"/>
-			<Done ENG="Done" localized="Kész"/>
-			<Cancel ENG="Cancel" localized="Mégse"/>
+			<Done ENG="Done" localized="KĂŠsz"/>
+			<Cancel ENG="Cancel" localized="MĂŠgse"/>
 			<Hot ENG="Hot" localized="Hot"/>
 			<Yes ENG="Yes" localized="Igen"/>
 			<No ENG="No" localized="Nem"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
-			<HotSeat_New ENG="New Hot Seat" localized="Új Hot Seat"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat Betöltése"/>
-			<Game_New ENG="New Game" localized="Új Játék"/>
-			<Game_Load ENG="Load Game" localized="Játék Betöltése"/>
-			<Game_Save ENG="Save Game" localized="Játék Mentése"/>
-			<Game_Options ENG="Game Options" localized="Játékbeállítások"/>
-			<Load ENG="Load" localized="Betöltés"/>
-			<Save ENG="Save" localized="Mentés"/>
-			<Training ENG="Training" localized="Gyakorlás"/>
-			<Delete ENG="Delete" localized="Törlés"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Ăj Hot Seat"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat BetĂśltĂŠse"/>
+			<Game_New ENG="New Game" localized="Ăj JĂĄtĂŠk"/>
+			<Game_Load ENG="Load Game" localized="JĂĄtĂŠk BetĂśltĂŠse"/>
+			<Game_Save ENG="Save Game" localized="JĂĄtĂŠk MentĂŠse"/>
+			<Game_Options ENG="Game Options" localized="JĂĄtĂŠkbeĂĄllĂ­tĂĄsok"/>
+			<Load ENG="Load" localized="BetĂśltĂŠs"/>
+			<Save ENG="Save" localized="MentĂŠs"/>
+			<Training ENG="Training" localized="GyakorlĂĄs"/>
+			<Delete ENG="Delete" localized="TĂśrlĂŠs"/>
 			<Buy ENG="Buy" localized="Vesz"/>
-			<Path ENG="Path" localized="Útvonal"/>
-			<Build ENG="Build" localized="Építés"/>
-			<Active ENG="Active" localized="Aktív"/>
-			<Repair ENG="Repair" localized="Javítás"/>
-			<Upgrade ENG="Upgrade" localized="Kutatás"/>
-			<Reload ENG="Reload" localized="Újratöltés"/>
-			<Host_Start ENG="Start Host" localized="Host Indítása"/>
+			<Path ENG="Path" localized="Ătvonal"/>
+			<Build ENG="Build" localized="ĂpĂ­tĂŠs"/>
+			<Active ENG="Active" localized="AktĂ­v"/>
+			<Repair ENG="Repair" localized="JavĂ­tĂĄs"/>
+			<Upgrade ENG="Upgrade" localized="KutatĂĄs"/>
+			<Reload ENG="Reload" localized="ĂjratĂśltĂŠs"/>
+			<Host_Start ENG="Start Host" localized="Host IndĂ­tĂĄsa"/>
 		</Button>
 		<Context>
-			<Clear ENG="Clear" localized="Eltakarítás"/>
-			<Build ENG="Build" localized="Építés"/>
-			<Transfer ENG="X-fer" localized="Átvitel"/>
-			<Sentry ENG="Sentry" localized="Örködés"/>
-			<Done ENG="Done" localized="Kész"/>
+			<Clear ENG="Clear" localized="EltakarĂ­tĂĄs"/>
+			<Build ENG="Build" localized="ĂpĂ­tĂŠs"/>
+			<Transfer ENG="X-fer" localized="Ătvitel"/>
+			<Sentry ENG="Sentry" localized="ĂrkĂśdĂŠs"/>
+			<Done ENG="Done" localized="KĂŠsz"/>
 			<Auto ENG="Auto" localized="Auto"/>
-			<Stop ENG="Stop" localized="Állj"/>
-			<Destroy ENG="Delete" localized="Törlés"/>
-			<Repair ENG="Repair" localized="Javítás"/>
-			<Disable ENG="Disable" localized="Megbénítás"/>
-			<Steal ENG="Steal" localized="Lopás"/>
-			<Load ENG="Load" localized="Behívás"/>
-			<Active ENG="Activ." localized="Aktiválás"/>
+			<Stop ENG="Stop" localized="Ăllj"/>
+			<Destroy ENG="Delete" localized="TĂśrlĂŠs"/>
+			<Repair ENG="Repair" localized="JavĂ­tĂĄs"/>
+			<Disable ENG="Disable" localized="MegbĂŠnĂ­tĂĄs"/>
+			<Steal ENG="Steal" localized="LopĂĄs"/>
+			<Load ENG="Load" localized="BehĂ­vĂĄs"/>
+			<Active ENG="Activ." localized="AktivĂĄlĂĄs"/>
 			<Dist ENG="Distr." localized="Distr."/>
-			<Reload ENG="Reload" localized="Újratöltés"/>
-			<Attack ENG="Attack" localized="Támadás"/>
+			<Reload ENG="Reload" localized="ĂjratĂśltĂŠs"/>
+			<Attack ENG="Attack" localized="TĂĄmadĂĄs"/>
 			<Seed ENG="Seed" localized="Seed"/>
-			<Start ENG="Start" localized="Elindítás"/>
-			<Research ENG="Research" localized="Kutatás"/>
-			<UpAll ENG="Up. all" localized="Összes fejl."/>
-			<Upgrades ENG="Upgrades" localized="Fejlesztések"/>
-			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
-			<Info ENG="Info" localized="Infó"/>
+			<Start ENG="Start" localized="ElindĂ­tĂĄs"/>
+			<Research ENG="Research" localized="KutatĂĄs"/>
+			<UpAll ENG="Up. all" localized="Ăsszes fejl."/>
+			<Upgrades ENG="Upgrades" localized="FejlesztĂŠsek"/>
+			<Upgrade ENG="Upgrade" localized="FejlesztĂŠs"/>
+			<Info ENG="Info" localized="InfĂł"/>
 		</Context>
 		<Hud>
-			<Files ENG="Files" localized="Fájlok"/>
-			<Settings ENG="Settings" localized="Beállítások"/>
+			<Files ENG="Files" localized="FĂĄjlok"/>
+			<Settings ENG="Settings" localized="BeĂĄllĂ­tĂĄsok"/>
 			<Proceed ENG="Do" localized="Mehet"/>
-			<End ENG="End" localized="Vége"/>
+			<End ENG="End" localized="VĂŠge"/>
 			<Log ENG="Log" localized="Log"/>
 			<Chat ENG="Chat" localized="Chat"/>
-			<Survey ENG="Survey" localized="Vizsgál"/>
-			<Status ENG="Status" localized="Státusz"/>
-			<Color ENG="Color" localized="Szín"/>
-			<Hitpoints ENG="Hits" localized="Élet"/>
-			<Ammo ENG="Ammunition" localized="Muníció"/>
-			<Range ENG="Range" localized="Lőtáv"/>
+			<Survey ENG="Survey" localized="VizsgĂĄl"/>
+			<Status ENG="Status" localized="StĂĄtusz"/>
+			<Color ENG="Color" localized="SzĂ­n"/>
+			<Hitpoints ENG="Hits" localized="Ălet"/>
+			<Ammo ENG="Ammunition" localized="MunĂ­ciĂł"/>
+			<Range ENG="Range" localized="LĹtĂĄv"/>
 			<Scan ENG="Scan" localized="Radar"/>
-			<Grid ENG="Grid" localized="Rács"/>
-			<Fog ENG="Fog" localized="Köd"/>
+			<Grid ENG="Grid" localized="RĂĄcs"/>
+			<Fog ENG="Fog" localized="KĂśd"/>
 			<Speed ENG="Speed" localized="Sebess."/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<AmmoShort ENG="Ammo" localized="Lőszer"/>
-			<Shots ENG="Shots" localized="Lövés"/>
-			<Armor ENG="Armor" localized="Páncél"/>
-			<Total ENG="Total" localized="Összes"/>
+			<Cargo ENG="Cargo" localized="RakomĂĄny"/>
+			<AmmoShort ENG="Ammo" localized="LĹszer"/>
+			<Shots ENG="Shots" localized="LĂśvĂŠs"/>
+			<Armor ENG="Armor" localized="PĂĄncĂŠl"/>
+			<Total ENG="Total" localized="Ăsszes"/>
 			<Energy ENG="Power" localized="Energia"/>
 			<Usage ENG="Usage" localized="Fogyaszt"/>
-			<Teams ENG="Teams" localized="Munkások"/>
+			<Teams ENG="Teams" localized="MunkĂĄsok"/>
 		</Hud>
 		<Option>
 			<Lowest ENG="Least" localized="Legkevesebb"/>
 			<Lower ENG="Lower" localized="Kevesebb"/>
-			<Low ENG="Low" localized="Kevés"/>
-			<Normal ENG="Normal" localized="Normál"/>
+			<Low ENG="Low" localized="KevĂŠs"/>
+			<Normal ENG="Normal" localized="NormĂĄl"/>
 			<Much ENG="Much" localized="Sok"/>
-			<More ENG="More" localized="Több"/>
-			<Most ENG="Most" localized="Legtöbb"/>
-			<Thick ENG="Dense" localized="Sűrű"/>
+			<More ENG="More" localized="TĂśbb"/>
+			<Most ENG="Most" localized="LegtĂśbb"/>
+			<Thick ENG="Dense" localized="SĹąrĹą"/>
 			<Thin ENG="Sparse" localized="Ritka"/>
 			<On ENG="on" localized="Be"/>
 			<Off ENG="off" localized="Ki"/>
-			<Definite ENG="Built (original)" localized="Felépült (eredeti)"/>
-			<Mobile ENG="Must build" localized="Fel kell építeni"/>
-			<Type_Turns ENG="Turn based" localized="Körökre osztott"/>
-			<Type_Simu ENG="Simultaneous" localized="Egyidejű"/>
+			<Definite ENG="Built (original)" localized="FelĂŠpĂźlt (eredeti)"/>
+			<Mobile ENG="Must build" localized="Fel kell ĂŠpĂ­teni"/>
+			<Type_Turns ENG="Turn based" localized="KĂśrĂśkre osztott"/>
+			<Type_Simu ENG="Simultaneous" localized="EgyidejĹą"/>
 		</Option>
 		<Settings>
-			<Preferences ENG="Preferences" localized="Beállítások"/>
-			<Volume ENG="Volume" localized="Hangerő"/>
+			<Preferences ENG="Preferences" localized="BeĂĄllĂ­tĂĄsok"/>
+			<Volume ENG="Volume" localized="HangerĹ"/>
 			<Music ENG="Music" localized="Zene"/>
 			<Effects ENG="Effects" localized="Effektusok"/>
 			<Voices ENG="Voices" localized="Hangok"/>
 			<Disable ENG="Disable" localized="Kikapcsol"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Görgősebesség"/>
-			<Autosave ENG="Autosave" localized="Automentés"/>
-			<Animation ENG="Animations" localized="Animációk"/>
+			<Scrollspeed ENG="Scrollspeed" localized="GĂśrgĹsebessĂŠg"/>
+			<Autosave ENG="Autosave" localized="AutomentĂŠs"/>
+			<Animation ENG="Animations" localized="AnimĂĄciĂłk"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Alfaeffektusok"/>
-			<Shadows ENG="Shadows" localized="Árnyékok"/>
-			<ShowDamage ENG="Buildingdamage" localized="Épületsebződés"/>
-			<ShowDamageVehicle ENG="Vehicledamage" localized="Járműsebződés"/>
-			<Tracks ENG="Vehicletracks" localized="Járműnyomok"/>
+			<Shadows ENG="Shadows" localized="ĂrnyĂŠkok"/>
+			<ShowDamage ENG="Buildingdamage" localized="ĂpĂźletsebzĹdĂŠs"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="JĂĄrmĹąsebzĹdĂŠs"/>
+			<Tracks ENG="Vehicletracks" localized="JĂĄrmĹąnyomok"/>
 		</Settings>
 		<Multiplayer>
-			<Player ENG="Player" localized="Játékos"/>
-			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
-			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>
-			<Player_Many ENG="Too many players!" localized="Túl sok játékos!"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
-			<Player_MustHost ENG="must be host in turn based game!" localized="Körökre osztott játéknál lennie kell host-nak!"/>
-			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
-			<Player_Turn ENG="'s turn" localized=" köre következik"/>
-			<Player_Turn_End ENG=" ended turn" localized=" befejezte a körét"/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyitható"/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Nem lehet hozzá csatlakozni: "/>
-			<Network_Open ENG="Game open" localized="Játék megnyitva"/>
-			<Network_Connecting ENG="Connecting to " localized="Csatlakozás: "/>
-			<Network_New ENG="New connection" localized="Új csatlakozás"/>
+			<Player ENG="Player" localized="JĂĄtĂŠkos"/>
+			<Waiting ENG="Waiting for other players..." localized="VĂĄrakozĂĄs a tĂśbbi jĂĄtĂŠkosra..."/>
+			<Player_Few ENG="Not enough players!" localized="Nincs elĂŠg jĂĄtĂŠkos!"/>
+			<Player_Many ENG="Too many players!" localized="TĂşl sok jĂĄtĂŠkos!"/>
+			<Player_Twice ENG="Playername exists twice: " localized="DuplĂĄn szereplĹ jĂĄtĂŠkosnĂŠv: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik jĂĄtĂŠkosnak nem megfelelĹ a neve!"/>
+			<Player_MustHost ENG="must be host in turn based game!" localized="KĂśrĂśkre osztott jĂĄtĂŠknĂĄl lennie kell host-nak!"/>
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="KĂŠrlek ĂĄllĂ­tsd be a jĂĄtĂŠkosok szĂĄmĂĄt. HotSeat jĂĄtĂŠk esetĂŠn legalĂĄbb kĂŠt emberi jĂĄtĂŠkos kell. Maximum 8 jĂĄtĂŠkos lehet."/>
+			<Player_Turn ENG="'s turn" localized=" kĂśre kĂśvetkezik"/>
+			<Player_Turn_End ENG=" ended turn" localized=" befejezte a kĂśrĂŠt"/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyithatĂł"/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Nem lehet hozzĂĄ csatlakozni: "/>
+			<Network_Open ENG="Game open" localized="JĂĄtĂŠk megnyitva"/>
+			<Network_Connecting ENG="Connecting to " localized="CsatlakozĂĄs: "/>
+			<Network_New ENG="New connection" localized="Ăj csatlakozĂĄs"/>
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
 			<Network_Connected_Not ENG="Not connected" localized="Nincs kapcsolat"/>
-			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>			
-			<Map_NoSet ENG="--no map set--" localized="--nincs Térkép kiválasztva--"/>
-			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
-			<Go ENG="Let's go" localized="Indítás"/>
-			<Go_Abort ENG="Go aborted" localized="Indítás megszakítva"/>
-			<Go_Host ENG="Host wants to go: Ready to go" localized="A Host állapota: Készenáll"/>
-			<Go_Host_No ENG="Host wants to go: No go" localized="A Host állapota: Nem áll készen"/>
-			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
-			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
-			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
-      <Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
-      <Not_Ready ENG="is not ready" localized="nem készült el"/>
-      <Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
-      <Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
+			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezĂĄrult"/>
+			<Network_Syncing ENG="Synchronizing..." localized="SzinkronizĂĄlĂĄs..."/>			
+			<Map_NoSet ENG="--no map set--" localized="--nincs TĂŠrkĂŠp kivĂĄlasztva--"/>
+			<Option_NoSet ENG="--no options set--" localized="--nincsenek paramĂŠterek beĂĄllĂ­tva--"/>
+			<Go ENG="Let's go" localized="IndĂ­tĂĄs"/>
+			<Go_Abort ENG="Go aborted" localized="IndĂ­tĂĄs megszakĂ­tva"/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized="A Host ĂĄllapota: KĂŠszenĂĄll"/>
+			<Go_Host_No ENG="Host wants to go: No go" localized="A Host ĂĄllapota: Nem ĂĄll kĂŠszen"/>
+			<Go_Ready ENG="Ready to go" localized="Indulhat a jĂĄtĂŠk"/>
+			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a jĂĄtĂŠk"/>
+			<Go_Check ENG="Check for go" localized="PipĂĄld be az indĂ­tĂĄshoz"/>
+      <Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beĂĄllĂ­tva a paramĂŠterek, a tĂŠrkĂŠp vagy a jĂĄtĂŠkmentĂŠs"/>
+      <Not_Ready ENG="is not ready" localized="nem kĂŠszĂźlt el"/>
+      <Wait_Until ENG="Please wait until %s has finished his turn." localized="KĂŠrlek vĂĄrd meg mĂ­g %s befejezi a kĂśrĂŠt."/>
+      <Deadline ENG="This turn will end in %s seconds." localized="A kĂśrnek %s mĂĄsoedpercen belĂźl vĂŠge."/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Attack" localized="Támadás"/>
-			<Shoots ENG="Shoots" localized="Lövés"/>
-			<Range ENG="Range" localized="Lőtáv"/>
-			<Ammo ENG="Ammo" localized="Lőszer"/>
-			<Armor ENG="Armor" localized="Páncél"/>
-			<Hitpoints ENG="Hits" localized="Élet"/>
+			<Damage ENG="Attack" localized="TĂĄmadĂĄs"/>
+			<Shoots ENG="Shoots" localized="LĂśvĂŠs"/>
+			<Range ENG="Range" localized="LĹtĂĄv"/>
+			<Ammo ENG="Ammo" localized="LĹszer"/>
+			<Armor ENG="Armor" localized="PĂĄncĂŠl"/>
+			<Hitpoints ENG="Hits" localized="Ălet"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Speed ENG="Speed" localized="Sebess."/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<Costs ENG="Costs" localized="Költség"/>
+			<Cargo ENG="Cargo" localized="RakomĂĄny"/>
+			<Costs ENG="Costs" localized="KĂśltsĂŠg"/>
 			<Produce ENG="Produces" localized="Termel"/>
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 		</Vehicles>
 		<Comp>
-			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Nincs elég üzemanyag, generátor leállítva!"/>
-			<Energy_Low ENG="Power needed, building turned off." localized="Nincs elég áram, fogyasztó leállítva!"/>
-			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elég nyersanyag, épület leállítva!"/>
-			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elég arany, feldolgozó leállítva!"/>
-			<Team_Low ENG="Workers needed, building turned off." localized="Nincs elég munkás, épület leállítva!"/>
-			<Building_Disabled ENG="Building disabled" localized="Épület működésképtelen"/>
-			<Energy_Optimize ENG="Power generator turned on." localized="Generátor bekapcsolva."/>
-			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nem lehet elindítani, több energiára van szükség"/>
-			<Energy_ToLow ENG="More power needed, generator turned on." localized="Nincs elegendő energia, generátor elindítva."/>
-			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nincs elegendő üzemanyag az elindításhoz."/>
-			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="A generátort nem lehet kikapcsolni, szükség van az energiára."/>
-			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="Módosítások történetek: üzemanyag termelés +"/>
-			<Cheat ENG="used cheat" localized="csaláskód:"/>
-			<Destroyed ENG="destroyed" localized="megsemmisült"/>
-			<Defeated ENG="defeated" localized="vereséget szenvedett"/>
-			<Finished ENG="is finished" localized="elkészült"/>
-			<Finished2 ENG="are finished" localized="elkészült"/>
-			<Detected ENG="detected" localized="észlelve"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Nincs elĂŠg Ăźzemanyag, generĂĄtor leĂĄllĂ­tva!"/>
+			<Energy_Low ENG="Power needed, building turned off." localized="Nincs elĂŠg ĂĄram, fogyasztĂł leĂĄllĂ­tva!"/>
+			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elĂŠg nyersanyag, ĂŠpĂźlet leĂĄllĂ­tva!"/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elĂŠg arany, feldolgozĂł leĂĄllĂ­tva!"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Nincs elĂŠg munkĂĄs, ĂŠpĂźlet leĂĄllĂ­tva!"/>
+			<Building_Disabled ENG="Building disabled" localized="ĂpĂźlet mĹąkĂśdĂŠskĂŠptelen"/>
+			<Energy_Optimize ENG="Power generator turned on." localized="GenerĂĄtor bekapcsolva."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nem lehet elindĂ­tani, tĂśbb energiĂĄra van szĂźksĂŠg"/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Nincs elegendĹ energia, generĂĄtor elindĂ­tva."/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nincs elegendĹ Ăźzemanyag az elindĂ­tĂĄshoz."/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="A generĂĄtort nem lehet kikapcsolni, szĂźksĂŠg van az energiĂĄra."/>
+			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="MĂłdosĂ­tĂĄsok tĂśrtĂŠnetek: Ăźzemanyag termelĂŠs +"/>
+			<Cheat ENG="used cheat" localized="csalĂĄskĂłd:"/>
+			<Destroyed ENG="destroyed" localized="megsemmisĂźlt"/>
+			<Defeated ENG="defeated" localized="veresĂŠget szenvedett"/>
+			<Finished ENG="is finished" localized="elkĂŠszĂźlt"/>
+			<Finished2 ENG="are finished" localized="elkĂŠszĂźlt"/>
+			<Detected ENG="detected" localized="ĂŠszlelve"/>
 			<Stolen ENG="stolen" localized="ellopva"/>
-			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
-			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Kilépés Megerősítése\n\nA nem mentett játékadatok elvesznek."/>
-			<Turn_Start ENG="Start turn" localized="Kör kezdése"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Kérlek várd meg, míg az összes lépés végrehajtódik"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Fennmaradó lépések végrehajtása"/>
-			<Research_Attack ENG="Attack research completed" localized="A Sebzésnövelő fejlesztés elkészült"/>
-			<Research_Shoots ENG="Shots research completed" localized="A Lövésszám növelő fejlesztés elkészült"/>
-			<Research_Range ENG="Range research completed" localized="A Lőtávnövelő fejlesztés elkészült"/>
-			<Research_Armor ENG="Armor research completed" localized="A Páncélzatnövelő fejlesztés elkészült"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Az Életnövelő fejlesztés elkészült"/>
-			<Research_Speed ENG="Speed research completed" localized="A Sebességnövelő fejlesztés elkészült"/>
-			<Research_Scan ENG="Scan research completed" localized="A Radar hatótávnövelő fejlesztése elkészült"/>
-			<Research_Costs ENG="Cost research completed" localized="A Költséghatékonyságot javító fejlesztés elkészült"/>
-			<Working ENG="working" localized="működik"/>
-			<Waits ENG="waiting" localized="várakozik"/>
+			<Attacked ENG="is under attack" localized="tĂĄmadĂĄs alatt ĂĄll"/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="KilĂŠpĂŠs MegerĹsĂ­tĂŠse\n\nA nem mentett jĂĄtĂŠkadatok elvesznek."/>
+			<Turn_Start ENG="Start turn" localized="KĂśr kezdĂŠse"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="KĂŠrlek vĂĄrd meg, mĂ­g az Ăśsszes lĂŠpĂŠs vĂŠgrehajtĂłdik"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="FennmaradĂł lĂŠpĂŠsek vĂŠgrehajtĂĄsa"/>
+			<Research_Attack ENG="Attack research completed" localized="A SebzĂŠsnĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Shoots ENG="Shots research completed" localized="A LĂśvĂŠsszĂĄm nĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Range ENG="Range research completed" localized="A LĹtĂĄvnĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Armor ENG="Armor research completed" localized="A PĂĄncĂŠlzatnĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Az ĂletnĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Speed ENG="Speed research completed" localized="A SebessĂŠgnĂśvelĹ fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Research_Scan ENG="Scan research completed" localized="A Radar hatĂłtĂĄvnĂśvelĹ fejlesztĂŠse elkĂŠszĂźlt"/>
+			<Research_Costs ENG="Cost research completed" localized="A KĂśltsĂŠghatĂŠkonysĂĄgot javĂ­tĂł fejlesztĂŠs elkĂŠszĂźlt"/>
+			<Working ENG="working" localized="mĹąkĂśdik"/>
+			<Waits ENG="waiting" localized="vĂĄrakozik"/>
 			<Disabled ENG="disabled" localized="kikapcsolva"/>
-			<Producing ENG="Building" localized="Épít"/>
-			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
+			<Producing ENG="Building" localized="ĂpĂ­t"/>
+			<Producing_Fin ENG="finished building" localized="GyĂĄrtĂĄs befejezve"/>
 			<Moving ENG="moving" localized="mozog"/>
-			<Sentry ENG="on sentry" localized="őrtáll"/>
-			<Clearing ENG="Clearing" localized="Takarít"/>
-			<Clearing_Mine ENG="clearing mines" localized="aknát szed fel"/>
-			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
-			<Laying ENG="placing mines" localized="aknát telepít"/>
-			<Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
-			<Veteran ENG="Veteran" localized="Veterán"/>
-			<Description ENG="Description" localized="Leírás"/>
-			<Repeat ENG="Again" localized="Újra"/>
+			<Sentry ENG="on sentry" localized="ĹrtĂĄll"/>
+			<Clearing ENG="Clearing" localized="TakarĂ­t"/>
+			<Clearing_Mine ENG="clearing mines" localized="aknĂĄt szed fel"/>
+			<Clearing_Fin ENG="clearing done" localized="elkĂŠszĂźlt a takarĂ­tĂĄs"/>
+			<Laying ENG="placing mines" localized="aknĂĄt telepĂ­t"/>
+			<Greenhorn ENG="Greenhorn" localized="ZĂśldfĂźlĹą"/>
+			<Veteran ENG="Veteran" localized="VeterĂĄn"/>
+			<Description ENG="Description" localized="LeĂ­rĂĄs"/>
+			<Repeat ENG="Again" localized="Ăjra"/>
 			<Dated ENG="dated" localized="elavult"/>
 			<Labs ENG="Labs" localized="Laborok"/>
-			<Themes ENG="Themes" localized="Határ"/>
-			<Turns ENG="Turns" localized="Kör"/>
-			<Turn ENG="Turn" localized="Kör"/>
-			<Reserve ENG="Reserve" localized="Tartalék"/>
+			<Themes ENG="Themes" localized="HatĂĄr"/>
+			<Turns ENG="Turns" localized="KĂśr"/>
+			<Turn ENG="Turn" localized="KĂśr"/>
+			<Reserve ENG="Reserve" localized="TartalĂŠk"/>
 			<Surveying ENG="surveying" localized="kutat"/>
 		</Comp>
 		<Error_Messages>
-			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="hiányzik a fordítás: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Hiba a térkép betöltése közben"/>
-      		<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializálva lett"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Még nincs implementálva"/>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fĂĄjl: %s"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="hiĂĄnyzik a fordĂ­tĂĄs: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Hiba a tĂŠrkĂŠp betĂśltĂŠse kĂśzben"/>
+      		<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializĂĄlva lett"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="MĂŠg nincs implementĂĄlva"/>
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" localized="Szállítórepülő">Szállítórepülő\n\nNehéz repülőgép-hordozó, ami három földi egységet képes szállítani.</Unit>
-		<Unit ID="0 2" localized="Idegen Rohamtank">Idegen Rohamtank\n\nErős plazmafegyver, amit egy gyors, közepesen páncélozott alvázra szereltek. Habár nem olyan sebezhető, mint az emberi rohamtank, az idegen rohamtanknak ugyan úgy kerülnie kell az ellenséges tüzet, amikor csak lehet. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket.</Unit>
-		<Unit ID="0 3" localized="Idegen Vadászbombázó">Idegen Vadászbombázó\n\nIdegen Vadászbombázó. Míg az idegen repülőt elsődlegesen földi célpontok megsemmisítésére tervezték, más repülőkre is képes kilőni rakétáit. Habár nagyon erős, az idegen támadó gép így is sebezhető a légvédelmi ágyúk tüzével szemben. Mint a többi idegen egység, az idegen repülő is javítja önmagát, és tapasztalatszerzéssel javítja képességeit.</Unit>
-		<Unit ID="0 4" localized="Idegen Hadihajó">Idegen Hadihajó\n\nNehézpáncélzattal és nehézfegyverekkel ellátott idegen eredetű hadihajó. Akár az emberi ágyúnaszád, az idegen hadihajó is más hajók és parthoz közeli földi célpontok elpusztításában tűnik ki. Minden idegen egység önjavító, és tapasztalatszerzéssel javítják képességeiket.</Unit>
-		<Unit ID="0 5" localized="Idegen Tank">Idegen Tank\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 6" localized="Csapatszállító">Csapatszállító\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
-		<Unit ID="0 7" localized="Rohamtank">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
+		<Unit ID="0 1" localized="SzĂĄllĂ­tĂłrepĂźlĹ">SzĂĄllĂ­tĂłrepĂźlĹ\n\nNehĂŠz repĂźlĹgĂŠp-hordozĂł, ami hĂĄrom fĂśldi egysĂŠget kĂŠpes szĂĄllĂ­tani.</Unit>
+		<Unit ID="0 2" localized="Idegen Rohamtank">Idegen Rohamtank\n\nErĹs plazmafegyver, amit egy gyors, kĂśzepesen pĂĄncĂŠlozott alvĂĄzra szereltek. HabĂĄr nem olyan sebezhetĹ, mint az emberi rohamtank, az idegen rohamtanknak ugyan Ăşgy kerĂźlnie kell az ellensĂŠges tĂźzet, amikor csak lehet. Minden idegen egysĂŠg ĂśnjavĂ­tĂł, ĂŠs tapasztalatszerzĂŠssel javĂ­tjĂĄk kĂŠpessĂŠgeiket.</Unit>
+		<Unit ID="0 3" localized="Idegen VadĂĄszbombĂĄzĂł">Idegen VadĂĄszbombĂĄzĂł\n\nIdegen VadĂĄszbombĂĄzĂł. MĂ­g az idegen repĂźlĹt elsĹdlegesen fĂśldi cĂŠlpontok megsemmisĂ­tĂŠsĂŠre terveztĂŠk, mĂĄs repĂźlĹkre is kĂŠpes kilĹni rakĂŠtĂĄit. HabĂĄr nagyon erĹs, az idegen tĂĄmadĂł gĂŠp Ă­gy is sebezhetĹ a lĂŠgvĂŠdelmi ĂĄgyĂşk tĂźzĂŠvel szemben. Mint a tĂśbbi idegen egysĂŠg, az idegen repĂźlĹ is javĂ­tja ĂśnmagĂĄt, ĂŠs tapasztalatszerzĂŠssel javĂ­tja kĂŠpessĂŠgeit.</Unit>
+		<Unit ID="0 4" localized="Idegen HadihajĂł">Idegen HadihajĂł\n\nNehĂŠzpĂĄncĂŠlzattal ĂŠs nehĂŠzfegyverekkel ellĂĄtott idegen eredetĹą hadihajĂł. AkĂĄr az emberi ĂĄgyĂşnaszĂĄd, az idegen hadihajĂł is mĂĄs hajĂłk ĂŠs parthoz kĂśzeli fĂśldi cĂŠlpontok elpusztĂ­tĂĄsĂĄban tĹąnik ki. Minden idegen egysĂŠg ĂśnjavĂ­tĂł, ĂŠs tapasztalatszerzĂŠssel javĂ­tjĂĄk kĂŠpessĂŠgeiket.</Unit>
+		<Unit ID="0 5" localized="Idegen Tank">Idegen Tank\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre FĂ¤higkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 6" localized="CsapatszĂĄllĂ­tĂł">CsapatszĂĄllĂ­tĂł\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten kĂśnnen ein sich unter Wasser bewegendes APC entdecken.</Unit>
+		<Unit ID="0 7" localized="Rohamtank">SturmgeschĂźtz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit groĂer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
 		<Unit ID="0 8" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
-		<Unit ID="0 9" localized="Légibombázó">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert.</Unit>
-		<Unit ID="0 10" localized="Buldózer">Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herausfiltern.</Unit>
-		<Unit ID="0 11" localized="Nyersanyagszállító Hajó">Frachtschiff\n\nSchiffe für den Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Seekampfeinheiten wieder mit Munition aufzuladen.</Unit>
-		<Unit ID="0 12" localized="Rakétavető">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstreckenraketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Flächen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
-		<Unit ID="0 13" localized="Hírszerző">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
-		<Unit ID="0 14" localized="Korvett">Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Korvetten können jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen.</Unit>
-		<Unit ID="0 15" localized="Kísérő Hajó">Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und Schnellschussluftabwehrkanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
-		<Unit ID="0 16" localized="Vadászrepülő">Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Missilen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
-		<Unit ID="0 17" localized="Ágyúnaszád">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer großkalibrigen Kanone mit mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen.</Unit>
+		<Unit ID="0 9" localized="LĂŠgibombĂĄzĂł">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die FĂ¤higkeit mit Genehmigung alles auĂer JĂ¤ger und Luftabwehr anzugreifen ist's wert.</Unit>
+		<Unit ID="0 10" localized="BuldĂłzer">Bulldozer\n\nFahrzeug, um GerĂśll und zerstĂśrte GebĂ¤ude zu rĂ¤umen. Bulldozer kĂśnnen Material aus Schutt herausfiltern.</Unit>
+		<Unit ID="0 11" localized="NyersanyagszĂĄllĂ­tĂł HajĂł">Frachtschiff\n\nSchiffe fĂźr den Transport von Rohstoffen. NĂźtzlich, um Pionierfahrzeuge und Seekampfeinheiten wieder mit Munition aufzuladen.</Unit>
+		<Unit ID="0 12" localized="RakĂŠtavetĹ">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstreckenraketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 FlĂ¤chen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
+		<Unit ID="0 13" localized="HĂ­rszerzĹ">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen KriegsfĂźhrung trainiert ist. Infiltratoren kĂśnnen feindliche Einheiten unschĂ¤dlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
+		<Unit ID="0 14" localized="Korvett">Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Korvetten kĂśnnen jede Marineeinheit angreifen, aber ihre wirkliche StĂ¤rke ist die FĂ¤higkeit, U-Boote zu sichten und anzugreifen.</Unit>
+		<Unit ID="0 15" localized="KĂ­sĂŠrĹ HajĂł">Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und Schnellschussluftabwehrkanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
+		<Unit ID="0 16" localized="VadĂĄszrepĂźlĹ">JĂ¤ger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Missilen transportiert. JĂ¤ger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. StationĂ¤re Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
+		<Unit ID="0 17" localized="ĂgyĂşnaszĂĄd">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer groĂkalibrigen Kanone mit mittlerer Reichweite. Exzellent beim ZerstĂśren von anderen Schiffen und beim Bombardieren von KĂźstenzielen.</Unit>
 		<Unit ID="0 18" localized="Gyalogos">Infanterie\n\nSoldaten, die mit leichten Panzerabwehrwaffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
-		<Unit ID="0 19" localized="Építőmű">Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude, wie Bergwerke und Fabriken.</Unit>
-		<Unit ID="0 20" localized="Aknatelepítő">Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, ausspähen und entfernen können. Minenleger können an Board Rohstoffe in Minen verwandeln. Sie können diese Minen später auch wieder entfernen und in Rohstoffe zurückverwandeln. Sie können keine feindlichen Minenfelder entfernen - diese müssen mit Kanonen und Raketen zum Explodieren gebracht werden.</Unit>
-		<Unit ID="0 21" localized="Lánctalpas Rakétakilővő">mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine Bewegungsfähigkeit wesendlich flexibler.</Unit>
-		<Unit ID="0 22" localized="Rakétakilövő Cirkáló">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
-		<Unit ID="0 23" localized="Mobil Légvédelmi Ágyú">Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Kanone zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben.</Unit>
-		<Unit ID="0 24" localized="Utászmű">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Gebäude und stationäre Waffen baut.</Unit>
-		<Unit ID="0 25" localized="Szerelőegység">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Peparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
-		<Unit ID="0 26" localized="Mobil Radar">Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen.</Unit>
-		<Unit ID="0 27" localized="Felderítő">Späher\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwächer als die meisten Kampfeinheiten.</Unit>
-		<Unit ID="0 28" localized="Víziakna Telepítő">Seeminenleger\n\nSeevariante des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspähen, und die in Rohstoffe zurückverwandeln.</Unit>
-		<Unit ID="0 29" localized="Vízi Csapatszállító">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff.</Unit>
-		<Unit ID="0 30" localized="Tengeralattjáró">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Desweiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen.</Unit>
-		<Unit ID="0 31" localized="Geodéta">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrundrohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
-		<Unit ID="0 32" localized="Tank">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern können, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer zu erreichen.</Unit>
-		<Unit ID="0 33" localized="Aranyszállító">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nächsten zu bewegen.</Unit>
-		<Unit ID="0 34" localized="Nyersanyagszállító">Versorgungstruck\n\nLkw zum Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
-		<Unit ID="0 35" localized="Üzemanyagszállító">Tankwagen\n\nLkw, um Treibstoff zu transportieren.</Unit>
-		<Unit ID="1 1" localized="Kaszárnya">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung, und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Berkwerk angeschlossen sein sollte.</Unit>
-		<Unit ID="1 2" localized="Betonakadály">Betonklotz\n\nGehärteter, gepanzerter Block zur Blockade feindlicher Bewegungen.</Unit>
-		<Unit ID="1 3" localized="Híd">Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht.</Unit>
-		<Unit ID="1 4" localized="Csatlakozó">Kopplung\n\nGebäude müssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem Gebäude zum anderen bauen.</Unit>
-		<Unit ID="1 5" localized="Szerelőállomás">Depot\n\nEin Depot kann Schäden reparieren, Munition herstellen und Bodeneinheiten mit den neusten Technologien aufrüsten. All diese Operationen erfordern Rohstoffe, so dass ein Depot an die Lagerreserven angeschlossen sein sollte.</Unit>
-		<Unit ID="1 6" localized="Kikötő">Dock\n\nEin Dock kann Schäden reparieren, Munition liefern und Schiffe mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Depot an die Lagerreserven angeschlossen sein.</Unit>
-		<Unit ID="1 7" localized="Erőműtelep">Energiestation\n\nEine Energiestation verbraucht sechs Treibstoffeinheiten in jeder Runde und liefert genug Energie für sechs Fabriken oder Berkwerke.\n\nEnergiestationen benötigen eine längere Bauzeit als Energiegeneratoren, aber sie sind auch effizienter.</Unit>
-		<Unit ID="1 8" localized="Áramgenerátor">Kleiner Generator\n\nEin Generator verbraucht in jeder Runde zwei Treibstoffeinheiten und liefert genug Energie um ein Berkwerk oder eine Fabrik zu betreiben. Der Energiegenerator muss an die Treibstoffquelle (Berkwerk oder Treibstofftank) und an das Gebäude, das Energie benötigt, angeschlossen sein.</Unit>
-		<Unit ID="1 9" localized="Légiegység Gyár">Lufteinheitenfabrik\n\nBaut Jäger, Bomber, AWACs und Lufttransportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und benötigt Energie.</Unit>
-		<Unit ID="1 10" localized="Idegen Egységgyár">Alieneinheitenfabrik</Unit>
-		<Unit ID="1 11" localized="Nehézgép Gyár">Schwere Fahrzeugfabrik\n\nSchwere Fahrzeugfabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, Sturmgeschütze, Raketenwerfer und mobile Missilenwerfer. Eine Schwere Fahrzeugfabrik verbraucht drei Rohmaterialien pro Runde und benötigt Energie.</Unit>
-		<Unit ID="1 12" localized="Hajógyár">Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft benötigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie.</Unit>
-		<Unit ID="1 13" localized="Könnyűgép Gyár">Leichte Fahrzeugfabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Lufteinheiten.</Unit>
-		<Unit ID="1 14" localized="Aranyfinomító">Goldraffinerie\n\nRaffinerie, um Gold in Upgradepunkte umzuwandeln. Upgradepunkte werden benötigt, um Einheitenverbesserungen zu erwerben. Um zu arbeiten, benötigt eine Goldraffinerie eine Energiequelle und eine Golderzquelle. Ein Berkwerk kann Golderz fördern, wenn eine seiner vier Flächen eine Fläche mit unterirdischem Gold bedeckt.</Unit>
-		<Unit ID="1 15" localized="Légvédelmi Ágyú">Luftabwehr\n\nDie Luftabwehr verschießt Kleinkalibrige Hochgeschwindigkeitsmunition. Luftabwehren machen kurzen Prozess mit Flugzeugen, können aber Bodeneinheiten nicht angreifen.</Unit>
-		<Unit ID="1 16" localized="Tüzérség">Atillerie\n\nStarke stationäre Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer.</Unit>
-		<Unit ID="1 17" localized="Rakétavető Torony">Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtstürmen und Luftabwehr.</Unit>
-		<Unit ID="1 18" localized="Lövegtorony">Gefechtsturm\n\nSchwer gepanzerter stationärer Gefechtsturm. Gefechtstürme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden können, sind sie eine gute Wahl, wenn Sie möglichst schnell Verteidigung benötigen.</Unit>
-		<Unit ID="1 19" localized="Lakóhely">Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder Ökosphären zu betreiben. Diese Gebäude müssen an eine Behausung angeschlossen sein, bevor sie operieren können.</Unit>
-		<Unit ID="1 20" localized="Hangár">Hangar\n\nEin Hangar kann Schäden reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
-		<Unit ID="1 21" localized="Szárazföldi Akna">Landmine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Gutachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
-		<Unit ID="1 22" localized="Bányászati Állomás">Berkwerk\n\nFördert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Gebäude müssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergebäude vorhanden sind, um überschüssiges Material zu Lagern, gehen diese Überschüsse verloren.</Unit>
-		<Unit ID="1 23" localized="Idegen Bányászati Állomás">Deep Mine...</Unit>
-		<Unit ID="1 24" localized="Leszállóplatform">Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
-		<Unit ID="1 25" localized="Hídtalapzat">Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserülattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
-		<Unit ID="1 26" localized="Radar">Radar\n\nStationäres Radargerät mit großer Reichweite. Einheiten mit größerer Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen können, daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben.</Unit>
-		<Unit ID="1 27" localized="Fejlesztőközpont">Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern können. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benötigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benötigt keine Golderzquelle. Ein Forschungszentrum benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
-		<Unit ID="1 28" localized="Út">Straße\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit über Straßen.</Unit>
-		<Unit ID="1 29" localized="Víziakna">Seemine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Guachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
-		<Unit ID="1 30" localized="Idegen Pajzsgenerátor">Alien Schildgenerator\n\n unbekannt</Unit>
-		<Unit ID="1 31" localized="Aranytároló">Goldtresor\n\nBeinhaltet unrafiniertes Golderz. Berkwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Berkwerk mit einem Goldtresor verbunden sein.</Unit>
-		<Unit ID="1 32" localized="Nyersanyagtároló">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
-		<Unit ID="1 33" localized="Üzemanyagtároló">Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein.</Unit>
-		<Unit ID="1 34" localized="Kiképzőközpont">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
+		<Unit ID="0 19" localized="ĂpĂ­tĹmĹą">Konstrukteur\n\nGroĂes Konstruktionsfahrzeug zum Errichten groĂer GebĂ¤ude, wie Bergwerke und Fabriken.</Unit>
+		<Unit ID="0 20" localized="AknatelepĂ­tĹ">Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, ausspĂ¤hen und entfernen kĂśnnen. Minenleger kĂśnnen an Board Rohstoffe in Minen verwandeln. Sie kĂśnnen diese Minen spĂ¤ter auch wieder entfernen und in Rohstoffe zurĂźckverwandeln. Sie kĂśnnen keine feindlichen Minenfelder entfernen - diese mĂźssen mit Kanonen und Raketen zum Explodieren gebracht werden.</Unit>
+		<Unit ID="0 21" localized="LĂĄnctalpas RakĂŠtakilĹvĹ">mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationĂ¤re Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine BewegungsfĂ¤higkeit wesendlich flexibler.</Unit>
+		<Unit ID="0 22" localized="RakĂŠtakilĂśvĹ CirkĂĄlĂł">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, groĂe AngriffsstĂ¤rke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
+		<Unit ID="0 23" localized="Mobil LĂŠgvĂŠdelmi ĂgyĂş">Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Kanone zum AbschieĂen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen kĂśnnen, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschĂźtzen, nachdem ihre JĂ¤ger die feindlichen Bomber verjagt haben.</Unit>
+		<Unit ID="0 24" localized="UtĂĄszmĹą">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine GebĂ¤ude und stationĂ¤re Waffen baut.</Unit>
+		<Unit ID="0 25" localized="SzerelĹegysĂŠg">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und GebĂ¤ude reparieren kann. Peparaturen erfordern Materialien. Je grĂśĂer der Schaden ist, desto mehr Materialien benĂśtigt die Instandsetzung. Depots, Docks, Hangars und Kasernen kĂśnnen auch Einheiten reparieren.</Unit>
+		<Unit ID="0 26" localized="Mobil Radar">Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein SpĂ¤her, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele fĂźr Einheiten mit sehr groĂer Reichweite wie mobile Missilenwerfer auszuspĂ¤hen.</Unit>
+		<Unit ID="0 27" localized="FelderĂ­tĹ">SpĂ¤her\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspĂ¤ht. Kann Wasser ohne BrĂźcke Ăźberqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwĂ¤cher als die meisten Kampfeinheiten.</Unit>
+		<Unit ID="0 28" localized="VĂ­ziakna TelepĂ­tĹ">Seeminenleger\n\nSeevariante des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspĂ¤hen, und die in Rohstoffe zurĂźckverwandeln.</Unit>
+		<Unit ID="0 29" localized="VĂ­zi CsapatszĂĄllĂ­tĂł">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie Ăźberleben auch eher einen feindlichen Angriff.</Unit>
+		<Unit ID="0 30" localized="TengeralattjĂĄrĂł">U-Boot\n\nDicht unter der WasseroberflĂ¤che lauernd, kĂśnnen sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten kĂśnnen ein U-Boot ausspĂ¤hen. Desweiteren verrĂ¤t das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber kĂśnnen sie angreifen.</Unit>
+		<Unit ID="0 31" localized="GeodĂŠta">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrundrohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
+		<Unit ID="0 32" localized="Tank">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern kĂśnnen, leicht gepanzerte Hilfseinheiten wie z.B. SturmgeschĂźtze und Raketenwerfer zu erreichen.</Unit>
+		<Unit ID="0 33" localized="AranyszĂĄllĂ­tĂł">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nĂ¤chsten zu bewegen.</Unit>
+		<Unit ID="0 34" localized="NyersanyagszĂĄllĂ­tĂł">Versorgungstruck\n\nLkw zum Transport von Rohstoffen. NĂźtzlich, um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
+		<Unit ID="0 35" localized="ĂzemanyagszĂĄllĂ­tĂł">Tankwagen\n\nLkw, um Treibstoff zu transportieren.</Unit>
+		<Unit ID="1 1" localized="KaszĂĄrnya">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt fĂźr AufrĂźstung und Reparatur von AusrĂźstung, und fĂźr die Produktion von Munition. Die Kaserne benĂśtigt Rohstoffe zum Reparieren, AufrĂźsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Berkwerk angeschlossen sein sollte.</Unit>
+		<Unit ID="1 2" localized="BetonakadĂĄly">Betonklotz\n\nGehĂ¤rteter, gepanzerter Block zur Blockade feindlicher Bewegungen.</Unit>
+		<Unit ID="1 3" localized="HĂ­d">BrĂźcke\n\nPontonbrĂźcke zum Ăberqueren von Wasser. BrĂźcken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht.</Unit>
+		<Unit ID="1 4" localized="CsatlakozĂł">Kopplung\n\nGebĂ¤ude mĂźssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie kĂśnnen GebĂ¤ude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem GebĂ¤ude zum anderen bauen.</Unit>
+		<Unit ID="1 5" localized="SzerelĹĂĄllomĂĄs">Depot\n\nEin Depot kann SchĂ¤den reparieren, Munition herstellen und Bodeneinheiten mit den neusten Technologien aufrĂźsten. All diese Operationen erfordern Rohstoffe, so dass ein Depot an die Lagerreserven angeschlossen sein sollte.</Unit>
+		<Unit ID="1 6" localized="KikĂśtĹ">Dock\n\nEin Dock kann SchĂ¤den reparieren, Munition liefern und Schiffe mit der neusten Technologie aufrĂźsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Depot an die Lagerreserven angeschlossen sein.</Unit>
+		<Unit ID="1 7" localized="ErĹmĹątelep">Energiestation\n\nEine Energiestation verbraucht sechs Treibstoffeinheiten in jeder Runde und liefert genug Energie fĂźr sechs Fabriken oder Berkwerke.\n\nEnergiestationen benĂśtigen eine lĂ¤ngere Bauzeit als Energiegeneratoren, aber sie sind auch effizienter.</Unit>
+		<Unit ID="1 8" localized="ĂramgenerĂĄtor">Kleiner Generator\n\nEin Generator verbraucht in jeder Runde zwei Treibstoffeinheiten und liefert genug Energie um ein Berkwerk oder eine Fabrik zu betreiben. Der Energiegenerator muss an die Treibstoffquelle (Berkwerk oder Treibstofftank) und an das GebĂ¤ude, das Energie benĂśtigt, angeschlossen sein.</Unit>
+		<Unit ID="1 9" localized="LĂŠgiegysĂŠg GyĂĄr">Lufteinheitenfabrik\n\nBaut JĂ¤ger, Bomber, AWACs und Lufttransportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und benĂśtigt Energie.</Unit>
+		<Unit ID="1 10" localized="Idegen EgysĂŠggyĂĄr">Alieneinheitenfabrik</Unit>
+		<Unit ID="1 11" localized="NehĂŠzgĂŠp GyĂĄr">Schwere Fahrzeugfabrik\n\nSchwere Fahrzeugfabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, SturmgeschĂźtze, Raketenwerfer und mobile Missilenwerfer. Eine Schwere Fahrzeugfabrik verbraucht drei Rohmaterialien pro Runde und benĂśtigt Energie.</Unit>
+		<Unit ID="1 12" localized="HajĂłgyĂĄr">Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft benĂśtigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie.</Unit>
+		<Unit ID="1 13" localized="KĂśnnyĹągĂŠp GyĂĄr">Leichte Fahrzeugfabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Lufteinheiten.</Unit>
+		<Unit ID="1 14" localized="AranyfinomĂ­tĂł">Goldraffinerie\n\nRaffinerie, um Gold in Upgradepunkte umzuwandeln. Upgradepunkte werden benĂśtigt, um Einheitenverbesserungen zu erwerben. Um zu arbeiten, benĂśtigt eine Goldraffinerie eine Energiequelle und eine Golderzquelle. Ein Berkwerk kann Golderz fĂśrdern, wenn eine seiner vier FlĂ¤chen eine FlĂ¤che mit unterirdischem Gold bedeckt.</Unit>
+		<Unit ID="1 15" localized="LĂŠgvĂŠdelmi ĂgyĂş">Luftabwehr\n\nDie Luftabwehr verschieĂt Kleinkalibrige Hochgeschwindigkeitsmunition. Luftabwehren machen kurzen Prozess mit Flugzeugen, kĂśnnen aber Bodeneinheiten nicht angreifen.</Unit>
+		<Unit ID="1 16" localized="TĂźzĂŠrsĂŠg">Atillerie\n\nStarke stationĂ¤re Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer.</Unit>
+		<Unit ID="1 17" localized="RakĂŠtavetĹ Torony">Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von GefechtstĂźrmen und Luftabwehr.</Unit>
+		<Unit ID="1 18" localized="LĂśvegtorony">Gefechtsturm\n\nSchwer gepanzerter stationĂ¤rer Gefechtsturm. GefechtstĂźrme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden kĂśnnen, sind sie eine gute Wahl, wenn Sie mĂśglichst schnell Verteidigung benĂśtigen.</Unit>
+		<Unit ID="1 19" localized="LakĂłhely">Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder ĂkosphĂ¤ren zu betreiben. Diese GebĂ¤ude mĂźssen an eine Behausung angeschlossen sein, bevor sie operieren kĂśnnen.</Unit>
+		<Unit ID="1 20" localized="HangĂĄr">Hangar\n\nEin Hangar kann SchĂ¤den reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufrĂźsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
+		<Unit ID="1 21" localized="SzĂĄrazfĂśldi Akna">Landmine\n\nKleines, schwer zu entdeckendes, explosives GeschĂźtz. Nur Gutachter, Minenleger und Infiltratoren kĂśnnen Minen ausspĂ¤hen. Sobald sie entdeckt werden, wird fast jede BeschĂ¤digung sie zerstĂśren.</Unit>
+		<Unit ID="1 22" localized="BĂĄnyĂĄszati ĂllomĂĄs">Berkwerk\n\nFĂśrdert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. GebĂ¤ude mĂźssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine LagergebĂ¤ude vorhanden sind, um ĂźberschĂźssiges Material zu Lagern, gehen diese ĂberschĂźsse verloren.</Unit>
+		<Unit ID="1 23" localized="Idegen BĂĄnyĂĄszati ĂllomĂĄs">Deep Mine...</Unit>
+		<Unit ID="1 24" localized="LeszĂĄllĂłplatform">LandeflĂ¤che\n\nLandemĂśglichkeit fĂźr Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer LandeflĂ¤che wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
+		<Unit ID="1 25" localized="HĂ­dtalapzat">Wasserplattform\n\nLiefert eine FlĂ¤che auf dem Wasser, auf der andere GebĂ¤ude errichtet werden kĂśnnen. Pionierfahrzeuge kĂśnnen Wasserplattformen sowohl Ăźber Ufer als auch Ăźber offenes GewĂ¤sser bauen. WasserĂźlattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
+		<Unit ID="1 26" localized="Radar">Radar\n\nStationĂ¤res RadargerĂ¤t mit groĂer Reichweite. Einheiten mit grĂśĂerer Reichweite wie Missilenwerfer und Artillerie kĂśnnen nicht auf etwas schieĂen, das sie nicht sehen kĂśnnen, daher ist es wichtig, einen Scanner oder ein Radar in der NĂ¤he zu haben.</Unit>
+		<Unit ID="1 27" localized="FejlesztĹkĂśzpont">Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern kĂśnnen. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benĂśtigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benĂśtigt keine Golderzquelle. Ein Forschungszentrum benĂśtigt Kolonisten einer Behausung und Energie, um operieren zu kĂśnnen.</Unit>
+		<Unit ID="1 28" localized="Ăt">StraĂe\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit Ăźber StraĂen.</Unit>
+		<Unit ID="1 29" localized="VĂ­ziakna">Seemine\n\nKleines, schwer zu entdeckendes, explosives GeschĂźtz. Nur Guachter, Minenleger und Infiltratoren kĂśnnen Minen ausspĂ¤hen. Sobald sie entdeckt werden, wird fast jede BeschĂ¤digung sie zerstĂśren.</Unit>
+		<Unit ID="1 30" localized="Idegen PajzsgenerĂĄtor">Alien Schildgenerator\n\n unbekannt</Unit>
+		<Unit ID="1 31" localized="AranytĂĄrolĂł">Goldtresor\n\nBeinhaltet unrafiniertes Golderz. Berkwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Berkwerk mit einem Goldtresor verbunden sein.</Unit>
+		<Unit ID="1 32" localized="NyersanyagtĂĄrolĂł">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um ĂberschĂźssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
+		<Unit ID="1 33" localized="ĂzemanyagtĂĄrolĂł">Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um ĂźberschĂźssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein.</Unit>
+		<Unit ID="1 34" localized="KikĂŠpzĹkĂśzpont">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten auĂer Gefecht setzen oder gefangen nehmen kĂśnnen, und Infanterie. Nur Infanterie und andere Infiltratoren kĂśnnen Infiltratoren ausspĂ¤hen. Eine Trainingshalle benĂśtigt Kolonisten einer Behausung und Energie, um operieren zu kĂśnnen.</Unit>
 	</Units>
 	<Graphic>
 		<Dummy/>

@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
-<!-- * encoding is needed for selecting the correct code table               -->
-<!--       iso-8859-5  : Cyrillic languages                                  -->
-<!--       iso-8859-15 : western European languages                          -->
+<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
 <!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
@@ -25,8 +22,8 @@
 			<Game_Title ENG="M.A.X."/>
 			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)"/>
 			<Version ENG="version v%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)"/>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)"/>
+			<Credits_MM ENG="Michael MÃ¶nch's M.A.X. (Original by Interplay)"/>
+			<Credits_Doc ENG="Michael MÃ¶nch's M.A.X. (Remake by DoctorDeath)"/>
 			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented"/>

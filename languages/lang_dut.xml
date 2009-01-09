@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
-<!-- * encoding is needed for selecting the correct code table               -->
-<!--       iso-8859-5  : Cyrillic languages                                  -->
-<!--       iso-8859-15 : western European languages                          -->
+<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
 <!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
@@ -20,11 +17,11 @@
 			<Game_Title ENG="M.A.X." localized="M.A.X."/>
 			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
 			<Version ENG="version v%s" localized="versie v%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Origineel van Interplay)"/>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"/>
+			<Credits_MM ENG="Michael MÃ¶nch's M.A.X. (Original by Interplay)" localized="Michael MÃ¶nchs M.A.X. (Origineel van Interplay)"/>
+			<Credits_Doc ENG="Michael MÃ¶nch's M.A.X. (Remake by DoctorDeath)" localized="Michael MÃ¶nchs M.A.X. (Herbouw door DoctorDeath)"/>
 			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded gebaseerd op Interplays Mechanized Assault and Exploration"/>
 			<Remarks>
-				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) nog niet geïmplementeerd"/>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) nog niet geÃ¯mplementeerd"/>
 			</Remarks>
 		</Main>
 		<Init>
@@ -180,7 +177,7 @@
 			<Player_MustHost ENG="must be host in turnbased game!" localized="moet host zijn in om-beurten spel!"/>
 			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
 			<Player_Turn ENG="'s turn" localized="'s beurt"/>
-			<Player_Turn_End ENG=" ended turn" localized=" beëindigde de beurt"/>
+			<Player_Turn_End ENG=" ended turn" localized=" beÃ«indigde de beurt"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
 			<Network_Open ENG="Game open" localized="Spel open"/>
@@ -272,8 +269,8 @@
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geïnitialiseerd"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geïmplementeerd"/>
+      			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geÃ¯nitialiseerd"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geÃ¯mplementeerd"/>
 		</Error_Messages>
 	</Text>
 	<Units>
