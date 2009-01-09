@@ -19,9 +19,11 @@
 #include "unifonts.h"
 #include "pcx.h"
 #include "files.h"
+#include "log.h"
 
 cUnicodeFont::cUnicodeFont()
 {
+	// fill the surface pointers with NULL
 	fill <SDL_Surface**, SDL_Surface *>( charsNormal, &charsNormal[0xFFFF], NULL );
 	fill <SDL_Surface**, SDL_Surface *>( charsSmallWhite, &charsSmallWhite[0xFFFF], NULL );
 	fill <SDL_Surface**, SDL_Surface *>( charsSmallGreen, &charsSmallGreen[0xFFFF], NULL );
@@ -30,6 +32,7 @@ cUnicodeFont::cUnicodeFont()
 	fill <SDL_Surface**, SDL_Surface *>( charsBig, &charsBig[0xFFFF], NULL );
 	fill <SDL_Surface**, SDL_Surface *>( charsBigGold, &charsBigGold[0xFFFF], NULL );
 
+	// load all existing fonts. If there will be added some, they have also to be added here!
 	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL );
 	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_NORMAL );
 	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_NORMAL );
@@ -67,6 +70,7 @@ cUnicodeFont::cUnicodeFont()
 
 cUnicodeFont::~cUnicodeFont()
 {
+	// free surfaces
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{
 		if ( charsNormal[i] ) SDL_FreeSurface ( charsNormal[i] );
@@ -159,36 +163,38 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 				}
 			}
 
-			int charnum = 0;
+			// get the unicode place of the character
+			int unicodeplace = 0;
 			if ( iso8859_to_uni == NULL )
 			{
-				if ( charset == CHARSET_ISO8559_ALL ) charnum = currentChar;
-				else if ( charset == CHARSET_ISO8559_1 ) charnum = currentChar + 128 + 2*16;
+				if ( charset == CHARSET_ISO8559_ALL ) unicodeplace = currentChar;
+				else if ( charset == CHARSET_ISO8559_1 ) unicodeplace = currentChar + 128 + 2*16;
 			}
-			else charnum = iso8859_to_uni[currentChar];
-			if ( chars[charnum] ) SDL_FreeSurface ( chars[charnum] );
-			chars[charnum] = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
+			else unicodeplace = iso8859_to_uni[currentChar];
+			if ( chars[unicodeplace] ) SDL_FreeSurface ( chars[unicodeplace] );
+			chars[unicodeplace] = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
 
+			// change color of smal fonts
 			switch ( fonttype )
 			{
 			case FONT_LATIN_SMALL_RED:
 				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[charnum], NULL, 0xe60000 );
+				SDL_FillRect ( chars[unicodeplace], NULL, 0xe60000 );
 				break;
 			case FONT_LATIN_SMALL_GREEN:
 				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[charnum], NULL, 0x04ae04 );
+				SDL_FillRect ( chars[unicodeplace], NULL, 0x04ae04 );
 				break;
 			case FONT_LATIN_SMALL_YELLOW:
 				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[charnum], NULL, 0xdbde00 );
+				SDL_FillRect ( chars[unicodeplace], NULL, 0xdbde00 );
 				break;
 			default:
-				SDL_FillRect ( chars[charnum], NULL, 0xFF00FF );
+				SDL_FillRect ( chars[unicodeplace], NULL, 0xFF00FF );
 				break;
 			}
-			SDL_BlitSurface ( surface, &Rect, chars[charnum], NULL );
-			SDL_SetColorKey ( chars[charnum], SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( surface, &Rect, chars[unicodeplace], NULL );
+			SDL_SetColorKey ( chars[unicodeplace], SDL_SRCCOLORKEY, 0xFF00FF );
 
 			//goto next character
 			currentChar++;
@@ -230,6 +236,7 @@ SDL_Surface **cUnicodeFont::getFontTypeSurfaces ( eUnicodeFontType fonttype )
 
 SDL_Surface *cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
+	// build the filename from the information
 	string filename = SettingsData.sFontPath + PATH_DELIMITER + "latin_";
 	switch ( fonttype )
 	{
@@ -252,10 +259,12 @@ SDL_Surface *cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUni
 	if ( charset != CHARSET_ISO8559_ALL )
 	{
 		filename += "_iso-8559-";
+		// it's important that the enum-numbers are the same as theire iso-numbers!
 		filename += iToStr ( charset );
 	}
 	filename += ".pcx";
 
+	// load the bitmap
 	if ( FileExists( filename.c_str() ) ) return LoadPCX ( filename.c_str() );
 	else return NULL;
 }
@@ -563,6 +572,7 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 		//is space?
 		if( *p == ' ' )
 		{
+			// we will use the wight of the 'a' for spaces
 			if ( chars[97] ) rTmp.w += chars[97]->w;
 			p++;
 		} //is new line?
@@ -603,6 +613,7 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 {
 	SDL_Surface **chars = getFontTypeSurfaces ( fonttype );
+	// we will return the height of the first character in the list
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{
 		if ( chars[i] != NULL ) return chars[i]->h;
@@ -612,8 +623,10 @@ int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 
 Uint16 cUnicodeFont::encodeUTF8Char ( unsigned char *pch, int *increase )
 {
+	// encode the UTF-8 character to his unicode position
 	Uint16 uni = 0;
 	unsigned char ch = *pch;
+	// we do not need encoding 4 byte long characters becouse SDL only returns the BMP of the unicode table
 	if ( (ch & 0xE0) == 0xE0 )
 	{
 		uni |= (ch & 0x0F) << 12;

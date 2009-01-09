@@ -17,12 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "input.h"
-#include "unifonts.h"
 #include "client.h"
 
 cInput::cInput()
 {
+	// enables that SDL puts the unicode values to the keyevents.
 	SDL_EnableUNICODE ( 1 );
+	// enables keyrepetition
 	SDL_EnableKeyRepeat ( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
 
 	stringpos = 0;
@@ -33,22 +34,25 @@ cInput::cInput()
 
 void cInput::inputkey ( SDL_keysym &keysym )
 {
+	// if input is active write the characters to the inputstring
 	if ( inputactive )
 	{
-		// write to inputstr when it is a normal character
 		if ( keysym.unicode >= 32 )
 		{
+			// write to inputstr when it is a normal character
 			addUTF16Char ( keysym.unicode );
 		}
 		else
 		{
-			// special behaviour
+			// special behaviour for other keys
 			switch ( keysym.sym )
 			{
 			case SDLK_RETURN:
+				// return will be handled from the client like a hotkey
 				if ( Client ) Client->handleHotKey ( keysym );
 				break;
 			case SDLK_LEFT:
+				// makes the cursor go left
 				if ( stringpos > 0 )
 				{
 					unsigned char ch = ((unsigned char*)(inputStr.c_str()))[stringpos-1];
@@ -61,6 +65,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 				}
 				break;
 			case SDLK_RIGHT:
+				// makes the cursor go right
 				if ( stringpos < (int)inputStr.length() )
 				{
 					unsigned char ch = ((unsigned char*)(inputStr.c_str()))[stringpos];
@@ -70,6 +75,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 				}
 				break;
 			case SDLK_BACKSPACE:
+				// deletes the first character left from the cursor
 				if ( stringpos > 0 )
 				{
 					unsigned char ch = ((unsigned char*)(inputStr.c_str()))[stringpos-1];
@@ -84,6 +90,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 				}
 				break;
 			case SDLK_DELETE:
+				// deletes the first character right from the cursor
 				if ( stringpos < (int)inputStr.length() )
 				{
 					unsigned char ch = ((unsigned char*)(inputStr.c_str()))[stringpos];
@@ -98,6 +105,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	}
 	else
 	{
+		// when input isn't active the client will handle the input as hotkey
 		if ( Client ) Client->handleHotKey ( keysym );
 	}
 }
@@ -144,6 +152,7 @@ void cInput::setInputStr( string input, bool decode )
 {
 	if ( decode )
 	{
+		// decode the string
 		wstring wstr ( input.begin(), input.end() );
 		inputStr = "";
 		stringpos = 0;
@@ -156,11 +165,12 @@ void cInput::setInputStr( string input, bool decode )
 	stringpos = (unsigned int)inputStr.length();
 }
 
-void cInput::cutToLength ( int length )
+void cInput::cutToLength ( int length, eUnicodeFontType fonttype )
 {
 	if ( length < 0 ) return;
-	while ( font->getTextWide( inputStr ) > length )
+	while ( font->getTextWide( inputStr, fonttype ) > length )
 	{
+		// erase the last character
 		unsigned char ch = ((unsigned char*)(inputStr.c_str()))[inputStr.length()-1];
 		while ( ((ch & 0xE0) != 0xE0) && ((ch & 0xC0) != 0xC0) && ((ch & 0x80) == 0x80) )
 		{
@@ -176,23 +186,26 @@ void cInput::cutToLength ( int length )
 string cInput::getInputStr( eCursorBehavior showcursor )
 {
 	string returnstring = inputStr;
+	// use standard cursor behavior when standard was overgiven
 	if ( showcursor == CURSOR_STANDARD ) showcursor = cursorBehavior;
 	switch ( showcursor )
 	{
 	case CURSOR_BLINK:
+		// handles the blinkstate and adds the cursor if necessary
 		if ( SDL_GetTicks()-lastShownCursorTime > CURSOR_BLINK_TIME || showingCursor )
 		{
 			if ( !showingCursor )
 				showingCursor = true;
 			else if ( SDL_GetTicks()-lastShownCursorTime > CURSOR_BLINK_TIME )
 				showingCursor = false;
-			if ( showingCursor ) returnstring.insert( stringpos, "|" );
+			if ( showingCursor ) returnstring.insert( stringpos, CURSOR_CHAR );
 			if ( SDL_GetTicks()-lastShownCursorTime > CURSOR_BLINK_TIME )
 				lastShownCursorTime = SDL_GetTicks();
 		}
 		break;
 	case CURSOR_SHOW:
-		returnstring.insert( stringpos, "|" );
+		// adds the cursor
+		returnstring.insert( stringpos, CURSOR_CHAR );
 		break;
 	}
 	return returnstring;
@@ -203,6 +216,7 @@ void cInput::setInputState( bool active, eCursorBehavior curBehavior )
 	inputactive = active;
 	if ( !active )
 	{
+		// disable cursor when deactivating input
 		hasBeenInput = true;
 		cursorBehavior = CURSOR_DISABLED;
 	}

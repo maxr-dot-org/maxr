@@ -22,6 +22,7 @@
 #include "defines.h"
 #include "main.h"
 
+/** diffrent fonttypes*/
 enum eUnicodeFontType
 {
 	FONT_LATIN_NORMAL,
@@ -33,9 +34,10 @@ enum eUnicodeFontType
 	FONT_LATIN_SMALL_YELLOW,
 };
 
+/** diffrent ISO-8559-X charsets*/
 enum eUnicodeFontCharset
 {
-	CHARSET_ISO8559_ALL,
+	CHARSET_ISO8559_ALL,	// main part of the charsets which is the same in all charsets
 	CHARSET_ISO8559_1,
 	CHARSET_ISO8559_2,
 	CHARSET_ISO8559_3,
@@ -47,28 +49,96 @@ enum eUnicodeFontCharset
 	CHARSET_ISO8559_9,
 	CHARSET_ISO8559_10,
 	CHARSET_ISO8559_11,
-	CHARSET_ISO8559_12, // doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
+	CHARSET_ISO8559_12,		// doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
 	CHARSET_ISO8559_13,
 	CHARSET_ISO8559_14,
 	CHARSET_ISO8559_15,
 	CHARSET_ISO8559_16,
 };
 
+/**
+ * @author alzi alias DoctorDeath
+ * Loades the fontbitmaps from a ISO-8859 structure to a unicode structure and handles theire output to the screen
+*/
 class cUnicodeFont
 {
 	public:
 		cUnicodeFont();
 		~cUnicodeFont();
 
+		/**
+		 * Wrapper for showText for easy use of SDL_Rects
+		 * @author beko
+		 * @param rdest destination to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		void showText( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		/**
+		 * Displays a text
+		 * @author beko
+		 * @param x position x to start drawing
+		 * @param y position y to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		void showText( int x, int y, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		/**
+		 * Displays a text as block.<br><br> This does <b>not</b> allow blanks in line. Linebreaks are interpreted. Unneeded blanks will be snipped.<br><br>
+		 * Example: "Headline\n\n This is my text for a textblock that get's linebreaked automagically"!
+		 * @author beko
+		 * @param rDest SDL_Rect for position and wide of textbox. Height is not taken care of!
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		int showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		/**
+		 * Displays a text centered on given X
+		 * @author beko
+		 * @param rDest DL_Rect for position.<br>Use X for position to center on.<br>Y is not taken care of!
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		void showTextCentered( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		/**
+		 * Displays a text centered on given X
+		 * @author beko
+		 * @param x Use X for position to center on.<br>Y is not taken care of!
+		 * @param y position y to start drawing
+		 * @param sText text to draw
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @param surface SDL_Surface to draw on. Default is buffer
+		 */
 		void showTextCentered( int x, int y, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		/**
+		 * Calculates the needed width for a text in pixels
+		 * @author beko
+		 * @param sText text to check
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return needed width for text
+		 */
 		int getTextWide( string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
+		/**
+		 * Calculates the needed space for a text in pixels
+		 * @author beko
+		 * @param sText text to check
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return SDL_Rect with needed width and height for text
+		 */
 		SDL_Rect getTextSize( string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
+		/**
+		 * Holds information of font height
+		 * @author beko
+		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
+		 * @return Height of fonttype in pixels
+		 */
 		int getFontHeight( eUnicodeFontType fonttype = FONT_LATIN_NORMAL );
 	private:
+		// character surfaces. Since SDL maximal gives us the unicodes from BMP we maximaly need 0xFFFF surfaces
 		SDL_Surface *charsNormal[0xFFFF];
 		SDL_Surface *charsSmallWhite[0xFFFF];
 		SDL_Surface *charsSmallGreen[0xFFFF];
@@ -77,13 +147,44 @@ class cUnicodeFont
 		SDL_Surface *charsBig[0xFFFF];
 		SDL_Surface *charsBigGold[0xFFFF];
 
+		/**
+		 * loads all characters of a ISO table and fonttype.
+		 * @author beko
+		 * @param charset the charset which should be loaded.
+		 * @param fonttype the fonttype which should be loaded.
+		 */
 		void loadChars( eUnicodeFontCharset charset, eUnicodeFontType fonttype );
 		Uint32 getPixel32( int x, int y, SDL_Surface *surface );
+		/**
+		 * returns the character array of a fonttype.
+		 * @author alzi alias DoctorDeath
+		 * @param fonttype the fonttype of which the chracter array should be returned.
+		 * @return the character array for the fonttype.
+		 */
 		SDL_Surface **getFontTypeSurfaces ( eUnicodeFontType fonttype );
+		/**
+		 * loads the ISO-8859 bitmap font surface
+		 * @author alzi alias DoctorDeath
+		 * @param charset the charset which bitmap should be loaded.
+		 * @param fonttype the fonttype which bitmap should be loaded.
+		 * @return the bitmap surface
+		 */
 		SDL_Surface *loadCharsetSurface( eUnicodeFontCharset charset, eUnicodeFontType fonttype );
+		/**
+		 * returns the iso page with the unicode positions of the characters in a ISO-8859 font
+		 * @author alzi alias DoctorDeath
+		 * @param charset the charset for that the iso page should be returned.
+		 * @return the iso page
+		 */
 		const unsigned short *getIsoPage ( eUnicodeFontCharset charset );
-
 		int drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode );
+		/**
+		 * encodes a UTF-8 character to his unicode position
+		 * @author alzi alias DoctorDeath
+		 * @param pch pointer to the character string
+		 * @param increase number which will be changed to the value how much bytes the character has taken in UTF-8
+		 * @return unicode position
+		 */
 		Uint16 encodeUTF8Char ( unsigned char *pch, int *increase );
 };
 
