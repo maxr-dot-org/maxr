@@ -35,7 +35,6 @@
 #include "mouse.h"
 #include "menu.h"
 #include "pcx.h"
-#include "keyinp.h"
 #include "keys.h"
 #include "sound.h"
 #include "map.h"

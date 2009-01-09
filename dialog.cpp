@@ -21,7 +21,6 @@
 #include "buttons.h"
 #include "dialog.h"
 #include "mouse.h"
-#include "keyinp.h"
 #include "unifonts.h"
 #include "sound.h"
 #include "menu.h"

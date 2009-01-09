@@ -486,6 +486,7 @@ public:
 	void destroyUnit( cBuilding* building );
 
 	void checkVehiclePositions( cNetMessage* message );
+	void handleHotKey ( SDL_keysym &keysym ); 
 
 } EX *Client;
 

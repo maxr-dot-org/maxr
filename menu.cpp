@@ -23,7 +23,6 @@
 #include "pcx.h"
 #include "unifonts.h"
 #include "mouse.h"
-#include "keyinp.h"
 #include "sound.h"
 #include "dialog.h"
 #include "log.h"
@@ -3878,7 +3877,6 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 	// prepare the focus
 	iFocus = FOCUS_NAME;
-	InputStr = ActualPlayer->name;
 
 	ChatStr = "";
 	font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
@@ -4285,7 +4283,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 			}
 		}
 
-		if ((InputEnter && iFocus == FOCUS_CHAT) ||
+		// TODO: reimplement sending strings with Enter
+		if (/*(InputEnter && iFocus == FOCUS_CHAT) ||*/
 				btn_send.CheckClick(x, y, down, up))
 		{
 			if ( !ChatStr.empty() )
@@ -5481,11 +5480,7 @@ int ShowDateiMenu ( bool bSave )
 			Client->doGameActions();
 		}
 		keystate = SDL_GetKeyState( NULL );
-		if ( keystate[SDLK_ESCAPE] )
-		{
-			InputStr="";
-			break;
-		}
+		if ( keystate[SDLK_ESCAPE] ) break;
 
 		if ( InputHandler->checkHasBeenInput() )
 		{

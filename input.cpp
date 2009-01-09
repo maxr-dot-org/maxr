@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include "input.h"
 #include "unifonts.h"
+#include "client.h"
 
 cInput::cInput()
 {
@@ -44,6 +45,9 @@ void cInput::inputkey ( SDL_keysym &keysym )
 			// special behaviour
 			switch ( keysym.sym )
 			{
+			case SDLK_RETURN:
+				if ( Client ) Client->handleHotKey ( keysym );
+				break;
 			case SDLK_LEFT:
 				if ( stringpos > 0 )
 				{
@@ -94,7 +98,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	}
 	else
 	{
-		// send to client for hotkeys etc.
+		if ( Client ) Client->handleHotKey ( keysym );
 	}
 }
 

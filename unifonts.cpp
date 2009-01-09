@@ -23,7 +23,10 @@
 cUnicodeFont::cUnicodeFont()
 {
 	fill <SDL_Surface**, SDL_Surface *>( charsNormal, &charsNormal[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsSmall, &charsSmall[0xFFFF], NULL );
+	fill <SDL_Surface**, SDL_Surface *>( charsSmallWhite, &charsSmallWhite[0xFFFF], NULL );
+	fill <SDL_Surface**, SDL_Surface *>( charsSmallGreen, &charsSmallGreen[0xFFFF], NULL );
+	fill <SDL_Surface**, SDL_Surface *>( charsSmallRed, &charsSmallRed[0xFFFF], NULL );
+	fill <SDL_Surface**, SDL_Surface *>( charsSmallYellow, &charsSmallYellow[0xFFFF], NULL );
 	fill <SDL_Surface**, SDL_Surface *>( charsBig, &charsBig[0xFFFF], NULL );
 	fill <SDL_Surface**, SDL_Surface *>( charsBigGold, &charsBigGold[0xFFFF], NULL );
 
@@ -45,6 +48,21 @@ cUnicodeFont::cUnicodeFont()
 	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_WHITE );
 	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_WHITE );
 	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_WHITE );
+
+	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_RED );
+	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_RED );
+	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_RED );
+	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_RED );
+
+	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_GREEN );
+	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_GREEN );
+	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_GREEN );
+	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_GREEN );
+
+	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_YELLOW );
+	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_YELLOW );
+	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_YELLOW );
+	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_YELLOW );
 }
 
 cUnicodeFont::~cUnicodeFont()
@@ -52,7 +70,10 @@ cUnicodeFont::~cUnicodeFont()
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{
 		if ( charsNormal[i] ) SDL_FreeSurface ( charsNormal[i] );
-		if ( charsSmall[i] ) SDL_FreeSurface ( charsSmall[i] );
+		if ( charsSmallWhite[i] ) SDL_FreeSurface ( charsSmallWhite[i] );
+		if ( charsSmallGreen[i] ) SDL_FreeSurface ( charsSmallGreen[i] );
+		if ( charsSmallRed[i] ) SDL_FreeSurface ( charsSmallRed[i] );
+		if ( charsSmallYellow[i] ) SDL_FreeSurface ( charsSmallYellow[i] );
 		if ( charsBig[i] ) SDL_FreeSurface ( charsBig[i] );
 		if ( charsBigGold[i] ) SDL_FreeSurface ( charsBigGold[i] );
 	}
@@ -147,9 +168,28 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			else charnum = iso8859_to_uni[currentChar];
 			if ( chars[charnum] ) SDL_FreeSurface ( chars[charnum] );
 			chars[charnum] = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
-			SDL_FillRect ( chars[charnum], NULL, 0xFF00FF );
-			SDL_SetColorKey ( chars[charnum], SDL_SRCCOLORKEY, 0xFF00FF );
+
+			switch ( fonttype )
+			{
+			case FONT_LATIN_SMALL_RED:
+				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+				SDL_FillRect ( chars[charnum], NULL, 0xe60000 );
+				break;
+			case FONT_LATIN_SMALL_GREEN:
+				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+				SDL_FillRect ( chars[charnum], NULL, 0x04ae04 );
+				break;
+			case FONT_LATIN_SMALL_YELLOW:
+				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+				SDL_FillRect ( chars[charnum], NULL, 0xdbde00 );
+				break;
+			default:
+				SDL_FillRect ( chars[charnum], NULL, 0xFF00FF );
+				break;
+			}
 			SDL_BlitSurface ( surface, &Rect, chars[charnum], NULL );
+			SDL_SetColorKey ( chars[charnum], SDL_SRCCOLORKEY, 0xFF00FF );
+
 			//goto next character
 			currentChar++;
 		}
@@ -172,19 +212,18 @@ SDL_Surface **cUnicodeFont::getFontTypeSurfaces ( eUnicodeFontType fonttype )
 	{
 	case FONT_LATIN_NORMAL:
 		return charsNormal;
-		break;
 	case FONT_LATIN_BIG:
 		return charsBig;
-		break;
 	case FONT_LATIN_BIG_GOLD:
 		return charsBigGold;
-		break;
 	case FONT_LATIN_SMALL_WHITE:
+		return charsSmallWhite;
 	case FONT_LATIN_SMALL_RED:
+		return charsSmallRed;
 	case FONT_LATIN_SMALL_GREEN:
+		return charsSmallGreen;
 	case FONT_LATIN_SMALL_YELLOW:
-		return charsSmall;
-		break;
+		return charsSmallYellow;
 	}
 	return NULL;
 }

@@ -21,12 +21,12 @@
 #include "mouse.h"
 #include "sound.h"
 #include "dialog.h"
-#include "keyinp.h"
 #include "unifonts.h"
 #include "menu.h"
 #include "client.h"
 #include "serverevents.h"
 #include "keys.h"
+#include "input.h"
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
@@ -889,7 +889,8 @@ void cHud::CheckMouseOver ( void )
 		{
 			PlayFX ( SoundData.SNDHudButton );
 			Client->bChatInput=true;
-			InputStr="";
+			InputHandler->setInputStr ( "" );
+			InputHandler->setInputState ( true );
 			ChatButton ( false );
 		}
 	}

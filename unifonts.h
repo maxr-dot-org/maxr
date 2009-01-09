@@ -70,7 +70,10 @@ class cUnicodeFont
 		int getFontHeight( eUnicodeFontType fonttype = FONT_LATIN_NORMAL );
 	private:
 		SDL_Surface *charsNormal[0xFFFF];
-		SDL_Surface *charsSmall[0xFFFF];
+		SDL_Surface *charsSmallWhite[0xFFFF];
+		SDL_Surface *charsSmallGreen[0xFFFF];
+		SDL_Surface *charsSmallRed[0xFFFF];
+		SDL_Surface *charsSmallYellow[0xFFFF];
 		SDL_Surface *charsBig[0xFFFF];
 		SDL_Surface *charsBigGold[0xFFFF];
 

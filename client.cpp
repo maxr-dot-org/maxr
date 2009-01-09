@@ -24,7 +24,6 @@
 #include "serverevents.h"
 #include "pcx.h"
 #include "mouse.h"
-#include "keyinp.h"
 #include "keys.h"
 #include "unifonts.h"
 #include "netmessage.h"
@@ -32,6 +31,7 @@
 #include "attackJobs.h"
 #include "buttons.h"
 #include "menu.h"
+#include "input.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -431,141 +431,22 @@ void cClient::run()
 int cClient::checkUser( bool bChange )
 {
 	static int iLastMouseButton = 0, iMouseButton;
-	static bool bLastReturn = false;
-	Uint8 *keystate;
 	// get events:
 	EventHandler->HandleEvents();
 
 	// check the keys:
-	keystate = SDL_GetKeyState( NULL );
 	if ( bChange && bChangeObjectName )
 	{
-		DoKeyInp ( keystate );
-		if ( InputEnter )
+		if ( InputHandler->checkHasBeenInput () )
 		{
-			bChangeObjectName = false;
-			// TODO: no engine: Change names of units
-			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			/*if ( SelectedVehicle )
-			{
-				engine->ChangeVehicleName ( SelectedVehicle->PosX,SelectedVehicle->PosY,InputStr,false,SelectedVehicle->data.can_drive==DRIVE_AIR );
-			}
-			else if ( SelectedBuilding )
-			{
-				engine->ChangeBuildingName ( SelectedBuilding->PosX,SelectedBuilding->PosY,InputStr,false,SelectedBuilding->data.is_base );
-			}*/
-		}
-		else
-		{
-			if ( font->getTextWide(InputStr) >=128 )
-			{
-				InputStr.erase ( InputStr.length()-1 );
-			}
+			InputHandler->cutToLength ( 128 );
 		}
 	}
 	else if ( bChatInput )
 	{
-		DoKeyInp ( keystate );
-		if ( InputEnter )
+		if ( InputHandler->checkHasBeenInput () )
 		{
-			bChatInput=false;
-			if ( !InputStr.empty() && !doCommand ( InputStr ) )
-			{
-				sendChatMessageToServer( ActivePlayer->name+": " + InputStr);
-			}
-		}
-		else
-		{
-			if ( InputStr.length() >= PACKAGE_LENGTH-20 )
-			{
-				InputStr.erase ( PACKAGE_LENGTH-20 );
-			}
-		}
-	}
-	else
-	{
-
-		//TODO: read keystates more sensitive - e.g. take care of ALT and STRG modifiers
-		//TODO: add more keys:
-		/*
-		e end turn
-		f center on selected unit
-		-/+ zoom bigger/smaller
-		g grid
-		PG DOWN center on selected unit
-		ARROWS scroll on map
-		ALT L load menu
-		ALT S save menu
-		ALT X end game
-		ALT F5 save window pos
-		ALT F6 save window pos
-		ALT F7 save window pos
-		ALT F8 save window pos
-		F5 jump to saved window pos
-		F6 jump to saved window pos
-		F7 jump to saved window pos
-		F8 jump to saved window pos
-		/ or ? activate help cursor
-		ALT C screenshot
-		Space + Enter + ESC cancel demo sequence
-		Shift + mouseclick groupcommand
-		*/
-		//TODO: additional hotkeys
-		/*
-		mousewheel UP zoom out
-		mousewheel DOWN zoom in
-
-		*/
-
-		if ( keystate[KeysList.KeyExit]&&ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
-		{
-			drawMap ( false );
-			SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
-			return -1;
-		}
-		if ( keystate[KeysList.KeyJumpToAction]&&iMsgCoordsX!=-1 )
-		{
-			Hud.OffX = iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-			Hud.OffY = iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-			bFlagDrawMap=true;
-			Hud.DoScroll ( 0 );
-			iMsgCoordsX=-1;
-		}
-		if ( keystate[KeysList.KeyEndTurn]&&!bLastReturn&&!bWantToEnd )
-		{
-			Hud.EndeButton ( true );
-			handleEnd();
-			bLastReturn = true;
-		}
-		else if ( !keystate[KeysList.KeyEndTurn] ) bLastReturn=false;
-		if ( keystate[KeysList.KeyChat]&&!keystate[SDLK_RALT]&&!keystate[SDLK_LALT] )
-		{
-			bChatInput = true;
-			InputStr = "";
-		}
-		if ( keystate[KeysList.KeyScroll8a]||keystate[KeysList.KeyScroll8b] ) Hud.DoScroll ( 8 );
-		if ( keystate[KeysList.KeyScroll2a]||keystate[KeysList.KeyScroll2b] ) Hud.DoScroll ( 2 );
-		if ( keystate[KeysList.KeyScroll6a]||keystate[KeysList.KeyScroll6b] ) Hud.DoScroll ( 6 );
-		if ( keystate[KeysList.KeyScroll4a]||keystate[KeysList.KeyScroll4b] ) Hud.DoScroll ( 4 );
-		if ( keystate[KeysList.KeyScroll7] ) Hud.DoScroll ( 7 );
-		if ( keystate[KeysList.KeyScroll9] ) Hud.DoScroll ( 9 );
-		if ( keystate[KeysList.KeyScroll1] ) Hud.DoScroll ( 1 );
-		if ( keystate[KeysList.KeyScroll3] ) Hud.DoScroll ( 3 );
-		if ( keystate[KeysList.KeyZoomIna]||keystate[KeysList.KeyZoomInb] ) Hud.SetZoom ( Hud.Zoom+1 );
-		if ( keystate[KeysList.KeyZoomOuta]||keystate[KeysList.KeyZoomOutb] ) Hud.SetZoom ( Hud.Zoom-1 );
-
-		{
-			static SDLKey last_key=SDLK_UNKNOWN;
-			if ( keystate[KeysList.KeyFog] ) {if ( last_key!=KeysList.KeyFog ) {Hud.SwitchNebel ( !Hud.Nebel );last_key=KeysList.KeyFog;}}
-			else if ( keystate[KeysList.KeyGrid] ) {if ( last_key!=KeysList.KeyGrid ) {Hud.SwitchGitter ( !Hud.Gitter );last_key=KeysList.KeyGrid;}}
-			else if ( keystate[KeysList.KeyScan] ) {if ( last_key!=KeysList.KeyScan ) {Hud.SwitchScan ( !Hud.Scan );last_key=KeysList.KeyScan;}}
-			else if ( keystate[KeysList.KeyRange] ) {if ( last_key!=KeysList.KeyRange ) {Hud.SwitchReichweite ( !Hud.Reichweite );last_key=KeysList.KeyRange;}}
-			else if ( keystate[KeysList.KeyAmmo] ) {if ( last_key!=KeysList.KeyAmmo ) {Hud.SwitchMunition ( !Hud.Munition );last_key=KeysList.KeyAmmo;}}
-			else if ( keystate[KeysList.KeyHitpoints] ) {if ( last_key!=KeysList.KeyHitpoints ) {Hud.SwitchTreffer ( !Hud.Treffer );last_key=KeysList.KeyHitpoints;}}
-			else if ( keystate[KeysList.KeyColors] ) {if ( last_key!=KeysList.KeyColors ) {Hud.SwitchFarben ( !Hud.Farben );last_key=KeysList.KeyColors;}}
-			else if ( keystate[KeysList.KeyStatus] ) {if ( last_key!=KeysList.KeyStatus ) {Hud.SwitchStatus ( !Hud.Status );last_key=KeysList.KeyStatus;}}
-			else if ( keystate[KeysList.KeySurvey] ) {if ( last_key!=KeysList.KeySurvey ) {Hud.SwitchStudie ( !Hud.Studie );last_key=KeysList.KeySurvey;}}
-			else last_key=SDLK_UNKNOWN;
+			InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
 		}
 	}
 	// handle the mouse:
@@ -610,7 +491,8 @@ int cClient::checkUser( bool bChange )
 
 					SelectedVehicle->Deselct();
 					SelectedVehicle=NULL;
-					bChangeObjectName=false;
+					bChangeObjectName = false;
+					if ( !bChatInput ) InputHandler->setInputState ( false );
 					StopFXLoop ( iObjectStream );
 				}
 				else if ( SelectedBuilding )
@@ -631,6 +513,7 @@ int cClient::checkUser( bool bChange )
 					SelectedBuilding->Deselct();
 					SelectedBuilding=NULL;
 					bChangeObjectName=false;
+					if ( !bChatInput ) InputHandler->setInputState ( false );
 					StopFXLoop ( iObjectStream );
 				}
 				switch ( next )
@@ -662,6 +545,7 @@ int cClient::checkUser( bool bChange )
 				SelectedVehicle->Deselct();
 				SelectedVehicle = NULL;
 				bChangeObjectName = false;
+				if ( !bChatInput ) InputHandler->setInputState ( false );
 				StopFXLoop ( iObjectStream );
 			}
 			else if ( SelectedBuilding!=NULL )
@@ -669,6 +553,7 @@ int cClient::checkUser( bool bChange )
 				SelectedBuilding->Deselct();
 				SelectedBuilding=NULL;
 				bChangeObjectName=false;
+				if ( !bChatInput ) InputHandler->setInputState ( false );
 				StopFXLoop ( iObjectStream );
 			}
 		}
@@ -821,13 +706,15 @@ int cClient::checkUser( bool bChange )
 			// check whether the name of a unit has to be changed:
 			if ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
-				InputStr = SelectedVehicle->name;
-				bChangeObjectName=true;
+				bChangeObjectName = true;
+				InputHandler->setInputStr ( SelectedVehicle->name );
+				InputHandler->setInputState ( true );
 			}
 			else if ( SelectedBuilding&&SelectedBuilding->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
-				InputStr = SelectedBuilding->name;
-				bChangeObjectName=true;
+				bChangeObjectName = true;
+				InputHandler->setInputStr ( SelectedVehicle->name );
+				InputHandler->setInputState ( true );
 			}
 		}
 		else if ( OverObject )
@@ -861,11 +748,123 @@ int cClient::checkUser( bool bChange )
 	return 0;
 }
 
+void cClient::handleHotKey ( SDL_keysym &keysym )
+{
+	//TODO: read keystates more sensitive - e.g. take care of ALT and STRG modifiers
+	//TODO: add more keys:
+	/*
+	e end turn
+	f center on selected unit
+	-/+ zoom bigger/smaller
+	g grid
+	PG DOWN center on selected unit
+	ARROWS scroll on map
+	ALT L load menu
+	ALT S save menu
+	ALT X end game
+	ALT F5 save window pos
+	ALT F6 save window pos
+	ALT F7 save window pos
+	ALT F8 save window pos
+	F5 jump to saved window pos
+	F6 jump to saved window pos
+	F7 jump to saved window pos
+	F8 jump to saved window pos
+	/ or ? activate help cursor
+	ALT C screenshot
+	Space + Enter + ESC cancel demo sequence
+	Shift + mouseclick groupcommand
+	*/
+	//TODO: additional hotkeys
+	/*
+	mousewheel UP zoom out
+	mousewheel DOWN zoom in
+
+	*/
+
+	if ( keysym.sym == KeysList.KeyExit )
+	{
+		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
+		{
+			drawMap ( false );
+			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+			bExit = true;
+		}
+	}
+	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) )
+	{
+		if ( bChatInput )
+		{
+			bChatInput = false;
+			if ( !InputHandler->getInputStr( CURSOR_DISABLED ).empty() && !doCommand ( InputHandler->getInputStr( CURSOR_DISABLED ) ) )
+			{
+				sendChatMessageToServer( ActivePlayer->name+": " + InputHandler->getInputStr( CURSOR_DISABLED ) );
+			}
+			InputHandler->setInputState ( false );
+		}
+		else if ( bChangeObjectName )
+		{
+			bChangeObjectName = false;
+			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			// TODO: implement changing names
+			InputHandler->setInputState ( false );
+		}
+	}
+	else if ( keysym.sym == KeysList.KeyEndTurn )
+	{
+		if ( !bWantToEnd )
+		{
+			Hud.EndeButton ( true );
+			handleEnd();
+		}
+	}
+	else if ( keysym.sym == KeysList.KeyJumpToAction )
+	{
+		if ( iMsgCoordsX!=-1 )
+		{
+			Hud.OffX = iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+			Hud.OffY = iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+			bFlagDrawMap=true;
+			Hud.DoScroll ( 0 );
+			iMsgCoordsX=-1;
+		}
+	}
+	else if ( keysym.sym == KeysList.KeyChat )
+	{
+		if ( !(keysym.mod & KMOD_ALT) )
+		{
+			InputHandler->setInputState ( true );
+			InputHandler->setInputStr ( "" );
+			bChatInput = true;
+		}
+	}
+	else if ( keysym.sym == KeysList.KeyScroll1 ) Hud.DoScroll ( 1 );
+	else if ( keysym.sym == KeysList.KeyScroll3 ) Hud.DoScroll ( 3 );
+	else if ( keysym.sym == KeysList.KeyScroll7 ) Hud.DoScroll ( 7 );
+	else if ( keysym.sym == KeysList.KeyScroll9 ) Hud.DoScroll ( 9 );
+	else if ( keysym.sym == KeysList.KeyScroll2a || keysym.sym == KeysList.KeyScroll2b ) Hud.DoScroll ( 2 );
+	else if ( keysym.sym == KeysList.KeyScroll4a || keysym.sym == KeysList.KeyScroll4b ) Hud.DoScroll ( 4 );
+	else if ( keysym.sym == KeysList.KeyScroll6a || keysym.sym == KeysList.KeyScroll6b ) Hud.DoScroll ( 6 );
+	else if ( keysym.sym == KeysList.KeyScroll8a || keysym.sym == KeysList.KeyScroll8b ) Hud.DoScroll ( 8 );
+	else if ( keysym.sym == KeysList.KeyZoomIna || keysym.sym == KeysList.KeyZoomInb ) Hud.SetZoom ( Hud.Zoom+1 );
+	else if ( keysym.sym == KeysList.KeyZoomOuta || keysym.sym == KeysList.KeyZoomOutb ) Hud.SetZoom ( Hud.Zoom-1 );
+	else if ( keysym.sym == KeysList.KeyFog ) Hud.SwitchNebel ( !Hud.Nebel );
+	else if ( keysym.sym == KeysList.KeyGrid ) Hud.SwitchGitter ( !Hud.Gitter );
+	else if ( keysym.sym == KeysList.KeyScan ) Hud.SwitchScan ( !Hud.Scan );
+	else if ( keysym.sym == KeysList.KeyRange ) Hud.SwitchReichweite ( !Hud.Reichweite );
+	else if ( keysym.sym == KeysList.KeyAmmo ) Hud.SwitchMunition ( !Hud.Munition );
+	else if ( keysym.sym == KeysList.KeyHitpoints ) Hud.SwitchTreffer ( !Hud.Treffer );
+	else if ( keysym.sym == KeysList.KeyColors ) Hud.SwitchFarben ( !Hud.Farben );
+	else if ( keysym.sym == KeysList.KeyStatus ) Hud.SwitchStatus ( !Hud.Status );
+	else if ( keysym.sym == KeysList.KeySurvey ) Hud.SwitchStudie ( !Hud.Studie );
+}
+
 bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 {
 	if ( OverObject->plane && !OverObject->plane->moving && !OverObject->plane->rotating )
 	{
 		bChangeObjectName = false;
+		if ( !bChatInput ) InputHandler->setInputState ( false );
 		if ( SelectedVehicle == OverObject->plane )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
@@ -897,6 +896,7 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 	else if ( OverObject->vehicle && !OverObject->vehicle->moving && !OverObject->vehicle->rotating && !( OverObject->plane && ( OverObject->vehicle->MenuActive || OverObject->vehicle->owner != ActivePlayer ) ) )
 	{
 		bChangeObjectName = false;
+		if ( !bChatInput ) InputHandler->setInputState ( false );
 		if ( SelectedVehicle == OverObject->vehicle )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
@@ -928,6 +928,7 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 	else if ( OverObject->top && ( base || ( ( !OverObject->top->data.is_connector || !SelectedVehicle ) && ( !OverObject->top->data.is_pad || ( !SelectedVehicle || SelectedVehicle->data.can_drive != DRIVE_AIR ) ) ) ) )
 	{
 		bChangeObjectName = false;
+		if ( !bChatInput ) InputHandler->setInputState ( false );
 		if ( SelectedBuilding == OverObject->top )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
@@ -959,6 +960,7 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 	else if ( ( base || !SelectedVehicle )&& OverObject->base && OverObject->base->owner )
 	{
 		bChangeObjectName = false;
+		if ( !bChatInput ) InputHandler->setInputState ( false );
 		if ( SelectedBuilding == OverObject->base )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
@@ -1572,15 +1574,7 @@ void cClient::drawFLC()
 			dest.y+=2;
 			dest.h=6;
 			SDL_FillRect ( buffer,&dest,0x404040 );
-			if ( iFrame%2 )
-			{
-				stmp = InputStr; stmp += "_";
-				font->showText(10, 32, stmp, FONT_LATIN_SMALL_GREEN);
-			}
-			else
-			{
-				font->showText(10, 32, InputStr, FONT_LATIN_SMALL_GREEN);
-			}
+			font->showText(10, 32, InputHandler->getInputStr(), FONT_LATIN_SMALL_GREEN);
 		}
 		else
 		{
@@ -1595,15 +1589,7 @@ void cClient::drawFLC()
 			dest.y+=2;
 			dest.h=6;
 			SDL_FillRect ( buffer,&dest,0x404040 );
-			if ( iFrame%2 )
-			{
-				stmp = InputStr; stmp += "_";
-				font->showText(10, 32, stmp, FONT_LATIN_SMALL_GREEN);
-			}
-			else
-			{
-				font->showText(10, 32, InputStr, FONT_LATIN_SMALL_GREEN);
-			}
+			font->showText(10, 32, InputHandler->getInputStr(), FONT_LATIN_SMALL_GREEN);
 		}
 		else
 		{
@@ -2292,9 +2278,7 @@ void cClient::displayChatInput()
 {
 	int y, iParts;
 	string OutTxt = ">";
-	OutTxt += InputStr;
-	if ( iFrame%2 ) {}
-	else OutTxt += "_";
+	OutTxt += InputHandler->getInputStr();
 
 	iParts = font->getTextWide( OutTxt ) / (SettingsData.iScreenW-210)+1;
 	y = SettingsData.iScreenH-40-iParts*font->getFontHeight ();
