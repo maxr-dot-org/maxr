@@ -39,7 +39,7 @@
 #include "files.h"
 #include "log.h"
 #include "pcx.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "keys.h"
 #include "vehicles.h"
 #include "main.h"
@@ -124,7 +124,7 @@ int LoadData ( void * )
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
 	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
 
-	font = new cBitmapFont; //init ascii fonts
+	font = new cUnicodeFont; //init ascii fonts
 
 	cLog::mark();
 
@@ -319,14 +319,14 @@ int LoadData ( void * )
 // Writes a Logmessage on the SplashScreen:
 void MakeLog ( string sTxt,int ok,int pos )
 {
-	SDL_Rect rDest = {22, 152, 228, font->getFontHeight(LATIN_BIG_GOLD)};
-	SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight(LATIN_BIG_GOLD)};
+	SDL_Rect rDest = {22, 152, 228, font->getFontHeight(FONT_LATIN_BIG_GOLD)};
+	SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight(FONT_LATIN_BIG_GOLD)};
 	SDL_Rect rSrc;
 
 	switch ( ok )
 	{
 	case 0:
-		font->showText(rDest.x, rDest.y + rDest.h*pos, sTxt, LATIN_NORMAL);
+		font->showText(rDest.x, rDest.y + rDest.h*pos, sTxt, FONT_LATIN_NORMAL);
 		rSrc=rDest;
 		rSrc.y = rDest.y + rDest.h*pos;
 		if(pos == 0) //need full line for first entry version information
@@ -342,11 +342,11 @@ void MakeLog ( string sTxt,int ok,int pos )
 		break;
 
 	case 1:
-		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "OK", LATIN_BIG_GOLD);
+		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "OK", FONT_LATIN_BIG_GOLD);
 		break;
 
 	default:
-		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check maxr.log!", LATIN_BIG_GOLD);
+		font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
 		break;
 	}
 

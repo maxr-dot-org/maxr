@@ -22,7 +22,7 @@
 #include "sound.h"
 #include "dialog.h"
 #include "keyinp.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "menu.h"
 #include "client.h"
 #include "serverevents.h"
@@ -1179,7 +1179,7 @@ void cHud::ShowRunde ( void )
 	dest.x=471;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	font->showTextCentered(498,7, iToStr(Client->iTurn), LATIN_NORMAL, GraphicsData.gfx_hud);
+	font->showTextCentered(498,7, iToStr(Client->iTurn), FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 	Client->bFlagDrawHud=true;
 }
 
@@ -1193,7 +1193,7 @@ void cHud::showTurnTime ( int iTime )
 	dest.x=537;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	if ( iTime != -1 ) font->showTextCentered(564,7, iToStr( iTime ), LATIN_NORMAL, GraphicsData.gfx_hud);
+	if ( iTime != -1 ) font->showTextCentered(564,7, iToStr( iTime ), FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 	Client->bFlagDrawHud=true;
 }
 
@@ -1295,20 +1295,20 @@ int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_
 	SDL_BlitSurface ( sfSrc,&scr,sfDest,&dest );
 	if(!bSmallFont)
 	{
-		font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, sfDest);
+		font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, FONT_LATIN_NORMAL, sfDest);
 	}
 	else
 	{
 		if(bPressed)
 		{
-			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+2, sText, LATIN_SMALL_GREEN, sfDest);
+			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+2, sText, FONT_LATIN_SMALL_GREEN, sfDest);
 			//iPx only +2 because small buttons aren't big enough for moving text on them
 		}
 		else
 		{
-			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+3, sText, LATIN_SMALL_RED, sfDest);
+			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+3, sText, FONT_LATIN_SMALL_RED, sfDest);
 		}
-		font->showTextCentered(dest.x+dest.w/2-1,dest.y+iPx+2, sText, LATIN_SMALL_WHITE, sfDest);
+		font->showTextCentered(dest.x+dest.w/2-1,dest.y+iPx+2, sText, FONT_LATIN_SMALL_WHITE, sfDest);
 	}
 	return 0;
 }

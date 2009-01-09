@@ -1,7 +1,7 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
-#include "fonts.h"
+#include "unifonts.h"
 #include "sound.h"
 
 
@@ -16,7 +16,7 @@ class Button
 
 		struct FontInfo
 		{
-			eBitmapFontType font;
+			eUnicodeFontType font;
 			int             off_x;
 			int             off_y;
 		};

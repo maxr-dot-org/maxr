@@ -26,7 +26,7 @@
 #include "mouse.h"
 #include "keyinp.h"
 #include "keys.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "netmessage.h"
 #include "main.h"
 #include "attackJobs.h"
@@ -1164,10 +1164,10 @@ void cClient::drawMap( bool bPure )
 					{
 						cBuilding* serverBuilding = NULL;
 						if ( Server ) serverBuilding = Server->Map->GO[iPos].top;
-						if ( building->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
-						if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
-						if ( building->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
-						if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+						if ( building->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+						if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+						if ( building->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+						if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 					}
 					if ( bDebugBaseClient )
 					{
@@ -1178,15 +1178,15 @@ void cClient::drawMap( bool bPure )
 						// the VS compiler gives a warning on casting a pointer to long.
 						// therfore we will first cast to long long and then cut this to Unit32 again.
 						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
-						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
-						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
 						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
-						font->showText(dest.x+1,dest.y+1+16, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
 
 						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
-						font->showText(dest.x+1,dest.y+1+24, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
 					}
 					if ( bDebugBaseServer )
 					{
@@ -1197,15 +1197,15 @@ void cClient::drawMap( bool bPure )
 						// the VS compiler gives a warning on casting a pointer to long.
 						// therfore we will first cast to long long and then cut this to Unit32 again.
 						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
-						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
 						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
-						font->showText(dest.x+1,dest.y+1+8, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
 						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
-						font->showText(dest.x+1,dest.y+1+16, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
 
 						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
-						font->showText(dest.x+1,dest.y+1+24, sTmp, LATIN_SMALL_WHITE);
+						font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
 					}
 				}
 			}
@@ -1232,10 +1232,10 @@ void cClient::drawMap( bool bPure )
 					{
 						cVehicle* serverVehicle = NULL;
 						if ( Server ) serverVehicle = Server->Map->GO[iPos].vehicle;
-						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
-						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 					}
 				}
 			}
@@ -1265,10 +1265,10 @@ void cClient::drawMap( bool bPure )
 					{
 						cVehicle* serverPlane = NULL;
 						if ( Server ) serverPlane = Server->Map->GO[iPos].plane;
-						if ( plane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", LATIN_SMALL_WHITE );
-						if ( serverPlane && serverPlane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", LATIN_SMALL_YELLOW );
-						if ( plane->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", LATIN_SMALL_WHITE );
-						if ( serverPlane && serverPlane->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", LATIN_SMALL_YELLOW );
+						if ( plane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+						if ( serverPlane && serverPlane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+						if ( plane->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+						if ( serverPlane && serverPlane->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 					}
 				}
 			}
@@ -1342,27 +1342,27 @@ void cClient::drawMap( bool bPure )
 				iPos = iY*Map->size+iStartX;
 				for ( iX = iStartX; iX <= iEndX; iX++ )
 				{
-					int offset = (Player->Nr - 1) * font->getFontHeight( LATIN_SMALL_YELLOW );
+					int offset = (Player->Nr - 1) * font->getFontHeight( FONT_LATIN_SMALL_YELLOW );
 					if ( Player->SentriesMapAir[iPos] )
 					{
 						if ( Player->ScanMap[iPos] )
 						{
-							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A+", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A+", FONT_LATIN_SMALL_YELLOW);
 						}
 						else
 						{
-							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A-", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+1,dest.y+1+offset, iToStr ( Player->Nr ) + " A-", FONT_LATIN_SMALL_YELLOW);
 						}
 					}
 					if ( Player->SentriesMapGround[iPos] )
 					{
 						if ( Player->ScanMap[iPos] )
 						{
-							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G+", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G+", FONT_LATIN_SMALL_YELLOW);
 						}
 						else
 						{
-							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G-", LATIN_SMALL_YELLOW);
+							font->showText(dest.x+10,dest.y+1+offset, iToStr ( Player->Nr ) + " G-", FONT_LATIN_SMALL_YELLOW);
 						}
 					}
 					iPos++;
@@ -1575,18 +1575,18 @@ void cClient::drawFLC()
 			if ( iFrame%2 )
 			{
 				stmp = InputStr; stmp += "_";
-				font->showText(10, 32, stmp, LATIN_SMALL_GREEN);
+				font->showText(10, 32, stmp, FONT_LATIN_SMALL_GREEN);
 			}
 			else
 			{
-				font->showText(10, 32, InputStr, LATIN_SMALL_GREEN);
+				font->showText(10, 32, InputStr, FONT_LATIN_SMALL_GREEN);
 			}
 		}
 		else
 		{
-			font->showText(10, 32, SelectedVehicle->name, LATIN_SMALL_GREEN);
+			font->showText(10, 32, SelectedVehicle->name, FONT_LATIN_SMALL_GREEN);
 		}
-		font->showText(10, 40, SelectedVehicle->GetStatusStr(), LATIN_SMALL_WHITE);
+		font->showText(10, 40, SelectedVehicle->GetStatusStr(), FONT_LATIN_SMALL_WHITE);
 	}
 	else if ( SelectedBuilding )
 	{
@@ -1598,18 +1598,18 @@ void cClient::drawFLC()
 			if ( iFrame%2 )
 			{
 				stmp = InputStr; stmp += "_";
-				font->showText(10, 32, stmp, LATIN_SMALL_GREEN);
+				font->showText(10, 32, stmp, FONT_LATIN_SMALL_GREEN);
 			}
 			else
 			{
-				font->showText(10, 32, InputStr, LATIN_SMALL_GREEN);
+				font->showText(10, 32, InputStr, FONT_LATIN_SMALL_GREEN);
 			}
 		}
 		else
 		{
-			font->showText(10, 32, SelectedBuilding->name, LATIN_SMALL_GREEN);
+			font->showText(10, 32, SelectedBuilding->name, FONT_LATIN_SMALL_GREEN);
 		}
-		font->showText(10, 40, SelectedBuilding->GetStatusStr(), LATIN_SMALL_WHITE);
+		font->showText(10, 40, SelectedBuilding->GetStatusStr(), FONT_LATIN_SMALL_WHITE);
 	}
 }
 
@@ -2193,26 +2193,26 @@ void cClient::displayDebugOutput()
 	iDebugOff = 30;
 	if ( bDebugAjobs && bFlagDrawMap)
 	{
-		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		if ( Server )
 		{
-			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		}
 	}
 
 	if ( bDebugBaseClient && bFlagDrawMap )
 	{
-		font->showText(550, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
+		font->showText(550, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
 	}
 
 	if ( bDebugBaseServer && bFlagDrawMap )
 	{
 		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-		font->showText(550, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight ( LATIN_SMALL_WHITE );
+		font->showText(550, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
 	}
 
 	if ( bDebugSentry && bFlagDrawMap )
@@ -2220,24 +2220,24 @@ void cClient::displayDebugOutput()
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
 			cPlayer *Player = (*Server->PlayerList)[i];
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		}
 	}
 
 	if ( bDebugFX && bFlagDrawMap )
 	{
-		font->showText(550, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
-		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
 	if ( bDebugPlayers && bFlagDrawMap )
 	{
-		font->showText(530, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(LATIN_SMALL_WHITE);
+		font->showText(530, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { 500, iDebugOff, 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
@@ -2266,16 +2266,16 @@ void cClient::displayDebugOutput()
 			if ( (*PlayerList)[i] == ActivePlayer ) 
 			{
 				string sTmpLine = " " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + " << you! ";
-				rBlackOut.w = font->getTextWide(sTmpLine, LATIN_SMALL_WHITE); //black out background for better recognizing
+				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
 				SDL_FillRect(buffer, &rBlackOut, 0x000000);
-				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , LATIN_SMALL_WHITE);
+				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			else
 			{
 				string sTmpLine = " " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + " ";
-				rBlackOut.w = font->getTextWide(sTmpLine, LATIN_SMALL_WHITE); //black out background for better recognizing
+				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
 				SDL_FillRect(buffer, &rBlackOut, 0x000000);
-				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , LATIN_SMALL_WHITE);
+				font->showText(rBlackOut.x, iDebugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			iDebugOff += 10; //use 10 for pixel high of dots instead of text high
 			rDest.y = rDotDest.y = rBlackOut.y = iDebugOff;
@@ -2749,7 +2749,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	method to format x and y easily with leading 0 -- beko */
 	char str[8];
 	sprintf ( str, "%0.3d-%0.3d", iX, iY );
-	font->showTextCentered(265+32, ( SettingsData.iScreenH-21 ) +4, str, LATIN_NORMAL, GraphicsData.gfx_hud);
+	font->showTextCentered(265+32, ( SettingsData.iScreenH-21 ) +4, str, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 
 	if ( !ActivePlayer->ScanMap[iX+iY*Map->size] )
 	{
@@ -2776,7 +2776,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	if ( GO->vehicle != NULL )
 	{
 		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->vehicle->name, LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->vehicle->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2792,7 +2792,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	else if ( GO->plane!=NULL )
 	{
 		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->plane->name, LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->plane->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2808,7 +2808,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	else if ( GO->top!=NULL )
 	{
 		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->top->name, LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->top->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2824,7 +2824,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 	else if ( GO->base != NULL && GO->base->owner )
 	{
 		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->base->name, LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->base->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -4368,11 +4368,11 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 			handleMessages();
 		}
 		// display waiting text
-		if ( iPlayerNum != -1 ) font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), LATIN_BIG );
+		if ( iPlayerNum != -1 ) font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iPlayerNum )->name ), FONT_LATIN_BIG );
 		else
 		{
-			font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), LATIN_BIG );
-			font->showTextCentered( 320, 235+font->getFontHeight(LATIN_BIG), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ), LATIN_NORMAL );
+			font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), FONT_LATIN_BIG );
+			font->showTextCentered( 320, 235+font->getFontHeight(FONT_LATIN_BIG), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ), FONT_LATIN_NORMAL );
 
 			Uint8 *keystate;
 			keystate = SDL_GetKeyState( NULL );
@@ -4596,8 +4596,8 @@ void cClient::trace ()
 	if ( bDebugTraceServer ) GO = Server->Map->GO + ( Server->Map->size*iY+iX );
 	else GO = Map->GO + ( Map->size*iY+iX );
 
-	if ( GO->reserviert ) font->showText(180+5,18+5, "reserviert", LATIN_SMALL_WHITE);
-	if ( GO->air_reserviert ) font->showText(180+5+100,18+5, "air-reserviert", LATIN_SMALL_WHITE);
+	if ( GO->reserviert ) font->showText(180+5,18+5, "reserviert", FONT_LATIN_SMALL_WHITE);
+	if ( GO->air_reserviert ) font->showText(180+5+100,18+5, "air-reserviert", FONT_LATIN_SMALL_WHITE);
 	iY = 18+5+8;
 	iX = 180+5;
 
@@ -4613,35 +4613,35 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	string sTmp;
 
 	sTmp = "name: \"" + Vehicle->name + "\" id: \"" + iToStr ( Vehicle->iID ) + "\" owner: \"" + Vehicle->owner->name + "\" posX: +" + iToStr ( Vehicle->PosX ) + " posY: " + iToStr ( Vehicle->PosY ) + " offX: " + iToStr ( Vehicle->OffX ) + " offY: " + iToStr ( Vehicle->OffY );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "attack_mode: " + iToStr ( Vehicle->AttackMode ) + " attacking: " + iToStr ( Vehicle->Attacking ) + " on sentry: +" + iToStr ( Vehicle->bSentryStatus ) + " transfer: " + iToStr ( Vehicle->Transfer ) + " ditherx: " + iToStr (Vehicle->ditherX ) + " dithery: " + iToStr ( Vehicle->ditherY );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "is_building: " + iToStr ( Vehicle->IsBuilding ) + " building_typ: " + Vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr ( Vehicle->BuildCosts ) + " build_rounds: " + iToStr ( Vehicle->BuildRounds ) + " build_round_start: " + iToStr (Vehicle->BuildRoundsStart );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "place_band: " + iToStr ( Vehicle->PlaceBand ) + " bandx: " + iToStr ( Vehicle->BandX ) + " bandy: +" + iToStr ( Vehicle->BandY ) + " build_big_saved_pos: " + iToStr ( Vehicle->BuildBigSavedPos ) + " build_path: " + iToStr (Vehicle->BuildPath );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "build_override: " + iToStr ( Vehicle->BuildOverride ) + " is_clearing: " + iToStr ( Vehicle->IsClearing ) + " clearing_rounds: +" + iToStr ( Vehicle->ClearingRounds ) + " clear_big: " + iToStr ( Vehicle->data.is_big ) + " loaded: " + iToStr (Vehicle->Loaded );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "commando_rank: " + iToStr ( Vehicle->CommandoRank ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) /*+ " detection_override: " + iToStr (Vehicle->detection_override )*/;
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "is_locked: " + iToStr ( Vehicle->IsLocked ) + /*" detected: " + iToStr ( Vehicle->detected ) +*/ " clear_mines: +" + iToStr ( Vehicle->ClearMines ) + " lay_mines: " + iToStr ( Vehicle->LayMines ) + " repair_active: " + iToStr (Vehicle->RepairActive ) + " muni_active: " + iToStr (Vehicle->MuniActive );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp =
@@ -4649,7 +4649,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		" activating_vehicle: "    + iToStr(Vehicle->ActivatingVehicle) +
 		" vehicle_to_activate: +"  + iToStr(Vehicle->VehicleToActivate) +
 		" stored_vehicles_count: " + iToStr((int)Vehicle->StoredVehicles.Size());
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if ( Vehicle->StoredVehicles.Size() )
@@ -4658,7 +4658,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		for (unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++)
 		{
 			StoredVehicle = Vehicle->StoredVehicles[i];
-			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
+			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
 			*iY += 8;
 		}
 	}
@@ -4670,7 +4670,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 		{
 			sTmp += ", \"" + Vehicle->SeenByPlayerList[i]->name + "\"";
 		}
-		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+		font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 		*iY+=8;
 	}
 }
@@ -4680,29 +4680,29 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	string sTmp;
 
 	sTmp = "name: \"" + Building->name + "\" id: \"" + iToStr ( Building->iID ) + "\" owner: \"" + ( Building->owner?Building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( Building->PosX ) + " posY: " + iToStr ( Building->PosY ) + " selected: " + iToStr ( Building->selected );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "dir: " + iToStr ( Building->dir ) + " menu_active: " + iToStr ( Building->MenuActive ) + " on sentry: +" + iToStr ( Building->bSentryStatus ) + " attacking_mode: +" + iToStr ( Building->AttackMode ) + " base: " + pToStr ( Building->base ) + " sub_base: " + pToStr (Building->SubBase );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->RubbleValue ) + " big_dirt: " + iToStr ( Building->data.is_big ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "metal_prod: " + iToStr ( Building->MetalProd ) + " oil_prod: " + iToStr ( Building->OilProd ) + " gold_prod: +" + iToStr ( Building->GoldProd ) + " max_metal_p: " + iToStr ( Building->MaxMetalProd ) + " max_oil_p: " + iToStr (Building->MaxOilProd ) + " max_gold_p: " + iToStr (Building->MaxGoldProd );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp = "is_locked: " + iToStr ( Building->IsLocked ) + " disabled: " + iToStr ( Building->Disabled ) /*+ " detected: +" + iToStr ( Building->detected )*/ + " activating_vehicle: " + iToStr ( Building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (Building->VehicleToActivate );
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	sTmp =
 		"load_active: "            + iToStr(Building->LoadActive) +
 		" stored_vehicles_count: " + iToStr((int)Building->StoredVehicles.Size());
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if (Building->StoredVehicles.Size())
@@ -4711,7 +4711,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		for (unsigned int i = 0; i < Building->StoredVehicles.Size(); i++)
 		{
 			StoredVehicle = Building->StoredVehicles[i];
-			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", LATIN_SMALL_WHITE);
+			font->showText(iX, *iY, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
 	}
@@ -4720,7 +4720,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		"build_speed: "        + iToStr(Building->BuildSpeed)  +
 		" repeat_build: "      + iToStr(Building->RepeatBuild) +
 		" build_list_count: +" + iToStr(Building->BuildList ? (int)Building->BuildList->Size() : 0);
-	font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
 	if (Building->BuildList && Building->BuildList->Size())
@@ -4729,7 +4729,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		for (unsigned int i = 0; i < Building->BuildList->Size(); i++)
 		{
 			BuildingList = (*Building->BuildList)[i];
-			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", LATIN_SMALL_WHITE);
+			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", FONT_LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
 	}
@@ -4741,7 +4741,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		{
 			sTmp += ", \"" + Building->SeenByPlayerList[i]->name + "\"";
 		}
-		font->showText(iX,*iY, sTmp, LATIN_SMALL_WHITE);
+		font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 		*iY+=8;
 	}
 }

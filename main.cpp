@@ -35,7 +35,6 @@
 #include "mouse.h"
 #include "menu.h"
 #include "pcx.h"
-#include "fonts.h"
 #include "keyinp.h"
 #include "keys.h"
 #include "sound.h"
@@ -53,10 +52,11 @@
 #include "server.h"
 #include "savegame.h"
 #include "mveplayer.h"
+#include "input.h"
+#include "unifonts.h"
 
 int main ( int argc, char *argv[] )
 {
-	
 	setPaths(); //first thing: figure out paths
 
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
@@ -70,9 +70,6 @@ int main ( int argc, char *argv[] )
 		cLog::write ( MAXVERSION , cLog::eLOG_TYPE_NET_DEBUG );
 		cLog::write ( str , cLog::eLOG_TYPE_NET_DEBUG );
 	}
-
-
-	
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
@@ -148,6 +145,7 @@ int main ( int argc, char *argv[] )
 
 	// Die Maus erzeugen:
 	mouse = new cMouse;
+	InputHandler = new cInput;
 
 	EventHandler = new cEventHandling;
 

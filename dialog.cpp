@@ -22,7 +22,7 @@
 #include "dialog.h"
 #include "mouse.h"
 #include "keyinp.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "sound.h"
 #include "menu.h"
 #include "pcx.h"
@@ -31,6 +31,7 @@
 #include "loaddata.h"
 #include "events.h"
 #include "client.h"
+#include "input.h"
 
 // shows a yes/no dialog
 bool ShowYesNo ( string text, bool bPurgeHud )
@@ -553,13 +554,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						PlayFX ( SoundData.SNDHudButton );
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN); //last entry in list needs this to disable arrow
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
-						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
+						font->showText(rDialogOnScreen, sLicence4, FONT_LATIN_SMALL_WHITE);
 						break;
 					default: //should not happen
 						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
-						font->showText(rDialogOnScreen, sLicence4, LATIN_SMALL_WHITE);
+						font->showText(rDialogOnScreen, sLicence4, FONT_LATIN_SMALL_WHITE);
 				}
 
 				SHOW_SCREEN
@@ -610,15 +611,12 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 void showPreferences ( void )
 {
 	bool OldMusicMute, OldSoundMute, OldVoiceMute, OldbAutoSave, OldbAnimations, OldbShadows, OldbAlphaEffects, OldbDamageEffects, OldbDamageEffectsVehicles, OldbMakeTracks, bOldIntro, bOldWindowMode;
-	bool Input = false;
 	int OldiScrollSpeed, OldMusicVol, OldSoundVol, OldVoiceVol;
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	string OldName;
 	string sTmpName;
-	string stmp;
 	string sTmp;
 	SDL_Rect scr, dest, rFont;
-	Uint8 *keystate;
 	bool cursor = true;
 	SDL_Surface *SfDialog;
 
@@ -741,6 +739,7 @@ void showPreferences ( void )
 	rFont.y = 158+rDialog.y;
 	font->showText(rFont, lngPack.i18n( "Text~Title~Player_Name" ));
 	font->showText(122+rDialog.x,158+rDialog.y, SettingsData.sPlayerName);
+	InputHandler->setInputStr ( sTmpName );
 
 	//END BLOCK PLAYERNAME
 
@@ -864,47 +863,19 @@ void showPreferences ( void )
 		// Events holen:
 		EventHandler->HandleEvents();
 
-		// Tasten prüfen:
-		keystate = SDL_GetKeyState( NULL );
-		if ( Input )
+		if ( InputHandler->checkHasBeenInput() )
 		{
-			if ( DoKeyInp ( keystate ) ||timer2 )
-			{
-				scr.x=116;
-				scr.y=154;
-				dest.w=scr.w=184;
-				dest.h=scr.h=17;
-				dest.x=116+rDialog.x;
-				dest.y=154+rDialog.y;
-				SDL_BlitSurface ( SfDialog,&scr,buffer,&dest );
-				if ( InputEnter )
-				{
-					font->showText(122+rDialog.x,158+rDialog.y, InputStr);
-					Input=false;
-					SettingsData.sPlayerName = sTmpName = InputStr;
-				}
-				else
-				{
-					stmp = InputStr; stmp += "_";
-					if ( font->getTextWide(stmp) >178 )
-					{
-						InputStr.erase ( InputStr.length()-1 );
-					}
-					if ( cursor )
-					{
-						stmp = InputStr; stmp += "_";
-						font->showText(122+rDialog.x,158+rDialog.y, stmp);
-
-					}
-					else
-					{
-						font->showText(122+rDialog.x,158+rDialog.y, InputStr);
-					}
-					if ( timer2 ) cursor=!cursor;
-				}
-				SHOW_SCREEN
-				mouse->draw ( false,screen );
-			}
+			scr.x = 116;
+			scr.y = 154;
+			dest.w = scr.w = 184;
+			dest.h = scr.h = 17;
+			dest.x = 116+rDialog.x;
+			dest.y = 154+rDialog.y;
+			SDL_BlitSurface ( SfDialog, &scr, buffer, &dest );
+			sTmpName = InputHandler->getInputStr();
+			font->showText( 122+rDialog.x, 158+rDialog.y, InputHandler->getInputStr() );
+			SHOW_SCREEN
+			mouse->draw ( true,screen );
 		}
 		// Die Maus machen:
 		mouse->GetPos();
@@ -924,6 +895,7 @@ void showPreferences ( void )
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				SetMusicVol ( SettingsData.MusicVol );
+				InputHandler->setInputState ( false );
 			}
 			else if ( x >= rSldEffect.x && x < rSldEffect.x + rSldEffect.w && y >= rSldEffect.y - 7 && y <= rSldEffect.y + rSldEffect.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
@@ -932,6 +904,7 @@ void showPreferences ( void )
 				drawSlider (SfDialog, rSldEffect.x,rSldEffect.y,SettingsData.SoundVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
+				InputHandler->setInputState ( false );
 			}
 			else if ( x >= rSldVoice.x && x < rSldVoice.x + rSldVoice.w && y >= rSldVoice.y - 7 && y <= rSldVoice.y + rSldVoice.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
@@ -940,6 +913,7 @@ void showPreferences ( void )
 				drawSlider (SfDialog, rSldVoice.x, rSldVoice.y,SettingsData.VoiceVol*2, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
+				InputHandler->setInputState ( false );
 			}
 			else if ( x >= rSldSpeed.x && x < rSldSpeed.x + rSldSpeed.w && y >= rSldSpeed.y - 7 && y <= rSldSpeed.y + rSldSpeed.h && ( x != LastMouseX || y != LastMouseY || !LastB ) )
 			{
@@ -947,6 +921,7 @@ void showPreferences ( void )
 				drawSlider (SfDialog, rSldSpeed.x,rSldSpeed.y,SettingsData.iScrollSpeed*5, buffer );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
+				InputHandler->setInputState ( false );
 			}
 			if ( !LastB )
 			{
@@ -964,6 +939,7 @@ void showPreferences ( void )
 					{
 						StartMusic();
 					}
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=93+rDialog.y&&y<93+rDialog.y+17 )
 				{
@@ -971,6 +947,7 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,93+rDialog.y,SettingsData.SoundMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=113+rDialog.y&&y<113+rDialog.y+17 )
 				{
@@ -978,6 +955,7 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,113+rDialog.y,SettingsData.VoiceMute,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=290+rDialog.y&&y<290+rDialog.y+17 )
 				{
@@ -985,6 +963,7 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,290+rDialog.y,SettingsData.bAutoSave,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=310+rDialog.y&&y<310+rDialog.y+17 )
 				{
@@ -992,6 +971,7 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,310+rDialog.y,SettingsData.bIntro,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=330+rDialog.y&&y<330+rDialog.y+17 )
 				{
@@ -999,6 +979,7 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,330+rDialog.y,SettingsData.bWindowMode,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=193+rDialog.y&&y<193+rDialog.y+17 )
 				{
@@ -1006,6 +987,7 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,193+rDialog.y,SettingsData.bAnimations,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=213+rDialog.y&&y<213+rDialog.y+17 )
 				{
@@ -1013,6 +995,7 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,213+rDialog.y,SettingsData.bShadows,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=233+rDialog.y&&y<233+rDialog.y+17 )
 				{
@@ -1020,13 +1003,11 @@ void showPreferences ( void )
 					drawCheckbox ( 25+rDialog.x,233+rDialog.y,SettingsData.bAlphaEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
-				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!Input )
+				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!InputHandler->getInputState() )
 				{
-					Input=true;
-					InputStr=sTmpName;
-					stmp = InputStr; stmp += "_";
-					font->showText(122+rDialog.x,158+rDialog.y, stmp);
+					InputHandler->setInputState ( true );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 				}
@@ -1036,6 +1017,7 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,193+rDialog.y,SettingsData.bDamageEffects,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=213+rDialog.y&&y<213+rDialog.y+17 )
 				{
@@ -1043,6 +1025,7 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,213+rDialog.y,SettingsData.bDamageEffectsVehicles,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				}
 				else if ( x>=210+rDialog.x&&x<210+rDialog.x+18&&y>=233+rDialog.y&&y<233+rDialog.y+17 )
 				{
@@ -1050,30 +1033,37 @@ void showPreferences ( void )
 					drawCheckbox ( 210+rDialog.x,233+rDialog.y,SettingsData.bMakeTracks,buffer );
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
+					InputHandler->setInputState ( false );
 				} //Start of combobox system for resolution modes
 				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*0+rDialog.y&&y<290+20*0+rDialog.y+17)
 				{
 					iNewResMode=0;
+					InputHandler->setInputState ( false );
 				}
 				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*1+rDialog.y&&y<290+20*1+rDialog.y+17)
 				{
 					iNewResMode=1;
+					InputHandler->setInputState ( false );
 				}
 				else if(x>=160+rDialog.x && x<=160+rDialog.x+18&&y>=290+20*2+rDialog.y&&y<290+20*2+rDialog.y+17)
 				{
-					iNewResMode=2;	
+					iNewResMode=2;
+					InputHandler->setInputState ( false );
 				}
 				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*0+rDialog.y&&y<290+20*0+rDialog.y+17)
 				{
 					iNewResMode=3;
+					InputHandler->setInputState ( false );
 				}
 				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*1+rDialog.y&&y<290+20*1+rDialog.y+17)
 				{
 					iNewResMode=4;
+					InputHandler->setInputState ( false );
 				}
 				else if(x>=260+rDialog.x && x<=260+rDialog.x+18&&y>=290+20*2+rDialog.y&&y<290+20*2+rDialog.y+17)
 				{
-					iNewResMode=5;	
+					iNewResMode=5;
+					InputHandler->setInputState ( false );
 				}
 
 				if(iResMode != iNewResMode)
@@ -1102,6 +1092,7 @@ void showPreferences ( void )
 
 		if (btn_done.CheckClick(x, y, down, up))
 		{
+			SettingsData.sPlayerName = sTmpName;
 			if ( Client)
 			{
 				Client->ActivePlayer->name=sTmpName;
@@ -1128,6 +1119,8 @@ void showPreferences ( void )
 
 			if(iNewResMode == -1)
 			{
+				InputHandler->setInputState ( false );
+				SDL_FreeSurface (SfDialog);
 				return; //don't attempt to save resolution. this case only happens if a not supported resolution was set in maxr.xml and no new resolution has been choosen in the preferences dialog
 			}
 			else
@@ -1170,6 +1163,8 @@ void showPreferences ( void )
 				SettingsData.iScreenH = iOldScreenH;
 				if(iResMode != iNewResMode) ShowOK(lngPack.i18n( "Text~Comp~ResolutionChange" ), true);
 			}
+			InputHandler->setInputState ( false );
+			SDL_FreeSurface (SfDialog);
 			return;
 		}
 
@@ -1193,6 +1188,9 @@ void showPreferences ( void )
 			SettingsData.bWindowMode = bOldWindowMode;
 			if(Client) Client->ActivePlayer->name = OldName;
 			SetMusicVol ( SettingsData.MusicVol );
+
+			InputHandler->setInputState ( false );
+			SDL_FreeSurface (SfDialog);
 			return;
 		}
 
@@ -1200,7 +1198,6 @@ void showPreferences ( void )
 		LastB=b;
 		SDL_Delay ( 1 );
 	}
-	SDL_FreeSurface (SfDialog);
 }
 
 bool showSelfdestruction()
@@ -1410,7 +1407,7 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 	dest.x = x;
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, LATIN_NORMAL, surface);
+	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, FONT_LATIN_NORMAL, surface);
 }
 
 void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)
@@ -1420,7 +1417,7 @@ void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *sur
 	if(bPressed) src.y+=21;
 
 	SDL_BlitSurface ( GraphicsData.gfx_context_menu, &src, surface, &dest );
-	font->showTextCentered ( dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight(LATIN_SMALL_WHITE) / 2) +1, sText, LATIN_SMALL_WHITE );
+	font->showTextCentered ( dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2) +1, sText, FONT_LATIN_SMALL_WHITE );
 
 	return;
 }

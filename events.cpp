@@ -21,7 +21,7 @@
 #include "menu.h"
 #include "serverevents.h"
 #include "client.h"
-
+#include "input.h"
 
 void cEventHandling::pushEvent(SDL_Event* const e)
 {
@@ -37,14 +37,15 @@ void cEventHandling::HandleEvents()
 		switch ( event.type )
 		{
 		case SDL_KEYDOWN:
-			if ( event.key.keysym.sym == SDLK_RETURN )
+			if ( event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
 			{
-				if( event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
-				{
-					SettingsData.bWindowMode = !SettingsData.bWindowMode;
-					screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
-					SHOW_SCREEN
-				}
+				SettingsData.bWindowMode = !SettingsData.bWindowMode;
+				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
+				SHOW_SCREEN
+			}
+			else
+			{
+				InputHandler->inputkey ( event.key.keysym );
 			}
 			break;
 		case NETWORK_EVENT:

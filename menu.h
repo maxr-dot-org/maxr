@@ -321,7 +321,7 @@ void ShowLandingList(cList<sLanding> *list,int selected,int offset, SDL_Surface 
  */
 int ShowDateiMenu( bool bSave );
 void loadFiles ( cList<string> *filesList, cList<sSaveFile*> &savesList, int offset );
-void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog );
+void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bFirstSelect, SDL_Rect rDialog );
 /**
  *
  * @param sFileName

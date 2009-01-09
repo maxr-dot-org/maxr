@@ -19,7 +19,7 @@
 #include "buttons.h"
 #include "math.h"
 #include "vehicles.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "mouse.h"
 #include "sound.h"
 #include "map.h"
@@ -1046,12 +1046,12 @@ void cVehicle::ShowDetails ( void )
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 
-	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	// Den Speed anzeigen:
 	DrawNumber ( 31, 201, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
 
-	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
 
@@ -1060,7 +1060,7 @@ void cVehicle::ShowDetails ( void )
 		// Transport:
 		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
 
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 		switch ( data.can_transport )
 		{
@@ -1094,14 +1094,14 @@ void cVehicle::ShowDetails ( void )
 				// Munition:
 				DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 
-				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 			}
 
 			// Schüsse:
 			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
 
-			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
 		}
@@ -1261,18 +1261,18 @@ void cVehicle::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *
 	if ( value > maxvalue / 2 )
 	{
 
-		font->showTextCentered ( x, y, sTmp , LATIN_SMALL_GREEN, sf );
+		font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_GREEN, sf );
 	}
 	else
 		if ( value > maxvalue / 4 )
 		{
 
-			font->showTextCentered ( x, y, sTmp , LATIN_SMALL_YELLOW, sf );
+			font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_YELLOW, sf );
 		}
 		else
 		{
 
-			font->showTextCentered ( x, y, sTmp , LATIN_SMALL_RED, sf );
+			font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_RED, sf );
 		}
 }
 
@@ -3221,19 +3221,19 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 
 		string sTmp = ptr->ID.getUnitData()->name;
 
-		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 
-		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData( owner )->iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData( owner )->iBuilt_Costs ), FONT_LATIN_SMALL_WHITE );
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
@@ -4383,7 +4383,7 @@ void cVehicle::DrawStored ( int off )
 		{
 			SDL_BlitSurface ( v->typ->storage, NULL, buffer, &dest );
 			// Den Namen ausgeben:
-			font->showText ( dest.x + 5, dest.y + 5, v->name, LATIN_SMALL_WHITE );
+			font->showText ( dest.x + 5, dest.y + 5, v->name, FONT_LATIN_SMALL_WHITE );
 			/*
 			if (
 			{
@@ -4454,7 +4454,7 @@ void cVehicle::DrawStored ( int off )
 			// Die Hitpoints anzeigen:
 			DrawNumber ( dest.x + 13, dest.y, v->data.hit_points, v->data.max_hit_points, buffer );
 
-			font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE );
+			font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE );
 			DrawSymbol ( SHits, dest.x + 60, dest.y, 58, v->data.hit_points, v->data.max_hit_points, buffer );
 			// Die Munition anzeigen:
 
@@ -4463,7 +4463,7 @@ void cVehicle::DrawStored ( int off )
 				dest.y += 15;
 				DrawNumber ( dest.x + 13, dest.y, v->data.ammo, v->data.max_ammo, buffer );
 
-				font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE );
+				font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE );
 				DrawSymbol ( SAmmo, dest.x + 60, dest.y, 58, v->data.ammo, v->data.max_ammo, buffer );
 			}
 		}

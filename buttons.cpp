@@ -61,7 +61,7 @@ bool Button::CheckClick(int const x, int const y, bool const down, bool const up
 
 Button::FontInfo const& Button::Font() const
 {
-	static FontInfo const fi = { LATIN_BIG, 0, 7 };
+	static FontInfo const fi = { FONT_LATIN_BIG, 0, 7 };
 	return fi;
 }
 
@@ -102,7 +102,7 @@ sSOUND* SmallButtonHUD::Sound() const { return SoundData.SNDHudButton; }
 
 Button::FontInfo const& NormalButton::Font() const
 {
-	static FontInfo const fi = { LATIN_NORMAL, 0, 4 };
+	static FontInfo const fi = { FONT_LATIN_NORMAL, 0, 4 };
 	return fi;
 }
 
@@ -123,7 +123,7 @@ Button::Gfx const& NormalButton::GfxDown() const
 
 Button::FontInfo const& BigButton::Font() const
 {
-	static FontInfo const fi = { LATIN_BIG, 0, 11 };
+	static FontInfo const fi = { FONT_LATIN_BIG, 0, 11 };
 	return fi;
 }
 

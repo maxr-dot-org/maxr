@@ -20,7 +20,7 @@
 #include "math.h"
 #include "buildings.h"
 #include "main.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "mouse.h"
 #include "files.h"
 #include "pcx.h"
@@ -253,7 +253,7 @@ string cBuilding::GetStatusStr ( void )
 				sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 				sText += iToStr ( iRound ) + ")";
 
-				if ( font->getTextWide ( sText, LATIN_SMALL_WHITE ) > 126 )
+				if ( font->getTextWide ( sText, FONT_LATIN_SMALL_WHITE ) > 126 )
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" ) + ":\n";
 					sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
@@ -3209,11 +3209,11 @@ void cBuilding::DrawStored ( int off )
 		{
 			SDL_BlitSurface ( vehicleV->typ->storage, NULL, buffer, &dest );
 			// Den Namen ausgeben:
-			font->showText ( dest.x + 5, dest.y + 5, vehicleV->name, LATIN_SMALL_WHITE );
+			font->showText ( dest.x + 5, dest.y + 5, vehicleV->name, FONT_LATIN_SMALL_WHITE );
 
 			if ( vehicleV->data.version != vehicleV->owner->VehicleData[vehicleV->typ->nr].version )
 			{
-				font->showText ( dest.x + 5, dest.y + 15, "(" + lngPack.i18n ( "Text~Comp~Dated" ) + ")", LATIN_SMALL_WHITE );
+				font->showText ( dest.x + 5, dest.y + 15, "(" + lngPack.i18n ( "Text~Comp~Dated" ) + ")", FONT_LATIN_SMALL_WHITE );
 			}
 		}
 		else
@@ -3314,7 +3314,7 @@ void cBuilding::DrawStored ( int off )
 		{
 			// Die Hitpoints anzeigen:
 			DrawNumber ( dest.x + 13, dest.y, vehicleV->data.hit_points, vehicleV->data.max_hit_points, buffer );
-			font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE );
+			font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE );
 
 			DrawSymbol ( SHits, dest.x + 60, dest.y, 58, vehicleV->data.hit_points, vehicleV->data.max_hit_points, buffer );
 			// Die Munition anzeigen:
@@ -3324,7 +3324,7 @@ void cBuilding::DrawStored ( int off )
 				dest.y += 15;
 				DrawNumber ( dest.x + 13, dest.y, vehicleV->data.ammo, vehicleV->data.max_ammo, buffer );
 
-				font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE );
+				font->showText ( dest.x + 27, dest.y, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE );
 				DrawSymbol ( SAmmo, dest.x + 60, dest.y, 58, vehicleV->data.ammo, vehicleV->data.max_ammo, buffer );
 			}
 		}
@@ -4423,15 +4423,15 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		}
 
 
-		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 		text.y += 32 + 2;
@@ -5618,17 +5618,17 @@ void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTe
 	DrawMineBar ( TRANS_METAL, SubBase->MetalNeed, SubBase->MaxMetalNeed, 1, false, 0 );
 	sTmp1 = iToStr ( SubBase->MetalNeed ) + " (" + iToStr ( iTempSBMetalProd - SubBase->MetalNeed );
 
-	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 70 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
+	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 70 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 
 	DrawMineBar ( TRANS_OIL, SubBase->OilNeed, SubBase->MaxOilNeed, 1, false, 0 );
 	sTmp1 = iToStr ( SubBase->OilNeed ) + " (" + iToStr ( iTempSBOilProd - SubBase->OilNeed );
 
-	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 190 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
+	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 190 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 
 	DrawMineBar ( TRANS_GOLD, SubBase->GoldNeed, SubBase->MaxGoldNeed, 1, false, 0 );
 	sTmp1 = iToStr ( SubBase->GoldNeed ) + " (" + iToStr ( iTempSBGoldProd - SubBase->GoldNeed );
 
-	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 310 + 8 + 37, sTmp1 + sTmp2, LATIN_BIG );
+	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 310 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 }
 
 // Malt einen Rohstoffbalken:
@@ -5704,7 +5704,7 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 	if ( number )
 	{
 
-		font->showTextCentered ( rDialog.x + 174 + 120, dest.y + 8, iToStr ( value ), LATIN_BIG );
+		font->showTextCentered ( rDialog.x + 174 + 120, dest.y + 8, iToStr ( value ), FONT_LATIN_BIG );
 	}
 }
 
@@ -6787,19 +6787,19 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 		// Text ausgeben:
 		string sTmp = ptr->ID.getUnitData()->name;
 
-		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 
-		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData ( owner )->iBuilt_Costs ), LATIN_SMALL_WHITE );
+		font->showTextCentered ( MENU_OFFSET_X + 616, text.y, iToStr ( ptr->ID.getUnitData ( owner )->iBuilt_Costs ), FONT_LATIN_SMALL_WHITE );
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
 	}
@@ -7043,15 +7043,15 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 		string sTmp = ptr->ID.getUnitData()->name;
 
 
-		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 
@@ -7759,7 +7759,7 @@ void cBuilding::ShowDetails ( void )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
-	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	// Zusätzliche Werte:
@@ -7768,7 +7768,7 @@ void cBuilding::ShowDetails ( void )
 	{
 		// Load:
 		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 		switch ( data.can_load )
 		{
@@ -7801,7 +7801,7 @@ void cBuilding::ShowDetails ( void )
 		// Gesamt:
 		if ( data.can_load == TRANS_METAL || data.can_load == TRANS_OIL || data.can_load == TRANS_GOLD )
 		{
-			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			switch ( data.can_load )
 			{
@@ -7830,7 +7830,7 @@ void cBuilding::ShowDetails ( void )
 			{
 				// Munition:
 				DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
-				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 			}
@@ -7838,7 +7838,7 @@ void cBuilding::ShowDetails ( void )
 			// Schüsse:
 			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
 
-			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
 		}
@@ -7847,19 +7847,19 @@ void cBuilding::ShowDetails ( void )
 			{
 				// EnergieProduktion:
 				DrawNumber ( 31, 189, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
-				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Energy" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 				DrawSymbol ( SEnergy, 88, 187, 70, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
 
 				if ( owner == Client->ActivePlayer )
 				{
 					// Gesammt:
-					font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawNumber ( 31, 201, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
 					DrawSymbol ( SEnergy, 88, 199, 70, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
 					// Verbrauch:
-					font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawNumber ( 31, 212, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
 					DrawSymbol ( SEnergy, 88, 212, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
@@ -7870,19 +7870,19 @@ void cBuilding::ShowDetails ( void )
 				{
 					// HumanProduktion:
 					DrawNumber ( 31, 189, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
-					font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Teams" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+					font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 					DrawSymbol ( SHuman, 88, 187, 70, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
 
 					if ( owner == Client->ActivePlayer )
 					{
 						// Gesammt:
-						font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+						font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 						DrawNumber ( 31, 201, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
 						DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
 						// Verbrauch:
-						font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+						font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 						DrawNumber ( 31, 212, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
 						DrawSymbol ( SHuman, 88, 210, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
@@ -7895,14 +7895,14 @@ void cBuilding::ShowDetails ( void )
 						if ( IsWorking )
 						{
 							DrawNumber ( 31, 189, data.human_need, data.human_need, GraphicsData.gfx_hud );
-							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawSymbol ( SHuman, 88, 187, 70, data.human_need, data.human_need, GraphicsData.gfx_hud );
 						}
 						else
 						{
 							DrawNumber ( 31, 189, 0, data.human_need, GraphicsData.gfx_hud );
-							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawSymbol ( SHuman, 88, 187, 70, 0, data.human_need, GraphicsData.gfx_hud );
 						}
@@ -7910,7 +7910,7 @@ void cBuilding::ShowDetails ( void )
 						if ( owner == Client->ActivePlayer )
 						{
 							// Gesammt:
-							font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+							font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 							DrawNumber ( 31, 201, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
 							DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
@@ -8077,18 +8077,18 @@ void cBuilding::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface 
 {
 	if ( value > maxvalue / 2 )
 	{
-		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), LATIN_SMALL_GREEN, sf );
+		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_GREEN, sf );
 
 	}
 	else
 		if ( value > maxvalue / 4 )
 		{
-			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), LATIN_SMALL_YELLOW, sf );
+			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_YELLOW, sf );
 
 		}
 		else
 		{
-			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), LATIN_SMALL_RED, sf );
+			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_RED, sf );
 
 		}
 }

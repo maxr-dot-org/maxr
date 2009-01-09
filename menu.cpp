@@ -21,7 +21,7 @@
 #include "buttons.h"
 #include "menu.h"
 #include "pcx.h"
-#include "fonts.h"
+#include "unifonts.h"
 #include "mouse.h"
 #include "keyinp.h"
 #include "sound.h"
@@ -35,6 +35,7 @@
 #include "serverevents.h"
 #include "upgradecalculator.h"
 #include "loaddata.h"
+#include "input.h"
 
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -3077,7 +3078,7 @@ void cSelectLandingMenu::run()
 				}
 
 				//wait for all other clients
-				font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,LATIN_BIG );
+				font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ) ,FONT_LATIN_BIG );
 				SHOW_SCREEN
 				mouse->draw( false, screen );
 
@@ -3151,7 +3152,7 @@ void cSelectLandingMenu::run()
 				{
 					selectLandingSite();
 					sendLandingCoords( c );
-					font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), LATIN_BIG );
+					font->showTextCentered( 320, 235, lngPack.i18n ( "Text~Multiplayer~Waiting" ), FONT_LATIN_BIG );
 					SHOW_SCREEN
 					mouse->draw( false, screen );
 					c.landingState = LANDING_POSITION_OK;
@@ -3339,11 +3340,11 @@ void cSelectLandingMenu::selectLandingSite()
 		drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, buffer );
 		if( c.landingState == LANDING_POSITION_TOO_CLOSE)
 		{
-			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Too_Close"),LATIN_BIG );
+			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Too_Close"),FONT_LATIN_BIG );
 		}
 		else if ( c.landingState == LANDING_POSITION_WARNING)
 		{
-			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Warning"),LATIN_BIG );
+			font->showTextAsBlock( rTextArea, lngPack.i18n("Text~Comp~Landing_Warning"),FONT_LATIN_BIG );
 
 		}
 	}
@@ -3452,8 +3453,8 @@ void cSelectLandingMenu::drawHud()
 // shows list of selected units for landing (box upper middle)
 void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surface *surface )
 {
-	SDL_Rect scr = {375,32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
-	SDL_Rect dest,text = {DIALOG_X + 375,DIALOG_Y + 32,80,font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect scr = {375,32,80,font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
+	SDL_Rect dest,text = {DIALOG_X + 375,DIALOG_Y + 32,80,font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
 	scr.x=330;scr.y=11;
 	scr.w=128;scr.h=222;
 	dest.x = scr.x + DIALOG_X;
@@ -3499,15 +3500,15 @@ void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surfac
 		}
 		// Text ausgeben:
 
-		if ( font->getTextWide ( ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, ptr.UnitID.getUnitData()->name, LATIN_SMALL_WHITE);
+			font->showText ( text, ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE);
 		}
 
 
@@ -3519,19 +3520,19 @@ void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surfac
 
 			if(value == 0)
 			{
-				font->showText(text.x,text.y+10, "(empty)", LATIN_SMALL_WHITE);
+				font->showText(text.x,text.y+10, "(empty)", FONT_LATIN_SMALL_WHITE);
 			}
 			else if(value <= maxval / 4)
 			{
-				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_RED);
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", FONT_LATIN_SMALL_RED);
 			}
 			else if(value <= maxval / 2)
 			{
-				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_YELLOW);
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", FONT_LATIN_SMALL_YELLOW);
 			}
 			else
 			{
-				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", LATIN_SMALL_GREEN);
+				font->showText(text.x,text.y+10, " ("+iToStr(value)+"/"+iToStr(maxval)+")", FONT_LATIN_SMALL_GREEN);
 			}
 
 
@@ -3595,8 +3596,8 @@ static void CreateSelectionList(cList<sHUp*>& selection, cList<sHUp*>& images, i
 static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const offset, bool const beschreibung, int const credits, cPlayer* const p)
 {
 	sHUp *ptr;
-	SDL_Rect dest,text = {DIALOG_X + 530, DIALOG_Y +  70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
-	SDL_Rect scr = {530, 70, 72, font->getFontHeight(LATIN_SMALL_WHITE)};
+	SDL_Rect dest,text = {DIALOG_X + 530, DIALOG_Y +  70, 72, font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
+	SDL_Rect scr = {530, 70, 72, font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
 	scr.x=479;scr.y=52;
 	scr.w=dest.w=150;scr.h=dest.h=330;
 	dest.x = scr.x + DIALOG_X;
@@ -3735,7 +3736,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 		if ( ptr->vehicle )
 		{
 			sTmp = ptr->UnitID.getUnitData()->name;
-			font->showTextCentered(DIALOG_X +616, text.y, iToStr(ptr->UnitID.getUnitData()->iBuilt_Costs), LATIN_SMALL_YELLOW);
+			font->showTextCentered(DIALOG_X +616, text.y, iToStr(ptr->UnitID.getUnitData()->iBuilt_Costs), FONT_LATIN_SMALL_YELLOW);
 		}
 		else
 		{
@@ -3743,15 +3744,15 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 		}
 
 
-		if ( font->getTextWide ( sTmp, LATIN_SMALL_WHITE ) > text.w )
+		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
-			text.y -= font->getFontHeight(LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(LATIN_SMALL_WHITE) / 2;
+			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, LATIN_SMALL_WHITE);
+			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 
@@ -3842,7 +3843,7 @@ void cMultiPlayerMenu::showChatLog()
 		{
 			sMsg.erase( sMsg.length()-1 );
 		}
-		font->showText( 25, 387-12*i, sMsg, LATIN_NORMAL, buffer );
+		font->showText( 25, 387-12*i, sMsg, FONT_LATIN_NORMAL, buffer );
 	}
 	SHOW_SCREEN
 	mouse->draw( false, screen );
@@ -3850,7 +3851,6 @@ void cMultiPlayerMenu::showChatLog()
 
 void cMultiPlayerMenu::runNetworkMenu()
 {
-	bool bShowCursor = true;
 	int b, lb = 0, lx = -1, ly = -1;
 	string ChatStr, stmp;
 	SDL_Rect scr;
@@ -3945,15 +3945,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 		}
 
 		// do the focus
-		if ( DoKeyInp ( keystate ) )
+		if ( InputHandler->checkHasBeenInput() )
 		{
-			bShowCursor = true;
-		}
-		if ( bShowCursor )
-		{
-			static bool CursorOn = false;
-			bShowCursor = false;
-			CursorOn = !CursorOn;
 			int i_tmpRedrawLength = 20; //20 choosen by random to make sure we erase _all_ the old garbage on screen - should be calculated in a better way when fonts come from ttf and not from jpg -- beko
 			switch ( iFocus )
 			{
@@ -3973,30 +3966,27 @@ void cMultiPlayerMenu::runNetworkMenu()
 					*			-- beko
 					*/
 				case FOCUS_IP:
-					i_tmpRedrawLength += font->getTextWide(InputStr);
-					while ( font->getTextWide(InputStr) > 176 )
-					{
-						InputStr.erase ( InputStr.end()-1 );
-					}
-					stmp = InputStr; stmp += "_";
+					i_tmpRedrawLength += font->getTextWide( InputHandler->getInputStr( CURSOR_SHOW ) );
+					InputHandler->cutToLength ( 176 );
+					stmp = InputHandler->getInputStr();
 
-					sIP = InputStr;
+					sIP = InputHandler->getInputStr( CURSOR_DISABLED );
 					scr.x=20;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
 					font->showText(20,260, stmp);
 					break;
 				case FOCUS_PORT:
-					i_tmpRedrawLength += font->getTextWide(InputStr);
-					if ( atoi ( InputStr.c_str() ) > 65535 ) //ports over 65535 are impossible
+					i_tmpRedrawLength += font->getTextWide(InputHandler->getInputStr( CURSOR_SHOW ));
+					if ( atoi ( InputHandler->getInputStr( CURSOR_DISABLED ).c_str() ) > 65535 ) //ports over 65535 are impossible
 					{
 						iPort = 58600; //default Port 58600 - why is this our default Port? -- beko
-						stmp = "58600_";
+						stmp = "58600";
 					}
 					else
 					{
-						stmp = InputStr + "_";
-						iPort = atoi ( InputStr.c_str() );
+						stmp = InputHandler->getInputStr();
+						iPort = atoi ( InputHandler->getInputStr( CURSOR_DISABLED ).c_str() );
 					}
 					scr.x=228;scr.y=260;
 					scr.w=i_tmpRedrawLength;scr.h=16;
@@ -4004,16 +3994,13 @@ void cMultiPlayerMenu::runNetworkMenu()
 					font->showText(228,260, stmp);
 					break;
 				case FOCUS_NAME:
-					i_tmpRedrawLength  += font->getTextWide(InputStr);
-					while ( font->getTextWide(InputStr) > 98 )
-					{
-						InputStr.erase ( InputStr.end()-1 );
-					}
-					stmp = InputStr + "_";
+					i_tmpRedrawLength  += font->getTextWide(InputHandler->getInputStr( CURSOR_SHOW ));
+					InputHandler->cutToLength ( 98 );
+					stmp = InputHandler->getInputStr();
 
-					if ( strcmp ( ActualPlayer->name.c_str(),InputStr.c_str() ) )
+					if ( strcmp ( ActualPlayer->name.c_str(),InputHandler->getInputStr( CURSOR_DISABLED ).c_str() ) )
 					{
-						ActualPlayer->name=InputStr;
+						ActualPlayer->name=InputHandler->getInputStr( CURSOR_DISABLED );
 						displayPlayerList();
 						sendIdentification();
 					}
@@ -4025,14 +4012,11 @@ void cMultiPlayerMenu::runNetworkMenu()
 					font->showText(352,260, stmp);
 					break;
 				case FOCUS_CHAT:
-					i_tmpRedrawLength += font->getTextWide(InputStr);
-					while ( font->getTextWide(InputStr) > 410 - font->getTextWide ( ( ActualPlayer->name+": " ) ) ) //keeping playername lenght in mind
-					{
-						InputStr.erase ( InputStr.end()-1 );
-					}
-					stmp = InputStr + "_";
+					i_tmpRedrawLength += font->getTextWide( InputHandler->getInputStr() );
+					InputHandler->cutToLength ( 410-font->getTextWide ( ( ActualPlayer->name+": " ) ) );
+					stmp = InputHandler->getInputStr();
 
-					ChatStr = InputStr;
+					ChatStr = InputHandler->getInputStr( CURSOR_DISABLED );
 					scr.x=20;scr.y=423;
 					scr.w=i_tmpRedrawLength;scr.h=16;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&scr );
@@ -4334,7 +4318,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 					if ( network->isHost() ) addChatLog ( ChatStr );
 				}
 				ChatStr="";
-				if ( iFocus==FOCUS_CHAT ) InputStr = "";
+				if ( iFocus==FOCUS_CHAT ) InputHandler->setInputStr ( "" );
 				scr.x = 20;
 				scr.y = 423;
 				scr.w = 430;
@@ -4358,25 +4342,24 @@ void cMultiPlayerMenu::runNetworkMenu()
 			if ( !bHost && b && !lb && mouse->x >= 20 && mouse->x < 20+188 && mouse->y >= 250 && mouse->y < 250+30 )
 			{
 				iFocus = FOCUS_IP;
-				InputStr = sIP;
+				InputHandler->setInputStr ( sIP );
 			}
 			else if( b && !lb && mouse->x >= 228 && mouse->x < 228+108 && mouse->y >= 250 && mouse->y < 250+30 )
 			{
 				iFocus = FOCUS_PORT;
-				InputStr = iToStr( iPort );
+				InputHandler->setInputStr ( iToStr( iPort ) );
 			}
 			else if( b && !lb && mouse->x >= 352 && mouse->x < 352+108 && mouse->y >= 250 && mouse->y < 250+30 )
 			{
 				iFocus = FOCUS_NAME;
-				InputStr = ActualPlayer->name;
+				InputHandler->setInputStr ( ActualPlayer->name );
 			}
 			else if( b && !lb && mouse->x >= 20 && mouse->x < 20+425 && mouse->y >= 420 && mouse->y < 420+30 )
 			{
 				iFocus = FOCUS_CHAT;
-				InputStr = ChatStr;
+				InputHandler->setInputStr ( ChatStr );
 			}
-
-			bShowCursor = true;
+			InputHandler->setInputState ( true );
 
 			scr.x = 20;
 			scr.y = 260;
@@ -4573,7 +4556,7 @@ void cMultiPlayerMenu::runNewGame ()
 
 		cSelectLandingMenu landingMenu( Map, clientLandingCoordsList, (int) PlayerList.Size(), ActualPlayer->Nr );
 		landingMenu.run();
-	
+
 		// finished selecting landing positions
 		// make all landings
 		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
@@ -5434,7 +5417,6 @@ int ShowDateiMenu ( bool bSave )
 	SDL_Rect scr;
 	int LastMouseX=0,LastMouseY=0,LastB=0,x,b,y,offset=0,selected=-1;
 	bool UpPressed=false, DownPressed=false;
-	bool Cursor=true;
 	Uint8 *keystate;
 	cList<string> *files;
 	cList<sSaveFile*> savefiles;
@@ -5480,7 +5462,7 @@ int ShowDateiMenu ( bool bSave )
 	// Dateien suchen und Anzeigen:
 	files = getFilesOfDirectory ( SettingsData.sSavesPath );
 	loadFiles ( files, savefiles, 0 );
-	displayFiles ( savefiles, offset, selected, false, false, false, rDialog);
+	displayFiles ( savefiles, offset, selected, false, false, rDialog);
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
 	mouse->GetBack ( buffer );
@@ -5505,18 +5487,9 @@ int ShowDateiMenu ( bool bSave )
 			break;
 		}
 
-		if ( DoKeyInp ( keystate ) || timer2 )
+		if ( InputHandler->checkHasBeenInput() )
 		{
-			if ( Cursor )
-			{
-				Cursor=false;
-				displayFiles ( savefiles, offset, selected, true, true, false, rDialog );
-			}
-			else
-			{
-				Cursor=true;
-				displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
-			}
+			displayFiles ( savefiles, offset, selected, bSave, false, rDialog );
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
@@ -5533,7 +5506,7 @@ int ShowDateiMenu ( bool bSave )
 		{
 			if ( b )
 			{
-				InputStr = "";
+				InputHandler->setInputStr ( "" );
 				int checkx = rDialog.x+15, checky = rDialog.y+45;
 				for ( int i = 0; i<10; i++ )
 				{
@@ -5546,9 +5519,10 @@ int ShowDateiMenu ( bool bSave )
 						selected = i+offset;
 					checky+=75;
 				}
-				displayFiles ( savefiles, offset, selected, bSave, false, true, rDialog );
+				displayFiles ( savefiles, offset, selected, bSave, true, rDialog );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
+				if ( bSave ) InputHandler->setInputState ( true );
 			}
 		}
 
@@ -5558,6 +5532,7 @@ int ShowDateiMenu ( bool bSave )
 		if (btn_back.CheckClick(x, y, down, up))
 		{
 			delete files;
+			InputHandler->setInputState ( false );
 			return -1;
 		}
 
@@ -5567,6 +5542,7 @@ int ShowDateiMenu ( bool bSave )
 			mouse->draw ( false,screen );
 			Client->bExit = true;
 			delete files;
+			InputHandler->setInputState ( false );
 			return -1;
 		}
 
@@ -5575,7 +5551,7 @@ int ShowDateiMenu ( bool bSave )
 			// TODO: make sure the game is halted befor saving
 			if ( selected != -1 )
 			{
-				displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
+				displayFiles ( savefiles, offset, selected, true, false, rDialog );
 				if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
 				else
 				{
@@ -5596,18 +5572,20 @@ int ShowDateiMenu ( bool bSave )
 						loadFiles ( files, savefiles, offset );
 						selected = -1;
 					}
-					displayFiles ( savefiles, offset, selected, true, false, false, rDialog );
+					displayFiles ( savefiles, offset, selected, true, false, rDialog );
 				}
 			}
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
+			InputHandler->setInputState ( false );
 		}
 
 		if (!bSave && btn_load.CheckClick(x, y, down, up))
 		{
+			InputHandler->setInputState ( false );
 			if ( selected != -1 )
 			{
-				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, rDialog );
 				delete files;
 				return 1;
 			}
@@ -5634,13 +5612,14 @@ int ShowDateiMenu ( bool bSave )
 					offset-=10;
 					selected=-1;
 				}
-				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, rDialog );
 				scr.x=96;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowUp );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				UpPressed=false;
 			}
+			InputHandler->setInputState ( false );
 		}
 		else if ( UpPressed )
 		{
@@ -5649,6 +5628,7 @@ int ShowDateiMenu ( bool bSave )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			UpPressed=false;
+			InputHandler->setInputState ( false );
 		}
 		// Down-Button:
 		if ( x >= rArrowDown.x && x < rArrowDown.x + rArrowDown.w && y >= rArrowDown.y && y < rArrowDown.y + rArrowDown.h )
@@ -5670,13 +5650,14 @@ int ShowDateiMenu ( bool bSave )
 					loadFiles ( files, savefiles, offset );
 					selected=-1;
 				}
-				displayFiles ( savefiles, offset, selected, false, false, false, rDialog );
+				displayFiles ( savefiles, offset, selected, false, false, rDialog );
 				scr.x=96+28*2;
 				SDL_BlitSurface ( GraphicsData.gfx_menu_buttons,&scr,buffer,&rArrowDown );
 				SHOW_SCREEN
 				mouse->draw ( false,screen );
 				DownPressed=false;
 			}
+			InputHandler->setInputState ( false );
 		}
 		else if ( DownPressed )
 		{
@@ -5685,6 +5666,7 @@ int ShowDateiMenu ( bool bSave )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 			DownPressed=false;
+			InputHandler->setInputState ( false );
 		}
 
 		LastMouseX=x;LastMouseY=y;
@@ -5697,6 +5679,7 @@ int ShowDateiMenu ( bool bSave )
 		delete savefiles[0];
 		savefiles.Delete( 0 );
 	}
+	InputHandler->setInputState ( false );
 	return -1;
 }
 
@@ -5735,7 +5718,7 @@ void loadFiles ( cList<string> *filesList, cList<sSaveFile*> &savesList, int off
 	}
 }
 
-void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bCursor, bool bFirstSelect, SDL_Rect rDialog )
+void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool bSave, bool bFirstSelect, SDL_Rect rDialog )
 {
 	SDL_Rect rect, src;
 	int i, x = rDialog.x + 35, y = rDialog.y + 72;
@@ -5759,11 +5742,11 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 		SDL_BlitSurface ( GraphicsData.gfx_load_save_menu, &src, buffer, &rect );
 		if ( i + offset == selected )
 		{
-			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), LATIN_BIG_GOLD);
+			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), FONT_LATIN_BIG_GOLD);
 		}
 		else
 		{
-			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), LATIN_BIG);
+			font->showTextCentered(x, y, iToStr ( offset + i + 1 ), FONT_LATIN_BIG);
 		}
 
 		rect.y += 76;
@@ -5805,39 +5788,45 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 		}
 		if ( bSave )
 		{
+			bool found = false;
 			for ( unsigned int j = 0; j < savesList.Size() || j == 0; j++ )
 			{
 				if ( savesList.Size() > 0 && savesList[j]->number == i )
 				{
 					string gamename = savesList[j]->gamename;
 					// cut filename and display it
-					if ( gamename.length() > 15 ) gamename.erase ( 15 );
 					if ( i == selected )
 					{
-						if ( bFirstSelect ) InputStr = gamename;
-						else gamename = InputStr;
+						if ( bFirstSelect )
+						{
+							InputHandler->setInputStr ( gamename );
+							InputHandler->cutToLength ( 145 );
+						}
+						else gamename = InputHandler->getInputStr();
 
-						if ( bCursor ) gamename += "_";
-
-						SaveLoadFile = InputStr;
+						SaveLoadFile = InputHandler->getInputStr( CURSOR_DISABLED );
 						SaveLoadNumber = i;
+					}
+					while ( font->getTextWide ( gamename ) > 145 )
+					{
+						gamename.erase ( gamename.length()-1 );
 					}
 					font->showText(x, y, gamename);
 					// display time and gametype
 					font->showText(x, y-23, savesList[j]->time);
 					font->showText(x+113,y-23, savesList[j]->type);
+					found = true;
 					break;
 				}
-				else if ( i == selected )
-				{
-					string gamename;
-					if ( InputStr.length() > 15 ) InputStr.erase ( 15 );
-					gamename = InputStr;
-					if ( bCursor ) gamename += "_";
-					SaveLoadFile = InputStr;
-					SaveLoadNumber = i;
-					font->showText(x, y, gamename);
-				}
+			}
+			if ( !found && i == selected )
+			{
+				string gamename;
+				InputHandler->cutToLength ( 145 );
+				gamename = InputHandler->getInputStr();
+				SaveLoadFile = InputHandler->getInputStr( CURSOR_DISABLED );
+				SaveLoadNumber = i;
+				font->showText(x, y, gamename);
 			}
 		}
 		else
