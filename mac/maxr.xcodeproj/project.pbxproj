@@ -19,9 +19,7 @@
 		9FC0DBCE0EE2B17400F23D2C /* events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB860EE2B17400F23D2C /* events.cpp */; };
 		9FC0DBCF0EE2B17400F23D2C /* extendedtinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB880EE2B17400F23D2C /* extendedtinyxml.cpp */; };
 		9FC0DBD00EE2B17400F23D2C /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB8A0EE2B17400F23D2C /* files.cpp */; };
-		9FC0DBD10EE2B17400F23D2C /* fonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB8C0EE2B17400F23D2C /* fonts.cpp */; };
 		9FC0DBD30EE2B17400F23D2C /* hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB900EE2B17400F23D2C /* hud.cpp */; };
-		9FC0DBD40EE2B17400F23D2C /* keyinp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB920EE2B17400F23D2C /* keyinp.cpp */; };
 		9FC0DBD50EE2B17400F23D2C /* keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB940EE2B17400F23D2C /* keys.cpp */; };
 		9FC0DBD60EE2B17400F23D2C /* language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB960EE2B17400F23D2C /* language.cpp */; };
 		9FC0DBD70EE2B17400F23D2C /* loaddata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB980EE2B17400F23D2C /* loaddata.cpp */; };
@@ -54,6 +52,8 @@
 		9FC0DD660EE2D6DF00F23D2C /* SDL.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF50EE2B29A00F23D2C /* SDL.framework */; };
 		9FC0DD670EE2D6DF00F23D2C /* SDL_mixer.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */; };
 		9FC0DD680EE2D6DF00F23D2C /* SDL_net.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */; };
+		9FC2DCBD0F17B2D60022714E /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2DCB90F17B2D60022714E /* input.cpp */; };
+		9FC2DCBE0F17B2D60022714E /* unifonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2DCBB0F17B2D60022714E /* unifonts.cpp */; };
 		9FE0E66E0EE2F56C0038B4AF /* maxr.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FE0E66D0EE2F56C0038B4AF /* maxr.icns */; };
 /* End PBXBuildFile section */
 
@@ -102,12 +102,8 @@
 		9FC0DB890EE2B17400F23D2C /* extendedtinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extendedtinyxml.h; path = ../extendedtinyxml.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB8A0EE2B17400F23D2C /* files.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = files.cpp; path = ../files.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB8B0EE2B17400F23D2C /* files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = files.h; path = ../files.h; sourceTree = SOURCE_ROOT; };
-		9FC0DB8C0EE2B17400F23D2C /* fonts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fonts.cpp; path = ../fonts.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DB8D0EE2B17400F23D2C /* fonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fonts.h; path = ../fonts.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB900EE2B17400F23D2C /* hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hud.cpp; path = ../hud.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB910EE2B17400F23D2C /* hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hud.h; path = ../hud.h; sourceTree = SOURCE_ROOT; };
-		9FC0DB920EE2B17400F23D2C /* keyinp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = keyinp.cpp; path = ../keyinp.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DB930EE2B17400F23D2C /* keyinp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keyinp.h; path = ../keyinp.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB940EE2B17400F23D2C /* keys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = keys.cpp; path = ../keys.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB950EE2B17400F23D2C /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../keys.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB960EE2B17400F23D2C /* language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = language.cpp; path = ../language.cpp; sourceTree = SOURCE_ROOT; };
@@ -163,6 +159,10 @@
 		9FC0DC2B0EE2B2CB00F23D2C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		9FC0DC310EE2B4A700F23D2C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		9FC0DC320EE2B4A700F23D2C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		9FC2DCB90F17B2D60022714E /* input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input.cpp; path = ../input.cpp; sourceTree = SOURCE_ROOT; };
+		9FC2DCBA0F17B2D60022714E /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = input.h; path = ../input.h; sourceTree = SOURCE_ROOT; };
+		9FC2DCBB0F17B2D60022714E /* unifonts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unifonts.cpp; path = ../unifonts.cpp; sourceTree = SOURCE_ROOT; };
+		9FC2DCBC0F17B2D60022714E /* unifonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unifonts.h; path = ../unifonts.h; sourceTree = SOURCE_ROOT; };
 		9FE0E66D0EE2F56C0038B4AF /* maxr.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = maxr.icns; path = Resources/maxr.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -220,12 +220,10 @@
 				9FC0DB890EE2B17400F23D2C /* extendedtinyxml.h */,
 				9FC0DB8A0EE2B17400F23D2C /* files.cpp */,
 				9FC0DB8B0EE2B17400F23D2C /* files.h */,
-				9FC0DB8C0EE2B17400F23D2C /* fonts.cpp */,
-				9FC0DB8D0EE2B17400F23D2C /* fonts.h */,
 				9FC0DB900EE2B17400F23D2C /* hud.cpp */,
 				9FC0DB910EE2B17400F23D2C /* hud.h */,
-				9FC0DB920EE2B17400F23D2C /* keyinp.cpp */,
-				9FC0DB930EE2B17400F23D2C /* keyinp.h */,
+				9FC2DCB90F17B2D60022714E /* input.cpp */,
+				9FC2DCBA0F17B2D60022714E /* input.h */,
 				9FC0DB940EE2B17400F23D2C /* keys.cpp */,
 				9FC0DB950EE2B17400F23D2C /* keys.h */,
 				9FC0DB960EE2B17400F23D2C /* language.cpp */,
@@ -271,6 +269,8 @@
 				9FC0DBBE0EE2B17400F23D2C /* tinyxml.h */,
 				9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */,
 				9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */,
+				9FC2DCBB0F17B2D60022714E /* unifonts.cpp */,
+				9FC2DCBC0F17B2D60022714E /* unifonts.h */,
 				9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */,
 				9FC0DBC20EE2B17400F23D2C /* upgradecalculator.h */,
 				9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */,
@@ -383,9 +383,7 @@
 				9FC0DBCE0EE2B17400F23D2C /* events.cpp in Sources */,
 				9FC0DBCF0EE2B17400F23D2C /* extendedtinyxml.cpp in Sources */,
 				9FC0DBD00EE2B17400F23D2C /* files.cpp in Sources */,
-				9FC0DBD10EE2B17400F23D2C /* fonts.cpp in Sources */,
 				9FC0DBD30EE2B17400F23D2C /* hud.cpp in Sources */,
-				9FC0DBD40EE2B17400F23D2C /* keyinp.cpp in Sources */,
 				9FC0DBD50EE2B17400F23D2C /* keys.cpp in Sources */,
 				9FC0DBD60EE2B17400F23D2C /* language.cpp in Sources */,
 				9FC0DBD70EE2B17400F23D2C /* loaddata.cpp in Sources */,
@@ -412,6 +410,8 @@
 				9FC0DBED0EE2B17400F23D2C /* vehicles.cpp in Sources */,
 				9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */,
 				9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */,
+				9FC2DCBD0F17B2D60022714E /* input.cpp in Sources */,
+				9FC2DCBE0F17B2D60022714E /* unifonts.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
