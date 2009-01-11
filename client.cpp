@@ -5366,7 +5366,6 @@ void cClient::destroyUnit( cVehicle* vehicle )
 
 void cClient::destroyUnit(cBuilding *building)
 {
-	cBuildingIterator bi;
 	int offset = building->PosX + building->PosY * Map->size;
 
 	//delete all buildings on the field
@@ -5375,7 +5374,7 @@ void cClient::destroyUnit(cBuilding *building)
 	if ( topBuilding && topBuilding->data.is_big )
 	{
 
-		bi = Map->fields[offset + 1].getBuildings();
+		cBuildingIterator bi = Map->fields[offset + 1].getBuildings();
 		while ( bi ) { deleteUnit( bi ); bi++; }
 
 		bi = Map->fields[offset + Map->size].getBuildings();
@@ -5391,7 +5390,7 @@ void cClient::destroyUnit(cBuilding *building)
 		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
 	
-	bi = Map->fields[offset].getBuildings();
+	cBuildingIterator bi = Map->fields[offset].getBuildings();
 	while ( bi ) { deleteUnit( bi ); bi++; }
 
 }
