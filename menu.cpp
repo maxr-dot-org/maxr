@@ -4562,9 +4562,12 @@ void cMultiPlayerMenu::runNewGame ()
 		{
 			cPlayer *Player = PlayerList[i];
 			sClientLandData& c = clientLandingCoordsList[Player->Nr];
-			cList<sLanding>& landingList = clientLandingVehicleList[Player->Nr];
+			cList<sLanding>& clientLandingList = clientLandingVehicleList[Player->Nr];
 
-			Server->makeLanding(c.iLandX, c.iLandY, Player, landingList, Options.FixedBridgeHead);
+			if ( i == ActualPlayer->Nr )
+				Server->makeLanding(c.iLandX, c.iLandY, Player, landingList, Options.FixedBridgeHead);
+			else
+				Server->makeLanding(c.iLandX, c.iLandY, Player, clientLandingList, Options.FixedBridgeHead);
 		}
 
 		delete[] clientLandingCoordsList;
