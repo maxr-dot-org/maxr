@@ -3254,13 +3254,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DO_START_WORK:
 		{
-			int offset = message->popInt32();
-			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
+			int iID = message->popInt32();
 
-			cBuilding* building = Client->Map->GO[offset].top;
+			cBuilding* building = getBuildingFromID( iID);
 			if ( building == NULL )
 			{
-				cLog::write(" Client: Can't start work of building: Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
+				cLog::write(" Client: Can't start work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_ERROR);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3285,13 +3284,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DO_STOP_WORK:
 		{
-			int offset = message->popInt32();
-			if (offset < 0 || offset > Client->Map->size * Client->Map->size ) break;
-
-			cBuilding* building = Client->Map->GO[offset].top;
+			int iID = message->popInt32();
+			
+			cBuilding* building = getBuildingFromID(iID);
 			if ( building == NULL )
 			{
-				cLog::write(" Client: Can't stop work of building: Unknown building at offset: "  + iToStr( offset ) , cLog::eLOG_TYPE_NET_WARNING);
+				cLog::write(" Client: Can't stop work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of building
 				break;
 			}

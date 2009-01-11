@@ -38,16 +38,14 @@ void sendWantToEndTurn()
 void sendWantStartWork( cBuilding* building)
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_START_WORK );
-	message->pushInt16(building->PosX);
-	message->pushInt16(building->PosY);
+	message->pushInt32(building->iID);
 	Client->sendNetMessage(message);
 }
 
 void sendWantStopWork( cBuilding* building)
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_WORK );
-	message->pushInt16( building->PosX);
-	message->pushInt16( building->PosY);
+	message->pushInt32( building->iID);
 	Client->sendNetMessage(message);
 }
 

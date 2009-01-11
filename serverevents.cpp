@@ -295,7 +295,7 @@ void sendDoStartWork( cBuilding* building )
 			message->pushInt16( subbase->OilProd );
 			message->pushInt16( subbase->GoldProd );
 		}
-		message->pushInt32( offset );
+		message->pushInt32( building->iID );
 
 		Server->sendNetMessage( message, player->Nr );
 	}
@@ -329,7 +329,7 @@ void sendDoStopWork( cBuilding* building )
 			message->pushInt16( subbase->OilProd );
 			message->pushInt16( subbase->GoldProd );
 		}
-		message->pushInt32( offset );
+		message->pushInt32( building->iID );
 
 		Server->sendNetMessage( message, player->Nr );
 	}

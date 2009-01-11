@@ -287,13 +287,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_WANT_START_WORK:
 		{
-			int PosY = message->popInt16();
-			int PosX = message->popInt16();
+			int iID = message->popInt32();
 
-			//check for invalid messages
-			if ( PosY < 0 || PosY > Map->size ) break;
-			if ( PosX < 0 || PosX > Map->size ) break;
-			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
+			cBuilding* building = getBuildingFromID( iID );
 			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
 
 			//handle message
@@ -302,13 +298,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_WANT_STOP_WORK:
 		{
-			int PosY = message->popInt16();
-			int PosX = message->popInt16();
-
-			//check for invalid messages
-			if ( PosY < 0 || PosY > Map->size ) break;
-			if ( PosX < 0 || PosX > Map->size ) break;
-			cBuilding* building = Map->GO[PosX + PosY*Map->size].top;
+			int iID = message->popInt32();
+			
+			cBuilding* building = getBuildingFromID( iID );
 			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
 
 			//handle message
