@@ -558,9 +558,16 @@ int cClient::checkUser( bool bChange )
 			}
 		}
 	}
-	cVehicle* overVehicle = Map->fields[mouse->GetKachelOff()].getVehicles();
-	cVehicle* overPlane = Map->fields[mouse->GetKachelOff()].getPlanes();
-	cBuilding* overBuilding = Map->fields[mouse->GetKachelOff()].getTopBuilding();
+	cVehicle* overVehicle = NULL;
+	cVehicle* overPlane = NULL;
+	cBuilding* overBuilding = NULL;
+	int offset = mouse->GetKachelOff();
+	if ( offset > 0 )
+	{
+		overVehicle  = Map->fields[offset].getVehicles();
+		overPlane    = Map->fields[offset].getPlanes();
+		overBuilding = Map->fields[offset].getTopBuilding();
+	}
 	if ( iMouseButton && !iLastMouseButton && iMouseButton != 4 )
 	{
 		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
