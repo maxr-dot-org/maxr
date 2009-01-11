@@ -1020,6 +1020,17 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		drawStatus();
 	}
+
+	//attack job debug output
+	if ( Client->bDebugAjobs )
+	{
+		cBuilding* serverBuilding = NULL;
+		if ( Server ) serverBuilding = Server->Map->fields[PosX + PosY*Server->Map->size].getBuildings();
+		if ( bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( Attacking ) font->showText(dest->x + 1,dest->y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest->x + 1,dest->y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+	}
 }
 
 // Liefert die Anzahl der Menüpunkte:
@@ -1126,12 +1137,8 @@ void cBuilding::SelfDestructionMenu ( void )
 
 	if ( showSelfdestruction() )
 	{
-		// Destroy both (platform and top building) if there is a platform and a top building on this place
-		if( data.is_platform && Client->Map->GO[PosX + PosY*Client->Map->size].top )
-		{
-			//game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
-		}
-		//game->engine->DestroyObject ( PosX + PosY*Client->Map->size, false );
+		//TODO: self destruction
+		
 	}
 
 }
@@ -2439,8 +2446,8 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 {
 	if ( offset < 0 || offset > Map->size*Map->size ) return false;
 
-	if ( data.can_load == TRANS_AIR && Map->GO[offset].plane ) return canLoad ( Map->GO[offset].plane );
-	if ( data.can_load != TRANS_AIR && Map->GO[offset].vehicle ) return canLoad ( Map->GO[offset].vehicle );
+	if ( data.can_load == TRANS_AIR ) return canLoad ( Map->fields[offset].getPlanes() );
+	if ( data.can_load != TRANS_AIR ) return canLoad ( Map->fields[offset].getVehicles() );
 
 	return false;
 }
@@ -2448,6 +2455,8 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 // Prüft, ob das vehicle an der Position geladen werden kann:
 bool cBuilding::canLoad ( cVehicle *Vehicle )
 {
+	if ( !Vehicle ) return false;
+
 	if ( data.cargo == data.max_cargo ) return false;
 
 	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
@@ -5966,6 +5975,8 @@ void cBuilding::ShowBuildMenu ( void )
 
 	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
+		const sVehicle& vehicle = UnitsData.vehicle[i];
+
 		SDL_Surface *sf;
 		bool land = false, water = false;
 
@@ -5978,19 +5989,20 @@ void cBuilding::ShowBuildMenu ( void )
 				x -= 3;
 				y += 1;
 			}
+			else if ( j == 5 || j == 7 )
+			{
+				x += 3;
+			}
 			else
-				if ( j == 5 || j == 7 )
-				{
-					x += 3;
-				}
-				else
-				{
-					x++;
-				}
+			{
+				x++;
+			}
 
 			int off = x + y * Client->Map->size;
+			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
+			while ( bi && (bi->data.is_connector || bi->data.is_expl_mine) ) bi++;
 
-			if ( !Client->Map->IsWater ( off, true, true ) || ( Client->Map->GO[off].base && ( Client->Map->GO[off].base->data.is_bridge || Client->Map->GO[off].base->data.is_platform || Client->Map->GO[off].base->data.is_road ) ) )
+			if ( !Client->Map->IsWater ( off, true, true ) || bi && (( bi->data.is_road || bi->data.is_bridge || bi->data.is_platform ) ))
 			{
 				land = true;
 			}
@@ -6000,46 +6012,39 @@ void cBuilding::ShowBuildMenu ( void )
 			}
 		}
 
-		if ( UnitsData.vehicle[i].data.can_drive == DRIVE_SEA && !water )
+		if ( vehicle.data.can_drive == DRIVE_SEA && !water )
 			continue;
-		else
-			if ( UnitsData.vehicle[i].data.can_drive == DRIVE_LAND && !land )
-				continue;
-
-		if ( data.can_build == BUILD_AIR && UnitsData.vehicle[i].data.can_drive != DRIVE_AIR )
+		else if ( vehicle.data.can_drive == DRIVE_LAND && !land )
 			continue;
-		else
-			if ( data.can_build == BUILD_BIG && !UnitsData.vehicle[i].data.build_by_big )
-				continue;
-			else
-				if ( data.can_build == BUILD_SEA && UnitsData.vehicle[i].data.can_drive != DRIVE_SEA )
-					continue;
-				else
-					if ( data.can_build == BUILD_SMALL && ( UnitsData.vehicle[i].data.can_drive == DRIVE_AIR || UnitsData.vehicle[i].data.can_drive == DRIVE_SEA || UnitsData.vehicle[i].data.build_by_big || UnitsData.vehicle[i].data.is_human ) )
-						continue;
-					else
-						if ( data.can_build == BUILD_MAN && !UnitsData.vehicle[i].data.is_human )
-							continue;
-						else
-							if ( !data.build_alien && UnitsData.vehicle[i].data.is_alien )
-								continue;
-							else
-								if ( data.build_alien && !UnitsData.vehicle[i].data.is_alien )
-									continue;
 
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
+		if ( data.can_build == BUILD_AIR && vehicle.data.can_drive != DRIVE_AIR )
+			continue;
+		else if ( data.can_build == BUILD_BIG && !vehicle.data.build_by_big )
+			continue;
+		else if ( data.can_build == BUILD_SEA && vehicle.data.can_drive != DRIVE_SEA )
+			continue;
+		else if ( data.can_build == BUILD_SMALL && ( vehicle.data.can_drive == DRIVE_AIR ||vehicle.data.can_drive == DRIVE_SEA || vehicle.data.build_by_big || vehicle.data.is_human ) )
+			continue;
+		else if ( data.can_build == BUILD_MAN && !vehicle.data.is_human )
+			continue;
+		else if ( !data.build_alien && vehicle.data.is_alien )
+			continue;
+		else if ( data.build_alien && !vehicle.data.is_alien )
+			continue;
 
-		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.vehicle[i].img[0]->w, UnitsData.vehicle[i].img[0]->h, 32, 0, 0, 0, 0 );
+		ScaleSurfaceAdv2 ( vehicle.img_org[0], vehicle.img[0], vehicle.img_org[0]->w / 2, vehicle.img_org[0]->h / 2 );
+
+		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, vehicle.img[0]->w, vehicle.img[0]->h, 32, 0, 0, 0, 0 );
 
 		SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
 
 		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
 
-		SDL_BlitSurface ( UnitsData.vehicle[i].img[0], NULL, sf, NULL );
+		SDL_BlitSurface ( vehicle.img[0], NULL, sf, NULL );
 
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
+		ScaleSurfaceAdv2 ( vehicle.img_org[0], vehicle.img[0], (int) (vehicle.img_org[0]->w* newzoom ), (int) ( vehicle.img_org[0]->h* newzoom ) );
 
-		sBuildStruct* const n = new sBuildStruct(sf, UnitsData.vehicle[i].data.ID);
+		sBuildStruct* const n = new sBuildStruct(sf, vehicle.data.ID);
 		images.Add( n );
 	}
 

@@ -738,6 +738,17 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		drawStatus();
 	}
 
+	//attack job debug output
+	if ( Client->bDebugAjobs )
+	{
+		cVehicle* serverVehicle = NULL;
+		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
+		if ( bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( Attacking ) font->showText(dest->x + 1,dest->y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest->x + 1,dest->y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+	}
+
 }
 
 // Wählt dieses Vehicle aus:

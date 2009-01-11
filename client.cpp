@@ -1113,7 +1113,7 @@ void cClient::drawMap( bool bPure )
 	// display the FX-Bottom-Effects:
 	displayFXBottom();
 
-	// draw sub- and basebuildings:
+	//draw rubble and all base buildings
 	iStartX= ( Hud.OffX-1 ) /64;if ( iStartX<0 ) iStartX=0;
 	iStartY= ( Hud.OffY-1 ) /64;if ( iStartY<0 ) iStartY=0;
 	iStartX-=1;if ( iStartX<0 ) iStartX=0;
@@ -1129,25 +1129,29 @@ void cClient::drawMap( bool bPure )
 		iPos=iY*Map->size+iStartX;
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
-			if ( ActivePlayer->ScanMap[iPos] )
+			cBuildingIterator bi = Map->fields[iPos].getBuildings();
+			while ( !bi.end ) bi++;
+			bi--;
+
+			while ( !bi.rend && ( bi->data.is_base || !bi->owner ) )
 			{
-				if ( Map->GO[iPos].subbase&&Map->GO[iPos].subbase->PosX==iX&&Map->GO[iPos].subbase->PosY==iY )
+				if ( ActivePlayer->ScanMap[iPos]||
+					( bi->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
 				{
-					Map->GO[iPos].subbase->Draw ( &dest );
+					if ( bi->PosX == iX && bi->PosY == iY )
+					{
+						bi->Draw ( &dest );
+					}
 				}
-				if ( Map->GO[iPos].base&&Map->GO[iPos].base->PosX==iX&&Map->GO[iPos].base->PosY==iY )
-				{
-					Map->GO[iPos].base->Draw ( &dest );
-				}
+				bi--;
 			}
 			iPos++;
 			dest.x+=iZoom;
 		}
 		dest.y+=iZoom;
 	}
-	// draw top buildings:
-	iStartY-=1;if ( iStartY<0 ) iStartY=0;
-	iStartX-=1;if ( iStartX<0 ) iStartX=0;
+
+	//draw top buildings (except connectors), and working vehicles
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1155,90 +1159,64 @@ void cClient::drawMap( bool bPure )
 		iPos=iY*Map->size+iStartX;
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
-			cBuilding* building = Map->GO[iPos].top;
-			if ( ActivePlayer->ScanMap[iPos]||
-			        ( building && building->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
+			cBuilding* building = Map->fields[iPos].getBuildings();
+			if ( building && !building->data.is_base && building->owner && !building->data.is_connector )
 			{
-				if ( building && building->PosX == iX && building->PosY == iY )
+
+				if ( ActivePlayer->ScanMap[iPos]||
+						( building->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
 				{
-					building->Draw ( &dest );
-					if ( bDebugAjobs )
+					if ( building->PosX == iX && building->PosY == iY )	//make sure a big building is drawn only once
 					{
-						cBuilding* serverBuilding = NULL;
-						if ( Server ) serverBuilding = Server->Map->GO[iPos].top;
-						if ( building->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-						if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-						if ( building->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-						if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
-					}
-					if ( bDebugBaseClient )
-					{
-						sSubBase *sb;
-						tmp=dest;
-						if ( tmp.h>8 ) tmp.h=8;
-						sb=Map->GO[iPos].top->SubBase;
-						// the VS compiler gives a warning on casting a pointer to long.
-						// therfore we will first cast to long long and then cut this to Unit32 again.
-						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
-						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
-						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
-						font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
+						building->Draw ( &dest );
 
-						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
-						font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+						if ( bDebugBaseClient )
+						{
+							sSubBase *sb;
+							tmp=dest;
+							if ( tmp.h>8 ) tmp.h=8;
+							sb = building->SubBase;
+							// the VS compiler gives a warning on casting a pointer to long.
+							// therfore we will first cast to long long and then cut this to Unit32 again.
+							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
+							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
+							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
-						font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
-					}
-					if ( bDebugBaseServer )
-					{
-						sSubBase *sb;
-						tmp=dest;
-						if ( tmp.h>8 ) tmp.h=8;
-						sb=Server->Map->GO[iPos].top->SubBase;
-						// the VS compiler gives a warning on casting a pointer to long.
-						// therfore we will first cast to long long and then cut this to Unit32 again.
-						SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
-						font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
-						string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
-						font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
+							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
 
-						sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
-						font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+						}
+						if ( bDebugBaseServer )
+						{
+							sSubBase *sb;
+							tmp=dest;
+							if ( tmp.h>8 ) tmp.h=8;
+							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
+							// the VS compiler gives a warning on casting a pointer to long.
+							// therfore we will first cast to long long and then cut this to Unit32 again.
+							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
+							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
+							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-						sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
-						font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+
+							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+						}
 					}
 				}
 			}
-			iPos++;
-			dest.x+=iZoom;
-		}
-		dest.y+=iZoom;
-	}
-	// draw vehicles:
-	dest.y=18-iOffY+iZoom*iStartY;
-	for ( iY=iStartY;iY<=iEndY;iY++ )
-	{
-		dest.x=180-iOffX+iZoom*iStartX;
-		iPos=iY*Map->size+iStartX;
-		for ( iX=iStartX;iX<=iEndX;iX++ )
-		{
-			if ( ActivePlayer->ScanMap[iPos] )
+			cVehicle* vehicle = Map->fields[iPos].getVehicles();
+			if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( ActivePlayer->ScanMap[iPos] || ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) )
 			{
-				cVehicle* vehicle = Map->GO[iPos].vehicle;
-				if ( vehicle && vehicle->PosX == iX && vehicle->PosY == iY )
+				if ( vehicle->PosX == iX && vehicle->PosY == iY )	//make sure a big vehicle is drawn only once
 				{
 					vehicle->Draw ( &dest );
-					if ( bDebugAjobs )
-					{
-						cVehicle* serverVehicle = NULL;
-						if ( Server ) serverVehicle = Server->Map->GO[iPos].vehicle;
-						if ( vehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-						if ( vehicle->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-						if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
-					}
 				}
 			}
 			iPos++;
@@ -1246,6 +1224,77 @@ void cClient::drawMap( bool bPure )
 		}
 		dest.y+=iZoom;
 	}
+
+	//draw ships and bridges
+	//the bridges are drawn by the vehicle->Draw() funktion
+	dest.y=18-iOffY+iZoom*iStartY;
+	for ( iY=iStartY;iY<=iEndY;iY++ )
+	{
+		dest.x=180-iOffX+iZoom*iStartX;
+		iPos=iY*Map->size+iStartX;
+		for ( iX=iStartX;iX<=iEndX;iX++ )
+		{
+			if ( ActivePlayer->ScanMap[iPos] )
+			{
+				cVehicle* vehicle = Map->fields[iPos].getVehicles();
+				if ( vehicle && vehicle->data.can_drive == DRIVE_SEA )
+				{
+					vehicle->Draw ( &dest );
+				}
+
+			}
+			iPos++;
+			dest.x+=iZoom;
+		}
+		dest.y+=iZoom;
+	}
+
+	//draw vehicles
+	dest.y=18-iOffY+iZoom*iStartY;
+	for ( iY=iStartY;iY<=iEndY;iY++ )
+	{
+		dest.x=180-iOffX+iZoom*iStartX;
+		iPos=iY*Map->size+iStartX;
+		for ( iX=iStartX;iX<=iEndX;iX++ )
+		{
+			if ( ActivePlayer->ScanMap[iPos] )
+			{
+				cVehicle* vehicle = Map->fields[iPos].getVehicles();
+				if ( vehicle && vehicle->data.can_drive != DRIVE_SEA && !vehicle->IsBuilding && !vehicle->IsClearing )
+				{
+					vehicle->Draw ( &dest );
+				}
+
+			}
+			iPos++;
+			dest.x+=iZoom;
+		}
+		dest.y+=iZoom;
+	}
+
+	//draw connectors
+	dest.y=18-iOffY+iZoom*iStartY;
+	for ( iY=iStartY;iY<=iEndY;iY++ )
+	{
+		dest.x=180-iOffX+iZoom*iStartX;
+		iPos=iY*Map->size+iStartX;
+		for ( iX=iStartX;iX<=iEndX;iX++ )
+		{
+			if ( ActivePlayer->ScanMap[iPos] )
+			{
+				cBuilding* building = Map->fields[iPos].getBuildings();
+				if ( building && building->data.is_connector )
+				{
+					building->Draw ( &dest );
+				}
+
+			}
+			iPos++;
+			dest.x+=iZoom;
+		}
+		dest.y+=iZoom;
+	}
+
 	// draw the planes:
 	dest.y=18-iOffY+iZoom*iStartY;
 	scr.x=0;scr.y=0;
@@ -1259,19 +1308,10 @@ void cClient::drawMap( bool bPure )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
-				cVehicle* plane = Map->GO[iPos].plane;
+				cVehicle* plane = Map->fields[iPos].getPlanes();
 				if ( plane )
 				{
 					plane->Draw ( &dest );
-					if ( bDebugAjobs )
-					{
-						cVehicle* serverPlane = NULL;
-						if ( Server ) serverPlane = Server->Map->GO[iPos].plane;
-						if ( plane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-						if ( serverPlane && serverPlane->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-						if ( plane->Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-						if ( serverPlane && serverPlane->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
-					}
 				}
 			}
 			iPos++;
@@ -1893,7 +1933,6 @@ void cClient::drawFXBottom( int iNum )
 		{
 			sFXRocketInfos *ri;
 			ri = fx->rocketInfo;
-			int x,y;
 			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 			{
 				ri->aj->state = cClientAttackJob::FINISHED;
@@ -1928,20 +1967,6 @@ void cClient::drawFXBottom( int iNum )
 			if ( ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] )
 			{
 				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
-			}
-
-			x= ( ( int ) ( ( ( dest.x-180 ) +Hud.OffX/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
-			y= ( ( int ) ( ( ( dest.y-18 ) +Hud.OffY/ ( 64.0/Hud.Zoom ) ) /Hud.Zoom ) );
-
-			if ( !Map->IsWater ( x+y*Map->size,false ) &&
-			        ! ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 ) &&
-			        ! ( Map->GO[x+y*Map->size].base && ( Map->GO[x+y*Map->size].base->data.is_bridge||Map->GO[x+y*Map->size].base->data.is_platform ) ) )
-			{
-				ri->aj->iTargetOffset = ri->aj->iAgressorOffset;
-				ri->aj->state = cClientAttackJob::FINISHED;
-				delete fx;
-				FXListBottom.Delete ( iNum );
-				return;
 			}
 			break;
 		}
@@ -5341,18 +5366,23 @@ void cClient::destroyUnit( cVehicle* vehicle )
 
 void cClient::destroyUnit(cBuilding *building)
 {
+	cBuildingIterator bi;
 	int offset = building->PosX + building->PosY * Map->size;
 
 	//delete all buildings on the field
 	//and if top is big, although all other buildings under the top building
-	if ( Map->GO[offset].top && Map->GO[offset].top->data.is_big )
+	cBuilding* topBuilding = Map->fields[offset].getBuildings();
+	if ( topBuilding && topBuilding->data.is_big )
 	{
-		deleteUnit( Map->GO[offset + 1            ].base );
-		deleteUnit( Map->GO[offset + Map->size    ].base );
-		deleteUnit( Map->GO[offset + Map->size + 1].base );
-		deleteUnit( Map->GO[offset + 1            ].subbase );
-		deleteUnit( Map->GO[offset + Map->size    ].subbase );
-		deleteUnit( Map->GO[offset + Map->size + 1].subbase );
+
+		bi = Map->fields[offset + 1].getBuildings();
+		while ( bi ) { deleteUnit( bi ); bi++; }
+
+		bi = Map->fields[offset + Map->size].getBuildings();
+		while ( bi ) { deleteUnit( bi ); bi++; }
+
+		bi = Map->fields[offset + Map->size + 1].getBuildings();
+		while ( bi ) { deleteUnit( bi ); bi++; }
 
 		Client->addFX( fxExploBig, Map->GO[offset].top->PosX * 64 + 64, Map->GO[offset].top->PosY * 64 + 64, 0);
 	}
@@ -5360,10 +5390,9 @@ void cClient::destroyUnit(cBuilding *building)
 	{
 		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
-
-	deleteUnit( Map->GO[offset].top );
-	deleteUnit( Map->GO[offset].base );
-	deleteUnit( Map->GO[offset].subbase );
+	
+	bi = Map->fields[offset].getBuildings();
+	while ( bi ) { deleteUnit( bi ); bi++; }
 
 }
 
