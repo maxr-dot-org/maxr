@@ -242,7 +242,7 @@ cBuilding* cMapField::getTopBuilding()
 	cBuildingIterator buildingIterator( &buildings );
 
 
-	if ( buildingIterator && buildingIterator->data.is_base )
+	if ( buildingIterator && !buildingIterator->data.is_base )
 	{
 		return buildingIterator;
 	}

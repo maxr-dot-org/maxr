@@ -558,17 +558,20 @@ int cClient::checkUser( bool bChange )
 			}
 		}
 	}
+	cVehicle* overVehicle = Map->fields[mouse->GetKachelOff()].getVehicles();
+	cVehicle* overPlane = Map->fields[mouse->GetKachelOff()].getPlanes();
+	cBuilding* overBuilding = Map->fields[mouse->GetKachelOff()].getTopBuilding();
 	if ( iMouseButton && !iLastMouseButton && iMouseButton != 4 )
 	{
 		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
 		if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
-			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( NULL, SelectedVehicle, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
-			else if ( Map->GO[mouse->GetKachelOff()].top ) showTransfer ( NULL, SelectedVehicle, Map->GO[mouse->GetKachelOff()].top, NULL );
+			if ( overVehicle ) showTransfer ( NULL, SelectedVehicle, NULL, overVehicle );
+			else if ( overBuilding ) showTransfer ( NULL, SelectedVehicle, overBuilding, NULL );
 		}
 		else if ( bChange && SelectedBuilding && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
-			if ( Map->GO[mouse->GetKachelOff()].vehicle ) showTransfer ( SelectedBuilding, NULL, NULL, Map->GO[mouse->GetKachelOff()].vehicle );
+			if ( overVehicle ) showTransfer ( SelectedBuilding, NULL, NULL, overVehicle );
 		}
 		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
@@ -600,14 +603,14 @@ int cClient::checkUser( bool bChange )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
-			if ( SelectedBuilding->data.can_load != TRANS_AIR && Map->GO[mouse->GetKachelOff()].vehicle ) sendWantLoad ( SelectedBuilding->iID, false, Map->GO[mouse->GetKachelOff()].vehicle->iID );
-			else if ( SelectedBuilding->data.can_load == TRANS_AIR && Map->GO[mouse->GetKachelOff()].plane ) sendWantLoad ( SelectedBuilding->iID, false, Map->GO[mouse->GetKachelOff()].plane->iID );
+			if ( SelectedBuilding->data.can_load != TRANS_AIR && overVehicle ) sendWantLoad ( SelectedBuilding->iID, false, overVehicle->iID );
+			else if ( SelectedBuilding->data.can_load == TRANS_AIR && overPlane ) sendWantLoad ( SelectedBuilding->iID, false, overPlane->iID );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
-			if ( Map->GO[mouse->GetKachelOff()].vehicle )
+			if ( overVehicle )
 			{
-				sendWantLoad ( SelectedVehicle->iID, true, Map->GO[mouse->GetKachelOff()].vehicle->iID );
+				sendWantLoad ( SelectedVehicle->iID, true, overVehicle->iID );
 			}
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
@@ -2670,25 +2673,6 @@ bool cClient::doCommand ( string sCmd )
 		engine->DestroyObject ( x+y*Map->size,true );*/
 		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Kill\"";
-		return true;
-	}
-	if ( sCmd.compare( "god off" ) == 0 )
-	{
-		int i;
-		for ( i=0;i<Map->size*Map->size;i++ )
-		{
-			if ( Map->GO[i].plane )
-			{
-				//engine->DestroyObject ( i,true );
-			}
-			if ( Map->GO[i].vehicle || ( Map->GO[i].base ||Map->GO[i].top ))
-			{
-				//engine->DestroyObject ( i,false );
-			}
-			memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
-		}
-		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
-		sPlayerCheat += " \"God Off\"";
 		return true;
 	}
 	if ( sCmd.compare( "load" ) == 0 )
