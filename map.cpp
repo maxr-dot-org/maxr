@@ -218,6 +218,11 @@ cBuildingIterator::operator cBuilding*() const
 	return (*buildingList)[index];
 }
 
+cMapField::cMapField():
+	reserved(false),
+	air_reserved(false)
+{};
+
 cVehicleIterator cMapField::getVehicles()
 {
 	cVehicleIterator v(&vehicles);
@@ -1108,7 +1113,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 		{
 			if ( player && !player->ScanMap[offset] ) return true;
 			//only one plane per field for now
-			if ( GO[offset].air_reserviert || fields[offset].planes.Size() > 0 ) return false;
+			if ( fields[offset].air_reserved || fields[offset].planes.Size() > 0 ) return false;
 			break;
 		}
 		case DRIVE_LAND:
@@ -1126,7 +1131,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 			}
 			if ( player && !player->ScanMap[offset] ) return true;			
 
-			if ( GO[offset].reserviert ) return false;
+			if ( fields[offset].reserved ) return false;
 			if ( fields[offset].vehicles.Size() > 0 ) return false;
 			if ( building )
 			{
@@ -1140,7 +1145,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 			if ( terrain[Kacheln[offset]].blocked ) return false;
 			if ( player && !player->ScanMap[offset] ) return true;
 
-			if ( GO[offset].reserviert ) return false;
+			if ( fields[offset].reserved ) return false;
 			if ( fields[offset].vehicles.Size() > 0 ) return false;
 
 			if ( building )
@@ -1158,7 +1163,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 			if ( player && !player->ScanMap[offset] ) return true;
 
 			if ( fields[offset].vehicles.Size() > 0 ) return false;
-			if ( GO[offset].reserviert ) return false;
+			if ( fields[offset].reserved ) return false;
 			if ( building )
 			{
 				//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
@@ -1233,7 +1238,7 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 		if ( !vehicle ) return false;
 		if ( vehicle != field.vehicles[0] ) return false;
 	}
-	if ( GO[offset].reserviert ) return false;
+	if ( fields[offset].reserved ) return false;
 
 	return true;
 }

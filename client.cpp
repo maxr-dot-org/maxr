@@ -562,7 +562,7 @@ int cClient::checkUser( bool bChange )
 	cVehicle* overPlane = NULL;
 	cBuilding* overBuilding = NULL;
 	int offset = mouse->GetKachelOff();
-	if ( offset > 0 )
+	if ( offset >= 0 )
 	{
 		overVehicle  = Map->fields[offset].getVehicles();
 		overPlane    = Map->fields[offset].getPlanes();
@@ -4588,14 +4588,17 @@ void cClient::trace ()
 {
 	int iY, iX;
 	sGameObjects *GO;
+	cMapField* field;
 
 	mouse->GetKachel ( &iX, &iY );
 	if ( iX < 0 || iY < 0 ) return;
 	if ( bDebugTraceServer ) GO = Server->Map->GO + ( Server->Map->size*iY+iX );
 	else GO = Map->GO + ( Map->size*iY+iX );
+	if ( bDebugTraceServer ) field = Server->Map->fields + ( Server->Map->size*iY+iX );
+	else field = Map->fields + ( Map->size*iY+iX );
 
-	if ( GO->reserviert ) font->showText(180+5,18+5, "reserviert", FONT_LATIN_SMALL_WHITE);
-	if ( GO->air_reserviert ) font->showText(180+5+100,18+5, "air-reserviert", FONT_LATIN_SMALL_WHITE);
+	if ( field->reserved ) font->showText(180+5,18+5, "reserved", FONT_LATIN_SMALL_WHITE);
+	if ( field->air_reserved ) font->showText(180+5+100,18+5, "air-reserved", FONT_LATIN_SMALL_WHITE);
 	iY = 18+5+8;
 	iX = 180+5;
 

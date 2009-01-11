@@ -344,8 +344,8 @@ cServerMoveJob::~cServerMoveJob()
 {
 	if ( iReservedOff >= 0 && iReservedOff <= Map->size*Map->size )
 	{
-		if ( !bPlane && Map->GO[iReservedOff].reserviert ) Map->GO[iReservedOff].reserviert = false;
-		if ( bPlane && Map->GO[iReservedOff].air_reserviert ) Map->GO[iReservedOff].air_reserviert = false;
+		if ( !bPlane && Map->fields[iReservedOff].reserved ) Map->fields[iReservedOff].reserved = false;
+		if ( bPlane && Map->fields[iReservedOff].air_reserved ) Map->fields[iReservedOff].air_reserved = false;
 	}
 	sWaypoint *NextWaypoint;
 	while ( Waypoints )
@@ -486,12 +486,12 @@ bool cServerMoveJob::checkMove()
 	// reserv the next field
 	if ( !bPlane )
 	{
-		Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].reserviert = true;
+		Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].reserved = true;
 		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
 	}
 	else
 	{
-		Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].air_reserviert = true;
+		Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].air_reserved = true;
 		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
 	}
 
@@ -564,12 +564,12 @@ void cServerMoveJob::moveVehicle()
 
 		if ( Vehicle->data.can_drive == DRIVE_AIR )
 		{
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].air_reserviert = false;
+			Map->fields[Waypoints->X+Waypoints->Y*Map->size].air_reserved = false;
 			iReservedOff = -1;
 		}
 		else
 		{
-			Map->GO[Waypoints->X+Waypoints->Y*Map->size].reserviert = false;
+			Map->fields[Waypoints->X+Waypoints->Y*Map->size].reserved = false;
 			iReservedOff = -1;
 		}
 

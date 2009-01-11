@@ -31,8 +31,7 @@ struct sGameObjects{
   cBuilding *base;			// Buildings on the ground whitch are under vehciles and top-buildings
   cBuilding *subbase;		// Normaley base-buildings but in this special case they are under an other base-building (for examble plattform under street)
   cBuilding *top;			// Normal buildings on the ground
-  bool reserviert;
-  bool air_reserviert;
+
 };
 
 // Resources Struktur ////////////////////////////////////////////////////////
@@ -108,6 +107,11 @@ private:
 	
 	
 public:
+	/** reservations for movejobs */
+	bool reserved;
+	bool air_reserved;
+
+	cMapField();
 	/** returns a Iterator for the vehicles on this field */
 	cVehicleIterator getVehicles();
 	/** returns a Iterator for the planes on this field */
