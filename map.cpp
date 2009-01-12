@@ -247,7 +247,7 @@ cBuilding* cMapField::getTopBuilding()
 	cBuildingIterator buildingIterator( &buildings );
 
 
-	if ( buildingIterator && !buildingIterator->data.is_base )
+	if ( buildingIterator && !buildingIterator->data.is_base && buildingIterator->owner )
 	{
 		return buildingIterator;
 	}
@@ -263,11 +263,23 @@ cBuilding* cMapField::getBaseBuilding()
 	
 	while ( !building.end )
 	{
-		if ( building->data.is_base ) return building;
+		if ( building->data.is_base || !building->owner ) return building;
 		building++;
 	}
 	
 	return NULL; 
+}
+
+cBuilding* cMapField::getRubble()
+{
+	cBuildingIterator building(&buildings);
+	while ( !building.end )
+	{
+		if ( !building->owner ) return building;
+		building++;
+	}
+
+	return NULL;
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////

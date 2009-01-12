@@ -123,6 +123,8 @@ public:
 	cBuilding* getTopBuilding();
 	/** returns a pointer to the first base building or NULL if there is no base building */
 	cBuilding* getBaseBuilding();
+	/** returns a pointer to a rubble object, if there is one. */
+	cBuilding* getRubble();
 
 };
 

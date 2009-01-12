@@ -475,7 +475,10 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff(), Client->Map ) && !( selectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
-				mouse->SetCursor ( CAttack );
+				if ( mouse->SetCursor ( CAttack ))
+				{
+					selectedVehicle->DrawAttackCursor( mouse->GetKachelOff());
+				}
 			}
 			else
 			{
@@ -486,9 +489,10 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
 			{
-				mouse->SetCursor ( CSteal );
-				//TODO: is mouseMoveCallback needed here?
-				//Client->mouseMoveCallback ( true );				
+				if ( mouse->SetCursor ( CSteal ) )
+				{
+					selectedVehicle->DrawCommandoCursor( mouse->GetKachelOff(), true );
+				}
 			}
 			else
 			{
@@ -499,9 +503,10 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
 			{
-				mouse->SetCursor ( CDisable );
-				//TODO: is mouseMoveCallback needed here?
-				//Client->mouseMoveCallback ( true );
+				if ( mouse->SetCursor ( CDisable ) )
+				{
+					selectedVehicle->DrawCommandoCursor( mouse->GetKachelOff(), false );
+				}
 			}
 			else
 			{
@@ -512,7 +517,10 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff(), Client->Map ) )
 			{
-				mouse->SetCursor ( CAttack );			
+				if ( mouse->SetCursor ( CAttack ))
+				{
+					selectedBuilding->DrawAttackCursor( mouse->GetKachelOff());
+				}
 			}
 			else
 			{
@@ -521,16 +529,16 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->CanAttackObject ( mouse->GetKachelOff(), Client->Map ) )
 		{
-			if ( mouse->SetCursor ( CAttack ) )
+			if ( mouse->SetCursor ( CAttack ))
 			{
-				Client->mouseMoveCallback ( true );
+				selectedVehicle->DrawAttackCursor( mouse->GetKachelOff() );
 			}
 		}
 		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->CanAttackObject ( mouse->GetKachelOff(), Client->Map ) )
 		{
-			if ( mouse->SetCursor ( CAttack ) )
+			if ( mouse->SetCursor ( CAttack ))
 			{
-				Client->mouseMoveCallback ( true );
+				selectedBuilding->DrawAttackCursor( mouse->GetKachelOff() );
 			}
 		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->MuniActive )

@@ -918,7 +918,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	{
 		sendWantStopWork( SelectedBuilding );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->GO[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].subbase && !Map->GO[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].subbase->owner && !SelectedVehicle->IsClearing )
+	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->fields[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].getRubble() && !SelectedVehicle->IsClearing )
 	{
 		sendWantStartClear ( SelectedVehicle );
 	}
@@ -2904,15 +2904,16 @@ void cClient::mouseMoveCallback ( bool bForce )
 		}
 		return;
 	}
-	// check wether there is a Go under the mouse:
+	// check wether there is a unit under the mouse:
 	GO=Map->GO+ ( Map->size*iY+iX );
+	cMapField* field = Map->fields + (iX + iY * Map->size);
 	if ( mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 	{
-		SelectedVehicle->DrawCommandoCursor ( GO,true );
+		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, true );
 	}
 	else if ( mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 	{
-		SelectedVehicle->DrawCommandoCursor ( GO,false );
+		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, false );
 	}
 	if ( GO->vehicle != NULL )
 	{
@@ -4731,13 +4732,11 @@ cBuilding *cClient::getBuildingFromID ( int iID )
 void cClient::trace ()
 {
 	int iY, iX;
-	sGameObjects *GO;
 	cMapField* field;
 
 	mouse->GetKachel ( &iX, &iY );
 	if ( iX < 0 || iY < 0 ) return;
-	if ( bDebugTraceServer ) GO = Server->Map->GO + ( Server->Map->size*iY+iX );
-	else GO = Map->GO + ( Map->size*iY+iX );
+	
 	if ( bDebugTraceServer ) field = Server->Map->fields + ( Server->Map->size*iY+iX );
 	else field = Map->fields + ( Map->size*iY+iX );
 
@@ -4746,11 +4745,10 @@ void cClient::trace ()
 	iY = 18+5+8;
 	iX = 180+5;
 
-	if ( GO->vehicle ) { traceVehicle ( GO->vehicle, &iY, iX ); iY += 20; }
-	if ( GO->plane ) { traceVehicle ( GO->plane, &iY, iX ); iY += 20; }
-	if ( GO->top ) { traceBuilding ( GO->top, &iY, iX ); iY += 20; }
-	if ( GO->base ) { traceBuilding ( GO->base, &iY, iX ); iY += 20; }
-	if ( GO->subbase ) traceBuilding ( GO->subbase, &iY, iX );
+	if ( field->getVehicles() ) { traceVehicle ( field->getVehicles(), &iY, iX ); iY += 20; }
+	if ( field->getPlanes() ) { traceVehicle ( field->getPlanes(), &iY, iX ); iY += 20; }
+	cBuildingIterator bi = field->getBuildings();
+	while ( !bi.end ) { traceBuilding ( bi, &iY, iX ); iY += 20; bi++;}
 }
 
 void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
@@ -5509,7 +5507,7 @@ void cClient::destroyUnit(cBuilding *building)
 	cBuilding* topBuilding = Map->fields[offset].getBuildings();
 	if ( topBuilding && topBuilding->data.is_big )
 	{
-
+		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
 		cBuildingIterator bi = Map->fields[offset + 1].getBuildings();
 		while ( bi ) { deleteUnit( bi ); bi++; }
 
@@ -5519,7 +5517,7 @@ void cClient::destroyUnit(cBuilding *building)
 		bi = Map->fields[offset + Map->size + 1].getBuildings();
 		while ( bi ) { deleteUnit( bi ); bi++; }
 
-		Client->addFX( fxExploBig, Map->GO[offset].top->PosX * 64 + 64, Map->GO[offset].top->PosY * 64 + 64, 0);
+		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
 	}
 	else
 	{

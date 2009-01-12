@@ -217,7 +217,7 @@ public:
 	*/
 	bool clearMine();
 	bool IsInRangeCommando(int off,bool steal);
-	void DrawCommandoCursor(struct sGameObjects *go,bool steal);
+	void DrawCommandoCursor( int off, bool steal );
 	int CalcCommandoChance(bool steal);
 	void CommandoOperation(int off,bool steal);
 	void DeleteStored(void);

@@ -4636,8 +4636,9 @@ bool cVehicle::IsInRangeCommando ( int off, bool steal )
 }
 
 // Malt die Commando-Cursor:
-void cVehicle::DrawCommandoCursor ( struct sGameObjects *go, bool steal )
+void cVehicle::DrawCommandoCursor ( int off, bool steal )
 {
+	cMapField* field = Client->Map->fields + off;
 	cBuilding *b = NULL;
 	cVehicle *v = NULL;
 	SDL_Surface *sf;
@@ -4645,15 +4646,15 @@ void cVehicle::DrawCommandoCursor ( struct sGameObjects *go, bool steal )
 
 	if ( steal )
 	{
-		v = go->vehicle;
+		v = field->getVehicles();
 		sf = GraphicsData.gfx_Csteal;
 	}
 	else
 	{
-		v = go->vehicle;
+		v = field->getVehicles();
 
 		if ( !v )
-			b = go->top;
+			b = field->getTopBuilding();
 
 		sf = GraphicsData.gfx_Cdisable;
 	}
