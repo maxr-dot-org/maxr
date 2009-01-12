@@ -32,7 +32,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LANGUAGE_FILE_FOLDER "languages"
+#define LANGUAGE_FILE_FOLDER SettingsData.sLangPath
 #define LANGUAGE_FILE_NAME   "lang_"
 #define LANGUAGE_FILE_EXT    ".xml"
 

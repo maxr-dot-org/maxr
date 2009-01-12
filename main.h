@@ -478,6 +478,8 @@ public:
 	string sConfig;
 	/**sExePath is where the exe is located - set in setPaths*/
 	string sExePath;
+	/**sDataDir is where the data files are stored*/
+	string sDataDir;
 	/**sLog is where the log goes - set in setPaths() **/
 	string sLog;
 	/**sNetLog is where the netlog goes - set in setPaths() **/
@@ -554,14 +556,15 @@ public:
 	//PATHS
 	string sFontPath;			// Path to the fonts
 	string sFxPath;				// Path to the effects
-	string sGfxPath;				// Path to the graphics
-	string sMapsPath;				// Path to the maps
+	string sGfxPath;			// Path to the graphics
+	string sLangPath;			//Path to language files
+	string sMapsPath;			// Path to the maps
 	string sSavesPath;			// Path to the saves
 	string sSoundsPath;			// Path to the sound-files
 	string sVoicesPath;			// Path to the voice-files
 	string sMusicPath;			// Path to the music-files
-	string sVehiclesPath;		// Path to the vehicles
-	string sBuildingsPath;		// Path to the buildings
+	string sVehiclesPath;			// Path to the vehicles
+	string sBuildingsPath;			// Path to the buildings
 	string sMVEPath;			// Path to the in-game movies (*.mve)
 
 	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften - NOT IN XML-file (yet?)!

@@ -144,9 +144,7 @@ int LoadData ( void * )
 			sLang[i] += 32;
 		}
 	}
-	sTmpString = SettingsData.sExePath;
-	//FIXME: add folder for languages to config!
-	sTmpString += "languages";
+	sTmpString = SettingsData.sLangPath;
 	sTmpString += PATH_DELIMITER;
 	sTmpString += "lang_";
 	sTmpString += sLang;
@@ -549,6 +547,20 @@ int ReadMaxXml()
 	}
 
 	// START Options
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Languages", NULL)))
+	{
+		cLog::write ( "Can't find language path node in max.xml", LOG_TYPE_WARNING );
+	}
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+	{
+		SettingsData.sLangPath = sTmpString;
+	}
+	else
+	{
+		cLog::write ( "Can't find language path in max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.sLangPath = "languages";
+	}
+
 	// Resolution
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
 		cLog::write ( "Can't find Resolution-Node in max.xml", LOG_TYPE_WARNING );
@@ -1240,6 +1252,12 @@ int GenerateMaxXml()
 	sTmp = SettingsData.sExePath;
 	sTmp += "gfx";
 	element = new TiXmlElement ( "GFX" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp = SettingsData.sExePath;
+	sTmp += "languages";
+	element = new TiXmlElement ( "Languages" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 

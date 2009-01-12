@@ -40,12 +40,6 @@ cLanguage::cLanguage(void)
 	m_bLeftToRight = true;
 	m_szLastEditor = "";
 	m_bErrorMsgTranslationLoaded = false;
-
-	m_szLanguageFileMaster = LANGUAGE_FILE_FOLDER ;
-	m_szLanguageFileMaster += PATH_DELIMITER;
-	m_szLanguageFileMaster += LANGUAGE_FILE_NAME;
-	m_szLanguageFileMaster += "eng";
-	m_szLanguageFileMaster += LANGUAGE_FILE_EXT;
 }
 
 cLanguage::~cLanguage(void)
@@ -59,6 +53,14 @@ std::string cLanguage::GetCurrentLanguage(void)
 
 int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 {
+	//don't do this on constructor because language folder isn't known yet in programm start.
+	//since the first thinh we do with language files is setting our language we can init the master lang file here too -- beko
+	m_szLanguageFileMaster = LANGUAGE_FILE_FOLDER ;
+	m_szLanguageFileMaster += PATH_DELIMITER;
+	m_szLanguageFileMaster += LANGUAGE_FILE_NAME;
+	m_szLanguageFileMaster += "eng";
+	m_szLanguageFileMaster += LANGUAGE_FILE_EXT;
+
 	std::string szTemp;
 	if( szLanguageCode.length() != 3 )
 	{
@@ -82,7 +84,7 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 	m_szLanguageFile = LANGUAGE_FILE_FOLDER ;
 	m_szLanguageFile += PATH_DELIMITER;
 	m_szLanguageFile += LANGUAGE_FILE_NAME;
-	m_szLanguageFile +=	m_szLanguage + LANGUAGE_FILE_EXT;
+	m_szLanguageFile += m_szLanguage + LANGUAGE_FILE_EXT;
 	return 0;
 }
 
@@ -369,10 +371,10 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 		szLanguageCode = "eng";
 	}else
 	{
-		strFileName = m_szLanguageFile;
+		strFileName = m_szLanguageFile;	
 	}
 
-	strFileName = SettingsData.sExePath + strFileName;	
+	
 
 	// Load the file
 	if( !m_XmlDoc.LoadFile( strFileName.c_str() ))
