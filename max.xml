@@ -39,6 +39,7 @@
             <Fonts Text="fonts" />
             <FX Text="fx" />
             <GFX Text="gfx" />
+	    <Languages Text="languages" />
             <Maps Text="maps" />
             <Saves Text="save" />
             <Sounds Text="sounds" />
