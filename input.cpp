@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include "input.h"
 #include "client.h"
+#include "menu.h"
 
 cInput::cInput()
 {
@@ -57,6 +58,7 @@ void cInput::inputkey ( SDL_keysym &keysym )
 			case SDLK_RETURN:
 				// return will be handled from the client like a hotkey
 				if ( Client ) Client->handleHotKey ( keysym );
+				else menuPressedReturn = true;
 				break;
 			case SDLK_LEFT:
 				// makes the cursor go left

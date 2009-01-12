@@ -28,8 +28,9 @@
 #include "savegame.h"
 
 // Globales //////////////////////////////////////////////////////////////////
-EX string SaveLoadFile;	// Name of the savegame to load or to save
-EX int SaveLoadNumber;	// Index number of the savegame to load or to save
+EX string SaveLoadFile;		// Name of the savegame to load or to save
+EX int SaveLoadNumber;		// Index number of the savegame to load or to save
+EX bool menuPressedReturn;	// boolean which will be set to true when return has been pressed, so that menus can get this information
 
 struct sColor
 {

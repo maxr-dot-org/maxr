@@ -3786,6 +3786,7 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	bStartSelecting = false;
 	bExit = false;
 	Savegame = NULL;
+	menuPressedReturn = false;
 
 	if ( bHost ) sIP = "-";
 	else sIP = SettingsData.sIP;
@@ -4283,8 +4284,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			}
 		}
 
-		// TODO: reimplement sending strings with Enter
-		if (/*(InputEnter && iFocus == FOCUS_CHAT) ||*/
+		if ( ( menuPressedReturn && iFocus == FOCUS_CHAT) ||
 				btn_send.CheckClick(x, y, down, up))
 		{
 			if ( !ChatStr.empty() )
@@ -4331,6 +4331,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
+		menuPressedReturn = false;
 
 		// Set new Focus
 		if ( ( !bHost && b && !lb && mouse->x >= 20 && mouse->x < 20+188 && mouse->y >= 250 && mouse->y < 250+30 ) ||
