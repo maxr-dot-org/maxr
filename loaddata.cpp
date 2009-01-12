@@ -1204,19 +1204,22 @@ int GenerateMaxXml()
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PlayerName" );
+
+	string sUser;
 	#ifdef WIN32
-	element->SetAttribute ( "Text", "Player");
+		sUser = getenv("%USERNAME%");
 	#else
-	string sUser = getenv("USER");
+		sUser = getenv("USER");
+	#endif
 	if(sUser.empty() != 1)
 	{
 		element->SetAttribute ( "Text", sUser.c_str());
 	}
 	else
 	{
-		element->SetAttribute ( "Text", "Tuxcommand");
+		element->SetAttribute ( "Text", "Commander");
 	}
-	#endif
+	
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Enabled" );
