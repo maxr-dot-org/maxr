@@ -574,11 +574,6 @@ int ReadMaxXml()
 		cLog::write ( "Can't find gamedata path in max.xml", LOG_TYPE_WARNING );
 		SettingsData.sDataDir = searchData();
 	}
-	if(!FileExists( (SettingsData.sDataDir + PATH_DELIMITER + "init.pcx").c_str() )) //crude verify of data path
-	{ //oops, we couldn't find game data in this folder - something is wrong
-		cLog::write("Fix paths in max.xml or remove invalid config!", cLog::eLOG_TYPE_ERROR);
-		return -1;
-	}
 
 	// Resolution
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
@@ -1207,7 +1202,7 @@ int GenerateMaxXml()
 
 	string sUser;
 	#ifdef WIN32
-		sUser = getenv("%USERNAME%");
+		sUser = getenv("USERNAME");
 	#else
 		sUser = getenv("USER");
 	#endif
