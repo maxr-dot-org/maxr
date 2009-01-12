@@ -5166,9 +5166,12 @@ void cMultiPlayerMenu::displayGameSettings()
 			{
 				if (PlayerList[iPlayerIndex] == ActualPlayer) break;
 			}
-			ReadyList[iPlayerIndex] = false;
-			displayPlayerList();
-			sendIdentification();
+			if ( ReadyList[iPlayerIndex] )
+			{
+				ReadyList[iPlayerIndex] = false;
+				displayPlayerList();
+				sendIdentification();
+			}
 
 		}
 		else
