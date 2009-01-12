@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
-<!--   Hier können die gewünschten Tastenkombinationen für die Aktionen             -->
+<?xml version="1.0" encoding="utf-8"?>
+<!--   Hier kÃ¶nnen die gewÃŒnschten Tastenkombinationen fÃŒr die Aktionen             -->
 <!--   eingetragen werden.                                                          -->
-<!--   Für Mauseistellungen siehe Abschnitt <Mouse>                                 -->
-<!--   Die folgende Liste führt alle verfügbaren Tasten auf                         -->
+<!--   FÃŒr Mauseistellungen siehe Abschnitt <Mouse>                                 -->
+<!--   Die folgende Liste fÃŒhrt alle verfÃŒgbaren Tasten auf                         -->
 <!--   (ACHTUNG: Es gilt die englische Tastatur):                                   -->
 <!--   BACKSPACE,TAB,CLEAR,RETURN,PAUSE,ESCAPE,SPACE,EXCLAIM,QUOTEDBL,              -->
 <!--   HASH,DOLLAR,AMPERSAND,QUOTE,LEFTPAREN,RIGHTPAREN,ASTERISK,PLUS,COMMA,        -->
@@ -14,6 +14,10 @@
 <!--   PAGEUP,PAGEDOWN,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,NUMLOCK,  -->
 <!--   CAPSLOCK,SCROLLOCK,RSHIFT,LSHIFT,RCTRL,LCTRL,RALT,LALT,RMETA,LMETA,LSUPER,   -->
 <!--   RSUPER,MODE,COMPOSE,HELP,PRINT,SYSREQ,BREAK,MENU,POWER,EURO,UNDO             -->
+<!--   Tasten kÃ¶nnen auch doppelt vergeben werden. Zu beachten ist dabei, dass sie  -->
+<!--   in der selben Reihe abgefragt werden, wie in der unteren Liste aufgefÃŒhrt    -->
+<!--   Feste Hotkeys, die nicht doppelt vergeben werden sollten sind:               -->
+<!--   (ALT+)F5-F8 ; ALT+C ; ALT+RETURN                                             -->
 <Controles>
 	<Keys>
 		<KeyExit Text="ESCAPE"/>
@@ -36,27 +40,49 @@
 		<KeyZoomInb Text="KP_PLUS"/>
 		<KeyZoomOuta Text="SLASH"/>
 		<KeyZoomOutb Text="KP_MINUS"/>
-		<KeyFog Text="N"/>
-		<KeyGrid Text="G"/>
-		<KeyScan Text="S"/>
-		<KeyRange Text="R"/>
-		<KeyAmmo Text="M"/>
-		<KeyHitpoints Text="T"/>
-		<KeyColors Text="F"/>
-		<KeyStatus Text="P"/>
-		<KeySurvey Text="H"/>
-		<KeyCalcPath Text="LSHIFT"/>
+    <KeyCalcPath Text="LSHIFT"/>
+    <KeyCenterUnit Text="F"/>
+    <KeyUnitMenuAttack Text="A"/>
+    <KeyUnitMenuBuild Text="B"/>
+    <KeyUnitMenuTransfer Text="X"/>
+    <KeyUnitMenuAutomove Text="A"/>
+    <KeyUnitMenuStart Text="S"/>
+    <KeyUnitMenuStop Text="S"/>
+    <KeyUnitMenuClear Text="C"/>
+    <KeyUnitMenuSentry Text="S"/>
+    <KeyUnitMenuActivate Text="A"/>
+    <KeyUnitMenuLoad Text="L"/>
+    <KeyUnitMenuReload Text="R"/>
+    <KeyUnitMenuRepair Text="R"/>
+    <KeyUnitMenuLayMine Text="L"/>
+    <KeyUnitMenuClearMine Text="C"/>
+    <KeyUnitMenuDisable Text="D"/>
+    <KeyUnitMenuSteal Text="S"/>
+    <KeyUnitMenuInfo Text="H"/>
+    <KeyUnitMenuDistribute Text="D"/>
+    <KeyUnitMenuResearch Text="R"/>
+    <KeyUnitMenuUpgrade Text="U"/>
+    <KeyUnitMenuDestroy Text="D"/>
+    <KeyFog Text="N"/>
+    <KeyGrid Text="G"/>
+    <KeyScan Text="S"/>
+    <KeyRange Text="R"/>
+    <KeyAmmo Text="M"/>
+    <KeyHitpoints Text="T"/>
+    <KeyColors Text="F"/>
+    <KeyStatus Text="P"/>
+    <KeySurvey Text="H"/>
 	</Keys>
 	<!--   In diesem Abschnitt kann man bestimmen, auf welche Art die Maustasten  -->
-	<!--   	benutzt werden können.                                            -->
-	<!--   Folgende Einstellungen sind möglich:                                   -->
-	<!--   MODERN - Deselect mit Rechtsklick, auswählen mit Linksklick,           -->
-	<!--   	durchblättern mehrerer Einheiten mit Rechtsklick, Hilfe übers     -->
-	<!--   	übers Menü, oder per Fragezeichen                                 -->
-	<!--   OLD_SCHOOL - Hilfe mit Rechtsklick, wenn über Objekt, ansonsten        -->
-	<!--   	Deselect, auswählen mit Linksklick, durchblättern mehrerer        -->
-	<!--   	Einheiten durch gedrückthalten von Links und dann drücken von     -->
-	<!--   	Rechts                                                            -->
+	<!--   	benutzt werden kÃ¶nnen.                                                -->
+	<!--   Folgende Einstellungen sind mÃ¶glich:                                   -->
+	<!--   MODERN - Deselect mit Rechtsklick, auswÃ€hlen mit Linksklick,           -->
+	<!--   	durchblÃ€ttern mehrerer Einheiten mit Rechtsklick, Hilfe ÃŒbers         -->
+	<!--   	ÃŒbers MenÃŒ, oder per Fragezeichen                                     -->
+	<!--   OLD_SCHOOL - Hilfe mit Rechtsklick, wenn ÃŒber Objekt, ansonsten        -->
+	<!--   	Deselect, auswÃ€hlen mit Linksklick, durchblÃ€ttern mehrerer            -->
+	<!--   	Einheiten durch gedrÃŒckthalten von Links und dann drÃŒcken von         -->
+	<!--   	Rechts                                                                -->
 	<Mouse>
 		<MOUSE_STYLE Text="MODERN"/>
 	</Mouse>
