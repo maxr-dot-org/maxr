@@ -395,7 +395,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 	stringstream ssLicence4;
 
 	//open AUTHOR
-	string sAuthors = SettingsData.sExePath + PATH_DELIMITER +
+	string sAuthors = SettingsData.sDataDir + PATH_DELIMITER +
 #ifdef _WIN32
 		"AUTHORS.txt";
 #else

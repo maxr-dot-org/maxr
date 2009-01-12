@@ -75,19 +75,19 @@
 #define MAX_XML               "max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"
-#define KEYS_XML              (SettingsData.sExePath + "keys.xml").c_str()
-#define SPLASH_BACKGROUND     (SettingsData.sExePath + "init.pcx").c_str()
+#define KEYS_XML              (SettingsData.sDataDir + "keys.xml").c_str()
+#define SPLASH_BACKGROUND     (SettingsData.sDataDir + "init.pcx").c_str()
 #if MAC
-	#define MAXR_ICON             (SettingsData.sExePath + "maxr_mac.bmp").c_str()
+	#define MAXR_ICON             (SettingsData.sDataDir + "maxr_mac.bmp").c_str()
 #else
-	#define MAXR_ICON             (SettingsData.sExePath + "maxr.bmp").c_str()
+	#define MAXR_ICON             (SettingsData.sDataDir + "maxr.bmp").c_str()
 #endif
 
 // We have to take care of these manually !
 #ifdef RELEASE
 #define MAXVERSION  "M.A.X. Reloaded 0.2.3 BUILD 200901051940" // Builddate: JJJJMMDDHHMM
 #else
-	#define MAXVERSION  "M.A.X. Reloaded 0.2.3 SVN Rev 1789"
+	#define MAXVERSION  "M.A.X. Reloaded 0.2.3 SVN Rev 1813"
 #endif
 #define MAX_VERSION     "0.2.3"
 #define MAX_BUILD_DATE  "2009-01-05 19:40:00"

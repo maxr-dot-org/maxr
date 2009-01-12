@@ -126,6 +126,11 @@ void reloadUnitValues ();
 void setPaths ();
 
 /**
+* This is where the game data folder is searched - e.g. /usr/share/maxr
+*/
+std::string searchData ();
+
+/**
 * Generates a new config file.
 * @return 0 on success<br>-1 on fail
 **/

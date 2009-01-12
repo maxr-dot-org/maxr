@@ -561,6 +561,25 @@ int ReadMaxXml()
 		SettingsData.sLangPath = "languages";
 	}
 
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Gamedata", NULL)))
+	{
+		cLog::write ( "Can't find gamedata path node in max.xml", LOG_TYPE_WARNING );
+	}
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+	{
+		SettingsData.sDataDir = sTmpString;
+	}
+	else
+	{
+		cLog::write ( "Can't find gamedata path in max.xml", LOG_TYPE_WARNING );
+		SettingsData.sDataDir = searchData();
+	}
+	if(!FileExists( (SettingsData.sDataDir + PATH_DELIMITER + "init.pcx").c_str() )) //crude verify of data path
+	{ //oops, we couldn't find game data in this folder - something is wrong
+		cLog::write("Fix paths in max.xml or remove invalid config!", cLog::eLOG_TYPE_ERROR);
+		return -1;
+	}
+
 	// Resolution
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
 		cLog::write ( "Can't find Resolution-Node in max.xml", LOG_TYPE_WARNING );
@@ -1237,38 +1256,47 @@ int GenerateMaxXml()
 	soundnode->LinkEndChild(element);
 
 	string sTmp ="";
-	sTmp = SettingsData.sExePath;
+
+	SettingsData.sDataDir = searchData();
+	
+	sTmp = SettingsData.sDataDir;
+	element = new TiXmlElement ( "Gamedata" );
+	element->SetAttribute ( "Text", sTmp.c_str());
+	pathsnode->LinkEndChild(element);
+
+	sTmp ="";
+	sTmp = SettingsData.sDataDir;
 	sTmp += "fonts";
 	element = new TiXmlElement ( "Fonts" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "fx";
 	element = new TiXmlElement ( "FX" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "gfx";
 	element = new TiXmlElement ( "GFX" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "languages";
 	element = new TiXmlElement ( "Languages" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "maps";
 	element = new TiXmlElement ( "Maps" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
 	#ifdef WIN32
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	#else
 	sTmp = SettingsData.sHome;
 	#endif
@@ -1277,37 +1305,37 @@ int GenerateMaxXml()
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 	
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "sounds";
 	element = new TiXmlElement ( "Sounds" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "voices";
 	element = new TiXmlElement ( "Voices" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "music";
 	element = new TiXmlElement ( "Music" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "vehicles";
 	element = new TiXmlElement ( "Vehicles" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "buildings";
 	element = new TiXmlElement ( "Buildings" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sExePath;
+	sTmp = SettingsData.sDataDir;
 	sTmp += "mve";
 	element = new TiXmlElement ( "MVEs" );
 	element->SetAttribute ( "Text", sTmp.c_str());
@@ -3820,27 +3848,30 @@ void setPaths()
 			SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos); 
 			SettingsData.sExePath += PATH_DELIMITER;
 
-			//crude path validation
-			if(FileExists( (SettingsData.sExePath+"init.pcx").c_str() ))
+			if(FileExists( (SettingsData.sExePath+"maxr").c_str() )) //check for binary itself in bin folder
 			{
-				cLog::write("Full path is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
+				cLog::write("Path to binary is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
 			}
 			else
-			{	//we got ourself a trailing maxr in the path like /proc seems to do it sometimes. remove it!
+			{	//perhaps we got ourself a trailing maxr in the path like /proc
+				// seems to do it sometimes. remove it and try again!
 				if(cPathToExe[iPos-1] == 'r' && cPathToExe[iPos-2] == 'x' && cPathToExe[iPos-3] == 'a' && cPathToExe[iPos-4] == 'm' )
 				{
 					SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos-5);
-					cLog::write("Full path is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
-				 }
+					if(FileExists( (SettingsData.sExePath+"maxr").c_str() )) 
+					{
+						cLog::write("Path to binary is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
+					}
+				}
 			}
+			
 		}
 	}
 	else
 	{
 		cLog::write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
+		SettingsData.sExePath=""; //reset sExePath
 	}
-
-
 
 	if(bCreateConfigDir)
 	{
@@ -3866,4 +3897,58 @@ void setPaths()
 
 	cout << "\n";
 	#endif
+}
+
+string searchData(void)
+{
+	string sPathToGameData = "";
+	#if MAC 
+		sPathToGameData =  SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
+	#endif
+
+	#ifdef WIN32
+		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
+	#else
+	//BEGIN crude path validation to find gamedata
+	cLog::write ( "Probing for data paths using default values:", cLog::eLOG_TYPE_INFO );
+	
+	//TODO: add env MAXRDATA or something like that or perhaps a placeholder for --prefix of autotools
+	#define PATHCOUNT 11
+	string sPathArray[PATHCOUNT] = { 
+		"/usr/share/maxr",
+		"/usr/local/share/maxr",
+		"/usr/games/maxr",
+		"/usr/local/games/maxr",
+		"/usr/maxr",
+		"/usr/local/maxr",
+		"/opt/maxr",
+		"/usr/share/games/maxr",
+		"/usr/local/share/games/maxr",
+		SettingsData.sExePath, //check for gamedata in bin folder too
+		"." //last resort: local dir
+	};
+	for(int i=0; i<PATHCOUNT; i++)
+	{
+		string sInitFile = sPathArray[i];
+		sInitFile += PATH_DELIMITER;
+		sInitFile += "init.pcx";
+		if(FileExists( sInitFile.c_str() )) 
+		{
+			sPathToGameData = sPathArray[i];
+			sPathToGameData += PATH_DELIMITER;
+			break;
+		}
+	}
+	
+	if(sPathToGameData.empty()) //still empty? cry for mama - we couldn't locate any typical data folder
+	{
+		cLog::write("No success probing for data folder!", cLog::eLOG_TYPE_WARNING);
+	}
+	else
+	{
+		cLog::write("Found gamedata in: "+sPathToGameData, cLog::eLOG_TYPE_INFO);
+	}
+	//END crude path validation to find gamedata
+	#endif
+	return sPathToGameData;
 }
