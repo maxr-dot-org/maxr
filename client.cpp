@@ -31,7 +31,6 @@
 #include "attackJobs.h"
 #include "buttons.h"
 #include "menu.h"
-#include "input.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -155,6 +154,12 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	SDL_BlitSurface( SfTmp, &rSrc, GraphicsData.gfx_hud, NULL );
 	SDL_FreeSurface( SfTmp );
 
+	for ( int i = 0; i < 4; i++ )
+	{
+		SavedPositions[i].offsetX = -1;
+		SavedPositions[i].offsetY = -1;
+	}
+
 	setWind(random(360));
 }
 
@@ -254,15 +259,16 @@ void cClient::run()
 	{
 		// check defeat
 		if ( bDefeated ) break;
-		// check user
-		if ( checkUser() == -1 )
-		{
-			drawMap();
-			SHOW_SCREEN
-			makePanel ( false );
-			break;
-		}
+		// get events
+		EventHandler->HandleEvents();
+		// check mouse moves 
+		mouse->GetPos();
+		Hud.CheckMouseOver();
+		Hud.CheckScroll();
 		CHECK_MEMORY;
+		// check length of input strings
+		if ( bChangeObjectName && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( 128 );
+		else if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
 		// end truth save/load menu
 		if ( bExit )
 		{
@@ -428,31 +434,13 @@ void cClient::run()
 	mouse->MoveCallback = false;
 }
 
-int cClient::checkUser( bool bChange )
+void cClient::handleMouseInput( sMouseState mouseState  )
 {
-	static int iLastMouseButton = 0, iMouseButton;
-	// get events:
-	EventHandler->HandleEvents();
+	bool bChange = !bWaitForOthers;
 
-	// check the keys:
-	if ( bChange && bChangeObjectName )
-	{
-		if ( InputHandler->checkHasBeenInput () )
-		{
-			InputHandler->cutToLength ( 128 );
-		}
-	}
-	else if ( bChatInput )
-	{
-		if ( InputHandler->checkHasBeenInput () )
-		{
-			InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
-		}
-	}
 	// handle the mouse:
 	mouse->GetPos();
-	iMouseButton = mouse->GetMouseButton();
-	if ( MouseStyle == OldSchool && iMouseButton == 4 && iLastMouseButton != 4 && OverObject )
+	if ( MouseStyle == OldSchool && mouseState.rightButtonPressed && !mouseState.leftButtonHold && OverObject )
 	{
 		if ( OverObject->vehicle && OverObject->vehicle == SelectedVehicle ) OverObject->vehicle->ShowHelp();
 		else if ( OverObject->plane && OverObject->plane == SelectedVehicle ) OverObject->plane->ShowHelp();
@@ -460,7 +448,7 @@ int cClient::checkUser( bool bChange )
 		else if ( OverObject->base && OverObject->base == SelectedBuilding ) OverObject->base->ShowHelp();
 		else if ( OverObject ) selectUnit ( OverObject, true );
 	}
-	else if ( ( iMouseButton == 4 && iLastMouseButton != 4 ) || ( MouseStyle == OldSchool && iMouseButton == 5 && iLastMouseButton != 5 ) )
+	else if ( ( mouseState.rightButtonPressed && !mouseState.leftButtonHold ) || ( MouseStyle == OldSchool && mouseState.leftButtonHold && mouseState.rightButtonPressed ) )
 	{
 		if ( bHelpActive )
 		{
@@ -568,7 +556,7 @@ int cClient::checkUser( bool bChange )
 		overPlane    = Map->fields[offset].getPlanes();
 		overBuilding = Map->fields[offset].getTopBuilding();
 	}
-	if ( iMouseButton && !iLastMouseButton && iMouseButton != 4 )
+	if ( mouseState.leftButtonPressed && !mouseState.rightButtonHold )
 	{
 		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
 		if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
@@ -748,50 +736,17 @@ int cClient::checkUser( bool bChange )
 			bHelpActive=false;
 		}
 	}
-	if ( iMouseButton && !bHelpActive )
+	if ( mouseState.leftButtonPressed || mouseState.rightButtonPressed && !bHelpActive )
 	{
 		Hud.CheckOneClick();
 	}
-	Hud.CheckMouseOver();
-	Hud.CheckScroll();
-	iLastMouseButton = iMouseButton;
-	return 0;
+	// check zoom via mousewheel
+	if ( mouseState.wheelUp ) Hud.SetZoom ( Hud.Zoom+3 );
+	else if ( mouseState.wheelDown ) Hud.SetZoom ( Hud.Zoom-3 );
 }
 
 void cClient::handleHotKey ( SDL_keysym &keysym )
 {
-	//TODO: read keystates more sensitive - e.g. take care of ALT and STRG modifiers
-	//TODO: add more keys:
-	/*
-	e end turn
-	f center on selected unit
-	-/+ zoom bigger/smaller
-	g grid
-	PG DOWN center on selected unit
-	ARROWS scroll on map
-	ALT L load menu
-	ALT S save menu
-	ALT X end game
-	ALT F5 save window pos
-	ALT F6 save window pos
-	ALT F7 save window pos
-	ALT F8 save window pos
-	F5 jump to saved window pos
-	F6 jump to saved window pos
-	F7 jump to saved window pos
-	F8 jump to saved window pos
-	/ or ? activate help cursor
-	ALT C screenshot
-	Space + Enter + ESC cancel demo sequence
-	Shift + mouseclick groupcommand
-	*/
-	//TODO: additional hotkeys
-	/*
-	mousewheel UP zoom out
-	mousewheel DOWN zoom in
-
-	*/
-
 	if ( keysym.sym == KeysList.KeyExit )
 	{
 		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
@@ -848,6 +803,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			bChatInput = true;
 		}
 	}
+	// scroll and zoom hotkeys
 	else if ( keysym.sym == KeysList.KeyScroll1 ) Hud.DoScroll ( 1 );
 	else if ( keysym.sym == KeysList.KeyScroll3 ) Hud.DoScroll ( 3 );
 	else if ( keysym.sym == KeysList.KeyScroll7 ) Hud.DoScroll ( 7 );
@@ -858,6 +814,191 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	else if ( keysym.sym == KeysList.KeyScroll8a || keysym.sym == KeysList.KeyScroll8b ) Hud.DoScroll ( 8 );
 	else if ( keysym.sym == KeysList.KeyZoomIna || keysym.sym == KeysList.KeyZoomInb ) Hud.SetZoom ( Hud.Zoom+1 );
 	else if ( keysym.sym == KeysList.KeyZoomOuta || keysym.sym == KeysList.KeyZoomOutb ) Hud.SetZoom ( Hud.Zoom-1 );
+	// position handling hotkeys
+	else if ( keysym.sym == KeysList.KeyCenterUnit && SelectedVehicle ) SelectedVehicle->Center();
+	else if ( keysym.sym == KeysList.KeyCenterUnit && SelectedBuilding ) SelectedBuilding->Center();
+	else if ( keysym.sym == SDLK_F5 && keysym.mod & KMOD_ALT )
+	{
+		SavedPositions[0].offsetX = Hud.OffX;
+		SavedPositions[0].offsetY = Hud.OffY;
+	}
+	else if ( keysym.sym == SDLK_F6 && keysym.mod & KMOD_ALT )
+	{
+		SavedPositions[1].offsetX = Hud.OffX;
+		SavedPositions[1].offsetY = Hud.OffY;
+	}
+	else if ( keysym.sym == SDLK_F7 && keysym.mod & KMOD_ALT )
+	{
+		SavedPositions[2].offsetX = Hud.OffX;
+		SavedPositions[2].offsetY = Hud.OffY;
+	}
+	else if ( keysym.sym == SDLK_F8 && keysym.mod & KMOD_ALT )
+	{
+		SavedPositions[3].offsetX = Hud.OffX;
+		SavedPositions[3].offsetY = Hud.OffY;
+	}
+	else if ( keysym.sym == SDLK_F5 && SavedPositions[0].offsetX >= 0 && SavedPositions[0].offsetY >= 0 )
+	{
+		Hud.OffX = SavedPositions[0].offsetX;
+		Hud.OffY = SavedPositions[0].offsetY;
+		bFlagDrawMap = true;
+		Hud.DoScroll ( 0 );
+	}
+	else if ( keysym.sym == SDLK_F6 && SavedPositions[1].offsetX >= 0 && SavedPositions[1].offsetY >= 0 )
+	{
+		Hud.OffX = SavedPositions[1].offsetX;
+		Hud.OffY = SavedPositions[1].offsetY;
+		bFlagDrawMap = true;
+		Hud.DoScroll ( 0 );
+	}
+	else if ( keysym.sym == SDLK_F7 && SavedPositions[2].offsetX >= 0 && SavedPositions[2].offsetY >= 0 )
+	{
+		Hud.OffX = SavedPositions[2].offsetX;
+		Hud.OffY = SavedPositions[2].offsetY;
+		bFlagDrawMap = true;
+		Hud.DoScroll ( 0 );
+	}
+	else if ( keysym.sym == SDLK_F8 && SavedPositions[3].offsetX >= 0 && SavedPositions[3].offsetY >= 0 )
+	{
+		Hud.OffX = SavedPositions[3].offsetX;
+		Hud.OffY = SavedPositions[3].offsetY;
+		bFlagDrawMap = true;
+		Hud.DoScroll ( 0 );
+	}
+	// Hotkeys for the unit menues
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedVehicle && SelectedVehicle->data.can_attack && SelectedVehicle->data.shots )
+	{
+		SelectedVehicle->AttackMode = true;
+		Hud.CheckScroll();
+		mouseMoveCallback ( true );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedBuilding && SelectedBuilding->data.can_attack && SelectedBuilding->data.shots )
+	{
+		SelectedBuilding->AttackMode = true;
+		Hud.CheckScroll();
+		mouseMoveCallback ( true );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding )
+	{
+		if ( SelectedVehicle->ClientMoveJob ) SelectedVehicle->ClientMoveJob->release();
+		SelectedVehicle->ShowBuildMenu();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build )
+	{
+		SelectedBuilding->ShowBuildMenu();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_METAL || SelectedVehicle->data.can_transport == TRANS_OIL || SelectedVehicle->data.can_transport == TRANS_GOLD ) && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing )
+	{
+		SelectedVehicle->Transfer = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedBuilding && ( SelectedBuilding->data.can_transport == TRANS_METAL || SelectedBuilding->data.can_transport == TRANS_OIL || SelectedBuilding->data.can_transport == TRANS_GOLD ) )
+	{
+		SelectedBuilding->Transfer = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuAutomove && SelectedVehicle && SelectedVehicle->data.can_survey )
+	{
+		if ( SelectedVehicle->autoMJob == NULL ) SelectedVehicle->autoMJob = new cAutoMJob ( SelectedVehicle );
+		else
+		{
+			delete SelectedVehicle->autoMJob;
+			SelectedVehicle->autoMJob = NULL;
+		}
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) )
+	{
+		sendWantStartWork( SelectedBuilding );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedVehicle && ( SelectedVehicle->ClientMoveJob || ( SelectedVehicle->IsBuilding && SelectedVehicle->BuildRounds ) || ( SelectedVehicle->IsClearing && SelectedVehicle->ClearingRounds ) ) )
+	{
+		if ( SelectedVehicle->ClientMoveJob ) sendWantStopMove ( SelectedVehicle->iID );
+		else if ( SelectedVehicle->IsBuilding ) sendWantStopBuilding ( SelectedVehicle->iID );
+		else if ( SelectedVehicle->IsClearing ) sendWantStopClear ( SelectedVehicle );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedBuilding && SelectedBuilding->IsWorking )
+	{
+		sendWantStopWork( SelectedBuilding );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->GO[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].subbase && !Map->GO[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].subbase->owner && !SelectedVehicle->IsClearing )
+	{
+		sendWantStartClear ( SelectedVehicle );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedVehicle && ( SelectedVehicle->bSentryStatus || SelectedVehicle->data.can_attack ) )
+	{
+		sendChangeSentry ( SelectedVehicle->iID, true );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedBuilding && ( SelectedBuilding->bSentryStatus || SelectedBuilding->data.can_attack ) )
+	{
+		sendChangeSentry ( SelectedBuilding->iID, false );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) )
+	{
+		SelectedVehicle->showStorage();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) )
+	{
+		SelectedBuilding->ShowStorage();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) )
+	{
+		SelectedVehicle->LoadActive = !SelectedVehicle->LoadActive;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) )
+	{
+		SelectedBuilding->LoadActive = !SelectedBuilding->LoadActive;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuReload && SelectedVehicle && SelectedVehicle->data.can_reload && SelectedVehicle->data.cargo >= 2 )
+	{
+		SelectedVehicle->MuniActive = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuRepair && SelectedVehicle && SelectedVehicle->data.can_repair && SelectedVehicle->data.cargo >= 2 )
+	{
+		SelectedVehicle->RepairActive = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuLayMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo > 0 )
+	{
+		SelectedVehicle->LayMines = !SelectedVehicle->LayMines;
+		SelectedVehicle->ClearMines = false;
+		sendMineLayerStatus( SelectedVehicle );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuClearMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo < SelectedVehicle->data.max_cargo )
+	{
+		SelectedVehicle->ClearMines = !SelectedVehicle->ClearMines;
+		SelectedVehicle->LayMines = false;
+		sendMineLayerStatus ( SelectedVehicle );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuDisable && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots )
+	{
+		SelectedVehicle->DisableActive = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuSteal && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots)
+	{
+		SelectedVehicle->StealActive = true;
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedVehicle )
+	{
+		SelectedVehicle->ShowHelp();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedBuilding )
+	{
+		SelectedBuilding->ShowHelp();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking )
+	{
+		SelectedBuilding->showMineManager();
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking )
+	{
+		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need )
+	{
+		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+	}
+	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road )
+	{
+		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+	}
+	// Hotkeys for the hud
 	else if ( keysym.sym == KeysList.KeyFog ) Hud.SwitchNebel ( !Hud.Nebel );
 	else if ( keysym.sym == KeysList.KeyGrid ) Hud.SwitchGitter ( !Hud.Gitter );
 	else if ( keysym.sym == KeysList.KeyScan ) Hud.SwitchScan ( !Hud.Scan );
@@ -4305,8 +4446,11 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 
 		mouse->GetPos();
 
-		// check user
-		if ( bExit || checkUser( false ) == -1 )
+		// check length of chat string
+		if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
+
+		// check exit
+		if ( bExit )
 		{
 			bExit = true;
 			bWaitForOthers = false;

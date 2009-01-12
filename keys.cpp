@@ -280,6 +280,182 @@ int LoadKeys ()
 		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
 		KeysList.KeyCalcPath = GetKeyFromString ( "LSHIFT" );
 	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyCenterUnit", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyCenterUnit = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyCenterUnit = GetKeyFromString ( "F" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuAttack", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuAttack = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuAttack = GetKeyFromString ( "A" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuBuild", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuBuild = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuBuild = GetKeyFromString ( "B" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuTransfer", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuTransfer = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuTransfer = GetKeyFromString ( "X" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuAutomove", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuAutomove = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuAutomove = GetKeyFromString ( "A" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuStart", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuStart = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuStart = GetKeyFromString ( "S" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuStop", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuStop = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuStop = GetKeyFromString ( "S" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuClear", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuClear = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuClear = GetKeyFromString ( "C" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuSentry", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuSentry = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuSentry = GetKeyFromString ( "S" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuActivate", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuActivate = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuActivate = GetKeyFromString ( "A" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuLoad", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuLoad = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuLoad = GetKeyFromString ( "L" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuReload", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuReload = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuReload = GetKeyFromString ( "R" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuRepair", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuRepair = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuRepair = GetKeyFromString ( "R" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuLayMine", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuLayMine = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuLayMine = GetKeyFromString ( "L" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuClearMine", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuClearMine = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuClearMine = GetKeyFromString ( "C" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuDisable", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuDisable = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuDisable = GetKeyFromString ( "D" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuSteal", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuSteal = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuSteal = GetKeyFromString ( "S" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuInfo", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuInfo = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuInfo = GetKeyFromString ( "H" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuDistribute", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuDistribute = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuDistribute = GetKeyFromString ( "D" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuResearch", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuResearch = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuResearch = GetKeyFromString ( "R" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuUpgrade", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuUpgrade = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuUpgrade = GetKeyFromString ( "U" );
+	}
+	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Keys","KeyUnitMenuDestroy", NULL);
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		KeysList.KeyUnitMenuDestroy = GetKeyFromString ( sTmpString );
+	else
+	{
+		cLog::write ( "Can't load KeyCalcPath from keys.xml: using default value", LOG_TYPE_WARNING );
+		KeysList.KeyUnitMenuDestroy = GetKeyFromString ( "D" );
+	}
 
 	pXmlNode = pXmlNode->XmlGetFirstNode(KeysXml,"Controles","Mouse","MOUSE_STYLE", NULL);
 	pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text");

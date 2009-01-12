@@ -43,10 +43,29 @@ void cEventHandling::HandleEvents()
 				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
 				SHOW_SCREEN
 			}
+			// Screenshot
+			else if ( event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT )
+			{
+				time_t tTime;
+				tm *tmTime;
+				char timestr[16];
+				string sTime;
+				tTime = time ( NULL );
+				tmTime = localtime ( &tTime );
+				strftime( timestr, 16, "%d.%m.%y-%H%M%S", tmTime );
+
+				// TODO: add folder for screenshots
+				string screenshotfile = (string)"Screen_" + timestr + ".bmp";
+				SDL_SaveBMP ( screen, screenshotfile.c_str() );
+			}
 			else
 			{
 				InputHandler->inputkey ( event.key.keysym );
 			}
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			InputHandler->inputMouseButton ( event.button );
 			break;
 		case NETWORK_EVENT:
 			switch ( event.user.code )

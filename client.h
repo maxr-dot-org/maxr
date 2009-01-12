@@ -26,6 +26,8 @@
 #include "hud.h"
 #include "netmessage.h"
 #include "attackJobs.h"
+#include "input.h"
+
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -167,13 +169,8 @@ private:
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	bool bStartupHud;
+	sHudPosition SavedPositions[4];
 
-	/**
-	* checks the input of the player
-	*@author alzi alias DoctorDeath
-	*@return -1 if game should be closed, else 0.
-	*/
-	int checkUser( bool bChange = true );
 	bool selectUnit( sGameObjects *OverObject, bool base );
 	/**
 	* draws the minimap in the hud
@@ -487,6 +484,7 @@ public:
 
 	void checkVehiclePositions( cNetMessage* message );
 	void handleHotKey ( SDL_keysym &keysym ); 
+	void handleMouseInput ( sMouseState mouseState );
 
 } EX *Client;
 

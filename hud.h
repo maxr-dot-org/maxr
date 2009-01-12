@@ -23,6 +23,10 @@
 
 #include <string>
 
+struct sHudPosition
+{
+	int offsetX, offsetY;
+};
 
 // Die Hud-Klasse ////////////////////////////////////////////////////////////
 class cHud{

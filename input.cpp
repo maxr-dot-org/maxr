@@ -30,6 +30,13 @@ cInput::cInput()
 	inputactive = false;
 	hasBeenInput = false;
 	lastShownCursorTime = 0;
+
+	MouseState.leftButtonPressed = false;
+	MouseState.rightButtonPressed = false;
+	MouseState.leftButtonHold = false;
+	MouseState.rightButtonHold = false;
+	MouseState.wheelUp = false;
+	MouseState.wheelDown = false;
 }
 
 void cInput::inputkey ( SDL_keysym &keysym )
@@ -108,6 +115,49 @@ void cInput::inputkey ( SDL_keysym &keysym )
 		// when input isn't active the client will handle the input as hotkey
 		if ( Client ) Client->handleHotKey ( keysym );
 	}
+}
+
+void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
+{
+	if ( button.state == SDL_PRESSED )
+	{
+		if ( button.button == SDL_BUTTON_LEFT )
+		{
+			MouseState.leftButtonPressed = true;
+			if ( MouseState.rightButtonPressed )
+			{
+				MouseState.rightButtonHold = true;
+				MouseState.rightButtonPressed = false;
+			}
+		}
+		else if ( button.button == SDL_BUTTON_RIGHT )
+		{
+			MouseState.rightButtonPressed = true;
+			if ( MouseState.leftButtonPressed )
+			{
+				MouseState.leftButtonHold = true;
+				MouseState.leftButtonPressed = false;
+			}
+		}
+		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = true;
+		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = true;
+	}
+	else if ( button.state == SDL_RELEASED )
+	{
+		if ( button.button == SDL_BUTTON_LEFT )
+		{
+			MouseState.leftButtonPressed = false;
+			MouseState.leftButtonHold = false;
+		}
+		else if ( button.button == SDL_BUTTON_RIGHT )
+		{
+			MouseState.rightButtonPressed = false;
+			MouseState.rightButtonHold = false;
+		}
+		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = false;
+		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = false;
+	}
+	if ( Client ) Client->handleMouseInput ( MouseState );
 }
 
 void cInput::addUTF16Char( Uint16 ch )

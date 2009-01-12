@@ -36,6 +36,16 @@ enum eCursorBehavior
 	CURSOR_STANDARD		// the cursor behavior which was overgiven in setInputState() will be used
 };
 
+struct sMouseState
+{
+	bool leftButtonPressed;
+	bool rightButtonPressed;
+	bool leftButtonHold;
+	bool rightButtonHold;
+	bool wheelUp;
+	bool wheelDown;
+};
+
 /**
  * @author alzi alias DoctorDeath
  * Handles keyinput from SDL_evnts and the input string. the string will be formated in UTF-8!
@@ -52,6 +62,7 @@ private:
 	/** the standard behavior of the cursor*/
 	eCursorBehavior cursorBehavior;
 
+	sMouseState MouseState;
 	/** true when there has been input since the last check*/
 	bool hasBeenInput;
 	/** time since the cursor was shown last*/
@@ -74,6 +85,7 @@ public:
 	 * @param keysym SDL_keysym with pressed key information.
 	 */
 	void inputkey ( SDL_keysym &keysym );
+	void inputMouseButton ( SDL_MouseButtonEvent &button );
 	/**
 	 * sets the input string.
 	 * @author alzi alias DoctorDeath

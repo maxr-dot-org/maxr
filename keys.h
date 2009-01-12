@@ -56,6 +56,28 @@ public:
 	SDLKey KeyStatus;
 	SDLKey KeySurvey;
 	SDLKey KeyCalcPath;
+	SDLKey KeyCenterUnit;
+	SDLKey KeyUnitMenuAttack;
+	SDLKey KeyUnitMenuBuild;
+	SDLKey KeyUnitMenuTransfer;
+	SDLKey KeyUnitMenuAutomove;
+	SDLKey KeyUnitMenuStart;
+	SDLKey KeyUnitMenuStop;
+	SDLKey KeyUnitMenuClear;
+	SDLKey KeyUnitMenuSentry;
+	SDLKey KeyUnitMenuActivate;
+	SDLKey KeyUnitMenuLoad;
+	SDLKey KeyUnitMenuReload;
+	SDLKey KeyUnitMenuRepair;
+	SDLKey KeyUnitMenuLayMine;
+	SDLKey KeyUnitMenuClearMine;
+	SDLKey KeyUnitMenuDisable;
+	SDLKey KeyUnitMenuSteal;
+	SDLKey KeyUnitMenuInfo;
+	SDLKey KeyUnitMenuDistribute;
+	SDLKey KeyUnitMenuResearch;
+	SDLKey KeyUnitMenuUpgrade;
+	SDLKey KeyUnitMenuDestroy;
 } EX KeysList;
 
 typedef enum {OldSchool,Modern}eMouseStyle;
