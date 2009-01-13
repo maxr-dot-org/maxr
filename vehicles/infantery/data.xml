@@ -77,7 +77,7 @@
       <Shots Num="1"/>
       <Destination_Area Num="1"/>
       <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="5"/>  
+      <Movement_Allowed Num="0"/>  
     </Weapon>
   </Weapons>
 
