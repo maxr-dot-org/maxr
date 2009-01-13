@@ -21,7 +21,7 @@
 
 #ifdef WIN32
 
-#elseif MAC
+#elif MAC
 
 #else
 	#include <config.h> //created by autotools on linux holding informations like package_string and versions
@@ -106,7 +106,7 @@
 	#else
 		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3"
 	#endif
-#elseif MAC
+#elif MAC
 	#define PACKAGE_VERSION     "0.2.3"
 	#ifdef RELEASE
 		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3 BUILD 200901051940" // Builddate: JJJJMMDDHHMM
