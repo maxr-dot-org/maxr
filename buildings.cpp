@@ -2236,11 +2236,7 @@ void cBuilding::ShowStorage ( void )
 		// Alle Aktivieren:
 		if ( x >= rBtnAllActive.x && x < rBtnAllActive.x + rBtnAllActive.w && y >= rBtnAllActive.y && y < rBtnAllActive.y + rBtnAllActive.h && b && !LastB && AlleAktivierenEnabled )
 		{
-			sVehicle *typ;
-			int size;
-
 			PlayFX ( SoundData.SNDMenuButton );
-			ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -2257,85 +2253,33 @@ void cBuilding::ShowStorage ( void )
 			mouse->MoveCallback = true;
 
 			PlayFX ( SoundData.SNDActivate );
-			size = Client->Map->size;
 
-			for (unsigned int i = 0; i < StoredVehicles.Size();)
+			bool hasCheckedPlayer[16];
+			for ( int i = 0; i < 16; i++ )
 			{
-				typ = StoredVehicles[i]->typ;
-/*
-				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY - 1 ) *size, false );
-					continue;
-				}
+				hasCheckedPlayer[i] = false;
+			}
 
-				if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
+			for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
+			{
+				cVehicle *vehicle = StoredVehicles[i];
+				bool activated = false;
+				for ( int ypos = PosY-1, poscount = 0; ypos <= PosY+2; ypos++ )
 				{
-					ExitVehicleTo ( i, PosX + ( PosY - 1 ) *size, false );
-					continue;
+					if ( ypos < 0 || ypos >= Client->Map->size ) continue;
+					for ( int xpos = PosX-1; xpos <= PosX+2; xpos++, poscount++ )
+					{
+						if ( xpos < 0 || xpos >= Client->Map->size || ( ( ypos == PosY || ypos == PosY+1 ) && ( xpos == PosX || xpos == PosX+1 ) ) ) continue;
+						if ( canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) && !hasCheckedPlayer[poscount] )
+						{
+							sendWantActivate ( iID, false, vehicle->iID, xpos, ypos );
+							hasCheckedPlayer[poscount] = true;
+							activated = true;
+							break;
+						}
+					}
+					if ( activated ) break;
 				}
-
-				if ( PosY - 1 >= 0 && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 1 + ( PosY - 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosX + 2 < size && PosY - 1 >= 0 && CanExitTo ( PosX + 2 + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 2 + ( PosY - 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY ) *size, false );
-					continue;
-				}
-
-				if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 2 + ( PosY ) *size, false );
-					continue;
-				}
-
-				if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY + 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosX + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 2 + ( PosY + 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosX - 1 >= 0 && PosY + 2 < size && CanExitTo ( PosX - 1 + ( PosY + 2 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY + 2 ) *size, false );
-					continue;
-				}
-
-				if ( PosY + 2 < size && CanExitTo ( PosX + ( PosY + 2 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + ( PosY + 2 ) *size, false );
-					continue;
-				}
-
-				if ( PosY + 2 < size && CanExitTo ( PosX + 1 + ( PosY + 2 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 1 + ( PosY + 2 ) *size, false );
-					continue;
-				}
-
-				if ( PosX + 2 < size && PosY + 2 < size && CanExitTo ( PosX + 2 + ( PosY + 2 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 2 + ( PosY + 2 ) *size, false );
-					continue;
-				}
-*/
-				i++;
 			}
 
 			break;

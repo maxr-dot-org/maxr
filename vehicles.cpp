@@ -3890,6 +3890,7 @@ void cVehicle::DrawExitPoints(sVehicle* const typ) const
 bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
 	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
+	if ( data.can_drive == DRIVE_AIR && ( x != PosX || y != PosY ) ) return false;
 	if ( !isNextTo(x, y) ) return false;
 
 	return true;
@@ -3937,7 +3938,7 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 
 void cVehicle::showStorage ()
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, i, to;
+	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, to;
 	SDL_Surface *sf;
 	SDL_Rect scr, dest;
 	bool DownPressed = false, DownEnabled = false;
@@ -3950,6 +3951,8 @@ void cVehicle::showStorage ()
 	#define BUTTON__H 23
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
+
+	SDL_Rect rBtnAllActive = {rDialog.x + 518, rDialog.y + 246, BUTTON__W, BUTTON__H};
 
 	LoadActive = false;
 	mouse->SetCursor ( CHand );
@@ -3984,24 +3987,8 @@ void cVehicle::showStorage ()
 	}
 
 	// Alle Aktivieren:
-	/*
-	scr.x = 0;
-
-	scr.y = 376;
-
-	dest.w = scr.w = 94;
-
-	dest.h = scr.h = 23;
-
-	dest.x = 511;
-
-	dest.y = 251;
-
-	if ( StoredVehicles->Size() )
-	{
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-		AlleAktivierenEnabled = true;
-	} */
+	if ( StoredVehicles.Size() ) drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
+	else drawButton ( lngPack.i18n ( "Text~Button~Active" ), true, rBtnAllActive.x, rBtnAllActive.y, buffer );
 
 	// Vehicles anzeigen:
 	DrawStored ( offset );
@@ -4156,18 +4143,10 @@ void cVehicle::showStorage ()
 			break;
 		}
 
-		// Alle Aktivieren: uncommented because this "feature" is odd for vehicles. -- beko
-		/*
-		if ( x >= 511 && x < 511 + 94 && y >= 251 && y < 251 + 23 && b && !LastB && AlleAktivierenEnabled )
+		if ( x >= rBtnAllActive.x && x < rBtnAllActive.x + rBtnAllActive.w && y >= rBtnAllActive.y && y < rBtnAllActive.y + rBtnAllActive.h && b && !LastB )
 		{
-			sVehicle *typ;
-			int size;
 			PlayFX ( SoundData.SNDMenuButton );
-			dest.w = 94;
-			dest.h = 23;
-			dest.x = 511;
-			dest.y = 251;
-			SDL_BlitSurface ( GraphicsData.gfx_storage, &dest, buffer, &dest );
+			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, rBtnAllActive.x, rBtnAllActive.y, buffer );
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
 
@@ -4178,77 +4157,41 @@ void cVehicle::showStorage ()
 				b = (int)Client->getMouseState().leftButtonPressed;
 			}
 
-			game->OverObject = NULL;
+			Client->OverObject = NULL;
 
 			mouse->MoveCallback = true;
 
 			PlayFX ( SoundData.SNDActivate );
-			size = Client->Map->size;
 
-			for ( i = 0;i < StoredVehicles->Size(); )
+			bool hasCheckedPlayer[9];
+			for ( int i = 0; i < 9; i++ )
 			{
-				typ = (*StoredVehicles)[i]->typ;
-
-				if ( PosX - 1 >= 0 && PosY - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY - 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosY - 1 >= 0 && CanExitTo ( PosX + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + ( PosY - 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosY - 1 >= 0 && CanExitTo ( PosX + 1 + ( PosY - 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 1 + ( PosY - 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosX - 1 >= 0 && CanExitTo ( PosX - 1 + ( PosY ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY ) *size, false );
-					continue;
-				}
-
-				if ( CanExitTo ( PosX + ( PosY ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + ( PosY ) *size, false );
-					continue;
-				}
-
-				if ( PosX + 1 < size && CanExitTo ( PosX + 1 + ( PosY ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 1 + ( PosY ) *size, false );
-					continue;
-				}
-
-				if ( PosX - 1 >= 0 && PosY + 1 < size && CanExitTo ( PosX - 1 + ( PosY + 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX - 1 + ( PosY + 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosY + 1 < size && CanExitTo ( PosX + ( PosY + 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + ( PosY + 1 ) *size, false );
-					continue;
-				}
-
-				if ( PosY + 1 < size && CanExitTo ( PosX + 1 + ( PosY + 1 ) *size, typ ) )
-				{
-					ExitVehicleTo ( i, PosX + 1 + ( PosY + 1 ) *size, false );
-					continue;
-				}
-
-				i++;
+				hasCheckedPlayer[i] = false;
 			}
 
+			for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
+			{
+				cVehicle *vehicle = StoredVehicles[i];
+				bool activated = false;
+				for ( int ypos = PosY-1, poscount = 0; ypos <= PosY+1; ypos++ )
+				{
+					if ( ypos < 0 || ypos >= Client->Map->size ) continue;
+					for ( int xpos = PosX-1; xpos <= PosX+1; xpos++, poscount++ )
+					{
+						if ( xpos < 0 || xpos >= Client->Map->size ) continue;
+						if ( canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) && !hasCheckedPlayer[poscount] )
+						{
+							sendWantActivate ( iID, true, vehicle->iID, xpos, ypos );
+							hasCheckedPlayer[poscount] = true;
+							activated = true;
+							break;
+						}
+					}
+					if ( activated ) break;
+				}
+			}
 			break;
 		}
-		*/
 
 		// Buttons unter den Vehicles:
 		dest.w = 73;
@@ -4257,7 +4200,7 @@ void cVehicle::showStorage ()
 
 		sf = GraphicsData.gfx_storage_ground;
 
-		for ( i = 0;i < to;i++ )
+		for ( int i = 0; i < to;i++ )
 		{
 			if ( (int)StoredVehicles.Size() <= i + offset )
 				break;
@@ -4318,6 +4261,7 @@ void cVehicle::showStorage ()
 
 				Client->OverObject = NULL;
 				mouse->MoveCallback = true;
+				Client->isInMenu = false;
 				return;
 			}
 
