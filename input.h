@@ -38,6 +38,7 @@ enum eCursorBehavior
 
 struct sMouseState
 {
+	sMouseState();
 	bool leftButtonPressed;
 	bool rightButtonPressed;
 	bool leftButtonHold;

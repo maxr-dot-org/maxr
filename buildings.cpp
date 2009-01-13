@@ -1880,497 +1880,6 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 	return false;
 }
 
-// Zeigt das Transfer-Menü an:
-void cBuilding::ShowTransfer ( sGameObjects *target )
-{
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;//i;
-	SDL_Rect scr, dest;
-	bool IncPressed = false;
-	bool DecPressed = false;
-	bool MouseHot = false;
-	int MaxTarget, Target;
-	int Transf = 0;
-	SDL_Surface *img;
-	cVehicle *pv = NULL;
-	cBuilding *pb = NULL;
-
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-	Client->drawMap();
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
-
-	if ( SettingsData.bAlphaEffects )
-		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-
-	dest.x = 166;
-
-	dest.y = 159;
-
-	dest.w = GraphicsData.gfx_transfer->w;
-
-	dest.h = GraphicsData.gfx_transfer->h;
-
-	SDL_BlitSurface ( GraphicsData.gfx_transfer, NULL, buffer, &dest );
-
-	// Die Images erstellen:
-	if ( data.is_big )
-	{
-		ScaleSurfaceAdv2 ( typ->img_org, typ->img, typ->img_org->w / 4, typ->img_org->h / 4 );
-	}
-	else
-	{
-		ScaleSurfaceAdv2 ( typ->img_org, typ->img, typ->img_org->w / 2, typ->img_org->h / 2 );
-	}
-
-	img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, typ->img->w, typ->img->h, 32, 0, 0, 0, 0 );
-
-	SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
-	SDL_BlitSurface ( typ->img, NULL, img, NULL );
-	dest.x = 88 + 166;
-	dest.y = 20 + 159;
-	dest.h = img->h;
-	dest.w = img->w;
-	SDL_BlitSurface ( img, NULL, buffer, &dest );
-	SDL_FreeSurface ( img );
-
-	if ( target->vehicle )
-		pv = target->vehicle;
-
-	pb = target->top;
-
-	if ( pv )
-	{
-		ScaleSurfaceAdv2 ( pv->typ->img_org[0], pv->typ->img[0], pv->typ->img_org[0]->w / 2, pv->typ->img_org[0]->h / 2 );
-		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, pv->typ->img[0]->w, pv->typ->img[0]->h, 32, 0, 0, 0, 0 );
-		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
-		SDL_BlitSurface ( pv->typ->img[0], NULL, img, NULL );
-	}
-	else
-	{
-		if ( pb->data.is_big )
-		{
-			ScaleSurfaceAdv2 ( pb->typ->img_org, pb->typ->img, pb->typ->img_org->w / 4, pb->typ->img_org->h / 4 );
-			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, pb->typ->img->w, pb->typ->img->h, 32, 0, 0, 0, 0 );
-			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
-			SDL_BlitSurface ( pb->typ->img, NULL, img, NULL );
-		}
-		else
-		{
-			ScaleSurfaceAdv2 ( pb->typ->img_org, pb->typ->img, pb->typ->img_org->w / 2, pb->typ->img_org->h / 2 );
-
-			if ( pb->data.has_frames || pb->data.is_connector )
-			{
-				pb->typ->img->h = pb->typ->img->w = 32;
-			}
-
-			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, pb->typ->img->w, pb->typ->img->h, 32, 0, 0, 0, 0 );
-
-			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
-
-			if ( !pb->data.is_connector )
-			{
-				SDL_BlitSurface ( Client->ActivePlayer->color, NULL, img, NULL );
-			}
-
-			SDL_BlitSurface ( pb->typ->img, NULL, img, NULL );
-		}
-	}
-
-	dest.x = 192 + 166;
-
-	dest.y = 20 + 159;
-	dest.h = dest.w = 32;
-	SDL_BlitSurface ( img, NULL, buffer, &dest );
-	SDL_FreeSurface ( img );
-
-	// Text ausgeben:
-
-	font->showTextCentered ( 102 + 166, 64 + 159, typ->data.name );
-
-	if ( pv )
-	{
-		font->showTextCentered ( 208 + 166, 64 + 159, pv->typ->data.name );
-
-		MaxTarget = pv->data.max_cargo;
-		Target = pv->data.cargo;
-	}
-	else
-	{
-		font->showTextCentered ( 208 + 166, 64 + 159, pb->typ->data.name );
-
-		MaxTarget = pb->data.max_cargo;
-		Target = pb->data.cargo;
-	}
-
-	Transf = MaxTarget;
-
-	// Den Bar malen:
-	MakeTransBar ( &Transf, MaxTarget, Target );
-
-	NormalButton btn_cancel( 74 + 166, 125 + 159, "Text~Button~Cancel");
-	NormalButton btn_done(  165 + 166, 125 + 159, "Text~Button~Done");
-	btn_cancel.Draw();
-	btn_done.Draw();
-
-	// Den Buffer anzeigen:
-	SHOW_SCREEN
-	mouse->GetBack ( buffer );
-
-	while ( 1 )
-	{
-		if ( Client->SelectedBuilding == NULL )
-			break;
-
-		Client->handleTimer();
-		Client->doGameActions();
-
-		// Events holen:
-		EventHandler->HandleEvents();
-
-		// Die Maus machen:
-		mouse->GetPos();
-
-		b = mouse->GetMouseButton();
-
-		if ( !b )
-			MouseHot = true;
-
-		if ( !MouseHot )
-			b = 0;
-
-		x = mouse->x;
-
-		y = mouse->y;
-
-		if ( x != LastMouseX || y != LastMouseY )
-		{
-			mouse->draw ( true, screen );
-		}
-
-		bool const down = b > LastB;
-		bool const up   = b < LastB;
-
-		if (btn_cancel.CheckClick(x, y, down, up))
-		{
-			break;
-		}
-
-		if (btn_done.CheckClick(x, y, down, up))
-		{
-			if ( !Transf )
-				break;
-
-			if ( pv )
-			{
-				switch ( data.can_load )
-				{
-
-					case TRANS_METAL:
-						owner->base.AddMetal ( SubBase, -Transf );
-						break;
-
-					case TRANS_OIL:
-						owner->base.AddOil ( SubBase, -Transf );
-						break;
-
-					case TRANS_GOLD:
-						owner->base.AddGold ( SubBase, -Transf );
-						break;
-				}
-
-				pv->data.cargo += Transf;
-			}
-			else
-			{
-				if ( data.cargo > Transf )
-				{
-					data.cargo -= Transf;
-				}
-				else
-				{
-					Transf = data.cargo;
-					data.cargo = 0;
-				}
-
-				pb->data.cargo += Transf;
-			}
-
-			ShowDetails();
-
-			PlayVoice ( VoiceData.VOITransferDone );
-			break;
-		}
-
-		// Inc-Button:
-		if ( x >= 277 + 166 && x < 277 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !IncPressed )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 257;
-			scr.y = 177;
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
-			dest.x = 277 + 166;
-			dest.y = 88 + 159;
-			Transf++;
-			MakeTransBar ( &Transf, MaxTarget, Target );
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-			SHOW_SCREEN
-			mouse->draw ( false, screen );
-			IncPressed = true;
-		}
-		else
-			if ( !b && IncPressed )
-			{
-				scr.x = 277;
-				scr.y = 88;
-				dest.w = scr.w = 19;
-				dest.h = scr.h = 18;
-				dest.x = 277 + 166;
-				dest.y = 88 + 159;
-				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				IncPressed = false;
-			}
-
-		// Dec-Button:
-		if ( x >= 16 + 166 && x < 16 + 19 + 166 && y >= 88 + 159 && y < 88 + 18 + 159 && b && !DecPressed )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 237;
-			scr.y = 177;
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
-			dest.x = 16 + 166;
-			dest.y = 88 + 159;
-			Transf--;
-			MakeTransBar ( &Transf, MaxTarget, Target );
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-			SHOW_SCREEN
-			mouse->draw ( false, screen );
-			DecPressed = true;
-		}
-		else
-			if ( !b && DecPressed )
-			{
-				scr.x = 16;
-				scr.y = 88;
-				dest.w = scr.w = 19;
-				dest.h = scr.h = 18;
-				dest.x = 16 + 166;
-				dest.y = 88 + 159;
-				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				DecPressed = false;
-			}
-
-		// Klick auf den Bar:
-		if ( x >= 44 + 166 && x < 44 + 223 + 166 && y >= 86 + 159 && y < 86 + 20 + 159 && b && !LastB )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			Transf = Round ( ( x - ( 44 +  166 ) ) * ( MaxTarget / 223.0 ) - Target );
-			MakeTransBar ( &Transf, MaxTarget, Target );
-			SHOW_SCREEN
-			mouse->draw ( false, screen );
-		}
-
-		LastMouseX = x;
-
-		LastMouseY = y;
-		LastB = b;
-	}
-
-	// Die Images wiederherstellen:
-	float newzoom = (float)(Client->Hud.Zoom / 64.0);
-
-	ScaleSurfaceAdv2 ( typ->img_org, typ->img, ( int ) ( typ->img_org->w* newzoom ) , ( int ) ( typ->img_org->h* newzoom ) );
-
-	if ( pv )
-	{
-		ScaleSurfaceAdv2 ( pv->typ->img_org[0], pv->typ->img[0], ( int ) ( pv->typ->img_org[0]->w* newzoom ), ( int ) ( pv->typ->img_org[0]->h* newzoom ) );
-	}
-	else
-	{
-		ScaleSurfaceAdv2 ( pb->typ->img_org, pb->typ->img, ( int ) ( pb->typ->img_org->w* newzoom ), ( int ) ( pb->typ->img_org->h* newzoom ) );
-	}
-
-	Transfer = false;
-}
-
-// Malt den Transfer-Bar (len von 0-223):
-void cBuilding::DrawTransBar ( int len )
-{
-	SDL_Rect scr, dest;
-
-	if ( len < 0 )
-		len = 0;
-
-	if ( len > 223 )
-		len = 223;
-
-	scr.x = 44;
-
-	scr.y = 90;
-
-	dest.w = scr.w = 223;
-
-	dest.h = scr.h = 16;
-
-	dest.x = 44 + 166;
-
-	dest.y = 90 + 159;
-
-	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-
-	scr.x = 156 + ( 223 - len );
-
-	dest.w = scr.w = 223 - ( 223 - len );
-
-	if ( data.can_load == TRANS_METAL )
-	{
-		scr.y = 256;
-	}
-	else
-		if ( data.can_load == TRANS_OIL )
-		{
-			scr.y = 273;
-		}
-		else
-		{
-			scr.y = 290;
-		}
-
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-}
-
-// Erzeugt den Transfer Balken:
-void cBuilding::MakeTransBar ( int *trans, int MaxTarget, int Target )
-{
-	int cargo, max_cargo;
-	SDL_Rect scr, dest;
-	string sText;
-
-	switch ( data.can_load )
-	{
-
-		case TRANS_METAL:
-			cargo = SubBase->Metal;
-			max_cargo = SubBase->MaxMetal;
-			break;
-
-		case TRANS_OIL:
-			cargo = SubBase->Oil;
-			max_cargo = SubBase->MaxOil;
-			break;
-
-		case TRANS_GOLD:
-			cargo = SubBase->Gold;
-			max_cargo = SubBase->MaxGold;
-			break;
-	}
-
-	// Den trans-Wert berichtigen:
-	if ( cargo - *trans < 0 )
-	{
-		*trans += cargo - *trans;
-	}
-
-	if ( Target + *trans < 0 )
-	{
-		*trans -= Target + *trans;
-	}
-
-	if ( Target + *trans > MaxTarget )
-	{
-		*trans -= ( Target + *trans ) - MaxTarget;
-	}
-
-	if ( cargo - *trans > max_cargo )
-	{
-		*trans += ( cargo - *trans ) - max_cargo;
-	}
-
-	// Die Nummern machen:
-	scr.x = 4;
-
-	scr.y = 30;
-
-	dest.x = 4 + 166;
-
-	dest.y = 30 + 159;
-
-	dest.w = scr.w = 78;
-
-	dest.h = scr.h = 14;
-
-	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-
-	sText = iToStr ( cargo - *trans );
-
-	//sprintf ( str,"%d",cargo-*trans );
-
-	font->showTextCentered ( 4 + 39 + 166, 30 + 159, sText );
-
-	scr.x = 229;
-
-	dest.x = 229 + 166;
-
-	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-
-	sText = iToStr ( Target + *trans );
-
-	//sprintf ( str,"%d",Target+*trans );
-
-	font->showTextCentered ( 229 + 39 + 166, 30 + 159, sText );
-
-	scr.x = 141;
-
-	scr.y = 15;
-
-	dest.x = 141 + 166;
-
-	dest.y = 15 + 159;
-
-	dest.w = scr.w = 29;
-
-	dest.h = scr.h = 21;
-
-	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-
-	//sprintf ( str,"%d",abs ( *trans ) );
-	sText = iToStr ( abs ( *trans ) );
-
-	font->showTextCentered ( 155 + 166, 21 + 159, sText );
-
-	// Den Pfeil malen:
-	if ( *trans < 0 )
-	{
-		scr.x = 122;
-		scr.y = 263;
-		dest.x = 143 + 166;
-		dest.y = 44 + 159;
-		dest.w = scr.w = 30;
-		dest.h = scr.h = 16;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-	}
-	else
-	{
-		scr.x = 143;
-		scr.y = 44;
-		dest.x = 143 + 166;
-		dest.y = 44 + 159;
-		dest.w = scr.w = 30;
-		dest.h = scr.h = 16;
-		SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
-	}
-
-	DrawTransBar ( ( int ) ( 223 * ( float ) ( Target + *trans ) / MaxTarget ) );
-}
-
 bool cBuilding::isNextTo( int x, int y) const
 {
 	if ( x + 1 < PosX || y + 1 < PosY ) return false;
@@ -2498,6 +2007,7 @@ void cBuilding::ShowStorage ( void )
 	bool AlleReparierenEnabled = false;
 	bool AlleUpgradenEnabled = false;
 	int offset = 0;
+	Client->isInMenu = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -2593,7 +2103,7 @@ void cBuilding::ShowStorage ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -2739,7 +2249,7 @@ void cBuilding::ShowStorage ( void )
 			{
 				Client->doGameActions();
 				EventHandler->HandleEvents();
-				b = mouse->GetMouseButton();
+				b = (int)Client->getMouseState().leftButtonPressed;
 			}
 
 			Client->OverObject = NULL;
@@ -2828,7 +2338,7 @@ void cBuilding::ShowStorage ( void )
 				i++;
 			}
 
-			return;
+			break;
 		}
 
 		// Alle Aufladen:
@@ -3034,13 +2544,13 @@ void cBuilding::ShowStorage ( void )
 				{
 					Client->doGameActions();
 					EventHandler->HandleEvents();
-					b = mouse->GetMouseButton();
+					b = (int)Client->getMouseState().leftButtonPressed;
 				}
 
 				Client->OverObject = NULL;
 
 				mouse->MoveCallback = true;
-				return;
+				Client->isInMenu = false;
 			}
 			// Reparatur:
 			dest.x += 75;
@@ -3099,6 +2609,7 @@ void cBuilding::ShowStorage ( void )
 	}
 
 	mouse->MoveCallback = true;
+	Client->isInMenu = false;
 }
 
 // Malt alle Bilder der geladenen Vehicles:
@@ -3479,6 +2990,7 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 void cBuilding::ShowResearch ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
+	Client->isInMenu = true;
 
 	//Dialog Research width
 #define DLG_RSRCH_W GraphicsData.gfx_research->w
@@ -3535,7 +3047,7 @@ void cBuilding::ShowResearch ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -3569,6 +3081,7 @@ void cBuilding::ShowResearch ( void )
 
 		LastB = b;
 	}
+	Client->isInMenu = false;
 }
 
 // Zeigt die Schieber an:
@@ -3732,6 +3245,7 @@ void cBuilding::ShowUpgrade ( void )
 	bool UpPressed = false;
 	int selected = 0, offset = 0;
 	int StartCredits = owner->Credits;
+	Client->isInMenu = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -3861,7 +3375,7 @@ void cBuilding::ShowUpgrade ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -4246,6 +3760,7 @@ void cBuilding::ShowUpgrade ( void )
 	}
 
 	mouse->MoveCallback = true;
+	Client->isInMenu = false;
 }
 
 // Zeigt die Liste mit den Images an:
@@ -5131,6 +4646,7 @@ void cBuilding::showMineManager ( void )
 	int MaxM = 0, MaxO = 0, MaxG = 0;
 	int iFreeM = 0, iFreeO = 0, iFreeG = 0;
 	int iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd;
+	Client->isInMenu = true;
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rTitle = {rDialog.x + 230, rDialog.y + 11, 174, 13};
@@ -5251,7 +4767,7 @@ void cBuilding::showMineManager ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -5612,6 +5128,7 @@ void cBuilding::showMineManager ( void )
 		LastMouseY = y;
 		LastB = b;
 	}
+	Client->isInMenu = false;
 }
 
 // Malt die Minenmanager-Bars:
@@ -5915,6 +5432,7 @@ void cBuilding::ShowBuildMenu ( void )
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
 	bool showDetailsBuildlist = true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
+	Client->isInMenu = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -6127,7 +5645,7 @@ void cBuilding::ShowBuildMenu ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -6599,6 +6117,7 @@ void cBuilding::ShowBuildMenu ( void )
 	}
 
 	mouse->MoveCallback = true;
+	Client->isInMenu = false;
 }
 
 // Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch sämtliche Infos zur ausgewählten Einheit
@@ -7188,7 +6707,7 @@ int cBuilding::CalcHelth ( int damage )
 }
 
 // Malt das Buildingmenü:
-void cBuilding::DrawMenu ( void )
+void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
 	static int LastNr = -1;
@@ -7209,7 +6728,7 @@ void cBuilding::DrawMenu ( void )
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
 		return;
 
-	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
 		LastNr = SelMenu;
@@ -8122,6 +7641,7 @@ void cBuilding::ShowHelp ( void )
 	SDL_Rect rTxt = {rDialog.x + 345, rDialog.y + 66, 274, 181};
 	SDL_Rect rTitle = {rDialog.x + 332, rDialog.y + 11, 152, 15};
 	SDL_Surface *SfDialog;
+	Client->isInMenu = true;
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -8174,7 +7694,7 @@ void cBuilding::ShowHelp ( void )
 
 		// Die Maus machen:
 		mouse->GetPos();
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 		x = mouse->x;
 		y = mouse->y;
 
@@ -8185,7 +7705,7 @@ void cBuilding::ShowHelp ( void )
 
 		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			return;
+			break;
 		}
 
 		LastMouseX = x;
@@ -8195,6 +7715,7 @@ void cBuilding::ShowHelp ( void )
 	}
 
 	SDL_FreeSurface ( SfDialog );
+	Client->isInMenu = false;
 }
 
 // Sendet die Update-Nachricht für das gespeicherte Vehicle mit dem Index:

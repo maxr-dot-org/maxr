@@ -148,6 +148,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugPlayers = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
+	isInMenu = false;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX((SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
@@ -266,6 +267,8 @@ void cClient::run()
 		Hud.CheckMouseOver();
 		Hud.CheckScroll();
 		CHECK_MEMORY;
+		// check minimap
+		if ( clientMouseState.leftButtonPressed && !bHelpActive ) Hud.CheckOneClick();
 		// check length of input strings
 		if ( bChangeObjectName && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( 128 );
 		else if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
@@ -438,8 +441,21 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 {
 	bool bChange = !bWaitForOthers;
 
-	// handle the mouse:
 	mouse->GetPos();
+	clientMouseState = mouseState;
+	// give the mouse input to the unit menu if one is active
+	if ( isInMenu ) return;
+	if ( SelectedVehicle && SelectedVehicle->MenuActive && SelectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
+	{
+		SelectedVehicle->DrawMenu ( &mouseState );
+		return;
+	}
+	if ( SelectedBuilding && SelectedBuilding->MenuActive && SelectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
+	{
+		SelectedBuilding->DrawMenu ( &mouseState );
+		return;
+	}
+	// handle input on the map
 	if ( MouseStyle == OldSchool && mouseState.rightButtonPressed && !mouseState.leftButtonHold && OverObject )
 	{
 		if ( OverObject->vehicle && OverObject->vehicle == SelectedVehicle ) OverObject->vehicle->ShowHelp();
@@ -736,17 +752,19 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			bHelpActive=false;
 		}
 	}
-	if ( mouseState.leftButtonPressed || mouseState.rightButtonPressed && !bHelpActive )
-	{
-		Hud.CheckOneClick();
-	}
 	// check zoom via mousewheel
 	if ( mouseState.wheelUp ) Hud.SetZoom ( Hud.Zoom+3 );
 	else if ( mouseState.wheelDown ) Hud.SetZoom ( Hud.Zoom-3 );
 }
 
+sMouseState cClient::getMouseState()
+{
+	return clientMouseState;
+}
+
 void cClient::handleHotKey ( SDL_keysym &keysym )
 {
+	if ( isInMenu ) return;
 	if ( keysym.sym == KeysList.KeyExit )
 	{
 		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
@@ -4959,6 +4977,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	int iMaxDestCargo, iDestCargo;
 	int iTransf = 0;
 	SDL_Surface *img;
+	isInMenu = true;
 
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
@@ -5117,7 +5136,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)clientMouseState.leftButtonPressed;
 
 		if ( !b ) MouseHot = true;
 
@@ -5299,6 +5318,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	if ( DestBuilding ) ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, ( int ) ( DestBuilding->typ->img_org->w* fNewZoom ), ( int ) ( DestBuilding->typ->img_org->h* fNewZoom ) );
 	else ScaleSurfaceAdv2 ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], ( int ) ( DestVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( DestVehicle->typ->img_org[0]->h* fNewZoom ) );
+	isInMenu = false;
 }
 
 void cClient::drawTransBar ( int iLenght, int iType )

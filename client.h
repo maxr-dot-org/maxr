@@ -169,7 +169,10 @@ private:
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	bool bStartupHud;
+	/** Saved positions for hotkeys F5-F8 */
 	sHudPosition SavedPositions[4];
+	/** the mouse state which the client reseived by event for the menus */
+	sMouseState clientMouseState;
 
 	bool selectUnit( sGameObjects *OverObject, bool base );
 	/**
@@ -368,6 +371,8 @@ public:
 	int iTimer0, iTimer1, iTimer2;
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
+	/** true, when the client is in a menu */
+	bool isInMenu;
 
 	/** flag if the hud has to be drawn */
 	bool bFlagDrawHud;
@@ -485,6 +490,7 @@ public:
 	void checkVehiclePositions( cNetMessage* message );
 	void handleHotKey ( SDL_keysym &keysym ); 
 	void handleMouseInput ( sMouseState mouseState );
+	sMouseState getMouseState();
 
 } EX *Client;
 

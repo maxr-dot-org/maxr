@@ -20,6 +20,16 @@
 #include "client.h"
 #include "menu.h"
 
+sMouseState::sMouseState()
+{
+	leftButtonPressed = false;
+	rightButtonPressed = false;
+	leftButtonHold = false;
+	rightButtonHold = false;
+	wheelUp = false;
+	wheelDown = false;
+}
+
 cInput::cInput()
 {
 	// enables that SDL puts the unicode values to the keyevents.
@@ -31,13 +41,6 @@ cInput::cInput()
 	inputactive = false;
 	hasBeenInput = false;
 	lastShownCursorTime = 0;
-
-	MouseState.leftButtonPressed = false;
-	MouseState.rightButtonPressed = false;
-	MouseState.leftButtonHold = false;
-	MouseState.rightButtonHold = false;
-	MouseState.wheelUp = false;
-	MouseState.wheelDown = false;
 }
 
 void cInput::inputkey ( SDL_keysym &keysym )

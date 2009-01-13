@@ -1300,6 +1300,7 @@ void cVehicle::ShowHelp ( void )
 	SDL_Rect rTxt = {MENU_OFFSET_X + 349, MENU_OFFSET_Y + 66, 277, 181};
 	SDL_Rect rTitle = {MENU_OFFSET_X + 327, MENU_OFFSET_Y + 11, 160, 15};
 	SDL_Surface *SfDialog;
+	Client->isInMenu = true;
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -1351,7 +1352,7 @@ void cVehicle::ShowHelp ( void )
 
 		// Die Maus machen:
 		mouse->GetPos();
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 		x = mouse->x;
 		y = mouse->y;
 
@@ -1362,7 +1363,7 @@ void cVehicle::ShowHelp ( void )
 
 		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
 		{
-			return;
+			break;
 		}
 
 		LastMouseX = x;
@@ -1372,6 +1373,7 @@ void cVehicle::ShowHelp ( void )
 	}
 
 	SDL_FreeSurface ( SfDialog );
+	Client->isInMenu = false;
 }
 
 // Malt große Symbole für das Info-Fenster:
@@ -1901,7 +1903,7 @@ void cVehicle::StartMoveSound ( void )
 }
 
 // Malt das Vehiclemenü:
-void cVehicle::DrawMenu ( void )
+void cVehicle::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
 	static int LastNr = -1;
@@ -1915,7 +1917,7 @@ void cVehicle::DrawMenu ( void )
 	if ( moving || rotating || bIsBeeingAttacked )
 		return;
 
-	if ( mouse->GetMouseButton() && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
 		LastNr = SelMenu;
@@ -2722,6 +2724,8 @@ void cVehicle::ShowBuildMenu ( void )
 	int iTurboBuildCosts[3];	//costs for the 3 turbo build steps
 	int iTurboBuildRounds[3];	// needed rounds for the 3 turbo build steps
 								// 0 rounds, means not available
+	Client->isInMenu = true;
+
 #define BUTTON__W 77
 #define BUTTON__H 23
 
@@ -2836,7 +2840,7 @@ void cVehicle::ShowBuildMenu ( void )
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -3090,6 +3094,7 @@ void cVehicle::ShowBuildMenu ( void )
 	}
 
 	mouse->MoveCallback = true;
+	Client->isInMenu = false;
 }
 
 // Zeigt die Liste mit den Images an:
@@ -3939,6 +3944,7 @@ void cVehicle::showStorage ()
 	bool UpPressed = false, UpEnabled = false;
 	//bool AlleAktivierenEnabled = false;
 	int offset = 0;
+	Client->isInMenu = true;
 
 	#define BUTTON__W 77
 	#define BUTTON__H 23
@@ -4020,7 +4026,7 @@ void cVehicle::showStorage ()
 		// Die Maus machen:
 		mouse->GetPos();
 
-		b = mouse->GetMouseButton();
+		b = (int)Client->getMouseState().leftButtonPressed;
 
 		x = mouse->x;
 
@@ -4169,7 +4175,7 @@ void cVehicle::showStorage ()
 			{
 				EventHandler->HandleEvents();
 				Client->doGameActions();
-				b = mouse->GetMouseButton();
+				b = (int)Client->getMouseState().leftButtonPressed;
 			}
 
 			game->OverObject = NULL;
@@ -4240,7 +4246,7 @@ void cVehicle::showStorage ()
 				i++;
 			}
 
-			return;
+			break;
 		}
 		*/
 
@@ -4304,7 +4310,7 @@ void cVehicle::showStorage ()
 				{
 					EventHandler->HandleEvents();
 					Client->doGameActions();
-					b = mouse->GetMouseButton();
+					b = (int)Client->getMouseState().leftButtonPressed;
 				}
 
 				if ( data.can_drive == DRIVE_AIR ) sendWantActivate ( iID, true, StoredVehicles[VehicleToActivate]->iID, PosX, PosY );
@@ -4324,6 +4330,7 @@ void cVehicle::showStorage ()
 	}
 
 	mouse->MoveCallback = true;
+	Client->isInMenu = false;
 }
 
 // Malt alle Bilder der geladenen Vehicles:

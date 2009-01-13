@@ -25,6 +25,7 @@
 #include "base.h"
 #include "dialog.h"
 #include "map.h"
+#include "input.h"
 
 // Define zum Updaten:
 #define UpdateBuilding(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).iBuilt_Costs=(to).iBuilt_Costs;
@@ -183,7 +184,7 @@ public:
 	int GetScreenPosX(void) const;
 	int GetScreenPosY(void) const;
 	int CalcHelth(int damage);
-	void DrawMenu(void);
+	void DrawMenu( sMouseState *mouseState = NULL );
 	int GetMenuPointAnz(void);
 	SDL_Rect GetMenuSize(void);
 	bool MouseOverMenu(int mx,int my);
@@ -197,9 +198,6 @@ public:
 	void ServerStopWork(bool override);
 	void ClientStopWork();
 	bool CanTransferTo(struct sGameObjects *go);
-	void ShowTransfer(sGameObjects *target);
-	void DrawTransBar(int len);
-	void MakeTransBar(int *trans,int MaxTarget,int Target);
 	void CheckRessourceProd(void);
 	void showMineManager();
 	void doMineInc(ResourceKind, cList<sMineValues*>& Mines);
