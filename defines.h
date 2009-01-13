@@ -19,6 +19,14 @@
 #ifndef definesH
 #define definesH
 
+#ifdef WIN32
+
+#elseif MAC
+
+#else
+	#include <config.h> //created by autotools on linux holding informations like package_string and versions
+#endif
+
 #ifdef __main__
 #define EX
 #define ZERO =0
@@ -77,19 +85,38 @@
 #define MAX_NET_LOG		"net.log"
 #define KEYS_XML              (SettingsData.sDataDir + "keys.xml").c_str()
 #define SPLASH_BACKGROUND     (SettingsData.sDataDir + "init.pcx").c_str()
-#if MAC
+#ifdef MAC
 	#define MAXR_ICON             (SettingsData.sDataDir + "maxr_mac.bmp").c_str()
 #else
 	#define MAXR_ICON             (SettingsData.sDataDir + "maxr.bmp").c_str()
 #endif
 
 // We have to take care of these manually !
+
 #ifdef RELEASE
-#define MAXVERSION  "M.A.X. Reloaded 0.2.3 BUILD 200901051940" // Builddate: JJJJMMDDHHMM
+	#define PACKAGE_REV ""
 #else
-	#define MAXVERSION  "M.A.X. Reloaded 0.2.3 SVN Rev 1813"
+	#define PACKAGE_REV " SVN Rev 1813"
 #endif
-#define MAX_VERSION     "0.2.3"
+
+#ifdef WIN32
+	#define PACKAGE_VERSION     "0.2.3"
+	#ifdef RELEASE
+		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3 BUILD 200901051940" // Builddate: JJJJMMDDHHMM
+	#else
+		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3"
+	#endif
+#elseif MAC
+	#define PACKAGE_VERSION     "0.2.3"
+	#ifdef RELEASE
+		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3 BUILD 200901051940" // Builddate: JJJJMMDDHHMM
+	#else
+		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3"
+	#endif
+#else
+	//define nothing on linux - comes all from config.h
+#endif
+
 #define MAX_BUILD_DATE  "2009-01-05 19:40:00"
 
-//#define MAXVERSION "M.A.X. Reloaded 0.2.3"
+//#define PACKAGE_STRING "M.A.X. Reloaded 0.2.3"

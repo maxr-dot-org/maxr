@@ -128,8 +128,10 @@ int LoadData ( void * )
 
 	cLog::mark();
 
+	string sVersion = PACKAGE_STRING;
+	sVersion += PACKAGE_REV;
 
-	MakeLog(MAXVERSION,0,0);
+	MakeLog( sVersion.c_str(),0,0);
 
 	// Load Languagepack
 	MakeLog ( "Loading languagepack...", 0, 2 );

@@ -104,7 +104,7 @@ static void prepareMenu()
 	SDL_FreeSurface(sfTmp);
 
 	//draw infostring with maxversion at the bottom
-	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.i18n ( "Text~Main~Credits_Reloaded" )+ " "+MAX_VERSION);
+	font->showTextCentered(DIALOG_X+320,DIALOG_Y+465, lngPack.i18n ( "Text~Main~Credits_Reloaded" )+ " "+PACKAGE_VERSION);
 	//END MENU REDRAW
 
 	//display random unit
@@ -5132,7 +5132,7 @@ void cMultiPlayerMenu::displayGameSettings()
 		SDL_BlitSurface( sfTmp, &rect, buffer, &rect );
 	}
 
-	OptionString = lngPack.i18n ( "Text~Main~Version", MAX_VERSION ) + "\n";
+	OptionString = lngPack.i18n ( "Text~Main~Version", PACKAGE_VERSION ) + "\n";
 	OptionString += "Checksum: " + iToStr( SettingsData.Checksum ) + "\n\n";
 
 	if( !bHost && !network )
