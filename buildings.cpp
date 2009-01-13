@@ -2551,6 +2551,7 @@ void cBuilding::ShowStorage ( void )
 
 				mouse->MoveCallback = true;
 				Client->isInMenu = false;
+				return;
 			}
 			// Reparatur:
 			dest.x += 75;

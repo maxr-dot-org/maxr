@@ -4183,6 +4183,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( StoringBuilding == SelectedBuilding ) StoringBuilding->ShowDetails();
 			}
 			PlayFX ( SoundData.SNDActivate );
+			mouseMoveCallback ( true );
 		}
 		break;
 	case GAME_EV_DELETE_EVERYTHING:
