@@ -4163,10 +4163,10 @@ void cVehicle::showStorage ()
 
 			PlayFX ( SoundData.SNDActivate );
 
-			bool hasCheckedPlayer[9];
+			bool hasCheckedPlace[9];
 			for ( int i = 0; i < 9; i++ )
 			{
-				hasCheckedPlayer[i] = false;
+				hasCheckedPlace[i] = false;
 			}
 
 			for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
@@ -4179,10 +4179,10 @@ void cVehicle::showStorage ()
 					for ( int xpos = PosX-1; xpos <= PosX+1; xpos++, poscount++ )
 					{
 						if ( xpos < 0 || xpos >= Client->Map->size ) continue;
-						if ( canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) && !hasCheckedPlayer[poscount] )
+						if ( canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) && !hasCheckedPlace[poscount] )
 						{
 							sendWantActivate ( iID, true, vehicle->iID, xpos, ypos );
-							hasCheckedPlayer[poscount] = true;
+							hasCheckedPlace[poscount] = true;
 							activated = true;
 							break;
 						}
