@@ -845,7 +845,7 @@ void cSavegame::writeHeader( string saveName )
 {
 	TiXmlElement *headerNode = addMainElement ( SaveFile->RootElement(), "Header" );
 
-	addAttributeElement ( headerNode, "Game_Version", "string", PACKAGE_STRING );
+	addAttributeElement ( headerNode, "Game_Version", "string", PACKAGE_VERSION );
 	addAttributeElement ( headerNode, "Name", "string", saveName );
 	switch ( Server->iGameType )
 	{

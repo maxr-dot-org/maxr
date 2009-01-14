@@ -128,7 +128,9 @@ int LoadData ( void * )
 
 	cLog::mark();
 
-	string sVersion = PACKAGE_STRING;
+	string sVersion = PACKAGE_NAME;
+	sVersion += " BUILD: ";
+	sVersion += MAX_BUILD_DATE;
 	sVersion += PACKAGE_REV;
 
 	MakeLog( sVersion.c_str(),0,0);
@@ -3912,10 +3914,9 @@ string searchData(void)
 	//BEGIN crude path validation to find gamedata
 	cLog::write ( "Probing for data paths using default values:", cLog::eLOG_TYPE_INFO );
 	
-	//TODO: add env MAXRDATA or something like that or perhaps a placeholder for --prefix of autotools
 	#define PATHCOUNT 11
 	string sPathArray[PATHCOUNT] = { 
-		"/usr/share/maxr",
+		BUILD_DATADIR,
 		"/usr/local/share/maxr",
 		"/usr/games/maxr",
 		"/usr/local/games/maxr",
@@ -3927,6 +3928,21 @@ string searchData(void)
 		SettingsData.sExePath, //check for gamedata in bin folder too
 		"." //last resort: local dir
 	};
+
+	//BEGIN SET MAXRDATA
+	char * cDataDir;
+	cDataDir = getenv("MAXRDATA"); //get $MAXRDATA (path to data folder) to override search paths
+	if(cDataDir == NULL)
+	{
+		cLog::write("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
+	}
+	else
+	{
+		sPathArray[0] = cDataDir;
+		cLog::write("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
+	}
+	//END SET MAXRDATA
+
 	for(int i=0; i<PATHCOUNT; i++)
 	{
 		string sInitFile = sPathArray[i];
@@ -3942,7 +3958,7 @@ string searchData(void)
 	
 	if(sPathToGameData.empty()) //still empty? cry for mama - we couldn't locate any typical data folder
 	{
-		cLog::write("No success probing for data folder!", cLog::eLOG_TYPE_WARNING);
+		cLog::write("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
 	}
 	else
 	{

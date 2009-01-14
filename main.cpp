@@ -61,8 +61,9 @@ int main ( int argc, char *argv[] )
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	{
-			string sVersion = PACKAGE_STRING;
-			sVersion += PACKAGE_REV;
+		string sVersion = PACKAGE_NAME;
+		sVersion += PACKAGE_VERSION;
+		sVersion += PACKAGE_REV;
 		cLog::write ( sVersion, cLog::eLOG_TYPE_INFO );
 		std::string str = "Build : ";
 		str += MAX_BUILD_DATE;
@@ -188,7 +189,8 @@ void showSplash()
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	
-	string sVersion = PACKAGE_STRING;
+	string sVersion = PACKAGE_NAME;
+	sVersion += PACKAGE_VERSION;
 	sVersion += PACKAGE_REV;
 	SDL_WM_SetCaption ( sVersion.c_str(), NULL );
 	SDL_UpdateRect ( screen,0,0,0,0 );
@@ -216,7 +218,8 @@ void showGameWindow()
 
 	SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
 
-	string sVersion = PACKAGE_STRING;
+	string sVersion = PACKAGE_NAME;
+	sVersion += PACKAGE_VERSION;
 	sVersion += PACKAGE_REV;
 	SDL_WM_SetCaption ( sVersion.c_str(), NULL ); //set caption
 	SDL_ShowCursor ( 0 );
