@@ -125,6 +125,8 @@ public:
 	cBuilding* getBaseBuilding();
 	/** returns a pointer to a rubble object, if there is one. */
 	cBuilding* getRubble();
+	/** returns a pointer to an expl. mine, if there is one */
+	cBuilding* getMine();
 
 };
 

@@ -402,7 +402,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					cLog::write(" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
-				attackingBuilding = Map->GO[offset].top;
+				attackingBuilding = Map->fields[offset].getTopBuilding();
 				if ( attackingBuilding == NULL )
 				{
 					cLog::write(" Server: No Building at agressor offset", cLog::eLOG_TYPE_NET_WARNING);
@@ -856,7 +856,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				int iOff = iX + iY * Map->size;
 
-				if ( !Map->IsWater ( iOff, true, true ) || ( Map->GO[iOff].base && ( Map->GO[iOff].base->data.is_bridge || Map->GO[iOff].base->data.is_platform || Map->GO[iOff].base->data.is_road ) ) ) bLand = true;
+				cBuilding* building = Map->fields[iOff].getBaseBuilding();
+				if ( !Map->IsWater ( iOff, true, true ) || ( building && ( building->data.is_bridge || building->data.is_platform || building->data.is_road ) ) ) bLand = true;
 				else bWater = true;
 			}
 
@@ -1582,36 +1583,55 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	{
 		if ( AddedBuilding->data.is_big )
 		{
-			deleteUnit ( Map->GO[iOff].top );
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
+			cBuildingIterator building = Map->fields[iOff].getBuildings();
+			while ( building )
 			{
-				deleteUnit ( Map->GO[iOff].base );
+				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				{
+					deleteUnit ( building );
+				}
 			}
 			iOff++;
-			deleteUnit ( Map->GO[iOff].top );
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
+			building = Map->fields[iOff].getBuildings();
+			while ( building )
 			{
-				deleteUnit ( Map->GO[iOff].base );
+				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				{
+					deleteUnit ( building );
+				}
 			}
 			iOff+=Map->size;
-			deleteUnit ( Map->GO[iOff].top );
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
+			building = Map->fields[iOff].getBuildings();
+			while ( building )
 			{
-				deleteUnit ( Map->GO[iOff].base );
+				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				{
+					deleteUnit ( building );
+				}
 			}
 			iOff--;
-			deleteUnit ( Map->GO[iOff].top );
-			if ( Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
+			building = Map->fields[iOff].getBuildings();
+			while ( building )
 			{
-				deleteUnit ( Map->GO[iOff].base );
+				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				{
+					deleteUnit ( building );
+				}
 			}
 		}
 		else
 		{
-			deleteUnit ( Map->GO[iOff].top );
-			if ( !AddedBuilding->data.is_connector&&Map->GO[iOff].base&&(Map->GO[iOff].base->data.is_road || Map->GO[iOff].base->data.is_expl_mine) )
+			deleteUnit ( Map->fields[iOff].getTopBuilding() );
+			if ( !AddedBuilding->data.is_connector )
 			{
-				deleteUnit ( Map->GO[iOff].base );
+				cBuildingIterator building = Map->fields[iOff].getBuildings();
+				while ( building )
+				{
+					if ( building->data.is_road || building->data.is_expl_mine )
+					{
+						deleteUnit ( building );
+					}
+				}
 			}
 		}
 	}
@@ -2509,39 +2529,50 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	
 }
 
-void cServer::destroyUnit(cBuilding *building)
+void cServer::destroyUnit(cBuilding *_b)
 {
-	int offset = building->PosX + building->PosY * Map->size;
+	int offset = _b->PosX + _b->PosY * Map->size;
 	int value = 0;
 	bool big = false;
-	bool isConnector = building->data.is_connector;
+	bool isConnector = _b->data.is_connector;
 
-	if ( Map->GO[offset].top && Map->GO[offset].top->data.is_big )
+	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
+	if ( topBuilding && topBuilding->data.is_big )
 	{
 		big = true;
 
-		if ( Map->GO[offset + 1            ].base )    value += Map->GO[offset + 1            ].base->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size    ].base )    value += Map->GO[offset + Map->size    ].base->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size + 1].base )    value += Map->GO[offset + Map->size + 1].base->data.iBuilt_Costs;
-		if ( Map->GO[offset + 1            ].subbase && Map->GO[offset + 1            ].subbase->owner ) value += Map->GO[offset + 1            ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size    ].subbase && Map->GO[offset + Map->size    ].subbase->owner ) value += Map->GO[offset + Map->size    ].subbase->data.iBuilt_Costs;
-		if ( Map->GO[offset + Map->size + 1].subbase && Map->GO[offset + Map->size + 1].subbase->owner ) value += Map->GO[offset + Map->size + 1].subbase->data.iBuilt_Costs;
+		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
+		while ( building )
+		{
+			if ( building->owner ) value += building->data.iBuilt_Costs;
+			else value += building->RubbleValue*2;
+			deleteUnit( building, false );
+		}
 
-		deleteUnit( Map->GO[offset + 1            ].base, false );
-		deleteUnit( Map->GO[offset + Map->size    ].base, false );
-		deleteUnit( Map->GO[offset + Map->size + 1].base, false );
-		deleteUnit( Map->GO[offset + 1            ].subbase, false );
-		deleteUnit( Map->GO[offset + Map->size    ].subbase, false );
-		deleteUnit( Map->GO[offset + Map->size + 1].subbase, false );
+		building = Map->fields[offset + Map->size].getBuildings();
+		while ( building )
+		{
+			if ( building->owner ) value += building->data.iBuilt_Costs;
+			else value += building->RubbleValue*2;
+			deleteUnit( building, false );
+		}
+
+		building = Map->fields[offset + Map->size + 1].getBuildings();
+		while ( building )
+		{
+			if ( building->owner ) value += building->data.iBuilt_Costs;
+			else value += building->RubbleValue*2;
+			deleteUnit( building, false );
+		}
 	}
  
-	if ( Map->GO[offset].top )     value += Map->GO[offset].top->data.iBuilt_Costs;
-	if ( Map->GO[offset].base )    value += Map->GO[offset].base->data.iBuilt_Costs;
-	if ( Map->GO[offset].subbase && Map->GO[offset].subbase->owner ) value += Map->GO[offset].subbase->data.iBuilt_Costs;
-
-	deleteUnit( Map->GO[offset].top, false );
-	deleteUnit( Map->GO[offset].base, false );
-	deleteUnit( Map->GO[offset].subbase, false );
+	cBuildingIterator building = Map->fields[offset].getBuildings();
+	while ( building )
+	{
+		if ( building->owner ) value += building->data.iBuilt_Costs;
+		else value += building->RubbleValue*2;
+		deleteUnit( building, false );
+	}
 
 	if ( !isConnector || value > 2 )
 	{
@@ -2553,11 +2584,8 @@ void cServer::addRubble( int offset, int value, bool big )
 {
 	if ( value <= 0 ) value = 1;
 
-	if ( Map->terrain[Map->Kacheln[offset]].water ||
-		 Map->terrain[Map->Kacheln[offset]].coast ||
-		 Map->GO[offset].base ||
-		 Map->GO[offset].top ||
-		 Map->GO[offset].subbase )
+	if ( Map->IsWater(offset) ||
+		 Map->fields[offset].getBuildings() )
 	{
 		if ( big )
 		{
@@ -2569,11 +2597,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		 Map->terrain[Map->Kacheln[offset + 1]].water ||
-		 Map->terrain[Map->Kacheln[offset + 1]].coast ||
-		 Map->GO[offset].top ||
-		 Map->GO[offset + 1].base ||
-		 Map->GO[offset + 1].subbase ))
+		 Map->IsWater(offset) ||
+		 Map->fields[offset].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + Map->size, value/4, false);
@@ -2582,11 +2607,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		Map->terrain[Map->Kacheln[offset + Map->size]].water ||
-		Map->terrain[Map->Kacheln[offset + Map->size]].coast ||
-		Map->GO[offset].top ||
-		Map->GO[offset + Map->size].base ||
-		Map->GO[offset + Map->size].subbase ))
+		Map->IsWater(offset) ||
+		Map->fields[offset].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);
@@ -2595,11 +2617,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		Map->terrain[Map->Kacheln[offset + Map->size + 1]].water ||
-		Map->terrain[Map->Kacheln[offset + Map->size + 1]].coast ||
-		Map->GO[offset].top ||
-		Map->GO[offset + Map->size + 1].base ||
-		Map->GO[offset + Map->size + 1].subbase ))
+		Map->IsWater(offset) ||
+		Map->fields[offset].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);

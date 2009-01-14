@@ -516,7 +516,8 @@ void cServerMoveJob::moveVehicle()
 	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
 	{
 		iSpeed = MOVE_SPEED;
-		if ( Waypoints && Waypoints->next && Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base&& ( Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base->data.is_road || Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed *= 2;
+		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
+		if ( Waypoints && Waypoints->next && building && building->data.is_road ) iSpeed *= 2;
 	}
 	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
 	else iSpeed = MOVE_SPEED;
@@ -591,10 +592,10 @@ void cServerMoveJob::moveVehicle()
 		// check for results of the move
 
 		// make mines explode if necessary
-		cBuilding* building = Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].base;
-		if ( Vehicle->data.can_drive != DRIVE_AIR && building && building->data.is_expl_mine && building->owner != Vehicle->owner )
+		cBuilding* mine = Map->fields[Vehicle->PosX+Vehicle->PosY*Map->size].getMine();
+		if ( Vehicle->data.can_drive != DRIVE_AIR && mine && mine->owner != Vehicle->owner )
 		{
-			Server->AJobs.Add( new cServerAttackJob( building, Vehicle->PosX+Vehicle->PosY*Map->size ));
+			Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size ));
 			bEndForNow = true;
 		}
 
@@ -906,7 +907,8 @@ void cClientMoveJob::moveVehicle()
 	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
 	{
 		iSpeed = MOVE_SPEED;
-		if ( Waypoints && Waypoints->next && Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base&& ( Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base->data.is_road || Map->GO[Waypoints->next->X+Waypoints->next->Y*Map->size].base->data.is_bridge ) ) iSpeed*=2;
+		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
+		if ( Waypoints && Waypoints->next && building && building->data.is_road ) iSpeed *= 2;
 	}
 	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
 	else iSpeed = MOVE_SPEED;
@@ -1029,12 +1031,13 @@ void cClientMoveJob::doEndMoveVehicle ()
 
 	Vehicle->moving = false;
 
+	cMapField& field = Map->fields[Waypoints->X+Waypoints->Y*Map->size];
 	if ( !bPlane )
 	{
-		if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle != NULL || Map->GO[Waypoints->X+Waypoints->Y*Map->size].top != NULL && !Map->GO[Waypoints->X+Waypoints->Y*Map->size].top->data.is_connector )
+		if ( field.getVehicles() != NULL || field.getTopBuilding() != NULL && !field.getTopBuilding()->data.is_connector )
 		{
-			if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle != NULL ) cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].vehicle->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
-			else cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].top->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			if ( field.getVehicles() ) cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( field.getVehicles()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			else cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( field.getTopBuilding()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else
@@ -1045,9 +1048,9 @@ void cClientMoveJob::doEndMoveVehicle ()
 	}
 	else
 	{
-		if ( Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane != NULL )
+		if ( field.getPlanes() != NULL )
 		{
-			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( Map->GO[Waypoints->X+Waypoints->Y*Map->size].plane->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( field.getPlanes()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else

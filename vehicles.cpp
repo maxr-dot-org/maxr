@@ -263,7 +263,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					cBuilding *b;
 					int high;
 					// Prüfen, ob das Flugzeug landen soll:
-					b = Client->Map->GO[PosX+PosY*Client->Map->size].top;
+					b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
 
 					if ( Client->iTimer0 )
 					{
@@ -652,72 +652,65 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	// Ggf die Brücke drüber malen:
 	if ( data.can_drive == DRIVE_SEA )
 	{
-#define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<Client->Map->size&&PosY+y>=0&&PosY+y<Client->Map->size&&Client->Map->GO[PosX+(x)+(PosY+(y))*Client->Map->size].base&&Client->Map->GO[PosX+(x)+(PosY+(y))*Client->Map->size].base->data.is_bridge
+#define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<Client->Map->size&&PosY+y>=0&&PosY+y<Client->Map->size&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()->data.is_bridge
 
 		if ( TEST_BRIDGE ( 0, 0 ) )
 		{
-			Client->Map->GO[PosX+PosY*Client->Map->size].base->Draw ( dest );
+			Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()->Draw ( dest );
 		}
 
 		if ( OffX > 0 && OffY == 0 && TEST_BRIDGE ( 1, 0 ) )
 		{
 			tmp = *dest;
 			tmp.x += Client->Hud.Zoom;
-			Client->Map->GO[PosX+1+PosY*Client->Map->size].base->Draw ( &tmp );
+			Client->Map->fields[PosX+1+PosY*Client->Map->size].getBaseBuilding()->Draw ( &tmp );
 		}
-		else
-			if ( OffX < 0 && OffY == 0 && TEST_BRIDGE ( -1, 0 ) )
-			{
-				tmp = *dest;
-				tmp.x -= Client->Hud.Zoom;
-				Client->Map->GO[PosX-1+PosY*Client->Map->size].base->Draw ( &tmp );
-			}
-			else
-				if ( OffX == 0 && OffY > 0 && TEST_BRIDGE ( 0, 1 ) )
-				{
-					tmp = *dest;
-					tmp.y += Client->Hud.Zoom;
-					Client->Map->GO[PosX+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
-				}
-				else
-					if ( OffX == 0 && OffY < 0 && TEST_BRIDGE ( 0, -1 ) )
-					{
-						tmp = *dest;
-						tmp.y -= Client->Hud.Zoom;
-						Client->Map->GO[PosX+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
-					}
-					else
-						if ( OffX > 0 && OffY > 0 && TEST_BRIDGE ( 1, 1 ) )
-						{
-							tmp = *dest;
-							tmp.x += Client->Hud.Zoom;
-							tmp.y += Client->Hud.Zoom;
-							Client->Map->GO[PosX+1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
-						}
-						else
-							if ( OffX < 0 && OffY < 0 && TEST_BRIDGE ( -1, -1 ) )
-							{
-								tmp = *dest;
-								tmp.x -= Client->Hud.Zoom;
-								tmp.y -= Client->Hud.Zoom;
-								Client->Map->GO[PosX-1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
-							}
-							else
-								if ( OffX > 0 && OffY < 0 && TEST_BRIDGE ( 1, -1 ) )
-								{
-									tmp = *dest;
-									tmp.x += Client->Hud.Zoom;
-									tmp.y -= Client->Hud.Zoom;
-									Client->Map->GO[PosX+1+ ( PosY-1 ) *Client->Map->size].base->Draw ( &tmp );
-								}
-								else
-									if ( OffX < 0 && OffY > 0 && TEST_BRIDGE ( -1, 1 ) )
-									{
-										tmp = *dest;
-										tmp.x -= Client->Hud.Zoom;
-										tmp.y += Client->Hud.Zoom;
-										Client->Map->GO[PosX-1+ ( PosY+1 ) *Client->Map->size].base->Draw ( &tmp );
-									}
+		else if ( OffX < 0 && OffY == 0 && TEST_BRIDGE ( -1, 0 ) )
+		{
+			tmp = *dest;
+			tmp.x -= Client->Hud.Zoom;
+			Client->Map->fields[PosX-1+PosY*Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
+		else if ( OffX == 0 && OffY > 0 && TEST_BRIDGE ( 0, 1 ) )
+		{
+			tmp = *dest;
+			tmp.y += Client->Hud.Zoom;
+			Client->Map->fields[PosX+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
+		else if ( OffX == 0 && OffY < 0 && TEST_BRIDGE ( 0, -1 ) )
+		{
+			tmp = *dest;
+			tmp.y -= Client->Hud.Zoom;
+			Client->Map->fields[PosX+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
+		else if ( OffX > 0 && OffY > 0 && TEST_BRIDGE ( 1, 1 ) )
+		{
+			tmp = *dest;
+			tmp.x += Client->Hud.Zoom;
+			tmp.y += Client->Hud.Zoom;
+			Client->Map->fields[PosX+1+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw( &tmp );
+		}
+		else if ( OffX < 0 && OffY < 0 && TEST_BRIDGE ( -1, -1 ) )
+		{
+			tmp = *dest;
+			tmp.x -= Client->Hud.Zoom;
+			tmp.y -= Client->Hud.Zoom;
+			Client->Map->fields[PosX-1+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
+		else if ( OffX > 0 && OffY < 0 && TEST_BRIDGE ( 1, -1 ) )
+		{
+			tmp = *dest;
+			tmp.x += Client->Hud.Zoom;
+			tmp.y -= Client->Hud.Zoom;
+			Client->Map->fields[PosX+1+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
+		else if ( OffX < 0 && OffY > 0 && TEST_BRIDGE ( -1, 1 ) )
+		{
+			tmp = *dest;
+			tmp.x -= Client->Hud.Zoom;
+			tmp.y += Client->Hud.Zoom;
+			Client->Map->fields[PosX-1+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
+		}
 	}
 
 	//draw health bar
@@ -1011,7 +1004,7 @@ int cVehicle::refreshData ()
 		if ( ClearingRounds == 0 )
 		{
 			IsClearing = false;
-			cBuilding *Rubble = Server->Map->GO[PosX+PosY*Server->Map->size].subbase;
+			cBuilding *Rubble = Server->Map->fields[PosX+PosY*Server->Map->size].getRubble();
 			if ( data.is_big )
 			{
 				Server->Map->moveVehicle ( this, BuildBigSavedPos );
@@ -1869,14 +1862,8 @@ void cVehicle::StartMoveSound ( void )
 	if ( this != Client->SelectedVehicle )
 		return;
 
-	if ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA )
-	{
-		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_bridge || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) );
-	}
-	else
-	{
-		water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( Client->Map->GO[PosX+PosY*Client->Map->size].base && ( Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_platform || Client->Map->GO[PosX+PosY*Client->Map->size].base->data.is_road ) );
-	}
+	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
+	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road ) );
 
 	StopFXLoop ( Client->iObjectStream );
 
@@ -2071,7 +2058,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Entfernen:
-	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -2325,7 +2312,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 		nr++;
 
-	if ( data.can_clear && Client->Map->GO[PosX+PosY*Client->Map->size].subbase && !Client->Map->GO[PosX+PosY*Client->Map->size].subbase->owner && !IsClearing )
+	if ( data.can_clear && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 		nr++;
 
 	if ( bSentryStatus || data.can_attack )
@@ -3900,13 +3887,13 @@ bool cVehicle::canLoad ( int off, cMap *Map )
 {
 	if ( off < 0 || off > Map->size*Map->size ) return false;
 
-	if ( Map->GO[off].vehicle ) return canLoad ( Map->GO[off].vehicle );
-
-	return false;
+	return canLoad ( Map->fields[off].getVehicles() );
 }
 
 bool cVehicle::canLoad ( cVehicle *Vehicle )
 {
+	if ( !Vehicle ) return false;
+
 	if ( data.cargo >= data.max_cargo )	return false;
 
 	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
@@ -4465,15 +4452,18 @@ bool cVehicle::canSupply ( int iOff, int iType )
 {
 	if ( iOff < 0 || iOff > Client->Map->size*Client->Map->size ) return false;
 
-	if ( Client->Map->GO[iOff].vehicle ) return canSupply ( Client->Map->GO[iOff].vehicle, iType );
-	else if ( Client->Map->GO[iOff].plane ) return canSupply ( Client->Map->GO[iOff].plane, iType );
-	else if ( Client->Map->GO[iOff].top ) return canSupply ( Client->Map->GO[iOff].top, iType );
+	cMapField& field = Client->Map->fields[iOff];
+	if ( field.getVehicles() ) return canSupply ( field.getVehicles(), iType );
+	else if ( field.getPlanes() ) return canSupply ( field.getPlanes(), iType );
+	else if ( field.getTopBuilding() ) return canSupply ( field.getTopBuilding(), iType );
 
 	return false;
 }
 
 bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 {
+	if ( !Vehicle ) return false;
+
 	if ( data.cargo <= 0 ) return false;
 
 	if ( Vehicle->PosX > PosX+1 || Vehicle->PosX < PosX-1 || Vehicle->PosY > PosY+1 || Vehicle->PosY < PosY-1 ) return false;
@@ -4546,8 +4536,9 @@ bool cVehicle::layMine ()
 
 bool cVehicle::clearMine ()
 {
-	cBuilding *Mine = Server->Map->GO[PosX+PosY*Server->Map->size].base;
-	if ( !Mine || !Mine->data.is_expl_mine || Mine->owner != owner || data.cargo >= data.max_cargo ) return false;
+	cBuilding* Mine = Server->Map->fields[PosX+PosY*Server->Map->size].getMine();
+
+	if ( !Mine || Mine->owner != owner || data.cargo >= data.max_cargo ) return false;
 
 	Server->deleteUnit ( Mine );
 	data.cargo++;
@@ -4560,7 +4551,6 @@ bool cVehicle::clearMine ()
 // Prüft, ob das Ziel direkt neben einem steht, und ob es gestohlen werden kann:
 bool cVehicle::IsInRangeCommando ( int off, bool steal )
 {
-	sGameObjects *go;
 	int boff;
 	boff = PosX + PosY * Client->Map->size;
 
@@ -4575,12 +4565,13 @@ bool cVehicle::IsInRangeCommando ( int off, bool steal )
 	else
 		return false;
 
-	go = Client->Map->GO + off;
+	cVehicle*  vehicle  = Client->Map->fields[off].getVehicles();
+	cBuilding* building = Client->Map->fields[off].getBuildings();
 
-	if ( steal && go->vehicle && go->vehicle->owner != owner )
+	if ( steal && vehicle && vehicle->owner != owner )
 		return true;
 
-	if ( !steal && ( ( go->vehicle && go->vehicle->owner != owner ) || ( go->top && go->top->owner != owner ) ) )
+	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) )
 		return true;
 
 	return false;
@@ -4706,8 +4697,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	{
 		if( steal )
 		{
-			cVehicle *vehicle;
-			vehicle = Client->Map->GO[off].vehicle;
+			cVehicle *vehicle = Client->Map->fields[off].getVehicles();
 			if( !vehicle->Disabled )
 			{
 				success = false;
@@ -4731,8 +4721,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	{
 		if ( steal )
 		{
-			cVehicle *v;
-			v = Client->Map->GO[off].vehicle;
+			cVehicle *v = Client->Map->fields[off].getVehicles();
 
 			if ( v )
 				v->owner = owner;
@@ -4741,9 +4730,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 		}
 		else
 		{
-			cVehicle *v;
-			cBuilding *b;
-			v = Client->Map->GO[off].vehicle;
+			cVehicle *v = Client->Map->fields[off].getVehicles();
 			PlayVoice ( VoiceData.VOIUnitDisabled );
 
 			if ( v )
@@ -4762,7 +4749,7 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 			}
 			else
 			{
-				b = Client->Map->GO[off].top;
+				cBuilding *b = Client->Map->fields[off].getTopBuilding();
 
 				if ( b )
 				{
@@ -4882,8 +4869,8 @@ void cVehicle::makeDetection()
 				if ( y < 0 || y >= Server->Map->size ) continue;
 				
 				int offset = x + y * Server->Map->size;
-				cVehicle* vehicle = Server->Map->GO[offset].vehicle;
-				cBuilding* building = Server->Map->GO[offset].base;
+				cVehicle* vehicle = Server->Map->fields[offset].getVehicles();
+				cBuilding* building = Server->Map->fields[offset].getMine();
 
 				if ( vehicle && vehicle->owner != owner )
 				{

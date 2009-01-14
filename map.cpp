@@ -282,6 +282,14 @@ cBuilding* cMapField::getRubble()
 	return NULL;
 }
 
+cBuilding* cMapField::getMine()
+{
+	cBuildingIterator building(&buildings);
+	while ( building && !building->data.is_expl_mine ) building++;
+
+	return building;
+}
+
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
 cMap::cMap ( void )
 {
