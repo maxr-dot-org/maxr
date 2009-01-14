@@ -96,9 +96,9 @@
 #else // We have no autoversion => take care of these manually!
 	//default path to data dir only used on linux/other
 	#define BUILD_DATADIR "/usr/share/maxr"
-	// Builddate: JJJJ-MM-DD HH:MM:SS
-	#define MAX_BUILD_DATE		"2009-01-05 19:40:00"
-	#ifdef RELEASE
+	// Builddate: Mmm DD YYYY HH:MM:SS
+	#define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
+	#ifdef RELEASE 
 		#define PACKAGE_REV " Releaseversion"
 	#else
 		#define PACKAGE_REV " SVN Rev 1813"
