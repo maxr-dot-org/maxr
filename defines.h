@@ -19,12 +19,10 @@
 #ifndef definesH
 #define definesH
 
-#ifdef WIN32
-
-#elif MAC
-
+#if HAVE_CONFIG_H
+        #include <config.h> //created by autotools on linux holding informations like package_string and versions
 #else
-	#include <config.h> //created by autotools on linux holding informations like package_string and versions
+
 #endif
 
 #ifdef __main__
@@ -114,7 +112,12 @@
 		#define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3"
 	#endif
 #else
-	//define nothing on linux - comes all from config.h
+        #if HAVE_CONFIG_H
+                //define nothing on linux - comes all from config.h
+        #else
+		#define PACKAGE_VERSION     "0.2.3"
+                #define PACKAGE_STRING  "M.A.X. Reloaded 0.2.3"
+        #endif
 #endif
 
 #define MAX_BUILD_DATE  "2009-01-05 19:40:00"
