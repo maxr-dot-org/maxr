@@ -129,7 +129,7 @@ int cLog::write ( std::string str, int TYPE )
 			case LOG_TYPE_NET_WARNING :
 			case LOG_TYPE_WARNING : str = str.insert ( 0 , WW ); break;
 			case LOG_TYPE_NET_ERROR :
-			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); break;
+			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); cout << str << "\n"; break;
 			case LOG_TYPE_NET_DEBUG :
 			case LOG_TYPE_DEBUG :   str = str.insert ( 0 , DD ); break;
 			case LOG_TYPE_INFO :    str = str.insert ( 0 , II ); break;

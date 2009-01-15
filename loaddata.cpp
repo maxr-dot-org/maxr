@@ -130,7 +130,7 @@ int LoadData ( void * )
 
 	string sVersion = PACKAGE_NAME;
 	sVersion += " BUILD: ";
-	sVersion += MAX_BUILD_DATE;
+	sVersion += MAX_BUILD_DATE; sVersion += " ";
 	sVersion += PACKAGE_REV;
 
 	MakeLog( sVersion.c_str(),0,0);
@@ -1204,12 +1204,21 @@ int GenerateMaxXml()
 
 	element = new TiXmlElement ( "PlayerName" );
 
-	string sUser;
+	char * cHome;
+	string sUser = "";
+
 	#ifdef WIN32
-		sUser = getenv("USERNAME");
+		cHome = getenv("USERNAME");
 	#else
-		sUser = getenv("USER");
+		cHome = getenv("USER"); //get $HOME on linux
 	#endif
+
+	if(cHome != NULL)
+	{
+		sUser = cHome;
+	}
+
+	
 	if(sUser.empty() != 1)
 	{
 		element->SetAttribute ( "Text", sUser.c_str());
@@ -3113,7 +3122,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	}
 	if(Data->Weapons[0].iShots > 0) Data->iWeaponsCount = 1;
 	cLog::write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
-	cLog::mark();
+	if(SettingsData.bDebug) cLog::mark();
 	return ;
 }
 
@@ -3762,23 +3771,28 @@ void setPaths()
 	SettingsData.sLog = MAX_LOG;
 	SettingsData.sNetLog = MAX_NET_LOG;
 	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac -- beko
+	SettingsData.sHome="";
 
 	#if MAC 
-		SettingsData.sHome=""; //this is where mac user should set their %HOME%
+		 //this is where mac user should set their %HOME%
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
 		return;
 	#endif
 
 	#ifdef WIN32
-		SettingsData.sHome=""; //this is where windowsuser should set their %HOME%
+		//this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
 	#else
 	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
 	bool bCreateConfigDir = false;
 	
-	SettingsData.sHome = getenv("HOME"); //get $HOME on linux
+	char * cHome = getenv("HOME"); //get $HOME on linux
+	if(cHome != NULL)
+	{
+		SettingsData.sHome = cHome; //get $HOME on linux
+	}
 
 	if(SettingsData.sHome.empty() != 1)
 	{

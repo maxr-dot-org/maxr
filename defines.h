@@ -99,9 +99,9 @@
 	// Builddate: Mmm DD YYYY HH:MM:SS
 	#define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
 	#ifdef RELEASE 
-		#define PACKAGE_REV " Releaseversion"
+		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV " SVN Rev 1813"
+		#define PACKAGE_REV "SVN Rev 1813"
 	#endif
 #endif
 
