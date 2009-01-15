@@ -3068,12 +3068,13 @@ void cSelectLandingMenu::run()
 				//get coords from the local client
 				if ( c.landingState != LANDING_POSITION_OK )
 				{
-					c.iLastLandX = c.iLandX;
-					c.iLastLandY = c.iLandY;
 					selectLandingSite();
 					cLog::write("Server: received landing coords from Player " + iToStr( iLocalClient ), cLog::eLOG_TYPE_NET_DEBUG);
 					iLandedClients++;
-					clientLandData[iLocalClient] = c;
+					clientLandData[iLocalClient].iLastLandX = clientLandData[iLocalClient].iLandX;
+					clientLandData[iLocalClient].iLastLandY = clientLandData[iLocalClient].iLandY;
+					clientLandData[iLocalClient].iLandX = c.iLandX;
+					clientLandData[iLocalClient].iLandY = c.iLandY;
 				}
 
 				//wait for all other clients
