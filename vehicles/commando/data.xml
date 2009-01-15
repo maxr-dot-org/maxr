@@ -127,7 +127,7 @@
     <Costs_Submarine Num="0.0"/>
     <Costs_Ground Num="1"/>
     <Factor_Water Num="0.0"/>
-    <Factor_Coast Num="0.0"/>
+    <Factor_Coast Num="1.0"/>
     <Factor_Wood Num="0.0"/>
     <Factor_Road Num="0.0"/>
     <Factor_Bridge Num="0.0"/>
