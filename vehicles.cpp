@@ -343,7 +343,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) &&
+			bool water = Server->Map->IsWater(PosX + PosY*Client->Map->size, true);
+			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+			//because the vehicle will drive on the bridge
+			cBuilding* building = Server->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
+			if ( building && data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+
+			if ( data.is_stealth_sea && water &&
 				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
@@ -4851,7 +4857,14 @@ void cVehicle::makeDetection()
 			{
 				setDetectedByPlayer( player );
 			}
-			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !Server->Map->IsWater(offset, true) ))
+			
+			bool water = Server->Map->IsWater(offset, true);
+			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+			//because the vehicle will drive on the bridge
+			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
+			if ( data.can_drive != DRIVE_SEA && building && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+
+			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !water ))
 			{
 				setDetectedByPlayer( player );
 			}
