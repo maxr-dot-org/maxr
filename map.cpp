@@ -1140,7 +1140,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 		{
 			if ( terrain[Kacheln[offset]].blocked ) return false;
 			
-			if ( terrain[Kacheln[offset]].water || (terrain[Kacheln[offset]].coast && !vehicleData.is_human) )
+			if ( terrain[Kacheln[offset]].water || (terrain[Kacheln[offset]].coast && !vehicleData.fFactor_Coast) )
 			{
 				if ( player && !player->ScanMap[offset] ) return false;
 
@@ -1178,7 +1178,8 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 		case DRIVE_SEA:
 		{
 			if ( terrain[Kacheln[offset]].blocked ) return false;
-			if ( !terrain[Kacheln[offset]].water ) return false;
+
+			if ( !terrain[Kacheln[offset]].water && (!terrain[Kacheln[offset]].coast || !vehicleData.fFactor_Coast ) ) return false;
 
 			if ( player && !player->ScanMap[offset] ) return true;
 
