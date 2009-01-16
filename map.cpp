@@ -1242,10 +1242,14 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 				if ( !bi ) return false;
 			}
 		}
+		//can build normal buildings only on platforms and roads
+		if ( bi && !( bi->data.is_road || bi->data.is_platform ) ) return false;
 	}
-
-	//can only build on platforms and roads
-	if ( bi && !( bi->data.is_road || bi->data.is_platform ) ) return false;
+	else
+	{
+		//can build connectors on platforms, roads, bridges and explodemines as well
+		if ( bi && !( bi->data.is_road || bi->data.is_platform || bi->data.is_expl_mine || bi->data.is_bridge ) ) return false;
+	}
 
 	//can not build a road on a road
 	if ( bi && bi->data.is_road && buildingData.is_road ) return false;
