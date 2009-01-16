@@ -159,6 +159,7 @@ public:
 	int Disabled;    // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
 	int wantRedrawedStoredOffset;
+	bool hasBeenAttacked;
 
 	void Draw(SDL_Rect *dest);
 	void Select(void);

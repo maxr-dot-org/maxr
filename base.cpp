@@ -504,6 +504,7 @@ void cBase::handleTurnend ()
 				break;
 			}
 		}
+		int overproducedMetal = SubBase->MetalProd-SubBase->MetalNeed+SubBase->Metal-SubBase->MaxMetal;
 		AddMetal ( SubBase, SubBase->MetalProd-SubBase->MetalNeed );
 
 		// produce/reduce gold
@@ -546,45 +547,45 @@ void cBase::handleTurnend ()
 		}*/
 
 		// make repairs/build/reload
-		for (unsigned int k = 0; k < SubBase->buildings.Size() && SubBase->Metal; k++)
+		for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
 		{
 			cBuilding *Building = SubBase->buildings[k];
-			// Reparatur:
-			if ( Building->data.hit_points < Building->data.max_hit_points && SubBase->Metal > 0 )
+			// repair:
+			if ( Building->data.hit_points < Building->data.max_hit_points && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
 			{
-				if ( Building->data.max_hit_points/10 > 2 )
+				// do not repair buildings that have been attacked in this turn
+				if ( !Building->hasBeenAttacked )
 				{
-					Building->data.hit_points += Building->data.max_hit_points/10;
-				}
-				else
-				{
-					Building->data.hit_points += 2;
-				}
-				if ( Building->data.hit_points > Building->data.max_hit_points )
-				{
-					Building->data.hit_points = Building->data.max_hit_points;
-				}
-				AddMetal ( SubBase, -1 );
-				sendUnitData ( Building, owner->Nr );
-				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
-				{
-					sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
+					// calc new hitpoints
+					Building->data.hit_points += Round ( ((float)Building->data.max_hit_points/Building->data.iBuilt_Costs)*4 );
+					if ( Building->data.hit_points > Building->data.max_hit_points ) Building->data.hit_points = Building->data.max_hit_points;
+					// first use overproduced metal to repair units, and use the stored metal afterwards
+					if ( overproducedMetal > 0 ) overproducedMetal--;
+					else AddMetal ( SubBase, -1 );
+					sendUnitData ( Building, owner->Nr );
+					for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+					{
+						sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
+					}
 				}
 			}
-			// Aufladen:
-			if ( Building->data.can_attack && Building->data.ammo == 0 && SubBase->Metal >= 2 )
+			// reload:
+			if ( Building->data.can_attack && Building->data.ammo == 0 && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
 			{
 				Building->data.ammo = Building->data.max_ammo;
-				AddMetal ( SubBase, -2 );
+				// first use overproduced metal to reload units
+				if ( overproducedMetal > 0 ) overproducedMetal--;
+				else AddMetal ( SubBase, -1 );
 				sendUnitData ( Building, owner->Nr );
 				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
 				{
 					sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
 				}
 			}
+			if ( Building->hasBeenAttacked ) Building->hasBeenAttacked = false;
 
-			// Bauen:
-			if (Building->IsWorking && Building->data.can_build && Building->BuildList->Size())
+			// build:
+			if (Building->IsWorking && Building->data.can_build && Building->BuildList->Size() && SubBase->Metal )
 			{
 				sBuildList *BuildListItem;
 				BuildListItem = (*Building->BuildList)[0];

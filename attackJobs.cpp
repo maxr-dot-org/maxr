@@ -446,6 +446,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		targetBuilding->data.hit_points = targetBuilding->CalcHelth( damage );
 		remainingHP = targetBuilding->data.hit_points;
 		owner = targetBuilding->owner;
+		targetBuilding->hasBeenAttacked = true;
 
 		cLog::write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
 

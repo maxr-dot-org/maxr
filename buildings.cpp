@@ -125,6 +125,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	ActivatingVehicle = false;
 	bIsBeeingAttacked = false;
 	RepeatBuild = false;
+	hasBeenAttacked = false;
 
 	if ( data.can_attack )
 	{
