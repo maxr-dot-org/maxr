@@ -191,10 +191,21 @@ class cUnicodeFont
 EX cUnicodeFont *font;
 
 
-// pages to assin the iso glyphes to their unicode place
-// these pages have been taken from the "libiconv" project
-// the author is "Bruno Haible" <bruno@clisp.org>
-// to get more information about it, vist http://www.gnu.org/software/libiconv/
+/*
+ * The following stuff is part of the GNU LIBICONV Library.
+ * Copyright (C) 1999-2001 Free Software Foundation, Inc.
+ *
+ * The GNU LIBICONV Library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * The pages to assign the iso glyphes to their unicode matches have
+ * been taken from the "libiconv" project.
+ * The author is "Bruno Haible" <bruno@clisp.org>
+ * To get more information about libiconv vist 
+ * http://www.gnu.org/software/libiconv/
+ */
 
 static const unsigned short iso8859_2_2uni[96] = {
   /* 0xa0 */
