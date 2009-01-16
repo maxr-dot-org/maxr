@@ -553,6 +553,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 		owner->deleteSentryBuilding ( building );
 		building->bSentryStatus = false;
 	}
+	if ( unitNode->FirstChildElement( "HasBeenAttacked" ) ) building->hasBeenAttacked = true;
 
 	if ( element = unitNode->FirstChildElement( "MetalProd" ) ) element->Attribute ( "num", &building->MetalProd );
 	if ( element = unitNode->FirstChildElement( "GoldProd" ) ) element->Attribute ( "num", &building->GoldProd );
@@ -1080,6 +1081,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	// write additional stauts information
 	if ( Building->IsWorking ) addMainElement ( unitNode, "IsWorking" );
 	if ( Building->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
+	if ( Building->hasBeenAttacked ) addMainElement ( unitNode, "HasBeenAttacked" );
 
 	if ( Building->MetalProd > 0 ) addAttributeElement ( unitNode, "MetalProd", "num", iToStr ( Building->MetalProd ) );
 	if ( Building->GoldProd > 0 ) addAttributeElement ( unitNode, "GoldProd", "num", iToStr ( Building->GoldProd ) );
