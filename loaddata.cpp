@@ -564,6 +564,12 @@ int ReadMaxXml()
 		SettingsData.sDataDir = searchData(); //do default gamedata search
 	}
 
+	string sDataDir = "";
+	if(!SettingsData.sDataDir.empty())
+	{
+		sDataDir = SettingsData.sDataDir + PATH_DELIMITER;
+	}
+
 	// START Options
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Languages", NULL)))
 	{
@@ -571,12 +577,12 @@ int ReadMaxXml()
 	}
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 	{
-		SettingsData.sLangPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sLangPath = sDataDir + sTmpString;
 	}
 	else
 	{
 		cLog::write ( "Can't find language path in max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sLangPath =  SettingsData.sDataDir + PATH_DELIMITER + "languages";
+		SettingsData.sLangPath =  sDataDir + "languages";
 	}
 
 	// Resolution
@@ -894,42 +900,42 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", NULL)))
 		cLog::write ( "Can't find Path-Fonts-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFontPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sFontPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load FontsPath from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFontPath = SettingsData.sDataDir + PATH_DELIMITER + "fonts";
+		SettingsData.sFontPath = sDataDir + "fonts";
 	}
 	//FX
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", NULL)))
 		cLog::write ( "Can't find Path-FX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFxPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sFxPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load FX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFxPath = SettingsData.sDataDir + PATH_DELIMITER + "fx";
+		SettingsData.sFxPath = sDataDir + "fx";
 	}
 	//Graphics
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", NULL)))
 		cLog::write ( "Can't find Path-GFX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sGfxPath = SettingsData.sDataDir + PATH_DELIMITER +  sTmpString;
+		SettingsData.sGfxPath = sDataDir +  sTmpString;
 	else
 	{
 		cLog::write ( "Can't load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sGfxPath = SettingsData.sDataDir + PATH_DELIMITER + "gfx";
+		SettingsData.sGfxPath = sDataDir + "gfx";
 	}
 
 	//Maps
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMapsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sMapsPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Maps-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMapsPath = SettingsData.sDataDir + PATH_DELIMITER + "maps";
+		SettingsData.sMapsPath = sDataDir + "maps";
 	}
 	//Saves
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", NULL)))
@@ -945,61 +951,61 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", NULL)))
 		cLog::write ( "Can't find Path-Sounds-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sSoundsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sSoundsPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Sounds-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSoundsPath = SettingsData.sDataDir + PATH_DELIMITER + "sounds";
+		SettingsData.sSoundsPath = sDataDir + "sounds";
 	}
 	//Voices
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", NULL)))
 		cLog::write ( "Can't find Path-Voices-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVoicesPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sVoicesPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Voices-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVoicesPath = SettingsData.sDataDir + PATH_DELIMITER + "voices";
+		SettingsData.sVoicesPath = sDataDir + "voices";
 	}
 	//Music
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", NULL)))
 		cLog::write ( "Can't find Path-Music-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMusicPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sMusicPath = sDataDir+ sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Music-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMusicPath = SettingsData.sDataDir + PATH_DELIMITER + "music";
+		SettingsData.sMusicPath = sDataDir + "music";
 	}
 	//Vehicles
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", NULL)))
 		cLog::write ( "Can't find Path-Vehicles-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVehiclesPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sVehiclesPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Vehicles-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVehiclesPath = SettingsData.sDataDir + PATH_DELIMITER + "vehicles";
+		SettingsData.sVehiclesPath = sDataDir + "vehicles";
 	}
 	//Buildings
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", NULL)))
 		cLog::write ( "Can't find Path-Buildings-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sBuildingsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sBuildingsPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sBuildingsPath = SettingsData.sDataDir + PATH_DELIMITER + "buildings";
+		SettingsData.sBuildingsPath = sDataDir + "buildings";
 	}
 	//MVEs
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","MVEs", NULL)))
 		cLog::write ( "Can't find Path-MVEs-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMVEPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
+		SettingsData.sMVEPath = sDataDir + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load MVEs-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMVEPath = SettingsData.sDataDir + PATH_DELIMITER + "mve";
+		SettingsData.sMVEPath = sDataDir + "mve";
 	}
 
 	if(SettingsData.bDebug) //Print settingslist to log
