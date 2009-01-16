@@ -1163,7 +1163,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			if ( ( !SrcVehicle && !SrcBuilding ) || ( !DestVehicle && !DestBuilding ) ) break;
 
-			// check whether the supply is ok
+			// check whether the supply is ok and reduce cargo of sourceunit
 			if ( SrcVehicle )
 			{
 				if ( DestVehicle && !SrcVehicle->canSupply ( DestVehicle, iType ) ) break;
@@ -1177,11 +1177,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				else
 				{
-					// TODO: calculate costs for repair and/or maximal repair value
-					// temporary a complete repair will cost 2 metal
-					if ( SrcVehicle->data.cargo < 2 ) break;
-					SrcVehicle->data.cargo -= 2;
-					iValue = DestVehicle ? DestVehicle->data.max_hit_points : DestBuilding->data.max_hit_points;
+					sUnitData *DestData = DestVehicle ? &DestVehicle->data : &DestBuilding->data;
+					// reduce cargo for repair and calculate maximal repair value
+					iValue = DestData->hit_points;
+					while ( SrcVehicle->data.cargo > 0 && iValue < DestData->max_hit_points )
+					{
+						iValue += Round(((float)DestData->max_hit_points/DestData->iBuilt_Costs)*4);
+						SrcVehicle->data.cargo--;
+					}
+					if ( iValue > DestData->max_hit_points ) iValue = DestData->max_hit_points;
 				}
 				sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
@@ -1199,19 +1203,23 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				else
 				{
-					// TODO: calculate costs for repair and/or maximal repair value
-					// temporary a complete repair will cost 2 metal
-					if ( SrcBuilding->SubBase->Metal < 2 ) break;
-					SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -2 );
-					iValue = DestVehicle->data.max_hit_points;
+					// reduce cargo for repair and calculate maximal repair value
+					iValue = DestVehicle->data.hit_points;
+					while ( SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.max_hit_points )
+					{
+						iValue += Round(((float)DestVehicle->data.max_hit_points/DestVehicle->data.iBuilt_Costs)*4);
+						SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
+					}
+					if ( iValue > DestVehicle->data.max_hit_points ) iValue = DestVehicle->data.max_hit_points;
 				}
 				sendUnitData ( SrcBuilding, SrcBuilding->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
 
+			// repair or reload the destination unit
 			if ( DestVehicle )
 			{
 				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = DestVehicle->data.max_ammo;
-				else DestVehicle->data.hit_points = DestVehicle->data.max_hit_points;
+				else DestVehicle->data.hit_points = iValue;
 
 				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
 				
@@ -1222,7 +1230,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			else
 			{
 				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = DestBuilding->data.max_ammo;
-				else DestBuilding->data.hit_points = DestBuilding->data.max_hit_points;
+				else DestBuilding->data.hit_points = iValue;
 
 				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
 								
