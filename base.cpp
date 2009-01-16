@@ -463,7 +463,7 @@ void cBase::handleTurnend ()
 		if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 )
 		{
 			// generator has to stop work
-			//sendChatMessage ( lngPack.i18n( "Text~Comp~Fuel_Low") );
+			sendChatMessageToClient ( "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size() && SubBase->EnergyProd; k++)
 			{
 				cBuilding *Building;
@@ -478,7 +478,7 @@ void cBase::handleTurnend ()
 		// check energy consumers
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd )
 		{
-			//sendChatMessage ( lngPack.i18n( "Text~Comp~Energy_Low") );
+			sendChatMessageToClient ( "Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
 			{
 				cBuilding *Building;
@@ -493,7 +493,7 @@ void cBase::handleTurnend ()
 		// produce/reduce metal
 		if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) <0 )
 		{
-			//sendChatMessage ( lngPack.i18n( "Text~Comp~Metal_Low") );
+			sendChatMessageToClient ( "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
 			{
 				cBuilding *Building;
@@ -510,7 +510,7 @@ void cBase::handleTurnend ()
 		// produce/reduce gold
 		if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 )
 		{
-			//sendChatMessage ( lngPack.i18n( "Text~Comp~Gold_Low") );
+			sendChatMessageToClient ( "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
 			{
 				cBuilding *Building;
@@ -528,7 +528,7 @@ void cBase::handleTurnend ()
 		// check humanneed
 		if ( SubBase->HumanNeed > SubBase->HumanProd )
 		{
-			//sendChatMessage ( lngPack.i18n( "Text~Comp~Team_Low") );
+			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
 			{
 				cBuilding *Building;
