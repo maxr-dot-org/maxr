@@ -5419,6 +5419,7 @@ void HeatTheSeat ( void )
 	Client->Hud = Player->HotHud;
 	ShowOK ( Player->name + lngPack.i18n ( "Text~Multiplayer~Player_Turn" ), true );
 	Server->bStarted = true;
+	Client->isInMenu = false;
 	Client->run();
 
 	while ( ClientPlayerList.Size() )
