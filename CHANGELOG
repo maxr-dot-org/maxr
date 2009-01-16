@@ -1,3 +1,14 @@
+M.A.X. Reloaded SVN
+=======================================================================
+-improved input event system
+	*input doesn't get lost any more between 2 frames
+	*fixed a lot of input lag
+	*changed input system to utf8
+	*fixed most keyboard shortcuts
+-fixed landing zones
+-fixed gamedata path detection on linux
+-tons of bugs fixed
+
 M.A.X. Reloaded 0.2.3
 =======================================================================
 new features:
