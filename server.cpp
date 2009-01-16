@@ -1597,7 +1597,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
 				{
 					deleteUnit ( building );
+					building--;
 				}
+				building++;
 			}
 			iOff++;
 			building = Map->fields[iOff].getBuildings();
@@ -1606,7 +1608,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
 				{
 					deleteUnit ( building );
+					building--;
 				}
+				building++;
 			}
 			iOff+=Map->size;
 			building = Map->fields[iOff].getBuildings();
@@ -1615,7 +1619,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
 				{
 					deleteUnit ( building );
+					building--;
 				}
+				building++;
 			}
 			iOff--;
 			building = Map->fields[iOff].getBuildings();
@@ -1624,7 +1630,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
 				{
 					deleteUnit ( building );
+					building--;
 				}
+				building++;
 			}
 		}
 		else
@@ -1638,7 +1646,9 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 					if ( building->data.is_road || building->data.is_expl_mine )
 					{
 						deleteUnit ( building );
+						building--;
 					}
+					building++;
 				}
 			}
 		}
