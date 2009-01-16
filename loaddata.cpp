@@ -550,6 +550,20 @@ int ReadMaxXml()
 		}
 	}
 
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Gamedata", NULL)))
+	{
+		cLog::write ( "Can't find gamedata path node in max.xml", LOG_TYPE_WARNING );
+	}
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+	{
+		SettingsData.sDataDir = searchData(sTmpString); //verify datadir or search for other paths
+	}
+	else
+	{
+		cLog::write ( "Can't find gamedata path in max.xml", LOG_TYPE_WARNING );
+		SettingsData.sDataDir = searchData(); //do default gamedata search
+	}
+
 	// START Options
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Languages", NULL)))
 	{
@@ -557,26 +571,12 @@ int ReadMaxXml()
 	}
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 	{
-		SettingsData.sLangPath = sTmpString;
+		SettingsData.sLangPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	}
 	else
 	{
 		cLog::write ( "Can't find language path in max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sLangPath = "languages";
-	}
-
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Gamedata", NULL)))
-	{
-		cLog::write ( "Can't find gamedata path node in max.xml", LOG_TYPE_WARNING );
-	}
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-	{
-		SettingsData.sDataDir = sTmpString;
-	}
-	else
-	{
-		cLog::write ( "Can't find gamedata path in max.xml", LOG_TYPE_WARNING );
-		SettingsData.sDataDir = searchData();
+		SettingsData.sLangPath =  SettingsData.sDataDir + PATH_DELIMITER + "languages";
 	}
 
 	// Resolution
@@ -793,7 +793,7 @@ int ReadMaxXml()
 	else
 	{
 		cLog::write ( "Can't load PlayerName from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sPlayerName = "Mechkommandant";
+		SettingsData.sPlayerName = "Commander";
 	}
 
 
@@ -894,112 +894,112 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", NULL)))
 		cLog::write ( "Can't find Path-Fonts-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFontPath = sTmpString;
+		SettingsData.sFontPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load FontsPath from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFontPath = "fonts";
+		SettingsData.sFontPath = SettingsData.sDataDir + PATH_DELIMITER + "fonts";
 	}
 	//FX
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", NULL)))
 		cLog::write ( "Can't find Path-FX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFxPath = sTmpString;
+		SettingsData.sFxPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load FX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFxPath = "fx";
+		SettingsData.sFxPath = SettingsData.sDataDir + PATH_DELIMITER + "fx";
 	}
 	//Graphics
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", NULL)))
 		cLog::write ( "Can't find Path-GFX-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sGfxPath = sTmpString;
+		SettingsData.sGfxPath = SettingsData.sDataDir + PATH_DELIMITER +  sTmpString;
 	else
 	{
 		cLog::write ( "Can't load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sGfxPath = "gfx";
+		SettingsData.sGfxPath = SettingsData.sDataDir + PATH_DELIMITER + "gfx";
 	}
 
 	//Maps
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
 		cLog::write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMapsPath = sTmpString;
+		SettingsData.sMapsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Maps-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMapsPath = "maps";
+		SettingsData.sMapsPath = SettingsData.sDataDir + PATH_DELIMITER + "maps";
 	}
 	//Saves
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", NULL)))
 		cLog::write ( "Can't find Path-Saves-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sSavesPath = sTmpString;
+		SettingsData.sSavesPath = sTmpString; //use absolut paths for saves - do not add sDataDir or sHome
 	else
 	{
 		cLog::write ( "Can't load Saves-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSavesPath = "saves";
+		SettingsData.sSavesPath = SettingsData.sHome + PATH_DELIMITER + "saves";
 	}
 	//Sounds
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", NULL)))
 		cLog::write ( "Can't find Path-Sounds-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sSoundsPath = sTmpString;
+		SettingsData.sSoundsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Sounds-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSoundsPath = "sounds";
+		SettingsData.sSoundsPath = SettingsData.sDataDir + PATH_DELIMITER + "sounds";
 	}
 	//Voices
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", NULL)))
 		cLog::write ( "Can't find Path-Voices-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVoicesPath = sTmpString;
+		SettingsData.sVoicesPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Voices-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVoicesPath = "voices";
+		SettingsData.sVoicesPath = SettingsData.sDataDir + PATH_DELIMITER + "voices";
 	}
 	//Music
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", NULL)))
 		cLog::write ( "Can't find Path-Music-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMusicPath = sTmpString;
+		SettingsData.sMusicPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Music-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMusicPath = "music";
+		SettingsData.sMusicPath = SettingsData.sDataDir + PATH_DELIMITER + "music";
 	}
 	//Vehicles
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", NULL)))
 		cLog::write ( "Can't find Path-Vehicles-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVehiclesPath = sTmpString;
+		SettingsData.sVehiclesPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Vehicles-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVehiclesPath = "vehicles";
+		SettingsData.sVehiclesPath = SettingsData.sDataDir + PATH_DELIMITER + "vehicles";
 	}
 	//Buildings
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", NULL)))
 		cLog::write ( "Can't find Path-Buildings-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sBuildingsPath = sTmpString;
+		SettingsData.sBuildingsPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sBuildingsPath = "buildings";
+		SettingsData.sBuildingsPath = SettingsData.sDataDir + PATH_DELIMITER + "buildings";
 	}
 	//MVEs
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","MVEs", NULL)))
 		cLog::write ( "Can't find Path-MVEs-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMVEPath = sTmpString;
+		SettingsData.sMVEPath = SettingsData.sDataDir + PATH_DELIMITER + sTmpString;
 	else
 	{
 		cLog::write ( "Can't load MVEs-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMVEPath = "mve";
+		SettingsData.sMVEPath = SettingsData.sDataDir + PATH_DELIMITER + "mve";
 	}
 
 	if(SettingsData.bDebug) //Print settingslist to log
@@ -1275,81 +1275,58 @@ int GenerateMaxXml()
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 
-	sTmp ="";
-	sTmp = SettingsData.sDataDir;
-	sTmp += "fonts";
 	element = new TiXmlElement ( "Fonts" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "fonts");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "fx";
 	element = new TiXmlElement ( "FX" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "fx");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "gfx";
 	element = new TiXmlElement ( "GFX" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "gfx");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "languages";
 	element = new TiXmlElement ( "Languages" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "languages");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "maps";
 	element = new TiXmlElement ( "Maps" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "maps");
 	pathsnode->LinkEndChild(element);
 
 	#ifdef WIN32
-	sTmp = SettingsData.sDataDir;
+		sTmp = "save";
 	#else
-	sTmp = SettingsData.sHome;
+		sTmp = SettingsData.sHome;
+		sTmp += "save";
 	#endif
-	sTmp += "save";
 	element = new TiXmlElement ( "Saves" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
 	
-	sTmp = SettingsData.sDataDir;
-	sTmp += "sounds";
 	element = new TiXmlElement ( "Sounds" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "sounds");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "voices";
 	element = new TiXmlElement ( "Voices" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "voices");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "music";
 	element = new TiXmlElement ( "Music" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "music");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "vehicles";
 	element = new TiXmlElement ( "Vehicles" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "vehicles");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "buildings";
 	element = new TiXmlElement ( "Buildings" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "buildings");
 	pathsnode->LinkEndChild(element);
 
-	sTmp = SettingsData.sDataDir;
-	sTmp += "mve";
 	element = new TiXmlElement ( "MVEs" );
-	element->SetAttribute ( "Text", sTmp.c_str());
+	element->SetAttribute ( "Text", "mve");
 	pathsnode->LinkEndChild(element);
 
 	gamenode->LinkEndChild(netnode);
@@ -3915,7 +3892,7 @@ void setPaths()
 	#endif
 }
 
-string searchData(void)
+string searchData(string sDataDirFromConf)
 {
 	string sPathToGameData = "";
 	#if MAC 
@@ -3930,7 +3907,7 @@ string searchData(void)
 	
 	#define PATHCOUNT 11
 	string sPathArray[PATHCOUNT] = { 
-		BUILD_DATADIR,
+		BUILD_DATADIR, //most important position holds value of configure --prefix to gamedata in %prefix%/$(datadir)/maxr or default path if autoversion.h wasn't used
 		"/usr/local/share/maxr",
 		"/usr/games/maxr",
 		"/usr/local/games/maxr",
@@ -3943,9 +3920,22 @@ string searchData(void)
 		"." //last resort: local dir
 	};
 
+	/*
+	* Logic is: 
+	* BUILD_DATADIR is default search path
+	* sDataDirFromConf overrides BUILD_DATADIR
+	* "$MAXRDATA overrides both
+	* BUILD_DATADIR is checked if sDataDirFromConf or $MAXRDATA fail the probe
+	*/
+	if(!sDataDirFromConf.empty())
+	{
+		sPathArray[0] = sDataDirFromConf; //override default path with path from config
+		sPathArray[1] = BUILD_DATADIR; //and save old value one later in case sDataDirFromConf is invalid
+	}
+
 	//BEGIN SET MAXRDATA
 	char * cDataDir;
-	cDataDir = getenv("MAXRDATA"); //get $MAXRDATA (path to data folder) to override search paths
+	cDataDir = getenv("MAXRDATA");
 	if(cDataDir == NULL)
 	{
 		cLog::write("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
@@ -3953,6 +3943,7 @@ string searchData(void)
 	else
 	{
 		sPathArray[0] = cDataDir;
+		sPathArray[1] = BUILD_DATADIR;
 		cLog::write("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
 	}
 	//END SET MAXRDATA

@@ -128,7 +128,7 @@ void setPaths ();
 /**
 * This is where the game data folder is searched - e.g. /usr/share/maxr
 */
-std::string searchData ();
+std::string searchData ( std::string sDataDirFromConf="");
 
 /**
 * Generates a new config file.
