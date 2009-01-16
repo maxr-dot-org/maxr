@@ -30,8 +30,8 @@
     <Hitpoints Num="24"/>
   </Defence>
   <Production>
-    <Built_Costs Num="30"/>
-    <Built_Costs_Max Num="120"/>
+    <Built_Costs Num="36"/>
+    <Built_Costs_Max Num="108"/>
     <Is_Produced_by>
       <Unit ID="1 11"/>
     </Is_Produced_by>
