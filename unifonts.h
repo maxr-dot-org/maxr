@@ -192,6 +192,9 @@ EX cUnicodeFont *font;
 
 
 // pages to assin the iso glyphes to their unicode place
+// these pages have been taken from the "libiconv" project
+// the author is "Bruno Haible" <bruno@clisp.org>
+// to get more information about it, vist http://www.gnu.org/software/libiconv/
 
 static const unsigned short iso8859_2_2uni[96] = {
   /* 0xa0 */
