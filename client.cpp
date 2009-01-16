@@ -5530,13 +5530,13 @@ void cClient::destroyUnit(cBuilding *building)
 	{
 		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
 		cBuildingIterator bi = Map->fields[offset + 1].getBuildings();
-		while ( bi ) { deleteUnit( bi ); bi++; }
+		while ( bi.size() > 0 ) { deleteUnit( bi ); }
 
 		bi = Map->fields[offset + Map->size].getBuildings();
-		while ( bi ) { deleteUnit( bi ); bi++; }
+		while ( bi.size() > 0 ) { deleteUnit( bi ); }
 
 		bi = Map->fields[offset + Map->size + 1].getBuildings();
-		while ( bi ) { deleteUnit( bi ); bi++; }
+		while ( bi.size() > 0 ) { deleteUnit( bi ); }
 
 		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
 	}
@@ -5546,7 +5546,7 @@ void cClient::destroyUnit(cBuilding *building)
 	}
 	
 	cBuildingIterator bi = Map->fields[offset].getBuildings();
-	while ( bi ) { deleteUnit( bi ); bi++; }
+	while ( bi.size() > 0 ) { deleteUnit( bi ); }
 
 }
 
