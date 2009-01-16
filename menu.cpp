@@ -526,6 +526,7 @@ void RunSPMenu ( void )
 
 				// init client and his player
 				Client = new cClient(&Map, &ClientPlayerList);
+				Client->isInMenu = true;
 				Client->initPlayer ( Player );
 				for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 				{
@@ -559,6 +560,7 @@ void RunSPMenu ( void )
 				ExitMenu();
 
 				Server->bStarted = true;
+				Client->isInMenu = false;
 				Client->run();
 
 				SettingsData.sPlayerName = Player->name;
@@ -602,6 +604,7 @@ void RunSPMenu ( void )
 						// reinit unitvalues
 						// init client and his player
 						Client = new cClient( &ClientMap, &ClientPlayerList );
+						Client->isInMenu = true;
 						Client->initPlayer ( ClientPlayerList[0] );
 						for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 						{
@@ -614,6 +617,7 @@ void RunSPMenu ( void )
 
 						// exit menu and start game
 						Server->bStarted = true;
+						Client->isInMenu = false;
 						Client->run();
 
 						delete Client;
@@ -4450,12 +4454,14 @@ void cMultiPlayerMenu::runNetworkMenu()
 					Map->LoadMap ( sMap );
 
 					Client = new cClient( Map, &PlayerList );
+					Client->isInMenu = true;
 					Client->initPlayer ( ActualPlayer );
 					for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 					{
 						PlayerList[i]->InitMaps( Map->size, Map );
 					}
 
+					Client->isInMenu = false;
 					Client->run();
 
 					delete Client;
@@ -4532,6 +4538,7 @@ void cMultiPlayerMenu::runNewGame ()
 	}
 	// init client and his player
 	Client = new cClient(Map, ClientPlayerList);
+	Client->isInMenu = true;
 	Client->initPlayer ( ActualPlayerClient );
 	for ( unsigned int i = 0; i < ClientPlayerList->Size(); i++ )
 	{
@@ -4592,6 +4599,7 @@ void cMultiPlayerMenu::runNewGame ()
 
 	if ( Options.PlayRounds && Client->ActivePlayer->Nr != 0 ) Client->bWaitForOthers = true;
 	if ( bHost ) Server->bStarted = true;
+	Client->isInMenu = false;
 	Client->run();
 
 	SettingsData.sPlayerName = ActualPlayerClient->name;
@@ -4659,6 +4667,7 @@ int cMultiPlayerMenu::runSavedGame()
 		}
 		// init client and his player
 		Client = new cClient( &ClientMap, &ClientPlayerList );
+		Client->isInMenu = true;
 		Client->initPlayer ( LocalPlayer );
 		for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 		{
@@ -4673,6 +4682,7 @@ int cMultiPlayerMenu::runSavedGame()
 
 		// exit menu and start game
 		Server->bStarted = true;
+		Client->isInMenu = false;
 		Client->run();
 
 		delete Client;
@@ -4897,6 +4907,7 @@ void cMultiPlayerMenu::HandleMessages()
 				}
 
 				Client = new cClient( Map, &PlayerList );
+				Client->isInMenu = true;
 				Client->initPlayer ( ActualPlayer );
 
 				ExitMenu();
@@ -4905,6 +4916,7 @@ void cMultiPlayerMenu::HandleMessages()
 				NewMessage->pushInt16 ( ActualPlayer->Nr );
 				sendMessage ( NewMessage );
 
+				Client->isInMenu = false;
 				Client->run();
 
 				delete Client; Client = NULL;
@@ -5370,6 +5382,7 @@ void HeatTheSeat ( void )
 
 	// init client
 	Client = new cClient(&Map, &ClientPlayerList);
+	Client->isInMenu = true;
 	Client->initPlayer ( ClientPlayerList[0] );
 	for ( unsigned int i = 0; i < ClientPlayerList.Size(); i++ )
 	{
