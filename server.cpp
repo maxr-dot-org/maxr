@@ -2550,7 +2550,7 @@ void cServer::destroyUnit(cBuilding *_b)
 		big = true;
 
 		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
-		while ( building )
+		while ( building.size() > 0 )
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
@@ -2558,7 +2558,7 @@ void cServer::destroyUnit(cBuilding *_b)
 		}
 
 		building = Map->fields[offset + Map->size].getBuildings();
-		while ( building )
+		while ( building.size() > 0 )
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
@@ -2566,7 +2566,7 @@ void cServer::destroyUnit(cBuilding *_b)
 		}
 
 		building = Map->fields[offset + Map->size + 1].getBuildings();
-		while ( building )
+		while ( building.size() > 0 )
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
@@ -2575,7 +2575,7 @@ void cServer::destroyUnit(cBuilding *_b)
 	}
  
 	cBuildingIterator building = Map->fields[offset].getBuildings();
-	while ( building )
+	while ( building.size() > 0 )
 	{
 		if ( building->owner ) value += building->data.iBuilt_Costs;
 		else value += building->RubbleValue*2;
