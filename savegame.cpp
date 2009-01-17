@@ -1228,16 +1228,16 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if( Data->fCosts_Ground != 1.0 ) addAttributeElement ( unitNode, "Costs_Ground", "num", dToStr ( Data->fCosts_Ground ) );
 	if( Data->fCosts_Sea != 0.0 ) addAttributeElement ( unitNode, "Costs_Sea", "num", dToStr ( Data->fCosts_Sea ) );
 	if( Data->fCosts_Air != 0.0 ) addAttributeElement ( unitNode, "Costs_Air", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fCosts_Submarine != 0.0 ) addAttributeElement ( unitNode, "Costs_Submarine", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fCosts_Submarine != 0.0 ) addAttributeElement ( unitNode, "Costs_Submarine", "num", dToStr ( Data->fCosts_Submarine ) );
 
-	if( Data->fFactor_Coast != 1.5 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Wood != 1.5 ) addAttributeElement ( unitNode, "Factor_Wood", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Road != 0.5 ) addAttributeElement ( unitNode, "Factor_Road", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Bridge != 1.0 ) addAttributeElement ( unitNode, "Factor_Bridge", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Platform != 1.0 ) addAttributeElement ( unitNode, "Factor_Platform", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Monorail != 0.0 ) addAttributeElement ( unitNode, "Factor_Monorail", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Wreck != 1.0 ) addAttributeElement ( unitNode, "Factor_Wreck", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fFactor_Mountains != 0.0 ) addAttributeElement ( unitNode, "Factor_Mountains", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Coast != 1.5 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->fFactor_Coast ) );
+	if( Data->fFactor_Wood != 1.5 ) addAttributeElement ( unitNode, "Factor_Wood", "num", dToStr ( Data->fFactor_Wood ) );
+	if( Data->fFactor_Road != 0.5 ) addAttributeElement ( unitNode, "Factor_Road", "num", dToStr ( Data->fFactor_Road ) );
+	if( Data->fFactor_Bridge != 1.0 ) addAttributeElement ( unitNode, "Factor_Bridge", "num", dToStr ( Data->fFactor_Bridge ) );
+	if( Data->fFactor_Platform != 1.0 ) addAttributeElement ( unitNode, "Factor_Platform", "num", dToStr ( Data->fFactor_Platform ) );
+	if( Data->fFactor_Monorail != 0.0 ) addAttributeElement ( unitNode, "Factor_Monorail", "num", dToStr ( Data->fFactor_Monorail ) );
+	if( Data->fFactor_Wreck != 1.0 ) addAttributeElement ( unitNode, "Factor_Wreck", "num", dToStr ( Data->fFactor_Wreck ) );
+	if( Data->fFactor_Mountains != 0.0 ) addAttributeElement ( unitNode, "Factor_Mountains", "num", dToStr ( Data->fFactor_Mountains ) );
 
 	if( Data->iSize_Length != 1 ) addAttributeElement ( unitNode, "Size_Length", "num", iToStr ( Data->iSize_Length ) );
 	if( Data->iSize_Width != 1 ) addAttributeElement ( unitNode, "Size_Width", "num", iToStr ( Data->iSize_Width ) );
