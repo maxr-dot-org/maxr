@@ -10,7 +10,7 @@ install-data-hook:
 
 uninstall-hook:
 
-	rm -rf $(maxrdir) 
+	rm -rf $(DESTDIR)$(maxrdir) 
 
 all-local:
 	$(SHELL) $(top_srcdir)/buildinfo.sh $(datadir)/maxr
