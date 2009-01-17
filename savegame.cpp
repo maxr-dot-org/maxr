@@ -366,6 +366,11 @@ void cSavegame::loadUnits ()
 			unitnum++;
 			unitNode = unitsNode->FirstChildElement( ("Unit_" + iToStr ( unitnum )).c_str() );
 		}
+		// read nextid-value before loading rubble, so that the rubble will get new ids.
+		int nextID;
+		unitsNode->FirstChildElement( "NextUnitID" )->Attribute ( "num", &nextID );
+		Server->iNextUnitID = nextID;
+
 		int rubblenum = 0;
 		TiXmlElement *rubbleNode = unitsNode->FirstChildElement( "Rubble_0" );
 		while ( rubbleNode )
@@ -375,10 +380,6 @@ void cSavegame::loadUnits ()
 			rubbleNode = unitsNode->FirstChildElement( ("Rubble_" + iToStr ( rubblenum )).c_str() );
 		}
 		generateMoveJobs();
-
-		int nextID;
-		unitsNode->FirstChildElement( "NextUnitID" )->Attribute ( "num", &nextID );
-		Server->iNextUnitID = nextID;
 	}
 }
 
