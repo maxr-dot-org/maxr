@@ -1,12 +1,12 @@
 SUBDIRS= . src
 
 maxr_DATA=
-maxrdir=$(DESTDIR)$(datadir)/maxr
+maxrdir=$(datadir)/maxr
 
 install-data-hook:
 
-	$(mkinstalldirs) $(maxrdir)
-	cp -a $(top_srcdir)/data/* $(maxrdir)/
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/maxr
+	cp -a $(top_srcdir)/data/* $(DESTDIR)$(maxrdir)/
 
 uninstall-hook:
 
