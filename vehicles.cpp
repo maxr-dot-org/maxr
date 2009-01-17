@@ -171,10 +171,10 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	// Den Schadenseffekt machen:
-	if ( Client->iTimer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && !moving && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->iTimer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hit_points / data.max_hit_points ) );
-		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
+		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
 	}
 
 	float newzoom = (float)( 64.0 / Client->Hud.Zoom );
