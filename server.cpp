@@ -2211,7 +2211,7 @@ void cServer::makeTurnEnd ()
 	if ( SettingsData.bAutoSave )
 	{
 		cSavegame Savegame ( 10 );	// autosaves are always in slot 10
-		Savegame.save ( "Autosave" );
+		Savegame.save ( lngPack.i18n ( "Text~Settings~Autosave") + " " + lngPack.i18n ( "Text~Comp~Turn") + " " + iToStr ( iTurn ) );
 	}
 
 	checkDefeats();
