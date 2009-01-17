@@ -188,9 +188,8 @@ void cUpgradeCalculator::setupLookupTables()
 	hitpointsArmorAmmo_26 [36] = 38;
 	hitpointsArmorAmmo_26 [41] = 84;
 	hitpointsArmorAmmo_26 [46] = 168;
-	hitpointsArmorAmmo_26 [51] = 310; // not real value - to be researched
-	hitpointsArmorAmmo_26 [56] = 527; // not real value - to be researched
-	hitpointsArmorAmmo_26 [61] = 790; // not real value - to be researched
+	hitpointsArmorAmmo_26 [51] = 319;
+	hitpointsArmorAmmo_26 [56] = 567;
 
 	hitpointsArmorAmmo_28 [28] = 4;
 	hitpointsArmorAmmo_28 [33] = 13;
@@ -553,12 +552,12 @@ void cUpgradeCalculator::setupLookupTables()
 	rangeScan_24 [34] = 58;
 	rangeScan_24 [36] = 84;
 	rangeScan_24 [38] = 117;
-	rangeScan_24 [40] = 153; // not real value - to be researched
-	rangeScan_24 [42] = 258; // not real value - to be researched
-	rangeScan_24 [44] = 336; // not real value - to be researched
-	rangeScan_24 [46] = 437; // not real value - to be researched
-	rangeScan_24 [48] = 568; // not real value - to be researched
-	rangeScan_24 [50] = 739; // not real value - to be researched
+	rangeScan_24 [40] = 163;
+	rangeScan_24 [42] = 223;
+	rangeScan_24 [44] = 298;
+	rangeScan_24 [46] = 396;
+	rangeScan_24 [48] = 518;
+	rangeScan_24 [50] = 673;
 
 	// ------------------------------ SHOTS
 	shots_1 [1] = 720;
