@@ -5528,6 +5528,8 @@ void cClient::destroyUnit(cBuilding *building)
 	cBuilding* topBuilding = Map->fields[offset].getBuildings();
 	if ( topBuilding && topBuilding->data.is_big )
 	{
+		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
+
 		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
 		cBuildingIterator bi = Map->fields[offset + 1].getBuildings();
 		while ( bi.size() > 0 ) { deleteUnit( bi ); }
@@ -5537,8 +5539,6 @@ void cClient::destroyUnit(cBuilding *building)
 
 		bi = Map->fields[offset + Map->size + 1].getBuildings();
 		while ( bi.size() > 0 ) { deleteUnit( bi ); }
-
-		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
 	}
 	else
 	{
