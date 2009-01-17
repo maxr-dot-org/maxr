@@ -482,6 +482,7 @@ void cPlayer::DoScan ( void )
 	cVehicle *vp;
 	cBuilding *bp;
 
+	if ( isDefeated ) return;
 	memset ( ScanMap      , 0, MapSize );
 	memset ( DetectLandMap, 0, MapSize );
 	memset ( DetectSeaMap , 0, MapSize );

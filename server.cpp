@@ -1773,7 +1773,7 @@ void cServer::checkPlayerUnits ()
 				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 
 				bool stealthUnit = NextVehicle->data.is_stealth_land || NextVehicle->data.is_stealth_sea;
-				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer )) && !NextVehicle->Loaded )
+				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) && !NextVehicle->Loaded )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
@@ -1814,7 +1814,7 @@ void cServer::checkPlayerUnits ()
 				int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
 				bool stealthUnit = NextBuilding->data.is_expl_mine;
 
-				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer )) )
+				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) )
 				{
 					unsigned int i;
 					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )
