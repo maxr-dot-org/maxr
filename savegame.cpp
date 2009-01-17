@@ -735,6 +735,16 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	if ( Element = unitNode->FirstChildElement( "Costs_Ground" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Ground = (float)tmpdouble; }
 	if ( Element = unitNode->FirstChildElement( "Costs_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Sea = (float)tmpdouble; }
 	if ( Element = unitNode->FirstChildElement( "Costs_Air" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Air = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Costs_Submarine" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Submarine = (float)tmpdouble; }
+
+	if ( Element = unitNode->FirstChildElement( "Factor_Coast" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Coast = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Wood" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Wood = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Road" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Road = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Bridge" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Bridge = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Platform" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Platform = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Monorail" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Monorail = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Wreck" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Wreck = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Mountains" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Mountains = (float)tmpdouble; }
 
 	if ( Element = unitNode->FirstChildElement( "Size_Length" ) ) Element->Attribute ( "num", &Data->iSize_Length );
 	if ( Element = unitNode->FirstChildElement( "Size_Width" ) ) Element->Attribute ( "num", &Data->iSize_Width );
@@ -1218,6 +1228,16 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if( Data->fCosts_Ground != 1.0 ) addAttributeElement ( unitNode, "Costs_Ground", "num", dToStr ( Data->fCosts_Ground ) );
 	if( Data->fCosts_Sea != 0.0 ) addAttributeElement ( unitNode, "Costs_Sea", "num", dToStr ( Data->fCosts_Sea ) );
 	if( Data->fCosts_Air != 0.0 ) addAttributeElement ( unitNode, "Costs_Air", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fCosts_Submarine != 0.0 ) addAttributeElement ( unitNode, "Costs_Submarine", "num", dToStr ( Data->fCosts_Air ) );
+
+	if( Data->fFactor_Coast != 1.5 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Wood != 1.5 ) addAttributeElement ( unitNode, "Factor_Wood", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Road != 0.5 ) addAttributeElement ( unitNode, "Factor_Road", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Bridge != 1.0 ) addAttributeElement ( unitNode, "Factor_Bridge", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Platform != 1.0 ) addAttributeElement ( unitNode, "Factor_Platform", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Monorail != 0.0 ) addAttributeElement ( unitNode, "Factor_Monorail", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Wreck != 1.0 ) addAttributeElement ( unitNode, "Factor_Wreck", "num", dToStr ( Data->fCosts_Air ) );
+	if( Data->fFactor_Mountains != 0.0 ) addAttributeElement ( unitNode, "Factor_Mountains", "num", dToStr ( Data->fCosts_Air ) );
 
 	if( Data->iSize_Length != 1 ) addAttributeElement ( unitNode, "Size_Length", "num", iToStr ( Data->iSize_Length ) );
 	if( Data->iSize_Width != 1 ) addAttributeElement ( unitNode, "Size_Width", "num", iToStr ( Data->iSize_Width ) );
