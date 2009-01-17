@@ -197,14 +197,16 @@ void cServer::run()
 						int iSocketNumber = ((Sint16 *)event->user.data1)[0];
 						network->close ( iSocketNumber );
 
+						cPlayer *Player;
 						// resort socket numbers of the players
 						for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 						{
-							if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS ) (*PlayerList)[i]->iSocketNum--;
+							if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) Player = (*PlayerList)[i];
+							else if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS ) (*PlayerList)[i]->iSocketNum--;
 						}
 						// push lost connection message
 						cNetMessage message( GAME_EV_LOST_CONNECTION );
-						message.pushInt16( ((Sint16*)event->user.data1)[0] );
+						message.pushInt16( Player->Nr );
 						pushEvent( message.getGameEvent() );
 					}
 					break;
@@ -248,19 +250,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	{
 	case GAME_EV_LOST_CONNECTION:
 		{
-			int iSocketNum = message->popInt16();
-			cPlayer *Player = NULL;
-			// get the player to who the connection has been lost
-			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-			{
-				if ( (*PlayerList)[i]->iSocketNum == iSocketNum )
-				{
-					Player = (*PlayerList)[i];
-					Player->iSocketNum = -1;
-					break;
-				}
-			}
+			int playerNum = message->popInt16();
+			cPlayer *Player = getPlayerFromNumber ( playerNum );
 			if ( !Player ) break;
+			Player->iSocketNum = -1;
 
 			// freeze clients
 			sendFreeze ();
