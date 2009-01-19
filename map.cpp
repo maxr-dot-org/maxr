@@ -541,8 +541,6 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 	memset ( Kacheln, 0, sizeof ( int ) *size*size );
 
 	fields = new cMapField[size*size];
-	GO = new sGameObjects[size*size];
-	memset ( GO,0,sizeof ( sGameObjects ) *size*size );
 	Resources = new sResources[size*size];
 
 	// alloc memory for terrains
@@ -555,7 +553,6 @@ void cMap::DeleteMap ( void )
 	if ( !Kacheln ) return;
 	delete [] Kacheln;
 	delete[] fields;
-	delete [] GO;
 	delete [] Resources;
 	Kacheln=NULL;
 	delete[] ( terrain );
@@ -814,45 +811,6 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 
 		fields[offset].buildings.Insert(i, building);
 	}
-
-	//backward compatibility
-	if ( !building->owner )
-	{
-		if ( building->data.is_big )
-		{
-			GO[offset].subbase = building;
-			GO[offset + 1].subbase = building;
-			GO[offset + size].subbase = building;
-			GO[offset + size + 1].subbase = building;
-		}
-		else
-		{
-			GO[offset].subbase = building;
-		}
-	}
-	else
-	{
-		if ( building->data.is_big )
-		{
-			GO[offset].top = building;
-			GO[offset + 1].top = building;
-			GO[offset + size].top = building;
-			GO[offset + size + 1].top = building;
-
-		}
-		else
-		{
-			if ( building->data.is_base )
-			{
-				if ( GO[offset].base ) GO[offset].subbase = GO[offset].base;
-				GO[offset].base = building;
-			}
-			else
-			{
-				GO[offset].top = building;
-			}
-		}
-	}
 }
 
 
@@ -870,16 +828,6 @@ void cMap::addVehicle(cVehicle *vehicle, unsigned int offset )
 	else
 	{
 		fields[offset].vehicles.Insert(0, vehicle );
-	}
-
-	//backward compatibility 
-	if ( vehicle->data.can_drive == DRIVE_AIR )
-	{
-		GO[offset].plane = vehicle;
-	}
-	else
-	{
-		GO[offset].vehicle = vehicle;
 	}
 }
 
@@ -910,29 +858,6 @@ void cMap::deleteBuilding( cBuilding* building )
 		buildings = &fields[offset].buildings;
 		if ( (*buildings)[0] == building ) buildings->Delete(0);
 		
-	}
-
-	//backward compatibility
-	offset = building->PosX + building->PosY * size;
-
-	if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
-	if ( GO[offset].base    == building ) GO[offset].base    = NULL;
-	if ( GO[offset].top     == building ) GO[offset].top     = NULL;
-	
-
-	if ( building->data.is_big )
-	{
-		offset++;
-		if ( GO[offset].top == building ) GO[offset].top = NULL;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
-
-		offset += size;
-		if ( GO[offset].top == building ) GO[offset].top = NULL;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;	
-		
-		offset--;
-		if ( GO[offset].top == building ) GO[offset].top = NULL;
-		if ( GO[offset].subbase == building ) GO[offset].subbase = NULL;
 	}
 }
 
@@ -974,27 +899,6 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 		}
 		else return;
 	}
-
-	//backward compatibility
-	offset = vehicle->PosX + vehicle->PosY *size;
-
-	if ( vehicle->data.can_drive == DRIVE_AIR ) 
-	{
-		if (GO[offset].plane == vehicle ) GO[offset].plane = NULL;
-	}
-	else
-	{
-		if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
-		if ( vehicle->PosX + 1 < size && vehicle->PosY + 1 < size )
-		{
-			offset++;
-			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
-			offset += size;
-			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
-			offset--;
-			if ( GO[offset].vehicle == vehicle ) GO[offset].vehicle = NULL;
-		}
-	}
 }
 
 void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y )
@@ -1033,36 +937,11 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 			oldOffset--;
 			fields[oldOffset].vehicles.Delete(0);
 
-			oldOffset -= size; //temp
-			//vehicle->data.is_big = false;
+			vehicle->data.is_big = false;
 		}
 
 		fields[newOffset].vehicles.Insert(0, vehicle );
 	}
-
-	//backward compatibility
-	if ( vehicle->data.can_drive == DRIVE_AIR )
-	{
-		GO[oldOffset].plane = NULL;
-		GO[newOffset].plane = vehicle;
-	}
-	else
-	{
-		GO[oldOffset].vehicle = NULL;
-		
-		if ( vehicle->IsBuilding || vehicle->IsClearing || vehicle->data.is_big )
-		{
-			oldOffset++;
-			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
-			oldOffset += size;
-			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
-			oldOffset--;
-			if ( GO[oldOffset].vehicle == vehicle ) GO[oldOffset].vehicle = NULL;
-		}
-
-		GO[newOffset].vehicle = vehicle;
-	}
-	vehicle->data.is_big = false;
 }
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
@@ -1087,19 +966,6 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 	fields[offset].vehicles.Insert(0, vehicle );
 
 	vehicle->data.is_big = true;
-
-	//backward compatibility
-	GO[oldOffset].vehicle = NULL;
-
-	offset -=size;
-	GO[offset].vehicle = vehicle;
-	offset++;
-	GO[offset].vehicle = vehicle;
-	offset += size;
-	GO[offset].vehicle = vehicle;
-	offset--;
-	GO[offset].vehicle = vehicle;
-
 }
 
 bool cMap::possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player ) const

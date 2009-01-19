@@ -24,16 +24,6 @@
 #include "buildings.h"
 #include "clist.h"
 
-// GameObjects Struktur //////////////////////////////////////////////////////
-struct sGameObjects{
-  cVehicle *vehicle;		// Vehicles on the ground
-  cVehicle *plane;			// Vehicles in the air
-  cBuilding *base;			// Buildings on the ground whitch are under vehciles and top-buildings
-  cBuilding *subbase;		// Normaley base-buildings but in this special case they are under an other base-building (for examble plattform under street)
-  cBuilding *top;			// Normal buildings on the ground
-
-};
-
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources{
   unsigned char value;
@@ -152,7 +142,6 @@ public:
 
 	int size;     // size of the map
 	int *Kacheln; // terrain numbers of the map fields
-	sGameObjects *GO; // TODO: remove
 	/**
 	* the infomation about the fields
 	*/
