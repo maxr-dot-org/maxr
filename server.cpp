@@ -2540,12 +2540,12 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	
 }
 
-void cServer::destroyUnit(cBuilding *_b)
+void cServer::destroyUnit(cBuilding *b)
 {
-	int offset = _b->PosX + _b->PosY * Map->size;
+	int offset = b->PosX + b->PosY * Map->size;
 	int value = 0;
 	bool big = false;
-	bool isConnector = _b->data.is_connector;
+	bool isConnector = b->data.is_connector;
 
 	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
 	if ( topBuilding && topBuilding->data.is_big )

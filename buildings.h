@@ -192,13 +192,13 @@ public:
 	void SelfDestructionMenu(void);
 	void ShowBigDetails(void);
 	void updateNeighbours( cMap *map );
-	void CheckNeighbours( cMap *map );
+	void CheckNeighbours( cMap *Map );
 	void DrawConnectors(SDL_Rect dest);
 	void ServerStartWork();
 	void ClientStartWork();
 	void ServerStopWork(bool override);
 	void ClientStopWork();
-	bool CanTransferTo( class cMapField *OverUnitField );
+	bool CanTransferTo( class cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd(void);
 	void showMineManager();
 	void doMineInc(ResourceKind, cList<sMineValues*>& Mines);

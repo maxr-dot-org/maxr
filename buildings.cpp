@@ -1332,27 +1332,33 @@ void cBuilding::updateNeighbours( cMap *Map )
 // Prüft, ob es Nachbarn gibt:
 void cBuilding::CheckNeighbours ( cMap *Map )
 {
-	int pos;
-	pos = PosX + PosY * Map->size;
-#define CHECK_NEIGHBOUR(a,m) if(a>=0&&a<Map->size*Map->size&&abs((a)%Map->size-PosX)<4&&abs((a)/Map->size-PosY)<4&&Map->GO[a].top&&Map->GO[a].top->owner==owner&&Map->GO[a].top->SubBase){m=true;}else{m=false;}
+
+#define CHECK_NEIGHBOUR(x,y,m)								\
+	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
+	{														\
+		cBuilding* b = Map->fields[x + y * Map->size].getTopBuilding();		\
+		if ( b && b->owner == owner && b->SubBase )			\
+			{m=true;}else{m=false;}							\
+	}														\
 
 	if ( !data.is_big )
 	{
-		CHECK_NEIGHBOUR ( pos - Map->size, BaseN )
-		CHECK_NEIGHBOUR ( pos + 1, BaseE )
-		CHECK_NEIGHBOUR ( pos + Map->size, BaseS )
-		CHECK_NEIGHBOUR ( pos - 1, BaseW )
+		CHECK_NEIGHBOUR ( PosX    , PosY - 1, BaseN )
+		CHECK_NEIGHBOUR ( PosX + 1, PosY    , BaseE )
+		CHECK_NEIGHBOUR ( PosX    , PosY + 1, BaseS )
+		CHECK_NEIGHBOUR ( PosX - 1, PosY    , BaseW )
 	}
 	else
 	{
-		CHECK_NEIGHBOUR ( pos - Map->size, BaseN )
-		CHECK_NEIGHBOUR ( pos - Map->size + 1, BaseBN )
-		CHECK_NEIGHBOUR ( pos + 2, BaseE )
-		CHECK_NEIGHBOUR ( pos + 2 + Map->size, BaseBE )
-		CHECK_NEIGHBOUR ( pos + Map->size*2, BaseS )
-		CHECK_NEIGHBOUR ( pos + Map->size*2 + 1, BaseBS )
-		CHECK_NEIGHBOUR ( pos - 1, BaseW )
-		CHECK_NEIGHBOUR ( pos - 1 + Map->size, BaseBW )
+		
+		CHECK_NEIGHBOUR ( PosX    , PosY - 1, BaseN  )
+		CHECK_NEIGHBOUR ( PosX + 1, PosY - 1, BaseBN )
+		CHECK_NEIGHBOUR ( PosX + 2, PosY    , BaseE  )
+		CHECK_NEIGHBOUR ( PosX + 2, PosY + 1, BaseBE )
+		CHECK_NEIGHBOUR ( PosX    , PosY + 2, BaseS  )
+		CHECK_NEIGHBOUR ( PosX + 1, PosY + 2, BaseBS )
+		CHECK_NEIGHBOUR ( PosX - 1, PosY    , BaseW  )
+		CHECK_NEIGHBOUR ( PosX - 1, PosY + 1, BaseBW )
 	}
 }
 
@@ -1817,7 +1823,6 @@ void cBuilding::ClientStopWork()
 	//if ( data.can_research ) owner->StopAReserach();
 }
 
-// Prüft, ob Rohstoffe zu dem GO transferiert werden können:
 bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
