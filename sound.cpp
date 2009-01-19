@@ -20,11 +20,11 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <SDL_mixer.h>
 
 #include "sound.h"
 #include "log.h"
 // #include "credits.h"
-#include "SDL_mixer.h"
 //#include "SDL_thread.h"
 
 // Globales //////////////////////////////////////////////////////////////////

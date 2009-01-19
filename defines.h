@@ -20,10 +20,10 @@
 #define definesH
 
 #if HAVE_CONFIG_H
-        #include <config.h> //created by autotools on linux holding informations like package_string and versions
+        #include "config.h" //created by autotools on linux holding informations like package_string and versions
 #endif
 #if HAVE_AUTOVERSION_H
-	#include <autoversion.h> //include autoversion created by buildinfo.sh for svn and machine info
+	#include "autoversion.h" //include autoversion created by buildinfo.sh for svn and machine info
 #endif
 
 #ifdef __main__

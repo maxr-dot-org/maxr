@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include <iostream>
-#include "SDL_rwops.h"
+#include <SDL_rwops.h>
 #include "log.h"
 #include "main.h"
 
