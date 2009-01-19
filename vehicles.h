@@ -188,7 +188,7 @@ public:
 	void FindNextband(void);
 	void doSurvey(void);
 	void MakeReport(void);
-	bool CanTransferTo( struct sGameObjects *go);
+	bool CanTransferTo( class cMapField *OverUnitField );
 	void ShowBigDetails(void);
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;

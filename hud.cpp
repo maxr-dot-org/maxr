@@ -419,7 +419,7 @@ void cHud::CheckScroll ( bool pure )
 	{
 		if ( selectedVehicle )
 		{
-			if ( Client->OverObject&&selectedVehicle->CanTransferTo ( Client->OverObject ) )
+			if ( Client->OverUnitField && selectedVehicle->CanTransferTo ( Client->OverUnitField ) )
 			{
 				mouse->SetCursor ( CTransf );
 			}
@@ -430,7 +430,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else
 		{
-			if ( Client->OverObject&&selectedBuilding->CanTransferTo ( Client->OverObject ) )
+			if ( Client->OverUnitField && selectedBuilding->CanTransferTo ( Client->OverUnitField ) )
 			{
 				mouse->SetCursor ( CTransf );
 			}
@@ -447,7 +447,7 @@ void cHud::CheckScroll ( bool pure )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				Client->OverObject=NULL;
+				Client->OverUnitField = NULL;
 			}
 			return;
 		}
@@ -456,7 +456,7 @@ void cHud::CheckScroll ( bool pure )
 		{
 			mouse->SetCursor ( CHand );
 			
-			Client->OverObject=NULL;
+			Client->OverUnitField = NULL;
 			LastOverEnde=true;
 			return;
 		}
@@ -563,34 +563,34 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if (Client->OverObject && 
+		else if (Client->OverUnitField && 
 				(
 					!selectedVehicle                               ||
 					selectedVehicle->owner != Client->ActivePlayer ||
 					(
 						(
 							selectedVehicle->data.can_drive == DRIVE_AIR ||
-							Client->OverObject->vehicle ||
+							Client->OverUnitField->getVehicles() ||
 							(
-								Client->OverObject->top &&
-								!Client->OverObject->top->data.is_connector
+								Client->OverUnitField->getTopBuilding() &&
+								!Client->OverUnitField->getTopBuilding()->data.is_connector
 							) ||
 							(
 								MouseStyle == OldSchool &&
-								Client->OverObject->plane
+								Client->OverUnitField->getPlanes()
 							)
 						) &&
 						(
 							selectedVehicle->data.can_drive != DRIVE_AIR ||
-							Client->OverObject->plane ||
+							Client->OverUnitField->getPlanes() ||
 							(
 								MouseStyle == OldSchool &&
 								(
-									Client->OverObject->vehicle ||
+									Client->OverUnitField->getVehicles() ||
 									(
-										Client->OverObject->top &&
-										!Client->OverObject->top->data.is_connector &&
-										!Client->OverObject->top->data.is_pad
+										Client->OverUnitField->getTopBuilding() &&
+										!Client->OverUnitField->getTopBuilding()->data.is_connector &&
+										!Client->OverUnitField->getTopBuilding()->data.is_pad
 									)
 								)
 							)

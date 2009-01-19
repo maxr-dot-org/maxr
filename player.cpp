@@ -938,23 +938,23 @@ bool cPlayer::InLockList ( cVehicle *v )
 }
 
 // Schaltet die Lock-Objekte unter der Maus um:
-void cPlayer::ToggelLock ( sGameObjects *OverObject )
+void cPlayer::ToggelLock ( cMapField *OverUnitField )
 {
-	if ( OverObject->base && OverObject->base->owner!=this )
+	if ( OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner!=this )
 	{
-		if ( InLockList ( OverObject->base ) ) DeleteLock ( OverObject->base );else AddLock ( OverObject->base );
+		if ( InLockList ( OverUnitField->getBaseBuilding() ) ) DeleteLock ( OverUnitField->getBaseBuilding() );else AddLock ( OverUnitField->getBaseBuilding() );
 	}
-	if ( OverObject->top && OverObject->top->owner!=this )
+	if ( OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner!=this )
 	{
-		if ( InLockList ( OverObject->top ) ) DeleteLock ( OverObject->top );else AddLock ( OverObject->top );
+		if ( InLockList ( OverUnitField->getTopBuilding() ) ) DeleteLock ( OverUnitField->getTopBuilding() );else AddLock ( OverUnitField->getTopBuilding() );
 	}
-	if ( OverObject->vehicle && OverObject->vehicle->owner!=this )
+	if ( OverUnitField->getVehicles() && OverUnitField->getVehicles()->owner!=this )
 	{
-		if ( InLockList ( OverObject->vehicle ) ) DeleteLock ( OverObject->vehicle );else AddLock ( OverObject->vehicle );
+		if ( InLockList ( OverUnitField->getVehicles() ) ) DeleteLock ( OverUnitField->getVehicles() );else AddLock ( OverUnitField->getVehicles() );
 	}
-	if ( OverObject->plane && OverObject->plane->owner!=this )
+	if ( OverUnitField->getPlanes() && OverUnitField->getPlanes()->owner!=this )
 	{
-		if ( InLockList ( OverObject->plane ) ) DeleteLock ( OverObject->plane );else AddLock ( OverObject->plane );
+		if ( InLockList ( OverUnitField->getPlanes() ) ) DeleteLock ( OverUnitField->getPlanes() );else AddLock ( OverUnitField->getPlanes() );
 	}
 }
 

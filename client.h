@@ -116,7 +116,8 @@ private:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
 	/** Object that is under the mouse cursor */
-	sGameObjects *OverObject;
+	//sGameObjects *OverObject;
+	cMapField *OverUnitField;
 	/** the acctual blink color */
 	unsigned int iBlinkColor;
 	/** the FLC-Animation */
@@ -174,7 +175,7 @@ private:
 	/** the mouse state which the client reseived by event for the menus */
 	sMouseState clientMouseState;
 
-	bool selectUnit( sGameObjects *OverObject, bool base );
+	bool selectUnit( cMapField *OverUnitField, bool base );
 	/**
 	* draws the minimap in the hud
 	*@author alzi alias DoctorDeath

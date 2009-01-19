@@ -3578,7 +3578,7 @@ void cVehicle::MakeReport ( void )
 }
 
 // Prüft, ob Rohstoffe zu dem GO transferiert werden können:
-bool cVehicle::CanTransferTo ( sGameObjects *go )
+bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
 	cVehicle *v;
@@ -3588,9 +3588,9 @@ bool cVehicle::CanTransferTo ( sGameObjects *go )
 	if ( x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1 )
 		return false;
 
-	if ( go->vehicle )
+	if ( OverUnitField->getVehicles() )
 	{
-		v = go->vehicle;
+		v = OverUnitField->getVehicles();
 
 		if ( v == this )
 			return false;
@@ -3607,9 +3607,9 @@ bool cVehicle::CanTransferTo ( sGameObjects *go )
 		return true;
 	}
 	else
-		if ( go->top )
+		if ( OverUnitField->getTopBuilding() )
 		{
-			b = go->top;
+			b = OverUnitField->getTopBuilding();
 
 			if ( b->owner != Client->ActivePlayer )
 				return false;
@@ -4150,7 +4150,7 @@ void cVehicle::showStorage ()
 				b = (int)Client->getMouseState().leftButtonPressed;
 			}
 
-			Client->OverObject = NULL;
+			Client->OverUnitField = NULL;
 
 			mouse->MoveCallback = true;
 
@@ -4252,7 +4252,7 @@ void cVehicle::showStorage ()
 				if ( data.can_drive == DRIVE_AIR ) sendWantActivate ( iID, true, StoredVehicles[VehicleToActivate]->iID, PosX, PosY );
 				else ActivatingVehicle = true;
 
-				Client->OverObject = NULL;
+				Client->OverUnitField = NULL;
 				mouse->MoveCallback = true;
 				Client->isInMenu = false;
 				return;

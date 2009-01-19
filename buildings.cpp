@@ -1818,16 +1818,16 @@ void cBuilding::ClientStopWork()
 }
 
 // Prüft, ob Rohstoffe zu dem GO transferiert werden können:
-bool cBuilding::CanTransferTo ( sGameObjects *go )
+bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
 	cVehicle *v;
 	int x, y;
 	mouse->GetKachel ( &x, &y );
 
-	if ( go->vehicle )
+	if ( OverUnitField->getVehicles() )
 	{
-		v = go->vehicle;
+		v = OverUnitField->getVehicles();
 
 		if ( v->owner != Client->ActivePlayer )
 			return false;
@@ -1859,9 +1859,9 @@ bool cBuilding::CanTransferTo ( sGameObjects *go )
 		return false;
 	}
 	else
-		if ( go->top )
+		if ( OverUnitField->getTopBuilding() )
 		{
-			b = go->top;
+			b = OverUnitField->getTopBuilding();
 
 			if ( b == this )
 				return false;
@@ -2249,7 +2249,7 @@ void cBuilding::ShowStorage ( void )
 				b = (int)Client->getMouseState().leftButtonPressed;
 			}
 
-			Client->OverObject = NULL;
+			Client->OverUnitField = NULL;
 
 			mouse->MoveCallback = true;
 
@@ -2492,7 +2492,7 @@ void cBuilding::ShowStorage ( void )
 					b = (int)Client->getMouseState().leftButtonPressed;
 				}
 
-				Client->OverObject = NULL;
+				Client->OverUnitField = NULL;
 
 				mouse->MoveCallback = true;
 				Client->isInMenu = false;

@@ -119,7 +119,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	SelectedBuilding = NULL;
 	neutralBuildings = NULL;
 	iObjectStream = -1;
-	OverObject = NULL;
+	OverUnitField = NULL;
 	iBlinkColor = 0xFFFFFF;
 	FLC = NULL;
 	sFLCname = "";
@@ -445,6 +445,18 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	clientMouseState = mouseState;
 	// give the mouse input to the unit menu if one is active
 	if ( isInMenu ) return;
+	cVehicle* overVehicle = NULL;
+	cVehicle* overPlane = NULL;
+	cBuilding* overBuilding = NULL;
+	cBuilding* overBaseBuilding = NULL;
+	if ( OverUnitField )
+	{
+		overVehicle  = OverUnitField->getVehicles();
+		overPlane    = OverUnitField->getPlanes();
+		overBuilding = OverUnitField->getTopBuilding();
+		overBaseBuilding = OverUnitField->getBaseBuilding();
+	}
+
 	if ( SelectedVehicle && SelectedVehicle->MenuActive && SelectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelectedVehicle->DrawMenu ( &mouseState );
@@ -456,13 +468,13 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		return;
 	}
 	// handle input on the map
-	if ( MouseStyle == OldSchool && mouseState.rightButtonPressed && !mouseState.leftButtonHold && OverObject )
+	if ( MouseStyle == OldSchool && mouseState.rightButtonPressed && !mouseState.leftButtonHold && OverUnitField )
 	{
-		if ( OverObject->vehicle && OverObject->vehicle == SelectedVehicle ) OverObject->vehicle->ShowHelp();
-		else if ( OverObject->plane && OverObject->plane == SelectedVehicle ) OverObject->plane->ShowHelp();
-		else if ( OverObject->top && OverObject->top == SelectedBuilding ) OverObject->top->ShowHelp();
-		else if ( OverObject->base && OverObject->base == SelectedBuilding ) OverObject->base->ShowHelp();
-		else if ( OverObject ) selectUnit ( OverObject, true );
+		if ( overVehicle && overVehicle == SelectedVehicle ) SelectedVehicle->ShowHelp();
+		else if ( overPlane && overPlane == SelectedVehicle ) SelectedVehicle->ShowHelp();
+		else if ( overBuilding && overBuilding == SelectedBuilding ) SelectedBuilding->ShowHelp();
+		else if ( overBaseBuilding && overBaseBuilding == SelectedBuilding ) SelectedBuilding->ShowHelp();
+		else if ( OverUnitField ) selectUnit ( OverUnitField, true );
 	}
 	else if ( ( mouseState.rightButtonPressed && !mouseState.leftButtonHold ) || ( MouseStyle == OldSchool && mouseState.leftButtonHold && mouseState.rightButtonPressed ) )
 	{
@@ -472,75 +484,75 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else
 		{
-			if ( OverObject&& (
-			            ( SelectedVehicle&& ( OverObject->vehicle==SelectedVehicle||OverObject->plane==SelectedVehicle ) ) ||
-			            ( SelectedBuilding&& ( OverObject->base==SelectedBuilding||OverObject->top==SelectedBuilding ) ) ) )
+			if ( OverUnitField && (
+			            ( SelectedVehicle && ( overVehicle == SelectedVehicle || overPlane == SelectedVehicle ) ) ||
+			            ( SelectedBuilding && ( overBaseBuilding == SelectedBuilding || overBuilding == SelectedBuilding ) ) ) )
 			{
 				int next = -1;
 
 				if ( SelectedVehicle )
 				{
-					if ( OverObject->plane == SelectedVehicle )
+					if ( overPlane == SelectedVehicle )
 					{
-						if ( OverObject->vehicle ) next='v';
-						else if ( OverObject->top ) next='t';
-						else if ( OverObject->base&&OverObject->base->owner ) next='b';
+						if ( overVehicle ) next = 'v';
+						else if ( overBuilding ) next = 't';
+						else if ( overBaseBuilding ) next = 'b';
 					}
 					else
 					{
-						if ( OverObject->top ) next='t';
-						else if ( OverObject->base&&OverObject->base->owner ) next='b';
-						else if ( OverObject->plane ) next='p';
+						if ( overBuilding ) next = 't';
+						else if ( overBaseBuilding ) next = 'b';
+						else if ( overPlane ) next = 'p';
 					}
 
 					SelectedVehicle->Deselct();
-					SelectedVehicle=NULL;
+					SelectedVehicle = NULL;
 					bChangeObjectName = false;
 					if ( !bChatInput ) InputHandler->setInputState ( false );
 					StopFXLoop ( iObjectStream );
 				}
 				else if ( SelectedBuilding )
 				{
-					if ( OverObject->top==SelectedBuilding )
+					if ( overBuilding == SelectedBuilding )
 					{
-						if ( OverObject->base&&OverObject->base->owner ) next='b';
-						else if ( OverObject->plane ) next='p';
-						else if ( OverObject->vehicle ) next='v';
+						if ( overBaseBuilding ) next = 'b';
+						else if ( overPlane ) next = 'p';
+						else if ( OverUnitField->getVehicles() ) next = 'v';
 					}
 					else
 					{
-						if ( OverObject->plane ) next='p';
-						else if ( OverObject->vehicle ) next='v';
-						else if ( OverObject->top ) next='t';
+						if ( overPlane ) next = 'p';
+						else if ( OverUnitField->getVehicles() ) next = 'v';
+						else if ( overBuilding ) next = 't';
 					}
 
 					SelectedBuilding->Deselct();
-					SelectedBuilding=NULL;
-					bChangeObjectName=false;
+					SelectedBuilding = NULL;
+					bChangeObjectName = false;
 					if ( !bChatInput ) InputHandler->setInputState ( false );
 					StopFXLoop ( iObjectStream );
 				}
 				switch ( next )
 				{
 					case 't':
-						SelectedBuilding = OverObject->top;
+						SelectedBuilding = overBuilding ;
 						SelectedBuilding->Select();
 						iObjectStream=SelectedBuilding->PlayStram();
 						break;
 					case 'b':
-						SelectedBuilding = OverObject->base;
+						SelectedBuilding = overBaseBuilding;
 						SelectedBuilding->Select();
 						iObjectStream=SelectedBuilding->PlayStram();
 						break;
 					case 'v':
-						SelectedVehicle = OverObject->vehicle;
+						SelectedVehicle = overVehicle;
 						SelectedVehicle->Select();
-						iObjectStream=SelectedVehicle->PlayStram();
+						iObjectStream = SelectedVehicle->PlayStram();
 						break;
 					case 'p':
-						SelectedVehicle = OverObject->plane;
+						SelectedVehicle = overPlane;
 						SelectedVehicle->Select();
-						iObjectStream=SelectedVehicle->PlayStram();
+						iObjectStream = SelectedVehicle->PlayStram();
 						break;
 				}
 			}
@@ -555,26 +567,16 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			else if ( SelectedBuilding!=NULL )
 			{
 				SelectedBuilding->Deselct();
-				SelectedBuilding=NULL;
-				bChangeObjectName=false;
+				SelectedBuilding = NULL;
+				bChangeObjectName = false;
 				if ( !bChatInput ) InputHandler->setInputState ( false );
 				StopFXLoop ( iObjectStream );
 			}
 		}
 	}
-	cVehicle* overVehicle = NULL;
-	cVehicle* overPlane = NULL;
-	cBuilding* overBuilding = NULL;
-	int offset = mouse->GetKachelOff();
-	if ( offset >= 0 )
-	{
-		overVehicle  = Map->fields[offset].getVehicles();
-		overPlane    = Map->fields[offset].getPlanes();
-		overBuilding = Map->fields[offset].getTopBuilding();
-	}
 	if ( mouseState.leftButtonPressed && !mouseState.rightButtonHold )
 	{
-		if ( OverObject && Hud.Lock ) ActivePlayer->ToggelLock ( OverObject );
+		if ( OverUnitField && Hud.Lock ) ActivePlayer->ToggelLock ( OverUnitField );
 		if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			if ( overVehicle ) showTransfer ( NULL, SelectedVehicle, NULL, overVehicle );
@@ -626,15 +628,15 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( overBuilding ) sendWantSupply ( overBuilding->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Crepair && SelectedVehicle && SelectedVehicle->RepairActive )
 		{
-			if ( OverObject->vehicle ) sendWantSupply ( OverObject->vehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->plane && OverObject->plane->FlightHigh == 0 ) sendWantSupply ( OverObject->plane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
-			else if ( OverObject->top ) sendWantSupply ( OverObject->top->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( overBuilding ) sendWantSupply ( overBuilding->iID, false, SelectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
 		}
 		else if ( !bHelpActive )
 		{
@@ -680,7 +682,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					// TODO: add commando disable
 					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 				}
-				else if ( MouseStyle == OldSchool && OverObject && selectUnit ( OverObject, false ) )
+				else if ( MouseStyle == OldSchool && OverUnitField && selectUnit ( OverUnitField, false ) )
 				{}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
 				{
@@ -695,10 +697,10 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 						addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
 					}
 				}
-				else if ( OverObject )
+				else if ( OverUnitField )
 				{
 					// open unit menu
-					if ( SelectedVehicle && ( OverObject->plane == SelectedVehicle || OverObject->vehicle == SelectedVehicle ) )
+					if ( SelectedVehicle && ( overPlane == SelectedVehicle || overVehicle == SelectedVehicle ) )
 					{
 						if ( !SelectedVehicle->moving && !SelectedVehicle->rotating&&SelectedVehicle->owner == ActivePlayer )
 						{
@@ -706,7 +708,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
-					else if ( SelectedBuilding&& ( OverObject->base == SelectedBuilding || OverObject->top == SelectedBuilding ) )
+					else if ( SelectedBuilding&& ( overBaseBuilding == SelectedBuilding || overBuilding == SelectedBuilding ) )
 					{
 						if ( SelectedBuilding->owner == ActivePlayer )
 						{
@@ -715,7 +717,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 						}
 					}
 					// select unit when using modern style
-					else if ( MouseStyle == Modern ) selectUnit ( OverObject, true );
+					else if ( MouseStyle == Modern ) selectUnit ( OverUnitField, true );
 				}
 			// check whether the name of a unit has to be changed:
 			if ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
@@ -731,25 +733,13 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				InputHandler->setInputState ( true );
 			}
 		}
-		else if ( OverObject )
+		else if ( OverUnitField )
 		{
-			if ( OverObject->plane )
-			{
-				OverObject->plane->ShowHelp();
-			}
-			else if ( OverObject->vehicle )
-			{
-				OverObject->vehicle->ShowHelp();
-			}
-			else if ( OverObject->top )
-			{
-				OverObject->top->ShowHelp();
-			}
-			else if ( OverObject->base )
-			{
-				OverObject->base->ShowHelp();
-			}
-			bHelpActive=false;
+			if ( overPlane ) overPlane->ShowHelp();
+			else if ( overVehicle )overVehicle->ShowHelp();
+			else if ( overBuilding ) overBuilding->ShowHelp();
+			else if ( overBaseBuilding ) overBaseBuilding->ShowHelp();
+			bHelpActive = false;
 		}
 	}
 	// check zoom via mousewheel
@@ -1028,13 +1018,13 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	else if ( keysym.sym == KeysList.KeySurvey ) Hud.SwitchStudie ( !Hud.Studie );
 }
 
-bool cClient::selectUnit( sGameObjects *OverObject, bool base )
+bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 {
-	if ( OverObject->plane && !OverObject->plane->moving && !OverObject->plane->rotating )
+	if ( OverUnitField->getPlanes() && !OverUnitField->getPlanes()->moving && !OverUnitField->getPlanes()->rotating )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
-		if ( SelectedVehicle == OverObject->plane )
+		if ( SelectedVehicle == OverUnitField->getPlanes() )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
 			{
@@ -1056,17 +1046,17 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 				SelectedBuilding = NULL;
 				StopFXLoop ( iObjectStream );
 			}
-			SelectedVehicle = OverObject->plane;
+			SelectedVehicle = OverUnitField->getPlanes();
 			SelectedVehicle->Select();
 			iObjectStream = SelectedVehicle->PlayStram();
 		}
 		return true;
 	}
-	else if ( OverObject->vehicle && !OverObject->vehicle->moving && !OverObject->vehicle->rotating && !( OverObject->plane && ( OverObject->vehicle->MenuActive || OverObject->vehicle->owner != ActivePlayer ) ) )
+	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !OverUnitField->getVehicles()->rotating && !( OverUnitField->getPlanes() && ( OverUnitField->getVehicles()->MenuActive || OverUnitField->getVehicles()->owner != ActivePlayer ) ) )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
-		if ( SelectedVehicle == OverObject->vehicle )
+		if ( SelectedVehicle == OverUnitField->getVehicles() )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
 			{
@@ -1088,17 +1078,17 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 				SelectedBuilding = NULL;
 				StopFXLoop ( iObjectStream );
 			}
-			SelectedVehicle = OverObject->vehicle;
+			SelectedVehicle = OverUnitField->getVehicles();
 			SelectedVehicle->Select();
 			iObjectStream = SelectedVehicle->PlayStram();
 		}
 		return true;
 	}
-	else if ( OverObject->top && ( base || ( ( !OverObject->top->data.is_connector || !SelectedVehicle ) && ( !OverObject->top->data.is_pad || ( !SelectedVehicle || SelectedVehicle->data.can_drive != DRIVE_AIR ) ) ) ) )
+	else if ( OverUnitField->getTopBuilding() && ( base || ( ( !OverUnitField->getTopBuilding()->data.is_connector || !SelectedVehicle ) && ( !OverUnitField->getTopBuilding()->data.is_pad || ( !SelectedVehicle || SelectedVehicle->data.can_drive != DRIVE_AIR ) ) ) ) )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
-		if ( SelectedBuilding == OverObject->top )
+		if ( SelectedBuilding == OverUnitField->getTopBuilding() )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
 			{
@@ -1120,17 +1110,17 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 				SelectedBuilding = NULL;
 				StopFXLoop ( iObjectStream );
 			}
-			SelectedBuilding = OverObject->top;
+			SelectedBuilding = OverUnitField->getTopBuilding();
 			SelectedBuilding->Select();
 			iObjectStream = SelectedBuilding->PlayStram();
 		}
 		return true;
 	}
-	else if ( ( base || !SelectedVehicle )&& OverObject->base && OverObject->base->owner )
+	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
-		if ( SelectedBuilding == OverObject->base )
+		if ( SelectedBuilding == OverUnitField->getBaseBuilding() )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
 			{
@@ -1152,7 +1142,7 @@ bool cClient::selectUnit( sGameObjects *OverObject, bool base )
 				SelectedBuilding = NULL;
 				StopFXLoop ( iObjectStream );
 			}
-			SelectedBuilding = OverObject->base;
+			SelectedBuilding = OverUnitField->getBaseBuilding();
 			SelectedBuilding->Select();
 			iObjectStream = SelectedBuilding->PlayStram();
 		}
@@ -2878,7 +2868,6 @@ void cClient::mouseMoveCallback ( bool bForce )
 {
 	static int iLastX = -1, iLastY = -1;
 	SDL_Rect scr, dest;
-	sGameObjects *GO;
 
 	int iX, iY;
 	mouse->GetKachel ( &iX, &iY );
@@ -2912,7 +2901,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 
 	if ( !ActivePlayer->ScanMap[iX+iY*Map->size] )
 	{
-		OverObject=NULL;
+		OverUnitField = NULL;
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			SDL_Rect r;
@@ -2923,8 +2912,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 		return;
 	}
 	// check wether there is a unit under the mouse:
-	GO=Map->GO+ ( Map->size*iY+iX );
-	cMapField* field = Map->fields + (iX + iY * Map->size);
+	OverUnitField = Map->fields + (iX + iY * Map->size);
 	if ( mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 	{
 		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, true );
@@ -2933,10 +2921,9 @@ void cClient::mouseMoveCallback ( bool bForce )
 	{
 		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, false );
 	}
-	if ( GO->vehicle != NULL )
+	if ( OverUnitField->getVehicles() != NULL )
 	{
-		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->vehicle->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, OverUnitField->getVehicles()->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2949,10 +2936,9 @@ void cClient::mouseMoveCallback ( bool bForce )
 			}
 		}
 	}
-	else if ( GO->plane!=NULL )
+	else if ( OverUnitField->getPlanes() != NULL )
 	{
-		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->plane->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, OverUnitField->getPlanes()->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2965,10 +2951,9 @@ void cClient::mouseMoveCallback ( bool bForce )
 			}
 		}
 	}
-	else if ( GO->top!=NULL )
+	else if ( OverUnitField->getTopBuilding() != NULL )
 	{
-		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->top->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, OverUnitField->getTopBuilding()->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -2981,10 +2966,9 @@ void cClient::mouseMoveCallback ( bool bForce )
 			}
 		}
 	}
-	else if ( GO->base != NULL && GO->base->owner )
+	else if ( OverUnitField->getBaseBuilding() != NULL )
 	{
-		OverObject=GO;
-		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, GO->base->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
+		font->showTextCentered(343+106, ( SettingsData.iScreenH-21 ) +4, OverUnitField->getBaseBuilding()->name, FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
 		if ( mouse->cur==GraphicsData.gfx_Cattack )
 		{
 			if ( SelectedVehicle )
@@ -3006,7 +2990,7 @@ void cClient::mouseMoveCallback ( bool bForce )
 			r.h=3;r.w=35;
 			SDL_FillRect ( GraphicsData.gfx_Cattack,&r,0 );
 		}
-		OverObject=NULL;
+		OverUnitField = NULL;
 	}
 	// place band:
 	if ( SelectedVehicle && SelectedVehicle->PlaceBand )

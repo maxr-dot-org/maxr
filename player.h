@@ -117,7 +117,7 @@ public:
   void DeleteLock(cVehicle *v);
   bool InLockList(cBuilding *b);
   bool InLockList(cVehicle *v);
-  void ToggelLock(struct sGameObjects *OverObject);
+  void ToggelLock(cMapField *OverUnitField);
   void DrawLockList(cHud const&);
 	/**
 	* draws a circle on the map for the fog

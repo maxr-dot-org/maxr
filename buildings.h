@@ -198,7 +198,7 @@ public:
 	void ClientStartWork();
 	void ServerStopWork(bool override);
 	void ClientStopWork();
-	bool CanTransferTo(struct sGameObjects *go);
+	bool CanTransferTo( class cMapField *OverUnitField );
 	void CheckRessourceProd(void);
 	void showMineManager();
 	void doMineInc(ResourceKind, cList<sMineValues*>& Mines);
