@@ -1336,7 +1336,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 #define CHECK_NEIGHBOUR(x,y,m)								\
 	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
 	{														\
-		cBuilding* b = Map->fields[x + y * Map->size].getTopBuilding();		\
+		cBuilding* b = Map->fields[(x) + (y) * Map->size].getTopBuilding();		\
 		if ( b && b->owner == owner && b->SubBase )			\
 			{m=true;}else{m=false;}							\
 	}														\
