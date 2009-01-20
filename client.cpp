@@ -797,9 +797,17 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		if ( bChatInput )
 		{
 			bChatInput = false;
-			if ( !InputHandler->getInputStr( CURSOR_DISABLED ).empty() && !doCommand ( InputHandler->getInputStr( CURSOR_DISABLED ) ) )
+			string s = InputHandler->getInputStr( CURSOR_DISABLED );
+			if ( !s.empty() )
 			{
-				sendChatMessageToServer( ActivePlayer->name+": " + InputHandler->getInputStr( CURSOR_DISABLED ) );
+				if ( s[0] == '/' ) 
+				{
+					doCommand( s );
+				}
+				else 
+				{
+					sendChatMessageToServer( ActivePlayer->name+": " + s );
+				}
 			}
 			InputHandler->setInputState ( false );
 		}
@@ -2783,36 +2791,36 @@ void cClient::addFX ( sFX* n )
 }
 
 
-bool cClient::doCommand ( string sCmd )
+void cClient::doCommand ( string sCmd )
 {
-	if ( sCmd.compare( "fps on" ) == 0 ) { bShowFPS = true; return true;}
-	if ( sCmd.compare( "fps off" ) == 0 ) { bShowFPS = false; return true;}
-	if ( sCmd.compare( "base client" ) == 0 ) { bDebugBaseClient = true; bDebugBaseServer = false; return true; }
-	if ( sCmd.compare( "base server" ) == 0 ) { if (Server) bDebugBaseServer = true; bDebugBaseClient = false; return true; }
-	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBaseServer = false; bDebugBaseClient = false; return true; }
-	if ( sCmd.compare( "sentry server" ) == 0 ) { if (Server) bDebugSentry = true; return true; }
-	if ( sCmd.compare( "sentry off" ) == 0 ) { bDebugSentry = false; return true; }
-	if ( sCmd.compare( "fx on" ) == 0 ) { bDebugFX = true; return true; }
-	if ( sCmd.compare( "fx off" ) == 0 ) { bDebugFX = false; return true; }
-	if ( sCmd.compare( "trace server" ) == 0 ) { if ( Server ) bDebugTraceServer = true; bDebugTraceClient = false; return true; }
-	if ( sCmd.compare( "trace client" ) == 0 ) { bDebugTraceClient = true; bDebugTraceServer = false; return true; }
-	if ( sCmd.compare( "trace off" ) == 0 ) { bDebugTraceServer = false; bDebugTraceClient = false; return true; }
-	if ( sCmd.compare( "ajobs on" ) == 0 ) { bDebugAjobs = true; return true; }
-	if ( sCmd.compare( "ajobs off" ) == 0 ) { bDebugAjobs = false; return true; }
-	if ( sCmd.compare( "checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return true; }
-	if ( sCmd.compare( "checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return true; }
-	if ( sCmd.compare( "checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return true; }
-	if ( sCmd.compare( "players on" ) == 0 ) { bDebugPlayers = true; return true; }
-	if ( sCmd.compare( "players off" ) == 0 ) { bDebugPlayers = false; return true; }
+	if ( sCmd.compare( "/fps on" ) == 0 ) { bShowFPS = true; return;}
+	if ( sCmd.compare( "/fps off" ) == 0 ) { bShowFPS = false; return;}
+	if ( sCmd.compare( "/base client" ) == 0 ) { bDebugBaseClient = true; bDebugBaseServer = false; return; }
+	if ( sCmd.compare( "/base server" ) == 0 ) { if (Server) bDebugBaseServer = true; bDebugBaseClient = false; return; }
+	if ( sCmd.compare( "/base off" ) == 0 ) { bDebugBaseServer = false; bDebugBaseClient = false; return; }
+	if ( sCmd.compare( "/sentry server" ) == 0 ) { if (Server) bDebugSentry = true; return; }
+	if ( sCmd.compare( "/sentry off" ) == 0 ) { bDebugSentry = false; return; }
+	if ( sCmd.compare( "/fx on" ) == 0 ) { bDebugFX = true; return; }
+	if ( sCmd.compare( "/fx off" ) == 0 ) { bDebugFX = false; return; }
+	if ( sCmd.compare( "/trace server" ) == 0 ) { if ( Server ) bDebugTraceServer = true; bDebugTraceClient = false; return; }
+	if ( sCmd.compare( "/trace client" ) == 0 ) { bDebugTraceClient = true; bDebugTraceServer = false; return; }
+	if ( sCmd.compare( "/trace off" ) == 0 ) { bDebugTraceServer = false; bDebugTraceClient = false; return; }
+	if ( sCmd.compare( "/ajobs on" ) == 0 ) { bDebugAjobs = true; return; }
+	if ( sCmd.compare( "/ajobs off" ) == 0 ) { bDebugAjobs = false; return; }
+	if ( sCmd.compare( "/checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return; }
+	if ( sCmd.compare( "/checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return; }
+	if ( sCmd.compare( "/checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return; }
+	if ( sCmd.compare( "/players on" ) == 0 ) { bDebugPlayers = true; return; }
+	if ( sCmd.compare( "/players off" ) == 0 ) { bDebugPlayers = false; return; }
 	
-	if ( sCmd.substr( 0, 6 ).compare( "resync" ) == 0 )
+	if ( sCmd.substr( 0, 6 ).compare( "/resync" ) == 0 )
 	{
-		if ( Server == NULL ) return false;
+		if ( Server == NULL ) return;
 		if ( sCmd.length() > 6 )
 		{
 			unsigned int playernum = atoi ( sCmd.substr ( 7, 8 ).c_str() );
 			cPlayer *Player = Server->getPlayerFromNumber ( playernum );
-			if ( Player == NULL ) return false;
+			if ( Player == NULL ) return;
 			Server->resyncPlayer ( Player, true );
 		}
 		else
@@ -2822,44 +2830,44 @@ bool cClient::doCommand ( string sCmd )
 				Server->resyncPlayer ( (*Server->PlayerList)[i], true );
 			}
 		}
-		return true;
+		return;
 	}
-	if ( sCmd.substr( 0, 5 ).compare( "mark "  ) == 0 )
+	if ( sCmd.substr( 0, 5 ).compare( "/mark "  ) == 0 )
 	{
 		sCmd.erase(0, 5 );
 		cNetMessage* message = new cNetMessage( GAME_EV_WANT_MARK_LOG );
 		message->pushString( sCmd );
 		Client->sendNetMessage( message );
-		return true;
+		return;
 	}
-	if ( sCmd.substr( 0, 6 ).compare( "color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return true;}
-	if ( sCmd.compare( "fog off" ) == 0 && Server )
+	if ( sCmd.substr( 0, 6 ).compare( "/color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return;}
+	if ( sCmd.compare( "/fog off" ) == 0 && Server )
 	{
 		memset ( Server->getPlayerFromNumber(ActivePlayer->Nr)->ScanMap,1,Map->size*Map->size );
 		memset ( ActivePlayer->ScanMap,1,Map->size*Map->size );
 		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Fog Off\"";
-		return true;
+		return;
 	}
 
-	if ( sCmd.compare( "survey" ) == 0 )
+	if ( sCmd.compare( "/survey" ) == 0 )
 	{
-		if ( network && !network->isHost() ) return false;
+		if ( network && !network->isHost() ) return;
 		memcpy ( Map->Resources , Server->Map->Resources, Map->size*Map->size*sizeof ( sResources ) );
 		memset ( ActivePlayer->ResourceMap,1,Map->size*Map->size );
 		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Survey\"";
-		return true;
+		return;
 	}
 
-	if ( sCmd.compare( "credits" ) == 0 )
+	if ( sCmd.compare( "/credits" ) == 0 )
 	{
 		//ActivePlayer->Credits+=1000;
 		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Credits\"";
-		return true;
+		return;
 	}
-	if ( sCmd.substr( 0, 5 ).compare( "kill " ) == 0 )
+	if ( sCmd.substr( 0, 5 ).compare( "/kill " ) == 0 )
 	{
 		int x,y;
 		sscanf ( sCmd.c_str(),"kill %d,%d",&x,&y );
@@ -2867,9 +2875,9 @@ bool cClient::doCommand ( string sCmd )
 		engine->DestroyObject ( x+y*Map->size,true );*/
 		sPlayerCheat=ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat+=" \"Kill\"";
-		return true;
+		return;
 	}
-	if ( sCmd.compare( "load" ) == 0 )
+	if ( sCmd.compare( "/load" ) == 0 )
 	{
 		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat += " \"Load\"";
@@ -2897,9 +2905,8 @@ bool cClient::doCommand ( string sCmd )
 			}
 			SelectedBuilding->data.ammo=SelectedBuilding->data.max_ammo;SelectedBuilding->ShowDetails();
 		}*/
-		return true;
+		return;
 	}
-	return false;
 }
 
 void cClient::mouseMoveCallback ( bool bForce )

@@ -251,7 +251,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param sCmd the input string
 	*/
-	bool doCommand ( string sCmd );
+	void doCommand ( string sCmd );
 
 	/**
 	* adds the unit to the map and player.
