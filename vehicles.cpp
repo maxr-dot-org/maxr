@@ -804,6 +804,7 @@ void cVehicle::Deselct ( void )
 	selected = false;
 	MenuActive = false;
 	AttackMode = false;
+	if ( PlaceBand ) BuildPath = false;
 	PlaceBand = false;
 	Transfer = false;
 	LoadActive = false;
