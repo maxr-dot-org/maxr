@@ -412,10 +412,7 @@ void cClient::run()
 				FLI_NextFrame ( FLC );
 			}
 		}
-		else
-		{
-			int blala = 0;
-		}
+
 		handleTurnTime();
 		CHECK_MEMORY;
 		// change the wind direction:
@@ -441,8 +438,8 @@ void cClient::run()
 			else iNextChange--;
 		}
 		//handle frames/s and cycles/s
+		if ( bShowFPS )
 		{
-			//TODO: prüfen auf fps an
 			static Uint32 iLastTicks = 0;
 			static Uint32 iLastFrame = 0;
 			static Uint32 iCycles = 0;
@@ -473,7 +470,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 
 	mouse->GetPos();
 	clientMouseState = mouseState;
-	// give the mouse input to the unit menu if one is active
+
 	if ( isInMenu ) return;
 	cVehicle* overVehicle = NULL;
 	cVehicle* overPlane = NULL;
@@ -487,6 +484,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		overBaseBuilding = OverUnitField->getBaseBuilding();
 	}
 
+	// give the mouse input to the unit menu if one is active
 	if ( SelectedVehicle && SelectedVehicle->MenuActive && SelectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelectedVehicle->DrawMenu ( &mouseState );
