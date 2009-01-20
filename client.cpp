@@ -115,6 +115,8 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
 	iFrame = 0;
+	fFPS = 0;
+	fCPS = 0;
 	SelectedVehicle = NULL;
 	SelectedBuilding = NULL;
 	neutralBuildings = NULL;
@@ -146,6 +148,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceServer = false;
 	bDebugTraceClient = false;
 	bDebugPlayers = false;
+	bShowFPS = true;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	isInMenu = false;
@@ -348,6 +351,7 @@ void cClient::run()
 		{
 			handleMessages();
 		}
+
 		CHECK_MEMORY;
 		// draw the mouse:
 		if ( bFlagDraw )
@@ -362,10 +366,10 @@ void cClient::run()
 			iLastMouseY = mouse->y;
 			mouse->draw ( true, screen );
 		}
+
 		// display the buffer:
 		if ( bFlagDraw )
 		{
-			//iFrames++;
 			if ( bStartup )
 			{
 				int hudzoom = Hud.Zoom;
@@ -408,6 +412,10 @@ void cClient::run()
 				FLI_NextFrame ( FLC );
 			}
 		}
+		else
+		{
+			int blala = 0;
+		}
 		handleTurnTime();
 		CHECK_MEMORY;
 		// change the wind direction:
@@ -432,6 +440,28 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
+		//handle frames/s and cycles/s
+		{
+			//TODO: prüfen auf fps an
+			static Uint32 iLastTicks = 0;
+			static Uint32 iLastFrame = 0;
+			static Uint32 iCycles = 0;
+
+			iCycles++;
+			Uint32 iTicks = SDL_GetTicks();
+			if ( iTicks > iLastTicks + 1000 )
+			{
+				float a = 0.5f;	//low pass filter coefficient
+				fFPS = (1-a)*(iFrame - iLastFrame)*1000/(float)(iTicks - iLastTicks) + a*fFPS;
+				iLastFrame = iFrame;
+
+				fCPS = (1-a)*iCycles*1000 / (float) (iTicks - iLastTicks) + a*fCPS;
+				iCycles = 0;
+
+				iLastTicks = iTicks;
+			}
+		}
+
 		CHECK_MEMORY;
 	}
 	mouse->MoveCallback = false;
@@ -1184,17 +1214,16 @@ void cClient::handleTimer()
 	//iTimer1: 100ms
 	//iTimer2: 400ms
 
-	static unsigned int iLast = 0, i = 0;
-	iTimer0 = 0 ;
+	static unsigned int iLast = 0;
+	iTimer0 = 0;
 	iTimer1 = 0;
 	iTimer2 = 0;
 	if ( iTimerTime != iLast )
 	{
 		iLast = iTimerTime;
-		i++;
 		iTimer0 = 1;
-		if ( i&0x1 ) iTimer1 = 1;
-		if ( ( i&0x3 ) == 3 ) iTimer2 = 1;
+		if (   iTimerTime & 0x1 ) iTimer1 = 1;
+		if ( ( iTimerTime & 0x3 ) == 3 ) iTimer2 = 1;
 	}
 }
 
@@ -2360,8 +2389,19 @@ void cClient::drawUnitCircles ()
 
 void cClient::displayDebugOutput()
 {
+	if ( !bFlagDrawMap ) return;
+
 	iDebugOff = 30;
-	if ( bDebugAjobs && bFlagDrawMap)
+
+	if ( bShowFPS )
+	{
+		font->showText(500, iDebugOff, "FPS: " + iToStr(Round(fFPS)), FONT_LATIN_SMALL_WHITE );
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(500, iDebugOff, "Cycles/s: " + iToStr(Round(fCPS)), FONT_LATIN_SMALL_WHITE );
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+	}
+
+	if ( bDebugAjobs )
 	{
 		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
@@ -2372,20 +2412,20 @@ void cClient::displayDebugOutput()
 		}
 	}
 
-	if ( bDebugBaseClient && bFlagDrawMap )
+	if ( bDebugBaseClient )
 	{
 		font->showText(550, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
 	}
 
-	if ( bDebugBaseServer && bFlagDrawMap )
+	if ( bDebugBaseServer )
 	{
 		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
 		font->showText(550, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
 	}
 
-	if ( bDebugSentry && bFlagDrawMap )
+	if ( bDebugSentry )
 	{
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
@@ -2397,14 +2437,14 @@ void cClient::displayDebugOutput()
 		}
 	}
 
-	if ( bDebugFX && bFlagDrawMap )
+	if ( bDebugFX )
 	{
 		font->showText(550, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
-	if ( bDebugPlayers && bFlagDrawMap )
+	if ( bDebugPlayers )
 	{
 		font->showText(530, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
@@ -2452,7 +2492,7 @@ void cClient::displayDebugOutput()
 
 		}
 	}
-	if ( ( bDebugTraceServer || bDebugTraceClient ) && bFlagDrawMap )
+	if ( bDebugTraceServer || bDebugTraceClient )
 	{
 		trace();
 	}
@@ -2747,8 +2787,8 @@ void cClient::addFX ( sFX* n )
 
 bool cClient::doCommand ( string sCmd )
 {
-	/*if ( sCmd.compare( "fps on" ) == 0 ) {DebugFPS=true;FPSstart=SDL_GetTicks();frames=0;cycles=0;return true;}
-	if ( sCmd.compare( "fps off" ) == 0 ) {DebugFPS=false;return true;}*/
+	if ( sCmd.compare( "fps on" ) == 0 ) { bShowFPS = true; return true;}
+	if ( sCmd.compare( "fps off" ) == 0 ) { bShowFPS = false; return true;}
 	if ( sCmd.compare( "base client" ) == 0 ) { bDebugBaseClient = true; bDebugBaseServer = false; return true; }
 	if ( sCmd.compare( "base server" ) == 0 ) { if (Server) bDebugBaseServer = true; bDebugBaseClient = false; return true; }
 	if ( sCmd.compare( "base off" ) == 0 ) { bDebugBaseServer = false; bDebugBaseClient = false; return true; }
@@ -4973,8 +5013,6 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	dest.x = 166;
 	dest.y = 159;
-	dest.w = GraphicsData.gfx_transfer->w;
-	dest.h = GraphicsData.gfx_transfer->h;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer, NULL, buffer, &dest );
 
 	// create the images
@@ -5004,8 +5042,6 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	}
 	dest.x = 88 + 166;
 	dest.y = 20 + 159;
-	dest.h = img->h;
-	dest.w = img->w;
 	SDL_BlitSurface ( img, NULL, buffer, &dest );
 	SDL_FreeSurface ( img );
 

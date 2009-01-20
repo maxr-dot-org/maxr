@@ -2451,7 +2451,6 @@ static int LoadBuildings()
 		UnitsData.building[i].nr = (int)i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=(int)i;
 		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=(int)i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 33) BNrOilStore=(int)i;
 		if(!UnitsData.building[i].data.is_expl_mine) continue;
 		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = (int)i;
 		else BNrLandMine = (int)i;

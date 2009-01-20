@@ -163,6 +163,8 @@ private:
 	bool bDebugTraceClient;
 	/** show infos from the client about the unit under the mouse */
 	bool bDebugPlayers;
+	/** show FPS information */
+	bool bShowFPS;
 	/** offset for the debug informations on the top of the gamewindow */
 	int iDebugOff;
 	/** how many seconds will be left for this turn */
@@ -348,6 +350,10 @@ private:
 public:
 	/** framecounter for the animations */
 	unsigned int iFrame;
+	/** number of drawn frames per second */
+	float fFPS;
+	/** number of main loop executions per second */
+	float fCPS;
 	/** the active Player */
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
