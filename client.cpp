@@ -2396,69 +2396,19 @@ void cClient::drawUnitCircles ()
 void cClient::displayDebugOutput()
 {
 	if ( !bFlagDrawMap ) return;
+	#define DEBUGOUT_X_POS		(SettingsData.iScreenW-140)
 
 	iDebugOff = 30;
 
-	if ( bShowFPS )
-	{
-		font->showText(500, iDebugOff, "FPS: " + iToStr(Round(fFPS)), FONT_LATIN_SMALL_WHITE );
-		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(500, iDebugOff, "Cycles/s: " + iToStr(Round(fCPS)), FONT_LATIN_SMALL_WHITE );
-		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-	}
-
-	if ( bDebugAjobs )
-	{
-		font->showText(500, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		if ( Server )
-		{
-			font->showText(500, iDebugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		}
-	}
-
-	if ( bDebugBaseClient )
-	{
-		font->showText(550, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
-	}
-
-	if ( bDebugBaseServer )
-	{
-		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
-		font->showText(550, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
-	}
-
-	if ( bDebugSentry )
-	{
-		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-		{
-			cPlayer *Player = (*Server->PlayerList)[i];
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), FONT_LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-			font->showText(500, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), FONT_LATIN_SMALL_WHITE);
-			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		}
-	}
-
-	if ( bDebugFX )
-	{
-		font->showText(550, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(550, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
-		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-	}
 	if ( bDebugPlayers )
 	{
-		font->showText(530, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "Players: " + iToStr( (int)PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
-		SDL_Rect rDest = { 500, iDebugOff, 20, 10 };
+		SDL_Rect rDest = { DEBUGOUT_X_POS, iDebugOff, 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
-		SDL_Rect rDotDest = { 490, iDebugOff, 10, 10 };
-		SDL_Rect rBlackOut = {520, iDebugOff, 0, 10 };
+		SDL_Rect rDotDest = {DEBUGOUT_X_POS-10, iDebugOff, 10, 10 };
+		SDL_Rect rBlackOut = {DEBUGOUT_X_POS+20, iDebugOff, 0, 10 };
 		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 		{
 			//HACK SHOWFINISHEDPLAYERS
@@ -2497,6 +2447,58 @@ void cClient::displayDebugOutput()
 			rDest.y = rDotDest.y = rBlackOut.y = iDebugOff;
 
 		}
+	}
+
+	if ( bShowFPS )
+	{
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "FPS: " + iToStr(Round(fFPS)), FONT_LATIN_SMALL_WHITE );
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "Cycles/s: " + iToStr(Round(fCPS)), FONT_LATIN_SMALL_WHITE );
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+	}
+
+	if ( bDebugAjobs )
+	{
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		if ( Server )
+		{
+			font->showText(DEBUGOUT_X_POS, iDebugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		}
+	}
+
+	if ( bDebugBaseClient )
+	{
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "subbases: " + iToStr((int)ActivePlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
+	}
+
+	if ( bDebugBaseServer )
+	{
+		cPlayer* serverPlayer = Server->getPlayerFromNumber(ActivePlayer->Nr);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
+	}
+
+	if ( bDebugSentry )
+	{
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			cPlayer *Player = (*Server->PlayerList)[i];
+			font->showText(DEBUGOUT_X_POS, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS, iDebugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), FONT_LATIN_SMALL_WHITE);
+			iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		}
+	}
+
+	if ( bDebugFX )
+	{
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
 	if ( bDebugTraceServer || bDebugTraceClient )
 	{
