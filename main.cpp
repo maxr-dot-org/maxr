@@ -53,10 +53,13 @@
 #include "mveplayer.h"
 #include "input.h"
 #include "unifonts.h"
+#include "debughelp.h"
 
 int main ( int argc, char *argv[] )
 {
 	setPaths(); //first thing: figure out paths
+
+	initStackDump();
 
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
