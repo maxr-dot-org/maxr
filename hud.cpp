@@ -836,7 +836,9 @@ void cHud::CheckMouseOver ( void )
 			PlayFX ( SoundData.SNDHudButton );
 			Client->bChangeObjectName=false;
 			Client->bChatInput=false;
+			Client->isInMenu = true;
 			showPreferences();
+			Client->isInMenu = false;
 			PraeferenzenButton ( false );
 		}
 	}
@@ -1042,7 +1044,9 @@ void cHud::CheckMouseOver ( void )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
+			Client->isInMenu = true;
 			ShowDateiMenu( true );
+			Client->isInMenu = false;
 			DateiButton ( false );
 		}
 	}

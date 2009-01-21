@@ -785,12 +785,14 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	if ( isInMenu ) return;
 	if ( keysym.sym == KeysList.KeyExit )
 	{
+		isInMenu = true;
 		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
 		{
 			drawMap ( false );
 			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 			bExit = true;
 		}
+		isInMenu = false;
 	}
 	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) )
 	{
@@ -4483,7 +4485,9 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 	SDL_BlitSurface ( sf,&scr,buffer,&scr );
 
+	isInMenu = true;
 	ShowOK ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn"), true );
+	isInMenu = false;
 }
 
 void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
