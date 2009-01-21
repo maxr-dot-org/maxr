@@ -721,7 +721,7 @@ void sendRequestIdentification ( int iSocket )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_REQ_IDENT );
 	message->pushInt16 ( iSocket );
-	cLog::write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	network->sendTo( iSocket, message->iLength, message->serialize() );
 }
 

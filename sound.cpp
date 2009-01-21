@@ -50,7 +50,7 @@ int InitSound ( int frequency,int chunksize )
 	// SDL Mixer initialisieren:
 	if ( Mix_OpenAudio ( frequency,AUDIO_S16,2,chunksize ) < 0 )
 	{
-		cLog::write("Could not initialize SDL_mixer", cLog::eLOG_TYPE_ERROR);
+		Log.write("Could not initialize SDL_mixer", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	Mix_QuerySpec ( &audio_rate, &audio_format, &audio_channels );
@@ -96,8 +96,8 @@ void PlayMusic(char const* const file)
 	music_stream = Mix_LoadMUS ( file );
 	if ( !music_stream )
 	{
-		cLog::write("failed opening music stream", cLog::eLOG_TYPE_WARNING);
-		cLog::write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
+		Log.write("failed opening music stream", cLog::eLOG_TYPE_WARNING);
+		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		return;
 	}
 	Mix_PlayMusic ( music_stream,0 );

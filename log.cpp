@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 #include <iostream>
-#include <SDL_rwops.h>
 #include "log.h"
 #include "main.h"
+#include "cmutex.h"
 
 #define LOGFILE SettingsData.sLog.c_str()
 #define NETLOGFILE SettingsData.sNetLog.c_str()
@@ -34,33 +34,29 @@
 #define DD "(DD): "
 /**mem error*/
 #define MM "(MM): "
-static SDL_RWops *logfile = NULL;
-bool bNetlogStarted;
-bool bIsRunning=false;
-bool bFirstRun=true;
-time_t tTime;
-tm *tmTime;
-char timestr[21];
-string sTime;
 
+cLog::cLog():
+	mutex()
+{
+	logfile = NULL;
+	bNetlogStarted = false;
+	bFirstRun = true;
+}
 
 bool cLog::open(int TYPE)
 {
-	if( bFirstRun && SettingsData.bDebug) //add timestamp to netlog
+	//check if netlog file name is initialized
+	if ( bFirstRun )
 	{
-		tTime = time ( NULL );
-		tmTime = localtime ( &tTime );
+		time_t tTime = time ( NULL );
+		tm * tmTime = localtime ( &tTime );
+		char timestr[25];
 		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
-		sTime = timestr;
+		string sTime = timestr;
 		SettingsData.sNetLog.erase(SettingsData.sNetLog.size() - 4, SettingsData.sNetLog.size());
 		SettingsData.sNetLog += sTime;
 		bFirstRun = false;
 	}
-
-	while(bIsRunning)
-		SDL_Delay(10);
-
-	bIsRunning = true;
 
 	if ( logfile == NULL || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted) )
 	{
@@ -96,7 +92,6 @@ bool cLog::open(int TYPE)
 	else
 	{
 		fprintf ( stderr,"(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n" );
-		bIsRunning = false;
 		return false;
 	}
 	if ( blocks<0 )
@@ -117,6 +112,8 @@ int cLog::write ( const char *str, int TYPE )
 
 int cLog::write ( std::string str, int TYPE )
 {
+	cMutex::Lock l(mutex);
+
 	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !SettingsData.bDebug ) //in case debug is disabled we skip message
 	{
 		return 0;
@@ -149,6 +146,8 @@ int cLog::write ( const char *str )
 
 void cLog::mark()
 {
+	cMutex::Lock l(mutex);
+
 	std::string str = "==============================(MARK)==============================";
 	str += TEXT_FILE_LF;
 	if ( open(-1) ) writeMessage ( str );
@@ -177,7 +176,6 @@ int cLog::writeMessage ( std::string str )
 	else
 	{
 		fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
-		bIsRunning = false;
 	}
 	return -1;
 }
@@ -186,5 +184,4 @@ int cLog::writeMessage ( std::string str )
 void cLog::close()
 {
 	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
-	bIsRunning = false;
 }

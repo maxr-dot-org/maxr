@@ -20,8 +20,9 @@
 #define LOG_H
 
 #include <iostream>
-
+#include <SDL_rwops.h>
 #include "defines.h"
+#include "cmutex.h"
 
 #define LOG_TYPE_WARNING 1
 #define LOG_TYPE_ERROR 2
@@ -40,25 +41,30 @@
 class cLog
 {
 private:
+	SDL_RWops *logfile;
+	bool bNetlogStarted;
+	bool bFirstRun;
+	cMutex mutex;
 
 	/**
 	* Writes message finally to logfile
 	*/
-	static int writeMessage( char *);
-	static int writeMessage( std::string );
+	int writeMessage( char *);
+	int writeMessage( std::string );
 
 	/**
 	* Closes the logfile.
 	*/
-	static void close();
+	void close();
 
 	/**
 	* Opens the Logfile.
 	*
 	* @return true on success
 	*/
-	static bool open(int TYPE);
+	bool open(int TYPE);
 public:
+	cLog();
 	/**
 	* Writes message with given type to logfile
 	*
@@ -73,8 +79,8 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write( const char *str , int TYPE );
-	static int write( std::string str , int TYPE );
+	int write( const char *str , int TYPE );
+	int write( std::string str , int TYPE );
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -83,8 +89,8 @@ public:
 	*
 	* @return 0 on success
 	*/
-	static int write( const char *str );
-	static int write( std::string str );
+	int write( const char *str );
+	int write( std::string str );
 
 	enum LOG_TYPE
 	{
@@ -102,6 +108,6 @@ public:
 	/**
 	* Writes a marker into logfile - please use only veeeery few times!
 	*/
-	static void mark();
-};
+	void mark();
+}EX Log;
 #endif

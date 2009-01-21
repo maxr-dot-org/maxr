@@ -1322,7 +1322,7 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 	//scr.x=25; scr.y=90; scr.h=scr.w=112;
 	dest.x=DIALOG_X+25; dest.y=DIALOG_Y+90; dest.h=dest.w=112;
 
-	cLog::write ( "Loading Maps", cLog::eLOG_TYPE_INFO );
+	Log.write ( "Loading Maps", cLog::eLOG_TYPE_INFO );
 
 	for ( int i=0;i<8;i++ ) //only 8 maps on one screen
 	{
@@ -1442,7 +1442,7 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 			SDL_FreeSurface ( sf );
 		}
 	}
-	cLog::mark();
+	Log.mark();
 
 	// Die Up-Down Buttons machen:
 
@@ -3073,7 +3073,7 @@ void cSelectLandingMenu::run()
 				if ( c.landingState != LANDING_POSITION_OK )
 				{
 					selectLandingSite();
-					cLog::write("Server: received landing coords from Player " + iToStr( iLocalClient ), cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write("Server: received landing coords from Player " + iToStr( iLocalClient ), cLog::eLOG_TYPE_NET_DEBUG);
 					iLandedClients++;
 					clientLandData[iLocalClient].iLastLandX = clientLandData[iLocalClient].iLandX;
 					clientLandData[iLocalClient].iLastLandY = clientLandData[iLocalClient].iLandY;
@@ -3104,7 +3104,7 @@ void cSelectLandingMenu::run()
 					SDL_Delay ( 1 );
 				}
 
-				cLog::write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG); 
+				Log.write("Server: all clients have selected a position. Checking...", cLog::eLOG_TYPE_NET_DEBUG); 
 
 				//now check the landing positions
 				for ( int playerNr = 0; playerNr < iClients; playerNr++ )
@@ -3126,21 +3126,21 @@ void cSelectLandingMenu::run()
 					}
 
 					if ( state == LANDING_POSITION_TOO_CLOSE )
-						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 					else if ( state == LANDING_POSITION_WARNING )
-						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_WARNING, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_WARNING, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 					else if ( state == LANDING_POSITION_OK )
-						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_OK, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_OK, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 					else if ( state == LANDING_POSITION_CONFIRMED )
-						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 					else if ( state == LANDING_STATE_UNKNOWN )
-						cLog::write("Server: Player " + iToStr(playerNr) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 					else
-						cLog::write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+						Log.write("Server: Player " + iToStr(playerNr) + " has an unknown landing state, Position: " + iToStr(clientLandData[playerNr].iLandX) + "," + iToStr(clientLandData[playerNr].iLandY), cLog::eLOG_TYPE_NET_DEBUG);
 
 				}
 
-				cLog::write("Server: waiting for " + iToStr(iClients - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Server: waiting for " + iToStr(iClients - iLandedClients) + " clients to select a position", cLog::eLOG_TYPE_NET_DEBUG);
 
 				if ( iLandedClients >= iClients )
 				{
@@ -3183,7 +3183,7 @@ void cSelectLandingMenu::run()
 
 void cSelectLandingMenu::sendLandingCoords( sClientLandData& c )
 {
-	cLog::write("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessage* message = new cNetMessage( MU_MSG_LANDING_COORDS );
 	message->pushInt16( c.iLandY );
 	message->pushInt16( c.iLandX );
@@ -3284,14 +3284,14 @@ void cSelectLandingMenu::handleMessages()
 		case MU_MSG_LANDING_COORDS:
 			{
 				int playerNr = message->popChar();
-				cLog::write("Server: received landing coords from Player " + iToStr( playerNr ), cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Server: received landing coords from Player " + iToStr( playerNr ), cLog::eLOG_TYPE_NET_DEBUG);
 
 				if ( playerNr >= iClients ) break;
 			
 				iLandedClients++;
 				if ( iLandedClients > iClients )
 				{
-					cLog::write("Server: received too much landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write("Server: received too much landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 				}
 
 				sClientLandData& c = clientLandData[playerNr];
@@ -3304,7 +3304,7 @@ void cSelectLandingMenu::handleMessages()
 			break;
 		case MU_MSG_RESELECT_LANDING:
 			{
-				cLog::write("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
 				c.landingState = (eLandingState) message->popChar();
 			}
 			break;
@@ -4247,12 +4247,12 @@ void cMultiPlayerMenu::runNetworkMenu()
 					if (network->create() == -1)
 					{
 						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Error_Socket"));
-						cLog::write("Error opening socket", cLog::eLOG_TYPE_WARNING);
+						Log.write("Error opening socket", cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
 						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n("Text~Title~Port") + ": "  + iToStr(iPort) + ")");
-						cLog::write("Game open (Port: " + iToStr(iPort) + ")", cLog::eLOG_TYPE_INFO);
+						Log.write("Game open (Port: " + iToStr(iPort) + ")", cLog::eLOG_TYPE_INFO);
 					}
 				}
 
@@ -4270,17 +4270,17 @@ void cMultiPlayerMenu::runNetworkMenu()
 					network->setIP(sIP);
 
 					addChatLog(lngPack.i18n("Text~Multiplayer~Network_Connecting") + sIP + ":" + iToStr(iPort)); // e.g. Connecting to 127.0.0.1:55800
-					cLog::write(("Connecting to " + sIP + ":" + iToStr(iPort)), cLog::eLOG_TYPE_INFO);
+					Log.write(("Connecting to " + sIP + ":" + iToStr(iPort)), cLog::eLOG_TYPE_INFO);
 
 					if (network->connect() == -1)
 					{
 						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Error_Connect") + sIP + ":" + iToStr(iPort));
-						cLog::write("Error on connecting " + sIP + ":" + iToStr(iPort), cLog::eLOG_TYPE_WARNING);
+						Log.write("Error on connecting " + sIP + ":" + iToStr(iPort), cLog::eLOG_TYPE_WARNING);
 					}
 					else
 					{
 						addChatLog(lngPack.i18n("Text~Multiplayer~Network_Connected"));
-						cLog::write("Connected", cLog::eLOG_TYPE_INFO);
+						Log.write("Connected", cLog::eLOG_TYPE_INFO);
 					}
 				}
 

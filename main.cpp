@@ -53,13 +53,10 @@
 #include "mveplayer.h"
 #include "input.h"
 #include "unifonts.h"
-#include "debughelp.h"
 
 int main ( int argc, char *argv[] )
 {
 	setPaths(); //first thing: figure out paths
-
-	initStackDump();
 
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
@@ -67,25 +64,25 @@ int main ( int argc, char *argv[] )
 		string sVersion = PACKAGE_NAME; sVersion += " ";
 		sVersion += PACKAGE_VERSION; sVersion += " ";
 		sVersion += PACKAGE_REV; sVersion += " ";
-		cLog::write ( sVersion, cLog::eLOG_TYPE_INFO );
+		Log.write ( sVersion, cLog::eLOG_TYPE_INFO );
 		string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
-		cLog::write ( sBuild , cLog::eLOG_TYPE_INFO );
+		Log.write ( sBuild , cLog::eLOG_TYPE_INFO );
 		#if HAVE_AUTOVERSION_H
 			string sBuildVerbose = "On: ";
 			sBuildVerbose += BUILD_UNAME_S; 
 			sBuildVerbose += " "; 
 			sBuildVerbose += BUILD_UNAME_R;
-			cLog::write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
+			Log.write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
 
 			sBuildVerbose = "From: ";
 			sBuildVerbose += BUILD_USER;
 			sBuildVerbose += " at "; 
 			sBuildVerbose += BUILD_UNAME_N;
-			cLog::write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
+			Log.write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
 		#endif
-		cLog::mark();
-		cLog::write ( sVersion, cLog::eLOG_TYPE_NET_DEBUG );
-		cLog::write ( sBuild , cLog::eLOG_TYPE_NET_DEBUG );
+		Log.mark();
+		Log.write ( sVersion, cLog::eLOG_TYPE_NET_DEBUG );
+		Log.write ( sBuild , cLog::eLOG_TYPE_NET_DEBUG );
 	}
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
@@ -109,7 +106,7 @@ int main ( int argc, char *argv[] )
 	{
 		if ( LoadingData == LOAD_ERROR )
 		{
-			cLog::write ( "Error while loading data!", cLog::eLOG_TYPE_ERROR );
+			Log.write ( "Error while loading data!", cLog::eLOG_TYPE_ERROR );
 			SDL_WaitThread ( DataThread, NULL );
 			Quit();
 		}
@@ -132,25 +129,25 @@ int main ( int argc, char *argv[] )
 			CloseSound();
 
 			char mvereturn;
-			cLog::write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+			Log.write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
 			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode, !SettingsData.SoundMute);
-			cLog::write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+			Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
 			// reinit maxr sound
 			if ( SettingsData.bSoundEnabled && !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
 			{
-				cLog::write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+				Log.write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 			}
 		}
 		else
 		{
-			cLog::write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+			Log.write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
 		}
 	}
 	else
 	{
-		cLog::write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
+		Log.write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
 	}
 
 	SDL_WaitThread ( DataThread, NULL );
@@ -179,13 +176,13 @@ void showSplash()
 	buffer = LoadPCX(SPLASH_BACKGROUND, false); //load splash with SDL_HWSURFACE
 	if (buffer == NULL)
 	{ //TODO: at flag for gamewide handling of SDL_HWSURFACE in case it doesn't work
-		cLog::write("Couldn't use hardware acceleration for images", cLog::eLOG_TYPE_ERROR);
-		cLog::write("This is currently not supported. Expect M.A.X. to crash!", cLog::eLOG_TYPE_ERROR);
+		Log.write("Couldn't use hardware acceleration for images", cLog::eLOG_TYPE_ERROR);
+		Log.write("This is currently not supported. Expect M.A.X. to crash!", cLog::eLOG_TYPE_ERROR);
 		buffer = LoadPCX(SPLASH_BACKGROUND, true);
 		if (buffer == NULL)
 		{
-			cLog::write("Couldn't use software acceleration, too", cLog::eLOG_TYPE_ERROR);
-			cLog::write("That's it. Tried my best. Bye!", cLog::eLOG_TYPE_ERROR);
+			Log.write("Couldn't use software acceleration, too", cLog::eLOG_TYPE_ERROR);
+			Log.write("That's it. Tried my best. Bye!", cLog::eLOG_TYPE_ERROR);
 			Quit();
 		}
 
@@ -197,7 +194,7 @@ void showSplash()
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
 	{
-		cLog::write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
+		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
 	}
 
 	//made it - enough to start game
@@ -220,14 +217,14 @@ void showGameWindow()
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
 	{
-		cLog::write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
+		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
 	}
 
 	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
 
 	if ( screen == NULL )
 	{
-		cLog::write("Couldn't set video mode w: " + iToStr( buffer->w ) +  " h: " + iToStr ( buffer->h ) + " bpp: " + iToStr ( buffer->format->BitsPerPixel ) + (SettingsData.bWindowMode?" window":" fullscreen"), cLog::eLOG_TYPE_ERROR);
+		Log.write("Couldn't set video mode w: " + iToStr( buffer->w ) +  " h: " + iToStr ( buffer->h ) + " bpp: " + iToStr ( buffer->format->BitsPerPixel ) + (SettingsData.bWindowMode?" window":" fullscreen"), cLog::eLOG_TYPE_ERROR);
 		Quit();
 	}
 
@@ -244,14 +241,14 @@ int initSDL()
 {
 	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{
-		cLog::write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
-		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
+		Log.write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
+		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	else
 	{
-		cLog::write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO );
-		cLog::mark();
+		Log.write ( "Initalized SDL basics - looks good!",cLog::eLOG_TYPE_INFO );
+		Log.mark();
 		//made it - enough to start game
 		return 0;
 	}
@@ -261,14 +258,14 @@ int initSound()
 {
 	if (!SettingsData.bSoundEnabled)
 	{
-		cLog::write ( "Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
+		Log.write ( "Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
 		return 1;
 	}
 
 	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
 	{
-		cLog::write ( "Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
-		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		SettingsData.bSoundEnabled=false;
 		return -1;
 	}
@@ -277,7 +274,7 @@ int initSound()
         {
                 return -1;
         }
-	cLog::write ( "Sound started", cLog::eLOG_TYPE_INFO);
+	Log.write ( "Sound started", cLog::eLOG_TYPE_INFO);
 	return 0;
 }
 
@@ -285,11 +282,11 @@ int initNet()
 {
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
-		cLog::write ( "Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING );
-		cLog::write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING );
+		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		return -1;
 	}
-	cLog::write ( "Net started", cLog::eLOG_TYPE_INFO);
+	Log.write ( "Net started", cLog::eLOG_TYPE_INFO);
 	return 0;
 }
 
@@ -303,7 +300,7 @@ void Quit()
 	SDL_FreeSurface(buffer);
 	SDL_FreeSurface(screen);
 	SDL_Quit();
-	cLog::write ( "EOF" );
+	Log.write ( "EOF" );
 	exit ( 0 );
 }
 

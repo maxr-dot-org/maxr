@@ -140,13 +140,13 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 	if(iMaxValue < 0 || iDefaultValue < 0)
 	{
 		SDL_FreeSurface(SfDialog);
-		cLog::write("Can't ask for negative numbers in number dialog", cLog::eLOG_TYPE_WARNING); //dev fucked up
+		Log.write("Can't ask for negative numbers in number dialog", cLog::eLOG_TYPE_WARNING); //dev fucked up
 		return -1;
 	}
 	if(iDefaultValue > iMaxValue)
 	{
 		iDefaultValue = iMaxValue;
-		cLog::write("Got default value bigger than maximum value", cLog::eLOG_TYPE_WARNING); //dev fucked up
+		Log.write("Got default value bigger than maximum value", cLog::eLOG_TYPE_WARNING); //dev fucked up
 	}
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOGBOX_W, DIALOGBOX_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
@@ -195,7 +195,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				value++;
 				if( value > iMaxValue )
 				{
-					cLog::write("Numberlimit exceeded", cLog::eLOG_TYPE_WARNING);
+					Log.write("Numberlimit exceeded", cLog::eLOG_TYPE_WARNING);
 					value --;
 				}
 				else
@@ -222,7 +222,7 @@ int ShowNumberInput ( string text, int iMaxValue, int iDefaultValue )
 				}
 				else
 				{
-					cLog::write("Negative numbers not allowed", cLog::eLOG_TYPE_WARNING);
+					Log.write("Negative numbers not allowed", cLog::eLOG_TYPE_WARNING);
 				}
 				stmp = iToStr(value);
 				font->showText(rTextField, stmp);
@@ -516,7 +516,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						font->showTextAsBlock(rDialogOnScreen, sLicence3);
 						break;
 					default: //should not happen
-						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
+						Log.write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowUp, ARROW_TYPE_UP);
 						font->showTextAsBlock(rDialogOnScreen, sLicence1);
 				}
@@ -556,7 +556,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 						font->showText(rDialogOnScreen, sLicence4, FONT_LATIN_SMALL_WHITE);
 						break;
 					default: //should not happen
-						cLog::write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
+						Log.write("Invalid index - can't show text in dialog",cLog::eLOG_TYPE_WARNING);
 						drawDialogArrow(buffer, &rArrowDown, ARROW_TYPE_DOWN);
 						font->showTextCentered(rDialog.x + SfDialog->w / 2, rDialog.y + 30 + font->getFontHeight(), sLicence4Intro1);
 						font->showText(rDialogOnScreen, sLicence4, FONT_LATIN_SMALL_WHITE);
@@ -590,7 +590,7 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 			scr.x = 249;
 			break;
 		default:
-			cLog::write("Invalid arrow type - can't serve here", cLog::eLOG_TYPE_WARNING);
+			Log.write("Invalid arrow type - can't serve here", cLog::eLOG_TYPE_WARNING);
 			break;
 	}
 
@@ -601,7 +601,7 @@ void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type)
 	}
 	else
 	{
-		cLog::write("Invalid surface - can't apply gfx arrow", cLog::eLOG_TYPE_WARNING);
+		Log.write("Invalid surface - can't apply gfx arrow", cLog::eLOG_TYPE_WARNING);
 	}
 }
 
@@ -1154,7 +1154,7 @@ void showPreferences ( void )
 						SettingsData.iScreenH = 1024; 
 						break;
 					default:
-						cLog::write("Can't save unknown resolution mode " + iToStr(iNewResMode), cLog::eLOG_TYPE_WARNING);
+						Log.write("Can't save unknown resolution mode " + iToStr(iNewResMode), cLog::eLOG_TYPE_WARNING);
 				}
 				SaveOption ( SAVETYPE_RESOLUTION );
 				//restore old resolution

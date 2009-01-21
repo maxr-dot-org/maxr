@@ -99,7 +99,7 @@ int cSavegame::load()
 
 	if ( ((string)SaveFile->RootElement()->Attribute ( "version" )).compare ( SAVE_FORMAT_VERSION ) )
 	{
-		cLog::write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING );
 	}
 
 	// load standard unit values
@@ -127,7 +127,7 @@ int cSavegame::load()
 	else if ( !gametype.compare ( "NET" )  ) Server = new cServer ( map, PlayerList, GAME_TYPE_TCPIP, false );
 	else
 	{
-		cLog::write ( "Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO );
+		Log.write ( "Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO );
 		Server = new cServer ( map, PlayerList, GAME_TYPE_SINGLE, false );
 	}
 

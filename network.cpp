@@ -131,7 +131,7 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 		// this will result in an error in nearly all cases
 		if ( iLenght > PACKAGE_LENGTH )
 		{
-			cLog::write( "Cut size of message!", LOG_TYPE_NET_ERROR );
+			Log.write( "Cut size of message!", LOG_TYPE_NET_ERROR );
 			iLenght = PACKAGE_LENGTH;
 		}
 
@@ -288,16 +288,16 @@ void cTCP::HandleNetworkThread()
 						{
 							if ( Sockets[i].buffer.iLenght <= 2 )
 							{
-								if ( Sockets[i].buffer.data[0] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
+								if ( Sockets[i].buffer.data[0] != START_CHAR ) Log.write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
 								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+1)) );
 							}
 							else if ( Sockets[i].buffer.iLenght < PACKAGE_LENGTH-2 )
 							{
-								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR ) cLog::write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
+								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR ) Log.write ( "Wrong start character in received message", LOG_TYPE_NET_ERROR );
 								else Sockets[i].messagelength = SDL_SwapLE16( *((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1))) );
 							}
 
-							if ( Sockets[i].messagelength > PACKAGE_LENGTH ) cLog::write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
+							if ( Sockets[i].messagelength > PACKAGE_LENGTH ) Log.write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
 						}
 						Sockets[i].buffer.iLenght += recvlength;
 
@@ -318,7 +318,7 @@ void cTCP::HandleNetworkThread()
 								Sockets[i].messagelength = SDL_SwapLE16( ((Sint16*)(Sockets[i].buffer.data+(Sockets[i].bufferpos+1)))[0] );
 								if ( Sockets[i].buffer.data[Sockets[i].bufferpos] != START_CHAR )
 								{
-									cLog::write ( "Wrong start character in next received message", LOG_TYPE_NET_ERROR );
+									Log.write ( "Wrong start character in next received message", LOG_TYPE_NET_ERROR );
 									break;
 								}
 							}
@@ -326,7 +326,7 @@ void cTCP::HandleNetworkThread()
 
 							if ( Sockets[i].messagelength > PACKAGE_LENGTH )
 							{
-								cLog::write ( "Length of next received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
+								Log.write ( "Length of next received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
 								break;
 							}
 						}
@@ -389,7 +389,7 @@ int cTCP::pushEvent( int iEventType, void *data1, void *data2 )
 	}
 	else
 	{
-		cLog::write( "Fatal Error when trying to push event", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Fatal Error when trying to push event", cLog::eLOG_TYPE_NET_ERROR );
 	}
 
 	free ( data1 );

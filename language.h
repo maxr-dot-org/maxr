@@ -57,9 +57,7 @@
 
 #include <map>
 #include <string>
-#ifndef LOG_H
-	#include "log.h"
-#endif
+#include "log.h"
 #include "defines.h"
 
 #include "tinyxml.h"

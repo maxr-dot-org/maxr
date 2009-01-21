@@ -365,7 +365,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	int iWaypointOff;
 	int iReceivedCount = message->popInt16();
 
-	cLog::write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 	
 	// Add the waypoints
 	sWaypoint *Waypoint = new sWaypoint;
@@ -432,13 +432,13 @@ void cServerMoveJob::release()
 {
 	bEndForNow = false;
 	bFinished = true;
-	cLog::write ( " Server: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write ( " Server: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for ( unsigned int i = 0; i < Server->ActiveMJobs.Size(); i++ )
 	{
 		if ( this == Server->ActiveMJobs[i] ) return;
 	}
 	Server->addActiveMoveJob ( this );
-	cLog::write ( " Server: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write ( " Server: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 bool cServerMoveJob::checkMove()
@@ -453,7 +453,7 @@ bool cServerMoveJob::checkMove()
 	bInSentryRange = Vehicle->InSentryRange();
 	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange )
 	{
-		cLog::write( " Server: Next point is blocked: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
+		Log.write( " Server: Next point is blocked: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		// if the next point would be the last, finish the job here
 		if ( Waypoints->next->X == DestX && Waypoints->next->Y == DestY )
 		{
@@ -474,7 +474,7 @@ bool cServerMoveJob::checkMove()
 	// not enough waypoints for this move
 	if ( Vehicle->data.speed < Waypoints->next->Costs )
 	{
-		cLog::write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
+		Log.write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		iSavedSpeed += Vehicle->data.speed;
 		Vehicle->data.speed = 0;
 		bEndForNow = true;
@@ -558,7 +558,7 @@ void cServerMoveJob::moveVehicle()
 	// check whether the point has been reached:
 	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
 	{
-		cLog::write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		sWaypoint *Waypoint;
 		Waypoint = Waypoints->next;
 		delete Waypoints;
@@ -683,7 +683,7 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 
 	/*if ( Vehicle->PosX != ScrX || Vehicle->PosY != ScrY )
 	{
-		cLog::write(" Client: Vehicle with id " + iToStr ( Vehicle->iID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (ScrX) + "x" + iToStr (ScrY) + " to " + iToStr (DestX) + "x" + iToStr (DestY) + "resetting to right position", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write(" Client: Vehicle with id " + iToStr ( Vehicle->iID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (ScrX) + "x" + iToStr (ScrY) + " to " + iToStr (DestX) + "x" + iToStr (DestY) + "resetting to right position", cLog::eLOG_TYPE_NET_WARNING);
 		// set vehicle to correct position
 		if  ( !bPlane && Vehicle == Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
 		else if ( bPlane && Vehicle == Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
@@ -721,7 +721,7 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 	int iWaypointOff;
 	int iReceivedCount = message->popInt16();
 
-	cLog::write(" Client: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Client: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// Add the waypoints
 	sWaypoint *Waypoint = new sWaypoint;
@@ -764,13 +764,13 @@ void cClientMoveJob::release()
 {
 	bEndForNow = false;
 	bFinished = true;
-	cLog::write ( " Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write ( " Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
 	for (unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++)
 	{
 		if ( this == Client->ActiveMJobs[i] ) return;
 	}
 	Client->addActiveMoveJob ( this );
-	cLog::write ( " Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write ( " Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
@@ -783,7 +783,7 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 		// then stop the vehicle
 		if ( Waypoints == NULL || Waypoints->next == NULL )
 		{
-			cLog::write ( " Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write ( " Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
 			bFinished = true;
 			Vehicle->OffX = Vehicle->OffY = 0;
 			return;
@@ -793,7 +793,7 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 			// server is one field faster then client
 			if ( iNextDestX == Waypoints->next->X && iNextDestY == Waypoints->next->Y )
 			{
-				cLog::write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
+				Log.write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
 				doEndMoveVehicle();
 			}
 			else
@@ -814,7 +814,7 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 				// the server is more then one field faster
 				if ( bServerIsFaster )
 				{
-					cLog::write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
+					Log.write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
 
 					Map->moveVehicle( Vehicle, iNextDestX, iNextDestY );
 					Vehicle->OffX = Vehicle->OffY = 0;
@@ -838,7 +838,7 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 				// the client is faster
 				else
 				{
-					cLog::write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+					Log.write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 					// just stop the vehicle and wait for the next commando of the server
 					for ( unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++ )
 					{
@@ -861,28 +861,28 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 			{
 				bEndForNow = false;
 				Client->addActiveMoveJob ( Vehicle->ClientMoveJob );
-				cLog::write ( " Client: reactivated movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+				Log.write ( " Client: reactivated movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 			}
 			Vehicle->MoveJobActive = true;
-			cLog::write(" Client: The movejob is ok: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: The movejob is ok: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
 	case MJOB_STOP:
 		{
-			cLog::write(" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 			bSuspended = true;
 			bEndForNow = true;
 		}
 		break;
 	case MJOB_FINISHED:
 		{
-			cLog::write(" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
 			release ();
 		}
 		break;
 	case MJOB_BLOCKED:
 		{
-			cLog::write(" Client: Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Movejob is finished becouse the next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 			bFinished = true;
 			// TODO: Calc a new path and start the new job
 		}
@@ -1036,27 +1036,27 @@ void cClientMoveJob::doEndMoveVehicle ()
 	{
 		if ( field.getVehicles() != NULL || field.getTopBuilding() != NULL && !field.getTopBuilding()->data.is_connector )
 		{
-			if ( field.getVehicles() ) cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( field.getVehicles()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
-			else cLog::write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( field.getTopBuilding()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			if ( field.getVehicles() ) Log.write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( field.getVehicles()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			else Log.write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( field.getTopBuilding()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else
 		{
 			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
-			cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 	}
 	else
 	{
 		if ( field.getPlanes() != NULL )
 		{
-			cLog::write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( field.getPlanes()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
+			Log.write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( field.getPlanes()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
 			bFinished = true;
 		}
 		else
 		{
 			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
-			cLog::write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 	}
 	Vehicle->OffX = 0;

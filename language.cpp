@@ -29,8 +29,7 @@
 
 #include "language.h"
 #include "main.h"
-
-extern cLog fLog;
+#include "log.h"
 
 cLanguage::cLanguage(void)
 {
@@ -153,7 +152,7 @@ int cLanguage::ReadLanguagePack()
 	}
 	catch( std::string strMsg )
 	{
-		fLog.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	ReadRecursiveLanguagePack( pXmlStartingNode , "Text" );
@@ -171,7 +170,7 @@ int cLanguage::ReadLanguagePack()
 	}
 	catch( std::string strMsg )
 	{
-		fLog.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	ReadRecursiveLanguagePack( pXmlStartingNode , "Graphic" );
@@ -190,7 +189,7 @@ int cLanguage::ReadLanguagePack()
 	}
 	catch( std::string strMsg )
 	{
-		fLog.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( "Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	ReadRecursiveLanguagePack( pXmlStartingNode , "Speech" );
@@ -233,7 +232,7 @@ int cLanguage::ReadLanguagePack()
 	}
 
 
-	fLog.write(this->i18n("Text~Error_Messages~INFO_Language_initialised"), cLog::eLOG_TYPE_INFO );
+	Log.write(this->i18n("Text~Error_Messages~INFO_Language_initialised"), cLog::eLOG_TYPE_INFO );
 
 	return 0;
 }
@@ -300,7 +299,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 			{
 				szErrorMsg = "Language file: translation for >";
 				szErrorMsg += szXmlNodePath + "< is read more than once!";
-				fLog.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
+				Log.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
 				return -1;
 			}
 			m_mpLanguage[szXmlNodePath] = strResult;
@@ -337,7 +336,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 		}
 		szErrorMsg += szXmlNodePath + "< is missing";
 	}
-	fLog.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
+	Log.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
 	va_end( pvaArg );
 	return -1;
 }
@@ -380,7 +379,7 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( !m_XmlDoc.LoadFile( strFileName.c_str() ))
 	{
 		strErrorMsg = "Can't open language file :" + strFileName;
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	// Is the main node correct ?
@@ -388,7 +387,7 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( pXmlNode == NULL )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): missing main node!";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
@@ -397,7 +396,7 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( pXmlNode == NULL )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): missing author node!";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
 	}else
 	{
 		pXmlNode->XmlGetLastEditor( strResult, pXmlNode );
@@ -408,13 +407,13 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "lang" ) == NULL )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): language attribut missing! Language can not be identified";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 	if( szLanguageCode  != strResult )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): language attribut mismatch file name!";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_ERROR );
 		return -1;
 	}
 
@@ -422,7 +421,7 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "direction" ) == NULL )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): language attribut 'direction' is missing! Writing direction will be set to 'Left-To-Right'";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 		m_bLeftToRight = true;
 	}
 	if( strResult == "left-to-right" )
@@ -434,7 +433,7 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	}else
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): language attribut 'direction' can not interpreted! Writing direction will be set to 'Left-To-Right'";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 		m_bLeftToRight = true;
 	}
 
@@ -442,13 +441,13 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	if( pXmlNode == NULL )
 	{
 		strErrorMsg = "Language file (" + szLanguageCode+ "): missing game version node!";
-		fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+		Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 	}else
 	{
 		if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "time" ) == NULL )
 		{
 			strErrorMsg = "Language file (" + szLanguageCode+ "): game version attribute 'time' is missing!";
-			fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+			Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 		}else
 		{
 			int iTestResult = pXmlNode->CheckTimeStamp( strResult );
@@ -456,15 +455,15 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 			{
 				case -1 :
 					strErrorMsg = "Language file (" + szLanguageCode+ "): game version attribute has wrong format!";
-					fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+					Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 					break;
 				case 0 :
 					strErrorMsg = "Language file (" + szLanguageCode+ "): may be outdated!";
-					fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+					Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 					break;
 				case 1 :
 					strErrorMsg = "Language file (" + szLanguageCode+ "): is newer than the game!";
-					fLog.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
+					Log.write( strErrorMsg, cLog::eLOG_TYPE_WARNING );
 					break;
 				case 2 :
 					// Timestamps match
@@ -493,7 +492,7 @@ int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlNode, std::string st
 	if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "ENG" ) != NULL )
 	{
 		m_mpLanguage[strNodePath + pXmlNode->Value()] = strResult;
-		fLog.write( strNodePath + pXmlNode->Value() + " : " + strResult, cLog::eLOG_TYPE_DEBUG );
+		Log.write( strNodePath + pXmlNode->Value() + " : " + strResult, cLog::eLOG_TYPE_DEBUG );
 	}
 
 	pXmlNodeTMP = pXmlNode->XmlGetFirstNodeChild( );
@@ -527,7 +526,7 @@ std::string cLanguage::ReadSingleTranslation( std::string strInput )
 	}
 	catch( std::string strMsg )
 	{
-		fLog.write( "Language file (" + m_szLanguage + "): "+ strMsg , cLog::eLOG_TYPE_WARNING );
+		Log.write( "Language file (" + m_szLanguage + "): "+ strMsg , cLog::eLOG_TYPE_WARNING );
 		return "";
 	}
 	iPosBegin = 0;
@@ -547,7 +546,7 @@ std::string cLanguage::ReadSingleTranslation( std::string strInput )
 	}
 	catch( std::string strMsg )
 	{
-		fLog.write( "Language file (" + m_szLanguage + "): "+ strMsg , cLog::eLOG_TYPE_WARNING );
+		Log.write( "Language file (" + m_szLanguage + "): "+ strMsg , cLog::eLOG_TYPE_WARNING );
 		return m_mpLanguage[strInput];
 	}
 
@@ -558,7 +557,7 @@ std::string cLanguage::ReadSingleTranslation( std::string strInput )
 
 	szErrorMsg = "Language file: translation for >";
 	szErrorMsg += strInput + "< is missing";
-	fLog.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
+	Log.write( szErrorMsg, cLog::eLOG_TYPE_WARNING );
 
 	return "";
 }

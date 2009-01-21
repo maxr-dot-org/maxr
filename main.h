@@ -49,6 +49,7 @@ class cBuilding;
 class cVehicle;
 class cMJobs;
 class cAJobs;
+class cLanguage;
 class cNetMessage;
 struct sBuilding;
 struct sUpgrades;
@@ -739,6 +740,7 @@ std::string dToStr(double x);
 /**Converts pointer to string
 */
 std::string pToStr(void *x);
+
 int min (int a, int b );
 
 

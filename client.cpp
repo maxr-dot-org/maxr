@@ -207,7 +207,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 {
 	message->iPlayerNr = ActivePlayer->Nr;
 
-	cLog::write("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	if (!network || network->isHost() )
 	{
@@ -685,7 +685,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedVehicle->data.can_attack, Client->Map);
 					if ( vehicle ) targetId = vehicle->iID;
 
-					cLog::write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
+					Log.write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
 					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
@@ -1198,7 +1198,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 	{
 		sendMoveJob ( MoveJob );
 		addActiveMoveJob ( MoveJob );
-		cLog::write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 	else
 	{
@@ -3053,7 +3053,7 @@ void cClient::addMessage ( string sMsg )
 {
 	sMessage* const Message = new sMessage(sMsg, iFrame);
 	messages.Add(Message);
-	if(SettingsData.bDebug) cLog::write(Message->msg, cLog::eLOG_TYPE_DEBUG);
+	if(SettingsData.bDebug) Log.write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
 // displays a message with 'goto' coordinates
@@ -3109,7 +3109,7 @@ void cClient::handleMessages()
 int cClient::HandleNetMessage( cNetMessage* message )
 {	
 	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS )		//do not pollute log file with debug events
-		cLog::write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+		Log.write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	switch ( message->iType )
 	{
@@ -3266,7 +3266,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				bWantToEnd = false;
 				Hud.showTurnTime ( -1 );
 				bFlagDrawHud = true;
-				cLog::write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
+				Log.write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
 			}
 
 			if ( bWaitForNextPlayer )
@@ -3304,7 +3304,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
 			if ( Player == NULL && iPlayerNum != -1 )
 			{
-				cLog::write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
+				Log.write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
 				break;
 			}
 
@@ -3334,7 +3334,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = NULL;
 			cBuilding *Building = NULL;
 
-			cLog::write(" Client: Received Unit Data: Vehicle: " + iToStr ( (int)bVehicle ) + ", ID: " + iToStr ( iID ) + ", XPos: " + iToStr ( iPosX ) + ", YPos: " +iToStr ( iPosY ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Received Unit Data: Vehicle: " + iToStr ( (int)bVehicle ) + ", ID: " + iToStr ( iID ) + ", XPos: " + iToStr ( iPosX ) + ", YPos: " +iToStr ( iPosY ), cLog::eLOG_TYPE_NET_DEBUG);
 			// unit is a vehicle
 			if ( bVehicle )
 			{
@@ -3343,7 +3343,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( !Vehicle )
 				{
-					cLog::write(" Client: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					Log.write(" Client: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// TODO: Request sync of vehicle
 					break;
 				}
@@ -3354,7 +3354,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// so the log message will just be an debug one
 					int iLogType = cLog::eLOG_TYPE_NET_WARNING;
 					if ( Vehicle->IsBuilding || Vehicle->IsClearing | Vehicle->moving ) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
-					cLog::write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
+					Log.write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
 
 					// set to server position if vehicle is not moving
 					if ( !Vehicle->moving )
@@ -3386,7 +3386,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building = getBuildingFromID ( iID );
 				if ( !Building )
 				{
-					cLog::write(" Client: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					Log.write(" Client: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// TODO: Request sync of building
 					break;
 				}
@@ -3459,7 +3459,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding* building = getBuildingFromID( iID);
 			if ( building == NULL )
 			{
-				cLog::write(" Client: Can't start work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_ERROR);
+				Log.write(" Client: Can't start work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_ERROR);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3489,7 +3489,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding* building = getBuildingFromID(iID);
 			if ( building == NULL )
 			{
-				cLog::write(" Client: Can't stop work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't stop work of building: Unknown building with id: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3522,7 +3522,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
 			{
-				cLog::write(" Client: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: request sync of vehicle
 				break;
 			}
@@ -3531,7 +3531,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
 
 			addActiveMoveJob ( MoveJob );
-			cLog::write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
 	case GAME_EV_NEXT_MOVE:
@@ -3540,7 +3540,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iDestOff = message->popInt16();
 			int iType = message->popInt16();
 
-			cLog::write(" Client: Received information for next move: ID: " + iToStr ( iID ) + ", SrcX: " + iToStr( iDestOff%Map->size ) + ", SrcY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: Received information for next move: ID: " + iToStr ( iID ) + ", SrcX: " + iToStr( iDestOff%Map->size ) + ", SrcY: " + iToStr( iDestOff/Map->size ) + ", Type: " + iToStr ( iType ), cLog::eLOG_TYPE_NET_DEBUG);
 
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle && Vehicle->ClientMoveJob )
@@ -3549,8 +3549,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else
 			{
-				if ( Vehicle == NULL ) cLog::write(" Client: Can't find vehicle with ID " + iToStr(iID), cLog::eLOG_TYPE_NET_WARNING);
-				else cLog::write(" Client: Vehicle with ID " + iToStr(iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
+				if ( Vehicle == NULL ) Log.write(" Client: Can't find vehicle with ID " + iToStr(iID), cLog::eLOG_TYPE_NET_WARNING);
+				else Log.write(" Client: Vehicle with ID " + iToStr(iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: request sync of vehicle
 			}
 		}
@@ -3596,7 +3596,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle == NULL )
 			{
-				cLog::write(" Client: Vehicle can't start building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Vehicle can't start building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of vehicle
 				break;
 			}
@@ -3645,7 +3645,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle == NULL )
 			{
-				cLog::write(" Client: Can't continue path building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't continue path building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of vehicle
 				break;
 			}
@@ -3665,7 +3665,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle == NULL )
 			{
-				cLog::write(" Client: Can't stop building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't stop building: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of vehicle
 				break;
 			}
@@ -3715,7 +3715,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			if ( SubBase == NULL )
 			{
-				cLog::write(" Client: Can't delete subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't delete subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of subbases
 				break;
 			}
@@ -3732,7 +3732,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sSubBase *SubBase = getSubBaseFromID ( iID );
 			if ( SubBase == NULL )
 			{
-				cLog::write(" Client: Can't add buildings to subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't add buildings to subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of subbases
 				break;
 			}
@@ -3757,7 +3757,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sSubBase *SubBase = getSubBaseFromID ( iID );
 			if ( SubBase == NULL )
 			{
-				cLog::write(" Client: Can't add subbase values: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't add subbase values: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of subbases
 				break;
 			}
@@ -3794,7 +3794,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *Building = getBuildingFromID ( iID );
 			if ( Building == NULL )
 			{
-				cLog::write(" Client: Can't set buildlist: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't set buildlist: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3827,7 +3827,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *Building = getBuildingFromID ( iID );
 			if ( Building == NULL )
 			{
-				cLog::write(" Client: Can't set produce values of building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't set produce values of building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: Request sync of building
 				break;
 			}
@@ -3894,9 +3894,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_MARK_LOG:
 		{
-			cLog::write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
-			cLog::write( message->popString(), cLog::eLOG_TYPE_NET_DEBUG );
-			cLog::write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write( message->popString(), cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
 	case GAME_EV_SUPPLY:
@@ -3908,7 +3908,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				cVehicle *DestVehicle = getVehicleFromID ( iID );
 				if ( !DestVehicle )
 				{
-					cLog::write(" Client: Can't supply vehicle: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					Log.write(" Client: Can't supply vehicle: Unknown vehicle with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// TODO: Request sync of vehicle
 					break;
 				}
@@ -3946,7 +3946,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				cBuilding *DestBuilding = getBuildingFromID ( iID );
 				if ( !DestBuilding )
 				{
-					cLog::write(" Client: Can't supply building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
+					Log.write(" Client: Can't supply building: Unknown building with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
 					// TODO: Request sync of building
 					break;
 				}
@@ -3989,7 +3989,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle* vehicle = getVehicleFromID( id );
 			if ( vehicle == NULL )
 			{
-				cLog::write(" Client: Vehicle (ID: " + iToStr(id) + ") not found", cLog::eLOG_TYPE_NET_ERROR);
+				Log.write(" Client: Vehicle (ID: " + iToStr(id) + ") not found", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 			bool detected = message->popBool();
@@ -4014,7 +4014,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					cVehicle *Vehicle = getVehicleFromID ( id );
 					if ( Vehicle == NULL )
 					{
-						cLog::write("Client: Can not find vehicle with id " + iToStr ( id ) + " for clearing", LOG_TYPE_NET_WARNING);
+						Log.write("Client: Can not find vehicle with id " + iToStr ( id ) + " for clearing", LOG_TYPE_NET_WARNING);
 						break;
 					}
 
@@ -4035,7 +4035,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				// addMessage ( "blocked" );
 				break;
 			case 2:
-				cLog::write("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
+				Log.write("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
 				break;
 			default:
 				break;
@@ -4048,7 +4048,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( id );
 			if ( Vehicle == NULL )
 			{
-				cLog::write("Client: Can not find vehicle with id " + iToStr ( id ) + " for stop clearing", LOG_TYPE_NET_WARNING);
+				Log.write("Client: Can not find vehicle with id " + iToStr ( id ) + " for stop clearing", LOG_TYPE_NET_WARNING);
 				break;
 			}
 
@@ -4072,7 +4072,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			if ( Player == NULL )
 			{
-				cLog::write ( "Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING );
+				Log.write ( "Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING );
 				break;
 			}
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
@@ -4090,12 +4090,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
 			if ( Player == ActivePlayer )
 			{
-				cLog::write ( "Client: Cannot delete own player!", LOG_TYPE_NET_WARNING );
+				Log.write ( "Client: Cannot delete own player!", LOG_TYPE_NET_WARNING );
 				break;
 			}
 			if ( Player->VehicleList || Player->BuildingList )
 			{
-				cLog::write ( "Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR );
+				Log.write ( "Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR );
 			}
 			addMessage ( Player->name + " has left the game." );
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -4290,7 +4290,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	default:
-		cLog::write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
 	}
 
@@ -4668,7 +4668,7 @@ void cClient::handleMoveJobs ()
 			{
 				if ( Vehicle && Vehicle->ClientMoveJob == MoveJob )
 				{
-					cLog::write(" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
+					Log.write(" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
 					Vehicle->ClientMoveJob = NULL;
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
@@ -4687,14 +4687,14 @@ void cClient::handleMoveJobs ()
 						}
 					}
 				}
-				else cLog::write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
+				else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs.Delete ( i );
 				delete MoveJob;
 				continue;
 			}
 			if ( MoveJob->bEndForNow )
 			{
-				cLog::write(" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write(" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				if ( Vehicle )
 				{
 					Vehicle->MoveJobActive = false;
@@ -4711,7 +4711,7 @@ void cClient::handleMoveJobs ()
 					}
 					else
 					{
-						cLog::write(" Client: movejob has end for now but has no waypoints anymore", cLog::eLOG_TYPE_NET_WARNING);
+						Log.write(" Client: movejob has end for now but has no waypoints anymore", cLog::eLOG_TYPE_NET_WARNING);
 					}
 				}
 				ActiveMJobs.Delete ( i );
@@ -5604,13 +5604,13 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 		cVehicle* vehicle = getVehicleFromID(id);
 		if ( vehicle == NULL )
 		{
-			cLog::write("   --Vehicle not present, ID: " + iToStr(id), cLog::eLOG_TYPE_NET_ERROR );
+			Log.write("   --Vehicle not present, ID: " + iToStr(id), cLog::eLOG_TYPE_NET_ERROR );
 			continue;
 		}
 
 		if ( PosX != -1 && PosY != -1 && ( vehicle->PosX != PosX || vehicle->PosY != PosY ) && !vehicle->ClientMoveJob )
 		{
-			cLog::write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR); 
+			Log.write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR); 
 		}
 
 		//remove vehicle from list
@@ -5627,7 +5627,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	//check remaining vehicles
 	while ( vehicleList.Size() > 0 )
 	{
-		cLog::write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
+		Log.write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
 		vehicleList.Delete(0);
 	}
 }

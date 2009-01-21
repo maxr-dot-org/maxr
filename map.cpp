@@ -403,12 +403,12 @@ bool cMap::LoadMap ( string filename )
 
 	// Open File
 	MapName = filename;
-	cLog::write("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
+	Log.write("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
 	filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
 	fpMapFile = SDL_RWFromFile ( filename.c_str(),"rb" );
 	if ( !fpMapFile )
 	{
-		cLog::write("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 
@@ -420,7 +420,7 @@ bool cMap::LoadMap ( string filename )
 	// DMO - for some reason some original maps have this filetype
 	if( strcmp( szFileTyp, "WRL" ) != 0 && strcmp( szFileTyp, "WRX" ) != 0 && strcmp( szFileTyp, "DMO" ) != 0  )
 	{
-		cLog::write("Wrong file format: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write("Wrong file format: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose( fpMapFile );
 		return false;
 	}
@@ -428,21 +428,21 @@ bool cMap::LoadMap ( string filename )
 
 	// Read informations and get positions from the map-file
 	sWidth = SDL_ReadLE16( fpMapFile );
-	cLog::write("SizeX: " + iToStr(sWidth), cLog::eLOG_TYPE_DEBUG );
+	Log.write("SizeX: " + iToStr(sWidth), cLog::eLOG_TYPE_DEBUG );
 	sHeight = SDL_ReadLE16( fpMapFile );
-	cLog::write("SizeY: " + iToStr(sHeight), cLog::eLOG_TYPE_DEBUG );
+	Log.write("SizeY: " + iToStr(sHeight), cLog::eLOG_TYPE_DEBUG );
 	SDL_RWseek ( fpMapFile, sWidth * sHeight, SEEK_CUR );	// Ignore Mini-Map
 	iDataPos = SDL_RWtell( fpMapFile );						// Map-Data
 	SDL_RWseek ( fpMapFile, sWidth * sHeight * 2, SEEK_CUR );
 	iNumberOfTerrains = SDL_ReadLE16( fpMapFile );				// Read PicCount
-	cLog::write("Number of terrains: " + iToStr(iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG );
+	Log.write("Number of terrains: " + iToStr(iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG );
 	iGraphicsPos = SDL_RWtell( fpMapFile );					// Terrain Graphics
 	iPalettePos = iGraphicsPos + iNumberOfTerrains * 64*64;		// Palette
 	iInfoPos = iPalettePos + 256*3;							// Special informations
 
 	if ( sWidth != sHeight )
 	{
-		cLog::write("Map must be quadratic!: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write("Map must be quadratic!: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose( fpMapFile );
 		return false;
 	}
@@ -490,7 +490,7 @@ bool cMap::LoadMap ( string filename )
 			terrain[iNum].blocked = true;
 			break;
 		default:
-			cLog::write("unknown terrain type found", cLog::eLOG_TYPE_WARNING );
+			Log.write("unknown terrain type found", cLog::eLOG_TYPE_WARNING );
 			SDL_RWclose( fpMapFile );
 			return false;
 		}
@@ -500,7 +500,7 @@ bool cMap::LoadMap ( string filename )
 		surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, palette, iNum );
 		if ( surface == NULL )
 		{
-			cLog::write("EOF while loading terrain number " + iToStr(iNum), cLog::eLOG_TYPE_WARNING );
+			Log.write("EOF while loading terrain number " + iToStr(iNum), cLog::eLOG_TYPE_WARNING );
 			SDL_RWclose( fpMapFile );
 			return false;
 		}
@@ -517,7 +517,7 @@ bool cMap::LoadMap ( string filename )
 			int Kachel = SDL_ReadLE16( fpMapFile );
 			if ( Kachel >= iNumberOfTerrains )
 			{
-				cLog::write("a map field referred to a nonexisting terrain", cLog::eLOG_TYPE_WARNING );
+				Log.write("a map field referred to a nonexisting terrain", cLog::eLOG_TYPE_WARNING );
 				SDL_RWclose( fpMapFile );
 				return false;
 			}

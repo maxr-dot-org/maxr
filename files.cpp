@@ -33,7 +33,7 @@ bool FileExists ( const char* name )
 	file=SDL_RWFromFile ( name, "r" );
 	if ( file==NULL )
 	{
-		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 	SDL_RWclose ( file );

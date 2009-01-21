@@ -27,7 +27,7 @@
 
 cNetMessage::cNetMessage( char* c)
 {
-	if ( c[0] != START_CHAR ) cLog::write ( "NetMessage has wrong start character", LOG_TYPE_NET_ERROR );
+	if ( c[0] != START_CHAR ) Log.write ( "NetMessage has wrong start character", LOG_TYPE_NET_ERROR );
 
 	iLength = SDL_SwapLE16( ((Sint16*)(c+1))[0] );
 	iType = SDL_SwapLE16( ((Sint16*)(c+1))[1] );
@@ -86,14 +86,14 @@ void cNetMessage::pushChar( char c)
 	data[iLength] = c;
 	iLength ++;
 
-	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 char cNetMessage::popChar()
 {
 	if ( iLength <= 6 )
 	{
-		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength--;
@@ -105,14 +105,14 @@ void cNetMessage::pushInt16( Sint16 i )
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
 
-	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint16 cNetMessage::popInt16()
 {
 	if ( iLength <= 7 )
 	{
-		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength -= 2;
@@ -124,14 +124,14 @@ void cNetMessage::pushInt32( Sint32 i )
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
 
-	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint32 cNetMessage::popInt32()
 {
 	if ( iLength <= 9 )
 	{
-		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 	iLength -= 4;
@@ -154,14 +154,14 @@ void cNetMessage::pushString( string s )
 
 	iLength += stringLength;
 
-	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 string cNetMessage::popString()
 {
 	if ( data[iLength - 1] != '\0' )
 	{
-		cLog::write( "Invalid popString() from netMessage", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Invalid popString() from netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return string("");
 	}
 
@@ -171,7 +171,7 @@ string cNetMessage::popString()
 	{
 		if ( iLength <= 6 )
 		{
-			cLog::write( "Pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NET_ERROR );
+			Log.write( "Pop string from netMessage failed, begin of string not found", cLog::eLOG_TYPE_NET_ERROR );
 			return string("");
 		}
 		iLength--;
@@ -187,14 +187,14 @@ void cNetMessage::pushBool( bool b )
 	data[iLength] = b;
 	iLength++;
 
-	if ( iLength > PACKAGE_LENGTH ) cLog::write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 bool cNetMessage::popBool()
 {
 	if ( iLength <= 6 )
 	{
-		cLog::write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
+		Log.write( "Pop from empty netMessage", cLog::eLOG_TYPE_NET_ERROR );
 		return 0;
 	}
 

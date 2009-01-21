@@ -47,7 +47,7 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	}
 	if ( file==NULL )
 	{
-		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
+		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
 		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return sf;
 	}
@@ -61,7 +61,7 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	if ( sf == NULL )
 	{
-		cLog::write(SDL_GetError(), cLog::eLOG_TYPE_ERROR); //sdl f*cked up
+		Log.write(SDL_GetError(), cLog::eLOG_TYPE_ERROR); //sdl f*cked up
 		SDL_RWclose ( file );
 		return NULL; //app will crash using this
 	}
@@ -136,7 +136,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	}
 	if ( file==NULL )
 	{
-		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img  - creating empty surface
+		Log.write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img  - creating empty surface
 		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return -1;
 	}
@@ -154,7 +154,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 
 	if ( sf == NULL ) //ops, couldn't create temp. surface
 	{
-		cLog::write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+		Log.write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
 		SDL_RWclose ( file );
 		return -1;
 	}

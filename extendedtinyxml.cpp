@@ -323,12 +323,12 @@ void debugToLog( void * pointer , const char * pszName)
 	char szMsg[256] = ""; //JCK
 	sprintf(szMsg , "%s = %p", pszName, pointer);
 
-	cLog::write( szMsg, cLog::eLOG_TYPE_DEBUG );
+	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };
 
 void debugToLog( std::string szMsg)
 {
-	cLog::write( szMsg, cLog::eLOG_TYPE_DEBUG );
+	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };
 
 */
