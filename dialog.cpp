@@ -662,8 +662,8 @@ void showPreferences ( void )
 		//blit black titlebar behind textfield for playername
 		scr.x=108;
 		scr.y=12;
-		dest.w=scr.w=186;
-		dest.h=scr.h=18;
+		scr.w=186;
+		scr.h=18;
 		dest.x=108;
 		dest.y=154;
 		SDL_BlitSurface ( SfDialog,&scr,SfDialog,&dest );
@@ -675,8 +675,6 @@ void showPreferences ( void )
 	 //blit dialog to buffer
 	dest.x = rDialog.x;
 	dest.y = rDialog.y;
-	dest.w = SfDialog->w;
-	dest.h = SfDialog->h;
 
 	NormalButton btn_cancel(rDialog.x + 118, rDialog.y + 383, "Text~Button~Cancel");
 	NormalButton btn_done(  rDialog.x + 208, rDialog.y + 383, "Text~Button~Done");
@@ -866,8 +864,8 @@ void showPreferences ( void )
 		{
 			scr.x = 116;
 			scr.y = 154;
-			dest.w = scr.w = 184;
-			dest.h = scr.h = 17;
+			scr.w = 184;
+			scr.h = 17;
 			dest.x = 116+rDialog.x;
 			dest.y = 154+rDialog.y;
 			SDL_BlitSurface ( SfDialog, &scr, buffer, &dest );
@@ -1339,8 +1337,6 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	scr.h = SLIDER_H;
 	dest.x = offx - 6;
 	dest.y = offy - 7;
-	dest.w = scr.w + SLIDER_W;
-	dest.h = SLIDER_H;
 	SDL_BlitSurface ( sfDialog,&scr,surface,&dest );
 	//END REDRAW DIALOG UNDER SLIDER
 
@@ -1359,8 +1355,6 @@ void drawSlider (SDL_Surface *sfDialog,int offx,int offy,int value, SDL_Surface 
 	scr.w=SLIDER_W;
 	scr.h=SLIDER_H;
 
-	dest.w=scr.w;
-	dest.h=scr.h;
 	dest.x=offx-6+ ( int ) ( ( 57/255.0 ) *value );
 	dest.y=offy-SLIDER_W / 2;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
@@ -1379,8 +1373,8 @@ void drawCheckbox ( int offx,int offy,bool set, SDL_Surface *surface )
 	{
 		scr.y=64; //button unpressed
 	}
-	dest.w=scr.w=18; //get button from hud_gfx
-	dest.h=scr.h=17;
+	scr.w=18; //get button from hud_gfx
+	scr.h=17;
 	dest.x=offx;
 	dest.y=offy;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest );
@@ -1401,12 +1395,12 @@ void drawButton (string sText, bool bPressed, int x, int y, SDL_Surface *surface
 		iPx = 4;
 	}
 	scr.y=455; //get button from gfx_hud.pcx
-	dest.w=scr.w=77;
-	dest.h=scr.h=23;
+	scr.w=77;
+	scr.h=23;
 	dest.x = x;
 	dest.y = y;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,surface,&dest ); //show button on string
-	font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, FONT_LATIN_NORMAL, surface);
+	font->showTextCentered(dest.x+scr.w/2,dest.y+iPx, sText, FONT_LATIN_NORMAL, surface);
 }
 
 void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)

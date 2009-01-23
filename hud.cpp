@@ -271,8 +271,8 @@ void cHud::SetZoom ( int zoom,int DestY )
 	scr.y=0;
 	dest.x=19;
 	dest.y=DestY;
-	dest.w=scr.w=132;
-	dest.h=scr.h=20;
+	scr.w=132;
+	scr.h=20;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 //  zoom=106-(int)(zoom*106.0/(64-((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size))));
 	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) ) );
@@ -280,8 +280,8 @@ void cHud::SetZoom ( int zoom,int DestY )
 	scr.y=1;
 	dest.x=20+zoom;
 	dest.y=DestY+1;
-	dest.w=scr.w=25;
-	dest.h=scr.h=14;
+	scr.w=25;
+	scr.h=14;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 	Client->bFlagDrawHud=true;
 	Client->bFlagDrawMap=true;
@@ -1081,8 +1081,8 @@ void cHud::ResetVideoMonitor ( void )
 	scr.y=98;
 	dest.x=10;
 	dest.y=29;
-	scr.w=dest.w=128;
-	scr.h=dest.h=128;
+	scr.w=128;
+	scr.h=128;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
 }
 
@@ -1187,8 +1187,8 @@ void cHud::ShowRunde ( void )
 	SDL_Rect scr,dest;
 	scr.x=156;
 	scr.y=215;
-	dest.w=scr.w=55;
-	dest.h=scr.h=15;
+	scr.w=55;
+	scr.h=15;
 	dest.x=471;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
@@ -1201,8 +1201,8 @@ void cHud::showTurnTime ( int iTime )
 	SDL_Rect scr,dest;
 	scr.x=156;
 	scr.y=215;
-	dest.w=scr.w=55;
-	dest.h=scr.h=15;
+	scr.w=55;
+	scr.h=15;
 	dest.x=537;
 	dest.y=5;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );

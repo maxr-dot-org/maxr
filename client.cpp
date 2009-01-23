@@ -1245,7 +1245,7 @@ void cClient::drawMap( bool bPure )
 	iOffX = ( int ) ( Hud.OffX/ ( f/iZoom ) );
 	iOffY = ( int ) ( Hud.OffY/ ( f/iZoom ) );
 	scr.y = 0;
-	scr.h = scr.w = dest.w = dest.h = iZoom;
+	scr.h = scr.w = iZoom;
 	dest.y = 18-iOffY;
 
 	if ( iTimer2 ) Map->generateNextAnimationFrame();
@@ -1646,6 +1646,7 @@ void cClient::drawMiniMap()
 	{
 		//calculate the field on the map	
 		int terrainx = (miniMapX * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+		if ( terrainx >= Map->size ) terrainx = Map->size - 1;
 
 		//calculate the position within the terrain graphic (for better rendering of maps < 112)
 		int offsetx  = ((miniMapX * Map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
@@ -1653,6 +1654,7 @@ void cClient::drawMiniMap()
 		for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
 		{
 			int terrainy =  (miniMapY * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+			if ( terrainy >= Map->size ) terrainy = Map->size - 1;
 			int offsety  = ((miniMapY * Map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 			SDL_Color sdlcolor;
@@ -1875,8 +1877,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_big[1],&scr,buffer,&dest );
@@ -1891,8 +1893,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_small[1],&scr,buffer,&dest );
@@ -1907,8 +1909,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
@@ -1923,8 +1925,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom*fx->param;
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
@@ -1939,8 +1941,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom* ( iFrame-fx->StartFrame );
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_hit[1],&scr,buffer,&dest );
@@ -2019,8 +2021,8 @@ void cClient::drawFX( int iNum )
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( iFrame-fx->StartFrame ) *4 );
 			scr.y=scr.x=0;
-			dest.w=scr.w=EffectsData.fx_smoke[1]->h;
-			dest.h=scr.h=EffectsData.fx_smoke[1]->h;
+			scr.w=EffectsData.fx_smoke[1]->h;
+			scr.h=EffectsData.fx_smoke[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
@@ -2056,7 +2058,7 @@ void cClient::drawFX( int iNum )
 			fx->PosY= ( int ) ri->fpy;
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
-			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
+			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			
@@ -2078,8 +2080,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x= ( int ) ( 0.375*Hud.Zoom ) * ( iFrame-fx->StartFrame );
 			scr.y=0;
-			dest.w=scr.w=EffectsData.fx_dark_smoke[1]->h;
-			dest.h=scr.h=EffectsData.fx_dark_smoke[1]->h;
+			scr.w=EffectsData.fx_dark_smoke[1]->h;
+			scr.h=EffectsData.fx_dark_smoke[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( ( int ) dsi->fx ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( ( int ) dsi->fy ) ) / ( 64.0/Hud.Zoom ) ) );
 
@@ -2106,8 +2108,8 @@ void cClient::drawFX( int iNum )
 			}
 			scr.x=Hud.Zoom* ( iFrame-fx->StartFrame );
 			scr.y=0;
-			dest.w=scr.w=Hud.Zoom;
-			dest.h=scr.h=Hud.Zoom;
+			scr.w=Hud.Zoom;
+			scr.h=Hud.Zoom;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_absorb[1],&scr,buffer,&dest );
@@ -2156,7 +2158,7 @@ void cClient::drawFXBottom( int iNum )
 			fx->PosY= ( int ) ( ri->fpy );
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
-			scr.h=scr.w=dest.h=dest.w=EffectsData.fx_rocket[1]->h;
+			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			
@@ -2177,7 +2179,7 @@ void cClient::drawFXBottom( int iNum )
 				return;
 			}
 			scr.y=0;
-			dest.w=scr.w=dest.h=scr.h=EffectsData.fx_tracks[1]->h;
+			scr.w=scr.h=EffectsData.fx_tracks[1]->h;
 			scr.x=tri->dir*scr.w;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY ) ) / ( 64.0/Hud.Zoom ) ) );
@@ -2199,8 +2201,8 @@ void cClient::drawFXBottom( int iNum )
 			}
 			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( iFrame-fx->StartFrame ) *4 );
 			scr.y=scr.x=0;
-			dest.w=scr.w=EffectsData.fx_smoke[1]->h;
-			dest.h=scr.h=EffectsData.fx_smoke[1]->h;
+			scr.w=EffectsData.fx_smoke[1]->h;
+			scr.h=EffectsData.fx_smoke[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
@@ -2208,8 +2210,8 @@ void cClient::drawFXBottom( int iNum )
 		case fxCorpse:
 			SDL_SetAlpha ( EffectsData.fx_corpse[1],SDL_SRCALPHA,fx->param-- );
 			scr.y=scr.x=0;
-			dest.w=scr.w=EffectsData.fx_corpse[1]->h;
-			dest.h=scr.h=EffectsData.fx_corpse[1]->h;
+			scr.w=EffectsData.fx_corpse[1]->h;
+			scr.h=EffectsData.fx_corpse[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX-fx->PosX ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY-fx->PosY ) / ( 64.0/Hud.Zoom ) ) );
 			SDL_BlitSurface ( EffectsData.fx_corpse[1],&scr,buffer,&dest );
@@ -2238,7 +2240,6 @@ void cClient::drawExitPoint( int iX, int iY )
 	scr.x = iZoom*iNr;
 	dest.y = iY;
 	dest.x = iX;
-	dest.w = dest.h = iZoom;
 	SDL_BlitSurface ( GraphicsData.gfx_exitpoints, &scr, buffer, &dest );
 }
 
@@ -2315,7 +2316,6 @@ void cClient::drawUnitCircles ()
 				SDL_Rect dest;
 				dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
 				dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandY;
-				dest.w = dest.h = GraphicsData.gfx_band_big->h;
 				SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
 			}
 			else
@@ -2328,7 +2328,6 @@ void cClient::drawUnitCircles ()
 					SDL_Rect dest;
 					dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * x;
 					dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * y;
-					dest.h = dest.w = GraphicsData.gfx_band_small->h;
 					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
 					v.BandX     = x;
 					v.BandY     = y;
@@ -3087,16 +3086,18 @@ void cClient::handleMessages()
 		iHeight += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
 	}
 	if (messages.Size() == 0) return;
+	
+	scr.x = 0; scr.y = 0;
+	dest.x = 180; dest.y = 30;
+	scr.w = SettingsData.iScreenW - 200;
+	scr.h = iHeight+6;
+
 	if ( SettingsData.bAlphaEffects )
 	{
-		scr.x = 0; scr.y = 0;
-		dest.x = 180; dest.y = 30;
-		dest.w = scr.w = SettingsData.iScreenW - 200;
-		dest.h = scr.h = iHeight+6;
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
 	}
 	dest.x = 180+2; dest.y = 34;
-	dest.w -= 4;
+	dest.w = SettingsData.iScreenW - 204;
 	dest.h = iHeight;
 	for (unsigned int i = 0; i < messages.Size(); i++)
 	{
@@ -5096,7 +5097,6 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	dest.x = 192 + 166;
 	dest.y = 20 + 159;
-	dest.h = dest.w = 32;
 	SDL_BlitSurface ( img, NULL, buffer, &dest );
 	SDL_FreeSurface ( img );
 
@@ -5246,8 +5246,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 257;
 			scr.y = 177;
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
+			scr.w = 19;
+			scr.h = 18;
 			dest.x = 277 + 166;
 			dest.y = 88 + 159;
 			iTransf++;
@@ -5267,8 +5267,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			{
 				scr.x = 277;
 				scr.y = 88;
-				dest.w = scr.w = 19;
-				dest.h = scr.h = 18;
+				scr.w = 19;
+				scr.h = 18;
 				dest.x = 277 + 166;
 				dest.y = 88 + 159;
 				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
@@ -5283,8 +5283,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 237;
 			scr.y = 177;
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
+			scr.w = 19;
+			scr.h = 18;
 			dest.x = 16 + 166;
 			dest.y = 88 + 159;
 			iTransf--;
@@ -5304,8 +5304,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			{
 				scr.x = 16;
 				scr.y = 88;
-				dest.w = scr.w = 19;
-				dest.h = scr.h = 18;
+				scr.w = 19;
+				scr.h = 18;
 				dest.x = 16 + 166;
 				dest.y = 88 + 159;
 				SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
@@ -5363,13 +5363,13 @@ void cClient::drawTransBar ( int iLenght, int iType )
 
 	scr.x = 44;
 	scr.y = 90;
-	dest.w = scr.w = 223;
-	dest.h = scr.h = 16;
+	scr.w = 223;
+	scr.h = 16;
 	dest.x = 44 + 166;
 	dest.y = 90 + 159;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
 	scr.x = 156 + ( 223 - iLenght );
-	dest.w = scr.w = 223 - ( 223 - iLenght );
+	scr.w = 223 - ( 223 - iLenght );
 
 	if ( iType == TRANS_METAL )
 	{
@@ -5431,8 +5431,8 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 	scr.y = 30;
 	dest.x = 4 + 166;
 	dest.y = 30 + 159;
-	dest.w = scr.w = 78;
-	dest.h = scr.h = 14;
+	scr.w = 78;
+	scr.h = 14;
 	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
 	sText = iToStr ( iCargo - *iTransfer );
 
@@ -5448,8 +5448,8 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 	scr.y = 15;
 	dest.x = 141 + 166;
 	dest.y = 15 + 159;
-	dest.w = scr.w = 29;
-	dest.h = scr.h = 21;
+	scr.w = 29;
+	scr.h = 21;
 
 	SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
 
@@ -5464,8 +5464,8 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 		scr.y = 263;
 		dest.x = 143 + 166;
 		dest.y = 44 + 159;
-		dest.w = scr.w = 30;
-		dest.h = scr.h = 16;
+		scr.w = 30;
+		scr.h = 16;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 	else
@@ -5474,8 +5474,8 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 		scr.y = 44;
 		dest.x = 143 + 166;
 		dest.y = 44 + 159;
-		dest.w = scr.w = 30;
-		dest.h = scr.h = 16;
+		scr.w = 30;
+		scr.h = 16;
 		SDL_BlitSurface ( GraphicsData.gfx_transfer, &scr, buffer, &dest );
 	}
 

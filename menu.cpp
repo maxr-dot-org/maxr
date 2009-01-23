@@ -1320,7 +1320,7 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
 	//scr.x=25; scr.y=90; scr.h=scr.w=112;
-	dest.x=DIALOG_X+25; dest.y=DIALOG_Y+90; dest.h=dest.w=112;
+	dest.x=DIALOG_X+25; dest.y=DIALOG_Y+90;
 
 	Log.write ( "Loading Maps", cLog::eLOG_TYPE_INFO );
 
@@ -1448,7 +1448,7 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 
 	dest.x=DIALOG_X + 293;
 	dest.y=DIALOG_Y + 440;
-	dest.h=scr.h=dest.w=scr.w=25;
+	scr.h=scr.w=25;
 
 	if ( offset )
 	{
@@ -1801,8 +1801,8 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 {
 	SDL_Rect dest,norm1,norm2;
 	SDL_Rect rSrc = { 0, 0, 35, 35 };
-	dest.w = norm1.w = norm2.w = 35;
-	dest.h = norm1.h = norm2.h = 35;
+	norm1.w = norm2.w = 35;
+	norm1.h = norm2.h = 35;
 	#define FIELD1 DIALOG_X+194
 	#define FIELD2 DIALOG_X+304
 	#define FIELD3 DIALOG_X+414
@@ -1850,8 +1850,8 @@ void showPlayerStatesHotSeat ( sPlayerHS players )
 void ShowPlayerStates ( sPlayer players )
 {
 	SDL_Rect dest,norm1,norm2;
-	dest.w = norm1.w = norm2.w = 55;
-	dest.h = norm1.h = norm2.h = 71;
+	norm1.w = norm2.w = 55;
+	norm1.h = norm2.h = 71;
 	dest.x = 394;
 	dest.y = 67;
 	for ( int i = 0; i<4;i++ )
@@ -2040,8 +2040,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				dest.x=scr.x + DIALOG_X;
 				scr.y=264;
 				dest.y=scr.y + DIALOG_Y;
-				dest.w=scr.w=17;
-				dest.h=scr.h=17;
+				scr.w=17;
+				scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 			}
 			else
@@ -2050,8 +2050,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				scr.y=46;
 				dest.x=291+ DIALOG_X;
 				dest.y=264+ DIALOG_Y;
-				dest.w=scr.w=18;
-				dest.h=scr.h=17;
+				scr.w=18;
+				scr.h=17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 			}
 			ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
@@ -2064,8 +2064,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 491;
 			dest.y=DIALOG_Y + 386;
 			if ( offset<(int)selection.Size()-9 )
@@ -2083,8 +2083,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		{
 			scr.x=491;
 			scr.y=386;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 491;
 			dest.y=DIALOG_Y + 386;
 			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
@@ -2098,8 +2098,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 470;
 			dest.y=DIALOG_Y + 386;
 			if ( offset!=0 )
@@ -2117,8 +2117,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		{
 			scr.x=470;
 			scr.y=386;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 470;
 			dest.y=DIALOG_Y + 386;
 			SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
@@ -2372,8 +2372,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=230;
 			scr.y=151;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 327;
 			dest.y=DIALOG_Y + 240;
 			if ( LandingOffset!=0 )
@@ -2391,8 +2391,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		{
 			scr.x=327;
 			scr.y=240;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 327;
 			dest.y=DIALOG_Y + 240;
 			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
@@ -2406,8 +2406,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x=249;
 			scr.y=151;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 347;
 			dest.y=DIALOG_Y + 240;
 			if ( LandingOffset<(int)LandingList->Size()-5 )
@@ -2425,8 +2425,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		{
 			scr.x=347;
 			scr.y=240;
-			dest.w=scr.w=18;
-			dest.h=scr.h=17;
+			scr.w=18;
+			scr.h=17;
 			dest.x=DIALOG_X + 347;
 			dest.y=DIALOG_Y + 240;
 			SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
@@ -2524,8 +2524,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
 					scr.y=151;
-					dest.w=scr.w=18;
-					dest.h=scr.h=17;
+					scr.w=18;
+					scr.h=17;
 					dest.x=DIALOG_X + 413;
 					dest.y=DIALOG_Y + 424;
 
@@ -2547,8 +2547,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				{
 					scr.x=413;
 					scr.y=424;
-					dest.w=scr.w=18;
-					dest.h=scr.h=17;
+					scr.w=18;
+					scr.h=17;
 					dest.x=DIALOG_X + 413;
 					dest.y=DIALOG_Y + 424;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
@@ -2565,8 +2565,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=230;
 					scr.y=151;
-					dest.w=scr.w=18;
-					dest.h=scr.h=17;
+					scr.w=18;
+					scr.h=17;
 					dest.x=DIALOG_X + 433;
 					dest.y=DIALOG_Y + 424;
 
@@ -2588,8 +2588,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				{
 					scr.x=433;
 					scr.y=424;
-					dest.w=scr.w=18;
-					dest.h=scr.h=17;
+					scr.w=18;
+					scr.h=17;
 					dest.x=DIALOG_X + 433;
 					dest.y=DIALOG_Y + 424;
 					SDL_BlitSurface ( sfTmp,&scr,buffer,&dest );
@@ -2872,7 +2872,8 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	scr.x=152;scr.y=479;
 	dest.x=orig_dest.x=467;
 	dest.y=orig_dest.y=411;
-	dest.w=scr.w=orig_dest.w=32;dest.h=scr.h=orig_dest.h=31;
+	scr.w=orig_dest.w=32;
+	scr.h=orig_dest.h=31;
 
 	dest.x += DIALOG_X;
 	dest.y += DIALOG_Y;
@@ -2936,7 +2937,7 @@ void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,
 	}
 	// Kauf:
 	scr.x=54;scr.y=352;
-	scr.w=scr.h=dest.w=dest.h=orig_dest.h=orig_dest.w=16;
+	scr.w=scr.h=orig_dest.h=orig_dest.w=16;
 	dest.x=orig_dest.x=542;
 	dest.y=orig_dest.y=446;
 	dest.x += DIALOG_X;
@@ -2964,33 +2965,33 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int select
 	dest.x += DIALOG_X;
 	scr.y=dest.y=301;
 	dest.y += DIALOG_Y;
-	scr.w=dest.w=22;
-	scr.h=dest.h=115;
+	scr.w=22;
+	scr.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	scr.x=dest.x=312;
 	dest.x +=DIALOG_X;
 	scr.y=dest.y=265;
 	dest.y +=DIALOG_Y;
-	scr.w=dest.w=150;
-	scr.h=dest.h=30;
+	scr.w=150;
+	scr.h=30;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 	font->showTextCentered(DIALOG_X +381,DIALOG_Y + 275, lngPack.i18n ( "Text~Title~Gold" ));
 	font->showTextCentered(DIALOG_X +381,DIALOG_Y +275+10, iToStr(credits));
 
 	scr.x=118;
 	scr.y=336;
-	scr.w=dest.w=16;
-	scr.h=dest.h= ( int ) ( 115 * ( credits / ( float ) StartCredits ) );
+	scr.w=16;
+	scr.h= ( int ) ( 115 * ( credits / ( float ) StartCredits ) );
 	dest.x=DIALOG_X +375;
-	dest.y=DIALOG_Y +301+115-dest.h;
+	dest.y=DIALOG_Y +301+115-scr.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 
 	scr.x=dest.x=422;
 	dest.x += DIALOG_X;
 	scr.y=dest.y=301;
 	dest.y += DIALOG_Y;
-	scr.w=dest.w=20;
-	scr.h=dest.h=115;
+	scr.w=20;
+	scr.h=115;
 	SDL_BlitSurface ( surface,&scr,buffer,&dest );
 
 	if ( selected>=0&&landing->Size()&&selected<(int)landing->Size() )
@@ -3004,10 +3005,10 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int select
 
 			scr.x=133;
 			scr.y=336;
-			scr.w=dest.w=20;
-			scr.h=dest.h= ( int ) ( 115 * ( ptr.cargo / ( float ) ptr.UnitID.getUnitData()->max_cargo ) );
+			scr.w=20;
+			scr.h= ( int ) ( 115 * ( ptr.cargo / ( float ) ptr.UnitID.getUnitData()->max_cargo ) );
 			dest.x=DIALOG_X +422;
-			dest.y=DIALOG_Y +301+115-dest.h;
+			dest.y=DIALOG_Y +301+115-scr.h;
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,buffer,&dest );
 		}
 	}
@@ -3603,23 +3604,24 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 	SDL_Rect dest,text = {DIALOG_X + 530, DIALOG_Y +  70, 72, font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
 	SDL_Rect scr = {530, 70, 72, font->getFontHeight(FONT_LATIN_SMALL_WHITE)};
 	scr.x=479;scr.y=52;
-	scr.w=dest.w=150;scr.h=dest.h=330;
+	scr.w=150;scr.h=330;
 	dest.x = scr.x + DIALOG_X;
 	dest.y = scr.y + DIALOG_Y;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 	scr.x=0;scr.y=0;
 	scr.w=32;scr.h=32;
 	dest.x=DIALOG_X + 490;dest.y=DIALOG_Y + 58;
-	dest.w=32;dest.h=32;
 	if ( list.Size()==0 )
 	{
 		scr.x=0;scr.y=0;
-		scr.w=dest.w=316;scr.h=dest.h=256;
+		scr.w=316;
+		scr.h=256;
 		dest.x = scr.x + DIALOG_X;
 		dest.y = scr.y + DIALOG_Y;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
 		scr.x=11;scr.y=290;
-		scr.w=dest.w=346;scr.h=dest.h=176;
+		scr.w=346;
+		scr.h=176;
 		dest.x = scr.x + DIALOG_X;
 		dest.y = scr.y + DIALOG_Y;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade,&scr,buffer,&dest );
@@ -3895,7 +3897,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 	font->showText(352,260, ActualPlayer->name);
 
 	font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
-	dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y=  0;
+	dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y=  0;
 	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
 
 	SmallButton btn_send(   470, 416, "Text~Title~Send");
@@ -4079,7 +4081,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			if ( nr > 7 ) nr = 0;
 			ActualPlayer->color = OtherData.colors[nr];
 			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
-			dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y = 0;
+			dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y = 0;
 			SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
 			displayPlayerList();
 			sendIdentification();
@@ -4095,7 +4097,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			if ( nr < 0 ) nr = 7;
 			ActualPlayer->color = OtherData.colors[nr];
 			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
-			dest.x = 505; dest.y = 260; scr.w = dest.w = 83; scr.h = dest.h = 10; scr.x = 0; scr.y = 0;
+			dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y = 0;
 			SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
 			displayPlayerList();
 			sendIdentification();
@@ -4126,8 +4128,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 				dest.x = 505;
 				dest.y = 260;
-				scr.w = dest.w = 83;
-				scr.h = dest.h = 10;
+				scr.w = 83;
+				scr.h = 10;
 				scr.x = 0;
 				scr.y = 0;
 				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
@@ -4170,8 +4172,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 				dest.x = 505;
 				dest.y = 260;
-				scr.w = dest.w = 83;
-				scr.h = dest.h = 10;
+				scr.w = 83;
+				scr.h = 10;
 				scr.x = 0;
 				scr.y = 0;
 				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
@@ -4219,8 +4221,8 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 				dest.x = 505;
 				dest.y = 260;
-				scr.w = dest.w = 83;
-				scr.h = dest.h = 10;
+				scr.w = 83;
+				scr.h = 10;
 				scr.x = 0;
 				scr.y = 0;
 				SDL_BlitSurface ( ActualPlayer->color, &scr, buffer, &dest );
@@ -5233,7 +5235,6 @@ void cMultiPlayerMenu::displayGameSettings()
 			if ( sfMapPic != NULL )
 			{
 				SDL_Rect dest;
-				dest.w = dest.h = 112;
 				dest.x = 33;
 				dest.y = 106;
 				SDL_BlitSurface ( sfMapPic, NULL, buffer, &dest );
@@ -5282,7 +5283,7 @@ void cMultiPlayerMenu::displayPlayerList()
 
 	scr.x = 0;
 	scr.y = 0;
-	dest.w = dest.h = scr.w = scr.h = 10;
+	scr.w = scr.h = 10;
 	dest.x = 476;
 	dest.y = 297;
 	for( unsigned int i = 0; i < PlayerList.Size(); i++ )

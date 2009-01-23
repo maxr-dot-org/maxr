@@ -1619,8 +1619,6 @@ static int LoadGraphics(const char* path)
 	scr.h = GraphicsData.gfx_tmp->h;
 	dest.x = 180;
 	dest.y = 0;
-	dest.w = GraphicsData.gfx_hud->w-180;
-	dest.h = 18;
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud, &dest );
 	scr.x = 1275;
 	scr.w = 18;
@@ -1637,8 +1635,6 @@ static int LoadGraphics(const char* path)
 	scr.h = GraphicsData.gfx_tmp->h;
 	dest.x = GraphicsData.gfx_hud->w-12;
 	dest.y = 18;
-	dest.w = 12;
-	dest.h = GraphicsData.gfx_hud->h;
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud,&dest );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
@@ -1650,8 +1646,6 @@ static int LoadGraphics(const char* path)
 	scr.h = GraphicsData.gfx_tmp->h;
 	dest.x = 180;
 	dest.y = GraphicsData.gfx_hud->h-24;
-	dest.w = GraphicsData.gfx_hud->w-180;
-	dest.h = 24;
 	SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,GraphicsData.gfx_hud,&dest );
 	scr.x = 1275;
 	scr.w = 23;
@@ -1672,8 +1666,6 @@ static int LoadGraphics(const char* path)
 			return 0;
 		dest.x = 9;
 		dest.y = SettingsData.iScreenH-32-15;
-		dest.w = 152;
-		dest.h = 32;
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,NULL,GraphicsData.gfx_hud,&dest );
 		SDL_FreeSurface ( GraphicsData.gfx_tmp );
 	}
@@ -1901,8 +1893,6 @@ static int LoadVehicles()
 						{
 							rcDest.x = 64*j + 32 - sfTempSurface->w/2;
 							rcDest.y = 32 - sfTempSurface->h/2;
-							rcDest.w = sfTempSurface->w;
-							rcDest.h = sfTempSurface->h;
 							SDL_BlitSurface(sfTempSurface, NULL, v.img[n], &rcDest);
 						}
 						SDL_FreeSurface ( sfTempSurface );
@@ -1923,8 +1913,6 @@ static int LoadVehicles()
 				int *ptr;
 				rcDest.x=3;
 				rcDest.y=3;
-				rcDest.w=64*13;
-				rcDest.h=64;
 				SDL_BlitSurface(v.img_org[n], NULL, v.shw_org[n], &rcDest);
 				SDL_LockSurface(v.shw_org[n]);
 				ptr = (int*)(v.shw_org[n]->pixels);

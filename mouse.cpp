@@ -54,12 +54,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 		dest.x=LastX;
 		dest.y=LastY;
 		SDL_BlitSurface ( back,NULL,sf,&dest );
-		/*
-		dest.x=LastX;
-		dest.y=LastY;
-		dest.w=back->w;
-		dest.h=back->h;
-		*/
+		
 		SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
 	}
 	// Den Hintergrund sichern, und die Maus malen:

@@ -525,12 +525,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( data.is_big )
 		{
 			if ( !UnitsData.dirt_big ) return;
-			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_big->h;
+			scr.w = scr.h = UnitsData.dirt_big->h;
 		}
 		else
 		{
 			if ( !UnitsData.dirt_small ) return;
-			scr.w = scr.h = dest->h = dest->w = UnitsData.dirt_small->h;
+			scr.w = scr.h = UnitsData.dirt_small->h;
 		}
 
 		scr.x = scr.w * RubbleTyp;
@@ -562,20 +562,20 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.has_frames )
 		{
-			dest->w = scr.w = Client->Hud.Zoom;
-			dest->h = scr.h = Client->Hud.Zoom;
+			scr.w = Client->Hud.Zoom;
+			scr.h = Client->Hud.Zoom;
 		}
 		else
 		{
-			scr.w = dest->w = typ->img->w;
-			scr.h = dest->h = typ->img->h;
+			scr.w = typ->img->w;
+			scr.h = typ->img->h;
 		}
 	}
 	else
 	{
 		scr.y = 0;
 		scr.x = 0;
-		scr.h = dest->h = scr.w = dest->w = typ->img->h;
+		scr.h = scr.w = typ->img->h;
 
 		if ( BaseN )
 		{
@@ -2041,14 +2041,13 @@ void cBuilding::ShowStorage ( void )
 	{
 		scr.x = 480;
 		scr.y = 0;
-		dest.w = scr.w = 640 - 480;
-		dest.h = scr.h = 480;
+		scr.w = 640 - 480;
+		scr.h = 480;
 		dest.x = rDialog.x + scr.x;
 		dest.y = rDialog.y + scr.y;
 		SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
 		dest.x = rDialog.x;
 		dest.y = rDialog.y;
-		dest.w = 480;
 		SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, &dest );
 		to = 6;
 	}
@@ -2064,7 +2063,7 @@ void cBuilding::ShowStorage ( void )
 		DownEnabled = true;
 		scr.x = 103;
 		scr.y = 452;
-		dest.h = scr.h = dest.w = scr.w = 25;
+		scr.h = scr.w = 25;
 		dest.x = rDialog.x + 530;
 		dest.y = rDialog.y + 426;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -2128,8 +2127,8 @@ void cBuilding::ShowStorage ( void )
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 530;
 				scr.y = 426;
-				dest.w = scr.w = 25;
-				dest.h = scr.h = 25;
+				scr.w = 25;
+				scr.h = 25;
 				dest.x = rDialog.x + 530;
 				dest.y = rDialog.y + 426;
 
@@ -2146,9 +2145,9 @@ void cBuilding::ShowStorage ( void )
 
 				scr.y = 452;
 
-				dest.w = scr.w = 25;
+				scr.w = 25;
 
-				dest.h = scr.h = 25;
+				scr.h = 25;
 
 				dest.x = rDialog.x + 504;
 
@@ -2168,8 +2167,8 @@ void cBuilding::ShowStorage ( void )
 				{
 					scr.x = 103;
 					scr.y = 452;
-					dest.w = scr.w = 25;
-					dest.h = scr.h = 25;
+					scr.w = 25;
+					scr.h = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -2187,8 +2186,8 @@ void cBuilding::ShowStorage ( void )
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 504;
 				scr.y = 426;
-				dest.w = scr.w = 25;
-				dest.h = scr.h = 25;
+				scr.w = 25;
+				scr.h = 25;
 				dest.x = rDialog.x + 504;
 				dest.y = rDialog.y + 426;
 
@@ -2210,7 +2209,7 @@ void cBuilding::ShowStorage ( void )
 					DownEnabled = true;
 					scr.x = 103;
 					scr.y = 452;
-					dest.h = scr.h = dest.w = scr.w = 25;
+					scr.h = scr.w = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -2223,8 +2222,8 @@ void cBuilding::ShowStorage ( void )
 				{
 					scr.x = 130;
 					scr.y = 452;
-					dest.w = scr.w = 25;
-					dest.h = scr.h = 25;
+					scr.w = 25;
+					scr.h = 25;
 					dest.x = rDialog.x + 504;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -2328,8 +2327,6 @@ void cBuilding::ShowStorage ( void )
 		if ( x >= rBtnRepair.x && x < rBtnRepair.x + rBtnRepair.w && y >= rBtnRepair.y && y < rBtnRepair.y + rBtnRepair.h && b && !LastB && AlleReparierenEnabled )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-			dest.w = 94;
-			dest.h = 23;
 			dest.x = rDialog.x + 511;
 			dest.y = rDialog.y + 251 + 25 * 2;
 
@@ -2395,9 +2392,6 @@ void cBuilding::ShowStorage ( void )
 		}
 
 		// Buttons unter den Vehicles:
-		dest.w = 73;
-
-		dest.h = 23;
 
 		if ( data.can_load == TRANS_AIR )
 		{
@@ -2627,9 +2621,9 @@ void cBuilding::DrawStored ( int off )
 					break;
 			}
 
-			dest.w = scr.w = 200; //hangarwidth
+			scr.w = 200; //hangarwidth
 
-			dest.h = scr.h = 128; //hangarheight
+			scr.h = 128; //hangarheight
 		}
 		else
 		{
@@ -2669,9 +2663,9 @@ void cBuilding::DrawStored ( int off )
 					break;
 			}
 
-			dest.w = scr.w = 128; //hangarwidth
+			scr.w = 128; //hangarwidth
 
-			dest.h = scr.h = 128; //hangarsize
+			scr.h = 128; //hangarsize
 		}
 
 		SDL_BlitSurface ( sf, &scr, buffer, &dest );
@@ -2769,9 +2763,9 @@ void cBuilding::DrawStored ( int off )
 
 		dest.y -= 69 - 6;
 
-		scr.w = dest.w = 128;
+		scr.w = 128;
 
-		scr.h = dest.h = 30;
+		scr.h = 30;
 
 		scr.x = dest.x - rDialog.x;
 
@@ -2813,8 +2807,8 @@ void cBuilding::ShowStorageMetalBar ( void )
 	//redraw metalbar to clean it from prior draws
 	dest.x = rDialog.x + ( scr.x = 490 );
 	dest.y = rDialog.y + ( scr.y = 80 );
-	dest.w = scr.w = 136;
-	dest.h = scr.h = 145;
+	scr.w = 136;
+	scr.h = 145;
 	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
 
 	//draw metalamount over the metalbar
@@ -2826,7 +2820,7 @@ void cBuilding::ShowStorageMetalBar ( void )
 	scr.y = 335;
 	dest.x = rDialog.x + 546;
 	dest.y = rDialog.y + 106;
-	scr.w = dest.w = 20;
+	scr.w = 20;
 
 	/*Gosh, this is tricky. I'll try to make an example. The metalbar graphic is 115px high.
 	* We've eg. storages for metal 125 and we have an metal amount of 49 so this would look
@@ -2835,8 +2829,8 @@ void cBuilding::ShowStorageMetalBar ( void )
 	* empty metal zylinder on storage.pcx
 	*								-- beko
 	*/
-	// scr.h = dest.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
-	scr.h = dest.h = Round ( 115 * SubBase->Metal / ( float ) SubBase->MaxMetal ); //	a/(b/c) = a*c/b
+	// scr.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
+	scr.h = Round ( 115 * SubBase->Metal / ( float ) SubBase->MaxMetal ); //	a/(b/c) = a*c/b
 	dest.y += 115 - scr.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	//END fill metal bar
@@ -3049,8 +3043,8 @@ void cBuilding::ShowResearchSchieber ( void )
 		scr.y = 70 + i * 28;
 		dest.x = 20 + rDialog.x;
 		dest.y = 70 + rDialog.y + i * 28;
-		dest.w = scr.w = 316;
-		dest.h = scr.h = 18;
+		scr.w = 316;
+		scr.h = 18;
 		SDL_BlitSurface ( GraphicsData.gfx_research, &scr, buffer, &dest );
 
 		// Texte ausgeben:
@@ -3070,8 +3064,8 @@ void cBuilding::ShowResearchSchieber ( void )
 		// Den Pfeil nach links:
 		if ( owner->ResearchTechs[i].working_on == 0 )
 		{
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
+			scr.w = 19;
+			scr.h = 18;
 			scr.x = 237;
 			scr.y = 177;
 			dest.x = 71 + rDialog.x;
@@ -3081,8 +3075,8 @@ void cBuilding::ShowResearchSchieber ( void )
 		// Den Pfeil nach rechts:
 		if ( owner->UnusedResearch <= 0 )
 		{
-			dest.w = scr.w = 19;
-			dest.h = scr.h = 18;
+			scr.w = 19;
+			scr.h = 18;
 			scr.x = 257;
 			scr.y = 177;
 			dest.x = 143 + rDialog.x;
@@ -3090,9 +3084,9 @@ void cBuilding::ShowResearchSchieber ( void )
 		}
 
 		// Die Schieber malen:
-		dest.w = scr.w = 14;
+		scr.w = 14;
 
-		dest.h = scr.h = 17;
+		scr.h = 17;
 
 		scr.x = 412;
 
@@ -3229,8 +3223,8 @@ void cBuilding::ShowUpgrade ( void )
 		scr.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 17;
-		dest.h = scr.h = 17;
+		scr.w = 17;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	}
 	else
@@ -3239,8 +3233,8 @@ void cBuilding::ShowUpgrade ( void )
 		scr.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 18;
-		dest.h = scr.h = 17;
+		scr.w = 18;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
@@ -3343,8 +3337,8 @@ void cBuilding::ShowUpgrade ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
 
@@ -3369,8 +3363,8 @@ void cBuilding::ShowUpgrade ( void )
 			{
 				scr.x = 491;
 				scr.y = 386;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 491;
 				dest.y = MENU_OFFSET_Y + 386;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
@@ -3385,8 +3379,8 @@ void cBuilding::ShowUpgrade ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 470;
 			dest.y = MENU_OFFSET_Y + 386;
 
@@ -3411,8 +3405,8 @@ void cBuilding::ShowUpgrade ( void )
 			{
 				scr.x = 470;
 				scr.y = 386;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 470;
 				dest.y = MENU_OFFSET_Y + 386;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
@@ -3489,8 +3483,8 @@ void cBuilding::ShowUpgrade ( void )
 				scr.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 17;
-				dest.h = scr.h = 17;
+				scr.w = 17;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 			}
 			else
@@ -3499,8 +3493,8 @@ void cBuilding::ShowUpgrade ( void )
 				scr.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			}
 
@@ -3723,8 +3717,8 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = dest.w = 150;
-	scr.h = dest.h = 330;
+	scr.w = 150;
+	scr.h = 330;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
@@ -3732,8 +3726,6 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	scr.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
-	dest.w = 32;
-	dest.h = 32;
 
 	if (list.Size() == 0)
 	{
@@ -3741,15 +3733,15 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		scr.y = 0;
 		dest.x = MENU_OFFSET_X;
 		dest.y = MENU_OFFSET_Y;
-		scr.w = dest.w = 316;
-		scr.h = dest.h = 256;
+		scr.w = 316;
+		scr.h = 256;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 		scr.x = 11;
 		scr.y = 290;
 		dest.x = MENU_OFFSET_X + 11;
 		dest.y = MENU_OFFSET_Y + 290;
-		scr.w = dest.w = 346;
-		scr.h = dest.h = 176;
+		scr.w = 346;
+		scr.h = 176;
 		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 		return;
 	}
@@ -3865,8 +3857,8 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 				{
 					scr.x = 380;
 					scr.y = 256;
-					dest.w = scr.w = 18;
-					dest.h = scr.h = 17;
+					scr.w = 18;
+					scr.h = 17;
 					dest.x = MENU_OFFSET_X + 283;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -3876,8 +3868,8 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 				{
 					scr.x = 399;
 					scr.y = 256;
-					dest.w = scr.w = 18;
-					dest.h = scr.h = 17;
+					scr.w = 18;
+					scr.h = 17;
 					dest.x = MENU_OFFSET_X + 301;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -3923,15 +3915,15 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	scr.y = 301;
 	dest.x = MENU_OFFSET_X + 371;
 	dest.y = MENU_OFFSET_Y + 301;
-	scr.w = dest.w = 22;
-	scr.h = dest.h = 115;
+	scr.w = 22;
+	scr.h = 115;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	scr.x = 312;
 	scr.y = 265;
 	dest.x = MENU_OFFSET_X + 312;
 	dest.y = MENU_OFFSET_Y + 265;
-	scr.w = dest.w = 150;
-	scr.h = dest.h = 26;
+	scr.w = 150;
+	scr.h = 26;
 	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
 	//sprintf ( str,"Credits: %d",owner->Credits );
 
@@ -3939,10 +3931,10 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 
 	scr.x = 118;
 	scr.y = 336;
-	scr.w = dest.w = 16;
-	scr.h = dest.h = ( int ) ( 115 * ( owner->Credits / ( float ) StartCredits ) );
+	scr.w = 16;
+	scr.h = ( int ) ( 115 * ( owner->Credits / ( float ) StartCredits ) );
 	dest.x = MENU_OFFSET_X + 375;
-	dest.y = MENU_OFFSET_Y + 301 + 115 - dest.h;
+	dest.y = MENU_OFFSET_Y + 301 + 115 - scr.h;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 }
 
@@ -4229,8 +4221,8 @@ void cBuilding::MakeUpgradeSubButtons ( void )
 	SDL_Rect scr, dest;
 	dest.x = MENU_OFFSET_X + 467;
 	dest.y = MENU_OFFSET_Y + 411;
-	dest.w = scr.w = 32;
-	dest.h = scr.h = 31;
+	scr.w = 32;
+	scr.h = 31;
 	// Tank:
 
 	if ( !Client->bUpShowTank )
@@ -4436,9 +4428,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 	dest.x = x;
 
 	dest.y = y;
-	dest.w = scr.w;
-	dest.h = scr.h;
-
+	
 	for ( i = 0;i < value;i++ )
 	{
 		if ( i == orgvalue )
@@ -4448,7 +4438,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 			mark.x = dest.x - scr.w / 2;
 			mark.y = dest.y;
 			mark.w = 1;
-			mark.h = dest.h;
+			mark.h = scr.h;
 			SDL_FillRect ( sf, &mark, 0xFC0000 );
 		}
 
@@ -4840,8 +4830,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 308;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 71;
 
@@ -4864,8 +4854,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 421;
 				scr.y = 71;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 71;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -4880,8 +4870,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 280;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 71;
 
@@ -4904,8 +4894,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 139;
 				scr.y = 71;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 71;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -4920,8 +4910,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 308;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 191;
 
@@ -4944,8 +4934,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 421;
 				scr.y = 191;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 191;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -4960,8 +4950,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 280;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 191;
 
@@ -4984,8 +4974,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 139;
 				scr.y = 191;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 191;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -5000,8 +4990,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 308;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 311;
 
@@ -5024,8 +5014,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 421;
 				scr.y = 311;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 311;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -5040,8 +5030,8 @@ void cBuilding::showMineManager ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 122;
 			scr.y = 280;
-			dest.w = scr.w = 26;
-			dest.h = scr.h = 27;
+			scr.w = 26;
+			scr.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 311;
 
@@ -5064,8 +5054,8 @@ void cBuilding::showMineManager ( void )
 			{
 				scr.x = 139;
 				scr.y = 311;
-				dest.w = scr.w = 26;
-				dest.h = scr.h = 27;
+				scr.w = 26;
+				scr.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 311;
 				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
@@ -5136,23 +5126,21 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 
 	dest.x = rDialog.x + 174;
 
-	dest.w = 240;
-	dest.h = scr.h = 30;
+	rScr.w = 240;
+	rScr.h = scr.h = 30;
 	dest.y += offy * 37;
 	rScr.x = dest.x - rDialog.x;
 	rScr.y = dest.y - rDialog.y;
-	rScr.w = dest.w;
-	rScr.h = dest.h;
 	SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &rScr, buffer, &dest );
 
 	if ( max_value == 0 )
 	{
-		dest.w = scr.w = 0;
+		scr.w = 0;
 		scr.x = 156;
 	}
 	else
 	{
-		dest.w = scr.w = ( int ) ( ( ( float ) value / max_value ) * 240 );
+		scr.w = ( int ) ( ( ( float ) value / max_value ) * 240 );
 		scr.x = 156 + ( 240 - ( int ) ( ( ( float ) value / max_value ) * 240 ) );
 	}
 
@@ -5162,7 +5150,7 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 
 	if ( fixed && scr.w != 240 && max_value != 0 )
 	{
-		dest.w = scr.w = ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
+		scr.w = ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
 		dest.x = rDialog.x + 174 + 240 - scr.w;
 		scr.x = 156;
 		scr.y = 307;
@@ -5171,7 +5159,7 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 	else
 		if ( max_value == 0 )
 		{
-			dest.w = scr.w = 240;
+			scr.w = 240;
 			dest.x = rDialog.x + 174;
 			scr.x = 156;
 			scr.y = 307;
@@ -5422,8 +5410,8 @@ void cBuilding::ShowBuildMenu ( void )
 		scr.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 17;
-		dest.h = scr.h = 17;
+		scr.w = 17;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 	}
 	else
@@ -5432,8 +5420,8 @@ void cBuilding::ShowBuildMenu ( void )
 		scr.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 18;
-		dest.h = scr.h = 17;
+		scr.w = 18;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
@@ -5568,8 +5556,8 @@ void cBuilding::ShowBuildMenu ( void )
 		scr.y = 46;
 		dest.x = MENU_OFFSET_X + 447;
 		dest.y = MENU_OFFSET_Y + 322;
-		dest.w = scr.w = 18;
-		dest.h = scr.h = 17;
+		scr.w = 18;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 	else
@@ -5613,8 +5601,8 @@ void cBuilding::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -5647,8 +5635,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 491;
 				scr.y = 440;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 491;
 				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -5663,8 +5651,8 @@ void cBuilding::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 471;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -5692,8 +5680,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 471;
 				scr.y = 440;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 471;
 				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -5708,8 +5696,8 @@ void cBuilding::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 327;
 			dest.y = MENU_OFFSET_Y + 293;
 
@@ -5730,8 +5718,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 327;
 				scr.y = 293;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 327;
 				dest.y = MENU_OFFSET_Y + 293;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -5746,8 +5734,8 @@ void cBuilding::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 347;
 			dest.y = MENU_OFFSET_Y + 293;
 
@@ -5768,8 +5756,8 @@ void cBuilding::ShowBuildMenu ( void )
 			{
 				scr.x = 347;
 				scr.y = 293;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 347;
 				dest.y = MENU_OFFSET_Y + 293;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
@@ -5852,8 +5840,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 17;
-				dest.h = scr.h = 17;
+				scr.w = 17;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 			}
 			else
@@ -5862,8 +5850,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			}
 
@@ -5886,8 +5874,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 322;
 				dest.x = MENU_OFFSET_X + 447;
 				dest.y = MENU_OFFSET_Y + 322;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 			}
 			else
@@ -5896,8 +5884,8 @@ void cBuilding::ShowBuildMenu ( void )
 				scr.y = 46;
 				dest.x = MENU_OFFSET_X + 447;
 				dest.y = MENU_OFFSET_Y + 322;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			}
 
@@ -6080,15 +6068,15 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = dest.w = 150;
-	scr.h = dest.h = 378;
+	scr.w = 150;
+	scr.h = 378;
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 	scr.x = 373;
 	scr.y = 344;
 	dest.x = MENU_OFFSET_X + 373;
 	dest.y = MENU_OFFSET_Y + 344;
-	scr.w = dest.w = 77;
-	scr.h = dest.h = 72;
+	scr.w = 77;
+	scr.h = 72;
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
@@ -6096,9 +6084,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 	scr.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
-	dest.w = 32;
-	dest.h = 32;
-
+	
 	for (unsigned int i = offset; i < list.Size(); i++)
 	{
 		if ( (int)i >= offset + 9 )
@@ -6326,8 +6312,8 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 	scr.y = 49;
 	dest.x = MENU_OFFSET_X + 330;
 	dest.y = MENU_OFFSET_Y + 49;
-	scr.w = dest.w = 128;
-	scr.h = dest.h = 233;
+	scr.w = 128;
+	scr.h = 233;
 	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
 
 
@@ -6337,8 +6323,6 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 	scr.h = 32;
 	dest.x = MENU_OFFSET_X + 340;
 	dest.y = MENU_OFFSET_Y + 58;
-	dest.w = 32;
-	dest.h = 32;
 
 	for (unsigned int i = offset; i < list.Size(); i++)
 	{
@@ -6665,8 +6649,6 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	bool bSelection = false;
 	SDL_Rect dest;
 	dest = GetMenuSize();
-	dest.w = 42;
-	dest.h = 21;
 
 	if ( bIsBeeingAttacked ) return;
 
@@ -7212,8 +7194,8 @@ void cBuilding::Deselct ( void )
 	// Den Hintergrund wiederherstellen:
 	scr.x = 0;
 	scr.y = 215;
-	dest.w = scr.w = 155;
-	dest.h = scr.h = 48;
+	scr.w = 155;
+	scr.h = 48;
 	dest.x = 8;
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
@@ -7227,8 +7209,8 @@ void cBuilding::ShowDetails ( void )
 	// Den Hintergrund wiederherstellen:
 	scr.x = 0;
 	scr.y = 215;
-	dest.w = scr.w = 155;
-	dest.h = scr.h = 48;
+	scr.w = 155;
+	scr.h = 48;
 	dest.x = 8;
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
@@ -7527,9 +7509,7 @@ void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, in
 	dest.x = x;
 
 	dest.y = y;
-	dest.w = full.w;
-	dest.h = full.h;
-
+	
 	for ( i = 0;i < to;i++ )
 	{
 		if ( value > 0 )

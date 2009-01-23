@@ -204,9 +204,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 
 		// Größe auslesen:
-		scr.w = dest->w = typ->img[dir]->w;
+		scr.w = typ->img[dir]->w;
 
-		scr.h = dest->h = typ->img[dir]->h;
+		scr.h = typ->img[dir]->h;
 
 		// Den Schatten malen:
 		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
@@ -816,8 +816,8 @@ void cVehicle::Deselct ( void )
 	// Den Hintergrund wiederherstellen:
 	scr.x = 0;
 	scr.y = 215;
-	dest.w = scr.w = 155;
-	dest.h = scr.h = 48;
+	scr.w = 155;
+	scr.h = 48;
 	dest.x = 8;
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
@@ -1049,8 +1049,8 @@ void cVehicle::ShowDetails ( void )
 	// Den Hintergrund wiederherstellen:
 	scr.x = 0;
 	scr.y = 215;
-	dest.w = scr.w = 155;
-	dest.h = scr.h = 48;
+	scr.w = 155;
+	scr.h = 48;
 	dest.x = 8;
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
@@ -1244,8 +1244,6 @@ void cVehicle::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, int
 	dest.x = x;
 
 	dest.y = y;
-	dest.w = full.w;
-	dest.h = full.h;
 
 	for ( i = 0;i < to;i++ )
 	{
@@ -1487,8 +1485,6 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 	dest.x = x;
 
 	dest.y = y;
-	dest.w = scr.w;
-	dest.h = scr.h;
 
 	for ( i = 0;i < value;i++ )
 	{
@@ -1499,7 +1495,7 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 			mark.x = dest.x - scr.w / 2;
 			mark.y = dest.y;
 			mark.w = 1;
-			mark.h = dest.h;
+			mark.h = scr.h;
 			SDL_FillRect ( sf, &mark, 0xFC0000 );
 		}
 
@@ -1554,8 +1550,6 @@ void cVehicle::DrawPath ( void )
 		{
 			dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
 			dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
-			dest.w = zoom;
-			dest.h = zoom;
 
 			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
 
@@ -1575,8 +1569,6 @@ void cVehicle::DrawPath ( void )
 		dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
 
 		dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
-		dest.w = zoom;
-		dest.h = zoom;
 		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
 		return;
 	}
@@ -1596,10 +1588,6 @@ void cVehicle::DrawPath ( void )
 	dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * PosX;
 
 	dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * PosY;
-
-	dest.w = zoom;
-
-	dest.h = zoom;
 
 	wp = ClientMoveJob->Waypoints;
 
@@ -1904,8 +1892,6 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	bool bSelection = false;
 	SDL_Rect dest;
 	dest = GetMenuSize();
-	dest.w = 42;
-	dest.h = 21;
 	Transfer = false;
 
 	if ( moving || rotating || bIsBeeingAttacked )
@@ -2758,8 +2744,8 @@ void cVehicle::ShowBuildMenu ( void )
 		scr.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 17;
-		dest.h = scr.h = 17;
+		scr.w = 17;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 	}
 	else
@@ -2768,8 +2754,8 @@ void cVehicle::ShowBuildMenu ( void )
 		scr.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		dest.w = scr.w = 18;
-		dest.h = scr.h = 17;
+		scr.w = 18;
+		scr.h = 17;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
@@ -2851,8 +2837,8 @@ void cVehicle::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 249;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -2880,8 +2866,8 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				scr.x = 491;
 				scr.y = 440;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 491;
 				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
@@ -2896,8 +2882,8 @@ void cVehicle::ShowBuildMenu ( void )
 			PlayFX ( SoundData.SNDObjectMenu );
 			scr.x = 230;
 			scr.y = 151;
-			dest.w = scr.w = 18;
-			dest.h = scr.h = 17;
+			scr.w = 18;
+			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 471;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -2925,8 +2911,8 @@ void cVehicle::ShowBuildMenu ( void )
 			{
 				scr.x = 471;
 				scr.y = 440;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				dest.x = MENU_OFFSET_X + 471;
 				dest.y = MENU_OFFSET_Y + 440;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
@@ -2991,8 +2977,8 @@ void cVehicle::ShowBuildMenu ( void )
 				scr.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 17;
-				dest.h = scr.h = 17;
+				scr.w = 17;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 			}
 			else
@@ -3001,8 +2987,8 @@ void cVehicle::ShowBuildMenu ( void )
 				scr.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				dest.w = scr.w = 18;
-				dest.h = scr.h = 17;
+				scr.w = 18;
+				scr.h = 17;
 				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			}
 
@@ -3101,15 +3087,15 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 	scr.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = dest.w = 150;
-	scr.h = dest.h = 378;
+	scr.w = 150;
+	scr.h = 378;
 	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 	scr.x = 373;
 	scr.y = 344;
 	dest.x = MENU_OFFSET_X + 373;
 	dest.y = MENU_OFFSET_Y + 344;
-	scr.w = dest.w = 77;
-	scr.h = dest.w = 72;
+	scr.w = 77;
+	scr.h = 72;
 	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
 	scr.x = 0;
 	scr.y = 0;
@@ -3117,8 +3103,6 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 	scr.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
-	dest.w = 32;
-	dest.h = 32;
 
 	for ( unsigned int i = offset;i < list.Size();i++ )
 	{
@@ -3953,14 +3937,13 @@ void cVehicle::showStorage ()
 	mouse->draw ( false, buffer );
 	scr.x = 480;
 	scr.y = 0;
-	dest.w = scr.w = 640 - 480;
-	dest.h = scr.h = 480;
+	scr.w = 640 - 480;
+	scr.h = 480;
 	dest.x = rDialog.x + scr.x;
 	dest.y = rDialog.y + scr.y;
 	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
 	dest.x = rDialog.x;
 	dest.y = rDialog.y;
-	dest.w = 480;
 	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, &dest );
 	to = 6;
 
@@ -3974,7 +3957,7 @@ void cVehicle::showStorage ()
 		DownEnabled = true;
 		scr.x = 103;
 		scr.y = 452;
-		dest.h = scr.h = dest.w = scr.w = 25;
+		scr.h = scr.w = 25;
 		dest.x = 530;
 		dest.y = 426;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -4026,8 +4009,8 @@ void cVehicle::showStorage ()
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 530;
 				scr.y = 426;
-				dest.w = scr.w = 25;
-				dest.h = scr.h = 25;
+				scr.w = 25;
+				scr.h = 25;
 				dest.x = rDialog.x + 530;
 				dest.y = rDialog.y + 426;
 
@@ -4044,9 +4027,9 @@ void cVehicle::showStorage ()
 
 				scr.y = 452;
 
-				dest.w = scr.w = 25;
+				scr.w = 25;
 
-				dest.h = scr.h = 25;
+				scr.h = 25;
 
 				dest.x = rDialog.x + 504;
 
@@ -4066,8 +4049,8 @@ void cVehicle::showStorage ()
 				{
 					scr.x = 103;
 					scr.y = 452;
-					dest.w = scr.w = 25;
-					dest.h = scr.h = 25;
+					scr.w = 25;
+					scr.h = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -4085,8 +4068,8 @@ void cVehicle::showStorage ()
 				PlayFX ( SoundData.SNDObjectMenu );
 				scr.x = 504;
 				scr.y = 426;
-				dest.w = scr.w = 25;
-				dest.h = scr.h = 25;
+				scr.w = 25;
+				scr.h = 25;
 				dest.x = rDialog.x + 504;
 				dest.y = rDialog.y + 426;
 
@@ -4108,7 +4091,7 @@ void cVehicle::showStorage ()
 					DownEnabled = true;
 					scr.x = 103;
 					scr.y = 452;
-					dest.h = scr.h = dest.w = scr.w = 25;
+					scr.h = scr.w = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -4121,8 +4104,8 @@ void cVehicle::showStorage ()
 				{
 					scr.x = 130;
 					scr.y = 452;
-					dest.w = scr.w = 25;
-					dest.h = scr.h = 25;
+					scr.w = 25;
+					scr.h = 25;
 					dest.x = rDialog.x + 504;
 					dest.y = rDialog.y + 426;
 					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
@@ -4188,10 +4171,6 @@ void cVehicle::showStorage ()
 		}
 
 		// Buttons unter den Vehicles:
-		dest.w = 73;
-
-		dest.h = 23;
-
 		sf = GraphicsData.gfx_storage_ground;
 
 		for ( int i = 0; i < to;i++ )
@@ -4331,8 +4310,8 @@ void cVehicle::DrawStored ( int off )
 				break;
 		}
 
-		dest.w = scr.w = 128; //hangarwidth
-		dest.h = scr.h = 128; //hangarsize
+		scr.w = 128; //hangarwidth
+		scr.h = 128; //hangarsize
 		SDL_BlitSurface ( sf, &scr, buffer, &dest );
 
 		if ( v )
@@ -4374,10 +4353,6 @@ void cVehicle::DrawStored ( int off )
 		}
 
 		dest.y += 182;
-
-		dest.w = 73;
-		dest.h = 23;
-
 		if ( v )
 		{
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, dest.x, dest.y, buffer );
@@ -4393,9 +4368,9 @@ void cVehicle::DrawStored ( int off )
 
 		dest.y -= 44 - 6;
 
-		scr.w = dest.w = 128;
+		scr.w = 128;
 
-		scr.h = dest.h = 30;
+		scr.h = 30;
 
 		scr.x = dest.x - rDialog.x;
 
