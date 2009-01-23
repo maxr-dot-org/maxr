@@ -354,6 +354,7 @@ public:
 	float fFPS;
 	/** number of main loop executions per second */
 	float fCPS;
+	Uint32 iLoad;
 	/** the active Player */
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */

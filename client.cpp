@@ -117,6 +117,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	iFrame = 0;
 	fFPS = 0;
 	fCPS = 0;
+	iLoad = 0;
 	SelectedVehicle = NULL;
 	SelectedBuilding = NULL;
 	neutralBuildings = NULL;
@@ -148,7 +149,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceServer = false;
 	bDebugTraceClient = false;
 	bDebugPlayers = false;
-	bShowFPS = true;
+	bShowFPS = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	isInMenu = false;
@@ -437,23 +438,33 @@ void cClient::run()
 			}
 			else iNextChange--;
 		}
-		//handle frames/s and cycles/s
+		//handle frames/s, cycles/s and load
 		if ( bShowFPS )
 		{
 			static Uint32 iLastTicks = 0;
 			static Uint32 iLastFrame = 0;
 			static Uint32 iCycles = 0;
+			static Uint32 iInverseLoad = 0; //this is 10*(100% - load) 
+			static Uint32 iLastTickLoad = 0;
 
 			iCycles++;
 			Uint32 iTicks = SDL_GetTicks();
+			
+			if ( iTicks != iLastTickLoad ) iInverseLoad++;
+			iLastTickLoad = iTicks;
+
 			if ( iTicks > iLastTicks + 1000 )
 			{
 				float a = 0.5f;	//low pass filter coefficient
+
 				fFPS = (1-a)*(iFrame - iLastFrame)*1000/(float)(iTicks - iLastTicks) + a*fFPS;
 				iLastFrame = iFrame;
 
 				fCPS = (1-a)*iCycles*1000 / (float) (iTicks - iLastTicks) + a*fCPS;
 				iCycles = 0;
+
+				iLoad = Round((1-a)*(1000 - iInverseLoad) + a*iLoad);
+				iInverseLoad = 0;
 
 				iLastTicks = iTicks;
 			}
@@ -2455,6 +2466,8 @@ void cClient::displayDebugOutput()
 		font->showText(DEBUGOUT_X_POS, iDebugOff, "FPS: " + iToStr(Round(fFPS)), FONT_LATIN_SMALL_WHITE );
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		font->showText(DEBUGOUT_X_POS, iDebugOff, "Cycles/s: " + iToStr(Round(fCPS)), FONT_LATIN_SMALL_WHITE );
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "Load: " + iToStr(iLoad/10) + "." + iToStr(iLoad%10) + "%", FONT_LATIN_SMALL_WHITE );
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
 
