@@ -5000,6 +5000,7 @@ void cClient::continuePathBuilding ( cVehicle *Vehicle )
 			sendWantContinuePathBuild ( Vehicle, Vehicle->PosX, Vehicle->PosY+1 );
 		}
 	}
+	else Vehicle->BuildPath = false;
 }
 
 sSubBase *cClient::getSubBaseFromID ( int iID )

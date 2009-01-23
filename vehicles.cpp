@@ -449,7 +449,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 
 			// Ggf Markierung blitten, wenn der Bauvorgang abgeschlossen ist:
-			if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer )
+			if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer && !BuildPath )
 			{
 				SDL_Rect d, t;
 				int max, nr;
