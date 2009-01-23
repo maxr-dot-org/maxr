@@ -3316,10 +3316,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iTimeDelay = message->popInt16();
 
 			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
-			if ( Player == NULL || iPlayerNum == -1 )
+			if ( Player == NULL && iPlayerNum != -1 )
 			{
 				Log.write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
 				break;
+			}
+			else
+			{
+				//HACK SHOWFINISHEDPLAYERS player finished his turn
+				Player->bFinishedTurn=true;
 			}
 
 			if ( iTimeDelay != -1 )
@@ -3329,10 +3334,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iStartTurnTime = SDL_GetTicks();
 			}
 			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
-			
-			////HACK SHOWFINISHEDPLAYERS player finished his turn
-			if(Player || iPlayerNum == -1 )
-				Player->bFinishedTurn=true;
 		}
 		break;
 	case GAME_EV_UNIT_DATA:
