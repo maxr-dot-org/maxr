@@ -1165,7 +1165,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() )
+	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
@@ -3321,11 +3321,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Log.write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
 				break;
 			}
-			else
-			{
-				//HACK SHOWFINISHEDPLAYERS player finished his turn
-				Player->bFinishedTurn=true;
-			}
+
+			//HACK SHOWFINISHEDPLAYERS player finished his turn
+			if ( Player ) Player->bFinishedTurn=true;
 
 			if ( iTimeDelay != -1 )
 			{
