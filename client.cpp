@@ -3316,7 +3316,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iTimeDelay = message->popInt16();
 
 			cPlayer *Player = getPlayerFromNumber( iPlayerNum );
-			if ( Player == NULL || iPlayerNum != -1 )
+			if ( Player == NULL || iPlayerNum == -1 )
 			{
 				Log.write(" Client: Player with nr " + iToStr(iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING );
 				break;
