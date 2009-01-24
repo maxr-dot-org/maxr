@@ -1165,7 +1165,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner )
+	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );

@@ -263,7 +263,7 @@ cBuilding* cMapField::getBaseBuilding()
 	
 	while ( !building.end )
 	{
-		if ( building->data.is_base || !building->owner ) return building;
+		if ( building->data.is_base ) return building;
 		building++;
 	}
 	
