@@ -411,7 +411,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	TiXmlElement *element;
 	unitNode->FirstChildElement( "Direction" )->Attribute ( "num", &vehicle->dir );
-	if ( unitNode->FirstChildElement( "IsBig" ) ) vehicle->data.is_big = true;
+	if ( unitNode->FirstChildElement( "IsBig" ) ) Server->Map->moveVehicleBig( vehicle, x, y );
 	if ( unitNode->FirstChildElement( "Disabled" ) ) vehicle->Disabled = true;
 	if ( unitNode->FirstChildElement( "LayMines" ) ) vehicle->LayMines = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
