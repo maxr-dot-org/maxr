@@ -951,6 +951,14 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 {
+	if ( vehicle->data.is_big ) 
+	{
+		Log.write("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR );
+		//calling this this function twice is allways an error.
+		//nevertheless try to proceed by resetting the data.is_big flag
+		moveVehicle(vehicle, offset);
+	}
+
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
 	fields[oldOffset].vehicles.Delete(0);
 
