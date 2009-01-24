@@ -527,6 +527,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			BuildingType.iFirstPart = message->popInt16();
 			BuildingType.iSecondPart = message->popInt16();
+			if ( !BuildingType.getUnitData() == NULL )
+			{
+				Log.write(" Server: invalid unit: " + iToStr(BuildingType.iFirstPart) + "."  + iToStr(BuildingType.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
+				break;
+			}
 			const sUnitData& Data = *BuildingType.getUnitData();
 			iBuildSpeed = message->popInt16();
 			iBuildOff = message->popInt32();
