@@ -1391,6 +1391,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					StoringVehicle->storeVehicle ( StoredVehicle, Map );
 					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
+					//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 					sendStoreVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->Nr );
 				}
 			}
@@ -1403,6 +1404,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					StoringBuilding->storeVehicle ( StoredVehicle, Map );
 					if ( StoredVehicle->ServerMoveJob ) StoredVehicle->ServerMoveJob->release();
+					//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 					sendStoreVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->Nr );
 				}
 			}
@@ -1423,7 +1425,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( StoringVehicle->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
 				{
 					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
-					// TODO: other players
+					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
 					StoredVehicle->InSentryRange();
 				}
@@ -1438,7 +1440,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( StoringBuilding->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
 				{
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
-					// TODO: other players
+					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
 					StoredVehicle->InSentryRange();
 				}
