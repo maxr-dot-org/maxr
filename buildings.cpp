@@ -1991,6 +1991,11 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 {
 	Map->deleteVehicle ( Vehicle );
+	if ( Vehicle->bSentryStatus )
+	{
+		Vehicle->owner->deleteSentryVehicle( Vehicle );
+		Vehicle->bSentryStatus = false;
+	}
 
 	Vehicle->Loaded = true;
 

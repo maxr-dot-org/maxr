@@ -1440,6 +1440,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					// TODO: other players
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
+					StoredVehicle->InSentryRange();
 				}
 			}
 		}

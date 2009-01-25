@@ -2525,6 +2525,9 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	cVehicle *v = NULL;
 	cBuilding *b = NULL;
 
+	if ( Loaded )
+		return false;
+
 	if ( !data.can_attack )
 		return false;
 
@@ -3905,6 +3908,11 @@ bool cVehicle::canLoad ( cVehicle *Vehicle )
 void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 {
 	Map->deleteVehicle ( Vehicle );
+	if ( Vehicle->bSentryStatus )
+	{
+		Vehicle->owner->deleteSentryVehicle( Vehicle);
+		Vehicle->bSentryStatus = false;
+	}
 
 	Vehicle->Loaded = true;
 
