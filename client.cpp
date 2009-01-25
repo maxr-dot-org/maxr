@@ -2342,7 +2342,6 @@ void cClient::drawUnitCircles ()
 					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
 					v.BandX     = x;
 					v.BandY     = y;
-					v.BuildPath = true;
 				}
 				else
 				{
@@ -3367,7 +3366,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// when the vehicle was building it is also normal that the position should be changed
 					// so the log message will just be an debug one
 					int iLogType = cLog::eLOG_TYPE_NET_WARNING;
-					if ( Vehicle->IsBuilding || Vehicle->IsClearing | Vehicle->moving ) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+					if ( Vehicle->IsBuilding || Vehicle->IsClearing || Vehicle->moving ) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 					Log.write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
 
 					// set to server position if vehicle is not moving
@@ -3644,7 +3643,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
 			Vehicle->IsBuilding = true;
 
-			if ( SelectedVehicle && Vehicle == SelectedVehicle )
+			if ( Vehicle == SelectedVehicle )
 			{
 				StopFXLoop ( iObjectStream );
 				iObjectStream = Vehicle->PlayStram();
@@ -4687,19 +4686,6 @@ void cClient::handleMoveJobs ()
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
 					Vehicle->MoveJobActive = false;
-
-					// continue path building if necessary
-					if ( Vehicle->BuildPath )
-					{
-						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
-						{
-							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, -1, Vehicle->PosX+Vehicle->PosY*Map->size, true, Vehicle->BandX+Vehicle->BandY*Map->size );
-						}
-						else
-						{
-							Vehicle->BuildPath = false;
-						}
-					}
 				}
 				else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs.Delete ( i );

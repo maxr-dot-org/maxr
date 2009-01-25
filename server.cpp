@@ -534,6 +534,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			const sUnitData& Data = *BuildingType.getUnitData();
 			iBuildSpeed = message->popInt16();
+			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
 
 			if ( Data.is_big )
@@ -571,29 +572,23 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
 
-			if ( iBuildSpeed == -1 && Vehicle->BuildPath )
-			{
-				Vehicle->BuildCosts = Vehicle->BuildCostsStart;
-				Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
-			}
-			else
-			{
-				if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
-				Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
+			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
 
-				Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-				Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-				Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-				Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
-			}
+			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
+			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
+			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
+			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 
-			Vehicle->IsBuilding = true;
+			
 
 			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
 			{
+				Vehicle->BuildPath = false;
 				sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
 				break;
 			}
+
+			Vehicle->IsBuilding = true;
 
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
@@ -2613,8 +2608,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		 Map->IsWater(offset) ||
-		 Map->fields[offset].getBuildings() ))
+		 Map->IsWater(offset + 1) ||
+		 Map->fields[offset + 1].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + Map->size, value/4, false);
@@ -2623,8 +2618,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		Map->IsWater(offset) ||
-		Map->fields[offset].getBuildings() ))
+		Map->IsWater(offset + Map->size ) ||
+		Map->fields[offset + Map->size].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);
@@ -2633,8 +2628,8 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 
 	if ( big && (
-		Map->IsWater(offset) ||
-		Map->fields[offset].getBuildings() ))
+		Map->IsWater(offset + Map->size + 1 ) ||
+		Map->fields[offset + Map->size + 1].getBuildings() ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);
