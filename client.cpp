@@ -2342,6 +2342,7 @@ void cClient::drawUnitCircles ()
 					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
 					v.BandX     = x;
 					v.BandY     = y;
+					v.BuildPath = true;
 				}
 				else
 				{
@@ -4686,6 +4687,19 @@ void cClient::handleMoveJobs ()
 					Vehicle->moving = false;
 					Vehicle->rotating = false;
 					Vehicle->MoveJobActive = false;
+
+					// continue path building if necessary
+					if ( Vehicle->BuildPath )
+					{
+						if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart )
+						{
+							sendWantBuild ( Vehicle->iID, Vehicle->BuildingTyp, -1, Vehicle->PosX+Vehicle->PosY*Map->size, true, Vehicle->BandX+Vehicle->BandY*Map->size );
+						}
+						else
+						{
+							Vehicle->BuildPath = false;
+						}
+					}
 				}
 				else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				ActiveMJobs.Delete ( i );

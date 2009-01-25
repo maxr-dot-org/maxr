@@ -534,7 +534,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			const sUnitData& Data = *BuildingType.getUnitData();
 			iBuildSpeed = message->popInt16();
-			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
 
 			if ( Data.is_big )
@@ -572,23 +571,29 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
 
-			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
-
-			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
-
-			
-
-			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
+			if ( iBuildSpeed == -1 && Vehicle->BuildPath )
 			{
-				Vehicle->BuildPath = false;
-				sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
-				break;
+				Vehicle->BuildCosts = Vehicle->BuildCostsStart;
+				Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
+			}
+			else
+			{
+				if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
+				Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
+
+				Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
+				Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
+				Vehicle->BuildCostsStart = Vehicle->BuildCosts;
+				Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 			}
 
 			Vehicle->IsBuilding = true;
+
+			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
+			{
+				sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
+				break;
+			}
 
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
