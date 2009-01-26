@@ -277,7 +277,7 @@ public:
 	*@param notifyClient when fasle, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
 	*/
 	void deleteUnit ( cBuilding *Building, bool notifyClient = true );
-	void deleteUnit( cVehicle* vehicle, bool notifyClient = true );
+	void deleteUnit( cVehicle* vehicle );
 
 	/**
 	* deletes an unit (and additional units on the same field if nessesarry)

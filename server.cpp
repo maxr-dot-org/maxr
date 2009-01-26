@@ -1643,7 +1643,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	owner->DoScan();
 }
 
-void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
+void cServer::deleteUnit( cVehicle* vehicle )
 {
 	if( !vehicle ) return;
 
@@ -1675,7 +1675,7 @@ void cServer::deleteUnit( cVehicle* vehicle, bool notifyClient )
 
 	Map->deleteVehicle( vehicle );
 
-	if ( notifyClient ) sendDeleteUnit( vehicle, -1 );
+	sendDeleteUnit( vehicle, -1 );
 
 
 	cPlayer* owner = vehicle->owner;
@@ -2413,7 +2413,8 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 void cServer::destroyUnit( cVehicle* vehicle )
 {
 	int offset = vehicle->PosX + vehicle->PosY*Map->size;
-	int value = vehicle->data.iBuilt_Costs;
+	int value = 0;
+	bool bigRubble = false;
 
 	//delete all buildings on the field, except connectors
 	cBuildingIterator bi = (*Map)[offset].getBuildings();
@@ -2423,24 +2424,26 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	{
 		if (!bi->owner) 
 		{
-			value += bi->RubbleValue*2;			
+			value += bi->RubbleValue*2;	
+			if ( bi->data.is_big ) bigRubble = true;
 		}
 		else
 		{
 			value += bi->data.iBuilt_Costs;
 		}
-		deleteUnit( bi, false );
+		deleteUnit( bi );
 		bi++;
 	}
 
 	if ( vehicle->data.is_big )
 	{
+		bigRubble = true;
 		bi = (*Map)[offset + 1].getBuildings();
 		if ( bi && bi->data.is_connector ) bi++;
 		while ( !bi.end )
 		{
 			value += bi->data.iBuilt_Costs;
-			deleteUnit( bi, false );
+			deleteUnit( bi );
 			bi++;
 		}
 
@@ -2449,7 +2452,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		while ( !bi.end )
 		{
 			value += bi->data.iBuilt_Costs;
-			deleteUnit( bi, false );
+			deleteUnit( bi );
 			bi++;
 		}
 
@@ -2458,17 +2461,22 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		while ( !bi.end )
 		{
 			value += bi->data.iBuilt_Costs;
-			deleteUnit( bi, false );
+			deleteUnit( bi );
 			bi++;
 		}
 	}
 
+
 	if ( (vehicle->data.can_drive != DRIVE_AIR || vehicle->FlightHigh == 0) && !vehicle->data.is_human )
 	{
-		addRubble( offset, value/2, vehicle->data.is_big );
+		value+= vehicle->data.iBuilt_Costs;
+	}
+	if ( value > 0 )
+	{
+		addRubble( offset, value/2, bigRubble );
 	}
 
-	deleteUnit( vehicle, false );
+	deleteUnit( vehicle );
 
 	
 }
@@ -2484,13 +2492,14 @@ void cServer::destroyUnit(cBuilding *b)
 	if ( topBuilding && topBuilding->data.is_big )
 	{
 		big = true;
+		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
 
 		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
 		while ( building.size() > 0 )
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
-			deleteUnit( building, false );
+			deleteUnit( building );
 		}
 
 		building = Map->fields[offset + Map->size].getBuildings();
@@ -2498,7 +2507,7 @@ void cServer::destroyUnit(cBuilding *b)
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
-			deleteUnit( building, false );
+			deleteUnit( building );
 		}
 
 		building = Map->fields[offset + Map->size + 1].getBuildings();
@@ -2506,7 +2515,7 @@ void cServer::destroyUnit(cBuilding *b)
 		{
 			if ( building->owner ) value += building->data.iBuilt_Costs;
 			else value += building->RubbleValue*2;
-			deleteUnit( building, false );
+			deleteUnit( building );
 		}
 	}
  
@@ -2515,7 +2524,7 @@ void cServer::destroyUnit(cBuilding *b)
 	{
 		if ( building->owner ) value += building->data.iBuilt_Costs;
 		else value += building->RubbleValue*2;
-		deleteUnit( building, false );
+		deleteUnit( building );
 	}
 
 	if ( !isConnector || value > 2 )

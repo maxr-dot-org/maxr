@@ -421,12 +421,6 @@ void cServerAttackJob::makeImpact(int x, int y )
 		remainingHP = targetVehicle->data.hit_points;
 		owner = targetVehicle->owner;
 		Log.write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
-
-		if (targetVehicle->data.hit_points <= 0)
-		{
-			Server->destroyUnit( targetVehicle );
-			targetVehicle = NULL;
-		}
 	}
 	else if ( targetBuilding )
 	{
@@ -449,12 +443,6 @@ void cServerAttackJob::makeImpact(int x, int y )
 		targetBuilding->hasBeenAttacked = true;
 
 		Log.write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hit_points), cLog::eLOG_TYPE_NET_DEBUG );
-
-		if ( targetBuilding->data.hit_points <= 0 )
-		{
-			Server->destroyUnit( targetBuilding );
-			targetBuilding = NULL;
-		}
 	}
 
 	//workaround
@@ -462,6 +450,19 @@ void cServerAttackJob::makeImpact(int x, int y )
 	if ( owner ) owner->ScanMap[offset] = 1;
 
 	sendAttackJobImpact( offset, remainingHP, attackMode );
+
+	//remove the destroyed units
+	if ( targetBuilding && targetBuilding->data.hit_points <= 0 )
+	{
+		Server->destroyUnit( targetBuilding );
+		targetBuilding = NULL;
+	}
+	else if ( targetVehicle && targetVehicle->data.hit_points <= 0)
+	{
+		Server->destroyUnit( targetVehicle );
+		targetVehicle = NULL;
+	}
+
 
 	//attack finished. reset Attacking and bIsBeeingAttacked flags
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;

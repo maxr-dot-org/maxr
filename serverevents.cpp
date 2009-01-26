@@ -95,18 +95,17 @@ void sendDeleteUnit ( cVehicle* vehicle, int iClient )
 		for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
 		{
 			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-
 			message->pushInt16( vehicle->iID );
-
 			Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
 		}
+		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
+		message->pushInt16( vehicle->iID );
+		Server->sendNetMessage( message, vehicle->owner->Nr );
 	}
 	else
 	{
 		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-
 		message->pushInt16( vehicle->iID );
-
 		Server->sendNetMessage( message, iClient );
 	}
 }

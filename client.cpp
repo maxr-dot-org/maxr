@@ -2828,10 +2828,10 @@ void cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "/players on" ) == 0 ) { bDebugPlayers = true; return; }
 	if ( sCmd.compare( "/players off" ) == 0 ) { bDebugPlayers = false; return; }
 	
-	if ( sCmd.substr( 0, 6 ).compare( "/resync" ) == 0 )
+	if ( sCmd.substr( 0, 7 ).compare( "/resync" ) == 0 )
 	{
 		if ( Server == NULL ) return;
-		if ( sCmd.length() > 6 )
+		if ( sCmd.length() > 7 )
 		{
 			unsigned int playernum = atoi ( sCmd.substr ( 7, 8 ).c_str() );
 			cPlayer *Player = Server->getPlayerFromNumber ( playernum );
@@ -5436,45 +5436,6 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 
 void cClient::destroyUnit( cVehicle* vehicle )
 {
-	int offset = vehicle->PosX + vehicle->PosY*Map->size;
-
-	//delete all buildings on the field, except connectors
-	cBuildingIterator bi = (*Map)[offset].getBuildings();
-	if ( bi && bi->data.is_connector ) bi++;
-	
-	while ( !bi.end )
-	{
-		deleteUnit( bi );
-		bi++;
-	}
-
-	if ( vehicle->data.is_big )
-	{
-		bi = (*Map)[offset + 1].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
-		while ( !bi.end )
-		{
-			deleteUnit( bi );
-			bi++;
-		}
-
-		bi = (*Map)[offset + Map->size].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
-		while ( !bi.end )
-		{
-			deleteUnit( bi );
-			bi++;
-		}
-
-		bi = (*Map)[offset + 1 + Map->size].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
-		while ( !bi.end )
-		{
-			deleteUnit( bi );
-			bi++;
-		}
-	}
-
 	//play explosion
 	if ( vehicle->data.is_big )
 	{
@@ -5484,7 +5445,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
-	else if ( Map->IsWater(offset) )
+	else if ( Map->IsWater(vehicle->PosX + vehicle->PosY*Map->size) )
 	{
 		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
@@ -5498,39 +5459,21 @@ void cClient::destroyUnit( cVehicle* vehicle )
 		//add corpse
 		Client->addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
 	}
-	
-	deleteUnit( vehicle );
 }
 
 void cClient::destroyUnit(cBuilding *building)
 {
-	int offset = building->PosX + building->PosY * Map->size;
-
-	//delete all buildings on the field
-	//and if top is big, although all other buildings under the top building
-	cBuilding* topBuilding = Map->fields[offset].getBuildings();
+	//play explosion animation
+	cBuilding* topBuilding = Map->fields[building->PosX + building->PosY*Map->size].getBuildings();
 	if ( topBuilding && topBuilding->data.is_big )
 	{
 		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
-
-		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
-		cBuildingIterator bi = Map->fields[offset + 1].getBuildings();
-		while ( bi.size() > 0 ) { deleteUnit( bi ); }
-
-		bi = Map->fields[offset + Map->size].getBuildings();
-		while ( bi.size() > 0 ) { deleteUnit( bi ); }
-
-		bi = Map->fields[offset + Map->size + 1].getBuildings();
-		while ( bi.size() > 0 ) { deleteUnit( bi ); }
 	}
 	else
 	{
 		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
 	
-	cBuildingIterator bi = Map->fields[offset].getBuildings();
-	while ( bi.size() > 0 ) { deleteUnit( bi ); }
-
 }
 
 void cClient::checkVehiclePositions(cNetMessage *message)
