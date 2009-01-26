@@ -321,12 +321,6 @@ private:
 	*/
 	void traceBuilding ( cBuilding *Building, int *iY, int iX );
 	/**
-	* continues the path of a building vehicle
-	*@author alzi alias DoctorDeath
-	*@param Vehicle The vehicle that will continue its path
-	*/
-	void continuePathBuilding ( cVehicle *Vehicle );
-	/**
 	* gets the subbase with the id
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase

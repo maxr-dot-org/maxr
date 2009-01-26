@@ -329,7 +329,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Log.write(" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG );
 				break;
 			}
-			if ( Vehicle->IsBuilding )
+			if ( Vehicle->IsBuilding || Vehicle->BuildPath )
 			{
 				Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
 				break;
@@ -520,19 +520,20 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iBuildSpeed, iBuildOff, iPathOff;
 			int iTurboBuildRounds[3];
 			int iTurboBuildCosts[3];
-			sID BuildingType;
 
 			Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( Vehicle == NULL ) break;
+			if ( Vehicle->IsBuilding || Vehicle->BuildPath ) break;
 
-			BuildingType.iFirstPart = message->popInt16();
-			BuildingType.iSecondPart = message->popInt16();
-			if ( BuildingType.getUnitData() == NULL )
+			sID BuildingTyp;
+			BuildingTyp.iFirstPart = message->popInt16();
+			BuildingTyp.iSecondPart = message->popInt16();
+			if ( BuildingTyp.getUnitData() == NULL )
 			{
-				Log.write(" Server: invalid unit: " + iToStr(BuildingType.iFirstPart) + "."  + iToStr(BuildingType.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
+				Log.write(" Server: invalid unit: " + iToStr(BuildingTyp.iFirstPart) + "."  + iToStr(BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-			const sUnitData& Data = *BuildingType.getUnitData();
+			const sUnitData& Data = *BuildingTyp.getUnitData();
 			iBuildSpeed = message->popInt16();
 			iBuildOff = message->popInt32();
 
@@ -545,7 +546,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size    , Vehicle ) &&
 						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size + 1, Vehicle )) )
 				{
-					sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
+					sendBuildAnswer ( false, Vehicle );
 					break;
 				}
 				Vehicle->BuildBigSavedPos = Vehicle->PosX+Vehicle->PosY*Map->size;
@@ -560,46 +561,37 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				if ( !Map->possiblePlaceBuilding( Data, iBuildOff, Vehicle ))
 				{
-					sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
+					sendBuildAnswer ( false, Vehicle );
 					break;
 				}
 			}
 
-			Vehicle->BuildingTyp = BuildingType;
-			Vehicle->BuildPath = message->popBool();
+			Vehicle->BuildingTyp = BuildingTyp;
+			bool bBuildPath = message->popBool();
 			iPathOff = message->popInt32();
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
 
-			if ( iBuildSpeed == -1 && Vehicle->BuildPath )
-			{
-				Vehicle->BuildCosts = Vehicle->BuildCostsStart;
-				Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
-			}
-			else
-			{
-				if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
-				Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingType.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
+			
+			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
+			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
 
-				Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-				Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-				Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-				Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
-			}
-
-			Vehicle->IsBuilding = true;
+			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
+			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
+			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
+			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 
 			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
 			{
-				sendBuildAnswer ( false, Vehicle->iID, 0, sID(), 0, 0, Vehicle->owner->Nr );
+				sendBuildAnswer ( false, Vehicle );
 				break;
 			}
 
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-			{
-				sendBuildAnswer(true, Vehicle->iID, iBuildOff, BuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, Vehicle->SeenByPlayerList[i]->Nr );
-			}
-			sendBuildAnswer ( true, Vehicle->iID, iBuildOff, BuildingType, Vehicle->BuildRounds, Vehicle->BuildCosts, Vehicle->owner->Nr );
+
+			Vehicle->IsBuilding = true;
+			Vehicle->BuildPath = bBuildPath;
+
+			sendBuildAnswer ( true, Vehicle );
 
 			if ( Vehicle->ServerMoveJob ) Vehicle->ServerMoveJob->release();
 		}
@@ -614,11 +606,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
 
+			if (!Map->possiblePlace( Vehicle, iEscapeX, iEscapeY )) break;
+
+			addUnit( Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp.getBuilding(), Vehicle->owner );
+
 			// end building
 			Vehicle->IsBuilding = false;
 			Vehicle->BuildPath = false;
 
-			addUnit( Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp.getBuilding(), Vehicle->owner );
 
 			// set the vehicle to the border
 			if ( Vehicle->data.can_build == BUILD_BIG )
@@ -641,74 +636,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			// drive away from the building lot
-			cServerMoveJob *MoveJob = new cServerMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, false, Vehicle );
-			if ( MoveJob->calcPath() )
-			{
-				sendMoveJobServer ( MoveJob, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendMoveJobServer( MoveJob, Vehicle->SeenByPlayerList[i]->Nr );
-				}
-				addActiveMoveJob ( MoveJob );
-			}
-			else
-			{
-				delete MoveJob;
-				Vehicle->ServerMoveJob = NULL;
-			}
-		}
-		break;
-	case GAME_EV_WANT_CONTINUE_PATH:
-		{
-			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-			if ( Vehicle == NULL ) break;
-
-			int iNextX = message->popInt16();
-			int iNextY = message->popInt16();
-
-			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
-
-			// check whether the exit field is free
-			cServerMoveJob *MoveJob = new cServerMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iNextX+iNextY*Map->size, false, Vehicle );
-			if ( Map->possiblePlaceBuilding(*Vehicle->BuildingTyp.getUnitData(), iNextX, iNextY ) && MoveJob->calcPath() )
-			{
-				addUnit( Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp.getBuilding(), Vehicle->owner );
-				Vehicle->IsBuilding = false;
-				Vehicle->BuildPath = false;
-
-				sendUnitData ( Vehicle, Vehicle->owner->Nr );
-				sendContinuePathAnswer ( true, Vehicle->iID, Vehicle->owner->Nr );
-				sendMoveJobServer ( MoveJob, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
-					sendContinuePathAnswer ( true, Vehicle->iID, Vehicle->SeenByPlayerList[i]->Nr );
-					sendMoveJobServer( MoveJob, Vehicle->SeenByPlayerList[i]->Nr );
-				}
-				addActiveMoveJob ( MoveJob );
-			}
-			else
-			{
-				delete MoveJob;
-				Vehicle->ServerMoveJob = NULL;
-
-				if ( Vehicle->BuildingTyp.getUnitData()->is_base || Vehicle->BuildingTyp.getUnitData()->is_connector )
-				{
-					addUnit( Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp.getBuilding(), Vehicle->owner );
-					Vehicle->IsBuilding = false;
-					Vehicle->BuildPath = false;
-					sendUnitData ( Vehicle, Vehicle->owner->Nr );
-					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-					{
-						sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
-					}
-				}
-				sendContinuePathAnswer ( false, Vehicle->iID, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendContinuePathAnswer ( false, Vehicle->iID, Vehicle->owner->Nr );
-				}
-			}
+			addMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, Vehicle );
 		}
 		break;
 	case GAME_EV_WANT_STOP_BUILDING:
@@ -2196,8 +2124,6 @@ void cServer::makeTurnEnd ()
 		}
 	}
 
-	// TODO: implement these things
-
 	// produce resources
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
@@ -2441,17 +2367,16 @@ void cServer::handleTimer()
 	//iTimer1: 100ms
 	//iTimer2: 400ms
 
-	static unsigned int iLast = 0, i = 0;
+	static unsigned int iLast = 0;
 	iTimer0 = 0 ;
 	iTimer1 = 0;
 	iTimer2 = 0;
 	if ( iTimerTime != iLast )
 	{
 		iLast = iTimerTime;
-		i++;
 		iTimer0 = 1;
-		if ( i&0x1 ) iTimer1 = 1;
-		if ( ( i&0x3 ) == 3 ) iTimer2 = 1;
+		if (   iTimerTime & 0x1 ) iTimer1 = 1;
+		if ( ( iTimerTime & 0x3 ) == 3 ) iTimer2 = 1;
 	}
 }
 
@@ -2823,4 +2748,28 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	sendUnitData ( Vehicle, Player->Nr );
 	sendSpecificUnitData ( Vehicle );
 	if ( Client ) EventHandler->HandleEvents ();
+}
+
+bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
+{
+	bool bIsAir = ( vehicle->data.can_drive == DRIVE_AIR );
+	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, bIsAir, vehicle );
+	if ( MoveJob->calcPath() )
+	{
+		sendMoveJobServer ( MoveJob, vehicle->owner->Nr );
+		for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+		{
+			sendMoveJobServer( MoveJob, vehicle->SeenByPlayerList[i]->Nr );
+		}
+		addActiveMoveJob ( MoveJob );
+		return true;
+	}
+	else
+	{
+		delete MoveJob;
+		vehicle->ServerMoveJob = NULL;
+		return false;
+	}
+
+	return false;
 }

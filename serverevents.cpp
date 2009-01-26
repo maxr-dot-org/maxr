@@ -441,25 +441,34 @@ void sendResources( cPlayer *Player )
 	}
 }
 
-void sendBuildAnswer( bool bOK, int iVehicleID, int iOff,  sID BuildingType, int iBuildRounds, int iBuildCosts, int iPlayer )
+void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 {
+	//message for the owner
 	cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
-	message->pushInt16( iBuildCosts );
-	message->pushInt16( iBuildRounds );
-	message->pushInt16( BuildingType.iSecondPart );
-	message->pushInt16( BuildingType.iFirstPart );
-	message->pushInt32( iOff );
-	message->pushInt16( iVehicleID );
+	message->pushInt16( vehicle->BandY );
+	message->pushInt16( vehicle->BandX );
+	message->pushBool(  vehicle->BuildPath );
+	message->pushInt16( vehicle->BuildRounds );
+	message->pushInt16( vehicle->BuildingTyp.iSecondPart );
+	message->pushInt16( vehicle->BuildingTyp.iFirstPart );
+	message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+	message->pushInt16( vehicle->PosY );
+	message->pushInt16( vehicle->PosX );
+	message->pushInt16( vehicle->iID );
 	message->pushBool ( bOK );
-	Server->sendNetMessage( message, iPlayer );
-}
+	Server->sendNetMessage( message, vehicle->owner->Nr );
 
-void sendContinuePathAnswer( bool bOK, int iVehicleID, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_CONTINUE_PATH_ANSWER );
-	message->pushBool ( bOK );
-	message->pushInt16( iVehicleID );
-	Server->sendNetMessage( message, iPlayer );
+	//message for the enemys
+	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
+		message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+		message->pushInt16( vehicle->PosY );
+		message->pushInt16( vehicle->PosX );
+		message->pushInt16( vehicle->iID );
+		message->pushBool ( bOK );
+		Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
+	}
 }
 
 void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  )

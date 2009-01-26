@@ -330,6 +330,10 @@ public:
 	*/
 	void addActiveMoveJob ( cServerMoveJob *MoveJob );
 	/**
+	* generates a new movejob
+	*/
+	bool addMoveJob(int iSrc, int iDest, cVehicle* vehicle);
+	/**
 	* adds a new rubble object to the game
 	* @param offset the offset where the rubble is added
 	* @param value the amount of material in the rubble field

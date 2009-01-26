@@ -357,10 +357,6 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_BUILD");
 	case GAME_EV_BUILD_ANSWER:
 		return string("GAME_EV_BUILD_ANSWER");
-	case GAME_EV_WANT_CONTINUE_PATH:
-		return string("GAME_EV_WANT_CONTINUE_PATH");
-	case GAME_EV_CONTINUE_PATH_ANSWER:
-		return string("GAME_EV_CONTINUE_PATH_ANSWER");
 	case GAME_EV_STOP_BUILD:
 		return string("GAME_EV_STOP_BUILD");
 	case GAME_EV_END_BUILDING:

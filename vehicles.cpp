@@ -988,19 +988,47 @@ int cVehicle::refreshData ()
 		if ( BuildRounds == 0 )
 		{
 			Server->addReport ( BuildingTyp, false, owner->Nr );
-
-			if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
+			
+			//handle pathbuilding
+			//here the new building is added (if possible) and the move job to the next field is generated
+			//the new build event is generated in cServerMoveJob::moveVehicle
+			if ( BuildPath )
 			{
-				if ( !BuildPath || data.cargo < BuildCostsStart || ( PosX == BandX && PosY == BandY ) ) IsBuilding = false;
-				if ( !BuildPath || !IsBuilding ) Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
+				int nextX = PosX;
+				if ( PosX > BandX ) nextX--;
+				if ( PosX < BandX ) nextX++;
+				int nextY = PosY;
+				if ( PosY > BandY ) nextY--;
+				if ( PosY < BandY ) nextY++;
+
+				if ( (PosX != BandX || PosY != BandY) && Server->addMoveJob( PosX + PosY*Server->Map->size, nextX + nextY*Server->Map->size, this ) )
+				{
+					IsBuilding = false;
+					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
+				}
+				else
+				{
+					if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
+					{
+						Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
+						IsBuilding = false;
+					}
+					BuildPath = false;
+					sendBuildAnswer(false, this );
+				}
+			}
+			else
+			{
+				//add building immediatly if it doesn't require the engineer to drive away
+				if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
+				{
+					IsBuilding = false;
+					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
+				}
 			}
 		}
 
-		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
-		{
-			sendUnitData ( this, SeenByPlayerList[i]->Nr );
-		}
-		sendUnitData ( this, owner->Nr );
+		iReturn = 1;
 	}
 
 	// Räumen:
@@ -1033,11 +1061,8 @@ int cVehicle::refreshData ()
 			if ( data.cargo > data.max_cargo ) data.cargo = data.max_cargo;
 			Server->deleteRubble ( Rubble );
 		}
-		for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
-		{
-			sendUnitData ( this, SeenByPlayerList[i]->Nr );
-		}
-		sendUnitData ( this, owner->Nr );
+
+		iReturn = 1;
 	}
 	return iReturn;
 }
@@ -1826,12 +1851,12 @@ string cVehicle::GetStatusStr ( void )
 // Spielt den Soundstream am, der zu diesem Vehicle gehört:
 int cVehicle::PlayStram ( void )
 {
-	if ( IsBuilding && BuildRounds )
+	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
 	{
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	}
 	else
-		if ( IsClearing && ClearingRounds )
+		if ( IsClearing )
 		{
 			return PlayFXLoop ( SoundData.SNDClearing );
 		}

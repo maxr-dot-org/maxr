@@ -139,15 +139,6 @@ void sendWantEndBuilding( cVehicle *Vehicle, int EscapeX, int EscapeY )
 	Client->sendNetMessage( message );
 }
 
-void sendWantContinuePathBuild( cVehicle *Vehicle, int iNextX, int iNextY )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CONTINUE_PATH );
-	message->pushInt16 ( iNextY );
-	message->pushInt16 ( iNextX );
-	message->pushInt16 ( Vehicle->iID );
-	Client->sendNetMessage( message );
-}
-
 void sendWantStopBuilding( int iVehicleID )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_BUILDING );
