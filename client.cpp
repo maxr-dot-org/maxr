@@ -739,7 +739,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				else if ( OverUnitField )
 				{
 					// open unit menu
-					if ( SelectedVehicle && ( overPlane == SelectedVehicle || overVehicle == SelectedVehicle ) )
+					if ( bChange && SelectedVehicle && ( overPlane == SelectedVehicle || overVehicle == SelectedVehicle ) )
 					{
 						if ( !SelectedVehicle->moving && !SelectedVehicle->rotating&&SelectedVehicle->owner == ActivePlayer )
 						{
@@ -747,7 +747,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
-					else if ( SelectedBuilding&& ( overBaseBuilding == SelectedBuilding || overBuilding == SelectedBuilding ) )
+					else if ( bChange && SelectedBuilding&& ( overBaseBuilding == SelectedBuilding || overBuilding == SelectedBuilding ) )
 					{
 						if ( SelectedBuilding->owner == ActivePlayer )
 						{
@@ -759,13 +759,13 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					else if ( MouseStyle == Modern ) selectUnit ( OverUnitField, true );
 				}
 			// check whether the name of a unit has to be changed:
-			if ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
+			if ( bChange && SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
 				bChangeObjectName = true;
 				InputHandler->setInputStr ( SelectedVehicle->name );
 				InputHandler->setInputState ( true );
 			}
-			else if ( SelectedBuilding&&SelectedBuilding->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
+			else if ( bChange && SelectedBuilding&&SelectedBuilding->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
 				bChangeObjectName = true;
 				InputHandler->setInputStr ( SelectedVehicle->name );
@@ -805,7 +805,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		}
 		isInMenu = false;
 	}
-	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) )
+	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) && !bWaitForOthers )
 	{
 		if ( bChatInput )
 		{
@@ -832,7 +832,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			InputHandler->setInputState ( false );
 		}
 	}
-	else if ( keysym.sym == KeysList.KeyEndTurn )
+	else if ( keysym.sym == KeysList.KeyEndTurn && !bWaitForOthers )
 	{
 		if ( !bWantToEnd )
 		{
@@ -923,36 +923,36 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		Hud.DoScroll ( 0 );
 	}
 	// Hotkeys for the unit menues
-	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedVehicle && SelectedVehicle->data.can_attack && SelectedVehicle->data.shots )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedVehicle && SelectedVehicle->data.can_attack && SelectedVehicle->data.shots && !bWaitForOthers )
 	{
 		SelectedVehicle->AttackMode = true;
 		Hud.CheckScroll();
 		mouseMoveCallback ( true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedBuilding && SelectedBuilding->data.can_attack && SelectedBuilding->data.shots )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedBuilding && SelectedBuilding->data.can_attack && SelectedBuilding->data.shots && !bWaitForOthers )
 	{
 		SelectedBuilding->AttackMode = true;
 		Hud.CheckScroll();
 		mouseMoveCallback ( true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding )
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding && !bWaitForOthers )
 	{
 		if ( SelectedVehicle->ClientMoveJob ) SelectedVehicle->ClientMoveJob->release();
 		SelectedVehicle->ShowBuildMenu();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build )
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build && !bWaitForOthers )
 	{
 		SelectedBuilding->ShowBuildMenu();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_METAL || SelectedVehicle->data.can_transport == TRANS_OIL || SelectedVehicle->data.can_transport == TRANS_GOLD ) && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing )
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_METAL || SelectedVehicle->data.can_transport == TRANS_OIL || SelectedVehicle->data.can_transport == TRANS_GOLD ) && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing && !bWaitForOthers )
 	{
 		SelectedVehicle->Transfer = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedBuilding && ( SelectedBuilding->data.can_transport == TRANS_METAL || SelectedBuilding->data.can_transport == TRANS_OIL || SelectedBuilding->data.can_transport == TRANS_GOLD ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedBuilding && ( SelectedBuilding->data.can_transport == TRANS_METAL || SelectedBuilding->data.can_transport == TRANS_OIL || SelectedBuilding->data.can_transport == TRANS_GOLD ) && !bWaitForOthers )
 	{
 		SelectedBuilding->Transfer = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuAutomove && SelectedVehicle && SelectedVehicle->data.can_survey )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAutomove && SelectedVehicle && SelectedVehicle->data.can_survey && !bWaitForOthers )
 	{
 		if ( SelectedVehicle->autoMJob == NULL ) SelectedVehicle->autoMJob = new cAutoMJob ( SelectedVehicle );
 		else
@@ -961,73 +961,73 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			SelectedVehicle->autoMJob = NULL;
 		}
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) && !bWaitForOthers )
 	{
 		sendWantStartWork( SelectedBuilding );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedVehicle && ( SelectedVehicle->ClientMoveJob || ( SelectedVehicle->IsBuilding && SelectedVehicle->BuildRounds ) || ( SelectedVehicle->IsClearing && SelectedVehicle->ClearingRounds ) ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedVehicle && ( SelectedVehicle->ClientMoveJob || ( SelectedVehicle->IsBuilding && SelectedVehicle->BuildRounds ) || ( SelectedVehicle->IsClearing && SelectedVehicle->ClearingRounds ) ) && !bWaitForOthers )
 	{
 		if ( SelectedVehicle->ClientMoveJob ) sendWantStopMove ( SelectedVehicle->iID );
 		else if ( SelectedVehicle->IsBuilding ) sendWantStopBuilding ( SelectedVehicle->iID );
 		else if ( SelectedVehicle->IsClearing ) sendWantStopClear ( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedBuilding && SelectedBuilding->IsWorking )
+	else if ( keysym.sym == KeysList.KeyUnitMenuStop && SelectedBuilding && SelectedBuilding->IsWorking && !bWaitForOthers )
 	{
 		sendWantStopWork( SelectedBuilding );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->fields[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].getRubble() && !SelectedVehicle->IsClearing )
+	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->fields[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].getRubble() && !SelectedVehicle->IsClearing && !bWaitForOthers )
 	{
 		sendWantStartClear ( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedVehicle && ( SelectedVehicle->bSentryStatus || SelectedVehicle->data.can_attack ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedVehicle && ( SelectedVehicle->bSentryStatus || SelectedVehicle->data.can_attack ) && !bWaitForOthers )
 	{
 		sendChangeSentry ( SelectedVehicle->iID, true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedBuilding && ( SelectedBuilding->bSentryStatus || SelectedBuilding->data.can_attack ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedBuilding && ( SelectedBuilding->bSentryStatus || SelectedBuilding->data.can_attack ) && !bWaitForOthers )
 	{
 		sendChangeSentry ( SelectedBuilding->iID, false );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers )
 	{
 		SelectedVehicle->showStorage();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) && !bWaitForOthers )
 	{
 		SelectedBuilding->ShowStorage();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers )
 	{
 		SelectedVehicle->LoadActive = !SelectedVehicle->LoadActive;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) && !bWaitForOthers )
 	{
 		SelectedBuilding->LoadActive = !SelectedBuilding->LoadActive;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuReload && SelectedVehicle && SelectedVehicle->data.can_reload && SelectedVehicle->data.cargo >= 2 )
+	else if ( keysym.sym == KeysList.KeyUnitMenuReload && SelectedVehicle && SelectedVehicle->data.can_reload && SelectedVehicle->data.cargo >= 2 && !bWaitForOthers )
 	{
 		SelectedVehicle->MuniActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuRepair && SelectedVehicle && SelectedVehicle->data.can_repair && SelectedVehicle->data.cargo >= 2 )
+	else if ( keysym.sym == KeysList.KeyUnitMenuRepair && SelectedVehicle && SelectedVehicle->data.can_repair && SelectedVehicle->data.cargo >= 2 && !bWaitForOthers )
 	{
 		SelectedVehicle->RepairActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLayMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo > 0 )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLayMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo > 0 && !bWaitForOthers )
 	{
 		SelectedVehicle->LayMines = !SelectedVehicle->LayMines;
 		SelectedVehicle->ClearMines = false;
 		sendMineLayerStatus( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuClearMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo < SelectedVehicle->data.max_cargo )
+	else if ( keysym.sym == KeysList.KeyUnitMenuClearMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo < SelectedVehicle->data.max_cargo && !bWaitForOthers )
 	{
 		SelectedVehicle->ClearMines = !SelectedVehicle->ClearMines;
 		SelectedVehicle->LayMines = false;
 		sendMineLayerStatus ( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDisable && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDisable && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots && !bWaitForOthers )
 	{
 		SelectedVehicle->DisableActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSteal && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots)
+	else if ( keysym.sym == KeysList.KeyUnitMenuSteal && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots && !bWaitForOthers)
 	{
 		SelectedVehicle->StealActive = true;
 	}
@@ -1039,19 +1039,19 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	{
 		SelectedBuilding->ShowHelp();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking && !bWaitForOthers )
 	{
 		SelectedBuilding->showMineManager();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking )
+	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking && !bWaitForOthers )
 	{
 		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need )
+	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need && !bWaitForOthers )
 	{
 		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road && !bWaitForOthers )
 	{
 		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 	}
@@ -4483,13 +4483,18 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
 	bool aborted = false;
+	isInMenu = false;
 
 	while ( bWaitForOthers )
 	{
 		EventHandler->HandleEvents();
 
+		// check mouse moves 
 		mouse->GetPos();
-
+		Hud.CheckMouseOver();
+		Hud.CheckScroll();
+		// check minimap
+		if ( clientMouseState.leftButtonPressed && !bHelpActive ) Hud.CheckOneClick();
 		// check length of chat string
 		if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
 
@@ -5102,8 +5107,9 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	while ( 1 )
 	{
-		if ( SrcBuilding != NULL && Client->SelectedBuilding == NULL ) break;
-		if ( SrcVehicle != NULL && Client->SelectedVehicle == NULL ) break;
+		if ( SrcBuilding && Client->SelectedBuilding != SrcBuilding ) break;
+		if ( SrcVehicle && Client->SelectedVehicle != SrcVehicle ) break;
+		if ( !isInMenu ) break;
 
 		handleTimer();
 		doGameActions();

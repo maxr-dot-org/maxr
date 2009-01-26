@@ -2101,8 +2101,8 @@ void cBuilding::ShowStorage ( void )
 
 	while ( 1 )
 	{
-		if ( Client->SelectedBuilding == NULL )
-			break;
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
 		Client->doGameActions();
@@ -2985,8 +2985,8 @@ void cBuilding::ShowResearch ( void )
 
 	while ( 1 )
 	{
-		if ( Client->SelectedBuilding == NULL )
-			break;
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
 		Client->doGameActions();
@@ -3313,8 +3313,8 @@ void cBuilding::ShowUpgrade ( void )
 
 	while ( 1 )
 	{
-		if ( Client->SelectedBuilding == NULL )
-			break;
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
 		Client->doGameActions();
@@ -4700,8 +4700,8 @@ void cBuilding::showMineManager ( void )
 
 	while ( 1 )
 	{
-		if (  Client->SelectedBuilding == NULL )
-			break;
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
 		Client->doGameActions();
@@ -5578,8 +5578,8 @@ void cBuilding::ShowBuildMenu ( void )
 
 	while ( 1 )
 	{
-		if (  Client->SelectedBuilding == NULL )
-			break;
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->doGameActions();
 
@@ -7622,6 +7622,9 @@ void cBuilding::ShowHelp ( void )
 
 	while ( 1 )
 	{
+		if (  Client->SelectedBuilding != this ) break;
+		if ( !Client->isInMenu ) break;
+
 		Client->handleTimer();
 		Client->doGameActions();
 

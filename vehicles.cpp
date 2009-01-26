@@ -1367,6 +1367,9 @@ void cVehicle::ShowHelp ( void )
 
 	while ( 1 )
 	{
+		if ( Client->SelectedVehicle != this ) break;
+		if ( !Client->isInMenu ) break;
+
 		Client->handleTimer();
 		Client->doGameActions();
 
@@ -2842,8 +2845,8 @@ void cVehicle::ShowBuildMenu ( void )
 		// Events holen:
 		EventHandler->HandleEvents();
 
-		if ( Client->SelectedVehicle == NULL )
-			break;
+		if ( Client->SelectedVehicle != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		// Die Maus machen:
 		mouse->GetPos();
@@ -4011,8 +4014,8 @@ void cVehicle::showStorage ()
 
 	while ( 1 )
 	{
-		if (  Client->SelectedVehicle == NULL )
-			break;
+		if ( Client->SelectedVehicle != this ) break;
+		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
 		Client->doGameActions();
