@@ -4198,6 +4198,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 					Savegame->loadHeader ( &savegameString, NULL, NULL );
 					savegameString += "\n\n" + lngPack.i18n ( "Text~Title~Players" ) +"\n" + Savegame->getPlayerNames();
 					sMap = Savegame->getMapName();
+					sendOptions ();
 				}
 				else
 				{
