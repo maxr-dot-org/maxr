@@ -2695,17 +2695,18 @@ void cServer::deleteRubble( cBuilding* rubble )
 
 void cServer::deletePlayer( cPlayer *Player )
 {
+	// send messages to clients that the units have to be deleted
 	cVehicle *Vehicle = Player->VehicleList;
 	while ( Vehicle )
 	{
-		deleteUnit ( Vehicle );
-		Vehicle = Player->VehicleList;
+		sendDeleteUnit( Vehicle, -1 );
+		Vehicle = Vehicle->next;
 	}
 	cBuilding *Building = Player->BuildingList;
 	while ( Building )
 	{
-		deleteUnit ( Building );
-		Building = Player->BuildingList;
+		sendDeleteUnit( Building, -1 );
+		Building = Building->next;
 	}
 	sendDeletePlayer ( Player );
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )

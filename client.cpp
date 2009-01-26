@@ -4508,6 +4508,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 {
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
+	bool aborted = false;
 
 	while ( bWaitForOthers )
 	{
@@ -4587,7 +4588,6 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 
 			Uint8 *keystate;
 			keystate = SDL_GetKeyState( NULL );
-			static bool aborted = false;
 			if ( keystate[SDLK_F2] && !aborted )
 			{
 				sendAbortWaiting ();

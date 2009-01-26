@@ -3885,6 +3885,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 	// prepare the focus
 	iFocus = FOCUS_NAME;
+	InputHandler->setInputStr ( ActualPlayer->name );
 
 	ChatStr = "";
 	font->showText(20,245, lngPack.i18n ( "Text~Title~IP" ));
@@ -4203,6 +4204,22 @@ void cMultiPlayerMenu::runNetworkMenu()
 					if ( Savegame ) delete Savegame;
 					Savegame = NULL;
 					savegameString.clear();
+				}
+				// reset InputStr
+				switch ( iFocus )
+				{
+					case FOCUS_IP:
+						InputHandler->setInputStr ( sIP );
+						break;
+					case FOCUS_PORT:
+						InputHandler->setInputStr ( iToStr ( iPort ) );
+						break;
+					case FOCUS_NAME:
+						InputHandler->setInputStr ( ActualPlayer->name );
+						break;
+					case FOCUS_CHAT:
+						InputHandler->setInputStr ( ChatStr );
+						break;
 				}
 
 				SDL_FillRect(buffer, NULL, 0x0000);
