@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <math.h>
 #include "hud.h"
 #include "main.h"
 #include "mouse.h"
@@ -258,12 +259,17 @@ void cHud::DoZoom ( int x,int y )
 
 void cHud::SetZoom ( int zoom,int DestY )
 {
+	//check for minimum and maximum zoom factor
+	int iMinZoom = (int) ceil( (float) max(SettingsData.iScreenH - 32, SettingsData.iScreenW - 192) / Client->Map->size);
+
+	if ( zoom < iMinZoom ) zoom = iMinZoom;
+	if ( zoom < 5 ) zoom = 5;
+	else if ( zoom > 64 ) zoom = 64;
+
 	static int lastz=64;
 	SDL_Rect scr,dest;
 //  if(zoom<448/Client->Map->size)zoom=448/Client->Map->size;
-	if ( zoom< ( SettingsData.iScreenW-192 ) /Client->Map->size ) zoom= ( SettingsData.iScreenW-192 ) /Client->Map->size;
-	if ( zoom<5 ) zoom=5;
-	else if ( zoom>64 ) zoom=64;
+	
 	Zoom=zoom;
 //  zoom-=((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size));
 	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) );
@@ -298,10 +304,10 @@ void cHud::SetZoom ( int zoom,int DestY )
 		OffY+=off;
 //    off=Client->Map->size*64-(int)((448.0/Zoom)*64);
 		off=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
-		while ( OffX>off ) OffX--;
-		while ( OffY>off ) OffY--;
-		while ( OffX<0 ) OffX++;
-		while ( OffY<0 ) OffY++;
+		if ( OffX > off ) OffX = off;
+		if ( OffY > off ) OffY = off;
+		if ( OffX < 0   ) OffX = 0;
+		if ( OffY < 0   ) OffY = 0;
 	}
 	ScaleSurfaces();
 }
