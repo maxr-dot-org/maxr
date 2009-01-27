@@ -2847,7 +2847,7 @@ void cClient::doCommand ( string sCmd )
 		}
 		return;
 	}
-	if ( sCmd.substr( 0, 5 ).compare( "/mark "  ) == 0 )
+	if ( sCmd.substr( 0, 5 ).compare( "/mark"  ) == 0 )
 	{
 		sCmd.erase(0, 5 );
 		cNetMessage* message = new cNetMessage( GAME_EV_WANT_MARK_LOG );
@@ -2855,7 +2855,8 @@ void cClient::doCommand ( string sCmd )
 		Client->sendNetMessage( message );
 		return;
 	}
-	if ( sCmd.substr( 0, 6 ).compare( "/color " ) == 0 ) {int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return;}
+	if ( sCmd.substr( 0, 7 ).compare( "/color " ) == 0 ) {
+		int cl=0;sscanf ( sCmd.c_str(),"color %d",&cl );cl%=8;ActivePlayer->color=OtherData.colors[cl];return;}
 	if ( sCmd.compare( "/fog off" ) == 0 && Server )
 	{
 		memset ( Server->getPlayerFromNumber(ActivePlayer->Nr)->ScanMap,1,Map->size*Map->size );
