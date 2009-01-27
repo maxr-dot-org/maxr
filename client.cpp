@@ -3630,6 +3630,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->ShowBigBeton = true;
 				Vehicle->BigBetonAlpha = 10;
 			}
+			else
+			{
+				Map->moveVehicle(Vehicle, iBuildX, iBuildY );
+			}
 
 			if ( Vehicle->owner == ActivePlayer )
 			{

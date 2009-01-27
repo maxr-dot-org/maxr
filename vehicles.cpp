@@ -991,7 +991,7 @@ int cVehicle::refreshData ()
 			
 			//handle pathbuilding
 			//here the new building is added (if possible) and the move job to the next field is generated
-			//the new build event is generated in cServerMoveJob::moveVehicle
+			//the new build event is generated in cServer::handleMoveJobs()
 			if ( BuildPath )
 			{
 				int nextX = PosX;

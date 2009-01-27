@@ -647,23 +647,6 @@ void cServerMoveJob::moveVehicle()
 		{
 			Vehicle->FlightHigh = 64;
 		}
-
-		//resume path building
-		if ( Vehicle->BuildPath )
-		{
-			if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
-			{
-				Vehicle->IsBuilding = true;
-				Vehicle->BuildCosts = Vehicle->BuildCostsStart;
-				Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
-				sendBuildAnswer( true, Vehicle );
-			}
-			else
-			{
-				Vehicle->BuildPath = false;
-				sendBuildAnswer( false, Vehicle );
-			}
-		}
 	}
 }
 

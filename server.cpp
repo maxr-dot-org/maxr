@@ -2310,6 +2310,23 @@ void cServer::handleMoveJobs ()
 				}
 				else Log.write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 				delete MoveJob;
+
+				//continue path building
+				if ( Vehicle->BuildPath )
+				{
+					if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
+					{
+						Vehicle->IsBuilding = true;
+						Vehicle->BuildCosts = Vehicle->BuildCostsStart;
+						Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
+						sendBuildAnswer( true, Vehicle );
+					}
+					else
+					{
+						Vehicle->BuildPath = false;
+						sendBuildAnswer( false, Vehicle );
+					}
+				}
 			}
 			ActiveMJobs.Delete ( i );
 			continue;
