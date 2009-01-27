@@ -4260,6 +4260,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				neutralBuildings = nextBuilding;
 			}
 		}
+		break;
 	case GAME_EV_UNIT_UPGRADE_VALUES:
 		{
 			sID ID;
