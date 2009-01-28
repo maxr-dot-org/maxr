@@ -405,7 +405,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
-	if ( strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	loadUnitValues ( unitNode, &vehicle->data );
 
@@ -528,7 +528,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	building->iID = tmpinteger;
-	if ( strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	TiXmlElement *element;
 	int subbaseID;

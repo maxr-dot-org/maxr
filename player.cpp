@@ -578,7 +578,7 @@ cVehicle *cPlayer::GetNextVehicle ( void )
 	v=start;
 	do
 	{
-		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus ) return v;
+		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) return v;
 		next=false;
 		if ( v->next )
 		{
@@ -611,7 +611,7 @@ cVehicle *cPlayer::GetPrevVehicle ( void )
 	v=start;
 	do
 	{
-		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus ) return v;
+		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) return v;
 		next=false;
 		if ( v->prev )
 		{
