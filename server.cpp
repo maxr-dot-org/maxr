@@ -2312,7 +2312,7 @@ void cServer::handleMoveJobs ()
 				delete MoveJob;
 
 				//continue path building
-				if ( Vehicle->BuildPath )
+				if ( Vehicle && Vehicle->BuildPath )
 				{
 					if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
 					{
