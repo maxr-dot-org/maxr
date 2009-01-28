@@ -2773,6 +2773,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	}
 	sendUnitData ( Vehicle, Player->Nr );
 	sendSpecificUnitData ( Vehicle );
+	if ( Vehicle->DetectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
 	if ( Client ) EventHandler->HandleEvents ();
 }
 

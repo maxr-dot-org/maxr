@@ -405,7 +405,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
-	vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	loadUnitValues ( unitNode, &vehicle->data );
 
@@ -462,6 +462,24 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		MoveJobsLoad.Add ( MoveJob );
 	}
 
+	// read the players which have detected this unit
+	TiXmlElement *detectedNode;
+	if ( detectedNode = unitNode->FirstChildElement( "IsDetectedByPlayers" ) )
+	{
+		int playerNodeNum = 0;
+		while ( element = detectedNode->FirstChildElement ( ("Player_" + iToStr( playerNodeNum )).c_str() ) )
+		{
+			int playerNum;
+			element->Attribute ( "nr", &playerNum );
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( Player )
+			{
+				vehicle->setDetectedByPlayer ( Player );
+			}
+			playerNodeNum++;
+		}
+	}
+
 	// since we write all stored vehicles imediatly after the storing unit we can be sure that this one has been loaded yet
 	if ( element = unitNode->FirstChildElement( "Stored_In" ) )
 	{
@@ -510,7 +528,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	building->iID = tmpinteger;
-	building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	TiXmlElement *element;
 	int subbaseID;
@@ -597,6 +615,24 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 			itemnum++;
 			element = buildNode->FirstChildElement( "BuildList" )->FirstChildElement( ("Item_" + iToStr ( itemnum )).c_str() );
+		}
+	}
+
+	// read the players which have detected this unit
+	TiXmlElement *detectedNode;
+	if ( detectedNode = unitNode->FirstChildElement( "IsDetectedByPlayers" ) )
+	{
+		int playerNodeNum = 0;
+		while ( element = detectedNode->FirstChildElement ( ("Player_" + iToStr( playerNodeNum )).c_str() ) )
+		{
+			int playerNum;
+			element->Attribute ( "nr", &playerNum );
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( Player )
+			{
+				building->setDetectedByPlayer ( Player );
+			}
+			playerNodeNum++;
 		}
 	}
 }
@@ -1023,7 +1059,11 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	addAttributeElement ( unitNode, "ID", "num", iToStr ( Vehicle->iID ) );
 	addAttributeElement ( unitNode, "Owner", "num", iToStr ( Vehicle->owner->Nr ) );
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Vehicle->PosX ), "y", iToStr ( Vehicle->PosY ) );
-	addAttributeElement ( unitNode, "Name", "string", Vehicle->name );
+	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
+	string wasName = Vehicle->name;
+	Vehicle->GenerateName();
+	addAttributeElement ( unitNode, "Name", "string", Vehicle->name, "notDefault", ( Vehicle->name.compare ( wasName ) == NULL ) ? "0" : "1" );
+	Vehicle->name = wasName;
 
 	// write the standard unit values which are the same for vehicles and buildings
 	writeUnitValues ( unitNode, &Vehicle->data, &Vehicle->owner->VehicleData[Vehicle->typ->nr] );
@@ -1055,6 +1095,16 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->IsClearing ) addAttributeElement ( unitNode, "Clearing", "turns", iToStr ( Vehicle->ClearingRounds ).c_str(), "savedpos", iToStr ( Vehicle->BuildBigSavedPos ).c_str() );
 	if ( Vehicle->ServerMoveJob ) addAttributeElement ( unitNode, "Movejob", "destx", iToStr ( Vehicle->ServerMoveJob->DestX ).c_str(), "desty", iToStr ( Vehicle->ServerMoveJob->DestY ).c_str()  );
 
+	// write from which players this unit has been detected
+	if ( Vehicle->DetectedByPlayerList.Size() > 0 )
+	{
+		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
+		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
+		{
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Vehicle->DetectedByPlayerList[i]->Nr ) );
+		}
+	}
+
 	// write all stored vehicles
 	for ( unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++ )
 	{
@@ -1084,6 +1134,12 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	addAttributeElement ( unitNode, "Owner", "num", iToStr ( Building->owner->Nr ) );
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Building->PosX ), "y", iToStr ( Building->PosY ) );
 	addAttributeElement ( unitNode, "Name", "string", Building->name );
+	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
+	string wasName = Building->name;
+	Building->GenerateName();
+	addAttributeElement ( unitNode, "Name", "string", Building->name, "notDefault", ( Building->name.compare ( wasName ) == NULL ) ? "0" : "1" );
+	Building->name = wasName;
+
 	if ( Building->SubBase ) addAttributeElement ( unitNode, "SubBase", "num", iToStr (Building->SubBase->iID ) );
 
 	// write the standard values
@@ -1110,6 +1166,16 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 		for ( unsigned int i = 0; i < Building->BuildList->Size(); i++ )
 		{
 			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type_id", (*Building->BuildList)[i]->typ->data.ID.getText(), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
+		}
+	}
+
+	// write from which players this unit has been detected
+	if ( Building->DetectedByPlayerList.Size() > 0 )
+	{
+		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
+		for ( unsigned int i = 0; i < Building->DetectedByPlayerList.Size(); i++ )
+		{
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Building->DetectedByPlayerList[i]->Nr ) );
 		}
 	}
 
