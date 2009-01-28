@@ -1367,7 +1367,7 @@ void cVehicle::ShowHelp ( void )
 
 	while ( 1 )
 	{
-		if ( Client->SelectedVehicle != this ) break;
+		if ( Client->SelectedVehicle != this && !Client->bHelpActive ) break;
 		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();

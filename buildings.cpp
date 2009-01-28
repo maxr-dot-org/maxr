@@ -7622,7 +7622,7 @@ void cBuilding::ShowHelp ( void )
 
 	while ( 1 )
 	{
-		if (  Client->SelectedBuilding != this ) break;
+		if (  Client->SelectedBuilding != this && !Client->bHelpActive ) break;
 		if ( !Client->isInMenu ) break;
 
 		Client->handleTimer();
