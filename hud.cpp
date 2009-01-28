@@ -663,12 +663,13 @@ void cHud::CheckScroll ( bool pure )
 					mouse->SetCursor ( CNo );
 				}
 			}
-			else if (( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds==0 ) || 
-					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds==0 ) )
+			else if ( selectedVehicle->IsBuilding || selectedVehicle->IsClearing )
 			{
 				int x, y;
 				mouse->GetKachel( &x, &y );
-				if ( Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff()) && selectedVehicle->isNextTo(x, y))
+				if ( ( ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds == 0 ) || 
+					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds == 0 ) ) &&
+					 Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff()) && selectedVehicle->isNextTo(x, y))
 				{
 					mouse->SetCursor( CMove );
 				}
