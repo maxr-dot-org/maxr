@@ -4721,6 +4721,7 @@ void cMultiPlayerMenu::HandleMessages()
 	while ( MessageList.Size()> 0 )
 	{
 		cNetMessage* Message = MessageList[0];
+		Log.write("Menu: --> " + Message->getTypeAsString() + ", Hexdump: " + Message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 		switch ( Message->iType )
 		{
@@ -5892,6 +5893,9 @@ void displayFiles ( cList<sSaveFile*> &savesList, int offset, int selected, bool
 
 void cMultiPlayerMenu::sendMessage( cNetMessage *Message, int iPlayer )
 {
+	Message->iPlayerNr = iPlayer;
+	Log.write("Menu: <-- " + Message->getTypeAsString() + ", Hexdump: " + Message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+
 	if ( iPlayer == -1 )
 	{
 		network->send ( Message->iLength, Message->serialize() );

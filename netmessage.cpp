@@ -299,6 +299,33 @@ string cNetMessage::getTypeAsString()
 	//should be updated when implementing a new message type
 	switch (iType)
 	{
+	case MU_MSG_CHAT:
+		return string("MU_MSG_CHAT");
+	case MU_MSG_NEW_PLAYER:
+		return string("MU_MSG_NEW_PLAYER");
+	case MU_MSG_REQ_IDENTIFIKATION:
+		return string("MU_MSG_REQ_IDENTIFIKATION");
+	case MU_MSG_IDENTIFIKATION:
+		return string("MU_MSG_IDENTIFIKATION");
+	case MU_MSG_DEL_PLAYER:
+		return string("MU_MSG_DEL_PLAYER");
+	case MU_MSG_PLAYERLIST:
+		return string("MU_MSG_PLAYERLIST");
+	case MU_MSG_OPTINS:
+		return string("MU_MSG_OPTINS");
+	case MU_MSG_GO:
+		return string("MU_MSG_GO");
+	case MU_MSG_LANDING_VEHICLES:
+		return string("MU_MSG_LANDING_VEHICLES");
+	case MU_MSG_UPGRADES:
+		return string("MU_MSG_UPGRADES");
+	case MU_MSG_LANDING_COORDS:
+		return string("MU_MSG_LANDING_COORDS");
+	case MU_MSG_RESELECT_LANDING:
+		return string("MU_MSG_RESELECT_LANDING");
+	case MU_MSG_ALL_LANDED:
+		return string("MU_MSG_ALL_LANDED");
+
 	case GAME_EV_ADD_BUILDING:
 		return string("GAME_EV_ADD_BUILDING");
 	case GAME_EV_ADD_VEHICLE:

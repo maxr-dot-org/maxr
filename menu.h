@@ -125,7 +125,6 @@ enum MESSAGE_TYPES
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_GO,					// host wants to start the game
 	MU_MSG_LANDING_VEHICLES,	// the list of purcased vehicles
-	MU_MSG_RESOURCES,			// the resources on the map
 	MU_MSG_UPGRADES,			// data of upgraded units
 	GAME_EV_REQ_IDENT,			// a server of a running game requests an identification
 	GAME_EV_OK_RECONNECT,		// a server gives his ok to the reconnect
