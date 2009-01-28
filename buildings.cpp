@@ -1978,6 +1978,8 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 
 	if ( data.can_load == TRANS_MEN && !Vehicle->data.is_human ) return false;
 
+	if ( data.can_load != TRANS_MEN && Vehicle->data.is_human ) return false;
+
 	if ( !( data.build_on_water ? ( Vehicle->data.can_drive == DRIVE_SEA ) : ( Vehicle->data.can_drive != DRIVE_SEA ) ) ) return false;
 
 	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->rotating || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
