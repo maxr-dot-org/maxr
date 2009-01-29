@@ -113,9 +113,9 @@ public:
 	~cTCP();
 
 private:
-	SDL_mutex *TCPMutex;
-	bool bDataLocked;
-	bool bTCPLocked;
+	cMutex TCPMutex;
+	cMutex DataMutex;
+
 	bool bWaitForRead;
 
 	SDL_Thread *TCPHandleThread;
@@ -140,27 +140,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void deleteSocket( int iNum );
-
-	/**
-	* Locks the network mutex.
-	*@author alzi alias DoctorDeath
-	*/
-	void lockTCP();
-	/**
-	* Unlocks the network mutex.
-	*@author alzi alias DoctorDeath
-	*/
-	void unlockTCP();
-	/**
-	* Locks the data mutex.
-	*@author alzi alias DoctorDeath
-	*/
-	void lockData();
-	/**
-	* Unlocks the data mutex.
-	*@author alzi alias DoctorDeath
-	*/
-	void unlockData();
 	/**
 	* Sends a signal to the conditional variable.
 	*@author alzi alias DoctorDeath
