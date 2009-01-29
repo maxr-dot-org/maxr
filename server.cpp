@@ -535,7 +535,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			const sUnitData& Data = *BuildingTyp.getUnitData();
 			iBuildSpeed = message->popInt16();
+			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
+			if ( iBuildOff < 0 || iBuildOff >= Map->size*Map->size ) break;
 
 			if ( Data.is_big )
 			{
@@ -569,11 +571,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BuildingTyp = BuildingTyp;
 			bool bBuildPath = message->popBool();
 			iPathOff = message->popInt32();
+			if ( iPathOff < 0 || iPathOff >= Map->size*Map->size ) break;
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
 
-			
-			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
+
 			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
 
 			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
