@@ -161,7 +161,6 @@ private:
 
 	cList<cPlayer*> PlayerList;
 	bool *ReadyList;
-	int iNextPlayerNr;
 	cPlayer *ActualPlayer;
 	cList<string> ChatLog;
 	sClientLandData* clientLandingCoordsList;  /**the landing coords of all clients*/

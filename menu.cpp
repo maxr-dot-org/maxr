@@ -3786,7 +3786,6 @@ cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 	this->bHost = bHost;
 	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 	PlayerList.Add ( ActualPlayer );
-	iNextPlayerNr = 1;
 	ReadyList = (bool *) malloc ( sizeof( bool* ) );
 	ReadyList[0] = false;
 	bOptions = false;
@@ -4746,19 +4745,21 @@ void cMultiPlayerMenu::HandleMessages()
 			break;
 		case MU_MSG_NEW_PLAYER:
 			{
+				int iNextPlayerNr = (int) PlayerList.Size();
 				cPlayer *Player = new cPlayer ( "unidentified", OtherData.colors[0], iNextPlayerNr, Message->popInt16() );
 				PlayerList.Add ( Player );
 				ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
 				ReadyList[PlayerList.Size()-1] = false;
 				cNetMessage *SendMessage = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
 				SendMessage->pushInt16( iNextPlayerNr );
-				iNextPlayerNr++;
 				sendMessage ( SendMessage, Player->iSocketNum );
 			}
 			break;
 		case MU_MSG_DEL_PLAYER:
 			{
 				int iClientNum = Message->popInt16();
+
+				//delete player
 				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 				{
 					if (PlayerList[i]->iSocketNum == iClientNum)
@@ -4768,6 +4769,22 @@ void cMultiPlayerMenu::HandleMessages()
 						ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
 					}
 				}
+
+				//resort socket numbers
+				for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+				{
+					if ( PlayerList[playerNr]->iSocketNum > iClientNum && PlayerList[playerNr]->iSocketNum < MAX_CLIENTS ) PlayerList[playerNr]->iSocketNum--;
+				}
+
+				//resort player numbers
+				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+				{
+					PlayerList[i]->Nr = i;
+					cNetMessage *message = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
+					message->pushInt16( i );
+					sendMessage ( message, PlayerList[i]->iSocketNum );
+				}
+
 				displayPlayerList();
 				sendPlayerList();
 			}
