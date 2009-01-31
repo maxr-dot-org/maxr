@@ -1387,7 +1387,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 	
-	sendCheckVehiclePositions();
+	if ( bDebugCheckPos ) sendCheckVehiclePositions();
 	CHECK_MEMORY;
 	return 0;
 }

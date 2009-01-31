@@ -666,11 +666,18 @@ void sendCheckVehiclePositions(cPlayer* p )
 						message->pushInt16( vehicle->PosY );
 					}
 					message->pushInt32( vehicle->iID  );
+					if ( message->iLength > PACKAGE_LENGTH - 6 )
+					{
+						message->pushBool(false);
+						Server->sendNetMessage( message );
+						message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
+					}
 				}
 
 				vehicle = vehicle->next;
 			}
 		}
+		message->pushBool( true );	//true for last message part
 		Server->sendNetMessage( message, player->Nr );
 	}
 }

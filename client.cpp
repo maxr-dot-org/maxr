@@ -5488,15 +5488,21 @@ void cClient::destroyUnit(cBuilding *building)
 
 void cClient::checkVehiclePositions(cNetMessage *message)
 {
-	//generate list with all vehicles
-	cList<cVehicle*>  vehicleList;
-	for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+	
+	static cList<cVehicle*>  vehicleList;
+	bool lastMessagePart = message->popBool();
+
+	if ( vehicleList.Size() == 0 && !lastMessagePart )
 	{
-		cVehicle* vehicle = (*Client->PlayerList)[i]->VehicleList;
-		while ( vehicle )
+		//generate list with all vehicles
+		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
 		{
-			vehicleList.Add( vehicle );
-			vehicle = vehicle->next;
+			cVehicle* vehicle = (*Client->PlayerList)[i]->VehicleList;
+			while ( vehicle )
+			{
+				vehicleList.Add( vehicle );
+				vehicle = vehicle->next;
+			}
 		}
 	}
 
@@ -5529,10 +5535,13 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 		}
 	}
 
-	//check remaining vehicles
-	while ( vehicleList.Size() > 0 )
+	if ( lastMessagePart )
 	{
-		Log.write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
-		vehicleList.Delete(0);
+		//check remaining vehicles
+		while ( vehicleList.Size() > 0 )
+		{
+			Log.write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
+			vehicleList.Delete(0);
+		}
 	}
 }
