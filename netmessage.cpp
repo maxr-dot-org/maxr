@@ -83,10 +83,14 @@ SDL_Event* cNetMessage::getGameEvent()
 
 void cNetMessage::pushChar( char c)
 {
-	data[iLength] = c;
-	iLength ++;
+	if ( iLength > PACKAGE_LENGTH - 1 )
+	{ 
+		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
 
-	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	data[iLength] = c;
+	iLength ++;	
 }
 
 char cNetMessage::popChar()
@@ -102,10 +106,14 @@ char cNetMessage::popChar()
 
 void cNetMessage::pushInt16( Sint16 i )
 {
+	if ( iLength > PACKAGE_LENGTH - 2 )
+	{ 
+		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
+
 	*((Sint16*) (data + iLength)) = SDL_SwapLE16(i);
 	iLength += 2;
-
-	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint16 cNetMessage::popInt16()
@@ -121,10 +129,14 @@ Sint16 cNetMessage::popInt16()
 
 void cNetMessage::pushInt32( Sint32 i )
 {
+	if ( iLength > PACKAGE_LENGTH - 4 )
+	{ 
+		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
+
 	*((Sint32*) (data + iLength)) = SDL_SwapLE32( i );
 	iLength += 4;
-
-	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 Sint32 cNetMessage::popInt32()
@@ -142,6 +154,12 @@ void cNetMessage::pushString( string s )
 {
 	int stringLength = (int) s.length() + 2;
 
+	if ( iLength > PACKAGE_LENGTH - stringLength )
+	{ 
+		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
+
 	//first write a '\0'
 	//in the netMessage both begin and end of the string are marked with a '\0'
 	//so we are able to pop it correctly
@@ -152,9 +170,7 @@ void cNetMessage::pushString( string s )
 	const char* c = s.c_str();
 	memcpy( data + iLength, c, stringLength );
 
-	iLength += stringLength;
-
-	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+	iLength += stringLength;	
 }
 
 string cNetMessage::popString()
@@ -184,10 +200,14 @@ string cNetMessage::popString()
 void cNetMessage::pushBool( bool b )
 {
 
+	if ( iLength > PACKAGE_LENGTH - 1 )
+	{ 
+		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
+		return;
+	}
+
 	data[iLength] = b;
 	iLength++;
-
-	if ( iLength > PACKAGE_LENGTH ) Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 }
 
 bool cNetMessage::popBool()

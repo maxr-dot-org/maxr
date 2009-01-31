@@ -669,7 +669,7 @@ void sendCheckVehiclePositions(cPlayer* p )
 					if ( message->iLength > PACKAGE_LENGTH - 6 )
 					{
 						message->pushBool(false);
-						Server->sendNetMessage( message );
+						Server->sendNetMessage( message, player->Nr );
 						message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
 					}
 				}
