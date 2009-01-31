@@ -2830,19 +2830,23 @@ void cClient::doCommand ( string sCmd )
 	
 	if ( sCmd.substr( 0, 7 ).compare( "/resync" ) == 0 )
 	{
-		if ( Server == NULL ) return;
-		if ( sCmd.length() > 7 )
+		if ( sCmd.length() > 7 && Server )
 		{
 			unsigned int playernum = atoi ( sCmd.substr ( 7, 8 ).c_str() );
-			cPlayer *Player = Server->getPlayerFromNumber ( playernum );
-			if ( Player == NULL ) return;
-			Server->resyncPlayer ( Player, true );
+			sendRequestResync( playernum );
 		}
 		else
 		{
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			if ( Server )
 			{
-				Server->resyncPlayer ( (*Server->PlayerList)[i], true );
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					sendRequestResync( 	(*Server->PlayerList)[i]->Nr );
+				}
+			}
+			else
+			{
+				sendRequestResync( Client->ActivePlayer->Nr );
 			}
 		}
 		return;

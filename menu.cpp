@@ -613,7 +613,8 @@ void RunSPMenu ( void )
 
 						// in singleplayer only the first player is important
 						(*Server->PlayerList)[0]->iSocketNum = MAX_CLIENTS;
-						Server->resyncPlayer ( (*Server->PlayerList)[0] );
+						//Server->resyncPlayer ( (*Server->PlayerList)[0] );
+						sendRequestResync( (*Server->PlayerList)[0]->Nr );
 
 						// exit menu and start game
 						Server->bStarted = true;
@@ -4697,7 +4698,8 @@ int cMultiPlayerMenu::runSavedGame()
 		// send data to all players
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
-			Server->resyncPlayer ( (*Server->PlayerList)[i] );
+			//Server->resyncPlayer ( (*Server->PlayerList)[i] );
+			sendRequestResync( (*Server->PlayerList)[i]->Nr );
 		}
 
 		// exit menu and start game

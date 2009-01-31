@@ -54,7 +54,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_IDENTIFICATION,			// a message with the name of the player who wants to reconnect
 	GAME_EV_RECON_SUCESS,			// a client has reconnected sucsessfuly and is ready to receive his game data
 	GAME_EV_WANT_LOAD,				// a client wants to load a unit into another
-	GAME_EV_WANT_EXIT				// a client wants to exit a stored unit
+	GAME_EV_WANT_EXIT,				// a client wants to exit a stored unit
+	GAME_EV_REQUEST_RESYNC			// requests the server to resync a client
 };
 
 /**

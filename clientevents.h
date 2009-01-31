@@ -211,6 +211,9 @@ void sendWantStopClear ( cVehicle *Vehicle );
 void sendAbortWaiting ();
 void sendWantLoad ( int unitid, bool vehicle, int loadedunitid );
 void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int y );
-
+/**
+* sends a request to resync the player
+*/
+void sendRequestResync( char PlayerNr );
 
 #endif // clienteventsH

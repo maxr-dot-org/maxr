@@ -1377,6 +1377,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_REQUEST_RESYNC:
+		{
+			cPlayer* player = getPlayerFromNumber( message->popChar());
+			if ( player ) resyncPlayer( player, true);
+		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2737,7 +2743,6 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		if ( Building->IsWorking && Building->data.is_mine ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
 		Building = Building->next;
-		if ( Client ) EventHandler->HandleEvents ();
 	}
 	// send all subbases
 	for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
@@ -2745,7 +2750,6 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
 		sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
 		sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
-		if ( Client ) EventHandler->HandleEvents ();
 	}
 	// refresh enemy units
 	Player->DoScan();

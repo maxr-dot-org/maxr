@@ -250,3 +250,10 @@ void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int 
 	message->pushInt16 ( activatunitid );
 	Client->sendNetMessage( message );
 }
+
+void sendRequestResync( char PlayerNr )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_REQUEST_RESYNC );
+	message->pushChar( PlayerNr );
+	Client->sendNetMessage( message );
+}
