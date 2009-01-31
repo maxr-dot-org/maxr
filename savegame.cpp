@@ -1062,7 +1062,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	string wasName = Vehicle->name;
 	Vehicle->GenerateName();
-	addAttributeElement ( unitNode, "Name", "string", Vehicle->name, "notDefault", ( Vehicle->name.compare ( wasName ) == NULL ) ? "0" : "1" );
+	addAttributeElement ( unitNode, "Name", "string", Vehicle->name, "notDefault", ( !Vehicle->name.compare ( wasName ) ) ? "0" : "1" );
 	Vehicle->name = wasName;
 
 	// write the standard unit values which are the same for vehicles and buildings
@@ -1137,7 +1137,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	string wasName = Building->name;
 	Building->GenerateName();
-	addAttributeElement ( unitNode, "Name", "string", Building->name, "notDefault", ( Building->name.compare ( wasName ) == NULL ) ? "0" : "1" );
+	addAttributeElement ( unitNode, "Name", "string", Building->name, "notDefault", ( !Building->name.compare ( wasName ) ) ? "0" : "1" );
 	Building->name = wasName;
 
 	if ( Building->SubBase ) addAttributeElement ( unitNode, "SubBase", "num", iToStr (Building->SubBase->iID ) );
