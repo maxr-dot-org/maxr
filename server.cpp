@@ -1594,9 +1594,14 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	Map->addBuilding( AddedBuilding, iPosX, iPosY );
 
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit );
-	if ( AddedBuilding->data.is_mine ) sendProduceValues ( AddedBuilding );
+
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
+	if ( AddedBuilding->data.is_mine )
+	{
+		sendProduceValues ( AddedBuilding );
+		AddedBuilding->ServerStartWork();
+	}
 	AddedBuilding->makeDetection();
 	return AddedBuilding;
 }
