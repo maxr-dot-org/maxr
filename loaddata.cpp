@@ -791,7 +791,7 @@ int ReadMaxXml()
 		Log.write ( "Can't load Port from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iPort = 58600;
 	}
-	//PlayerName
+	//PlayerName and PlayerColor
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL)))
 		Log.write ( "Can't find Net-PlayerName-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
@@ -801,7 +801,21 @@ int ReadMaxXml()
 		Log.write ( "Can't load PlayerName from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.sPlayerName = "Commander";
 	}
-
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+	{
+		int iTmp = atoi(sTmpString.c_str());
+		if(iTmp > PLAYERCOLORS || iTmp < 0)
+		{
+			Log.write ( "Invalid playercolour read: "+ sTmpString + ". Using default value", LOG_TYPE_WARNING );
+			iTmp=0;
+		}
+		SettingsData.iColor = iTmp;
+	}
+	else
+	{
+		Log.write ( "Can't load playercolor from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iColor = 0;
+	}	
 
 	// GAME-SOUND Options
 	// Enabled
@@ -1062,6 +1076,11 @@ int ReadMaxXml()
 
 		Log.write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
 
+		strStream << "Playercolor   == " << SettingsData.iColor;
+		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
+		strStream.str(""); //reset sequence
+		strStream.clear(stringstream::goodbit); //reset goodbit
+
 		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
 		Log.write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 
@@ -1234,6 +1253,8 @@ int GenerateMaxXml()
 		element->SetAttribute ( "Text", "Commander");
 	}
 	
+	element->SetAttribute ( "Num", "0"); //default playercolor	
+
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Enabled" );
@@ -1672,7 +1693,7 @@ static int LoadGraphics(const char* path)
 
 	Log.write ( "Colourgraphics...", LOG_TYPE_DEBUG );
 	// Farben:
-	OtherData.colors = new SDL_Surface*[8];
+	OtherData.colors = new SDL_Surface*[PLAYERCOLORS];
 	if(!OtherData.colors) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	LoadGraphicToSurface ( OtherData.colors[cl_red],path,"cl_red.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_blue],path,"cl_blue.pcx" );
@@ -3638,6 +3659,10 @@ int SaveOption ( int iTyp )
 	case SAVETYPE_NAME:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL);
 		SaveValue ( pXmlNode, "Text",false,0,SettingsData.sPlayerName);
+		break;
+	case SAVETYPE_COLOR:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.iColor,"");
 		break;
 	case SAVETYPE_IP:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", NULL);

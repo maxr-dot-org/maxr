@@ -531,6 +531,8 @@ public:
 	int iPort;
 	/**Last/default player's name used for network game */
 	string sPlayerName;
+	/**Last color choosen by player*/
+	int iColor;
 
 	//SOUND
 	/**sound enabled*/

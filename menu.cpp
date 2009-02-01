@@ -3898,6 +3898,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 	font->showText(500,245, lngPack.i18n ( "Text~Title~Color" ));
 	dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y=  0;
+	ActualPlayer->color = OtherData.colors[SettingsData.iColor]; //set color from config
 	SDL_BlitSurface ( ActualPlayer->color,&scr,buffer,&dest );
 
 	SmallButton btn_send(   470, 416, "Text~Title~Send");
@@ -4040,11 +4041,13 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 		if (btn_back.CheckClick(x, y, down, up))
 		{
-			// Save changed name, port or ip to max.xml
+			// Save changed name, color, port or ip to max.xml
 			SettingsData.sPlayerName = ActualPlayer->name;
 			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
 			SaveOption(SAVETYPE_PORT);
+			SettingsData.iColor=GetColorNr ( ActualPlayer->color )+1;
+			SaveOption(SAVETYPE_COLOR);
 			if ( !bHost )
 			{
 				SettingsData.sIP = sIP;
@@ -4078,7 +4081,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			int nr;
 			PlayFX ( SoundData.SNDObjectMenu );
 			nr = GetColorNr ( ActualPlayer->color )+1;
-			if ( nr > 7 ) nr = 0;
+			if ( nr > PLAYERCOLORS-1 ) nr = 0;
 			ActualPlayer->color = OtherData.colors[nr];
 			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
 			dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y = 0;
@@ -4094,7 +4097,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			int nr;
 			PlayFX ( SoundData.SNDObjectMenu );
 			nr = GetColorNr ( ActualPlayer->color )-1;
-			if ( nr < 0 ) nr = 7;
+			if ( nr < 0 ) nr = PLAYERCOLORS-1;
 			ActualPlayer->color = OtherData.colors[nr];
 			font->showText( 500, 245, lngPack.i18n ( "Text~Title~Color" ) );
 			dest.x = 505; dest.y = 260; scr.w = 83; scr.h = 10; scr.x = 0; scr.y = 0;
@@ -4446,10 +4449,12 @@ void cMultiPlayerMenu::runNetworkMenu()
 
 		if ( bStartSelecting )
 		{
-			// Save changed name, port or ip to max.xml
+			// Save changed name, color, port or ip to max.xml
 			SettingsData.sPlayerName = ActualPlayer->name;
 			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
+			SettingsData.iColor=GetColorNr ( ActualPlayer->color )+1;
+			SaveOption(SAVETYPE_COLOR);
 			SaveOption(SAVETYPE_PORT);
 			if ( !bHost )
 			{

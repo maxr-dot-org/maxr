@@ -79,6 +79,9 @@
 #define GFXOD_DIALOG6         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
+#define PLAYERCOLORS		8
+//^-- make sure that given amount of colors is loaded too
+
 #define MAX_XML               "max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"
