@@ -256,7 +256,7 @@ void cClient::run()
 	mouse->Show();
 	mouse->SetCursor ( CHand );
 	mouse->MoveCallback = true;
-	Hud.DoAllHud();
+	Hud.reset(); //to clean old garbage on hud from previous games
 
 	waitForOtherPlayer( 0, true );
 

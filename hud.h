@@ -34,7 +34,7 @@ public:
   cHud();
   ~cHud();
 
-  bool TNT,MinimapZoom,Nebel,Gitter,Scan,Reichweite,Munition,Treffer,Farben,Status,Studie,Lock;
+  bool TNT,bShowPlayers,MinimapZoom,Nebel,Gitter,Scan,Reichweite,Munition,Treffer,Farben,Status,Studie,Lock;
   bool Praeferenzen;
   bool PlayFLC,PausePressed,PlayPressed;
   bool HelpPressed,ChatPressed,EndePressed;
@@ -48,6 +48,7 @@ public:
   int minimapOffsetX, minimapOffsetY;
 
   void SwitchTNT(bool set);
+  void SwitchPlayers(bool set);
   void SwitchMinimapZoom(bool set);
   void SwitchNebel(bool set);
   void SwitchGitter(bool set);
@@ -86,6 +87,7 @@ public:
   void ShowRunde(void);
   void showTurnTime( int iTime );
   void ExtraPlayers ( std::string sPlayer, int iColor, int iPos, bool bFinished, bool bActive=true);
+  void reset(void);
 
 private:
 	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target using normal font

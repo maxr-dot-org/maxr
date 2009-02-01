@@ -1625,8 +1625,12 @@ static int LoadGraphics(const char* path)
 	SDL_Rect scr,dest;
 	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
 		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	GraphicsData.gfx_hud_backup = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
+		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
+	SDL_FillRect ( GraphicsData.gfx_hud_backup, NULL, 0xFF00FF );
 	SDL_SetColorKey ( GraphicsData.gfx_hud, SDL_SRCCOLORKEY, 0xFF00FF );
+	SDL_SetColorKey ( GraphicsData.gfx_hud_backup, SDL_SRCCOLORKEY, 0xFF00FF );
 
 	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_left.pcx" ))
 		return 0;
@@ -1691,6 +1695,8 @@ static int LoadGraphics(const char* path)
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,NULL,GraphicsData.gfx_hud,&dest );
 		SDL_FreeSurface ( GraphicsData.gfx_tmp );
 	}
+
+	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, GraphicsData.gfx_hud_backup, NULL);
 
 	Log.write ( "Colourgraphics...", LOG_TYPE_DEBUG );
 	// Farben:

@@ -28,11 +28,13 @@
 #include "serverevents.h"
 #include "keys.h"
 #include "input.h"
+#include "pcx.h"
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
 {
 	TNT=false;
+	bShowPlayers=false;
 	MinimapZoom=false;
 	Nebel=false;
 	Gitter=false;
@@ -76,6 +78,22 @@ void cHud::SwitchTNT ( bool set )
 
 	BlitButton(scr, dest, "", false);
 	TNT=set;
+	Client->bFlagDrawHud=true;
+	Client->bFlagDrawMMap=true;
+	PlayFX ( SoundData.SNDHudSwitch );
+}
+
+void cHud::SwitchPlayers ( bool set )
+{
+	SDL_Rect scr={317,478,27,28},dest={136,439,27,28};
+	if ( set )
+		{
+			scr.x=344;
+			scr.y=478;
+		}
+
+	BlitButton(scr, dest, "", false);
+	bShowPlayers=set;
 	Client->bFlagDrawHud=true;
 	Client->bFlagDrawMMap=true;
 	PlayFX ( SoundData.SNDHudSwitch );
@@ -320,6 +338,12 @@ void cHud::CheckButtons ( void )
 	if ( x<170 )
 	{
 		if ( x>=136&&x<=136+27&&y>=413&&y<=413+28 ) {SwitchTNT ( !TNT );return;}
+		if ( x>=136&&x<=136+27&&y>=439&&y<=439+28 ) 
+		{
+			SwitchPlayers( !bShowPlayers );
+			reset();
+			return;
+		}
 		if ( x>=136&&x<=136+27&&y>=387&&y<=387+28 ) {SwitchMinimapZoom ( !MinimapZoom );return;}
 		if ( x>=112&&x<=112+55&&y>=332&&y<=332+17 ) {SwitchNebel ( !Nebel );return;}
 		if ( x>=112&&x<=112+55&&y>=314&&y<=314+17 ) {SwitchGitter ( !Gitter );return;}
@@ -353,7 +377,8 @@ void cHud::DoAllHud ( void )
 	bool s;
 	s=SettingsData.bSoundEnabled;
 	SettingsData.bSoundEnabled=false;
-
+	
+	EndeButton(EndePressed);
 	DateiButton(false);
 	PraeferenzenButton(false);
 	PrevButton(false);
@@ -363,6 +388,7 @@ void cHud::DoAllHud ( void )
 	ChatButton(false);
 	DateiButton(false);
 	SwitchTNT ( TNT );
+	SwitchPlayers( bShowPlayers );
 	SwitchMinimapZoom ( MinimapZoom );
 	SwitchNebel ( Nebel );
 	SwitchGitter ( Gitter );
@@ -1453,53 +1479,62 @@ void cHud::ScaleSurfaces ( void )
 
 void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, bool bActive)
 {
-	//BEGIN PREP WORK
-	//draw players beside minimap
-	SDL_Rect rDest;
-	SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
+	if(bShowPlayers)
+	{
+		//BEGIN PREP WORK
+		//draw players beside minimap
+		SDL_Rect rDest;
+		SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
+		
+		if(SettingsData.iScreenH >= 768) //draw players under minimap if screenres is big enough
+		{
+			rSrc.x = 18; //skip eyecandy spit before playerbar
 	
-	if(SettingsData.iScreenH >= 768) //draw players under minimap if screenres is big enough
-	{
-		rSrc.x = 18; //skip eyecandy spit before playerbar
-
-		rDest.x = 3;
-		rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
-		rDest.w = GraphicsData.gfx_hud_extra_players->w-rSrc.x;
-		rDest.h = GraphicsData.gfx_hud_extra_players->h;
+			rDest.x = 3;
+			rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
+			rDest.w = GraphicsData.gfx_hud_extra_players->w-rSrc.x;
+			rDest.h = GraphicsData.gfx_hud_extra_players->h;
+		}
+		else //draw players beside minimap if screenres is to small
+		{
+			rDest.x = 161;
+			rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
+			rDest.w = GraphicsData.gfx_hud_extra_players->w;
+			rDest.h = GraphicsData.gfx_hud_extra_players->h;
+		}
+	
+	
+		SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
+		SDL_Rect rDotDest = { rDest.x + 23 - rSrc.x, rDest.y + 6, rDot.w, rDot.h };
+	
+		SDL_Rect rColorSrc = { 0, 0, 10, 12 };
+		SDL_Rect rColorDest = { rDest.x + 40 - rSrc.x, rDest.y + 6, rColorSrc.w, rColorSrc.h };
+		//END PREP WORK
+		//BEGIN DRAW PLAYERS
+		SDL_BlitSurface( GraphicsData.gfx_hud_extra_players, &rSrc, GraphicsData.gfx_hud, &rDest ); //blit box
+		if(!bFinished)
+		{
+			rDot.x = 0; //red dot
+		}
+		if(bActive) 
+		{
+			SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, GraphicsData.gfx_hud, &rDotDest ); //blit dot
+			SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, GraphicsData.gfx_hud, &rColorDest ); //blit color
+		}
+		else
+		{
+			font->showText(rColorDest.x+3, rColorDest.y+2, "X" , FONT_LATIN_SMALL_RED, GraphicsData.gfx_hud); //blit X for defeated/dropped players
+		}
+		font->showText(rDest.x+= (59 - rSrc.x), rDest.y+6, sPlayer , FONT_LATIN_NORMAL, GraphicsData.gfx_hud); //blit name
+		//END DRAW PLAYERS
 	}
-	else //draw players beside minimap if screenres is to small
-	{
-		rDest.x = 161;
-		rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
-		rDest.w = GraphicsData.gfx_hud_extra_players->w;
-		rDest.h = GraphicsData.gfx_hud_extra_players->h;
-	}
 
 
-	SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
-	SDL_Rect rDotDest = { rDest.x + 23 - rSrc.x, rDest.y + 6, rDot.w, rDot.h };
+}
 
-	SDL_Rect rColorSrc = { 0, 0, 10, 12 };
-	SDL_Rect rColorDest = { rDest.x + 40 - rSrc.x, rDest.y + 6, rColorSrc.w, rColorSrc.h };
-	//END PREP WORK
-	//BEGIN DRAW PLAYERS
-	SDL_BlitSurface( GraphicsData.gfx_hud_extra_players, &rSrc, GraphicsData.gfx_hud, &rDest ); //blit box
-	if(!bFinished)
-	{
-		rDot.x = 0; //red dot
-	}
-	if(bActive) 
-	{
-		SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, GraphicsData.gfx_hud, &rDotDest ); //blit dot
-		SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, GraphicsData.gfx_hud, &rColorDest ); //blit color
-	}
-	else
-	{
-		font->showText(rColorDest.x+3, rColorDest.y+2, "X" , FONT_LATIN_SMALL_RED, GraphicsData.gfx_hud); //blit X for defeated/dropped players
-	}
-	font->showText(rDest.x+= (59 - rSrc.x), rDest.y+6, sPlayer , FONT_LATIN_NORMAL, GraphicsData.gfx_hud); //blit name
-	//END DRAW PLAYERS
-
-
-
+void cHud::reset()
+{
+	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_backup, NULL, GraphicsData.gfx_hud, NULL);
+	DoAllHud();
 }
