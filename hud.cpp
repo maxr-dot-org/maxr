@@ -1537,4 +1537,6 @@ void cHud::reset()
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_hud_backup, NULL, GraphicsData.gfx_hud, NULL);
 	DoAllHud();
+	if ( Client && Client->SelectedVehicle ) Client->SelectedVehicle->ShowDetails();
+	if ( Client && Client->SelectedBuilding ) Client->SelectedBuilding->ShowDetails();
 }
