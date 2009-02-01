@@ -625,6 +625,7 @@ public:
 	SDL_Surface *gfx_Csteal;
 	SDL_Surface *gfx_Cdisable;
 	SDL_Surface *gfx_menu_stuff;
+	SDL_Surface *gfx_hud_extra_players;
 	SDL_Surface *gfx_player_pc;
 	SDL_Surface *gfx_player_human;
 	SDL_Surface *gfx_player_none;

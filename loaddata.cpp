@@ -1568,6 +1568,7 @@ static int LoadGraphics(const char* path)
 		!LoadGraphicToSurface ( GraphicsData.gfx_Cdisable,path,"disable.pcx" ) ||
 		!LoadGraphicToSurface ( GraphicsData.gfx_Cattack,path,"attack.pcx" ) ||
 		!LoadGraphicToSurface ( GraphicsData.gfx_hud_stuff,path,"hud_stuff.pcx" ) ||
+		!LoadGraphicToSurface ( GraphicsData.gfx_hud_extra_players,path,"hud_extra_players.pcx" ) ||
 		!LoadGraphicToSurface ( GraphicsData.gfx_panel_top,path,"panel_top.pcx" ) ||
 		!LoadGraphicToSurface ( GraphicsData.gfx_panel_bottom,path,"panel_bottom.pcx" ) ||
 		!LoadGraphicToSurface ( GraphicsData.gfx_menu_stuff,path,"menu_stuff.pcx" ) )

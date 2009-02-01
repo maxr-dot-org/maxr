@@ -85,6 +85,7 @@ public:
   void ResetVideoMonitor(void);
   void ShowRunde(void);
   void showTurnTime( int iTime );
+  void ExtraPlayers ( std::string sPlayer, int iColor, int iPos, bool bFinished, bool bActive=true);
 
 private:
 	/** Wrapper for BlitButton using default Surfaces gfx_hud_stuff for source and gfx_hud for target using normal font
@@ -120,6 +121,7 @@ private:
 	*@return 0 on success
 	*/
  	int BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_Rect dest, std::string sText, bool bPressed, bool bSmallFont);
+
 
 };
 

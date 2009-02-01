@@ -1450,3 +1450,56 @@ void cHud::ScaleSurfaces ( void )
 
 	LastZoom=Zoom;
 }
+
+void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, bool bActive)
+{
+	//BEGIN PREP WORK
+	//draw players beside minimap
+	SDL_Rect rDest;
+	SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
+	
+	if(SettingsData.iScreenH >= 768) //draw players under minimap if screenres is big enough
+	{
+		rSrc.x = 18; //skip eyecandy spit before playerbar
+
+		rDest.x = 3;
+		rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
+		rDest.w = GraphicsData.gfx_hud_extra_players->w-rSrc.x;
+		rDest.h = GraphicsData.gfx_hud_extra_players->h;
+	}
+	else //draw players beside minimap if screenres is to small
+	{
+		rDest.x = 161;
+		rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
+		rDest.w = GraphicsData.gfx_hud_extra_players->w;
+		rDest.h = GraphicsData.gfx_hud_extra_players->h;
+	}
+
+
+	SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
+	SDL_Rect rDotDest = { rDest.x + 23 - rSrc.x, rDest.y + 6, rDot.w, rDot.h };
+
+	SDL_Rect rColorSrc = { 0, 0, 10, 12 };
+	SDL_Rect rColorDest = { rDest.x + 40 - rSrc.x, rDest.y + 6, rColorSrc.w, rColorSrc.h };
+	//END PREP WORK
+	//BEGIN DRAW PLAYERS
+	SDL_BlitSurface( GraphicsData.gfx_hud_extra_players, &rSrc, GraphicsData.gfx_hud, &rDest ); //blit box
+	if(!bFinished)
+	{
+		rDot.x = 0; //red dot
+	}
+	if(bActive) 
+	{
+		SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, GraphicsData.gfx_hud, &rDotDest ); //blit dot
+		SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, GraphicsData.gfx_hud, &rColorDest ); //blit color
+	}
+	else
+	{
+		font->showText(rColorDest.x+3, rColorDest.y+2, "X" , FONT_LATIN_SMALL_RED, GraphicsData.gfx_hud); //blit X for defeated/dropped players
+	}
+	font->showText(rDest.x+= (59 - rSrc.x), rDest.y+6, sPlayer , FONT_LATIN_NORMAL, GraphicsData.gfx_hud); //blit name
+	//END DRAW PLAYERS
+
+
+
+}

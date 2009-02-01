@@ -3327,7 +3327,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			//HACK SHOWFINISHEDPLAYERS player finished his turn
-			if ( Player ) Player->bFinishedTurn=true;
+			if ( Player ) 
+			{
+				Player->bFinishedTurn=true;
+				Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), iPlayerNum, Player->bFinishedTurn);
+			}
+
 
 			if ( iTimeDelay != -1 )
 			{
@@ -3884,6 +3889,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if(Player)
 				{
 					Player->bFinishedTurn=false;
+					Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
 				}
 
 			}
@@ -4073,6 +4079,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
+			Hud.ExtraPlayers(Player->name += " (d)", GetColorNr(Player->color), message->popInt16(), Player->bFinishedTurn, false);
+
 		}
 		break;
 	case GAME_EV_FREEZE:
@@ -4099,6 +4107,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				if ( Player == (*PlayerList)[i] )
 				{
+					Hud.ExtraPlayers(Player->name + " (-)", GetColorNr(Player->color), i, false, false);
 					delete (*PlayerList)[i];
 					PlayerList->Delete ( i );
 				}
