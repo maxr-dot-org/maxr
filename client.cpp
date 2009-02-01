@@ -4072,14 +4072,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DEFEATED:
 		{
-			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			int iTmp = message->popInt16();
+			cPlayer *Player = getPlayerFromNumber ( iTmp );
 			if ( Player == NULL )
 			{
 				Log.write ( "Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING );
 				break;
 			}
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
-			Hud.ExtraPlayers(Player->name += " (d)", GetColorNr(Player->color), message->popInt16(), Player->bFinishedTurn, false);
+			Hud.ExtraPlayers(Player->name += " (d)", GetColorNr(Player->color), iTmp, Player->bFinishedTurn, false);
 
 		}
 		break;
