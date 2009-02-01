@@ -2827,7 +2827,18 @@ void cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "/checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return; }
 	if ( sCmd.compare( "/players on" ) == 0 ) { bDebugPlayers = true; return; }
 	if ( sCmd.compare( "/players off" ) == 0 ) { bDebugPlayers = false; return; }
-	
+
+	if ( sCmd.substr( 0, 9 ).compare( "/deadline"  ) == 0 )
+	{
+		if(sCmd.length() > 9  && Server)
+		{
+			int i = 90;
+			i = atoi ( sCmd.substr ( 9, sCmd.length() ).c_str());
+			Server->setDeadline(i);
+			Log.write("Deadline changed to "  + iToStr( i ) , cLog::eLOG_TYPE_INFO);
+		}
+		return;
+	}
 	if ( sCmd.substr( 0, 7 ).compare( "/resync" ) == 0 )
 	{
 		if ( sCmd.length() > 7 && Server )
