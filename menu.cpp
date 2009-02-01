@@ -3784,7 +3784,7 @@ int GetColorNr ( SDL_Surface *sf )
 cMultiPlayerMenu::cMultiPlayerMenu(bool const bHost)
 {
 	this->bHost = bHost;
-	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
+	ActualPlayer = new cPlayer ( SettingsData.sPlayerName, OtherData.colors[SettingsData.iColor], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 	PlayerList.Add ( ActualPlayer );
 	ReadyList = (bool *) malloc ( sizeof( bool* ) );
 	ReadyList[0] = false;
@@ -4046,7 +4046,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
 			SaveOption(SAVETYPE_PORT);
-			SettingsData.iColor=GetColorNr ( ActualPlayer->color )+1;
+			SettingsData.iColor=GetColorNr ( ActualPlayer->color );
 			SaveOption(SAVETYPE_COLOR);
 			if ( !bHost )
 			{
@@ -4453,7 +4453,7 @@ void cMultiPlayerMenu::runNetworkMenu()
 			SettingsData.sPlayerName = ActualPlayer->name;
 			SettingsData.iPort = iPort;
 			SaveOption(SAVETYPE_NAME);
-			SettingsData.iColor=GetColorNr ( ActualPlayer->color )+1;
+			SettingsData.iColor=GetColorNr ( ActualPlayer->color );
 			SaveOption(SAVETYPE_COLOR);
 			SaveOption(SAVETYPE_PORT);
 			if ( !bHost )
