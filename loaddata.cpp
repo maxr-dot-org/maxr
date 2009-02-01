@@ -804,7 +804,7 @@ int ReadMaxXml()
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 	{
 		int iTmp = atoi(sTmpString.c_str());
-		if(iTmp > PLAYERCOLORS || iTmp < 0)
+		if(iTmp >= PLAYERCOLORS || iTmp < 0)
 		{
 			Log.write ( "Invalid playercolour read: "+ sTmpString + ". Using default value", LOG_TYPE_WARNING );
 			iTmp=0;
