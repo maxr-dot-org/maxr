@@ -93,6 +93,10 @@ cServer::~cServer()
 	}
 }
 
+void cServer::setDeadline(int iDeadline)
+{
+	iTurnDeadline = iDeadline;
+}
 
 SDL_Event* cServer::pollEvent()
 {

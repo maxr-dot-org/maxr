@@ -71,7 +71,7 @@ public:
 	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
 	 */
 	cServer(cMap* map, cList<cPlayer*>* PlayerList, int iGameType, bool bPlayTurns);
-
+	void setDeadline(int iDeadline);
 	~cServer();
 
 private:
