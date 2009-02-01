@@ -31,28 +31,29 @@ COMMANDS
 
 In-game console (TAB or chat-button) offers a variet of commands:
 
-base [server/client/off]     shows the informations of the client or the server(only available on the host) to basecamps
-sentry [server/off]          shows covered areas by unity on sentry
-fx [on/off]                  shows additional information to special effects
-trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
-ajobs [on/off]               shows additional information about attackjobs
-players [on/off]             shows additional information about all players in the game
-resync [playernumber]        resyncs all units of the player with the overgiven number or all players if no number was set.
-fps [on/off]                 [*not working*] shows frames per second
-com [on/off]                 [*not working*] shows network traffic (multiplayer)
-log [on/off]                 [*not working*] creats a logfile by engine
-[show/hide] log              [*not working*] shows log (if active)
-ping                         [*not working*] checks connectivity in multiplayer
+/base [server/client/off]     shows the informations of the client or the server(only available on the host) to basecamps
+/sentry [server/off]          shows covered areas by unity on sentry
+/fx [on/off]                  shows additional information to special effects
+/trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
+/ajobs [on/off]               shows additional information about attackjobs
+/players [on/off]             shows additional information about all players in the game
+/resync [playernumber]        resyncs all units of the player with the overgiven number or all players if no number was set.
+/deadline <seconds>           sets deadline for turnend to given seconds
+/fps [on/off]                 [*not working*] shows frames per second
+/com [on/off]                 [*not working*] shows network traffic (multiplayer)
+/log [on/off]                 [*not working*] creats a logfile by engine
+/[show/hide] log              [*not working*] shows log (if active)
+/ping                         [*not working*] checks connectivity in multiplayer
 
 Next commands are considered as cheats and will show up in gamechat
 
-survey            shows all mapresources (only in singleplayer or on the host)
-color [0-7]       sets new color for active player
-fog off           disabled fog for a short period
-credits           [*not working*] player gets +1000 credits
-kill [x] [y]      [*not working*] kills whatever is on position x,y
-god off           [*not working*] creates a godless world
-load              [*not working*] reloads active unit
+/survey            shows all mapresources (only in singleplayer or on the host)
+/color [0-7]       sets new color for active player
+/fog off           disabled fog for a short period
+/credits           [*not working*] player gets +1000 credits
+/kill [x] [y]      [*not working*] kills whatever is on position x,y
+/god off           [*not working*] creates a godless world
+/load              [*not working*] reloads active unit
 
 DESCRIPTION
 
