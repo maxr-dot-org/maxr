@@ -4080,7 +4080,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
-			Hud.ExtraPlayers(Player->name += " (d)", GetColorNr(Player->color), iTmp, Player->bFinishedTurn, false);
+			Hud.ExtraPlayers(Player->name + " (d)", GetColorNr(Player->color), iTmp, Player->bFinishedTurn, false);
 
 		}
 		break;
