@@ -3677,9 +3677,9 @@ void cVehicle::ShowBigDetails ( void )
 		DOLINEBREAK
 
 		// Ammo:
-		font->showTextCentered ( COLUMN_1, y, iToStr ( data.ammo ) );
+		font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_ammo ) );
 		font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Ammo" ) );
-		DrawSymbolBig ( SBAmmo, COLUMN_3, y - 2, 160, data.ammo, typ->data.max_ammo, buffer );
+		DrawSymbolBig ( SBAmmo, COLUMN_3, y - 2, 160, data.max_ammo, typ->data.max_ammo, buffer );
 		DOLINEBREAK
 	}
 
