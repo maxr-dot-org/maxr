@@ -29,6 +29,7 @@
 #include "keys.h"
 #include "input.h"
 #include "pcx.h"
+#include "player.h"
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
@@ -94,8 +95,24 @@ void cHud::SwitchPlayers ( bool set )
 
 	BlitButton(scr, dest, "", false);
 	bShowPlayers=set;
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMMap=true;
+
+	if(Client)
+	{
+		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+		{
+			cPlayer* const Player = (*Client->PlayerList)[i];
+			if (Player)
+			{
+				ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
+			}
+			else
+			{ //should not happen
+				ExtraPlayers("~disabled~", 0, i, false, false);
+			}
+		}
+		Client->bFlagDrawHud=true;
+		Client->bFlagDrawMMap=true;
+	}
 	PlayFX ( SoundData.SNDHudSwitch );
 }
 
