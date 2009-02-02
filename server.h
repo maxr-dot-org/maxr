@@ -200,11 +200,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs();
-	/**
-	* deletes a player and all his units
-	*@author alzi alias DoctorDeath
-	*/
-	void deletePlayer( cPlayer *Player );
 
 	/**
 	* gets the vehicle with the ID
@@ -348,6 +343,11 @@ public:
 
 	void resyncPlayer ( cPlayer *Player, bool firstDelete = false );
 	void resyncVehicle ( cVehicle *Vehicle, cPlayer *Player );
+	/**
+	* deletes a player and all his units
+	*@author alzi alias DoctorDeath
+	*/
+	void deletePlayer( cPlayer *Player );
 
 } EX *Server;
 

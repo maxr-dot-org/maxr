@@ -2828,6 +2828,42 @@ void cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "/players on" ) == 0 ) { bDebugPlayers = true; return; }
 	if ( sCmd.compare( "/players off" ) == 0 ) { bDebugPlayers = false; return; }
 
+	if ( sCmd.substr( 0, 6 ).compare( "/kick " ) == 0 )
+	{
+		if ( sCmd.length() > 6 && Server )
+		{
+			int playerNum = atoi ( sCmd.substr ( 6, sCmd.length() ).c_str() );
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( Player )
+			{
+				// close the socket
+				network->close ( Player->iSocketNum );
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					if ( (*Server->PlayerList)[i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList)[i]->iSocketNum < MAX_CLIENTS ) (*Server->PlayerList)[i]->iSocketNum--;
+				}
+				// delete the player
+				Server->deletePlayer ( Player );
+			}
+		}
+	}
+	if ( sCmd.substr( 0, 12 ).compare( "/disconnect " ) == 0 )
+	{
+		if ( sCmd.length() > 12 && Server )
+		{
+			int playerNum = atoi ( sCmd.substr ( 12, sCmd.length() ).c_str() );
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( Player )
+			{
+				SDL_Event* event = new SDL_Event;
+				event->type = NETWORK_EVENT;
+				event->user.code = TCP_CLOSEEVENT;
+				event->user.data1 = new Sint16[1];
+				((Sint16*)event->user.data1)[0] = Player->iSocketNum;
+				Server->pushEvent ( event );
+			}
+		}
+	}
 	if ( sCmd.substr( 0, 9 ).compare( "/deadline"  ) == 0 )
 	{
 		if(sCmd.length() > 9  && Server)

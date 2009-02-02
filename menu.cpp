@@ -4646,6 +4646,25 @@ int cMultiPlayerMenu::runSavedGame()
 {
 	if ( Savegame && Savegame->load() == 1 )
 	{
+		// romve all players that do not belong to the save
+		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+		{
+			unsigned int j;
+			for ( j = 0; j < Server->PlayerList->Size(); j++ )
+			{
+				cPlayer *Player = (*Server->PlayerList)[j];
+				if ( PlayerList[i]->name == (*Server->PlayerList)[j]->name ) break;
+			}
+			// the player isn't in the list when the loop has gone trough all players and no match was found
+			if ( j == Server->PlayerList->Size() )
+			{
+				network->close ( PlayerList[i]->iSocketNum );
+				for ( unsigned int k = 0; k < PlayerList.Size(); k++ )
+				{
+					if ( PlayerList[k]->iSocketNum > PlayerList[i]->iSocketNum && PlayerList[k]->iSocketNum < MAX_CLIENTS ) PlayerList[k]->iSocketNum--;
+				}
+			}
+		}
 		// set sockets
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
@@ -4666,21 +4685,6 @@ int cMultiPlayerMenu::runSavedGame()
 						return 0;
 					}
 				}
-			}
-		}
-		// romve all players that do not belong to the save
-		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
-		{
-			unsigned int j;
-			for ( j = 0; j < Server->PlayerList->Size(); j++ )
-			{
-				cPlayer *Player = (*Server->PlayerList)[j];
-				if ( PlayerList[i]->name == (*Server->PlayerList)[j]->name ) break;
-			}
-			// the player isn't in the list when the loop has gone trough all players and no match was found
-			if ( j == Server->PlayerList->Size() )
-			{
-				network->close ( PlayerList[i]->iSocketNum );
 			}
 		}
 		sendPlayerList ( Server->PlayerList );
