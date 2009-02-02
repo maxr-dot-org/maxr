@@ -3163,10 +3163,52 @@ void cClient::handleMessages()
 	dest.x = 180+2; dest.y = 34;
 	dest.w = SettingsData.iScreenW - 204;
 	dest.h = iHeight;
+	
 	for (unsigned int i = 0; i < messages.Size(); i++)
 	{
 		message = messages[i];
-		dest.y = font->showTextAsBlock( dest, message->msg );
+		string sMsg = message->msg;
+		//HACK TO SHOW PLAYERCOLOR IN CHAT
+		int iColor = -1;
+		for(int i=0; i < sMsg.length(); i++)
+		{
+			if(sMsg[i] == ':') //scan for chatmessages from _players_
+			{
+				string sTmp = sMsg.substr( 0, i );
+				for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+				{
+					cPlayer* const Player = (*Client->PlayerList)[i];
+					if (Player)
+					{
+						if(sTmp.compare( Player->name ) == 0)
+						{
+							iColor = GetColorNr(Player->color);
+							break;
+						}
+					}
+				}
+				break;
+			}
+		}
+		if(iColor != -1)
+		{
+			#define CELLSPACE 3
+			SDL_Rect rColorSrc = { 0, 0, 10, font->getFontHeight() };
+			SDL_Rect rDest = dest;
+			rDest.w = rColorSrc.w;
+			rDest.h = rColorSrc.h;
+			SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, buffer, &rDest ); //blit color
+			dest.x += rColorSrc.w + CELLSPACE; //add border for color
+			dest.w -= rColorSrc.w + CELLSPACE;
+			dest.y = font->showTextAsBlock( dest, sMsg );
+			dest.x -= rColorSrc.w + CELLSPACE; //reset border from color
+			dest.w += rColorSrc.w + CELLSPACE;
+		}
+		else
+		{
+			dest.y = font->showTextAsBlock( dest, sMsg );
+		}
+		
 		dest.y += 5;
 	}
 }
