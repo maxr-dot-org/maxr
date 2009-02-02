@@ -1506,7 +1506,7 @@ void cBuilding::ServerStartWork ()
 			if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + MaxSubBaseOilProd )
 			{
 				// not enough Oil even with adjustments - so give up
-				if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
+				if(Client)if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
 				{
 					sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 				}
@@ -1629,7 +1629,7 @@ void cBuilding::ServerStartWork ()
 			{
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
-					if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
+					if(Client)if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
 					{
 						sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
 					}
