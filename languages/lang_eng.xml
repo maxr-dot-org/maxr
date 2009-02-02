@@ -240,6 +240,8 @@
 			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
 			<Save_Only_Host ENG="Only the host can save games."/>
+      <Player_Joined ENG="%s has joined"/>
+      <Player_Left ENG="%s has left"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
