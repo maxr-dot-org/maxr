@@ -4668,6 +4668,21 @@ int cMultiPlayerMenu::runSavedGame()
 				}
 			}
 		}
+		// romve all players that do not belong to the save
+		for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+		{
+			unsigned int j;
+			for ( j = 0; j < Server->PlayerList->Size(); j++ )
+			{
+				cPlayer *Player = (*Server->PlayerList)[j];
+				if ( PlayerList[i]->name == (*Server->PlayerList)[j]->name ) break;
+			}
+			// the player isn't in the list when the loop has gone trough all players and no match was found
+			if ( j == Server->PlayerList->Size() )
+			{
+				network->close ( PlayerList[i]->iSocketNum );
+			}
+		}
 		sendPlayerList ( Server->PlayerList );
 		// send client that the game has to be started
 		cNetMessage *Message = new cNetMessage ( MU_MSG_GO );
@@ -4762,36 +4777,53 @@ void cMultiPlayerMenu::HandleMessages()
 			break;
 		case MU_MSG_DEL_PLAYER:
 			{
-				int iClientNum = Message->popInt16();
-
-				//delete player
-				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+				if ( bHost )
 				{
-					if (PlayerList[i]->iSocketNum == iClientNum)
+					int iClientNum = Message->popInt16();
+					string playerName;
+
+					//delete player
+					for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
 					{
-						PlayerList.Delete ( i );
-						for (unsigned int j = i; j < PlayerList.Size(); j++ ) ReadyList[j] = ReadyList[j+1];
-						ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
+						if (PlayerList[i]->iSocketNum == iClientNum)
+						{
+							playerName = PlayerList[i]->name;
+							PlayerList.Delete ( i );
+							for (unsigned int j = i; j < PlayerList.Size(); j++ ) ReadyList[j] = ReadyList[j+1];
+							ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
+						}
 					}
-				}
 
-				//resort socket numbers
-				for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+					//resort socket numbers
+					for ( unsigned int playerNr = 0; playerNr < PlayerList.Size(); playerNr++ )
+					{
+						if ( PlayerList[playerNr]->iSocketNum > iClientNum && PlayerList[playerNr]->iSocketNum < MAX_CLIENTS ) PlayerList[playerNr]->iSocketNum--;
+					}
+
+					//resort player numbers
+					for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+					{
+						PlayerList[i]->Nr = i;
+						cNetMessage *message = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
+						message->pushInt16( i );
+						sendMessage ( message, PlayerList[i]->iSocketNum );
+					}
+
+					addChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Left", playerName ) );
+					displayPlayerList();
+					sendPlayerList();
+				}
+				else
 				{
-					if ( PlayerList[playerNr]->iSocketNum > iClientNum && PlayerList[playerNr]->iSocketNum < MAX_CLIENTS ) PlayerList[playerNr]->iSocketNum--;
+					for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
+					{
+						if ( PlayerList[i] != ActualPlayer ) PlayerList.Delete ( i );
+					}
+					ReadyList = (bool *)realloc ( ReadyList, sizeof (bool*)*PlayerList.Size() );
+					ReadyList[0] = false;
+					displayPlayerList();
+					addChatLog ( lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" ) );
 				}
-
-				//resort player numbers
-				for ( unsigned int i = 0; i < PlayerList.Size(); i++ )
-				{
-					PlayerList[i]->Nr = i;
-					cNetMessage *message = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
-					message->pushInt16( i );
-					sendMessage ( message, PlayerList[i]->iSocketNum );
-				}
-
-				displayPlayerList();
-				sendPlayerList();
 			}
 			break;
 		case MU_MSG_REQ_IDENTIFIKATION:
@@ -4801,13 +4833,16 @@ void cMultiPlayerMenu::HandleMessages()
 		case MU_MSG_IDENTIFIKATION:
 			{
 				unsigned int iPlayerNum;
+				string playerName;
 				int iPlayerNr = Message->popInt16();
 				for ( iPlayerNum = 0; iPlayerNum < PlayerList.Size(); iPlayerNum++ )
 				{
 					if (PlayerList[iPlayerNum]->Nr == iPlayerNr) break;
 				}
 				PlayerList[iPlayerNum]->color = OtherData.colors[Message->popInt16()];
-				PlayerList[iPlayerNum]->name  = Message->popString();
+				playerName = Message->popString();
+				if ( PlayerList[iPlayerNum]->name == "unidentified" ) addChatLog ( lngPack.i18n ( "Text~Multiplayer~Player_Joined", playerName ) );
+				PlayerList[iPlayerNum]->name  = playerName;
 				ReadyList[iPlayerNum] = Message->popBool();
 				displayPlayerList();
 				sendPlayerList();
