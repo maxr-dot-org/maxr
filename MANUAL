@@ -38,6 +38,8 @@ In-game console (TAB or chat-button) offers a variet of commands:
 /ajobs [on/off]               shows additional information about attackjobs
 /players [on/off]             shows additional information about all players in the game
 /resync [playernumber]        resyncs all units of the player with the overgiven number or all players if no number was set.
+/kick [playernumber]          removes the player from the game.
+/disconnect [playernumber]    closes connection to the player and starts waiting for reconnection.
 /deadline <seconds>           sets deadline for turnend to given seconds
 /fps [on/off]                 [*not working*] shows frames per second
 /com [on/off]                 [*not working*] shows network traffic (multiplayer)
