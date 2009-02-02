@@ -1372,6 +1372,11 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 			}
 			if ( sf!=NULL )
 			{
+				#define MAPWINSIZE 112
+				if(sf->w != MAPWINSIZE || sf->h != MAPWINSIZE) // resize map
+				{
+					ScaleSurface2(sf, sf, MAPWINSIZE );
+				}
 				SDL_BlitSurface ( sf,NULL,buffer,&dest );
 			}
 
@@ -5251,9 +5256,10 @@ void cMultiPlayerMenu::displayGameSettings()
 
 			//blank map preview
 			SDL_Rect rect;
-			rect.w = rect.h = 112;
-			rect.x = 33;
-			rect.y = 106;
+			rect.w = 154;
+			rect.h = 172;
+			rect.x = 50;
+			rect.y = 60;
 			SDL_BlitSurface ( sfTmp, &rect, buffer, &rect );
 
 			//remove Player from readylist
@@ -5317,9 +5323,28 @@ void cMultiPlayerMenu::displayGameSettings()
 				SDL_Rect dest;
 				dest.x = 33;
 				dest.y = 106;
+				dest.w = dest.h = 112;
+				SDL_Rect rSrc = { 0, 0, dest.w, dest.h };
+				if(sfMapPic->w > dest.w || sfMapPic->h > dest.h) //map is bigger than window - resize
+				{
+					ScaleSurface2(sfMapPic, sfMapPic, dest.h );
+				}
+				else if(sfMapPic->w < dest.w || sfMapPic->h > dest.h) //map is smaller than window - center
+				{
+					dest.x += dest.w / 2 - sfMapPic->w / 2;
+					dest.y += dest.h / 2 - sfMapPic->h / 2;
+				}
 				SDL_BlitSurface ( sfMapPic, NULL, buffer, &dest );
 			}
 			SDL_FreeSurface ( sfMapPic );
+			//blank map titlebar
+			SDL_Rect rect;
+			rect.w = 153;
+			rect.h = 22;
+			rect.x = 13;
+			rect.y = 59;
+			SDL_BlitSurface ( sfTmp, &rect, buffer, &rect );
+						
 			font->showTextCentered( 90, 65, sMapName + " (" + iToStr ( size ) + "x" + iToStr ( size ) + ")" );
 		}
 	}
