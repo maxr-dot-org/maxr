@@ -1506,7 +1506,10 @@ void cBuilding::ServerStartWork ()
 			if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + MaxSubBaseOilProd )
 			{
 				// not enough Oil even with adjustments - so give up
-				sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+				if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
+				{
+					sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+				}
 				return;
 			}
 			else
@@ -1618,7 +1621,7 @@ void cBuilding::ServerStartWork ()
 		if ( data.energy_need )
 		{
 			if ( data.energy_need + SubBase->EnergyNeed > SubBase->MaxEnergyProd )
-			{
+			{	
 				sendChatMessageToClient ( "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 				return;
 			}
@@ -1626,7 +1629,10 @@ void cBuilding::ServerStartWork ()
 			{
 				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
 				{
-					sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
+					if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
+					{
+						sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
+					}
 					/*
 					 * Workaround for powering up Mining stations when there's not enough power and Oil.
 					 *	Check unpowered generators, and Oil production limits in current mine.
