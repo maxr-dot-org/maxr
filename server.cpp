@@ -2679,6 +2679,19 @@ void cServer::deletePlayer( cPlayer *Player )
 		sendDeleteUnit( Building, -1 );
 		Building = Building->next;
 	}
+	// remove the player of all detected by player lists
+	for ( unsigned int playerNum = 0; playerNum < PlayerList->Size(); playerNum++ )
+	{
+		cPlayer *UnitPlayer = (*PlayerList)[playerNum];
+		if ( UnitPlayer == Player ) continue;
+		Vehicle = UnitPlayer->VehicleList;
+		while ( Vehicle )
+		{
+			if ( ( Vehicle->data.is_stealth_land || Vehicle->data.is_stealth_sea ) && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
+			Vehicle = Vehicle->next;
+		}
+	}
+	// delete the player
 	sendDeletePlayer ( Player );
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
