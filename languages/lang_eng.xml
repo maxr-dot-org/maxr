@@ -240,8 +240,8 @@
 			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
 			<Save_Only_Host ENG="Only the host can save games."/>
-      <Player_Joined ENG="%s has joined"/>
-      <Player_Left ENG="%s has left"/>
+			<Player_Joined ENG="%s has joined"/>
+			<Player_Left ENG="%s has left"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
@@ -258,8 +258,8 @@
 			<Usage ENG="Usage"/>
 		</Vehicles>
 		<Comp>
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off."/>
 			<Energy_Low ENG="Power needed, building turned off."/>
 			<Metal_Low ENG="More raw material needed, building turned off."/>

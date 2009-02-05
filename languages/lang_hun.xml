@@ -57,7 +57,7 @@
 			<Nobody ENG="Nobody" localized="Senki"/>
 			<Clan ENG="Clan" localized="Klán"/>
 			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<Choose_Planet ENG="Planetchoosing" localized="Bolygóválasztás"/>
+			<Choose_Planet ENG="Choose planet" localized="Bolygóválasztás"/>
 			<Options ENG="Options" localized="Beállítások"/>
 			<Connect ENG="Connect" localized="Csatlakozás"/>
 			<Send ENG="Send" localized="Küldés"/>
@@ -72,6 +72,8 @@
 			<Labs ENG="Research menu" localized="Fejlesztés Menü"/>
 			<Mine ENG="Allocation menu" localized="Nyersanyagelosztás menü"/>
 			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
+			<Savegame ENG="Savegame" localized="Mentés"/>
+			<Players ENG="Players:" localized="Játékosok:"/>
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Főmenü"/>
@@ -192,6 +194,9 @@
 			<ShowDamage ENG="Buildingdamage" localized="Épületsebződés"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Járműsebződés"/>
 			<Tracks ENG="Vehicletracks" localized="Járműnyomok"/>
+			<Intro ENG="Show intro" localized="Bevezető lejátszása"/>
+			<Window ENG="Windowed" localized="Futtatás ablakban"/>
+			<Resolution ENG="Resolution" localized="Felbontás"/>
 		</Settings>
 		<Multiplayer>
 			<Player ENG="Player" localized="Játékos"/>
@@ -222,10 +227,17 @@
 			<Go_Ready ENG="Ready to go" localized="Indulhat a játék"/>
 			<Go_Ready_No ENG="not ready to go" localized="nem indulhat a játék"/>
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
-      <Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
-      <Not_Ready ENG="is not ready" localized="nem készült el"/>
-      <Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
-      <Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
+			<Not_Ready ENG="is not ready" localized="nem készült el"/>
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
+			<Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/>
+			<Lost_Connection ENG="Lost connection to %s." localized="A kapcsolat megszakadt %s gépével."/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Várakozás egy játékos újracsatlakozására."/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Kiszolgáló, a várakozás megszakításához nyomj F2-őt."/>
+			<Save_Only_Host ENG="Only the host can save games." localized="Csak a kiszolgáló mentheti el a játékot."/>
+			<Player_Joined ENG="%s has joined" localized="%s csatlakozott a játékhoz"/>
+			<Player_Left ENG="%s has left" localized="%s elhagyta a játékot"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Támadás"/>
@@ -242,6 +254,8 @@
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 		</Vehicles>
 		<Comp>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="A leszállási pozíció túl közel van egy másik játékoshoz. Kérlek válassz másik pozíciót."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Nincs elég üzemanyag, generátor leállítva!"/>
 			<Energy_Low ENG="Power needed, building turned off." localized="Nincs elég áram, fogyasztó leállítva!"/>
 			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elég nyersanyag, épület leállítva!"/>
@@ -296,6 +310,8 @@
 			<Turn ENG="Turn" localized="Kör"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
 			<Surveying ENG="surveying" localized="kutat"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and Exploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and Exploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
