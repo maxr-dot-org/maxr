@@ -22,6 +22,7 @@
 #include "serverevents.h"
 #include "client.h"
 #include "input.h"
+#include "log.h"
 
 void cEventHandling::pushEvent(SDL_Event* const e)
 {
@@ -54,8 +55,13 @@ void cEventHandling::HandleEvents()
 				tmTime = localtime ( &tTime );
 				strftime( timestr, 16, "%d.%m.%y-%H%M%S", tmTime );
 
-				// TODO: add folder for screenshots
-				string screenshotfile = (string)"Screen_" + timestr + ".bmp";
+				string screenshotfile ="";
+				#ifdef WIN32
+					screenshotfile = (string)"Screen_" + timestr + ".bmp";
+				#else
+					screenshotfile = SettingsData.sHome+PATH_DELIMITER+"Screen_" + timestr + ".bmp";
+				#endif
+				Log.write ( "Screenshot saved to "+screenshotfile, cLog::eLOG_TYPE_INFO );
 				SDL_SaveBMP ( screen, screenshotfile.c_str() );
 			}
 			else
