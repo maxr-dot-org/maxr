@@ -12,18 +12,32 @@ settings ingame (not all options are offered ingame however).
 CONTROLS
 
 F1		Go to event
+F2		Remove disconnected player (server only)
+F5-F8		jump to saved position
+Alt+F5-F8	save screen position
+Alt+C		Make screenshot
 Arrows		Scroll
 +/- 		Zoom
 Enter		Turn End
 Tab		Chat
 n		fog on/off
-s		scan on/off
-r		range on/off
+g		grid on/off
+s		scan on/off or stop or start or sentry or steal
+r		range on/off or reload or repair or research menu
 m		munition on/off
 t		hitpoints on/off
 f		color on/off
+p		status on/off
+h		survey on/off or info menu
 n		shild on/off
-d		study on/off
+f		center selected unit
+a		attack or automove or activate
+b		build menu
+x		xfer menu
+c		clear or clear mine
+l		load or lay mine
+d		disable or distribution menu or destroy
+u		upgrade
 LShift		[*not working*] calculate path (but don't move)
 ESC		end game
 
@@ -37,11 +51,11 @@ In-game console (TAB or chat-button) offers a variet of commands:
 /trace [server/client/off]    shows additional information of the client or the server(only available on the host) about current field
 /ajobs [on/off]               shows additional information about attackjobs
 /players [on/off]             shows additional information about all players in the game
-/resync [playernumber]        resyncs all units of the player with the overgiven number or all players if no number was set.
-/kick [playernumber]          removes the player from the game.
-/disconnect [playernumber]    closes connection to the player and starts waiting for reconnection.
+/resync [id]	              resyncs all units of the player with the overgiven number or all players if no number was set.
+/kick [id]                    removes a player from the game.
+/disconnect [id]              closes connection to a player and starts waiting for reconnection.
 /deadline <seconds>           sets deadline for turnend to given seconds
-/fps [on/off]                 [*not working*] shows frames per second
+/fps [on/off]                 shows frames per second
 /com [on/off]                 [*not working*] shows network traffic (multiplayer)
 /log [on/off]                 [*not working*] creats a logfile by engine
 /[show/hide] log              [*not working*] shows log (if active)
