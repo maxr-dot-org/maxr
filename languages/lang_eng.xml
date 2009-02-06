@@ -5,7 +5,7 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="eng" encoding="iso-8859-15" direction="left-to-right">
+<MAX_Language_File lang="eng" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="JCK">
 			<Editor name="JCK" time="2007-09-30 13:04:00"/>
