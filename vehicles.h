@@ -96,6 +96,7 @@ public:
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
 	cAutoMJob *autoMJob; //the auto move AI of the vehicle
+	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool rotating;   // Gibt an, ob sich das Vehicle grade dreht
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird

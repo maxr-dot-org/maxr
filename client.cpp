@@ -4386,6 +4386,20 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_SET_AUTOMOVE:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle )
+			{
+				if ( Vehicle->autoMJob )
+				{
+					delete Vehicle->autoMJob;
+					Vehicle->autoMJob = NULL;
+				}
+				Vehicle->autoMJob = new cAutoMJob ( Vehicle );
+			}
+		}
+		break;
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

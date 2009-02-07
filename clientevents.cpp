@@ -257,3 +257,11 @@ void sendRequestResync( char PlayerNr )
 	message->pushChar( PlayerNr );
 	Client->sendNetMessage( message );
 }
+
+void sendSetAutoStatus( int unitID, bool set )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_AUTOMOVE_STATUS );
+	message->pushBool ( set );
+	message->pushInt16( unitID );
+	Client->sendNetMessage( message );
+}

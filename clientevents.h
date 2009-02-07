@@ -72,6 +72,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_STORE_UNIT,				// a unit has to be stored
 	GAME_EV_EXIT_UNIT,				// a unit has to be exit
 	GAME_EV_DELETE_EVERYTHING,		// a client has to delete all units to be ready for a resync
+	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -215,5 +216,9 @@ void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int 
 * sends a request to resync the player
 */
 void sendRequestResync( char PlayerNr );
+/**
+* sends that a unit has been set to automove status
+*/
+void sendSetAutoStatus( int unitID, bool set );
 
 #endif // clienteventsH

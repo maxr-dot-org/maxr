@@ -414,6 +414,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	if ( unitNode->FirstChildElement( "IsBig" ) ) Server->Map->moveVehicleBig( vehicle, x, y );
 	if ( unitNode->FirstChildElement( "Disabled" ) ) vehicle->Disabled = true;
 	if ( unitNode->FirstChildElement( "LayMines" ) ) vehicle->LayMines = true;
+	if ( unitNode->FirstChildElement( "AutoMoving" ) ) vehicle->hasAutoMoveJob = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
 		vehicle->bSentryStatus = true;
@@ -1074,6 +1075,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->Disabled ) addMainElement ( unitNode, "Disabled" );
 	if ( Vehicle->LayMines ) addMainElement ( unitNode, "LayMines" );
 	if ( Vehicle->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
+	if ( Vehicle->hasAutoMoveJob ) addMainElement ( unitNode, "AutoMoving" );
 
 	if ( Vehicle->IsBuilding )
 	{

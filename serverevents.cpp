@@ -830,3 +830,10 @@ void sendUnitUpgrades ( sUnitData *Data, int player )
 	message->pushInt16 ( Data->ID.iFirstPart );
 	Server->sendNetMessage( message, player );
 }
+
+void sendSetAutomoving ( cVehicle *Vehicle  )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_SET_AUTOMOVE );
+	message->pushInt16 ( Vehicle->iID );
+	Server->sendNetMessage( message, Vehicle->owner->Nr );
+}

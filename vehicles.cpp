@@ -67,6 +67,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	ClientMoveJob = NULL;
 	ServerMoveJob = NULL;
 	autoMJob = NULL;
+	hasAutoMoveJob = false;
 	moving = false;
 	rotating = false;
 	MoveJobActive = false;

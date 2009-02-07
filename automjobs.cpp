@@ -56,6 +56,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 playerMJob = false;
 	 lastMoveJob = NULL;
 	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
+	 sendSetAutoStatus ( vehicle->iID, true );
 }
 
 //destruktor for cAutoMJob
@@ -64,6 +65,7 @@ cAutoMJob::~cAutoMJob()
 	if (!playerMJob && lastMoveJob )
 	{
 		sendWantStopMove( vehicle->iID );
+		sendSetAutoStatus ( vehicle->iID, true );
 	}
 	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{

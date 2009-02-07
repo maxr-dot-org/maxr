@@ -1390,6 +1390,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( player ) resyncPlayer( player, true);
 		}
 		break;
+	case GAME_EV_AUTOMOVE_STATUS:
+		{
+			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
+			if ( Vehicle ) Vehicle->hasAutoMoveJob = message->popBool();
+		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2808,6 +2814,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	}
 	sendUnitData ( Vehicle, Player->Nr );
 	sendSpecificUnitData ( Vehicle );
+	if ( Vehicle->hasAutoMoveJob ) sendSetAutomoving ( Vehicle );
 	if ( Vehicle->DetectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
 	if ( Client ) EventHandler->HandleEvents ();
 }

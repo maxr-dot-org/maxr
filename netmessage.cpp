@@ -492,6 +492,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_MARK_LOG");
 	case GAME_EV_MARK_LOG:
 		return string("GAME_EV_MARK_LOG");
+	case GAME_EV_AUTOMOVE_STATUS:
+		return string("GAME_EV_AUTOMOVE_STATUS");
+	case GAME_EV_SET_AUTOMOVE:
+		return string("GAME_EV_SET_AUTOMOVE");
 	default:
 		return iToStr( iType );
 	}
