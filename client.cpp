@@ -3170,7 +3170,7 @@ void cClient::handleMessages()
 		string sMsg = message->msg;
 		//HACK TO SHOW PLAYERCOLOR IN CHAT
 		int iColor = -1;
-		for(int i=0; i < sMsg.length(); i++)
+		for(unsigned int i=0; i < sMsg.length(); i++)
 		{
 			if(sMsg[i] == ':') //scan for chatmessages from _players_
 			{
@@ -3419,7 +3419,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Player ) 
 			{
 				Player->bFinishedTurn=true;
-				Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), iPlayerNum, Player->bFinishedTurn);
+				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				{
+					if ( Player == (*PlayerList)[i] )
+					{
+						Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
+						break;
+					}
+				}
 			}
 
 
@@ -3974,7 +3981,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				cPlayer *Player = getPlayerFromNumber( i );
+				cPlayer *Player = (*Client->PlayerList)[i];
 				if(Player)
 				{
 					Player->bFinishedTurn=false;
@@ -4169,8 +4176,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
-			Hud.ExtraPlayers(Player->name + " (d)", GetColorNr(Player->color), iTmp, Player->bFinishedTurn, false);
-
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				if ( Player == (*PlayerList)[i] )
+				{
+					Hud.ExtraPlayers(Player->name + " (d)", GetColorNr(Player->color), i, Player->bFinishedTurn, false);
+					break;
+				}
+			}
 		}
 		break;
 	case GAME_EV_FREEZE:
