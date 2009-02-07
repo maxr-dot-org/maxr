@@ -1907,12 +1907,16 @@ void cServer::handleEnd ( int iPlayerNum )
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
+		// defeated player are ignored when they hit the end button
+		if ( getPlayerFromNumber( iPlayerNum )->isDefeated ) return;
+
 		// check whether this player has already finished his turn
 		for ( unsigned int i = 0; i < PlayerEndList.Size(); i++ )
 		{
 			if (PlayerEndList[i]->Nr == iPlayerNum) return;
 		}
 		PlayerEndList.Add ( getPlayerFromNumber ( iPlayerNum ) );
+		bool firstTimeEnded = PlayerEndList.Size() == 1;
 
 		// make sure that all defeated players are added to the endlist
 		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -1952,7 +1956,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		}
 		else
 		{
-			if ( PlayerEndList.Size() == 1 )
+			if ( firstTimeEnded )
 			{
 				sendTurnFinished ( iPlayerNum, iTurnDeadline );
 				iDeadlineStartTime = SDL_GetTicks();
