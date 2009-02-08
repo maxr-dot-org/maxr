@@ -65,8 +65,8 @@ cAutoMJob::~cAutoMJob()
 	if (!playerMJob && lastMoveJob )
 	{
 		sendWantStopMove( vehicle->iID );
-		sendSetAutoStatus ( vehicle->iID, true );
 	}
+	sendSetAutoStatus ( vehicle->iID, false );
 	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
