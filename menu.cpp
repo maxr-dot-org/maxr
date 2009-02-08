@@ -1375,7 +1375,8 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 				#define MAPWINSIZE 112
 				if(sf->w != MAPWINSIZE || sf->h != MAPWINSIZE) // resize map
 				{
-					ScaleSurface2(sf, sf, MAPWINSIZE );
+					//FIXME: resizing like that doesn't work good and even crashs on windows
+					//ScaleSurface2(sf, sf, MAPWINSIZE );
 				}
 				SDL_BlitSurface ( sf,NULL,buffer,&dest );
 			}
@@ -5327,7 +5328,8 @@ void cMultiPlayerMenu::displayGameSettings()
 				SDL_Rect rSrc = { 0, 0, dest.w, dest.h };
 				if(sfMapPic->w > dest.w || sfMapPic->h > dest.h) //map is bigger than window - resize
 				{
-					ScaleSurface2(sfMapPic, sfMapPic, dest.h );
+					//FIXME: rescaling the image like this doesn't work to good and even crashs on windows
+					//ScaleSurface2(sfMapPic, sfMapPic, dest.h );
 				}
 				else if(sfMapPic->w < dest.w || sfMapPic->h > dest.h) //map is smaller than window - center
 				{
