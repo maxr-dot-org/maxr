@@ -5326,17 +5326,13 @@ void cMultiPlayerMenu::displayGameSettings()
 				dest.y = 106;
 				dest.w = dest.h = 112;
 				SDL_Rect rSrc = { 0, 0, dest.w, dest.h };
-				if(sfMapPic->w > dest.w || sfMapPic->h > dest.h) //map is bigger than window - resize
-				{
-					//FIXME: rescaling the image like this doesn't work to good and even crashs on windows
-					//ScaleSurface2(sfMapPic, sfMapPic, dest.h );
+				#define MAPWINSIZE 112
+				if(sfMapPic->w != MAPWINSIZE || sfMapPic->h != MAPWINSIZE) // resize map
+				{ 
+					SDL_Surface *scaledMap = scaleSurface ( sfMapPic, NULL, MAPWINSIZE, MAPWINSIZE );
+					SDL_BlitSurface ( scaledMap, NULL, buffer, &dest );
 				}
-				else if(sfMapPic->w < dest.w || sfMapPic->h > dest.h) //map is smaller than window - center
-				{
-					dest.x += dest.w / 2 - sfMapPic->w / 2;
-					dest.y += dest.h / 2 - sfMapPic->h / 2;
-				}
-				SDL_BlitSurface ( sfMapPic, NULL, buffer, &dest );
+				else SDL_BlitSurface ( sfMapPic,NULL,buffer,&dest );
 			}
 			SDL_FreeSurface ( sfMapPic );
 			//blank map titlebar
