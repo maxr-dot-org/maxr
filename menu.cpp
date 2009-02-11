@@ -1374,11 +1374,11 @@ static void ShowPlanets(cList<string>* const files, int const offset, int const 
 			{
 				#define MAPWINSIZE 112
 				if(sf->w != MAPWINSIZE || sf->h != MAPWINSIZE) // resize map
-				{
-					//FIXME: resizing like that doesn't work good and even crashs on windows
-					//ScaleSurface2(sf, sf, MAPWINSIZE );
+				{ 
+					SDL_Surface *scaledMap = scaleSurface ( sf, NULL, MAPWINSIZE, MAPWINSIZE );
+					SDL_BlitSurface ( scaledMap, NULL, buffer, &dest );
 				}
-				SDL_BlitSurface ( sf,NULL,buffer,&dest );
+				else SDL_BlitSurface ( sf,NULL,buffer,&dest );
 			}
 
 			SDL_Rect r = dest;
@@ -1951,12 +1951,12 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 	{
 		sHUp *n;
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w/2,UnitsData.vehicle[i].img_org[0]->h/2 );
+		scaleSurface ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w/2,UnitsData.vehicle[i].img_org[0]->h/2 );
 		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.vehicle[i].img[0]->w,UnitsData.vehicle[i].img[0]->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 		SDL_BlitSurface ( OtherData.colors[cl_grey],NULL,sf,NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0],NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w,UnitsData.vehicle[i].img_org[0]->h );
+		scaleSurface ( UnitsData.vehicle[i].img_org[0],UnitsData.vehicle[i].img[0],UnitsData.vehicle[i].img_org[0]->w,UnitsData.vehicle[i].img_org[0]->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->UnitID=UnitsData.vehicle[i].data.ID;
@@ -1971,11 +1971,11 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		SDL_Surface *sf;
 		if ( UnitsData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/4,UnitsData.building[i].img_org->h/4 );
+			scaleSurface ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/4,UnitsData.building[i].img_org->h/4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/2,UnitsData.building[i].img_org->h/2 );
+			scaleSurface ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w/2,UnitsData.building[i].img_org->h/2 );
 		}
 		sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,UnitsData.building[i].img->w,UnitsData.building[i].img->h,32,0,0,0,0 );
 		SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
@@ -1988,7 +1988,7 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 			SDL_FillRect ( sf,NULL,0xFF00FF );
 		}
 		SDL_BlitSurface ( UnitsData.building[i].img,NULL,sf,NULL );
-		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w,UnitsData.building[i].img_org->h );
+		scaleSurface ( UnitsData.building[i].img_org,UnitsData.building[i].img,UnitsData.building[i].img_org->w,UnitsData.building[i].img_org->h );
 		n=new sHUp;
 		n->sf=sf;
 		n->UnitID = UnitsData.building[i].data.ID;

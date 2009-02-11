@@ -5117,14 +5117,14 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	// create the images
 	if ( SrcBuilding != NULL )
 	{
-		if ( SrcBuilding->data.is_big ) ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 4, SrcBuilding->typ->img_org->h / 4 );
-		else ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 2, SrcBuilding->typ->img_org->h / 2 );
+		if ( SrcBuilding->data.is_big ) scaleSurface ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 4, SrcBuilding->typ->img_org->h / 4 );
+		else scaleSurface ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, SrcBuilding->typ->img_org->w / 2, SrcBuilding->typ->img_org->h / 2 );
 
 		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, SrcBuilding->typ->img->w, SrcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
 	}
 	else
 	{
-		ScaleSurfaceAdv2 ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], SrcVehicle->typ->img_org[0]->w / 2, SrcVehicle->typ->img_org[0]->h / 2 );
+		scaleSurface ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], SrcVehicle->typ->img_org[0]->w / 2, SrcVehicle->typ->img_org[0]->h / 2 );
 		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, SrcVehicle->typ->img[0]->w, SrcVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
 	}
 
@@ -5148,7 +5148,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	{
 		if ( DestBuilding->data.is_big )
 		{
-			ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 4, DestBuilding->typ->img_org->h / 4 );
+			scaleSurface ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 4, DestBuilding->typ->img_org->h / 4 );
 			img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, DestBuilding->typ->img->w, DestBuilding->typ->img->h, 32, 0, 0, 0, 0 );
 			SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
 			SDL_BlitSurface ( DestBuilding->owner->color, NULL, img, NULL );
@@ -5156,7 +5156,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 2, DestBuilding->typ->img_org->h / 2 );
+			scaleSurface ( DestBuilding->typ->img_org, DestBuilding->typ->img, DestBuilding->typ->img_org->w / 2, DestBuilding->typ->img_org->h / 2 );
 
 			if ( DestBuilding->data.has_frames || DestBuilding->data.is_connector )
 			{
@@ -5175,7 +5175,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	}
 	else
 	{
-		ScaleSurfaceAdv2 ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], DestVehicle->typ->img_org[0]->w / 2, DestVehicle->typ->img_org[0]->h / 2 );
+		scaleSurface ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], DestVehicle->typ->img_org[0]->w / 2, DestVehicle->typ->img_org[0]->h / 2 );
 		img = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, DestVehicle->typ->img[0]->w, DestVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
 		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( DestVehicle->owner->color, NULL, img, NULL );
@@ -5427,17 +5427,17 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	if ( SrcBuilding != NULL )
 	{
-		ScaleSurfaceAdv2 ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, ( int ) ( SrcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( SrcBuilding->typ->img_org->h* fNewZoom ) );
+		scaleSurface ( SrcBuilding->typ->img_org, SrcBuilding->typ->img, ( int ) ( SrcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( SrcBuilding->typ->img_org->h* fNewZoom ) );
 		SrcBuilding->Transfer = false;
 	}
 	else
 	{
-		ScaleSurfaceAdv2 ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], ( int ) ( SrcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) ( SrcVehicle->typ->img_org[0]->h* fNewZoom ) );
+		scaleSurface ( SrcVehicle->typ->img_org[0], SrcVehicle->typ->img[0], ( int ) ( SrcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) ( SrcVehicle->typ->img_org[0]->h* fNewZoom ) );
 		SrcVehicle->Transfer = false;
 	}
 
-	if ( DestBuilding ) ScaleSurfaceAdv2 ( DestBuilding->typ->img_org, DestBuilding->typ->img, ( int ) ( DestBuilding->typ->img_org->w* fNewZoom ), ( int ) ( DestBuilding->typ->img_org->h* fNewZoom ) );
-	else ScaleSurfaceAdv2 ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], ( int ) ( DestVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( DestVehicle->typ->img_org[0]->h* fNewZoom ) );
+	if ( DestBuilding ) scaleSurface ( DestBuilding->typ->img_org, DestBuilding->typ->img, ( int ) ( DestBuilding->typ->img_org->w* fNewZoom ), ( int ) ( DestBuilding->typ->img_org->h* fNewZoom ) );
+	else scaleSurface ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], ( int ) ( DestVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( DestVehicle->typ->img_org[0]->h* fNewZoom ) );
 	isInMenu = false;
 }
 

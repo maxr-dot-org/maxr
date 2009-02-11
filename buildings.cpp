@@ -3259,12 +3259,12 @@ void cBuilding::ShowUpgrade ( void )
 	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
 	{
 		SDL_Surface *sf;
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
+		scaleSurface ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
 		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.vehicle[i].img[0]->w, UnitsData.vehicle[i].img[0]->h, 32, 0, 0, 0, 0 );
 		SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
 		SDL_BlitSurface ( UnitsData.vehicle[i].img[0], NULL, sf, NULL );
-		ScaleSurfaceAdv2 ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
+		scaleSurface ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
 		sUpgradeStruct* const n = new sUpgradeStruct(sf, true, (int)i);
 		MakeUpgradeSliderVehicle ( n->upgrades, (int)i );
 		images.Add ( n );
@@ -3276,11 +3276,11 @@ void cBuilding::ShowUpgrade ( void )
 
 		if ( UnitsData.building[i].data.is_big )
 		{
-			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 4, UnitsData.building[i].img_org->h / 4 );
+			scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 4, UnitsData.building[i].img_org->h / 4 );
 		}
 		else
 		{
-			ScaleSurfaceAdv2 ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 2, UnitsData.building[i].img_org->h / 2 );
+			scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 2, UnitsData.building[i].img_org->h / 2 );
 		}
 
 		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.building[i].img->w, UnitsData.building[i].img->h, 32, 0, 0, 0, 0 );
@@ -3298,7 +3298,7 @@ void cBuilding::ShowUpgrade ( void )
 
 		SDL_BlitSurface ( UnitsData.building[i].img, NULL, sf, NULL );
 
-		ScaleSurfaceAdv2 ( UnitsData.building[i].img_org, UnitsData.building[i].img, ( int ) ( UnitsData.building[i].img_org->w* newzoom ), ( int ) ( UnitsData.building[i].img_org->h* newzoom ) );
+		scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, ( int ) ( UnitsData.building[i].img_org->w* newzoom ), ( int ) ( UnitsData.building[i].img_org->h* newzoom ) );
 		sUpgradeStruct* const n = new sUpgradeStruct(sf, false, (int)i);
 		MakeUpgradeSliderBuilding ( n->upgrades, (int)i );
 		images.Add ( n );
@@ -5502,7 +5502,7 @@ void cBuilding::ShowBuildMenu ( void )
 		else if ( data.build_alien && !vehicle.data.is_alien )
 			continue;
 
-		ScaleSurfaceAdv2 ( vehicle.img_org[0], vehicle.img[0], vehicle.img_org[0]->w / 2, vehicle.img_org[0]->h / 2 );
+		scaleSurface ( vehicle.img_org[0], vehicle.img[0], vehicle.img_org[0]->w / 2, vehicle.img_org[0]->h / 2 );
 
 		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, vehicle.img[0]->w, vehicle.img[0]->h, 32, 0, 0, 0, 0 );
 
@@ -5512,7 +5512,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 		SDL_BlitSurface ( vehicle.img[0], NULL, sf, NULL );
 
-		ScaleSurfaceAdv2 ( vehicle.img_org[0], vehicle.img[0], (int) (vehicle.img_org[0]->w* newzoom ), (int) ( vehicle.img_org[0]->h* newzoom ) );
+		scaleSurface ( vehicle.img_org[0], vehicle.img[0], (int) (vehicle.img_org[0]->w* newzoom ), (int) ( vehicle.img_org[0]->h* newzoom ) );
 
 		sBuildStruct* const n = new sBuildStruct(sf, vehicle.data.ID);
 		images.Add( n );

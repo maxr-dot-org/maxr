@@ -716,15 +716,27 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 
+/**
+ * draws one line of the source surface scaled to the destination surface.
+ * @author alzi alias DoctorDeath
+ * @param srcPixelData pointer to the first byte of the line in the pixeldate of the source surface.
+ * @param srcWidth width of the line in the sourcesurface.
+ * @param destPixelData pointer to the first byte where in the pixeldate of the source surface the line should be drawn.
+ * @param destWidth Directory width of the line how it should be drawn to the destination surface.
+ */
+template<typename Type> void drawStetchedLine ( Type *srcPixelData, int srcWidth, Type *destPixelData, int destWidth );
+/**
+ * scale a surface to the overgiven sice. The scaled surface will be drawn to the destination surface.
+ * If the destiniation surface is NULL a new surface will be created.
+ * @author alzi alias DoctorDeath
+ * @param scr the surface to be scaled.
+ * @param dest the surface that will receive the new pixel data. If it is NUll a new surface will be created.
+ * @param width width of the new surface.
+ * @param height height of the new surface.
+ * @return returns the destination surface.
+ */
+SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int height);
 
-void ScaleSurface(SDL_Surface *scr,SDL_Surface **dest,int size);
-void ScaleSurface2(SDL_Surface *scr,SDL_Surface *dest,int size);
-void ScaleSurfaceAdv(SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey);
-
-//takes the surfaces src and scales it to match the given size.
-//the result is directly written in the pixel memory of dst
-void ScaleSurfaceAdv2(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
-void ScaleSurfaceAdv2Spec(SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey);
 SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
 
 /** Draws a line on the surface */

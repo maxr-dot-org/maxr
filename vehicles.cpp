@@ -2810,7 +2810,9 @@ void cVehicle::ShowBuildMenu ( void )
 		if ( !Client->bAlienTech && UnitsData.building[i].data.is_alien )
 			continue;
 
-		ScaleSurface ( UnitsData.building[i].img_org, &sf2, 32 );
+		int width = 32;
+		if ( UnitsData.building[i].img_org->w > UnitsData.building[i].img_org->h ) width = UnitsData.building[i].img_org->w/64*32;
+		sf2 = scaleSurface ( UnitsData.building[i].img_org, NULL, width, 32 );
 
 		SDL_SetColorKey ( sf2, SDL_SRCCOLORKEY, 0xFFFFFF );
 

@@ -304,240 +304,109 @@ void Quit()
 	exit ( 0 );
 }
 
-// ScaleSurface //////////////////////////////////////////////////////////////
-// Skaliert ein Surface in ein Anderes:
-void ScaleSurface ( SDL_Surface *scr,SDL_Surface **dest,int size )
+template<typename Type> void drawStetchedLine ( Type *srcPixelData, int srcWidth, Type *destPixelData, int destWidth )
 {
-	int x,y,rx,ry,dx,dy,sizex=size;
-	unsigned int *s,*d;
-
-	if ( scr->w>scr->h )
+	int i = 0;
+	int width = destWidth;
+	Type pixel = 0;
+	Type* srcEnd = srcPixelData + srcWidth;
+	// go trough all pixel in this line
+	while( srcPixelData < srcEnd )
 	{
-		sizex=scr->w/64*size;
-	}
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,size,SettingsData.iColourDepth,0,0,0,0 );
-	dx=rx=0;
-	dy=0;
-	SDL_LockSurface ( *dest );
-	SDL_LockSurface ( scr );
-	s= ( unsigned int* ) scr->pixels;
-	d= ( unsigned int* ) ( *dest )->pixels;
-	ry=scr->h;
-	for ( y=0;y<scr->h;y++ )
-	{
-		if ( ry>=scr->h )
+		pixel = *srcPixelData;
+	drawpixel:
+		// copy the pixel
+		*destPixelData++ = pixel;
+		width--;
+		i += srcWidth;
+		if ( !width ) break;
+		// draw pixel once more if necessary
+		if ( i < destWidth ) goto drawpixel;
+		// skip pixels when necessary
+		do
 		{
-			ry-=scr->h;
-			dx=0;
-			rx=scr->w;
-			for ( x=0;x<scr->w;x++ )
-			{
-				if ( rx>=scr->w )
-				{
-					rx-=scr->w;
-					d[dx+dy*sizex]=s[x+y*scr->w];
-					dx++;
-				}
-				if ( dx>=sizex ) break;
-				rx+=sizex;
-			}
-			dy++;
-			if ( dy>=size ) break;
+			i -= destWidth;
+			srcPixelData++;
 		}
-		ry+=size;
-	}
-	SDL_UnlockSurface ( *dest );
-	SDL_UnlockSurface ( scr );
+		while ( i >= destWidth );
+	};
+	return; 
 }
 
-void ScaleSurface2 ( SDL_Surface *scr,SDL_Surface *dest,int size )
+SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int height )
 {
-	int x,y,rx,ry,dx,dy,sizex=size;
-	unsigned char *s,*d;
-	if ( scr->w>scr->h )
+	if ( width <= 0 || height <= 0 || !scr ) return NULL;
+	SDL_Surface *surface;
+	// generate new surface if necessary
+	if ( dest == NULL ) surface = SDL_CreateRGBSurface(scr->flags, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+	else
 	{
-		sizex=scr->w/64*size;
+		// else set the size of the old one
+		surface = dest;
+		surface->w = width;
+		surface->h = height;
 	}
-	dest->w=scr->w;
-	dest->h=scr->h;
-	dx=rx=0;
-	dy=0;
-	SDL_LockSurface ( dest );
-	SDL_LockSurface ( scr );
-	s= ( unsigned char* ) scr->pixels;
-	d= ( unsigned char* ) dest->pixels;
-	int bpp = scr->format->BytesPerPixel;
-	ry=scr->h;
-	for ( y=0;y<scr->h;y++ )
+	// just blit the surface when the new size is identic to the old one
+	/*if ( scr->w == width && scr->h == height )
 	{
-		if ( ry>=scr->h )
+		SDL_BlitSurface ( scr, NULL, surface, NULL );
+		return surface;
+	}*/
+	// copy palette when necessary
+	if ( scr->format->BitsPerPixel == 8 && !dest )
+	{
+		for (int i = 0; i < 256; i++ )
 		{
-			ry-=scr->h;
-			dx=0;
-			rx=scr->w;
-			for ( x=0;x<scr->w;x++ )
-			{
-				if ( rx>=scr->w )
-				{
-					rx-=scr->w;
-					if ( bpp == 1 )
-					{
-						d[dx+dy*dest->w]=s[x+y*scr->w];
-					}
-					else
-					{
-						((int*) d)[dx+dy*dest->w] = ((int*) s)[x+y*scr->w];
-					}
-					dx++;
-				}
-				if ( dx>=sizex ) break;
-				rx+=sizex;
-			}
-			dy++;
-			if ( dy>=size ) break;
+			surface->format->palette->colors[i].r = scr->format->palette->colors[i].r;
+			surface->format->palette->colors[i].g = scr->format->palette->colors[i].g;
+			surface->format->palette->colors[i].b = scr->format->palette->colors[i].b;
 		}
-		ry+=size;
 	}
-	SDL_UnlockSurface ( dest );
-	SDL_UnlockSurface ( scr );
-	dest->w=sizex;
-	dest->h=size;
-}
 
-// ScaleSurfaceAdv ///////////////////////////////////////////////////////////
-// Skaliert ein Surface in ein Anderes:
-void ScaleSurfaceAdv ( SDL_Surface *scr,SDL_Surface **dest,int sizex,int sizey )
-{
-	int x,y,rx,ry,dx,dy;
-	unsigned int *s,*d;
-	*dest=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,sizex,sizey,SettingsData.iColourDepth,0,0,0,0 );
-	dx=rx=0;
-	dy=0;
-	SDL_LockSurface ( *dest );
-	SDL_LockSurface ( scr );
-	s= ( unsigned int* ) scr->pixels;
-	d= ( unsigned int* ) ( *dest )->pixels;
-	ry=scr->h;
-	for ( y=0;y<scr->h;y++ )
+	int srcRow = 0;
+	int destRow = 0;
+	int i = 0;
+	Uint8* srcPixelData;
+	Uint8* destPixelData;
+	// go trough all rows
+	while ( srcRow < scr->h )
 	{
-		if ( ry>=scr->h )
+		srcPixelData = (Uint8*)scr->pixels+(srcRow*scr->pitch);
+		// draw the complete line
+	drawline:
+		destPixelData = (Uint8*)surface->pixels+(destRow*surface->pitch);
+
+		// pay attention to diffrent surface formats
+		switch ( scr->format->BytesPerPixel )
 		{
-			ry-=scr->h;
-			dx=0;
-			rx=scr->w;
-			for ( x=0;x<scr->w;x++ )
-			{
-				if ( rx>=scr->w )
-				{
-					rx-=scr->w;
-					d[dx+dy*sizex]=s[x+y*scr->w];
-					dx++;
-				}
-				if ( dx>=sizex ) break;
-				rx+=sizex;
-			}
-			dy++;
-			if ( dy>=sizey ) break;
+		case 1:
+		    drawStetchedLine<Uint8>( srcPixelData, scr->w, destPixelData, surface->w );
+		    break;
+		case 2:
+		    drawStetchedLine<Uint16>( (Uint16*)srcPixelData, scr->w, (Uint16*)destPixelData, surface->w );
+		    break;
+		case 3:
+		    // not yet supported
+		    break;
+		case 4:
+		    drawStetchedLine<Uint32>( (Uint32*)srcPixelData, scr->w, (Uint32 *)destPixelData, surface->w );
+		    break;
 		}
-		ry+=sizey;
-	}
-	SDL_UnlockSurface ( *dest );
-	SDL_UnlockSurface ( scr );
-}
-
-void ScaleSurfaceAdv2 ( SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey )
-{
-	int x,y,rx,ry,dx,dy;
-	unsigned int *s,*d;
-	dx=rx=0;
-	dy=0;
-	dest->w=scr->w;
-	dest->h=scr->h;
-	SDL_LockSurface ( dest );
-	SDL_LockSurface ( scr );
-	s= ( unsigned int* ) scr->pixels;
-	d= ( unsigned int* ) dest->pixels;
-	ry=scr->h;
-	for ( y=0;y<scr->h;y++ )
-	{
-		if ( ry>=scr->h )
+		destRow++;
+		i += scr->h;
+		// break when we have already finished
+	    if ( destRow == surface->h ) break;
+		// draw the line once more when the destiniation surface has a bigger height then the source surface
+	    if ( i < surface->h ) goto drawline;
+		// skip lines in the source surface when the destiniation surface has a smaller height then the source surface
+	    do
 		{
-			ry-=scr->h;
-			dx=0;
-			rx=scr->w;
-			for ( x=0;x<scr->w;x++ )
-			{
-				if ( rx>=scr->w )
-				{
-					rx-=scr->w;
-					d[dx+dy*dest->w]=s[x+y*scr->w];
-					dx++;
-				}
-				if ( dx>=sizex ) break;
-				rx+=sizex;
-			}
-			dy++;
-			if ( dy>=sizey ) break;
+			i -= surface->h;
+			srcRow++;
 		}
-		ry+=sizey;
+		while ( i >= surface->h );
 	}
-	SDL_UnlockSurface ( dest );
-	SDL_UnlockSurface ( scr );
-	dest->w=sizex;
-	dest->h=sizey;
-}
-
-void ScaleSurfaceAdv2Spec ( SDL_Surface *scr,SDL_Surface *dest,int sizex,int sizey )
-{
-	int x,y,rx,ry,dx,dy;
-	unsigned int *s,*d;
-	dx=rx=0;
-	dy=0;
-	dest->w=scr->w;
-	dest->h=scr->h;
-	SDL_LockSurface ( dest );
-	SDL_LockSurface ( scr );
-	s= ( unsigned int* ) scr->pixels;
-	d= ( unsigned int* ) dest->pixels;
-	ry=scr->h;
-	for ( y=0;y<scr->h;y++ )
-	{
-		if ( ry>=scr->h )
-		{
-			ry-=scr->h;
-			dx=0;
-			rx=scr->w;
-			for ( x=0;x<scr->w;x++ )
-			{
-				if ( rx>=scr->w )
-				{
-					unsigned int t,sc,de;
-					rx-=scr->w;
-
-					sc=x+y*scr->w;
-					de=dx+dy*dest->w;
-					t=d[de]=s[sc];
-
-					if ( t==0xFF00FF )
-					{
-						if ( x>0&&s[sc-1]!=0xFF00FF ) d[de]=s[sc-1];
-						else if ( x<scr->w-1&&s[sc+1]!=0xFF00FF ) d[de]=s[sc+1];
-					}
-
-					dx++;
-				}
-				if ( dx>=sizex ) break;
-				rx+=sizex;
-			}
-			dy++;
-			if ( dy>=sizey ) break;
-		}
-		ry+=sizey;
-	}
-	SDL_UnlockSurface ( dest );
-	SDL_UnlockSurface ( scr );
-	dest->w=sizex;
-	dest->h=sizey;
+	return surface;
 }
 
 // CreatePfeil ////////////////////////////////////////////////////////////////
