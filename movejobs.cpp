@@ -606,6 +606,12 @@ void cServerMoveJob::moveVehicle()
 			Vehicle->doSurvey();
 		}
 
+		//hide vehicle
+		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
+
+		//handle detection
+		Vehicle->makeDetection();
+
 		// let other units fire on this one
 		Vehicle->InSentryRange();
 
@@ -627,12 +633,6 @@ void cServerMoveJob::moveVehicle()
 		}
 
 		Vehicle->owner->DoScan();
-
-		//hide vehicle
-		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
-
-		//handle detection
-		Vehicle->makeDetection();
 
 		Vehicle->moving = false;
 		calcNextDir();
