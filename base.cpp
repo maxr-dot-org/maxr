@@ -73,7 +73,7 @@ cBase::~cBase ( void )
 
 sSubBase *cBase::checkNeighbour ( int iOff, cBuilding *Building )
 {
-	if( iOff < 0 && iOff <= map->size*map->size ) return NULL;
+	if( iOff < 0 || iOff >= map->size*map->size ) return NULL;
 	cBuilding* b = map->fields[iOff].getBuildings();
 
 	if ( b && b->owner == Building->owner && b->SubBase )
