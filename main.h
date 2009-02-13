@@ -500,6 +500,8 @@ public:
 	/**start in fastmode */
 	bool bFastMode;
 	/**start in fastmode */
+	bool bPreScale;
+	/**start in fastmode */
 	string sLanguage;
 
 	//GAME-Node
@@ -694,8 +696,11 @@ public:
 	SDL_Surface *dirt_big_shw;
 
 	SDL_Surface *ptr_small_beton;
+	SDL_Surface *ptr_small_beton_org;
 	SDL_Surface *ptr_connector;
+	SDL_Surface *ptr_connector_org;
 	SDL_Surface *ptr_connector_shw;
+	SDL_Surface *ptr_connector_shw_org;
 } EX UnitsData;
 
 // OtherData - Class containing the rest of surfaces //////////////////////////

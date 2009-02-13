@@ -71,6 +71,8 @@ struct sVehicle{
   struct Mix_Chunk *Drive;
   struct Mix_Chunk *DriveWater;
   struct Mix_Chunk *Attack;
+
+  void scaleSurfaces( float factor );
 };
 
 // Die Vehicle Klasse ////////////////////////////////////////////////////////
@@ -249,6 +251,7 @@ public:
 	* checks whether the offset is next to the vehicle
 	*/
 	bool isNextTo( int x, int y) const;
+	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
 };
 
 #endif

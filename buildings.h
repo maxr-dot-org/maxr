@@ -57,6 +57,8 @@ struct sBuilding{
   struct Mix_Chunk *Running;
   struct Mix_Chunk *Stop;
   struct Mix_Chunk *Attack;
+
+  void scaleSurfaces( float faktor );
 };
 
 class cPlayer;

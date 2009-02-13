@@ -639,6 +639,16 @@ int ReadMaxXml()
 		Log.write ( "Can't load Fastmode from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.bFastMode = false;
 	}
+	// PreScale
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","PreScale", NULL)))
+		Log.write ( "Can't find PreScale-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
+		SettingsData.bPreScale = pXmlNode->XmlDataToBool(sTmpString);
+	else
+	{
+		Log.write ( "Can't load PreScale-Mode from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.bPreScale = false;
+	}
 	// Language
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Language", NULL)))
 		Log.write ( "Can't find Language-Node in max.xml", LOG_TYPE_WARNING );
@@ -1042,6 +1052,8 @@ int ReadMaxXml()
 		Log.write ("Windowmode    == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bFastMode?SON:SOFF;
 		Log.write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		sTmp =  SettingsData.bPreScale?SON:SOFF;
+		Log.write ("PreScale      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
 		//Log.write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bAutoSave?SON:SOFF;
@@ -1163,6 +1175,10 @@ int GenerateMaxXml()
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Fastmode" );
+	element->SetAttribute ( "YN", "Yes");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "PreScale" );
 	element->SetAttribute ( "YN", "Yes");	
 	startnode->LinkEndChild(element);
 
@@ -2457,13 +2473,16 @@ static int LoadBuildings()
 		if (b.data.is_connector)
 		{
 			UnitsData.ptr_connector = b.img;
+			UnitsData.ptr_connector_org = b.img_org;
 			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
-			UnitsData.ptr_connector_shw = b.shw;
+			UnitsData.ptr_connector_shw = b.img;
+			UnitsData.ptr_connector_shw_org = b.shw_org;
 			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
 		}
 		else if (b.data.is_road)
 		{
 			UnitsData.ptr_small_beton = b.img;
+			UnitsData.ptr_small_beton_org = b.img_org;
 			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
 		}
 

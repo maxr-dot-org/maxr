@@ -504,6 +504,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	tmp = *dest;
 	scr.x = 0;
 	scr.y = 0;
+	float factor = (float)(Client->Hud.Zoom/64.0);
 
 	// Den Schadenseffekt machen:
 
@@ -525,12 +526,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( data.is_big )
 		{
 			if ( !UnitsData.dirt_big ) return;
-			scr.w = scr.h = UnitsData.dirt_big->h;
+			scr.w = scr.h = (int)(UnitsData.dirt_big_org->h*factor);
 		}
 		else
 		{
 			if ( !UnitsData.dirt_small ) return;
-			scr.w = scr.h = UnitsData.dirt_small->h;
+			scr.w = scr.h = (int)(UnitsData.dirt_small_org->h*factor);
 		}
 
 		scr.x = scr.w * RubbleTyp;
@@ -541,18 +542,30 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( SettingsData.bShadows )
 		{
 			if ( data.is_big )
+			{
+				if ( !SettingsData.bPreScale && ( UnitsData.dirt_big_shw->w != (int)(UnitsData.dirt_big_shw_org->w*factor) || UnitsData.dirt_big_shw->h != (int)(UnitsData.dirt_big_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_big_shw_org->h*factor) );
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &scr, buffer, &tmp );
+			}
 			else
+			{
+				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &scr, buffer, &tmp );
+			}
 		}
 
 		// Das Building malen:
 		tmp = *dest;
 
 		if ( data.is_big )
+		{
+			if ( !SettingsData.bPreScale && ( UnitsData.dirt_big->w != (int)(UnitsData.dirt_big_org->w*factor) || UnitsData.dirt_big->h != (int)(UnitsData.dirt_big_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_big_org, UnitsData.dirt_big, (int)(UnitsData.dirt_big_org->w*factor), (int)(UnitsData.dirt_big_org->h*factor) );
 			SDL_BlitSurface ( UnitsData.dirt_big, &scr, buffer, &tmp );
+		}
 		else
+		{
+			if ( !SettingsData.bPreScale && ( UnitsData.dirt_small->w != (int)(UnitsData.dirt_small_org->w*factor) || UnitsData.dirt_small->h != (int)(UnitsData.dirt_small_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_org, UnitsData.dirt_small, (int)(UnitsData.dirt_small_org->w*factor), (int)(UnitsData.dirt_small_org->h*factor) );
 			SDL_BlitSurface ( UnitsData.dirt_small, &scr, buffer, &tmp );
+		}
 
 		return;
 	}
@@ -567,15 +580,15 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			scr.w = typ->img->w;
-			scr.h = typ->img->h;
+			scr.w = (int)(typ->img_org->w*factor);
+			scr.h = (int)(typ->img_org->h*factor);
 		}
 	}
 	else
 	{
 		scr.y = 0;
 		scr.x = 0;
-		scr.h = scr.w = typ->img->h;
+		scr.h = scr.w = (int)(typ->img_org->h*factor);
 
 		if ( BaseN )
 		{
@@ -713,6 +726,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.is_big )
 		{
+			if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
@@ -726,6 +740,8 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			}
 		}
 		else
+		{
+			if ( !SettingsData.bPreScale && ( UnitsData.ptr_small_beton->w != (int)(UnitsData.ptr_small_beton_org->w*factor) || UnitsData.ptr_small_beton->h != (int)(UnitsData.ptr_small_beton_org->h*factor) ) ) scaleSurface ( UnitsData.ptr_small_beton_org, UnitsData.ptr_small_beton, (int)(UnitsData.ptr_small_beton_org->w*factor), (int)(UnitsData.ptr_small_beton_org->h*factor) );
 			if ( !data.is_road && !data.is_connector )
 			{
 				if ( StartUp && SettingsData.bAlphaEffects )
@@ -740,6 +756,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, buffer, &tmp );
 				}
 			}
+		}
 	}
 
 	tmp = *dest;
@@ -754,32 +771,14 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	// Den Schatten malen:
 	if ( SettingsData.bShadows )
 	{
-		if ( StartUp && SettingsData.bAlphaEffects )
-		{
-			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
+		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 
-			if ( !data.is_connector )
-			{
-				SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
-			}
-			else
-			{
-				SDL_BlitSurface ( typ->shw, &scr, buffer, &tmp );
-			}
+		if ( !SettingsData.bPreScale && ( typ->shw->w != (int)(typ->shw_org->w*factor) || typ->shw->h != (int)(typ->shw_org->h*factor) ) ) scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
 
-			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
-		}
-		else
-		{
-			if ( !data.is_connector )
-			{
-				SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
-			}
-			else
-			{
-				SDL_BlitSurface ( typ->shw, &scr, buffer, &tmp );
-			}
-		}
+		if ( !data.is_connector ) SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
+		else SDL_BlitSurface ( typ->shw, &scr, buffer, &tmp );
+
+		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 	}
 
 	// Die Spielerfarbe blitten:
@@ -787,37 +786,33 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-		if ( !data.is_connector )
+		if ( data.has_frames )
 		{
-			if ( data.has_frames )
+			if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
 			{
-				if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
-				{
-					scr.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
-				}
-				else
-				{
-					scr.x = dir * Client->Hud.Zoom;
-				}
-
-				SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
-
-				scr.x = 0;
+				scr.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
 			}
 			else
 			{
-				SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
+				scr.x = dir * Client->Hud.Zoom;
 			}
+
+			if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
+			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
+
+			scr.x = 0;
 		}
 		else
 		{
-			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
+			if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
+			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		}
 	}
 	else
 	{
 		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
+		if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
 		if ( !data.is_connector )
 		{
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
@@ -857,6 +852,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		tmp = *dest;
 		SDL_SetAlpha ( typ->eff, SDL_SRCALPHA, EffectAlpha );
+		if ( !SettingsData.bPreScale && ( typ->eff->w != (int)(typ->eff_org->w*factor) || typ->eff->h != (int)(typ->eff_org->h*factor) ) ) scaleSurface ( typ->eff_org, typ->eff, (int)(typ->eff_org->w*factor), (int)(typ->eff_org->h*factor) );
 		SDL_BlitSurface ( typ->eff, NULL, buffer, &tmp );
 
 		if ( Client->iTimer0 )
@@ -1371,7 +1367,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	tmp = dest;
 	scr.y = 0;
 	scr.h = scr.w = zoom;
+	float factor = (float)(zoom/64.0);
 
+	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
 	if ( BaseN )
 	{
 		scr.x = zoom;
@@ -7762,4 +7760,11 @@ void cBuilding::makeDetection()
 			setDetectedByPlayer( player );
 		}
 	}
+}
+
+void sBuilding::scaleSurfaces( float factor )
+{
+	scaleSurface ( img_org, img, (int)(img_org->w*factor), (int)(img_org->h*factor) );
+	scaleSurface ( shw_org, shw, (int)(shw_org->w*factor), (int)(shw_org->h*factor) );
+	if ( eff_org ) scaleSurface ( eff_org, eff, (int)(eff_org->w*factor), (int)(eff_org->h*factor) );
 }

@@ -179,6 +179,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	float newzoom = (float)( 64.0 / Client->Hud.Zoom );
+	float factor = (float)(Client->Hud.Zoom/64.0);
 
 	if ( OffX )
 		ox = ( int ) ( OffX / newzoom );
@@ -205,9 +206,9 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 
 		// Größe auslesen:
-		scr.w = typ->img[dir]->w;
+		scr.w = (int)(typ->img_org[dir]->w*factor);
 
-		scr.h = typ->img[dir]->h;
+		scr.h = (int)(typ->img_org[dir]->h*factor);
 
 		// Den Schatten malen:
 		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
@@ -224,11 +225,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 						r.h = r.w = typ->img[dir]->h;
 						r.x = r.w * WalkFrame;
 						r.y = 0;
-						SDL_BlitSurface ( typ->shw[dir], &r, buffer, &tmp );
+						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, buffer, &tmp, factor );
 					}
 					else
 					{
-						SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
+						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
 					}
 				}
 				else
@@ -237,7 +238,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
 					tmp.x += high + ditherX;
 					tmp.y += high + ditherY;
-					SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
+					blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
 				}
 
 				SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
@@ -252,11 +253,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 						r.h = r.w = typ->img[dir]->h;
 						r.x = r.w * WalkFrame;
 						r.y = 0;
-						SDL_BlitSurface ( typ->shw[dir], &r, buffer, &tmp );
+						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, buffer, &tmp, factor );
 					}
 					else
 					{
-						SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
+						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
 					}
 				}
 				else
@@ -288,7 +289,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 						tmp.y += high + ditherY;
 					}
 
-					SDL_BlitSurface ( typ->shw[dir], NULL, buffer, &tmp );
+					blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
 				}
 			}
 		}
@@ -301,11 +302,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			scr.w = scr.h = tmp.h = tmp.w = typ->img[dir]->h;
 			tmp.x = WalkFrame * tmp.w;
 			tmp.y = 0;
-			SDL_BlitSurface ( typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL );
+			blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
 		}
 		else
 		{
-			SDL_BlitSurface ( typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL );
+			blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
 		}
 
 		// Das Vehicle malen:
@@ -367,7 +368,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		if ( data.has_overlay && SettingsData.bAnimations )
 		{
 			tmp = *dest;
-			scr.h = scr.w = typ->overlay->h;
+			scr.h = scr.w = (int)(typ->overlay_org->h*factor);
 			tmp.x += Client->Hud.Zoom / 2 - scr.h / 2 + ox + ditherX;
 			tmp.y += Client->Hud.Zoom / 2 - scr.h / 2 + oy + ditherY;
 			scr.y = 0;
@@ -378,13 +379,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 			else
 			{
-				scr.x = ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( typ->overlay->w / scr.h ) ) ) ) / newzoom );
+				scr.x = ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / scr.h ) ) ) ) / newzoom );
 			}
 
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
-				SDL_BlitSurface ( typ->overlay, &scr, buffer, &tmp );
+				blitWithPreScale ( typ->overlay_org, typ->overlay, &scr, buffer, &tmp, factor );
 				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
 
 				if ( Client->iTimer0 )
@@ -395,7 +396,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 			else
 			{
-				SDL_BlitSurface ( typ->overlay, &scr, buffer, &tmp );
+				blitWithPreScale ( typ->overlay_org, typ->overlay, &scr, buffer, &tmp, factor );
 			}
 		}
 	}
@@ -406,6 +407,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			if ( ShowBigBeton )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
+				if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
 				SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, buffer, &tmp );
 				tmp = *dest;
 
@@ -422,19 +424,19 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			// Den Schatten malen:
 			if ( SettingsData.bShadows )
 			{
-				SDL_BlitSurface ( typ->build_shw, NULL, buffer, &tmp );
+				blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, buffer, &tmp, factor );
 			}
 
 			// Die Spielerfarbe blitten:
 			scr.y = 0;
 
-			scr.h = scr.w = typ->build->h;
+			scr.h = scr.w = (int)(typ->build_org->h*factor);
 
 			scr.x = ( Client->iFrame % 4 ) * scr.w;
 
 			SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-			SDL_BlitSurface ( typ->build, &scr, GraphicsData.gfx_tmp, NULL );
+			blitWithPreScale ( typ->build_org, typ->build, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
 			// Das Vehicle malen:
 			scr.x = 0;
@@ -492,7 +494,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			// Den Schatten malen:
 			if ( SettingsData.bShadows )
 			{
-				SDL_BlitSurface ( typ->clear_small_shw, NULL, buffer, &tmp );
+				blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, buffer, &tmp, factor );
 			}
 
 			// Die Spielerfarbe blitten:
@@ -504,7 +506,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-			SDL_BlitSurface ( typ->clear_small, &scr, GraphicsData.gfx_tmp, NULL );
+			blitWithPreScale ( typ->clear_small_org, typ->clear_small, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
 			// Das Vehicle malen:
 			scr.x = 0;
@@ -4937,4 +4939,58 @@ bool cVehicle::isNextTo( int x, int y) const
 	}
 
 	return true;
+}
+
+void sVehicle::scaleSurfaces( float factor )
+{
+	int width, height;
+	for ( int i = 0; i < 8; i++ )
+	{
+		width= (int) ( img_org[i]->w*factor );
+		height= (int) ( img_org[i]->h*factor );
+		scaleSurface ( img_org[i], img[i], width, height );
+		width= (int) ( shw_org[i]->w*factor );
+		height= (int) ( shw_org[i]->h*factor );
+		scaleSurface ( shw_org[i], shw[i], width, height );
+	}
+	if ( build_org )
+	{
+		height= (int) ( build_org->h*factor );
+		width=height*4;
+		scaleSurface ( build_org, build, width, height );
+		width= (int) ( build_shw_org->w*factor );
+		height= (int) ( build_shw_org->h*factor );
+		scaleSurface ( build_shw_org, build_shw, width, height );
+	}
+	if ( clear_small_org )
+	{
+		height= (int) ( clear_small_org->h*factor );
+		width=height*4;
+		scaleSurface ( clear_small_org, clear_small, width, height );
+		width= (int) ( clear_small_shw_org->w*factor );
+		height= (int) ( clear_small_shw_org->h*factor );
+		scaleSurface ( clear_small_shw_org, clear_small_shw, width, height );
+	}
+	if ( overlay_org )
+	{
+		height= (int) ( overlay_org->h*factor );
+		width= (int) ( overlay_org->w*factor );
+		scaleSurface ( overlay_org, overlay, width, height );
+	}
+}
+
+void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames )
+{
+	if ( !SettingsData.bPreScale )
+	{
+		int width, height;
+		height = (int) ( org_src->h*factor );
+		if ( frames > 1 ) width = height*frames;
+		else width = (int) ( org_src->w*factor );
+		if ( src->w != width || src->h != height )
+		{
+			scaleSurface ( org_src, src, width, height );
+		}
+	}
+	SDL_BlitSurface ( src, srcrect, dest, destrect );
 }
