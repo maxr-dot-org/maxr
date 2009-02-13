@@ -548,7 +548,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			}
 			else
 			{
-				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
+				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_small_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &scr, buffer, &tmp );
 			}
 		}
@@ -812,7 +812,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
-		if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
+		if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
 		if ( !data.is_connector )
 		{
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
