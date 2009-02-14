@@ -2397,7 +2397,7 @@ int installGfx()
 {
 	string path;
 	SDL_Surface *surface, *output;
-	iTotalFiles = 32;
+	iTotalFiles = 34;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	
@@ -2720,8 +2720,7 @@ int installGfx()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "res.pcx" )
-	
-	/*
+
 	//fuel
 	try
 	{
@@ -2732,7 +2731,7 @@ int installGfx()
 		for ( int i = 1; i < 17; i++)
 		{
 			surface = getImageFromRes("FUELMK" + iToStr(i) );
-			setColor( surface, 48, 255, 0, 255 );
+			setColor( surface, 255, 255, 0, 255 );
 			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -2753,7 +2752,7 @@ int installGfx()
 		for ( int i = 1; i < 17; i++)
 		{
 			surface = getImageFromRes("GOLDMK" + iToStr(i) );
-			setColor( surface, 48, 255, 0, 255 );
+			setColor( surface, 255, 255, 0, 255 );
 			SDL_Rect dst_rect = { 1 + i*64, 1, 0, 0};
 			SDL_BlitSurface( surface, NULL, output, &dst_rect);
 			SDL_FreeSurface( surface );
@@ -2763,7 +2762,6 @@ int installGfx()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "gold.pcx" )
-	*/
 
 	//and now the ugly hud_stuff.pcx :|
 #define COPY_GRAPHIC(name, _x, _y) \
@@ -3943,6 +3941,8 @@ int installEverything (void*)
 	installMVEs ();
 	installMusic ();
 	gFinishedInstalling = true;
+
+	return 0;
 }
 
 
