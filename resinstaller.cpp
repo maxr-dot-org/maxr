@@ -2466,7 +2466,14 @@ int installGfx()
 	END_INSTALL_FILE( path + "activate_field.pcx" );
 
 	//band_big
-	copyFileFromRes("LRGTAPE", path + "band_big.pcx", 0);
+	try
+	{
+		surface = getImageFromRes( "LRGTAPE" );
+		resizeSurface(surface, 0, 0, 128, 128 );
+		savePCX( surface, path + "band_big.pcx");
+		SDL_FreeSurface( surface);
+	}
+	END_INSTALL_FILE( path + "band_big.pcx" );
 
 	//band_big_water
 	//copyFileFromRes("LRGTAPE", path + "band_big_water.pcx", 1);
