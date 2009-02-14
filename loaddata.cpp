@@ -1767,59 +1767,25 @@ static int LoadGraphics(const char* path)
 
 	// Resources:
 	Log.write ( "Resourcegraphics...", LOG_TYPE_DEBUG );
+	//metal
 	if ( LoadGraphicToSurface ( ResourceData.res_metal_org,path,"res.pcx" ) == 1 )
 	{
-		//metal
-		SDL_SetColorKey ( ResourceData.res_metal_org,SDL_SRCCOLORKEY,-1 );
-		ResourceData.res_metal=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-		SDL_BlitSurface ( ResourceData.res_metal_org,NULL,ResourceData.res_metal,NULL );
-		SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFFFFFF );
-		//oil
-		ResourceData.res_oil_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-		SDL_FillRect ( ResourceData.res_oil_org,NULL,0x00FF00 );
-		SDL_SetColorKey ( ResourceData.res_oil_org,SDL_SRCCOLORKEY,0xFF00FF );
-		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil_org,NULL );
-		ResourceData.res_oil=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-		SDL_FillRect ( ResourceData.res_oil,NULL,0x00FF00 );
-		SDL_SetColorKey ( ResourceData.res_oil,SDL_SRCCOLORKEY,0xFF00FF );
-		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_oil,NULL );
-			//draw oil symbol on oil resources
-			
-			for(int i=0; i<16; i++)
-			{
-				SDL_Rect rSrc = { 100, 108, 12, 12 };
-				SDL_Rect rDest = { 90 + 64*i, 45, rSrc.w, rSrc.h};
-				
-				SDL_BlitSurface(GraphicsData.gfx_hud_stuff, &rSrc, ResourceData.res_oil_org, &rDest);
-				
-			}
-		//gold
-		ResourceData.res_gold_org=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-		SDL_FillRect ( ResourceData.res_gold_org,NULL,0xFFFF00 );
-		SDL_SetColorKey ( ResourceData.res_gold_org,SDL_SRCCOLORKEY,0xFF00FF );
-		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold_org,NULL );
-		ResourceData.res_gold=SDL_CreateRGBSurface ( SDL_HWSURFACE,ResourceData.res_metal_org->w,ResourceData.res_metal_org->h,SettingsData.iColourDepth,0,0,0,0 );
-		SDL_FillRect ( ResourceData.res_gold,NULL,0xFFFF00 );
-		SDL_SetColorKey ( ResourceData.res_gold,SDL_SRCCOLORKEY,0xFF00FF );
-		SDL_BlitSurface ( ResourceData.res_metal,NULL,ResourceData.res_gold,NULL );
-			//draw gold symbol on gold resources
-			for(int i=0; i<16; i++)
-			{
-				SDL_Rect rSrc = { 112, 108, 13, 10 };
-				SDL_Rect rDest = { 89 + 64*i, 46, rSrc.w, rSrc.h};
-				SDL_BlitSurface(GraphicsData.gfx_hud_stuff, &rSrc, ResourceData.res_gold_org, &rDest);
-				
-			}
-
+		LoadGraphicToSurface ( ResourceData.res_metal,path,"res.pcx" );
 		SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
-			//finally draw material symbol on raw resources
-			for(int i=0; i<16; i++)
-			{
-				SDL_Rect rSrc = { 88, 108, 11, 15 };
-				SDL_Rect rDest = { 89 + 64*i, 44, rSrc.w, rSrc.h};
-				SDL_BlitSurface(GraphicsData.gfx_hud_stuff, &rSrc, ResourceData.res_metal_org, &rDest);
-				
-			}
+	}
+
+	//fuel
+	if ( LoadGraphicToSurface ( ResourceData.res_gold_org,path,"gold.pcx" ) == 1 )
+	{
+		LoadGraphicToSurface ( ResourceData.res_gold,path,"gold.pcx" );
+		SDL_SetColorKey ( ResourceData.res_gold,SDL_SRCCOLORKEY,0xFF00FF );
+	}
+
+	//fuel
+	if ( LoadGraphicToSurface ( ResourceData.res_oil_org,path,"fuel.pcx" ) == 1 )
+	{
+		LoadGraphicToSurface ( ResourceData.res_oil,path,"fuel.pcx" );
+		SDL_SetColorKey ( ResourceData.res_oil,SDL_SRCCOLORKEY,0xFF00FF );
 	}
 
 	return 1;
