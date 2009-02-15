@@ -19,11 +19,11 @@ Sourcecode:
 
 You can get it here:
 
-http://maxthegame.de/wiki/index.php5?title=Downloads
+http://www.maxr.org/docs.php?id=3
 
 Or fresh from the SVN here:
 
-svn://maxthegame.dyndns.org/MAX/trunk
+svn://maxr.org/MAX/trunk
 
 WINDOWS
 
@@ -60,6 +60,8 @@ LINUX
 	Compiles the maxr binary and installs it along with the game
 	data to the default prefix which is probably /usr/local.
 
+	Use make DESTDIR=/foo/bar install to make use of destdir.
+
 Rebuilding:
 
 You should clean your existing maxr release build first with:
@@ -72,9 +74,12 @@ If you want to clean your maxr SVN build do:
 
 Starting:
 
-After installing currently needed original gamedata (see INSTALL) 
-you can start M.A.X. Reloaded executing ./maxr in the datadirectory
+After installing you can start maxr executing ./maxr
 
-If you don't want to install maxr simply move the new binary maxr
-from src to the data directory. Now you can start M.A.X. Reloaded
-executing ./maxr
+If you don't want to install maxr simply point MAXRDATA to your data
+folder and execute the binary maxr.
+
+Example: 
+
+ $ MAXRDATA=/foo/bar/data ./maxr
+

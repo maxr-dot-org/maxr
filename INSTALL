@@ -19,10 +19,6 @@ required SDL-libraries for Win32. If you want to use your own version
 from e.g. c:\windows\system32 simply delete the dlls from the game
 directory.
 
-After installing currently needed original gamedata running
-Resinstaller.exe (requires original M.A.X. CD or installation) you can
-start M.A.X. Reloaded executing Maxr.exe
-
 LINUX
 
 See BUILDING
@@ -32,14 +28,12 @@ BOTH
 Due the copyright we are not allowed to provide any game content
 from the original Mechanized Assault and Exploration (c) 1996 Interplay
 
-MAXR is currently in need of unofficial gfx data and WILL NOT start
-without the required files. Due the copyright we are not allowed to
-provide you with the missing files.
-
 If you do own an original Mechanized Assault & Exploration CD
 (c) 1996 Interplay or if you downloaded the original game from
 cdosabandonware you can however make use of the tool "resinstaller"
-and extract the needed gfx automagically from your existing max.res
+and extract the original gfx automagically from your existing max.res
+
+Resinstaller also takes care of sounds, videos, maps and music.
 
 The tool can be found on our website and easily installs and converts
 the needed data for you. Please check the bbs at maxthegame.de/bbs
@@ -61,7 +55,7 @@ TROUBLESHOOTING
 
 Compilation problems on ppc:
 
-Not supported yet, sorry.
+Not supported yet, sorry. May work. May not.
 
 Compilation problems:
 
@@ -71,10 +65,10 @@ SDL_mixer prior 1.2.8.
 
 Screenresolution:
 
-It is possible to increase the resolution in max.xml however
+It is possible to set the resolution in max.xml however
 you should keep in mind that all menus and displays are designed for
-640x480. If you experience odd graphical problems (and there are!)
-you're on your own.
+640x480. If you choose a resolution not offered in our settings
+dialog you may experience odd graphical problems.
 
 Sound:
 
@@ -94,6 +88,6 @@ Many. There is no AI! This is one of the first releases featuring
 network games using TCP/IP. Expect and report crashes (with backtrace
 if possible) and odd behaivors. Some features that may have worked in
 prior releases are disabled. For more known and/or fixed bugs please
-visit our bugtracker (no registration required): 
+visit our bugtracker: 
 
-http://maxthegame.dyndns.org:8080/tracker/report/1
+http://www.maxr.org/docs.php?id=22
