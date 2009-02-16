@@ -19,12 +19,12 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X.R."/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
 			<Version ENG="version v%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented"/>
 			</Remarks>
@@ -259,7 +259,7 @@
 		</Vehicles>
 		<Comp>
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position."/>
-			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select an other position."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off."/>
 			<Energy_Low ENG="Power needed, building turned off."/>
 			<Metal_Low ENG="More raw material needed, building turned off."/>
@@ -314,7 +314,7 @@
 			<Turn ENG="Turn"/>
 			<Reserve ENG="Reserve"/>
 			<Surveying ENG="surveying"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and Exploration Reloaded' for changes in the video mode to take effect"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
 		</Comp>
 		<Error_Messages>

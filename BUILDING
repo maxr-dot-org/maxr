@@ -54,7 +54,6 @@ LINUX
 	and make. 
 
 	$ ./configure
-	$ make
 	$ make install
 	
 	Compiles the maxr binary and installs it along with the game

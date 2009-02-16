@@ -53,7 +53,7 @@ resinstaller has done it's magic *except* the file gfx/hud_stuff.pcx.
 
 TROUBLESHOOTING
 
-Compilation problems on ppc:
+Compilation problems on ppc/64bit/youroddcpuhere:
 
 Not supported yet, sorry. May work. May not.
 
@@ -65,10 +65,10 @@ SDL_mixer prior 1.2.8.
 
 Screenresolution:
 
-It is possible to set the resolution in max.xml however
-you should keep in mind that all menus and displays are designed for
-640x480. If you choose a resolution not offered in our settings
-dialog you may experience odd graphical problems.
+It is possible to set the resolution in max.xml however you should keep 
+in mind that all menus and displays are designed for 640x480. If you 
+choose a resolution not offered in our settings dialog you may 
+experience odd graphical problems.
 
 Sound:
 
@@ -77,6 +77,11 @@ may increase the chunksize in max.xml. Default is 1024 and 2205Hz. Next
 proper value is 2048 or 4096. If you increasing frequency you have to 
 increase the chunksize, too. However increasing frequency has only a
 small benefit to the backgroundmusic.
+
+On linux make sure that no soundserver blocks your soundcard from being
+accessed if your SDL installation doesn't know how to connect to your
+soundserver. This is the case when maxr seems to hang when the splash
+finished loading everything and seems to be stucked.
 
 Maps:
 

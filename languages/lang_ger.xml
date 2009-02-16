@@ -15,12 +15,12 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
+			<Game_Subtitle localized="Mechanized Assault and eXploration Reloaded"/>
 			<Version ENG="version v%s" localized="Version V%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded basierend auf Interplays Mechanized Assault and Exploration"/>
+			<Credits_Reloaded localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) noch nicht eingebaut"/>
 			</Remarks>
@@ -310,7 +310,7 @@
 			<Turn ENG="Turn" localized="Runde"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
 			<Surveying ENG="surveying" localized="vermesse"/>
-			<ResolutionChange localized="Bitte starte 'Mechanized Assault and Exploration Reloaded' neu um Änderungen in der Bildschirmauflösung wirksam zu machen."/>
+			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um Änderungen in der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning localized="Achtung: Gelesene Auflösung ungültig"/>
 		</Comp>
 		<Error_Messages>
