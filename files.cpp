@@ -77,6 +77,27 @@ cList<string> *getFilesOfDirectory(string sDirectory)
 		while ( _findnext ( lFile, &DataFile ) == 0 );
 		_findclose ( lFile );
 	}
+#elif __amigaos4__
+	DIR* hDir = opendir ( sDirectory.c_str() );
+	struct dirent* entry;
+	if( hDir == NULL )
+	{
+		closedir( hDir );
+	}
+	else
+	{
+		do
+		{
+			entry = readdir ( hDir );
+			if( entry != NULL && entry->d_name[0] != '.' )
+			{
+				List->Add( entry->d_name );
+			}
+		}
+		while ( entry != NULL );
+
+		closedir( hDir );
+	}
 #else
 	DIR* hDir = opendir ( sDirectory.c_str() );
 	struct dirent* entry;

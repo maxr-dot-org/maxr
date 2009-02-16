@@ -58,6 +58,8 @@ void cEventHandling::HandleEvents()
 				string screenshotfile ="";
 				#ifdef WIN32
 					screenshotfile = (string)"Screen_" + timestr + ".bmp";
+				#elif __amigaos4__
+					screenshotfile = (string)"Screen_" + timestr + ".bmp";
 				#else
 					screenshotfile = SettingsData.sHome+PATH_DELIMITER+"Screen_" + timestr + ".bmp";
 				#endif

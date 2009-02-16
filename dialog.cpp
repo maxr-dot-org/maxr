@@ -396,7 +396,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 
 	//open AUTHOR
 	string sAuthors = SettingsData.sDataDir + PATH_DELIMITER +
-#ifdef _WIN32
+#ifdef WIN32
+		"AUTHORS.txt";
+#elif __amigaos4
 		"AUTHORS.txt";
 #else
 		"AUTHORS";

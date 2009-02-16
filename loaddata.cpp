@@ -1179,7 +1179,7 @@ int GenerateMaxXml()
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PreScale" );
-	element->SetAttribute ( "YN", "No");	
+	element->SetAttribute ( "YN", "Yes");	
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Language" );
@@ -1250,8 +1250,10 @@ int GenerateMaxXml()
 
 	#ifdef WIN32
 		cHome = getenv("USERNAME");
+	#elif __amigaos4__
+		cHome = "AmigaOS4-User";
 	#else
-		cHome = getenv("USER"); //get $HOME on linux
+		cHome = getenv("USER"); //get $USER on linux
 	#endif
 
 	if(cHome != NULL)
@@ -1340,7 +1342,11 @@ int GenerateMaxXml()
 
 	#ifdef WIN32
 		sTmp = "save";
-	#else
+	#endif
+	#ifdef __amigaos4__
+		sTmp = "save";
+	#endif
+	#ifdef LINUX
 		sTmp = SettingsData.sHome;
 		sTmp += "save";
 	#endif
@@ -3784,7 +3790,7 @@ void setPaths()
 	//init absolutly needed paths
 	SettingsData.sLog = MAX_LOG;
 	SettingsData.sNetLog = MAX_NET_LOG;
-	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac -- beko
+	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
 	SettingsData.sHome="";
 
 	#if MAC 
@@ -3792,10 +3798,12 @@ void setPaths()
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
 		return;
-	#endif
-
-	#ifdef WIN32
+	#elif WIN32 
 		//this is where windowsuser should set their %HOME%
+		//this is also a good place to find out where the executable is located
+		SettingsData.sConfig = MAX_XML; //assume config in current working directory
+	#elif __amigaos4__
+		//this is where amigausers should set their %HOME%
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
 	#else
@@ -3934,9 +3942,9 @@ string searchData(string sDataDirFromConf)
 	string sPathToGameData = "";
 	#if MAC 
 		sPathToGameData =  SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
-	#endif
-
-	#ifdef WIN32
+	#elif WIN32
+		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
+	#elif __amigaos4__
 		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
 	#else
 	//BEGIN crude path validation to find gamedata
