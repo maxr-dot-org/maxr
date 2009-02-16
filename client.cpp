@@ -805,7 +805,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		}
 		isInMenu = false;
 	}
-	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) && !bWaitForOthers )
+	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) )
 	{
 		if ( bChatInput )
 		{
@@ -824,7 +824,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			}
 			InputHandler->setInputState ( false );
 		}
-		else if ( bChangeObjectName )
+		else if ( bChangeObjectName && !bWaitForOthers )
 		{
 			bChangeObjectName = false;
 			addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
