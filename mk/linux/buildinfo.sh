@@ -1,5 +1,9 @@
 #!bin/sh
 VERSION=src/autoversion.h
+export LC_ALL=C
+export LANGUAGE=C
+export LANG=C
+export CHARSET="iso8859-1"
 
 if [ -f $VERSION ]; then
 	echo "Recreating autoversion.h"
