@@ -2003,7 +2003,7 @@ void cClient::drawFX( int iNum )
 		case fxExploBig:
 			if ( !EffectsData.fx_explo_big ) break;
 			width = (EffectsData.fx_explo_big[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_muzzle_big[0]->h*Hud.Zoom)/64;
+			height = (EffectsData.fx_explo_big[0]->h*Hud.Zoom)/64;
 			if ( !SettingsData.bPreScale && ( EffectsData.fx_explo_big[1]->w != width || EffectsData.fx_explo_big[1]->h != height ) ) scaleSurface ( EffectsData.fx_explo_big[0], EffectsData.fx_explo_big[1], width, height );
 			if ( iFrame - fx->StartFrame > 28 )
 			{
