@@ -1,11 +1,20 @@
-M.A.X. Reloaded SVN
+M.A.X. Reloaded 0.2.4
 =======================================================================
+-added player overview "P" (formally hack /players on)
 -improved input event system
 	*input doesn't get lost any more between 2 frames
 	*fixed a lot of input lag
 	*changed input system to utf8
 	*fixed most keyboard shortcuts
+	*added screenshot function ALT+C
+	*console commands has new syntax: /<command>
+-improved config and safe format
+	*automoves are now saved too
+	*more options like player color are saved now
 -fixed landing zones
+-fixed race conditions in network- and loggerclass
+-fixed several ingame commands (like /fps on)
+-fixed map previews in several menus
 -fixed gamedata path detection on linux
 -tons of bugs fixed
 
