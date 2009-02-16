@@ -1,4 +1,4 @@
-AC_INIT([maxr], [0.2.3], [bugs@maxthegame.dyndns.org])
+AC_INIT([maxr], [0.2.4], [bugs@maxr.org])
 AC_PREREQ(2.61)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_AUX_DIR([build-aux])
