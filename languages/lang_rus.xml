@@ -38,7 +38,7 @@
 			<Voices ENG="Loading voices..." localized="Загрузка голосов..."/>
 		</Init>
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Главное меню"/>
+			<MainMenu localized="Главное меню"/>
 			<Credits ENG="Credits" localized="Деньги"/>
 			<Gold ENG="Gold" localized="Золото"/>
 			<Metal ENG="Materials" localized="Сырьё"/>
