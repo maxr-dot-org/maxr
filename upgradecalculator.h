@@ -82,13 +82,32 @@ public:
 	*/
 	int calcIncreaseByUpgrade(int startValue) const;
 
+	/** Calculates the price (gold) for upgrading a unit, that started with orgValue and has 
+		currently curValue, to newValue.
+	 @param orgValue the value the unit has as a base value
+	 @param curValue the value the unit currently has
+	 @param newValue the value the unit wants to reach
+	 @upgradeType the area of the upgrade
+	 @return the costs for this upgrade or kNoPriceAvailable if such an upgrade is impossible
+	*/
+	int getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType) const;
+	
 	/** Calculates the turns needed for one research center to reach the next level.
-	@param curResearchLevel the level this research area currently has (e.g. 20 for 20%) 
-	@param upgradeType the area of the upgrade
-	@return the turns needed to reach the next level with one research center or
-		    kNoResearchAvailable if the passed values are out of range */
+	 @param curResearchLevel the level this research area currently has (e.g. 20 for 20%) 
+	 @param upgradeType the area of the upgrade
+	 @return the turns needed to reach the next level with one research center or
+			 kNoResearchAvailable if the passed values are out of range */
 	int calcResearchTurns(int curResearchLevel, int upgradeType) const;
 
+	/** Calculates the raw-material needed for upgrading a unit, that costs unitCost, to the current version.
+		The costs in original M.A.X. are simply a fourth of the costs (rounded down) needed to build that unit.
+		The costs do not depend on the quality of the upgrade (e.g. upgrading hitpoints from 18 to 20 costs the 
+		same as upgrading the basic version of the unit to an ultra fat version with all values upgraded to a
+		maximum).
+	 @param unitCost the raw-material cost to build the unit that will be upgraded (e.g. 24 for a mine-building)
+	 @return the raw-material needed to upgrade to the current version */
+	int getMaterialCostForUpgrading(int unitCost) const;
+	
 	enum UnitTypes {
 		kBuilding = 0, // Mines, Research Centers, Storage, Generators, ...
 		kInfantry, // Infantry and Infiltrator

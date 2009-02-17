@@ -30,17 +30,28 @@
 // Define zum Updaten:
 #define UpdateBuilding(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).iBuilt_Costs=(to).iBuilt_Costs;
 
-// Struktur für Upgrades /////////////////////////////////////////////////////
-struct sUpgrades{
-  bool active;
-  int NextPrice;
+// Struct for one upgrade (one kind of value, e.g. max_hit_points) /////////////////////////////////////////////////////
+struct sUpgrade {
+  bool active; // is this upgrade buyable for the player
+  int NextPrice; // what will the next upgrade cost
   int Purchased;
-  int *value;
-  int StartValue;
-  string name;
+  int *value; // what is the current value
+  int StartValue; // the initial value for this unit type
+  string name; // the name of this upgrade type, e.g. Ammo
 };
 
-// Struktur für die Bilder und Sounds:
+// Struct for one upgrade (one kind of value, e.g. max_hit_points) /////////////////////////////////////////////////////
+// When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again.
+struct sUpgradeNew {
+	bool active; // is this upgrade buyable for the player
+	int nextPrice; // what will the next upgrade cost
+	int purchased; // how many upgrades of this type has the player purchased
+	int curValue; // what is the current value
+	int startValue; // the value that this unit would have without all upgrades
+	string name; // the name of this upgrade type, e.g. Ammo
+};
+
+// struct for the images and sounds:
 struct sBuilding{
   SDL_Surface *img,*img_org; // Surface des Buildings
   SDL_Surface *shw,*shw_org; // Surfaces des Schattens
@@ -65,7 +76,7 @@ class cPlayer;
 class cBase;
 struct sUpgradeStruct;
 
-// Enum für die Symbole
+// enum for the upgrade symbols
 #ifndef D_eSymbols
 #define D_eSymbols
 enum eSymbols {SSpeed,SHits,SAmmo,SMetal,SEnergy,SShots,SOil,SGold,STrans,SHuman,SAir};
@@ -86,7 +97,7 @@ public:
 	int iRemainingMetal;
 };
 
-// Struktur für die Bauliste:
+// struct for the building order list
 struct sBuildList{
   struct sVehicle *typ;
   int metall_remaining;
@@ -125,29 +136,29 @@ public:
 	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	sBuilding *typ;  // Typ des Buildings
-	bool selected;   // Gibt an, ob das Building ausgewählt ist
+	bool selected;   // is the building selected?
 	string name; // Name des Buildings
-	cPlayer *owner;  // Eigentümer des Buildings
+	cPlayer *owner;  // owner of the building
 	sUnitData data;    // Daten des Buildings
-	cBuilding *next,*prev; // Zeiger für die Verkettung
-	bool MenuActive; // Gibt an, ob das Menü grad aktiv ist
+	cBuilding *next,*prev; // pointers for the linked list
+	bool MenuActive; // is the menu currently active?
 	bool AttackMode; // Gibt an, ob der AttackMode grad aktiv ist
 	bool bIsBeeingAttacked; /** true when an attack on this building is running */
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
-	int StartUp;     // Zähler für die Startupannimation
-	cBase *base;     // Die Basis des Gebäudes
-	bool BaseN,BaseE,BaseS,BaseW; // Gibt an, ob das Gebäude in einer Richting verbunden ist
-	bool BaseBN,BaseBE,BaseBS,BaseBW; // Gibt an, ob das Gebäude in einer Richting verbunden ist (zusätzlich für große Gebäude)
-	struct sSubBase *SubBase;     // Die SubBase dieses Gebäudes
-	int EffectAlpha; // Alphawert für den Effekt
-	bool EffectInc;  // Gibt an, ob der Effect rauf, oder runter gezählt wird
-	bool IsWorking;  // Gibt an, ob das Gebäude grade arbeitet
+	int StartUp;     // counter for the startup animation
+	cBase *base;     // the base to which this building belongs
+	bool BaseN,BaseE,BaseS,BaseW; // is the building connected in this direction?
+	bool BaseBN,BaseBE,BaseBS,BaseBW; // is the building connected in this direction (only for big buildings)
+	struct sSubBase *SubBase;     // the subbase to which this building belongs
+	int EffectAlpha; // alpha value for the effect
+	bool EffectInc;  // is the effect counted upwards or dounwards?
+	bool IsWorking;  // is the building currently working?
 	bool bSentryStatus;		/** true if the building is on sentry */
 	bool Transfer;   // Gibt an, ob ein Transfer statfinden soll
-	int MetalProd,OilProd,GoldProd; // Produktion des gebäudes
-	int MaxMetalProd,MaxOilProd,MaxGoldProd; // Maximal mögliche Produktion
-	int dir;         // Frame des Gebäudes
+	int MetalProd,OilProd,GoldProd; // the production of the building
+	int MaxMetalProd,MaxOilProd,MaxGoldProd; // the maximum possible production of the building
+	int dir;         // ?Frame of the building?
 	bool Attacking;  // Gibt an, ob das Building gerade angreift
 	cList<sBuildList*> *BuildList; // Die Bauliste der Fabrik
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
@@ -157,8 +168,8 @@ public:
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
-	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
-	int Disabled;    // Gibt an, für wie lange diese Einheit disabled ist
+	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
+	int Disabled;    // the time this unit will be disabled
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
 	int wantRedrawedStoredOffset;
 	bool hasBeenAttacked;
@@ -231,18 +242,17 @@ public:
 	void DrawStored(int off);
 	void ShowStorageMetalBar(void);
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
-	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled,bool *AlleReparierenEnabled,bool *AlleUpgradenEnabled);
+	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled);
 	void ShowResearch(void);
 	void ShowResearchSchieber(void);
 	void MakeResearchSchieber(int x,int y);
-	void ShowUpgrade(void);
-	void ShowUpgradeList(cList<sUpgradeStruct*>& list, int selected, int offset, bool beschreibung);
-	void ShowGoldBar(int StartCredits);
-	void MakeUpgradeSliderVehicle(sUpgrades *u,int nr);
-	void MakeUpgradeSliderBuilding(sUpgrades *u,int nr);
-	void CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int* selected, int* offset);
-	void MakeUpgradeSubButtons(void);
 	void SendUpdateStored(int index);
+
+	/** 
+	* Shows the upgrade screen and sends upgrade-requests to the server, if the user presses the "done" button. 
+	*/
+	void ShowUpgrade ();
+	
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
@@ -268,6 +278,18 @@ public:
 	* checks whether the coordinates are next to the building
 	*/
 	bool isNextTo( int x, int y) const;
+	
+
+	//-----------------------------------------------------------
+protected:
+	void ShowUpgradeList (cList<sUpgradeStruct*>& list, int selected, int offset, bool description, int curCredits);
+	void ShowGoldBar (int startCredits, int curCredits);
+	void initUpgradesVehicle (sUpgradeNew u[], int vehicleTypeIdx);
+	void initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx);
+	void CreateUpgradeList (cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int& selected, int& offset);
+	void ShowUpgradeSubButtons ();
+	int findUpgradeValue (sUpgradeStruct* upgradeStruct, int upgradeType, int defaultValue = 0);
+	void sendUpgrades (cList<sUpgradeStruct*>& allUpgradeStructs, cPlayer* player);
 };
 
 #endif

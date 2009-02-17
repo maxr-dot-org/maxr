@@ -25,13 +25,16 @@
 #include "netmessage.h"
 #include "attackJobs.h"
 #include "movejobs.h"
+#include "upgradecalculator.h"
 
+//-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
 {
 	((cServer *)arg)->Timer();
 	return interval;
 }
 
+//-------------------------------------------------------------------------------------
 int CallbackRunServerThread( void *arg )
 {
 	cServer *Server = (cServer *) arg;
@@ -39,6 +42,7 @@ int CallbackRunServerThread( void *arg )
 	return 0;
 }
 
+//-------------------------------------------------------------------------------------
 cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const iGameType, bool const bPlayTurns)
 {
 	bDebugCheckPos = false;
@@ -62,6 +66,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
 
+//-------------------------------------------------------------------------------------
 cServer::~cServer()
 {
 	bExit = true;
@@ -93,11 +98,13 @@ cServer::~cServer()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::setDeadline(int iDeadline)
 {
 	iTurnDeadline = iDeadline;
 }
 
+//-------------------------------------------------------------------------------------
 SDL_Event* cServer::pollEvent()
 {
 	static SDL_Event* lastEvent = NULL;
@@ -121,6 +128,7 @@ SDL_Event* cServer::pollEvent()
 	return event;
 }
 
+//-------------------------------------------------------------------------------------
 int cServer::pushEvent( SDL_Event *event )
 {
 	cMutex::Lock l(QueueMutex);
@@ -128,6 +136,7 @@ int cServer::pushEvent( SDL_Event *event )
 	return 0;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
@@ -171,6 +180,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	delete message;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::run()
 {
 	while ( !bExit )
@@ -249,6 +259,7 @@ void cServer::run()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 int cServer::HandleNetMessage( cNetMessage *message )
 {
 	Log.write("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
@@ -1390,6 +1401,71 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( player ) resyncPlayer( player, true);
 		}
 		break;
+	case GAME_EV_WANT_BUY_UPGRADES:
+		{
+			cPlayer* player = 0;
+			int iPlayerNr = message->popInt16();
+			for (unsigned int i = 0; i < PlayerList->Size(); i++)
+			{
+				if ((*PlayerList)[i]->Nr == iPlayerNr)
+				{
+					player = (*PlayerList)[i];
+					break;
+				}
+			}
+			if (player == 0)
+				break;
+
+			bool updateCredits = false;
+			
+			int iCount = message->popInt16(); // get the number of upgrades in this message
+			for (int i = 0; i < iCount; i++)
+			{
+				bool bVehicle = message->popBool();
+				sID ID;
+				ID.iFirstPart = message->popInt16();
+				ID.iSecondPart = message->popInt16();
+
+				int newDamage = message->popInt16();
+				int newMaxShots = message->popInt16();
+				int newRange = message->popInt16();
+				int newMaxAmmo = message->popInt16();
+				int newArmor = message->popInt16();
+				int newMaxHitPoints = message->popInt16();
+				int newScan = message->popInt16();
+				int newMaxSpeed = 0;
+				if (bVehicle)
+					newMaxSpeed = message->popInt16();
+				
+				sUnitData* upgradedUnit = ID.getUnitData (player);
+				if (upgradedUnit == 0)
+					continue; // skip this upgrade, because there is no such unitData
+
+				int costs = getUpgradeCosts (ID, player, bVehicle, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
+				if (costs <= player->Credits)
+				{
+					// update the unitData of the player and send an ack-msg for this upgrade to the player
+					upgradedUnit->damage = newDamage;
+					upgradedUnit->max_shots = newMaxShots;
+					upgradedUnit->range = newRange;
+					upgradedUnit->max_ammo = newMaxAmmo;
+					upgradedUnit->armor = newArmor;
+					upgradedUnit->max_hit_points = newMaxHitPoints;
+					upgradedUnit->scan = newScan;
+					if (bVehicle) 
+						upgradedUnit->max_speed = newMaxSpeed;
+					upgradedUnit->version++;
+					
+					player->Credits -= costs;
+					updateCredits = true;
+					
+					sendUnitUpgrades (upgradedUnit, iPlayerNr);
+				}
+			}
+			if (updateCredits)
+				sendCredits (player->Credits, iPlayerNr);
+		}
+		break;
 	case GAME_EV_AUTOMOVE_STATUS:
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
@@ -1405,6 +1481,88 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	return 0;
 }
 
+//-------------------------------------------------------------------------------------
+int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
+							  int newDamage, int newMaxShots, int newRange, 
+							  int newMaxAmmo, int newArmor, int newMaxHitPoints, 
+							  int newScan, int newMaxSpeed)
+{
+	sUnitData* currentVersion = ID.getUnitData (player);
+	sUnitData* startVersion = ID.getUnitData ();
+	if (currentVersion == 0 || startVersion == 0)
+		return 1000000; // error (unbelievably high cost...)
+	
+	int cost = 0;
+	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+	if (newDamage > currentVersion->damage)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newMaxShots > currentVersion->max_shots)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_shots, currentVersion->max_shots, newMaxShots, cUpgradeCalculator::kShots);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newRange > currentVersion->range)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newMaxAmmo > currentVersion->max_ammo)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_ammo, currentVersion->max_ammo, newMaxAmmo, cUpgradeCalculator::kAmmo);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newArmor > currentVersion->armor)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newMaxHitPoints > currentVersion->max_hit_points)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_hit_points, currentVersion->max_hit_points, newMaxHitPoints, cUpgradeCalculator::kHitpoints);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (newScan > currentVersion->scan)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	if (bVehicle && newMaxSpeed > currentVersion->max_speed)
+	{
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_speed / 4, currentVersion->max_speed / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed);
+		if (costForUpgrade > 0)
+			cost += costForUpgrade;
+		else
+			return 1000000; // error, invalid values received from client
+	}
+	
+	return cost;
+}
+
+//-------------------------------------------------------------------------------------
 cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player )
 {
 	cVehicle *VehcilePtr = NULL;
@@ -1423,6 +1581,7 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 	return VehcilePtr;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& List, bool bFixed )
 {
 	cVehicle *Vehicle;
@@ -1497,6 +1656,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& Lis
 	}
 }
 
+//-------------------------------------------------------------------------------------
 cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit, bool bAddToMap )
 {
 	cVehicle *AddedVehicle;
@@ -1523,6 +1683,7 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 	return AddedVehicle;
 }
 
+//-------------------------------------------------------------------------------------
 cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit )
 {
 	cBuilding *AddedBuilding;
@@ -1619,6 +1780,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	return AddedBuilding;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 {
 	if( !Building ) return;
@@ -1669,6 +1831,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	owner->DoScan();
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::deleteUnit( cVehicle* vehicle )
 {
 	if( !vehicle ) return;
@@ -1710,6 +1873,7 @@ void cServer::deleteUnit( cVehicle* vehicle )
 	if ( owner ) owner->DoScan();
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::checkPlayerUnits ()
 {
 	cPlayer *UnitPlayer;	// The player whos unit is it
@@ -1842,6 +2006,7 @@ void cServer::checkPlayerUnits ()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 cPlayer *cServer::getPlayerFromNumber ( int iNum )
 {
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -1852,6 +2017,7 @@ cPlayer *cServer::getPlayerFromNumber ( int iNum )
 	return NULL;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::handleEnd ( int iPlayerNum )
 {
 	if ( iGameType == GAME_TYPE_SINGLE )
@@ -1975,6 +2141,7 @@ void cServer::handleEnd ( int iPlayerNum )
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
 	if ( !iTimer0 ) return;
@@ -1988,6 +2155,7 @@ void cServer::handleWantEnd()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 bool cServer::checkEndActions ( int iPlayer )
 {
 	string sMessage = "";
@@ -2046,6 +2214,7 @@ bool cServer::checkEndActions ( int iPlayer )
 	return false;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::makeTurnEnd ()
 {
 	// reload all buildings
@@ -2176,6 +2345,7 @@ void cServer::makeTurnEnd ()
 	iWantPlayerEndNum = -1;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::checkDefeats ()
 {
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -2217,6 +2387,7 @@ void cServer::checkDefeats ()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::addReport ( sID Type, bool bVehicle, int iPlayerNum )
 {
 	sTurnstartReport *Report;
@@ -2255,6 +2426,7 @@ void cServer::addReport ( sID Type, bool bVehicle, int iPlayerNum )
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::checkDeadline ()
 {
 	static int lastCheckTime = SDL_GetTicks();
@@ -2292,11 +2464,13 @@ void cServer::checkDeadline ()
 	lastCheckTime = SDL_GetTicks();
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::addActiveMoveJob ( cServerMoveJob *MoveJob )
 {
 	ActiveMJobs.Add ( MoveJob );
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::handleMoveJobs ()
 {
 	for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
@@ -2403,11 +2577,13 @@ void cServer::handleMoveJobs ()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::Timer()
 {
 	iTimerTime++;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::handleTimer()
 {
 	//iTimer0: 50ms
@@ -2427,6 +2603,7 @@ void cServer::handleTimer()
 	}
 }
 
+//-------------------------------------------------------------------------------------
 cVehicle *cServer::getVehicleFromID ( int iID )
 {
 	cVehicle *Vehicle;
@@ -2442,6 +2619,7 @@ cVehicle *cServer::getVehicleFromID ( int iID )
 	return NULL;
 }
 
+//-------------------------------------------------------------------------------------
 cBuilding *cServer::getBuildingFromID ( int iID )
 {
 	cBuilding *Building;
@@ -2457,6 +2635,7 @@ cBuilding *cServer::getBuildingFromID ( int iID )
 	return NULL;
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::destroyUnit( cVehicle* vehicle )
 {
 	int offset = vehicle->PosX + vehicle->PosY*Map->size;
@@ -2524,10 +2703,9 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	}
 
 	deleteUnit( vehicle );
-
-	
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::destroyUnit(cBuilding *b)
 {
 	int offset = b->PosX + b->PosY * Map->size;
@@ -2580,6 +2758,7 @@ void cServer::destroyUnit(cBuilding *b)
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::addRubble( int offset, int value, bool big )
 {
 	if ( value <= 0 ) value = 1;
@@ -2653,6 +2832,7 @@ void cServer::addRubble( int offset, int value, bool big )
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::deleteRubble( cBuilding* rubble )
 {
 	Map->deleteBuilding( rubble );
@@ -2674,6 +2854,7 @@ void cServer::deleteRubble( cBuilding* rubble )
 
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::deletePlayer( cPlayer *Player )
 {
 	// send messages to clients that the units have to be deleted
@@ -2713,6 +2894,7 @@ void cServer::deletePlayer( cPlayer *Player )
 	}
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 {
 	cVehicle *Vehicle;
@@ -2802,6 +2984,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	//sendHudSettings ( &Player->HotHud, Player );
 }
 
+//-------------------------------------------------------------------------------------
 void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 {
 	sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, false, !Vehicle->Loaded );

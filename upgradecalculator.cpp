@@ -679,6 +679,30 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType) c
 }
 
 //--------------------------------------------------
+int cUpgradeCalculator::getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType) const
+{
+	int cost = 0;
+	if (orgValue <= curValue && curValue < newValue)
+	{
+		int upgradedValue = curValue;
+		while (upgradedValue < newValue)
+		{
+			int costsForThis = calcPrice (upgradedValue, orgValue, upgradeType);
+			if (costsForThis != kNoPriceAvailable)
+			{
+				cost += costsForThis;
+				upgradedValue += calcIncreaseByUpgrade (orgValue);
+				if (upgradedValue > newValue)
+					return kNoPriceAvailable; // it is not possible to reach the newValue with upgrading
+			}
+			else
+				return kNoPriceAvailable;
+		}
+	}
+	return cost;
+}
+
+//--------------------------------------------------
 int cUpgradeCalculator::calcResearchTurns(int curResearchLevel, int upgradeType) const
 {
 	int neededTurns = kNoResearchAvailable;
@@ -819,6 +843,14 @@ int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLeve
 	}
 	else
 		return 0;
+}
+
+//--------------------------------------------------
+int cUpgradeCalculator::getMaterialCostForUpgrading(int unitCost) const
+{
+	if (unitCost < 4)
+		return 0;
+	return unitCost / 4;
 }
 
 //--------------------------------------------------
@@ -1140,7 +1172,7 @@ void cUpgradeCalculator::printToLog(const char* str, int value) const
 					break;
 			}
 			break;
-			// Schüsse
+			// Shots
 		case 2:
 			switch ( org )
 			{

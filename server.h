@@ -213,6 +213,14 @@ private:
 	*@param iID The ID of the building
 	*/
 	cBuilding *getBuildingFromID ( int iID );
+	
+	/**
+	* Calculates the cost, that this upgrade would have for the given player.
+	*@author Paul Grathwohl
+	*/
+	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
+						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo, 
+						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
 
 public:
 	/** the map */

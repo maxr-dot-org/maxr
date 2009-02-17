@@ -456,6 +456,8 @@ void cBase::AddGold ( sSubBase *sb,int value )
 
 void cBase::handleTurnend ()
 {
+	bool bSendCreditsUpdate = false;
+	
 	for (unsigned int i = 0; i < SubBases.Size(); ++i)
 	{
 		sSubBase* const SubBase = SubBases[i];
@@ -522,9 +524,14 @@ void cBase::handleTurnend ()
 			}
 		}
 		AddGold ( SubBase, SubBase->GoldProd-SubBase->GoldNeed );
+		
 		// get credits
-		//owner->Credits += SubBase->GoldNeed;
-
+		if (SubBase->GoldNeed > 0)
+		{
+			owner->Credits += SubBase->GoldNeed;
+			bSendCreditsUpdate = true;
+		}
+		
 		// check humanneed
 		if ( SubBase->HumanNeed > SubBase->HumanProd )
 		{
@@ -610,6 +617,8 @@ void cBase::handleTurnend ()
 			}
 		}
 	}
+	if (bSendCreditsUpdate)
+		sendCredits (owner->Credits, owner->Nr);
 }
 
 // Optimiert den Energieverbrauch der Basis:

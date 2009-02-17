@@ -82,7 +82,7 @@ sClientLandData::sClientLandData()
 	iLastLandY = 0;
 };
 
-// Menü vorbereiten:
+// Prepare the menu:
 static void prepareMenu()
 {
 	//BEGIN MENU REDRAW
@@ -150,7 +150,7 @@ static void showUnitPicture(void)
 	s_iLastUnitShown = iUnitShow; //store shown unit
 }
 
-// Menü aufräumen:
+// clean up the menu:
 void ExitMenu ( void )
 {
 	SDL_FillRect ( GraphicsData.gfx_shadow,NULL,(buffer->format, 0, 0, 0)  );
@@ -158,7 +158,7 @@ void ExitMenu ( void )
 }
 
 
-// Platziert einen auswählbaren Text (zentriert):
+// Places a selectable text (centered):
 void placeSelectableText ( string sText,int x,int y,bool checked, SDL_Surface *surface,bool center )
 {
 	SDL_Rect r;
@@ -217,7 +217,7 @@ static void CheckUnitImageClick(int const x, int const y, bool const down)
 }
 
 
-// Zeigt das Hauptmenü an:
+// Displays and runs the main menu:
 void RunMainMenu ( void )
 {
 	bool EscHot=true;
@@ -256,7 +256,7 @@ void RunMainMenu ( void )
 
 		// Events holen:
 		EventHandler->HandleEvents();
-		// Tasten prüfen:
+		// check the keys:
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE]&&EscHot ) break;else if ( !keystate[SDLK_ESCAPE] ) EscHot=true;
 		// Die Maus machen:
@@ -325,7 +325,7 @@ void RunMainMenu ( void )
 	StopMusic();
 }
 
-// Zeigt das Multiplayermenü an:
+// Displays and runs the multiplayer menu:
 void RunMPMenu ( void )
 {
 	Uint8 *keystate;
@@ -351,7 +351,7 @@ void RunMPMenu ( void )
 	{
 		// Events holen:
 		EventHandler->HandleEvents();
-		// Tasten prüfen:
+		// check the keys:
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
@@ -450,7 +450,7 @@ void RunSPMenu ( void )
 	{
 		// Events holen:
 		EventHandler->HandleEvents();
-		// Tasten prüfen:
+		// check the keys:
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
@@ -745,7 +745,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 	placeSelectableText ( MORE,110+130,86+20*5,options.credits==250, sfTmp,false );
 	placeSelectableText ( MOST,110+130,86+20*6,options.credits==300, sfTmp,false );
 
-	// Brückenkopf:
+	// Brueckenkopf:
 	font->showTextCentered(DIALOG_X + 110+211*2, DIALOG_Y + 56, HEAD);
 
 	placeSelectableText ( MOBILE,452,86,!options.FixedBridgeHead, sfTmp,false );
@@ -838,7 +838,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Klick aufs Öl:
+		// Click on oil:
 		if ( b&&!lb&&mouse->x>=DIALOG_X + 38-20&&mouse->x<DIALOG_X + 38+20&&mouse->y>=DIALOG_Y + 124+16-4&&mouse->y<DIALOG_Y + 124+16-4+14 )
 		{
 			options.oil=0;
@@ -1027,7 +1027,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 			SHOW_SCREEN
 			mouse->draw ( false,screen );
 		}
-		// Brückenkopf:
+		// Brueckenkopf:
 		if ( b&&!lb&&mouse->x>=DIALOG_X + 452&&mouse->x<DIALOG_X + 452+100&&mouse->y>=DIALOG_Y + 86-4&&mouse->y<DIALOG_Y + 86-4+14 )
 		{
 			options.FixedBridgeHead=false;
@@ -1159,7 +1159,7 @@ sOptions RunOptionsMenu ( sOptions *init )
 static void ShowPlanets(cList<string>* files, int offset, int selected, SDL_Surface* surface);
 
 
-// Startet die Planetenauswahl (gibt den Namen des Planeten zurück):
+// Runs the planet selection menu. Returns the name of the planet:
 string RunPlanetSelect ( void )
 {
 	Uint8 *keystate;
@@ -1212,7 +1212,7 @@ string RunPlanetSelect ( void )
 	{
 		// Events holen:
 		EventHandler->HandleEvents();
-		// Tasten prüfen:
+		// Check the keys:
 		keystate = SDL_GetKeyState( NULL );
 		if ( keystate[SDLK_ESCAPE] ) break;
 		// Die Maus machen:
@@ -1564,7 +1564,7 @@ sPlayerHS runPlayerSelectionHotSeat ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		// Änderungen:
+		// changes:
 		if ( b&&!lb )
 		{
 			int x = FIELD1;
@@ -1739,7 +1739,7 @@ sPlayer runPlayerSelection ( void )
 		{
 			mouse->draw ( true,screen );
 		}
-		// Änderungen:
+		// changes:
 		if ( b&&!lb )
 		{
 			int x = 175;
@@ -1894,8 +1894,8 @@ void ShowPlayerStates ( sPlayer players )
 
 // Zeigt den Hngar an:
 void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int selected, SDL_Surface *surface );
-void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p );
-void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p );
+void MakeUpgradeSliderVehicle ( sUpgrade u[],int nr,cPlayer *p );
+void MakeUpgradeSliderBuilding ( sUpgrade u[],int nr,cPlayer *p );
 void MakeUpgradeSubButtons ( bool tank,bool plane,bool ship,bool build,bool tnt,bool kauf, SDL_Surface *surface );
 
 static void ShowSelectionList(cList<sHUp*>& list, int selected, int offset, bool beschreibung, int credits, cPlayer* p);
@@ -2152,7 +2152,7 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				PlayFX ( SoundData.SNDObjectMenu );
 				selected=nr;
 				ShowSelectionList ( selection,selected,offset,Beschreibung,player->Credits,player );
-				// Doppelklick prüfen:
+				// check for doubleclick:
 				if (last_selected == nr && selection[selected]->costs <= player->Credits)
 				{
 					// Don't add buildings, humans, planes, etc...
@@ -2487,7 +2487,7 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 				LandingSelected=nr;
 				ShowLandingList ( LandingList,LandingSelected,LandingOffset, sfTmp  );
 				ShowBars ( player->Credits,StartCredits,LandingList,LandingSelected, sfTmp );
-				// Doppelklick prüfen:
+				// check for doubleclick:
 				if ( last_selected==nr )
 				{
 					if ( LandingList->Size()&&(int)LandingList->Size()>LandingSelected&&LandingSelected>=0 )
@@ -2519,13 +2519,16 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 		if ( LandingSelected>=0&&LandingList->Size()&&LandingSelected<(int)LandingList->Size() )
 		{
 			sLanding& ptr = (*LandingList)[LandingSelected];
-			if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
+			if ( ptr.UnitID.getUnitData()->can_transport == TRANS_METAL
+				|| ptr.UnitID.getUnitData()->can_transport == TRANS_OIL
+				/*|| ptr.UnitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold-cargo, because it would be too cheap!
 			{
 				//FIXME: this is not a good way since numbers of vehicles can change becouse of modifications in vehicles.xml
 				// Prevent players from buying Gold cargo into a GoldTruck in the beginning of the game, as in org MAX (&&ptr->id!=32)
 
 				// LadungUp-Button: 
-				if ( x >= DIALOG_X + 413 && x < DIALOG_X + 413 + 18 && y >= DIALOG_Y + 424 && y < DIALOG_Y + 424 + 17 && b && !LadungDownPressed && ptr.cargo < ptr.UnitID.getUnitData()->max_cargo && player->Credits > 0 )
+				if ( x >= DIALOG_X + 413 && x < DIALOG_X + 413 + 18 && y >= DIALOG_Y + 424 && y < DIALOG_Y + 424 + 17 && b 
+					&& !LadungDownPressed && ptr.cargo < ptr.UnitID.getUnitData()->max_cargo && player->Credits > 0 )
 				{
 					PlayFX ( SoundData.SNDObjectMenu );
 					scr.x=249;
@@ -2676,8 +2679,8 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 }
 
 // TODO ALERT: DUPLICATE CODE with cBuilding::MakeUpgradeSliderVehicle
-// Macht die Upgradeschieber für Vehicle:
-void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
+// Macht die Upgradeschieber fuer Vehicle:
+void MakeUpgradeSliderVehicle ( sUpgrade u[], int nr, cPlayer *p )
 {
 	sUnitData *d;
 	int i;
@@ -2757,8 +2760,8 @@ void MakeUpgradeSliderVehicle ( sUpgrades *u,int nr,cPlayer *p )
 }
 
 // TODO ALERT: DUPLICATE CODE with cBuilding::MakeUpgradeSliderVehicle
-// Macht die Upgradeschieber für Buildings:
-void MakeUpgradeSliderBuilding ( sUpgrades *u,int nr,cPlayer *p )
+// Macht die Upgradeschieber fuer Buildings:
+void MakeUpgradeSliderBuilding ( sUpgrade u[], int nr, cPlayer *p )
 {
 	sUnitData *d;
 	int i;
@@ -3003,7 +3006,9 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int select
 	if ( selected>=0&&landing->Size()&&selected<(int)landing->Size() )
 	{
 		sLanding& ptr = (*landing)[selected];
-		if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
+		if ( ptr.UnitID.getUnitData()->can_transport == TRANS_METAL
+			|| ptr.UnitID.getUnitData()->can_transport == TRANS_OIL
+			/*|| ptr.UnitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
 		{
 			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275, lngPack.i18n ( "Text~Title~Cargo" ));
 			font->showTextCentered(DIALOG_X +430,DIALOG_Y +275+10, iToStr(ptr.cargo));
@@ -3020,7 +3025,7 @@ void ShowBars ( int credits,int StartCredits,cList<sLanding> *landing,int select
 	}
 }
 
-// Liefert die Kachel, die auf der großen Karte unter den Koordinaten liegt:
+// Returns the tile, that lies on the big map at the given coordinates:
 int GetKachelBig ( int x,int y, cMap *map )
 {
 	double fak;
@@ -3524,7 +3529,9 @@ void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surfac
 
 
 
-		if ( ptr.UnitID.getUnitData()->can_transport==TRANS_METAL||ptr.UnitID.getUnitData()->can_transport==TRANS_OIL||ptr.UnitID.getUnitData()->can_transport==TRANS_GOLD )
+		if ( ptr.UnitID.getUnitData()->can_transport == TRANS_METAL
+			|| ptr.UnitID.getUnitData()->can_transport == TRANS_OIL
+			/*|| ptr.UnitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
 		{
 			int value = ptr.cargo;
 			int maxval = ptr.UnitID.getUnitData()->max_cargo;
@@ -3773,7 +3780,7 @@ static void ShowSelectionList(cList<sHUp*>& list, int const selected, int const 
 	}
 }
 
-// Liefert die Numemr der Farbe zurück:
+// Returns the number of the color:
 int GetColorNr ( SDL_Surface *sf )
 {
 	if ( sf==OtherData.colors[cl_red] ) return cl_red;
@@ -5535,7 +5542,7 @@ void HeatTheSeat ( void )
 	delete Server; Server = NULL;
 }
 
-// Zeigt das Laden Menü an:
+// Runs and displays the load/save menu:
 int ShowDateiMenu ( bool bSave )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
@@ -5598,7 +5605,7 @@ int ShowDateiMenu ( bool bSave )
 		// Events holen:
 		EventHandler->HandleEvents();
 
-		// Tasten prüfen:
+		// check the keys:
 		if ( Client )
 		{
 			Client->handleTimer();

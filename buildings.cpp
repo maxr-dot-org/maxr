@@ -56,7 +56,7 @@ int sMineValues::GetMaxProd(ResourceKind const resource) const
 }
 
 
-// Struktur für die Upgrade-List:
+// struct for the upgrade list
 struct sUpgradeStruct
 {
 public:
@@ -67,9 +67,9 @@ public:
 	{}
 
 	SDL_Surface* const sf;
-	bool         const vehicle;
-	int          const id;
-	sUpgrades          upgrades[8];
+	bool const vehicle;
+	int const id;
+	sUpgradeNew upgrades[8];
 };
 
 // Funktionen der Vehicle Klasse /////////////////////////////////////////////
@@ -233,7 +233,7 @@ cBuilding::~cBuilding ( void )
 	}
 }
 
-// Liefert einen String mit dem aktuellen Status zurück:
+// Liefert einen String mit dem aktuellen Status zurÂ¸ck:
 string cBuilding::GetStatusStr ( void )
 {
 	if ( IsWorking )
@@ -367,7 +367,7 @@ int cBuilding::refreshData ()
 	else return 0;
 }
 
-// Erzeugt den Namen für das Buildings aus der Versionsnummer:
+// generates the name for the building depending on the versionnumber
 void cBuilding::GenerateName ( void )
 {
 	string rome, tmp_name;
@@ -376,7 +376,7 @@ void cBuilding::GenerateName ( void )
 	rome = "";
 	nr = data.version;
 
-	// Römische Versionsnummer erzeugen (ist bis 899 richtig):
+	// generate the roman versionnumber (correct until 899)
 
 	if ( nr > 100 )
 	{
@@ -520,7 +520,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 	}
 
-	// Prüfen, ob es Dreck ist:
+	// check, if it is dirt:
 	if ( !owner )
 	{
 		if ( data.is_big )
@@ -570,7 +570,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		return;
 	}
 
-	// Größe auslesen:
+	// read the size:
 	if ( !data.is_connector )
 	{
 		if ( data.has_frames )
@@ -761,7 +761,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 	tmp = *dest;
 
-	// Die Connectoranschlüsse malen:
+	// draw the connector slots:
 
 	if ( !data.is_connector && !data.is_base && !StartUp )
 	{
@@ -1030,7 +1030,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 }
 
-// Liefert die Anzahl der Menüpunkte:
+// Get the numer of menu items:
 int cBuilding::GetMenuPointAnz ( void )
 {
 	int nr = 2;
@@ -1071,7 +1071,7 @@ int cBuilding::GetMenuPointAnz ( void )
 	return nr;
 }
 
-// Liefert die Größe des Menüs und Position zurück:
+// Returns the size and position of the menu:
 SDL_Rect cBuilding::GetMenuSize ( void )
 {
 	SDL_Rect dest;
@@ -1113,7 +1113,7 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 	return dest;
 }
 
-// Liefert true zurück, wenn die Koordinaten in dem Menübereich liegen:
+// returns true, if the mouse coordinates are inside the menu area:
 bool cBuilding::MouseOverMenu ( int mx, int my )
 {
 	SDL_Rect r;
@@ -1128,7 +1128,7 @@ bool cBuilding::MouseOverMenu ( int mx, int my )
 	return true;
 }
 
-// Zeigt das Selbstzerstörungsmenü an:
+// displays the self destruction menu:
 void cBuilding::SelfDestructionMenu ( void )
 {
 
@@ -1140,7 +1140,7 @@ void cBuilding::SelfDestructionMenu ( void )
 
 }
 
-// Zeigt die Details mit großen Symbolen an:
+// Shows the details with big symbols:
 void cBuilding::ShowBigDetails ( void )
 {
 #define DIALOG_W 640
@@ -1177,9 +1177,9 @@ void cBuilding::ShowBigDetails ( void )
 			DOLINEBREAK
 
 			// Ammo:
-			font->showTextCentered ( COLUMN_1, y, iToStr ( data.ammo ) );
+			font->showTextCentered ( COLUMN_1, y, iToStr ( data.max_ammo ) );
 			font->showText ( COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Ammo" ) );
-			DrawSymbolBig ( SBAmmo, COLUMN_3, y - 2, 160, data.ammo, typ->data.max_ammo, buffer );
+			DrawSymbolBig ( SBAmmo, COLUMN_3, y - 2, 160, data.max_ammo, typ->data.max_ammo, buffer );
 			DOLINEBREAK
 		}
 	}
@@ -1325,7 +1325,7 @@ void cBuilding::updateNeighbours( cMap *Map )
 	CheckNeighbours( Map );
 }
 
-// Prüft, ob es Nachbarn gibt:
+// PrÂ¸ft, ob es Nachbarn gibt:
 void cBuilding::CheckNeighbours ( cMap *Map )
 {
 
@@ -1358,7 +1358,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 	}
 }
 
-// Malt die Anschlüsse an das Gebäude:
+// Draws the connectors at the building:
 void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
 	SDL_Rect scr, tmp;
@@ -1747,7 +1747,7 @@ void cBuilding::ClientStartWork()
 	return;
 }
 
-// Stoppt die Arbeit des Gebäudes:
+// Stops the building's working:
 void cBuilding::ServerStopWork ( bool override )
 {
 	if ( !IsWorking )
@@ -1907,7 +1907,7 @@ bool cBuilding::isNextTo( int x, int y) const
 }
 
 
-// Mal die Exitpoints für ein Vehicle des Übergebenen Typs:
+// draws the exit points for a vehicle of the given type:
 void cBuilding::DrawExitPoints ( sVehicle *typ )
 {
 	int spx, spy, size;
@@ -1971,7 +1971,7 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 	return false;
 }
 
-// Prüft, ob das vehicle an der Position geladen werden kann:
+// returns, if the vehicle can be loaded from its position:
 bool cBuilding::canLoad ( cVehicle *Vehicle )
 {
 	if ( !Vehicle ) return false;
@@ -1993,7 +1993,7 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 	return false;
 }
 
-// Läd das Vehicle an der Position ein:
+// loads the vehicle:
 void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 {
 	Map->deleteVehicle ( Vehicle );
@@ -2769,7 +2769,7 @@ void cBuilding::DrawStored ( int off )
 			drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
 		}
 
-		// Die zusätzlichen Infos anzeigen:
+		// Display the additional info:
 		dest.x -= 66;
 
 		dest.y -= 69 - 6;
@@ -2809,7 +2809,7 @@ void cBuilding::DrawStored ( int off )
 	SDL_FreeSurface ( sf );
 }
 
-// Zeigt den Metallbalken im Storage-Menü an:
+// Display the raw material bar in the storage menu
 void cBuilding::ShowStorageMetalBar ( void )
 {
 	SDL_Rect scr, dest;
@@ -2847,7 +2847,7 @@ void cBuilding::ShowStorageMetalBar ( void )
 	//END fill metal bar
 }
 
-// Läd ein Vehicle aus:
+// Unloads a vehicle
 void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
 	for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
@@ -3154,7 +3154,7 @@ void cBuilding::ShowResearchSchieber ( void )
 	}
 }
 
-// Prüft, ob die Schieber geändert wurden:
+// checks, if the research sliders were changed:
 void cBuilding::MakeResearchSchieber ( int x, int y )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
@@ -3191,44 +3191,49 @@ void cBuilding::MakeResearchSchieber ( int x, int y )
 	}
 }
 
-// Zeigt den Upgradeschirm an:
-void cBuilding::ShowUpgrade ( void )
+
+//------------------------------------------------------------------------
+/** Display and handle the upgrade screen. */
+//------------------------------------------------------------------------
+void cBuilding::ShowUpgrade ()
 {
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, k;
+	int lastMouseX = 0;
+	int lastMouseY = 0;
+	int x = 0;
+	int y = 0;
+	int lastLeftButtonPressed = 0;
+	int leftButtonPressed = 0;
 	SDL_Rect scr, dest;
-	bool Beschreibung = SettingsData.bShowDescription;
-	bool DownPressed = false;
-	bool UpPressed = false;
-	int selected = 0, offset = 0;
-	int StartCredits = owner->Credits;
+	bool showDescription = SettingsData.bShowDescription;
+	bool downPressed = false; // is the down-button currently pressed (for navigating down the list of units)
+	bool upPressed = false; // is the up-button currently pressed (for navigating up the list of units)
+	int selected = 0;
+	int offset = 0;
+	int startCredits = owner->Credits;
+	int curCredits = startCredits;
 	Client->isInMenu = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
 
 	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
-	SDL_Rect rTitle = {MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13};
-	SDL_Rect rTxtDescription = {MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13};
+	SDL_Rect rTitle = { MENU_OFFSET_X + 330, MENU_OFFSET_Y + 11, 154, 13 };
+	SDL_Rect rTxtDescription = { MENU_OFFSET_X + 141, MENU_OFFSET_Y + 266, 150, 13 };
 
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, NULL, buffer, &rDialog );
+	mouse->SetCursor (CHand);
+	mouse->draw (false, buffer);
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, NULL, buffer, &rDialog);
+	
+	NormalButton btn_cancel (MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, "Text~Button~Cancel");
+	NormalButton btn_done (MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, "Text~Button~Done");
+	btn_cancel.Draw ();
+	btn_done.Draw ();
 
-	NormalButton btn_cancel(MENU_OFFSET_X + 360, MENU_OFFSET_Y + 452, "Text~Button~Cancel");
-	NormalButton btn_done(  MENU_OFFSET_X + 447, MENU_OFFSET_Y + 452, "Text~Button~Done");
-	btn_cancel.Draw();
-	btn_done.Draw();
+	font->showTextCentered (rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ("Text~Title~Updates"));
+	font->showTextCentered (rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ("Text~Comp~Description"));
 
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Updates" ) );
-
-
-
-	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
-
-
-	// Der Haken:
-
-	if ( Beschreibung )
+	// the description checkbox
+	if (showDescription)
 	{
 		scr.x = 291;
 		scr.y = 264;
@@ -3249,246 +3254,219 @@ void cBuilding::ShowUpgrade ( void )
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 	}
 
-	// Die Images erstellen:
-	cList<sUpgradeStruct*> images;
+	// Initialize the upgrade structs for all unit types
+	cList<sUpgradeStruct*> allUpgradeStructs;
 
-	float newzoom = (float)(Client->Hud.Zoom / 64.0);
+	float newZoom = Client->Hud.Zoom / 64.0f;
 
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+	// create and add upgrade structs for all vehicles
+	for (int vehicleTypeIdx = 0; vehicleTypeIdx < UnitsData.vehicle.Size (); vehicleTypeIdx++)
 	{
 		SDL_Surface *sf;
-		scaleSurface ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], UnitsData.vehicle[i].img_org[0]->w / 2, UnitsData.vehicle[i].img_org[0]->h / 2 );
-		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.vehicle[i].img[0]->w, UnitsData.vehicle[i].img[0]->h, 32, 0, 0, 0, 0 );
+		scaleSurface ( UnitsData.vehicle[vehicleTypeIdx].img_org[0], UnitsData.vehicle[vehicleTypeIdx].img[0],
+					   UnitsData.vehicle[vehicleTypeIdx].img_org[0]->w / 2, UnitsData.vehicle[vehicleTypeIdx].img_org[0]->h / 2 );
+		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.vehicle[vehicleTypeIdx].img[0]->w, UnitsData.vehicle[vehicleTypeIdx].img[0]->h, 32, 0, 0, 0, 0 );
 		SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
-		SDL_BlitSurface ( UnitsData.vehicle[i].img[0], NULL, sf, NULL );
-		scaleSurface ( UnitsData.vehicle[i].img_org[0], UnitsData.vehicle[i].img[0], ( int ) ( UnitsData.vehicle[i].img_org[0]->w* newzoom ), ( int ) ( UnitsData.vehicle[i].img_org[0]->h* newzoom ) );
-		sUpgradeStruct* const n = new sUpgradeStruct(sf, true, (int)i);
-		MakeUpgradeSliderVehicle ( n->upgrades, (int)i );
-		images.Add ( n );
+		SDL_BlitSurface ( UnitsData.vehicle[vehicleTypeIdx].img[0], NULL, sf, NULL );
+		scaleSurface ( UnitsData.vehicle[vehicleTypeIdx].img_org[0], UnitsData.vehicle[vehicleTypeIdx].img[0], 
+					   (int) (UnitsData.vehicle[vehicleTypeIdx].img_org[0]->w * newZoom), (int) (UnitsData.vehicle[vehicleTypeIdx].img_org[0]->h * newZoom) );
+		sUpgradeStruct* upgradeStruct = new sUpgradeStruct(sf, true, vehicleTypeIdx);
+		initUpgradesVehicle (upgradeStruct->upgrades, vehicleTypeIdx);
+		allUpgradeStructs.Add (upgradeStruct);
 	}
 
-	for (size_t i = 0;i < UnitsData.building.Size(); ++i)
+	// create and add upgrade structs for all buildings
+	for (int  buildingTypeIdx = 0; buildingTypeIdx < UnitsData.building.Size(); buildingTypeIdx++)
 	{
 		SDL_Surface *sf;
-
-		if ( UnitsData.building[i].data.is_big )
+		if (UnitsData.building[buildingTypeIdx].data.is_big)
 		{
-			scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 4, UnitsData.building[i].img_org->h / 4 );
+			scaleSurface (UnitsData.building[buildingTypeIdx].img_org, 
+						  UnitsData.building[buildingTypeIdx].img, 
+						  UnitsData.building[buildingTypeIdx].img_org->w / 4, 
+						  UnitsData.building[buildingTypeIdx].img_org->h / 4);
 		}
 		else
 		{
-			scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, UnitsData.building[i].img_org->w / 2, UnitsData.building[i].img_org->h / 2 );
+			scaleSurface (UnitsData.building[buildingTypeIdx].img_org, 
+						  UnitsData.building[buildingTypeIdx].img, 
+						  UnitsData.building[buildingTypeIdx].img_org->w / 2, 
+						  UnitsData.building[buildingTypeIdx].img_org->h / 2);
 		}
-
-		sf = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UnitsData.building[i].img->w, UnitsData.building[i].img->h, 32, 0, 0, 0, 0 );
-
-		SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
-
-		if ( !UnitsData.building[i].data.is_connector && !UnitsData.building[i].data.is_road )
-		{
-			SDL_BlitSurface ( Client->ActivePlayer->color, NULL, sf, NULL );
-		}
+		sf = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, 
+								   UnitsData.building[buildingTypeIdx].img->w, 
+								   UnitsData.building[buildingTypeIdx].img->h, 
+								   32, 0, 0, 0, 0 );
+		SDL_SetColorKey (sf, SDL_SRCCOLORKEY, 0xFF00FF);
+		if (UnitsData.building[buildingTypeIdx].data.is_connector == false && UnitsData.building[buildingTypeIdx].data.is_road == false)
+			SDL_BlitSurface (Client->ActivePlayer->color, NULL, sf, NULL);
 		else
-		{
-			SDL_FillRect ( sf, NULL, 0xFF00FF );
-		}
-
-		SDL_BlitSurface ( UnitsData.building[i].img, NULL, sf, NULL );
-
-		scaleSurface ( UnitsData.building[i].img_org, UnitsData.building[i].img, ( int ) ( UnitsData.building[i].img_org->w* newzoom ), ( int ) ( UnitsData.building[i].img_org->h* newzoom ) );
-		sUpgradeStruct* const n = new sUpgradeStruct(sf, false, (int)i);
-		MakeUpgradeSliderBuilding ( n->upgrades, (int)i );
-		images.Add ( n );
+			SDL_FillRect (sf, NULL, 0xFF00FF);
+		
+		SDL_BlitSurface (UnitsData.building[buildingTypeIdx].img, NULL, sf, NULL);
+		scaleSurface (UnitsData.building[buildingTypeIdx].img_org, 
+					  UnitsData.building[buildingTypeIdx].img, 
+					  (int) (UnitsData.building[buildingTypeIdx].img_org->w * newZoom), 
+					  (int) (UnitsData.building[buildingTypeIdx].img_org->h * newZoom));
+		sUpgradeStruct* upgradeStruct = new sUpgradeStruct(sf, false, buildingTypeIdx);
+		initUpgradesBuilding (upgradeStruct->upgrades, buildingTypeIdx);
+		allUpgradeStructs.Add (upgradeStruct);
 	}
 
+	
 	cList<sUpgradeStruct*> selection;
 
-	CreateUpgradeList ( selection, images, &selected, &offset );
-	ShowUpgradeList ( selection, selected, offset, Beschreibung );
-	MakeUpgradeSubButtons();
+	// create the list of units (displayed at the right side), depending on the state of the client-flags bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT
+	CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+	// display the list of units selectable for upgrading and the values of the currently selected unit 
+	ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+	// display the buttons for selecting unit subcategories
+	ShowUpgradeSubButtons ();
 
-	// Credits anzeigen:
-	ShowGoldBar ( StartCredits );
+	// show the available credits
+	ShowGoldBar (startCredits, curCredits);
 
-	// Den Buffer anzeigen:
+	// display the buffer
 	SHOW_SCREEN
-	mouse->GetBack ( buffer );
-
+	mouse->GetBack (buffer);
 	mouse->MoveCallback = false;
 
-	while ( 1 )
+	// exit, when cancle or done was clicked by the player
+	while (1)
 	{
+//		if (Client->SelectedBuilding == NULL)
+//			break;
 		if (  Client->SelectedBuilding != this ) break;
 		if ( !Client->isInMenu ) break;
 
-		Client->handleTimer();
-		Client->doGameActions();
+		Client->handleTimer ();
+		Client->doGameActions ();
 
-		// Events holen:
+		// get the events
 		EventHandler->HandleEvents();
 
-		// Die Maus machen:
+		// udpate the mouse
 		mouse->GetPos();
 
-		b = (int)Client->getMouseState().leftButtonPressed;
-
+		leftButtonPressed = (int)Client->getMouseState().leftButtonPressed;
 		x = mouse->x;
-
 		y = mouse->y;
 
-		if ( x != LastMouseX || y != LastMouseY )
-		{
-			mouse->draw ( true, screen );
-		}
+		if (x != lastMouseX || y != lastMouseY) // mouse moved
+			mouse->draw (true, screen);
 
-		// Down-Button:
-		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 && b && !DownPressed )
+		// the Down-Button was pressed (to navigate down the list of units)
+		if (x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 
+			&& y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 
+			&& leftButtonPressed && !downPressed)
 		{
-			PlayFX ( SoundData.SNDObjectMenu );
+			int leftSpace = selection.Size () - 9 - offset;
+			if (leftSpace != 0)
+			{
+				if (leftSpace >= 9)
+					offset += 9;
+				else if (leftSpace > 0)
+					offset += leftSpace;
+				if (selected < offset)
+					selected = offset;
+				ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			}
+
+			PlayFX (SoundData.SNDObjectMenu);
 			scr.x = 249;
 			scr.y = 151;
 			scr.w = 18;
 			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
-
-			if (offset < (int)selection.Size() - 9)
-			{
-				offset++;
-
-				if ( selected < offset )
-					selected = offset;
-
-				ShowUpgradeList ( selection, selected, offset, Beschreibung );
-			}
-
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 			SHOW_SCREEN
-			mouse->draw ( false, screen );
-			DownPressed = true;
+			mouse->draw (false, screen);
+			downPressed = true;
 		}
-		else
-			if ( !b && DownPressed )
+		else if (!leftButtonPressed && downPressed/* && (offset < selection.Size () - 9)*/) // down button was released -> reset the button graphics
+		{
+			scr.x = 491;
+			scr.y = 386;
+			scr.w = 18;
+			scr.h = 17;
+			dest.x = MENU_OFFSET_X + 491;
+			dest.y = MENU_OFFSET_Y + 386;
+			SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+			downPressed = false;
+		}
+
+		// the Up-Button was pressed (to navigate up the list of units)
+		if (x >= MENU_OFFSET_X + 470 && x < MENU_OFFSET_X + 470 + 18 
+			&& y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 
+			&& leftButtonPressed && !upPressed)
+		{
+			if (offset > 0)
 			{
-				scr.x = 491;
-				scr.y = 386;
-				scr.w = 18;
-				scr.h = 17;
-				dest.x = MENU_OFFSET_X + 491;
-				dest.y = MENU_OFFSET_Y + 386;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				DownPressed = false;
+				if (offset >= 9)
+					offset -= 9;
+				else
+					offset = 0;
+				if (selected >= offset + 9)
+					selected = offset + 8;
+				ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
 			}
 
-		// Up-Button:
-		if ( x >= MENU_OFFSET_X + 470 && x < MENU_OFFSET_X + 470 + 18 && y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 && b && !UpPressed )
-		{
-			PlayFX ( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			scr.x = 230;
 			scr.y = 151;
 			scr.w = 18;
 			scr.h = 17;
 			dest.x = MENU_OFFSET_X + 470;
 			dest.y = MENU_OFFSET_Y + 386;
-
-			if ( offset != 0 )
-			{
-				offset--;
-
-				if ( selected >= offset + 9 )
-					selected = offset + 8;
-
-				ShowUpgradeList ( selection, selected, offset, Beschreibung );
-			}
-
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 			SHOW_SCREEN
-			mouse->draw ( false, screen );
-			UpPressed = true;
+			mouse->draw (false, screen);
+			upPressed = true;
 		}
-		else
-			if ( !b && UpPressed )
-			{
-				scr.x = 470;
-				scr.y = 386;
-				scr.w = 18;
-				scr.h = 17;
-				dest.x = MENU_OFFSET_X + 470;
-				dest.y = MENU_OFFSET_Y + 386;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-				UpPressed = false;
-			}
-
-		bool const down = b > LastB;
-		bool const up   = b < LastB;
-
-		if (btn_cancel.CheckClick(x, y, down, up))
+		else if (!leftButtonPressed && upPressed/* && offset > 0*/) // up button was released -> reset the button graphics
 		{
-			// Alle Upgrades zurücksetzen:
-			owner->Credits = StartCredits;
+			scr.x = 470;
+			scr.y = 386;
+			scr.w = 18;
+			scr.h = 17;
+			dest.x = MENU_OFFSET_X + 470;
+			dest.y = MENU_OFFSET_Y + 386;
+			SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+			upPressed = false;
+		}
 
-			for (size_t i = 0; i < images.Size(); i++)
-			{
-				sUpgradeStruct *ptr;
-				ptr = images[i];
+		const bool down = (leftButtonPressed > lastLeftButtonPressed); // TODO: refactor this strange mouseUp and mouseDown handling...
+		const bool up   = (leftButtonPressed < lastLeftButtonPressed);
 
-				for ( k = 0;k < 8;k++ )
-				{
-					if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
-						continue;
-
-					* ( ptr->upgrades[k].value ) = ptr->upgrades[k].StartValue;
-				}
-			}
+		// the user clicked the cancle button!
+		if (btn_cancel.CheckClick (x, y, down, up))
+		{
 			break;
 		}
 
+		// the user clicked the done button => send the upgrades to the server
 		if (btn_done.CheckClick(x, y, down, up))
 		{
-			// Alle Upgrades durchführen:
-			for (size_t i = 0; i < images.Size(); i++)
-			{
-				bool up = false;
-				sUpgradeStruct *ptr;
-				ptr = images[i];
-
-				for ( k = 0;k < 8;k++ )
-				{
-					if ( !ptr->upgrades[k].active || !ptr->upgrades[k].Purchased )
-						continue;
-
-					if ( !ptr->vehicle )
-					{
-						owner->BuildingData[ptr->id].version++;
-					}
-					else
-					{
-						owner->VehicleData[ptr->id].version++;
-					}
-
-					up = true;
-
-					break;
-				}
-			}
+			sendUpgrades (allUpgradeStructs, owner);
 			break;
 		}
 
-		// Beschreibung Haken:
-		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
+		// Description checkbox:
+		if (x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 
+			&& y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 
+			&& leftButtonPressed && !lastLeftButtonPressed)
 		{
-			PlayFX ( SoundData.SNDObjectMenu );
-			Beschreibung = !Beschreibung;
-			SettingsData.bShowDescription = Beschreibung;
+			PlayFX (SoundData.SNDObjectMenu);
+			showDescription = !showDescription;
+			SettingsData.bShowDescription = showDescription;
 
-			if ( Beschreibung )
+			if (showDescription)
 			{
 				scr.x = 291;
 				scr.y = 264;
@@ -3496,7 +3474,7 @@ void cBuilding::ShowUpgrade ( void )
 				dest.y = MENU_OFFSET_Y + 264;
 				scr.w = 17;
 				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+				SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 			}
 			else
 			{
@@ -3506,221 +3484,232 @@ void cBuilding::ShowUpgrade ( void )
 				dest.y = MENU_OFFSET_Y + 264;
 				scr.w = 18;
 				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 			}
 
-			ShowUpgradeList ( selection, selected, offset, Beschreibung );
-
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
 			SHOW_SCREEN
-			mouse->draw ( false, screen );
+			mouse->draw (false, screen);
 		}
 
-		// Klick in die Liste:
-		if ( x >= MENU_OFFSET_X + 490 && x < MENU_OFFSET_X + 490 + 70 && y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 315 && b && !LastB )
+		// Click inside the list of upgradeable units (user selects another unit)
+		if (x >= MENU_OFFSET_X + 490 && x < MENU_OFFSET_X + 490 + 70 
+			&& y >= MENU_OFFSET_Y + 60 && y < MENU_OFFSET_Y + 60 + 315 
+			&& leftButtonPressed && !lastLeftButtonPressed)
 		{
 			int nr;
-			nr = ( y - MENU_OFFSET_Y - 60 ) / ( 32 + 2 );
+			nr = (y - MENU_OFFSET_Y - 60) / (32 + 2);
 
 			if (selection.Size() < 9)
 			{
-				if (nr >= (int)selection.Size())
+				if (nr >= (int)selection.Size ())
 					nr = -1;
 			}
 			else
 			{
-				if ( nr >= 10 )
+				if (nr >= 10)
 					nr = -1;
-
 				nr += offset;
 			}
 
-			if ( nr != -1 )
+			if (nr != -1)
 			{
-				PlayFX ( SoundData.SNDObjectMenu );
+				PlayFX (SoundData.SNDObjectMenu);
 				selected = nr;
-				ShowUpgradeList ( selection, selected, offset, Beschreibung );
+				ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
 				SHOW_SCREEN
-				mouse->draw ( false, screen );
+				mouse->draw (false, screen);
 			}
 		}
 
-		// Klick auf einen Upgrade-Slider:
-		if (b && !LastB && x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 && selection.Size())
+		// User clicks on an upgrade-slider
+		if (leftButtonPressed && !lastLeftButtonPressed 
+			&& x >= MENU_OFFSET_X + 283 && x < MENU_OFFSET_X + 301 + 18 
+			&& selection.Size ())
 		{
-			sUpgradeStruct* ptr = selection[selected];
+			sUpgradeStruct* upgradeStructSelectedUnit = selection[selected];
 
-			for (int i = 0;i < 8;i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( !ptr->upgrades[i].active )
+				if (!upgradeStructSelectedUnit->upgrades[i].active)
 					continue;
 
-				if ( ptr->upgrades[i].Purchased && x < MENU_OFFSET_X + 283 + 18 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
+				// left slider was pressed (revert the upgrade)
+				if (upgradeStructSelectedUnit->upgrades[i].purchased 
+					&& x < MENU_OFFSET_X + 283 + 18 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19)
 				{
 					int upgradeType = -1;
-					if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+					if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
 						upgradeType = cUpgradeCalculator::kHitpoints;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
 						upgradeType = cUpgradeCalculator::kArmor;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
 						upgradeType = cUpgradeCalculator::kAmmo;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
 						upgradeType = cUpgradeCalculator::kAttack;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
 						upgradeType = cUpgradeCalculator::kSpeed;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
 						upgradeType = cUpgradeCalculator::kShots;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
 						upgradeType = cUpgradeCalculator::kRange;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
 						upgradeType = cUpgradeCalculator::kScan;
 
 					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
-						*(ptr->upgrades[i].value) -= uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
+						upgradeStructSelectedUnit->upgrades[i].curValue -= uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue);
+						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue, 
+																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType);
 					}
 					else
 					{
-						*(ptr->upgrades[i].value) -= 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
+						upgradeStructSelectedUnit->upgrades[i].curValue -= 4 * uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue / 4);
+						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue / 4, 
+																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType);
 					}
 
-					owner->Credits += ptr->upgrades[i].NextPrice;
+					curCredits += upgradeStructSelectedUnit->upgrades[i].nextPrice;
 
-					ptr->upgrades[i].Purchased--;
+					upgradeStructSelectedUnit->upgrades[i].purchased--;
 
-					PlayFX ( SoundData.SNDObjectMenu );
-					ShowUpgradeList ( selection, selected, offset, Beschreibung );
-					ShowGoldBar ( StartCredits );
+					PlayFX (SoundData.SNDObjectMenu);
+					ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+					ShowGoldBar (startCredits, curCredits);
 					SHOW_SCREEN
-					mouse->draw ( false, screen );
+					mouse->draw (false, screen);
 					break;
 				}
-				else if ( ptr->upgrades[i].NextPrice <= owner->Credits && x >= MENU_OFFSET_X + 301 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19 )
+				else if (upgradeStructSelectedUnit->upgrades[i].nextPrice <= curCredits && upgradeStructSelectedUnit->upgrades[i].nextPrice > 0
+						 && x >= MENU_OFFSET_X + 301 && y >= MENU_OFFSET_Y + 293 + i*19 && y < MENU_OFFSET_Y + 293 + i*19 + 19) // upgrade kaufen (slider rechts geclickt)
 				{
-					owner->Credits -= ptr->upgrades[i].NextPrice;
+					curCredits -= upgradeStructSelectedUnit->upgrades[i].nextPrice;
 
 					int upgradeType = -1;
-					if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+					if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
 						upgradeType = cUpgradeCalculator::kHitpoints;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
 						upgradeType = cUpgradeCalculator::kArmor;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
 						upgradeType = cUpgradeCalculator::kAmmo;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
 						upgradeType = cUpgradeCalculator::kAttack;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
 						upgradeType = cUpgradeCalculator::kSpeed;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
 						upgradeType = cUpgradeCalculator::kShots;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
 						upgradeType = cUpgradeCalculator::kRange;
-					else if (ptr->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+					else if (upgradeStructSelectedUnit->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
 						upgradeType = cUpgradeCalculator::kScan;
 
 					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
-						*(ptr->upgrades[i].value) += uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
+						upgradeStructSelectedUnit->upgrades[i].curValue += uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue);
+						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue, 
+																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType);
 					}
 					else
 					{
-						*(ptr->upgrades[i].value) += 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
+						upgradeStructSelectedUnit->upgrades[i].curValue += 4 * uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue / 4);
+						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue / 4, 
+																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType);
 					}
 
-					ptr->upgrades[i].Purchased++;
+					upgradeStructSelectedUnit->upgrades[i].purchased++;
 
-					PlayFX ( SoundData.SNDObjectMenu );
-					ShowUpgradeList ( selection, selected, offset, Beschreibung );
-					ShowGoldBar ( StartCredits );
+					PlayFX (SoundData.SNDObjectMenu);
+					ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+					ShowGoldBar (startCredits, curCredits);
 					SHOW_SCREEN
-					mouse->draw ( false, screen );
+					mouse->draw (false, screen);
 					break;
 				}
 			}
 		}
 
-		// Klick auf einen der SubSelctionButtons:
-		if ( b && !LastB && x >= MENU_OFFSET_X + 467 && x < MENU_OFFSET_X + 467 + 32 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
+		// click on a subcategory selection button (e.g. "show ships")
+		if (leftButtonPressed && !lastLeftButtonPressed 
+			&& x >= MENU_OFFSET_X + 467 && x < MENU_OFFSET_X + 467 + 32 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31)
 		{
-			PlayFX ( SoundData.SNDHudSwitch );
+			PlayFX (SoundData.SNDHudSwitch);
 			Client->bUpShowTank = !Client->bUpShowTank;
-			CreateUpgradeList ( selection, images, &selected, &offset );
-			ShowUpgradeList ( selection, selected, offset, Beschreibung );
-			MakeUpgradeSubButtons();
+			CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			ShowUpgradeSubButtons ();
 			SHOW_SCREEN
-			mouse->draw ( false, screen );
+			mouse->draw (false, screen);
 		}
-		else
-			if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33 && x < MENU_OFFSET_X + 467 + 32 + 33 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
-			{
-				PlayFX ( SoundData.SNDHudSwitch );
-				Client->bUpShowPlane = !Client->bUpShowPlane;
-				CreateUpgradeList ( selection, images, &selected, &offset );
-				ShowUpgradeList ( selection, selected, offset, Beschreibung );
-				MakeUpgradeSubButtons();
-				SHOW_SCREEN
-				mouse->draw ( false, screen );
-			}
-			else
-				if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*2 && x < MENU_OFFSET_X + 467 + 32 + 33*2 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
-				{
-					PlayFX ( SoundData.SNDHudSwitch );
-					Client->bUpShowShip = !Client->bUpShowShip;
-					CreateUpgradeList ( selection, images, &selected, &offset );
-					ShowUpgradeList ( selection, selected, offset, Beschreibung );
-					MakeUpgradeSubButtons();
-					SHOW_SCREEN
-					mouse->draw ( false, screen );
-				}
-				else
-					if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*3 && x < MENU_OFFSET_X + 467 + 32 + 33*3 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
-					{
-						PlayFX ( SoundData.SNDHudSwitch );
-						Client->bUpShowBuild = !Client->bUpShowBuild;
-						CreateUpgradeList ( selection, images, &selected, &offset );
-						ShowUpgradeList ( selection, selected, offset, Beschreibung );
-						MakeUpgradeSubButtons();
-						SHOW_SCREEN
-						mouse->draw ( false, screen );
-					}
-					else
-						if ( b && !LastB && x >= MENU_OFFSET_X + 467 + 33*4 && x < MENU_OFFSET_X + 467 + 32 + 33*4 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31 )
-						{
-							PlayFX ( SoundData.SNDHudSwitch );
-							Client->bUpShowTNT = !Client->bUpShowTNT;
-							CreateUpgradeList ( selection, images, &selected, &offset );
-							ShowUpgradeList ( selection, selected, offset, Beschreibung );
-							MakeUpgradeSubButtons();
-							SHOW_SCREEN
-							mouse->draw ( false, screen );
-						}
+		else if (leftButtonPressed && !lastLeftButtonPressed 
+				 && x >= MENU_OFFSET_X + 467 + 33 && x < MENU_OFFSET_X + 467 + 32 + 33 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31)
+		{
+			PlayFX (SoundData.SNDHudSwitch);
+			Client->bUpShowPlane = !Client->bUpShowPlane;
+			CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			ShowUpgradeSubButtons ();
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+		}
+		else if (leftButtonPressed && !lastLeftButtonPressed 
+				 && x >= MENU_OFFSET_X + 467 + 33*2 && x < MENU_OFFSET_X + 467 + 32 + 33*2 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31)
+		{
+			PlayFX (SoundData.SNDHudSwitch);
+			Client->bUpShowShip = !Client->bUpShowShip;
+			CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			ShowUpgradeSubButtons ();
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+		}
+		else if (leftButtonPressed && !lastLeftButtonPressed 
+				 && x >= MENU_OFFSET_X + 467 + 33*3 && x < MENU_OFFSET_X + 467 + 32 + 33*3 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31)
+		{
+			PlayFX (SoundData.SNDHudSwitch);
+			Client->bUpShowBuild = !Client->bUpShowBuild;
+			CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			ShowUpgradeSubButtons ();
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+		}
+		else if (leftButtonPressed && !lastLeftButtonPressed 
+				 && x >= MENU_OFFSET_X + 467 + 33*4 && x < MENU_OFFSET_X + 467 + 32 + 33*4 && y >= MENU_OFFSET_Y + 411 && y < MENU_OFFSET_Y + 411 + 31)
+		{
+			PlayFX (SoundData.SNDHudSwitch);
+			Client->bUpShowTNT = !Client->bUpShowTNT;
+			CreateUpgradeList (selection, allUpgradeStructs, selected, offset);
+			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
+			ShowUpgradeSubButtons ();
+			SHOW_SCREEN
+			mouse->draw (false, screen);
+		}
 
-		LastMouseX = x;
-
-		LastMouseY = y;
-		LastB = b;
+		lastMouseX = x;
+		lastMouseY = y;
+		lastLeftButtonPressed = leftButtonPressed;
 	}
 
-	// Alles Images löschen:
-	while (images.Size())
+	// clean up
+	while (allUpgradeStructs.Size())
 	{
 		sUpgradeStruct *ptr;
-		ptr = images[0];
+		ptr = allUpgradeStructs[0];
 		SDL_FreeSurface ( ptr->sf );
 		delete ptr;
-		images.Delete ( 0 );
+		allUpgradeStructs.Delete ( 0 );
 	}
 
 	mouse->MoveCallback = true;
 	Client->isInMenu = false;
 }
 
-// Zeigt die Liste mit den Images an:
-void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected, int const offset, bool const beschreibung)
+//-------------------------------------------------------------------------------
+/** Displays the list of units selectable for upgrading and the values of the currently selected unit. */
+//-------------------------------------------------------------------------------
+void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selected, int const offset, bool const showDescription, int curCredits)
 {
 	sUpgradeStruct *ptr;
 	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
@@ -3730,7 +3719,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	dest.y = MENU_OFFSET_Y + 52;
 	scr.w = 150;
 	scr.h = 330;
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	scr.x = 0;
 	scr.y = 0;
 	scr.w = 32;
@@ -3738,7 +3727,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
 
-	if (list.Size() == 0)
+	if (list.Size () == 0)
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -3746,86 +3735,86 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		dest.y = MENU_OFFSET_Y;
 		scr.w = 316;
 		scr.h = 256;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 		scr.x = 11;
 		scr.y = 290;
 		dest.x = MENU_OFFSET_X + 11;
 		dest.y = MENU_OFFSET_Y + 290;
 		scr.w = 346;
 		scr.h = 176;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 		return;
 	}
 
-	for (unsigned int i = offset; i < list.Size(); i++)
+	for (unsigned int i = offset; i < list.Size (); i++)
 	{
-		if ( (int)i >= offset + 9 )
+		if ((int)i >= offset + 9)
 			break;
 
 		// Das Bild malen:
 		ptr = list[i];
 
-		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
+		SDL_BlitSurface (ptr->sf, &scr, buffer, &dest);
 
-		// Ggf noch Rahmen drum:
-		if ( selected == i )
+		if (selected == i)
 		{
+			// Ggf noch Rahmen drum:
 			SDL_Rect tmp, tmp2;
 			tmp = dest;
 			tmp.x -= 4;
 			tmp.y -= 4;
 			tmp.h = 1;
 			tmp.w = 8;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.x += 30;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.y += 38;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.x -= 30;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.y = dest.y - 4;
 			tmp.w = 1;
 			tmp.h = 8;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.x += 38;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.y += 31;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			tmp.x -= 38;
-			SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
+			SDL_FillRect (buffer, &tmp, 0xE0E0E0);
 			// Das Bild neu malen:
 			tmp.x = MENU_OFFSET_X + 11;
 			tmp.y = MENU_OFFSET_Y + 13;
 
-			if ( ptr->vehicle )
+			if (ptr->vehicle)
 			{
 				tmp.w = UnitsData.vehicle[ptr->id].info->w;
 				tmp.h = UnitsData.vehicle[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp );
+				SDL_BlitSurface (UnitsData.vehicle[ptr->id].info, NULL, buffer, &tmp);
 			}
 			else
 			{
 				tmp.w = UnitsData.building[ptr->id].info->w;
 				tmp.h = UnitsData.building[ptr->id].info->h;
-				SDL_BlitSurface ( UnitsData.building[ptr->id].info, NULL, buffer, &tmp );
+				SDL_BlitSurface (UnitsData.building[ptr->id].info, NULL, buffer, &tmp);
 			}
 
 			// Ggf die Beschreibung ausgeben:
-			if ( beschreibung )
+			if (showDescription)
 			{
 				tmp.x += 10;
 				tmp.y += 10;
 				tmp.w -= 20;
 				tmp.h -= 20;
 
-				if ( ptr->vehicle )
+				if (ptr->vehicle)
 				{
-					font->showTextAsBlock ( tmp, UnitsData.vehicle[ptr->id].text );
+					font->showTextAsBlock (tmp, UnitsData.vehicle[ptr->id].text);
 
 				}
 				else
 				{
-					font->showTextAsBlock ( tmp, UnitsData.building[ptr->id].text );
+					font->showTextAsBlock (tmp, UnitsData.building[ptr->id].text);
 
 				}
 			}
@@ -3838,33 +3827,81 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 				tmp2.y = MENU_OFFSET_Y + 290;
 				tmp.w = tmp2.w = 346;
 				tmp.h = tmp2.h = 176;
-				SDL_BlitSurface ( GraphicsData.gfx_upgrade, &tmp, buffer, &tmp2 );
+				SDL_BlitSurface (GraphicsData.gfx_upgrade, &tmp, buffer, &tmp2);
 
-				if ( ptr->vehicle )
+				sUpgradeStruct* selectedUpgrade = list[selected];
+				if (ptr->vehicle)
 				{
-					cVehicle tv(&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
-					tv.ShowBigDetails();
+					cVehicle tempVeh (&UnitsData.vehicle[ptr->id], Client->ActivePlayer);
+					// now set the current values (which are already locally upgraded) for tempVeh 
+					for (int upgradeType = 0; upgradeType < 8; upgradeType++)
+					{
+						if (selectedUpgrade->upgrades[upgradeType].active)
+						{
+							if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+								tempVeh.data.max_hit_points = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+								tempVeh.data.armor = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+								tempVeh.data.max_ammo = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+								tempVeh.data.damage = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+								tempVeh.data.max_speed = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+								tempVeh.data.max_shots = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+								tempVeh.data.range = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+								tempVeh.data.scan = selectedUpgrade->upgrades[upgradeType].curValue;
+						}
+					}
+					tempVeh.ShowBigDetails ();
 				}
 				else
 				{
-					cBuilding tb(&UnitsData.building[ptr->id], Client->ActivePlayer, NULL);
-					tb.ShowBigDetails();
+					cBuilding tempBuild (&UnitsData.building[ptr->id], Client->ActivePlayer, NULL);
+					// now set the current values (which are already locally upgraded) for tempBuild 
+					for (int upgradeType = 0; upgradeType < 8; upgradeType++)
+					{
+						if (selectedUpgrade->upgrades[upgradeType].active)
+						{
+							if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+								tempBuild.data.max_hit_points = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+								tempBuild.data.armor = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+								tempBuild.data.max_ammo = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+								tempBuild.data.damage = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+								tempBuild.data.max_speed = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+								tempBuild.data.max_shots = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+								tempBuild.data.range = selectedUpgrade->upgrades[upgradeType].curValue;
+							else if (selectedUpgrade->upgrades[upgradeType].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+								tempBuild.data.scan = selectedUpgrade->upgrades[upgradeType].curValue;
+						}
+					}
+					tempBuild.ShowBigDetails();
 				}
 			}
 
 			// Die Texte anzeigen/Slider machen:
-			for ( int k = 0;k < 8;k++ )
+			for (int k = 0;k < 8;k++)
 			{
 				SDL_Rect scr, dest;
 
-				if ( !ptr->upgrades[k].active )
+				if (!ptr->upgrades[k].active)
 					continue;
 
-				//sprintf ( str,"%d",ptr->upgrades[k].NextPrice );
+				//sprintf (str,"%d",ptr->upgrades[k].NextPrice);
 
-				font->showText ( MENU_OFFSET_X + 322, MENU_OFFSET_Y + 296 + k*19, iToStr ( ptr->upgrades[k].NextPrice ) );
+				if (ptr->upgrades[k].nextPrice > 0)
+					font->showText (MENU_OFFSET_X + 322, MENU_OFFSET_Y + 296 + k*19, iToStr (ptr->upgrades[k].nextPrice));
 
-				if ( ptr->upgrades[k].Purchased )
+				if (ptr->upgrades[k].purchased)
 				{
 					scr.x = 380;
 					scr.y = 256;
@@ -3872,10 +3909,10 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 					scr.h = 17;
 					dest.x = MENU_OFFSET_X + 283;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 				}
 
-				if ( ptr->upgrades[k].NextPrice <= owner->Credits )
+				if (ptr->upgrades[k].nextPrice <= curCredits && ptr->upgrades[k].nextPrice > 0)
 				{
 					scr.x = 399;
 					scr.y = 256;
@@ -3883,7 +3920,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 					scr.h = 17;
 					dest.x = MENU_OFFSET_X + 301;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 				}
 			}
 		}
@@ -3891,7 +3928,7 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		// Text ausgeben:
 		string sTmp;
 
-		if ( ptr->vehicle )
+		if (ptr->vehicle)
 		{
 			sTmp = UnitsData.vehicle[ptr->id].data.name;
 		}
@@ -3901,15 +3938,15 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 		}
 
 
-		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
+		if (font->getTextWide (sTmp, FONT_LATIN_SMALL_WHITE) > text.w)
 		{
 			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			font->showTextAsBlock (text, sTmp, FONT_LATIN_SMALL_WHITE);
 			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
 		{
-			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
+			font->showText (text, sTmp, FONT_LATIN_SMALL_WHITE);
 		}
 
 		text.y += 32 + 2;
@@ -3917,8 +3954,10 @@ void cBuilding::ShowUpgradeList(cList<sUpgradeStruct*>& list, int const selected
 	}
 }
 
-// Zeigt die Anzahl der Credits an:
-void cBuilding::ShowGoldBar ( int StartCredits )
+//-------------------------------------------------------------------------------
+/** Displays the available credits as a gold bar and a number. */
+//-------------------------------------------------------------------------------
+void cBuilding::ShowGoldBar (int startCredits, int curCredits)
 {
 	//char str[50];
 	SDL_Rect scr, dest;
@@ -3928,306 +3967,311 @@ void cBuilding::ShowGoldBar ( int StartCredits )
 	dest.y = MENU_OFFSET_Y + 301;
 	scr.w = 22;
 	scr.h = 115;
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	scr.x = 312;
 	scr.y = 265;
 	dest.x = MENU_OFFSET_X + 312;
 	dest.y = MENU_OFFSET_Y + 265;
 	scr.w = 150;
 	scr.h = 26;
-	SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
-	//sprintf ( str,"Credits: %d",owner->Credits );
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+	//sprintf (str,"Credits: %d", curCredits);
 
-	font->showTextCentered ( MENU_OFFSET_X + 381, MENU_OFFSET_Y + 275, "Credits: " + iToStr ( owner->Credits ) );
+	font->showTextCentered (MENU_OFFSET_X + 381, MENU_OFFSET_Y + 275, "Credits: " + iToStr (curCredits));
 
 	scr.x = 118;
 	scr.y = 336;
 	scr.w = 16;
-	scr.h = ( int ) ( 115 * ( owner->Credits / ( float ) StartCredits ) );
+	scr.h = (int) (115 * (curCredits / (float) startCredits));
 	dest.x = MENU_OFFSET_X + 375;
 	dest.y = MENU_OFFSET_Y + 301 + 115 - scr.h;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 }
 
-// Macht die Upgradeschieber für Vehicle:
-void cBuilding::MakeUpgradeSliderVehicle ( sUpgrades *u, int nr )
+//-------------------------------------------------------------------------------
+/** initializes the upgrades in u[] for the given vehicle type by setting the available
+	upgrade sliders and calculating the current price for the next upgrade */
+//-------------------------------------------------------------------------------
+void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 {
-	sUnitData *d;
-	int i;
-
-	for ( i = 0;i < 8;i++ )
+	// initialize the upgrades with empty values
+	for (int i = 0; i < 8; i++)
 	{
 		u[i].active = false;
-		u[i].Purchased = 0;
-		u[i].value = NULL;
+		u[i].purchased = 0;
+		u[i].curValue = -1;
 	}
 
-	d = owner->VehicleData + nr;
+	sUnitData& currentVersion = owner->VehicleData[vehicleTypeIdx]; // get the owner's current version of the unitData
+	const sUnitData& startVersion = UnitsData.vehicle[vehicleTypeIdx].data;
+	
+	int i = 0;
 
-	i = 0;
-
-	if ( d->can_attack )
+	if (currentVersion.can_attack)
 	{
 		// Damage:
 		u[i].active = true;
-		u[i].value = & ( d->damage );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].startValue = startVersion.damage;
+		u[i].curValue = currentVersion.damage;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 		// Shots:
 		u[i].active = true;
-		u[i].value = & ( d->max_shots );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_shots, cUpgradeCalculator::kShots);
+		u[i].startValue = startVersion.max_shots;
+		u[i].curValue = currentVersion.max_shots;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 		i++;
 		// Range:
 		u[i].active = true;
-		u[i].value = & ( d->range );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.range, cUpgradeCalculator::kRange);
+		u[i].startValue = startVersion.range;
+		u[i].curValue = currentVersion.range;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 		i++;
 		// Ammo:
 		u[i].active = true;
-		u[i].value = & ( d->max_ammo );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+		u[i].startValue = startVersion.max_ammo;
+		u[i].curValue = currentVersion.max_ammo;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 		i++;
 	}
 
-	if ( d->can_transport == TRANS_METAL || d->can_transport == TRANS_OIL || d->can_transport == TRANS_GOLD )
-	{
+	if (currentVersion.can_transport == TRANS_METAL || currentVersion.can_transport == TRANS_OIL || currentVersion.can_transport == TRANS_GOLD)
 		i++;
-	}
 
 	// Armor:
 	u[i].active = true;
-	u[i].value = & ( d->armor );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.armor, cUpgradeCalculator::kArmor);
+	u[i].startValue = startVersion.armor;
+	u[i].curValue = currentVersion.armor;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 
 	// Hitpoints:
 	u[i].active = true;
-	u[i].value = & ( d->max_hit_points );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].startValue = startVersion.max_hit_points;
+	u[i].curValue = currentVersion.max_hit_points;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 
 	// Scan:
 	u[i].active = true;
-	u[i].value = & ( d->scan );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.scan, cUpgradeCalculator::kScan);
+	u[i].startValue = startVersion.scan;
+	u[i].curValue = currentVersion.scan;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 	i++;
 
 	// Speed:
 	u[i].active = true;
-	u[i].value = &(d->max_speed);
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value) / 4, UnitsData.vehicle[nr].data.max_speed / 4, cUpgradeCalculator::kSpeed);
+	u[i].startValue = startVersion.max_speed;
+	u[i].curValue = currentVersion.max_speed;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_speed / 4, startVersion.max_speed / 4, cUpgradeCalculator::kSpeed);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Speed");
 	i++;
 
 	// Costs:
 	i++;
 
-	for ( i = 0;i < 8;i++ )
-	{
-		if ( u[i].value == NULL )
-			continue;
-
-		u[i].StartValue = * ( u[i].value );
-	}
+//	for (i = 0; i < 8; i++)
+//	{
+//		if (u[i].curValue == -1)
+//			continue;
+//
+//		u[i].startValue = u[i].curValue;
+//	}
 }
 
-// Macht die Upgradeschieber für Buildings:
-void cBuilding::MakeUpgradeSliderBuilding ( sUpgrades *u, int nr )
+//-------------------------------------------------------------------------------
+/** initializes the upgrades in u[] for the given building type by setting the available
+	upgrade sliders and calculating the current price for the next upgrade */
+//-------------------------------------------------------------------------------
+void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 {
-	sUnitData *d;
-	int i;
-
-	for ( i = 0;i < 8;i++ )
+	// initialize the upgrades with empty values
+	for (int i = 0; i < 8; i++)
 	{
 		u[i].active = false;
-		u[i].Purchased = 0;
-		u[i].value = NULL;
+		u[i].purchased = 0;
+		u[i].curValue = -1;
 	}
 
-	d = owner->BuildingData + nr;
+	sUnitData& currentVersion = owner->BuildingData[buildingTypeIdx]; // get the owner's current version of the unitData
+	const sUnitData& startVersion = UnitsData.building[buildingTypeIdx].data;
 
-	i = 0;
+	int i = 0;
 
-	if ( d->can_attack )
+	if (currentVersion.can_attack)
 	{
 		// Damage:
 		u[i].active = true;
-		u[i].value = & ( d->damage );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].startValue = startVersion.damage;
+		u[i].curValue = currentVersion.damage;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 
-		if ( !d->is_expl_mine )
+		if (!currentVersion.is_expl_mine)
 		{
 			// Shots:
 			u[i].active = true;
-			u[i].value = & ( d->max_shots );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_shots, cUpgradeCalculator::kShots);
+			u[i].startValue = startVersion.max_shots;
+			u[i].curValue = currentVersion.max_shots;
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 			i++;
 			// Range:
 			u[i].active = true;
-			u[i].value = & ( d->range );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.range, cUpgradeCalculator::kRange);
+			u[i].startValue = startVersion.range;
+			u[i].curValue = currentVersion.range;
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 			i++;
 			// Ammo:
 			u[i].active = true;
-			u[i].value = & ( d->max_ammo );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+			u[i].startValue = startVersion.max_ammo;			
+			u[i].curValue = currentVersion.max_ammo;
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 			i++;
 		}
 	}
 
-	if ( d->can_load == TRANS_METAL || d->can_load == TRANS_OIL || d->can_load == TRANS_GOLD )
-	{
+	if (currentVersion.can_load == TRANS_METAL || currentVersion.can_load == TRANS_OIL || currentVersion.can_load == TRANS_GOLD)
 		i++;
-	}
 
-	if ( d->energy_prod )
-	{
+	if (currentVersion.energy_prod)
 		i += 2;
-	}
 
-	if ( d->human_prod )
-	{
+	if (currentVersion.human_prod)
 		i++;
-	}
 
 	// Armor:
 	u[i].active = true;
-	u[i].value = & ( d->armor );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.armor, cUpgradeCalculator::kArmor);
+	u[i].startValue = startVersion.armor;
+	u[i].curValue = currentVersion.armor;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 	// Hitpoints:
 	u[i].active = true;
-	u[i].value = & ( d->max_hit_points );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].startValue = startVersion.max_hit_points;
+	u[i].curValue = currentVersion.max_hit_points;
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 	// Scan:
-	if ( d->scan )
+	if (currentVersion.scan)
 	{
 		u[i].active = true;
-		u[i].value = & ( d->scan );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.scan, cUpgradeCalculator::kScan);
+		u[i].startValue = startVersion.scan;
+		u[i].curValue = currentVersion.scan;
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 		i++;
 	}
 
 	// Energieverbrauch:
-	if ( d->energy_need )
-	{
+	if (currentVersion.energy_need)
 		i++;
-	}
 
 	// Humanverbrauch:
-	if ( d->human_need )
-	{
+	if (currentVersion.human_need)
 		i++;
-	}
 
 	// Metallverbrauch:
-	if ( d->metal_need )
-	{
+	if (currentVersion.metal_need)
 		i++;
-	}
 
 	// Goldverbrauch:
-	if ( d->gold_need )
-	{
+	if (currentVersion.gold_need)
 		i++;
-	}
 
 	// Costs:
 	i++;
 
-	for ( i = 0;i < 8;i++ )
-	{
-		if ( u[i].value == NULL )
-			continue;
-
-		u[i].StartValue = * ( u[i].value );
-	}
+//	for (int i = 0; i < 8; i++)
+//	{
+//		if (u[i].curValue == -1)
+//			continue;
+//
+//		u[i].startValue = u[i].curValue;
+//	}
 }
 
-// Stellt die Selectionlist zusammen:
-void cBuilding::CreateUpgradeList(cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int* const selected, int* const offset)
+//-------------------------------------------------------------------------------
+/** Constructs the list of upgradeStructs, that are currently selectable (depending on the states of the subselection-buttons). */
+//-------------------------------------------------------------------------------
+void cBuilding::CreateUpgradeList (cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& allUpgradeStructs, int& selected, int& offset)
 {
 	sUnitData *bd;
 	sUnitData *vd;
 
 	while (selection.Size())
 	{
-		selection.Delete ( 0 );
+		selection.Delete (0);
 	}
 
-	for (unsigned int i = 0; i < images.Size(); i++)
+	for (unsigned int i = 0; i < allUpgradeStructs.Size(); i++)
 	{
-		if (images[i]->vehicle)
+		if (allUpgradeStructs[i]->vehicle)
 		{
-			if ( ! ( Client->bUpShowTank || Client->bUpShowShip || Client->bUpShowPlane ) )
+			if (! (Client->bUpShowTank || Client->bUpShowShip || Client->bUpShowPlane))
 				continue;
 
-			vd = &UnitsData.vehicle[images[i]->id].data;
+			vd = &UnitsData.vehicle[allUpgradeStructs[i]->id].data;
 
-			if ( Client->bUpShowTNT && !vd->can_attack )
+			if (Client->bUpShowTNT && !vd->can_attack)
 				continue;
 
-			if ( vd->can_drive == DRIVE_AIR && !Client->bUpShowPlane )
+			if (vd->can_drive == DRIVE_AIR && !Client->bUpShowPlane)
 				continue;
 
-			if ( vd->can_drive == DRIVE_SEA && !Client->bUpShowShip )
+			if (vd->can_drive == DRIVE_SEA && !Client->bUpShowShip)
 				continue;
 
-			if ( ( vd->can_drive == DRIVE_LAND || vd->can_drive == DRIVE_LANDnSEA ) && !Client->bUpShowTank )
+			if ((vd->can_drive == DRIVE_LAND || vd->can_drive == DRIVE_LANDnSEA) && !Client->bUpShowTank)
 				continue;
 
-			selection.Add(images[i]);
+			selection.Add(allUpgradeStructs[i]);
 		}
 		else
 		{
-			if ( !Client->bUpShowBuild )
+			if (!Client->bUpShowBuild)
 				continue;
 
-			bd = &UnitsData.building[images[i]->id].data;
+			bd = &UnitsData.building[allUpgradeStructs[i]->id].data;
 
-			if ( Client->bUpShowTNT && !bd->can_attack )
+			if (Client->bUpShowTNT && !bd->can_attack)
 				continue;
 
-			selection.Add(images[i]);
+			selection.Add(allUpgradeStructs[i]);
 		}
 	}
 
-	if (*offset >= (int)selection.Size() - 9)
+	if (offset >= (int)selection.Size () - 9)
 	{
-		*offset = (int)selection.Size() - 9;
-
-		if ( *offset < 0 )
-			*offset = 0;
+		offset = (int)selection.Size () - 9;
+		if (offset < 0)
+			offset = 0;
 	}
 
-	if (*selected >= (int)selection.Size())
+	if (selected >= (int)selection.Size())
 	{
-		*selected = (int)selection.Size() - 1;
-
-		if ( *selected < 0 )
-			*selected = 0;
+		selected = (int)selection.Size() - 1;
+		if (selected < 0)
+			selected = 0;
 	}
 }
 
-// Malt die SubButtons im Upgradefenster:
-void cBuilding::MakeUpgradeSubButtons ( void )
+//-------------------------------------------------------------------------------
+/** Displays the buttons for making subselections */
+//-------------------------------------------------------------------------------
+void cBuilding::ShowUpgradeSubButtons ()
 {
 	SDL_Rect scr, dest;
 	dest.x = MENU_OFFSET_X + 467;
@@ -4236,86 +4280,227 @@ void cBuilding::MakeUpgradeSubButtons ( void )
 	scr.h = 31;
 	// Tank:
 
-	if ( !Client->bUpShowTank )
+	if (!Client->bUpShowTank)
 	{
 		scr.x = 467;
 		scr.y = 411;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	}
 	else
 	{
 		scr.x = 152;
 		scr.y = 479;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 	}
 
 	dest.x += 33;
 	// Plane:
 
-	if ( !Client->bUpShowPlane )
+	if (!Client->bUpShowPlane)
 	{
 		scr.x = 467 + 33;
 		scr.y = 411;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	}
 	else
 	{
 		scr.x = 152 + 33;
 		scr.y = 479;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 	}
 
 	dest.x += 33;
 	// Ship:
 
-	if ( !Client->bUpShowShip )
+	if (!Client->bUpShowShip)
 	{
 		scr.x = 467 + 66;
 		scr.y = 411;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	}
 	else
 	{
 		scr.x = 152 + 66;
 		scr.y = 479;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 	}
 
 	dest.x += 33;
 	// Building:
 
-	if ( !Client->bUpShowBuild )
+	if (!Client->bUpShowBuild)
 	{
 		scr.x = 467 + 99;
 		scr.y = 411;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	}
 	else
 	{
 		scr.x = 152 + 99;
 		scr.y = 479;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 	}
 
 	dest.x += 33;
 	// TNT:
 
-	if ( !Client->bUpShowTNT )
+	if (!Client->bUpShowTNT)
 	{
 		scr.x = 467 + 132;
 		scr.y = 411;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
 	}
 	else
 	{
 		scr.x = 152 + 132;
 		scr.y = 479;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 	}
 }
 
-// Malt große Symbole für das Info-Fenster:
-void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf )
+//------------------------------------------------------------------------
+void cBuilding::sendUpgrades (cList<sUpgradeStruct*>& allUpgradeStructs, cPlayer* player)
+{	
+	cNetMessage* msg = NULL;
+	int iCount = 0;
+	
+	// send vehicles
+	for (size_t i = 0; i < allUpgradeStructs.Size(); i++)
+	{
+		sUpgradeStruct* curUpgrade = allUpgradeStructs[i];
+		bool purchased = (curUpgrade->upgrades[0].purchased || curUpgrade->upgrades[1].purchased || curUpgrade->upgrades[2].purchased
+						  || curUpgrade->upgrades[3].purchased || curUpgrade->upgrades[4].purchased || curUpgrade->upgrades[5].purchased 
+						  || curUpgrade->upgrades[6].purchased || curUpgrade->upgrades[7].purchased);
+		if (purchased)
+		{
+			if (msg == NULL)
+			{
+				msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
+				iCount = 0;
+			}
+			
+			if (curUpgrade->vehicle == true)
+			{
+				sUnitData& currentVersion = player->VehicleData[curUpgrade->id];
+				
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion.max_speed));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion.scan));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion.max_hit_points));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion.armor));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion.max_ammo));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion.range));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion.max_shots));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion.damage));
+				msg->pushInt16 (currentVersion.ID.iSecondPart);
+				msg->pushInt16 (currentVersion.ID.iFirstPart);
+				msg->pushBool (true); // true for vehicle
+			}
+			else // building
+			{
+				sUnitData& currentVersion = player->BuildingData[curUpgrade->id];
+				
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion.scan));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion.max_hit_points));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion.armor));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion.max_ammo));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion.range));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion.max_shots));
+				msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion.damage));
+				msg->pushInt16 (currentVersion.ID.iSecondPart);
+				msg->pushInt16 (currentVersion.ID.iFirstPart);
+				msg->pushBool (false); // false for building				
+			}	
+			iCount++; // msg contains one more upgrade struct
+			
+			// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
+			if (msg->iLength + 38 > PACKAGE_LENGTH) 
+			{
+				msg->pushInt16 (iCount);
+				msg->pushInt16 (player->Nr);
+				Client->sendNetMessage (msg);
+				msg = NULL;
+			}
+			
+		}
+	}
+	if (msg != NULL)
+	{
+		msg->pushInt16 (iCount);
+		msg->pushInt16 (player->Nr);
+		Client->sendNetMessage (msg);
+	}
+}
+
+//------------------------------------------------------------------------
+int cBuilding::findUpgradeValue (sUpgradeStruct* upgradeStruct, int upgradeType, int defaultValue)
+{
+	switch (upgradeType)
+	{
+		case 0:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Speed")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 1:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Scan")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 2:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Hitpoints")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 3:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Armor")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 4:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Ammo")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 5:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Range")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 6:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Shots")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+		case 7:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgradeStruct->upgrades[i].active && upgradeStruct->upgrades[i].name.compare (lngPack.i18n ("Text~Vehicles~Damage")) == 0)
+					return upgradeStruct->upgrades[i].curValue;
+			}
+			break;
+	}
+	return defaultValue; // the specified upgrade was not found...
+}
+
+
+//-------------------------------------------------------------------------------
+// Draws big symbols for the info menu:
+//-------------------------------------------------------------------------------
+void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf)
 {
 	SDL_Rect scr, dest;
 	int i, offx;
@@ -4459,7 +4644,8 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 	}
 }
 
-// Prüft die Ressourcen unter der Mine:
+//-------------------------------------------------------------------------------
+// checks the resources that are available under the mining station:
 void cBuilding::CheckRessourceProd ( void )
 {
 	int pos, max_cap;
@@ -4584,6 +4770,7 @@ void cBuilding::CheckRessourceProd ( void )
 	}
 }
 
+//-------------------------------------------------------------------------------
 // Zeigt den Minenmanager an:
 void cBuilding::showMineManager ( void )
 {
@@ -4769,7 +4956,7 @@ void cBuilding::showMineManager ( void )
 			mouse->draw ( false, screen );
 		}
 
-		// Aufs Öl geklickt:
+		// click on oil:
 		if ( x >= rDialog.x + 174 && x < rDialog.x + 174 + 240 && y >= rDialog.y + 190 && y < rDialog.y + 190 + 30 && b && !LastB )
 		{
 			int t;
@@ -5184,7 +5371,7 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 	}
 }
 
-// Prüft, ob das Ziel innerhalb der Reichweite liegt:
+// Checks if the target is in range
 bool cBuilding::IsInRange ( int off, cMap *Map )
 {
 	int x, y;
@@ -5201,7 +5388,7 @@ bool cBuilding::IsInRange ( int off, cMap *Map )
 	return false;
 }
 
-// Prüft, ob das Building das Objekt angreifen kann:
+// Checks if the building is able to attack the object
 bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 {
 	cVehicle *v = NULL;
@@ -5369,7 +5556,7 @@ void cBuilding::RotateTo ( int Dir )
 }
 
 #include "pcx.h"
-// Zeigt das Build-Menü an:
+// Displays the build menu
 void cBuilding::ShowBuildMenu ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
@@ -5381,7 +5568,7 @@ void cBuilding::ShowBuildMenu ( void )
 	bool Up2Pressed = false;
 	int selected = 0, offset = 0, BuildSpeed;
 	int build_selected = 0, build_offset = 0;
-	bool showDetailsBuildlist = true; //wenn false, stattdessen die Details der in der toBuild Liste gewählen Einheit anzeigen
+	bool showDetailsBuildlist = true; //wenn false, stattdessen die Details der in der toBuild Liste gewaehlten Einheit anzeigen
 	Client->isInMenu = true;
 
 #define BUTTON__W 77
@@ -5525,7 +5712,7 @@ void cBuilding::ShowBuildMenu ( void )
 		sBuildList *ptr;
 		ptr = (*BuildList)[i];
 
-		//für jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
+		//fuer jeden Eintrag in der toBuild-Liste das bereits erstellte Bild in der Auswahlliste suchen
 		//und in die toBuild-Liste kopieren.
 
 		for (unsigned int k = 0; k < images.Size(); k++)
@@ -5838,7 +6025,7 @@ void cBuilding::ShowBuildMenu ( void )
 			break;
 		}
 
-		// Beschreibung Haken:
+		// description checkbox:
 		if ( x >= MENU_OFFSET_X + 292 && x < MENU_OFFSET_X + 292 + 16 && y >= MENU_OFFSET_Y + 265 && y < MENU_OFFSET_Y + 265 + 15 && b && !LastB )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -6050,7 +6237,7 @@ void cBuilding::ShowBuildMenu ( void )
 
 	}
 
-	// Alles Images löschen:
+	// clean up the images
 	while (images.Size())
 	{
 		sBuildStruct *ptr;
@@ -6070,7 +6257,7 @@ void cBuilding::ShowBuildMenu ( void )
 	Client->isInMenu = false;
 }
 
-// Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch sämtliche Infos zur ausgewählten Einheit
+// Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch saemtliche Infos zur ausgewaehlten Einheit
 void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
@@ -6158,7 +6345,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 				tmp.x -= 40;
 				SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 
-				// Das große Bild neu malen:
+				// draw the big picture
 				tmp.x = MENU_OFFSET_X + 11;
 				tmp.y = MENU_OFFSET_Y + 13;
 				tmp.w = ptr->ID.getVehicle()->info->w;
@@ -6314,7 +6501,7 @@ void cBuilding::DrawBuildButtons ( int speed )
 	}
 }
 
-// Zeigt die Liste mit den Bauaufträgen an, und wenn show Info==true auch sämtliche Details zur gewählten Einheit
+// Zeigt die Liste mit den Bauauftraegen an, und wenn show Info==true auch saemtliche Details zur gewaehlten Einheit
 void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
@@ -6397,7 +6584,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 				tmp.x -= 40;
 				SDL_FillRect ( buffer, &tmp, 0xE0E0E0 );
 
-				// Das große Bild neu malen:
+				// Draw the big picture
 				tmp.x = MENU_OFFSET_X + 11;
 				tmp.y = MENU_OFFSET_Y + 13;
 				tmp.w = ptr->ID.getVehicle()->info->w;
@@ -6618,13 +6805,13 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	}*/
 }
 
-// Liefert die X-Position des Buildings auf dem Screen zurück:
+// Returns the screen x position of the building
 int cBuilding::GetScreenPosX ( void ) const
 {
 	return 180 - ( ( int ) ( ( Client->Hud.OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
-// Liefert die Y-Position des Buildings auf dem Screen zurück:
+// Returns the screen x position of the building
 int cBuilding::GetScreenPosY ( void ) const
 {
 	return 18 - ( ( int ) ( ( Client->Hud.OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
@@ -6652,7 +6839,7 @@ int cBuilding::CalcHelth ( int damage )
 	return hp;
 }
 
-// Malt das Buildingmenü:
+// draws the building menu
 void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
@@ -6908,9 +7095,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			// TODOD: implement upgrades
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//ShowUpgrade();
+			ShowUpgrade();
 			return;
 		}
 
@@ -6968,7 +7153,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 
 			owner->DoScan();
 
-			sprintf ( str, "%d von %d aufgerüstet.", count, sum );
+			//sprintf ( str, "%d von %d aufgerÂ¸stet.", count, sum );
 			//sendChatMessage ( str );*/
 
 			return;
@@ -7071,7 +7256,7 @@ void cBuilding::Center ( void )
 	Client->Hud.DoScroll ( 0 );
 }
 
-// Malt die Munitionsanzeige über das Buildings:
+// draws the available ammunition over the building:
 void cBuilding::DrawMunBar ( void ) const
 {
 	SDL_Rect r1, r2;
@@ -7107,7 +7292,7 @@ void cBuilding::DrawMunBar ( void ) const
 	}
 }
 
-// Malt die Trefferanzeige über das Buildings:
+// draws the health bar over the building
 void cBuilding::DrawHelthBar ( void ) const
 {
 	SDL_Rect r1, r2;
@@ -7230,7 +7415,7 @@ void cBuilding::ShowDetails ( void )
 	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
-	// Zusätzliche Werte:
+	// additional values:
 
 	if ( data.can_load && owner == Client->ActivePlayer )
 	{
@@ -7303,7 +7488,7 @@ void cBuilding::ShowDetails ( void )
 				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 			}
 
-			// Schüsse:
+			// shots:
 			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
 
 			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
@@ -7559,7 +7744,7 @@ void cBuilding::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface 
 		}
 }
 
-// Spielt den Soundstream am, der zu diesem Vehicle gehört:
+// Playback of the soundstream that belongs to this building
 int cBuilding::PlayStram ( void )
 {
 	if ( IsWorking )
@@ -7663,7 +7848,7 @@ void cBuilding::ShowHelp ( void )
 	Client->isInMenu = false;
 }
 
-// Sendet die Update-Nachricht für das gespeicherte Vehicle mit dem Index:
+// Sendet die Update-Nachricht fuer das gespeicherte Vehicle mit dem Index:
 void cBuilding::SendUpdateStored ( int index )
 {
 	return;

@@ -91,7 +91,7 @@ struct sHUp{
   bool vehicle;
   sID UnitID;
   int costs;
-  sUpgrades upgrades[8];
+  sUpgrade upgrades[8];
 };
 
 // Struktur für die Landung:

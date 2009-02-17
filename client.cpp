@@ -4462,6 +4462,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_CREDITS_CHANGED:
+		{
+			ActivePlayer->Credits = message->popInt16();
+		}
+		break;
 	case GAME_EV_SET_AUTOMOVE:
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
