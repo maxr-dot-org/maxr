@@ -793,6 +793,11 @@ void copyImageFromFLC(string fileName, string dst)
 		int error;
 		FLI_Animation* animation;
 
+		if ( file == NULL )
+		{
+			throw InstallException( "FLC-File '" + fileName + "' not found" + TEXT_FILE_LF );
+		}
+
 		animation = FLI_Open( file, &error);
 		if ( error != 0 )
 		{

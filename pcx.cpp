@@ -260,7 +260,7 @@ int savePCX ( SDL_Surface* surface, string fileName )
 		return savePCX_32bpp( surface, fileName );
 	}
 
-	return 1;
+	return 0;
 }
 
 SDL_Surface *loadPCX ( string name )

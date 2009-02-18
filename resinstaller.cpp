@@ -3787,7 +3787,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 bool validateOutputPath (string& outputPath)
 {
 	//test for valid output folder
-	string testFileName = "max.xml";
+	string testFileName = "init.pcx";
 	SDL_RWops* testFile;
 	try
 	{
