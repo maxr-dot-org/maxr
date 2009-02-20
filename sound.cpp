@@ -130,7 +130,6 @@ void StartMusic ( void )
 // Callback, wenn Musik am Ende:
 void MusicFinished ( void )
 {
-	return;
 	if ( !SettingsData.bSoundEnabled ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	srand ( ( unsigned ) time ( NULL ) );
