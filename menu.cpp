@@ -5817,14 +5817,14 @@ void loadFiles ( cList<string> *filesList, cList<sSaveFile*> &savesList, int off
 	{
 		// only check for xml files and numbers for this offset
 		string const& file = (*filesList)[i];
-		if ( file.substr( file.length() - 3, 3 ).compare( "xml" ) != 0 )
+		if ( file.length() < 4 || file.substr( file.length() - 3, 3 ).compare( "xml" ) != 0 )
 		{
 			filesList->Delete ( i );
 			i--;
 			continue;
 		}
 		int number;
-		if ( ( number = atoi( file.substr( file.length() - 7, 3 ).c_str() ) ) < offset || number > offset+10 ) continue;
+		if ( file.length() < 8 || ( number = atoi( file.substr( file.length() - 7, 3 ).c_str() ) ) < offset || number > offset+10 ) continue;
 		// don't add files twice
 		bool found = false;
 		for ( unsigned int j = 0; j < savesList.Size(); j++ )
