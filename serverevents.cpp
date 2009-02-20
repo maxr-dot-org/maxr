@@ -462,15 +462,19 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 {
 	//message for the owner
 	cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
-	message->pushInt16( vehicle->BandY );
-	message->pushInt16( vehicle->BandX );
-	message->pushBool(  vehicle->BuildPath );
-	message->pushInt16( vehicle->BuildRounds );
-	message->pushInt16( vehicle->BuildingTyp.iSecondPart );
-	message->pushInt16( vehicle->BuildingTyp.iFirstPart );
-	message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
-	message->pushInt16( vehicle->PosY );
-	message->pushInt16( vehicle->PosX );
+	if ( bOK )
+	{
+		message->pushInt16( vehicle->BandY );
+		message->pushInt16( vehicle->BandX );
+		message->pushBool(  vehicle->BuildPath );
+		message->pushInt16( vehicle->BuildRounds );
+		message->pushInt16( vehicle->BuildingTyp.iSecondPart );
+		message->pushInt16( vehicle->BuildingTyp.iFirstPart );
+		message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+		message->pushInt16( vehicle->PosY );
+		message->pushInt16( vehicle->PosX );
+	}
+
 	message->pushInt16( vehicle->iID );
 	message->pushBool ( bOK );
 	Server->sendNetMessage( message, vehicle->owner->Nr );
