@@ -32,6 +32,8 @@ template<typename T> class cList
 		void PopBack();
 
 		void Reserve(size_t n);
+	
+		bool Contains(const T& e);
 
 	private:
 		T*     v_;
@@ -99,6 +101,16 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 
 	for (size_t k = old_size; k != 0;) old_v[--k].~T();
 	free(old_v);
+}
+
+template<typename T> bool cList<T>::Contains(const T& e)
+{
+	for (size_t idx = 0; idx < size_; idx++)
+	{
+		if (v_[idx] == e)
+			return true;
+	}
+	return false;
 }
 
 #endif
