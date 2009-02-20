@@ -3952,6 +3952,8 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 	StoredVehicles.Add ( Vehicle );
 	data.cargo++;
 
+	if ( data.can_drive == DRIVE_AIR || data.cargo == data.max_cargo ) LoadActive = false;
+
 	owner->DoScan();
 }
 

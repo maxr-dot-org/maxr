@@ -2008,6 +2008,8 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 	StoredVehicles.Add ( Vehicle );
 	data.cargo++;
 
+	if ( data.cargo == data.max_cargo ) LoadActive = false;
+
 	owner->DoScan();
 }
 
