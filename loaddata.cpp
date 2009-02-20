@@ -1342,11 +1342,9 @@ int GenerateMaxXml()
 
 	#ifdef WIN32
 		sTmp = "save";
-	#endif
-	#ifdef __amigaos4__
+	#elif __amigaos4__
 		sTmp = "save";
-	#endif
-	#ifdef LINUX
+	#else
 		sTmp = SettingsData.sHome;
 		sTmp += "save";
 	#endif
