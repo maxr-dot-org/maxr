@@ -2678,7 +2678,7 @@ void cClient::rotateBlinkColor()
 	}
 }
 
-// Fügt einen FX-Effekt ein:
+// FÂ¸gt einen FX-Effekt ein:
 void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOff, int iFireDir )
 {
 	sFX* n = new sFX(typ, x, y);
@@ -2692,7 +2692,7 @@ void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOf
 	addFX( n );
 }
 
-// Fügt einen FX-Effekt ein:
+// FÂ¸gt einen FX-Effekt ein:
 void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 {
 	sFX* n = new sFX(typ, x, y);
@@ -2700,7 +2700,7 @@ void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 	addFX( n );
 }
 
-// Fügt einen FX-Effekt ein:
+// FÂ¸gt einen FX-Effekt ein:
 void cClient::addFX ( sFX* n )
 {
 
@@ -3200,7 +3200,7 @@ void cClient::handleMessages()
 	sMessage *message;
 	if (messages.Size() == 0) return;
 	iHeight = 0;
-	// Alle alten Nachrichten löschen:
+	// Alle alten Nachrichten lË†schen:
 	for (int i = (int)messages.Size() - 1; i >= 0; i--)
 	{
 		message = messages[i];
@@ -4465,6 +4465,37 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_CREDITS_CHANGED:
 		{
 			ActivePlayer->Credits = message->popInt16();
+		}
+		break;
+	case GAME_EV_UPGRADED_BUILDINGS:
+		{
+			int buildingsInMsg = message->popInt16();
+			int totalCosts = message->popInt16();
+			if (buildingsInMsg > 0)
+			{
+				string buildingName;
+				bool scanNecessary = false;
+				for (int i = 0; i < buildingsInMsg; i++)
+				{
+					int buildingID = message->popInt32();
+					cBuilding* building = getBuildingFromID(buildingID);
+					if (!scanNecessary && building->data.scan < ActivePlayer->BuildingData[building->typ->nr].scan)
+						scanNecessary = true; // Scan range was upgraded. So trigger a scan.
+					building->upgradeToCurrentVersion();
+					if (i == 0)
+					{
+						buildingName = building->data.szName;
+						if (buildingsInMsg > 1)
+							buildingName.append(1,'s');
+					}
+				}
+				ostringstream os;
+				os << "Upgraded " << buildingsInMsg << " " << buildingName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
+				string printStr(os.str());
+				addMessage (printStr);
+				if (scanNecessary)
+					ActivePlayer->DoScan(); 
+			}
 		}
 		break;
 	case GAME_EV_SET_AUTOMOVE:

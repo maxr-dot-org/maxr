@@ -1407,16 +1407,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_WANT_BUY_UPGRADES:
 		{
-			cPlayer* player = 0;
 			int iPlayerNr = message->popInt16();
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				if ((*PlayerList)[i]->Nr == iPlayerNr)
-				{
-					player = (*PlayerList)[i];
-					break;
-				}
-			}
+			cPlayer* player = getPlayerFromNumber(iPlayerNr);
 			if (player == 0)
 				break;
 
@@ -1468,6 +1460,55 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			if (updateCredits)
 				sendCredits (player->Credits, iPlayerNr);
+		}
+		break;
+	case GAME_EV_WANT_BUILDING_UPGRADE:
+		{
+			unsigned int unitID = message->popInt32();
+			bool upgradeAll = message->popBool();
+
+			cBuilding* building = getBuildingFromID(unitID);
+			cPlayer* player = ((building != 0) ? building->owner : 0);
+			if (player == 0)
+				break;
+			
+			int availableMetal = building->SubBase->Metal;
+
+			sUnitData& upgradedVersion = player->BuildingData[building->typ->nr];
+			if (building->data.version >= upgradedVersion.version)
+				break; // already uptodate
+			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+			int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading(upgradedVersion.iBuilt_Costs);
+			int totalCosts = 0;
+			cList<cBuilding*> upgradedBuildings;
+			if (upgradeAll)
+			{
+				// TODO	
+				break;
+			}
+			else // only update one building
+			{
+				if (availableMetal >= totalCosts + upgradeCostPerBuilding)
+				{
+					upgradedBuildings.Add(building);
+					totalCosts += upgradeCostPerBuilding;
+				}
+			}
+			if (totalCosts > 0)
+				player->base.AddMetal (building->SubBase, -totalCosts);
+			if (upgradedBuildings.Size() > 0)
+			{
+				bool scanNecessary = false;
+				for (int i = 0; i < upgradedBuildings.Size(); i++)
+				{
+					if (!scanNecessary && upgradedBuildings[i]->data.scan < upgradedVersion.scan)
+						scanNecessary = true; // Scan range was upgraded. So trigger a scan.
+					upgradedBuildings[i]->upgradeToCurrentVersion();
+				}
+				sendUpgradeBuildings(upgradedBuildings, totalCosts, player->Nr);
+				if (scanNecessary)
+					player->DoScan();
+			}
 		}
 		break;
 	case GAME_EV_AUTOMOVE_STATUS:

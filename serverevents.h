@@ -57,6 +57,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_EXIT,				// a client wants to exit a stored unit
 	GAME_EV_REQUEST_RESYNC,			// requests the server to resync a client
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
+	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_AUTOMOVE_STATUS			// a unit has been set to automoving
 };
 
@@ -283,6 +284,7 @@ void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, i
 void sendDeleteEverything ( int player );
 void sendUnitUpgrades ( sUnitData *Data, int player );
 void sendCredits (int newCredits, int player);
+void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
 void sendSetAutomoving ( cVehicle *Vehicle );
 
 #endif // servereventsH

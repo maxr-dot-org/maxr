@@ -884,6 +884,53 @@ void sendCredits (int newCredits, int player)
 }
 
 //-------------------------------------------------------------------------------------
+void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player)
+{
+	// send to owner
+	cNetMessage* message = NULL;
+	int buildingsInMsg = 0;
+	for (int i = 0; i < upgradedBuildings.Size(); i++)
+	{
+		if (message == NULL)
+		{
+			message = new cNetMessage (GAME_EV_UPGRADED_BUILDINGS);
+			buildingsInMsg = 0;
+		}
+		
+		message->pushInt32(upgradedBuildings[i]->iID);
+		buildingsInMsg++;
+		if (message->iLength + 8 > PACKAGE_LENGTH)
+		{
+			message->pushInt16((totalCosts * buildingsInMsg) / upgradedBuildings.Size());
+			message->pushInt16(buildingsInMsg);
+			Server->sendNetMessage (message, player);
+			message = NULL;
+		}
+	}
+	if (message != NULL)
+	{
+		message->pushInt16((totalCosts * buildingsInMsg) / upgradedBuildings.Size());
+		message->pushInt16(buildingsInMsg);
+		Server->sendNetMessage (message, player);
+		message = NULL;
+	}
+	
+	// send to other players
+	for (unsigned int n = 0; n < Server->PlayerList->Size(); n++)
+	{
+		cPlayer* curPlayer = (*Server->PlayerList)[n];
+		if (curPlayer == 0 || curPlayer->Nr == player) // don't send to the owner of the buildings 
+			continue;
+
+		for (int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
+		{
+			if (upgradedBuildings[buildingIdx]->SeenByPlayerList.Contains(curPlayer)) // that player can see the building
+				sendUnitData(upgradedBuildings[buildingIdx], curPlayer->Nr);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------
 void sendSetAutomoving ( cVehicle *Vehicle  )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_SET_AUTOMOVE );

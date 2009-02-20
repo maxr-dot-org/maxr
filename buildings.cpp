@@ -7111,8 +7111,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase->Metal >= 2 )
 	{
 		// Alle Updaten:
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = (SelMenu == nr);
 
 		if ( ExeNr == nr )
 		{
@@ -7166,27 +7165,13 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 
-		// Dies Updaten:
-
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
-
-		if ( ExeNr == nr )
+		// update this building
+		bSelection = (SelMenu == nr);
+		if (ExeNr == nr)
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
-			// TODO: implement upgrading
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			/*UpdateBuilding ( data, owner->BuildingData[typ->nr] );
-			GenerateName();
-			owner->base.AddMetal ( SubBase, -2 );
-
-			if ( this ==  Client->SelectedBuilding )
-				ShowDetails();
-
-			owner->DoScan();*/
-
+			sendUpgradeBuilding (this, false);
 			return;
 		}
 
@@ -7249,8 +7234,53 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
 }
 
+//------------------------------------------------------------------------
+void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
+{	
+	if (building == 0 || building->owner == 0)
+		return;
+	
+	sUnitData& currentVersion = building->data;
+	sUnitData& upgradedVersion = building->owner->BuildingData[building->typ->nr];
+	if (currentVersion.version >= upgradedVersion.version)
+		return; // already uptodate
+
+	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
+	msg->pushBool (upgradeAll);
+	msg->pushInt32 (building->iID);
+	
+	Client->sendNetMessage (msg);
+}
+
+//------------------------------------------------------------------------
+void cBuilding::upgradeToCurrentVersion ()
+{
+	sUnitData& upgradeVersion = owner->BuildingData[typ->nr];
+	data.version = upgradeVersion.version; // TODO: iVersion?
+	
+	if (data.hit_points == data.max_hit_points)
+		data.hit_points = upgradeVersion.max_hit_points; // TODO: check behaviour in original
+	data.max_hit_points = upgradeVersion.max_hit_points;
+
+	if (data.ammo == data.max_ammo)
+		data.ammo = upgradeVersion.max_ammo; // TODO: check behaviour in original
+	data.max_ammo = upgradeVersion.max_ammo;
+	
+	data.armor = upgradeVersion.armor;
+	data.scan = upgradeVersion.scan;
+	data.range = upgradeVersion.range;
+	data.max_shots = upgradeVersion.max_shots; // TODO: check behaviour in original
+	data.damage = upgradeVersion.damage;
+	data.iBuilt_Costs = upgradeVersion.iBuilt_Costs;
+	
+	if (this == Client->SelectedBuilding)
+		ShowDetails();
+}
+
+
+//------------------------------------------------------------------------
 // Zentriert auf dieses Building:
-void cBuilding::Center ( void )
+void cBuilding::Center ()
 {
 	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
 	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
@@ -7258,6 +7288,7 @@ void cBuilding::Center ( void )
 	Client->Hud.DoScroll ( 0 );
 }
 
+//------------------------------------------------------------------------
 // draws the available ammunition over the building:
 void cBuilding::DrawMunBar ( void ) const
 {
@@ -7294,6 +7325,7 @@ void cBuilding::DrawMunBar ( void ) const
 	}
 }
 
+//------------------------------------------------------------------------
 // draws the health bar over the building
 void cBuilding::DrawHelthBar ( void ) const
 {

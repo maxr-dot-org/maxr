@@ -247,7 +247,8 @@ public:
 	void ShowResearchSchieber(void);
 	void MakeResearchSchieber(int x,int y);
 	void SendUpdateStored(int index);
-
+	void upgradeToCurrentVersion ();
+	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
 	/** 
 	* Shows the upgrade screen and sends upgrade-requests to the server, if the user presses the "done" button. 
 	*/
