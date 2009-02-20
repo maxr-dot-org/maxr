@@ -7110,53 +7110,13 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Updates:
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase->Metal >= 2 )
 	{
-		// Alle Updaten:
+		// Update all buildings of this type in this subbase
 		bSelection = (SelMenu == nr);
-
-		if ( ExeNr == nr )
+		if (ExeNr == nr)
 		{
-			/*int i, k, sum = 0, count = 0;
-			char str[50];*/
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
-			// TODO: implemt upgrading all
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			/*for (i = 0; i < owner->base.SubBases.Size(); ++i)
-			{
-				sSubBase* const sb = owner->base.SubBases[i];
-
-				for (k = 0; k < sb->buildings.Size(); k++)
-				{
-					cBuilding *b;
-					b = sb->buildings[k];
-
-					if ( b->typ != typ )
-						continue;
-
-					sum++;
-
-					if ( SubBase->Metal < 2 )
-						continue;
-
-					UpdateBuilding ( b->data, owner->BuildingData[typ->nr] );
-
-					b->GenerateName();
-
-					if ( b ==  Client->SelectedBuilding )
-						ShowDetails();
-
-					owner->base.AddMetal ( SubBase, -2 );
-
-					count++;
-				}
-			}
-
-			owner->DoScan();
-
-			//sprintf ( str, "%d von %d aufger¸stet.", count, sum );
-			//sendChatMessage ( str );*/
-
+			sendUpgradeBuilding (this, true);
 			return;
 		}
 
@@ -7249,7 +7209,7 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 	msg->pushBool (upgradeAll);
 	msg->pushInt32 (building->iID);
 	
-	Client->sendNetMessage (msg);
+	Client->sendNetMessage (msg);	
 }
 
 //------------------------------------------------------------------------

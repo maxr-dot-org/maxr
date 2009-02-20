@@ -1481,19 +1481,33 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading(upgradedVersion.iBuilt_Costs);
 			int totalCosts = 0;
 			cList<cBuilding*> upgradedBuildings;
+			
+			// in any case update the selected building
+			if (availableMetal >= totalCosts + upgradeCostPerBuilding)
+			{
+				upgradedBuildings.Add(building);
+				totalCosts += upgradeCostPerBuilding;
+			}
+			
 			if (upgradeAll)
 			{
-				// TODO	
-				break;
-			}
-			else // only update one building
-			{
-				if (availableMetal >= totalCosts + upgradeCostPerBuilding)
+				sSubBase* subBase = building->SubBase;
+				for (int subBaseBuildIdx = 0; subBaseBuildIdx < subBase->buildings.Size(); subBaseBuildIdx++)
 				{
-					upgradedBuildings.Add(building);
+					cBuilding* otherBuilding = subBase->buildings[subBaseBuildIdx];
+					if (otherBuilding == building)
+						continue;
+					if (otherBuilding->typ != building->typ)
+						continue;
+					if (otherBuilding->data.version >= upgradedVersion.version)
+						continue;
+					upgradedBuildings.Add(otherBuilding);
 					totalCosts += upgradeCostPerBuilding;
+					if (availableMetal < totalCosts + upgradeCostPerBuilding)
+						break; // no more raw material left...
 				}
 			}
+
 			if (totalCosts > 0)
 				player->base.AddMetal (building->SubBase, -totalCosts);
 			if (upgradedBuildings.Size() > 0)
