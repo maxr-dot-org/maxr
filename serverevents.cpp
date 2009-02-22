@@ -483,9 +483,12 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
-		message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
-		message->pushInt16( vehicle->PosY );
-		message->pushInt16( vehicle->PosX );
+		if ( bOK )
+		{
+			message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+			message->pushInt16( vehicle->PosY );
+			message->pushInt16( vehicle->PosX );
+		}
 		message->pushInt16( vehicle->iID );
 		message->pushBool ( bOK );
 		Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
