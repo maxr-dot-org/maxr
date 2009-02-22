@@ -3776,7 +3776,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( !bOK )
 			{
 				// TODO: translate
-				if ( !Vehicle->BuildPath ) addMessage ( "Buildposition is blocked" );
+				if ( !Vehicle->BuildPath && Vehicle->owner == ActivePlayer ) addMessage ( "Buildposition is blocked" );
 				Vehicle->BuildRounds = 0;
 				Vehicle->BuildingTyp.iFirstPart = 0;
 				Vehicle->BuildingTyp.iSecondPart = 0;
