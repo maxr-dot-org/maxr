@@ -1376,7 +1376,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
 					sendVehicleResources( StoredVehicle, Map );
-					StoredVehicle->doSurvey();
+					if ( StoredVehicle->data.can_survey ) StoredVehicle->doSurvey();
 					StoredVehicle->InSentryRange();
 				}
 			}
@@ -1393,7 +1393,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
 					sendVehicleResources( StoredVehicle, Map );
-					StoredVehicle->doSurvey();
+					if ( StoredVehicle->data.can_survey ) StoredVehicle->doSurvey();
 					StoredVehicle->InSentryRange();
 				}
 			}
