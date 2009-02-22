@@ -7222,9 +7222,7 @@ void cBuilding::upgradeToCurrentVersion ()
 		data.hit_points = upgradeVersion.max_hit_points; // TODO: check behaviour in original
 	data.max_hit_points = upgradeVersion.max_hit_points;
 
-	if (data.ammo == data.max_ammo)
-		data.ammo = upgradeVersion.max_ammo; // TODO: check behaviour in original
-	data.max_ammo = upgradeVersion.max_ammo;
+	data.max_ammo = upgradeVersion.max_ammo; // don't change the current ammo-amount!
 	
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
