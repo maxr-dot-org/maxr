@@ -5,7 +5,7 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="dut" encoding="utf8" direction="left-to-right">
+<MAX_Language_File lang="dut" encoding="iso-8859-15" direction="left-to-right">
 	<Header>
 		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
 			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
@@ -48,9 +48,9 @@
 			<Alien_Tech ENG="Alientechnology" localized="Buitenaardse technologie"/>
 			<Resource ENG="Resources" localized="Bronnen"/>
 			<Resource_Density ENG="Resources Density" localized="Brondichtheid"/>
-			<Game_Type ENG="Game Type" localized="Spel type"/>
-			<Player_Name ENG="Playername:" localized="Speler naam:"/>
-			<Player_Select ENG="Playeroptions" localized="Speler opties"/>
+			<Game_Type ENG="Game Type" localized="Speltype"/>
+			<Player_Name ENG="Playername:" localized="Spelernaam:"/>
+			<Player_Select ENG="Playeroptions" localized="Speleropties"/>
 			<Team ENG="Team" localized="Team"/>
 			<Human ENG="Human" localized="Mens"/>
 			<Computer ENG="Computer" localized="Computer"/>
@@ -95,7 +95,7 @@
 			<Game_New ENG="New Game" localized="Nieuw Spel"/>
 			<Game_Load ENG="Load Game" localized="Spel laden"/>
 			<Game_Save ENG="Save Game" localized="Spel opslaan"/>
-			<Game_Options ENG="Game Options" localized="Spel Opties"/>
+			<Game_Options ENG="Game Options" localized="Spelopties"/>
 			<Load ENG="Load" localized="Laden"/>
 			<Save ENG="Save" localized="Opslaan"/>
 			<Training ENG="Training" localized="Oefening"/>
@@ -206,7 +206,7 @@
 			<Player_MustHost ENG="must be host in turnbased game!" localized="moet host zijn in om-beurten spel!"/>
 			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
 			<Player_Turn ENG="'s turn" localized="'s beurt"/>
-			<Player_Turn_End ENG=" ended turn" localized=" beëindigde de beurt"/>
+			<Player_Turn_End ENG=" ended turn" localized=" beeindigde de beurt"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
 			<Network_Open ENG="Game open" localized="Spel open"/>
@@ -298,7 +298,7 @@
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geïnitialiseerd"/>
+      			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geinitialiseerd"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geimplementeerd"/>
 		</Error_Messages>
 	</Text>
