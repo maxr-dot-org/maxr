@@ -5,10 +5,11 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="dut" encoding="iso-8859-15" direction="left-to-right">
+<MAX_Language_File lang="dut" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
 			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>
 		</Author>
 		<Game_Version time="2007-09-30 13:04:00"/>
 	</Header>
@@ -25,25 +26,25 @@
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading languagepack..." localized="Laden taalpakket..."/>
-      <Keys ENG="Loading keys..." localized="Laden toetsen..."/>
-      <Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
-      <GFX ENG="Loading gfx..." localized="Laden gfx..."/>
-      <Effects ENG="Loading effects..." localized="Laden effecten..."/>
-      <Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
-      <Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
-      <Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
-      <Music ENG="Loading music..." localized="Laden muziek..."/>
-      <Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
+			<Lang ENG="Loading language pack..." localized="Laden taalpakket..."/>
+      		<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
+      		<Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
+      		<GFX ENG="Loading gfx..." localized="Laden gfx..."/>
+      		<Effects ENG="Loading effects..." localized="Laden effecten..."/>
+      		<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
+      		<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
+      		<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
+      		<Music ENG="Loading music..." localized="Laden muziek..."/>
+      		<Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
 			<Voices ENG="Loading voices..." localized="Laden stemmen..."/>
 		</Init>
 		<Title>
 			<MainMenu ENG="Main Menu" localized="Hoofdmenu"/>
-			<Credits ENG="Credits" localized="Geld"/>
+			<Credits ENG="Credits" localized="Goud"/>
 			<Gold ENG="Gold" localized="Goud"/>
 			<Metal ENG="Metal" localized="Metaal"/>
 			<Oil ENG="Oil" localized="Olie"/>
-			<BridgeHead ENG="Bridgehead" localized="Bruggehoofd"/>
+			<BridgeHead ENG="Bridgehead" localized="Hoofdbrug"/>
 			<Alien_Tech ENG="Alientechnology" localized="Buitenaardse technologie"/>
 			<Resource ENG="Resources" localized="Bronnen"/>
 			<Resource_Density ENG="Resources Density" localized="Brondichtheid"/>
@@ -64,8 +65,8 @@
 			<IP ENG="IP" localized="IP"/>
 			<Port ENG="Port" localized="Poort"/>
 			<Map ENG="Map" localized="Kaart"/>
-			<LoadSave ENG="Load/Save Menu" localized="Laden/Opstaan Menu"/>
-			<Load ENG="Load Menu" localized="Laden Menu"/>
+			<LoadSave ENG="Load/Save Menu" localized="Menu Laden/Opslaan"/>
+			<Load ENG="Load Menu" localized="Menu laden"/>
 			<Updates ENG="Updatemenu" localized="Updatemenu"/>
 			<Build ENG="Buildmenu" localized="Bouwmenu"/>
 			<Labs ENG="Researchmenu" localized="Onderzoeksmenu"/>
@@ -92,8 +93,8 @@
 			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
 			<Game_New ENG="New Game" localized="Nieuw Spel"/>
-			<Game_Load ENG="Load Game" localized="Laden Spel"/>
-			<Game_Save ENG="Save Game" localized="Opslaan Spel"/>
+			<Game_Load ENG="Load Game" localized="Spel laden"/>
+			<Game_Save ENG="Save Game" localized="Spel opslaan"/>
 			<Game_Options ENG="Game Options" localized="Spel Opties"/>
 			<Load ENG="Load" localized="Laden"/>
 			<Save ENG="Save" localized="Opslaan"/>
@@ -108,6 +109,31 @@
 			<Reload ENG="Reload" localized="Herladen"/>
 			<Host_Start ENG="Start Host" localized="Start Host"/>
 		</Button>
+		<Context>
+			<Clear ENG="Clear" localized="opruim."/>
+			<Build ENG="Build" localized="Bouw"/>
+			<Transfer ENG="X-fer" localized="X-fer"/>
+			<Sentry ENG="Sentry" localized="Wacht"/>
+			<Done ENG="Done" localized="Gereed"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Stop ENG="Stop" localized="Stop"/>
+			<Destroy ENG="Delete" localized="Verwijd."/>
+			<Repair ENG="Repair" localized="Repareer"/>
+			<Disable ENG="Disable" localized="Uitschak."/>
+			<Steal ENG="Steal" localized="Stelen"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Active ENG="Activ." localized="Actief"/>
+			<Dist ENG="Distr." localized="Distr."/>
+			<Reload ENG="Reload" localized="Herladen"/>
+			<Attack ENG="Attack" localized="Aanval"/>
+			<Seed ENG="Seed" localized="Strooi"/>
+			<Start ENG="Start" localized="Start"/>
+			<Research ENG="Research" localized="Onderzoek"/>
+			<UpAll ENG="Up. all" localized="Vern. alles"/>
+			<Upgrades ENG="Upgrades" localized="Verbeteringen"/>
+			<Upgrade ENG="Upgrade" localized="Verbeter"/>
+			<Info ENG="Info" localized="Info"/>
+		</Context>
 		<Hud>
 			<Files ENG="Files" localized="Bestanden"/>
 			<Settings ENG="Settings" localized="Instellingen"/>
@@ -135,9 +161,9 @@
 			<Teams ENG="Teams" localized="Teams"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="laagst"/>
-			<Lower ENG="very low" localized="erg laag"/>
-			<Low ENG="low" localized="laag"/>
+			<Lowest ENG="lowest" localized="zeer weinig"/>
+			<Lower ENG="very low" localized="erg weinig"/>
+			<Low ENG="low" localized="weinig"/>
 			<Normal ENG="normal" localized="normaal"/>
 			<Much ENG="much" localized="veel"/>
 			<More ENG="very much" localized="zeer veel"/>
@@ -146,7 +172,7 @@
 			<Thin ENG="thin" localized="dun"/>
 			<On ENG="on" localized="aan"/>
 			<Off ENG="off" localized="uit"/>
-			<Definite ENG="definite" localized="vast"/>
+			<Definite ENG="definite" localized="vaste locatie"/>
 			<Mobile ENG="mobile" localized="mobiel"/>
 			<Type_Turns ENG="turns" localized="om de beurt"/>
 			<Type_Simu ENG="simultaneous" localized="gelijktijdig"/>
@@ -159,13 +185,16 @@
 			<Voices ENG="Voices" localized="Stemmen"/>
 			<Disable ENG="Disable" localized="Uitgeschakeld"/>
 			<Scrollspeed ENG="Scrollspeed" localized="Scrollsnelheid"/>
-			<Autosave ENG="Autosave" localized="Automatisch opslaan"/>
+			<Autosave ENG="Autosave" localized="Auto-opslaan"/>
 			<Animation ENG="Animations" localized="Animaties"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Alpha effecten"/>
 			<Shadows ENG="Shadows" localized="Schaduwen"/>
 			<ShowDamage ENG="Buildingdamage" localized="Gebouwschade"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Voertuigschade"/>
 			<Tracks ENG="Vehicletracks" localized="Voertuigsporen"/>
+			<Intro ENG="Show intro" localized="Intro afspelen"/>
+			<Window ENG="Windowed" localized="Venstermodus"/>
+			<Resolution ENG="Resolution" localized="Resolutie"/>
 		</Settings>
 		<Multiplayer>
 			<Player ENG="Player" localized="Speler"/>
@@ -270,7 +299,7 @@
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
       			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geïnitialiseerd"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geïmplementeerd"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geimplementeerd"/>
 		</Error_Messages>
 	</Text>
 	<Units>
