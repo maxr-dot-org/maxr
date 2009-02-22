@@ -48,16 +48,9 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	// if input is active write the characters to the inputstring
 	if ( inputactive )
 	{
-		if ( keysym.unicode >= 32 )
+		// handle special keys separate, but all other keys in the default-section.
+		switch ( keysym.sym )
 		{
-			// write to inputstr when it is a normal character
-			addUTF16Char ( keysym.unicode );
-		}
-		else
-		{
-			// special behaviour for other keys
-			switch ( keysym.sym )
-			{
 			case SDLK_RETURN:
 				// return will be handled from the client like a hotkey
 				if ( Client ) Client->handleHotKey ( keysym );
@@ -111,7 +104,13 @@ void cInput::inputkey ( SDL_keysym &keysym )
 					else inputStr.erase ( stringpos, 1 );
 				}
 				break;
-			}
+			default: // no special key - handle as normal character:
+				if ( keysym.unicode >= 32 )
+				{
+					// write to inputstr when it is a normal character
+					addUTF16Char ( keysym.unicode );
+				}
+				break;
 		}
 		hasBeenInput = true;
 	}
