@@ -1375,8 +1375,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
-					sendVehicleResources( StoredVehicle, Map );
-					if ( StoredVehicle->data.can_survey ) StoredVehicle->doSurvey();
+					if ( StoredVehicle->data.can_survey ) 
+					{
+						sendVehicleResources( StoredVehicle, Map );
+						StoredVehicle->doSurvey();
+					}
 					StoredVehicle->InSentryRange();
 				}
 			}
@@ -1392,8 +1395,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
-					sendVehicleResources( StoredVehicle, Map );
-					if ( StoredVehicle->data.can_survey ) StoredVehicle->doSurvey();
+					if ( StoredVehicle->data.can_survey ) 
+					{
+						sendVehicleResources( StoredVehicle, Map );
+						StoredVehicle->doSurvey();
+					}
 					StoredVehicle->InSentryRange();
 				}
 			}
@@ -2956,6 +2962,8 @@ void cServer::deletePlayer( cPlayer *Player )
 //-------------------------------------------------------------------------------------
 void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 {
+
+	Log.write(" Server:  ============================= begin reconnect  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle *Vehicle;
 	cBuilding *Building;
 	if ( firstDelete )
@@ -3041,6 +3049,8 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	}
 	// FIXME: sending hudsettings doesn't work form yet
 	//sendHudSettings ( &Player->HotHud, Player );
+
+	Log.write(" Server:  ============================= begin reconnect  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 //-------------------------------------------------------------------------------------
