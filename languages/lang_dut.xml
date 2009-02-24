@@ -130,7 +130,7 @@
 			<Start ENG="Start" localized="Start"/>
 			<Research ENG="Research" localized="Onderzoek"/>
 			<UpAll ENG="Up. all" localized="Vern. alles"/>
-			<Upgrades ENG="Upgrades" localized="Verbeteringen"/>
+			<Upgrades ENG="Upgrades" localized="Upgrades"/>
 			<Upgrade ENG="Upgrade" localized="Verbeter"/>
 			<Info ENG="Info" localized="Info"/>
 		</Context>
@@ -138,7 +138,7 @@
 			<Files ENG="Files" localized="Bestanden"/>
 			<Settings ENG="Settings" localized="Instellingen"/>
 			<Proceed ENG="Do" localized="Doe"/>
-			<End ENG="End" localized="Eind"/>
+			<End ENG="End" localized="Einde"/>
 			<Log ENG="Log" localized="Log"/>
 			<Chat ENG="Chat" localized="Chat"/>
 			<Survey ENG="Survey" localized="Bodum"/>
