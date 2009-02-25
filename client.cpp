@@ -3556,11 +3556,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
 
-				if ( Vehicle->IsBuilding && Vehicle->data.is_big && !Vehicle->ShowBigBeton )
-				{
-					Vehicle->ShowBigBeton = true;
-					Vehicle->BigBetonAlpha = 0;
-				}
 				Data = &Vehicle->data;
 			}
 			else
@@ -3795,7 +3790,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Map->moveVehicleBig(Vehicle, iBuildX, iBuildY );
 				Vehicle->owner->DoScan();
 
-				Vehicle->ShowBigBeton = true;
 				Vehicle->BigBetonAlpha = 10;
 			}
 			else

@@ -119,7 +119,6 @@ public:
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
 	bool IsClearing;  // Gibt an, ob einn Feld ger‰umt wird
 	int ClearingRounds; // Gibt an, wie lange ein Feld noch ger‰umt wird
-	bool ShowBigBeton; // Gibt an, ob eine groﬂe Betonfl‰che gemalt werden soll
 	int BigBetonAlpha; // AlphaWert des groﬂen Betons
 	bool bSentryStatus;		/** true if the vehicle is on sentry */
 	bool Transfer;    // Gibt an, ob gerade ein Transfer statfinden soll

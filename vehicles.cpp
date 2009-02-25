@@ -77,7 +77,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsBuilding = false;
 	PlaceBand = false;
 	IsClearing = false;
-	ShowBigBeton = false;
 	bSentryStatus = false;
 	Transfer = false;
 	LoadActive = false;
@@ -403,7 +402,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		if ( IsBuilding || ( IsClearing && data.is_big ) )
 		{
 			// Ggf den Beton malen:
-			if ( ShowBigBeton )
+			if ( IsBuilding && data.is_big && !BuildingTyp.getUnitData()->build_on_water )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
 				if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
