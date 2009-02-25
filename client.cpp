@@ -1875,6 +1875,81 @@ void cClient::displayFXBottom()
 	}
 }
 
+void cClient::runFX()
+{
+	for ( unsigned int i = 0; i < FXList.Size(); i++ )
+	{
+		sFX* fx = FXList[i];
+		switch ( fx->typ )
+		{
+			case fxRocket:
+				{
+					sFXRocketInfos *ri= fx->rocketInfo;
+					if ( abs ( fx->PosX - ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
+					{
+						ri->aj->state = cClientAttackJob::FINISHED;
+						delete fx;
+						FXList.Delete ( i );
+						return;
+					}
+				
+					for ( int k=0; k < 64; k += 8 )
+					{
+						if ( SettingsData.bAlphaEffects )
+						{
+							addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+							if (!isInMenu) drawFX((int)FXList.Size() - 1);
+						}
+						ri->fpx+=ri->mx*8;
+						ri->fpy-=ri->my*8;
+					}
+
+					fx->PosX= ( int ) ri->fpx;
+					fx->PosY= ( int ) ri->fpy;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	for ( unsigned int i = 0; i < FXListBottom.Size(); i++ )
+	{
+		sFX* fx = FXListBottom[i];
+		switch ( fx->typ )
+		{
+			case fxTorpedo:
+			{
+				sFXRocketInfos *ri= fx->rocketInfo;
+				if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
+				{
+					ri->aj->state = cClientAttackJob::FINISHED;
+					delete fx;
+					FXListBottom.Delete ( i );
+					return;
+				}
+
+				for ( int k=0; k < 64; k += 8 )
+				{
+					if ( SettingsData.bAlphaEffects )
+					{
+						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
+						if (!isInMenu) drawFXBottom((int)FXListBottom.Size() - 1);
+					}
+					ri->fpx+=ri->mx*8;
+					ri->fpy-=ri->my*8;
+				}
+
+				fx->PosX= ( int ) ( ri->fpx );
+				fx->PosY= ( int ) ( ri->fpy );
+			}
+			default:
+				break;
+		}
+			
+	}
+}
+
 void cClient::drawFX( int iNum )
 {
 	SDL_Rect scr,dest;
@@ -2084,30 +2159,7 @@ void cClient::drawFX( int iNum )
 			if ( !SettingsData.bPreScale && ( EffectsData.fx_rocket[1]->w != width || EffectsData.fx_rocket[1]->h != height ) ) scaleSurface ( EffectsData.fx_rocket[0], EffectsData.fx_rocket[1], width, height );
 			sFXRocketInfos *ri;
 			ri= fx->rocketInfo;
-			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
-			{
-				ri->aj->state = cClientAttackJob::FINISHED;
-				delete fx;
-				FXList.Delete ( iNum );
-				return;
-			}
-			if ( iTimer0 )
-			{
-				int k;
-				for ( k=0;k<64;k+=8 )
-				{
-					if ( SettingsData.bAlphaEffects )
-					{
-						addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-						drawFX((int)FXList.Size() - 1);
-					}
-					ri->fpx+=ri->mx*8;
-					ri->fpy-=ri->my*8;
-				}
-			}
-
-			fx->PosX= ( int ) ri->fpx;
-			fx->PosY= ( int ) ri->fpy;
+			
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
@@ -2193,31 +2245,7 @@ void cClient::drawFXBottom( int iNum )
 			if ( !SettingsData.bPreScale && ( EffectsData.fx_rocket[1]->w != width || EffectsData.fx_rocket[1]->h != height ) ) scaleSurface ( EffectsData.fx_rocket[0], EffectsData.fx_rocket[1], width, height );
 			sFXRocketInfos *ri;
 			ri = fx->rocketInfo;
-			if ( abs ( fx->PosX-ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
-			{
-				ri->aj->state = cClientAttackJob::FINISHED;
-				delete fx;
-				FXListBottom.Delete ( iNum );
-				return;
-			}
-
-			if ( iTimer0 )
-			{
-				int k;
-				for ( k=0;k<64;k+=8 )
-				{
-					if ( SettingsData.bAlphaEffects )
-					{
-						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-						drawFXBottom((int)FXListBottom.Size() - 1);
-					}
-					ri->fpx+=ri->mx*8;
-					ri->fpy-=ri->my*8;
-				}
-			}
-
-			fx->PosX= ( int ) ( ri->fpx );
-			fx->PosY= ( int ) ( ri->fpy );
+			
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
@@ -5160,13 +5188,12 @@ void cClient::doGameActions()
 
 	//run attackJobs
 	cClientAttackJob::handleAttackJobs();
-	CHECK_MEMORY;
 	//run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();
-	CHECK_MEMORY;
 	//run surveyor ai
 	cAutoMJob::handleAutoMoveJobs();
-	CHECK_MEMORY;
+	//run effects
+	runFX();
 }
 
 sSubBase *cClient::getSubBaseFromID ( int iID )

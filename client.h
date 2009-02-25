@@ -211,6 +211,11 @@ private:
 	*/
 	void drawFXBottom( int iNum );
 	/**
+	* handles the game relevant actions (for example moving the current position of a rocket)
+	* of the fx-effects, so that they are handled also, when the effects are not drawn.
+	*/
+	void runFX();
+	/**
 	* draws an exitpoint on the ground
 	*@author alzi alias DoctorDeath
 	*@param iX X coordinate
