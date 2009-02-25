@@ -2923,19 +2923,38 @@ void cClient::doCommand ( string sCmd )
 	{
 		if ( sCmd.length() > 6 && Server )
 		{
-			int playerNum = atoi ( sCmd.substr ( 6, sCmd.length() ).c_str() );
-			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
-			if ( Player )
+			int playerNum = -1;
+			//first try to find player by name
+			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
-				// close the socket
-				network->close ( Player->iSocketNum );
-				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				if ( (*Server->PlayerList)[i]->name.compare( sCmd.substr ( 6, sCmd.length() )) == 0 )
 				{
-					if ( (*Server->PlayerList)[i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList)[i]->iSocketNum < MAX_CLIENTS ) (*Server->PlayerList)[i]->iSocketNum--;
+					playerNum = (*Server->PlayerList)[i]->Nr;
 				}
-				// delete the player
-				Server->deletePlayer ( Player );
 			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( sCmd.substr ( 6, sCmd.length() ).c_str() );
+			}
+
+			//since atoi is too stupid to report an error, do an extra check, when the number is 0
+			if ( playerNum == 0 )
+			{
+				if ( sCmd[6] != '0' ) return;
+			}
+			
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+			
+			// close the socket
+			if ( network ) network->close ( Player->iSocketNum );
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList)[i]->iSocketNum < MAX_CLIENTS ) (*Server->PlayerList)[i]->iSocketNum--;
+			}
+			// delete the player
+			Server->deletePlayer ( Player );
 		}
 	}
 	if ( sCmd.substr( 0, 12 ).compare( "/disconnect " ) == 0 )
