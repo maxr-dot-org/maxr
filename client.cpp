@@ -2939,10 +2939,7 @@ void cClient::doCommand ( string sCmd )
 			}
 
 			//since atoi is too stupid to report an error, do an extra check, when the number is 0
-			if ( playerNum == 0 )
-			{
-				if ( sCmd[6] != '0' ) return;
-			}
+			if ( playerNum == 0 && sCmd[6] != '0' ) return;
 			
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
@@ -2961,17 +2958,36 @@ void cClient::doCommand ( string sCmd )
 	{
 		if ( sCmd.length() > 12 && Server )
 		{
-			int playerNum = atoi ( sCmd.substr ( 12, sCmd.length() ).c_str() );
-			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
-			if ( Player )
+			int playerNum = -1;
+			//first try to find player by name
+			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
-				SDL_Event* event = new SDL_Event;
-				event->type = NETWORK_EVENT;
-				event->user.code = TCP_CLOSEEVENT;
-				event->user.data1 = new Sint16[1];
-				((Sint16*)event->user.data1)[0] = Player->iSocketNum;
-				Server->pushEvent ( event );
+				if ( (*Server->PlayerList)[i]->name.compare( sCmd.substr ( 12, sCmd.length() )) == 0 )
+				{
+					playerNum = (*Server->PlayerList)[i]->Nr;
+				}
 			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( sCmd.substr ( 12, sCmd.length() ).c_str() );
+			}
+
+			//since atoi is too stupid to report an error, do an extra check, when the number is 0
+			if ( playerNum == 0 && sCmd[12] != '0' ) return;
+			
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+
+			//can not disconnect local players
+			if ( Player->iSocketNum == MAX_CLIENTS ) return;
+
+			SDL_Event* event = new SDL_Event;
+			event->type = NETWORK_EVENT;
+			event->user.code = TCP_CLOSEEVENT;
+			event->user.data1 = new Sint16[1];
+			((Sint16*)event->user.data1)[0] = Player->iSocketNum;
+			Server->pushEvent ( event );
 		}
 	}
 	if ( sCmd.substr( 0, 9 ).compare( "/deadline"  ) == 0 )
