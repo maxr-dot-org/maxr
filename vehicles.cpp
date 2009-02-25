@@ -76,7 +76,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	Attacking = false;
 	IsBuilding = false;
 	PlaceBand = false;
-	BuildOverride = false;
 	IsClearing = false;
 	ShowBigBeton = false;
 	bSentryStatus = false;
@@ -197,7 +196,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		dir = 0;
 
 	// Prüfen, ob gebaut wird:
-	if ( ( !IsBuilding && !IsClearing ) || dir != 0 || BuildOverride )
+	if ( ( !IsBuilding && !IsClearing ) || dir != 0 )
 	{
 		if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
 		{
@@ -2526,6 +2525,11 @@ void cVehicle::drawStatus() const
 		{
 		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		if ( data.is_big )
+		{
+			dest.y += 32;
+			dest.x += 32;
+		}
 		if ( data.speed )
 		{
 			if ( data.shots ) dest.x -= Client->Hud.Zoom/4;

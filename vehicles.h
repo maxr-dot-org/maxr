@@ -117,7 +117,6 @@ public:
 	int BandX,BandY;  // X,Y Position für das Band
 	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
-	bool BuildOverride; // Um nen kleinen Grafikfehler im MP zu beheben
 	bool IsClearing;  // Gibt an, ob einn Feld geräumt wird
 	int ClearingRounds; // Gibt an, wie lange ein Feld noch geräumt wird
 	bool ShowBigBeton; // Gibt an, ob eine große Betonfläche gemalt werden soll
