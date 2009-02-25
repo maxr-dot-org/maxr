@@ -2963,7 +2963,7 @@ void cServer::deletePlayer( cPlayer *Player )
 void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 {
 
-	Log.write(" Server:  ============================= begin reconnect  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle *Vehicle;
 	cBuilding *Building;
 	if ( firstDelete )
@@ -3050,7 +3050,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// FIXME: sending hudsettings doesn't work form yet
 	//sendHudSettings ( &Player->HotHud, Player );
 
-	Log.write(" Server:  ============================= begin reconnect  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write(" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 //-------------------------------------------------------------------------------------

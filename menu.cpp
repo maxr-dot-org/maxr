@@ -3421,27 +3421,28 @@ void cSelectLandingMenu::selectLandingSite()
 
 void cSelectLandingMenu::drawMap()
 {
-	unsigned int nr,off;
-	sTerrain *t;
-
-	int fakx= ( int ) ( ( SettingsData.iScreenW-192.0 ) / map->size ); //pixel per field in x direction
-	int faky= ( int ) ( ( SettingsData.iScreenH-32.0 ) / map->size );  //pixel per field in y direction
-
 	// Die Karte malen:
 	SDL_LockSurface ( buffer );
 	for ( int i=0; i<SettingsData.iScreenW-192; i++ )
 	{
+		int terrainx = (i * map->size) / (SettingsData.iScreenW-192);
+		if ( terrainx >= map->size ) terrainx = map->size - 1;
+		int offsetx  = ((i * map->size ) % (SettingsData.iScreenW-192)) * 64 / (SettingsData.iScreenW-192);
+
 		for ( int k=0; k<SettingsData.iScreenH-32; k++ )
 		{
-			nr=GetKachelBig ( ( i/fakx ) *fakx, ( k/faky ) *faky, map );
-			t=map->terrain+nr;
-			off= ( i%fakx ) * ( t->sf_org->h/fakx ) + ( k%faky ) * ( t->sf_org->h/faky ) *t->sf_org->w;
-			nr= *( ( unsigned char* ) ( t->sf_org->pixels ) +off );
+			int terrainy = (k * map->size) / (SettingsData.iScreenH-32);
+			if ( terrainy >= map->size ) terrainy = map->size - 1;
+			int offsety  = ((k * map->size ) % (SettingsData.iScreenH-32)) * 64 / (SettingsData.iScreenH-32);
+
+			unsigned int terrainNumber = map->Kacheln[terrainx + terrainy * map->size];
+			sTerrain *t	= map->terrain + terrainNumber;
+			unsigned int ColorNr = *( ( unsigned char* ) ( t->sf_org->pixels ) + (offsetx + offsety*64));
 
 			unsigned char* pixel = (unsigned char*) &( ( Sint32* ) ( buffer->pixels ) ) [i+180+ ( k+18 ) *buffer->w];
-			pixel[0] = map->palette[nr].b;
-			pixel[1] = map->palette[nr].g;
-			pixel[2] = map->palette[nr].r;
+			pixel[0] = map->palette[ColorNr].b;
+			pixel[1] = map->palette[ColorNr].g;
+			pixel[2] = map->palette[ColorNr].r;
 		}
 	}
 	SDL_UnlockSurface ( buffer );
