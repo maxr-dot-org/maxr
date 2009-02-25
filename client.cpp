@@ -1947,7 +1947,7 @@ void cClient::drawFX( int iNum )
 			if ( !EffectsData.fx_muzzle_med ) break;
 			width = (EffectsData.fx_muzzle_med[0]->w*Hud.Zoom)/64;
 			height = (EffectsData.fx_muzzle_med[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_med[1]->w != width || EffectsData.fx_muzzle_med[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_med[0], EffectsData.fx_muzzle_big[1], width, height );
+			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_med[1]->w != width || EffectsData.fx_muzzle_med[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_med[0], EffectsData.fx_muzzle_med[1], width, height );
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
