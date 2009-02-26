@@ -247,6 +247,7 @@ public:
 	void ShowResearchSchieber(void);
 	void MakeResearchSchieber(int x,int y);
 	void SendUpdateStored(int index);
+	void sendWantUpgrade (int storageSlot, bool upgradeAll); // wants to upgrade the vehicle to the current version
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
 	/** 

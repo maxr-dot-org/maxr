@@ -4530,6 +4530,40 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_UPGRADED_VEHICLES:
+		{
+			int vehiclesInMsg = message->popInt16();
+			int totalCosts = message->popInt16();
+			unsigned int storingBuildingID = message->popInt32();
+			if (vehiclesInMsg > 0)
+			{
+				string vehicleName;
+				for (int i = 0; i < vehiclesInMsg; i++)
+				{
+					int vehicleID = message->popInt32();
+					cVehicle* vehicle = getVehicleFromID(vehicleID);
+					vehicle->upgradeToCurrentVersion();
+					if (i == 0)
+					{
+						vehicleName = vehicle->data.szName;
+						if (vehiclesInMsg > 1)
+							vehicleName = "units"; // TODO: translated
+					}
+				}
+				cBuilding* storingBuilding = getBuildingFromID(storingBuildingID);
+				if (storingBuilding && Client->isInMenu)
+				{
+					storingBuilding->DrawStored(0);
+					storingBuilding->ShowStorageMetalBar();
+					SHOW_SCREEN
+				}
+				ostringstream os;
+				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
+				string printStr(os.str());
+				addMessage (printStr);
+			}
+		}
+		break;
 	case GAME_EV_SET_AUTOMOVE:
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );

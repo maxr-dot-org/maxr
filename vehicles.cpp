@@ -195,7 +195,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	if ( (IsBuilding || IsClearing) && data.is_big )
 		dir = 0;
 
-	// Prüfen, ob gebaut wird:
+	// Check, if the vehicle is building
 	if ( ( !IsBuilding && !IsClearing ) || dir != 0 )
 	{
 		if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
@@ -204,7 +204,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			RotateTo ( 0 );
 		}
 
-		// Größe auslesen:
+		// read the size:
 		scr.w = (int)(typ->img_org[dir]->w*factor);
 
 		scr.h = (int)(typ->img_org[dir]->h*factor);
@@ -263,7 +263,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				{
 					cBuilding *b;
 					int high;
-					// Prüfen, ob das Flugzeug landen soll:
+					// check, if the plane should land
 					b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
 
 					if ( Client->iTimer0 )
@@ -657,7 +657,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 	}
 
-	// Ggf die Brücke drüber malen:
+	// Draw the bridge, if necessary
 	if ( data.can_drive == DRIVE_SEA )
 	{
 #define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<Client->Map->size&&PosY+y>=0&&PosY+y<Client->Map->size&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()->data.is_bridge
@@ -752,7 +752,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 }
 
-// Wählt dieses Vehicle aus:
+// Selects the vehicle
 void cVehicle::Select ( void )
 {
 	int error;
@@ -827,7 +827,7 @@ void cVehicle::Deselct ( void )
 	Client->iObjectStream = -1;
 }
 
-// Erzeugt den Namen für das Vehicle aus der Versionsnummer:
+// Generates the name of the vehicle based on the version
 void cVehicle::GenerateName ( void )
 {
 	string rome, tmp_name;
@@ -836,7 +836,7 @@ void cVehicle::GenerateName ( void )
 	rome = "";
 	nr = data.version;
 
-	// Römische Versionsnummer erzeugen (ist bis 899 richtig):
+	// genrate roman version number (correct until 899)
 
 	if ( nr > 100 )
 	{
@@ -1033,7 +1033,7 @@ int cVehicle::refreshData ()
 		iReturn = 1;
 	}
 
-	// Räumen:
+	// removing dirt
 	if ( IsClearing && ClearingRounds )
 	{
 		ClearingRounds--;
@@ -1091,7 +1091,7 @@ void cVehicle::ShowDetails ( void )
 
 	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
-	// Zusätzliche Werte:
+	// additional values
 
 	if ( data.can_transport && owner == Client->ActivePlayer )
 	{
@@ -1136,7 +1136,7 @@ void cVehicle::ShowDetails ( void )
 				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 			}
 
-			// Schüsse:
+			// shots
 			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
 
 			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
@@ -1404,7 +1404,7 @@ void cVehicle::ShowHelp ( void )
 	Client->isInMenu = false;
 }
 
-// Malt große Symbole für das Info-Fenster:
+// draws big symbols for the info window
 void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf )
 {
 	SDL_Rect scr, dest;
@@ -1535,13 +1535,13 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 	}
 }
 
-// Liefert die X-Position des Vehicles auf dem Screen zurück:
+// Returns the x-position of the vehicle on the screen
 int cVehicle::GetScreenPosX(void) const
 {
 	return 180 - ( ( int ) ( ( Client->Hud.OffX - OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
-// Liefert die Y-Position des Vehicles auf dem Screen zurück:
+// Returns the y-position of the vehicle on the screen
 int cVehicle::GetScreenPosY(void) const
 {
 	return 18 - ( ( int ) ( ( Client->Hud.OffY - OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
@@ -1705,8 +1705,8 @@ void cVehicle::RotateTo ( int Dir )
 			dir -= 8;
 }
 
-// Liefert einen String mit dem aktuellen Status zurück:
-string cVehicle::GetStatusStr ( void )
+// Returns a string with the current state
+string cVehicle::GetStatusStr ()
 {
 	if ( autoMJob )
 	{
@@ -1853,7 +1853,7 @@ string cVehicle::GetStatusStr ( void )
 	return lngPack.i18n ( "Text~Comp~Waits" );
 }
 
-// Spielt den Soundstream am, der zu diesem Vehicle gehört:
+// Plays the soundstream, that belongs to this vehicle
 int cVehicle::PlayStram ( void )
 {
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
@@ -1880,9 +1880,9 @@ int cVehicle::PlayStram ( void )
 void cVehicle::StartMoveSound ( void )
 {
 	bool water;
-	// Hier ist gleichzeitig der Moment um das Menü auszublenden:
+	// That's the moment, too, to hide the menu
 	MenuActive = false;
-	// Prüfen, ob ein Sound zu spielen ist:
+	// check, if a sound has to be played
 
 	if ( this != Client->SelectedVehicle )
 		return;
@@ -1914,7 +1914,7 @@ void cVehicle::StartMoveSound ( void )
 	}
 }
 
-// Malt das Vehiclemenü:
+// Draws the vehicle menu:
 void cVehicle::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
@@ -2315,7 +2315,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
 }
 
-// Liefert die Anzahl der Menüpunkte:
+// Returns the number of points in the menu:
 int cVehicle::GetMenuPointAnz ( void )
 {
 	int nr = 2;
@@ -2362,7 +2362,7 @@ int cVehicle::GetMenuPointAnz ( void )
 	return nr;
 }
 
-// Liefert die Größe des Menüs und Position zurück:
+// Returns the size of the menu and the position
 SDL_Rect cVehicle::GetMenuSize ( void )
 {
 	SDL_Rect dest;
@@ -2404,7 +2404,7 @@ SDL_Rect cVehicle::GetMenuSize ( void )
 	return dest;
 }
 
-// Liefert true zurück, wenn die Koordinaten in dem Menübereich liegen:
+// Returns true, if the mouse coordinates are in the menu's space
 bool cVehicle::MouseOverMenu ( int mx, int my )
 {
 	SDL_Rect r;
@@ -2439,7 +2439,7 @@ void cVehicle::DecSpeed ( int value )
 		ShowDetails();
 }
 
-// Malt die Munitionsanzeige über das Fahrzeug:
+// Draws the ammunition bar over the vehicle
 void cVehicle::DrawMunBar(void) const
 {
 	SDL_Rect r1, r2;
@@ -2474,7 +2474,7 @@ void cVehicle::DrawMunBar(void) const
 		SDL_FillRect ( buffer, &r2, 0xE60000 );
 	}
 }
-// Malt die Trefferanzeige über das Fahrzeug:
+// Draws the hitpoints bar over the vehicle
 void cVehicle::DrawHelthBar(void) const
 {
 	SDL_Rect r1, r2;
@@ -2554,7 +2554,7 @@ void cVehicle::Center ( void )
 	Client->Hud.DoScroll ( 0 );
 }
 
-// Prüft, ob das Vehicle das Objekt angreifen kann:
+// Checks, if the vehicle can attack the object
 bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 {
 	cVehicle *v = NULL;
@@ -2613,7 +2613,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	return true;
 }
 
-// Prüft, ob das Ziel innerhalb der Reichweite liegt:
+// Checks, if the target lies in range
 bool cVehicle::IsInRange ( int off, cMap *Map )
 {
 	int x, y;
@@ -2730,7 +2730,7 @@ int cVehicle::CalcHelth ( int damage )
 	return hp;
 }
 
-// Zeigt das Build-Menü an:
+// Displays the build menu
 void cVehicle::ShowBuildMenu ( void )
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
@@ -3103,7 +3103,7 @@ void cVehicle::ShowBuildMenu ( void )
 		LastB = b;
 	}
 
-	// Alles Images löschen:
+	// cleanup all images
 	while ( images.Size() )
 	{
 		sBuildStruct *ptr;
@@ -3365,7 +3365,7 @@ void cVehicle::DrawBuildButtons ( int speed )
 	}
 }
 
-// Findet die nächste passende Position für das Band:
+// Finds the next fitting position for the band
 void cVehicle::FindNextband ( void )
 {
 	bool pos[4] = {false, false, false, false};
@@ -3503,10 +3503,10 @@ void cVehicle::MakeReport ( void )
 	else
 		if ( data.hit_points > data.max_hit_points / 2 )
 		{
-			// Status Grün:
+			// Status green
 			if ( data.speed == 0 )
 			{
-				// Bewegung erschöpft:
+				// no more movement
 				PlayVoice ( VoiceData.VOINoSpeed );
 			}
 			else
@@ -3529,7 +3529,7 @@ void cVehicle::MakeReport ( void )
 				else
 					if ( IsClearing )
 					{
-						// Räumen:
+						// removing dirt
 						if ( ClearingRounds )
 						{
 							PlayVoice ( VoiceData.VOIClearing );
@@ -3602,7 +3602,7 @@ void cVehicle::MakeReport ( void )
 			}
 }
 
-// Prüft, ob Rohstoffe zu dem GO transferiert werden können:
+// checks, if resources can be transfered to the unit
 bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
@@ -3887,7 +3887,7 @@ bool cVehicle::InSentryRange ()
 	return false;
 }
 
-// Malt Ausgangspunkte für auszuladende Fahrzeuge:
+// Draws exitpoints for a vehicle, that should be exited
 void cVehicle::DrawExitPoints(sVehicle* const typ) const
 {
 	int spx, spy, size;
@@ -4410,7 +4410,7 @@ void cVehicle::DrawStored ( int off )
 		}
 
 
-		// Die zusätzlichen Infos anzeigen:
+		// Display the additional info
 		dest.x += 9;
 
 		dest.y -= 44 - 6;
@@ -4449,7 +4449,9 @@ void cVehicle::DrawStored ( int off )
 	SDL_FreeSurface(sf);
 }
 
-// Läd ein Vehicle aus:
+//-----------------------------------------------------------------------------
+// Exits a vehicle
+//-----------------------------------------------------------------------------
 void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
 	for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
@@ -4476,7 +4478,9 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 	owner->DoScan();
 }
 
-// Prüft, ob das Objekt aufmunitioniert werden kann:
+//-----------------------------------------------------------------------------
+// Checks, if an object can get ammunition.
+//-----------------------------------------------------------------------------
 bool cVehicle::canSupply ( int iOff, int iType )
 {
 	if ( iOff < 0 || iOff > Client->Map->size*Client->Map->size ) return false;
@@ -4489,6 +4493,7 @@ bool cVehicle::canSupply ( int iOff, int iType )
 	return false;
 }
 
+//-----------------------------------------------------------------------------
 bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 {
 	if ( !Vehicle ) return false;
@@ -4514,6 +4519,7 @@ bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 	return true;
 }
 
+//-----------------------------------------------------------------------------
 bool cVehicle::canSupply( cBuilding *Building, int iType )
 {
 	if ( data.cargo <= 0 ) return false;
@@ -4542,6 +4548,31 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 	return true;
 }
 
+//-----------------------------------------------------------------------------
+void cVehicle::upgradeToCurrentVersion ()
+{
+	sUnitData& upgradeVersion = owner->VehicleData[typ->nr];
+	data.version = upgradeVersion.version; // TODO: iVersion?
+	
+	if (data.hit_points == data.max_hit_points)
+		data.hit_points = upgradeVersion.max_hit_points; // TODO: check behaviour in original
+	data.max_hit_points = upgradeVersion.max_hit_points;
+	
+	data.max_ammo = upgradeVersion.max_ammo; // don't change the current ammo-amount!
+	
+	data.max_speed = upgradeVersion.max_speed;
+	
+	data.armor = upgradeVersion.armor;
+	data.scan = upgradeVersion.scan;
+	data.range = upgradeVersion.range;
+	data.max_shots = upgradeVersion.max_shots; // TODO: check behaviour in original
+	data.damage = upgradeVersion.damage;
+	data.iBuilt_Costs = upgradeVersion.iBuilt_Costs;
+	
+	GenerateName();
+}
+
+//-----------------------------------------------------------------------------
 bool cVehicle::layMine ()
 {
 	if ( data.cargo <= 0 ) return false;
@@ -4577,7 +4608,7 @@ bool cVehicle::clearMine ()
 	return true;
 }
 
-// Prüft, ob das Ziel direkt neben einem steht, und ob es gestohlen werden kann:
+// Checks if the target is on a neighbour field and if it can be stolen
 bool cVehicle::IsInRangeCommando ( int off, bool steal )
 {
 	int boff;
@@ -4711,7 +4742,7 @@ int cVehicle::CalcCommandoChance ( bool steal )
 	return 0;
 }
 
-// Führt eine Kommandooperation durch:
+// Executes a commando operation (like stealing)
 void cVehicle::CommandoOperation ( int off, bool steal )
 {
 	int chance;

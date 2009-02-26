@@ -47,7 +47,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_CHANGE_RESOURCES,		// a client wants to change his resource production
 	GAME_EV_WANT_CHANGE_SENTRY,		// a client wants to change the sentry status of a unit
 	GAME_EV_WANT_MARK_LOG,			// marks a position in the log file
-	GAME_EV_WANT_SUPPLY,			// a clients wants to rearm or repair a unit
+	GAME_EV_WANT_SUPPLY,			// a client wants to rearm or repair a unit
+	GAME_EV_WANT_VEHICLE_UPGRADE,	// a client wants to upgrade a vehicle in a building to the newest version
 	GAME_EV_WANT_START_CLEAR,		// a bulldowzer wants to start clearing the field under his position
 	GAME_EV_WANT_STOP_CLEAR,		// a bulldowzer wants to stop the clearing
 	GAME_EV_ABORT_WAITING,			// the player wants to abort waiting for the reconnect of a disconnected player
@@ -285,6 +286,7 @@ void sendDeleteEverything ( int player );
 void sendUnitUpgrades ( sUnitData *Data, int player );
 void sendCredits (int newCredits, int player);
 void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
+void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
 void sendSetAutomoving ( cVehicle *Vehicle );
 
 #endif // servereventsH

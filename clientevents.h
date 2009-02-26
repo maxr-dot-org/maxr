@@ -74,6 +74,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DELETE_EVERYTHING,		// a client has to delete all units to be ready for a resync
 	GAME_EV_CREDITS_CHANGED,		// the credits of a player changed (e.g. because he bought upgrades)
 	GAME_EV_UPGRADED_BUILDINGS,		// the buildings in the msg have been upgraded to the current version
+	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };

@@ -1181,6 +1181,50 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_VEHICLE_UPGRADE:
+		{
+			bool upgradeAll = message->popBool();
+			int storageSlot = 0;
+			if (!upgradeAll)
+				storageSlot = message->popInt16();
+			cBuilding* storingBuilding = getBuildingFromID(message->popInt32());
+			if (storingBuilding == 0)
+				break;
+
+			int totalCosts = 0;
+			int availableMetal = storingBuilding->SubBase->Metal;
+			
+			cList<cVehicle*> upgradedVehicles;
+			for (int i = 0; i < storingBuilding->StoredVehicles.Size(); i++)
+			{
+				if (upgradeAll || i == storageSlot)
+				{
+					cVehicle* vehicle = storingBuilding->StoredVehicles[i];
+					sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
+					
+					if (vehicle->data.version >= upgradedVersion.version)
+						continue; // already uptodate
+					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+					int upgradeCost = uc.getMaterialCostForUpgrading(upgradedVersion.iBuilt_Costs);
+
+					if (availableMetal >= totalCosts + upgradeCost)
+					{
+						upgradedVehicles.Add(vehicle);
+						totalCosts += upgradeCost;
+					}
+				}
+			}
+			
+			if (upgradedVehicles.Size() > 0)
+			{
+				if (totalCosts > 0)
+					storingBuilding->owner->base.AddMetal (storingBuilding->SubBase, -totalCosts);
+				for (int i = 0; i < upgradedVehicles.Size(); i++)
+					upgradedVehicles[i]->upgradeToCurrentVersion();
+				sendUpgradeVehicles(upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->Nr);
+			}
+		}
+		break;
 	case GAME_EV_WANT_START_CLEAR:
 		{
 			int id = message->popInt16();

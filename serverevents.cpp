@@ -906,6 +906,27 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 }
 
 //-------------------------------------------------------------------------------------
+void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
+{
+	if (upgradedVehicles.Size() * 4 > PACKAGE_LENGTH - 50)
+	{	
+		Log.write("Server: sendUpgradeVehicles: Message would exceed messagesize!!!", cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
+	// send to owner
+	cNetMessage* message = new cNetMessage (GAME_EV_UPGRADED_VEHICLES);
+	for (int i = 0; i < upgradedVehicles.Size(); i++)
+		message->pushInt32(upgradedVehicles[i]->iID);
+
+	message->pushInt32(storingBuildingID);
+	message->pushInt16(totalCosts);
+	message->pushInt16(upgradedVehicles.Size());
+	Server->sendNetMessage (message, player);
+	
+	//TODO: send to other players as well?
+}
+
+//-------------------------------------------------------------------------------------
 void sendSetAutomoving ( cVehicle *Vehicle  )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_SET_AUTOMOVE );

@@ -2544,23 +2544,18 @@ void cBuilding::ShowStorage ( void )
 				mouse->draw ( false, screen );
 			}
 
-			//FIXME: reimplement upgrade
 			// Upgrade:
 			dest.x += 75;
-			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB && v->data.version != owner->VehicleData[v->typ->nr].version )
+			if ( x >= dest.x && x < dest.x + 73 && y >= dest.y && y < dest.y + 23 && b && !LastB 
+				&& v->data.version != owner->VehicleData[v->typ->nr].version )
 			{
 				PlayFX ( SoundData.SNDMenuButton );
-				ShowOK(lngPack.i18n("Text~Error_Messages~INFO_Not_Implemented"), true);
-				/*Update ( v->data, owner->VehicleData[v->typ->nr] )
-				v->GenerateName();
-				owner->base.AddMetal ( SubBase, -2 );
-				DrawStored ( offset );
-				MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
+				sendWantUpgrade (i + offset, false);
+				//MakeStorageButtonsAlle ( &AlleAufladenEnabled, &AlleReparierenEnabled, &AlleUpgradenEnabled );
 				drawButton ( lngPack.i18n ( "Text~Button~Upgrade" ), true, dest.x, dest.y, buffer );
-				ShowStorageMetalBar(); */
+				
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
-				//SendUpdateStored ( i + offset );
 			}
 			
 		}
@@ -2854,6 +2849,18 @@ void cBuilding::ShowStorageMetalBar ( void )
 	//END fill metal bar
 }
 
+//-----------------------------------------------------------------------
+void cBuilding::sendWantUpgrade (int storageSlot, bool upgradeAll)
+{
+	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_VEHICLE_UPGRADE);
+	msg->pushInt32(iID);
+	if (!upgradeAll)
+		msg->pushInt16(storageSlot);
+	msg->pushBool (upgradeAll);
+	Client->sendNetMessage (msg);
+}
+
+//-----------------------------------------------------------------------
 // Unloads a vehicle
 void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
@@ -7235,7 +7242,9 @@ void cBuilding::upgradeToCurrentVersion ()
 	data.max_shots = upgradeVersion.max_shots; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
 	data.iBuilt_Costs = upgradeVersion.iBuilt_Costs;
-	
+
+	GenerateName();
+
 	if (this == Client->SelectedBuilding)
 		ShowDetails();
 }

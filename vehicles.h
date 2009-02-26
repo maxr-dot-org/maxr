@@ -205,6 +205,8 @@ public:
 	bool canSupply( int iOff, int iType );
 	bool canSupply( cVehicle *Vehicle, int iType );
 	bool canSupply( cBuilding *Building, int iType );
+	/** Upgrades the unit data of this vehicle to the current, upgraded version of the player. */
+	void upgradeToCurrentVersion();
 	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs, int iBuilt_Costs_Max );
 	/**
 	* lays a mine. Should only be called by the server!
