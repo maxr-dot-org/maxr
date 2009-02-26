@@ -246,15 +246,10 @@ void cServer::run()
 		if ( !bStarted ) { SDL_Delay( 10 ); continue; }
 
 		checkPlayerUnits();
-		CHECK_MEMORY;
 		checkDeadline();
-		CHECK_MEMORY;
 		handleMoveJobs ();
-		CHECK_MEMORY;
 		handleTimer();
-		CHECK_MEMORY;
 		handleWantEnd();
-		CHECK_MEMORY;
 		SDL_Delay( 10 );
 	}
 }
@@ -3068,7 +3063,6 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	sendSpecificUnitData ( Vehicle );
 	if ( Vehicle->hasAutoMoveJob ) sendSetAutomoving ( Vehicle );
 	if ( Vehicle->DetectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
-	if ( Client ) EventHandler->HandleEvents ();
 }
 
 bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
