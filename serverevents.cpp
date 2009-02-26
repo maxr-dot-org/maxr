@@ -291,23 +291,7 @@ void sendDoStartWork( cBuilding* building )
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
 
 		cNetMessage* message = new cNetMessage( GAME_EV_DO_START_WORK );
-
-		//send the subbase data only to the owner
-		if ( building->owner->Nr == player->Nr )
-		{
-			sSubBase* subbase = building->SubBase;
-			message->pushInt16( subbase->HumanNeed );
-			message->pushInt16( subbase->EnergyProd );
-			message->pushInt16( subbase->OilNeed );
-			message->pushInt16( subbase->EnergyNeed );
-			message->pushInt16( subbase->MetalNeed );
-			message->pushInt16( subbase->GoldNeed );
-			message->pushInt16( subbase->MetalProd );
-			message->pushInt16( subbase->OilProd );
-			message->pushInt16( subbase->GoldProd );
-		}
 		message->pushInt32( building->iID );
-
 		Server->sendNetMessage( message, player->Nr );
 	}
 }
@@ -326,23 +310,7 @@ void sendDoStopWork( cBuilding* building )
 		if ( !player->ScanMap[offset] && player!=building->owner ) continue;
 
 		cNetMessage* message = new cNetMessage( GAME_EV_DO_STOP_WORK );
-
-		//send the subbase data only to the owner
-		if ( building->owner->Nr == player->Nr )
-		{
-			sSubBase* subbase = building->SubBase;
-			message->pushInt16( subbase->HumanNeed );
-			message->pushInt16( subbase->EnergyProd );
-			message->pushInt16( subbase->OilNeed );
-			message->pushInt16( subbase->EnergyNeed );
-			message->pushInt16( subbase->MetalNeed );
-			message->pushInt16( subbase->GoldNeed );
-			message->pushInt16( subbase->MetalProd );
-			message->pushInt16( subbase->OilProd );
-			message->pushInt16( subbase->GoldProd );
-		}
 		message->pushInt32( building->iID );
-
 		Server->sendNetMessage( message, player->Nr );
 	}
 }

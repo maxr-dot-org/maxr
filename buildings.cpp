@@ -835,16 +835,19 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
 		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+	}
+	else
+	{
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+	}
 
+	if ( StartUp )
+	{
 		if ( Client->iTimer0 )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )
 			StartUp = 0;
-	}
-	else
-	{
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 	}
 
 	// Ggf den Effekt malen:
@@ -1720,6 +1723,7 @@ void cBuilding::ServerStartWork ()
 	}
 
 	IsWorking = true;
+	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStartWork(this);
 }
 
@@ -1806,6 +1810,7 @@ void cBuilding::ServerStopWork ( bool override )
 	}
 
 	IsWorking = false;
+	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStopWork(this);
 }
 

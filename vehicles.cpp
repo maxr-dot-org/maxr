@@ -91,6 +91,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	DisableActive = false;
 	IsLocked = false;
 	bIsBeeingAttacked = false;
+	BigBetonAlpha = 0;
 
 	DamageFXPointX = random(7) + 26 - 3;
 	DamageFXPointY = random(7) + 26 - 3;
@@ -401,8 +402,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	else
 		if ( IsBuilding || ( IsClearing && data.is_big ) )
 		{
-			// Ggf den Beton malen:
-			if ( IsBuilding && data.is_big && !BuildingTyp.getUnitData()->build_on_water )
+			//draw beton if nessesary
+			if ( IsBuilding && data.is_big && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
 				if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
@@ -458,7 +459,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 				if ( data.can_build == BUILD_BIG || IsClearing )
 				{
-					max = ( Client->Hud.Zoom - 3 ) * 2;
+					max = ( Client->Hud.Zoom * 2) - 3;
 				}
 				else
 				{

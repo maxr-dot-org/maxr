@@ -1385,6 +1385,8 @@ void cClient::drawMap( bool bPure )
 							sSubBase *sb;
 							tmp=dest;
 							if ( tmp.h>8 ) tmp.h=8;
+							tmp.w = Hud.Zoom;
+							if ( building->data.is_big ) tmp.w*=2;
 							sb = building->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
@@ -1404,6 +1406,8 @@ void cClient::drawMap( bool bPure )
 							sSubBase *sb;
 							tmp=dest;
 							if ( tmp.h>8 ) tmp.h=8;
+							tmp.w = Hud.Zoom;
+							if ( building->data.is_big ) tmp.w*=2;
 							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
@@ -3695,27 +3699,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			building->ClientStartWork();
-
-			//if the message is not for the owner of the building, no subbase data follows
-			if ( message->iPlayerNr != building->owner->Nr ) break;
-
-			building->SubBase->GoldProd = message->popInt16();
-			building->SubBase->OilProd = message->popInt16();
-			building->SubBase->MetalProd = message->popInt16();
-			building->SubBase->GoldNeed = message->popInt16();
-			building->SubBase->MetalNeed = message->popInt16();
-			building->SubBase->EnergyNeed = message->popInt16();
-			building->SubBase->OilNeed = message->popInt16();
-			building->SubBase->EnergyProd = message->popInt16();
-			building->SubBase->HumanNeed = message->popInt16();
-
-			if ( building == SelectedBuilding ) building->ShowDetails();
 		}
 		break;
 	case GAME_EV_DO_STOP_WORK:
 		{
 			int iID = message->popInt32();
-			
 			cBuilding* building = getBuildingFromID(iID);
 			if ( building == NULL )
 			{
@@ -3725,21 +3713,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			building->ClientStopWork();
-
-			//if the message is not for the owner of the building, no subbase data follows
-			if ( message->iPlayerNr != building->owner->Nr ) break;
-
-			building->SubBase->GoldProd = message->popInt16();
-			building->SubBase->OilProd = message->popInt16();
-			building->SubBase->MetalProd = message->popInt16();
-			building->SubBase->GoldNeed = message->popInt16();
-			building->SubBase->MetalNeed = message->popInt16();
-			building->SubBase->EnergyNeed = message->popInt16();
-			building->SubBase->OilNeed = message->popInt16();
-			building->SubBase->EnergyProd = message->popInt16();
-			building->SubBase->HumanNeed = message->popInt16();
-
-			if ( building == SelectedBuilding ) building->ShowDetails();
 		}
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
@@ -3843,6 +3816,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->BandY = 0;
 				break;
 			}
+
+			if ( Vehicle->IsBuilding ) Log.write(" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR );
 
 			int iBuildX = message->popInt16();
 			int iBuildY = message->popInt16();
