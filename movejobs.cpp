@@ -233,6 +233,7 @@ void cPathCalculator::insertToHeap( sPathNode *Node, bool exists )
 			sPathNode *TempNode = nodesHeap[i/2];
 			nodesHeap[i/2] = Node;
 			nodesHeap[i] = TempNode;
+			i = i/2;
 		}
 		else break;
 	}
