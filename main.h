@@ -762,9 +762,6 @@ std::string dToStr(double x);
 */
 std::string pToStr(void *x);
 
-int min (int a, int b );
-
-
 /**
 * Rounds given param num to specified position after decimal point<br>
 * Example:<br>
