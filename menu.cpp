@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <time.h>
 #include <math.h>
+#include <sstream>
 #include "buttons.h"
 #include "menu.h"
 #include "pcx.h"
@@ -3515,21 +3516,31 @@ void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surfac
 			tmp.x-=38;
 			SDL_FillRect ( buffer,&tmp,0xE0E0E0 );
 		}
-		// Text ausgeben:
 
-		if ( font->getTextWide ( ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE ) > text.w )
+		// Print the unit name, and numerate the unit.
+		int nrOfSameUnits = 1;
+		sID& currentUnitID = ptr.UnitID.getUnitData()->ID;
+		// search the landing list for other units of the same type.
+		for (int otherUnitIdx = 0; otherUnitIdx < i; otherUnitIdx++)
 		{
-			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
-			font->showTextAsBlock ( text, ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE);
-			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
+			sID& otherUnitID = (*list)[otherUnitIdx].UnitID.getUnitData()->ID;
+			if (otherUnitID.iFirstPart == currentUnitID.iFirstPart && otherUnitID.iSecondPart == currentUnitID.iSecondPart)
+				nrOfSameUnits++;
+		}
+		ostringstream os;
+		os << ptr.UnitID.getUnitData()->name << " " << nrOfSameUnits; // construct the name from the unit name + the running number
+		string nameToDisplay(os.str());
+		// display the name
+		if (font->getTextWide (nameToDisplay, FONT_LATIN_SMALL_WHITE ) > text.w)
+		{
+			text.y -= font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2;
+			font->showTextAsBlock (text, nameToDisplay, FONT_LATIN_SMALL_WHITE);
+			text.y += font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
-		{
-			font->showText ( text, ptr.UnitID.getUnitData()->name, FONT_LATIN_SMALL_WHITE);
-		}
+			font->showText (text, nameToDisplay, FONT_LATIN_SMALL_WHITE);
 
-
-
+		// print the cargo, if the unit can transport something
 		if ( ptr.UnitID.getUnitData()->can_transport == TRANS_METAL
 			|| ptr.UnitID.getUnitData()->can_transport == TRANS_OIL
 			/*|| ptr.UnitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
