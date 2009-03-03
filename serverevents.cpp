@@ -864,7 +864,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 	// send to owner
 	cNetMessage* message = NULL;
 	int buildingsInMsg = 0;
-	for (int i = 0; i < upgradedBuildings.Size(); i++)
+	for (unsigned int i = 0; i < upgradedBuildings.Size(); i++)
 	{
 		if (message == NULL)
 		{
@@ -876,7 +876,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 		buildingsInMsg++;
 		if (message->iLength + 8 > PACKAGE_LENGTH)
 		{
-			message->pushInt16((totalCosts * buildingsInMsg) / upgradedBuildings.Size());
+			message->pushInt16((totalCosts * buildingsInMsg) / (int)upgradedBuildings.Size());
 			message->pushInt16(buildingsInMsg);
 			Server->sendNetMessage (message, player);
 			message = NULL;
@@ -884,7 +884,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 	}
 	if (message != NULL)
 	{
-		message->pushInt16((totalCosts * buildingsInMsg) / upgradedBuildings.Size());
+		message->pushInt16((int)(totalCosts * buildingsInMsg) / (int)upgradedBuildings.Size());
 		message->pushInt16(buildingsInMsg);
 		Server->sendNetMessage (message, player);
 		message = NULL;
@@ -897,7 +897,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 		if (curPlayer == 0 || curPlayer->Nr == player) // don't send to the owner of the buildings 
 			continue;
 
-		for (int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
+		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
 		{
 			if (upgradedBuildings[buildingIdx]->SeenByPlayerList.Contains(curPlayer)) // that player can see the building
 				sendUnitData(upgradedBuildings[buildingIdx], curPlayer->Nr);
@@ -915,12 +915,12 @@ void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, un
 	}
 	// send to owner
 	cNetMessage* message = new cNetMessage (GAME_EV_UPGRADED_VEHICLES);
-	for (int i = 0; i < upgradedVehicles.Size(); i++)
+	for (unsigned int i = 0; i < upgradedVehicles.Size(); i++)
 		message->pushInt32(upgradedVehicles[i]->iID);
 
 	message->pushInt32(storingBuildingID);
 	message->pushInt16(totalCosts);
-	message->pushInt16(upgradedVehicles.Size());
+	message->pushInt16((int)upgradedVehicles.Size());
 	Server->sendNetMessage (message, player);
 	
 	//TODO: send to other players as well?

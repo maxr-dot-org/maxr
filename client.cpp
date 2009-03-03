@@ -2929,7 +2929,7 @@ void cClient::doCommand ( string sCmd )
 		{
 			int playerNum = -1;
 			//first try to find player by name
-			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
 				if ( (*Server->PlayerList)[i]->name.compare( sCmd.substr ( 6, sCmd.length() )) == 0 )
 				{
@@ -2964,7 +2964,7 @@ void cClient::doCommand ( string sCmd )
 		{
 			int playerNum = -1;
 			//first try to find player by name
-			for ( int i = 0; i < Server->PlayerList->Size(); i++ )
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 			{
 				if ( (*Server->PlayerList)[i]->name.compare( sCmd.substr ( 12, sCmd.length() )) == 0 )
 				{

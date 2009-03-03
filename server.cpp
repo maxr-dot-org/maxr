@@ -1195,7 +1195,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int availableMetal = storingBuilding->SubBase->Metal;
 			
 			cList<cVehicle*> upgradedVehicles;
-			for (int i = 0; i < storingBuilding->StoredVehicles.Size(); i++)
+			for (unsigned int i = 0; i < storingBuilding->StoredVehicles.Size(); i++)
 			{
 				if (upgradeAll || i == storageSlot)
 				{
@@ -1219,7 +1219,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if (totalCosts > 0)
 					storingBuilding->owner->base.AddMetal (storingBuilding->SubBase, -totalCosts);
-				for (int i = 0; i < upgradedVehicles.Size(); i++)
+				for (unsigned int i = 0; i < upgradedVehicles.Size(); i++)
 					upgradedVehicles[i]->upgradeToCurrentVersion();
 				sendUpgradeVehicles(upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->Nr);
 			}
@@ -1537,7 +1537,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (upgradeAll)
 			{
 				sSubBase* subBase = building->SubBase;
-				for (int subBaseBuildIdx = 0; subBaseBuildIdx < subBase->buildings.Size(); subBaseBuildIdx++)
+				for (unsigned int subBaseBuildIdx = 0; subBaseBuildIdx < subBase->buildings.Size(); subBaseBuildIdx++)
 				{
 					cBuilding* otherBuilding = subBase->buildings[subBaseBuildIdx];
 					if (otherBuilding == building)
@@ -1558,7 +1558,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (upgradedBuildings.Size() > 0)
 			{
 				bool scanNecessary = false;
-				for (int i = 0; i < upgradedBuildings.Size(); i++)
+				for (unsigned int i = 0; i < upgradedBuildings.Size(); i++)
 				{
 					if (!scanNecessary && upgradedBuildings[i]->data.scan < upgradedVersion.scan)
 						scanNecessary = true; // Scan range was upgraded. So trigger a scan.

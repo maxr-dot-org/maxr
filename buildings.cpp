@@ -3274,7 +3274,7 @@ void cBuilding::ShowUpgrade ()
 	float newZoom = Client->Hud.Zoom / 64.0f;
 
 	// create and add upgrade structs for all vehicles
-	for (int vehicleTypeIdx = 0; vehicleTypeIdx < UnitsData.vehicle.Size (); vehicleTypeIdx++)
+	for (unsigned int vehicleTypeIdx = 0; vehicleTypeIdx < UnitsData.vehicle.Size (); vehicleTypeIdx++)
 	{
 		SDL_Surface *sf;
 		scaleSurface ( UnitsData.vehicle[vehicleTypeIdx].img_org[0], UnitsData.vehicle[vehicleTypeIdx].img[0],
@@ -3291,7 +3291,7 @@ void cBuilding::ShowUpgrade ()
 	}
 
 	// create and add upgrade structs for all buildings
-	for (int  buildingTypeIdx = 0; buildingTypeIdx < UnitsData.building.Size(); buildingTypeIdx++)
+	for (unsigned int  buildingTypeIdx = 0; buildingTypeIdx < UnitsData.building.Size(); buildingTypeIdx++)
 	{
 		SDL_Surface *sf;
 		if (UnitsData.building[buildingTypeIdx].data.is_big)
@@ -3375,7 +3375,7 @@ void cBuilding::ShowUpgrade ()
 			&& y >= MENU_OFFSET_Y + 386 && y < MENU_OFFSET_Y + 386 + 17 
 			&& leftButtonPressed && !downPressed)
 		{
-			int leftSpace = selection.Size () - 9 - offset;
+			int leftSpace = (int) selection.Size () - 9 - offset;
 			if (leftSpace != 0)
 			{
 				if (leftSpace >= 9)
