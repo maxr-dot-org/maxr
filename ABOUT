@@ -1,10 +1,53 @@
-MECHANIED ASSAULT AND EXPLORATION RELOADED is based on INTERPLAY's
-MECHANIED ASSAULT AND EXPLORATION from 1996. M.A.X. Reloaded is a
-completly rewritten clone based on the wish of many M.A.X. fanatics
-to play M.A.X. bugless in multiplayer mode over the Internet using
-TCP/IP. M.A.X. Reloaded code is based on Michael Moench's "MM's 
-M.A.X.". MM offered the source to the community of maxthegame.de
-since he had no time for his project any more. 2007 the community
-decided to go opensource with it and started the M.A.X. Reloaded
-project. M.A.X. Reloaded is released under the GPLv2. See COPYING 
-and COPYING.README for details.
+M.A.X.R. (Mechanized Assault and eXploration Reloaded) is a fanmade
+strategy game by the community of maxr.org. M.A.X.R. is OpenSource and
+a remake of the old M.A.X. by Interplay from 1996 featuring network
+games based on TCP/IP (e.g. over the internet). The game can be
+played in a turn-based mode (with or without time limit), or
+simultaneous mode (all the players take their turns at the same time),
+and features combat in air, land, and sea. Three resources are present
+on the maps - raw materials, that are needed to manufacture units,
+structures and ammunition, fuel, that power generators need to
+function, and gold, that is used to purchase upgrades. This game
+is a mix of realtime and turnbased strategy with battle chess
+character. It is released under the GPLv2 and GFDL (see COPYING
+and COPYING.README)
+
+The project was founded 2007 by Albert (alzi) Ziegenhagel and
+Bernd (beko) Kosmahl and is based on "MM's Max". The original
+author Michael Mönch, who wrote the first version of "MM's Max",
+had no time for his project any more and offered the source to anyone
+who asked for it. M.A.X.R. represents the hope and wishes of many
+M.A.X. fans all over the world to play M.A.X. bugless and in
+multiplayer mode over the internet using TCP/IP.
+
+Soon after the founding Eiko (eiko) Oltmanns joined the team and 
+together M.A.X.R. learned TCP/IP in no time. The Win API was completly
+removed and translation support was added. Beeing POSIX compatible and
+available on english M.A.X.R. became international very fast and after
+the joining of Paul (pagra) Grathwohl a Mac hacker had been found too.
+The source was made little/big endian safe and can now be compiled on
+any POSIX compatible system - even on AmigaOS. After two years of
+development M.A.X.R. even made it into some major GNU/Linux
+distributions like Fedora.
+
+Due copyright issues the additional tool "resinstaller" has been
+written. Since maxr.org is not allowed to distribute licensed material
+like graphics and sounds of the original game M.A.X.R. was in need
+for an original game CD for a long time. The resinstaller does it's
+magic by extracting and copying the needed files to their proper places
+in the M.A.X.R.'s folder structure and their required file formats.
+Beside covering missing files the fans of the original game could
+configure their M.A.X.R. installation to be as close to the original
+as it is possible.
+
+That was however only the first step. The team realized early that the
+resinstaller was nice indeed but only players with the original CD
+could be reached that way. A game that requires a no longer distributed
+CD - means no way to obtain a legal copy nowadays - was pretty useless.
+As a conclusion the creation of a free graphics set started in 2008 and
+shipped today M.A.X.R. can be played as standalone too.
+
+The goals of M.A.X.R. are still the same as in the beginning: Beeing a
+remake of the original featuring network games. The team focused on this
+fact and network playing works pretty stable today. Some features are
+still missing - like single player missions, hot seat mode and AI.
