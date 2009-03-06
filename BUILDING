@@ -1,7 +1,7 @@
 PREREQUISITES
 
 You'll need to have these libraries (with equivalent devel versions) to
-build M.A.X. Reloaded:
+build M.A.X.R.:
 
  libsdl1.2
  libsdl-mixer1.2 (with Vorbis support)

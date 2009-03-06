@@ -1,7 +1,7 @@
 PREREQUISITES
 
 You'll need to have these libraries (with equivalent devel versions
-for building) to play M.A.X. Reloaded:
+for building) to play M.A.X.R.:
 
  libsdl1.2
  libsdl-mixer1.2 (with Vorbis support)
@@ -36,11 +36,12 @@ and extract the original gfx automagically from your existing max.res
 Resinstaller also takes care of sounds, videos, maps and music.
 
 The tool can be found on our website and easily installs and converts
-the needed data for you. Please check the bbs at maxthegame.de/bbs
-for more informations.
+the needed data for you. Please check the bbs at maxr.org for more 
+informations.
 
-If you don't own an original maxcd you've another chance in downloading
-Mechanized Assault and Exploration from cdosabandonware.com since you
+If you don't own an original maxcd but you want to play with the 
+original look'n'feel you've another chance in downloading
+Mechanized Assault and eXploration from cdosabandonware.com since you
 won't find any gamecds from this any more on stores - too old.
 http://www.cdosabandonware.com/std_games_details.php?gameid=1979
 This version is however lacking some files like videos, music and some
@@ -49,7 +50,7 @@ sounds.
 Warning: Resinstaller will overwrite existing graphics. If you want to
 keep existing free graphics for some reasons *backup* the folders fx, 
 gfx, vehicles and buildings. It's save to copy the files back after the
-resinstaller has done it's magic *except* the file gfx/hud_stuff.pcx.
+resinstaller has done it's magic. 
 
 TROUBLESHOOTING
 
