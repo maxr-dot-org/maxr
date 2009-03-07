@@ -221,6 +221,8 @@ private:
 	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo, 
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
+	void changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner );
+	void stopVehicleBuilding ( cVehicle *vehicle );
 
 public:
 	/** the map */

@@ -3521,7 +3521,7 @@ void ShowLandingList ( cList<sLanding> *list,int selected,int offset, SDL_Surfac
 		int nrOfSameUnits = 1;
 		sID& currentUnitID = ptr.UnitID.getUnitData()->ID;
 		// search the landing list for other units of the same type.
-		for (int otherUnitIdx = 0; otherUnitIdx < i; otherUnitIdx++)
+		for (int otherUnitIdx = 0; otherUnitIdx < (int)i; otherUnitIdx++)
 		{
 			sID& otherUnitID = (*list)[otherUnitIdx].UnitID.getUnitData()->ID;
 			if (otherUnitID.iFirstPart == currentUnitID.iFirstPart && otherUnitID.iSecondPart == currentUnitID.iSecondPart)

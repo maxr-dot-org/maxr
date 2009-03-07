@@ -714,12 +714,17 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 				{
 					// TODO: add commando steal
-					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+					//addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+					if ( overVehicle ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, true );
+					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, true );
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 				{
 					// TODO: add commando disable
-					addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+					//addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+					if ( overVehicle ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, false );
+					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( SelectedVehicle->iID, overPlane->iID, true, false );
+					else if ( overBuilding ) sendWantComAction ( SelectedVehicle->iID, overBuilding->iID, false, false );
 				}
 				else if ( MouseStyle == OldSchool && OverUnitField && selectUnit ( OverUnitField, false ) )
 				{}
@@ -3183,11 +3188,11 @@ void cClient::mouseMoveCallback ( bool bForce )
 	OverUnitField = Map->fields + (iX + iY * Map->size);
 	if ( mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 	{
-		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, true );
+		SelectedVehicle->drawCommandoCursor ( Map->size*iY+iX, true );
 	}
 	else if ( mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 	{
-		SelectedVehicle->DrawCommandoCursor ( Map->size*iY+iX, false );
+		SelectedVehicle->drawCommandoCursor ( Map->size*iY+iX, false );
 	}
 	if ( OverUnitField->getVehicles() != NULL )
 	{
@@ -3643,6 +3648,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->name = message->popString();
 				Vehicle->bIsBeeingAttacked = message->popBool();
 				Vehicle->Disabled = message->popInt16();
+				Vehicle->CommandoRank = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
 				bWasBuilding = Vehicle->IsBuilding;
 				Vehicle->IsBuilding = message->popBool();
@@ -4604,6 +4610,22 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_COMMANDO_ANSWER:
+		{
+			if ( message->popBool() )
+			{
+				if ( message->popBool() ) PlayVoice ( VoiceData.VOIUnitStolen );
+				else PlayVoice ( VoiceData.VOIUnitDisabled );
+			}
+			else PlayVoice ( VoiceData.VOICommandoDetected );
+			cVehicle *srcUnit = getVehicleFromID ( message->popInt16() );
+			if ( srcUnit && !srcUnit->data.shots )
+			{
+				srcUnit->DisableActive = false;
+				srcUnit->StealActive = false;
+			}
+		}
+		break;
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -5131,7 +5153,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "commando_rank: " + iToStr ( Vehicle->CommandoRank ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) /*+ " detection_override: " + iToStr (Vehicle->detection_override )*/;
+	sTmp = "commando_rank: " + dToStr ( Round ( Vehicle->CommandoRank, 2 ) ) + " steal_active: " + iToStr ( Vehicle->StealActive ) + " disable_active: +" + iToStr ( Vehicle->DisableActive ) + " disabled: " + iToStr ( Vehicle->Disabled ) /*+ " detection_override: " + iToStr (Vehicle->detection_override )*/;
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 

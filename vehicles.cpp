@@ -1785,57 +1785,13 @@ string cVehicle::GetStatusStr ()
 								{
 									string sTmp = lngPack.i18n ( "Text~Comp~Waits" ) + "\n";
 
-									switch ( CommandoRank )
-									{
+									if ( CommandoRank < 1 ) sTmp += lngPack.i18n ( "Text~Comp~Greenhorn" );
+									else if ( CommandoRank < 3 ) sTmp += lngPack.i18n ( "Text~Comp~Average" );
+									else if ( CommandoRank < 6 ) sTmp += lngPack.i18n ( "Text~Comp~Veteran" );
+									else if ( CommandoRank < 11 ) sTmp += lngPack.i18n ( "Text~Comp~Expert" );
+									else sTmp += lngPack.i18n ( "Text~Comp~Elite" );
 
-										case 0:
-
-										case 1:
-
-										case 2:
-											sTmp += lngPack.i18n ( "Text~Comp~Greenhorn" );
-											break;
-
-										case 3:
-
-										case 4:
-
-										case 5:
-											sTmp += lngPack.i18n ( "Text~Comp~Veteran" );
-											break;
-
-										default: "invalid rank"; //dev messed up
-									}
-
-									switch ( CommandoRank )
-									{
-
-										case 0:
-											sTmp += "";
-											break;
-
-										case 1:
-											sTmp += " +1";
-											break;
-
-										case 2:
-											sTmp += " +2";
-											break;
-
-										case 3:
-											sTmp += " +3";
-											break;
-
-										case 4:
-											sTmp += " +4";
-											break;
-
-										case 5:
-											sTmp += " +5";
-											break;
-
-										default: ""; //dev messed up
-									}
+									if ( CommandoRank > 0 ) sTmp += " +" + iToStr ( (int)CommandoRank );
 
 									return sTmp;
 								}
@@ -4606,37 +4562,30 @@ bool cVehicle::clearMine ()
 	return true;
 }
 
-// Checks if the target is on a neighbour field and if it can be stolen
-bool cVehicle::IsInRangeCommando ( int off, bool steal )
+// Checks if the target is on a neighbour field and if it can be stolen or disabled
+bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 {
-	int boff;
-	boff = PosX + PosY * Client->Map->size;
+	int off, boff;
+	off = x + y * map->size; 
+	boff = PosX + PosY * map->size;
 
-	if ( off == boff )
-		return false;
+	if ( !isNextTo ( x, y ) ) return false;
+	if ( !data.shots ) return false;
 
-	if ( ( off > Client->Map->size*off > Client->Map->size ) ||
-	        ( off >= boff - 1 - Client->Map->size && off <= boff + 2 - Client->Map->size ) ||
-	        ( off >= boff - 1 && off <= boff + 2 ) ||
-	        ( off >= boff - 1 + Client->Map->size && off <= boff + 2 + Client->Map->size ) )
-		{}
-	else
-		return false;
+	cVehicle*  vehicle  = map->fields[off].getVehicles();
+	cBuilding* building = map->fields[off].getBuildings();
 
-	cVehicle*  vehicle  = Client->Map->fields[off].getVehicles();
-	cBuilding* building = Client->Map->fields[off].getBuildings();
+	if ( steal && vehicle && vehicle->StoredVehicles.Size() ) return false;
 
-	if ( steal && vehicle && vehicle->owner != owner )
-		return true;
+	if ( steal && vehicle && vehicle->owner != owner ) return true;
 
-	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) )
-		return true;
+	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) ) return true;
 
 	return false;
 }
 
-// Malt die Commando-Cursor:
-void cVehicle::DrawCommandoCursor ( int off, bool steal )
+// draws the commando-cursors:
+void cVehicle::drawCommandoCursor ( int off, bool steal )
 {
 	cMapField* field = Client->Map->fields + off;
 	cBuilding *b = NULL;
@@ -4652,15 +4601,11 @@ void cVehicle::DrawCommandoCursor ( int off, bool steal )
 	else
 	{
 		v = field->getVehicles();
-
-		if ( !v )
-			b = field->getTopBuilding();
-
+		if ( !v ) b = field->getTopBuilding();
 		sf = GraphicsData.gfx_Cdisable;
 	}
 
 	r.x = 1;
-
 	r.y = 28;
 	r.h = 3;
 	r.w = 35;
@@ -4672,84 +4617,20 @@ void cVehicle::DrawCommandoCursor ( int off, bool steal )
 	}
 
 	SDL_FillRect ( sf, &r, 0xFF0000 );
-
-	if( steal && !v->Disabled )
-	{
-		r.w = 0;
-	}
-	else
-	{
-		r.w = ( int ) ( 35 * ( float ) ( CalcCommandoChance ( steal ) / 100.0 ) );
-	}
+	r.w = 35*calcCommandoChance( v, b, steal )/100;
 	SDL_FillRect ( sf, &r, 0x00FF00 );
-}
-
-// Berechnet die Chance, dass die Commadooperation gelingt (0-100);
-int cVehicle::CalcCommandoChance ( bool steal )
-{
-	if ( steal )
-	{
-		// FIXME: Set more usefull values
-		switch ( CommandoRank )
-		{
-
-			case 0:
-				return 20;
-
-			case 1:
-				return 30;
-
-			case 2:
-				return 50;
-
-			case 3:
-				return 75;
-
-			case 4:
-				return 80;
-
-			case 5:
-				return 80;
-		}
-	}
-	else
-	{
-		switch ( CommandoRank )
-		{
-
-			case 0:
-				return 80;
-
-			case 1:
-				return 90;
-
-			case 2:
-				return 95;
-
-			case 3:
-				return 98;
-
-			case 4:
-				return 100;
-
-			case 5:
-				return 90;
-		}
-	}
-
-	return 0;
 }
 
 // Executes a commando operation (like stealing)
 void cVehicle::CommandoOperation ( int off, bool steal )
 {
-	int chance;
+	/*int chance;
 	bool success;
 	data.shots--;
 	StealActive = false;
 	DisableActive = false;
 
-	chance = CalcCommandoChance ( steal );
+	chance = 0;//CalcCommandoChance ( steal );
 
 	if (random(100) < chance)
 	{
@@ -4829,7 +4710,24 @@ void cVehicle::CommandoOperation ( int off, bool steal )
 	if (  Client->SelectedVehicle == this )
 	{
 		ShowDetails();
-	}
+	}*/
+}
+
+int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal )
+{
+	int destTurn, factor, srcLevel, chance;
+
+	if ( !destVehicle && !destBuilding ) return 0;
+
+	if ( destVehicle ) destTurn = destVehicle->data.iBuilt_Costs/3;
+	else if ( destBuilding ) destTurn = destBuilding->data.iBuilt_Costs/3;
+
+	factor = steal ? 1 : 4;
+	srcLevel = (int)CommandoRank+7;
+
+	chance = Round( (float)(8*srcLevel)/(35*destTurn)*factor*100 );
+	if ( chance > 90 ) chance = 90;
+	return chance;
 }
 
 void cVehicle::DeleteStored ( void )

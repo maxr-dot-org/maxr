@@ -134,7 +134,7 @@ public:
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde
 	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	int WalkFrame;    // Frame der Geh-Annimation
-	int CommandoRank; // Rang des Commandos
+	float CommandoRank; // Rang des Commandos
 	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
@@ -219,10 +219,11 @@ public:
 	*@return true if there was a mine to be cleared
 	*/
 	bool clearMine();
-	bool IsInRangeCommando(int off,bool steal);
-	void DrawCommandoCursor( int off, bool steal );
+	bool canDoCommandoAction( int x, int y, cMap *map, bool steal );
+	void drawCommandoCursor( int off, bool steal );
 	int CalcCommandoChance(bool steal);
 	void CommandoOperation(int off,bool steal);
+	int calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal );
 	void DeleteStored(void);
 	/**
 	* returns whether this player has detected this unit or not

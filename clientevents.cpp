@@ -265,3 +265,13 @@ void sendSetAutoStatus( int unitID, bool set )
 	message->pushInt16( unitID );
 	Client->sendNetMessage( message );
 }
+
+void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal )
+{
+	cNetMessage* message = new cNetMessage( GAME_AV_WANT_COM_ACTION );
+	message->pushBool ( steal );
+	message->pushInt16( destUnitID );
+	message->pushBool ( destIsVehicle );
+	message->pushInt16( srcUnitID );
+	Client->sendNetMessage( message );
+}

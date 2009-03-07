@@ -536,11 +536,11 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),true ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 			{
 				if ( mouse->SetCursor ( CSteal ) )
 				{
-					selectedVehicle->DrawCommandoCursor( mouse->GetKachelOff(), true );
+					selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), true );
 				}
 			}
 			else
@@ -550,11 +550,11 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( selectedVehicle->IsInRangeCommando ( mouse->GetKachelOff(),false ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
 			{
 				if ( mouse->SetCursor ( CDisable ) )
 				{
-					selectedVehicle->DrawCommandoCursor( mouse->GetKachelOff(), false );
+					selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
 				}
 			}
 			else

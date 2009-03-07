@@ -659,22 +659,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( Vehicle == NULL ) break;
 			if ( !Vehicle->IsBuilding ) break;
-			int iPos = Vehicle->PosX+Vehicle->PosY*Map->size;
-
-			Vehicle->IsBuilding = false;
-			Vehicle->BuildPath = false;
-
-			if ( Vehicle->data.can_build == BUILD_BIG )
-			{
-				Map->moveVehicle( Vehicle, Vehicle->BuildBigSavedPos );
-				iPos = Vehicle->BuildBigSavedPos;
-				Vehicle->owner->DoScan();
-			}
-			sendStopBuild ( Vehicle->iID, iPos, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-			{
-				sendStopBuild ( Vehicle->iID, iPos, Vehicle->SeenByPlayerList[i]->Nr );
-			}
+			stopVehicleBuilding ( Vehicle );
 		}
 		break;
 	case GAME_EV_WANT_TRANSFER:
@@ -1576,6 +1561,93 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Vehicle ) Vehicle->hasAutoMoveJob = message->popBool();
 		}
 		break;
+	case GAME_AV_WANT_COM_ACTION:
+		{
+			cVehicle *srcVehicle = getVehicleFromID ( message->popInt16() );
+			if ( !srcVehicle ) break;
+
+			cVehicle *destVehicle = NULL;
+			cBuilding *destBuilding = NULL;
+			if ( message->popBool() ) destVehicle = getVehicleFromID ( message->popInt16() );
+			else destBuilding = getBuildingFromID ( message->popInt16() );
+
+			bool steal = message->popBool();
+			// check whether the commando action is possible
+			if ( !( ( destVehicle && srcVehicle->canDoCommandoAction ( destVehicle->PosX, destVehicle->PosY, Client->Map, steal ) ) ||
+				( destBuilding && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY, Client->Map, steal ) ) ||
+				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY+1, Client->Map, steal ) ) ||
+				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY, Client->Map, steal ) ) ||
+				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Client->Map, steal ) ) ) ) break;
+
+			// check whether the action is successfull or not
+			int chance = srcVehicle->calcCommandoChance ( destVehicle, destBuilding, steal );
+			bool success = false;
+			if ( random ( 100 ) < chance )
+			{
+				int strength = (int)(((int)srcVehicle->CommandoRank+5)/5);
+				srcVehicle->CommandoRank += (float)1/strength;
+
+				if ( steal )
+				{
+					if ( destVehicle )
+					{
+						// change the owner
+						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
+						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
+						changeUnitOwner ( destVehicle, srcVehicle->owner );
+					}
+				}
+				else
+				{
+					if ( destVehicle )
+					{
+						// stop the vehicle and make it disabled
+						destVehicle->Disabled = strength;
+						destVehicle->data.speed = 0;
+						destVehicle->data.shots = 0;
+						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
+						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
+						sendUnitData ( destVehicle, destVehicle->owner->Nr );
+						for ( unsigned int i = 0; i < destVehicle->SeenByPlayerList.Size(); i++ )
+						{
+							sendUnitData ( destVehicle, destVehicle->SeenByPlayerList[i]->Nr );
+						}
+					}
+					else if ( destBuilding )
+					{
+						// stop the vehicle and make it disabled
+						destBuilding->Disabled = strength;
+						destBuilding->data.shots = 0;
+						destBuilding->ServerStopWork( true );
+						sendDoStopWork ( destBuilding );
+						sendUnitData ( destBuilding, destBuilding->owner->Nr );
+						for ( unsigned int i = 0; i < destBuilding->SeenByPlayerList.Size(); i++ )
+						{
+							sendUnitData ( destBuilding, destBuilding->SeenByPlayerList[i]->Nr );
+						}
+					}
+				}
+				success = true;
+			}
+			else
+			{
+				// detect the infiltrator on failed action and let enemy units fire on him
+				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				{
+					cPlayer* player = (*PlayerList)[i];
+					if ( player == srcVehicle->owner ) continue;
+					if ( !player->ScanMap[srcVehicle->PosX+srcVehicle->PosY*Map->size] ) continue;
+					
+					srcVehicle->setDetectedByPlayer( player );
+				}
+				checkPlayerUnits();
+				srcVehicle->InSentryRange();
+			}
+			srcVehicle->data.shots--;
+			sendUnitData ( srcVehicle, srcVehicle->owner->Nr );
+			sendCommandoAnswer ( success, steal, srcVehicle, srcVehicle->owner->Nr );
+		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2334,14 +2406,13 @@ void cServer::makeTurnEnd ()
 			if ( Building->Disabled )
 			{
 				Building->Disabled--;
+				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
+				{
+					sendUnitData(Building, Building->SeenByPlayerList[k]->Nr );
+				}
+				sendUnitData ( Building, Building->owner->Nr );
 				if ( Building->Disabled )
 				{
-					for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
-					{
-						sendUnitData(Building, Building->SeenByPlayerList[k]->Nr );
-					}
-					sendUnitData ( Building, Building->owner->Nr );
-
 					Building = Building->next;
 					continue;
 				}
@@ -2371,14 +2442,13 @@ void cServer::makeTurnEnd ()
 			if ( Vehicle->Disabled )
 			{
 				Vehicle->Disabled--;
+				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
+				{
+					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[k]->Nr );
+				}
+				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 				if ( Vehicle->Disabled )
 				{
-					for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
-					{
-						sendUnitData(Vehicle, Vehicle->SeenByPlayerList[k]->Nr );
-					}
-					sendUnitData ( Vehicle, Vehicle->owner->Nr );
-
 					Vehicle = Vehicle->next;
 					continue;
 				}
@@ -3125,4 +3195,79 @@ bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 	}
 
 	return false;
+}
+
+void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
+{
+	// delete vehicle in the list of he old player
+	cPlayer *oldOwner = vehicle->owner;
+	cVehicle *vehicleList = oldOwner->VehicleList;
+	while ( vehicleList )
+	{
+		if ( vehicleList == vehicle )
+		{
+			if ( vehicleList->prev )
+			{
+				vehicleList->prev->next = vehicleList->next;
+				if ( vehicleList->next ) vehicleList->next->prev = vehicleList->prev;
+			}
+			else if ( vehicleList->next )
+			{
+				oldOwner->VehicleList = vehicleList->next;
+				vehicleList->next->prev = NULL;
+			}
+			else oldOwner->VehicleList = NULL;
+			break;
+		}
+		vehicleList = vehicleList->next;
+	}
+	// add the vehicle to the list of the new player
+	vehicle->owner = newOwner;
+	vehicle->next = newOwner->VehicleList;
+	vehicle->prev = NULL;
+	newOwner->VehicleList->prev = vehicle;
+	newOwner->VehicleList = vehicle;
+
+	// delete the unit on the clients and ad it with new owner again
+	sendDeleteUnit ( vehicle, oldOwner->Nr );
+	while ( vehicle->SeenByPlayerList.Size() )
+	{
+		sendDeleteUnit ( vehicle, vehicle->SeenByPlayerList[0]->Nr );
+		vehicle->SeenByPlayerList.Delete ( 0 );
+	}
+	while ( vehicle->DetectedByPlayerList.Size() ) vehicle->DetectedByPlayerList.Delete ( 0 );
+	sendAddUnit ( vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false );
+	sendUnitData ( vehicle, vehicle->owner->Nr );
+	sendSpecificUnitData ( vehicle );
+	checkPlayerUnits();
+
+	// let the unit work for his new owner
+	if ( vehicle->data.can_survey )
+	{
+		sendVehicleResources( vehicle, Map );
+		vehicle->doSurvey();
+	}
+	vehicle->makeDetection();
+}
+
+void cServer::stopVehicleBuilding ( cVehicle *vehicle )
+{
+	if ( !vehicle->IsBuilding ) return;
+
+	int iPos = vehicle->PosX+vehicle->PosY*Map->size;
+
+	vehicle->IsBuilding = false;
+	vehicle->BuildPath = false;
+
+	if ( vehicle->data.can_build == BUILD_BIG )
+	{
+		Map->moveVehicle( vehicle, vehicle->BuildBigSavedPos );
+		iPos = vehicle->BuildBigSavedPos;
+		vehicle->owner->DoScan();
+	}
+	sendStopBuild ( vehicle->iID, iPos, vehicle->owner->Nr );
+	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	{
+		sendStopBuild ( vehicle->iID, iPos, vehicle->SeenByPlayerList[i]->Nr );
+	}
 }

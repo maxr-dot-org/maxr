@@ -200,6 +200,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16 ( Vehicle->BuildRounds );
 	message->pushBool ( Vehicle->IsBuilding );
 	message->pushBool ( Vehicle->IsClearing );
+	message->pushInt16 ( (int)Vehicle->CommandoRank );
 	message->pushInt16 ( Vehicle->Disabled );
 	message->pushBool ( Vehicle->bIsBeeingAttacked );
 	message->pushString ( Vehicle->name );
@@ -932,4 +933,21 @@ void sendSetAutomoving ( cVehicle *Vehicle  )
 	cNetMessage* message = new cNetMessage( GAME_EV_SET_AUTOMOVE );
 	message->pushInt16 ( Vehicle->iID );
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
+}
+
+void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_COMMANDO_ANSWER );
+	message->pushInt16 ( srcUnit->iID );
+	message->pushBool ( steal );
+	message->pushBool ( succsess );
+	Server->sendNetMessage( message, player );
+}
+
+void sendChangeOwner ( cVehicle *vehicle, int newOwnerNumber, int player )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_CHANGE_OWNER );
+	message->pushInt16 ( newOwnerNumber );
+	message->pushInt16 ( vehicle->iID );
+	Server->sendNetMessage( message, player );
 }

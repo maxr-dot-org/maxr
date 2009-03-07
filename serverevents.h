@@ -59,7 +59,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_REQUEST_RESYNC,			// requests the server to resync a client
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
-	GAME_EV_AUTOMOVE_STATUS			// a unit has been set to automoving
+	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
+	GAME_AV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
 };
 
 /**
@@ -288,5 +289,8 @@ void sendCredits (int newCredits, int player);
 void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
 void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
 void sendSetAutomoving ( cVehicle *Vehicle );
+void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player );
+void sendChangeOwner ( cVehicle *vehicle, int newOwnerNumber, int player );
+
 
 #endif // servereventsH
