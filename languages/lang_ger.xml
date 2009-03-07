@@ -300,7 +300,10 @@
 			<Clearing_Fin ENG="clearing done" localized="Räumen abgeschlossen"/>
 			<Laying ENG="laying mines" localized="Lege Minen"/>
 			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
+      <Average ENG="Average" localized="Durchschnitt"/>
 			<Veteran ENG="Veteran" localized="Veteran"/>
+      <Expert ENG="Expert" localized="Experte"/>
+      <Elite ENG="Elite" localized="Elite"/>
 			<Description ENG="Description" localized="Beschreibung"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Dated ENG="dated" localized="veraltet"/>

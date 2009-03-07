@@ -303,8 +303,11 @@
 			<Clearing_Mine ENG="clearing mines"/>
 			<Clearing_Fin ENG="clearing done"/>
 			<Laying ENG="placing mines"/>
-			<Greenhorn ENG="Greenhorn"/>
-			<Veteran ENG="Veteran"/>
+      <Greenhorn ENG="Greenhorn"/>
+      <Average ENG="Average"/>
+      <Veteran ENG="Veteran"/>
+      <Expert ENG="Expert"/>
+      <Elite ENG="Elite"/>
 			<Description ENG="Description"/>
 			<Repeat ENG="Again"/>
 			<Dated ENG="dated"/>
