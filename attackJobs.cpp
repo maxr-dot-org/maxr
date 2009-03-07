@@ -680,12 +680,10 @@ void cClientAttackJob::rotate()
 	{
 		if ( vehicle->dir != iFireDir )
 		{
-			vehicle->rotating = true;
 			vehicle->RotateTo( iFireDir );
 		}
 		else
 		{
-			vehicle->rotating = false;
 			state = UPDATE_AGRESSOR_DATA;
 		}
 	}

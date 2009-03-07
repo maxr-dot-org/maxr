@@ -149,8 +149,7 @@ public:
 	bool bEndForNow;
 	int iNextDir;
 	int iSavedSpeed;
-	bool bPlane, bShip;
-	int iReservedOff;
+	bool bPlane;
 
 	sWaypoint *Waypoints;
 
@@ -177,7 +176,7 @@ public:
 	bool bSuspended;
 	int iNextDir;
 	int iSavedSpeed;
-	bool bPlane, bShip;
+	bool bPlane;
 
 	sWaypoint *Waypoints;
 

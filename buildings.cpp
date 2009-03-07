@@ -1991,7 +1991,7 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 
 	if ( !( data.build_on_water ? ( Vehicle->data.can_drive == DRIVE_SEA ) : ( Vehicle->data.can_drive != DRIVE_SEA ) ) ) return false;
 
-	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->rotating || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
+	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
 	if ( Vehicle->owner == owner && !Vehicle->IsBuilding && !Vehicle->IsClearing ) return true;
 

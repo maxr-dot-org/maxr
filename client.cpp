@@ -1,4 +1,4 @@
-	/***************************************************************************
+/***************************************************************************
  *      Mechanized Assault and Exploration Reloaded Projectfile            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -723,7 +723,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				}
 				else if ( MouseStyle == OldSchool && OverUnitField && selectUnit ( OverUnitField, false ) )
 				{}
-				else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->rotating && !SelectedVehicle->Attacking )
+				else if ( bChange && mouse->cur == GraphicsData.gfx_Cmove && SelectedVehicle && !SelectedVehicle->moving && !SelectedVehicle->Attacking )
 				{
 					if ( SelectedVehicle->IsBuilding )
 					{
@@ -741,7 +741,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					// open unit menu
 					if ( bChange && SelectedVehicle && ( overPlane == SelectedVehicle || overVehicle == SelectedVehicle ) )
 					{
-						if ( !SelectedVehicle->moving && !SelectedVehicle->rotating&&SelectedVehicle->owner == ActivePlayer )
+						if ( !SelectedVehicle->moving && SelectedVehicle->owner == ActivePlayer )
 						{
 							SelectedVehicle->MenuActive = true;
 							PlayFX ( SoundData.SNDHudButton );
@@ -1069,7 +1069,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 
 bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 {
-	if ( OverUnitField->getPlanes() && !OverUnitField->getPlanes()->moving && !OverUnitField->getPlanes()->rotating )
+	if ( OverUnitField->getPlanes() && !OverUnitField->getPlanes()->moving )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
@@ -1101,7 +1101,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !OverUnitField->getVehicles()->rotating && !( OverUnitField->getPlanes() && ( OverUnitField->getVehicles()->MenuActive || OverUnitField->getVehicles()->owner != ActivePlayer ) ) )
+	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !( OverUnitField->getPlanes() && ( OverUnitField->getVehicles()->MenuActive || OverUnitField->getVehicles()->owner != ActivePlayer ) ) )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
@@ -1208,7 +1208,6 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 	if ( MoveJob->calcPath() )
 	{
 		sendMoveJob ( MoveJob );
-		addActiveMoveJob ( MoveJob );
 		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 	else
@@ -1632,6 +1631,33 @@ void cClient::drawMap( bool bPure )
 			}
 		}
 	}
+
+	/*if ( 1 )
+	{
+		scr.y = 0;
+		scr.h = scr.w = iZoom;
+		dest.y = 18-iOffY+iZoom*iStartY;
+		for ( iY = iStartY; iY <= iEndY; iY++ )
+		{
+			dest.x = 180-iOffX+iZoom*iStartX;
+			iPos = iY*Map->size+iStartX;
+			for ( iX = iStartX; iX <= iEndX; iX++ )
+			{
+				if ( Map->fields[iPos].getVehicles() )
+				{
+					font->showText(dest.x+1,dest.y+1, "C", FONT_LATIN_SMALL_YELLOW);
+				
+				}
+				if ( Server->Map->fields[iPos].getVehicles() )
+				{
+					font->showText(dest.x+1,dest.y+10, "S", FONT_LATIN_SMALL_YELLOW);
+				}
+				iPos++;
+				dest.x += iZoom;
+			}
+			dest.y += iZoom;
+		}
+	}*/
 }
 
 void cClient::drawMiniMap()
@@ -3610,6 +3636,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					{
 						Map->moveVehicle( Vehicle, iPosX, iPosY );
 						if ( bBig ) Map->moveVehicleBig( Vehicle, iPosX, iPosY );
+						Vehicle->owner->DoScan();
 					}
 				}
 
@@ -3732,8 +3759,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			cClientMoveJob *MoveJob = new cClientMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
-
-			addActiveMoveJob ( MoveJob );
 			Log.write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
@@ -3833,6 +3858,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			else
 			{
 				Map->moveVehicle(Vehicle, iBuildX, iBuildY );
+				Vehicle->owner->DoScan();
 			}
 
 			if ( Vehicle->owner == ActivePlayer )
@@ -4957,48 +4983,47 @@ void cClient::handleMoveJobs ()
 				else PlayFX ( Vehicle->typ->Stop );
 				iObjectStream = Vehicle->PlayStram();
 			}
+		}
 
-			if ( MoveJob->bFinished )
+		if ( MoveJob->bFinished )
+		{
+			if ( Vehicle && Vehicle->ClientMoveJob == MoveJob )
 			{
-				if ( Vehicle && Vehicle->ClientMoveJob == MoveJob )
-				{
-					Log.write(" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-					Vehicle->ClientMoveJob = NULL;
-					Vehicle->moving = false;
-					Vehicle->rotating = false;
-					Vehicle->MoveJobActive = false;
+				Log.write(" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
+				Vehicle->ClientMoveJob = NULL;
+				Vehicle->moving = false;
+				Vehicle->MoveJobActive = false;
 
-				}
-				else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-				ActiveMJobs.Delete ( i );
-				delete MoveJob;
-				continue;
 			}
-			if ( MoveJob->bEndForNow )
+			else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
+			ActiveMJobs.Delete ( i );
+			delete MoveJob;
+			continue;
+		}
+		if ( MoveJob->bEndForNow )
+		{
+			Log.write(" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+			if ( Vehicle )
 			{
-				Log.write(" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-				if ( Vehicle )
+				Vehicle->MoveJobActive = false;
+				Vehicle->moving = false;
+				// save speed
+				if ( MoveJob->Waypoints && MoveJob->Waypoints->next )
 				{
-					Vehicle->MoveJobActive = false;
-					Vehicle->rotating = false;
-					// save speed
-					if ( MoveJob->Waypoints && MoveJob->Waypoints->next )
+					if ( Vehicle->data.speed < MoveJob->Waypoints->next->Costs )
 					{
-						if ( Vehicle->data.speed < MoveJob->Waypoints->next->Costs )
-						{
-							MoveJob->iSavedSpeed += Vehicle->data.speed;
-							Vehicle->data.speed = 0;
-							if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
-						}
-					}
-					else
-					{
-						Log.write(" Client: movejob has end for now but has no waypoints anymore", cLog::eLOG_TYPE_NET_WARNING);
+						MoveJob->iSavedSpeed += Vehicle->data.speed;
+						Vehicle->data.speed = 0;
+						if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 					}
 				}
-				ActiveMJobs.Delete ( i );
-				continue;
+				else
+				{
+					Log.write(" Client: movejob has end for now but has no waypoints anymore", cLog::eLOG_TYPE_NET_WARNING);
+				}
 			}
+			ActiveMJobs.Delete ( i );
+			continue;
 		}
 
 		if ( Vehicle == NULL ) continue;
@@ -5006,23 +5031,16 @@ void cClient::handleMoveJobs ()
 		// rotate vehicle
 		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
 		{
-			Vehicle->rotating = true;
 			if ( iTimer1 )
 			{
 				Vehicle->RotateTo ( MoveJob->iNextDir );
 			}
 			continue;
 		}
-		else
-		{
-			Vehicle->rotating = false;
-		}
 
 		if ( Vehicle->MoveJobActive )
 		{
 			MoveJob->moveVehicle();
-			bFlagDrawMap = true;
-			mouseMoveCallback ( true );
 		}
 	}
 }
@@ -5076,8 +5094,6 @@ void cClient::trace ()
 	if ( bDebugTraceServer ) field = Server->Map->fields + ( Server->Map->size*iY+iX );
 	else field = Map->fields + ( Map->size*iY+iX );
 
-	if ( field->reserved ) font->showText(180+5,18+5, "reserved", FONT_LATIN_SMALL_WHITE);
-	if ( field->air_reserved ) font->showText(180+5+100,18+5, "air-reserved", FONT_LATIN_SMALL_WHITE);
 	iY = 18+5+8;
 	iX = 180+5;
 
@@ -5095,7 +5111,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " rotating: " + iToStr ( Vehicle->rotating ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 

@@ -69,7 +69,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	autoMJob = NULL;
 	hasAutoMoveJob = false;
 	moving = false;
-	rotating = false;
 	MoveJobActive = false;
 	MenuActive = false;
 	AttackMode = false;
@@ -156,11 +155,10 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		OffY = 0;
 	}
 
-	if ( !ClientMoveJob && ( MoveJobActive || moving || rotating ) )
+	if ( !ClientMoveJob && ( MoveJobActive || moving ) )
 	{
 		MoveJobActive = false;
 		moving = false;
-		rotating = false;
 		StopFXLoop ( Client->iObjectStream );
 		Client->iObjectStream = PlayStram();
 	}
@@ -268,7 +266,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 					if ( Client->iTimer0 )
 					{
-						if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !rotating && !Attacking )
+						if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !moving && !Attacking )
 						{
 							if ( FlightHigh > 0 )
 								FlightHigh -= 8;
@@ -1924,7 +1922,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	dest = GetMenuSize();
 	Transfer = false;
 
-	if ( moving || rotating || bIsBeeingAttacked )
+	if ( moving || bIsBeeingAttacked )
 		return;
 
 	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) )
@@ -3935,7 +3933,7 @@ bool cVehicle::canLoad ( cVehicle *Vehicle )
 
 	if ( data.can_transport == TRANS_MEN && !Vehicle->data.is_human ) return false;
 
-	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->rotating || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
+	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
 	if ( Vehicle->owner == owner && !Vehicle->IsBuilding && !Vehicle->IsClearing ) return true;
 
@@ -4507,10 +4505,10 @@ bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 	switch ( iType )
 	{
 	case SUPPLY_TYPE_REARM:
-		if ( Vehicle == this || !Vehicle->data.can_attack || Vehicle->data.ammo >= Vehicle->data.max_ammo || Vehicle->moving || Vehicle->rotating || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || !Vehicle->data.can_attack || Vehicle->data.ammo >= Vehicle->data.max_ammo || Vehicle->moving || Vehicle->Attacking ) return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if ( Vehicle == this || Vehicle->data.hit_points >= Vehicle->data.max_hit_points || Vehicle->moving || Vehicle->rotating || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || Vehicle->data.hit_points >= Vehicle->data.max_hit_points || Vehicle->moving || Vehicle->Attacking ) return false;
 		break;
 	default:
 		return false;

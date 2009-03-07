@@ -302,6 +302,42 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	return costs;
 }
 
+void setOffset( cVehicle* Vehicle, int nextDir, int offset )
+{
+	switch ( nextDir )
+	{
+		case 0:
+			Vehicle->OffY -= offset;
+			break;
+		case 1:
+			Vehicle->OffY -= offset;
+			Vehicle->OffX += offset;
+			break;
+		case 2:
+			Vehicle->OffX += offset;
+			break;
+		case 3:
+			Vehicle->OffX += offset;
+			Vehicle->OffY += offset;
+			break;
+		case 4:
+			Vehicle->OffY += offset;
+			break;
+		case 5:
+			Vehicle->OffX -= offset;
+			Vehicle->OffY += offset;
+			break;
+		case 6:
+			Vehicle->OffX -= offset;
+			break;
+		case 7:
+			Vehicle->OffX -= offset;
+			Vehicle->OffY -= offset;
+			break;
+	}
+
+}
+
 cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
 {
 	if ( !Server ) return;
@@ -313,12 +349,10 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	DestX = iDestOff%Map->size;
 	DestY = iDestOff/Map->size;
 	this->bPlane = bPlane;
-	bShip = Vehicle->data.can_drive == DRIVE_SEA;
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
 	Waypoints = NULL;
-	iReservedOff = -1;
 
 	// unset sentry status when moving vehicle
 	if ( Vehicle->bSentryStatus )
@@ -344,11 +378,6 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 
 cServerMoveJob::~cServerMoveJob()
 {
-	if ( iReservedOff >= 0 && iReservedOff <= Map->size*Map->size )
-	{
-		if ( !bPlane && Map->fields[iReservedOff].reserved ) Map->fields[iReservedOff].reserved = false;
-		if ( bPlane && Map->fields[iReservedOff].air_reserved ) Map->fields[iReservedOff].air_reserved = false;
-	}
 	sWaypoint *NextWaypoint;
 	while ( Waypoints )
 	{
@@ -472,7 +501,7 @@ bool cServerMoveJob::checkMove()
 		return false;
 	}
 
-	// not enough waypoints for this move
+	// not enough waypoints for this move?
 	if ( Vehicle->data.speed < Waypoints->next->Costs )
 	{
 		Log.write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
@@ -482,20 +511,9 @@ bool cServerMoveJob::checkMove()
 		return true;
 	}
 
+	//next step can be executed. start the move and set the vehicle to the next field
 	Vehicle->MoveJobActive = true;
 	Vehicle->moving = true;
-
-	// reserv the next field
-	if ( !bPlane )
-	{
-		Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].reserved = true;
-		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
-	}
-	else
-	{
-		Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].air_reserved = true;
-		iReservedOff = Waypoints->next->X+Waypoints->next->Y*Map->size;
-	}
 
 	// send move command to all players who can see the unit
 	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
@@ -503,6 +521,10 @@ bool cServerMoveJob::checkMove()
 		sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->SeenByPlayerList[i]->Nr );
 	}
 	sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->owner->Nr );
+
+	Map->moveVehicle(Vehicle, Waypoints->next->X, Waypoints->next->Y );
+	setOffset( Vehicle, iNextDir, -64 );
+
 	return true;
 }
 
@@ -523,60 +545,16 @@ void cServerMoveJob::moveVehicle()
 	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
 	else iSpeed = MOVE_SPEED;
 
-	switch ( iNextDir )
-	{
-		case 0:
-			Vehicle->OffY -= iSpeed;
-			break;
-		case 1:
-			Vehicle->OffY -= iSpeed;
-			Vehicle->OffX += iSpeed;
-			break;
-		case 2:
-			Vehicle->OffX += iSpeed;
-			break;
-		case 3:
-			Vehicle->OffX += iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 4:
-			Vehicle->OffY += iSpeed;
-			break;
-		case 5:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 6:
-			Vehicle->OffX -= iSpeed;
-			break;
-		case 7:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY -= iSpeed;
-			break;
-	}
-
+	setOffset(Vehicle, iNextDir, iSpeed );
 
 	// check whether the point has been reached:
-	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
+	if ( abs( Vehicle->OffX ) < iSpeed && abs( Vehicle->OffY ) < iSpeed )
 	{
 		Log.write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		sWaypoint *Waypoint;
 		Waypoint = Waypoints->next;
 		delete Waypoints;
 		Waypoints = Waypoint;
-
-		if ( Vehicle->data.can_drive == DRIVE_AIR )
-		{
-			Map->fields[Waypoints->X+Waypoints->Y*Map->size].air_reserved = false;
-			iReservedOff = -1;
-		}
-		else
-		{
-			Map->fields[Waypoints->X+Waypoints->Y*Map->size].reserved = false;
-			iReservedOff = -1;
-		}
-
-		Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
 
 		Vehicle->OffX = 0;
 		Vehicle->OffY = 0;
@@ -676,7 +654,6 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	DestX = iDestOff%Map->size;
 	DestY = iDestOff/Map->size;
 	this->bPlane = bPlane;
-	bShip = Vehicle->data.can_drive == DRIVE_SEA;
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
@@ -789,66 +766,67 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 			Vehicle->OffX = Vehicle->OffY = 0;
 			return;
 		}
+
+		// server is one field faster then client
+		if ( iNextDestX == Waypoints->next->X && iNextDestY == Waypoints->next->Y )
+		{
+			Log.write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
+			doEndMoveVehicle();
+		}
 		else
 		{
-			// server is one field faster then client
-			if ( iNextDestX == Waypoints->next->X && iNextDestY == Waypoints->next->Y )
+			// check whether the destination field is one of the next in the waypointlist
+			// if not it must have been one that has been deleted already
+			bool bServerIsFaster = false;
+			sWaypoint *Waypoint = Waypoints->next->next;
+			while ( Waypoint )
 			{
-				Log.write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
-				doEndMoveVehicle();
+				if ( Waypoint->X == iNextDestX && Waypoint->Y == iNextDestY )
+				{
+					bServerIsFaster = true;
+					break;
+				}
+				Waypoint = Waypoint->next;
 			}
-			else
+			// the server is more then one field faster
+			if ( bServerIsFaster )
 			{
-				// check whether the destination field is one of the next in the waypointlist
-				// if not it must have been one that has been deleted already
-				bool bServerIsFaster = false;
-				sWaypoint *Waypoint = Waypoints->next->next;
+				Log.write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
+
+				Map->moveVehicle( Vehicle, iNextDestX, iNextDestY );
+				Vehicle->owner->DoScan();
+				Vehicle->moving = false;
+				Vehicle->OffX = Vehicle->OffY = 0;
+
+				Waypoint = Waypoints;
 				while ( Waypoint )
 				{
-					if ( Waypoint->X == iNextDestX && Waypoint->Y == iNextDestY )
+					if ( Waypoint->next->X != iNextDestX && Waypoint->next->Y != iNextDestY )
 					{
-						bServerIsFaster = true;
+						Waypoints = Waypoint->next;
+						delete Waypoint;
+						Waypoint = Waypoints;
+					}
+					else
+					{
+						Waypoints = Waypoint;
 						break;
 					}
-					Waypoint = Waypoint->next;
 				}
-				// the server is more then one field faster
-				if ( bServerIsFaster )
+				calcNextDir();
+			}
+			// the client is faster
+			else
+			{
+				Log.write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+				// just stop the vehicle and wait for the next commando of the server
+				for ( unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++ )
 				{
-					Log.write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
-
-					Map->moveVehicle( Vehicle, iNextDestX, iNextDestY );
-					Vehicle->OffX = Vehicle->OffY = 0;
-
-					Waypoint = Waypoints;
-					while ( Waypoint )
-					{
-						if ( Waypoint->next->X != iNextDestX && Waypoint->next->Y != iNextDestY )
-						{
-							Waypoints = Waypoint->next;
-							delete Waypoint;
-							Waypoint = Waypoints;
-						}
-						else
-						{
-							Waypoints = Waypoint;
-							break;
-						}
-					}
+					if ( Client->ActiveMJobs[i] == this ) Client->ActiveMJobs.Delete ( i );
 				}
-				// the client is faster
-				else
-				{
-					Log.write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
-					// just stop the vehicle and wait for the next commando of the server
-					for ( unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++ )
-					{
-						if ( Client->ActiveMJobs[i] == this ) Client->ActiveMJobs.Delete ( i );
-					}
-					Vehicle->MoveJobActive = false;
-					bEndForNow = true;
-					return;
-				}
+				Vehicle->MoveJobActive = false;
+				bEndForNow = true;
+				return;
 			}
 		}
 	}
@@ -856,8 +834,11 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 	{
 	case MJOB_OK:
 		{
-			Vehicle->moving = true;
-			if ( !Vehicle->MoveJobActive ) Vehicle->StartMoveSound();
+			if ( !Vehicle->MoveJobActive )
+			{
+				Vehicle->StartMoveSound();
+				Client->addActiveMoveJob( this );
+			}
 			if ( bEndForNow && !Vehicle->MoveJobActive )
 			{
 				bEndForNow = false;
@@ -865,7 +846,6 @@ void cClientMoveJob::handleNextMove( int iNextDestX, int iNextDestY, int iType )
 				Log.write ( " Client: reactivated movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 			}
 			Vehicle->MoveJobActive = true;
-			Log.write(" Client: The movejob is ok: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 		}
 		break;
 	case MJOB_STOP:
@@ -897,6 +877,17 @@ void cClientMoveJob::moveVehicle()
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
 	if ( Waypoints == NULL || Waypoints->next == NULL ) return;
+
+	if (!Vehicle->moving)
+	{
+		Vehicle->owner->DoScan();
+		Map->moveVehicle(Vehicle, Waypoints->next->X, Waypoints->next->Y );
+		Vehicle->OffX = 0;
+		Vehicle->OffY = 0;
+		setOffset(Vehicle, iNextDir, -64 );
+		Vehicle->moving = true;
+
+	}
 
 	int iSpeed;
 	if ( Vehicle->data.is_human )
@@ -968,41 +959,11 @@ void cClientMoveJob::moveVehicle()
 			}
 		}
 	}
-
-	switch ( iNextDir )
-	{
-		case 0:
-			Vehicle->OffY -= iSpeed;
-			break;
-		case 1:
-			Vehicle->OffY -= iSpeed;
-			Vehicle->OffX += iSpeed;
-			break;
-		case 2:
-			Vehicle->OffX += iSpeed;
-			break;
-		case 3:
-			Vehicle->OffX += iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 4:
-			Vehicle->OffY += iSpeed;
-			break;
-		case 5:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY += iSpeed;
-			break;
-		case 6:
-			Vehicle->OffX -= iSpeed;
-			break;
-		case 7:
-			Vehicle->OffX -= iSpeed;
-			Vehicle->OffY -= iSpeed;
-			break;
-	}
+	
+	setOffset(Vehicle, iNextDir, iSpeed);
 
 	// check whether the point has been reached:
-	if ( Vehicle->OffX >= 64 || Vehicle->OffY >= 64 || Vehicle->OffX <= -64 || Vehicle->OffY <= -64 )
+	if ( abs( Vehicle->OffX ) < iSpeed && abs( Vehicle->OffY ) < iSpeed )
 	{
 		doEndMoveVehicle ();
 	}
@@ -1032,34 +993,6 @@ void cClientMoveJob::doEndMoveVehicle ()
 
 	Vehicle->moving = false;
 
-	cMapField& field = Map->fields[Waypoints->X+Waypoints->Y*Map->size];
-	if ( !bPlane )
-	{
-		if ( field.getVehicles() != NULL || field.getTopBuilding() != NULL && !field.getTopBuilding()->data.is_connector )
-		{
-			if ( field.getVehicles() ) Log.write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other vehicle with ID\"" + iToStr( field.getVehicles()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
-			else Log.write ( " Client: Next waypoint for vehicle with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other building with ID\"" + iToStr( field.getTopBuilding()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
-			bFinished = true;
-		}
-		else
-		{
-			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
-			Log.write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-		}
-	}
-	else
-	{
-		if ( field.getPlanes() != NULL )
-		{
-			Log.write ( " Client: Next waypoint for plane with ID \"" + iToStr( Vehicle->iID )  + "\" is blocked by an other plane with ID\"" + iToStr( field.getPlanes()->iID ) + "\"", cLog::eLOG_TYPE_NET_ERROR );
-			bFinished = true;
-		}
-		else
-		{
-			Map->moveVehicle( Vehicle, Waypoints->X, Waypoints->Y );
-			Log.write(" Client: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->X ) + ", Y: " + iToStr ( Waypoints->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-		}
-	}
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 

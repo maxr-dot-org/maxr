@@ -2642,20 +2642,6 @@ void cServer::handleMoveJobs ()
 
 		if ( Vehicle == NULL ) continue;
 
-		// rotate vehicle
-		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
-		{
-			Vehicle->rotating = true;
-			if ( iTimer1 )
-			{
-				Vehicle->RotateTo ( MoveJob->iNextDir );
-			}
-			continue;
-		}
-		else
-		{
-			Vehicle->rotating = false;
-		}
 
 		if ( !Vehicle->moving )
 		{
@@ -2672,11 +2658,19 @@ void cServer::handleMoveJobs ()
 				delete MoveJob;
 				Vehicle->ServerMoveJob = NULL;
 				Log.write( " Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
+				continue;
 			}
+		}
+
+		if ( MoveJob->iNextDir != Vehicle->dir )
+		{
+			// rotate vehicle
+			if ( iTimer1 ) Vehicle->RotateTo ( MoveJob->iNextDir );
 		}
 		else
 		{
-			if ( Server->iTimer0 ) MoveJob->moveVehicle ();
+			//move the vehicle
+			if ( iTimer0 ) MoveJob->moveVehicle ();
 		}
 	}
 }

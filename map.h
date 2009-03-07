@@ -97,9 +97,6 @@ private:
 	
 	
 public:
-	/** reservations for movejobs */
-	bool reserved;
-	bool air_reserved;
 
 	cMapField();
 	/** returns a Iterator for the vehicles on this field */
