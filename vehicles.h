@@ -31,7 +31,6 @@
 // Vehicle-Strukturen ////////////////////////////////////////////////////////
 
 class cPlayer;
-class cMJobs;
 class cAutoMJob;
 class cMap;
 class cServerMoveJob;
@@ -94,7 +93,6 @@ public:
 	bool selected;   // Gibt an, ob das Fahrzeug ausgewählt ist
 	string name; // Name des Vehicles
 	cPlayer *owner;  // Eigentümer des Vehicles
-	cMJobs *mjob;    // Der Movejob des Vehicles
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
 	cAutoMJob *autoMJob; //the auto move AI of the vehicle

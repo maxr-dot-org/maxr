@@ -250,8 +250,7 @@ void cServer::run()
 		handleMoveJobs ();
 		handleTimer();
 		handleWantEnd();
-		SDL_Delay( 10 );
-	}
+		SDL_Delay( 10 );	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -320,7 +319,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iDestOff = message->popInt32();
 			bool bPlane = message->popBool();
 
-			//FIXME: I think there are some memleaks. is the client movejob alway deleted? --Eiko
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
 			{
@@ -332,6 +330,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Log.write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
 				break;
 			}
+			//TODO: is this check really needed?
 			if ( Vehicle->bIsBeeingAttacked )
 			{
 				Log.write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );

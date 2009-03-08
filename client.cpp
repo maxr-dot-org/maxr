@@ -942,7 +942,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding && !bWaitForOthers )
 	{
-		if ( SelectedVehicle->ClientMoveJob ) SelectedVehicle->ClientMoveJob->release();
+		sendWantStopMove ( SelectedVehicle->iID );
 		SelectedVehicle->ShowBuildMenu();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build && !bWaitForOthers )
@@ -1637,31 +1637,28 @@ void cClient::drawMap( bool bPure )
 		}
 	}
 
-	/*if ( 1 )
+	/*scr.y = 0;
+	scr.h = scr.w = iZoom;
+	dest.y = 18-iOffY+iZoom*iStartY;
+	for ( iY = iStartY; iY <= iEndY; iY++ )
 	{
-		scr.y = 0;
-		scr.h = scr.w = iZoom;
-		dest.y = 18-iOffY+iZoom*iStartY;
-		for ( iY = iStartY; iY <= iEndY; iY++ )
+		dest.x = 180-iOffX+iZoom*iStartX;
+		iPos = iY*Map->size+iStartX;
+		for ( iX = iStartX; iX <= iEndX; iX++ )
 		{
-			dest.x = 180-iOffX+iZoom*iStartX;
-			iPos = iY*Map->size+iStartX;
-			for ( iX = iStartX; iX <= iEndX; iX++ )
+			if ( Map->fields[iPos].getVehicles() )
 			{
-				if ( Map->fields[iPos].getVehicles() )
-				{
-					font->showText(dest.x+1,dest.y+1, "C", FONT_LATIN_SMALL_YELLOW);
-				
-				}
-				if ( Server->Map->fields[iPos].getVehicles() )
-				{
-					font->showText(dest.x+1,dest.y+10, "S", FONT_LATIN_SMALL_YELLOW);
-				}
-				iPos++;
-				dest.x += iZoom;
+				font->showText(dest.x+1,dest.y+1, "C", FONT_LATIN_SMALL_YELLOW);
+			
 			}
-			dest.y += iZoom;
+			if ( Server->Map->fields[iPos].getVehicles() )
+			{
+				font->showText(dest.x+1,dest.y+10, "S", FONT_LATIN_SMALL_YELLOW);
+			}
+			iPos++;
+			dest.x += iZoom;
 		}
+		dest.y += iZoom;
 	}*/
 }
 
@@ -4998,11 +4995,14 @@ void cClient::handleMoveJobs ()
 		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{
 			// Stop the soundstream
-			if ( Vehicle && Vehicle == SelectedVehicle && Vehicle->MoveJobActive )
+			if ( Vehicle && Vehicle == SelectedVehicle && Vehicle->ClientMoveJob == MoveJob )
 			{
 				StopFXLoop ( iObjectStream );
-				if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
-				else PlayFX ( Vehicle->typ->Stop );
+				if (Vehicle->MoveJobActive )
+				{
+					if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+					else PlayFX ( Vehicle->typ->Stop );
+				}
 				iObjectStream = Vehicle->PlayStram();
 			}
 		}
@@ -5050,19 +5050,16 @@ void cClient::handleMoveJobs ()
 
 		if ( Vehicle == NULL ) continue;
 
-		// rotate vehicle
+
 		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
 		{
-			if ( iTimer1 )
-			{
-				Vehicle->RotateTo ( MoveJob->iNextDir );
-			}
-			continue;
+			// rotate vehicle
+			if ( iTimer1 ) Vehicle->RotateTo ( MoveJob->iNextDir );
 		}
-
-		if ( Vehicle->MoveJobActive )
+		else if ( Vehicle->MoveJobActive )
 		{
-			MoveJob->moveVehicle();
+			// move vehicle
+			if ( iTimer0 ) MoveJob->moveVehicle();
 		}
 	}
 }

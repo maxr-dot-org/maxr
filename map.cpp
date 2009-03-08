@@ -922,9 +922,12 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	}
 	else
 	{
-		//there will be only one vehicle per field
-		fields[oldOffset].vehicles.Delete(0);
-		
+		cList<cVehicle*>& vehicles = fields[oldOffset].vehicles;
+		for ( unsigned int i = 0; i < vehicles.Size(); i++ )
+		{
+			if ( vehicles[i] == vehicle ) vehicles.Delete(i);
+		}
+
 		//check, whether the vehicle is centered on 4 map fields
 		if ( vehicle->data.is_big )
 		{

@@ -179,11 +179,13 @@ public:
 	bool bPlane;
 
 	sWaypoint *Waypoints;
+	sWaypoint *lastWaypoints;
 
+	void setVehicleToCoords(int x, int y);
 	bool generateFromMessage( cNetMessage *message );
 	bool calcPath();
 	void release();
-	void handleNextMove( int iNextDestX, int iNextDestY, int iType );
+	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType );
 	void moveVehicle();
 	void doEndMoveVehicle ();
 	void calcNextDir ();

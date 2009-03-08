@@ -63,7 +63,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	data = owner->VehicleData[typ->nr];
 	data.hit_points = data.max_hit_points;
 	data.ammo = data.max_ammo;
-	mjob = NULL;
 	ClientMoveJob = NULL;
 	ServerMoveJob = NULL;
 	autoMJob = NULL;
@@ -161,11 +160,6 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		moving = false;
 		StopFXLoop ( Client->iObjectStream );
 		Client->iObjectStream = PlayStram();
-	}
-
-	if ( ClientMoveJob && moving && !MoveJobActive )
-	{
-		ClientMoveJob->release();
 	}
 
 	// Den Schadenseffekt machen:
@@ -1928,10 +1922,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 
 		if ( ExeNr == nr )
 		{
-			if ( ClientMoveJob )
-			{
-				ClientMoveJob->release();
-			}
+			if ( ClientMoveJob ) sendWantStopMove ( iID );
 
 			MenuActive = false;
 

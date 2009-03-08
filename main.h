@@ -47,7 +47,6 @@ using namespace std;
 class cPlayer;
 class cBuilding;
 class cVehicle;
-class cMJobs;
 class cAJobs;
 class cLanguage;
 class cNetMessage;
