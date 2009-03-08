@@ -77,7 +77,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action
-	GAME_EV_CHANGE_OWNER,			// the owner of a unit has to be changed
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -225,6 +224,10 @@ void sendRequestResync( char PlayerNr );
 * sends that a unit has been set to automove status
 */
 void sendSetAutoStatus( int unitID, bool set );
+/**
+* sends that the infiltrator wants to infiltrate a unit
+*@author alzi alias DoctorDeath
+*/
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
 
 #endif // clienteventsH

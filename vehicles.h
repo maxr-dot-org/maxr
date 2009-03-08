@@ -219,10 +219,20 @@ public:
 	*@return true if there was a mine to be cleared
 	*/
 	bool clearMine();
+	/**
+	* checks whether the commando action can be performed or not
+	*@author alzi alias DoctorDeath
+	*/
 	bool canDoCommandoAction( int x, int y, cMap *map, bool steal );
+	/**
+	* draws the commando curser for stealing or disabling with the calculated chance
+	*@author alzi alias DoctorDeath
+	*/
 	void drawCommandoCursor( int off, bool steal );
-	int CalcCommandoChance(bool steal);
-	void CommandoOperation(int off,bool steal);
+	/**
+	* calculates the chance for disabling or stealing the target unit
+	*@author alzi alias DoctorDeath
+	*/
 	int calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal );
 	void DeleteStored(void);
 	/**

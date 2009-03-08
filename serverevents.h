@@ -289,8 +289,11 @@ void sendCredits (int newCredits, int player);
 void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
 void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
 void sendSetAutomoving ( cVehicle *Vehicle );
+/**
+* sends the result of a infiltrating action to the client
+*@author alzi alias DoctorDeath
+*/
 void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player );
-void sendChangeOwner ( cVehicle *vehicle, int newOwnerNumber, int player );
 
 
 #endif // servereventsH

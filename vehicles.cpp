@@ -4621,98 +4621,6 @@ void cVehicle::drawCommandoCursor ( int off, bool steal )
 	SDL_FillRect ( sf, &r, 0x00FF00 );
 }
 
-// Executes a commando operation (like stealing)
-void cVehicle::CommandoOperation ( int off, bool steal )
-{
-	/*int chance;
-	bool success;
-	data.shots--;
-	StealActive = false;
-	DisableActive = false;
-
-	chance = 0;//CalcCommandoChance ( steal );
-
-	if (random(100) < chance)
-	{
-		if( steal )
-		{
-			cVehicle *vehicle = Client->Map->fields[off].getVehicles();
-			if( !vehicle->Disabled )
-			{
-				success = false;
-			}
-			else
-			{
-				success = true;
-			}
-		}
-		else
-		{
-			success = true;
-		}
-	}
-	else
-	{
-		success = false;
-	}
-
-	if ( success )
-	{
-		if ( steal )
-		{
-			cVehicle *v = Client->Map->fields[off].getVehicles();
-
-			if ( v )
-				v->owner = owner;
-
-			PlayVoice ( VoiceData.VOIUnitStolen );
-		}
-		else
-		{
-			cVehicle *v = Client->Map->fields[off].getVehicles();
-			PlayVoice ( VoiceData.VOIUnitDisabled );
-
-			if ( v )
-			{
-				v->Disabled = 2 + CommandoRank / 2;
-				v->data.speed = 0;
-				v->data.shots = 0;
-
-				if ( v->ClientMoveJob )
-				{
-					v->ClientMoveJob->bFinished = true;
-					v->ClientMoveJob = NULL;
-					v->moving = false;
-					v->MoveJobActive = false;
-				}
-			}
-			else
-			{
-				cBuilding *b = Client->Map->fields[off].getTopBuilding();
-
-				if ( b )
-				{
-					b->Disabled = 2 + CommandoRank / 2;
-					b->data.shots = 0;
-					//b->StopWork ( true );
-				}
-			}
-		}
-
-		if ( CommandoRank < 5 )
-			CommandoRank++;
-	}
-	else
-	{
-		PlayVoice ( VoiceData.VOICommandoDetected );
-	}
-
-	if (  Client->SelectedVehicle == this )
-	{
-		ShowDetails();
-	}*/
-}
-
 int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal )
 {
 	int destTurn, factor, srcLevel, chance;
@@ -4725,7 +4633,14 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 	factor = steal ? 1 : 4;
 	srcLevel = (int)CommandoRank+7;
 
+	/* The chance to disable or steal a unit depends on the infiltratorranking and the
+	buildcosts (or 'turns' in the original game) of the target unit. The chance rises
+	linearly with a higher ranking of the infiltrator. The chance of a unexperienced
+	infiltrator will be calculated like he has the ranking 7. Disabling has a 4 times
+	higher chance then stealing.
+	*/
 	chance = Round( (float)(8*srcLevel)/(35*destTurn)*factor*100 );
+
 	if ( chance > 90 ) chance = 90;
 	return chance;
 }

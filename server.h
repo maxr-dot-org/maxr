@@ -221,7 +221,15 @@ private:
 	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo, 
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
+	/**
+	* changes the owner of a vehicle
+	*@author alzi alias DoctorDeath
+	*/
 	void changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner );
+	/**
+	* stops the buildingprocess of a working vehicle.
+	*@author alzi alias DoctorDeath
+	*/
 	void stopVehicleBuilding ( cVehicle *vehicle );
 
 public:

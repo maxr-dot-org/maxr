@@ -935,6 +935,7 @@ void sendSetAutomoving ( cVehicle *Vehicle  )
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
 }
 
+//-------------------------------------------------------------------------------------
 void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_COMMANDO_ANSWER );
@@ -944,10 +945,3 @@ void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int play
 	Server->sendNetMessage( message, player );
 }
 
-void sendChangeOwner ( cVehicle *vehicle, int newOwnerNumber, int player )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_CHANGE_OWNER );
-	message->pushInt16 ( newOwnerNumber );
-	message->pushInt16 ( vehicle->iID );
-	Server->sendNetMessage( message, player );
-}

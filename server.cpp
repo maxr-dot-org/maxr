@@ -1584,8 +1584,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			bool success = false;
 			if ( random ( 100 ) < chance )
 			{
+				// the strength rises every 5 rankings
 				int strength = (int)(((int)srcVehicle->CommandoRank+5)/5);
-				srcVehicle->CommandoRank += (float)1/strength;
 
 				if ( steal )
 				{
@@ -1599,6 +1599,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				else
 				{
+					// only on disabling units the infiltartor gets exp. As higher his level is as slower he rises onto the next one.
+					srcVehicle->CommandoRank += (float)1/strength;
+
 					if ( destVehicle )
 					{
 						// stop the vehicle and make it disabled

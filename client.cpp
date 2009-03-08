@@ -4619,7 +4619,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else PlayVoice ( VoiceData.VOICommandoDetected );
 			cVehicle *srcUnit = getVehicleFromID ( message->popInt16() );
-			if ( srcUnit && !srcUnit->data.shots )
+			if ( srcUnit && !srcUnit->data.shots && srcUnit == SelectedVehicle )
 			{
 				srcUnit->DisableActive = false;
 				srcUnit->StealActive = false;

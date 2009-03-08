@@ -496,6 +496,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_AUTOMOVE_STATUS");
 	case GAME_EV_SET_AUTOMOVE:
 		return string("GAME_EV_SET_AUTOMOVE");
+	case GAME_AV_WANT_COM_ACTION:
+		return string("GAME_AV_WANT_COM_ACTION");
+	case GAME_EV_COMMANDO_ANSWER:
+		return string("GAME_EV_COMMANDO_ANSWER");
 	default:
 		return iToStr( iType );
 	}
