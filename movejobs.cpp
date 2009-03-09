@@ -839,6 +839,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 	if ( Waypoints == NULL || Waypoints->next == NULL )
 	{
 		Log.write ( " Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
+		//TODO: not finish here
 		bFinished = true;
 		Vehicle->OffX = Vehicle->OffY = 0;
 	}

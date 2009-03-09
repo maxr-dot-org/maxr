@@ -5776,7 +5776,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	{
 		Client->addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
 	}
-	else if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh == 0 )
+	else if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh != 0 )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}

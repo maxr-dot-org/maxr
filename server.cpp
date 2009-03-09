@@ -2812,6 +2812,12 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	int value = 0;
 	bool bigRubble = false;
 
+	if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh != 0 )
+	{
+		deleteUnit( vehicle );
+		return;
+	}
+
 	//delete all buildings on the field, except connectors
 	cBuildingIterator bi = (*Map)[offset].getBuildings();
 	if ( bi && bi->data.is_connector ) bi++;
@@ -2863,7 +2869,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	}
 
 
-	if ( (vehicle->data.can_drive != DRIVE_AIR || vehicle->FlightHigh == 0) && !vehicle->data.is_human )
+	if ( !vehicle->data.is_human )
 	{
 		value+= vehicle->data.iBuilt_Costs;
 	}
