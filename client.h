@@ -113,10 +113,7 @@ private:
 	SDL_TimerID TimerID;
 	/** will be incremented by the Timer */
 	unsigned int iTimerTime;
-	/**  the soundstream of the selected unit */
-	int iObjectStream;
 	/** Object that is under the mouse cursor */
-	//sGameObjects *OverObject;
 	cMapField *OverUnitField;
 	/** the acctual blink color */
 	unsigned int iBlinkColor;
@@ -347,6 +344,8 @@ private:
 	*/
 	void makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle );
 public:
+	/**  the soundstream of the selected unit */
+	int iObjectStream;
 	/** framecounter for the animations */
 	unsigned int iFrame;
 	/** number of drawn frames per second */

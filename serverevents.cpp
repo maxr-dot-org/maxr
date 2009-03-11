@@ -317,13 +317,26 @@ void sendDoStopWork( cBuilding* building )
 }
 
 //-------------------------------------------------------------------------------------
-void sendNextMove( int iUnitID, int iDestOff, int iType, int iPlayer )
+void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 {
+	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
+		if ( iSavedSpeed >= 0 ) message->pushChar( iSavedSpeed );
+		message->pushChar( iType );
+		message->pushInt16(vehicle->PosY);
+		message->pushInt16(vehicle->PosX);
+		message->pushInt16( vehicle->iID );
+		Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
+	}
+
 	cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
-	message->pushInt16( iType );
-	message->pushInt16( iDestOff );
-	message->pushInt16( iUnitID );
-	Server->sendNetMessage( message, iPlayer );
+	if ( iSavedSpeed >= 0 ) message->pushChar( iSavedSpeed );
+	message->pushChar( iType );
+	message->pushInt16(vehicle->PosY);
+	message->pushInt16(vehicle->PosX);
+	message->pushInt16( vehicle->iID );
+	Server->sendNetMessage( message, vehicle->owner->Nr);
 }
 
 //-------------------------------------------------------------------------------------

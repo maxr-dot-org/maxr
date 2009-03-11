@@ -177,6 +177,7 @@ public:
 	int iNextDir;
 	int iSavedSpeed;
 	bool bPlane;
+	bool bSoundRunning;
 
 	sWaypoint *Waypoints;
 	sWaypoint *lastWaypoints;
@@ -185,11 +186,13 @@ public:
 	bool generateFromMessage( cNetMessage *message );
 	bool calcPath();
 	void release();
-	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType );
+	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed );
 	void moveVehicle();
 	void doEndMoveVehicle ();
 	void calcNextDir ();
 	void drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezial );
+	void startMoveSound();
+	void stopMoveSound();
 };
 
 #endif // movejobsH

@@ -492,11 +492,7 @@ bool cServerMoveJob::checkMove()
 		// else delete the movejob and inform the client that he has to find a new path
 		else
 		{
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-			{
-				sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, Vehicle->SeenByPlayerList[i]->Nr );
-			}
-			sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_BLOCKED, Vehicle->owner->Nr );
+			sendNextMove ( Vehicle, MJOB_BLOCKED );
 		}
 		return false;
 	}
@@ -517,11 +513,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->moving = true;
 
 	// send move command to all players who can see the unit
-	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-	{
-		sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->SeenByPlayerList[i]->Nr );
-	}
-	sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_OK, Vehicle->owner->Nr );
+	sendNextMove ( Vehicle, MJOB_OK );
 
 	Map->moveVehicle(Vehicle, Waypoints->next->X, Waypoints->next->Y );
 	Vehicle->owner->DoScan();
@@ -658,6 +650,7 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	this->bPlane = bPlane;
 	bFinished = false;
 	bEndForNow = false;
+	bSoundRunning = false;
 	iSavedSpeed = 0;
 	Waypoints = NULL;
 	lastWaypoints = NULL;
@@ -701,7 +694,11 @@ cClientMoveJob::~cClientMoveJob()
 
 	for ( unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++ )
 	{
-		if ( Client->ActiveMJobs[i] == this ) Client->ActiveMJobs.Delete(i);
+		if ( Client->ActiveMJobs[i] == this ) 
+		{
+			Client->ActiveMJobs.Delete(i);
+			i--;
+		}
 	}
 }
 
@@ -709,6 +706,7 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 {
 	if ( x == Waypoints->X && y == Waypoints->Y ) return;
 
+	Log.write(" Client: mjob: setting vehicle " + iToStr(Vehicle->iID) + " to position " + iToStr(x) + " : " + iToStr(y), cLog::eLOG_TYPE_NET_DEBUG );
 	//determine direction
 	bool bForward = false;
 	sWaypoint *Waypoint = Waypoints;
@@ -730,7 +728,7 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 		Waypoint = Waypoints;
 		while ( Waypoint )
 		{
-			if ( Waypoint->X != x && Waypoint->Y != y )
+			if ( Waypoint->X != x || Waypoint->Y != y )
 			{
 				Vehicle->DecSpeed( Waypoint->next->Costs );
 				Waypoints = Waypoints->next;
@@ -823,24 +821,19 @@ void cClientMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	Log.write ( " Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG );
-	for (unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++)
-	{
-		if ( this == Client->ActiveMJobs[i] ) return;
-	}
 	Client->addActiveMoveJob ( this );
 	Log.write ( " Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
-void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY, int iType )
+void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed )
 {
-	// the client is faster then the server and has already
+	// the client is faster than the server and has already
 	// reached the last field or the next will be the last,
 	// then stop the vehicle
 	if ( Waypoints == NULL || Waypoints->next == NULL )
 	{
 		Log.write ( " Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG );
-		//TODO: not finish here
-		bFinished = true;
+		bEndForNow = true;
 		Vehicle->OffX = Vehicle->OffY = 0;
 	}
 	else
@@ -862,7 +855,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		if ( iServerPositionX == Vehicle->PosX && iServerPositionY == Vehicle->PosY )
 		{
 			//the server has allready finished the current movement step
-			Log.write ( " Client: Server is one field faster then client", cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write ( " Client: Server is one field faster than client", cLog::eLOG_TYPE_NET_DEBUG );
 			if ( Vehicle->moving ) doEndMoveVehicle();
 		}
 		else if ( iServerPositionX == Waypoints->X && iServerPositionY == Waypoints->Y )
@@ -872,13 +865,13 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		else if ( bServerIsFaster )
 		{
 			//the server is faster than the client. So set so server position.
-			Log.write ( " Client: Server is more then one field faster", cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write ( " Client: Server is more than one field faster", cLog::eLOG_TYPE_NET_DEBUG );
 			if ( Vehicle->moving ) doEndMoveVehicle();
 			setVehicleToCoords( iServerPositionX, iServerPositionY );
 		}
 		else
 		{
-			//the client is more then one field faster, than the server. 
+			//the client is more than one field faster, than the server. 
 			//So wait, until the server reaches the current position.
 			Log.write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 			// just stop the vehicle and wait for the next commando of the server
@@ -898,7 +891,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		{
 			if ( !Vehicle->MoveJobActive )
 			{
-				Vehicle->StartMoveSound();
+				startMoveSound();
 				Client->addActiveMoveJob( this );
 			}
 			if ( bEndForNow )
@@ -916,6 +909,9 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			if ( Vehicle->moving ) doEndMoveVehicle();
 			setVehicleToCoords( iServerPositionX, iServerPositionY );
 			if ( bEndForNow ) Client->addActiveMoveJob(this);
+			this->iSavedSpeed = iSavedSpeed;
+			Vehicle->data.speed = 0;
+			if ( Vehicle == Client->SelectedVehicle ) Vehicle->ShowDetails();
 			bSuspended = true;
 			bEndForNow = true;
 		}
@@ -957,7 +953,11 @@ void cClientMoveJob::moveVehicle()
 	if ( Vehicle == NULL || Vehicle->ClientMoveJob != this ) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
-	if ( Waypoints == NULL || Waypoints->next == NULL ) return;
+	if ( Waypoints == NULL || Waypoints->next == NULL ) 
+	{
+		stopMoveSound();
+		return;
+	}
 
 	if (!Vehicle->moving)
 	{
@@ -966,6 +966,7 @@ void cClientMoveJob::moveVehicle()
 		{
 			bSuspended = true;
 			bEndForNow = true;
+			stopMoveSound();
 			return;
 		}
 
@@ -1127,4 +1128,22 @@ void cClientMoveJob::drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezia
 	{
 		SDL_BlitSurface ( OtherData.WayPointPfeile[iIndex][64-Client->Hud.Zoom], NULL, buffer, &Dest );
 	}
+}
+
+void cClientMoveJob::startMoveSound()
+{
+	Vehicle->StartMoveSound();
+	bSoundRunning = true;
+}
+
+void cClientMoveJob::stopMoveSound()
+{
+	if ( !bSoundRunning ) return;
+
+	bSoundRunning = false;
+	StopFXLoop ( Client->iObjectStream );
+	if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+	else PlayFX ( Vehicle->typ->Stop );
+
+	Client->iObjectStream = Vehicle->PlayStram();
 }

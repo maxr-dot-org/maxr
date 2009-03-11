@@ -250,7 +250,8 @@ void cServer::run()
 		handleMoveJobs ();
 		handleTimer();
 		handleWantEnd();
-		SDL_Delay( 10 );	}
+		SDL_Delay( 10 );
+	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -2356,11 +2357,6 @@ bool cServer::checkEndActions ( int iPlayer )
 					NextVehicle->ServerMoveJob->bEndForNow = false;
 					NextVehicle->ServerMoveJob->ScrX = NextVehicle->PosX;
 					NextVehicle->ServerMoveJob->ScrY = NextVehicle->PosY;
-					for ( unsigned int j = 0; j < NextVehicle->SeenByPlayerList.Size(); j++ )
-					{
-						sendMoveJobServer ( NextVehicle->ServerMoveJob, NextVehicle->SeenByPlayerList[j]->Nr );
-					}
-					sendMoveJobServer ( NextVehicle->ServerMoveJob, NextVehicle->owner->Nr );
 					addActiveMoveJob ( NextVehicle->ServerMoveJob );
 					sMessage = "Text~Comp~Turn_Automove";
 				}
@@ -2661,51 +2657,42 @@ void cServer::handleMoveJobs ()
 		if ( Vehicle && Vehicle->bIsBeeingAttacked ) 
 			continue;
 
-		if ( MoveJob->bFinished || MoveJob->bEndForNow )
+		// stop the job
+		if ( MoveJob->bEndForNow && Vehicle )
 		{
-			// stop the job
-			if ( MoveJob->bEndForNow && Vehicle )
+			Log.write(" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+			sendNextMove ( Vehicle, MJOB_STOP, MoveJob->iSavedSpeed );
+			ActiveMJobs.Delete ( i );
+			continue;
+		}
+		else if ( MoveJob->bFinished )
+		{
+			if ( Vehicle && Vehicle->ServerMoveJob == MoveJob )
 			{
-				Log.write(" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY * Map->size, MJOB_STOP, Vehicle->SeenByPlayerList[i]->Nr );
-				}
-				sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_STOP, Vehicle->owner->Nr );
+				Log.write(" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
+				Vehicle->ServerMoveJob = NULL;
+				Vehicle->moving = false;
+				Vehicle->MoveJobActive = false;
+
+				sendNextMove ( Vehicle, MJOB_FINISHED );
 			}
-			else
+			else Log.write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
+			delete MoveJob;
+
+			//continue path building
+			if ( Vehicle && Vehicle->BuildPath )
 			{
-				if ( Vehicle && Vehicle->ServerMoveJob == MoveJob )
+				if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
 				{
-					Log.write(" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-					Vehicle->ServerMoveJob = NULL;
-					Vehicle->moving = false;
-					Vehicle->MoveJobActive = false;
-
-					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-					{
-						sendNextMove( Vehicle->iID, Vehicle->PosX+Vehicle->PosY * Map->size, MJOB_FINISHED, Vehicle->SeenByPlayerList[i]->Nr );
-					}
-					sendNextMove ( Vehicle->iID, Vehicle->PosX+Vehicle->PosY*Map->size, MJOB_FINISHED, Vehicle->owner->Nr );
+					Vehicle->IsBuilding = true;
+					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
+					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
+					sendBuildAnswer( true, Vehicle );
 				}
-				else Log.write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-				delete MoveJob;
-
-				//continue path building
-				if ( Vehicle && Vehicle->BuildPath )
+				else
 				{
-					if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
-					{
-						Vehicle->IsBuilding = true;
-						Vehicle->BuildCosts = Vehicle->BuildCostsStart;
-						Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
-						sendBuildAnswer( true, Vehicle );
-					}
-					else
-					{
-						Vehicle->BuildPath = false;
-						sendBuildAnswer( false, Vehicle );
-					}
+					Vehicle->BuildPath = false;
+					sendBuildAnswer( false, Vehicle );
 				}
 			}
 			ActiveMJobs.Delete ( i );
@@ -2719,14 +2706,7 @@ void cServer::handleMoveJobs ()
 		{
 			if ( !MoveJob->checkMove() && !MoveJob->bFinished )
 			{
-				for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
-				{
-					if ( MoveJob == ActiveMJobs[i] )
-					{
-						ActiveMJobs.Delete ( i );
-						break;
-					}
-				}
+				ActiveMJobs.Delete ( i );
 				delete MoveJob;
 				Vehicle->ServerMoveJob = NULL;
 				Log.write( " Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG );
