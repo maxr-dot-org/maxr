@@ -46,7 +46,6 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 	blocknum = 0;
 	blocksize = 0;
 	heapCount = 0;
-	calcPath ();
 }
 
 cPathCalculator::~cPathCalculator()
@@ -64,7 +63,7 @@ cPathCalculator::~cPathCalculator()
 	if ( closedList != NULL ) delete [] closedList;
 }
 
-void cPathCalculator::calcPath ()
+sWaypoint* cPathCalculator::calcPath ()
 {
 	// generate open and closed list
 	nodesHeap = new sPathNode*[Map->size*Map->size+1];
@@ -130,7 +129,7 @@ void cPathCalculator::calcPath ()
 
 			NextWaypoint->next = NULL;
 
-			return;
+			return Waypoints;
 		}
 
 		// expand node
@@ -139,6 +138,9 @@ void cPathCalculator::calcPath ()
 
 	// there is no path to the destination field
 	Waypoints = NULL;
+
+
+	return Waypoints;
 }
 
 void cPathCalculator::expandNodes ( sPathNode *ParentNode )
@@ -449,7 +451,7 @@ bool cServerMoveJob::calcPath()
 	if ( ScrX == DestX && ScrY == DestY ) return false;
 
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
-	Waypoints = PathCalculator.Waypoints;
+	Waypoints = PathCalculator.calcPath();
 	if ( Waypoints )
 	{
 		calcNextDir();
@@ -480,8 +482,25 @@ bool cServerMoveJob::checkMove()
 		return false;
 	}
 
+	// not enough waypoints for this move?
+	if ( Vehicle->data.speed < Waypoints->next->Costs )
+	{
+		Log.write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
+		iSavedSpeed += Vehicle->data.speed;
+		Vehicle->data.speed = 0;
+		bEndForNow = true;
+		return true;
+	}
+
 	bInSentryRange = Vehicle->InSentryRange();
-	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange )
+
+	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange )
+	{
+		sideStepStealthUnit( Waypoints->next->X, Waypoints->next->Y );
+	}
+	
+	//when the next field is still blocked, inform the client
+	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange ) //TODO: bInSentryRange?? Why?
 	{
 		Log.write( " Server: Next point is blocked: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
 		// if the next point would be the last, finish the job here
@@ -495,16 +514,6 @@ bool cServerMoveJob::checkMove()
 			sendNextMove ( Vehicle, MJOB_BLOCKED );
 		}
 		return false;
-	}
-
-	// not enough waypoints for this move?
-	if ( Vehicle->data.speed < Waypoints->next->Costs )
-	{
-		Log.write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
-		iSavedSpeed += Vehicle->data.speed;
-		Vehicle->data.speed = 0;
-		bEndForNow = true;
-		return true;
 	}
 
 	//next step can be executed. start the move and set the vehicle to the next field
@@ -522,6 +531,91 @@ bool cServerMoveJob::checkMove()
 	setOffset( Vehicle, iNextDir, -64 );
 
 	return true;
+}
+
+void cServerMoveJob::sideStepStealthUnit( int PosX, int PosY )
+{
+	//TODO: make sure, the stealth vehicle takes the direct diagonal move. Also when two straight moves would be shorter.
+
+	//first look for an undetected stealth unit
+	cVehicle* stealthVehicle = Server->Map->fields[PosX+PosY*Server->Map->size].getVehicles();
+	if ( !stealthVehicle ) return;
+	if ( stealthVehicle->owner == Vehicle->owner ) return;
+	if ( !stealthVehicle->data.is_stealth_land && !stealthVehicle->data.is_stealth_sea ) return;
+	if ( stealthVehicle->isDetectedByPlayer( Vehicle->owner )) return;
+
+	//make sure a running movement is finished, before starting the side step move
+	if ( stealthVehicle->moving ) stealthVehicle->ServerMoveJob->doEndMoveVehicle();
+
+	//found a stealth unit. Try to find a place where the unit can move
+	bool placeFound = false;
+	int minCosts = 99;
+	int bestX, bestY;
+	for ( int x = PosX - 1; x <= PosX + 1; x++ )
+	{
+		if ( x < 0 || x >= Server->Map->size ) continue;
+		for ( int y = PosY - 1; y <= PosY + 1; y++ )
+		{
+			if ( y < 0 || y >= Server->Map->size ) continue;
+			if ( x == PosX && y == PosY ) continue;
+
+			//check whether this field is a possible destination
+			if ( !Server->Map->possiblePlace( stealthVehicle, x, y ) ) continue;
+
+			//check costs of the move
+			cPathCalculator pathCalculator(0, 0, 0, 0, Map, stealthVehicle );
+			int costs = pathCalculator.calcNextCost(PosX, PosY, x, y);
+			if ( costs > stealthVehicle->data.speed ) continue;
+
+			//check whether the vehicle would be detected on the destination field
+			bool detectOnDest = false;
+			if ( stealthVehicle->data.is_stealth_land )
+			{
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
+					if ( (*Server->PlayerList)[i]->DetectLandMap[x+y*Map->size] ) detectOnDest = true;
+				}
+				if ( Server->Map->IsWater(x+y*Map->size,true) ) detectOnDest = true;
+			}
+			if ( stealthVehicle->data.is_stealth_sea )
+			{
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
+					if ( (*Server->PlayerList)[i]->DetectSeaMap[x+y*Map->size] ) detectOnDest = true;
+				}
+				if ( !Server->Map->IsWater(x+y*Map->size, true) ) detectOnDest = true;
+
+				if ( Vehicle->data.can_drive == DRIVE_LANDnSEA )
+				{
+					cBuilding* b = Map->fields[x+y*Map->size].getBaseBuilding();
+					if ( b && (b->data.is_road || b->data.is_bridge || b->data.is_platform )) detectOnDest = true;
+				}
+			}
+			if ( detectOnDest ) continue;
+
+			if ( costs < minCosts || (costs == minCosts && random(2) ))
+			{
+				//this is a good candidate for a destination
+				minCosts = costs;
+				bestX = x;
+				bestY = y;
+				placeFound = true;
+			}
+		}
+	}
+
+	if ( placeFound )
+	{
+		Server->addMoveJob( PosX+PosY*Server->Map->size, bestX+bestY*Server->Map->size, stealthVehicle );
+		stealthVehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
+		return;
+	}
+
+	//sidestepping failed. Uncover the vehicle.
+	stealthVehicle->setDetectedByPlayer( Vehicle->owner );
+	Server->checkPlayerUnits();
 }
 
 void cServerMoveJob::moveVehicle()
@@ -546,80 +640,85 @@ void cServerMoveJob::moveVehicle()
 	// check whether the point has been reached:
 	if ( abs( Vehicle->OffX ) < iSpeed && abs( Vehicle->OffY ) < iSpeed )
 	{
-		Log.write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
-		sWaypoint *Waypoint;
-		Waypoint = Waypoints->next;
-		delete Waypoints;
-		Waypoints = Waypoint;
+		doEndMoveVehicle();
+	}
+}
 
-		Vehicle->OffX = 0;
-		Vehicle->OffY = 0;
-		
-		if ( Waypoints->next == NULL )
+void cServerMoveJob::doEndMoveVehicle()
+{
+	Log.write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+	sWaypoint *Waypoint;
+	Waypoint = Waypoints->next;
+	delete Waypoints;
+	Waypoints = Waypoint;
+
+	Vehicle->OffX = 0;
+	Vehicle->OffY = 0;
+	
+	if ( Waypoints->next == NULL )
+	{
+		bFinished = true;
+	}
+
+	Vehicle->data.speed += iSavedSpeed;
+	iSavedSpeed = 0;
+	Vehicle->DecSpeed ( Waypoints->Costs );
+
+	// check for results of the move
+
+	// make mines explode if necessary
+	cBuilding* mine = Map->fields[Vehicle->PosX+Vehicle->PosY*Map->size].getMine();
+	if ( Vehicle->data.can_drive != DRIVE_AIR && mine && mine->owner != Vehicle->owner )
+	{
+		Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size ));
+		bEndForNow = true;
+	}
+
+	// search for resources if necessary
+	if ( Vehicle->data.can_survey )
+	{
+		sendVehicleResources( Vehicle, Map );
+		Vehicle->doSurvey();
+	}
+
+	//hide vehicle
+	while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
+
+	//handle detection
+	Vehicle->makeDetection();
+
+	// let other units fire on this one
+	Vehicle->InSentryRange();
+
+	// lay/clear mines if necessary
+	if ( Vehicle->data.can_lay_mines )
+	{
+		bool bResult = false;
+		if ( Vehicle->LayMines ) bResult = Vehicle->layMine();
+		else if ( Vehicle->ClearMines ) bResult = Vehicle->clearMine();
+		if ( bResult )
 		{
-			bFinished = true;
-		}
-
-		Vehicle->data.speed += iSavedSpeed;
-		iSavedSpeed = 0;
-		Vehicle->DecSpeed ( Waypoints->Costs );
-
-		// check for results of the move
-
-		// make mines explode if necessary
-		cBuilding* mine = Map->fields[Vehicle->PosX+Vehicle->PosY*Map->size].getMine();
-		if ( Vehicle->data.can_drive != DRIVE_AIR && mine && mine->owner != Vehicle->owner )
-		{
-			Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size ));
-			bEndForNow = true;
-		}
-
-		// search for resources if necessary
-		if ( Vehicle->data.can_survey )
-		{
-			sendVehicleResources( Vehicle, Map );
-			Vehicle->doSurvey();
-		}
-
-		//hide vehicle
-		while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
-
-		//handle detection
-		Vehicle->makeDetection();
-
-		// let other units fire on this one
-		Vehicle->InSentryRange();
-
-		// lay/clear mines if necessary
-		if ( Vehicle->data.can_lay_mines )
-		{
-			bool bResult = false;
-			if ( Vehicle->LayMines ) bResult = Vehicle->layMine();
-			else if ( Vehicle->ClearMines ) bResult = Vehicle->clearMine();
-			if ( bResult )
+			// send new unit values
+			sendUnitData( Vehicle, Vehicle->owner->Nr );
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
-				// send new unit values
-				sendUnitData( Vehicle, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
-				{
-					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
-				}
+				sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
 			}
 		}
+	}
 
-		Vehicle->moving = false;
-		calcNextDir();
+	Vehicle->moving = false;
+	calcNextDir();
 
-		//workaround for repairing/reloading
-		cBuilding* b = (*Server->Map)[Vehicle->PosX+Vehicle->PosY*Server->Map->size].getBuildings();
-		if ( Vehicle->data.can_drive == DRIVE_AIR && b && b->owner == Vehicle->owner && b->data.is_pad )
-		{
-			Vehicle->FlightHigh = 0;
-		}
-		else
-		{
-			Vehicle->FlightHigh = 64;
-		}
+	//workaround for repairing/reloading
+	cBuilding* b = (*Server->Map)[Vehicle->PosX+Vehicle->PosY*Server->Map->size].getBuildings();
+	if ( Vehicle->data.can_drive == DRIVE_AIR && b && b->owner == Vehicle->owner && b->data.is_pad )
+	{
+		Vehicle->FlightHigh = 0;
+	}
+	else
+	{
+		Vehicle->FlightHigh = 64;
 	}
 }
 
@@ -807,7 +906,7 @@ bool cClientMoveJob::calcPath()
 	if ( ScrX == DestX && ScrY == DestY ) return false;
 
 	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
-	Waypoints = PathCalculator.Waypoints;
+	Waypoints = PathCalculator.calcPath();
 	if ( Waypoints )
 	{
 		calcNextDir();
@@ -1110,7 +1209,7 @@ void cClientMoveJob::calcNextDir ()
 
 void cClientMoveJob::drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezial )
 {
-	int iIndex = 0;
+	int iIndex = -1;
 #define TESTXY_DP(a,b) if( Dest.x a LastDest->x && Dest.y b LastDest->y )
 	TESTXY_DP ( >,< ) iIndex = 0;
 	else TESTXY_DP ( ==,< ) iIndex = 1;
@@ -1120,6 +1219,9 @@ void cClientMoveJob::drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezia
 	else TESTXY_DP ( >,> ) iIndex = 5;
 	else TESTXY_DP ( ==,> ) iIndex = 6;
 	else TESTXY_DP ( <,> ) iIndex = 7;
+
+	if ( iIndex == -1 ) return;
+
 	if ( bSpezial )
 	{
 		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[iIndex][64-Client->Hud.Zoom], NULL, buffer, &Dest );

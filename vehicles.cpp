@@ -156,6 +156,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 	if ( !ClientMoveJob && ( MoveJobActive || moving ) )
 	{
+		//TODO: remove
 		MoveJobActive = false;
 		moving = false;
 		StopFXLoop ( Client->iObjectStream );
@@ -999,6 +1000,7 @@ int cVehicle::refreshData ()
 				{
 					IsBuilding = false;
 					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
+					this->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
 				}
 				else
 				{
@@ -2475,7 +2477,7 @@ void cVehicle::drawStatus() const
 			dest.y += 32;
 			dest.x += 32;
 		}
-		if ( data.speed )
+		if ( data.speed >= 4 )
 		{
 			if ( data.shots ) dest.x -= Client->Hud.Zoom/4;
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );

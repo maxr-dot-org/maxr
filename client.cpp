@@ -3639,7 +3639,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Log.write(" Client: Vehicle identificated by ID (" + iToStr( iID ) + ") but has wrong position [IS: X" + iToStr( Vehicle->PosX ) + " Y" + iToStr( Vehicle->PosY ) + "; SHOULD: X" + iToStr( iPosX ) + " Y" + iToStr( iPosY ) + "]", iLogType );
 
 					// set to server position if vehicle is not moving
-					if ( !Vehicle->moving )
+					if ( !Vehicle->MoveJobActive )
 					{
 						Map->moveVehicle( Vehicle, iPosX, iPosY );
 						if ( bBig ) Map->moveVehicleBig( Vehicle, iPosX, iPosY );
@@ -4984,7 +4984,7 @@ void cClient::handleTurnTime()
 void cClient::addActiveMoveJob ( cClientMoveJob *MoveJob )
 {
 	MoveJob->bSuspended = false;
-
+	if ( MoveJob->Vehicle) MoveJob->Vehicle->MoveJobActive = true;
 	for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
 	{
 		if ( ActiveMJobs[i] == MoveJob ) return;

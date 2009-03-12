@@ -69,6 +69,17 @@ public:
 	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle );
 	~cPathCalculator();
 
+	/**
+	* calculates the best path in costs and length
+	*@author alzi alias DoctorDeath
+	*/
+	sWaypoint* calcPath();
+	/**
+	* calculates the costs for moving from the source- to the destinationfield
+	*@author alzi alias DoctorDeath
+	*/
+	int calcNextCost( int srcX, int srcY, int destX, int destY );
+
 	/* the map on which the path will be calculated */
 	cMap *Map;
 	/* the moving vehicle */
@@ -77,10 +88,10 @@ public:
 	int ScrX, ScrY, DestX, DestY;
 	bool bPlane, bShip;
 
-	/* the waypoints of the found path*/
-	sWaypoint *Waypoints;
 
 private:
+	/* the waypoints of the found path*/
+	sWaypoint *Waypoints;
 	/* memoryblocks for the nodes */
 	sPathNode **MemBlocks;
 	/* number of blocks */
@@ -96,17 +107,6 @@ private:
 	sPathNode **closedList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
 	int heapCount;
-
-	/**
-	* calculates the best path in costs and length
-	*@author alzi alias DoctorDeath
-	*/
-	void calcPath();
-	/**
-	* calculates the costs for moving from the source- to the destinationfield
-	*@author alzi alias DoctorDeath
-	*/
-	int calcNextCost( int srcX, int srcY, int destX, int destY );
 	/**
 	* calculates the heuristic costs from the sourcefield to the total path destination
 	*@author alzi alias DoctorDeath
@@ -157,7 +157,9 @@ public:
 	bool calcPath();
 	void release();
 	bool checkMove();
+	void sideStepStealthUnit( int PosX, int PosY );
 	void moveVehicle();
+	void doEndMoveVehicle();
 	void calcNextDir();
 };
 

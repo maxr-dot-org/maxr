@@ -643,15 +643,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				checkPlayerUnits();
 			}
 
-			// send new vehicle status and position
+			/*// send new vehicle status and position		//done implicitly by addMoveJob()
 			sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
 				sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
-			}
+			}*/
 
 			// drive away from the building lot
 			addMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, Vehicle );
+			Vehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
 		}
 		break;
 	case GAME_EV_WANT_STOP_BUILDING:
@@ -3165,24 +3166,21 @@ bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 {
 	bool bIsAir = ( vehicle->data.can_drive == DRIVE_AIR );
 	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, bIsAir, vehicle );
-	if ( MoveJob->calcPath() )
-	{
-		sendMoveJobServer ( MoveJob, vehicle->owner->Nr );
-		for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
-		{
-			sendMoveJobServer( MoveJob, vehicle->SeenByPlayerList[i]->Nr );
-		}
-		addActiveMoveJob ( MoveJob );
-		return true;
-	}
-	else
+	if ( !MoveJob->calcPath() )
 	{
 		delete MoveJob;
 		vehicle->ServerMoveJob = NULL;
 		return false;
 	}
 
-	return false;
+	sendMoveJobServer ( MoveJob, vehicle->owner->Nr );
+	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	{
+		sendMoveJobServer( MoveJob, vehicle->SeenByPlayerList[i]->Nr );
+	}
+
+	addActiveMoveJob ( MoveJob );
+	return true;
 }
 
 void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
