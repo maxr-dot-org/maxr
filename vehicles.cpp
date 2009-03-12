@@ -162,12 +162,31 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		Client->iObjectStream = PlayStram();
 	}
 
-	// Den Schadenseffekt machen:
+	//make damage effect
 	if ( Client->iTimer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hit_points / data.max_hit_points ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
 	}
+
+	//make landing and take off of planes
+	if ( data.can_drive == DRIVE_AIR && Client->iTimer0 )
+	{
+		// check, if the plane should land
+		cBuilding *b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
+
+		if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !moving && !Attacking )
+		{
+			FlightHigh -= 8;
+			if ( FlightHigh < 0 ) FlightHigh = 0;
+		}
+		else
+		{
+			FlightHigh += 8;
+			if ( FlightHigh > 64 ) FlightHigh = 64;
+		}
+	}
+
 
 	float newzoom = (float)( 64.0 / Client->Hud.Zoom );
 	float factor = (float)(Client->Hud.Zoom/64.0);
@@ -192,7 +211,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	{
 		if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
 		{
-			// Vehicle drehen:
+			// rotate vehicle
 			RotateTo ( 0 );
 		}
 
@@ -201,7 +220,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		scr.h = (int)(typ->img_org[dir]->h*factor);
 
-		// Den Schatten malen:
+		// draw shadow
 		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
 		{
 			if ( StartUp && SettingsData.bAlphaEffects )
@@ -253,29 +272,10 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				}
 				else
 				{
-					cBuilding *b;
-					int high;
-					// check, if the plane should land
-					b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
-
-					if ( Client->iTimer0 )
-					{
-						if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !moving && !Attacking )
-						{
-							if ( FlightHigh > 0 )
-								FlightHigh -= 8;
-						}
-						else
-							if ( FlightHigh < 64 )
-							{
-								FlightHigh += 8;
-							}
-					}
-
-					// Schatten malen:
+					// draw shadow
 					if ( FlightHigh > 0 )
 					{
-						high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
+						int high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
 						tmp.x += high + ditherX;
 						tmp.y += high + ditherY;
 					}
@@ -285,7 +285,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 
-		// Die Spielerfarbe blitten:
+		// draw player color
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
 		if ( data.is_human )
@@ -300,7 +300,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
 		}
 
-		// Das Vehicle malen:
+		// draw the vehicle
 		scr.x = 0;
 
 		scr.y = 0;
@@ -355,7 +355,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			}
 		}
 
-		// Ggf das Overlay malen:
+		// draw overlay if necessary:
 		if ( data.has_overlay && SettingsData.bAnimations )
 		{
 			tmp = *dest;
@@ -412,13 +412,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				}
 			}
 
-			// Den Schatten malen:
+			// draw shadow
 			if ( SettingsData.bShadows )
 			{
 				blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, buffer, &tmp, factor );
 			}
 
-			// Die Spielerfarbe blitten:
+			// draw player color
 			scr.y = 0;
 
 			scr.h = scr.w = (int)(typ->build_org->h*factor);
@@ -429,7 +429,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			blitWithPreScale ( typ->build_org, typ->build, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
-			// Das Vehicle malen:
+			// draw vehicle
 			scr.x = 0;
 
 			scr.y = 0;
@@ -442,7 +442,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 
-			// Ggf Markierung blitten, wenn der Bauvorgang abgeschlossen ist:
+			// draw indication, when building is complete
 			if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer && !BuildPath )
 			{
 				SDL_Rect d, t;
@@ -482,13 +482,13 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			// Den Schatten malen:
+			// draw shadow
 			if ( SettingsData.bShadows )
 			{
 				blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, buffer, &tmp, factor );
 			}
 
-			// Die Spielerfarbe blitten:
+			// draw player color
 			scr.y = 0;
 
 			scr.h = scr.w = typ->clear_small->h;
@@ -499,7 +499,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			blitWithPreScale ( typ->clear_small_org, typ->clear_small, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
-			// Das Vehicle malen:
+			// draw vehicle
 			scr.x = 0;
 
 			scr.y = 0;
@@ -512,7 +512,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
 
-			// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
+			// draw indication, when building is complete
 			if ( ClearingRounds == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_Rect d, t;
