@@ -1027,7 +1027,13 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		{
 			if ( Vehicle->moving ) doEndMoveVehicle();
 			setVehicleToCoords( iServerPositionX, iServerPositionY );
-			Log.write(" Client: Movejob is finished because the next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write(" Client: next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+
+			if ( Vehicle->owner != Client->ActivePlayer ) 
+			{
+				break;
+				bFinished = true;
+			}
 			ScrX = Vehicle->PosX;
 			ScrY = Vehicle->PosY;
 			if (calcPath())
