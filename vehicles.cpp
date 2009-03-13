@@ -4568,9 +4568,15 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 	cVehicle*  vehicle  = map->fields[off].getVehicles();
 	cBuilding* building = map->fields[off].getBuildings();
 
+	if ( vehicle && vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh > 0 ) return false;
+	if ( vehicle && vehicle->data.is_human ) return false;
 	if ( steal && vehicle && vehicle->StoredVehicles.Size() ) return false;
 
+	if ( steal && !vehicle ) return false;
+
 	if ( steal && vehicle && vehicle->owner != owner ) return true;
+
+	if ( building && !building->data.can_attack && !building->data.can_work && !(building->data.range > 10 ) ) return false;
 
 	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) ) return true;
 
@@ -4636,6 +4642,29 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 
 	if ( chance > 90 ) chance = 90;
 	return chance;
+}
+
+int cVehicle::calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding )
+{
+	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 1, 0, -4 };
+	int destTurn, srcLevel;
+
+	if ( destVehicle )
+	{
+		destTurn = destVehicle->data.iBuilt_Costs/3;
+		srcLevel = (int)CommandoRank;
+		if ( destTurn > 0 && destTurn < 13 ) srcLevel += vehiclesTable[destTurn];
+	}
+	else if ( destBuilding )
+	{
+		destTurn = destBuilding->data.iBuilt_Costs/2;
+		srcLevel = (int)CommandoRank+8;
+	}
+	else return 1;
+
+	int turns = (int)(1.0/destTurn*srcLevel);
+	if ( turns < 1 ) turns = 1;
+	return turns;
 }
 
 void cVehicle::DeleteStored ( void )

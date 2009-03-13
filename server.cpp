@@ -57,7 +57,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const i
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 90; // just temporary set to 45 seconds
+	iTurnDeadline = 0; // just temporary set to 45 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
@@ -1585,9 +1585,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			bool success = false;
 			if ( random ( 100 ) < chance )
 			{
-				// the strength rises every 5 rankings
-				int strength = (int)(((int)srcVehicle->CommandoRank+5)/5);
-
 				if ( steal )
 				{
 					if ( destVehicle )
@@ -1601,8 +1598,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else
 				{
 					// only on disabling units the infiltartor gets exp. As higher his level is as slower he rises onto the next one.
-					srcVehicle->CommandoRank += (float)1/strength;
+					// every 5 rankings he needs one succesfull disabling more, to get to the next ranking
+					srcVehicle->CommandoRank += (float)1/((int)(((int)srcVehicle->CommandoRank+5)/5));
 
+					int strength = srcVehicle->calcCommandoTurns ( destVehicle, destBuilding );
 					if ( destVehicle )
 					{
 						// stop the vehicle and make it disabled

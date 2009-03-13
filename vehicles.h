@@ -232,6 +232,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	int calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal );
+	int calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding );
 	void DeleteStored(void);
 	/**
 	* returns whether this player has detected this unit or not
