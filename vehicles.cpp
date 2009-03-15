@@ -4646,7 +4646,7 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 
 int cVehicle::calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding )
 {
-	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 1, 0, -4 };
+	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 	int destTurn, srcLevel;
 
 	if ( destVehicle )
