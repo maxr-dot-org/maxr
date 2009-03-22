@@ -753,6 +753,7 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	iSavedSpeed = 0;
 	Waypoints = NULL;
 	lastWaypoints = NULL;
+	bSuspended = false;
 
 	/*if ( Vehicle->PosX != ScrX || Vehicle->PosY != ScrY )
 	{
