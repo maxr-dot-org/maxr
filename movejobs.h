@@ -66,7 +66,7 @@ struct sPathNode
 class cPathCalculator
 {
 public:
-	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle );
+	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group = NULL );
 	~cPathCalculator();
 
 	/**
@@ -84,6 +84,7 @@ public:
 	cMap *Map;
 	/* the moving vehicle */
 	cVehicle *Vehicle;
+	cList<cVehicle*> *group;
 	/* source and destination coords */
 	int ScrX, ScrY, DestX, DestY;
 	bool bPlane, bShip;
@@ -186,7 +187,7 @@ public:
 
 	void setVehicleToCoords(int x, int y);
 	bool generateFromMessage( cNetMessage *message );
-	bool calcPath();
+	bool calcPath( cList<cVehicle*> *group = NULL );
 	void release();
 	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed );
 	void moveVehicle();

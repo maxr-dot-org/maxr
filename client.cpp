@@ -752,7 +752,8 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					}
 					else
 					{
-						addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
+						if ( SelectedVehicles.Size() > 1 ) startGroupMove();
+						else addMoveJob( SelectedVehicle, mouse->GetKachelOff() );
 					}
 				}
 				else if ( OverUnitField )
@@ -1229,6 +1230,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 
 void cClient::selectBoxVehicles ( sMouseBox &box )
 {
+	if ( box.startX < 0 || box.startY < 0 || box.endX < 0 || box.endY < 0 ) return;
 	int startFieldX, startFieldY;
 	int endFieldX, endFieldY;
 	startFieldX = (int)min ( box.startX, box.endX );
@@ -1289,12 +1291,12 @@ void cClient::deselectGroup ()
 	}
 }
 
-void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
+void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset, cList<cVehicle*> *group)
 {
 	if ( vehicle->bIsBeeingAttacked ) return;
 
 	cClientMoveJob *MoveJob = new cClientMoveJob ( vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle );
-	if ( MoveJob->calcPath() )
+	if ( MoveJob->calcPath( group ) )
 	{
 		sendMoveJob ( MoveJob );
 		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
@@ -1312,6 +1314,48 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
 			MoveJob->Vehicle->ClientMoveJob = NULL;
 		}
 		delete MoveJob;
+	}
+}
+
+void cClient::startGroupMove()
+{
+	int mainPosX = SelectedVehicles[0]->PosX;
+	int mainPosY = SelectedVehicles[0]->PosY;
+	int mainDestX = mouse->GetKachelOff()%Map->size;
+	int mainDestY = mouse->GetKachelOff()/Map->size;
+
+	// copy the selected-units-list
+	cList<cVehicle*> group;
+	for ( unsigned int i = 0; i < SelectedVehicles.Size(); i++ ) group.Add( SelectedVehicles[i] );
+
+	// go trough all vehicles in the list
+	while ( group.Size() )
+	{
+		// we will start moving the vehicles in the list with the vehicle that is the closesed to the destination.
+		// this will avoid that the units will crash into each other becouse the one infront of them has started
+		// his move and the next field is free.
+		int shortestWayLength = 0xFFFF;
+		int shortestWayVehNum = 0;
+		for ( unsigned int i = 0; i < group.Size(); i++ )
+		{
+			cVehicle *vehicle = group[i];
+			int deltaX = vehicle->PosX-mainDestX+vehicle->PosX-mainPosX;
+			int deltaY = vehicle->PosY-mainDestY+vehicle->PosY-mainPosY;
+			int wayLength = Round ( sqrt ( (double)deltaX*deltaX + deltaY*deltaY ) );
+
+			if ( wayLength < shortestWayLength )
+			{
+				shortestWayLength = wayLength;
+				shortestWayVehNum = i;
+			}
+		}
+		cVehicle *vehicle = group[shortestWayVehNum];
+		// add the movejob to the destination of the unit.
+		// the formation of the vehicle group will stay as destination formation.
+		int destOffset = mainDestX+vehicle->PosX-mainPosX+(mainDestY+vehicle->PosY-mainPosY)*Map->size;
+		addMoveJob ( vehicle, destOffset, &SelectedVehicles );
+		// delete the unit from the copyed list
+		group.Delete ( shortestWayVehNum ); 
 	}
 }
 

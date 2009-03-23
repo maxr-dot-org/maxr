@@ -1908,7 +1908,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	if ( moving || bIsBeeingAttacked )
 		return;
 
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonReleased && MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
 		LastNr = SelMenu;

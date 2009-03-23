@@ -26,7 +26,7 @@
 #include "vehicles.h"
 #include "math.h"
 
-cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle )
+cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group )
 {
 	this->DestX = DestX;
 	this->DestY = DestY;
@@ -34,6 +34,7 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 	this->ScrY = ScrY;
 	this->Map = Map;
 	this->Vehicle = Vehicle;
+	this->group = group;
 	bPlane = Vehicle->data.can_drive == DRIVE_AIR;
 	bShip = Vehicle->data.can_drive == DRIVE_SEA;
 
@@ -155,7 +156,29 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 			if ( x < 0 || x >= Map->size ) continue;
 			if ( x == ParentNode->x && y == ParentNode->y ) continue;
 
-			if ( !Map->possiblePlaceVehicle( Vehicle->data, x, y, Vehicle->owner) ) continue;
+			if ( !Map->possiblePlaceVehicle( Vehicle->data, x, y, Vehicle->owner) )
+			{
+				// when we have a group of units, the units will not block each other
+				if ( group )
+				{
+					bool isInGroup = false;
+					// get the blocking unit
+					cVehicle *blockingUnit;
+					if ( Vehicle->data.can_drive == DRIVE_AIR ) blockingUnit = (*Map)[x+y*Map->size].getPlanes();
+					else blockingUnit = (*Map)[x+y*Map->size].getVehicles();
+					// check whether the blocking unit is the group
+					for ( unsigned int i = 0; i < group->Size(); i++ )
+					{
+						if ( (*group)[i] == blockingUnit )
+						{
+							isInGroup = true;
+							break;
+						}
+					}
+					if ( !isInGroup ) continue;
+				}
+				else continue;
+			}
 			if ( closedList[x+y*Map->size] != NULL ) continue;
 
 			if ( openList[x+y*Map->size] == NULL )
@@ -902,11 +925,11 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 	return true;
 }
 
-bool cClientMoveJob::calcPath()
+bool cClientMoveJob::calcPath( cList<cVehicle*> *group  )
 {
 	if ( ScrX == DestX && ScrY == DestY ) return false;
 
-	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
+	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle, group );
 	Waypoints = PathCalculator.calcPath();
 	if ( Waypoints )
 	{

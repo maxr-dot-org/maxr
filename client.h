@@ -418,7 +418,8 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	void addMoveJob(cVehicle* vehicle, int iDestOffset);
+	void addMoveJob(cVehicle* vehicle, int iDestOffset, cList<cVehicle*> *group = NULL);
+	void startGroupMove ();
 	/**
 	* adds an new movejob
 	*@author alzi alias DoctorDeath
