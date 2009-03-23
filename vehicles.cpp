@@ -59,6 +59,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	VehicleToActivate = 0;
 	BuildBigSavedPos = 0;
 	selected = false;
+	groupSelected = false;
 	owner = Owner;
 	data = owner->VehicleData[typ->nr];
 	data.hit_points = data.max_hit_points;
@@ -581,6 +582,35 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	}
 
 	// Ggf den Rahmen malen:
+	if ( groupSelected )
+	{
+		Uint32 color = 0xFFFF00;
+		SDL_Rect d;
+
+		d.w = Client->Hud.Zoom-2;
+		d.h = 1;
+		d.x = dest->x + 1 + ox;
+		d.y = dest->y + 1 + oy;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.w = Client->Hud.Zoom-2;
+		d.h = 1;
+		d.x = dest->x + 1 + ox;
+		d.y = dest->y + oy + Client->Hud.Zoom-1;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.w = 1;
+		d.h = Client->Hud.Zoom-2;
+		d.x = dest->x + 1 + ox;
+		d.y = dest->y + 1 + oy;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.w = 1;
+		d.h = Client->Hud.Zoom-2;
+		d.x = dest->x + ox + Client->Hud.Zoom-1;
+		d.y = dest->y + 1 + oy;
+		SDL_FillRect ( buffer, &d, color );
+	}
 	if ( selected )
 	{
 		SDL_Rect d, t;
@@ -797,6 +827,7 @@ void cVehicle::Deselct ( void )
 {
 	SDL_Rect scr, dest;
 	selected = false;
+	groupSelected = false;
 	MenuActive = false;
 	AttackMode = false;
 	if ( PlaceBand ) BuildPath = false;

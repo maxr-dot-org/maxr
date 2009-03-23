@@ -41,8 +41,8 @@ struct sMouseState
 	sMouseState();
 	bool leftButtonPressed;
 	bool rightButtonPressed;
-	bool leftButtonHold;
-	bool rightButtonHold;
+	bool leftButtonReleased;
+	bool rightButtonReleased;
 	bool wheelUp;
 	bool wheelDown;
 };

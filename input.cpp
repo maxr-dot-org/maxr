@@ -24,8 +24,8 @@ sMouseState::sMouseState()
 {
 	leftButtonPressed = false;
 	rightButtonPressed = false;
-	leftButtonHold = false;
-	rightButtonHold = false;
+	leftButtonReleased = false;
+	rightButtonReleased = false;
 	wheelUp = false;
 	wheelDown = false;
 }
@@ -128,35 +128,39 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 		if ( button.button == SDL_BUTTON_LEFT )
 		{
 			MouseState.leftButtonPressed = true;
-			if ( MouseState.rightButtonPressed )
-			{
-				MouseState.rightButtonHold = true;
-				MouseState.rightButtonPressed = false;
-			}
+			MouseState.leftButtonReleased = false;
 		}
 		else if ( button.button == SDL_BUTTON_RIGHT )
 		{
 			MouseState.rightButtonPressed = true;
-			if ( MouseState.leftButtonPressed )
-			{
-				MouseState.leftButtonHold = true;
-				MouseState.leftButtonPressed = false;
-			}
+			MouseState.rightButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = true;
-		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = true;
+		else if ( button.button == SDL_BUTTON_WHEELUP )
+		{
+			MouseState.wheelUp = true;
+			MouseState.leftButtonReleased = false;
+			MouseState.rightButtonReleased = false;
+		}
+		else if ( button.button == SDL_BUTTON_WHEELDOWN )
+		{
+			MouseState.wheelDown = true;
+			MouseState.leftButtonReleased = false;
+			MouseState.rightButtonReleased = false;
+		}
 	}
 	else if ( button.state == SDL_RELEASED )
 	{
 		if ( button.button == SDL_BUTTON_LEFT )
 		{
 			MouseState.leftButtonPressed = false;
-			MouseState.leftButtonHold = false;
+			MouseState.leftButtonReleased = true;
+			MouseState.rightButtonReleased = false;
 		}
 		else if ( button.button == SDL_BUTTON_RIGHT )
 		{
 			MouseState.rightButtonPressed = false;
-			MouseState.rightButtonHold = false;
+			MouseState.rightButtonReleased = true;
+			MouseState.leftButtonReleased = false;
 		}
 		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = false;
 		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = false;

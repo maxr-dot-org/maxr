@@ -166,6 +166,9 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	}
 
 	setWind(random(360));
+
+	mouseBox.startX = mouseBox.startY = -1;
+	mouseBox.endX = mouseBox.endY = -1;
 }
 
 cClient::~cClient()
@@ -268,11 +271,17 @@ void cClient::run()
 		EventHandler->HandleEvents();
 		// check mouse moves 
 		mouse->GetPos();
-		Hud.CheckMouseOver();
 		Hud.CheckScroll();
 		CHECK_MEMORY;
-		// check minimap
-		if ( clientMouseState.leftButtonPressed && !bHelpActive ) Hud.CheckOneClick();
+		// check hud
+		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver();
+		if ( clientMouseState.leftButtonPressed && !bHelpActive && mouseBox.startX == -1 ) Hud.CheckOneClick();
+		// actualize mousebox
+		if ( clientMouseState.leftButtonPressed && !clientMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > 180 )
+		{
+			mouseBox.endX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
+			mouseBox.endY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
+		}
 		// check length of input strings
 		if ( bChangeObjectName && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( 128 );
 		else if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
@@ -507,7 +516,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		return;
 	}
 	// handle input on the map
-	if ( MouseStyle == OldSchool && mouseState.rightButtonPressed && !mouseState.leftButtonHold && OverUnitField )
+	if ( MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && OverUnitField )
 	{
 		if ( overVehicle && overVehicle == SelectedVehicle ) SelectedVehicle->ShowHelp();
 		else if ( overPlane && overPlane == SelectedVehicle ) SelectedVehicle->ShowHelp();
@@ -515,7 +524,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		else if ( overBaseBuilding && overBaseBuilding == SelectedBuilding ) SelectedBuilding->ShowHelp();
 		else if ( OverUnitField ) selectUnit ( OverUnitField, true );
 	}
-	else if ( ( mouseState.rightButtonPressed && !mouseState.leftButtonHold ) || ( MouseStyle == OldSchool && mouseState.leftButtonHold && mouseState.rightButtonPressed ) )
+	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed ) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
 	{
 		if ( bHelpActive )
 		{
@@ -523,6 +532,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else
 		{
+			deselectGroup();
 			if ( OverUnitField && (
 			            ( SelectedVehicle && ( overVehicle == SelectedVehicle || overPlane == SelectedVehicle ) ) ||
 			            ( SelectedBuilding && ( overBaseBuilding == SelectedBuilding || overBuilding == SelectedBuilding ) ) ) )
@@ -613,10 +623,14 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			}
 		}
 	}
-	if ( mouseState.leftButtonPressed && !mouseState.rightButtonHold )
+	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
 		if ( OverUnitField && Hud.Lock ) ActivePlayer->ToggelLock ( OverUnitField );
-		if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
+		if ( mouseBox.endX > mouseBox.startX+(3/Hud.Zoom) || mouseBox.endX < mouseBox.startX-(3/Hud.Zoom) || mouseBox.endY > mouseBox.startY+(3/Hud.Zoom) || mouseBox.endY < mouseBox.startY-(3/Hud.Zoom) )
+		{
+			selectBoxVehicles( mouseBox );
+		}
+		else if ( bChange && SelectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			if ( overVehicle ) showTransfer ( NULL, SelectedVehicle, NULL, overVehicle );
 			else if ( overBuilding ) showTransfer ( NULL, SelectedVehicle, overBuilding, NULL );
@@ -785,6 +799,13 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			else if ( overBaseBuilding ) overBaseBuilding->ShowHelp();
 			bHelpActive = false;
 		}
+		mouseBox.startX = mouseBox.startY = -1;
+		mouseBox.endX = mouseBox.endY = -1;
+	}
+	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouse->x > 180 )
+	{
+		mouseBox.startX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
+		mouseBox.startY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
 	}
 	// check zoom via mousewheel
 	if ( mouseState.wheelUp ) Hud.SetZoom ( Hud.Zoom+3 );
@@ -1074,6 +1095,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 
 bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 {
+	deselectGroup();
 	if ( OverUnitField->getPlanes() && !OverUnitField->getPlanes()->moving )
 	{
 		bChangeObjectName = false;
@@ -1203,6 +1225,68 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		return true;
 	}
 	return false;
+}
+
+void cClient::selectBoxVehicles ( sMouseBox &box )
+{
+	int startFieldX, startFieldY;
+	int endFieldX, endFieldY;
+	startFieldX = (int)min ( box.startX, box.endX );
+	startFieldY = (int)min ( box.startY, box.endY );
+	endFieldX = (int)max ( box.startX, box.endX );
+	endFieldY = (int)max ( box.startY, box.endY );
+
+	deselectGroup();
+
+	bool newSelected = true;
+	for ( int x = startFieldX; x <= endFieldX; x++ )
+	{
+		for ( int y = startFieldY; y <= endFieldY; y++ )
+		{
+			int offset = x+y*Map->size;
+
+			cVehicle *vehicle;
+			vehicle = (*Map)[offset].getVehicles();
+			if ( !vehicle || vehicle->owner != ActivePlayer ) vehicle = (*Map)[offset].getPlanes();
+
+			if ( vehicle && vehicle->owner == ActivePlayer && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving )
+			{
+				if ( vehicle == SelectedVehicle )
+				{
+					newSelected = false;
+					SelectedVehicles.Insert( 0, vehicle );
+				}
+				else SelectedVehicles.Add ( vehicle );
+				vehicle->groupSelected = true;
+			}
+		}
+	}
+	if ( newSelected && SelectedVehicles.Size() > 0 )
+	{
+		if ( SelectedVehicle ) SelectedVehicle->Deselct();
+		SelectedVehicle = SelectedVehicles[0];
+		SelectedVehicle->Select();
+	}
+	if ( SelectedVehicles.Size() == 1 )
+	{
+		SelectedVehicles[0]->groupSelected = false;
+		SelectedVehicles.Delete( 0 );
+	}
+
+	if ( SelectedBuilding )
+	{
+		SelectedBuilding->Deselct();
+		SelectedBuilding = NULL;
+	}
+}
+
+void cClient::deselectGroup ()
+{
+	while ( SelectedVehicles.Size() )
+	{
+		SelectedVehicles[0]->groupSelected = false;
+		SelectedVehicles.Delete ( 0 );
+	}
 }
 
 void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset)
@@ -1635,6 +1719,41 @@ void cClient::drawMap( bool bPure )
 				dest.y += iZoom;
 			}
 		}
+	}
+
+	// draw the selection box
+	if ( mouseBox.startX != -1 && mouseBox.endX != -1 )
+	{
+		Uint32 color = 0xFFFF00;
+		SDL_Rect d;
+		int mouseStartX = (int)(min(mouseBox.startX, mouseBox.endX)*Hud.Zoom);
+		int mouseStartY = (int)(min(mouseBox.startY, mouseBox.endY)*Hud.Zoom); 
+		int mouseEndX = (int)(max(mouseBox.startX, mouseBox.endX)*Hud.Zoom);
+		int mouseEndY = (int)(max(mouseBox.startY, mouseBox.endY)*Hud.Zoom);
+
+		d.h = 1;
+		d.w = mouseEndX-mouseStartX;
+		d.x = mouseStartX-iOffX+180;
+		d.y = mouseEndY-iOffY+20;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.h = 1;
+		d.w = mouseEndX-mouseStartX;
+		d.x = mouseStartX-iOffX+180;
+		d.y = mouseStartY-iOffY+20;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.h = mouseEndY-mouseStartY;
+		d.w = 1;
+		d.x = mouseStartX-iOffX+180;
+		d.y = mouseStartY-iOffY+20;
+		SDL_FillRect ( buffer, &d, color );
+
+		d.h = mouseEndY-mouseStartY;
+		d.w = 1;
+		d.x = mouseEndX-iOffX+180;
+		d.y = mouseStartY-iOffY+20;
+		SDL_FillRect ( buffer, &d, color );
 	}
 
 	/*scr.y = 0;
@@ -4847,8 +4966,15 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 		mouse->GetPos();
 		Hud.CheckMouseOver();
 		Hud.CheckScroll();
-		// check minimap
-		if ( clientMouseState.leftButtonPressed && !bHelpActive ) Hud.CheckOneClick();
+		// check hud
+		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver();
+		if ( clientMouseState.leftButtonPressed && !bHelpActive && mouseBox.startX == -1 ) Hud.CheckOneClick();
+		// actualize mousebox
+		if ( clientMouseState.leftButtonPressed && !clientMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > 180 )
+		{
+			mouseBox.endX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
+			mouseBox.endY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
+		}
 		// check length of chat string
 		if ( bChatInput && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( PACKAGE_LENGTH-20 );
 

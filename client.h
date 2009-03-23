@@ -87,6 +87,12 @@ struct sFX
 		sFXTracks* trackInfo;
 };
 
+struct sMouseBox
+{
+	float startX, startY;
+	float endX, endY;
+};
+
 /**
 * Client class which handles the in and output for a player
 *@author alzi alias DoctorDeath
@@ -173,8 +179,20 @@ private:
 	sHudPosition SavedPositions[4];
 	/** the mouse state which the client reseived by event for the menus */
 	sMouseState clientMouseState;
+	/** the currently by the mouse pulled box */
+	sMouseBox mouseBox;
 
 	bool selectUnit( cMapField *OverUnitField, bool base );
+	/**
+	* selects all vehicles which are within the mousebox
+	*@author alzi alias DoctorDeath
+	*/
+	void selectBoxVehicles ( sMouseBox &box );
+	/**
+	* deselects all group selected vehicles
+	*@author alzi alias DoctorDeath
+	*/
+	void deselectGroup ();
 	/**
 	* draws the minimap in the hud
 	*@author alzi alias DoctorDeath
@@ -365,6 +383,7 @@ public:
 	cHud Hud;
 	/** the currently selected vehicle */
 	cVehicle *SelectedVehicle;
+	cList<cVehicle*> SelectedVehicles;
 	/** the currently selected building */
 	cBuilding *SelectedBuilding;
 	/** true if the turn should be end after all movejobs have been finished */

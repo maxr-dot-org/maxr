@@ -91,6 +91,7 @@ public:
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
 	bool selected;   // Gibt an, ob das Fahrzeug ausgewählt ist
+	bool groupSelected;
 	string name; // Name des Vehicles
 	cPlayer *owner;  // Eigentümer des Vehicles
 	cServerMoveJob *ServerMoveJob;
