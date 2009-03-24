@@ -271,10 +271,10 @@ void cClient::run()
 		EventHandler->HandleEvents();
 		// check mouse moves 
 		mouse->GetPos();
-		Hud.CheckScroll();
 		CHECK_MEMORY;
 		// check hud
-		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver();
+		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver( clientMouseState );
+		Hud.CheckScroll();
 		if ( clientMouseState.leftButtonPressed && !bHelpActive && mouseBox.startX == -1 ) Hud.CheckOneClick();
 		// actualize mousebox
 		if ( clientMouseState.leftButtonPressed && !clientMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > 180 )
@@ -803,7 +803,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		mouseBox.startX = mouseBox.startY = -1;
 		mouseBox.endX = mouseBox.endY = -1;
 	}
-	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouse->x > 180 )
+	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouse->x > 180 && mouse->y > 20 )
 	{
 		mouseBox.startX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
 		mouseBox.startY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
@@ -5008,10 +5008,9 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 
 		// check mouse moves 
 		mouse->GetPos();
-		Hud.CheckMouseOver();
-		Hud.CheckScroll();
 		// check hud
-		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver();
+		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver( clientMouseState );
+		Hud.CheckScroll();
 		if ( clientMouseState.leftButtonPressed && !bHelpActive && mouseBox.startX == -1 ) Hud.CheckOneClick();
 		// actualize mousebox
 		if ( clientMouseState.leftButtonPressed && !clientMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > 180 )

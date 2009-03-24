@@ -868,14 +868,13 @@ void cHud::DoMinimapClick ( int x,int y )
 	DoScroll ( 0 );
 }
 
-void cHud::CheckMouseOver ( void )
+void cHud::CheckMouseOver ( sMouseState &MouseState )
 {
 	static int lb=0;
 	int x,y,b;
 	x=mouse->x;
 	y=mouse->y;
-	b=mouse->GetMouseButton();
-	if ( b==4 ) b=0;
+	b = MouseState.leftButtonPressed;
 	if ( y>274|| ( x>179&&y>22 ) ) return;
 	// Der Präferenzen-Button:
 	if ( x>=86&&x<=86+67&&y>=4&&y<=4+18 )

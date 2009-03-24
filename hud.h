@@ -22,6 +22,7 @@
 #include <SDL.h>
 
 #include <string>
+#include "input.h"
 
 struct sHudPosition
 {
@@ -82,7 +83,7 @@ public:
   void CheckOneClick(void);
   void DoAllHud(void);
   void CheckScroll(bool pure=false);
-  void CheckMouseOver(void);
+  void CheckMouseOver( sMouseState &MouseState );
   void ResetVideoMonitor(void);
   void ShowRunde(void);
   void showTurnTime( int iTime );
