@@ -26,9 +26,7 @@
 #include "dialog.h"
 #include "map.h"
 #include "input.h"
-
-// Define zum Updaten:
-#define UpdateBuilding(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).iBuilt_Costs=(to).iBuilt_Costs;
+#include "upgradecalculator.h"
 
 // Struct for one upgrade (one kind of value, e.g. max_hit_points) /////////////////////////////////////////////////////
 struct sUpgrade {
@@ -154,6 +152,7 @@ public:
 	int EffectAlpha; // alpha value for the effect
 	bool EffectInc;  // is the effect counted upwards or dounwards?
 	bool IsWorking;  // is the building currently working?
+	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	bool bSentryStatus;		/** true if the building is on sentry */
 	bool Transfer;   // Gibt an, ob ein Transfer statfinden soll
 	int MetalProd,OilProd,GoldProd; // the production of the building
@@ -179,14 +178,14 @@ public:
 	void Deselct(void);
 	void ShowDetails(void);
 	void GenerateName(void);
-	int PlayStram(void);
-	std::string GetStatusStr(void);
+	int playStream();
+	std::string getStatusStr();
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	/**
 	* refreshes the shots of this building
 	*@author alzi alias DoctorDeath
-	*@return 1 if there has been refreshed something else 0.
+	*@return 1 if there has been refreshed something, else 0.
 	*/
 	int refreshData();
 	void ShowHelp(void);
@@ -243,9 +242,10 @@ public:
 	void ShowStorageMetalBar(void);
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled);
-	void ShowResearch(void);
-	void ShowResearchSchieber(void);
-	void MakeResearchSchieber(int x,int y);
+	void ShowResearch();
+	void ShowResearchSliders(int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
+	void handleResearchSliderMouseClick(int mouseX, int mouseY, int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
+	void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas]);
 	void SendUpdateStored(int index);
 	void sendWantUpgrade (int storageSlot, bool upgradeAll); // wants to upgrade the vehicle to the current version
 	void upgradeToCurrentVersion ();

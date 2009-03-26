@@ -17,6 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef upgradecalculatorH
+#define upgradecalculatorH
+
+#include <map>
+
+class cResearch;
+
+//-------------------------------------------------------------------------------
 /**	A singleton class for calculating costs for upgrades and research and for 
 	getting the	results of such upgrades and research.
 	In M.A.X. research and gold upgrades have no direct influence on each other. 
@@ -29,21 +37,14 @@
 	If you have gold-upgraded the speed of an awac from 18 to 32 and do now
 	a speed research, then you will still get only an additional bonus of 1
 	for the first research (and not 3). This is because the research benefit 
-	is always calculated on the basis of the start value and not of the current 
+	is	always calculated on the basis of the start value and not of the current 
 	value.
-
+ 
 	To use this class, simply call: cUpdateCalculator::instance().theMethodINeed()
-
+ 
 	@author Paul Grathwohl 
 */
-
-#ifndef upgradecalculatorH
-#define upgradecalculatorH
-
-#include <map>
-
-//-------------------------------------------
-//-------------------------------------------
+//-------------------------------------------------------------------------------
 class cUpgradeCalculator {
 public:
 	static cUpgradeCalculator& instance();
@@ -69,8 +70,9 @@ public:
 	@param curValue the value the unit currently has (without boni by research!)
 	@param orgValue the value the unit has as a base value
 	@param upgradeType the area of the upgrade
+	@param researchLevel the research level of the player that has to be taken into account
 	@return the costs for this upgrade or kNoPriceAvailable if the values are unknown */
-	int calcPrice(int curValue, int orgValue, int upgradeType) const;
+	int calcPrice(int curValue, int orgValue, int upgradeType, cResearch& researchLevel) const;
 
 	/** Calculates the increase of a unit value, when an upgrade is bought.
 	    Examples: If orgValue is 10, the increase will be 2. 
@@ -88,9 +90,10 @@ public:
 	 @param curValue the value the unit currently has
 	 @param newValue the value the unit wants to reach
 	 @upgradeType the area of the upgrade
+	 @param researchLevel the research level of the player that has to be taken into account
 	 @return the costs for this upgrade or kNoPriceAvailable if such an upgrade is impossible
 	*/
-	int getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType) const;
+	int getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel) const;
 	
 	/** Calculates the turns needed for one research center to reach the next level.
 	 @param curResearchLevel the level this research area currently has (e.g. 20 for 20%) 
@@ -204,5 +207,54 @@ private:
 
 	bool setupDone;
 };
+
+
+
+//-------------------------------------------
+/** Stores the current research state of a player. */
+//-------------------------------------------
+class cResearch
+{
+public:
+	enum ResearchArea {
+		kAttackResearch = 0,
+		kShotsResearch,
+		kRangeResearch,
+		kArmorResearch,
+		kHitpointsResearch,
+		kSpeedResearch,
+		kScanResearch,
+		kCostResearch,
+		kNrResearchAreas
+	};
+
+	cResearch (); ///< constructor
+		
+	/** Adds researchPoints to the current research points of the specified researchArea.
+		\return true, if the next research level was reached */
+	bool doResearch (int researchPoints, int researchArea);
+
+	int getCurResearchLevel (int researchArea) const; ///< 0, 10, 20, 30, ...
+	int getCurResearchPoints (int researchArea) const; ///< Number of research-center turns the player invested in an area 
+	int getNeededResearchPoints (int researchArea) const;  ///< Number of research-center turns needed to reach the next level
+	int getRemainingResearchPoints (int researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
+
+	int getRemainingTurns (int researchArea, int centersWorkingOn) const; ///< returns the needed number of turns to reach the next level with the given nr of research centers 
+
+	void setCurResearchLevel (int researchLevel, int researchArea); ///< will also set the neededResearchPoints if necessary
+	void setCurResearchPoints (int researchPoints, int researchArea); ///< if researchPoints >= neededResearchPoints, nothing will be done
+	
+	int getUpgradeCalculatorUpgradeType (int researchArea) const;
+	int getResearchArea (int upgradeCalculatorType) const;
+	
+//-------------------------------------------
+protected:
+	void init (); ///< sets all research information to the initial values
+
+	int curResearchLevel[kNrResearchAreas]; ///< 0, 10, 20, 30, ...
+	int curResearchPoints[kNrResearchAreas]; ///< Numberr of research-center turns the player invested in an area
+	int neededResearchPoints[kNrResearchAreas]; ///< Number of research-center turns needed to reach the next level (remainingResearchPoints == neededResearchPoints - curResearchPoints)
+};
+
 
 #endif // upgradecalculatorH

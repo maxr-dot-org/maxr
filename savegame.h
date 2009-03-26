@@ -24,6 +24,8 @@
 #include "map.h"
 #include "player.h"
 
+class cResearch;
+
 #define SAVE_FORMAT_VERSION		"0.2"
 
 struct sMoveJobLoad
@@ -97,6 +99,16 @@ private:
 	*/
 	void writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sUnitData *data, sUnitData *originaldata );
 	/**
+	 * save the research level values of a player
+	 *@author pagra
+	 */
+	void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& researchLevel );
+	/**
+	 * save the number of research centers that are working on each area of a player
+	 *@author pagra
+	 */
+	void writeResearchCentersWorkingOnArea (TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player);
+	/**
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
@@ -147,6 +159,16 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data );
+	/**
+	 * loads the research level of a player into the players researchLevel
+	 * @author pagra
+	 */
+	void loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& researchLevel );
+	/**
+	 * loads the number of research centers of a player that are working on each area
+	 * @author pagra
+	 */
+	void loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player );
 	/**
 	* loads all units
 	*@author alzi alias DoctorDeath

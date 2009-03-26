@@ -84,6 +84,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	dir = 0;
 	StartUp = 0;
 	IsWorking = false;
+	researchArea = cResearch::kAttackResearch;
 	IsLocked = false;
 	typ = b;
 	owner = Owner;
@@ -233,12 +234,14 @@ cBuilding::~cBuilding ( void )
 	}
 }
 
-// Liefert einen String mit dem aktuellen Status zur¸ck:
-string cBuilding::GetStatusStr ( void )
+//----------------------------------------------------
+/** Returns a string with the current state */
+//----------------------------------------------------
+string cBuilding::getStatusStr ()
 {
 	if ( IsWorking )
 	{
-		// Fabrik:
+		// Factory:
 		if (data.can_build && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
 		{
 			sBuildList *ptr;
@@ -269,55 +272,28 @@ string cBuilding::GetStatusStr ( void )
 			}
 		}
 
-		// Forschungszentrum:
-		if ( data.can_research && owner == Client->ActivePlayer )
+		// Research Center
+		if (data.can_research && owner == Client->ActivePlayer)
 		{
 			string sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
-
-			for ( int i = 0;i < 8;i++ )
+			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 			{
-				if ( owner->ResearchTechs[i].working_on )
+				if (owner->researchCentersWorkingOnArea[area] > 0)
 				{
-					switch ( i )
+					switch (area)
 					{
-
-						case 0:
-							sText += lngPack.i18n ( "Text~Vehicles~Damage" );
-							break;
-
-						case 1:
-							sText += lngPack.i18n ( "Text~Hud~Shots" );
-							break;
-
-						case 2:
-							sText += lngPack.i18n ( "Text~Hud~Range" );
-							break;
-
-						case 3:
-							sText += lngPack.i18n ( "Text~Vehicles~Armor" );
-							break;
-
-						case 4:
-							sText += lngPack.i18n ( "Text~Hud~Hitpoints" );
-							break;
-
-						case 5:
-							sText += lngPack.i18n ( "Text~Hud~Speed" );
-							break;
-
-						case 6:
-							sText += lngPack.i18n ( "Text~Hud~Scan" );
-							break;
-
-						case 7:
-							sText += lngPack.i18n ( "Text~Vehicles~Costs" );
-							break;
+						case cResearch::kAttackResearch: sText += lngPack.i18n ( "Text~Vehicles~Damage" ); break;
+						case cResearch::kShotsResearch: sText += lngPack.i18n ( "Text~Hud~Shots" ); break;
+						case cResearch::kRangeResearch: sText += lngPack.i18n ( "Text~Hud~Range" ); break;
+						case cResearch::kArmorResearch: sText += lngPack.i18n ( "Text~Vehicles~Armor" ); break;
+						case cResearch::kHitpointsResearch: sText += lngPack.i18n ( "Text~Hud~Hitpoints" ); break;
+						case cResearch::kSpeedResearch: sText += lngPack.i18n ( "Text~Hud~Speed" ); break;
+						case cResearch::kScanResearch: sText += lngPack.i18n ( "Text~Hud~Scan" ); break;
+						case cResearch::kCostResearch: sText += lngPack.i18n ( "Text~Vehicles~Costs" ); break;
 					}
-
-					sText += ": " + iToStr ( ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining / ( double ) owner->ResearchTechs[i].working_on ) ) + "\n";
+					sText += ": " + iToStr (owner->researchLevel.getRemainingTurns (area, owner->researchCentersWorkingOnArea[area])) + "\n";
 				}
 			}
-
 			return sText;
 		}
 
@@ -1722,33 +1698,35 @@ void cBuilding::ServerStartWork ()
 		SubBase->GoldProd += GoldProd;
 	}
 
+	if ( data.can_research )
+	{
+		owner->ResearchCount++;
+		owner->researchCentersWorkingOnArea[researchArea]++;
+	}
+	
 	IsWorking = true;
 	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStartWork(this);
 }
 
-//starts the building in the cliend thread
+//------------------------------------------------------------
+/** starts the building in the client thread */
+//------------------------------------------------------------
 void cBuilding::ClientStartWork()
 {
-
-	if ( IsWorking ) return;
-
+	if (IsWorking) 
+		return;
 	IsWorking = true;
-
 	EffectAlpha = 0;
-
-	if ( selected )
+	if (selected)
 	{
-		StopFXLoop ( Client->iObjectStream );
-		PlayFX ( typ->Start );
-		Client->iObjectStream = PlayStram();
-
+		StopFXLoop (Client->iObjectStream);
+		PlayFX (typ->Start);
+		Client->iObjectStream = playStream ();
 		ShowDetails();
 	}
-
-	//if ( data.can_research ) owner->StartAResearch();
-
-	return;
+	if (data.can_research) 
+		owner->startAResearch (researchArea);
 }
 
 // Stops the building's working:
@@ -1808,30 +1786,38 @@ void cBuilding::ServerStopWork ( bool override )
 		SubBase->OilProd -= OilProd;
 		SubBase->GoldProd -= GoldProd;
 	}
-
+	
+	if ( data.can_research )
+	{
+		owner->ResearchCount--;
+		owner->researchCentersWorkingOnArea[researchArea]--;
+	}
+	
 	IsWorking = false;
 	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStopWork(this);
 }
 
+//------------------------------------------------------------
+/** stops the building in the client thread */
+//------------------------------------------------------------
 void cBuilding::ClientStopWork()
 {
-
-	if (!IsWorking) return;
+	if (!IsWorking) 
+		return;
 	IsWorking = false;
-
 	if (selected)
 	{
-		StopFXLoop ( Client->iObjectStream );
-		PlayFX ( typ->Stop );
-		Client->iObjectStream = PlayStram();
-
-		ShowDetails();
+		StopFXLoop (Client->iObjectStream);
+		PlayFX (typ->Stop);
+		Client->iObjectStream = playStream ();
+		ShowDetails ();
 	}
-
-	//if ( data.can_research ) owner->StopAReserach();
+	if (data.can_research) 
+		owner->stopAResearch (researchArea);
 }
 
+//------------------------------------------------------------
 bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
@@ -2379,25 +2365,25 @@ void cBuilding::ShowStorage ( void )
 		if ( x >= rBtnUpgrade.x && x < rBtnUpgrade.x + rBtnUpgrade.w && y >= rBtnUpgrade.y && y < rBtnUpgrade.y + rBtnUpgrade.h && b && !LastB && AlleUpgradenEnabled )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
-
-			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
-			{
-				cVehicle *v;
-				v = StoredVehicles[i];
-
-				if ( v->data.version != owner->VehicleData[v->typ->nr].version )
-				{
-
-					Update ( v->data, owner->VehicleData[v->typ->nr] )
-
-					v->GenerateName();
-					owner->base.AddMetal ( SubBase, -2 );
-					SendUpdateStored ( i );
-
-					if ( SubBase->Metal < 2 )
-						break;
-				}
-			}
+// TODO: reimplement
+//			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
+//			{
+//				cVehicle *v;
+//				v = StoredVehicles[i];
+//
+//				if ( v->data.version != owner->VehicleData[v->typ->nr].version )
+//				{
+//
+//					Update ( v->data, owner->VehicleData[v->typ->nr] )
+//
+//					v->GenerateName();
+//					owner->base.AddMetal ( SubBase, -2 );
+//					SendUpdateStored ( i );
+//
+//					if ( SubBase->Metal < 2 )
+//						break;
+//				}
+//			}
 
 			DrawStored ( offset );
 
@@ -2956,8 +2942,10 @@ void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleRe
 }
 
 
-// Zeigt den Researchbildschirm an:
-void cBuilding::ShowResearch ( void )
+//---------------------------------------------------------------------
+/** Displays the research screen. */
+//---------------------------------------------------------------------
+void cBuilding::ShowResearch ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	Client->isInMenu = true;
@@ -2973,17 +2961,14 @@ void cBuilding::ShowResearch ( void )
 	SDL_Rect rTxtThemes = {rDialog.x + 177, rDialog.y + 52, 45, 21};
 	SDL_Rect rTxtRounds = {rDialog.x + 291, rDialog.y + 52, 45, 21};
 
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-	Client->drawMap();
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
+	mouse->SetCursor (CHand);
+	mouse->draw (false, buffer);
+	Client->drawMap ();
+	SDL_BlitSurface (GraphicsData.gfx_hud, NULL, buffer, NULL);
 
-	if ( SettingsData.bAlphaEffects )
-	{
-		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-	}
-
-	SDL_BlitSurface ( GraphicsData.gfx_research, NULL, buffer, &rDialog );
+	if (SettingsData.bAlphaEffects)
+		SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, buffer, NULL);
+	SDL_BlitSurface (GraphicsData.gfx_research, NULL, buffer, &rDialog);
 
 	//draw titles
 	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Labs" ) );
@@ -2991,220 +2976,224 @@ void cBuilding::ShowResearch ( void )
 	font->showTextCentered ( rTxtThemes.x + rTxtThemes.w / 2, rTxtThemes.y, lngPack.i18n ( "Text~Comp~Themes" ) );
 	font->showTextCentered ( rTxtRounds.x + rTxtRounds.w / 2, rTxtRounds.y, lngPack.i18n ( "Text~Comp~Turns" ) );
 
-	NormalButton btn_cancel(rDialog.x +  91, rDialog.y + 294, "Text~Button~Cancel");
-	NormalButton btn_done(  rDialog.x + 193, rDialog.y + 294, "Text~Button~Done");
-	btn_cancel.Draw();
-	btn_done.Draw();
+	NormalButton btn_cancel (rDialog.x +  91, rDialog.y + 294, "Text~Button~Cancel");
+	NormalButton btn_done (rDialog.x + 193, rDialog.y + 294, "Text~Button~Done");
+	btn_cancel.Draw ();
+	btn_done.Draw ();
 
-	// Schieber malen:
-	ShowResearchSchieber();
+	int startResearchCenters = owner->ResearchCount;
+	int newResearchSettings[cResearch::kNrResearchAreas];
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		newResearchSettings[i] = owner->researchCentersWorkingOnArea[i];
+	
+	// draw the sliders
+	ShowResearchSliders(newResearchSettings, startResearchCenters);
 
 	// Den Buffer anzeigen:
 	SHOW_SCREEN
-	mouse->GetBack ( buffer );
+	mouse->GetBack (buffer);
 
-	while ( 1 )
+	while (true)
 	{
-		if (  Client->SelectedBuilding != this ) break;
-		if ( !Client->isInMenu ) break;
+		if (Client->SelectedBuilding != this) 
+			break;
+		if (Client->isInMenu == false) 
+			break;
 
 		Client->handleTimer();
 		Client->doGameActions();
-
-		// Events holen:
 		EventHandler->HandleEvents();
 
-		// Die Maus machen:
 		mouse->GetPos();
-
 		b = (int)Client->getMouseState().leftButtonPressed;
-
 		x = mouse->x;
-
 		y = mouse->y;
 
-		if ( x != LastMouseX || y != LastMouseY )
-		{
-			mouse->draw ( true, screen );
-		}
+		if (x != LastMouseX || y != LastMouseY)
+			mouse->draw (true, screen);
 
-		bool const down = b > LastB;
-		bool const up   = b < LastB;
+		bool const down = (b > LastB);
+		bool const up   = (b < LastB);
 
 		if (btn_cancel.CheckClick(x, y, down, up))
 		{
+			// nothing to do...
 			break;
 		}
 
 		if (btn_done.CheckClick(x, y, down, up))
 		{
+			sendWantResearchChange (newResearchSettings);
 			break;
 		}
 
-		// Die Schieber machen:
-		if ( b && !LastB )
-			MakeResearchSchieber (x, y );
+		// Calculate the setting changes due to a mouseclick
+		if (b && !LastB)
+			handleResearchSliderMouseClick (x, y, newResearchSettings, startResearchCenters);
 
 		LastMouseX = x;
-
 		LastMouseY = y;
-
 		LastB = b;
 	}
 	Client->isInMenu = false;
 }
 
-// Zeigt die Schieber an:
-void cBuilding::ShowResearchSchieber ( void )
+//------------------------------------------------------------------
+/** Displays the sliders for the research areas. */
+//------------------------------------------------------------------
+void cBuilding::ShowResearchSliders (int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters)
 {
+	int unusedResearch = startResearchCenters;
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		unusedResearch -= newResearchSettings[i];
+	
 	SDL_Rect scr, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
 	SDL_Rect rTxtDescr = {rDialog.x + 183, rDialog.y + 72, 12, 21};
 	string sTxtTheme = "";
 
-	for ( int i = 0;i < 8;i++ )
+	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		scr.x = 20;
-		scr.y = 70 + i * 28;
+		scr.y = 70 + area * 28;
 		dest.x = 20 + rDialog.x;
-		dest.y = 70 + rDialog.y + i * 28;
+		dest.y = 70 + rDialog.y + area * 28;
 		scr.w = 316;
 		scr.h = 18;
-		SDL_BlitSurface ( GraphicsData.gfx_research, &scr, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_research, &scr, buffer, &dest);
 
-		// Texte ausgeben:
-		font->showTextCentered ( dest.x + 21 + 2, dest.y + 1, iToStr ( owner->ResearchTechs[i].working_on ) );
-		font->showTextCentered ( 258 + rDialog.x, dest.y + 1, dToStr ( owner->ResearchTechs[i].level*100 ) );
+		// display the current nr of research centers for this area
+		font->showTextCentered (dest.x + 21 + 2, dest.y + 1, iToStr (newResearchSettings[area]));
+		// display the current research level of this area
+		font->showTextCentered (258 + rDialog.x, dest.y + 1, iToStr (owner->researchLevel.getCurResearchLevel(area)));
 
+		if (newResearchSettings[area] > 0)
+			font->showTextCentered (rDialog.x + 313, dest.y + 1, iToStr (owner->researchLevel.getRemainingTurns (area, newResearchSettings[area])));
 
-
-
-		if ( owner->ResearchTechs[i].working_on )
-		{
-			int iTmp = ( int ) ceil ( owner->ResearchTechs[i].RoundsRemaining / ( double ) owner->ResearchTechs[i].working_on );
-
-			font->showTextCentered (rDialog.x + 313, dest.y + 1, iToStr ( iTmp ) );
-		}
-
-		// Den Pfeil nach links:
-		if ( owner->ResearchTechs[i].working_on == 0 )
+		// Display the left arrow
+		if (newResearchSettings[area] == 0)
 		{
 			scr.w = 19;
 			scr.h = 18;
 			scr.x = 237;
 			scr.y = 177;
 			dest.x = 71 + rDialog.x;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 		}
 
-		// Den Pfeil nach rechts:
-		if ( owner->UnusedResearch <= 0 )
+		// Display the right arrow
+		if (unusedResearch <= 0)
 		{
 			scr.w = 19;
 			scr.h = 18;
 			scr.x = 257;
 			scr.y = 177;
 			dest.x = 143 + rDialog.x;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 		}
 
-		// Die Schieber malen:
+		// Display the sliders
 		scr.w = 14;
-
 		scr.h = 17;
-
 		scr.x = 412;
-
 		scr.y = 46;
+		// draw the slider-rect at a position that shows the proportion of research centers used for this area
+		dest.x = 90 + rDialog.x + (int) (36 * ((float) (newResearchSettings[area]) / startResearchCenters));
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
 
-		dest.x = 90 + rDialog.x + ( int ) ( 36 * ( ( float ) ( owner->ResearchTechs[i].working_on ) / owner->ResearchCount ) );
-
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
-
-
-		switch ( i )
+		switch (area)
 		{
-
-			case 0:
-				sTxtTheme = lngPack.i18n ( "Text~Vehicles~Damage" );
-				break;
-
-			case 1:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Shots" );
-				break;
-
-			case 2:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Range" );
-				break;
-
-			case 3:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Armor" );
-				break;
-
-			case 4:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Hitpoints" );
-				break;
-
-			case 5:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Speed" );
-				break;
-
-			case 6:
-				sTxtTheme = lngPack.i18n ( "Text~Hud~Scan" );
-				break;
-
-			case 7:
-				sTxtTheme = lngPack.i18n ( "Text~Vehicles~Costs" );
-				break;
+			case 0: sTxtTheme = lngPack.i18n ( "Text~Vehicles~Damage" ); break;
+			case 1:	sTxtTheme = lngPack.i18n ( "Text~Hud~Shots" ); break;
+			case 2:	sTxtTheme = lngPack.i18n ( "Text~Hud~Range" ); break;
+			case 3: sTxtTheme = lngPack.i18n ( "Text~Hud~Armor" ); break;
+			case 4: sTxtTheme = lngPack.i18n ( "Text~Hud~Hitpoints" ); break;
+			case 5: sTxtTheme = lngPack.i18n ( "Text~Hud~Speed" ); break;
+			case 6: sTxtTheme = lngPack.i18n ( "Text~Hud~Scan" ); break;
+			case 7: sTxtTheme = lngPack.i18n ( "Text~Vehicles~Costs" ); break;
 		}
 
 		dest.x = rTxtDescr.x;
-
 		//dest.w = rTxtDescr.w; //not used right now
 		//dest.h = rTxtDescr.h; //not used right now
-		dest.y = rTxtDescr.y + i * 28;
-		font->showText ( dest, sTxtTheme );
-
+		dest.y = rTxtDescr.y + area * 28;
+		font->showText (dest, sTxtTheme);
 	}
 }
 
-// checks, if the research sliders were changed:
-void cBuilding::MakeResearchSchieber ( int x, int y )
+//--------------------------------------------------------------
+/** handles mouseclicks on the research sliders */
+//--------------------------------------------------------------
+void cBuilding::handleResearchSliderMouseClick (int mouseX, int mouseY, int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters)
 {
+	int unusedResearch = startResearchCenters;
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		unusedResearch -= (newResearchSettings)[i];
+
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
 	SDL_Rect rArrowLeft = {rDialog.x + 71 , rDialog.y + 70 , 19, 18 };
 	SDL_Rect rArrowRight = {rDialog.x + 143 , rDialog.y + 70 , 19, 18 };
 	bool changed = false;
-	int i;
-
-	for ( i = 0;i < 8;i++ )
+	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
-		// Den Pfeil nach links:
-		if ( x >= rArrowLeft.x && x < rArrowLeft.x +  rArrowLeft.w && y >= rArrowLeft.y + i*28 && y < rArrowLeft.y + rArrowLeft.h + i*28 && owner->ResearchTechs[i].working_on )
+		// the left arrow
+		if (mouseX >= rArrowLeft.x && mouseX < rArrowLeft.x +  rArrowLeft.w && mouseY >= rArrowLeft.y + area*28 && mouseY < rArrowLeft.y + rArrowLeft.h + area*28 
+			&& (newResearchSettings)[area] > 0)
 		{
-			owner->ResearchTechs[i].working_on--;
-			owner->UnusedResearch++;
+			(newResearchSettings)[area] -= 1;
+			unusedResearch += 1;
 			changed = true;
 		}
 
-		// Den Pfeil nach rechts:
-		if ( x >= rArrowRight.x && x < rArrowRight.x +  rArrowRight.w && y >= rArrowRight.y + i*28 && y < rArrowRight.y + rArrowRight.h + i*28 && owner->UnusedResearch > 0 )
+		// the right arrow
+		if (mouseX >= rArrowRight.x && mouseX < rArrowRight.x +  rArrowRight.w && mouseY >= rArrowRight.y + area*28 && mouseY < rArrowRight.y + rArrowRight.h + area*28 
+			&& unusedResearch > 0)
 		{
-			owner->ResearchTechs[i].working_on++;
-
-			owner->UnusedResearch--;
+			(newResearchSettings)[area] += 1;
+			unusedResearch -= 1;
+			changed = true;
+		}
+		
+		// click directly into the slider
+		if (rArrowLeft.x + rArrowLeft.w + 1 <= mouseX && mouseX < rArrowRight.x - 1 
+			&& rArrowLeft.y + area*28 <= mouseY && mouseY < rArrowLeft.y + rArrowLeft.h + area*28)
+		{
+			int sliderWidth = rArrowRight.x - 1 - (rArrowLeft.x + rArrowLeft.w + 1);
+			int clickXInsideSlider = mouseX - (rArrowLeft.x + rArrowLeft.w + 1);
+			int wantedResearchForArea = (int) (((clickXInsideSlider * startResearchCenters) / (float)sliderWidth) + 0.5f);
+			if (wantedResearchForArea <= newResearchSettings[area])
+			{
+				unusedResearch += newResearchSettings[area] - wantedResearchForArea;
+				newResearchSettings[area] = wantedResearchForArea;
+			}
+			else
+			{
+				int wantedIncrement = wantedResearchForArea - newResearchSettings[area];
+				int possibleIncrement = (wantedIncrement >= unusedResearch) ? unusedResearch : wantedIncrement;
+				newResearchSettings[area] += possibleIncrement;
+				unusedResearch -= possibleIncrement;
+			}
 			changed = true;
 		}
 	}
 
-	if ( changed )
+	if (changed)
 	{
-		ShowResearchSchieber();
+		ShowResearchSliders (newResearchSettings, startResearchCenters);
 		SHOW_SCREEN
-		mouse->draw ( false, screen );
+		mouse->draw (false, screen);
 	}
 }
 
+//------------------------------------------------------------------------
+void cBuilding::sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas])
+{
+	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_RESEARCH_CHANGE);
+	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+		msg->pushInt16 (newResearchSettings[area]);
+	msg->pushInt16 (owner->Nr);
+	Client->sendNetMessage (msg);
+}
 
 //------------------------------------------------------------------------
 /** Display and handle the upgrade screen. */
@@ -3575,13 +3564,13 @@ void cBuilding::ShowUpgrade ()
 					{
 						upgradeStructSelectedUnit->upgrades[i].curValue -= uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue);
 						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue, 
-																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType);
+																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType, owner->researchLevel);
 					}
 					else
 					{
 						upgradeStructSelectedUnit->upgrades[i].curValue -= 4 * uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue / 4);
 						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue / 4, 
-																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType);
+																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
 					}
 
 					curCredits += upgradeStructSelectedUnit->upgrades[i].nextPrice;
@@ -3623,13 +3612,13 @@ void cBuilding::ShowUpgrade ()
 					{
 						upgradeStructSelectedUnit->upgrades[i].curValue += uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue);
 						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue, 
-																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType);
+																						 upgradeStructSelectedUnit->upgrades[i].startValue, upgradeType, owner->researchLevel);
 					}
 					else
 					{
 						upgradeStructSelectedUnit->upgrades[i].curValue += 4 * uc.calcIncreaseByUpgrade (upgradeStructSelectedUnit->upgrades[i].startValue / 4);
 						upgradeStructSelectedUnit->upgrades[i].nextPrice = uc.calcPrice (upgradeStructSelectedUnit->upgrades[i].curValue / 4, 
-																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType);
+																						 upgradeStructSelectedUnit->upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
 					}
 
 					upgradeStructSelectedUnit->upgrades[i].purchased++;
@@ -4008,6 +3997,8 @@ void cBuilding::ShowGoldBar (int startCredits, int curCredits)
 //-------------------------------------------------------------------------------
 void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 {
+	cResearch& researchLevel = owner->researchLevel;
+	
 	// initialize the upgrades with empty values
 	for (int i = 0; i < 8; i++)
 	{
@@ -4027,28 +4018,28 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 		u[i].active = true;
 		u[i].startValue = startVersion.damage;
 		u[i].curValue = currentVersion.damage;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 		// Shots:
 		u[i].active = true;
 		u[i].startValue = startVersion.max_shots;
 		u[i].curValue = currentVersion.max_shots;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 		i++;
 		// Range:
 		u[i].active = true;
 		u[i].startValue = startVersion.range;
 		u[i].curValue = currentVersion.range;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 		i++;
 		// Ammo:
 		u[i].active = true;
 		u[i].startValue = startVersion.max_ammo;
 		u[i].curValue = currentVersion.max_ammo;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 		i++;
 	}
@@ -4060,7 +4051,7 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 	u[i].active = true;
 	u[i].startValue = startVersion.armor;
 	u[i].curValue = currentVersion.armor;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 
@@ -4068,7 +4059,7 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 	u[i].active = true;
 	u[i].startValue = startVersion.max_hit_points;
 	u[i].curValue = currentVersion.max_hit_points;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 
@@ -4076,7 +4067,7 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 	u[i].active = true;
 	u[i].startValue = startVersion.scan;
 	u[i].curValue = currentVersion.scan;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 	i++;
 
@@ -4084,7 +4075,7 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 	u[i].active = true;
 	u[i].startValue = startVersion.max_speed;
 	u[i].curValue = currentVersion.max_speed;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_speed / 4, startVersion.max_speed / 4, cUpgradeCalculator::kSpeed);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_speed / 4, startVersion.max_speed / 4, cUpgradeCalculator::kSpeed, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Speed");
 	i++;
 
@@ -4106,6 +4097,8 @@ void cBuilding::initUpgradesVehicle(sUpgradeNew u[], int vehicleTypeIdx)
 //-------------------------------------------------------------------------------
 void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 {
+	cResearch& researchLevel = owner->researchLevel;
+
 	// initialize the upgrades with empty values
 	for (int i = 0; i < 8; i++)
 	{
@@ -4125,7 +4118,7 @@ void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 		u[i].active = true;
 		u[i].startValue = startVersion.damage;
 		u[i].curValue = currentVersion.damage;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.damage, startVersion.damage, cUpgradeCalculator::kAttack, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 
@@ -4135,21 +4128,21 @@ void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 			u[i].active = true;
 			u[i].startValue = startVersion.max_shots;
 			u[i].curValue = currentVersion.max_shots;
-			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots);
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_shots, startVersion.max_shots, cUpgradeCalculator::kShots, researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 			i++;
 			// Range:
 			u[i].active = true;
 			u[i].startValue = startVersion.range;
 			u[i].curValue = currentVersion.range;
-			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange);
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.range, startVersion.range, cUpgradeCalculator::kRange, researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 			i++;
 			// Ammo:
 			u[i].active = true;
 			u[i].startValue = startVersion.max_ammo;			
 			u[i].curValue = currentVersion.max_ammo;
-			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo);
+			u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_ammo, startVersion.max_ammo, cUpgradeCalculator::kAmmo, researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 			i++;
 		}
@@ -4168,14 +4161,14 @@ void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 	u[i].active = true;
 	u[i].startValue = startVersion.armor;
 	u[i].curValue = currentVersion.armor;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.armor, startVersion.armor, cUpgradeCalculator::kArmor, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 	// Hitpoints:
 	u[i].active = true;
 	u[i].startValue = startVersion.max_hit_points;
 	u[i].curValue = currentVersion.max_hit_points;
-	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.max_hit_points, startVersion.max_hit_points, cUpgradeCalculator::kHitpoints, researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 	// Scan:
@@ -4184,7 +4177,7 @@ void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 		u[i].active = true;
 		u[i].startValue = startVersion.scan;
 		u[i].curValue = currentVersion.scan;
-		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan);
+		u[i].nextPrice = cUpgradeCalculator::instance().calcPrice (currentVersion.scan, startVersion.scan, cUpgradeCalculator::kScan, researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 		i++;
 	}
@@ -7075,46 +7068,35 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		nr++;
 	}
 
-	// Forschen:
-	if ( typ->data.can_research && IsWorking )
+	// research
+	if (typ->data.can_research && IsWorking)
 	{
-		// Aktivieren:
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
-
-		if ( ExeNr == nr )
+		bSelection = (SelMenu == nr);
+		if (ExeNr == nr)
 		{
 			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			// TODO: implement researche
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//ShowResearch();
+			PlayFX (SoundData.SNDObjectMenu);
+			ShowResearch();
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Research" ), bSelection, dest.x, dest.y, buffer );
-
+		drawContextItem (lngPack.i18n ("Text~Context~Research"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
-	// Upgradeschirm:
-	if ( data.gold_need )
+	// upgradescreen
+	if (data.gold_need)
 	{
-		// Dies Updaten:
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
-
-		if ( ExeNr == nr )
+		// update this
+		bSelection = (SelMenu == nr);
+		if (ExeNr == nr)
 		{
 			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			ShowUpgrade();
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Upgrades" ), bSelection, dest.x, dest.y, buffer );
-
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
@@ -7131,9 +7113,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 			sendUpgradeBuilding (this, true);
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~UpAll" ), bSelection, dest.x, dest.y, buffer );
-
+		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
@@ -7146,20 +7126,16 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 			sendUpgradeBuilding (this, false);
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Upgrade" ), bSelection, dest.x, dest.y, buffer );
-
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
-	// Entfernen:
-	if ( !data.is_road )
+	// Self destruct
+	if (!data.is_road)
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
-
-		if ( ExeNr == nr )
+		bSelection = (SelMenu == nr);
+		if (ExeNr == nr)
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -7168,42 +7144,33 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 			//SelfDestructionMenu();
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Destroy" ), bSelection, dest.x, dest.y, buffer );
-
+		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	if ( SelMenu == nr ) { bSelection = true; }
-	else { bSelection = false; }
-
-	if ( ExeNr == nr )
+	bSelection = (SelMenu == nr);
+	if (ExeNr == nr)
 	{
 		MenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
+		PlayFX (SoundData.SNDObjectMenu);
 		ShowHelp();
 		return;
 	}
-
-	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), bSelection, dest.x, dest.y, buffer );
-
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), bSelection, dest.x, dest.y, buffer);
 	dest.y += 22;
 	nr++;
-	// Fertig:
 
-	if ( SelMenu == nr ) { bSelection = true; }
-	else { bSelection = false; }
-
-	if ( ExeNr == nr )
+	// Done:
+	bSelection = (SelMenu == nr);
+	if (ExeNr == nr)
 	{
 		MenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
+		PlayFX (SoundData.SNDObjectMenu);
 		return;
 	}
-
-	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), bSelection, dest.x, dest.y, buffer);
 }
 
 //------------------------------------------------------------------------
@@ -7750,8 +7717,10 @@ void cBuilding::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface 
 		}
 }
 
-// Playback of the soundstream that belongs to this building
-int cBuilding::PlayStram ( void )
+//----------------------------------------------------------------
+/** Playback of the soundstream that belongs to this building */
+//----------------------------------------------------------------
+int cBuilding::playStream ()
 {
 	if ( IsWorking )
 		return PlayFXLoop ( typ->Running );

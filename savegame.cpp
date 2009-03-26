@@ -22,6 +22,7 @@
 #include "client.h"
 #include "menu.h"
 #include "loaddata.h"
+#include "upgradecalculator.h"
 
 cSavegame::cSavegame ( int number )
 {
@@ -298,7 +299,17 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 		}
 	}
 
-	// TODO: load researches
+	TiXmlElement *researchNode = playerNode->FirstChildElement( "Research" );
+	if (researchNode)
+	{
+		researchNode->Attribute ( "researchCount", &(Player->ResearchCount) );
+		TiXmlElement *researchLevelNode = researchNode->FirstChildElement( "ResearchLevel" );
+		if ( researchLevelNode )
+			loadResearchLevel( researchLevelNode, Player->researchLevel );
+		TiXmlElement *researchCentersWorkingOnAreaNode = researchNode->FirstChildElement( "CentersWorkingOnArea" );
+		if ( researchCentersWorkingOnAreaNode )
+			loadResearchCentersWorkingOnArea( researchCentersWorkingOnAreaNode, Player );
+	}
 
 	TiXmlElement *subbasesNode;
 	if ( subbasesNode = playerNode->FirstChildElement( "Subbases" ) )
@@ -341,10 +352,69 @@ void cSavegame::loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data )
 	if ( element = upgradeNode->FirstChildElement( "Shots" ) ) element->Attribute ( "num", &data->max_shots );
 	if ( element = upgradeNode->FirstChildElement( "Speed" ) ) element->Attribute ( "num", &data->max_speed );
 	if ( element = upgradeNode->FirstChildElement( "Armor" ) ) element->Attribute ( "num", &data->armor );
-	if ( element = upgradeNode->FirstChildElement( "Costs" ) ) element->Attribute ( "num", &data->costs );
+	if ( element = upgradeNode->FirstChildElement( "Costs" ) ) element->Attribute ( "num", &data->iBuilt_Costs );
 	if ( element = upgradeNode->FirstChildElement( "Damage" ) ) element->Attribute ( "num", &data->damage );
 	if ( element = upgradeNode->FirstChildElement( "Range" ) ) element->Attribute ( "num", &data->range );
 	if ( element = upgradeNode->FirstChildElement( "Scan" ) ) element->Attribute ( "num", &data->scan );
+}
+
+void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& researchLevel )
+{
+	int value;
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "attack", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kAttackResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "shots", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kShotsResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "range", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kRangeResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "armor", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kArmorResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "hitpoints", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kHitpointsResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "speed", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kSpeedResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "scan", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kScanResearch );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "cost", &value );
+	researchLevel.setCurResearchLevel( value, cResearch::kCostResearch );
+	
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "attack", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kAttackResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "shots", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kShotsResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "range", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kRangeResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "armor", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kArmorResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "hitpoints", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kHitpointsResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "speed", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kSpeedResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "scan", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kScanResearch );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "cost", &value );
+	researchLevel.setCurResearchPoints( value, cResearch::kCostResearch );
+}
+
+void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player )
+{
+	int value;
+	researchCentersWorkingOnAreaNode->Attribute ( "attack", &value );
+	player->researchCentersWorkingOnArea[cResearch::kAttackResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "shots", &value );
+	player->researchCentersWorkingOnArea[cResearch::kShotsResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "range", &value );
+	player->researchCentersWorkingOnArea[cResearch::kRangeResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "armor", &value );
+	player->researchCentersWorkingOnArea[cResearch::kArmorResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "hitpoints", &value );
+	player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "speed", &value );
+	player->researchCentersWorkingOnArea[cResearch::kSpeedResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "scan", &value );
+	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
+	researchCentersWorkingOnAreaNode->Attribute ( "cost", &value );
+	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;	
 }
 
 void cSavegame::loadUnits ()
@@ -560,6 +630,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	loadUnitValues ( unitNode, &building->data );
 
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
+	if ( unitNode->FirstChildElement( "ResearchArea" ) ) unitNode->FirstChildElement( "ResearchArea" )->Attribute( "area", &(building->researchArea) );
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
 		if ( !building->bSentryStatus )
@@ -995,8 +1066,14 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 			upgrades++;
 		}
 	}
-	// TODO: implement researches
-	TiXmlElement *researchesNode = addMainElement ( playerNode, "Researches" );
+
+	TiXmlElement *researchNode = addMainElement( playerNode, "Research" );
+	researchNode->SetAttribute( "researchCount", iToStr( Player->ResearchCount ).c_str() );
+	TiXmlElement *researchLevelNode = addMainElement ( researchNode, "ResearchLevel" );
+	writeResearchLevel( researchLevelNode, Player->researchLevel );
+	TiXmlElement *researchCentersWorkingOnAreaNode = addMainElement ( researchNode, "CentersWorkingOnArea" );
+	writeResearchCentersWorkingOnArea( researchCentersWorkingOnAreaNode, Player );
+	
 
 	// write subbases
 	TiXmlElement *subbasesNode = addMainElement ( playerNode, "Subbases" );
@@ -1036,10 +1113,45 @@ void cSavegame::writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sU
 	if ( data->max_shots != originaldata->max_shots ) addAttributeElement ( upgradeNode, "Shots", "num", iToStr ( data->max_shots ) );
 	if ( data->max_speed != originaldata->max_speed ) addAttributeElement ( upgradeNode, "Speed", "num", iToStr ( data->max_speed ) );
 	if ( data->armor != originaldata->armor ) addAttributeElement ( upgradeNode, "Armor", "num", iToStr ( data->armor ) );
-	if ( data->costs != originaldata->costs ) addAttributeElement ( upgradeNode, "Costs", "num", iToStr ( data->costs ) );
+	if ( data->iBuilt_Costs != originaldata->iBuilt_Costs ) addAttributeElement ( upgradeNode, "Costs", "num", iToStr ( data->iBuilt_Costs ) );
 	if ( data->damage != originaldata->damage ) addAttributeElement ( upgradeNode, "Damage", "num", iToStr ( data->damage ) );
 	if ( data->range != originaldata->range ) addAttributeElement ( upgradeNode, "Range", "num", iToStr ( data->range ) );
 	if ( data->scan != originaldata->scan ) addAttributeElement ( upgradeNode, "Scan", "num", iToStr ( data->scan ) );
+}
+
+void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& researchLevel )
+{
+	TiXmlElement *levelNode = addMainElement ( researchLevelNode, "Level" );
+	levelNode->SetAttribute( "attack", iToStr (researchLevel.getCurResearchLevel (cResearch::kAttackResearch)).c_str() );
+	levelNode->SetAttribute( "shots", iToStr (researchLevel.getCurResearchLevel (cResearch::kShotsResearch)).c_str() );
+	levelNode->SetAttribute( "range", iToStr (researchLevel.getCurResearchLevel (cResearch::kRangeResearch)).c_str() );
+	levelNode->SetAttribute( "armor", iToStr (researchLevel.getCurResearchLevel (cResearch::kArmorResearch)).c_str() );
+	levelNode->SetAttribute( "hitpoints", iToStr (researchLevel.getCurResearchLevel (cResearch::kHitpointsResearch)).c_str() );
+	levelNode->SetAttribute( "speed", iToStr (researchLevel.getCurResearchLevel (cResearch::kSpeedResearch)).c_str() );
+	levelNode->SetAttribute( "scan", iToStr (researchLevel.getCurResearchLevel (cResearch::kScanResearch)).c_str() );
+	levelNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchLevel (cResearch::kCostResearch)).c_str() );
+
+	TiXmlElement *curPointsNode = addMainElement ( researchLevelNode, "CurPoints" );
+	curPointsNode->SetAttribute( "attack", iToStr (researchLevel.getCurResearchPoints (cResearch::kAttackResearch)).c_str() );
+	curPointsNode->SetAttribute( "shots", iToStr (researchLevel.getCurResearchPoints (cResearch::kShotsResearch)).c_str() );
+	curPointsNode->SetAttribute( "range", iToStr (researchLevel.getCurResearchPoints (cResearch::kRangeResearch)).c_str() );
+	curPointsNode->SetAttribute( "armor", iToStr (researchLevel.getCurResearchPoints (cResearch::kArmorResearch)).c_str() );
+	curPointsNode->SetAttribute( "hitpoints", iToStr (researchLevel.getCurResearchPoints (cResearch::kHitpointsResearch)).c_str() );
+	curPointsNode->SetAttribute( "speed", iToStr (researchLevel.getCurResearchPoints (cResearch::kSpeedResearch)).c_str() );
+	curPointsNode->SetAttribute( "scan", iToStr (researchLevel.getCurResearchPoints (cResearch::kScanResearch)).c_str() );
+	curPointsNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchPoints (cResearch::kCostResearch)).c_str() );	
+}
+
+void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player)
+{
+	researchCentersWorkingOnAreaNode->SetAttribute( "attack", iToStr (player->researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "shots", iToStr (player->researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "range", iToStr (player->researchCentersWorkingOnArea[cResearch::kRangeResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "armor", iToStr (player->researchCentersWorkingOnArea[cResearch::kArmorResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "hitpoints", iToStr (player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "speed", iToStr (player->researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "scan", iToStr (player->researchCentersWorkingOnArea[cResearch::kScanResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );		
 }
 
 TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
@@ -1149,6 +1261,11 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 
 	// write additional stauts information
 	if ( Building->IsWorking ) addMainElement ( unitNode, "IsWorking" );
+	if ( Building->data.can_research )
+	{
+		TiXmlElement *researchNode = addMainElement ( unitNode, "ResearchArea" );
+		researchNode->SetAttribute ( "area", iToStr(Building->researchArea).c_str() );
+	}
 	if ( Building->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
 	if ( Building->hasBeenAttacked ) addMainElement ( unitNode, "HasBeenAttacked" );
 

@@ -26,6 +26,7 @@
 #include "vehicles.h"
 #include "base.h"
 #include "map.h"
+#include "upgradecalculator.h"
 
 struct sVehicle;
 struct sUnitData;
@@ -46,13 +47,6 @@ struct sLockElem{
   cBuilding *b;
 };
 
-// Die Research Struktur /////////////////////////////////////////////////////
-struct sResearch{
-  int working_on;
-  int RoundsRemaining;
-  int MaxRounds;
-  double level;
-};
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
@@ -60,65 +54,66 @@ class cPlayer{
 friend class cServer;
 friend class cClient;
 public:
-  cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
-  ~cPlayer(void);
-  cPlayer(const cPlayer &Player);
-
-  string name;
-  SDL_Surface *color;
-  int Nr;
-
-  sUnitData *VehicleData; // Daten aller Vehicles für diesen Player.
-  cVehicle *VehicleList;     // Liste aller Vehicles des Spielers.
-  sUnitData *BuildingData; // Daten aller Buildings für diesen Player.
-  cBuilding *BuildingList;     // Liste aller Buildings des Spielers.
-  int MapSize;               // Kartengröße
-  char *ScanMap;             // Map mit dem Scannerflags.
-  char *ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
-  cBase base;               // Die Basis dieses Spielers.
-  cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
-  char *SentriesMapAir;				/** the covered air area */
-  cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
-  char *SentriesMapGround;			/** the covered ground area */
-  char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden können.
-  char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden können.
-  char *DetectMinesMap;				/** the area where the player can detect mines */
-  sResearch ResearchTechs[8];// Map mit den erforschten Technologien.
-  int ResearchCount;         // Anzahl an Forschungszentren (die arbeiten).
-  int UnusedResearch;        // Nicht benutzte Forschungskapazitäten.
-  int Credits;               // Anzahl der erworbenen Credits.
-  cHud HotHud;               // Gespeichertes Hud für Hot-Seat-Spiele.
-  cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
-  cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
-  bool ReportForschungFinished; // Merker, ob Forschung abgeschlossen ist.
-  cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
-  int iSocketNum;			// Number of socket over which this player is connected in network game
-							// if MAX_CLIENTS its the lokal connected player; -1 for unknown
-  bool bFinishedTurn;			//true when player send his turn end
-  bool isDefeated;			// true if the player has been defeated
-
-  void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
-  void DoScan(void);
-  cVehicle *GetNextVehicle(void);
-  cVehicle *GetPrevVehicle(void);
-  void addSentryVehicle( cVehicle *v );
-  void addSentryBuilding( cBuilding *b );
-  void deleteSentryVehicle( cVehicle *v );
-  void deleteSentryBuilding( cBuilding *b) ;
-  void refreshSentryAir();
-  void refreshSentryGround();
-  void StartAResearch(void);
-  void StopAReserach(void);
-  void DoResearch(void);
-  void DoTheResearch(int i);
-  void AddLock(cBuilding *b);
-  void AddLock(cVehicle *v);
-  void DeleteLock(cBuilding *b);
-  void DeleteLock(cVehicle *v);
-  bool InLockList(cBuilding *b);
-  bool InLockList(cVehicle *v);
-  void ToggelLock(cMapField *OverUnitField);
-  void DrawLockList(cHud const&);
+	cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
+	~cPlayer(void);
+	cPlayer(const cPlayer &Player);
+	
+	string name;
+	SDL_Surface *color;
+	int Nr;
+	
+	sUnitData *VehicleData; // Daten aller Vehicles fÂ¸r diesen Player.
+	cVehicle *VehicleList;     // Liste aller Vehicles des Spielers.
+	sUnitData *BuildingData; // Daten aller Buildings fÂ¸r diesen Player.
+	cBuilding *BuildingList;     // Liste aller Buildings des Spielers.
+	int MapSize;               // KartengrË†ï¬‚e
+	char *ScanMap;             // Map mit dem Scannerflags.
+	char *ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
+	cBase base;               // Die Basis dieses Spielers.
+	cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
+	char *SentriesMapAir;				/** the covered air area */
+	cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
+	char *SentriesMapGround;			/** the covered ground area */
+	char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kË†nnen.
+	char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kË†nnen.
+	char *DetectMinesMap;				/** the area where the player can detect mines */
+	cResearch researchLevel;	///< stores the current research level of the player
+	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area	
+	int ResearchCount;         ///< number of working research centers
+	int Credits;               // Anzahl der erworbenen Credits.
+	cHud HotHud;               // Gespeichertes Hud fÂ¸r Hot-Seat-Spiele.
+	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
+	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
+	bool reportResearchFinished; ///< stores, if just a research was finished
+	cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
+	int iSocketNum;			// Number of socket over which this player is connected in network game
+	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
+	bool bFinishedTurn;			//true when player send his turn end
+	bool isDefeated;			// true if the player has been defeated
+	
+	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
+	void DoScan(void);
+	cVehicle *GetNextVehicle(void);
+	cVehicle *GetPrevVehicle(void);
+	void addSentryVehicle( cVehicle *v );
+	void addSentryBuilding( cBuilding *b );
+	void deleteSentryVehicle( cVehicle *v );
+	void deleteSentryBuilding( cBuilding *b) ;
+	void refreshSentryAir();
+	void refreshSentryGround();
+	void startAResearch (int researchArea);
+	void stopAResearch (int researchArea);
+	void doResearch (); ///< proceed with the research at turn end
+	void upgradeUnitType (int newResearchLevel, int researchArea, cList<sUnitData*>& resultUpgradedUnitDatas);
+	void refreshResearchCentersWorkingOnArea();
+	void AddLock(cBuilding *b);
+	void AddLock(cVehicle *v);
+	void DeleteLock(cBuilding *b);
+	void DeleteLock(cVehicle *v);
+	bool InLockList(cBuilding *b);
+	bool InLockList(cVehicle *v);
+	void ToggelLock(cMapField *OverUnitField);
+	void DrawLockList(cHud const&);
 	/**
 	* draws a circle on the map for the fog
 	*@author alzi alias DoctorDeath
@@ -139,8 +134,8 @@ public:
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
 
 private:
-  cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
-  cBuilding *addBuilding( int posx, int posy, sBuilding *b );
+	cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
+	cBuilding *addBuilding( int posx, int posy, sBuilding *b );
 };
 
 #endif

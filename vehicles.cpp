@@ -161,7 +161,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		MoveJobActive = false;
 		moving = false;
 		StopFXLoop ( Client->iObjectStream );
-		Client->iObjectStream = PlayStram();
+		Client->iObjectStream = playStream();
 	}
 
 	//make damage effect
@@ -1731,7 +1731,7 @@ void cVehicle::RotateTo ( int Dir )
 }
 
 // Returns a string with the current state
-string cVehicle::GetStatusStr ()
+string cVehicle::getStatusStr ()
 {
 	if ( autoMJob )
 	{
@@ -1835,7 +1835,7 @@ string cVehicle::GetStatusStr ()
 }
 
 // Plays the soundstream, that belongs to this vehicle
-int cVehicle::PlayStram ( void )
+int cVehicle::playStream ()
 {
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
 	{

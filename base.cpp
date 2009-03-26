@@ -227,14 +227,15 @@ void cBase::DeleteBuilding ( cBuilding *b )
 			break;
 		}
 	}
-	// Alle Gebäude neu einsetzen:
+	// add all the buildings again
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		n = sb->buildings[i];
 		if ( n==b ) continue;
 		AddBuilding ( n );
 	}
-	if ( b->IsWorking&&b->data.can_research ) b->owner->StopAReserach();
+	if (b->IsWorking && b->data.can_research)
+		b->owner->stopAResearch (b->researchArea);
 	delete sb;
 }
 

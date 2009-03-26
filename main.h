@@ -361,7 +361,7 @@ struct sUnitData{
   int cargo;
   int max_ammo;
   int ammo;
-  int costs;
+  //int costs;
 
   int energy_prod;
   int oil_need;

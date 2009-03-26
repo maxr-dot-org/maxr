@@ -28,7 +28,7 @@
 
 // the first client message must be smaller then the first menu message!
 #define FIRST_CLIENT_MESSAGE	50
-#define FIRST_MENU_MESSAGE		100
+#define FIRST_MENU_MESSAGE		1000
 
 /**
 * Callback for the networkthread

@@ -25,9 +25,6 @@
 #include "automjobs.h"
 #include "input.h"
 
-// Define zum Updaten:
-#define Update(from,to) if((from).hit_points==(from).max_hit_points){(from).hit_points=(to).max_hit_points;}(from).version=(to).version;(from).speed=(to).speed;(from).max_hit_points=(to).max_hit_points;(from).armor=(to).armor;(from).scan=(to).scan;(from).range=(to).range;(from).max_shots=(to).max_shots;(from).damage=(to).damage;(from).max_ammo=(to).max_ammo;(from).iBuilt_Costs=(to).iBuilt_Costs;
-
 // Vehicle-Strukturen ////////////////////////////////////////////////////////
 
 class cPlayer;
@@ -160,8 +157,8 @@ public:
 	int GetScreenPosY(void) const;
 	void DrawPath(void);
 	void RotateTo(int Dir);
-	std::string GetStatusStr(void);
-	int PlayStram(void);
+	std::string getStatusStr();
+	int playStream();
 	void StartMoveSound(void);
 	void DrawMenu( sMouseState *mouseState = NULL );
 	int GetMenuPointAnz(void);

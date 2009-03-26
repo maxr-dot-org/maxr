@@ -1277,5 +1277,5 @@ void cClientMoveJob::stopMoveSound()
 	if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
 	else PlayFX ( Vehicle->typ->Stop );
 
-	Client->iObjectStream = Vehicle->PlayStram();
+	Client->iObjectStream = Vehicle->playStream();
 }

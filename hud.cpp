@@ -1026,7 +1026,7 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 				}
 				v->Select();
 				v->Center();
-				Client->iObjectStream=v->PlayStram();
+				Client->iObjectStream=v->playStream();
 				Client->SelectedVehicle=v;
 			}
 			NextButton ( false );
@@ -1054,7 +1054,7 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 				}
 				v->Select();
 				v->Center();
-				Client->iObjectStream=v->PlayStram();
+				Client->iObjectStream=v->playStream();
 				Client->SelectedVehicle=v;
 			}
 			PrevButton ( false );

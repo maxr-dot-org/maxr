@@ -2219,12 +2219,12 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
 						*(ptr->upgrades[i].value) -= uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType, player->researchLevel);
 					}
 					else
 					{
 						*(ptr->upgrades[i].value) -= 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType, player->researchLevel);
 					}
 
 					player->Credits += ptr->upgrades[i].NextPrice;
@@ -2266,12 +2266,12 @@ void RunHangar ( cPlayer *player,cList<sLanding> *LandingList )
 					if (upgradeType != cUpgradeCalculator::kSpeed)
 					{
 						*(ptr->upgrades[i].value) += uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value), ptr->upgrades[i].StartValue, upgradeType, player->researchLevel);
 					}
 					else
 					{
 						*(ptr->upgrades[i].value) += 4 * uc.calcIncreaseByUpgrade (ptr->upgrades[i].StartValue / 4);
-						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType);
+						ptr->upgrades[i].NextPrice = uc.calcPrice (*(ptr->upgrades[i].value) / 4, ptr->upgrades[i].StartValue / 4, upgradeType, player->researchLevel);
 					}
 
 					ptr->upgrades[i].Purchased++;
@@ -2699,25 +2699,25 @@ void MakeUpgradeSliderVehicle ( sUpgrade u[], int nr, cPlayer *p )
 		// Damage:
 		u[i].active = true;
 		u[i].value = & ( d->damage );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.damage, cUpgradeCalculator::kAttack, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 		// Shots:
 		u[i].active = true;
 		u[i].value = & ( d->max_shots );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_shots, cUpgradeCalculator::kShots);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_shots, cUpgradeCalculator::kShots, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 		i++;
 		// Range:
 		u[i].active = true;
 		u[i].value = & ( d->range );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.range, cUpgradeCalculator::kRange);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.range, cUpgradeCalculator::kRange, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 		i++;
 		// Ammo:
 		u[i].active = true;
 		u[i].value = & ( d->max_ammo );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_ammo, cUpgradeCalculator::kAmmo, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 		i++;
 	}
@@ -2729,25 +2729,25 @@ void MakeUpgradeSliderVehicle ( sUpgrade u[], int nr, cPlayer *p )
 	// Armor:
 	u[i].active = true;
 	u[i].value = & ( d->armor );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.armor, cUpgradeCalculator::kArmor);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.armor, cUpgradeCalculator::kArmor, p->researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	i++;
 	// Hitpoints:
 	u[i].active = true;
 	u[i].value = & ( d->max_hit_points );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints, p->researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 	// Scan:
 	u[i].active = true;
 	u[i].value = & ( d->scan );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.scan, cUpgradeCalculator::kScan);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.vehicle[nr].data.scan, cUpgradeCalculator::kScan, p->researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 	i++;
 	// Speed:
 	u[i].active = true;
 	u[i].value = & ( d->max_speed );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value) / 4, UnitsData.vehicle[nr].data.max_speed / 4, cUpgradeCalculator::kSpeed);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value) / 4, UnitsData.vehicle[nr].data.max_speed / 4, cUpgradeCalculator::kSpeed, p->researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Speed");
 	i++;
 	// Costs:
@@ -2780,7 +2780,7 @@ void MakeUpgradeSliderBuilding ( sUpgrade u[], int nr, cPlayer *p )
 		// Damage:
 		u[i].active = true;
 		u[i].value = & ( d->damage );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.damage, cUpgradeCalculator::kAttack);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.damage, cUpgradeCalculator::kAttack, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Damage");
 		i++;
 
@@ -2789,19 +2789,19 @@ void MakeUpgradeSliderBuilding ( sUpgrade u[], int nr, cPlayer *p )
 			// Shots:
 			u[i].active = true;
 			u[i].value = & ( d->max_shots );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_shots, cUpgradeCalculator::kShots);
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_shots, cUpgradeCalculator::kShots, p->researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Shots");
 			i++;
 			// Range:
 			u[i].active = true;
 			u[i].value = & ( d->range );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.range, cUpgradeCalculator::kRange);
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.range, cUpgradeCalculator::kRange, p->researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Range");
 			i++;
 			// Ammo:
 			u[i].active = true;
 			u[i].value = & ( d->max_ammo );
-			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_ammo, cUpgradeCalculator::kAmmo);
+			u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_ammo, cUpgradeCalculator::kAmmo, p->researchLevel);
 			u[i].name = lngPack.i18n ("Text~Vehicles~Ammo");
 			i++;
 		}
@@ -2825,14 +2825,14 @@ void MakeUpgradeSliderBuilding ( sUpgrade u[], int nr, cPlayer *p )
 	{
 		u[i].active = true;
 		u[i].value = &(d->armor);
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.armor, cUpgradeCalculator::kArmor);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.armor, cUpgradeCalculator::kArmor, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Armor");
 	}
 	i++;
 	// Hitpoints:
 	u[i].active = true;
 	u[i].value = & ( d->max_hit_points );
-	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints);
+	u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.max_hit_points, cUpgradeCalculator::kHitpoints, p->researchLevel);
 	u[i].name = lngPack.i18n ("Text~Vehicles~Hitpoints");
 	i++;
 	// Scan:
@@ -2840,7 +2840,7 @@ void MakeUpgradeSliderBuilding ( sUpgrade u[], int nr, cPlayer *p )
 	{
 		u[i].active = true;
 		u[i].value = & ( d->scan );
-		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.scan, cUpgradeCalculator::kScan);
+		u[i].NextPrice = cUpgradeCalculator::instance().calcPrice (*(u[i].value), UnitsData.building[nr].data.scan, cUpgradeCalculator::kScan, p->researchLevel);
 		u[i].name = lngPack.i18n ("Text~Vehicles~Scan");
 		i++;
 	}

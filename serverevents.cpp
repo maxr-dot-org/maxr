@@ -23,6 +23,7 @@
 #include "client.h"
 #include "menu.h"
 #include "movejobs.h"
+#include "upgradecalculator.h"
 
 
 //-------------------------------------------------------------------------------------
@@ -190,7 +191,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16( Vehicle->data.cargo );
 	message->pushInt16( Vehicle->data.max_ammo );
 	message->pushInt16( Vehicle->data.ammo );
-	message->pushInt16( Vehicle->data.costs );
+	message->pushInt16( Vehicle->data.iBuilt_Costs );
 
 	// Current state of the unit
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
@@ -249,11 +250,12 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	message->pushInt16( Building->data.cargo );
 	message->pushInt16( Building->data.max_ammo );
 	message->pushInt16( Building->data.ammo );
-	message->pushInt16( Building->data.costs );
+	message->pushInt16( Building->data.iBuilt_Costs );
 
 	// Current state of the unit
 	message->pushBool ( Building->bSentryStatus );
 	message->pushBool ( Building->IsWorking );
+	message->pushInt16 ( Building->researchArea );
 	message->pushInt16 ( Building->Disabled );
 	message->pushString ( Building->name );
 
@@ -599,12 +601,14 @@ void sendProduceValues ( cBuilding *Building )
 //-------------------------------------------------------------------------------------
 void sendTurnReport ( cPlayer *Player )
 {
+	// TODO: make sure, that the message size is not exceeded!
+	
 	cNetMessage* message = new cNetMessage( GAME_EV_TURN_REPORT );
 	int iCount = 0;
 	sTurnstartReport *Report;
 
-	message->pushBool ( Player->ReportForschungFinished );
-	Player->ReportForschungFinished = false;
+	message->pushBool (Player->reportResearchFinished);
+	Player->reportResearchFinished = false;
 
 	while ( Player->ReportBuildings.Size() )
 	{
@@ -846,6 +850,25 @@ void sendDeleteEverything ( int player )
 }
 
 //-------------------------------------------------------------------------------------
+void sendResearchLevel ( cResearch* researchLevel, int player )
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_RESEARCH_LEVEL);
+	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+	{
+		message->pushInt16(researchLevel->getCurResearchLevel(area));
+		message->pushInt16(researchLevel->getCurResearchPoints(area));
+	}
+	Server->sendNetMessage (message, player);
+}
+
+//-------------------------------------------------------------------------------------
+void sendRefreshResearchCount ( int player )
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_REFRESH_RESEARCH_COUNT);
+	Server->sendNetMessage ( message, player );
+}
+
+//-------------------------------------------------------------------------------------
 void sendUnitUpgrades ( sUnitData *Data, int player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_UNIT_UPGRADE_VALUES );
@@ -854,7 +877,7 @@ void sendUnitUpgrades ( sUnitData *Data, int player )
 	message->pushInt16 ( Data->max_shots );
 	message->pushInt16 ( Data->max_speed );
 	message->pushInt16 ( Data->armor );
-	message->pushInt16 ( Data->costs );
+	message->pushInt16 ( Data->iBuilt_Costs );
 	message->pushInt16 ( Data->damage );
 	message->pushInt16 ( Data->range );
 	message->pushInt16 ( Data->scan );
@@ -938,6 +961,40 @@ void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, un
 	Server->sendNetMessage (message, player);
 	
 	//TODO: send to other players as well?
+}
+
+//-------------------------------------------------------------------------------------
+void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<int>& newAreasForResearchCenters, int player)
+{
+	if (researchCentersToChangeArea.Size() != newAreasForResearchCenters.Size())
+		return;
+
+	cNetMessage* message = NULL;
+	int buildingsInMsg = 0;
+	for (unsigned int i = 0; i < researchCentersToChangeArea.Size(); i++)
+	{
+		if (message == NULL)
+		{
+			message = new cNetMessage (GAME_EV_RESEARCH_SETTINGS);
+			buildingsInMsg = 0;
+		}
+		
+		message->pushChar(newAreasForResearchCenters[i]);
+		message->pushInt32(researchCentersToChangeArea[i]->iID);
+		buildingsInMsg++;
+		if (message->iLength + 7 > PACKAGE_LENGTH)
+		{
+			message->pushInt16(buildingsInMsg);
+			Server->sendNetMessage (message, player);
+			message = NULL;
+		}
+	}
+	if (message != NULL)
+	{
+		message->pushInt16(buildingsInMsg);
+		Server->sendNetMessage (message, player);
+		message = NULL;
+	}	
 }
 
 //-------------------------------------------------------------------------------------

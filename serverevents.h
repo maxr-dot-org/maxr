@@ -25,6 +25,8 @@
 #include "map.h"
 #include "hud.h"
 
+class cResearch;
+
 enum SERVER_EVENT_TYPES
 {
 	// Types between 0 and FIRST_CLIENT_MESSAGE are for the server
@@ -59,6 +61,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_REQUEST_RESYNC,			// requests the server to resync a client
 	GAME_EV_WANT_BUY_UPGRADES,		// a client wants to buy gold upgrades for units
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
+	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_AV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
 };
@@ -288,6 +291,9 @@ void sendUnitUpgrades ( sUnitData *Data, int player );
 void sendCredits (int newCredits, int player);
 void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
 void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
+void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<int>& newAreasForResearchCenters, int player);
+void sendResearchLevel(cResearch* researchLevel, int player);
+void sendRefreshResearchCount ( int player );
 void sendSetAutomoving ( cVehicle *Vehicle );
 /**
 * sends the result of a infiltrating action to the client

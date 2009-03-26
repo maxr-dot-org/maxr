@@ -586,22 +586,22 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					case 't':
 						SelectedBuilding = overBuilding ;
 						SelectedBuilding->Select();
-						iObjectStream=SelectedBuilding->PlayStram();
+						iObjectStream=SelectedBuilding->playStream();
 						break;
 					case 'b':
 						SelectedBuilding = overBaseBuilding;
 						SelectedBuilding->Select();
-						iObjectStream=SelectedBuilding->PlayStram();
+						iObjectStream=SelectedBuilding->playStream();
 						break;
 					case 'v':
 						SelectedVehicle = overVehicle;
 						SelectedVehicle->Select();
-						iObjectStream = SelectedVehicle->PlayStram();
+						iObjectStream = SelectedVehicle->playStream();
 						break;
 					case 'p':
 						SelectedVehicle = overPlane;
 						SelectedVehicle->Select();
-						iObjectStream = SelectedVehicle->PlayStram();
+						iObjectStream = SelectedVehicle->playStream();
 						break;
 				}
 			}
@@ -1125,7 +1125,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 			}
 			SelectedVehicle = OverUnitField->getPlanes();
 			SelectedVehicle->Select();
-			iObjectStream = SelectedVehicle->PlayStram();
+			iObjectStream = SelectedVehicle->playStream();
 		}
 		return true;
 	}
@@ -1157,7 +1157,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 			}
 			SelectedVehicle = OverUnitField->getVehicles();
 			SelectedVehicle->Select();
-			iObjectStream = SelectedVehicle->PlayStram();
+			iObjectStream = SelectedVehicle->playStream();
 		}
 		return true;
 	}
@@ -1189,7 +1189,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 			}
 			SelectedBuilding = OverUnitField->getTopBuilding();
 			SelectedBuilding->Select();
-			iObjectStream = SelectedBuilding->PlayStram();
+			iObjectStream = SelectedBuilding->playStream();
 		}
 		return true;
 	}
@@ -1221,7 +1221,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 			}
 			SelectedBuilding = OverUnitField->getBaseBuilding();
 			SelectedBuilding->Select();
-			iObjectStream = SelectedBuilding->PlayStram();
+			iObjectStream = SelectedBuilding->playStream();
 		}
 		return true;
 	}
@@ -2036,7 +2036,7 @@ void cClient::drawFLC()
 		{
 			font->showText(10, 32, SelectedVehicle->name, FONT_LATIN_SMALL_GREEN);
 		}
-		font->showText(10, 40, SelectedVehicle->GetStatusStr(), FONT_LATIN_SMALL_WHITE);
+		font->showText(10, 40, SelectedVehicle->getStatusStr(), FONT_LATIN_SMALL_WHITE);
 	}
 	else if ( SelectedBuilding )
 	{
@@ -2051,7 +2051,7 @@ void cClient::drawFLC()
 		{
 			font->showText(10, 32, SelectedBuilding->name, FONT_LATIN_SMALL_GREEN);
 		}
-		font->showText(10, 40, SelectedBuilding->GetStatusStr(), FONT_LATIN_SMALL_WHITE);
+		font->showText(10, 40, SelectedBuilding->getStatusStr(), FONT_LATIN_SMALL_WHITE);
 	}
 }
 
@@ -3835,13 +3835,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				Building->name = message->popString();
 				Building->Disabled = message->popInt16();
+				Building->researchArea = message->popInt16(); 
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
 
 				Data = &Building->data;
 			}
 
-			Data->costs = message->popInt16();
+			Data->iBuilt_Costs = message->popInt16();
 			Data->ammo = message->popInt16();
 			Data->max_ammo = message->popInt16();
 			Data->cargo = message->popInt16();
@@ -4050,7 +4051,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Vehicle == SelectedVehicle )
 			{
 				StopFXLoop ( iObjectStream );
-				iObjectStream = Vehicle->PlayStram();
+				iObjectStream = Vehicle->playStream();
 			}
 
 			if ( Vehicle->ClientMoveJob ) Vehicle->ClientMoveJob->release();
@@ -4081,7 +4082,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( SelectedVehicle == Vehicle )
 			{
 				StopFXLoop ( iObjectStream );
-				iObjectStream = Vehicle->PlayStram();
+				iObjectStream = Vehicle->playStream();
 			}
 		}
 		break;
@@ -4254,6 +4255,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			bool bFinishedResearch = message->popBool();
+			ActivePlayer->reportResearchFinished = bFinishedResearch;
 			if ( iCount == 0 )
 			{
 				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartNone );
@@ -4268,11 +4270,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished2") + ".";
 				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartMore );
 			}
-			if ( bFinishedResearch ) PlayVoice ( VoiceData.VOIResearchComplete );
-
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
 			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
-
+			if ( bFinishedResearch ) 
+			{
+				PlayVoice ( VoiceData.VOIResearchComplete );
+				addMessage ("Research Finished"); // TODO: translate
+			}			
+			
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
@@ -4282,7 +4287,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Player->bFinishedTurn=false;
 					Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
 				}
-
 			}
 		}
 		break;
@@ -4420,7 +4424,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					if ( SelectedVehicle == Vehicle )
 					{
 						StopFXLoop( Client->iObjectStream );
-						Client->iObjectStream = Vehicle->PlayStram();
+						Client->iObjectStream = Vehicle->playStream();
 					}
 				}
 				break;
@@ -4454,7 +4458,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( SelectedVehicle == Vehicle )
 			{
 				StopFXLoop( Client->iObjectStream );
-				Client->iObjectStream = Vehicle->PlayStram();
+				Client->iObjectStream = Vehicle->playStream();
 			}
 		}
 		break;
@@ -4530,13 +4534,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					SelectedVehicle = vehicle;
 					vehicle->Select();
-					iObjectStream = SelectedVehicle->PlayStram();
+					iObjectStream = SelectedVehicle->playStream();
 				}
 				if ( building )
 				{
 					SelectedBuilding = building;
 					building->Select();
-					iObjectStream = SelectedBuilding->PlayStram();
+					iObjectStream = SelectedBuilding->playStream();
 				}
 			}
 			Hud.OffX = message->popInt16();
@@ -4685,7 +4689,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->scan = message->popInt16();
 				Data->range = message->popInt16();
 				Data->damage = message->popInt16();
-				Data->costs = message->popInt16();
+				Data->iBuilt_Costs = message->popInt16();
 				Data->armor = message->popInt16();
 				Data->max_speed = message->popInt16();
 				Data->max_shots = message->popInt16();
@@ -4763,6 +4767,38 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				addMessage (printStr);
 			}
 		}
+		break;
+	case GAME_EV_RESEARCH_SETTINGS:
+		{
+			int buildingsInMsg = message->popInt16();
+			if (buildingsInMsg > 0)
+			{
+				for (int i = 0; i < buildingsInMsg; i++)
+				{
+					int buildingID = message->popInt32();
+					int newArea = message->popChar();
+					cBuilding* building = getBuildingFromID(buildingID);
+					if (building && building->data.can_research && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
+						building->researchArea = newArea;
+				}
+			}
+			// now update the research center count for the areas
+			ActivePlayer->refreshResearchCentersWorkingOnArea();
+		}
+		break;
+	case GAME_EV_RESEARCH_LEVEL:
+		{
+			for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
+			{
+				int newCurPoints = message->popInt16();
+				int newLevel = message->popInt16();				
+				ActivePlayer->researchLevel.setCurResearchLevel(newLevel, area);
+				ActivePlayer->researchLevel.setCurResearchPoints(newCurPoints, area);
+			}
+		}
+		break;
+	case GAME_EV_REFRESH_RESEARCH_COUNT: // sent, when the player was resynced (or a game was loaded)
+		ActivePlayer->refreshResearchCentersWorkingOnArea();
 		break;
 	case GAME_EV_SET_AUTOMOVE:
 		{

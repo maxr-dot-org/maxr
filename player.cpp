@@ -23,79 +23,92 @@
 #include "server.h"
 #include "serverevents.h"
 
-// Funktionen der Player-Klasse //////////////////////////////////////////////
-cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
-	base(this)
+//-----------------------------------------------------------------------
+// Implementation cPlayer class
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) 
+: base(this)
+, name (Name)
+, color (Color)
+, Nr (nr)
 {
-	name=Name;
-	color=Color;
-	Nr=nr;
-	// Die Vehicle Eigenschaften kopieren:
+	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
-	{
+	for (size_t i = 0; i < UnitsData.vehicle.Size(); i++)
 		VehicleData[i]=UnitsData.vehicle[i].data;
-	}
-	// Die Building Eigenschaften kopieren:
+
+	// copy the building stats
 	BuildingData = new sUnitData[UnitsData.building.Size()];
-	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
-	{
-		BuildingData[i]=UnitsData.building[i].data;
-	}
-	DetectLandMap=NULL;
-	DetectSeaMap=NULL;
+	for (size_t i = 0; i < UnitsData.building.Size(); i++)
+		BuildingData[i] = UnitsData.building[i].data;
+
+	DetectLandMap = NULL;
+	DetectSeaMap = NULL;
 	DetectMinesMap = NULL;
-	ScanMap=NULL;
-	SentriesMapAir=NULL;
-	SentriesMapGround=NULL;
-	VehicleList=NULL;
-	BuildingList=NULL;
-	ResourceMap=NULL;
-	ResearchCount=0;
-	UnusedResearch=0;
+	ScanMap = NULL;
+	SentriesMapAir = NULL;
+	SentriesMapGround = NULL;
+	VehicleList = NULL;
+	BuildingList = NULL;
+	ResourceMap = NULL;
+	
+	ResearchCount = 0;
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		researchCentersWorkingOnArea[i] = 0;	
 	Credits=0;
-	ReportForschungFinished=false;
+	reportResearchFinished = false;
+	
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = false;
 }
 
-cPlayer::cPlayer(const cPlayer &Player) : base(this)
+//-----------------------------------------------------------------------
+cPlayer::cPlayer(const cPlayer &Player) 
+: base(this)
 {
 	name = Player.name;
 	color = Player.color;
 	Nr = Player.Nr;
 	iSocketNum = Player.iSocketNum;
-	Credits = Player.Credits;
+
 	// copy vehicle and building datas
 	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); ++i)
-	{
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++)
 		VehicleData[i] = Player.VehicleData[i];
-	}
 	BuildingData = new sUnitData[UnitsData.building.Size()];
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); ++i)
-	{
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++)
 		BuildingData[i] = Player.BuildingData[i];
-	}
-	DetectLandMap=NULL;
-	DetectSeaMap=NULL;
+
+	DetectLandMap = NULL;
+	DetectSeaMap = NULL;
 	DetectMinesMap = NULL;
-	ScanMap=NULL;
-	SentriesMapAir=NULL;
-	SentriesMapGround=NULL;
-	VehicleList=NULL;
-	BuildingList=NULL;
-	ResourceMap=NULL;
-	ResearchCount=0;
-	UnusedResearch=0;
-	Credits=0;
-	ReportForschungFinished=false;
+	ScanMap = NULL;
+	SentriesMapAir = NULL;
+	SentriesMapGround = NULL;
+	VehicleList = NULL;
+	BuildingList = NULL;
+	ResourceMap = NULL;
+	
+	Credits = Player.Credits;
+	ResearchCount = Player.ResearchCount;
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		researchCentersWorkingOnArea[i] = Player.researchCentersWorkingOnArea[i];
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	{
+		researchLevel.setCurResearchLevel(Player.researchLevel.getCurResearchLevel(i), i);
+		researchLevel.setCurResearchPoints(Player.researchLevel.getCurResearchPoints(i), i);		
+	}
+	reportResearchFinished = Player.reportResearchFinished;
+
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
 }
 
+//-----------------------------------------------------------------------
 cPlayer::~cPlayer ( void )
 {
 	while ( SentriesAir.Size() )
@@ -110,7 +123,7 @@ cPlayer::~cPlayer ( void )
 		SentriesGround.Delete( SentriesGround.Size() - 1 );
 	}
 
-	// Erst alle geladenen Vehicles löschen:
+	// Erst alle geladenen Vehicles lË†schen:
 	cVehicle *ptr=VehicleList;
 	while ( ptr )
 	{
@@ -120,7 +133,7 @@ cPlayer::~cPlayer ( void )
 		}
 		ptr=ptr->next;
 	}
-	// Jetzt alle Vehicles löschen:
+	// Jetzt alle Vehicles lË†schen:
 	while ( VehicleList )
 	{
 		cVehicle *ptr;
@@ -172,7 +185,7 @@ cPlayer::~cPlayer ( void )
 	}
 }
 
-// Fügt ein Vehicle in die Listes des Spielser ein:
+// FÂ¸gt ein Vehicle in die Listes des Spielser ein:
 cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 {
 	cVehicle *n;
@@ -231,19 +244,9 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 	memset ( DetectSeaMap,0,MapSize );
 	DetectMinesMap = new char[MapSize];
 	memset ( DetectMinesMap, 0, MapSize );
-
-	// Die Research-Map:
-	memset ( ResearchTechs,0,sizeof ( sResearch ) *8 );
-	int i;
-	for ( i=0;i<8;i++ )
-	{
-		ResearchTechs[i].MaxRounds=ResearchInits[i];
-		ResearchTechs[i].RoundsRemaining=ResearchTechs[i].MaxRounds;
-	}
-
 }
 
-// Fügt ein Building in die Listes des Spielser ein:
+// FÂ¸gt ein Building in die Listes des Spielser ein:
 cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 {
 	cBuilding *Building;
@@ -476,7 +479,7 @@ void cPlayer::refreshSentryGround ()
 	}
 }
 
-// Läßt alle Objekte des Spielers Scannen:
+// Lâ€°ï¬‚t alle Objekte des Spielers Scannen:
 void cPlayer::DoScan ( void )
 {
 	cVehicle *vp;
@@ -560,7 +563,7 @@ void cPlayer::DoScan ( void )
 }
 
 
-// Gibt das nächste Vehicle zurück, dass noch schießen/sich bewegen kann:
+// Gibt das nâ€°chste Vehicle zurÂ¸ck, dass noch schieï¬‚en/sich bewegen kann:
 cVehicle *cPlayer::GetNextVehicle ( void )
 {
 	cVehicle *v,*start;
@@ -593,7 +596,7 @@ cVehicle *cPlayer::GetNextVehicle ( void )
 	return NULL;
 }
 
-// Gibt das vorherige Vehicle zurück, dass noch schießen/sich bewegen kann:
+// Gibt das vorherige Vehicle zurÂ¸ck, dass noch schieï¬‚en/sich bewegen kann:
 cVehicle *cPlayer::GetPrevVehicle ( void )
 {
 	cVehicle *v,*start;
@@ -629,310 +632,253 @@ cVehicle *cPlayer::GetPrevVehicle ( void )
 	return NULL;
 }
 
-// Startet eine Forschungsstation:
-void cPlayer::StartAResearch ( void )
+//--------------------------------------------------------------
+/** Starts a research center. */
+//--------------------------------------------------------------
+void cPlayer::startAResearch (int researchArea)
 {
-	ResearchCount++;
-	UnusedResearch++;
-}
-
-// Stoppt eine Forschungsstation:
-void cPlayer::StopAReserach ( void )
-{
-	int i;
-	ResearchCount--;
-	if ( UnusedResearch )
+	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		UnusedResearch--;
-		return;
-	}
-	for ( i=0;i<8;i++ )
-	{
-		if ( ResearchTechs[i].working_on )
-		{
-			ResearchTechs[i].working_on--;
-			break;
-		}
+		ResearchCount++;
+		researchCentersWorkingOnArea[researchArea] += 1;
 	}
 }
 
-// Forschen am Rundenende:
-void cPlayer::DoResearch ( void )
+//--------------------------------------------------------------
+/** Stops a research center. */
+//--------------------------------------------------------------
+void cPlayer::stopAResearch (int researchArea)
 {
-	bool complete=false;
-	int i;
-	for ( i=0;i<8;i++ )
+	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		if ( ResearchTechs[i].working_on )
-		{
-			ResearchTechs[i].RoundsRemaining-=ResearchTechs[i].working_on;
-			if ( ResearchTechs[i].RoundsRemaining<=0 )
-			{
-				double a,b,c,d;
-				int x;
-				switch ( i )
-				{
-					case 0:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Attack" ));
-						a=0.5;
-						break;
-					case 1:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Shoots" ) );
-						a=0.5;
-						break;
-					case 2:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Range" ) );
-						a=1.0;
-						break;
-					case 3:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Armor" ) );
-						a=0.25;
-						break;
-					case 4:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Hitpoints" ) );
-						a=0.25;
-						break;
-					case 5:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Speed" ) );
-						a=0.5;
-						break;
-					case 6:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Scan" ) );
-						a=1.0;
-						break;
-					case 7:
-						//sendChatMessage ( lngPack.i18n ( "Text~Comp~Research_Costs" ) );
-						a=1.0;
-						break;
-				}
-				b=0.0000083418154;
-				c=-9.4455792;
-				d=6.4756817;
-				ResearchTechs[i].level+=0.1;
-				x=(int)(ResearchTechs[i].level*10)+1;
-				ResearchTechs[i].MaxRounds= Round((a*b*pow((x-c),d)));
-				ResearchTechs[i].RoundsRemaining=ResearchTechs[i].MaxRounds;
-				complete=true;
+		ResearchCount--;
+		if (researchCentersWorkingOnArea[researchArea] > 0)
+			researchCentersWorkingOnArea[researchArea] -= 1;
+	}
+}
 
-				// Nun alle Sachen verbessern:
-				DoTheResearch ( i );
+//--------------------------------------------------------------
+/** At turnend update the research level */
+//--------------------------------------------------------------
+void cPlayer::doResearch()
+{
+	bool researchFinished = false;
+	cList<sUnitData*> upgradedUnitDatas; 
+	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+	{
+		if (researchCentersWorkingOnArea[area] > 0)
+		{
+			if (researchLevel.doResearch(researchCentersWorkingOnArea[area], area))
+			{ // next level reached
+				upgradeUnitType(researchLevel.getCurResearchLevel(area), area, upgradedUnitDatas);
+				researchFinished = true;
 			}
 		}
 	}
-	if ( complete )
+	if (researchFinished)
 	{
-		PlayVoice ( VoiceData.VOIResearchComplete );
-		ReportForschungFinished=true;
+		for (int i = 0; i < upgradedUnitDatas.Size(); i++)
+			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
 	}
+	sendResearchLevel (&researchLevel, Nr);
+	
+	reportResearchFinished = researchFinished;
 }
 
-// Führt eine konkrete Forschung durch:
-void cPlayer::DoTheResearch ( int i )
+//--------------------------------------------------------------
+void cPlayer::upgradeUnitType (int newResearchLevel, int researchArea, cList<sUnitData*>& resultUpgradedUnitDatas)
 {
-	for (size_t k = 0; k < UnitsData.vehicle.Size(); ++k)
+	if (newResearchLevel < 10)
+		return;
+	for (int i = 0; i < UnitsData.vehicle.Size(); i++)
 	{
-		int before;
-		switch ( i )
+		int startValue = 0;
+		switch (researchArea)
 		{
-			case 0:
-				before=VehicleData[k].damage;
-				VehicleData[k].damage-= ( int ) ( UnitsData.vehicle[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].damage+= ( int ) ( UnitsData.vehicle[k].data.damage*ResearchTechs[i].level );
-				if ( VehicleData[k].damage!=before ) VehicleData[k].version++;
-				break;
-			case 1:
-				before=VehicleData[k].max_shots;
-				VehicleData[k].max_shots-= ( int ) ( UnitsData.vehicle[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_shots+= ( int ) ( UnitsData.vehicle[k].data.max_shots*ResearchTechs[i].level );
-				if ( VehicleData[k].max_shots!=before ) VehicleData[k].version++;
-				break;
-			case 2:
-				before=VehicleData[k].range;
-				VehicleData[k].range-= ( int ) ( UnitsData.vehicle[k].data.range* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].range+= ( int ) ( UnitsData.vehicle[k].data.range*ResearchTechs[i].level );
-				if ( VehicleData[k].range!=before ) VehicleData[k].version++;
-				break;
-			case 3:
-				before=VehicleData[k].armor;
-				VehicleData[k].armor-= ( int ) ( UnitsData.vehicle[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].armor+= ( int ) ( UnitsData.vehicle[k].data.armor*ResearchTechs[i].level );
-				if ( VehicleData[k].armor!=before ) VehicleData[k].version++;
-				break;
-			case 4:
-				before=VehicleData[k].max_hit_points;
-				VehicleData[k].max_hit_points-= ( int ) ( UnitsData.vehicle[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_hit_points+= ( int ) ( UnitsData.vehicle[k].data.max_hit_points*ResearchTechs[i].level );
-				if ( VehicleData[k].max_hit_points!=before ) VehicleData[k].version++;
-				break;
-			case 5:
-				before=VehicleData[k].max_speed;
-				VehicleData[k].max_speed-= ( int ) ( UnitsData.vehicle[k].data.max_speed* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].max_speed+= ( int ) ( UnitsData.vehicle[k].data.max_speed*ResearchTechs[i].level );
-				if ( VehicleData[k].max_speed!=before ) VehicleData[k].version++;
-				break;
-			case 6:
-				before=VehicleData[k].scan;
-				VehicleData[k].scan-= ( int ) ( UnitsData.vehicle[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
-				VehicleData[k].scan+= ( int ) ( UnitsData.vehicle[k].data.scan*ResearchTechs[i].level );
-				if ( VehicleData[k].scan!=before ) VehicleData[k].version++;
-				break;
-			case 7:
-				VehicleData[k].iBuilt_Costs = Round ( UnitsData.vehicle[k].data.iBuilt_Costs * pow( 0.92, ResearchTechs[i].level * 10 ) );
-				if ( VehicleData[k].iBuilt_Costs == 0 )
-				{
-					VehicleData[k].iBuilt_Costs = 1;
-				}
-				cVehicle *veh = VehicleList;
-				while ( veh != NULL )
-				{
-					if ( veh->typ->nr == k )
-					{
-						veh->data.iBuilt_Costs = VehicleData[k].iBuilt_Costs;
-					}
-					veh = veh->next;
-				}
-				break;
+			case cResearch::kAttackResearch: startValue = UnitsData.vehicle[i].data.damage; break;
+			case cResearch::kShotsResearch: startValue = UnitsData.vehicle[i].data.max_shots; break;
+			case cResearch::kRangeResearch: startValue = UnitsData.vehicle[i].data.range; break;
+			case cResearch::kArmorResearch: startValue = UnitsData.vehicle[i].data.armor; break;
+			case cResearch::kHitpointsResearch: startValue = UnitsData.vehicle[i].data.max_hit_points; break;
+			case cResearch::kScanResearch: startValue = UnitsData.vehicle[i].data.scan; break;
+			case cResearch::kSpeedResearch: startValue = UnitsData.vehicle[i].data.max_speed; break;
+			case cResearch::kCostResearch: startValue = UnitsData.vehicle[i].data.iBuilt_Costs; break;
+		}
+		int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																				   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+		int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
+																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																				   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+		if (oldResearchBonus != newResearchBonus)
+		{
+			switch (researchArea)
+			{
+				case cResearch::kAttackResearch: VehicleData[i].damage += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kShotsResearch: VehicleData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kRangeResearch: VehicleData[i].range += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kArmorResearch: VehicleData[i].armor += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kHitpointsResearch: VehicleData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kScanResearch: VehicleData[i].scan += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kSpeedResearch: VehicleData[i].max_speed += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kCostResearch: VehicleData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+			}
+			if (!resultUpgradedUnitDatas.Contains(&(VehicleData[i])))
+			{
+				VehicleData[i].version += 1;
+				resultUpgradedUnitDatas.Add(&(VehicleData[i]));
+			}
 		}
 	}
-	for (size_t k = 0; k < UnitsData.building.Size(); ++k)
+	for (int i = 0; i < UnitsData.building.Size(); i++)
 	{
-		int before;
-		switch ( i )
+		int startValue = 0;
+		switch (researchArea)
 		{
-			case 0:
-				before=BuildingData[k].damage;
-				BuildingData[k].damage-= ( int ) ( UnitsData.building[k].data.damage* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].damage+= ( int ) ( UnitsData.building[k].data.damage*ResearchTechs[i].level );
-				if ( BuildingData[k].damage!=before ) BuildingData[k].version++;
-				break;
-			case 1:
-				before=BuildingData[k].max_shots;
-				BuildingData[k].max_shots-= ( int ) ( UnitsData.building[k].data.max_shots* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].max_shots+= ( int ) ( UnitsData.building[k].data.max_shots*ResearchTechs[i].level );
-				if ( BuildingData[k].max_shots!=before ) BuildingData[k].version++;
-				break;
-			case 2:
-				before=BuildingData[k].range;
-				BuildingData[k].range-= ( int ) ( UnitsData.building[k].data.range* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].range+= ( int ) ( UnitsData.building[k].data.range*ResearchTechs[i].level );
-				if ( BuildingData[k].range!=before ) BuildingData[k].version++;
-				break;
-			case 3:
-				before=BuildingData[k].armor;
-				BuildingData[k].armor-= ( int ) ( UnitsData.building[k].data.armor* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].armor+= ( int ) ( UnitsData.building[k].data.armor*ResearchTechs[i].level );
-				if ( BuildingData[k].armor!=before ) BuildingData[k].version++;
-				break;
-			case 4:
-				before=BuildingData[k].max_hit_points;
-				BuildingData[k].max_hit_points-= ( int ) ( UnitsData.building[k].data.max_hit_points* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].max_hit_points+= ( int ) ( UnitsData.building[k].data.max_hit_points*ResearchTechs[i].level );
-				if ( BuildingData[k].max_hit_points!=before ) BuildingData[k].version++;
-				break;
-			case 5:
-				break;
-			case 6:
-				before=BuildingData[k].scan;
-				BuildingData[k].scan-= ( int ) ( UnitsData.building[k].data.scan* ( ResearchTechs[i].level-0.1 ) );
-				BuildingData[k].scan+= ( int ) ( UnitsData.building[k].data.scan*ResearchTechs[i].level );
-				if ( BuildingData[k].scan!=before ) BuildingData[k].version++;
-				break;
-			case 7:
-				BuildingData[k].iBuilt_Costs = Round ( UnitsData.building[k].data.iBuilt_Costs * pow( 0.92, ResearchTechs[i].level * 10 ) );
-				if ( BuildingData[k].iBuilt_Costs == 0 )
-				{
-					BuildingData[k].iBuilt_Costs = 1;
-				}
-				cBuilding *bui = BuildingList;
-				while ( bui != NULL )
-				{
-					if ( bui->typ->nr == k )
-					{
-						bui->data.iBuilt_Costs = BuildingData[k].iBuilt_Costs;
-					}
-					bui = bui->next;
-				}
-				break;
+			case cResearch::kAttackResearch: startValue = UnitsData.building[i].data.damage; break;
+			case cResearch::kShotsResearch: startValue = UnitsData.building[i].data.max_shots; break;
+			case cResearch::kRangeResearch: startValue = UnitsData.building[i].data.range; break;
+			case cResearch::kArmorResearch: startValue = UnitsData.building[i].data.armor; break;
+			case cResearch::kHitpointsResearch: startValue = UnitsData.building[i].data.max_hit_points; break;
+			case cResearch::kScanResearch: startValue = UnitsData.building[i].data.scan; break;
+			case cResearch::kCostResearch: startValue = UnitsData.building[i].data.iBuilt_Costs; break;
+		}
+		int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																				   cUpgradeCalculator::kBuilding);
+		int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
+																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																				   cUpgradeCalculator::kBuilding);
+		if (oldResearchBonus != newResearchBonus)
+		{
+			switch (researchArea)
+			{
+				case cResearch::kAttackResearch: BuildingData[i].damage += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kShotsResearch: BuildingData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kRangeResearch: BuildingData[i].range += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kArmorResearch: BuildingData[i].armor += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kHitpointsResearch: BuildingData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kScanResearch: BuildingData[i].scan += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kCostResearch: BuildingData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+			}
+			if (!resultUpgradedUnitDatas.Contains(&(BuildingData[i])))
+			{
+				BuildingData[i].version += 1;
+				resultUpgradedUnitDatas.Add(&(BuildingData[i]));
+			}
 		}
 	}
 }
 
-// Fügt ein Building in die Lock-Liste ein:
-void cPlayer::AddLock ( cBuilding *b )
+//------------------------------------------------------------
+void cPlayer::refreshResearchCentersWorkingOnArea()
+{
+	int newResearchCount = 0;
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+		researchCentersWorkingOnArea[i] = 0;
+	cBuilding* curBuilding = BuildingList;
+	while (curBuilding)
+	{
+		if (curBuilding->data.can_research && curBuilding->IsWorking)
+		{
+			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
+			newResearchCount++;
+		}
+		curBuilding = curBuilding->next;
+	}
+	ResearchCount = newResearchCount;
+}
+
+//------------------------------------------------------------
+/** Adds a building to the lock list (the range/scan of the building will remain displayed, even if it is unselected). */
+//------------------------------------------------------------
+void cPlayer::AddLock (cBuilding *b)
 {
 	sLockElem *elem;
 	elem = new sLockElem;
 	elem->b = b;
 	elem->v = NULL;
 	b->IsLocked = true;
-	LockList.Add ( elem );
+	LockList.Add (elem);
 }
 
-// Fügt ein Vehicle in die Lock-Liste ein:
-void cPlayer::AddLock ( cVehicle *v )
+//------------------------------------------------------------
+/** Adds a vehicle to the lock list (the range/scan of the vehicle will remain displayed, even if it is unselected). */
+//------------------------------------------------------------
+void cPlayer::AddLock (cVehicle *v)
 {
 	sLockElem *elem;
 	elem = new sLockElem;
 	elem->v = v;
 	elem->b = NULL;
 	v->IsLocked = true;
-	LockList.Add ( elem );
+	LockList.Add (elem);
 }
 
-// FLöscht ein Vehicle aus der Lock-Liste:
-void cPlayer::DeleteLock ( cVehicle *v )
+//------------------------------------------------------------
+/** Removes a vehicle from the lock list. */
+//------------------------------------------------------------
+void cPlayer::DeleteLock (cVehicle *v)
 {
 	sLockElem *elem;
-	for ( unsigned int i=0;i<LockList.Size();i++ )
+	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		elem = LockList[i];
-		if ( elem->v==v )
+		if (elem->v == v)
 		{
 			v->IsLocked=false;
 			delete elem;
-			LockList.Delete ( i );
+			LockList.Delete (i);
 			return;
 		}
 	}
 }
 
-// FLöscht ein Building aus der Lock-Liste:
-void cPlayer::DeleteLock ( cBuilding *b )
+//------------------------------------------------------------
+/** Removes a building from the lock list. */
+//------------------------------------------------------------
+void cPlayer::DeleteLock (cBuilding *b)
 {
 	sLockElem *elem;
-	for ( unsigned int i=0;i<LockList.Size();i++ )
+	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		elem = LockList[i];
-		if ( elem->b==b )
+		if (elem->b == b)
 		{
-			b->IsLocked=false;
+			b->IsLocked = false;
 			delete elem;
-			LockList.Delete ( i );
+			LockList.Delete (i);
 			return;
 		}
 	}
 }
 
-// Prüft, ob das Building in der Lock-Liste ist:
-bool cPlayer::InLockList ( cBuilding *b )
+//------------------------------------------------------------
+/** Checks if the building is contained in the lock list. */
+//------------------------------------------------------------
+bool cPlayer::InLockList (cBuilding *b)
 {
 	sLockElem *elem;
-	for ( unsigned int i=0;i<LockList.Size();i++ )
+	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		elem = LockList[i];
-		if ( elem->b==b ) return true;
+		if (elem->b == b) 
+			return true;
 	}
 	return false;
 }
 
-// Prüft, ob das Vehicle in der Lock-Liste ist:
-bool cPlayer::InLockList ( cVehicle *v )
+//------------------------------------------------------------
+/** Checks if the vehicle is contained in the lock list. */
+//------------------------------------------------------------
+bool cPlayer::InLockList (cVehicle *v)
 {
 	sLockElem *elem;
-	for ( unsigned int i=0;i<LockList.Size();i++ )
+	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		elem = LockList[i];
-		if ( elem->v==v ) return true;
+		if (elem->v == v)
+			return true;
 	}
 	return false;
 }
@@ -958,7 +904,7 @@ void cPlayer::ToggelLock ( cMapField *OverUnitField )
 	}
 }
 
-// Malt alle Einträge der Lock-Liste:
+// Malt alle Eintraege der Lock-Liste:
 void cPlayer::DrawLockList(cHud const& hud)
 {
 	if ( !hud.Lock ) return;

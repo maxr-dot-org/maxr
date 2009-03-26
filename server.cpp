@@ -1556,6 +1556,66 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_WANT_RESEARCH_CHANGE:
+		{
+			int iPlayerNr = message->popInt16();
+			cPlayer* player = getPlayerFromNumber(iPlayerNr);
+			if (player == 0)
+				break;
+			int newUsedResearch = 0;
+			int newResearchSettings[cResearch::kNrResearchAreas];
+			for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
+			{
+				newResearchSettings[area] = message->popInt16();
+				newUsedResearch += newResearchSettings[area];
+			}
+			if (newUsedResearch > player->ResearchCount)
+				break; // can't turn on research centers automatically!
+			
+			cList<cBuilding*> researchCentersToStop; // needed, if newUsedResearch < player->ResearchCount
+			cList<cBuilding*> researchCentersToChangeArea;
+			cList<int> newAreasForResearchCenters;			
+
+			bool error = false;
+			cBuilding* curBuilding = player->BuildingList;
+			for (int newArea = 0; newArea < cResearch::kNrResearchAreas; newArea++)
+			{
+				int centersToAssign = newResearchSettings[newArea];
+				while (centersToAssign > 0 && curBuilding != 0)
+				{
+					if (curBuilding->data.can_research && curBuilding->IsWorking)
+					{
+						researchCentersToChangeArea.Add(curBuilding);
+						newAreasForResearchCenters.Add(newArea);
+						centersToAssign--;
+					}
+					curBuilding = curBuilding->next;
+				}
+				if (curBuilding == 0 && centersToAssign > 0)
+				{
+					error = true; // not enough active research centers!
+					break;
+				}
+			}
+			while (curBuilding != 0) // shut down unused research centers
+			{
+				if (curBuilding->data.can_research && curBuilding->IsWorking)
+					researchCentersToStop.Add(curBuilding);
+				curBuilding = curBuilding->next;
+			}
+			if (error)
+				break;
+			
+			for (int i = 0; i < researchCentersToStop.Size(); i++)
+				researchCentersToStop[i]->ServerStopWork(false);
+			
+			for (int i = 0; i < researchCentersToChangeArea.Size(); i++)
+				researchCentersToChangeArea[i]->researchArea = newAreasForResearchCenters[i];
+			player->refreshResearchCentersWorkingOnArea();
+
+			sendResearchSettings(researchCentersToChangeArea, newAreasForResearchCenters, iPlayerNr);
+		}
+		break;
 	case GAME_EV_AUTOMOVE_STATUS:
 		{
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
@@ -1675,7 +1735,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	if (newDamage > currentVersion->damage)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1683,7 +1743,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxShots > currentVersion->max_shots)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_shots, currentVersion->max_shots, newMaxShots, cUpgradeCalculator::kShots);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_shots, currentVersion->max_shots, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1691,7 +1751,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newRange > currentVersion->range)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1699,7 +1759,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxAmmo > currentVersion->max_ammo)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_ammo, currentVersion->max_ammo, newMaxAmmo, cUpgradeCalculator::kAmmo);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_ammo, currentVersion->max_ammo, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1707,7 +1767,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newArmor > currentVersion->armor)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1715,7 +1775,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxHitPoints > currentVersion->max_hit_points)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_hit_points, currentVersion->max_hit_points, newMaxHitPoints, cUpgradeCalculator::kHitpoints);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_hit_points, currentVersion->max_hit_points, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1723,7 +1783,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newScan > currentVersion->scan)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1731,7 +1791,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (bVehicle && newMaxSpeed > currentVersion->max_speed)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_speed / 4, currentVersion->max_speed / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_speed / 4, currentVersion->max_speed / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2502,8 +2562,8 @@ void cServer::makeTurnEnd ()
 	}
 
 	// do research:
-	//game->ActivePlayer->DoResearch();
-
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		(*PlayerList)[i]->doResearch();
 
 	// make autosave
 	if ( SettingsData.bAutoSave )
@@ -3138,6 +3198,12 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	{
 		if ( Player->BuildingData[i].version > 1 ) sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}
+	// send credits
+	sendCredits( Player->Credits, Player->Nr );
+	// send research
+	sendResearchLevel( &(Player->researchLevel), Player->Nr );
+	sendRefreshResearchCount (Player->Nr);
+	
 	// FIXME: sending hudsettings doesn't work form yet
 	//sendHudSettings ( &Player->HotHud, Player );
 
