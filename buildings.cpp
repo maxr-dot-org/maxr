@@ -470,10 +470,10 @@ void cBuilding::GenerateName ()
 //--------------------------------------------------------------------------
 void cBuilding::Draw ( SDL_Rect *dest )
 {
-	SDL_Rect scr, tmp;
+	SDL_Rect src, tmp;
 	tmp = *dest;
-	scr.x = 0;
-	scr.y = 0;
+	src.x = 0;
+	src.y = 0;
 	float factor = (float)(Client->Hud.Zoom/64.0);
 
 	// draw the damage effects
@@ -495,17 +495,17 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( data.is_big )
 		{
 			if ( !UnitsData.dirt_big ) return;
-			scr.w = scr.h = (int)(UnitsData.dirt_big_org->h*factor);
+			src.w = src.h = (int)(UnitsData.dirt_big_org->h*factor);
 		}
 		else
 		{
 			if ( !UnitsData.dirt_small ) return;
-			scr.w = scr.h = (int)(UnitsData.dirt_small_org->h*factor);
+			src.w = src.h = (int)(UnitsData.dirt_small_org->h*factor);
 		}
 
-		scr.x = scr.w * RubbleTyp;
+		src.x = src.w * RubbleTyp;
 
-		scr.y = 0;
+		src.y = 0;
 
 		// draw the shadows
 		if ( SettingsData.bShadows )
@@ -514,13 +514,13 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			{
 				if ( !SettingsData.bPreScale && ( UnitsData.dirt_big_shw->w != (int)(UnitsData.dirt_big_shw_org->w*factor) || UnitsData.dirt_big_shw->h != (int)(UnitsData.dirt_big_shw_org->h*factor) ) ) 
 					scaleSurface ( UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_big_shw_org->h*factor) );
-				SDL_BlitSurface ( UnitsData.dirt_big_shw, &scr, buffer, &tmp );
+				SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, buffer, &tmp );
 			}
 			else
 			{
 				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) 
 					scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_small_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
-				SDL_BlitSurface ( UnitsData.dirt_small_shw, &scr, buffer, &tmp );
+				SDL_BlitSurface ( UnitsData.dirt_small_shw, &src, buffer, &tmp );
 			}
 		}
 
@@ -531,13 +531,13 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		{
 			if ( !SettingsData.bPreScale && ( UnitsData.dirt_big->w != (int)(UnitsData.dirt_big_org->w*factor) || UnitsData.dirt_big->h != (int)(UnitsData.dirt_big_org->h*factor) ) ) 
 				scaleSurface ( UnitsData.dirt_big_org, UnitsData.dirt_big, (int)(UnitsData.dirt_big_org->w*factor), (int)(UnitsData.dirt_big_org->h*factor) );
-			SDL_BlitSurface ( UnitsData.dirt_big, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.dirt_big, &src, buffer, &tmp );
 		}
 		else
 		{
 			if ( !SettingsData.bPreScale && ( UnitsData.dirt_small->w != (int)(UnitsData.dirt_small_org->w*factor) || UnitsData.dirt_small->h != (int)(UnitsData.dirt_small_org->h*factor) ) ) 
 				scaleSurface ( UnitsData.dirt_small_org, UnitsData.dirt_small, (int)(UnitsData.dirt_small_org->w*factor), (int)(UnitsData.dirt_small_org->h*factor) );
-			SDL_BlitSurface ( UnitsData.dirt_small, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.dirt_small, &src, buffer, &tmp );
 		}
 
 		return;
@@ -548,20 +548,20 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.has_frames )
 		{
-			scr.w = Client->Hud.Zoom;
-			scr.h = Client->Hud.Zoom;
+			src.w = Client->Hud.Zoom;
+			src.h = Client->Hud.Zoom;
 		}
 		else
 		{
-			scr.w = (int)(typ->img_org->w*factor);
-			scr.h = (int)(typ->img_org->h*factor);
+			src.w = (int)(typ->img_org->w*factor);
+			src.h = (int)(typ->img_org->h*factor);
 		}
 	}
 	else
 	{
-		scr.y = 0;
-		scr.x = 0;
-		scr.h = scr.w = (int)(typ->img_org->h*factor);
+		src.y = 0;
+		src.x = 0;
+		src.h = src.w = (int)(typ->img_org->h*factor);
 
 		if ( BaseN )
 		{
@@ -572,12 +572,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// N,E,S,W
-						scr.x += 15 * scr.h;
+						src.x += 15 * src.h;
 					}
 					else
 					{
 						// N,E,S
-						scr.x += 13 * scr.h;
+						src.x += 13 * src.h;
 					}
 				}
 				else
@@ -586,12 +586,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// N,E,W
-						scr.x += 12 * scr.h;
+						src.x += 12 * src.h;
 					}
 					else
 					{
 						// N,E
-						scr.x += 8 * scr.h;
+						src.x += 8 * src.h;
 					}
 				}
 			}
@@ -604,12 +604,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// N,S,W
-						scr.x += 11 * scr.h;
+						src.x += 11 * src.h;
 					}
 					else
 					{
 						// N,S
-						scr.x += 5 * scr.h;
+						src.x += 5 * src.h;
 					}
 				}
 				else
@@ -618,12 +618,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// N,W
-						scr.x += 7 * scr.h;
+						src.x += 7 * src.h;
 					}
 					else
 					{
 						// N
-						scr.x += 1 * scr.h;
+						src.x += 1 * src.h;
 					}
 				}
 			}
@@ -639,12 +639,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// E,S,W
-						scr.x += 14 * scr.h;
+						src.x += 14 * src.h;
 					}
 					else
 					{
 						// E,S
-						scr.x += 9 * scr.h;
+						src.x += 9 * src.h;
 					}
 				}
 				else
@@ -653,12 +653,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// E,W
-						scr.x += 6 * scr.h;
+						src.x += 6 * src.h;
 					}
 					else
 					{
 						// E
-						scr.x += 2 * scr.h;
+						src.x += 2 * src.h;
 					}
 				}
 			}
@@ -670,12 +670,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// S,W
-						scr.x += 10 * scr.h;
+						src.x += 10 * src.h;
 					}
 					else
 					{
 						// S
-						scr.x += 3 * scr.h;
+						src.x += 3 * src.h;
 					}
 				}
 				else
@@ -683,11 +683,11 @@ void cBuilding::Draw ( SDL_Rect *dest )
 					if ( BaseW )
 					{
 						// W
-						scr.x += 4 * scr.h;
+						src.x += 4 * src.h;
 					}
 					else
 					{
-						scr.x = 0;
+						src.x = 0;
 					}
 				}
 			}
@@ -752,7 +752,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
 
 		if ( !data.is_connector ) SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
-		else SDL_BlitSurface ( typ->shw, &scr, buffer, &tmp );
+		else SDL_BlitSurface ( typ->shw, &src, buffer, &tmp );
 
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 	}
@@ -766,23 +766,23 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		{
 			if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
 			{
-				scr.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
+				src.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
 			}
 			else
 			{
-				scr.x = dir * Client->Hud.Zoom;
+				src.x = dir * Client->Hud.Zoom;
 			}
 
 			if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
 				scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
-			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
+			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
 
-			scr.x = 0;
+			src.x = 0;
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) 
-				scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
+			if ( !SettingsData.bPreScale && ( typ->img->w != src.w || typ->img->h != src.h ) ) 
+				scaleSurface ( typ->img_org, typ->img, src.w, src.h );
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		}
 	}
@@ -795,23 +795,23 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( !data.is_connector )
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		else
-			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
+			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
 	}
 
 	// draw the building 
 	tmp = *dest;
 
-	scr.x = 0;
-	scr.y = 0;
+	src.x = 0;
+	src.y = 0;
 
 	if ( StartUp && SettingsData.bAlphaEffects )
 	{
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 	}
 	else
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 
 	if ( StartUp )
 	{
@@ -1315,27 +1315,27 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 //--------------------------------------------------------------------------
 void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
-	SDL_Rect scr, tmp;
+	SDL_Rect src, tmp;
 	int zoom;
 	zoom = Client->Hud.Zoom;
 	tmp = dest;
-	scr.y = 0;
-	scr.h = scr.w = zoom;
+	src.y = 0;
+	src.h = src.w = zoom;
 	float factor = (float)(zoom/64.0);
 
 	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) 
 		scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
 	if ( BaseN )
 	{
-		scr.x = zoom;
-		SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+		src.x = zoom;
+		SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 		tmp = dest;
 	}
 
 	if ( BaseW )
 	{
-		scr.x = zoom * 4;
-		SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+		src.x = zoom * 4;
+		SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 		tmp = dest;
 	}
 
@@ -1343,15 +1343,15 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	{
 		if ( BaseE )
 		{
-			scr.x = zoom * 2;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			src.x = zoom * 2;
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseS )
 		{
-			scr.x = zoom * 3;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			src.x = zoom * 3;
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 	}
@@ -1359,51 +1359,51 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	{
 		if ( BaseBN )
 		{
-			scr.x = zoom;
+			src.x = zoom;
 			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseBW )
 		{
-			scr.x = zoom * 4;
+			src.x = zoom * 4;
 			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseE )
 		{
-			scr.x = zoom * 2;
+			src.x = zoom * 2;
 			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseBE )
 		{
-			scr.x = zoom * 2;
+			src.x = zoom * 2;
 			tmp.x += zoom;
 			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseS )
 		{
-			scr.x = zoom * 3;
+			src.x = zoom * 3;
 			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 
 		if ( BaseBS )
 		{
-			scr.x = zoom * 3;
+			src.x = zoom * 3;
 			tmp.y += zoom;
 			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &scr, buffer, &tmp );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
 			tmp = dest;
 		}
 	}
@@ -1982,7 +1982,7 @@ void cBuilding::ShowStorage ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, to;
 	SDL_Surface *sf;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool DownPressed = false, DownEnabled = false;
 	bool UpPressed = false, UpEnabled = false;
 	bool AlleAktivierenEnabled = false;
@@ -2016,13 +2016,13 @@ void cBuilding::ShowStorage ()
 	}
 	else
 	{
-		scr.x = 480;
-		scr.y = 0;
-		scr.w = 640 - 480;
-		scr.h = 480;
-		dest.x = rDialog.x + scr.x;
-		dest.y = rDialog.y + scr.y;
-		SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+		src.x = 480;
+		src.y = 0;
+		src.w = 640 - 480;
+		src.h = 480;
+		dest.x = rDialog.x + src.x;
+		dest.y = rDialog.y + src.y;
+		SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 		dest.x = rDialog.x;
 		dest.y = rDialog.y;
 		SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, &dest );
@@ -2038,12 +2038,12 @@ void cBuilding::ShowStorage ()
 	if ((int)StoredVehicles.Size() > to)
 	{
 		DownEnabled = true;
-		scr.x = 103;
-		scr.y = 452;
-		scr.h = scr.w = 25;
+		src.x = 103;
+		src.y = 452;
+		src.h = src.w = 25;
 		dest.x = rDialog.x + 530;
 		dest.y = rDialog.y + 426;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 
 	// Alle Aktivieren:
@@ -2102,10 +2102,10 @@ void cBuilding::ShowStorage ()
 			if ( x >= rDialog.x + 530 && x < rDialog.x + 530 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !DownPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				scr.x = 530;
-				scr.y = 426;
-				scr.w = 25;
-				scr.h = 25;
+				src.x = 530;
+				src.y = 426;
+				src.w = 25;
+				src.h = 25;
 				dest.x = rDialog.x + 530;
 				dest.y = rDialog.y + 426;
 
@@ -2116,21 +2116,15 @@ void cBuilding::ShowStorage ()
 
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 
-				scr.x = 130;
-
-				scr.y = 452;
-
-				scr.w = 25;
-
-				scr.h = 25;
-
+				src.x = 130;
+				src.y = 452;
+				src.w = 25;
+				src.h = 25;
 				dest.x = rDialog.x + 504;
-
 				dest.y = rDialog.y + 426;
-
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 				UpEnabled = true;
 
@@ -2142,13 +2136,13 @@ void cBuilding::ShowStorage ()
 			else
 				if ( !b && DownPressed && DownEnabled )
 				{
-					scr.x = 103;
-					scr.y = 452;
-					scr.w = 25;
-					scr.h = 25;
+					src.x = 103;
+					src.y = 452;
+					src.w = 25;
+					src.h = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					DownPressed = false;
@@ -2161,10 +2155,10 @@ void cBuilding::ShowStorage ()
 			if ( x >= rDialog.x + 504 && x < rDialog.x + 504 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !UpPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				scr.x = 504;
-				scr.y = 426;
-				scr.w = 25;
-				scr.h = 25;
+				src.x = 504;
+				src.y = 426;
+				src.w = 25;
+				src.h = 25;
 				dest.x = rDialog.x + 504;
 				dest.y = rDialog.y + 426;
 
@@ -2175,7 +2169,7 @@ void cBuilding::ShowStorage ()
 
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 
 				mouse->draw ( false, screen );
 
@@ -2184,12 +2178,12 @@ void cBuilding::ShowStorage ()
 				if ((int)StoredVehicles.Size() > to)
 				{
 					DownEnabled = true;
-					scr.x = 103;
-					scr.y = 452;
-					scr.h = scr.w = 25;
+					src.x = 103;
+					src.y = 452;
+					src.h = src.w = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 				}
 
 				SHOW_SCREEN
@@ -2197,13 +2191,13 @@ void cBuilding::ShowStorage ()
 			else
 				if ( !b && UpPressed && UpEnabled )
 				{
-					scr.x = 130;
-					scr.y = 452;
-					scr.w = 25;
-					scr.h = 25;
+					src.x = 130;
+					src.y = 452;
+					src.w = 25;
+					src.h = 25;
 					dest.x = rDialog.x + 504;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					UpPressed = false;
@@ -2535,7 +2529,7 @@ void cBuilding::ShowStorage ()
 //--------------------------------------------------------------------------
 void cBuilding::DrawStored ( int off )
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	SDL_Surface *sf;
 	cVehicle *vehicleV;
 	int i, to;
@@ -2576,29 +2570,29 @@ void cBuilding::DrawStored ( int off )
 			{
 
 				case 0 :
-					dest.x = rDialog.x + ( scr.x = 17 );
-					dest.y = rDialog.y + ( scr.y = 9 );
+					dest.x = rDialog.x + ( src.x = 17 );
+					dest.y = rDialog.y + ( src.y = 9 );
 					break;
 
 				case 1 :
-					dest.x = rDialog.x + ( scr.x = 243 );
-					dest.y = rDialog.y + ( scr.y = 9 );
+					dest.x = rDialog.x + ( src.x = 243 );
+					dest.y = rDialog.y + ( src.y = 9 );
 					break;
 
 				case 2 :
-					dest.x = rDialog.x + ( scr.x = 17 );
-					dest.y = rDialog.y + ( scr.y = 244 );
+					dest.x = rDialog.x + ( src.x = 17 );
+					dest.y = rDialog.y + ( src.y = 244 );
 					break;
 
 				case 3 :
-					dest.x = rDialog.x + ( scr.x = 243 );
-					dest.y = rDialog.y + ( scr.y = 244 );
+					dest.x = rDialog.x + ( src.x = 243 );
+					dest.y = rDialog.y + ( src.y = 244 );
 					break;
 			}
 
-			scr.w = 200; //hangarwidth
+			src.w = 200; //hangarwidth
 
-			scr.h = 128; //hangarheight
+			src.h = 128; //hangarheight
 		}
 		else
 		{
@@ -2608,42 +2602,42 @@ void cBuilding::DrawStored ( int off )
 			{
 
 				case 0 :
-					dest.x = rDialog.x + ( scr.x = 17 );
-					dest.y = rDialog.y + ( scr.y = 9 );
+					dest.x = rDialog.x + ( src.x = 17 );
+					dest.y = rDialog.y + ( src.y = 9 );
 					break;
 
 				case 1 :
-					dest.x = rDialog.x + ( scr.x = 172 );
-					dest.y = rDialog.y + ( scr.y = 9 );
+					dest.x = rDialog.x + ( src.x = 172 );
+					dest.y = rDialog.y + ( src.y = 9 );
 					break;
 
 				case 2 :
-					dest.x = rDialog.x + ( scr.x = 327 );
-					dest.y = rDialog.y + ( scr.y = 9 );
+					dest.x = rDialog.x + ( src.x = 327 );
+					dest.y = rDialog.y + ( src.y = 9 );
 					break;
 
 				case 3 :
-					dest.x = rDialog.x + ( scr.x = 17 );
-					dest.y = rDialog.y + ( scr.y = 244 );
+					dest.x = rDialog.x + ( src.x = 17 );
+					dest.y = rDialog.y + ( src.y = 244 );
 					break;
 
 				case 4 :
-					dest.x = rDialog.x + ( scr.x = 172 );
-					dest.y = rDialog.y + ( scr.y = 244 );
+					dest.x = rDialog.x + ( src.x = 172 );
+					dest.y = rDialog.y + ( src.y = 244 );
 					break;
 
 				case 5 :
-					dest.x = rDialog.x + ( scr.x = 327 );
-					dest.y = rDialog.y + ( scr.y = 244 );
+					dest.x = rDialog.x + ( src.x = 327 );
+					dest.y = rDialog.y + ( src.y = 244 );
 					break;
 			}
 
-			scr.w = 128; //hangarwidth
+			src.w = 128; //hangarwidth
 
-			scr.h = 128; //hangarsize
+			src.h = 128; //hangarsize
 		}
 
-		SDL_BlitSurface ( sf, &scr, buffer, &dest );
+		SDL_BlitSurface ( sf, &src, buffer, &dest );
 
 		if ( vehicleV )
 		{
@@ -2686,8 +2680,8 @@ void cBuilding::DrawStored ( int off )
 
 		if ( vehicleV )
 		{
-			scr.x = 156;
-			scr.y = 431;
+			src.x = 156;
+			src.y = 431;
 			drawButton ( lngPack.i18n ( "Text~Button~Active" ), false, dest.x, dest.y, buffer );
 		}
 		else
@@ -2736,11 +2730,11 @@ void cBuilding::DrawStored ( int off )
 		// Display the additional info:
 		dest.x -= 66;
 		dest.y -= 69 - 6;
-		scr.w = 128;
-		scr.h = 30;
-		scr.x = dest.x - rDialog.x;
-		scr.y = dest.y - rDialog.y;
-		SDL_BlitSurface ( sf, &scr, buffer, &dest );
+		src.w = 128;
+		src.h = 30;
+		src.x = dest.x - rDialog.x;
+		src.y = dest.y - rDialog.y;
+		SDL_BlitSurface ( sf, &src, buffer, &dest );
 		dest.x += 6;
 
 		if ( vehicleV )
@@ -2771,26 +2765,26 @@ void cBuilding::DrawStored ( int off )
 //--------------------------------------------------------------------------
 void cBuilding::ShowStorageMetalBar ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 
 	//redraw metalbar to clean it from prior draws
-	dest.x = rDialog.x + ( scr.x = 490 );
-	dest.y = rDialog.y + ( scr.y = 80 );
-	scr.w = 136;
-	scr.h = 145;
-	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+	dest.x = rDialog.x + ( src.x = 490 );
+	dest.y = rDialog.y + ( src.y = 80 );
+	src.w = 136;
+	src.h = 145;
+	SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 
 	//draw metalamount over the metalbar
 	font->showTextCentered ( rDialog.x + 557, rDialog.y + 86, lngPack.i18n ( "Text~Title~Metal" ) + ": " + iToStr ( SubBase->Metal ) );
 
 
 	//BEGIN fill metal bar
-	scr.x = 135;
-	scr.y = 335;
+	src.x = 135;
+	src.y = 335;
 	dest.x = rDialog.x + 546;
 	dest.y = rDialog.y + 106;
-	scr.w = 20;
+	src.w = 20;
 
 	/*Gosh, this is tricky. I'll try to make an example. The metalbar graphic is 115px high.
 	* We've eg. storages for metal 125 and we have an metal amount of 49 so this would look
@@ -2799,10 +2793,10 @@ void cBuilding::ShowStorageMetalBar ()
 	* empty metal zylinder on storage.pcx
 	*								-- beko
 	*/
-	// scr.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
-	scr.h = Round ( 115 * SubBase->Metal / ( float ) SubBase->MaxMetal ); //	a/(b/c) = a*c/b
-	dest.y += 115 - scr.h;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	// src.h = Round ( 115 / ( float ) ( SubBase->MaxMetal / ( float ) SubBase->Metal ) );
+	src.h = Round ( 115 * SubBase->Metal / ( float ) SubBase->MaxMetal ); //	a/(b/c) = a*c/b
+	dest.y += 115 - src.h;
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	//END fill metal bar
 }
 
@@ -3019,20 +3013,20 @@ void cBuilding::ShowResearchSliders (int newResearchSettings[cResearch::kNrResea
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		unusedResearch -= newResearchSettings[i];
 	
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DLG_RSRCH_W / 2, SettingsData.iScreenH / 2 - DLD_RSRCH_H / 2, DLG_RSRCH_W, DLD_RSRCH_H };
 	SDL_Rect rTxtDescr = {rDialog.x + 183, rDialog.y + 72, 12, 21};
 	string sTxtTheme = "";
 
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
-		scr.x = 20;
-		scr.y = 70 + area * 28;
+		src.x = 20;
+		src.y = 70 + area * 28;
 		dest.x = 20 + rDialog.x;
 		dest.y = 70 + rDialog.y + area * 28;
-		scr.w = 316;
-		scr.h = 18;
-		SDL_BlitSurface (GraphicsData.gfx_research, &scr, buffer, &dest);
+		src.w = 316;
+		src.h = 18;
+		SDL_BlitSurface (GraphicsData.gfx_research, &src, buffer, &dest);
 
 		// display the current nr of research centers for this area
 		font->showTextCentered (dest.x + 21 + 2, dest.y + 1, iToStr (newResearchSettings[area]));
@@ -3045,33 +3039,33 @@ void cBuilding::ShowResearchSliders (int newResearchSettings[cResearch::kNrResea
 		// Display the left arrow
 		if (newResearchSettings[area] == 0)
 		{
-			scr.w = 19;
-			scr.h = 18;
-			scr.x = 237;
-			scr.y = 177;
+			src.w = 19;
+			src.h = 18;
+			src.x = 237;
+			src.y = 177;
 			dest.x = 71 + rDialog.x;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 		}
 
 		// Display the right arrow
 		if (unusedResearch <= 0)
 		{
-			scr.w = 19;
-			scr.h = 18;
-			scr.x = 257;
-			scr.y = 177;
+			src.w = 19;
+			src.h = 18;
+			src.x = 257;
+			src.y = 177;
 			dest.x = 143 + rDialog.x;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 		}
 
 		// Display the sliders
-		scr.w = 14;
-		scr.h = 17;
-		scr.x = 412;
-		scr.y = 46;
+		src.w = 14;
+		src.h = 17;
+		src.x = 412;
+		src.y = 46;
 		// draw the slider-rect at a position that shows the proportion of research centers used for this area
 		dest.x = 90 + rDialog.x + (int) (36 * ((float) (newResearchSettings[area]) / startResearchCenters));
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 
 		switch (area)
 		{
@@ -3178,7 +3172,7 @@ void cBuilding::ShowUpgrade ()
 	int y = 0;
 	int lastLeftButtonPressed = 0;
 	int leftButtonPressed = 0;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool showDescription = SettingsData.bShowDescription;
 	bool downPressed = false; // is the down-button currently pressed (for navigating down the list of units)
 	bool upPressed = false; // is the up-button currently pressed (for navigating up the list of units)
@@ -3210,23 +3204,23 @@ void cBuilding::ShowUpgrade ()
 	// the description checkbox
 	if (showDescription)
 	{
-		scr.x = 291;
-		scr.y = 264;
+		src.x = 291;
+		src.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 17;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &scr, buffer, &dest );
+		src.w = 17;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_upgrade, &src, buffer, &dest );
 	}
 	else
 	{
-		scr.x = 393;
-		scr.y = 46;
+		src.x = 393;
+		src.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 18;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		src.w = 18;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 
 	// Initialize the upgrade structs for all unit types
@@ -3349,26 +3343,26 @@ void cBuilding::ShowUpgrade ()
 			}
 
 			PlayFX (SoundData.SNDObjectMenu);
-			scr.x = 249;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 249;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 			SHOW_SCREEN
 			mouse->draw (false, screen);
 			downPressed = true;
 		}
 		else if (!leftButtonPressed && downPressed/* && (offset < selection.Size () - 9)*/) // down button was released -> reset the button graphics
 		{
-			scr.x = 491;
-			scr.y = 386;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 491;
+			src.y = 386;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 386;
-			SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 			SHOW_SCREEN
 			mouse->draw (false, screen);
 			downPressed = false;
@@ -3391,26 +3385,26 @@ void cBuilding::ShowUpgrade ()
 			}
 
 			PlayFX (SoundData.SNDObjectMenu);
-			scr.x = 230;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 230;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 470;
 			dest.y = MENU_OFFSET_Y + 386;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 			SHOW_SCREEN
 			mouse->draw (false, screen);
 			upPressed = true;
 		}
 		else if (!leftButtonPressed && upPressed/* && offset > 0*/) // up button was released -> reset the button graphics
 		{
-			scr.x = 470;
-			scr.y = 386;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 470;
+			src.y = 386;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 470;
 			dest.y = MENU_OFFSET_Y + 386;
-			SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 			SHOW_SCREEN
 			mouse->draw (false, screen);
 			upPressed = false;
@@ -3443,23 +3437,23 @@ void cBuilding::ShowUpgrade ()
 
 			if (showDescription)
 			{
-				scr.x = 291;
-				scr.y = 264;
+				src.x = 291;
+				src.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 17;
-				scr.h = 17;
-				SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+				src.w = 17;
+				src.h = 17;
+				SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 			}
 			else
 			{
-				scr.x = 393;
-				scr.y = 46;
+				src.x = 393;
+				src.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 18;
-				scr.h = 17;
-				SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+				src.w = 18;
+				src.h = 17;
+				SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 			}
 
 			ShowUpgradeList (selection, selected, offset, showDescription, curCredits);
@@ -3687,37 +3681,37 @@ void cBuilding::ShowUpgrade ()
 void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selected, int const offset, bool const showDescription, int curCredits)
 {
 	sUpgradeStruct *ptr;
-	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
-	scr.x = 479;
-	scr.y = 52;
+	SDL_Rect dest, src, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 0 };
+	src.x = 479;
+	src.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = 150;
-	scr.h = 330;
-	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = 32;
-	scr.h = 32;
+	src.w = 150;
+	src.h = 330;
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
+	src.x = 0;
+	src.y = 0;
+	src.w = 32;
+	src.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
 
 	if (list.Size () == 0)
 	{
-		scr.x = 0;
-		scr.y = 0;
+		src.x = 0;
+		src.y = 0;
 		dest.x = MENU_OFFSET_X;
 		dest.y = MENU_OFFSET_Y;
-		scr.w = 316;
-		scr.h = 256;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
-		scr.x = 11;
-		scr.y = 290;
+		src.w = 316;
+		src.h = 256;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
+		src.x = 11;
+		src.y = 290;
 		dest.x = MENU_OFFSET_X + 11;
 		dest.y = MENU_OFFSET_Y + 290;
-		scr.w = 346;
-		scr.h = 176;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.w = 346;
+		src.h = 176;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 		return;
 	}
 
@@ -3729,7 +3723,7 @@ void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selecte
 		// Das Bild malen:
 		ptr = list[i];
 
-		SDL_BlitSurface (ptr->sf, &scr, buffer, &dest);
+		SDL_BlitSurface (ptr->sf, &src, buffer, &dest);
 
 		if (selected == i)
 		{
@@ -3866,7 +3860,7 @@ void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selecte
 			// Die Texte anzeigen/Slider machen:
 			for (int k = 0;k < 8;k++)
 			{
-				SDL_Rect scr, dest;
+				SDL_Rect src, dest;
 
 				if (!ptr->upgrades[k].active)
 					continue;
@@ -3878,24 +3872,24 @@ void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selecte
 
 				if (ptr->upgrades[k].purchased)
 				{
-					scr.x = 380;
-					scr.y = 256;
-					scr.w = 18;
-					scr.h = 17;
+					src.x = 380;
+					src.y = 256;
+					src.w = 18;
+					src.h = 17;
 					dest.x = MENU_OFFSET_X + 283;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
-					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 				}
 
 				if (ptr->upgrades[k].nextPrice <= curCredits && ptr->upgrades[k].nextPrice > 0)
 				{
-					scr.x = 399;
-					scr.y = 256;
-					scr.w = 18;
-					scr.h = 17;
+					src.x = 399;
+					src.y = 256;
+					src.w = 18;
+					src.h = 17;
 					dest.x = MENU_OFFSET_X + 301;
 					dest.y = MENU_OFFSET_Y + 293 + k * 19;
-					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+					SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 				}
 			}
 		}
@@ -3935,32 +3929,32 @@ void cBuilding::ShowUpgradeList (cList<sUpgradeStruct*>& list, int const selecte
 void cBuilding::ShowGoldBar (int startCredits, int curCredits)
 {
 	//char str[50];
-	SDL_Rect scr, dest;
-	scr.x = 371;
-	scr.y = 301;
+	SDL_Rect src, dest;
+	src.x = 371;
+	src.y = 301;
 	dest.x = MENU_OFFSET_X + 371;
 	dest.y = MENU_OFFSET_Y + 301;
-	scr.w = 22;
-	scr.h = 115;
-	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
-	scr.x = 312;
-	scr.y = 265;
+	src.w = 22;
+	src.h = 115;
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
+	src.x = 312;
+	src.y = 265;
 	dest.x = MENU_OFFSET_X + 312;
 	dest.y = MENU_OFFSET_Y + 265;
-	scr.w = 150;
-	scr.h = 26;
-	SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+	src.w = 150;
+	src.h = 26;
+	SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	//sprintf (str,"Credits: %d", curCredits);
 
 	font->showTextCentered (MENU_OFFSET_X + 381, MENU_OFFSET_Y + 275, "Credits: " + iToStr (curCredits));
 
-	scr.x = 118;
-	scr.y = 336;
-	scr.w = 16;
-	scr.h = (int) (115 * (curCredits / (float) startCredits));
+	src.x = 118;
+	src.y = 336;
+	src.w = 16;
+	src.h = (int) (115 * (curCredits / (float) startCredits));
 	dest.x = MENU_OFFSET_X + 375;
-	dest.y = MENU_OFFSET_Y + 301 + 115 - scr.h;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+	dest.y = MENU_OFFSET_Y + 301 + 115 - src.h;
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 }
 
 //-------------------------------------------------------------------------------
@@ -4252,24 +4246,24 @@ void cBuilding::CreateUpgradeList (cList<sUpgradeStruct*>& selection, cList<sUpg
 //-------------------------------------------------------------------------------
 void cBuilding::ShowUpgradeSubButtons ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	dest.x = MENU_OFFSET_X + 467;
 	dest.y = MENU_OFFSET_Y + 411;
-	scr.w = 32;
-	scr.h = 31;
+	src.w = 32;
+	src.h = 31;
 	// Tank:
 
 	if (!Client->bUpShowTank)
 	{
-		scr.x = 467;
-		scr.y = 411;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.x = 467;
+		src.y = 411;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	}
 	else
 	{
-		scr.x = 152;
-		scr.y = 479;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		src.x = 152;
+		src.y = 479;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 	}
 
 	dest.x += 33;
@@ -4277,15 +4271,15 @@ void cBuilding::ShowUpgradeSubButtons ()
 
 	if (!Client->bUpShowPlane)
 	{
-		scr.x = 467 + 33;
-		scr.y = 411;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.x = 467 + 33;
+		src.y = 411;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	}
 	else
 	{
-		scr.x = 152 + 33;
-		scr.y = 479;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		src.x = 152 + 33;
+		src.y = 479;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 	}
 
 	dest.x += 33;
@@ -4293,15 +4287,15 @@ void cBuilding::ShowUpgradeSubButtons ()
 
 	if (!Client->bUpShowShip)
 	{
-		scr.x = 467 + 66;
-		scr.y = 411;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.x = 467 + 66;
+		src.y = 411;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	}
 	else
 	{
-		scr.x = 152 + 66;
-		scr.y = 479;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		src.x = 152 + 66;
+		src.y = 479;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 	}
 
 	dest.x += 33;
@@ -4309,15 +4303,15 @@ void cBuilding::ShowUpgradeSubButtons ()
 
 	if (!Client->bUpShowBuild)
 	{
-		scr.x = 467 + 99;
-		scr.y = 411;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.x = 467 + 99;
+		src.y = 411;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	}
 	else
 	{
-		scr.x = 152 + 99;
-		scr.y = 479;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		src.x = 152 + 99;
+		src.y = 479;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 	}
 
 	dest.x += 33;
@@ -4325,15 +4319,15 @@ void cBuilding::ShowUpgradeSubButtons ()
 
 	if (!Client->bUpShowTNT)
 	{
-		scr.x = 467 + 132;
-		scr.y = 411;
-		SDL_BlitSurface (GraphicsData.gfx_upgrade, &scr, buffer, &dest);
+		src.x = 467 + 132;
+		src.y = 411;
+		SDL_BlitSurface (GraphicsData.gfx_upgrade, &src, buffer, &dest);
 	}
 	else
 	{
-		scr.x = 152 + 132;
-		scr.y = 479;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scr, buffer, &dest);
+		src.x = 152 + 132;
+		src.y = 479;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 	}
 }
 
@@ -4481,112 +4475,112 @@ int cBuilding::findUpgradeValue (sUpgradeStruct* upgradeStruct, int upgradeType,
 //-------------------------------------------------------------------------------
 void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf)
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	int i, offx;
 
 	switch ( sym )
 	{
 
 		case SBSpeed:
-			scr.x = 0;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 12;
+			src.x = 0;
+			src.y = 109;
+			src.w = 11;
+			src.h = 12;
 			break;
 
 		case SBHits:
-			scr.x = 11;
-			scr.y = 109;
-			scr.w = 7;
-			scr.h = 11;
+			src.x = 11;
+			src.y = 109;
+			src.w = 7;
+			src.h = 11;
 			break;
 
 		case SBAmmo:
-			scr.x = 18;
-			scr.y = 109;
-			scr.w = 9;
-			scr.h = 14;
+			src.x = 18;
+			src.y = 109;
+			src.w = 9;
+			src.h = 14;
 			break;
 
 		case SBAttack:
-			scr.x = 27;
-			scr.y = 109;
-			scr.w = 10;
-			scr.h = 14;
+			src.x = 27;
+			src.y = 109;
+			src.w = 10;
+			src.h = 14;
 			break;
 
 		case SBShots:
-			scr.x = 37;
-			scr.y = 109;
-			scr.w = 15;
-			scr.h = 7;
+			src.x = 37;
+			src.y = 109;
+			src.w = 15;
+			src.h = 7;
 			break;
 
 		case SBRange:
-			scr.x = 52;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 13;
+			src.x = 52;
+			src.y = 109;
+			src.w = 13;
+			src.h = 13;
 			break;
 
 		case SBArmor:
-			scr.x = 65;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 14;
+			src.x = 65;
+			src.y = 109;
+			src.w = 11;
+			src.h = 14;
 			break;
 
 		case SBScan:
-			scr.x = 76;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 13;
+			src.x = 76;
+			src.y = 109;
+			src.w = 13;
+			src.h = 13;
 			break;
 
 		case SBMetal:
-			scr.x = 89;
-			scr.y = 109;
-			scr.w = 12;
-			scr.h = 15;
+			src.x = 89;
+			src.y = 109;
+			src.w = 12;
+			src.h = 15;
 			break;
 
 		case SBOil:
-			scr.x = 101;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 12;
+			src.x = 101;
+			src.y = 109;
+			src.w = 11;
+			src.h = 12;
 			break;
 
 		case SBGold:
-			scr.x = 112;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 10;
+			src.x = 112;
+			src.y = 109;
+			src.w = 13;
+			src.h = 10;
 			break;
 
 		case SBEnergy:
-			scr.x = 125;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 17;
+			src.x = 125;
+			src.y = 109;
+			src.w = 13;
+			src.h = 17;
 			break;
 
 		case SBHuman:
-			scr.x = 138;
-			scr.y = 109;
-			scr.w = 12;
-			scr.h = 16;
+			src.x = 138;
+			src.y = 109;
+			src.w = 12;
+			src.h = 16;
 			break;
 	}
 
-	maxx -= scr.w;
+	maxx -= src.w;
 
 	if ( orgvalue < value )
 	{
-		maxx -= scr.w + 3;
+		maxx -= src.w + 3;
 	}
 
-	offx = scr.w;
+	offx = src.w;
 
 	while ( offx*value >= maxx )
 	{
@@ -4596,7 +4590,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 		{
 			value /= 2;
 			orgvalue /= 2;
-			offx = scr.w;
+			offx = src.w;
 		}
 	}
 
@@ -4609,15 +4603,15 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 		if ( i == orgvalue )
 		{
 			SDL_Rect mark;
-			dest.x += scr.w + 3;
-			mark.x = dest.x - scr.w / 2;
+			dest.x += src.w + 3;
+			mark.x = dest.x - src.w / 2;
 			mark.y = dest.y;
 			mark.w = 1;
-			mark.h = scr.h;
+			mark.h = src.h;
 			SDL_FillRect ( sf, &mark, 0xFC0000 );
 		}
 
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, sf, &dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, sf, &dest );
 
 		dest.x += offx;
 	}
@@ -4756,7 +4750,7 @@ void cBuilding::CheckRessourceProd ( void )
 void cBuilding::showMineManager ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool IncMetalPressed = false;
 	bool DecMetalPressed = false;
 	bool IncOilPressed = false;
@@ -5007,10 +5001,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 71 && y < rDialog.y + 71 + 27 && b && !IncMetalPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 308;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 308;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 71;
 
@@ -5022,7 +5016,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5031,13 +5025,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && IncMetalPressed )
 			{
-				scr.x = 421;
-				scr.y = 71;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 421;
+				src.y = 71;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 71;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				IncMetalPressed = false;
@@ -5047,10 +5041,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 71 && y < rDialog.y + 71 + 27 && b && !DecMetalPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 280;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 280;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 71;
 
@@ -5062,7 +5056,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5071,13 +5065,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && DecMetalPressed )
 			{
-				scr.x = 139;
-				scr.y = 71;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 139;
+				src.y = 71;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 71;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				DecMetalPressed = false;
@@ -5087,10 +5081,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 191 && y < rDialog.y + 191 + 27 && b && !IncOilPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 308;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 308;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 191;
 
@@ -5102,7 +5096,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5111,13 +5105,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && IncOilPressed )
 			{
-				scr.x = 421;
-				scr.y = 191;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 421;
+				src.y = 191;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 191;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				IncOilPressed = false;
@@ -5127,10 +5121,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 191 && y < rDialog.y + 191 + 27 && b && !DecOilPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 280;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 280;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 191;
 
@@ -5142,7 +5136,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5151,13 +5145,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && DecOilPressed )
 			{
-				scr.x = 139;
-				scr.y = 191;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 139;
+				src.y = 191;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 191;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				DecOilPressed = false;
@@ -5167,10 +5161,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 421 && x < rDialog.x + 421 + 26 && y >= rDialog.y + 311 && y < rDialog.y + 311 + 27 && b && !IncGoldPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 308;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 308;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 421;
 			dest.y = rDialog.y + 311;
 
@@ -5182,7 +5176,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5191,13 +5185,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && IncGoldPressed )
 			{
-				scr.x = 421;
-				scr.y = 311;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 421;
+				src.y = 311;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 421;
 				dest.y = rDialog.y + 311;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				IncGoldPressed = false;
@@ -5207,10 +5201,10 @@ void cBuilding::showMineManager ()
 		if ( x >= rDialog.x + 139 && x < rDialog.x + 139 + 26 && y >= rDialog.y + 311 && y < rDialog.y + 311 + 27 && b && !DecGoldPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 122;
-			scr.y = 280;
-			scr.w = 26;
-			scr.h = 27;
+			src.x = 122;
+			src.y = 280;
+			src.w = 26;
+			src.h = 27;
 			dest.x = rDialog.x + 139;
 			dest.y = rDialog.y + 311;
 
@@ -5222,7 +5216,7 @@ void cBuilding::showMineManager ()
 				MakeMineBars ( iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd, MaxM, MaxO, MaxG, &iFreeM, &iFreeO, &iFreeG );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5231,13 +5225,13 @@ void cBuilding::showMineManager ()
 		else
 			if ( !b && DecGoldPressed )
 			{
-				scr.x = 139;
-				scr.y = 311;
-				scr.w = 26;
-				scr.h = 27;
+				src.x = 139;
+				src.y = 311;
+				src.w = 26;
+				src.h = 27;
 				dest.x = rDialog.x + 139;
 				dest.y = rDialog.y + 311;
-				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_mine_manager, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				DecGoldPressed = false;
@@ -5284,7 +5278,7 @@ void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTe
 //--------------------------------------------------------------------------
 void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool number, int fixed )
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rScr;
 
@@ -5292,17 +5286,17 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 	{
 
 		case TRANS_METAL:
-			scr.y = 339;
+			src.y = 339;
 			dest.y = rDialog.y + 70;
 			break;
 
 		case TRANS_OIL:
-			scr.y = 369;
+			src.y = 369;
 			dest.y = rDialog.y + 190;
 			break;
 
 		case TRANS_GOLD:
-			scr.y = 400;
+			src.y = 400;
 			dest.y = rDialog.y + 310;
 			break;
 	}
@@ -5310,7 +5304,7 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 	dest.x = rDialog.x + 174;
 
 	rScr.w = 240;
-	rScr.h = scr.h = 30;
+	rScr.h = src.h = 30;
 	dest.y += offy * 37;
 	rScr.x = dest.x - rDialog.x;
 	rScr.y = dest.y - rDialog.y;
@@ -5318,35 +5312,35 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 
 	if ( max_value == 0 )
 	{
-		scr.w = 0;
-		scr.x = 156;
+		src.w = 0;
+		src.x = 156;
 	}
 	else
 	{
-		scr.w = ( int ) ( ( ( float ) value / max_value ) * 240 );
-		scr.x = 156 + ( 240 - ( int ) ( ( ( float ) value / max_value ) * 240 ) );
+		src.w = ( int ) ( ( ( float ) value / max_value ) * 240 );
+		src.x = 156 + ( 240 - ( int ) ( ( ( float ) value / max_value ) * 240 ) );
 	}
 
 	dest.x = rDialog.x + 174;
 
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
-	if ( fixed && scr.w != 240 && max_value != 0 )
+	if ( fixed && src.w != 240 && max_value != 0 )
 	{
-		scr.w = ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
-		dest.x = rDialog.x + 174 + 240 - scr.w;
-		scr.x = 156;
-		scr.y = 307;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		src.w = ( int ) ( ( ( float ) fixed /  max_value ) * 240 );
+		dest.x = rDialog.x + 174 + 240 - src.w;
+		src.x = 156;
+		src.y = 307;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 	else
 		if ( max_value == 0 )
 		{
-			scr.w = 240;
+			src.w = 240;
 			dest.x = rDialog.x + 174;
-			scr.x = 156;
-			scr.y = 307;
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			src.x = 156;
+			src.y = 307;
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 		}
 
 	if ( number )
@@ -5549,7 +5543,7 @@ void cBuilding::RotateTo ( int Dir )
 void cBuilding::ShowBuildMenu ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool Wiederholen = false;
 	bool DownPressed = false;
 	bool UpPressed = false;
@@ -5588,23 +5582,23 @@ void cBuilding::ShowBuildMenu ()
 	// the checkbox
 	if ( SettingsData.bShowDescription )
 	{
-		scr.x = 291;
-		scr.y = 264;
+		src.x = 291;
+		src.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 17;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+		src.w = 17;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 	}
 	else
 	{
-		scr.x = 393;
-		scr.y = 46;
+		src.x = 393;
+		src.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 18;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		src.w = 18;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 
 	// Die Images erstellen:
@@ -5734,13 +5728,13 @@ void cBuilding::ShowBuildMenu ()
 	if ( !RepeatBuild )
 	{
 		// Den Wiederholen Haken machen:
-		scr.x = 393;
-		scr.y = 46;
+		src.x = 393;
+		src.y = 46;
 		dest.x = MENU_OFFSET_X + 447;
 		dest.y = MENU_OFFSET_Y + 322;
-		scr.w = 18;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		src.w = 18;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 	else
 	{
@@ -5781,10 +5775,10 @@ void cBuilding::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 249;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 249;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -5805,7 +5799,7 @@ void cBuilding::ShowBuildMenu ()
 			ShowBuildList ( images, selected, offset, showDetailsBuildlist );
 
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5815,13 +5809,13 @@ void cBuilding::ShowBuildMenu ()
 		else
 			if ( !b && DownPressed )
 			{
-				scr.x = 491;
-				scr.y = 440;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 491;
+				src.y = 440;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 491;
 				dest.y = MENU_OFFSET_Y + 440;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				DownPressed = false;
@@ -5831,10 +5825,10 @@ void cBuilding::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 471 && x < MENU_OFFSET_X + 471 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 230;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 230;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 471;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -5850,7 +5844,7 @@ void cBuilding::ShowBuildMenu ()
 
 			ShowBuildList ( images, selected, offset, showDetailsBuildlist );
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5860,13 +5854,13 @@ void cBuilding::ShowBuildMenu ()
 		else
 			if ( !b && UpPressed )
 			{
-				scr.x = 471;
-				scr.y = 440;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 471;
+				src.y = 440;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 471;
 				dest.y = MENU_OFFSET_Y + 440;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				UpPressed = false;
@@ -5876,10 +5870,10 @@ void cBuilding::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 327 && x < MENU_OFFSET_X + 327 + 18 && y >= MENU_OFFSET_Y + 293 && y < MENU_OFFSET_Y + 293 + 17 && b && !Down2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 230;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 230;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 327;
 			dest.y = MENU_OFFSET_Y + 293;
 
@@ -5889,7 +5883,7 @@ void cBuilding::ShowBuildMenu ()
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5898,13 +5892,13 @@ void cBuilding::ShowBuildMenu ()
 		else
 			if ( !b && Down2Pressed )
 			{
-				scr.x = 327;
-				scr.y = 293;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 327;
+				src.y = 293;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 327;
 				dest.y = MENU_OFFSET_Y + 293;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				Down2Pressed = false;
@@ -5914,10 +5908,10 @@ void cBuilding::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 347 && x < MENU_OFFSET_X + 347 + 18 && y >= MENU_OFFSET_Y + 293 && y < MENU_OFFSET_Y + 293 + 17 && b && !Up2Pressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 249;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 249;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 347;
 			dest.y = MENU_OFFSET_Y + 293;
 
@@ -5927,7 +5921,7 @@ void cBuilding::ShowBuildMenu ()
 				ShowToBuildList ( to_build, build_selected, build_offset, !showDetailsBuildlist );
 			}
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5936,13 +5930,13 @@ void cBuilding::ShowBuildMenu ()
 		else
 			if ( !b && Up2Pressed )
 			{
-				scr.x = 347;
-				scr.y = 293;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 347;
+				src.y = 293;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 347;
 				dest.y = MENU_OFFSET_Y + 293;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				Up2Pressed = false;
@@ -6018,23 +6012,23 @@ void cBuilding::ShowBuildMenu ()
 
 			if ( SettingsData.bShowDescription )
 			{
-				scr.x = 291;
-				scr.y = 264;
+				src.x = 291;
+				src.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 17;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				src.w = 17;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 			}
 			else
 			{
-				scr.x = 393;
-				scr.y = 46;
+				src.x = 393;
+				src.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 18;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				src.w = 18;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 			}
 
 			ShowBuildList ( images, selected, offset, showDetailsBuildlist );
@@ -6052,23 +6046,23 @@ void cBuilding::ShowBuildMenu ()
 
 			if ( Wiederholen )
 			{
-				scr.x = 447;
-				scr.y = 322;
+				src.x = 447;
+				src.y = 322;
 				dest.x = MENU_OFFSET_X + 447;
 				dest.y = MENU_OFFSET_Y + 322;
-				scr.w = 18;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+				src.w = 18;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 			}
 			else
 			{
-				scr.x = 393;
-				scr.y = 46;
+				src.x = 393;
+				src.y = 46;
 				dest.x = MENU_OFFSET_X + 447;
 				dest.y = MENU_OFFSET_Y + 322;
-				scr.w = 18;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				src.w = 18;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 			}
 
 			SHOW_SCREEN
@@ -6247,25 +6241,25 @@ void cBuilding::ShowBuildMenu ()
 void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
-	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16 };
-	scr.x = 479;
-	scr.y = 52;
+	SDL_Rect dest, src, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16 };
+	src.x = 479;
+	src.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = 150;
-	scr.h = 378;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
-	scr.x = 373;
-	scr.y = 344;
+	src.w = 150;
+	src.h = 378;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
+	src.x = 373;
+	src.y = 344;
 	dest.x = MENU_OFFSET_X + 373;
 	dest.y = MENU_OFFSET_Y + 344;
-	scr.w = 77;
-	scr.h = 72;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = 32;
-	scr.h = 32;
+	src.w = 77;
+	src.h = 72;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
+	src.x = 0;
+	src.y = 0;
+	src.w = 32;
+	src.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
 	
@@ -6277,7 +6271,7 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 		// Das Bild malen:
 		ptr = list[i];
 
-		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
+		SDL_BlitSurface ( ptr->sf, &src, buffer, &dest );
 
 		if ( selected == i )
 		{
@@ -6483,20 +6477,20 @@ void cBuilding::DrawBuildButtons ( int speed )
 void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
-	SDL_Rect scr, dest, text = { MENU_OFFSET_X + 375, MENU_OFFSET_Y + 70, 80, 16};
-	scr.x = 330;
-	scr.y = 49;
+	SDL_Rect src, dest, text = { MENU_OFFSET_X + 375, MENU_OFFSET_Y + 70, 80, 16};
+	src.x = 330;
+	src.y = 49;
 	dest.x = MENU_OFFSET_X + 330;
 	dest.y = MENU_OFFSET_Y + 49;
-	scr.w = 128;
-	scr.h = 233;
-	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &scr, buffer, &dest );
+	src.w = 128;
+	src.h = 233;
+	SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &src, buffer, &dest );
 
 
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = 32;
-	scr.h = 32;
+	src.x = 0;
+	src.y = 0;
+	src.w = 32;
+	src.h = 32;
 	dest.x = MENU_OFFSET_X + 340;
 	dest.y = MENU_OFFSET_Y + 58;
 
@@ -6508,7 +6502,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 		ptr = list[i];
 
 		// Das Bild malen:
-		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
+		SDL_BlitSurface ( ptr->sf, &src, buffer, &dest );
 
 		if ( selected == i )
 		{
@@ -7318,7 +7312,7 @@ void cBuilding::Select ()
 //--------------------------------------------------------------------------
 void cBuilding::Deselct ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	selected = false;
 	MenuActive = false;
 	AttackMode = false;
@@ -7326,13 +7320,13 @@ void cBuilding::Deselct ()
 	LoadActive = false;
 	ActivatingVehicle = false;
 	// Den Hintergrund wiederherstellen:
-	scr.x = 0;
-	scr.y = 215;
-	scr.w = 155;
-	scr.h = 48;
+	src.x = 0;
+	src.y = 215;
+	src.w = 155;
+	src.h = 48;
 	dest.x = 8;
 	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
 }
@@ -7340,15 +7334,15 @@ void cBuilding::Deselct ()
 //--------------------------------------------------------------------------
 void cBuilding::ShowDetails ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	// Den Hintergrund wiederherstellen:
-	scr.x = 0;
-	scr.y = 215;
-	scr.w = 155;
-	scr.h = 48;
+	src.x = 0;
+	src.y = 215;
+	src.w = 155;
+	src.h = 48;
 	dest.x = 8;
 	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
