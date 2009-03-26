@@ -24,6 +24,7 @@
 #include "loaddata.h"
 #include "upgradecalculator.h"
 
+//--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )
 {
 	this->number = number;
@@ -31,6 +32,7 @@ cSavegame::cSavegame ( int number )
 	sprintf ( numberstr, "%0.3d", number );
 }
 
+//--------------------------------------------------------------------------
 int cSavegame::save( string saveName )
 {
 	SaveFile = new TiXmlDocument;
@@ -89,6 +91,7 @@ int cSavegame::save( string saveName )
 	return 1;
 }
 
+//--------------------------------------------------------------------------
 int cSavegame::load()
 {
 	SaveFile = new TiXmlDocument ();
@@ -139,6 +142,7 @@ int cSavegame::load()
 	return 1;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadHeader( string *name, string *type, string *time )
 {
 	SaveFile = new TiXmlDocument ();
@@ -152,6 +156,7 @@ void cSavegame::loadHeader( string *name, string *type, string *time )
 	if ( time ) *time = headerNode->FirstChildElement( "Time" )->Attribute ( "string" );
 }
 
+//--------------------------------------------------------------------------
 string cSavegame::getMapName()
 {
 	TiXmlElement *mapNode = SaveFile->RootElement()->FirstChildElement( "Map" );
@@ -159,6 +164,7 @@ string cSavegame::getMapName()
 	else return "";
 }
 
+//--------------------------------------------------------------------------
 string cSavegame::getPlayerNames()
 {
 	string playernames = "";
@@ -177,6 +183,7 @@ string cSavegame::getPlayerNames()
 	return playernames;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadGameInfo()
 {
 	TiXmlElement *gameInfoNode = SaveFile->RootElement()->FirstChildElement( "Game" );
@@ -196,6 +203,7 @@ void cSavegame::loadGameInfo()
 	}
 }
 
+//--------------------------------------------------------------------------
 cMap *cSavegame::loadMap()
 {
 	TiXmlElement *mapNode = SaveFile->RootElement()->FirstChildElement( "Map" );
@@ -212,6 +220,7 @@ cMap *cSavegame::loadMap()
 	else return NULL;
 }
 
+//--------------------------------------------------------------------------
 cList<cPlayer*> * cSavegame::loadPlayers( cMap *map )
 {
 	cList<cPlayer *> *PlayerList = new cList<cPlayer *>;
@@ -235,6 +244,7 @@ cList<cPlayer*> * cSavegame::loadPlayers( cMap *map )
 	return PlayerList;
 }
 
+//--------------------------------------------------------------------------
 cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 {
 	int number, color;
@@ -343,6 +353,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 	return Player;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data )
 {
 	upgradeNode->FirstChildElement( "Version" )->Attribute ( "num", &data->version );
@@ -358,6 +369,7 @@ void cSavegame::loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data )
 	if ( element = upgradeNode->FirstChildElement( "Scan" ) ) element->Attribute ( "num", &data->scan );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& researchLevel )
 {
 	int value;
@@ -396,6 +408,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	researchLevel.setCurResearchPoints( value, cResearch::kCostResearch );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player )
 {
 	int value;
@@ -417,6 +430,7 @@ void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersW
 	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;	
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadUnits ()
 {
 	if ( !Server ) return;
@@ -453,6 +467,7 @@ void cSavegame::loadUnits ()
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
@@ -577,6 +592,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
@@ -709,6 +725,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadRubble( TiXmlElement *rubbleNode )
 {
 	int x, y, rubblevalue;
@@ -723,6 +740,7 @@ void cSavegame::loadRubble( TiXmlElement *rubbleNode )
 	Server->addRubble ( x+y*Server->Map->size, rubblevalue, big );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data )
 {
 	TiXmlElement *Element;
@@ -746,6 +764,7 @@ void cSavegame::loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 {
 	if ( unitNode == NULL ) return;
@@ -871,6 +890,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	ConvertData ( unitNum, isVehicle );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::generateMoveJobs ()
 {
 	for ( unsigned int i = 0; i < MoveJobsLoad.Size(); i++ )
@@ -886,6 +906,7 @@ void cSavegame::generateMoveJobs ()
 	}
 }
 
+//--------------------------------------------------------------------------
 cPlayer *cSavegame::getPlayerFromNumber ( cList<cPlayer*> *PlayerList, int number )
 {
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -895,6 +916,7 @@ cPlayer *cSavegame::getPlayerFromNumber ( cList<cPlayer*> *PlayerList, int numbe
 	return NULL;
 }
 
+//--------------------------------------------------------------------------
 string cSavegame::convertDataToString ( sResources *resources, int size )
 {
 	string str = "";
@@ -906,6 +928,7 @@ string cSavegame::convertDataToString ( sResources *resources, int size )
 	return str;
 }
 
+//--------------------------------------------------------------------------
 string cSavegame::getHexValue ( unsigned char byte )
 {
 	string str = "";
@@ -920,6 +943,7 @@ string cSavegame::getHexValue ( unsigned char byte )
 	return str;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::convertStringToData ( string str, int size, sResources *resources )
 {
 	for ( int i = 0; i < size; i++ )
@@ -929,6 +953,7 @@ void cSavegame::convertStringToData ( string str, int size, sResources *resource
 	}
 }
 
+//--------------------------------------------------------------------------
 unsigned char cSavegame::getByteValue ( string str )
 {
 	unsigned char first = str.substr ( 0, 1 ).c_str()[0] - '0';
@@ -941,6 +966,7 @@ unsigned char cSavegame::getByteValue ( string str )
 	return ( first*16+second );
 }
 
+//--------------------------------------------------------------------------
 string cSavegame::convertScanMapToString ( char *data, int size )
 {
 	string str = "";
@@ -952,6 +978,7 @@ string cSavegame::convertScanMapToString ( char *data, int size )
 	return str;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::convertStringToScanMap ( string str, char *data )
 {
 	for ( unsigned int i = 0; i < str.length(); i++ )
@@ -961,6 +988,7 @@ void cSavegame::convertStringToScanMap ( string str, char *data )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeHeader( string saveName )
 {
 	TiXmlElement *headerNode = addMainElement ( SaveFile->RootElement(), "Header" );
@@ -989,6 +1017,7 @@ void cSavegame::writeHeader( string saveName )
 	addAttributeElement ( headerNode, "Time", "string", timestr );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeGameInfo()
 {
 	TiXmlElement *gemeinfoNode = addMainElement ( SaveFile->RootElement(), "Game" );
@@ -998,6 +1027,7 @@ void cSavegame::writeGameInfo()
 	if ( Server->bPlayTurns ) addAttributeElement ( gemeinfoNode, "PlayTurns", "activeplayer", iToStr ( Server->iActiveTurnPlayerNr ) );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeMap( cMap *Map )
 {
 	TiXmlElement *mapNode = addMainElement ( SaveFile->RootElement(), "Map" );
@@ -1005,6 +1035,7 @@ void cSavegame::writeMap( cMap *Map )
 	addAttributeElement ( mapNode, "Resources", "data", convertDataToString ( Map->Resources, Map->size*Map->size ) );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writePlayer( cPlayer *Player, int number )
 {
 	// generate players node if it doesn't exists
@@ -1102,7 +1133,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	}
 }
 
-
+//--------------------------------------------------------------------------
 void cSavegame::writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sUnitData *data, sUnitData *originaldata )
 {
 	TiXmlElement *upgradeNode = addMainElement ( upgradesNode, "Unit_" + iToStr ( upgradenumber ) );
@@ -1119,6 +1150,7 @@ void cSavegame::writeUpgrade ( TiXmlElement *upgradesNode, int upgradenumber, sU
 	if ( data->scan != originaldata->scan ) addAttributeElement ( upgradeNode, "Scan", "num", iToStr ( data->scan ) );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& researchLevel )
 {
 	TiXmlElement *levelNode = addMainElement ( researchLevelNode, "Level" );
@@ -1142,6 +1174,7 @@ void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& 
 	curPointsNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchPoints (cResearch::kCostResearch)).c_str() );	
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player)
 {
 	researchCentersWorkingOnAreaNode->SetAttribute( "attack", iToStr (player->researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str() );
@@ -1154,6 +1187,7 @@ void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCenters
 	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );		
 }
 
+//--------------------------------------------------------------------------
 TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 {
 	// add units node if it doesn't exists
@@ -1229,6 +1263,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	return unitNode;
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 {
 	// add units node if it doesn't exists
@@ -1307,6 +1342,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeRubble ( cBuilding *Building, int rubblenum )
 {
 	// add units node if it doesn't exists
@@ -1325,6 +1361,7 @@ void cSavegame::writeRubble ( cBuilding *Building, int rubblenum )
 	if ( Building->data.is_big ) addMainElement ( rubbleNode, "Big" );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnitData *OwnerData )
 {
 	// write the standard status values
@@ -1350,6 +1387,7 @@ void cSavegame::writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnit
 	}
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 {
 	// add the main node if it doesn't exists
@@ -1438,6 +1476,7 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if( Data->bHas_Overlay ) addMainElement ( unitNode, "Has_Overlay" );
 }
 
+//--------------------------------------------------------------------------
 void cSavegame::addAttributeElement( TiXmlElement *node, string nodename, string attributename, string value, string attributename2, string value2 )
 {
 	TiXmlElement *element = addMainElement ( node, nodename );
@@ -1445,6 +1484,7 @@ void cSavegame::addAttributeElement( TiXmlElement *node, string nodename, string
 	if ( attributename2.compare("") ) element->SetAttribute ( attributename2.c_str(), value2.c_str() );
 }
 
+//--------------------------------------------------------------------------
 TiXmlElement *cSavegame::addMainElement( TiXmlElement *node, string nodename )
 {
 	TiXmlElement *element = new TiXmlElement ( nodename.c_str() );

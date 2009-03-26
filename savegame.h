@@ -28,12 +28,14 @@ class cResearch;
 
 #define SAVE_FORMAT_VERSION		"0.2"
 
+//--------------------------------------------------------------------------
 struct sMoveJobLoad
 {
 	cVehicle *vehicle;
 	int destX, destY;
 };
 
+//--------------------------------------------------------------------------
 struct sSubBaseLoad
 {
 	sSubBaseLoad() : SubBase(0) {};
@@ -41,10 +43,12 @@ struct sSubBaseLoad
 	cPlayer *Player;
 };
 
+//--------------------------------------------------------------------------
 /**
 * Class for loading and saving savegames
 *@author alzi alias DoctorDeath
 */
+//--------------------------------------------------------------------------
 class cSavegame
 {
 public:
@@ -60,6 +64,7 @@ public:
 	string getMapName();
 	string getPlayerNames();
 
+//--------------------------------------------------------------------------
 private:
 	/* the number of the savefile */
 	int number;

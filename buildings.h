@@ -28,7 +28,9 @@
 #include "input.h"
 #include "upgradecalculator.h"
 
-// Struct for one upgrade (one kind of value, e.g. max_hit_points) /////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+/** Struct for one upgrade (one kind of value, e.g. max_hit_points) */
+//--------------------------------------------------------------------------
 struct sUpgrade {
   bool active; // is this upgrade buyable for the player
   int NextPrice; // what will the next upgrade cost
@@ -38,8 +40,10 @@ struct sUpgrade {
   string name; // the name of this upgrade type, e.g. Ammo
 };
 
-// Struct for one upgrade (one kind of value, e.g. max_hit_points) /////////////////////////////////////////////////////
-// When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again.
+//--------------------------------------------------------------------------
+/** Struct for one upgrade (one kind of value, e.g. max_hit_points)
+	When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again. */
+//--------------------------------------------------------------------------
 struct sUpgradeNew {
 	bool active; // is this upgrade buyable for the player
 	int nextPrice; // what will the next upgrade cost
@@ -49,7 +53,9 @@ struct sUpgradeNew {
 	string name; // the name of this upgrade type, e.g. Ammo
 };
 
-// struct for the images and sounds:
+//--------------------------------------------------------------------------
+/** struct for the images and sounds */
+//--------------------------------------------------------------------------
 struct sBuilding{
   SDL_Surface *img,*img_org; // Surface des Buildings
   SDL_Surface *shw,*shw_org; // Surfaces des Schattens
@@ -81,6 +87,7 @@ enum eSymbols {SSpeed,SHits,SAmmo,SMetal,SEnergy,SShots,SOil,SGold,STrans,SHuman
 enum eSymbolsBig {SBSpeed,SBHits,SBAmmo,SBAttack,SBShots,SBRange,SBArmor,SBScan,SBMetal,SBOil,SBGold,SBEnergy,SBHuman};
 #endif
 
+//--------------------------------------------------------------------------
 struct sBuildStruct
 {
 public:
@@ -95,12 +102,15 @@ public:
 	int iRemainingMetal;
 };
 
-// struct for the building order list
+//--------------------------------------------------------------------------
+/** struct for the building order list */
+//--------------------------------------------------------------------------
 struct sBuildList{
   struct sVehicle *typ;
   int metall_remaining;
 };
 
+//--------------------------------------------------------------------------
 enum ResourceKind
 {
 	TYPE_METAL = 0,
@@ -108,6 +118,7 @@ enum ResourceKind
 	TYPE_GOLD  = 2
 };
 
+//--------------------------------------------------------------------------
 struct sMineValues
 {
 	int& GetProd(ResourceKind);
@@ -120,11 +131,15 @@ struct sMineValues
 	int iBuildingID;
 };
 
-// Die Buulding Klasse ///////////////////////////////////////////////////////
-class cBuilding{
+
+//--------------------------------------------------------------------------
+/** Class cBuilding for one building. */
+//--------------------------------------------------------------------------
+class cBuilding
+{
 public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
-	~cBuilding(void);
+	~cBuilding();
 
 	/** the identification number of this unit */
 	unsigned int iID;
@@ -174,10 +189,10 @@ public:
 	bool hasBeenAttacked;
 
 	void Draw(SDL_Rect *dest);
-	void Select(void);
-	void Deselct(void);
-	void ShowDetails(void);
-	void GenerateName(void);
+	void Select();
+	void Deselct();
+	void ShowDetails();
+	void GenerateName();
 	int playStream();
 	std::string getStatusStr();
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
@@ -188,21 +203,21 @@ public:
 	*@return 1 if there has been refreshed something, else 0.
 	*/
 	int refreshData();
-	void ShowHelp(void);
+	void ShowHelp();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	void Center(void);
-	void DrawMunBar(void) const;
-	void DrawHelthBar(void) const;
+	void Center();
+	void DrawMunBar() const;
+	void DrawHelthBar() const;
 	void drawStatus() const;
-	int GetScreenPosX(void) const;
-	int GetScreenPosY(void) const;
+	int GetScreenPosX() const;
+	int GetScreenPosY() const;
 	int CalcHelth(int damage);
 	void DrawMenu( sMouseState *mouseState = NULL );
-	int GetMenuPointAnz(void);
-	SDL_Rect GetMenuSize(void);
+	int GetMenuPointAnz();
+	SDL_Rect GetMenuSize();
 	bool MouseOverMenu(int mx,int my);
-	void SelfDestructionMenu(void);
-	void ShowBigDetails(void);
+	void SelfDestructionMenu();
+	void ShowBigDetails();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
 	void DrawConnectors(SDL_Rect dest);
@@ -210,8 +225,8 @@ public:
 	void ClientStartWork();
 	void ServerStopWork(bool override);
 	void ClientStopWork();
-	bool CanTransferTo( class cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
-	void CheckRessourceProd(void);
+	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
+	void CheckRessourceProd();
 	void showMineManager();
 	void doMineInc(ResourceKind, cList<sMineValues*>& Mines);
 	void doMineDec(ResourceKind, cList<sMineValues*>& Mines);
@@ -227,7 +242,7 @@ public:
 	bool CanAttackObject(int off, cMap *Map, bool override=false);
 	void DrawAttackCursor( int offset );
 	void RotateTo(int Dir);
-	void ShowBuildMenu(void);
+	void ShowBuildMenu();
 	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
 	void DrawBuildButtons(int speed);
 	void ShowToBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
@@ -237,16 +252,15 @@ public:
 	bool canLoad( int offset, cMap *Map );
 	bool canLoad( cVehicle *Vehicle );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
-	void ShowStorage(void);
+	void ShowStorage();
 	void DrawStored(int off);
-	void ShowStorageMetalBar(void);
+	void ShowStorageMetalBar();
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled);
 	void ShowResearch();
 	void ShowResearchSliders(int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
 	void handleResearchSliderMouseClick(int mouseX, int mouseY, int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
 	void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas]);
-	void SendUpdateStored(int index);
 	void sendWantUpgrade (int storageSlot, bool upgradeAll); // wants to upgrade the vehicle to the current version
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
@@ -282,7 +296,7 @@ public:
 	bool isNextTo( int x, int y) const;
 	
 
-	//-----------------------------------------------------------
+//-----------------------------------------------------------
 protected:
 	void ShowUpgradeList (cList<sUpgradeStruct*>& list, int selected, int offset, bool description, int curCredits);
 	void ShowGoldBar (int startCredits, int curCredits);

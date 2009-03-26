@@ -30,6 +30,7 @@
 #include "server.h"
 #include "upgradecalculator.h"
 
+//--------------------------------------------------------------------------
 int& sMineValues::GetProd(ResourceKind const resource)
 {
 	switch (resource)
@@ -42,7 +43,7 @@ int& sMineValues::GetProd(ResourceKind const resource)
 	}
 }
 
-
+//--------------------------------------------------------------------------
 int sMineValues::GetMaxProd(ResourceKind const resource) const
 {
 	switch (resource)
@@ -56,14 +57,16 @@ int sMineValues::GetMaxProd(ResourceKind const resource) const
 }
 
 
-// struct for the upgrade list
+//--------------------------------------------------------------------------
+/** struct for the upgrade list */
+//--------------------------------------------------------------------------
 struct sUpgradeStruct
 {
 public:
-	sUpgradeStruct(SDL_Surface* const sf_, bool const vehicle_, int const id_) :
-		sf(sf_),
-		vehicle(vehicle_),
-		id(id_)
+	sUpgradeStruct(SDL_Surface* const sf_, bool const vehicle_, int const id_) 
+	: sf(sf_)
+	, vehicle(vehicle_)
+	, id(id_)
 	{}
 
 	SDL_Surface* const sf;
@@ -72,7 +75,12 @@ public:
 	sUpgradeNew upgrades[8];
 };
 
-// Funktionen der Vehicle Klasse /////////////////////////////////////////////
+
+//--------------------------------------------------------------------------
+// cBuilding Implementation
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 {
 	PosX = 0;
@@ -128,17 +136,9 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	RepeatBuild = false;
 	hasBeenAttacked = false;
 
-	if ( data.can_attack )
-	{
-		bSentryStatus = true;
-	}
-	else
-	{
-		bSentryStatus = false;
-	}
-
+	bSentryStatus = data.can_attack;
+	
 	MetalProd = 0;
-
 	GoldProd = 0;
 	OilProd = 0;
 	MaxMetalProd = 0;
@@ -152,9 +152,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	BuildList = NULL;
 
 	if ( data.can_build )
-	{
 		BuildList = new cList<sBuildList*>;
-	}
 
 	if ( data.is_big )
 	{
@@ -172,7 +170,8 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	refreshData();
 }
 
-cBuilding::~cBuilding ( void )
+//--------------------------------------------------------------------------
+cBuilding::~cBuilding ()
 {
 	if ( BuildList )
 	{
@@ -325,26 +324,26 @@ string cBuilding::getStatusStr ()
 	return lngPack.i18n ( "Text~Comp~Waits" );
 }
 
-// Aktalisiert alle Daten auf ihre Max-Werte:
+//--------------------------------------------------------------------------
+/** Refreshs all data to the maximum values */
+//--------------------------------------------------------------------------
 int cBuilding::refreshData ()
 {
 	if ( data.shots < data.max_shots )
 	{
 		if ( data.ammo >= data.max_shots )
-		{
 			data.shots = data.max_shots;
-		}
 		else
-		{
 			data.shots = data.ammo;
-		}
 		return 1;
 	}
-	else return 0;
+	return 0;
 }
 
-// generates the name for the building depending on the versionnumber
-void cBuilding::GenerateName ( void )
+//--------------------------------------------------------------------------
+/** generates the name for the building depending on the versionnumber */
+//--------------------------------------------------------------------------
+void cBuilding::GenerateName ()
 {
 	string rome, tmp_name;
 	int nr, tmp;
@@ -360,9 +359,7 @@ void cBuilding::GenerateName ( void )
 		nr %= 100;
 
 		while ( tmp-- )
-		{
 			rome += "C";
-		}
 	}
 
 	if ( nr >= 90 )
@@ -389,9 +386,7 @@ void cBuilding::GenerateName ( void )
 		nr %= 10;
 
 		while ( tmp-- )
-		{
 			rome += "X";
-		}
 	}
 
 	if ( nr == 9 )
@@ -413,11 +408,9 @@ void cBuilding::GenerateName ( void )
 	}
 
 	while ( nr-- )
-	{
 		rome += "I";
-	}
 
-	// Den Namen zusammenbauen:
+	// concatenate the name
 	// name=(string)data.name + " MK "+rome;
 /*
 	name = ( string ) data.name;
@@ -474,6 +467,7 @@ void cBuilding::GenerateName ( void )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::Draw ( SDL_Rect *dest )
 {
 	SDL_Rect scr, tmp;
@@ -482,8 +476,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	scr.y = 0;
 	float factor = (float)(Client->Hud.Zoom/64.0);
 
-	// Den Schadenseffekt machen:
-
+	// draw the damage effects
 	if ( Client->iTimer1 && !data.is_base && !data.is_connector && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hit_points / data.max_hit_points ) );
@@ -514,32 +507,36 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 		scr.y = 0;
 
-		// Den Schatten malen:
+		// draw the shadows
 		if ( SettingsData.bShadows )
 		{
 			if ( data.is_big )
 			{
-				if ( !SettingsData.bPreScale && ( UnitsData.dirt_big_shw->w != (int)(UnitsData.dirt_big_shw_org->w*factor) || UnitsData.dirt_big_shw->h != (int)(UnitsData.dirt_big_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_big_shw_org->h*factor) );
+				if ( !SettingsData.bPreScale && ( UnitsData.dirt_big_shw->w != (int)(UnitsData.dirt_big_shw_org->w*factor) || UnitsData.dirt_big_shw->h != (int)(UnitsData.dirt_big_shw_org->h*factor) ) ) 
+					scaleSurface ( UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_big_shw_org->h*factor) );
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &scr, buffer, &tmp );
 			}
 			else
 			{
-				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_small_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
+				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) 
+					scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_small_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &scr, buffer, &tmp );
 			}
 		}
 
-		// Das Building malen:
+		// draw the building
 		tmp = *dest;
 
 		if ( data.is_big )
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.dirt_big->w != (int)(UnitsData.dirt_big_org->w*factor) || UnitsData.dirt_big->h != (int)(UnitsData.dirt_big_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_big_org, UnitsData.dirt_big, (int)(UnitsData.dirt_big_org->w*factor), (int)(UnitsData.dirt_big_org->h*factor) );
+			if ( !SettingsData.bPreScale && ( UnitsData.dirt_big->w != (int)(UnitsData.dirt_big_org->w*factor) || UnitsData.dirt_big->h != (int)(UnitsData.dirt_big_org->h*factor) ) ) 
+				scaleSurface ( UnitsData.dirt_big_org, UnitsData.dirt_big, (int)(UnitsData.dirt_big_org->w*factor), (int)(UnitsData.dirt_big_org->h*factor) );
 			SDL_BlitSurface ( UnitsData.dirt_big, &scr, buffer, &tmp );
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.dirt_small->w != (int)(UnitsData.dirt_small_org->w*factor) || UnitsData.dirt_small->h != (int)(UnitsData.dirt_small_org->h*factor) ) ) scaleSurface ( UnitsData.dirt_small_org, UnitsData.dirt_small, (int)(UnitsData.dirt_small_org->w*factor), (int)(UnitsData.dirt_small_org->h*factor) );
+			if ( !SettingsData.bPreScale && ( UnitsData.dirt_small->w != (int)(UnitsData.dirt_small_org->w*factor) || UnitsData.dirt_small->h != (int)(UnitsData.dirt_small_org->h*factor) ) ) 
+				scaleSurface ( UnitsData.dirt_small_org, UnitsData.dirt_small, (int)(UnitsData.dirt_small_org->w*factor), (int)(UnitsData.dirt_small_org->h*factor) );
 			SDL_BlitSurface ( UnitsData.dirt_small, &scr, buffer, &tmp );
 		}
 
@@ -697,12 +694,13 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 	}
 
-	// Den Beton malen:
+	// draw the concrete
 	if ( !data.build_on_water && !data.is_expl_mine )
 	{
 		if ( data.is_big )
 		{
-			if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
+			if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) 
+				scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
@@ -717,7 +715,8 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.ptr_small_beton->w != (int)(UnitsData.ptr_small_beton_org->w*factor) || UnitsData.ptr_small_beton->h != (int)(UnitsData.ptr_small_beton_org->h*factor) ) ) scaleSurface ( UnitsData.ptr_small_beton_org, UnitsData.ptr_small_beton, (int)(UnitsData.ptr_small_beton_org->w*factor), (int)(UnitsData.ptr_small_beton_org->h*factor) );
+			if ( !SettingsData.bPreScale && ( UnitsData.ptr_small_beton->w != (int)(UnitsData.ptr_small_beton_org->w*factor) || UnitsData.ptr_small_beton->h != (int)(UnitsData.ptr_small_beton_org->h*factor) ) ) 
+				scaleSurface ( UnitsData.ptr_small_beton_org, UnitsData.ptr_small_beton, (int)(UnitsData.ptr_small_beton_org->w*factor), (int)(UnitsData.ptr_small_beton_org->h*factor) );
 			if ( !data.is_road && !data.is_connector )
 			{
 				if ( StartUp && SettingsData.bAlphaEffects )
@@ -744,12 +743,13 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		DrawConnectors ( *dest );
 	}
 
-	// Den Schatten malen:
+	// draw the shadows
 	if ( SettingsData.bShadows )
 	{
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 
-		if ( !SettingsData.bPreScale && ( typ->shw->w != (int)(typ->shw_org->w*factor) || typ->shw->h != (int)(typ->shw_org->h*factor) ) ) scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
+		if ( !SettingsData.bPreScale && ( typ->shw->w != (int)(typ->shw_org->w*factor) || typ->shw->h != (int)(typ->shw_org->h*factor) ) ) 
+			scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
 
 		if ( !data.is_connector ) SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
 		else SDL_BlitSurface ( typ->shw, &scr, buffer, &tmp );
@@ -757,7 +757,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 	}
 
-	// Die Spielerfarbe blitten:
+	// blit the players color
 	if ( !data.is_connector && !data.is_road )
 	{
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
@@ -773,14 +773,16 @@ void cBuilding::Draw ( SDL_Rect *dest )
 				scr.x = dir * Client->Hud.Zoom;
 			}
 
-			if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
+			if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
+				scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
 			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
 
 			scr.x = 0;
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
+			if ( !SettingsData.bPreScale && ( typ->img->w != scr.w || typ->img->h != scr.h ) ) 
+				scaleSurface ( typ->img_org, typ->img, scr.w, scr.h );
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		}
 	}
@@ -788,22 +790,18 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
-		if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
+		if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
+			scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
 		if ( !data.is_connector )
-		{
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
-		}
 		else
-		{
 			SDL_BlitSurface ( typ->img, &scr, GraphicsData.gfx_tmp, NULL );
-		}
 	}
 
-	// Das Building malen:
+	// draw the building 
 	tmp = *dest;
 
 	scr.x = 0;
-
 	scr.y = 0;
 
 	if ( StartUp && SettingsData.bAlphaEffects )
@@ -813,9 +811,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 	}
 	else
-	{
 		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
-	}
 
 	if ( StartUp )
 	{
@@ -826,12 +822,13 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			StartUp = 0;
 	}
 
-	// Ggf den Effekt malen:
+	// draw the effect if necessary
 	if ( data.has_effect && SettingsData.bAnimations && ( IsWorking || !data.can_work ) )
 	{
 		tmp = *dest;
 		SDL_SetAlpha ( typ->eff, SDL_SRCALPHA, EffectAlpha );
-		if ( !SettingsData.bPreScale && ( typ->eff->w != (int)(typ->eff_org->w*factor) || typ->eff->h != (int)(typ->eff_org->h*factor) ) ) scaleSurface ( typ->eff_org, typ->eff, (int)(typ->eff_org->w*factor), (int)(typ->eff_org->h*factor) );
+		if ( !SettingsData.bPreScale && ( typ->eff->w != (int)(typ->eff_org->w*factor) || typ->eff->h != (int)(typ->eff_org->h*factor) ) ) 
+			scaleSurface ( typ->eff_org, typ->eff, (int)(typ->eff_org->w*factor), (int)(typ->eff_org->h*factor) );
 		SDL_BlitSurface ( typ->eff, NULL, buffer, &tmp );
 
 		if ( Client->iTimer0 )
@@ -859,7 +856,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 	}
 
-	// Ggf Markierung malen, wenn der Bauvorgang abgeschlossen ist:
+	// draw the mark, when a build order is finished 
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
 	{
 		SDL_Rect d, t;
@@ -887,24 +884,14 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		SDL_FillRect ( buffer, &d, nr );
 	}
 
-	// Ggf den farbigen Rahmen malen:
+	// draw a colored frame if necessary
 	if ( Client->Hud.Farben )
 	{
 		SDL_Rect d, t;
-		int max, nr;
-		nr = * ( unsigned int* ) owner->color->pixels;
-
-		if ( data.is_big )
-		{
-			max = ( Client->Hud.Zoom - 1 ) * 2;
-		}
-		else
-		{
-			max = Client->Hud.Zoom - 1;
-		}
+		int nr = *((unsigned int*)(owner->color->pixels));
+		int max = data.is_big ? (Client->Hud.Zoom - 1) * 2 : Client->Hud.Zoom - 1;
 
 		d.x = dest->x + 1;
-
 		d.y = dest->y + 1;
 		d.w = max;
 		d.h = 1;
@@ -925,22 +912,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		SDL_FillRect ( buffer, &d, nr );
 	}
 
-	// Ggf den Rahmen malen:
+	// draw a colored frame if necessary
 	if ( selected )
 	{
 		SDL_Rect d, t;
-		int len, max;
-
-		if ( data.is_big )
-		{
-			max = Client->Hud.Zoom * 2;
-		}
-		else
-		{
-			max = Client->Hud.Zoom;
-		}
-
-		len = max / 4;
+		int max = data.is_big ? Client->Hud.Zoom * 2 : Client->Hud.Zoom;
+		int len = max / 4;
 
 		d.x = dest->x + 1;
 		d.y = dest->y + 1;
@@ -981,21 +958,15 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 	//draw health bar
 	if ( Client->Hud.Treffer )
-	{
 		DrawHelthBar();
-	}
 
 	//draw ammo bar
 	if ( Client->Hud.Munition && data.can_attack && data.max_ammo > 0 )
-	{
 		DrawMunBar();
-	}
 
 	//draw status
 	if ( Client->Hud.Status )
-	{
 		drawStatus();
-	}
 
 	//attack job debug output
 	if ( Client->bDebugAjobs )
@@ -1009,8 +980,10 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 }
 
-// Get the numer of menu items:
-int cBuilding::GetMenuPointAnz ( void )
+//--------------------------------------------------------------------------
+/** Get the numer of menu items */
+//--------------------------------------------------------------------------
+int cBuilding::GetMenuPointAnz ()
 {
 	int nr = 2;
 
@@ -1050,8 +1023,10 @@ int cBuilding::GetMenuPointAnz ( void )
 	return nr;
 }
 
-// Returns the size and position of the menu:
-SDL_Rect cBuilding::GetMenuSize ( void )
+//--------------------------------------------------------------------------
+/** Returns the size and position of the menu */
+//--------------------------------------------------------------------------
+SDL_Rect cBuilding::GetMenuSize ()
 {
 	SDL_Rect dest;
 	int i, size;
@@ -1065,35 +1040,30 @@ SDL_Rect cBuilding::GetMenuSize ( void )
 		size *= 2;
 
 	if ( dest.x + size + 42 >= SettingsData.iScreenW - 12 )
-	{
 		dest.x -= 42;
-	}
 	else
-	{
 		dest.x += size;
-	}
 
 	if ( dest.y - ( i - size ) / 2 <= 24 )
 	{
 		dest.y -= ( i - size ) / 2;
 		dest.y += - ( dest.y - 24 );
 	}
+	else if ( dest.y - ( i - size ) / 2 + i >= SettingsData.iScreenH - 24 )
+	{
+		dest.y -= ( i - size ) / 2;
+		dest.y -= ( dest.y + i ) - ( SettingsData.iScreenH - 24 );
+	}
 	else
-		if ( dest.y - ( i - size ) / 2 + i >= SettingsData.iScreenH - 24 )
-		{
-			dest.y -= ( i - size ) / 2;
-			dest.y -= ( dest.y + i ) - ( SettingsData.iScreenH - 24 );
-		}
-		else
-		{
-			dest.y -= ( i - size ) / 2;
-		}
+		dest.y -= ( i - size ) / 2;
 
 	return dest;
 }
 
-// returns true, if the mouse coordinates are inside the menu area:
-bool cBuilding::MouseOverMenu ( int mx, int my )
+//--------------------------------------------------------------------------
+/** returns true, if the mouse coordinates are inside the menu area */
+//--------------------------------------------------------------------------
+bool cBuilding::MouseOverMenu (int mx, int my)
 {
 	SDL_Rect r;
 	r = GetMenuSize();
@@ -1107,20 +1077,21 @@ bool cBuilding::MouseOverMenu ( int mx, int my )
 	return true;
 }
 
-// displays the self destruction menu:
-void cBuilding::SelfDestructionMenu ( void )
+//--------------------------------------------------------------------------
+/** displays the self destruction menu */
+//--------------------------------------------------------------------------
+void cBuilding::SelfDestructionMenu ()
 {
-
-	if ( showSelfdestruction() )
+	if (showSelfdestruction())
 	{
 		//TODO: self destruction
-		
 	}
-
 }
 
+//--------------------------------------------------------------------------
 // Shows the details with big symbols:
-void cBuilding::ShowBigDetails ( void )
+//--------------------------------------------------------------------------
+void cBuilding::ShowBigDetails ()
 {
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -1234,7 +1205,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	}
 
-	// Energieverbrauch:
+	// energy consumption:
 	if ( data.energy_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.energy_need ) );
@@ -1244,7 +1215,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	}
 
-	// Humanverbrauch:
+	// humans needed:
 	if ( data.human_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.human_need ) );
@@ -1254,7 +1225,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	}
 
-	// Metallverbrauch:
+	// raw material consumption:
 	if ( data.metal_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.metal_need ) );
@@ -1264,7 +1235,7 @@ void cBuilding::ShowBigDetails ( void )
 
 	}
 
-	// Goldverbrauch:
+	// gold consumption:
 	if ( data.gold_need )
 	{
 		font->showTextCentered ( COLUMN_1, y, iToStr ( data.gold_need ) );
@@ -1280,7 +1251,8 @@ void cBuilding::ShowBigDetails ( void )
 	DrawSymbolBig ( SBMetal, COLUMN_3, y - 2, 160, data.iBuilt_Costs, typ->data.iBuilt_Costs, buffer );
 }
 
-void cBuilding::updateNeighbours( cMap *Map )
+//--------------------------------------------------------------------------
+void cBuilding::updateNeighbours (cMap *Map)
 {
 	int iPosOff = PosX+PosY*Map->size;
 	if ( !data.is_big )
@@ -1304,10 +1276,11 @@ void cBuilding::updateNeighbours( cMap *Map )
 	CheckNeighbours( Map );
 }
 
-// Pr¸ft, ob es Nachbarn gibt:
+//--------------------------------------------------------------------------
+/** Checks, if there are neighbours */
+//--------------------------------------------------------------------------
 void cBuilding::CheckNeighbours ( cMap *Map )
 {
-
 #define CHECK_NEIGHBOUR(x,y,m)								\
 	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
 	{														\
@@ -1337,7 +1310,9 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 	}
 }
 
-// Draws the connectors at the building:
+//--------------------------------------------------------------------------
+/** Draws the connectors at the building: */
+//--------------------------------------------------------------------------
 void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
 	SDL_Rect scr, tmp;
@@ -1348,7 +1323,8 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	scr.h = scr.w = zoom;
 	float factor = (float)(zoom/64.0);
 
-	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
+	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) 
+		scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
 	if ( BaseN )
 	{
 		scr.x = zoom;
@@ -1433,7 +1409,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	}
 }
 
-//starts the building for the server thread
+//--------------------------------------------------------------------------
+/** starts the building for the server thread */
+//--------------------------------------------------------------------------
 void cBuilding::ServerStartWork ()
 {
 	cBuilding *b;
@@ -1450,7 +1428,7 @@ void cBuilding::ServerStartWork ()
 		return;
 	}
 
-	// Humanverbraucher:
+	// needs human workers:
 	if ( data.human_need )
 	{
 		if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
@@ -1458,7 +1436,6 @@ void cBuilding::ServerStartWork ()
 			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
-
 		SubBase->HumanNeed += data.human_need;
 	}
 
@@ -1678,17 +1655,13 @@ void cBuilding::ServerStartWork ()
 			}
 		}
 
-	// Rohstoffverbraucher:
+	// raw material conumer:
 	if ( data.metal_need )
-	{
 		SubBase->MetalNeed += min(MetalPerRound, (*BuildList)[0]->metall_remaining);
-	}
 
-	// Goldverbraucher:
+	// gold consumer:
 	if ( data.gold_need )
-	{
 		SubBase->GoldNeed += data.gold_need;
-	}
 
 	// Minen:
 	if ( data.is_mine )
@@ -1698,6 +1671,7 @@ void cBuilding::ServerStartWork ()
 		SubBase->GoldProd += GoldProd;
 	}
 
+	// research building
 	if ( data.can_research )
 	{
 		owner->ResearchCount++;
@@ -1729,7 +1703,9 @@ void cBuilding::ClientStartWork()
 		owner->startAResearch (researchArea);
 }
 
-// Stops the building's working:
+//--------------------------------------------------------------------------
+/** Stops the building's working in the server thread */
+//--------------------------------------------------------------------------
 void cBuilding::ServerStopWork ( bool override )
 {
 	if ( !IsWorking )
@@ -1738,9 +1714,7 @@ void cBuilding::ServerStopWork ( bool override )
 		return;
 	}
 
-
-
-	// Energiegeneratoren:
+	// energy generators
 	if ( data.energy_prod )
 	{
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
@@ -1750,34 +1724,23 @@ void cBuilding::ServerStopWork ( bool override )
 		}
 
 		SubBase->EnergyProd -= data.energy_prod;
-
 		SubBase->OilNeed -= data.oil_need;
 	}
+	// Energy consumers:
+	else if ( data.energy_need )
+		SubBase->EnergyNeed -= data.energy_need;
 
-	// Energieverbraucher:
-	else
-		if ( data.energy_need )
-		{
-			SubBase->EnergyNeed -= data.energy_need;
-		}
-
-	// Rohstoffverbraucher:
+	// raw material consumer:
 	if ( data.metal_need )
-	{
 		SubBase->MetalNeed -= min(MetalPerRound, (*BuildList)[0]->metall_remaining);
-	}
 
-	// Goldverbraucher:
+	// gold consumer
 	if ( data.gold_need )
-	{
 		SubBase->GoldNeed -= data.gold_need;
-	}
 
-	// Humanverbraucher:
+	// human consumer
 	if ( data.human_need )
-	{
 		SubBase->HumanNeed -= data.human_need;
-	}
 
 	// Minen:
 	if ( data.is_mine )
@@ -1881,6 +1844,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 	return false;
 }
 
+//--------------------------------------------------------------------------
 bool cBuilding::isNextTo( int x, int y) const
 {
 	if ( x + 1 < PosX || y + 1 < PosY ) return false;
@@ -1898,7 +1862,9 @@ bool cBuilding::isNextTo( int x, int y) const
 }
 
 
-// draws the exit points for a vehicle of the given type:
+//--------------------------------------------------------------------------
+/** draws the exit points for a vehicle of the given type: */
+//--------------------------------------------------------------------------
 void cBuilding::DrawExitPoints ( sVehicle *typ )
 {
 	int spx, spy, size;
@@ -1943,7 +1909,7 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom*2 );
 }
 
-
+//--------------------------------------------------------------------------
 bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
 	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
@@ -1952,6 +1918,7 @@ bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVe
 	return true;
 }
 
+//--------------------------------------------------------------------------
 bool cBuilding::canLoad ( int offset, cMap *Map )
 {
 	if ( offset < 0 || offset > Map->size*Map->size ) return false;
@@ -1962,7 +1929,9 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 	return false;
 }
 
-// returns, if the vehicle can be loaded from its position:
+//--------------------------------------------------------------------------
+/** returns, if the vehicle can be loaded from its position: */
+//--------------------------------------------------------------------------
 bool cBuilding::canLoad ( cVehicle *Vehicle )
 {
 	if ( !Vehicle ) return false;
@@ -1984,7 +1953,9 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 	return false;
 }
 
-// loads the vehicle:
+//--------------------------------------------------------------------------
+/** loads a vehicle: */
+//--------------------------------------------------------------------------
 void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 {
 	Map->deleteVehicle ( Vehicle );
@@ -2004,8 +1975,10 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 	owner->DoScan();
 }
 
-// Zeigt den Lagerbildschirm an:
-void cBuilding::ShowStorage ( void )
+//--------------------------------------------------------------------------
+/** Shows the storage screen. */
+//--------------------------------------------------------------------------
+void cBuilding::ShowStorage ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, to;
 	SDL_Surface *sf;
@@ -2299,21 +2272,22 @@ void cBuilding::ShowStorage ( void )
 		{
 			PlayFX ( SoundData.SNDMenuButton );
 
-			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
-			{
-				cVehicle *v;
-				v = StoredVehicles[i];
-
-				if ( v->data.ammo != v->data.max_ammo )
-				{
-					v->data.ammo = v->data.max_ammo;
-					owner->base.AddMetal ( SubBase, -2 );
-					SendUpdateStored ( i );
-
-					if ( SubBase->Metal < 2 )
-						break;
-				}
-			}
+// TODO: reimplement
+//			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
+//			{
+//				cVehicle *v;
+//				v = StoredVehicles[i];
+//
+//				if ( v->data.ammo != v->data.max_ammo )
+//				{
+//					v->data.ammo = v->data.max_ammo;
+//					owner->base.AddMetal ( SubBase, -2 );
+//					//SendUpdateStored ( i );
+//
+//					if ( SubBase->Metal < 2 )
+//						break;
+//				}
+//			}
 
 			DrawStored ( offset );
 
@@ -2333,22 +2307,22 @@ void cBuilding::ShowStorage ( void )
 			PlayFX ( SoundData.SNDMenuButton );
 			dest.x = rDialog.x + 511;
 			dest.y = rDialog.y + 251 + 25 * 2;
-
-			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
-			{
-				cVehicle *v;
-				v = StoredVehicles[i];
-
-				if ( v->data.hit_points != v->data.max_hit_points )
-				{
-					v->data.hit_points = v->data.max_hit_points;
-					owner->base.AddMetal ( SubBase, -2 );
-					SendUpdateStored ( i );
-
-					if ( SubBase->Metal < 2 )
-						break;
-				}
-			}
+// TODO: reimplement
+//			for (unsigned int i = 0; i < StoredVehicles.Size(); i++)
+//			{
+//				cVehicle *v;
+//				v = StoredVehicles[i];
+//
+//				if ( v->data.hit_points != v->data.max_hit_points )
+//				{
+//					v->data.hit_points = v->data.max_hit_points;
+//					owner->base.AddMetal ( SubBase, -2 );
+//					//SendUpdateStored ( i );
+//
+//					if ( SubBase->Metal < 2 )
+//						break;
+//				}
+//			}
 
 			DrawStored ( offset );
 
@@ -2556,7 +2530,9 @@ void cBuilding::ShowStorage ( void )
 	Client->isInMenu = false;
 }
 
-// Malt alle Bilder der geladenen Vehicles:
+//--------------------------------------------------------------------------
+/** Draws all pictures of the loaded vehicles */
+//--------------------------------------------------------------------------
 void cBuilding::DrawStored ( int off )
 {
 	SDL_Rect scr, dest;
@@ -2759,19 +2735,12 @@ void cBuilding::DrawStored ( int off )
 
 		// Display the additional info:
 		dest.x -= 66;
-
 		dest.y -= 69 - 6;
-
 		scr.w = 128;
-
 		scr.h = 30;
-
 		scr.x = dest.x - rDialog.x;
-
 		scr.y = dest.y - rDialog.y;
-
 		SDL_BlitSurface ( sf, &scr, buffer, &dest );
-
 		dest.x += 6;
 
 		if ( vehicleV )
@@ -2797,8 +2766,10 @@ void cBuilding::DrawStored ( int off )
 	SDL_FreeSurface ( sf );
 }
 
-// Display the raw material bar in the storage menu
-void cBuilding::ShowStorageMetalBar ( void )
+//--------------------------------------------------------------------------
+/** Display the raw material bar in the storage screen */
+//--------------------------------------------------------------------------
+void cBuilding::ShowStorageMetalBar ()
 {
 	SDL_Rect scr, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
@@ -2875,6 +2846,7 @@ void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 	owner->DoScan();
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::MakeStorageButtonsAlle ( bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
@@ -4182,19 +4154,19 @@ void cBuilding::initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx)
 		i++;
 	}
 
-	// Energieverbrauch:
+	// energy consumption:
 	if (currentVersion.energy_need)
 		i++;
 
-	// Humanverbrauch:
+	// Human consumption:
 	if (currentVersion.human_need)
 		i++;
 
-	// Metallverbrauch:
+	// raw material consumption
 	if (currentVersion.metal_need)
 		i++;
 
-	// Goldverbrauch:
+	// Gold consumption
 	if (currentVersion.gold_need)
 		i++;
 
@@ -4652,7 +4624,8 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 }
 
 //-------------------------------------------------------------------------------
-// checks the resources that are available under the mining station:
+/** checks the resources that are available under the mining station */
+//--------------------------------------------------------------------------
 void cBuilding::CheckRessourceProd ( void )
 {
 	int pos, max_cap;
@@ -4778,8 +4751,9 @@ void cBuilding::CheckRessourceProd ( void )
 }
 
 //-------------------------------------------------------------------------------
-// Zeigt den Minenmanager an:
-void cBuilding::showMineManager ( void )
+/** Display the ressource (mine) manager */
+//--------------------------------------------------------------------------
+void cBuilding::showMineManager ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
@@ -5277,7 +5251,9 @@ void cBuilding::showMineManager ( void )
 	Client->isInMenu = false;
 }
 
-// Malt die Minenmanager-Bars:
+//--------------------------------------------------------------------------
+/** Displays the horizontal bars in the mine (resource) manager screen */
+//--------------------------------------------------------------------------
 void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM, int MaxO, int MaxG, int *FreeM, int *FreeO, int *FreeG )
 {
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
@@ -5303,7 +5279,9 @@ void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTe
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 310 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 }
 
-// Malt einen Rohstoffbalken:
+//--------------------------------------------------------------------------
+/* Displays one resource bar */
+//--------------------------------------------------------------------------
 void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool number, int fixed )
 {
 	SDL_Rect scr, dest;
@@ -5372,13 +5350,12 @@ void cBuilding::DrawMineBar ( int typ, int value, int max_value, int offy, bool 
 		}
 
 	if ( number )
-	{
-
 		font->showTextCentered ( rDialog.x + 174 + 120, dest.y + 8, iToStr ( value ), FONT_LATIN_BIG );
-	}
 }
 
-// Checks if the target is in range
+//--------------------------------------------------------------------------
+/** Checks if the target is in range */
+//--------------------------------------------------------------------------
 bool cBuilding::IsInRange ( int off, cMap *Map )
 {
 	int x, y;
@@ -5395,7 +5372,9 @@ bool cBuilding::IsInRange ( int off, cMap *Map )
 	return false;
 }
 
-// Checks if the building is able to attack the object
+//--------------------------------------------------------------------------
+/** Checks if the building is able to attack the object */
+//--------------------------------------------------------------------------
 bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 {
 	cVehicle *v = NULL;
@@ -5441,14 +5420,14 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 			return false;
 	}
 	else
-	{
 		return false;
-	}
 
 	return true;
 }
 
-// Malt den Attack-Cursor:
+//--------------------------------------------------------------------------
+/** Draw the attack cursor */
+//--------------------------------------------------------------------------
 void cBuilding::DrawAttackCursor ( int offset )
 {
 	SDL_Rect r;
@@ -5526,7 +5505,9 @@ void cBuilding::DrawAttackCursor ( int offset )
 		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
 }
 
-// Dreht das Building in die angegebene Richtung:
+//--------------------------------------------------------------------------
+/** Rotates the building in the given direction */
+//--------------------------------------------------------------------------
 void cBuilding::RotateTo ( int Dir )
 {
 	int i, t, dest;
@@ -5562,9 +5543,10 @@ void cBuilding::RotateTo ( int Dir )
 			dir -= 8;
 }
 
-#include "pcx.h"
-// Displays the build menu
-void cBuilding::ShowBuildMenu ( void )
+//--------------------------------------------------------------------------
+/** Displays the build menu */
+//--------------------------------------------------------------------------
+void cBuilding::ShowBuildMenu ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	SDL_Rect scr, dest;
@@ -5600,15 +5582,10 @@ void cBuilding::ShowBuildMenu ( void )
 	btn_build.Draw();
 
 	font->showTextCentered ( rTxtDescription.x + rTxtDescription.w / 2, rTxtDescription.y, lngPack.i18n ( "Text~Comp~Description" ) );
-
-
 	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Build" ) );
-
 	font->showTextCentered ( rTxtRepeat.x + rTxtRepeat.w / 2, rTxtRepeat.y, lngPack.i18n ( "Text~Comp~Repeat" ) );
 
-
-	// Der Haken:
-
+	// the checkbox
 	if ( SettingsData.bShowDescription )
 	{
 		scr.x = 291;
@@ -6264,7 +6241,9 @@ void cBuilding::ShowBuildMenu ( void )
 	Client->isInMenu = false;
 }
 
-// Zeigt die Liste mit den baubaren Einheiten und wenn showInfo==true auch saemtliche Infos zur ausgewaehlten Einheit
+//--------------------------------------------------------------------------
+/** Displays the list with all buildable units. If showInfo==true also all infos for the selected unit. */
+//--------------------------------------------------------------------------
 void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
@@ -6471,7 +6450,9 @@ void cBuilding::ShowBuildList(cList<sBuildStruct*>& list, int const selected, in
 	}
 }
 
-//draws the Buildspeed-Buttons
+//--------------------------------------------------------------------------
+/** draws the Buildspeed-Buttons */
+//--------------------------------------------------------------------------
 void cBuilding::DrawBuildButtons ( int speed )
 {
 	SDL_Rect rBtnSpeed1 = {MENU_OFFSET_X + 292, MENU_OFFSET_Y + 345, BUTTON__W, BUTTON__H};
@@ -6481,34 +6462,24 @@ void cBuilding::DrawBuildButtons ( int speed )
 	string sTmp = lngPack.i18n ( "Text~Button~Build" );
 
 	if ( speed == 0 )
-	{
 		drawButton ( sTmp + " x1", true, rBtnSpeed1.x, rBtnSpeed1.y, buffer );
-	}
 	else
-	{
 		drawButton ( sTmp + " x1", false, rBtnSpeed1.x, rBtnSpeed1.y, buffer );
-	}
 
 	if ( speed == 1 )
-	{
 		drawButton ( sTmp + " x2", true, rBtnSpeed2.x, rBtnSpeed2.y, buffer );
-	}
 	else
-	{
 		drawButton ( sTmp + " x2", false, rBtnSpeed2.x, rBtnSpeed2.y, buffer );
-	}
 
 	if ( speed == 2 )
-	{
 		drawButton ( sTmp + " x4", true, rBtnSpeed3.x, rBtnSpeed3.y, buffer );
-	}
 	else
-	{
 		drawButton ( sTmp + " x4", false, rBtnSpeed3.x, rBtnSpeed3.y, buffer );
-	}
 }
 
-// Zeigt die Liste mit den Bauauftraegen an, und wenn show Info==true auch saemtliche Details zur gewaehlten Einheit
+//--------------------------------------------------------------------------
+/** Draws the list with all build orders. If showInfo==true additionally all details for the selected unit. */
+//--------------------------------------------------------------------------
 void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, int const offset, bool const showInfo)
 {
 	sBuildStruct *ptr;
@@ -6632,44 +6603,31 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 				CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, ptr->ID.getUnitData( owner )->iBuilt_Costs, ptr->iRemainingMetal );
 
 				tmp.x = 373;
-
 				tmp.y = 344;
-
 				tmp2.x = MENU_OFFSET_X + 373;
-
 				tmp2.y = MENU_OFFSET_Y + 344;
-
 				tmp.w = tmp2.w = 77;
-
 				tmp.h = tmp2.h = 72;
-
 				SDL_BlitSurface ( GraphicsData.gfx_fac_build_screen, &tmp, buffer, &tmp2 );
 
 				//sprintf ( str,"%d",iTurboBuildRounds[0]);
-
 				font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildRounds[0] ) );
-
 				//sprintf ( str,"%d",iTurboBuildCosts[0] );
-
 				font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 350, iToStr ( iTurboBuildCosts[0] ) );
 
 				if ( iTurboBuildRounds[1] > 0 )
 				{
 					//sprintf ( str,"%d", iTurboBuildRounds[1] );
-
 					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildRounds[1] ) );
 					//sprintf ( str,"%d", iTurboBuildCosts[1] );
-
 					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 375, iToStr ( iTurboBuildCosts[1] ) );
 				}
 
 				if ( iTurboBuildRounds[2] > 0 )
 				{
 					//sprintf ( str,"%d", iTurboBuildRounds[2] );
-
 					font->showTextCentered ( MENU_OFFSET_X + 389, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildRounds[2] ) );
 					//sprintf ( str,"%d", iTurboBuildCosts[2] );
-
 					font->showTextCentered ( MENU_OFFSET_X + 429, MENU_OFFSET_Y + 400, iToStr ( iTurboBuildCosts[2] ) );
 				}
 			}
@@ -6703,10 +6661,7 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 		}
 
 		// Text ausgeben:
-
 		string sTmp = ptr->ID.getUnitData()->name;
-
-
 		if ( font->getTextWide ( sTmp, FONT_LATIN_SMALL_WHITE ) > text.w )
 		{
 			text.y -= font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
@@ -6714,18 +6669,17 @@ void cBuilding::ShowToBuildList(cList<sBuildStruct*>& list, int const selected, 
 			text.y += font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2;
 		}
 		else
-		{
 			font->showText ( text, sTmp, FONT_LATIN_SMALL_WHITE);
-		}
-
 
 		text.y += 32 + 10;
 		dest.y += 32 + 10;
 	}
 }
 
-//calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
-//iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1
+//--------------------------------------------------------------------------
+/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
+	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
+//--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
 	//first calc costs for a new Vehical
@@ -6812,19 +6766,25 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	}*/
 }
 
-// Returns the screen x position of the building
-int cBuilding::GetScreenPosX ( void ) const
+//--------------------------------------------------------------------------
+/** Returns the screen x position of the building */
+//--------------------------------------------------------------------------
+int cBuilding::GetScreenPosX () const
 {
 	return 180 - ( ( int ) ( ( Client->Hud.OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
 }
 
-// Returns the screen x position of the building
-int cBuilding::GetScreenPosY ( void ) const
+//--------------------------------------------------------------------------
+/** Returns the screen x position of the building */
+//--------------------------------------------------------------------------
+int cBuilding::GetScreenPosY () const
 {
 	return 18 - ( ( int ) ( ( Client->Hud.OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
 }
 
-// returns the remaining hitpoints after an attack
+//--------------------------------------------------------------------------
+/** returns the remaining hitpoints after an attack */
+//--------------------------------------------------------------------------
 int cBuilding::CalcHelth ( int damage )
 {
 	damage -= data.armor;
@@ -6846,7 +6806,9 @@ int cBuilding::CalcHelth ( int damage )
 	return hp;
 }
 
-// draws the building menu
+//--------------------------------------------------------------------------
+/** draws the building menu */
+//--------------------------------------------------------------------------
 void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0, SelMenu = -1, ExeNr = -1;
@@ -7218,7 +7180,8 @@ void cBuilding::upgradeToCurrentVersion ()
 
 
 //------------------------------------------------------------------------
-// Zentriert auf dieses Building:
+/** centers on this building */
+//--------------------------------------------------------------------------
 void cBuilding::Center ()
 {
 	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
@@ -7228,7 +7191,8 @@ void cBuilding::Center ()
 }
 
 //------------------------------------------------------------------------
-// draws the available ammunition over the building:
+/** draws the available ammunition over the building: */
+//--------------------------------------------------------------------------
 void cBuilding::DrawMunBar ( void ) const
 {
 	SDL_Rect r1, r2;
@@ -7265,7 +7229,8 @@ void cBuilding::DrawMunBar ( void ) const
 }
 
 //------------------------------------------------------------------------
-// draws the health bar over the building
+/** draws the health bar over the building */
+//--------------------------------------------------------------------------
 void cBuilding::DrawHelthBar ( void ) const
 {
 	SDL_Rect r1, r2;
@@ -7304,6 +7269,7 @@ void cBuilding::DrawHelthBar ( void ) const
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::drawStatus() const
 {
 	SDL_Rect dest;
@@ -7328,20 +7294,18 @@ void cBuilding::drawStatus() const
 	}
 }
 
-void cBuilding::Select ( void )
+//--------------------------------------------------------------------------
+void cBuilding::Select ()
 {
 	selected = true;
 	// Das Video laden:
-
 	if ( Client->FLC != NULL )
 	{
 		FLI_Close ( Client->FLC );
 		Client->FLC = NULL;
 		Client->sFLCname = "";
 	}
-
 	Client->video = typ->video;
-
 
 	// Sound abspielen:
 	if ( !IsWorking )
@@ -7351,7 +7315,8 @@ void cBuilding::Select ( void )
 	ShowDetails();
 }
 
-void cBuilding::Deselct ( void )
+//--------------------------------------------------------------------------
+void cBuilding::Deselct ()
 {
 	SDL_Rect scr, dest;
 	selected = false;
@@ -7372,7 +7337,8 @@ void cBuilding::Deselct ( void )
 	Client->iObjectStream = -1;
 }
 
-void cBuilding::ShowDetails ( void )
+//--------------------------------------------------------------------------
+void cBuilding::ShowDetails ()
 {
 	SDL_Rect scr, dest;
 	// Den Hintergrund wiederherstellen:
@@ -7544,7 +7510,9 @@ void cBuilding::ShowDetails ( void )
 					}
 }
 
-// Malt eine Reihe von Symbolen:
+//--------------------------------------------------------------------------
+/** draws a row of symbols */
+//--------------------------------------------------------------------------
 void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, int maxvalue, SDL_Surface *sf )
 {
 	SDL_Rect full, empty, dest;
@@ -7552,7 +7520,6 @@ void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, in
 
 	switch ( sym )
 	{
-
 		case SSpeed:
 			full.x = 0;
 			empty.y = full.y = 98;
@@ -7676,45 +7643,31 @@ void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, in
 	}
 
 	dest.x = x;
-
 	dest.y = y;
 	
 	for ( i = 0;i < to;i++ )
 	{
 		if ( value > 0 )
-		{
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &full, sf, &dest );
-		}
 		else
-		{
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &empty, sf, &dest );
-		}
 
 		dest.x += offx;
-
 		value -= step;
 	}
 }
 
-// Malt eine Nummer/Nummer auf das Surface:
+//--------------------------------------------------------------------------
+/** Draws a number/number on the surface */
+//--------------------------------------------------------------------------
 void cBuilding::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *sf )
 {
 	if ( value > maxvalue / 2 )
-	{
 		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_GREEN, sf );
-
-	}
+	else if ( value > maxvalue / 4 )
+		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_YELLOW, sf );
 	else
-		if ( value > maxvalue / 4 )
-		{
-			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_YELLOW, sf );
-
-		}
-		else
-		{
-			font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_RED, sf );
-
-		}
+		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_RED, sf );
 }
 
 //----------------------------------------------------------------
@@ -7728,8 +7681,10 @@ int cBuilding::playStream ()
 	return 0;
 }
 
-// Zeigt den Hilfebildschirm an:
-void cBuilding::ShowHelp ( void )
+//--------------------------------------------------------------------------
+/** Displays the help screen */
+//--------------------------------------------------------------------------
+void cBuilding::ShowHelp ()
 {
 #define DIALOG_W 640
 #define DIALOG_H 480
@@ -7750,18 +7705,11 @@ void cBuilding::ShowHelp ( void )
 	mouse->draw ( false, buffer );
 
 	if ( SettingsData.bAlphaEffects )
-	{
 		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-	}
-
 
 	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
-
 	if ( FileExists ( GFXOD_HELP ) )
-	{
 		LoadPCXtoSF ( GFXOD_HELP, SfDialog );
-	}
-
 
 	// Den Hilfebildschirm blitten:
 	SDL_BlitSurface ( SfDialog, &rDialogSrc, buffer, &rDialog );
@@ -7774,7 +7722,6 @@ void cBuilding::ShowHelp ( void )
 
 
 	// show text
-
 	font->showTextAsBlock ( rTxt, typ->text );
 
 	// get unit details
@@ -7804,17 +7751,12 @@ void cBuilding::ShowHelp ( void )
 		y = mouse->y;
 
 		if ( x != LastMouseX || y != LastMouseY )
-		{
 			mouse->draw ( true, screen );
-		}
 
 		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
-		{
 			break;
-		}
 
 		LastMouseX = x;
-
 		LastMouseY = y;
 		LastB = b;
 	}
@@ -7823,12 +7765,7 @@ void cBuilding::ShowHelp ( void )
 	Client->isInMenu = false;
 }
 
-// Sendet die Update-Nachricht fuer das gespeicherte Vehicle mit dem Index:
-void cBuilding::SendUpdateStored ( int index )
-{
-	return;
-}
-
+//--------------------------------------------------------------------------
 bool cBuilding::isDetectedByPlayer( cPlayer* player )
 {
 	for (unsigned int i = 0; i < DetectedByPlayerList.Size(); i++)
@@ -7838,6 +7775,7 @@ bool cBuilding::isDetectedByPlayer( cPlayer* player )
 	return false;
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
 	for (unsigned int i = 0; i < Mines.Size(); ++i)
@@ -7855,6 +7793,7 @@ void cBuilding::doMineInc(ResourceKind const resource, cList<sMineValues*>& Mine
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::doMineDec(ResourceKind const resource, cList<sMineValues*>& Mines)
 {
 	for (unsigned int i = 0; i < Mines.Size(); ++i)
@@ -7868,6 +7807,7 @@ void cBuilding::doMineDec(ResourceKind const resource, cList<sMineValues*>& Mine
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFreeO, int *iFreeG )
 {
 	*iFreeM = 0;
@@ -7891,12 +7831,14 @@ void cBuilding::calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFr
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::setDetectedByPlayer( cPlayer* player )
 {
 	if (!isDetectedByPlayer( player ))
 		DetectedByPlayerList.Add( player );
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::resetDetectedByPlayer( cPlayer* player )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
@@ -7905,6 +7847,7 @@ void cBuilding::resetDetectedByPlayer( cPlayer* player )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cBuilding::makeDetection()
 {
 	//check whether the building has been detected by others
@@ -7922,6 +7865,7 @@ void cBuilding::makeDetection()
 	}
 }
 
+//--------------------------------------------------------------------------
 void sBuilding::scaleSurfaces( float factor )
 {
 	scaleSurface ( img_org, img, (int)(img_org->w*factor), (int)(img_org->h*factor) );
