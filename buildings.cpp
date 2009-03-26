@@ -6866,7 +6866,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
 		return;
 
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonReleased && MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
 		LastNr = SelMenu;
