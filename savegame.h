@@ -107,7 +107,7 @@ private:
 	 * save the research level values of a player
 	 *@author pagra
 	 */
-	void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& researchLevel );
+	void writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& researchLevel );
 	/**
 	 * save the number of research centers that are working on each area of a player
 	 *@author pagra
