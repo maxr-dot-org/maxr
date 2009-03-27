@@ -136,7 +136,8 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	RepeatBuild = false;
 	hasBeenAttacked = false;
 
-	bSentryStatus = data.can_attack;
+	if ( data.can_attack != ATTACK_NONE ) bSentryStatus = true;
+	else bSentryStatus = false;
 	
 	MetalProd = 0;
 	GoldProd = 0;

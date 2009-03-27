@@ -677,7 +677,7 @@ void cPlayer::doResearch()
 	}
 	if (researchFinished)
 	{
-		for (int i = 0; i < upgradedUnitDatas.Size(); i++)
+		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
 			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
 	}
 	sendResearchLevel (&researchLevel, Nr);
@@ -690,7 +690,7 @@ void cPlayer::upgradeUnitType (int newResearchLevel, int researchArea, cList<sUn
 {
 	if (newResearchLevel < 10)
 		return;
-	for (int i = 0; i < UnitsData.vehicle.Size(); i++)
+	for (unsigned int i = 0; i < UnitsData.vehicle.Size(); i++)
 	{
 		int startValue = 0;
 		switch (researchArea)
@@ -730,7 +730,7 @@ void cPlayer::upgradeUnitType (int newResearchLevel, int researchArea, cList<sUn
 			}
 		}
 	}
-	for (int i = 0; i < UnitsData.building.Size(); i++)
+	for (unsigned int i = 0; i < UnitsData.building.Size(); i++)
 	{
 		int startValue = 0;
 		switch (researchArea)

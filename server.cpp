@@ -1606,10 +1606,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (error)
 				break;
 			
-			for (int i = 0; i < researchCentersToStop.Size(); i++)
+			for (unsigned int i = 0; i < researchCentersToStop.Size(); i++)
 				researchCentersToStop[i]->ServerStopWork(false);
 			
-			for (int i = 0; i < researchCentersToChangeArea.Size(); i++)
+			for (unsigned int i = 0; i < researchCentersToChangeArea.Size(); i++)
 				researchCentersToChangeArea[i]->researchArea = newAreasForResearchCenters[i];
 			player->refreshResearchCentersWorkingOnArea();
 
