@@ -490,7 +490,8 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) 
+		vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	loadUnitValues ( unitNode, &vehicle->data );
 
@@ -615,7 +616,8 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	building->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) 
+		building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	TiXmlElement *element;
 	int subbaseID;
@@ -744,24 +746,26 @@ void cSavegame::loadRubble( TiXmlElement *rubbleNode )
 void cSavegame::loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data )
 {
 	TiXmlElement *Element;
+	if ( Element = unitNode->FirstChildElement( "Version" ) ) Element->Attribute ( "num", &Data->version );
+
+	if ( Element = unitNode->FirstChildElement( "Max_Hitpoints" ) ) Element->Attribute ( "num", &Data->max_hit_points );
+	if ( Element = unitNode->FirstChildElement( "Max_Ammo" ) ) Element->Attribute ( "num", &Data->max_ammo );
+	if ( Element = unitNode->FirstChildElement( "Max_Speed" ) ) Element->Attribute ( "num", &Data->max_speed );
+	if ( Element = unitNode->FirstChildElement( "Max_Shots" ) ) Element->Attribute ( "num", &Data->max_shots );
+	if ( Element = unitNode->FirstChildElement( "Armor" ) ) Element->Attribute ( "num", &Data->armor );
+	if ( Element = unitNode->FirstChildElement( "Damage" ) ) Element->Attribute ( "num", &Data->damage );
+	if ( Element = unitNode->FirstChildElement( "Range" ) ) Element->Attribute ( "num", &Data->range );
+	if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan );
+
 	if ( Element = unitNode->FirstChildElement( "Hitpoints" ) ) Element->Attribute ( "num", &Data->hit_points );
+	else Data->hit_points = Data->max_hit_points;
 	if ( Element = unitNode->FirstChildElement( "Ammo" ) ) Element->Attribute ( "num", &Data->ammo );
+	else Data->ammo = Data->max_ammo;
 	if ( Element = unitNode->FirstChildElement( "Cargo" ) ) Element->Attribute ( "num", &Data->cargo );
 	if ( Element = unitNode->FirstChildElement( "Speed" ) ) Element->Attribute ( "num", &Data->speed );
+	else Data->speed = Data->max_speed;
 	if ( Element = unitNode->FirstChildElement( "Shots" ) ) Element->Attribute ( "num", &Data->shots );
-
-	if ( Element = unitNode->FirstChildElement( "Version" ) ) Element->Attribute ( "num", &Data->version );
-	if ( Data->version > 1 )
-	{
-		if ( Element = unitNode->FirstChildElement( "Max_Hitpoints" ) ) Element->Attribute ( "num", &Data->max_hit_points );
-		if ( Element = unitNode->FirstChildElement( "Max_Ammo" ) ) Element->Attribute ( "num", &Data->max_ammo );
-		if ( Element = unitNode->FirstChildElement( "Max_Speed" ) ) Element->Attribute ( "num", &Data->max_speed );
-		if ( Element = unitNode->FirstChildElement( "Max_Shots" ) ) Element->Attribute ( "num", &Data->max_shots );
-		if ( Element = unitNode->FirstChildElement( "Armor" ) ) Element->Attribute ( "num", &Data->armor );
-		if ( Element = unitNode->FirstChildElement( "Damage" ) ) Element->Attribute ( "num", &Data->damage );
-		if ( Element = unitNode->FirstChildElement( "Range" ) ) Element->Attribute ( "num", &Data->range );
-		if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan );
-	}
+	else Data->shots = Data->max_shots;
 }
 
 //--------------------------------------------------------------------------
@@ -1282,7 +1286,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	addAttributeElement ( unitNode, "ID", "num", iToStr ( Building->iID ) );
 	addAttributeElement ( unitNode, "Owner", "num", iToStr ( Building->owner->Nr ) );
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Building->PosX ), "y", iToStr ( Building->PosY ) );
-	addAttributeElement ( unitNode, "Name", "string", Building->name );
+
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	string wasName = Building->name;
 	Building->GenerateName();
@@ -1372,9 +1376,9 @@ void cSavegame::writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnit
 	if ( Data->shots != Data->max_shots ) addAttributeElement ( unitNode, "Shots", "num", iToStr ( Data->shots ) );
 
 	// write upgrade values that differ from the acctual unit values of the owner
-	if ( Data->version > 1 )
+	if ( OwnerData->version > 1 )
 	{
-		addAttributeElement ( unitNode, "version", "num", iToStr ( Data->version ) );
+		addAttributeElement ( unitNode, "Version", "num", iToStr ( Data->version ) );
 		if ( Data->max_hit_points != OwnerData->max_hit_points ) addAttributeElement ( unitNode, "Max_Hitpoints", "num", iToStr ( Data->max_hit_points ) );
 		if ( Data->max_ammo != OwnerData->max_ammo ) addAttributeElement ( unitNode, "Max_Ammo", "num", iToStr ( Data->max_ammo ) );
 		if ( Data->max_speed != OwnerData->max_speed ) addAttributeElement ( unitNode, "Max_Speed", "num", iToStr ( Data->max_speed ) );
