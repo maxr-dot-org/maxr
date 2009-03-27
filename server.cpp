@@ -3227,6 +3227,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	if ( Vehicle->DetectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
 }
 
+//--------------------------------------------------------------------------
 bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 {
 	bool bIsAir = ( vehicle->data.can_drive == DRIVE_AIR );
@@ -3248,6 +3249,7 @@ bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 	return true;
 }
 
+//--------------------------------------------------------------------------
 void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 {
 	// delete vehicle in the list of he old player
@@ -3301,6 +3303,7 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	vehicle->makeDetection();
 }
 
+//--------------------------------------------------------------------------
 void cServer::stopVehicleBuilding ( cVehicle *vehicle )
 {
 	if ( !vehicle->IsBuilding ) return;

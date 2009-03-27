@@ -109,7 +109,7 @@ cPlayer::cPlayer(const cPlayer &Player)
 }
 
 //-----------------------------------------------------------------------
-cPlayer::~cPlayer ( void )
+cPlayer::~cPlayer ()
 {
 	while ( SentriesAir.Size() )
 	{
@@ -185,8 +185,10 @@ cPlayer::~cPlayer ( void )
 	}
 }
 
-// F¸gt ein Vehicle in die Listes des Spielser ein:
-cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
+//--------------------------------------------------------------------------
+/** Adds the vehicle to the list of the player */
+//--------------------------------------------------------------------------
+cVehicle *cPlayer::AddVehicle (int posx, int posy, sVehicle *v)
 {
 	cVehicle *n;
 
@@ -219,7 +221,9 @@ cVehicle *cPlayer::AddVehicle ( int posx,int posy,sVehicle *v )
 	return n;
 }
 
-// Erstellt die Maps:
+//--------------------------------------------------------------------------
+/** initialize the maps */
+//--------------------------------------------------------------------------
 void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 {
 	MapSize=MapSizeX*MapSizeX;
@@ -246,7 +250,9 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 	memset ( DetectMinesMap, 0, MapSize );
 }
 
-// F¸gt ein Building in die Listes des Spielser ein:
+//--------------------------------------------------------------------------
+/** Adds the building to the list of the player */
+//--------------------------------------------------------------------------
 cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 {
 	cBuilding *Building;
@@ -270,6 +276,7 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 	return Building;
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::addSentryVehicle ( cVehicle *v )
 {
 	sSentry *n;
@@ -298,6 +305,7 @@ void cPlayer::addSentryVehicle ( cVehicle *v )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::addSentryBuilding ( cBuilding *b )
 {
 	sSentry *n;
@@ -326,6 +334,7 @@ void cPlayer::addSentryBuilding ( cBuilding *b )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::deleteSentryVehicle ( cVehicle *v )
 {
 	sSentry *ptr;
@@ -384,6 +393,7 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::deleteSentryBuilding ( cBuilding *b )
 {
 	sSentry *ptr;
@@ -443,6 +453,7 @@ void cPlayer::deleteSentryBuilding ( cBuilding *b )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::refreshSentryAir ()
 {
 	sSentry *ptr;
@@ -461,6 +472,7 @@ void cPlayer::refreshSentryAir ()
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::refreshSentryGround ()
 {
 	sSentry *ptr;
@@ -479,156 +491,147 @@ void cPlayer::refreshSentryGround ()
 	}
 }
 
-// L‰ﬂt alle Objekte des Spielers Scannen:
-void cPlayer::DoScan ( void )
+//--------------------------------------------------------------------------
+/** Does a scan for all units of the player */
+//--------------------------------------------------------------------------
+void cPlayer::DoScan ()
 {
 	cVehicle *vp;
 	cBuilding *bp;
 
 	if ( isDefeated ) return;
-	memset ( ScanMap      , 0, MapSize );
+	memset ( ScanMap,       0, MapSize );
 	memset ( DetectLandMap, 0, MapSize );
-	memset ( DetectSeaMap , 0, MapSize );
+	memset ( DetectSeaMap,  0, MapSize );
 	memset ( DetectMinesMap,0, MapSize );
 	
-	// Die Vehicle-List durchgehen:
-	vp=VehicleList;
+	// iterate the vehicle list
+	vp = VehicleList;
 	while ( vp )
 	{
 		if ( vp->Loaded )
 		{
-			vp=vp->next;
+			vp = vp->next;
 			continue;
 		}
 
 		if ( vp->Disabled )
-		{
-			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )]=1;
-		}
+			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )] = 1;
 		else
 		{
 			if ( vp->data.is_big )
-			{
 				drawSpecialCircleBig ( vp->PosX, vp->PosY, vp->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
-			}
 			else
-			{
 				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
-			}
 
 			//detection maps
 			if ( vp->data.can_detect_land )
-			{
 				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
-			}
 			else if ( vp->data.can_detect_sea )
-			{
 				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize ) );
-			}
 			if ( vp->data.can_detect_mines )
 			{
 				for ( int x = vp->PosX - 1; x <= vp->PosX + 1; x++ )
 				{
-					if ( x < 0 || x >= (int)sqrt ( (double)MapSize ) ) continue;
+					if ( x < 0 || x >= (int)sqrt ( (double)MapSize ) )
+						continue;
 					for ( int y = vp->PosY - 1; y <= vp->PosY + 1; y++ )
 					{
-						if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) ) continue;
+						if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) ) 
+							continue;
 						DetectMinesMap[x + (int)sqrt ( (double)MapSize )*y] = 1;
 					}
 				}
 			}
 		}
-		vp=vp->next;
+		vp = vp->next;
 	}
 
-	// Die Building-List durchgehen:
-	bp=BuildingList;
+	// iterate the building list
+	bp = BuildingList;
 	while ( bp )
 	{
 
 		if ( bp->Disabled )
-		{
 			ScanMap[bp->PosX+bp->PosY*(int)sqrt ( (double)MapSize )]=1;
-		}
 		else
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.is_big ) drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
-				else drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
+				if ( bp->data.is_big ) 
+					drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
+				else 
+					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
-		bp=bp->next;
+		bp = bp->next;
 	}
 }
 
 
-// Gibt das n‰chste Vehicle zur¸ck, dass noch schieﬂen/sich bewegen kann:
-cVehicle *cPlayer::GetNextVehicle ( void )
+//--------------------------------------------------------------------------
+/** Returns the next vehicle that can still fire/shoot */
+//--------------------------------------------------------------------------
+cVehicle *cPlayer::GetNextVehicle ()
 {
-	cVehicle *v,*start;
-	bool next=false;
-	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner==this )
+	cVehicle *v, *start;
+	bool next = false;
+	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner == this )
 	{
-		start=Client->SelectedVehicle;
-		next=true;
+		start = Client->SelectedVehicle;
+		next = true;
 	}
 	else
-	{
-		start=VehicleList;
-	}
-	if ( !start ) return NULL;
-	v=start;
+		start = VehicleList;
+
+	if ( !start ) 
+		return NULL;
+	v = start;
 	do
 	{
-		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) return v;
-		next=false;
+		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+			return v;
+		next = false;
 		if ( v->next )
-		{
-			v=v->next;
-		}
+			v = v->next;
 		else
-		{
-			v=VehicleList;
-		}
+			v = VehicleList;
 	}
-	while ( v!=start );
+	while ( v != start );
 	return NULL;
 }
 
-// Gibt das vorherige Vehicle zur¸ck, dass noch schieﬂen/sich bewegen kann:
-cVehicle *cPlayer::GetPrevVehicle ( void )
+//--------------------------------------------------------------------------
+/** Returns the previous vehicle, that can still move / shoot */
+//--------------------------------------------------------------------------
+cVehicle *cPlayer::GetPrevVehicle ()
 {
-	cVehicle *v,*start;
-	bool next=false;
-	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner==this )
+	cVehicle *v, *start;
+	bool next = false;
+	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner == this )
 	{
-		start=Client->SelectedVehicle;
-		next=true;
+		start = Client->SelectedVehicle;
+		next = true;
 	}
 	else
-	{
-		start=VehicleList;
-	}
-	if ( !start ) return NULL;
-	v=start;
+		start = VehicleList;
+	if ( !start ) 
+		return NULL;
+	v = start;
 	do
 	{
-		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) return v;
-		next=false;
+		if ( !next && (v->data.speed || v->data.shots) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+			return v;
+		next = false;
 		if ( v->prev )
-		{
-			v=v->prev;
-		}
+			v = v->prev;
 		else
 		{
 			while ( v->next )
-			{
-				v=v->next;
-			}
+				v = v->next;
 		}
 	}
-	while ( v!=start );
+	while ( v != start );
 	return NULL;
 }
 
@@ -883,35 +886,43 @@ bool cPlayer::InLockList (cVehicle *v)
 	return false;
 }
 
-// Schaltet die Lock-Objekte unter der Maus um:
+//--------------------------------------------------------------------------
+/** Toggles the lock state of a unit under the mouse (when locked it's range and scan is displayed, although the unit is not selected). */
+//--------------------------------------------------------------------------
 void cPlayer::ToggelLock ( cMapField *OverUnitField )
 {
 	if ( OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner!=this )
 	{
-		if ( InLockList ( OverUnitField->getBaseBuilding() ) ) DeleteLock ( OverUnitField->getBaseBuilding() );else AddLock ( OverUnitField->getBaseBuilding() );
+		if ( InLockList ( OverUnitField->getBaseBuilding() ) ) DeleteLock ( OverUnitField->getBaseBuilding() );
+		else AddLock ( OverUnitField->getBaseBuilding() );
 	}
 	if ( OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner!=this )
 	{
-		if ( InLockList ( OverUnitField->getTopBuilding() ) ) DeleteLock ( OverUnitField->getTopBuilding() );else AddLock ( OverUnitField->getTopBuilding() );
+		if ( InLockList ( OverUnitField->getTopBuilding() ) ) DeleteLock ( OverUnitField->getTopBuilding() );
+		else AddLock ( OverUnitField->getTopBuilding() );
 	}
 	if ( OverUnitField->getVehicles() && OverUnitField->getVehicles()->owner!=this )
 	{
-		if ( InLockList ( OverUnitField->getVehicles() ) ) DeleteLock ( OverUnitField->getVehicles() );else AddLock ( OverUnitField->getVehicles() );
+		if ( InLockList ( OverUnitField->getVehicles() ) ) DeleteLock ( OverUnitField->getVehicles() );
+		else AddLock ( OverUnitField->getVehicles() );
 	}
 	if ( OverUnitField->getPlanes() && OverUnitField->getPlanes()->owner!=this )
 	{
-		if ( InLockList ( OverUnitField->getPlanes() ) ) DeleteLock ( OverUnitField->getPlanes() );else AddLock ( OverUnitField->getPlanes() );
+		if ( InLockList ( OverUnitField->getPlanes() ) ) DeleteLock ( OverUnitField->getPlanes() );
+		else AddLock ( OverUnitField->getPlanes() );
 	}
 }
 
-// Malt alle Eintraege der Lock-Liste:
-void cPlayer::DrawLockList(cHud const& hud)
+//--------------------------------------------------------------------------
+/** Draws all entries, that are in the lock list. */
+//--------------------------------------------------------------------------
+void cPlayer::DrawLockList (cHud const& hud)
 {
 	if ( !hud.Lock ) return;
 	sLockElem *elem;
-	int spx,spy,off;
+	int spx, spy, off;
 
-	for ( unsigned int i=0;i<LockList.Size();i++ )
+	for ( unsigned int i = 0; i < LockList.Size(); i++ )
 	{
 		elem = LockList[i];
 		if ( elem->v )
@@ -929,34 +940,22 @@ void cPlayer::DrawLockList(cHud const& hud)
 			if ( hud.Scan )
 			{
 				if ( elem->v->data.is_big )
-				{
 					drawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
-				}
 				else
-				{
 					drawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
-				}
 			}
 			if ( hud.Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
-			{
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
-			}
 			if ( hud.Reichweite&&elem->v->data.can_attack==ATTACK_AIR )
-			{
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			}
 			if ( hud.Munition&&elem->v->data.can_attack )
-			{
 				elem->v->DrawMunBar();
-			}
 			if ( hud.Treffer )
-			{
 				elem->v->DrawHelthBar();
-			}
 		}
 		else if ( elem->b )
 		{
@@ -973,43 +972,32 @@ void cPlayer::DrawLockList(cHud const& hud)
 			if ( hud.Scan )
 			{
 				if ( elem->b->data.is_big )
-				{
 					drawCircle ( spx+hud.Zoom,
 					             spy+hud.Zoom,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
-				}
 				else
-				{
 					drawCircle ( spx+hud.Zoom/2,
 					             spy+hud.Zoom/2,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
-				}
 			}
 			if ( hud.Reichweite&& ( elem->b->data.can_attack==ATTACK_LAND||elem->b->data.can_attack==ATTACK_SUB_LAND ) &&!elem->b->data.is_expl_mine )
-			{
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
-			}
 			if ( hud.Reichweite&&elem->b->data.can_attack==ATTACK_AIR )
-			{
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			}
 
 			if ( hud.Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
-			{
 				elem->b->DrawMunBar();
-			}
 			if ( hud.Treffer )
-			{
 				elem->b->DrawHelthBar();
-			}
 		}
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize )
 {
 	float w = (float)(0.017453*45), step;
@@ -1051,6 +1039,7 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int map
 	}
 }
 
+//--------------------------------------------------------------------------
 void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize )
 {
 	float w=(float)(0.017453*45), step;

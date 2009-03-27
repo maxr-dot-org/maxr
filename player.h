@@ -55,7 +55,7 @@ friend class cServer;
 friend class cClient;
 public:
 	cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
-	~cPlayer(void);
+	~cPlayer();
 	cPlayer(const cPlayer &Player);
 	
 	string name;
@@ -92,9 +92,9 @@ public:
 	bool isDefeated;			// true if the player has been defeated
 	
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
-	void DoScan(void);
-	cVehicle *GetNextVehicle(void);
-	cVehicle *GetPrevVehicle(void);
+	void DoScan();
+	cVehicle *GetNextVehicle();
+	cVehicle *GetPrevVehicle();
 	void addSentryVehicle( cVehicle *v );
 	void addSentryBuilding( cBuilding *b );
 	void deleteSentryVehicle( cVehicle *v );
