@@ -25,29 +25,62 @@
 #include "automjobs.h"
 #include "input.h"
 
-// Vehicle-Strukturen ////////////////////////////////////////////////////////
-
 class cPlayer;
 class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
 
-// Enum für die Symbole
+//-----------------------------------------------------------------------------
+// Enum for the symbols
+//-----------------------------------------------------------------------------
 #ifndef D_eSymbols
 #define D_eSymbols
-enum eSymbols {SSpeed,SHits,SAmmo,SMetal,SEnergy,SShots,SOil,SGold,STrans,SHuman,SAir};
-enum eSymbolsBig {SBSpeed,SBHits,SBAmmo,SBAttack,SBShots,SBRange,SBArmor,SBScan,SBMetal,SBOil,SBGold,SBEnergy,SBHuman};
+
+//-----------------------------------------------------------------------------
+enum eSymbols {
+	SSpeed,
+	SHits,
+	SAmmo,
+	SMetal,
+	SEnergy,
+	SShots,
+	SOil,
+	SGold,
+	STrans,
+	SHuman,
+	SAir
+};
+
+//-----------------------------------------------------------------------------
+enum eSymbolsBig {
+	SBSpeed,
+	SBHits,
+	SBAmmo,
+	SBAttack,
+	SBShots,
+	SBRange,
+	SBArmor,
+	SBScan,
+	SBMetal,
+	SBOil,
+	SBGold,
+	SBEnergy,
+SBHuman
+};
+
 #endif
 
-// Struktur für die Bilder und Sounds:
+//-----------------------------------------------------------------------------
+// Struct for the pictures and sounds
+//-----------------------------------------------------------------------------
 struct sVehicle{
   SDL_Surface *img[8],*img_org[8]; // 8 Surfaces des Vehicles
   SDL_Surface *shw[8],*shw_org[8]; // 8 Surfaces des Schattens
   SDL_Surface *build,*build_org;         // Surfaces beim Bauen
   SDL_Surface *build_shw,*build_shw_org; // Surfaces beim Bauen (Schatten)
-  SDL_Surface *clear_small,*clear_small_org;         // Surfaces beim Clearen (die große wird in build geladen)
-  SDL_Surface *clear_small_shw,*clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die große wird in build geladen)
+  SDL_Surface *clear_small,*clear_small_org;         // Surfaces beim Clearen (die groï¬‚e wird in build geladen)
+  SDL_Surface *clear_small_shw,*clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die groï¬‚e wird in build geladen)
   SDL_Surface *overlay,*overlay_org;     // Overlays
   SDL_Surface *storage; // Bild des Vehicles im Lager
   char *FLCFile;       // FLC-Video
@@ -71,11 +104,16 @@ struct sVehicle{
   void scaleSurfaces( float factor );
 };
 
-// Die Vehicle Klasse ////////////////////////////////////////////////////////
-class cVehicle{
+
+//-----------------------------------------------------------------------------
+/** Class for a vehicle-unit of a player */
+//-----------------------------------------------------------------------------
+class cVehicle
+{
+//-----------------------------------------------------------------------------
 public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
-	~cVehicle(void);
+	~cVehicle();
 
 	/** the identification number of this unit */
 	unsigned int iID;
@@ -139,10 +177,10 @@ public:
 	sUnitData data;    // Daten des Vehicles
 
 	void Draw(SDL_Rect *dest);
-	void Select(void);
-	void Deselct(void);
-	void ShowDetails(void);
-	void GenerateName(void);
+	void Select();
+	void Deselct();
+	void ShowDetails();
+	void GenerateName();
 	/**
 	* refreshes speed and shots and continues building or clearing
 	*@author alzi alias DoctorDeath
@@ -151,24 +189,24 @@ public:
 	int refreshData();
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
-	void ShowHelp(void);
+	void ShowHelp();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	int GetScreenPosX(void) const;
-	int GetScreenPosY(void) const;
-	void DrawPath(void);
+	int GetScreenPosX() const;
+	int GetScreenPosY() const;
+	void DrawPath();
 	void RotateTo(int Dir);
 	std::string getStatusStr();
 	int playStream();
-	void StartMoveSound(void);
+	void StartMoveSound();
 	void DrawMenu( sMouseState *mouseState = NULL );
-	int GetMenuPointAnz(void);
-	SDL_Rect GetMenuSize(void);
+	int GetMenuPointAnz();
+	SDL_Rect GetMenuSize();
 	bool MouseOverMenu(int mx,int my);
 	void DecSpeed(int value);
-	void DrawMunBar(void) const;
-	void DrawHelthBar(void) const;
+	void DrawMunBar() const;
+	void drawHealthBar() const;
 	void drawStatus() const;
-	void Center(void);
+	void Center();
 	/*
 	* checks if the unit can attack the offset
 	* when override is false, the funktion only returns true, when there is an enemy unit
@@ -178,14 +216,14 @@ public:
 	bool IsInRange(int off, cMap *Map);
 	void DrawAttackCursor( int offset );
 	int CalcHelth(int damage);
-	void ShowBuildMenu(void);
+	void ShowBuildMenu();
 	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool beschreibung, int* buildspeed, int* iTurboBuildCosts, int* TurboBuildRounds);
 	void DrawBuildButtons(int speed);
-	void FindNextband(void);
-	void doSurvey(void);
-	void MakeReport(void);
+	void FindNextband();
+	void doSurvey();
+	void MakeReport();
 	bool CanTransferTo( class cMapField *OverUnitField );
-	void ShowBigDetails(void);
+	void ShowBigDetails();
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
@@ -231,7 +269,7 @@ public:
 	*/
 	int calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal );
 	int calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding );
-	void DeleteStored(void);
+	void DeleteStored();
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath

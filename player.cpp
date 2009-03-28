@@ -955,7 +955,7 @@ void cPlayer::DrawLockList (cHud const& hud)
 			if ( hud.Munition&&elem->v->data.can_attack )
 				elem->v->DrawMunBar();
 			if ( hud.Treffer )
-				elem->v->DrawHelthBar();
+				elem->v->drawHealthBar();
 		}
 		else if ( elem->b )
 		{
