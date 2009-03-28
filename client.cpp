@@ -1072,11 +1072,11 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking && !bWaitForOthers )
 	{
-		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+		SelectedBuilding->ShowResearch();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need && !bWaitForOthers )
 	{
-		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+		SelectedBuilding->ShowUpgrade();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road && !bWaitForOthers )
 	{
