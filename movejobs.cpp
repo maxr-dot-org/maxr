@@ -1055,8 +1055,8 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 
 			if ( Vehicle->owner != Client->ActivePlayer ) 
 			{
-				break;
 				bFinished = true;
+				break;
 			}
 			ScrX = Vehicle->PosX;
 			ScrY = Vehicle->PosY;
