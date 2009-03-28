@@ -147,7 +147,7 @@ cVehicle::~cVehicle ()
 //-----------------------------------------------------------------------------
 void cVehicle::Draw ( SDL_Rect *dest )
 {
-	SDL_Rect scr, tmp;
+	SDL_Rect src, tmp;
 	int ox = 0, oy = 0;
 
 	// Workarounds:
@@ -218,8 +218,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 
 		// read the size:
-		scr.w = (int)(typ->img_org[dir]->w*factor);
-		scr.h = (int)(typ->img_org[dir]->h*factor);
+		src.w = (int)(typ->img_org[dir]->w*factor);
+		src.h = (int)(typ->img_org[dir]->h*factor);
 
 		// draw shadow
 		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
@@ -286,7 +286,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( data.is_human )
 		{
-			scr.w = scr.h = tmp.h = tmp.w = typ->img[dir]->h;
+			src.w = src.h = tmp.h = tmp.w = typ->img[dir]->h;
 			tmp.x = WalkFrame * tmp.w;
 			tmp.y = 0;
 			blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
@@ -295,8 +295,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
 
 		// draw the vehicle
-		scr.x = 0;
-		scr.y = 0;
+		src.x = 0;
+		src.y = 0;
 		tmp = *dest;
 
 		if ( FlightHigh > 0 )
@@ -313,7 +313,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		if ( StartUp && SettingsData.bAlphaEffects )
 		{
 			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-			SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+			SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 
 			if ( Client->iTimer0 )
@@ -338,27 +338,27 @@ void cVehicle::Draw ( SDL_Rect *dest )
 				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 			}
 			else
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 		}
 
 		// draw overlay if necessary:
 		if ( data.has_overlay && SettingsData.bAnimations )
 		{
 			tmp = *dest;
-			scr.h = scr.w = (int)(typ->overlay_org->h*factor);
-			tmp.x += Client->Hud.Zoom / 2 - scr.h / 2 + ox + ditherX;
-			tmp.y += Client->Hud.Zoom / 2 - scr.h / 2 + oy + ditherY;
-			scr.y = 0;
-			scr.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / scr.h ) ) ) ) / newzoom );
+			src.h = src.w = (int)(typ->overlay_org->h*factor);
+			tmp.x += Client->Hud.Zoom / 2 - src.h / 2 + ox + ditherX;
+			tmp.y += Client->Hud.Zoom / 2 - src.h / 2 + oy + ditherY;
+			src.y = 0;
+			src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / src.h ) ) ) ) / newzoom );
 
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
-				blitWithPreScale ( typ->overlay_org, typ->overlay, &scr, buffer, &tmp, factor );
+				blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
 				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
 
 				if ( Client->iTimer0 )
@@ -368,7 +368,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					StartUp = 0;
 			}
 			else
-				blitWithPreScale ( typ->overlay_org, typ->overlay, &scr, buffer, &tmp, factor );
+				blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
 		}
 	}
 	else if ( IsBuilding || ( IsClearing && data.is_big ) )
@@ -396,19 +396,19 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, buffer, &tmp, factor );
 
 		// draw player color
-		scr.y = 0;
-		scr.h = scr.w = (int)(typ->build_org->h*factor);
-		scr.x = ( Client->iFrame % 4 ) * scr.w;
+		src.y = 0;
+		src.h = src.w = (int)(typ->build_org->h*factor);
+		src.x = ( Client->iFrame % 4 ) * src.w;
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-		blitWithPreScale ( typ->build_org, typ->build, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
+		blitWithPreScale ( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
 		// draw vehicle
-		scr.x = 0;
-		scr.y = 0;
+		src.x = 0;
+		src.y = 0;
 		tmp = *dest;
 		tmp.x += ox;
 		tmp.y += oy;
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 
 		// draw indication, when building is complete
 		if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer && !BuildPath )
@@ -450,20 +450,20 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, buffer, &tmp, factor );
 
 		// draw player color
-		scr.y = 0;
-		scr.h = scr.w = typ->clear_small->h;
-		scr.x = ( Client->iFrame % 4 ) * scr.w;
+		src.y = 0;
+		src.h = src.w = typ->clear_small->h;
+		src.x = ( Client->iFrame % 4 ) * src.w;
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &scr, GraphicsData.gfx_tmp, NULL, factor, 4 );
+		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
 		// draw vehicle
-		scr.x = 0;
-		scr.y = 0;
+		src.x = 0;
+		src.y = 0;
 		tmp = *dest;
 		tmp.x += ox;
 		tmp.y += oy;
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, buffer, &tmp );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 
 		// draw indication, when building is complete
 		if ( ClearingRounds == 0 && owner == Client->ActivePlayer )
@@ -747,7 +747,7 @@ void cVehicle::Select ()
 //-----------------------------------------------------------------------------
 void cVehicle::Deselct ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	selected = false;
 	groupSelected = false;
 	MenuActive = false;
@@ -762,13 +762,13 @@ void cVehicle::Deselct ()
 	StealActive = false;
 	DisableActive = false;
 	// redraw the background
-	scr.x = 0;
-	scr.y = 215;
-	scr.w = 155;
-	scr.h = 48;
+	src.x = 0;
+	src.y = 215;
+	src.w = 155;
+	src.h = 48;
 	dest.x = 8;
 	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
 }
@@ -1020,15 +1020,15 @@ int cVehicle::refreshData ()
 //-----------------------------------------------------------------------------
 void cVehicle::ShowDetails ()
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	// Den Hintergrund wiederherstellen:
-	scr.x = 0;
-	scr.y = 215;
-	scr.w = 155;
-	scr.h = 48;
+	src.x = 0;
+	src.y = 215;
+	src.w = 155;
+	src.h = 48;
 	dest.x = 8;
 	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, GraphicsData.gfx_hud, &dest );
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
 	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
 
@@ -1363,98 +1363,98 @@ void cVehicle::ShowHelp ()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf )
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	int i, offx;
 
 	switch ( sym )
 	{
 
 		case SBSpeed:
-			scr.x = 0;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 12;
+			src.x = 0;
+			src.y = 109;
+			src.w = 11;
+			src.h = 12;
 			break;
 
 		case SBHits:
-			scr.x = 11;
-			scr.y = 109;
-			scr.w = 7;
-			scr.h = 11;
+			src.x = 11;
+			src.y = 109;
+			src.w = 7;
+			src.h = 11;
 			break;
 
 		case SBAmmo:
-			scr.x = 18;
-			scr.y = 109;
-			scr.w = 9;
-			scr.h = 14;
+			src.x = 18;
+			src.y = 109;
+			src.w = 9;
+			src.h = 14;
 			break;
 
 		case SBAttack:
-			scr.x = 27;
-			scr.y = 109;
-			scr.w = 10;
-			scr.h = 14;
+			src.x = 27;
+			src.y = 109;
+			src.w = 10;
+			src.h = 14;
 			break;
 
 		case SBShots:
-			scr.x = 37;
-			scr.y = 109;
-			scr.w = 15;
-			scr.h = 7;
+			src.x = 37;
+			src.y = 109;
+			src.w = 15;
+			src.h = 7;
 			break;
 
 		case SBRange:
-			scr.x = 52;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 13;
+			src.x = 52;
+			src.y = 109;
+			src.w = 13;
+			src.h = 13;
 			break;
 
 		case SBArmor:
-			scr.x = 65;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 14;
+			src.x = 65;
+			src.y = 109;
+			src.w = 11;
+			src.h = 14;
 			break;
 
 		case SBScan:
-			scr.x = 76;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 13;
+			src.x = 76;
+			src.y = 109;
+			src.w = 13;
+			src.h = 13;
 			break;
 
 		case SBMetal:
-			scr.x = 89;
-			scr.y = 109;
-			scr.w = 12;
-			scr.h = 15;
+			src.x = 89;
+			src.y = 109;
+			src.w = 12;
+			src.h = 15;
 			break;
 
 		case SBOil:
-			scr.x = 101;
-			scr.y = 109;
-			scr.w = 11;
-			scr.h = 12;
+			src.x = 101;
+			src.y = 109;
+			src.w = 11;
+			src.h = 12;
 			break;
 
 		case SBGold:
-			scr.x = 112;
-			scr.y = 109;
-			scr.w = 13;
-			scr.h = 10;
+			src.x = 112;
+			src.y = 109;
+			src.w = 13;
+			src.h = 10;
 			break;
 	}
 
-	maxx -= scr.w;
+	maxx -= src.w;
 
 	if ( orgvalue < value )
 	{
-		maxx -= scr.w + 3;
+		maxx -= src.w + 3;
 	}
 
-	offx = scr.w;
+	offx = src.w;
 
 	while ( offx*value > maxx )
 	{
@@ -1464,7 +1464,7 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 		{
 			value /= 2;
 			orgvalue /= 2;
-			offx = scr.w;
+			offx = src.w;
 		}
 	}
 
@@ -1477,15 +1477,15 @@ void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int valu
 		if ( i == orgvalue )
 		{
 			SDL_Rect mark;
-			dest.x += scr.w + 3;
-			mark.x = dest.x - scr.w / 2;
+			dest.x += src.w + 3;
+			mark.x = dest.x - src.w / 2;
 			mark.y = dest.y;
 			mark.w = 1;
-			mark.h = scr.h;
+			mark.h = src.h;
 			SDL_FillRect ( sf, &mark, 0xFC0000 );
 		}
 
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, sf, &dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, sf, &dest );
 
 		dest.x += offx;
 	}
@@ -2625,7 +2625,7 @@ int cVehicle::CalcHelth ( int damage )
 void cVehicle::ShowBuildMenu ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool Beschreibung = SettingsData.bShowDescription;
 	bool DownPressed = false;
 	bool UpPressed = false;
@@ -2669,23 +2669,23 @@ void cVehicle::ShowBuildMenu ()
 
 	if ( Beschreibung )
 	{
-		scr.x = 291;
-		scr.y = 264;
+		src.x = 291;
+		src.y = 264;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 17;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
+		src.w = 17;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
 	}
 	else
 	{
-		scr.x = 393;
-		scr.y = 46;
+		src.x = 393;
+		src.y = 46;
 		dest.x = MENU_OFFSET_X + 291;
 		dest.y = MENU_OFFSET_Y + 264;
-		scr.w = 18;
-		scr.h = 17;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		src.w = 18;
+		src.h = 17;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 
 	// Die Images erstellen:
@@ -2766,10 +2766,10 @@ void cVehicle::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 491 && x < MENU_OFFSET_X + 491 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !DownPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 249;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 249;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 491;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -2785,7 +2785,7 @@ void cVehicle::ShowBuildMenu ()
 
 			ShowBuildList ( images, selected, offset, Beschreibung, &BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -2795,13 +2795,13 @@ void cVehicle::ShowBuildMenu ()
 		else
 			if ( !b && DownPressed )
 			{
-				scr.x = 491;
-				scr.y = 440;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 491;
+				src.y = 440;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 491;
 				dest.y = MENU_OFFSET_Y + 440;
-				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				DownPressed = false;
@@ -2811,10 +2811,10 @@ void cVehicle::ShowBuildMenu ()
 		if ( x >= MENU_OFFSET_X + 471 && x < MENU_OFFSET_X + 471 + 18 && y >= MENU_OFFSET_Y + 440 && y < MENU_OFFSET_Y + 440 + 17 && b && !UpPressed )
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
-			scr.x = 230;
-			scr.y = 151;
-			scr.w = 18;
-			scr.h = 17;
+			src.x = 230;
+			src.y = 151;
+			src.w = 18;
+			src.h = 17;
 			dest.x = MENU_OFFSET_X + 471;
 			dest.y = MENU_OFFSET_Y + 440;
 
@@ -2830,7 +2830,7 @@ void cVehicle::ShowBuildMenu ()
 
 			ShowBuildList ( images, selected, offset, Beschreibung, &BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
 
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -2840,13 +2840,13 @@ void cVehicle::ShowBuildMenu ()
 		else
 			if ( !b && UpPressed )
 			{
-				scr.x = 471;
-				scr.y = 440;
-				scr.w = 18;
-				scr.h = 17;
+				src.x = 471;
+				src.y = 440;
+				src.w = 18;
+				src.h = 17;
 				dest.x = MENU_OFFSET_X + 471;
 				dest.y = MENU_OFFSET_Y + 440;
-				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
 				SHOW_SCREEN
 				mouse->draw ( false, screen );
 				UpPressed = false;
@@ -2904,23 +2904,23 @@ void cVehicle::ShowBuildMenu ()
 
 			if ( Beschreibung )
 			{
-				scr.x = 291;
-				scr.y = 264;
+				src.x = 291;
+				src.y = 264;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 17;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
+				src.w = 17;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
 			}
 			else
 			{
-				scr.x = 393;
-				scr.y = 46;
+				src.x = 393;
+				src.y = 46;
 				dest.x = MENU_OFFSET_X + 291;
 				dest.y = MENU_OFFSET_Y + 264;
-				scr.w = 18;
-				scr.h = 17;
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				src.w = 18;
+				src.h = 17;
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 			}
 
 			ShowBuildList ( images, selected, offset, Beschreibung, &BuildSpeed, iTurboBuildCosts, iTurboBuildRounds );
@@ -3015,25 +3015,25 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 {
 	sBuildStruct *ptr;
 
-	SDL_Rect dest, scr, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16};
-	scr.x = 479;
-	scr.y = 52;
+	SDL_Rect dest, src, text = { MENU_OFFSET_X + 530, MENU_OFFSET_Y + 70, 80, 16};
+	src.x = 479;
+	src.y = 52;
 	dest.x = MENU_OFFSET_X + 479;
 	dest.y = MENU_OFFSET_Y + 52;
-	scr.w = 150;
-	scr.h = 378;
-	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
-	scr.x = 373;
-	scr.y = 344;
+	src.w = 150;
+	src.h = 378;
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
+	src.x = 373;
+	src.y = 344;
 	dest.x = MENU_OFFSET_X + 373;
 	dest.y = MENU_OFFSET_Y + 344;
-	scr.w = 77;
-	scr.h = 72;
-	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &scr, buffer, &dest );
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = 32;
-	scr.h = 32;
+	src.w = 77;
+	src.h = 72;
+	SDL_BlitSurface ( GraphicsData.gfx_build_screen, &src, buffer, &dest );
+	src.x = 0;
+	src.y = 0;
+	src.w = 32;
+	src.h = 32;
 	dest.x = MENU_OFFSET_X + 490;
 	dest.y = MENU_OFFSET_Y + 58;
 
@@ -3045,7 +3045,7 @@ void cVehicle::ShowBuildList(cList<sBuildStruct*>& list, int const selected, int
 		// Das Bild malen:
 		ptr = list[i];
 
-		SDL_BlitSurface ( ptr->sf, &scr, buffer, &dest );
+		SDL_BlitSurface ( ptr->sf, &src, buffer, &dest );
 
 		// Ggf noch Rahmen drum:
 		if ( selected == i )
@@ -3817,7 +3817,7 @@ void cVehicle::showStorage ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b, to;
 	SDL_Surface *sf;
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	bool DownPressed = false, DownEnabled = false;
 	bool UpPressed = false, UpEnabled = false;
 	//bool AlleAktivierenEnabled = false;
@@ -3834,13 +3834,13 @@ void cVehicle::showStorage ()
 	LoadActive = false;
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, buffer );
-	scr.x = 480;
-	scr.y = 0;
-	scr.w = 640 - 480;
-	scr.h = 480;
-	dest.x = rDialog.x + scr.x;
-	dest.y = rDialog.y + scr.y;
-	SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+	src.x = 480;
+	src.y = 0;
+	src.w = 640 - 480;
+	src.h = 480;
+	dest.x = rDialog.x + src.x;
+	dest.y = rDialog.y + src.y;
+	SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 	dest.x = rDialog.x;
 	dest.y = rDialog.y;
 	SDL_BlitSurface ( GraphicsData.gfx_storage_ground, NULL, buffer, &dest );
@@ -3854,12 +3854,12 @@ void cVehicle::showStorage ()
 	if ( (int)StoredVehicles.Size() > to )
 	{
 		DownEnabled = true;
-		scr.x = 103;
-		scr.y = 452;
-		scr.h = scr.w = 25;
+		src.x = 103;
+		src.y = 452;
+		src.h = src.w = 25;
 		dest.x = 530;
 		dest.y = 426;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 	}
 
 	// Alle Aktivieren:
@@ -3906,10 +3906,10 @@ void cVehicle::showStorage ()
 			if ( x >= rDialog.x + 530 && x < rDialog.x +  530 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !DownPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				scr.x = 530;
-				scr.y = 426;
-				scr.w = 25;
-				scr.h = 25;
+				src.x = 530;
+				src.y = 426;
+				src.w = 25;
+				src.h = 25;
 				dest.x = rDialog.x + 530;
 				dest.y = rDialog.y + 426;
 
@@ -3920,21 +3920,21 @@ void cVehicle::showStorage ()
 
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 
-				scr.x = 130;
+				src.x = 130;
 
-				scr.y = 452;
+				src.y = 452;
 
-				scr.w = 25;
+				src.w = 25;
 
-				scr.h = 25;
+				src.h = 25;
 
 				dest.x = rDialog.x + 504;
 
 				dest.y = rDialog.y + 426;
 
-				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 
 				UpEnabled = true;
 
@@ -3946,13 +3946,13 @@ void cVehicle::showStorage ()
 			else
 				if ( !b && DownPressed && DownEnabled )
 				{
-					scr.x = 103;
-					scr.y = 452;
-					scr.w = 25;
-					scr.h = 25;
+					src.x = 103;
+					src.y = 452;
+					src.w = 25;
+					src.h = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					DownPressed = false;
@@ -3965,10 +3965,10 @@ void cVehicle::showStorage ()
 			if ( x >= rDialog.x + 504 && x < rDialog.x + 504 + 25 && y >= rDialog.y + 426 && y < rDialog.y + 426 + 25 && b && !UpPressed )
 			{
 				PlayFX ( SoundData.SNDObjectMenu );
-				scr.x = 504;
-				scr.y = 426;
-				scr.w = 25;
-				scr.h = 25;
+				src.x = 504;
+				src.y = 426;
+				src.w = 25;
+				src.h = 25;
 				dest.x = rDialog.x + 504;
 				dest.y = rDialog.y + 426;
 
@@ -3979,7 +3979,7 @@ void cVehicle::showStorage ()
 
 				DrawStored ( offset );
 
-				SDL_BlitSurface ( GraphicsData.gfx_storage, &scr, buffer, &dest );
+				SDL_BlitSurface ( GraphicsData.gfx_storage, &src, buffer, &dest );
 
 				mouse->draw ( false, screen );
 
@@ -3988,12 +3988,12 @@ void cVehicle::showStorage ()
 				if ( (int)StoredVehicles.Size() > to )
 				{
 					DownEnabled = true;
-					scr.x = 103;
-					scr.y = 452;
-					scr.h = scr.w = 25;
+					src.x = 103;
+					src.y = 452;
+					src.h = src.w = 25;
 					dest.x = rDialog.x + 530;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 				}
 
 				SHOW_SCREEN
@@ -4001,13 +4001,13 @@ void cVehicle::showStorage ()
 			else
 				if ( !b && UpPressed && UpEnabled )
 				{
-					scr.x = 130;
-					scr.y = 452;
-					scr.w = 25;
-					scr.h = 25;
+					src.x = 130;
+					src.y = 452;
+					src.w = 25;
+					src.h = 25;
 					dest.x = rDialog.x + 504;
 					dest.y = rDialog.y + 426;
-					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
+					SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
 					SHOW_SCREEN
 					mouse->draw ( false, screen );
 					UpPressed = false;
@@ -4154,7 +4154,7 @@ void cVehicle::showStorage ()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawStored ( int off )
 {
-	SDL_Rect scr, dest;
+	SDL_Rect src, dest;
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Surface *sf;
 	cVehicle *v;
@@ -4181,39 +4181,39 @@ void cVehicle::DrawStored ( int off )
 		{
 
 			case 0 :
-				dest.x = rDialog.x + ( scr.x = 17 );
-				dest.y = rDialog.y + ( scr.y = 9 );
+				dest.x = rDialog.x + ( src.x = 17 );
+				dest.y = rDialog.y + ( src.y = 9 );
 				break;
 
 			case 1 :
-				dest.x = rDialog.x + ( scr.x = 172 );
-				dest.y = rDialog.y + ( scr.y = 9 );
+				dest.x = rDialog.x + ( src.x = 172 );
+				dest.y = rDialog.y + ( src.y = 9 );
 				break;
 
 			case 2 :
-				dest.x = rDialog.x + ( scr.x = 327 );
-				dest.y = rDialog.y + ( scr.y = 9 );
+				dest.x = rDialog.x + ( src.x = 327 );
+				dest.y = rDialog.y + ( src.y = 9 );
 				break;
 
 			case 3 :
-				dest.x = rDialog.x + ( scr.x = 17 );
-				dest.y = rDialog.y + ( scr.y = 244 );
+				dest.x = rDialog.x + ( src.x = 17 );
+				dest.y = rDialog.y + ( src.y = 244 );
 				break;
 
 			case 4 :
-				dest.x = rDialog.x + ( scr.x = 172 );
-				dest.y = rDialog.y + ( scr.y = 244 );
+				dest.x = rDialog.x + ( src.x = 172 );
+				dest.y = rDialog.y + ( src.y = 244 );
 				break;
 
 			case 5 :
-				dest.x = rDialog.x + ( scr.x = 327 );
-				dest.y = rDialog.y + ( scr.y = 244 );
+				dest.x = rDialog.x + ( src.x = 327 );
+				dest.y = rDialog.y + ( src.y = 244 );
 				break;
 		}
 
-		scr.w = 128; //hangarwidth
-		scr.h = 128; //hangarsize
-		SDL_BlitSurface ( sf, &scr, buffer, &dest );
+		src.w = 128; //hangarwidth
+		src.h = 128; //hangarsize
+		SDL_BlitSurface ( sf, &src, buffer, &dest );
 
 		if ( v )
 		{
@@ -4269,15 +4269,15 @@ void cVehicle::DrawStored ( int off )
 
 		dest.y -= 44 - 6;
 
-		scr.w = 128;
+		src.w = 128;
 
-		scr.h = 30;
+		src.h = 30;
 
-		scr.x = dest.x - rDialog.x;
+		src.x = dest.x - rDialog.x;
 
-		scr.y = dest.y - rDialog.y;
+		src.y = dest.y - rDialog.y;
 
-		SDL_BlitSurface ( sf, &scr, buffer, &dest );
+		SDL_BlitSurface ( sf, &src, buffer, &dest );
 
 		dest.x += 6;
 
