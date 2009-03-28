@@ -1264,7 +1264,7 @@ void cClientMoveJob::drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezia
 
 void cClientMoveJob::startMoveSound()
 {
-	Vehicle->StartMoveSound();
+	if ( Vehicle == Client->SelectedVehicle) Vehicle->StartMoveSound();
 	bSoundRunning = true;
 }
 
@@ -1273,9 +1273,13 @@ void cClientMoveJob::stopMoveSound()
 	if ( !bSoundRunning ) return;
 
 	bSoundRunning = false;
-	StopFXLoop ( Client->iObjectStream );
-	if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
-	else PlayFX ( Vehicle->typ->Stop );
 
-	Client->iObjectStream = Vehicle->playStream();
+	if ( Vehicle == Client->SelectedVehicle )
+	{
+		StopFXLoop ( Client->iObjectStream );
+		if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+		else PlayFX ( Vehicle->typ->Stop );
+
+		Client->iObjectStream = Vehicle->playStream();
+	}
 }

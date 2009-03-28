@@ -1765,10 +1765,6 @@ void cVehicle::StartMoveSound ()
 	bool water;
 	// That's the moment, too, to hide the menu
 	MenuActive = false;
-	// check, if a sound has to be played
-
-	if ( this != Client->SelectedVehicle )
-		return;
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
 	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road ) );
