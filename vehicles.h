@@ -276,7 +276,7 @@ public:
 	*@param iPlayerNum number of player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( cPlayer* player );
+	bool isDetectedByPlayer( const cPlayer* player );
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/

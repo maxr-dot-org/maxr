@@ -519,7 +519,7 @@ bool cServerMoveJob::checkMove()
 
 	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange )
 	{
-		sideStepStealthUnit( Waypoints->next->X, Waypoints->next->Y );
+		Server->sideStepStealthUnit( Waypoints->next->X, Waypoints->next->Y, Vehicle );
 	}
 	
 	//when the next field is still blocked, inform the client
@@ -554,91 +554,6 @@ bool cServerMoveJob::checkMove()
 	setOffset( Vehicle, iNextDir, -64 );
 
 	return true;
-}
-
-void cServerMoveJob::sideStepStealthUnit( int PosX, int PosY )
-{
-	//TODO: make sure, the stealth vehicle takes the direct diagonal move. Also when two straight moves would be shorter.
-
-	//first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Server->Map->fields[PosX+PosY*Server->Map->size].getVehicles();
-	if ( !stealthVehicle ) return;
-	if ( stealthVehicle->owner == Vehicle->owner ) return;
-	if ( !stealthVehicle->data.is_stealth_land && !stealthVehicle->data.is_stealth_sea ) return;
-	if ( stealthVehicle->isDetectedByPlayer( Vehicle->owner )) return;
-
-	//make sure a running movement is finished, before starting the side step move
-	if ( stealthVehicle->moving ) stealthVehicle->ServerMoveJob->doEndMoveVehicle();
-
-	//found a stealth unit. Try to find a place where the unit can move
-	bool placeFound = false;
-	int minCosts = 99;
-	int bestX, bestY;
-	for ( int x = PosX - 1; x <= PosX + 1; x++ )
-	{
-		if ( x < 0 || x >= Server->Map->size ) continue;
-		for ( int y = PosY - 1; y <= PosY + 1; y++ )
-		{
-			if ( y < 0 || y >= Server->Map->size ) continue;
-			if ( x == PosX && y == PosY ) continue;
-
-			//check whether this field is a possible destination
-			if ( !Server->Map->possiblePlace( stealthVehicle, x, y ) ) continue;
-
-			//check costs of the move
-			cPathCalculator pathCalculator(0, 0, 0, 0, Map, stealthVehicle );
-			int costs = pathCalculator.calcNextCost(PosX, PosY, x, y);
-			if ( costs > stealthVehicle->data.speed ) continue;
-
-			//check whether the vehicle would be detected on the destination field
-			bool detectOnDest = false;
-			if ( stealthVehicle->data.is_stealth_land )
-			{
-				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-				{
-					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
-					if ( (*Server->PlayerList)[i]->DetectLandMap[x+y*Map->size] ) detectOnDest = true;
-				}
-				if ( Server->Map->IsWater(x+y*Map->size,true) ) detectOnDest = true;
-			}
-			if ( stealthVehicle->data.is_stealth_sea )
-			{
-				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-				{
-					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
-					if ( (*Server->PlayerList)[i]->DetectSeaMap[x+y*Map->size] ) detectOnDest = true;
-				}
-				if ( !Server->Map->IsWater(x+y*Map->size, true) ) detectOnDest = true;
-
-				if ( Vehicle->data.can_drive == DRIVE_LANDnSEA )
-				{
-					cBuilding* b = Map->fields[x+y*Map->size].getBaseBuilding();
-					if ( b && (b->data.is_road || b->data.is_bridge || b->data.is_platform )) detectOnDest = true;
-				}
-			}
-			if ( detectOnDest ) continue;
-
-			if ( costs < minCosts || (costs == minCosts && random(2) ))
-			{
-				//this is a good candidate for a destination
-				minCosts = costs;
-				bestX = x;
-				bestY = y;
-				placeFound = true;
-			}
-		}
-	}
-
-	if ( placeFound )
-	{
-		Server->addMoveJob( PosX+PosY*Server->Map->size, bestX+bestY*Server->Map->size, stealthVehicle );
-		stealthVehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
-		return;
-	}
-
-	//sidestepping failed. Uncover the vehicle.
-	stealthVehicle->setDetectedByPlayer( Vehicle->owner );
-	Server->checkPlayerUnits();
 }
 
 void cServerMoveJob::moveVehicle()

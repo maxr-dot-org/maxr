@@ -158,7 +158,6 @@ public:
 	bool calcPath();
 	void release();
 	bool checkMove();
-	void sideStepStealthUnit( int PosX, int PosY );
 	void moveVehicle();
 	void doEndMoveVehicle();
 	void calcNextDir();

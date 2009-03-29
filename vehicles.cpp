@@ -948,6 +948,12 @@ int cVehicle::refreshData ()
 				if ( PosY > BandY ) nextY--;
 				if ( PosY < BandY ) nextY++;
 
+				//sidestep stealth unit if nessesary
+				if ( (PosX != BandX || PosY != BandY) && !Server->Map->possiblePlace(this, nextX, nextY ) )
+				{
+					Server->sideStepStealthUnit(nextX, nextY, this );
+				}
+
 				if ( (PosX != BandX || PosY != BandY) && Server->addMoveJob( PosX + PosY*Server->Map->size, nextX + nextY*Server->Map->size, this ) )
 				{
 					IsBuilding = false;
@@ -4610,7 +4616,7 @@ void cVehicle::DeleteStored ()
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isDetectedByPlayer( cPlayer* player )
+bool cVehicle::isDetectedByPlayer( const cPlayer* player )
 {
 	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
 	{

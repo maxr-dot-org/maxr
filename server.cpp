@@ -551,15 +551,22 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
 			if ( iBuildOff < 0 || iBuildOff >= Map->size*Map->size ) break;
+			int buildX = iBuildOff % Map->size;
+			int buildY = iBuildOff / Map->size;
 
 			if ( Data.is_big )
 			{
 				if ( Vehicle->data.can_build != BUILD_BIG ) break;
 
-				if ( !( Map->possiblePlaceBuilding( Data, iBuildOff                , Vehicle ) &&
-						Map->possiblePlaceBuilding( Data, iBuildOff + 1            , Vehicle ) &&
-						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size    , Vehicle ) &&
-						Map->possiblePlaceBuilding( Data, iBuildOff + Map->size + 1, Vehicle )) )
+				sideStepStealthUnit( buildX    , buildY    , Vehicle, iBuildOff );
+				sideStepStealthUnit( buildX + 1, buildY    , Vehicle, iBuildOff );
+				sideStepStealthUnit( buildX    , buildY + 1, Vehicle, iBuildOff );
+				sideStepStealthUnit( buildX + 1, buildY + 1, Vehicle, iBuildOff );
+
+				if ( !( Map->possiblePlaceBuilding( Data, buildX,     buildY    , Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, buildX + 1, buildY    , Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, buildX,     buildY + 1, Vehicle ) &&
+						Map->possiblePlaceBuilding( Data, buildX + 1, buildY + 1, Vehicle ) ))
 				{
 					sendBuildAnswer ( false, Vehicle );
 					break;
@@ -620,6 +627,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iEscapeY = message->popInt16();
 
 			if ( !Vehicle->IsBuilding || Vehicle->BuildRounds > 0 ) break;
+			if (!Map->possiblePlace( Vehicle, iEscapeX, iEscapeY ))
+			{
+				sideStepStealthUnit( iEscapeX, iEscapeY, Vehicle );
+			}
 
 			if (!Map->possiblePlace( Vehicle, iEscapeX, iEscapeY )) break;
 
@@ -880,7 +891,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			BuildingListItem = (*Building->BuildList)[0];
 			if ( BuildingListItem->metall_remaining > 0 ) break;
 
-			if ( !Building->canExitTo( iX, iY, Server->Map, BuildingListItem->typ ) ) break;
+			if ( !Building->isNextTo( iX, iY )) break;
+
+			if (!Map->possiblePlaceVehicle( BuildingListItem->typ->data, iX, iY ) )
+			{
+				sideStepStealthUnit(iX, iY, BuildingListItem->typ->data, Building->owner );
+			}
+			if ( !Map->possiblePlaceVehicle( BuildingListItem->typ->data, iX, iY )) break;
 
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
 
@@ -1222,41 +1239,45 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			int off = Vehicle->PosX+Vehicle->PosY*Map->size;
-			cBuildingIterator Buildings = (*Map)[off].getBuildings();
+			cBuilding* building = (*Map)[off].getRubble();
 
-			while ( Buildings && Buildings->owner ) Buildings++;
-
-			if ( !Buildings.end )
+			if ( !building )
 			{
-				int rubbleoffset = -1;
-				if ( Buildings->data.is_big )
-				{
-					rubbleoffset = Buildings->PosX+Buildings->PosY*Map->size;
-					if ( ( !Map->possiblePlace ( Vehicle, rubbleoffset ) && rubbleoffset != off ) ||
-						( !Map->possiblePlace ( Vehicle, rubbleoffset+1 ) && rubbleoffset+1 != off ) ||
-						( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size ) && rubbleoffset+Map->size != off ) ||
-						( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size+1 ) && rubbleoffset+Map->size+1 != off ) )
-					{
-						sendClearAnswer ( 1, Vehicle, 0, -1, Vehicle->owner->Nr );
-						break;
-					}
-					else
-					{
-						Vehicle->BuildBigSavedPos = off;
-						Map->moveVehicleBig ( Vehicle, rubbleoffset );
-					}
-				}
-
-				Vehicle->IsClearing = true;
-				Vehicle->ClearingRounds = Buildings->RubbleValue/4+1;
-
-				sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
-				{
-					sendClearAnswer( 0, Vehicle, 0, rubbleoffset, Vehicle->SeenByPlayerList[i]->Nr );
-				}
+				sendClearAnswer ( 2, Vehicle, 0, -1, Vehicle->owner->Nr );
+				break;
 			}
-			else sendClearAnswer ( 2, Vehicle, 0, -1, Vehicle->owner->Nr );
+
+			int rubbleoffset = -1;
+			if ( building->data.is_big )
+			{
+				rubbleoffset = building->PosX+building->PosY*Map->size;
+
+				sideStepStealthUnit( building->PosX    , building->PosY    , Vehicle, rubbleoffset );
+				sideStepStealthUnit( building->PosX + 1, building->PosY    , Vehicle, rubbleoffset );
+				sideStepStealthUnit( building->PosX    , building->PosY + 1, Vehicle, rubbleoffset );
+				sideStepStealthUnit( building->PosX + 1, building->PosY + 1, Vehicle, rubbleoffset );
+
+				if ( ( !Map->possiblePlace ( Vehicle, rubbleoffset ) && rubbleoffset != off ) ||
+					( !Map->possiblePlace ( Vehicle, rubbleoffset+1 ) && rubbleoffset+1 != off ) ||
+					( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size ) && rubbleoffset+Map->size != off ) ||
+					( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size+1 ) && rubbleoffset+Map->size+1 != off ) )
+				{
+					sendClearAnswer ( 1, Vehicle, 0, -1, Vehicle->owner->Nr );
+					break;
+				}
+				
+				Vehicle->BuildBigSavedPos = off;
+				Map->moveVehicleBig ( Vehicle, rubbleoffset );
+			}
+
+			Vehicle->IsClearing = true;
+			Vehicle->ClearingRounds = building->RubbleValue/4+1;
+
+			sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
+			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
+			{
+				sendClearAnswer( 0, Vehicle, 0, rubbleoffset, Vehicle->SeenByPlayerList[i]->Nr );
+			}
 		}
 		break;
 	case GAME_EV_WANT_STOP_CLEAR:
@@ -1395,6 +1416,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
+				if ( !StoringVehicle->isNextTo(x, y) ) break;
+
+				//sidestep stealth units if nessesary
+				sideStepStealthUnit(x, y, StoredVehicle);
+
 				if ( StoringVehicle->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
 				{
 					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
@@ -1415,6 +1441,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
+				if ( !StoringBuilding->isNextTo(x, y )) break;
+				
+				//sidestep stealth units if nessesary
+				sideStepStealthUnit(x, y, StoredVehicle);
+
 				if ( StoringBuilding->canExitTo ( x, y, Server->Map, StoredVehicle->typ ) )
 				{
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
@@ -3324,4 +3355,108 @@ void cServer::stopVehicleBuilding ( cVehicle *vehicle )
 	{
 		sendStopBuild ( vehicle->iID, iPos, vehicle->SeenByPlayerList[i]->Nr );
 	}
+}
+
+void cServer::sideStepStealthUnit( int PosX, int PosY, cVehicle* vehicle, int bigOffset )
+{
+	sideStepStealthUnit( PosX, PosY, vehicle->data, vehicle->owner, bigOffset );
+}
+
+void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset )
+{
+	//TODO: make sure, the stealth vehicle takes the direct diagonal move. Also when two straight moves would be shorter.
+
+	if ( vehicleData.can_drive == DRIVE_AIR ) return;
+
+	//first look for an undetected stealth unit
+	cVehicle* stealthVehicle = Map->fields[PosX+PosY*Server->Map->size].getVehicles();
+	if ( !stealthVehicle ) return;
+	if ( stealthVehicle->owner == vehicleOwner ) return;
+	if ( !stealthVehicle->data.is_stealth_land && !stealthVehicle->data.is_stealth_sea ) return;
+	if ( stealthVehicle->isDetectedByPlayer( vehicleOwner )) return;
+
+	//make sure a running movement is finished, before starting the side step move
+	if ( stealthVehicle->moving ) stealthVehicle->ServerMoveJob->doEndMoveVehicle();
+
+	//found a stealth unit. Try to find a place where the unit can move
+	bool placeFound = false;
+	int minCosts = 99;
+	int bestX, bestY;
+	for ( int x = PosX - 1; x <= PosX + 1; x++ )
+	{
+		if ( x < 0 || x >= Server->Map->size ) continue;
+		for ( int y = PosY - 1; y <= PosY + 1; y++ )
+		{
+			if ( y < 0 || y >= Server->Map->size ) continue;
+			if ( x == PosX && y == PosY ) continue;
+
+			//when a bigOffet was passed, for example a contructor needs space for a big building
+			//so not all directions are allowed for the side stepping
+			if ( bigOffset != -1 )
+			{
+				int off = x + y*Server->Map->size;
+				if (off == bigOffset ||
+					off == bigOffset + 1 ||
+					off == bigOffset + Server->Map->size ||
+					off == bigOffset + Server->Map->size + 1 ) 	continue;
+			}
+
+			//check whether this field is a possible destination
+			if ( !Server->Map->possiblePlace( stealthVehicle, x, y ) ) continue;
+
+			//check costs of the move
+			cPathCalculator pathCalculator(0, 0, 0, 0, Map, stealthVehicle );
+			int costs = pathCalculator.calcNextCost(PosX, PosY, x, y);
+			if ( costs > stealthVehicle->data.speed ) continue;
+
+			//check whether the vehicle would be detected on the destination field
+			bool detectOnDest = false;
+			if ( stealthVehicle->data.is_stealth_land )
+			{
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
+					if ( (*Server->PlayerList)[i]->DetectLandMap[x+y*Map->size] ) detectOnDest = true;
+				}
+				if ( Server->Map->IsWater(x+y*Map->size,true) ) detectOnDest = true;
+			}
+			if ( stealthVehicle->data.is_stealth_sea )
+			{
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
+					if ( (*Server->PlayerList)[i]->DetectSeaMap[x+y*Map->size] ) detectOnDest = true;
+				}
+				if ( !Server->Map->IsWater(x+y*Map->size, true) ) detectOnDest = true;
+
+				if ( stealthVehicle->data.can_drive == DRIVE_LANDnSEA )
+				{
+					cBuilding* b = Map->fields[x+y*Map->size].getBaseBuilding();
+					if ( b && (b->data.is_road || b->data.is_bridge || b->data.is_platform )) detectOnDest = true;
+				}
+			}
+			if ( detectOnDest ) continue;
+
+			//take the move with the lowest costs. Decide randomly, when costs are equal
+			if ( costs < minCosts || (costs == minCosts && random(2) ))
+			{
+				//this is a good candidate for a destination
+				minCosts = costs;
+				bestX = x;
+				bestY = y;
+				placeFound = true;
+			}
+		}
+	}
+
+	if ( placeFound )
+	{
+		Server->addMoveJob( PosX+PosY*Server->Map->size, bestX+bestY*Server->Map->size, stealthVehicle );
+		stealthVehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
+		return;
+	}
+
+	//sidestepping failed. Uncover the vehicle.
+	stealthVehicle->setDetectedByPlayer( vehicleOwner );
+	Server->checkPlayerUnits();
 }
