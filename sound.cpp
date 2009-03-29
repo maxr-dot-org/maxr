@@ -124,7 +124,7 @@ void StartMusic ( void )
 {
 	if ( !SettingsData.bSoundEnabled ||SettingsData.MusicMute ) return;
 	if ( MusicFiles.Size() == 0 ) return;
-	PlayMusic(MusicFiles[random(MusicFiles.Size())].c_str());
+	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
 
 // Callback, wenn Musik am Ende:
@@ -133,7 +133,7 @@ void MusicFinished ( void )
 	if ( !SettingsData.bSoundEnabled ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	srand ( ( unsigned ) time ( NULL ) );
-	PlayMusic(MusicFiles[random(MusicFiles.Size())].c_str());
+	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
 
 // Startet einen Loop-Sound:
