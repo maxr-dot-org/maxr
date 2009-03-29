@@ -626,7 +626,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
 		if ( OverUnitField && Hud.Lock ) ActivePlayer->ToggelLock ( OverUnitField );
-		if ( mouseBox.endX > mouseBox.startX+(3/Hud.Zoom) || mouseBox.endX < mouseBox.startX-(3/Hud.Zoom) || mouseBox.endY > mouseBox.startY+(3/Hud.Zoom) || mouseBox.endY < mouseBox.startY-(3/Hud.Zoom) )
+		if ( mouseBox.endX > mouseBox.startX+(10/64.0) || mouseBox.endX < mouseBox.startX-(10/64.0) || mouseBox.endY > mouseBox.startY+(10/64.0) || mouseBox.endY < mouseBox.startY-(10/64.0) )
 		{
 			selectBoxVehicles( mouseBox );
 		}
