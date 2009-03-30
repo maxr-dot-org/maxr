@@ -339,8 +339,8 @@ SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int h
 	SDL_Surface *surface;
 
 	//can not enlage an existing surface
-	if ( (width > scr->w || height > scr->h) && dest ) 
-		return NULL;
+	if ( width > scr->w && dest ) width = scr->w;
+	if ( height > scr->h && dest ) height = scr->h;
 
 	// generate new surface if necessary
 	if ( dest == NULL ) surface = SDL_CreateRGBSurface(scr->flags, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
