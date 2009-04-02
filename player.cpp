@@ -667,19 +667,22 @@ void cPlayer::doResearch()
 {
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas; 
+	cList<int> areasReachingNextLevel;
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		if (researchCentersWorkingOnArea[area] > 0)
 		{
 			if (researchLevel.doResearch(researchCentersWorkingOnArea[area], area))
 			{ // next level reached
-				upgradeUnitType(researchLevel.getCurResearchLevel(area), area, upgradedUnitDatas);
+				areasReachingNextLevel.Add(area);
 				researchFinished = true;
 			}
 		}
 	}
 	if (researchFinished)
 	{
+		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
+		
 		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
 			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
 	}
@@ -689,87 +692,102 @@ void cPlayer::doResearch()
 }
 
 //--------------------------------------------------------------
-void cPlayer::upgradeUnitType (int newResearchLevel, int researchArea, cList<sUnitData*>& resultUpgradedUnitDatas)
+void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas)
 {
-	if (newResearchLevel < 10)
-		return;
 	for (unsigned int i = 0; i < UnitsData.vehicle.Size(); i++)
 	{
-		int startValue = 0;
-		switch (researchArea)
+		bool incrementVersion = false;
+		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
 		{
-			case cResearch::kAttackResearch: startValue = UnitsData.vehicle[i].data.damage; break;
-			case cResearch::kShotsResearch: startValue = UnitsData.vehicle[i].data.max_shots; break;
-			case cResearch::kRangeResearch: startValue = UnitsData.vehicle[i].data.range; break;
-			case cResearch::kArmorResearch: startValue = UnitsData.vehicle[i].data.armor; break;
-			case cResearch::kHitpointsResearch: startValue = UnitsData.vehicle[i].data.max_hit_points; break;
-			case cResearch::kScanResearch: startValue = UnitsData.vehicle[i].data.scan; break;
-			case cResearch::kSpeedResearch: startValue = UnitsData.vehicle[i].data.max_speed; break;
-			case cResearch::kCostResearch: startValue = UnitsData.vehicle[i].data.iBuilt_Costs; break;
-		}
-		int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
-																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																				   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
-		int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
-																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																				   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
-		if (oldResearchBonus != newResearchBonus)
-		{
+			int researchArea = areasReachingNextLevel[areaCounter];
+			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
+		
+			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: VehicleData[i].damage += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kShotsResearch: VehicleData[i].max_shots += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kRangeResearch: VehicleData[i].range += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kArmorResearch: VehicleData[i].armor += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kHitpointsResearch: VehicleData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kScanResearch: VehicleData[i].scan += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kSpeedResearch: VehicleData[i].max_speed += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kCostResearch: VehicleData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kAttackResearch: startValue = UnitsData.vehicle[i].data.damage; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.vehicle[i].data.max_shots; break;
+				case cResearch::kRangeResearch: startValue = UnitsData.vehicle[i].data.range; break;
+				case cResearch::kArmorResearch: startValue = UnitsData.vehicle[i].data.armor; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.vehicle[i].data.max_hit_points; break;
+				case cResearch::kScanResearch: startValue = UnitsData.vehicle[i].data.scan; break;
+				case cResearch::kSpeedResearch: startValue = UnitsData.vehicle[i].data.max_speed; break;
+				case cResearch::kCostResearch: startValue = UnitsData.vehicle[i].data.iBuilt_Costs; break;
 			}
-			if (!resultUpgradedUnitDatas.Contains(&(VehicleData[i])))
+			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																					   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
+																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																					   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+			if (oldResearchBonus != newResearchBonus)
 			{
-				VehicleData[i].version += 1;
-				resultUpgradedUnitDatas.Add(&(VehicleData[i]));
+				switch (researchArea)
+				{
+					case cResearch::kAttackResearch: VehicleData[i].damage += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: VehicleData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kRangeResearch: VehicleData[i].range += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kArmorResearch: VehicleData[i].armor += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: VehicleData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kScanResearch: VehicleData[i].scan += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kSpeedResearch: VehicleData[i].max_speed += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kCostResearch: VehicleData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+				}
+				if (researchArea != cResearch::kCostResearch) // don't increment the version, if the only change are the costs
+					incrementVersion = true;
+				if (!resultUpgradedUnitDatas.Contains(&(VehicleData[i])))
+					resultUpgradedUnitDatas.Add(&(VehicleData[i]));
 			}
 		}
+		if (incrementVersion)
+			VehicleData[i].version += 1;
 	}
+	
 	for (unsigned int i = 0; i < UnitsData.building.Size(); i++)
 	{
-		int startValue = 0;
-		switch (researchArea)
+		bool incrementVersion = false;
+		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
 		{
-			case cResearch::kAttackResearch: startValue = UnitsData.building[i].data.damage; break;
-			case cResearch::kShotsResearch: startValue = UnitsData.building[i].data.max_shots; break;
-			case cResearch::kRangeResearch: startValue = UnitsData.building[i].data.range; break;
-			case cResearch::kArmorResearch: startValue = UnitsData.building[i].data.armor; break;
-			case cResearch::kHitpointsResearch: startValue = UnitsData.building[i].data.max_hit_points; break;
-			case cResearch::kScanResearch: startValue = UnitsData.building[i].data.scan; break;
-			case cResearch::kCostResearch: startValue = UnitsData.building[i].data.iBuilt_Costs; break;
-		}
-		int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
-																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																				   cUpgradeCalculator::kBuilding);
-		int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
-																				   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																				   cUpgradeCalculator::kBuilding);
-		if (oldResearchBonus != newResearchBonus)
-		{
+			int researchArea = areasReachingNextLevel[areaCounter];
+			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
+			
+			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: BuildingData[i].damage += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kShotsResearch: BuildingData[i].max_shots += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kRangeResearch: BuildingData[i].range += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kArmorResearch: BuildingData[i].armor += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kHitpointsResearch: BuildingData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kScanResearch: BuildingData[i].scan += newResearchBonus - oldResearchBonus; break;
-				case cResearch::kCostResearch: BuildingData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+				case cResearch::kAttackResearch: startValue = UnitsData.building[i].data.damage; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.building[i].data.max_shots; break;
+				case cResearch::kRangeResearch: startValue = UnitsData.building[i].data.range; break;
+				case cResearch::kArmorResearch: startValue = UnitsData.building[i].data.armor; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.building[i].data.max_hit_points; break;
+				case cResearch::kScanResearch: startValue = UnitsData.building[i].data.scan; break;
+				case cResearch::kCostResearch: startValue = UnitsData.building[i].data.iBuilt_Costs; break;
 			}
-			if (!resultUpgradedUnitDatas.Contains(&(BuildingData[i])))
+			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																					   cUpgradeCalculator::kBuilding);
+			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
+																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
+																					   cUpgradeCalculator::kBuilding);
+			if (oldResearchBonus != newResearchBonus)
 			{
-				BuildingData[i].version += 1;
-				resultUpgradedUnitDatas.Add(&(BuildingData[i]));
+				switch (researchArea)
+				{
+					case cResearch::kAttackResearch: BuildingData[i].damage += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: BuildingData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kRangeResearch: BuildingData[i].range += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kArmorResearch: BuildingData[i].armor += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: BuildingData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kScanResearch: BuildingData[i].scan += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kCostResearch: BuildingData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+				}
+				if (researchArea != cResearch::kCostResearch) // don't increment the version, if the only change are the costs
+					incrementVersion = true;
+				if (!resultUpgradedUnitDatas.Contains(&(BuildingData[i])))
+					resultUpgradedUnitDatas.Add(&(BuildingData[i]));
 			}
 		}
+		if (incrementVersion)
+			BuildingData[i].version += 1;
 	}
 }
 

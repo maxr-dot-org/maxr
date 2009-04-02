@@ -104,7 +104,7 @@ public:
 	void startAResearch (int researchArea);
 	void stopAResearch (int researchArea);
 	void doResearch (); ///< proceed with the research at turn end
-	void upgradeUnitType (int newResearchLevel, int researchArea, cList<sUnitData*>& resultUpgradedUnitDatas);
+	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void AddLock(cBuilding *b);
 	void AddLock(cVehicle *v);
