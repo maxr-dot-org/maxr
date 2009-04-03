@@ -1753,11 +1753,14 @@ string cVehicle::getStatusStr ()
 //-----------------------------------------------------------------------------
 int cVehicle::playStream ()
 {
+	cBuilding *building = (*Client->Map)[PosX + PosY*Client->Map->size].getBaseBuilding();
+	bool water = Client->Map->IsWater ( PosX+PosY*Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
+
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	else if ( IsClearing )
 		return PlayFXLoop ( SoundData.SNDClearing );
-	else if ( Client->Map->IsWater ( PosX + PosY*Client->Map->size ) && data.can_drive != DRIVE_AIR )
+	else if ( water )
 		return PlayFXLoop ( typ->WaitWater );
 	else
 		return PlayFXLoop ( typ->Wait );
@@ -1773,8 +1776,7 @@ void cVehicle::StartMoveSound ()
 	MenuActive = false;
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
-	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road ) );
-
+	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
 	StopFXLoop ( Client->iObjectStream );
 
 	if ( !MoveJobActive )

@@ -1191,8 +1191,11 @@ void cClientMoveJob::stopMoveSound()
 
 	if ( Vehicle == Client->SelectedVehicle )
 	{
+		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
+		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
+
 		StopFXLoop ( Client->iObjectStream );
-		if ( Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size ) && Vehicle->data.can_drive != DRIVE_AIR ) PlayFX ( Vehicle->typ->StopWater );
+		if ( water ) PlayFX ( Vehicle->typ->StopWater );
 		else PlayFX ( Vehicle->typ->Stop );
 
 		Client->iObjectStream = Vehicle->playStream();
