@@ -122,6 +122,7 @@ int cSavegame::load()
 	}
 
 	cMap *map = loadMap();
+	if ( !map ) return 0;
 	cList<cPlayer *> *PlayerList = loadPlayers ( map );
 
 	string gametype;
@@ -212,8 +213,11 @@ cMap *cSavegame::loadMap()
 		cMap *map = new cMap;
 		string name = mapNode->FirstChildElement( "Name" )->Attribute ( "string" );
 		string resourcestr = mapNode->FirstChildElement( "Resources" )->Attribute ( "data" );
-		map->LoadMap ( name );
-
+		if ( !map->LoadMap ( name ) )
+		{
+			delete map;
+			return NULL;
+		}
 		convertStringToData ( resourcestr, map->size*map->size, map->Resources );
 		return map;
 	}
