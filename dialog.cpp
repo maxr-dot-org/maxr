@@ -871,7 +871,7 @@ void showPreferences ( void )
 			dest.x = 116+rDialog.x;
 			dest.y = 154+rDialog.y;
 			SDL_BlitSurface ( SfDialog, &scr, buffer, &dest );
-			sTmpName = InputHandler->getInputStr();
+			sTmpName = InputHandler->getInputStr( CURSOR_DISABLED );
 			font->showText( 122+rDialog.x, 158+rDialog.y, InputHandler->getInputStr() );
 			SHOW_SCREEN
 			mouse->draw ( true,screen );
