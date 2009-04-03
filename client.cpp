@@ -638,6 +638,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		else if ( bChange && SelectedBuilding && mouse->cur == GraphicsData.gfx_Ctransf )
 		{
 			if ( overVehicle ) showTransfer ( SelectedBuilding, NULL, NULL, overVehicle );
+			else if ( overBuilding ) showTransfer ( SelectedBuilding, NULL, overBuilding, NULL );
 		}
 		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
@@ -5589,30 +5590,39 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	{
 		font->showTextCentered ( 208 + 166, 64 + 159, DestBuilding->typ->data.name );
 
-		switch ( SrcVehicle->data.can_transport )
+		if ( SrcVehicle )
 		{
-			case TRANS_METAL:
-				{
-					iMaxDestCargo = DestBuilding->SubBase->MaxMetal;
-					iDestCargo = DestBuilding->SubBase->Metal;
-				}
-				break;
-			case TRANS_OIL:
-				{
-					iMaxDestCargo = DestBuilding->SubBase->MaxOil;
-					iDestCargo = DestBuilding->SubBase->Oil;
-				}
-				break;
-			case TRANS_GOLD:
-				{
-					iMaxDestCargo = DestBuilding->SubBase->MaxGold;
-					iDestCargo = DestBuilding->SubBase->Gold;
-				}
-				break;
+			switch ( SrcVehicle->data.can_transport )
+			{
+				case TRANS_METAL:
+					{
+						iMaxDestCargo = DestBuilding->SubBase->MaxMetal;
+						iDestCargo = DestBuilding->SubBase->Metal;
+					}
+					break;
+				case TRANS_OIL:
+					{
+						iMaxDestCargo = DestBuilding->SubBase->MaxOil;
+						iDestCargo = DestBuilding->SubBase->Oil;
+					}
+					break;
+				case TRANS_GOLD:
+					{
+						iMaxDestCargo = DestBuilding->SubBase->MaxGold;
+						iDestCargo = DestBuilding->SubBase->Gold;
+					}
+					break;
+			}
+			iTransf = iMaxDestCargo;
+			makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
 		}
-		iTransf = iMaxDestCargo;
-
-		makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+		else
+		{
+			iMaxDestCargo = DestBuilding->data.max_cargo;
+			iDestCargo = DestBuilding->data.cargo;
+			iTransf = iMaxDestCargo;
+			makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, NULL, NULL, SrcBuilding );
+		}
 	}
 	else
 	{
@@ -5622,8 +5632,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		iDestCargo = DestVehicle->data.cargo;
 		iTransf = iMaxDestCargo;
 
-		if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
-		else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+		if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL, NULL );
+		else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
 	}
 	NormalButton btn_cancel( 74 + 166, 125 + 159, "Text~Button~Cancel");
 	NormalButton btn_done(  165 + 166, 125 + 159, "Text~Button~Done");
@@ -5673,49 +5683,16 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		{
 			if ( !iTransf ) break;
 
-			if ( SrcBuilding ) sendWantTransfer ( false, SrcBuilding->iID, true, DestVehicle->iID, iTransf, SrcBuilding->data.can_load );
+			if ( SrcBuilding )
+			{
+				if ( DestBuilding ) sendWantTransfer ( false, SrcBuilding->iID, false, DestBuilding->iID, iTransf, SrcBuilding->data.can_load );
+				else sendWantTransfer ( false, SrcBuilding->iID, true, DestVehicle->iID, iTransf, SrcBuilding->data.can_load );
+			}
 			else
 			{
 				if ( DestBuilding ) sendWantTransfer ( true, SrcVehicle->iID, false, DestBuilding->iID, iTransf, SrcVehicle->data.can_transport );
 				else sendWantTransfer ( true, SrcVehicle->iID, true, DestVehicle->iID, iTransf, SrcVehicle->data.can_transport );
 			}
-
-			/*if ( pv )
-			{
-				switch ( data.can_load )
-				{
-
-					case TRANS_METAL:
-						owner->base.AddMetal ( SubBase, -Transf );
-						break;
-
-					case TRANS_OIL:
-						owner->base.AddOil ( SubBase, -Transf );
-						break;
-
-					case TRANS_GOLD:
-						owner->base.AddGold ( SubBase, -Transf );
-						break;
-				}
-
-				pv->data.cargo += Transf;
-			}
-			else
-			{
-				if ( data.cargo > Transf )
-				{
-					data.cargo -= Transf;
-				}
-				else
-				{
-					Transf = data.cargo;
-					data.cargo = 0;
-				}
-
-				pb->data.cargo += Transf;
-			}
-
-			ShowDetails();*/
 
 			PlayVoice ( VoiceData.VOITransferDone );
 			break;
@@ -5732,11 +5709,15 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			dest.x = 277 + 166;
 			dest.y = 88 + 159;
 			iTransf++;
-			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			if ( DestBuilding )
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, NULL, NULL, SrcBuilding );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
+			}
 			else
 			{
-				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
-				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			SHOW_SCREEN
@@ -5769,11 +5750,15 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 			dest.x = 16 + 166;
 			dest.y = 88 + 159;
 			iTransf--;
-			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			if ( DestBuilding )
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, NULL, NULL, SrcBuilding );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
+			}
 			else
 			{
-				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
-				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
 			}
 			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 			SHOW_SCREEN
@@ -5800,11 +5785,15 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 		{
 			PlayFX ( SoundData.SNDObjectMenu );
 			iTransf = Round ( ( x - ( 44 +  166 ) ) * ( iMaxDestCargo / 223.0 ) - iDestCargo );
-			if ( DestBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+			if ( DestBuilding )
+			{
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, NULL, NULL, SrcBuilding );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
+			}
 			else
 			{
-				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL );
-				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle );
+				if ( SrcBuilding ) makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcBuilding->data.can_load, SrcBuilding->SubBase, NULL, NULL );
+				else makeTransBar ( &iTransf, iMaxDestCargo, iDestCargo, SrcVehicle->data.can_transport, NULL, SrcVehicle, NULL );
 			}
 			SHOW_SCREEN
 			mouse->draw ( false, screen );
@@ -5869,7 +5858,7 @@ void cClient::drawTransBar ( int iLenght, int iType )
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &scr, buffer, &dest );
 }
 
-void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle )
+void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle, cBuilding *Building )
 {
 	int iCargo, iMaxCargo;
 	SDL_Rect scr, dest;
@@ -5899,6 +5888,11 @@ void cClient::makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, i
 	{
 		iCargo = Vehicle->data.cargo;
 		iMaxCargo = Vehicle->data.max_cargo;
+	}
+	else if ( Building != NULL )
+	{
+		iCargo = Building->data.cargo;
+		iMaxCargo = Building->data.max_cargo;
 	}
 	else return;
 

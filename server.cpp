@@ -686,7 +686,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			else DestBuilding = getBuildingFromID ( message->popInt16() );
 
 			if ( ( !SrcBuilding && !SrcVehicle ) || ( !DestBuilding && !DestVehicle ) ) break;
-			if ( SrcBuilding && DestBuilding ) break;
 
 			int iTranfer = message->popInt16();
 			int iType = message->popInt16();
@@ -694,34 +693,51 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( SrcBuilding )
 			{
 				bool bBreakSwitch = false;
-				if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
-				if ( DestVehicle->data.can_transport != iType ) break;
-				if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
-				switch ( iType )
+				if ( DestBuilding )
 				{
-					case TRANS_METAL:
-						{
-							if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
-						}
-						break;
-					case TRANS_OIL:
-						{
-							if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
-						}
-						break;
-					case TRANS_GOLD:
-						{
-							if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
-						}
-						break;
+					if ( SrcBuilding->SubBase != DestBuilding->SubBase ) break;
+					if ( SrcBuilding->owner != DestBuilding->owner ) break;
+					if ( SrcBuilding->data.can_load != iType ) break;
+					if ( SrcBuilding->data.can_load != DestBuilding->data.can_load ) break;
+					if ( DestBuilding->data.cargo+iTranfer > DestBuilding->data.max_cargo || DestBuilding->data.cargo+iTranfer < 0 ) break;
+					if ( SrcBuilding->data.cargo-iTranfer > SrcBuilding->data.max_cargo || SrcBuilding->data.cargo-iTranfer < 0 ) break;
+
+					DestBuilding->data.cargo+=iTranfer;
+					SrcBuilding->data.cargo-=iTranfer;
+					sendUnitData ( DestBuilding, DestBuilding->owner->Nr );
+					sendUnitData ( SrcBuilding, SrcBuilding->owner->Nr );
 				}
-				if ( bBreakSwitch ) break;
-				sendSubbaseValues ( SrcBuilding->SubBase, SrcBuilding->owner->Nr );
-				DestVehicle->data.cargo += iTranfer;
-				sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
+				else
+				{
+					if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
+					if ( DestVehicle->data.can_transport != iType ) break;
+					if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
+					switch ( iType )
+					{
+						case TRANS_METAL:
+							{
+								if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
+							}
+							break;
+						case TRANS_OIL:
+							{
+								if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
+							}
+							break;
+						case TRANS_GOLD:
+							{
+								if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
+								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
+							}
+							break;
+					}
+					if ( bBreakSwitch ) break;
+					sendSubbaseValues ( SrcBuilding->SubBase, SrcBuilding->owner->Nr );
+					DestVehicle->data.cargo += iTranfer;
+					sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
+				}
 			}
 			else
 			{

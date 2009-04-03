@@ -360,7 +360,7 @@ private:
 	* handles the transferbars.
 	*@author alzi alias DoctorDeath
 	*/
-	void makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle );
+	void makeTransBar( int *iTransfer, int iMaxDestCargo, int iDestCargo, int iType, sSubBase *SubBase, cVehicle *Vehicle, cBuilding *Building );
 public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
