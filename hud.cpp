@@ -442,16 +442,12 @@ void cHud::CheckScroll ( bool pure )
 
 	if ( pure )
 	{
-		if ( mouse->SetCursor ( CHand ) )
-		{
-			Client->bFlagDrawMap=true;
-		}
+		mouse->SetCursor ( CHand );
 		return;
 	}
 
 	cVehicle* selectedVehicle = Client->SelectedVehicle;
 	cBuilding* selectedBuilding = Client->SelectedBuilding;
-	SDL_Surface* lastCursor = mouse->cur; //for checking, whether the cursor has been changed
 
 	if ( selectedVehicle&&selectedVehicle->PlaceBand&&selectedVehicle->owner==Client->ActivePlayer )
 	{
@@ -773,11 +769,6 @@ void cHud::CheckScroll ( bool pure )
 	else
 	{
 		mouse->SetCursor ( CHelp );
-	}
-
-	if ( mouse->cur != lastCursor )
-	{
-		Client->bFlagDrawMap = true;
 	}
 }
 

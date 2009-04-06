@@ -25,7 +25,6 @@ cMouse::cMouse ( void )
 {
 	visible=false;
 	MoveCallback=false;
-	MoveCallbackEditor=false;
 	back=NULL;
 	cur=NULL;
 	LastX=-100;
@@ -46,10 +45,9 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	SDL_Rect dest;
 	if ( !visible||cur==NULL ) return;
 	GetPos();
-	dest.w=back->w;
-	dest.h=back->h;
-	// Den Hintergrund wiederherstellen:
-	if ( draw_back&&LastX!=-100 )
+
+	// restore old background
+	if ( back && draw_back && LastX!=-100 )
 	{
 		dest.x=LastX;
 		dest.y=LastY;
@@ -57,124 +55,105 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 		
 		SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
 	}
-	// Den Hintergrund sichern, und die Maus malen:
+
+	//change size of back surface if nessesary, e.g. when the mouse curor was changed
+	if ( !back || back->h != cur->h || back->w != cur->w )
+	{
+		if ( back ) SDL_FreeSurface( back );
+		back = SDL_CreateRGBSurface( SDL_HWSURFACE, cur->w, cur->h,32, 0, 0, 0, 0 );
+	}
+
+	// store new background
 	GetBack ( sf );
 	dest.x=DrawX;
 	dest.y=DrawY;
 	LastX=DrawX;
 	LastY=DrawY;
 
+	//draw mouse
 	SDL_BlitSurface ( cur,NULL,sf,&dest );
 	SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
 }
 
-// Setzt den Cursor:
+// sets a new cursor
 bool cMouse::SetCursor ( eCursor typ )
 {
+	SDL_Surface *lastCur = cur;
+
 	switch ( typ )
 	{
 		case CHand:
-			if ( cur==GraphicsData.gfx_Chand ) return false;
 			cur=GraphicsData.gfx_Chand;
 			break;
 		case CNo:
-			if ( cur==GraphicsData.gfx_Cno ) return false;
 			cur=GraphicsData.gfx_Cno;
 			break;
 		case CSelect:
-			if ( cur==GraphicsData.gfx_Cselect ) return false;
 			cur=GraphicsData.gfx_Cselect;
 			break;
 		case CMove:
-			if ( cur==GraphicsData.gfx_Cmove ) return false;
 			cur=GraphicsData.gfx_Cmove;
 			break;
 		case CPfeil1:
-			if ( cur==GraphicsData.gfx_Cpfeil1 ) return false;
 			cur=GraphicsData.gfx_Cpfeil1;
 			break;
 		case CPfeil2:
-			if ( cur==GraphicsData.gfx_Cpfeil2 ) return false;
 			cur=GraphicsData.gfx_Cpfeil2;
 			break;
 		case CPfeil3:
-			if ( cur==GraphicsData.gfx_Cpfeil3 ) return false;
 			cur=GraphicsData.gfx_Cpfeil3;
 			break;
 		case CPfeil4:
-			if ( cur==GraphicsData.gfx_Cpfeil4 ) return false;
 			cur=GraphicsData.gfx_Cpfeil4;
 			break;
 		case CPfeil6:
-			if ( cur==GraphicsData.gfx_Cpfeil6 ) return false;
 			cur=GraphicsData.gfx_Cpfeil6;
 			break;
 		case CPfeil7:
-			if ( cur==GraphicsData.gfx_Cpfeil7 ) return false;
 			cur=GraphicsData.gfx_Cpfeil7;
 			break;
 		case CPfeil8:
-			if ( cur==GraphicsData.gfx_Cpfeil8 ) return false;
 			cur=GraphicsData.gfx_Cpfeil8;
 			break;
 		case CPfeil9:
-			if ( cur==GraphicsData.gfx_Cpfeil9 ) return false;
 			cur=GraphicsData.gfx_Cpfeil9;
 			break;
 		case CHelp:
-			if ( cur==GraphicsData.gfx_Chelp ) return false;
 			cur=GraphicsData.gfx_Chelp;
 			break;
 		case CAttack:
-			if ( cur==GraphicsData.gfx_Cattack ) return false;
 			cur=GraphicsData.gfx_Cattack;
 			break;
 		case CBand:
-			if ( cur==GraphicsData.gfx_Cband ) return false;
 			cur=GraphicsData.gfx_Cband;
 			break;
 		case CTransf:
-			if ( cur==GraphicsData.gfx_Ctransf ) return false;
 			cur=GraphicsData.gfx_Ctransf;
 			break;
 		case CLoad:
-			if ( cur==GraphicsData.gfx_Cload ) return false;
 			cur=GraphicsData.gfx_Cload;
 			break;
 		case CMuni:
-			if ( cur==GraphicsData.gfx_Cmuni ) return false;
 			cur=GraphicsData.gfx_Cmuni;
 			break;
 		case CRepair:
-			if ( cur==GraphicsData.gfx_Crepair ) return false;
 			cur=GraphicsData.gfx_Crepair;
 			break;
 		case CSteal:
-			if ( cur==GraphicsData.gfx_Csteal ) return false;
 			cur=GraphicsData.gfx_Csteal;
 			break;
 		case CDisable:
-			if ( cur==GraphicsData.gfx_Cdisable ) return false;
 			cur=GraphicsData.gfx_Cdisable;
 			break;
 		case CActivate:
-			if ( cur==GraphicsData.gfx_Cactivate ) return false;
 			cur=GraphicsData.gfx_Cactivate;
 			break;
+		default:
+			cur=GraphicsData.gfx_Chand;
+			break;
 	}
-	if ( back!=NULL )
-	{
-		SDL_Surface *tmp;
-		tmp=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,cur->w,cur->h,32,0,0,0,0 );
-		SDL_BlitSurface ( back,NULL,tmp,NULL );
-		SDL_FreeSurface ( back );
-		back=tmp;
-	}
-	else
-	{
-		back=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,cur->w,cur->h,32,0,0,0,0 );
-	}
-	return true;
+
+	return (lastCur != cur);
 }
 
 // Liest den Hintergrund in das Back-Surface ein:
