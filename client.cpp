@@ -4675,6 +4675,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				delete neutralBuildings;
 				neutralBuildings = nextBuilding;
 			}
+
+			// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
+			// Normally there shouldn't be any pointers left after deleting all units, but a resync is not 
+			// executed in normal situations and there are situations, when this happens.
+			Map->reset();
 		}
 		break;
 	case GAME_EV_UNIT_UPGRADE_VALUES:

@@ -208,6 +208,11 @@ public:
 	bool possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL ) const;
 	bool possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL ) const;
 
+	/**
+	* removes all units from the map structure
+	*/
+	void reset();
+
 
 private:
 
