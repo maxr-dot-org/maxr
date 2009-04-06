@@ -1937,6 +1937,8 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 {
 	if ( !Vehicle ) return false;
 
+	if ( Vehicle->Loaded ) return false;
+
 	if ( data.cargo == data.max_cargo ) return false;
 
 	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;

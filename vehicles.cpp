@@ -2412,8 +2412,8 @@ void cVehicle::drawStatus() const
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
 		if ( data.is_big )
 		{
-			dest.y += 32;
-			dest.x += 32;
+			dest.y += (Client->Hud.Zoom/2);
+			dest.x += (Client->Hud.Zoom/2);
 		}
 		if ( data.speed >= 4 )
 		{
@@ -3778,6 +3778,8 @@ bool cVehicle::canLoad ( int off, cMap *Map )
 bool cVehicle::canLoad ( cVehicle *Vehicle )
 {
 	if ( !Vehicle ) return false;
+
+	if ( Vehicle->Loaded ) return false;
 
 	if ( data.cargo >= data.max_cargo )	return false;
 
