@@ -298,6 +298,17 @@ void cClient::run()
 		{
 			drawMap();
 			displayFX();
+			drawUnitCircles();
+			displayDebugOutput();
+
+			//restore hud
+			SDL_Rect bottomDisplay = {240, SettingsData.iScreenH - 30, 400, 30}; 
+			SDL_BlitSurface ( GraphicsData.gfx_hud, &bottomDisplay, buffer, &bottomDisplay );
+
+			SDL_Rect topDisplay = {380, 5, 220, 25}; 
+			SDL_BlitSurface ( GraphicsData.gfx_hud, &topDisplay, buffer, &topDisplay );
+
+			bFlagDraw = true;
 		}
 		CHECK_MEMORY;
 
@@ -313,30 +324,24 @@ void cClient::run()
 			SelectedBuilding=NULL;
 		}
 
-		// draw the unit circles
-		drawUnitCircles();
 		CHECK_MEMORY;
 		// draw the minimap:
 		if ( bFlagDrawMMap )
 		{
-			bFlagDrawMMap = false;
 			drawMiniMap();
 			bFlagDrawHud = true;
 		}
 		CHECK_MEMORY;
-		// draw the debug information
-		displayDebugOutput();
 
 		// check whether the hud has to be drawn:
-		if ( bFlagDrawHud || bFlagDrawMap )
+		if ( bFlagDrawHud || bFlagDrawMMap )
 		{
 			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
-			mouse->GetBack ( buffer );
 			bFlagDraw = true;
 		}
 		CHECK_MEMORY;
 		// draw the video:
-		if ( bFlagDraw || bFlagDrawHud )
+		if ( bFlagDrawHud || iTimer0 )
 		{
 			drawFLC();
 		}
@@ -396,15 +401,18 @@ void cClient::run()
 					bStartupHud = false;
 				}
 				drawMap();
+				drawMiniMap();
 				SHOW_SCREEN
-
+				
 				bStartup = false;
 			}
 			CHECK_MEMORY;
 			SHOW_SCREEN
+			mouse->restoreBack( buffer ); //remove the mouse cursor, to keep the buffer mouse free
 			bFlagDraw = false;
 			bFlagDrawHud = false;
 			bFlagDrawMap = false;
+			bFlagDrawMMap = false;
 		}
 		else if ( !SettingsData.bFastMode )
 		{
@@ -1395,6 +1403,9 @@ void cClient::drawMap( bool bPure )
 
 	if ( iTimer2 ) Map->generateNextAnimationFrame();
 
+	SDL_Rect clipRect = { 180, 18, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32 };
+	SDL_SetClipRect( buffer, &clipRect );
+
 	// draw the terrain
 	for ( iY=0;iY<Map->size;iY++ )
 	{
@@ -1451,7 +1462,11 @@ void cClient::drawMap( bool bPure )
 			dest.x+=iZoom;
 		}
 	}
-	if ( bPure ) return;
+	if ( bPure ) 
+	{
+		SDL_SetClipRect( buffer, NULL );
+		return;
+	}
 
 	// display the FX-Bottom-Effects:
 	displayFXBottom();
@@ -1829,6 +1844,8 @@ void cClient::drawMap( bool bPure )
 		}
 		dest.y += iZoom;
 	}*/
+
+	SDL_SetClipRect( buffer, NULL );
 }
 
 void cClient::drawMiniMap()
@@ -2060,20 +2077,28 @@ void cClient::displayFX()
 {
 	if (!FXList.Size()) return;
 
+	SDL_Rect clipRect = { 180, 18, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32 };
+	SDL_SetClipRect( buffer, &clipRect );
+
 	for (int i = (int)FXList.Size() - 1; i >= 0; i--)
 	{
 		drawFX ( i );
 	}
+	SDL_SetClipRect( buffer, NULL );
 }
 
 void cClient::displayFXBottom()
 {
 	if (!FXListBottom.Size()) return;
 
+	SDL_Rect clipRect = { 180, 18, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32 };
+	SDL_SetClipRect( buffer, &clipRect );
+
 	for (int i = (int)FXListBottom.Size() - 1; i >= 0; i--)
 	{
 		drawFXBottom ( i );
 	}
+	SDL_SetClipRect( buffer, NULL );
 }
 
 void cClient::runFX()
@@ -2546,6 +2571,9 @@ void cClient::drawExitPoint( int iX, int iY )
 
 void cClient::drawUnitCircles ()
 {
+	SDL_Rect clipRect = { 180, 18, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32 };
+	SDL_SetClipRect( buffer, &clipRect );
+
 	if ( SelectedVehicle )
 	{
 		cVehicle& v   = *SelectedVehicle; // XXX not const is suspicious
@@ -2694,6 +2722,8 @@ void cClient::drawUnitCircles ()
 		}
 	}
 	ActivePlayer->DrawLockList(Hud);
+
+	SDL_SetClipRect( buffer, NULL );
 }
 
 void cClient::displayDebugOutput()
@@ -4853,6 +4883,7 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 	if ( !bInit ) AddedVehicle->StartUp = 10;
 
 	mouseMoveCallback(true);
+	bFlagDrawMMap = true;
 }
 
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
@@ -4863,6 +4894,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	if ( !bInit ) AddedBuilding->StartUp = 10;
 
 	mouseMoveCallback(true);
+	bFlagDrawMMap = true;
 }
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )

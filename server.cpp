@@ -2587,6 +2587,16 @@ void cServer::makeTurnEnd ()
 		}
 	}
 
+	// produce resources
+	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	{
+		(*PlayerList)[i]->base.handleTurnend();
+	}
+
+	// do research:
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		(*PlayerList)[i]->doResearch();
+
 	// Gun'em down:
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
@@ -2602,16 +2612,7 @@ void cServer::makeTurnEnd ()
 		}
 	}
 
-	// produce resources
-	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-	{
-		(*PlayerList)[i]->base.handleTurnend();
-	}
-
-	// do research:
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
-		(*PlayerList)[i]->doResearch();
-
+	//FIXME: saving of running attack jobs does not work correctly yet.
 	// make autosave
 	if ( SettingsData.bAutoSave )
 	{

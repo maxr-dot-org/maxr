@@ -1078,25 +1078,26 @@ void cVehicle::ShowDetails ()
 				break;
 		}
 	}
-	else
-		if ( data.can_attack )
+	else if ( data.can_attack )
+	{
+		if ( owner == Client->ActivePlayer )
 		{
-			if ( owner == Client->ActivePlayer )
-			{
-				// Munition:
-				DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
+			// Munition:
+			DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 
-				font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-				DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
-			}
-
-			// shots
-			DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
-
-			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-
-			DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
+			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
 		}
+
+		// shots
+		DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
+
+		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+
+		DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
+	}
+
+	Client->bFlagDrawHud = true;
 }
 
 //-----------------------------------------------------------------------------

@@ -481,7 +481,6 @@ void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
 	SDL_LockSurface ( surface );
 
 	ptr = ( unsigned int* ) surface->pixels;
-	iY *= SettingsData.iScreenW;
 
 	d = 0;
 	xx = 0;
@@ -502,17 +501,27 @@ void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
 			xx++;
 			yy--;
 		}
-#define PUTC(xxx,yyy) if((xxx)+iX>=0&&(xxx)+iX<SettingsData.iScreenW&&(yyy)*SettingsData.iScreenW+iY>=0&&(yyy)*SettingsData.iScreenW+iY<SettingsData.iScreenH*SettingsData.iScreenW)ptr[(xxx)+iX+(yyy)*SettingsData.iScreenW+iY] = iColor;
-		PUTC ( xx,yy )
-		PUTC ( yy,xx )
-		PUTC ( yy,-xx )
-		PUTC ( xx,-yy )
-		PUTC ( -xx,yy )
-		PUTC ( -yy,xx )
-		PUTC ( -yy,-xx )
-		PUTC ( -xx,-yy )
+//#define PUTC(xxx,yyy) if((xxx)+iX>=0&&(xxx)+iX<SettingsData.iScreenW&&(yyy)*SettingsData.iScreenW+iY>=0&&(yyy)*SettingsData.iScreenW+iY<SettingsData.iScreenH*SettingsData.iScreenW )ptr[ (xxx)+iX+ (yyy)*SettingsData.iScreenW + iY ] = iColor;
+		setPixel ( surface, iX + xx, iY + yy, iColor );
+		setPixel ( surface, iX + yy, iY + xx, iColor );
+		setPixel ( surface, iX + yy, iY - xx, iColor );
+		setPixel ( surface, iX + xx, iY - yy, iColor );
+		setPixel ( surface, iX - xx, iY + yy, iColor );
+		setPixel ( surface, iX - yy, iY + xx, iColor );
+		setPixel ( surface, iX - yy, iY - xx, iColor );
+		setPixel ( surface, iX - xx, iY - yy, iColor );
 	}
 	SDL_UnlockSurface ( surface );
+}
+
+void setPixel( SDL_Surface* surface, int x, int y, int iColor )
+{
+	//check the surface size
+	if ( x < 0 || x >= surface->w || y < 0 || y >= surface->h ) return;
+	//check the clip rect
+	if ( x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w || y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h ) return;
+	
+	((unsigned int*) surface->pixels)[x + y * surface->w] = iColor;
 }
 
 int random(int const x)

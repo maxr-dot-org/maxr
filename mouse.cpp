@@ -168,6 +168,14 @@ void cMouse::GetBack ( SDL_Surface *sf )
 	SDL_BlitSurface ( sf,&scr,back,NULL );
 }
 
+void cMouse::restoreBack( SDL_Surface *sf )
+{
+	SDL_Rect dest;
+	dest.x = LastX;
+	dest.y = LastY;
+	SDL_BlitSurface ( back, NULL, sf, &dest );
+}
+
 // Liest die aktuelle Mausposition aus:
 void cMouse::GetPos ( void )
 {

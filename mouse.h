@@ -42,6 +42,10 @@ public:
   void draw(bool draw_back,SDL_Surface *sf);
   bool SetCursor(eCursor typ);
   void GetBack(SDL_Surface *sf);
+  /**
+  * Draws the currently stored background to sf
+  */
+  void restoreBack( SDL_Surface *sf );
   void GetPos(void);
   void Show(void){LastX=-100;visible=true;}
   void Hide(void){visible=false;}

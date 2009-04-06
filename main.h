@@ -747,6 +747,8 @@ SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigne
 void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
 /** Draws a circle on the surface */
 void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface );
+/** Sets a pixel on the surface */
+void setPixel( SDL_Surface* surface, int x, int y, int iColor );
 
 // returns a random number in the range 0 <= r < x
 int random(int x);
