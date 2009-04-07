@@ -227,10 +227,19 @@ cBuilding::~cBuilding ()
 			p->DeleteLock ( this );
 		}
 	}
-
-	while (SeenByPlayerList.Size())
+	if ( Server )
 	{
-		SeenByPlayerList.Delete(SeenByPlayerList.Size() - 1);
+		for ( unsigned int i = 0; i < Server->AJobs.Size(); i++ )
+		{
+			if ( Server->AJobs[i]->building == this ) Server->AJobs[i]->building = NULL;
+		}
+	}
+	if ( Client )
+	{
+		for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++ )
+		{
+			if ( Client->attackJobs[i]->building == this ) Client->attackJobs[i]->building = NULL;
+		}
 	}
 }
 

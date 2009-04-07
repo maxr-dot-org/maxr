@@ -135,11 +135,21 @@ cVehicle::~cVehicle ()
 			p->DeleteLock ( this );
 		}
 	}
-
-	while ( SeenByPlayerList.Size() )
+	if ( Server )
 	{
-		SeenByPlayerList.Delete ( SeenByPlayerList.Size()-1 );
+		for ( unsigned int i = 0; i < Server->AJobs.Size(); i++ )
+		{
+			if ( Server->AJobs[i]->vehicle == this ) Server->AJobs[i]->vehicle = NULL;
+		}
 	}
+	if ( Client )
+	{
+		for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++ )
+		{
+			if ( Client->attackJobs[i]->vehicle == this ) Client->attackJobs[i]->vehicle = NULL;
+		}
+	}
+
 }
 
 //-----------------------------------------------------------------------------
