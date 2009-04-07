@@ -501,7 +501,6 @@ void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
 			xx++;
 			yy--;
 		}
-//#define PUTC(xxx,yyy) if((xxx)+iX>=0&&(xxx)+iX<SettingsData.iScreenW&&(yyy)*SettingsData.iScreenW+iY>=0&&(yyy)*SettingsData.iScreenW+iY<SettingsData.iScreenH*SettingsData.iScreenW )ptr[ (xxx)+iX+ (yyy)*SettingsData.iScreenW + iY ] = iColor;
 		setPixel ( surface, iX + xx, iY + yy, iColor );
 		setPixel ( surface, iX + yy, iY + xx, iColor );
 		setPixel ( surface, iX + yy, iY - xx, iColor );

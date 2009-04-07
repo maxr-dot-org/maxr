@@ -554,156 +554,17 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	}
 
 	// read the size:
-	if ( !data.is_connector )
+	if ( data.has_frames )
 	{
-		if ( data.has_frames )
-		{
-			src.w = Client->Hud.Zoom;
-			src.h = Client->Hud.Zoom;
-		}
-		else
-		{
-			src.w = (int)(typ->img_org->w*factor);
-			src.h = (int)(typ->img_org->h*factor);
-		}
+		src.w = Client->Hud.Zoom;
+		src.h = Client->Hud.Zoom;
 	}
 	else
 	{
-		src.y = 0;
-		src.x = 0;
-		src.h = src.w = (int)(typ->img_org->h*factor);
-
-		if ( BaseN )
-		{
-			if ( BaseE )
-			{
-				if ( BaseS )
-				{
-					if ( BaseW )
-					{
-						// N,E,S,W
-						src.x += 15 * src.h;
-					}
-					else
-					{
-						// N,E,S
-						src.x += 13 * src.h;
-					}
-				}
-				else
-				{
-					// N,E
-					if ( BaseW )
-					{
-						// N,E,W
-						src.x += 12 * src.h;
-					}
-					else
-					{
-						// N,E
-						src.x += 8 * src.h;
-					}
-				}
-			}
-			else
-			{
-				// N
-				if ( BaseS )
-				{
-					// N,S
-					if ( BaseW )
-					{
-						// N,S,W
-						src.x += 11 * src.h;
-					}
-					else
-					{
-						// N,S
-						src.x += 5 * src.h;
-					}
-				}
-				else
-				{
-					// N
-					if ( BaseW )
-					{
-						// N,W
-						src.x += 7 * src.h;
-					}
-					else
-					{
-						// N
-						src.x += 1 * src.h;
-					}
-				}
-			}
-		}
-		else
-		{
-			if ( BaseE )
-			{
-				// E
-				if ( BaseS )
-				{
-					// E,S
-					if ( BaseW )
-					{
-						// E,S,W
-						src.x += 14 * src.h;
-					}
-					else
-					{
-						// E,S
-						src.x += 9 * src.h;
-					}
-				}
-				else
-				{
-					// E
-					if ( BaseW )
-					{
-						// E,W
-						src.x += 6 * src.h;
-					}
-					else
-					{
-						// E
-						src.x += 2 * src.h;
-					}
-				}
-			}
-			else
-			{
-				if ( BaseS )
-				{
-					// S
-					if ( BaseW )
-					{
-						// S,W
-						src.x += 10 * src.h;
-					}
-					else
-					{
-						// S
-						src.x += 3 * src.h;
-					}
-				}
-				else
-				{
-					if ( BaseW )
-					{
-						// W
-						src.x += 4 * src.h;
-					}
-					else
-					{
-						src.x = 0;
-					}
-				}
-			}
-		}
+		src.w = (int)(typ->img_org->w*factor);
+		src.h = (int)(typ->img_org->h*factor);
 	}
-
+	
 	// draw the concrete
 	if ( !data.build_on_water && !data.is_expl_mine )
 	{
@@ -747,28 +608,26 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	tmp = *dest;
 
 	// draw the connector slots:
-
-	if ( !data.is_connector && !data.is_base && !StartUp )
+	if ( this->SubBase && !StartUp )
 	{
 		DrawConnectors ( *dest );
 	}
 
 	// draw the shadows
-	if ( SettingsData.bShadows )
+	if ( SettingsData.bShadows && !data.is_connector )
 	{
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 
 		if ( !SettingsData.bPreScale && ( typ->shw->w != (int)(typ->shw_org->w*factor) || typ->shw->h != (int)(typ->shw_org->h*factor) ) ) 
 			scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
 
-		if ( !data.is_connector ) SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
-		else SDL_BlitSurface ( typ->shw, &src, buffer, &tmp );
+		SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
 
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 	}
 
 	// blit the players color
-	if ( !data.is_connector && !data.is_road )
+	if ( !data.is_road && !data.is_connector )
 	{
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
@@ -796,16 +655,14 @@ void cBuilding::Draw ( SDL_Rect *dest )
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		}
 	}
-	else
+	else if ( !data.is_connector )
 	{
 		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
 		if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
 			scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
-		if ( !data.is_connector )
-			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
-		else
-			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
+		
+		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 	}
 
 	// draw the building 
@@ -813,15 +670,18 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 	src.x = 0;
 	src.y = 0;
-
-	if ( StartUp && SettingsData.bAlphaEffects )
+	
+	if ( !data.is_connector )
 	{
-		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
-		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		if ( StartUp && SettingsData.bAlphaEffects )
+		{
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+			SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		}
+		else
+			SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 	}
-	else
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
 
 	if ( StartUp )
 	{
@@ -1325,97 +1185,91 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 //--------------------------------------------------------------------------
 void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
-	SDL_Rect src, tmp;
-	int zoom;
-	zoom = Client->Hud.Zoom;
-	tmp = dest;
-	src.y = 0;
-	src.h = src.w = zoom;
+	SDL_Rect src;
+	int zoom = Client->Hud.Zoom;
 	float factor = (float)(zoom/64.0);
 
 	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) 
 		scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
-	if ( BaseN )
-	{
-		src.x = zoom;
-		SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-		tmp = dest;
-	}
 
-	if ( BaseW )
-	{
-		src.x = zoom * 4;
-		SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-		tmp = dest;
-	}
-
+	src.y = 0;
+	src.x = 0;
+	src.h = src.w = UnitsData.ptr_connector->h;
+	
 	if ( !data.is_big )
 	{
-		if ( BaseE )
-		{
-			src.x = zoom * 2;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		if      (  BaseN &&  BaseE &&  BaseS &&  BaseW ) src.x = 15;
+		else if (  BaseN &&  BaseE &&  BaseS && !BaseW ) src.x = 13; 
+		else if (  BaseN &&  BaseE && !BaseS &&  BaseW ) src.x = 12;
+		else if (  BaseN &&  BaseE && !BaseS && !BaseW ) src.x =  8;
+		else if (  BaseN && !BaseE &&  BaseS &&  BaseW ) src.x = 11;
+		else if (  BaseN && !BaseE &&  BaseS && !BaseW ) src.x =  5;
+		else if (  BaseN && !BaseE && !BaseS &&  BaseW ) src.x =  7;
+		else if (  BaseN && !BaseE && !BaseS && !BaseW ) src.x =  1;
+		else if ( !BaseN &&  BaseE &&  BaseS &&  BaseW ) src.x = 14;
+		else if ( !BaseN &&  BaseE &&  BaseS && !BaseW ) src.x =  9;
+		else if ( !BaseN &&  BaseE && !BaseS &&  BaseW ) src.x =  6;
+		else if ( !BaseN &&  BaseE && !BaseS && !BaseW ) src.x =  2;
+		else if ( !BaseN && !BaseE &&  BaseS &&  BaseW ) src.x = 10;
+		else if ( !BaseN && !BaseE &&  BaseS && !BaseW ) src.x =  3;
+		else if ( !BaseN && !BaseE && !BaseS &&  BaseW ) src.x =  4;
+		else if ( !BaseN && !BaseE && !BaseS && !BaseW ) src.x =  0;
+		src.x *= src.h;
 
-		if ( BaseS )
-		{
-			src.x = zoom * 3;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		//blit shadow
+		if ( data.is_connector )
+			SDL_BlitSurface ( UnitsData.ptr_connector_shw, &src, buffer, &dest );
+
+		//blit the image
+		if ( src.x != 0 || data.is_connector )
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+
 	}
 	else
 	{
-		if ( BaseBN )
-		{
-			src.x = zoom;
-			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		//make connector stubs of big buildings.
+		//upper left field
+		src.x = 0;
+		if      (  BaseN &&  BaseW ) src.x = 7;
+		else if (  BaseN && !BaseW ) src.x = 1;
+		else if ( !BaseN &&  BaseW ) src.x = 4;
+		src.x *= src.h;
 
-		if ( BaseBW )
-		{
-			src.x = zoom * 4;
-			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		if ( src.x != 0 )
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );  //TODO: dests anpassen
 
-		if ( BaseE )
-		{
-			src.x = zoom * 2;
-			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		//upper right field
+		src.x = 0;
+		dest.x += zoom;
+		if      (  BaseBN &&  BaseE ) src.x = 8;
+		else if (  BaseBN && !BaseE ) src.x = 1;
+		else if ( !BaseBN &&  BaseE ) src.x = 2;
+		src.x *= src.h;
 
-		if ( BaseBE )
-		{
-			src.x = zoom * 2;
-			tmp.x += zoom;
-			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		if ( src.x != 0 )
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
 
-		if ( BaseS )
-		{
-			src.x = zoom * 3;
-			tmp.y += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		//lower right field
+		src.x = 0;
+		dest.y += zoom;
+		if      (  BaseBE &&  BaseBS ) src.x = 9;
+		else if (  BaseBE && !BaseBS ) src.x = 2;
+		else if ( !BaseBE &&  BaseBS ) src.x = 3;
+		src.x *= src.h;
 
-		if ( BaseBS )
-		{
-			src.x = zoom * 3;
-			tmp.y += zoom;
-			tmp.x += zoom;
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &tmp );
-			tmp = dest;
-		}
+		if ( src.x != 0 )
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+
+		//lower left field
+		src.x = 0;
+		dest.x -= zoom;
+		if      (  BaseS &&  BaseBW ) src.x = 10;
+		else if (  BaseS && !BaseBW ) src.x =  3;
+		else if ( !BaseS &&  BaseBW ) src.x =  4;
+		src.x *= src.h;
+
+		if ( src.x != 0 )
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
 	}
 }
 
@@ -7341,6 +7195,7 @@ void cBuilding::Deselct ()
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
+	Client->bFlagDrawHud = true;
 }
 
 //--------------------------------------------------------------------------

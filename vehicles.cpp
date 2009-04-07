@@ -781,6 +781,7 @@ void cVehicle::Deselct ()
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
+	Client->bFlagDrawHud = true;
 }
 
 //-----------------------------------------------------------------------------
