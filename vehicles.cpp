@@ -269,7 +269,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 					if ( data.is_human )
 					{
 						SDL_Rect r;
-						r.h = r.w = typ->img[dir]->h;
+						r.h = r.w = typ->img_org[dir]->h*factor;
 						r.x = r.w * WalkFrame;
 						r.y = 0;
 						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, buffer, &tmp, factor );
@@ -296,7 +296,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		if ( data.is_human )
 		{
-			src.w = src.h = tmp.h = tmp.w = typ->img[dir]->h;
+			src.w = src.h = tmp.h = tmp.w = typ->img_org[dir]->h*factor;
 			tmp.x = WalkFrame * tmp.w;
 			tmp.y = 0;
 			blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
