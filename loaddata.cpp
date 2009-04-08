@@ -2445,7 +2445,7 @@ static int LoadBuildings()
 			UnitsData.ptr_connector = b.img;
 			UnitsData.ptr_connector_org = b.img_org;
 			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
-			UnitsData.ptr_connector_shw = b.img;
+			UnitsData.ptr_connector_shw = b.shw;
 			UnitsData.ptr_connector_shw_org = b.shw_org;
 			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
 		}
