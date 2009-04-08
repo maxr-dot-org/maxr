@@ -1669,7 +1669,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Vehicle ) Vehicle->hasAutoMoveJob = message->popBool();
 		}
 		break;
-	case GAME_AV_WANT_COM_ACTION:
+	case GAME_EV_WANT_COM_ACTION:
 		{
 			cVehicle *srcVehicle = getVehicleFromID ( message->popInt16() );
 			if ( !srcVehicle ) break;

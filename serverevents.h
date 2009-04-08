@@ -63,7 +63,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
-	GAME_AV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
+	GAME_EV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
 };
 
 /**

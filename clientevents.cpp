@@ -268,7 +268,7 @@ void sendSetAutoStatus( int unitID, bool set )
 
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal )
 {
-	cNetMessage* message = new cNetMessage( GAME_AV_WANT_COM_ACTION );
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_COM_ACTION );
 	message->pushBool ( steal );
 	message->pushInt16( destUnitID );
 	message->pushBool ( destIsVehicle );
