@@ -719,6 +719,10 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+/** this macro checks, wether the surface has to be rescaled, and scales it if nessesary */
+#define CHECK_SCALING( surface, surface_org, factor ) \
+	if ( !SettingsData.bPreScale && ( (surface)->w != (int)((surface_org)->w * (factor)) || (surface)->h != (int)((surface_org)->h * (factor)) ) )  \
+		scaleSurface ( (surface_org), (surface), (int)((surface_org)->w * (factor)), (int)((surface_org)->h * (factor)) );
 
 /**
  * draws one line of the source surface scaled to the destination surface.

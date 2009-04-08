@@ -522,14 +522,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		{
 			if ( data.is_big )
 			{
-				if ( !SettingsData.bPreScale && ( UnitsData.dirt_big_shw->w != (int)(UnitsData.dirt_big_shw_org->w*factor) || UnitsData.dirt_big_shw->h != (int)(UnitsData.dirt_big_shw_org->h*factor) ) ) 
-					scaleSurface ( UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int)(UnitsData.dirt_big_shw_org->w*factor), (int)(UnitsData.dirt_big_shw_org->h*factor) );
+				CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, factor );
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, buffer, &tmp );
 			}
 			else
 			{
-				if ( !SettingsData.bPreScale && ( UnitsData.dirt_small_shw->w != (int)(UnitsData.dirt_small_shw_org->w*factor) || UnitsData.dirt_small_shw->h != (int)(UnitsData.dirt_small_shw_org->h*factor) ) ) 
-					scaleSurface ( UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int)(UnitsData.dirt_small_shw_org->w*factor), (int)(UnitsData.dirt_small_shw_org->h*factor) );
+				CHECK_SCALING( UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, factor );
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &src, buffer, &tmp );
 			}
 		}
@@ -539,14 +537,12 @@ void cBuilding::Draw ( SDL_Rect *dest )
 
 		if ( data.is_big )
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.dirt_big->w != (int)(UnitsData.dirt_big_org->w*factor) || UnitsData.dirt_big->h != (int)(UnitsData.dirt_big_org->h*factor) ) ) 
-				scaleSurface ( UnitsData.dirt_big_org, UnitsData.dirt_big, (int)(UnitsData.dirt_big_org->w*factor), (int)(UnitsData.dirt_big_org->h*factor) );
+			CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, factor);
 			SDL_BlitSurface ( UnitsData.dirt_big, &src, buffer, &tmp );
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.dirt_small->w != (int)(UnitsData.dirt_small_org->w*factor) || UnitsData.dirt_small->h != (int)(UnitsData.dirt_small_org->h*factor) ) ) 
-				scaleSurface ( UnitsData.dirt_small_org, UnitsData.dirt_small, (int)(UnitsData.dirt_small_org->w*factor), (int)(UnitsData.dirt_small_org->h*factor) );
+			CHECK_SCALING( UnitsData.dirt_small, UnitsData.dirt_small_org, factor);
 			SDL_BlitSurface ( UnitsData.dirt_small, &src, buffer, &tmp );
 		}
 
@@ -570,8 +566,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( data.is_big )
 		{
-			if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) 
-				scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
+			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
 			if ( StartUp && SettingsData.bAlphaEffects )
 			{
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
@@ -586,8 +581,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( UnitsData.ptr_small_beton->w != (int)(UnitsData.ptr_small_beton_org->w*factor) || UnitsData.ptr_small_beton->h != (int)(UnitsData.ptr_small_beton_org->h*factor) ) ) 
-				scaleSurface ( UnitsData.ptr_small_beton_org, UnitsData.ptr_small_beton, (int)(UnitsData.ptr_small_beton_org->w*factor), (int)(UnitsData.ptr_small_beton_org->h*factor) );
+			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
 			if ( !data.is_road && !data.is_connector )
 			{
 				if ( StartUp && SettingsData.bAlphaEffects )
@@ -618,9 +612,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 
-		if ( !SettingsData.bPreScale && ( typ->shw->w != (int)(typ->shw_org->w*factor) || typ->shw->h != (int)(typ->shw_org->h*factor) ) ) 
-			scaleSurface ( typ->shw_org, typ->shw, (int)(typ->shw_org->w*factor), (int)(typ->shw_org->h*factor) );
-
+		CHECK_SCALING( typ->shw, typ->shw_org, factor);
 		SDL_BlitSurface ( typ->shw, NULL, buffer, &tmp );
 
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
@@ -642,16 +634,14 @@ void cBuilding::Draw ( SDL_Rect *dest )
 				src.x = dir * Client->Hud.Zoom;
 			}
 
-			if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
-				scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
+			CHECK_SCALING( typ->img, typ->img_org, factor);
 			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
 
 			src.x = 0;
 		}
 		else
 		{
-			if ( !SettingsData.bPreScale && ( typ->img->w != src.w || typ->img->h != src.h ) ) 
-				scaleSurface ( typ->img_org, typ->img, src.w, src.h );
+			CHECK_SCALING( typ->img, typ->img_org, factor);
 			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 		}
 	}
@@ -659,9 +649,7 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
-		if ( !SettingsData.bPreScale && ( typ->img->w != (int)(typ->img_org->w*factor) || typ->img->h != (int)(typ->img_org->h*factor) ) ) 
-			scaleSurface ( typ->img_org, typ->img, (int)(typ->img_org->w*factor), (int)(typ->img_org->h*factor) );
-		
+		CHECK_SCALING( typ->img, typ->img_org, factor);
 		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 	}
 
@@ -697,8 +685,8 @@ void cBuilding::Draw ( SDL_Rect *dest )
 	{
 		tmp = *dest;
 		SDL_SetAlpha ( typ->eff, SDL_SRCALPHA, EffectAlpha );
-		if ( !SettingsData.bPreScale && ( typ->eff->w != (int)(typ->eff_org->w*factor) || typ->eff->h != (int)(typ->eff_org->h*factor) ) ) 
-			scaleSurface ( typ->eff_org, typ->eff, (int)(typ->eff_org->w*factor), (int)(typ->eff_org->h*factor) );
+
+		CHECK_SCALING( typ->eff, typ->eff_org, factor);
 		SDL_BlitSurface ( typ->eff, NULL, buffer, &tmp );
 
 		if ( Client->iTimer0 )
@@ -1189,8 +1177,8 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 	int zoom = Client->Hud.Zoom;
 	float factor = (float)(zoom/64.0);
 
-	if ( !SettingsData.bPreScale && ( UnitsData.ptr_connector->w != (int)(UnitsData.ptr_connector_org->w*factor) || UnitsData.ptr_connector->h != (int)(UnitsData.ptr_connector_org->h*factor) ) ) 
-		scaleSurface ( UnitsData.ptr_connector_org, UnitsData.ptr_connector, (int)(UnitsData.ptr_connector_org->w*factor), (int)(UnitsData.ptr_connector_org->h*factor) );
+	CHECK_SCALING( UnitsData.ptr_connector, UnitsData.ptr_connector_org, factor);
+	CHECK_SCALING( UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, factor);
 
 	src.y = 0;
 	src.x = 0;

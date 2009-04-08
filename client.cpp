@@ -2179,8 +2179,8 @@ void cClient::runFX()
 void cClient::drawFX( int iNum )
 {
 	SDL_Rect scr,dest;
-	int width, height;
 	sFX *fx;
+	float factor = (float) (Hud.Zoom/64.0);
 
 	fx = FXList[iNum];
 	if ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] && fx->typ != fxRocket ) return;
@@ -2189,9 +2189,7 @@ void cClient::drawFX( int iNum )
 	{
 		case fxMuzzleBig:
 			if ( !EffectsData.fx_muzzle_big ) break;
-			width = (EffectsData.fx_muzzle_big[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_muzzle_big[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_big[1]->w != width || EffectsData.fx_muzzle_big[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_big[0], EffectsData.fx_muzzle_big[1], width, height );
+			CHECK_SCALING( EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], factor );
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -2208,9 +2206,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxMuzzleSmall:
 			if ( !EffectsData.fx_muzzle_small ) break;
-			width = (EffectsData.fx_muzzle_small[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_muzzle_small[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_small[1]->w != width || EffectsData.fx_muzzle_small[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_small[0], EffectsData.fx_muzzle_small[1], width, height );
+			CHECK_SCALING( EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], factor );
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -2227,9 +2223,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxMuzzleMed:
 			if ( !EffectsData.fx_muzzle_med ) break;
-			width = (EffectsData.fx_muzzle_med[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_muzzle_med[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_med[1]->w != width || EffectsData.fx_muzzle_med[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_med[0], EffectsData.fx_muzzle_med[1], width, height );
+			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], factor );
 			if ( iFrame - fx->StartFrame > 2 )
 			{
 				delete fx;
@@ -2246,9 +2240,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxMuzzleMedLong:
 			if ( !EffectsData.fx_muzzle_med ) break;
-			width = (EffectsData.fx_muzzle_med[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_muzzle_med[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_muzzle_med[1]->w != width || EffectsData.fx_muzzle_med[1]->h != height ) ) scaleSurface ( EffectsData.fx_muzzle_med[0], EffectsData.fx_muzzle_med[1], width, height );
+			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], factor );
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
@@ -2265,9 +2257,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxHit:
 			if ( !EffectsData.fx_hit ) break;
-			width = (EffectsData.fx_hit[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_hit[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_hit[1]->w != width || EffectsData.fx_hit[1]->h != height ) ) scaleSurface ( EffectsData.fx_hit[0], EffectsData.fx_hit[1], width, height );
+			CHECK_SCALING( EffectsData.fx_hit[1], EffectsData.fx_hit[0], factor );
 			if ( iFrame - fx->StartFrame > 5 )
 			{
 				delete fx;
@@ -2284,9 +2274,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxExploSmall:
 			if ( !EffectsData.fx_explo_small ) break;
-			width = (EffectsData.fx_explo_small[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_explo_small[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_explo_small[1]->w != width || EffectsData.fx_explo_small[1]->h != height ) ) scaleSurface ( EffectsData.fx_explo_small[0], EffectsData.fx_explo_small[1], width, height );
+			CHECK_SCALING( EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], factor );
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -2303,9 +2291,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxExploBig:
 			if ( !EffectsData.fx_explo_big ) break;
-			width = (EffectsData.fx_explo_big[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_explo_big[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_explo_big[1]->w != width || EffectsData.fx_explo_big[1]->h != height ) ) scaleSurface ( EffectsData.fx_explo_big[0], EffectsData.fx_explo_big[1], width, height );
+			CHECK_SCALING( EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], factor );
 			if ( iFrame - fx->StartFrame > 28 )
 			{
 				delete fx;
@@ -2322,9 +2308,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxExploWater:
 			if ( !EffectsData.fx_explo_water ) break;
-			width = (EffectsData.fx_explo_water[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_explo_water[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_explo_water[1]->w != width || EffectsData.fx_explo_water[1]->h != height ) ) scaleSurface ( EffectsData.fx_explo_water[0], EffectsData.fx_explo_water[1], width, height );
+			CHECK_SCALING( EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], factor );
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -2341,9 +2325,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxExploAir:
 			if ( !EffectsData.fx_explo_air ) break;
-			width = (EffectsData.fx_explo_air[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_explo_air[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_explo_air[1]->w != width || EffectsData.fx_explo_air[1]->h != height ) ) scaleSurface ( EffectsData.fx_explo_air[0], EffectsData.fx_explo_air[1], width, height );
+			CHECK_SCALING( EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], factor );
 			if ( iFrame - fx->StartFrame > 14 )
 			{
 				delete fx;
@@ -2360,9 +2342,7 @@ void cClient::drawFX( int iNum )
 			break;
 		case fxSmoke:
 			if ( !EffectsData.fx_smoke ) break;
-			width = (EffectsData.fx_smoke[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_smoke[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_smoke[1]->w != width || EffectsData.fx_smoke[1]->h != height ) ) scaleSurface ( EffectsData.fx_smoke[0], EffectsData.fx_smoke[1], width, height );
+			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], factor );
 			if ( iFrame-fx->StartFrame>100/4 )
 			{
 				delete fx;
@@ -2380,9 +2360,7 @@ void cClient::drawFX( int iNum )
 		case fxRocket:
 		{
 			if ( !EffectsData.fx_rocket ) break;
-			width = (EffectsData.fx_rocket[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_rocket[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_rocket[1]->w != width || EffectsData.fx_rocket[1]->h != height ) ) scaleSurface ( EffectsData.fx_rocket[0], EffectsData.fx_rocket[1], width, height );
+			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], factor );
 			sFXRocketInfos *ri;
 			ri= fx->rocketInfo;
 			
@@ -2400,9 +2378,7 @@ void cClient::drawFX( int iNum )
 		case fxDarkSmoke:
 		{
 			if ( !EffectsData.fx_dark_smoke ) break;
-			width = (EffectsData.fx_dark_smoke[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_dark_smoke[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_dark_smoke[1]->w != width || EffectsData.fx_dark_smoke[1]->h != height ) ) scaleSurface ( EffectsData.fx_dark_smoke[0], EffectsData.fx_dark_smoke[1], width, height );
+			CHECK_SCALING( EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], factor );
 			sFXDarkSmoke *dsi;
 			dsi = fx->smokeInfo;
 			if ( iFrame-fx->StartFrame>50||dsi->alpha<=1 )
@@ -2433,9 +2409,7 @@ void cClient::drawFX( int iNum )
 		case fxAbsorb:
 		{
 			if ( !EffectsData.fx_absorb ) break;
-			width = (EffectsData.fx_absorb[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_absorb[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_absorb[1]->w != width || EffectsData.fx_absorb[1]->h != height ) ) scaleSurface ( EffectsData.fx_absorb[0], EffectsData.fx_absorb[1], width, height );
+			CHECK_SCALING( EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], factor );
 			if ( iFrame-fx->StartFrame>10 )
 			{
 				delete fx;
@@ -2457,8 +2431,8 @@ void cClient::drawFX( int iNum )
 void cClient::drawFXBottom( int iNum )
 {
 	SDL_Rect scr,dest;
-	int width, height;
 	sFX *fx;
+	float factor = (float) (Hud.Zoom/64.0);
 
 	fx = FXListBottom[iNum];
 	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxTorpedo ) return;
@@ -2466,9 +2440,7 @@ void cClient::drawFXBottom( int iNum )
 	{
 		case fxTorpedo:
 		{
-			width = (EffectsData.fx_rocket[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_rocket[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_rocket[1]->w != width || EffectsData.fx_rocket[1]->h != height ) ) scaleSurface ( EffectsData.fx_rocket[0], EffectsData.fx_rocket[1], width, height );
+			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], factor );
 			sFXRocketInfos *ri;
 			ri = fx->rocketInfo;
 			
@@ -2486,9 +2458,7 @@ void cClient::drawFXBottom( int iNum )
 		}
 		case fxTracks:
 		{
-			width = (EffectsData.fx_tracks[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_tracks[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_tracks[1]->w != width || EffectsData.fx_tracks[1]->h != height ) ) scaleSurface ( EffectsData.fx_tracks[0], EffectsData.fx_tracks[1], width, height );
+			CHECK_SCALING( EffectsData.fx_tracks[1], EffectsData.fx_tracks[0], factor );
 			sFXTracks *tri;
 			tri = fx->trackInfo;
 			if ( tri->alpha<=1 )
@@ -2512,9 +2482,7 @@ void cClient::drawFXBottom( int iNum )
 			break;
 		}
 		case fxBubbles:
-			width = (EffectsData.fx_smoke[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_smoke[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_smoke[1]->w != width || EffectsData.fx_smoke[1]->h != height ) ) scaleSurface ( EffectsData.fx_smoke[0], EffectsData.fx_smoke[1], width, height );
+			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], factor );
 			if ( iFrame-fx->StartFrame>100/4 )
 			{
 				delete fx;
@@ -2530,9 +2498,7 @@ void cClient::drawFXBottom( int iNum )
 			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
 			break;
 		case fxCorpse:
-			width = (EffectsData.fx_corpse[0]->w*Hud.Zoom)/64;
-			height = (EffectsData.fx_corpse[0]->h*Hud.Zoom)/64;
-			if ( !SettingsData.bPreScale && ( EffectsData.fx_corpse[1]->w != width || EffectsData.fx_corpse[1]->h != height ) ) scaleSurface ( EffectsData.fx_corpse[0], EffectsData.fx_corpse[1], width, height );
+			CHECK_SCALING( EffectsData.fx_corpse[1], EffectsData.fx_corpse[0], factor );
 			SDL_SetAlpha ( EffectsData.fx_corpse[1],SDL_SRCALPHA,fx->param-- );
 			scr.y=scr.x=0;
 			scr.w=EffectsData.fx_corpse[1]->h;
@@ -2565,7 +2531,9 @@ void cClient::drawExitPoint( int iX, int iY )
 	scr.x = iZoom*iNr;
 	dest.y = iY;
 	dest.x = iX;
-	if ( !SettingsData.bPreScale && ( GraphicsData.gfx_exitpoints->w != GraphicsData.gfx_exitpoints_org->w/64*iZoom || GraphicsData.gfx_exitpoints->h != iZoom ) ) scaleSurface ( GraphicsData.gfx_exitpoints_org, GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org->w/64*iZoom, iZoom );
+	float factor = (float)(Hud.Zoom/64.0);
+
+	CHECK_SCALING( GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, factor );
 	SDL_BlitSurface ( GraphicsData.gfx_exitpoints, &scr, buffer, &dest );
 }
 
@@ -2645,7 +2613,7 @@ void cClient::drawUnitCircles ()
 				SDL_Rect dest;
 				dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
 				dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandY;
-				if ( !SettingsData.bPreScale && ( GraphicsData.gfx_band_big->w != Hud.Zoom*2 || GraphicsData.gfx_band_big->h != Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_band_big_org, GraphicsData.gfx_band_big, Hud.Zoom*2, Hud.Zoom*2 );
+				CHECK_SCALING( GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, (float) Hud.Zoom/64.0 );
 				SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
 			}
 			else
@@ -2658,7 +2626,7 @@ void cClient::drawUnitCircles ()
 					SDL_Rect dest;
 					dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * x;
 					dest.y =  18 - (int)(Hud.OffY / (64.0 / Hud.Zoom)) + Hud.Zoom * y;
-					if ( !SettingsData.bPreScale && ( GraphicsData.gfx_band_small->w != Hud.Zoom || GraphicsData.gfx_band_small->h != Hud.Zoom ) ) scaleSurface ( GraphicsData.gfx_band_small_org, GraphicsData.gfx_band_small, Hud.Zoom, Hud.Zoom );
+					CHECK_SCALING( GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, (float) Hud.Zoom/64.0 );
 					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
 					v.BandX     = x;
 					v.BandY     = y;
