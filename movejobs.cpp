@@ -1044,56 +1044,56 @@ void cClientMoveJob::moveVehicle()
 	        ( Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X+Waypoints->next->Y*Map->size]].water ) &&
 	        ( Vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
 	{
-		if ( !Vehicle->OffX && !Vehicle->OffY )
+		if ( abs(Vehicle->OffX) == 64 || abs(Vehicle->OffY) == 64 )
 		{
 			switch ( Vehicle->dir )
 			{
 				case 0:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64-10,0 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64-10+Vehicle->OffY,0 );
 					break;
 				case 4:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64+10,0 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+10+Vehicle->OffY,0 );
 					break;
 				case 2:
-					Client->addFX ( fxTracks,Vehicle->PosX*64+10,Vehicle->PosY*64,2 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+10+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,2 );
 					break;
 				case 6:
-					Client->addFX ( fxTracks,Vehicle->PosX*64-10,Vehicle->PosY*64,2 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64-10+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,2 );
 					break;
 				case 1:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,1 );
 					break;
 				case 5:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,1 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,1 );
 					break;
 				case 3:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,3 );
 					break;
 				case 7:
-					Client->addFX ( fxTracks,Vehicle->PosX*64,Vehicle->PosY*64,3 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,3 );
 					break;
 			}
 		}
-		else if ( abs ( Vehicle->OffX ) == iSpeed*2 || abs ( Vehicle->OffY ) == iSpeed*2 )
+		else if ( abs ( Vehicle->OffX ) == 64-(iSpeed*2) || abs ( Vehicle->OffY ) == 64-(iSpeed*2) )
 		{
 			switch ( Vehicle->dir )
 			{
 				case 1:
-					Client->addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64-26,1 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+26+Vehicle->OffX,Vehicle->PosY*64-26+Vehicle->OffY,1 );
 					break;
 				case 5:
-					Client->addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64+26,1 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64-26+Vehicle->OffX,Vehicle->PosY*64+26+Vehicle->OffY,1 );
 					break;
 				case 3:
-					Client->addFX ( fxTracks,Vehicle->PosX*64+26,Vehicle->PosY*64+26,3 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64+26+Vehicle->OffX,Vehicle->PosY*64+26+Vehicle->OffY,3 );
 					break;
 				case 7:
-					Client->addFX ( fxTracks,Vehicle->PosX*64-26,Vehicle->PosY*64-26,3 );
+					Client->addFX ( fxTracks,Vehicle->PosX*64-26+Vehicle->OffX,Vehicle->PosY*64-26+Vehicle->OffY,3 );
 					break;
 			}
 		}
 	}
-	
+
 	setOffset(Vehicle, iNextDir, iSpeed);
 
 	// check whether the point has been reached:

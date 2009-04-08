@@ -2091,6 +2091,7 @@ void cClient::displayFXBottom()
 {
 	if (!FXListBottom.Size()) return;
 
+	SDL_Rect oldClipRect = buffer->clip_rect;
 	SDL_Rect clipRect = { 180, 18, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32 };
 	SDL_SetClipRect( buffer, &clipRect );
 
@@ -2098,7 +2099,7 @@ void cClient::displayFXBottom()
 	{
 		drawFXBottom ( i );
 	}
-	SDL_SetClipRect( buffer, NULL );
+	SDL_SetClipRect( buffer, &oldClipRect );
 }
 
 void cClient::runFX()
@@ -2435,7 +2436,7 @@ void cClient::drawFXBottom( int iNum )
 	float factor = (float) (Hud.Zoom/64.0);
 
 	fx = FXListBottom[iNum];
-	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) &&fx->typ!=fxTorpedo ) return;
+	if ( ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) && fx->typ != fxTorpedo && fx->typ != fxTracks ) return;
 	switch ( fx->typ )
 	{
 		case fxTorpedo:
@@ -2467,18 +2468,20 @@ void cClient::drawFXBottom( int iNum )
 				FXListBottom.Delete ( iNum );
 				return;
 			}
+			
+			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
+			if ( iTimer0 )
+			{
+				tri->alpha--;
+			}
+
+			if ( !ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] ) return;
 			scr.y=0;
 			scr.w=scr.h=EffectsData.fx_tracks[1]->h;
 			scr.x=tri->dir*scr.w;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY ) ) / ( 64.0/Hud.Zoom ) ) );
-			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
-			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );
-
-			if ( iTimer0 )
-			{
-				tri->alpha--;
-			}
+			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );			
 			break;
 		}
 		case fxBubbles:
