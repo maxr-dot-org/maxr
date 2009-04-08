@@ -1173,7 +1173,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 //--------------------------------------------------------------------------
 void cBuilding::DrawConnectors ( SDL_Rect dest )
 {
-	SDL_Rect src;
+	SDL_Rect src, temp;
 	int zoom = Client->Hud.Zoom;
 	float factor = (float)(zoom/64.0);
 
@@ -1205,12 +1205,14 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		src.x *= src.h;
 
 		//blit shadow
+		temp = dest;
 		if ( data.is_connector )
-			SDL_BlitSurface ( UnitsData.ptr_connector_shw, &src, buffer, &dest );
+			SDL_BlitSurface ( UnitsData.ptr_connector_shw, &src, buffer, &temp );
 
 		//blit the image
+		temp = dest;
 		if ( src.x != 0 || data.is_connector )
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &temp );
 
 	}
 	else
@@ -1223,8 +1225,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		else if ( !BaseN &&  BaseW ) src.x = 4;
 		src.x *= src.h;
 
+		temp = dest;
 		if ( src.x != 0 )
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );  //TODO: dests anpassen
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &temp );
 
 		//upper right field
 		src.x = 0;
@@ -1234,8 +1237,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		else if ( !BaseBN &&  BaseE ) src.x = 2;
 		src.x *= src.h;
 
+		temp = dest;
 		if ( src.x != 0 )
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &temp );
 
 		//lower right field
 		src.x = 0;
@@ -1245,8 +1249,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		else if ( !BaseBE &&  BaseBS ) src.x = 3;
 		src.x *= src.h;
 
+		temp = dest;
 		if ( src.x != 0 )
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &temp );
 
 		//lower left field
 		src.x = 0;
@@ -1256,8 +1261,9 @@ void cBuilding::DrawConnectors ( SDL_Rect dest )
 		else if ( !BaseS &&  BaseBW ) src.x =  4;
 		src.x *= src.h;
 
+		temp = dest;
 		if ( src.x != 0 )
-			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &dest );
+			SDL_BlitSurface ( UnitsData.ptr_connector, &src, buffer, &temp );
 	}
 }
 
