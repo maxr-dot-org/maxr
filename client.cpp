@@ -1491,7 +1491,7 @@ void cClient::drawMap( bool bPure )
 			while ( !bi.end ) bi++;
 			bi--;
 
-			while ( !bi.rend && ( bi->data.is_base || !bi->owner ) )
+			while ( !bi.rend && !bi->data.is_bridge && ( bi->data.is_base || !bi->owner ) )
 			{
 				if ( ActivePlayer->ScanMap[iPos]||
 					( bi->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
@@ -1588,7 +1588,6 @@ void cClient::drawMap( bool bPure )
 	}
 
 	//draw ships and bridges
-	//the bridges are drawn by the vehicle->Draw() funktion
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1602,6 +1601,12 @@ void cClient::drawMap( bool bPure )
 				if ( vehicle && vehicle->data.can_drive == DRIVE_SEA )
 				{
 					vehicle->Draw ( &dest );
+				}
+
+				cBuilding* building = Map->fields[iPos].getBaseBuilding();
+				if ( building && building->data.is_bridge )
+				{
+					building->Draw ( &dest );
 				}
 
 			}
@@ -1643,8 +1648,8 @@ void cClient::drawMap( bool bPure )
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
-			{
-				cBuilding* building = Map->fields[iPos].getBuildings();
+			{				
+				cBuilding* building = Map->fields[iPos].getTopBuilding();
 				if ( building && building->data.is_connector )
 				{
 					building->Draw ( &dest );

@@ -630,69 +630,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 			ditherY = random(2) - 1;
 		}
 	}
-
-	// Draw the bridge, if necessary
-	if ( data.can_drive == DRIVE_SEA )
-	{
-#define TEST_BRIDGE(x,y) PosX+x>=0&&PosX+x<Client->Map->size&&PosY+y>=0&&PosY+y<Client->Map->size&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()&&Client->Map->fields[PosX+(x)+(PosY+(y))*Client->Map->size].getBaseBuilding()->data.is_bridge
-
-		if ( TEST_BRIDGE ( 0, 0 ) )
-			Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()->Draw ( dest );
-
-		if ( OffX > 0 && OffY == 0 && TEST_BRIDGE ( 1, 0 ) )
-		{
-			tmp = *dest;
-			tmp.x += Client->Hud.Zoom;
-			Client->Map->fields[PosX+1+PosY*Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX < 0 && OffY == 0 && TEST_BRIDGE ( -1, 0 ) )
-		{
-			tmp = *dest;
-			tmp.x -= Client->Hud.Zoom;
-			Client->Map->fields[PosX-1+PosY*Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX == 0 && OffY > 0 && TEST_BRIDGE ( 0, 1 ) )
-		{
-			tmp = *dest;
-			tmp.y += Client->Hud.Zoom;
-			Client->Map->fields[PosX+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX == 0 && OffY < 0 && TEST_BRIDGE ( 0, -1 ) )
-		{
-			tmp = *dest;
-			tmp.y -= Client->Hud.Zoom;
-			Client->Map->fields[PosX+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX > 0 && OffY > 0 && TEST_BRIDGE ( 1, 1 ) )
-		{
-			tmp = *dest;
-			tmp.x += Client->Hud.Zoom;
-			tmp.y += Client->Hud.Zoom;
-			Client->Map->fields[PosX+1+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw( &tmp );
-		}
-		else if ( OffX < 0 && OffY < 0 && TEST_BRIDGE ( -1, -1 ) )
-		{
-			tmp = *dest;
-			tmp.x -= Client->Hud.Zoom;
-			tmp.y -= Client->Hud.Zoom;
-			Client->Map->fields[PosX-1+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX > 0 && OffY < 0 && TEST_BRIDGE ( 1, -1 ) )
-		{
-			tmp = *dest;
-			tmp.x += Client->Hud.Zoom;
-			tmp.y -= Client->Hud.Zoom;
-			Client->Map->fields[PosX+1+ ( PosY-1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-		else if ( OffX < 0 && OffY > 0 && TEST_BRIDGE ( -1, 1 ) )
-		{
-			tmp = *dest;
-			tmp.x -= Client->Hud.Zoom;
-			tmp.y += Client->Hud.Zoom;
-			Client->Map->fields[PosX-1+ ( PosY+1 ) *Client->Map->size].getBaseBuilding()->Draw ( &tmp );
-		}
-	}
-
+	
 	//draw health bar
 	if ( Client->Hud.Treffer )
 		drawHealthBar();
