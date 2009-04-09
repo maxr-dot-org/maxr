@@ -1772,7 +1772,7 @@ int cVehicle::playStream ()
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	else if ( IsClearing )
 		return PlayFXLoop ( SoundData.SNDClearing );
-	else if ( water )
+	else if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA )
 		return PlayFXLoop ( typ->WaitWater );
 	else
 		return PlayFXLoop ( typ->Wait );
@@ -1793,13 +1793,13 @@ void cVehicle::StartMoveSound ()
 
 	if ( !MoveJobActive )
 	{
-		if ( water && data.can_drive != DRIVE_AIR )
+		if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA  )
 			PlayFX ( typ->StartWater );
 		else
 			PlayFX ( typ->Start );
 	}
 
-	if ( water && data.can_drive != DRIVE_AIR )
+	if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA  )
 		Client->iObjectStream = PlayFXLoop ( typ->DriveWater );
 	else
 		Client->iObjectStream = PlayFXLoop ( typ->Drive );
