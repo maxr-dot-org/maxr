@@ -27,6 +27,7 @@
 #include "netmessage.h"
 #include "attackJobs.h"
 #include "input.h"
+#include "drawingcache.h"
 
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
@@ -168,6 +169,8 @@ private:
 	bool bDebugPlayers;
 	/** show FPS information */
 	bool bShowFPS;
+	/** show drawing cache debug information */
+	bool bDebugCache;
 	/** offset for the debug informations on the top of the gamewindow */
 	int iDebugOff;
 	/** how many seconds will be left for this turn */
@@ -407,6 +410,9 @@ public:
 	bool bFlagDraw;
 	/** flag if the minimap has to be drawn  */
 	bool bFlagDrawMMap;
+
+	/** drawing cache to speed up the graphic engine */
+	cBuildingCache bCache;
 
 	/**
 	* handles the timers iTimer0, iTimer1 and iTimer2

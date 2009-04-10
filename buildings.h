@@ -220,7 +220,7 @@ public:
 	void ShowBigDetails();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
-	void DrawConnectors(SDL_Rect dest);
+	void DrawConnectors( SDL_Surface* surface, SDL_Rect dest);
 	void ServerStartWork();
 	void ClientStartWork();
 	void ServerStopWork(bool override);

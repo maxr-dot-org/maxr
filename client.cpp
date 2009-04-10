@@ -150,6 +150,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceClient = false;
 	bDebugPlayers = false;
 	bShowFPS = false;
+	bDebugCache = true;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	isInMenu = false;
@@ -1471,7 +1472,9 @@ void cClient::drawMap( bool bPure )
 	// display the FX-Bottom-Effects:
 	displayFXBottom();
 
-	//draw rubble and all base buildings
+	bCache.resetStatistics();
+
+	//draw rubble and all base buildings (without bridges)
 	iStartX= ( Hud.OffX-1 ) /64;if ( iStartX<0 ) iStartX=0;
 	iStartY= ( Hud.OffY-1 ) /64;if ( iStartY<0 ) iStartY=0;
 	iStartX-=1;if ( iStartX<0 ) iStartX=0;
@@ -2815,6 +2818,17 @@ void cClient::displayDebugOutput()
 	{
 		trace();
 	}
+	if ( bDebugCache )
+	{
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "Max cache size: " + iToStr(Client->bCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache size: " + iToStr(Client->bCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache hits: " + iToStr(Client->bCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache misses: " + iToStr(Client->bCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+	}
 }
 
 void cClient::displayChatInput()
@@ -3125,6 +3139,26 @@ void cClient::doCommand ( string sCmd )
 	if ( sCmd.compare( "/checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return; }
 	if ( sCmd.compare( "/players on" ) == 0 ) { bDebugPlayers = true; return; }
 	if ( sCmd.compare( "/players off" ) == 0 ) { bDebugPlayers = false; return; }
+	if ( sCmd.substr( 0, 12 ).compare( "/cache size " ) == 0 )
+	{
+		int size = atoi ( sCmd.substr ( 12, sCmd.length() ).c_str() );
+		//since atoi is too stupid to report an error, do an extra check, when the number is 0
+		if ( size == 0 && sCmd[12] != '0' ) return;
+
+		bCache.setMaxCachsize( size );
+	}
+	if ( sCmd.compare("/cache flush") == 0 )
+	{
+		bCache.flush();
+	}
+	if ( sCmd.compare("/cache debug on") == 0 )
+	{
+		this->bDebugCache = true;
+	}
+	if ( sCmd.compare("/cache debug off") == 0 )
+	{
+		this->bDebugCache = false;
+	}
 
 	if ( sCmd.substr( 0, 6 ).compare( "/kick " ) == 0 )
 	{
