@@ -1722,6 +1722,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						{
 							sendUnitData ( destVehicle, destVehicle->SeenByPlayerList[i]->Nr );
 						}
+						destVehicle->owner->DoScan();
+						checkPlayerUnits();
 					}
 					else if ( destBuilding )
 					{
@@ -1735,6 +1737,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						{
 							sendUnitData ( destBuilding, destBuilding->SeenByPlayerList[i]->Nr );
 						}
+						destVehicle->owner->DoScan();
+						checkPlayerUnits();
 					}
 				}
 				success = true;
@@ -3340,6 +3344,9 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	sendAddUnit ( vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false );
 	sendUnitData ( vehicle, vehicle->owner->Nr );
 	sendSpecificUnitData ( vehicle );
+
+	oldOwner->DoScan();
+	newOwner->DoScan();
 	checkPlayerUnits();
 
 	// let the unit work for his new owner

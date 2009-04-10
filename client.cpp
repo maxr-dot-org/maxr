@@ -3853,6 +3853,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				Vehicle->name = message->popString();
 				Vehicle->bIsBeeingAttacked = message->popBool();
+				bool bWasDisabled = Vehicle->Disabled > 0;
 				Vehicle->Disabled = message->popInt16();
 				Vehicle->CommandoRank = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
@@ -3862,6 +3863,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
 
+				if ( Vehicle->Disabled > 0 != bWasDisabled ) Vehicle->owner->DoScan();
 				Data = &Vehicle->data;
 			}
 			else
@@ -3875,11 +3877,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				}
 
 				Building->name = message->popString();
+				bool bWasDisabled = Building->Disabled > 0;
 				Building->Disabled = message->popInt16();
 				Building->researchArea = message->popInt16(); 
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
 
+				if ( Building->Disabled > 0 != bWasDisabled ) Building->owner->DoScan();
 				Data = &Building->data;
 			}
 
