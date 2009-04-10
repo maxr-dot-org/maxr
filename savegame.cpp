@@ -501,6 +501,8 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	TiXmlElement *element;
 	unitNode->FirstChildElement( "Direction" )->Attribute ( "num", &vehicle->dir );
+	double tmpdouble;
+	if ( element = unitNode->FirstChildElement( "CommandoRank" ) ) { element->Attribute ( "num", &tmpdouble ); vehicle->CommandoRank = (float)tmpdouble; }
 	if ( unitNode->FirstChildElement( "IsBig" ) ) Server->Map->moveVehicleBig( vehicle, x, y );
 	if ( unitNode->FirstChildElement( "Disabled" ) ) vehicle->Disabled = true;
 	if ( unitNode->FirstChildElement( "LayMines" ) ) vehicle->LayMines = true;
@@ -1225,6 +1227,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 
 	// add additional status information
 	addAttributeElement ( unitNode, "Direction", "num", iToStr ( Vehicle->dir ).c_str() );
+	if ( Vehicle->data.is_commando ) addAttributeElement ( unitNode, "CommandoRank", "num", dToStr ( Vehicle->CommandoRank ).c_str() );
 	if ( Vehicle->data.is_big ) addMainElement ( unitNode, "IsBig" );
 	if ( Vehicle->Disabled ) addMainElement ( unitNode, "Disabled" );
 	if ( Vehicle->LayMines ) addMainElement ( unitNode, "LayMines" );
