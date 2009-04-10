@@ -124,6 +124,7 @@ void cEventHandling::HandleEvents()
 				break;
 				}
 			case TCP_CLOSEEVENT:
+				if ( !network ) break;
 				// Socket should be closed
 				network->close ( ((Sint16 *)event.user.data1)[0] );
 				if ( MultiPlayerMenu && !Client )
