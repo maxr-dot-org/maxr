@@ -895,7 +895,7 @@ int cBuilding::GetMenuPointAnz ()
 	if ( typ->data.can_research && IsWorking )
 		nr++;
 
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase->Metal >= 2 )
+	if ( data.version != owner->BuildingData[typ->nr].version && Subbase && SubBase->Metal >= 2 )
 		nr += 2;
 
 	if ( data.gold_need )
