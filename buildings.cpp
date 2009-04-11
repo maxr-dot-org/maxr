@@ -6941,7 +6941,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Updates:
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase->Metal >= 2 )
+	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
 	{
 		// Update all buildings of this type in this subbase
 		bSelection = (SelMenu == nr);
