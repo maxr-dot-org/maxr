@@ -647,3 +647,152 @@ bool sID::operator ==(sID &ID) const
 	if ( iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart ) return true;
 	return false;
 }
+
+void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+{
+	SDL_Rect temp1, temp2;
+
+	if ( !dst || !src ) return;
+
+	//check surface formats
+	if ( !dst->format->Amask ) return;
+	if ( src->format->Amask || !( src->flags & SDL_SRCALPHA )) return;
+
+	if ( srcrect == NULL )
+	{
+		srcrect = &temp1;
+		srcrect->x = 0;
+		srcrect->y = 0;
+		srcrect->h = src->h;
+		srcrect->w = src->w;
+	}
+
+	if ( dstrect == NULL )
+	{
+		dstrect = &temp2;
+		dstrect->x = 0;
+		dstrect->y = 0;
+	}
+
+	int width  = srcrect->w;
+	int height = srcrect->h;
+
+	//clip source rect to the source surface
+	if ( srcrect->x < 0 )
+	{
+		width += srcrect->x;
+		srcrect->x = 0;
+	}
+	if ( srcrect->y < 0 )
+	{
+		height += srcrect->y;
+		srcrect->y = 0;
+	}
+	if ( srcrect->x + width > src->w )
+	{
+		width = src->w - srcrect->x;
+	}
+	if ( srcrect->y + height > src->h )
+	{
+		height = src->h - srcrect->y;
+	}
+
+	//clip the dest rect to the destination clip rect
+	if ( dstrect->x < dst->clip_rect.x )
+	{
+		width -= dst->clip_rect.x - dstrect->x;
+		srcrect->x += dst->clip_rect.x - dstrect->x;
+		dstrect->x = dst->clip_rect.x;
+	}
+	if ( dstrect->y < dst->clip_rect.y )
+	{
+		height -= dst->clip_rect.y - dstrect->y;
+		srcrect->y += dst->clip_rect.y - dstrect->y;
+		dstrect->y = dst->clip_rect.y;
+	}
+	if ( dstrect->x + width > dst->clip_rect.x + dst->clip_rect.w )
+	{
+		width -= dstrect->x + width - dst->clip_rect.x + dst->clip_rect.w;
+	}
+	if ( dstrect->y + height > dst->clip_rect.y + dst->clip_rect.h )
+	{
+		height -= dstrect->y + height - dst->clip_rect.y + dst->clip_rect.h;
+	}
+
+
+	if ( width <= 0 || height <= 0 ) 
+	{
+		dstrect->w = 0;
+		dstrect->h = 0;
+		return;
+	}
+
+	if ( SDL_MUSTLOCK(src) ) SDL_LockSurface( src );
+	if ( SDL_MUSTLOCK(dst) ) SDL_LockSurface( dst );
+	
+	//setup needed variables
+	Uint8 srcAlpha = src->format->alpha;
+	int srmask = src->format->Rmask;
+	int sgmask = src->format->Gmask;
+	int sbmask = src->format->Bmask;
+	int damask = dst->format->Amask;
+	int drmask = dst->format->Rmask;
+	int dgmask = dst->format->Gmask;
+	int dbmask = dst->format->Bmask;
+	int rshift = src->format->Rshift - dst->format->Rshift;
+	int gshift = src->format->Gshift - dst->format->Gshift;
+	int bshift = src->format->Bshift - dst->format->Bshift;
+	int ashift = dst->format->Ashift;
+	Uint32 colorKey = src->format->colorkey;
+	bool useColorKey = (src->flags & SDL_SRCCOLORKEY) != 0;
+
+	
+	Uint32* dstPixel = ((Uint32*)dst->pixels) + dstrect->x + dstrect->y * dst->w;
+	Uint32* srcPixel = ((Uint32*)src->pixels) + srcrect->x + srcrect->y * src->w;
+
+	for ( int y = 0; y < height; y++ )
+	{
+		for ( int x = 0; x < width; x++ )
+		{
+			Uint32 dcolor = *dstPixel;
+			Uint32 scolor = *srcPixel;
+
+			if ( useColorKey && scolor == colorKey )
+			{
+				dstPixel++;
+				srcPixel++;
+				continue;
+			}
+
+			Uint32 r = (scolor & srmask) >> rshift;
+			Uint32 g = (scolor & sgmask) >> gshift;
+			Uint32 b = (scolor & sbmask) >> bshift;
+			Uint8  dalpha = (dcolor & damask) >> ashift;
+
+			r = ( ((( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha)>>8) + ((r * srcAlpha)>>8) ) & drmask; //extra shift, to prevent Uint32 overflow in this line
+			g = ( (((dcolor & dgmask)*(255 - srcAlpha) * dalpha)>>16) + ((g * srcAlpha)>>8) ) & dgmask;
+			b = ( (((dcolor & dbmask)*(255 - srcAlpha) * dalpha)>>16) + ((b * srcAlpha)>>8) ) & dbmask;
+
+			Uint8 a = srcAlpha + dalpha + srcAlpha * dalpha;
+
+			*dstPixel = r | g | b | a << ashift;
+
+			dstPixel++;
+			srcPixel++;
+		}
+
+		dstPixel += dst->pitch/4 - width;
+		srcPixel += src->pitch/4 - width;
+	}
+
+	if ( SDL_MUSTLOCK(src) ) SDL_UnlockSurface( src );
+	if ( SDL_MUSTLOCK(dst) ) SDL_UnlockSurface( dst );
+}
+
+void blittShadow (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+{
+	if ( dst->format->Amask && (src->flags & SDL_SRCALPHA) )
+		blittAlphaSurface( src, srcrect, dst, dstrect );
+	else
+		SDL_BlitSurface( src, srcrect, dst, dstrect );
+}

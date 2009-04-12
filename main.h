@@ -832,4 +832,12 @@ void showGameWindow();
 
 int runEventChecker( void *);
 
+/**
+* Works like SDL_BlittSurface. But it respects the destination alpha value of the surface.
+* This function is only designed to blitt from a surface with per surface alpha value to a surface with alpha channel.
+* A source color key is also supported.
+*/
+void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+
+void blittShadow (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
 #endif
