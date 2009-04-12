@@ -626,7 +626,8 @@ void cBuilding::Draw ( SDL_Rect *screenPos )
 				SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 
 			CHECK_SCALING( typ->shw, typ->shw_org, factor);
-			SDL_BlitSurface ( typ->shw, NULL, drawingSurface, &tmp );
+			blittShadow ( typ->shw, NULL, drawingSurface, &tmp );
+			//SDL_BlitSurface ( typ->shw, NULL, drawingSurface, &tmp );
 		}
 
 		// blit the players color
@@ -1227,15 +1228,15 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseN && !BaseE && !BaseS && !BaseW ) src.x =  0;
 		src.x *= src.h;
 
-		//blit shadow
-		temp = dest;
-		if ( data.is_connector )
-			SDL_BlitSurface ( UnitsData.ptr_connector_shw, &src, surface, &temp );
-
-		//blit the image
-		temp = dest;
 		if ( src.x != 0 || data.is_connector )
+		{
+			//blit shadow
+			temp = dest;
+			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			//blit the image
+			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
+		}
 
 	}
 	else
@@ -1248,9 +1249,13 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseN &&  BaseW ) src.x = 4;
 		src.x *= src.h;
 
-		temp = dest;
 		if ( src.x != 0 )
+		{
+			temp = dest;
+			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
+		}
 
 		//upper right field
 		src.x = 0;
@@ -1260,9 +1265,13 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseBN &&  BaseE ) src.x = 2;
 		src.x *= src.h;
 
-		temp = dest;
 		if ( src.x != 0 )
+		{
+			temp = dest;
+			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
+		}
 
 		//lower right field
 		src.x = 0;
@@ -1272,9 +1281,13 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseBE &&  BaseBS ) src.x = 3;
 		src.x *= src.h;
 
-		temp = dest;
 		if ( src.x != 0 )
+		{
+			temp = dest;
+			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
+		}
 
 		//lower left field
 		src.x = 0;
@@ -1284,9 +1297,13 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseS &&  BaseBW ) src.x =  4;
 		src.x *= src.h;
 
-		temp = dest;
 		if ( src.x != 0 )
+		{
+			temp = dest;
+			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
+		}
 	}
 }
 
