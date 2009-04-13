@@ -2828,6 +2828,8 @@ void cClient::displayDebugOutput()
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache misses: " + iToStr(Client->bCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "not cached: " + iToStr(Client->bCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
+		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
 }
 

@@ -72,6 +72,7 @@ public:
 	int getCacheSize();
 	int getCacheHits();
 	int getCacheMisses();
+	int getNotCached();
 
 private:
 	unsigned int maxCacheSize;
@@ -81,6 +82,7 @@ private:
 	//statistics
 	int cacheHits;
 	int cacheMisses;
+	int notCached;
 
 };
 
