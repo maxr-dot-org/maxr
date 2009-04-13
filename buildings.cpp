@@ -605,6 +605,7 @@ void cBuilding::Draw ( SDL_Rect *screenPos )
 						SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
 
 					SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, drawingSurface, &tmp );
+					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
 				}
 			}
 		}
