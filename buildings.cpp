@@ -1232,7 +1232,7 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		{
 			//blit shadow
 			temp = dest;
-			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( SettingsData.bShadows ) blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			//blit the image
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
@@ -1252,7 +1252,7 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( SettingsData.bShadows ) blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1268,7 +1268,7 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( SettingsData.bShadows ) blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1284,7 +1284,7 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( SettingsData.bShadows ) blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1300,7 +1300,7 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( SettingsData.bShadows ) blittShadow( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}

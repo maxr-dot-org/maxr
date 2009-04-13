@@ -111,7 +111,7 @@ SDL_Surface* cBuildingCache::createNewEntry(cBuilding* building)
 		float factor = (float)(Client->Hud.Zoom/64.0);
 		int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
 		int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-		if ( building->data.has_frames ) width = height;
+		if ( building->data.has_frames ) width = building->typ->shw_org->w*factor;
 		entry->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
 		
 		SDL_FillRect( entry->surface, NULL, SDL_MapRGBA( entry->surface->format, 255, 0, 255, 0));
@@ -149,7 +149,7 @@ SDL_Surface* cBuildingCache::createNewEntry(cBuilding* building)
 		float factor = (float)(Client->Hud.Zoom/64.0);
 		int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
 		int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-		if ( building->data.has_frames ) width = height;
+		if ( building->data.has_frames ) width = building->typ->shw_org->w*factor;
 		SDL_FreeSurface( entry->surface );
 		entry->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
 

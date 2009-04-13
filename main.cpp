@@ -712,11 +712,11 @@ void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SD
 	}
 	if ( dstrect->x + width > dst->clip_rect.x + dst->clip_rect.w )
 	{
-		width -= dstrect->x + width - dst->clip_rect.x + dst->clip_rect.w;
+		width -= dstrect->x + width - dst->clip_rect.x - dst->clip_rect.w;
 	}
 	if ( dstrect->y + height > dst->clip_rect.y + dst->clip_rect.h )
 	{
-		height -= dstrect->y + height - dst->clip_rect.y + dst->clip_rect.h;
+		height -= dstrect->y + height - dst->clip_rect.y - dst->clip_rect.h;
 	}
 
 
