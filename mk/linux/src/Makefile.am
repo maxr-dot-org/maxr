@@ -10,6 +10,7 @@ buttons.cpp \
 client.cpp \
 clientevents.cpp \
 dialog.cpp \
+drawingcache.cpp \
 events.cpp \
 extendedtinyxml.cpp \
 files.cpp \
