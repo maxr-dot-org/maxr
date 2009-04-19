@@ -648,7 +648,7 @@ bool sID::operator ==(sID &ID) const
 	return false;
 }
 
-void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	SDL_Rect temp1, temp2;
 
@@ -731,7 +731,7 @@ void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SD
 	if ( SDL_MUSTLOCK(dst) ) SDL_LockSurface( dst );
 	
 	//setup needed variables
-	Uint8 srcAlpha = src->format->alpha;
+	Uint32 srcAlpha = src->format->alpha;
 	int srmask = src->format->Rmask;
 	int sgmask = src->format->Gmask;
 	int sbmask = src->format->Bmask;
@@ -767,13 +767,23 @@ void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SD
 			Uint32 r = (scolor & srmask) >> rshift;
 			Uint32 g = (scolor & sgmask) >> gshift;
 			Uint32 b = (scolor & sbmask) >> bshift;
-			Uint8  dalpha = (dcolor & damask) >> ashift;
+			Uint32  dalpha = (dcolor & damask) >> ashift;
 
-			r = ( ((( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha)>>8) + ((r * srcAlpha)>>8) ) & drmask; //extra shift, to prevent Uint32 overflow in this line
-			g = ( (((dcolor & dgmask)*(255 - srcAlpha) * dalpha)>>16) + ((g * srcAlpha)>>8) ) & dgmask;
-			b = ( (((dcolor & dbmask)*(255 - srcAlpha) * dalpha)>>16) + ((b * srcAlpha)>>8) ) & dbmask;
+			r = ( ((dcolor & drmask)>>8) * (255 - srcAlpha) * dalpha + r * srcAlpha );
+			g = ( (((dcolor & dgmask)*(255 - srcAlpha) * dalpha)>>8) + g * srcAlpha );
+			b = ( (((dcolor & dbmask)*(255 - srcAlpha) * dalpha)>>8) + b * srcAlpha );
 
-			Uint8 a = srcAlpha + dalpha + srcAlpha * dalpha;
+			Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha)/255;;
+
+			if ( a > 0 && a < 255 )
+			{
+				r /= a;
+				g /= a;
+				b /= a;
+			}
+			r = (r >> 8) & drmask;
+			g = (g >> 8) & dgmask;
+			b = (b >> 8) & dbmask;
 
 			*dstPixel = r | g | b | a << ashift;
 
@@ -789,10 +799,10 @@ void blittAlphaSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SD
 	if ( SDL_MUSTLOCK(dst) ) SDL_UnlockSurface( dst );
 }
 
-void blittShadow (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+void blittAlphaSurface (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	if ( dst->format->Amask && (src->flags & SDL_SRCALPHA) )
-		blittAlphaSurface( src, srcrect, dst, dstrect );
+		blittPerSurfaceAlphaToAlphaChannel( src, srcrect, dst, dstrect );
 	else
 		SDL_BlitSurface( src, srcrect, dst, dstrect );
 }
