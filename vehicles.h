@@ -176,7 +176,11 @@ public:
 	cVehicle *next,*prev; // Verkettungselemente
 	sUnitData data;    // Daten des Vehicles
 
-	void Draw(SDL_Rect *dest);
+	/**
+	* Draws the vehicle to the screen buffer.
+	* Takes the main image from the cache or calls cVehicle::render()
+	*/
+	void draw(SDL_Rect screenPosition );
 	void Select();
 	void Deselct();
 	void ShowDetails();
@@ -297,6 +301,11 @@ public:
 	*/
 	bool isNextTo( int x, int y) const;
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
+private:
+	/**
+	* draws the main image of the vehicle onto the passed surface
+	*/
+	void render( SDL_Surface* surface, const SDL_Rect& dest );
 };
 
 #endif

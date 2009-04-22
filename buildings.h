@@ -187,8 +187,10 @@ public:
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
 	int wantRedrawedStoredOffset;
 	bool hasBeenAttacked;
-
-	void Draw(SDL_Rect *dest);
+	/**
+	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
+	*/
+	void draw(SDL_Rect *dest);
 	void Select();
 	void Deselct();
 	void ShowDetails();
@@ -220,7 +222,6 @@ public:
 	void ShowBigDetails();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
-	void DrawConnectors( SDL_Surface* surface, SDL_Rect dest);
 	void ServerStartWork();
 	void ClientStartWork();
 	void ServerStopWork(bool override);
@@ -294,7 +295,16 @@ public:
 	* checks whether the coordinates are next to the building
 	*/
 	bool isNextTo( int x, int y) const;
-	
+
+private:
+	/**
+	* draws the main image of the building onto the given surface
+	*/
+	void render( SDL_Surface* surface, const SDL_Rect& dest);
+	/**
+	* draws the connectors onto the given surface
+	*/
+	void drawConnectors( SDL_Surface* surface, SDL_Rect dest);
 
 //-----------------------------------------------------------
 protected:

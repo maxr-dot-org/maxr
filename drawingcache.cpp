@@ -20,61 +20,200 @@
 #include "drawingcache.h"
 #include "client.h"
 
-cBuildingCache::cBuildingCache()
+sDrawingCacheEntry::sDrawingCacheEntry()
 {
-	maxCacheSize = 0;
+	surface = NULL;
+}
+
+sDrawingCacheEntry::~sDrawingCacheEntry()
+{
+	if ( surface ) SDL_FreeSurface( surface );
+}
+
+void sDrawingCacheEntry::init( cVehicle* vehicle)
+{
+	dir = vehicle->dir;
+	owner = vehicle->owner;
+	isBuilding = vehicle->IsBuilding;
+	isClearing = vehicle->IsClearing;
+	flightHigh = vehicle->FlightHigh;
+	big = vehicle->data.is_big;
+	vehicleTyp = vehicle->typ;
+	buildingTyp = NULL;
+	if ( vehicle->data.is_human )
+		frame = vehicle->WalkFrame;
+	else
+		frame = Client->iFrame % 4;
+
+	bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+	//because the vehicle will drive on the bridge
+	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+	if ( building && vehicle->data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+	if ( vehicle->data.is_stealth_sea && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+		stealth = true;
+	else
+		stealth = false;
+
+	zoom = Client->Hud.Zoom;
+	lastUsed = Client->iFrame;
+
+	//determine needed size of the surface
+	float factor = (float)(Client->Hud.Zoom/64.0);
+	int height = (int) max(vehicle->typ->img_org[vehicle->dir]->h*factor, vehicle->typ->shw_org[vehicle->dir]->h*factor);
+	int width  = (int) max(vehicle->typ->img_org[vehicle->dir]->w*factor, vehicle->typ->shw_org[vehicle->dir]->w*factor);
+	if ( vehicle->FlightHigh > 0 )
+	{
+		int shwOff = ( ( int ) ( Client->Hud.Zoom * ( vehicle->FlightHigh / 64.0 ) ) );
+		height += shwOff;
+		width  += shwOff;
+	}
+	if ( vehicle->IsClearing || vehicle->IsBuilding )
+	{
+		width  *= 2;
+		height *= 2;
+	}
+	if ( surface ) SDL_FreeSurface( surface );
+	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
+
+	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
+	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );
+};
+
+void sDrawingCacheEntry::init( cBuilding* building )
+{
+	BaseN  = building->BaseN;
+	BaseBN = building->BaseBN;
+	BaseE  = building->BaseE;
+	BaseBE = building->BaseBE;
+	BaseS  = building->BaseS;
+	BaseBS = building->BaseBS;
+	BaseW  = building->BaseW;
+	BaseBW = building->BaseBW;
+	dir = building->dir;
+	owner = building->owner;
+	buildingTyp = building->typ;
+	vehicleTyp = NULL;
+
+	zoom = Client->Hud.Zoom;
+	lastUsed = Client->iFrame;
+
+	//determine needed size of the surface
+	float factor = (float)(Client->Hud.Zoom/64.0);
+	int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
+	int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
+	if ( building->data.has_frames ) width = (int) (building->typ->shw_org->w*factor);
+
+	if ( surface ) SDL_FreeSurface( surface );
+	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
+	
+	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
+	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );
+};
+
+cDrawingCache::cDrawingCache()
+{
 	cacheHits = 0;
 	cacheMisses = 0;
 	notCached = 0;
+	cacheSize = 0;
+	maxCacheSize = 400;
+	cachedImages = new sDrawingCacheEntry[maxCacheSize];
+
 };
 
-cBuildingCache::~cBuildingCache()
+cDrawingCache::~cDrawingCache()
 {
-	while ( cachedImages.Size() )
-	{
-		SDL_FreeSurface( cachedImages[0]->surface );
-		delete cachedImages[0];
-		cachedImages.Delete(0);
-	}
+	delete[] cachedImages;
 };
 
-SDL_Surface* cBuildingCache::getCachedImage(cBuilding* building )
+SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 {
 	if ( !canCache(building) ) return NULL;
 
-	for ( unsigned int i = 0; i < cachedImages.Size(); i++ )
+	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
-		sBuildingCacheEntry* entry = cachedImages[i];
+		sDrawingCacheEntry& entry = cachedImages[i];
 
 		//check wether the entrys properties are equal to the building
-		if ( entry->typ != building->typ ) continue;
-		if ( entry->owner != building->owner ) continue;
+		if ( entry.buildingTyp != building->typ ) continue;
+		if ( entry.owner != building->owner ) continue;
 		if ( building->SubBase )
 		{
-			if ( building->BaseN != entry->BaseN ||
-				 building->BaseE != entry->BaseE ||
-				 building->BaseS != entry->BaseS ||
-				 building->BaseW != entry->BaseW ) continue;
+			if ( building->BaseN != entry.BaseN ||
+				 building->BaseE != entry.BaseE ||
+				 building->BaseS != entry.BaseS ||
+				 building->BaseW != entry.BaseW ) continue;
 
 			if ( building->data.is_big )
 			{
-				if ( building->BaseBN != entry->BaseBN ||
-					 building->BaseBE != entry->BaseBE ||
-					 building->BaseBS != entry->BaseBS ||
-					 building->BaseBW != entry->BaseBW ) continue;
+				if ( building->BaseBN != entry.BaseBN ||
+					 building->BaseBE != entry.BaseBE ||
+					 building->BaseBS != entry.BaseBS ||
+					 building->BaseBW != entry.BaseBW ) continue;
 			}
 
 		}
 		if ( building->data.has_frames && !building->data.is_annimated )
 		{
-			if ( entry->dir != building->dir ) continue;
+			if ( entry.dir != building->dir ) continue;
 		}
-		if ( entry->zoom != Client->Hud.Zoom ) continue;
+		if ( entry.zoom != Client->Hud.Zoom ) continue;
 
 		//cache hit!
 		cacheHits++;
-		entry->lastUsed = Client->iFrame;
-		return entry->surface;
+		entry.lastUsed = Client->iFrame;
+		return entry.surface;
+	}
+
+	//cache miss!
+	cacheMisses++;
+	return NULL;
+};
+
+SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
+{
+	if ( !canCache(vehicle) ) return NULL;
+
+	for ( unsigned int i = 0; i < cacheSize; i++ )
+	{
+		sDrawingCacheEntry& entry = cachedImages[i];
+
+		//check wether the entrys properties are equal to the building
+		if ( entry.vehicleTyp != vehicle->typ ) continue;
+		if ( entry.owner != vehicle->owner ) continue;
+		if ( entry.big != vehicle->data.is_big ) continue;
+		if ( entry.isBuilding != vehicle->IsBuilding ) continue;
+		if ( entry.isClearing != vehicle->IsClearing ) continue;
+		
+		if ( entry.flightHigh != vehicle->FlightHigh ) continue;
+		if ( entry.dir != vehicle->dir ) continue;
+		
+		if ( vehicle->data.is_human )
+		{
+			if ( entry.frame != vehicle->WalkFrame ) continue;
+		}
+		if ( vehicle->IsBuilding || vehicle->IsClearing )
+		{
+			if ( entry.frame != Client->iFrame % 4 ) continue;
+		}
+		if ( entry.zoom != Client->Hud.Zoom ) continue;
+
+		//check the stealth flag
+		bool stealth = false;
+		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+		if ( building && vehicle->data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+		if ( vehicle->data.is_stealth_sea && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+			stealth = true;
+		
+		if ( entry.stealth != stealth ) continue;
+
+
+		//cache hit!
+		cacheHits++;
+		entry.lastUsed = Client->iFrame;
+		return entry.surface;
 
 	}
 
@@ -83,99 +222,77 @@ SDL_Surface* cBuildingCache::getCachedImage(cBuilding* building )
 	return NULL;
 };
 
-
-SDL_Surface* cBuildingCache::createNewEntry(cBuilding* building)
+SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
 {
 	if ( !canCache(building) ) return NULL;
 
-	if ( cachedImages.Size() < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
+	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
 	{
-		sBuildingCacheEntry* entry = new sBuildingCacheEntry();
+		sDrawingCacheEntry& entry = cachedImages[cacheSize];
+		cacheSize++;
 
 		//set properties of the cached image
-		entry->BaseN  = building->BaseN;
-		entry->BaseBN = building->BaseBN;
-		entry->BaseE  = building->BaseE;
-		entry->BaseBE = building->BaseBE;
-		entry->BaseS  = building->BaseS;
-		entry->BaseBS = building->BaseBS;
-		entry->BaseW  = building->BaseW;
-		entry->BaseBW = building->BaseBW;
-		entry->dir = building->dir;
-		entry->owner = building->owner;
-		entry->typ = building->typ;
-
-		entry->zoom = Client->Hud.Zoom;
-		entry->lastUsed = Client->iFrame;
-
-		//determine needed size of the surface
-		float factor = (float)(Client->Hud.Zoom/64.0);
-		int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
-		int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-		if ( building->data.has_frames ) width = (int) (building->typ->shw_org->w*factor);
-		entry->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
+		entry.init( building );
 		
-		SDL_FillRect( entry->surface, NULL, SDL_MapRGBA( entry->surface->format, 255, 0, 255, 0));
-		SDL_SetColorKey( entry->surface, SDL_SRCCOLORKEY, SDL_MapRGBA( entry->surface->format, 255, 0, 255, 0) );
-
-		cachedImages.Add(entry);
-		return entry->surface;
+		return entry.surface;
 	}
 
 	//try to find an old entry to reuse
-	for ( unsigned int i = 0; i < cachedImages.Size(); i++ )
+	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
-		if ( Client->iFrame - cachedImages[i]->lastUsed < 5 )  continue;
-		
+		if ( Client->iFrame - cachedImages[i].lastUsed < 5 )  continue;
 		//entry has not been used for 5 frames. Use it for the new entry.
-		sBuildingCacheEntry* entry = cachedImages[i];
+
+		sDrawingCacheEntry& entry = cachedImages[i];
 
 		//set properties of the cached image
-		entry->BaseN  = building->BaseN;
-		entry->BaseBN = building->BaseBN;
-		entry->BaseE  = building->BaseE;
-		entry->BaseBE = building->BaseBE;
-		entry->BaseS  = building->BaseS;
-		entry->BaseBS = building->BaseBS;
-		entry->BaseW  = building->BaseW;
-		entry->BaseBW = building->BaseBW;
-		entry->dir = building->dir;
-		entry->owner = building->owner;
-		entry->typ = building->typ;
+		entry.init( building );
 
-		entry->zoom = Client->Hud.Zoom;
-		entry->lastUsed = Client->iFrame;
-
-		//check size of the surface
-		float factor = (float)(Client->Hud.Zoom/64.0);
-		int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
-		int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-		if ( building->data.has_frames ) width = (int) (building->typ->shw_org->w*factor);
-		SDL_FreeSurface( entry->surface );
-		entry->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
-
-		SDL_FillRect( entry->surface, NULL, SDL_MapRGBA( entry->surface->format, 255, 0, 255, 0));
-		SDL_SetColorKey( entry->surface, SDL_SRCCOLORKEY, SDL_MapRGBA( entry->surface->format, 255, 0, 255, 0) );
-
-		return entry->surface;
-
+		return entry.surface;
 	}
 
 	//there are no old entries in the cache.
 	return NULL;
 };
 
-void cBuildingCache::flush()
+SDL_Surface* cDrawingCache::createNewEntry(cVehicle* vehicle)
 {
-	while ( cachedImages.Size() > 0 )
+	if ( !canCache(vehicle) ) return NULL;
+
+	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
 	{
-		SDL_FreeSurface( cachedImages[0]->surface );
-		delete cachedImages[0];
-		cachedImages.Delete( 0 );
+		sDrawingCacheEntry& entry = cachedImages[cacheSize];
+
+		//set properties of the cached image
+		entry.init( vehicle );
+
+		cacheSize++;
+		return entry.surface;
 	}
+
+	//try to find an old entry to reuse
+	for ( unsigned int i = 0; i < cacheSize; i++ )
+	{
+		if ( Client->iFrame - cachedImages[i].lastUsed < 5 )  continue;
+		
+		//entry has not been used for 5 frames. Use it for the new entry.
+		sDrawingCacheEntry& entry = cachedImages[i];
+
+		//set properties of the cached image
+		entry.init( vehicle );
+		return entry.surface;
+	}
+
+	//there are no old entries in the cache.
+	return NULL;
 };
 
-bool cBuildingCache::canCache( cBuilding* building )
+void cDrawingCache::flush()
+{
+	cacheSize = 0;
+};
+
+bool cDrawingCache::canCache( cBuilding* building )
 {
 	if ( !building->owner   ||
 		  building->StartUp ||
@@ -188,45 +305,64 @@ bool cBuildingCache::canCache( cBuilding* building )
 	return true;
 };
 
-void cBuildingCache::resetStatistics()
+bool cDrawingCache::canCache( cVehicle* vehicle )
+{
+	if ( vehicle->StartUp )
+	{
+		notCached++;
+		return false;
+	}
+
+	if ( vehicle->FlightHigh > 0 && vehicle->FlightHigh < 64 )
+	{
+		notCached++;
+		return false;
+	}
+
+	if ( vehicle->IsBuilding && vehicle->data.is_big && vehicle->BigBetonAlpha < 255 )
+	{
+		notCached++;
+		return false;
+	}
+	return true;
+};
+
+void cDrawingCache::resetStatistics()
 {
 	cacheMisses = 0;
 	cacheHits = 0;
 	notCached = 0;
 };
 
-int cBuildingCache::getMaxCacheSize()
+int cDrawingCache::getMaxCacheSize()
 {
 	return maxCacheSize;	
 };
 
-void cBuildingCache::setMaxCachsize( unsigned int newSize )
+void cDrawingCache::setMaxCacheSize( unsigned int newSize )
 {
-	while ( cachedImages.Size() > newSize )
-	{
-		SDL_FreeSurface( cachedImages[0]->surface );
-		delete cachedImages[0];
-		cachedImages.Delete( 0 );
-	}
-	maxCacheSize = newSize;	
+	delete[] cachedImages;
+	cachedImages = new sDrawingCacheEntry[newSize];
+	maxCacheSize = newSize;
+	cacheSize = 0;
 };
 
-int cBuildingCache::getCacheSize()
+int cDrawingCache::getCacheSize()
 {
-	return (int) cachedImages.Size();
+	return cacheSize;
 };
 
-int cBuildingCache::getCacheHits()
+int cDrawingCache::getCacheHits()
 {
 	return cacheHits;
 };
 
-int cBuildingCache::getCacheMisses()
+int cDrawingCache::getCacheMisses()
 {
 	return cacheMisses;
 };
 
-int cBuildingCache::getNotCached()
+int cDrawingCache::getNotCached()
 {
-	return notCached;
+	return notCached/2;
 };

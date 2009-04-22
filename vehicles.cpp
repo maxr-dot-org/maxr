@@ -51,7 +51,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	ditherX = 0;
 	ditherY = 0;
 	StartUp = 0;
-	FlightHigh = 64;
+	FlightHigh = 0;
 	WalkFrame = 0;
 	CommandoRank = 0;
 	Disabled = 0;
@@ -155,10 +155,9 @@ cVehicle::~cVehicle ()
 //-----------------------------------------------------------------------------
 /** Draws the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Draw ( SDL_Rect *dest )
+void cVehicle::draw ( SDL_Rect screenPosition )
 {
-	SDL_Rect src, tmp;
-	int ox = 0, oy = 0;
+	SDL_Rect tmp;
 
 	// Workarounds:
 
@@ -202,306 +201,166 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		}
 	}
 
-	float newzoom = (float)( 64.0 / Client->Hud.Zoom );
-	float factor = (float)(Client->Hud.Zoom/64.0);
-
-	if ( OffX )
-		ox = ( int ) ( OffX / newzoom );
-
-	if ( OffY )
-		oy = ( int ) ( OffY / newzoom );
-
-	tmp = *dest;
-	tmp.x += ox;
-	tmp.y += oy;
-
-	if ( (IsBuilding || IsClearing) && data.is_big )
-		dir = 0;
-
-	// Check, if the vehicle is building
-	if ( ( !IsBuilding && !IsClearing ) || dir != 0 )
+	// make the dithering
+	if ( FlightHigh > 0 && Client->iTimer0 )
 	{
-		if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
+		if ( moving || Client->iFrame % 10 == 0 )
 		{
-			// rotate vehicle
-			RotateTo ( 0 );
-		}
-
-		// read the size:
-		src.w = (int)(typ->img_org[dir]->w*factor);
-		src.h = (int)(typ->img_org[dir]->h*factor);
-
-		// draw shadow
-		if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
-		{
-			if ( StartUp && SettingsData.bAlphaEffects )
-			{
-				SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
-
-				if ( data.can_drive != DRIVE_AIR )
-				{
-					if ( data.is_human )
-					{
-						SDL_Rect r;
-						r.h = r.w = (int) (typ->img_org[dir]->h*factor);
-						r.x = r.w * WalkFrame;
-						r.y = 0;
-						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, buffer, &tmp, factor );
-					}
-					else
-						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
-				}
-				else
-				{
-					int high;
-					high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
-					tmp.x += high + ditherX;
-					tmp.y += high + ditherY;
-					blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
-				}
-
-				SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
-			}
-			else
-			{
-				if ( data.can_drive != DRIVE_AIR )
-				{
-					if ( data.is_human )
-					{
-						SDL_Rect r;
-						r.h = r.w = (int) (typ->img_org[dir]->h*factor);
-						r.x = r.w * WalkFrame;
-						r.y = 0;
-						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, buffer, &tmp, factor );
-					}
-					else
-						blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
-				}
-				else
-				{
-					// draw shadow
-					if ( FlightHigh > 0 )
-					{
-						int high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
-						tmp.x += high + ditherX;
-						tmp.y += high + ditherY;
-					}
-					blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, buffer, &tmp, factor );
-				}
-			}
-		}
-
-		// draw player color
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-
-		if ( data.is_human )
-		{
-			src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*factor);
-			tmp.x = WalkFrame * tmp.w;
-			tmp.y = 0;
-			blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
-		}
-		else
-			blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
-
-		// draw the vehicle
-		src.x = 0;
-		src.y = 0;
-		tmp = *dest;
-
-		if ( FlightHigh > 0 )
-		{
-			tmp.x += ox + ditherX;
-			tmp.y += oy + ditherY;
+			ditherX = 0;
+			ditherY = 0;
 		}
 		else
 		{
-			tmp.x += ox;
-			tmp.y += oy;
-		}
-
-		if ( StartUp && SettingsData.bAlphaEffects )
-		{
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-			SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-
-			if ( Client->iTimer0 )
-				StartUp += 25;
-
-			if ( StartUp >= 255 )
-				StartUp = 0;
-
-			if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && 
-				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
-				StartUp = 0;
-		}
-		else
-		{
-			bool water = Client->Map->IsWater(PosX + PosY*Client->Map->size, true);
-			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
-			//because the vehicle will drive on the bridge
-			cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
-			if ( building && data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
-
-			if ( data.is_stealth_sea && water &&
-				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
-			{
-				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
-				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-			}
-			else
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
-		}
-
-		// draw overlay if necessary:
-		if ( data.has_overlay && SettingsData.bAnimations )
-		{
-			tmp = *dest;
-			src.h = src.w = (int)(typ->overlay_org->h*factor);
-			tmp.x += Client->Hud.Zoom / 2 - src.h / 2 + ox + ditherX;
-			tmp.y += Client->Hud.Zoom / 2 - src.h / 2 + oy + ditherY;
-			src.y = 0;
-			src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / src.h ) ) ) ) / newzoom );
-
-			if ( StartUp && SettingsData.bAlphaEffects )
-			{
-				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
-				blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
-				SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
-
-				if ( Client->iTimer0 )
-					StartUp += 25;
-
-				if ( StartUp >= 255 )
-					StartUp = 0;
-			}
-			else
-				blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
-		}
-	}
-	else if ( IsBuilding || ( IsClearing && data.is_big ) )
-	{
-		//draw beton if nessesary
-		if ( IsBuilding && data.is_big && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
-		{
-			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
-			if ( !SettingsData.bPreScale && ( GraphicsData.gfx_big_beton->w != Client->Hud.Zoom*2 || GraphicsData.gfx_big_beton->h != Client->Hud.Zoom*2 ) ) scaleSurface ( GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, Client->Hud.Zoom*2, Client->Hud.Zoom*2 );
-			SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, buffer, &tmp );
-			tmp = *dest;
-
-			if ( BigBetonAlpha < 255 )
-			{
-				if ( Client->iTimer0 )
-					BigBetonAlpha += 25;
-
-				if ( BigBetonAlpha > 255 )
-					BigBetonAlpha = 255;
-			}
-		}
-
-		// draw shadow
-		if ( SettingsData.bShadows )
-			blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, buffer, &tmp, factor );
-
-		// draw player color
-		src.y = 0;
-		src.h = src.w = (int)(typ->build_org->h*factor);
-		src.x = ( Client->iFrame % 4 ) * src.w;
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-		blitWithPreScale ( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
-
-		// draw vehicle
-		src.x = 0;
-		src.y = 0;
-		tmp = *dest;
-		tmp.x += ox;
-		tmp.y += oy;
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
-
-		// draw indication, when building is complete
-		if ( ( ( IsBuilding && BuildRounds == 0 ) || ( IsClearing && ClearingRounds == 0 ) ) && owner == Client->ActivePlayer && !BuildPath )
-		{
-			SDL_Rect d, t;
-			int max, nr;
-			nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
-
-			if ( data.can_build == BUILD_BIG || IsClearing )
-				max = ( Client->Hud.Zoom * 2) - 3;
-			else
-				max = Client->Hud.Zoom - 3;
-
-			d.x = dest->x + 2 + ox;
-			d.y = dest->y + 2 + oy;
-			d.w = max;
-			d.h = 3;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.y += max - 3;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.y = dest->y + 2 + oy;
-			d.w = 3;
-			d.h = max;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.x += max - 3;
-			SDL_FillRect ( buffer, &d, nr );
+			ditherX = random(2) - 1;
+			ditherY = random(2) - 1;
 		}
 	}
 	else
 	{
-		// draw shadow
-		if ( SettingsData.bShadows )
-			blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, buffer, &tmp, factor );
+		ditherX = 0;
+		ditherY = 0;
+	}
 
-		// draw player color
-		src.y = 0;
-		src.h = src.w = typ->clear_small->h;
-		src.x = ( Client->iFrame % 4 ) * src.w;
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+	//rotate vehicles to the right direction for building/clearing
+	if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
+	{
+		if ( data.is_big ) 
+			dir = 0;
+		else
+			RotateTo ( 0 );
+	}
 
-		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
+	//run start up effect
+	if ( StartUp )
+	{
+		if ( Client->iTimer0 )
+			StartUp += 25;
 
-		// draw vehicle
-		src.x = 0;
-		src.y = 0;
-		tmp = *dest;
-		tmp.x += ox;
-		tmp.y += oy;
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, buffer, &tmp );
+		if ( StartUp >= 255 )
+			StartUp = 0;
 
-		// draw indication, when building is complete
-		if ( ClearingRounds == 0 && owner == Client->ActivePlayer )
+		//max StartUp value for undetected stealth units is 100, because they stay half visible
+		if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && 
+				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 		{
-			SDL_Rect d, t;
-			int max, nr;
-			nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
-			max = Client->Hud.Zoom - 3;
-			d.x = dest->x + 2 + ox;
-			d.y = dest->y + 2 + oy;
-			d.w = max;
-			d.h = 1;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.y += max - 1;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.y = dest->y + 2 + oy;
-			d.w = 1;
-			d.h = max;
-			t = d;
-			SDL_FillRect ( buffer, &d, nr );
-			d = t;
-			d.x += max - 1;
-			SDL_FillRect ( buffer, &d, nr );
+			if ( StartUp > 100 ) StartUp = 0;
 		}
+	}
+
+	if ( IsBuilding && dir == 0 && BigBetonAlpha < 255 )
+	{
+		if ( Client->iTimer0 )
+			BigBetonAlpha += 25;
+
+		if ( BigBetonAlpha > 255 )
+			BigBetonAlpha = 255;
+	}
+
+	float factor = (float) (Client->Hud.Zoom/64.0);
+
+	//calculate screen position
+	int ox = (int) (OffX * factor);
+	int oy = (int) (OffY * factor);
+	
+	if ( !IsBuilding && !IsClearing )
+	{
+		screenPosition.x += ox;
+		screenPosition.y += oy;
+	}
+	if ( FlightHigh > 0 )
+	{
+		screenPosition.x += ditherX;
+		screenPosition.y += ditherY;
+	}
+
+	SDL_Rect dest;
+	dest.x = dest.y = 0;
+	bool bDraw = false;
+	SDL_Surface* drawingSurface = Client->dCache.getCachedImage(this);
+	if ( drawingSurface == NULL )
+	{
+		//no cached image found. building needs to be redrawn.
+		bDraw = true;
+		drawingSurface = Client->dCache.createNewEntry(this);
+	}
+
+	if ( drawingSurface == NULL )
+	{
+		//image will not be cached. So blitt directly to the screen buffer.
+		dest = screenPosition;
+		drawingSurface = buffer;
+	}
+	
+	if ( bDraw )
+	{
+		render ( drawingSurface, dest );
+	}
+
+	//now check, whether the image has to be blitted to screen buffer
+	if ( drawingSurface != buffer )
+	{
+		dest = screenPosition;
+		SDL_BlitSurface( drawingSurface, NULL, buffer, &dest );
+	}
+
+	// draw overlay if necessary:
+	if ( data.has_overlay && SettingsData.bAnimations )
+	{
+		SDL_Rect src;
+
+		tmp = screenPosition;
+		src.h = src.w = (int)(typ->overlay_org->h*factor);
+		tmp.x += Client->Hud.Zoom / 2 - src.h / 2;
+		tmp.y += Client->Hud.Zoom / 2 - src.h / 2;
+		src.y = 0;
+		src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / src.h ) ) ) ) * factor );
+
+		if ( StartUp && SettingsData.bAlphaEffects )
+			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
+		else
+			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
+
+		blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
+	}
+
+	//remove the dithering for the following operations
+	if ( FlightHigh > 0 )
+	{
+		screenPosition.x -= ditherX;
+		screenPosition.y -= ditherY;
+	}
+
+	// draw indication, when building is complete
+	if ( IsBuilding && BuildRounds == 0  && owner == Client->ActivePlayer && !BuildPath )
+	{
+		SDL_Rect d, t;
+		int max, nr;
+		nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
+
+		if ( data.is_big )
+			max = ( Client->Hud.Zoom * 2) - 3;
+		else
+			max = Client->Hud.Zoom - 3;
+
+		d.x = screenPosition.x + 2;
+		d.y = screenPosition.y + 2;
+		d.w = max;
+		d.h = 3;
+		t = d;
+		SDL_FillRect ( buffer, &d, nr );
+		d = t;
+		d.y += max - 3;
+		t = d;
+		SDL_FillRect ( buffer, &d, nr );
+		d = t;
+		d.y = screenPosition.y + 2 + oy;
+		d.w = 3;
+		d.h = max;
+		t = d;
+		SDL_FillRect ( buffer, &d, nr );
+		d = t;
+		d.x += max - 3;
+		SDL_FillRect ( buffer, &d, nr );
 	}
 
 	// Draw the colored frame if necessary
@@ -516,8 +375,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		else
 			max = Client->Hud.Zoom - 1;
 
-		d.x = dest->x + 1 + ox;
-		d.y = dest->y + 1 + oy;
+		d.x = screenPosition.x + 1;
+		d.y = screenPosition.y + 1;
 		d.w = max;
 		d.h = 1;
 		t = d;
@@ -527,7 +386,7 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		t = d;
 		SDL_FillRect ( buffer, &d, nr );
 		d = t;
-		d.y = dest->y + 1 + oy;
+		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = max;
 		t = d;
@@ -545,26 +404,26 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		d.w = Client->Hud.Zoom-2;
 		d.h = 1;
-		d.x = dest->x + 1 + ox;
-		d.y = dest->y + 1 + oy;
+		d.x = screenPosition.x + 1;
+		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = Client->Hud.Zoom-2;
 		d.h = 1;
-		d.x = dest->x + 1 + ox;
-		d.y = dest->y + oy + Client->Hud.Zoom-1;
+		d.x = screenPosition.x + 1;
+		d.y = screenPosition.y + Client->Hud.Zoom-1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
 		d.h = Client->Hud.Zoom-2;
-		d.x = dest->x + 1 + ox;
-		d.y = dest->y + 1 + oy;
+		d.x = screenPosition.x + 1;
+		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
 		d.h = Client->Hud.Zoom-2;
-		d.x = dest->x + ox + Client->Hud.Zoom-1;
-		d.y = dest->y + 1 + oy;
+		d.x = screenPosition.x + Client->Hud.Zoom-1;
+		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 	}
 	if ( selected )
@@ -579,8 +438,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 
 		len = max / 4;
 
-		d.x = dest->x + 1 + ox;
-		d.y = dest->y + 1 + oy;
+		d.x = screenPosition.x + 1;
+		d.y = screenPosition.y + 1;
 		d.w = len;
 		d.h = 1;
 		t = d;
@@ -594,11 +453,11 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		t = d;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
-		d.x = dest->x + 1 + ox;
+		d.x = screenPosition.x + 1;
 		t = d;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
-		d.y = dest->y + 1 + oy;
+		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
@@ -612,23 +471,8 @@ void cVehicle::Draw ( SDL_Rect *dest )
 		t = d;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
 		d = t;
-		d.x = dest->x + 1 + ox;
+		d.x = screenPosition.x + 1;
 		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
-	}
-
-	// draw the dithering
-	if ( data.can_drive == DRIVE_AIR && Client->iTimer0 )
-	{
-		if ( moving || Client->iFrame % 10 == 0 )
-		{
-			ditherX = 0;
-			ditherY = 0;
-		}
-		else
-		{
-			ditherX = random(2) - 1;
-			ditherY = random(2) - 1;
-		}
 	}
 	
 	//draw health bar
@@ -648,11 +492,155 @@ void cVehicle::Draw ( SDL_Rect *dest )
 	{
 		cVehicle* serverVehicle = NULL;
 		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
-		if ( bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(dest->x + 1,dest->y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-		if ( Attacking ) font->showText(dest->x + 1,dest->y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->Attacking ) font->showText(dest->x + 1,dest->y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+		if ( bIsBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( Attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->Attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 	}
+}
+
+void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
+{
+	//Note: when changing something in this function, make sure to update the caching rules!
+	SDL_Rect src, tmp;
+	float factor = (float) (Client->Hud.Zoom/64.0);
+
+	//draw working engineers and bulldozers:
+	if ( (IsBuilding || ( IsClearing && data.is_big )) && dir == 0 )
+	{
+		//draw beton if nessesary
+		tmp = dest;
+		if ( IsBuilding && data.is_big && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
+		{
+			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
+			CHECK_SCALING(GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor );
+			SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, surface, &tmp );
+		}
+
+		// draw shadow
+		tmp = dest;
+		if ( SettingsData.bShadows )
+			blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, factor );
+
+		// draw player color
+		src.y = 0;
+		src.h = src.w = (int)(typ->build_org->h*factor);
+		src.x = ( Client->iFrame % 4 ) * src.w;
+		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+		blitWithPreScale ( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
+
+		// draw vehicle
+		src.x = 0;
+		src.y = 0;
+		tmp = dest;
+		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+		
+		return;
+	}
+
+	if ( ( IsClearing && !data.is_big ) && dir == 0 )
+	{
+		// draw shadow
+		tmp = dest;
+		if ( SettingsData.bShadows )
+			blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, factor );
+
+		// draw player color
+		src.y = 0;
+		src.h = src.w = (int)(typ->clear_small_org->h*factor);
+		src.x = ( Client->iFrame % 4 ) * src.w;
+		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+
+		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
+
+		// draw vehicle
+		src.x = 0;
+		src.y = 0;
+		tmp = dest;
+		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+
+		return;
+	}
+
+	//draw all other vehicles:
+
+	// read the size:
+	src.w = (int)(typ->img_org[dir]->w*factor);
+	src.h = (int)(typ->img_org[dir]->h*factor);
+
+	// draw shadow
+	tmp = dest;
+	if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
+	{
+		if ( StartUp && SettingsData.bAlphaEffects )
+			SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
+		else
+			SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
+
+		
+		// draw shadow
+		if ( FlightHigh > 0 )
+		{
+			int high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
+			tmp.x += high;
+			tmp.y += high;
+
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, factor );
+		}
+		else if ( data.is_human )
+		{
+			SDL_Rect r;
+			r.h = r.w = (int) (typ->img_org[dir]->h*factor);
+			r.x = r.w * WalkFrame;
+			r.y = 0;
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, factor );
+		}
+		else
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, factor );
+	}
+
+	// draw player color
+	SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+
+	if ( data.is_human )
+	{
+		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*factor);
+		tmp.x = WalkFrame * tmp.w;
+		tmp.y = 0;
+		blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
+	}
+	else
+		blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
+
+
+	// draw the vehicle
+	src.x = 0;
+	src.y = 0;
+	tmp = dest;
+
+	if ( StartUp && SettingsData.bAlphaEffects )
+	{
+		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+	}
+	else
+	{
+		bool water = Client->Map->IsWater(PosX + PosY*Client->Map->size, true);
+		//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+		//because the vehicle will drive on the bridge
+		cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
+		if ( building && data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+
+		if ( data.is_stealth_sea && water && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
+		else
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+
+	}
+
+	blittAlphaSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -4740,5 +4728,5 @@ void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Re
 			scaleSurface ( org_src, src, width, height );
 		}
 	}
-	SDL_BlitSurface ( src, srcrect, dest, destrect );
+	blittAlphaSurface ( src, srcrect, dest, destrect );
 }

@@ -412,7 +412,7 @@ public:
 	bool bFlagDrawMMap;
 
 	/** drawing cache to speed up the graphic engine */
-	cBuildingCache bCache;
+	cDrawingCache dCache;
 
 	/**
 	* handles the timers iTimer0, iTimer1 and iTimer2

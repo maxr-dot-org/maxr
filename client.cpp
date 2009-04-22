@@ -150,7 +150,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugTraceClient = false;
 	bDebugPlayers = false;
 	bShowFPS = false;
-	bDebugCache = true;
+	bDebugCache = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	isInMenu = false;
@@ -1472,7 +1472,7 @@ void cClient::drawMap( bool bPure )
 	// display the FX-Bottom-Effects:
 	displayFXBottom();
 
-	bCache.resetStatistics();
+	dCache.resetStatistics();
 
 	//draw rubble and all base buildings (without bridges)
 	iStartX= ( Hud.OffX-1 ) /64;if ( iStartX<0 ) iStartX=0;
@@ -1501,7 +1501,7 @@ void cClient::drawMap( bool bPure )
 				{
 					if ( bi->PosX == iX && bi->PosY == iY )
 					{
-						bi->Draw ( &dest );
+						bi->draw ( &dest );
 					}
 				}
 				bi--;
@@ -1529,7 +1529,7 @@ void cClient::drawMap( bool bPure )
 				{
 					if ( building->PosX == iX && building->PosY == iY )	//make sure a big building is drawn only once
 					{
-						building->Draw ( &dest );
+						building->draw ( &dest );
 
 						if ( bDebugBaseClient )
 						{
@@ -1581,7 +1581,7 @@ void cClient::drawMap( bool bPure )
 			{
 				if ( vehicle->PosX == iX && vehicle->PosY == iY )	//make sure a big vehicle is drawn only once
 				{
-					vehicle->Draw ( &dest );
+					vehicle->draw ( dest );
 				}
 			}
 			iPos++;
@@ -1603,13 +1603,13 @@ void cClient::drawMap( bool bPure )
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
 				if ( vehicle && vehicle->data.can_drive == DRIVE_SEA )
 				{
-					vehicle->Draw ( &dest );
+					vehicle->draw ( dest );
 				}
 
 				cBuilding* building = Map->fields[iPos].getBaseBuilding();
 				if ( building && building->data.is_bridge )
 				{
-					building->Draw ( &dest );
+					building->draw ( &dest );
 				}
 
 			}
@@ -1632,7 +1632,7 @@ void cClient::drawMap( bool bPure )
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
 				if ( vehicle && vehicle->data.can_drive != DRIVE_SEA && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
-					vehicle->Draw ( &dest );
+					vehicle->draw ( dest );
 				}
 
 			}
@@ -1655,7 +1655,7 @@ void cClient::drawMap( bool bPure )
 				cBuilding* building = Map->fields[iPos].getTopBuilding();
 				if ( building && building->data.is_connector )
 				{
-					building->Draw ( &dest );
+					building->draw ( &dest );
 				}
 
 			}
@@ -1681,7 +1681,7 @@ void cClient::drawMap( bool bPure )
 				cVehicle* plane = Map->fields[iPos].getPlanes();
 				if ( plane )
 				{
-					plane->Draw ( &dest );
+					plane->draw ( dest );
 				}
 			}
 			iPos++;
@@ -1823,35 +1823,6 @@ void cClient::drawMap( bool bPure )
 		d.y = mouseStartY-iOffY+20;
 		SDL_FillRect ( buffer, &d, color );
 	}
-
-	/*scr.y = 0;
-	scr.h = scr.w = iZoom;
-	dest.y = 18-iOffY+iZoom*iStartY;
-	for ( iY = iStartY; iY <= iEndY; iY++ )
-	{
-		dest.x = 180-iOffX+iZoom*iStartX;
-		iPos = iY*Map->size+iStartX;
-		for ( iX = iStartX; iX <= iEndX; iX++ )
-		{
-			cVehicle* vehicle = Map->fields[iPos].getVehicles();
-			if ( vehicle )
-			{
-				font->showText(dest.x+1,dest.y+1, "C", FONT_LATIN_SMALL_YELLOW);
-			
-			}
-			if ( Server->Map->fields[iPos].getVehicles() )
-			{
-				font->showText(dest.x+1,dest.y+10, "S", FONT_LATIN_SMALL_YELLOW);
-			}
-			if ( vehicle && vehicle->ClientMoveJob && vehicle->ClientMoveJob->iSavedSpeed )
-			{
-				font->showText(dest.x+1,dest.y+19, iToStr(vehicle->ClientMoveJob->iSavedSpeed), FONT_LATIN_SMALL_YELLOW);
-			}
-			iPos++;
-			dest.x += iZoom;
-		}
-		dest.y += iZoom;
-	}*/
 
 	SDL_SetClipRect( buffer, NULL );
 }
@@ -2820,15 +2791,15 @@ void cClient::displayDebugOutput()
 	}
 	if ( bDebugCache )
 	{
-		font->showText(DEBUGOUT_X_POS, iDebugOff, "Max cache size: " + iToStr(Client->bCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "Max cache size: " + iToStr(Client->dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache size: " + iToStr(Client->bCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache size: " + iToStr(Client->dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache hits: " + iToStr(Client->bCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache hits: " + iToStr(Client->dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache misses: " + iToStr(Client->bCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "cache misses: " + iToStr(Client->dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, iDebugOff, "not cached: " + iToStr(Client->bCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, iDebugOff, "not cached: " + iToStr(Client->dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
 		iDebugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 	}
 }
@@ -3147,11 +3118,11 @@ void cClient::doCommand ( string sCmd )
 		//since atoi is too stupid to report an error, do an extra check, when the number is 0
 		if ( size == 0 && sCmd[12] != '0' ) return;
 
-		bCache.setMaxCachsize( size );
+		dCache.setMaxCacheSize( size );
 	}
 	if ( sCmd.compare("/cache flush") == 0 )
 	{
-		bCache.flush();
+		dCache.flush();
 	}
 	if ( sCmd.compare("/cache debug on") == 0 )
 	{
@@ -3815,6 +3786,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			bool bWasBuilding = false;
 			int iID = message->popInt16();
+
 			bool bVehicle = message->popBool();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();

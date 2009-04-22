@@ -23,11 +23,12 @@
 #include "main.h"
 
 /**
-* Stores all properties, which determine the look of the building.
+* Stores all properties, which determine the look of the unit.
 * Overlays and alpha effects are not cached!
 */
-struct sBuildingCacheEntry
+struct sDrawingCacheEntry
 {
+	//building proberties
 	bool BaseN;
 	bool BaseBN;
 	bool BaseE;
@@ -36,26 +37,46 @@ struct sBuildingCacheEntry
 	bool BaseBS;
 	bool BaseW;
 	bool BaseBW;
+	sBuilding* buildingTyp;
+
+	//vehicle properties
+	sVehicle* vehicleTyp;
+	int frame;
+	int flightHigh;
+	bool big;
+	bool isBuilding;
+	bool isClearing;
+	bool stealth;
+
+	//common properties
 	cPlayer* owner;
-	sBuilding* typ;
 	int dir;
 	int zoom;
 
 	int lastUsed;
 	SDL_Surface* surface;
+
+	sDrawingCacheEntry();
+	~sDrawingCacheEntry();
+	/**
+	* sets all properties and initialises the surface.
+	*/
+	void init( cVehicle* vehicle);
+	void init( cBuilding* building);
 };
 
-class cBuildingCache
+class cDrawingCache
 {
 public:
-	cBuildingCache();
-	~cBuildingCache();
+	cDrawingCache();
+	~cDrawingCache();
 
 	/**
 	* This method looks for a cached image, that matches the properties of the passed building.
 	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matchong cache entry exists.
 	*/  
 	SDL_Surface* getCachedImage(cBuilding* building );
+	SDL_Surface* getCachedImage(cVehicle* vehicle );
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
@@ -63,12 +84,15 @@ public:
 	* @return a surface to which the building has to be drawn, after calling this function. Returns NULL when the cache is full.
 	*/
 	SDL_Surface* createNewEntry(cBuilding* building);
-
+	SDL_Surface* createNewEntry(cVehicle* vehicle);
+	/**
+	* Deletes all cache entries.
+	*/
 	void flush();
 	
 	void resetStatistics();
 	int getMaxCacheSize();
-	void setMaxCachsize( unsigned int newSize );
+	void setMaxCacheSize( unsigned int newSize );
 	int getCacheSize();
 	int getCacheHits();
 	int getCacheMisses();
@@ -76,8 +100,10 @@ public:
 
 private:
 	unsigned int maxCacheSize;
-	cList<sBuildingCacheEntry*> cachedImages;
+	unsigned int cacheSize;
+	sDrawingCacheEntry* cachedImages;
 	bool canCache( cBuilding* building );
+	bool canCache( cVehicle* vehicle );
 
 	//statistics
 	int cacheHits;

@@ -995,7 +995,7 @@ void showPreferences ( void )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					InputHandler->setInputState ( false );
-					if ( Client ) Client->bCache.flush();
+					if ( Client ) Client->dCache.flush();
 				}
 				else if ( x>=25+rDialog.x&&x<25+rDialog.x+18&&y>=233+rDialog.y&&y<233+rDialog.y+17 )
 				{
@@ -1004,7 +1004,7 @@ void showPreferences ( void )
 					SHOW_SCREEN
 					mouse->draw ( false,screen );
 					InputHandler->setInputState ( false );
-					if ( Client ) Client->bCache.flush();
+					if ( Client ) Client->dCache.flush();
 				}
 				else if ( x>=116+rDialog.x&&x<116+rDialog.x+184&&y>=154+rDialog.y&&y<154+rDialog.y+17&&!InputHandler->getInputState() )
 				{

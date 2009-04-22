@@ -478,13 +478,11 @@ void cBuilding::GenerateName ()
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::Draw ( SDL_Rect *screenPos )
+void cBuilding::draw ( SDL_Rect *screenPos )
 {
-	SDL_Rect src, tmp, dest;
-	src.x = 0;
-	src.y = 0;
+	SDL_Rect dest, tmp;
 	float factor = (float)(Client->Hud.Zoom/64.0);
-
+	
 	// draw the damage effects
 	if ( Client->iTimer1 && !data.is_base && !data.is_connector && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
@@ -500,12 +498,12 @@ void cBuilding::Draw ( SDL_Rect *screenPos )
 
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = Client->bCache.getCachedImage(this);
+	SDL_Surface* drawingSurface = Client->dCache.getCachedImage(this);
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = Client->bCache.createNewEntry(this);
+		drawingSurface = Client->dCache.createNewEntry(this);
 	}
 
 	if ( drawingSurface == NULL )
@@ -517,184 +515,20 @@ void cBuilding::Draw ( SDL_Rect *screenPos )
 		
 	if ( bDraw )
 	{
-		// check, if it is dirt:
-		if ( !owner )
-		{
-			if ( data.is_big )
-			{
-				if ( !UnitsData.dirt_big ) return;
-				src.w = src.h = (int)(UnitsData.dirt_big_org->h*factor);
-			}
-			else
-			{
-				if ( !UnitsData.dirt_small ) return;
-				src.w = src.h = (int)(UnitsData.dirt_small_org->h*factor);
-			}
-
-			src.x = src.w * RubbleTyp;
-
-			src.y = 0;
-
-			// draw the shadows
-			if ( SettingsData.bShadows )
-			{
-				if ( data.is_big )
-				{
-					CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, factor );
-					SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, drawingSurface, &tmp );
-				}
-				else
-				{
-					CHECK_SCALING( UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, factor );
-					SDL_BlitSurface ( UnitsData.dirt_small_shw, &src, drawingSurface, &tmp );
-				}
-			}
-
-			// draw the building
-			tmp = dest;
-
-			if ( data.is_big )
-			{
-				CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, factor);
-				SDL_BlitSurface ( UnitsData.dirt_big, &src, drawingSurface, &tmp );
-			}
-			else
-			{
-				CHECK_SCALING( UnitsData.dirt_small, UnitsData.dirt_small_org, factor);
-				SDL_BlitSurface ( UnitsData.dirt_small, &src, drawingSurface, &tmp );
-			}
-
-			return;
-		}
-
-		// read the size:
-		if ( data.has_frames )
-		{
-			src.w = Client->Hud.Zoom;
-			src.h = Client->Hud.Zoom;
-		}
-		else
-		{
-			src.w = (int)(typ->img_org->w*factor);
-			src.h = (int)(typ->img_org->h*factor);
-		}
-		
-		// draw the concrete
-		tmp = dest;
-		if ( !data.build_on_water && !data.is_expl_mine )
-		{
-			if ( data.is_big )
-			{
-				CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
-
-				if ( StartUp && SettingsData.bAlphaEffects )
-					SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
-				else
-					SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255 );
-				
-				SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, drawingSurface, &tmp );
-			}
-			else
-			{
-				CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
-				if ( !data.is_road && !data.is_connector )
-				{
-					if ( StartUp && SettingsData.bAlphaEffects )
-						SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
-					else
-						SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
-
-					SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, drawingSurface, &tmp );
-					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
-				}
-			}
-		}
-
-		tmp = dest;
-
-		// draw the connector slots:
-		if ( this->SubBase && !StartUp )
-		{
-			DrawConnectors (  drawingSurface, dest );
-		}
-
-		// draw the shadows
-		if ( SettingsData.bShadows && !data.is_connector )
-		{
-			if ( StartUp && SettingsData.bAlphaEffects ) 
-				SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
-			else
-				SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
-
-			CHECK_SCALING( typ->shw, typ->shw_org, factor);
-			blittAlphaSurface ( typ->shw, NULL, drawingSurface, &tmp );
-			//SDL_BlitSurface ( typ->shw, NULL, drawingSurface, &tmp );
-		}
-
-		// blit the players color
-		if ( !data.is_road && !data.is_connector )
-		{
-			SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-
-			if ( data.has_frames )
-			{
-				if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
-				{
-					src.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
-				}
-				else
-				{
-					src.x = dir * Client->Hud.Zoom;
-				}
-
-				CHECK_SCALING( typ->img, typ->img_org, factor);
-				SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
-
-				src.x = 0;
-			}
-			else
-			{
-				CHECK_SCALING( typ->img, typ->img_org, factor);
-				SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
-			}
-		}
-		else if ( !data.is_connector )
-		{
-			SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
-
-			CHECK_SCALING( typ->img, typ->img_org, factor);
-			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
-		}
-
-		// draw the building 
-		tmp = dest;
-
-		src.x = 0;
-		src.y = 0;
-		
-		if ( !data.is_connector )
-		{
-			if ( StartUp && SettingsData.bAlphaEffects )
-			{
-				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, drawingSurface, &tmp );
-				SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-			}
-			else
-				SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, drawingSurface, &tmp );
-		}
+		render ( drawingSurface, dest );
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
 	if ( drawingSurface != buffer )
 	{
-		tmp = *screenPos;
-		SDL_BlitSurface( drawingSurface, NULL, buffer, &tmp );
+		dest = *screenPos;
+		SDL_BlitSurface( drawingSurface, NULL, buffer, &dest );
 
 		//all folling graphic operations are drawn directly to buffer
 		dest = *screenPos;
 	}
 
+	if (!owner ) return;
 
 	if ( StartUp )
 	{
@@ -860,6 +694,180 @@ void cBuilding::Draw ( SDL_Rect *screenPos )
 		if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
 		if ( Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
 		if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+	}
+}
+
+void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
+{	
+	//Note: when changing something in this function, make sure to update the caching rules!
+	SDL_Rect src, tmp;
+	src.x = 0;
+	src.y = 0;
+
+	float factor = (float)(Client->Hud.Zoom/64.0);
+
+	// check, if it is dirt:
+	if ( !owner )
+	{
+		if ( data.is_big )
+		{
+			if ( !UnitsData.dirt_big ) return;
+			src.w = src.h = (int)(UnitsData.dirt_big_org->h*factor);
+		}
+		else
+		{
+			if ( !UnitsData.dirt_small ) return;
+			src.w = src.h = (int)(UnitsData.dirt_small_org->h*factor);
+		}
+
+		src.x = src.w * RubbleTyp;
+		tmp = dest;
+		src.y = 0;
+
+		// draw the shadows
+		if ( SettingsData.bShadows )
+		{
+			if ( data.is_big )
+			{
+				CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, factor );
+				SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, surface, &tmp );
+			}
+			else
+			{
+				CHECK_SCALING( UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, factor );
+				SDL_BlitSurface ( UnitsData.dirt_small_shw, &src, surface, &tmp );
+			}
+		}
+
+		// draw the building
+		tmp = dest;
+
+		if ( data.is_big )
+		{
+			CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, factor);
+			SDL_BlitSurface ( UnitsData.dirt_big, &src, surface, &tmp );
+		}
+		else
+		{
+			CHECK_SCALING( UnitsData.dirt_small, UnitsData.dirt_small_org, factor);
+			SDL_BlitSurface ( UnitsData.dirt_small, &src, surface, &tmp );
+		}
+
+		return;
+	}
+
+	// read the size:
+	if ( data.has_frames )
+	{
+		src.w = Client->Hud.Zoom;
+		src.h = Client->Hud.Zoom;
+	}
+	else
+	{
+		src.w = (int)(typ->img_org->w*factor);
+		src.h = (int)(typ->img_org->h*factor);
+	}
+	
+	// draw the concrete
+	tmp = dest;
+	if ( !data.build_on_water && !data.is_expl_mine )
+	{
+		if ( data.is_big )
+		{
+			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
+
+			if ( StartUp && SettingsData.bAlphaEffects )
+				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
+			else
+				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255 );
+			
+			SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, surface, &tmp );
+		}
+		else
+		{
+			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
+			if ( !data.is_road && !data.is_connector )
+			{
+				if ( StartUp && SettingsData.bAlphaEffects )
+					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
+				else
+					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
+
+				SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, surface, &tmp );
+				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
+			}
+		}
+	}
+
+	tmp = dest;
+ 
+	// draw the connector slots:
+	if ( (this->SubBase && !StartUp) || data.is_connector )
+	{
+		drawConnectors (  surface, dest );
+	}
+
+	// draw the shadows
+	if ( SettingsData.bShadows && !data.is_connector )
+	{
+		if ( StartUp && SettingsData.bAlphaEffects ) 
+			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
+		else
+			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
+
+		CHECK_SCALING( typ->shw, typ->shw_org, factor);
+		blittAlphaSurface ( typ->shw, NULL, surface, &tmp );
+	}
+
+	// blit the players color
+	if ( !data.is_road && !data.is_connector )
+	{
+		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+
+		if ( data.has_frames )
+		{
+			if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
+			{
+				src.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
+			}
+			else
+			{
+				src.x = dir * Client->Hud.Zoom;
+			}
+
+			CHECK_SCALING( typ->img, typ->img_org, factor);
+			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
+
+			src.x = 0;
+		}
+		else
+		{
+			CHECK_SCALING( typ->img, typ->img_org, factor);
+			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
+		}
+	}
+	else if ( !data.is_connector )
+	{
+		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
+
+		CHECK_SCALING( typ->img, typ->img_org, factor);
+		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
+	}
+
+	// draw the building 
+	tmp = dest;
+
+	src.x = 0;
+	src.y = 0;
+	
+	if ( !data.is_connector )
+	{
+		if ( StartUp && SettingsData.bAlphaEffects )
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+		else
+			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+
+		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
 	}
 }
 
@@ -1196,7 +1204,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 //--------------------------------------------------------------------------
 /** Draws the connectors at the building: */
 //--------------------------------------------------------------------------
-void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
+void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 {
 	SDL_Rect src, temp;
 	int zoom = Client->Hud.Zoom;
@@ -1204,6 +1212,11 @@ void cBuilding::DrawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 
 	CHECK_SCALING( UnitsData.ptr_connector, UnitsData.ptr_connector_org, factor);
 	CHECK_SCALING( UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, factor);
+
+	if ( StartUp )
+		SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, StartUp );
+	else
+		SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, 255 );
 
 	src.y = 0;
 	src.x = 0;

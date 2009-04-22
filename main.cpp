@@ -775,15 +775,16 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 
 			Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha)/255;;
 
-			if ( a > 0 && a < 255 )
+			if ( a > 0 )
 			{
 				r /= a;
 				g /= a;
 				b /= a;
 			}
-			r = (r >> 8) & drmask;
-			g = (g >> 8) & dgmask;
-			b = (b >> 8) & dbmask;
+			
+			r = r & drmask;
+			g = g & dgmask;
+			b = b & dbmask;
 
 			*dstPixel = r | g | b | a << ashift;
 
