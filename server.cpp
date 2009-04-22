@@ -807,6 +807,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					if ( i == 5 || i == 7 ) iX += 3;
 					else iX++;
 				}
+				if ( iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size ) continue; 
 
 				int iOff = iX + iY * Map->size;
 

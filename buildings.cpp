@@ -5544,6 +5544,7 @@ void cBuilding::ShowBuildMenu ()
 			{
 				x++;
 			}
+			if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) continue; 
 
 			int off = x + y * Client->Map->size;
 			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
