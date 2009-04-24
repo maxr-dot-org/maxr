@@ -236,6 +236,7 @@ Function LanguageDialog
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Russian (RUS)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (HUN)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (DUT)"
+         ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (SLV)"
          
          # by default english is selected
          ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (ENG)"
