@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- * The English attributes are not needed. They are not interpreted.      -->
+<!-- * The "%s" is a placeholder for another part of the text.               -->
+<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
+<!--   they are needed.                                                      -->
+<!-- * All other line feeds within a text block will be replaced by a single -->
+<!--   blank.                                                                -->
+<MAX_Language_File lang="slv" encoding="utf8" direction="left-to-right">
+	<Header>
+		<Author name="Miha Kocevar neo.guardian@artist-trade.si">
+			<Editor name="NeoGuardian" time="2009-04-16 19:00:00"/>
+			<Editor name="Unknown" time="2009-01-01 17:00:00"/>
+		</Author>
+		<Game_Version time="2007-09-30 13:04:00"/>
+	</Header>
+	<Text>
+		<Main>
+			<Game_Title ENG="M.A.X." localized="M.A.X."/>
+			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Version ENG="version v%s" localized="verzija v%s"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Lastnik originala je Interplay)"/>
+			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded temelji na Interplayevi igri Mechanized Assault and Exploration"/>
+			<Remarks>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) ni še implementirano"/>
+			</Remarks>
+		</Main>
+		<Init>
+			<Lang ENG="Loading language pack..." localized="Nalagam jezikovni paket..."/>
+      		<Keys ENG="Loading keys..." localized="Nalagam tipke..."/>
+      		<Fonts ENG="Loading fonts..." localized="Nalagam znake..."/>
+      		<GFX ENG="Loading gfx..." localized="Nalagam grafiko..."/>
+      		<Effects ENG="Loading effects..." localized="Nalagam efekte..."/>
+      		<Terrain ENG="Loading terrain..." localized="Nalagam ozemlje..."/>
+      		<Vehicles ENG="Loading vehicles..." localized="Nalagam vozila..."/>
+      		<Buildings ENG="Loading buildings..." localized="Nalagam stavbe..."/>
+      		<Music ENG="Loading music..." localized="Nalagam glasbo..."/>
+      		<Sounds ENG="Loading sounds..." localized="Nalagam zvoke..."/>
+			<Voices ENG="Loading voices..." localized="Nalagam glasove..."/>
+		</Init>
+		<Title>
+			<MainMenu ENG="Main Menu" localized="Glavni menu"/>
+			<Credits ENG="Credits" localized="Začetna sredstva"/>
+			<Gold ENG="Gold" localized="Zlato"/>
+			<Metal ENG="Metal" localized="Surovine"/>
+			<Oil ENG="Oil" localized="Gorivo"/>
+			<BridgeHead ENG="Bridgehead" localized="Začetna pozicija"/>
+			<Alien_Tech ENG="Alientechnology" localized="Nezemeljska tehnologija"/>
+			<Resource ENG="Resources" localized="Rudnine"/>
+			<Resource_Density ENG="Resources Density" localized="Pogostost rudnin"/>
+			<Game_Type ENG="Game Type" localized="Tip igre"/>
+			<Player_Name ENG="Playername:" localized="Ime igralca:"/>
+			<Player_Select ENG="Playeroptions" localized="Možnosti igralca"/>
+			<Team ENG="Team" localized="Moštvo"/>
+			<Human ENG="Human" localized="Človek"/>
+			<Computer ENG="Computer" localized="Računalnik"/>
+			<Nobody ENG="Nobody" localized="Prazno"/>
+			<Clan ENG="Clan" localized="Klan"/>
+			<Cargo ENG="Cargo" localized="Tovor"/>
+			<Choose_Planet ENG="Planetchoosing" localized="Izbira planeta"/>
+			<Options ENG="Options" localized="Možnosti"/>
+			<Connect ENG="Connect" localized="Povezava"/>
+			<Send ENG="Send" localized="Pošlji"/>
+			<Color ENG="Color:" localized="Barva:"/>
+			<IP ENG="IP" localized="IP"/>
+			<Port ENG="Port" localized="Vrata"/>
+			<Map ENG="Map" localized="Mapa"/>
+			<LoadSave ENG="Load/Save Menu" localized="Naloži/Shrani menu"/>
+			<Load ENG="Load Menu" localized="Menu Naloži"/>
+			<Updates ENG="Updatemenu" localized="Menu Osveži"/>
+			<Build ENG="Buildmenu" localized="Menu Gradnja"/>
+			<Labs ENG="Researchmenu" localized="Menu Raziskave"/>
+			<Mine ENG="Minemanager" localized="Nadzor rudnika"/>
+			<Unitinfo ENG="Unitinformations" localized="Informacije o enoti"/>
+		</Title>
+		<Button>
+			<Title_Main_Menu ENG="Main Menu" localized="Glavni menu"/>
+			<Single_Player ENG="Singleplayer" localized="Enoigralski način"/>
+			<Multi_Player ENG="Multiplayer" localized="Večigralski način"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Urejevalnik map (*)"/>
+			<Credits ENG="Credits (*)" localized="Zasluge (*)"/>
+			<Mani ENG="Manifestation" localized="Licenca"/>
+			<Exit ENG="Exit" localized="Končaj"/>
+			<Back ENG="Back" localized="Nazaj"/>
+			<OK ENG="OK" localized="OK"/>
+			<Done ENG="Done" localized="V redu"/>
+			<Cancel ENG="Cancel" localized="Prekliči"/>
+			<Hot ENG="Hot" localized="Vroče"/>
+			<Yes ENG="Yes" localized="Da"/>
+			<No ENG="No" localized="Ne"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Strežnik"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Klient"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Začni - Vroči stol"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Naloži - vroči stol"/>
+			<Game_New ENG="New Game" localized="Nova igra"/>
+			<Game_Load ENG="Load Game" localized="Naloži igro"/>
+			<Game_Save ENG="Save Game" localized="Shrani igro"/>
+			<Game_Options ENG="Game Options" localized="Možnosti igre"/>
+			<Load ENG="Load" localized="Naloži"/>
+			<Save ENG="Save" localized="Shrani"/>
+			<Training ENG="Training" localized="Učenje"/>
+			<Delete ENG="Delete" localized="Izbriši"/>
+			<Buy ENG="Buy" localized="Kupi"/>
+			<Path ENG="Path" localized="Pot"/>
+			<Build ENG="Build" localized="Gradnja"/>
+			<Active ENG="Active" localized="Aktiviraj"/>
+			<Repair ENG="Repair" localized="Popravi"/>
+			<Upgrade ENG="Upgrade" localized="Nadgradi"/>
+			<Reload ENG="Reload" localized="Obnovi"/>
+			<Host_Start ENG="Start Host" localized="Zaženi strežnik"/>
+		</Button>
+		<Context>
+			<Clear ENG="Clear" localized="Počisti"/>
+			<Build ENG="Build" localized="Gradnja"/>
+			<Transfer ENG="X-fer" localized="Prenos"/>
+			<Sentry ENG="Sentry" localized="Nadzor"/>
+			<Done ENG="Done" localized="Zapri"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Stop ENG="Stop" localized="Stop"/>
+			<Destroy ENG="Delete" localized="Uniči"/>
+			<Repair ENG="Repair" localized="Popravi"/>
+			<Disable ENG="Disable" localized="Pokvari"/>
+			<Steal ENG="Steal" localized="Zaseži"/>
+			<Load ENG="Load" localized="Naloži"/>
+			<Active ENG="Activ." localized="Aktiviraj"/>
+			<Dist ENG="Distr." localized="Uredi"/>
+			<Reload ENG="Reload" localized="Obnovi"/>
+			<Attack ENG="Attack" localized="Napad"/>
+			<Seed ENG="Seed" localized="Zasej"/>
+			<Start ENG="Start" localized="Start"/>
+			<Research ENG="Research" localized="Razišči"/>
+			<UpAll ENG="Up. all" localized="Nad. vse"/>
+			<Upgrades ENG="Upgrades" localized="Nakup"/>
+			<Upgrade ENG="Upgrade" localized="Nadgradi"/>
+			<Info ENG="Info" localized="Info"/>
+		</Context>
+		<Hud>
+			<Files ENG="Files" localized="Datoteke"/>
+			<Settings ENG="Settings" localized="Nastavitve"/>
+			<Proceed ENG="Do" localized="OK"/>
+			<End ENG="End" localized="Končaj"/>
+			<Log ENG="Log" localized="Log"/>
+			<Chat ENG="Chat" localized="Pogovor"/>
+			<Survey ENG="Survey" localized="Geologija"/>
+			<Status ENG="Status" localized="Status"/>
+			<Color ENG="Color" localized="Barva"/>
+			<Hitpoints ENG="Hits" localized="Trdnost"/>
+			<Ammo ENG="Ammo" localized="Strelivo"/>
+			<Range ENG="Range" localized="Domet"/>
+			<Scan ENG="Scan" localized="Pregled"/>
+			<Grid ENG="Grid" localized="Mreža"/>
+			<Fog ENG="Fog" localized="Megla"/>
+			<Speed ENG="Speed" localized="Hitrost"/>
+			<Cargo ENG="Cargo" localized="Tovor"/>
+			<AmmoShort ENG="Ammo" localized="Strelivo"/>
+			<Shots ENG="Shots" localized="Streli"/>
+			<Shield ENG="Shield" localized="Oklep"/>
+			<Total ENG="Total" localized="Skupaj"/>
+			<Energy ENG="Energy" localized="Energija"/>
+			<Usage ENG="Usage" localized="Poraba"/>
+			<Teams ENG="Teams" localized="Moštva"/>
+		</Hud>
+		<Option>
+			<Lowest ENG="lowest" localized="mini"/>
+			<Lower ENG="very low" localized="zelo malo"/>
+			<Low ENG="low" localized="malo"/>
+			<Normal ENG="normal" localized="vmes"/>
+			<Much ENG="much" localized="veliko"/>
+			<More ENG="very much" localized="zelo veliko"/>
+			<Most ENG="most" localized="maksi"/>
+			<Thick ENG="thick" localized="veliko"/>
+			<Thin ENG="thin" localized="mini"/>
+			<On ENG="on" localized="vklop"/>
+			<Off ENG="off" localized="izklop"/>
+			<Definite ENG="definite" localized="določena"/>
+			<Mobile ENG="mobile" localized="mobilna"/>
+			<Type_Turns ENG="turns" localized="izmenljive poteze"/>
+			<Type_Simu ENG="simultaneous" localized="sočasne poteze"/>
+		</Option>
+		<Settings>
+			<Preferences ENG="Preferences" localized="Lastnosti"/>
+			<Volume ENG="Volume" localized="Glasnost"/>
+			<Music ENG="Music" localized="Glasba"/>
+			<Effects ENG="Effects" localized="Efekti"/>
+			<Voices ENG="Voices" localized="Glasovi"/>
+			<Disable ENG="Disable" localized="Onemogoči"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Hitrost zaslona"/>
+			<Autosave ENG="Autosave" localized="Avtom. shrani"/>
+			<Animation ENG="Animations" localized="Animacije"/>
+			<Alphaeffects ENG="Alphaeffects" localized="Alfa efekti"/>
+			<Shadows ENG="Shadows" localized="Senčenje"/>
+			<ShowDamage ENG="Buildingdamage" localized="Poškodbe stavb"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="Poškodbe vozil"/>
+			<Tracks ENG="Vehicletracks" localized="Sledi vozil"/>
+			<Intro ENG="Show intro" localized="Prikaži film"/>
+			<Window ENG="Windowed" localized="V oknu"/>
+			<Resolution ENG="Resolution" localized="Resolucija"/>
+		</Settings>
+		<Multiplayer>
+			<Player ENG="Player" localized="Igralec"/>
+			<Waiting ENG="Waiting for other players..." localized="Čakam na druge igralce..."/>
+			<Player_Few ENG="Not enough players!" localized="Ni dovolj igralcev!"/>
+			<Player_Many ENG="Too many players!" localized="Preveč igralcev!"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Podvojeno ime igralca: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Manjka pravilno ime igralca"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="mora biti strežnik v potezni igri!"/>
+			<Player_Amount ENG="Amount of players" localized="Število igralcev"/>
+			<Player_Turn ENG="'s turn" localized="-ta poteza"/>
+			<Player_Turn_End ENG=" ended turn" localized=" končana poteza"/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Napaka pri odpiranju"/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Ne morem se povezati na "/>
+			<Network_Open ENG="Game open" localized="Igra odprta"/>
+			<Network_Connecting ENG="Connecting to " localized="Povezovanje na "/>
+			<Network_New ENG="New connection" localized="Nova povezava"/>
+			<Network_Connected ENG="Connected" localized="Povezan"/>
+			<Network_Connected_Not ENG="Not connected" localized="Brez povezave"/>
+			<Network_Closed ENG="Connection closed" localized="Povezava končana"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Sinhronizacija..."/>
+			<Map_NoSet ENG="--no map set--" localized="--brez nastavitev mape--"/>
+			<Option_NoSet ENG="--no options set--" localized="--brez nastavitev opcij--"/>
+			<Go ENG="Let's go" localized="Gremo, akcija"/>
+			<Go_Abort ENG="Go aborted" localized="Prekini"/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized="Strežnik želi da: Potrdiš pripravljenost"/>
+			<Go_Host_No ENG="Host wants to go: No go" localized="Strežnik želi da: Ne potrdiš pripravljenosti"/>
+			<Go_Ready ENG="Ready to go" localized="Pripravljen"/>
+			<Go_Ready_No ENG="not ready to go" localized="nisem pripravljen"/>
+			<Go_Check ENG="Check for go" localized="Preveri pripravljenost"/>
+		</Multiplayer>
+		<Vehicles>
+			<Damage ENG="Damage" localized="Moč"/>
+			<Shoots ENG="Shoots" localized="Streli"/>
+			<Range ENG="Range" localized="Domet"/>
+			<Ammo ENG="Ammo" localized="Strelivo"/>
+			<Armor ENG="Armor" localized="Oklep"/>
+			<Hitpoints ENG="Hitpoints" localized="Trdnost"/>
+			<Scan ENG="Scan" localized="Pregled"/>
+			<Speed ENG="Speed" localized="Hitrost"/>
+			<Cargo ENG="Cargo" localized="Tovor"/>
+			<Costs ENG="Costs" localized="Cena"/>
+			<Produce ENG="Produces" localized="Proizvod"/>
+			<Usage ENG="Usage" localized="Poraba"/>
+		</Vehicles>
+		<Comp>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Premalo goriva, generator ugasnjen!"/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized="Premalo energije, porabnik izključen!"/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized="Premalo surovin, porabnik izključen!"/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized="Premalo zlata, porabnik izključen!"/>
+			<Team_Low ENG="To low teams, disabled consumer!" localized="Premalo prebivališč, porabnik izključen!"/>
+			<Energy_Optimize ENG="Energygeneration optimized" localized="Proizvodnja energije optimizirana"/>
+			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Premalo energije za zagon!"/>
+			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Premalo energije, zagon generatorja!"/>
+			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Premalo goriva za zagon!"/>
+			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="Ne morem ugasniti generatorja, potrebujemo energijo!"/>
+			<Cheat ENG="used cheat" localized="uporaba goljufije"/>
+			<Destroyed ENG="destroyed" localized="uničen"/>
+			<Defeated ENG="defeated" localized="poražen"/>
+			<Finished ENG="is finished" localized="je izgrajen-a"/>
+			<Finished2 ENG="are finished" localized="so izgrajeni"/>
+			<Detected ENG="detected" localized="zaznan"/>
+			<Stolen ENG="stolen" localized="ukraden"/>
+			<Attacked ENG="is under attack" localized="je napaden-a"/>
+			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Res želite zaključiti?\n\nNeshranjeni napredek bo izgubljen."/>
+			<Turn_Start ENG="Start turn" localized="Začni potezo"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Prosim počakaj, da se zaključijo vsi premiki"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Izvajanje preostalih premikov"/>
+			<Research_Attack ENG="Research 'Attack' completed" localized="Raziskava 'Moč' zaključena"/>
+			<Research_Shoots ENG="Research 'Shoots' completed" localized="Raziskava 'Streli' zaključena"/>
+			<Research_Range ENG="Research 'Range' completed" localized="Raziskava 'Domet' zaključena"/>
+			<Research_Armor ENG="Research 'Armor' completed" localized="Raziskava 'Oklep' zaključena"/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Raziskava 'Trdnost' zaključena"/>
+			<Research_Speed ENG="Research 'Speed' completed" localized="Raziskava 'Hitrost' zaključena"/>
+			<Research_Scan ENG="Research 'Scan' completed" localized="Raziskava 'Pregled' zaključena"/>
+			<Research_Costs ENG="Research 'Costs' completed" localized="Raziskava 'Cena' zaključena"/>
+			<Working ENG="working" localized="v delovanju"/>
+			<Waits ENG="waits" localized="v mirovanju"/>
+			<Disabled ENG="disabled" localized="onemogočeno delovanje"/>
+			<Producing ENG="Producing" localized="proizvodnja poteka"/>
+			<Producing_Fin ENG="finished producing" localized="proizvodnja zaključena"/>
+			<Moving ENG="moving" localized="v premiku"/>
+			<Sentry ENG="on sentry" localized="na preži"/>
+			<Clearing ENG="Clearing" localized="čisti"/>
+			<Clearing_Mine ENG="clearing mines" localized="čisti mine"/>
+			<Clearing_Fin ENG="clearing done" localized="čiščenje končano"/>
+			<Laying ENG="laying mines" localized="polagam mine"/>
+			<Greenhorn ENG="Greenhorn" localized="Zelenec"/>
+			<Veteran ENG="Veteran" localized="Veteran"/>
+			<Description ENG="Description" localized="Opis"/>
+			<Repeat ENG="Again" localized="Ponovno"/>
+			<Dated ENG="dated" localized="datiran"/>
+			<Labs ENG="Labs" localized="Laboratoriji"/>
+			<Themes ENG="Themes" localized="Teme"/>
+			<Turns ENG="Turns" localized="Poteze"/>
+			<Turn ENG="Turn" localized="Potezo"/>
+			<Reserve ENG="Reserve" localized="Rezerva"/>
+			<Surveying ENG="surveying" localized="preiskujem"/>
+		</Comp>
+		<Error_Messages>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Ne najdem datoteke: %s"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="manjkajoč prevod: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Napaka pri nalaganju mape"/>
+      			<INFO_Language_initialised ENG="Language is now initialised" localized="Jezik je nastavljen"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Funkcija še ni implementirana"/>
+		</Error_Messages>
+	</Text>
+	<Units>
+    <Unit ID="0 1" localized="Transportno letalo">Transportno letalo\n\nMasivno letalo, ki je sposobno nositi do tri kopenske enote.</Unit>
+    <Unit ID="0 2" localized="Nezemljanska samohodka">Nezemljanska samohodka\n\nMočan plazmatski top, nameščen na hitro, srednje oklopljeno podvozje. Kljub večji odpornosti od človeških samohodnih topov, se mora tudi to vozilo ogibati sovražnega ognja. Vse nezemljanske enote se avtomatično popravljajo in izboljšujejo bojne lastnosti z novimi izkušnjami.</Unit>
+    <Unit ID="0 3" localized="Nezemljansko letalo">Nezemljansko letalo\n\nNezemljansko letalo je hkrati lovec in bombnik. V prvi vrsti je namenjeno uničevanju kopenskih ciljev, vendar lahko izstreljuje rakete tudi na sovražna letala. Kljub izjemni moči, je še vedno občutljivo na protiletalsko obrambo. Kot vse nezemljanske enote se tudi to letaloavtomatično popravlja in izboljšuje bojne lastnosti z novimi izkušnjami.</Unit>
+    <Unit ID="0 4" localized="Nezemljanska ladja">Nezemljanska ladja\n\nMočno oklopljena in oborožena bojna ladja nezemljanske izdelave. Podobno, kot človeška topnjača, se tudi ta ladja odlikuje v uničevanju sovražnih ladij in napadih na kopenske cilje, ki so blizu obale. Vse nezemljanske enote se avtomatično popravljajo in izboljšujejo bojne lastnosti z novimi izkušnjami.</Unit>
+    <Unit ID="0 5" localized="Nezemljanski tank">Nezemljanski tank\n\nMočno oklopljeni tank, nezemljanske izdelave. Nezemljanske tanke je najbolje uporabiti v prvih bojnih vrstah, da pritegnejo sovražni ogenj. Vse nezemljanske enote se avtomatično popravljajo in izboljšujejo bojne lastnosti z novimi izkušnjami.</Unit>
+    <Unit ID="0 6" localized="Osebni transporter">Osebni transporter\n\nHitro in oklopljeno vozilo za transport pehote in vohunov. Transporter se lahko uporablja tako na kopnem, kot tudi pod vodo, kjer pa je počasnejši. Pod vodo ga zaznajo le sovražnikove korvete.</Unit>
+    <Unit ID="0 7" localized="Samohodni top">Samohodni top\n\nLahko oklopljeno vozilo z nameščenim topom srednjega dosega, ki strelja visoko eksplozivne izstrelke. Učinkovit je v napadu, a šibak v obrambi.</Unit>
+    <Unit ID="0 8" localized="AWAC">AWAC\n\nLetalo za pregled in upravljanje bojišča. Letalo je opremljeno z zmogljivim radarjem, ki omogoča učinkovito zgodnje opozarjanje pred sovražnikovimi enotami in vodenje lastnih enot.</Unit>
+    <Unit ID="0 9" localized="Bombnik">Bombnik\n\nTežko bojno letalo, opremljeno z vodenimi raketami zrak-zemlja. Bombniki so dragi, vendar njihove zmogljivosti in moč odtehtajo ceno. Zaradi hitrosti in dosega so idealni za napade presenečenja, pri katerih so jim kos le lovska letala in protiletalska obramba.</Unit>
+    <Unit ID="0 10" localized="Buldožer">Buldožer\n\nVozilo je namenjeno odstranjevanju razbitin in uničevanju zgradb. Buldožer med čiščenjem razbitin pridobiva surovine .</Unit>
+    <Unit ID="0 11" localized="Oskrbovalna ladja">Oskrbovalna ladja\n\nLadja je namenjena prevozu osnovnih surovin in materiala na bojišče. Idealna je za oskrbovanje inženirskih enot z gradbenim materialom in pomorskih bojnih enot s strelivom.</Unit>
+    <Unit ID="0 12" localized="Raketomet">Raketomet\n\nLahko oklopljeno vozilo, opremljeno z raketami srednjega dosega, ki vsebujejo razpršno razstrelivo. Ker so izstrelki na cilju učinkoviti v obsegu dveh kvadratov, je raketomet idealen za napad na strnjene enote in za uničevanje minskih polj.</Unit>
+    <Unit ID="0 13" localized="Vohun">Vohun\n\nPripadnik posebnih enot, ki je izurjen v prikrivanju in elektronskem bojevanju. Vohuni lahko sabotirajo ali zavzamejo sovražnikove enote. Običajno so nevidni sovražniku, razen, kadar niso uspešni v svoji nalogi, ali kadar jih zazna sovražnikova pehota. Vohuni lahko odkrivajo sovražnikove mine.</Unit>
+    <Unit ID="0 14" localized="Korveta">Korveta\n\nMajhna in hitra ladja, opremljena s torpedi in sonarjem za odkrivanje podvodnih vozil, kot so podmornice in osebni transporterji.</Unit>
+    <Unit ID="0 15" localized="Fregata">Fregata\n\nMajhno in izredno hitro plovilo, opremljeno s protiletalskim hitrostrelnim topom in zmogljivim radarjem. Fregate so oči bojne flote ali konvoja ladij, hkrati pa služijo tudi kot zaščita pred napadi iz zraka.</Unit>
+    <Unit ID="0 16" localized="Lovsko letalo">Lovsko letalo\n\nHitro in lahko, a krhko letalo, opremljeno z raketami zrak-zrak. Lovska letala so namenjena napadom na sovražnikova letala in varovanju premikajoče se lastne vojske pred letalskimi napadi. Za varovanje statičnih objektov je primernejša kopenska protiletalska obramba.</Unit>
+    <Unit ID="0 17" localized="Topnjača">Topnjača\n\nMočno oklopljena ladja, oborožena s topovi velikega kalibra, ki ji omogočajo učinkovite napade na srednje oddaljene cilje. Idealna je za napade na sovražnikove ladje in objekte blizu obale.</Unit>
+    <Unit ID="0 18" localized="Pehota">Pehota\n\nPehoto sestavljajo posamezni vojaki, z minimalno zaščito in lahkim protioklepnim orožjem. Pehota lahko zazna sovražnikove vohune.</Unit>
+    <Unit ID="0 19" localized="Konstruktor">Konstruktor\n\nVozilo izjemne velikosti, namenjeno gradnji velikih objektov, kot so rudniki in tovarne. Vsak konstruktor za lastno delovanje porabi dve enoti surovin.</Unit>
+    <Unit ID="0 20" localized="Minopolagalec">Minopolagalec\n\nMinopolagalec je specializirano vozilo, namenjeno polaganju, zaznavanju in odstranjevanju min. Minopolagalci za polaganje min uporabljajo surovine, ki jih prevažajo s seboj, hkrati pa lahko lastne mine pretvorijo nazaj v surovine. Sovražnikovih min minopolagalec ne more odstraniti, temveč jih je potrebno uničiti s streli bojnih enot.</Unit>
+    <Unit ID="0 21" localized="Raketni transporter">Raketni transporter\n\nRaketni transporter prevaža manevrirno raketo dolgega dosega na lahko oklopljenem podvozju. Kljub večji krhkosti in dragi izdelavi ima sama mobilnost te enote nekatere prednosti pred stacionarnimi raketnimi platformami.</Unit>
+    <Unit ID="0 22" localized="Rušilec">Rušilec\n\nRušilec je opremljen z manevrirnimi raketami dolgega dosega. Visoka moč izstrelka, izjemen doseg in srednje oklopljen trup so lastnosti te mogočne enote.</Unit>
+    <Unit ID="0 23" localized="Mobilni protiletalski top">Mobilni protiletalski top\n\nLahko in hitro vozilo, opremljeno s hitrostrelnim topom za obrambo pred sovražnimi letali. Njegova vloga je zlasti obrambna, saj je počasnejši od letal, hkrati pa ne more streljati med premikom. Namenjen je področni obrambi kopenskih enot.</Unit>
+    <Unit ID="0 24" localized="Inženir">Inženir\n\nInženir je majhno konstruktorsko vozilo, namenjeno postavitvi manjših zgradb in stacionarnih obrambnih konstrukcij.</Unit>
+    <Unit ID="0 25" localized="Servisno vozilo">Servisno vozilo\n\nLahko vozilo, namenjeno hitremu popravilu enot in zgradb. Za popravila servisno vozilo porablja surovine, ki jih v omejeni količini prevaža s seboj. Za popravila mobilnih enot so poleg servisnega vozila primerne tudi garaže, pristanišča in hangerji.</Unit>
+    <Unit ID="0 26" localized="Mobilni radar">Mobilni radar\n\nMobilna radarska platforma, z večjim pregledom od izvidnikov, a dražja, počasnejša in neoborožena. Mobilni radar je namenjen zlasti spremstvu enot z orožjem dolgega dosega.</Unit>
+    <Unit ID="0 27" localized="Izvidnik">Izvidnik\n\nHitro izvidniško vozilo za raziskovanje terena in odkrivanje sovražnih enot. Lahko potuje po vodi, ima visok pregled nad okolico, vendar šibko orožje in oklep v primerjavi z drugimi bojnimi enotami.</Unit>
+    <Unit ID="0 28" localized="Minolovec">Minolovec\n\nMinolovec je pomorska različica minopolagalca. Tako kot minopolagalec služi za polaganje, zaznavanje in odstranjevanje pomorskih min. Pobrane mine lahko predela nazaj v surovine.</Unit>
+    <Unit ID="0 29" localized="Transportna ladja">Transportna ladja\n\nMočno oklopljena ladja, ki je sposobna prevažati do šest kopenskih enot. Transportne ladje so počasnejše od transportnih letal, vendar pa dosti bolj odporne na sovražnikov ogenj.</Unit>
+    <Unit ID="0 30" localized="Podmornica">Podmornica\n\nSkrita pod gladino se lahko podmornica prikrade v bližino sovražnika in izstreli torpeda. Podmornica nima aktevnega sonarja, saj bi jo le-ta izdal. Zgolj korvete lahko odkrijejo podmornico, napadejo pa jo lahko le druge podmornice, korvete in bombniki.</Unit>
+    <Unit ID="0 31" localized="Geološko vozilo">Geološko vozilo\n\nLahko amfibijsko vozilo, opremljeno z natančnimi senzorji za zaznavo podzemnih mineralov in sovražnih min. Za razliko od drugih amfibijskih enot je geološko vozilo enako hitro tako na kopnem, kot na vodi.</Unit>
+    <Unit ID="0 32" localized="Tank">Tank\n\nMočno oklopljeno bojno vozilo, namenjeno frontalnim spopadom in zaščiti šibkeje oklopljenih enot, kot so samohodni topovi in raketometi.</Unit>
+    <Unit ID="0 33" localized="Transporter zlata">Transporter zlata\n\nTransporter zlata je namenjen prevažanju nerafiniranega zlata med različnimi lokacijami.</Unit>
+    <Unit ID="0 34" localized="Oskrbovalno vozilo">Oskrbovalno vozilo\n\nOskrbovalno vozilo je namenjeno prevozu surovin, oskrbovanju inženirjev in konstruktorjev s surovinami ter oskrbovanju bojnih enot s strelivom.</Unit>
+    <Unit ID="0 35" localized="Cisterna">Cisterna\n\nVozilo je namenjeno prevozu goriva med različnimi lokacijami.</Unit>
+    <Unit ID="1 1" localized="Vojašnica">Vojašnica\n\nVojašnica je namenjena vzdrževanju pehote in specialnih enot (vohunov). Vsebuje delavnico za popravila in nadgradnjo orožja ter orožarno za oskrbovanje s strelivom. Vojašnica za popravila, nadgradnje in oskrbovanje s strelivom potrebuje surovine, zato mora biti povezana z rudnikom ali skladiščem surovin.</Unit>
+    <Unit ID="1 2" localized="Betonski blok">Betonski blok\n\nUtrjen, oklopljen betonski blok za ustavljanje in oviranje sovražnih premikov.</Unit>
+    <Unit ID="1 3" localized="Most">Most\n\nPontonski most za postavitev na vodnih površinah. Mostovi, za razliko od vodnih ploščadi, ne blokirajo premikov pomorskih enot oz. ladij.</Unit>
+    <Unit ID="1 4" localized="Konektor">Konektor\n\nZgradbe morajo biti povezane med seboj za izmenjavo energije, goriva, surovin in zlata. Med seboj sosednje zgradbe se avtomatično povežejo, med odaljenimi zgradbami pa za povezavo poskrbijo konektorji.</Unit>
+    <Unit ID="1 5" localized="Garaža">Garaža\n\nGaraža je namenjena popravilom, nadgradnjam in oskrbovanju vozil s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti garaža povezana z rudnikom ali skladiščem surovin.</Unit>
+    <Unit ID="1 6" localized="Pristanišče">Pristanišče\n\nPristanišče je namenjeno popravilom, nadgradnjam in oskrbovanju plovil s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti pristanišče povezano z rudnikom ali skladiščem surovin.</Unit>
+    <Unit ID="1 7" localized="Elektrarna">Elektrarna\n\nElektrarna za delovanje porabi šest enot goriva na potezo in zagotavlja dovolj energije, da lahko z njo napaja šest tovarn ali rudnikov.</Unit>
+    <Unit ID="1 8" localized="Generator">Generator\n\nGenerator porabi dve enoti goriva vsako potezo in zagotavlja dovolj energije, da lahko z njo napaja eno tovarno ali rudnik.</Unit>
+    <Unit ID="1 9" localized="Tovarna letal">Tovarna letal\n\nGradi bombnike, AWAC, lovska letala in transportna letala. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 10" localized="Tovarna nezemljanov">Tovarna nezemljanov\n\nTovarna nezemeljskega izvora. Ni podatkov o zmogljivostih in porabi.</Unit>
+    <Unit ID="1 11" localized="Tovarna težkih vozil">Tovarna težkih vozil\n\nGradi konstruktorje, mobilne radarje in težke bojne enote: tanke, samohodne topove, raketomete in raketna vozila. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 12" localized="Ladjedelnica">Ladjedelnica\n\nGradi plovila, kot so podmornice, transportne in bojne ladje. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 13" localized="Tovarna lahkih vozil">Tovarna lahkih vozil\n\nGradi inženirje, transporterje, servisna vozila, izvidnike in mobilne protiletalske enote. Za delovanje potrebuje vsako potezo tri enote surovin in energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 14" localized="Rafinerija zlata">Rafinerija zlata\n\nRafinerija pretvarja zlato v valuto za nakup nadgradenj. Za delovanje potrebuje energijo iz elektrarne ali generatorja in zlato, ki ga priskrbijo rudniki, ležeči na območju z zlato rudo.</Unit>
+    <Unit ID="1 15" localized="Protiletalski top">Protiletalski top\n\nHitrostrelni top majhnega kalibra, ki služi za obrambo pred letali, vendar pa ne more streljati na kopenske enote.</Unit>
+    <Unit ID="1 16" localized="Artilerija">Artilerija\n\nStacionarni top velike moči, ki je kompromis med poceni a vzdržljivim topovsko baterijo in med dražjo, a občutljivejšo raketno baterijo dolgega dosega.</Unit>
+    <Unit ID="1 17" localized="Raketna baterija">Raketna baterija\n\nIzstrelitvena ploščad za manevrirne rakete dolgega dosega. Izjemna eksplozivna moč in doseg, vendar pa le malenkost bolje zaščitena od mobilne različice. </Unit>
+    <Unit ID="1 18" localized="Topovska baterija">Topovska baterija\n\nMočno oklopljeno stacionarno topovsko gnezdo, s solidno ognjeno močjo in kratkim do srednjim dosegom. Kratek čas postavitve naredi topovsko baterijo za idealno rešitev v primerih, ko je potrebna hitra postavitev obrambe.</Unit>
+    <Unit ID="1 19" localized="Prebivališče">Prebivališče\n\nPrebivališče je namenjeno nastanitvi kolonizatorjev. Vsako prebivališče zadostuje za delovanje treh raziskovalnih centrov, vadbenih centrov ali ekosfer.</Unit>
+    <Unit ID="1 20" localized="Hangar">Hangar\n\nHangar je namenjen popravilom, nadgradnjam in oskrbovanju letal s strelivom. Vse te dejavnosti zahtevajo surovine, zato mora biti hangar povezan z rudnikom ali skladiščem surovin.</Unit>
+    <Unit ID="1 21" localized="Kopenska mina">Kopenska minan\n\nMajhno, težko zaznavno eksplozivno telo, ki se ga položi na tla in služi za uničevanje ter oviranje sovražnikovih enot. Sovražne mine lahko zaznajo le vohuni, minopolagalci in geološka vozila. Po odkritju jih je možno uničiti s streli bojnih enot.</Unit>
+    <Unit ID="1 22" localized="Rudnik">Rudnik\n\nPridobiva surovine, gorivo in zlato z vsako potezo delovanja. Za porabo materialov, ki jih rudnik proizvaja, morajo biti porabniki povezani nanj neposredno ali preko konektorjev. V kolikor je poraba manjša od pridobivanja, se materiali skladiščijo v skladišča, po zasičenju skladišč pa so neporabljeni materiali izgubljeni. Rudnik za delovanje potrebuje energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 23" localized="Globinska mina">Globinska mina\n\n...</Unit>
+    <Unit ID="1 24" localized="Pristajalna ploščad">Pristajalna ploščad\n\nPristajalna ploščad za letala, ki pa sama po sebi ne omogoča popravil, oskrbe in nadgradnje. Popravila letal na ploščadi so možna ob uporabi servisnega vozila, obnovitev streliva pa ob uporabi oskrbovalnega vozila.</Unit>
+    <Unit ID="1 25" localized="Vodna ploščad">Vodna ploščad\n\nZagotavlja plavajočo površino, na kateri je možna gradnja. Inženirji lahko gradijo vodne ploščadi iz kopnega ali na odprtem morju. Vodne ploščadi so primerne za gradnjo otokov in za gradnjo rudnikov nad morskimi nahajališči.</Unit>
+    <Unit ID="1 26" localized="Radar">Radar\n\nStacionarni radar dolgega dosega, ki omogoča pregled nad bojiščem in premiki sovražnih enot.</Unit>
+    <Unit ID="1 27" localized="Raziskovalni center">Raziskovalni center\n\nRaziskovalni centri so namenjeni izboljševanju tehnologije. Za razliko od nadgradenj, ki jih je možno kupiti, raziskave zahtevajo čas in napredki so v manjših korakih. Vendar pa izsledki raziskav vplivajo na vse enote in ne le na eno, hkrati pa za delovanje ne potrebujejo zlata temveč le koloniste iz prebivališča in energijo iz elektrarne ali generatorja.</Unit>
+    <Unit ID="1 28" localized="Cesta">Cesta\n\nCesta omogoča vsem kopenskim enotam, da se premikajo dvakrat hitreje, kot preko običajnega terena.</Unit>
+    <Unit ID="1 29" localized="Morska mina">Morska mina\n\nMajhno, plavajoče in težko zaznavno eksplozivno telo, ki se ga položi v vodo in služi za uničevanje ter oviranje sovražnikovih pomorskih enot. Sovražne morske mine lahko zaznajo le vohuni, minolovci in geološka vozila. Po odkritju jih je možno uničiti s streli bojnih enot.</Unit>
+    <Unit ID="1 30" localized="Oklep">Oklep\n\n</Unit>
+    <Unit ID="1 31" localized="Skladišče zlata">Skladišče zlata\n\nNamenjeno je shranjevanju nerafiniranega zlata, neposredno iz povezanih rudnikov, ali preko specialnih transportnih vozil za prevoz zlata (Transporter zlata).</Unit>
+    <Unit ID="1 32" localized="Skladišče surovin">Skladišče surovin\n\nNamenjeno je shranjevanju surovin, neposredno iz povezanih rudnikov, ali preko oskrbovalnih vozil.</Unit>
+    <Unit ID="1 33" localized="Skladišče goriva">Skladišče goriva\n\nNamenjeno je shranjevanju goriva, neposredno iz povezanih rudnikov, ali preko specialnih vozil za prevoz goriva (Cisterna).</Unit>
+    <Unit ID="1 34" localized="Vadbeni center">Vadbeni center\n\nCenter za usposabljanje vohunov in pehote. Za delovanje potrebuje koloniste iz prebivališča in energijo iz elektrarne ali generatorja.</Unit>
+  </Units>
+	<Graphic>
+	</Graphic>
+	<Speech>
+	</Speech>
+</MAX_Language_File>
