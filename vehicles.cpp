@@ -1224,6 +1224,7 @@ void cVehicle::ShowHelp ()
 	SDL_Rect rTitle = {MENU_OFFSET_X + 327, MENU_OFFSET_Y + 11, 160, 15};
 	SDL_Surface *SfDialog;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
@@ -2576,6 +2577,7 @@ void cVehicle::ShowBuildMenu ()
 	int iTurboBuildRounds[3];	// needed rounds for the 3 turbo build steps
 								// 0 rounds, means not available
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -3767,6 +3769,7 @@ void cVehicle::showStorage ()
 	//bool AlleAktivierenEnabled = false;
 	int offset = 0;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 	#define BUTTON__W 77
 	#define BUTTON__H 23

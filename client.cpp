@@ -333,7 +333,15 @@ void cClient::run()
 			bFlagDrawHud = true;
 		}
 		CHECK_MEMORY;
-
+		// display the object menu:
+		if ( bFlagDrawMap && SelectedVehicle && SelectedVehicle->MenuActive )
+		{
+			SelectedVehicle->DrawMenu();
+		}
+		if ( bFlagDrawMap && SelectedBuilding && SelectedBuilding->MenuActive )
+		{
+			SelectedBuilding->DrawMenu();
+		}
 		// check whether the hud has to be drawn:
 		if ( bFlagDrawHud || bFlagDrawMMap )
 		{
@@ -345,16 +353,6 @@ void cClient::run()
 		if ( bFlagDrawHud || iTimer0 )
 		{
 			drawFLC();
-		}
-		CHECK_MEMORY;
-		// display the object menu:
-		if ( bFlagDrawMap && SelectedVehicle && SelectedVehicle->MenuActive )
-		{
-			SelectedVehicle->DrawMenu();
-		}
-		if ( bFlagDrawMap && SelectedBuilding && SelectedBuilding->MenuActive )
-		{
-			SelectedBuilding->DrawMenu();
 		}
 		CHECK_MEMORY;
 		// display the chatinput:
@@ -5192,6 +5190,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 		}
 		handleTurnTime();
 	}
+	Client->bFlagDrawHud = true;
 }
 
 void cClient::handleTurnTime()
@@ -5845,6 +5844,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	if ( DestBuilding ) scaleSurface ( DestBuilding->typ->img_org, DestBuilding->typ->img, ( int ) ( DestBuilding->typ->img_org->w* fNewZoom ), ( int ) ( DestBuilding->typ->img_org->h* fNewZoom ) );
 	else scaleSurface ( DestVehicle->typ->img_org[0], DestVehicle->typ->img[0], ( int ) ( DestVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( DestVehicle->typ->img_org[0]->h* fNewZoom ) );
+	if ( Client ) Client->bFlagDrawHud = true;
 	isInMenu = false;
 }
 

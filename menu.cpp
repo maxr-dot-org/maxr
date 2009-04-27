@@ -5673,6 +5673,7 @@ int ShowDateiMenu ( bool bSave )
 		{
 			delete files;
 			InputHandler->setInputState ( false );
+			if ( Client ) Client->bFlagDrawHud = true;
 			return -1;
 		}
 
@@ -5683,6 +5684,7 @@ int ShowDateiMenu ( bool bSave )
 			Client->bExit = true;
 			delete files;
 			InputHandler->setInputState ( false );
+			if ( Client ) Client->bFlagDrawHud = true;
 			return -1;
 		}
 
@@ -5727,6 +5729,7 @@ int ShowDateiMenu ( bool bSave )
 			{
 				displayFiles ( savefiles, offset, selected, false, false, rDialog );
 				delete files;
+				if ( Client ) Client->bFlagDrawHud = true;
 				return 1;
 			}
 			SHOW_SCREEN
@@ -5820,6 +5823,7 @@ int ShowDateiMenu ( bool bSave )
 		savefiles.Delete( 0 );
 	}
 	InputHandler->setInputState ( false );
+	if ( Client ) Client->bFlagDrawHud = true;
 	return -1;
 }
 

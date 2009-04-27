@@ -977,6 +977,7 @@ void cBuilding::SelfDestructionMenu ()
 	{
 		//TODO: self destruction
 	}
+	Client->bFlagDrawHud = true;
 }
 
 //--------------------------------------------------------------------------
@@ -1905,6 +1906,7 @@ void cBuilding::ShowStorage ()
 	bool AlleUpgradenEnabled = false;
 	int offset = 0;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -2829,6 +2831,7 @@ void cBuilding::ShowResearch ()
 {
 	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 	//Dialog Research width
 #define DLG_RSRCH_W GraphicsData.gfx_research->w
@@ -3095,6 +3098,7 @@ void cBuilding::ShowUpgrade ()
 	int startCredits = owner->Credits;
 	int curCredits = startCredits;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -4675,6 +4679,7 @@ void cBuilding::showMineManager ()
 	int iFreeM = 0, iFreeO = 0, iFreeG = 0;
 	int iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	SDL_Rect rTitle = {rDialog.x + 230, rDialog.y + 11, 174, 13};
@@ -5467,6 +5472,7 @@ void cBuilding::ShowBuildMenu ()
 	int build_selected = 0, build_offset = 0;
 	bool showDetailsBuildlist = true; //wenn false, stattdessen die Details der in der toBuild Liste gewaehlten Einheit anzeigen
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 #define BUTTON__W 77
 #define BUTTON__H 23
@@ -7606,6 +7612,7 @@ void cBuilding::ShowHelp ()
 	SDL_Rect rTitle = {rDialog.x + 332, rDialog.y + 11, 152, 15};
 	SDL_Surface *SfDialog;
 	Client->isInMenu = true;
+	Client->bFlagDrawHud = true;
 
 	PlayFX ( SoundData.SNDHudButton );
 	mouse->SetCursor ( CHand );
