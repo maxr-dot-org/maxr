@@ -1446,15 +1446,11 @@ void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, 
 	
 			rDest.x = 3;
 			rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
-			rDest.w = GraphicsData.gfx_hud_extra_players->w-rSrc.x;
-			rDest.h = GraphicsData.gfx_hud_extra_players->h;
 		}
 		else //draw players beside minimap if screenres is to small
 		{
 			rDest.x = 161;
 			rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
-			rDest.w = GraphicsData.gfx_hud_extra_players->w;
-			rDest.h = GraphicsData.gfx_hud_extra_players->h;
 		}
 	
 	

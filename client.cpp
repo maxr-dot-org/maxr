@@ -309,6 +309,12 @@ void cClient::run()
 			SDL_Rect topDisplay = {380, 5, 220, 25}; 
 			SDL_BlitSurface ( GraphicsData.gfx_hud, &topDisplay, buffer, &topDisplay );
 
+			if ( Hud.bShowPlayers )
+			{
+				SDL_Rect playersReadyMenue = { 180, 300, 200, 300 };
+				SDL_BlitSurface ( GraphicsData.gfx_hud, &playersReadyMenue, buffer, &playersReadyMenue );
+			}
+
 			bFlagDraw = true;
 		}
 		CHECK_MEMORY;
