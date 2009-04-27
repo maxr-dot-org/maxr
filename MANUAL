@@ -53,20 +53,15 @@ In-game console (TAB or chat-button) offers a variet of commands:
 /disconnect [id]              closes connection to a player and starts waiting for reconnection.
 /deadline <seconds>           sets deadline for turnend to given seconds
 /fps [on/off]                 shows frames per second
-/com [on/off]                 [*not working*] shows network traffic (multiplayer)
-/log [on/off]                 [*not working*] creats a logfile by engine
-/[show/hide] log              [*not working*] shows log (if active)
-/ping                         [*not working*] checks connectivity in multiplayer
+/cache size <wert>		set the number of rendered units stored in the graphic cache. The higher the value, the faster runs maxr
+/cache flush			when you have some strange graphic artefacts thy this command. It deletes all units from the graphic cache, so they are rerendered.
+/cache debug [on/off]		display debug statistics of the graphic cache
 
 Next commands are considered as cheats and will show up in gamechat
 
 /survey            shows all mapresources (only in singleplayer or on the host)
 /color [0-7]       sets new color for active player
 /fog off           disabled fog for a short period
-/credits           [*not working*] player gets +1000 credits
-/kill [x] [y]      [*not working*] kills whatever is on position x,y
-/god off           [*not working*] creates a godless world
-/load              [*not working*] reloads active unit
 
 DESCRIPTION
 
