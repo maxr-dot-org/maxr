@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F7F4ECE0F13FEB3006FE47C /* Ogg.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FA756FC0EE72A890059A7F6 /* Ogg.framework */; };
+		9F7F4ED30F13FEB8006FE47C /* Vorbis.framework in Copy frameworks into app bundle */ = {isa = PBXBuildFile; fileRef = 9FA756FD0EE72A890059A7F6 /* Vorbis.framework */; };
 		9FA38C740EE71FC000340716 /* converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C640EE71FC000340716 /* converter.cpp */; };
 		9FA38C750EE71FC000340716 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C670EE71FC000340716 /* file.cpp */; };
 		9FA38C760EE71FC000340716 /* ogg_encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA38C690EE71FC000340716 /* ogg_encode.cpp */; };
@@ -35,6 +37,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9F7F4ED30F13FEB8006FE47C /* Vorbis.framework in Copy frameworks into app bundle */,
+				9F7F4ECE0F13FEB3006FE47C /* Ogg.framework in Copy frameworks into app bundle */,
 				9FC0DD660EE2D6DF00F23D2C /* SDL.framework in Copy frameworks into app bundle */,
 				9FC0DD670EE2D6DF00F23D2C /* SDL_mixer.framework in Copy frameworks into app bundle */,
 				9FC0DD680EE2D6DF00F23D2C /* SDL_net.framework in Copy frameworks into app bundle */,
@@ -179,8 +183,8 @@
 			buildPhases = (
 				9FC0DB570EE2B06700F23D2C /* Resources */,
 				9FC0DB580EE2B06700F23D2C /* Sources */,
-				9FC0DB590EE2B06700F23D2C /* Frameworks */,
 				9FC0DD510EE2D5B400F23D2C /* Copy frameworks into app bundle */,
+				9FC0DB590EE2B06700F23D2C /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -260,7 +264,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				FRAMEWORK_SEARCH_PATHS = ResInstaller.app/Contents/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -300,9 +304,9 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "/Library/Frameworks\nFRAMEWORK_SEARCH_PATHS";
+				FRAMEWORK_SEARCH_PATHS = ../Frameworks;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
