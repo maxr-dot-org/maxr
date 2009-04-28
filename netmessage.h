@@ -56,9 +56,10 @@ public:
 	~cNetMessage();
 
 	/** return a pointer to a platform independed serial representation of the NetMessage
-	* Bytes 0 - 1: Type of the message, in little endian
-	* Bytes 2 - 3: total Length of the message, little endian
-	* Byte  4: the Playernumber
+	* Byte 0: START_CHAR
+	* Bytes 1 - 2: Total length of the message, in little endian
+	* Bytes 3 - 4: Type of the message, little endian
+	* Byte  5: the Playernumber
 	* following Bytes: the pushed data
 	* @author Eiko
 	*/
