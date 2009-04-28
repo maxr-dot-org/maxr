@@ -20,7 +20,7 @@
 			<Version ENG="version v%s" localized="Verzió V%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönch's M.A.X. (Eredeti az Interplay-től)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake DoctorDeath-től)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded készült az Interplay M.A.X. című játéka alapján"/>
+			<Credits_Reloaded ENG="M.A.X.R based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R készült az Interplay M.A.X. című játéka alapján"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) még nincs implementálva"/>
 			</Remarks>
@@ -255,7 +255,7 @@
 		</Vehicles>
 		<Comp>
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="A leszállási pozíció túl közel van egy másik játékoshoz. Kérlek válassz másik pozíciót."/>
-			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Nincs elég üzemanyag, generátor leállítva!"/>
 			<Energy_Low ENG="Power needed, building turned off." localized="Nincs elég áram, fogyasztó leállítva!"/>
 			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elég nyersanyag, épület leállítva!"/>
@@ -300,7 +300,10 @@
 			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
 			<Laying ENG="placing mines" localized="aknát telepít"/>
 			<Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
+		    <Average ENG="Average" localized="Középszerű"/>
 			<Veteran ENG="Veteran" localized="Veterán"/>
+			<Expert ENG="Expert" localized="Szakértő"/>
+			<Elite ENG="Elite" localized="Elit"/>
 			<Description ENG="Description" localized="Leírás"/>
 			<Repeat ENG="Again" localized="Újra"/>
 			<Dated ENG="dated" localized="elavult"/>
@@ -310,7 +313,7 @@
 			<Turn ENG="Turn" localized="Kör"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
 			<Surveying ENG="surveying" localized="kutat"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and Exploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and Exploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and eXploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
 		</Comp>
 		<Error_Messages>
