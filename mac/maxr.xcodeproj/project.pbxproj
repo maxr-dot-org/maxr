@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
+		9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
@@ -76,6 +77,8 @@
 /* Begin PBXFileReference section */
 		9F7E432B0EFD1D2200021440 /* mveplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mveplayer.cpp; path = ../mveplayer.cpp; sourceTree = SOURCE_ROOT; };
 		9F7E432C0EFD1D2200021440 /* mveplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mveplayer.h; path = ../mveplayer.h; sourceTree = SOURCE_ROOT; };
+		9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = drawingcache.cpp; path = ../drawingcache.cpp; sourceTree = SOURCE_ROOT; };
+		9F7F33D00F8F814C00B00D61 /* drawingcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = drawingcache.h; path = ../drawingcache.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -214,6 +217,8 @@
 				9FC0DB810EE2B17400F23D2C /* defines.h */,
 				9FC0DB820EE2B17400F23D2C /* dialog.cpp */,
 				9FC0DB830EE2B17400F23D2C /* dialog.h */,
+				9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */,
+				9F7F33D00F8F814C00B00D61 /* drawingcache.h */,
 				9FC0DB860EE2B17400F23D2C /* events.cpp */,
 				9FC0DB870EE2B17400F23D2C /* events.h */,
 				9FC0DB880EE2B17400F23D2C /* extendedtinyxml.cpp */,
@@ -412,6 +417,7 @@
 				9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */,
 				9FC2DCBD0F17B2D60022714E /* input.cpp in Sources */,
 				9FC2DCBE0F17B2D60022714E /* unifonts.cpp in Sources */,
+				9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
