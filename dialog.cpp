@@ -403,6 +403,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
 #else
 		"AUTHORS";
 #endif
+#ifdef MAC
+	sAuthors = "AUTHORS";
+#endif
+	
 	FILE* const fp = fopen(sAuthors.c_str(), "r");
 	if ( fp != NULL  )
 	{	//read authors from file
