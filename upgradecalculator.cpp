@@ -864,10 +864,14 @@ int cUpgradeCalculator::getNearestPossibleCost(double realCost, int costDifferen
 
 	int intCost = (int) realCost;
 	int nearestLowerCost = intCost - (intCost % costDifference); 
+	int result;
 	if (realCost - nearestLowerCost < (costDifference / 2.0f))
-		return nearestLowerCost;
+		result = nearestLowerCost;
 	else
-		return nearestLowerCost + costDifference;
+		result = nearestLowerCost + costDifference;
+	if (result <= 0) // a cost of zero or below is forbidden
+		result = costDifference;
+	return result;
 }
 
 //--------------------------------------------------
