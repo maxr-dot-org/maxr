@@ -1093,7 +1093,8 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	int upgrades = 0;
 	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
 	{
-		if ( Player->VehicleData[i].version > 1 )
+		if ( Player->VehicleData[i].version > 1 
+			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.vehicle[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->VehicleData[i], &UnitsData.vehicle[i].data );
 			upgrades++;
@@ -1101,7 +1102,8 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	}
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
-		if ( Player->BuildingData[i].version > 1 )
+		if ( Player->BuildingData[i].version > 1 
+			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.building[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->BuildingData[i], &UnitsData.building[i].data );
 			upgrades++;

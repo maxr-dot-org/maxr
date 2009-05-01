@@ -3245,11 +3245,15 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send upgrades
 	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
 	{
-		if ( Player->VehicleData[i].version > 1 ) sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
+		if ( Player->VehicleData[i].version > 1 
+			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.vehicle[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
 	}
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
-		if ( Player->BuildingData[i].version > 1 ) sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
+		if ( Player->BuildingData[i].version > 1 
+			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.building[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}
 	// send credits
 	sendCredits( Player->Credits, Player->Nr );
