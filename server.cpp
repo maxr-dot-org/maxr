@@ -1738,7 +1738,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						{
 							sendUnitData ( destBuilding, destBuilding->SeenByPlayerList[i]->Nr );
 						}
-						destVehicle->owner->DoScan();
+						destBuilding->owner->DoScan();
 						checkPlayerUnits();
 					}
 				}
