@@ -645,7 +645,7 @@ sBuilding *sID::getBuilding()
 	return NULL;
 }
 
-bool sID::operator ==(sID &ID) const
+bool sID::operator ==(const sID &ID) const
 {
 	if ( iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart ) return true;
 	return false;

@@ -153,7 +153,7 @@ struct sID
 	sVehicle *getVehicle();
 	sBuilding *getBuilding();
 
-	bool operator==(sID &ID) const;
+	bool operator==(const sID &ID) const;
 };
 
 // Struktur für die Waffen
