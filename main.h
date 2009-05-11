@@ -598,7 +598,6 @@ public:
 	SDL_Surface *gfx_context_menu;
 	SDL_Surface *gfx_destruction;
 	SDL_Surface *gfx_destruction_glas;
-	SDL_Surface *gfx_build_screen;
 	SDL_Surface *gfx_Cband;
 	SDL_Surface *gfx_band_small;
 	SDL_Surface *gfx_band_big;
@@ -609,7 +608,6 @@ public:
 	SDL_Surface *gfx_Ctransf;
 	SDL_Surface *gfx_transfer;
 	SDL_Surface *gfx_mine_manager;
-	SDL_Surface *gfx_fac_build_screen;
 	SDL_Surface *gfx_Cload;
 	SDL_Surface *gfx_Cactivate;
 	SDL_Surface *gfx_storage;
@@ -632,7 +630,6 @@ public:
 	SDL_Surface *gfx_player_human;
 	SDL_Surface *gfx_player_none;
 	SDL_Surface *gfx_player_select;
-	SDL_Surface *gfx_load_save_menu;
 	SDL_Surface *gfx_exitpoints_org;
 	SDL_Surface *gfx_exitpoints;
 	SDL_Surface *gfx_menu_buttons;
@@ -711,7 +708,6 @@ public:
 	SDL_Surface *WayPointPfeile[8][60];
 	SDL_Surface *WayPointPfeileSpecial[8][60];
 } EX OtherData;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations

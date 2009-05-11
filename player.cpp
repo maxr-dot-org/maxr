@@ -18,7 +18,6 @@
  ***************************************************************************/
 #include <math.h>
 #include "player.h"
-#include "menu.h"
 #include "client.h"
 #include "server.h"
 #include "serverevents.h"

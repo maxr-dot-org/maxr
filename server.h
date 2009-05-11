@@ -31,9 +31,12 @@
 /**
 * The Types which are possible for a game
 */
-#define GAME_TYPE_SINGLE	0	// a singleplayer game
-#define GAME_TYPE_HOTSEAT	1	// a hotseat multiplayer game
-#define GAME_TYPE_TCPIP		2	// a multiplayergame over TCP/IP
+enum eGameTypes
+{
+	GAME_TYPE_SINGLE,		// a singleplayer game
+	GAME_TYPE_HOTSEAT,		// a hotseat multiplayer game
+	GAME_TYPE_TCPIP			// a multiplayergame over TCP/IP
+};
 
 /**
  * Structure for the reports
@@ -55,6 +58,8 @@ int CallbackRunServerThread( void *arg );
 
 Uint32 ServerTimerCallback(Uint32 interval, void *arg);
 
+struct sLandingUnit;
+
 /**
 * Server class which takes all calculations for the game and has the data of all players
 *@author alzi alias DoctorDeath
@@ -70,7 +75,7 @@ public:
 	 *@param PlayerList The list with all players
 	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
 	 */
-	cServer(cMap* map, cList<cPlayer*>* PlayerList, int iGameType, bool bPlayTurns);
+	cServer(cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns);
 	void setDeadline(int iDeadline);
 	~cServer();
 
@@ -101,7 +106,7 @@ private:
 	/** index number of the savegame to load or to save */
 	int iSaveLoadNumber;
 	/** the type of the current game */
-	int iGameType;
+	eGameTypes gameType;
 	/** a list with the numbers of all players who have ended theire turn */
 	cList<cPlayer*> PlayerEndList;
 	/** number of current turn */
@@ -322,7 +327,7 @@ public:
 	*@param List List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& List, bool bFixed );
+	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> *List, bool bFixed );
 	/**
 	* increments the iTimeTimer.
 	*@author alzi alias DoctorDeath

@@ -449,9 +449,11 @@ int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFont
 					}
 					else
 					{
-						sTextShortened.erase ( sText.size() / 2 - 1, sTextShortened.size() ); //erase everything longer than line
+						int erase = (int)sText.size() / 2 - 1;
+						if ( erase < 1 ) erase = 1;
+						sTextShortened.erase ( erase, sTextShortened.size() ); //erase everything longer than line
 						sTextShortened += "-";
-						sText.erase ( 0, sText.size() / 2 - 1 ); //erase txt from original that we just copied to tmp
+						sText.erase ( 0, erase ); //erase txt from original that we just copied to tmp
 
 					}
 

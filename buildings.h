@@ -243,10 +243,6 @@ public:
 	bool CanAttackObject(int off, cMap *Map, bool override=false);
 	void DrawAttackCursor( int offset );
 	void RotateTo(int Dir);
-	void ShowBuildMenu();
-	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
-	void DrawBuildButtons(int speed);
-	void ShowToBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool showInfo);
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;

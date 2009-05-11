@@ -30,7 +30,7 @@
 #include "main.h"
 #include "attackJobs.h"
 #include "buttons.h"
-#include "menu.h"
+#include "menus.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -979,11 +979,13 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding && !bWaitForOthers )
 	{
 		sendWantStopMove ( SelectedVehicle->iID );
-		SelectedVehicle->ShowBuildMenu();
+		cBuildingsBuildMenu buildMenu ( ActivePlayer, SelectedVehicle );
+		buildMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build && !bWaitForOthers )
 	{
-		SelectedBuilding->ShowBuildMenu();
+		cVehiclesBuildMenu buildMenu ( ActivePlayer, SelectedBuilding );
+		buildMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_METAL || SelectedVehicle->data.can_transport == TRANS_OIL || SelectedVehicle->data.can_transport == TRANS_GOLD ) && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing && !bWaitForOthers )
 	{

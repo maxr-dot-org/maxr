@@ -23,7 +23,6 @@
 #include "mouse.h"
 #include "unifonts.h"
 #include "sound.h"
-#include "menu.h"
 #include "pcx.h"
 #include "files.h"
 #include "log.h"

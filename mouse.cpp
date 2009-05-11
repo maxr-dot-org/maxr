@@ -177,7 +177,7 @@ void cMouse::restoreBack( SDL_Surface *sf )
 }
 
 // Liest die aktuelle Mausposition aus:
-void cMouse::GetPos ( void )
+void cMouse::GetPos ()
 {
 	SDL_GetMouseState( &x, &y);
 
@@ -211,6 +211,16 @@ void cMouse::GetPos ( void )
 	{
 		Client->mouseMoveCallback ( false );
 	}
+}
+
+bool cMouse::moved()
+{
+	static int lastX = 0, lastY = 0;
+	bool moved = false;
+	if ( lastX != x || lastY != y ) moved = true;
+	lastX = x;
+	lastY = y;
+	return moved;
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:

@@ -1605,8 +1605,6 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil9,path,"pf_9.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_context_menu,path,"object_menu2.pcx");
 	LoadGraphicToSurface ( GraphicsData.gfx_destruction,path,"destruction.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_build_screen,path,"build_screen.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_fac_build_screen,path,"fac_build_screen.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_band_small_org,path,"band_small.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_band_small,path,"band_small.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_band_big_org,path,"band_big.pcx" );
@@ -1626,7 +1624,6 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_player_pc,path,"player_pc.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_human,path,"player_human.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_none,path,"player_none.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_load_save_menu,path,"load_save_menu.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_exitpoints_org,path,"activate_field.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_exitpoints,path,"activate_field.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_select,path,"customgame_menu.pcx" );

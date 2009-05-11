@@ -21,10 +21,9 @@
 #include "events.h"
 #include "server.h"
 #include "client.h"
-#include "menu.h"
 #include "movejobs.h"
 #include "upgradecalculator.h"
-
+#include "menuevents.h"
 
 //-------------------------------------------------------------------------------------
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap )

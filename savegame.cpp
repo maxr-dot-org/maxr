@@ -20,9 +20,9 @@
 #include "savegame.h"
 #include "server.h"
 #include "client.h"
-#include "menu.h"
 #include "loaddata.h"
 #include "upgradecalculator.h"
+#include "menus.h"
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )
@@ -1005,7 +1005,7 @@ void cSavegame::writeHeader( string saveName )
 
 	addAttributeElement ( headerNode, "Game_Version", "string", PACKAGE_VERSION );
 	addAttributeElement ( headerNode, "Name", "string", saveName );
-	switch ( Server->iGameType )
+	switch ( Server->gameType )
 	{
 	case GAME_TYPE_SINGLE:
 		addAttributeElement ( headerNode, "Type", "string", "IND" );

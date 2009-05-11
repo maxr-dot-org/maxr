@@ -18,11 +18,12 @@
  ***************************************************************************/
 #include "events.h"
 #include "network.h"
-#include "menu.h"
 #include "serverevents.h"
+#include "menuevents.h"
 #include "client.h"
 #include "input.h"
 #include "log.h"
+#include "menus.h"
 
 void cEventHandling::pushEvent(SDL_Event* const e)
 {
@@ -80,11 +81,11 @@ void cEventHandling::HandleEvents()
 			{
 			case TCP_ACCEPTEVENT:
 				// new socket accepted
-				if ( MultiPlayerMenu )
+				if ( ActiveMenu )
 				{
-					cNetMessage *Message = new cNetMessage( MU_MSG_NEW_PLAYER );
-					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					MultiPlayerMenu->MessageList.Add ( Message );
+					cNetMessage message ( MU_MSG_NEW_PLAYER );
+					message.pushInt16 ( ((Sint16 *)event.user.data1)[0] );
+					ActiveMenu->handleNetMessage ( &message );
 					free ( event.user.data1 );
 				}
 				break;
@@ -113,10 +114,10 @@ void cEventHandling::HandleEvents()
 					}
 					else //message for the MultiPlayerMenu
 					{
-						if ( MultiPlayerMenu )
+						if ( ActiveMenu )
 						{
-							cNetMessage* const Message = new cNetMessage((char*)DataBuffer.data);
-							MultiPlayerMenu->MessageList.Add ( Message );
+							cNetMessage message((char*)DataBuffer.data);
+							ActiveMenu->handleNetMessage ( &message );
 						}
 					}
 				}
@@ -127,11 +128,11 @@ void cEventHandling::HandleEvents()
 				if ( !network ) break;
 				// Socket should be closed
 				network->close ( ((Sint16 *)event.user.data1)[0] );
-				if ( MultiPlayerMenu && !Client )
+				if ( ActiveMenu && !Client )
 				{
-					cNetMessage *Message = new cNetMessage( MU_MSG_DEL_PLAYER );
-					Message->pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					MultiPlayerMenu->MessageList.Add ( Message );
+					cNetMessage message( MU_MSG_DEL_PLAYER );
+					message.pushInt16 ( ((Sint16 *)event.user.data1)[0] );
+					ActiveMenu->handleNetMessage ( &message );
 				}
 				else if ( Client )
 				{

@@ -18,7 +18,7 @@
  ***************************************************************************/
 #include "input.h"
 #include "client.h"
-#include "menu.h"
+#include "menus.h"
 
 sMouseState::sMouseState()
 {
@@ -54,7 +54,6 @@ void cInput::inputkey ( SDL_keysym &keysym )
 			case SDLK_RETURN:
 				// return will be handled from the client like a hotkey
 				if ( Client ) Client->handleHotKey ( keysym );
-				else menuPressedReturn = true;
 				break;
 			case SDLK_LEFT:
 				// makes the cursor go left
@@ -108,7 +107,9 @@ void cInput::inputkey ( SDL_keysym &keysym )
 				if ( keysym.unicode >= 32 )
 				{
 					// write to inputstr when it is a normal character
-					addUTF16Char ( keysym.unicode );
+					string str = getUTF16Char ( keysym.unicode );
+					inputStr.insert ( stringpos, str );
+					stringpos += (int)str.length();
 				}
 				break;
 		}
@@ -117,7 +118,8 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	else
 	{
 		// when input isn't active the client will handle the input as hotkey
-		if ( Client ) Client->handleHotKey ( keysym );
+		if ( ActiveMenu ) ActiveMenu->handleKeyInput ( keysym, getUTF16Char ( keysym.unicode ) );
+		else if ( Client ) Client->handleHotKey ( keysym );
 	}
 }
 
@@ -165,10 +167,11 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = false;
 		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = false;
 	}
-	if ( Client ) Client->handleMouseInput ( MouseState );
+	if ( ActiveMenu ) ActiveMenu->handleMouseInput ( MouseState );
+	else if ( Client ) Client->handleMouseInput ( MouseState );
 }
 
-void cInput::addUTF16Char( Uint16 ch )
+string cInput::getUTF16Char( Uint16 ch )
 {
 	int count;
 	Uint32 bitmask;
@@ -184,12 +187,10 @@ void cInput::addUTF16Char( Uint16 ch )
 		bitmask <<= 5;
 	}
 
+	string returnStr = "";
 	if( count == 1 )
 	{
-		string str;
-		str += (char)ch;
-		inputStr.insert( stringpos, str );
-		stringpos++;
+		returnStr += (char)ch;
 	}
 	else
 	{
@@ -198,12 +199,10 @@ void cInput::addUTF16Char( Uint16 ch )
 			unsigned char c = (ch >> (6*i)) & 0x3f;
 			c |= 0x80;
 			if( i == count-1 ) c |= 0xff << (8-count);
-			string str;
-			str += c;
-			inputStr.insert( stringpos, str );
-			stringpos++;
+			returnStr += c;
 		}
 	}
+	return returnStr;
 }
 
 void cInput::setInputStr( string input, bool decode )
@@ -216,7 +215,9 @@ void cInput::setInputStr( string input, bool decode )
 		stringpos = 0;
 		for ( unsigned int i = 0; i < wstr.length(); i++ )
 		{
-			addUTF16Char ( (Uint16)wstr[i] );
+			string str = getUTF16Char ( (Uint16)wstr[i] );
+			inputStr.insert ( stringpos, str );
+			stringpos += (int)str.length();
 		}
 	}
 	else inputStr = input;
@@ -299,3 +300,4 @@ bool cInput::checkHasBeenInput()
 	}
 	return false;
 }
+

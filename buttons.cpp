@@ -78,21 +78,21 @@ Button::Gfx const& MenuButton::GfxUp() const
 
 Button::Gfx const& MenuButton::GfxDown() const
 {
-	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 30, 200, 29 } };
+	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 29, 200, 29 } };
 	return gfx;
 }
 
 
 Button::Gfx const& SmallButton::GfxUp() const
 {
-	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 60, 150, 29 } };
+	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 58, 150, 29 } };
 	return gfx;
 }
 
 
 Button::Gfx const& SmallButton::GfxDown() const
 {
-	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 90, 150, 29 } };
+	static Gfx const gfx = { GraphicsData.gfx_menu_stuff, { 0, 87, 150, 29 } };
 	return gfx;
 }
 

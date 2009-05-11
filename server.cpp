@@ -21,11 +21,11 @@
 #include "events.h"
 #include "network.h"
 #include "serverevents.h"
-#include "menu.h"
 #include "netmessage.h"
 #include "attackJobs.h"
 #include "movejobs.h"
 #include "upgradecalculator.h"
+#include "menus.h"
 
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
@@ -43,12 +43,12 @@ int CallbackRunServerThread( void *arg )
 }
 
 //-------------------------------------------------------------------------------------
-cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, int const iGameType, bool const bPlayTurns)
+cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns)
 {
 	bDebugCheckPos = false;
 	Map = map;
 	this->PlayerList = PlayerList;
-	this->iGameType = iGameType;
+	this->gameType = gameType;
 	this->bPlayTurns = bPlayTurns;
 	bHotSeat = false;
 	bExit = false;
@@ -598,17 +598,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
 
-			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
-
-			if ( Vehicle->BuildCosts > Vehicle->data.cargo )
+			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.cargo || iTurboBuildRounds[iBuildSpeed] <= 0 )
 			{
 				sendBuildAnswer ( false, Vehicle );
 				break;
 			}
 
+			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
+			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
+			Vehicle->BuildCostsStart = Vehicle->BuildCosts;
+			Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
 
 			Vehicle->IsBuilding = true;
 			Vehicle->BuildPath = bBuildPath;
@@ -1873,7 +1872,7 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& List, bool bFixed )
+void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> *List, bool bFixed )
 {
 	cVehicle *Vehicle;
 	int iWidth, iHeight;
@@ -1929,15 +1928,15 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLanding>& Lis
 
 	iWidth = 2;
 	iHeight = 2;
-	for ( unsigned int i = 0; i < List.Size(); i++ )
+	for ( unsigned int i = 0; i < List->Size(); i++ )
 	{
-		sLanding& Landing = List[i];
-		Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.UnitID.getVehicle(), Player);
+		sLandingUnit &Landing = (*List)[i];
+		Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.unitID.getVehicle(), Player);
 		while ( !Vehicle )
 		{
 			iWidth += 2;
 			iHeight += 2;
-			Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.UnitID.getVehicle(), Player);
+			Vehicle = landVehicle(iX, iY, iWidth, iHeight, Landing.unitID.getVehicle(), Player);
 		}
 		if ( Landing.cargo && Vehicle )
 		{
@@ -2311,7 +2310,7 @@ cPlayer *cServer::getPlayerFromNumber ( int iNum )
 //-------------------------------------------------------------------------------------
 void cServer::handleEnd ( int iPlayerNum )
 {
-	if ( iGameType == GAME_TYPE_SINGLE )
+	if ( gameType == GAME_TYPE_SINGLE )
 	{
 		if ( checkEndActions( iPlayerNum ) )
 		{
@@ -2324,9 +2323,9 @@ void cServer::handleEnd ( int iPlayerNum )
 		// send report to player
 		sendTurnReport ( (*PlayerList)[0] );
 	}
-	else if ( iGameType == GAME_TYPE_HOTSEAT || bPlayTurns )
+	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
 	{
-		bool bWaitForPlayer = ( iGameType == GAME_TYPE_TCPIP && bPlayTurns );
+		bool bWaitForPlayer = ( gameType == GAME_TYPE_TCPIP && bPlayTurns );
 		if ( checkEndActions( iPlayerNum ) )
 		{
 			iWantPlayerEndNum = iPlayerNum;
@@ -2336,7 +2335,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		if ( iActiveTurnPlayerNr >= (int)PlayerList->Size() )
 		{
 			iActiveTurnPlayerNr = 0;
-			if ( iGameType == GAME_TYPE_HOTSEAT )
+			if ( gameType == GAME_TYPE_HOTSEAT )
 			{
 				sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, iPlayerNum);
 			}
@@ -2352,7 +2351,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		}
 		else
 		{
-			if ( iGameType == GAME_TYPE_HOTSEAT )
+			if ( gameType == GAME_TYPE_HOTSEAT )
 			{
 				sendMakeTurnEnd(false, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, iPlayerNum);
 				// TODO: in hotseat: maybe send information to client about the next player

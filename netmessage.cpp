@@ -23,7 +23,7 @@
 #include "network.h"
 #include "clientevents.h"
 #include "serverevents.h"
-#include "menu.h"
+#include "menuevents.h"
 
 cNetMessage::cNetMessage( char* c)
 {

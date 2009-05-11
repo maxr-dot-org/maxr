@@ -46,7 +46,8 @@ public:
   * Draws the currently stored background to sf
   */
   void restoreBack( SDL_Surface *sf );
-  void GetPos(void);
+  void GetPos();
+  bool moved();
   void Show(void){LastX=-100;visible=true;}
   void Hide(void){visible=false;}
   int GetMouseButton(void);

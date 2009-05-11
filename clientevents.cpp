@@ -158,16 +158,16 @@ void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDe
 	Client->sendNetMessage( message );
 }
 
-void sendWantBuildList ( cBuilding *Building, cList<sBuildStruct*> *BuildList, bool bRepeat )
+void sendWantBuildList ( cBuilding *Building, cList<sBuildList*> &BuildList, bool bRepeat )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_BUILDLIST );
 	message->pushBool ( bRepeat );
-	for (int i = (int)BuildList->Size()-1; i >= 0; i--)
+	for (int i = (int)BuildList.Size()-1; i >= 0; i--)
 	{
-		message->pushInt16((*BuildList)[i]->ID.iSecondPart);
-		message->pushInt16((*BuildList)[i]->ID.iFirstPart);
+		message->pushInt16( BuildList[i]->typ->data.ID.iSecondPart );
+		message->pushInt16( BuildList[i]->typ->data.ID.iFirstPart );
 	}
-	message->pushInt16((int)BuildList->Size());
+	message->pushInt16((int)BuildList.Size());
 	message->pushInt16 ( Building->BuildSpeed );
 	message->pushInt16 ( Building->iID );
 	Client->sendNetMessage( message );

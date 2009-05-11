@@ -220,9 +220,6 @@ public:
 	bool IsInRange(int off, cMap *Map);
 	void DrawAttackCursor( int offset );
 	int CalcHelth(int damage);
-	void ShowBuildMenu();
-	void ShowBuildList(cList<sBuildStruct*>& list, int selected, int offset, bool beschreibung, int* buildspeed, int* iTurboBuildCosts, int* TurboBuildRounds);
-	void DrawBuildButtons(int speed);
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();

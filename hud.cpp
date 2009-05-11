@@ -23,13 +23,14 @@
 #include "sound.h"
 #include "dialog.h"
 #include "unifonts.h"
-#include "menu.h"
 #include "client.h"
 #include "serverevents.h"
 #include "keys.h"
 #include "input.h"
 #include "pcx.h"
 #include "player.h"
+#include "menus.h"
+
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////
 cHud::cHud ( void )
@@ -1084,9 +1085,9 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			Client->isInMenu = true;
-			ShowDateiMenu( true );
-			Client->isInMenu = false;
+			cLoadSaveMenu loadSaveMenu ( new cGameDataContainer );
+			if ( loadSaveMenu.show() != 1 ) Client->bExit = true;
+			Client->bFlagDrawHud = true;
 			DateiButton ( false );
 		}
 	}

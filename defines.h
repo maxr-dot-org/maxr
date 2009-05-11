@@ -65,18 +65,21 @@
 #endif
 
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN            (SettingsData.sGfxPath + PATH_DELIMITER + "main.pcx").c_str()
-#define GFXOD_HELP            (SettingsData.sGfxPath + PATH_DELIMITER + "help_screen.pcx").c_str()
-#define GFXOD_OPTIONS         (SettingsData.sGfxPath + PATH_DELIMITER + "options.pcx").c_str()
-#define GFXOD_PLANET_SELECT   (SettingsData.sGfxPath + PATH_DELIMITER + "planet_select.pcx").c_str()
-#define GFXOD_PLAYER_SELECT   (SettingsData.sGfxPath + PATH_DELIMITER + "customgame_menu.pcx").c_str()
-#define GFXOD_PLAYERHS_SELECT (SettingsData.sGfxPath + PATH_DELIMITER + "hotseatplayers.pcx").c_str()
-#define GFXOD_HANGAR          (SettingsData.sGfxPath + PATH_DELIMITER + "hangar.pcx").c_str()
-#define GFXOD_MULT            (SettingsData.sGfxPath + PATH_DELIMITER + "multi.pcx").c_str()
-#define GFXOD_DIALOG2         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx").c_str()
-#define GFXOD_DIALOG4         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog4.pcx").c_str()
-#define GFXOD_DIALOG5         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()
-#define GFXOD_DIALOG6         (SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
+#define GFXOD_MAIN				(SettingsData.sGfxPath + PATH_DELIMITER + "main.pcx").c_str()
+#define GFXOD_HELP				(SettingsData.sGfxPath + PATH_DELIMITER + "help_screen.pcx").c_str()
+#define GFXOD_OPTIONS			(SettingsData.sGfxPath + PATH_DELIMITER + "options.pcx").c_str()
+#define GFXOD_SAVELOAD			(SettingsData.sGfxPath + PATH_DELIMITER + "load_save_menu.pcx").c_str()
+#define GFXOD_PLANET_SELECT		(SettingsData.sGfxPath + PATH_DELIMITER + "planet_select.pcx").c_str()
+#define GFXOD_PLAYER_SELECT		(SettingsData.sGfxPath + PATH_DELIMITER + "customgame_menu.pcx").c_str()
+#define GFXOD_PLAYERHS_SELECT	(SettingsData.sGfxPath + PATH_DELIMITER + "hotseatplayers.pcx").c_str()
+#define GFXOD_HANGAR			(SettingsData.sGfxPath + PATH_DELIMITER + "hangar.pcx").c_str()
+#define GFXOD_BUILD_SCREEN		(SettingsData.sGfxPath + PATH_DELIMITER + "build_screen.pcx").c_str()
+#define GFXOD_FAC_BUILD_SCREEN	(SettingsData.sGfxPath + PATH_DELIMITER + "fac_build_screen.pcx").c_str()
+#define GFXOD_MULT				(SettingsData.sGfxPath + PATH_DELIMITER + "multi.pcx").c_str()
+#define GFXOD_DIALOG2			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx").c_str()
+#define GFXOD_DIALOG4			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog4.pcx").c_str()
+#define GFXOD_DIALOG5			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()
+#define GFXOD_DIALOG6			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
 #define PLAYERCOLORS		8

@@ -22,6 +22,8 @@
 #include "main.h"
 #include "unifonts.h"
 
+class cMenu;
+
 /** time in miliseconds how long the cursor will be shown or not shown*/
 #define CURSOR_BLINK_TIME	300
 /** character used for the cursor*/
@@ -75,7 +77,7 @@ private:
 	 * @author alzi alias DoctorDeath
 	 * @param ch character which is to be added.
 	 */
-	void addUTF16Char( Uint16 ch );
+	string getUTF16Char( Uint16 ch );
 public:
 	cInput();
 	/**

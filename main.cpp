@@ -33,7 +33,6 @@
 #include "main.h"
 #include "files.h"
 #include "mouse.h"
-#include "menu.h"
 #include "pcx.h"
 #include "keys.h"
 #include "sound.h"
@@ -53,6 +52,7 @@
 #include "mveplayer.h"
 #include "input.h"
 #include "unifonts.h"
+#include "menus.h"
 
 int main ( int argc, char *argv[] )
 {
@@ -164,7 +164,10 @@ int main ( int argc, char *argv[] )
 	EventHandler = new cEventHandling;
 
 	// Das Menu starten:
-	RunMainMenu();
+	//RunMainMenu();
+
+	cStartMenu mainMenu;
+	mainMenu.show();
 
 	Quit();
 	return 0;
