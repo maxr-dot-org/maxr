@@ -782,6 +782,9 @@ cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade
 	selected = false;
 	marked = false;
 	resValue = 0;
+	minResValue = -1;
+	fixed = false;
+
 	displayType = displayType_;
 	fixedResValue = fixedResValue_;
 	parentList = parent;
@@ -928,8 +931,15 @@ void cMenuUnitListItem::setResValue( int resValue_, bool cargoCheck )
 {
 	if ( fixedResValue ) return;
 	resValue = resValue_;
+	if ( resValue < minResValue ) resValue = minResValue;
 	if ( cargoCheck && resValue < 0 ) resValue = 0;
 	if ( cargoCheck && resValue > unitID.getUnitData()->max_cargo ) resValue = unitID.getUnitData()->max_cargo;
+}
+
+void cMenuUnitListItem::setMinResValue ( int minResValue_ )
+{
+	minResValue = minResValue_;
+	if ( resValue < minResValue ) resValue = minResValue;
 }
 
 void cMenuUnitListItem::setMarked ( bool marked_ )
@@ -940,6 +950,17 @@ void cMenuUnitListItem::setMarked ( bool marked_ )
 void cMenuUnitListItem::setFixedResValue ( bool fixedResValue_ )
 {
 	fixedResValue = fixedResValue_;
+}
+
+
+void cMenuUnitListItem::setFixed ( bool fixed_ )
+{
+	fixed = fixed_;
+}
+
+bool cMenuUnitListItem::getFixedStatus()
+{
+	return fixed;
 }
 
 sUnitUpgrade *cMenuUnitListItem::getUpgrades()
@@ -1059,7 +1080,7 @@ void cMenuUnitsList::setSelection ( cMenuUnitListItem *selectedUnit_ )
 	parentMenu->setSelectedUnit ( selectedUnit );
 }
 
-void cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades, bool scroll, bool fixedCargo )
+cMenuUnitListItem *cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades, bool scroll, bool fixedCargo )
 {
 	cMenuUnitListItem *unitItem = new cMenuUnitListItem( unitID, owner, upgrades, displayType, this, fixedCargo );
 	unitItem->setReleaseSound ( SoundData.SNDObjectMenu );
@@ -1070,6 +1091,7 @@ void cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrade
 	selectedUnit = unitItem;
 	selectedUnit->selected = true;
 	if ( scroll && (int)unitsList.Size() > offset+maxDisplayUnits ) scrollDown();
+	return unitItem;
 }
 
 void cMenuUnitsList::removeUnit ( cMenuUnitListItem *item )

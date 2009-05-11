@@ -633,6 +633,7 @@ public:
 	static void backReleased ( void *parent );
 	static void pathReleased ( void *parent );
 	static void selectionChanged ( void *parent );
+	static bool selListDoubleClicked ( cMenuUnitsList* list, void *parent );
 };
 
 class cVehiclesBuildMenu : public cAdvListHangarMenu

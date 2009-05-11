@@ -1224,6 +1224,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 				if ( startupHangarMenu.show() == 1 )
 				{
 					menu->draw();
+					menu->gameDataContainer->players.Delete ( 0 );
 					return;
 				}
 			}
@@ -1432,6 +1433,7 @@ bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *paren
 bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *parent )
 {
 	cAdvListHangarMenu *menu = ((cAdvListHangarMenu*)parent);
+	if ( menu->selectedUnit->getFixedStatus() ) return false;
 	if ( menu->selectedUnit && menu->selectedUnit == menu->secondList->getSelectedUnit() )
 	{
 		menu->removedCallback ( menu->selectedUnit );
@@ -1510,6 +1512,22 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	initUpgrades();
 
 	generateSelectionList();
+
+	if ( gameDataContainer->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE )
+	{
+		for ( int i = 0; i < selectionList->getSize(); i++ )
+		{
+			sVehicle *vehicle = selectionList->getItem ( i )->getUnitID().getVehicle();
+			if ( !vehicle ) continue;
+			if ( vehicle->data.can_build == BUILD_BIG || vehicle->data.can_build == BUILD_SMALL || vehicle->data.can_survey )
+			{
+				cMenuUnitListItem *unit = secondList->addUnit ( vehicle->data.ID, player, selectionList->getItem ( i )->getUpgrades() );
+				if ( vehicle->data.can_build == BUILD_BIG ) unit->setMinResValue ( 40 );
+				else if ( vehicle->data.can_build == BUILD_SMALL ) unit->setMinResValue ( 20 );
+				unit->setFixed ( true );
+			}
+		}
+	}
 	if ( selectionList->getSize() > 0 ) setSelectedUnit ( selectionList->getItem ( 0 ) );
 }
 
@@ -1729,14 +1747,17 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 		if ( newCargo%5 < 3 ) newCargo -= newCargo%5;
 		else newCargo += 5-newCargo%5;
 
+		menu->secondList->getSelectedUnit()->setResValue ( newCargo );
+		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
+
+		newCargo = menu->secondList->getSelectedUnit()->getResValue();
 		int costs = (newCargo-oldCargo)/5;
 		if ( costs > menu->credits )
 		{
 			costs = menu->credits;
 			newCargo = costs * 5;
 		}
-		menu->secondList->getSelectedUnit()->setResValue ( newCargo );
-		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
+
 		menu->credits -= costs;
 		menu->goldBar->setCurrentValue ( menu->credits );
 		menu->upgradeButtons->setSelection ( menu->selectedUnit );
@@ -3238,6 +3259,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 	selectionList->resize ( 154, 390 );
 	selListUpButton->move ( position.x+471, position.y+440 );
 	selListDownButton->move ( position.x+491, position.y+440 );
+	selectionList->setDoubleClickedFunction ( &selListDoubleClicked );
 
 	if ( vehicle->data.can_build != BUILD_BIG )
 	{
@@ -3336,6 +3358,13 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 		turboBuildTurns[0] = buildingData->iBuilt_Costs / menu->vehicle->data.iNeeds_Metal;
 	}
 	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
+}
+
+bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *parent )
+{
+	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	menu->doneReleased( menu );
+	return true;
 }
 
 cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cAdvListHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_ )

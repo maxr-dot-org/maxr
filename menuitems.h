@@ -300,8 +300,10 @@ protected:
 	SDL_Surface *surface;
 
 	int resValue;
+	int minResValue;
 	sUnitUpgrade *upgrades;
 
+	bool fixed;
 	bool selected;
 	bool fixedResValue;
 	bool marked;
@@ -321,8 +323,11 @@ public:
 	int getResValue();
 	bool getFixedResValue ();
 	void setResValue( int resValue_, bool cargoCheck = true );
+	void setMinResValue ( int minResValue_ );
 	void setMarked ( bool marked_ );
 	void setFixedResValue ( bool fixedResValue_ );
+	void setFixed ( bool fixed_ );
+	bool getFixedStatus();
 	sUnitUpgrade *getUpgrades();
 };
 
@@ -357,7 +362,7 @@ public:
 	void scrollUp();
 	void scrollDown();
 	void setSelection ( cMenuUnitListItem *selectedUnit_ );
-	void addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades = NULL, bool scroll = false, bool fixedCargo = false );
+	cMenuUnitListItem *addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades = NULL, bool scroll = false, bool fixedCargo = false );
 	void removeUnit ( cMenuUnitListItem *item );
 	void clear();
 	void setDisplayType ( eMenuUnitListDisplayTypes displayType_ );
