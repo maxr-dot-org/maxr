@@ -1495,7 +1495,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int iCount = message->popInt16(); // get the number of upgrades in this message
 			for (int i = 0; i < iCount; i++)
 			{
-				bool bVehicle = message->popBool();
 				sID ID;
 				ID.iFirstPart = message->popInt16();
 				ID.iSecondPart = message->popInt16();
@@ -1508,14 +1507,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int newMaxHitPoints = message->popInt16();
 				int newScan = message->popInt16();
 				int newMaxSpeed = 0;
-				if (bVehicle)
-					newMaxSpeed = message->popInt16();
+				if ( ID.iFirstPart == 0 ) newMaxSpeed = message->popInt16();
 				
 				sUnitData* upgradedUnit = ID.getUnitData (player);
 				if (upgradedUnit == 0)
 					continue; // skip this upgrade, because there is no such unitData
 
-				int costs = getUpgradeCosts (ID, player, bVehicle, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
+				int costs = getUpgradeCosts (ID, player, ID.iFirstPart == 0, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
 				if (costs <= player->Credits)
 				{
 					// update the unitData of the player and send an ack-msg for this upgrade to the player
@@ -1526,8 +1524,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					upgradedUnit->armor = newArmor;
 					upgradedUnit->max_hit_points = newMaxHitPoints;
 					upgradedUnit->scan = newScan;
-					if (bVehicle) 
-						upgradedUnit->max_speed = newMaxSpeed;
+					if ( ID.iFirstPart == 0 ) upgradedUnit->max_speed = newMaxSpeed;
 					upgradedUnit->version++;
 					
 					player->Credits -= costs;

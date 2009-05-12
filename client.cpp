@@ -1092,7 +1092,8 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need && !bWaitForOthers )
 	{
-		SelectedBuilding->ShowUpgrade();
+		cUpgradeMenu upgradeMenu ( SelectedBuilding->owner );
+		upgradeMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road && !bWaitForOthers )
 	{
@@ -3172,6 +3173,40 @@ void cClient::doCommand ( string sCmd )
 			}
 			// delete the player
 			Server->deletePlayer ( Player );
+		}
+	}
+	if ( sCmd.substr( 0, 9 ).compare( "/credits " ) == 0 )
+	{
+		if ( sCmd.length() > 9 && Server )
+		{
+			int playerNum = -1;
+			string playerStr = sCmd.substr ( 9, sCmd.find_first_of ( " ", 9 )-9 );
+			string creditsStr = sCmd.substr ( sCmd.find_first_of ( " ", 9 )+1, sCmd.length() );
+			//first try to find player by name
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->name.compare( playerStr ) == 0 )
+				{
+					playerNum = (*Server->PlayerList)[i]->Nr;
+				}
+			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( playerStr.c_str() );
+			}
+
+			//since atoi is too stupid to report an error, do an extra check, when the number is 0
+			if ( playerNum == 0 ) return;
+			
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+
+			int credits = atoi ( creditsStr.c_str() );
+
+			Player->Credits = credits;
+
+			sendCredits ( credits, Player->Nr );
 		}
 	}
 	if ( sCmd.substr( 0, 12 ).compare( "/disconnect " ) == 0 )

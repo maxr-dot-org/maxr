@@ -261,10 +261,6 @@ public:
 	void sendWantUpgrade (int storageSlot, bool upgradeAll); // wants to upgrade the vehicle to the current version
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
-	/** 
-	* Shows the upgrade screen and sends upgrade-requests to the server, if the user presses the "done" button. 
-	*/
-	void ShowUpgrade ();
 	
 	/**
 	* returns whether this player has detected this unit or not
@@ -301,17 +297,6 @@ private:
 	* draws the connectors onto the given surface
 	*/
 	void drawConnectors( SDL_Surface* surface, SDL_Rect dest);
-
-//-----------------------------------------------------------
-protected:
-	void ShowUpgradeList (cList<sUpgradeStruct*>& list, int selected, int offset, bool description, int curCredits);
-	void ShowGoldBar (int startCredits, int curCredits);
-	void initUpgradesVehicle (sUpgradeNew u[], int vehicleTypeIdx);
-	void initUpgradesBuilding (sUpgradeNew u[], int buildingTypeIdx);
-	void CreateUpgradeList (cList<sUpgradeStruct*>& selection, cList<sUpgradeStruct*>& images, int& selected, int& offset);
-	void ShowUpgradeSubButtons ();
-	int findUpgradeValue (sUpgradeStruct* upgradeStruct, int upgradeType, int defaultValue = 0);
-	void sendUpgrades (cList<sUpgradeStruct*>& allUpgradeStructs, cPlayer* player);
 };
 
 #endif

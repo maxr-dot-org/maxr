@@ -27,7 +27,7 @@
 
 class cMenu;
 class cHangarMenu;
-class cStartupHangarMenu;
+class cUpgradeHangarMenu;
 class cNetworkMenu;
 
 struct sSaveFile
@@ -428,9 +428,9 @@ public:
 	void setCurrentValue( int currentValue_ );
 };
 
-class cMenuUpgradeHanlder : public cMenuItemContainer
+class cMenuUpgradeHandler : public cMenuItemContainer
 {
-	cStartupHangarMenu *parentMenu;
+	cUpgradeHangarMenu *parentMenu;
 	cMenuUnitListItem *selection;
 
 	cMenuButton *decreaseButtons[8];
@@ -440,8 +440,8 @@ class cMenuUpgradeHanlder : public cMenuItemContainer
 	cUpgradeCalculator::UpgradeTypes getUpgradeType( sUnitUpgrade upgrade );
 	void updateUnitValues ( cMenuUnitListItem *unit ); 
 public:
-	cMenuUpgradeHanlder( int x, int y, cStartupHangarMenu *parent );
-	~cMenuUpgradeHanlder();
+	cMenuUpgradeHandler( int x, int y, cUpgradeHangarMenu *parent );
+	~cMenuUpgradeHandler();
 
 	static void buttonReleased( void* parent );
 
@@ -614,6 +614,34 @@ public:
 	void setValues ( int *turboBuildTurns, int *turboBuildCosts );
 	void setBuildSpeed( int buildSpeed );
 	int getBuildSpeed();
+};
+
+class cMenuUpgradeFilter : public cMenuItemContainer
+{
+	cHangarMenu *parentMenu;
+
+	cMenuCheckButton* checkButtonTank;
+	cMenuCheckButton* checkButtonPlane;
+	cMenuCheckButton* checkButtonShip;
+	cMenuCheckButton* checkButtonBuilding;
+	cMenuCheckButton* checkButtonTNT;
+
+	static void buttonChanged( void *parent );
+public:
+	cMenuUpgradeFilter( int x, int y, cHangarMenu *parentMenu );
+	~cMenuUpgradeFilter();
+
+	void setTankChecked ( bool checked );
+	void setPlaneChecked ( bool checked );
+	void setShipChecked ( bool checked );
+	void setBuildingChecked ( bool checked );
+	void setTNTChecked ( bool checked );
+
+	bool TankIsChecked();
+	bool PlaneIsChecked();
+	bool ShipIsChecked();
+	bool BuildingIsChecked();
+	bool TNTIsChecked();
 };
 
 #endif // menuitemsH

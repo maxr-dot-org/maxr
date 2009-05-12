@@ -1506,7 +1506,7 @@ void cMenuMaterialBar::setCurrentValue( int currentValue_ )
 	valueLabel->setText( iToStr ( currentValue ) );
 }
 
-cMenuUpgradeHanlder::cMenuUpgradeHanlder ( int x, int y, cStartupHangarMenu *parent ) : cMenuItemContainer ( x, y ), parentMenu(parent)
+cMenuUpgradeHandler::cMenuUpgradeHandler ( int x, int y, cUpgradeHangarMenu *parent ) : cMenuItemContainer ( x, y ), parentMenu(parent)
 {
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -1527,7 +1527,7 @@ cMenuUpgradeHanlder::cMenuUpgradeHanlder ( int x, int y, cStartupHangarMenu *par
 	selection = NULL;
 }
 
-cMenuUpgradeHanlder::~cMenuUpgradeHanlder()
+cMenuUpgradeHandler::~cMenuUpgradeHandler()
 {
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -1538,9 +1538,9 @@ cMenuUpgradeHanlder::~cMenuUpgradeHanlder()
 }
 
 
-void cMenuUpgradeHanlder::buttonReleased( void* parent )
+void cMenuUpgradeHandler::buttonReleased( void* parent )
 {
-	cMenuUpgradeHanlder *This = (cMenuUpgradeHanlder *)parent;
+	cMenuUpgradeHandler *This = (cMenuUpgradeHandler *)parent;
 	if ( !This->selection ) return;
 
 	sUnitUpgrade *upgrades = This->selection->getUpgrades();
@@ -1596,7 +1596,7 @@ void cMenuUpgradeHanlder::buttonReleased( void* parent )
 	}
 }
 
-void cMenuUpgradeHanlder::setSelection ( cMenuUnitListItem *selection_ )
+void cMenuUpgradeHandler::setSelection ( cMenuUnitListItem *selection_ )
 {
 	selection = selection_;
 	if ( !selection )
@@ -1624,7 +1624,7 @@ void cMenuUpgradeHanlder::setSelection ( cMenuUnitListItem *selection_ )
 	}
 }
 
-cUpgradeCalculator::UpgradeTypes cMenuUpgradeHanlder::getUpgradeType( sUnitUpgrade upgrade )
+cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgrade upgrade )
 {
 	switch ( upgrade.type )
 	{
@@ -1649,7 +1649,7 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHanlder::getUpgradeType( sUnitUpgra
 	return cUpgradeCalculator::kAttack;
 }
 
-void cMenuUpgradeHanlder::updateUnitValues ( cMenuUnitListItem *unit )
+void cMenuUpgradeHandler::updateUnitValues ( cMenuUnitListItem *unit )
 {
 	for ( unsigned int i = 0; i < UnitsData.vehicle.Size()+UnitsData.building.Size(); i++ )
 	{
@@ -2301,4 +2301,93 @@ int cMenuBuildSpeedHandler::getBuildSpeed()
 		if ( speedGroup->buttonIsChecked ( i ) ) return i;
 	}
 	return 0;
+}
+
+cMenuUpgradeFilter::cMenuUpgradeFilter( int x, int y, cHangarMenu *parentMenu_ ) : cMenuItemContainer ( x, y ), parentMenu(parentMenu_)
+{
+	checkButtonTank = new cMenuCheckButton ( position.x, position.y, "", true, false, cMenuCheckButton::CHECKBOX_TYPE_TANK );
+	checkButtonTank->setClickedFunction ( &buttonChanged );
+	addItem ( checkButtonTank );
+
+	checkButtonPlane = new cMenuCheckButton ( position.x+33, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_PLANE );
+	checkButtonPlane->setClickedFunction ( &buttonChanged );
+	addItem ( checkButtonPlane );
+
+	checkButtonShip = new cMenuCheckButton ( position.x+33*2, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_SHIP );
+	checkButtonShip->setClickedFunction ( &buttonChanged );
+	addItem ( checkButtonShip );
+
+	checkButtonBuilding = new cMenuCheckButton ( position.x+33*3, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_BUILD );
+	checkButtonBuilding->setClickedFunction ( &buttonChanged );
+	addItem ( checkButtonBuilding );
+
+	checkButtonTNT = new cMenuCheckButton ( position.x+33*4, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT );
+	checkButtonTNT->setClickedFunction ( &buttonChanged );
+	addItem ( checkButtonTNT );
+}
+
+cMenuUpgradeFilter::~cMenuUpgradeFilter()
+{
+	delete checkButtonTank;
+	delete checkButtonPlane;
+	delete checkButtonShip;
+	delete checkButtonBuilding;
+	delete checkButtonTNT;
+}
+
+void cMenuUpgradeFilter::setTankChecked ( bool checked )
+{
+	checkButtonTank->setChecked ( checked );
+}
+
+void cMenuUpgradeFilter::setPlaneChecked ( bool checked )
+{
+	checkButtonPlane->setChecked ( checked );
+}
+
+void cMenuUpgradeFilter::setShipChecked ( bool checked )
+{
+	checkButtonShip->setChecked ( checked );
+}
+
+void cMenuUpgradeFilter::setBuildingChecked ( bool checked )
+{
+	checkButtonBuilding->setChecked ( checked );
+}
+
+void cMenuUpgradeFilter::setTNTChecked ( bool checked )
+{
+	checkButtonTNT->setChecked ( checked );
+}
+
+bool cMenuUpgradeFilter::TankIsChecked()
+{
+	return checkButtonTank->isChecked();
+}
+
+bool cMenuUpgradeFilter::PlaneIsChecked()
+{
+	return checkButtonPlane->isChecked();
+}
+
+bool cMenuUpgradeFilter::ShipIsChecked()
+{
+	return checkButtonShip->isChecked();
+}
+
+bool cMenuUpgradeFilter::BuildingIsChecked()
+{
+	return checkButtonBuilding->isChecked();
+}
+
+bool cMenuUpgradeFilter::TNTIsChecked()
+{
+	return checkButtonTNT->isChecked();
+}
+
+void cMenuUpgradeFilter::buttonChanged( void *parent )
+{
+	cMenuUpgradeFilter *filter = ((cMenuUpgradeFilter*)parent);
+	filter->parentMenu->generateSelectionList();
+	filter->parentMenu->draw();
 }

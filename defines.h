@@ -76,6 +76,7 @@
 #define GFXOD_BUILD_SCREEN		(SettingsData.sGfxPath + PATH_DELIMITER + "build_screen.pcx").c_str()
 #define GFXOD_FAC_BUILD_SCREEN	(SettingsData.sGfxPath + PATH_DELIMITER + "fac_build_screen.pcx").c_str()
 #define GFXOD_MULT				(SettingsData.sGfxPath + PATH_DELIMITER + "multi.pcx").c_str()
+#define GFXOD_UPGRADE			(SettingsData.sGfxPath + PATH_DELIMITER + "upgrade.pcx").c_str()
 #define GFXOD_DIALOG2			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx").c_str()
 #define GFXOD_DIALOG4			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog4.pcx").c_str()
 #define GFXOD_DIALOG5			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()

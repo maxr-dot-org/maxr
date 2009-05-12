@@ -768,7 +768,7 @@ cMultiPlayersMenu::~cMultiPlayersMenu()
 
 void cMultiPlayersMenu::tcpHostReleased( void* parent )
 {
-	cMultiPlayersMenu *menu = ((cMultiPlayersMenu*)parent);
+	cMultiPlayersMenu *menu = dynamic_cast<cMultiPlayersMenu *>((cMenu*)parent);
 	cNetworkHostMenu networkMenu;
 	if ( networkMenu.show() == 1 )
 	{
@@ -780,7 +780,7 @@ void cMultiPlayersMenu::tcpHostReleased( void* parent )
 
 void cMultiPlayersMenu::tcpClientReleased( void* parent )
 {
-	cMultiPlayersMenu *menu = ((cMultiPlayersMenu*)parent);
+	cMultiPlayersMenu *menu = dynamic_cast<cMultiPlayersMenu *>((cMenu*)parent);
 	cNetworkClientMenu networkMenu;
 	if ( networkMenu.show() == 1 )
 	{
@@ -940,14 +940,14 @@ cSettingsMenu::~cSettingsMenu()
 
 void cSettingsMenu::backReleased( void* parent )
 {
-	cSettingsMenu *menu = ((cSettingsMenu*)parent);
+	cSettingsMenu *menu = dynamic_cast<cSettingsMenu *>((cMenu*)parent);
 	menu->gameDataContainer->settings = NULL;
 	menu->terminate = true;
 }
 
 void cSettingsMenu::okReleased( void* parent )
 {
-	cSettingsMenu *menu = ((cSettingsMenu*)parent);
+	cSettingsMenu *menu = dynamic_cast<cSettingsMenu *>((cMenu*)parent);
 	menu->updateSettings();
 	if ( menu->gameDataContainer->settings ) delete menu->gameDataContainer->settings;
 	menu->gameDataContainer->settings = new sSettings(menu->settings);
@@ -1199,14 +1199,14 @@ void cPlanetsSelectionMenu::showMaps()
 
 void cPlanetsSelectionMenu::backReleased( void* parent )
 {
-	cPlanetsSelectionMenu *menu = ((cPlanetsSelectionMenu*)parent);
+	cPlanetsSelectionMenu *menu = dynamic_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	menu->gameDataContainer->map = NULL;
 	menu->terminate = true;
 }
 
 void cPlanetsSelectionMenu::okReleased( void* parent )
 {
-	cPlanetsSelectionMenu *menu = ((cPlanetsSelectionMenu*)parent);
+	cPlanetsSelectionMenu *menu = dynamic_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	if ( menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int)menu->maps->Size() )
 	{
 		menu->gameDataContainer->map = new cMap();
@@ -1240,7 +1240,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 
 void cPlanetsSelectionMenu::arrowDownReleased( void* parent )
 {
-	cPlanetsSelectionMenu *menu = ((cPlanetsSelectionMenu*)parent);
+	cPlanetsSelectionMenu *menu = dynamic_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	if ( menu->offset+8 < (int)menu->maps->Size() )
 	{
 		menu->offset += 8;
@@ -1250,7 +1250,7 @@ void cPlanetsSelectionMenu::arrowDownReleased( void* parent )
 
 void cPlanetsSelectionMenu::arrowUpReleased( void* parent )
 {
-	cPlanetsSelectionMenu *menu = ((cPlanetsSelectionMenu*)parent);
+	cPlanetsSelectionMenu *menu = dynamic_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	if ( menu->offset-8 >= 0 )
 	{
 		menu->offset -= 8;
@@ -1260,7 +1260,7 @@ void cPlanetsSelectionMenu::arrowUpReleased( void* parent )
 
 void cPlanetsSelectionMenu::mapReleased( void* parent )
 {
-	cPlanetsSelectionMenu *menu = ((cPlanetsSelectionMenu*)parent);
+	cPlanetsSelectionMenu *menu = dynamic_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	int index = 0;
 	if ( mouse->x > menu->position.x+160 ) index++;
 	if ( mouse->x > menu->position.x+320 ) index++;
@@ -1414,7 +1414,7 @@ void cAdvListHangarMenu::secondListDownReleased( void* parent )
 
 bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *parent )
 {
-	cAdvListHangarMenu *menu = ((cAdvListHangarMenu*)parent);
+	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cHangarMenu*)parent);
 	if ( menu->selectedUnit && menu->selectedUnit == menu->selectionList->getSelectedUnit() )
 	{
 		sVehicle *vehicle = menu->selectedUnit->getUnitID().getVehicle();
@@ -1432,7 +1432,7 @@ bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *paren
 
 bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *parent )
 {
-	cAdvListHangarMenu *menu = ((cAdvListHangarMenu*)parent);
+	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cHangarMenu*)parent);
 	if ( menu->selectedUnit->getFixedStatus() ) return false;
 	if ( menu->selectedUnit && menu->selectedUnit == menu->secondList->getSelectedUnit() )
 	{
@@ -1445,7 +1445,7 @@ bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *pa
 	return false;
 }
 
-cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_ ) : cAdvListHangarMenu ( LoadPCX (GFXOD_HANGAR), player_ ), gameDataContainer(gameDataContainer_)
+cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_ ) : cHangarMenu ( LoadPCX ( GFXOD_HANGAR ), player_ ), cUpgradeHangarMenu ( player_ ), cAdvListHangarMenu ( NULL, player_ ), gameDataContainer(gameDataContainer_)
 {
 	/*cMenuLabel *titleLabel = new cMenuLabel ( position.x+552, position.y+11, lngPack.i18n ("Text~Title~Hangar") );
 	titleLabel->setCentered( true );
@@ -1465,31 +1465,8 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	upgradeBuyGroup->setClickedFunction ( &subButtonsChanged );
 	menuItems.Add ( upgradeBuyGroup );
 
-	checkButtonTank = new cMenuCheckButton ( position.x+467, position.y+411, "", true, false, cMenuCheckButton::CHECKBOX_TYPE_TANK );
-	checkButtonTank->setClickedFunction ( &subButtonsChanged );
-	menuItems.Add ( checkButtonTank );
-
-	checkButtonPlane = new cMenuCheckButton ( position.x+467+33, position.y+411, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_PLANE );
-	checkButtonPlane->setClickedFunction ( &subButtonsChanged );
-	menuItems.Add ( checkButtonPlane );
-
-	checkButtonShip = new cMenuCheckButton ( position.x+467+33*2, position.y+411, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_SHIP );
-	checkButtonShip->setClickedFunction ( &subButtonsChanged );
-	menuItems.Add ( checkButtonShip );
-
-	checkButtonBuilding = new cMenuCheckButton ( position.x+467+33*3, position.y+411, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_BUILD );
-	checkButtonBuilding->setClickedFunction ( &subButtonsChanged );
-	menuItems.Add ( checkButtonBuilding );
-
-	checkButtonTNT = new cMenuCheckButton ( position.x+467+33*4, position.y+411, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT );
-	checkButtonTNT->setClickedFunction ( &subButtonsChanged );
-	menuItems.Add ( checkButtonTNT );
-
-	goldBar = new cMenuMaterialBar ( position.x+372, position.y+301, position.x+381, position.y+275, credits, cMenuMaterialBar::MAT_BAR_TYPE_GOLD );
-	menuItems.Add ( goldBar );
-	goldBarLabel = new cMenuLabel ( position.x+381, position.y+285, lngPack.i18n ("Text~Title~Gold") );
-	goldBarLabel->setCentered( true );
-	menuItems.Add ( goldBarLabel );
+	upgradeFilter = new cMenuUpgradeFilter ( position.x+467, position.y+411, this );
+	menuItems.Add ( upgradeFilter );
 
 	materialBar = new cMenuMaterialBar ( position.x+421, position.y+301, position.x+430, position.y+275, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL );
 	materialBar->setClickedFunction ( materialBarClicked );
@@ -1497,6 +1474,9 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	materialBarLabel = new cMenuLabel ( position.x+430, position.y+285, lngPack.i18n ("Text~Title~Cargo") );
 	materialBarLabel->setCentered( true );
 	menuItems.Add ( materialBarLabel );
+
+	goldBar->setMaximalValue ( credits );
+	goldBar->setCurrentValue ( credits );
 
 	materialBarUpButton = new cMenuButton ( position.x+413, position.y+424, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
 	materialBarUpButton->setReleasedFunction ( &materialBarUpReleased );
@@ -1506,10 +1486,8 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	materialBarDownButton->setReleasedFunction ( &materialBarDownReleased );
 	menuItems.Add ( materialBarDownButton );
 
-	upgradeButtons = new cMenuUpgradeHanlder ( position.x+283, position.y+293, this );
+//	upgradeButtons = new cMenuUpgradeHandler ( position.x+283, position.y+293, this );
 	menuItems.Add ( upgradeButtons );
-
-	initUpgrades();
 
 	generateSelectionList();
 
@@ -1535,142 +1513,21 @@ cStartupHangarMenu::~cStartupHangarMenu()
 {
 	delete upgradeBuyGroup;
 
-	delete checkButtonTank;
-	delete checkButtonPlane;
-	delete checkButtonShip;
-	delete checkButtonBuilding;
-	delete checkButtonTNT;
-
-	delete goldBar;
 	delete materialBar;
-
-	delete goldBarLabel;
 	delete materialBarLabel;
-
 	delete materialBarUpButton;
 	delete materialBarDownButton;
-
-	delete upgradeButtons;
-
-	delete[] unitUpgrades;
-}
-
-void cStartupHangarMenu::initUpgrades()
-{
-	unitUpgrades = new sUnitUpgrade[UnitsData.vehicle.Size()+UnitsData.building.Size()][8];
-	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.vehicle.Size()+UnitsData.building.Size(); unitIndex++ )
-	{
-		sUnitData *data;
-		sUnitData *oriData;
-		if ( unitIndex < UnitsData.vehicle.Size() )
-		{
-			oriData = &UnitsData.vehicle[unitIndex].data;
-			data = &player->VehicleData[unitIndex];
-		}
-		else
-		{
-			oriData = &UnitsData.building[unitIndex-UnitsData.vehicle.Size()].data;
-			data = &player->BuildingData[unitIndex-UnitsData.vehicle.Size()];
-		}
-
-		cResearch& researchLevel = player->researchLevel;
-
-		sUnitUpgrade *upgrade = unitUpgrades[unitIndex];
-		int i = 0;
-
-		if ( data->can_attack )
-		{
-			// Damage:
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->damage;
-			upgrade[i].curValue = data->damage;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->damage, oriData->damage, cUpgradeCalculator::kAttack, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
-			i++;
-			if ( !data->is_expl_mine )
-			{
-				// Shots:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->max_shots;
-				upgrade[i].curValue = data->max_shots;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_shots, oriData->max_shots, cUpgradeCalculator::kShots, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
-				i++;
-				// Range:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->range;
-				upgrade[i].curValue = data->range;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->range, oriData->range, cUpgradeCalculator::kRange, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
-				i++;
-				// Ammo:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->max_ammo;
-				upgrade[i].curValue = data->max_ammo;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_ammo, oriData->max_ammo, cUpgradeCalculator::kAmmo, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
-				i++;
-			}
-		}
-
-		if ( data->can_transport == TRANS_METAL || data->can_transport == TRANS_OIL || data->can_transport == TRANS_GOLD ||
-			data->can_load == TRANS_METAL || data->can_load == TRANS_OIL || data->can_load == TRANS_GOLD )
-		{
-			i++;
-		}
-
-		if ( data->energy_prod ) i += 2;
-
-		if ( data->human_prod ) i++;
-
-		// Armor:
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData->armor;
-		upgrade[i].curValue = data->armor;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->armor, oriData->armor, cUpgradeCalculator::kArmor, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_ARMOR;
-		i++;
-
-		// Hitpoints:
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData->max_hit_points;
-		upgrade[i].curValue = data->max_hit_points;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_hit_points, oriData->max_hit_points, cUpgradeCalculator::kHitpoints, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
-		i++;
-
-		// Scan:
-		if ( data->scan )
-		{
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->scan;
-			upgrade[i].curValue = data->scan;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->scan, oriData->scan, cUpgradeCalculator::kScan, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SCAN;
-			i++;
-		}
-
-		// Speed:
-		if ( data->max_speed )
-		{
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->max_speed;
-			upgrade[i].curValue = data->max_speed;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_speed / 4, oriData->max_speed / 4, cUpgradeCalculator::kSpeed, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
-			i++;
-		}
-	}
 }
 
 void cStartupHangarMenu::backReleased( void* parent )
 {
-	((cStartupHangarMenu*)parent)->terminate = true;
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
+	menu->terminate = true;
 }
 
 void cStartupHangarMenu::doneReleased( void* parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	cList<sLandingUnit> *landingUnits  = new cList<sLandingUnit>;
 	for ( int i = 0; i < menu->secondList->getSize(); i++ )
 	{
@@ -1696,14 +1553,14 @@ void cStartupHangarMenu::doneReleased( void* parent )
 
 void cStartupHangarMenu::subButtonsChanged( void* parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	menu->generateSelectionList();
 	menu->draw();
 }
 
 void cStartupHangarMenu::materialBarUpReleased( void* parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( menu->secondList->getSelectedUnit() && menu->credits > 0 )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
@@ -1721,7 +1578,7 @@ void cStartupHangarMenu::materialBarUpReleased( void* parent )
 
 void cStartupHangarMenu::materialBarDownReleased( void* parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( menu->secondList->getSelectedUnit() )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
@@ -1739,7 +1596,7 @@ void cStartupHangarMenu::materialBarDownReleased( void* parent )
 
 void cStartupHangarMenu::materialBarClicked( void* parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( menu->secondList->getSelectedUnit() && menu->secondList->getSelectedUnit()->getUnitID().getVehicle() )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
@@ -1772,11 +1629,11 @@ void cStartupHangarMenu::generateSelectionList()
 	if ( selectionList->getSelectedUnit() ) oldSelectdUnit = selectionList->getSelectedUnit()->getUnitID();
 
 	selectionList->clear();
-	bool tank = checkButtonTank->isChecked();
-	bool plane = checkButtonPlane->isChecked();
-	bool ship = checkButtonShip->isChecked();
-	bool build = checkButtonBuilding->isChecked();
-	bool tnt = checkButtonTNT->isChecked();
+	bool tank = upgradeFilter->TankIsChecked();
+	bool plane = upgradeFilter->PlaneIsChecked();
+	bool ship = upgradeFilter->ShipIsChecked();
+	bool build = upgradeFilter->BuildingIsChecked();
+	bool tnt = upgradeFilter->TNTIsChecked();
 	bool buy = upgradeBuyGroup->buttonIsChecked ( 0 );
 
 	if ( buy ) plane = ship = build = false;
@@ -1852,17 +1709,6 @@ void cStartupHangarMenu::removedCallback ( cMenuUnitListItem *item )
 	goldBar->setCurrentValue ( credits );
 }
 
-void cStartupHangarMenu::setCredits( int credits_ )
-{
-	credits = credits_;
-	goldBar->setCurrentValue ( credits );
-}
-
-int cStartupHangarMenu::getCredits()
-{
-	return credits;
-}
-
 void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
@@ -1881,7 +1727,10 @@ void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 
 void cStartupHangarMenu::selectionChanged( void *parent )
 {
-	cStartupHangarMenu *menu = ((cStartupHangarMenu*)parent);
+	cStartupHangarMenu *menu;
+	menu = dynamic_cast<cStartupHangarMenu*>((cHangarMenu*)parent);
+	if ( !menu ) menu = dynamic_cast<cStartupHangarMenu*>((cStartupHangarMenu*)parent);
+	if ( !menu ) return;
 	sVehicle *vehicle;
 	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle() ) &&
 		( vehicle->data.can_transport == TRANS_METAL || vehicle->data.can_transport == TRANS_OIL || vehicle->data.can_transport == TRANS_GOLD ) )
@@ -2011,7 +1860,7 @@ sTerrain *cLandingMenu::getMapTile ( int x, int y )
 
 void cLandingMenu::mapClicked( void* parent )
 {
-	cLandingMenu *menu = ((cLandingMenu*)parent);
+	cLandingMenu *menu = dynamic_cast<cLandingMenu*>((cMenu*)parent);
 
 	if ( menu->landData.landingState == LANDING_POSITION_OK ) return;
 
@@ -2047,7 +1896,7 @@ void cLandingMenu::mapClicked( void* parent )
 
 void cLandingMenu::mouseMoved( void* parent )
 {
-	cLandingMenu *menu = ((cLandingMenu*)parent);
+	cLandingMenu *menu = dynamic_cast<cLandingMenu*>((cMenu*)parent);
 	sTerrain *terrain = menu->getMapTile ( mouse->x-180, mouse->y-18 );
 	if ( mouse->x >= 180 && mouse->x < SettingsData.iScreenW-12 && mouse->y >= 18 && mouse->y < SettingsData.iScreenH-14 && terrain && !( terrain->water || terrain->coast || terrain->blocked ) ) mouse->SetCursor ( CMove );
 	else mouse->SetCursor ( CNo );
@@ -2371,7 +2220,7 @@ void cNetworkMenu::backReleased( void* parent )
 
 void cNetworkMenu::sendReleased( void* parent )
 {
-	cNetworkMenu *menu = ((cNetworkMenu*)parent);
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
 	string chatText = menu->chatLine->getText();
 	if ( !chatText.empty() )
 	{
@@ -2385,7 +2234,7 @@ void cNetworkMenu::sendReleased( void* parent )
 
 void cNetworkMenu::nextColorReleased( void* parent )
 {
-	cNetworkMenu *menu = ((cNetworkMenu*)parent);
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
 	menu->actPlayer->color++;
 	if ( menu->actPlayer->color >= PLAYERCOLORS ) menu->actPlayer->color = 0;
 	menu->setColor ( menu->actPlayer->color );
@@ -2395,7 +2244,7 @@ void cNetworkMenu::nextColorReleased( void* parent )
 
 void cNetworkMenu::prevColorReleased( void* parent )
 {
-	cNetworkMenu *menu = ((cNetworkMenu*)parent);
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
 	menu->actPlayer->color--;
 	if ( menu->actPlayer->color < 0 ) menu->actPlayer->color = PLAYERCOLORS-1;
 	menu->setColor ( menu->actPlayer->color );
@@ -2405,14 +2254,14 @@ void cNetworkMenu::prevColorReleased( void* parent )
 
 void cNetworkMenu::wasNameImput( void* parent )
 {
-	cNetworkMenu *menu = ((cNetworkMenu*)parent);
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
 	menu->actPlayer->name = menu->nameLine->getText();
 	menu->playerSettingsChanged();
 }
 
 void cNetworkMenu::portIpChanged( void* parent )
 {
-	cNetworkMenu *menu = ((cNetworkMenu*)parent);
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
 	menu->port = atoi ( menu->portLine->getText().c_str() );
 	if ( menu->ipLine->getText().compare ( "-" ) != 0 ) menu->ip = menu->ipLine->getText();
 }
@@ -2470,7 +2319,7 @@ int cNetworkHostMenu::checkAllPlayersReady()
 
 void cNetworkHostMenu::okReleased( void* parent )
 {
-	cNetworkHostMenu *menu = ((cNetworkHostMenu*)parent);
+	cNetworkHostMenu *menu = dynamic_cast<cNetworkHostMenu*>((cMenu*)parent);
 
 	int playerNr;
 	if ( ( !menu->gameDataContainer.settings || !menu->gameDataContainer.map ) && menu->gameDataContainer.savegame.empty() )
@@ -2508,7 +2357,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 
 void cNetworkHostMenu::mapReleased( void* parent )
 {
-	cNetworkHostMenu *menu = ((cNetworkHostMenu*)parent);
+	cNetworkHostMenu *menu = dynamic_cast<cNetworkHostMenu*>((cMenu*)parent);
 	cPlanetsSelectionMenu planetsSelectionMenu ( &menu->gameDataContainer );
 	planetsSelectionMenu.show();
 	menu->showSettingsText();
@@ -2519,7 +2368,7 @@ void cNetworkHostMenu::mapReleased( void* parent )
 
 void cNetworkHostMenu::settingsReleased( void* parent )
 {
-	cNetworkHostMenu *menu = ((cNetworkHostMenu*)parent);
+	cNetworkHostMenu *menu = dynamic_cast<cNetworkHostMenu*>((cMenu*)parent);
 	cSettingsMenu settingsMenu ( &menu->gameDataContainer );
 	settingsMenu.show();
 	menu->showSettingsText();
@@ -2529,7 +2378,7 @@ void cNetworkHostMenu::settingsReleased( void* parent )
 
 void cNetworkHostMenu::loadReleased( void* parent )
 {
-	cNetworkHostMenu *menu = ((cNetworkHostMenu*)parent);
+	cNetworkHostMenu *menu = dynamic_cast<cNetworkHostMenu*>((cMenu*)parent);
 	cLoadMenu loadMenu ( &menu->gameDataContainer );
 	loadMenu.show();
 	if ( !menu->gameDataContainer.savegame.empty() )
@@ -2554,7 +2403,7 @@ void cNetworkHostMenu::loadReleased( void* parent )
 
 void cNetworkHostMenu::startReleased( void* parent )
 {
-	cNetworkHostMenu *menu = ((cNetworkHostMenu*)parent);
+	cNetworkHostMenu *menu = dynamic_cast<cNetworkHostMenu*>((cMenu*)parent);
 	if ( network->getConnectionStatus() == 0 ) // Connect only if there isn't a connection jet
 	{
 		network->setPort( menu->port );
@@ -2773,7 +2622,7 @@ cNetworkClientMenu::~cNetworkClientMenu()
 
 void cNetworkClientMenu::connectReleased( void* parent )
 {
-	cNetworkClientMenu *menu = ((cNetworkClientMenu*)parent);
+	cNetworkClientMenu *menu = dynamic_cast<cNetworkClientMenu*>((cMenu*)parent);
 
 	if ( network->getConnectionStatus() == 0 ) // Connect only if there isn't a connection jet
 	{
@@ -3112,7 +2961,7 @@ void cLoadMenu::backReleased( void* parent )
 
 void cLoadMenu::loadReleased( void* parent )
 {
-	cLoadMenu *menu = ((cLoadMenu*)parent);
+	cLoadMenu *menu = dynamic_cast<cLoadMenu*>((cMenu*)parent);
 	sSaveFile *savefile = NULL;
 	for ( unsigned int i = 0; i < menu->savefiles.Size(); i++ )
 	{
@@ -3131,7 +2980,7 @@ void cLoadMenu::loadReleased( void* parent )
 
 void cLoadMenu::upReleased( void* parent )
 {
-	cLoadMenu *menu = ((cLoadMenu*)parent);
+	cLoadMenu *menu = dynamic_cast<cLoadMenu*>((cMenu*)parent);
 	if ( menu->offset > 0 )
 	{
 		menu->offset -= 10;
@@ -3143,7 +2992,7 @@ void cLoadMenu::upReleased( void* parent )
 
 void cLoadMenu::downReleased( void* parent )
 {
-	cLoadMenu *menu = ((cLoadMenu*)parent);
+	cLoadMenu *menu = dynamic_cast<cLoadMenu*>((cMenu*)parent);
 	if ( menu->offset < 90 )
 	{
 		menu->offset += 10;
@@ -3156,7 +3005,7 @@ void cLoadMenu::downReleased( void* parent )
 
 void cLoadMenu::slotClicked( void* parent )
 {
-	cLoadMenu *menu = ((cLoadMenu*)parent);
+	cLoadMenu *menu = dynamic_cast<cLoadMenu*>((cMenu*)parent);
 	int x = mouse->x > menu->position.x+menu->position.w/2 ? 1 : 0;
 	int y = 0;
 	if ( mouse->y > menu->position.y+118 ) y++;
@@ -3197,13 +3046,13 @@ cLoadSaveMenu::~cLoadSaveMenu()
 
 void cLoadSaveMenu::exitReleased( void* parent )
 {
-	cLoadSaveMenu *menu = ((cLoadSaveMenu*)parent);
+	cLoadSaveMenu *menu = dynamic_cast<cLoadSaveMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
 void cLoadSaveMenu::saveReleased( void* parent )
 {
-	cLoadSaveMenu *menu = ((cLoadSaveMenu*)parent);
+	cLoadSaveMenu *menu = dynamic_cast<cLoadSaveMenu*>((cMenu*)parent);
 	if (  menu->selected < 0 ||  menu->selected > 99 ) return;
 	if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
 
@@ -3273,7 +3122,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 
 	selectionChangedFunc = &selectionChanged;
 
-	createSelectionList();
+	generateSelectionList();
 
 	selectionChanged ( this );
 }
@@ -3289,7 +3138,7 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 	if ( Client ) Client->bFlagDrawHud = true;
 }
 
-void cBuildingsBuildMenu::createSelectionList()
+void cBuildingsBuildMenu::generateSelectionList()
 {
 	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
 	{
@@ -3307,7 +3156,7 @@ void cBuildingsBuildMenu::createSelectionList()
 
 void cBuildingsBuildMenu::doneReleased ( void *parent )
 {
-	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 	if ( menu->vehicle->data.can_build != BUILD_BIG )
 	{
 		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
@@ -3328,7 +3177,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 
 void cBuildingsBuildMenu::pathReleased ( void *parent )
 {
-	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
@@ -3339,13 +3188,13 @@ void cBuildingsBuildMenu::pathReleased ( void *parent )
 
 void cBuildingsBuildMenu::backReleased ( void *parent )
 {
-	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 	menu->terminate = true;
 }
 
 void cBuildingsBuildMenu::selectionChanged ( void *parent )
 {
-	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cHangarMenu*)parent);
 	if ( !menu->selectedUnit ) return;
 
 	sUnitData *buildingData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );
@@ -3362,12 +3211,12 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 
 bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *parent )
 {
-	cBuildingsBuildMenu *menu = ((cBuildingsBuildMenu*)parent);
+	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cHangarMenu*)parent);
 	menu->doneReleased( menu );
 	return true;
 }
 
-cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cAdvListHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_ )
+cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_ ), cAdvListHangarMenu ( NULL, player_ )
 {
 	if ( !Client ) terminate = true;
 
@@ -3402,7 +3251,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 
 	selectionChangedFunc = &selectionChanged;
 
-	createSelectionList();
+	generateSelectionList();
 	createBuildList();
 
 	selectionChanged ( this );
@@ -3413,10 +3262,12 @@ cVehiclesBuildMenu::~cVehiclesBuildMenu()
 	delete titleLabel;
 	delete speedHandler;
 
+	delete repeatButton;
+
 	if ( Client ) Client->bFlagDrawHud = true;
 }
 
-void cVehiclesBuildMenu::createSelectionList()
+void cVehiclesBuildMenu::generateSelectionList()
 {
 	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
 	{
@@ -3480,7 +3331,7 @@ void cVehiclesBuildMenu::createBuildList()
 
 void cVehiclesBuildMenu::doneReleased ( void *parent )
 {
-	cVehiclesBuildMenu *menu = ((cVehiclesBuildMenu*)parent);
+	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cMenu*)parent);
 	cList<sBuildList*> buildList;
 	for ( int i = 0; i < menu->secondList->getSize(); i++ )
 	{
@@ -3496,13 +3347,13 @@ void cVehiclesBuildMenu::doneReleased ( void *parent )
 
 void cVehiclesBuildMenu::backReleased ( void *parent )
 {
-	cVehiclesBuildMenu *menu = ((cVehiclesBuildMenu*)parent);
+	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cMenu*)parent);
 	menu->terminate = true;
 }
 
 void cVehiclesBuildMenu::selectionChanged ( void *parent )
 {
-	cVehiclesBuildMenu *menu = ((cVehiclesBuildMenu*)parent);
+	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cHangarMenu*)parent);
 	if ( !menu->selectedUnit ) return;
 
 	sUnitData *vehicleData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );
@@ -3510,4 +3361,238 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 	menu->building->CalcTurboBuild ( turboBuildTurns, turboBuildCosts, vehicleData->iBuilt_Costs, menu->selectedUnit->getResValue() );
 
 	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
+}
+
+cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), owner )
+{
+	upgradeFilter = new cMenuUpgradeFilter ( position.x+467, position.y+411, this );
+	menuItems.Add ( upgradeFilter );
+
+	upgradeButtons = new cMenuUpgradeHandler ( position.x+283, position.y+293, this );
+	menuItems.Add ( upgradeButtons );
+
+	goldBar = new cMenuMaterialBar ( position.x+372, position.y+301, position.x+381, position.y+275, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD );
+	menuItems.Add ( goldBar );
+	goldBarLabel = new cMenuLabel ( position.x+381, position.y+285, lngPack.i18n ("Text~Title~Gold") );
+	goldBarLabel->setCentered( true );
+	menuItems.Add ( goldBarLabel );
+
+	initUpgrades ( owner );
+}
+
+cUpgradeHangarMenu::~cUpgradeHangarMenu()
+{
+	delete upgradeFilter;
+	delete upgradeButtons;
+
+	delete goldBar;
+	delete goldBarLabel;
+
+	delete[] unitUpgrades;
+}
+void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
+{
+	unitUpgrades = new sUnitUpgrade[UnitsData.vehicle.Size()+UnitsData.building.Size()][8];
+	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.vehicle.Size()+UnitsData.building.Size(); unitIndex++ )
+	{
+		sUnitData *data;
+		sUnitData *oriData;
+		if ( unitIndex < UnitsData.vehicle.Size() )
+		{
+			oriData = &UnitsData.vehicle[unitIndex].data;
+			data = &player->VehicleData[unitIndex];
+		}
+		else
+		{
+			oriData = &UnitsData.building[unitIndex-UnitsData.vehicle.Size()].data;
+			data = &player->BuildingData[unitIndex-UnitsData.vehicle.Size()];
+		}
+
+		cResearch& researchLevel = player->researchLevel;
+
+		sUnitUpgrade *upgrade = unitUpgrades[unitIndex];
+		int i = 0;
+
+		if ( data->can_attack )
+		{
+			// Damage:
+			upgrade[i].active = true;
+			upgrade[i].startValue = oriData->damage;
+			upgrade[i].curValue = data->damage;
+			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->damage, oriData->damage, cUpgradeCalculator::kAttack, researchLevel);
+			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
+			i++;
+			if ( !data->is_expl_mine )
+			{
+				// Shots:
+				upgrade[i].active = true;
+				upgrade[i].startValue = oriData->max_shots;
+				upgrade[i].curValue = data->max_shots;
+				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_shots, oriData->max_shots, cUpgradeCalculator::kShots, researchLevel);
+				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
+				i++;
+				// Range:
+				upgrade[i].active = true;
+				upgrade[i].startValue = oriData->range;
+				upgrade[i].curValue = data->range;
+				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->range, oriData->range, cUpgradeCalculator::kRange, researchLevel);
+				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
+				i++;
+				// Ammo:
+				upgrade[i].active = true;
+				upgrade[i].startValue = oriData->max_ammo;
+				upgrade[i].curValue = data->max_ammo;
+				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_ammo, oriData->max_ammo, cUpgradeCalculator::kAmmo, researchLevel);
+				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
+				i++;
+			}
+		}
+
+		if ( data->can_transport == TRANS_METAL || data->can_transport == TRANS_OIL || data->can_transport == TRANS_GOLD ||
+			data->can_load == TRANS_METAL || data->can_load == TRANS_OIL || data->can_load == TRANS_GOLD )
+		{
+			i++;
+		}
+
+		if ( data->energy_prod ) i += 2;
+
+		if ( data->human_prod ) i++;
+
+		// Armor:
+		upgrade[i].active = true;
+		upgrade[i].startValue = oriData->armor;
+		upgrade[i].curValue = data->armor;
+		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->armor, oriData->armor, cUpgradeCalculator::kArmor, researchLevel);
+		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_ARMOR;
+		i++;
+
+		// Hitpoints:
+		upgrade[i].active = true;
+		upgrade[i].startValue = oriData->max_hit_points;
+		upgrade[i].curValue = data->max_hit_points;
+		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_hit_points, oriData->max_hit_points, cUpgradeCalculator::kHitpoints, researchLevel);
+		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
+		i++;
+
+		// Scan:
+		if ( data->scan )
+		{
+			upgrade[i].active = true;
+			upgrade[i].startValue = oriData->scan;
+			upgrade[i].curValue = data->scan;
+			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->scan, oriData->scan, cUpgradeCalculator::kScan, researchLevel);
+			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SCAN;
+			i++;
+		}
+
+		// Speed:
+		if ( data->max_speed )
+		{
+			upgrade[i].active = true;
+			upgrade[i].startValue = oriData->max_speed;
+			upgrade[i].curValue = data->max_speed;
+			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_speed / 4, oriData->max_speed / 4, cUpgradeCalculator::kSpeed, researchLevel);
+			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
+			i++;
+		}
+	}
+}
+
+void cUpgradeHangarMenu::setCredits( int credits_ )
+{
+	credits = credits_;
+	goldBar->setCurrentValue ( credits );
+}
+
+int cUpgradeHangarMenu::getCredits()
+{
+	return credits;
+}
+
+cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), player )
+{
+	credits = player->Credits;
+
+	doneButton->setReleasedFunction ( &doneReleased );
+	backButton->setReleasedFunction ( &backReleased );
+
+	goldBar->setMaximalValue ( credits );
+	goldBar->setCurrentValue ( credits );
+
+	generateSelectionList();
+
+	selectionChangedFunc = &selectionChanged;
+}
+
+cUpgradeMenu::~cUpgradeMenu()
+{
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cUpgradeMenu::doneReleased ( void *parent )
+{
+	cUpgradeMenu *menu;
+	menu = dynamic_cast<cUpgradeMenu*>((cMenu*)parent);
+	sendTakenUpgrades ( menu->unitUpgrades, menu->player );
+	menu->end = true;
+}
+
+void cUpgradeMenu::backReleased ( void *parent )
+{
+	cUpgradeMenu *menu;
+	menu = dynamic_cast<cUpgradeMenu*>((cMenu*)parent);
+	menu->terminate = true;
+}
+
+void cUpgradeMenu::selectionChanged ( void *parent )
+{
+	cUpgradeMenu *menu;
+	menu = dynamic_cast<cUpgradeMenu*>((cHangarMenu*)parent);
+	if ( !menu ) menu = dynamic_cast<cUpgradeMenu*>((cUpgradeMenu*)parent);
+	if ( !menu ) return;
+	menu->upgradeButtons->setSelection ( menu->selectedUnit );
+	menu->draw();
+}
+
+void cUpgradeMenu::generateSelectionList()
+{
+	sID oldSelectdUnit;
+	sBuilding *oldSelectdBuilding = NULL;
+	if ( selectionList->getSelectedUnit() ) oldSelectdUnit = selectionList->getSelectedUnit()->getUnitID();
+
+	selectionList->clear();
+	bool tank = upgradeFilter->TankIsChecked();
+	bool plane = upgradeFilter->PlaneIsChecked();
+	bool ship = upgradeFilter->ShipIsChecked();
+	bool build = upgradeFilter->BuildingIsChecked();
+	bool tnt = upgradeFilter->TNTIsChecked();
+
+	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	{
+		if ( !tank && !ship && !plane ) continue;
+		sUnitData &data = UnitsData.vehicle[i].data;
+		if ( tnt && !data.can_attack ) continue;
+		if ( data.can_drive == DRIVE_AIR && !plane ) continue;
+		if ( data.can_drive == DRIVE_SEA && !ship ) continue;
+		if ( ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA ) && !tank ) continue;
+		selectionList->addUnit ( UnitsData.vehicle[i].data.ID, player, unitUpgrades[i] );
+	}
+
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	{
+		if ( !build ) continue;
+		sUnitData &data = UnitsData.building[i].data;
+		if ( tnt && !data.can_attack ) continue;
+		selectionList->addUnit ( UnitsData.building[i].data.ID, player, unitUpgrades[UnitsData.vehicle.Size()+i] );
+	}
+
+	for ( int i = 0; i < selectionList->getSize(); i++ )
+	{
+		if ( oldSelectdUnit == selectionList->getItem( i )->getUnitID() )
+		{
+			selectionList->setSelection ( selectionList->getItem( i ) );
+			break;
+		}
+	}
+	if ( selectionList->getSelectedUnit() == NULL && selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem( 0 ) );
 }

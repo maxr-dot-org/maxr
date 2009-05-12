@@ -19,6 +19,7 @@
 #include "menuevents.h"
 #include "netmessage.h"
 #include "serverevents.h"
+#include "client.h"
 
 void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player )
 {
@@ -286,4 +287,130 @@ void sendReconnectionSuccess( int playerNr )
 	cNetMessage *message = new cNetMessage ( GAME_EV_RECON_SUCESS );
 	message->pushInt16 ( playerNr );
 	cMenu::sendMessage ( message );
+}
+
+void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
+{
+	cNetMessage* msg = NULL;
+	int iCount = 0;
+
+	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.vehicle.Size()+UnitsData.building.Size(); unitIndex++ )
+	{
+		sUnitUpgrade *curUpgrade = unitUpgrades[unitIndex];
+		bool purchased = false;
+		for ( int i = 0; i < 8; i++ )
+		{
+			if ( curUpgrade[i].purchased )
+			{
+				purchased = true;
+				break;
+			}
+		}
+
+		if (purchased)
+		{
+			if (msg == NULL)
+			{
+				msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
+				iCount = 0;
+			}
+			
+			sUnitData *currentVersion;
+			if ( unitIndex < UnitsData.vehicle.Size() ) currentVersion = &player->VehicleData[unitIndex];
+			else currentVersion = &player->BuildingData[unitIndex-UnitsData.vehicle.Size()];
+
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->max_speed));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion->scan));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion->max_hit_points));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion->armor));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion->max_ammo));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion->range));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion->max_shots));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion->damage));
+			msg->pushInt16 (currentVersion->ID.iSecondPart);
+			msg->pushInt16 (currentVersion->ID.iFirstPart);
+
+			iCount++; // msg contains one more upgrade struct
+			
+			// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
+			if (msg->iLength + 38 > PACKAGE_LENGTH) 
+			{
+				msg->pushInt16 (iCount);
+				msg->pushInt16 (player->Nr);
+				Client->sendNetMessage (msg);
+				msg = NULL;
+			}
+			
+		}
+	}
+	if (msg != NULL)
+	{
+		msg->pushInt16 (iCount);
+		msg->pushInt16 (player->Nr);
+		Client->sendNetMessage (msg);
+	}
+}
+
+int findUpgradeValue ( sUnitUpgrade upgrades[8], int upgradeType, int defaultValue )
+{
+	switch (upgradeType)
+	{
+		case 0:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SPEED )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 1:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SCAN )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 2:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_HITS )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 3:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_ARMOR )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 4:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_AMMO )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 5:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_RANGE )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 6:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SHOTS )
+					return upgrades[i].curValue;
+			}
+			break;
+		case 7:
+			for (int i = 0; i < 8; i++)
+			{
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_DAMAGE )
+					return upgrades[i].curValue;
+			}
+			break;
+	}
+	return defaultValue; // the specified upgrade was not found...
 }

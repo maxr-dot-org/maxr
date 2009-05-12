@@ -315,6 +315,7 @@ public:
 
 class cHangarMenu : public cMenu
 {
+friend class cUpgradeHangarMenu;
 protected:
 	cPlayer *player;
 
@@ -346,9 +347,11 @@ public:
 
 	void setSelectedUnit( cMenuUnitListItem *selectedUnit_ );
 	cMenuUnitListItem *getSelectedUnit();
+
+	virtual void generateSelectionList() {}
 };
 
-class cAdvListHangarMenu : public cHangarMenu
+class cAdvListHangarMenu : virtual public cHangarMenu
 {
 protected:
 	cMenuUnitsList *secondList;
@@ -370,36 +373,40 @@ public:
 	static void secondListDownReleased( void* parent );
 };
 
-class cStartupHangarMenu : public cAdvListHangarMenu
+class cUpgradeHangarMenu : virtual public cHangarMenu
+{
+protected:
+	int credits;
+
+	cMenuUpgradeFilter *upgradeFilter;
+	cMenuUpgradeHandler *upgradeButtons;
+	cMenuMaterialBar *goldBar;
+	cMenuLabel *goldBarLabel;
+
+	sUnitUpgrade (*unitUpgrades)[8];
+	void initUpgrades( cPlayer *player );
+public:
+	cUpgradeHangarMenu( cPlayer *owner );
+	~cUpgradeHangarMenu();
+
+	void setCredits( int credits_ );
+	int getCredits();
+};
+
+class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
 {
 protected:
 	cGameDataContainer *gameDataContainer;
 
-	int credits;
-
 	cMenuRadioGroup *upgradeBuyGroup;
 
-	cMenuCheckButton* checkButtonTank;
-	cMenuCheckButton* checkButtonPlane;
-	cMenuCheckButton* checkButtonShip;
-	cMenuCheckButton* checkButtonBuilding;
-	cMenuCheckButton* checkButtonTNT;
-
-	cMenuMaterialBar *goldBar;
 	cMenuMaterialBar *materialBar;
 
-	cMenuLabel *goldBarLabel;
 	cMenuLabel *materialBarLabel;
 
 	cMenuButton *materialBarUpButton;
 	cMenuButton *materialBarDownButton;
 
-	cMenuUpgradeHanlder *upgradeButtons;
-
-	sUnitUpgrade (*unitUpgrades)[8];
-
-	void initUpgrades();
-	void generateSelectionList();
 	bool isInLandingList( cMenuUnitListItem *item );
 
 	bool checkAddOk ( cMenuUnitListItem *item );
@@ -418,10 +425,9 @@ public:
 	static void materialBarDownReleased( void* parent );
 	static void materialBarClicked( void* parent );
 
-	void setCredits( int credits_ );
-	int getCredits();
-
 	void handleNetMessage( cNetMessage *message );
+
+	void generateSelectionList();
 };
 
 class cLandingMenu : public cMenu
@@ -624,7 +630,6 @@ protected:
 	cMenuButton *pathButton;
 	cMenuBuildSpeedHandler *speedHandler;
 
-	void createSelectionList();
 public:
 	cBuildingsBuildMenu( cPlayer *player_, cVehicle *vehicle_ );
 	~cBuildingsBuildMenu();
@@ -634,6 +639,8 @@ public:
 	static void pathReleased ( void *parent );
 	static void selectionChanged ( void *parent );
 	static bool selListDoubleClicked ( cMenuUnitsList* list, void *parent );
+
+	void generateSelectionList();
 };
 
 class cVehiclesBuildMenu : public cAdvListHangarMenu
@@ -646,7 +653,6 @@ protected:
 
 	cMenuCheckButton *repeatButton;
 
-	void createSelectionList();
 	void createBuildList();
 public:
 	cVehiclesBuildMenu( cPlayer *player_, cBuilding *building_ );
@@ -655,6 +661,22 @@ public:
 	static void doneReleased ( void *parent );
 	static void backReleased ( void *parent );
 	static void selectionChanged ( void *parent );
+
+	void generateSelectionList();
+};
+
+class cUpgradeMenu : public cUpgradeHangarMenu
+{
+protected:
+public:
+	cUpgradeMenu( cPlayer *player );
+	~cUpgradeMenu();
+
+	static void doneReleased ( void *parent );
+	static void backReleased ( void *parent );
+	static void selectionChanged ( void *parent );
+
+	void generateSelectionList();
 };
 
 #endif //menusH

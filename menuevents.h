@@ -68,4 +68,8 @@ void sendGameIdentification ( sMenuPlayer *player, int socket );
 
 void sendReconnectionSuccess( int playerNr );
 
+void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player );
+
+int findUpgradeValue ( sUnitUpgrade upgrades[8], int upgradeType, int defaultValue = 0);
+
 #endif // menueventsH
