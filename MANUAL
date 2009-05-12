@@ -56,6 +56,7 @@ In-game console (TAB or chat-button) offers a variet of commands:
 /cache size <wert>		set the number of rendered units stored in the graphic cache. The higher the value, the faster runs maxr
 /cache flush			when you have some strange graphic artefacts thy this command. It deletes all units from the graphic cache, so they are rerendered.
 /cache debug [on/off]		display debug statistics of the graphic cache
+/credits [name/id] [value]    sets the credits of a player to the given value
 
 Next commands are considered as cheats and will show up in gamechat
 
