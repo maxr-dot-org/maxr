@@ -220,7 +220,7 @@ protected:
 	eCheckButtonTypes buttonType;
 	eCheckButtonTextOriantation textOrientation;
 
-	cMenuRadioGroup *group;
+	class cMenuRadioGroup *group;
 
 	bool centered;
 	bool checked;
@@ -292,7 +292,7 @@ class cMenuUnitListItem : public cMenuItem
 friend class cMenuUnitsList;
 protected:
 	eMenuUnitListDisplayTypes displayType;
-	cMenuUnitsList* parentList;
+	class cMenuUnitsList* parentList;
 
 	sID unitID;
 	cPlayer *owner;
