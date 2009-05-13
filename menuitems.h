@@ -29,6 +29,8 @@ class cMenu;
 class cHangarMenu;
 class cUpgradeHangarMenu;
 class cNetworkMenu;
+class cMenuRadioGroup;
+class cMenuUnitsList;
 
 struct sSaveFile
 {
@@ -220,7 +222,7 @@ protected:
 	eCheckButtonTypes buttonType;
 	eCheckButtonTextOriantation textOrientation;
 
-	class cMenuRadioGroup *group;
+	cMenuRadioGroup *group;
 
 	bool centered;
 	bool checked;
@@ -292,7 +294,7 @@ class cMenuUnitListItem : public cMenuItem
 friend class cMenuUnitsList;
 protected:
 	eMenuUnitListDisplayTypes displayType;
-	class cMenuUnitsList* parentList;
+	cMenuUnitsList* parentList;
 
 	sID unitID;
 	cPlayer *owner;
