@@ -22,7 +22,9 @@ loaddata.cpp \
 log.cpp \
 main.cpp \
 map.cpp \
-menu.cpp \
+menuevents.cpp \
+menuitems.cpp \
+menus.cpp \
 mouse.cpp \
 movejobs.cpp \
 mveplayer.cpp \
