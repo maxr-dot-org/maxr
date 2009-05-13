@@ -11,8 +11,8 @@
 ${StrStr}
 
 # --- Main defines ---
-!define VERSION                    "0.2.4"
-!define FILESFOLDER                "D:\Spiele\Max-Reloaded - 2\" ;the folder to the files that should be installed with this installer (svn game directory)
+!define VERSION                    "0.2.5"
+!define FILESFOLDER                "C:\Users\Albert\Documents\Visual Studio 2005\Projects\maxr\GameData\" ;the folder to the files that should be installed with this installer (svn game directory)
 !define RESINSTALLER_EXE           "${FILESFOLDER}resinstaller.exe"
 !define RESINSTALLER_TESTFILE      "${FILESFOLDER}init.pcx"
 !define RES_KEEP_SPACE             138444 ;these are just about values

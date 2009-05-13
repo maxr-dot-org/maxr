@@ -3195,6 +3195,7 @@ void cBuildingsBuildMenu::backReleased ( void *parent )
 void cBuildingsBuildMenu::selectionChanged ( void *parent )
 {
 	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cHangarMenu*)parent);
+	if ( !menu ) menu = dynamic_cast<cBuildingsBuildMenu*>((cBuildingsBuildMenu*)parent);
 	if ( !menu->selectedUnit ) return;
 
 	sUnitData *buildingData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );
@@ -3354,6 +3355,9 @@ void cVehiclesBuildMenu::backReleased ( void *parent )
 void cVehiclesBuildMenu::selectionChanged ( void *parent )
 {
 	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cHangarMenu*)parent);
+	if ( !menu ) menu = dynamic_cast<cVehiclesBuildMenu*>((cVehiclesBuildMenu*)parent);
+	if ( !menu ) return;
+
 	if ( !menu->selectedUnit ) return;
 
 	sUnitData *vehicleData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );

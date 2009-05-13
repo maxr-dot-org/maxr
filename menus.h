@@ -99,6 +99,10 @@ enum eSettingsGameType
 	SETTINGS_GAMETYPE_TURNS
 };
 
+/**
+ * A class that containes all settings for a new game.
+ *@author alzi
+ */
 struct sSettings
 {
 	eSettingResourceValue metal, oil, gold;
@@ -116,64 +120,154 @@ struct sSettings
 
 };
 
+/**
+ * A class that containes all information to start a new or loaded game.
+ * This class can run games automaticaly out of this information.
+ *@author alzi
+ */
 class cGameDataContainer
 {
 public:
 
+	/** The type of the game. See eGameTypes*/
 	eGameTypes type;
 
+	/** Number of the savegame or -1 for no savegame*/
 	int savegameNum;
+	/** name of the savegame if the savefile is only on the server and this container is set by an client*/
 	string savegame;
 
+	/** The settings for the game*/
 	sSettings *settings;
+	/** The map for the game*/
 	cMap *map;
 
+	/** list with all players for the game*/
 	cList<cPlayer*> players;
+	/** list with the selected landing units by each player*/
 	cList<cList<sLandingUnit>*> landingUnits;
+	/** the client landing data (landing positions) of the players*/
 	cList<sClientLandData*> landData;
 
 
 	cGameDataContainer() : settings(NULL), map(NULL), type(GAME_TYPE_SINGLE), savegameNum(-1) {}
 	~cGameDataContainer();
 
+	/** Runs the game. If player is 0, which means that he is the host, a server will be started.
+	 * Else only a client will be started. When reconnect is true, it will be reconnected to a running game.
+	 * When the conatainer contains a savegamenumber, the savegame will be loaded
+	 *@author alzi
+	 */
 	void runGame( int player, bool reconnect = false );
+	/** handles incomming landing units
+	 *@author alzi
+	 */
 	void receiveLandingUnits ( cNetMessage *message );
+	/** handles incomming unit upgrades
+	 *@author alzi
+	 */
 	void receiveUnitUpgrades ( cNetMessage *message );
+	/** handles an incomming landing position
+	 *@author alzi
+	 */
 	void receiveLandingPosition ( cNetMessage *message );
 
 private:
+	/** checks whether the landing positions are okay
+	 *@author alzi
+	 */
 	eLandingState checkLandingState( int playerNr );
+	/** loads and runs a saved game
+	 *@author alzi
+	 */
 	void runSavedGame( int player );
 };
 
+/**
+ * The main menu class. This class handles the background, the position, the input from mouse and keyboard
+ * and all the menu items as buttons, images, labels, etc. All menuclasses in maxr should be a child of
+ * this class.
+ *@author alzi
+ */
 class cMenu
 {
 protected:
+	/** When this is true the show-loop will be end and give 0 as return.
+	 * Should be used when the menu is closed by ok or done.
+	 */
 	bool end;
+	/** When this is true the show-loop will be end and give 1 as return.
+	 * Should be used when the menu is closed by abort or back.
+	 */
 	bool terminate;
 
+	/** The background of the menu. Can be smaller then the screen*/
 	SDL_Surface *background;
+	/** The position of the menu on the screen when it is smaller then the screen. The position will be
+	 * calculated in the constructor of cMenu und set the the center of the screen.
+	 */
 	SDL_Rect position;
 
+	/** The list with all menuitems (buttons, images, etc.) of this menu.*/
 	cList<cMenuItem*> menuItems;
+	/** Pointer to the currently active menuitem. This one will receive keyboard input*/
 	cMenuItem *activeItem;
 
+	/**
+	 * initialises members and calculates the menu position on the screen.
+	 *@author alzi
+	 *@param background_ The background of the surface
+	 */
 	cMenu( SDL_Surface *background_ );
+	/**
+	 * frees the background surface. This destructor does not delete the menuitems!
+	 *@author alzi
+	 */
 	~cMenu();
 
 public:
+	/**
+	 * redraws the menu background, the cursor and all menuitems.
+	 *@author alzi
+	 */
 	void draw();
+	/**
+	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
+	 *@author alzi
+	 */
 	int show();
 
+	/**
+	 * handles mouseclicks, gives them to the matching menuitem and handles the activity of the menuitems.
+	 *@author alzi
+	 */
 	void handleMouseInput( sMouseState mouseState );
+	/**
+	 * gives the keyinput to the active menuitem.
+	 *@author alzi
+	 */
 	virtual void handleKeyInput( SDL_keysym keysym, string ch );
 
+	/**
+	 * sends a netmessage to the given player.
+	 *@author alzi
+	 */
 	static void sendMessage ( cNetMessage *message, sMenuPlayer *player = NULL );
+	/**
+	 * this procedure will receive the menu-net-messages when this menu is active in the moment the message
+	 * has been received. If the message should be handles overwrite this virtual function.
+	 *@author alzi
+	 */
 	virtual void handleNetMessage( cNetMessage *message ) {}
 };
 
+/** pointer to the currently active menu or NULL if no menu is active */
 EX cMenu *ActiveMenu;
 
+/**
+ * A main menu with unit info image and a credits label on the bottom.
+ *@author alzi
+ */
 class cMainMenu : public cMenu
 {
 	cMenuImage *infoImage;
@@ -187,6 +281,10 @@ public:
 	static void infoImageReleased( void* parent );
 };
 
+/**
+ * The menu in the very beginning.
+ *@author alzi
+ */
 class cStartMenu : public cMainMenu
 {
 	cMenuLabel *titleLabel;
@@ -207,6 +305,10 @@ public:
 	static void exitReleased( void* parent );
 };
 
+/**
+ * The singleplayer menu.
+ *@author alzi
+ */
 class cSinglePlayerMenu : public cMainMenu
 {
 	cMenuLabel *titleLabel;
@@ -222,6 +324,10 @@ public:
 	static void backReleased( void* parent );
 };
 
+/**
+ * A the multiplayer menu.
+ *@author alzi
+ */
 class cMultiPlayersMenu : public cMainMenu
 {
 	cMenuLabel *titleLabel;
@@ -241,6 +347,10 @@ public:
 	static void backReleased( void* parent );
 };
 
+/**
+ * The settings menu.
+ *@author alzi
+ */
 class cSettingsMenu : public cMenu
 {
 protected:
@@ -279,6 +389,10 @@ public:
 	static void okReleased( void* parent );
 };
 
+/**
+ * The planet selection.
+ *@author alzi
+ */
 class cPlanetsSelectionMenu : public cMenu
 {
 protected:
@@ -313,9 +427,13 @@ public:
 	static void mapReleased( void* parent );
 };
 
+/**
+ * A standard hangar menu with one unit selection table, unit info image, unit description, unit details window
+ * and two buttons (done and back).
+ *@author alzi
+ */
 class cHangarMenu : public cMenu
 {
-friend class cUpgradeHangarMenu;
 protected:
 	cPlayer *player;
 
@@ -351,6 +469,10 @@ public:
 	virtual void generateSelectionList() {}
 };
 
+/**
+ * A hangar menu with a second unit table, where you can add units by double clicking in the first list.
+ *@author alzi
+ */
 class cAdvListHangarMenu : virtual public cHangarMenu
 {
 protected:
@@ -373,6 +495,11 @@ public:
 	static void secondListDownReleased( void* parent );
 };
 
+/**
+ * A upgrade hangar menu with filter checkbuttons for the unit selection list, goldbar and buttons for
+ * upgrading units.
+ *@author alzi
+ */
 class cUpgradeHangarMenu : virtual public cHangarMenu
 {
 protected:
@@ -393,6 +520,10 @@ public:
 	int getCredits();
 };
 
+/**
+ * The hangar menu where you selected your landind units in the beginning of a new game.
+ *@author alzi
+ */
 class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
 {
 protected:
@@ -430,6 +561,10 @@ public:
 	void generateSelectionList();
 };
 
+/**
+ * The landingposition selection menu.
+ *@author alzi
+ */
 class cLandingMenu : public cMenu
 {
 protected:
@@ -464,6 +599,11 @@ public:
 	void handleNetMessage( cNetMessage *message );
 };
 
+/**
+ * A standard menu for network TCP/IP games with ip, port, and playername lineedits,
+ * chat lineedit and chat window, color selection and playerlist and map image.
+ *@author alzi
+ */
 class cNetworkMenu : public cMenu
 {
 protected:
@@ -522,6 +662,10 @@ public:
 	virtual void playerSettingsChanged () {}
 };
 
+/**
+ * The host network menu.
+ *@author alzi
+ */
 class cNetworkHostMenu : public cNetworkMenu
 {
 protected:
@@ -551,6 +695,10 @@ public:
 	void playerSettingsChanged ();
 };
 
+/**
+ * The client network menu
+ *@author alzi
+ */
 class cNetworkClientMenu : public cNetworkMenu
 {
 	cMenuLabel *titleLabel;
@@ -566,6 +714,10 @@ public:
 	void playerSettingsChanged ();
 };
 
+/**
+ * The load menu.
+ *@author alzi
+ */
 class cLoadMenu : public cMenu
 {
 protected:
@@ -605,6 +757,10 @@ public:
 	virtual void extendedSlotClicked( int oldSelection ) {}
 };
 
+/**
+ * The load and save menu (ingame data menu).
+ *@author alzi
+ */
 class cLoadSaveMenu : public cLoadMenu
 {
 protected:
@@ -621,6 +777,10 @@ public:
 	void extendedSlotClicked( int oldSelection );
 };
 
+/**
+ * The menu to build buildings.
+ *@author alzi
+ */
 class cBuildingsBuildMenu : public cHangarMenu
 {
 protected:
@@ -643,6 +803,10 @@ public:
 	void generateSelectionList();
 };
 
+/**
+ * The menu to build vehicles.
+ *@author alzi
+ */
 class cVehiclesBuildMenu : public cAdvListHangarMenu
 {
 protected:
@@ -665,6 +829,10 @@ public:
 	void generateSelectionList();
 };
 
+/**
+ * The upgrade menu.
+ *@author alzi
+ */
 class cUpgradeMenu : public cUpgradeHangarMenu
 {
 protected:

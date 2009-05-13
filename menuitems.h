@@ -32,68 +32,204 @@ class cNetworkMenu;
 class cMenuRadioGroup;
 class cMenuUnitsList;
 
+/**
+ * A struct that contains information of a savegame.
+ *@author alzi
+ */
 struct sSaveFile
 {
+	/** the filename of the savegame*/
 	string filename;
+	/** the displayed name of the savegame*/
 	string gamename;
+	/** the type of the savegame (SIN, HOT, NET)*/
 	string type;
+	/** the time and date when this savegame was saved*/
 	string time;
+	/** the number of the savegame*/
 	int number;
 };
 
+/**
+ * The basic class for menuitems such as buttons, images, labels, etc. All menuitems have to be children
+ * of this class to be addable to the menu's item list. This class handles the clicks etc. on the item.
+ *@author alzi
+ */
 class cMenuItem
 {
 friend class cMenuItemContainer;
 protected:
+	/** The sound that should be played then the item is clicked or NULL for no sound*/
 	sSOUND *clickSound;
+	/** The sound that should be played then mousebutton is released over the item or NULL for no sound*/
 	sSOUND *releaseSound;
 
+	/** pointer to the extern function that will be called when the item was clicked. The void* parameter should
+	* be a pointer to the menu or item that contains this function, so it can be used as "this-pointer" in
+	* a static function. (The function has to be static to get a pointer on the function)*/
 	void (*click)(void *);
+	/** pointer to the extern function that will be called when the item was released */
 	void (*release)(void *);
+	/** pointer to the extern  function that will be called when the mouse was moved from somewhere outside the item
+	* to a position over the item */
 	void (*hoverOn)(void *);
+	/** pointer to the extern  function that will be called when the mouse was moved from a position over the item to
+	* somewhere outside the item */
 	void (*hoverAway)(void *);
+	/** pointer to the extern  function that will be called when the mouse has been moved over the item */
 	void (*moveMouseOver)(void *);
+	/** pointer to the extern  function that will be called when the item is active and keyboard input has been received */
 	void (*wasKeyInput)(void *);
 
 	cMenuItem( int x, int y );
 
+	/** position and size of the item */
 	SDL_Rect position;
+	/** true then the item is the currently active item of the menu */
 	bool active;
 
+	/** intern handler for the clicked status */
 	bool wasClicked;
+	/** intern handler for the clicked status */
 	bool isClicked;
+	/** if this is true, the item is always in clicked state and no clicked, release, etc. functions will be called anymore */
 	bool locked;
 
+	/**
+	 * Function that will be called when the item has been clicked.
+	 *@author alzi
+	 *@return if 'false' the click-pointer-function will not be called.
+	 */
 	virtual bool preClicked() { return true; }
+	/**
+	 * Function that will be called when the mouse has been released over this item.
+	 *@author alzi
+	 *@return if 'false' the release-pointer-function will not be called.
+	 */
 	virtual bool preReleased();
+	/**
+	 * Function that will be called when the hovers onto the item.
+	 *@author alzi
+	 *@return if 'false' the hoverOn-pointer-function will not be called.
+	 */
 	virtual bool preHoveredOn() { return true; }
+	/**
+	 * Function that will be called when the mouse hovers away from the item.
+	 *@author alzi
+	 *@return if 'false' the hoverAway-pointer-function will not be called.
+	 */
 	virtual bool preHoveredAway() { return true; }
+	/**
+	 * Function that will be called when the item will be locked.
+	 *@author alzi
+	 *@return if 'false' the item will not be locked.
+	 */
 	virtual bool preSetLocked( bool locked_ ) { return true; }
 
 public:
+	/**
+	 * virtual functions that should draw the item.
+	 *@author alzi
+	 */
 	virtual void draw() = 0;
 
+	/**
+	 * Sets the activity status of this item
+	 *@author alzi
+	 */
 	virtual void setActivity ( bool active_ ) { active = active_; }
+	/**
+	 * returns whether the position is over the item or not.
+	 *@author alzi
+	 */
 	virtual bool overItem( int x, int y ) const;
 
+	/**
+	 * This function will be called by the menus when the item has been clicked. Regular the parent pointer
+	 * should point to the calling object becouse this pointer will be overgiven to the click-pointer-function.
+	 *@author alzi
+	 */
 	virtual void clicked( void *parent );
+	/**
+	 * This function will be called by the menus when the item has been released. Regular the parent pointer
+	 * should point to the calling object becouse this pointer will be overgiven to the release-pointer-function.
+	 *@author alzi
+	 */
 	virtual void released( void *parent );
+	/**
+	 * This function will be called by the menus when the mouse hovered on this item. Regular the parent pointer
+	 * should point to the calling object becouse this pointer will be overgiven to the hoverOn-pointer-function.
+	 *@author alzi
+	 */
 	virtual void hoveredOn( void *parent );
+	/**
+	 * This function will be called by the menus when the mouse hovered away from this item. Regular the parent pointer
+	 * should point to the calling object becouse this pointer will be overgiven to the hoverAway-pointer-function.
+	 *@author alzi
+	 */
 	virtual void hoveredAway( void *parent );
+	/**
+	 * This function will be called by the menus when the mouse has moved over the item. Regular the parent pointer
+	 * should point to the calling object becouse this pointer will be overgiven to the moveMouseOver-pointer-function.
+	 *@author alzi
+	 */
 	virtual void movedMouseOver( int lastMouseX, int lastMouseY, void *parent );
 
+	/**
+	 * This function will be called by the menus when the mousebutton has been released somewhere else then over this item.
+	 *@author alzi
+	 */
 	virtual void somewhereReleased();
 
+	/**
+	 * function that will be called when this item is the currently active one and there has been keyboard input.
+	 *@author alzi
+	 *@param keysym the SDL keysym with the information about the pressed key
+	 *@param ch the encoded key
+	 *@param parent pointer to the calling menu
+	 */
 	virtual void handleKeyInput( SDL_keysym keysym, string ch, void *parent ) {}
 
+	/**
+	 * sets a new position of the item
+	 *@author alzi
+	 */
 	void move ( int x, int y );
+	/**
+	 * locks the item.
+	 *@author alzi
+	 */
 	void setLocked( bool locked_ );
+	/**
+	 * sets a new clicked sound.
+	 *@author alzi
+	 */
 	void setClickSound ( sSOUND *clickSound_ );
+	/**
+	 * sets a new released sound.
+	 *@author alzi
+	 */
 	void setReleaseSound ( sSOUND *releaseSound_ );
 
+	/**
+	 * sets the click-pointer-function.
+	 *@author alzi
+	 */
 	void setClickedFunction ( void (*click_)(void *) );
+	/**
+	 * sets the release-pointer-function.
+	 *@author alzi
+	 */
 	void setReleasedFunction ( void (*release_)(void *) );
+	/**
+	 * sets the moveMouseOver-pointer-function.
+	 *@author alzi
+	 */
 	void setMovedOverFunction ( void (*moveMouseOver_)(void *) );
+	/**
+	 * sets the wasKeyInput-pointer-function.
+	 *@author alzi
+	 */
 	void setWasKeyInputFunction ( void (*wasKeyInput_)(void *) );
 };
 
