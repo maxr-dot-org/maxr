@@ -51,6 +51,42 @@ struct sSaveFile
 };
 
 /**
+ * A struct that contains information about the upgrades of a unit.
+ *@author alzi
+ */
+struct sUnitUpgrade
+{
+	/** The diffrent values of a unit that can be upgraded*/
+	enum eUpgradeTypes
+	{
+		UPGRADE_TYPE_DAMAGE,
+		UPGRADE_TYPE_SHOTS,
+		UPGRADE_TYPE_RANGE,
+		UPGRADE_TYPE_AMMO,
+		UPGRADE_TYPE_ARMOR,
+		UPGRADE_TYPE_HITS,
+		UPGRADE_TYPE_SCAN,
+		UPGRADE_TYPE_SPEED,
+		UPGRADE_TYPE_NONE
+	};
+
+	/** is this upgrade buyable for the player */
+	bool active;
+	/** what will the next upgrade cost */
+	int nextPrice;
+	/** how many upgrades of this type has the player purchased */
+	int purchased;
+	/** what is the current value */
+	int curValue;
+	/** the value that this unit would have without all upgrades */
+	int startValue;
+	/** the type of the upgrade */
+	eUpgradeTypes type;
+
+	sUnitUpgrade() : active(false), nextPrice(0), purchased(0), curValue(-1), startValue(0), type(UPGRADE_TYPE_NONE) {}
+};
+
+/**
  * The basic class for menuitems such as buttons, images, labels, etc. All menuitems have to be children
  * of this class to be addable to the menu's item list. This class handles the clicks etc. on the item.
  *@author alzi
@@ -233,7 +269,10 @@ public:
 	void setWasKeyInputFunction ( void (*wasKeyInput_)(void *) );
 };
 
-
+/**
+ * a menu item that contains more menuitems. Mouse and keyboardevents will be given to the child items.
+ *@author alzi
+ */
 class cMenuItemContainer : public cMenuItem
 {
 protected:
@@ -254,19 +293,31 @@ public:
 	void removeItem ( cMenuItem* item );
 };
 
-
+/**
+ * a simple image.
+ *@author alzi
+ */
 class cMenuImage : public cMenuItem
 {
 protected:
 	SDL_Surface *image;
 
 public:
+	/**
+	 * ATTENTION: the image surface you overgive to this konstruktor will be freed with SDL_FreeSurface in the destructor,
+	 * so have in mind that you will not free it twice.
+	 *@author alzi
+	 */
 	cMenuImage ( int x, int y, SDL_Surface *image_ = NULL );
 	~cMenuImage();
 	void setImage( SDL_Surface *image_ );
 	void draw();
 };
 
+/**
+ * a simple label that displays text.
+ *@author alzi
+ */
 class cMenuLabel : public cMenuItem
 {
 protected:
@@ -281,14 +332,27 @@ public:
 	cMenuLabel ( int x, int y, string text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
 	void setText( string text_ );
 	void setFontType ( eUnicodeFontType fontType_ );
+	/**
+	 * if centered is true the text will be centered at the in the constructor overgiven position.
+	 *@author alzi
+	 */
 	void setCentered( bool centered );
+	/**
+	 * sets the label to a fixed width and height and displays the text in this box.
+	 *@author alzi
+	 */
 	void setBox( int width, int height );
 	void draw();
 };
 
+/**
+ * a simple button.
+ *@author alzi
+ */
 class cMenuButton : public cMenuItem
 {
 public:
+	/** the diffrent button types that are provided by the graphics in menu_stuff.pcx*/
 	enum eButtonTypes
 	{
 		BUTTON_TYPE_STANDARD_BIG,
@@ -328,11 +392,16 @@ public:
 	void draw();
 };
 
+/**
+ * a simple checkbox or radiobutton.
+ *@author alzi
+ */
 class cMenuCheckButton : public cMenuItem
 {
 friend class cMenuRadioGroup;
 
 public:
+	/** the diffrent button types that are provided by the graphics in menu_stuff.pcx*/
 	enum eCheckButtonTypes
 	{
 		RADIOBTN_TYPE_TEXT_ONLY,
@@ -346,6 +415,8 @@ public:
 		CHECKBOX_TYPE_TNT,
 	};
 
+	/** deffines whether the text will be displayed at the left or the right of the item.
+	 * Will not be used when the checkbox is a button where the text is centered.*/
 	enum eCheckButtonTextOriantation
 	{
 		TEXT_ORIENT_RIGHT,
@@ -375,6 +446,10 @@ public:
 	bool isChecked();
 };
 
+/**
+ * an item that handles a group of radiobuttons, and makes sure that alway only one of his childs is checked.
+ *@author alzi
+ */
 class cMenuRadioGroup : public cMenuItem
 {
 friend class cMenuCheckButton;
@@ -382,49 +457,33 @@ protected:
 	cList<cMenuCheckButton*> buttonList;
 
 	void checkedButton ( cMenuCheckButton* button );
+
+	bool overItem( int x, int y ) const;
+
+	void clicked ( void *parent );
 public:
 	cMenuRadioGroup () : cMenuItem ( 0, 0 ) {}
 	void draw();
-
-	bool overItem( int x, int y ) const;
-	void clicked( void *parent );
 
 	void addButton( cMenuCheckButton* button );
 	bool buttonIsChecked ( int index );
 };
 
+/** The diffrent display types for a unit list item */
 enum eMenuUnitListDisplayTypes
 {
+	/** Displays the unitimage, -name and -costs.*/
 	MUL_DIS_TYPE_COSTS,
+	/** Displays the unitimage, unitname and the acctual and maximum cargo.*/
 	MUL_DIS_TYPE_CARGO,
+	/** Displays only the unitimage and -name*/
 	MUL_DIS_TYPE_NOEXTRA
 };
 
-struct sUnitUpgrade
-{
-	enum eUpgradeTypes
-	{
-		UPGRADE_TYPE_DAMAGE,
-		UPGRADE_TYPE_SHOTS,
-		UPGRADE_TYPE_RANGE,
-		UPGRADE_TYPE_AMMO,
-		UPGRADE_TYPE_ARMOR,
-		UPGRADE_TYPE_HITS,
-		UPGRADE_TYPE_SCAN,
-		UPGRADE_TYPE_SPEED,
-		UPGRADE_TYPE_NONE
-	};
-
-	bool active; // is this upgrade buyable for the player
-	int nextPrice; // what will the next upgrade cost
-	int purchased; // how many upgrades of this type has the player purchased
-	int curValue; // what is the current value
-	int startValue; // the value that this unit would have without all upgrades
-	eUpgradeTypes type;
-
-	sUnitUpgrade() : active(false), nextPrice(0), purchased(0), curValue(-1), startValue(0), type(UPGRADE_TYPE_NONE) {}
-};
-
+/**
+ * the item of a unitslist. This item handles some additional information as the cargo and handles the drawing.
+ *@author alzi
+ */
 class cMenuUnitListItem : public cMenuItem
 {
 friend class cMenuUnitsList;
@@ -449,26 +508,66 @@ protected:
 	int drawName( bool withNumber );
 	void drawCargo( int destY );
 
+	void released( void *parent );
 public:
 	cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
 	~cMenuUnitListItem();
 	void draw();
 
-	void released( void *parent );
-
 	sID getUnitID();
 	cPlayer *getOwner();
+
+	/**
+	 * returns the res-value saved by the listitem.
+	 *@author alzi
+	 */
 	int getResValue();
+	/**
+	 * returns whether the res-value is fixed or not.
+	 *@author alzi
+	 */
 	bool getFixedResValue ();
+	/**
+	 * sets a new res-value to the unit. The value will automatically set to minResValue if it's smaller than this value.
+	 *@author alzi
+	 *@param resValue_ the new res-value
+	 *@param cargoCheck if this is true the new res-value will automatically set to the maximum cargo that the unit can cargo,
+	 * or to 0 when it's negative.
+	 */
 	void setResValue( int resValue_, bool cargoCheck = true );
+	/**
+	 * sets the minimum res-value.
+	 *@author alzi
+	 */
 	void setMinResValue ( int minResValue_ );
+	/**
+	 * if the unititem is marked then name will be displayed red instead of white.
+	 *@author alzi
+	 */
 	void setMarked ( bool marked_ );
+	/**
+	 * sets whether the res-value is fixed and can not be changed by setResValue.
+	 *@author alzi
+	 */
 	void setFixedResValue ( bool fixedResValue_ );
+	/**
+	 * sets the fixed status of the item. If this is true it will for example not be removable of the secondList of the AdvListHangaMenu.
+	 *@author alzi
+	 */
 	void setFixed ( bool fixed_ );
+	/**
+	 * returns the fixed status of the listitem.
+	 *@author alzi
+	 */
 	bool getFixedStatus();
+
 	sUnitUpgrade *getUpgrades();
 };
 
+/**
+ * a list that displays units.
+ *@author alzi
+ */
 class cMenuUnitsList : public cMenuItem
 {
 friend class cMenuUnitListItem;
@@ -484,12 +583,12 @@ protected:
 	int offset;
 	int maxDisplayUnits;
 
+	void released( void *parent );
+
 public:
 	cMenuUnitsList( int x, int y, int w, int h, cHangarMenu *parent, eMenuUnitListDisplayTypes displayType_ );
 	~cMenuUnitsList();
 	void draw();
-
-	void released( void *parent );
 
 	int getSize();
 	cMenuUnitListItem* getItem ( int index );
@@ -500,15 +599,29 @@ public:
 	void scrollUp();
 	void scrollDown();
 	void setSelection ( cMenuUnitListItem *selectedUnit_ );
+	/**
+	 * adds a new unit to the list.
+	 *@author alzi
+	 *@param unitID the it of the new unit
+	 *@param owner the owner of the unit
+	 *@param upgrades the struct with the upgrade-values for this unit
+	 *@param scroll	if this is true the list will automatically scrolled to the new added item.
+	 *@param fixedCargo if this is true the new unit will set with a fixed cargo.
+	 */
 	cMenuUnitListItem *addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades = NULL, bool scroll = false, bool fixedCargo = false );
 	void removeUnit ( cMenuUnitListItem *item );
 	void clear();
 	void setDisplayType ( eMenuUnitListDisplayTypes displayType_ );
 };
 
+/**
+ * an item that displays the data-values (attack, range, scan, etc.) of unit with the corresponding symbols.
+ *@author alzi
+ */
 class cMenuUnitDetails : public cMenuItem
 {
 public:
+	/** the diffrent symbol types */
 	enum eMenuSymbolsBig
 	{
 		MENU_SYMBOLS_BIG_SPEED,
@@ -538,6 +651,10 @@ public:
 	void setSelection ( cMenuUnitListItem *selectedUnit_ );
 };
 
+/**
+ * a simple vertical material bar.
+ *@author alzi
+ */
 class cMenuMaterialBar : public cMenuItem
 {
 public:
@@ -566,6 +683,10 @@ public:
 	void setCurrentValue( int currentValue_ );
 };
 
+/**
+ * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetils item.
+ *@author alzi
+ */
 class cMenuUpgradeHandler : public cMenuItemContainer
 {
 	cUpgradeHangarMenu *parentMenu;
@@ -576,16 +697,20 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 	cMenuLabel *costsLabel[8];
 
 	cUpgradeCalculator::UpgradeTypes getUpgradeType( sUnitUpgrade upgrade );
-	void updateUnitValues ( cMenuUnitListItem *unit ); 
+	void updateUnitValues ( cMenuUnitListItem *unit );
+
+	static void buttonReleased( void* parent );
 public:
 	cMenuUpgradeHandler( int x, int y, cUpgradeHangarMenu *parent );
 	~cMenuUpgradeHandler();
 
-	static void buttonReleased( void* parent );
-
 	void setSelection ( cMenuUnitListItem *selection_ );
 };
 
+/**
+ * The little dot that displays where the current prosition of a scrollbar is.
+ *@author alzi
+ */
 class cMenuScroller : public cMenuItem
 {
 friend class cMenuScrollBar;
@@ -599,6 +724,10 @@ public:
 	void move ( int y );
 };
 
+/**
+ * a simple scrollbar with up and down buttons.
+ *@author alzi
+ */
 class cMenuScrollBar : public cMenuItemContainer
 {
 friend class cMenuListBox;
@@ -632,7 +761,10 @@ public:
 	static void downButtonReleased( void* parent );
 };
 
-
+/**
+ * a simple box with many lines of text.
+ *@author alzi
+ */
 class cMenuListBox : public cMenuItemContainer
 {
 protected:
@@ -651,6 +783,10 @@ public:
 	void addLine ( string line );
 };
 
+/**
+ * a simple editbox where you can enter text.
+ *@author alzi
+ */
 class cMenuLineEdit : public cMenuItem
 {
 	void (*returnPressed)(void *);
@@ -676,6 +812,12 @@ public:
 	bool preClicked();
 
 	void setReadOnly ( bool readOnly_ );
+	/**
+	 * sets what type of input this editbox takes.
+	 *@author alzi
+	 *@param takeChars_ if this is true the box takes all kind of normal chars that are not numerics.
+	 *@param takeNumerics_ if this is true the box takes numerics.
+	 */
 	void setTaking ( bool takeChars_, bool takeNumerics_ );
 	void setText ( string text_ );
 	string getText ();
@@ -684,6 +826,10 @@ public:
 	void setReturnPressedFunc( void (*returnPressed_)(void *) );
 };
 
+/**
+ * a structure that includes all information about a player needed by a multiplayermenu.
+ *@author alzi
+ */
 struct sMenuPlayer
 {
 	string name;
@@ -697,6 +843,10 @@ struct sMenuPlayer
 		: name(name_), color(color_), ready(ready_), nr(nr_), socket(socket_) {}
 };
 
+/**
+ * a list with players. It displays the name, the color and the readystate of the player.
+ *@author alzi
+ */
 class cMenuPlayersBox : public cMenuItemContainer
 {
 	cList<sMenuPlayer*> *players;
@@ -709,16 +859,20 @@ class cMenuPlayersBox : public cMenuItemContainer
 	cList<cMenuImage*> playerReadys;
 
 	cMenuScrollBar *scrollBar;
+
+	bool preClicked();
 public:
 	cMenuPlayersBox ( int x, int y, int w, int h, cNetworkMenu *parentMenu_ );
 	~cMenuPlayersBox();
 	void draw();
 
-	bool preClicked();
-
 	void setPlayers ( cList<sMenuPlayer*> *player_ );
 };
 
+/**
+ * a saveslot that displays the information like name, time and type of a savegame.
+ *@author alzi
+ */
 class cMenuSaveSlot : public cMenuItem
 {
 	cMenuLabel *saveNumber;
@@ -737,6 +891,10 @@ public:
 	cMenuLineEdit *getNameEdit();
 };
 
+/**
+ * three buttons and labels that display the diffrent buildspeeds of unit.
+ *@author alzi
+ */
 class cMenuBuildSpeedHandler : public cMenuItemContainer
 {
 	cMenuCheckButton *speedButtons[3];
@@ -754,6 +912,10 @@ public:
 	int getBuildSpeed();
 };
 
+/**
+ * one chackbox each for tank, plane, ship, building or TNT to control the units displayed in a unitlist.
+ *@author alzi
+ */
 class cMenuUpgradeFilter : public cMenuItemContainer
 {
 	cHangarMenu *parentMenu;
