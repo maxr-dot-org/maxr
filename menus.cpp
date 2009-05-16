@@ -592,11 +592,12 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 
 void cMainMenu::infoImageReleased( void* parent )
 {
+	cMainMenu *menu = dynamic_cast<cMainMenu*>((cMenu*)parent);
 	// get a new random info image
 	SDL_Surface *surface = ((cMainMenu*)parent)->getRandomInfoImage();
 	// draw the new image
-	((cMainMenu*)parent)->infoImage->setImage ( surface );
-	((cMainMenu*)parent)->infoImage->draw();
+	menu->infoImage->setImage ( surface );
+	menu->infoImage->draw();
 	SHOW_SCREEN
 	mouse->draw ( false, screen );
 }
@@ -642,37 +643,42 @@ cStartMenu::~cStartMenu()
 
 void cStartMenu::singlePlayerReleased( void* parent )
 {
+	cStartMenu *menu = dynamic_cast<cStartMenu*>((cMenu*)parent);
 	cSinglePlayerMenu singlePlayerMenu;
 	singlePlayerMenu.show();
-	((cStartMenu*)parent)->draw();
+	menu->draw();
 }
 
 void cStartMenu::multiPlayerReleased( void* parent )
 {
+	cStartMenu *menu = dynamic_cast<cStartMenu*>((cMenu*)parent);
 	cMultiPlayersMenu multiPlayerMenu;
 	multiPlayerMenu.show();
-	((cStartMenu*)parent)->draw();
+	menu->draw();
 }
 
 void cStartMenu::preferencesReleased( void* parent )
 {
+	cStartMenu *menu = dynamic_cast<cStartMenu*>((cMenu*)parent);
 	ActiveMenu = NULL;
 	showPreferences();
-	ActiveMenu = ((cStartMenu*)parent);
-	((cStartMenu*)parent)->draw();
+	ActiveMenu = menu;
+	menu->draw();
 }
 
 void cStartMenu::licenceReleased( void* parent )
 {
+	cStartMenu *menu = dynamic_cast<cStartMenu*>((cMenu*)parent);
 	ActiveMenu = NULL;
 	showLicence();
-	ActiveMenu = ((cStartMenu*)parent);
-	((cStartMenu*)parent)->draw();
+	ActiveMenu = menu;
+	menu->draw();
 }
 
 void cStartMenu::exitReleased( void* parent )
 {
-	((cStartMenu*)parent)->end = true;
+	cStartMenu *menu = dynamic_cast<cStartMenu*>((cMenu*)parent);
+	menu->end = true;
 }
 
 cSinglePlayerMenu::cSinglePlayerMenu()
@@ -703,15 +709,17 @@ cSinglePlayerMenu::~cSinglePlayerMenu()
 }
 
 void cSinglePlayerMenu::newGameReleased( void* parent )
-{
+{	
+	cSinglePlayerMenu *menu = dynamic_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	cGameDataContainer gameDataContainer;
 	cSettingsMenu settingsMenu ( &gameDataContainer );
 	settingsMenu.show();
-	((cSinglePlayerMenu*)parent)->draw();
+	menu->draw();
 }
 
 void cSinglePlayerMenu::loadGameReleased( void* parent )
 {
+	cSinglePlayerMenu *menu = dynamic_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	cGameDataContainer gameDataContainer;
 	cLoadMenu loadMenu ( &gameDataContainer );
 	loadMenu.show();
@@ -719,14 +727,15 @@ void cSinglePlayerMenu::loadGameReleased( void* parent )
 	{
 		ActiveMenu = NULL;
 		gameDataContainer.runGame( 0 );
-		((cSinglePlayerMenu*)parent)->end = true;
+		menu->end = true;
 	}
-	else ((cSinglePlayerMenu*)parent)->draw();
+	else menu->draw();
 }
 
 void cSinglePlayerMenu::backReleased( void* parent )
 {
-	((cSinglePlayerMenu*)parent)->end = true;
+	cSinglePlayerMenu *menu = dynamic_cast<cSinglePlayerMenu*>((cMenu*)parent);
+	menu->end = true;
 }
 
 cMultiPlayersMenu::cMultiPlayersMenu()
@@ -800,7 +809,8 @@ void cMultiPlayersMenu::loadHotseatReleased( void* parent )
 
 void cMultiPlayersMenu::backReleased( void* parent )
 {
-	((cMultiPlayersMenu*)parent)->end = true;
+	cMultiPlayersMenu *menu = dynamic_cast<cMultiPlayersMenu*>((cMenu*)parent);
+	menu->end = true;
 }
 
 cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX(GFXOD_OPTIONS) ), gameDataContainer(gameDataContainer_)
@@ -1350,18 +1360,21 @@ void cHangarMenu::drawUnitInformation()
 
 void cHangarMenu::infoCheckBoxClicked( void* parent )
 {
-	((cHangarMenu*)parent)->drawUnitInformation();
-	((cHangarMenu*)parent)->draw();
+	cHangarMenu *menu = dynamic_cast<cHangarMenu*>((cMenu*)parent);
+	menu->drawUnitInformation();
+	menu->draw();
 }
 
 void cHangarMenu::selListUpReleased( void* parent )
 {
-	((cHangarMenu*)parent)->selectionList->scrollUp();
+	cHangarMenu *menu = dynamic_cast<cHangarMenu*>((cMenu*)parent);
+	menu->selectionList->scrollUp();
 }
 
 void cHangarMenu::selListDownReleased( void* parent )
 {
-	((cHangarMenu*)parent)->selectionList->scrollDown();
+	cHangarMenu *menu = dynamic_cast<cHangarMenu*>((cMenu*)parent);
+	menu->selectionList->scrollDown();
 }
 
 void cHangarMenu::setSelectedUnit( cMenuUnitListItem *selectedUnit_ )
@@ -1404,12 +1417,14 @@ cAdvListHangarMenu::~cAdvListHangarMenu()
 
 void cAdvListHangarMenu::secondListUpReleased( void* parent )
 {
-	((cAdvListHangarMenu*)parent)->secondList->scrollUp();
+	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cMenu*)parent);
+	menu->secondList->scrollUp();
 }
 
 void cAdvListHangarMenu::secondListDownReleased( void* parent )
 {
-	((cAdvListHangarMenu*)parent)->secondList->scrollDown();
+	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cMenu*)parent);
+	menu->secondList->scrollDown();
 }
 
 bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *parent )
@@ -1485,9 +1500,6 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	materialBarDownButton = new cMenuButton ( position.x+433, position.y+424, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
 	materialBarDownButton->setReleasedFunction ( &materialBarDownReleased );
 	menuItems.Add ( materialBarDownButton );
-
-//	upgradeButtons = new cMenuUpgradeHandler ( position.x+283, position.y+293, this );
-	menuItems.Add ( upgradeButtons );
 
 	generateSelectionList();
 
@@ -2215,7 +2227,8 @@ void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 
 void cNetworkMenu::backReleased( void* parent )
 {
-	((cNetworkMenu*)parent)->terminate = true;
+	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
+	menu->terminate = true;
 }
 
 void cNetworkMenu::sendReleased( void* parent )
@@ -2956,7 +2969,8 @@ void cLoadMenu::displaySaves()
 
 void cLoadMenu::backReleased( void* parent )
 {
-	((cLoadMenu*)parent)->terminate = true;
+	cLoadMenu *menu = dynamic_cast<cLoadMenu*>((cMenu*)parent);
+	menu->terminate = true;
 }
 
 void cLoadMenu::loadReleased( void* parent )
