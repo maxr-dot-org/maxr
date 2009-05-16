@@ -639,13 +639,11 @@ public:
 		MENU_SYMBOLS_BIG_HUMAN
 	};
 protected:
-
-	cHangarMenu *parentMenu;
 	cMenuUnitListItem *selectedUnit;
 
 	void drawBigSymbol ( eMenuSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue );
 public:
-	cMenuUnitDetails( int x, int y, cHangarMenu *parent );
+	cMenuUnitDetails( int x, int y );
 	void draw();
 
 	void setSelection ( cMenuUnitListItem *selectedUnit_ );

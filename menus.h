@@ -847,4 +847,24 @@ public:
 	void generateSelectionList();
 };
 
+class cUnitHelpMenu : public cMenu
+{
+protected:
+	cMenuLabel *titleLabel;
+
+	cMenuImage *infoImage;
+	cMenuLabel *infoText;
+
+	cMenuUnitDetails *unitDetails;
+
+	cMenuButton *doneButton;
+
+	cMenuUnitListItem *unit;
+public:
+	cUnitHelpMenu( sID unitID, cPlayer *owner );
+	~cUnitHelpMenu();
+
+	static void doneReleased( void *parent );
+};
+
 #endif //menusH

@@ -4590,7 +4590,8 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	{
 		MenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
-		ShowHelp();
+		cUnitHelpMenu helpMenu ( data.ID, owner );
+		helpMenu.show();
 		return;
 	}
 	drawContextItem (lngPack.i18n ("Text~Context~Info"), bSelection, dest.x, dest.y, buffer);
@@ -5150,91 +5151,6 @@ int cBuilding::playStream ()
 		return PlayFXLoop ( typ->Running );
 
 	return 0;
-}
-
-//--------------------------------------------------------------------------
-/** Displays the help screen */
-//--------------------------------------------------------------------------
-void cBuilding::ShowHelp ()
-{
-#define DIALOG_W 640
-#define DIALOG_H 480
-#define BUTTON_W 150
-#define BUTTON_H 29
-
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
-	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
-	SDL_Rect rInfoTxt = {rDialog.x + 11, rDialog.y + 13, typ->info->w, typ->info->h};
-	SDL_Rect rTxt = {rDialog.x + 345, rDialog.y + 66, 274, 181};
-	SDL_Rect rTitle = {rDialog.x + 332, rDialog.y + 11, 152, 15};
-	SDL_Surface *SfDialog;
-	Client->isInMenu = true;
-	Client->bFlagDrawHud = true;
-
-	PlayFX ( SoundData.SNDHudButton );
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-
-	if ( SettingsData.bAlphaEffects )
-		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-
-	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	if ( FileExists ( GFXOD_HELP ) )
-		LoadPCXtoSF ( GFXOD_HELP, SfDialog );
-
-	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( SfDialog, &rDialogSrc, buffer, &rDialog );
-
-	// Das Infobild blitten:
-	SDL_BlitSurface ( typ->info, NULL, buffer, &rInfoTxt );
-
-	//show menu title
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Unitinfo" ) );
-
-
-	// show text
-	font->showTextAsBlock ( rTxt, typ->text );
-
-	// get unit details
-	ShowBigDetails();
-
-	NormalButton btn_done(rDialog.x + 474, rDialog.y + 452, "Text~Button~Done");
-	btn_done.Draw();
-
-	SHOW_SCREEN 	// Den Buffer anzeigen
-	mouse->GetBack ( buffer );
-
-	while ( 1 )
-	{
-		if (  Client->SelectedBuilding != this && !Client->bHelpActive ) break;
-		if ( !Client->isInMenu ) break;
-
-		Client->handleTimer();
-		Client->doGameActions();
-
-		// Events holen:
-		EventHandler->HandleEvents();
-
-		// Die Maus machen:
-		mouse->GetPos();
-		b = (int)Client->getMouseState().leftButtonPressed;
-		x = mouse->x;
-		y = mouse->y;
-
-		if ( x != LastMouseX || y != LastMouseY )
-			mouse->draw ( true, screen );
-
-		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
-			break;
-
-		LastMouseX = x;
-		LastMouseY = y;
-		LastB = b;
-	}
-
-	SDL_FreeSurface ( SfDialog );
-	Client->isInMenu = false;
 }
 
 //--------------------------------------------------------------------------

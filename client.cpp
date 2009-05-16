@@ -531,10 +531,16 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	// handle input on the map
 	if ( MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && OverUnitField )
 	{
-		if ( overVehicle && overVehicle == SelectedVehicle ) SelectedVehicle->ShowHelp();
-		else if ( overPlane && overPlane == SelectedVehicle ) SelectedVehicle->ShowHelp();
-		else if ( overBuilding && overBuilding == SelectedBuilding ) SelectedBuilding->ShowHelp();
-		else if ( overBaseBuilding && overBaseBuilding == SelectedBuilding ) SelectedBuilding->ShowHelp();
+		if (( overVehicle && overVehicle == SelectedVehicle ) || ( overPlane && overPlane == SelectedVehicle ))
+		{
+			cUnitHelpMenu helpMenu ( SelectedVehicle->data.ID, SelectedVehicle->owner );
+			helpMenu.show();
+		}
+		else if (( overBuilding && overBuilding == SelectedBuilding ) || ( overBaseBuilding && overBaseBuilding == SelectedBuilding ) )
+		{
+			cUnitHelpMenu helpMenu ( SelectedBuilding->data.ID, SelectedBuilding->owner );
+			helpMenu.show();
+		}
 		else if ( OverUnitField ) selectUnit ( OverUnitField, true );
 	}
 	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed ) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
@@ -808,10 +814,26 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else if ( OverUnitField )
 		{
-			if ( overPlane ) overPlane->ShowHelp();
-			else if ( overVehicle )overVehicle->ShowHelp();
-			else if ( overBuilding ) overBuilding->ShowHelp();
-			else if ( overBaseBuilding ) overBaseBuilding->ShowHelp();
+			if ( overPlane )
+			{
+				cUnitHelpMenu helpMenu ( overPlane->data.ID, overPlane->owner );
+				helpMenu.show();
+			}
+			else if ( overVehicle )
+			{
+				cUnitHelpMenu helpMenu ( overVehicle->data.ID, overVehicle->owner );
+				helpMenu.show();
+			}
+			else if ( overBuilding )
+			{
+				cUnitHelpMenu helpMenu ( overBuilding->data.ID, overBuilding->owner );
+				helpMenu.show();
+			}
+			else if ( overBaseBuilding )
+			{
+				cUnitHelpMenu helpMenu ( overBaseBuilding->data.ID, overBaseBuilding->owner );
+				helpMenu.show();
+			}
 			bHelpActive = false;
 		}
 		mouseBox.startX = mouseBox.startY = -1;
@@ -1076,11 +1098,13 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedVehicle )
 	{
-		SelectedVehicle->ShowHelp();
+		cUnitHelpMenu helpMenu ( SelectedVehicle->data.ID, SelectedVehicle->owner );
+		helpMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedBuilding )
 	{
-		SelectedBuilding->ShowHelp();
+		cUnitHelpMenu helpMenu ( SelectedBuilding->data.ID, SelectedBuilding->owner );
+		helpMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking && !bWaitForOthers )
 	{

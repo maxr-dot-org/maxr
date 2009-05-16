@@ -1210,101 +1210,6 @@ void cVehicle::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *
 }
 
 //-----------------------------------------------------------------------------
-/** Displays the help screen */
-//-----------------------------------------------------------------------------
-void cVehicle::ShowHelp ()
-{
-#define BUTTON_W 150
-#define BUTTON_H 29
-
-	int LastMouseX = 0, LastMouseY = 0, LastB = 0, x, y, b;
-	SDL_Rect rDialog = { MENU_OFFSET_X, MENU_OFFSET_Y, DIALOG_W, DIALOG_H };
-	SDL_Rect rDialogSrc = {0, 0, DIALOG_W, DIALOG_H};
-	SDL_Rect rInfoTxt = {MENU_OFFSET_X + 11, MENU_OFFSET_Y + 13, typ->info->w, typ->info->h};
-	SDL_Rect rTxt = {MENU_OFFSET_X + 349, MENU_OFFSET_Y + 66, 277, 181};
-	SDL_Rect rTitle = {MENU_OFFSET_X + 327, MENU_OFFSET_Y + 11, 160, 15};
-	SDL_Surface *SfDialog;
-	Client->isInMenu = true;
-	Client->bFlagDrawHud = true;
-
-	PlayFX ( SoundData.SNDHudButton );
-	mouse->SetCursor ( CHand );
-	mouse->draw ( false, buffer );
-
-	if ( SettingsData.bAlphaEffects )
-	{
-		SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
-	}
-
-
-	SfDialog = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, DIALOG_W, DIALOG_H, SettingsData.iColourDepth, 0, 0, 0, 0 );
-
-	if ( FileExists ( GFXOD_HELP ) )
-	{
-		LoadPCXtoSF ( GFXOD_HELP, SfDialog );
-	}
-
-
-	// Den Hilfebildschirm blitten:
-	SDL_BlitSurface ( SfDialog, &rDialogSrc, buffer, &rDialog );
-
-	// Das Infobild blitten:
-	SDL_BlitSurface ( typ->info, NULL, buffer, &rInfoTxt );
-
-	//show menu title
-	font->showTextCentered ( rTitle.x + rTitle.w / 2, rTitle.y, lngPack.i18n ( "Text~Title~Unitinfo" ) );
-
-
-	// show text
-	font->showTextAsBlock ( rTxt, typ->text );
-
-	// get unit details
-	ShowBigDetails();
-
-	NormalButton btn_done(MENU_OFFSET_X + 474, MENU_OFFSET_Y + 452, "Text~Button~Done");
-	btn_done.Draw();
-
-	SHOW_SCREEN 	// Den Buffer anzeigen
-	mouse->GetBack ( buffer );
-
-	while ( 1 )
-	{
-		if ( Client->SelectedVehicle != this && !Client->bHelpActive ) break;
-		if ( !Client->isInMenu ) break;
-
-		Client->handleTimer();
-		Client->doGameActions();
-
-		// Events holen:
-		EventHandler->HandleEvents();
-
-		// Die Maus machen:
-		mouse->GetPos();
-		b = (int)Client->getMouseState().leftButtonPressed;
-		x = mouse->x;
-		y = mouse->y;
-
-		if ( x != LastMouseX || y != LastMouseY )
-		{
-			mouse->draw ( true, screen );
-		}
-
-		if (btn_done.CheckClick(x, y, b > LastB, b < LastB))
-		{
-			break;
-		}
-
-		LastMouseX = x;
-
-		LastMouseY = y;
-		LastB = b;
-	}
-
-	SDL_FreeSurface ( SfDialog );
-	Client->isInMenu = false;
-}
-
-//-----------------------------------------------------------------------------
 /** draws big symbols for the info window */
 //-----------------------------------------------------------------------------
 void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf )
@@ -2110,7 +2015,8 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	{
 		MenuActive = false;
 		PlayFX ( SoundData.SNDObjectMenu );
-		ShowHelp();
+		cUnitHelpMenu helpMenu ( data.ID, owner );
+		helpMenu.show();
 		return;
 	}
 

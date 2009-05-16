@@ -1137,7 +1137,7 @@ void cMenuUnitsList::setDisplayType ( eMenuUnitListDisplayTypes displayType_ )
 	displayType = displayType_;
 }
 
-cMenuUnitDetails::cMenuUnitDetails( int x, int y, cHangarMenu *parent ) : cMenuItem (x,y), parentMenu(parent)
+cMenuUnitDetails::cMenuUnitDetails( int x, int y ) : cMenuItem (x,y)
 {
 	position.w = 246;
 	position.h = 176;

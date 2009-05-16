@@ -1307,7 +1307,7 @@ cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_ ) : cMenu (
 	infoTextCheckBox->setClickedFunction ( &infoCheckBoxClicked );
 	menuItems.Add ( infoTextCheckBox );
 
-	unitDetails = new cMenuUnitDetails ( position.x+16, position.y+297, this );
+	unitDetails = new cMenuUnitDetails ( position.x+16, position.y+297 );
 	menuItems.Add ( unitDetails );
 
 	selectionList = new cMenuUnitsList ( position.x+477,  position.y+50, 154, 326, this, MUL_DIS_TYPE_COSTS );
@@ -3613,4 +3613,61 @@ void cUpgradeMenu::generateSelectionList()
 		}
 	}
 	if ( selectionList->getSelectedUnit() == NULL && selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem( 0 ) );
+}
+
+cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ) )
+{
+	titleLabel = new cMenuLabel ( position.x+406, position.y+11, lngPack.i18n( "Text~Title~Unitinfo" ) );
+	titleLabel->setCentered ( true );
+	menuItems.Add ( titleLabel );
+
+	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
+
+	doneButton = new cMenuButton ( position.x+474, position.y+452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	infoImage = new cMenuImage ( position.x+11, position.y+13 );
+	menuItems.Add ( infoImage );
+
+	infoText = new cMenuLabel ( position.x+354, position.y+67 );
+	infoText->setBox ( 269, 176 );
+	menuItems.Add ( infoText );
+
+	unitDetails = new cMenuUnitDetails ( position.x+16, position.y+297 );
+	unitDetails->setSelection ( unit );
+	menuItems.Add ( unitDetails );
+
+	if ( unitID.getVehicle() )
+	{
+		infoImage->setImage ( unitID.getVehicle()->info );
+		infoText->setText ( unitID.getVehicle()->text );
+	}
+	else if ( unitID.getBuilding() )
+	{
+		infoImage->setImage ( unitID.getBuilding()->info );
+		infoText->setText ( unitID.getBuilding()->text );
+	}
+}
+
+cUnitHelpMenu::~cUnitHelpMenu()
+{
+	delete titleLabel;
+
+	delete infoImage;
+	delete infoText;
+
+	delete unitDetails;
+
+	delete doneButton;
+
+	delete unit;
+
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cUnitHelpMenu::doneReleased( void *parent )
+{
+	cUnitHelpMenu *menu = dynamic_cast<cUnitHelpMenu*>((cMenu*)parent);
+	menu->end = true;
 }

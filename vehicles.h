@@ -193,7 +193,6 @@ public:
 	int refreshData();
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
-	void ShowHelp();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	int GetScreenPosX() const;
 	int GetScreenPosY() const;

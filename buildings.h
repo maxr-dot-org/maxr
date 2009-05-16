@@ -205,7 +205,6 @@ public:
 	*@return 1 if there has been refreshed something, else 0.
 	*/
 	int refreshData();
-	void ShowHelp();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	void Center();
 	void DrawMunBar() const;
