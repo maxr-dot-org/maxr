@@ -12,7 +12,7 @@ ${StrStr}
 
 # --- Main defines ---
 !define VERSION                    "0.2.5"
-!define FILESFOLDER                "C:\Users\Albert\Documents\Visual Studio 2005\Projects\maxr\GameData\" ;the folder to the files that should be installed with this installer (svn game directory)
+!define FILESFOLDER                "C:\Users\Albert\Documents\Visual Studio 2008\Projects\maxr\GameData\" ;the folder to the files that should be installed with this installer (svn game directory)
 !define RESINSTALLER_EXE           "${FILESFOLDER}resinstaller.exe"
 !define RESINSTALLER_TESTFILE      "${FILESFOLDER}init.pcx"
 !define RES_KEEP_SPACE             138444 ;these are just about values
@@ -183,12 +183,16 @@ Function .onSelChange
          SectionGetFlags ${Section_Keep} $R0
          SectionGetFlags ${Section_Over} $R1
          
+         #MessageBox MB_YESNO|MB_ICONQUESTION "$SELECTION_STATUS - $R0 - $R1"
+         
          ${If} $R0 == ${SF_SELECTED}
          StrCmp $SELECTION_STATUS "Over" SelectKeep
+         StrCmp $SELECTION_STATUS "None" SelectKeep
          ${EndIF}
          
          ${If} $R1 == ${SF_SELECTED}
          StrCmp $SELECTION_STATUS "Keep" SelectOver
+         StrCmp $SELECTION_STATUS "None" SelectOver
          ${EndIF}
          
          StrCpy $SELECTION_STATUS "None"
@@ -204,8 +208,9 @@ Function .onSelChange
          StrCpy $SELECTION_STATUS "Over"
          GoTo End
          
-         
          End:
+         #MessageBox MB_YESNO|MB_ICONQUESTION $SELECTION_STATUS
+         
          Pop $R0
          Pop $R1
 FunctionEnd
@@ -266,9 +271,6 @@ Function DirectoryDialog
          Push $R1
 
          # Create the Dialog
-         GetDlgItem $0 $HWNDPARENT 1
-         EnableWindow $0 0
-
          nsDialogs::Create 1018
          !insertmacro MUI_HEADER_TEXT "Choose Install Location" "Choose the folder in which to install $(^NameDA)."
          
@@ -368,16 +370,11 @@ FunctionEnd
 
 # --- Callback function when directoy has chanded ---
 Function DirChange
-	Pop $0 # dir hwnd
+        Pop $0 # dir hwnd
 	GetDlgItem $0 $HWNDPARENT 1
 	System::Call user32::GetWindowText(i$DIRECTORY_FIELD,t.d,i${NSIS_MAX_STRLEN})
-	${If} ${FileExists} $INSTDIR
-		EnableWindow $0 1
-	${Else}
-		EnableWindow $0 0
-	${EndIf}
-	Call UpdateAvaSpace
 
+	Call UpdateAvaSpace
 FunctionEnd
 
 # --- Browse button functions ---
