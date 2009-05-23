@@ -1505,7 +1505,7 @@ void cMenuUnitDetails::draw()
 	if ( data->human_need )
 	{
 		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->human_need ) );
-		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
+		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
 		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->human_need, oriData->human_need );
 		DETAIL_DOLINEBREAK
 	}
