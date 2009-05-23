@@ -223,15 +223,12 @@ public:
 	void doSurvey();
 	void MakeReport();
 	bool CanTransferTo( class cMapField *OverUnitField );
-	void ShowBigDetails();
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
 	bool canLoad( int off, cMap *Map );
 	bool canLoad( cVehicle *Vehicle );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
-	void showStorage();
-	void DrawStored(int off);
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 #define SUPPLY_TYPE_REARM	0
 #define SUPPLY_TYPE_REPAIR	1

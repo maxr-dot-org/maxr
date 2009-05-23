@@ -232,5 +232,6 @@ void sendSetAutoStatus( int unitID, bool set );
 *@author alzi alias DoctorDeath
 */
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
+void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll );
 
 #endif // clienteventsH

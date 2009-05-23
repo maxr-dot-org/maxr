@@ -120,8 +120,6 @@ private:
 	SDL_TimerID TimerID;
 	/** will be incremented by the Timer */
 	unsigned int iTimerTime;
-	/** Object that is under the mouse cursor */
-	cMapField *OverUnitField;
 	/** the acctual blink color */
 	unsigned int iBlinkColor;
 	/** the FLC-Animation */
@@ -401,6 +399,8 @@ public:
 	bool bWaitForOthers;
 	/** true, when the client is in a menu */
 	bool isInMenu;
+	/** Object that is under the mouse cursor */
+	cMapField *OverUnitField;
 
 	/** flag if the hud has to be drawn */
 	bool bFlagDrawHud;

@@ -386,6 +386,7 @@ protected:
 
 	bool preSetLocked( bool locked_ );
 
+	string shortenStringToSize ( string str, int size );
 public:
 	cMenuButton ( int x, int y, string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
 	~cMenuButton();
@@ -614,34 +615,43 @@ public:
 	void setDisplayType ( eMenuUnitListDisplayTypes displayType_ );
 };
 
+class cUnitDataSymbolHandler
+{
+public:
+	/** the diffrent symbol types */
+	enum eUnitDataSymbols
+	{
+		MENU_SYMBOLS_SPEED,
+		MENU_SYMBOLS_HITS,
+		MENU_SYMBOLS_AMMO,
+		MENU_SYMBOLS_ATTACK,
+		MENU_SYMBOLS_SHOTS,
+		MENU_SYMBOLS_RANGE,
+		MENU_SYMBOLS_ARMOR,
+		MENU_SYMBOLS_SCAN,
+		MENU_SYMBOLS_METAL,
+		MENU_SYMBOLS_OIL,
+		MENU_SYMBOLS_GOLD,
+		MENU_SYMBOLS_ENERGY,
+		MENU_SYMBOLS_HUMAN,
+		MENU_SYMBOLS_TRANS_TANK,
+		MENU_SYMBOLS_TRANS_AIR
+	};
+	static void drawSymbols ( eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2 );
+
+	static SDL_Rect getBigSymbolPosition ( eUnitDataSymbols symType );
+	static SDL_Rect getSmallSymbolPosition ( eUnitDataSymbols symType );
+};
+
 /**
  * an item that displays the data-values (attack, range, scan, etc.) of unit with the corresponding symbols.
  *@author alzi
  */
 class cMenuUnitDetails : public cMenuItem
 {
-public:
-	/** the diffrent symbol types */
-	enum eMenuSymbolsBig
-	{
-		MENU_SYMBOLS_BIG_SPEED,
-		MENU_SYMBOLS_BIG_HITS,
-		MENU_SYMBOLS_BIG_AMMO,
-		MENU_SYMBOLS_BIG_ATTACK,
-		MENU_SYMBOLS_BIG_SHOTS,
-		MENU_SYMBOLS_BIG_RANGE,
-		MENU_SYMBOLS_BIG_ARMOR,
-		MENU_SYMBOLS_BIG_SCAN,
-		MENU_SYMBOLS_BIG_METAL,
-		MENU_SYMBOLS_BIG_OIL,
-		MENU_SYMBOLS_BIG_GOLD,
-		MENU_SYMBOLS_BIG_ENERGY,
-		MENU_SYMBOLS_BIG_HUMAN
-	};
 protected:
 	cMenuUnitListItem *selectedUnit;
 
-	void drawBigSymbol ( eMenuSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue );
 public:
 	cMenuUnitDetails( int x, int y );
 	void draw();
@@ -940,6 +950,19 @@ public:
 	bool ShipIsChecked();
 	bool BuildingIsChecked();
 	bool TNTIsChecked();
+};
+
+class cMenuStoredUnitDetails : public cMenuItem
+{
+protected:
+	sUnitData *unitData;
+
+	void drawNumber ( int value, int maximalValue, int index );
+public:
+	cMenuStoredUnitDetails( int x, int y, sUnitData *unitData_ = NULL );
+	void draw();
+
+	void setUnitData ( sUnitData *unitData_ );
 };
 
 #endif // menuitemsH

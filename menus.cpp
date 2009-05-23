@@ -3671,3 +3671,368 @@ void cUnitHelpMenu::doneReleased( void *parent )
 	cUnitHelpMenu *menu = dynamic_cast<cUnitHelpMenu*>((cMenu*)parent);
 	menu->end = true;
 }
+
+cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building ) : cMenu ( LoadPCX ( GFXOD_STORAGE ) ), storageList(storageList_), ownerVehicle( vehicle ), ownerBuilding(building)
+{
+	if ( ownerVehicle ) unitData = ownerVehicle->data;
+	else if ( ownerBuilding )
+	{
+		unitData = ownerBuilding->data;
+		subBase = ownerBuilding->SubBase;
+	}
+	else return;
+
+	offset = 0;
+	canStorePlanes = unitData.can_load == TRANS_AIR;
+	canStoreShips = unitData.iCapacity_Units_Sea_Max > 0;
+	canRepairReloadUpgrade = ownerBuilding != NULL;
+
+	metalValue = ownerBuilding ? subBase->Metal : 0;
+
+	if ( !canStorePlanes )
+	{
+		SDL_Surface *surface = LoadPCX ( GFXOD_STORAGE_GROUND );
+		SDL_BlitSurface ( surface, NULL, background, NULL );
+	}
+
+	doneButton = new cMenuButton ( position.x+518, position.y+371, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	upButton = new cMenuButton ( position.x+504, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG, FONT_LATIN_NORMAL );
+	upButton->setReleasedFunction ( &upReleased );
+	menuItems.Add ( upButton );
+
+	downButton = new cMenuButton ( position.x+532, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG, FONT_LATIN_NORMAL );
+	downButton->setReleasedFunction ( &downReleased );
+	menuItems.Add ( downButton );
+
+	activateAllButton = new cMenuButton ( position.x+518, position.y+246, lngPack.i18n ( "Text~Button~Active" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	activateAllButton->setReleasedFunction ( &activateAllReleased );
+	menuItems.Add ( activateAllButton );
+
+	reloadAllButton = new cMenuButton ( position.x+518, position.y+246+25, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Reload" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	reloadAllButton->setReleasedFunction ( &reloadAllReleased );
+	menuItems.Add ( reloadAllButton );
+
+	repairAllButton = new cMenuButton ( position.x+518, position.y+246+25*2, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Repair" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	repairAllButton->setReleasedFunction ( &repairAllReleased );
+	menuItems.Add ( repairAllButton );
+
+	upgradeAllButton = new cMenuButton ( position.x+518, position.y+246+25*3, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Upgrade" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	upgradeAllButton->setReleasedFunction ( &upgradeAllReleased );
+	menuItems.Add ( upgradeAllButton );
+
+	metalBar = new cMenuMaterialBar ( position.x+546, position.y+106, position.x+557, position.y+86, metalValue, cMenuMaterialBar::MAT_BAR_TYPE_METAL );
+	metalBar->setCurrentValue ( metalValue );
+	menuItems.Add ( metalBar );
+
+	generateItems();
+
+	resetInfos();
+}
+
+cStorageMenu::~cStorageMenu()
+{
+	delete doneButton;
+
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cStorageMenu::generateItems()
+{
+	int maxX = canStorePlanes ? 2 : 3;
+	int xStep = canStorePlanes ? 227 : 155;
+	int xStepImage = canStorePlanes ? 227 : 155;
+	int startX = canStorePlanes ? 42 : 8;
+
+	for ( int x = 0; x < maxX; x++ )
+	{
+		for ( int y = 0; y < 2; y++ )
+		{
+			int index = x + y*maxX;
+			activateButtons[index] = new cMenuButton ( position.x+startX+x*xStep, position.y+191+y*236, lngPack.i18n ( "Text~Button~Active" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+			activateButtons[index]->setReleasedFunction ( &activateReleased );
+			relaodButtons[index] = new cMenuButton ( position.x+startX+x*xStep, position.y+191+25+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Reload" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+			relaodButtons[index]->setReleasedFunction ( &reloadReleased );
+			repairButtons[index] = new cMenuButton ( position.x+startX+75+x*xStep, position.y+191+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Repair" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+			repairButtons[index]->setReleasedFunction ( &repairReleased );
+			upgradeButtons[index] = new cMenuButton ( position.x+startX+75+x*xStep, position.y+191+25+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Upgrade" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+			upgradeButtons[index]->setReleasedFunction ( &upgradeReleased );
+
+			unitImages[index] = new cMenuImage ( position.x+17+x*xStepImage, position.y+9+y*236 );
+			unitNames[index] = new cMenuLabel ( position.x+17+x*xStepImage+5, position.y+9+y*236+5 );
+			unitNames[index]->setBox ( canStorePlanes ? 190 : 118, 118 );
+			unitInfo[index] = new cMenuStoredUnitDetails ( position.x+startX+17+x*xStepImage, position.y+143+y*236 );
+
+			menuItems.Add ( activateButtons[index] );
+			menuItems.Add ( relaodButtons[index] );
+			menuItems.Add ( repairButtons[index] );
+			menuItems.Add ( upgradeButtons[index] );
+
+			menuItems.Add ( unitImages[index] );
+			menuItems.Add ( unitNames[index] );
+			menuItems.Add ( unitInfo[index] );
+		}
+	}
+}
+
+void cStorageMenu::resetInfos()
+{
+	int maxX = canStorePlanes ? 2 : 3;
+
+	for ( int x = 0; x < maxX; x++ )
+	{
+		for ( int y = 0; y < 2; y++ )
+		{
+			int pos = x+y*maxX;
+			int index = offset*maxX*2 + pos;
+
+			SDL_Surface *srcSurface;
+			string name;
+
+			if ( index < (int)storageList.Size() )
+			{
+				cVehicle *vehicle = storageList[index];
+				srcSurface = vehicle->typ->storage;
+				name = vehicle->name;
+				if (  vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version )
+				{
+					name += "\n(" + lngPack.i18n ( "Text~Comp~Dated" ) + ")";
+				}
+				unitInfo[pos]->setUnitData ( &vehicle->data );
+
+				activateButtons[pos]->setLocked ( false );
+				if ( vehicle->data.ammo != vehicle->data.max_ammo && metalValue >= 2 ) relaodButtons[pos]->setLocked ( false );
+				else relaodButtons[pos]->setLocked ( true );
+				if ( vehicle->data.hit_points != vehicle->data.max_hit_points && metalValue >= 2 ) repairButtons[pos]->setLocked ( false );
+				else repairButtons[pos]->setLocked ( true );
+				if ( vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 2 ) upgradeButtons[pos]->setLocked ( false );
+				else upgradeButtons[pos]->setLocked ( true );
+			}
+			else
+			{
+				name = "";
+				if ( canStoreShips ) srcSurface = GraphicsData.gfx_edock;
+				else if ( canStorePlanes ) srcSurface = GraphicsData.gfx_ehangar;
+				else srcSurface = GraphicsData.gfx_edepot;
+				unitInfo[pos]->setUnitData ( NULL );
+
+				activateButtons[pos]->setLocked ( true );
+				relaodButtons[pos]->setLocked ( true );
+				repairButtons[pos]->setLocked ( true );
+				upgradeButtons[pos]->setLocked ( true );
+			}
+
+			SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, srcSurface->w, srcSurface->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+			SDL_BlitSurface ( srcSurface, NULL, surface, NULL );
+			unitImages[pos]->setImage ( surface );
+
+			unitNames[pos]->setText ( name );
+		}
+	}
+
+	activateAllButton->setLocked ( storageList.Size() == 0 );
+
+	reloadAllButton->setLocked ( true );
+	repairAllButton->setLocked ( true );
+	upgradeAllButton->setLocked ( true );
+	if ( canRepairReloadUpgrade && metalValue >= 2 )
+	{
+		for ( unsigned int i = 0; i < storageList.Size(); i++ )
+		{
+			cVehicle *vehicle = storageList[i];
+			if ( vehicle->data.ammo != vehicle->data.max_ammo ) reloadAllButton->setLocked ( false );
+			if ( vehicle->data.hit_points != vehicle->data.max_hit_points ) repairAllButton->setLocked ( false );
+			if ( vehicle->data.version != vehicle->owner->VehicleData[vehicle->typ->nr].version ) upgradeAllButton->setLocked ( false );
+		}
+	}
+
+	if ( ownerBuilding )
+	{
+		metalValue = ownerBuilding->SubBase->Metal;
+		metalBar->setCurrentValue ( metalValue );
+	}
+
+	if ( (offset+1)*maxX*2 < unitData.max_cargo && (offset+1)*maxX*2 < (int)storageList.Size() ) downButton->setLocked ( false );
+	else downButton->setLocked ( true );
+
+	if ( offset > 0 ) upButton->setLocked ( false );
+	else upButton->setLocked ( true );
+}
+
+void cStorageMenu::doneReleased( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	menu->end = true;
+}
+
+void cStorageMenu::upReleased( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	menu->offset--;;
+	menu->resetInfos();
+	menu->draw();
+}
+
+void cStorageMenu::downReleased( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	menu->offset++;
+	menu->resetInfos();
+	menu->draw();
+}
+
+int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
+{
+	int maxX = canStorePlanes ? 2 : 3;
+
+	cVehicle *vehicle = NULL;
+	for ( int x = 0; x < maxX; x++ )
+	{
+		for ( int y = 0; y < 2; y++ )
+		{
+			int index = offset*x*y + x + y*maxX;
+			if ( index >= (int)storageList.Size() ) break;
+
+			if ( buttons[x+y*maxX]->overItem ( mouse->x, mouse->y ) ) return index;
+		}
+	}
+	return -1;
+}
+
+void cStorageMenu::activateReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	int index = menu->getClickedButtonVehIndex ( menu->activateButtons );
+	if ( index == -1 ) return;
+
+	if ( menu->ownerVehicle )
+	{
+		menu->ownerVehicle->VehicleToActivate = index;
+		if ( menu->unitData.can_drive == DRIVE_AIR ) sendWantActivate ( menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY );
+		else menu->ownerVehicle->ActivatingVehicle = true;
+	}
+	else if ( menu->ownerBuilding )
+	{
+		menu->ownerBuilding->VehicleToActivate = index;
+		menu->ownerBuilding->ActivatingVehicle = true;
+	}
+
+	Client->OverUnitField = NULL;
+	mouse->MoveCallback = true;
+	menu->end = true;
+}
+
+void cStorageMenu::reloadReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	int index = menu->getClickedButtonVehIndex ( menu->relaodButtons );
+	if ( index == -1 || !menu->ownerBuilding ) return;
+	
+	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
+}
+
+void cStorageMenu::repairReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	int index = menu->getClickedButtonVehIndex ( menu->repairButtons );
+	if ( index == -1 || !menu->ownerBuilding ) return;
+	
+	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
+}
+
+void cStorageMenu::upgradeReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	int index = menu->getClickedButtonVehIndex ( menu->upgradeButtons );
+	if ( index == -1 || !menu->ownerBuilding ) return;
+
+	sendWantUpgrade ( menu->ownerBuilding->iID, index, false );
+}
+
+void cStorageMenu::activateAllReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	bool hasCheckedPlace[16];
+	fill <bool [16], bool> ( &hasCheckedPlace[0], &hasCheckedPlace[15], false );
+
+	int unitXPos = menu->ownerBuilding ? menu->ownerBuilding->PosX : menu->ownerVehicle->PosX;
+	int unitYPos = menu->ownerBuilding ? menu->ownerBuilding->PosY : menu->ownerVehicle->PosY;
+	int id = menu->ownerBuilding ? menu->ownerBuilding->iID : menu->ownerVehicle->iID;
+	bool isBig = menu->unitData.is_big;
+
+	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
+	{
+		cVehicle *vehicle = menu->storageList[i];
+		bool activated = false;
+		for ( int ypos = unitYPos-1, poscount = 0; ypos <= unitYPos+(isBig ? 2 : 1); ypos++ )
+		{
+			if ( ypos < 0 || ypos >= Client->Map->size ) continue;
+			for ( int xpos = unitXPos-1; xpos <= unitXPos+(isBig ? 2 : 1); xpos++, poscount++ )
+			{
+				if ( xpos < 0 || xpos >= Client->Map->size || ( ( ( ypos == unitYPos && menu->unitData.can_drive != DRIVE_AIR ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.can_drive != DRIVE_AIR ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
+				if ( ( ( menu->ownerBuilding && menu->ownerBuilding->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) ||
+					( menu->ownerVehicle && menu->ownerVehicle->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) )
+					&& !hasCheckedPlace[poscount] )
+				{
+					sendWantActivate ( id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos );
+					hasCheckedPlace[poscount] = true;
+					activated = true;
+					break;
+				}
+			}
+			if ( activated ) break;
+		}
+	}
+	menu->end = true;
+}
+
+void cStorageMenu::reloadAllReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	if ( !menu->ownerBuilding ) return;
+	
+	int resources = menu->metalValue;
+	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
+	{
+		if ( resources < 1 ) break;
+		cVehicle *vehicle = menu->storageList[i];
+		if ( vehicle->data.ammo != vehicle->data.max_ammo )
+		{
+			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
+			resources--;
+		}
+	}
+}
+
+void cStorageMenu::repairAllReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	if ( !menu->ownerBuilding ) return;
+	
+	int resources = menu->metalValue;
+	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
+	{
+		if ( resources < 1 ) break;
+		cVehicle *vehicle = menu->storageList[i];
+		if ( vehicle->data.hit_points != vehicle->data.max_hit_points )
+		{
+			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
+			int value = vehicle->data.hit_points;
+			while ( value < vehicle->data.max_hit_points )
+			{
+				value += Round(((float)vehicle->data.max_hit_points/vehicle->data.iBuilt_Costs)*4);
+				resources--;
+			}
+		}
+	}
+}
+
+void cStorageMenu::upgradeAllReleased ( void *parent )
+{
+	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
+	if ( !menu->ownerBuilding ) return;
+	
+	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
+}

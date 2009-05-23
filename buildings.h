@@ -218,7 +218,6 @@ public:
 	SDL_Rect GetMenuSize();
 	bool MouseOverMenu(int mx,int my);
 	void SelfDestructionMenu();
-	void ShowBigDetails();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
 	void ServerStartWork();
@@ -248,16 +247,11 @@ public:
 	bool canLoad( int offset, cMap *Map );
 	bool canLoad( cVehicle *Vehicle );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
-	void ShowStorage();
-	void DrawStored(int off);
-	void ShowStorageMetalBar();
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
-	void MakeStorageButtonsAlle(bool *AlleAufladenEnabled, bool *AlleReparierenEnabled, bool *AlleUpgradenEnabled);
 	void ShowResearch();
 	void ShowResearchSliders(int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
 	void handleResearchSliderMouseClick(int mouseX, int mouseY, int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
 	void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas]);
-	void sendWantUpgrade (int storageSlot, bool upgradeAll); // wants to upgrade the vehicle to the current version
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
 	

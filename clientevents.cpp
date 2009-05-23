@@ -275,3 +275,12 @@ void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool 
 	message->pushInt16( srcUnitID );
 	Client->sendNetMessage( message );
 }
+
+void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll )
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_VEHICLE_UPGRADE);
+	message->pushInt32( buildingID );
+	if ( !upgradeAll ) message->pushInt16( storageSlot );
+	message->pushBool ( upgradeAll );
+	Client->sendNetMessage ( message );
+}

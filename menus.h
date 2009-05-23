@@ -867,4 +867,67 @@ public:
 	static void doneReleased( void *parent );
 };
 
+class cStorageMenu : public cMenu
+{
+friend class cClient;
+protected:
+	cVehicle *ownerVehicle;
+	cBuilding *ownerBuilding;
+	cList<cVehicle *> &storageList;
+	sUnitData unitData;
+	sSubBase *subBase;
+
+	bool canStorePlanes;
+	bool canStoreShips;
+	bool canRepairReloadUpgrade;
+
+	int metalValue;
+
+	int offset;
+
+	cMenuButton *doneButton;
+	cMenuButton *downButton;
+	cMenuButton *upButton;
+
+	cMenuImage *unitImages[6];
+	cMenuLabel *unitNames[6];
+	cMenuStoredUnitDetails *unitInfo[6];
+
+	cMenuButton *activateButtons[6];
+	cMenuButton *relaodButtons[6];
+	cMenuButton *repairButtons[6];
+	cMenuButton *upgradeButtons[6];
+
+	cMenuButton *activateAllButton;
+	cMenuButton *reloadAllButton;
+	cMenuButton *repairAllButton;
+	cMenuButton *upgradeAllButton;
+
+	cMenuMaterialBar *metalBar;
+
+	void generateItems();
+
+	void resetInfos();
+
+	int getClickedButtonVehIndex ( cMenuButton *buttons[6] );
+public:
+	cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building );
+	~cStorageMenu();
+	
+	static void doneReleased( void *parent );
+
+	static void upReleased( void *parent );
+	static void downReleased( void *parent );
+
+	static void activateReleased ( void *parent );
+	static void reloadReleased ( void *parent );
+	static void repairReleased ( void *parent );
+	static void upgradeReleased ( void *parent );
+
+	static void activateAllReleased ( void *parent );
+	static void reloadAllReleased ( void *parent );
+	static void repairAllReleased ( void *parent );
+	static void upgradeAllReleased ( void *parent );
+};
+
 #endif //menusH

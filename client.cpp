@@ -1054,11 +1054,13 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers )
 	{
-		SelectedVehicle->showStorage();
+		cStorageMenu storageMenu ( SelectedVehicle->StoredVehicles, SelectedVehicle, NULL );
+		storageMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) && !bWaitForOthers )
 	{
-		SelectedBuilding->ShowStorage();
+		cStorageMenu storageMenu ( SelectedBuilding->StoredVehicles, NULL, SelectedBuilding );
+		storageMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers )
 	{
@@ -4414,11 +4416,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						if ( found ) break;
 						Building = Building->next;
 					}
-					if ( Building != NULL )
+					if ( Building != NULL && ActiveMenu != NULL )
 					{
-						Building->DrawStored ( Building->wantRedrawedStoredOffset );
-						Building->ShowStorageMetalBar();
-						SHOW_SCREEN
+						cStorageMenu *storageMenu = dynamic_cast<cStorageMenu*>(ActiveMenu);
+						if ( storageMenu )
+						{
+							storageMenu->resetInfos();
+							storageMenu->draw();
+						}
 					}
 				}
 			}
@@ -4844,11 +4849,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 				cBuilding* storingBuilding = getBuildingFromID(storingBuildingID);
-				if (storingBuilding && Client->isInMenu)
+				if (storingBuilding && ActiveMenu )
 				{
-					storingBuilding->DrawStored(0);
-					storingBuilding->ShowStorageMetalBar();
-					SHOW_SCREEN
+					cStorageMenu *storageMenu = dynamic_cast<cStorageMenu*>(ActiveMenu);
+					if ( storageMenu )
+					{
+						storageMenu->resetInfos();
+						storageMenu->draw();
+					}
 				}
 				ostringstream os;
 				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
