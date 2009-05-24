@@ -2216,6 +2216,22 @@ void cNetworkMenu::setColor( int color )
 	SDL_FreeSurface ( colorSurface );
 }
 
+
+void cNetworkMenu::saveOptions()
+{
+	SettingsData.sPlayerName = actPlayer->name;
+	SettingsData.iPort = port;
+	SettingsData.iColor = actPlayer->color;
+	SaveOption ( SAVETYPE_NAME );
+	SaveOption ( SAVETYPE_PORT );
+	SaveOption ( SAVETYPE_COLOR );
+	if ( ip.compare ( "-" ) != 0 )
+	{
+		SettingsData.sIP = ip;
+		SaveOption ( SAVETYPE_IP );
+	}
+}
+
 void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 {
 	if ( player != actPlayer ) return;
@@ -2226,6 +2242,7 @@ void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 void cNetworkMenu::backReleased( void* parent )
 {
 	cNetworkMenu *menu = dynamic_cast<cNetworkMenu*>((cMenu*)parent);
+	menu->saveOptions();
 	menu->terminate = true;
 }
 
@@ -2345,6 +2362,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 		menu->draw();
 		return;
 	}
+	menu->saveOptions ();
 	if( !menu->gameDataContainer.savegame.empty() )
 	{
 		ActiveMenu = NULL;
@@ -2769,6 +2787,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case MU_MSG_GO:
 		{
+			saveOptions ();
 			for ( unsigned int i = 0; i < players.Size(); i++ )
 			{
 				cPlayer *player = new cPlayer ( players[i]->name, OtherData.colors[players[i]->color], players[i]->nr, players[i]->socket );

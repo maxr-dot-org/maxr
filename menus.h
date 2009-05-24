@@ -645,6 +645,7 @@ protected:
 	void showSettingsText();
 	void showMap();
 	void setColor( int color );
+	void saveOptions();
 public:
 	cNetworkMenu();
 	~cNetworkMenu();
