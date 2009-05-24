@@ -271,17 +271,17 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 	c->iLastLandY = c->iLandY;
 	c->iLandX = message->popInt16();
 	c->iLandY = message->popInt16();
+	c->receivedOK = true;
 
 	for ( int player = 0; player < (int)landData.Size(); player++ )
 	{
-		if ( landData[player] == NULL ) return;
+		if ( landData[player] == NULL || !landData[player]->receivedOK ) return;
 	}
 
 	//now check the landing positions
 	int lastPlayer = 0;
 	for ( int player = 0; player < (int)landData.Size(); player++ )
 	{
-		if ( landData[player] == NULL ) continue;
 		eLandingState state = checkLandingState( player );
 
 		if ( state == LANDING_POSITION_TOO_CLOSE )
@@ -299,26 +299,24 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 
 		if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
 		{
-			sendReselectLanding ( state, player );
-		}
-	}
-	// now remove all players with warning
-	for ( int player = 0; player < (int)landData.Size(); player++ )
-	{
-		if ( landData[player] == NULL ) continue;
-		if ( landData[player]->landingState != LANDING_POSITION_OK )
-		{
-			delete landData[player];
-			landData[player] = NULL;
+			sMenuPlayer *menuPlayer = new sMenuPlayer ( players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum ); 
+			sendReselectLanding ( state, menuPlayer );
+			delete menuPlayer;
 		}
 	}
 
-	// check whether all landing positions are ok
+	// now remove all players with warning
+	bool ok = true;
 	for ( int player = 0; player < (int)landData.Size(); player++ )
 	{
-		if ( landData[player] == NULL ) return;
-		if ( landData[player]->landingState != LANDING_POSITION_OK ) return;
+		if ( landData[player]->landingState != LANDING_POSITION_OK && landData[player]->landingState != LANDING_POSITION_CONFIRMED )
+		{
+			landData[player]->receivedOK = false;
+			ok = false;
+		}
 	}
+	if ( !ok ) return;
+
 	sendAllLanded();
 }
 

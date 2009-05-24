@@ -60,7 +60,7 @@ void sendUnitUpgrades ( cPlayer *player );
 
 void sendLandingCoords ( sClientLandData& c, int ownerNr );
 
-void sendReselectLanding ( eLandingState state, int playerNr );
+void sendReselectLanding ( eLandingState state, sMenuPlayer *player );
 
 void sendAllLanded ();
 

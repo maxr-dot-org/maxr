@@ -252,17 +252,17 @@ void sendLandingCoords ( sClientLandData& c, int ownerNr )
 	else cMenu::sendMessage( message );
 }
 
-void sendReselectLanding ( eLandingState state, int playerNr )
+void sendReselectLanding ( eLandingState state, sMenuPlayer *player )
 {
 	cNetMessage* message = new cNetMessage(MU_MSG_RESELECT_LANDING);
 	message->pushChar( state );
 	
-	if ( playerNr == 0 && ActiveMenu )
+	if ( player->nr == 0 && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
 	}
-	else cMenu::sendMessage( message );
+	else cMenu::sendMessage( message, player );
 }
 
 void sendAllLanded ()

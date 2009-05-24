@@ -50,8 +50,9 @@ struct sClientLandData
 	int iLandX, iLandY;
 	eLandingState landingState;
 	int iLastLandX, iLastLandY;
+	bool receivedOK;
 
-	sClientLandData() : iLandX(0), iLandY(0), iLastLandX(0), iLastLandY(0), landingState ( LANDING_STATE_UNKNOWN ) {}
+	sClientLandData() : iLandX(0), iLandY(0), iLastLandX(0), iLastLandY(0), landingState ( LANDING_STATE_UNKNOWN ), receivedOK(true) {}
 };
 
 enum eSettingResourceValue
