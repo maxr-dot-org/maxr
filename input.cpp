@@ -131,11 +131,13 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 		{
 			MouseState.leftButtonPressed = true;
 			MouseState.leftButtonReleased = false;
+			MouseState.rightButtonReleased = false;
 		}
 		else if ( button.button == SDL_BUTTON_RIGHT )
 		{
 			MouseState.rightButtonPressed = true;
 			MouseState.rightButtonReleased = false;
+			MouseState.leftButtonReleased = false;
 		}
 		else if ( button.button == SDL_BUTTON_WHEELUP )
 		{
