@@ -3983,7 +3983,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	bool hasCheckedPlace[16];
-	fill <bool [16], bool> ( &hasCheckedPlace[0], &hasCheckedPlace[15], false );
+	fill <bool*, bool> ( &hasCheckedPlace[0], &hasCheckedPlace[15], false );
 
 	int unitXPos = menu->ownerBuilding ? menu->ownerBuilding->PosX : menu->ownerVehicle->PosX;
 	int unitYPos = menu->ownerBuilding ? menu->ownerBuilding->PosY : menu->ownerVehicle->PosY;
