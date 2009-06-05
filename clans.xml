@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Clans>
+  <Clan Num="1" Name="The Chosen">
+    <Description lang="ENG">
+      Better Air Units
+    </Description>
+    <ChangedUnitStat UnitID="0 8">
+      <Scan Num="14"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 16">
+      <Range Num="6"/>
+      <Built_Costs Num="21"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 1">
+      <Speed Num="22"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 9">
+      <Damage Num="22"/>
+      <Built_Costs Num="27"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 9">
+      <Built_Costs Num="30"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="2" Name="Crimson Path">
+    <Description lang="ENG">
+      Better Sea Units
+    </Description>
+    <ChangedUnitStat UnitID="0 22">
+      <Range Num="11"/>
+      <Built_Costs Num="33"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 15">
+      <Speed Num="11"/>
+      <Scan Num="10"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 14">
+      <Speed Num="11"/>
+      <Armor Num="7"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 17">
+      <Hitpoints Num="36"/>
+      <Armor Num="14"/>
+      <Range Num="8"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 30">
+      <Damage Num="24"/>
+      <Speed Num="9"/>
+      <Built_Costs Num="15"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 29">
+      <Speed Num="9"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 11">
+      <Speed Num="9"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 12">
+      <Built_Costs Num="30"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="3" Name="Von Griffin">
+    <Description lang="ENG">
+      Improved Espionage
+    </Description>
+    <ChangedUnitStat UnitID="0 26">
+      <Scan Num="18"/>
+      <Speed Num="8"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 27">
+      <Scan Num="11"/>
+      <Speed Num="14"/>
+      <Damage Num="14"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 30">
+      <Damage Num="24"/>
+      <Speed Num="9"/>
+      <Scan Num="8"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 13">
+      <Scan Num="5"/>
+      <Speed Num="6"/>
+      <Built_Costs Num="8"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 8">
+      <Scan Num="16"/>
+      <Speed Num="20"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 6">
+      <Armor Num="9"/>
+      <Hitpoints Num="26"/>
+      <Speed Num="12"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 26">
+      <Scan Num="24"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="4" Name="Ayer's Hand">
+    <Description lang="ENG">
+      Better Missile Units
+    </Description>
+    <ChangedUnitStat UnitID="0 21">
+      <Range Num="11"/>
+      <Damage Num="24"/>
+      <Built_Costs Num="30"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 22">
+      <Range Num="11"/>
+      <Damage Num="30"/>
+      <Built_Costs Num="30"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 12">
+      <Range Num="9"/>
+      <Damage Num="17"/>
+      <Built_Costs Num="18"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 17">
+      <Range Num="12"/>
+      <Damage Num="30"/>
+      <Built_Costs Num="20"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="5" Name="Musashi">
+    <Description lang="ENG">
+      Better Armored Vehicles
+    </Description>
+    <ChangedUnitStat UnitID="0 32">
+      <Armor Num="12"/>
+      <Damage Num="20"/>
+      <Hitpoints Num="28"/>
+      <Speed Num="7"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 17">
+      <Armor Num="14"/>
+      <Damage Num="24"/>
+      <Hitpoints Num="40"/>
+      <Range Num="8"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 6">
+      <Armor Num="10"/>
+      <Hitpoints Num="28"/>
+      <Speed Num="11"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 18">
+      <Armor Num="14"/>
+      <Damage Num="20"/>
+      <Hitpoints Num="28"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="6" Name="Sacred Eights">
+    <Description lang="ENG">
+      Better Fast Units
+    </Description>
+    <ChangedUnitStat UnitID="0 15">
+      <Range Num="8"/>
+      <Speed Num="11"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 23">
+      <Range Num="8"/>
+      <Speed Num="9"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 9">
+      <Damage Num="20"/>
+      <Speed Num="20"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 7">
+      <Built_Costs Num="18"/>
+      <Damage Num="22"/>
+      <Range Num="7"/>
+      <Speed Num="14"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 27">
+      <Damage Num="14"/>
+      <Speed Num="14"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="0 14">
+      <Damage Num="16"/>
+      <Speed Num="11"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="7" Name="7 Knights">
+    <Description lang="ENG">
+      Better Defense
+    </Description>
+    <ChangedUnitStat UnitID="1 26">
+      <Scan Num="20"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 29">
+      <Damage Num="36"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 21">
+      <Damage Num="36"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 17">
+      <Range Num="12"/>
+      <Damage Num="30"/>
+      <Built_Costs Num="22"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 18">
+      <Armor Num="14"/>
+      <Damage Num="20"/>
+      <Hitpoints Num="28"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 16">
+      <Range Num="9"/>
+      <Damage Num="20"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 18">
+      <Range Num="9"/>
+      <Damage Num="18"/>
+    </ChangedUnitStat>
+  </Clan>
+
+  <Clan Num="8" Name="Axis Inc.">
+    <Description lang="ENG">
+      Extra constructors and eingineers (depends on budget)
+    </Description>
+    <ChangedUnitStat UnitID="1 11">
+      <Built_Costs Num="36"/>
+    </ChangedUnitStat>
+    <ChangedUnitStat UnitID="1 13">
+      <Built_Costs Num="16"/>
+    </ChangedUnitStat>
+  </Clan>
+
+</Clans>
